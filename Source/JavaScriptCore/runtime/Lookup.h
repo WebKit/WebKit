@@ -306,7 +306,7 @@ namespace JSC {
                 thisObject->putDirect(exec->vm(), propertyName, value);
         } else if (!(entry->attributes() & ReadOnly)) {
             entry->propertyPutter()(exec, base, JSValue::encode(slot.thisValue()), JSValue::encode(value));
-            slot.setCustomProperty(base, entry->propertyPutter());
+            slot.setCacheableCustomProperty(base, entry->propertyPutter());
         } else if (slot.isStrictMode())
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
     }

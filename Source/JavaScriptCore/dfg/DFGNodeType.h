@@ -146,6 +146,7 @@ namespace JSC { namespace DFG {
     macro(GetById, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     macro(GetByIdFlush, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     macro(PutById, NodeMustGenerate | NodeClobbersWorld) \
+    macro(PutByIdFlush, NodeMustGenerate | NodeMustGenerate | NodeClobbersWorld) \
     macro(PutByIdDirect, NodeMustGenerate | NodeClobbersWorld) \
     macro(CheckStructure, NodeMustGenerate) \
     macro(CheckExecutable, NodeMustGenerate) \

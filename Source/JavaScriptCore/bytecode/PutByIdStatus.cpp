@@ -205,6 +205,8 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJITLocker&, Code
                     return PutByIdStatus(TakesSlowPath);
                 break;
             }
+            case PutByIdAccess::CustomSetter:
+                return PutByIdStatus(MakesCalls);
 
             default:
                 return PutByIdStatus(TakesSlowPath);
@@ -265,6 +267,9 @@ PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, St
     JSCell* specificValue;
     PropertyOffset offset = structure->getConcurrently(vm, uid, attributes, specificValue);
     if (isValidOffset(offset)) {
+        if (attributes & CustomAccessor)
+            return PutByIdStatus(MakesCalls);
+
         if (attributes & (Accessor | ReadOnly))
             return PutByIdStatus(TakesSlowPath);
         if (specificValue) {
@@ -341,6 +346,9 @@ void PutByIdStatus::dump(PrintStream& out) const
         
     case TakesSlowPath:
         out.print("(TakesSlowPath)");
+        return;
+    case MakesCalls:
+        out.print("(MakesCalls)");
         return;
     }
     

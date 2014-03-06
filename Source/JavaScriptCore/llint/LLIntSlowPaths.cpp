@@ -628,7 +628,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
     
     if (!LLINT_ALWAYS_ACCESS_SLOW
         && baseValue.isCell()
-        && slot.isCacheable()) {
+        && slot.isCacheablePut()) {
         
         JSCell* baseCell = baseValue.asCell();
         Structure* structure = baseCell->structure();
@@ -1410,7 +1410,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
 
     // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
     if (modeAndType.type() == GlobalProperty || modeAndType.type() == GlobalPropertyWithVarInjectionChecks) {
-        if (slot.isCacheable() && slot.base() == scope && scope->structure()->propertyAccessesAreCacheable()) {
+        if (slot.isCacheablePut() && slot.base() == scope && scope->structure()->propertyAccessesAreCacheable()) {
             ConcurrentJITLocker locker(codeBlock->m_lock);
             pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), scope->structure());
             pc[6].u.operand = slot.cachedOffset();

@@ -224,6 +224,7 @@ private:
             }
                 
             case PutById:
+            case PutByIdFlush:
             case PutByIdDirect: {
                 NodeOrigin origin = node->origin;
                 Edge childEdge = node->child1();

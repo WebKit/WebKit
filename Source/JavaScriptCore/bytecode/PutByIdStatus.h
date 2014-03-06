@@ -47,7 +47,9 @@ public:
         // It's cached as a simple store of some kind.
         Simple,
         // It's known to often take slow path.
-        TakesSlowPath
+        TakesSlowPath,
+        // It's known to take paths that make calls.
+        MakesCalls
     };
     
     PutByIdStatus()
@@ -58,7 +60,7 @@ public:
     explicit PutByIdStatus(State state)
         : m_state(state)
     {
-        ASSERT(m_state == NoInformation || m_state == TakesSlowPath);
+        ASSERT(m_state == NoInformation || m_state == TakesSlowPath || m_state == MakesCalls);
     }
     
     PutByIdStatus(const PutByIdVariant& variant)
@@ -77,7 +79,8 @@ public:
     bool isSet() const { return m_state != NoInformation; }
     bool operator!() const { return m_state == NoInformation; }
     bool isSimple() const { return m_state == Simple; }
-    bool takesSlowPath() const { return m_state == TakesSlowPath; }
+    bool takesSlowPath() const { return m_state == TakesSlowPath || m_state == MakesCalls; }
+    bool makesCalls() const { return m_state == MakesCalls; }
     
     size_t numVariants() const { return m_variants.size(); }
     const Vector<PutByIdVariant, 1>& variants() const { return m_variants; }

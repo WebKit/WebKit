@@ -174,7 +174,7 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseTagGPROrNon
     JITGetByIdGenerator gen(
         m_jit.codeBlock(), codeOrigin, usedRegisters(),
         JSValueRegs(baseTagGPROrNone, basePayloadGPR),
-        JSValueRegs(resultTagGPR, resultPayloadGPR), spillMode != NeedToSpill);
+        JSValueRegs(resultTagGPR, resultPayloadGPR), spillMode);
     
     gen.generateFastPath(m_jit);
     
@@ -201,12 +201,12 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseTagGPROrNon
     addSlowPathGenerator(slowPath.release());
 }
 
-void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR, GPRReg valueTagGPR, GPRReg valuePayloadGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget)
+void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR, GPRReg valueTagGPR, GPRReg valuePayloadGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
 {
     JITPutByIdGenerator gen(
         m_jit.codeBlock(), codeOrigin, usedRegisters(),
         JSValueRegs::payloadOnly(basePayloadGPR), JSValueRegs(valueTagGPR, valuePayloadGPR),
-        scratchGPR, false, m_jit.ecmaModeFor(codeOrigin), putKind);
+        scratchGPR, spillMode, m_jit.ecmaModeFor(codeOrigin), putKind);
     
     gen.generateFastPath(m_jit);
     
@@ -3915,6 +3915,23 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.storePtr(valueTagGPR, JITCompiler::Address(storageGPR, offsetRelativeToBase(storageAccessData.offset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
         m_jit.storePtr(valuePayloadGPR, JITCompiler::Address(storageGPR, offsetRelativeToBase(storageAccessData.offset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
         
+        noResult(node);
+        break;
+    }
+
+    case PutByIdFlush: {
+        SpeculateCellOperand base(this, node->child1());
+        JSValueOperand value(this, node->child2());
+        GPRTemporary scratch(this);
+
+        GPRReg baseGPR = base.gpr();
+        GPRReg valueTagGPR = value.tagGPR();
+        GPRReg valuePayloadGPR = value.payloadGPR();
+        GPRReg scratchGPR = scratch.gpr();
+        flushRegisters();
+
+        cachedPutById(node->origin.semantic, baseGPR, valueTagGPR, valuePayloadGPR, scratchGPR, node->identifierNumber(), NotDirect, MacroAssembler::Jump(), DontSpill);
+
         noResult(node);
         break;
     }

@@ -77,6 +77,12 @@ bool PutByIdAccess::visitWeak() const
         if (!Heap::isMarked(m_chain.get()))
             return false;
         break;
+    case CustomSetter:
+        if (!Heap::isMarked(m_oldStructure.get()))
+            return false;
+        if (m_chain && !Heap::isMarked(m_chain.get()))
+            return false;
+        break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return false;
@@ -88,7 +94,8 @@ PolymorphicPutByIdList::PolymorphicPutByIdList(
     PutKind putKind, StructureStubInfo& stubInfo)
     : m_kind(putKind)
 {
-    m_list.append(PutByIdAccess::fromStructureStubInfo(stubInfo));
+    if (stubInfo.accessType != access_unset)
+        m_list.append(PutByIdAccess::fromStructureStubInfo(stubInfo));
 }
 
 PolymorphicPutByIdList* PolymorphicPutByIdList::from(
@@ -98,8 +105,9 @@ PolymorphicPutByIdList* PolymorphicPutByIdList::from(
         return stubInfo.u.putByIdList.list;
     
     ASSERT(stubInfo.accessType == access_put_by_id_replace
-           || stubInfo.accessType == access_put_by_id_transition_normal
-           || stubInfo.accessType == access_put_by_id_transition_direct);
+        || stubInfo.accessType == access_put_by_id_transition_normal
+        || stubInfo.accessType == access_put_by_id_transition_direct
+        || stubInfo.accessType == access_unset);
     
     PolymorphicPutByIdList* result =
         new PolymorphicPutByIdList(putKind, stubInfo);

@@ -851,6 +851,7 @@ private:
         }
             
         case PutById:
+        case PutByIdFlush:
         case PutByIdDirect: {
             fixEdge<CellUse>(node->child1());
             insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());

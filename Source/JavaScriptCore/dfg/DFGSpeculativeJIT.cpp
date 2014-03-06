@@ -880,7 +880,7 @@ void SpeculativeJIT::compileIn(Node* node)
             stubInfo->patch.baseGPR = static_cast<int8_t>(baseGPR);
             stubInfo->patch.valueGPR = static_cast<int8_t>(resultGPR);
             stubInfo->patch.usedRegisters = usedRegisters();
-            stubInfo->patch.registersFlushed = false;
+            stubInfo->patch.spillMode = NeedToSpill;
             
             m_jit.addIn(InRecord(jump, done, slowPath.get(), stubInfo));
             addSlowPathGenerator(slowPath.release());
