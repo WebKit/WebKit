@@ -84,6 +84,8 @@ class RegisterID
             "t5"
         when "t6"
             "pcBase"
+        when "t7"
+            "t7"
         when "csr1"
             "tagTypeNumber"
         when "csr2"

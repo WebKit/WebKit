@@ -325,7 +325,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     // 2. 32 bit result values will be in the low 32-bit of t0.
     // 3. 64 bit result values will be in t0.
 
-    CLoopRegister t0, t1, t2, t3, t5, sp, cfr, lr, pc;
+    CLoopRegister t0, t1, t2, t3, t5, t7, sp, cfr, lr, pc;
 #if USE(JSVALUE64)
     CLoopRegister pcBase, tagTypeNumber, tagMask;
 #endif

@@ -1,3 +1,16 @@
+2014-03-06  Mark Lam  <mark.lam@apple.com>
+
+        REGRESSION(r165205): broke the CLOOP build (Requested by smfr on #webkit).
+        <https://webkit.org/b/129813>
+
+        Reviewed by Michael Saboff.
+
+        Fixed broken C loop LLINT build.
+
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+        * offlineasm/cloop.rb:
+
 2014-03-03  Oliver Hunt  <oliver@apple.com>
 
         Support caching of custom setters
