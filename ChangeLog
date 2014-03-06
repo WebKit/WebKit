@@ -1,3 +1,14 @@
+2014-03-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][Autotools] Default to libc++ when compiling with Clang
+        https://bugs.webkit.org/show_bug.cgi?id=129798
+
+        Reviewed by Anders Carlsson.
+
+        * Source/autotools/SetupCompilerFlags.m4: Default to using libc++ when compiling with the Clang
+        compiler. This is still overridable if -stdlib=* flag was set through CXXFLAGS, in case people
+        would for some reason still prefer libstdc++ (i.e. on setups where a functional libc++ is not yet available).
+
 2014-03-05  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] Ninja generator builds fail with "Argument list too long"
