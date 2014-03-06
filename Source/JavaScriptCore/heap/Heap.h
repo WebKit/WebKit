@@ -190,6 +190,7 @@ namespace JSC {
         void increaseLastGCLength(double amount) { m_lastGCLength += amount; }
 
         JS_EXPORT_PRIVATE void deleteAllCompiledCode();
+        void deleteAllUnlinkedFunctionCode();
 
         void didAllocate(size_t);
         void didAbandon(size_t);

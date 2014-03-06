@@ -1,3 +1,21 @@
+2014-03-06  Andreas Kling  <akling@apple.com>
+
+        Drop unlinked function code on memory pressure.
+        <https://webkit.org/b/129789>
+
+        Make VM::discardAllCode() also drop UnlinkedFunctionCodeBlocks that
+        are not currently being compiled.
+
+        4.5 MB progression on Membuster.
+
+        Reviewed by Geoffrey Garen.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::deleteAllUnlinkedFunctionCode):
+        * heap/Heap.h:
+        * runtime/VM.cpp:
+        (JSC::VM::discardAllCode):
+
 2014-03-06  Filip Pizlo  <fpizlo@apple.com>
 
         Clarify how we deal with "special" registers
