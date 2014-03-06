@@ -694,6 +694,8 @@ void InspectorDebuggerAgent::clearInspectorBreakpointState()
     for (const String& identifier : breakpointIdentifiers)
         removeBreakpoint(&dummyError, identifier);
 
+    m_javaScriptBreakpoints.clear();
+
     clearDebuggerBreakpointState();
 }
 
