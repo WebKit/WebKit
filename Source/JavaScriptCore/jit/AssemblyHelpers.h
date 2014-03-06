@@ -387,11 +387,6 @@ public:
     void jitAssertArgumentCountSane() { }
 #endif
 
-    Jump checkMarkByte(GPRReg owner)
-    {
-        return branchTest8(NonZero, Address(owner, JSCell::gcDataOffset()));
-    }
-
     // These methods convert between doubles, and doubles boxed and JSValues.
 #if USE(JSVALUE64)
     GPRReg boxDouble(FPRReg fpr, GPRReg gpr)
@@ -620,19 +615,15 @@ public:
 #endif
     }
 
-    void writeBarrier(GPRReg owner, GPRReg scratch1, GPRReg scratch2, WriteBarrierUseKind useKind)
+    Jump checkMarkByte(GPRReg cell)
     {
-        UNUSED_PARAM(owner);
-        UNUSED_PARAM(scratch1);
-        UNUSED_PARAM(scratch2);
-        UNUSED_PARAM(useKind);
-        ASSERT(owner != scratch1);
-        ASSERT(owner != scratch2);
-        ASSERT(scratch1 != scratch2);
-        
-#if ENABLE(WRITE_BARRIER_PROFILING)
-        emitCount(WriteBarrierCounters::jitCounterFor(useKind));
-#endif
+        return branchTest8(MacroAssembler::NonZero, MacroAssembler::Address(cell, JSCell::gcDataOffset()));
+    }
+
+    Jump checkMarkByte(JSCell* cell)
+    {
+        uint8_t* address = reinterpret_cast<uint8_t*>(cell) + JSCell::gcDataOffset();
+        return branchTest8(MacroAssembler::NonZero, MacroAssembler::AbsoluteAddress(address));
     }
 
     Vector<BytecodeAndMachineOffset>& decodedCodeMapFor(CodeBlock*);

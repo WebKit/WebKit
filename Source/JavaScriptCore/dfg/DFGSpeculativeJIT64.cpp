@@ -5042,7 +5042,7 @@ void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, Edge valueUs
     if (!isKnownCell(valueUse.node()))
         isNotCell = m_jit.branchTest64(JITCompiler::NonZero, valueGPR, GPRInfo::tagMaskRegister);
 
-    JITCompiler::Jump ownerNotMarkedOrAlreadyRemembered = checkMarkByte(m_jit, ownerGPR);
+    JITCompiler::Jump ownerNotMarkedOrAlreadyRemembered = m_jit.checkMarkByte(ownerGPR);
     storeToWriteBarrierBuffer(ownerGPR, scratch1, scratch2);
     ownerNotMarkedOrAlreadyRemembered.link(&m_jit);
 
@@ -5056,7 +5056,7 @@ void SpeculativeJIT::writeBarrier(JSCell* owner, GPRReg valueGPR, Edge valueUse,
     if (!isKnownCell(valueUse.node()))
         isNotCell = m_jit.branchTest64(JITCompiler::NonZero, valueGPR, GPRInfo::tagMaskRegister);
 
-    JITCompiler::Jump ownerNotMarkedOrAlreadyRemembered = checkMarkByte(m_jit, owner);
+    JITCompiler::Jump ownerNotMarkedOrAlreadyRemembered = m_jit.checkMarkByte(owner);
     storeToWriteBarrierBuffer(owner, scratch1, scratch2);
     ownerNotMarkedOrAlreadyRemembered.link(&m_jit);
 

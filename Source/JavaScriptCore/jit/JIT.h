@@ -314,8 +314,6 @@ namespace JSC {
         enum WriteBarrierMode { UnconditionalWriteBarrier, ShouldFilterValue, ShouldFilterBaseAndValue };
         // value register in write barrier is used before any scratch registers
         // so may safely be the same as either of the scratch registers.
-        Jump checkMarkByte(RegisterID owner);
-        Jump checkMarkByte(JSCell* owner);
         void emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode);
         void emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode);
         void emitWriteBarrier(JSCell* owner);

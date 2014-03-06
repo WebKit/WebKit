@@ -1,3 +1,27 @@
+2014-03-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Fix write barriers in Repatch.cpp for !ENABLE(DFG_JIT) platforms after r165128
+        https://bugs.webkit.org/show_bug.cgi?id=129760
+
+        Reviewed by Geoffrey Garen.
+
+        r165128 disabled the write barrier fast path for inline caches on !ENABLE(DFG_JIT) platforms. 
+        The fix is to refactor the write barrier code into AssemblyHelpers and use that everywhere.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::checkMarkByte):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        * jit/Repatch.cpp:
+        (JSC::writeBarrier):
+
 2014-03-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Expose the console object in JSContexts to interact with Web Inspector

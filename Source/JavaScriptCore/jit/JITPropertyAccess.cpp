@@ -879,17 +879,6 @@ void JIT::emit_op_init_global_const(Instruction* currentInstruction)
 
 #endif // USE(JSVALUE64)
 
-JIT::Jump JIT::checkMarkByte(RegisterID owner)
-{
-    return branchTest8(NonZero, Address(owner, JSCell::gcDataOffset()));
-}
-
-JIT::Jump JIT::checkMarkByte(JSCell* owner)
-{
-    uint8_t* address = reinterpret_cast<uint8_t*>(owner) + JSCell::gcDataOffset();
-    return branchTest8(NonZero, AbsoluteAddress(address));
-}
-
 #if USE(JSVALUE64)
 void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode)
 {
