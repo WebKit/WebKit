@@ -187,7 +187,11 @@ void DocumentStyleSheetCollection::updateInjectedStyleSheetCache() const
 
 void DocumentStyleSheetCollection::invalidateInjectedStyleSheetCache()
 {
+    if (!m_injectedStyleSheetCacheValid)
+        return;
     m_injectedStyleSheetCacheValid = false;
+    if (m_injectedUserStyleSheets.isEmpty() && m_injectedAuthorStyleSheets.isEmpty())
+        return;
     m_document->styleResolverChanged(DeferRecalcStyle);
 }
 
