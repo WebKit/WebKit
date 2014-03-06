@@ -1,3 +1,14 @@
+2014-03-06  Anders Carlsson  <andersca@apple.com>
+
+        Build WebKit2 before building WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=129831
+        <rdar://problem/15920020>
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/build-webkit:
+        Always build WebKit2 and make sure to build it before WebKit when building on Mac.
+
 2014-03-06  ChangSeok Oh  <changseok.oh@collabora.com>
 
         make-3.82 fails to build on ARM/Linux

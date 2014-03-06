@@ -1,3 +1,15 @@
+2014-03-06  Anders Carlsson  <andersca@apple.com>
+
+        Build WebKit2 before building WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=129831
+        <rdar://problem/15920020>
+
+        Reviewed by Dan Bernstein.
+
+        * Source/Makefile:
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme:
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme:
+
 2014-03-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r165193.

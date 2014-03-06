@@ -203,14 +203,17 @@ if (isAppleMacWebKit()) {
 
         # WebKitAdditions must come before WebCore
         splice(@projects, 0, 0, "../Internal/WebKitAdditions");
+    } else {
+        # WebKit2 should always be built just before WebKit.
+        my $webKitIndex = first { $projects[$_] eq "Source/WebKit" } 0..$#projects;
+        splice(@projects, $webKitIndex, 0, "Source/WebKit2");
     }
 
     # ANGLE must come before WebCore
     splice @projects, 0, 0, "Source/ThirdParty/ANGLE";
 
     if (!isIOSWebKit()) {
-        # WebKit2 is only supported in SnowLeopard and later at present.
-        push @projects, ("Source/WebKit2", "Tools/MiniBrowser") if osXVersion()->{"minor"} >= 6 and !$noWebKit2;
+        push @projects, ("Tools/MiniBrowser");
 
         # WebInspectorUI must come before WebKit and WebKit2
         unshift @projects, ("Source/WebInspectorUI");
@@ -224,7 +227,7 @@ if (isAppleMacWebKit()) {
         print(join(" ", @copyLibrariesArgs) . "\n");
         (system(@copyLibrariesArgs) == 0) or die;
     } else {
-        push @projects, ("Source/WebKit2") if !$noWebKit2;
+        push @projects, ("Source/WebKit2");
     }
 
     # Build Tools needed for Apple ports
