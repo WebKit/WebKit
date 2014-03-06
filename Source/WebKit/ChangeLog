@@ -1,3 +1,9 @@
+2014-03-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed follow-up fix for Windows for r165199.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-03-05  Martin Hock  <mhock@apple.com>
 
         Add support for sessions to MemoryCache.

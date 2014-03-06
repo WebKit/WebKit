@@ -358,7 +358,6 @@ EXPORTS
         symbolWithPointer(?pageProperty@PrintContext@WebCore@@SA?AVString@WTF@@PAVFrame@2@PBDH@Z, ?pageProperty@PrintContext@WebCore@@SA?AVString@WTF@@PEAVFrame@2@PEBDH@Z)
         symbolWithPointer(?pageSizeAndMarginsInPixels@PrintContext@WebCore@@SA?AVString@WTF@@PAVFrame@2@HHHHHHH@Z, ?pageSizeAndMarginsInPixels@PrintContext@WebCore@@SA?AVString@WTF@@PEAVFrame@2@HHHHHHH@Z)
         symbolWithPointer(?close@DOMWindow@WebCore@@QAEXPAVScriptExecutionContext@2@@Z, ?close@DOMWindow@WebCore@@QEAAXPEAVScriptExecutionContext@2@@Z)
-        symbolWithPointer(?console@DOMWindow@WebCore@@QBEPAVConsole@2@XZ, ?console@DOMWindow@WebCore@@QBEPAVConsole@2@XZ)
         symbolWithPointer(?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVScriptProfile@1@@Z, ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVScriptProfile@1@@Z)
         symbolWithPointer(?document@DOMWindow@WebCore@@QBEPAVDocument@2@XZ, ?document@DOMWindow@WebCore@@QEBAPEAVDocument@2@XZ)
         symbolWithPointer(?open@DOMWindow@WebCore@@QAE?AV?$PassRefPtr@VDOMWindow@WebCore@@@WTF@@ABVString@4@ABVAtomicString@4@0AAV12@2@Z, ?open@DOMWindow@WebCore@@QEAA?AV?$PassRefPtr@VDOMWindow@WebCore@@@WTF@@AEBVString@4@AEBVAtomicString@4@0AEAV12@2@Z)
