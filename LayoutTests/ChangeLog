@@ -1,5 +1,21 @@
 2014-03-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r164204.
+
+    2014-02-16  Andreas Kling  <akling@apple.com>
+
+            Ensure that removing an iframe from the DOM tree disconnects its Frame.
+            <https://webkit.org/b/128889>
+            <rdar://problem/15671221>
+
+            Merged from Blink (patch by Adam Klein):
+            https://src.chromium.org/viewvc/blink?revision=156174&view=revision
+
+            * fast/frames/reattach-in-unload-expected.txt: Added.
+            * fast/frames/reattach-in-unload.html: Added.
+
+2014-03-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r158697.
 
     2013-11-05  Enrica Casucci  <enrica@apple.com>

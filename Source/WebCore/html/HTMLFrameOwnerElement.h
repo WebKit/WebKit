@@ -23,6 +23,7 @@
 
 #include "FrameLoaderTypes.h"
 #include "HTMLElement.h"
+#include <wtf/HashCountedSet.h>
 
 namespace WebCore {
 
@@ -101,9 +102,9 @@ public:
     }
 
 private:
-    static HashSet<Node*>& disabledSubtreeRoots()
+    static HashCountedSet<Node*>& disabledSubtreeRoots()
     {
-        DEFINE_STATIC_LOCAL(HashSet<Node*>, nodes, ());
+        DEFINE_STATIC_LOCAL(HashCountedSet<Node*>, nodes, ());
         return nodes;
     }
 
