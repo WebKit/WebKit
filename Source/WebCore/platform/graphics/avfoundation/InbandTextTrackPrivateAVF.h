@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,15 +55,20 @@ public:
     bool hasBeenReported() const { return m_hasBeenReported; }
     void setHasBeenReported(bool reported) { m_hasBeenReported = reported; }
 
-    void processCue(CFArrayRef, double);
-    void resetCueValues();
+    virtual void processCue(CFArrayRef, double);
+    virtual void resetCueValues();
 
     void beginSeeking();
     void endSeeking() { m_seeking = false; }
     bool seeking() const { return m_seeking; }
     
-    virtual bool isLegacyClosedCaptionsTrack() const = 0;
-
+    enum Category {
+        LegacyClosedCaption,
+        OutOfBand,
+        InBand
+    };
+    virtual Category textTrackCategory() const = 0;
+    
 protected:
     InbandTextTrackPrivateAVF(AVFInbandTrackParent*);
 

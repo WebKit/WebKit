@@ -1272,6 +1272,12 @@ void MediaPlayer::setTextTrackRepresentation(TextTrackRepresentation* representa
 }
 
 #if ENABLE(AVF_CAPTIONS)
+void MediaPlayer::notifyTrackModeChanged()
+{
+    if (m_private)
+        m_private->notifyTrackModeChanged();
+}
+
 Vector<RefPtr<PlatformTextTrack>> MediaPlayer::outOfBandTrackSources()
 {
     if (!m_mediaPlayerClient)

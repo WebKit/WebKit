@@ -1,3 +1,66 @@
+2014-03-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Revise Out-of-band VTT support for better integration with AVFoundation engine
+        https://bugs.webkit.org/show_bug.cgi?id=129749
+        <rdar://problem/16215701>
+
+        Reviewed by Eric Carlson.
+
+        Revise the platform handling of out-of-band text tracks so that we can keep AVFoundation
+        informed of track selections we make. Use a dummy out-of-band child of the existing text
+        track classes to avoid code duplication.
+
+        * WebCore.xcodeproj/project.pbxproj: Add new OutOfBandTextTrackPrivateAVF.h file.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute): Notify player when OOB tracks change.
+        (WebCore::HTMLMediaElement::outOfBandTrackSources): Also pass track mode to platform backend.
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::platformTextTrack): Also pass track mode to constructor.
+        * html/track/TrackBase.cpp:
+        (WebCore::TrackBase::TrackBase): Move ownership of track unique identifier to this base class.
+        * html/track/TrackBase.h:
+        (WebCore::TrackBase::uniqueId): Ditto.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::notifyTrackModeChanged): Added stub to pass message to platform player.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::notifyTrackModeChanged): Stub for most platforms.
+        * platform/graphics/PlatformTextTrack.h:
+        (WebCore::PlatformTextTrack::create): Update for revised constructor (with 'mode' argument).
+        (WebCore::PlatformTextTrack::createOutOfBand): Ditto.
+        (WebCore::PlatformTextTrack::mode): Added.
+        (WebCore::PlatformTextTrack::captionMenuOffItem): Use revised constructor arguments.
+        (WebCore::PlatformTextTrack::captionMenuAutomaticItem): Ditto.
+        (WebCore::PlatformTextTrack::PlatformTextTrack): Ditto.
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h: Change predicate to return enum indicating the category
+        of track (out-of-band, legacy closed caption, or in band).
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::notifyTrackModeChanged): Added.
+        * platform/graphics/avfoundation/cf/InbandTextTrackPrivateAVCF.h: Override predicate to return category enum.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp: Revise to use new category enum.
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.h: Override predicate to return category enum.
+        that this is NOT an out-of-band track.
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.h: Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::notifyTrackModeChanged): Added implementation.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions): Revise to handle out-of-band
+        track placeholders.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setCurrentTrack): Modify to inform AVFoundation about any
+        out-of-band tracks we've selected.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::synchronizeTextTrackState): Added.
+        * platform/graphics/avfoundation/objc/OutOfBandTextTrackPrivateAVF.h: Added.
+        (WebCore::OutOfBandTextTrackPrivateAVF::create):
+        (WebCore::OutOfBandTextTrackPrivateAVF::processCue):
+        (WebCore::OutOfBandTextTrackPrivateAVF::resetCueValues):
+        (WebCore::OutOfBandTextTrackPrivateAVF::mediaSelectionOption):
+        (WebCore::OutOfBandTextTrackPrivateAVF::OutOfBandTextTrackPrivateAVF):
+        (WebCore::OutOfBandTextTrackPrivateAVF::processCueAttributes):
+        * platform/graphics/ios/InbandTextTrackPrivateAVFIOS.h: Override predicate to indicate
+        that this is NOT an out-of-band track.
+        * platform/graphics/ios/MediaPlayerPrivateIOS.mm:
+        (WebCore::MediaPlayerPrivateIOS::setSelectedTextTrack): Correct typo in logging text.
+
 2014-03-06  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [WebRTC] Updating createOffer and createAnswer methods to match WebRTC editor's draft of 01/27/2014

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -246,6 +246,10 @@ public:
     virtual unsigned long droppedVideoFrames() { return 0; }
     virtual unsigned long corruptedVideoFrames() { return 0; }
     virtual double totalFrameDelay() { return 0; }
+#endif
+
+#if ENABLE(AVF_CAPTIONS)
+    virtual void notifyTrackModeChanged() { }
 #endif
 };
 

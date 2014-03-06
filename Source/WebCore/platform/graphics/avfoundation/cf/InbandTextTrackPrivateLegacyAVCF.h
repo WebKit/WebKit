@@ -55,7 +55,7 @@ public:
 
     virtual void disconnect() override;
 
-    virtual bool isLegacyClosedCaptionsTrack() const override { return true; }
+    virtual Category textTrackCategory() const override { return LegacyClosedCaption; }
 
     AVCFPlayerItemTrackRef avPlayerItemTrack() const { return m_playerItemTrack.get(); }
 

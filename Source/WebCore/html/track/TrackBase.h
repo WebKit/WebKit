@@ -62,6 +62,8 @@ public:
 
     virtual void clearClient() = 0;
 
+    virtual int uniqueId() const { return m_uniqueId; }
+
 #if ENABLE(MEDIA_SOURCE)
     SourceBuffer* sourceBuffer() const { return m_sourceBuffer; }
     void setSourceBuffer(SourceBuffer* buffer) { m_sourceBuffer = buffer; }
@@ -85,6 +87,7 @@ protected:
 
 private:
     Type m_type;
+    int m_uniqueId;
     AtomicString m_id;
     AtomicString m_kind;
     AtomicString m_label;

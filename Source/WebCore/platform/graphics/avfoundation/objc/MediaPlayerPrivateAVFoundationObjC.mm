@@ -42,6 +42,7 @@
 #import "GraphicsContextCG.h"
 #import "InbandTextTrackPrivateAVFObjC.h"
 #import "InbandTextTrackPrivateLegacyAVFObjC.h"
+#import "OutOfBandTextTrackPrivateAVF.h"
 #import "URL.h"
 #import "Logging.h"
 #import "PlatformTimeRanges.h"
@@ -83,7 +84,8 @@
 // Note: This must be defined before our SOFT_LINK macros:
 @class AVMediaSelectionOption;
 @interface AVMediaSelectionOption (OutOfBandExtensions)
-@property (nonatomic, readonly) NSString *outOfBandSource /*NS_AVAILABLE(TBD, TBD)*/;
+@property (nonatomic, readonly) NSString* outOfBandSource;
+@property (nonatomic, readonly) NSString* outOfBandIdentifier;
 @end
 #endif
 
@@ -533,6 +535,42 @@ static const NSArray* mediaDescriptionForKind(PlatformTextTrack::TrackKind kind)
         return [NSArray arrayWithObjects: AVMediaCharacteristicContainsOnlyForcedSubtitles, nil];
 
     return [NSArray arrayWithObjects: AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, nil];
+}
+    
+void MediaPlayerPrivateAVFoundationObjC::notifyTrackModeChanged()
+{
+    trackModeChanged();
+}
+    
+void MediaPlayerPrivateAVFoundationObjC::synchronizeTextTrackState()
+{
+    const Vector<RefPtr<PlatformTextTrack>>& outOfBandTrackSources = player()->outOfBandTrackSources();
+    
+    for (auto& textTrack : m_textTracks) {
+        if (textTrack->textTrackCategory() == InbandTextTrackPrivateAVF::OutOfBand)
+            continue;
+        
+        RefPtr<OutOfBandTextTrackPrivateAVF> trackPrivate = static_cast<OutOfBandTextTrackPrivateAVF*>(textTrack.get());
+        RetainPtr<AVMediaSelectionOptionType> currentOption = trackPrivate->mediaSelectionOption();
+        
+        for (auto& track : outOfBandTrackSources) {
+            RetainPtr<CFStringRef> uniqueID = String::number(track->uniqueId()).createCFString();
+            
+            if (![[currentOption.get() outOfBandIdentifier] isEqual: reinterpret_cast<const NSString*>(uniqueID.get())])
+                continue;
+            
+            InbandTextTrackPrivate::Mode mode = InbandTextTrackPrivate::Hidden;
+            if (track->mode() == PlatformTextTrack::Hidden)
+                mode = InbandTextTrackPrivate::Hidden;
+            else if (track->mode() == PlatformTextTrack::Disabled)
+                mode = InbandTextTrackPrivate::Disabled;
+            else if (track->mode() == PlatformTextTrack::Showing)
+                mode = InbandTextTrackPrivate::Showing;
+            
+            textTrack->setMode(mode);
+            break;
+        }
+    }
 }
 #endif
 
@@ -1745,7 +1783,7 @@ void MediaPlayerPrivateAVFoundationObjC::processLegacyClosedCaptionsTracks()
 
         bool newCCTrack = true;
         for (unsigned i = removedTextTracks.size(); i > 0; --i) {
-            if (!removedTextTracks[i - 1]->isLegacyClosedCaptionsTrack())
+            if (removedTextTracks[i - 1]->textTrackCategory() != InbandTextTrackPrivateAVF::LegacyClosedCaption)
                 continue;
 
             RefPtr<InbandTextTrackPrivateLegacyAVFObjC> track = static_cast<InbandTextTrackPrivateLegacyAVFObjC*>(m_textTracks[i - 1].get());
@@ -1796,11 +1834,22 @@ void MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions()
     for (AVMediaSelectionOptionType *option in legibleOptions) {
         bool newTrack = true;
         for (unsigned i = removedTextTracks.size(); i > 0; --i) {
-             if (removedTextTracks[i - 1]->isLegacyClosedCaptionsTrack())
-                 continue;
-
-            RefPtr<InbandTextTrackPrivateAVFObjC> track = static_cast<InbandTextTrackPrivateAVFObjC*>(removedTextTracks[i - 1].get());
-            if ([track->mediaSelectionOption() isEqual:option]) {
+            if (removedTextTracks[i - 1]->textTrackCategory() == InbandTextTrackPrivateAVF::LegacyClosedCaption)
+                continue;
+            
+            RetainPtr<AVMediaSelectionOptionType> currentOption;
+#if ENABLE(AVF_CAPTIONS)
+            if (removedTextTracks[i - 1]->textTrackCategory() == InbandTextTrackPrivateAVF::OutOfBand) {
+                RefPtr<OutOfBandTextTrackPrivateAVF> track = static_cast<OutOfBandTextTrackPrivateAVF*>(removedTextTracks[i - 1].get());
+                currentOption = track->mediaSelectionOption();
+            } else
+#endif
+            {
+                RefPtr<InbandTextTrackPrivateAVFObjC> track = static_cast<InbandTextTrackPrivateAVFObjC*>(removedTextTracks[i - 1].get());
+                currentOption = track->mediaSelectionOption();
+            }
+            
+            if ([currentOption.get() isEqual:option]) {
                 removedTextTracks.remove(i - 1);
                 newTrack = false;
                 break;
@@ -1810,9 +1859,11 @@ void MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions()
             continue;
 
 #if ENABLE(AVF_CAPTIONS)
-        // Ignore out-of-band tracks that we passed to AVFoundation so we do not double-count them
-        if ([option outOfBandSource])
+        if ([option outOfBandSource]) {
+            m_textTracks.append(OutOfBandTextTrackPrivateAVF::create(this, option));
+            m_textTracks.last()->setHasBeenReported(true); // Ignore out-of-band tracks that we passed to AVFoundation so we do not double-count them
             continue;
+        }
 #endif
 
         m_textTracks.append(InbandTextTrackPrivateAVFObjC::create(this, option));
@@ -1850,9 +1901,13 @@ void MediaPlayerPrivateAVFoundationObjC::setCurrentTrack(InbandTextTrackPrivateA
     m_currentTrack = track;
 
     if (track) {
-        if (track->isLegacyClosedCaptionsTrack())
+        if (track->textTrackCategory() == InbandTextTrackPrivateAVF::LegacyClosedCaption)
             [m_avPlayer.get() setClosedCaptionDisplayEnabled:YES];
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
+#if ENABLE(AVF_CAPTIONS)
+        else if (track->textTrackCategory() == InbandTextTrackPrivateAVF::OutOfBand)
+            [m_avPlayerItem.get() selectMediaOption:static_cast<OutOfBandTextTrackPrivateAVF*>(track)->mediaSelectionOption() inMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
+#endif
         else
             [m_avPlayerItem.get() selectMediaOption:static_cast<InbandTextTrackPrivateAVFObjC*>(track)->mediaSelectionOption() inMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
 #endif

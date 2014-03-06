@@ -1032,7 +1032,7 @@ void MediaPlayerPrivateAVFoundationCF::processLegacyClosedCaptionsTracks()
 
         bool newCCTrack = true;
         for (unsigned i = removedTextTracks.size(); i > 0; --i) {
-            if (!removedTextTracks[i - 1]->isLegacyClosedCaptionsTrack())
+            if (removedTextTracks[i - 1]->textTrackCategory() != InbandTextTrackPrivateAVF::LegacyClosedCaption)
                 continue;
 
             RefPtr<InbandTextTrackPrivateLegacyAVCF> track = static_cast<InbandTextTrackPrivateLegacyAVCF*>(m_textTracks[i - 1].get());
@@ -1079,7 +1079,7 @@ void MediaPlayerPrivateAVFoundationCF::processMediaSelectionOptions()
         AVCFMediaSelectionOptionRef option = static_cast<AVCFMediaSelectionOptionRef>(CFArrayGetValueAtIndex(legibleOptions.get(), i));
         bool newTrack = true;
         for (unsigned i = removedTextTracks.size(); i > 0; --i) {
-            if (removedTextTracks[i - 1]->isLegacyClosedCaptionsTrack())
+            if (removedTextTracks[i - 1]->textTrackCategory() == InbandTextTrackPrivateAVF::LegacyClosedCaption)
                 continue;
 
             RefPtr<InbandTextTrackPrivateAVCF> track = static_cast<InbandTextTrackPrivateAVCF*>(removedTextTracks[i - 1].get());
@@ -1110,7 +1110,7 @@ void AVFWrapper::setCurrentTrack(InbandTextTrackPrivateAVF* track)
     m_currentTrack = track;
 
     if (track) {
-        if (track->isLegacyClosedCaptionsTrack())
+        if (track->textTrackCategory() == InbandTextTrackPrivateAVF::LegacyClosedCaption)
             AVCFPlayerSetClosedCaptionDisplayEnabled(avPlayer(), TRUE);
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
         else

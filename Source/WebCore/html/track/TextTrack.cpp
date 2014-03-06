@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc.  All rights reserved.
- * Copyright (C) 2011, 2012, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011-2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -550,8 +550,6 @@ bool TextTrack::hasCue(VTTCue* cue, VTTCue::CueMatchRules match)
 #if USE(PLATFORM_TEXT_TRACK_MENU)
 PassRefPtr<PlatformTextTrack> TextTrack::platformTextTrack()
 {
-    static int uniqueId = 0;
-
     if (m_platformTextTrack)
         return m_platformTextTrack;
 
@@ -577,7 +575,15 @@ PassRefPtr<PlatformTextTrack> TextTrack::platformTextTrack()
     else if (m_trackType == InBand)
         type = PlatformTextTrack::InBand;
 
-    m_platformTextTrack = PlatformTextTrack::create(this, label(), language(), platformKind, type, ++uniqueId);
+    PlatformTextTrack::TrackMode platformMode = PlatformTextTrack::Disabled;
+    if (TextTrack::hiddenKeyword() == mode())
+        platformMode = PlatformTextTrack::Hidden;
+    else if (TextTrack::disabledKeyword() == mode())
+        platformMode = PlatformTextTrack::Disabled;
+    else if (TextTrack::showingKeyword() == mode())
+        platformMode = PlatformTextTrack::Showing;
+
+    m_platformTextTrack = PlatformTextTrack::create(this, label(), language(), platformMode, platformKind, type, uniqueId());
 
     return m_platformTextTrack;
 }

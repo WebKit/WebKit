@@ -984,7 +984,7 @@ void MediaPlayerPrivateIOS::setSelectedTextTrack(NSNumber *trackID)
 
     setDelayCallbacks(true);
     {
-        LOG(Media, "MediaPlayerPrivateIOS::setCurrentTrack(%p) - selecting track id %i", this, [trackID intValue]);
+        LOG(Media, "MediaPlayerPrivateIOS::setSelectedTextTrack(%p) - selecting track id %i", this, [trackID intValue]);
         [m_deferredProperties.get() removeObjectForKey:DeferredPropertySelectedTrackKey];
         [m_mediaPlayerHelper.get() _setSelectedTextTrack:trackID];
     }

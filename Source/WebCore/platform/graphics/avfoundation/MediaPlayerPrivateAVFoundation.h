@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -294,6 +294,10 @@ protected:
     virtual size_t extraMemoryCost() const override;
 
     virtual void trackModeChanged() override;
+#if ENABLE(AVF_CAPTIONS)
+    virtual void notifyTrackModeChanged() { }
+    virtual void synchronizeTextTrackState() { }
+#endif
     void processNewAndRemovedTextTracks(const Vector<RefPtr<InbandTextTrackPrivateAVF>>&);
     void clearTextTracks();
     Vector<RefPtr<InbandTextTrackPrivateAVF>> m_textTracks;

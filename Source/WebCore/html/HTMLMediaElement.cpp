@@ -1597,6 +1597,11 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
 
     if (m_textTracks && m_textTracks->contains(track))
         m_textTracks->scheduleChangeEvent();
+
+#if ENABLE(AVF_CAPTIONS)
+    if (track->trackType() == TextTrack::TrackElement && m_player)
+        m_player->notifyTrackModeChanged();
+#endif
 }
 
 void HTMLMediaElement::videoTrackSelectedChanged(VideoTrack* track)
@@ -5538,8 +5543,6 @@ String HTMLMediaElement::mediaPlayerUserAgent() const
 #if ENABLE(AVF_CAPTIONS)
 Vector<RefPtr<PlatformTextTrack>> HTMLMediaElement::outOfBandTrackSources()
 {
-    static int uniqueId = 0;
-
     Vector<RefPtr<PlatformTextTrack>> outOfBandTrackSources;
     for (auto& trackElement : childrenOfType<HTMLTrackElement>(*this)) {
         
@@ -5564,8 +5567,18 @@ Vector<RefPtr<PlatformTextTrack>> HTMLMediaElement::outOfBandTrackSources()
             platformKind = PlatformTextTrack::Forced;
         else
             continue;
-
-        outOfBandTrackSources.append(PlatformTextTrack::createOutOfBand(trackElement.label(), trackElement.srclang(), url.string(), platformKind, ++uniqueId, trackElement.isDefault()));
+        
+        const AtomicString& mode = trackElement.track()->mode();
+        
+        PlatformTextTrack::TrackMode platformMode = PlatformTextTrack::Disabled;
+        if (TextTrack::hiddenKeyword() == mode)
+            platformMode = PlatformTextTrack::Hidden;
+        else if (TextTrack::disabledKeyword() == mode)
+            platformMode = PlatformTextTrack::Disabled;
+        else if (TextTrack::showingKeyword() == mode)
+            platformMode = PlatformTextTrack::Showing;
+        
+        outOfBandTrackSources.append(PlatformTextTrack::createOutOfBand(trackElement.label(), trackElement.srclang(), url.string(), platformMode, platformKind, trackElement.track()->uniqueId(), trackElement.isDefault()));
     }
     
     return outOfBandTrackSources;
