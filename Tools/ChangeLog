@@ -1,3 +1,17 @@
+2014-03-06  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        make-3.82 fails to build on ARM/Linux
+        https://bugs.webkit.org/show_bug.cgi?id=107926
+
+        Reviewed by Martin Robinson.
+
+        Some ARM/Linux systems don't support PAGE_SIZE macro so that it causes a build failure.
+        The related bug reporting is here. https://lists.debian.org/debian-kernel/2014/02/msg00274.html
+        To avoid this, I propose to use sysconf(_SC_PAGESIZE) instead of PAGE_SIZE
+        where it is not defined. See more details, http://linux.die.net/man/2/getpagesize
+
+        * gtk/patches/make-3.82-arg-list-length.patch:
+
 2014-03-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Close the page when the view is disposed instead of when finalized

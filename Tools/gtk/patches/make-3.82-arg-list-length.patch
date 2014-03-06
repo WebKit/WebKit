@@ -36,11 +36,14 @@ diff -u make-3.82-orig/job.c make-3.82/job.c
  
  # ifdef __EMX__ /* is this necessary? */
      if (!unixy_shell)
-@@ -2865,8 +2871,17 @@
+@@ -2865,8 +2871,20 @@
  	return new_argv;
        }
  
 +#ifdef MAX_ARG_STRLEN
++#ifndef PAGE_SIZE
++#define PAGE_SIZE sysconf(_SC_PAGESIZE)
++#endif
 +    static char eval_line[] = "eval\\ \\\"set\\ x\\;\\ shift\\;\\ ";
 +#define ARG_NUMBER_DIGITS 5
 +#define EVAL_LEN (sizeof(eval_line)-1 + shell_len + 4                   \
