@@ -1,5 +1,12 @@
 2014-03-05  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another build fix attempt after r165141.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::fixFunctionBasedOnStackMaps):
+
+2014-03-05  Ryosuke Niwa  <rniwa@webkit.org>
+
         FTL build fix attempt after r165141.
 
         * ftl/FTLCompile.cpp:
