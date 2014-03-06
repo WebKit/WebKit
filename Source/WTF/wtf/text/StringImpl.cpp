@@ -44,7 +44,7 @@ namespace WTF {
 
 using namespace Unicode;
 
-COMPILE_ASSERT(sizeof(StringImpl) == 2 * sizeof(int) + 4 * sizeof(void*), StringImpl_should_stay_small);
+COMPILE_ASSERT(sizeof(StringImpl) == 2 * sizeof(int) + 3 * sizeof(void*), StringImpl_should_stay_small);
 
 #ifdef STRING_STATS
 StringStats StringImpl::m_stringStats;
@@ -110,7 +110,6 @@ void StringStats::printStats()
 StringImpl::~StringImpl()
 {
     ASSERT(!isStatic());
-    ASSERT(!m_weakJSString);
 
     STRING_STATS_REMOVE_STRING(this);
 

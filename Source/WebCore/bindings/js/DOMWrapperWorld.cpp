@@ -53,6 +53,7 @@ DOMWrapperWorld::~DOMWrapperWorld()
 void DOMWrapperWorld::clearWrappers()
 {
     m_wrappers.clear();
+    m_stringCache.clear();
 
     // These items are created lazily.
     while (!m_scriptControllersWithWindowShells.isEmpty())

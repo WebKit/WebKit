@@ -1,3 +1,18 @@
+2014-03-05  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=128625
+        Add fast mapping from StringImpl to JSString
+
+        Unreviewed roll-out.
+
+        Reverting r164347, r165054, r165066 - not clear the performance tradeoff was right.
+
+        * runtime/JSString.cpp:
+        * runtime/JSString.h:
+        * runtime/VM.cpp:
+        (JSC::VM::createLeaked):
+        * runtime/VM.h:
+
 2014-03-03  Oliver Hunt  <oliver@apple.com>
 
         Support caching of custom setters
