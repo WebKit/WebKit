@@ -38,7 +38,7 @@
 
 @implementation WKAccessibilityWebPageObject
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (!self)
@@ -49,6 +49,13 @@
     return self;
 }
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [_remoteTokenData release];
+    [super dealloc];
+}
+
 - (void)_accessibilityCategoryInstalled:(id)notification
 {
     // Accessibility bundle will override this method so that it knows when to initialize the accessibility runtime within the WebProcess.
@@ -57,13 +64,6 @@
 - (double)pageScale
 {
     return m_page->pageScaleFactor();
-}
-
-- (void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    self.remoteTokenData = nil;
-    [super dealloc];
 }
 
 @end

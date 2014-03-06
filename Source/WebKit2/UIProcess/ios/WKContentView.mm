@@ -261,10 +261,10 @@ using namespace WebKit;
     if (_page->process().state() == WebProcessProxy::State::Running) {
         IPC::Connection* connection = _page->process().connection();
         WKAXStoreRemoteConnectionInformation(self, _page->process().processIdentifier(), connection->identifier().port, uuid.get());
-    }
 
-    IPC::DataReference elementToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteElementToken bytes]), [remoteElementToken length]);
-    _page->registerUIProcessAccessibilityTokens(elementToken, elementToken);
+        IPC::DataReference elementToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteElementToken bytes]), [remoteElementToken length]);
+        _page->registerUIProcessAccessibilityTokens(elementToken, elementToken);
+    }
 }
 
 #pragma mark PageClientImpl methods

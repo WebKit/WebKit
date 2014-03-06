@@ -26,13 +26,14 @@
 #ifndef WKAccessibilityWebPageObjectMac_h
 #define WKAccessibilityWebPageObjectMac_h
 
-#include "WKAccessibilityWebPageObjectBase.h"
 
 #if PLATFORM(MAC)
 
+#include "WKAccessibilityWebPageObjectBase.h"
+#include <wtf/RetainPtr.h>
+
 @interface WKAccessibilityWebPageObject : WKAccessibilityWebPageObjectBase {
-    NSArray* m_attributeNames;
-    NSMutableArray* m_accessibilityChildren;
+    RetainPtr<NSArray> m_attributeNames;
 }
 
 - (NSPoint)convertScreenPointToRootView:(NSPoint)point;

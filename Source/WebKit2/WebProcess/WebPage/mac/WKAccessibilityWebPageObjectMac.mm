@@ -53,8 +53,6 @@ using namespace WebKit;
 - (void)dealloc
 {
     WKUnregisterUniqueIdForElement(self);
-    [m_accessibilityChildren release];
-    [m_attributeNames release];
     [m_parent release];
     [super dealloc];
 }
@@ -67,12 +65,12 @@ using namespace WebKit;
 - (NSArray *)accessibilityAttributeNames
 {
     if (!m_attributeNames)
-        m_attributeNames = [[NSArray alloc] initWithObjects:
+        m_attributeNames = adoptNS([[NSArray alloc] initWithObjects:
                             NSAccessibilityRoleAttribute, NSAccessibilityRoleDescriptionAttribute, NSAccessibilityFocusedAttribute,
                             NSAccessibilityParentAttribute, NSAccessibilityWindowAttribute, NSAccessibilityTopLevelUIElementAttribute,
-                            NSAccessibilityPositionAttribute, NSAccessibilitySizeAttribute, NSAccessibilityChildrenAttribute, nil];
+                            NSAccessibilityPositionAttribute, NSAccessibilitySizeAttribute, NSAccessibilityChildrenAttribute, nil]);
     
-    return m_attributeNames;
+    return m_attributeNames.get();
 }
 
 - (NSArray *)accessibilityParameterizedAttributeNames
@@ -101,7 +99,6 @@ using namespace WebKit;
 
 - (void)accessibilitySetValue:(id)value forAttribute:(NSString *)attribute
 {
-    return;
 }
 
 - (NSPoint)convertScreenPointToRootView:(NSPoint)point
@@ -130,14 +127,19 @@ using namespace WebKit;
     
     if ([attribute isEqualToString:NSAccessibilityParentAttribute])
         return m_parent;
+    
     if ([attribute isEqualToString:NSAccessibilityWindowAttribute])
         return [m_parent accessibilityAttributeValue:NSAccessibilityWindowAttribute];
+    
     if ([attribute isEqualToString:NSAccessibilityTopLevelUIElementAttribute])
         return [m_parent accessibilityAttributeValue:NSAccessibilityTopLevelUIElementAttribute];
+    
     if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
         return NSAccessibilityGroupRole;
+    
     if ([attribute isEqualToString:NSAccessibilityRoleDescriptionAttribute])
         return NSAccessibilityRoleDescription(NSAccessibilityGroupRole, nil);
+    
     if ([attribute isEqualToString:NSAccessibilityFocusedAttribute])
         return [NSNumber numberWithBool:NO];
     
@@ -148,10 +150,12 @@ using namespace WebKit;
         const WebCore::FloatPoint& point = m_page->accessibilityPosition();
         return [NSValue valueWithPoint:NSMakePoint(point.x(), point.y())];
     }
+    
     if ([attribute isEqualToString:NSAccessibilitySizeAttribute]) {
         const IntSize& s = m_page->size();
         return [NSValue valueWithSize:NSMakeSize(s.width(), s.height())];
     }
+    
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute])
         return [self accessibilityChildren];
     
@@ -174,7 +178,7 @@ using namespace WebKit;
     
     if (toImpl(result.get())->type() == API::String::APIType)
         return CFBridgingRelease(WKStringCopyCFString(kCFAllocatorDefault, (WKStringRef)result.get()));
-    else if (toImpl(result.get())->type() == API::Boolean::APIType)
+    if (toImpl(result.get())->type() == API::Boolean::APIType)
         return [NSNumber numberWithBool:WKBooleanGetValue(static_cast<WKBooleanRef>(result.get()))];
     
     return nil;
@@ -185,8 +189,6 @@ using namespace WebKit;
     return YES;
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (id)accessibilityHitTest:(NSPoint)point
 {
     // Hit-test point comes in as bottom-screen coordinates. Needs to be normalized to the frame of the web page.
@@ -211,7 +213,6 @@ using namespace WebKit;
     
     return [[self accessibilityRootObjectWrapper] accessibilityHitTest:point];
 }
-#pragma clang diagnostic pop
 
 @end
 
