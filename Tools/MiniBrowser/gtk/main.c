@@ -60,10 +60,8 @@ static void createBrowserWindow(const gchar *uri, WebKitSettings *webkitSettings
     GtkWidget *mainWindow = browser_window_new(WEBKIT_WEB_VIEW(webView), NULL);
     gchar *url = argumentToURL(uri);
 
-    if (webkitSettings) {
+    if (webkitSettings)
         webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webView), webkitSettings);
-        g_object_unref(webkitSettings);
-    }
 
     browser_window_load_uri(BROWSER_WINDOW(mainWindow), url);
     g_free(url);
@@ -254,10 +252,8 @@ int main(int argc, char *argv[])
     WebKitSettings *webkitSettings = webkit_settings_new();
     webkit_settings_set_enable_developer_extras(webkitSettings, TRUE);
     webkit_settings_set_enable_webgl(webkitSettings, TRUE);
-    if (!addSettingsGroupToContext(context, webkitSettings)) {
-        g_object_unref(webkitSettings);
-        webkitSettings = 0;
-    }
+    if (!addSettingsGroupToContext(context, webkitSettings))
+        g_clear_object(&webkitSettings);
 
     GError *error = 0;
     if (!g_option_context_parse(context, &argc, &argv, &error)) {
@@ -283,6 +279,8 @@ int main(int argc, char *argv[])
             createBrowserWindow(uriArguments[i], webkitSettings);
     } else
         createBrowserWindow("http://www.webkitgtk.org/", webkitSettings);
+
+    g_clear_object(&webkitSettings);
 
     gtk_main();
 

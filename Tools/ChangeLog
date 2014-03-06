@@ -1,3 +1,19 @@
+2014-03-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] MiniBrowser crashes when opening several urls passed as command line options
+        https://bugs.webkit.org/show_bug.cgi?id=129738
+
+        Reviewed by Sergio Villar Senin.
+
+        The problem is that we are calling g_object_unref() for the
+        WebKitWebSettings everytime we set it to a WebKitWebView, but the
+        view only increases the reference counter when the settings is not
+        the same it currently has. We should release our reference once.
+
+        * MiniBrowser/gtk/main.c:
+        (createBrowserWindow):
+        (main):
+
 2014-03-05  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][CMake] Tarball is created with wrong tarball paths
