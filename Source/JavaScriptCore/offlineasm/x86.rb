@@ -1,4 +1,4 @@
-# Copyright (C) 2012 Apple Inc. All rights reserved.
+# Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
 # Copyright (C) 2013 Digia Plc. and/or its subsidiary(-ies)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -284,13 +284,25 @@ class RegisterID
             raise "Cannot use #{name} in 32-bit X86 at #{codeOriginString}" unless isX64
             case kind
             when :half
-                "%r10w"
+                "%r8w"
             when :int
-                "%r10d"
+                "%r8d"
             when :ptr
-                "%r10"
+                "%r8"
             when :quad
-                "%r10"
+                "%r8"
+            end
+        when "t7"
+            raise "Cannot use #{name} in 32-bit X86 at #{codeOriginString}" unless isX64
+            case kind
+            when :half
+                "%r9w"
+            when :int
+                "%r9d"
+            when :ptr
+                "%r9"
+            when :quad
+                "%r9"
             end
         when "csr1"
             raise "Cannot use #{name} in 32-bit X86 at #{codeOriginString}" unless isX64

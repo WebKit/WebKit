@@ -558,8 +558,14 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         if (returnValueGPR != regT0)
             move(returnValueGPR, regT0);
         branchTest32(Zero, regT0).linkTo(beginLabel, this);
-        move(TrustedImmPtr(m_vm->arityCheckFailReturnThunks->returnPCsFor(*m_vm, m_codeBlock->numParameters())), regT5);
-        loadPtr(BaseIndex(regT5, regT0, timesPtr()), regT5);
+        GPRReg thunkReg;
+#if USE(JSVALUE64)
+        thunkReg = GPRInfo::regT7;
+#else
+        thunkReg = GPRInfo::regT5;
+#endif
+        move(TrustedImmPtr(m_vm->arityCheckFailReturnThunks->returnPCsFor(*m_vm, m_codeBlock->numParameters())), thunkReg);
+        loadPtr(BaseIndex(thunkReg, regT0, timesPtr()), thunkReg);
         emitNakedCall(m_vm->getCTIStub(arityFixup).code());
 
 #if !ASSERT_DISABLED

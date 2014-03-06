@@ -68,7 +68,7 @@ public:
     }
 
 #if CPU(X86_64) || CPU(X86)
-    size_t prologueStackPointerDelta()
+    static size_t prologueStackPointerDelta()
     {
         // Prologue only saves the framePointerRegister
         return sizeof(void*);
@@ -103,7 +103,7 @@ public:
 #endif // CPU(X86_64) || CPU(X86)
 
 #if CPU(ARM) || CPU(ARM64)
-    size_t prologueStackPointerDelta()
+    static size_t prologueStackPointerDelta()
     {
         // Prologue saves the framePointerRegister and linkRegister
         return 2 * sizeof(void*);
@@ -138,7 +138,7 @@ public:
 #endif
 
 #if CPU(MIPS)
-    size_t prologueStackPointerDelta()
+    static size_t prologueStackPointerDelta()
     {
         // Prologue saves the framePointerRegister and returnAddressRegister
         return 2 * sizeof(void*);
@@ -161,7 +161,7 @@ public:
 #endif
 
 #if CPU(SH4)
-    size_t prologueStackPointerDelta()
+    static size_t prologueStackPointerDelta()
     {
         // Prologue saves the framePointerRegister and link register
         return 2 * sizeof(void*);

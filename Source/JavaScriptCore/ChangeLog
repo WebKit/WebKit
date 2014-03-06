@@ -1,3 +1,31 @@
+2014-03-06  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL arity fixup should work on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=129810
+
+        Reviewed by Michael Saboff.
+        
+        - Using regT5 to pass the thunk return address to arityFixup is shady since that's a
+          callee-save.
+        
+        - The FTL path was assuming X86 conventions for where SP points at the top of the prologue.
+        
+        This makes some more tests pass.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::prologueStackPointerDelta):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/ThunkGenerators.cpp:
+        (JSC::arityFixup):
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/arm64.rb:
+        * offlineasm/x86.rb: In addition to the t7 change, make t6 agree with GPRInfo.h.
+
 2014-03-06  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fix write barriers in Repatch.cpp for !ENABLE(DFG_JIT) platforms after r165128

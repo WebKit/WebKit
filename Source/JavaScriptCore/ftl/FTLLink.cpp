@@ -71,7 +71,7 @@ void link(State& state)
     CCallHelpers::Label arityCheck;
 
     CCallHelpers::Address frame = CCallHelpers::Address(
-        CCallHelpers::stackPointerRegister, -static_cast<int32_t>(sizeof(void*)));
+        CCallHelpers::stackPointerRegister, -static_cast<int32_t>(AssemblyHelpers::prologueStackPointerDelta()));
     
     if (Profiler::Compilation* compilation = graph.compilation()) {
         compilation->addDescription(
@@ -170,8 +170,8 @@ void link(State& state)
         jit.emitFunctionEpilogue();
         mainPathJumps.append(jit.branchTest32(CCallHelpers::Zero, GPRInfo::regT0));
         jit.emitFunctionPrologue();
-        jit.move(CCallHelpers::TrustedImmPtr(vm.arityCheckFailReturnThunks->returnPCsFor(vm, codeBlock->numParameters())), GPRInfo::regT5);
-        jit.loadPtr(CCallHelpers::BaseIndex(GPRInfo::regT5, GPRInfo::regT0, CCallHelpers::timesPtr()), GPRInfo::regT5);
+        jit.move(CCallHelpers::TrustedImmPtr(vm.arityCheckFailReturnThunks->returnPCsFor(vm, codeBlock->numParameters())), GPRInfo::regT7);
+        jit.loadPtr(CCallHelpers::BaseIndex(GPRInfo::regT7, GPRInfo::regT0, CCallHelpers::timesPtr()), GPRInfo::regT7);
         CCallHelpers::Call callArityFixup = jit.call();
         jit.emitFunctionEpilogue();
         mainPathJumps.append(jit.jump());

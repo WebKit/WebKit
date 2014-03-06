@@ -483,7 +483,7 @@ macro functionArityCheck(doneLabel, slowPath)
     loadp CommonSlowPaths::ArityCheckData::thunkToCall[t1], t2
     btpz t2, .proceedInline
     
-    loadp CommonSlowPaths::ArityCheckData::returnPC[t1], t5
+    loadp CommonSlowPaths::ArityCheckData::returnPC[t1], t7
     loadp CommonSlowPaths::ArityCheckData::paddedStackSpace[t1], t0
     call t2
     if ASSERT_ENABLED

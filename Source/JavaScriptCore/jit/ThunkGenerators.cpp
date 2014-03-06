@@ -429,7 +429,7 @@ MacroAssemblerCodeRef arityFixup(VM* vm)
     JSInterfaceJIT jit(vm);
 
     // We enter with fixup count, in aligned stack units, in regT0 and the return thunk in
-    // regT5.
+    // regT5 on 32-bit and regT7 on 64-bit.
 #if USE(JSVALUE64)
 #  if CPU(X86_64)
     jit.pop(JSInterfaceJIT::regT4);
@@ -467,7 +467,7 @@ MacroAssemblerCodeRef arityFixup(VM* vm)
     jit.storePtr(GPRInfo::regT1, MacroAssembler::BaseIndex(JSInterfaceJIT::regT6, JSInterfaceJIT::regT0, JSInterfaceJIT::TimesEight));
     
     // Install the new return PC.
-    jit.storePtr(GPRInfo::regT5, JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, CallFrame::returnPCOffset()));
+    jit.storePtr(GPRInfo::regT7, JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, CallFrame::returnPCOffset()));
 
 #  if CPU(X86_64)
     jit.push(JSInterfaceJIT::regT4);

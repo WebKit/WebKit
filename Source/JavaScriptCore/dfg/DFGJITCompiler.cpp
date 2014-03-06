@@ -381,8 +381,14 @@ void JITCompiler::compileFunction()
         addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
     branchTest32(Zero, GPRInfo::regT0).linkTo(fromArityCheck, this);
     emitStoreCodeOrigin(CodeOrigin(0));
-    move(TrustedImmPtr(m_vm->arityCheckFailReturnThunks->returnPCsFor(*m_vm, m_codeBlock->numParameters())), GPRInfo::regT5);
-    loadPtr(BaseIndex(GPRInfo::regT5, GPRInfo::regT0, timesPtr()), GPRInfo::regT5);
+    GPRReg thunkReg;
+#if USE(JSVALUE64)
+    thunkReg = GPRInfo::regT7;
+#else
+    thunkReg = GPRInfo::regT5;
+#endif
+    move(TrustedImmPtr(m_vm->arityCheckFailReturnThunks->returnPCsFor(*m_vm, m_codeBlock->numParameters())), thunkReg);
+    loadPtr(BaseIndex(thunkReg, GPRInfo::regT0, timesPtr()), thunkReg);
     m_callArityFixup = call();
     jump(fromArityCheck);
     
