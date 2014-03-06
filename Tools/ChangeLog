@@ -1,3 +1,15 @@
+2014-03-05  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][CMake] Tarball is created with wrong tarball paths
+        https://bugs.webkit.org/show_bug.cgi?id=129496
+
+        Reviewed by Daniel Bates.
+
+        * gtk/make-dist.py:
+        (Manifest.__init__): I inadvertently inverted the logic of these checks when
+        landing the original patch with some suggestions from the reviewer. With the
+        checks corrected, the tarball path is constructed properly.
+
 2014-03-05  Jae Hyun Park  <jaepark@webkit.org>
 
         Unreviewed. Update my email in contributors.json
