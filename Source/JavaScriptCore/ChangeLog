@@ -1,5 +1,12 @@
 2014-03-06  Julien Brianceau  <jbriance@cisco.com>
 
+        Unreviewed, fix style in my previous commit.
+        https://bugs.webkit.org/show_bug.cgi?id=129833
+
+        * runtime/JSConsole.cpp:
+
+2014-03-06  Julien Brianceau  <jbriance@cisco.com>
+
         Build fix: add missing include in JSConole.cpp.
         https://bugs.webkit.org/show_bug.cgi?id=129833
 
