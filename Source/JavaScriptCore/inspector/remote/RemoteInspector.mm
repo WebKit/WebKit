@@ -361,7 +361,7 @@ void RemoteInspector::pushListingSoon()
         return;
 
     m_pushScheduled = true;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.02 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         std::lock_guard<std::mutex> lock(m_mutex);
         if (m_pushScheduled)
             pushListingNow();
