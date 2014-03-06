@@ -12,9 +12,10 @@ fi
 if test "$cxx_compiler" = "clang++"; then
     CXXFLAGS="$CXXFLAGS -Qunused-arguments"
 
-    # Default to libc++ as the standard library to be used with Clang, if it isn't already enforced
-    # through CXXFLAGS (in case where some would still like to build using Clang and libstdc++).
-    AS_CASE([$CXXFLAGS], [*-stdlib=*], [], [CXXFLAGS="$CXXFLAGS -stdlib=libc++"])
+    # Default to libc++ as the standard library on Darwin, if it isn't already enforced through CXXFLAGS.
+    if test "$os_darwin" = "yes"; then
+        AS_CASE([$CXXFLAGS], [*-stdlib=*], [], [CXXFLAGS="$CXXFLAGS -stdlib=libc++"])
+    fi
 
     # If Clang will be using libstdc++ as the standard library, version >= 4.8.1 should be in use.
     AC_LANG_PUSH([C++])
