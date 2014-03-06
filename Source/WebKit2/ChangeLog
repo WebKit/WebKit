@@ -1,3 +1,26 @@
+2014-03-06  Anders Carlsson  <andersca@apple.com>
+
+        Remove WebKit1 header includes from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=129824
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (makeResponderFirstResponderIfDescendantOfView):
+        Add a new function instead of calling an NSWindow category method that's defined in WebKit1.
+
+        (-[WKFullScreenWindowController enterFullScreen:]):
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+        Call makeResponderFirstResponderIfDescendantOfView.
+
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        Remove unused WebKit1 header import.
+
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::documentFragmentFromAttributedString):
+        Change a category to be on NSObject instead of WebResource.
+
 2014-03-06  Jon Lee  <jonlee@apple.com>
 
         iOS build fix.

@@ -46,7 +46,6 @@
 #import <WebCore/RenderImage.h>
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/StringTruncator.h>
-#import <WebKit/WebArchive.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/StdLibExtras.h>
 

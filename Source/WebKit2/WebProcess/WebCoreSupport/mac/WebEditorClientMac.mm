@@ -47,7 +47,6 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebCore/WebCoreNSURLExtras.h>
-#import <WebKit/WebResource.h> // FIXME: WebKit2 should not include WebKit headers.
 
 using namespace WebCore;
 
@@ -55,7 +54,7 @@ using namespace WebCore;
 - (DOMDocumentFragment*)_documentFromRange:(NSRange)range document:(DOMDocument*)document documentAttributes:(NSDictionary *)dict subresources:(NSArray **)subresources;
 @end
 
-@interface WebResource (WebResourceInternal)
+@interface NSObject (WebResourceInternal)
 - (WebCore::ArchiveResource*)_coreResource;
 @end
 
@@ -116,11 +115,13 @@ DocumentFragment* WebEditorClient::documentFragmentFromAttributedString(NSAttrib
     
     NSArray *subResources;
     Document* document = m_page->mainFrame()->document();
+
+    // FIXME: Isntead of calling this WebKit1 method, the code should be factored out and moved into WebCore.
     DOMDocumentFragment* fragment = [string _documentFromRange:NSMakeRange(0, [string length])
                                                       document:kit(document)
                                             documentAttributes:dictionary
                                                   subresources:&subResources];
-    for (WebResource* resource in subResources)
+    for (id resource in subResources)
         resources.append([resource _coreResource]);
 
     return core(fragment);
