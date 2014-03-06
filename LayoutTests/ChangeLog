@@ -1,3 +1,11 @@
+2014-03-05  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening.
+        Mofify the TestExpectaions according to the renamed file name in r164299.
+
+        * platform/efl/TestExpectations: copy-paste-converts-sticky-and-fixed.html is renamed
+        to copy-paste-wraps-position-absolute.html.
+
 2014-03-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r165141, r165157, and r165158.
