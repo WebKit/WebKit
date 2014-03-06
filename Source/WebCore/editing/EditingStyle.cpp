@@ -1204,11 +1204,13 @@ bool EditingStyle::convertPositionStyle()
     if (!m_mutableStyle)
         return false;
 
+#if ENABLE(CSS_STICKY_POSITION)
     RefPtr<CSSPrimitiveValue> sticky = cssValuePool().createIdentifierValue(CSSValueWebkitSticky);
     if (m_mutableStyle->propertyMatches(CSSPropertyPosition, sticky.get())) {
         m_mutableStyle->setProperty(CSSPropertyPosition, cssValuePool().createIdentifierValue(CSSValueStatic), m_mutableStyle->propertyIsImportant(CSSPropertyPosition));
         return false;
     }
+#endif
     RefPtr<CSSPrimitiveValue> fixed = cssValuePool().createIdentifierValue(CSSValueFixed);
     if (m_mutableStyle->propertyMatches(CSSPropertyPosition, fixed.get())) {
         m_mutableStyle->setProperty(CSSPropertyPosition, cssValuePool().createIdentifierValue(CSSValueAbsolute), m_mutableStyle->propertyIsImportant(CSSPropertyPosition));
