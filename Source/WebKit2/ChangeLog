@@ -1,3 +1,11 @@
+2014-03-06  Jon Lee  <jonlee@apple.com>
+
+        iOS build fix.
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/SmartMagnificationController.mm:
+
 2014-03-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Expose the console object in JSContexts to interact with Web Inspector
