@@ -694,6 +694,12 @@ bool ApplicationCacheStorage::store(ApplicationCacheGroup* group, GroupStorageID
     ASSERT(group->storageID() == 0);
     ASSERT(journal);
 
+    // For some reason, an app cache may be partially written to disk. In particular, there may be
+    // a cache group with an identical manifest URL and associated cache entries. We want to remove
+    // this cache group and its associated cache entries so that we can create it again (below) as
+    // a way to repair it.
+    deleteCacheGroupRecord(group->manifestURL());
+
     SQLiteStatement statement(m_database, "INSERT INTO CacheGroups (manifestHostHash, manifestURL, origin) VALUES (?, ?, ?)");
     if (statement.prepare() != SQLResultOk)
         return false;
@@ -1175,7 +1181,12 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
 
     if (result != SQLResultDone)
         LOG_ERROR("Could not load cache resources, error \"%s\"", m_database.lastErrorMsg());
-    
+
+    if (!cache->manifestResource()) {
+        LOG_ERROR("Could not load application cache because there was no manifest resource");
+        return nullptr;
+    }
+
     // Load the online whitelist
     SQLiteStatement whitelistStatement(m_database, "SELECT url FROM CacheWhitelistURLs WHERE cache=?");
     if (whitelistStatement.prepare() != SQLResultOk)
@@ -1417,6 +1428,36 @@ bool ApplicationCacheStorage::cacheGroupSize(const String& manifestURL, int64_t*
     return true;
 }
 
+bool ApplicationCacheStorage::deleteCacheGroupRecord(const String& manifestURL)
+{
+    ASSERT(SQLiteDatabaseTracker::hasTransactionInProgress());
+    SQLiteStatement idStatement(m_database, "SELECT id FROM CacheGroups WHERE manifestURL=?");
+    if (idStatement.prepare() != SQLResultOk)
+        return false;
+
+    idStatement.bindText(1, manifestURL);
+
+    int result = idStatement.step();
+    if (result != SQLResultRow)
+        return false;
+
+    int64_t groupId = idStatement.getColumnInt64(0);
+
+    SQLiteStatement cacheStatement(m_database, "DELETE FROM Caches WHERE cacheGroup=?");
+    if (cacheStatement.prepare() != SQLResultOk)
+        return false;
+
+    SQLiteStatement groupStatement(m_database, "DELETE FROM CacheGroups WHERE id=?");
+    if (groupStatement.prepare() != SQLResultOk)
+        return false;
+
+    cacheStatement.bindInt64(1, groupId);
+    executeStatement(cacheStatement);
+    groupStatement.bindInt64(1, groupId);
+    executeStatement(groupStatement);
+    return true;
+}
+
 bool ApplicationCacheStorage::deleteCacheGroup(const String& manifestURL)
 {
     SQLiteTransactionInProgressAutoCounter transactionCounter;
@@ -1431,36 +1472,10 @@ bool ApplicationCacheStorage::deleteCacheGroup(const String& manifestURL)
         openDatabase(false);
         if (!m_database.isOpen())
             return false;
-
-        SQLiteStatement idStatement(m_database, "SELECT id FROM CacheGroups WHERE manifestURL=?");
-        if (idStatement.prepare() != SQLResultOk)
-            return false;
-
-        idStatement.bindText(1, manifestURL);
-
-        int result = idStatement.step();
-        if (result == SQLResultDone)
-            return false;
-
-        if (result != SQLResultRow) {
-            LOG_ERROR("Could not load cache group id, error \"%s\"", m_database.lastErrorMsg());
+        if (!deleteCacheGroupRecord(manifestURL)) {
+            LOG_ERROR("Could not delete cache group record, error \"%s\"", m_database.lastErrorMsg());
             return false;
         }
-
-        int64_t groupId = idStatement.getColumnInt64(0);
-
-        SQLiteStatement cacheStatement(m_database, "DELETE FROM Caches WHERE cacheGroup=?");
-        if (cacheStatement.prepare() != SQLResultOk)
-            return false;
-
-        SQLiteStatement groupStatement(m_database, "DELETE FROM CacheGroups WHERE id=?");
-        if (groupStatement.prepare() != SQLResultOk)
-            return false;
-
-        cacheStatement.bindInt64(1, groupId);
-        executeStatement(cacheStatement);
-        groupStatement.bindInt64(1, groupId);
-        executeStatement(groupStatement);
     }
 
     deleteTransaction.commit();

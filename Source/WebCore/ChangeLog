@@ -1,3 +1,39 @@
+2014-03-05  Daniel Bates  <dabates@apple.com>
+            And Alexey Proskuryakov  <ap@apple.com>
+
+        ASSERT(newestManifest) fails in WebCore::ApplicationCacheGroup::didFinishLoadingManifest()
+        https://bugs.webkit.org/show_bug.cgi?id=129753
+        <rdar://problem/12069835>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixes an issue where an assertion failure would occur when visiting a web site whose on-disk
+        app cache doesn't contain a manifest resource.
+
+        For some reason an app cache for a web site may be partially written to disk. In particular, the
+        app cache may only contain a CacheGroups entry. That is, the manifest resource and origin records
+        may not be persisted to disk. From looking over the code, we're unclear how such a situation can occur
+        and hence have been unable to create such an app cache. We were able to reproduce this issue using
+        an app cache database file that was provided by a person that was affected by this issue.
+
+        No test included because it's not straightforward to write a test for this change.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete): Assert that m_cacheBeingUpdated->manifestResource()
+        is non-null. Currently we only document this assumption in a code comment. Also separated a single assertion
+        expression into two assertion expressions to make it straightforward to identify the failing sub-expression
+        on failure.
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::store): Modified to call ApplicationCacheStorage::deleteCacheGroupRecord()
+        to remove a cache group and associated cache records (if applicable) before inserting a cache group entry.
+        This replacement approach will ultimately repair incomplete app cache data for people affected by this bug.
+        (WebCore::ApplicationCacheStorage::loadCache): Log an error and return nullptr if the cache we loaded doesn't
+        have a manifest resource.
+        (WebCore::ApplicationCacheStorage::deleteCacheGroupRecord): Added.
+        (WebCore::ApplicationCacheStorage::deleteCacheGroup): Extracted deletion logic for cache group record into
+        ApplicationCacheStorage::deleteCacheGroupRecord().
+        * loader/appcache/ApplicationCacheStorage.h:
+
 2014-03-05  Oliver Hunt  <oliver@apple.com>
 
         Support caching of custom setters
