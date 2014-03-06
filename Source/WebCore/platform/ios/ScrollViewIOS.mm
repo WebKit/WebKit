@@ -96,12 +96,12 @@ bool ScrollView::platformCanBlitOnScroll() const
     return [[scrollView() contentView] copiesOnScroll];
 }
 
-IntRect ScrollView::actualVisibleContentRect() const
+IntRect ScrollView::unobscuredContentRect() const
 {
     CGRect r = CGRectZero;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     WAKScrollView *view = static_cast<WAKScrollView *>(platformWidget());
-    r = [view actualDocumentVisibleRect];
+    r = [view unobscuredContentRect];
     END_BLOCK_OBJC_EXCEPTIONS;
     return enclosingIntRect(r);
 }

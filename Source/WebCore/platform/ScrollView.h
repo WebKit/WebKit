@@ -168,7 +168,7 @@ public:
 
 #if PLATFORM(IOS)
     // This is the area that is not covered by UI elements.
-    IntRect actualVisibleContentRect() const;
+    IntRect unobscuredContentRect() const;
     // This is the area that is partially or fully exposed, and may extend under overlapping UI elements.
     IntRect exposedContentRect() const;
     void setExposedContentRect(const IntRect&);

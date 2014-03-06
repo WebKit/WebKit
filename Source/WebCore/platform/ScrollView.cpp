@@ -269,7 +269,7 @@ IntRect ScrollView::visibleContentRectInternal(VisibleContentRectIncludesScrollb
     }
     
     if (platformWidget())
-        return actualVisibleContentRect();
+        return unobscuredContentRect();
 #else
     UNUSED_PARAM(visibleContentRectBehavior);
 #endif

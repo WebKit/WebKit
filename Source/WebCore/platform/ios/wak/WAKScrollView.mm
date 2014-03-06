@@ -358,9 +358,9 @@ static BOOL scrollViewToPoint(WAKScrollView *scrollView, CGPoint point)
         return [[self nextResponder] scrollWheel:anEvent];
 }
 
-- (CGRect)actualDocumentVisibleRect
+- (CGRect)unobscuredContentRect
 {
-    // Only called by WebCore::ScrollView::actualVisibleContentRect
+    // Only called by WebCore::ScrollView::unobscuredContentRect
     WAKView* view = self;
     while ((view = [view superview])) {
         if ([view isKindOfClass:[WAKScrollView class]])
@@ -420,7 +420,7 @@ static BOOL scrollViewToPoint(WAKScrollView *scrollView, CGPoint point)
     CGRect frame = [self documentVisibleRect];
     [description appendFormat:@"documentVisible = (%g %g; %g %g); ", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height];
 
-    frame = [self actualDocumentVisibleRect];
+    frame = [self unobscuredContentRect];
     [description appendFormat:@"actualDocumentVisible = (%g %g; %g %g)>", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height];
 
     return description;

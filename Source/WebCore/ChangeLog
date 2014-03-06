@@ -1,3 +1,24 @@
+2014-03-06  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS] Rename the actualVisibleXXXRect to unobscuredContentRect for consistency
+        https://bugs.webkit.org/show_bug.cgi?id=129773
+
+        Reviewed by Simon Fraser.
+
+        * dom/TreeScope.cpp:
+        (WebCore::nodeFromPoint):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::visibleContentRectInternal):
+        * platform/ScrollView.h:
+        * platform/ios/ScrollViewIOS.mm:
+        (WebCore::ScrollView::unoscuredContentRect):
+        * platform/ios/wak/WAKScrollView.h:
+        * platform/ios/wak/WAKScrollView.mm:
+        (-[WAKScrollView unoscuredContentRect]):
+        (-[WAKScrollView description]):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+
 2014-03-05  Oliver Hunt  <oliver@apple.com>
 
         Support caching of custom setters

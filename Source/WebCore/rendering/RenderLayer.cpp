@@ -2428,8 +2428,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
             IntSize scrollOffsetRelativeToDocument = frameView.scrollOffsetRelativeToDocument();
             visibleRectRelativeToDocument.setLocation(IntPoint(scrollOffsetRelativeToDocument.width(), scrollOffsetRelativeToDocument.height()));
 #else
-            // FIXME: is this equivalent to the code above?
-            LayoutRect viewRect = frameView.actualVisibleContentRect();
+            LayoutRect viewRect = frameView.unobscuredContentRect();
             LayoutRect visibleRectRelativeToDocument = viewRect;
 #endif
 

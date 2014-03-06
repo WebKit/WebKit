@@ -235,7 +235,7 @@ Node* nodeFromPoint(Document* document, int x, int y, LayoutPoint* localPoint)
 #else
     IntPoint point = roundedIntPoint(FloatPoint(x * scaleFactor  + frameView->actualScrollX(), y * scaleFactor + frameView->actualScrollY()));
 
-    if (!frameView->actualVisibleContentRect().contains(point))
+    if (!frameView->unobscuredContentRect().contains(point))
         return nullptr;
 #endif
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
