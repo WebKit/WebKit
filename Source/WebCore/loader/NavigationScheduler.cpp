@@ -465,9 +465,10 @@ void NavigationScheduler::startTimer()
     if (!m_redirect->shouldStartTimer(m_frame))
         return;
 
-    m_timer.startOneShot(m_redirect->delay());
-    m_redirect->didStartTimer(m_frame, &m_timer);
-    InspectorInstrumentation::frameScheduledNavigation(m_frame, m_redirect->delay());
+    double delay = m_redirect->delay();
+    m_timer.startOneShot(delay);
+    InspectorInstrumentation::frameScheduledNavigation(m_frame, delay);
+    m_redirect->didStartTimer(m_frame, &m_timer); // m_redirect may be null on return (e.g. the client canceled the load)
 }
 
 void NavigationScheduler::cancel(bool newLoadInProgress)
