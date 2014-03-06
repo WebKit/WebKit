@@ -1,3 +1,31 @@
+2014-03-05  Mark Lam  <mark.lam@apple.com>
+
+        llint_slow_path_check_has_instance() should not adjust PC before accessing operands.
+        <https://webkit.org/b/129768>
+
+        Reviewed by Mark Hahnenberg.
+
+        When evaluating "a instanceof b" where b is an object that ImplementsHasInstance
+        and OverridesHasInstance (e.g. a bound function), the LLINT will take the slow
+        path llint_slow_path_check_has_instance(), and execute a code path that does the
+        following:
+        1. Adjusts the byte code PC to the jump target PC.
+        2. For the purpose of storing the result, get the result registerIndex from the
+           1st operand using the PC as if the PC is still pointing to op_check_has_instance
+           bytecode.
+
+        The result is that whatever value resides after where the jump target PC is will
+        be used as a result register value.  Depending on what that value is, the result
+        can be:
+        1. the code coincidently works correctly
+        2. memory corruption
+        3. crashes
+
+        The fix is to only adjust the byte code PC after we have stored the result.
+        
+        * llint/LLIntSlowPaths.cpp:
+        (llint_slow_path_check_has_instance):
+
 2014-03-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another build fix attempt after r165141.

@@ -121,6 +121,14 @@ namespace JSC { namespace LLInt {
         LLINT_END_IMPL();                       \
     } while (false)
 
+#define LLINT_RETURN_WITH_PC_ADJUSTMENT(value, pcAdjustment) do { \
+        JSValue __r_returnValue = (value);      \
+        LLINT_CHECK_EXCEPTION();                \
+        LLINT_OP(1) = __r_returnValue;          \
+        pc += (pcAdjustment);                   \
+        LLINT_END_IMPL();                       \
+    } while (false)
+
 #define LLINT_RETURN_PROFILED(opcode, value) do {               \
         JSValue __rp_returnValue = (value);                     \
         LLINT_CHECK_EXCEPTION();                                \
@@ -535,8 +543,8 @@ LLINT_SLOW_PATH_DECL(slow_path_check_has_instance)
         JSObject* baseObject = asObject(baseVal);
         ASSERT(!baseObject->structure()->typeInfo().implementsDefaultHasInstance());
         if (baseObject->structure()->typeInfo().implementsHasInstance()) {
-            pc += pc[4].u.operand;
-            LLINT_RETURN(jsBoolean(baseObject->methodTable()->customHasInstance(baseObject, exec, value)));
+            JSValue result = jsBoolean(baseObject->methodTable()->customHasInstance(baseObject, exec, value));
+            LLINT_RETURN_WITH_PC_ADJUSTMENT(result, pc[4].u.operand);
         }
     }
     LLINT_THROW(createInvalidParameterError(exec, "instanceof", baseVal));
