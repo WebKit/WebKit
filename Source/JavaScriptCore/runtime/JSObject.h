@@ -1233,7 +1233,7 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlot(JSObject* object, ExecState* exe
 
 ALWAYS_INLINE bool JSObject::fastGetOwnPropertySlot(ExecState* exec, VM& vm, Structure& structure, PropertyName propertyName, PropertySlot& slot)
 {
-    if (!structure.typeInfo().overridesGetOwnPropertySlot())
+    if (!TypeInfo::overridesGetOwnPropertySlot(inlineTypeFlags()))
         return asObject(this)->inlineGetOwnPropertySlot(exec, vm, structure, propertyName, slot);
     return structure.classInfo()->methodTable.getOwnPropertySlot(this, exec, propertyName, slot);
 }

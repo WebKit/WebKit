@@ -1,3 +1,20 @@
+2014-03-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSObject::fastGetOwnPropertySlot does a slow check for OverridesGetOwnPropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=129754
+
+        Reviewed by Geoffrey Garen.
+
+        InlineTypeFlags are stored in JSCell, so we can just load those instead of going through the TypeInfo.
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::inlineTypeFlags):
+        * runtime/JSObject.h:
+        (JSC::JSObject::fastGetOwnPropertySlot):
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::TypeInfo):
+        (JSC::TypeInfo::overridesGetOwnPropertySlot):
+
 2014-03-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ASSERTION FAILED: m_javaScriptBreakpoints.isEmpty()

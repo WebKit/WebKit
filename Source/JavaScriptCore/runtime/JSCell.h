@@ -102,6 +102,8 @@ public:
     void setStructure(VM&, Structure*);
     void clearStructure() { m_structureID = 0; }
 
+    TypeInfo::InlineTypeFlags inlineTypeFlags() const { return m_flags; }
+
     const char* className();
 
     // Extracting the value.

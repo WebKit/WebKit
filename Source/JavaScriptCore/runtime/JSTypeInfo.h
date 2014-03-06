@@ -67,7 +67,7 @@ namespace JSC {
             , m_flags(inlineTypeFlags)
             , m_flags2(outOfLineTypeFlags)
         {
-            ASSERT(m_type >= CompoundType || !(m_flags & OverridesVisitChildren));
+            ASSERT(m_type >= CompoundType || !(isSetOnFlags1(OverridesVisitChildren)));
             // No object that doesn't ImplementsHasInstance should override it!
             ASSERT((m_flags & (ImplementsHasInstance | OverridesHasInstance)) != OverridesHasInstance);
             // ImplementsDefaultHasInstance means (ImplementsHasInstance & !OverridesHasInstance)
@@ -88,7 +88,8 @@ namespace JSC {
         bool isEnvironmentRecord() const { return isSetOnFlags1(IsEnvironmentRecord); }
         bool overridesHasInstance() const { return isSetOnFlags1(OverridesHasInstance); }
         bool implementsDefaultHasInstance() const { return isSetOnFlags1(ImplementsDefaultHasInstance); }
-        bool overridesGetOwnPropertySlot() const { return isSetOnFlags1(OverridesGetOwnPropertySlot); }
+        bool overridesGetOwnPropertySlot() const { return overridesGetOwnPropertySlot(inlineTypeFlags()); }
+        static bool overridesGetOwnPropertySlot(InlineTypeFlags flags) { return flags & OverridesGetOwnPropertySlot; }
         bool interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero() const { return isSetOnFlags1(InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero); }
         bool overridesVisitChildren() const { return isSetOnFlags1(OverridesVisitChildren); }
         bool overridesGetPropertyNames() const { return isSetOnFlags2(OverridesGetPropertyNames); }
