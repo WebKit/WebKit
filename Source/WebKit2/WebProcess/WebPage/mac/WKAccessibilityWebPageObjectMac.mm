@@ -189,6 +189,8 @@ using namespace WebKit;
     return YES;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (id)accessibilityHitTest:(NSPoint)point
 {
     // Hit-test point comes in as bottom-screen coordinates. Needs to be normalized to the frame of the web page.
@@ -213,6 +215,7 @@ using namespace WebKit;
     
     return [[self accessibilityRootObjectWrapper] accessibilityHitTest:point];
 }
+#pragma clang diagnostic pop
 
 @end
 
