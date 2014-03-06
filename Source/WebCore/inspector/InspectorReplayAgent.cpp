@@ -167,7 +167,7 @@ void InspectorReplayAgent::didCreateFrontendAndBackend(InspectorFrontendChannel*
     // Keep track of the (default) session currently loaded by ReplayController,
     // and any segments within the session.
     RefPtr<ReplaySession> session = m_page.replayController().loadedSession();
-    m_sessionsMap.add(session->identifier(), session.release());
+    m_sessionsMap.add(session->identifier(), session);
 
     for (auto it = session->begin(); it != session->end(); ++it)
         m_segmentsMap.add((*it)->identifier(), *it);

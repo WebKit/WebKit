@@ -1,3 +1,13 @@
+2014-03-06  Brian Burg  <bburg@apple.com>
+
+        Web Replay: premature release() of PassRefPtr in InspectorReplayAgent
+        https://bugs.webkit.org/show_bug.cgi?id=129827
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorReplayAgent.cpp:
+        (WebCore::InspectorReplayAgent::didCreateFrontendAndBackend):
+
 2014-03-06  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS] Do not compile fake mouse event handling when iOS Touch Events are enabled
