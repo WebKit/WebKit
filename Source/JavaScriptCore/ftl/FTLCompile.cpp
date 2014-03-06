@@ -308,7 +308,7 @@ static void fixFunctionBasedOnStackMaps(
                 
                 JITGetByIdGenerator gen(
                     codeBlock, getById.codeOrigin(), usedRegisters, JSValueRegs(base),
-                    JSValueRegs(result), false);
+                    JSValueRegs(result), NeedToSpill);
                 
                 MacroAssembler::Label begin = slowPathJIT.label();
                 
