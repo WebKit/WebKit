@@ -1,5 +1,30 @@
 2014-03-06  Zan Dobersek  <zdobersek@igalia.com>
 
+        Move Source/WebCore/editing/ code to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=129665
+
+        Reviewed by Anders Carlsson.
+
+        Replace uses of OwnPtr and PassOwnPtr in code under Source/WebCore/editing/ with std::unique_ptr.
+
+        * editing/EditingStyle.cpp:
+        (WebCore::htmlElementEquivalents):
+        (WebCore::EditingStyle::conflictsWithImplicitStyleOfElement):
+        (WebCore::htmlAttributeEquivalents):
+        (WebCore::EditingStyle::conflictsWithImplicitStyleOfAttributes):
+        (WebCore::EditingStyle::extractConflictingImplicitStyleOfAttributes):
+        (WebCore::EditingStyle::elementIsStyledSpanOrHTMLEquivalent):
+        (WebCore::EditingStyle::mergeInlineAndImplicitStyleOfElement):
+        * editing/Editor.cpp:
+        (WebCore::Editor::Editor):
+        (WebCore::Editor::clear):
+        * editing/Editor.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        * page/Frame.h:
+
+2014-03-06  Zan Dobersek  <zdobersek@igalia.com>
+
         Move to using std::unique_ptr for KeyboardEvent, ScriptExecutionContext::PendingException
         https://bugs.webkit.org/show_bug.cgi?id=129061
 

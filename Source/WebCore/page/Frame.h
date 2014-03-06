@@ -298,7 +298,7 @@ namespace WebCore {
         RefPtr<Document> m_doc;
 
         const std::unique_ptr<ScriptController> m_script;
-        const OwnPtr<Editor> m_editor;
+        const std::unique_ptr<Editor> m_editor;
         const OwnPtr<FrameSelection> m_selection;
         const OwnPtr<EventHandler> m_eventHandler;
         const std::unique_ptr<AnimationController> m_animationController;

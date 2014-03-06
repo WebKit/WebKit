@@ -40,6 +40,7 @@
 #include "TextIteratorBehavior.h"
 #include "VisibleSelection.h"
 #include "WritingDirection.h"
+#include <memory>
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSAttributedString;
@@ -91,7 +92,7 @@ enum EditorParagraphSeparator { EditorParagraphSeparatorIsDiv, EditorParagraphSe
 
 class Editor {
 public:
-    static PassOwnPtr<Editor> create(Frame& frame) { return adoptPtr(new Editor(frame)); }
+    explicit Editor(Frame&);
     ~Editor();
 
     EditorClient* client() const;
@@ -443,8 +444,6 @@ public:
 private:
     class WebContentReader;
 
-    explicit Editor(Frame&);
-
     Document& document() const;
 
     bool canDeleteRange(Range*) const;
@@ -481,7 +480,7 @@ private:
 
     Frame& m_frame;
 #if ENABLE(DELETION_UI)
-    OwnPtr<DeleteButtonController> m_deleteButtonController;
+    std::unique_ptr<DeleteButtonController> m_deleteButtonController;
 #endif
     RefPtr<CompositeEditCommand> m_lastEditCommand;
     RefPtr<Text> m_compositionNode;
@@ -491,9 +490,9 @@ private:
     bool m_ignoreCompositionSelectionChange;
     bool m_shouldStartNewKillRingSequence;
     bool m_shouldStyleWithCSS;
-    const OwnPtr<KillRing> m_killRing;
-    const OwnPtr<SpellChecker> m_spellChecker;
-    const OwnPtr<AlternativeTextController> m_alternativeTextController;
+    const std::unique_ptr<KillRing> m_killRing;
+    const std::unique_ptr<SpellChecker> m_spellChecker;
+    const std::unique_ptr<AlternativeTextController> m_alternativeTextController;
     VisibleSelection m_mark;
     bool m_areMarkedTextMatchesHighlighted;
     EditorParagraphSeparator m_defaultParagraphSeparator;

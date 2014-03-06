@@ -162,7 +162,7 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient&
     , m_navigationScheduler(*this)
     , m_ownerElement(ownerElement)
     , m_script(std::make_unique<ScriptController>(*this))
-    , m_editor(Editor::create(*this))
+    , m_editor(std::make_unique<Editor>(*this))
     , m_selection(adoptPtr(new FrameSelection(this)))
     , m_eventHandler(adoptPtr(new EventHandler(*this)))
     , m_animationController(std::make_unique<AnimationController>(*this))

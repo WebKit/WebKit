@@ -1135,15 +1135,15 @@ void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 Editor::Editor(Frame& frame)
     : m_frame(frame)
 #if ENABLE(DELETION_UI)
-    , m_deleteButtonController(adoptPtr(new DeleteButtonController(frame)))
+    , m_deleteButtonController(std::make_unique<DeleteButtonController>(frame))
 #endif
     , m_ignoreCompositionSelectionChange(false)
     , m_shouldStartNewKillRingSequence(false)
     // This is off by default, since most editors want this behavior (this matches IE but not FF).
     , m_shouldStyleWithCSS(false)
-    , m_killRing(adoptPtr(new KillRing))
-    , m_spellChecker(adoptPtr(new SpellChecker(frame)))
-    , m_alternativeTextController(adoptPtr(new AlternativeTextController(frame)))
+    , m_killRing(std::make_unique<KillRing>())
+    , m_spellChecker(std::make_unique<SpellChecker>(frame))
+    , m_alternativeTextController(std::make_unique<AlternativeTextController>(frame))
     , m_areMarkedTextMatchesHighlighted(false)
     , m_defaultParagraphSeparator(EditorParagraphSeparatorIsDiv)
     , m_overwriteModeEnabled(false)
@@ -1165,7 +1165,7 @@ void Editor::clear()
     m_defaultParagraphSeparator = EditorParagraphSeparatorIsDiv;
 
 #if ENABLE(DELETION_UI)
-    m_deleteButtonController = adoptPtr(new DeleteButtonController(m_frame));
+    m_deleteButtonController = std::make_unique<DeleteButtonController>(m_frame);
 #endif
 }
 
