@@ -127,11 +127,6 @@ const char* Vibration::supplementName()
     return "Vibration";
 }
 
-bool Vibration::isActive(Page* page)
-{
-    return static_cast<bool>(Vibration::from(page));
-}
-
 void provideVibrationTo(Page* page, VibrationClient* client)
 {
     Vibration::provideTo(page, Vibration::supplementName(), Vibration::create(client));
