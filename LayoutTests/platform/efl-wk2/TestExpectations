@@ -60,7 +60,6 @@ webkit.org/b/102651 [ Debug ] networkinformation/basic-operation.html [ Crash ]
 # WebGL test cases crashing in WebCore::GraphicsContext3D::readPixels().
 webkit.org/b/109417 webgl/conformance/textures/texture-attachment-formats.html [ Crash Failure ]
 webkit.org/b/109945 webgl/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Crash ]
-webkit.org/b/109945 webgl/conformance/uniforms/uniform-default-values.html [ Crash ]
 
 # Known WebGL conformance test failures, fails on Intel and AMD hardware
 webkit.org/b/129199 webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Crash ]
@@ -110,26 +109,6 @@ webkit.org/b/116587 http/tests/websocket/tests/hybi/workers/close-in-onmessage-c
 webkit.org/b/116587 http/tests/websocket/tests/hybi/workers/close-in-worker.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/workers/multiple-subprotocols.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/zero-length-text.html [ Skip ]
-
-# Started to crash after r162947
-webkit.org/b/128259 compositing/iframes/remove-iframe-crash.html [ Crash ]
-webkit.org/b/128259 fast/dom/Window/web-timing-minimal-performance-now.html [ Crash ]
-webkit.org/b/128259 fast/events/pagehide-xhr-open.html [ Crash ]
-webkit.org/b/128259 fast/events/pageshow-pagehide-on-back-cached.html [ Crash ]
-webkit.org/b/128259 fast/events/tab-crash-with-image-map.html [ Crash ]
-webkit.org/b/128259 fast/forms/autocomplete.html [ Crash ]
-webkit.org/b/128259 fast/history/go-back-to-iframe-with-plugin.html [ Crash ]
-webkit.org/b/128259 fast/history/history-back-while-pdf-in-pagecache.html [ Crash ]
-webkit.org/b/128259 fast/history/visited-generated-content-test.html [ Crash ]
-webkit.org/b/128259 fast/images/animated-gif-with-offsets.html [ Crash ]
-webkit.org/b/128259 fast/loader/show-only-one-beforeunload-dialog.html [ Crash ]
-webkit.org/b/128259 fast/loader/url-data-replace-backslash.html [ Crash ]
-webkit.org/b/128259 fast/overflow/image-selection-highlight.html [ Crash ]
-webkit.org/b/128259 fast/viewport/viewport-129.html [ Crash ]
-webkit.org/b/128259 http/tests/navigation/history-back-across-form-submission-to-fragment.html [ Crash ]
-webkit.org/b/128259 http/tests/navigation/https-in-page-cache.html [ Crash ]
-webkit.org/b/128259 loader/image-loader-adoptNode-assert.html [ Crash ]
-webkit.org/b/128259 media/sources-fallback-codecs.html [ Crash ]
 
 webkit.org/b/128906 fast/events/touch/basic-single-touch-events.html [ Crash ]
 
@@ -249,10 +228,6 @@ webkit.org/b/127914 webgl/conformance/textures/tex-image-and-sub-image-2d-with-i
 webkit.org/b/127914 webgl/conformance/textures/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Crash Pass ]
 webkit.org/b/127914 webgl/conformance/textures/tex-image-and-sub-image-2d-with-image-rgb565.html [ Crash Pass ]
 webkit.org/b/127914 webgl/conformance/textures/texture-npot.html [ Crash Pass ]
-
-webkit.org/b/128259 animations/simultaneous-start-left.html [ Crash Pass ]
-
-webkit.org/b/128259 fast/loader/invalid-charset-on-script-crashes-loader.html [ Crash Pass ]
 
 webkit.org/b/128969 fast/sub-pixel/input-caret-on-subpixel-bound.html [ ImageOnlyFailure Pass ]
 
@@ -561,3 +536,19 @@ webkit.org/b/129733 fast/borders/hidpi-simple-hairline-border-painting.html [ Im
 webkit.org/b/129734 fast/css3-text/css3-text-decoration/text-decoration-style-double-space-scales.html [ ImageOnlyFailure ]
 
 webkit.org/b/129735 fast/regions/box-decorations-over-region-padding.html [ ImageOnlyFailure ]
+
+webkit.org/b/129815 fast/sub-pixel/clip-rect-box-consistent-rounding.html [ ImageOnlyFailure ]
+
+webkit.org/b/129818 fast/canvas/webgl/webgl-draw-buffers.html [ Failure ]
+
+webkit.org/b/129820 svg/clip-path/mask-nested-clip-path-006.svg [ ImageOnlyFailure ]
+webkit.org/b/129820 svg/clip-path/mask-nested-clip-path-007.svg [ ImageOnlyFailure ]
+webkit.org/b/129820 svg/clip-path/mask-nested-clip-path-008.svg [ ImageOnlyFailure ]
+webkit.org/b/129820 svg/clip-path/mask-nested-clip-path-009.svg [ ImageOnlyFailure ]
+webkit.org/b/129820 svg/clip-path/mask-nested-clip-path-010.svg [ ImageOnlyFailure ]
+webkit.org/b/129820 svg/clip-path/mask-objectboundingbox-content-clip-transform.svg [ ImageOnlyFailure ]
+webkit.org/b/129820 svg/clip-path/mask-objectboundingbox-content-clip.svg [ ImageOnlyFailure ]
+webkit.org/b/129820 svg/clip-path/mask-userspaceonuse-content-clip-transform.svg [ ImageOnlyFailure ]
+webkit.org/b/129820 svg/clip-path/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
+
+webkit.org/b/129821 svg/css/svg-resource-fragment-identifier-img-src.html [ ImageOnlyFailure ]

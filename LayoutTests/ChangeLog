@@ -1,3 +1,14 @@
+2014-03-06  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Add test expectations for failing tests and remove crash expectations after r164718.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/compositing/layer-creation/overlap-animation-container-expected.txt: Added after r164449.
+        * platform/efl/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt: Rebaseline after r164867.
+
 2014-03-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Expose the console object in JSContexts to interact with Web Inspector
