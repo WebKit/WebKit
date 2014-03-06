@@ -1,3 +1,17 @@
+2014-03-05  Oliver Hunt  <oliver@apple.com>
+
+        Support caching of custom setters
+        https://bugs.webkit.org/show_bug.cgi?id=129519
+
+        Reviewed by Filip Pizlo.
+
+        Add forwarding header
+
+        Tests: js/regress/assign-custom-setter-polymorphic.html
+               js/regress/assign-custom-setter.html
+
+        * ForwardingHeaders/jit/SpillRegistersMode.h: Added.
+
 2014-03-05  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Invalid cast in WebCore::RenderLayer::FilterInfo::updateReferenceFilterClients()

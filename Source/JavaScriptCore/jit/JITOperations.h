@@ -35,8 +35,10 @@
 #include "JSCJSValue.h"
 #include "MacroAssembler.h"
 #include "PutKind.h"
+#include "SpillRegistersMode.h"
 #include "StructureStubInfo.h"
 #include "VariableWatchpointSet.h"
+
 
 namespace JSC {
 

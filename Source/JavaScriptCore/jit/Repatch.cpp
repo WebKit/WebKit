@@ -449,7 +449,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
     if (structure->isDictionary())
         return false;
 
-    if (!stubInfo.patch.registersFlushed) {
+    if (stubInfo.patch.spillMode == NeedToSpill) {
         // We cannot do as much inline caching if the registers were not flushed prior to this GetById. In particular,
         // non-Value cached properties require planting calls, which requires registers to have been flushed. Thus,
         // if registers were not flushed, don't do non-Value caching.
@@ -551,7 +551,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
     Structure* structure = baseCell->structure();
     
     if (slot.slotBase() == baseValue) {
-        if (!stubInfo.patch.registersFlushed) {
+        if (stubInfo.patch.spillMode == NeedToSpill) {
             // We cannot do as much inline caching if the registers were not flushed prior to this GetById. In particular,
             // non-Value cached properties require planting calls, which requires registers to have been flushed. Thus,
             // if registers were not flushed, don't do non-Value caching.
@@ -702,7 +702,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         || baseValue.asCell()->structure()->isDictionary())
         return false;
     
-    if (!stubInfo.patch.registersFlushed) {
+    if (stubInfo.patch.spillMode == NeedToSpill) {
         // We cannot do as much inline caching if the registers were not flushed prior to this GetById. In particular,
         // non-Value cached properties require planting calls, which requires registers to have been flushed. Thus,
         // if registers were not flushed, don't do non-Value caching.
@@ -1126,6 +1126,71 @@ static void emitPutTransitionStub(
             structure);
 }
 
+static void emitCustomSetterStub(ExecState* exec, const PutPropertySlot& slot,
+    StructureStubInfo& stubInfo, Structure* structure, StructureChain* prototypeChain,
+    CodeLocationLabel failureLabel, RefPtr<JITStubRoutine>& stubRoutine)
+{
+    VM* vm = &exec->vm();
+    ASSERT(stubInfo.patch.spillMode == DontSpill);
+    GPRReg baseGPR = static_cast<GPRReg>(stubInfo.patch.baseGPR);
+#if USE(JSVALUE32_64)
+    GPRReg valueTagGPR = static_cast<GPRReg>(stubInfo.patch.valueTagGPR);
+#endif
+    GPRReg valueGPR = static_cast<GPRReg>(stubInfo.patch.valueGPR);
+    TempRegisterSet tempRegisters(stubInfo.patch.usedRegisters);
+
+    CCallHelpers stubJit(vm);
+    GPRReg scratchGPR = tempRegisters.getFreeGPR();
+    RELEASE_ASSERT(scratchGPR != InvalidGPRReg);
+    RELEASE_ASSERT(scratchGPR != baseGPR);
+    RELEASE_ASSERT(scratchGPR != valueGPR);
+    MacroAssembler::JumpList failureCases;
+    failureCases.append(branchStructure(stubJit,
+        MacroAssembler::NotEqual,
+        MacroAssembler::Address(baseGPR, JSCell::structureIDOffset()),
+        structure));
+    
+    if (prototypeChain) {
+        for (WriteBarrier<Structure>* it = prototypeChain->head(); *it; ++it)
+            addStructureTransitionCheck((*it)->storedPrototype(), exec->codeBlock(), stubInfo, stubJit, failureCases, scratchGPR);
+    }
+
+    // typedef void (*PutValueFunc)(ExecState*, JSObject* base, EncodedJSValue thisObject, EncodedJSValue value);
+#if USE(JSVALUE64)
+    stubJit.setupArgumentsWithExecState(MacroAssembler::TrustedImmPtr(slot.base()), baseGPR, valueGPR);
+#else
+    stubJit.setupArgumentsWithExecState(MacroAssembler::TrustedImmPtr(slot.base()), baseGPR, MacroAssembler::TrustedImm32(JSValue::CellTag), valueGPR, valueTagGPR);
+#endif
+
+    // Need to make sure that whenever this call is made in the future, we remember the
+    // place that we made it from. It just so happens to be the place that we are at
+    // right now!
+    stubJit.store32(MacroAssembler::TrustedImm32(exec->locationAsRawBits()),
+        CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
+    stubJit.storePtr(GPRInfo::callFrameRegister, &vm->topCallFrame);
+
+    MacroAssembler::Call setterCall = stubJit.call();
+    
+    MacroAssembler::Jump success = stubJit.emitExceptionCheck(CCallHelpers::InvertedExceptionCheck);
+
+    stubJit.setupArguments(CCallHelpers::TrustedImmPtr(vm), GPRInfo::callFrameRegister);
+
+    MacroAssembler::Call handlerCall = stubJit.call();
+
+    stubJit.jumpToExceptionHandler();
+    LinkBuffer patchBuffer(*vm, &stubJit, exec->codeBlock());
+
+    patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone));
+    patchBuffer.link(failureCases, failureLabel);
+    patchBuffer.link(setterCall, FunctionPtr(slot.customSetter()));
+    patchBuffer.link(handlerCall, lookupExceptionHandler);
+
+    stubRoutine = createJITStubRoutine(
+        FINALIZE_CODE_FOR(exec->codeBlock(), patchBuffer, ("PutById custom setter stub for %s, return point %p",
+        toCString(*exec->codeBlock()).data(), stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone).executableAddress())), *vm, exec->codeBlock()->ownerExecutable(), structure);
+}
+
+
 static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier& ident, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
 {
     CodeBlock* codeBlock = exec->codeBlock();
@@ -1137,13 +1202,13 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
     Structure* structure = baseCell->structure();
     Structure* oldStructure = structure->previousID();
     
-    if (!slot.isCacheable())
+    if (!slot.isCacheablePut() && !slot.isCacheableCustomProperty())
         return false;
     if (!structure->propertyAccessesAreCacheable())
         return false;
 
     // Optimize self access.
-    if (slot.base() == baseValue) {
+    if (slot.base() == baseValue && slot.isCacheablePut()) {
         if (slot.type() == PutPropertySlot::NewProperty) {
             if (structure->isDictionary())
                 return false;
@@ -1190,6 +1255,33 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
         stubInfo.initPutByIdReplace(*vm, codeBlock->ownerExecutable(), structure);
         return true;
     }
+    if (slot.isCacheableCustomProperty() && stubInfo.patch.spillMode == DontSpill) {
+        RefPtr<JITStubRoutine> stubRoutine;
+
+        StructureChain* prototypeChain = 0;
+        if (baseValue != slot.base()) {
+            PropertyOffset offsetIgnored;
+            if (normalizePrototypeChainForChainAccess(exec, baseCell, slot.base(), ident, offsetIgnored) == InvalidPrototypeChain)
+                return false;
+
+            prototypeChain = structure->prototypeChain(exec);
+        }
+        PolymorphicPutByIdList* list;
+        list = PolymorphicPutByIdList::from(putKind, stubInfo);
+
+        emitCustomSetterStub(exec, slot, stubInfo,
+            structure, prototypeChain,
+            stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToSlowCase),
+            stubRoutine);
+
+        list->addAccess(PutByIdAccess::customSetter(*vm, codeBlock->ownerExecutable(), structure, prototypeChain, slot.customSetter(), stubRoutine));
+
+        RepatchBuffer repatchBuffer(codeBlock);
+        repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.deltaCallToJump), CodeLocationLabel(stubRoutine->code().code()));
+        repatchCall(repatchBuffer, stubInfo.callReturnLocation, appropriateListBuildingPutByIdFunction(slot, putKind));
+        RELEASE_ASSERT(!list->isFull());
+        return true;
+    }
 
     return false;
 }
@@ -1214,13 +1306,15 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
     Structure* structure = baseCell->structure();
     Structure* oldStructure = structure->previousID();
     
-    if (!slot.isCacheable())
+    
+    if (!slot.isCacheablePut() && !slot.isCacheableCustomProperty())
         return false;
+
     if (!structure->propertyAccessesAreCacheable())
         return false;
 
     // Optimize self access.
-    if (slot.base() == baseValue) {
+    if (slot.base() == baseValue && slot.isCacheablePut()) {
         PolymorphicPutByIdList* list;
         RefPtr<JITStubRoutine> stubRoutine;
         
@@ -1282,6 +1376,33 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
         return true;
     }
 
+    if (slot.isCacheableCustomProperty() && stubInfo.patch.spillMode == DontSpill) {
+        RefPtr<JITStubRoutine> stubRoutine;
+        StructureChain* prototypeChain = 0;
+        if (baseValue != slot.base()) {
+            PropertyOffset offsetIgnored;
+            if (normalizePrototypeChainForChainAccess(exec, baseCell, slot.base(), propertyName, offsetIgnored) == InvalidPrototypeChain)
+                return false;
+
+            prototypeChain = structure->prototypeChain(exec);
+        }
+        PolymorphicPutByIdList* list;
+        list = PolymorphicPutByIdList::from(putKind, stubInfo);
+
+        emitCustomSetterStub(exec, slot, stubInfo,
+            structure, prototypeChain,
+            CodeLocationLabel(list->currentSlowPathTarget()),
+            stubRoutine);
+
+        list->addAccess(PutByIdAccess::customSetter(*vm, codeBlock->ownerExecutable(), structure, prototypeChain, slot.customSetter(), stubRoutine));
+
+        RepatchBuffer repatchBuffer(codeBlock);
+        repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.deltaCallToJump), CodeLocationLabel(stubRoutine->code().code()));
+        if (list->isFull())
+            repatchCall(repatchBuffer, stubInfo.callReturnLocation, appropriateGenericPutByIdFunction(slot, putKind));
+
+        return true;
+    }
     return false;
 }
 

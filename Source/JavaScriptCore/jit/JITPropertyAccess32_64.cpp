@@ -478,7 +478,7 @@ void JIT::emit_op_get_by_id(Instruction* currentInstruction)
 
     JITGetByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeOffset), RegisterSet::specialRegisters(),
-        JSValueRegs::payloadOnly(regT0), JSValueRegs(regT1, regT0), true);
+        JSValueRegs::payloadOnly(regT0), JSValueRegs(regT1, regT0), DontSpill);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
     m_getByIds.append(gen);
@@ -527,7 +527,7 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     JITPutByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeOffset), RegisterSet::specialRegisters(),
         JSValueRegs::payloadOnly(regT0), JSValueRegs(regT3, regT2),
-        regT1, true, m_codeBlock->ecmaMode(), direct ? Direct : NotDirect);
+        regT1, DontSpill, m_codeBlock->ecmaMode(), direct ? Direct : NotDirect);
     
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());

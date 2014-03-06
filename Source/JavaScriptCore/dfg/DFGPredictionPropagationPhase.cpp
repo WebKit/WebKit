@@ -550,6 +550,7 @@ private:
         case Return:
         case Throw:
         case PutById:
+        case PutByIdFlush:
         case PutByIdDirect:
         case PutByOffset:
         case MultiPutByOffset:

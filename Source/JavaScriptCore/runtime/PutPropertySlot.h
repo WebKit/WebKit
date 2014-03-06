@@ -38,7 +38,7 @@ namespace JSC {
     
     class PutPropertySlot {
     public:
-        enum Type { Uncachable, ExistingProperty, NewProperty, CustomProperty };
+        enum Type { Uncachable, ExistingProperty, NewProperty, CustomProperty, CacheableCustomProperty };
         enum Context { UnknownContext, PutById, PutByIdEval };
         typedef void (*PutValueFunc)(ExecState*, JSObject* base, EncodedJSValue thisObject, EncodedJSValue value);
 
@@ -72,7 +72,15 @@ namespace JSC {
             m_base = base;
             m_putFunction = function;
         }
-        
+
+        void setCacheableCustomProperty(JSObject* base, PutValueFunc function)
+        {
+            m_type = CacheableCustomProperty;
+            m_base = base;
+            m_putFunction = function;
+        }
+        PutValueFunc customSetter() const { return m_putFunction; }
+
         Context context() const { return static_cast<Context>(m_context); }
 
         Type type() const { return m_type; }
@@ -80,10 +88,12 @@ namespace JSC {
         JSValue thisValue() const { return m_thisValue; }
 
         bool isStrictMode() const { return m_isStrictMode; }
-        bool isCacheable() const { return m_type != Uncachable && m_type != CustomProperty; }
+        bool isCacheablePut() const { return m_type == NewProperty || m_type == ExistingProperty; }
+        bool isCacheableCustomProperty() const { return m_type == CacheableCustomProperty; }
+
         PropertyOffset cachedOffset() const
         {
-            ASSERT(isCacheable());
+            ASSERT(isCacheablePut());
             return m_offset;
         }
 

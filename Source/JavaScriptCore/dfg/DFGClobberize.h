@@ -196,6 +196,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case GetById:
     case GetByIdFlush:
     case PutById:
+    case PutByIdFlush:
     case PutByIdDirect:
     case ArrayPush:
     case ArrayPop:
