@@ -1,3 +1,15 @@
+2014-03-06  Michael Saboff  <msaboff@apple.com>
+
+        JSC should disable the JIT when building for ARMv7k
+        https://bugs.webkit.org/show_bug.cgi?id=129829
+
+        Reviewed by Oliver Hunt.
+
+        Added WTF_CPU_APPLE_ARMV7K CPU define.  Disabled the JITs when
+        that feature define is set.
+
+        * wtf/Platform.h:
+
 2014-03-06  Filip Pizlo  <fpizlo@apple.com>
 
         Use the LLVM disassembler on ARM64 if we are enabling the FTL
