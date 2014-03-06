@@ -48,7 +48,6 @@
 
 namespace WebCore {
 
-class MediaConstraints;
 class MediaStreamTrack;
 class RTCConfiguration;
 class RTCDTMFSender;
@@ -64,9 +63,9 @@ public:
     static PassRefPtr<RTCPeerConnection> create(ScriptExecutionContext&, const Dictionary& rtcConfiguration, ExceptionCode&);
     ~RTCPeerConnection();
 
-    void createOffer(PassRefPtr<RTCSessionDescriptionCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>, const Dictionary& mediaConstraints, ExceptionCode&);
+    void createOffer(PassRefPtr<RTCSessionDescriptionCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>, const Dictionary& offerOptions, ExceptionCode&);
 
-    void createAnswer(PassRefPtr<RTCSessionDescriptionCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>, const Dictionary& mediaConstraints, ExceptionCode&);
+    void createAnswer(PassRefPtr<RTCSessionDescriptionCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>, const Dictionary& answerOptions, ExceptionCode&);
 
     void setLocalDescription(PassRefPtr<RTCSessionDescription>, PassRefPtr<VoidCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>, ExceptionCode&);
     PassRefPtr<RTCSessionDescription> localDescription(ExceptionCode&);

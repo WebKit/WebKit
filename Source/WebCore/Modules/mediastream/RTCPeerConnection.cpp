@@ -42,7 +42,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "MediaConstraintsImpl.h"
 #include "MediaStreamEvent.h"
 #include "RTCConfiguration.h"
 #include "RTCDTMFSender.h"
@@ -52,6 +51,7 @@
 #include "RTCIceCandidate.h"
 #include "RTCIceCandidateDescriptor.h"
 #include "RTCIceCandidateEvent.h"
+#include "RTCOfferAnswerOptions.h"
 #include "RTCPeerConnectionErrorCallback.h"
 #include "RTCSessionDescription.h"
 #include "RTCSessionDescriptionCallback.h"
@@ -203,7 +203,7 @@ RTCPeerConnection::~RTCPeerConnection()
         (*stream)->removeObserver(this);
 }
 
-void RTCPeerConnection::createOffer(PassRefPtr<RTCSessionDescriptionCallback> successCallback, PassRefPtr<RTCPeerConnectionErrorCallback> errorCallback, const Dictionary& mediaConstraints, ExceptionCode& ec)
+void RTCPeerConnection::createOffer(PassRefPtr<RTCSessionDescriptionCallback> successCallback, PassRefPtr<RTCPeerConnectionErrorCallback> errorCallback, const Dictionary& offerOptions, ExceptionCode& ec)
 {
     if (m_signalingState == SignalingStateClosed) {
         ec = INVALID_STATE_ERR;
@@ -215,15 +215,20 @@ void RTCPeerConnection::createOffer(PassRefPtr<RTCSessionDescriptionCallback> su
         return;
     }
 
-    RefPtr<MediaConstraints> constraints = MediaConstraintsImpl::create(mediaConstraints, ec);
-    if (ec)
+    RefPtr<RTCOfferOptions> options = RTCOfferOptions::create(offerOptions, ec);
+    if (ec) {
+        callOnMainThread([=] {
+            RefPtr<DOMError> error = DOMError::create("Invalid createOffer argument.");
+            errorCallback->handleEvent(error.get());
+        });
         return;
+    }
 
     RefPtr<RTCSessionDescriptionRequestImpl> request = RTCSessionDescriptionRequestImpl::create(scriptExecutionContext(), successCallback, errorCallback);
-    m_peerHandler->createOffer(request.release(), constraints);
+    m_peerHandler->createOffer(request.release(), options.release());
 }
 
-void RTCPeerConnection::createAnswer(PassRefPtr<RTCSessionDescriptionCallback> successCallback, PassRefPtr<RTCPeerConnectionErrorCallback> errorCallback, const Dictionary& mediaConstraints, ExceptionCode& ec)
+void RTCPeerConnection::createAnswer(PassRefPtr<RTCSessionDescriptionCallback> successCallback, PassRefPtr<RTCPeerConnectionErrorCallback> errorCallback, const Dictionary& answerOptions, ExceptionCode& ec)
 {
     if (m_signalingState == SignalingStateClosed) {
         ec = INVALID_STATE_ERR;
@@ -235,12 +240,17 @@ void RTCPeerConnection::createAnswer(PassRefPtr<RTCSessionDescriptionCallback> s
         return;
     }
 
-    RefPtr<MediaConstraints> constraints = MediaConstraintsImpl::create(mediaConstraints, ec);
-    if (ec)
+    RefPtr<RTCOfferAnswerOptions> options = RTCOfferAnswerOptions::create(answerOptions, ec);
+    if (ec) {
+        callOnMainThread([=] {
+            RefPtr<DOMError> error = DOMError::create("Invalid createAnswer argument.");
+            errorCallback->handleEvent(error.get());
+        });
         return;
+    }
 
     RefPtr<RTCSessionDescriptionRequestImpl> request = RTCSessionDescriptionRequestImpl::create(scriptExecutionContext(), successCallback, errorCallback);
-    m_peerHandler->createAnswer(request.release(), constraints.release());
+    m_peerHandler->createAnswer(request.release(), options.release());
 }
 
 bool RTCPeerConnection::checkStateForLocalDescription(RTCSessionDescription* localDescription)

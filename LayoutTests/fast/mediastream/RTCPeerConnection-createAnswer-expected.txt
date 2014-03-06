@@ -7,15 +7,10 @@ PASS pc.createAnswer(requestSucceeded1, requestFailed1); did not throw exception
 PASS createAnswer request succeeded.
 PASS pc.setRemoteDescription(sessionDescription, setDescriptionSucceeded, setDescriptionFailed); did not throw exception.
 PASS setRemoteDescription succeeded.
-PASS pc.createAnswer(requestSucceeded2, requestFailed2, {mandatory:{"succeed":false}}); did not throw exception.
+PASS pc.createAnswer(requestSucceeded2, requestFailed2, {}); threw exception Error: TypeMismatchError: DOM Exception 17.
 PASS createAnswer request failed.
-PASS errorReason.name is "IncompatibleConstraintsError"
-PASS pc.createAnswer(requestSucceeded3, requestFailed3); did not throw exception.
-PASS createAnswer request succeeded.
-PASS sessionDescription.type is "answer"
-PASS pc.createAnswer(requestSucceeded4, requestFailed3, {mandatory:{"succeed":true}}); did not throw exception.
-PASS createAnswer request succeeded.
-PASS sessionDescription.type is "answer"
+PASS errorReason.name is "Invalid createAnswer argument."
+PASS pc.createAnswer(requestSucceeded3, requestFailed1, {requestIdentity:"ifconfigured"}); did not throw exception.
 PASS successfullyParsed is true
 
 TEST COMPLETE

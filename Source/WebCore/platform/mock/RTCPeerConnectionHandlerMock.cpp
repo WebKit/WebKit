@@ -58,28 +58,15 @@ bool RTCPeerConnectionHandlerMock::initialize(PassRefPtr<RTCConfiguration>)
     return true;
 }
 
-void RTCPeerConnectionHandlerMock::createOffer(PassRefPtr<RTCSessionDescriptionRequest> request, PassRefPtr<MediaConstraints> constraints)
+void RTCPeerConnectionHandlerMock::createOffer(PassRefPtr<RTCSessionDescriptionRequest> request, PassRefPtr<RTCOfferOptions>)
 {
-    String succeedValue;
-    RefPtr<SessionRequestNotifier> notifier;
-    if (constraints->getMandatoryConstraintValue("succeed", succeedValue) && succeedValue == "false")
-        notifier = adoptRef(new SessionRequestNotifier(request, 0, RTCPeerConnectionHandler::incompatibleConstraintsErrorName()));
-    else
-        notifier = adoptRef(new SessionRequestNotifier(request, RTCSessionDescriptionDescriptor::create("offer", "local")));
-
+    RefPtr<SessionRequestNotifier> notifier = adoptRef(new SessionRequestNotifier(request, RTCSessionDescriptionDescriptor::create("offer", "local")));
     m_timerEvents.append(adoptRef(new TimerEvent(this, notifier)));
 }
 
-void RTCPeerConnectionHandlerMock::createAnswer(PassRefPtr<RTCSessionDescriptionRequest> request, PassRefPtr<MediaConstraints> constraints)
+void RTCPeerConnectionHandlerMock::createAnswer(PassRefPtr<RTCSessionDescriptionRequest> request, PassRefPtr<RTCOfferAnswerOptions>)
 {
-    RefPtr<SessionRequestNotifier> notifier;
-    // We can only create an answer if we have already had an offer and the remote session description is stored.
-    String succeedValue;
-    if (constraints->getMandatoryConstraintValue("succeed", succeedValue) && succeedValue == "false")
-        notifier = adoptRef(new SessionRequestNotifier(request, 0, RTCPeerConnectionHandler::incompatibleConstraintsErrorName()));
-    else
-        notifier = adoptRef(new SessionRequestNotifier(request, RTCSessionDescriptionDescriptor::create("answer", "local")));
-
+    RefPtr<SessionRequestNotifier> notifier = adoptRef(new SessionRequestNotifier(request, RTCSessionDescriptionDescriptor::create("answer", "local")));
     m_timerEvents.append(adoptRef(new TimerEvent(this, notifier)));
 }
 

@@ -9,6 +9,16 @@
 
             var pc = null;
 
+            function requestSucceeded5(sd)
+            {
+                testPassed('createAnswer request succeeded.');
+
+                sessionDescription = sd;
+                shouldBe('sessionDescription.type', '"answer"');
+
+                finishJSTest();
+            }
+
             function requestSucceeded4(sd)
             {
                 testPassed('createAnswer request succeeded.');
@@ -16,24 +26,18 @@
                 sessionDescription = sd;
                 shouldBe('sessionDescription.type', '"answer"');
 
-                finishJSTest();
-            }
-
-            function requestFailed3(reason)
-            {
-                testFailed('createAnswer request failed.');
-
-                finishJSTest();
+                shouldNotThrow('pc.createAnswer(requestSucceeded5, requestFailed1, {requestIdentity:"no"});');
             }
 
             function requestSucceeded3(sd)
             {
+                finishJSTest();
                 testPassed('createAnswer request succeeded.');
 
                 sessionDescription = sd;
                 shouldBe('sessionDescription.type', '"answer"');
 
-                shouldNotThrow('pc.createAnswer(requestSucceeded4, requestFailed3, {mandatory:{"succeed":true}});');
+                shouldNotThrow('pc.createAnswer(requestSucceeded4, requestFailed1, {requestIdentity:"yes"});');
             }
 
             function requestFailed2(reason)
@@ -41,9 +45,8 @@
                 testPassed('createAnswer request failed.');
 
                 errorReason = reason;
-                shouldBe('errorReason.name', '"IncompatibleConstraintsError"');
-
-                shouldNotThrow('pc.createAnswer(requestSucceeded3, requestFailed3);');
+                shouldBe('errorReason.name', '"Invalid createAnswer argument."');
+                shouldNotThrow('pc.createAnswer(requestSucceeded3, requestFailed1, {requestIdentity:"ifconfigured"});');
             }
 
             function requestSucceeded2()
@@ -78,7 +81,7 @@
             function setDescriptionSucceeded()
             {
                 testPassed('setRemoteDescription succeeded.');
-                shouldNotThrow('pc.createAnswer(requestSucceeded2, requestFailed2, {mandatory:{"succeed":false}});');
+                shouldThrow('pc.createAnswer(requestSucceeded2, requestFailed2, {});');
             }
 
             pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});

@@ -1,3 +1,30 @@
+2014-03-06  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [WebRTC] Updating createOffer and createAnswer methods to match WebRTC editor's draft of 01/27/2014
+        https://bugs.webkit.org/show_bug.cgi?id=129484
+
+        Reviewed by Eric Carlson.
+
+        According to the spec, createOffer and createAnswer will no longer have MediaConstraints as an argument,
+        instead they will have RTCOfferOptions and RTCOfferAnswerOptions, respectively.
+
+        Existing tests were updated.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/mediastream/RTCOfferAnswerOptions.cpp: Added.
+        * Modules/mediastream/RTCOfferAnswerOptions.h: Added.
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::createOffer):
+        (WebCore::RTCPeerConnection::createAnswer):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * platform/mediastream/RTCPeerConnectionHandler.h:
+        * platform/mock/RTCPeerConnectionHandlerMock.cpp:
+        (WebCore::RTCPeerConnectionHandlerMock::createOffer):
+        (WebCore::RTCPeerConnectionHandlerMock::createAnswer):
+        * platform/mock/RTCPeerConnectionHandlerMock.h:
+
 2014-03-06  Brian Burg  <bburg@apple.com>
 
         Web Replay: premature release() of PassRefPtr in InspectorReplayAgent

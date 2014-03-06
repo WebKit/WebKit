@@ -1,3 +1,18 @@
+2014-03-06  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [WebRTC] Updating createOffer and createAnswer methods to match WebRTC editor's draft of 01/27/2014
+        https://bugs.webkit.org/show_bug.cgi?id=129484
+
+        Reviewed by Eric Carlson.
+
+        According to the spec, createOffer and createAnswer will no longer have MediaConstraints as an argument,
+        instead they will have RTCOfferOptions and RTCOfferAnswerOptions, respectively.
+
+        * fast/mediastream/RTCPeerConnection-createAnswer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-createAnswer.html:
+        * fast/mediastream/RTCPeerConnection-createOffer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-createOffer.html:
+
 2014-03-05  Oliver Hunt  <oliver@apple.com>
 
         Support caching of custom setters

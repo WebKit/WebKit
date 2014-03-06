@@ -39,9 +39,9 @@
     EventTarget,
     InterfaceName=webkitRTCPeerConnection,
 ] interface RTCPeerConnection {
-    [RaisesException] void createOffer(RTCSessionDescriptionCallback successCallback, [Default=Undefined] optional RTCPeerConnectionErrorCallback failureCallback, optional Dictionary mediaConstraints);
+    [RaisesException] void createOffer(RTCSessionDescriptionCallback successCallback, [Default=Undefined] optional RTCPeerConnectionErrorCallback failureCallback, optional Dictionary offerOptions);
 
-    [RaisesException] void createAnswer(RTCSessionDescriptionCallback successCallback, [Default=Undefined] optional RTCPeerConnectionErrorCallback failureCallback, optional Dictionary mediaConstraints);
+    [RaisesException] void createAnswer(RTCSessionDescriptionCallback successCallback, [Default=Undefined] optional RTCPeerConnectionErrorCallback failureCallback, optional Dictionary answerOptions);
 
     [RaisesException] void setLocalDescription(RTCSessionDescription description, [Default=Undefined] optional VoidCallback successCallback, [Default=Undefined] optional RTCPeerConnectionErrorCallback failureCallback);
     [GetterRaisesException] readonly attribute RTCSessionDescription localDescription;

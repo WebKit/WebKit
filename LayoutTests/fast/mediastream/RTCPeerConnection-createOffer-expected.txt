@@ -3,13 +3,28 @@ Tests RTCPeerConnection createOffer.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS pc.createOffer(requestSucceeded1, requestFailed1, {mandatory:{"succeed":true}}); did not throw exception.
+PASS pc.createOffer(requestSucceeded1, requestFailed1); did not throw exception.
 PASS createOffer request succeeded.
 PASS sessionDescription.type is "offer"
-PASS pc.createOffer(requestSucceeded2, requestFailed2, {mandatory:{"succeed":false}}); did not throw exception.
+PASS pc.createOffer(requestSucceeded2, requestFailed2, {}); threw exception Error: TypeMismatchError: DOM Exception 17.
 PASS createOffer request failed.
-PASS errorReason.name is "IncompatibleConstraintsError"
-PASS pc.createOffer(requestSucceeded3, requestFailed1); did not throw exception.
+PASS errorReason.name is "Invalid createOffer argument."
+PASS pc.createOffer(requestSucceeded2, requestFailed3, {requestIdentity:"yes", offerToReceiveAudio:0}); threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS createOffer request failed.
+PASS errorReason.name is "Invalid createOffer argument."
+PASS pc.createOffer(requestSucceeded2, requestFailed4, {requestIdentity:"yes", offerToReceiveVideo:0}); threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS createOffer request failed.
+PASS errorReason.name is "Invalid createOffer argument."
+PASS pc.createOffer(requestSucceeded2, requestFailed5, {offerToReceiveVideo:0, offerToReceiveAudio:0}); threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS createOffer request failed.
+PASS errorReason.name is "Invalid createOffer argument."
+PASS pc.createOffer(requestSucceeded2, requestFailed6, {requestIdentity:"yes", offerToReceiveVideo:"", offerToReceiveAudio:0}); threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS createOffer request failed.
+PASS errorReason.name is "Invalid createOffer argument."
+PASS pc.createOffer(requestSucceeded2, requestFailed7, {requestIdentity:"yes", offerToReceiveVideo:0, offerToReceiveAudio:""}); threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS createOffer request failed.
+PASS errorReason.name is "Invalid createOffer argument."
+PASS pc.createOffer(requestSucceeded3, requestFailed1, {requestIdentity:"yes", offerToReceiveVideo:0, offerToReceiveAudio:0}); did not throw exception.
 PASS createOffer request succeeded.
 PASS sessionDescription.type is "offer"
 PASS successfullyParsed is true

@@ -1945,6 +1945,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediastream/RTCIceCandidate.h \
 	Source/WebCore/Modules/mediastream/RTCIceCandidateEvent.cpp \
 	Source/WebCore/Modules/mediastream/RTCIceCandidateEvent.h \
+	Source/WebCore/Modules/mediastream/RTCOfferAnswerOptions.cpp \
+	Source/WebCore/Modules/mediastream/RTCOfferAnswerOptions.h \
 	Source/WebCore/Modules/mediastream/RTCPeerConnection.cpp \
 	Source/WebCore/Modules/mediastream/RTCPeerConnection.h \
 	Source/WebCore/Modules/mediastream/RTCSessionDescription.cpp \
