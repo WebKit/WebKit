@@ -9,10 +9,12 @@ RUN(track2 = video.videoTracks[1])
 ** Checking initial state
 EXPECTED (track1.selected == 'true') OK
 EXPECTED (track2.selected == 'false') OK
+EXPECTED (video.videoTracks.selectedIndex == '0') OK
 
 ** If we select one track, the other should be deselected
 RUN(track2.selected = true)
 EXPECTED (track1.selected == 'false') OK
 EXPECTED (track2.selected == 'true') OK
+EXPECTED (video.videoTracks.selectedIndex == '1') OK
 END OF TEST
 

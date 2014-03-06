@@ -17,6 +17,7 @@
                 if (changedEventCount > 1) {
                     testExpected("track1.selected", false);
                     testExpected("track2.selected", true);
+                    testExpected("video.videoTracks.selectedIndex", 1);
 
                     endTest();
                 }
@@ -31,6 +32,7 @@
                 consoleWrite("<br><i>** Checking initial state</i>");
                 testExpected("track1.selected", true);
                 testExpected("track2.selected", false);
+                testExpected("video.videoTracks.selectedIndex", 0);
 
                 consoleWrite("<br><i>** If we select one track, the other should be deselected</i>");
                 video.videoTracks.addEventListener("change", trackChanged);

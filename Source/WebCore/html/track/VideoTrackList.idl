@@ -33,6 +33,7 @@
     readonly attribute unsigned long length;
     getter VideoTrack item(unsigned long index);
     VideoTrack getTrackById(DOMString id);
+    readonly attribute long selectedIndex;
 
     attribute EventListener onchange;
     attribute EventListener onaddtrack;

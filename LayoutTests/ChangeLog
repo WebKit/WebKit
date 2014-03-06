@@ -1,3 +1,13 @@
+2014-03-06  Brendan Long  <b.long@cablelabs.com>
+
+        Implement VideoTrackList.selectedIndex
+        https://bugs.webkit.org/show_bug.cgi?id=129770
+
+        Reviewed by Eric Carlson.
+
+        * media/track/video/video-track-mkv-theora-selected-expected.txt:
+        * media/track/video/video-track-mkv-theora-selected.html:
+
 2014-03-06  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         REGRESSION (r158254): Rubber-banding at Bing image search causes the toolbar to move up and away

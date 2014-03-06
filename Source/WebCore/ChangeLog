@@ -1,3 +1,14 @@
+2014-03-06  Brendan Long  <b.long@cablelabs.com>
+
+        Implement VideoTrackList.selectedIndex
+        https://bugs.webkit.org/show_bug.cgi?id=129770
+
+        Reviewed by Eric Carlson.
+
+        Tests: media/track/video/video-track-mkv-theora-selected.html
+
+        * html/track/VideoTrackList.idl:
+
 2014-03-06  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK][CMake] Fix the GTK+ CMake build
