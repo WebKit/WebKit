@@ -819,7 +819,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     if (!m_isMainFrameRenderViewLayer) {
         // For non-root layers, background is always painted by the primary graphics layer.
         ASSERT(!m_backgroundLayer);
-        bool hadSubpixelRounding = !m_devicePixelFractionFromRenderer.isEmpty();
+        bool hadSubpixelRounding = !m_devicePixelFractionFromRenderer.isZero();
         m_graphicsLayer->setContentsOpaque(!hadSubpixelRounding && m_owningLayer.backgroundIsKnownToBeOpaqueInRect(localCompositingBounds));
     }
 

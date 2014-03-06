@@ -1,3 +1,16 @@
+2014-03-06  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Setting content to opaque on m_graphicsLayer depends on subpixel accumulation.
+        https://bugs.webkit.org/show_bug.cgi?id=129776
+
+        Reviewed by Simon Fraser.
+
+        isEmpty() returns true when any of the dimensions is <= 0. Subpixel accumulation could happen
+        in one direction only. Use isZero() instead().
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+
 2014-03-06  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         REGRESSION (r158254): Rubber-banding at Bing image search causes the toolbar to move up and away
