@@ -1,3 +1,16 @@
+2014-03-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Use the LLVM disassembler on ARM64 if we are enabling the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=129785
+
+        Reviewed by Geoffrey Garen.
+        
+        Our disassembler can't handle some of the code sequences that LLVM emits. LLVM's disassembler
+        is strictly more capable at this point. Use it if it's available.
+
+        * disassembler/ARM64Disassembler.cpp:
+        (JSC::tryToDisassemble):
+
 2014-03-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Reduce RWI message frequency

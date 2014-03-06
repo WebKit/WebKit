@@ -1,3 +1,12 @@
+2014-03-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Use the LLVM disassembler on ARM64 if we are enabling the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=129785
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/Platform.h:
+
 2014-03-05  peavo@outlook.com  <peavo@outlook.com>
 
         [Win32][LLINT] Crash when running JSC stress tests.
