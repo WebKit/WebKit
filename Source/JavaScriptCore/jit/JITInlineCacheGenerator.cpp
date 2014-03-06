@@ -49,12 +49,12 @@ JITInlineCacheGenerator::JITInlineCacheGenerator(CodeBlock* codeBlock, CodeOrigi
 
 JITByIdGenerator::JITByIdGenerator(
     CodeBlock* codeBlock, CodeOrigin codeOrigin, const RegisterSet& usedRegisters,
-    JSValueRegs base, JSValueRegs value, SpillRegistersMode spillMode)
+    JSValueRegs base, JSValueRegs value, bool registersFlushed)
     : JITInlineCacheGenerator(codeBlock, codeOrigin)
     , m_base(base)
     , m_value(value)
 {
-    m_stubInfo->patch.spillMode = spillMode;
+    m_stubInfo->patch.registersFlushed = registersFlushed;
     m_stubInfo->patch.usedRegisters = usedRegisters;
     
     // This is a convenience - in cases where the only registers you're using are base/value,
@@ -129,9 +129,9 @@ void JITGetByIdGenerator::generateFastPath(MacroAssembler& jit)
 
 JITPutByIdGenerator::JITPutByIdGenerator(
     CodeBlock* codeBlock, CodeOrigin codeOrigin, const RegisterSet& usedRegisters,
-    JSValueRegs base, JSValueRegs value, GPRReg scratch, SpillRegistersMode spillMode,
+    JSValueRegs base, JSValueRegs value, GPRReg scratch, bool registersFlushed,
     ECMAMode ecmaMode, PutKind putKind)
-    : JITByIdGenerator(codeBlock, codeOrigin, usedRegisters, base, value, spillMode)
+    : JITByIdGenerator(codeBlock, codeOrigin, usedRegisters, base, value, registersFlushed)
     , m_scratch(scratch)
     , m_ecmaMode(ecmaMode)
     , m_putKind(putKind)

@@ -1737,7 +1737,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case PutById:
-    case PutByIdFlush:
     case PutByIdDirect:
         node->setCanExit(true);
         if (Structure* structure = forNode(node->child1()).bestProvenStructure()) {

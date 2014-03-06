@@ -180,7 +180,7 @@ private:
         int destinationOperand, SpeculatedType, Node* base, unsigned identifierNumber,
         const GetByIdStatus&);
     void emitPutById(
-        Node* base, unsigned identifierNumber, Node* value,  const PutByIdStatus&, bool isDirect);
+        Node* base, unsigned identifierNumber, Node* value, bool isDirect);
     void handlePutById(
         Node* base, unsigned identifierNumber, Node* value, const PutByIdStatus&,
         bool isDirect);
@@ -1943,12 +1943,12 @@ void ByteCodeParser::handleGetById(
 }
 
 void ByteCodeParser::emitPutById(
-    Node* base, unsigned identifierNumber, Node* value, const PutByIdStatus& putByIdStatus, bool isDirect)
+    Node* base, unsigned identifierNumber, Node* value, bool isDirect)
 {
     if (isDirect)
         addToGraph(PutByIdDirect, OpInfo(identifierNumber), base, value);
     else
-        addToGraph(putByIdStatus.makesCalls() ? PutByIdFlush : PutById, OpInfo(identifierNumber), base, value);
+        addToGraph(PutById, OpInfo(identifierNumber), base, value);
 }
 
 void ByteCodeParser::handlePutById(
@@ -1958,13 +1958,13 @@ void ByteCodeParser::handlePutById(
     if (!putByIdStatus.isSimple()) {
         if (!putByIdStatus.isSet())
             addToGraph(ForceOSRExit);
-        emitPutById(base, identifierNumber, value, putByIdStatus, isDirect);
+        emitPutById(base, identifierNumber, value, isDirect);
         return;
     }
     
     if (putByIdStatus.numVariants() > 1) {
         if (!isFTL(m_graph.m_plan.mode)) {
-            emitPutById(base, identifierNumber, value, putByIdStatus, isDirect);
+            emitPutById(base, identifierNumber, value, isDirect);
             return;
         }
         
@@ -2001,13 +2001,9 @@ void ByteCodeParser::handlePutById(
         return;
     }
     
-    if (variant.kind() != PutByIdVariant::Transition) {
-        emitPutById(base, identifierNumber, value, putByIdStatus, isDirect);
-        return;
-    }
-
+    ASSERT(variant.kind() == PutByIdVariant::Transition);
     if (variant.structureChain() && !variant.structureChain()->isStillValid()) {
-        emitPutById(base, identifierNumber, value, putByIdStatus, isDirect);
+        emitPutById(base, identifierNumber, value, isDirect);
         return;
     }
     

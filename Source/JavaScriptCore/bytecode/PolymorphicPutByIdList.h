@@ -32,7 +32,6 @@
 #include "MacroAssembler.h"
 #include "Opcode.h"
 #include "PutKind.h"
-#include "PutPropertySlot.h"
 #include "Structure.h"
 #include <wtf/Vector.h>
 
@@ -46,8 +45,7 @@ public:
     enum AccessType {
         Invalid,
         Transition,
-        Replace,
-        CustomSetter
+        Replace
     };
     
     PutByIdAccess()
@@ -68,11 +66,10 @@ public:
         result.m_oldStructure.set(vm, owner, oldStructure);
         result.m_newStructure.set(vm, owner, newStructure);
         result.m_chain.set(vm, owner, chain);
-        result.m_customSetter = 0;
         result.m_stubRoutine = stubRoutine;
         return result;
     }
-
+    
     static PutByIdAccess replace(
         VM& vm,
         JSCell* owner,
@@ -82,26 +79,6 @@ public:
         PutByIdAccess result;
         result.m_type = Replace;
         result.m_oldStructure.set(vm, owner, structure);
-        result.m_customSetter = 0;
-        result.m_stubRoutine = stubRoutine;
-        return result;
-    }
-
-
-    static PutByIdAccess customSetter(
-        VM& vm,
-        JSCell* owner,
-        Structure* structure,
-        StructureChain* chain,
-        PutPropertySlot::PutValueFunc customSetter,
-        PassRefPtr<JITStubRoutine> stubRoutine)
-    {
-        PutByIdAccess result;
-        result.m_oldStructure.set(vm, owner, structure);
-        result.m_type = CustomSetter;
-        if (chain)
-            result.m_chain.set(vm, owner, chain);
-        result.m_customSetter = customSetter;
         result.m_stubRoutine = stubRoutine;
         return result;
     }
@@ -115,13 +92,12 @@ public:
     
     bool isTransition() const { return m_type == Transition; }
     bool isReplace() const { return m_type == Replace; }
-    bool isCustom() const { return m_type == CustomSetter; }
     
     Structure* oldStructure() const
     {
         // Using this instead of isSet() to make this assertion robust against the possibility
         // of additional access types being added.
-        ASSERT(isTransition() || isReplace() || isCustom());
+        ASSERT(isTransition() || isReplace());
         
         return m_oldStructure.get();
     }
@@ -140,18 +116,16 @@ public:
     
     StructureChain* chain() const
     {
-        ASSERT(isTransition() || isCustom());
+        ASSERT(isTransition());
         return m_chain.get();
     }
     
     JITStubRoutine* stubRoutine() const
     {
-        ASSERT(isTransition() || isReplace() || isCustom());
+        ASSERT(isTransition() || isReplace());
         return m_stubRoutine.get();
     }
-
-    PutPropertySlot::PutValueFunc customSetter() const { ASSERT(isCustom()); return m_customSetter; }
-
+    
     bool visitWeak() const;
     
 private:
@@ -161,7 +135,6 @@ private:
     WriteBarrier<Structure> m_oldStructure;
     WriteBarrier<Structure> m_newStructure;
     WriteBarrier<StructureChain> m_chain;
-    PutPropertySlot::PutValueFunc m_customSetter;
     RefPtr<JITStubRoutine> m_stubRoutine;
 };
 

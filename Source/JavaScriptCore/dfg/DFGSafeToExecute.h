@@ -155,7 +155,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case GetById:
     case GetByIdFlush:
     case PutById:
-    case PutByIdFlush:
     case PutByIdDirect:
     case CheckStructure:
     case CheckExecutable:

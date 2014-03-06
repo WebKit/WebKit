@@ -96,6 +96,8 @@ inline bool enableInt52()
 #endif
 }
 
+enum SpillRegistersMode { NeedToSpill, DontSpill };
+
 enum NoResultTag { NoResult };
 
 enum OptimizationFixpointState { BeforeFixpoint, FixpointNotConverged, FixpointConverged };

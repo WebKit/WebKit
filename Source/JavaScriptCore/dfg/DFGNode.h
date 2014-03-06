@@ -654,7 +654,6 @@ struct Node {
         case GetById:
         case GetByIdFlush:
         case PutById:
-        case PutByIdFlush:
         case PutByIdDirect:
             return true;
         default:

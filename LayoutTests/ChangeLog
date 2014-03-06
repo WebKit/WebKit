@@ -1,3 +1,20 @@
+2014-03-05  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r165141, r165157, and r165158.
+        http://trac.webkit.org/changeset/165141
+        http://trac.webkit.org/changeset/165157
+        http://trac.webkit.org/changeset/165158
+        https://bugs.webkit.org/show_bug.cgi?id=129772
+
+        "broke ftl" (Requested by olliej_ on #webkit).
+
+        * js/regress/assign-custom-setter-expected.txt: Removed.
+        * js/regress/assign-custom-setter-polymorphic-expected.txt: Removed.
+        * js/regress/assign-custom-setter-polymorphic.html: Removed.
+        * js/regress/assign-custom-setter.html: Removed.
+        * js/regress/script-tests/assign-custom-setter-polymorphic.js: Removed.
+        * js/regress/script-tests/assign-custom-setter.js: Removed.
+
 2014-03-05  Mark Lam  <mark.lam@apple.com>
 
         llint_slow_path_check_has_instance() should not adjust PC before accessing operands.

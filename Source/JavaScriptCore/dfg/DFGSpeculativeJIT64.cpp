@@ -37,7 +37,6 @@
 #include "Debugger.h"
 #include "JSCInlines.h"
 #include "ObjectPrototype.h"
-#include "SpillRegistersMode.h"
 
 namespace JSC { namespace DFG {
 
@@ -192,7 +191,7 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
 {
     JITGetByIdGenerator gen(
         m_jit.codeBlock(), codeOrigin, usedRegisters(), JSValueRegs(baseGPR),
-        JSValueRegs(resultGPR), spillMode);
+        JSValueRegs(resultGPR), spillMode != NeedToSpill);
     gen.generateFastPath(m_jit);
     
     JITCompiler::JumpList slowCases;
@@ -208,12 +207,11 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
     addSlowPathGenerator(slowPath.release());
 }
 
-void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
+void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget)
 {
     JITPutByIdGenerator gen(
         m_jit.codeBlock(), codeOrigin, usedRegisters(), JSValueRegs(baseGPR),
-        JSValueRegs(valueGPR), scratchGPR, spillMode, m_jit.ecmaModeFor(codeOrigin), putKind);
-
+        JSValueRegs(valueGPR), scratchGPR, false, m_jit.ecmaModeFor(codeOrigin), putKind);
     gen.generateFastPath(m_jit);
     
     JITCompiler::JumpList slowCases;
@@ -4246,22 +4244,6 @@ void SpeculativeJIT::compile(Node* node)
         StorageAccessData& storageAccessData = m_jit.graph().m_storageAccessData[node->storageAccessDataIndex()];
         
         m_jit.store64(valueGPR, JITCompiler::Address(storageGPR, offsetRelativeToBase(storageAccessData.offset)));
-
-        noResult(node);
-        break;
-    }
-
-    case PutByIdFlush: {
-        SpeculateCellOperand base(this, node->child1());
-        JSValueOperand value(this, node->child2());
-        GPRTemporary scratch(this);
-
-        GPRReg baseGPR = base.gpr();
-        GPRReg valueGPR = value.gpr();
-        GPRReg scratchGPR = scratch.gpr();
-        flushRegisters();
-
-        cachedPutById(node->origin.semantic, baseGPR, valueGPR, scratchGPR, node->identifierNumber(), NotDirect, MacroAssembler::Jump(), DontSpill);
 
         noResult(node);
         break;

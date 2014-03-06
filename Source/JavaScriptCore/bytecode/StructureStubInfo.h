@@ -33,7 +33,6 @@
 #include "Opcode.h"
 #include "PolymorphicAccessStructureList.h"
 #include "RegisterSet.h"
-#include "SpillRegistersMode.h"
 #include "Structure.h"
 #include "StructureStubClearingWatchpoint.h"
 #include <wtf/OwnPtr.h>
@@ -194,7 +193,7 @@ struct StructureStubInfo {
     CodeOrigin codeOrigin;
 
     struct {
-        SpillRegistersMode spillMode : 8;
+        int8_t registersFlushed;
         int8_t baseGPR;
 #if USE(JSVALUE32_64)
         int8_t valueTagGPR;
