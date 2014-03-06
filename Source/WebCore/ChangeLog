@@ -1,3 +1,22 @@
+2014-03-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move to using std::unique_ptr for KeyboardEvent, ScriptExecutionContext::PendingException
+        https://bugs.webkit.org/show_bug.cgi?id=129061
+
+        Reviewed by Eric Carlson.
+
+        Replace uses of OwnPtr and PassOwnPtr for KeyboardEvent and ScriptExecutionContext::PendingException
+        classes with std::unique_ptr. ScriptExecutionContext::Task objects are still handled through OwnPtr,
+        but this will be addressed later.
+
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        * dom/KeyboardEvent.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::reportException):
+        * dom/ScriptExecutionContext.h:
+        * dom/ScriptRunner.h: Remove an unnecessary PassOwnPtr header inclusion.
+
 2014-03-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r165175.

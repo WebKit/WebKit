@@ -299,8 +299,8 @@ void ScriptExecutionContext::reportException(const String& errorMessage, int lin
 {
     if (m_inDispatchErrorEvent) {
         if (!m_pendingExceptions)
-            m_pendingExceptions = adoptPtr(new Vector<OwnPtr<PendingException>>());
-        m_pendingExceptions->append(adoptPtr(new PendingException(errorMessage, lineNumber, columnNumber, sourceURL, callStack)));
+            m_pendingExceptions = std::make_unique<Vector<std::unique_ptr<PendingException>>>();
+        m_pendingExceptions->append(std::make_unique<PendingException>(errorMessage, lineNumber, columnNumber, sourceURL, callStack));
         return;
     }
 
@@ -311,11 +311,9 @@ void ScriptExecutionContext::reportException(const String& errorMessage, int lin
     if (!m_pendingExceptions)
         return;
 
-    for (size_t i = 0; i < m_pendingExceptions->size(); i++) {
-        PendingException* e = m_pendingExceptions->at(i).get();
-        logExceptionToConsole(e->m_errorMessage, e->m_sourceURL, e->m_lineNumber, e->m_columnNumber, e->m_callStack);
-    }
-    m_pendingExceptions.clear();
+    std::unique_ptr<Vector<std::unique_ptr<PendingException>>> pendingExceptions = std::move(m_pendingExceptions);
+    for (auto& exception : *pendingExceptions)
+        logExceptionToConsole(exception->m_errorMessage, exception->m_sourceURL, exception->m_lineNumber, exception->m_columnNumber, exception->m_callStack);
 }
 
 void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
