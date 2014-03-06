@@ -87,11 +87,6 @@ void redirectedWindowDamagedCallback(void* data);
 #endif
 
 struct _WebKitWebViewBasePrivate {
-    ~_WebKitWebViewBasePrivate()
-    {
-        pageProxy->close();
-    }
-
     WebKitWebViewChildrenMap children;
     OwnPtr<PageClientImpl> pageClient;
     RefPtr<WebPageProxy> pageProxy;
@@ -391,7 +386,9 @@ void webkitWebViewBaseChildMoveResize(WebKitWebViewBase* webView, GtkWidget* chi
 
 static void webkitWebViewBaseDispose(GObject* gobject)
 {
-    webkitWebViewBaseSetToplevelOnScreenWindow(WEBKIT_WEB_VIEW_BASE(gobject), 0);
+    WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(gobject);
+    webkitWebViewBaseSetToplevelOnScreenWindow(webView, nullptr);
+    webView->priv->pageProxy->close();
     G_OBJECT_CLASS(webkit_web_view_base_parent_class)->dispose(gobject);
 }
 
