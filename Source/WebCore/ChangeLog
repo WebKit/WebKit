@@ -1,3 +1,14 @@
+2014-03-06  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK][CMake] Fix the GTK+ CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=129801
+
+        Reviewed by Martin Robinson.
+
+        Include missing files for CMake build
+
+        * CMakeLists.txt: Add a missing references to DOMURLMediaStream
+
 2014-03-06  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Setting content to opaque on m_graphicsLayer depends on subpixel accumulation.
