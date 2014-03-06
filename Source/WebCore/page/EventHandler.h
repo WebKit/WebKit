@@ -341,8 +341,10 @@ private:
     static bool isKeyboardOptionTab(KeyboardEvent*);
     static bool eventInvertsTabsToLinksClientCallResult(KeyboardEvent*);
 
+#if !ENABLE(IOS_TOUCH_EVENTS)
     void fakeMouseMoveEventTimerFired(Timer<EventHandler>&);
     void cancelFakeMouseMoveEvent();
+#endif
 
     bool isInsideScrollbar(const IntPoint&) const;
 
@@ -467,7 +469,9 @@ private:
     bool m_mouseDownMayStartAutoscroll;
     bool m_mouseDownWasInSubframe;
 
+#if !ENABLE(IOS_TOUCH_EVENTS)
     Timer<EventHandler> m_fakeMouseMoveEventTimer;
+#endif
 
     bool m_svgPan;
     RefPtr<SVGElementInstance> m_instanceUnderMouse;

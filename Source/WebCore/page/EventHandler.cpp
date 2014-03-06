@@ -144,12 +144,14 @@ const int CompositionEventKeyCode = 229;
 
 using namespace SVGNames;
 
+#if !ENABLE(IOS_TOUCH_EVENTS)
 // The amount of time to wait before sending a fake mouse event, triggered
 // during a scroll. The short interval is used if the content responds to the mouse events
 // in fakeMouseMoveDurationThreshold or less, otherwise the long interval is used.
 const double fakeMouseMoveDurationThreshold = 0.01;
 const double fakeMouseMoveShortInterval = 0.1;
 const double fakeMouseMoveLongInterval = 0.25;
+#endif
 
 #if ENABLE(CURSOR_SUPPORT)
 // The amount of time to wait for a cursor update on style and layout changes
@@ -336,7 +338,9 @@ EventHandler::EventHandler(Frame& frame)
     , m_autoscrollController(adoptPtr(new AutoscrollController))
     , m_mouseDownMayStartAutoscroll(false)
     , m_mouseDownWasInSubframe(false)
+#if !ENABLE(IOS_TOUCH_EVENTS)
     , m_fakeMouseMoveEventTimer(this, &EventHandler::fakeMouseMoveEventTimerFired)
+#endif
     , m_svgPan(false)
     , m_resizeLayer(0)
     , m_eventHandlerWillResetCapturingMouseEventsElement(nullptr)
@@ -379,7 +383,9 @@ EventHandler::EventHandler(Frame& frame)
 
 EventHandler::~EventHandler()
 {
+#if !ENABLE(IOS_TOUCH_EVENTS)
     ASSERT(!m_fakeMouseMoveEventTimer.isActive());
+#endif
 #if ENABLE(CURSOR_VISIBILITY)
     ASSERT(!m_autoHideCursorTimer.isActive());
 #endif
@@ -399,7 +405,9 @@ void EventHandler::clear()
 #if ENABLE(CURSOR_SUPPORT)
     m_cursorUpdateTimer.stop();
 #endif
+#if !ENABLE(IOS_TOUCH_EVENTS)
     m_fakeMouseMoveEventTimer.stop();
+#endif
 #if ENABLE(CURSOR_VISIBILITY)
     cancelAutoHideCursorTimer();
 #endif
@@ -680,7 +688,9 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
     dragState().source = 0;
 #endif
 
+#if !ENABLE(IOS_TOUCH_EVENTS)
     cancelFakeMouseMoveEvent();
+#endif
 
     m_frame.document()->updateLayoutIgnorePendingStylesheets();
 
@@ -1486,10 +1496,12 @@ void EventHandler::startAutoHideCursorTimer()
 
     m_autoHideCursorTimer.startOneShot(page->settings().timeWithoutMouseMovementBeforeHidingControls());
 
+#if !ENABLE(IOS_TOUCH_EVENTS)
     // The fake mouse move event screws up the auto-hide feature (by resetting the auto-hide timer)
     // so cancel any pending fake mouse moves.
     if (m_fakeMouseMoveEventTimer.isActive())
         m_fakeMouseMoveEventTimer.stop();
+#endif
 }
 
 void EventHandler::cancelAutoHideCursorTimer()
@@ -1535,8 +1547,10 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 
     // FIXME (bug 68185): this call should be made at another abstraction layer
     m_frame.loader().resetMultipleFormSubmissionProtection();
-    
+
+#if !ENABLE(IOS_TOUCH_EVENTS)
     cancelFakeMouseMoveEvent();
+#endif
     m_mousePressed = true;
     m_capturesDragging = true;
     setLastKnownMousePosition(mouseEvent);
@@ -1767,7 +1781,9 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
     m_cursorUpdateTimer.stop();
 #endif
 
+#if !ENABLE(IOS_TOUCH_EVENTS)
     cancelFakeMouseMoveEvent();
+#endif
 
     if (m_svgPan) {
         toSVGDocument(m_frame.document())->updatePan(m_frame.view()->windowToContents(m_lastKnownMousePosition));
@@ -2748,6 +2764,7 @@ void EventHandler::scheduleCursorUpdate()
 
 void EventHandler::dispatchFakeMouseMoveEventSoon()
 {
+#if !ENABLE(IOS_TOUCH_EVENTS)
     if (m_mousePressed)
         return;
 
@@ -2769,10 +2786,14 @@ void EventHandler::dispatchFakeMouseMoveEventSoon()
         if (!m_fakeMouseMoveEventTimer.isActive())
             m_fakeMouseMoveEventTimer.startOneShot(fakeMouseMoveShortInterval);
     }
+#endif
 }
 
 void EventHandler::dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad& quad)
 {
+#if ENABLE(IOS_TOUCH_EVENTS)
+    UNUSED_PARAM(quad);
+#else
     FrameView* view = m_frame.view();
     if (!view)
         return;
@@ -2781,8 +2802,10 @@ void EventHandler::dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad& quad)
         return;
 
     dispatchFakeMouseMoveEventSoon();
+#endif
 }
 
+#if !ENABLE(IOS_TOUCH_EVENTS)
 void EventHandler::cancelFakeMouseMoveEvent()
 {
     m_fakeMouseMoveEventTimer.stop();
@@ -2811,6 +2834,7 @@ void EventHandler::fakeMouseMoveEventTimerFired(Timer<EventHandler>& timer)
     PlatformMouseEvent fakeMouseMoveEvent(m_lastKnownMousePosition, m_lastKnownMouseGlobalPosition, NoButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey, metaKey, currentTime());
     mouseMoved(fakeMouseMoveEvent);
 }
+#endif // !ENABLE(IOS_TOUCH_EVENTS)
 
 void EventHandler::setResizingFrameSet(HTMLFrameSetElement* frameSet)
 {

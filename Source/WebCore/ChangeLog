@@ -1,3 +1,24 @@
+2014-03-06  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS] Do not compile fake mouse event handling when iOS Touch Events are enabled
+        https://bugs.webkit.org/show_bug.cgi?id=129725
+
+        Reviewed by Dan Bernstein.
+
+        Bug <rdar://problem/16218636>. The code is #ifdef'ed out to avoid setting up useless objects
+        and to avoid future mistake.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::~EventHandler):
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::startAutoHideCursorTimer):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::dispatchFakeMouseMoveEventSoon):
+        (WebCore::EventHandler::dispatchFakeMouseMoveEventSoonInQuad):
+        * page/EventHandler.h:
+
 2014-03-06  Pratik Solanki  <psolanki@apple.com>
 
         Unreviewed. iOS build fix after r165199.
