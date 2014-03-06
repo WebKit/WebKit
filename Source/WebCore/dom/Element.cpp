@@ -784,17 +784,7 @@ int Element::clientHeight()
 
 int Element::scrollLeft()
 {
-    if (document().documentElement() == this && document().inQuirksMode())
-        return 0;
-
     document().updateLayoutIgnorePendingStylesheets();
-
-    if (!document().hasLivingRenderTree())
-        return 0;
-    RenderView& renderView = *document().renderView();
-
-    if (document().documentElement() == this)
-        return adjustForAbsoluteZoom(renderView.frameView().scrollX(), renderView);
 
     if (RenderBox* rend = renderBox())
         return adjustForAbsoluteZoom(rend->scrollLeft(), *rend);
@@ -803,17 +793,7 @@ int Element::scrollLeft()
 
 int Element::scrollTop()
 {
-    if (document().documentElement() == this && document().inQuirksMode())
-        return 0;
-
     document().updateLayoutIgnorePendingStylesheets();
-
-    if (!document().hasLivingRenderTree())
-        return 0;
-    RenderView& renderView = *document().renderView();
-
-    if (document().documentElement() == this)
-        return adjustForAbsoluteZoom(renderView.frameView().scrollY(), renderView);
 
     if (RenderBox* rend = renderBox())
         return adjustForAbsoluteZoom(rend->scrollTop(), *rend);
@@ -822,20 +802,7 @@ int Element::scrollTop()
 
 void Element::setScrollLeft(int newLeft)
 {
-    if (document().documentElement() == this && document().inQuirksMode())
-        return;
-
     document().updateLayoutIgnorePendingStylesheets();
-
-    if (!document().hasLivingRenderTree())
-        return;
-
-    if (document().documentElement() == this) {
-        RenderView& renderView = *document().renderView();
-        int zoom = renderView.style().effectiveZoom();
-        renderView.frameView().setScrollPosition(IntPoint(newLeft * zoom, renderView.frameView().scrollY() * zoom));
-        return;
-    }
 
     if (RenderBox* rend = renderBox())
         rend->setScrollLeft(static_cast<int>(newLeft * rend->style().effectiveZoom()));
@@ -843,20 +810,7 @@ void Element::setScrollLeft(int newLeft)
 
 void Element::setScrollTop(int newTop)
 {
-    if (document().documentElement() == this && document().inQuirksMode())
-        return;
-
     document().updateLayoutIgnorePendingStylesheets();
-
-    if (!document().hasLivingRenderTree())
-        return;
-
-    if (document().documentElement() == this) {
-        RenderView& renderView = *document().renderView();
-        int zoom = renderView.style().effectiveZoom();
-        renderView.frameView().setScrollPosition(IntPoint(renderView.frameView().scrollX() * zoom, newTop * zoom));
-        return;
-    }
 
     if (RenderBox* rend = renderBox())
         rend->setScrollTop(static_cast<int>(newTop * rend->style().effectiveZoom()));

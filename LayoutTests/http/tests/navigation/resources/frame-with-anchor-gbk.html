@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=gbk"/>
@@ -11,7 +12,7 @@
       setTimeout(function() {
           // Make sure that the body is taller than the viewport (i.e. scrolling is
           // required).
-          shouldBeTrue('document.body.offsetHeight > window.innerHeight');
+          shouldBeTrue('document.body.offsetHeight > document.documentElement.clientHeight');
           
           // We should be scrolled at least a little bit
           shouldBeTrue('document.body.scrollTop > 0');

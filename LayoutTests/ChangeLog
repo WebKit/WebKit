@@ -1,3 +1,31 @@
+2014-03-06  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        REGRESSION (r158254): Rubber-banding at Bing image search causes the toolbar to move up and away
+        https://bugs.webkit.org/show_bug.cgi?id=128873
+
+        Reviewed by Antonio Gomes.
+
+        * fast/css/zoom-body-scroll-expected.txt:
+        * fast/css/zoom-body-scroll.html:
+        * fast/dom/Element/documentElement-scrollLeft-expected.txt:
+        * fast/dom/Element/documentElement-scrollLeft.html:
+        * fast/dom/Element/documentElement-scrollTop-expected.txt:
+        * fast/dom/Element/documentElement-scrollTop.html:
+        * fast/dom/Element/scrollLeft-expected.txt:
+        * fast/dom/Element/scrollLeft.html:
+        * fast/dom/Element/scrollTop-expected.txt:
+        * fast/dom/Element/scrollTop.html:
+        * fast/events/mouse-cursor.html:
+        * fast/multicol/scrolling-overflow.html:
+        * http/tests/navigation/anchor-frames-expected.txt:
+        * http/tests/navigation/anchor-frames-gbk-expected.txt:
+        * http/tests/navigation/resources/frame-with-anchor-gbk.html:
+        * http/tests/navigation/resources/frame-with-anchor-same-origin.html:
+        * http/tests/navigation/resources/frame-with-anchor.html:
+        * platform/mac-wk2/tiled-drawing/resources/scroll-and-load-page.html:
+        * platform/mac-wk2/tiled-drawing/tiled-drawing-scroll-position-page-cache-restoration.html:
+        Reverting changes as it caused regression.
+
 2014-03-05  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed EFL gardening.

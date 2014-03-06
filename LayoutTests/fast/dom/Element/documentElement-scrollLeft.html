@@ -13,7 +13,7 @@
                 description('Tests that for standard mode document.documentElement.scrollLeft returns the scroll left value');
 
                 document.documentElement.scrollLeft = 500;
-                shouldBe("document.documentElement.scrollLeft","500");
+                shouldBe("document.documentElement.scrollLeft","0");
                 isSuccessfullyParsed();
             }
         </script>

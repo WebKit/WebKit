@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS window.pageXOffset is 500
 PASS document.body.scrollLeft is 500
-PASS document.documentElement.scrollLeft is 500
+PASS document.documentElement.scrollLeft is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

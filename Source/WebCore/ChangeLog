@@ -1,3 +1,21 @@
+2014-03-06  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        REGRESSION (r158254): Rubber-banding at Bing image search causes the toolbar to move up and away
+        https://bugs.webkit.org/show_bug.cgi?id=128873
+
+        Reviewed by Antonio Gomes.
+
+        This regression is caused by  http://trac.webkit.org/changeset/154614 
+        and http://trac.webkit.org/changeset/156605. So reverting the changes
+        to make it Web compatible as earlier.
+
+        * dom/Element.cpp:
+        (WebCore::Element::scrollLeft):
+        (WebCore::Element::scrollTop):
+        (WebCore::Element::setScrollLeft):
+        (WebCore::Element::setScrollTop):
+        Reverting changes as it caused regression.
+
 2014-03-06  Zan Dobersek  <zdobersek@igalia.com>
 
         Move Source/WebCore/html/canvas/ code to std::unique_ptr

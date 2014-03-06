@@ -13,7 +13,7 @@
                 description('Tests that for standard mode document.documentElement.scrollTop returns the scroll top value');
 
                 document.documentElement.scrollTop = 500;
-                shouldBe("document.documentElement.scrollTop","500");
+                shouldBe("document.documentElement.scrollTop","0");
                 isSuccessfullyParsed();
             }
         </script>
