@@ -157,12 +157,12 @@ SOFT_LINK_CONSTANT(UIFoundation, NSCocoaVersionDocumentAttribute, NSString *)
 #define NSTextAlignmentRight        NSRightTextAlignment
 #define NSTextAlignmentCenter       NSCenterTextAlignment
 #define NSTextAlignmentJustified    NSJustifiedTextAlignment
-#endif
 
 // We don't softlink NSSuperscriptAttributeName because UIFoundation stopped exporting it.
 // This attribute is being deprecated at the API level, but internally UIFoundation
 // will continue to support it.
 static NSString *const NSSuperscriptAttributeName = @"NSSuperscript";
+#endif
 
 using namespace WebCore;
 using namespace HTMLNames;
