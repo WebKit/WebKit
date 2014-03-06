@@ -1,3 +1,30 @@
+2014-03-05  David Kilzer  <ddkilzer@apple.com>
+
+        Fix crash in CompositeEditCommand::cloneParagraphUnderNewElement()
+        <http://webkit.org/b/129751>
+        <rdar://problem/16237965>
+
+        Reviewed by Jon Honeycutt.
+
+        Merged from Blink (patch by Yuta Kitamura):
+        https://src.chromium.org/viewvc/blink?revision=168160&view=revision
+        http://crbug.com/345005
+
+            The root cause is CompositeEditCommand::moveParagraphWithClones() passing
+            two positions |start| and |end| which do not follow the document order,
+            i.e. in some situations |start| is located after |end| because of
+            the difference in affinity.
+
+            This patch fixes this crash by normalizing |end| to |start| in such situations.
+            It also adds an ASSERT that checks the relationship between |start| and |end|.
+
+        Test: editing/execCommand/format-block-crash.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::cloneParagraphUnderNewElement):
+        (WebCore::CompositeEditCommand::moveParagraphWithClones):
+        * editing/CompositeEditCommand.h:
+
 2014-03-05  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Scrollable regions
