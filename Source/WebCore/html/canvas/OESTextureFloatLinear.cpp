@@ -44,11 +44,6 @@ WebGLExtension::ExtensionName OESTextureFloatLinear::getName() const
     return OESTextureFloatLinearName;
 }
 
-OwnPtr<OESTextureFloatLinear> OESTextureFloatLinear::create(WebGLRenderingContext* context)
-{
-    return adoptPtr(new OESTextureFloatLinear(context));
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

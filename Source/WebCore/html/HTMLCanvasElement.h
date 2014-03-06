@@ -31,6 +31,7 @@
 #include "FloatRect.h"
 #include "HTMLElement.h"
 #include "IntSize.h"
+#include <memory>
 #include <wtf/Forward.h>
 
 #if USE(CG)
@@ -171,7 +172,7 @@ private:
 
     IntSize m_size;
 
-    OwnPtr<CanvasRenderingContext> m_context;
+    std::unique_ptr<CanvasRenderingContext> m_context;
 
     bool m_rendererIsCanvas;
 

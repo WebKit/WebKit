@@ -48,11 +48,6 @@ WebGLExtension::ExtensionName ANGLEInstancedArrays::getName() const
     return ANGLEInstancedArraysName;
 }
 
-OwnPtr<ANGLEInstancedArrays> ANGLEInstancedArrays::create(WebGLRenderingContext* context)
-{
-    return adoptPtr(new ANGLEInstancedArrays(context));
-}
-
 bool ANGLEInstancedArrays::supported(WebGLRenderingContext* context)
 {
 #if PLATFORM(IOS) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090

@@ -46,11 +46,6 @@ WebGLExtension::ExtensionName WebGLDrawBuffers::getName() const
     return WebGLExtension::WebGLDrawBuffersName;
 }
 
-OwnPtr<WebGLDrawBuffers> WebGLDrawBuffers::create(WebGLRenderingContext* context)
-{
-    return adoptPtr(new WebGLDrawBuffers(context));
-}
-
 // static
 bool WebGLDrawBuffers::supported(WebGLRenderingContext* context)
 {

@@ -27,7 +27,6 @@
 #define ANGLEInstancedArrays_h
 
 #include "WebGLExtension.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -35,8 +34,9 @@ class WebGLRenderingContext;
 
 class ANGLEInstancedArrays : public WebGLExtension {
 public:
-    static OwnPtr<ANGLEInstancedArrays> create(WebGLRenderingContext*);
+    explicit ANGLEInstancedArrays(WebGLRenderingContext*);
     virtual ~ANGLEInstancedArrays();
+
     virtual ExtensionName getName() const;
 
     static bool supported(WebGLRenderingContext*);
@@ -44,9 +44,6 @@ public:
     void drawArraysInstancedANGLE(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount);
     void drawElementsInstancedANGLE(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount);
     void vertexAttribDivisorANGLE(GC3Duint index, GC3Duint divisor);
-
-private:
-    ANGLEInstancedArrays(WebGLRenderingContext*);
 };
 
 } // namespace WebCore

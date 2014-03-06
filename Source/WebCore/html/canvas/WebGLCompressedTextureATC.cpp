@@ -50,11 +50,6 @@ WebGLExtension::ExtensionName WebGLCompressedTextureATC::getName() const
     return WebGLCompressedTextureATCName;
 }
 
-OwnPtr<WebGLCompressedTextureATC> WebGLCompressedTextureATC::create(WebGLRenderingContext* context)
-{
-    return adoptPtr(new WebGLCompressedTextureATC(context));
-}
-
 bool WebGLCompressedTextureATC::supported(WebGLRenderingContext* context)
 {
     Extensions3D* extensions = context->graphicsContext3D()->getExtensions();

@@ -49,11 +49,6 @@ WebGLExtension::ExtensionName WebGLDebugShaders::getName() const
     return WebGLDebugShadersName;
 }
 
-OwnPtr<WebGLDebugShaders> WebGLDebugShaders::create(WebGLRenderingContext* context)
-{
-    return adoptPtr(new WebGLDebugShaders(context));
-}
-
 String WebGLDebugShaders::getTranslatedShaderSource(WebGLShader* shader, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);

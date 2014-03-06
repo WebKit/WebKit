@@ -27,19 +27,15 @@
 #define OESTextureFloatLinear_h
 
 #include "WebGLExtension.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class OESTextureFloatLinear : public WebGLExtension {
 public:
-    static OwnPtr<OESTextureFloatLinear> create(WebGLRenderingContext*);
-
+    explicit OESTextureFloatLinear(WebGLRenderingContext*);
     virtual ~OESTextureFloatLinear();
-    virtual ExtensionName getName() const override;
 
-private:
-    OESTextureFloatLinear(WebGLRenderingContext*);
+    virtual ExtensionName getName() const override;
 };
 
 } // namespace WebCore

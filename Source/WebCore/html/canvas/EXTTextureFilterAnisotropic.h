@@ -27,19 +27,15 @@
 #define EXTTextureFilterAnisotropic_h
 
 #include "WebGLExtension.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class EXTTextureFilterAnisotropic : public WebGLExtension {
 public:
-    static OwnPtr<EXTTextureFilterAnisotropic> create(WebGLRenderingContext*);
-
+    explicit EXTTextureFilterAnisotropic(WebGLRenderingContext*);
     virtual ~EXTTextureFilterAnisotropic();
-    virtual ExtensionName getName() const override;
 
-private:
-    EXTTextureFilterAnisotropic(WebGLRenderingContext*);
+    virtual ExtensionName getName() const override;
 };
 
 } // namespace WebCore

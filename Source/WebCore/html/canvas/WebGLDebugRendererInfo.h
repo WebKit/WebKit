@@ -27,7 +27,6 @@
 #define WebGLDebugRendererInfo_h
 
 #include "WebGLExtension.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -38,13 +37,10 @@ public:
         UNMASKED_RENDERER_WEBGL = 0x9246
     };
 
-    static OwnPtr<WebGLDebugRendererInfo> create(WebGLRenderingContext*);
-
+    explicit WebGLDebugRendererInfo(WebGLRenderingContext*);
     virtual ~WebGLDebugRendererInfo();
-    virtual ExtensionName getName() const override;
 
-private:
-    WebGLDebugRendererInfo(WebGLRenderingContext*);
+    virtual ExtensionName getName() const override;
 };
 
 } // namespace WebCore

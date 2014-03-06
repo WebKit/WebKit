@@ -45,11 +45,6 @@ WebGLExtension::ExtensionName OESElementIndexUint::getName() const
     return OESElementIndexUintName;
 }
 
-OwnPtr<OESElementIndexUint> OESElementIndexUint::create(WebGLRenderingContext* context)
-{
-    return adoptPtr(new OESElementIndexUint(context));
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

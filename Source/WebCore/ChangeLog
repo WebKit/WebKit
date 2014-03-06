@@ -1,5 +1,58 @@
 2014-03-06  Zan Dobersek  <zdobersek@igalia.com>
 
+        Move Source/WebCore/html/canvas/ code to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=129668
+
+        Reviewed by Anders Carlsson.
+
+        Replace uses of OwnPtr and PassOwnPtr in code under Source/WebCore/html/canvas/ to std::unique_ptr.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::~HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::getContext):
+        * html/HTMLCanvasElement.h:
+        * html/canvas/ANGLEInstancedArrays.cpp:
+        * html/canvas/ANGLEInstancedArrays.h:
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/EXTTextureFilterAnisotropic.cpp:
+        * html/canvas/EXTTextureFilterAnisotropic.h:
+        * html/canvas/OESElementIndexUint.cpp:
+        * html/canvas/OESElementIndexUint.h:
+        * html/canvas/OESStandardDerivatives.cpp:
+        * html/canvas/OESStandardDerivatives.h:
+        * html/canvas/OESTextureFloat.cpp:
+        * html/canvas/OESTextureFloat.h:
+        * html/canvas/OESTextureFloatLinear.cpp:
+        * html/canvas/OESTextureFloatLinear.h:
+        * html/canvas/OESTextureHalfFloat.cpp:
+        * html/canvas/OESTextureHalfFloat.h:
+        * html/canvas/OESTextureHalfFloatLinear.cpp:
+        * html/canvas/OESTextureHalfFloatLinear.h:
+        * html/canvas/OESVertexArrayObject.cpp:
+        * html/canvas/OESVertexArrayObject.h:
+        * html/canvas/WebGLCompressedTextureATC.cpp:
+        * html/canvas/WebGLCompressedTextureATC.h:
+        * html/canvas/WebGLCompressedTexturePVRTC.cpp:
+        * html/canvas/WebGLCompressedTexturePVRTC.h:
+        * html/canvas/WebGLCompressedTextureS3TC.cpp:
+        * html/canvas/WebGLCompressedTextureS3TC.h:
+        * html/canvas/WebGLDebugRendererInfo.cpp:
+        * html/canvas/WebGLDebugRendererInfo.h:
+        * html/canvas/WebGLDebugShaders.cpp:
+        * html/canvas/WebGLDebugShaders.h:
+        * html/canvas/WebGLDepthTexture.cpp:
+        * html/canvas/WebGLDepthTexture.h:
+        * html/canvas/WebGLDrawBuffers.cpp:
+        * html/canvas/WebGLDrawBuffers.h:
+        * html/canvas/WebGLLoseContext.cpp:
+        * html/canvas/WebGLLoseContext.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::create):
+        (WebCore::WebGLRenderingContext::getExtension):
+        * html/canvas/WebGLRenderingContext.h:
+
+2014-03-06  Zan Dobersek  <zdobersek@igalia.com>
+
         Move Source/WebCore/editing/ code to std::unique_ptr
         https://bugs.webkit.org/show_bug.cgi?id=129665
 

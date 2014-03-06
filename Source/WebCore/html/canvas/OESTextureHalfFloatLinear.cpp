@@ -44,11 +44,6 @@ WebGLExtension::ExtensionName OESTextureHalfFloatLinear::getName() const
     return OESTextureHalfFloatLinearName;
 }
 
-OwnPtr<OESTextureHalfFloatLinear> OESTextureHalfFloatLinear::create(WebGLRenderingContext* context)
-{
-    return adoptPtr(new OESTextureHalfFloatLinear(context));
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

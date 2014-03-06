@@ -27,24 +27,21 @@
 #define WebGLDrawBuffers_h
 
 #include "WebGLExtension.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class WebGLDrawBuffers : public WebGLExtension {
 public:
-    static OwnPtr<WebGLDrawBuffers> create(WebGLRenderingContext*);
+    explicit WebGLDrawBuffers(WebGLRenderingContext*);
+    virtual ~WebGLDrawBuffers();
 
     static bool supported(WebGLRenderingContext*);
 
-    virtual ~WebGLDrawBuffers();
     virtual ExtensionName getName() const override;
 
     void drawBuffersWEBGL(const Vector<GC3Denum>& buffers);
 
 private:
-    WebGLDrawBuffers(WebGLRenderingContext*);
-
     static bool satisfiesWebGLRequirements(WebGLRenderingContext*);
 };
 

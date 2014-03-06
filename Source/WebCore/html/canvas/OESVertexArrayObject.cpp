@@ -47,11 +47,6 @@ WebGLExtension::ExtensionName OESVertexArrayObject::getName() const
     return OESVertexArrayObjectName;
 }
 
-OwnPtr<OESVertexArrayObject> OESVertexArrayObject::create(WebGLRenderingContext* context)
-{
-    return adoptPtr(new OESVertexArrayObject(context));
-}
-
 PassRefPtr<WebGLVertexArrayObjectOES> OESVertexArrayObject::createVertexArrayOES()
 {
     if (m_context->isContextLost())

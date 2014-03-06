@@ -104,7 +104,7 @@ HTMLCanvasElement::~HTMLCanvasElement()
     for (auto it = m_observers.begin(), end = m_observers.end(); it != end; ++it)
         (*it)->canvasDestroyed(*this);
 
-    m_context.clear(); // Ensure this goes away before the ImageBuffer.
+    m_context = nullptr; // Ensure this goes away before the ImageBuffer.
 }
 
 void HTMLCanvasElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -205,7 +205,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
             if (Settings* settings = document().settings())
                 usesDashbardCompatibilityMode = settings->usesDashboardBackwardCompatibilityMode();
 #endif
-            m_context = CanvasRenderingContext2D::create(this, document().inQuirksMode(), usesDashbardCompatibilityMode);
+            m_context = std::make_unique<CanvasRenderingContext2D>(this, document().inQuirksMode(), usesDashbardCompatibilityMode);
 #if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
             // Need to make sure a RenderLayer and compositing layer get created for the Canvas
             setNeedsStyleRecalc(SyntheticStyleChange);

@@ -47,11 +47,6 @@ WebGLExtension::ExtensionName WebGLDebugRendererInfo::getName() const
     return WebGLDebugRendererInfoName;
 }
 
-OwnPtr<WebGLDebugRendererInfo> WebGLDebugRendererInfo::create(WebGLRenderingContext* context)
-{
-    return adoptPtr(new WebGLDebugRendererInfo(context));
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

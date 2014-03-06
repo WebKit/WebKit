@@ -33,7 +33,6 @@
 #include "ImageBuffer.h"
 #include "Timer.h"
 #include "WebGLGetInfo.h"
-
 #include <memory>
 #include <runtime/Float32Array.h>
 #include <runtime/Int32Array.h>
@@ -84,7 +83,7 @@ typedef int ExceptionCode;
 
 class WebGLRenderingContext : public CanvasRenderingContext, public ActiveDOMObject {
 public:
-    static OwnPtr<WebGLRenderingContext> create(HTMLCanvasElement*, WebGLContextAttributes*);
+    static std::unique_ptr<WebGLRenderingContext> create(HTMLCanvasElement*, WebGLContextAttributes*);
     virtual ~WebGLRenderingContext();
 
     virtual bool is3d() const override { return true; }
@@ -533,23 +532,23 @@ private:
     bool isContextLostOrPending();
 
     // Enabled extension objects.
-    OwnPtr<EXTTextureFilterAnisotropic> m_extTextureFilterAnisotropic;
-    OwnPtr<OESTextureFloat> m_oesTextureFloat;
-    OwnPtr<OESTextureFloatLinear> m_oesTextureFloatLinear;
-    OwnPtr<OESTextureHalfFloat> m_oesTextureHalfFloat;
-    OwnPtr<OESTextureHalfFloatLinear> m_oesTextureHalfFloatLinear;
-    OwnPtr<OESStandardDerivatives> m_oesStandardDerivatives;
-    OwnPtr<OESVertexArrayObject> m_oesVertexArrayObject;
-    OwnPtr<OESElementIndexUint> m_oesElementIndexUint;
-    OwnPtr<WebGLLoseContext> m_webglLoseContext;
-    OwnPtr<WebGLDebugRendererInfo> m_webglDebugRendererInfo;
-    OwnPtr<WebGLDebugShaders> m_webglDebugShaders;
-    OwnPtr<WebGLCompressedTextureATC> m_webglCompressedTextureATC;
-    OwnPtr<WebGLCompressedTexturePVRTC> m_webglCompressedTexturePVRTC;
-    OwnPtr<WebGLCompressedTextureS3TC> m_webglCompressedTextureS3TC;
-    OwnPtr<WebGLDepthTexture> m_webglDepthTexture;
-    OwnPtr<WebGLDrawBuffers> m_webglDrawBuffers;
-    OwnPtr<ANGLEInstancedArrays> m_angleInstancedArrays;
+    std::unique_ptr<EXTTextureFilterAnisotropic> m_extTextureFilterAnisotropic;
+    std::unique_ptr<OESTextureFloat> m_oesTextureFloat;
+    std::unique_ptr<OESTextureFloatLinear> m_oesTextureFloatLinear;
+    std::unique_ptr<OESTextureHalfFloat> m_oesTextureHalfFloat;
+    std::unique_ptr<OESTextureHalfFloatLinear> m_oesTextureHalfFloatLinear;
+    std::unique_ptr<OESStandardDerivatives> m_oesStandardDerivatives;
+    std::unique_ptr<OESVertexArrayObject> m_oesVertexArrayObject;
+    std::unique_ptr<OESElementIndexUint> m_oesElementIndexUint;
+    std::unique_ptr<WebGLLoseContext> m_webglLoseContext;
+    std::unique_ptr<WebGLDebugRendererInfo> m_webglDebugRendererInfo;
+    std::unique_ptr<WebGLDebugShaders> m_webglDebugShaders;
+    std::unique_ptr<WebGLCompressedTextureATC> m_webglCompressedTextureATC;
+    std::unique_ptr<WebGLCompressedTexturePVRTC> m_webglCompressedTexturePVRTC;
+    std::unique_ptr<WebGLCompressedTextureS3TC> m_webglCompressedTextureS3TC;
+    std::unique_ptr<WebGLDepthTexture> m_webglDepthTexture;
+    std::unique_ptr<WebGLDrawBuffers> m_webglDrawBuffers;
+    std::unique_ptr<ANGLEInstancedArrays> m_angleInstancedArrays;
 
     // Helpers for getParameter and others
     WebGLGetInfo getBooleanParameter(GC3Denum);

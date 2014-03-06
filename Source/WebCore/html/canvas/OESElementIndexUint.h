@@ -27,19 +27,15 @@
 #define OESElementIndexUint_h
 
 #include "WebGLExtension.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class OESElementIndexUint : public WebGLExtension {
 public:
-    static OwnPtr<OESElementIndexUint> create(WebGLRenderingContext*);
-
+    explicit OESElementIndexUint(WebGLRenderingContext*);
     virtual ~OESElementIndexUint();
-    virtual ExtensionName getName() const override;
 
-private:
-    OESElementIndexUint(WebGLRenderingContext*);
+    virtual ExtensionName getName() const override;
 };
 
 } // namespace WebCore

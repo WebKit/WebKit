@@ -27,19 +27,15 @@
 #define OESTextureHalfFloat_h
 
 #include "WebGLExtension.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class OESTextureHalfFloat : public WebGLExtension {
 public:
-    static OwnPtr<OESTextureHalfFloat> create(WebGLRenderingContext*);
-
-    virtual ~OESTextureHalfFloat();
-    virtual ExtensionName getName() const override;
-
-private:
     OESTextureHalfFloat(WebGLRenderingContext*);
+    virtual ~OESTextureHalfFloat();
+
+    virtual ExtensionName getName() const override;
 };
 
 } // namespace WebCore

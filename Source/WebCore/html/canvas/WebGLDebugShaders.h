@@ -27,7 +27,6 @@
 #define WebGLDebugShaders_h
 
 #include "WebGLExtension.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -37,15 +36,12 @@ typedef int ExceptionCode;
 
 class WebGLDebugShaders : public WebGLExtension {
 public:
-    static OwnPtr<WebGLDebugShaders> create(WebGLRenderingContext*);
-
+    explicit WebGLDebugShaders(WebGLRenderingContext*);
     virtual ~WebGLDebugShaders();
+
     virtual ExtensionName getName() const override;
 
     String getTranslatedShaderSource(WebGLShader*, ExceptionCode&);
-
-private:
-    WebGLDebugShaders(WebGLRenderingContext*);
 };
 
 } // namespace WebCore

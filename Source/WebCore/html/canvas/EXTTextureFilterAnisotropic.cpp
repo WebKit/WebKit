@@ -45,11 +45,6 @@ WebGLExtension::ExtensionName EXTTextureFilterAnisotropic::getName() const
     return EXTTextureFilterAnisotropicName;
 }
 
-OwnPtr<EXTTextureFilterAnisotropic> EXTTextureFilterAnisotropic::create(WebGLRenderingContext* context)
-{
-    return adoptPtr(new EXTTextureFilterAnisotropic(context));
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)
