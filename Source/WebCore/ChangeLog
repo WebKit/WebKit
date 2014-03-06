@@ -1,3 +1,15 @@
+2014-03-05  Enrica Casucci  <enrica@apple.com>
+
+        Crash when copying content that contains <sup>.
+        https://bugs.webkit.org/show_bug.cgi?id=129765
+        <rdar://problem/16139498>
+        
+        Reviewed by Benjamin Poulain.
+
+        Adding static definition of NSAttributeSuperscriptName.
+
+        * platform/mac/HTMLConverter.mm:
+
 2014-03-05  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=128625

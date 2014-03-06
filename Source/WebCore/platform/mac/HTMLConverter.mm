@@ -85,8 +85,6 @@ SOFT_LINK_CONSTANT(UIFoundation, NSLigatureAttributeName, NSString *)
 #define NSLigatureAttributeName getNSLigatureAttributeName()
 SOFT_LINK_CONSTANT(UIFoundation, NSUnderlineStyleAttributeName, NSString *)
 #define NSUnderlineStyleAttributeName getNSUnderlineStyleAttributeName()
-SOFT_LINK_CONSTANT(UIFoundation, NSSuperscriptAttributeName, NSString *)
-#define NSSuperscriptAttributeName getNSSuperscriptAttributeName()
 SOFT_LINK_CONSTANT(UIFoundation, NSStrikethroughStyleAttributeName, NSString *)
 #define NSStrikethroughStyleAttributeName getNSStrikethroughStyleAttributeName()
 SOFT_LINK_CONSTANT(UIFoundation, NSBaselineOffsetAttributeName, NSString *)
@@ -160,6 +158,11 @@ SOFT_LINK_CONSTANT(UIFoundation, NSCocoaVersionDocumentAttribute, NSString *)
 #define NSTextAlignmentCenter       NSCenterTextAlignment
 #define NSTextAlignmentJustified    NSJustifiedTextAlignment
 #endif
+
+// We don't softlink NSSuperscriptAttributeName because UIFoundation stopped exporting it.
+// This attribute is being deprecated at the API level, but internally UIFoundation
+// will continue to support it.
+static NSString *const NSSuperscriptAttributeName = @"NSSuperscript";
 
 using namespace WebCore;
 using namespace HTMLNames;
