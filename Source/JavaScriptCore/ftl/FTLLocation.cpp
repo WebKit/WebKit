@@ -29,7 +29,6 @@
 #if ENABLE(FTL_JIT)
 
 #include "FTLSaveRestore.h"
-#include "RegisterSet.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/DataLog.h>
 #include <wtf/ListDump.h>
@@ -158,7 +157,7 @@ FPRReg Location::fpr() const
 
 void Location::restoreInto(MacroAssembler& jit, char* savedRegisters, GPRReg result, unsigned numFramesToPop) const
 {
-    if (involvesGPR() && RegisterSet::stackRegisters().get(gpr())) {
+    if (involvesGPR() && MacroAssembler::isStackRelated(gpr())) {
         // Make the result GPR contain the appropriate stack register.
         if (numFramesToPop) {
             jit.move(MacroAssembler::framePointerRegister, result);
@@ -175,7 +174,7 @@ void Location::restoreInto(MacroAssembler& jit, char* savedRegisters, GPRReg res
     }
     
     if (isGPR()) {
-        if (RegisterSet::stackRegisters().get(gpr())) {
+        if (MacroAssembler::isStackRelated(gpr())) {
             // Already restored into result.
         } else
             jit.load64(savedRegisters + offsetOfGPR(gpr()), result);
@@ -198,7 +197,7 @@ void Location::restoreInto(MacroAssembler& jit, char* savedRegisters, GPRReg res
         return;
         
     case Indirect:
-        if (RegisterSet::stackRegisters().get(gpr())) {
+        if (MacroAssembler::isStackRelated(gpr())) {
             // The stack register is already recovered into result.
             jit.load64(MacroAssembler::Address(result, offset()), result);
             return;

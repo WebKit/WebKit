@@ -42,31 +42,18 @@ RegisterSet RegisterSet::stackRegisters()
     return result;
 }
 
-RegisterSet RegisterSet::reservedHardwareRegisters()
-{
-    RegisterSet result;
-#if CPU(ARM64)
-    result.set(ARM64Registers::lr);
-#endif
-    return result;
-}
-
-RegisterSet RegisterSet::runtimeRegisters()
-{
-    RegisterSet result;
-#if USE(JSVALUE64)
-    result.set(GPRInfo::tagTypeNumberRegister);
-    result.set(GPRInfo::tagMaskRegister);
-#endif
-    return result;
-}
-
 RegisterSet RegisterSet::specialRegisters()
 {
     RegisterSet result;
     result.merge(stackRegisters());
-    result.merge(reservedHardwareRegisters());
-    result.merge(runtimeRegisters());
+    result.set(GPRInfo::callFrameRegister);
+#if USE(JSVALUE64)
+    result.set(GPRInfo::tagTypeNumberRegister);
+    result.set(GPRInfo::tagMaskRegister);
+#endif
+#if CPU(ARM64)
+    result.set(ARM64Registers::lr);
+#endif
     return result;
 }
 
@@ -82,9 +69,7 @@ RegisterSet RegisterSet::calleeSaveRegisters()
     result.set(X86Registers::r15);
 #elif CPU(ARM64)
     // We don't include LR in the set of callee-save registers even though it technically belongs
-    // there. This is because we use this set to describe the set of registers that need to be saved
-    // beyond what you would save by the platform-agnostic "preserve return address" and "restore
-    // return address" operations in CCallHelpers.
+    // there. But, the way we use this list, it makes no sense to have it there.
     for (
         ARM64Registers::RegisterID reg = ARM64Registers::x19;
         reg <= ARM64Registers::x28;

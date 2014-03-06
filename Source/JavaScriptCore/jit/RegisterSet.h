@@ -42,9 +42,7 @@ public:
     RegisterSet() { }
     
     static RegisterSet stackRegisters();
-    static RegisterSet reservedHardwareRegisters();
-    static RegisterSet runtimeRegisters();
-    static RegisterSet specialRegisters(); // The union of stack, reserved hardware, and runtime registers.
+    static RegisterSet specialRegisters();
     static RegisterSet calleeSaveRegisters();
     static RegisterSet allGPRs();
     static RegisterSet allFPRs();

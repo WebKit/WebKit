@@ -52,9 +52,8 @@ public:
         , m_numArgs(numArgs)
         , m_returnRegister(returnRegister)
     {
-        // We don't care that you're using callee-save, stack, or hardware registers.
+        // We don't care that you're using callee-save or stack registers.
         m_usedRegisters.exclude(RegisterSet::stackRegisters());
-        m_usedRegisters.exclude(RegisterSet::reservedHardwareRegisters());
         m_usedRegisters.exclude(RegisterSet::calleeSaveRegisters());
         
         // The return register doesn't need to be saved.
