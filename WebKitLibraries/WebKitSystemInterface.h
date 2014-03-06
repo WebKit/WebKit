@@ -108,6 +108,9 @@ NSString *WKSpeechSynthesisGetDefaultVoiceIdentifierForLocale(NSLocale*);
 BOOL WKShouldBlockPlugin(NSString *bundleIdentifier, NSString *bundleVersionString);
 BOOL WKIsPluginUpdateAvailable(NSString *bundleIdentifier);
 
+BOOL WKShouldBlockWebGL();
+BOOL WKShouldSuggestBlockingWebGL();
+
 // Remote Accessibility API.
 #if !TARGET_OS_IPHONE
 void WKAXRegisterRemoteApp(void);
