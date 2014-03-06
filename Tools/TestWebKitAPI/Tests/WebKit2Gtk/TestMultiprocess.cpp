@@ -81,6 +81,26 @@ public:
         return identifier;
     }
 
+    static void nameVanishedCallback(GDBusConnection* connection, const gchar* name, gpointer userData)
+    {
+        g_main_loop_quit(static_cast<GMainLoop*>(userData));
+    }
+
+    void destroyWebViewAndWaitUntilWebProcessFinishes(unsigned index)
+    {
+        // FIXME: This test is disabled because the web processed don't actually die
+        // due to bug https://bugs.webkit.org/show_bug.cgi?id=129684.
+#if 0
+        g_assert_cmpuint(index, <, numViews);
+
+        unsigned watcherID = g_bus_watch_name_on_connection(bus->connection(), m_webViewBusNames[index].get(), G_BUS_NAME_WATCHER_FLAGS_NONE,
+            nullptr, nameVanishedCallback, m_mainLoop, nullptr);
+        gtk_widget_destroy(GTK_WIDGET(m_webViews[index].get()));
+        g_main_loop_run(m_mainLoop);
+        g_bus_unwatch_name(watcherID);
+#endif
+    }
+
     GMainLoop* m_mainLoop;
     Vector<GUniquePtr<char>, numViews> m_webViewBusNames;
     Vector<GRefPtr<WebKitWebView>, numViews> m_webViews;
@@ -103,6 +123,13 @@ static void testProcessPerWebView(MultiprocessTest* test, gconstpointer)
     g_assert_cmpuint(initializeWebExtensionsSignalCount, ==, numViews);
     g_assert_cmpstr(test->m_webViewBusNames[0].get(), !=, test->m_webViewBusNames[1].get());
     g_assert_cmpuint(test->webProcessPid(0), !=, test->webProcessPid(1));
+
+    // Check that web processes finish when the web view is destroyed even when it's not finalized.
+    // See https://bugs.webkit.org/show_bug.cgi?id=129783.
+    for (unsigned i = 0; i < numViews; i++) {
+        GRefPtr<WebKitWebView> webView = test->m_webViews[i];
+        test->destroyWebViewAndWaitUntilWebProcessFinishes(i);
+    }
 }
 
 class UIClientMultiprocessTest: public WebViewTest {

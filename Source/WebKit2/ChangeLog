@@ -1,3 +1,18 @@
+2014-03-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Close the page when the view is disposed instead of when finalized
+        https://bugs.webkit.org/show_bug.cgi?id=129783
+
+        Reviewed by Sergio Villar Senin.
+
+        When a GtkWidget is destroyed, the GObject is disposed, but not
+        finalized if it has additional references. When the destroyed
+        widget is leaked by the application, we leak the page proxy and
+        what is more important the web process in multi-process mode.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDispose): Close the WebPageProxy.
+
 2014-03-05  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support IOS Accessibility in WK2
