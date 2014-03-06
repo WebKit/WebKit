@@ -529,6 +529,9 @@ void SourceBuffer::sourceBufferPrivateDidEndStream(SourceBufferPrivate*, const W
 
 void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBufferPrivate*, const InitializationSegment& segment)
 {
+    if (isRemoved())
+        return;
+
     // 3.5.7 Initialization Segment Received
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#sourcebuffer-init-segment-received
     // 1. Update the duration attribute if it currently equals NaN:
@@ -780,6 +783,9 @@ public:
 
 void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, PassRefPtr<MediaSample> prpSample)
 {
+    if (isRemoved())
+        return;
+
     RefPtr<MediaSample> sample = prpSample;
 
     // 3.5.8 Coded Frame Processing
