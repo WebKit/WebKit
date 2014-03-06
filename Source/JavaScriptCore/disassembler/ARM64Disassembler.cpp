@@ -55,7 +55,7 @@ bool tryToDisassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const c
 
 #endif // USE(ARM64_DISASSEMBLER)
 
-#if USE(LLVM_DISASSEMBLER)
+#if USE(LLVM_DISASSEMBLER) && CPU(ARM64)
 
 #include "LLVMDisassembler.h"
 
@@ -68,4 +68,4 @@ bool tryToDisassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const c
 
 } // namespace JSC
 
-#endif // USE(LLVM_DISASSEMBLER)
+#endif // USE(LLVM_DISASSEMBLER) && CPU(ARM64)
