@@ -138,6 +138,11 @@ SOFT_LINK_CONSTANT(UIFoundation, NSCocoaVersionDocumentAttribute, NSString *)
 #define PlatformNSColorClass        getNSColorClass()
 #define PlatformFont                UIFont
 #define PlatformFontClass           getUIFontClass()
+
+// We don't softlink NSSuperscriptAttributeName because UIFoundation stopped exporting it.
+// This attribute is being deprecated at the API level, but internally UIFoundation
+// will continue to support it.
+static NSString *const NSSuperscriptAttributeName = @"NSSuperscript";
 #else
 
 #define PlatformNSShadow            NSShadow
@@ -157,11 +162,6 @@ SOFT_LINK_CONSTANT(UIFoundation, NSCocoaVersionDocumentAttribute, NSString *)
 #define NSTextAlignmentRight        NSRightTextAlignment
 #define NSTextAlignmentCenter       NSCenterTextAlignment
 #define NSTextAlignmentJustified    NSJustifiedTextAlignment
-
-// We don't softlink NSSuperscriptAttributeName because UIFoundation stopped exporting it.
-// This attribute is being deprecated at the API level, but internally UIFoundation
-// will continue to support it.
-static NSString *const NSSuperscriptAttributeName = @"NSSuperscript";
 #endif
 
 using namespace WebCore;

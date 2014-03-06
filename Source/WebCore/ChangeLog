@@ -1,5 +1,11 @@
 2014-03-05  Enrica Casucci  <enrica@apple.com>
 
+        Build fix, take 2.
+
+        * platform/mac/HTMLConverter.mm:
+
+2014-03-05  Enrica Casucci  <enrica@apple.com>
+
         Build fix.
 
         * platform/mac/HTMLConverter.mm:
