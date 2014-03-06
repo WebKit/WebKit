@@ -469,291 +469,288 @@ target_link_libraries(WebCorePlatformGTK
     ${GDK_LIBRARIES}
 )
 
-if (ENABLE_WEBKIT2)
-    include_directories(
-        "${WebCore_INCLUDE_DIRECTORIES}"
-        "${DERIVED_SOURCES_DIR}"
-        "${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}"
-    )
+include_directories(
+    "${WebCore_INCLUDE_DIRECTORIES}"
+    "${DERIVED_SOURCES_DIR}"
+    "${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}"
+)
 
-    list(APPEND GObjectDOMBindings_SOURCES
-        bindings/gobject/ConvertToUTF8String.cpp
-        bindings/gobject/DOMObjectCache.cpp
-        bindings/gobject/GObjectEventListener.cpp
-        bindings/gobject/WebKitDOMCustom.cpp
-        bindings/gobject/WebKitDOMDeprecated.cpp
-        bindings/gobject/WebKitDOMEventTarget.cpp
-        bindings/gobject/WebKitDOMHTMLPrivate.cpp
-        bindings/gobject/WebKitDOMObject.cpp
-        bindings/gobject/WebKitDOMPrivate.cpp
-        ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
-        ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
-    )
+list(APPEND GObjectDOMBindings_SOURCES
+    bindings/gobject/ConvertToUTF8String.cpp
+    bindings/gobject/DOMObjectCache.cpp
+    bindings/gobject/GObjectEventListener.cpp
+    bindings/gobject/WebKitDOMCustom.cpp
+    bindings/gobject/WebKitDOMDeprecated.cpp
+    bindings/gobject/WebKitDOMEventTarget.cpp
+    bindings/gobject/WebKitDOMHTMLPrivate.cpp
+    bindings/gobject/WebKitDOMObject.cpp
+    bindings/gobject/WebKitDOMPrivate.cpp
+    ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
+    ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
+)
 
+list(APPEND GObjectDOMBindings_IDL_FILES
+    Modules/battery/BatteryManager.idl
+    Modules/gamepad/Gamepad.idl
+    Modules/gamepad/GamepadList.idl
+    Modules/geolocation/Geolocation.idl
+    Modules/mediasource/VideoPlaybackQuality.idl
+    Modules/quota/StorageInfo.idl
+    Modules/quota/StorageQuota.idl
+    Modules/webdatabase/Database.idl
+
+    css/CSSRule.idl
+    css/CSSRuleList.idl
+    css/CSSStyleDeclaration.idl
+    css/CSSStyleSheet.idl
+    css/CSSValue.idl
+    css/DOMWindowCSS.idl
+    css/MediaList.idl
+    css/MediaQueryList.idl
+    css/StyleMedia.idl
+    css/StyleSheet.idl
+    css/StyleSheetList.idl
+
+    dom/Attr.idl
+    dom/CDATASection.idl
+    dom/CharacterData.idl
+    dom/Comment.idl
+    dom/DOMImplementation.idl
+    dom/DOMNamedFlowCollection.idl
+    dom/DOMStringList.idl
+    dom/DOMStringMap.idl
+    dom/Document.idl
+    dom/DocumentFragment.idl
+    dom/DocumentType.idl
+    dom/Element.idl
+    dom/EntityReference.idl
+    dom/Event.idl
+    dom/KeyboardEvent.idl
+    dom/MessagePort.idl
+    dom/MouseEvent.idl
+    dom/NamedNodeMap.idl
+    dom/Node.idl
+    dom/NodeFilter.idl
+    dom/NodeIterator.idl
+    dom/NodeList.idl
+    dom/ProcessingInstruction.idl
+    dom/Range.idl
+    dom/Text.idl
+    dom/Touch.idl
+    dom/TreeWalker.idl
+    dom/UIEvent.idl
+    dom/WebKitNamedFlow.idl
+    dom/WheelEvent.idl
+
+    fileapi/Blob.idl
+    fileapi/File.idl
+    fileapi/FileList.idl
+
+    html/DOMSettableTokenList.idl
+    html/DOMTokenList.idl
+    html/HTMLAnchorElement.idl
+    html/HTMLAppletElement.idl
+    html/HTMLAreaElement.idl
+    html/HTMLBRElement.idl
+    html/HTMLBaseElement.idl
+    html/HTMLBaseFontElement.idl
+    html/HTMLBodyElement.idl
+    html/HTMLButtonElement.idl
+    html/HTMLCanvasElement.idl
+    html/HTMLCollection.idl
+    html/HTMLDListElement.idl
+    html/HTMLDetailsElement.idl
+    html/HTMLDirectoryElement.idl
+    html/HTMLDivElement.idl
+    html/HTMLDocument.idl
+    html/HTMLElement.idl
+    html/HTMLEmbedElement.idl
+    html/HTMLFieldSetElement.idl
+    html/HTMLFontElement.idl
+    html/HTMLFormElement.idl
+    html/HTMLFrameElement.idl
+    html/HTMLFrameSetElement.idl
+    html/HTMLHRElement.idl
+    html/HTMLHeadElement.idl
+    html/HTMLHeadingElement.idl
+    html/HTMLHtmlElement.idl
+    html/HTMLIFrameElement.idl
+    html/HTMLImageElement.idl
+    html/HTMLInputElement.idl
+    html/HTMLKeygenElement.idl
+    html/HTMLLIElement.idl
+    html/HTMLLabelElement.idl
+    html/HTMLLegendElement.idl
+    html/HTMLLinkElement.idl
+    html/HTMLMapElement.idl
+    html/HTMLMarqueeElement.idl
+    html/HTMLMediaElement.idl
+    html/HTMLMenuElement.idl
+    html/HTMLMetaElement.idl
+    html/HTMLModElement.idl
+    html/HTMLOListElement.idl
+    html/HTMLObjectElement.idl
+    html/HTMLOptGroupElement.idl
+    html/HTMLOptionElement.idl
+    html/HTMLOptionsCollection.idl
+    html/HTMLParagraphElement.idl
+    html/HTMLParamElement.idl
+    html/HTMLPreElement.idl
+    html/HTMLQuoteElement.idl
+    html/HTMLScriptElement.idl
+    html/HTMLSelectElement.idl
+    html/HTMLStyleElement.idl
+    html/HTMLTableCaptionElement.idl
+    html/HTMLTableCellElement.idl
+    html/HTMLTableColElement.idl
+    html/HTMLTableElement.idl
+    html/HTMLTableRowElement.idl
+    html/HTMLTableSectionElement.idl
+    html/HTMLTextAreaElement.idl
+    html/HTMLTitleElement.idl
+    html/HTMLUListElement.idl
+    html/MediaController.idl
+    html/MediaError.idl
+    html/TimeRanges.idl
+    html/ValidityState.idl
+
+    loader/appcache/DOMApplicationCache.idl
+
+    page/BarProp.idl
+    page/Console.idl
+    page/DOMSecurityPolicy.idl
+    page/DOMSelection.idl
+    page/DOMWindow.idl
+    page/History.idl
+    page/Location.idl
+    page/Navigator.idl
+    page/Performance.idl
+    page/PerformanceEntry.idl
+    page/PerformanceEntryList.idl
+    page/PerformanceNavigation.idl
+    page/PerformanceTiming.idl
+    page/Screen.idl
+    page/WebKitPoint.idl
+
+    plugins/DOMMimeType.idl
+    plugins/DOMMimeTypeArray.idl
+    plugins/DOMPlugin.idl
+    plugins/DOMPluginArray.idl
+
+    storage/Storage.idl
+
+    xml/XPathExpression.idl
+    xml/XPathNSResolver.idl
+    xml/XPathResult.idl
+)
+
+if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     list(APPEND GObjectDOMBindings_IDL_FILES
-        Modules/battery/BatteryManager.idl
-        Modules/gamepad/Gamepad.idl
-        Modules/gamepad/GamepadList.idl
-        Modules/geolocation/Geolocation.idl
-        Modules/mediasource/VideoPlaybackQuality.idl
-        Modules/quota/StorageInfo.idl
-        Modules/quota/StorageQuota.idl
-        Modules/webdatabase/Database.idl
+        html/HTMLAudioElement.idl
+        html/HTMLVideoElement.idl
 
-        css/CSSRule.idl
-        css/CSSRuleList.idl
-        css/CSSStyleDeclaration.idl
-        css/CSSStyleSheet.idl
-        css/CSSValue.idl
-        css/DOMWindowCSS.idl
-        css/MediaList.idl
-        css/MediaQueryList.idl
-        css/StyleMedia.idl
-        css/StyleSheet.idl
-        css/StyleSheetList.idl
-
-        dom/Attr.idl
-        dom/CDATASection.idl
-        dom/CharacterData.idl
-        dom/Comment.idl
-        dom/DOMImplementation.idl
-        dom/DOMNamedFlowCollection.idl
-        dom/DOMStringList.idl
-        dom/DOMStringMap.idl
-        dom/Document.idl
-        dom/DocumentFragment.idl
-        dom/DocumentType.idl
-        dom/Element.idl
-        dom/EntityReference.idl
-        dom/Event.idl
-        dom/KeyboardEvent.idl
-        dom/MessagePort.idl
-        dom/MouseEvent.idl
-        dom/NamedNodeMap.idl
-        dom/Node.idl
-        dom/NodeFilter.idl
-        dom/NodeIterator.idl
-        dom/NodeList.idl
-        dom/ProcessingInstruction.idl
-        dom/Range.idl
-        dom/Text.idl
-        dom/Touch.idl
-        dom/TreeWalker.idl
-        dom/UIEvent.idl
-        dom/WebKitNamedFlow.idl
-        dom/WheelEvent.idl
-
-        fileapi/Blob.idl
-        fileapi/File.idl
-        fileapi/FileList.idl
-
-        html/DOMSettableTokenList.idl
-        html/DOMTokenList.idl
-        html/HTMLAnchorElement.idl
-        html/HTMLAppletElement.idl
-        html/HTMLAreaElement.idl
-        html/HTMLBRElement.idl
-        html/HTMLBaseElement.idl
-        html/HTMLBaseFontElement.idl
-        html/HTMLBodyElement.idl
-        html/HTMLButtonElement.idl
-        html/HTMLCanvasElement.idl
-        html/HTMLCollection.idl
-        html/HTMLDListElement.idl
-        html/HTMLDetailsElement.idl
-        html/HTMLDirectoryElement.idl
-        html/HTMLDivElement.idl
-        html/HTMLDocument.idl
-        html/HTMLElement.idl
-        html/HTMLEmbedElement.idl
-        html/HTMLFieldSetElement.idl
-        html/HTMLFontElement.idl
-        html/HTMLFormElement.idl
-        html/HTMLFrameElement.idl
-        html/HTMLFrameSetElement.idl
-        html/HTMLHRElement.idl
-        html/HTMLHeadElement.idl
-        html/HTMLHeadingElement.idl
-        html/HTMLHtmlElement.idl
-        html/HTMLIFrameElement.idl
-        html/HTMLImageElement.idl
-        html/HTMLInputElement.idl
-        html/HTMLKeygenElement.idl
-        html/HTMLLIElement.idl
-        html/HTMLLabelElement.idl
-        html/HTMLLegendElement.idl
-        html/HTMLLinkElement.idl
-        html/HTMLMapElement.idl
-        html/HTMLMarqueeElement.idl
-        html/HTMLMediaElement.idl
-        html/HTMLMenuElement.idl
-        html/HTMLMetaElement.idl
-        html/HTMLModElement.idl
-        html/HTMLOListElement.idl
-        html/HTMLObjectElement.idl
-        html/HTMLOptGroupElement.idl
-        html/HTMLOptionElement.idl
-        html/HTMLOptionsCollection.idl
-        html/HTMLParagraphElement.idl
-        html/HTMLParamElement.idl
-        html/HTMLPreElement.idl
-        html/HTMLQuoteElement.idl
-        html/HTMLScriptElement.idl
-        html/HTMLSelectElement.idl
-        html/HTMLStyleElement.idl
-        html/HTMLTableCaptionElement.idl
-        html/HTMLTableCellElement.idl
-        html/HTMLTableColElement.idl
-        html/HTMLTableElement.idl
-        html/HTMLTableRowElement.idl
-        html/HTMLTableSectionElement.idl
-        html/HTMLTextAreaElement.idl
-        html/HTMLTitleElement.idl
-        html/HTMLUListElement.idl
-        html/MediaController.idl
-        html/MediaError.idl
-        html/TimeRanges.idl
-        html/ValidityState.idl
-
-        loader/appcache/DOMApplicationCache.idl
-
-        page/BarProp.idl
-        page/Console.idl
-        page/DOMSecurityPolicy.idl
-        page/DOMSelection.idl
-        page/DOMWindow.idl
-        page/History.idl
-        page/Location.idl
-        page/Navigator.idl
-        page/Performance.idl
-        page/PerformanceEntry.idl
-        page/PerformanceEntryList.idl
-        page/PerformanceNavigation.idl
-        page/PerformanceTiming.idl
-        page/Screen.idl
-        page/WebKitPoint.idl
-
-        plugins/DOMMimeType.idl
-        plugins/DOMMimeTypeArray.idl
-        plugins/DOMPlugin.idl
-        plugins/DOMPluginArray.idl
-
-        storage/Storage.idl
-
-        xml/XPathExpression.idl
-        xml/XPathNSResolver.idl
-        xml/XPathResult.idl
+        html/track/AudioTrack.idl
+        html/track/AudioTrackList.idl
+        html/track/TextTrack.idl
+        html/track/TextTrackCue.idl
+        html/track/TextTrackCueList.idl
+        html/track/TextTrackList.idl
+        html/track/TrackEvent.idl
+        html/track/VideoTrack.idl
+        html/track/VideoTrackList.idl
     )
-
-    if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
-        list(APPEND GObjectDOMBindings_IDL_FILES
-            html/HTMLAudioElement.idl
-            html/HTMLVideoElement.idl
-
-            html/track/AudioTrack.idl
-            html/track/AudioTrackList.idl
-            html/track/TextTrack.idl
-            html/track/TextTrackCue.idl
-            html/track/TextTrackCueList.idl
-            html/track/TextTrackList.idl
-            html/track/TrackEvent.idl
-            html/track/VideoTrack.idl
-            html/track/VideoTrackList.idl
-        )
-    endif ()
-
-    set(GObjectDOMBindings_CLASS_LIST Custom EventTarget Object Deprecated)
-    set(GObjectDOMBindings_INSTALLED_HEADERS
-         ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
-         ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
-         ${WEBCORE_DIR}/bindings/gobject/WebKitDOMCustom.h
-         ${WEBCORE_DIR}/bindings/gobject/WebKitDOMDeprecated.h
-         ${WEBCORE_DIR}/bindings/gobject/WebKitDOMEventTarget.h
-         ${WEBCORE_DIR}/bindings/gobject/WebKitDOMObject.h
-    )
-    file(GLOB GObjectDOMBindingsSymbolsFiles
-        "${WEBCORE_DIR}/bindings/gobject/WebKitDOM*.symbols"
-    )
-
-    foreach (file ${GObjectDOMBindings_IDL_FILES})
-        get_filename_component(classname ${file} NAME_WE)
-        list(APPEND GObjectDOMBindings_CLASS_LIST ${classname})
-        list(APPEND GObjectDOMBindings_INSTALLED_HEADERS ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}.h)
-        list(APPEND GObjectDOMBindingsSymbolsFiles ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}.symbols)
-    endforeach ()
-
-    set(GOBJECT_DOM_BINDINGS_FEATURES_DEFINES "LANGUAGE_GOBJECT=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
-    string(REPLACE "ENABLE_INDEXED_DATABASE=1" "" GOBJECT_DOM_BINDINGS_FEATURES_DEFINES ${GOBJECT_DOM_BINDINGS_FEATURES_DEFINES})
-    string(REPLACE REGEX "ENABLE_SVG[A-Z_]+=1" "" GOBJECT_DOM_BINDINGS_FEATURES_DEFINES ${GOBJECT_DOM_BINDINGS_FEATURES_DEFINES})
-
-    file(MAKE_DIRECTORY ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR})
-
-    add_custom_command(
-        OUTPUT ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
-        COMMAND echo ${GObjectDOMBindings_CLASS_LIST} | ${PERL_EXECUTABLE} ${WEBCORE_DIR}/bindings/scripts/gobject-generate-headers.pl defines > ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
-    )
-
-    add_custom_command(
-        OUTPUT ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
-        COMMAND echo ${GObjectDOMBindings_CLASS_LIST} | ${PERL_EXECUTABLE} ${WEBCORE_DIR}/bindings/scripts/gobject-generate-headers.pl gdom > ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
-    )
-
-    add_custom_target(fake-installed-webkitdom-headers
-        COMMAND ln -n -s -f ${WEBCORE_DIR}/bindings/gobject/*.h ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}
-    )
-
-    GENERATE_BINDINGS(GObjectDOMBindings_SOURCES
-        "${GObjectDOMBindings_IDL_FILES}"
-        "${WEBCORE_DIR}"
-        "${IDL_INCLUDES}"
-        "${GOBJECT_DOM_BINDINGS_FEATURES_DEFINES}"
-        ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}
-        WebKitDOM GObject
-        ${IDL_ATTRIBUTES_FILE}
-        ${SUPPLEMENTAL_DEPENDENCY_FILE}
-        ${WINDOW_CONSTRUCTORS_FILE}
-        ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
-        ${SHAREDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
-        ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE})
-
-    add_definitions(-DBUILDING_WEBKIT)
-
-    add_library(GObjectDOMBindings STATIC ${GObjectDOMBindings_SOURCES})
-
-    WEBKIT_SET_EXTRA_COMPILER_FLAGS(GObjectDOMBindings)
-
-    add_dependencies(GObjectDOMBindings
-        WebCore
-        fake-installed-webkitdom-headers
-    )
-
-    file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkitdom.cfg
-        "[webkitdomgtk]\n"
-        "pkgconfig_file=${WebKit2_PKGCONFIG_FILE}\n"
-        "namespace=webkit_dom\n"
-        "cflags=-I${CMAKE_SOURCE_DIR}/Source\n"
-        "       -I${WEBCORE_DIR}/bindings\n"
-        "       -I${WEBCORE_DIR}/bindings/gobject\n"
-        "       -I${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}\n"
-        "doc_dir=${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/docs\n"
-        "source_dirs=${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}\n"
-        "            ${WEBCORE_DIR}/bindings/gobject\n"
-        "headers=${GObjectDOMBindings_INSTALLED_HEADERS}\n"
-    )
-
-    install(FILES ${GObjectDOMBindings_INSTALLED_HEADERS}
-            DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/webkitdom"
-    )
-
-    # Some installed headers are not on the list of headers used for gir generation.
-    set(GObjectDOMBindings_GIR_HEADERS ${GObjectDOMBindings_INSTALLED_HEADERS})
-    list(REMOVE_ITEM GObjectDOMBindings_GIR_HEADERS
-         bindings/gobject/WebKitDOMEventTarget.h
-         bindings/gobject/WebKitDOMDeprecated.h
-         bindings/gobject/WebKitDOMObject.h)
-
-    # Propagate this variable to the parent scope, so that it can be used in other parts of the build.
-    set(GObjectDOMBindings_GIR_HEADERS ${GObjectDOMBindings_GIR_HEADERS} PARENT_SCOPE)
-
 endif ()
 
+set(GObjectDOMBindings_CLASS_LIST Custom EventTarget Object Deprecated)
+set(GObjectDOMBindings_INSTALLED_HEADERS
+     ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
+     ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
+     ${WEBCORE_DIR}/bindings/gobject/WebKitDOMCustom.h
+     ${WEBCORE_DIR}/bindings/gobject/WebKitDOMDeprecated.h
+     ${WEBCORE_DIR}/bindings/gobject/WebKitDOMEventTarget.h
+     ${WEBCORE_DIR}/bindings/gobject/WebKitDOMObject.h
+)
+file(GLOB GObjectDOMBindingsSymbolsFiles
+    "${WEBCORE_DIR}/bindings/gobject/WebKitDOM*.symbols"
+)
+
+foreach (file ${GObjectDOMBindings_IDL_FILES})
+    get_filename_component(classname ${file} NAME_WE)
+    list(APPEND GObjectDOMBindings_CLASS_LIST ${classname})
+    list(APPEND GObjectDOMBindings_INSTALLED_HEADERS ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}.h)
+    list(APPEND GObjectDOMBindingsSymbolsFiles ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}.symbols)
+endforeach ()
+
+set(GOBJECT_DOM_BINDINGS_FEATURES_DEFINES "LANGUAGE_GOBJECT=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
+string(REPLACE "ENABLE_INDEXED_DATABASE=1" "" GOBJECT_DOM_BINDINGS_FEATURES_DEFINES ${GOBJECT_DOM_BINDINGS_FEATURES_DEFINES})
+string(REPLACE REGEX "ENABLE_SVG[A-Z_]+=1" "" GOBJECT_DOM_BINDINGS_FEATURES_DEFINES ${GOBJECT_DOM_BINDINGS_FEATURES_DEFINES})
+
+file(MAKE_DIRECTORY ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR})
+
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
+    COMMAND echo ${GObjectDOMBindings_CLASS_LIST} | ${PERL_EXECUTABLE} ${WEBCORE_DIR}/bindings/scripts/gobject-generate-headers.pl defines > ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
+)
+
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
+    COMMAND echo ${GObjectDOMBindings_CLASS_LIST} | ${PERL_EXECUTABLE} ${WEBCORE_DIR}/bindings/scripts/gobject-generate-headers.pl gdom > ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
+)
+
+add_custom_target(fake-installed-webkitdom-headers
+    COMMAND ln -n -s -f ${WEBCORE_DIR}/bindings/gobject/*.h ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}
+)
+
+GENERATE_BINDINGS(GObjectDOMBindings_SOURCES
+    "${GObjectDOMBindings_IDL_FILES}"
+    "${WEBCORE_DIR}"
+    "${IDL_INCLUDES}"
+    "${GOBJECT_DOM_BINDINGS_FEATURES_DEFINES}"
+    ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}
+    WebKitDOM GObject
+    ${IDL_ATTRIBUTES_FILE}
+    ${SUPPLEMENTAL_DEPENDENCY_FILE}
+    ${WINDOW_CONSTRUCTORS_FILE}
+    ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+    ${SHAREDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+    ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE})
+
+add_definitions(-DBUILDING_WEBKIT)
+
+add_library(GObjectDOMBindings STATIC ${GObjectDOMBindings_SOURCES})
+
+WEBKIT_SET_EXTRA_COMPILER_FLAGS(GObjectDOMBindings)
+
+add_dependencies(GObjectDOMBindings
+    WebCore
+    fake-installed-webkitdom-headers
+)
+
+file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkitdom.cfg
+    "[webkitdomgtk]\n"
+    "pkgconfig_file=${WebKit2_PKGCONFIG_FILE}\n"
+    "namespace=webkit_dom\n"
+    "cflags=-I${CMAKE_SOURCE_DIR}/Source\n"
+    "       -I${WEBCORE_DIR}/bindings\n"
+    "       -I${WEBCORE_DIR}/bindings/gobject\n"
+    "       -I${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}\n"
+    "doc_dir=${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/docs\n"
+    "source_dirs=${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}\n"
+    "            ${WEBCORE_DIR}/bindings/gobject\n"
+    "headers=${GObjectDOMBindings_INSTALLED_HEADERS}\n"
+)
+
+install(FILES ${GObjectDOMBindings_INSTALLED_HEADERS}
+        DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/webkitdom"
+)
+
+# Some installed headers are not on the list of headers used for gir generation.
+set(GObjectDOMBindings_GIR_HEADERS ${GObjectDOMBindings_INSTALLED_HEADERS})
+list(REMOVE_ITEM GObjectDOMBindings_GIR_HEADERS
+     bindings/gobject/WebKitDOMDeprecated.h
+     bindings/gobject/WebKitDOMEventTarget.h
+     bindings/gobject/WebKitDOMObject.h
+)
+
+# Propagate this variable to the parent scope, so that it can be used in other parts of the build.
+set(GObjectDOMBindings_GIR_HEADERS ${GObjectDOMBindings_GIR_HEADERS} PARENT_SCOPE)
