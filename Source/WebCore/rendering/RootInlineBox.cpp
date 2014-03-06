@@ -37,6 +37,10 @@
 #include "VerticalPositionCache.h"
 #include <wtf/NeverDestroyed.h>
 
+#if PLATFORM(IOS)
+#include "Settings.h"
+#endif
+
 namespace WebCore {
     
 struct SameSizeAsRootInlineBox : public InlineFlowBox {
