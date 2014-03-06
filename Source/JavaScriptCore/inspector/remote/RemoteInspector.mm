@@ -479,13 +479,16 @@ void RemoteInspector::receivedIndicateMessage(NSDictionary *userInfo)
     BOOL indicateEnabled = [[userInfo objectForKey:WIRIndicateEnabledKey] boolValue];
 
     dispatchAsyncOnQueueSafeForAnyDebuggable(^{
-        std::lock_guard<std::mutex> lock(m_mutex);
+        RemoteInspectorDebuggable* debuggable = nullptr;
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
 
-        auto it = m_debuggableMap.find(identifier);
-        if (it == m_debuggableMap.end())
-            return;
+            auto it = m_debuggableMap.find(identifier);
+            if (it == m_debuggableMap.end())
+                return;
 
-        RemoteInspectorDebuggable* debuggable = it->value.first;
+            debuggable = it->value.first;
+        }
         debuggable->setIndicating(indicateEnabled);
     });
 }

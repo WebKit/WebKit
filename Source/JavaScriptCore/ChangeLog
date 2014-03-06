@@ -1,3 +1,13 @@
+2014-03-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Prevent possible deadlock in view indication
+        https://bugs.webkit.org/show_bug.cgi?id=129766
+
+        Reviewed by Geoffrey Garen.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::receivedIndicateMessage):
+
 2014-03-05  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSObject::fastGetOwnPropertySlot does a slow check for OverridesGetOwnPropertySlot
