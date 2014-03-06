@@ -62,6 +62,8 @@ private:
     explicit FilterInfo(RenderLayer&);
     ~FilterInfo();
 
+    Element* layerElement() const;
+
     friend void WTF::deleteOwnedPtr<FilterInfo>(FilterInfo*);
 
     virtual void notifyFinished(CachedResource*) override;
