@@ -1,5 +1,14 @@
 2014-03-07  Anders Carlsson  <andersca@apple.com>
 
+        Fix a typo
+        <rdar://problem/15920020>
+
+        Rubber-stamped by Dan Bernstein.
+
+        * Configurations/WebKit.xcconfig:
+
+2014-03-07  Anders Carlsson  <andersca@apple.com>
+
         Tweak the WebKit2 frameworks directories
         https://bugs.webkit.org/show_bug.cgi?id=129910
         <rdar://problem/15920020>
