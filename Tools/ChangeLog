@@ -1,3 +1,16 @@
+2014-03-06  Martin Robinson  <mrobinson@igalia.com>
+
+        [CMake] [GTK] Build with ninja when it is available
+        https://bugs.webkit.org/show_bug.cgi?id=129805
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/webkitdirs.pm:
+        (canUseNinja): Added this helper which tries to execute Ninja, in an effort to determine
+        if it's available on the system.
+        (cmakeGeneratedBuildfile): Return the path to the generated build file. Only Unix support ATM.
+        (generateBuildSystemFromCMakeProject): For GTK+ compile with Ninja when possible.
+
 2014-03-06  Filip Pizlo  <fpizlo@apple.com>
 
         If the FTL is build-time enabled then it should be run-time enabled.

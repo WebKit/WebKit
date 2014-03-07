@@ -1969,6 +1969,22 @@ sub removeCMakeCache(@)
     }
 }
 
+sub canUseNinja(@)
+{
+    system('ninja --version > /dev/null');
+    return $? == 0;
+}
+
+sub cmakeGeneratedBuildfile(@)
+{
+    my ($willUseNinja) = @_;
+    if ($willUseNinja) {
+        return File::Spec->catfile(baseProductDir(), configuration(), "build.ninja")
+    } else {
+        return File::Spec->catfile(baseProductDir(), configuration(), "Makefile")
+    }
+}
+
 sub generateBuildSystemFromCMakeProject
 {
     my ($port, $prefixPath, @cmakeArgs, $additionalCMakeArgs) = @_;
@@ -1979,7 +1995,8 @@ sub generateBuildSystemFromCMakeProject
     chdir($buildPath) or die;
 
     # For GTK+ we try to be smart about when to rerun cmake, so that we can have faster incremental builds.
-    if (isGtk() && -e cmakeCachePath() && -e File::Spec->catfile(baseProductDir(), configuration(), "Makefile")) {
+    my $willUseNinja = isGtk() && canUseNinja();
+    if (isGtk() && -e cmakeCachePath() && -e cmakeGeneratedBuildfile($willUseNinja)) {
         return 0;
     }
 
@@ -1992,6 +2009,12 @@ sub generateBuildSystemFromCMakeProject
     } elsif ($config =~ /debug/i) {
         push @args, "-DCMAKE_BUILD_TYPE=Debug";
     }
+
+    if ($willUseNinja) {
+        push @args, "-G";
+        push @args, "Ninja";
+    }
+
     # Don't warn variables which aren't used by cmake ports.
     push @args, "--no-warn-unused-cli";
     push @args, @cmakeArgs if @cmakeArgs;
