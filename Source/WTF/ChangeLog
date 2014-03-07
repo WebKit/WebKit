@@ -1,3 +1,15 @@
+2014-03-07  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win64] Compile error after r165128.
+        https://bugs.webkit.org/show_bug.cgi?id=129807
+
+        Reviewed by Mark Lam.
+
+        * wtf/Platform.h: MSVC does not support computed goto.
+        Also enabled COMPUTED_GOTO_OPCODES when !ENABLE(LLINT_C_LOOP). This is needed because the ASM LLINT operates like COMPUTED_GOTO_OPCODES,
+        and relies on the related data structures being defined to support this. On Win32, the platform does not HAVE_COMPUTED_GOTO support,
+        but does want ENABLE_COMPUTED_GOTO_OPCODES because it uses the ASM LLINT.
+
 2014-03-06  Michael Saboff  <msaboff@apple.com>
 
         JSC should disable the JIT when building for ARMv7k

@@ -1,3 +1,13 @@
+2014-03-07  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win64] Compile error after r165128.
+        https://bugs.webkit.org/show_bug.cgi?id=129807
+
+        Reviewed by Mark Lam.
+
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/build-LLIntAssembly.sh: 
+        Check platform environment variable to determine if an assembler file should be generated.
+
 2014-03-07  Michael Saboff  <msaboff@apple.com>
 
         Clarify how we deal with "special" registers

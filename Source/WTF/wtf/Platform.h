@@ -790,12 +790,12 @@
 #endif
 
 /* Configure the interpreter */
-#if COMPILER(GCC) || COMPILER(MSVC)
+#if COMPILER(GCC)
 #define HAVE_COMPUTED_GOTO 1
 #endif
 
 /* Determine if we need to enable Computed Goto Opcodes or not: */
-#if HAVE(COMPUTED_GOTO) && ENABLE(LLINT)
+#if HAVE(COMPUTED_GOTO) || !ENABLE(LLINT_C_LOOP)
 #define ENABLE_COMPUTED_GOTO_OPCODES 1
 #endif
 
