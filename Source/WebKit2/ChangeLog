@@ -1,3 +1,43 @@
+2014-03-07  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Add an updateID to visibleContentRect updates which is passed back in layer transactions, so we know whether transactions are stale
+        https://bugs.webkit.org/show_bug.cgi?id=129897
+
+        Reviewed by Benjamin Poulain.
+
+        In WebKit2 on iOS we need to know when layer updates from the web process
+        are stale with respect to visible rect updates from the UI process. Do so
+        by adding an updateID to VisibleContentRectUpdateInfo, and storing it
+        on each side, returning it in RemoteLayerTreeTransaction.
+        
+        Did some re-ordering of members and encoding order in RemoteLayerTreeTransaction
+        to group like data members together.
+        
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        (WebKit::VisibleContentRectUpdateInfo::encode):
+        (WebKit::VisibleContentRectUpdateInfo::decode):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::VisibleContentRectUpdateInfo::updateID):
+        (WebKit::operator==):
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::setLastVisibleContentRectUpdateID):
+        (WebKit::RemoteLayerTreeTransaction::lastVisibleContentRectUpdateID):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::nextVisibleContentRectUpdateID):
+        (WebKit::WebPageProxy::lastVisibleContentRectUpdateID):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:scale:inStableState:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::willCommitLayerTree):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2014-03-07  Roger Fong  <roger_fong@apple.com>
 
         Replace setSystemWebGLLoadPolicy API with methods to query for WebGL blocking policy.

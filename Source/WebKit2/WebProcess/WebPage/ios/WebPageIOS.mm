@@ -1729,6 +1729,8 @@ void WebPage::applicationDidBecomeActive()
 
 void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo)
 {
+    m_lastVisibleContentRectUpdateID = visibleContentRectUpdateInfo.updateID();
+
     FloatRect exposedRect = visibleContentRectUpdateInfo.exposedRect();
     m_drawingArea->setExposedContentRect(enclosingIntRect(exposedRect));
 

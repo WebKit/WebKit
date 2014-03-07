@@ -39,14 +39,17 @@ class VisibleContentRectUpdateInfo {
 public:
     VisibleContentRectUpdateInfo()
         : m_scale(-1)
+        , m_updateID(0)
+        , m_inStableState(false)
     {
     }
 
-    VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedRect, const WebCore::FloatRect& unobscuredRect, const WebCore::FloatRect& customFixedPositionRect, double scale, bool inStableState)
+    VisibleContentRectUpdateInfo(uint64_t updateID, const WebCore::FloatRect& exposedRect, const WebCore::FloatRect& unobscuredRect, const WebCore::FloatRect& customFixedPositionRect, double scale, bool inStableState)
         : m_exposedRect(exposedRect)
         , m_unobscuredRect(unobscuredRect)
         , m_customFixedPositionRect(customFixedPositionRect)
         , m_scale(scale)
+        , m_updateID(updateID)
         , m_inStableState(inStableState)
     {
     }
@@ -55,6 +58,7 @@ public:
     const WebCore::FloatRect& unobscuredRect() const { return m_unobscuredRect; }
     const WebCore::FloatRect& customFixedPositionRect() const { return m_customFixedPositionRect; }
     double scale() const { return m_scale; }
+    uint64_t updateID() const { return m_updateID; }
     bool inStableState() const { return m_inStableState; }
 
     void encode(IPC::ArgumentEncoder&) const;
@@ -65,11 +69,13 @@ private:
     WebCore::FloatRect m_unobscuredRect;
     WebCore::FloatRect m_customFixedPositionRect;
     double m_scale;
+    uint64_t m_updateID;
     bool m_inStableState;
 };
 
 inline bool operator==(const VisibleContentRectUpdateInfo& a, const VisibleContentRectUpdateInfo& b)
 {
+    // Note: the comparison doesn't include updateID since we care about equality based on the other data.
     return a.scale() == b.scale()
         && a.exposedRect() == b.exposedRect()
         && a.unobscuredRect() == b.unobscuredRect()

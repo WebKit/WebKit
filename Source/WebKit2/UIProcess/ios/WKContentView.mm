@@ -173,7 +173,7 @@ using namespace WebKit;
     }
 
     FloatRect fixedPosRect = [self fixedPositionRectFromExposedRect:unobscuredRect scale:scale];
-    _page->updateVisibleContentRects(VisibleContentRectUpdateInfo(visibleRect, unobscuredRect, fixedPosRect, scale, isStableState));
+    _page->updateVisibleContentRects(VisibleContentRectUpdateInfo(_page->nextVisibleContentRectUpdateID(), visibleRect, unobscuredRect, fixedPosRect, scale, isStableState));
 
     RemoteScrollingCoordinatorProxy* scrollingCoordinator = _page->scrollingCoordinatorProxy();
     scrollingCoordinator->scrollPositionChangedViaDelegatedScrolling(scrollingCoordinator->rootScrollingNodeID(), unobscuredRect.origin);

@@ -1100,6 +1100,7 @@ private:
     bool m_shouldReturnWordAtSelection;
 
     WebCore::ViewportConfiguration m_viewportConfiguration;
+    uint64_t m_lastVisibleContentRectUpdateID;
     bool m_scaleWasSetByUIProcess;
     bool m_userHasChangedPageScaleFactor;
     WebCore::IntSize m_blockSelectionDesiredSize;

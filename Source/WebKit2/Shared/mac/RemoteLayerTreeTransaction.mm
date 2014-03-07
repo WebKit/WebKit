@@ -411,14 +411,18 @@ void RemoteLayerTreeTransaction::encode(IPC::ArgumentEncoder& encoder) const
     }
     
     encoder << m_destroyedLayerIDs;
+    encoder << m_videoLayerIDsPendingFullscreen;
+
     encoder << m_contentsSize;
     encoder << m_pageScaleFactor;
-    encoder << m_scaleWasSetByUIProcess;
     encoder << m_minimumScaleFactor;
     encoder << m_maximumScaleFactor;
-    encoder << m_allowsUserScaling;
+
+    encoder << m_lastVisibleContentRectUpdateID;
     encoder << m_renderTreeSize;
-    encoder << m_videoLayerIDsPendingFullscreen;
+
+    encoder << m_scaleWasSetByUIProcess;
+    encoder << m_allowsUserScaling;
 }
 
 bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLayerTreeTransaction& result)
@@ -455,13 +459,13 @@ bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLay
             return false;
     }
 
+    if (!decoder.decode(result.m_videoLayerIDsPendingFullscreen))
+        return false;
+
     if (!decoder.decode(result.m_contentsSize))
         return false;
 
     if (!decoder.decode(result.m_pageScaleFactor))
-        return false;
-
-    if (!decoder.decode(result.m_scaleWasSetByUIProcess))
         return false;
 
     if (!decoder.decode(result.m_minimumScaleFactor))
@@ -470,13 +474,16 @@ bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLay
     if (!decoder.decode(result.m_maximumScaleFactor))
         return false;
 
-    if (!decoder.decode(result.m_allowsUserScaling))
+    if (!decoder.decode(result.m_lastVisibleContentRectUpdateID))
         return false;
-    
+
     if (!decoder.decode(result.m_renderTreeSize))
         return false;
-    
-    if (!decoder.decode(result.m_videoLayerIDsPendingFullscreen))
+
+    if (!decoder.decode(result.m_scaleWasSetByUIProcess))
+        return false;
+
+    if (!decoder.decode(result.m_allowsUserScaling))
         return false;
 
     return true;
