@@ -32,6 +32,7 @@
 #include "ResourceResponse.h"
 #include "WebViewInputMethodFilter.h"
 #include "WidgetBackingStore.h"
+#include <memory>
 #include <webkit/webkitwebview.h>
 
 #if ENABLE(MEDIA_STREAM)
@@ -102,22 +103,22 @@ struct _WebKitWebViewPrivate {
     bool selfScrolling;
     GRefPtr<GtkTargetList> targetList;
 
-    OwnPtr<WebKit::AcceleratedCompositingContext> acceleratedCompositingContext;
+    std::unique_ptr<WebKit::AcceleratedCompositingContext> acceleratedCompositingContext;
 
 #if ENABLE(ICONDATABASE)
     gulong iconLoadedHandler;
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    OwnPtr<WebKit::UserMediaClientGtk> userMediaClient;
+    std::unique_ptr<WebKit::UserMediaClientGtk> userMediaClient;
 #endif
 
 #if ENABLE(GEOLOCATION)
-    OwnPtr<WebCore::GeolocationClientMock> geolocationClientMock;
+    std::unique_ptr<WebCore::GeolocationClientMock> geolocationClientMock;
 #endif
 
 #if ENABLE(NAVIGATOR_CONTENT_UTILS)
-    OwnPtr<WebKit::NavigatorContentUtilsClient> navigatorContentUtilsClient;
+    std::unique_ptr<WebKit::NavigatorContentUtilsClient> navigatorContentUtilsClient;
 #endif
 };
 

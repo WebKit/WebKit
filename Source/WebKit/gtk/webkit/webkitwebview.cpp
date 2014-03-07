@@ -3853,7 +3853,7 @@ static void webkit_web_view_init(WebKitWebView* webView)
 
 #if ENABLE(GEOLOCATION)
     if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled()) {
-        priv->geolocationClientMock = adoptPtr(new GeolocationClientMock);
+        priv->geolocationClientMock = std::make_unique<GeolocationClientMock>();
         WebCore::provideGeolocationTo(priv->corePage, priv->geolocationClientMock.get());
         priv->geolocationClientMock.get()->setController(GeolocationController::from(priv->corePage));
     } else
@@ -3865,12 +3865,12 @@ static void webkit_web_view_init(WebKitWebView* webView)
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    priv->userMediaClient = adoptPtr(new UserMediaClientGtk);
+    priv->userMediaClient = std::make_unique<UserMediaClientGtk>();
     WebCore::provideUserMediaTo(priv->corePage, priv->userMediaClient.get());
 #endif
 
 #if ENABLE(NAVIGATOR_CONTENT_UTILS)
-    priv->navigatorContentUtilsClient = WebKit::NavigatorContentUtilsClient::create();
+    priv->navigatorContentUtilsClient = std::make_unique<WebKit::NavigatorContentUtilsClient>();
     WebCore::provideNavigatorContentUtilsTo(priv->corePage, priv->navigatorContentUtilsClient.get());
 #endif
 
@@ -3925,7 +3925,7 @@ static void webkit_web_view_init(WebKitWebView* webView)
 #endif
 
     priv->selfScrolling = false;
-    priv->acceleratedCompositingContext = AcceleratedCompositingContext::create(webView);
+    priv->acceleratedCompositingContext = std::make_unique<AcceleratedCompositingContext>(webView);
 
     g_signal_connect(webView, "direction-changed", G_CALLBACK(webkitWebViewDirectionChanged), 0);
 }

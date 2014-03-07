@@ -26,15 +26,6 @@
 
 namespace WebKit {
 
-PassOwnPtr<NavigatorContentUtilsClient> NavigatorContentUtilsClient::create()
-{
-    return adoptPtr(new NavigatorContentUtilsClient);
-}
-
-NavigatorContentUtilsClient::NavigatorContentUtilsClient()
-{
-}
-
 void NavigatorContentUtilsClient::registerProtocolHandler(const String& scheme, const URL& baseURL, const URL& url, const String& title)
 {
     notImplemented();

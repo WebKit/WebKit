@@ -43,12 +43,9 @@ namespace WebKit {
 class AcceleratedCompositingContext : public WebCore::GraphicsLayerClient {
     WTF_MAKE_NONCOPYABLE(AcceleratedCompositingContext);
 public:
-    static PassOwnPtr<AcceleratedCompositingContext> create(WebKitWebView* webView)
-    {
-        return adoptPtr(new AcceleratedCompositingContext(webView));
-    }
-
+    explicit AcceleratedCompositingContext(WebKitWebView*);
     virtual ~AcceleratedCompositingContext();
+
     void setRootCompositingLayer(WebCore::GraphicsLayer*);
     void setNonCompositedContentsNeedDisplay(const WebCore::IntRect&);
     void scheduleLayerFlush();
@@ -94,8 +91,6 @@ private:
     std::unique_ptr<WebCore::GraphicsLayer> m_rootGraphicsLayer;
     OwnPtr<WebCore::TextureMapper> m_textureMapper;
 #endif
-
-    AcceleratedCompositingContext(WebKitWebView*);
 };
 
 } // namespace WebKit

@@ -28,14 +28,7 @@ namespace WebKit {
 
 class NavigatorContentUtilsClient : public WebCore::NavigatorContentUtilsClient {
 public:
-    static PassOwnPtr<NavigatorContentUtilsClient> create();
-
-    ~NavigatorContentUtilsClient() { }
-
     virtual void registerProtocolHandler(const String& scheme, const URL& baseURL, const URL&, const String& title);
-
-private:
-    NavigatorContentUtilsClient();
 };
 
 }
