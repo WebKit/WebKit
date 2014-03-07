@@ -1,3 +1,19 @@
+2014-03-06  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [WebRTC] Updating RTCIceServer to match spec
+        https://bugs.webkit.org/show_bug.cgi?id=129844
+
+        Reviewed by Eric Carlson.
+
+        Move RTCIceServer from RTCConfiguration to its own file.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::validateIceServerURL):
+        (WebCore::processIceServer):
+        * platform/mediastream/RTCConfiguration.h:
+        (WebCore::RTCConfiguration::iceServers):
+        * platform/mediastream/RTCIceServer.h: Added.
+
 2014-03-06  Hyowon Kim  <hw1008.kim@samsung.com>
 
         [EFL] Move EvasGL classes from WebKit to WebCore namespace.

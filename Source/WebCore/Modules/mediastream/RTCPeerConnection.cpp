@@ -66,13 +66,12 @@
 
 namespace WebCore {
 
-static bool appendIceServer(const String& iceURL, const String& credential, const String& username, RTCConfiguration* rtcConfiguration)
+static bool validateIceServerURL(const String& iceURL)
 {
     URL url(URL(), iceURL);
     if (url.isEmpty() || !url.isValid() || !(url.protocolIs("turn") || url.protocolIs("stun")))
         return false;
 
-    rtcConfiguration->appendServer(RTCIceServer::create(url, credential, username));
     return true;
 }
 
@@ -92,19 +91,23 @@ static ExceptionCode processIceServer(const Dictionary& iceServer, RTCConfigurat
     // So we convert to a string always, which converts a sequence to a string in the format: "foo, bar, ..",
     // then checking for a comma in the string assures that a string was a sequence and then we convert
     // it to a sequence safely.
+    if (urlString.isEmpty())
+        return INVALID_ACCESS_ERR;
+
     if (urlString.find(',') != notFound && iceServer.get("urls", urlsList) && urlsList.size()) {
         for (auto iter = urlsList.begin(); iter != urlsList.end(); ++iter) {
-            if (!appendIceServer((*iter), credential, username, rtcConfiguration))
+            if (!validateIceServerURL(*iter))
                 return INVALID_ACCESS_ERR;
         }
+    } else {
+        if (!validateIceServerURL(urlString))
+            return INVALID_ACCESS_ERR;
 
-        return 0;
+        urlsList.append(urlString);
     }
 
-    if (!urlString.isEmpty() && appendIceServer(urlString, credential, username, rtcConfiguration))
-        return 0;
-
-    return INVALID_ACCESS_ERR;
+    rtcConfiguration->appendServer(RTCIceServer::create(urlsList, credential, username));
+    return 0;
 }
 
 PassRefPtr<RTCConfiguration> RTCPeerConnection::parseConfiguration(const Dictionary& configuration, ExceptionCode& ec)
