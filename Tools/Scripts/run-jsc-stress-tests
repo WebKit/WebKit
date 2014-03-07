@@ -276,7 +276,7 @@ def simpleErrorHandler
         | outp, plan |
         outp.puts "if test -e #{plan.failFile}"
         outp.puts "then"
-        outp.puts "    (echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + prefixCommand(plan.name)
+        outp.puts "    (echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + prefixCommand(plan.name) + "1>&2"
         outp.puts "    " + plan.failCommand
         outp.puts "else"
         outp.puts "    " + plan.successCommand
@@ -293,7 +293,7 @@ def diffErrorHandler(expectedFilename)
         
         outp.puts "if test -e #{plan.failFile}"
         outp.puts "then"
-        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + prefixCommand(plan.name)
+        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + prefixCommand(plan.name) + "1>&2"
         outp.puts "    " + plan.failCommand
         outp.puts "elif test -e ../#{Shellwords.shellescape(expectedFilename)}"
         outp.puts "then"
@@ -302,11 +302,11 @@ def diffErrorHandler(expectedFilename)
         outp.puts "    then"
         outp.puts "    " + plan.successCommand
         outp.puts "    else"
-        outp.puts "        (echo \"DIFF FAILURE!\" && cat #{diffFilename}) | " + prefixCommand(plan.name)
+        outp.puts "        (echo \"DIFF FAILURE!\" && cat #{diffFilename}) | " + prefixCommand(plan.name) + "1>&2"
         outp.puts "        " + plan.failCommand
         outp.puts "    fi"
         outp.puts "else"
-        outp.puts "    (echo \"NO EXPECTATION!\" && cat #{outputFilename}) | " + prefixCommand(plan.name)
+        outp.puts "    (echo \"NO EXPECTATION!\" && cat #{outputFilename}) | " + prefixCommand(plan.name) + "1>&2"
         outp.puts "    " + plan.failCommand
         outp.puts "fi"
     }
@@ -321,11 +321,11 @@ def mozillaErrorHandler
 
         outp.puts "if test -e #{plan.failFile}"
         outp.puts "then"
-        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + prefixCommand(plan.name)
+        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + prefixCommand(plan.name) + "1>&2"
         outp.puts "    " + plan.failCommand
         outp.puts "elif grep -i -q failed! #{outputFilename}"
         outp.puts "then"
-        outp.puts "    (echo Detected failures: && cat #{outputFilename}) | " + prefixCommand(plan.name)
+        outp.puts "    (echo Detected failures: && cat #{outputFilename}) | " + prefixCommand(plan.name) + "1>&2"
         outp.puts "    " + plan.failCommand
         outp.puts "else"
         outp.puts "    " + plan.successCommand
@@ -347,7 +347,7 @@ def mozillaFailErrorHandler
         outp.puts "then"
         outp.puts "    " + plan.successCommand
         outp.puts "else"
-        outp.puts "    (echo NOTICE: You made this test pass, but it was expected to fail) | " + prefixCommand(plan.name)
+        outp.puts "    (echo NOTICE: You made this test pass, but it was expected to fail) | " + prefixCommand(plan.name) + "1>&2"
         outp.puts "    " + plan.failCommand
         outp.puts "fi"
     }
@@ -366,17 +366,17 @@ def mozillaExit3ErrorHandler
         outp.puts "    then"
         outp.puts "        if grep -i -q failed! #{outputFilename}"
         outp.puts "        then"
-        outp.puts "            (echo Detected failures: && cat #{outputFilename}) | " + prefixCommand(plan.name)
+        outp.puts "            (echo Detected failures: && cat #{outputFilename}) | " + prefixCommand(plan.name) + "1>&2"
         outp.puts "            " + plan.failCommand
         outp.puts "        else"
         outp.puts "            " + plan.successCommand
         outp.puts "        fi"
         outp.puts "    else"
-        outp.puts "        (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + prefixCommand(plan.name)
+        outp.puts "        (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + prefixCommand(plan.name) + "1>&2"
         outp.puts "        " + plan.failCommand
         outp.puts "    fi"
         outp.puts "else"
-        outp.puts "    (cat #{outputFilename} && echo ERROR: Test expected to fail, but returned successfully) | " + prefixCommand(plan.name)
+        outp.puts "    (cat #{outputFilename} && echo ERROR: Test expected to fail, but returned successfully) | " + prefixCommand(plan.name) + "1>&2"
         outp.puts "    " + plan.failCommand
         outp.puts "fi"
     }

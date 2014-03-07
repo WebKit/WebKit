@@ -1,3 +1,16 @@
+2014-03-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        run-jsc-stress-tests doesn't eagerly report test failures when using the shell runner
+        https://bugs.webkit.org/show_bug.cgi?id=129886
+
+        Reviewed by Mark Lam.
+
+        * Scripts/jsc-stress-test-helpers/shell-runner.sh: Added a "verbose" mode to the shell runner.
+        If we're in verbose mode, then we don't redirect any output when running each test. If we're not
+        in verbose mode then we redirect stdout to /dev/null and allow any stderr output through.
+        * Scripts/run-jsc-stress-tests: Redirect any sort of error output to stderr so that it will 
+        make it through when in non-verbose mode.
+
 2014-03-07  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] buid-webkit should use CMake by default
