@@ -54,7 +54,9 @@ class GtkPort(Port):
                 raise ValueError('use --wrapper=\"valgrind\" for memory leak detection on GTK')
 
     def _is_cmake_build(self):
-        return os.path.exists(self._build_path('CMakeCache.txt'))
+        # Look for the autotools config.log file, which means that we
+        # assume a CMake build (--gtk) when lacking evidence of either.
+        return not os.path.exists(self._build_path('config.log'))
 
     def _built_executables_path(self, *path):
         if self._is_cmake_build():

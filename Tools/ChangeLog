@@ -1,3 +1,13 @@
+2014-03-07  Martin Robinson  <mrobinson@igalia.com>
+
+        REGRESSION(165267): Broke a webkitpy unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=129904
+
+        Reviewed by Jon Honeycutt.
+
+        * Scripts/webkitpy/port/gtk.py: Flip the default test to assume CMake by default.
+        (GtkPort._is_cmake_build):
+
 2014-03-07  Andres Gomez  <agomez@igalia.com>
 
         [GTK] webkit-patch setup-git-clone fails even after running Tools/gtk/install-dependencies
