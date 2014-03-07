@@ -155,21 +155,14 @@ JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef ctx)
 
 void JSGlobalContextRelease(JSGlobalContextRef ctx)
 {
-    IdentifierTable* savedIdentifierTable;
     ExecState* exec = toJS(ctx);
-    {
-        JSLockHolder locker(exec);
+    JSLockHolder locker(exec);
 
-        VM& vm = exec->vm();
-        savedIdentifierTable = wtfThreadData().setCurrentIdentifierTable(vm.identifierTable);
-
-        bool protectCountIsZero = Heap::heap(exec->vmEntryGlobalObject())->unprotect(exec->vmEntryGlobalObject());
-        if (protectCountIsZero)
-            vm.heap.reportAbandonedObjectGraph();
-        vm.deref();
-    }
-
-    wtfThreadData().setCurrentIdentifierTable(savedIdentifierTable);
+    VM& vm = exec->vm();
+    bool protectCountIsZero = Heap::heap(exec->vmEntryGlobalObject())->unprotect(exec->vmEntryGlobalObject());
+    if (protectCountIsZero)
+        vm.heap.reportAbandonedObjectGraph();
+    vm.deref();
 }
 
 JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)

@@ -1,3 +1,16 @@
+2014-03-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSGlobalContextRelease incorrectly handles saving/restoring IdentifierTable
+        https://bugs.webkit.org/show_bug.cgi?id=129858
+
+        Reviewed by Mark Lam.
+
+        It was correct (but really ugly) prior to the combining of APIEntryShim and JSLock, 
+        but now it ends up overwriting the IdentifierTable that JSLock just restored.
+
+        * API/JSContextRef.cpp:
+        (JSGlobalContextRelease):
+
 2014-03-06  Oliver Hunt  <oliver@apple.com>
 
         Fix FTL build.
