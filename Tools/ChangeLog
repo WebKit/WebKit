@@ -1,3 +1,17 @@
+2014-03-07  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] buid-webkit should use CMake by default
+        https://bugs.webkit.org/show_bug.cgi?id=129855
+
+        Reviewed by Carlos Garcia Campos.
+
+        Make the CMake build the default GTK+ build when using build-webkit. This will
+        ensure that all bots are using CMake. We do this by swapping --gtk and --gtkcmake,
+        so that we have --gtk and --gtkautotools.
+
+        * Scripts/webkitdirs.pm: Swap --gtkcmake/--gtk for --gtk/--gtkautotools.
+        * Scripts/webkitpy/port/gtk.py: Ditto.
+
 2014-03-06  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] [GTK] Build with ninja when it is available

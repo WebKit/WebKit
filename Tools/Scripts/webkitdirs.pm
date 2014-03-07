@@ -374,8 +374,8 @@ sub argumentsForConfiguration()
     push(@args, '--release') if ($configuration =~ "^Release");
     push(@args, '--32-bit') if ($architecture ne "x86_64" and !isWin64());
     push(@args, '--64-bit') if (isWin64());
-    push(@args, '--gtk') if isGtkAutotools();
-    push(@args, '--gtkcmake') if isGtkCMake();
+    push(@args, '--gtkautotools') if isGtkAutotools();
+    push(@args, '--gtk') if isGtkCMake();
     push(@args, '--efl') if isEfl();
     push(@args, '--wincairo') if isWinCairo();
     push(@args, '--wince') if isWinCE();
@@ -945,7 +945,7 @@ sub isEfl()
 sub determineIsGtkCMake()
 {
     return if defined($isGtkCMake);
-    $isGtkCMake = checkForArgumentAndRemoveFromARGV("--gtkcmake");
+    $isGtkCMake = checkForArgumentAndRemoveFromARGV("--gtk");
 }
 
 sub isGtkCMake()
@@ -968,7 +968,7 @@ sub isGtk()
 sub determineIsGtkAutotools()
 {
     return if defined($isGtkAutotools);
-    $isGtkAutotools = checkForArgumentAndRemoveFromARGV("--gtk");
+    $isGtkAutotools = checkForArgumentAndRemoveFromARGV("--gtkautotools");
 }
 
 sub isWinCE()

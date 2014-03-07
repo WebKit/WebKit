@@ -73,9 +73,9 @@ class GtkPort(Port):
 
     def _port_flag_for_scripts(self):
         if self._is_cmake_build():
-            return "--gtkcmake"
-        else:
             return "--gtk"
+        else:
+            return "--gtkautotools"
 
     @memoized
     def _driver_class(self):
@@ -215,9 +215,9 @@ class GtkPort(Port):
     def build_webkit_command(self, build_style=None):
         command = super(GtkPort, self).build_webkit_command(build_style)
         if self._is_cmake_build():
-            command.extend(["--gtkcmake", "--update-gtk"])
-        else:
             command.extend(["--gtk", "--update-gtk"])
+        else:
+            command.extend(["--gtkautotools", "--update-gtk"])
 
         if self.get_option('webkit_test_runner'):
             command.append("--no-webkit1")
