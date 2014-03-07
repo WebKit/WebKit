@@ -1,3 +1,14 @@
+2014-03-07  Gergo Balogh  <gbalogh.u-szeged@partner.samsung.com>
+
+        Remove FFTFrameMKL.
+        https://bugs.webkit.org/show_bug.cgi?id=129866
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/audio/FFTFrame.h:
+        * platform/audio/FFTFrameStub.cpp:
+        * platform/audio/mkl/FFTFrameMKL.cpp: Removed, it is never used.
+
 2014-03-07  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [WebRTC] Adding getConfiguration method to RTCPeerConnection
