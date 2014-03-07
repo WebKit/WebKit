@@ -463,6 +463,7 @@
     <ClCompile Include="..\heap\CopiedSpace.cpp" />
     <ClCompile Include="..\heap\CopyVisitor.cpp" />
     <ClCompile Include="..\heap\DeferGC.cpp" />
+    <ClCompile Include="..\heap\GCActivityCallback.cpp" />
     <ClCompile Include="..\heap\GCThread.cpp" />
     <ClCompile Include="..\heap\GCThreadSharedData.cpp" />
     <ClCompile Include="..\heap\HandleSet.cpp" />
@@ -619,7 +620,6 @@
     <ClCompile Include="..\runtime\FunctionConstructor.cpp" />
     <ClCompile Include="..\runtime\FunctionExecutableDump.cpp" />
     <ClCompile Include="..\runtime\FunctionPrototype.cpp" />
-    <ClCompile Include="..\runtime\GCActivityCallback.cpp" />
     <ClCompile Include="..\runtime\GetterSetter.cpp" />
     <ClCompile Include="..\runtime\Identifier.cpp" />
     <ClCompile Include="..\runtime\IndexingType.cpp" />
@@ -1043,6 +1043,7 @@
     <ClInclude Include="..\heap\CopyWriteBarrier.h" />
     <ClInclude Include="..\heap\DeferGC.h" />
     <ClInclude Include="..\heap\DelayedReleaseScope.h" />
+    <ClInclude Include="..\heap\GCActivityCallback.h" />
     <ClInclude Include="..\heap\GCSegmentedArray.h" />
     <ClInclude Include="..\heap\GCSegmentedArrayInlines.h" />
     <ClInclude Include="..\heap\GCAssertions.h" />
@@ -1267,7 +1268,6 @@
     <ClInclude Include="..\runtime\FunctionConstructor.h" />
     <ClInclude Include="..\runtime\FunctionExecutableDump.h" />
     <ClInclude Include="..\runtime\FunctionPrototype.h" />
-    <ClInclude Include="..\runtime\GCActivityCallback.h" />
     <ClInclude Include="..\runtime\GenericTypedArrayView.h" />
     <ClInclude Include="..\runtime\GenericTypedArrayViewInlines.h" />
     <ClInclude Include="..\runtime\GetterSetter.h" />

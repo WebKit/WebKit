@@ -1,3 +1,22 @@
+2014-03-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Move GCActivityCallback to heap
+        https://bugs.webkit.org/show_bug.cgi?id=129457
+
+        Reviewed by Geoffrey Garen.
+
+        All the other GC timer related stuff is there already.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/GCActivityCallback.cpp: Copied from Source/JavaScriptCore/runtime/GCActivityCallback.cpp.
+        * heap/GCActivityCallback.h: Copied from Source/JavaScriptCore/runtime/GCActivityCallback.h.
+        * runtime/GCActivityCallback.cpp: Removed.
+        * runtime/GCActivityCallback.h: Removed.
+
 2014-03-07  Andrew Trick  <atrick@apple.com>
 
         Correct a comment typo from:

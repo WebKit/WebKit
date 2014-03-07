@@ -215,6 +215,7 @@ set(JavaScriptCore_SOURCES
     heap/CopiedSpace.cpp
     heap/CopyVisitor.cpp
     heap/DeferGC.cpp
+    heap/GCActivityCallback.cpp
     heap/GCThread.cpp
     heap/GCThreadSharedData.cpp
     heap/HandleSet.cpp
@@ -372,7 +373,6 @@ set(JavaScriptCore_SOURCES
     runtime/FunctionConstructor.cpp
     runtime/FunctionExecutableDump.cpp
     runtime/FunctionPrototype.cpp
-    runtime/GCActivityCallback.cpp
     runtime/GetterSetter.cpp
     runtime/Identifier.cpp
     runtime/IndexingType.cpp

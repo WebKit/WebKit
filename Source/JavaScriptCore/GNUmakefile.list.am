@@ -557,6 +557,8 @@ javascriptcore_sources += \
     Source/JavaScriptCore/heap/DeferGC.cpp \
 	Source/JavaScriptCore/heap/DeferGC.h \
     Source/JavaScriptCore/heap/DelayedReleaseScope.h \
+	Source/JavaScriptCore/heap/GCActivityCallback.cpp \
+	Source/JavaScriptCore/heap/GCActivityCallback.h \
 	Source/JavaScriptCore/heap/GCSegmentedArray.h \
 	Source/JavaScriptCore/heap/GCSegmentedArrayInlines.h \
 	Source/JavaScriptCore/heap/GCAssertions.h \
@@ -995,8 +997,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/FunctionExecutableDump.h \
 	Source/JavaScriptCore/runtime/FunctionPrototype.cpp \
 	Source/JavaScriptCore/runtime/FunctionPrototype.h \
-	Source/JavaScriptCore/runtime/GCActivityCallback.cpp \
-	Source/JavaScriptCore/runtime/GCActivityCallback.h \
 	Source/JavaScriptCore/runtime/GenericTypedArrayView.h \
 	Source/JavaScriptCore/runtime/GenericTypedArrayViewInlines.h \
 	Source/JavaScriptCore/runtime/GetterSetter.cpp \

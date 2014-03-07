@@ -30,9 +30,9 @@
 #include "GCActivityCallback.h"
 
 #include "Heap.h"
-#include "VM.h"
 #include "JSLock.h"
 #include "JSObject.h"
+#include "VM.h"
 
 #include <wtf/RetainPtr.h>
 #include <wtf/WTFThreadData.h>
