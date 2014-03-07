@@ -262,10 +262,13 @@ static String buildEllipseString(const String& radiusX, const String& radiusY, c
 
 String CSSBasicShapeEllipse::cssText() const
 {
+    RefPtr<CSSPrimitiveValue> normalizedCX = buildSerializablePositionOffset(m_centerX, CSSValueLeft);
+    RefPtr<CSSPrimitiveValue> normalizedCY = buildSerializablePositionOffset(m_centerY, CSSValueTop);
+
     return buildEllipseString(m_radiusX ? m_radiusX->cssText() : String(),
         m_radiusY ? m_radiusY->cssText() : String(),
-        m_centerX ? m_centerX->cssText() : String(),
-        m_centerY ? m_centerY->cssText() : String(),
+        serializePositionOffset(*normalizedCX->getPairValue(), *normalizedCY->getPairValue()),
+        serializePositionOffset(*normalizedCY->getPairValue(), *normalizedCX->getPairValue()),
         m_layoutBox ? m_layoutBox->cssText() : String());
 }
 

@@ -60,9 +60,9 @@ var validShapeValues = [
 
     "ellipse(10px, 20px, 30px, 40px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
 
-    ["ellipse()", "ellipse()", "ellipse(closest-side closest-side at 50% 50%)"],
-    ["ellipse(10px)", "ellipse(10px)", "ellipse(10px closest-side at 50% 50%)"],
-    ["ellipse(10px 20px)", "ellipse(10px 20px)", "ellipse(10px 20px at 50% 50%)"],
+    ["ellipse()", "ellipse(at 50% 50%)", "ellipse(closest-side closest-side at 50% 50%)"],
+    ["ellipse(10px)", "ellipse(10px at 50% 50%)", "ellipse(10px closest-side at 50% 50%)"],
+    ["ellipse(10px 20px)", "ellipse(10px 20px at 50% 50%)", "ellipse(10px 20px at 50% 50%)"],
     ["ellipse(10px at 10px)", "ellipse(10px at 10px 50%)", "ellipse(10px closest-side at 10px 50%)"],
     ["ellipse(10px 20px at 10px)", "ellipse(10px 20px at 10px 50%)"],
     ["ellipse(10px at 10px 10px)", "ellipse(10px at 10px 10px)", "ellipse(10px closest-side at 10px 10px)"],
@@ -70,12 +70,14 @@ var validShapeValues = [
     ["ellipse(at 10px 10px)", "ellipse(at 10px 10px)", "ellipse(closest-side closest-side at 10px 10px)"],
     ["ellipse(at top left)", "ellipse(at 0% 0%)", "ellipse(closest-side closest-side at 0% 0%)"],
     ["ellipse(at right bottom)", "ellipse(at 100% 100%)", "ellipse(closest-side closest-side at 100% 100%)"],
-    ["ellipse(10px at left top 10px)", "ellipse(10px at left 0% top 10px)", "ellipse(10px closest-side at 0% 10px)"],
-    ["ellipse(10px at top 10px left 10px)", "ellipse(10px at left 10px top 10px)", "ellipse(10px closest-side at 10px 10px)"],
+    ["ellipse(10px at left top 10px)", "ellipse(10px at 0% 10px)", "ellipse(10px closest-side at 0% 10px)"],
+    ["ellipse(10px at top 10px left 10px)", "ellipse(10px at 10px 10px)", "ellipse(10px closest-side at 10px 10px)"],
     ["ellipse(10px at right 10px bottom 10px)", "ellipse(10px at right 10px bottom 10px)", "ellipse(10px closest-side at right 10px bottom 10px)"],
-    ["ellipse(10px 20px at left top 10px)", "ellipse(10px 20px at left 0% top 10px)", "ellipse(10px 20px at 0% 10px)"],
-    ["ellipse(10px 20px at top 10px left 10px)", "ellipse(10px 20px at left 10px top 10px)", "ellipse(10px 20px at 10px 10px)"],
+    ["ellipse(10px 20px at left top 10px)", "ellipse(10px 20px at 0% 10px)", "ellipse(10px 20px at 0% 10px)"],
+    ["ellipse(10px 20px at top 10px left 10px)", "ellipse(10px 20px at 10px 10px)", "ellipse(10px 20px at 10px 10px)"],
     ["ellipse(10px 20px at right 10px bottom 10px)", "ellipse(10px 20px at right 10px bottom 10px)"],
+    ["ellipse(10px 10px at right 10% bottom 10%)", "ellipse(10px 10px at 90% 90%)"],
+    ["ellipse(10px 10px at right 0px bottom 0px)", "ellipse(10px 10px at 100% 100%)"],
 
     ["polygon(10px 20px, 30px 40px, 40px 50px)", "polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)"],
     ["polygon(evenodd, 10px 20px, 30px 40px, 40px 50px)", "polygon(evenodd, 10px 20px, 30px 40px, 40px 50px)"],

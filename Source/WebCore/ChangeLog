@@ -1,3 +1,22 @@
+2014-03-07  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Correctly serialize ellipse positions
+        https://bugs.webkit.org/show_bug.cgi?id=129700
+
+        Reviewed by Dirk Schulze.
+
+        Updating ellipse serialization to be in line with
+        the CSS Shapes spec. Positions should serialize as
+        2 or 4-value positions, converting keywords to
+        percentages where possible. This uses the same method
+        as circle position serialization (bug 129404).
+
+        Updated existing parsing tests.
+
+        * css/CSSBasicShapes.cpp:
+        (WebCore::CSSBasicShapeEllipse::cssText): Use the
+        normalization / serialization helpers for shape position.
+
 2014-03-07  Brian Burg  <bburg@apple.com>
 
         Unreviewed, rebaseline run-binding-tests results after r165242.
