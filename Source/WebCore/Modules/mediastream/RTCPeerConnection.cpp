@@ -175,6 +175,7 @@ RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext& context, PassRefPtr
     , m_iceGatheringState(IceGatheringStateNew)
     , m_iceConnectionState(IceConnectionStateNew)
     , m_scheduledEventTimer(this, &RTCPeerConnection::scheduledEventTimerFired)
+    , m_configuration(configuration)
     , m_stopped(false)
 {
     Document& document = toDocument(context);
@@ -192,7 +193,7 @@ RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext& context, PassRefPtr
 
     document.frame()->loader().client().dispatchWillStartUsingPeerConnectionHandler(m_peerHandler.get());
 
-    if (!m_peerHandler->initialize(configuration)) {
+    if (!m_peerHandler->initialize(m_configuration)) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
@@ -361,11 +362,11 @@ void RTCPeerConnection::updateIce(const Dictionary& rtcConfiguration, ExceptionC
         return;
     }
 
-    RefPtr<RTCConfiguration> configuration = parseConfiguration(rtcConfiguration, ec);
+    m_configuration = parseConfiguration(rtcConfiguration, ec);
     if (ec)
         return;
 
-    bool valid = m_peerHandler->updateIce(configuration);
+    bool valid = m_peerHandler->updateIce(m_configuration);
     if (!valid)
         ec = SYNTAX_ERR;
 }
@@ -494,6 +495,11 @@ void RTCPeerConnection::removeStream(PassRefPtr<MediaStream> prpStream, Exceptio
     m_localStreams.remove(pos);
     stream->removeObserver(this);
     m_peerHandler->removeStream(stream->privateStream());
+}
+
+RTCConfiguration* RTCPeerConnection::getConfiguration() const
+{
+    return m_configuration.get();
 }
 
 MediaStreamVector RTCPeerConnection::getLocalStreams() const

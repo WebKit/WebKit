@@ -1,3 +1,24 @@
+2014-03-07  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [WebRTC] Adding getConfiguration method to RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=129845
+
+        Reviewed by Eric Carlson.
+
+        Test: fast/mediastream/RTCPeerConnection-getConfiguration.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * Modules/mediastream/RTCConfiguration.idl: Added.
+        * Modules/mediastream/RTCIceServer.idl: Added.
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::RTCPeerConnection):
+        (WebCore::RTCPeerConnection::updateIce):
+        (WebCore::RTCPeerConnection::getConfiguration):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+
 2014-03-07  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Optimize collectionLast() and collectionTraverseBackward() in LiveNodeList

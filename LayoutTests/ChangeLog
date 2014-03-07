@@ -1,3 +1,13 @@
+2014-03-07  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [WebRTC] Adding getConfiguration method to RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=129845
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/RTCPeerConnection-getConfiguration-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-getConfiguration.html: Added.
+
 2014-03-06  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [WebRTC] Updating RTCPeerConnection.idl

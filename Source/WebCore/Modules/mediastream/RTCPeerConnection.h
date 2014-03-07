@@ -83,6 +83,8 @@ public:
 
     String iceConnectionState() const;
 
+    RTCConfiguration* getConfiguration() const;
+
     MediaStreamVector getLocalStreams() const;
 
     MediaStreamVector getRemoteStreams() const;
@@ -164,6 +166,8 @@ private:
 
     Timer<RTCPeerConnection> m_scheduledEventTimer;
     Vector<RefPtr<Event>> m_scheduledEvents;
+
+    RefPtr<RTCConfiguration> m_configuration;
 
     bool m_stopped;
 };

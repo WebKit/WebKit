@@ -62,6 +62,8 @@
     sequence<MediaStream> getRemoteStreams();
     MediaStream getStreamById(DOMString streamId);
 
+    RTCConfiguration getConfiguration();
+
     [StrictTypeChecking, RaisesException] void addStream(MediaStream stream);
     [StrictTypeChecking, RaisesException] void removeStream(MediaStream stream);
 

@@ -1,0 +1,58 @@
+Tests RTCPeerConnection getConfiguration.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS iceServers.length is 1
+PASS configuration.iceTransports is "all"
+PASS configuration.requestIdentity is "ifconfigured"
+PASS iceServers[i].username is ""
+PASS iceServers[i].credential is ""
+PASS urls[j] is "stun:foo.com"
+PASS iceServers.length is 2
+PASS configuration.iceTransports is "all"
+PASS configuration.requestIdentity is "ifconfigured"
+PASS iceServers[i].username is "user"
+PASS iceServers[i].credential is "x"
+PASS urls[j] is "turn:foo.com"
+PASS iceServers[i].username is "user2"
+PASS iceServers[i].credential is "x"
+PASS urls[j] is "stun:bar.com"
+PASS iceServers.length is 2
+PASS configuration.iceTransports is "all"
+PASS configuration.requestIdentity is "ifconfigured"
+PASS iceServers[i].username is "user"
+PASS iceServers[i].credential is "x"
+PASS urls[j] is "turn:foo.com"
+PASS iceServers[i].username is "user2"
+PASS iceServers[i].credential is "x"
+PASS urls[j] is "stun:bar.com"
+PASS urls[j] is "turn:foo.com"
+PASS urls[j] is "turn:foo2.com"
+PASS iceServers.length is 1
+PASS configuration.iceTransports is "relay"
+PASS configuration.requestIdentity is "no"
+PASS iceServers[i].username is ""
+PASS iceServers[i].credential is ""
+PASS urls[j] is "stun:foo.com"
+PASS iceServers.length is 2
+PASS configuration.iceTransports is "none"
+PASS configuration.requestIdentity is "yes"
+PASS iceServers[i].username is "user"
+PASS iceServers[i].credential is "x"
+PASS urls[j] is "turn:foo.com"
+PASS iceServers[i].username is "user2"
+PASS iceServers[i].credential is "x"
+PASS urls[j] is "stun:bar.com"
+PASS urls[j] is "turn:foo.com"
+PASS urls[j] is "turn:foo2.com"
+PASS iceServers.length is 1
+PASS configuration.iceTransports is "all"
+PASS configuration.requestIdentity is "ifconfigured"
+PASS iceServers[i].username is ""
+PASS iceServers[i].credential is ""
+PASS urls[j] is "stun:foo.com"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

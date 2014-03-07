@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description("Tests RTCPeerConnection getConfiguration.");
+
+            var pc = null;
+            var configuration = null;
+            var iceServers = null;
+            var urls = null;
+
+            function checkConfiguration(serversList, iceTransports, requestIdentity)
+            {
+                iceServers = configuration.iceServers
+                shouldBe('iceServers.length', serversList.length.toString());
+                shouldBeEqualToString('configuration.iceTransports', iceTransports);
+                shouldBeEqualToString('configuration.requestIdentity', requestIdentity);
+                for (i = 0; i < iceServers.length; ++i) {
+                    shouldBeEqualToString('iceServers[i].username', serversList[i].username);
+                    shouldBeEqualToString('iceServers[i].credential', serversList[i].credential);
+
+                    urls = iceServers[i].urls;
+                    for (j = 0; j < urls.length; ++j)
+                        shouldBeEqualToString('urls[j]', serversList[i].urls[j]);
+                }
+            }
+
+            pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            var servers = [{urls:['stun:foo.com'], username:'', credential:''}];
+            configuration = pc.getConfiguration();
+            checkConfiguration(servers, 'all', 'ifconfigured');
+
+            pc = new webkitRTCPeerConnection({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'},{urls:'stun:bar.com', username:'user2', credential:'x'}]});
+            servers = [{urls:['turn:foo.com'], username:'user', credential:'x'}, {urls:['stun:bar.com'], username:'user2', credential:'x'}];
+            configuration = pc.getConfiguration();
+            checkConfiguration(servers, 'all', 'ifconfigured');
+
+            pc = new webkitRTCPeerConnection({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}]});
+            servers = [{urls:['turn:foo.com'], username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}];
+            configuration = pc.getConfiguration();
+            checkConfiguration(servers, 'all', 'ifconfigured');
+
+            pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}], iceTransports:'relay', requestIdentity:'no'});
+            var servers = [{urls:['stun:foo.com'], username:'', credential:''}];
+            configuration = pc.getConfiguration();
+            checkConfiguration(servers, 'relay', 'no');
+
+            pc = new webkitRTCPeerConnection({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}], iceTransports:'none', requestIdentity:'yes'});
+            servers = [{urls:['turn:foo.com'], username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}];
+            configuration = pc.getConfiguration();
+            checkConfiguration(servers, 'none', 'yes');
+
+            pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}], iceTransports:'foo', requestIdentity:'bar'});
+            var servers = [{urls:['stun:foo.com'], username:'', credential:''}];
+            configuration = pc.getConfiguration();
+            checkConfiguration(servers, 'all', 'ifconfigured');
+
+            finishJSTest();
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

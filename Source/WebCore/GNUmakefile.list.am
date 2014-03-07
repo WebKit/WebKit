@@ -602,6 +602,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSRequestAnimationFrameCallback.h \
 	DerivedSources/WebCore/JSRGBColor.cpp \
 	DerivedSources/WebCore/JSRGBColor.h \
+	DerivedSources/WebCore/JSRTCConfiguration.cpp \
+	DerivedSources/WebCore/JSRTCConfiguration.h \
 	DerivedSources/WebCore/JSRTCDTMFSender.cpp \
 	DerivedSources/WebCore/JSRTCDTMFSender.h \
 	DerivedSources/WebCore/JSRTCDTMFToneChangeEvent.cpp \
@@ -616,6 +618,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSRTCIceCandidate.h \
 	DerivedSources/WebCore/JSRTCIceCandidateEvent.cpp \
 	DerivedSources/WebCore/JSRTCIceCandidateEvent.h \
+	DerivedSources/WebCore/JSRTCIceServer.cpp \
+	DerivedSources/WebCore/JSRTCIceServer.h \
 	DerivedSources/WebCore/JSRTCPeerConnection.cpp \
 	DerivedSources/WebCore/JSRTCPeerConnection.h \
 	DerivedSources/WebCore/JSRTCSessionDescription.cpp \
@@ -1223,6 +1227,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaError.idl \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaErrorCallback.idl \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaSuccessCallback.idl \
+	$(WebCore)/Modules/mediastream/RTCConfiguration.idl \
 	$(WebCore)/Modules/mediastream/RTCDTMFSender.idl \
 	$(WebCore)/Modules/mediastream/RTCDTMFToneChangeEvent.idl \
 	$(WebCore)/Modules/mediastream/RTCDataChannel.idl \
@@ -1230,6 +1235,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediastream/RTCPeerConnectionErrorCallback.idl \
 	$(WebCore)/Modules/mediastream/RTCIceCandidate.idl \
 	$(WebCore)/Modules/mediastream/RTCIceCandidateEvent.idl \
+	$(WebCore)/Modules/mediastream/RTCIceServer.idl \
 	$(WebCore)/Modules/mediastream/RTCPeerConnection.idl \
 	$(WebCore)/Modules/mediastream/RTCSessionDescription.idl \
 	$(WebCore)/Modules/mediastream/RTCSessionDescriptionCallback.idl \
