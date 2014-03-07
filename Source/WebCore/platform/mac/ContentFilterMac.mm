@@ -93,6 +93,7 @@ PassRefPtr<ContentFilter> ContentFilter::create(const ResourceResponse& response
 ContentFilter::ContentFilter(const ResourceResponse& response)
 #if HAVE(NE_FILTER_SOURCE)
     : m_neFilterSourceStatus(NEFilterSourceStatusNeedsMoreData)
+    , m_neFilterSourceQueue(0)
 #endif
 {
     if ([getWebFilterEvaluatorClass() isManagedSession])
