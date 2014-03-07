@@ -42,6 +42,8 @@
 #import <mach/host_info.h>
 #import <mach/mach.h>
 #import <mach/mach_error.h>
+#import <malloc/malloc.h>
+#import <notify.h>
 #import <sysexits.h>
 #import <wtf/text/WTFString.h>
 
@@ -112,6 +114,11 @@ static void overrideSystemProxies(const String& httpProxy, const String& httpsPr
 
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
+    static int notifyToken;
+    notify_register_dispatch("org.WebKit.lowMemory", &notifyToken, dispatch_get_main_queue(), ^(int) {
+        malloc_zone_pressure_relief(nullptr, 0);
+    });
+
     m_diskCacheDirectory = parameters.diskCacheDirectory;
 
     if (!m_diskCacheDirectory.isNull()) {

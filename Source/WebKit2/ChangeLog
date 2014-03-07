@@ -1,3 +1,18 @@
+2014-03-07  Andreas Kling  <akling@apple.com>
+
+        [Mac] Notify system malloc of fake memory pressure.
+        <https://webkit.org/b/129908>
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+
+            Listen for the fake memory pressure notification and respond by
+            just forwarding to system malloc. We don't do the full WebCore
+            memory pressure handling here, since that will cause stuff that
+            the network process doesn't need to get instantiated.
+
 2014-03-07  Dean Jackson  <dino@apple.com>
 
         Attempt to fix the iOS build.

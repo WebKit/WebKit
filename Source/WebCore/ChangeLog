@@ -1,3 +1,25 @@
+2014-03-07  Andreas Kling  <akling@apple.com>
+
+        [Mac] Notify system malloc of fake memory pressure.
+        <https://webkit.org/b/129908>
+
+        After fixing the leak in r165252, I was surprised to find that it didn't
+        show up on memory test bots. It turns out that while the memory is now
+        getting freed, the system malloc implementation doesn't actually release
+        pages back to the OS until there is memory pressure.
+
+        Since we are just faking the memory pressure on bots, we have to let
+        system malloc in on the fun, so we can get representative numbers.
+        With this change, we should finally see the effect of not leaking the
+        URLRequest object tree.
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::install):
+
+            Tell system malloc that we are under fake memory pressure.
+
 2014-03-07  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS] WebKit1 scroll position is incorrect

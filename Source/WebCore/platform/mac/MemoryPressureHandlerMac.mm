@@ -39,6 +39,7 @@
 #import <wtf/CurrentTime.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Functional.h>
+#import <malloc/malloc.h>
 
 #if !PLATFORM(IOS)
 #import "WebCoreSystemInterface.h"
@@ -85,6 +86,7 @@ void MemoryPressureHandler::install()
     notify_register_dispatch("org.WebKit.lowMemory", &_notifyToken, dispatch_get_main_queue(), ^(int) {
         memoryPressureHandler().respondToMemoryPressure();
         gcController().garbageCollectSoon();
+        malloc_zone_pressure_relief(nullptr, 0);
     });
 
     m_installed = true;
