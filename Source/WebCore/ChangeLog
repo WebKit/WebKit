@@ -1,3 +1,12 @@
+2014-03-07  Brian Burg  <bburg@apple.com>
+
+        Unreviewed, rebaseline run-binding-tests results after r165242.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionMethodWithSequenceArg):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresInclude):
+
 2014-03-07  Darin Adler  <darin@apple.com>
 
         Remove non-working optimization that was attempted on iOS only

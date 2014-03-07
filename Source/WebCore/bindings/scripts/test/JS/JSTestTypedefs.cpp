@@ -628,7 +628,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionCallWithSequenceThat
     TestTypedefs& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    Vector<RefPtr<TestEventTarget> > sequenceArg((toRefPtrNativeArray<TestEventTarget, JSTestEventTarget>(exec, exec->argument(0), &toTestEventTarget)));
+    Vector<RefPtr<TestEventTarget>> sequenceArg((toRefPtrNativeArray<TestEventTarget, JSTestEventTarget>(exec, exec->argument(0), &toTestEventTarget)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
 
