@@ -79,8 +79,6 @@ public:
 #endif
 #if PLATFORM(COCOA)
     void exposedRectChangedTimerFired();
-    
-    void setCustomFixedPositionRect(const WebCore::FloatRect&);
 #endif
 
     virtual void updateDebugIndicator() { }

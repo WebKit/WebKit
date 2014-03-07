@@ -1,5 +1,11 @@
 2014-03-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove one more setCustomFixedPositionRect() that I missed.
+
+        * UIProcess/DrawingAreaProxy.h:
+
+2014-03-06  Simon Fraser  <simon.fraser@apple.com>
+
         Send the fixed position rect to the WebProcess along with the other rects
         https://bugs.webkit.org/show_bug.cgi?id=129856
 
