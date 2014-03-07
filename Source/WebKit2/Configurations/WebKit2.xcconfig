@@ -30,7 +30,7 @@ INSTALL_PATH_ACTUAL = $(WEBKIT2_FRAMEWORKS_DIR);
 DYLIB_INSTALL_NAME_BASE = $(NORMAL_WEBKIT2_FRAMEWORKS_DIR);
 
 FRAMEWORK_AND_LIBRARY_LDFLAGS = $(FRAMEWORK_AND_LIBRARY_LDFLAGS_$(PLATFORM_NAME));
-FRAMEWORK_AND_LIBRARY_LDFLAGS_iphonesimulator = -lobjc -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework UIKit -framework WebKit -lMobileGestalt -lassertion_extension;
+FRAMEWORK_AND_LIBRARY_LDFLAGS_iphonesimulator = -lobjc -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework UIKit -framework OpenGLES -framework WebKit -lMobileGestalt -lassertion_extension;
 FRAMEWORK_AND_LIBRARY_LDFLAGS_iphoneos = $(FRAMEWORK_AND_LIBRARY_LDFLAGS_iphonesimulator) -framework IOSurface;
 FRAMEWORK_AND_LIBRARY_LDFLAGS_macosx = -framework ApplicationServices -framework Carbon -framework Cocoa -framework CoreServices -framework IOKit -framework CoreAudio -framework IOSurface -framework OpenGL;
 

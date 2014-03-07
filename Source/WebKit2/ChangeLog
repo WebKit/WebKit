@@ -1,3 +1,9 @@
+2014-03-07  Dean Jackson  <dino@apple.com>
+
+        Attempt to fix the iOS build.
+
+        * Configurations/WebKit2.xcconfig: Add -framework OpenGLES to linking.
+
 2014-03-07  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] Add an updateID to visibleContentRect updates which is passed back in layer transactions, so we know whether transactions are stale
