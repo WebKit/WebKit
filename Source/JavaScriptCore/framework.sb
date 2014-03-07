@@ -1,0 +1,1 @@
+(allow mach-lookup (global-name "com.apple.webinspector"))

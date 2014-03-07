@@ -1016,6 +1016,7 @@
 		A53CE08718BC1A5600BEDF76 /* JSConsole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53CE08318BC1A5600BEDF76 /* JSConsole.cpp */; };
 		A53CE08818BC1A5600BEDF76 /* JSConsole.h in Headers */ = {isa = PBXBuildFile; fileRef = A53CE08418BC1A5600BEDF76 /* JSConsole.h */; };
 		A53CE08A18BC21C300BEDF76 /* ConsoleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A53CE08918BC21C300BEDF76 /* ConsoleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A53F1AC018C90F8F0072EB6D /* framework.sb in Resources */ = {isa = PBXBuildFile; fileRef = A53F1ABE18C90EC70072EB6D /* framework.sb */; };
 		A54982031891D0B00081E5B8 /* EventLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54982011891D0B00081E5B8 /* EventLoop.cpp */; };
 		A54982041891D0B00081E5B8 /* EventLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = A54982021891D0B00081E5B8 /* EventLoop.h */; };
 		A54CF2F5184EAB2400237F19 /* ScriptValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54CF2F2184EAB2400237F19 /* ScriptValue.cpp */; };
@@ -2558,6 +2559,7 @@
 		A53CE08318BC1A5600BEDF76 /* JSConsole.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSConsole.cpp; sourceTree = "<group>"; };
 		A53CE08418BC1A5600BEDF76 /* JSConsole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSConsole.h; sourceTree = "<group>"; };
 		A53CE08918BC21C300BEDF76 /* ConsoleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleClient.h; sourceTree = "<group>"; };
+		A53F1ABE18C90EC70072EB6D /* framework.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = framework.sb; sourceTree = "<group>"; };
 		A54982011891D0B00081E5B8 /* EventLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventLoop.cpp; sourceTree = "<group>"; };
 		A54982021891D0B00081E5B8 /* EventLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventLoop.h; sourceTree = "<group>"; };
 		A54CF2F2184EAB2400237F19 /* ScriptValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptValue.cpp; sourceTree = "<group>"; };
@@ -4503,6 +4505,7 @@
 		932FC3C20824BB70005B3C75 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A53F1ABE18C90EC70072EB6D /* framework.sb */,
 				932F5BD80822A1C700736975 /* Info.plist */,
 			);
 			name = Resources;
@@ -5805,6 +5808,7 @@
 			buildConfigurationList = 149C275D08902AFE008A9EFC /* Build configuration list for PBXNativeTarget "JavaScriptCore" */;
 			buildPhases = (
 				5D2F7CF90C6875BB00B5B72B /* Update Info.plist with version information */,
+				A53F1ABF18C90F8B0072EB6D /* Resources */,
 				932F5B3F0822A1C700736975 /* Headers */,
 				3732811A17FCD235004AD519 /* Postprocess Headers */,
 				932F5B910822A1C700736975 /* Sources */,
@@ -5884,6 +5888,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A53F1ABF18C90F8B0072EB6D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A53F1AC018C90F8F0072EB6D /* framework.sb in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		0F4680AA14BA7FD900BFE272 /* Generate Derived Sources */ = {

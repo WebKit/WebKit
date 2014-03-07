@@ -1,3 +1,19 @@
+2014-03-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [OS X] Web Inspector: Allow Apps using JavaScriptCore to access "com.apple.webinspector" mach port
+        https://bugs.webkit.org/show_bug.cgi?id=129852
+
+        Reviewed by Geoffrey Garen.
+
+        * framework.sb: Added.
+        Sandbox extension to allow access to "com.apple.webinspector".
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Add a Copy Resources build phase and include framework.sb.
+
+        * Configurations/JavaScriptCore.xcconfig:
+        Do not copy framework.sb on iOS.
+
 2014-03-06  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSGlobalContextRelease incorrectly handles saving/restoring IdentifierTable
