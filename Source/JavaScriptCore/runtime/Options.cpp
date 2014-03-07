@@ -182,12 +182,20 @@ static void recomputeDependentOptions()
 #if !ENABLE(JIT)
     Options::useJIT() = false;
     Options::useDFGJIT() = false;
+    Options::useFTLJIT() = false;
 #endif
 #if !ENABLE(YARR_JIT)
     Options::useRegExpJIT() = false;
 #endif
 #if !ENABLE(CONCURRENT_JIT)
     Options::enableConcurrentJIT() = false;
+#endif
+#if !ENABLE(DFG_JIT)
+    Options::useDFGJIT() = false;
+    Options::useFTLJIT() = false;
+#endif
+#if !ENABLE(FTL_JIT)
+    Options::useFTLJIT() = false;
 #endif
     
     if (Options::showDisassembly()

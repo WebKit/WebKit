@@ -1,3 +1,13 @@
+2014-03-06  Filip Pizlo  <fpizlo@apple.com>
+
+        If the FTL is build-time enabled then it should be run-time enabled.
+
+        Rubber stamped by Geoffrey Garen.
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+
 2014-03-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         [OS X] Web Inspector: Allow Apps using JavaScriptCore to access "com.apple.webinspector" mach port

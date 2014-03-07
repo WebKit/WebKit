@@ -1,3 +1,11 @@
+2014-03-06  Filip Pizlo  <fpizlo@apple.com>
+
+        If the FTL is build-time enabled then it should be run-time enabled.
+
+        Rubber stamped by Geoffrey Garen.
+
+        * Scripts/run-jsc-stress-tests:
+
 2014-03-06  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         detectFailures in run-jsc-stress-tests can report everything was ok if too many tests fail

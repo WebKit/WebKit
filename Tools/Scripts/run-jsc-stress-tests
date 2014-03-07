@@ -180,6 +180,8 @@ $numFailures = 0
 
 EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20"]
 
+NO_FTL_OPTIONS = ["--useFTLJIT=false"]
+
 FTL_OPTIONS = ["--useFTLJIT=true", "--enableExperimentalFTLCoverage=true"]
 
 $runlist = []
@@ -514,7 +516,7 @@ def slow!
 end
 
 def run(kind, *options)
-    addRunCommand(kind, [pathToVM.to_s] + options + [$benchmark.to_s], silentOutputHandler, simpleErrorHandler)
+    addRunCommand(kind, [pathToVM.to_s] + NO_FTL_OPTIONS + options + [$benchmark.to_s], silentOutputHandler, simpleErrorHandler)
 end
 
 def runDefault

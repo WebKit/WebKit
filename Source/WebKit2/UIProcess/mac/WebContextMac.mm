@@ -67,7 +67,6 @@ NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
 NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
 NSString *WebStorageDirectoryDefaultsKey = @"WebKitLocalStorageDatabasePathPreferenceKey";
 NSString *WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey = @"WebKitKerningAndLigaturesEnabledByDefault";
-NSString *WebKitJSCFTLEnabledDefaultsKey = @"WebKitJSCFTLEnabledDefaultsKey";
 NSString *WebKitJSCJITEnabledDefaultsKey = @"WebKitJSCJITEnabledDefaultsKey";
 
 #if !PLATFORM(IOS)
@@ -100,7 +99,6 @@ static void registerUserDefaultsIfNeeded()
 
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey];
-    [registrationDictionary setObject:[NSNumber numberWithBool:NO] forKey:WebKitJSCFTLEnabledDefaultsKey];
 #endif
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:registrationDictionary];
@@ -159,7 +157,6 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
     parameters.shouldEnableKerningAndLigaturesByDefault = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey];
     parameters.shouldEnableJIT = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJSCJITEnabledDefaultsKey];
-    parameters.shouldEnableFTL = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJSCFTLEnabledDefaultsKey];
 
 #if HAVE(HOSTED_CORE_ANIMATION)
 #if !PLATFORM(IOS)

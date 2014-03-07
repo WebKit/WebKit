@@ -140,7 +140,7 @@ typedef OptionRange optionRange;
     v(bool, enableOSREntryToDFG, true) \
     v(bool, enableOSREntryToFTL, true) \
     \
-    v(bool, useFTLJIT, false) \
+    v(bool, useFTLJIT, true) \
     v(bool, enableExperimentalFTLCoverage, false) \
     v(bool, useFTLTBAA, true) \
     v(bool, enableLLVMFastISel, false) \

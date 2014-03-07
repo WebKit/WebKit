@@ -1,3 +1,20 @@
+2014-03-06  Filip Pizlo  <fpizlo@apple.com>
+
+        If the FTL is build-time enabled then it should be run-time enabled.
+
+        Rubber stamped by Geoffrey Garen.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::WebProcessCreationParameters):
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::registerUserDefaultsIfNeeded):
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2014-03-06  Hyowon Kim  <hw1008.kim@samsung.com>
 
         [EFL] Move EvasGL classes from WebKit to WebCore namespace.
