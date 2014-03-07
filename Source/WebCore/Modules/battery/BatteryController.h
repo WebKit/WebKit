@@ -45,7 +45,6 @@ public:
 
     static const char* supplementName();
     static BatteryController* from(Page* page) { return static_cast<BatteryController*>(Supplement<Page>::from(page, supplementName())); }
-    static bool isActive(Page*);
 
 private:
     typedef Vector<BatteryManager*> ListenerVector;

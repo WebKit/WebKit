@@ -100,11 +100,6 @@ const char* BatteryController::supplementName()
     return "BatteryController";
 }
 
-bool BatteryController::isActive(Page* page)
-{
-    return static_cast<bool>(BatteryController::from(page));
-}
-
 void provideBatteryTo(Page* page, BatteryClient* client)
 {
     Supplement<Page>::provideTo(page, BatteryController::supplementName(), BatteryController::create(client));
