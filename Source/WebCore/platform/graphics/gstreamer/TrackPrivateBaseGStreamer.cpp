@@ -97,9 +97,11 @@ void TrackPrivateBaseGStreamer::disconnect()
 
     if (m_activeTimerHandler)
         g_source_remove(m_activeTimerHandler);
+    m_activeTimerHandler = 0;
 
     if (m_tagTimerHandler)
         g_source_remove(m_tagTimerHandler);
+    m_tagTimerHandler = 0;
 
     m_pad.clear();
     m_tags.clear();
@@ -111,6 +113,7 @@ void TrackPrivateBaseGStreamer::activeChanged()
         g_source_remove(m_activeTimerHandler);
     m_activeTimerHandler = g_timeout_add(0,
         reinterpret_cast<GSourceFunc>(trackPrivateActiveChangeTimeoutCallback), this);
+    g_source_set_name_by_id(m_activeTimerHandler, "[WebKit] trackPrivateActiveChangeTimeoutCallback");
 }
 
 void TrackPrivateBaseGStreamer::tagsChanged()
@@ -127,10 +130,12 @@ void TrackPrivateBaseGStreamer::tagsChanged()
 
     m_tagTimerHandler = g_timeout_add(0,
         reinterpret_cast<GSourceFunc>(trackPrivateTagsChangeTimeoutCallback), this);
+    g_source_set_name_by_id(m_tagTimerHandler, "[WebKit] trackPrivateTagsChangeTimeoutCallback");
 }
 
 void TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged()
 {
+    m_activeTimerHandler = 0;
     if (!m_pad)
         return;
 

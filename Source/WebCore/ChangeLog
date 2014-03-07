@@ -1,3 +1,19 @@
+2014-03-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Timeout sources not correctly removed
+        https://bugs.webkit.org/show_bug.cgi?id=129877
+
+        Reviewed by Philippe Normand.
+
+        Set source ID variables to 0 after removing the sources from the
+        context. Also give a name to the sources.
+
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::disconnect):
+        (WebCore::TrackPrivateBaseGStreamer::activeChanged):
+        (WebCore::TrackPrivateBaseGStreamer::tagsChanged):
+        (WebCore::TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged):
+
 2014-03-07  Gergo Balogh  <gbalogh.u-szeged@partner.samsung.com>
 
         Remove FFTFrameMKL.
