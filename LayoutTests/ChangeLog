@@ -1,3 +1,13 @@
+2014-03-06  Andy Estes  <aestes@apple.com>
+
+        Test that the screen orientation does not change when focusing a <textarea>
+        https://bugs.webkit.org/show_bug.cgi?id=129847
+
+        Reviewed by Enrica Casucci.
+
+        * fast/css/orientation-changes-on-textarea-focus-expected.html: Added.
+        * fast/css/orientation-changes-on-textarea-focus.html: Added.
+
 2014-03-06  Mark Lam  <mark.lam@apple.com>
 
         XMLHttpRequest: status and statusText throw DOM Exception 11 when the state is UNSENT or OPENED.
