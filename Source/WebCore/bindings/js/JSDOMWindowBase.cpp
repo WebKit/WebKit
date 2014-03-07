@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2006 Jon Shier (jshier@iastate.edu)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reseved.
+ *  Copyright (C) 2003-2009, 2014 Apple Inc. All rights reseved.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -207,43 +207,23 @@ VM& JSDOMWindowBase::commonVM()
 {
     ASSERT(isMainThread());
 
-#if !PLATFORM(IOS)
-    static VM* vm = 0;
-#else
-    VM*& vm = commonVMInternal();
-#endif
+    static VM* vm = nullptr;
     if (!vm) {
         ScriptController::initializeThreading();
         vm = VM::createLeaked(LargeHeap).leakRef();
-#if PLATFORM(IOS)
-        PassOwnPtr<WebSafeGCActivityCallback> activityCallback = WebSafeGCActivityCallback::create(&vm->heap);
-        vm->heap.setActivityCallback(activityCallback);
-        PassOwnPtr<WebSafeIncrementalSweeper> incrementalSweeper = WebSafeIncrementalSweeper::create(&vm->heap);
-        vm->heap.setIncrementalSweeper(incrementalSweeper);
+#if !PLATFORM(IOS)
+        vm->setExclusiveThread(std::this_thread::get_id());
+#else
+        vm->heap.setActivityCallback(WebSafeGCActivityCallback::create(&vm->heap));
+        vm->heap.setIncrementalSweeper(WebSafeIncrementalSweeper::create(&vm->heap));
         vm->makeUsableFromMultipleThreads();
         vm->heap.machineThreads().addCurrentThread();
-#else
-        vm->setExclusiveThread(std::this_thread::get_id());
-#endif // !PLATFORM(IOS)
+#endif
         initNormalWorldClientData(vm);
     }
 
     return *vm;
 }
-
-#if PLATFORM(IOS)
-bool JSDOMWindowBase::commonVMExists()
-{
-    return commonVMInternal();
-}
-
-VM*& JSDOMWindowBase::commonVMInternal()
-{
-    ASSERT(isMainThread());
-    static VM* commonVM;
-    return commonVM;
-}
-#endif
 
 // JSDOMGlobalObject* is ignored, accessing a window in any context will
 // use that DOMWindow's prototype chain.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,7 +58,7 @@ GCController::GCController()
 void GCController::garbageCollectSoon()
 {
     // We only use reportAbandonedObjectGraph on systems with CoreFoundation 
-    // since it uses a runloop-based timer that is currently only available on 
+    // since it uses a run-loop-based timer that is currently only available on
     // systems with CoreFoundation. If and when the notion of a run loop is pushed 
     // down into WTF so that more platforms can take advantage of it, we will be 
     // able to use reportAbandonedObjectGraph on more platforms.
@@ -74,19 +74,13 @@ void GCController::garbageCollectSoon()
 #if !USE(CF)
 void GCController::gcTimerFired(Timer<GCController>*)
 {
-    collect(0);
+    collect(nullptr);
 }
 #endif
 
 void GCController::garbageCollectNow()
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
-#if PLATFORM(IOS)
-    // If JavaScript was never run in this process, there's no need to call GC which will
-    // end up creating a VM unnecessarily.
-    if (!JSDOMWindow::commonVMExists())
-        return;
-#endif
     if (!JSDOMWindow::commonVM().heap.isBusy())
         JSDOMWindow::commonVM().heap.collectAllGarbage();
 }
@@ -107,18 +101,9 @@ void GCController::releaseExecutableMemory()
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
 
-#if PLATFORM(IOS)
-    // If JavaScript was never run in this process, there's no need to call GC which will
-    // end up creating a VM unnecessarily.
-    if (!JSDOMWindow::commonVMExists())
-        return;
-#endif
-
-    // We shouldn't have any javascript running on our stack when this function is called. The
-    // following line asserts that.
+    // We shouldn't have any JavaScript running on our stack when this function is called.
+    // The following line asserts that, but to be safe we check this in release builds anyway.
     ASSERT(!JSDOMWindow::commonVM().entryScope);
-
-    // But be safe in release builds just in case...
     if (JSDOMWindow::commonVM().entryScope)
         return;
 

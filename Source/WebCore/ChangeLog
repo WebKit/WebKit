@@ -1,3 +1,30 @@
+2014-03-07  Darin Adler  <darin@apple.com>
+
+        Remove non-working optimization that was attempted on iOS only
+        https://bugs.webkit.org/show_bug.cgi?id=129595
+        <rdar://problem/15798825>
+
+        Reviewed by Sam Weinig.
+
+        Code in GCController tried to optimize cases where the controller
+        was used, but no JavaScript had been run in the current process.
+        The code was never effective, and was iOS-only. Another way to fix
+        the problem would be to change the code so it works, and if we do
+        that we should do it for all platforms, not just iOS.
+
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::garbageCollectNow): Remove check of
+        JSDOMWindow::commonVMExists, since it's called just after a call
+        to JSDOMWindow::commonVM, which will create it as a side effect.
+        (WebCore::GCController::releaseExecutableMemory): Ditto.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonVM): Removed iOS-specific code
+        that pulled the commonVM global out into another function so we
+        can check for its existence without creating it as a side effect.
+
+        * bindings/js/JSDOMWindowBase.h: Ditto.
+
 2014-03-07  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] inset does not properly clamp large corner radii
