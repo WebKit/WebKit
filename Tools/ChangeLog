@@ -1,3 +1,15 @@
+2014-03-07  Andres Gomez  <agomez@igalia.com>
+
+        [GTK] webkit-patch setup-git-clone fails even after running Tools/gtk/install-dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=129893
+
+        Reviewed by Martin Robinson.
+
+        Added "git-svn" as dependency for deb based distros and,
+        additionally, "subversion" for rpm based distros.
+
+        * gtk/install-dependencies:
+
 2014-03-07  Roger Fong  <roger_fong@apple.com>
 
         Remove dummy setSystemWebGLLoadPolicy client method.

@@ -121,6 +121,7 @@ function installDependenciesWithApt {
 
     # These are dependencies necessary for using webkit-patch
     apt-get install \
+        git-svn \
         subversion
 }
 
@@ -196,6 +197,11 @@ function installDependenciesWithYum {
         xorg-x11-proto-devel \
         xorg-x11-util-macros \
         xorg-x11-xtrans-devel
+
+    # These are dependencies necessary for using webkit-patch
+    yum install \
+        git-svn \
+        subversion
 }
 
 checkInstaller
