@@ -1,3 +1,18 @@
+2014-03-07  Andy Estes  <aestes@apple.com>
+
+        [iOS] Install WebKit2 XPC services to the correct place during iOS Simulator builds
+        https://bugs.webkit.org/show_bug.cgi?id=129914
+
+        Reviewed by Dan Bernstein.
+
+        We weren't specifying INSTALL_PATH for iOS Simulator builds in
+        BaseXPCService.xcconfig, and r164576 changed INSTALL_PATH to
+        INSTALL_PATH_ACTUAL. This caused XPC services to start being installed
+        to the root of the iOS Simulator SDK. Fix this by setting
+        INSTALL_PATH_ACTUAL for iphonesimulator.
+
+        * Configurations/BaseXPCService.xcconfig:
+
 2014-03-07  Andreas Kling  <akling@apple.com>
 
         [Mac] Notify system malloc of fake memory pressure.
