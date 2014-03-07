@@ -547,7 +547,7 @@ void MediaPlayerPrivateAVFoundationObjC::synchronizeTextTrackState()
     const Vector<RefPtr<PlatformTextTrack>>& outOfBandTrackSources = player()->outOfBandTrackSources();
     
     for (auto& textTrack : m_textTracks) {
-        if (textTrack->textTrackCategory() == InbandTextTrackPrivateAVF::OutOfBand)
+        if (textTrack->textTrackCategory() != InbandTextTrackPrivateAVF::OutOfBand)
             continue;
         
         RefPtr<OutOfBandTextTrackPrivateAVF> trackPrivate = static_cast<OutOfBandTextTrackPrivateAVF*>(textTrack.get());

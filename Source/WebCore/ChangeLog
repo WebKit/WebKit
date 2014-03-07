@@ -1,3 +1,14 @@
+2014-03-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct out-of-band track selection logic.
+        https://bugs.webkit.org/show_bug.cgi?id=129900
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::synchronizeTextTrackState): Correct test to
+        use inequality.
+
 2014-03-07  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Correctly serialize ellipse positions
