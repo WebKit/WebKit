@@ -1,5 +1,17 @@
 2014-03-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove empty class extension in WKContentViewInteraction
+        https://bugs.webkit.org/show_bug.cgi?id=129849
+
+        Reviewed by Enrica Casucci.
+        
+        This empty class extension is cruft left over from refactoring.
+        It can be removed.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
+2014-03-06  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS] didUpdateVisibleRect: should use fabs, not abs
         https://bugs.webkit.org/show_bug.cgi?id=129843
 

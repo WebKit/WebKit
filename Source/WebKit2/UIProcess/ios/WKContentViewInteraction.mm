@@ -129,12 +129,6 @@ static const float tapAndHoldDelay  = 0.75;
 - (void)selectWord;
 @end
 
-@interface WKContentView () {
-
-}
-
-@end
-
 @implementation WKContentView (WKInteraction)
 
 - (void)setupInteraction
