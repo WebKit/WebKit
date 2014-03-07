@@ -82,17 +82,18 @@ void DocumentOrderedMap::clear()
     m_map.clear();
 }
 
-void DocumentOrderedMap::add(AtomicStringImpl* key, Element* element)
+void DocumentOrderedMap::add(AtomicStringImpl* key, Element* element, const TreeScope* treeScope)
 {
-    ASSERT(key);
-    ASSERT(element);
-
+    ASSERT_WITH_SECURITY_IMPLICATION(element->isInTreeScope());
+    ASSERT_WITH_SECURITY_IMPLICATION(treeScope->rootNode()->containsIncludingShadowDOM(element));
+    if (!element->isInTreeScope() || element->document() != treeScope->documentScope())
+        return;
     Map::AddResult addResult = m_map.add(key, MapEntry(element));
     if (addResult.isNewEntry)
         return;
 
     MapEntry& entry = addResult.iterator->value;
-    ASSERT(entry.count);
+    ASSERT_WITH_SECURITY_IMPLICATION(entry.count);
     entry.element = 0;
     entry.count++;
     entry.orderedList.clear();
@@ -105,15 +106,14 @@ void DocumentOrderedMap::remove(AtomicStringImpl* key, Element* element)
 
     m_map.checkConsistency();
     Map::iterator it = m_map.find(key);
-    ASSERT(it != m_map.end());
+    ASSERT_WITH_SECURITY_IMPLICATION(it != m_map.end());
     if (it == m_map.end())
         return;
-
     MapEntry& entry = it->value;
 
-    ASSERT(entry.count);
+    ASSERT_WITH_SECURITY_IMPLICATION(entry.count);
     if (entry.count == 1) {
-        ASSERT(!entry.element || entry.element == element);
+        ASSERT_WITH_SECURITY_IMPLICATION(!entry.element || entry.element == element);
         m_map.remove(it);
     } else {
         if (entry.element == element)
@@ -137,14 +137,19 @@ inline Element* DocumentOrderedMap::get(AtomicStringImpl* key, const TreeScope* 
 
     MapEntry& entry = it->value;
     ASSERT(entry.count);
-    if (entry.element)
+    if (entry.element) {
+        ASSERT_WITH_SECURITY_IMPLICATION(entry.element->isInTreeScope());
+        ASSERT_WITH_SECURITY_IMPLICATION(entry.element->treeScope() == scope);
         return entry.element;
+    }
 
     // We know there's at least one node that matches; iterate to find the first one.
     for (Element* element = ElementTraversal::firstWithin(scope->rootNode()); element; element = ElementTraversal::next(element)) {
         if (!keyMatches(key, element))
             continue;
         entry.element = element;
+        ASSERT_WITH_SECURITY_IMPLICATION(element->isInTreeScope());
+        ASSERT_WITH_SECURITY_IMPLICATION(element->treeScope() == scope);
         return element;
     }
     ASSERT_NOT_REACHED();
@@ -198,7 +203,7 @@ const Vector<Element*>* DocumentOrderedMap::getAllElementsById(AtomicStringImpl*
         return 0;
 
     MapEntry& entry = it->value;
-    ASSERT(entry.count);
+    ASSERT_WITH_SECURITY_IMPLICATION(entry.count);
     if (!entry.count)
         return 0;
 

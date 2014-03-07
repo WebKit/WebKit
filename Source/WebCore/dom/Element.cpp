@@ -2895,7 +2895,7 @@ void Element::updateNameForDocument(HTMLDocument* document, const AtomicString& 
         if (!oldName.isEmpty() && oldName != id)
             document->windowNamedItemMap().remove(oldName.impl(), this);
         if (!newName.isEmpty() && newName != id)
-            document->windowNamedItemMap().add(newName.impl(), this);
+            document->windowNamedItemMap().add(newName.impl(), this, treeScope());
     }
 
     if (DocumentNameCollection::nodeMatchesIfNameAttributeMatch(this)) {
@@ -2903,7 +2903,7 @@ void Element::updateNameForDocument(HTMLDocument* document, const AtomicString& 
         if (!oldName.isEmpty() && oldName != id)
             document->documentNamedItemMap().remove(oldName.impl(), this);
         if (!newName.isEmpty() && newName != id)
-            document->documentNamedItemMap().add(newName.impl(), this);
+            document->documentNamedItemMap().add(newName.impl(), this, treeScope());
     }
 }
 
@@ -2946,7 +2946,7 @@ void Element::updateIdForDocument(HTMLDocument* document, const AtomicString& ol
         if (!oldId.isEmpty() && oldId != name)
             document->windowNamedItemMap().remove(oldId.impl(), this);
         if (!newId.isEmpty() && newId != name)
-            document->windowNamedItemMap().add(newId.impl(), this);
+            document->windowNamedItemMap().add(newId.impl(), this, treeScope());
     }
 
     if (DocumentNameCollection::nodeMatchesIfIdAttributeMatch(this)) {
@@ -2954,7 +2954,7 @@ void Element::updateIdForDocument(HTMLDocument* document, const AtomicString& ol
         if (!oldId.isEmpty() && oldId != name)
             document->documentNamedItemMap().remove(oldId.impl(), this);
         if (!newId.isEmpty() && newId != name)
-            document->documentNamedItemMap().add(newId.impl(), this);
+            document->documentNamedItemMap().add(newId.impl(), this, treeScope());
     }
 }
 

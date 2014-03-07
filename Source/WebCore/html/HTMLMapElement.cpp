@@ -133,9 +133,10 @@ PassRefPtr<HTMLCollection> HTMLMapElement::areas()
 
 Node::InsertionNotificationRequest HTMLMapElement::insertedInto(ContainerNode* insertionPoint)
 {
+    Node::InsertionNotificationRequest request = HTMLElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument())
         treeScope()->addImageMap(this);
-    return HTMLElement::insertedInto(insertionPoint);
+    return request;
 }
 
 void HTMLMapElement::removedFrom(ContainerNode* insertionPoint)
