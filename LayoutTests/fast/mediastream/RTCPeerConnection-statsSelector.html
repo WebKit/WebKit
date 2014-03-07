@@ -12,6 +12,12 @@
             var timestamp;
             var local;
 
+            function statsError()
+            {
+                testFailed("Error in getStats.")
+                finishJSTest();
+            }
+
             function getUserMedia(dictionary, callback) {
                 try {
                     navigator.webkitGetUserMedia(dictionary, callback, error);
@@ -31,7 +37,8 @@
                 stream = s;
 
                 pc.addStream(stream);
-                shouldNotThrow('pc.getStats(statsHandler2, pc.getLocalStreams()[0].getVideoTracks()[0])');
+                // FIXME: Test getStats error callback: https://webkit.org/b/129860
+                shouldNotThrow('pc.getStats(statsHandler2, statsError, pc.getLocalStreams()[0].getVideoTracks()[0])');
             }
 
             function statsHandler2(status)

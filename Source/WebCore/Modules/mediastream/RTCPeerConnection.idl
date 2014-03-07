@@ -39,19 +39,19 @@
     EventTarget,
     InterfaceName=webkitRTCPeerConnection,
 ] interface RTCPeerConnection {
-    [RaisesException] void createOffer(RTCSessionDescriptionCallback successCallback, [Default=Undefined] optional RTCPeerConnectionErrorCallback failureCallback, optional Dictionary offerOptions);
+    [RaisesException] void createOffer(RTCSessionDescriptionCallback successCallback, RTCPeerConnectionErrorCallback failureCallback, optional Dictionary offerOptions);
 
-    [RaisesException] void createAnswer(RTCSessionDescriptionCallback successCallback, [Default=Undefined] optional RTCPeerConnectionErrorCallback failureCallback, optional Dictionary answerOptions);
+    [RaisesException] void createAnswer(RTCSessionDescriptionCallback successCallback,  RTCPeerConnectionErrorCallback failureCallback, optional Dictionary answerOptions);
 
-    [RaisesException] void setLocalDescription(RTCSessionDescription description, [Default=Undefined] optional VoidCallback successCallback, [Default=Undefined] optional RTCPeerConnectionErrorCallback failureCallback);
+    [RaisesException] void setLocalDescription(RTCSessionDescription description, VoidCallback successCallback, RTCPeerConnectionErrorCallback failureCallback);
     [GetterRaisesException] readonly attribute RTCSessionDescription localDescription;
 
-    [RaisesException] void setRemoteDescription(RTCSessionDescription description, [Default=Undefined] optional VoidCallback successCallback, [Default=Undefined] optional RTCPeerConnectionErrorCallback failureCallback);
+    [RaisesException] void setRemoteDescription(RTCSessionDescription description, VoidCallback successCallback, RTCPeerConnectionErrorCallback failureCallback);
     [GetterRaisesException] readonly attribute RTCSessionDescription remoteDescription;
 
     readonly attribute DOMString signalingState;
 
-    [RaisesException] void updateIce(optional Dictionary configuration);
+    [RaisesException] void updateIce(Dictionary configuration);
 
     [RaisesException] void addIceCandidate(RTCIceCandidate candidate, VoidCallback successCallback, RTCPeerConnectionErrorCallback failureCallback);
 
@@ -65,7 +65,7 @@
     [StrictTypeChecking, RaisesException] void addStream(MediaStream stream);
     [StrictTypeChecking, RaisesException] void removeStream(MediaStream stream);
 
-    void getStats(RTCStatsCallback successCallback, [Default=Undefined] optional MediaStreamTrack selector);
+    void getStats(RTCStatsCallback successCallback, RTCPeerConnectionErrorCallback failureCallback, [Default=Undefined] optional MediaStreamTrack selector);
 
     [RaisesException] RTCDataChannel createDataChannel([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString label, optional Dictionary options);
 

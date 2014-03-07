@@ -1,3 +1,15 @@
+2014-03-06  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [WebRTC] Updating RTCPeerConnection.idl
+        https://bugs.webkit.org/show_bug.cgi?id=129804
+
+        Reviewed by Eric Carlson.
+
+        Some methods signatures were wrong, marking some arguments as optional when they are mandatory.
+
+        * fast/mediastream/RTCPeerConnection-stats.html:
+        * fast/mediastream/RTCPeerConnection-statsSelector.html:
+
 2014-03-06  Andy Estes  <aestes@apple.com>
 
         Test that the screen orientation does not change when focusing a <textarea>

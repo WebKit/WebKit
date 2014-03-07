@@ -1,5 +1,27 @@
 2014-03-06  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
+        [WebRTC] Updating RTCPeerConnection.idl
+        https://bugs.webkit.org/show_bug.cgi?id=129804
+
+        Reviewed by Eric Carlson.
+
+        Some methods signatures were wrong, marking some arguments as optional when they are mandatory.
+
+        Existing tests were updated.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::getStats):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCStatsRequestImpl.cpp:
+        (WebCore::RTCStatsRequestImpl::create):
+        (WebCore::RTCStatsRequestImpl::RTCStatsRequestImpl):
+        (WebCore::RTCStatsRequestImpl::requestFailed):
+        * Modules/mediastream/RTCStatsRequestImpl.h:
+        * platform/mediastream/RTCStatsRequest.h:
+
+2014-03-06  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
         [WebRTC] Updating RTCIceServer to match spec
         https://bugs.webkit.org/show_bug.cgi?id=129844
 

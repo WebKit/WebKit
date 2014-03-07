@@ -37,10 +37,11 @@
 namespace WebCore {
 
 class RTCStatsCallback;
+class RTCPeerConnectionErrorCallback;
 
 class RTCStatsRequestImpl : public RTCStatsRequest, public ActiveDOMObject {
 public:
-    static PassRefPtr<RTCStatsRequestImpl> create(ScriptExecutionContext*, PassRefPtr<RTCStatsCallback>, PassRefPtr<MediaStreamTrack>);
+    static PassRefPtr<RTCStatsRequestImpl> create(ScriptExecutionContext*, PassRefPtr<RTCStatsCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>, PassRefPtr<MediaStreamTrack>);
     virtual ~RTCStatsRequestImpl();
 
     virtual PassRefPtr<RTCStatsResponseBase> createResponse() override;
@@ -48,16 +49,18 @@ public:
     virtual MediaStreamTrack* track() override;
 
     virtual void requestSucceeded(PassRefPtr<RTCStatsResponseBase>) override;
+    virtual void requestFailed(const String&) override;
 
     // ActiveDOMObject
     virtual void stop() override;
 
 private:
-    RTCStatsRequestImpl(ScriptExecutionContext*, PassRefPtr<RTCStatsCallback>, PassRefPtr<MediaStreamTrack>);
+    RTCStatsRequestImpl(ScriptExecutionContext*, PassRefPtr<RTCStatsCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>, PassRefPtr<MediaStreamTrack>);
 
     void clear();
 
     RefPtr<RTCStatsCallback> m_successCallback;
+    RefPtr<RTCPeerConnectionErrorCallback> m_errorCallback;
     RefPtr<MediaStreamTrack> m_track;
 };
 

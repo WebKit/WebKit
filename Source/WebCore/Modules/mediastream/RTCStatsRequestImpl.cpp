@@ -29,22 +29,24 @@
 #include "RTCStatsRequestImpl.h"
 
 #include "MediaStreamTrack.h"
+#include "RTCPeerConnectionErrorCallback.h"
 #include "RTCStatsCallback.h"
 #include "RTCStatsRequest.h"
 #include "RTCStatsResponse.h"
 
 namespace WebCore {
 
-PassRefPtr<RTCStatsRequestImpl> RTCStatsRequestImpl::create(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> callback, PassRefPtr<MediaStreamTrack> selector)
+PassRefPtr<RTCStatsRequestImpl> RTCStatsRequestImpl::create(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> successCallback, PassRefPtr<RTCPeerConnectionErrorCallback> errorCallback, PassRefPtr<MediaStreamTrack> selector)
 {
-    RefPtr<RTCStatsRequestImpl> request = adoptRef(new RTCStatsRequestImpl(context, callback, selector));
+    RefPtr<RTCStatsRequestImpl> request = adoptRef(new RTCStatsRequestImpl(context, successCallback, errorCallback, selector));
     request->suspendIfNeeded();
     return request.release();
 }
 
-RTCStatsRequestImpl::RTCStatsRequestImpl(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> callback, PassRefPtr<MediaStreamTrack> selector)
+RTCStatsRequestImpl::RTCStatsRequestImpl(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> successCallback, PassRefPtr<RTCPeerConnectionErrorCallback> errorCallback, PassRefPtr<MediaStreamTrack> selector)
     : ActiveDOMObject(context)
-    , m_successCallback(callback)
+    , m_successCallback(successCallback)
+    , m_errorCallback(errorCallback)
     , m_track(selector)
 {
 }
@@ -73,6 +75,14 @@ void RTCStatsRequestImpl::requestSucceeded(PassRefPtr<RTCStatsResponseBase> resp
     if (!m_successCallback)
         return;
     m_successCallback->handleEvent(static_cast<RTCStatsResponse*>(response.get()));
+    clear();
+}
+
+void RTCStatsRequestImpl::requestFailed(const String& error)
+{
+    if (m_errorCallback)
+        m_errorCallback->handleEvent(DOMError::create(error).get());
+
     clear();
 }
 

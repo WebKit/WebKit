@@ -50,6 +50,7 @@ public:
     virtual bool hasSelector() = 0;
     virtual MediaStreamTrack* track() = 0;
     virtual void requestSucceeded(PassRefPtr<RTCStatsResponseBase>) = 0;
+    virtual void requestFailed(const String&) = 0;
 
 protected:
     RTCStatsRequest() { }
