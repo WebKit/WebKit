@@ -3216,9 +3216,6 @@ sub GenerateParametersCheck
                 $nativeElementType = "String";
             } else {
                 $nativeElementType = GetNativeType($argType);
-                if ($nativeElementType =~ />$/) {
-                    $nativeElementType .= " ";
-                }
             }
 
             if (!IsNativeType($argType)) {
@@ -3599,7 +3596,7 @@ sub GetNativeVectorInnerType
 
     return "String" if $arrayOrSequenceType eq "DOMString";
     return $nativeType{$arrayOrSequenceType} if exists $nativeType{$arrayOrSequenceType};
-    return "RefPtr<${arrayOrSequenceType}> ";
+    return "RefPtr<${arrayOrSequenceType}>";
 }
 
 sub GetNativeTypeForCallbacks
@@ -3620,12 +3617,9 @@ sub GetSVGPropertyTypes
     my $svgNativeType;
 
     return ($svgPropertyType, $svgListPropertyType, $svgNativeType) if not $implType =~ /SVG/;
-    
+
     $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($implType);
     return ($svgPropertyType, $svgListPropertyType, $svgNativeType) if not $svgNativeType;
-
-    # Append space to avoid compilation errors when using  PassRefPtr<$svgNativeType>
-    $svgNativeType = "$svgNativeType ";
 
     my $svgWrappedNativeType = $codeGenerator->GetSVGWrappedTypeNeedingTearOff($implType);
     if ($svgNativeType =~ /SVGPropertyTearOff/) {
