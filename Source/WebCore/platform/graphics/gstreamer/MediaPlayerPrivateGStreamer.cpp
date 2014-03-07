@@ -672,6 +672,7 @@ void MediaPlayerPrivateGStreamer::videoChanged()
     if (m_videoTimerHandler)
         g_source_remove(m_videoTimerHandler);
     m_videoTimerHandler = g_idle_add_full(G_PRIORITY_DEFAULT, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateVideoChangeTimeoutCallback), this, 0);
+    g_source_set_name_by_id(m_videoTimerHandler, "[WebKit] mediaPlayerPrivateVideoChangeTimeoutCallback");
 }
 
 void MediaPlayerPrivateGStreamer::videoCapsChanged()
@@ -679,6 +680,7 @@ void MediaPlayerPrivateGStreamer::videoCapsChanged()
     if (m_videoCapsTimerHandler)
         g_source_remove(m_videoCapsTimerHandler);
     m_videoCapsTimerHandler = g_timeout_add(0, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateVideoCapsChangeTimeoutCallback), this);
+    g_source_set_name_by_id(m_videoCapsTimerHandler, "[WebKit] mediaPlayerPrivateVideoCapsChangeTimeoutCallback");
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
@@ -732,6 +734,7 @@ void MediaPlayerPrivateGStreamer::audioChanged()
     if (m_audioTimerHandler)
         g_source_remove(m_audioTimerHandler);
     m_audioTimerHandler = g_idle_add_full(G_PRIORITY_DEFAULT, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateAudioChangeTimeoutCallback), this, 0);
+    g_source_set_name_by_id(m_audioTimerHandler, "[WebKit] mediaPlayerPrivateAudioChangeTimeoutCallback");
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
@@ -779,6 +782,7 @@ void MediaPlayerPrivateGStreamer::textChanged()
     if (m_textTimerHandler)
         g_source_remove(m_textTimerHandler);
     m_textTimerHandler = g_timeout_add(0, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateTextChangeTimeoutCallback), this);
+    g_source_set_name_by_id(m_textTimerHandler, "[WebKit] mediaPlayerPrivateTextChangeTimeoutCallback");
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfText()

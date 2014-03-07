@@ -249,6 +249,7 @@ void MediaPlayerPrivateGStreamerBase::volumeChanged()
     if (m_volumeTimerHandler)
         g_source_remove(m_volumeTimerHandler);
     m_volumeTimerHandler = g_idle_add_full(G_PRIORITY_DEFAULT, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateVolumeChangeTimeoutCallback), this, 0);
+    g_source_set_name_by_id(m_volumeTimerHandler, "[WebKit] mediaPlayerPrivateVolumeChangeTimeoutCallback");
 }
 
 MediaPlayer::NetworkState MediaPlayerPrivateGStreamerBase::networkState() const
@@ -301,6 +302,7 @@ void MediaPlayerPrivateGStreamerBase::muteChanged()
     if (m_muteTimerHandler)
         g_source_remove(m_muteTimerHandler);
     m_muteTimerHandler = g_idle_add_full(G_PRIORITY_DEFAULT, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateMuteChangeTimeoutCallback), this, 0);
+    g_source_set_name_by_id(m_muteTimerHandler, "[WebKit] mediaPlayerPrivateMuteChangeTimeoutCallback");
 }
 
 

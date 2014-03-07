@@ -1,5 +1,21 @@
 2014-03-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GST] Set name to several timeout sources
+        https://bugs.webkit.org/show_bug.cgi?id=129878
+
+        Reviewed by Philippe Normand.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::videoChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::videoCapsChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::audioChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::textChanged):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::volumeChanged):
+        (WebCore::MediaPlayerPrivateGStreamerBase::muteChanged):
+
+2014-03-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Timeout sources not correctly removed
         https://bugs.webkit.org/show_bug.cgi?id=129877
 
