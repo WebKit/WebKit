@@ -77,7 +77,7 @@ using namespace WebCore;
 
 - (void)continueWillSendRequest:(NSURLRequest *)newRequest
 {
-    m_requestResult = [newRequest retain];
+    m_requestResult = newRequest;
     dispatch_semaphore_signal(m_semaphore);
 }
 

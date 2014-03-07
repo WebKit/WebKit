@@ -1,3 +1,16 @@
+2014-03-06  Andreas Kling  <akling@apple.com>
+
+        WebCoreResourceHandleAsOperationQueueDelegate over-retains NSURLRequest.
+        <https://webkit.org/b/129862>
+
+        Don't retain the pointer before assigning it to a RetainPtr, since that
+        will cause the object to leak.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate continueWillSendRequest:]):
+
 2014-03-06  Dan Bernstein  <mitz@apple.com>
 
         Don’t copy WebInputs.json into the framework.
