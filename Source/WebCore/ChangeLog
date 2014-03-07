@@ -1,3 +1,21 @@
+2014-03-07  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Optimize collectionLast() and collectionTraverseBackward() in LiveNodeList
+        https://bugs.webkit.org/show_bug.cgi?id=129775
+
+        Reviewed by Ryosuke Niwa.
+
+        Check the LiveNodeList type if it is HTMLTagNodeListType and ClassNodeListType then
+        apply inlined matching methods for each type.
+
+        * dom/LiveNodeList.cpp:
+        (WebCore::lastMatchingElement): Added.
+        (WebCore::previousMatchingElement): Added.
+        (WebCore::traverseMatchingElementsBackward): Added.
+        (WebCore::LiveNodeList::collectionLast): Apply lastMatchingElement() with LiveNodeList type.
+        (WebCore::LiveNodeList::collectionTraverseBackward): Apply traverseMatchingElementsBackward()
+        with LiveNodeList type.
+
 2014-03-06  Andreas Kling  <akling@apple.com>
 
         WebCoreResourceHandleAsOperationQueueDelegate over-retains NSURLRequest.

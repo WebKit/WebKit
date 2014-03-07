@@ -57,22 +57,21 @@ template <> inline bool isMatchingElement(const ClassNodeList* nodeList, Element
     return nodeList->nodeMatchesInlined(element);
 }
 
-ALWAYS_INLINE Element* LiveNodeList::iterateForPreviousElement(Element* current) const
-{
-    ContainerNode& rootNode = this->rootNode();
-    for (; current; current = ElementTraversal::previous(current, &rootNode)) {
-        if (isMatchingElement(static_cast<const LiveNodeList*>(this), current))
-            return current;
-    }
-    return 0;
-}
-
 template <class NodeListType>
 inline Element* firstMatchingElement(const NodeListType* nodeList, ContainerNode& root)
 {
     Element* element = ElementTraversal::firstWithin(&root);
     while (element && !isMatchingElement(nodeList, element))
         element = ElementTraversal::next(element, &root);
+    return element;
+}
+
+template <class NodeListType>
+inline Element* lastMatchingElement(const NodeListType* nodeList, ContainerNode& root)
+{
+    Element* element = ElementTraversal::lastWithin(&root);
+    while (element && !isMatchingElement(nodeList, element))
+        element = ElementTraversal::previous(element, &root);
     return element;
 }
 
@@ -86,11 +85,32 @@ inline Element* nextMatchingElement(const NodeListType* nodeList, Element* curre
 }
 
 template <class NodeListType>
+inline Element* previousMatchingElement(const NodeListType* nodeList, Element* current, ContainerNode& root)
+{
+    do {
+        current = ElementTraversal::previous(current, &root);
+    } while (current && !isMatchingElement(nodeList, current));
+    return current;
+}
+
+template <class NodeListType>
 inline Element* traverseMatchingElementsForward(const NodeListType* nodeList, Element& current, unsigned count, unsigned& traversedCount, ContainerNode& root)
 {
     Element* element = &current;
     for (traversedCount = 0; traversedCount < count; ++traversedCount) {
         element = nextMatchingElement(nodeList, element, root);
+        if (!element)
+            return nullptr;
+    }
+    return element;
+}
+
+template <class NodeListType>
+inline Element* traverseMatchingElementsBackward(const NodeListType* nodeList, Element& current, unsigned count, ContainerNode& root)
+{
+    Element* element = &current;
+    for (; count; --count) {
+        element = previousMatchingElement(nodeList, element, root);
         if (!element)
             return nullptr;
     }
@@ -109,8 +129,12 @@ Element* LiveNodeList::collectionFirst() const
 
 Element* LiveNodeList::collectionLast() const
 {
-    // FIXME: This should be optimized similarly to the forward case.
-    return iterateForPreviousElement(ElementTraversal::lastWithin(&rootNode()));
+    auto& root = rootNode();
+    if (type() == Type::HTMLTagNodeListType)
+        return lastMatchingElement(static_cast<const HTMLTagNodeList*>(this), root);
+    if (type() == Type::ClassNodeListType)
+        return lastMatchingElement(static_cast<const ClassNodeList*>(this), root);
+    return lastMatchingElement(static_cast<const LiveNodeList*>(this), root);
 }
 
 Element* LiveNodeList::collectionTraverseForward(Element& current, unsigned count, unsigned& traversedCount) const
@@ -125,12 +149,12 @@ Element* LiveNodeList::collectionTraverseForward(Element& current, unsigned coun
 
 Element* LiveNodeList::collectionTraverseBackward(Element& current, unsigned count) const
 {
-    // FIXME: This should be optimized similarly to the forward case.
     auto& root = rootNode();
-    Element* element = &current;
-    for (; count && element ; --count)
-        element = iterateForPreviousElement(ElementTraversal::previous(element, &root));
-    return element;
+    if (type() == Type::HTMLTagNodeListType)
+        return traverseMatchingElementsBackward(static_cast<const HTMLTagNodeList*>(this), current, count, root);
+    if (type() == Type::ClassNodeListType)
+        return traverseMatchingElementsBackward(static_cast<const ClassNodeList*>(this), current, count, root);
+    return traverseMatchingElementsBackward(static_cast<const LiveNodeList*>(this), current, count, root);
 }
 
 unsigned LiveNodeList::length() const
