@@ -1,3 +1,16 @@
+2014-03-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Minor optimization in ScrollingTreeScrollingNodeMac
+        https://bugs.webkit.org/show_bug.cgi?id=129848
+
+        Reviewed by Dean Jackson.
+
+        No need to call scrollOffsetForFixedPosition() again if we don't have header
+        and footer layers.
+
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
+
 2014-03-06  Mark Lam  <mark.lam@apple.com>
 
         XMLHttpRequest: status and statusText throw DOM Exception 11 when the state is UNSENT or OPENED.
