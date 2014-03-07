@@ -1217,7 +1217,7 @@ def detectFailures
     raise if $bundle
 
     if $remote
-        output = sshRead("cd #{$remoteDirectory}/#{$outputDir.basename}/.runner && (ls test_fail_* 2> /dev/null || true)")
+        output = sshRead("cd #{$remoteDirectory}/#{$outputDir.basename}/.runner && find . -name \"test_fail_*\" -depth 1")
         output.split(/\n/).each {
             | line |
             next unless line =~ /test_fail_/

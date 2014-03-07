@@ -1,3 +1,15 @@
+2014-03-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        detectFailures in run-jsc-stress-tests can report everything was ok if too many tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=129837
+
+        Reviewed by Michael Saboff.
+
+        ls test_fail_* can fail if there are too many files that match. We then swallow that error, which makes everything seem ok.
+        The fix is to use find instead of ls like we do in shell-runner.sh.
+
+        * Scripts/run-jsc-stress-tests:
+
 2014-03-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         filter-build-webkit should not strip .o
