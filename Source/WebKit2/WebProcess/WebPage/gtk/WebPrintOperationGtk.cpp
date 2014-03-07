@@ -52,7 +52,7 @@
 namespace WebKit {
 
 #ifdef HAVE_GTK_UNIX_PRINTING
-class WebPrintOperationGtkUnix: public WebPrintOperationGtk {
+class WebPrintOperationGtkUnix final: public WebPrintOperationGtk {
 public:
     WebPrintOperationGtkUnix(WebPage* page, const PrintInfo& printInfo)
         : WebPrintOperationGtk(page, printInfo)
@@ -60,7 +60,7 @@ public:
     {
     }
 
-    void startPrint(WebCore::PrintContext* printContext, uint64_t callbackID)
+    void startPrint(WebCore::PrintContext* printContext, uint64_t callbackID) override
     {
         m_printContext = printContext;
         m_callbackID = callbackID;
@@ -103,7 +103,7 @@ public:
         print(surface, 72, 72);
     }
 
-    void startPage(cairo_t* cr)
+    void startPage(cairo_t* cr) override
     {
         if (!currentPageIsFirstPageOfSheet())
           return;
@@ -132,7 +132,7 @@ public:
             cairo_pdf_surface_set_size(surface, width, height);
     }
 
-    void endPage(cairo_t* cr)
+    void endPage(cairo_t* cr) override
     {
         if (currentPageIsLastPageOfSheet())
             cairo_show_page(cr);
@@ -149,7 +149,7 @@ public:
         printOperation->deref();
     }
 
-    void endPrint()
+    void endPrint() override
     {
         cairo_surface_finish(gtk_print_job_get_surface(m_printJob.get(), 0));
         // Make sure the operation is alive until the job is sent.
@@ -163,31 +163,31 @@ public:
 #endif
 
 #ifdef G_OS_WIN32
-class WebPrintOperationGtkWin32: public WebPrintOperationGtk {
+class WebPrintOperationGtkWin32 final: public WebPrintOperationGtk {
 public:
     WebPrintOperationGtkWin32(WebPage* page, const PrintInfo& printInfo)
         : WebPrintOperationGtk(page, printInfo)
     {
     }
 
-    void startPrint(WebCore::PrintContext* printContext, uint64_t callbackID)
+    void startPrint(WebCore::PrintContext* printContext, uint64_t callbackID) override
     {
         m_printContext = printContext;
         m_callbackID = callbackID;
         notImplemented();
     }
 
-    void startPage(cairo_t* cr)
+    void startPage(cairo_t* cr) override
     {
         notImplemented();
     }
 
-    void endPage(cairo_t* cr)
+    void endPage(cairo_t* cr) override
     {
         notImplemented();
     }
 
-    void endPrint()
+    void endPrint() override
     {
         notImplemented();
     }
