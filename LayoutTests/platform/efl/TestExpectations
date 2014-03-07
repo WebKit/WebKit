@@ -689,6 +689,10 @@ webkit.org/b/125517 compositing/regions/floated-region-with-transformed-child.ht
 
 webkit.org/b/128736 inspector-protocol/debugger/setBreakpoint-dfg.html [ Failure Pass ]
 
+# Regressions in svg/clip-path
+webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure Pass ]
+webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1485,8 +1489,6 @@ webkit.org/b/109951 compositing/transitions/transform-on-large-layer.html [ Imag
 # CUSTOM_ELEMENTS is not enabled.
 webkit.org/b/110958 fast/dom/custom [ Skip ]
 
-webkit.org/b/110316 svg/as-background-image/tiled-background-image.html [ ImageOnlyFailure ]
-
 webkit.org/b/110446 svg/as-background-image/svg-transformed-background.html [ ImageOnlyFailure ]
 
 # New test
@@ -1632,7 +1634,6 @@ webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Failure 
 webgl/1.0.2/conformance/context/premultiplyalpha-test.html [ Failure ]
 webgl/1.0.2/conformance/extensions/oes-texture-float.html [ Failure ]
 webgl/1.0.2/conformance/glsl/literals/float_literal.vert.html [ Failure ]
-webgl/1.0.2/conformance/glsl/misc/shaders-with-varyings.html [ Failure ]
 webgl/1.0.2/conformance/ogles/GL/sin/sin_001_to_006.html [ Failure ]
 webgl/1.0.2/conformance/renderbuffers/framebuffer-object-attachment.html [ Failure ]
 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Failure ]
@@ -1801,7 +1802,6 @@ webkit.org/b/127725 media/video-restricted-no-preload-auto.html [ Failure ]
 webkit.org/b/127731 plugins/embed-prefers-plugins-for-images.html [ Failure ]
 
 # Subpixel rendering: borders are reporting float values.
-webkit.org/b/128061 css1/units/length_units.html [ Failure ]
 webkit.org/b/128061 fast/block/float/016.html [ Failure ]
 webkit.org/b/128061 fast/css/bidi-override-in-anonymous-block.html [ Failure ]
 webkit.org/b/128061 fast/multicol/span/anonymous-style-inheritance.html [ Failure ]
@@ -1830,8 +1830,6 @@ webkit.org/b/128664 fast/css3-text/css3-text-decoration/text-decoration-thicknes
 
 webkit.org/b/128665 fast/regions/clip-to-padding-box-vertical-lr.html [ ImageOnlyFailure ]
 
-webkit.org/b/128666 fast/regions/overflow-nested-regions.html [ ImageOnlyFailure ]
-
 webkit.org/b/128667 fast/regions/repaint/hover-border-radius.html [ Failure ]
 
 webkit.org/b/128668 fast/sub-pixel/sub-pixel-root-layer.html [ ImageOnlyFailure ]
@@ -1846,8 +1844,6 @@ webkit.org/b/128670 fast/forms/form-hides-table.html [ Failure ]
 webkit.org/b/128670 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
 webkit.org/b/128670 networkinformation/window-property.html [ Failure ]
 
-webkit.org/b/128735 fast/regions/nested-floated-region.html [ ImageOnlyFailure ]
-
 webkit.org/b/128901 accessibility/list-detection.html [ Failure ]
 
 webkit.org/b/128902 media/media-event-listeners.html [ Failure ]
@@ -1858,8 +1854,6 @@ webkit.org/b/128973 fast/multicol/span/span-as-immediate-columns-child-dynamic.h
 webkit.org/b/128499 svg/clip-path/clip-path-content-use-005.svg [ ImageOnlyFailure ]
 webkit.org/b/128499 svg/clip-path/clip-path-precision-001.svg [ ImageOnlyFailure ]
 webkit.org/b/128499 svg/clip-path/clip-path-content-use-006.svg [ ImageOnlyFailure ]
-webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure ]
-webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
 
 webkit.org/b/102097 compositing/hidpi-absolute-subpixel-positioned-transformed-elements.html [ ImageOnlyFailure ]
 webkit.org/b/102097 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]

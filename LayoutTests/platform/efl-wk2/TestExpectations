@@ -62,7 +62,6 @@ webkit.org/b/109417 webgl/conformance/textures/texture-attachment-formats.html [
 webkit.org/b/109945 webgl/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Crash ]
 
 # Known WebGL conformance test failures, fails on Intel and AMD hardware
-webkit.org/b/129199 webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Crash ]
 webkit.org/b/129199 webgl/1.0.2/conformance/uniforms/uniform-default-values.html [ Crash ]
 webkit.org/b/129199 webgl/conformance/uniforms/uniform-default-values.html [ Crash ]
 
@@ -231,6 +230,11 @@ webkit.org/b/127914 webgl/conformance/textures/texture-npot.html [ Crash Pass ]
 
 webkit.org/b/128969 fast/sub-pixel/input-caret-on-subpixel-bound.html [ ImageOnlyFailure Pass ]
 
+# Known WebGL conformance test failures, fails on Intel and AMD hardware
+webkit.org/b/129199 webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Crash Failure Pass ]
+
+webkit.org/b/128732 fast/css3-text/css3-text-align-last/text-align-last-with-text-align-justify.html [ ImageOnlyFailure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -385,7 +389,6 @@ webkit.org/b/109435 webgl/conformance/context/context-creation-and-destruction.h
 webkit.org/b/109435 webgl/conformance/glsl/functions/glsl-function-sin.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/glsl/functions/glsl-function-smoothstep-float.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/glsl/literals/float_literal.vert.html [ Failure Crash ]
-webkit.org/b/109435 webgl/conformance/glsl/misc/shaders-with-varyings.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/more/functions/readPixelsBadArgs.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/more/functions/texImage2DHTML.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/more/functions/texSubImage2DHTML.html [ Failure Crash ]
@@ -515,8 +518,6 @@ webkit.org/b/109941 webgl/1.0.1/conformance/textures/origin-clean-conformance.ht
 
 webkit.org/b/127780 compositing/regions/position-layers-inside-regions-overflow-hidden.html [ ImageOnlyFailure ]
 
-webkit.org/b/128732 fast/css3-text/css3-text-align-last/text-align-last-with-text-align-justify.html [ ImageOnlyFailure ]
-
 # Failing since added in r162960
 webkit.org/b/128733 fast/css/sticky/sticky-table-row-top.html [ ImageOnlyFailure ]
 webkit.org/b/128733 fast/css/sticky/sticky-table-thead-top.html [ ImageOnlyFailure ]
@@ -526,8 +527,6 @@ webkit.org/b/128734 plugins/nested-plugin-objects.html [ Failure ]
 webkit.org/b/128734 plugins/netscape-destroy-plugin-script-objects.html [ Failure ]
 
 webkit.org/b/128737 fast/events/touch/basic-multi-touch-events.html [ Failure ]
-
-webkit.org/b/128972 fast/regions/box-decorations-over-region-padding-fragmented.html [ ImageOnlyFailure ]
 
 webkit.org/b/129731 css3/masking/clip-path-filter.html [ ImageOnlyFailure ]
 
