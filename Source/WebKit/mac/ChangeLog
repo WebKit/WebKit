@@ -1,3 +1,13 @@
+2014-03-07  Anders Carlsson  <andersca@apple.com>
+
+        Link WebKit.framework against WebKit2.framework and re-export all WebKit2 symbols
+        https://bugs.webkit.org/show_bug.cgi?id=129901
+        <rdar://problem/15920020>
+
+        Reviewed by Andreas Kling.
+
+        * Configurations/WebKit.xcconfig:
+
 2014-03-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Expose the console object in JSContexts to interact with Web Inspector
