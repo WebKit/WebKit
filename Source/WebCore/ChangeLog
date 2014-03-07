@@ -1,3 +1,22 @@
+2014-03-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS] WebKit1 scroll position is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=129905
+
+        Reviewed by Simon Fraser.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::scrollX):
+        (WebCore::DOMWindow::scrollY):
+        A new optimization was avoiding layout if the position is zero. This was using the scrollX/Y instead
+        of actualScrollX/Y which caused us to always bail out instead of returning the value to JavaScript.
+
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::actualScrollX):
+        (WebCore::ScrollView::actualScrollY):
+        (WebCore::ScrollView::actualScrollPosition):
+        This was accidentally changed to the iOS compat document visible rect at some point.
+
 2014-03-07  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         Remove unused StdDeviation from Drop shadow effect

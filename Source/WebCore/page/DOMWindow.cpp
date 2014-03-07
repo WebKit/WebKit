@@ -1192,16 +1192,18 @@ int DOMWindow::scrollX() const
     if (!view)
         return 0;
 
-    if (!view->scrollX())
+    int scrollX;
+#if PLATFORM(IOS)
+    scrollX = view->actualScrollX();
+#else
+    scrollX = view->scrollX();
+#endif
+    if (!scrollX)
         return 0;
 
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
-#if PLATFORM(IOS)
-    return static_cast<int>(view->actualScrollX() / (m_frame->pageZoomFactor() * m_frame->frameScaleFactor()));
-#else
-    return view->mapFromLayoutToCSSUnits(view->scrollX());
-#endif
+    return view->mapFromLayoutToCSSUnits(scrollX);
 }
 
 int DOMWindow::scrollY() const
@@ -1213,16 +1215,18 @@ int DOMWindow::scrollY() const
     if (!view)
         return 0;
 
-    if (!view->scrollY())
+    int scrollY;
+#if PLATFORM(IOS)
+    scrollY = view->actualScrollY();
+#else
+    scrollY = view->scrollY();
+#endif
+    if (!scrollY)
         return 0;
 
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
-#if PLATFORM(IOS)
-    return static_cast<int>(view->actualScrollY() / (m_frame->pageZoomFactor() * m_frame->frameScaleFactor()));
-#else
-    return view->mapFromLayoutToCSSUnits(view->scrollY());
-#endif
+    return view->mapFromLayoutToCSSUnits(scrollY);
 }
 
 bool DOMWindow::closed() const
