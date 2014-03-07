@@ -144,7 +144,7 @@ for (my $previousLine = "", my $line = <>; $line; $previousLine = $line, $line =
         printLine("Build Succeeded", STYLE_SUCCESS);
     } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|ProcessProductPackaging|CodeSign|SymLink|Updating|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
         my ($command, $path) = ($2, basename($4));
-        $path =~ s/("|\\|\.[oah]$)//g;
+        $path =~ s/("|\\|\.[ah]$)//g;
         printLine("$command $path", STYLE_PLAIN);
     } elsif ($line =~ /^\S+mkdir .*?(\S+)$/) {
         my $path = basename($1);

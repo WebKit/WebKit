@@ -1,3 +1,15 @@
+2014-03-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        filter-build-webkit should not strip .o
+        https://bugs.webkit.org/show_bug.cgi?id=129614
+
+        Reviewed by Dean Jackson.
+
+        This makes it much easier to jump from the failing output at
+        the end back up to the compile errors earlier in the output.
+
+        * Scripts/filter-build-webkit:
+
 2014-03-06  Anders Carlsson  <andersca@apple.com>
 
         Build WebKit2 before building WebKit
