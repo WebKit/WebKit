@@ -1,3 +1,12 @@
+2014-03-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Convert WebKit.make to an MSBuild file.
+        https://bugs.webkit.org/show_bug.cgi?id=129888
+
+        Reviewed by Dean Jackson.
+
+        * WebKit.vcxproj/WebKit.proj: Added.
+
 2014-03-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed follow-up fix for Windows for r165199.
