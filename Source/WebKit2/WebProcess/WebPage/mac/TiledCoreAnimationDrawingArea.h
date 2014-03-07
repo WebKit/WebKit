@@ -82,8 +82,6 @@ private:
     virtual void setExposedRect(const WebCore::FloatRect&) override;
     virtual WebCore::FloatRect exposedRect() const override { return m_scrolledExposedRect; }
 
-    virtual void setCustomFixedPositionRect(const WebCore::FloatRect&) override { }
-
     virtual bool supportsAsyncScrolling() override { return true; }
 
     virtual void didChangeScrollOffsetForAnyFrame() override;

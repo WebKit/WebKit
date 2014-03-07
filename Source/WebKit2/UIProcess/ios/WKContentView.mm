@@ -171,19 +171,15 @@ using namespace WebKit;
         // visual noise. We filter those useless updates.
         scale = _page->displayedContentScale();
     }
-    
-    _page->updateVisibleContentRects(VisibleContentRectUpdateInfo(visibleRect, unobscuredRect, scale));
+
+    FloatRect fixedPosRect = [self fixedPositionRectFromExposedRect:unobscuredRect scale:scale];
+    _page->updateVisibleContentRects(VisibleContentRectUpdateInfo(visibleRect, unobscuredRect, fixedPosRect, scale, isStableState));
 
     RemoteScrollingCoordinatorProxy* scrollingCoordinator = _page->scrollingCoordinatorProxy();
     scrollingCoordinator->scrollPositionChangedViaDelegatedScrolling(scrollingCoordinator->rootScrollingNodeID(), unobscuredRect.origin);
 
-    if (auto drawingArea = _page->drawingArea()) {
-        if (isStableState) {
-            FloatRect fixedPosRect = [self fixedPositionRectFromExposedRect:unobscuredRect scale:scale];
-            drawingArea->setCustomFixedPositionRect(fixedPosRect);
-        }
+    if (auto drawingArea = _page->drawingArea())
         drawingArea->updateDebugIndicator();
-    }
 }
 
 - (void)setMinimumSize:(CGSize)size

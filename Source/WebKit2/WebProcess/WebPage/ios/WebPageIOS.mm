@@ -1746,6 +1746,10 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     }
 
     m_page->mainFrame().view()->setScrollOffset(scrollPosition);
+    
+    if (visibleContentRectUpdateInfo.inStableState())
+        m_page->mainFrame().view()->setCustomFixedPositionLayoutRect(enclosingIntRect(visibleContentRectUpdateInfo.customFixedPositionRect()));
+
     // FIXME: we should also update the frame view from unobscured rect. Altenatively, we can have it pull the values from ScrollView.
 }
 

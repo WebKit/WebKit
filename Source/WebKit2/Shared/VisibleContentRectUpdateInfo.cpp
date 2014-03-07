@@ -34,7 +34,9 @@ void VisibleContentRectUpdateInfo::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_exposedRect;
     encoder << m_unobscuredRect;
+    encoder << m_customFixedPositionRect;
     encoder << m_scale;
+    encoder << m_inStableState;
 }
 
 bool VisibleContentRectUpdateInfo::decode(IPC::ArgumentDecoder& decoder, VisibleContentRectUpdateInfo& result)
@@ -43,7 +45,11 @@ bool VisibleContentRectUpdateInfo::decode(IPC::ArgumentDecoder& decoder, Visible
         return false;
     if (!decoder.decode(result.m_unobscuredRect))
         return false;
+    if (!decoder.decode(result.m_customFixedPositionRect))
+        return false;
     if (!decoder.decode(result.m_scale))
+        return false;
+    if (!decoder.decode(result.m_inStableState))
         return false;
     return true;
 }

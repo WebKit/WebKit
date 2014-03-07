@@ -91,7 +91,6 @@ public:
 #if PLATFORM(COCOA)
     virtual void setExposedRect(const WebCore::FloatRect&) = 0;
     virtual WebCore::FloatRect exposedRect() const = 0;
-    virtual void setCustomFixedPositionRect(const WebCore::FloatRect&) = 0;
 #endif
 #if PLATFORM(IOS)
     virtual void setExposedContentRect(const WebCore::FloatRect&) = 0;

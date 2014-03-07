@@ -42,16 +42,20 @@ public:
     {
     }
 
-    VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedRect, const WebCore::FloatRect& unobscuredRect, double scale)
+    VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedRect, const WebCore::FloatRect& unobscuredRect, const WebCore::FloatRect& customFixedPositionRect, double scale, bool inStableState)
         : m_exposedRect(exposedRect)
         , m_unobscuredRect(unobscuredRect)
+        , m_customFixedPositionRect(customFixedPositionRect)
         , m_scale(scale)
+        , m_inStableState(inStableState)
     {
     }
 
     const WebCore::FloatRect& exposedRect() const { return m_exposedRect; }
     const WebCore::FloatRect& unobscuredRect() const { return m_unobscuredRect; }
+    const WebCore::FloatRect& customFixedPositionRect() const { return m_customFixedPositionRect; }
     double scale() const { return m_scale; }
+    bool inStableState() const { return m_inStableState; }
 
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, VisibleContentRectUpdateInfo&);
@@ -59,12 +63,18 @@ public:
 private:
     WebCore::FloatRect m_exposedRect;
     WebCore::FloatRect m_unobscuredRect;
+    WebCore::FloatRect m_customFixedPositionRect;
     double m_scale;
+    bool m_inStableState;
 };
 
 inline bool operator==(const VisibleContentRectUpdateInfo& a, const VisibleContentRectUpdateInfo& b)
 {
-    return a.scale() == b.scale() && a.exposedRect() == b.exposedRect() && a.unobscuredRect() == b.unobscuredRect();
+    return a.scale() == b.scale()
+        && a.exposedRect() == b.exposedRect()
+        && a.unobscuredRect() == b.unobscuredRect()
+        && a.customFixedPositionRect() == b.customFixedPositionRect()
+        && a.inStableState() == b.inStableState();
 }
 
 } // namespace WebKit
