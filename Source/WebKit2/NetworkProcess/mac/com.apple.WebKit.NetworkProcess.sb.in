@@ -103,6 +103,7 @@
 ;; FIXME should be removed when <rdar://problem/9347205> + related radar in Safari is fixed
 (allow mach-lookup
     (global-name "org.h5l.kcm")
+    (global-name "com.apple.GSSCred")
     (global-name "com.apple.system.logger")
     (global-name "com.apple.system.notification_center"))
 (allow network-outbound
