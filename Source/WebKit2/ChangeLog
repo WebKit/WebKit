@@ -1,3 +1,13 @@
+2014-03-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Initialize new WKSI functions for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=129889
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2014-03-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use final and override in WebPrintOperationGtk
