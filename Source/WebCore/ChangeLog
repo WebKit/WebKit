@@ -1,3 +1,27 @@
+2014-03-07  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] inset does not properly clamp large corner radii
+        https://bugs.webkit.org/show_bug.cgi?id=129726
+
+        Reviewed by Dirk Schulze.
+
+        Make sure that radii that are larger than 50% of the associated shape
+        dimension (height or width) are properly reduced the same way as
+        border-radius radii are.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-large-radius.html
+
+        * rendering/shapes/Shape.cpp:
+        (WebCore::ensureRadiiDoNotOverlap): Drive by style fix.
+        (WebCore::Shape::createShape): Scale radii the same way as border
+            radii are scaled.
+        * platform/graphics/FloatRoundedRect.h:
+        (WebCore::calcBorderRadiiConstraintScaleFor): Move border radii
+            constraint calculation function out so that it can be shared by
+            the shape code.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getRoundedBorderFor): Call renamed scale function.
+
 2014-03-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GST] Set name to several timeout sources

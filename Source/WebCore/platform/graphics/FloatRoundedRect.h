@@ -134,6 +134,38 @@ inline bool operator==(const FloatRoundedRect& a, const FloatRoundedRect& b)
     return a.rect() == b.rect() && a.radii() == b.radii();
 }
 
+inline float calcBorderRadiiConstraintScaleFor(const FloatRect& rect, const FloatRoundedRect::Radii& radii)
+{
+    // Constrain corner radii using CSS3 rules:
+    // http://www.w3.org/TR/css3-background/#the-border-radius
+
+    float factor = 1;
+    float radiiSum;
+
+    // top
+    radiiSum = radii.topLeft().width() + radii.topRight().width(); // Casts to avoid integer overflow.
+    if (radiiSum > rect.width())
+        factor = std::min(rect.width() / radiiSum, factor);
+
+    // bottom
+    radiiSum = radii.bottomLeft().width() + radii.bottomRight().width();
+    if (radiiSum > rect.width())
+        factor = std::min(rect.width() / radiiSum, factor);
+
+    // left
+    radiiSum = radii.topLeft().height() + radii.bottomLeft().height();
+    if (radiiSum > rect.height())
+        factor = std::min(rect.height() / radiiSum, factor);
+
+    // right
+    radiiSum = radii.topRight().height() + radii.bottomRight().height();
+    if (radiiSum > rect.height())
+        factor = std::min(rect.height() / radiiSum, factor);
+
+    ASSERT(factor <= 1);
+    return factor;
+}
+
 } // namespace WebCore
 
 #endif // FloatRoundedRect_h

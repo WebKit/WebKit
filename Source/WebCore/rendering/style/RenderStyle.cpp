@@ -26,6 +26,7 @@
 #include "ContentData.h"
 #include "CursorList.h"
 #include "CSSPropertyNames.h"
+#include "FloatRoundedRect.h"
 #include "Font.h"
 #include "FontSelector.h"
 #include "Pagination.h"
@@ -1066,38 +1067,6 @@ static RoundedRect::Radii calcRadiiFor(const BorderData& border, const LayoutSiz
             valueForLength(border.bottomRight().height(), size.height(), renderView)));
 }
 
-static float calcConstraintScaleFor(const LayoutRect& rect, const RoundedRect::Radii& radii)
-{
-    // Constrain corner radii using CSS3 rules:
-    // http://www.w3.org/TR/css3-background/#the-border-radius
-    
-    float factor = 1;
-    float radiiSum;
-
-    // top
-    radiiSum = radii.topLeft().width() + radii.topRight().width(); // Casts to avoid integer overflow.
-    if (radiiSum > rect.width())
-        factor = std::min(rect.width() / radiiSum, factor);
-
-    // bottom
-    radiiSum = radii.bottomLeft().width() + radii.bottomRight().width();
-    if (radiiSum > rect.width())
-        factor = std::min(rect.width() / radiiSum, factor);
-    
-    // left
-    radiiSum = radii.topLeft().height() + radii.bottomLeft().height();
-    if (radiiSum > rect.height())
-        factor = std::min(rect.height() / radiiSum, factor);
-    
-    // right
-    radiiSum = radii.topRight().height() + radii.bottomRight().height();
-    if (radiiSum > rect.height())
-        factor = std::min(rect.height() / radiiSum, factor);
-    
-    ASSERT(factor <= 1);
-    return factor;
-}
-
 StyleImage* RenderStyle::listStyleImage() const { return rareInheritedData->listStyleImage.get(); }
 void RenderStyle::setListStyleImage(PassRefPtr<StyleImage> v)
 {
@@ -1120,7 +1089,7 @@ RoundedRect RenderStyle::getRoundedBorderFor(const LayoutRect& borderRect, Rende
     RoundedRect roundedRect(borderRect);
     if (hasBorderRadius()) {
         RoundedRect::Radii radii = calcRadiiFor(surround->border, borderRect.size(), renderView);
-        radii.scale(calcConstraintScaleFor(borderRect, radii));
+        radii.scale(calcBorderRadiiConstraintScaleFor(borderRect, radii));
         roundedRect.includeLogicalEdges(radii, isHorizontalWritingMode(), includeLogicalLeftEdge, includeLogicalRightEdge);
     }
     return roundedRect;

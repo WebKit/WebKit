@@ -100,7 +100,7 @@ static inline FloatSize physicalSizeToLogical(const FloatSize& size, WritingMode
     return size.transposedSize();
 }
 
-static inline void ensureRadiiDoNotOverlap(FloatRect &bounds, FloatSize &radii)
+static inline void ensureRadiiDoNotOverlap(FloatRect& bounds, FloatSize& radii)
 {
     float widthRatio = bounds.width() / (2 * radii.width());
     float heightRatio = bounds.height() / (2 * radii.height());
@@ -238,6 +238,8 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
             floatSizeForLengthSize(inset.topRightRadius(), boxSize),
             floatSizeForLengthSize(inset.bottomLeftRadius(), boxSize),
             floatSizeForLengthSize(inset.bottomRightRadius(), boxSize));
+
+        cornerRadii.scale(calcBorderRadiiConstraintScaleFor(logicalRect, cornerRadii));
 
         shape = createInsetShape(FloatRoundedRect(logicalRect, cornerRadii));
         break;
