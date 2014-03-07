@@ -1059,29 +1059,24 @@ bool XMLHttpRequest::responseIsXML() const
     return DOMImplementation::isXMLMIMEType(responseMIMEType().lower());
 }
 
-int XMLHttpRequest::status(ExceptionCode& ec) const
+int XMLHttpRequest::status() const
 {
+    if (m_state == UNSENT || m_state == OPENED || m_error)
+        return 0;
+
     if (m_response.httpStatusCode())
         return m_response.httpStatusCode();
-
-    if (m_state == OPENED) {
-        // Firefox only raises an exception in this state; we match it.
-        // Note the case of local file requests, where we have no HTTP response code! Firefox never raises an exception for those, but we match HTTP case for consistency.
-        ec = INVALID_STATE_ERR;
-    }
 
     return 0;
 }
 
-String XMLHttpRequest::statusText(ExceptionCode& ec) const
+String XMLHttpRequest::statusText() const
 {
+    if (m_state == UNSENT || m_state == OPENED || m_error)
+        return String();
+
     if (!m_response.httpStatusText().isNull())
         return m_response.httpStatusText();
-
-    if (m_state == OPENED) {
-        // See comments in status() above.
-        ec = INVALID_STATE_ERR;
-    }
 
     return String();
 }

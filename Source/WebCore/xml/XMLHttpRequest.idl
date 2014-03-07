@@ -88,8 +88,8 @@ enum XMLHttpRequestResponseType {
     [SetterRaisesException] attribute XMLHttpRequestResponseType responseType;
     [GetterRaisesException, CachedAttribute, CustomGetter] readonly attribute Object response;
 
-    [GetterRaisesException] readonly attribute unsigned short status;
-    [GetterRaisesException] readonly attribute DOMString statusText;
+    readonly attribute unsigned short status;
+    readonly attribute DOMString statusText;
 
     // Extension
     void overrideMimeType(DOMString override);

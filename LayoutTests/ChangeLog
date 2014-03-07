@@ -1,3 +1,25 @@
+2014-03-06  Mark Lam  <mark.lam@apple.com>
+
+        XMLHttpRequest: status and statusText throw DOM Exception 11 when the state is UNSENT or OPENED.
+        https://bugs.webkit.org/show_bug.cgi?id=45994
+
+        Not reviewed.
+
+        Re-landing r161051 (originally by Ryosuke Niwa, reviewed by Alexey Proskuryakov)
+        since https://bugs.webkit.org/show_bug.cgi?id=126219 is no longer an issue.
+
+        * http/tests/xmlhttprequest/exceptions-expected.txt:
+        * http/tests/xmlhttprequest/exceptions.html:
+        * http/tests/xmlhttprequest/status-after-abort-expected.txt:
+        * http/tests/xmlhttprequest/zero-length-response-expected.txt:
+        * js/dom/dfg-custom-getter-throw-expected.txt:
+        * js/dom/script-tests/dfg-custom-getter-throw-inlined.js:
+        (foo):
+        (bar):
+        * js/dom/script-tests/dfg-custom-getter-throw.js:
+        (foo):
+        (bar):
+
 2014-03-06  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [WebRTC] Updating createOffer and createAnswer methods to match WebRTC editor's draft of 01/27/2014

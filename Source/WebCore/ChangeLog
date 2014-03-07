@@ -1,3 +1,19 @@
+2014-03-06  Mark Lam  <mark.lam@apple.com>
+
+        XMLHttpRequest: status and statusText throw DOM Exception 11 when the state is UNSENT or OPENED.
+        https://bugs.webkit.org/show_bug.cgi?id=45994
+
+        Not reviewed.
+
+        Re-landing r161051 (originally by Ryosuke Niwa, reviewed by Alexey Proskuryakov)
+        since https://bugs.webkit.org/show_bug.cgi?id=126219 is no longer an issue.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::status):
+        (WebCore::XMLHttpRequest::statusText):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequest.idl:
+
 2014-03-06  Brent Fulgham  <bfulgham@apple.com>
 
         Revise Out-of-band VTT support for better integration with AVFoundation engine
