@@ -31,7 +31,7 @@
 #include <Evas_GL.h>
 #include <wtf/PassOwnPtr.h>
 
-namespace WebKit {
+namespace WebCore {
 
 class EvasGLSurface {
 public:
@@ -63,6 +63,6 @@ private:
     Evas_GL_Surface* m_surface;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // EvasGLSurface_h

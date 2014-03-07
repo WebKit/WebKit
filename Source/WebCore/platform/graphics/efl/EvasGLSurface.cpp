@@ -26,7 +26,7 @@
 #include "config.h"
 #include "EvasGLSurface.h"
 
-namespace WebKit {
+namespace WebCore {
 
 EvasGLSurface::EvasGLSurface(Evas_GL* evasGL, Evas_GL_Surface* passSurface)
     : m_evasGL(evasGL)
@@ -41,4 +41,4 @@ EvasGLSurface::~EvasGLSurface()
     evas_gl_surface_destroy(m_evasGL, m_surface);
 }
 
-} // namespace WebKit
+} // namespace WebCore

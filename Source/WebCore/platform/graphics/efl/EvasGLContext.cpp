@@ -26,7 +26,7 @@
 #include "config.h"
 #include "EvasGLContext.h"
 
-namespace WebKit {
+namespace WebCore {
 
 EvasGLContext::EvasGLContext(Evas_GL* evasGL, Evas_GL_Context* passContext)
     : m_evasGL(evasGL)
@@ -41,4 +41,4 @@ EvasGLContext::~EvasGLContext()
     evas_gl_context_destroy(m_evasGL, m_context);
 }
 
-} // namespace WebKit
+} // namespace WebCore

@@ -29,7 +29,7 @@
 #include <Evas_GL.h>
 #include <wtf/PassOwnPtr.h>
 
-namespace WebKit {
+namespace WebCore {
 
 class EvasGLContext {
 public:
@@ -54,6 +54,6 @@ private:
     Evas_GL_Context* m_context;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // EvasGLContext_h

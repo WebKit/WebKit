@@ -250,8 +250,8 @@ private:
     RefPtr<EwkContext> m_context;
     RefPtr<EwkPageGroup> m_pageGroup;
     OwnPtr<Evas_GL> m_evasGL;
-    OwnPtr<WebKit::EvasGLContext> m_evasGLContext;
-    OwnPtr<WebKit::EvasGLSurface> m_evasGLSurface;
+    OwnPtr<WebCore::EvasGLContext> m_evasGLContext;
+    OwnPtr<WebCore::EvasGLSurface> m_evasGLSurface;
     bool m_pendingSurfaceResize;
 
     WebCore::TransformationMatrix m_userViewportTransform;
