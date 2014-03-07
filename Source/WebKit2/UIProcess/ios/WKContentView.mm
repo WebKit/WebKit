@@ -166,7 +166,7 @@ using namespace WebKit;
 - (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect scale:(CGFloat)scale inStableState:(BOOL)isStableState
 {
     double scaleNoiseThreshold = 0.0005;
-    if (!isStableState && abs(scale - _page->displayedContentScale()) < scaleNoiseThreshold) {
+    if (!isStableState && fabs(scale - _page->displayedContentScale()) < scaleNoiseThreshold) {
         // Tiny changes of scale during interactive zoom cause content to jump by one pixel, creating
         // visual noise. We filter those useless updates.
         scale = _page->displayedContentScale();

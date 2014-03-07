@@ -1,3 +1,16 @@
+2014-03-06  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] didUpdateVisibleRect: should use fabs, not abs
+        https://bugs.webkit.org/show_bug.cgi?id=129843
+
+        Reviewed by Benjamin Poulain.
+        
+        When zooming we sent messages to the web process with an unchanging
+        zoom scale because of use of abs() rather than fabs().
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:scale:inStableState:]):
+
 2014-03-06  Anders Carlsson  <andersca@apple.com>
 
         Remove WebKit1 header includes from WebKit2
