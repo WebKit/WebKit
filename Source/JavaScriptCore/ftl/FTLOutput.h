@@ -129,7 +129,7 @@ public:
     LValue doubleDiv(LValue left, LValue right) { return buildFDiv(m_builder, left, right); }
     LValue doubleRem(LValue left, LValue right)
     {
-        // FIXME: LLVM may soften float operations be expanding them to libcalls.
+        // FIXME: LLVM may soften float operations by expanding them to libcalls.
         // We cannot allow that on all platforms yet.
         // <rdar://16196412> MachO large code model support.
         return isX86() ? buildFRem(m_builder, left, right) : call(operation(fmod), left, right);

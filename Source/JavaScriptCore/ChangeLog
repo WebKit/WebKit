@@ -1,3 +1,14 @@
+2014-03-07  Andrew Trick  <atrick@apple.com>
+
+        Correct a comment typo from:
+        FLT should call fmod directly on platforms where LLVM cannot relocate the libcall
+        https://bugs.webkit.org/show_bug.cgi?id=129865
+
+        Reviewed by Mark Lam.
+
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::doubleRem):
+
 2014-03-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Use OwnPtr in StructureIDTable
