@@ -68,7 +68,6 @@
 - (void)enableFrameSizeUpdates;
 - (BOOL)frameSizeUpdatesDisabled;
 
-- (void)performDictionaryLookupAtCurrentMouseLocation;
 + (void)hideWordDefinitionWindow;
 
 @property (readwrite) CGFloat minimumLayoutWidth;

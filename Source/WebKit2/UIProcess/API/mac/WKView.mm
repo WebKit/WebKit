@@ -2133,7 +2133,7 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 
 - (void)_postFakeMouseMovedEventForFlagsChangedEvent:(NSEvent *)flagsChangedEvent
 {
-    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved location:flagsChangedEvent.locationInWindow
+    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved location:[[flagsChangedEvent window] mouseLocationOutsideOfEventStream]
         modifierFlags:[flagsChangedEvent modifierFlags] timestamp:[flagsChangedEvent timestamp] windowNumber:[flagsChangedEvent windowNumber]
         context:[flagsChangedEvent context] eventNumber:0 clickCount:0 pressure:0];
     NativeWebMouseEvent webEvent(fakeEvent, self);
@@ -3068,11 +3068,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (BOOL)frameSizeUpdatesDisabled
 {
     return _data->_frameSizeUpdatesDisabledCount > 0;
-}
-
-- (void)performDictionaryLookupAtCurrentMouseLocation
-{
-    _data->_page->performDictionaryLookupAtLocation([self convertPoint:[[NSApp currentEvent] locationInWindow] fromView:nil]);
 }
 
 + (void)hideWordDefinitionWindow

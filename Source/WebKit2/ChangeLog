@@ -1,3 +1,19 @@
+2014-03-07  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r164847): Pressing the command key while hovering an element causes it to un-hover
+        https://bugs.webkit.org/show_bug.cgi?id=129872
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h: Changes in performDictionaryLookupAtCurrentMouseLocation
+        were also not correct, because the current event could be a keyboard one (Cmd+Ctrl+D).
+        But this SPI is unused, and can be simply removed.
+
+        * UIProcess/API/mac/WKView.mm: (-[WKView _postFakeMouseMovedEventForFlagsChangedEvent:]):
+        locationInWindow is undefined for keyboard events, so we have to use current location.
+        Thankfully, there is a method that returns the location in appropriate coordinate
+        space, unlike +[NSEvent mouseLocation] that we used before.
+
 2014-03-07  Andy Estes  <aestes@apple.com>
 
         [iOS] Install WebKit2 XPC services to the correct place during iOS Simulator builds
