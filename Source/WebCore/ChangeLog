@@ -1,3 +1,14 @@
+2014-03-07  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        Remove unused StdDeviation from Drop shadow effect
+        https://bugs.webkit.org/show_bug.cgi?id=129891
+
+        Reviewed by Dirk Schulze.
+
+        No new tests, no change on behavior.
+
+        * platform/graphics/filters/FEDropShadow.h:
+
 2014-03-07  Brent Fulgham  <bfulgham@apple.com>
 
         Correct out-of-band track selection logic.
