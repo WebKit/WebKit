@@ -1,3 +1,10 @@
+2014-03-06  Dan Bernstein  <mitz@apple.com>
+
+        Don’t copy WebInputs.json into the framework.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed WebInputs.json from the Copy Bundle Resources
+        build phase of the WebCore target.
+
 2014-03-06  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [WebRTC] Updating RTCPeerConnection.idl
