@@ -137,3 +137,13 @@ WKStringRef WKPlugInInfoIsSandboxedKey()
 {
     return WKPluginInformationHasSandboxProfileKey();
 }
+
+bool WKContextShouldBlockWebGL()
+{
+    return WKShouldBlockWebGL();
+}
+
+bool WKContextShouldSuggestBlockWebGL()
+{
+    return WKShouldSuggestBlockingWebGL();
+}

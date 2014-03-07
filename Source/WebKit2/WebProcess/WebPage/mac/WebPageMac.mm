@@ -959,16 +959,6 @@ void WebPage::didUpdateViewStateTimerFired()
 #if ENABLE(WEBGL)
 WebCore::WebGLLoadPolicy WebPage::webGLPolicyForURL(WebFrame* frame, const String& url)
 {
-    if (WKShouldBlockWebGL()) {
-        if (m_systemWebGLPolicy != WebGLBlockCreation)
-            sendSync(Messages::WebPageProxy::SetSystemWebGLPolicy(static_cast<uint32_t>(WebGLBlockCreation)), Messages::WebPageProxy::SetSystemWebGLPolicy::Reply());
-        m_systemWebGLPolicy = WebGLBlockCreation;
-    } else if (WKShouldSuggestBlockingWebGL()) {
-        if (m_systemWebGLPolicy != WebGLPendingCreation)
-            sendSync(Messages::WebPageProxy::SetSystemWebGLPolicy(static_cast<uint32_t>(WebGLPendingCreation)), Messages::WebPageProxy::SetSystemWebGLPolicy::Reply());
-        m_systemWebGLPolicy = WebGLPendingCreation;
-    }
-
     uint32_t policyResult = 0;
 
     if (sendSync(Messages::WebPageProxy::WebGLPolicyForURL(url), Messages::WebPageProxy::WebGLPolicyForURL::Reply(policyResult)))

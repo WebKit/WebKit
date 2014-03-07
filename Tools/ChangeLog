@@ -1,3 +1,13 @@
+2014-03-07  Roger Fong  <roger_fong@apple.com>
+
+        Remove dummy setSystemWebGLLoadPolicy client method.
+        https://bugs.webkit.org/show_bug.cgi?id=129873.
+
+        Reviewed by Dean Jackson.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions):
+
 2014-03-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         run-jsc-stress-tests doesn't eagerly report test failures when using the shell runner

@@ -67,6 +67,9 @@ WK_EXPORT WKStringRef WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKe
 /* Value type: WKBooleanRef */
 WK_EXPORT WKStringRef WKPlugInInfoIsSandboxedKey();
 
+WK_EXPORT bool WKContextShouldBlockWebGL();
+WK_EXPORT bool WKContextShouldSuggestBlockWebGL();
+
 #ifdef __cplusplus
 }
 #endif

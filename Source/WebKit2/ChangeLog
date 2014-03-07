@@ -1,3 +1,29 @@
+2014-03-07  Roger Fong  <roger_fong@apple.com>
+
+        Replace setSystemWebGLLoadPolicy API with methods to query for WebGL blocking policy.
+        https://bugs.webkit.org/show_bug.cgi?id=129873.
+
+        Reviewed by Dean Jackson.
+
+        Remove setSystemWebGLLoadPolicy API.
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::resolveWebGLLoadPolicy):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        * UIProcess/API/C/WKPageLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resolveWebGLPolicyForURL):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::webGLPolicyForURL):
+
+        Add API to directly query the WebGL blocking policies from WKSI.
+        * UIProcess/API/C/mac/WKContextPrivateMac.h:
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextShouldBlockWebGL):
+        (WKContextShouldSuggestBlockWebGL):
+
 2014-03-07  Eric Carlson  <eric.carlson@apple.com>
 
         Initialize new WKSI functions for WebKit2
