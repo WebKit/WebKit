@@ -508,8 +508,6 @@ webkit.org/b/116025 compositing/video/video-background-color.html [ Crash Pass ]
 
 webkit.org/b/124574 fast/css/object-fit/object-fit-embed.html [ Crash Pass ]
 
-webkit.org/b/124575 fast/forms/select-live-pseudo-selectors.html [ Crash ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1274,7 +1272,6 @@ webkit.org/b/95530 http/tests/security/inactive-document-with-empty-security-ori
 webkit.org/b/95551 fast/forms/datalist/input-appearance-range-with-datalist-rtl.html [ ImageOnlyFailure ]
 
 # EFL port does not support plugins yet
-webkit.org/b/96881 http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Failure ]
 webkit.org/b/96881 http/tests/security/cross-origin-plugin.html [ Failure ]
 webkit.org/b/96881 http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html [ Failure ]
 webkit.org/b/96881 http/tests/security/storage-blocking-strengthened-plugin.html [ Failure ]
@@ -1556,8 +1553,6 @@ webkit.org/b/115419 media/track/track-automatic-subtitles.html [ Failure ]
 
 webkit.org/b/115439 fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
 
-webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
-
 # EFL specific error : (_ecore_main_fd_handlers_bads_rem() No bad fd found).
 webkit.org/b/116587 http/tests/websocket/tests/hybi/close.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/close-on-navigate-new-location.html [ Skip ]
@@ -1635,7 +1630,6 @@ webgl/1.0.2/conformance/context/premultiplyalpha-test.html [ Failure ]
 webgl/1.0.2/conformance/extensions/oes-texture-float.html [ Failure ]
 webgl/1.0.2/conformance/glsl/literals/float_literal.vert.html [ Failure ]
 webgl/1.0.2/conformance/ogles/GL/sin/sin_001_to_006.html [ Failure ]
-webgl/1.0.2/conformance/renderbuffers/framebuffer-object-attachment.html [ Failure ]
 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Failure ]
 webgl/1.0.2/conformance/textures/copy-tex-image-2d-formats.html [ Failure ]
 webgl/1.0.2/conformance/textures/texture-attachment-formats.html [ Failure ]
@@ -1670,8 +1664,6 @@ webkit.org/b/120596 css3/masking/mask-repeat-space-border.html [ ImageOnlyFailur
 webkit.org/b/120596 css3/masking/mask-repeat-space-content.html [ ImageOnlyFailure ]
 webkit.org/b/120596 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 
-webkit.org/b/118595 fast/regions/auto-size/autoheight-correct-region-for-lines-2.html [ ImageOnlyFailure ]
-
 webkit.org/b/120105 http/tests/navigation/post-frames-goback1-uncached.html [ Failure ]
 
 webkit.org/b/120682 inspector-protocol/page/archive.html [ Failure ]
@@ -1694,8 +1686,6 @@ webkit.org/b/124519 fast/filter-image/parse-filter-image.html [ Failure ]
 webkit.org/b/124582 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
 
 webkit.org/b/124583 fast/images/pdf-as-image-with-annotations.html [ ImageOnlyFailure ]
-
-webkit.org/b/124584 fast/regions/overflow-moving-below-floats-in-variable-width-regions.html [ ImageOnlyFailure ]
 
 webkit.org/b/124585 fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
 
@@ -1737,9 +1727,6 @@ webkit.org/b/124971 compositing/repaint/repaint-on-layer-grouping-change.html [ 
 webkit.org/b/125348 accessibility/document-attributes.html [ Failure ]
 
 webkit.org/b/125355 fast/events/updateLayoutForHitTest.html [ Failure ]
-
-webkit.org/b/125458 fast/repaint/line-flow-with-floats-9.html [ Failure ]
-
 
 # Started failing after r154906
 webkit.org/b/125496 animations/cross-fade-border-image-source.html [ Failure ]

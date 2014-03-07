@@ -12,6 +12,14 @@
 
         Unreviewed EFL gardening
 
+        Clear test expectations for passing tests.
+
+        * platform/efl/TestExpectations:
+
+2014-03-07  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
         Remove wrong test expectations.
 
         * platform/efl-wk2/TestExpectations:
