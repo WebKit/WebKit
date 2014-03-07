@@ -29,12 +29,13 @@
 #include <limits.h>
 #include <wtf/Atomics.h>
 #include <wtf/DataLog.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace JSC {
 
 StructureIDTable::StructureIDTable()
     : m_firstFreeOffset(0)
-    , m_table(new StructureOrOffset[s_initialSize])
+    , m_table(adoptPtr(new StructureOrOffset[s_initialSize]))
     , m_size(0)
     , m_capacity(s_initialSize)
 {
@@ -43,28 +44,22 @@ StructureIDTable::StructureIDTable()
     allocateID(0);
 }
 
-StructureIDTable::~StructureIDTable()
-{
-    delete [] m_table;
-}
-
 void StructureIDTable::resize(size_t newCapacity)
 {
     // Create the new table.
-    StructureOrOffset* newTable = new StructureOrOffset[newCapacity];
+    OwnPtr<StructureOrOffset> newTable = adoptPtr(new StructureOrOffset[newCapacity]);
 
     // Copy the contents of the old table to the new table.
-    memcpy(newTable, m_table, m_capacity * sizeof(StructureOrOffset));
+    memcpy(newTable.get(), table(), m_capacity * sizeof(StructureOrOffset));
 
     // Store fence to make sure we've copied everything before doing the swap.
     WTF::storeStoreFence();
 
     // Swap the old and new tables.
-    StructureOrOffset* oldTable = m_table;
-    m_table = newTable;
+    swap(m_table, newTable);
 
     // Put the old table (now labeled as new) into the list of old tables.
-    m_oldTables.append(oldTable);
+    m_oldTables.append(newTable.release());
 
     // Update the capacity.
     m_capacity = newCapacity;
@@ -72,8 +67,6 @@ void StructureIDTable::resize(size_t newCapacity)
 
 void StructureIDTable::flushOldTables()
 {
-    for (unsigned i = 0; i < m_oldTables.size(); ++i)
-        delete [] m_oldTables[i];
     m_oldTables.clear();
 }
 
@@ -95,7 +88,7 @@ StructureID StructureIDTable::allocateID(Structure* structure)
         }
 
         StructureID result = m_size;
-        m_table[result] = newEntry;
+        table()[result] = newEntry;
         m_size++;
         return result;
     }
@@ -103,8 +96,8 @@ StructureID StructureIDTable::allocateID(Structure* structure)
     ASSERT(m_firstFreeOffset != s_unusedID);
 
     StructureID result = m_firstFreeOffset;
-    m_firstFreeOffset = m_table[m_firstFreeOffset].offset;
-    m_table[result].structure = structure;
+    m_firstFreeOffset = table()[m_firstFreeOffset].offset;
+    table()[result].structure = structure;
     return result;
 #else
     return structure;
@@ -115,8 +108,8 @@ void StructureIDTable::deallocateID(Structure* structure, StructureID structureI
 {
 #if USE(JSVALUE64)
     ASSERT(structureID != s_unusedID);
-    RELEASE_ASSERT(m_table[structureID].structure == structure);
-    m_table[structureID].offset = m_firstFreeOffset;
+    RELEASE_ASSERT(table()[structureID].structure == structure);
+    table()[structureID].offset = m_firstFreeOffset;
     m_firstFreeOffset = structureID;
 #else
     UNUSED_PARAM(structure);
