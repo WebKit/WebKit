@@ -36,6 +36,7 @@ class ArgumentEncoder;
 class DataReference;
 
 class ArgumentEncoder {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ArgumentEncoder();
     virtual ~ArgumentEncoder();

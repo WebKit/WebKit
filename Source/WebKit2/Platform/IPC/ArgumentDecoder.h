@@ -35,6 +35,7 @@ namespace IPC {
 class DataReference;
     
 class ArgumentDecoder {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ArgumentDecoder(const uint8_t* buffer, size_t bufferSize);
     virtual ~ArgumentDecoder();

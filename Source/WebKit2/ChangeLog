@@ -1,3 +1,13 @@
+2014-03-07  Andreas Kling  <akling@apple.com>
+
+        ArgumentEncoder and ArgumentDecoder should be fastmalloced.
+        <https://webkit.org/b/129960>
+
+        Reviewed by Ryosuke Niwa.
+
+        * Platform/IPC/ArgumentDecoder.h:
+        * Platform/IPC/ArgumentEncoder.h:
+
 2014-03-07  Martin Robinson  <mrobinson@igalia.com>
 
         Fix the GTK+ build after the recent iOS merge.
