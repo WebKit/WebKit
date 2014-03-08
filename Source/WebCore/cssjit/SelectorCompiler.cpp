@@ -61,8 +61,8 @@ enum class BacktrackingAction {
     JumpToIndirectAdjacentEntryPoint,
     JumpToDescendantTreeWalkerEntryPoint,
     JumpToDescendantTail,
-    JumpToClearAdjacentDescendantTail,
-    JumpToDirectAdjacentTail
+    JumpToDirectAdjacentTail,
+    JumpToClearAdjacentTail
 };
 
 struct BacktrackingFlag {
@@ -161,9 +161,9 @@ private:
     void markParentElementIfResolvingStyle(JSC::FunctionPtr);
 
     void linkFailures(Assembler::JumpList& globalFailureCases, BacktrackingAction, Assembler::JumpList& localFailureCases);
-    void generateAdjacentBacktrackingTail(StackAllocator& adjacentTailStack);
+    void generateAdjacentBacktrackingTail(Assembler::JumpList& failureCases);
     void generateDescendantBacktrackingTail();
-    void generateBacktrackingTailsIfNeeded(const SelectorFragment&);
+    void generateBacktrackingTailsIfNeeded(Assembler::JumpList& failureCases, const SelectorFragment&);
 
     // Element properties matchers.
     void generateElementMatching(Assembler::JumpList& failureCases, const SelectorFragment&);
@@ -199,7 +199,7 @@ private:
     Assembler::JumpList m_descendantBacktrackingFailureCases;
     StackAllocator::StackReference m_adjacentBacktrackingStart;
     Assembler::JumpList m_adjacentBacktrackingFailureCases;
-    Assembler::JumpList m_clearAdjacentEntryPointDescendantFailureCases;
+    Assembler::JumpList m_clearAdjacentBacktrackingFailureCases;
 
 #if CSS_SELECTOR_JIT_DEBUGGING
     const CSSSelector* m_originalSelector;
@@ -545,8 +545,12 @@ static inline void solveBacktrackingAction(SelectorFragment& fragment, bool hasD
                 if (!hasIndirectAdjacentRelationOnTheRightOfDirectAdjacentChain || isFirstAdjacent(adjacentPositionSinceIndirectAdjacentTreeWalk))
                     fragment.traversalBacktrackingAction = BacktrackingAction::JumpToDescendantTail;
                 else
-                    fragment.traversalBacktrackingAction = BacktrackingAction::JumpToClearAdjacentDescendantTail;
+                    fragment.traversalBacktrackingAction = BacktrackingAction::JumpToClearAdjacentTail;
             }
+        } else {
+            // If we are in a direct adjacent chain with backtracking, we need to clear the backtracking register on the stack.
+            if (hasIndirectAdjacentRelationOnTheRightOfDirectAdjacentChain && !isFirstAdjacent(adjacentPositionSinceIndirectAdjacentTreeWalk))
+                fragment.traversalBacktrackingAction = BacktrackingAction::JumpToClearAdjacentTail;
         }
 
         // If the rightmost relation is a indirect adjacent, matching sould resume from there.
@@ -559,7 +563,7 @@ static inline void solveBacktrackingAction(SelectorFragment& fragment, bool hasD
         } else if (hasDescendantRelationOnTheRight) {
             if (isAfterChildRelation(ancestorPositionSinceDescendantRelation))
                 fragment.matchingBacktrackingAction = BacktrackingAction::JumpToDescendantTail;
-            else if (hasDescendantRelationOnTheRight)
+            else
                 fragment.matchingBacktrackingAction = BacktrackingAction::JumpToDescendantTreeWalkerEntryPoint;
         }
         break;
@@ -667,7 +671,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
             generateIndirectAdjacentTreeWalker(failureCases, fragment);
             break;
         }
-        generateBacktrackingTailsIfNeeded(fragment);
+        generateBacktrackingTailsIfNeeded(failureCases, fragment);
     }
 
     m_registerAllocator.deallocateRegister(elementAddressRegister);
@@ -706,7 +710,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
         StackAllocator failureStack = m_stackAllocator;
 
         LocalRegister checkingContextRegister(m_registerAllocator);
-        successStack.pop(m_checkingContextStackReference, checkingContextRegister);
+        successStack.popAndDiscardUpTo(m_checkingContextStackReference);
 
         // Failure.
         if (!failureCases.empty()) {
@@ -900,18 +904,32 @@ void SelectorCodeGenerator::linkFailures(Assembler::JumpList& globalFailureCases
     case BacktrackingAction::JumpToDirectAdjacentTail:
         m_adjacentBacktrackingFailureCases.append(localFailureCases);
         break;
-    case BacktrackingAction::JumpToClearAdjacentDescendantTail:
-        m_clearAdjacentEntryPointDescendantFailureCases.append(localFailureCases);
+    case BacktrackingAction::JumpToClearAdjacentTail:
+        m_clearAdjacentBacktrackingFailureCases.append(localFailureCases);
         break;
     }
 }
 
-void SelectorCodeGenerator::generateAdjacentBacktrackingTail(StackAllocator& adjacentTailStack)
+void SelectorCodeGenerator::generateAdjacentBacktrackingTail(Assembler::JumpList& successCases)
 {
+    StackAllocator successStack = m_stackAllocator;
+    StackAllocator recoveryStack = m_stackAllocator;
+    StackAllocator failureStack = m_stackAllocator;
+
+    successStack.popAndDiscard(m_adjacentBacktrackingStart);
+    successCases.append(m_assembler.jump());
+
+    // Recovering tail.
     m_adjacentBacktrackingFailureCases.link(&m_assembler);
     m_adjacentBacktrackingFailureCases.clear();
-    adjacentTailStack.pop(m_adjacentBacktrackingStart, elementAddressRegister);
+    recoveryStack.pop(m_adjacentBacktrackingStart, elementAddressRegister);
     m_assembler.jump(m_indirectAdjacentEntryPoint);
+
+    // Total failure tail.
+    m_clearAdjacentBacktrackingFailureCases.link(&m_assembler);
+    failureStack.popAndDiscard(m_adjacentBacktrackingStart);
+
+    m_stackAllocator.merge(std::move(successStack), std::move(recoveryStack), std::move(failureStack));
 }
 
 void SelectorCodeGenerator::generateDescendantBacktrackingTail()
@@ -923,39 +941,18 @@ void SelectorCodeGenerator::generateDescendantBacktrackingTail()
     m_assembler.jump(m_descendantEntryPoint);
 }
 
-void SelectorCodeGenerator::generateBacktrackingTailsIfNeeded(const SelectorFragment& fragment)
+void SelectorCodeGenerator::generateBacktrackingTailsIfNeeded(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
     if (fragment.backtrackingFlags & BacktrackingFlag::DirectAdjacentTail && fragment.backtrackingFlags & BacktrackingFlag::DescendantTail) {
-        StackAllocator successStack = m_stackAllocator;
-        StackAllocator adjacentTailStack = m_stackAllocator;
-        StackAllocator descendantTailStack = m_stackAllocator;
-
-        successStack.popAndDiscard(m_adjacentBacktrackingStart);
-
-        Assembler::Jump normalCase = m_assembler.jump();
-
-        generateAdjacentBacktrackingTail(adjacentTailStack);
-
-        m_clearAdjacentEntryPointDescendantFailureCases.link(&m_assembler);
-        m_clearAdjacentEntryPointDescendantFailureCases.clear();
-        descendantTailStack.popAndDiscard(m_adjacentBacktrackingStart);
-
+        Assembler::JumpList successCases;
+        generateAdjacentBacktrackingTail(successCases);
         generateDescendantBacktrackingTail();
-
-        normalCase.link(&m_assembler);
-
-        m_stackAllocator.merge(std::move(successStack), std::move(adjacentTailStack), std::move(descendantTailStack));
+        successCases.link(&m_assembler);
     } else if (fragment.backtrackingFlags & BacktrackingFlag::DirectAdjacentTail) {
-        StackAllocator successStack = m_stackAllocator;
-        StackAllocator adjacentTailStack = m_stackAllocator;
-
-        successStack.popAndDiscard(m_adjacentBacktrackingStart);
-
-        Assembler::Jump normalCase = m_assembler.jump();
-        generateAdjacentBacktrackingTail(adjacentTailStack);
-        normalCase.link(&m_assembler);
-
-        m_stackAllocator.merge(std::move(successStack), std::move(adjacentTailStack));
+        Assembler::JumpList successCases;
+        generateAdjacentBacktrackingTail(successCases);
+        failureCases.append(m_assembler.jump());
+        successCases.link(&m_assembler);
     } else if (fragment.backtrackingFlags & BacktrackingFlag::DescendantTail) {
         Assembler::Jump normalCase = m_assembler.jump();
         generateDescendantBacktrackingTail();
