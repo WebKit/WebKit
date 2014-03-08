@@ -1,3 +1,15 @@
+2014-03-07  Michael Saboff  <msaboff@apple.com>
+
+        .cfi directives in LowLevelInterpreter.cpp are providing no benefit
+        https://bugs.webkit.org/show_bug.cgi?id=129945
+
+        Reviewed by Mark Lam.
+
+        Removed .cfi directive.  Verified that stack traces didn't regress in crash reporter
+        or in lldb.
+
+        * llint/LowLevelInterpreter.cpp:
+
 2014-03-07  Oliver Hunt  <oliver@apple.com>
 
         Continue hangs when performing for-of over arguments
