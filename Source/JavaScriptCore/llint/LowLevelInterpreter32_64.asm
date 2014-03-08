@@ -878,6 +878,7 @@ _llint_op_eq_null:
     move 0, t1
     jmp .opEqNullNotImmediate
 .opEqNullMasqueradesAsUndefined:
+    loadp JSCell::m_structureID[t0], t1
     loadp CodeBlock[cfr], t0
     loadp CodeBlock::m_globalObject[t0], t0
     cpeq Structure::m_globalObject[t1], t0, t1
@@ -924,6 +925,7 @@ _llint_op_neq_null:
     move 1, t1
     jmp .opNeqNullNotImmediate
 .opNeqNullMasqueradesAsUndefined:
+    loadp JSCell::m_structureID[t0], t1
     loadp CodeBlock[cfr], t0
     loadp CodeBlock::m_globalObject[t0], t0
     cpneq Structure::m_globalObject[t1], t0, t1

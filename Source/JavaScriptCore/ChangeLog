@@ -1,3 +1,31 @@
+2014-03-07  Mark Lam  <mark.lam@apple.com>
+
+        Fix bugs in 32-bit Structure implementation.
+        <https://webkit.org/b/129947>
+
+        Reviewed by Mark Hahnenberg.
+
+        Added the loading of the Structure (from the JSCell) before use that was
+        missing in a few places.  Also added more test cases to equals-masquerader.js.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * llint/LowLevelInterpreter32_64.asm:
+        * tests/stress/equals-masquerader.js:
+        (equalsNull):
+        (notEqualsNull):
+        (strictEqualsNull):
+        (strictNotEqualsNull):
+        (equalsUndefined):
+        (notEqualsUndefined):
+        (strictEqualsUndefined):
+        (strictNotEqualsUndefined):
+        (isFalsey):
+        (test):
+
 2014-03-07  Andrew Trick  <atrick@apple.com>
 
         Temporarily disable repeat-out-of-bounds stress tests pending fix for 129953.
