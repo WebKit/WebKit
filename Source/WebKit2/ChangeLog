@@ -1,3 +1,15 @@
+2014-03-08  Jae Hyun Park  <jaepark@webkit.org>
+
+        Remove unnecessary casting in NetworkProcessMainUnix.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=129968
+
+        Reviewed by Andreas Kling.
+
+        * NetworkProcess/unix/NetworkProcessMainUnix.cpp:
+        Since socket is an int, int casting is not necessary.
+
+        (WebKit::NetworkProcessMain):
+
 2014-03-08  Aaron Golden  <golden@inkling.com>
 
         Prevent processes spawned by WebProcess from trying to insert the SecItem shim.

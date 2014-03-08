@@ -71,7 +71,7 @@ WK_EXPORT int NetworkProcessMain(int argc, char* argv[])
     int socket = atoi(argv[1]);
 
     WebKit::ChildProcessInitializationParameters parameters;
-    parameters.connectionIdentifier = int(socket);
+    parameters.connectionIdentifier = socket;
 
     NetworkProcess::shared().initialize(parameters);
 
