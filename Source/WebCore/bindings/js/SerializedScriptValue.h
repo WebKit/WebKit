@@ -88,7 +88,8 @@ public:
     JSValueRef deserialize(JSContextRef, JSValueRef* exception);
 
     const Vector<uint8_t>& data() const { return m_data; }
-    const Vector<String>& blobURLs() const { return m_blobURLs; }
+    bool hasBlobURLs() const { return !m_blobURLs.isEmpty(); }
+    void blobURLs(Vector<String>&) const;
 
 #if ENABLE(INDEXED_DATABASE)
     // FIXME: Get rid of these. The only caller immediately deserializes the result, so it's a very roundabout way to create a JSValue.
@@ -109,6 +110,7 @@ private:
     static void maybeThrowExceptionIfSerializationFailed(JSC::ExecState*, SerializationReturnCode);
     static bool serializationDidCompleteSuccessfully(SerializationReturnCode);
     static PassOwnPtr<ArrayBufferContentsArray> transferArrayBuffers(JSC::ExecState*, ArrayBufferArray&, SerializationReturnCode&);
+    void addBlobURL(const String&);
 
     SerializedScriptValue(const Vector<unsigned char>&);
     SerializedScriptValue(Vector<unsigned char>&);
@@ -117,7 +119,7 @@ private:
 
     Vector<unsigned char> m_data;
     OwnPtr<ArrayBufferContentsArray> m_arrayBufferContentsArray;
-    Vector<String> m_blobURLs;
+    Vector<Vector<uint16_t>> m_blobURLs;
 };
 
 }

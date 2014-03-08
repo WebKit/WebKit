@@ -1412,6 +1412,8 @@ class CloneDeserializer : CloneBase {
 public:
     static String deserializeString(const Vector<uint8_t>& buffer)
     {
+        if (buffer.isEmpty())
+            return String();
         const uint8_t* ptr = buffer.begin();
         const uint8_t* end = buffer.end();
         uint32_t version;
@@ -2505,7 +2507,14 @@ error:
     return std::make_pair(JSValue(), ValidationError);
 }
 
-
+void SerializedScriptValue::addBlobURL(const String& string)
+{
+    m_blobURLs.append(Vector<uint16_t>());
+    m_blobURLs.last().reserveCapacity(string.length());
+    for (size_t i = 0; i < string.length(); i++)
+        m_blobURLs.last().append(string.characterAt(i));
+    m_blobURLs.last().resize(m_blobURLs.last().size());
+}
 
 SerializedScriptValue::~SerializedScriptValue()
 {
@@ -2524,14 +2533,16 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer)
 SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer, Vector<String>& blobURLs)
 {
     m_data.swap(buffer);
-    m_blobURLs.swap(blobURLs);
+    for (auto& string : blobURLs)
+        addBlobURL(string);
 }
 
 SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer, Vector<String>& blobURLs, PassOwnPtr<ArrayBufferContentsArray> arrayBufferContentsArray)
     : m_arrayBufferContentsArray(arrayBufferContentsArray)
 {
     m_data.swap(buffer);
-    m_blobURLs.swap(blobURLs);
+    for (auto& string : blobURLs)
+        addBlobURL(string);
 }
 
 PassOwnPtr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValue::transferArrayBuffers(

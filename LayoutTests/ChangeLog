@@ -1,3 +1,17 @@
+2014-03-08  Oliver Hunt  <oliver@apple.com>
+
+        SerializedScriptValue may move Identifiers between worlds
+        https://bugs.webkit.org/show_bug.cgi?id=129979
+
+        Reviewed by Andreas Kling.
+
+        Add test cases
+
+        * fast/workers/resources/worker-copy-shared-blob-url-worker.js: Added.
+        (count.0.onmessage):
+        * fast/workers/worker-copy-shared-blob-url-expected.txt: Added.
+        * fast/workers/worker-copy-shared-blob-url.html: Added.
+
 2014-03-08  Martin Robinson  <mrobinson@igalia.com>
 
         Lots of cleanups for the GTK+ TestExpectations

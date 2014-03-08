@@ -1,3 +1,23 @@
+2014-03-08  Oliver Hunt  <oliver@apple.com>
+
+        SerializedScriptValue may move Identifiers between worlds
+        https://bugs.webkit.org/show_bug.cgi?id=129979
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/workers/worker-copy-shared-blob-url.html
+
+        Don't use Strings to store blob URLs as String's may be Identifiers
+        and they can only exist in one world/thread at a time.
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::put):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::deserializeString):
+        (WebCore::SerializedScriptValue::addBlobURL):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        * bindings/js/SerializedScriptValue.h:
+
 2014-03-07  Timothy Hatcher  <timothy@apple.com>
 
         Load source maps and their resources asynchronously.
