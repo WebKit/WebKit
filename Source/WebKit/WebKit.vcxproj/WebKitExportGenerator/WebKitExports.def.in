@@ -111,7 +111,7 @@ EXPORTS
         symbolWithPointer(?fastFree@WTF@@YAXPAX@Z, ?fastFree@WTF@@YAXPEAX@Z)
         symbolWithPointer(?fastCalloc@WTF@@YAPAXII@Z, ?fastCalloc@WTF@@YAPEAX_K0@Z)
         symbolWithPointer(??0CSSComputedStyleDeclaration@WebCore@@AAE@V?$PassRefPtr@VNode@WebCore@@@WTF@@_NABVString@3@@Z, ??0CSSComputedStyleDeclaration@WebCore@@AEAA@V?$PassRefPtr@VNode@WebCore@@@WTF@@_NAEBVString@3@@Z)
-        symbolWithPointer(??0CSSParserContext@WebCore@@QAE@AAVDocument@1@ABVKURL@1@ABVString@WTF@@@Z, ??0CSSParserContext@WebCore@@QEAA@PEAVDocument@1@AEBVKURL@1@AEBVString@WTF@@@Z)
+        symbolWithPointer(??0CSSParserContext@WebCore@@QAE@PAVDocument@1@ABVKURL@1@ABVString@WTF@@@Z, ??0CSSParserContext@WebCore@@QEAA@PEAVDocument@1@AEBVKURL@1@AEBVString@WTF@@@Z)
         symbolWithPointer(??0Mutex@WTF@@QAE@XZ, ??0Mutex@WTF@@QEAA@XZ)
         symbolWithPointer(??0ThreadCondition@WTF@@QAE@XZ, ??0ThreadCondition@WTF@@QEAA@XZ)
         symbolWithPointer(??1HitTestResult@WebCore@@QAE@XZ, ??1HitTestResult@WebCore@@QEAA@XZ)
@@ -186,9 +186,6 @@ EXPORTS
         symbolWithPointer(?cacheDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PAV23@PBUClassInfo@3@@Z, ?cacheDOMStructure@WebCore@@YAPEAVStructure@JSC@@PEAVJSDOMGlobalObject@1@PEAV23@PEBUClassInfo@3@@Z)
         symbolWithPointer(?childItemWithTarget@HistoryItem@WebCore@@QBEPAV12@ABVString@WTF@@@Z, ?childItemWithTarget@HistoryItem@WebCore@@QEBAPEAV12@AEBVString@WTF@@@Z)
         symbolWithPointer(?create@Range@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@V?$PassRefPtr@VDocument@WebCore@@@4@V?$PassRefPtr@VNode@WebCore@@@4@H1H@Z, ?create@Range@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@V?$PassRefPtr@VDocument@WebCore@@@4@V?$PassRefPtr@VNode@WebCore@@@4@H1H@Z)
-#if 0
-        symbolWithPointer(?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@ABVString@4@@Z, ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@AEBVString@4@@Z)
-#endif
 #if USE(CF)
         symbolWithPointer(?createCFString@String@WTF@@QBE?AV?$RetainPtr@PBU__CFString@@@2@XZ, ?createCFString@String@WTF@@QEBA?AV?$RetainPtr@PEBU__CFString@@@2@XZ)
 #endif
@@ -237,16 +234,10 @@ EXPORTS
         symbolWithPointer(?windowObjectCleared@InspectorFrontendClientLocal@WebCore@@UAEXXZ, ?windowObjectCleared@InspectorFrontendClientLocal@WebCore@@UEAAXXZ)
         symbolWithPointer(?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QAEXHH@Z, ?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QEAAXHH@Z)
         symbolWithPointer(?pathByAppendingComponent@WebCore@@YA?AVString@WTF@@ABV23@0@Z, ?pathByAppendingComponent@WebCore@@YA?AVString@WTF@@AEBV23@0@Z)
-#if 0
-        ?profilerEnabled@InspectorController@WebCore@@QAE_NXZ
-#endif
         symbolWithPointer(?setProfilerEnabled@InspectorController@WebCore@@QAEX_N@Z, ?setProfilerEnabled@InspectorController@WebCore@@QEAAX_N@Z)
         symbolWithPointer(?disconnectFrontend@InspectorController@WebCore@@QAEXXZ, ?disconnectFrontend@InspectorController@WebCore@@QEAAXXZ)
 #endif
         symbolWithPointer(?isActiveInsertionPoint@WebCore@@YA_NPBVNode@1@@Z, ?isActiveInsertionPoint@WebCore@@YA_NPEBVNode@1@@Z)
-#if 0
-        ?isCSSExclusionsEnabled@RuntimeEnabledFeatures@WebCore@@0_NA
-#endif
         symbolWithPointer(?isPreloaded@CachedResourceLoader@WebCore@@QBE_NABVString@WTF@@@Z, ?isPreloaded@CachedResourceLoader@WebCore@@QEBA_NAEBVString@WTF@@@Z)
         symbolWithPointer(?jsArray@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@V?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@@Z, ?jsArray@WebCore@@YA?AVJSValue@JSC@@PEAVExecState@3@PEAVJSDOMGlobalObject@1@V?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@@Z)
         symbolWithPointer(?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QBE_NXZ, ?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QEBA_NXZ)
@@ -265,9 +256,6 @@ EXPORTS
         ?number@String@WTF@@SA?AV12@H@Z
         ?number@String@WTF@@SA?AV12@I@Z
         ?number@String@WTF@@SA?AV12@NIW4TrailingZerosTruncatingPolicy@2@@Z
-#if 0
-        ?numberOfScopedHTMLStyleChildren@Node@WebCore@@QBEIXZ
-#endif
         symbolWithPointer(?completeURL@Document@WebCore@@QBE?AVKURL@2@ABVString@WTF@@@Z, ?completeURL@Document@WebCore@@QEBA?AVKURL@2@AEBVString@WTF@@@Z)
         symbolWithPointer(?page@Document@WebCore@@QBEPAVPage@2@XZ, ?page@Document@WebCore@@QEBAPEAVPage@2@XZ)
         symbolWithPointer(?pageNumberForElement@PrintContext@WebCore@@SAHPAVElement@2@ABVFloatSize@2@@Z, ?pageNumberForElement@PrintContext@WebCore@@SAHPEAVElement@2@AEBVFloatSize@2@@Z)
@@ -312,9 +300,6 @@ EXPORTS
         symbolWithPointer(?setPseudo@Element@WebCore@@QAEXABVAtomicString@WTF@@@Z, ?setPseudo@Element@WebCore@@QEAAXAEBVAtomicString@WTF@@@Z)
         symbolWithPointer(?setMediaTypeOverride@Settings@WebCore@@QAEXABVString@WTF@@@Z, ?setMediaTypeOverride@Settings@WebCore@@QEAAXAEBVString@WTF@@@Z)
         symbolWithPointer(?settings@Document@WebCore@@QBEPAVSettings@2@XZ, ?settings@Document@WebCore@@QEBAPEAVSettings@2@XZ)
-#if 0
-        ?settings@Frame@WebCore@@QBEPAVSettings@2@XZ
-#endif
         symbolWithPointer(?shadow@Element@WebCore@@QBEPAVElementShadow@2@XZ, ?shadow@Element@WebCore@@QEBAPEAVElementShadow@2@XZ)
         symbolWithPointer(?substring@String@WTF@@QBE?AV12@II@Z, ?substring@String@WTF@@QEBA?AV12@II@Z)
         symbolWithPointer(?suggestedValue@HTMLInputElement@WebCore@@QBEABVString@WTF@@XZ, ?suggestedValue@HTMLInputElement@WebCore@@QEBAAEBVString@WTF@@XZ)
@@ -333,14 +318,8 @@ EXPORTS
         symbolWithPointer(?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVRange@1@@Z, ?toJS@WebCore@@YA?AVJSValue@JSC@@PEAVExecState@3@PEAVJSDOMGlobalObject@1@PEAVRange@1@@Z)
         symbolWithPointer(?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNodeList@1@@Z, ?toJS@WebCore@@YA?AVJSValue@JSC@@PEAVExecState@3@PEAVJSDOMGlobalObject@1@PEAVNodeList@1@@Z)
         symbolWithPointer(?toRange@WebCore@@YAPAVRange@1@VJSValue@JSC@@@Z, ?toRange@WebCore@@YAPEAVRange@1@VJSValue@JSC@@@Z)
-#if 0
-        ?treeScope@Node@WebCore@@QBEPAVTreeScope@2@XZ
-#endif
         symbolWithPointer(?isTreeScope@Node@WebCore@@QBE_NXZ, ?isTreeScope@Node@WebCore@@QEBA_NXZ)
         symbolWithPointer(?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ, ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QEAAXXZ)
-#if 0
-        ?utf8@String@WTF@@QBE?AVCString@2@W4ConversionMode@12@@Z
-#endif
         symbolWithPointer(?view@Document@WebCore@@QBEPAVFrameView@2@XZ, ?view@Document@WebCore@@QEBAPEAVFrameView@2@XZ)
         symbolWithPointer(??1ContextDestructionObserver@WebCore@@MAE@XZ, ??1ContextDestructionObserver@WebCore@@MEAA@XZ)
         symbolWithPointer(?contextDestroyed@ContextDestructionObserver@WebCore@@UAEXXZ, ?contextDestroyed@ContextDestructionObserver@WebCore@@UEAAXXZ)
@@ -372,7 +351,7 @@ EXPORTS
         symbolWithPointer(?pageSizeAndMarginsInPixels@PrintContext@WebCore@@SA?AVString@WTF@@PAVFrame@2@HHHHHHH@Z, ?pageSizeAndMarginsInPixels@PrintContext@WebCore@@SA?AVString@WTF@@PEAVFrame@2@HHHHHHH@Z)
         symbolWithPointer(?close@DOMWindow@WebCore@@QAEXPAVScriptExecutionContext@2@@Z, ?close@DOMWindow@WebCore@@QEAAXPEAVScriptExecutionContext@2@@Z)
         symbolWithPointer(?document@DOMWindow@WebCore@@QBEPAVDocument@2@XZ, ?document@DOMWindow@WebCore@@QEBAPEAVDocument@2@XZ)
-        symbolWithPointer(?open@DOMWindow@WebCore@@QAE?AV?$PassRefPtr@VDOMWindow@WebCore@@@WTF@@ABVString@4@ABVAtomicString@4@0AAV12@2@Z, ?open@DOMWindow@WebCore@@QEAA?AV?$PassRefPtr@VDOMWindow@WebCore@@@WTF@@AEBVString@4@AEBVAtomicString@4@0PEAV12@2@Z)
+        symbolWithPointer(?open@DOMWindow@WebCore@@QAE?AV?$PassRefPtr@VDOMWindow@WebCore@@@WTF@@ABVString@4@ABVAtomicString@4@0PAV12@2@Z, ?open@DOMWindow@WebCore@@QEAA?AV?$PassRefPtr@VDOMWindow@WebCore@@@WTF@@AEBVString@4@AEBVAtomicString@4@0PEAV12@2@Z)
         symbolWithPointer(?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVDOMWindow@1@@Z, ?toJS@WebCore@@YA?AVJSValue@JSC@@PEAVExecState@3@PEAVJSDOMGlobalObject@1@PEAVDOMWindow@1@@Z)
         symbolWithPointer(?layerTreeAsText@Frame@WebCore@@QBE?AVString@WTF@@I@Z, ?layerTreeAsText@Frame@WebCore@@QEBA?AVString@WTF@@I@Z)
         symbolWithPointer(?trackedRepaintRectsAsText@Frame@WebCore@@QBE?AVString@WTF@@XZ, ?trackedRepaintRectsAsText@Frame@WebCore@@QEBA?AVString@WTF@@XZ)
@@ -391,9 +370,6 @@ EXPORTS
         symbolWithPointer(?dataChanged@BitmapImage@WebCore@@UAE_N_N@Z, ?dataChanged@BitmapImage@WebCore@@UEAA_N_N@Z)
         symbolWithPointer(?filenameExtension@BitmapImage@WebCore@@UBE?AVString@WTF@@XZ, ?filenameExtension@BitmapImage@WebCore@@UEBA?AVString@WTF@@XZ)
         symbolWithPointer(?destroyDecodedData@BitmapImage@WebCore@@MAEX_N@Z, ?destroyDecodedData@BitmapImage@WebCore@@MEAAX_N@Z)
-#if 0
-        ?decodedSize@BitmapImage@WebCore@@UBEIXZ
-#endif
         symbolWithPointer(?startAnimation@BitmapImage@WebCore@@MAEX_N@Z, ?startAnimation@BitmapImage@WebCore@@MEAAX_N@Z)
         symbolWithPointer(?stopAnimation@BitmapImage@WebCore@@UAEXXZ, ?stopAnimation@BitmapImage@WebCore@@UEAAXXZ)
         symbolWithPointer(?resetAnimation@BitmapImage@WebCore@@UAEXXZ, ?resetAnimation@BitmapImage@WebCore@@UEAAXXZ)
@@ -410,16 +386,8 @@ EXPORTS
         symbolWithPointer(?getHBITMAPOfSize@BitmapImage@WebCore@@UAE_NPAUHBITMAP__@@PAUtagSIZE@@@Z, ?getHBITMAPOfSize@BitmapImage@WebCore@@UEAA_NPEAUHBITMAP__@@PEAUtagSIZE@@@Z)
         symbolWithPointer(?drawPattern@Image@WebCore@@UAEXPAVGraphicsContext@2@ABVFloatRect@2@ABVAffineTransform@2@ABVFloatPoint@2@W4ColorSpace@2@W4CompositeOperator@2@1W4BlendMode@2@@Z, ?drawPattern@Image@WebCore@@UEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@AEBVAffineTransform@2@AEBVFloatPoint@2@W4ColorSpace@2@W4CompositeOperator@2@1W4BlendMode@2@@Z)
         symbolWithPointer(?drawFrameMatchingSourceSize@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@ABVIntSize@2@W4ColorSpace@2@W4CompositeOperator@2@@Z, ?drawFrameMatchingSourceSize@BitmapImage@WebCore@@MEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@AEBVIntSize@2@W4ColorSpace@2@W4CompositeOperator@2@@Z)
-#if 0
-        ?draw@Image@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@W4RespectImageOrientationEnum@2@@Z
-        ?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z
-#endif
         symbolWithPointer(?mayFillWithSolidColor@BitmapImage@WebCore@@MAE_NXZ, ?mayFillWithSolidColor@BitmapImage@WebCore@@MEAA_NXZ)
         symbolWithPointer(?solidColor@BitmapImage@WebCore@@MBE?AVColor@2@XZ, ?solidColor@BitmapImage@WebCore@@MEBA?AVColor@2@XZ)
-#if 0
-        ?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@W4RespectImageOrientationEnum@2@@Z
-        ?frameCount@BitmapImage@WebCore@@MAEIXZ
-#endif
         symbolWithPointer(?addAuthorSheet@DocumentStyleSheetCollection@WebCore@@QAEXV?$PassRefPtr@VStyleSheetContents@WebCore@@@WTF@@@Z, ?addAuthorSheet@DocumentStyleSheetCollection@WebCore@@QEAAXV?$PassRefPtr@VStyleSheetContents@WebCore@@@WTF@@@Z)
         symbolWithPointer(?parseString@StyleSheetContents@WebCore@@QAE_NABVString@WTF@@@Z, ?parseString@StyleSheetContents@WebCore@@QEAA_NAEBVString@WTF@@@Z)
         symbolWithPointer(?emptyString@WTF@@YAABVString@1@XZ, ?emptyString@WTF@@YAAEBVString@1@XZ)
@@ -429,7 +397,7 @@ EXPORTS
         symbolWithPointer(??1StyleSheetContents@WebCore@@QAE@XZ, ??1StyleSheetContents@WebCore@@QEAA@XZ)
         symbolWithPointer(?pauseAnimationAtTime@AnimationController@WebCore@@QAE_NPAVRenderObject@2@ABVAtomicString@WTF@@N@Z, ?pauseAnimationAtTime@AnimationController@WebCore@@QEAA_NPEAVRenderObject@2@AEBVAtomicString@WTF@@N@Z)
         symbolWithPointer(?pseudoElement@Element@WebCore@@QBEPAVPseudoElement@2@W4PseudoId@2@@Z, ?pseudoElement@Element@WebCore@@QEBAPEAVPseudoElement@2@W4PseudoId@2@@Z)
-        symbolWithPointer(?pauseTransitionAtTime@AnimationController@WebCore@@QAE_NPAVRenderElement@2@ABVString@WTF@@N@Z, ?pauseTransitionAtTime@AnimationController@WebCore@@QEAA_NPEAVRenderObject@2@AEBVString@WTF@@N@Z)
+        symbolWithPointer(?pauseTransitionAtTime@AnimationController@WebCore@@QAE_NPAVRenderObject@2@ABVString@WTF@@N@Z, ?pauseTransitionAtTime@AnimationController@WebCore@@QEAA_NPEAVRenderObject@2@AEBVString@WTF@@N@Z)
         symbolWithPointer(?addFromLiteralData@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBDI@Z, ?addFromLiteralData@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PEBDI@Z)
         symbolWithPointer(?memoryCache@WebCore@@YAPAVMemoryCache@1@XZ, ?memoryCache@WebCore@@YAPEAVMemoryCache@1@XZ)
         symbolWithPointer(?resourceForURL@MemoryCache@WebCore@@QAEPAVCachedResource@2@ABVKURL@2@@Z, ?resourceForURL@MemoryCache@WebCore@@QEAAPEAVCachedResource@2@AEBVKURL@2@@Z)
@@ -458,7 +426,7 @@ EXPORTS
         symbolWithPointer(?consoleMessageArgumentCounts@InspectorConsoleAgent@WebCore@@QAE?AV?$Vector@I$0A@VCrashOnOverflow@WTF@@@WTF@@XZ, ?consoleMessageArgumentCounts@InspectorConsoleAgent@WebCore@@QEAA?AV?$Vector@I$0A@VCrashOnOverflow@WTF@@@WTF@@XZ)
         ?userPreferredLanguages@WebCore@@YA?AV?$Vector@VString@WTF@@$0A@VCrashOnOverflow@2@@WTF@@XZ
         symbolWithPointer(?documentState@HistoryItem@WebCore@@QBEABV?$Vector@VString@WTF@@$0A@VCrashOnOverflow@2@@WTF@@XZ, ?documentState@HistoryItem@WebCore@@QEBAAEBV?$Vector@VString@WTF@@$0A@VCrashOnOverflow@2@@WTF@@XZ)
-        symbolWithPointer(?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@PAVExecState@JSC@@VJSValue@6@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00VCrashOnOverflow@2@@4@PAV?$Vector@V?$RefPtr@VArrayBuffer@JSC@@@WTF@@$00VCrashOnOverflow@2@@4@W4SerializationErrorMode@2@@Z, ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@PEAVExecState@JSC@@VJSValue@6@PEAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00VCrashOnOverflow@2@@4@PEAV?$Vector@V?$RefPtr@VArrayBuffer@WTF@@@WTF@@$00VCrashOnOverflow@2@@4@W4SerializationErrorMode@2@@Z)
+        symbolWithPointer(?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@PAVExecState@JSC@@VJSValue@6@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00VCrashOnOverflow@2@@4@PAV?$Vector@V?$RefPtr@VArrayBuffer@WTF@@@WTF@@$00VCrashOnOverflow@2@@4@W4SerializationErrorMode@2@@Z, ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@PEAVExecState@JSC@@VJSValue@6@PEAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00VCrashOnOverflow@2@@4@PEAV?$Vector@V?$RefPtr@VArrayBuffer@WTF@@@WTF@@$00VCrashOnOverflow@2@@4@W4SerializationErrorMode@2@@Z)
         symbolWithPointer(??0ClientRectList@WebCore@@AAE@ABV?$Vector@VFloatQuad@WebCore@@$0A@VCrashOnOverflow@WTF@@@WTF@@@Z, ??0ClientRectList@WebCore@@AEAA@AEBV?$Vector@VFloatQuad@WebCore@@$0A@VCrashOnOverflow@WTF@@@WTF@@@Z)
         symbolWithPointer(??0SerializedScriptValue@WebCore@@AAE@AAV?$Vector@E$0A@VCrashOnOverflow@WTF@@@WTF@@@Z, ??0SerializedScriptValue@WebCore@@AEAA@AEAV?$Vector@E$0A@VCrashOnOverflow@WTF@@@WTF@@@Z)
 #if ENABLE(VIDEO_TRACK)

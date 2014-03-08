@@ -1,5 +1,14 @@
 2014-03-07  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Build fix for combined 32-bit and 64-bit target.
+
+        * WebKit.vcxproj/WebKit/WebKitDirectX.props: Use PlatformTarget so that path matches
+        what DirectX uses.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Correct some symbols to
+        match sources in branch.
+
+2014-03-07  Brent Fulgham  <bfulgham@apple.com>
+
         Merge r152930.
 
     2013-07-19  Alex Christensen  <achristensen@apple.com> 
