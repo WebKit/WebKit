@@ -1,3 +1,15 @@
+2014-03-07  Oliver Hunt  <oliver@apple.com>
+
+        Continue hangs when performing for-of over arguments
+        https://bugs.webkit.org/show_bug.cgi?id=129915
+
+        Reviewed by Geoffrey Garen.
+
+        Put the continue label in the right place
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEnumeration):
+
 2014-03-07  peavo@outlook.com  <peavo@outlook.com>
 
         [Win64] Compile error after r165128.

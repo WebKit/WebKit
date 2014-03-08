@@ -2446,16 +2446,17 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
         LabelScopePtr scope = newLabelScope(LabelScope::Loop);
         RefPtr<RegisterID> value = emitLoad(newTemporary(), jsUndefined());
         
-        emitJump(scope->continueTarget());
-        
+        RefPtr<Label> loopCondition = newLabel();
         RefPtr<Label> loopStart = newLabel();
+        emitJump(loopCondition.get());
         emitLabel(loopStart.get());
         emitLoopHint();
         emitGetArgumentByVal(value.get(), uncheckedRegisterForArguments(), index.get());
         callBack(*this, value.get());
-        emitInc(index.get());
+    
         emitLabel(scope->continueTarget());
-
+        emitInc(index.get());
+        emitLabel(loopCondition.get());
         RefPtr<RegisterID> length = emitGetArgumentsLength(newTemporary(), uncheckedRegisterForArguments());
         emitJumpIfTrue(emitEqualityOp(op_less, newTemporary(), index.get(), length.get()), loopStart.get());
         emitLabel(scope->breakTarget());
