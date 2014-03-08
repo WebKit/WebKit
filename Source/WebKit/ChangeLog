@@ -1,3 +1,10 @@
+2014-03-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening (for 64-bit)
+
+        * WebKit.vcxproj/WebKit/WebKitDirectX.props: Use Platform macro, rather than
+        hard-coded path. This allows it to work on 32-bit or 64-bit builds.
+
 2014-03-07  Anders Carlsson  <andersca@apple.com>
 
         Make it possible to copy WebKit2 headers to WebKit.framework
