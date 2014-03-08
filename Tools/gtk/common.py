@@ -44,7 +44,7 @@ def set_build_types(new_build_types):
 def is_cmake_build():
     global is_cmake
     if is_cmake is None:
-        is_cmake = os.path.exists(build_path('CMakeCache.txt'))
+        is_cmake = not os.path.exists(build_path('config.log'))
     return is_cmake
 
 

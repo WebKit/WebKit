@@ -1,3 +1,11 @@
+2014-03-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed build fix for GTKbuild after the switch to CMake
+
+        * gtk/common.py:
+        (is_cmake_build): Like r165284, we need to assume CMake by default, since the
+        test-only bot doesn't have any build files.
+
 2014-03-07  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] built-product-archive does not handle GTK+ CMake build
