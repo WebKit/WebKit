@@ -1,0 +1,11 @@
+button
+This tests that aria-help attribute works as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL button.helpText should be AXHelp: click here. Was .
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

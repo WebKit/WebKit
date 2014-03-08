@@ -360,9 +360,6 @@ webkit.org/b/95935 http/tests/security/cross-origin-plugin.html [ Failure ]
 # https://bugs.webkit.org/show_bug.cgi?id=39160
 webkit.org/b/39160 security/block-test-no-port.html [ Failure ]
 
-webkit.org/b/97655 fast/css/style-scoped [ Failure ]
-webkit.org/b/97655 fast/css/style-scoped/style-scoped-with-dom-operation.html [ Pass ]
-
 # Apparently our WebkitTestRunner is disregarding window features? We open the window sized 800x600.
 webkit.org/b/122535 fast/dom/Window/open-window-min-size.html [ Failure ]
 

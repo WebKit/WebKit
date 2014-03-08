@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 25: TypeError: undefined is not an object (evaluating 'meter.role')
+      
+This tests that the meter element is accessible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Meter1
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+

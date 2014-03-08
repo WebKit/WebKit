@@ -258,7 +258,7 @@ webkit.org/b/35300 http/tests/loading/307-after-303-after-post.html [ Failure ]
 Bug(GTK) http/tests/download [ Failure ]
 
 # Touch support only implemented in WK2
-fast/events/touch [ Skip ]
+Bug(GTK) fast/events/touch [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

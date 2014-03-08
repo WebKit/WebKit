@@ -1,0 +1,29 @@
+CONSOLE MESSAGE: line 86: TypeError: undefined is not an object (evaluating 'accessibilityController.accessibleElementById("l0").childAtIndex(0).stringValue')
+Name: 
+High Score:
+Name: 
+High Score:
+Name: 
+High Score:
+Name: 
+High Score:
+Name: 
+High Score: Name: 
+Name: 
+Other:
+This tests that fieldset and legend elements are exposed correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXDescription: High Score:
+AXDescription: High Score:
+AXDescription: New High Score:
+AXDescription: New High Score:
+AXDescription: 
+AXDescription: High Score:
+AXDescription: 
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+

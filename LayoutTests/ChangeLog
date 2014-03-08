@@ -1,5 +1,17 @@
 2014-03-08  Martin Robinson  <mrobinson@igalia.com>
 
+        Lots of cleanups for the GTK+ TestExpectations
+
+        Updated TestExpectations, adding bug standins where appropriate, skipping tests that
+        expected to fail and prone to timeout or crash. Removed some unused expectations. Added
+        new baselines for some tests.
+
+        * platform/gtk-wk1/TestExpectations: Updated expectations.
+        * platform/gtk-wk2/TestExpectations: Ditto.
+        * platform/gtk/TestExpectations: Ditto.
+
+2014-03-08  Martin Robinson  <mrobinson@igalia.com>
+
         Add and update some test expectations for GTK+
 
         * platform/gtk/TestExpectations: These all seem to be failing because of the same bug.
