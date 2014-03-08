@@ -379,10 +379,13 @@ _handleUncaughtException:
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     loadp VM::callFrameForThrow[t3], cfr
 
-    # So far, we've unwound the stack to the frame just below the sentinel frame.
-    # We need to pop to the sentinel frame and do the necessary clean up for
+    # So far, we've unwound the stack to the frame just below the sentinel frame, except
+    # in the case of stack overflow in the first function called from callToJavaScript.
+    # Check if we need to pop to the sentinel frame and do the necessary clean up for
     # returning to the caller C frame.
+    bpeq CodeBlock[cfr], 1, .handleUncaughtExceptionAlreadyIsSentinel
     loadp CallerFrame + PayloadOffset[cfr], cfr
+.handleUncaughtExceptionAlreadyIsSentinel:
 
     loadp Callee + PayloadOffset[cfr], t3 # VM
     loadp ScopeChain + PayloadOffset[cfr], t5 # previous topCallFrame

@@ -1,3 +1,19 @@
+2014-03-08  Mark Lam  <mark.lam@apple.com>
+
+        32-bit x86 handleUncaughtException returns to wrong location after a stack overflow.
+        <https://webkit.org/b/129969>
+
+        Reviewed by Geoffrey Garen.
+
+        The 32-bit version of handleUncaughtException was missing the handling of an
+        edge case for stack overflows where the current frame may already be the
+        sentinel frame.  This edge case was handled in the 64-bit version.  The fix
+        is to bring the 32-bit version up to parity.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * llint/LowLevelInterpreter32_64.asm:
+
 2014-03-07  Mark Lam  <mark.lam@apple.com>
 
         Fix bugs in 32-bit Structure implementation.
