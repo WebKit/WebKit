@@ -102,7 +102,7 @@ private:
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
 
     virtual void handleDownloadRequest(DownloadProxy*) override;
-    virtual void didCommitLoadForMainFrame() override;
+    virtual void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)
@@ -118,6 +118,8 @@ private:
     virtual void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
     virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
 #endif
+
+    virtual void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) override;
 
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled) override;
 

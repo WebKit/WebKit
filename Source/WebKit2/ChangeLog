@@ -1,3 +1,10 @@
+2014-03-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the GTK+ build after the recent iOS merge.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp: Make some methods available to non-Cocoa ports and fix some signatures.
+        * UIProcess/WebPageProxy.h: Ditto.
+
 2014-03-07  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed. Fix build on the EFL port after r165303

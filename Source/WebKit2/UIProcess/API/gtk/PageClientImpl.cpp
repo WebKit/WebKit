@@ -277,7 +277,7 @@ void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
     webkitWebViewBaseHandleDownloadRequest(WEBKIT_WEB_VIEW_BASE(m_viewWidget), download);
 }
 
-void PageClientImpl::didCommitLoadForMainFrame()
+void PageClientImpl::didCommitLoadForMainFrame(const String& /* mimeType */, bool /* useCustomContentProvider */ )
 {
     webkitWebViewBaseResetClickCounter(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
@@ -375,6 +375,10 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& event, bool w
     pointerEvent->any.send_event = TRUE;
 
     gtk_widget_event(m_viewWidget, pointerEvent.get());
+}
+
+void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String&, const IPC::DataReference&)
+{
 }
 
 } // namespace WebKit
