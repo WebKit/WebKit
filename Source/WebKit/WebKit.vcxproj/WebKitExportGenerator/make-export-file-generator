@@ -30,13 +30,20 @@ require 'erb'
 
 def line_for_output line
   return line.chomp if line =~ /#/
-  "    printf(\"#{line.chomp}\\n\");"
+    return "    printf(\"%s\\n\",#{line.chomp});" if line =~ /symbolWithPointer/
+    return "    printf(\"#{line.chomp}\\n\");"
 end
 
 TEMPLATE = <<-EOF
 #include "config.h"
 #include <stdio.h>
 #include <wtf/Assertions.h>
+
+#ifdef _WIN64
+#define symbolWithPointer(symbol32Bit, symbol64Bit) #symbol64Bit
+#else
+#define symbolWithPointer(symbol32Bit, symbol64Bit) #symbol32Bit
+#endif
 
 int main(int, char**)
 {
