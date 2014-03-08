@@ -504,7 +504,7 @@ if test "$enable_webkit2" = "yes"; then
     AC_SUBST(GTK_UNIX_PRINTING_LIBS)
 
     # On some Linux/Unix platforms, shm_* may only be available if linking against librt
-    if test "$os_win32" = "no"; then
+    if test "$os_win32" = "no" && test "$os_openbsd" = "no"; then
         AC_SEARCH_LIBS([shm_open], [rt], [SHM_LIBS="-lrt"])
         AC_SUBST(SHM_LIBS)
     fi
