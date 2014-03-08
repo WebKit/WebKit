@@ -233,8 +233,8 @@ webkit.org/b/92749 fast/dom/is-protocol-handler-registered.html [ Skip ]
 
 # Tests for MediaSource API. Feature is not totally functional.
 webkit.org/b/99065 http/tests/media/media-source/mediasource-addsourcebuffer.html [ Failure Timeout ]
-webkit.org/b/99065 http/tests/media/media-source/mediasource-append-buffer.html [ Crash Timeout ]
-webkit.org/b/99065 http/tests/media/media-source/mediasource-buffered.html [ Timeout ]
+webkit.org/b/99065 http/tests/media/media-source/mediasource-append-buffer.html [ Failure Crash Timeout ]
+webkit.org/b/99065 http/tests/media/media-source/mediasource-buffered.html [ Failure Timeout ]
 webkit.org/b/99065 http/tests/media/media-source/mediasource-closed.html [ Failure ]
 webkit.org/b/99065 http/tests/media/media-source/mediasource-config-change-mp4-a-bitrate.html [ Failure ]
 webkit.org/b/99065 http/tests/media/media-source/mediasource-config-change-mp4-av-audio-bitrate.html [ Failure ]
@@ -252,7 +252,7 @@ webkit.org/b/99065 http/tests/media/media-source/mediasource-config-change-webm-
 webkit.org/b/99065 http/tests/media/media-source/mediasource-config-change-webm-v-framesize.html [ Failure ]
 webkit.org/b/99065 http/tests/media/media-source/mediasource-is-type-supported.html [ Failure ]
 webkit.org/b/99065 http/tests/media/media-source/mediasource-play.html [ Failure ]
-webkit.org/b/99065 http/tests/media/media-source/mediasource-sourcebufferlist.html [ Crash ]
+webkit.org/b/99065 http/tests/media/media-source/mediasource-sourcebufferlist.html [ Failure Crash ]
 webkit.org/b/99065 http/tests/media/media-source/seek-to-end-after-duration-change.html [ Timeout ]
 webkit.org/b/99065 http/tests/media/media-source/video-media-source-abort.html [ Timeout ]
 webkit.org/b/99065 http/tests/media/media-source/video-media-source-add-and-remove-buffers.html [ Timeout ]
@@ -284,6 +284,7 @@ webkit.org/b/99065 media/media-source/media-source-end-of-stream.html [ Timeout 
 webkit.org/b/99065 media/media-source/media-source-duration-after-append.html [ Failure ]
 webkit.org/b/99065 media/media-source/media-source-monitor-source-buffers.html [ Failure ]
 webkit.org/b/99065 media/media-source/media-source-video-playback-quality.html [ Failure ]
+webkit.org/b/99065 media/media-source/media-source-fudge-factor.html [ Timeout ]
 
 # Encrypted Media Extensions are not enabled.
 webkit.org/b/99024 media/encrypted-media [ Failure Timeout ]
@@ -302,6 +303,7 @@ webkit.org/b/99026 fast/filter-image/parse-filter-image.html [ Skip ]
 webkit.org/b/120673 fast/filter-image/filter-image-blur.html [ Skip ]
 webkit.org/b/120674 fast/filter-image/filter-image-animation.html [ Skip ]
 webkit.org/b/99026 fast/filter-image/filter-image-svg.html [ Skip ]
+webkit.org/b/99026 css3/masking/clip-path-filter.html [ Skip ]
 
 # Needs testRunner.enableAutoResizeMode()
 webkit.org/b/99028 fast/autoresize [ Failure ]
@@ -1548,6 +1550,20 @@ webkit.org/b/128499 svg/clip-path/clip-path-precision-001.svg [ ImageOnlyFailure
 webkit.org/b/128499 svg/clip-path/clip-path-content-use-006.svg [ ImageOnlyFailure ]
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure ]
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
+
+webkit.org/b/129957 fast/css3-text/css3-text-decoration/text-decoration-thickness.html [ Failure ]
+
+webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-006.svg [ ImageOnlyFailure ]
+webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-007.svg [ ImageOnlyFailure ]
+webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-008.svg [ ImageOnlyFailure ]
+webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-009.svg [ ImageOnlyFailure ]
+webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-010.svg [ ImageOnlyFailure ]
+webkit.org/b/129958 svg/clip-path/mask-objectboundingbox-content-clip-transform.svg [ ImageOnlyFailure ]
+webkit.org/b/129958 svg/clip-path/mask-objectboundingbox-content-clip.svg [ ImageOnlyFailure ]
+webkit.org/b/129958 svg/clip-path/mask-userspaceonuse-content-clip-transform.svg [ ImageOnlyFailure ]
+webkit.org/b/129958 svg/clip-path/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
+
+webkit.org/b/128901 accessibility/list-detection.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

@@ -1,3 +1,9 @@
+2014-03-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Mark some more tests as failing on WebKitGTK+ and file bugs for them
+
+        * platform/gtk/TestExpectations: Update test expectations.
+
 2014-03-07  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [WebRTC] Throw SYNTAX_ERROR when maxRetransmits and maxRetransmitTime are both set in RTCDataChannelInit
