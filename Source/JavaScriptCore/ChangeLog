@@ -1,3 +1,13 @@
+2014-03-07  Andrew Trick  <atrick@apple.com>
+
+        Temporarily disable repeat-out-of-bounds stress tests pending fix for 129953.
+        https://bugs.webkit.org/show_bug.cgi?id=129954
+
+        Reviewed by Filip Pizlo.
+
+        * tests/stress/float32-repeat-out-of-bounds.js:
+        * tests/stress/int8-repeat-out-of-bounds.js:
+
 2014-03-07  Michael Saboff  <msaboff@apple.com>
 
         .cfi directives in LowLevelInterpreter.cpp are providing no benefit
