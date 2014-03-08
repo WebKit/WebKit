@@ -66,9 +66,10 @@ public:
 
     virtual void doPreInitializationWork()
     {
-        // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
-        // the WebProcess don't try to insert the shim and crash.
+        // Remove the WebProcess and SecItem shims from the DYLD_INSERT_LIBRARIES environment variable so any processes
+        // spawned by the WebProcess don't try to insert the shims and crash.
         EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
+        EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/SecItemShim.dylib");
     
 #if USE(APPKIT)
         // Initialize AppKit.

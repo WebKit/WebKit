@@ -1,3 +1,13 @@
+2014-03-08  Aaron Golden  <golden@inkling.com>
+
+        Prevent processes spawned by WebProcess from trying to insert the SecItem shim.
+        https://bugs.webkit.org/show_bug.cgi?id=129864
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/EntryPoint/mac/LegacyProcess/WebContentProcessMain.mm:
+        (WebKit::WebContentProcessMainDelegate::doPreInitializationWork):
+
 2014-03-07  Tim Horton  <timothy_horton@apple.com>
 
         [WebKit2][iOS] PDF
