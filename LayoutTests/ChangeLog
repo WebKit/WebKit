@@ -1,3 +1,9 @@
+2014-03-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Add and update some test expectations for GTK+
+
+        * platform/gtk/TestExpectations: These all seem to be failing because of the same bug.
+
 2014-03-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Mountain Lion WK1 test bots are crashing often

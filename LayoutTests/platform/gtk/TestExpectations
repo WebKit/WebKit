@@ -1515,8 +1515,6 @@ webkit.org/b/126521 accessibility/menu-list-sends-change-notification.html [ Fai
 
 webkit.org/b/126619 http/tests/media/video-auth.html [ Failure ]
 
-webkit.org/b/126879 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-tall-underlines.html [ ImageOnlyFailure ]
-
 # Subpixel rendering: borders are reporting float values.
 webkit.org/b/128061 css1/units/length_units.html [ Failure ]
 webkit.org/b/128061 fast/css/bidi-override-in-anonymous-block.html [ Failure ]
@@ -1551,7 +1549,9 @@ webkit.org/b/128499 svg/clip-path/clip-path-content-use-006.svg [ ImageOnlyFailu
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure ]
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
 
-webkit.org/b/129957 fast/css3-text/css3-text-decoration/text-decoration-thickness.html [ Failure ]
+webkit.org/b/129957 fast/css3-text/css3-text-decoration/text-decoration-thickness.html [ ImageOnlyFailure ]
+webkit.org/b/129957 fast/css3-text/css3-text-decoration/text-decoration-style-double-space-scales.html [ ImageOnlyFailure ]
+webkit.org/b/129957 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-tall-underlines.html [ ImageOnlyFailure ]
 
 webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-006.svg [ ImageOnlyFailure ]
 webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-007.svg [ ImageOnlyFailure ]
