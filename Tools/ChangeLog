@@ -1,3 +1,12 @@
+2014-03-07  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] built-product-archive does not handle GTK+ CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=129941
+
+        * BuildSlaveSupport/built-product-archive:
+        (archiveBuiltProduct): Fix the build by adding support to built-product-archive for
+        the CMake build.
+
 2014-03-07  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK] Include CMake into install-dependencies script

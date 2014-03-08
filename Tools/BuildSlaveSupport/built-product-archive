@@ -137,10 +137,7 @@ def archiveBuiltProduct(configuration, platform, fullPlatform):
         removeDirectoryIfExists(thinDirectory)
         os.mkdir(thinDirectory)
 
-        if platform == 'qt' or platform == 'efl':
-            neededDirectories = ["bin", "lib"]
-        elif platform == 'gtk':
-            neededDirectories = ["Programs", ".libs", "Libraries", "TestNetscapePlugin"]
+        neededDirectories = ["bin", "lib"]
 
         for dirname in neededDirectories:
             fromDir = os.path.join(configurationBuildDirectory, dirname, ".")
