@@ -147,7 +147,7 @@ protected:
 
     virtual void toolTipChanged(const String&, const String&) override;
 
-    virtual void didCommitLoadForMainFrame() override;
+    virtual void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
 
     virtual void pageDidRequestScroll(const WebCore::IntPoint&) override;
     virtual void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect) override;

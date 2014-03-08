@@ -82,6 +82,8 @@ private:
     virtual void beganExitFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) override final { }
 #endif
 
+    virtual void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) override final;
+
 private:
     EwkView* m_ewkView;
     bool m_hasRequestedFullScreen;

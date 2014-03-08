@@ -1,3 +1,16 @@
+2014-03-07  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed. Fix build on the EFL port after r165303
+
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::didCommitLoadForMainFrame): Added new parameters.
+        * UIProcess/CoordinatedGraphics/WebView.h: Ditto.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/efl/WebViewEfl.cpp: Added dummy didFinishLoadingDataForCustomContentProvider()
+        (WebKit::WebViewEfl::exitFullScreen):
+        (WebKit::WebViewEfl::didFinishLoadingDataForCustomContentProvider):
+        * UIProcess/efl/WebViewEfl.h: Ditto.
+
 2014-03-07  Enrica Casucci  <enrica@apple.com>
 
         [iOS WebKit2] Keyboard accessory comes up when I click a link.

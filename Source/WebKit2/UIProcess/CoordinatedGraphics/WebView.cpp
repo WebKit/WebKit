@@ -362,7 +362,7 @@ void WebView::toolTipChanged(const String&, const String& newToolTip)
     m_client.didChangeTooltip(this, newToolTip);
 }
 
-void WebView::didCommitLoadForMainFrame()
+void WebView::didCommitLoadForMainFrame(const String&, bool)
 {
     m_contentsSize = IntSize();
 }

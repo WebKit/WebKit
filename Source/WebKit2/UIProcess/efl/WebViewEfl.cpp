@@ -30,6 +30,7 @@
 #include "EwkView.h"
 #include "InputMethodContextEfl.h"
 #include "NativeWebMouseEvent.h"
+#include "NotImplemented.h"
 #include "WebContextMenuProxyEfl.h"
 #include "WebPopupMenuListenerEfl.h"
 #include "ewk_context_private.h"
@@ -179,8 +180,12 @@ void WebViewEfl::exitFullScreen()
     m_ewkView->exitFullScreen();
     manager->didExitFullScreen();
 }
-
 #endif // ENABLE(FULLSCREEN_API)
+
+void WebViewEfl::didFinishLoadingDataForCustomContentProvider(const String&, const IPC::DataReference&)
+{
+    notImplemented();
+}
 
 #if ENABLE(INPUT_TYPE_COLOR)
 void WebViewEfl::initializeColorPickerClient(const WKColorPickerClientBase* client)
