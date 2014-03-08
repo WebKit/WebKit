@@ -261,9 +261,28 @@ $(INTERNAL_HEADERS_DIR)/% : % MigrateHeaders.make
 
 WEBKIT2_HEADERS = \
     WKFoundation.h \
+    WKFrameInfo.h \
+    WKHistoryDelegatePrivate.h \
+    WKNavigation.h \
+    WKNavigationAction.h \
+    WKNavigationDelegate.h \
+    WKNavigationResponse.h \
+    WKPreferences.h \
+    WKProcessPool.h \
     WKProcessPoolConfiguration.h \
     WKProcessPoolConfigurationPrivate.h \
-    WKPreferences.h \
+    WKProcessPoolPrivate.h \
+    WKThumbnailView.h \
+    WKUIDelegate.h \
+    WKUIDelegatePrivate.h \
+    WKVisitedLinkProvider.h \
+    WKVisitedLinkProviderPrivate.h \
+    WKWebView.h \
+    WKWebViewConfiguration.h \
+    WKWebViewConfigurationPrivate.h \
+    WKWebViewPrivate.h \
+    _WKActivatedElementInfo.h \
+    _WKElementAction.h \
 #
 
 WEBKIT2_PUBLIC_HEADERS = $(addprefix $(PUBLIC_HEADERS_DIR)/, $(filter $(WEBKIT2_HEADERS),$(notdir $(wildcard $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework/Headers/*))))

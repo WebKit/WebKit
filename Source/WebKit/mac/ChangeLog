@@ -1,5 +1,15 @@
 2014-03-07  Anders Carlsson  <andersca@apple.com>
 
+        Add the remaining WebKit2 headers to WEBKIT2_HEADERS
+        https://bugs.webkit.org/show_bug.cgi?id=129942
+        <rdar://problem/15920020>
+
+        Reviewed by Tim Horton.
+
+        * MigrateHeaders.make:
+
+2014-03-07  Anders Carlsson  <andersca@apple.com>
+
         MigrateHeaders.make should remove C SPI includes from WebKit2 headers
         https://bugs.webkit.org/show_bug.cgi?id=129937
         <rdar://problem/15920020>
