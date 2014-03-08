@@ -3070,6 +3070,22 @@ void WebPage::clearSelection()
 }
 #endif
 
+bool WebPage::mainFrameHasCustomContentProvider() const
+{
+    if (Frame* frame = mainFrame()) {
+        WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader().client());
+        ASSERT(webFrameLoaderClient);
+        return webFrameLoaderClient->frameHasCustomContentProvider();
+    }
+
+    return false;
+}
+
+void WebPage::addMIMETypeWithCustomContentProvider(const String& mimeType)
+{
+    m_mimeTypesWithCustomContentProviders.add(mimeType);
+}
+
 void WebPage::updateMainFrameScrollOffsetPinning()
 {
     Frame& frame = m_page->mainFrame();
@@ -3812,6 +3828,12 @@ bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
 #endif
 }
 
+bool WebPage::shouldUseCustomContentProviderForResponse(const ResourceResponse& response)
+{
+    // If a plug-in exists that claims to support this response, it should take precedence over the custom content provider.
+    return m_mimeTypesWithCustomContentProviders.contains(response.mimeType()) && !canPluginHandleResponse(response);
+}
+
 #if PLATFORM(GTK)
 static Frame* targetFrameForEditing(WebPage* page)
 {
@@ -3955,6 +3977,9 @@ void WebPage::setSelectTrailingWhitespaceEnabled(bool enabled)
 bool WebPage::canShowMIMEType(const String& MIMEType) const
 {
     if (MIMETypeRegistry::canShowMIMEType(MIMEType))
+        return true;
+
+    if (m_mimeTypesWithCustomContentProviders.contains(MIMEType))
         return true;
 
     const PluginData& pluginData = m_page->pluginData();

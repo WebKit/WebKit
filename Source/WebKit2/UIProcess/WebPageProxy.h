@@ -451,6 +451,8 @@ public:
     bool isViewWindowActive() const;
     bool isProcessSuppressible() const;
 
+    void addMIMETypeWithCustomContentProvider(const String& mimeType);
+
     void executeEditCommand(const String& commandName);
     void validateCommand(const String& commandName, PassRefPtr<ValidateCommandCallback>);
 #if PLATFORM(IOS)
@@ -949,7 +951,7 @@ private:
     void didStartProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& url, const String& unreachableURL, IPC::MessageDecoder&);
     void didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, const String&, IPC::MessageDecoder&);
     void didFailProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, const WebCore::ResourceError&, IPC::MessageDecoder&);
-    void didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& mimeType, uint32_t frameLoadType, const WebCore::CertificateInfo&, IPC::MessageDecoder&);
+    void didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t frameLoadType, const WebCore::CertificateInfo&, IPC::MessageDecoder&);
     void didFinishDocumentLoadForFrame(uint64_t frameID, IPC::MessageDecoder&);
     void didFinishLoadForFrame(uint64_t frameID, uint64_t navigationID, IPC::MessageDecoder&);
     void didFailLoadForFrame(uint64_t frameID, uint64_t navigationID, const WebCore::ResourceError&, IPC::MessageDecoder&);
@@ -1157,6 +1159,7 @@ private:
     void didReceiveAuthenticationChallenge(uint64_t frameID, const WebCore::AuthenticationChallenge&, uint64_t challengeID);
 
 #if PLATFORM(COCOA)
+    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&);
     void pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus);
     void setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, uint64_t complexTextInputState);
 #endif
@@ -1394,6 +1397,8 @@ private:
     int64_t m_spellDocumentTag;
     bool m_hasSpellDocumentTag;
     unsigned m_pendingLearnOrIgnoreWordMessageCount;
+
+    bool m_mainFrameHasCustomContentProvider;
 
 #if ENABLE(DRAG_SUPPORT)
     WebCore::DragSession m_currentDragSession;

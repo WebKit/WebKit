@@ -23,49 +23,63 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWebViewPrivate.h"
+#import "config.h"
+#import "WKWebViewContentProviderRegistry.h"
 
 #if WK_API_ENABLED
 
-#import <wtf/RefPtr.h>
-
 #if PLATFORM(IOS)
-#import "WKContentView.h"
-#import <WebCore/FloatRect.h>
-#import <UIKit/UIScrollView_Private.h>
-#endif
 
-#if PLATFORM(IOS)
-#define WK_WEB_VIEW_PROTOCOLS <UIScrollViewDelegate>
-#endif
+#import "WKWebViewInternal.h"
+#import "WebPageProxy.h"
+#import <wtf/HashCountedSet.h>
+#import <wtf/HashMap.h>
+#import <wtf/text/StringHash.h>
+#import <wtf/text/WTFString.h>
 
-#if !defined(WK_WEB_VIEW_PROTOCOLS)
-#define WK_WEB_VIEW_PROTOCOLS
-#endif
+using namespace WebKit;
 
-namespace WebKit {
-class WebPageProxy;
+@implementation WKWebViewContentProviderRegistry {
+    HashMap<String, Class <WKWebViewContentProvider>, CaseFoldingHash> _contentProviderForMIMEType;
+    HashCountedSet<WebPageProxy*> _pages;
 }
 
-@interface WKWebView () WK_WEB_VIEW_PROTOCOLS {
+- (void)addPage:(WebPageProxy&)page
+{
+    ASSERT(!_pages.contains(&page));
+    _pages.add(&page);
 
-@package
-    RefPtr<WebKit::WebPageProxy> _page;
+    for (auto& mimeType : _contentProviderForMIMEType.keys())
+        page.addMIMETypeWithCustomContentProvider(mimeType);
 }
 
-#if PLATFORM(IOS)
-- (void)_didCommitLoadForMainFrame;
-- (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;
+- (void)removePage:(WebPageProxy&)page
+{
+    ASSERT(_pages.contains(&page));
 
-- (RetainPtr<CGImageRef>)_takeViewSnapshot;
+    _pages.remove(&page);
+}
 
-- (BOOL)_scrollToRect:(WebCore::FloatRect)targetRect origin:(WebCore::FloatPoint)origin minimumScrollDistance:(float)minimumScrollDistance;
-- (BOOL)_zoomToRect:(WebCore::FloatRect)targetRect withOrigin:(WebCore::FloatPoint)origin fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale minimumScrollDistance:(float)minimumScrollDistance;
-- (void)_zoomOutWithOrigin:(WebCore::FloatPoint)origin;
+- (void)registerProvider:(Class <WKWebViewContentProvider>)contentProvider forMIMEType:(const String&)mimeType
+{
+    _contentProviderForMIMEType.set(mimeType, contentProvider);
 
-- (void)_setHasCustomContentView:(BOOL)hasCustomContentView loadedMIMEType:(const WTF::String&)mimeType;
-- (void)_didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:(const WTF::String&)suggestedFilename data:(NSData *)data;
-#endif
+    for (auto& page : _pages)
+        page.key->addMIMETypeWithCustomContentProvider(mimeType);
+}
+
+- (Class <WKWebViewContentProvider>)providerForMIMEType:(const String&)mimeType
+{
+    const auto& representation = _contentProviderForMIMEType.find(mimeType);
+
+    if (representation == _contentProviderForMIMEType.end())
+        return nil;
+
+    return representation->value;
+}
+
 @end
 
-#endif
+#endif // PLATFORM(IOS)
+
+#endif // WK_API_ENABLED

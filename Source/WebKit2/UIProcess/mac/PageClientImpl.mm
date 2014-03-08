@@ -285,7 +285,11 @@ void PageClientImpl::toolTipChanged(const String& oldToolTip, const String& newT
     [m_wkView _toolTipChangedFrom:nsStringFromWebCoreString(oldToolTip) to:nsStringFromWebCoreString(newToolTip)];
 }
 
-void PageClientImpl::didCommitLoadForMainFrame()
+void PageClientImpl::didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider)
+{
+}
+
+void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference& dataReference)
 {
 }
 

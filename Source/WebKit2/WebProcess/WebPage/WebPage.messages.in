@@ -183,6 +183,8 @@ messages -> WebPage LegacyReceiver {
     SelectFindMatch(uint32_t matchIndex)
     HideFindUI()
     CountStringMatches(String string, uint32_t findOptions, unsigned maxMatchCount)
+    
+    AddMIMETypeWithCustomContentProvider(String mimeType)
 
     # Drag and drop.
 #if PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)

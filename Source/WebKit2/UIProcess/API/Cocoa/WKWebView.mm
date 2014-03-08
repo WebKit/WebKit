@@ -45,8 +45,9 @@
 #import "WKProcessPoolInternal.h"
 #import "WKRemoteObjectRegistryInternal.h"
 #import "WKUIDelegate.h"
-#import "WKWebViewConfigurationPrivate.h"
 #import "WKVisitedLinkProviderInternal.h"
+#import "WKWebViewConfigurationInternal.h"
+#import "WKWebViewContentProvider.h"
 #import "WebCertificateInfo.h"
 #import "WebContext.h"
 #import "WebBackForwardList.h"
@@ -57,6 +58,7 @@
 
 #if PLATFORM(IOS)
 #import "WKScrollView.h"
+#import "WKWebViewContentProviderRegistry.h"
 #import <UIKit/UIPeripheralHost_Private.h>
 
 @interface UIScrollView (UIScrollViewInternal)
@@ -96,6 +98,8 @@
 
     std::unique_ptr<WebKit::ViewGestureController> _gestureController;
     BOOL _allowsBackForwardNavigationGestures;
+
+    RetainPtr<UIView <WKWebViewContentProvider>> _customContentView;
 #endif
 #if PLATFORM(MAC)
     RetainPtr<WKView> _wkView;
@@ -132,6 +136,11 @@
     if (![_configuration visitedLinkProvider])
         [_configuration setVisitedLinkProvider:adoptNS([[WKVisitedLinkProvider alloc] init]).get()];
 
+#if PLATFORM(IOS)
+    if (![_configuration _contentProviderRegistry])
+        [_configuration _setContentProviderRegistry:adoptNS([[WKWebViewContentProviderRegistry alloc] init]).get()];
+#endif
+
     CGRect bounds = self.bounds;
 
     WebKit::WebContext& context = *[_configuration processPool]->_context;
@@ -163,6 +172,8 @@
     [center addObserver:self selector:@selector(_keyboardDidChangeFrame:) name:UIKeyboardDidChangeFrameNotification object:nil];
     [center addObserver:self selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [center addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+
+    [[_configuration _contentProviderRegistry] addPage:*_page];
 #endif
 
 #if PLATFORM(MAC)
@@ -184,6 +195,7 @@
 {
     [_remoteObjectRegistry _invalidate];
 #if PLATFORM(IOS)
+    [[_configuration _contentProviderRegistry] removePage:*_page];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 #endif
 
@@ -321,6 +333,35 @@
     return [_contentView browsingContextController];
 }
 
+- (void)_setHasCustomContentView:(BOOL)pageHasCustomContentView loadedMIMEType:(const WTF::String&)mimeType
+{
+    if (pageHasCustomContentView) {
+        [_customContentView removeFromSuperview];
+
+        Class representationClass = [[_configuration _contentProviderRegistry] providerForMIMEType:mimeType];
+        ASSERT(representationClass);
+        _customContentView = adoptNS([[representationClass alloc] init]);
+
+        [_contentView removeFromSuperview];
+        [_scrollView addSubview:_customContentView.get()];
+
+        [_customContentView web_setMinimumSize:self.bounds.size];
+        [_customContentView web_setScrollView:_scrollView.get()];
+    } else if (_customContentView) {
+        [_customContentView removeFromSuperview];
+        _customContentView = nullptr;
+
+        [_scrollView addSubview:_contentView.get()];
+        [_scrollView setContentSize:[_contentView frame].size];
+    }
+}
+
+- (void)_didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:(const String&)suggestedFilename data:(NSData *)data
+{
+    ASSERT(_customContentView);
+    [_customContentView web_setContentProviderData:data];
+}
+
 - (void)_didCommitLoadForMainFrame
 {
     _isWaitingForNewLayerTreeAfterDidCommitLoad = YES;
@@ -328,6 +369,8 @@
 
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
 {
+    ASSERT(!_customContentView);
+
     [_scrollView setContentSize:[_contentView frame].size];
     [_scrollView setMinimumZoomScale:layerTreeTransaction.minimumScaleFactor()];
     [_scrollView setMaximumZoomScale:layerTreeTransaction.maximumScaleFactor()];
@@ -466,14 +509,26 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 #pragma mark - UIScrollViewDelegate
 
+- (BOOL)usesStandardContentView
+{
+    return !_customContentView;
+}
+
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
     ASSERT(_scrollView == scrollView);
+
+    if (_customContentView)
+        return _customContentView.get();
+
     return _contentView.get();
 }
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
 {
+    if (![self usesStandardContentView])
+        return;
+
     if (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateBegan)
         [_contentView willStartUserTriggeredZoom];
     [_contentView willStartZoomOrScroll];
@@ -481,6 +536,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
+    if (![self usesStandardContentView])
+        return;
+
     if (scrollView.panGestureRecognizer.state == UIGestureRecognizerStateBegan)
         [_contentView willStartUserTriggeredScroll];
     [_contentView willStartZoomOrScroll];
@@ -488,6 +546,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_didFinishScrolling
 {
+    if (![self usesStandardContentView])
+        return;
+
     [self _updateVisibleContentRects];
     [_contentView didFinishScrolling];
 }
@@ -534,11 +595,15 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         [_contentView setMinimumLayoutSize:bounds.size];
     [_scrollView setFrame:bounds];
     [_contentView setMinimumSize:bounds.size];
+    [_customContentView web_setMinimumSize:bounds.size];
     [self _updateVisibleContentRects];
 }
 
 - (void)_updateVisibleContentRects
 {
+    if (![self usesStandardContentView])
+        return;
+
     CGRect fullViewRect = self.bounds;
     CGRect visibleRectInContentCoordinates = [self convertRect:fullViewRect toView:_contentView.get()];
 

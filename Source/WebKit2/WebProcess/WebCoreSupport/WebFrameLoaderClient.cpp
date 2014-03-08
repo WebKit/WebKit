@@ -90,6 +90,7 @@ WebFrameLoaderClient::WebFrameLoaderClient()
     : m_frame(0)
     , m_hasSentResponseToPluginView(false)
     , m_didCompletePageTransitionAlready(false)
+    , m_frameHasCustomContentProvider(false)
     , m_frameCameFromPageCache(false)
 {
 }
@@ -107,6 +108,11 @@ void WebFrameLoaderClient::frameLoaderDestroyed()
 
     // Balances explicit ref() in WebFrame::create().
     m_frame->deref();
+}
+
+bool WebFrameLoaderClient::hasHTMLView() const
+{
+    return !m_frameHasCustomContentProvider;
 }
 
 bool WebFrameLoaderClient::hasWebView() const
@@ -445,8 +451,7 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
 
     // Notify the UIProcess.
 
-    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), documentLoader.navigationID(), documentLoader.response().mimeType(), m_frame->coreFrame()->loader().loadType(), CertificateInfo(documentLoader.response()), InjectedBundleUserMessageEncoder(userData.get())));
-
+    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), documentLoader.navigationID(), documentLoader.response().mimeType(), m_frameHasCustomContentProvider, m_frame->coreFrame()->loader().loadType(), CertificateInfo(documentLoader.response()), InjectedBundleUserMessageEncoder(userData.get())));
     webPage->didCommitLoad(m_frame);
 }
 
@@ -826,7 +831,7 @@ void WebFrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceE
         return;
     
     m_pluginView->manualLoadDidFail(error);
-    m_pluginView = 0;
+    m_pluginView = nullptr;
     m_hasSentResponseToPluginView = false;
 }
 
@@ -852,6 +857,10 @@ void WebFrameLoaderClient::didChangeTitle(DocumentLoader*)
 
 void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* data, int length)
 {
+    // If we're loading a custom representation, we don't want to hand off the data to WebCore.
+    if (m_frameHasCustomContentProvider)
+        return;
+
     if (!m_pluginView)
         loader->commitData(data, length);
 
@@ -878,8 +887,19 @@ void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* dat
 
 void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
 {
-    if (!m_pluginView)
+    if (!m_pluginView) {
+        if (m_frameHasCustomContentProvider) {
+            WebPage* webPage = m_frame->page();
+            if (!webPage)
+                return;
+
+            RefPtr<ResourceBuffer> mainResourceData = loader->mainResourceData();
+            IPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(mainResourceData ? mainResourceData->data() : 0), mainResourceData ? mainResourceData->size() : 0);
+            webPage->send(Messages::WebPageProxy::DidFinishLoadingDataForCustomContentProvider(loader->response().suggestedFilename(), dataReference));
+        }
+
         return;
+    }
 
     // If we just received an empty response without any data, we won't have sent a response to the plug-in view.
     // Make sure to do this before calling manualLoadDidFinishLoading.
@@ -892,7 +912,7 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
     }
 
     m_pluginView->manualLoadDidFinishLoading();
-    m_pluginView = 0;
+    m_pluginView = nullptr;
     m_hasSentResponseToPluginView = false;
 }
 
@@ -1166,6 +1186,9 @@ void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame*)
 
 void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame*)
 {
+    const ResourceResponse& response = m_frame->coreFrame()->loader().documentLoader()->response();
+    m_frameHasCustomContentProvider = m_frame->isMainFrame() && m_frame->page()->shouldUseCustomContentProviderForResponse(response);
+    m_frameCameFromPageCache = true;
 }
 
 void WebFrameLoaderClient::transitionToCommittedForNewPage()
@@ -1173,7 +1196,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     WebPage* webPage = m_frame->page();
 
     Color backgroundColor = webPage->drawsTransparentBackground() ? Color::transparent : Color::white;
-    bool isMainFrame = webPage->mainWebFrame() == m_frame;
+    bool isMainFrame = m_frame->isMainFrame();
     bool isTransparent = !webPage->drawsBackground();
     bool shouldUseFixedLayout = isMainFrame && webPage->useFixedLayout();
     bool shouldDisableScrolling = isMainFrame && !webPage->mainFrameIsScrollable();
@@ -1185,6 +1208,8 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
         fixedVisibleContentRect = m_frame->coreFrame()->view()->fixedVisibleContentRect();
 #endif
 
+    const ResourceResponse& response = m_frame->coreFrame()->loader().documentLoader()->response();
+    m_frameHasCustomContentProvider = isMainFrame && webPage->shouldUseCustomContentProviderForResponse(response);
     m_frameCameFromPageCache = false;
 
     ScrollbarMode defaultScrollbarMode = shouldHideScrollbars ? ScrollbarAlwaysOff : ScrollbarAuto;
@@ -1242,6 +1267,13 @@ void WebFrameLoaderClient::dispatchDidBecomeFrameset(bool value)
         return;
 
     webPage->send(Messages::WebPageProxy::FrameDidBecomeFrameSet(m_frame->frameID(), value));
+}
+
+bool WebFrameLoaderClient::canCachePage() const
+{
+    // We cannot cache frames that have custom representations because they are
+    // rendered in the UIProcess.
+    return !m_frameHasCustomContentProvider;
 }
 
 void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader *documentLoader, const ResourceRequest& request, const ResourceResponse& response)

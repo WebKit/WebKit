@@ -33,6 +33,7 @@
 #import "InteractionInformationAtPosition.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
+#import "WKWebViewInternal.h"
 #import "WebContextMenuProxy.h"
 #import "WebEditCommandProxy.h"
 #import <UIKit/UIImagePickerController_Private.h>
@@ -49,8 +50,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PageClientImpl::PageClientImpl(WKContentView *view)
-    : m_contentView(view)
+PageClientImpl::PageClientImpl(WKContentView *contentView, WKWebView *webView)
+    : m_contentView(contentView)
+    , m_webView(webView)
 {
 }
 
@@ -146,8 +148,9 @@ bool PageClientImpl::decidePolicyForGeolocationPermissionRequest(WebFrameProxy& 
     return true;
 }
 
-void PageClientImpl::didCommitLoadForMainFrame()
+void PageClientImpl::didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider)
 {
+    [m_webView _setHasCustomContentView:useCustomContentProvider loadedMIMEType:mimeType];
     [m_contentView _didCommitLoadForMainFrame];
 }
 
@@ -401,6 +404,12 @@ void PageClientImpl::beganExitFullScreen(const IntRect&, const IntRect&)
 }
 
 #endif // ENABLE(FULLSCREEN_API)
+
+void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference& dataReference)
+{
+    RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytes:dataReference.data() length:dataReference.size()]);
+    [m_webView _didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:suggestedFilename data:data.get()];
+}
 
 } // namespace WebKit
 

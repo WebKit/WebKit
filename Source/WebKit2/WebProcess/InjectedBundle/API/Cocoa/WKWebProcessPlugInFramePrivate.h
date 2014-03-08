@@ -35,6 +35,8 @@
 
 @property (nonatomic, readonly) WKWebProcessPlugInBrowserContextController *_browserContextController;
 
+@property (nonatomic, readonly) BOOL _hasCustomContentProvider;
+
 @end
 
 #endif // WK_API_ENABLED

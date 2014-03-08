@@ -131,7 +131,7 @@ public:
         return false;
     }
 
-    virtual void didCommitLoadForMainFrame() = 0;
+    virtual void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) = 0;
 
 #if USE(TILED_BACKING_STORE)
     virtual void pageDidRequestScroll(const WebCore::IntPoint&) = 0;
@@ -256,6 +256,9 @@ public:
 #if ENABLE(FULLSCREEN_API)
     virtual WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() = 0;
 #endif
+
+    // Custom representations.
+    virtual void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) = 0;
 };
 
 } // namespace WebKit

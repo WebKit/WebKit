@@ -102,6 +102,14 @@ using namespace WebKit;
     return [wrapper(*API::FrameHandle::create(_frame->frameID()).leakRef()) autorelease];
 }
 
+- (BOOL)_hasCustomContentProvider
+{
+    if (!_frame->isMainFrame())
+        return false;
+
+    return _frame->page()->mainFrameHasCustomContentProvider();
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject

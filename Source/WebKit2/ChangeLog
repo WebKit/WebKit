@@ -1,3 +1,127 @@
+2014-03-07  Tim Horton  <timothy_horton@apple.com>
+
+        [WebKit2][iOS] Main-frame custom content providers
+        https://bugs.webkit.org/show_bug.cgi?id=129809
+
+        Reviewed by Dan Bernstein.
+
+        Re-introduce custom content providers to WebKit2 (removed in r152841), but
+        for iOS this time.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        Send the initial MIME types that have custom content providers to the WebProcess.
+
+        (-[WKWebView dealloc]):
+        Unregister our page from the content provider registry.
+        
+        (-[WKWebView _setHasCustomContentView:loadedMIMEType:]):
+        Install/uninstall the custom content provider. Create a view, if needed,
+        based on the class that the registry has associated with the given MIME type.
+        We unparent the WKContentView while the custom content provider is active,
+        and re-use the existing WKScrollView to contain the custom content provider.
+
+        (-[WKWebView _didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:dataReference:]):
+        Forward loaded data on to the custom content provider for display.
+
+        (-[WKWebView _didCommitLayerTree:WebKit::]):
+        Assert that we aren't getting layer tree commits while using a custom content provider.
+
+        (-[WKWebView viewForZoomingInScrollView:]):
+        If we're using a custom content provider, its view should be used for zooming
+        instead of the (unparented) web content view.
+
+        (-[WKWebView hasContentView]):
+        (-[WKWebView scrollViewWillBeginZooming:withView:]):
+        (-[WKWebView scrollViewWillBeginDragging:]):
+        (-[WKWebView _didFinishScrolling]):
+        (-[WKWebView _updateVisibleContentRects]):
+        If we do not have a parented WKContentView because we are using a custom
+        content provider, we should not forward scroll view related changes to it.
+
+        (-[WKWebView _frameOrBoundsChanged]):
+        Update the minimum size of the custom content provider if the web view size changes.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _contentProviderRegistry]):
+        (-[WKWebViewConfiguration _setContentProviderRegistry:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationInternal.h: Added.
+        Add an internal WKWebViewConfiguration property, the WKWebViewContentProviderRegistry.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+
+        * UIProcess/Cocoa/WKWebViewContentProvider.h: Added.
+        A minimal protocol for informing custom content providers of changes to
+        the size of the view, the represented data, and the owning scroll view.
+
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.h: Added.
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm: Added.
+        (-[WKWebViewContentProviderRegistry addPage:]):
+        (-[WKWebViewContentProviderRegistry removePage:]):
+        (-[WKWebViewContentProviderRegistry registerProvider:forMIMEType:]):
+        (-[WKWebViewContentProviderRegistry providerForMIMEType:]):
+        (-[WKWebViewContentProviderRegistry mimeTypesWithContentProviders]):
+        New class, keeps track of a mapping from MIME types to UIViews that
+        conform to the WKWebViewContentProvider protocol.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * UIProcess/PageClient.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        (WebKit::PageClientImpl::didFinishLoadingDataForCustomContentProvider):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        (WebKit::PageClientImpl::didFinishLoadingDataForCustomContentProvider):
+        Add parameters to didCommitLoadForMainFrame, indicating if we should use
+        a custom content provider to display the main frame, and what MIME type
+        was loaded in said frame, and add didFinishLoadingDataForCustomContentProvider.
+        On iOS, forward these to the WKWebView.
+        Also, give PageClientImplIOS a reference to the WKWebView.
+        
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView initWithFrame:context:WebKit::configuration:WebKit::webView:]):
+        
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (-[WKWebProcessPlugInFrame _hasCustomContentProvider]):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFramePrivate.h:
+        Expose whether or not a given frame has a custom content provider to the plug-in.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::WebFrameLoaderClient):
+        (WebKit::WebFrameLoaderClient::hasHTMLView):
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebKit::WebFrameLoaderClient::committedLoad):
+        (WebKit::WebFrameLoaderClient::finishedLoading):
+        (WebKit::WebFrameLoaderClient::transitionToCommittedFromCachedFrame):
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        (WebKit::WebFrameLoaderClient::canCachePage):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        (WebKit::WebFrameLoaderClient::frameHasCustomContentProvider):
+        Restore WebFrameLoaderClient custom representation code, which ensures
+        that data is routed correctly (to the UI process, and not to WebCore) and
+        that we don't try to use the page cache for frames with content providers.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mainFrameHasCustomContentProvider):
+        (WebKit::WebPage::addMIMETypeWithCustomContentProvider):
+        (WebKit::WebPage::shouldUseCustomContentProviderForResponse):
+        (WebKit::WebPage::canShowMIMEType):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Keep a list of MIME types which can be displayed via custom content providers
+        in WebPage, which will be pushed down from the registry as new providers
+        are added. Plug-ins still take precendence over custom content providers.
+
 2014-03-07  Anders Carlsson  <andersca@apple.com>
 
         MigrateHeaders.make should remove C SPI includes from WebKit2 headers

@@ -311,6 +311,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_spellDocumentTag(0)
     , m_hasSpellDocumentTag(false)
     , m_pendingLearnOrIgnoreWordMessageCount(0)
+    , m_mainFrameHasCustomContentProvider(false)
     , m_delegatesScrolling(false)
     , m_mainFrameHasHorizontalScrollbar(false)
     , m_mainFrameHasVerticalScrollbar(false)
@@ -2236,7 +2237,7 @@ void WebPageProxy::clearLoadDependentCallbacks()
     }
 }
 
-void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& mimeType, uint32_t opaqueFrameLoadType, const WebCore::CertificateInfo& certificateInfo, IPC::MessageDecoder& decoder)
+void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t opaqueFrameLoadType, const WebCore::CertificateInfo& certificateInfo, IPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
     WebContextUserMessageDecoder messageDecoder(userData, process());
@@ -2248,10 +2249,8 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
 
     auto transaction = m_pageLoadState.transaction();
 
-    if (frame->isMainFrame()) {
+    if (frame->isMainFrame())
         m_pageLoadState.didCommitLoad(transaction);
-        m_pageClient.didCommitLoadForMainFrame();
-    }
 
 #if USE(APPKIT)
     // FIXME (bug 59111): didCommitLoadForFrame comes too late when restoring a page from b/f cache, making us disable secure event mode in password fields.
@@ -2264,6 +2263,20 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
     clearLoadDependentCallbacks();
 
     frame->didCommitLoad(mimeType, certificateInfo);
+
+    if (frame->isMainFrame()) {
+        m_mainFrameHasCustomContentProvider = frameHasCustomContentProvider;
+
+        if (m_mainFrameHasCustomContentProvider) {
+            // Always assume that the main frame is pinned here, since the custom representation view will handle
+            // any wheel events and dispatch them to the WKView when necessary.
+            m_mainFrameIsPinnedToLeftSide = true;
+            m_mainFrameIsPinnedToRightSide = true;
+            m_mainFrameIsPinnedToTopSide = true;
+            m_mainFrameIsPinnedToBottomSide = true;
+        }
+        m_pageClient.didCommitLoadForMainFrame(mimeType, frameHasCustomContentProvider);
+    }
 
     // Even if WebPage has the default pageScaleFactor (and therefore doesn't reset it),
     // WebPageProxy's cache of the value can get out of sync (e.g. in the case where a
@@ -4237,6 +4250,11 @@ bool WebPageProxy::willHandleHorizontalScrollEvents() const
     return !m_canShortCircuitHorizontalWheelEvents;
 }
 
+void WebPageProxy::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference& dataReference)
+{
+    m_pageClient.didFinishLoadingDataForCustomContentProvider(suggestedFilename, dataReference);
+}
+
 void WebPageProxy::backForwardRemovedItem(uint64_t itemID)
 {
     m_process->send(Messages::WebPage::DidRemoveBackForwardItem(itemID), m_pageID);
@@ -4539,6 +4557,11 @@ void WebPageProxy::setThumbnailScale(double scale)
         return;
 
     m_process->send(Messages::WebPage::SetThumbnailScale(scale), m_pageID);
+}
+
+void WebPageProxy::addMIMETypeWithCustomContentProvider(const String& mimeType)
+{
+    m_process->send(Messages::WebPage::AddMIMETypeWithCustomContentProvider(mimeType), m_pageID);
 }
 
 } // namespace WebKit

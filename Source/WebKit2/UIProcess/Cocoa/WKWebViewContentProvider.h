@@ -23,49 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWebViewPrivate.h"
+#import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-#import <wtf/RefPtr.h>
-
 #if PLATFORM(IOS)
-#import "WKContentView.h"
-#import <WebCore/FloatRect.h>
-#import <UIKit/UIScrollView_Private.h>
-#endif
 
-#if PLATFORM(IOS)
-#define WK_WEB_VIEW_PROTOCOLS <UIScrollViewDelegate>
-#endif
+@class NSData;
+@class UIScrollView;
+@protocol NSObject;
+struct CGSize;
 
-#if !defined(WK_WEB_VIEW_PROTOCOLS)
-#define WK_WEB_VIEW_PROTOCOLS
-#endif
+// FIXME: This should be API.
+@protocol WKWebViewContentProvider <NSObject>
 
-namespace WebKit {
-class WebPageProxy;
-}
+- (void)web_setContentProviderData:(NSData *)data;
+- (void)web_setMinimumSize:(CGSize)size;
+- (void)web_setScrollView:(UIScrollView *)scrollView;
 
-@interface WKWebView () WK_WEB_VIEW_PROTOCOLS {
-
-@package
-    RefPtr<WebKit::WebPageProxy> _page;
-}
-
-#if PLATFORM(IOS)
-- (void)_didCommitLoadForMainFrame;
-- (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;
-
-- (RetainPtr<CGImageRef>)_takeViewSnapshot;
-
-- (BOOL)_scrollToRect:(WebCore::FloatRect)targetRect origin:(WebCore::FloatPoint)origin minimumScrollDistance:(float)minimumScrollDistance;
-- (BOOL)_zoomToRect:(WebCore::FloatRect)targetRect withOrigin:(WebCore::FloatPoint)origin fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale minimumScrollDistance:(float)minimumScrollDistance;
-- (void)_zoomOutWithOrigin:(WebCore::FloatPoint)origin;
-
-- (void)_setHasCustomContentView:(BOOL)hasCustomContentView loadedMIMEType:(const WTF::String&)mimeType;
-- (void)_didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:(const WTF::String&)suggestedFilename data:(NSData *)data;
-#endif
 @end
 
-#endif
+#endif // PLATFORM(IOS)
+
+#endif // WK_API_ENABLED
+

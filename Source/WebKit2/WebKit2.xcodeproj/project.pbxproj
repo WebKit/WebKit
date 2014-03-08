@@ -498,6 +498,8 @@
 		2D6B371C18A967AD0042AE80 /* WKThumbnailView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D6B371A18A967AD0042AE80 /* WKThumbnailView.mm */; };
 		2D6CD119189058A500E5A4A0 /* ViewSnapshotStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6CD117189058A500E5A4A0 /* ViewSnapshotStore.h */; };
 		2D6CD11A189058A500E5A4A0 /* ViewSnapshotStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D6CD118189058A500E5A4A0 /* ViewSnapshotStore.mm */; };
+		2D7AAFD318C8640600A7ACD4 /* WKWebViewContentProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7AAFD218C8640600A7ACD4 /* WKWebViewContentProvider.h */; };
+		2D7AAFD618C956AF00A7ACD4 /* WKWebViewConfigurationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7AAFD518C956AF00A7ACD4 /* WKWebViewConfigurationInternal.h */; };
 		2D819B9E18627EE9001F03D1 /* ViewGestureGeometryCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */; };
 		2D819BA11862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D819B9F1862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp */; };
 		2D819BA21862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D819BA01862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h */; };
@@ -529,6 +531,8 @@
 		2DACE64E18ADBFF000E4CA76 /* WKThumbnailViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DACE64D18ADBFF000E4CA76 /* WKThumbnailViewInternal.h */; };
 		2DAF06D618BD1A470081CEB1 /* SmartMagnificationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF06D418BD1A470081CEB1 /* SmartMagnificationController.h */; };
 		2DAF06D718BD1A470081CEB1 /* SmartMagnificationController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF06D518BD1A470081CEB1 /* SmartMagnificationController.mm */; };
+		2DC6D9C318C44A610043BAD4 /* WKWebViewContentProviderRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC6D9C118C44A610043BAD4 /* WKWebViewContentProviderRegistry.h */; };
+		2DC6D9C418C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6D9C218C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm */; };
 		2DDE0AFA18298CC900F97EAA /* RemoteLayerTreePropertyApplier.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDE0AF818298CC900F97EAA /* RemoteLayerTreePropertyApplier.h */; };
 		2DDE0AFB18298CC900F97EAA /* RemoteLayerTreePropertyApplier.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DDE0AF918298CC900F97EAA /* RemoteLayerTreePropertyApplier.mm */; };
 		2DE6943D18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DE6943B18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp */; };
@@ -2255,6 +2259,8 @@
 		2D6CD118189058A500E5A4A0 /* ViewSnapshotStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewSnapshotStore.mm; sourceTree = "<group>"; };
 		2D70AB1318A1D51A00026D6E /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist"; sourceTree = "<group>"; };
 		2D70AB1418A1D57C00026D6E /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist"; sourceTree = "<group>"; };
+		2D7AAFD218C8640600A7ACD4 /* WKWebViewContentProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewContentProvider.h; sourceTree = "<group>"; };
+		2D7AAFD518C956AF00A7ACD4 /* WKWebViewConfigurationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewConfigurationInternal.h; sourceTree = "<group>"; };
 		2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewGestureGeometryCollector.cpp; sourceTree = "<group>"; };
 		2D819B9A186275B3001F03D1 /* ViewGestureGeometryCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewGestureGeometryCollector.h; sourceTree = "<group>"; };
 		2D819B9B186275B3001F03D1 /* ViewGestureGeometryCollector.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewGestureGeometryCollector.messages.in; sourceTree = "<group>"; };
@@ -2290,6 +2296,8 @@
 		2DAF06D418BD1A470081CEB1 /* SmartMagnificationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmartMagnificationController.h; path = ios/SmartMagnificationController.h; sourceTree = "<group>"; };
 		2DAF06D518BD1A470081CEB1 /* SmartMagnificationController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SmartMagnificationController.mm; path = ios/SmartMagnificationController.mm; sourceTree = "<group>"; };
 		2DAF06D818BD23BA0081CEB1 /* SmartMagnificationController.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = SmartMagnificationController.messages.in; path = ios/SmartMagnificationController.messages.in; sourceTree = "<group>"; };
+		2DC6D9C118C44A610043BAD4 /* WKWebViewContentProviderRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewContentProviderRegistry.h; sourceTree = "<group>"; };
+		2DC6D9C218C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewContentProviderRegistry.mm; sourceTree = "<group>"; };
 		2DDE0AF818298CC900F97EAA /* RemoteLayerTreePropertyApplier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreePropertyApplier.h; sourceTree = "<group>"; };
 		2DDE0AF918298CC900F97EAA /* RemoteLayerTreePropertyApplier.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreePropertyApplier.mm; sourceTree = "<group>"; };
 		2DE6943B18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmartMagnificationControllerMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -4144,6 +4152,9 @@
 		1ABC3DF21899E415004F0626 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				2D7AAFD218C8640600A7ACD4 /* WKWebViewContentProvider.h */,
+				2DC6D9C118C44A610043BAD4 /* WKWebViewContentProviderRegistry.h */,
+				2DC6D9C218C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm */,
 				0F0C365918C0555800F607D7 /* LayerRepresentation.h */,
 				1A422F8D18B29C6400D8CD96 /* HistoryClient.h */,
 				1A422F8C18B29C6400D8CD96 /* HistoryClient.mm */,
@@ -4547,6 +4558,7 @@
 				1ADF59191890528E0043C145 /* WKWebViewConfiguration.h */,
 				1ADF59181890528E0043C145 /* WKWebViewConfiguration.mm */,
 				1AC1415018AC47EE006C602C /* WKWebViewConfigurationPrivate.h */,
+				2D7AAFD518C956AF00A7ACD4 /* WKWebViewConfigurationInternal.h */,
 				1A66BF8E18A052ED002071B4 /* WKWebViewInternal.h */,
 				26F9A83A18A3463F00AEB88A /* WKWebViewPrivate.h */,
 			);
@@ -6553,6 +6565,7 @@
 				BC4BEEAB120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.h in Headers */,
 				378E1A4E18208D700031007A /* WKNSURL.h in Headers */,
 				1A1B0EB818A424CD0038481A /* WKNavigationResponseInternal.h in Headers */,
+				2D7AAFD318C8640600A7ACD4 /* WKWebViewContentProvider.h in Headers */,
 				512935E41288D97800A4B695 /* InjectedBundlePageContextMenuClient.h in Headers */,
 				E1EE53E311F8CFC000CCBEE4 /* InjectedBundlePageEditorClient.h in Headers */,
 				BC14E10A120B905E00826C0C /* InjectedBundlePageFormClient.h in Headers */,
@@ -6759,6 +6772,7 @@
 				3F87B9C0158940D80090FF62 /* WebColorPicker.h in Headers */,
 				BC4A6290147312BE006C681A /* WebConnection.h in Headers */,
 				0FCB4E5418BBE044000FCFC9 /* WKScrollView.h in Headers */,
+				2DC6D9C318C44A610043BAD4 /* WKWebViewContentProviderRegistry.h in Headers */,
 				2DE6943E18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h in Headers */,
 				BC4A6292147312BE006C681A /* WebConnectionClient.h in Headers */,
 				1A1FEC1D1627B45700700F6D /* WebConnectionMessages.h in Headers */,
@@ -6793,6 +6807,7 @@
 				1A2464F31891E45100234C5B /* APILoaderClient.h in Headers */,
 				BC1DD7B2114DC396005ADAF3 /* WebCoreArgumentCoders.h in Headers */,
 				512F589B12A8838800629530 /* WebCredential.h in Headers */,
+				2D7AAFD618C956AF00A7ACD4 /* WKWebViewConfigurationInternal.h in Headers */,
 				2DACE64E18ADBFF000E4CA76 /* WKThumbnailViewInternal.h in Headers */,
 				51578B831209ECEF00A37C4A /* APIData.h in Headers */,
 				F6A25FDD12ADC6CC00DC40CC /* WebDatabaseManager.h in Headers */,
@@ -8032,6 +8047,7 @@
 				51CBBA0F165219B6005BE8FD /* NetworkResourceLoadParameters.cpp in Sources */,
 				51829DA51637C70C000953D6 /* NetworkResourceLoadScheduler.cpp in Sources */,
 				512C069016390E6900ABB911 /* NetworkResourceLoadSchedulerMac.mm in Sources */,
+				2DC6D9C418C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm in Sources */,
 				BC8283AC16B4BF3F00A278FE /* NetworkServiceEntryPoint.mm in Sources */,
 				31A2EC551489982E00810D71 /* NotificationPermissionRequest.cpp in Sources */,
 				3131261E148FF82C00BA2A39 /* NotificationPermissionRequestManager.cpp in Sources */,

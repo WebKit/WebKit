@@ -32,7 +32,8 @@
 #import "WebFullScreenManagerProxy.h"
 #import <wtf/RetainPtr.h>
 
-@class WKContentView;
+OBJC_CLASS WKContentView;
+OBJC_CLASS WKWebView;
 
 namespace WebKit {
     
@@ -42,7 +43,7 @@ class PageClientImpl : public PageClient
 #endif
     {
 public:
-    explicit PageClientImpl(WKContentView *);
+    explicit PageClientImpl(WKContentView *, WKWebView *);
     virtual ~PageClientImpl();
     
 private:
@@ -63,7 +64,7 @@ private:
     virtual void preferencesDidChange() override;
     virtual void toolTipChanged(const String&, const String&) override;
     virtual bool decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, WebSecurityOrigin&, GeolocationPermissionRequestProxy&) override;
-    virtual void didCommitLoadForMainFrame() override;
+    virtual void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
     virtual void setCursor(const WebCore::Cursor&) override;
     virtual void setCursorHiddenUntilMouseMoves(bool) override;
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;
@@ -129,7 +130,10 @@ private:
     virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
 #endif
 
+    virtual void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) override;
+
     WKContentView *m_contentView;
+    WKWebView *m_webView;
 };
 } // namespace WebKit
 

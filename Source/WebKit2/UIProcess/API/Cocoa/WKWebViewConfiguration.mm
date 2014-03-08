@@ -24,10 +24,11 @@
  */
 
 #import "config.h"
-#import "WKWebViewConfigurationPrivate.h"
+#import "WKWebViewConfigurationInternal.h"
 
 #if WK_API_ENABLED
 
+#import "WKWebViewContentProviderRegistry.h"
 #import "WeakObjCPtr.h"
 #import <wtf/RetainPtr.h>
 
@@ -36,6 +37,9 @@
     RetainPtr<WKPreferences> _preferences;
     RetainPtr<WKVisitedLinkProvider> _visitedLinkProvider;
     WebKit::WeakObjCPtr<WKWebView> _relatedWebView;
+#if PLATFORM(IOS)
+    RetainPtr<WKWebViewContentProviderRegistry> _contentProviderRegistry;
+#endif
 }
 
 - (NSString *)description
@@ -50,6 +54,9 @@
     configuration.processPool = _processPool.get();
     configuration.preferences = _preferences.get();
     configuration._relatedWebView = _relatedWebView.get().get();
+#if PLATFORM(IOS)
+    configuration._contentProviderRegistry = _contentProviderRegistry.get();
+#endif
 
     return configuration;
 }
@@ -93,6 +100,18 @@
 {
     _relatedWebView = relatedWebView;
 }
+
+#if PLATFORM(IOS)
+- (WKWebViewContentProviderRegistry *)_contentProviderRegistry
+{
+    return _contentProviderRegistry.get();
+}
+
+- (void)_setContentProviderRegistry:(WKWebViewContentProviderRegistry *)registry
+{
+    _contentProviderRegistry = registry;
+}
+#endif
 
 @end
 

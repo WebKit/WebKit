@@ -625,6 +625,9 @@ public:
 
     void updateMainFrameScrollOffsetPinning();
 
+    bool mainFrameHasCustomContentProvider() const;
+    void addMIMETypeWithCustomContentProvider(const String&);
+
     void mainFrameDidLayout();
 
     bool canRunBeforeUnloadConfirmPanel() const { return m_canRunBeforeUnloadConfirmPanel; }
@@ -679,6 +682,7 @@ public:
     uint64_t nativeWindowHandle() { return m_nativeWindowHandle; }
 #endif
 
+    bool shouldUseCustomContentProviderForResponse(const WebCore::ResourceResponse&);
     bool canPluginHandleResponse(const WebCore::ResourceResponse& response);
 
     bool asynchronousPluginInitializationEnabled() const { return m_asynchronousPluginInitializationEnabled; }
@@ -1108,6 +1112,7 @@ private:
 
     WebInspectorClient* m_inspectorClient;
 
+    HashSet<String, CaseFoldingHash> m_mimeTypesWithCustomContentProviders;
     WebCore::Color m_backgroundColor;
 
     HashSet<unsigned> m_activeRenderingSuppressionTokens;

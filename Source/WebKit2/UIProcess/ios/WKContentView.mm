@@ -76,7 +76,7 @@ using namespace WebKit;
 
     InitializeWebKit2();
 
-    _pageClient = std::make_unique<PageClientImpl>(self);
+    _pageClient = std::make_unique<PageClientImpl>(self, webView);
 
     _page = context.createWebPage(*_pageClient, std::move(webPageConfiguration));
     _page->initializeWebPage();
