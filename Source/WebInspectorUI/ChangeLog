@@ -1,3 +1,15 @@
+2014-03-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: update-InspectorBackendCommands.rb is putting legacy protocol files in the wrong place
+        https://bugs.webkit.org/show_bug.cgi?id=129959
+
+        Reviewed by Timothy Hatcher.
+
+        The script was putting legacy generated files into UserInterface
+        instead of UserInterface/Protocol.
+
+        * Scripts/update-InspectorBackendCommands.rb:
+
 2014-03-07  Timothy Hatcher  <timothy@apple.com>
 
         Load source maps and their resources asynchronously.
