@@ -1,3 +1,15 @@
+2014-03-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix the regression introduced by r165288
+        https://bugs.webkit.org/show_bug.cgi?id=129934
+
+        Reviewed by Ryosuke Niwa.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::scrollX):
+        (WebCore::DOMWindow::scrollY):
+        We need to return the new value after layout, not the value from the dirty tree.
+
 2014-03-07  Benjamin Poulain  <benjamin@webkit.org>
 
         Traversal failure in a direct adjacent chain with tail backtracking lacks the path to clear the tail

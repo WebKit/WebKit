@@ -1203,7 +1203,11 @@ int DOMWindow::scrollX() const
 
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
-    return view->mapFromLayoutToCSSUnits(scrollX);
+#if PLATFORM(IOS)
+    return view->mapFromLayoutToCSSUnits(view->actualScrollX());
+#else
+    return view->mapFromLayoutToCSSUnits(view->scrollX());
+#endif
 }
 
 int DOMWindow::scrollY() const
@@ -1226,7 +1230,11 @@ int DOMWindow::scrollY() const
 
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
-    return view->mapFromLayoutToCSSUnits(scrollY);
+#if PLATFORM(IOS)
+    return view->mapFromLayoutToCSSUnits(view->actualScrollY());
+#else
+    return view->mapFromLayoutToCSSUnits(view->scrollY());
+#endif
 }
 
 bool DOMWindow::closed() const
