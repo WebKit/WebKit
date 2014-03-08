@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         RenderInline (generated) at (0,0) size 8x17
           RenderText at (0,0) size 8x17
             text run at (0,0) width 8: "*"
-          RenderQuote at (0,0) size 0x0
+          RenderQuote at (0,0) size 0x17
         RenderText {#text} at (8,0) size 425x17
           text run at (8,0) width 114: "This is some text. "
           text run at (122,0) width 311: "It should have a single asterisk before and after it."
         RenderInline (generated) at (0,0) size 8x17
           RenderText at (433,0) size 8x17
             text run at (433,0) width 8: "*"
-          RenderQuote at (0,0) size 0x0
+          RenderQuote at (0,0) size 0x17

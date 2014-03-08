@@ -1,3 +1,9 @@
+2014-03-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline some tests for WebKitGTK+
+
+        * platform/gtk: Rebaseline tests.
+
 2014-03-07  Oliver Hunt  <oliver@apple.com>
 
         Continue hangs when performing for-of over arguments

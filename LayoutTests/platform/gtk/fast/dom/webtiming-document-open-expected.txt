@@ -1,0 +1,9 @@
+This test verifies that the NavigationTimings don't change after a document.open().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -18,7 +18,7 @@ layer at (0,0) size 800x184
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-      RenderInline {p} at (0,0) size 489x17
+      RenderInline {p} at (0,0) size 489x17 [color=#FF0000]
         RenderInline {font} at (0,0) size 489x17
           RenderText {#text} at (0,0) size 489x17
             text run at (0,0) width 263: "This should be the only line on this page. "
