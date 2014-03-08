@@ -1,3 +1,11 @@
+2014-03-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Skip tests on GTK+ for unimplemented features
+
+        * platform/gtk/TestExpectations: When a feature is unimplemented, the tests may fail or
+        they may timeout, or perhaps they will crash. We just skip them here, so that we don't
+        have to micromanage expectations for tests against incomplete features.
+
 2014-03-08  Oliver Hunt  <oliver@apple.com>
 
         SerializedScriptValue may move Identifiers between worlds
