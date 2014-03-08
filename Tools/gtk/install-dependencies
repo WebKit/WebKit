@@ -40,6 +40,7 @@ function installDependenciesWithApt {
         autopoint \
         autotools-dev \
         bison \
+        cmake \
         flex \
         gawk \
         gnome-common \
@@ -133,6 +134,7 @@ function installDependenciesWithYum {
         automake \
         bison \
         cairo-devel \
+        cmake \
         enchant-devel \
         flex \
         fontconfig-devel \
