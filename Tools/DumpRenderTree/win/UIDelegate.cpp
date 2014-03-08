@@ -41,6 +41,7 @@
 #include <wtf/Vector.h>
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <WebKit/WebKit.h>
+#include <WebKit/WebKitCOMAPI.h>
 #include <stdio.h>
 
 using std::wstring;

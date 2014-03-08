@@ -1,3 +1,11 @@
+2014-03-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed 64-bit build fix.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncher.vcxproj:
+        Do not attempt to use the /SAFESEH flag on 64-bit builds.
+        * DumpRenderTree/win/UIDelegate.cpp: Add a missing include file.
+
 2014-03-05  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r157957.
