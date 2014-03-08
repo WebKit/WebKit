@@ -1,3 +1,25 @@
+2014-03-07  Timothy Hatcher  <timothy@apple.com>
+
+        Load source maps and their resources asynchronously.
+
+        https://bugs.webkit.org/show_bug.cgi?id=112071
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/SourceMapManager.js:
+        (WebInspector.SourceMapManager.prototype.loadAndParseSourceMap):
+        (WebInspector.SourceMapManager.prototype.downloadSourceMap):
+        (WebInspector.SourceMapManager.prototype.sourceMapLoaded):
+        (WebInspector.SourceMapManager.prototype._loadAndParseSourceMap):
+        Use NetworkAgent.loadResource.
+
+        * UserInterface/Models/SourceMapResource.js:
+        (WebInspector.SourceMapResource.prototype.requestContentFromBackend.sourceMapResourceLoaded):
+        (WebInspector.SourceMapResource.prototype.createSourceCodeTextRange):
+        Use NetworkAgent.loadResource.
+
+        * UserInterface/Protocol/InspectorWebBackendCommands.js: Updated.
+
 2014-03-04  Brian Burg  <bburg@apple.com>
 
         Inspector does not restore breakpoints after a page reload

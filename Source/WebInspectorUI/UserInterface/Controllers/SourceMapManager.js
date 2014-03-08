@@ -61,7 +61,19 @@ WebInspector.SourceMapManager.prototype = {
         if (sourceMapURL in this._downloadingSourceMaps)
             return;
 
-        this._loadAndParseSourceMap(sourceMapURL, baseURL, originalSourceCode);
+        function loadAndParseSourceMap()
+        {
+            this._loadAndParseSourceMap(sourceMapURL, baseURL, originalSourceCode);
+        }
+
+        if (!WebInspector.frameResourceManager.mainFrame) {
+            // If we don't have a main frame, then we are likely in the middle of building the resource tree.
+            // Delaying until the next runloop is enough in this case to then start loading the source map.
+            setTimeout(loadAndParseSourceMap.bind(this), 0);
+            return;
+        }
+
+        loadAndParseSourceMap.call(this);
     },
 
     // Private
@@ -70,31 +82,41 @@ WebInspector.SourceMapManager.prototype = {
     {
         this._downloadingSourceMaps[sourceMapURL] = true;
 
-        // FIXME: <rdar://problem/13238886> Source Maps: Frontend needs asynchronous resource loading of content + mime type
-        var response = InspectorFrontendHost.loadResourceSynchronously(sourceMapURL);
-        if (response === undefined) {
-            this._loadAndParseFailed(sourceMapURL);
-            return;
-        }
-
-        if (response.slice(0, 3) === ")]}") {
-            var firstNewlineIndex = response.indexOf("\n");
-            if (firstNewlineIndex === -1) {
+        function sourceMapLoaded(error, content, mimeType)
+        {
+            if (error) {
                 this._loadAndParseFailed(sourceMapURL);
                 return;
             }
-            response = response.substring(firstNewlineIndex);
+
+            if (content.slice(0, 3) === ")]}") {
+                var firstNewlineIndex = content.indexOf("\n");
+                if (firstNewlineIndex === -1) {
+                    this._loadAndParseFailed(sourceMapURL);
+                    return;
+                }
+
+                content = content.substring(firstNewlineIndex);
+            }
+
+            try {
+                var payload = JSON.parse(content);
+                var baseURL = sourceMapURL.startsWith("data:") ? originalSourceCode.url : sourceMapURL;
+                var sourceMap = new WebInspector.SourceMap(baseURL, payload, originalSourceCode);
+                this._loadAndParseSucceeded(sourceMapURL, sourceMap);
+            } catch(e) {
+                this._loadAndParseFailed(sourceMapURL);
+            }
         }
 
-        try {
-            var payload = JSON.parse(response);
-            var baseURL = sourceMapURL.startsWith("data:") ? originalSourceCode.url : sourceMapURL;
-            var sourceMap = new WebInspector.SourceMap(baseURL, payload, originalSourceCode);
-            this._loadAndParseSucceeded(sourceMapURL, sourceMap);
-        } catch(e) {
-            console.error(e.message);
-            this._loadAndParseFailed(sourceMapURL);
-        }
+        var frameIdentifier = null;
+        if (originalSourceCode instanceof WebInspector.Resource && originalSourceCode.parentFrame)
+            frameIdentifier = originalSourceCode.parentFrame.id;
+
+        if (!frameIdentifier)
+            frameIdentifier = WebInspector.frameResourceManager.mainFrame.id;
+
+        NetworkAgent.loadResource(frameIdentifier, sourceMapURL, sourceMapLoaded.bind(this));
     },
 
     _loadAndParseFailed: function(sourceMapURL)

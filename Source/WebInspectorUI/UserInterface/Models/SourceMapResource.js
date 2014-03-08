@@ -67,17 +67,38 @@ WebInspector.SourceMapResource.prototype = {
 
     requestContentFromBackend: function(callback)
     {
-        function requestAsyncCallback(body, base64encoded, mimeType)
+        var inlineContent = this._sourceMap.sourceContent(this.url);
+        if (inlineContent) {
+            // Force inline content to be asynchronous to match the expected load pattern.
+            setTimeout(function() {
+                // FIXME: We don't know the MIME-type for inline content. Guess by analyzing the content?
+                // Guess by using the type of the original resource?
+                sourceMapResourceLoaded.call(this, null, inlineContent, "text/javascript");
+            }.bind(this));
+
+            return true;
+        }
+
+        function sourceMapResourceLoaded(error, body, mimeType)
         {
-            if (body === null) {
+            const base64encoded = false;
+
+            if (error) {
                 this.markAsFailed();
-                callback("Failed to load resource", body, base64encoded);
+                callback(error, body, base64encoded);
                 return;
             }
+
+            var fileExtension = WebInspector.fileExtensionForURL(this.url);
+            var fileExtensionMIMEType = WebInspector.mimeTypeForFileExtension(fileExtension, true) || "text/javascript";
+
+            // FIXME: Add support for picking the best MIME-type. Right now the file extension is the best bet.
+            mimeType = fileExtensionMIMEType;
 
             var oldType = this._type;
             var oldMIMEType = this._mimeType;
 
+            // FIXME: This is a layering violation. It should use a helper function on the Resource base-class.
             this._mimeType = mimeType;
             this._type = WebInspector.Resource.Type.fromMIMEType(this._mimeType);
 
@@ -96,7 +117,15 @@ WebInspector.SourceMapResource.prototype = {
             callback(null, body, base64encoded);
         }
 
-        this._requestResourceAsynchronously(requestAsyncCallback.bind(this));
+        var frameIdentifier = null;
+        if (this._sourceMap.originalSourceCode instanceof WebInspector.Resource && this._sourceMap.originalSourceCode.parentFrame)
+            frameIdentifier = this._sourceMap.originalSourceCode.parentFrame.id;
+
+        if (!frameIdentifier)
+            frameIdentifier = WebInspector.frameResourceManager.mainFrame.id;
+
+        NetworkAgent.loadResource(frameIdentifier, this.url, sourceMapResourceLoaded.bind(this));
+
         return true;
     },
 
@@ -128,25 +157,6 @@ WebInspector.SourceMapResource.prototype = {
         var startSourceCodeLocation = this.createSourceCodeLocation(textRange.startLine, textRange.startColumn);
         var endSourceCodeLocation = this.createSourceCodeLocation(textRange.endLine, textRange.endColumn);
         return new WebInspector.SourceCodeTextRange(this._sourceMap.originalSourceCode, startSourceCodeLocation, endSourceCodeLocation);
-    },
-
-    // Private
-
-    _requestResourceAsynchronously: function(callback)
-    {
-        // FIXME: <rdar://problem/13238886> Source Maps: Frontend needs asynchronous resource loading of content + mime type
-
-        function async()
-        {
-            var body = this._sourceMap.sourceContent(this.url) || InspectorFrontendHost.loadResourceSynchronously(this.url);
-            if (body === undefined)
-                body = null;
-            var fileExtension = WebInspector.fileExtensionForURL(this.url);
-            var mimeType = WebInspector.mimeTypeForFileExtension(fileExtension, true) || "text/javascript";
-            callback(body, false, mimeType);
-        }
-
-        setTimeout(async.bind(this), 0);
     }
 };
 

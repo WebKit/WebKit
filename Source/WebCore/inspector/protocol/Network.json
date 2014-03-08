@@ -190,6 +190,19 @@
                 { "name": "cacheDisabled", "type": "boolean", "description": "Cache disabled state." }
             ],
             "description": "Toggles ignoring cache for each request. If <code>true</code>, cache will not be used."
+        },
+        {
+            "name": "loadResource",
+            "async": true,
+            "parameters": [
+                { "name": "frameId", "$ref": "FrameId", "description": "Frame to load the resource from." },
+                { "name": "url", "type": "string", "description": "URL of the resource to load." }
+            ],
+            "returns": [
+                { "name": "content", "type": "string", "description": "Resource content." },
+                { "name": "mimeType", "type": "string", "description": "Resource mimeType." }
+            ],
+            "description": "Loads a resource in the context of a frame on the inspected page without cross origin checks."
         }
     ],
     "events": [

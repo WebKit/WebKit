@@ -34,6 +34,7 @@
 #include "InspectorWebAgentBase.h"
 #include "InspectorWebBackendDispatchers.h"
 #include "InspectorWebFrontendDispatchers.h"
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -137,6 +138,8 @@ public:
     virtual void clearBrowserCookies(ErrorString*) override;
     virtual void setCacheDisabled(ErrorString*, bool cacheDisabled) override;
 
+    virtual void loadResource(ErrorString*, const String& frameId, const String& url, PassRefPtr<LoadResourceCallback>) override;
+
 private:
     void enable();
 
@@ -149,6 +152,8 @@ private:
     bool m_cacheDisabled;
     bool m_loadingXHRSynchronously;
     RefPtr<Inspector::InspectorObject> m_extraRequestHeaders;
+
+    HashSet<unsigned long> m_hiddenRequestIdentifiers;
 
     typedef HashMap<ThreadableLoaderClient*, RefPtr<XHRReplayData>> PendingXHRReplayDataMap;
     PendingXHRReplayDataMap m_pendingXHRReplayData;

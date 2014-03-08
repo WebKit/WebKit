@@ -184,6 +184,7 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext& context)
     , m_uploadEventsAllowed(true)
     , m_uploadComplete(false)
     , m_sameOriginRequest(true)
+    , m_sendingForInspector(false)
     , m_receivedLength(0)
     , m_lastSendLineNumber(0)
     , m_lastSendColumnNumber(0)
@@ -737,7 +738,13 @@ void XMLHttpRequest::sendBytesData(const void* data, size_t length, ExceptionCod
     createRequest(ec);
 }
 
-void XMLHttpRequest::sendFromInspector(PassRefPtr<FormData> formData, ExceptionCode& ec)
+void XMLHttpRequest::sendForInspector(ExceptionCode& ec)
+{
+    m_sendingForInspector = true;
+    send(ec);
+}
+
+void XMLHttpRequest::sendForInspectorXHRReplay(PassRefPtr<FormData> formData, ExceptionCode& ec)
 {
     m_requestEntityBody = formData ? formData->deepCopy() : 0;
     createRequest(ec);
@@ -774,6 +781,7 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
 
     ResourceRequest request(m_url);
     request.setHTTPMethod(m_method);
+    request.setHiddenFromInspector(m_sendingForInspector);
 
     InspectorInstrumentation::willLoadXHR(scriptExecutionContext(), this, m_method, m_url, m_async, m_requestEntityBody ? m_requestEntityBody->deepCopy() : 0, m_requestHeaders, m_includeCredentials);
 
@@ -791,7 +799,7 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
     options.sniffContent = DoNotSniffContent;
     options.preflightPolicy = uploadEvents ? ForcePreflight : ConsiderPreflight;
     options.allowCredentials = (m_sameOriginRequest || m_includeCredentials) ? AllowStoredCredentials : DoNotAllowStoredCredentials;
-    options.crossOriginRequestPolicy = UseAccessControl;
+    options.crossOriginRequestPolicy = m_sendingForInspector ? AllowCrossOriginRequests : UseAccessControl;
     options.securityOrigin = securityOrigin();
 #if ENABLE(RESOURCE_TIMING)
     options.initiator = cachedResourceRequestInitiators().xmlhttprequest;

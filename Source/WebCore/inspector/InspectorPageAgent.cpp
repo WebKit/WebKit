@@ -979,6 +979,9 @@ PassRefPtr<Inspector::TypeBuilder::Page::FrameResourceTree> InspectorPageAgent::
     for (Vector<CachedResource*>::const_iterator it = allResources.begin(); it != allResources.end(); ++it) {
         CachedResource* cachedResource = *it;
 
+        if (cachedResource->resourceRequest().hiddenFromInspector())
+            continue;
+
         RefPtr<Inspector::TypeBuilder::Page::FrameResourceTree::Resources> resourceObject = Inspector::TypeBuilder::Page::FrameResourceTree::Resources::create()
             .setUrl(cachedResource->url())
             .setType(cachedResourceTypeJson(*cachedResource))

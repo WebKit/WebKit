@@ -109,6 +109,7 @@ public:
     String getResponseHeader(const AtomicString& name) const;
     String responseText(ExceptionCode&);
     String responseTextIgnoringResponseType() const { return m_responseBuilder.toStringPreserveCapacity(); }
+    String responseMIMEType() const;
     Document* responseXML(ExceptionCode&);
     Document* optionalResponseXML() const { return m_responseDocument.get(); }
     Blob* responseBlob();
@@ -121,7 +122,8 @@ public:
     bool responseCacheIsValid() const { return m_responseCacheIsValid; }
     void didCacheResponseJSON();
 
-    void sendFromInspector(PassRefPtr<FormData>, ExceptionCode&);
+    void sendForInspector(ExceptionCode&);
+    void sendForInspectorXHRReplay(PassRefPtr<FormData>, ExceptionCode&);
 
     // Expose HTTP validation methods for other untrusted requests.
     static bool isAllowedHTTPMethod(const String&);
@@ -183,7 +185,6 @@ private:
     virtual void didFail(const ResourceError&) override;
     virtual void didFailRedirectCheck() override;
 
-    String responseMIMEType() const;
     bool responseIsXML() const;
 
     bool initSend(ExceptionCode&);
@@ -245,6 +246,7 @@ private:
     bool m_uploadComplete;
 
     bool m_sameOriginRequest;
+    bool m_sendingForInspector;
 
     // Used for onprogress tracking
     long long m_receivedLength;
