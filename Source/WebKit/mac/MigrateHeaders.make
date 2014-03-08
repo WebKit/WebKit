@@ -231,8 +231,8 @@ $(PRIVATE_HEADERS_DIR)/WAKScrollView.h : WAKScrollView.h MigrateHeaders.make
 
 endif
 
-REPLACE_RULES = -e s/\<WebCore/\<WebKit/ -e s/DOMDOMImplementation/DOMImplementation/
-HEADER_MIGRATE_CMD = sed $(REPLACE_RULES) $< > $@
+WEBCORE_HEADER_REPLACE_RULES = -e s/\<WebCore/\<WebKit/ -e s/DOMDOMImplementation/DOMImplementation/
+WEBCORE_HEADER_MIGRATE_CMD = sed $(WEBCORE_HEADER_REPLACE_RULES) $< > $@
 
 ifeq ($(filter iphoneos iphonesimulator, $(PLATFORM_NAME)), )
 PUBLIC_HEADER_CHECK_CMD = @if grep -q "AVAILABLE.*TBD" "$<"; then line=$$(awk "/AVAILABLE.*TBD/ { print FNR; exit }" "$<" ); echo "$<:$$line: error: A class within a public header has unspecified availability."; false; fi
@@ -242,17 +242,41 @@ endif
 
 $(PUBLIC_HEADERS_DIR)/DOM% : DOMDOM% MigrateHeaders.make
 	$(PUBLIC_HEADER_CHECK_CMD)
-	$(HEADER_MIGRATE_CMD)
+	$(WEBCORE_HEADER_MIGRATE_CMD)
 
 $(PRIVATE_HEADERS_DIR)/DOM% : DOMDOM% MigrateHeaders.make
-	$(HEADER_MIGRATE_CMD)
+	$(WEBCORE_HEADER_MIGRATE_CMD)
 
 $(PUBLIC_HEADERS_DIR)/% : % MigrateHeaders.make
 	$(PUBLIC_HEADER_CHECK_CMD)
-	$(HEADER_MIGRATE_CMD)
+	$(WEBCORE_HEADER_MIGRATE_CMD)
 
 $(PRIVATE_HEADERS_DIR)/% : % MigrateHeaders.make
-	$(HEADER_MIGRATE_CMD)
+	$(WEBCORE_HEADER_MIGRATE_CMD)
 
 $(INTERNAL_HEADERS_DIR)/% : % MigrateHeaders.make
-	$(HEADER_MIGRATE_CMD)
+	$(WEBCORE_HEADER_MIGRATE_CMD)
+
+# Migration of WebKit2 headers to WebKit
+
+WEBKIT2_HEADERS = \
+    WKFoundation.h \
+    WKProcessPoolConfiguration.h \
+    WKProcessPoolConfigurationPrivate.h \
+#
+
+WEBKIT2_PUBLIC_HEADERS = $(addprefix $(PUBLIC_HEADERS_DIR)/, $(filter $(WEBKIT2_HEADERS),$(notdir $(wildcard $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework/Headers/*))))
+WEBKIT2_PRIVATE_HEADERS = $(addprefix $(PRIVATE_HEADERS_DIR)/, $(filter $(WEBKIT2_HEADERS),$(notdir $(wildcard $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework/PrivateHeaders/*))))
+
+ifeq ($(PLATFORM_NAME), macosx)
+all : $(WEBKIT2_PUBLIC_HEADERS) $(WEBKIT2_PRIVATE_HEADERS)
+endif
+
+WEBKIT2_HEADER_REPLACE_RULES = -e s/\<WebKit2/\<WebKit/
+WEBKIT2_HEADER_MIGRATE_CMD = sed $(WEBKIT2_HEADER_REPLACE_RULES) $< > $@
+
+$(PUBLIC_HEADERS_DIR)/% : $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework/Headers/% MigrateHeaders.make
+	$(WEBKIT2_HEADER_MIGRATE_CMD)
+
+$(PRIVATE_HEADERS_DIR)/% : $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework/PrivateHeaders/% MigrateHeaders.make
+	$(WEBKIT2_HEADER_MIGRATE_CMD)

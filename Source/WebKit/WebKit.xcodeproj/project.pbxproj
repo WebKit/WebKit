@@ -2031,7 +2031,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}\"\nmkdir -p \"${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\nmkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit\"\n\n# If we didn't build WebCore, use the production copy of the headers\nif [ ! -d \"${WEBCORE_PRIVATE_HEADERS_DIR}\" ]; then\n    export WEBCORE_PRIVATE_HEADERS_DIR=\"`eval 'echo ${WEBCORE_PRIVATE_HEADERS_DIR_'${PLATFORM_NAME}'_Production}'`\"\nfi\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    make -C mac -f \"MigrateHeaders.make\" -j `/usr/sbin/sysctl -n hw.activecpu`\nfi\n";
+			shellScript = "exec \"${SRCROOT}/mac/migrate-headers.sh\"";
 		};
 		3713F018142905B70036387F /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;
