@@ -150,7 +150,6 @@ void ewk_view_mixed_content_displayed_set(Evas_Object* ewkView, bool hasDisplaye
 void ewk_view_mixed_content_run_set(Evas_Object* ewkView, bool hasRun);
 
 bool ewk_view_accelerated_compositing_object_create(Evas_Object* ewkView, Evas_Native_Surface* nativeSurface, const WebCore::IntRect& rect);
-WebCore::GraphicsContext3D* ewk_view_accelerated_compositing_context_get(Evas_Object* ewkView);
 void ewk_view_root_graphics_layer_set(Evas_Object* ewkView, WebCore::GraphicsLayer* rootLayer);
 void ewk_view_mark_for_sync(Evas_Object* ewkView);
 

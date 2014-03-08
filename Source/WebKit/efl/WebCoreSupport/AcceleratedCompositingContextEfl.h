@@ -20,16 +20,16 @@
 #ifndef AcceleratedCompositingContextEfl_h
 #define AcceleratedCompositingContextEfl_h
 
-#include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
-
 #if USE(TEXTURE_MAPPER_GL)
-
+#include "EvasGLContext.h"
+#include "EvasGLSurface.h"
 #include "TextureMapperFPSCounter.h"
-#include "ewk_private.h"
+#include <wtf/Noncopyable.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
+class GraphicsLayer;
 class HostWindow;
 class TextureMapper;
 class TextureMapperLayer;
@@ -43,12 +43,13 @@ public:
     virtual void syncLayersNow();
     virtual void renderLayers();
     virtual void attachRootGraphicsLayer(GraphicsLayer* rootLayer);
-    virtual GraphicsContext3D* context();
 
 private:
     AcceleratedCompositingContext();
 
     virtual bool initialize(HostWindow*);
+
+    bool resize(const IntSize&);
 
     Evas_Object* m_view;
 
@@ -56,7 +57,10 @@ private:
     std::unique_ptr<GraphicsLayer> m_rootGraphicsLayer;
     TextureMapperLayer* m_rootTextureMapperLayer;
 
-    RefPtr<GraphicsContext3D> m_context3D;
+    OwnPtr<Evas_GL> m_evasGL;
+    OwnPtr<EvasGLContext> m_evasGLContext;
+    OwnPtr<EvasGLSurface> m_evasGLSurface;
+
     TextureMapperFPSCounter m_fpsCounter;
 };
 

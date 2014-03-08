@@ -4657,15 +4657,6 @@ bool ewk_view_accelerated_compositing_object_create(Evas_Object* ewkView, Evas_N
     return true;
 }
 
-WebCore::GraphicsContext3D* ewk_view_accelerated_compositing_context_get(Evas_Object* ewkView)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
-
-    _ewk_view_accelerated_compositing_context_create_if_needed(ewkView);
-    return priv->acceleratedCompositingContext->context();
-}
-
 void ewk_view_root_graphics_layer_set(Evas_Object* ewkView, WebCore::GraphicsLayer* rootLayer)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
