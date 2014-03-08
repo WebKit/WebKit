@@ -3,6 +3,7 @@ Tests RTCDataChannel.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS dc = pc.createDataChannel("label", {maxRetransmitTime:0, maxRetransmits:0}); threw exception Error: SyntaxError: DOM Exception 12.
 PASS dc = pc.createDataChannel("label1"); did not throw exception.
 PASS dc = pc.createDataChannel("label2", {}); did not throw exception.
 PASS dc = pc.createDataChannel("label3", {ordered:true}); did not throw exception.

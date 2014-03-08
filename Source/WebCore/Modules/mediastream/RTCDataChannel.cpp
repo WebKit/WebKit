@@ -57,12 +57,23 @@ static const AtomicString& arraybufferKeyword()
 PassRefPtr<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext* context, RTCPeerConnectionHandler* peerConnectionHandler, const String& label, const Dictionary& options, ExceptionCode& ec)
 {
     RTCDataChannelInit initData;
+    String maxRetransmitsStr;
+    String maxRetransmitTimeStr;
     options.get("ordered", initData.ordered);
     options.get("negotiated", initData.negotiated);
     options.get("id", initData.id);
-    options.get("maxRetransmits", initData.maxRetransmits);
-    options.get("maxRetransmitTime", initData.maxRetransmitTime);
+    options.get("maxRetransmits", maxRetransmitsStr);
+    options.get("maxRetransmitTime", maxRetransmitTimeStr);
     options.get("protocol", initData.protocol);
+
+    bool maxRetransmitsConversion;
+    bool maxRetransmitTimeConversion;
+    initData.maxRetransmits = maxRetransmitsStr.toUIntStrict(&maxRetransmitsConversion);
+    initData.maxRetransmitTime = maxRetransmitTimeStr.toUIntStrict(&maxRetransmitTimeConversion);
+    if (maxRetransmitsConversion && maxRetransmitTimeConversion) {
+        ec = SYNTAX_ERR;
+        return nullptr;
+    }
 
     std::unique_ptr<RTCDataChannelHandler> handler = peerConnectionHandler->createDataChannel(label, initData);
     if (!handler) {

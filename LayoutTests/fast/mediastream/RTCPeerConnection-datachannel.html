@@ -82,6 +82,7 @@
             }
 
             pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            shouldThrow('dc = pc.createDataChannel("label", {maxRetransmitTime:0, maxRetransmits:0});');
             shouldNotThrow('dc = pc.createDataChannel("label1");');
             shouldNotThrow('dc = pc.createDataChannel("label2", {});');
             shouldNotThrow('dc = pc.createDataChannel("label3", {ordered:true});');
