@@ -187,6 +187,7 @@ static HashSet<String>* supportedImageMIMETypesForEncoding;
 static HashSet<String>* supportedJavaScriptMIMETypes;
 static HashSet<String>* supportedNonImageMIMETypes;
 static HashSet<String>* supportedMediaMIMETypes;
+static HashSet<String>* pdfMIMETypes;
 static HashSet<String>* pdfAndPostScriptMIMETypes;
 static HashSet<String>* unsupportedTextMIMETypes;
 
@@ -339,15 +340,19 @@ static void initializeSupportedJavaScriptMIMETypes()
       supportedJavaScriptMIMETypes->add(types[i]);
 }
 
-static void initializePDFAndPostScriptMIMETypes()
+static void initializePDFMIMETypes()
 {
     const char* const types[] = {
         "application/pdf",
-        "text/pdf",
-        "application/postscript",
+        "text/pdf"
     };
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(types); ++i)
-        pdfAndPostScriptMIMETypes->add(types[i]);
+        pdfMIMETypes->add(types[i]);
+}
+
+static void initializePostScriptMIMETypes()
+{
+    pdfAndPostScriptMIMETypes->add("application/postscript");
 }
 
 static void initializeSupportedNonImageMimeTypes()
@@ -491,8 +496,11 @@ static void initializeMIMETypeRegistry()
     supportedImageMIMETypes = new HashSet<String>;
     initializeSupportedImageMIMETypes();
 
-    pdfAndPostScriptMIMETypes = new HashSet<String>;
-    initializePDFAndPostScriptMIMETypes();
+    pdfMIMETypes = new HashSet<String>;
+    initializePDFMIMETypes();
+
+    pdfAndPostScriptMIMETypes = new HashSet<String>(*pdfMIMETypes);
+    initializePostScriptMIMETypes();
 
     unsupportedTextMIMETypes = new HashSet<String>;
     initializeUnsupportedTextMIMETypes();
@@ -659,6 +667,14 @@ HashSet<String>& MIMETypeRegistry::getSupportedMediaMIMETypes()
     if (!supportedMediaMIMETypes)
         initializeSupportedMediaMIMETypes();
     return *supportedMediaMIMETypes;
+}
+
+
+HashSet<String>& MIMETypeRegistry::getPDFMIMETypes()
+{
+    if (!pdfMIMETypes)
+        initializeMIMETypeRegistry();
+    return *pdfMIMETypes;
 }
 
 HashSet<String>& MIMETypeRegistry::getPDFAndPostScriptMIMETypes()

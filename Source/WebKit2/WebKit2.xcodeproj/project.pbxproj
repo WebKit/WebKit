@@ -512,6 +512,8 @@
 		2DA049B4180CCCD300AAFA9E /* PlatformCALayerRemote.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA049B2180CCCD300AAFA9E /* PlatformCALayerRemote.h */; };
 		2DA049B7180CCD0A00AAFA9E /* GraphicsLayerCARemote.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA049B5180CCD0A00AAFA9E /* GraphicsLayerCARemote.cpp */; };
 		2DA049B8180CCD0A00AAFA9E /* GraphicsLayerCARemote.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA049B6180CCD0A00AAFA9E /* GraphicsLayerCARemote.h */; };
+		2DA1E4FE18C02B6A00DBC929 /* WKPDFView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA1E4FC18C02B6A00DBC929 /* WKPDFView.h */; };
+		2DA1E4FF18C02B6A00DBC929 /* WKPDFView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA1E4FD18C02B6A00DBC929 /* WKPDFView.mm */; };
 		2DA944951884E3B500ED86DB /* WKViewIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944861884E3B500ED86DB /* WKViewIOS.mm */; };
 		2DA9449E1884E4F000ED86DB /* NativeWebKeyboardEventIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944971884E4F000ED86DB /* NativeWebKeyboardEventIOS.mm */; };
 		2DA9449F1884E4F000ED86DB /* NativeWebTouchEventIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944981884E4F000ED86DB /* NativeWebTouchEventIOS.mm */; };
@@ -2276,6 +2278,8 @@
 		2DA049B2180CCCD300AAFA9E /* PlatformCALayerRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCALayerRemote.h; sourceTree = "<group>"; };
 		2DA049B5180CCD0A00AAFA9E /* GraphicsLayerCARemote.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsLayerCARemote.cpp; sourceTree = "<group>"; };
 		2DA049B6180CCD0A00AAFA9E /* GraphicsLayerCARemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerCARemote.h; sourceTree = "<group>"; };
+		2DA1E4FC18C02B6A00DBC929 /* WKPDFView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPDFView.h; path = ios/WKPDFView.h; sourceTree = "<group>"; };
+		2DA1E4FD18C02B6A00DBC929 /* WKPDFView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKPDFView.mm; path = ios/WKPDFView.mm; sourceTree = "<group>"; };
 		2DA944861884E3B500ED86DB /* WKViewIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKViewIOS.mm; path = ios/WKViewIOS.mm; sourceTree = "<group>"; };
 		2DA944971884E4F000ED86DB /* NativeWebKeyboardEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeWebKeyboardEventIOS.mm; path = ios/NativeWebKeyboardEventIOS.mm; sourceTree = "<group>"; };
 		2DA944981884E4F000ED86DB /* NativeWebTouchEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeWebTouchEventIOS.mm; path = ios/NativeWebTouchEventIOS.mm; sourceTree = "<group>"; };
@@ -4356,6 +4360,8 @@
 				0FCB4E3718BBE044000FCFC9 /* PageClientImplIOS.mm */,
 				0F0C365718C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm */,
 				0F0C365B18C05CA100F607D7 /* RemoteScrollingCoordinatorProxyIOS.mm */,
+				2DA1E4FC18C02B6A00DBC929 /* WKPDFView.h */,
+				2DA1E4FD18C02B6A00DBC929 /* WKPDFView.mm */,
 				2DA944A91884E9BA00ED86DB /* TextCheckerIOS.mm */,
 				2DF9593418A42412009785A1 /* ViewGestureControllerIOS.mm */,
 				2DAF06D418BD1A470081CEB1 /* SmartMagnificationController.h */,
@@ -6822,6 +6828,7 @@
 				BC032D7B10F4378D0058C15A /* WebDragClient.h in Headers */,
 				BCA0EF9F12332642007D3CFB /* WebEditCommandProxy.h in Headers */,
 				51064D36189781C4004B2FEB /* SQLiteIDBCursor.h in Headers */,
+				2DA1E4FE18C02B6A00DBC929 /* WKPDFView.h in Headers */,
 				BC032D7D10F4378D0058C15A /* WebEditorClient.h in Headers */,
 				0F5947A8187B517600437857 /* RemoteScrollingCoordinatorMessages.h in Headers */,
 				2684055318B86ED60022C38B /* ViewUpdateDispatcherMessages.h in Headers */,
@@ -7986,6 +7993,7 @@
 				37D0B5C81845232700F6CE7D /* WKErrorRecoveryAttempting.m in Sources */,
 				CD5C66A0134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.cpp in Sources */,
 				755422CB180650020046F6A8 /* WebOriginDataManager.cpp in Sources */,
+				2DA1E4FF18C02B6A00DBC929 /* WKPDFView.mm in Sources */,
 				BCA8C6A811E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.cpp in Sources */,
 				0FCB4E6718BBE3D9000FCFC9 /* WKPrintingView.mm in Sources */,
 				1AAB037C185F99D800EDF501 /* APIData.cpp in Sources */,

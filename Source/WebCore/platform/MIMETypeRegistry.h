@@ -91,6 +91,7 @@ public:
     static HashSet<String>& getSupportedImageMIMETypesForEncoding();
     static HashSet<String>& getSupportedNonImageMIMETypes();
     static HashSet<String>& getSupportedMediaMIMETypes();
+    static HashSet<String>& getPDFMIMETypes();
     static HashSet<String>& getPDFAndPostScriptMIMETypes();
     static HashSet<String>& getUnsupportedTextMIMETypes();
 

@@ -1,3 +1,28 @@
+2014-03-07  Tim Horton  <timothy_horton@apple.com>
+
+        [WebKit2][iOS] PDF
+        https://bugs.webkit.org/show_bug.cgi?id=129600
+        <rdar://problem/15260216>
+
+        Reviewed by Anders Carlsson.
+
+        Add a single custom content provider which installs a very primitive PDF view
+        in place of the WKContentView if a PDF is loaded in the main frame.
+
+        * Configurations/WebKit2.xcconfig:
+        Link against CorePDF, for UIPDFPageView.
+
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm:
+        (-[WKWebViewContentProviderRegistry init]):
+        Initialize the registry, using WKPDFView for all PDF MIME types.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * UIProcess/ios/WKPDFView.h: Added.
+        * UIProcess/ios/WKPDFView.mm: Added.
+        Add a very simple PDF view based on UIPDFPageView. Additional functionality
+        can come in the future; right now, we just create one view for each page, and
+        depend on CATiledLayer to only paint the pages that are being displayed.
+
 2014-03-07  Andreas Kling  <akling@apple.com>
 
         ArgumentEncoder and ArgumentDecoder should be fastmalloced.

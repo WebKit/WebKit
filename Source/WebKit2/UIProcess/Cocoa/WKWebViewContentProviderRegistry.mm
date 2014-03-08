@@ -30,8 +30,10 @@
 
 #if PLATFORM(IOS)
 
+#import "WKPDFView.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
+#import <WebCore/MIMETypeRegistry.h>
 #import <wtf/HashCountedSet.h>
 #import <wtf/HashMap.h>
 #import <wtf/text/StringHash.h>
@@ -42,6 +44,17 @@ using namespace WebKit;
 @implementation WKWebViewContentProviderRegistry {
     HashMap<String, Class <WKWebViewContentProvider>, CaseFoldingHash> _contentProviderForMIMEType;
     HashCountedSet<WebPageProxy*> _pages;
+}
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    for (auto& mimeType : WebCore::MIMETypeRegistry::getPDFMIMETypes())
+        [self registerProvider:[WKPDFView class] forMIMEType:mimeType];
+
+    return self;
 }
 
 - (void)addPage:(WebPageProxy&)page
