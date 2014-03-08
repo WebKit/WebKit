@@ -115,27 +115,45 @@ contain the following key-value pairs representing a single run of tests on a si
 
 A sample JSON:
 
-    {
-        "buildNumber": "651",
-        "buildTime": "2013-01-31T22:22:12.121051",
-        "builderName": "bot-111",
-        "builderPassword": "********"
-        "platform": "Mountain Lion",
-        "revisions": {
-            "OS X": {"revision": "10.8.2"},
-            "WebKit": {"revision": "141469", "timestamp": "2013-01-31T20:55:15.452267Z"}
+[{
+    "buildNumber": "651",
+    "buildTime": "2013-01-31T22:22:12.121051",
+    "builderName": "bot-111",
+    "builderPassword": "********",
+    "platform": "Mountain Lion",
+    "revisions": {
+        "OS X": {
+            "revision": "10.8.2"
         },
-		"tests": {
-            "PageLoadingTest": {
-                "metrics": {"Time": ["Arithmetic", "Geometric"]},
-                "tests": {
-                    "webkit.org": {
-                    "metrics": {"Time": {"current": [629.1, 654.8, 598.9]}}
+        "WebKit": {
+            "revision": "141469",
+            "timestamp": "2013-01-31T20:55:15.452267Z"
+        }
+    },
+    "tests": {
+        "PageLoadingTest": {
+            "metrics": {
+                "Time": [
+                    "Arithmetic",
+                    "Geometric"
+                ]
+            },
+            "tests": {
+                "webkit.org": {
+                    "metrics": {
+                        "Time": {
+                            "current": [
+                                629.1,
+                                654.8,
+                                598.9
+                            ]
+                        }
+                    }
                 },
                 "url": "http://www.webkit.org/"
             }
         }
     }
-
+}]
 
 FIXME: Add a section describing how the application is structured.
