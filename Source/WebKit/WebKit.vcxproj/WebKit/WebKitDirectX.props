@@ -8,7 +8,7 @@
       <AdditionalIncludeDirectories>$(DXSDK_DIR)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\$(PlatformShortName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
 </Project>

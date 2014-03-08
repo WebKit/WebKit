@@ -1,3 +1,12 @@
+2014-03-07  Alex Christensen  <achristensen@webkit.org>
+
+        [Win] Unreviewed build fix after r165310.
+
+        * WebKit.vcxproj/WebKit/WebKitDirectX.props:
+        Replaced Platform macro, which is either "Win32" or "x64"
+        with PlatformShortName macro, which is either "x86" or "x64".
+        This is correct for finding the DirectX libraries.
+
 2014-03-07  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening (for 64-bit)
