@@ -1,5 +1,17 @@
 2014-03-07  Anders Carlsson  <andersca@apple.com>
 
+        MigrateHeaders.make should remove C SPI includes from WebKit2 headers
+        https://bugs.webkit.org/show_bug.cgi?id=129937
+        <rdar://problem/15920020>
+
+        Reviewed by Tim Horton.
+
+        * MigrateHeaders.make:
+        Add WKPreferences.h to WEBKIT2_HEADERS. 
+        Add a sed rule that deletes all lines that start with a # and contain <WebKit/*Ref.h>.
+
+2014-03-07  Anders Carlsson  <andersca@apple.com>
+
         Make it possible to copy WebKit2 headers to WebKit.framework
         https://bugs.webkit.org/show_bug.cgi?id=129935
         <rdar://problem/15920020>

@@ -263,6 +263,7 @@ WEBKIT2_HEADERS = \
     WKFoundation.h \
     WKProcessPoolConfiguration.h \
     WKProcessPoolConfigurationPrivate.h \
+    WKPreferences.h \
 #
 
 WEBKIT2_PUBLIC_HEADERS = $(addprefix $(PUBLIC_HEADERS_DIR)/, $(filter $(WEBKIT2_HEADERS),$(notdir $(wildcard $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework/Headers/*))))
@@ -272,7 +273,7 @@ ifeq ($(PLATFORM_NAME), macosx)
 all : $(WEBKIT2_PUBLIC_HEADERS) $(WEBKIT2_PRIVATE_HEADERS)
 endif
 
-WEBKIT2_HEADER_REPLACE_RULES = -e s/\<WebKit2/\<WebKit/
+WEBKIT2_HEADER_REPLACE_RULES = -e s/\<WebKit2/\<WebKit/ -e /$\#.*\<WebKit\\/WK.*Ref\\.h\>/d
 WEBKIT2_HEADER_MIGRATE_CMD = sed $(WEBKIT2_HEADER_REPLACE_RULES) $< > $@
 
 $(PUBLIC_HEADERS_DIR)/% : $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework/Headers/% MigrateHeaders.make

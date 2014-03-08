@@ -1,3 +1,15 @@
+2014-03-07  Anders Carlsson  <andersca@apple.com>
+
+        MigrateHeaders.make should remove C SPI includes from WebKit2 headers
+        https://bugs.webkit.org/show_bug.cgi?id=129937
+        <rdar://problem/15920020>
+
+        Reviewed by Tim Horton.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Make WKPreferences.h and all headers it includes public. Update the post processing of WKBase.h
+        to account for WKBase.h now being a public header again.
+
 2014-03-07  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r164847): Pressing the command key while hovering an element causes it to un-hover
