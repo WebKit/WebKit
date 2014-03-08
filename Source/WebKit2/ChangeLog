@@ -1,3 +1,17 @@
+2014-03-07  Enrica Casucci  <enrica@apple.com>
+
+        [iOS WebKit2] Long-press on a link shows just "Copy".
+        https://bugs.webkit.org/show_bug.cgi?id=129938
+        <rdar://problem/16266054>
+
+        Reviewed by Benjamin Poulain.
+
+        When adding a FIXME comment, I accidentally removed the ! on
+        the if (!element) condition.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2014-03-07  Tim Horton  <timothy_horton@apple.com>
 
         [WebKit2][iOS] Main-frame custom content providers

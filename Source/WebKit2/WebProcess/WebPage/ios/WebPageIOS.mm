@@ -1466,24 +1466,21 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
         info.clickableElementName = hitNode->nodeName();
 
         Element* element = hitNode->isElementNode() ? toElement(hitNode) : 0;
-        // FIXME: should not return here but do what is under if (!elementIsLinkOrImage)
-        if (element)
-            return;
-
-        Element* linkElement = nullptr;
-        if (element->renderer() && element->renderer()->isRenderImage()) {
-            elementIsLinkOrImage = true;
-            linkElement = containingLinkElement(element);
-
-        } else if (element->isLink()) {
-            linkElement = element;
-            elementIsLinkOrImage = true;
+        if (element) {
+            Element* linkElement = nullptr;
+            if (element->renderer() && element->renderer()->isRenderImage()) {
+                elementIsLinkOrImage = true;
+                linkElement = containingLinkElement(element);
+            } else if (element->isLink()) {
+                linkElement = element;
+                elementIsLinkOrImage = true;
+            }
+            if (linkElement)
+                info.url = linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr)));
+            info.title = element->fastGetAttribute(HTMLNames::titleAttr).string();
+            if (element->renderer())
+                info.bounds = element->renderer()->absoluteBoundingBoxRect(true);
         }
-        if (linkElement)
-            info.url = linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr)));
-        info.title = element->getAttribute(HTMLNames::titleAttr).string();
-        if (element->renderer())
-            info.bounds = element->renderer()->absoluteBoundingBoxRect(true);
     }
 
     if (!elementIsLinkOrImage) {
