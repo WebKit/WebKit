@@ -1,3 +1,41 @@
+2014-03-08  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Simple compositing container layer (isSimpleContainerCompositingLayer) paints to wrong position.
+        https://bugs.webkit.org/show_bug.cgi?id=129861
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that both the simple and non-simple cases paint to the same position.
+        Simple compositing container layer codepath needs to take the fractional device pixel offset
+        into account when painting. Without the fractional value, the final paint rounding could push the
+        paint offset to a different position.
+        retina example:
+        compositing top-left: 0px 0px.
+        fractional offset: 0.3px 0.3px
+        painting coords without offseting: 0px 0px
+                           with offseting: 0.5px 0.5px
+
+        Tests: compositing/hidpi-simple-container-layer-on-device-pixel.html
+
+        * WebCore.exp.in:
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::contentsRect):
+        (WebCore::GraphicsLayer::setContentsRect):
+        (WebCore::GraphicsLayer::contentsClippingRect):
+        (WebCore::GraphicsLayer::setContentsClippingRect):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setContentsRect):
+        (WebCore::GraphicsLayerCA::setContentsClippingRect):
+        (WebCore::GraphicsLayerCA::updateContentsRects):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::updateDirectlyCompositedBackgroundColor):
+        (WebCore::RenderLayerBacking::updateDirectlyCompositedBackgroundImage):
+        (WebCore::RenderLayerBacking::contentOffsetInCompostingLayer):
+        (WebCore::RenderLayerBacking::backgroundBoxForPainting):
+        * rendering/RenderLayerBacking.h:
+
 2014-03-08  Oliver Hunt  <oliver@apple.com>
 
         SerializedScriptValue may move Identifiers between worlds

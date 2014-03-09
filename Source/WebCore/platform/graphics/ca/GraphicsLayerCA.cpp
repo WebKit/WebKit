@@ -764,7 +764,7 @@ void GraphicsLayerCA::setContentsNeedsDisplay()
     noteLayerPropertyChanged(ContentsNeedsDisplay);
 }
 
-void GraphicsLayerCA::setContentsRect(const IntRect& rect)
+void GraphicsLayerCA::setContentsRect(const FloatRect& rect)
 {
     if (rect == m_contentsRect)
         return;
@@ -773,7 +773,7 @@ void GraphicsLayerCA::setContentsRect(const IntRect& rect)
     noteLayerPropertyChanged(ContentsRectsChanged);
 }
 
-void GraphicsLayerCA::setContentsClippingRect(const IntRect& rect)
+void GraphicsLayerCA::setContentsClippingRect(const FloatRect& rect)
 {
     if (rect == m_contentsClippingRect)
         return;
@@ -2038,7 +2038,7 @@ void GraphicsLayerCA::updateContentsRects()
         clippingOrigin = m_contentsClippingRect.location();
         clippingBounds.setSize(m_contentsClippingRect.size());
 
-        contentOrigin = toLayoutPoint(m_contentsRect.location() - m_contentsClippingRect.location());
+        contentOrigin = FloatPoint(m_contentsRect.location() - m_contentsClippingRect.location());
 
         m_contentsClippingLayer->setPosition(clippingOrigin);
         m_contentsClippingLayer->setBounds(clippingBounds);

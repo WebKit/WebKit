@@ -1,3 +1,23 @@
+2014-03-08  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Simple compositing container layer (isSimpleContainerCompositingLayer) paints to wrong position.
+        https://bugs.webkit.org/show_bug.cgi?id=129861
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that both the simple and non-simple cases paint to the same position.
+        Simple compositing container layer codepath needs to take the fractional device pixel offset
+        into account when painting. Without the fractional value, the final paint rounding could push the
+        paint offset to a different position.
+        retina example:
+        compositing top-left: 0px 0px.
+        fractional offset: 0.3px 0.3px
+        painting coords without offseting: 0px 0px
+                           with offseting: 0.5px 0.5px
+
+        * compositing/hidpi-simple-container-layer-on-device-pixel-expected.html: Added.
+        * compositing/hidpi-simple-container-layer-on-device-pixel.html: Added.
+
 2014-03-08  Martin Robinson  <mrobinson@igalia.com>
 
         Skip tests on GTK+ for unimplemented features

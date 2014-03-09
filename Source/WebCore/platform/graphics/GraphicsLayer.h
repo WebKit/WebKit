@@ -30,6 +30,7 @@
 #include "Color.h"
 #include "FloatPoint.h"
 #include "FloatPoint3D.h"
+#include "FloatRect.h"
 #include "FloatSize.h"
 #include "GraphicsLayerClient.h"
 #include "IntRect.h"
@@ -59,7 +60,6 @@ typedef unsigned LayerTreeAsTextBehavior;
 
 namespace WebCore {
 
-class FloatRect;
 class GraphicsContext;
 class GraphicsLayerFactory;
 class Image;
@@ -376,11 +376,11 @@ public:
     bool hasContentsTiling() const { return !m_contentsTileSize.isEmpty(); }
 
     // Set that the position/size of the contents (image or video).
-    IntRect contentsRect() const { return m_contentsRect; }
-    virtual void setContentsRect(const IntRect& r) { m_contentsRect = r; }
+    FloatRect contentsRect() const { return m_contentsRect; }
+    virtual void setContentsRect(const FloatRect& r) { m_contentsRect = r; }
 
-    IntRect contentsClippingRect() const { return m_contentsClippingRect; }
-    virtual void setContentsClippingRect(const IntRect& r) { m_contentsClippingRect = r; }
+    FloatRect contentsClippingRect() const { return m_contentsClippingRect; }
+    virtual void setContentsClippingRect(const FloatRect& r) { m_contentsClippingRect = r; }
 
     // Transitions are identified by a special animation name that cannot clash with a keyframe identifier.
     static String animationNameForTransition(AnimatedPropertyID);
@@ -604,8 +604,8 @@ protected:
     GraphicsLayer* m_replicatedLayer; // For a replica layer, a reference to the original layer.
     FloatPoint m_replicatedLayerPosition; // For a replica layer, the position of the replica.
 
-    IntRect m_contentsRect;
-    IntRect m_contentsClippingRect;
+    FloatRect m_contentsRect;
+    FloatRect m_contentsClippingRect;
     IntPoint m_contentsTilePhase;
     IntSize m_contentsTileSize;
 

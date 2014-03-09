@@ -565,7 +565,7 @@ void TextureMapperLayer::setChildrenTransform(const TransformationMatrix& childr
     m_currentTransform.setChildrenTransform(childrenTransform);
 }
 
-void TextureMapperLayer::setContentsRect(const IntRect& contentsRect)
+void TextureMapperLayer::setContentsRect(const FloatRect& contentsRect)
 {
     if (contentsRect == m_state.contentsRect)
         return;

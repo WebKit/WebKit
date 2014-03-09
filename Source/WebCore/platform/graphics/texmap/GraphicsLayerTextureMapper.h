@@ -63,7 +63,7 @@ public:
     virtual void setContentsOpaque(bool b);
     virtual void setBackfaceVisibility(bool b);
     virtual void setOpacity(float opacity);
-    virtual void setContentsRect(const IntRect& r);
+    virtual void setContentsRect(const FloatRect&);
     virtual void setReplicatedByLayer(GraphicsLayer*);
     virtual void setContentsToImage(Image*);
     virtual void setContentsToSolidColor(const Color&);

@@ -111,8 +111,8 @@ public:
     virtual void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer);
     virtual void setContentsNeedsDisplay();
     
-    virtual void setContentsRect(const IntRect&);
-    virtual void setContentsClippingRect(const IntRect&) override;
+    virtual void setContentsRect(const FloatRect&) override;
+    virtual void setContentsClippingRect(const FloatRect&) override;
     
     virtual void suspendAnimations(double time);
     virtual void resumeAnimations();

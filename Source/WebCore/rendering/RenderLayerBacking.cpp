@@ -1556,7 +1556,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundColor(bool isSimpleCo
 
     // An unset (invalid) color will remove the solid color.
     m_graphicsLayer->setContentsToSolidColor(backgroundColor);
-    IntRect contentsRect = backgroundBox();
+    FloatRect contentsRect = backgroundBoxForPainting();
     m_graphicsLayer->setContentsRect(contentsRect);
     m_graphicsLayer->setContentsClippingRect(contentsRect);
     didUpdateContentsRect = true;
@@ -1609,7 +1609,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(bool isSimpleCo
         return;
     }
 
-    IntRect destRect = backgroundBox();
+    IntRect destRect = pixelSnappedIntRect(LayoutRect(backgroundBoxForPainting()));
     IntPoint phase;
     IntSize tileSize;
 
@@ -1945,7 +1945,7 @@ FloatPoint RenderLayerBacking::computePerspectiveOrigin(const LayoutRect& border
 // Return the offset from the top-left of this compositing layer at which the renderer's contents are painted.
 LayoutSize RenderLayerBacking::contentOffsetInCompostingLayer() const
 {
-    return LayoutSize(-m_compositedBounds.x(), -m_compositedBounds.y());
+    return LayoutSize(-m_compositedBounds.x(), -m_compositedBounds.y()) + m_devicePixelFractionFromRenderer;
 }
 
 LayoutRect RenderLayerBacking::contentsBox() const
@@ -1987,14 +1987,14 @@ static LayoutRect backgroundRectForBox(const RenderBox& box)
     return LayoutRect();
 }
 
-IntRect RenderLayerBacking::backgroundBox() const
+FloatRect RenderLayerBacking::backgroundBoxForPainting() const
 {
     if (!renderer().isBox())
-        return IntRect();
+        return FloatRect();
 
     LayoutRect backgroundBox = backgroundRectForBox(toRenderBox(renderer()));
     backgroundBox.move(contentOffsetInCompostingLayer());
-    return pixelSnappedIntRect(backgroundBox);
+    return pixelSnappedForPainting(backgroundBox, deviceScaleFactor());
 }
 
 GraphicsLayer* RenderLayerBacking::parentForSublayers() const

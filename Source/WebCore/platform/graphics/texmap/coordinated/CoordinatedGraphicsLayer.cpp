@@ -334,7 +334,7 @@ void CoordinatedGraphicsLayer::setOpacity(float opacity)
     didChangeLayerState();
 }
 
-void CoordinatedGraphicsLayer::setContentsRect(const IntRect& r)
+void CoordinatedGraphicsLayer::setContentsRect(const FloatRect& r)
 {
     if (contentsRect() == r)
         return;
@@ -822,7 +822,7 @@ void CoordinatedGraphicsLayer::resetLayerState()
 bool CoordinatedGraphicsLayer::imageBackingVisible()
 {
     ASSERT(m_coordinatedImageBacking);
-    return tiledBackingStoreVisibleRect().intersects(contentsRect());
+    return tiledBackingStoreVisibleRect().intersects(IntRect(contentsRect()));
 }
 
 void CoordinatedGraphicsLayer::releaseImageBackingIfNeeded()

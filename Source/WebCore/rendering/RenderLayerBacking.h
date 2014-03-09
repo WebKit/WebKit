@@ -194,7 +194,6 @@ public:
 #endif
 
     LayoutRect contentsBox() const;
-    IntRect backgroundBox() const;
     
     // For informative purposes only.
     CompositingLayerType compositingLayerType() const;
@@ -215,6 +214,8 @@ public:
 #endif
 
 private:
+    FloatRect backgroundBoxForPainting() const;
+
     void createPrimaryGraphicsLayer();
     void destroyGraphicsLayers();
     

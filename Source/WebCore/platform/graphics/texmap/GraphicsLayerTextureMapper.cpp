@@ -328,7 +328,7 @@ void GraphicsLayerTextureMapper::setOpacity(float value)
 
 /* \reimp (GraphicsLayer.h)
 */
-void GraphicsLayerTextureMapper::setContentsRect(const IntRect& value)
+void GraphicsLayerTextureMapper::setContentsRect(const FloatRect& value)
 {
     if (value == contentsRect())
         return;
