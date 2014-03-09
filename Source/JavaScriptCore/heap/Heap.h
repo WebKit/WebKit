@@ -301,9 +301,9 @@ namespace JSC {
 
         JSStack& stack();
         
-        JS_EXPORT_PRIVATE void incrementDeferralDepth();
+        void incrementDeferralDepth();
         void decrementDeferralDepth();
-        JS_EXPORT_PRIVATE void decrementDeferralDepthAndGCIfNeeded();
+        void decrementDeferralDepthAndGCIfNeeded();
 
         const HeapType m_heapType;
         const size_t m_ramSize;
@@ -544,6 +544,37 @@ namespace JSC {
         m_objectSpace.releaseSoon(std::move(object));
     }
 #endif
+
+
+inline void Heap::incrementDeferralDepth()
+{
+    RELEASE_ASSERT(m_deferralDepth < 100); // Sanity check to make sure this doesn't get ridiculous.
+    m_deferralDepth++;
+}
+
+inline void Heap::decrementDeferralDepth()
+{
+    RELEASE_ASSERT(m_deferralDepth >= 1);
+    m_deferralDepth--;
+}
+
+inline bool Heap::collectIfNecessaryOrDefer()
+{
+    if (isDeferred())
+        return false;
+
+    if (!shouldCollect())
+        return false;
+
+    collect();
+    return true;
+}
+
+inline void Heap::decrementDeferralDepthAndGCIfNeeded()
+{
+    decrementDeferralDepth();
+    collectIfNecessaryOrDefer();
+}
 
 } // namespace JSC
 

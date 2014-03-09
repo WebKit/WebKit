@@ -1,3 +1,22 @@
+2014-03-09  Andreas Kling  <akling@apple.com>
+
+        Inline the trivial parts of GC deferral.
+        <https://webkit.org/b/129984>
+
+        Made most of the functions called by the DeferGC RAII object inline
+        to avoid function call overhead.
+
+        Looks like ~1% progression on DYEB.
+
+        Reviewed by Geoffrey Garen.
+
+        * heap/Heap.cpp:
+        * heap/Heap.h:
+        (JSC::Heap::incrementDeferralDepth):
+        (JSC::Heap::decrementDeferralDepth):
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        (JSC::Heap::decrementDeferralDepthAndGCIfNeeded):
+
 2014-03-08  Mark Lam  <mark.lam@apple.com>
 
         32-bit x86 handleUncaughtException returns to wrong location after a stack overflow.

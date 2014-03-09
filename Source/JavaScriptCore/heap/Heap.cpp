@@ -916,18 +916,6 @@ void Heap::collect()
     }
 }
 
-bool Heap::collectIfNecessaryOrDefer()
-{
-    if (isDeferred())
-        return false;
-
-    if (!shouldCollect())
-        return false;
-
-    collect();
-    return true;
-}
-
 void Heap::suspendCompilerThreads()
 {
 #if ENABLE(DFG_JIT)
@@ -1199,26 +1187,6 @@ void Heap::zombifyDeadObjects()
     m_objectSpace.sweep();
     HeapIterationScope iterationScope(*this);
     m_objectSpace.forEachDeadCell<Zombify>(iterationScope);
-}
-
-void Heap::incrementDeferralDepth()
-{
-    RELEASE_ASSERT(m_deferralDepth < 100); // Sanity check to make sure this doesn't get ridiculous.
-    
-    m_deferralDepth++;
-}
-
-void Heap::decrementDeferralDepth()
-{
-    RELEASE_ASSERT(m_deferralDepth >= 1);
-    
-    m_deferralDepth--;
-}
-
-void Heap::decrementDeferralDepthAndGCIfNeeded()
-{
-    decrementDeferralDepth();
-    collectIfNecessaryOrDefer();
 }
 
 void Heap::writeBarrier(const JSCell* from)
