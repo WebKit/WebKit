@@ -185,6 +185,10 @@ public:
         m_windowsVirtualKeyCode = webEvent.windowsVirtualKeyCode();
         m_nativeVirtualKeyCode = webEvent.nativeVirtualKeyCode();
         m_macCharCode = webEvent.macCharCode();
+#if USE(APPKIT)
+        m_handledByInputMethod = webEvent.handledByInputMethod();
+        m_commands = webEvent.commands();
+#endif
         m_autoRepeat = webEvent.isAutoRepeat();
         m_isKeypad = webEvent.isKeypad();
         m_isSystemKey = webEvent.isSystemKey();

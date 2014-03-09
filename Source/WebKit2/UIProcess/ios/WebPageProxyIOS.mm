@@ -410,11 +410,6 @@ void WebPageProxy::extendSelection(WebCore::TextGranularity granularity)
     m_process->send(Messages::WebPage::ExtendSelection(static_cast<uint32_t>(granularity)), m_pageID);
 }
 
-void WebPageProxy::interpretQueuedKeyEvent(const EditorState&, bool&, Vector<WebCore::KeypressCommand>&)
-{
-    notImplemented();
-}
-
 void WebPageProxy::interpretKeyEvent(const EditorState& state, bool isCharEvent, bool& handled)
 {
     m_editorState = state;

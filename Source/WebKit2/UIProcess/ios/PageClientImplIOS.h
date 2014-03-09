@@ -73,7 +73,6 @@ private:
     virtual bool canUndoRedo(WebPageProxy::UndoOrRedo) override;
     virtual void executeUndoRedo(WebPageProxy::UndoOrRedo) override;
     virtual void accessibilityWebProcessTokenReceived(const IPC::DataReference&) override;
-    virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, Vector<WebCore::KeypressCommand>&) override;
     virtual bool executeSavedCommandBySelector(const String& selector) override;
     virtual void setDragImage(const WebCore::IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag) override;
     virtual void updateSecureInputState() override;

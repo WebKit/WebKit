@@ -196,12 +196,6 @@ void PageClientImpl::accessibilityWebProcessTokenReceived(const IPC::DataReferen
     [m_contentView _setAccessibilityWebProcessToken:remoteToken];
 }
 
-bool PageClientImpl::interpretKeyEvent(const NativeWebKeyboardEvent&, Vector<KeypressCommand>&)
-{
-    notImplemented();
-    return false;
-}
-
 bool PageClientImpl::interpretKeyEvent(const NativeWebKeyboardEvent& event, bool isCharEvent)
 {
     return [m_contentView _interpretKeyEvent:event.nativeEvent() isCharEvent:isCharEvent];

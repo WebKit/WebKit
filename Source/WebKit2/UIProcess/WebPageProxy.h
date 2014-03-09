@@ -1070,7 +1070,6 @@ private:
 
     // Keyboard handling
 #if PLATFORM(COCOA)
-    void interpretQueuedKeyEvent(const EditorState&, bool& handled, Vector<WebCore::KeypressCommand>&);
     void executeSavedCommandBySelector(const String& selector, bool& handled);
 #endif
 

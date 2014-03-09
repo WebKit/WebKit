@@ -1,3 +1,38 @@
+2014-03-06  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Don't perform a round-trip through WebProcess before interpreting key events
+        https://bugs.webkit.org/show_bug.cgi?id=129812
+
+        Reviewed by Darin Adler.
+
+        No significant behavior changes expected, except for Esc key processing, which now
+        dispatches a keypress before executing its default action.
+
+        * platform/KeypressCommand.h: Added.
+        (WebCore::KeypressCommand::KeypressCommand):
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        Moved KeypressCommand from dom/KeyboardEvent.h to its own header, as it needed
+        in platform/ directory now.
+
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        * dom/KeyboardEvent.h:
+        (WebCore::KeyboardEvent::handledByInputMethod):
+        (WebCore::KeyboardEvent::keypressCommands):
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        (WebCore::PlatformKeyboardEvent::handledByInputMethod):
+        (WebCore::PlatformKeyboardEvent::commands):
+        PlatformKeyboardEvent now carries results of interpreting the event by AppKit. This
+        is logically not much different from carrying charcode, and is similar to what Gtk
+        does for input methods.
+        KeyboardEvent already had keypress commands, which were added to it after construction.
+        It's still possible for WebKit1, while with WebKit2, they are provided at construction
+        time. The event now also has a boolean for whether IM handled it already.
+
 2014-03-09  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Pass FloatSize boxsize to transform animations to support device pixel sizing.

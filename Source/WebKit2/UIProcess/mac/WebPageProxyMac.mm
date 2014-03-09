@@ -348,12 +348,6 @@ void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint& 
     process().send(Messages::WebPage::PerformDictionaryLookupAtLocation(point), m_pageID);
 }
 
-void WebPageProxy::interpretQueuedKeyEvent(const EditorState& state, bool& handled, Vector<WebCore::KeypressCommand>& commands)
-{
-    m_editorState = state;
-    handled = m_pageClient.interpretKeyEvent(m_keyEventQueue.first(), commands);
-}
-
 // Complex text input support for plug-ins.
 void WebPageProxy::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput)
 {

@@ -693,6 +693,7 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
 {
 #if !PLATFORM(IOS)
+    // FIXME: Switch to WebKit2 model, interpreting the event before it's sent down to WebCore.
     Frame* frame = event->target()->toNode()->document().frame();
     WebHTMLView *webHTMLView = [[kit(frame) frameView] documentView];
     if ([webHTMLView _interpretKeyEvent:event savingCommands:YES])

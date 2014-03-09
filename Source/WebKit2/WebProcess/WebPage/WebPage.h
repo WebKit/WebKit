@@ -237,11 +237,7 @@ public:
     void layoutIfNeeded();
 
     // -- Called from WebCore clients.
-#if PLATFORM(COCOA)
-    bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*, bool saveCommands);
-#elif !PLATFORM(GTK)
     bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*);
-#endif
 
     void didStartPageTransition();
     void didCompletePageTransition();
@@ -999,8 +995,6 @@ private:
     WebCore::FloatPoint m_accessibilityPosition;
     
     RetainPtr<WKAccessibilityWebPageObject> m_mockAccessibilityElement;
-
-    WebCore::KeyboardEvent* m_keyboardEventBeingInterpreted;
 
     ViewGestureGeometryCollector m_viewGestureGeometryCollector;
 

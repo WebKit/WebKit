@@ -27,8 +27,34 @@
 #include "WebEvent.h"
 
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/KeypressCommand.h>
 
 namespace WebKit {
+
+WebKeyboardEvent::WebKeyboardEvent()
+{
+}
+
+#if USE(APPKIT)
+
+WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& unmodifiedText, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands, bool isAutoRepeat, bool isKeypad, bool isSystemKey, Modifiers modifiers, double timestamp)
+    : WebEvent(type, modifiers, timestamp)
+    , m_text(text)
+    , m_unmodifiedText(unmodifiedText)
+    , m_keyIdentifier(keyIdentifier)
+    , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
+    , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
+    , m_macCharCode(macCharCode)
+    , m_handledByInputMethod(handledByInputMethod)
+    , m_commands(commands)
+    , m_isAutoRepeat(isAutoRepeat)
+    , m_isKeypad(isKeypad)
+    , m_isSystemKey(isSystemKey)
+{
+    ASSERT(isKeyboardEventType(type));
+}
+
+#else
 
 WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& unmodifiedText, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, Modifiers modifiers, double timestamp)
     : WebEvent(type, modifiers, timestamp)
@@ -45,6 +71,12 @@ WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& 
     ASSERT(isKeyboardEventType(type));
 }
 
+#endif
+
+WebKeyboardEvent::~WebKeyboardEvent()
+{
+}
+
 void WebKeyboardEvent::encode(IPC::ArgumentEncoder& encoder) const
 {
     WebEvent::encode(encoder);
@@ -55,6 +87,10 @@ void WebKeyboardEvent::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_windowsVirtualKeyCode;
     encoder << m_nativeVirtualKeyCode;
     encoder << m_macCharCode;
+#if USE(APPKIT)
+    encoder << m_handledByInputMethod;
+    encoder << m_commands;
+#endif
     encoder << m_isAutoRepeat;
     encoder << m_isKeypad;
     encoder << m_isSystemKey;
@@ -77,6 +113,12 @@ bool WebKeyboardEvent::decode(IPC::ArgumentDecoder& decoder, WebKeyboardEvent& r
         return false;
     if (!decoder.decode(result.m_macCharCode))
         return false;
+#if USE(APPKIT)
+    if (!decoder.decode(result.m_handledByInputMethod))
+        return false;
+    if (!decoder.decode(result.m_commands))
+        return false;
+#endif
     if (!decoder.decode(result.m_isAutoRepeat))
         return false;
     if (!decoder.decode(result.m_isKeypad))

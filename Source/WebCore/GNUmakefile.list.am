@@ -6007,6 +6007,7 @@ platform_sources += \
 	Source/WebCore/platform/URL.h \
 	Source/WebCore/platform/URLHash.h \
 	Source/WebCore/platform/KeyedCoding.h \
+	Source/WebCore/platform/KeypressCommand.h \
 	Source/WebCore/platform/KillRing.h \
 	Source/WebCore/platform/KillRingNone.cpp \
 	Source/WebCore/platform/Language.cpp \

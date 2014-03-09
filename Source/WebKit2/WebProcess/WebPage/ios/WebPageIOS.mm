@@ -142,8 +142,9 @@ bool WebPage::allowsUserScaling() const
     return m_viewportConfiguration.allowsUserScaling();
 }
 
-bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event, bool)
+bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event)
 {
+    // FIXME: Interpret the event immediately upon receiving it in UI process, without sending to WebProcess first.
     bool eventWasHandled = false;
     bool sendResult = WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::InterpretKeyEvent(editorState(), event->keyEvent()->type() == PlatformKeyboardEvent::Char),
                                                                                Messages::WebPageProxy::InterpretKeyEvent::Reply(eventWasHandled), m_pageID);
@@ -206,7 +207,7 @@ void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uin
     if (!frame.editor().hasComposition()) {
         // An insertText: might be handled by other responders in the chain if we don't handle it.
         // One example is space bar that results in scrolling down the page.
-        frame.editor().insertText(text, 0);
+        frame.editor().insertText(text, nullptr);
     } else
         frame.editor().confirmComposition(text);
 }

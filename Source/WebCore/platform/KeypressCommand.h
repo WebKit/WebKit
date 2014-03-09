@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "NativeWebKeyboardEvent.h"
+#ifndef KeypressCommand_h
+#define KeypressCommand_h
 
-#if USE(APPKIT)
+#include <wtf/Assertions.h>
+#include <wtf/text/WTFString.h>
 
-#import "WebEventFactory.h"
-#import <WebCore/KeyboardEvent.h>
+#if PLATFORM(COCOA)
 
-using namespace WebCore;
+namespace WebCore {
 
-namespace WebKit {
+struct KeypressCommand {
+    KeypressCommand() { }
+    explicit KeypressCommand(const String& commandName) : commandName(commandName) { ASSERT(isASCIILower(commandName[0U])); }
+    KeypressCommand(const String& commandName, const String& text) : commandName(commandName), text(text) { ASSERT(commandName == "insertText:"); }
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(NSEvent *event, bool handledByInputMethod, const Vector<KeypressCommand>& commands)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, handledByInputMethod, commands))
-    , m_nativeEvent(event)
-{
-}
+    String commandName; // Actually, a selector name - it may have a trailing colon, and a name that can be different from an editor command name.
+    String text;
+};
 
-} // namespace WebKit
+} // namespace WebCore
 
-#endif // USE(APPKIT)
+#endif
+
+#endif // KeypressCommand_h

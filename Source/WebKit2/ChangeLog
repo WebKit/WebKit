@@ -1,3 +1,85 @@
+2014-03-06  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Don't perform a round-trip through WebProcess before interpreting key events
+        https://bugs.webkit.org/show_bug.cgi?id=129812
+
+        Reviewed by Darin Adler.
+
+        * Shared/NativeWebKeyboardEvent.h:
+        * Shared/WebEvent.h:
+        (WebKit::WebKeyboardEvent::handledByInputMethod):
+        (WebKit::WebKeyboardEvent::commands):
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformKeyboardEvent::WebKit2PlatformKeyboardEvent):
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::WebKeyboardEvent):
+        (WebKit::WebKeyboardEvent::~WebKeyboardEvent):
+        (WebKit::WebKeyboardEvent::encode):
+        (WebKit::WebKeyboardEvent::decode):
+        * Shared/mac/NativeWebKeyboardEventMac.mm:
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent):
+        * Shared/mac/WebEventFactory.h:
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        Keyboard events now carry results of interpretation with them.
+        Ideally, mouse events should also have a handledByInputMethod member, because IMs
+        can handle events, but that can wait until we have actual bugs caused by not diabling
+        default processing for these.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView becomeFirstResponder]): Updated for new NativeWebKeyboardEvent contructor
+        signature. We don't interpret the event in this code path.
+        (-[WKView doCommandBySelector:]): Added logging.
+        (-[WKView performKeyEquivalent:]): Reimplemented Esc and Cmd+period handling to avoid
+        infinite loops and re-entrancy. These two work in a unique way in AppKit.
+        Interpret key event before sending it down to WebProcess.
+        (-[WKView keyUp:]): Interpret key event before sending it down to WebProcess.
+        We need to tell IMs about the event, but key binding processing is moot, all commands
+        are executed on keydown.
+        (-[WKView keyDown:]): Interpret the event.
+        (-[WKView flagsChanged:]): Ditto.
+        (-[WKView _interpretKeyEvent:savingCommandsTo:WebCore::]): Added an assertion in
+        consumedByIM code path.
+        (-[WKView _executeSavedCommandBySelector:]): Added logging.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        Removed interpretQueuedKeyEvent/interpretKeyEvent, WebProcess no longer asks UIProcess to do this.
+
+        * WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm:
+        (WebKit::WebEditorClient::handleKeyboardEvent):
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::handleKeyboardEvent):
+        (WebKit::WebEditorClient::handleInputMethodKeydown):
+        WebPage::handleEditingKeyboardEvent is now one function instead of two with a boolean
+        switch between two behaviors.
+
+        * WebProcess/WebPage/WebPage.cpp:(WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        Removed m_keyboardEventBeingInterpreted, as we no longer send the event for interpretation.
+        This means that we sometimes have to pass a null event down to WebCore, but I wasn't
+        able to find any behavior differences from us doing so.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm: (WebKit::WebPage::handleEditingKeyboardEvent):
+        Added a FIXME.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::executeKeypressCommandsInternal): When we don't have an event,
+        use current frame as a target, just like input method messages do.
+        (WebKit::WebPage::handleEditingKeyboardEvent): This function no longer saves commands,
+        it only interprets them.
+        Added a check for Esc, as we don't want to handle it in keydown event handler.
+        (WebKit::WebPage::insertText): Pass 0 instead of m_keyboardEventBeingInterpreted.
+        (WebKit::WebPage::insertDictatedText): Ditto.
+        (WebKit::WebPage::executeKeypressCommands): Ditto.
+
 2014-03-09  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Pass FloatSize boxsize to transform animations to support device pixel sizing.

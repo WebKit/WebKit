@@ -33,6 +33,10 @@
 #if USE(APPKIT)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS NSView;
+
+namespace WebCore {
+struct KeypressCommand;
+}
 #endif
 
 #if PLATFORM(EFL)
@@ -56,7 +60,7 @@ namespace WebKit {
 class NativeWebKeyboardEvent : public WebKeyboardEvent {
 public:
 #if USE(APPKIT)
-    NativeWebKeyboardEvent(NSEvent *, NSView *);
+    NativeWebKeyboardEvent(NSEvent *, bool handledByInputMethod, const Vector<WebCore::KeypressCommand>&);
 #elif PLATFORM(GTK)
     NativeWebKeyboardEvent(const NativeWebKeyboardEvent&);
     NativeWebKeyboardEvent(GdkEvent*, const WebCore::CompositionResults&, WebCore::GtkInputMethodFilter::EventFakedForComposition);

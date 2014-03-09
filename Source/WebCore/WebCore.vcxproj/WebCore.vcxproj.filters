@@ -7964,6 +7964,9 @@
     <ClInclude Include="..\platform\URLHash.h">
       <Filter>platform</Filter>
     </ClInclude>
+    <ClInclude Include="..\platform\KeypressCommand.h">
+      <Filter>platform</Filter>
+    </ClInclude>
     <ClInclude Include="..\platform\Language.h">
       <Filter>platform</Filter>
     </ClInclude>

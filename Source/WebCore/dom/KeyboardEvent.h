@@ -24,6 +24,7 @@
 #ifndef KeyboardEvent_h
 #define KeyboardEvent_h
 
+#include "KeypressCommand.h"
 #include "UIEventWithKeyState.h"
 #include <memory>
 #include <wtf/Vector.h>
@@ -32,17 +33,6 @@ namespace WebCore {
 
 class Node;
 class PlatformKeyboardEvent;
-
-#if PLATFORM(COCOA)
-struct KeypressCommand {
-    KeypressCommand() { }
-    explicit KeypressCommand(const String& commandName) : commandName(commandName) { ASSERT(isASCIILower(commandName[0U])); }
-    KeypressCommand(const String& commandName, const String& text) : commandName(commandName), text(text) { ASSERT(commandName == "insertText:"); }
-
-    String commandName; // Actually, a selector name - it may have a trailing colon, and a name that can be different from an editor command name.
-    String text;
-};
-#endif
 
 struct KeyboardEventInit : public UIEventInit {
     KeyboardEventInit();
@@ -105,7 +95,10 @@ public:
     virtual int which() const override;
 
 #if PLATFORM(COCOA)
-    // We only have this need to store keypress command info on the Mac.
+    bool handledByInputMethod() const { return m_handledByInputMethod; }
+    const Vector<KeypressCommand>& keypressCommands() const { return m_keypressCommands; }
+
+    // The non-const version is still needed for WebKit1, which doesn't construct a complete KeyboardEvent with interpreted commands yet.
     Vector<KeypressCommand>& keypressCommands() { return m_keypressCommands; }
 #endif
 
@@ -121,6 +114,7 @@ private:
 
 #if PLATFORM(COCOA)
     // Commands that were sent by AppKit when interpreting the event. Doesn't include input method commands.
+    bool m_handledByInputMethod;
     Vector<KeypressCommand> m_keypressCommands;
 #endif
 };

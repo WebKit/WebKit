@@ -27,6 +27,7 @@
 #ifndef PlatformKeyboardEvent_h
 #define PlatformKeyboardEvent_h
 
+#include "KeypressCommand.h"
 #include "PlatformEvent.h"
 #include <wtf/WindowsExtras.h>
 #include <wtf/text/WTFString.h>
@@ -60,6 +61,9 @@ namespace WebCore {
             , m_windowsVirtualKeyCode(0)
             , m_nativeVirtualKeyCode(0)
             , m_macCharCode(0)
+#if USE(APPKIT)
+            , m_handledByInputMethod(false)
+#endif
             , m_autoRepeat(false)
             , m_isKeypad(false)
             , m_isSystemKey(false)
@@ -77,6 +81,9 @@ namespace WebCore {
             , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
             , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
             , m_macCharCode(macCharCode)
+#if USE(APPKIT)
+            , m_handledByInputMethod(false)
+#endif
             , m_autoRepeat(isAutoRepeat)
             , m_isKeypad(isKeypad)
             , m_isSystemKey(isSystemKey)
@@ -107,6 +114,11 @@ namespace WebCore {
 
         int nativeVirtualKeyCode() const { return m_nativeVirtualKeyCode; }
         int macCharCode() const { return m_macCharCode; }
+
+#if USE(APPKIT)
+        bool handledByInputMethod() const { return m_handledByInputMethod; }
+        const Vector<KeypressCommand>& commands() const { return m_commands; }
+#endif
 
         bool isAutoRepeat() const { return m_autoRepeat; }
         bool isKeypad() const { return m_isKeypad; }
@@ -150,6 +162,10 @@ namespace WebCore {
         int m_windowsVirtualKeyCode;
         int m_nativeVirtualKeyCode;
         int m_macCharCode;
+#if USE(APPKIT)
+        bool m_handledByInputMethod;
+        Vector<KeypressCommand> m_commands;
+#endif
         bool m_autoRepeat;
         bool m_isKeypad;
         bool m_isSystemKey;

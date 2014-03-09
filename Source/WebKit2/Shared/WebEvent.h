@@ -41,6 +41,12 @@ namespace IPC {
     class ArgumentEncoder;
 }
 
+#if USE(APPKIT)
+namespace WebCore {
+struct KeypressCommand;
+}
+#endif
+
 namespace WebKit {
 
 class WebEvent {
@@ -207,9 +213,14 @@ private:
 // FIXME: Move this class to its own header file.
 class WebKeyboardEvent : public WebEvent {
 public:
-    WebKeyboardEvent() { }
+    WebKeyboardEvent();
+    ~WebKeyboardEvent();
 
+#if USE(APPKIT)
+    WebKeyboardEvent(Type, const String& text, const String& unmodifiedText, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool handledByInputMethod, const Vector<WebCore::KeypressCommand>&, bool isAutoRepeat, bool isKeypad, bool isSystemKey, Modifiers, double timestamp);
+#else
     WebKeyboardEvent(Type, const String& text, const String& unmodifiedText, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, Modifiers, double timestamp);
+#endif
 
     const String& text() const { return m_text; }
     const String& unmodifiedText() const { return m_unmodifiedText; }
@@ -217,6 +228,10 @@ public:
     int32_t windowsVirtualKeyCode() const { return m_windowsVirtualKeyCode; }
     int32_t nativeVirtualKeyCode() const { return m_nativeVirtualKeyCode; }
     int32_t macCharCode() const { return m_macCharCode; }
+#if USE(APPKIT)
+    bool handledByInputMethod() const { return m_handledByInputMethod; }
+    const Vector<WebCore::KeypressCommand>& commands() const { return m_commands; }
+#endif
     bool isAutoRepeat() const { return m_isAutoRepeat; }
     bool isKeypad() const { return m_isKeypad; }
     bool isSystemKey() const { return m_isSystemKey; }
@@ -233,6 +248,10 @@ private:
     int32_t m_windowsVirtualKeyCode;
     int32_t m_nativeVirtualKeyCode;
     int32_t m_macCharCode;
+#if USE(APPKIT)
+    bool m_handledByInputMethod;
+    Vector<WebCore::KeypressCommand> m_commands;
+#endif
     bool m_isAutoRepeat;
     bool m_isKeypad;
     bool m_isSystemKey;

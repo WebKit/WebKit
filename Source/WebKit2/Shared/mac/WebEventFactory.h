@@ -36,9 +36,9 @@ namespace WebKit {
 class WebEventFactory {
 public:
 #if USE(APPKIT)
-    static WebMouseEvent createWebMouseEvent(NSEvent *event, NSView *windowView);
-    static WebWheelEvent createWebWheelEvent(NSEvent *event, NSView *windowView);
-    static WebKeyboardEvent createWebKeyboardEvent(NSEvent *event, NSView *windowView);
+    static WebMouseEvent createWebMouseEvent(NSEvent *, NSView *windowView);
+    static WebWheelEvent createWebWheelEvent(NSEvent *, NSView *windowView);
+    static WebKeyboardEvent createWebKeyboardEvent(NSEvent *, bool handledByInputMethod, const Vector<WebCore::KeypressCommand>&);
 #endif // USE(APPKIT)
 };
 

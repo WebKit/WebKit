@@ -166,22 +166,25 @@ static Frame* frameForEvent(KeyboardEvent* event)
 
 bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>& commands, KeyboardEvent* event)
 {
-    Frame* frame = frameForEvent(event);
-    ASSERT(frame->page() == corePage());
+    Frame& frame = event ? *frameForEvent(event) : m_page->focusController().focusedOrMainFrame();
+    ASSERT(frame.page() == corePage());
 
     bool eventWasHandled = false;
     for (size_t i = 0; i < commands.size(); ++i) {
         if (commands[i].commandName == "insertText:") {
-            ASSERT(!frame->editor().hasComposition());
+            if (frame.editor().hasComposition()) {
+                eventWasHandled = true;
+                frame.editor().confirmComposition(commands[i].text);
+            } else {
+                if (!frame.editor().canEdit())
+                    continue;
 
-            if (!frame->editor().canEdit())
-                continue;
-
-            // An insertText: might be handled by other responders in the chain if we don't handle it.
-            // One example is space bar that results in scrolling down the page.
-            eventWasHandled |= frame->editor().insertText(commands[i].text, event);
+                // An insertText: might be handled by other responders in the chain if we don't handle it.
+                // One example is space bar that results in scrolling down the page.
+                eventWasHandled |= frame.editor().insertText(commands[i].text, event);
+            }
         } else {
-            Editor::Command command = frame->editor().command(commandNameForSelectorName(commands[i].commandName));
+            Editor::Command command = frame.editor().command(commandNameForSelectorName(commands[i].commandName));
             if (command.isSupported()) {
                 bool commandExecutedByEditor = command.execute(event);
                 eventWasHandled |= commandExecutedByEditor;
@@ -200,53 +203,39 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
     return eventWasHandled;
 }
 
-bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event, bool saveCommands)
+bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event)
 {
-    ASSERT(!saveCommands || event->keypressCommands().isEmpty()); // Save commands once for each event.
-
     Frame* frame = frameForEvent(event);
     
     const PlatformKeyboardEvent* platformEvent = event->keyEvent();
     if (!platformEvent)
         return false;
-    Vector<KeypressCommand>& commands = event->keypressCommands();
+    const Vector<KeypressCommand>& commands = event->keypressCommands();
 
-    if ([platformEvent->macEvent() type] == NSFlagsChanged)
+    ASSERT(!platformEvent->macEvent()); // Cannot have a native event in WebProcess.
+
+    // Don't handle Esc while handling keydown event, we need to dispatch a keypress first.
+    if (platformEvent->type() != PlatformEvent::Char && platformEvent->windowsVirtualKeyCode() == VK_ESCAPE && commands.size() == 1 && commandNameForSelectorName(commands[0].commandName) == "cancelOperation")
         return false;
 
     bool eventWasHandled = false;
-    
-    if (saveCommands) {
-        KeyboardEvent* oldEvent = m_keyboardEventBeingInterpreted;
-        m_keyboardEventBeingInterpreted = event;
-        bool sendResult = WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::InterpretQueuedKeyEvent(editorState()), 
-            Messages::WebPageProxy::InterpretQueuedKeyEvent::Reply(eventWasHandled, commands), m_pageID);
-        m_keyboardEventBeingInterpreted = oldEvent;
-        if (!sendResult)
-            return false;
 
-        // An input method may make several actions per keypress. For example, pressing Return with Korean IM both confirms it and sends a newline.
-        // IM-like actions are handled immediately (so the return value from UI process is true), but there are saved commands that
-        // should be handled like normal text input after DOM event dispatch.
-        if (!event->keypressCommands().isEmpty())
-            return false;
-    } else {
-        // Are there commands that could just cause text insertion if executed via Editor?
-        // WebKit doesn't have enough information about mode to decide how they should be treated, so we leave it upon WebCore
-        // to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
-        // (e.g. Tab that inserts a Tab character, or Enter).
-        bool haveTextInsertionCommands = false;
-        for (size_t i = 0; i < commands.size(); ++i) {
-            if (frame->editor().command(commandNameForSelectorName(commands[i].commandName)).isTextInsertion())
-                haveTextInsertionCommands = true;
-        }
-        // If there are no text insertion commands, default keydown handler is the right time to execute the commands.
-        // Keypress (Char event) handler is the latest opportunity to execute.
-        if (!haveTextInsertionCommands || platformEvent->type() == PlatformEvent::Char) {
-            eventWasHandled = executeKeypressCommandsInternal(event->keypressCommands(), event);
-            event->keypressCommands().clear();
-        }
+    // Are there commands that could just cause text insertion if executed via Editor?
+    // WebKit doesn't have enough information about mode to decide how they should be treated, so we leave it upon WebCore
+    // to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
+    // (e.g. Tab that inserts a Tab character, or Enter).
+    bool haveTextInsertionCommands = false;
+    for (auto& command : commands) {
+        if (frame->editor().command(commandNameForSelectorName(command.commandName)).isTextInsertion())
+            haveTextInsertionCommands = true;
     }
+    // If there are no text insertion commands, default keydown handler is the right time to execute the commands.
+    // Keypress (Char event) handler is the latest opportunity to execute.
+    if (!haveTextInsertionCommands || platformEvent->type() == PlatformEvent::Char) {
+        eventWasHandled = executeKeypressCommandsInternal(event->keypressCommands(), event);
+        event->keypressCommands().clear();
+    }
+
     return eventWasHandled;
 }
 
@@ -302,7 +291,7 @@ void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uin
     if (!frame.editor().hasComposition()) {
         // An insertText: might be handled by other responders in the chain if we don't handle it.
         // One example is space bar that results in scrolling down the page.
-        handled = frame.editor().insertText(text, m_keyboardEventBeingInterpreted);
+        handled = frame.editor().insertText(text, nullptr);
     } else {
         handled = true;
         frame.editor().confirmComposition(text);
@@ -322,7 +311,7 @@ void WebPage::insertDictatedText(const String& text, uint64_t replacementRangeSt
     }
 
     ASSERT(!frame.editor().hasComposition());
-    handled = frame.editor().insertDictatedText(text, dictationAlternativeLocations, m_keyboardEventBeingInterpreted);
+    handled = frame.editor().insertDictatedText(text, dictationAlternativeLocations, nullptr);
     newState = editorState();
 }
 
@@ -436,7 +425,7 @@ void WebPage::firstRectForCharacterRange(uint64_t location, uint64_t length, Web
 
 void WebPage::executeKeypressCommands(const Vector<WebCore::KeypressCommand>& commands, bool& handled, EditorState& newState)
 {
-    handled = executeKeypressCommandsInternal(commands, m_keyboardEventBeingInterpreted);
+    handled = executeKeypressCommandsInternal(commands, nullptr);
     newState = editorState();
 }
 

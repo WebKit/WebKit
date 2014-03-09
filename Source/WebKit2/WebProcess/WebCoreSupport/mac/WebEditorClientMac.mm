@@ -62,13 +62,13 @@ namespace WebKit {
     
 void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {
-    if (m_page->handleEditingKeyboardEvent(event, false))
+    if (m_page->handleEditingKeyboardEvent(event))
         event->setDefaultHandled();
 }
 
 void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
 {
-    if (m_page->handleEditingKeyboardEvent(event, true))
+    if (event->handledByInputMethod())
         event->setDefaultHandled();
 }
     

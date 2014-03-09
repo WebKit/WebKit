@@ -18947,6 +18947,7 @@
     <ClInclude Include="..\platform\graphics\win\SharedGDIObject.h" />
     <ClInclude Include="..\platform\HistogramSupport.h" />
     <ClInclude Include="..\platform\HostWindow.h" />
+    <ClInclude Include="..\platform\KeypressCommand.h" />
     <ClInclude Include="..\platform\KillRing.h" />
     <ClInclude Include="..\platform\URL.h" />
     <ClInclude Include="..\platform\URLHash.h" />

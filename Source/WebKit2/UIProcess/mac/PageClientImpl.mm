@@ -336,11 +336,6 @@ void PageClientImpl::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
     return (undoOrRedo == WebPageProxy::Undo) ? [[m_wkView undoManager] undo] : [[m_wkView undoManager] redo];
 }
 
-bool PageClientImpl::interpretKeyEvent(const NativeWebKeyboardEvent& event, Vector<WebCore::KeypressCommand>& commands)
-{
-    return [m_wkView _interpretKeyEvent:event.nativeEvent() savingCommandsTo:commands];
-}
-
 void PageClientImpl::setDragImage(const IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag)
 {
     RetainPtr<CGImageRef> dragCGImage = dragImage->makeCGImage();

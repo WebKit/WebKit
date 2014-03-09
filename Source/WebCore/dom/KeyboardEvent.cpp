@@ -102,6 +102,9 @@ KeyboardEventInit::KeyboardEventInit()
 KeyboardEvent::KeyboardEvent()
     : m_location(DOM_KEY_LOCATION_STANDARD)
     , m_altGraphKey(false)
+#if PLATFORM(COCOA)
+    , m_handledByInputMethod(false)
+#endif
 {
 }
 
@@ -112,6 +115,10 @@ KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, AbstractView* vie
     , m_keyIdentifier(key.keyIdentifier())
     , m_location(keyLocationCode(key))
     , m_altGraphKey(false)
+#if PLATFORM(COCOA)
+    , m_handledByInputMethod(key.handledByInputMethod())
+    , m_keypressCommands(key.commands())
+#endif
 {
 }
 
@@ -120,6 +127,9 @@ KeyboardEvent::KeyboardEvent(const AtomicString& eventType, const KeyboardEventI
     , m_keyIdentifier(initializer.keyIdentifier)
     , m_location(initializer.location)
     , m_altGraphKey(false)
+#if PLATFORM(COCOA)
+    , m_handledByInputMethod(false)
+#endif
 {
 }
 

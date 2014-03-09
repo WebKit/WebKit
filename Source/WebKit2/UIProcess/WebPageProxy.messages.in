@@ -261,7 +261,6 @@ messages -> WebPageProxy {
     DidPerformDictionaryLookup(WebKit::AttributedString text, WebKit::DictionaryPopupInfo dictionaryPopupInfo)
 
     # Keyboard input support messages
-    InterpretQueuedKeyEvent(WebKit::EditorState state) -> (bool handled, Vector<WebCore::KeypressCommand> savedCommands)
     ExecuteSavedCommandBySelector(String selector) -> (bool handled)
 
     # Remote accessibility messages

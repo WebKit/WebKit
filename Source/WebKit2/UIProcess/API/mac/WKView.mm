@@ -345,7 +345,7 @@ struct WKViewInterpretKeyEventsParameters {
         NSEvent *keyboardEvent = nil;
         if ([event type] == NSKeyDown || [event type] == NSKeyUp)
             keyboardEvent = event;
-        _data->_page->setInitialFocus(direction == NSSelectingNext, keyboardEvent != nil, NativeWebKeyboardEvent(keyboardEvent, self));
+        _data->_page->setInitialFocus(direction == NSSelectingNext, keyboardEvent != nil, NativeWebKeyboardEvent(keyboardEvent, false, Vector<KeypressCommand>()));
     }
     return YES;
 }
@@ -1225,6 +1225,7 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
     if (parameters && !isFromInputMethod) {
         KeypressCommand command(NSStringFromSelector(selector));
         parameters->commands->append(command);
+        LOG(TextInput, "...stored");
         _data->_page->registerKeypressCommandName(command.commandName);
     } else {
         // FIXME: Send the command to Editor synchronously and only send it along the
@@ -1301,18 +1302,29 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
     [[event retain] autorelease];
-    
-    BOOL eventWasSentToWebCore = (_data->_keyDownEventBeingResent == event);
 
-    if (!eventWasSentToWebCore)
-        [self _disableComplexTextInputIfNecessary];
+    // We get Esc key here after processing either Esc or Cmd+period. The former starts as a keyDown, and the latter starts as a key equivalent,
+    // but both get transformed to a cancelOperation: command, executing which passes an Esc key event to -performKeyEquivalent:.
+    // Don't interpret this event again, avoiding re-entrancy and infinite loops.
+    if ([[event charactersIgnoringModifiers] isEqualToString:@"\e"] && !([event modifierFlags] & NSDeviceIndependentModifierFlagsMask))
+        return [super performKeyEquivalent:event];
+
+    // If we are already re-sending the event, then WebCore has already seen it, no need for custom processing.
+    BOOL eventWasSentToWebCore = (_data->_keyDownEventBeingResent == event);
+    if (eventWasSentToWebCore)
+        return [super performKeyEquivalent:event];
+
+    ASSERT(event == [NSApp currentEvent]);
+
+    [self _disableComplexTextInputIfNecessary];
 
     // Pass key combos through WebCore if there is a key binding available for
     // this event. This lets web pages have a crack at intercepting key-modified keypresses.
-    // But don't do it if we have already handled the event.
-    // Pressing Esc results in a fake event being sent - don't pass it to WebCore.
-    if (!eventWasSentToWebCore && event == [NSApp currentEvent] && self == [[self window] firstResponder]) {
-        _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(event, self));
+    // FIXME: Why is the firstResponder check needed?
+    if (self == [[self window] firstResponder]) {
+        Vector<KeypressCommand> commands;
+        BOOL handledByInputMethod = [self _interpretKeyEvent:event savingCommandsTo:commands];
+        _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(event, handledByInputMethod, commands));
         return YES;
     }
     
@@ -1322,7 +1334,11 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 - (void)keyUp:(NSEvent *)theEvent
 {
     LOG(TextInput, "keyUp:%p %@", theEvent, theEvent);
-    _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, self));
+
+    Vector<KeypressCommand> commands;
+    BOOL handledByInputMethod = [self _interpretKeyEvent:theEvent savingCommandsTo:commands];
+
+    _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, handledByInputMethod, commands));
 }
 
 - (void)_disableComplexTextInputIfNecessary
@@ -1396,7 +1412,17 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
         [super keyDown:theEvent];
         return;
     }
-    _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, self));
+
+    Vector<KeypressCommand> commands;
+    BOOL handledByInputMethod = [self _interpretKeyEvent:theEvent savingCommandsTo:commands];
+    if (!commands.isEmpty()) {
+        // An input method may make several actions per keypress. For example, pressing Return with Korean IM both confirms it and sends a newline.
+        // IM-like actions are handled immediately (so the return value from UI process is true), but there are saved commands that
+        // should be handled like normal text input after DOM event dispatch.
+        handledByInputMethod = NO;
+    }
+
+    _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, handledByInputMethod, commands));
 }
 
 - (void)flagsChanged:(NSEvent *)theEvent
@@ -1414,7 +1440,10 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
     if (!keyCode || keyCode == 10 || keyCode == 63)
         return;
 
-    _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, self));
+    Vector<KeypressCommand> commands;
+    BOOL handledByInputMethod = [self _interpretKeyEvent:theEvent savingCommandsTo:commands];
+
+    _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, handledByInputMethod, commands));
 }
 
 - (void)_executeSavedKeypressCommands
@@ -2310,11 +2339,12 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     LOG(TextInput, "-> interpretKeyEvents:%p %@", event, event);
     [self interpretKeyEvents:[NSArray arrayWithObject:event]];
 
-    _data->_interpretKeyEventsParameters = 0;
+    _data->_interpretKeyEventsParameters = nullptr;
 
     // An input method may consume an event and not tell us (e.g. when displaying a candidate window),
     // in which case we should not bubble the event up the DOM.
     if (parameters.consumedByIM) {
+        ASSERT(commands.isEmpty());
         LOG(TextInput, "...event %p was consumed by an input method", event);
         return YES;
     }
@@ -2823,6 +2853,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (bool)_executeSavedCommandBySelector:(SEL)selector
 {
+    LOG(TextInput, "Executing previously saved command %s", sel_getName(selector));
     // The sink does two things: 1) Tells us if the responder went unhandled, and
     // 2) prevents any NSBeep; we don't ever want to beep here.
     RetainPtr<WKResponderChainSink> sink = adoptNS([[WKResponderChainSink alloc] initWithResponderChain:self]);
