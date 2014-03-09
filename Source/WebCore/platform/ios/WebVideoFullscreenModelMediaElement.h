@@ -30,6 +30,7 @@
 #if PLATFORM(IOS)
 
 #include <WebCore/EventListener.h>
+#include <WebCore/FloatRect.h>
 #include <WebCore/PlatformLayer.h>
 #include <WebCore/WebVideoFullscreenModel.h>
 #include <wtf/RefPtr.h>
@@ -41,27 +42,30 @@ class WebVideoFullscreenInterface;
 
 class WebVideoFullscreenModelMediaElement : public WebVideoFullscreenModel, public EventListener {
     RefPtr<HTMLMediaElement> m_mediaElement;
-    RetainPtr<PlatformLayer> m_borrowedVideoLayer;
+    RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     bool m_isListening;
     WebVideoFullscreenInterface* m_videoFullscreenInterface;
+    FloatRect m_videoFrame;
     
 public:
     WebVideoFullscreenModelMediaElement();
     virtual ~WebVideoFullscreenModelMediaElement();
     void setWebVideoFullscreenInterface(WebVideoFullscreenInterface* interface) {m_videoFullscreenInterface = interface;}
     void setMediaElement(HTMLMediaElement*);
+    void setVideoFullscreenLayer(PlatformLayer*);
     
     virtual void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) override;
     bool operator==(const EventListener& rhs) override
         {return static_cast<WebCore::EventListener*>(this) == &rhs;}
 
-    virtual void borrowVideoLayer() override;
-    virtual void returnVideoLayer() override;
     virtual void play() override;
     virtual void pause() override;
     virtual void togglePlayState() override;
     virtual void seekToTime(double time) override;
     virtual void requestExitFullscreen() override;
+    virtual void setVideoLayerFrame(FloatRect) override;
+    virtual void setVideoLayerGravity(WebVideoFullscreenModel::VideoGravity) override;
+
 };
 
 }

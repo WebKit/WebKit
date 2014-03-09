@@ -26,8 +26,7 @@ messages -> WebVideoFullscreenManagerProxy {
     SetVideoDimensions(bool hasVideo, unsigned width, unsigned height)
     SetDuration(double duration)
     SetRate(bool isPlaying, double rate)
-    EnterFullscreen()
-    WillLendVideoLayerWithID(WebCore::GraphicsLayer::PlatformLayerID videoLayerID)
+    EnterFullscreenWithID(uint32_t videoLayerID)
     ExitFullscreen()
 }
 #endif

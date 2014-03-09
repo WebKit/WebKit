@@ -41,21 +41,18 @@ OBJC_CLASS UIView;
 namespace WebKit {
 
 class WebPageProxy;
-class RemoteLayerTreeTransaction;
 
 class WebVideoFullscreenManagerProxy : public WebCore::WebVideoFullscreenInterfaceAVKit, public WebCore::WebVideoFullscreenChangeObserver, public WebCore::WebVideoFullscreenModel, private IPC::MessageReceiver {
 public:
     static PassRefPtr<WebVideoFullscreenManagerProxy> create(WebPageProxy&);
     virtual ~WebVideoFullscreenManagerProxy();
 
-    void didCommitLayerTree(const RemoteLayerTreeTransaction&);
-    
 private:
     explicit WebVideoFullscreenManagerProxy(WebPageProxy&);
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
     // Translate to FullscreenInterface
-    virtual void willLendVideoLayerWithID(WebCore::GraphicsLayer::PlatformLayerID);
+    virtual void enterFullscreenWithID(uint32_t);
 
     // Fullscreen Observer
     virtual void requestExitFullscreen() override;
@@ -67,13 +64,11 @@ private:
     virtual void pause() override;
     virtual void togglePlayState() override;
     virtual void seekToTime(double) override;
-    virtual void borrowVideoLayer() override;
-    virtual void returnVideoLayer() override;
+    virtual void setVideoLayerFrame(WebCore::FloatRect) override;
+    virtual void setVideoLayerGravity(WebCore::WebVideoFullscreenModel::VideoGravity) override;
 
     WebPageProxy* m_page;
-    bool m_enterFullscreenAfterVideoLayerUnparentedTransaction;
-    WebCore::GraphicsLayer::PlatformLayerID m_videoLayerID;
-    RetainPtr<UIView> m_videoView;
+    RetainPtr<PlatformLayer> m_layerHost;
 };
     
 } // namespace WebKit

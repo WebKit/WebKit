@@ -2638,8 +2638,6 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
     layerTransaction.setMinimumScaleFactor(minimumPageScaleFactor());
     layerTransaction.setMaximumScaleFactor(maximumPageScaleFactor());
     layerTransaction.setAllowsUserScaling(allowsUserScaling());
-    if (m_videoFullscreenManager)
-        m_videoFullscreenManager->willCommitLayerTree(layerTransaction);
 #endif
 }
 #endif

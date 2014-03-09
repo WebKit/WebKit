@@ -27,11 +27,11 @@
 
 #if PLATFORM(IOS)
 
-#include "RemoteLayerTreeTransaction.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include "WebVideoFullscreenManagerMessages.h"
 #include "WebVideoFullscreenManagerProxyMessages.h"
+#include <QuartzCore/CoreAnimation.h>
 #include <WebCore/Event.h>
 #include <WebCore/EventNames.h>
 #include <WebCore/HTMLVideoElement.h>
@@ -42,7 +42,7 @@
 using namespace WebCore;
 
 namespace WebKit {
-    
+
 PassRefPtr<WebVideoFullscreenManager> WebVideoFullscreenManager::create(PassRefPtr<WebPage> page)
 {
     return adoptRef(new WebVideoFullscreenManager(page));
@@ -50,7 +50,6 @@ PassRefPtr<WebVideoFullscreenManager> WebVideoFullscreenManager::create(PassRefP
 
 WebVideoFullscreenManager::WebVideoFullscreenManager(PassRefPtr<WebPage> page)
     : m_page(page.get())
-    , m_sendUnparentVideoLayerTransaction(false)
     , m_isAnimating(false)
     , m_targetIsFullscreen(false)
     , m_isFullscreen(false)
@@ -64,19 +63,9 @@ WebVideoFullscreenManager::~WebVideoFullscreenManager()
     WebProcess::shared().removeMessageReceiver(Messages::WebVideoFullscreenManager::messageReceiverName(), m_page->pageID());
 }
 
-void WebVideoFullscreenManager::willCommitLayerTree(RemoteLayerTreeTransaction& transaction)
-{
-    if (m_sendUnparentVideoLayerTransaction) {
-        transaction.addVideoLayerIDPendingFullscreen(m_platformCALayer->layerID());
-        m_sendUnparentVideoLayerTransaction = false;
-    }
-}
-    
 bool WebVideoFullscreenManager::supportsFullscreen(const Node* node) const
 {
-    if (!Settings::avKitEnabled())
-        return false;
-    return isHTMLVideoElement(node);
+    return Settings::avKitEnabled() && isHTMLVideoElement(node);
 }
 
 void WebVideoFullscreenManager::enterFullscreenForNode(Node* node)
@@ -84,37 +73,43 @@ void WebVideoFullscreenManager::enterFullscreenForNode(Node* node)
     ASSERT(node);
     m_node = node;
     m_targetIsFullscreen = true;
-    
+
     if (m_isAnimating)
         return;
-    
+
     m_isAnimating = true;
     setMediaElement(toHTMLMediaElement(node));
-    enterFullscreen();
+
+    PlatformLayer* videoLayer = [CALayer layer];
+    m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess();
+    m_layerHostingContext->setRootLayer(videoLayer);
+    setVideoFullscreenLayer(videoLayer);
+
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::EnterFullscreenWithID(m_layerHostingContext->contextID()), m_page->pageID());
 }
 
 void WebVideoFullscreenManager::exitFullscreenForNode(Node*)
 {
     m_node.clear();
     m_targetIsFullscreen = false;
-    
+
     if (m_isAnimating)
         return;
-    
+
     m_isAnimating = true;
-    exitFullscreen();
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::ExitFullscreen(), m_page->pageID());
 }
 
 void WebVideoFullscreenManager::setDuration(double duration)
 {
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetDuration(duration), m_page->pageID());
 }
-    
+
 void WebVideoFullscreenManager::setCurrentTime(double currentTime, double anchorTime)
 {
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetCurrentTime(currentTime, anchorTime), m_page->pageID());
 }
-    
+
 void WebVideoFullscreenManager::setRate(bool isPlaying, float playbackRate)
 {
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetRate(isPlaying, playbackRate), m_page->pageID());
@@ -124,39 +119,16 @@ void WebVideoFullscreenManager::setVideoDimensions(bool hasVideo, float width, f
 {
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetVideoDimensions(hasVideo, width, height), m_page->pageID());
 }
-    
-void WebVideoFullscreenManager::willLendVideoLayer(PlatformLayer* videoLayer)
-{
-    m_platformCALayer = PlatformCALayer::platformCALayer(videoLayer);
-    m_sendUnparentVideoLayerTransaction = !!m_platformCALayer;
-    
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::WillLendVideoLayerWithID(m_platformCALayer ? m_platformCALayer->layerID() : 0), m_page->pageID());
-}
-    
-void WebVideoFullscreenManager::didLendVideoLayer()
-{
-    // no-op
-    // this will be sent through a RemoteLayerTreeTransaction
-}
 
-void WebVideoFullscreenManager::enterFullscreen()
-{
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::EnterFullscreen(), m_page->pageID());
-}
-    
-void WebVideoFullscreenManager::exitFullscreen()
-{
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::ExitFullscreen(), m_page->pageID());
-}
-    
 void WebVideoFullscreenManager::didEnterFullscreen()
 {
     m_isAnimating = false;
     m_isFullscreen = false;
-    
+
     if (m_targetIsFullscreen)
         return;
 
+    // exit fullscreen now if it was previously requested during an animation.
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^ {
         exitFullscreenForNode(m_node.get());
@@ -169,16 +141,26 @@ void WebVideoFullscreenManager::didExitFullscreen()
     m_isAnimating = false;
     m_isFullscreen = false;
 
+    m_layerHostingContext->setRootLayer(nullptr);
+    m_layerHostingContext = nullptr;
+    setVideoFullscreenLayer(nullptr);
+
     setMediaElement(nullptr);
 
     if (!m_targetIsFullscreen)
         return;
 
+    // enter fullscreen now if it was previously requested during an animation.
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^ {
         enterFullscreenForNode(m_node.get());
         protect.clear();
     });
+}
+    
+void WebVideoFullscreenManager::setVideoLayerGravityEnum(unsigned gravity)
+{
+    setVideoLayerGravity((WebVideoFullscreenModel::VideoGravity)gravity);
 }
 
 } // namespace WebKit

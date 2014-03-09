@@ -683,7 +683,7 @@
 		3F87B9C0158940D80090FF62 /* WebColorPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BF158940D80090FF62 /* WebColorPicker.h */; };
 		3F889D14188778C900FEADAF /* WebVideoFullscreenManagerProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3F889D12188778C900FEADAF /* WebVideoFullscreenManagerProxy.mm */; };
 		3F889D15188778C900FEADAF /* WebVideoFullscreenManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F889D13188778C900FEADAF /* WebVideoFullscreenManagerProxy.h */; };
-		3F889D171887859300FEADAF /* WebVideoFullscreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F889D0D1887699C00FEADAF /* WebVideoFullscreenManager.cpp */; };
+		3F889D171887859300FEADAF /* WebVideoFullscreenManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3F889D0D1887699C00FEADAF /* WebVideoFullscreenManager.mm */; };
 		4F601432155C5AA2001FBDE0 /* BlockingResponseMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */; };
 		51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */; };
 		51032F18180F73BB00961BB7 /* WebToDatabaseProcessConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51032F16180F73BB00961BB7 /* WebToDatabaseProcessConnection.cpp */; };
@@ -2454,7 +2454,7 @@
 		3F87B9BA15893F630090FF62 /* WebColorChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorChooser.cpp; sourceTree = "<group>"; };
 		3F87B9BB15893F630090FF62 /* WebColorChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorChooser.h; sourceTree = "<group>"; };
 		3F87B9BF158940D80090FF62 /* WebColorPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorPicker.h; sourceTree = "<group>"; };
-		3F889D0D1887699C00FEADAF /* WebVideoFullscreenManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebVideoFullscreenManager.cpp; path = ios/WebVideoFullscreenManager.cpp; sourceTree = "<group>"; };
+		3F889D0D1887699C00FEADAF /* WebVideoFullscreenManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebVideoFullscreenManager.mm; path = ios/WebVideoFullscreenManager.mm; sourceTree = "<group>"; };
 		3F889D0E1887699C00FEADAF /* WebVideoFullscreenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVideoFullscreenManager.h; path = ios/WebVideoFullscreenManager.h; sourceTree = "<group>"; };
 		3F889D101887710000FEADAF /* WebVideoFullscreenManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebVideoFullscreenManager.messages.in; path = ios/WebVideoFullscreenManager.messages.in; sourceTree = "<group>"; };
 		3F889D12188778C900FEADAF /* WebVideoFullscreenManagerProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebVideoFullscreenManagerProxy.mm; path = ios/WebVideoFullscreenManagerProxy.mm; sourceTree = "<group>"; };
@@ -4393,7 +4393,7 @@
 		2DA944B11884E9DF00ED86DB /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				3F889D0D1887699C00FEADAF /* WebVideoFullscreenManager.cpp */,
+				3F889D0D1887699C00FEADAF /* WebVideoFullscreenManager.mm */,
 				3F889D0E1887699C00FEADAF /* WebVideoFullscreenManager.h */,
 				3F889D101887710000FEADAF /* WebVideoFullscreenManager.messages.in */,
 			);
@@ -8508,7 +8508,7 @@
 				51FCB18817BBFE0300394CD8 /* SynchronousNetworkLoaderClient.cpp in Sources */,
 				3F418EFB1887BD97002795FD /* WebVideoFullscreenManagerProxyMessageReceiver.cpp in Sources */,
 				BCD597D6112B56DC00EC8C23 /* WKPage.cpp in Sources */,
-				3F889D171887859300FEADAF /* WebVideoFullscreenManager.cpp in Sources */,
+				3F889D171887859300FEADAF /* WebVideoFullscreenManager.mm in Sources */,
 				BC7B633812A45ABA00D174A4 /* WKPageGroup.cpp in Sources */,
 				BCE17B7D1381F1170012A641 /* WKPagePrivateMac.cpp in Sources */,
 				7C135AA8173B0BCA00586AE2 /* WKPluginInformation.cpp in Sources */,

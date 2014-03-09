@@ -183,9 +183,6 @@ public:
     bool allowsUserScaling() const { return m_allowsUserScaling; }
     void setAllowsUserScaling(bool allowsUserScaling) { m_allowsUserScaling = allowsUserScaling; }
     
-    bool isVideoLayerIDPendingFullscreen(WebCore::GraphicsLayer::PlatformLayerID layerID) const { return m_videoLayerIDsPendingFullscreen.contains(layerID); }
-    void addVideoLayerIDPendingFullscreen(WebCore::GraphicsLayer::PlatformLayerID layerID) { m_videoLayerIDsPendingFullscreen.append(layerID); }
-
 private:
     WebCore::GraphicsLayer::PlatformLayerID m_rootLayerID;
     LayerPropertiesMap m_changedLayerProperties;

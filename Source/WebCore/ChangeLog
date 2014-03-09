@@ -1,3 +1,145 @@
+2014-03-08  Jeremy Jones  <jeremyj@apple.com>
+
+        Allow media element to supply the video layer after fullscreen transition has already begun.
+        https://bugs.webkit.org/show_bug.cgi?id=129870
+
+        Reviewed by Eric Carlson.
+
+        Instead of borrowing the videolayer from the HTMLMediaElement, WebVideoFullscreen now supplies a layer to HTMLMediaElement to fill in as needed and at the appropriate time.
+
+        This allows fullscreen even if the video layer hasn't yet been created. And in the future it allows MediaPlayer to supply other layers such as closed captions. 
+
+        * WebCore.exp.in:
+        Remove exports related to borrowing and lend the video layer.
+        Add exports for supplying a layer to fullscreen and keepying the frame and gravity properties in sync.
+
+        * html/HTMLMediaElement.cpp:
+        Remove the concept of borrowing the platform layer.
+        Add the concept of a supplied m_videoFullscreenLayer, into which the media player can add layers.
+        When the m_videoFullscreenFrame is supplied, don't show the video layer inline any more.
+        Stash video layer properties in case the media player is not yet created.
+
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        Initialize gravity to the default. Remove m_platformLayerBorrowed.
+
+        (WebCore::HTMLMediaElement::platformLayer):
+        When we have a m_videoFullscreenLayer, don't show video inline.
+
+        (WebCore::HTMLMediaElement::setVideoFullscreenLayer):
+        Pass along the m_videoFullscreenLayer to the MediaPlayer if available or just stash it for later.
+
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+        Pass along video fullscreen properties that we may have accumulated before the MediaPlayer was created.
+
+        (WebCore::HTMLMediaElement::setVideoFullscreenGravity):
+        Stash the gravity property, pass it along to the media player if possible.
+
+        * html/HTMLMediaElement.h:
+        Remove concept of borrowing the video layer. Add properties for a supplied videoFullscreenLayer.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::setVideoFullscreenLayer):
+        Forward on to internal implementation.
+
+        (WebCore::MediaPlayer::setVideoFullscreenFrame):
+        Forward on to internal implementation.
+
+        (WebCore::MediaPlayer::setVideoFullscreenGravity):
+        Forward on to internal implementation.
+
+        * platform/graphics/MediaPlayer.h:
+        Add methods for video fullscreen Layer, Frame and Gravity.
+
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setVideoFullscreenLayer):
+        Add default implementation.
+
+        (WebCore::MediaPlayerPrivateInterface::setVideoFullscreenFrame):
+        Add default implementation.
+        
+        (WebCore::MediaPlayerPrivateInterface::setVideoFullscreenGravity):
+        Add default implementation.
+        
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        Add support for fullscreen video layer, frame and gravity.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC):
+        Init m_videoFullscreenGravity. 
+
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer):
+        Apply cached properties once video layer is created and add to the fullscreen layer.
+
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer):
+        Cache the property value. Add video layer right away available.
+
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame):
+        Cache the property value. Apply to video layer right away if available.
+
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenGravity):
+        Cache the property value. Apply to video layer right away if available.
+
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        Supply a fullscreen video layer to the WebVideoFullscreenModel and to the WebVideoFullscreenInterface.
+
+        (-[WebVideoFullscreenController enterFullscreen:]):
+        Supply a fullscreen video layer to the WebVideoFullscreenModel and to the WebVideoFullscreenInterface.
+
+        (-[WebVideoFullscreenController didExitFullscreen]):
+        Clean up the videoFullscreenLayer.
+
+        * platform/ios/WebVideoFullscreenInterface.h:
+        Remove methods related to lending the video layer.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        Rename WebAVPlayer layer to WebAVVideoLayer to match the AVKit name.
+        Remove functions related to lending the video layer.
+        Supply a layer directly to enterFullscreen.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (+[WebAVVideoLayer videoLayer]):
+        Rename WebAVPlayer layer to WebAVVideoLayer to match the AVKit name.
+
+        (-[WebAVVideoLayer setPlayerController:]):
+        Store the AVPlayerController to prevent AVKit's default behavior.
+
+        (-[WebAVVideoLayer setBounds:]):
+        Forward this onto the WebVideoFullscreenModel
+
+        (-[WebAVVideoLayer setVideoLayerGravity:]):
+        Forward this onto the WebVideoFullscreenModel
+
+        (-[WebAVVideoLayer videoLayerGravity]):
+        Forward this onto the WebVideoFullscreenModel
+
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreen):
+        Supply a video layer directly instead of relying on one being previously loaned.
+
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreen):
+        Clean-up now assumes there is a video layer.
+
+        * platform/ios/WebVideoFullscreenModel.h:
+        Remove methods for borrowing and returning video layers.
+        Add methods for keeping video layer state in sync.
+
+        * platform/ios/WebVideoFullscreenModelMediaElement.h:
+        Remove methods for borrowing and returning video layers.
+        Add method for supplying a video fullscreen layer.
+        Add methods for keeping video layer state in sync.
+
+        * platform/ios/WebVideoFullscreenModelMediaElement.mm:
+        (WebVideoFullscreenModelMediaElement::setMediaElement):
+        Handle audio element case by setting hasVideo to false.
+
+        (WebVideoFullscreenModelMediaElement::setVideoFullscreenLayer):
+        Pass along the video fullscreen layer to the media element.
+
+        (WebVideoFullscreenModelMediaElement::setVideoLayerFrame):
+        Pass along the video layer frame to the media element.
+
+        (WebVideoFullscreenModelMediaElement::setVideoLayerGravity):
+        Pass along the video layer gravity to the media element.
+
 2014-03-08  Jae Hyun Park  <jaepark@webkit.org>
 
         Clean up PlatformLayer.h

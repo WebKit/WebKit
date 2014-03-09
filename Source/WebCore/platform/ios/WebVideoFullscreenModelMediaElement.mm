@@ -41,6 +41,7 @@
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/WebCoreThreadRun.h>
+#import <QuartzCore/CoreAnimation.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WebCore;
@@ -89,7 +90,8 @@ void WebVideoFullscreenModelMediaElement::setMediaElement(HTMLMediaElement* medi
     if (isHTMLVideoElement(m_mediaElement.get())) {
         HTMLVideoElement *videoElement = toHTMLVideoElement(m_mediaElement.get());
         m_videoFullscreenInterface->setVideoDimensions(true, videoElement->videoWidth(), videoElement->videoHeight());
-    }
+    } else
+        m_videoFullscreenInterface->setVideoDimensions(false, 0, 0);
 }
 
 void WebVideoFullscreenModelMediaElement::handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event* event)
@@ -109,29 +111,16 @@ void WebVideoFullscreenModelMediaElement::handleEvent(WebCore::ScriptExecutionCo
         m_videoFullscreenInterface->setCurrentTime(m_mediaElement->currentTime(), [[NSProcessInfo processInfo] systemUptime]);
 }
 
-void WebVideoFullscreenModelMediaElement::borrowVideoLayer()
+void WebVideoFullscreenModelMediaElement::setVideoFullscreenLayer(PlatformLayer* videoLayer)
 {
-    ASSERT(!m_borrowedVideoLayer);
+    if (m_videoFullscreenLayer == videoLayer)
+        return;
+    
+    m_videoFullscreenLayer = videoLayer;
     
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^{
-        m_videoFullscreenInterface->willLendVideoLayer(m_mediaElement->platformLayer());
-        m_borrowedVideoLayer = m_mediaElement->borrowPlatformLayer();
-        if (m_borrowedVideoLayer.get())
-            m_videoFullscreenInterface->didLendVideoLayer();
-        protect.clear();
-    });
-}
-
-void WebVideoFullscreenModelMediaElement::returnVideoLayer()
-{
-    ASSERT(m_borrowedVideoLayer.get());
-    
-    __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
-    WebThreadRun(^{
-        ASSERT(m_mediaElement);
-        m_mediaElement->returnPlatformLayer(m_borrowedVideoLayer.get());
-        m_borrowedVideoLayer.clear();
+        m_mediaElement->setVideoFullscreenLayer(m_videoFullscreenLayer.get());
         protect.clear();
     });
 }
@@ -178,6 +167,28 @@ void WebVideoFullscreenModelMediaElement::requestExitFullscreen()
         m_mediaElement->exitFullscreen();
         protect.clear();
     });
+}
+
+void WebVideoFullscreenModelMediaElement::setVideoLayerFrame(FloatRect rect)
+{
+    m_videoFrame = rect;
+    [m_videoFullscreenLayer setFrame:CGRect(rect)];
+    m_mediaElement->setVideoFullscreenFrame(rect);
+}
+
+void WebVideoFullscreenModelMediaElement::setVideoLayerGravity(WebVideoFullscreenModel::VideoGravity gravity)
+{
+    MediaPlayer::VideoGravity videoGravity = MediaPlayer::VideoGravityResizeAspect;
+    if (gravity == WebVideoFullscreenModel::VideoGravityResize)
+        videoGravity = MediaPlayer::VideoGravityResize;
+    else if (gravity == WebVideoFullscreenModel::VideoGravityResizeAspect)
+        videoGravity = MediaPlayer::VideoGravityResizeAspect;
+    else if (gravity == WebVideoFullscreenModel::VideoGravityResizeAspectFill)
+        videoGravity = MediaPlayer::VideoGravityResizeAspectFill;
+    else
+        ASSERT_NOT_REACHED();
+    
+    m_mediaElement->setVideoFullscreenGravity(videoGravity);
 }
 
 #endif

@@ -300,7 +300,12 @@ public:
     bool requiresImmediateCompositing() const;
     PlatformMedia platformMedia() const;
     PlatformLayer* platformLayer() const;
-
+#if PLATFORM(IOS)
+    void setVideoFullscreenLayer(PlatformLayer*);
+    void setVideoFullscreenFrame(FloatRect);
+    enum VideoGravity { VideoGravityResize, VideoGravityResizeAspect, VideoGravityResizeAspectFill };
+    void setVideoFullscreenGravity(VideoGravity);
+#endif
     IntSize naturalSize();
     bool hasVideo() const;
     bool hasAudio() const;

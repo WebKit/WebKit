@@ -1,3 +1,86 @@
+2014-03-08  Jeremy Jones  <jeremyj@apple.com>
+
+        Allow media element to supply the video layer after fullscreen transition has already begun.
+        https://bugs.webkit.org/show_bug.cgi?id=129870
+
+        Reviewed by Eric Carlson.
+
+        WebVideoFullscreenManager and WebVideoFullscreenManagerProxy do their own remote hosting of the video layer instead of needing the video layer to have already been hosted elsewhere. This allows the removal of the coordination with WebPageProxy via a RemoteLayerTreeTransaction.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        Remove m_videoLayerIDsPendingFullscreen and accessors.
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        Don't encode m_videoLayerIDsPendingFullscreen
+
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        Don't decode m_videoLayerIDsPendingFullscreen
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didCommitLayerTree):
+        Don't forward didCommitLayerTree to m_videoFullscreenManager.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+        Remove code for synchronizing with the RenderTree.
+        Add a hosting layer and methods to keep video layer frame and video gravity synchronized.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.messages.in:
+        Change IPC interface to fascilitate rehosting video layer with a instead of coordinating with the RenderTree by PlatformLayerID.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::WebVideoFullscreenManagerProxy):
+        Remove initialization for removed members.
+
+        (WebKit::WebVideoFullscreenManagerProxy::enterFullscreenWithID):
+        Rehost the video layer by id and pass on the layer.
+        This replaces didCommitLayerTree() and  willLendVideoLayerWithID(). 
+
+        (WebKit::WebVideoFullscreenManagerProxy::didExitFullscreen):
+        Cleanup the hosting layer.
+
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoLayerFrame):
+        Forward on the video layer's frame to keep the hosted layer in sync with the interface.
+
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoLayerGravity):
+        Forward the videolayer gravity.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Rename WebVideoFullscreenManager.cpp to WebVideoFullscreenManager.mm
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::willCommitLayerTree):
+        Don't invovle the m_videoFullscreenManager in layer tree transactions.
+
+        * WebProcess/ios/WebVideoFullscreenManager.h:
+        Remove code that synchronizes with the render tree via RemoteLayerTreeTransaction.
+        Instead rehost the video layer directly.
+        Instead of hoping the WebVideoFullscreenModel has a videoLayer, supply one into which
+        it can add whatever it likes as needed.
+
+        * WebProcess/ios/WebVideoFullscreenManager.messages.in:
+        No more explicit borrowing and returning video layers.
+        Add functions to keep video layer bounds and gravity in sync with the UI. 
+
+        * WebProcess/ios/WebVideoFullscreenManager.mm: Renamed from Source/WebKit2/WebProcess/ios/WebVideoFullscreenManager.cpp.
+        Removed code for synchronizing via RemoteLAyerTreeTransaction.
+
+        (WebKit::WebVideoFullscreenManager::WebVideoFullscreenManager):
+        Remove initialization for removed memeber m_sendUnparentVideoLayerTransaction.
+
+        (WebKit::WebVideoFullscreenManager::enterFullscreenForNode):
+        Creates a fullscreen layer, gives it to the WebVideoFullscreenModel to fill in,
+        and hosts it in a context to send to the UIProcess.
+
+        (WebKit::WebVideoFullscreenManager::exitFullscreenForNode):
+        remove enterFullscreen() and just directly send the IPC message. 
+
+        (WebKit::WebVideoFullscreenManager::didExitFullscreen):
+        Clean up the hosting context.
+
+        (WebKit::WebVideoFullscreenManager::setVideoLayerGravityEnum):
+        Forward on the video gravity. Type convert from unsigned to MediaPlayer::VideoGravity.
+
 2014-03-08  Andreas Kling  <akling@apple.com>
 
         [WK2] Improve the network process low memory handler.

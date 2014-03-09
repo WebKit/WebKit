@@ -41,7 +41,7 @@ OBJC_CLASS AVPlayerViewController;
 OBJC_CLASS UIViewController;
 OBJC_CLASS UIWindow;
 OBJC_CLASS CALayer;
-OBJC_CLASS WebAVPlayerLayer;
+OBJC_CLASS WebAVVideoLayer;
 
 namespace WebCore {
 class WebVideoFullscreenModel;
@@ -62,7 +62,7 @@ class WebVideoFullscreenInterfaceAVKit
     RetainPtr<UIViewController> m_viewController;
     RetainPtr<UIWindow> m_window;
     RetainPtr<CALayer> m_videoLayer;
-    RetainPtr<WebAVPlayerLayer> m_videoLayerContainer;
+    RetainPtr<WebAVVideoLayer> m_videoLayerContainer;
     WebVideoFullscreenModel* m_videoFullscreenModel;
     WebVideoFullscreenChangeObserver* m_fullscreenChangeObserver;
         
@@ -81,10 +81,7 @@ public:
     virtual void setRate(bool isPlaying, float playbackRate) override;
     virtual void setVideoDimensions(bool hasVideo, float width, float height) override;
 
-    virtual void willLendVideoLayer(PlatformLayer*) override;
-    virtual void didLendVideoLayer() override;
-
-    virtual void enterFullscreen();
+    virtual void enterFullscreen(PlatformLayer&);
     virtual void exitFullscreen();
 };
 

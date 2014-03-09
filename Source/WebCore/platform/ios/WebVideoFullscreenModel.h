@@ -29,18 +29,21 @@
 
 #if PLATFORM(IOS)
 
+#include <WebCore/FloatRect.h>
+
 namespace WebCore {
 
 class WebVideoFullscreenModel {
 public:
     virtual ~WebVideoFullscreenModel() { };
-    virtual void borrowVideoLayer() = 0;
-    virtual void returnVideoLayer() = 0;
     virtual void play() = 0;
     virtual void pause() = 0;
     virtual void togglePlayState() = 0;
     virtual void seekToTime(double time) = 0;
     virtual void requestExitFullscreen() = 0;
+    virtual void setVideoLayerFrame(FloatRect) = 0;
+    enum VideoGravity { VideoGravityResize, VideoGravityResizeAspect, VideoGravityResizeAspectFill };
+    virtual void setVideoLayerGravity(VideoGravity) = 0;
 };
 
 }

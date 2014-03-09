@@ -28,14 +28,12 @@
 
 #if PLATFORM(IOS)
 
-#include "DrawingAreaProxy.h"
-#include "RemoteLayerTreeDrawingAreaProxy.h"
-#include "RemoteLayerTreeTransaction.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include "WebVideoFullscreenManagerMessages.h"
 #include "WebVideoFullscreenManagerProxyMessages.h"
-#include <UIKit/UIView.h>
+#include <QuartzCore/CoreAnimation.h>
+#include <WebKitSystemInterface.h>
 
 using namespace WebCore;
 
@@ -48,8 +46,6 @@ PassRefPtr<WebVideoFullscreenManagerProxy> WebVideoFullscreenManagerProxy::creat
 
 WebVideoFullscreenManagerProxy::WebVideoFullscreenManagerProxy(WebPageProxy& page)
     : m_page(&page)
-    , m_enterFullscreenAfterVideoLayerUnparentedTransaction(false)
-    , m_videoLayerID(0)
 {
     m_page->process().addMessageReceiver(Messages::WebVideoFullscreenManagerProxy::messageReceiverName(), m_page->pageID(), *this);
     setWebVideoFullscreenModel(this);
@@ -61,22 +57,11 @@ WebVideoFullscreenManagerProxy::~WebVideoFullscreenManagerProxy()
     m_page->process().removeMessageReceiver(Messages::WebVideoFullscreenManagerProxy::messageReceiverName(), m_page->pageID());
 }
 
-void WebVideoFullscreenManagerProxy::didCommitLayerTree(const RemoteLayerTreeTransaction& layerTreeTransaction)
+void WebVideoFullscreenManagerProxy::enterFullscreenWithID(uint32_t videoLayerID)
 {
-    if (m_enterFullscreenAfterVideoLayerUnparentedTransaction && layerTreeTransaction.isVideoLayerIDPendingFullscreen(m_videoLayerID)) {
-        m_enterFullscreenAfterVideoLayerUnparentedTransaction = false;
-        [m_videoView removeFromSuperview];
-        didLendVideoLayer();
-    }
-}
-
-void WebVideoFullscreenManagerProxy::willLendVideoLayerWithID(GraphicsLayer::PlatformLayerID videoLayerID)
-{
-    RemoteLayerTreeDrawingAreaProxy* remoteDrawingAreaProxy = toRemoteLayerTreeDrawingAreaProxy(m_page->drawingArea());
-    m_videoView = remoteDrawingAreaProxy->remoteLayerTreeHost().getLayer(videoLayerID);
-    willLendVideoLayer(m_videoView.get().layer);
-    m_videoLayerID = videoLayerID;
-    m_enterFullscreenAfterVideoLayerUnparentedTransaction = true;
+    ASSERT(videoLayerID);
+    m_layerHost = WKMakeRenderLayer(videoLayerID);
+    enterFullscreen(*m_layerHost.get());
 }
 
 void WebVideoFullscreenManagerProxy::requestExitFullscreen()
@@ -87,6 +72,8 @@ void WebVideoFullscreenManagerProxy::requestExitFullscreen()
 void WebVideoFullscreenManagerProxy::didExitFullscreen()
 {
     m_page->send(Messages::WebVideoFullscreenManager::DidExitFullscreen(), m_page->pageID());
+    [m_layerHost removeFromSuperlayer];
+    m_layerHost.clear();
 }
 
 void WebVideoFullscreenManagerProxy::didEnterFullscreen()
@@ -113,16 +100,15 @@ void WebVideoFullscreenManagerProxy::seekToTime(double time)
 {
     m_page->send(Messages::WebVideoFullscreenManager::SeekToTime(time), m_page->pageID());
 }
-    
-void WebVideoFullscreenManagerProxy::borrowVideoLayer()
+
+void WebVideoFullscreenManagerProxy::setVideoLayerFrame(WebCore::FloatRect frame)
 {
-    m_page->send(Messages::WebVideoFullscreenManager::BorrowVideoLayer(), m_page->pageID());
+    m_page->send(Messages::WebVideoFullscreenManager::SetVideoLayerFrame(frame), m_page->pageID());
 }
 
-void WebVideoFullscreenManagerProxy::returnVideoLayer()
+void WebVideoFullscreenManagerProxy::setVideoLayerGravity(WebCore::WebVideoFullscreenModel::VideoGravity gravity)
 {
-    m_page->send(Messages::WebVideoFullscreenManager::ReturnVideoLayer(), m_page->pageID());
-    m_videoView.clear();
+    m_page->send(Messages::WebVideoFullscreenManager::SetVideoLayerGravityEnum((unsigned)gravity), m_page->pageID());
 }
 
 } // namespace WebKit

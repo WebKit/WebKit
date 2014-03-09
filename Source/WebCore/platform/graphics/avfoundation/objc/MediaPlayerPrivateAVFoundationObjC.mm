@@ -135,6 +135,7 @@ SOFT_LINK_POINTER(AVFoundation, AVPlayerItemDidPlayToEndTimeNotification, NSStri
 SOFT_LINK_POINTER(AVFoundation, AVAssetImageGeneratorApertureModeCleanAperture, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVURLAssetReferenceRestrictionsKey, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVLayerVideoGravityResizeAspect, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVLayerVideoGravityResizeAspectFill, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVLayerVideoGravityResize, NSString *)
 SOFT_LINK_POINTER(CoreVideo, kCVPixelBufferPixelFormatTypeKey, NSString *)
 
@@ -155,6 +156,7 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime)
 #define AVAssetImageGeneratorApertureModeCleanAperture getAVAssetImageGeneratorApertureModeCleanAperture()
 #define AVURLAssetReferenceRestrictionsKey getAVURLAssetReferenceRestrictionsKey()
 #define AVLayerVideoGravityResizeAspect getAVLayerVideoGravityResizeAspect()
+#define AVLayerVideoGravityResizeAspectFill getAVLayerVideoGravityResizeAspectFill()
 #define AVLayerVideoGravityResize getAVLayerVideoGravityResize()
 #define kCVPixelBufferPixelFormatTypeKey getkCVPixelBufferPixelFormatTypeKey()
 
@@ -313,6 +315,9 @@ void MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(MediaEngineRegistra
 MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlayer* player)
     : MediaPlayerPrivateAVFoundation(player)
     , m_weakPtrFactory(this)
+#if PLATFORM(IOS)
+    , m_videoFullscreenGravity(MediaPlayer::VideoGravityResizeAspect)
+#endif
     , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithCallback:this]))
     , m_videoFrameHasDrawn(false)
     , m_haveCheckedPlayability(false)
@@ -494,6 +499,12 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
         updateVideoLayerGravity();
         LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoLayer(%p) - returning %p", this, m_videoLayer.get());
 
+#if PLATFORM(IOS)
+        if (m_videoFullscreenLayer) {
+            [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
+            [m_videoFullscreenLayer addSublayer:m_videoLayer.get()];
+        }
+#endif
         player()->mediaPlayerClient()->mediaPlayerRenderingModeChanged(player());
     });
 }
@@ -754,6 +765,53 @@ PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
 {
     return m_videoLayer.get();
 }
+
+#if PLATFORM(IOS)
+void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer)
+{
+    if (m_videoFullscreenLayer == videoFullscreenLayer)
+        return;
+
+    if (m_videoFullscreenLayer)
+       [m_videoLayer removeFromSuperlayer];
+
+    m_videoFullscreenLayer = videoFullscreenLayer;
+
+    if (!m_videoFullscreenLayer || !m_videoLayer)
+        return;
+
+    [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
+    [m_videoFullscreenLayer addSublayer:m_videoLayer.get()];
+}
+
+void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame(FloatRect frame)
+{
+    m_videoFullscreenFrame = frame;
+    if (!m_videoFullscreenLayer || !m_videoLayer)
+        return;
+    
+    [m_videoLayer setFrame:CGRectMake(0, 0, frame.width(), frame.height())];
+}
+
+void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenGravity(MediaPlayer::VideoGravity gravity)
+{
+    m_videoFullscreenGravity = gravity;
+    if (!m_videoLayer)
+        return;
+
+    NSString *videoGravity = AVLayerVideoGravityResizeAspect;
+    if (gravity == MediaPlayer::VideoGravityResize)
+        videoGravity = AVLayerVideoGravityResize;
+    else if (gravity == MediaPlayer::VideoGravityResizeAspect)
+        videoGravity = AVLayerVideoGravityResizeAspect;
+    else if (gravity == MediaPlayer::VideoGravityResizeAspectFill)
+        videoGravity = AVLayerVideoGravityResizeAspectFill;
+    else
+        ASSERT_NOT_REACHED();
+
+    [m_videoLayer setVideoGravity:videoGravity];
+}
+#endif
 
 void MediaPlayerPrivateAVFoundationObjC::platformSetVisible(bool isVisible)
 {

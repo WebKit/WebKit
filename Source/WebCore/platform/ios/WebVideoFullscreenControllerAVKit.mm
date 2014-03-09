@@ -32,6 +32,7 @@
 #import "Logging.h"
 #import "WebVideoFullscreenInterfaceAVKit.h"
 #import "WebVideoFullscreenModelMediaElement.h"
+#import <QuartzCore/CoreAnimation.h>
 #import <WebCore/WebCoreThreadRun.h>
 
 using namespace WebCore;
@@ -55,6 +56,7 @@ public:
     RefPtr<WebVideoFullscreenInterfaceAVKit> _interface;
     RefPtr<WebVideoFullscreenModelMediaElement> _model;
     WebVideoFullscreenControllerChangeObserver _changeObserver;
+    RetainPtr<PlatformLayer> _videoFullscreenLayer;
 }
 
 - (instancetype)init
@@ -88,13 +90,15 @@ public:
     [self retain]; // Balanced by -release in didExitFullscreen:
     
     UNUSED_PARAM(screen);
+    _videoFullscreenLayer = [CALayer layer];
     _interface = adoptRef(new WebVideoFullscreenInterfaceAVKit);
     _interface->setWebVideoFullscreenChangeObserver(&_changeObserver);
     _model = adoptRef(new WebVideoFullscreenModelMediaElement);
     _model->setWebVideoFullscreenInterface(_interface.get());
     _interface->setWebVideoFullscreenModel(_model.get());
     _model->setMediaElement(_mediaElement.get());
-    _interface->enterFullscreen();
+    _model->setVideoFullscreenLayer(_videoFullscreenLayer.get());
+    _interface->enterFullscreen(*_videoFullscreenLayer.get());
 }
 
 - (void)exitFullscreen
@@ -109,10 +113,11 @@ public:
 - (void)didExitFullscreen
 {
     WebThreadRun(^{
-        _model->setMediaElement(nullptr);
         _interface->setWebVideoFullscreenModel(nullptr);
-        _interface->setWebVideoFullscreenChangeObserver(nullptr);
         _model->setWebVideoFullscreenInterface(nullptr);
+        _model->setVideoFullscreenLayer(nullptr);
+        _model->setMediaElement(nullptr);
+        _interface->setWebVideoFullscreenChangeObserver(nullptr);
         _model = nullptr;
         _interface = nullptr;
         

@@ -26,11 +26,10 @@ messages -> WebVideoFullscreenManager {
     Pause()
     TogglePlayState()
     SeekToTime(double time)
-    BorrowVideoLayer()
-    ReturnVideoLayer()
     RequestExitFullscreen()
-
     DidExitFullscreen()
     DidEnterFullscreen()
+    SetVideoLayerFrame(WebCore::FloatRect bounds)
+    SetVideoLayerGravityEnum(unsigned gravity)
 }
 #endif

@@ -47,8 +47,8 @@ class Node;
 
 namespace WebKit {
 
+class LayerHostingContext;
 class WebPage;
-class RemoteLayerTreeTransaction;
 
 class WebVideoFullscreenManager : public WebCore::WebVideoFullscreenModelMediaElement, public WebCore::WebVideoFullscreenInterface, private IPC::MessageReceiver {
 public:
@@ -57,8 +57,6 @@ public:
     
     void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&);
     
-    void willCommitLayerTree(RemoteLayerTreeTransaction&);
-
     bool supportsFullscreen(const WebCore::Node*) const;
     void enterFullscreenForNode(WebCore::Node*);
     void exitFullscreenForNode(WebCore::Node*);
@@ -72,21 +70,15 @@ protected:
     virtual void setCurrentTime(double currentTime, double anchorTime) override;
     virtual void setRate(bool isPlaying, float playbackRate) override;
     virtual void setVideoDimensions(bool hasVideo, float width, float height) override;
-    virtual void willLendVideoLayer(PlatformLayer*) override;
-    virtual void didLendVideoLayer() override;
-
-    // forward to interface
-    virtual void enterFullscreen();
-    virtual void exitFullscreen();
     
     // additional incoming
     virtual void didEnterFullscreen();
     virtual void didExitFullscreen();
+    virtual void setVideoLayerGravityEnum(unsigned);
     
     WebPage* m_page;
     RefPtr<WebCore::Node> m_node;
-    RefPtr<WebCore::PlatformCALayer> m_platformCALayer;
-    bool m_sendUnparentVideoLayerTransaction;
+    std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     
     bool m_isAnimating;
     bool m_targetIsFullscreen;

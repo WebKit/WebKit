@@ -40,8 +40,6 @@ public:
     virtual void setCurrentTime(double currentTime, double anchorTime) = 0;
     virtual void setRate(bool isPlaying, float playbackRate) = 0;
     virtual void setVideoDimensions(bool hasVideo, float width, float height) = 0;
-    virtual void willLendVideoLayer(PlatformLayer*) = 0;
-    virtual void didLendVideoLayer() = 0;
 };
 
 }

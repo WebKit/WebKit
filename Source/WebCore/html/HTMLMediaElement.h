@@ -134,8 +134,9 @@ public:
     PlatformMedia platformMedia() const;
     PlatformLayer* platformLayer() const;
 #if PLATFORM(IOS)
-    PlatformLayer* borrowPlatformLayer();
-    void returnPlatformLayer(PlatformLayer*);
+    void setVideoFullscreenLayer(PlatformLayer*);
+    void setVideoFullscreenFrame(FloatRect);
+    void setVideoFullscreenGravity(MediaPlayer::VideoGravity);
 #endif
 
     enum DelayedActionType {
@@ -728,6 +729,12 @@ private:
     RefPtr<HTMLSourceElement> m_currentSourceNode;
     RefPtr<Node> m_nextChildNodeToConsider;
 
+#if PLATFORM(IOS)
+    RetainPtr<PlatformLayer> m_videoFullscreenLayer;
+    FloatRect m_videoFullscreenFrame;
+    MediaPlayer::VideoGravity m_videoFullscreenGravity;
+#endif
+
     OwnPtr<MediaPlayer> m_player;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     RefPtr<Widget> m_proxyWidget;
@@ -796,7 +803,6 @@ private:
 
 #if PLATFORM(IOS)
     bool m_requestingPlay : 1;
-    bool m_platformLayerBorrowed : 1;
 #endif
 
 #if ENABLE(VIDEO_TRACK)

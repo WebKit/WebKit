@@ -54,7 +54,11 @@ public:
     virtual void prepareToPlay() { }
     virtual PlatformMedia platformMedia() const { return NoPlatformMedia; }
     virtual PlatformLayer* platformLayer() const { return 0; }
-
+#if PLATFORM(IOS)
+    virtual void setVideoFullscreenLayer(PlatformLayer*) { }
+    virtual void setVideoFullscreenFrame(FloatRect) { }
+    virtual void setVideoFullscreenGravity(MediaPlayer::VideoGravity) { }
+#endif
     virtual void play() = 0;
     virtual void pause() = 0;    
 

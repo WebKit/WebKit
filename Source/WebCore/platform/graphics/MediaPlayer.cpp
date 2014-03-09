@@ -624,6 +624,23 @@ PlatformLayer* MediaPlayer::platformLayer() const
 {
     return m_private->platformLayer();
 }
+    
+#if PLATFORM(IOS)
+void MediaPlayer::setVideoFullscreenLayer(PlatformLayer* layer)
+{
+    m_private->setVideoFullscreenLayer(layer);
+}
+
+void MediaPlayer::setVideoFullscreenFrame(FloatRect frame)
+{
+    m_private->setVideoFullscreenFrame(frame);
+}
+
+void MediaPlayer::setVideoFullscreenGravity(MediaPlayer::VideoGravity gravity)
+{
+    m_private->setVideoFullscreenGravity(gravity);
+}
+#endif
 
 MediaPlayer::NetworkState MediaPlayer::networkState()
 {
