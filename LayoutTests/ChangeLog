@@ -1,3 +1,9 @@
+2014-03-09  Oliver Hunt  <oliver@apple.com>
+
+        Skip fast/workers/worker-copy-shared-blob-url.html in webkit2
+
+        * platform/wk2/TestExpectations:
+
 2014-03-08  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Simple compositing container layer (isSimpleContainerCompositingLayer) paints to wrong position.
