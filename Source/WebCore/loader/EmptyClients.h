@@ -237,9 +237,8 @@ public:
     virtual bool hasWebView() const override { return true; } // mainly for assertions
 
     virtual void makeRepresentation(DocumentLoader*) override { }
-    virtual void forceLayout() override { }
 #if PLATFORM(IOS)
-    virtual void forceLayoutWithoutRecalculatingStyles() override { }
+    virtual bool forceLayoutOnRestoreFromPageCache() override { return false; }
 #endif
     virtual void forceLayoutForNonHTML() override { }
 

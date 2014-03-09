@@ -39,9 +39,9 @@ void WebFrameLoaderClient::didRestoreFrameHierarchyForCachedFrame()
     notImplemented();
 }
 
-void WebFrameLoaderClient::forceLayoutWithoutRecalculatingStyles()
+bool WebFrameLoaderClient::forceLayoutOnRestoreFromPageCache()
 {
-    notImplemented();
+    return false;
 }
 
 RetainPtr<CFDictionaryRef> WebFrameLoaderClient::connectionProperties(DocumentLoader*, unsigned long identifier)

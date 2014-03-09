@@ -1837,7 +1837,8 @@ void FrameLoader::commitProvisionalLoad()
 
         // Force a layout to update view size and thereby update scrollbars.
 #if PLATFORM(IOS)
-        m_client.forceLayoutWithoutRecalculatingStyles();
+        if (!m_client.forceLayoutOnRestoreFromPageCache())
+            m_frame.view()->forceLayout();
 #else
         m_frame.view()->forceLayout();
 #endif

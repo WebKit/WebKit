@@ -114,9 +114,10 @@ namespace WebCore {
         virtual bool hasWebView() const = 0; // mainly for assertions
 
         virtual void makeRepresentation(DocumentLoader*) = 0;
-        virtual void forceLayout() = 0;
+        
 #if PLATFORM(IOS)
-        virtual void forceLayoutWithoutRecalculatingStyles() = 0;
+        // Returns true if the client forced the layout.
+        virtual bool forceLayoutOnRestoreFromPageCache() = 0;
 #endif
         virtual void forceLayoutForNonHTML() = 0;
 

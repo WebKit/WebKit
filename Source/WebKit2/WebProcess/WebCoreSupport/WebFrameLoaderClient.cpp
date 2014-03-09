@@ -125,11 +125,6 @@ void WebFrameLoaderClient::makeRepresentation(DocumentLoader*)
     notImplemented();
 }
 
-void WebFrameLoaderClient::forceLayout()
-{
-    notImplemented();
-}
-
 void WebFrameLoaderClient::forceLayoutForNonHTML()
 {
     notImplemented();

@@ -62,9 +62,8 @@ private:
 
     virtual void makeRepresentation(WebCore::DocumentLoader*) override;
     virtual bool hasHTMLView() const override;
-    virtual void forceLayout() override;
 #if PLATFORM(IOS)
-    virtual void forceLayoutWithoutRecalculatingStyles() override;
+    virtual bool forceLayoutOnRestoreFromPageCache() override;
 #endif
     virtual void forceLayoutForNonHTML() override;
 

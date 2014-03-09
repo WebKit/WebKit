@@ -52,8 +52,6 @@ public:
 
     virtual bool hasWebView() const;
 
-    virtual void forceLayout() override;
-
     virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext();
 
     virtual void frameLoaderDestroyed() override;

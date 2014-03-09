@@ -254,28 +254,8 @@ bool WebFrameLoaderClient::hasHTMLView() const
     return [view isKindOfClass:[WebHTMLView class]];
 }
 
-void WebFrameLoaderClient::forceLayout()
-{
-    NSView <WebDocumentView> *view = [m_webFrame->_private->webFrameView documentView];
 #if PLATFORM(IOS)
-    // This gets called to lay out a page restored from the page cache.
-    // To work around timing problems with UIKit, restore fixed 
-    // layout settings here.
-    WebView* webView = getWebView(m_webFrame.get());
-    bool isMainFrame = [webView mainFrame] == m_webFrame.get();
-    Frame* coreFrame = core(m_webFrame.get());
-    if (isMainFrame && coreFrame->view()) {
-        IntSize newSize([webView _fixedLayoutSize]);
-        coreFrame->view()->setFixedLayoutSize(newSize);
-        coreFrame->view()->setUseFixedLayout(!newSize.isEmpty()); 
-    }
-#endif
-    [view setNeedsLayout:YES];
-    [view layout];
-}
-
-#if PLATFORM(IOS)
-void WebFrameLoaderClient::forceLayoutWithoutRecalculatingStyles()
+bool WebFrameLoaderClient::forceLayoutOnRestoreFromPageCache()
 {
     NSView <WebDocumentView> *view = [m_webFrame->_private->webFrameView documentView];
     // This gets called to lay out a page restored from the page cache.
@@ -291,6 +271,7 @@ void WebFrameLoaderClient::forceLayoutWithoutRecalculatingStyles()
     }
     [view setNeedsLayout:YES];
     [view layout];
+    return true;
 }
 #endif
 

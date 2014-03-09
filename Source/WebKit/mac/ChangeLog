@@ -1,3 +1,27 @@
+2014-03-08  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS Wk2] Can't scroll after going back to page in page cache
+        https://bugs.webkit.org/show_bug.cgi?id=129989
+        <rdar://problem/16217588>
+
+        Reviewed by Dan Bernstein.
+
+        iOS has a special FrameLoader::forceLayoutWithoutRecalculatingStyle()
+        function that is called instead of FrameView::forceLayout(). This was unimplemented
+        for the WK2 FrameLoaderClient, so no layout was forced, with the result
+        that the contentSize was never updated and scrolling was broken.
+        
+        Fix by renaming the client function to forceLayoutOnRestoreFromPageCache()
+        and having it return a bool to say whether the default forceLayout()
+        should be done. WK1 can then continue to have its custom behavior,
+        and Wk2 will simply do a forceLayout().
+        
+        Also remove FrameLaoderClient::forceLayout(), which was never called.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::forceLayoutOnRestoreFromPageCache):
+
 2014-03-07  Anders Carlsson  <andersca@apple.com>
 
         Add the remaining WebKit2 headers to WEBKIT2_HEADERS

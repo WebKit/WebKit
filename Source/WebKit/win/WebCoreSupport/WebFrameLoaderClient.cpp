@@ -129,23 +129,6 @@ void WebFrameLoaderClient::makeRepresentation(DocumentLoader*)
     notImplemented();
 }
 
-void WebFrameLoaderClient::forceLayout()
-{
-    Frame* frame = core(m_webFrame);
-    if (!frame)
-        return;
-
-    if (frame->document() && frame->document()->inPageCache())
-        return;
-
-    FrameView* view = frame->view();
-    if (!view)
-        return;
-
-    view->setNeedsLayout();
-    view->forceLayout(true);
-}
-
 void WebFrameLoaderClient::forceLayoutForNonHTML()
 {
     notImplemented();
