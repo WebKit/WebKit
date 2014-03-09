@@ -2775,7 +2775,7 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
             availableHeight = std::max<LayoutUnit>(0, contentBoxHeight);
         }
     } else if (cbstyle.logicalHeight().isViewportPercentage()) {
-        LayoutUnit heightWithScrollbar = valueForLength(cbstyle.logicalHeight(), 0, &view());
+        LayoutUnit heightWithScrollbar = valueForLength(cbstyle.logicalHeight(), 0);
         if (heightWithScrollbar != -1) {
             LayoutUnit contentBoxHeightWithScrollbar = cb->adjustContentBoxLogicalHeightForBoxSizing(heightWithScrollbar);
             // We need to adjust for min/max height because this method does 

@@ -1,3 +1,17 @@
+2014-03-08  Zalan Bujtas  <zalan@apple.com>
+
+        RenderElement::valueForLength() callers misuse bool parameter.
+        https://bugs.webkit.org/show_bug.cgi?id=129982
+
+        Reviewed by Andreas Kling.
+
+        Remove bogus RenderView* parameter.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::repaintAfterLayoutIfNeeded):
+
 2014-03-08  Jeremy Jones  <jeremyj@apple.com>
 
         Allow media element to supply the video layer after fullscreen transition has already begun.
