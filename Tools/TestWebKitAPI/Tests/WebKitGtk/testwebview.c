@@ -687,27 +687,6 @@ static void test_webkit_web_view_file_chooser()
     gtk_widget_destroy(window);
 }
 
-static void test_webkit_web_view_source_mode()
-{
-    GtkWidget* web_view;
-
-    web_view = webkit_web_view_new();
-
-    webkit_web_view_load_string(WEBKIT_WEB_VIEW(web_view), "<html><body></body></html>", NULL, NULL, NULL);
-
-    g_assert(!webkit_web_view_get_view_source_mode(WEBKIT_WEB_VIEW(web_view)));
-
-    webkit_web_view_set_view_source_mode(WEBKIT_WEB_VIEW(web_view), TRUE);
-
-    g_assert(webkit_web_view_get_view_source_mode(WEBKIT_WEB_VIEW(web_view)));
-
-    webkit_web_view_set_view_source_mode(WEBKIT_WEB_VIEW(web_view), FALSE);
-
-    g_assert(!webkit_web_view_get_view_source_mode(WEBKIT_WEB_VIEW(web_view)));
-
-    gtk_widget_destroy(web_view);
-}
-
 int main(int argc, char** argv)
 {
     SoupServer* server;
@@ -740,7 +719,6 @@ int main(int argc, char** argv)
     g_test_add_data_func("/webkit/webview/fullscreen", GINT_TO_POINTER(FALSE), test_webkit_web_view_fullscreen);
     g_test_add_data_func("/webkit/webview/fullscreen-blocked", GINT_TO_POINTER(TRUE), test_webkit_web_view_fullscreen);
     g_test_add_func("/webkit/webview/file-chooser", test_webkit_web_view_file_chooser);
-    g_test_add_func("/webkit/webview/source-mode", test_webkit_web_view_source_mode);
 
     return g_test_run ();
 }
