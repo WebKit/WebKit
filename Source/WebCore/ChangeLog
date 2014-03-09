@@ -1,3 +1,13 @@
+2014-03-08  Jae Hyun Park  <jaepark@webkit.org>
+
+        Clean up PlatformLayer.h
+        https://bugs.webkit.org/show_bug.cgi?id=129967
+
+        Reviewed by Martin Robinson.
+
+        * platform/graphics/PlatformLayer.h:
+        Remove duplicated declaration of PlatformLayer when using TextureMapper.
+
 2014-03-08  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Simple compositing container layer (isSimpleContainerCompositingLayer) paints to wrong position.
