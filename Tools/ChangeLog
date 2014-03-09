@@ -1,5 +1,14 @@
 2014-03-09  Martin Robinson  <mrobinson@igalia.com>
 
+        RunGtkWebKitGObjectDOMBindingsAPIBreakTests should be added to the BuildAndTestFactory not the TestFactory
+        https://bugs.webkit.org/show_bug.cgi?id=129980
+
+        Reviewed by Carlos Garcia Campos.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Add RunGtkWebKitGObjectDOMBindingsAPIBreakTests to the correct factory.
+
+2014-03-09  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] Remove the WebView source-mode WebKit1 test
         https://bugs.webkit.org/show_bug.cgi?id=129976
 
