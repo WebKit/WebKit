@@ -71,6 +71,11 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t)
 {
 }
 
+void NetworkProcess::platformLowMemoryHandler(bool)
+{
+    notImplemented();
+}
+
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters&)
 {
     notImplemented();

@@ -1,3 +1,14 @@
+2014-03-08  Jon Lee  <jonlee@apple.com>
+
+        iOS broken after r165342
+        https://bugs.webkit.org/show_bug.cgi?id=129987
+
+        Reviewed by Simon Fraser.
+
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::platformLowMemoryHandler): Add missing stub implementation for
+        platformLowMemoryHandler().
+
 2014-03-08  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] media preferences not initialized correctly in WebKit2
