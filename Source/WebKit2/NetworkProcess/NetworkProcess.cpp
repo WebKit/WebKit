@@ -44,6 +44,7 @@
 #include "WebContextMessages.h"
 #include "WebCookieManager.h"
 #include <WebCore/Logging.h>
+#include <WebCore/MemoryPressureHandler.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SessionID.h>
 #include <wtf/RunLoop.h>
@@ -155,6 +156,9 @@ AuthenticationManager& NetworkProcess::downloadsAuthenticationManager()
 void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
     platformInitializeNetworkProcess(parameters);
+
+    memoryPressureHandler().setLowMemoryHandler(lowMemoryHandler);
+    memoryPressureHandler().install();
 
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
 
@@ -268,6 +272,12 @@ void NetworkProcess::terminate()
     ChildProcess::terminate();
 }
 
+void NetworkProcess::lowMemoryHandler(bool critical)
+{
+    platformLowMemoryHandler(critical);
+    WTF::releaseFastMallocFreeMemory();
+}
+
 #if !PLATFORM(COCOA)
 void NetworkProcess::initializeProcess(const ChildProcessInitializationParameters&)
 {
@@ -278,6 +288,10 @@ void NetworkProcess::initializeProcessName(const ChildProcessInitializationParam
 }
 
 void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&)
+{
+}
+
+void NetworkProcess::platformLowMemoryHandler(bool)
 {
 }
 #endif

@@ -82,6 +82,9 @@ private:
     virtual void terminate() override;
     void platformTerminate();
 
+    static void lowMemoryHandler(bool critical);
+    static void platformLowMemoryHandler(bool critical);
+
     // ChildProcess
     virtual void initializeProcess(const ChildProcessInitializationParameters&) override;
     virtual void initializeProcessName(const ChildProcessInitializationParameters&) override;

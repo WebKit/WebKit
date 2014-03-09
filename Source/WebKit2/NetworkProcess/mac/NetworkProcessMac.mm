@@ -38,18 +38,20 @@
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/MemoryPressureHandler.h>
 #import <WebKitSystemInterface.h>
 #import <mach/host_info.h>
 #import <mach/mach.h>
 #import <mach/mach_error.h>
-#import <malloc/malloc.h>
 #import <notify.h>
 #import <sysexits.h>
 #import <wtf/text/WTFString.h>
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 typedef struct _CFURLCache* CFURLCacheRef;
 extern "C" CFURLCacheRef CFURLCacheCopySharedURLCache();
+extern "C" void _CFURLCachePurgeMemoryCache(CFURLCacheRef);
+
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 extern "C" void _CFURLCacheSetMinSizeForVMCachedResource(CFURLCacheRef, CFIndex);
 #endif
 
@@ -112,13 +114,13 @@ static void overrideSystemProxies(const String& httpProxy, const String& httpsPr
 }
 #endif
 
+void NetworkProcess::platformLowMemoryHandler(bool)
+{
+    _CFURLCachePurgeMemoryCache(adoptCF(CFURLCacheCopySharedURLCache()).get());
+}
+
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
-    static int notifyToken;
-    notify_register_dispatch("org.WebKit.lowMemory", &notifyToken, dispatch_get_main_queue(), ^(int) {
-        malloc_zone_pressure_relief(nullptr, 0);
-    });
-
     m_diskCacheDirectory = parameters.diskCacheDirectory;
 
     if (!m_diskCacheDirectory.isNull()) {

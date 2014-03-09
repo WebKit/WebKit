@@ -1,3 +1,27 @@
+2014-03-08  Andreas Kling  <akling@apple.com>
+
+        [WK2] Improve the network process low memory handler.
+        <https://webkit.org/b/129977>
+
+        Split the network process low memory handler into platform-specific
+        and shared parts. The shared part tells FastMalloc to release freed
+        pages back to the OS.
+
+        For Mac, added a call to purge the in-memory part of CFURLCache.
+        Remove the malloc_zone_pressure_relief() since that is now taken care
+        of by the shared MemoryPressureHandler code.
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::lowMemoryHandler):
+        (WebKit::NetworkProcess::platformLowMemoryHandler):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::platformLowMemoryHandler):
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+
 2014-03-08  Jae Hyun Park  <jaepark@webkit.org>
 
         Remove unnecessary casting in NetworkProcessMainUnix.cpp
