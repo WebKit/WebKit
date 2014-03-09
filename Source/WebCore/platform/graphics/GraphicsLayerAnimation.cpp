@@ -28,17 +28,17 @@
 namespace WebCore {
 
 #if ENABLE(CSS_FILTERS)
-static inline PassRefPtr<FilterOperation> blendFunc(FilterOperation* fromOp, FilterOperation* toOp, double progress, const IntSize& size, bool blendToPassthrough = false)
+static inline PassRefPtr<FilterOperation> blendFunc(FilterOperation* fromOp, FilterOperation* toOp, double progress, const FloatSize& size, bool blendToPassthrough = false)
 {
     ASSERT(toOp);
     if (toOp->blendingNeedsRendererSize())
-        return toOp->blend(fromOp, progress, LayoutSize(size.width(), size.height()), blendToPassthrough);
+        return toOp->blend(fromOp, progress, LayoutSize(size), blendToPassthrough);
 
     return toOp->blend(fromOp, progress, blendToPassthrough);
 }
 
 
-static FilterOperations applyFilterAnimation(const FilterOperations& from, const FilterOperations& to, double progress, const IntSize& boxSize)
+static FilterOperations applyFilterAnimation(const FilterOperations& from, const FilterOperations& to, double progress, const FloatSize& boxSize)
 {
     // First frame of an animation.
     if (!progress)
@@ -154,7 +154,7 @@ static inline float applyTimingFunction(const TimingFunction* timingFunction, fl
     return progress;
 }
 
-static TransformationMatrix applyTransformAnimation(const TransformOperations& from, const TransformOperations& to, double progress, const IntSize& boxSize, bool listsMatch)
+static TransformationMatrix applyTransformAnimation(const TransformOperations& from, const TransformOperations& to, double progress, const FloatSize& boxSize, bool listsMatch)
 {
     TransformationMatrix matrix;
 
@@ -212,7 +212,7 @@ static const TimingFunction* timingFunctionForAnimationValue(const AnimationValu
     return CubicBezierTimingFunction::defaultTimingFunction();
 }
 
-GraphicsLayerAnimation::GraphicsLayerAnimation(const String& name, const KeyframeValueList& keyframes, const IntSize& boxSize, const Animation* animation, double startTime, bool listsMatch)
+GraphicsLayerAnimation::GraphicsLayerAnimation(const String& name, const KeyframeValueList& keyframes, const FloatSize& boxSize, const Animation* animation, double startTime, bool listsMatch)
     : m_keyframes(keyframes)
     , m_boxSize(boxSize)
     , m_animation(Animation::create(*animation))

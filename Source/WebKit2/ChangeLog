@@ -1,3 +1,16 @@
+2014-03-09  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Pass FloatSize boxsize to transform animations to support device pixel sizing.
+        https://bugs.webkit.org/show_bug.cgi?id=129985
+
+        Reviewed by Simon Fraser.
+
+        This is in preparation to stop passing integral positioned boxes to transform animations.
+
+        No change in behavior.
+
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.h:
+
 2014-03-08  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS Wk2] Can't scroll after going back to page in page cache

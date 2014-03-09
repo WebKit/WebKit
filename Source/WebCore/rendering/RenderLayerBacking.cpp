@@ -2400,7 +2400,7 @@ bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID proper
             opacityVector.insert(FloatAnimationValue::create(0, compositingOpacity(fromStyle->opacity())));
             opacityVector.insert(FloatAnimationValue::create(1, compositingOpacity(toStyle->opacity())));
             // The boxSize param is only used for transform animations (which can only run on RenderBoxes), so we pass an empty size here.
-            if (m_graphicsLayer->addAnimation(opacityVector, IntSize(), opacityAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyOpacity), timeOffset)) {
+            if (m_graphicsLayer->addAnimation(opacityVector, FloatSize(), opacityAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyOpacity), timeOffset)) {
                 // To ensure that the correct opacity is visible when the animation ends, also set the final opacity.
                 updateOpacity(toStyle);
                 didAnimate = true;
@@ -2429,7 +2429,7 @@ bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID proper
             KeyframeValueList filterVector(AnimatedPropertyWebkitFilter);
             filterVector.insert(FilterAnimationValue::create(0, fromStyle->filter()));
             filterVector.insert(FilterAnimationValue::create(1, toStyle->filter()));
-            if (m_graphicsLayer->addAnimation(filterVector, IntSize(), filterAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyWebkitFilter), timeOffset)) {
+            if (m_graphicsLayer->addAnimation(filterVector, FloatSize(), filterAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyWebkitFilter), timeOffset)) {
                 // To ensure that the correct filter is visible when the animation ends, also set the final filter.
                 updateFilters(toStyle);
                 didAnimate = true;

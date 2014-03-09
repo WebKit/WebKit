@@ -104,7 +104,7 @@ public:
 #if ENABLE(CSS_FILTERS)
     virtual bool setFilters(const FilterOperations&) override;
 #endif
-    virtual bool addAnimation(const KeyframeValueList&, const IntSize&, const Animation*, const String&, double) override;
+    virtual bool addAnimation(const KeyframeValueList&, const FloatSize&, const Animation*, const String&, double) override;
     virtual void pauseAnimation(const String&, double) override;
     virtual void removeAnimation(const String&) override;
     virtual void suspendAnimations(double time) override;

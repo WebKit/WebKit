@@ -42,7 +42,7 @@ public:
     GraphicsLayerAnimation()
         : m_keyframes(AnimatedPropertyInvalid)
     { }
-    GraphicsLayerAnimation(const String&, const KeyframeValueList&, const IntSize&, const Animation*, double, bool);
+    GraphicsLayerAnimation(const String&, const KeyframeValueList&, const FloatSize&, const Animation*, double, bool);
     void apply(Client*);
     void pause(double);
     void resume();
@@ -56,7 +56,7 @@ public:
     AnimatedPropertyID property() const { return m_keyframes.property(); }
     bool isActive() const;
     String name() const { return m_name; }
-    IntSize boxSize() const { return m_boxSize; }
+    FloatSize boxSize() const { return m_boxSize; }
     double startTime() const { return m_startTime; }
     double pauseTime() const { return m_pauseTime; }
     PassRefPtr<Animation> animation() const { return m_animation.get(); }
@@ -66,7 +66,7 @@ public:
 private:
     void applyInternal(Client*, const AnimationValue& from, const AnimationValue& to, float progress);
     KeyframeValueList m_keyframes;
-    IntSize m_boxSize;
+    FloatSize m_boxSize;
     RefPtr<Animation> m_animation;
     String m_name;
     bool m_listsMatch;
