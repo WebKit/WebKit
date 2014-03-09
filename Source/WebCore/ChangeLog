@@ -1,3 +1,15 @@
+2014-03-07  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Don't call scrollOffsetForFixedPosition a second time if we have no header and footer layers
+        https://bugs.webkit.org/show_bug.cgi?id=129912
+
+        Reviewed by Tim Horton.
+
+        Avoid extra work if we have no header or footer layers.
+
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeScrollingNodeIOS::setScrollLayerPosition):
+
 2014-03-08  Zalan Bujtas  <zalan@apple.com>
 
         RenderElement::valueForLength() callers misuse bool parameter.
