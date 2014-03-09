@@ -1,3 +1,16 @@
+2014-03-08  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Get position:fixed working slighlty better
+        https://bugs.webkit.org/show_bug.cgi?id=129988
+
+        Reviewed by Dan Bernstein.
+
+        On iOS we want to use the viewport-constrained visible rect, not
+        just the visible rect.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+
 2014-03-07  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] Don't call scrollOffsetForFixedPosition a second time if we have no header and footer layers

@@ -1,3 +1,16 @@
+2014-03-08  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Get position:fixed working slighlty better
+        https://bugs.webkit.org/show_bug.cgi?id=129988
+
+        Reviewed by Dan Bernstein.
+        
+        iOS uses fixed layout, but does not want fixed elements laid
+        out relative to the frame.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setUseFixedLayout):
+
 2014-03-08  Jon Lee  <jonlee@apple.com>
 
         iOS broken after r165342

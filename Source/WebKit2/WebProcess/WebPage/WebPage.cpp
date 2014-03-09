@@ -1322,7 +1322,9 @@ void WebPage::setUseFixedLayout(bool fixed)
         return;
     m_useFixedLayout = fixed;
 
+#if !PLATFORM(IOS)
     m_page->settings().setFixedElementsLayoutRelativeToFrame(fixed);
+#endif
 #if USE(COORDINATED_GRAPHICS)
     m_page->settings().setAcceleratedCompositingForFixedPositionEnabled(fixed);
     m_page->settings().setFixedPositionCreatesStackingContext(fixed);
