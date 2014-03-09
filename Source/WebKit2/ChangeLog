@@ -1,3 +1,13 @@
+2014-03-08  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] media preferences not initialized correctly in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=129983
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/WebPreferencesStore.h: Initialize mediaPlaybackAllowsInline and 
+        mediaPlaybackRequiresUserGesture correctly for iOS.
+
 2014-03-08  Jeremy Jones  <jeremyj@apple.com>
 
         Allow media element to supply the video layer after fullscreen transition has already begun.
