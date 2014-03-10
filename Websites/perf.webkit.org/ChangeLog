@@ -1,3 +1,16 @@
+2014-03-10  Zoltan Horvath  <zoltan@webkit.org>
+
+        Update the install guidelines for perf.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=129895
+
+        Reviewed by Ryosuke Niwa.
+
+        The current install guideline for perf.webkit.org discourages the use of the installed
+        Server application. I've actualized the documentation for Mavericks, and modified the
+        guideline to include the instructions for Server.app also.
+
+        * Install.md:
+
 2014-03-08  Zoltan Horvath  <zoltan@webkit.org>
 
         Update perf.webkit.org json example
