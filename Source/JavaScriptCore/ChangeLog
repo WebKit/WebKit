@@ -1,3 +1,16 @@
+2014-03-10  Andreas Kling  <akling@apple.com>
+
+        [X86_64] Smaller code for add_ir when register is accumulator.
+        <https://webkit.org/b/130024>
+
+        Generate the shorthand version of "add eax, imm" when possible.
+
+        Reviewed by Michael Saboff.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::addl_ir):
+        (JSC::X86Assembler::addq_ir):
+
 2014-03-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         writeBarrier in emitPutReplaceStub is unnecessary

@@ -188,6 +188,7 @@ private:
     typedef enum {
         OP_ADD_EvGv                     = 0x01,
         OP_ADD_GvEv                     = 0x03,
+        OP_ADD_EAXIv                    = 0x05,
         OP_OR_EvGv                      = 0x09,
         OP_OR_GvEv                      = 0x0B,
         OP_OR_EAXIv                     = 0x0D,
@@ -418,7 +419,10 @@ public:
             m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_ADD, dst);
             m_formatter.immediate8(imm);
         } else {
-            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_ADD, dst);
+            if (dst == X86Registers::eax)
+                m_formatter.oneByteOp(OP_ADD_EAXIv);
+            else
+                m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_ADD, dst);
             m_formatter.immediate32(imm);
         }
     }
@@ -451,7 +455,10 @@ public:
             m_formatter.oneByteOp64(OP_GROUP1_EvIb, GROUP1_OP_ADD, dst);
             m_formatter.immediate8(imm);
         } else {
-            m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_ADD, dst);
+            if (dst == X86Registers::eax)
+                m_formatter.oneByteOp64(OP_ADD_EAXIv);
+            else
+                m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_ADD, dst);
             m_formatter.immediate32(imm);
         }
     }
