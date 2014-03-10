@@ -414,6 +414,8 @@ protected:
         for (size_t i = 0; i < arguments.size(); ++i)
             array->putDirectIndex(globalExec(), i, jsString(globalExec(), arguments[i]));
         putDirect(vm, Identifier(globalExec(), "arguments"), array);
+        
+        putDirect(vm, Identifier(globalExec(), "console"), jsUndefined());
     }
 
     void addFunction(VM& vm, const char* name, NativeFunction function, unsigned arguments)

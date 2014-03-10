@@ -1,5 +1,15 @@
 2014-03-10  Filip Pizlo  <fpizlo@apple.com>
 
+        jsc commandline shouldn't have a "console" because that confuses some tests into thinking
+        that they're running in the browser.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+
+2014-03-10  Filip Pizlo  <fpizlo@apple.com>
+
         Out-line ScratchRegisterAllocator
 
         Rubber stamped by Mark Hahnenberg.
