@@ -184,7 +184,10 @@ static void initializeAudioSession()
 {
     if (pluginViews == nil)
         pluginViews = [[NSMutableSet alloc] init];
-    [pluginViews addObject:view];
+
+    ASSERT(view);
+    if (view)
+        [pluginViews addObject:view];
 }
 #endif
 

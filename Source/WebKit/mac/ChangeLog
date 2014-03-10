@@ -1,3 +1,17 @@
+2014-03-10  Jer Noble  <jer.noble@apple.com>
+
+        [iOS][WK1] Crash in HTMLMediaElement::createElementRenderer() - "-[NSSet addObject:]: object cannot be nil"
+        https://bugs.webkit.org/show_bug.cgi?id=129634
+
+        Reviewed by Eric Carlson.
+
+        If a plugin fails to create a NSView, a nil object is inserted into the WebPluginController's
+        pluginViews set. This is an exceptional case, so add an ASSERT so that this error will continue
+        to occur in debug builds, but also add an early return so as not to crash release builds.
+
+        * Plugins/WebPluginController.mm:
+        (+[WebPluginController addPlugInView:]):
+
 2014-03-06  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Don't perform a round-trip through WebProcess before interpreting key events
