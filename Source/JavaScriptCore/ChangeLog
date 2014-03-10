@@ -1,5 +1,18 @@
 2014-03-10  Andreas Kling  <akling@apple.com>
 
+        [X86_64] Smaller code for cmp_ir when register is accumulator.
+        <https://webkit.org/b/130005>
+
+        Generate the shorthand version of "cmp eax, imm" when possible.
+
+        Reviewed by Benjamin Poulain.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::cmpl_ir):
+        (JSC::X86Assembler::cmpq_ir):
+
+2014-03-10  Andreas Kling  <akling@apple.com>
+
         [X86_64] Smaller code for store64(imm, address) when imm fits in 32 bits.
         <https://webkit.org/b/130002>
 

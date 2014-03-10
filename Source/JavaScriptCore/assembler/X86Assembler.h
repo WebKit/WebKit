@@ -200,6 +200,7 @@ private:
         OP_XOR_GvEv                     = 0x33,
         OP_CMP_EvGv                     = 0x39,
         OP_CMP_GvEv                     = 0x3B,
+        OP_CMP_EAXIv                    = 0x3D,
 #if CPU(X86_64)
         PRE_REX                         = 0x40,
 #endif
@@ -923,7 +924,10 @@ public:
             m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_CMP, dst);
             m_formatter.immediate8(imm);
         } else {
-            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_CMP, dst);
+            if (dst == X86Registers::eax)
+                m_formatter.oneByteOp(OP_CMP_EAXIv);
+            else
+                m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_CMP, dst);
             m_formatter.immediate32(imm);
         }
     }
@@ -1009,7 +1013,10 @@ public:
             m_formatter.oneByteOp64(OP_GROUP1_EvIb, GROUP1_OP_CMP, dst);
             m_formatter.immediate8(imm);
         } else {
-            m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_CMP, dst);
+            if (dst == X86Registers::eax)
+                m_formatter.oneByteOp64(OP_CMP_EAXIv);
+            else
+                m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_CMP, dst);
             m_formatter.immediate32(imm);
         }
     }
