@@ -1,3 +1,17 @@
+2014-03-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] The web process can finish while a print operation is still ongoing
+        https://bugs.webkit.org/show_bug.cgi?id=129871
+
+        Reviewed by Martin Robinson.
+
+        This can happen when the last page is closed while the print job
+        is sending data to the printer.
+
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp: Disable web
+        process termination when the print job is sending data to the
+        printer and enable it again when job finishes.
+
 2014-03-09  Jeong Yong-uk  <yong@company100.com>
 
         Update comment in NetworkResourceLoader
