@@ -116,8 +116,12 @@ KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, AbstractView* vie
     , m_location(keyLocationCode(key))
     , m_altGraphKey(false)
 #if PLATFORM(COCOA)
+#if USE(APPKIT)
     , m_handledByInputMethod(key.handledByInputMethod())
     , m_keypressCommands(key.commands())
+#else
+    , m_handledByInputMethod(false)
+#endif
 #endif
 {
 }
