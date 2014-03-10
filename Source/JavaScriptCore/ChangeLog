@@ -1,5 +1,17 @@
 2014-03-10  Andreas Kling  <akling@apple.com>
 
+        [X86_64] Smaller code for testb_i8r when register is accumulator.
+        <https://webkit.org/b/130026>
+
+        Generate the shorthand version of "test al, imm" when possible.
+
+        Reviewed by Michael Saboff.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::testb_i8r):
+
+2014-03-10  Andreas Kling  <akling@apple.com>
+
         [X86_64] Smaller code for sub_ir when register is accumulator.
         <https://webkit.org/b/130025>
 
