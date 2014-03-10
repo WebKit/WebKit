@@ -123,7 +123,7 @@ void NetworkResourceLoader::start()
 {
     ASSERT(RunLoop::isMain());
 
-    // Explicit ref() balanced by a deref() in NetworkResourceLoader::resourceHandleStopped()
+    // Explicit ref() balanced by a deref() in NetworkResourceLoader::cleanup()
     ref();
 
     // FIXME (NetworkProcess): Set platform specific settings.

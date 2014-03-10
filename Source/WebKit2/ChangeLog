@@ -1,3 +1,16 @@
+2014-03-09  Jeong Yong-uk  <yong@company100.com>
+
+        Update comment in NetworkResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=129997
+
+        Reviewed by Andreas Kling.
+
+        NetworkResourceLoader::resourceHandleStopped() has been renamed to
+        NetworkResourceLoader::cleanup() but the comment is not updated.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+
 2014-03-09  Alexey Proskuryakov  <ap@apple.com>
 
         iOS build fix.
