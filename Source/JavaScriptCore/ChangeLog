@@ -1,3 +1,29 @@
+2014-03-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Out-line ScratchRegisterAllocator
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * jit/ScratchRegisterAllocator.cpp: Added.
+        (JSC::ScratchRegisterAllocator::ScratchRegisterAllocator):
+        (JSC::ScratchRegisterAllocator::~ScratchRegisterAllocator):
+        (JSC::ScratchRegisterAllocator::lock):
+        (JSC::ScratchRegisterAllocator::allocateScratch):
+        (JSC::ScratchRegisterAllocator::allocateScratchGPR):
+        (JSC::ScratchRegisterAllocator::allocateScratchFPR):
+        (JSC::ScratchRegisterAllocator::preserveReusedRegistersByPushing):
+        (JSC::ScratchRegisterAllocator::restoreReusedRegistersByPopping):
+        (JSC::ScratchRegisterAllocator::desiredScratchBufferSize):
+        (JSC::ScratchRegisterAllocator::preserveUsedRegistersToScratchBuffer):
+        (JSC::ScratchRegisterAllocator::restoreUsedRegistersFromScratchBuffer):
+        * jit/ScratchRegisterAllocator.h:
+
 2014-03-10  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Pass environment to Pre-Build, Pre-link, and Post-Build Stages.

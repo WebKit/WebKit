@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,64 +33,23 @@
 
 namespace JSC {
 
+struct ScratchBuffer;
+
 // This class provides a low-level register allocator for use in stubs.
 
 class ScratchRegisterAllocator {
 public:
-    ScratchRegisterAllocator(const TempRegisterSet& usedRegisters)
-        : m_usedRegisters(usedRegisters)
-        , m_numberOfReusedRegisters(0)
-    {
-    }
+    ScratchRegisterAllocator(const TempRegisterSet& usedRegisters);
+    ~ScratchRegisterAllocator();
 
-    void lock(GPRReg reg)
-    {
-        unsigned index = GPRInfo::toIndex(reg);
-        if (index == GPRInfo::InvalidIndex)
-            return;
-        m_lockedRegisters.setGPRByIndex(index);
-    }
-    void lock(FPRReg reg)
-    {
-        unsigned index = FPRInfo::toIndex(reg);
-        if (index == FPRInfo::InvalidIndex)
-            return;
-        m_lockedRegisters.setFPRByIndex(index);
-    }
+    void lock(GPRReg reg);
+    void lock(FPRReg reg);
     
     template<typename BankInfo>
-    typename BankInfo::RegisterType allocateScratch()
-    {
-        // First try to allocate a register that is totally free.
-        for (unsigned i = 0; i < BankInfo::numberOfRegisters; ++i) {
-            typename BankInfo::RegisterType reg = BankInfo::toRegister(i);
-            if (!m_lockedRegisters.get(reg)
-                && !m_usedRegisters.get(reg)
-                && !m_scratchRegisters.get(reg)) {
-                m_scratchRegisters.set(reg);
-                return reg;
-            }
-        }
-        
-        // Since that failed, try to allocate a register that is not yet
-        // locked or used for scratch.
-        for (unsigned i = 0; i < BankInfo::numberOfRegisters; ++i) {
-            typename BankInfo::RegisterType reg = BankInfo::toRegister(i);
-            if (!m_lockedRegisters.get(reg) && !m_scratchRegisters.get(reg)) {
-                m_scratchRegisters.set(reg);
-                m_numberOfReusedRegisters++;
-                return reg;
-            }
-        }
-        
-        // We failed.
-        CRASH();
-        // Make some silly compilers happy.
-        return static_cast<typename BankInfo::RegisterType>(-1);
-    }
+    typename BankInfo::RegisterType allocateScratch();
     
-    GPRReg allocateScratchGPR() { return allocateScratch<GPRInfo>(); }
-    FPRReg allocateScratchFPR() { return allocateScratch<FPRInfo>(); }
+    GPRReg allocateScratchGPR();
+    FPRReg allocateScratchFPR();
     
     bool didReuseRegisters() const
     {
@@ -102,101 +61,14 @@ public:
         return m_numberOfReusedRegisters;
     }
     
-    void preserveReusedRegistersByPushing(MacroAssembler& jit)
-    {
-        if (!didReuseRegisters())
-            return;
-        
-        for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
-            if (m_scratchRegisters.getFPRByIndex(i) && m_usedRegisters.getFPRByIndex(i))
-                jit.pushToSave(FPRInfo::toRegister(i));
-        }
-        for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
-            if (m_scratchRegisters.getGPRByIndex(i) && m_usedRegisters.getGPRByIndex(i))
-                jit.pushToSave(GPRInfo::toRegister(i));
-        }
-    }
+    void preserveReusedRegistersByPushing(MacroAssembler& jit);
+    void restoreReusedRegistersByPopping(MacroAssembler& jit);
     
-    void restoreReusedRegistersByPopping(MacroAssembler& jit)
-    {
-        if (!didReuseRegisters())
-            return;
-        
-        for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
-            if (m_scratchRegisters.getGPRByIndex(i) && m_usedRegisters.getGPRByIndex(i))
-                jit.popToRestore(GPRInfo::toRegister(i));
-        }
-        for (unsigned i = FPRInfo::numberOfRegisters; i--;) {
-            if (m_scratchRegisters.getFPRByIndex(i) && m_usedRegisters.getFPRByIndex(i))
-                jit.popToRestore(FPRInfo::toRegister(i));
-        }
-    }
+    unsigned desiredScratchBufferSize() const;
     
-    unsigned desiredScratchBufferSize() const { return m_usedRegisters.numberOfSetRegisters() * sizeof(JSValue); }
+    void preserveUsedRegistersToScratchBuffer(MacroAssembler& jit, ScratchBuffer* scratchBuffer, GPRReg scratchGPR = InvalidGPRReg);
     
-    void preserveUsedRegistersToScratchBuffer(MacroAssembler& jit, ScratchBuffer* scratchBuffer, GPRReg scratchGPR = InvalidGPRReg)
-    {
-        unsigned count = 0;
-        for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
-            if (m_usedRegisters.getGPRByIndex(i)) {
-#if USE(JSVALUE64)
-                jit.store64(GPRInfo::toRegister(i), static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) + (count++));
-#else
-                jit.store32(GPRInfo::toRegister(i), static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) + (count++));
-#endif
-            }
-            if (scratchGPR == InvalidGPRReg && !m_lockedRegisters.getGPRByIndex(i) && !m_scratchRegisters.getGPRByIndex(i))
-                scratchGPR = GPRInfo::toRegister(i);
-        }
-        RELEASE_ASSERT(scratchGPR != InvalidGPRReg);
-        for (unsigned i = FPRInfo::numberOfRegisters; i--;) {
-            if (m_usedRegisters.getFPRByIndex(i)) {
-                jit.move(MacroAssembler::TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) + (count++)), scratchGPR);
-                jit.storeDouble(FPRInfo::toRegister(i), scratchGPR);
-            }
-        }
-        RELEASE_ASSERT(count * sizeof(JSValue) == desiredScratchBufferSize());
-        
-        jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->activeLengthPtr()), scratchGPR);
-        jit.storePtr(MacroAssembler::TrustedImmPtr(static_cast<size_t>(count * sizeof(JSValue))), scratchGPR);
-    }
-    
-    void restoreUsedRegistersFromScratchBuffer(MacroAssembler& jit, ScratchBuffer* scratchBuffer, GPRReg scratchGPR = InvalidGPRReg)
-    {
-        if (scratchGPR == InvalidGPRReg) {
-            // Find a scratch register.
-            for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
-                if (m_lockedRegisters.getGPRByIndex(i) || m_scratchRegisters.getGPRByIndex(i))
-                    continue;
-                scratchGPR = GPRInfo::toRegister(i);
-                break;
-            }
-        }
-        RELEASE_ASSERT(scratchGPR != InvalidGPRReg);
-        
-        jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->activeLengthPtr()), scratchGPR);
-        jit.storePtr(MacroAssembler::TrustedImmPtr(0), scratchGPR);
-
-        // Restore double registers first.
-        unsigned count = m_usedRegisters.numberOfSetGPRs();
-        for (unsigned i = FPRInfo::numberOfRegisters; i--;) {
-            if (m_usedRegisters.getFPRByIndex(i)) {
-                jit.move(MacroAssembler::TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) + (count++)), scratchGPR);
-                jit.loadDouble(scratchGPR, FPRInfo::toRegister(i));
-            }
-        }
-        
-        count = 0;
-        for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
-            if (m_usedRegisters.getGPRByIndex(i)) {
-#if USE(JSVALUE64)
-                jit.load64(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) + (count++), GPRInfo::toRegister(i));
-#else
-                jit.load32(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) + (count++), GPRInfo::toRegister(i));
-#endif
-            }
-        }
-    }
+    void restoreUsedRegistersFromScratchBuffer(MacroAssembler& jit, ScratchBuffer* scratchBuffer, GPRReg scratchGPR = InvalidGPRReg);
     
 private:
     TempRegisterSet m_usedRegisters;
@@ -210,4 +82,3 @@ private:
 #endif // ENABLE(JIT)
 
 #endif // ScratchRegisterAllocator_h
-

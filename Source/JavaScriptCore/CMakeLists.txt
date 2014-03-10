@@ -302,6 +302,7 @@ set(JavaScriptCore_SOURCES
     jit/RegisterPreservationWrapperGenerator.cpp
     jit/RegisterSet.cpp
     jit/Repatch.cpp
+    jit/ScratchRegisterAllocator.cpp
     jit/TempRegisterSet.cpp
     jit/ThunkGenerators.cpp
 

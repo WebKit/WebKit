@@ -393,6 +393,7 @@
 		0FA581BC150E953000B9A2D9 /* DFGNodeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FA581B9150E952A00B9A2D9 /* DFGNodeType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FA7A8EB18B413C80052371D /* Reg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FA7A8E918B413C80052371D /* Reg.cpp */; };
 		0FA7A8EC18B413C80052371D /* Reg.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FA7A8EA18B413C80052371D /* Reg.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FA7A8EE18CE4FD80052371D /* ScratchRegisterAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FA7A8ED18CE4FD80052371D /* ScratchRegisterAllocator.cpp */; };
 		0FAF7EFD165BA91B000C8455 /* JITDisassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FAF7EFA165BA919000C8455 /* JITDisassembler.cpp */; };
 		0FAF7EFE165BA91F000C8455 /* JITDisassembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FAF7EFB165BA919000C8455 /* JITDisassembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB105851675480F00F8AB6E /* ExitKind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB105821675480C00F8AB6E /* ExitKind.cpp */; };
@@ -1906,6 +1907,7 @@
 		0FA581B9150E952A00B9A2D9 /* DFGNodeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNodeType.h; path = dfg/DFGNodeType.h; sourceTree = "<group>"; };
 		0FA7A8E918B413C80052371D /* Reg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Reg.cpp; sourceTree = "<group>"; };
 		0FA7A8EA18B413C80052371D /* Reg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reg.h; sourceTree = "<group>"; };
+		0FA7A8ED18CE4FD80052371D /* ScratchRegisterAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScratchRegisterAllocator.cpp; sourceTree = "<group>"; };
 		0FAF7EFA165BA919000C8455 /* JITDisassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITDisassembler.cpp; sourceTree = "<group>"; };
 		0FAF7EFB165BA919000C8455 /* JITDisassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITDisassembler.h; sourceTree = "<group>"; };
 		0FB105821675480C00F8AB6E /* ExitKind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExitKind.cpp; sourceTree = "<group>"; };
@@ -3480,16 +3482,17 @@
 				0FC314101814559100033232 /* RegisterSet.h */,
 				0F24E54917EE274900ABB217 /* Repatch.cpp */,
 				0F24E54A17EE274900ABB217 /* Repatch.h */,
+				0FA7A8ED18CE4FD80052371D /* ScratchRegisterAllocator.cpp */,
 				0F24E54B17EE274900ABB217 /* ScratchRegisterAllocator.h */,
 				A709F2EF17A0AC0400512E98 /* SlowPathCall.h */,
 				A7386551118697B400540279 /* SpecializedThunkJIT.h */,
+				A7FF647A18C52E8500B55307 /* SpillRegistersMode.h */,
 				0FC314111814559100033232 /* TempRegisterSet.cpp */,
 				0F24E54817EE274900ABB217 /* TempRegisterSet.h */,
 				0F572D4D16879FDB00E57FBD /* ThunkGenerator.h */,
 				A7386552118697B400540279 /* ThunkGenerators.cpp */,
 				A7386553118697B400540279 /* ThunkGenerators.h */,
 				65987F2F16828A7E003C2F8D /* UnusedPointer.h */,
-				A7FF647A18C52E8500B55307 /* SpillRegistersMode.h */,
 			);
 			path = jit;
 			sourceTree = "<group>";
@@ -6486,6 +6489,7 @@
 				A51007C0187CC3C600B38879 /* JSGlobalObjectInspectorController.cpp in Sources */,
 				A50E4B6318809DD50068A46D /* JSGlobalObjectRuntimeAgent.cpp in Sources */,
 				A503FA29188F105900110F14 /* JSGlobalObjectScriptDebugServer.cpp in Sources */,
+				0FA7A8EE18CE4FD80052371D /* ScratchRegisterAllocator.cpp in Sources */,
 				A513E5BF185BFACC007E95AD /* JSInjectedScriptHost.cpp in Sources */,
 				A513E5C1185BFACC007E95AD /* JSInjectedScriptHostPrototype.cpp in Sources */,
 				A503FA1B188E0FB000110F14 /* JSJavaScriptCallFrame.cpp in Sources */,

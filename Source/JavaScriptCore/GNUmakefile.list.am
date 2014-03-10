@@ -817,6 +817,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/Repatch.cpp \
 	Source/JavaScriptCore/jit/Repatch.h \
 	Source/JavaScriptCore/jit/ScratchRegisterAllocator.h \
+	Source/JavaScriptCore/jit/ScratchRegisterAllocator.cpp \
 	Source/JavaScriptCore/jit/SlowPathCall.h \
 	Source/JavaScriptCore/jit/SpecializedThunkJIT.h \
 	Source/JavaScriptCore/jit/TempRegisterSet.cpp \
