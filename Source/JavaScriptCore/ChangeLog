@@ -1,5 +1,18 @@
 2014-03-10  Andreas Kling  <akling@apple.com>
 
+        [X86_64] Smaller code for sub_ir when register is accumulator.
+        <https://webkit.org/b/130025>
+
+        Generate the shorthand version of "sub eax, imm" when possible.
+
+        Reviewed by Michael Saboff.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::subl_ir):
+        (JSC::X86Assembler::subq_ir):
+
+2014-03-10  Andreas Kling  <akling@apple.com>
+
         [X86_64] Smaller code for add_ir when register is accumulator.
         <https://webkit.org/b/130024>
 
