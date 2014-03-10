@@ -73,13 +73,26 @@ RegisterSet RegisterSet::specialRegisters()
 RegisterSet RegisterSet::calleeSaveRegisters()
 {
     RegisterSet result;
-#if CPU(X86_64)
+#if CPU(X86)
+    result.set(X86Registers::ebx);
+    result.set(X86Registers::ebp);
+    result.set(X86Registers::edi);
+    result.set(X86Registers::esi);
+#elif CPU(X86_64)
     result.set(X86Registers::ebx);
     result.set(X86Registers::ebp);
     result.set(X86Registers::r12);
     result.set(X86Registers::r13);
     result.set(X86Registers::r14);
     result.set(X86Registers::r15);
+#elif CPU(ARM_THUMB2)
+    result.set(ARMRegisters::r4);
+    result.set(ARMRegisters::r5);
+    result.set(ARMRegisters::r6);
+    result.set(ARMRegisters::r8);
+    result.set(ARMRegisters::r9);
+    result.set(ARMRegisters::r10);
+    result.set(ARMRegisters::r11);
 #elif CPU(ARM64)
     // We don't include LR in the set of callee-save registers even though it technically belongs
     // there. This is because we use this set to describe the set of registers that need to be saved
@@ -124,6 +137,20 @@ RegisterSet RegisterSet::allRegisters()
     result.merge(allGPRs());
     result.merge(allFPRs());
     return result;
+}
+
+size_t RegisterSet::numberOfSetGPRs() const
+{
+    RegisterSet temp = *this;
+    temp.filter(allGPRs());
+    return temp.numberOfSetRegisters();
+}
+
+size_t RegisterSet::numberOfSetFPRs() const
+{
+    RegisterSet temp = *this;
+    temp.filter(allFPRs());
+    return temp.numberOfSetRegisters();
 }
 
 void RegisterSet::dump(PrintStream& out) const

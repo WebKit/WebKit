@@ -1,3 +1,33 @@
+2014-03-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Repatch should save and restore all used registers - not just temp ones - when making a call
+        https://bugs.webkit.org/show_bug.cgi?id=130041
+
+        Reviewed by Geoffrey Garen and Mark Hahnenberg.
+        
+        The save/restore code was written back when the only client was the DFG, which only uses a
+        subset of hardware registers: the "temp" registers in our lingo. But the FTL may use many
+        other registers, especially on ARM64. The fact that Repatch doesn't know to save those can
+        lead to data corruption on ARM64. 
+
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::calleeSaveRegisters):
+        (JSC::RegisterSet::numberOfSetGPRs):
+        (JSC::RegisterSet::numberOfSetFPRs):
+        * jit/RegisterSet.h:
+        * jit/Repatch.cpp:
+        (JSC::storeToWriteBarrierBuffer):
+        (JSC::emitPutTransitionStub):
+        * jit/ScratchRegisterAllocator.cpp:
+        (JSC::ScratchRegisterAllocator::ScratchRegisterAllocator):
+        (JSC::ScratchRegisterAllocator::preserveReusedRegistersByPushing):
+        (JSC::ScratchRegisterAllocator::restoreReusedRegistersByPopping):
+        (JSC::ScratchRegisterAllocator::usedRegistersForCall):
+        (JSC::ScratchRegisterAllocator::desiredScratchBufferSizeForCall):
+        (JSC::ScratchRegisterAllocator::preserveUsedRegistersToScratchBufferForCall):
+        (JSC::ScratchRegisterAllocator::restoreUsedRegistersFromScratchBufferForCall):
+        * jit/ScratchRegisterAllocator.h:
+
 2014-03-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove ConditionalStore barrier

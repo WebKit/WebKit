@@ -79,6 +79,8 @@ public:
     void filter(const RegisterSet& other) { m_vector.filter(other.m_vector); }
     void exclude(const RegisterSet& other) { m_vector.exclude(other.m_vector); }
     
+    size_t numberOfSetGPRs() const;
+    size_t numberOfSetFPRs() const;
     size_t numberOfSetRegisters() const { return m_vector.bitCount(); }
     
     void dump(PrintStream&) const;

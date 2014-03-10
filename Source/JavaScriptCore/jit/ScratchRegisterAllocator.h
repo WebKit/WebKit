@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "MacroAssembler.h"
+#include "RegisterSet.h"
 #include "TempRegisterSet.h"
 
 namespace JSC {
@@ -39,7 +40,7 @@ struct ScratchBuffer;
 
 class ScratchRegisterAllocator {
 public:
-    ScratchRegisterAllocator(const TempRegisterSet& usedRegisters);
+    ScratchRegisterAllocator(const RegisterSet& usedRegisters);
     ~ScratchRegisterAllocator();
 
     void lock(GPRReg reg);
@@ -64,14 +65,16 @@ public:
     void preserveReusedRegistersByPushing(MacroAssembler& jit);
     void restoreReusedRegistersByPopping(MacroAssembler& jit);
     
-    unsigned desiredScratchBufferSize() const;
+    RegisterSet usedRegistersForCall() const;
     
-    void preserveUsedRegistersToScratchBuffer(MacroAssembler& jit, ScratchBuffer* scratchBuffer, GPRReg scratchGPR = InvalidGPRReg);
+    unsigned desiredScratchBufferSizeForCall() const;
     
-    void restoreUsedRegistersFromScratchBuffer(MacroAssembler& jit, ScratchBuffer* scratchBuffer, GPRReg scratchGPR = InvalidGPRReg);
+    void preserveUsedRegistersToScratchBufferForCall(MacroAssembler& jit, ScratchBuffer* scratchBuffer, GPRReg scratchGPR = InvalidGPRReg);
+    
+    void restoreUsedRegistersFromScratchBufferForCall(MacroAssembler& jit, ScratchBuffer* scratchBuffer, GPRReg scratchGPR = InvalidGPRReg);
     
 private:
-    TempRegisterSet m_usedRegisters;
+    RegisterSet m_usedRegisters;
     TempRegisterSet m_lockedRegisters;
     TempRegisterSet m_scratchRegisters;
     unsigned m_numberOfReusedRegisters;
