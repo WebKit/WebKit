@@ -1,3 +1,40 @@
+2014-03-10  Beth Dakin  <bdakin@apple.com>
+
+        Set background color of WK2's UIScrollView to the pageExtendedBackgroundColor
+        https://bugs.webkit.org/show_bug.cgi?id=129919
+
+        Reviewed by Benjamin Poulain.
+
+        Make the pageExtendedBackgroundColor part of a RemoteLayerTreeTransaction.
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::pageExtendedBackgroundColor):
+        (WebKit::RemoteLayerTreeTransaction::setPageExtendedBackgroundColor):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+
+        Set the background color of the UIScrollView based on the 
+        pageExtendedBackgroundColor.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:WebKit::]):
+
+        For the sake of PLATFORM(MAC), continue to support the fact that this color can be 
+        set via a message from the WebProcess or the new RemoteLayerTreeTransaction.
+        * UIProcess/WebPageProxy.h:
+
+        Cache the pageExtendedBackgroundColor as provided by the 
+        RemoteLayerTreeTransaction.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didCommitLayerTree):
+
+        It’s not necessary to do anything here in non-Mac platforms anymore.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::pageExtendedBackgroundColorDidChange):
+
+        Include the pageExtendedBackgroundColor in the RemoteLayerTreeTransaction.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::willCommitLayerTree):
+
 2014-03-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Generalize unobscured rect to all ports

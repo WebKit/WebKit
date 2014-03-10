@@ -386,6 +386,11 @@
     if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing] && ![_scrollView _isAnimatingZoom])
         [_scrollView setZoomScale:layerTreeTransaction.pageScaleFactor()];
 
+    if (UIColor *pageExtendedBackgroundColor = [self _pageExtendedBackgroundColor]) {
+        if ([self _backgroundExtendsBeyondPage])
+            [_scrollView setBackgroundColor:pageExtendedBackgroundColor];
+    }
+
     if (_gestureController)
         _gestureController->setRenderTreeSize(layerTreeTransaction.renderTreeSize());
 

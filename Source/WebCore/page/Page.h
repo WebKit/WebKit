@@ -62,6 +62,7 @@ class BackForwardClient;
 class Chrome;
 class ChromeClient;
 class ClientRectList;
+class Color;
 class ContextMenuClient;
 class ContextMenuController;
 class Document;
@@ -354,6 +355,8 @@ public:
 
     int headerHeight() const { return m_headerHeight; }
     int footerHeight() const { return m_footerHeight; }
+
+    Color pageExtendedBackgroundColor() const;
 
     bool isCountingRelevantRepaintedObjects() const;
     void startCountingRelevantRepaintedObjects();

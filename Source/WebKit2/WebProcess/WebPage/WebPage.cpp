@@ -2633,6 +2633,7 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
     layerTransaction.setContentsSize(corePage()->mainFrame().view()->contentsSize());
     layerTransaction.setPageScaleFactor(corePage()->pageScaleFactor());
     layerTransaction.setRenderTreeSize(corePage()->renderTreeSize());
+    layerTransaction.setPageExtendedBackgroundColor(corePage()->pageExtendedBackgroundColor());
 #if PLATFORM(IOS)
     layerTransaction.setLastVisibleContentRectUpdateID(m_lastVisibleContentRectUpdateID);
     layerTransaction.setScaleWasSetByUIProcess(scaleWasSetByUIProcess());

@@ -161,6 +161,9 @@ public:
 
     WebCore::IntSize contentsSize() const { return m_contentsSize; }
     void setContentsSize(const WebCore::IntSize& size) { m_contentsSize = size; };
+    
+    WebCore::Color pageExtendedBackgroundColor() const { return m_pageExtendedBackgroundColor; }
+    void setPageExtendedBackgroundColor(WebCore::Color color) { m_pageExtendedBackgroundColor = color; }
 
     double pageScaleFactor() const { return m_pageScaleFactor; }
     void setPageScaleFactor(double pageScaleFactor) { m_pageScaleFactor = pageScaleFactor; }
@@ -191,6 +194,7 @@ private:
     Vector<WebCore::GraphicsLayer::PlatformLayerID> m_videoLayerIDsPendingFullscreen;
 
     WebCore::IntSize m_contentsSize;
+    WebCore::Color m_pageExtendedBackgroundColor;
     double m_pageScaleFactor;
     double m_minimumScaleFactor;
     double m_maximumScaleFactor;

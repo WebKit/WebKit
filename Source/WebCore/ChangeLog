@@ -1,3 +1,20 @@
+2014-03-10  Beth Dakin  <bdakin@apple.com>
+
+        Set background color of WK2's UIScrollView to the pageExtendedBackgroundColor
+        https://bugs.webkit.org/show_bug.cgi?id=129919
+
+        Reviewed by Benjamin Poulain.
+
+        WK2 needs to be able to ask for the pageExtendedBackgroundColor, so this patch 
+        adds a function to Page that will return it
+
+        * WebCore.exp.in:
+        * page/Page.cpp:
+        (WebCore::Page::pageExtendedBackgroundColor):
+        * page/Page.h:
+        * rendering/RenderLayerCompositor.h:
+        (WebCore::RenderLayerCompositor::rootExtendedBackgroundColor):
+
 2014-03-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Generalize unobscured rect to all ports

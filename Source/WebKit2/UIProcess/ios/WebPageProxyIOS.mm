@@ -31,6 +31,7 @@
 #import "DataReference.h"
 #import "NativeWebKeyboardEvent.h"
 #import "PageClient.h"
+#import "RemoteLayerTreeTransaction.h"
 #import "ViewUpdateDispatcherMessages.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WebKitSystemInterfaceIOS.h"
@@ -251,6 +252,8 @@ void WebPageProxy::setViewportConfigurationMinimumLayoutSize(const WebCore::IntS
 
 void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& layerTreeTransaction)
 {
+    m_pageExtendedBackgroundColor = layerTreeTransaction.pageExtendedBackgroundColor();
+
     m_pageClient.didCommitLayerTree(layerTreeTransaction);
 }
 

@@ -297,6 +297,7 @@ public:
     void didPaintBacking(RenderLayerBacking*);
 
     void setRootExtendedBackgroundColor(const Color&);
+    Color rootExtendedBackgroundColor() const { return m_rootExtendedBackgroundColor; }
 
 private:
     class OverlapMap;

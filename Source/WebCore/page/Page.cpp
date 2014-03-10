@@ -1271,6 +1271,19 @@ void Page::removeLayoutMilestones(LayoutMilestones milestones)
     m_requestedLayoutMilestones &= ~milestones;
 }
 
+Color Page::pageExtendedBackgroundColor() const
+{
+    FrameView* frameView = mainFrame().view();
+    if (!frameView)
+        return Color();
+
+    RenderView* renderView = frameView->renderView();
+    if (!renderView)
+        return Color();
+
+    return renderView->compositor().rootExtendedBackgroundColor();
+}
+
 // These are magical constants that might be tweaked over time.
 static double gMinimumPaintedAreaRatio = 0.1;
 static double gMaximumUnpaintedAreaRatio = 0.04;
