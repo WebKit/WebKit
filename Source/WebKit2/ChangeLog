@@ -1,3 +1,18 @@
+2014-03-10  Enrica Casucci  <enrica@apple.com>
+
+        WebKit2: Crash in WebPage::getPositionInformation.
+        https://bugs.webkit.org/show_bug.cgi?id=129936
+        <rdar://problem/16264550>
+ 
+        Reviewed by Eric Carlson.
+ 
+        Missing null check on the node renderer in one code path.
+        If the page body is smaller than the document, hit testing
+        will return HTMLHtmlElement that has no renderer.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2014-03-10  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Clean up library linking

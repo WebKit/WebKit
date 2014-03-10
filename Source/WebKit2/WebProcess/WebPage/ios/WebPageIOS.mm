@@ -1488,7 +1488,8 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
     if (!elementIsLinkOrImage) {
         HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint((point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent | HitTestRequest::AllowChildFrameContent);
         hitNode = result.innerNode();
-        if (hitNode) {
+        // Hit test could return HTMLHtmlElement that has no renderer, if the body is smaller than the document.
+        if (hitNode && hitNode->renderer()) {
             m_page->focusController().setFocusedFrame(result.innerNodeFrame());
             info.selectionRects.append(SelectionRect(hitNode->renderer()->absoluteBoundingBoxRect(true), true, 0));
             info.bounds = hitNode->renderer()->absoluteBoundingBoxRect();
