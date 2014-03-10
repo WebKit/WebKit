@@ -32,6 +32,7 @@
 @interface WKWebViewConfiguration (WKPrivate)
 
 @property (nonatomic, weak, setter=_setRelatedWebView:) WKWebView *_relatedWebView;
+@property (nonatomic, copy, setter=_setGroupIdentifier:) NSString *_groupIdentifier;
 
 @end
 

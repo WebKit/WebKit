@@ -37,6 +37,7 @@
     RetainPtr<WKPreferences> _preferences;
     RetainPtr<WKVisitedLinkProvider> _visitedLinkProvider;
     WebKit::WeakObjCPtr<WKWebView> _relatedWebView;
+    RetainPtr<NSString> _groupIdentifier;
 #if PLATFORM(IOS)
     RetainPtr<WKWebViewContentProviderRegistry> _contentProviderRegistry;
 #endif
@@ -91,16 +92,6 @@
     _visitedLinkProvider = visitedLinkProvider;
 }
 
-- (WKWebView *)_relatedWebView
-{
-    return _relatedWebView.getAutoreleased();
-}
-
-- (void)_setRelatedWebView:(WKWebView *)relatedWebView
-{
-    _relatedWebView = relatedWebView;
-}
-
 #if PLATFORM(IOS)
 - (WKWebViewContentProviderRegistry *)_contentProviderRegistry
 {
@@ -112,6 +103,30 @@
     _contentProviderRegistry = registry;
 }
 #endif
+
+@end
+
+@implementation WKWebViewConfiguration (WKPrivate)
+
+- (WKWebView *)_relatedWebView
+{
+    return _relatedWebView.getAutoreleased();
+}
+
+- (void)_setRelatedWebView:(WKWebView *)relatedWebView
+{
+    _relatedWebView = relatedWebView;
+}
+
+- (NSString *)_groupIdentifier
+{
+    return _groupIdentifier.get();
+}
+
+- (void)_setGroupIdentifier:(NSString *)groupIdentifier
+{
+    _groupIdentifier = groupIdentifier;
+}
 
 @end
 

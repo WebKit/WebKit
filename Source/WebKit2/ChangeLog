@@ -1,3 +1,18 @@
+2014-03-10  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/16278716> [Cocoa] Allow setting a custom group identifier on a WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=130033
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]): Create a page group with the group identifier
+        from the configuration, if it’s non-empty.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _groupIdentifier]): Added this accessor.
+        (-[WKWebViewConfiguration _setGroupIdentifier:]): Ditto.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h: Declared _groupIdentifier property.
+
 2014-03-10  Enrica Casucci  <enrica@apple.com>
 
         WebKit2: Crash in WebPage::getPositionInformation.

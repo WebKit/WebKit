@@ -51,6 +51,7 @@
 #import "WebCertificateInfo.h"
 #import "WebContext.h"
 #import "WebBackForwardList.h"
+#import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import "WKNSURLExtras.h"
@@ -151,6 +152,13 @@
         webPageConfiguration.relatedPage = relatedWebView->_page.get();
 
     webPageConfiguration.visitedLinkProvider = [_configuration visitedLinkProvider]->_visitedLinkProvider.get();
+
+    RefPtr<WebKit::WebPageGroup> pageGroup;
+    NSString *groupIdentifier = configuration._groupIdentifier;
+    if (groupIdentifier.length) {
+        pageGroup = WebKit::WebPageGroup::create(configuration._groupIdentifier);
+        webPageConfiguration.pageGroup = pageGroup.get();
+    }
 
 #if PLATFORM(IOS)
     _scrollView = adoptNS([[WKScrollView alloc] initWithFrame:bounds]);
