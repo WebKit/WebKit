@@ -747,7 +747,7 @@
 
 /* Generational collector for JSC */
 #if !defined(ENABLE_GGC)
-#if CPU(X86_64) || CPU(X86) || CPU(ARM_THUMB2)
+#if CPU(X86_64) || CPU(X86) || CPU(ARM_THUMB2) || CPU(ARM64)
 #define ENABLE_GGC 1
 #else
 #define ENABLE_GGC 0
