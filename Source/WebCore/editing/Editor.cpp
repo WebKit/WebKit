@@ -2010,7 +2010,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         grammarSearchRange = spellingSearchRange->cloneRange(IGNORE_EXCEPTION);
         if (!misspelledWord.isEmpty()) {
             // Stop looking at start of next misspelled word
-            CharacterIterator chars(grammarSearchRange.get());
+            CharacterIterator chars(*grammarSearchRange);
             chars.advance(misspellingOffset);
             grammarSearchRange->setEnd(chars.range()->startContainer(), chars.range()->startOffset(), IGNORE_EXCEPTION);
         }
@@ -2044,7 +2044,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
             grammarSearchRange = spellingSearchRange->cloneRange(IGNORE_EXCEPTION);
             if (!misspelledWord.isEmpty()) {
                 // Stop looking at start of next misspelled word
-                CharacterIterator chars(grammarSearchRange.get());
+                CharacterIterator chars(*grammarSearchRange);
                 chars.advance(misspellingOffset);
                 grammarSearchRange->setEnd(chars.range()->startContainer(), chars.range()->startOffset(), IGNORE_EXCEPTION);
             }
@@ -3163,7 +3163,7 @@ PassRefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRa
             searchRange->setStart(shadowTreeRoot.get(), 0);
     }
 
-    RefPtr<Range> resultRange(findPlainText(searchRange.get(), target, options));
+    RefPtr<Range> resultRange(findPlainText(*searchRange, target, options));
     // If we started in the reference range and the found range exactly matches the reference range, find again.
     // Build a selection with the found range to remove collapsed whitespace.
     // Compare ranges instead of selection objects to ignore the way that the current selection was made.
@@ -3181,7 +3181,7 @@ PassRefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRa
                 searchRange->setStart(shadowTreeRoot.get(), 0);
         }
 
-        resultRange = findPlainText(searchRange.get(), target, options);
+        resultRange = findPlainText(*searchRange, target, options);
     }
 
     // If nothing was found in the shadow tree, search in main content following the shadow tree.
@@ -3192,14 +3192,14 @@ PassRefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRa
         else
             searchRange->setEndBefore(shadowTreeRoot->shadowHost());
 
-        resultRange = findPlainText(searchRange.get(), target, options);
+        resultRange = findPlainText(*searchRange, target, options);
     }
 
     // If we didn't find anything and we're wrapping, search again in the entire document (this will
     // redundantly re-search the area already searched in some cases).
     if (resultRange->collapsed(ASSERT_NO_EXCEPTION) && options & WrapAround) {
         searchRange = rangeOfContents(document());
-        resultRange = findPlainText(searchRange.get(), target, options);
+        resultRange = findPlainText(*searchRange, target, options);
         // We used to return false here if we ended up with the same range that we started with
         // (e.g., the reference range was already the only instance of this text). But we decided that
         // this should be a success case instead, so we'll just fall through in that case.
@@ -3240,7 +3240,7 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
 
     unsigned matchCount = 0;
     do {
-        RefPtr<Range> resultRange(findPlainText(searchRange.get(), target, options & ~Backwards));
+        RefPtr<Range> resultRange(findPlainText(*searchRange, target, options & ~Backwards));
         if (resultRange->collapsed(IGNORE_EXCEPTION)) {
             if (!resultRange->startContainer()->isInShadowTree())
                 break;

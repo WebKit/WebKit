@@ -126,10 +126,10 @@ int Frame::indexCountOfWordPrecedingSelection(NSString *word) const
     if (searchRange->collapsed(exception))
         return result;
 
-    WordAwareIterator it(searchRange.get());
+    WordAwareIterator it(*searchRange);
     while (!it.atEnd()) {
         StringView text = it.text();
-        int length = it.length();
+        int length = text.length();
         if (length > 1 || !isSpaceOrNewline(text[0])) {
             int startOfWordBoundary = 0;
             for (int i = 1; i < length; i++) {
@@ -181,10 +181,10 @@ NSArray *Frame::wordsInCurrentParagraph() const
 
     NSMutableArray *words = [NSMutableArray array];
 
-    WordAwareIterator it(searchRange.get());
+    WordAwareIterator it(*searchRange);
     while (!it.atEnd()) {
         StringView text = it.text();
-        int length = it.length();
+        int length = text.length();
         if (length > 1 || !isSpaceOrNewline(text[0])) {
             int startOfWordBoundary = 0;
             for (int i = 1; i < length; i++) {

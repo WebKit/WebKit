@@ -1,3 +1,143 @@
+2014-03-10  Darin Adler  <darin@apple.com>
+
+        TextIterator: Use StringView and references rather than pointers
+        https://bugs.webkit.org/show_bug.cgi?id=129975
+
+        Reviewed by Anders Carlsson.
+
+        TextIterator refinements:
+        - Use StringView instead of deprecatedCharacters to point to characters within strings.
+        - Added TextIteratorCopyableText, a safe way to copy the current text of a TextIterator,
+          for use by WordAwareIterator.
+        - Removed m_shouldStop; iterators stop by setting m_positionNode to null, and there is no
+          need for a separate boolean to do the same thing.
+        - Got rid of all the boolean data members set based on the text iterator behavior; instead
+          store the behavior in a data member and check it directly.
+        - Changed most functions to use references rather than pointers.
+        - Small micro-optimizations, such as using fastGetAttribute rather than getAttribute.
+        - Switched to nullptr instead of 0 where appropriate.
+        - Removed unused functions.
+        - Cut down on use of abbreviations instead of words.
+        - Renamed data members and argument names for clarity.
+        - Split up assertions that needlessly asserted more than one thing in a single expression.
+        - Treat CDATASection just like other Text, since its text will be visible.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::advanceToNextMisspelling): Pass reference rather than pointer.
+        (WebCore::Editor::rangeOfString): Ditto.
+        (WebCore::Editor::countMatchesForText): Ditto.
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingHelper::findFirstMisspelling): Ditto.
+
+        * editing/TextIterator.cpp:
+        (WebCore::depthCrossingShadowBoundaries): Take a reference rather than a pointer.
+        (WebCore::nextInPreOrderCrossingShadowBoundaries): Ditto.
+        (WebCore::fullyClipsContents): Ditto.
+        (WebCore::ignoresContainerClip): Ditto.
+        (WebCore::pushFullyClippedState): Ditto.
+        (WebCore::setUpFullyClippedStack): Ditto.
+        (WebCore::isRendererReplacedElement): Use references rather than pointers in the
+        implementation. Also use fastGetAttribute instead of getAttribute.
+        (WebCore::TextIteratorCopyableText::reset): Added.
+        (WebCore::TextIteratorCopyableText::set): Added.
+        (WebCore::TextIteratorCopyableText::appendToStringBuilder): Added.
+        (WebCore::TextIterator::TextIterator): Use more initialization rather than assignment.
+        Got rid of some local variables.
+        (WebCore::TextIterator::advance): Removed the m_shouldStop boolean, uneeded.
+        Many other improvements. Use isTextNode instead of nodeType.
+        (WebCore::hasVisibleTextNode): Changed this into a file-private helper function
+        instead of a member function.
+        (WebCore::TextIterator::handleTextNode): Used references and cut down on type casts.
+        Gave local variables clearer names.
+        (WebCore::TextIterator::handleTextBox): More of the same.
+        (WebCore::TextIterator::handleTextNodeFirstLetter): Ditto.
+        (WebCore::TextIterator::handleReplacedElement): Ditto.
+        (WebCore::shouldEmitTabBeforeNode): Ditto.
+        (WebCore::hasHeaderTag): Added.
+        (WebCore::shouldEmitNewlinesBeforeAndAfterNode): More of the same.
+        (WebCore::shouldEmitNewlineAfterNode): Ditto.
+        (WebCore::shouldEmitNewlineBeforeNode): Ditto.
+        (WebCore::shouldEmitExtraNewlineForNode): Ditto.
+        (WebCore::collapsedSpaceLength): Use StringImpl directly instead of using the
+        deprecatedCharacters function.
+        (WebCore::TextIterator::shouldRepresentNodeOffsetZero): More like above.
+        (WebCore::TextIterator::shouldEmitSpaceBeforeAndAfterNode): Ditto.
+        (WebCore::TextIterator::representNodeOffsetZero): Ditto.
+        (WebCore::TextIterator::handleNonTextNode): Ditto.
+        (WebCore::TextIterator::exitNode): Ditto.
+        (WebCore::TextIterator::emitCharacter): Changed to use the new copyable text class
+        instead of managing the single character buffer directly here.
+        (WebCore::TextIterator::emitText): Changed to take a Text& and use the copyable text
+        class. Added a FIXME about a mistake I noticed.
+        (WebCore::TextIterator::range): Streamlined and simplified a bit. Updated data
+        member names to be a bit clearer. This function never returned null before, but there
+        was a code path that looked like it would; I removed that.
+        (WebCore::TextIterator::node): Removed unneeded null checks; the range function will
+        never return a range of null or one with null for a start container.
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator): More
+        like above.
+        (WebCore::SimplifiedBackwardsTextIterator::advance): Reorganized a bit and removed
+        m_shouldStop.
+        (WebCore::SimplifiedBackwardsTextIterator::handleTextNode): More of the same.
+        (WebCore::SimplifiedBackwardsTextIterator::handleFirstLetter): Ditto.
+        (WebCore::SimplifiedBackwardsTextIterator::handleReplacedElement): Ditto.
+        (WebCore::SimplifiedBackwardsTextIterator::handleNonTextNode): Ditto.
+        (WebCore::SimplifiedBackwardsTextIterator::exitNode): Ditto.
+        (WebCore::SimplifiedBackwardsTextIterator::emitCharacter): Ditto.
+        (WebCore::SimplifiedBackwardsTextIterator::advanceRespectingRange): Ditto.
+        (WebCore::SimplifiedBackwardsTextIterator::range): Ditto.
+        (WebCore::CharacterIterator::CharacterIterator): Ditto.
+        (WebCore::CharacterIterator::range): Ditto. No need for ASSERT_NO_EXCEPTION.
+        (WebCore::CharacterIterator::advance): Ditto.
+        (WebCore::BackwardsCharacterIterator::BackwardsCharacterIterator): Ditto.
+        (WebCore::BackwardsCharacterIterator::range): Ditto.
+        (WebCore::BackwardsCharacterIterator::advance): Ditto.
+        (WebCore::WordAwareIterator::WordAwareIterator): Ditto.
+        (WebCore::WordAwareIterator::advance): Use copyableText for m_previousText, fixing
+        the FIXME that I wrote in here before.
+        (WebCore::WordAwareIterator::text): Ditto.
+        (WebCore::containsKanaLetters): Changed to quickly return false when the pattern
+        is all Latin-1 rather than expanding to 16-bit just to check.
+        (WebCore::SearchBuffer::SearchBuffer): Iterate the target using the string operator[]
+        instead of using deprecatedCharacters.
+        (WebCore::SearchBuffer::append): Do the folding of quote marks and hyphens one character
+        at a time as we move characters into the buffer instead of in a separate loop.
+        (WebCore::TextIterator::rangeLength): Updated for changes eslwehere.
+        (WebCore::TextIterator::subrange): Ditto.
+        (WebCore::isInsideReplacedElement): Ditto. Also streamlined and removed unneeded null check.
+        (WebCore::TextIterator::rangeFromLocationAndLength): Updated for changes elsewhere and
+        removed unneeded ASSERT_NO_EXCEPTION.
+        (WebCore::plainText): Ditto.
+        (WebCore::collapsedToBoundary): Ditto.
+        (WebCore::findPlainText): Ditto.
+
+        * editing/TextIterator.h: Changed many functions to take references instead of pointers.
+        Added TextIteratorCopyableText, to represent the current text in a TextIterator in a form
+        that can be safely copied and used after further iteration. Reorganized member functions so
+        they are in the same order in all the classes. Changed TextIterator to use
+        TextIteratorCopyableText. Removed many unused functions, including:
+        - TextIterator::length
+        - TextIterator::deprecatedTextIteratorCharacters
+        - TextIterator::characterAt
+        - SimplifiedBackwardsTextIterator::length
+        - CharacterIterator::length
+        - CharacterIterator::string
+        - WordAwareIterator::length
+        - WordAwareIterator::range
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::appendTrailingWhitespace): Pass reference rather than pointer.
+        Use text().length() instead of length(). Check atEnd() before using CharacterIterator, since
+        iterator member functions don't work when at the end.
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousBoundary): Ditto.
+        (WebCore::nextBoundary): Ditto.
+        * editing/htmlediting.cpp:
+        (WebCore::visiblePositionForIndexUsingCharacterIterator): Ditto.
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::indexCountOfWordPrecedingSelection): Ditto.
+        (WebCore::Frame::wordsInCurrentParagraph): Ditto.
+
 2014-03-10  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Clean up library linking

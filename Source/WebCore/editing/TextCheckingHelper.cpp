@@ -244,7 +244,7 @@ TextCheckingHelper::~TextCheckingHelper()
 
 String TextCheckingHelper::findFirstMisspelling(int& firstMisspellingOffset, bool markAll, RefPtr<Range>& firstMisspellingRange)
 {
-    WordAwareIterator it(m_range.get());
+    WordAwareIterator it(*m_range);
     firstMisspellingOffset = 0;
     
     String firstMisspelling;

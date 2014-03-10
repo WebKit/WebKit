@@ -234,9 +234,9 @@ void VisibleSelection::appendTrailingWhitespace()
     if (!searchRange)
         return;
 
-    CharacterIterator charIt(searchRange.get(), TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    CharacterIterator charIt(*searchRange, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
 
-    for (; charIt.length(); charIt.advance(1)) {
+    for (; !charIt.atEnd() && charIt.text().length(); charIt.advance(1)) {
         UChar c = charIt.text()[0];
         if ((!isSpaceOrNewline(c) && c != noBreakSpace) || c == '\n')
             break;

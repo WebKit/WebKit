@@ -1140,10 +1140,9 @@ VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node* node, int in
 
     RefPtr<Range> range = Range::create(node->document());
     range->selectNodeContents(node, IGNORE_EXCEPTION);
-    CharacterIterator it(range.get());
+    CharacterIterator it(*range);
     it.advance(index - 1);
-
-    return VisiblePosition(Position(it.range()->endContainer(), it.range()->endOffset(), Position::PositionIsOffsetInAnchor), UPSTREAM);
+    return VisiblePosition(it.atEnd() ? range->endPosition() : it.range()->endPosition(), UPSTREAM);
 }
 
 // Determines whether two positions are visibly next to each other (first then second)
