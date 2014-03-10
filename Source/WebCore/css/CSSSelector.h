@@ -79,8 +79,7 @@ namespace WebCore {
         };
 
         enum PseudoType {
-            PseudoNotParsed = 0,
-            PseudoUnknown,
+            PseudoUnknown = 0,
             PseudoEmpty,
             PseudoFirstChild,
             PseudoFirstOfType,
@@ -143,9 +142,9 @@ namespace WebCore {
             PseudoSingleButton,
             PseudoNoButton,
             PseudoSelection,
-            PseudoLeftPage,
-            PseudoRightPage,
-            PseudoFirstPage,
+            PseudoLeft,
+            PseudoRight,
+            PseudoFirst,
 #if ENABLE(FULLSCREEN_API)
             PseudoFullScreen,
             PseudoFullScreenDocument,
@@ -158,8 +157,8 @@ namespace WebCore {
             PseudoWebKitCustomElement,
 #if ENABLE(VIDEO_TRACK)
             PseudoCue,
-            PseudoFutureCue,
-            PseudoPastCue,
+            PseudoFuture,
+            PseudoPast,
 #endif
         };
 
@@ -184,12 +183,10 @@ namespace WebCore {
 
         PseudoType pseudoType() const
         {
-            if (m_pseudoType == PseudoNotParsed)
-                extractPseudoType();
             return static_cast<PseudoType>(m_pseudoType);
         }
 
-        static PseudoType parsePseudoType(const AtomicString&);
+        static PseudoType parsePseudoType(const String&);
         static PseudoId pseudoId(PseudoType);
 
         // Selectors are kept in an array by CSSSelectorList. The next component of the selector is
@@ -243,7 +240,6 @@ namespace WebCore {
 
         unsigned specificityForOneSelector() const;
         unsigned specificityForPage() const;
-        void extractPseudoType() const;
 
         // Hide.
         CSSSelector& operator=(const CSSSelector&);
@@ -292,8 +288,6 @@ inline const AtomicString& CSSSelector::attributeCanonicalLocalName() const
 
 inline bool CSSSelector::matchesPseudoElement() const
 {
-    if (m_pseudoType == PseudoUnknown)
-        extractPseudoType();
     return m_match == PseudoElement;
 }
 
@@ -339,7 +333,6 @@ inline bool CSSSelector::isAttributeSelector() const
 inline void CSSSelector::setValue(const AtomicString& value)
 {
     ASSERT(m_match != Tag);
-    ASSERT(m_pseudoType == PseudoNotParsed);
     // Need to do ref counting manually for the union.
     if (m_hasRareData) {
         if (m_data.m_rareData->m_value)
@@ -357,7 +350,7 @@ inline void CSSSelector::setValue(const AtomicString& value)
 inline CSSSelector::CSSSelector()
     : m_relation(Descendant)
     , m_match(Unknown)
-    , m_pseudoType(PseudoNotParsed)
+    , m_pseudoType(PseudoUnknown)
     , m_parsedNth(false)
     , m_isLastInSelectorList(false)
     , m_isLastInTagHistory(true)
@@ -370,7 +363,7 @@ inline CSSSelector::CSSSelector()
 inline CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRule)
     : m_relation(Descendant)
     , m_match(Tag)
-    , m_pseudoType(PseudoNotParsed)
+    , m_pseudoType(PseudoUnknown)
     , m_parsedNth(false)
     , m_isLastInSelectorList(false)
     , m_isLastInTagHistory(true)

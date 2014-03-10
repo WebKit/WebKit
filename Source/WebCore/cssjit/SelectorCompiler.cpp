@@ -287,10 +287,10 @@ static inline FunctionType addPseudoType(CSSSelector::PseudoType type, SelectorF
         return FunctionType::SimpleSelectorChecker;
 #endif
 #if ENABLE(VIDEO_TRACK)
-    case CSSSelector::PseudoFutureCue:
+    case CSSSelector::PseudoFuture:
         pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesFutureCuePseudoClass));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoPastCue:
+    case CSSSelector::PseudoPast:
         pseudoClasses.unoptimizedPseudoClasses.append(JSC::FunctionPtr(matchesPastCuePseudoClass));
         return FunctionType::SimpleSelectorChecker;
 #endif

@@ -855,6 +855,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/PlugInsResourcesData.cpp \
 	DerivedSources/WebCore/PlugInsResources.h \
 	DerivedSources/WebCore/SettingsMacros.h \
+	DerivedSources/WebCore/SelectorPseudoTypeMap.cpp \
 	DerivedSources/WebCore/UserAgentScriptsData.cpp \
 	DerivedSources/WebCore/UserAgentScripts.h \
 	DerivedSources/WebCore/UserAgentStyleSheetsData.cpp \
@@ -2688,6 +2689,7 @@ webcore_sources += \
 	Source/WebCore/css/SelectorCheckerTestFunctions.h \
 	Source/WebCore/css/SelectorFilter.cpp \
 	Source/WebCore/css/SelectorFilter.h \
+	Source/WebCore/css/SelectorPseudoTypeMap.h \
 	Source/WebCore/css/StyleInvalidationAnalysis.cpp \
 	Source/WebCore/css/StyleInvalidationAnalysis.h \
 	Source/WebCore/css/StyleMedia.cpp \

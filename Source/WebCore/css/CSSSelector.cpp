@@ -29,6 +29,7 @@
 #include "CSSOMUtils.h"
 #include "CSSSelectorList.h"
 #include "HTMLNames.h"
+#include "SelectorPseudoTypeMap.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -121,16 +122,14 @@ unsigned CSSSelector::specificityForPage() const
         case Tag:
             s += tagQName().localName() == starAtom ? 0 : 4;
             break;
-        case PseudoClass:
+        case PagePseudoClass:
             switch (component->pseudoType()) {
-            case PseudoFirstPage:
+            case PseudoFirst:
                 s += 2;
                 break;
-            case PseudoLeftPage:
-            case PseudoRightPage:
+            case PseudoLeft:
+            case PseudoRight:
                 s += 1;
-                break;
-            case PseudoNotParsed:
                 break;
             default:
                 ASSERT_NOT_REACHED();
@@ -231,21 +230,18 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
     case PseudoDoubleButton:
     case PseudoSingleButton:
     case PseudoNoButton:
-    case PseudoFirstPage:
-    case PseudoLeftPage:
-    case PseudoRightPage:
+    case PseudoFirst:
+    case PseudoLeft:
+    case PseudoRight:
     case PseudoInRange:
     case PseudoOutOfRange:
     case PseudoUserAgentCustomElement:
     case PseudoWebKitCustomElement:
 #if ENABLE(VIDEO_TRACK)
     case PseudoCue:
-    case PseudoFutureCue:
-    case PseudoPastCue:
+    case PseudoFuture:
+    case PseudoPast:
 #endif
-        return NOPSEUDO;
-    case PseudoNotParsed:
-        ASSERT_NOT_REACHED();
         return NOPSEUDO;
     }
 
@@ -253,242 +249,23 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
     return NOPSEUDO;
 }
 
-static NEVER_INLINE void populatePseudoTypeByNameMap(HashMap<AtomicString, CSSSelector::PseudoType>& map)
-{
-    struct TableEntry {
-        const char* name;
-        unsigned nameLength;
-        CSSSelector::PseudoType type;
-    };
-
-    // Could use strlen in this macro but not all compilers can constant-fold it.
-#define TABLE_ENTRY(name, type) { name, sizeof(name) - 1, CSSSelector::type },
-
-    static const TableEntry table[] = {
-        TABLE_ENTRY("-khtml-drag", PseudoDrag)
-        TABLE_ENTRY("-webkit-any(", PseudoAny)
-        TABLE_ENTRY("-webkit-any-link", PseudoAnyLink)
-        TABLE_ENTRY("-webkit-autofill", PseudoAutofill)
-        TABLE_ENTRY("-webkit-drag", PseudoDrag)
-        TABLE_ENTRY("-webkit-full-page-media", PseudoFullPageMedia)
-        TABLE_ENTRY("-webkit-resizer", PseudoResizer)
-        TABLE_ENTRY("-webkit-scrollbar", PseudoScrollbar)
-        TABLE_ENTRY("-webkit-scrollbar-button", PseudoScrollbarButton)
-        TABLE_ENTRY("-webkit-scrollbar-corner", PseudoScrollbarCorner)
-        TABLE_ENTRY("-webkit-scrollbar-thumb", PseudoScrollbarThumb)
-        TABLE_ENTRY("-webkit-scrollbar-track", PseudoScrollbarTrack)
-        TABLE_ENTRY("-webkit-scrollbar-track-piece", PseudoScrollbarTrackPiece)
-        TABLE_ENTRY("active", PseudoActive)
-        TABLE_ENTRY("after", PseudoAfter)
-        TABLE_ENTRY("before", PseudoBefore)
-        TABLE_ENTRY("checked", PseudoChecked)
-        TABLE_ENTRY("corner-present", PseudoCornerPresent)
-        TABLE_ENTRY("decrement", PseudoDecrement)
-        TABLE_ENTRY("default", PseudoDefault)
-        TABLE_ENTRY("disabled", PseudoDisabled)
-        TABLE_ENTRY("double-button", PseudoDoubleButton)
-        TABLE_ENTRY("empty", PseudoEmpty)
-        TABLE_ENTRY("enabled", PseudoEnabled)
-        TABLE_ENTRY("end", PseudoEnd)
-        TABLE_ENTRY("first", PseudoFirstPage)
-        TABLE_ENTRY("first-child", PseudoFirstChild)
-        TABLE_ENTRY("first-letter", PseudoFirstLetter)
-        TABLE_ENTRY("first-line", PseudoFirstLine)
-        TABLE_ENTRY("first-of-type", PseudoFirstOfType)
-        TABLE_ENTRY("focus", PseudoFocus)
-        TABLE_ENTRY("horizontal", PseudoHorizontal)
-        TABLE_ENTRY("hover", PseudoHover)
-        TABLE_ENTRY("in-range", PseudoInRange)
-        TABLE_ENTRY("increment", PseudoIncrement)
-        TABLE_ENTRY("indeterminate", PseudoIndeterminate)
-        TABLE_ENTRY("invalid", PseudoInvalid)
-        TABLE_ENTRY("lang(", PseudoLang)
-        TABLE_ENTRY("last-child", PseudoLastChild)
-        TABLE_ENTRY("last-of-type", PseudoLastOfType)
-        TABLE_ENTRY("left", PseudoLeftPage)
-        TABLE_ENTRY("link", PseudoLink)
-        TABLE_ENTRY("no-button", PseudoNoButton)
-        TABLE_ENTRY("not(", PseudoNot)
-        TABLE_ENTRY("nth-child(", PseudoNthChild)
-        TABLE_ENTRY("nth-last-child(", PseudoNthLastChild)
-        TABLE_ENTRY("nth-last-of-type(", PseudoNthLastOfType)
-        TABLE_ENTRY("nth-of-type(", PseudoNthOfType)
-        TABLE_ENTRY("only-child", PseudoOnlyChild)
-        TABLE_ENTRY("only-of-type", PseudoOnlyOfType)
-        TABLE_ENTRY("optional", PseudoOptional)
-        TABLE_ENTRY("out-of-range", PseudoOutOfRange)
-        TABLE_ENTRY("read-only", PseudoReadOnly)
-        TABLE_ENTRY("read-write", PseudoReadWrite)
-        TABLE_ENTRY("required", PseudoRequired)
-        TABLE_ENTRY("right", PseudoRightPage)
-        TABLE_ENTRY("root", PseudoRoot)
-        TABLE_ENTRY("scope", PseudoScope)
-        TABLE_ENTRY("selection", PseudoSelection)
-        TABLE_ENTRY("single-button", PseudoSingleButton)
-        TABLE_ENTRY("start", PseudoStart)
-        TABLE_ENTRY("target", PseudoTarget)
-        TABLE_ENTRY("valid", PseudoValid)
-        TABLE_ENTRY("vertical", PseudoVertical)
-        TABLE_ENTRY("visited", PseudoVisited)
-        TABLE_ENTRY("window-inactive", PseudoWindowInactive)
-
-#if ENABLE(FULLSCREEN_API)
-        TABLE_ENTRY("-webkit-animating-full-screen-transition", PseudoAnimatingFullScreenTransition)
-        TABLE_ENTRY("-webkit-full-screen", PseudoFullScreen)
-        TABLE_ENTRY("-webkit-full-screen-ancestor", PseudoFullScreenAncestor)
-        TABLE_ENTRY("-webkit-full-screen-document", PseudoFullScreenDocument)
-#endif
-
-#if ENABLE(VIDEO_TRACK)
-        TABLE_ENTRY("cue(", PseudoCue)
-        TABLE_ENTRY("future", PseudoFutureCue)
-        TABLE_ENTRY("past", PseudoPastCue)
-#endif
-    };
-
-#undef TABLE_ENTRY
-
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(table); ++i)
-        map.add(AtomicString(table[i].name, table[i].nameLength, AtomicString::ConstructFromLiteral), table[i].type);
-}
-
-CSSSelector::PseudoType CSSSelector::parsePseudoType(const AtomicString& name)
+CSSSelector::PseudoType CSSSelector::parsePseudoType(const String& name)
 {
     if (name.isNull())
         return PseudoUnknown;
 
-    static NeverDestroyed<HashMap<AtomicString, CSSSelector::PseudoType>> types;
-    if (types.get().isEmpty())
-        populatePseudoTypeByNameMap(types);
-    if (PseudoType type = types.get().get(name))
-        return type;
+    PseudoType type = parsePseudoTypeString(*name.impl());
+    if (type == PseudoUnknown) {
+        if (name.startsWith("-webkit-"))
+            type = PseudoWebKitCustomElement;
 
-    if (name.startsWith("-webkit-"))
-        return PseudoWebKitCustomElement;
-
-    // FIXME: This is strange. Why would all strings that start with "cue" be "user agent custom"?
-    if (name.startsWith("x-") || name.startsWith("cue"))
-        return PseudoUserAgentCustomElement;
-
-    return PseudoUnknown;
-}
-
-void CSSSelector::extractPseudoType() const
-{
-    if (m_match != PseudoClass && m_match != PseudoElement && m_match != PagePseudoClass)
-        return;
-
-    m_pseudoType = parsePseudoType(value());
-
-    bool element = false; // pseudo-element
-    bool compat = false; // single colon compatbility mode
-    bool isPagePseudoClass = false; // Page pseudo-class
-
-    switch (m_pseudoType) {
-    case PseudoAfter:
-    case PseudoBefore:
-#if ENABLE(VIDEO_TRACK)
-    case PseudoCue:
-#endif
-    case PseudoFirstLetter:
-    case PseudoFirstLine:
-        compat = true;
-        FALLTHROUGH;
-    case PseudoResizer:
-    case PseudoScrollbar:
-    case PseudoScrollbarCorner:
-    case PseudoScrollbarButton:
-    case PseudoScrollbarThumb:
-    case PseudoScrollbarTrack:
-    case PseudoScrollbarTrackPiece:
-    case PseudoSelection:
-    case PseudoUserAgentCustomElement:
-    case PseudoWebKitCustomElement:
-        element = true;
-        break;
-    case PseudoUnknown:
-    case PseudoEmpty:
-    case PseudoFirstChild:
-    case PseudoFirstOfType:
-    case PseudoLastChild:
-    case PseudoLastOfType:
-    case PseudoOnlyChild:
-    case PseudoOnlyOfType:
-    case PseudoNthChild:
-    case PseudoNthOfType:
-    case PseudoNthLastChild:
-    case PseudoNthLastOfType:
-    case PseudoLink:
-    case PseudoVisited:
-    case PseudoAny:
-    case PseudoAnyLink:
-    case PseudoAutofill:
-    case PseudoHover:
-    case PseudoDrag:
-    case PseudoFocus:
-    case PseudoActive:
-    case PseudoChecked:
-    case PseudoEnabled:
-    case PseudoFullPageMedia:
-    case PseudoDefault:
-    case PseudoDisabled:
-    case PseudoOptional:
-    case PseudoRequired:
-    case PseudoReadOnly:
-    case PseudoReadWrite:
-    case PseudoScope:
-    case PseudoValid:
-    case PseudoInvalid:
-    case PseudoIndeterminate:
-    case PseudoTarget:
-    case PseudoLang:
-    case PseudoNot:
-    case PseudoRoot:
-    case PseudoScrollbarBack:
-    case PseudoScrollbarForward:
-    case PseudoWindowInactive:
-    case PseudoCornerPresent:
-    case PseudoDecrement:
-    case PseudoIncrement:
-    case PseudoHorizontal:
-    case PseudoVertical:
-    case PseudoStart:
-    case PseudoEnd:
-    case PseudoDoubleButton:
-    case PseudoSingleButton:
-    case PseudoNoButton:
-    case PseudoNotParsed:
-#if ENABLE(FULLSCREEN_API)
-    case PseudoFullScreen:
-    case PseudoFullScreenDocument:
-    case PseudoFullScreenAncestor:
-    case PseudoAnimatingFullScreenTransition:
-#endif
-    case PseudoInRange:
-    case PseudoOutOfRange:
-#if ENABLE(VIDEO_TRACK)
-    case PseudoFutureCue:
-    case PseudoPastCue:
-#endif
-        break;
-    case PseudoFirstPage:
-    case PseudoLeftPage:
-    case PseudoRightPage:
-        isPagePseudoClass = true;
-        break;
+        // FIXME: This is strange. Why would all strings that start with "cue" be "user agent custom"?
+        if (name.startsWith("x-") || name.startsWith("cue"))
+            type = PseudoUserAgentCustomElement;
     }
-
-    bool matchPagePseudoClass = (m_match == PagePseudoClass);
-    if (matchPagePseudoClass != isPagePseudoClass)
-        m_pseudoType = PseudoUnknown;
-    else if (m_match == PseudoClass && element) {
-        if (!compat)
-            m_pseudoType = PseudoUnknown;
-        else
-           m_match = PseudoElement;
-    } else if (m_match == PseudoElement && !element)
-        m_pseudoType = PseudoUnknown;
+    return type;
 }
+
 
 bool CSSSelector::operator==(const CSSSelector& other) const
 {
@@ -518,6 +295,37 @@ bool CSSSelector::operator==(const CSSSelector& other) const
     return true;
 }
 
+static void appendPseudoTypeTailIfNecessary(StringBuilder& str, const CSSSelector* selector)
+{
+    switch (selector->pseudoType()) {
+    case CSSSelector::PseudoNot:
+        if (const CSSSelectorList* selectorList = selector->selectorList())
+            str.append(selectorList->first()->selectorText());
+        str.append(')');
+        break;
+    case CSSSelector::PseudoLang:
+    case CSSSelector::PseudoNthChild:
+    case CSSSelector::PseudoNthLastChild:
+    case CSSSelector::PseudoNthOfType:
+    case CSSSelector::PseudoNthLastOfType:
+        str.append(selector->argument());
+        str.append(')');
+        break;
+    case CSSSelector::PseudoAny: {
+        const CSSSelector* firstSubSelector = selector->selectorList()->first();
+        for (const CSSSelector* subSelector = firstSubSelector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+            if (subSelector != firstSubSelector)
+                str.append(',');
+            str.append(subSelector->selectorText());
+        }
+        str.append(')');
+        break;
+    }
+    default:
+        break;
+    }
+}
+
 String CSSSelector::selectorText(const String& rightSide) const
 {
     StringBuilder str;
@@ -541,34 +349,20 @@ String CSSSelector::selectorText(const String& rightSide) const
             str.append('.');
             serializeIdentifier(cs->value(), str);
         } else if (cs->m_match == CSSSelector::PseudoClass || cs->m_match == CSSSelector::PagePseudoClass) {
-            str.append(':');
-            str.append(cs->value());
-
             switch (cs->pseudoType()) {
-            case PseudoNot:
-                if (const CSSSelectorList* selectorList = cs->selectorList())
-                    str.append(selectorList->first()->selectorText());
-                str.append(')');
+            case PseudoFirst:
+                str.appendLiteral(":first");
                 break;
-            case PseudoLang:
-            case PseudoNthChild:
-            case PseudoNthLastChild:
-            case PseudoNthOfType:
-            case PseudoNthLastOfType:
-                str.append(cs->argument());
-                str.append(')');
+            case PseudoLeft:
+                str.appendLiteral(":left");
                 break;
-            case PseudoAny: {
-                const CSSSelector* firstSubSelector = cs->selectorList()->first();
-                for (const CSSSelector* subSelector = firstSubSelector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
-                    if (subSelector != firstSubSelector)
-                        str.append(',');
-                    str.append(subSelector->selectorText());
-                }
-                str.append(')');
+            case PseudoRight:
+                str.appendLiteral(":right");
                 break;
-            }
             default:
+                str.append(':');
+                str.append(cs->value());
+                appendPseudoTypeTailIfNecessary(str, cs);
                 break;
             }
         } else if (cs->m_match == CSSSelector::PseudoElement) {

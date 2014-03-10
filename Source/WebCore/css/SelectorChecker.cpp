@@ -699,9 +699,9 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             element->document().setContainsValidityStyleRules();
             return element->isOutOfRange();
 #if ENABLE(VIDEO_TRACK)
-        case CSSSelector::PseudoFutureCue:
+        case CSSSelector::PseudoFuture:
             return matchesFutureCuePseudoClass(element);
-        case CSSSelector::PseudoPastCue:
+        case CSSSelector::PseudoPast:
             return matchesPastCuePseudoClass(element);
 #endif
 
@@ -726,7 +726,6 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             return false;
 
         case CSSSelector::PseudoUnknown:
-        case CSSSelector::PseudoNotParsed:
         default:
             ASSERT_NOT_REACHED();
             break;

@@ -1,3 +1,67 @@
+2014-03-10  Benjamin Poulain  <benjamin@webkit.org>
+
+        Start splitting CSS Selectors's pseudo types
+        https://bugs.webkit.org/show_bug.cgi?id=130003
+
+        Reviewed by Andreas Kling.
+
+        CSS Selectors pseudo types come in 3 flavors: page, pseudo class, pseudo elements.
+
+        The three types are mixed together in a single enum list named PseudoType. Only some combinations
+        of match type + pseudo type are valid, but this is implicitly defined from the code.
+
+        This patch is the beginning of a refactoring to add more clear boundaries between
+        valid and invalid combinations.
+
+        First, the handling of page pseudo types is completely split from the other values.
+        The parser use a different method for handling the value CSSParserSelector::parsePagePseudoSelector().
+
+        PagePseudo types no longer store their string in the CSSSelector either to reduce the redundancy
+        with m_pseudoType.
+        When we need to generate the string for those CSSSelector, we recreate the string as needed in
+        CSSSelector::selectorText().
+
+        The remaining two types are not yet split in this patch but this introduce the preliminary clean up
+        toward that goal.
+        The list of parsed pseudo types is now generated at compile time from the source in SelectorPseudoTypeMap.in.
+
+        * DerivedSources.make:
+        The mapping of strings to pseudo types is generated from SelectorPseudoTypeMap.in
+        by the new script makeSelectorPseudoTypeMap.py.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSGrammar.y.in:
+        Split the parsing of Pseudo Types. Pseudo page get its own method. The others will need some work.
+
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::parsePagePseudoSelector):
+        (WebCore::CSSParserSelector::setPseudoTypeValue):
+        * css/CSSParserValues.h:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::specificityForPage):
+        This is an example of invalid combination that is hidden by the current code.
+        First, Left and Right could never appear in a pseudo class match.
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::CSSSelector::parsePseudoType):
+        (WebCore::appendPseudoTypeTailIfNecessary):
+        (WebCore::CSSSelector::selectorText):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::pseudoType):
+        (WebCore::CSSSelector::matchesPseudoElement):
+        (WebCore::CSSSelector::setValue):
+        (WebCore::CSSSelector::CSSSelector):
+        * css/PageRuleCollector.cpp:
+        (WebCore::checkPageSelectorComponents):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorPseudoTypeMap.h: Added.
+        * css/SelectorPseudoTypeMap.in: Added.
+        * css/makeSelectorPseudoTypeMap.py: Added.
+        (enumerablePseudoType):
+        (expand_ifdef_condition):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoType):
+
 2014-03-10  Enrica Casucci  <enrica@apple.com>
 
         iOS build fix after http://trac.webkit.org/changeset/165385

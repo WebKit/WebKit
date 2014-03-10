@@ -171,6 +171,8 @@ public:
 class CSSParserSelector {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    static CSSParserSelector* parsePagePseudoSelector(const CSSParserString& pseudoTypeString);
+
     CSSParserSelector();
     explicit CSSParserSelector(const QualifiedName&);
     ~CSSParserSelector();
@@ -184,8 +186,10 @@ public:
     void setRelation(CSSSelector::Relation value) { m_selector->m_relation = value; }
     void setForPage() { m_selector->setForPage(); }
 
+
     void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector);
 
+    void setPseudoTypeValue(const CSSParserString& pseudoTypeString);
     CSSSelector::PseudoType pseudoType() const { return m_selector->pseudoType(); }
     bool isCustomPseudoElement() const { return m_selector->isCustomPseudoElement(); }
 

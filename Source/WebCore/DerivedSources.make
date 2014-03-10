@@ -749,6 +749,7 @@ all : \
     PlugInsResources.h \
     SVGElementFactory.cpp \
     SVGNames.cpp \
+    SelectorPseudoTypeMap.cpp \
     UserAgentScripts.h \
     UserAgentStyleSheets.h \
     WebKitFontFamilyNames.cpp \
@@ -789,6 +790,14 @@ CSSPropertyNames.h : $(WEBCORE_CSS_PROPERTY_NAMES) css/makeprop.pl bindings/scri
 CSSValueKeywords.h : $(WEBCORE_CSS_VALUE_KEYWORDS) css/makevalues.pl bindings/scripts/preprocessor.pm $(PLATFORM_FEATURE_DEFINES)
 	cat $(WEBCORE_CSS_VALUE_KEYWORDS) > CSSValueKeywords.in
 	perl -I$(WebCore)/bindings/scripts "$(WebCore)/css/makevalues.pl" --defines "$(FEATURE_DEFINES)"
+
+# --------
+
+# CSS Selector pseudo type name to value map.
+
+WEBCORE_CSS_SELECTOR_PSEUDO_TYPE_MAP_KEYWORDS := $(WebCore)/css/SelectorPseudoTypeMap.in
+SelectorPseudoTypeMap.cpp : $(WebCore)/css/makeSelectorPseudoTypeMap.py $(WEBCORE_CSS_SELECTOR_PSEUDO_TYPE_MAP_KEYWORDS)
+	python "$(WebCore)/css/makeSelectorPseudoTypeMap.py" $(WEBCORE_CSS_SELECTOR_PSEUDO_TYPE_MAP_KEYWORDS) "$(FEATURE_DEFINES)"
 
 # --------
 

@@ -146,6 +146,24 @@ PassRefPtr<CSSValue> CSSParserValue::createCSSValue()
     return 0;
 }
 
+CSSParserSelector* CSSParserSelector::parsePagePseudoSelector(const CSSParserString& pseudoTypeString)
+{
+    CSSSelector::PseudoType pseudoType;
+    if (pseudoTypeString.equalIgnoringCase("first"))
+        pseudoType = CSSSelector::PseudoFirst;
+    else if (pseudoTypeString.equalIgnoringCase("left"))
+        pseudoType = CSSSelector::PseudoLeft;
+    else if (pseudoTypeString.equalIgnoringCase("right"))
+        pseudoType = CSSSelector::PseudoRight;
+    else
+        return nullptr;
+
+    auto selector = std::make_unique<CSSParserSelector>();
+    selector->m_selector->m_match = CSSSelector::PagePseudoClass;
+    selector->m_selector->m_pseudoType = pseudoType;
+    return selector.release();
+}
+
 CSSParserSelector::CSSParserSelector()
     : m_selector(std::make_unique<CSSSelector>())
 {
@@ -176,6 +194,121 @@ void CSSParserSelector::adoptSelectorVector(Vector<std::unique_ptr<CSSParserSele
     auto selectorList = std::make_unique<CSSSelectorList>();
     selectorList->adoptSelectorVector(selectorVector);
     m_selector->setSelectorList(std::move(selectorList));
+}
+
+void CSSParserSelector::setPseudoTypeValue(const CSSParserString& pseudoTypeString)
+{
+    AtomicString name = pseudoTypeString;
+    m_selector->setValue(name);
+
+    CSSSelector::PseudoType pseudoType = CSSSelector::parsePseudoType(name);
+    bool element = false; // pseudo-element
+    bool compat = false; // single colon compatbility mode
+
+    switch (pseudoType) {
+    case CSSSelector::PseudoAfter:
+    case CSSSelector::PseudoBefore:
+#if ENABLE(VIDEO_TRACK)
+    case CSSSelector::PseudoCue:
+#endif
+    case CSSSelector::PseudoFirstLetter:
+    case CSSSelector::PseudoFirstLine:
+        compat = true;
+        FALLTHROUGH;
+    case CSSSelector::PseudoResizer:
+    case CSSSelector::PseudoScrollbar:
+    case CSSSelector::PseudoScrollbarCorner:
+    case CSSSelector::PseudoScrollbarButton:
+    case CSSSelector::PseudoScrollbarThumb:
+    case CSSSelector::PseudoScrollbarTrack:
+    case CSSSelector::PseudoScrollbarTrackPiece:
+    case CSSSelector::PseudoSelection:
+    case CSSSelector::PseudoUserAgentCustomElement:
+    case CSSSelector::PseudoWebKitCustomElement:
+        element = true;
+        break;
+    case CSSSelector::PseudoUnknown:
+    case CSSSelector::PseudoEmpty:
+    case CSSSelector::PseudoFirstChild:
+    case CSSSelector::PseudoFirstOfType:
+    case CSSSelector::PseudoLastChild:
+    case CSSSelector::PseudoLastOfType:
+    case CSSSelector::PseudoOnlyChild:
+    case CSSSelector::PseudoOnlyOfType:
+    case CSSSelector::PseudoNthChild:
+    case CSSSelector::PseudoNthOfType:
+    case CSSSelector::PseudoNthLastChild:
+    case CSSSelector::PseudoNthLastOfType:
+    case CSSSelector::PseudoLink:
+    case CSSSelector::PseudoVisited:
+    case CSSSelector::PseudoAny:
+    case CSSSelector::PseudoAnyLink:
+    case CSSSelector::PseudoAutofill:
+    case CSSSelector::PseudoHover:
+    case CSSSelector::PseudoDrag:
+    case CSSSelector::PseudoFocus:
+    case CSSSelector::PseudoActive:
+    case CSSSelector::PseudoChecked:
+    case CSSSelector::PseudoEnabled:
+    case CSSSelector::PseudoFullPageMedia:
+    case CSSSelector::PseudoDefault:
+    case CSSSelector::PseudoDisabled:
+    case CSSSelector::PseudoOptional:
+    case CSSSelector::PseudoRequired:
+    case CSSSelector::PseudoReadOnly:
+    case CSSSelector::PseudoReadWrite:
+    case CSSSelector::PseudoScope:
+    case CSSSelector::PseudoValid:
+    case CSSSelector::PseudoInvalid:
+    case CSSSelector::PseudoIndeterminate:
+    case CSSSelector::PseudoTarget:
+    case CSSSelector::PseudoLang:
+    case CSSSelector::PseudoNot:
+    case CSSSelector::PseudoRoot:
+    case CSSSelector::PseudoScrollbarBack:
+    case CSSSelector::PseudoScrollbarForward:
+    case CSSSelector::PseudoWindowInactive:
+    case CSSSelector::PseudoCornerPresent:
+    case CSSSelector::PseudoDecrement:
+    case CSSSelector::PseudoIncrement:
+    case CSSSelector::PseudoHorizontal:
+    case CSSSelector::PseudoVertical:
+    case CSSSelector::PseudoStart:
+    case CSSSelector::PseudoEnd:
+    case CSSSelector::PseudoDoubleButton:
+    case CSSSelector::PseudoSingleButton:
+    case CSSSelector::PseudoNoButton:
+#if ENABLE(FULLSCREEN_API)
+    case CSSSelector::PseudoFullScreen:
+    case CSSSelector::PseudoFullScreenDocument:
+    case CSSSelector::PseudoFullScreenAncestor:
+    case CSSSelector::PseudoAnimatingFullScreenTransition:
+#endif
+    case CSSSelector::PseudoInRange:
+    case CSSSelector::PseudoOutOfRange:
+#if ENABLE(VIDEO_TRACK)
+    case CSSSelector::PseudoFuture:
+    case CSSSelector::PseudoPast:
+#endif
+        break;
+    case CSSSelector::PseudoFirst:
+    case CSSSelector::PseudoLeft:
+    case CSSSelector::PseudoRight:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    unsigned matchType = m_selector->m_match;
+    if (matchType == CSSSelector::PseudoClass && element) {
+        if (!compat)
+            pseudoType = CSSSelector::PseudoUnknown;
+        else
+            matchType = CSSSelector::PseudoElement;
+    } else if (matchType == CSSSelector::PseudoElement && !element)
+        pseudoType = CSSSelector::PseudoUnknown;
+
+    m_selector->m_match = matchType;
+    m_selector->m_pseudoType = pseudoType;
 }
 
 bool CSSParserSelector::isSimple() const

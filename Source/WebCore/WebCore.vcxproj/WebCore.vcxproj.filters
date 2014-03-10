@@ -5152,6 +5152,9 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\CSSValueKeywords.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SelectorPseudoTypeMap.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\EventFactory.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>

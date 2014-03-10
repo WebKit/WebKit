@@ -1170,13 +1170,7 @@ ident_or_string: IDENT | STRING ;
 
 pseudo_page:
     ':' IDENT {
-        $$ = nullptr;
-        auto selector = std::make_unique<CSSParserSelector>();
-        selector->setMatch(CSSSelector::PagePseudoClass);
-        $2.lower();
-        selector->setValue($2);
-        if (selector->pseudoType() != CSSSelector::PseudoUnknown)
-            $$ = selector.release();
+        $$ = CSSParserSelector::parsePagePseudoSelector($2);
     }
 
 pseudo:
@@ -1185,7 +1179,7 @@ pseudo:
         auto selector = std::make_unique<CSSParserSelector>();
         selector->setMatch(CSSSelector::PseudoClass);
         $2.lower();
-        selector->setValue($2);
+        selector->setPseudoTypeValue($2);
         if (selector->pseudoType() != CSSSelector::PseudoUnknown)
             $$ = selector.release();
     }
@@ -1194,7 +1188,7 @@ pseudo:
         auto selector = std::make_unique<CSSParserSelector>();
         selector->setMatch(CSSSelector::PseudoElement);
         $3.lower();
-        selector->setValue($3);
+        selector->setPseudoTypeValue($3);
         if (selector->pseudoType() != CSSSelector::PseudoUnknown)
             $$ = selector.release();
     }
@@ -1206,7 +1200,7 @@ pseudo:
             auto selector = std::make_unique<CSSParserSelector>();
             selector->setMatch(CSSSelector::PseudoClass);
             selector->adoptSelectorVector(*std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>($5));
-            selector->setValue($3);
+            selector->setPseudoTypeValue($3);
             if (selector->pseudoType() == CSSSelector::PseudoCue)
                 $$ = selector.release();
         }
@@ -1224,7 +1218,7 @@ pseudo:
             selector->setMatch(CSSSelector::PseudoClass);
             selector->adoptSelectorVector(*std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>($4));
             $2.lower();
-            selector->setValue($2);
+            selector->setPseudoTypeValue($2);
             if (selector->pseudoType() == CSSSelector::PseudoAny)
                 $$ = selector.release();
         }
@@ -1235,7 +1229,7 @@ pseudo:
         auto selector = std::make_unique<CSSParserSelector>();
         selector->setMatch(CSSSelector::PseudoClass);
         selector->setArgument($4);
-        selector->setValue($2);
+        selector->setPseudoTypeValue($2);
         if (selector->pseudoType() != CSSSelector::PseudoUnknown)
             $$ = selector.release();
     }
@@ -1245,7 +1239,7 @@ pseudo:
         auto selector = std::make_unique<CSSParserSelector>();
         selector->setMatch(CSSSelector::PseudoClass);
         selector->setArgument(AtomicString::number($4 * $5));
-        selector->setValue($2);
+        selector->setPseudoTypeValue($2);
         if (selector->pseudoType() != CSSSelector::PseudoUnknown)
             $$ = selector.release();
     }
@@ -1255,7 +1249,7 @@ pseudo:
         selector->setMatch(CSSSelector::PseudoClass);
         selector->setArgument($4);
         $2.lower();
-        selector->setValue($2);
+        selector->setPseudoTypeValue($2);
         CSSSelector::PseudoType type = selector->pseudoType();
         if (type == CSSSelector::PseudoUnknown)
             selector = nullptr;
@@ -1281,7 +1275,7 @@ pseudo:
             $$->adoptSelectorVector(selectorVector);
 
             $2.lower();
-            $$->setValue($2);
+            $$->setPseudoTypeValue($2);
         }
     }
   ;
