@@ -1,5 +1,18 @@
 2014-03-10  Andreas Kling  <akling@apple.com>
 
+        [X86_64] Smaller code for or_ir when register is accumulator.
+        <https://webkit.org/b/130007>
+
+        Generate the shorthand version of "or eax, imm" when possible.
+
+        Reviewed by Benjamin Poulain.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::orl_ir):
+        (JSC::X86Assembler::orq_ir):
+
+2014-03-10  Andreas Kling  <akling@apple.com>
+
         [X86_64] Smaller code for test_ir when register is accumulator.
         <https://webkit.org/b/130006>
 

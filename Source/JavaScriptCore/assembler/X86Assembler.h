@@ -190,6 +190,7 @@ private:
         OP_ADD_GvEv                     = 0x03,
         OP_OR_EvGv                      = 0x09,
         OP_OR_GvEv                      = 0x0B,
+        OP_OR_EAXIv                     = 0x0D,
         OP_2BYTE_ESCAPE                 = 0x0F,
         OP_AND_EvGv                     = 0x21,
         OP_AND_GvEv                     = 0x23,
@@ -615,7 +616,10 @@ public:
             m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_OR, dst);
             m_formatter.immediate8(imm);
         } else {
-            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_OR, dst);
+            if (dst == X86Registers::eax)
+                m_formatter.oneByteOp(OP_OR_EAXIv);
+            else
+                m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_OR, dst);
             m_formatter.immediate32(imm);
         }
     }
@@ -643,7 +647,10 @@ public:
             m_formatter.oneByteOp64(OP_GROUP1_EvIb, GROUP1_OP_OR, dst);
             m_formatter.immediate8(imm);
         } else {
-            m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_OR, dst);
+            if (dst == X86Registers::eax)
+                m_formatter.oneByteOp64(OP_OR_EAXIv);
+            else
+                m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_OR, dst);
             m_formatter.immediate32(imm);
         }
     }
