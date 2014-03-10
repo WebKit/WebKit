@@ -61,6 +61,7 @@
 #import <WebCore/HTMLParserIdioms.h>
 #import <WebCore/HTMLSelectElement.h>
 #import <WebCore/HTMLTextAreaElement.h>
+#import <WebCore/KeyboardEvent.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/MediaSessionManagerIOS.h>
 #import <WebCore/Node.h>
