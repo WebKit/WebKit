@@ -199,6 +199,7 @@ private:
         PRE_PREDICT_BRANCH_NOT_TAKEN    = 0x2E,
         OP_XOR_EvGv                     = 0x31,
         OP_XOR_GvEv                     = 0x33,
+        OP_XOR_EAXIv                    = 0x35,
         OP_CMP_EvGv                     = 0x39,
         OP_CMP_GvEv                     = 0x3B,
         OP_CMP_EAXIv                    = 0x3D,
@@ -770,7 +771,10 @@ public:
             m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_XOR, dst);
             m_formatter.immediate8(imm);
         } else {
-            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_XOR, dst);
+            if (dst == X86Registers::eax)
+                m_formatter.oneByteOp(OP_XOR_EAXIv);
+            else
+                m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_XOR, dst);
             m_formatter.immediate32(imm);
         }
     }
@@ -787,7 +791,10 @@ public:
             m_formatter.oneByteOp64(OP_GROUP1_EvIb, GROUP1_OP_XOR, dst);
             m_formatter.immediate8(imm);
         } else {
-            m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_XOR, dst);
+            if (dst == X86Registers::eax)
+                m_formatter.oneByteOp64(OP_XOR_EAXIv);
+            else
+                m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_XOR, dst);
             m_formatter.immediate32(imm);
         }
     }
