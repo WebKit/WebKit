@@ -1,3 +1,24 @@
+2014-03-10  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r159218): FrameView::layout() should destroy TemporaryChange<LayoutPhase>
+        before destroying Ref<FrameView>
+        https://bugs.webkit.org/show_bug.cgi?id=130034
+        <rdar://problem/15664288>
+
+        Reviewed by Alexey Proskuryakov.
+
+        We should always destroy TemporaryChange<LayoutPhase> before destroying Ref<FrameView>
+        in FrameView::layout() so as to ensure that the FrameView exists when we restore the
+        original layout phase value.
+
+        The existing test fast/frames/crash-remove-iframe-during-object-beforeload.html covers
+        this change. Although you must run the test with Guard Malloc enabled (i.e. run-webkit-tests -r).
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Move construction of variable protect before the construction of
+        variable layoutPhaseRestorer. Additionally, add a period to the end of the comment associated
+        with variable protect.
+
 2014-03-10  Zsolt Borbely  <borbezs@inf.u-szeged.hu>
 
         ASSERTION FAILED: span >= 1

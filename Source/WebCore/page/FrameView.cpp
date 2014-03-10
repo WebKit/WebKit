@@ -1056,12 +1056,12 @@ void FrameView::layout(bool allowSubtree)
     if (isInLayout())
         return;
 
+    // Protect the view from being deleted during layout (in recalcStyle).
+    Ref<FrameView> protect(*this);
+
     // Many of the tasks performed during layout can cause this function to be re-entered,
     // so save the layout phase now and restore it on exit.
     TemporaryChange<LayoutPhase> layoutPhaseRestorer(m_layoutPhase, InPreLayout);
-
-    // Protect the view from being deleted during layout (in recalcStyle)
-    Ref<FrameView> protect(*this);
 
     // Every scroll that happens during layout is programmatic.
     TemporaryChange<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
