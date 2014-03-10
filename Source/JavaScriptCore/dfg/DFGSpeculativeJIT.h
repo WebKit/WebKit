@@ -2025,8 +2025,6 @@ public:
     void compileBooleanCompare(Node*, MacroAssembler::RelationalCondition);
     void compileDoubleCompare(Node*, MacroAssembler::DoubleCondition);
     
-    bool compileStrictEqForConstant(Node*, Edge value, JSValue constant);
-    
     bool compileStrictEq(Node*);
     
     void compileAllocatePropertyStorage(Node*);

@@ -91,7 +91,6 @@ inline CapabilityLevel canCompile(Node* node)
     case UInt32ToNumber:
     case Int32ToDouble:
     case CompareEqConstant:
-    case CompareStrictEqConstant:
     case Jump:
     case ForceOSRExit:
     case Phi:
@@ -238,11 +237,9 @@ inline CapabilityLevel canCompile(Node* node)
             break;
         if (node->isBinaryUseKind(BooleanUse))
             break;
-        if (node->child1().useKind() == ObjectUse
-            && node->child2().useKind() == ObjectOrOtherUse)
+        if (node->isBinaryUseKind(ObjectUse, ObjectOrOtherUse))
             break;
-        if (node->child1().useKind() == ObjectOrOtherUse
-            && node->child2().useKind() == ObjectUse)
+        if (node->isBinaryUseKind(ObjectOrOtherUse, ObjectUse))
             break;
         return CannotCompile;
     case CompareStrictEq:
@@ -254,9 +251,11 @@ inline CapabilityLevel canCompile(Node* node)
             break;
         if (node->isBinaryUseKind(ObjectUse))
             break;
-        if (node->isBinaryUseKind(MiscUse))
-            break;
         if (node->isBinaryUseKind(BooleanUse))
+            break;
+        if (node->isBinaryUseKind(MiscUse, UntypedUse))
+            break;
+        if (node->isBinaryUseKind(UntypedUse, MiscUse))
             break;
         return CannotCompile;
     case CompareLess:
@@ -350,6 +349,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case StringOrStringObjectUse:
                 case FinalObjectUse:
                 case NotCellUse:
+                case OtherUse:
                 case MiscUse:
                     // These are OK.
                     break;

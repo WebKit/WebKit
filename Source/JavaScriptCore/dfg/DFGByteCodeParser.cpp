@@ -718,16 +718,6 @@ private:
         return node->isStronglyProvedConstantIn(inlineCallFrame());
     }
 
-    // Our codegen for constant strict equality performs a bitwise comparison,
-    // so we can only select values that have a consistent bitwise identity.
-    bool isConstantForCompareStrictEq(Node* node)
-    {
-        if (!node->isConstant())
-            return false;
-        JSValue value = valueOfJSConstant(node);
-        return value.isBoolean() || value.isUndefinedOrNull();
-    }
-    
     BranchData* branchData(unsigned taken, unsigned notTaken)
     {
         BranchData* data = m_graph.m_branchData.add();
@@ -2608,12 +2598,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     getJSConstantForValue(jsBoolean(JSValue::strictEqual(m_codeBlock->globalObject()->globalExec(), a, b))));
                 NEXT_OPCODE(op_stricteq);
             }
-            if (isConstantForCompareStrictEq(op1))
-                set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(CompareStrictEqConstant, op2, op1));
-            else if (isConstantForCompareStrictEq(op2))
-                set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(CompareStrictEqConstant, op1, op2));
-            else
-                set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(CompareStrictEq, op1, op2));
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(CompareStrictEq, op1, op2));
             NEXT_OPCODE(op_stricteq);
         }
 
@@ -2648,12 +2633,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 NEXT_OPCODE(op_nstricteq);
             }
             Node* invertedResult;
-            if (isConstantForCompareStrictEq(op1))
-                invertedResult = addToGraph(CompareStrictEqConstant, op2, op1);
-            else if (isConstantForCompareStrictEq(op2))
-                invertedResult = addToGraph(CompareStrictEqConstant, op1, op2);
-            else
-                invertedResult = addToGraph(CompareStrictEq, op1, op2);
+            invertedResult = addToGraph(CompareStrictEq, op1, op2);
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(LogicalNot, invertedResult));
             NEXT_OPCODE(op_nstricteq);
         }

@@ -1,5 +1,66 @@
 2014-03-10  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG and FTL should know that comparing anything to Misc is cheap and easy
+        https://bugs.webkit.org/show_bug.cgi?id=130001
+
+        Reviewed by Geoffrey Garen.
+        
+        - Expand CompareStrictEq(Misc:, Misc:) to work for cases where either side of the
+          comparison is just Untyped:.
+        
+        - This obviates the need for CompareStrictEqConstant, so remove it.
+        
+        - FTL had a thing called "Nully" which is really "Other". Rename it and add
+          OtherUse.
+        
+        9% speed-up on box2d.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isBinaryUseKind):
+        (JSC::DFG::Node::shouldSpeculateOther):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMiscStrictEq):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMiscStrictEq):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareEq):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEq):
+        (JSC::FTL::LowerDFGToLLVM::compareEqObjectOrOtherToObject):
+        (JSC::FTL::LowerDFGToLLVM::equalNullOrUndefined):
+        (JSC::FTL::LowerDFGToLLVM::isNotOther):
+        (JSC::FTL::LowerDFGToLLVM::isOther):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::speculateObjectOrOther):
+        (JSC::FTL::LowerDFGToLLVM::speculateNotCell):
+        (JSC::FTL::LowerDFGToLLVM::speculateOther):
+        (JSC::FTL::LowerDFGToLLVM::speculateMisc):
+        * tests/stress/compare-strict-eq-integer-to-misc.js: Added.
+
+2014-03-10  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, remove unintended change.
 
         * dfg/DFGDriver.cpp:

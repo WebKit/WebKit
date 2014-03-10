@@ -656,10 +656,12 @@ void SpeculativeJIT::compileMiscStrictEq(Node* node)
     JSValueOperand op2(this, node->child2(), ManualOperandSpeculation);
     GPRTemporary result(this);
     
-    speculateMisc(node->child1(), op1.jsValueRegs());
-    speculateMisc(node->child2(), op2.jsValueRegs());
+    if (node->child1().useKind() == MiscUse)
+        speculateMisc(node->child1(), op1.jsValueRegs());
+    if (node->child2().useKind() == MiscUse)
+        speculateMisc(node->child2(), op2.jsValueRegs());
     
-    m_jit.compare32(JITCompiler::Equal, op1.gpr(), op2.gpr(), result.gpr());
+    m_jit.compare64(JITCompiler::Equal, op1.gpr(), op2.gpr(), result.gpr());
     m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
     jsValueResult(result.gpr(), node, DataFormatJSBoolean);
 }
@@ -2626,11 +2628,6 @@ void SpeculativeJIT::compile(Node* node)
 
     case CompareEq:
         if (compare(node, JITCompiler::Equal, JITCompiler::DoubleEqual, operationCompareEq))
-            return;
-        break;
-
-    case CompareStrictEqConstant:
-        if (compileStrictEqForConstant(node, node->child1(), valueOfJSConstant(node->child2().node())))
             return;
         break;
 

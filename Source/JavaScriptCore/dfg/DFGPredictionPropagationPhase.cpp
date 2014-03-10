@@ -345,7 +345,6 @@ private:
         case CompareEq:
         case CompareEqConstant:
         case CompareStrictEq:
-        case CompareStrictEqConstant:
         case InstanceOf:
         case IsUndefined:
         case IsBoolean:

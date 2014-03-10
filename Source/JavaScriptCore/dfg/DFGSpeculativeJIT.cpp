@@ -1281,9 +1281,9 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node* node, MacroAssembler::Relationa
                 compilePeepHoleBooleanBranch(node, branchNode, condition);
             else if (node->isBinaryUseKind(ObjectUse))
                 compilePeepHoleObjectEquality(node, branchNode);
-            else if (node->child1().useKind() == ObjectUse && node->child2().useKind() == ObjectOrOtherUse)
+            else if (node->isBinaryUseKind(ObjectUse, ObjectOrOtherUse))
                 compilePeepHoleObjectToObjectOrOtherEquality(node->child1(), node->child2(), branchNode);
-            else if (node->child1().useKind() == ObjectOrOtherUse && node->child2().useKind() == ObjectUse)
+            else if (node->isBinaryUseKind(ObjectOrOtherUse, ObjectUse))
                 compilePeepHoleObjectToObjectOrOtherEquality(node->child2(), node->child1(), branchNode);
             else {
                 nonSpeculativePeepholeBranch(node, branchNode, condition, operation);
@@ -3621,12 +3621,12 @@ bool SpeculativeJIT::compare(Node* node, MacroAssembler::RelationalCondition con
             return false;
         }
         
-        if (node->child1().useKind() == ObjectUse && node->child2().useKind() == ObjectOrOtherUse) {
+        if (node->isBinaryUseKind(ObjectUse, ObjectOrOtherUse)) {
             compileObjectToObjectOrOtherEquality(node->child1(), node->child2());
             return false;
         }
         
-        if (node->child1().useKind() == ObjectOrOtherUse && node->child2().useKind() == ObjectUse) {
+        if (node->isBinaryUseKind(ObjectOrOtherUse, ObjectUse)) {
             compileObjectToObjectOrOtherEquality(node->child2(), node->child1());
             return false;
         }
@@ -3636,82 +3636,9 @@ bool SpeculativeJIT::compare(Node* node, MacroAssembler::RelationalCondition con
     return false;
 }
 
-bool SpeculativeJIT::compileStrictEqForConstant(Node* node, Edge value, JSValue constant)
-{
-    JSValueOperand op1(this, value);
-    
-    unsigned branchIndexInBlock = detectPeepHoleBranch();
-    if (branchIndexInBlock != UINT_MAX) {
-        Node* branchNode = m_block->at(branchIndexInBlock);
-        BasicBlock* taken = branchNode->branchData()->taken.block;
-        BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
-        MacroAssembler::RelationalCondition condition = MacroAssembler::Equal;
-        
-        // The branch instruction will branch to the taken block.
-        // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
-        if (taken == nextBlock()) {
-            condition = MacroAssembler::NotEqual;
-            BasicBlock* tmp = taken;
-            taken = notTaken;
-            notTaken = tmp;
-        }
-
-#if USE(JSVALUE64)
-        branch64(condition, op1.gpr(), MacroAssembler::TrustedImm64(JSValue::encode(constant)), taken);
-#else
-        GPRReg payloadGPR = op1.payloadGPR();
-        GPRReg tagGPR = op1.tagGPR();
-        if (condition == MacroAssembler::Equal) {
-            // Drop down if not equal, go elsewhere if equal.
-            MacroAssembler::Jump notEqual = m_jit.branch32(MacroAssembler::NotEqual, tagGPR, MacroAssembler::Imm32(constant.tag()));
-            branch32(MacroAssembler::Equal, payloadGPR, MacroAssembler::Imm32(constant.payload()), taken);
-            notEqual.link(&m_jit);
-        } else {
-            // Drop down if equal, go elsehwere if not equal.
-            branch32(MacroAssembler::NotEqual, tagGPR, MacroAssembler::Imm32(constant.tag()), taken);
-            branch32(MacroAssembler::NotEqual, payloadGPR, MacroAssembler::Imm32(constant.payload()), taken);
-        }
-#endif
-        
-        jump(notTaken);
-        
-        use(node->child1());
-        use(node->child2());
-        m_indexInBlock = branchIndexInBlock;
-        m_currentNode = branchNode;
-        return true;
-    }
-    
-    GPRTemporary result(this);
-    
-#if USE(JSVALUE64)
-    GPRReg op1GPR = op1.gpr();
-    GPRReg resultGPR = result.gpr();
-    m_jit.move(MacroAssembler::TrustedImm64(ValueFalse), resultGPR);
-    MacroAssembler::Jump notEqual = m_jit.branch64(MacroAssembler::NotEqual, op1GPR, MacroAssembler::TrustedImm64(JSValue::encode(constant)));
-    m_jit.or32(MacroAssembler::TrustedImm32(1), resultGPR);
-    notEqual.link(&m_jit);
-    jsValueResult(resultGPR, node, DataFormatJSBoolean);
-#else
-    GPRReg op1PayloadGPR = op1.payloadGPR();
-    GPRReg op1TagGPR = op1.tagGPR();
-    GPRReg resultGPR = result.gpr();
-    m_jit.move(TrustedImm32(0), resultGPR);
-    MacroAssembler::JumpList notEqual;
-    notEqual.append(m_jit.branch32(MacroAssembler::NotEqual, op1TagGPR, MacroAssembler::Imm32(constant.tag())));
-    notEqual.append(m_jit.branch32(MacroAssembler::NotEqual, op1PayloadGPR, MacroAssembler::Imm32(constant.payload())));
-    m_jit.move(TrustedImm32(1), resultGPR);
-    notEqual.link(&m_jit);
-    booleanResult(resultGPR, node);
-#endif
-    
-    return false;
-}
-
 bool SpeculativeJIT::compileStrictEq(Node* node)
 {
-    switch (node->binaryUseKind()) {
-    case BooleanUse: {
+    if (node->isBinaryUseKind(BooleanUse)) {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {
             Node* branchNode = m_block->at(branchIndexInBlock);
@@ -3726,7 +3653,7 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         return false;
     }
 
-    case Int32Use: {
+    if (node->isBinaryUseKind(Int32Use)) {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {
             Node* branchNode = m_block->at(branchIndexInBlock);
@@ -3742,7 +3669,7 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
     }
     
 #if USE(JSVALUE64)   
-    case MachineIntUse: {
+    if (node->isBinaryUseKind(MachineIntUse)) {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {
             Node* branchNode = m_block->at(branchIndexInBlock);
@@ -3757,8 +3684,8 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         return false;
     }
 #endif // USE(JSVALUE64)
-        
-    case NumberUse: {
+
+    if (node->isBinaryUseKind(NumberUse)) {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {
             Node* branchNode = m_block->at(branchIndexInBlock);
@@ -3772,18 +3699,18 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         compileDoubleCompare(node, MacroAssembler::DoubleEqual);
         return false;
     }
-        
-    case StringUse: {
+    
+    if (node->isBinaryUseKind(StringUse)) {
         compileStringEquality(node);
         return false;
     }
-        
-    case StringIdentUse: {
+    
+    if (node->isBinaryUseKind(StringIdentUse)) {
         compileStringIdentEquality(node);
         return false;
     }
-        
-    case ObjectUse: {
+
+    if (node->isBinaryUseKind(ObjectUse)) {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {
             Node* branchNode = m_block->at(branchIndexInBlock);
@@ -3797,20 +3724,15 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         compileObjectEquality(node);
         return false;
     }
-        
-    case MiscUse: {
+
+    if (node->isBinaryUseKind(MiscUse, UntypedUse)
+        || node->isBinaryUseKind(UntypedUse, MiscUse)) {
         compileMiscStrictEq(node);
         return false;
     }
-        
-    case UntypedUse: {
-        return nonSpeculativeStrictEq(node);
-    }
-        
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        return false;
-    }
+    
+    RELEASE_ASSERT(node->isBinaryUseKind(UntypedUse));
+    return nonSpeculativeStrictEq(node);
 }
 
 void SpeculativeJIT::compileBooleanCompare(Node* node, MacroAssembler::RelationalCondition condition)

@@ -935,8 +935,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
             
-    case CompareStrictEq:
-    case CompareStrictEqConstant: {
+    case CompareStrictEq: {
         Node* leftNode = node->child1().node();
         Node* rightNode = node->child2().node();
         JSValue left = forNode(leftNode).value();

@@ -391,10 +391,6 @@ private:
             break;
         }
             
-        case CompareStrictEqConstant: {
-            break;
-        }
-            
         case CompareStrictEq: {
             if (Node::shouldSpeculateBoolean(node->child1().node(), node->child2().node())) {
                 fixEdge<BooleanUse>(node->child1());
@@ -432,8 +428,11 @@ private:
                 fixEdge<ObjectUse>(node->child2());
                 break;
             }
-            if (node->child1()->shouldSpeculateMisc() && node->child2()->shouldSpeculateMisc()) {
+            if (node->child1()->shouldSpeculateMisc()) {
                 fixEdge<MiscUse>(node->child1());
+                break;
+            }
+            if (node->child2()->shouldSpeculateMisc()) {
                 fixEdge<MiscUse>(node->child2());
                 break;
             }
@@ -772,7 +771,7 @@ private:
         case ToThis: {
             ECMAMode ecmaMode = m_graph.executableFor(node->origin.semantic)->isStrictMode() ? StrictMode : NotStrictMode;
 
-            if (isOtherSpeculation(node->child1()->prediction())) {
+            if (node->child1()->shouldSpeculateOther()) {
                 if (ecmaMode == StrictMode) {
                     fixEdge<OtherUse>(node->child1());
                     node->convertToIdentity();
