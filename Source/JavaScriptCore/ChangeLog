@@ -1,5 +1,12 @@
 2014-03-10  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, remove unintended change.
+
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+
+2014-03-10  Filip Pizlo  <fpizlo@apple.com>
+
         jsc commandline shouldn't have a "console" because that confuses some tests into thinking
         that they're running in the browser.
 
