@@ -1,0 +1,133 @@
+/*
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+.toolbar .dashboard.debugger {
+    display: -webkit-flex;
+    -webkit-flex-wrap: nowrap;
+    -webkit-justify-content: center;
+    -webkit-align-items: center;
+
+    font-size: 11px;
+    font-family: Lucida Grande, sans-serif;
+    text-align: center;
+    text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
+    color: rgb(60, 60, 60);
+    padding: 0 5px;
+}
+
+.dashboard.debugger > .message {
+    font-weight: bold;
+}
+
+.dashboard.debugger .navigation-bar {
+    border: 0;
+    margin: 0 5px 0 -5px;
+}
+
+.toolbar:not(.small-size) .dashboard.debugger .navigation-bar {
+    margin-top: 1px;
+}
+
+.dashboard.debugger .navigation-bar .item.button {
+    -webkit-flex-direction: row;
+    width: 16px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.dashboard.debugger .navigation-bar .item.button > .glyph {
+    width: 16px;
+    height: 16px;
+    -webkit-animation-name: pulse-pause-button;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-timing-function: ease-out;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-direction: alternate;
+    background-color: rgb(102, 155, 199) !important;
+}
+
+@-webkit-keyframes pulse-pause-button {
+    from { opacity: 0.7; -webkit-transform: scale(1); }
+    to { opacity: 1; -webkit-transform: scale(1.1); }
+}
+
+.dashboard.debugger > .divider {
+    width: 1px;
+    height: 100%;
+
+    margin: 0 10px;
+
+    background-image: linear-gradient(rgb(190, 190, 190), rgb(190, 190, 190));
+    background-size: 100% 66%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.dashboard.debugger > div {
+    display: -webkit-flex;
+    -webkit-align-items: center;
+}
+
+.dashboard.debugger > .location > :first-child {
+    -webkit-align-self: center;
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+}
+
+.toolbar:not(.small-size) .dashboard.debugger > .location :not(:first-child) {
+    margin-top: 1px;
+}
+
+.dashboard.debugger > .location img.icon {
+    width: 16px;
+    height: 16px;
+}
+
+.dashboard.debugger > .location .function-name {
+    color: rgb(30, 30, 30);
+}
+
+.dashboard.debugger > .location .function-name::after {
+    content: '\0A00\2014\0A00'; /* &nbsp;&mdash;&nbsp; */
+}
+
+.dashboard.debugger > .location .go-to-link {
+    padding-bottom: 1px;
+    -webkit-text-decoration-color: #aaa;
+}
+
+.toolbar.collapsed .dashboard.debugger > :not(.message):not(.navigation-bar ) {
+    display: none;
+}
+
+.toolbar.small-size .dashboard.debugger > .message {
+    font-size: 10px;
+}
+
+.toolbar.small-size .dashboard.debugger > .location img.icon,
+.toolbar.small-size .dashboard.debugger > .location > :first-child {
+    width: 14px;
+    height: 14px;
+}

@@ -122,6 +122,7 @@ WebInspector.loaded = function()
 
     // Register for events.
     this.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Paused, this._debuggerDidPause, this);
+    this.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, this._debuggerDidResume, this);
     this.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.InspectModeStateChanged, this._inspectModeStateChanged, this);
     this.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.DOMNodeWasInspected, this._domNodeWasInspected, this);
     this.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
@@ -280,10 +281,10 @@ WebInspector.contentLoaded = function()
     this._consoleToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this.toggleConsoleView, this);
     this.toolbar.addToolbarItem(this._consoleToolbarButton, WebInspector.Toolbar.Section.Center);
 
-    this._dashboardContainerView = new WebInspector.DashboardContainerView;
-    this._dashboardContainerView.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.default);
+    this.dashboardContainer = new WebInspector.DashboardContainerView;
+    this.dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.default);
 
-    this.toolbar.addToolbarItem(this._dashboardContainerView.toolbarItem, WebInspector.Toolbar.Section.Center);
+    this.toolbar.addToolbarItem(this.dashboardContainer.toolbarItem, WebInspector.Toolbar.Section.Center);
 
     // The toolbar button for node inspection.
     if (this.debuggableType === WebInspector.DebuggableType.Web) {
@@ -749,12 +750,18 @@ WebInspector._dragOver = function(event)
 WebInspector._debuggerDidPause = function(event)
 {
     this.debuggerSidebarPanel.show();
+    this.dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.debugger);
 
     // Since the Scope Chain details sidebar panel might not be in the sidebar yet,
     // set a flag to select and show it when it does become available.
     this._selectAndShowScopeChainDetailsSidebarPanelWhenAvailable = true;
 
     InspectorFrontendHost.bringToFront();
+}
+
+WebInspector._debuggerDidResume = function(event)
+{
+    this.dashboardContainer.closeDashboardViewForRepresentedObject(this.dashboardManager.dashboards.debugger);
 }
 
 WebInspector._mainFrameDidChange = function(event)

@@ -191,7 +191,7 @@ WebInspector.ButtonNavigationItem.prototype = {
     _updateImage: function()
     {
         if (this._suppressEmboss)
-            this._glyphElement.style.backgroundImage = "url(" + this._image + ")";
+            this._glyphElement.style.webkitMask = "url(" + this._image + ")";
         else
             this._generateImages();
     },

@@ -1,5 +1,69 @@
 2014-03-10  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: show a debugging-oriented dashboard when scripts pause
+        https://bugs.webkit.org/show_bug.cgi?id=129913
+
+        Reviewed by Timothy Hatcher.
+
+        Using the dashboard swapping functionality just added, show a debugger dashboard
+        whenever the debugger pauses, and hide it when it resumes. The debugger manager
+        already coalesces pause/resume events across stepping commands.
+
+        The dashboard itself is straightforward, with the exception of how it uses the
+        navigation bar buttons. Since buttons from the same URL can't be reused if they
+        are bezeled, we don't bezel our button, and set the button image as the glyph mask
+        instead of the background image. This lets us easily animate the glyph shape.
+
+        We also have to more forcefully declare a bunch of icon rules that would otherwise
+        be messed up by the toolbar's icon rules (whereas we want to mostly emulate navigation
+        bar icon styles).
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        (WebInspector.contentLoaded):
+        (WebInspector._debuggerDidPause):
+        (WebInspector._debuggerDidResume):
+        * UserInterface/Controllers/DashboardManager.js:
+        (WebInspector.DashboardManager):
+        * UserInterface/Main.html:
+        * UserInterface/Models/DebuggerDashboard.js: Added.
+        (WebInspector.DebuggerDashboard):
+        * UserInterface/Views/ButtonNavigationItem.css:
+        (.navigation-bar .item.button.suppress-emboss > .glyph):
+        * UserInterface/Views/ButtonNavigationItem.js:
+        (WebInspector.ButtonNavigationItem.prototype._updateImage):
+        * UserInterface/Views/DashboardView.js:
+        (WebInspector.DashboardView):
+        * UserInterface/Views/DebuggerDashboardView.css: Added.
+        (.toolbar .dashboard.debugger):
+        (.dashboard.debugger > .message):
+        (.dashboard.debugger .navigation-bar):
+        (.toolbar:not(.small-size) .dashboard.debugger .navigation-bar):
+        (.dashboard.debugger .navigation-bar .item.button):
+        (.dashboard.debugger .navigation-bar .item.button > .glyph):
+        (@-webkit-keyframes pulse-pause-button):
+        (to):
+        (.dashboard.debugger > .divider):
+        (.dashboard.debugger > div):
+        (.dashboard.debugger > .location > :first-child):
+        (.toolbar:not(.small-size) .dashboard.debugger > .location :not(:first-child)):
+        (.dashboard.debugger > .location img.icon):
+        (.dashboard.debugger > .location .function-name):
+        (.dashboard.debugger > .location .function-name::after):
+        (.dashboard.debugger > .location .go-to-link):
+        (.toolbar.collapsed .dashboard.debugger > :not(.message):not(.navigation-bar )):
+        (.toolbar.small-size .dashboard.debugger > .message):
+        (.toolbar.small-size .dashboard.debugger > .location > :first-child):
+        * UserInterface/Views/DebuggerDashboardView.js: Added.
+        (WebInspector.DebuggerDashboardView):
+        (WebInspector.DebuggerDashboardView.prototype._rebuildLocation):
+        (WebInspector.DebuggerDashboardView.prototype._resumeButtonClicked):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+
+2014-03-10  Brian Burg  <bburg@apple.com>
+
         Web Inspector: convert the dashboard toolbar item to support multiple dashboards
         https://bugs.webkit.org/show_bug.cgi?id=129898
 

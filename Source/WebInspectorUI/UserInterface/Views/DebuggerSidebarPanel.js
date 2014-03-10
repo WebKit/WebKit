@@ -40,12 +40,12 @@ WebInspector.DebuggerSidebarPanel = function()
     WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, this._debuggerDidResume, this);
     WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, this._debuggerActiveCallFrameDidChange, this);
 
-    this._pauseOrResumeKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "Y", this._debuggerPauseResumeButtonClicked.bind(this));
+    this.pauseOrResumeKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "Y", this._debuggerPauseResumeButtonClicked.bind(this));
     this._stepOverKeyboardShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.F6, this._debuggerStepOverButtonClicked.bind(this));
     this._stepIntoKeyboardShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.F7, this._debuggerStepIntoButtonClicked.bind(this));
     this._stepOutKeyboardShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.F8, this._debuggerStepOutButtonClicked.bind(this));
 
-    this._pauseOrResumeAlternateKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.Slash, this._debuggerPauseResumeButtonClicked.bind(this));
+    this.pauseOrResumeAlternateKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.Slash, this._debuggerPauseResumeButtonClicked.bind(this));
     this._stepOverAlternateKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.SingleQuote, this._debuggerStepOverButtonClicked.bind(this));
     this._stepIntoAlternateKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.Semicolon, this._debuggerStepIntoButtonClicked.bind(this));
     this._stepOutAlternateKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Shift | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.Semicolon, this._debuggerStepOutButtonClicked.bind(this));
@@ -61,8 +61,8 @@ WebInspector.DebuggerSidebarPanel = function()
     this._debuggerBreakpointsButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._breakpointsToggleButtonClicked, this);
     this._navigationBar.addNavigationItem(this._debuggerBreakpointsButtonItem);
 
-    toolTip = WebInspector.UIString("Pause script execution (%s or %s)").format(this._pauseOrResumeKeyboardShortcut.displayName, this._pauseOrResumeAlternateKeyboardShortcut.displayName);
-    altToolTip = WebInspector.UIString("Continue script execution (%s or %s)").format(this._pauseOrResumeKeyboardShortcut.displayName, this._pauseOrResumeAlternateKeyboardShortcut.displayName);
+    toolTip = WebInspector.UIString("Pause script execution (%s or %s)").format(this.pauseOrResumeKeyboardShortcut.displayName, this.pauseOrResumeAlternateKeyboardShortcut.displayName);
+    altToolTip = WebInspector.UIString("Continue script execution (%s or %s)").format(this.pauseOrResumeKeyboardShortcut.displayName, this.pauseOrResumeAlternateKeyboardShortcut.displayName);
 
     this._debuggerPauseResumeButtonItem = new WebInspector.ToggleButtonNavigationItem("debugger-pause-resume", toolTip, altToolTip, "Images/Pause.svg", "Images/Resume.svg", 16, 16);
     this._debuggerPauseResumeButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._debuggerPauseResumeButtonClicked, this);

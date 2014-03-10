@@ -32,6 +32,9 @@ WebInspector.DashboardView = function(representedObject, identifier)
         if (representedObject instanceof WebInspector.DefaultDashboard)
             return new WebInspector.DefaultDashboardView(representedObject);
 
+        if (representedObject instanceof WebInspector.DebuggerDashboard)
+            return new WebInspector.DebuggerDashboardView(representedObject);
+
         throw "Can't make a DashboardView for an unknown representedObject.";
     }
 

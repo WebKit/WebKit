@@ -60,6 +60,7 @@ body.window-inactive .navigation-bar .item.button.disabled:not(.suppress-emboss)
 }
 
 .navigation-bar .item.button.suppress-emboss > .glyph {
+    background-color: rgb(153, 153, 153);
     opacity: 0.7;
 }
 
