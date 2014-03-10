@@ -3458,18 +3458,6 @@ private:
     {
         JSValue constant = m_graph.valueOfJSConstant(m_node->child2().node());
 
-        if (constant.isUndefinedOrNull()
-            && !masqueradesAsUndefinedWatchpointIsStillValid()) {
-            if (constant.isNull()) {
-                setBoolean(equalNullOrUndefined(m_node->child1(), AllCellsAreFalse, EqualNull));
-                return;
-            }
-        
-            ASSERT(constant.isUndefined());
-            setBoolean(equalNullOrUndefined(m_node->child1(), AllCellsAreFalse, EqualUndefined));
-            return;
-        }
-        
         setBoolean(
             m_out.equal(
                 lowJSValue(m_node->child1()),

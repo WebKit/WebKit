@@ -1,3 +1,24 @@
+2014-03-09  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL fails the new equals-masquerader strictEqualConstant test
+        https://bugs.webkit.org/show_bug.cgi?id=129996
+
+        Reviewed by Mark Lam.
+        
+        It turns out that the FTL was trying to do the masquerading stuff for ===null. But
+        that's wrong since none of the other engines do it. The DFG even had an ancient
+        FIXME about doing it - but that doesn't make sense since the LLInt and baseline JIT
+        don't do it and JSValue::strictEqual() doesn't do it.
+        
+        Remove the FIXME and remove the extra checks in the FTL.
+        
+        This is a glorious patch: nothing but red and it fixes a test failure.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStrictEqForConstant):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEqConstant):
+
 2014-03-09  Andreas Kling  <akling@apple.com>
 
         Short-circuit JSGlobalObjectInspectorController when not inspecting.

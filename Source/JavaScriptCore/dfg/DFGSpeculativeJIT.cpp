@@ -3640,10 +3640,6 @@ bool SpeculativeJIT::compileStrictEqForConstant(Node* node, Edge value, JSValue 
 {
     JSValueOperand op1(this, value);
     
-    // FIXME: This code is wrong for the case that the constant is null or undefined,
-    // and the value is an object that MasqueradesAsUndefined.
-    // https://bugs.webkit.org/show_bug.cgi?id=109487
-    
     unsigned branchIndexInBlock = detectPeepHoleBranch();
     if (branchIndexInBlock != UINT_MAX) {
         Node* branchNode = m_block->at(branchIndexInBlock);
