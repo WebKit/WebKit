@@ -1,3 +1,11 @@
+2014-03-09  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION: js/dom/create-lots-of-workers.html frequently crashes
+        (sometimes in js/dom/cross-frame-bad-time.html)
+        https://bugs.webkit.org/show_bug.cgi?id=129758
+
+        * platform/mac/TestExpectations: Skipped the test.
+
 2014-03-09  Oliver Hunt  <oliver@apple.com>
 
         Skip fast/workers/worker-copy-shared-blob-url.html in webkit2

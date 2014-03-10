@@ -1326,3 +1326,5 @@ webkit.org/b/128499 svg/clip-path/clip-path-precision-001.svg [ ImageOnlyFailure
 webkit.org/b/128499 svg/clip-path/clip-path-content-use-006.svg [ ImageOnlyFailure ]
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure ]
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
+
+webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]
