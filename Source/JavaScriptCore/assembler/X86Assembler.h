@@ -229,6 +229,7 @@ private:
         OP_CDQ                          = 0x99,
         OP_MOV_EAXOv                    = 0xA1,
         OP_MOV_OvEAX                    = 0xA3,
+        OP_TEST_EAXIv                   = 0xA9,
         OP_MOV_EAXIv                    = 0xB8,
         OP_GROUP2_EvIb                  = 0xC1,
         OP_RET                          = 0xC3,
@@ -1099,7 +1100,10 @@ public:
     
     void testl_i32r(int imm, RegisterID dst)
     {
-        m_formatter.oneByteOp(OP_GROUP3_EvIz, GROUP3_OP_TEST, dst);
+        if (dst == X86Registers::eax)
+            m_formatter.oneByteOp(OP_TEST_EAXIv);
+        else
+            m_formatter.oneByteOp(OP_GROUP3_EvIz, GROUP3_OP_TEST, dst);
         m_formatter.immediate32(imm);
     }
 
@@ -1153,7 +1157,10 @@ public:
 
     void testq_i32r(int imm, RegisterID dst)
     {
-        m_formatter.oneByteOp64(OP_GROUP3_EvIz, GROUP3_OP_TEST, dst);
+        if (dst == X86Registers::eax)
+            m_formatter.oneByteOp64(OP_TEST_EAXIv);
+        else
+            m_formatter.oneByteOp64(OP_GROUP3_EvIz, GROUP3_OP_TEST, dst);
         m_formatter.immediate32(imm);
     }
 

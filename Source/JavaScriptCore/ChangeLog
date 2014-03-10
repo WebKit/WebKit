@@ -1,5 +1,18 @@
 2014-03-10  Andreas Kling  <akling@apple.com>
 
+        [X86_64] Smaller code for test_ir when register is accumulator.
+        <https://webkit.org/b/130006>
+
+        Generate the shorthand version of "test eax, imm" when possible.
+
+        Reviewed by Benjamin Poulain.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::testl_i32r):
+        (JSC::X86Assembler::testq_i32r):
+
+2014-03-10  Andreas Kling  <akling@apple.com>
+
         [X86_64] Smaller code for cmp_ir when register is accumulator.
         <https://webkit.org/b/130005>
 
