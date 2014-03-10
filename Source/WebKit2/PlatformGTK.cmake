@@ -453,9 +453,10 @@ set(SharedWebKit2Libraries
 # Since the GObjectDOMBindings convenience library exports API that is unused except
 # in embedding applications we need to instruct the linker to link all symbols explicitly.
 list(APPEND WebKit2_LIBRARIES
-    -Wl,--whole-archive GObjectDOMBindings -Wl,--no-whole-archive
+    GObjectDOMBindings
     WebCorePlatformGTK
 )
+ADD_WHOLE_ARCHIVE_TO_LIBRARIES(WebKit2_LIBRARIES)
 
 set(WebKit2_MARSHAL_LIST ${WEBKIT2_DIR}/UIProcess/API/gtk/webkit2marshal.list)
 add_custom_command(
@@ -650,11 +651,12 @@ if (ENABLE_PLUGIN_PROCESS)
             ${GDK2_INCLUDE_DIRS}
     )
 
-    target_link_libraries(WebKitPluginProcess
+    set(WebKitPluginProcess_LIBRARIES
         ${SharedWebKit2Libraries}
         WebCorePlatformGTK2
-        WebCore
     )
+    ADD_WHOLE_ARCHIVE_TO_LIBRARIES(WebKitPluginProcess_LIBRARIES)
+    target_link_libraries(WebKitPluginProcess ${WebKitPluginProcess_LIBRARIES})
 
     add_dependencies(WebKitPluginProcess WebKit2)
 

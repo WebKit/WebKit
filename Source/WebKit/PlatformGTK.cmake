@@ -134,9 +134,10 @@ list(APPEND WebKitGTK_INSTALLED_HEADERS
 # Since the GObjectDOMBindings convenience library exports API that is unused except
 # in embedding applications we need to instruct the linker to link all symbols explicitly.
 list(APPEND WebKit_LIBRARIES
-    -Wl,--whole-archive GObjectDOMBindings -Wl,--no-whole-archive
+    GObjectDOMBindings
     WebCorePlatformGTK
 )
+ADD_WHOLE_ARCHIVE_TO_LIBRARIES(WebKit_LIBRARIES)
 
 set(WebKit_MARSHAL_LIST ${WEBKIT_DIR}/gtk/webkitmarshal.list)
 

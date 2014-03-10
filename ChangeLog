@@ -1,3 +1,14 @@
+2014-03-10  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Clean up library linking
+        https://bugs.webkit.org/show_bug.cgi?id=129782
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/OptionsGTK.cmake: Add a macro to wrap all libraries in a list with --whole-archive
+        so that unused symbols are not dropped. This is useful when building up shared libraries
+        from convenience libraries.
+
 2014-03-08  Landry Breuil  <landry@openbsd.org>
 
         Don't check for shm_open on librt on OpenBSD, lib doesnt exist.
