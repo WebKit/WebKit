@@ -70,6 +70,8 @@ public:
 
     LayoutRect decorationsClipRectForBoxInNamedFlowFragment(const RenderBox&, RenderNamedFlowFragment&) const;
 
+    RenderNamedFlowFragment* fragmentFromAbsolutePointAndBox(const IntPoint&, const RenderBox& flowedBox);
+
     void registerNamedFlowContentElement(Element&);
     void unregisterNamedFlowContentElement(Element&);
     const NamedFlowContentElements& contentElements() const { return m_contentElements; }

@@ -45,13 +45,13 @@
 #include "PaintInfo.h"
 #include "RenderBoxRegionInfo.h"
 #include "RenderFlexibleBox.h"
-#include "RenderFlowThread.h"
 #include "RenderGeometryMap.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
 #include "RenderNamedFlowFragment.h"
+#include "RenderNamedFlowThread.h"
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -781,7 +781,7 @@ bool RenderBox::scroll(ScrollDirection direction, ScrollGranularity granularity,
     RenderBlock* nextScrollBlock = containingBlock();
     if (nextScrollBlock && nextScrollBlock->isRenderNamedFlowThread()) {
         ASSERT(startBox);
-        nextScrollBlock = toRenderFlowThread(nextScrollBlock)->regionFromAbsolutePointAndBox(wheelEventAbsolutePoint, *startBox);
+        nextScrollBlock = toRenderNamedFlowThread(nextScrollBlock)->fragmentFromAbsolutePointAndBox(wheelEventAbsolutePoint, *startBox);
     }
 
     if (nextScrollBlock && !nextScrollBlock->isRenderView())

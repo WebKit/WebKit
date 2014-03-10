@@ -68,6 +68,8 @@ public:
     RenderLayer& fragmentContainerLayer() const;
     
     virtual bool shouldClipFlowThreadContent() const override;
+    
+    virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&, bool* offsetDependsOnPoint = 0) const override;
 
     bool isPseudoElementRegion() const { return parent() && parent()->isPseudoElement(); }
 

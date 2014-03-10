@@ -366,6 +366,29 @@ LayoutRect RenderNamedFlowThread::decorationsClipRectForBoxInNamedFlowFragment(c
     return visualOverflowRect;
 }
 
+RenderNamedFlowFragment* RenderNamedFlowThread::fragmentFromAbsolutePointAndBox(const IntPoint& absolutePoint, const RenderBox& flowedBox)
+{
+    RenderRegion* startRegion = nullptr;
+    RenderRegion* endRegion = nullptr;
+    getRegionRangeForBox(&flowedBox, startRegion, endRegion);
+    
+    if (!startRegion)
+        return nullptr;
+    
+    for (auto iter = m_regionList.find(startRegion), end = m_regionList.end(); iter != end; ++iter) {
+        RenderNamedFlowFragment* fragment = toRenderNamedFlowFragment(*iter);
+        RenderBlockFlow& fragmentContainer = fragment->fragmentContainer();
+        IntRect fragmentAbsoluteRect(roundedIntPoint(fragmentContainer.localToAbsolute()), roundedIntSize(fragmentContainer.paddingBoxRect().size()));
+        if (fragmentAbsoluteRect.contains(absolutePoint))
+            return fragment;
+        
+        if (fragment == endRegion)
+            break;
+    }
+    
+    return nullptr;
+}
+
 void RenderNamedFlowThread::computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats)
 {
     RenderFlowThread::computeOverflow(oldClientAfterEdge, recomputeFloats);

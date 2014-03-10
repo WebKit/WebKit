@@ -1,3 +1,29 @@
+2014-03-10  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Scrolling regions with the mouse wheel only works properly if hovering over the region's padding
+        https://bugs.webkit.org/show_bug.cgi?id=129485
+
+        Reviewed by Andrei Bucur.
+
+        When searching for the region under the mouse pointer (to identify which region to scroll), 
+        the localToAbsolute method must be called on the region container, not the region itself.
+        Also, when calling the offsetFromContainer method on a named flow fragment,
+        it must only take into consideration the border and padding of the fragment container,
+        not its scrolled offset.
+
+        Test: fast/regions/wheel-scrollable-single-region.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::scroll):
+        * rendering/RenderFlowThread.cpp:
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::offsetFromContainer):
+        * rendering/RenderNamedFlowFragment.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::fragmentFromAbsolutePointAndBox):
+        * rendering/RenderNamedFlowThread.h:
+
 2014-03-10  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Remove unused dispatchStorageEvent() from StorageAreaSync

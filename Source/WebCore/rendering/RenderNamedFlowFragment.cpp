@@ -252,6 +252,14 @@ bool RenderNamedFlowFragment::shouldClipFlowThreadContent() const
     
     return isLastRegion() && (style().regionFragment() == BreakRegionFragment);
 }
+    
+LayoutSize RenderNamedFlowFragment::offsetFromContainer(RenderObject* o, const LayoutPoint&, bool*) const
+{
+    ASSERT(&fragmentContainer() == o);
+    ASSERT(container() == o);
+    UNUSED_PARAM(o);
+    return topLeftLocationOffset();
+}
 
 void RenderNamedFlowFragment::layoutBlock(bool relayoutChildren, LayoutUnit)
 {

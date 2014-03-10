@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html style="font: 16px/1.25 monospace;">
+    <head>
+        <script>
+            onload = function() {
+                if (window.eventSender) {
+                    eventSender.mouseMoveTo(250, 250);
+                    eventSender.continuousMouseScrollBy(0, -120);
+                    eventSender.mouseMoveTo(0, 0);
+                }
+            }
+        </script>
+
+        <style>
+            #container {
+                border: 2px solid green;
+                height: 300px;
+                overflow: visible;
+            }
+
+            #region {
+                width: 600px;
+                height: 200px;
+                border: thick solid red;
+                padding: 50px;
+                overflow: scroll;
+            }
+
+            #innerDiv {
+                width: 300px;
+                height: 100px;
+                background-color: red;
+                margin-left: 30px;
+            }
+
+            #innerDiv:hover
+            {
+                background-color: green;
+            }
+        </style>
+    </head>
+
+    <body onload="testScroll()">
+        <a style="font-size: 14px" href="https://bugs.webkit.org/show_bug.cgi?id=129485">[CSS Regions] Scrolling regions with the mouse wheel only works properly if hovering over the region's padding</a>
+        <p>This test passes if the <span style="color:red">region</span> properly scrolls its content using the mouse wheel.</p>
+
+        <div id="region">
+            <div id="container">
+                <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent interdum, sapien vitae faucibus suscipit, massa urna sagittis libero, ac imperdiet elit lacus a ligula. Mauris a orci sem.</div>
+                <div id="innerDiv"></div>
+                <div style="color:red">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent interdum, sapien vitae faucibus suscipit, massa urna sagittis libero, ac imperdiet elit lacus a ligula. Mauris a orci sem. Nullam ullamcorper ornare porttitor. Morbi laoreet pellentesque diam, vitae hendrerit sem fringilla id. Maecenas rutrum lacinia lobortis. Praesent elit lectus, porttitor sed semper vel, fringilla id dolor. Sed lacus nisl, rutrum sit amet euismod a, vulputate quis elit. Fusce commodo dui quis lacus viverra vel egestas velit tempus. Donec ut sapien sit amet purus luctus fermentum. Donec eleifend pretium neque quis bibendum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nam congue dapibus mi, id ultricies est sagittis et. Integer posuere, eros vitae laoreet congue, tortor purus euismod nibh, eu porta purus arcu id turpis. Donec vitae ultricies nibh. Nullam in urna dolor, at fringilla lorem. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+            </div>
+        </div>
+    </body>
+</html>
