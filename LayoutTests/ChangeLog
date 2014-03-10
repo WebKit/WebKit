@@ -1,3 +1,14 @@
+2014-03-10  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Add test expectations for failing and crashing tests.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/images/image-controls-basic-expected.txt: Added after r164457.
+        * platform/efl/fast/ruby/ruby-base-merge-block-children-crash-2-expected.txt: Added after r164323.
+
 2014-03-10  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Fix broken paths in some regions tests

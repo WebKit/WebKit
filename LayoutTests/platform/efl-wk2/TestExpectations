@@ -74,6 +74,7 @@ webkit.org/b/116587 http/tests/security/contentSecurityPolicy/default-src-inline
 webkit.org/b/116587 http/tests/security/contentSecurityPolicy/directive-parsing-01.html [ Skip ]
 webkit.org/b/116587 http/tests/security/contentSecurityPolicy/directive-parsing-02.html [ Skip ]
 webkit.org/b/116587 http/tests/security/contentSecurityPolicy/directive-parsing-03.html [ Skip ]
+webkit.org/b/116587 http/tests/security/contentSecurityPolicy/directive-parsing-04.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/broken-utf8.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/bufferedAmount-after-close-in-busy.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/deflate-frame-comp-bit-onoff.html [ Skip ]
@@ -103,6 +104,8 @@ webkit.org/b/116587 http/tests/websocket/tests/hybi/sub-protocol.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/url-no-trailing-slash.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/url-with-credential.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/url-with-empty-query.html [ Skip ]
+webkit.org/b/116587 http/tests/websocket/tests/hybi/useragent-in-openinghandshake.html [ Skip ]
+webkit.org/b/116587 http/tests/websocket/tests/hybi/workers/close.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/workers/close-code-and-reason.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/workers/close-in-onmessage-crash.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/workers/close-in-worker.html [ Skip ]
@@ -335,9 +338,6 @@ webkit.org/b/98744 plugins/reloadplugins-and-pages.html [ Failure ]
 # Plugin test timeout.
 webkit.org/b/98743 plugins/evaluate-js-after-removing-plugin-element.html [ Failure ]
 
-# Reloading a Netscape plugin that accesses its own DOM element is failing.
-webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Failure ]
-
 # Plugin test failures having wrong object reference count problem.
 webkit.org/b/98741 plugins/npruntime/browser-object-identity.html [ Failure ]
 webkit.org/b/98741 plugins/refcount-leaks.html [ Failure ]
@@ -551,3 +551,5 @@ webkit.org/b/129820 svg/clip-path/mask-userspaceonuse-content-clip-transform.svg
 webkit.org/b/129820 svg/clip-path/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
 
 webkit.org/b/129821 svg/css/svg-resource-fragment-identifier-img-src.html [ ImageOnlyFailure ]
+
+webkit.org/b/130020 webaudio/codec-tests/wav/24bit-22khz-resample.html [ Failure ]

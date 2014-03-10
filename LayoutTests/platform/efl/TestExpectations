@@ -1410,6 +1410,7 @@ webkit.org/b/102464 [ Debug ] fast/images/webgl-teximage2d.html [ Pass Timeout ]
 
 
 # Fail color checks, may also need platform results.
+webkit.org/b/105030 fast/canvas/webgl/framebuffer-object-attachment.html [ Failure ]
 webkit.org/b/105030 fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
 
 # Rendering issues.
@@ -1547,7 +1548,6 @@ webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-contain-no-r
 webkit.org/b/114876 media/click-volume-bar-not-pausing.html [ Failure ]
 
 # Unidentified failing media tests
-webkit.org/b/115419 http/tests/media/video-redirect.html [ Failure ]
 webkit.org/b/115419 media/media-can-play-ogg.html [ Failure ]
 webkit.org/b/115419 media/track/track-automatic-subtitles.html [ Failure ]
 
@@ -1801,7 +1801,7 @@ webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-with-thre
 webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-with-two-values-001.htm [ Failure ]
 webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-003.htm [ Failure ]
 webkit.org/b/128061 media/video-zoom.html [ Failure ]
-webkit.org/b/128061 svg/custom/svg-fonts-in-html.html [ Failure ]
+webkit.org/b/128061 svg/custom/svg-fonts-in-html.html [ Missing ]
 webkit.org/b/128061 svg/zoom/page/zoom-background-image-tiled.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-background-images.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ]
