@@ -1,3 +1,13 @@
+2014-03-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Pass environment to Pre-Build, Pre-link, and Post-Build Stages.
+        https://bugs.webkit.org/show_bug.cgi?id=130023
+
+        Reviewed by Dean Jackson.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.proj: Avoid trailing backslashes in
+        path names to avoid accidental escaping of later string substitutions.
+
 2014-03-10  Andreas Kling  <akling@apple.com>
 
         [X86_64] Smaller code for testb_i8r when register is accumulator.

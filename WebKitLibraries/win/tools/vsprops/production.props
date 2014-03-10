@@ -3,6 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
     <PRODUCTION>1</PRODUCTION>
+    <OFFICIAL_BUILD>1</OFFICIAL_BUILD>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup>
@@ -22,6 +23,10 @@
   <ItemGroup>
     <BuildMacro Include="PRODUCTION">
       <Value>$(PRODUCTION)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OFFICIAL_BUILD">
+      <Value>$(OFFICIAL_BUILD)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
   </ItemGroup>

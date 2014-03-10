@@ -12,11 +12,15 @@
     <LinkIncremental>false</LinkIncremental>
     <NMakeBuildCommandLine>%SystemDrive%\cygwin\bin\which.exe bash
 if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
+set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)
 set PLATFORMARCHITECTURE=$(PlatformArchitecture)
+set WEBKIT_LIBRARIES=$(WEBKIT_LIBRARIES)
 nmake /nologo -f $(ProjectName).make</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>%SystemDrive%\cygwin\bin\which.exe bash
 if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
+set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)
 set PLATFORMARCHITECTURE=$(PlatformArchitecture)
+set WEBKIT_LIBRARIES=$(WEBKIT_LIBRARIES)
 nmake /nologo -f $(ProjectName).make clean
 nmake /nologo -f $(ProjectName).make</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>%SystemDrive%\cygwin\bin\which.exe bash
@@ -27,6 +31,7 @@ set PATH=$(VSInstallDir)\VC\bin;%PATH%
 REM VS2010 has a known bug where the clean command does not recognize environment variables properly unless explicitly set here
 set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)
 set PLATFORMARCHITECTURE=$(PlatformArchitecture)
+set WEBKIT_LIBRARIES=$(WEBKIT_LIBRARIES)
 nmake /nologo -f $(ProjectName).make clean</NMakeCleanCommandLine>
     <TargetName>$(ProjectName)$(DebugSuffix)</TargetName>
   </PropertyGroup>
@@ -90,6 +95,7 @@ set TARGETEXT=$(TargetExt)
 set TARGETFILENAME=$(TargetFileName)
 set TARGETPATH=$(TargetPath)
 set DEBUGSUFFIX=$(DebugSuffix)
+set WEBKIT_LIBRARIES=$(WEBKIT_LIBRARIES)
 
 REM If any of the above variables didn't exist previously and
 REM were set to an empty string, set will set the errorlevel to 1,
@@ -126,6 +132,7 @@ set TARGETEXT=$(TargetExt)
 set TARGETFILENAME=$(TargetFileName)
 set TARGETPATH=$(TargetPath)
 set DEBUGSUFFIX=$(DebugSuffix)
+set WEBKIT_LIBRARIES=$(WEBKIT_LIBRARIES)
 
 REM If any of the above variables didn't exist previously and
 REM were set to an empty string, set will set the errorlevel to 1,
@@ -162,6 +169,7 @@ set TARGETEXT=$(TargetExt)
 set TARGETFILENAME=$(TargetFileName)
 set TARGETPATH=$(TargetPath)
 set DEBUGSUFFIX=$(DebugSuffix)
+set WEBKIT_LIBRARIES=$(WEBKIT_LIBRARIES)
 
 REM If any of the above variables didn't exist previously and
 REM were set to an empty string, set will set the errorlevel to 1,

@@ -3,6 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
     <DebugSuffix>_debug</DebugSuffix>
+    <OFFICIAL_BUILD>1</OFFICIAL_BUILD>
   </PropertyGroup>
   <PropertyGroup>
     <TargetName>$(TargetName)$(DebugSuffix)</TargetName>
@@ -19,6 +20,10 @@
   <ItemGroup>
     <BuildMacro Include="DebugSuffix">
       <Value>$(DebugSuffix)</Value>
+    </BuildMacro>
+    <BuildMacro Include="OFFICIAL_BUILD">
+      <Value>$(OFFICIAL_BUILD)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
   </ItemGroup>
 </Project>

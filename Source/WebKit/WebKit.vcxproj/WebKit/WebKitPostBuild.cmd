@@ -1,6 +1,6 @@
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\WebKit"
 
-set ResourcesDirectory=%CONFIGURATIONBUILDDIR%\bin32\WebKit.resources
+set ResourcesDirectory=%CONFIGURATIONBUILDDIR%\bin%PlatformArchitecture%\WebKit.resources
 
 xcopy /y /d "%PROJECTDIR%\..\..\win\WebLocalizableStrings.h" "%CONFIGURATIONBUILDDIR%\include\WebKit"
 xcopy /y /d "%PROJECTDIR%\..\..\win\WebKitGraphics.h" "%CONFIGURATIONBUILDDIR%\include\WebKit"

@@ -1,3 +1,13 @@
+2014-03-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Pass environment to Pre-Build, Pre-Link, and Post-Build Stages.
+        https://bugs.webkit.org/show_bug.cgi?id=130023
+
+        Reviewed by Dean Jackson.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncher.vcxproj: Add missing
+        /SAFESEH flag to DLL launcher process.
+
 2014-03-09  Martin Robinson  <mrobinson@igalia.com>
 
         RunGtkWebKitGObjectDOMBindingsAPIBreakTests should be added to the BuildAndTestFactory not the TestFactory
