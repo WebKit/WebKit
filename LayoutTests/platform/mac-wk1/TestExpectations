@@ -15,9 +15,6 @@ webkit.org/b/118269 compositing/geometry/fixed-position-flipped-writing-mode.htm
 
 webkit.org/b/124318 fullscreen/anonymous-block-merge-crash.html [ Pass Failure ]
 
-webkit.org/b/129962 js/dom/cross-frame-bad-time.html [ Pass Failure ]
-webkit.org/b/129962 js/dom/create-lots-of-workers.html [ Pass Failure ]
-
 ### END OF (1) Failures with bug reports
 ########################################
 
