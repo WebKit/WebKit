@@ -858,9 +858,6 @@ static void emitPutReplaceStub(
     allocator.lock(valueGPR);
     
     GPRReg scratchGPR1 = allocator.allocateScratchGPR();
-#if ENABLE(GGC)
-    GPRReg scratchGPR2 = allocator.allocateScratchGPR();
-#endif
 
     CCallHelpers stubJit(vm, exec->codeBlock());
 
@@ -889,10 +886,6 @@ static void emitPutReplaceStub(
     }
 #endif
     
-#if ENABLE(GGC)
-    MacroAssembler::Call writeBarrierOperation = writeBarrier(stubJit, baseGPR, scratchGPR1, scratchGPR2, allocator);
-#endif
-    
     MacroAssembler::Jump success;
     MacroAssembler::Jump failure;
     
@@ -909,9 +902,6 @@ static void emitPutReplaceStub(
     }
     
     LinkBuffer patchBuffer(*vm, &stubJit, exec->codeBlock());
-#if ENABLE(GGC)
-    patchBuffer.link(writeBarrierOperation, operationFlushWriteBarrierBuffer);
-#endif
     patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone));
     patchBuffer.link(failure, failureLabel);
             

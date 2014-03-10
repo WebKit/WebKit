@@ -1,3 +1,16 @@
+2014-03-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        writeBarrier in emitPutReplaceStub is unnecessary
+        https://bugs.webkit.org/show_bug.cgi?id=130030
+
+        Reviewed by Filip Pizlo.
+
+        We already emit write barriers for each put-by-id when they're first compiled, so it's 
+        redundant to emit a write barrier as part of the repatched code.
+
+        * jit/Repatch.cpp:
+        (JSC::emitPutReplaceStub):
+
 2014-03-10  Andreas Kling  <akling@apple.com>
 
         [X86_64] Smaller code for xor_ir when register is accumulator.
