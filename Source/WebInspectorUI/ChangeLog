@@ -1,3 +1,129 @@
+2014-03-10  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: convert the dashboard toolbar item to support multiple dashboards
+        https://bugs.webkit.org/show_bug.cgi?id=129898
+
+        Reviewed by Timothy Hatcher.
+
+        We want to ability to swap in and out different dashboard contents depending on
+        circumstances such as debugger activity and page loading. This patch converts the
+        existing hard-coded dashboard implementation to follow the container-based approach
+        used by WebInspector.ContentViewContainer.
+
+        As part of the refactoring, we introduce dashboard model objects to store persistent
+        dashboard data. Some CSS has also been split between the container and specific dashboard.
+
+        * UserInterface/Controllers/DashboardManager.js:
+        (WebInspector.DashboardManager):
+        (WebInspector.DashboardManager.prototype.get toolbarItem):
+        * UserInterface/Main.html:
+        * UserInterface/Models/DefaultDashboard.js: Copied from Source/WebInspectorUI/UserInterface/Controllers/DashboardManager.js.
+        (WebInspector.DefaultDashboard):
+        (WebInspector.DefaultDashboard.prototype.get resourcesCount):
+        (WebInspector.DefaultDashboard.prototype.set resourcesCount):
+        (WebInspector.DefaultDashboard.prototype.get resourcesSize):
+        (WebInspector.DefaultDashboard.prototype.set resourcesSize):
+        (WebInspector.DefaultDashboard.prototype.get time):
+        (WebInspector.DefaultDashboard.prototype.set time):
+        (WebInspector.DefaultDashboard.prototype.get logs):
+        (WebInspector.DefaultDashboard.prototype.set logs):
+        (WebInspector.DefaultDashboard.prototype.get errors):
+        (WebInspector.DefaultDashboard.prototype.set errors):
+        (WebInspector.DefaultDashboard.prototype.get issues):
+        (WebInspector.DefaultDashboard.prototype.set issues):
+        (WebInspector.DefaultDashboard.prototype._dataDidChange):
+        (WebInspector.DefaultDashboard.prototype._mainResourceDidChange):
+        (WebInspector.DefaultDashboard.prototype._recordingStopped):
+        (WebInspector.DefaultDashboard.prototype._resourceWasAdded):
+        (WebInspector.DefaultDashboard.prototype._frameWasAdded):
+        (WebInspector.DefaultDashboard.prototype._resourceSizeDidChange):
+        (WebInspector.DefaultDashboard.prototype._startUpdatingTime):
+        (WebInspector.DefaultDashboard.prototype._stopUpdatingTime):
+        (WebInspector.DefaultDashboard.prototype._updateTime):
+        (WebInspector.DefaultDashboard.prototype._consoleMessageAdded):
+        (WebInspector.DefaultDashboard.prototype._consoleMessageWasRepeated):
+        (WebInspector.DefaultDashboard.prototype._incrementConsoleMessageType):
+        (WebInspector.DefaultDashboard.prototype._consoleWasCleared):
+        * UserInterface/Views/DashboardContainerView.css: Added.
+        (.toolbar .dashboard-container):
+        (body.window-inactive .toolbar .dashboard-container):
+        (body.javascript .toolbar .dashboard-container):
+        (.toolbar.normal-size.icon-and-label-vertical .dashboard-container):
+        (.toolbar.small-size.icon-and-label-horizontal .dashboard-container):
+        (.toolbar.normal-size.icon-and-label-horizontal .dashboard-container):
+        (.toolbar .dashboard-container):
+        (.toolbar .dashboard):
+        (.toolbar .dashboard.visible):
+        (.toolbar .dashboard.slide-out-up):
+        (.toolbar .dashboard.slide-out-down):
+        (.toolbar .dashboard.slide-in-up):
+        (.toolbar .dashboard.slide-in-down):
+        (@-webkit-keyframes slide-top-edge):
+        (to):
+        (@-webkit-keyframes slide-bottom-edge):
+        * UserInterface/Views/DashboardContainerView.js: Added.
+        (WebInspector.DashboardContainerView):
+        (WebInspector.DashboardContainerView.prototype.get toolbarItem):
+        (WebInspector.DashboardContainerView.prototype.get currentDashboardView):
+        (WebInspector.DashboardContainerView.prototype.showDashboardViewForRepresentedObject):
+        (WebInspector.DashboardContainerView.prototype._dashboardViewForRepresentedObject):
+        (WebInspector.DashboardContainerView.prototype._showDashboardView):
+        * UserInterface/Views/DashboardView.css: Removed.
+        * UserInterface/Views/DashboardView.js:
+        (WebInspector.DashboardView):
+        (WebInspector.DashboardView.prototype.get element):
+        (WebInspector.DashboardView.prototype.get parentContainer):
+        (WebInspector.DashboardView.prototype.get representedObject):
+        (WebInspector.DashboardView.prototype.shown):
+        (WebInspector.DashboardView.prototype.hidden):
+        * UserInterface/Views/DefaultDashboardView.css: Added.
+        (body.web .toolbar.collapsed .dashboard.default > .logs):
+        (body.javascript .toolbar .dashboard.default > .resourcesCount):
+        (.toolbar .dashboard.default):
+        (.toolbar .dashboard.default > .item):
+        (.toolbar .dashboard.default > .resourcesSize):
+        (.toolbar .dashboard.default > .item.enabled:hover):
+        (.toolbar .dashboard.default > .item.enabled:active):
+        (.toolbar .dashboard.default > .item > *):
+        (.toolbar .dashboard.default > .item > img):
+        (.toolbar .dashboard.default > .item.enabled > img):
+        (.toolbar .dashboard.default > .item.enabled:hover > img):
+        (.toolbar .dashboard.default > .item > div):
+        (.toolbar .dashboard.default > .item.enabled > div):
+        (.toolbar .dashboard.default > .item.enabled:hover > div):
+        (.toolbar .dashboard.default > .resourcesCount > img):
+        (.toolbar .dashboard.default > .time > img):
+        (.toolbar .dashboard.default > .logs > img):
+        (.toolbar .dashboard.default > .resourcesSize > img):
+        (.toolbar .dashboard.default > .errors > img):
+        (.toolbar .dashboard.default > .errors.enabled > img):
+        (.toolbar .dashboard.default > .errors.enabled:hover > img):
+        (.toolbar .dashboard.default > .errors.enabled > div):
+        (.toolbar .dashboard.default > .errors.enabled:hover > div):
+        (.toolbar .dashboard.default > .issues > img):
+        (.toolbar .dashboard.default > .issues.enabled > img):
+        (.toolbar .dashboard.default > .issues.enabled:hover > img):
+        (.toolbar .dashboard.default > .issues.enabled > div):
+        (.toolbar .dashboard.default > .issues.enabled:hover > div):
+        (.toolbar .dashboard.default > .item.pulsing):
+        (@-webkit-keyframes console-item-pulse):
+        (.toolbar.small-size.icon-and-label-horizontal .dashboard.default > .item):
+        (.toolbar.normal-size.icon-and-label-horizontal .dashboard.default > .item):
+        * UserInterface/Views/DefaultDashboardView.js: Copied from Source/WebInspectorUI/UserInterface/Views/DashboardView.js.
+        (WebInspector.DefaultDashboardView):
+        (WebInspector.DefaultDashboardView.prototype._updateDisplay):
+        (WebInspector.DefaultDashboardView.prototype._formatPossibleLargeNumber):
+        (WebInspector.DefaultDashboardView.prototype._appendElementForNamedItem.):
+        (WebInspector.DefaultDashboardView.prototype._appendElementForNamedItem.set item):
+        (WebInspector.DefaultDashboardView.prototype._appendElementForNamedItem):
+        (WebInspector.DefaultDashboardView.prototype._itemWasClicked):
+        (WebInspector.DefaultDashboardView.prototype._resourcesWasClicked):
+        (WebInspector.DefaultDashboardView.prototype._networkItemWasClicked):
+        (WebInspector.DefaultDashboardView.prototype._consoleItemWasClicked):
+        (WebInspector.DefaultDashboardView.prototype.animationEnded):
+        (WebInspector.DefaultDashboardView.prototype._setConsoleItemValue):
+        (WebInspector.DefaultDashboardView.prototype._setItemEnabled):
+
 2014-03-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: update-InspectorBackendCommands.rb is putting legacy protocol files in the wrong place

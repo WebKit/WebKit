@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,223 +23,61 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DashboardView = function(element)
+WebInspector.DashboardView = function(representedObject, identifier)
 {
+    // Creating a new DashboardView directly returns an instance of the proper subclass.
+    if (this.constructor === WebInspector.DashboardView) {
+        console.assert(representedObject);
+
+        if (representedObject instanceof WebInspector.DefaultDashboard)
+            return new WebInspector.DefaultDashboardView(representedObject);
+
+        throw "Can't make a DashboardView for an unknown representedObject.";
+    }
+
+    // Otherwise, a subclass is calling the base constructor.
+    console.assert(this.constructor !== WebInspector.DashboardView && this instanceof WebInspector.DashboardView);
+    console.assert(identifier);
+
     WebInspector.Object.call(this);
 
-    this._element = element;
+    this._representedObject = representedObject;
 
-    this._items = {
-        resourcesCount: {
-            tooltip: WebInspector.UIString("Total number of resources, click to show the Resources navigation sidebar"),
-            handler: this._resourcesWasClicked
-        },
-        resourcesSize: {
-            tooltip: WebInspector.UIString("Total size of all resources, click to show the Network Requests timeline"),
-            handler: this._networkItemWasClicked
-        },
-        time: {
-            tooltip: WebInspector.UIString("Time until the load event fired, click to show the Network Requests timeline"),
-            handler: this._networkItemWasClicked
-        },
-        logs: {
-            tooltip: WebInspector.UIString("Console logs, click to show the Console"),
-            handler: this._consoleItemWasClicked.bind(this, WebInspector.LogContentView.Scopes.Logs)
-        },
-        errors: {
-            tooltip: WebInspector.UIString("Console errors, click to show the Console"),
-            handler: this._consoleItemWasClicked.bind(this, WebInspector.LogContentView.Scopes.Errors)
-        },
-        issues: {
-            tooltip: WebInspector.UIString("Console warnings, click to show the Console"),
-            handler: this._consoleItemWasClicked.bind(this, WebInspector.LogContentView.Scopes.Warnings)
-        }
-    };
-
-    for (var name in this._items)
-        this._appendElementForNamedItem(name);
-
-    this.resourcesCount = 0;
-    this.resourcesSize = 0;
-    this.time = 0;
-    this.logs = 0;
-    this.errors = 0;
-    this.issues = 0;
+    this._element = document.createElement("div");
+    this._element.classList.add(WebInspector.DashboardView.StyleClassName);
+    this._element.classList.add(identifier);
 };
 
-WebInspector.DashboardView.EnabledStyleClassName = "enabled";
+WebInspector.DashboardView.StyleClassName = "dashboard";
 
 WebInspector.DashboardView.prototype = {
     constructor: WebInspector.DashboardView,
+    __proto__: WebInspector.Object.prototype,
 
     // Public
 
-    get logs()
+    get element()
     {
-        return this._logs;
+        return this._element;
     },
 
-    set logs(logs)
+    get representedObject()
     {
-        this._setConsoleItemValue("logs", logs);
+        return this._representedObject;
     },
 
-    get issues()
+    shown: function()
     {
-        return this._issues;
+        // Implemented by subclasses.
     },
 
-    set issues(issues)
+    hidden: function()
     {
-        this._setConsoleItemValue("issues", issues);
+        // Implemented by subclasses.
     },
 
-    get errors()
+    closed: function()
     {
-        return this._errors;
-    },
-
-    set errors(errors)
-    {
-        this._setConsoleItemValue("errors", errors);
-    },
-
-    set time(time)
-    {
-        var item = this._items.time;
-        item.text = time ? Number.secondsToString(time) : "\u2014";
-        this._setItemEnabled(item, time > 0);
-    },
-
-    get resourcesCount()
-    {
-        return this._resourcesCount;
-    },
-
-    set resourcesCount(resourcesCount)
-    {
-        this._resourcesCount = resourcesCount;
-
-        var item = this._items.resourcesCount;
-        item.text = this._formatPossibleLargeNumber(resourcesCount);
-        this._setItemEnabled(item, resourcesCount > 0);
-    },
-
-    get resourcesSize()
-    {
-        return this._resourcesSize;
-    },
-
-    set resourcesSize(resourcesSize)
-    {
-        this._resourcesSize = resourcesSize;
-
-        var item = this._items.resourcesSize;
-        item.text = resourcesSize ? Number.bytesToString(resourcesSize, false) : "\u2014";
-        this._setItemEnabled(item, resourcesSize > 0);
-    },
-
-    // Private
-
-    _formatPossibleLargeNumber: function(number)
-    {
-        return number > 999 ? WebInspector.UIString("999+") : number;
-    },
-
-    _appendElementForNamedItem: function(name)
-    {
-        var item = this._items[name];
-
-        item.container = this._element.appendChild(document.createElement("div"));
-        item.container.className = "item " + name;
-        item.container.title = item.tooltip;
-
-        item.container.appendChild(document.createElement("img"));
-
-        item.outlet = item.container.appendChild(document.createElement("div"));
-
-        Object.defineProperty(item, "text",
-        {
-            set: function(newText)
-            {
-                if (newText === item.outlet.textContent)
-                    return;
-                item.outlet.textContent = newText;
-            }
-        });
-
-        item.container.addEventListener("click", function(event) {
-            this._itemWasClicked(name);
-        }.bind(this));
-    },
-
-    _itemWasClicked: function(name)
-    {
-        var item = this._items[name];
-        if (!item.container.classList.contains(WebInspector.DashboardView.EnabledStyleClassName))
-            return;
-
-        if (item.handler)
-            item.handler.call(this);
-    },
-
-    _resourcesWasClicked: function()
-    {
-        WebInspector.navigationSidebar.selectedSidebarPanel = WebInspector.resourceSidebarPanel;
-        WebInspector.navigationSidebar.collapsed = false;
-    },
-
-    _networkItemWasClicked: function()
-    {
-        WebInspector.navigationSidebar.selectedSidebarPanel = WebInspector.timelineSidebarPanel;
-    },
-
-    _consoleItemWasClicked: function(scope)
-    {
-        WebInspector.showConsoleView(scope);
-    },
-
-    _setConsoleItemValue: function(itemName, newValue)
-    {
-        var iVarName = "_" + itemName;
-        var previousValue = this[iVarName];
-        this[iVarName] = newValue;
-
-        var item = this._items[itemName];
-        item.text = this._formatPossibleLargeNumber(newValue);
-        this._setItemEnabled(item, newValue > 0);
-
-        if (newValue <= previousValue)
-            return;
-
-        var container = item.container;
-
-        function animationEnded(event)
-        {
-            if (event.target === container) {
-                container.classList.remove("pulsing");
-                container.removeEventListener("webkitAnimationEnd", animationEnded);
-            }
-        }
-
-        // We need to force a style invalidation in the case where we already
-        // were animating this item after we've removed the pulsing CSS class.
-        if (container.classList.contains("pulsing")) {
-            container.classList.remove("pulsing");
-            container.recalculateStyles();
-        } else
-            container.addEventListener("webkitAnimationEnd", animationEnded);
-        
-        container.classList.add("pulsing");
-    },
-
-    _setItemEnabled: function(item, enabled)
-    {
-        if (enabled)
-            item.container.classList.add(WebInspector.DashboardView.EnabledStyleClassName);
-        else
-            item.container.classList.remove(WebInspector.DashboardView.EnabledStyleClassName);
+        // Implemented by subclasses.
     }
 };
-
-WebInspector.DashboardView.prototype.__proto__ = WebInspector.Object.prototype;

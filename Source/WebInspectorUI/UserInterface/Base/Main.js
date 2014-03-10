@@ -280,7 +280,10 @@ WebInspector.contentLoaded = function()
     this._consoleToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this.toggleConsoleView, this);
     this.toolbar.addToolbarItem(this._consoleToolbarButton, WebInspector.Toolbar.Section.Center);
 
-    this.toolbar.addToolbarItem(this.dashboardManager.toolbarItem, WebInspector.Toolbar.Section.Center);
+    this._dashboardContainerView = new WebInspector.DashboardContainerView;
+    this._dashboardContainerView.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.default);
+
+    this.toolbar.addToolbarItem(this._dashboardContainerView.toolbarItem, WebInspector.Toolbar.Section.Center);
 
     // The toolbar button for node inspection.
     if (this.debuggableType === WebInspector.DebuggableType.Web) {
