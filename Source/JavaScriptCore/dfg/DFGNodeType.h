@@ -296,7 +296,6 @@ namespace JSC { namespace DFG {
     macro(CheckWatchdogTimer, NodeMustGenerate) \
     /* Write barriers ! */\
     macro(StoreBarrier, NodeMustGenerate) \
-    macro(ConditionalStoreBarrier, NodeMustGenerate) \
     macro(StoreBarrierWithNullCheck, NodeMustGenerate) \
 
 // This enum generates a monotonically increasing id for all Node types,

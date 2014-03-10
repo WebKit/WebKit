@@ -773,65 +773,6 @@ static V_JITOperation_ESsiJJI appropriateListBuildingPutByIdFunction(const PutPr
     return operationPutByIdNonStrictBuildList;
 }
 
-#if ENABLE(GGC)
-static MacroAssembler::Call storeToWriteBarrierBuffer(CCallHelpers& jit, GPRReg cell, GPRReg scratch1, GPRReg scratch2, ScratchRegisterAllocator& allocator)
-{
-    ASSERT(scratch1 != scratch2);
-    WriteBarrierBuffer* writeBarrierBuffer = &jit.vm()->heap.writeBarrierBuffer();
-    jit.move(MacroAssembler::TrustedImmPtr(writeBarrierBuffer), scratch1);
-    jit.load32(MacroAssembler::Address(scratch1, WriteBarrierBuffer::currentIndexOffset()), scratch2);
-    MacroAssembler::Jump needToFlush = jit.branch32(MacroAssembler::AboveOrEqual, scratch2, MacroAssembler::Address(scratch1, WriteBarrierBuffer::capacityOffset()));
-
-    jit.add32(MacroAssembler::TrustedImm32(1), scratch2);
-    jit.store32(scratch2, MacroAssembler::Address(scratch1, WriteBarrierBuffer::currentIndexOffset()));
-
-    jit.loadPtr(MacroAssembler::Address(scratch1, WriteBarrierBuffer::bufferOffset()), scratch1);
-    // We use an offset of -sizeof(void*) because we already added 1 to scratch2.
-    jit.storePtr(cell, MacroAssembler::BaseIndex(scratch1, scratch2, MacroAssembler::ScalePtr, static_cast<int32_t>(-sizeof(void*))));
-
-    MacroAssembler::Jump done = jit.jump();
-    needToFlush.link(&jit);
-
-    ScratchBuffer* scratchBuffer = jit.vm()->scratchBufferForSize(allocator.desiredScratchBufferSize());
-    allocator.preserveUsedRegistersToScratchBuffer(jit, scratchBuffer, scratch1);
-
-    unsigned bytesFromBase = allocator.numberOfReusedRegisters() * sizeof(void*);
-    unsigned bytesToSubtract = 0;
-#if CPU(X86)
-    bytesToSubtract += 2 * sizeof(void*);
-    bytesFromBase += bytesToSubtract;
-#endif
-    unsigned currentAlignment = bytesFromBase % stackAlignmentBytes();
-    bytesToSubtract += currentAlignment;
-
-    if (bytesToSubtract)
-        jit.subPtr(MacroAssembler::TrustedImm32(bytesToSubtract), MacroAssembler::stackPointerRegister); 
-
-    jit.setupArgumentsWithExecState(cell);
-    MacroAssembler::Call call = jit.call();
-
-    if (bytesToSubtract)
-        jit.addPtr(MacroAssembler::TrustedImm32(bytesToSubtract), MacroAssembler::stackPointerRegister);
-    allocator.restoreUsedRegistersFromScratchBuffer(jit, scratchBuffer, scratch1);
-
-    done.link(&jit);
-
-    return call;
-}
-
-static MacroAssembler::Call writeBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch1, GPRReg scratch2, ScratchRegisterAllocator& allocator)
-{
-    ASSERT(owner != scratch1);
-    ASSERT(owner != scratch2);
-
-    MacroAssembler::Jump ownerNotMarkedOrAlreadyRemembered = jit.checkMarkByte(owner);
-    MacroAssembler::Call call = storeToWriteBarrierBuffer(jit, owner, scratch1, scratch2, allocator);
-    ownerNotMarkedOrAlreadyRemembered.link(&jit);
-
-    return call;
-}
-#endif // ENABLE(GGC)
-
 static void emitPutReplaceStub(
     ExecState* exec,
     JSValue,
@@ -1051,10 +992,6 @@ static void emitPutTransitionStub(
     }
 #endif
     
-#if ENABLE(GGC)
-    MacroAssembler::Call writeBarrierOperation = writeBarrier(stubJit, baseGPR, scratchGPR1, scratchGPR2, allocator);
-#endif
-    
     MacroAssembler::Jump success;
     MacroAssembler::Jump failure;
             
@@ -1088,9 +1025,6 @@ static void emitPutTransitionStub(
     }
     
     LinkBuffer patchBuffer(*vm, &stubJit, exec->codeBlock());
-#if ENABLE(GGC)
-    patchBuffer.link(writeBarrierOperation, operationFlushWriteBarrierBuffer);
-#endif
     patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone));
     if (allocator.didReuseRegisters())
         patchBuffer.link(failure, failureLabel);

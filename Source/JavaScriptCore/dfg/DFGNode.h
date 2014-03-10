@@ -640,7 +640,6 @@ struct Node {
     {
         switch (op()) {
         case StoreBarrier:
-        case ConditionalStoreBarrier:
         case StoreBarrierWithNullCheck:
             return true;
         default:

@@ -253,14 +253,6 @@ private:
                 break;
             }
 
-            case ConditionalStoreBarrier: {
-                if (!m_interpreter.needsTypeCheck(node->child2().node(), ~SpecCell)) {
-                    node->convertToPhantom();
-                    eliminated = true;
-                }
-                break;
-            }
-
             case ToPrimitive: {
                 if (m_state.forNode(node->child1()).m_type & ~(SpecFullNumber | SpecBoolean | SpecString))
                     break;
@@ -471,9 +463,8 @@ private:
 
         node->convertToPutByOffset(m_graph.m_storageAccessData.size(), propertyStorage);
         m_insertionSet.insertNode(
-            indexInBlock, SpecNone, ConditionalStoreBarrier, origin, 
-            Edge(node->child2().node(), KnownCellUse),
-            Edge(node->child3().node(), UntypedUse));
+            indexInBlock, SpecNone, StoreBarrier, origin, 
+            Edge(node->child2().node(), KnownCellUse));
 
         StorageAccessData storageAccessData;
         storageAccessData.offset = variant.offset();

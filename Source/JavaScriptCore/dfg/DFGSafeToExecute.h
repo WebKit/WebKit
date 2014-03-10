@@ -243,7 +243,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case Int52ToDouble:
     case Int52ToValue:
     case StoreBarrier:
-    case ConditionalStoreBarrier:
     case StoreBarrierWithNullCheck:
     case InvalidationPoint:
     case NotifyWrite:

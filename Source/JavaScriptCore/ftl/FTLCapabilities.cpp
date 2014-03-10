@@ -115,7 +115,6 @@ inline CapabilityLevel canCompile(Node* node)
     case VariableWatchpoint:
     case NotifyWrite:
     case StoreBarrier:
-    case ConditionalStoreBarrier:
     case StoreBarrierWithNullCheck:
     case Call:
     case Construct:

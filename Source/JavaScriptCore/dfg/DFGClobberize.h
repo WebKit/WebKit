@@ -658,7 +658,6 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         return;
 
     case StoreBarrier:
-    case ConditionalStoreBarrier:
     case StoreBarrierWithNullCheck:
         read(BarrierState);
         write(BarrierState);

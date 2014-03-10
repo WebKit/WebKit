@@ -5349,11 +5349,6 @@ void SpeculativeJIT::linkBranches()
 void SpeculativeJIT::compileStoreBarrier(Node* node)
 {
     switch (node->op()) {
-    case ConditionalStoreBarrier: {
-        compileBaseValueStoreBarrier(node->child1(), node->child2());
-        break;
-    }
-
     case StoreBarrier: {
         SpeculateCellOperand base(this, node->child1());
         GPRTemporary scratch1(this);

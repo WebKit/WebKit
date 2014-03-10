@@ -581,9 +581,6 @@ private:
         case StoreBarrier:
             compileStoreBarrier();
             break;
-        case ConditionalStoreBarrier:
-            compileConditionalStoreBarrier();
-            break;
         case StoreBarrierWithNullCheck:
             compileStoreBarrierWithNullCheck();
             break;
@@ -715,13 +712,6 @@ private:
     void compileStoreBarrier()
     {
         emitStoreBarrier(lowCell(m_node->child1()));
-    }
-
-    void compileConditionalStoreBarrier()
-    {
-        LValue base = lowCell(m_node->child1());
-        LValue value = lowJSValue(m_node->child2());
-        emitStoreBarrier(base, value, m_node->child2());
     }
 
     void compileStoreBarrierWithNullCheck()
@@ -5371,29 +5361,6 @@ private:
     LValue loadMarkByte(LValue base)
     {
         return m_out.load8(base, m_heaps.JSCell_gcData);
-    }
-
-    void emitStoreBarrier(LValue base, LValue value, Edge valueEdge)
-    {
-#if ENABLE(GGC)
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Store barrier continuation"));
-        LBasicBlock isCell = FTL_NEW_BLOCK(m_out, ("Store barrier is cell block"));
-
-        if (m_state.forNode(valueEdge.node()).couldBeType(SpecCell))
-            m_out.branch(isNotCell(value), unsure(continuation), unsure(isCell));
-        else
-            m_out.jump(isCell);
-
-        LBasicBlock lastNext = m_out.appendTo(isCell, continuation);
-        emitStoreBarrier(base);
-        m_out.jump(continuation);
-
-        m_out.appendTo(continuation, lastNext);
-#else
-        UNUSED_PARAM(base);
-        UNUSED_PARAM(value);
-        UNUSED_PARAM(valueEdge);
-#endif
     }
 
     void emitStoreBarrier(LValue base)

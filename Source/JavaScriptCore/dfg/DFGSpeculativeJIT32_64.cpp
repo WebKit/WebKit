@@ -4647,7 +4647,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case StoreBarrier:
-    case ConditionalStoreBarrier:
     case StoreBarrierWithNullCheck: {
         compileStoreBarrier(node);
         break;

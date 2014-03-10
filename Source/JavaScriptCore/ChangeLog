@@ -1,3 +1,49 @@
+2014-03-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove ConditionalStore barrier
+        https://bugs.webkit.org/show_bug.cgi?id=130040
+
+        Reviewed by Geoffrey Garen.
+
+        ConditionalStoreBarrier was created when barriers were much more expensive. Now that 
+        they're cheap(er), we can get rid of them. This also allows us to get rid of the write 
+        barrier logic in emitPutTransitionStub because we always will have executed a write barrier 
+        on the base object in the case where we are allocating and storing a new Butterfly into it. 
+        Previously, a ConditionalStoreBarrier might or might not have barrier-ed the base object, 
+        so we'd have to emit a write barrier in the transition case.
+
+        This is performance neutral on the benchmarks we track.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::insertStoreBarrier):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isStoreBarrier):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStoreBarrier):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        * jit/Repatch.cpp:
+        (JSC::emitPutTransitionStub):
+
 2014-03-10  Filip Pizlo  <fpizlo@apple.com>
 
         DFG and FTL should know that comparing anything to Misc is cheap and easy

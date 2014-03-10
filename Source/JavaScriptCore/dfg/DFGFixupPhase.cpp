@@ -578,7 +578,7 @@ private:
             case Array::Arguments:
                 fixEdge<KnownCellUse>(child1);
                 fixEdge<Int32Use>(child2);
-                insertStoreBarrier(m_indexInBlock, child1, child3);
+                insertStoreBarrier(m_indexInBlock, child1);
                 break;
             default:
                 fixEdge<KnownCellUse>(child1);
@@ -616,7 +616,7 @@ private:
                 break;
             case Array::Contiguous:
             case Array::ArrayStorage:
-                insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());
+                insertStoreBarrier(m_indexInBlock, node->child1());
                 break;
             default:
                 break;
@@ -809,7 +809,7 @@ private:
 
         case PutClosureVar: {
             fixEdge<KnownCellUse>(node->child1());
-            insertStoreBarrier(m_indexInBlock, node->child1(), node->child3());
+            insertStoreBarrier(m_indexInBlock, node->child1());
             break;
         }
 
@@ -853,7 +853,7 @@ private:
         case PutByIdFlush:
         case PutByIdDirect: {
             fixEdge<CellUse>(node->child1());
-            insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());
+            insertStoreBarrier(m_indexInBlock, node->child1());
             break;
         }
 
@@ -892,13 +892,13 @@ private:
             if (!node->child1()->hasStorageResult())
                 fixEdge<KnownCellUse>(node->child1());
             fixEdge<KnownCellUse>(node->child2());
-            insertStoreBarrier(m_indexInBlock, node->child2(), node->child3());
+            insertStoreBarrier(m_indexInBlock, node->child2());
             break;
         }
             
         case MultiPutByOffset: {
             fixEdge<CellUse>(node->child1());
-            insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());
+            insertStoreBarrier(m_indexInBlock, node->child1());
             break;
         }
             
@@ -966,8 +966,8 @@ private:
                 m_indexInBlock, SpecNone, WeakJSConstant, node->origin, 
                 OpInfo(m_graph.globalObjectFor(node->origin.semantic)));
             Node* barrierNode = m_graph.addNode(
-                SpecNone, ConditionalStoreBarrier, m_currentNode->origin, 
-                Edge(globalObjectNode, KnownCellUse), Edge(node->child1().node(), UntypedUse));
+                SpecNone, StoreBarrier, m_currentNode->origin, 
+                Edge(globalObjectNode, KnownCellUse));
             m_insertionSet.insert(m_indexInBlock, barrierNode);
             break;
         }
@@ -1041,7 +1041,6 @@ private:
         case ExtractOSREntryLocal:
         case LoopHint:
         case StoreBarrier:
-        case ConditionalStoreBarrier:
         case StoreBarrierWithNullCheck:
         case FunctionReentryWatchpoint:
         case TypedArrayWatchpoint:
@@ -1618,15 +1617,9 @@ private:
         edge.setUseKind(useKind);
     }
     
-    void insertStoreBarrier(unsigned indexInBlock, Edge child1, Edge child2 = Edge())
+    void insertStoreBarrier(unsigned indexInBlock, Edge child1)
     {
-        Node* barrierNode;
-        if (!child2)
-            barrierNode = m_graph.addNode(SpecNone, StoreBarrier, m_currentNode->origin, Edge(child1.node(), child1.useKind()));
-        else {
-            barrierNode = m_graph.addNode(SpecNone, ConditionalStoreBarrier, m_currentNode->origin, 
-                Edge(child1.node(), child1.useKind()), Edge(child2.node(), child2.useKind()));
-        }
+        Node* barrierNode = m_graph.addNode(SpecNone, StoreBarrier, m_currentNode->origin, child1);
         m_insertionSet.insert(indexInBlock, barrierNode);
     }
 
