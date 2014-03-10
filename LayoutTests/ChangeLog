@@ -1,3 +1,15 @@
+2014-03-10  Zsolt Borbely  <borbezs@inf.u-szeged.hu>
+
+        ASSERTION FAILED: span >= 1
+        https://bugs.webkit.org/show_bug.cgi?id=129148
+
+        Reviewed by Andreas Kling.
+
+        Added test demonstrates the behavior of colgroup in case of large negative, large positive, zero and null span values.
+
+        * fast/table/incorrect-colgroup-span-values-expected.txt: Added.
+        * fast/table/incorrect-colgroup-span-values.html: Added.
+
 2014-03-10  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Hit-testing is not working properly inside scrollable regions

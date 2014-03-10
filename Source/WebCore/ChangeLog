@@ -1,3 +1,17 @@
+2014-03-10  Zsolt Borbely  <borbezs@inf.u-szeged.hu>
+
+        ASSERTION FAILED: span >= 1
+        https://bugs.webkit.org/show_bug.cgi?id=129148
+
+        Reviewed by Andreas Kling.
+
+        Set the value of span to 1 if the given number is too big or zero.
+
+        Test: fast/table/incorrect-colgroup-span-values.html
+
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::parseAttribute):
+
 2014-03-10  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Pass environment to Pre-Build, Pre-Link, and Post-Build Stages.
