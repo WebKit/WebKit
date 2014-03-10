@@ -309,7 +309,10 @@ class PerfTestsRunner(object):
         return None
 
     def _upload_json(self, test_results_server, json_path, host_path="/api/report", file_uploader=FileUploader):
-        url = "https://%s%s" % (test_results_server, host_path)
+        hypertext_protocol = ''
+        if not test_results_server.startswith('http'):
+            hypertext_protocol = 'https://'
+        url = hypertext_protocol + test_results_server + host_path
         uploader = file_uploader(url, 120)
         try:
             response = uploader.upload_single_text_file(self._host.filesystem, 'application/json', json_path)
