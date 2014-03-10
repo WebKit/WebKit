@@ -44,7 +44,7 @@ static NSString *platformSystemRootDirectory()
 
 static NSString *osMarketingVersion()
 {
-    RetainPtr<NSDictionary> systemInfo = [[NSDictionary alloc] initWithContentsOfFile:[platformSystemRootDirectory() stringByAppendingPathComponent:@"System/Library/CoreServices/SystemVersion.plist"]];
+    RetainPtr<NSDictionary> systemInfo = adoptNS([[NSDictionary alloc] initWithContentsOfFile:[platformSystemRootDirectory() stringByAppendingPathComponent:@"System/Library/CoreServices/SystemVersion.plist"]]);
     NSString *productVersion = [systemInfo objectForKey:@"ProductVersion"];
     return !productVersion ? @"" : [productVersion stringByReplacingOccurrencesOfString:@"." withString:@"_"];
 }

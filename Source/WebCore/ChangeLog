@@ -1,3 +1,15 @@
+2014-03-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix three leaks
+        https://bugs.webkit.org/show_bug.cgi?id=130048
+
+        Reviewed by Anders Carlsson.
+
+        The NSDictionary was leaked.
+
+        * page/ios/UserAgentIOS.mm:
+        (WebCore::osMarketingVersion):
+
 2014-03-10  Beth Dakin  <bdakin@apple.com>
 
         Set background color of WK2's UIScrollView to the pageExtendedBackgroundColor

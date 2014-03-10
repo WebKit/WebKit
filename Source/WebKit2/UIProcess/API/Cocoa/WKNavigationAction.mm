@@ -34,6 +34,7 @@
     RetainPtr<WKFrameInfo> _sourceFrame;
     RetainPtr<WKFrameInfo> _destinationFrame;
     RetainPtr<NSURLRequest> _request;
+    RetainPtr<NSURL> _originalURL;
 }
 
 - (NSString *)description
@@ -70,6 +71,16 @@
 - (void)setRequest:(NSURLRequest *)request
 {
     _request = adoptNS([request copy]);
+}
+
+- (void)_setOriginalURL:(NSURL *)originalURL
+{
+    _originalURL = adoptNS([originalURL copy]);
+}
+
+- (NSURL *)_originalURL
+{
+    return _originalURL.get();
 }
 
 @end
