@@ -1,3 +1,30 @@
+2014-03-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Generalize unobscured rect to all ports
+        https://bugs.webkit.org/show_bug.cgi?id=130036
+
+        Reviewed by Simon Fraser.
+
+        iOS differentiates visible content and unobscured content. This patch moves the concept to all
+        ports to remove the #ifdefs from the call sites.
+
+        On everything but iOS, unobscuredRect and visibleRect are the same.
+
+        * WebCore.exp.in:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::innerHeight):
+        (WebCore::DOMWindow::innerWidth):
+        * page/SpatialNavigation.cpp:
+        (WebCore::canScrollInDirection):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::paint):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::unobscuredContentRectIncludingScrollbars):
+        (WebCore::ScrollView::unobscuredContentRect):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::viewportSize):
+
 2014-03-10  Benjamin Poulain  <benjamin@webkit.org>
 
         Start splitting CSS Selectors's pseudo types

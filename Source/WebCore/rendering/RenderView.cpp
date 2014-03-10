@@ -1050,6 +1050,8 @@ bool RenderView::shouldDisableLayoutStateForSubtree(RenderObject* renderer) cons
 
 IntSize RenderView::viewportSize() const
 {
+    // FIXME: viewportSize() is used to layout content from viewport units. On iOS, it should use the last stable
+    // unobscured rect. See <rdar://problem/16279088>.
     return frameView().visibleContentRectIncludingScrollbars(ScrollableArea::LegacyIOSDocumentVisibleRect).size();
 }
 

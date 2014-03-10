@@ -559,7 +559,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         bool sendContentResizedNotification = false;
         
         IntSize docSize = totalContentsSize();
-        IntSize fullVisibleSize = visibleContentRectIncludingScrollbars().size();
+        IntSize fullVisibleSize = unobscuredContentRectIncludingScrollbars().size();
 
         if (hScroll == ScrollbarAuto)
             newHasHorizontalScrollbar = docSize.width() > visibleWidth();
@@ -1174,7 +1174,7 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     if (!m_scrollbarsSuppressed && (m_horizontalScrollbar || m_verticalScrollbar)) {
         GraphicsContextStateSaver stateSaver(*context);
         IntRect scrollViewDirtyRect = rect;
-        IntRect visibleAreaWithScrollbars(location(), visibleContentRectIncludingScrollbars().size());
+        IntRect visibleAreaWithScrollbars(location(), unobscuredContentRectIncludingScrollbars().size());
         scrollViewDirtyRect.intersect(visibleAreaWithScrollbars);
         context->translate(x(), y());
         scrollViewDirtyRect.moveBy(-location());

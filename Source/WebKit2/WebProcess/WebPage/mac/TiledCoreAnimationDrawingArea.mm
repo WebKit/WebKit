@@ -818,8 +818,8 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, Float
     }
 
     FloatPoint unscrolledOrigin(origin);
-    FloatRect visibleContentRect = m_webPage->mainFrameView()->visibleContentRectIncludingScrollbars();
-    unscrolledOrigin.moveBy(-visibleContentRect.location());
+    FloatRect unobscuredContentRect = m_webPage->mainFrameView()->unobscuredContentRectIncludingScrollbars();
+    unscrolledOrigin.moveBy(-unobscuredContentRect.location());
     m_webPage->scalePage(scale, roundedIntPoint(-unscrolledOrigin));
     flushLayers();
 

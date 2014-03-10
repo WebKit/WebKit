@@ -166,9 +166,18 @@ public:
     IntRect fixedVisibleContentRect() const { return m_fixedVisibleContentRect; }
 #endif
 
+    // Parts of the document can be visible through transparent or blured UI widgets of the chrome. Those parts
+    // contribute to painting but not to the scrollable area.
+    // The unobscuredContentRect is the area that is not covered by UI elements.
 #if PLATFORM(IOS)
-    // This is the area that is not covered by UI elements.
     IntRect unobscuredContentRect() const;
+    IntRect unobscuredContentRectIncludingScrollbars() const { return unobscuredContentRect(); }
+#else
+    IntRect unobscuredContentRect() const { return visibleContentRect(); }
+    IntRect unobscuredContentRectIncludingScrollbars() const { return visibleContentRectIncludingScrollbars(); }
+#endif
+
+#if PLATFORM(IOS)
     // This is the area that is partially or fully exposed, and may extend under overlapping UI elements.
     IntRect exposedContentRect() const;
     void setExposedContentRect(const IntRect&);

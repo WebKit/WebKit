@@ -75,7 +75,7 @@ void ViewGestureGeometryCollector::dispatchDidCollectGeometryForSmartMagnificati
 
 void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(FloatPoint origin)
 {
-    FloatRect visibleContentRect = m_webPage.mainFrameView()->visibleContentRectIncludingScrollbars();
+    FloatRect visibleContentRect = m_webPage.mainFrameView()->unobscuredContentRectIncludingScrollbars();
 
     if (m_webPage.mainWebFrame()->handlesPageScaleGesture())
         return;
@@ -108,7 +108,7 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
 #if PLATFORM(MAC)
 void ViewGestureGeometryCollector::collectGeometryForMagnificationGesture()
 {
-    FloatRect visibleContentRect = m_webPage.mainFrameView()->visibleContentRectIncludingScrollbars();
+    FloatRect visibleContentRect = m_webPage.mainFrameView()->unobscuredContentRectIncludingScrollbars();
     bool frameHandlesMagnificationGesture = m_webPage.mainWebFrame()->handlesPageScaleGesture();
     m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForMagnificationGesture(visibleContentRect, frameHandlesMagnificationGesture));
 }

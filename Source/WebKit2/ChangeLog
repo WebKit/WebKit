@@ -1,3 +1,16 @@
+2014-03-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Generalize unobscured rect to all ports
+        https://bugs.webkit.org/show_bug.cgi?id=130036
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture):
+        (WebKit::ViewGestureGeometryCollector::collectGeometryForMagnificationGesture):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::applyTransientZoomToPage):
+
 2014-03-10  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/16278716> [Cocoa] Allow setting a custom group identifier on a WKWebView
