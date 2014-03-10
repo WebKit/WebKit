@@ -54,8 +54,6 @@ public:
 private:
     StorageAreaSync(PassRefPtr<StorageSyncManager>, PassRefPtr<StorageAreaImpl>, const String& databaseIdentifier);
 
-    void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
-
     Timer<StorageAreaSync> m_syncTimer;
     HashMap<String, String> m_changedItems;
     bool m_itemsCleared;
