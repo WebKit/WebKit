@@ -1,3 +1,14 @@
+2014-03-10  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Fix broken paths in some regions tests
+        https://bugs.webkit.org/show_bug.cgi?id=130012
+
+        Reviewed by Andrei Bucur.
+
+        * fast/regions/cssom/offsetLeft-offsetTop-in-multiple-regions.html:
+        * fast/regions/region-styling/region-style-image-background-color-expected.html:
+        * fast/regions/region-styling/region-style-image-background-color.html:
+
 2014-03-09  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION: js/dom/create-lots-of-workers.html frequently crashes
