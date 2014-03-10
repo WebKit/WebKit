@@ -1,5 +1,22 @@
 2014-03-09  Filip Pizlo  <fpizlo@apple.com>
 
+        GPRInfo::toIndex should return InvalidIndex for non-temp registers on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=129998
+
+        Reviewed by Geoffrey Garen.
+        
+        Not only is that the established contract, but this is used to signal to
+        ScratchRegisterAllocator that the register doesn't need locking since it isn't a register
+        that this allocator would use. In the FTL, we may have an inline cache where LLVM had used
+        some non-temp register (i.e. a register that JSC itself wouldn't have used). This is totally
+        fine but previously it would have led to either an assertion failure, or data corruption, in
+        the ScratchRegisterAllocator.
+
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toIndex):
+
+2014-03-09  Filip Pizlo  <fpizlo@apple.com>
+
         FTL fails the new equals-masquerader strictEqualConstant test
         https://bugs.webkit.org/show_bug.cgi?id=129996
 
