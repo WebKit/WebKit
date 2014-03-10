@@ -1644,7 +1644,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         int offset = it.range()->startOffset(exception);
         
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
-        if (it.length() != 0) {
+        if (it.text().length() != 0) {
             if (!attributed) {
                 // First check if this is represented by a link.
                 AccessibilityObject* linkObject = AccessibilityObject::anchorElementForNode(node);

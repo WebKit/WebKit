@@ -1,3 +1,12 @@
+2014-03-10  Enrica Casucci  <enrica@apple.com>
+
+        iOS build fix after http://trac.webkit.org/changeset/165385
+
+        Unreviewed.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper arrayOfTextForTextMarkers:attributed:]):
+
 2014-03-10  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r159218): FrameView::layout() should destroy TemporaryChange<LayoutPhase>
