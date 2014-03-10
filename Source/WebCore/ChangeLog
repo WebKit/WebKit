@@ -1,3 +1,18 @@
+2014-03-10  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Hit-testing is not working properly inside scrollable regions
+        https://bugs.webkit.org/show_bug.cgi?id=130015
+
+        Reviewed by Antti Koivisto.
+
+        When hit-testing inside the flow thread's layer, the scrolled offset
+        of the current region must be taken into consideration.
+
+        Test: fast/regions/scrollable-regions-hit-testing-inside.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+
 2014-03-10  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] SVG Image valued shape fails if root element's size is relative

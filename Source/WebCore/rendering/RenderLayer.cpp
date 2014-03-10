@@ -6876,6 +6876,7 @@ RenderLayer* RenderLayer::hitTestFlowThreadIfRegionForFragments(const LayerFragm
     }
 
     LayoutRect regionContentBox = toRenderBlockFlow(&renderer())->contentBoxRect();
+    IntSize scrolledContentOffset = region->fragmentContainer().hasOverflowClip() ? region->fragmentContainer().scrolledContentOffset() : IntSize();
 
     RenderLayer* resultLayer = 0;
     for (int i = fragments.size() - 1; i >= 0; --i) {
@@ -6884,7 +6885,7 @@ RenderLayer* RenderLayer::hitTestFlowThreadIfRegionForFragments(const LayerFragm
         if (!fragment.backgroundRect.intersects(hitTestLocation))
             continue;
 
-        LayoutSize hitTestOffset = portionLocation - (fragment.layerBounds.location() + regionContentBox.location());
+        LayoutSize hitTestOffset = portionLocation - (fragment.layerBounds.location() + regionContentBox.location()) + scrolledContentOffset;
 
         // Always ignore clipping, since the RenderFlowThread has nothing to do with the bounds of the FrameView.
         HitTestRequest newRequest(request.type() | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
