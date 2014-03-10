@@ -141,6 +141,9 @@ void JSGlobalObjectInspectorController::appendAPIBacktrace(ScriptCallStack* call
 
 void JSGlobalObjectInspectorController::reportAPIException(ExecState* exec, JSValue exception)
 {
+    if (!m_consoleAgent->enabled())
+        return;
+
     if (isTerminatedExecutionException(exception))
         return;
 

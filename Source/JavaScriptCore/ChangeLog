@@ -1,5 +1,21 @@
 2014-03-09  Andreas Kling  <akling@apple.com>
 
+        Short-circuit JSGlobalObjectInspectorController when not inspecting.
+        <https://webkit.org/b/129995>
+
+        Add an early return in reportAPIException() when the console agent
+        is disabled. This avoids expensive symbolication during exceptions
+        if there's nobody expecting the fancy backtrace anyway.
+
+        ~2% progression on DYEB on my MBP.
+
+        Reviewed by Geoff Garen.
+
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::reportAPIException):
+
+2014-03-09  Andreas Kling  <akling@apple.com>
+
         Inline the trivial parts of GC deferral.
         <https://webkit.org/b/129984>
 
