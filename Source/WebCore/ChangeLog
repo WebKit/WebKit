@@ -1,3 +1,11 @@
+2014-03-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Build fix after r165379.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::SerializedScriptValue): Revert to older-style C++ iteration
+        for Windows compatibility. This can be reverted when we use VS2013 on this branch.
+
 2014-03-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Merge r162972 and r163007.

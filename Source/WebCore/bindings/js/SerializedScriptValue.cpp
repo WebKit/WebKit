@@ -1721,16 +1721,16 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer)
 SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer, Vector<String>& blobURLs)
 {
     m_data.swap(buffer);
-    for (auto& string : blobURLs)
-        addBlobURL(string);
+    for (auto blobIter = blobURLs.begin(); blobIter != blobURLs.end(); ++blobIter)
+        addBlobURL(*blobIter);
 }
 
 SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer, Vector<String>& blobURLs, PassOwnPtr<ArrayBufferContentsArray> arrayBufferContentsArray)
     : m_arrayBufferContentsArray(arrayBufferContentsArray)
 {
     m_data.swap(buffer);
-    for (auto& string : blobURLs)
-        addBlobURL(string);
+   for (auto blobIter = blobURLs.begin(); blobIter != blobURLs.end(); ++blobIter)
+       addBlobURL(*blobIter);
 }
 
 static void neuterView(JSCell* jsView)
