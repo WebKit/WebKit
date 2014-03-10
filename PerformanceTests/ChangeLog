@@ -1,3 +1,15 @@
+2014-03-10  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Add performance tests for SVG shape with shape-margin
+        https://bugs.webkit.org/show_bug.cgi?id=129930
+
+        Reviewed by Ryosuke Niwa.
+
+        The test is skipped by default.
+
+        * Layout/Shapes/ShapeOutsideSVGWithMargin.html: Added.
+        * Layout/Shapes/resources/shape.svg: Added.
+
 2014-02-19  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Add performance test for stacked floats with shape-outsides
