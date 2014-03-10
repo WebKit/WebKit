@@ -175,7 +175,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBDatabaseBackendInterface::PutMode 
         return 0;
     }
 
-    if (serializedValue->blobURLs().size() > 0) {
+    if (serializedValue->hasBlobURLs()) {
         // FIXME: Add Blob/File/FileList support
         ec = IDBDatabaseException::DataCloneError;
         return 0;

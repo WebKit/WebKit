@@ -96,7 +96,8 @@ public:
 #endif
 
     const Vector<uint8_t>& data() { return m_data; }
-    const Vector<String>& blobURLs() const { return m_blobURLs; }
+    bool hasBlobURLs() const { return !m_blobURLs.isEmpty(); }
+    void blobURLs(Vector<String>&) const;
 
 #if ENABLE(INDEXED_DATABASE)
     static PassRefPtr<SerializedScriptValue> create(JSC::ExecState*, JSC::JSValue);
@@ -117,6 +118,7 @@ private:
     static void maybeThrowExceptionIfSerializationFailed(JSC::ExecState*, SerializationReturnCode);
     static bool serializationDidCompleteSuccessfully(SerializationReturnCode);
     static PassOwnPtr<ArrayBufferContentsArray> transferArrayBuffers(JSC::ExecState*, ArrayBufferArray&, SerializationReturnCode&);
+    void addBlobURL(const String&);
 
     SerializedScriptValue(const Vector<unsigned char>&);
     SerializedScriptValue(Vector<unsigned char>&);
@@ -124,7 +126,7 @@ private:
     SerializedScriptValue(Vector<unsigned char>&, Vector<String>& blobURLs, PassOwnPtr<ArrayBufferContentsArray>);
     Vector<unsigned char> m_data;
     OwnPtr<ArrayBufferContentsArray> m_arrayBufferContentsArray;
-    Vector<String> m_blobURLs;
+    Vector<Vector<uint16_t>> m_blobURLs;
 };
 
 }
