@@ -93,16 +93,19 @@ bool checkShapeImageOrigin(Document& document, CachedImage& cachedImage)
     return false;
 }
 
-static LayoutRect getShapeImageReplacedRect(const RenderBox& renderBox, const StyleImage& styleImage)
+static void getShapeImageAndRect(const ShapeValue* shapeValue, const RenderBox* renderBox, const LayoutSize& referenceBoxSize, Image*& image, LayoutRect& rect)
 {
-    if (renderBox.isRenderImage()) {
-        const RenderImage& renderImage = *toRenderImage(&renderBox);
-        return renderImage.replacedContentRect(renderBox.intrinsicSize());
-    }
+    ASSERT(shapeValue->isImageValid());
+    StyleImage* styleImage = shapeValue->image();
 
-    ASSERT(styleImage.cachedImage());
-    ASSERT(styleImage.cachedImage()->hasImage());
-    return LayoutRect(LayoutPoint(), styleImage.cachedImage()->image()->size());
+    const IntSize& imageSize = renderBox->calculateImageIntrinsicDimensions(styleImage, roundedIntSize(referenceBoxSize), RenderImage::ScaleByEffectiveZoom);
+    styleImage->setContainerSizeForRenderer(renderBox, imageSize, renderBox->style().effectiveZoom());
+
+    image = styleImage->cachedImage()->imageForRenderer(renderBox);
+    if (renderBox->isRenderImage())
+        rect = toRenderImage(renderBox)->replacedContentRect(renderBox->intrinsicSize());
+    else
+        rect = LayoutRect(LayoutPoint(), imageSize);
 }
 
 static LayoutRect getShapeImageMarginRect(const RenderBox& renderBox, const LayoutSize& referenceBoxLogicalSize)
@@ -131,11 +134,11 @@ const Shape& ShapeInfo<RenderType>::computedShape() const
         m_shape = Shape::createShape(shapeValue->shape(), m_referenceBoxLogicalSize, writingMode, margin, padding);
         break;
     case ShapeValue::Image: {
-        ASSERT(shapeValue->image());
-        const StyleImage& styleImage = *(shapeValue->image());
-        const LayoutRect& imageRect = getShapeImageReplacedRect(m_renderer, styleImage);
+        Image* image;
+        LayoutRect imageRect;
+        getShapeImageAndRect(shapeValue, &m_renderer, m_referenceBoxLogicalSize, image, imageRect);
         const LayoutRect& marginRect = getShapeImageMarginRect(m_renderer, m_referenceBoxLogicalSize);
-        m_shape = Shape::createRasterShape(styleImage, shapeImageThreshold, imageRect, marginRect, writingMode, margin, padding);
+        m_shape = Shape::createRasterShape(image, shapeImageThreshold, imageRect, marginRect, writingMode, margin, padding);
         break;
     }
     case ShapeValue::Box: {

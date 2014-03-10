@@ -1,3 +1,16 @@
+2014-03-10  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] SVG Image valued shape fails if root element's size is relative
+        https://bugs.webkit.org/show_bug.cgi?id=128983
+
+        Reviewed by Simon Fraser.
+
+        Verify that an SVG Image valued shape-outside with a relatively sized SVG root element
+        generates a shape with the correct size.
+
+        * fast/shapes/shape-outside-floats/shape-outside-relative-size-svg-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-relative-size-svg.html: Added.
+
 2014-03-10  Darin Adler  <darin@apple.com>
 
         TextIterator: Use StringView and references rather than pointers

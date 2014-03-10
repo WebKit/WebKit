@@ -1,3 +1,27 @@
+2014-03-10  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] SVG Image valued shape fails if root element's size is relative
+        https://bugs.webkit.org/show_bug.cgi?id=128983
+
+        Reviewed by Simon Fraser.
+
+        When creating a shape based on an Image, compute its dimensions using
+        RenderBoxModelObject::calculateImageIntrinsicDimensions(), then set the
+        ImageResource's containerSize, and then use imageForRenderer() to get the
+        image to be drawn. The first step resolves SVG Image relative sizes, the
+        second step creates and caches an SVGImageForContainer with the correct
+        containerSize, and the last step retrieves the SVGImageForContainer.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-relative-size-svg.html
+
+        * rendering/RenderBoxModelObject.h: Publicized calculateImageIntrinsicDimensions() and its enum.
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createRasterShape):
+        * rendering/shapes/Shape.h:
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::getShapeImageAndRect):
+        (WebCore::ShapeInfo<RenderType>::computedShape):
+
 2014-03-10  Darin Adler  <darin@apple.com>
 
         TextIterator: Use StringView and references rather than pointers

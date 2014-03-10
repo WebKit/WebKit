@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#container {
+    color: green;
+    font: 100px/1 Ahem, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+#shape-outside {
+    width: 100px;
+    height: 100px;
+    float: left;
+    background-image: url("data:image/svg+xml;UTF-8,<svg xmlns='http://www.w3.org/2000/svg' width='100px' height='100px'><rect width='100%' height='100%' fill='blue' /></svg>");
+    background-repeat: no-repeat;
+}
+</style>
+</head>
+<body>
+<p>You should see three blue squares: above the green square, to the green square's right, and below the green square.</p>
+<div id="container">
+  X<br>
+  <div id="shape-outside"></div>
+  X<br>X
+</div>
+</body>
+</html>
