@@ -224,6 +224,7 @@ private:
         OP_LEA                          = 0x8D,
         OP_GROUP1A_Ev                   = 0x8F,
         OP_NOP                          = 0x90,
+        OP_XCHG_EAX                     = 0x90,
         OP_CDQ                          = 0x99,
         OP_MOV_EAXOv                    = 0xA1,
         OP_MOV_OvEAX                    = 0xA3,
@@ -1213,13 +1214,23 @@ public:
 
     void xchgl_rr(RegisterID src, RegisterID dst)
     {
-        m_formatter.oneByteOp(OP_XCHG_EvGv, src, dst);
+        if (src == X86Registers::eax)
+            m_formatter.oneByteOp(OP_XCHG_EAX, dst);
+        else if (dst == X86Registers::eax)
+            m_formatter.oneByteOp(OP_XCHG_EAX, src);
+        else
+            m_formatter.oneByteOp(OP_XCHG_EvGv, src, dst);
     }
 
 #if CPU(X86_64)
     void xchgq_rr(RegisterID src, RegisterID dst)
     {
-        m_formatter.oneByteOp64(OP_XCHG_EvGv, src, dst);
+        if (src == X86Registers::eax)
+            m_formatter.oneByteOp64(OP_XCHG_EAX, dst);
+        else if (dst == X86Registers::eax)
+            m_formatter.oneByteOp64(OP_XCHG_EAX, src);
+        else
+            m_formatter.oneByteOp64(OP_XCHG_EvGv, src, dst);
     }
 #endif
 
