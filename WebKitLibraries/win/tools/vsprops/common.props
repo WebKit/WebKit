@@ -95,6 +95,7 @@ set TARGETEXT=$(TargetExt)
 set TARGETFILENAME=$(TargetFileName)
 set TARGETPATH=$(TargetPath)
 set DEBUGSUFFIX=$(DebugSuffix)
+set WEBKIT_LIBRARIES=$(WEBKIT_LIBRARIES)
 
 REM If any of the above variables didn't exist previously and
 REM were set to an empty string, set will set the errorlevel to 1,
@@ -131,6 +132,7 @@ set TARGETEXT=$(TargetExt)
 set TARGETFILENAME=$(TargetFileName)
 set TARGETPATH=$(TargetPath)
 set DEBUGSUFFIX=$(DebugSuffix)
+set WEBKIT_LIBRARIES=$(WEBKIT_LIBRARIES)
 
 REM If any of the above variables didn't exist previously and
 REM were set to an empty string, set will set the errorlevel to 1,
@@ -167,6 +169,7 @@ set TARGETEXT=$(TargetExt)
 set TARGETFILENAME=$(TargetFileName)
 set TARGETPATH=$(TargetPath)
 set DEBUGSUFFIX=$(DebugSuffix)
+set WEBKIT_LIBRARIES=$(WEBKIT_LIBRARIES)
 
 REM If any of the above variables didn't exist previously and
 REM were set to an empty string, set will set the errorlevel to 1,

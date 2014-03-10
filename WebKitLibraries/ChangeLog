@@ -1,3 +1,16 @@
+2014-03-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge r165393.
+
+    2014-03-10  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Pass environment to Pre-Build, Pre-Link, and Post-Build Stages.
+            https://bugs.webkit.org/show_bug.cgi?id=130023
+
+            Reviewed by Dean Jackson.
+
+            * win/tools/vsprops/common.props: Pass WEBKIT_LIBRARIES value to subprocesses.
+
 2014-02-28  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix.
