@@ -36,6 +36,8 @@
 
 #define REPTACH_OFFSET_CALL_R11 3
 
+inline bool CAN_SIGN_EXTEND_32_64(int64_t value) { return value == (int64_t)(int32_t)value; }
+
 namespace JSC {
 
 class MacroAssemblerX86_64 : public MacroAssemblerX86Common {
@@ -412,8 +414,12 @@ public:
 
     void store64(TrustedImm64 imm, ImplicitAddress address)
     {
-        move(imm, scratchRegister);
-        store64(scratchRegister, address);
+        if (CAN_SIGN_EXTEND_32_64(imm.m_value))
+            m_assembler.movq_i32m(static_cast<int>(imm.m_value), address.offset, address.base);
+        else {
+            move(imm, scratchRegister);
+            store64(scratchRegister, address);
+        }
     }
 
     void store64(TrustedImm64 imm, BaseIndex address)

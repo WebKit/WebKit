@@ -1,5 +1,28 @@
 2014-03-10  Andreas Kling  <akling@apple.com>
 
+        [X86_64] Smaller code for store64(imm, address) when imm fits in 32 bits.
+        <https://webkit.org/b/130002>
+
+        Generate this:
+
+            mov [address], imm32
+
+        Instead of this:
+
+            mov scratchRegister, imm32
+            mov [address], scratchRegister
+
+        For store64(imm, address) where the 64-bit immediate can be passed as
+        a sign-extended 32-bit value.
+
+        Reviewed by Benjamin Poulain.
+
+        * assembler/MacroAssemblerX86_64.h:
+        (CAN_SIGN_EXTEND_32_64):
+        (JSC::MacroAssemblerX86_64::store64):
+
+2014-03-10  Andreas Kling  <akling@apple.com>
+
         [X86_64] Smaller code for xchg_rr when one register is accumulator.
         <https://webkit.org/b/130004>
 
