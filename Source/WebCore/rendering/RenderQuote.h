@@ -23,11 +23,11 @@
 #ifndef RenderQuote_h
 #define RenderQuote_h
 
-#include "RenderText.h"
+#include "RenderInline.h"
 
 namespace WebCore {
 
-class RenderQuote FINAL : public RenderText {
+class RenderQuote FINAL : public RenderInline {
 public:
     RenderQuote(Document*, QuoteType);
     virtual ~RenderQuote();
@@ -40,10 +40,11 @@ private:
     virtual void willBeDestroyed() OVERRIDE;
     virtual const char* renderName() const OVERRIDE { return "RenderQuote"; }
     virtual bool isQuote() const OVERRIDE { return true; };
-    virtual PassRefPtr<StringImpl> originalText() const OVERRIDE;
     virtual void styleDidChange(StyleDifference, const RenderStyle*) OVERRIDE;
     virtual void willBeRemovedFromTree() OVERRIDE;
 
+    PassRefPtr<StringImpl> computeText() const;
+    void updateText();
     void updateDepth();
 
     QuoteType m_type;
@@ -51,6 +52,7 @@ private:
     RenderQuote* m_next;
     RenderQuote* m_previous;
     bool m_isAttached;
+    String m_text;
 };
 
 inline RenderQuote* toRenderQuote(RenderObject* object)

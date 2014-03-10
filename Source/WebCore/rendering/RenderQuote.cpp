@@ -24,19 +24,21 @@
 #include "RenderQuote.h"
 
 #include "QuotesData.h"
+#include "RenderTextFragment.h"
 
 using namespace WTF::Unicode;
 
 namespace WebCore {
 
-RenderQuote::RenderQuote(Document* node, QuoteType quote)
-    : RenderText(node, StringImpl::empty())
+RenderQuote::RenderQuote(Document* document, QuoteType quote)
+    : RenderInline(0)
     , m_type(quote)
     , m_depth(-1)
     , m_next(0)
     , m_previous(0)
     , m_isAttached(false)
 {
+    setDocumentForAnonymous(document);
 }
 
 RenderQuote::~RenderQuote()
@@ -49,19 +51,19 @@ RenderQuote::~RenderQuote()
 void RenderQuote::willBeDestroyed()
 {
     detachQuote();
-    RenderText::willBeDestroyed();
+    RenderInline::willBeDestroyed();
 }
 
 void RenderQuote::willBeRemovedFromTree()
 {
-    RenderText::willBeRemovedFromTree();
+    RenderInline::willBeRemovedFromTree();
     detachQuote();
 }
 
 void RenderQuote::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    RenderText::styleDidChange(diff, oldStyle);
-    setText(originalText());
+    RenderInline::styleDidChange(diff, oldStyle);
+    updateText();
 }
 
 const unsigned maxDistinctQuoteCharacters = 16;
@@ -335,7 +337,28 @@ static inline StringImpl* apostropheString()
     return apostropheString;
 }
 
-PassRefPtr<StringImpl> RenderQuote::originalText() const
+void RenderQuote::updateText()
+{
+    String text = computeText();
+    if (m_text == text)
+        return;
+
+    while (RenderObject* child = firstChild())
+        child->destroy();
+
+    if (text == emptyString() || text == String()) {
+        m_text = String();
+        return;
+    }
+
+    m_text = text;
+
+    RenderTextFragment* fragment = new (document()->renderArena()) RenderTextFragment(document(), m_text.impl());
+    fragment->setStyle(style());
+    addChild(fragment);
+}
+
+PassRefPtr<StringImpl> RenderQuote::computeText() const
 {
     if (m_depth < 0)
         return StringImpl::empty();
@@ -452,7 +475,7 @@ void RenderQuote::updateDepth()
     if (m_depth == depth)
         return;
     m_depth = depth;
-    setText(originalText());
+    updateText();
 }
 
 } // namespace WebCore

@@ -1788,19 +1788,7 @@ StyleDifference RenderObject::adjustStyleDifference(StyleDifference diff, unsign
 
 void RenderObject::setPseudoStyle(PassRefPtr<RenderStyle> pseudoStyle)
 {
-    ASSERT(pseudoStyle->styleType() == BEFORE || pseudoStyle->styleType() == AFTER);
-
-    // Images are special and must inherit the pseudoStyle so the width and height of
-    // the pseudo element doesn't change the size of the image. In all other cases we
-    // can just share the style.
-    if (isImage()) {
-        RefPtr<RenderStyle> style = RenderStyle::create();
-        style->inheritFrom(pseudoStyle.get());
-        setStyle(style.release());
-        return;
-    }
-
-    setStyle(pseudoStyle);
+    setStyle(RenderStyle::createStyleInheritingFromPseudoStyle(pseudoStyle.get()));
 }
 
 inline bool RenderObject::hasImmediateNonWhitespaceTextChild() const

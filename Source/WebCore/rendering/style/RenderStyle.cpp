@@ -106,6 +106,15 @@ PassRefPtr<RenderStyle> RenderStyle::clone(const RenderStyle* other)
     return adoptRef(new RenderStyle(*other));
 }
 
+PassRefPtr<RenderStyle> RenderStyle::createStyleInheritingFromPseudoStyle(const RenderStyle* pseudoStyle)
+{
+    ASSERT(pseudoStyle->styleType() == BEFORE || pseudoStyle->styleType() == AFTER);
+
+    auto style = RenderStyle::create();
+    style->inheritFrom(pseudoStyle);
+    return style;
+}
+
 ALWAYS_INLINE RenderStyle::RenderStyle()
     : m_box(defaultStyle()->m_box)
     , visual(defaultStyle()->visual)
