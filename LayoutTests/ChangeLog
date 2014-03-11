@@ -1,3 +1,18 @@
+2014-03-11  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Add layout test for anonymous grid items
+        https://bugs.webkit.org/show_bug.cgi?id=130083
+
+        Reviewed by Sergio Villar Senin.
+
+        Add a layout test to prevent regressions supporting anonymous grid items.
+
+        For example, anonymous grid items do not have an associated Node, so trying to access it will make this test
+        crash.
+
+        * fast/css-grid-layout/anonymous-grid-items-expected.html: Added.
+        * fast/css-grid-layout/anonymous-grid-items.html: Added.
+
 2014-03-11  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Expose aria-posinset and aria-setsize through object attributes

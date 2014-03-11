@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<body>
+    <div>Checks that anonymous grid items are supported. This should not crash.</div>
+    <div style="display: -webkit-grid;">
+        anonymous item
+    </div>
+</body>
+</html>
