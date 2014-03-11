@@ -54,8 +54,6 @@ void RenderMathMLToken::createWrapperIfNeeded()
 {
     if (!firstChild()) {
         RenderPtr<RenderMathMLBlock> wrapper = createAnonymousMathMLBlock();
-        // This container doesn't offer any useful information to accessibility.
-        wrapper->setIgnoreInAccessibilityTree(true);
         RenderMathMLBlock::addChild(wrapper.leakPtr());
     }
 }

@@ -40,15 +40,11 @@ namespace WebCore {
     
 using namespace MathMLNames;
     
-enum Braces { OpeningBraceChar = 0x28, ClosingBraceChar = 0x29 };
-    
-static const float gSeparatorMarginEndEms = 0.25f;
-static const float gFenceMarginEms = 0.1f;
+static const char* gOpeningBraceChar = "(";
+static const char* gClosingBraceChar = ")";
 
 RenderMathMLFenced::RenderMathMLFenced(MathMLInlineContainerElement& element, PassRef<RenderStyle> style)
     : RenderMathMLRow(element, std::move(style))
-    , m_open(OpeningBraceChar)
-    , m_close(ClosingBraceChar)
     , m_closeFenceRenderer(nullptr)
 {
 }
@@ -57,15 +53,15 @@ void RenderMathMLFenced::updateFromElement()
 {
     const auto& fenced = element();
  
-    // FIXME: Handle open/close values with more than one character (they should be treated like text).
-    AtomicString openValue = fenced.getAttribute(MathMLNames::openAttr);
-    if (openValue.length() > 0)
-        m_open = openValue[0];
-    AtomicString closeValue = fenced.getAttribute(MathMLNames::closeAttr);
-    if (closeValue.length() > 0)
-        m_close = closeValue[0];
-    
-    AtomicString separators = fenced.getAttribute(MathMLNames::separatorsAttr);
+    // The open operator defaults to a left parenthesis.
+    AtomicString open = fenced.fastGetAttribute(MathMLNames::openAttr);
+    m_open = open.isNull() ? gOpeningBraceChar : open;
+
+    // The close operator defaults to a right parenthesis.
+    AtomicString close = fenced.fastGetAttribute(MathMLNames::closeAttr);
+    m_close = close.isNull() ? gClosingBraceChar : close;
+
+    AtomicString separators = fenced.fastGetAttribute(MathMLNames::separatorsAttr);
     if (!separators.isNull()) {
         StringBuilder characters;
         for (unsigned int i = 0; i < separators.length(); i++) {
@@ -80,16 +76,16 @@ void RenderMathMLFenced::updateFromElement()
     
     if (isEmpty())
         makeFences();
+    else {
+        // FIXME: The mfenced element fails to update dynamically when its open, close and separators attributes are changed (https://bugs.webkit.org/show_bug.cgi?id=57696).
+        toRenderMathMLOperator(firstChild())->updateTokenContent(m_open);
+        m_closeFenceRenderer->updateTokenContent(m_close);
+    }
 }
 
-RenderPtr<RenderMathMLOperator> RenderMathMLFenced::createMathMLOperator(UChar uChar, MathMLOperatorDictionary::Form form, MathMLOperatorDictionary::Flag flag)
+RenderPtr<RenderMathMLOperator> RenderMathMLFenced::createMathMLOperator(const String& operatorString, MathMLOperatorDictionary::Form form, MathMLOperatorDictionary::Flag flag)
 {
-    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
-    newStyle.get().setFlexDirection(FlowColumn);
-    newStyle.get().setMarginEnd(Length((flag == MathMLOperatorDictionary::Fence ? gFenceMarginEms : gSeparatorMarginEndEms) * style().fontSize(), Fixed));
-    if (flag == MathMLOperatorDictionary::Fence)
-        newStyle.get().setMarginStart(Length(gFenceMarginEms * style().fontSize(), Fixed));
-    RenderPtr<RenderMathMLOperator> newOperator = createRenderer<RenderMathMLOperator>(element(), std::move(newStyle), uChar, form, flag);
+    RenderPtr<RenderMathMLOperator> newOperator = createRenderer<RenderMathMLOperator>(document(), RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX), operatorString, form, flag);
     newOperator->initializeStyle();
     return newOperator;
 }
@@ -97,15 +93,11 @@ RenderPtr<RenderMathMLOperator> RenderMathMLFenced::createMathMLOperator(UChar u
 void RenderMathMLFenced::makeFences()
 {
     RenderPtr<RenderMathMLOperator> openFence = createMathMLOperator(m_open, MathMLOperatorDictionary::Prefix, MathMLOperatorDictionary::Fence);
-    RenderMathMLOperator* openFencePtr = openFence.get();
     RenderMathMLRow::addChild(openFence.leakPtr(), firstChild());
 
     RenderPtr<RenderMathMLOperator> closeFence = createMathMLOperator(m_close, MathMLOperatorDictionary::Postfix, MathMLOperatorDictionary::Fence);
     m_closeFenceRenderer = closeFence.get();
     RenderMathMLRow::addChild(closeFence.leakPtr());
-
-    openFencePtr->updateFromElement();
-    m_closeFenceRenderer->updateFromElement();
 }
 
 void RenderMathMLFenced::addChild(RenderObject* child, RenderObject* beforeChild)
@@ -114,8 +106,7 @@ void RenderMathMLFenced::addChild(RenderObject* child, RenderObject* beforeChild
     if (isEmpty())
         updateFromElement();
     
-    // FIXME: Adding or removing a child should possibly cause all later separators to shift places if they're different,
-    // as later child positions change by +1 or -1.
+    // FIXME: Adding or removing a child should possibly cause all later separators to shift places if they're different, as later child positions change by +1 or -1. This should also handle surrogate pairs. See https://bugs.webkit.org/show_bug.cgi?id=125938.
     
     RenderPtr<RenderMathMLOperator> separatorRenderer;
     if (m_separators.get()) {
@@ -139,7 +130,9 @@ void RenderMathMLFenced::addChild(RenderObject* child, RenderObject* beforeChild
             else
                 separator = (*m_separators.get())[count - 1];
                 
-            separatorRenderer = createMathMLOperator(separator, MathMLOperatorDictionary::Infix, MathMLOperatorDictionary::Separator);
+            StringBuilder builder;
+            builder.append(separator);
+            separatorRenderer = createMathMLOperator(builder.toString(), MathMLOperatorDictionary::Infix, MathMLOperatorDictionary::Separator);
         }
     }
     
@@ -153,26 +146,6 @@ void RenderMathMLFenced::addChild(RenderObject* child, RenderObject* beforeChild
         if (separatorRenderer)
             RenderMathMLRow::addChild(separatorRenderer.leakPtr(), m_closeFenceRenderer);
         RenderMathMLRow::addChild(child, m_closeFenceRenderer);
-    }
-}
-
-// FIXME: Change createMathMLOperator() above to create an isAnonymous() operator, and remove this styleDidChange() function.
-void RenderMathMLFenced::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderMathMLBlock::styleDidChange(diff, oldStyle);
-    
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->node() == &element()) {
-            ASSERT(child->style().refCount() == 1);
-            child->style().inheritFrom(&style());
-            bool isFence = child == firstChild() || child == lastChild();
-            child->style().setMarginEnd(Length((isFence ? gFenceMarginEms : gSeparatorMarginEndEms) * style().fontSize(), Fixed));
-            if (isFence) {
-                RenderMathMLBlock* block = toRenderMathMLBlock(child);
-                toRenderMathMLOperator(block)->updateFromElement();
-                child->style().setMarginStart(Length(gFenceMarginEms * style().fontSize(), Fixed));
-            }
-        }
     }
 }
 

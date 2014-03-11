@@ -64,14 +64,9 @@ public:
     // Create a new RenderMathMLBlock, with a new style inheriting from this->style().
     RenderPtr<RenderMathMLBlock> createAnonymousMathMLBlock();
     
-    void setIgnoreInAccessibilityTree(bool flag) { m_ignoreInAccessibilityTree = flag; }
-    bool ignoreInAccessibilityTree() const { return m_ignoreInAccessibilityTree; }
-    
 private:
     virtual bool isRenderMathMLBlock() const override final { return true; }
     virtual const char* renderName() const override;
-
-    bool m_ignoreInAccessibilityTree;
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderMathMLBlock, isRenderMathMLBlock())

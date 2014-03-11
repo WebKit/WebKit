@@ -43,15 +43,13 @@ private:
     virtual bool isRenderMathMLFenced() const override { return true; }
     virtual const char* renderName() const override { return "RenderMathMLFenced"; }
     virtual void addChild(RenderObject* child, RenderObject* beforeChild) override;
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
-
     virtual void updateFromElement() override;
 
-    RenderPtr<RenderMathMLOperator> createMathMLOperator(UChar, MathMLOperatorDictionary::Form, MathMLOperatorDictionary::Flag);
+    RenderPtr<RenderMathMLOperator> createMathMLOperator(const String& operatorString, MathMLOperatorDictionary::Form, MathMLOperatorDictionary::Flag);
     void makeFences();
 
-    UChar m_open;
-    UChar m_close;
+    String m_open;
+    String m_close;
     RefPtr<StringImpl> m_separators;
     
     RenderMathMLOperator* m_closeFenceRenderer;

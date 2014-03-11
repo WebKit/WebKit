@@ -33,5 +33,21 @@
       </math>
     </p>
 
+    <!-- Test for open/close operators with multiple characters -->
+    <p>
+      <math>
+        <mfenced open="ABC" close="DEF">
+          <mi>x</mi>
+        </mfenced>
+      </math>
+    </p>
+
+    <!-- Test that whitespace is ignored. -->
+    <p>
+      <math>
+        <mfenced open="&#x20;&#x9;&#xD;&#xA;[&#x20;&#x9;&#xD;&#xA;" close="&#x20;&#x9;&#xD;&#xA;]&#x20;&#x9;&#xD;&#xA;" separators="&#x20;&#x9;&#xD;&#xA;1&#x20;&#x9;&#xD;&#xA;2&#x20;&#x9;&#xD;&#xA;"><mi>x</mi><mi>y</mi><mi>z</mi></mfenced>
+      </math>
+    </p>
+
   </body>
 </html>

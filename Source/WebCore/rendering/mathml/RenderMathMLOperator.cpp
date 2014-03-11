@@ -1119,31 +1119,30 @@ static const Entry dictionary[MATHML_OPDICT_SIZE] = {
 }
 
 RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, PassRef<RenderStyle> style)
-    : RenderMathMLBlock(element, std::move(style))
+    : RenderMathMLToken(element, std::move(style))
     , m_stretchHeightAboveBaseline(0)
     , m_stretchDepthBelowBaseline(0)
     , m_operator(0)
     , m_stretchyCharacter(nullptr)
-    , m_isFencedOperator(false)
 {
-    SetOperatorProperties();
+    updateTokenContent();
 }
 
-RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, PassRef<RenderStyle> style, UChar operatorChar, MathMLOperatorDictionary::Form form, MathMLOperatorDictionary::Flag flag)
-    : RenderMathMLBlock(element, std::move(style))
+RenderMathMLOperator::RenderMathMLOperator(Document& document, PassRef<RenderStyle> style, const String& operatorString, MathMLOperatorDictionary::Form form, MathMLOperatorDictionary::Flag flag)
+    : RenderMathMLToken(document, std::move(style))
     , m_stretchHeightAboveBaseline(0)
     , m_stretchDepthBelowBaseline(0)
-    , m_operator(operatorChar == hyphenMinus ? minusSign : operatorChar)
+    , m_operator(0)
     , m_stretchyCharacter(nullptr)
-    , m_isFencedOperator(true)
     , m_operatorForm(form)
     , m_operatorFlags(flag)
 {
-    SetOperatorProperties();
+    updateTokenContent(operatorString);
 }
 
 void RenderMathMLOperator::setOperatorFlagFromAttribute(MathMLOperatorDictionary::Flag flag, const QualifiedName& name)
 {
+    ASSERT(!isFencedOperator());
     const AtomicString& attributeValue = element().fastGetAttribute(name);
     if (attributeValue == "true")
         m_operatorFlags |= flag;
@@ -1155,7 +1154,7 @@ void RenderMathMLOperator::setOperatorFlagFromAttribute(MathMLOperatorDictionary
 void RenderMathMLOperator::setOperatorPropertiesFromOpDictEntry(const MathMLOperatorDictionary::Entry* entry)
 {
     // If this operator has been created by RenderMathMLFenced, we preserve the Fence and Separator properties.
-    if (m_isFencedOperator)
+    if (isFencedOperator())
         m_operatorFlags = (m_operatorFlags & (MathMLOperatorDictionary::Fence | MathMLOperatorDictionary::Separator)) | entry->flags;
     else
         m_operatorFlags = entry->flags;
@@ -1167,18 +1166,9 @@ void RenderMathMLOperator::setOperatorPropertiesFromOpDictEntry(const MathMLOper
 
 void RenderMathMLOperator::SetOperatorProperties()
 {
-    // We verify whether the operator text can be represented by a single UChar.
-    if (!m_isFencedOperator) {
-        // FIXME: This does not handle surrogate pairs (https://bugs.webkit.org/show_bug.cgi?id=122296).
-        // FIXME: This does not handle <mo> operators with multiple characters (https://bugs.webkit.org/show_bug.cgi?id=124828).
-        String opText = element().textContent().stripWhiteSpace().simplifyWhiteSpace().replace(hyphenMinus, minusSign).impl();
-        if (opText.length() == 1)
-            m_operator = opText[0];
-    }
-
     // We determine the form of the operator.
     bool explicitForm = true;
-    if (!m_isFencedOperator) {
+    if (!isFencedOperator()) {
         const AtomicString& form = element().fastGetAttribute(MathMLNames::formAttr);
         if (form == "prefix")
             m_operatorForm = MathMLOperatorDictionary::Prefix;
@@ -1201,7 +1191,10 @@ void RenderMathMLOperator::SetOperatorProperties()
     // We determine the default values of the operator properties.
 
     // First we initialize with the default values for unknown operators.
-    m_operatorFlags = 0; // This sets all the properties to "false".
+    if (isFencedOperator())
+        m_operatorFlags &= MathMLOperatorDictionary::Fence | MathMLOperatorDictionary::Separator; // This resets all but the Fence and Separator properties.
+    else
+        m_operatorFlags = 0; // This resets all the operator properties.
     m_leadingSpace = 5 * style().fontSize() / 18; // This sets leading space to "thickmathspace".
     m_trailingSpace = 5 * style().fontSize() / 18; // This sets trailing space to "thickmathspace".
     m_minSize = style().fontSize(); // This sets minsize to "1em".
@@ -1225,7 +1218,7 @@ void RenderMathMLOperator::SetOperatorProperties()
     }
 #undef MATHML_OPDICT_SIZE
 
-    if (!m_isFencedOperator) {
+    if (!isFencedOperator()) {
         // Finally, we make the attribute values override the default.
 
         setOperatorFlagFromAttribute(MathMLOperatorDictionary::Fence, MathMLNames::fenceAttr);
@@ -1243,6 +1236,20 @@ void RenderMathMLOperator::SetOperatorProperties()
         const AtomicString& maxsize = element().fastGetAttribute(MathMLNames::maxsizeAttr);
         if (maxsize != "infinity")
             parseMathMLLength(maxsize, m_maxSize, &style(), false);
+    }
+
+    // FIXME: this should be removed when operator spacing is implemented (https://bugs.webkit.org/show_bug.cgi?id=115787). At the moment spacing for normal <mo> elements is handled in mathml.css and mfenced uses the arbitrary constants below.
+    if (isFencedOperator()) {
+        if (hasOperatorFlag(MathMLOperatorDictionary::Fence)) {
+            m_leadingSpace = 0.1f * style().fontSize();
+            m_trailingSpace = 0.1f * style().fontSize();
+        } else if (hasOperatorFlag(MathMLOperatorDictionary::Separator)) {
+            m_leadingSpace = 0;
+            m_trailingSpace = 0.25f * style().fontSize();
+        }
+    } else {
+        m_leadingSpace = 0;
+        m_trailingSpace = 0;
     }
 }
 
@@ -1283,12 +1290,6 @@ void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit 
     updateStyle();
 }
 
-void RenderMathMLOperator::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderMathMLBlock::styleDidChange(diff, oldStyle);
-    updateFromElement();
-}
-
 FloatRect RenderMathMLOperator::glyphBoundsForCharacter(UChar character)
 {
     GlyphData data = style().font().glyphDataForCharacter(character, false);
@@ -1314,7 +1315,7 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
     UChar stretchedCharacter;
     bool allowStretching = shouldAllowStretching(stretchedCharacter);
     if (!allowStretching) {
-        RenderMathMLBlock::computePreferredLogicalWidths();
+        RenderMathMLToken::computePreferredLogicalWidths();
         return;
     }
 
@@ -1332,45 +1333,45 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
             maximumGlyphWidth = std::max(maximumGlyphWidth, advanceForCharacter(character.bottomGlyph));
         if (character.middleGlyph)
             maximumGlyphWidth = std::max(maximumGlyphWidth, advanceForCharacter(character.middleGlyph));
-        m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = maximumGlyphWidth;
+        m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = m_leadingSpace + maximumGlyphWidth + m_trailingSpace;
         return;
     }
 
-    m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = maximumGlyphWidth;
+    m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = m_leadingSpace + maximumGlyphWidth + m_trailingSpace;
 }
 
-// FIXME: It's cleaner to only call updateFromElement when an attribute has changed. The body of
-// this method should probably be moved to a private stretchHeightChanged or checkStretchHeight
-// method. Probably at the same time, addChild/removeChild methods should be made to work for
-// dynamic DOM changes.
-void RenderMathMLOperator::updateFromElement()
+void RenderMathMLOperator::rebuildTokenContent(const String& operatorString)
 {
-    RenderElement* savedRenderer = element().renderer();
+    // We collapse the whitespace and replace the hyphens by minus signs.
+    AtomicString textContent = operatorString.stripWhiteSpace().simplifyWhiteSpace().replace(hyphenMinus, minusSign).impl();
 
-    // Destroy our current children
-    destroyLeftoverChildren();
+    // We destroy the wrapper and rebuild it.
+    // FIXME: Using this RenderText make the text inaccessible to the dumpAsText/selection code (https://bugs.webkit.org/show_bug.cgi?id=125597).
+    if (firstChild())
+        toRenderElement(firstChild())->destroy();
+    createWrapperIfNeeded();
+    RenderPtr<RenderText> text = createRenderer<RenderText>(document(), textContent);
+    toRenderElement(firstChild())->addChild(text.leakPtr());
 
-    // Since we share a node with our children, destroying our children may set our node's
-    // renderer to 0, so we need to restore it.
-    element().setRenderer(savedRenderer);
-
-    RenderPtr<RenderMathMLBlock> container = createRenderer<RenderMathMLBlock>(element(), RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX));
-    // This container doesn't offer any useful information to accessibility.
-    container->setIgnoreInAccessibilityTree(true);
-    container->initializeStyle();
-
-    RenderPtr<RenderText> text;
-    if (m_isFencedOperator)
-        text = createRenderer<RenderText>(document(), String(&m_operator, 1));
-    else
-        text = createRenderer<RenderText>(document(), element().textContent().replace(hyphenMinus, minusSign).impl());
-
-    container->addChild(text.leakPtr());
-    addChild(container.leakPtr());
-
+    // We verify whether the operator text can be represented by a single UChar.
+    // FIXME: This does not handle surrogate pairs (https://bugs.webkit.org/show_bug.cgi?id=122296).
+    // FIXME: This does not handle <mo> operators with multiple characters (https://bugs.webkit.org/show_bug.cgi?id=124828).
+    m_operator = textContent.length() == 1 ? textContent[0] : 0;
     SetOperatorProperties();
     updateStyle();
     setNeedsLayoutAndPrefWidthsRecalc();
+}
+
+void RenderMathMLOperator::updateTokenContent(const String& operatorString)
+{
+    ASSERT(isFencedOperator());
+    rebuildTokenContent(operatorString);
+}
+
+void RenderMathMLOperator::updateTokenContent()
+{
+    ASSERT(!isFencedOperator());
+    rebuildTokenContent(element().textContent());
 }
 
 bool RenderMathMLOperator::shouldAllowStretching(UChar& stretchedCharacter)
@@ -1424,13 +1425,21 @@ void RenderMathMLOperator::updateStyle()
     m_stretchyCharacter = m_isStretched ? findAcceptableStretchyCharacter(stretchedCharacter) : 0;
     if (!m_stretchyCharacter)
         m_isStretched = false;
+
+    // We add spacing around the operator.
+    const auto& wrapper = toRenderElement(firstChild());
+    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
+    newStyle.get().setMarginStart(Length(m_leadingSpace, Fixed));
+    newStyle.get().setMarginEnd(Length(m_trailingSpace, Fixed));
+    wrapper->setStyle(std::move(newStyle));
+    wrapper->setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 int RenderMathMLOperator::firstLineBaseline() const
 {
     if (m_isStretched)
         return m_stretchHeightAboveBaseline;
-    return RenderMathMLBlock::firstLineBaseline();
+    return RenderMathMLToken::firstLineBaseline();
 }
 
 void RenderMathMLOperator::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
@@ -1518,15 +1527,15 @@ void RenderMathMLOperator::fillWithExtensionGlyph(PaintInfo& info, const LayoutP
 
 void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
-    RenderMathMLBlock::paint(info, paintOffset);
-
     if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE)
         return;
 
     if (!m_isStretched && !m_stretchyCharacter) {
-        RenderMathMLBlock::paint(info, paintOffset);
+        RenderMathMLToken::paint(info, paintOffset);
         return;
     }
+
+    // FIXME: This painting should work in RTL mode too (https://bugs.webkit.org/show_bug.cgi?id=123018).
 
     GraphicsContextStateSaver stateSaver(*info.context);
     info.context->setFillColor(style().visitedDependentColor(CSSPropertyColor), style().colorSpace());
@@ -1535,7 +1544,9 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
     ASSERT(m_stretchyCharacter->bottomGlyph);
 
     // We are positioning the glyphs so that the edge of the tight glyph bounds line up exactly with the edges of our paint box.
-    LayoutPoint operatorTopLeft = ceiledIntPoint(paintOffset + location());
+    LayoutPoint operatorTopLeft = paintOffset + location();
+    operatorTopLeft.move(m_leadingSpace, 0);
+    operatorTopLeft = ceiledIntPoint(operatorTopLeft);
     FloatRect topGlyphBounds = glyphBoundsForCharacter(m_stretchyCharacter->topGlyph);
     LayoutPoint topGlyphOrigin(operatorTopLeft.x(), operatorTopLeft.y() - topGlyphBounds.y());
     LayoutRect topGlyphPaintRect = paintCharacter(info, m_stretchyCharacter->topGlyph, topGlyphOrigin, TrimBottom);
@@ -1562,7 +1573,7 @@ void RenderMathMLOperator::paintChildren(PaintInfo& paintInfo, const LayoutPoint
 {
     if (m_isStretched)
         return;
-    RenderMathMLBlock::paintChildren(paintInfo, paintOffset, paintInfoForChild, usePrintRect);
+    RenderMathMLToken::paintChildren(paintInfo, paintOffset, paintInfoForChild, usePrintRect);
 }
     
 }

@@ -1328,3 +1328,6 @@ webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure ]
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
 
 webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]
+
+# This test fails because the structure of mfenced/mo operators was changed in bug 124838.
+webkit.org/b/124836 platform/mac/accessibility/mathml-elements.html [ Failure ]

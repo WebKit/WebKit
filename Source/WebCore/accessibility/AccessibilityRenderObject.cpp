@@ -253,17 +253,8 @@ AccessibilityObject* AccessibilityRenderObject::lastChild() const
 
 static inline RenderInline* startOfContinuations(RenderObject* r)
 {
-    if (r->isInlineElementContinuation()) {
-#if ENABLE(MATHML)
-        // MathML elements make anonymous RenderObjects, then set their node to the parent's node.
-        // This makes it so that the renderer() != renderer()->node()->renderer()
-        // (which is what isInlineElementContinuation() uses as a determinant).
-        if (r->node()->isMathMLElement())
-            return nullptr;
-#endif
-        
+    if (r->isInlineElementContinuation())
         return toRenderInline(r->node()->renderer());
-    }
 
     // Blocks with a previous continuation always have a next continuation
     if (r->isRenderBlock() && toRenderBlock(r)->inlineElementContinuation())
@@ -654,10 +645,8 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
 #if ENABLE(MATHML)
     // Math operators create RenderText nodes on the fly that are not tied into the DOM in a reasonable way,
     // so rangeOfContents does not work for them (nor does regular text selection).
-    if (m_renderer->isText() && isMathElement()) {
-        if (ancestorsOfType<RenderMathMLOperator>(*m_renderer).first())
-            return toRenderText(*m_renderer).text();
-    }
+    if (m_renderer->isText() && m_renderer->isAnonymous() && ancestorsOfType<RenderMathMLOperator>(*m_renderer).first())
+        return toRenderText(*m_renderer).text();
 #endif
 
     // We use a text iterator for text objects AND for those cases where we are
@@ -3502,10 +3491,7 @@ bool AccessibilityRenderObject::isMathOperator() const
     if (!m_renderer || !m_renderer->isRenderMathMLOperator())
         return false;
 
-    // Ensure that this is actually a render MathML operator because
-    // MathML will create MathMLBlocks and use the original node as the node
-    // of this new block that is not tied to the DOM.
-    return isMathElement() && node()->hasTagName(MathMLNames::moTag);
+    return true;
 }
 
 bool AccessibilityRenderObject::isMathFenceOperator() const
@@ -3564,15 +3550,14 @@ bool AccessibilityRenderObject::isIgnoredElementWithinMathTree() const
     if (!m_renderer)
         return true;
     
-    // Ignore items that were created for layout purposes only.
-    if (m_renderer->isRenderMathMLBlock() && toRenderMathMLBlock(m_renderer)->ignoreInAccessibilityTree())
-        return true;
-
-    // Ignore anonymous renderers inside math blocks.
+    // We ignore anonymous renderers inside math blocks.
+    // However, we do not exclude anonymous RenderMathMLOperator nodes created by the mfenced element nor RenderText nodes created by math operators so that the text can be exposed by AccessibilityRenderObject::textUnderElement.
     if (m_renderer->isAnonymous()) {
+        if (m_renderer->isRenderMathMLOperator())
+            return false;
         for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
             if (parent->isMathElement())
-                return true;
+                return !(m_renderer->isText() && ancestorsOfType<RenderMathMLOperator>(*m_renderer).first());
         }
     }
 

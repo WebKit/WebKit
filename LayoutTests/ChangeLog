@@ -1,3 +1,19 @@
+2014-03-10  Frédéric Wang  <fred.wang@free.fr>
+
+        Improve renderer classes for MathML Token elements.
+        https://bugs.webkit.org/show_bug.cgi?id=124838
+
+        Reviewed by Chris Fleizach.
+
+        Two tests are added to fenced-mi in order to verify that the open/close
+        attributes of the mfenced element collapse whitespace and accept values
+        with multiple characters.
+
+        * mathml/presentation/fenced-mi-expected.html:
+        * mathml/presentation/fenced-mi.html:
+        * platform/mac/accessibility/mathml-elements.html: fix bad closing tag and disable the test for now.
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt: update text reference.
+
 2014-03-10  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: Expose checked/disabled/expanded/pressed/readonly/selected

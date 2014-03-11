@@ -1,3 +1,57 @@
+2014-03-10  Frédéric Wang  <fred.wang@free.fr>
+
+        Improve renderer classes for MathML Token elements.
+        https://bugs.webkit.org/show_bug.cgi?id=124838
+
+        Reviewed by Chris Fleizach.
+
+        This patch continues the refactoring of token elements that has been
+        started in bug 44208. The <mo> element now derives from the
+        RenderMathMLToken class, which was already used for the <mi> element.
+        The behavior of anonymous <mo> elements created by the <mfenced> element
+        is now more consistent with the one of "standard" <mo> elements and the
+        spacing around them is now handled in RenderMathMLOperator. This is a
+        first step towards fixing bugs 115787 and 118843. The only visible
+        rendering change is how <mfenced> open/close attributes handle
+        whitespace and multiple characters and some tests are added for that.
+        Other features are already covered by other tests. Finally, this also
+        removes some code from AccessibilityRenderObject that was used to
+        workaround issues with <mo> elements.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::startOfContinuations):
+        (WebCore::AccessibilityRenderObject::textUnderElement):
+        (WebCore::AccessibilityRenderObject::isMathOperator):
+        (WebCore::AccessibilityRenderObject::isIgnoredElementWithinMathTree):
+        * mathml/MathMLTextElement.cpp:
+        (WebCore::MathMLTextElement::didAttachRenderers):
+        (WebCore::MathMLTextElement::childrenChanged):
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::RenderMathMLBlock):
+        * rendering/mathml/RenderMathMLBlock.h:
+        * rendering/mathml/RenderMathMLFenced.cpp:
+        (WebCore::RenderMathMLFenced::RenderMathMLFenced):
+        (WebCore::RenderMathMLFenced::updateFromElement):
+        (WebCore::RenderMathMLFenced::createMathMLOperator):
+        (WebCore::RenderMathMLFenced::makeFences):
+        (WebCore::RenderMathMLFenced::addChild):
+        * rendering/mathml/RenderMathMLFenced.h:
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::RenderMathMLOperator):
+        (WebCore::RenderMathMLOperator::setOperatorFlagFromAttribute):
+        (WebCore::RenderMathMLOperator::setOperatorPropertiesFromOpDictEntry):
+        (WebCore::RenderMathMLOperator::SetOperatorProperties):
+        (WebCore::RenderMathMLOperator::computePreferredLogicalWidths):
+        (WebCore::RenderMathMLOperator::rebuildTokenContent):
+        (WebCore::RenderMathMLOperator::updateTokenContent):
+        (WebCore::RenderMathMLOperator::updateStyle):
+        (WebCore::RenderMathMLOperator::firstLineBaseline):
+        (WebCore::RenderMathMLOperator::paint):
+        (WebCore::RenderMathMLOperator::paintChildren):
+        * rendering/mathml/RenderMathMLOperator.h:
+        * rendering/mathml/RenderMathMLToken.cpp:
+        (WebCore::RenderMathMLToken::createWrapperIfNeeded):
+
 2014-03-10  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: Expose checked/disabled/expanded/pressed/readonly/selected

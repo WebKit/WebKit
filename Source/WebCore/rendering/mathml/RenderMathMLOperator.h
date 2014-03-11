@@ -29,7 +29,7 @@
 #if ENABLE(MATHML)
 
 #include "MathMLElement.h"
-#include "RenderMathMLBlock.h"
+#include "RenderMathMLToken.h"
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -57,19 +57,17 @@ struct Entry {
 
 }
 
-class RenderMathMLOperator final : public RenderMathMLBlock {
+class RenderMathMLOperator final : public RenderMathMLToken {
 public:
     RenderMathMLOperator(MathMLElement&, PassRef<RenderStyle>);
-    RenderMathMLOperator(MathMLElement&, PassRef<RenderStyle>, UChar operatorChar, MathMLOperatorDictionary::Form, MathMLOperatorDictionary::Flag);
-
-    MathMLElement& element() { return toMathMLElement(nodeForNonAnonymous()); }
+    RenderMathMLOperator(Document&, PassRef<RenderStyle>, const String& operatorString, MathMLOperatorDictionary::Form, MathMLOperatorDictionary::Flag);
 
     void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline);
     LayoutUnit stretchSize() const { return m_stretchHeightAboveBaseline + m_stretchDepthBelowBaseline; }
     
     bool hasOperatorFlag(MathMLOperatorDictionary::Flag flag) const { return m_operatorFlags & flag; }
 
-    void updateStyle();
+    void updateStyle() override final;
 
     void paint(PaintInfo&, const LayoutPoint&);
 
@@ -81,18 +79,20 @@ public:
         UChar middleGlyph;
     };
 
-    virtual void updateFromElement() override;
+    void updateTokenContent(const String& operatorString);
+    void updateTokenContent() override final;
 
 private:
     virtual const char* renderName() const override { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
     virtual bool isRenderMathMLOperator() const override { return true; }
+    bool isFencedOperator() { return isAnonymous(); }
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
     virtual void computePreferredLogicalWidths() override;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
     virtual int firstLineBaseline() const override;
     virtual RenderMathMLOperator* unembellishedOperator() override { return this; }
+    void rebuildTokenContent(const String& operatorString);
 
     bool shouldAllowStretching(UChar& characterForStretching);
     StretchyCharacter* findAcceptableStretchyCharacter(UChar);
@@ -116,7 +116,6 @@ private:
 
     UChar m_operator;
     StretchyCharacter* m_stretchyCharacter;
-    bool m_isFencedOperator;
     MathMLOperatorDictionary::Form m_operatorForm;
     unsigned short m_operatorFlags;
     LayoutUnit m_leadingSpace;
