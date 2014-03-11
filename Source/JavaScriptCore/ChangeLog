@@ -1,3 +1,13 @@
+2014-03-10  Mark Lam  <mark.lam@apple.com>
+
+        Resurrect bit-rotted JIT::probe() mechanism.
+        <https://webkit.org/b/130067>
+
+        Reviewed by Geoffrey Garen.
+
+        * jit/JITStubs.cpp:
+        - Added the needed #include <wtf/InlineASM.h>.
+
 2014-03-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix typo in EXCLUDED_SOURCE_FILE_NAMES_iphoneos.

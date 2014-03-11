@@ -34,6 +34,7 @@
 #if ENABLE(JIT)
 
 #include "JSCInlines.h"
+#include <wtf/InlineASM.h>
 
 #if CPU(ARM_TRADITIONAL)
 #include "JITStubsARM.h"
