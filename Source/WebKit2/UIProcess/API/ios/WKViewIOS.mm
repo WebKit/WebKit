@@ -368,11 +368,8 @@ using namespace WebKit;
 
 - (UIColor *)_pageExtendedBackgroundColor
 {
-    WebCore::Color color = [_contentView page]->pageExtendedBackgroundColor();
-    if (!color.isValid())
-        return nil;
-
-    return [UIColor colorWithRed:(color.red() / 255.0) green:(color.green() / 255.0) blue:(color.blue() / 255.0) alpha:(color.alpha() / 255.0)];
+    // This is deprecated. 
+    return nil;
 }
 
 - (void)_setBackgroundExtendsBeyondPage:(BOOL)backgroundExtends

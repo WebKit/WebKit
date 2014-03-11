@@ -1,3 +1,27 @@
+2014-03-11  Beth Dakin  <bdakin@apple.com>
+
+        _pageExtendedBackgroundColor should not be exposed on WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=130093
+
+        Reviewed by Simon Fraser.
+
+        Added comment indicating that _pageExtendedBackgroundColor is deprecated.
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+
+        _pageExtendedBackgroundColor now returns nil, but the conversation functionality 
+        is maintained with a convenience method pageExtendedBackgroundColor.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView pageExtendedBackgroundColor]):
+        (-[WKWebView _didCommitLayerTree:WebKit::]):
+        (-[WKWebView _pageExtendedBackgroundColor]):
+
+        Added comment indicating that _pageExtendedBackgroundColor is deprecated.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        Return nil.
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView _pageExtendedBackgroundColor]):
+
 2014-03-11  Jae Hyun Park  <jaepark@webkit.org>
 
         [GTK][CMake] Add HARFBUZZ_INCLUDE_DIRS to WebKit and WebKit2
