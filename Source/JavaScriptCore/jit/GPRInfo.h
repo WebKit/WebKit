@@ -327,7 +327,6 @@ public:
         ASSERT(static_cast<int>(reg) < 8);
         static const unsigned indexForRegister[8] = { 0, 2, 1, 3, InvalidIndex, InvalidIndex, 5, 4 };
         unsigned result = indexForRegister[reg];
-        ASSERT(result != InvalidIndex);
         return result;
     }
 
@@ -504,7 +503,6 @@ public:
             { 0, 1, 2, 8, 3, 9, InvalidIndex, 7, 4, 5, 6, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
 #endif
         unsigned result = indexForRegister[reg];
-        ASSERT(result != InvalidIndex);
         return result;
     }
 
@@ -684,7 +682,6 @@ public:
             6, InvalidIndex, 3, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex
         };
         unsigned result = indexForRegister[reg];
-        ASSERT(result != InvalidIndex);
         return result;
     }
 
@@ -756,7 +753,6 @@ public:
         ASSERT(reg < 14);
         static const unsigned indexForRegister[14] = { 0, 1, 2, InvalidIndex, 4, 5, 6, 7, 8, 9, 3, InvalidIndex, InvalidIndex, InvalidIndex };
         unsigned result = indexForRegister[reg];
-        ASSERT(result != InvalidIndex);
         return result;
     }
 

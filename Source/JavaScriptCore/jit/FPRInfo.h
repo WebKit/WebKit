@@ -242,7 +242,6 @@ public:
             16, 17, 18, 19, 20, 21, 22, InvalidIndex
         };
         unsigned result = indexForRegister[reg];
-        ASSERT(result != InvalidIndex);
         return result;
     }
 
@@ -305,7 +304,6 @@ public:
             InvalidIndex, InvalidIndex, 5, InvalidIndex,
         };
         unsigned result = indexForRegister[reg];
-        ASSERT(result != InvalidIndex);
         return result;
     }
 
@@ -371,7 +369,6 @@ public:
             InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex
         };
         unsigned result = indexForRegister[reg];
-        ASSERT(result != InvalidIndex);
         return result;
     }
 

@@ -1,5 +1,23 @@
 2014-03-10  Mark Lam  <mark.lam@apple.com>
 
+        r165414 broke the 32-bit x86 tests: ASSERTION FAILED: result != InvalidIndex @ GPRInfo.h:330.
+        <https://webkit.org/b/130065>
+
+        Reviewed by Michael Saboff.
+
+        There is code in ScratchRegisterAllocator.cpp that is relying on GPRInfo::toIndex()
+        being able to return InvalidIndex.  Hence, the assertion is invalid.  Ditto for
+        FPRInfo::toIndex().
+
+        The fix is to remove the "result != InvalidIndex" assertions.
+
+        * jit/FPRInfo.h:
+        (JSC::FPRInfo::toIndex):
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toIndex):
+
+2014-03-10  Mark Lam  <mark.lam@apple.com>
+
         Crash on a stack overflow on 32-bit x86 in http/tests/websocket/tests/hybi/workers/no-onmessage-in-sync-op.html.
         <https://webkit.org/b/129955>
 
