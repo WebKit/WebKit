@@ -339,7 +339,7 @@ void Structure::despecifyDictionaryFunction(VM& vm, PropertyName propertyName)
     ASSERT(isDictionary());
     ASSERT(propertyTable());
 
-    PropertyMapEntry* entry = propertyTable()->find(rep).first;
+    PropertyMapEntry* entry = propertyTable()->get(rep);
     ASSERT(entry);
     entry->specificValue.clear();
 }
@@ -521,7 +521,7 @@ Structure* Structure::attributeChangeTransition(VM& vm, Structure* structure, Pr
     }
 
     ASSERT(structure->propertyTable());
-    PropertyMapEntry* entry = structure->propertyTable()->find(propertyName.uid()).first;
+    PropertyMapEntry* entry = structure->propertyTable()->get(propertyName.uid());
     ASSERT(entry);
     entry->attributes = attributes;
 
@@ -850,7 +850,7 @@ PropertyOffset Structure::getConcurrently(VM&, StringImpl* uid, unsigned& attrib
     findStructuresAndMapForMaterialization(structures, structure, table);
     
     if (table) {
-        PropertyMapEntry* entry = table->find(uid).first;
+        PropertyMapEntry* entry = table->get(uid);
         if (entry) {
             attributes = entry->attributes;
             specificValue = entry->specificValue.get();
@@ -884,7 +884,7 @@ PropertyOffset Structure::get(VM& vm, PropertyName propertyName, unsigned& attri
     if (!propertyTable())
         return invalidOffset;
 
-    PropertyMapEntry* entry = propertyTable()->find(propertyName.uid()).first;
+    PropertyMapEntry* entry = propertyTable()->get(propertyName.uid());
     if (!entry)
         return invalidOffset;
 
@@ -900,7 +900,7 @@ bool Structure::despecifyFunction(VM& vm, PropertyName propertyName)
     if (!propertyTable())
         return false;
 
-    PropertyMapEntry* entry = propertyTable()->find(propertyName.uid()).first;
+    PropertyMapEntry* entry = propertyTable()->get(propertyName.uid());
     if (!entry)
         return false;
 

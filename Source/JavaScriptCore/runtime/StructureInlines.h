@@ -82,7 +82,7 @@ inline PropertyOffset Structure::get(VM& vm, PropertyName propertyName)
     if (!propertyTable())
         return invalidOffset;
 
-    PropertyMapEntry* entry = propertyTable()->find(propertyName.uid()).first;
+    PropertyMapEntry* entry = propertyTable()->get(propertyName.uid());
     return entry ? entry->offset : invalidOffset;
 }
 

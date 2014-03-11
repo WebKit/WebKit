@@ -1,3 +1,32 @@
+2014-03-11  Andreas Kling  <akling@apple.com>
+
+        Streamline PropertyTable for lookup-only access.
+        <https://webkit.org/b/130060>
+
+        The PropertyTable lookup algorithm was written to support both read
+        and write access. This wasn't actually needed in most places.
+
+        This change adds a PropertyTable::get() that just returns the value
+        type (instead of an insertion iterator.) It also adds an early return
+        for empty tables.
+
+        Finally, up the minimum table capacity from 8 to 16. It was lowered
+        to 8 in order to save memory, but that was before PropertyTables were
+        GC allocated. Nowadays we don't have nearly as many tables, since all
+        the unpinned transitions die off.
+
+        Reviewed by Darin Adler.
+
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::get):
+        * runtime/Structure.cpp:
+        (JSC::Structure::despecifyDictionaryFunction):
+        (JSC::Structure::attributeChangeTransition):
+        (JSC::Structure::get):
+        (JSC::Structure::despecifyFunction):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::get):
+
 2014-03-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         REGRESSION(r165407): DoYouEvenBench crashes in DRT
