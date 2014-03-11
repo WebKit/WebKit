@@ -835,6 +835,11 @@ static void releaseNSData(unsigned char*, const void* data)
     _page->restoreFromSessionStateData(API::Data::createWithoutCopying((const unsigned char*)sessionState.bytes, sessionState.length, releaseNSData, sessionState).get());
 }
 
+- (void)_close
+{
+    _page->close();
+}
+
 - (BOOL)_privateBrowsingEnabled
 {
     return [_configuration preferences]->_preferences->privateBrowsingEnabled();

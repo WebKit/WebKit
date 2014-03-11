@@ -1,3 +1,14 @@
+2014-03-10  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Expose WebPageProxy::close
+        https://bugs.webkit.org/show_bug.cgi?id=130068
+
+        Reviewed by Adele Peterson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _close]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2014-03-10  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WebKit 2] Wire the unobscured rect in the WebProcess

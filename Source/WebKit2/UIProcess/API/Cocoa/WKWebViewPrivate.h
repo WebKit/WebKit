@@ -63,6 +63,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
 
 @property (nonatomic, setter=_setPrivateBrowsingEnabled:) BOOL _privateBrowsingEnabled;
 
+- (void)_close;
+
 #if TARGET_OS_IPHONE
 @property (nonatomic, setter=_setMinimumLayoutSizeOverride:) CGSize _minimumLayoutSizeOverride;
 
