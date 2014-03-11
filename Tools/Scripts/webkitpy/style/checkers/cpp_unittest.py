@@ -4386,6 +4386,56 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_multi_line_lint(
             '} while (true);\n',
             '')
+        # 5. Multi line control clauses should use braces.
+        self.assert_multi_line_lint(
+            'for ( ; c1 && c2 ; )\n'
+            '    if (condition1 && condition2)\n'
+            '        i = 1;\n',
+            'Multi line control clauses should use braces.  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
+            '    if (condition)\n'
+            '        i = 1;\n'
+            '        j = 1;\n',
+            'Multi line control clauses should use braces.  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
+            '    if (condition1\n'
+            '        || condition2\n'
+            '        && condition3)\n'
+            '        i = 1;\n'
+            '        j = 1;\n',
+            'Multi line control clauses should use braces.  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
+            '    if (condition1\n'
+            '        || condition2\n'
+            '        && condition3) {\n'
+            '        i = 1;\n'
+            '        j = 1;\n'
+            '    }\n',
+            '')
+        self.assert_multi_line_lint(
+            'if (condition)\n'
+            '#ifdef SOMETHING\n'
+            '    i = 1;\n'
+            '#endif\n',
+            '')
+        self.assert_multi_line_lint(
+            '#ifdef SOMETHING\n'
+            'if (condition)\n'
+            '#endif\n'
+            '    // Some comment\n'
+            '    i = 1;\n',
+            'Multi line control clauses should use braces.  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
+            'if (condition)\n'
+            '    myFunction(reallyLongParam1, reallyLongParam2, ...\n'
+            '        reallyLongParam5);\n',
+            'Multi line control clauses should use braces.  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
+            'if (condition) {\n'
+            '    myFunction(reallyLongParam1, reallyLongParam2, ...\n'
+            '        reallyLongParam5);\n'
+            '    }\n',
+            '')
 
     def test_null_false_zero(self):
         # 1. In C++, the null pointer value should be written as 0. In C,

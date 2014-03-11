@@ -2401,6 +2401,33 @@ def check_braces(clean_lines, line_number, error):
         error(line_number, 'whitespace/newline', 4,
               'do/while clauses should not be on a single line')
 
+    # Multi line control clauses should use braces. We check the
+    # indentation level of the statements.
+    if (match(r'^\s*\b(if|for|while|else)\b\s', line)
+        and match(r'.*[^{]$', line)
+        and len(clean_lines.elided) > line_number + 2):
+        has_braces = False
+        begin_line = line
+        begin_line_number = line_number
+        while (clean_lines.elided[begin_line_number + 1].strip().startswith("&&")
+            or clean_lines.elided[begin_line_number + 1].strip().startswith("||")
+            or search(r'^#\S*', clean_lines.elided[begin_line_number + 1])):
+            begin_line_number = begin_line_number + 1
+            begin_line = clean_lines.elided[begin_line_number]
+            if search(r'.*{$', begin_line):
+                has_braces = True
+
+        next_line = clean_lines.elided[begin_line_number + 1]
+        after_next_line = clean_lines.elided[begin_line_number + 2]
+        control_indent = search(r'^(?P<indentation>\s*).*', line).group('indentation')
+        next_line_indent = search(r'^(?P<indentation>\s*).*', next_line).group('indentation')
+        after_next_line_indent = search(r'^(?P<indentation>\s*).*', after_next_line).group('indentation')
+        if (after_next_line != ''
+            and not has_braces
+            and control_indent < next_line_indent
+            and control_indent < after_next_line_indent):
+            error(line_number, 'whitespace/braces', 4, 'Multi line control clauses should use braces.')
+
     # Braces shouldn't be followed by a ; unless they're defining a struct
     # or initializing an array.
     # We can't tell in general, but we can for some common cases.

@@ -1,5 +1,17 @@
 2014-03-11  László Langó  <llango.u-szeged@partner.samsung.com>
 
+        check-webkit-style failed to complain about missing braces
+        https://bugs.webkit.org/show_bug.cgi?id=34189
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_braces):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_braces):
+
+2014-03-11  László Langó  <llango.u-szeged@partner.samsung.com>
+
         Remove Qt cruft from style checker.
         https://bugs.webkit.org/show_bug.cgi?id=130085
 
