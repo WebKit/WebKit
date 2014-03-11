@@ -975,13 +975,23 @@ static void _ewk_view_smart_del(Evas_Object* ewkView)
     _ewk_view_priv_del(priv);
 }
 
-static void _ewk_view_smart_resize(Evas_Object* ewkView, Evas_Coord w, Evas_Coord h)
+static void _ewk_view_smart_resize(Evas_Object* ewkView, Evas_Coord width, Evas_Coord height)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
     // these should be queued and processed in calculate as well!
-    evas_object_resize(smartData->backing_store, w, h);
-    evas_object_image_size_set(smartData->backing_store, w, h);
+    evas_object_resize(smartData->backing_store, width, height);
+    evas_object_image_size_set(smartData->backing_store, width, height);
+
+    if (priv->compositingObject) {
+        evas_object_resize(priv->compositingObject.get(), width, height);
+        evas_object_image_size_set(priv->compositingObject.get(), width, height);
+        evas_object_image_fill_set(priv->compositingObject.get(), 0, 0, width, height);
+
+        if (priv->acceleratedCompositingContext)
+            priv->acceleratedCompositingContext->resize(WebCore::IntSize(width, height));
+    }
 
     smartData->changed.size = true;
     _ewk_view_smart_changed(smartData);
@@ -989,15 +999,15 @@ static void _ewk_view_smart_resize(Evas_Object* ewkView, Evas_Coord w, Evas_Coor
     if (smartData->animated_zoom.zoom.current < std::numeric_limits<float>::epsilon()) {
         Evas_Object* clip = evas_object_clip_get(smartData->backing_store);
         Evas_Coord x, y, contentWidth, contentHeight;
-        evas_object_image_fill_set(smartData->backing_store, 0, 0, w, h);
+        evas_object_image_fill_set(smartData->backing_store, 0, 0, width, height);
         evas_object_geometry_get(smartData->backing_store, &x, &y, 0, 0);
         evas_object_move(clip, x, y);
         ewk_frame_contents_size_get(smartData->main_frame, &contentWidth, &contentHeight);
-        if (w > contentWidth)
-            w = contentWidth;
-        if (h > contentHeight)
-            h = contentHeight;
-        evas_object_resize(clip, w, h);
+        if (width > contentWidth)
+            width = contentWidth;
+        if (height > contentHeight)
+            height = contentHeight;
+        evas_object_resize(clip, width, height);
     }
 }
 
@@ -1271,18 +1281,26 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
 static void _ewk_view_smart_show(Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
     if (evas_object_clipees_get(smartData->base.clipper))
         evas_object_show(smartData->base.clipper);
     evas_object_show(smartData->backing_store);
+
+    if (priv->isCompositingActive)
+        evas_object_show(priv->compositingObject.get());
 }
 
 static void _ewk_view_smart_hide(Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
     evas_object_hide(smartData->base.clipper);
     evas_object_hide(smartData->backing_store);
+
+    if (priv->isCompositingActive)
+        evas_object_hide(priv->compositingObject.get());
 }
 
 static Eina_Bool _ewk_view_smart_contents_resize(Ewk_View_Smart_Data*, int /*width*/, int /*height*/)
@@ -4618,22 +4636,26 @@ void _ewk_view_accelerated_compositing_cb(void* data, Evas_Object*)
     }
 }
 
-void _ewk_view_accelerated_compositing_context_create_if_needed(Evas_Object* ewkView)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
-
-    if (!priv->acceleratedCompositingContext)
-        priv->acceleratedCompositingContext = WebCore::AcceleratedCompositingContext::create(&priv->page->chrome());
-}
-
-bool ewk_view_accelerated_compositing_object_create(Evas_Object* ewkView, Evas_Native_Surface* nativeSurface, const WebCore::IntRect& rect)
+bool _ewk_view_accelerated_compositing_context_create_if_needed(Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
+    if (!priv->acceleratedCompositingContext) {
+        priv->acceleratedCompositingContext = WebCore::AcceleratedCompositingContext::create(&priv->page->chrome());
+        if (!priv->acceleratedCompositingContext)
+            return false;
+    }
+    return true;
+}
+
+void _ewk_view_accelerated_compositing_object_create_if_needed(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
     if (!priv->compositingObject) {
-        priv->compositingObject = evas_object_image_add(smartData->base.evas);
+        priv->compositingObject = adoptRef(evas_object_image_add(smartData->base.evas));
 
         evas_object_pass_events_set(priv->compositingObject.get(), true); // Just for rendering, ignore events.
         evas_object_image_alpha_set(priv->compositingObject.get(), true);
@@ -4645,16 +4667,12 @@ bool ewk_view_accelerated_compositing_object_create(Evas_Object* ewkView, Evas_N
         evas_object_smart_member_add(priv->compositingObject.get(), ewkView);
     }
 
-    evas_object_image_size_set(priv->compositingObject.get(), rect.width(), rect.height());
-    evas_object_image_fill_set(priv->compositingObject.get(), 0, 0, rect.width(), rect.height());
+    evas_object_image_size_set(priv->compositingObject.get(), smartData->view.w, smartData->view.h);
+    evas_object_image_fill_set(priv->compositingObject.get(), 0, 0, smartData->view.w, smartData->view.h);
 
-    evas_object_move(priv->compositingObject.get(), rect.x(), rect.y());
-    evas_object_resize(priv->compositingObject.get(), rect.width(), rect.height());
+    evas_object_move(priv->compositingObject.get(), smartData->view.x, smartData->view.y);
+    evas_object_resize(priv->compositingObject.get(), smartData->view.w, smartData->view.h);
     evas_object_hide(priv->compositingObject.get());
-
-    // Set up the native surface info to use the context and surface created in GC3DPrivate.
-    evas_object_image_native_surface_set(priv->compositingObject.get(), nativeSurface);
-    return true;
 }
 
 void ewk_view_root_graphics_layer_set(Evas_Object* ewkView, WebCore::GraphicsLayer* rootLayer)
@@ -4669,12 +4687,18 @@ void ewk_view_root_graphics_layer_set(Evas_Object* ewkView, WebCore::GraphicsLay
     priv->isCompositingActive = active;
 
     if (priv->isCompositingActive) {
-        _ewk_view_accelerated_compositing_context_create_if_needed(ewkView);
-        evas_object_show(priv->compositingObject.get());
-    } else
+        _ewk_view_accelerated_compositing_object_create_if_needed(ewkView);
+        if (_ewk_view_accelerated_compositing_context_create_if_needed(ewkView))
+            evas_object_show(priv->compositingObject.get());
+        else
+            priv->isCompositingActive = false;
+    }
+
+    if (!priv->isCompositingActive)
         evas_object_hide(priv->compositingObject.get());
 
-    priv->acceleratedCompositingContext->attachRootGraphicsLayer(rootLayer);
+    if (priv->acceleratedCompositingContext)
+        priv->acceleratedCompositingContext->attachRootGraphicsLayer(rootLayer);
 }
 
 void ewk_view_mark_for_sync(Evas_Object* ewkView)

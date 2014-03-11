@@ -40,6 +40,8 @@ public:
     static PassOwnPtr<AcceleratedCompositingContext> create(HostWindow*);
     virtual ~AcceleratedCompositingContext();
 
+    bool resize(const IntSize&);
+
     virtual void syncLayersNow();
     virtual void renderLayers();
     virtual void attachRootGraphicsLayer(GraphicsLayer* rootLayer);
@@ -48,8 +50,6 @@ private:
     AcceleratedCompositingContext();
 
     virtual bool initialize(HostWindow*);
-
-    bool resize(const IntSize&);
 
     Evas_Object* m_view;
 
