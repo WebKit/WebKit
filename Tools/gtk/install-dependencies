@@ -47,6 +47,7 @@ function installDependenciesWithApt {
         gperf \
         gtk-doc-tools \
         intltool \
+        itstool \
         libatk1.0-dev \
         libenchant-dev \
         libfaad-dev \
@@ -185,6 +186,7 @@ function installDependenciesWithYum {
         git \
         gobject-introspection \
         icon-naming-utils \
+        itstool \
         libXfont-devel \
         libcroco-devel \
         libgcrypt-devel \

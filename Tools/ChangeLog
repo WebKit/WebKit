@@ -1,3 +1,16 @@
+2014-03-11  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
+
+        [GTK] update-webkitgtk-libs needs itstool
+        https://bugs.webkit.org/show_bug.cgi?id=130082
+
+        After http://trac.webkit.org/changeset/165110 WebKitGTK+ uses gtk-doc 1.20.
+        itstool is a dependency of building gtk-doc from version 1.19, so it should
+        be added to Tools/gtk/install-dependencies script, too.
+
+        Reviewed by Philippe Normand.
+
+        * gtk/install-dependencies:
+
 2014-03-11  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         webkitbot rollout ChangeLogs should be nicer
