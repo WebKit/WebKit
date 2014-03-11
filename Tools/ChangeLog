@@ -1,3 +1,14 @@
+2014-03-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        Some bad Windows code was committed at some point that prevents the Apple Windows port
+        from finding its runtime dependencies reliably.
+
+        * win/DLLLauncher/DLLLauncherMain.cpp:
+        (appleApplicationSupportDirectory): Restored this function.
+        (modifyPath): Update to use appleApplicationSupportDirectory function.
+
 2014-03-10  Zoltan Horvath  <zoltan@webkit.org>
 
         Let the user define the full address of the performance-site-server for uploading results
