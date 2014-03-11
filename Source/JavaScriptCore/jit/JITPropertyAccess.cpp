@@ -554,7 +554,7 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     int valueVReg = currentInstruction[3].u.operand;
     unsigned direct = currentInstruction[8].u.operand;
 
-    emitWriteBarrier(baseVReg, valueVReg, ShouldFilterBaseAndValue);
+    emitWriteBarrier(baseVReg, valueVReg, ShouldFilterBase);
 
     // In order to be able to patch both the Structure, and the object offset, we store one pointer,
     // to just after the arguments have been loaded into registers 'hotPathBegin', and we generate code
@@ -883,21 +883,22 @@ void JIT::emit_op_init_global_const(Instruction* currentInstruction)
 void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode)
 {
 #if ENABLE(GGC)
-    emitGetVirtualRegister(value, regT0);
     Jump valueNotCell;
-    if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue)
+    if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue) {
+        emitGetVirtualRegister(value, regT0);
         valueNotCell = branchTest64(NonZero, regT0, tagMaskRegister);
+    }
     
     emitGetVirtualRegister(owner, regT0);
     Jump ownerNotCell;
-    if (mode == ShouldFilterBaseAndValue)
+    if (mode == ShouldFilterBaseAndValue || mode == ShouldFilterBase)
         ownerNotCell = branchTest64(NonZero, regT0, tagMaskRegister);
 
     Jump ownerNotMarkedOrAlreadyRemembered = checkMarkByte(regT0);
     callOperation(operationUnconditionalWriteBarrier, regT0);
     ownerNotMarkedOrAlreadyRemembered.link(this);
 
-    if (mode == ShouldFilterBaseAndValue)
+    if (mode == ShouldFilterBaseAndValue || mode == ShouldFilterBase)
         ownerNotCell.link(this);
     if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue) 
         valueNotCell.link(this);

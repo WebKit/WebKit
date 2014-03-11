@@ -1,3 +1,18 @@
+2014-03-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        REGRESSION(r165407): DoYouEvenBench crashes in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=130066
+
+        Reviewed by Geoffrey Garen.
+
+        The baseline JIT does a conditional store barrier for the put_by_id, but we need 
+        an unconditional store barrier so that we cover the butterfly case as well in emitPutTransitionStub.
+
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitWriteBarrier):
+
 2014-03-10  Mark Lam  <mark.lam@apple.com>
 
         Resurrect bit-rotted JIT::probe() mechanism.
