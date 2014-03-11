@@ -1,5 +1,15 @@
 2014-01-30  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GTK] Only disable -ftree-dce optimization when compiling with GCC
+        https://bugs.webkit.org/show_bug.cgi?id=127911
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: Only disable the -ftree-dce optimization when using the GCC compiler.
+        Some Clang versions/configurations don't support the flag.
+
+2014-01-30  Zan Dobersek  <zdobersek@igalia.com>
+
         [GTK] Disable optimizations for JSC that turned out malignant after jsCStack branch merge
         https://bugs.webkit.org/show_bug.cgi?id=127909
 

@@ -44,10 +44,6 @@ libjavascriptcoregtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@
 	$(global_cppflags) \
 	$(javascriptcore_cppflags)
 
-# FIXME: the -fomit-frame-pointer and -ftree-dce optimizations are disabled after they've been causing
-# trouble with the merged jsCStack code. The former is required due to otherwise incorrectly compiled
-# operationCallEval function, while the second is required when using GCC 4.8 but not when using GCC 4.7,
-# possibly due to a bug in that compiler. See bugs #127777 and #127909 for more information.
 javascriptcore_cppflags += \
 	-I$(srcdir)/Source \
 	-I$(srcdir)/Source/JavaScriptCore \
@@ -74,9 +70,19 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/Source/JavaScriptCore/yarr \
 	-I$(top_builddir)/DerivedSources/JavaScriptCore \
 	-I$(srcdir)/Source/WTF \
-	-fno-omit-frame-pointer \
-	-fno-tree-dce \
 	$(LLVM_CFLAGS)
+
+# FIXME: the -fomit-frame-pointer and -ftree-dce optimizations are disabled after they've been causing
+# trouble with the merged jsCStack code. The former is required due to otherwise incorrectly compiled
+# operationCallEval function, while the latter is required when using GCC 4.8. See bugs #127777 and
+# #127909 for more information.
+javascriptcore_cppflags += \
+	-fno-omit-frame-pointer
+
+if COMPILER_GCC
+javascriptcore_cppflags += \
+	-fno-tree-dce
+endif
 
 javascriptcore_cflags += \
 	$(global_cflags) \
