@@ -1,3 +1,14 @@
+2014-01-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Disable optimizations for JSC that turned out malignant after jsCStack branch merge
+        https://bugs.webkit.org/show_bug.cgi?id=127909
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: Disable the -fomit-frame-pointer optimization to achieve proper register usage
+        in operationCallEval. Disable the -ftree-dce optimization since it is causing additional failures
+        when using GCC 4.8, possibly due to a bug in the compiler itself.
+
 2014-01-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(JAVASCRIPT_DEBUGGER) leftovers
