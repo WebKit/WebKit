@@ -1,3 +1,15 @@
+2014-03-10  Mark Lam  <mark.lam@apple.com>
+
+        Crash on a stack overflow on 32-bit x86 in http/tests/websocket/tests/hybi/workers/no-onmessage-in-sync-op.html.
+        <https://webkit.org/b/129955>
+
+        Reviewed by Geoffrey Garen.
+
+        The 32-bit x86 version of getHostCallReturnValue() was leaking 16 bytes
+        stack memory every time it was called.  This is now fixed.
+
+        * jit/JITOperations.cpp:
+
 2014-03-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Better JSContext API for named evaluations (other than //# sourceURL)

@@ -1830,12 +1830,13 @@ asm (
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "mov (%esp), %eax\n"
     "push %ebp\n"
     "leal -4(%esp), %esp\n"
     "push %ebp\n"
-    "push %eax\n"
-    "jmp " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
+    "call " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
+    "leal 8(%esp), %esp\n"
+    "pop %ebp\n"
+    "ret\n"
 );
 
 #elif COMPILER(GCC) && CPU(ARM_THUMB2)
