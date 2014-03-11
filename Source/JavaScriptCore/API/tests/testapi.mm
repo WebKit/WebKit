@@ -617,6 +617,24 @@ void testObjectiveCAPI()
 
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
+        __block bool emptyExceptionSourceURL = false;
+        context.exceptionHandler = ^(JSContext *, JSValue *exception) {
+            emptyExceptionSourceURL = [exception[@"sourceURL"] isUndefined];
+        };
+        [context evaluateScript:@"!@#$%^&*() THIS IS NOT VALID JAVASCRIPT SYNTAX !@#$%^&*()"];
+        checkResult(@"evaluteScript: exception has no sourceURL", emptyExceptionSourceURL);
+
+        __block NSString *exceptionSourceURL = nil;
+        context.exceptionHandler = ^(JSContext *, JSValue *exception) {
+            exceptionSourceURL = [exception[@"sourceURL"] toString];
+        };
+        NSURL *url = [NSURL fileURLWithPath:@"/foo/bar.js"];
+        [context evaluateScript:@"!@#$%^&*() THIS IS NOT VALID JAVASCRIPT SYNTAX !@#$%^&*()" withSourceURL:url];
+        checkResult(@"evaluateScript:withSourceURL: exception has expected sourceURL", [exceptionSourceURL isEqualToString:[url absoluteString]]);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
         context[@"callback"] = ^{
             JSContext *context = [JSContext currentContext];
             context.exception = [JSValue valueWithNewErrorFromMessage:@"Something went wrong." inContext:context];

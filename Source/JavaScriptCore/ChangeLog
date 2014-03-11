@@ -1,3 +1,24 @@
+2014-03-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Better JSContext API for named evaluations (other than //# sourceURL)
+        https://bugs.webkit.org/show_bug.cgi?id=129911
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSBase.h:
+        * API/JSContext.h:
+        * API/JSContext.mm:
+        (-[JSContext evaluateScript:]):
+        (-[JSContext evaluateScript:withSourceURL:]):
+        Add new evaluateScript:withSourceURL:.
+
+        * API/tests/testapi.c:
+        (main):
+        * API/tests/testapi.mm:
+        (testObjectiveCAPI):
+        Add tests for sourceURL in evaluate APIs. It should
+        affect the exception objects.
+
 2014-03-10  Filip Pizlo  <fpizlo@apple.com>
 
         Repatch should save and restore all used registers - not just temp ones - when making a call

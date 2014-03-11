@@ -1810,6 +1810,18 @@ int main(int argc, char* argv[])
     ASSERT(JSValueIsEqual(context, v, o, NULL));
     JSStringRelease(script);
 
+    exception = NULL;
+    script = JSStringCreateWithUTF8CString("rreturn Array;");
+    JSStringRef sourceURL = JSStringCreateWithUTF8CString("file:///foo/bar.js");
+    JSStringRef sourceURLKey = JSStringCreateWithUTF8CString("sourceURL");
+    JSEvaluateScript(context, script, NULL, sourceURL, 1, &exception);
+    ASSERT(exception);
+    v = JSObjectGetProperty(context, JSValueToObject(context, exception, NULL), sourceURLKey, NULL);
+    assertEqualsAsUTF8String(v, "file:///foo/bar.js");
+    JSStringRelease(script);
+    JSStringRelease(sourceURL);
+    JSStringRelease(sourceURLKey);
+
     // Verify that creating a constructor for a class with no static functions does not trigger
     // an assert inside putDirect or lead to a crash during GC. <https://bugs.webkit.org/show_bug.cgi?id=25785>
     nullDefinition = kJSClassDefinitionEmpty;
@@ -1838,6 +1850,7 @@ int main(int argc, char* argv[])
         }
 
         JSStringRelease(script);
+        exception = NULL;
         result = scriptObject ? JSScriptEvaluate(context, scriptObject, 0, &exception) : 0;
         if (result && JSValueIsUndefined(context, result))
             printf("PASS: Test script executed successfully.\n");

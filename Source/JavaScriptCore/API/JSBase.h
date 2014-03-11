@@ -101,7 +101,7 @@ extern "C" {
 @param ctx The execution context to use.
 @param script A JSString containing the script to evaluate.
 @param thisObject The object to use as "this," or NULL to use the global object as "this."
-@param sourceURL A JSString containing a URL for the script's source file. This is only used when reporting exceptions. Pass NULL if you do not care to include source file information in exceptions.
+@param sourceURL A JSString containing a URL for the script's source file. This is used by debuggers and when reporting exceptions. Pass NULL if you do not care to include source file information.
 @param startingLineNumber An integer value specifying the script's starting line number in the file located at sourceURL. This is only used when reporting exceptions. The value is one-based, so the first line is line 1 and invalid values are clamped to 1.
 @param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
 @result The JSValue that results from evaluating script, or NULL if an exception is thrown.

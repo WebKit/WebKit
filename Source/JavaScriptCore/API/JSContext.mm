@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -89,9 +89,17 @@
 
 - (JSValue *)evaluateScript:(NSString *)script
 {
-    JSValueRef exceptionValue = 0;
+    return [self evaluateScript:script withSourceURL:nil];
+}
+
+- (JSValue *)evaluateScript:(NSString *)script withSourceURL:(NSURL *)sourceURL
+{
+    JSValueRef exceptionValue = nullptr;
     JSStringRef scriptJS = JSStringCreateWithCFString((CFStringRef)script);
-    JSValueRef result = JSEvaluateScript(m_context, scriptJS, 0, 0, 0, &exceptionValue);
+    JSStringRef sourceURLJS = sourceURL ? JSStringCreateWithCFString((CFStringRef)[sourceURL absoluteString]) : nullptr;
+    JSValueRef result = JSEvaluateScript(m_context, scriptJS, nullptr, sourceURLJS, 0, &exceptionValue);
+    if (sourceURLJS)
+        JSStringRelease(sourceURLJS);
     JSStringRelease(scriptJS);
 
     if (exceptionValue)
