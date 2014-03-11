@@ -447,14 +447,20 @@ WebInspector.DOMNode.prototype = {
         {
             if (!error && callback && accessibilityProperties) {
                 callback({
+                    checked: accessibilityProperties.checked,
+                    disabled: accessibilityProperties.disabled,
                     exists: accessibilityProperties.exists,
+                    expanded: accessibilityProperties.expanded,
                     ignored: accessibilityProperties.ignored,
                     ignoredByDefault: accessibilityProperties.ignoredByDefault,
                     invalid: accessibilityProperties.invalid,
                     hidden: accessibilityProperties.hidden,
                     label: accessibilityProperties.label,
+                    pressed: accessibilityProperties.pressed,
+                    readonly: accessibilityProperties.readonly,
                     required: accessibilityProperties.required,
-                    role: accessibilityProperties.role
+                    role: accessibilityProperties.role,
+                    selected: accessibilityProperties.selected
                 });
             }
         }

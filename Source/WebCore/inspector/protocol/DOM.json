@@ -59,15 +59,21 @@
             "description": "A structure holding accessibility properties.",
             "type": "object",
             "properties": [
-                { "name": "exists", "type": "boolean", "description": "Returns whether there is an existing AX object for the DOM node. If this is false, all the other properties will be default values." },
-                { "name": "ignored", "type": "boolean", "optional": true, "description": "Returns whether the accessibility of the associated AX object node is ignored, whether heuristically or explicitly." },
-                { "name": "ignoredByDefault", "type": "boolean", "optional": true, "description": "Returns whether the accessibility of the associated AX object node is ignored by default for node type." },
-                { "name": "invalid", "type": "string", "optional": true, "description": "Returns the invalid status for form fields: true, false, grammar, spelling." },
-                { "name": "hidden", "type": "boolean", "optional": true, "description": "Returns true if node or an ancestor is hidden via CSS or explicit @aria-hidden, to clarify why the element is ignored." },
+                { "name": "checked", "type": "string", "optional": true, "enum": ["true", "false", "mixed"], "description": "Checked state of certain form controls." },
+                { "name": "disabled", "type": "boolean", "optional": true, "description": "Disabled state of form controls." },
+                { "name": "exists", "type": "boolean", "description": "Indicates whether there is an existing AX object for the DOM node. If this is false, all the other properties will be default values." },
+                { "name": "expanded", "type": "boolean", "optional": true, "description": "Expanded state." },
+                { "name": "ignored", "type": "boolean", "optional": true, "description": "Indicates whether the accessibility of the associated AX object node is ignored, whether heuristically or explicitly." },
+                { "name": "ignoredByDefault", "type": "boolean", "optional": true, "description": "State indicating whether the accessibility of the associated AX object node is ignored by default for node type." },
+                { "name": "invalid", "type": "string", "optional": true, "description": "Invalid status of form controls: true, false, grammar, spelling." },
+                { "name": "hidden", "type": "boolean", "optional": true, "description": "Hidden state. True if node or an ancestor is hidden via CSS or explicit @aria-hidden, to clarify why the element is ignored." },
                 { "name": "label", "type": "string", "description": "Computed label value for the node, sometimes calculated by referencing other nodes." },
-                { "name": "required", "type": "boolean", "optional": true, "description": "Returns whether the element is required or not required." },
+                { "name": "nodeId", "$ref": "NodeId", "description": "Target <code>DOMNode</code> id." },
+                { "name": "pressed", "type": "boolean", "optional": true, "description": "Pressed state for toggle buttons." },
+                { "name": "readonly", "type": "boolean", "optional": true, "description": "Readonly state of text controls." },
+                { "name": "required", "type": "boolean", "optional": true, "description": "Required state of form controls." },
                 { "name": "role", "type": "string", "description": "Computed value for first recognized role token, default role per element, or overridden role." },
-                { "name": "nodeId", "$ref": "NodeId", "description": "Target <code>DOMNode</code> id." }
+                { "name": "selected", "type": "boolean", "optional": true, "description": "Selected state of certain form controls." }
             ]
         },
         {

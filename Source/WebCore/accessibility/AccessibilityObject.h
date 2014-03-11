@@ -587,6 +587,7 @@ public:
     bool ariaIsMultiline() const;
     virtual const AtomicString& invalidStatus() const;
     bool supportsARIAExpanded() const;
+    bool supportsChecked() const;
     AccessibilitySortDirection sortDirection() const;
     virtual bool canvasHasFallbackContent() const { return false; }
     bool supportsRangeValue() const;

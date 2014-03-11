@@ -6,6 +6,8 @@
 
 <p>Checking Web Inspector protocol for the Accessibility Node Inspector.</p>
 
+<div id="examples">
+
 <script class="ex"></script>
 <script class="ex" style="display:block;"></script>
 
@@ -17,14 +19,36 @@
 <span class="ex" aria-hidden="true"></span>
 
 <div class="ex" role="button" tabindex="0"></div>
+<div class="ex" role="button" tabindex="0" aria-disabled="true">disabled</div>
+<div class="ex" role="button" tabindex="0" aria-pressed="true">FIXME: Pressed is false. Expected true. http://webkit.org/b/129830</div>
+<div class="ex" role="button" tabindex="0" aria-pressed="false">Not Pressed.</div>
 <button class="ex"></button>
 <input class="ex" type="button">
 
 <input class="ex">
 <input class="ex" required>
-<input class="ex" aria-required="true">
-<input class="ex" aria-invalid="spelling">
-<input class="ex" aria-invalid="fake-value-will-eval-to-true">
+<input class="ex" aria-required="true" value="required">
+<input class="ex" aria-invalid="spelling" value="invalid spelling">
+<input class="ex" aria-invalid="foo" value="fake value will eval to true">
+<input class="ex" readonly value="readonly">
+<div class="ex" role="textbox" tabindex="0" aria-readonly="true">readonly</div>
+<input class="ex" disabled value="disabled">
+<div class="ex" role="textbox" tabindex="0" aria-disabled="true">disabled</div>
+
+<input class="ex" type="checkbox">
+<input class="ex" type="checkbox" checked>
+<div class="ex" role="checkbox">unchecked (checked undefined evals to false on checkbox)</div>
+<div class="ex" role="checkbox" aria-checked="true">checked</div>
+<div class="ex" role="checkbox" aria-checked="mixed">mixed</div>
+<div class="ex" role="checkbox" aria-checked="false">unchecked</div>
+
+<input class="ex" type="radio">
+<input class="ex" type="radio" checked>
+<div class="ex" role="radio">unchecked (checked undefined evals to false on radio)</div>
+<div class="ex" role="radio" aria-checked="true">checked</div>
+<div class="ex" role="radio" aria-checked="mixed">unchecked [sic] mixed state will not be exposed on radios per ARIA spec.</div>
+<div class="ex" role="radio" aria-checked="false">unchecked</div>
+
 <input class="ex" aria-hidden="true">
 <input class="ex" style="display:none;">
 
@@ -34,15 +58,34 @@
 <img class="ex" src="./404.gif" alt="x" aria-hidden="true">
 <img class="ex" src="./404.gif" alt="x" style="display:none;">
 
+<select multiple>
+    <option class="ex" selected>FIXME: Selected is false. Expected true. http://webkit.org/b/129835</option>
+    <option class="ex">not selected</option>
+</select>
+<div role="listbox">
+    <div class="ex" role="option" aria-selected="true">selected</div>
+    <div class="ex" role="option" aria-selected="false">not selected</div>
+</div>
+<div role="tablist">
+    <div class="ex" role="tab" aria-selected="true">selected</div>
+    <div class="ex" role="tab" aria-selected="false">not selected</div>
+</div>
+
+<ul role="tree">
+    <li class="ex" role="treeitem" aria-expanded="true">expanded</li>
+    <li class="ex" role="treeitem" aria-expanded="false">collapsed</li>
+</ul>
+
+</div>
+
 <script type="text/javascript">
 
 function $(selector) {
     return document.querySelectorAll(selector);
 }
 function cleanup() {
-    var examples = $(".ex");
-    for (el in examples)
-        el.style.display = "none";
+    // Hide the test element container to avoid irrelevant output diffs on subsequent updates.
+    document.getElementById("examples").style.display = "none";
 }
 
 function test() {

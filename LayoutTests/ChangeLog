@@ -1,3 +1,15 @@
+2014-03-10  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: Expose checked/disabled/expanded/pressed/readonly/selected
+        https://bugs.webkit.org/show_bug.cgi?id=129781
+
+        Reviewed by Joseph Pecoraro.
+
+        Enabling several more properties to be exposed in the Accessibility Node Inspector.
+
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode.html:
+
 2014-03-10  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] inset corner radii are not flipped for vertical writing modes

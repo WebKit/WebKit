@@ -52,11 +52,17 @@ WebInspector.DOMNodeDetailsSidebarPanel = function() {
     var eventListenersSection = new WebInspector.DetailsSection("dom-node-event-listeners", WebInspector.UIString("Event Listeners"), [this._eventListenersSectionGroup]);    
 
     this._accessibilityEmptyRow = new WebInspector.DetailsSectionRow(WebInspector.UIString("No Accessibility Information"));
+    this._accessibilityNodeCheckedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Checked"));
+    this._accessibilityNodeDisabledRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Disabled"));
+    this._accessibilityNodeExpandedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Expanded"));
     this._accessibilityNodeIgnoredRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Ignored"));
     this._accessibilityNodeInvalidRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Invalid"));
     this._accessibilityNodeLabelRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Label"));
+    this._accessibilityNodePressedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Pressed"));
+    this._accessibilityNodeReadonlyRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Readonly"));
     this._accessibilityNodeRequiredRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Required"));
     this._accessibilityNodeRoleRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Role"));
+    this._accessibilityNodeSelectedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Selected"));
     
     this._accessibilityGroup = new WebInspector.DetailsSectionGroup([this._accessibilityEmptyRow]);
     var accessibilitySection = new WebInspector.DetailsSection("dom-node-accessibility", WebInspector.UIString("Accessibility"), [this._accessibilityGroup]);    
@@ -235,18 +241,49 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
         }
     },
 
-    _refreshAccessibility: function()
-    {
-        var domNode = this.domNode;
-        if (!domNode)
-            return;
+    _refreshAccessibility: (function(){
 
-        function accessibilityPropertiesCallback(accessibilityProperties)
-        {
+        var properties = {};
+        var domNode;
+
+        function booleanValueToLocalizedStringIfTrue(property) {
+            if (properties[property])
+                return WebInspector.UIString("Yes");
+            return "";
+        }
+
+        function booleanValueToLocalizedStringIfPropertyDefined(property) {
+            if (properties[property] !== undefined) {
+                if (properties[property])
+                    return WebInspector.UIString("Yes");
+                else
+                    return WebInspector.UIString("No");
+            }
+            return "";
+        }
+
+        function accessibilityPropertiesCallback(accessibilityProperties) {
+
             if (this.domNode !== domNode)
                 return;
 
+            // Make sure the current set of properties is available in the closure scope for the helper functions.
+            properties = accessibilityProperties;
+
             if (accessibilityProperties && accessibilityProperties.exists) {
+
+                var checked = "";
+                if (accessibilityProperties.checked !== undefined) {
+                    if (accessibilityProperties.checked === DOMAgent.AccessibilityPropertiesChecked.True)
+                        checked = WebInspector.UIString("Yes");
+                    else if (accessibilityProperties.checked === DOMAgent.AccessibilityPropertiesChecked.Mixed)
+                        checked = WebInspector.UIString("Mixed");
+                    else // DOMAgent.AccessibilityPropertiesChecked.False
+                        checked = WebInspector.UIString("No");
+                }
+
+                var disabled = booleanValueToLocalizedStringIfTrue("disabled");
+                var expanded = booleanValueToLocalizedStringIfPropertyDefined("expanded");
                 
                 var ignored = "";
                 if (accessibilityProperties.ignored) {
@@ -264,13 +301,9 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                 if (label && label !== domNode.getAttribute("aria-label"))
                     label = WebInspector.UIString("%s (computed)").format(label);
 
-                var required = "";
-                if (accessibilityProperties.required !== undefined) {
-                    if (accessibilityProperties.required)
-                        required = WebInspector.UIString("Yes");
-                    else
-                        required = WebInspector.UIString("No");
-                }
+                var pressed = booleanValueToLocalizedStringIfPropertyDefined("pressed");
+                var readonly = booleanValueToLocalizedStringIfTrue("readonly");
+                var required = booleanValueToLocalizedStringIfPropertyDefined("required");
 
                 var role = accessibilityProperties.role;
                 if (role === "" || role === "unknown")
@@ -281,19 +314,42 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                     else if (domNode.getAttribute("role") !== role)
                         role = WebInspector.UIString("%s (computed)").format(role);
                 }
-                
+
+                var selected = booleanValueToLocalizedStringIfTrue("selected");
+
+                // Assign all the properties to their respective views.
+                this._accessibilityNodeCheckedRow.value = checked;
+                this._accessibilityNodeDisabledRow.value = disabled;
+                this._accessibilityNodeExpandedRow.value = expanded;
                 this._accessibilityNodeIgnoredRow.value = ignored;
                 this._accessibilityNodeInvalidRow.value = invalid;
                 this._accessibilityNodeLabelRow.value = label;
+                this._accessibilityNodePressedRow.value = pressed;
+                this._accessibilityNodeReadonlyRow.value = readonly;
                 this._accessibilityNodeRequiredRow.value = required;
                 this._accessibilityNodeRoleRow.value = role;
+                this._accessibilityNodeSelectedRow.value = selected;
 
+                // Display order, not alphabetical as above.
                 this._accessibilityGroup.rows = [
+
+                    // Global properties for all elements.
                     this._accessibilityNodeIgnoredRow,
                     this._accessibilityNodeRoleRow,
                     this._accessibilityNodeLabelRow,
+
+                    // Properties exposed for all input-type elements.
+                    this._accessibilityNodeDisabledRow,
+                    this._accessibilityNodeInvalidRow,
                     this._accessibilityNodeRequiredRow,
-                    this._accessibilityNodeInvalidRow
+
+                    // Role-specific properties.
+                    this._accessibilityNodeCheckedRow,
+                    this._accessibilityNodeExpandedRow,
+                    this._accessibilityNodePressedRow,
+                    this._accessibilityNodeReadonlyRow,
+                    this._accessibilityNodeSelectedRow
+
                 ];
 
                 this._accessibilityEmptyRow.hideEmptyMessage();
@@ -303,8 +359,17 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                 this._accessibilityEmptyRow.showEmptyMessage();
             }
         }
-        domNode.accessibilityProperties(accessibilityPropertiesCallback.bind(this));
-    },
+
+        function refreshAX() {
+            // Make sure the domNode is available in the closure scope.
+            domNode = this.domNode;
+            if (!domNode)
+                return;
+            domNode.accessibilityProperties(accessibilityPropertiesCallback.bind(this));
+        }
+
+        return refreshAX;
+    }()),
 
     _attributesChanged: function(event)
     {

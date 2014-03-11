@@ -1414,38 +1414,82 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
     if (!WebCore::AXObjectCache::accessibilityEnabled())
         WebCore::AXObjectCache::enableAccessibility();
 
+    TypeBuilder::DOM::AccessibilityProperties::Checked::Enum checked = TypeBuilder::DOM::AccessibilityProperties::Checked::False;
     bool exists = false;
+    bool expanded = false;
+    bool disabled = false;
     bool ignored = true;
     bool ignoredByDefault = false;
     String invalid = "false"; // String values: true, false, spelling, grammar, etc.
     bool hidden = false;
     String label; // FIXME: Waiting on http://webkit.org/b/121134
+    bool pressed = false;
+    bool readonly = false;
     bool required = false;
     String role;
+    bool selected = false;
+    bool supportsChecked = false;
+    bool supportsExpanded = false;
+    bool supportsPressed = false;
     bool supportsRequired = false;
 
     if (AXObjectCache* axObjectCache = node->document().axObjectCache()) {
         if (AccessibilityObject* axObject = axObjectCache->getOrCreate(node)) {
+
+            supportsChecked = axObject->supportsChecked();
+            if (supportsChecked) {
+                int checkValue = axObject->checkboxOrRadioValue(); // Element using aria-checked.
+                if (checkValue == 1)
+                    checked = TypeBuilder::DOM::AccessibilityProperties::Checked::True;
+                else if (checkValue == 2)
+                    checked = TypeBuilder::DOM::AccessibilityProperties::Checked::Mixed;
+                else if (axObject->isChecked()) // Native checkbox.
+                    checked = TypeBuilder::DOM::AccessibilityProperties::Checked::True;
+            }
+            
+            disabled = !axObject->isEnabled(); 
             exists = true;
+            
+            supportsExpanded = axObject->supportsARIAExpanded();
+            if (supportsExpanded)
+                expanded = axObject->isExpanded();
+            
             ignored = axObject->accessibilityIsIgnored();
             ignoredByDefault = axObject->accessibilityIsIgnoredByDefault();
             invalid = axObject->invalidStatus();
+            
             if (axObject->isARIAHidden() || axObject->isDOMHidden())
                 hidden = true;
+            
+            supportsPressed = axObject->ariaPressedIsPresent();
+            if (supportsPressed)
+                pressed = axObject->isPressed();
+            
+            if (axObject->isTextControl())
+                readonly = axObject->isReadOnly();
+
             supportsRequired = axObject->supportsRequiredAttribute();
             if (supportsRequired)
                 required = axObject->isRequired();
+            
             role = axObject->computedRoleString();
+            selected = axObject->isSelected();
         }
     }
     
-    RefPtr<Inspector::TypeBuilder::DOM::AccessibilityProperties> value = Inspector::TypeBuilder::DOM::AccessibilityProperties::create()
+    RefPtr<TypeBuilder::DOM::AccessibilityProperties> value = TypeBuilder::DOM::AccessibilityProperties::create()
         .setExists(exists)
         .setLabel(label)
         .setRole(role)
         .setNodeId(pushNodePathToFrontend(node));
 
     if (exists) {
+        if (supportsChecked)
+            value->setChecked(checked);
+        if (disabled)
+            value->setDisabled(disabled);
+        if (supportsExpanded)
+            value->setExpanded(expanded);
         if (ignored)
             value->setIgnored(ignored);
         if (ignoredByDefault)
@@ -1454,8 +1498,14 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             value->setInvalid(invalid);
         if (hidden)
             value->setHidden(hidden);
+        if (supportsPressed)
+            value->setPressed(pressed);
+        if (readonly)
+            value->setReadonly(readonly);
         if (supportsRequired)
             value->setRequired(required);
+        if (selected)
+            value->setSelected(selected);
     }
 
     return value.release();
