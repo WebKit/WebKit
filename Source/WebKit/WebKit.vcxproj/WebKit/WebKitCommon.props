@@ -13,7 +13,7 @@
       <ForcedIncludeFiles>WebKitPrefix.h;ICUVersion.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opengl32.lib;delayimp.lib;kernel32.lib;user32.lib;gdi32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;usp10.lib;comctl32.lib;version.lib;shlwapi.lib;libxslt$(DebugSuffix).lib;libxml2$(DebugSuffix).lib;libicuin$(DebugSuffix).lib;libicuuc$(DebugSuffix).lib;WTF$(DebugSuffix).lib;JavaScriptCore$(DebugSuffix).lib;WebCore$(DebugSuffix).lib;WebKitGUID$(DebugSuffix).lib;SQLite3$(DebugSuffix).lib;msimg32.lib;crypt32.lib;iphlpapi.lib;winmm.lib;comsuppw.lib;rpcrt4.lib;zdll$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;delayimp.lib;kernel32.lib;user32.lib;gdi32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;odbc32.lib;odbccp32.lib;usp10.lib;comctl32.lib;version.lib;shlwapi.lib;libxslt$(DebugSuffix).lib;libxml2$(DebugSuffix).lib;libicuin$(DebugSuffix).lib;libicuuc$(DebugSuffix).lib;WTF$(DebugSuffix).lib;JavaScriptCore$(DebugSuffix).lib;WebCore$(DebugSuffix).lib;WebKitGUID$(DebugSuffix).lib;SQLite3$(DebugSuffix).lib;msimg32.lib;crypt32.lib;iphlpapi.lib;winmm.lib;comsuppw.lib;rpcrt4.lib;zdll$(DebugSuffix).lib;uuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebKitExportGenerator\WebKitExports.def</ModuleDefinitionFile>
       <DelayLoadDLLs>usp10.dll;comctl32.dll;version.dll;iphlpapi.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>

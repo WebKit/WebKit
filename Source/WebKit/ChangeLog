@@ -1,5 +1,13 @@
 2014-03-10  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unreviewed build fix (64-bit).
+
+        * WebKit.vcxproj/WebKit/WebKitCommon.props: Put uuid.lib as the last link library so that
+        the MSIE DOM symbols don't conflict with WebKit's.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Add missing 64-bit symbol definitions.
+
+2014-03-10  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Pass environment to Pre-Build, Pre-Link, and Post-Build Stages.
         https://bugs.webkit.org/show_bug.cgi?id=130023
 
