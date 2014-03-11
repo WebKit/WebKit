@@ -144,28 +144,6 @@ extern "C" inline double wtf_pow(double x, double y) { return y == 0 ? 1 : pow(x
 #define fmod(x, y) wtf_fmod(x, y)
 #define pow(x, y) wtf_pow(x, y)
 
-// MSVC's math functions do not bring lrint.
-inline long int lrint(double flt)
-{
-    int64_t intgr;
-#if CPU(X86)
-    __asm {
-        fld flt
-        fistp intgr
-    };
-#else
-    ASSERT(std::isfinite(flt));
-    double rounded = round(flt);
-    intgr = static_cast<int64_t>(rounded);
-    // If the fractional part is exactly 0.5, we need to check whether
-    // the rounded result is even. If it is not we need to add 1 to
-    // negative values and subtract one from positive values.
-    if ((fabs(intgr - flt) == 0.5) & intgr)
-        intgr -= ((intgr >> 62) | 1); // 1 with the sign of result, i.e. -1 or 1.
-#endif
-    return static_cast<long int>(intgr);
-}
-
 #endif // COMPILER(MSVC)
 
 inline double deg2rad(double d)  { return d * piDouble / 180.0; }

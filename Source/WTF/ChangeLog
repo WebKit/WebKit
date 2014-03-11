@@ -1,3 +1,10 @@
+2014-03-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening.
+
+        * wtf/MathExtras.h: VS2013 provides an lrint implementation. No need to implement
+        our own.
+
 2014-03-10  Jer Noble  <jer.noble@apple.com>
 
         Improve WeakPtr operators.
