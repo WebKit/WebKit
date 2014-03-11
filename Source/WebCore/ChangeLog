@@ -1,3 +1,9 @@
+2014-03-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        makeSelectorPseudoTypeMap.py should not be copied in the WebCore bundle
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2014-03-10  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Add support for Geoclue2

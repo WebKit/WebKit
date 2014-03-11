@@ -1467,7 +1467,6 @@
 		43A625F813B3304000AC94B8 /* SVGAnimatedColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 43A625F613B3304000AC94B8 /* SVGAnimatedColor.h */; };
 		43A625F913B3304000AC94B8 /* SVGAnimatedColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43A625F713B3304000AC94B8 /* SVGAnimatedColor.cpp */; };
 		43A6266713B3D11000AC94B8 /* SVGAnimatedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43A6266613B3D11000AC94B8 /* SVGAnimatedString.cpp */; };
-		43B85ED118CBEACE00E31AF4 /* makeSelectorPseudoTypeMap.py in Resources */ = {isa = PBXBuildFile; fileRef = 43B85ED018CBEACE00E31AF4 /* makeSelectorPseudoTypeMap.py */; };
 		43B85ED418CBEC5200E31AF4 /* SelectorPseudoTypeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B85ED218CBEC5200E31AF4 /* SelectorPseudoTypeMap.cpp */; };
 		43B9336913B261B1004584BF /* SVGAnimatedPointList.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B9336713B261B1004584BF /* SVGAnimatedPointList.h */; };
 		43B9336A13B261B1004584BF /* SVGAnimatedPointList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B9336813B261B1004584BF /* SVGAnimatedPointList.cpp */; };
@@ -26219,7 +26218,6 @@
 			files = (
 				46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */,
 				46D4F2490AF97E810035385A /* cellCursor.png in Resources */,
-				43B85ED118CBEACE00E31AF4 /* makeSelectorPseudoTypeMap.py in Resources */,
 				93153BDE141959F400FCF5BE /* deleteButton.png in Resources */,
 				93153BCD1417FBBF00FCF5BE /* deleteButton@2x.png in Resources */,
 				93153BE014195A2800FCF5BE /* deleteButtonPressed.png in Resources */,
