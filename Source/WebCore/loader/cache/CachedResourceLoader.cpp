@@ -393,12 +393,16 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
     return true;
 }
 
-bool CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache(CachedResource* resource)
+bool CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache(const CachedResourceRequest& request, CachedResource* resource)
 {
     if (!resource || !frame() || resource->status() != CachedResource::Cached)
         return true;
 
-    ResourceRequest newRequest;
+    ResourceRequest newRequest = ResourceRequest(resource->url());
+#if ENABLE(INSPECTOR)
+    if (request.resourceRequest().hiddenFromInspector())
+        newRequest.setHiddenFromInspector(true);
+#endif
     frame()->loader().loadedResourceFromMemoryCache(resource, newRequest);
     
     // FIXME <http://webkit.org/b/113251>: If the delegate modifies the request's
@@ -453,7 +457,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         resource = revalidateResource(request, resource.get());
         break;
     case Use:
-        if (!shouldContinueAfterNotifyingLoadedFromMemoryCache(resource.get()))
+        if (!shouldContinueAfterNotifyingLoadedFromMemoryCache(request, resource.get()))
             return 0;
         memoryCache()->resourceAccessed(resource.get());
         break;

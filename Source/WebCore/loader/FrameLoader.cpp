@@ -2995,8 +2995,6 @@ void FrameLoader::requestFromDelegate(ResourceRequest& request, unsigned long& i
 
 void FrameLoader::loadedResourceFromMemoryCache(CachedResource* resource, ResourceRequest& newRequest)
 {
-    newRequest = ResourceRequest(resource->url());
-
     Page* page = m_frame.page();
     if (!page)
         return;

@@ -1,3 +1,24 @@
+2014-03-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Frontend loaded resources from cache are not hidden as expected
+        https://bugs.webkit.org/show_bug.cgi?id=130044
+
+        Reviewed by Timothy Hatcher.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache):
+        Use the new request that was passed in. Assume it is filled in appropriately.
+
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache):
+        Carry over the hidden from inspector state if the passed in request had it,
+        and create the request that loadedResourceFromMemoryCache will use.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+        Add missing ifdefs for INSPECTOR only function.
+
 2014-03-10  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Remove 'visibilitychange' attribute event listener from document
