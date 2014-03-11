@@ -1,3 +1,12 @@
+2014-03-11  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Remove unused method from BatteryController
+        https://bugs.webkit.org/show_bug.cgi?id=130063
+
+        Reviewed by Darin Adler.
+
+        * Modules/battery/BatteryController.h: Removed client() which is not used.
+
 2014-03-11  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Expose aria-posinset and aria-setsize through object attributes

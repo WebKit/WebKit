@@ -41,8 +41,6 @@ public:
     void updateBatteryStatus(PassRefPtr<BatteryStatus>);
     void didChangeBatteryStatus(const AtomicString& eventType, PassRefPtr<BatteryStatus>);
 
-    BatteryClient* client() const { return m_client; }
-
     static const char* supplementName();
     static BatteryController* from(Page* page) { return static_cast<BatteryController*>(Supplement<Page>::from(page, supplementName())); }
 
