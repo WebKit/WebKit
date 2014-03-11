@@ -96,7 +96,7 @@ private:
 
     virtual void platformCALayerAnimationStarted(CFTimeInterval beginTime) { }
     virtual GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const { return GraphicsLayer::CompositingCoordinatesBottomUp; }
-    virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const IntRect& inClip) { }
+    virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect& inClip) { }
     virtual bool platformCALayerShowDebugBorders() const { return false; }
     virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const { return false; }
     virtual int platformCALayerIncrementRepaintCount(PlatformCALayer*) { return 0; }
@@ -366,7 +366,7 @@ void MediaPlayerPrivateQuickTimeVisualContext::loadInternal(const String& url)
 
     m_movie = adoptRef(new QTMovie(m_movieClient.get()));
 
-    m_movie->load(url.characters(), url.length(), m_player->preservesPitch());
+    m_movie->load(url.characters16(), url.length(), m_player->preservesPitch());
     m_movie->setVolume(m_player->volume());
 }
 

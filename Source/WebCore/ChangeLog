@@ -1,3 +1,14 @@
+2014-03-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed Windows Build Fix.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Don't build cURL files for Apple Windows port.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerPaintContents): Correct
+        method signature to match base class.
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::loadInternal): Use proper character encoding.
+
 2014-03-10  Simon Fraser  <simon.fraser@apple.com>
 
         Fix three leaks
