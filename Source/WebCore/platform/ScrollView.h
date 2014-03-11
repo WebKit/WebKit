@@ -180,7 +180,10 @@ public:
 #if PLATFORM(IOS)
     // This is the area that is partially or fully exposed, and may extend under overlapping UI elements.
     IntRect exposedContentRect() const;
+
+    // The given rects are only used if there is no platform widget.
     void setExposedContentRect(const IntRect&);
+    void setUnobscuredContentRect(const IntRect&);
 
     void setActualScrollPosition(const IntPoint&);
     TileCache* tileCache();
@@ -406,6 +409,7 @@ private:
     // between exposed rect and unobscuredRects. The two attributes should eventually be merged.
 #if PLATFORM(IOS)
     IntRect m_exposedContentRect;
+    IntRect m_unobscuredContentRect;
 #else
     IntRect m_fixedVisibleContentRect;
 #endif

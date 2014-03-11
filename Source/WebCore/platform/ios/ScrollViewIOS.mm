@@ -98,12 +98,24 @@ bool ScrollView::platformCanBlitOnScroll() const
 
 IntRect ScrollView::unobscuredContentRect() const
 {
-    CGRect r = CGRectZero;
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    WAKScrollView *view = static_cast<WAKScrollView *>(platformWidget());
-    r = [view unobscuredContentRect];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return enclosingIntRect(r);
+    if (WAKScrollView *view = static_cast<WAKScrollView *>(platformWidget())) {
+        CGRect r = CGRectZero;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        r = [view unobscuredContentRect];
+        END_BLOCK_OBJC_EXCEPTIONS;
+        return enclosingIntRect(r);
+    }
+
+    if (!m_unobscuredContentRect.isEmpty())
+        return m_unobscuredContentRect;
+
+    return visibleContentRectIncludingScrollbars();
+}
+
+void ScrollView::setUnobscuredContentRect(const IntRect& rect)
+{
+    ASSERT(!platformWidget());
+    m_unobscuredContentRect = rect;
 }
 
 IntRect ScrollView::exposedContentRect() const

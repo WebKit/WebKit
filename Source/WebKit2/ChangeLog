@@ -1,3 +1,13 @@
+2014-03-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WebKit 2] Wire the unobscured rect in the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=130058
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2014-03-10  Simon Fraser  <simon.fraser@apple.com>
 
         Fix three leaks

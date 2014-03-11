@@ -1734,7 +1734,8 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     FloatRect exposedRect = visibleContentRectUpdateInfo.exposedRect();
     m_drawingArea->setExposedContentRect(enclosingIntRect(exposedRect));
 
-    IntPoint scrollPosition = roundedIntPoint(visibleContentRectUpdateInfo.unobscuredRect().location());
+    IntRect roundedUnobscuredRect = roundedIntRect(visibleContentRectUpdateInfo.unobscuredRect());
+    IntPoint scrollPosition = roundedUnobscuredRect.location();
 
     double boundedScale = std::min(m_viewportConfiguration.maximumScale(), std::max(m_viewportConfiguration.minimumScale(), visibleContentRectUpdateInfo.scale()));
     float floatBoundedScale = boundedScale;
@@ -1748,11 +1749,10 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     }
 
     m_page->mainFrame().view()->setScrollOffset(scrollPosition);
-    
+    m_page->mainFrame().view()->setUnobscuredContentRect(roundedUnobscuredRect);
+
     if (visibleContentRectUpdateInfo.inStableState())
         m_page->mainFrame().view()->setCustomFixedPositionLayoutRect(enclosingIntRect(visibleContentRectUpdateInfo.customFixedPositionRect()));
-
-    // FIXME: we should also update the frame view from unobscured rect. Altenatively, we can have it pull the values from ScrollView.
 }
 
 void WebPage::willStartUserTriggeredZooming()

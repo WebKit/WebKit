@@ -1,5 +1,18 @@
 2014-03-10  Benjamin Poulain  <bpoulain@apple.com>
 
+        [iOS][WebKit 2] Wire the unobscured rect in the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=130058
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+        * platform/ScrollView.h:
+        * platform/ios/ScrollViewIOS.mm:
+        (WebCore::ScrollView::unobscuredContentRect):
+        (WebCore::ScrollView::setUnobscuredContentRect):
+
+2014-03-10  Benjamin Poulain  <bpoulain@apple.com>
+
         makeSelectorPseudoTypeMap.py should not be copied in the WebCore bundle
 
         * WebCore.xcodeproj/project.pbxproj:
