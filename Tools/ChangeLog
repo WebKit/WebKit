@@ -1,5 +1,29 @@
 2014-03-11  Krzysztof Czech  <k.czech@samsung.com>
 
+        [ATK] Adjust WKTR/DRT to use new API from ATK 2.11.90
+        https://bugs.webkit.org/show_bug.cgi?id=130021
+
+        Reviewed by Mario Sanchez Prada.
+
+        Replace deprecated functions to use new API from ATK 2.11.90.
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::x):
+        (AccessibilityUIElement::y):
+        (AccessibilityUIElement::width):
+        (AccessibilityUIElement::height):
+        (AccessibilityUIElement::clickPointX):
+        (AccessibilityUIElement::clickPointY):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::x):
+        (WTR::AccessibilityUIElement::y):
+        (WTR::AccessibilityUIElement::width):
+        (WTR::AccessibilityUIElement::height):
+        (WTR::AccessibilityUIElement::clickPointX):
+        (WTR::AccessibilityUIElement::clickPointY):
+
+2014-03-11  Krzysztof Czech  <k.czech@samsung.com>
+
         [ATK] Expose aria-posinset and aria-setsize through object attributes
         https://bugs.webkit.org/show_bug.cgi?id=130011
 

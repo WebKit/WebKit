@@ -1107,8 +1107,12 @@ double AccessibilityUIElement::x()
     if (!ATK_IS_COMPONENT(m_element.get()))
         return 0;
 
-    int x, y;
-    atk_component_get_position(ATK_COMPONENT(m_element.get()), &x, &y, ATK_XY_SCREEN);
+    int x;
+#if ATK_CHECK_VERSION(2,11,90)
+    atk_component_get_extents(ATK_COMPONENT(m_element.get()), &x, nullptr, nullptr, nullptr, ATK_XY_SCREEN);
+#else
+    atk_component_get_position(ATK_COMPONENT(m_element.get()), &x, nullptr, ATK_XY_SCREEN);
+#endif
     return x;
 }
 
@@ -1117,8 +1121,12 @@ double AccessibilityUIElement::y()
     if (!ATK_IS_COMPONENT(m_element.get()))
         return 0;
 
-    int x, y;
-    atk_component_get_position(ATK_COMPONENT(m_element.get()), &x, &y, ATK_XY_SCREEN);
+    int y;
+#if ATK_CHECK_VERSION(2,11,90)
+    atk_component_get_extents(ATK_COMPONENT(m_element.get()), nullptr, &y, nullptr, nullptr, ATK_XY_SCREEN);
+#else
+    atk_component_get_position(ATK_COMPONENT(m_element.get()), &x,  nullptr, ATK_XY_SCREEN);
+#endif
     return y;
 }
 
@@ -1127,8 +1135,12 @@ double AccessibilityUIElement::width()
     if (!ATK_IS_COMPONENT(m_element.get()))
         return 0;
 
-    int width, height;
-    atk_component_get_size(ATK_COMPONENT(m_element.get()), &width, &height);
+    int width;
+#if ATK_CHECK_VERSION(2,11,90)
+    atk_component_get_extents(ATK_COMPONENT(m_element.get()), nullptr, nullptr, &width, nullptr, ATK_XY_WINDOW);
+#else
+    atk_component_get_size(ATK_COMPONENT(m_element.get()), &width, nullptr);
+#endif
     return width;
 }
 
@@ -1137,8 +1149,12 @@ double AccessibilityUIElement::height()
     if (!ATK_IS_COMPONENT(m_element.get()))
         return 0;
 
-    int width, height;
-    atk_component_get_size(ATK_COMPONENT(m_element.get()), &width, &height);
+    int height;
+#if ATK_CHECK_VERSION(2,11,90)
+    atk_component_get_extents(ATK_COMPONENT(m_element.get()), nullptr, nullptr, nullptr, &height, ATK_XY_WINDOW);
+#else
+    atk_component_get_size(ATK_COMPONENT(m_element.get()), nullptr, &height);
+#endif
     return height;
 }
 
@@ -1147,11 +1163,13 @@ double AccessibilityUIElement::clickPointX()
     if (!ATK_IS_COMPONENT(m_element.get()))
         return 0;
 
-    int x, y;
-    atk_component_get_position(ATK_COMPONENT(m_element.get()), &x, &y, ATK_XY_WINDOW);
-
-    int width, height;
-    atk_component_get_size(ATK_COMPONENT(m_element.get()), &width, &height);
+    int x, width;
+#if ATK_CHECK_VERSION(2,11,90)
+    atk_component_get_extents(ATK_COMPONENT(m_element.get()), &x, nullptr, &width, nullptr, ATK_XY_WINDOW);
+#else
+    atk_component_get_position(ATK_COMPONENT(m_element.get()), &x, nullptr, ATK_XY_WINDOW);
+    atk_component_get_size(ATK_COMPONENT(m_element.get()), &width, nullptr);
+#endif
 
     return x + width / 2.0;
 }
@@ -1161,11 +1179,13 @@ double AccessibilityUIElement::clickPointY()
     if (!ATK_IS_COMPONENT(m_element.get()))
         return 0;
 
-    int x, y;
-    atk_component_get_position(ATK_COMPONENT(m_element.get()), &x, &y, ATK_XY_WINDOW);
-
-    int width, height;
-    atk_component_get_size(ATK_COMPONENT(m_element.get()), &width, &height);
+    int y, height;
+#if ATK_CHECK_VERSION(2,11,90)
+    atk_component_get_extents(ATK_COMPONENT(m_element.get()), nullptr, &y, nullptr, &height, ATK_XY_WINDOW);
+#else
+    atk_component_get_position(ATK_COMPONENT(m_element.get()), nullptr, &y, ATK_XY_WINDOW);
+    atk_component_get_size(ATK_COMPONENT(m_element.get()), nullptr, &height);
+#endif
 
     return y + height / 2.0;
 }
