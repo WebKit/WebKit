@@ -29,6 +29,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include "WebProcess.h"
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/ErrorsGtk.h>
 #include <WebCore/Frame.h>
@@ -147,10 +148,14 @@ public:
     static void printJobFinished(WebPrintOperationGtkUnix* printOperation)
     {
         printOperation->deref();
+        WebProcess::shared().enableTermination();
     }
 
     void endPrint() override
     {
+        // Disable web process termination until the print job finishes.
+        WebProcess::shared().disableTermination();
+
         cairo_surface_finish(gtk_print_job_get_surface(m_printJob.get(), 0));
         // Make sure the operation is alive until the job is sent.
         ref();
