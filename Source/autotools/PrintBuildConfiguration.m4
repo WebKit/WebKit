@@ -17,6 +17,7 @@ Build configuration:
  Code coverage support                                    : $enable_coverage
  Optimized memory allocator                               : $enable_fast_malloc
  Accelerated rendering backend                            : $acceleration_description
+ Geolocation backend                                      : $geolocation_description
 
 Features:
 =======

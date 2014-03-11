@@ -1,3 +1,55 @@
+2014-03-10  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Add support for Geoclue2
+        https://bugs.webkit.org/show_bug.cgi?id=120185
+
+        Reviewed by Carlos Garcia Campos.
+
+        Patch by Anton Obzhirov <a.obzhirov@samsung.com> and Mario Sanchez Prada <mario.prada@samsung.com>
+
+        Implement a new geolocation provider based on Geoclue2, which will only
+        be used if a good enough version of Geoclue2 is found  at configure time.
+
+        * GNUmakefile.am: Generate C-API for accessing the D-Bus API
+        provided by Geoclue2, and place it in DerivedSources.
+        * GNUmakefile.list.am: Add GeolocationProviderGeoclue2.cpp, and
+        include the generated proxy files when using Geoclue2.
+        * PlatformGTK.cmake: Likewise, for CMake based builds.
+        * platform/geoclue/GeolocationProviderGeoclue.h: Modified to
+        accomodate the needs both for Geoclue and Geoclue2 providers.
+        * platform/geoclue/GeolocationProviderGeoclue1.cpp: Renamed from Source/WebCore/platform/geoclue/GeolocationProviderGeoclue.cpp.
+        (GeolocationProviderGeoclue::getPositionCallback):
+        (GeolocationProviderGeoclue::positionChangedCallback):
+        (GeolocationProviderGeoclue::createGeocluePositionCallback):
+        (GeolocationProviderGeoclue::geoclueClientSetRequirementsCallback):
+        (GeolocationProviderGeoclue::createGeoclueClientCallback):
+        (GeolocationProviderGeoclue::GeolocationProviderGeoclue):
+        (GeolocationProviderGeoclue::~GeolocationProviderGeoclue):
+        (GeolocationProviderGeoclue::startUpdating):
+        (GeolocationProviderGeoclue::stopUpdating):
+        (GeolocationProviderGeoclue::setEnableHighAccuracy):
+        (GeolocationProviderGeoclue::initializeGeoclueClient):
+        (GeolocationProviderGeoclue::initializeGeocluePosition):
+        (GeolocationProviderGeoclue::updateClientRequirements):
+        (GeolocationProviderGeoclue::positionChanged):
+        (GeolocationProviderGeoclue::errorOccurred):
+        * platform/geoclue/GeolocationProviderGeoclue2.cpp: Added.
+        (GeolocationProviderGeoclue::GeolocationProviderGeoclue):
+        (GeolocationProviderGeoclue::~GeolocationProviderGeoclue):
+        (GeolocationProviderGeoclue::startUpdating):
+        (GeolocationProviderGeoclue::stopUpdating):
+        (GeolocationProviderGeoclue::setEnableHighAccuracy):
+        (GeolocationProviderGeoclue::createGeoclueManagerProxyCallback):
+        (GeolocationProviderGeoclue::getGeoclueClientCallback):
+        (GeolocationProviderGeoclue::createGeoclueClientProxyCallback):
+        (GeolocationProviderGeoclue::startClientCallback):
+        (GeolocationProviderGeoclue::locationUpdatedCallback):
+        (GeolocationProviderGeoclue::createLocationProxyCallback):
+        (GeolocationProviderGeoclue::startGeoclueClient):
+        (GeolocationProviderGeoclue::updateLocation):
+        (GeolocationProviderGeoclue::errorOccurred):
+        (GeolocationProviderGeoclue::updateClientRequirements):
+
 2014-03-10  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed Windows Build Fix.

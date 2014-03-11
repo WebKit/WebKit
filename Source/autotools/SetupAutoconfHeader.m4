@@ -27,6 +27,10 @@ if test "$enable_webkit2" = "yes"; then
     fi
 fi
 
+if test "$found_geoclue2" = "yes"; then
+    AC_DEFINE([WTF_USE_GEOCLUE2], [1], [ ])
+fi
+
 if test "$os_win32" = "yes"; then
     AC_DEFINE([XP_WIN], [1], [ ])
     AC_DEFINE([UNICODE], [1], [ ])

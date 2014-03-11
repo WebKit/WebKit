@@ -33,6 +33,9 @@ AM_CONDITIONAL([TARGET_WIN32], [test "$enable_win32_target" = "yes"])
 AM_CONDITIONAL([TARGET_QUARTZ], [test "$enable_quartz_target" = "yes"])
 AM_CONDITIONAL([TARGET_DIRECTFB], [test "$enable_directfb_target" = "yes"])
 
+# Geoclue conditionals.
+AM_CONDITIONAL([USE_GEOCLUE2],[test "$found_geoclue2" = "yes"])
+
 # GStreamer feature conditionals.
 AM_CONDITIONAL([USE_GSTREAMER], [test "$enable_video" = "yes" || test "$enable_web_audio" = "yes"])
 AM_CONDITIONAL([USE_WEBAUDIO_GSTREAMER], [test "$enable_web_audio" = "yes"])

@@ -404,9 +404,20 @@ PKG_CHECK_MODULES([LIBXSLT],[libxslt >= libxslt_required_version])
 AC_SUBST([LIBXSLT_CFLAGS])
 AC_SUBST([LIBXSLT_LIBS])
 
-# Check if geoclue is available.
+# Check if geoclue is available, with a preference over Geoclue2 if present.
+geolocation_description="none"
 if test "$enable_geolocation" = "yes"; then
-    PKG_CHECK_MODULES([GEOCLUE], [geoclue])
+    PKG_CHECK_MODULES([GEOCLUE2], [gio-unix-2.0 geoclue-2.0 >= geoclue2_required_version], [found_geoclue2=yes], [found_geoclue2=no])
+    if test "$found_geoclue2" = "yes"; then
+        GEOCLUE_CFLAGS="$GEOCLUE2_CFLAGS"
+        GEOCLUE_LIBS="$GEOCLUE2_LIBS"
+        GEOCLUE_DBUS_INTERFACE=`$PKG_CONFIG --variable dbus_interface geoclue-2.0`
+        AC_SUBST(GEOCLUE_DBUS_INTERFACE)
+        geolocation_description="Geoclue 2"
+    else
+        PKG_CHECK_MODULES([GEOCLUE], [geoclue])
+        geolocation_description="Geoclue"
+    fi
     AC_SUBST([GEOCLUE_CFLAGS])
     AC_SUBST([GEOCLUE_LIBS])
 fi

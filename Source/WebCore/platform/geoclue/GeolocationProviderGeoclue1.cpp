@@ -26,11 +26,11 @@
 #include "config.h"
 #include "GeolocationProviderGeoclue.h"
 
-#if ENABLE(GEOLOCATION)
+#if ENABLE(GEOLOCATION) && !USE(GEOCLUE2)
 
 using namespace WebCore;
 
-static void getPositionCallback(GeocluePosition* position, GeocluePositionFields fields, int timestamp, double latitude, double longitude, double altitude, GeoclueAccuracy* accuracy, GError* error, GeolocationProviderGeoclue* provider)
+void GeolocationProviderGeoclue::getPositionCallback(GeocluePosition* position, GeocluePositionFields fields, int timestamp, double latitude, double longitude, double altitude, GeoclueAccuracy* accuracy, GError* error, GeolocationProviderGeoclue* provider)
 {
     if (error) {
         provider->errorOccurred(error->message);
@@ -40,12 +40,12 @@ static void getPositionCallback(GeocluePosition* position, GeocluePositionFields
     provider->positionChanged(position, fields, timestamp, latitude, longitude, altitude, accuracy);
 }
 
-static void positionChangedCallback(GeocluePosition* position, GeocluePositionFields fields, int timestamp, double latitude, double longitude, double altitude, GeoclueAccuracy* accuracy, GeolocationProviderGeoclue* provider)
+void GeolocationProviderGeoclue::positionChangedCallback(GeocluePosition* position, GeocluePositionFields fields, int timestamp, double latitude, double longitude, double altitude, GeoclueAccuracy* accuracy, GeolocationProviderGeoclue* provider)
 {
     provider->positionChanged(position, fields, timestamp, latitude, longitude, altitude, accuracy);
 }
 
-static void createGeocluePositionCallback(GeoclueMasterClient*, GeocluePosition* position, GError *error, GeolocationProviderGeoclue* provider)
+void GeolocationProviderGeoclue::createGeocluePositionCallback(GeoclueMasterClient*, GeocluePosition* position, GError *error, GeolocationProviderGeoclue* provider)
 {
     if (error) {
         provider->errorOccurred(error->message);
@@ -55,7 +55,7 @@ static void createGeocluePositionCallback(GeoclueMasterClient*, GeocluePosition*
     provider->initializeGeocluePosition(position);
 }
 
-static void geoclueClientSetRequirementsCallback(GeoclueMasterClient* client, GError* error, GeolocationProviderGeoclue* provider)
+void GeolocationProviderGeoclue::geoclueClientSetRequirementsCallback(GeoclueMasterClient*, GError* error, GeolocationProviderGeoclue* provider)
 {
     if (error) {
         provider->errorOccurred(error->message);
@@ -63,7 +63,7 @@ static void geoclueClientSetRequirementsCallback(GeoclueMasterClient* client, GE
     }
 }
 
-static void createGeoclueClientCallback(GeoclueMaster*, GeoclueMasterClient* client, char*, GError* error, GeolocationProviderGeoclue* provider)
+void GeolocationProviderGeoclue::createGeoclueClientCallback(GeoclueMaster*, GeoclueMasterClient* client, char*, GError* error, GeolocationProviderGeoclue* provider)
 {
     if (error) {
         provider->errorOccurred(error->message);
@@ -75,8 +75,6 @@ static void createGeoclueClientCallback(GeoclueMaster*, GeoclueMasterClient* cli
 
 GeolocationProviderGeoclue::GeolocationProviderGeoclue(GeolocationProviderGeoclueClient* client)
     : m_client(client)
-    , m_geoclueClient(0)
-    , m_geocluePosition(0)
     , m_latitude(0)
     , m_longitude(0)
     , m_altitude(0)
@@ -154,7 +152,7 @@ void GeolocationProviderGeoclue::updateClientRequirements()
     geoclue_master_client_set_requirements_async(m_geoclueClient.get(), accuracyLevel, 0, false, GEOCLUE_RESOURCE_ALL, reinterpret_cast<GeoclueSetRequirementsCallback>(geoclueClientSetRequirementsCallback), this);
 }
 
-void GeolocationProviderGeoclue::positionChanged(GeocluePosition* position, GeocluePositionFields fields, int timestamp, double latitude, double longitude, double altitude, GeoclueAccuracy* accuracy)
+void GeolocationProviderGeoclue::positionChanged(GeocluePosition*, GeocluePositionFields fields, int timestamp, double latitude, double longitude, double altitude, GeoclueAccuracy* accuracy)
 {
     if (!(fields & GEOCLUE_POSITION_FIELDS_LATITUDE && fields & GEOCLUE_POSITION_FIELDS_LONGITUDE)) {
         errorOccurred("Position could not be determined.");
@@ -176,4 +174,4 @@ void GeolocationProviderGeoclue::errorOccurred(const char* message)
     m_client->notifyErrorOccurred(message);
 }
 
-#endif // ENABLE(GEOLOCATION)
+#endif // ENABLE(GEOLOCATION) && !USE(GEOCLUE2)

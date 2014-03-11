@@ -40,7 +40,8 @@ list(APPEND WebCore_SOURCES
     platform/audio/gstreamer/FFTFrameGStreamer.cpp
     platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp
 
-    platform/geoclue/GeolocationProviderGeoclue.cpp
+    platform/geoclue/GeolocationProviderGeoclue1.cpp
+    platform/geoclue/GeolocationProviderGeoclue2.cpp
 
     platform/graphics/GraphicsContext3DPrivate.cpp
     platform/graphics/OpenGLShims.cpp
@@ -242,6 +243,17 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/WidgetGtk.cpp
     platform/gtk/WidgetRenderingContext.cpp
 )
+
+if (WTF_USE_GEOCLUE2)
+    list(APPEND WebCore_SOURCES
+        ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.c
+    )
+    execute_process(COMMAND pkg-config --variable dbus_interface geoclue-2.0 OUTPUT_VARIABLE GEOCLUE_DBUS_INTERFACE)
+    add_custom_command(
+         OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.c ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.h
+         COMMAND gdbus-codegen --interface-prefix org.freedesktop.GeoClue2. --c-namespace Geoclue --generate-c-code ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface ${GEOCLUE_DBUS_INTERFACE}
+    )
+endif ()
 
 if (ENABLE_NETSCAPE_PLUGIN_API)
     list(APPEND WebCore_SOURCES

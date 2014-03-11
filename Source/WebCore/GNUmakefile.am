@@ -386,6 +386,12 @@ audio_DATA = $(WebCore)/platform/audio/resources/Composite.wav
 dist_audio_DATA = $(audio_DATA)
 endif  # END ENABLE_WEB_AUDIO
 
+if USE_GEOCLUE2
+DerivedSources/Platform/Geoclue2Interface.c: DerivedSources/Platform/Geoclue2Interface.h
+DerivedSources/Platform/Geoclue2Interface.h:
+	$(AM_V_GEN)gdbus-codegen --interface-prefix org.freedesktop.GeoClue2. --c-namespace Geoclue --generate-c-code DerivedSources/Platform/Geoclue2Interface $(GEOCLUE_DBUS_INTERFACE)
+endif
+
 IDL_PATH := \
     $(WebCore)/Modules/battery \
     $(WebCore)/Modules/gamepad \

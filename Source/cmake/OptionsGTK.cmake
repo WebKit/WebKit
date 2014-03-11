@@ -204,7 +204,13 @@ endif ()
 find_package(GLIB 2.33.2 REQUIRED COMPONENTS ${glib_components})
 
 if (ENABLE_GEOLOCATION)
-    find_package(GeoClue)
+    find_package(GeoClue2 2.1.5)
+    if (GEOCLUE2_FOUND)
+      set(WTF_USE_GEOCLUE2 1)
+    else ()
+      find_package(GeoClue)
+      set(WTF_USE_GEOCLUE2 0)
+    endif ()
 endif ()
 
 # We don't use find_package for GLX because it is part of -lGL, unlike EGL.

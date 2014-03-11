@@ -875,6 +875,12 @@ platform_built_sources += \
 	DerivedSources/Platform/WebKitFontFamilyNames.cpp \
 	DerivedSources/Platform/WebKitFontFamilyNames.h
 
+if USE_GEOCLUE2
+platform_built_sources += \
+	DerivedSources/Platform/Geoclue2Interface.h \
+	DerivedSources/Platform/Geoclue2Interface.c
+endif
+
 # These files need to be part of WebCore otherwise they cause undefined
 # symbols havoc
 webcore_built_sources += \
@@ -5575,7 +5581,8 @@ platform_sources += \
 	Source/WebCore/platform/audio/ZeroPole.cpp \
 	Source/WebCore/platform/audio/ZeroPole.h \
 	Source/WebCore/platform/geoclue/GeolocationProviderGeoclue.h \
-	Source/WebCore/platform/geoclue/GeolocationProviderGeoclue.cpp \
+	Source/WebCore/platform/geoclue/GeolocationProviderGeoclue1.cpp \
+	Source/WebCore/platform/geoclue/GeolocationProviderGeoclue2.cpp \
 	Source/WebCore/platform/geoclue/GeolocationProviderGeoclueClient.h \
 	Source/WebCore/platform/glib/BatteryProviderUPowerClient.h \
 	Source/WebCore/platform/glib/BatteryProviderUPower.cpp \
