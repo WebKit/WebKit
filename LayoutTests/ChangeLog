@@ -1,3 +1,18 @@
+2014-03-10  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] inset corner radii are not flipped for vertical writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=129918
+
+        Reviewed by Dean Jackson.
+
+        Test both left and right float cases so that we cover all four
+        corners.
+
+        * fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-different-writing-modes-left-expected.txt: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-different-writing-modes-left.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-different-writing-modes-right-expected.txt: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-different-writing-modes-right.html: Added.
+
 2014-03-10  Zsolt Borbely  <borbezs@inf.u-szeged.hu>
 
         ASSERTION FAILED: span >= 1
