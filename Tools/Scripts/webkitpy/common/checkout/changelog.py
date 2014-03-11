@@ -391,11 +391,10 @@ class ChangeLog(object):
                 if first_boilerplate_line_regexp.search(line):
                     message_lines = self._wrap_lines(message)
                     result.write(first_boilerplate_line_regexp.sub(message_lines, line))
-                    # Remove all the ChangeLog boilerplate before the first changed
-                    # file.
+                    # Remove all the ChangeLog boilerplate, except the first line (date, name, e-mail).
                     removing_boilerplate = True
                 elif removing_boilerplate:
-                    if line.find('*') >= 0:  # each changed file is preceded by a *
+                    if re.search("^[1-9]", line):  # each changelog entry is preceded by a date
                         removing_boilerplate = False
 
                 if not removing_boilerplate:

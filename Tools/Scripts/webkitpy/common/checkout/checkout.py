@@ -90,10 +90,11 @@ class Checkout(object):
             return None
         changelog_entry = changelog_entries[0]
         return {
-            "bug_id": parse_bug_id_from_changelog(changelog_entry.contents()),
+            "bug_id": changelog_entry.bug_id(),
             "author_name": changelog_entry.author_name(),
             "author_email": changelog_entry.author_email(),
             "author": changelog_entry.author(),
+            "bug_description": changelog_entry.bug_description(),
             "reviewer_text": changelog_entry.reviewer_text(),
             "reviewer": changelog_entry.reviewer(),
             "contents": changelog_entry.contents(),

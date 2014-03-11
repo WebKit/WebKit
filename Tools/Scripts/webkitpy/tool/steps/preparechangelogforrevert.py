@@ -34,24 +34,33 @@ from webkitpy.tool.steps.abstractstep import AbstractStep
 
 class PrepareChangeLogForRevert(AbstractStep):
     @classmethod
-    def _message_for_revert(cls, revision_list, reason, bug_url=None):
+    def _message_for_revert(cls, revision_list, reason, description_list, reverted_bug_url_list, rollout_bug_url=None):
         message = "Unreviewed, rolling out %s.\n" % join_with_separators(['r' + str(revision) for revision in revision_list])
-        for revision in revision_list:
-            message += "%s\n" % urls.view_revision_url(revision)
-        if bug_url:
-            message += "%s\n" % bug_url
-        # Add an extra new line after the rollout links, before any reason.
+        if rollout_bug_url:
+            message += "%s\n" % rollout_bug_url
         message += "\n"
         if reason:
-            message += "%s\n\n" % reason
+            message += "%s\n" % reason
+        message += "\n"
+        pluralSuffix = 's' if len(revision_list) > 1 else ''
+        message += "Reverted changeset%s:\n\n" % pluralSuffix
+        for index in range(len(revision_list)):
+            if description_list[index]:
+                message += "\"%s\"\n" % description_list[index]
+            if reverted_bug_url_list[index]:
+                message += "%s\n" % reverted_bug_url_list[index]
+            message += "%s\n\n" % urls.view_revision_url(revision_list[index])
         return message
 
     def run(self, state):
+        reverted_bug_url_list = []
         # This could move to prepare-ChangeLog by adding a --revert= option.
         self._tool.executive.run_and_throw_if_fail(self._tool.deprecated_port().prepare_changelog_command(), cwd=self._tool.scm().checkout_root)
         changelog_paths = self._tool.checkout().modified_changelogs(git_commit=None)
-        bug_url = self._tool.bugs.bug_url_for_bug_id(state["bug_id"]) if state["bug_id"] else None
-        message = self._message_for_revert(state["revision_list"], state["reason"], bug_url)
+        rollout_bug_url = self._tool.bugs.bug_url_for_bug_id(state["bug_id"]) if state["bug_id"] else None
+        for bug_id in state["bug_id_list"]:
+            reverted_bug_url_list.append(self._tool.bugs.bug_url_for_bug_id(bug_id))
+        message = self._message_for_revert(state["revision_list"], state["reason"], state["description_list"], reverted_bug_url_list, rollout_bug_url)
         for changelog_path in changelog_paths:
             # FIXME: Seems we should prepare the message outside of changelogs.py and then just pass in
             # text that we want to use to replace the reviewed by line.

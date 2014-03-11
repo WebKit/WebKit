@@ -37,57 +37,88 @@ from webkitpy.tool.steps.preparechangelogforrevert import *
 
 
 class UpdateChangeLogsForRevertTest(unittest.TestCase):
-    _revert_entry_with_bug_url = '''2009-08-19  Eric Seidel  <eric@webkit.org>
+    _revert_entry = '''2009-08-19  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r12345.
-        http://trac.webkit.org/changeset/12345
-        http://example.com/123
 
         Reason
 
-        * Scripts/bugzilla-tool:
+        Reverted changeset:
+
+        "Blocked Bug's Description"
+        http://bug.example.com/12345
+        http://trac.webkit.org/changeset/12345
 '''
 
-    _revert_entry_without_bug_url = '''2009-08-19  Eric Seidel  <eric@webkit.org>
+    _revert_entry_with_missing_bug_url_and_description = '''2009-08-19  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r12345.
-        http://trac.webkit.org/changeset/12345
 
         Reason
 
-        * Scripts/bugzilla-tool:
+        Reverted changeset:
+
+        http://trac.webkit.org/changeset/12345
 '''
 
-    _multiple_revert_entry_with_bug_url = '''2009-08-19  Eric Seidel  <eric@webkit.org>
+    _multiple_revert_entry = '''2009-08-19  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r12345, r12346, and r12347.
-        http://trac.webkit.org/changeset/12345
-        http://trac.webkit.org/changeset/12346
-        http://trac.webkit.org/changeset/12347
-        http://example.com/123
 
         Reason
 
-        * Scripts/bugzilla-tool:
+        Reverted changesets:
+
+        "r12345's Description"
+        http://bug.example.com/12345
+        http://trac.webkit.org/changeset/12345
+
+        "r12346's Description"
+        http://bug.example.com/12346
+        http://trac.webkit.org/changeset/12346
+
+        "r12347's Description"
+        http://bug.example.com/12347
+        http://trac.webkit.org/changeset/12347
 '''
 
-    _multiple_revert_entry_without_bug_url = '''2009-08-19  Eric Seidel  <eric@webkit.org>
+    _multiple_revert_entry_with_missing_bug_urls_and_descriptions = '''2009-08-19  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r12345, r12346, and r12347.
-        http://trac.webkit.org/changeset/12345
-        http://trac.webkit.org/changeset/12346
-        http://trac.webkit.org/changeset/12347
 
         Reason
 
-        * Scripts/bugzilla-tool:
+        Reverted changesets:
+
+        http://trac.webkit.org/changeset/12345
+
+        http://trac.webkit.org/changeset/12346
+
+        http://trac.webkit.org/changeset/12347
 '''
 
-    _revert_with_log_reason = """2009-08-19  Eric Seidel  <eric@webkit.org>
+    _multiple_revert_entry_with_a_missing_bug_url_and_description = '''2009-08-19  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r12345, r12346, and r12347.
+
+        Reason
+
+        Reverted changesets:
+
+        "r12345's Description"
+        http://bug.example.com/12345
+        http://trac.webkit.org/changeset/12345
+
+        http://trac.webkit.org/changeset/12346
+
+        "r12347's Description"
+        http://bug.example.com/12347
+        http://trac.webkit.org/changeset/12347
+'''
+
+    _revert_with_long_reason = """2009-08-19  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r12345.
-        http://trac.webkit.org/changeset/12345
-        http://example.com/123
 
         This is a very long reason which should be long enough so that
         _message_for_revert will need to wrap it.  We'll also include
@@ -95,8 +126,34 @@ class UpdateChangeLogsForRevertTest(unittest.TestCase):
         https://veryveryveryveryverylongbugurl.com/reallylongbugthingy.cgi?bug_id=12354
         link so that we can make sure we wrap that right too.
 
-        * Scripts/bugzilla-tool:
+        Reverted changeset:
+
+        "Blocked Bug's Description"
+        http://bug.example.com/12345
+        http://trac.webkit.org/changeset/12345
 """
+
+    _multiple_revert_entry_with_rollout_bug_url = '''2009-08-19  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r12345, r12346, and r12347.
+        http://rollout.example.com/56789
+
+        Reason
+
+        Reverted changesets:
+
+        "r12345's Description"
+        http://bug.example.com/12345
+        http://trac.webkit.org/changeset/12345
+
+        "r12346's Description"
+        http://bug.example.com/12346
+        http://trac.webkit.org/changeset/12346
+
+        "r12347's Description"
+        http://bug.example.com/12347
+        http://trac.webkit.org/changeset/12347
+'''
 
     def _assert_message_for_revert_output(self, args, expected_entry):
         changelog_contents = u"%s\n%s" % (changelog_unittest.ChangeLogTest._new_entry_boilerplate, changelog_unittest.ChangeLogTest._example_changelog)
@@ -112,9 +169,11 @@ class UpdateChangeLogsForRevertTest(unittest.TestCase):
         self.assertEqual(actual_entry.author_email(), "eric@webkit.org")
 
     def test_message_for_revert(self):
-        self._assert_message_for_revert_output([[12345], "Reason"], self._revert_entry_without_bug_url)
-        self._assert_message_for_revert_output([[12345], "Reason", "http://example.com/123"], self._revert_entry_with_bug_url)
-        self._assert_message_for_revert_output([[12345, 12346, 12347], "Reason"], self._multiple_revert_entry_without_bug_url)
-        self._assert_message_for_revert_output([[12345, 12346, 12347], "Reason", "http://example.com/123"], self._multiple_revert_entry_with_bug_url)
+        self._assert_message_for_revert_output([[12345], "Reason", ["Blocked Bug's Description"], ["http://bug.example.com/12345"]], self._revert_entry)
+        self._assert_message_for_revert_output([[12345], "Reason", [None], [None]], self._revert_entry_with_missing_bug_url_and_description)
+        self._assert_message_for_revert_output([[12345, 12346, 12347], "Reason", ["r12345's Description", "r12346's Description", "r12347's Description"], ["http://bug.example.com/12345", "http://bug.example.com/12346", "http://bug.example.com/12347"]], self._multiple_revert_entry)
+        self._assert_message_for_revert_output([[12345, 12346, 12347], "Reason", [None, None, None], [None, None, None]], self._multiple_revert_entry_with_missing_bug_urls_and_descriptions)
+        self._assert_message_for_revert_output([[12345, 12346, 12347], "Reason", ["r12345's Description", None, "r12347's Description"], ["http://bug.example.com/12345", None, "http://bug.example.com/12347"]], self._multiple_revert_entry_with_a_missing_bug_url_and_description)
         long_reason = "This is a very long reason which should be long enough so that _message_for_revert will need to wrap it.  We'll also include a https://veryveryveryveryverylongbugurl.com/reallylongbugthingy.cgi?bug_id=12354 link so that we can make sure we wrap that right too."
-        self._assert_message_for_revert_output([[12345], long_reason, "http://example.com/123"], self._revert_with_log_reason)
+        self._assert_message_for_revert_output([[12345], long_reason, ["Blocked Bug's Description"], ["http://bug.example.com/12345"]], self._revert_with_long_reason)
+        self._assert_message_for_revert_output([[12345, 12346, 12347], "Reason", ["r12345's Description", "r12346's Description", "r12347's Description"], ["http://bug.example.com/12345", "http://bug.example.com/12346", "http://bug.example.com/12347"], "http://rollout.example.com/56789"], self._multiple_revert_entry_with_rollout_bug_url)

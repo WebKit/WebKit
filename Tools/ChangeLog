@@ -1,3 +1,44 @@
+2014-03-11  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        webkitbot rollout ChangeLogs should be nicer
+        https://bugs.webkit.org/show_bug.cgi?id=122654
+
+        Reviewed by Csaba Osztrogonác.
+
+        Added bug urls and descriptions of rolled out patches to the rollout changelog
+        if they are present in the original changelog. Additionally removed the list of
+        changed files and functions.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (ChangeLog.update_with_unreviewed_message): Cut off the list of modified files.
+        * Scripts/webkitpy/common/checkout/checkout.py:
+        (Checkout._changelog_data_for_revision): Store bug description.
+        * Scripts/webkitpy/common/checkout/checkout_mock.py:
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        (CheckoutTest.test_commit_info_for_revision):
+        * Scripts/webkitpy/common/checkout/commitinfo.py:
+        (CommitInfo.bug_description): Added.
+        (CommitInfo.to_json):
+        * Scripts/webkitpy/common/checkout/commitinfo_unittest.py:
+        (CommitInfoTest.test_commit_info_creation):
+        * Scripts/webkitpy/tool/commands/download.py:
+        (AbstractRolloutPrepCommand._prepare_state): Store bug ids and descriptions of rolled
+        out patches for creating rollout changelog.
+        (CreateRollout._prepare_state): Remove obsolete comments and code, the bug id that
+        caused the regression is stored in state["bug_blocked"] now.
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        (test_prepare_rollout):
+        (test_create_rollout_multiple_revision):
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert.py:
+        (PrepareChangeLogForRevert._message_for_revert): Add bug urls and descriptions of
+        rolled out patches to the changelog.
+        (PrepareChangeLogForRevert.run):
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert_unittest.py:
+        (UpdateChangeLogsForRevertTest):
+        (test_message_for_revert):
+        * Scripts/webkitpy/tool/steps/reopenbugafterrollout.py:
+        (ReopenBugAfterRollout.run):
+
 2014-03-11  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Adjust WKTR/DRT to use new API from ATK 2.11.90

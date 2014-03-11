@@ -46,6 +46,7 @@ class CommitInfoTest(unittest.TestCase):
             "author": author,
             "reviewer_text": "Reviewer",
             "reviewer": reviewer,
+            "bug_description": "Bug description",
         }
         commit = CommitInfo(123, "committer@example.com", changelog_data, committer_list)
 
@@ -59,3 +60,4 @@ class CommitInfoTest(unittest.TestCase):
         self.assertEqual(commit.committer(), committer)
         self.assertEqual(commit.committer_email(), "committer@example.com")
         self.assertEqual(commit.responsible_parties(), set([author, committer, reviewer]))
+        self.assertEqual(commit.bug_description(), "Bug description")

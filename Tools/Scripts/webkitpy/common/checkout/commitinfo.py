@@ -62,6 +62,9 @@ class CommitInfo(object):
     def author_email(self):
         return self._changelog_data["author_email"]
 
+    def bug_description(self):
+        return self._changelog_data["bug_description"]
+
     def reviewer(self):
         return self._changelog_data["reviewer"]  # May be None
 
@@ -78,6 +81,7 @@ class CommitInfo(object):
             "author_email": self.author_email(),
             "reviewer_text": self.reviewer_text(),
             "changed_files": self.changed_files(),
+            "bug_description": self.bug_description(),
         }
 
     def responsible_parties(self):

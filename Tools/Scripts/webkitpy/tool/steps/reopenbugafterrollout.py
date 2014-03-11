@@ -39,7 +39,7 @@ class ReopenBugAfterRollout(AbstractStep):
         commit_comment = bug_comment_from_commit_text(self._tool.scm(), state["commit_text"])
         comment_text = "Reverted r%s for reason:\n\n%s\n\n%s" % (state["revision"], state["reason"], commit_comment)
 
-        bug_id = state["bug_id"]
+        bug_id = state["bug_blocked"]
         if not bug_id:
             _log.info(comment_text)
             _log.info("No bugs were updated.")

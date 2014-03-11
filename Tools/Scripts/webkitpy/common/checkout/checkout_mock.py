@@ -53,6 +53,7 @@ mock_revisions = {
             "path/to/file",
             "another/file",
         ],
+        "bug_description": "Example description.",
     }),
     3001: CommitInfo(3001, "tomz@codeaurora.org", {
         "bug_id": 50004,
@@ -65,6 +66,7 @@ mock_revisions = {
             "path/to/file",
             "another/file",
         ],
+        "bug_description": "Another example description.",
     })
 }
 

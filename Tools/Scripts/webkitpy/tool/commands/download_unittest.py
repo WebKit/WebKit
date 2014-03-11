@@ -289,11 +289,12 @@ Not closing bug 50000 as attachment 10000 has review=+.  Assuming there are more
         self.assert_execute_outputs(LandFromURL(), ["https://bugs.webkit.org/show_bug.cgi?id=50000"], options=self._default_options(), expected_logs=expected_logs)
 
     def test_prepare_rollout(self):
-        expected_logs = "Preparing rollout for bug 50000.\nUpdating working directory\n"
+        expected_logs = "Preparing rollout for bug 50000.\nPreparing rollout for bug 50000.\nUpdating working directory\n"
         self.assert_execute_outputs(PrepareRollout(), [852, "Reason"], options=self._default_options(), expected_logs=expected_logs)
 
     def test_create_rollout(self):
         expected_logs = """Preparing rollout for bug 50000.
+Preparing rollout for bug 50000.
 Updating working directory
 MOCK create_bug
 bug_title: REGRESSION(r852): Reason
@@ -314,10 +315,37 @@ where ATTACHMENT_ID is the ID of this attachment.
 -- End comment --
 """
         self.assert_execute_outputs(CreateRollout(), [852, "Reason"], options=self._default_options(), expected_logs=expected_logs)
+
+    def test_create_rollout_multiple_revision(self):
+        expected_logs = """Preparing rollout for bug 50000.
+Preparing rollout for bug 50000.
+Unable to parse bug number from diff.
+Preparing rollout for bug 50000.
+Updating working directory
+MOCK create_bug
+bug_title: REGRESSION(r852): Reason
+bug_description: http://trac.webkit.org/changeset/852 broke the build:
+Reason
+component: MOCK component
+cc: MOCK cc
+blocked: 50000
+MOCK add_patch_to_bug: bug_id=60001, description=ROLLOUT of r852, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
+-- Begin comment --
+Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the rollout will be successful.  This process takes approximately 15 minutes.
+
+If you would like to land the rollout faster, you can use the following command:
+
+  webkit-patch land-attachment ATTACHMENT_ID
+
+where ATTACHMENT_ID is the ID of this attachment.
+-- End comment --
+"""
+        self.maxDiff = None
         self.assert_execute_outputs(CreateRollout(), ["855 852 854", "Reason"], options=self._default_options(), expected_logs=expected_logs)
 
     def test_create_rollout_resolved(self):
         expected_logs = """Preparing rollout for bug 50004.
+Preparing rollout for bug 50004.
 Updating working directory
 MOCK create_bug
 bug_title: REGRESSION(r3001): Reason
@@ -342,6 +370,7 @@ where ATTACHMENT_ID is the ID of this attachment.
 
     def test_rollout(self):
         expected_logs = """Preparing rollout for bug 50000.
+Preparing rollout for bug 50000.
 Updating working directory
 MOCK: user.open_url: file://...
 Was that diff correct?
@@ -353,5 +382,5 @@ Reason
 
 Committed r49824: <http://trac.webkit.org/changeset/49824>'
 """
-        self.assert_execute_outputs(Rollout(), [852, "Reason"], options=self._default_options(), expected_logs=expected_logs)
+        self.assert_execute_outputs(Rollout(), [852, "Reason", "Description"], options=self._default_options(), expected_logs=expected_logs)
 

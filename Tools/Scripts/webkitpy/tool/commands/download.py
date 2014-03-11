@@ -394,6 +394,8 @@ class AbstractRolloutPrepCommand(AbstractSequencedCommand):
 
     def _prepare_state(self, options, args, tool):
         revision_list = []
+        description_list = []
+        bug_id_list = []
         for revision in str(args[0]).split():
             if revision.isdigit():
                 revision_list.append(int(revision))
@@ -402,15 +404,26 @@ class AbstractRolloutPrepCommand(AbstractSequencedCommand):
         revision_list.sort()
 
         # We use the earliest revision for the bug info
+        for revision in revision_list:
+            commit_info = self._commit_info(revision)
+            if commit_info:
+                description_list.append(commit_info.bug_description())
+                bug_id_list.append(commit_info.bug_id())
+            else:
+                description_list.append(None)
+                bug_id_list.append(None)
         earliest_revision = revision_list[0]
         state = {
             "revision": earliest_revision,
             "revision_list": revision_list,
             "reason": args[1],
+            "bug_id": None,
+            "bug_id_list": bug_id_list,
+            "description_list": description_list,
         }
         commit_info = self._commit_info(earliest_revision)
         if commit_info:
-            state["bug_id"] = commit_info.bug_id()
+            state["bug_blocked"] = commit_info.bug_id()
             cc_list = sorted([party.bugzilla_email()
                             for party in commit_info.responsible_parties()
                             if party.bugzilla_email()])
@@ -448,14 +461,6 @@ class CreateRollout(AbstractRolloutPrepCommand):
 
     def _prepare_state(self, options, args, tool):
         state = AbstractRolloutPrepCommand._prepare_state(self, options, args, tool)
-        # Currently, state["bug_id"] points to the bug that caused the
-        # regression.  We want to create a new bug that blocks the old bug
-        # so we move state["bug_id"] to state["bug_blocked"] and delete the
-        # old state["bug_id"] so that steps.CreateBug will actually create
-        # the new bug that we want (and subsequently store its bug id into
-        # state["bug_id"])
-        state["bug_blocked"] = state["bug_id"]
-        del state["bug_id"]
         state["bug_title"] = "REGRESSION(r%s): %s" % (state["revision"], state["reason"])
         state["bug_description"] = "%s broke the build:\n%s" % (urls.view_revision_url(state["revision"]), state["reason"])
         # FIXME: If we had more context here, we could link to other open bugs
