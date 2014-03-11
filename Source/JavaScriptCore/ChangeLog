@@ -1,3 +1,11 @@
+2014-03-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix typo in EXCLUDED_SOURCE_FILE_NAMES_iphoneos.
+
+        Rubber-stamped by Dan Bernstein.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2014-03-10  Mark Lam  <mark.lam@apple.com>
 
         r165414 broke the 32-bit x86 tests: ASSERTION FAILED: result != InvalidIndex @ GPRInfo.h:330.
