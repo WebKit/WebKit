@@ -1633,17 +1633,12 @@ class CppStyleTest(CppStyleTestBase):
                          '  [whitespace/parens] [5]')
         self.assert_lint('for (foo; bar; ) {', '')
         self.assert_lint('for ((foo); (bar); ) {', '')
-        self.assert_lint('foreach (foo, foos ) {', 'Extra space before ) in foreach'
-                         '  [whitespace/parens] [5]')
-        self.assert_lint('foreach ( foo, foos) {', 'Extra space after ( in foreach'
-                         '  [whitespace/parens] [5]')
         self.assert_lint('while (  foo) {', 'Extra space after ( in while'
                          '  [whitespace/parens] [5]')
 
     def test_spacing_for_fncall(self):
         self.assert_lint('if (foo) {', '')
         self.assert_lint('for (foo;bar;baz) {', '')
-        self.assert_lint('foreach (foo, foos) {', '')
         self.assert_lint('while (foo) {', '')
         self.assert_lint('switch (foo) {', '')
         self.assert_lint('new (RenderArena()) RenderInline(document())', '')
@@ -4257,12 +4252,6 @@ class WebKitStyleTest(CppStyleTestBase):
             '}\n',
             'This { should be at the end of the previous line  [whitespace/braces] [4]')
         self.assert_multi_line_lint(
-            'foreach (Foo* foo, foos)\n'
-            '{\n'
-            '    int bar;\n'
-            '}\n',
-            'This { should be at the end of the previous line  [whitespace/braces] [4]')
-        self.assert_multi_line_lint(
             'switch (type)\n'
             '{\n'
             'case foo: return;\n'
@@ -4335,12 +4324,6 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_multi_line_lint(
             'for (; foo; bar) {\n'
             '    int foo;\n'
-            '}\n',
-            'One line control clauses should not use braces.  [whitespace/braces] [4]')
-
-        self.assert_multi_line_lint(
-            'foreach (foo, foos) {\n'
-            '    int bar;\n'
             '}\n',
             'One line control clauses should not use braces.  [whitespace/braces] [4]')
 
