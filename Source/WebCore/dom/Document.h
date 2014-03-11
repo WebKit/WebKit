@@ -383,9 +383,6 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitpointerlockchange);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitpointerlockerror);
 #endif
-#if ENABLE(PAGE_VISIBILITY_API)
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(visibilitychange);
-#endif
 #if ENABLE(CSP_NEXT)
     DEFINE_ATTRIBUTE_EVENT_LISTENER(securitypolicyviolation);
 #endif

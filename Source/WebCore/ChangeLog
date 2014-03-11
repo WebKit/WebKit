@@ -1,3 +1,15 @@
+2014-03-10  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Remove 'visibilitychange' attribute event listener from document
+        https://bugs.webkit.org/show_bug.cgi?id=129794
+
+        Reviewed by Simon Fraser.
+
+        Remove the unused attribute event listener which is not defined in Page Visibility API spec.
+        http://www.w3.org/TR/page-visibility/#sec-document-interface
+
+        * dom/Document.h:
+
 2014-03-10  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WebKit 2] Wire the unobscured rect in the WebProcess
