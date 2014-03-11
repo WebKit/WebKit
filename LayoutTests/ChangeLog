@@ -1,3 +1,16 @@
+2014-03-11  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Expose aria-posinset and aria-setsize through object attributes
+        https://bugs.webkit.org/show_bug.cgi?id=130011
+
+        Reviewed by Chris Fleizach.
+
+        Test could be shared with other platforms.
+
+        * accessibility/aria-setsize-posinset-expected.txt: Renamed from LayoutTests/platform/mac/accessibility/aria-setsize-posinset-expected.txt.
+        * accessibility/aria-setsize-posinset.html: Renamed from LayoutTests/platform/mac/accessibility/aria-setsize-posinset.html.
+        * platform/win/TestExpectations: Skipping on win port.
+
 2014-03-10  Frédéric Wang  <fred.wang@free.fr>
 
         Improve renderer classes for MathML Token elements.

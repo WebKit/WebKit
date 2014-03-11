@@ -58,6 +58,8 @@ enum AttributesIndex {
     // Attribute names.
     InvalidNameIndex = 0,
     PlaceholderNameIndex,
+    PosInSetIndex,
+    SetSizeIndex,
     SortNameIndex,
 
     // Attribute values.
@@ -72,6 +74,8 @@ enum AttributesIndex {
 const String attributesMap[][2] = {
     // Attribute names.
     { "AXInvalid", "invalid" },
+    { "AXARIAPosInSet", "posinset" },
+    { "AXARIASetSize", "setsize" },
     { "AXPlaceholderValue", "placeholder-text" } ,
     { "AXSortDirection", "sort" },
 
@@ -1302,7 +1306,19 @@ JSStringRef AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
 
 double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
 {
-    // FIXME: implement
+    if (!ATK_IS_OBJECT(m_element))
+        return 0;
+
+    String atkAttributeName = coreAttributeToAtkAttribute(attribute);
+    if (atkAttributeName.isEmpty())
+        return 0;
+
+    if (atkAttributeName == "setsize" || atkAttributeName == "posinset") {
+        String attributeValue = getAttributeSetValueForId(ATK_OBJECT(m_element), ObjectAttributeType, atkAttributeName);
+        if (!attributeValue.isEmpty())
+            return attributeValue.toDouble();
+    }
+
     return 0;
 }
 

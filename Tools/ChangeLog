@@ -1,3 +1,17 @@
+2014-03-11  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Expose aria-posinset and aria-setsize through object attributes
+        https://bugs.webkit.org/show_bug.cgi?id=130011
+
+        Reviewed by Chris Fleizach.
+
+        Added missing implementation of numberAttributeValue both to WKTR and DRT.
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::numberAttributeValue):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::numberAttributeValue):
+
 2014-03-10  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.

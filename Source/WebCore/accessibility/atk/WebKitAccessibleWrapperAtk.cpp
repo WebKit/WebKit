@@ -553,6 +553,12 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
         attributeSet = addToAtkAttributeSet(attributeSet, "sort", sortAttribute.string().utf8().data());
     }
 
+    if (coreObject->supportsARIAPosInSet())
+        attributeSet = addToAtkAttributeSet(attributeSet, "posinset", String::number(coreObject->ariaPosInSet()).utf8().data());
+
+    if (coreObject->supportsARIASetSize())
+        attributeSet = addToAtkAttributeSet(attributeSet, "setsize", String::number(coreObject->ariaSetSize()).utf8().data());
+
     // Landmarks will be exposed with xml-roles object attributes, with the exception
     // of LandmarkApplicationRole, which will be exposed with ATK_ROLE_EMBEDDED.
     AccessibilityRole role = coreObject->roleValue();

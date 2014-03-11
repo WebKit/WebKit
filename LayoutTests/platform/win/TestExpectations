@@ -672,6 +672,8 @@ accessibility/loading-iframe-sends-notification.html
 # Crashing in AccessibilityUIElement::parentElement
 webkit.org/b/49379 accessibility/iframe-bastardization.html
 
+webkit.org/b/130011 accessibility/aria-setsize-posinset.html [ Skip ]
+
 # ASSERTION FAILED !m_ptr under AccessibilityController::winAddNotificationListener
 webkit.org/b/87426 [ Debug ] accessibility/menu-list-sends-change-notification.html [ Crash ]
 webkit.org/b/87425 [ Debug ] accessibility/multiselect-list-reports-active-option.html [ Crash ]

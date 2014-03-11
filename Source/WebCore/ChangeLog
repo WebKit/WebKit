@@ -1,3 +1,18 @@
+2014-03-11  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Expose aria-posinset and aria-setsize through object attributes
+        https://bugs.webkit.org/show_bug.cgi?id=130011
+
+        Reviewed by Chris Fleizach.
+
+        Based on http://www.w3.org/TR/2014/PR-wai-aria-implementation-20140206/
+        aria-poinset and aria-setsize can be exposed as object attributes.
+
+        Test: accessibility/aria-setsize-posinset.html
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes):
+
 2014-03-10  Frédéric Wang  <fred.wang@free.fr>
 
         Improve renderer classes for MathML Token elements.
