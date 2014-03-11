@@ -62,3 +62,23 @@ def init(jhbuildrc_globals, platform):
 
     jhbuildrc_globals["nonotify"] = True
     jhbuildrc_globals["notrayicon"] = True
+
+    if 'NUMBER_OF_PROCESSORS' in os.environ:
+        jhbuildrc_globals['jobs'] = os.environ['NUMBER_OF_PROCESSORS']
+
+    # Avoid runtime conflicts with GStreamer system-wide plugins. We want
+    # to use only the plugins we build in JHBuild.
+    os.environ['GST_PLUGIN_SYSTEM_PATH'] = ''
+
+    # Use system libraries while building.
+    if jhbuildrc_globals['use_lib64']:
+        _library_dir = 'lib64'
+    else:
+        _library_dir = 'lib'
+    addpath = jhbuildrc_globals['addpath']
+    addpath('PKG_CONFIG_PATH', os.path.join(os.sep, 'usr', _library_dir, 'pkgconfig'))
+    addpath('PKG_CONFIG_PATH', os.path.join(os.sep, 'usr', 'share', 'pkgconfig'))
+
+    prefix = jhbuildrc_globals['prefix']
+    addpath('CMAKE_PREFIX_PATH', prefix)
+    addpath('CMAKE_LIBRARY_PATH', os.path.join(prefix, _library_dir))

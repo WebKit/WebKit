@@ -22,33 +22,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../jhbuild") )
 import jhbuildrc_common
 jhbuildrc_common.init(globals(), "efl") 
 
-if 'NUMBER_OF_PROCESSORS' in os.environ:
-    jobs = os.environ['NUMBER_OF_PROCESSORS']
-
-# Use system libraries while building.
-if use_lib64:
-    _libdir = 'lib64'
-else:
-    _libdir = 'lib'
-addpath('PKG_CONFIG_PATH', os.path.join(os.sep, 'usr', _libdir, 'pkgconfig'))
-addpath('PKG_CONFIG_PATH', os.path.join(os.sep, 'usr', 'share', 'pkgconfig'))
-
 addpath('XDG_DATA_DIRS', '/usr/share')
 addpath('XDG_CONFIG_DIRS', '/etc/xdg')
 
-addpath('CMAKE_PREFIX_PATH', prefix)
-
-# jhbuild installs libraries into lib64/ by default when building on
-# 64-bit Linux installations, while CMake does not look for libraries
-# in lib64/ if /etc/debian_version exists. For now we just pass the
-# lib64/ directory to the CMAKE_LIBRARY_PATH environment variable to
-# make sure the libraries installed by jhbuild are found by CMake on
-# Debian-based systems as well.
-if use_lib64:
-    addpath('CMAKE_LIBRARY_PATH', os.path.join(prefix, _libdir))
-
 partial_build = False
-
-# Avoid runtime conflicts with GStreamer system-wide plugins. We want
-# to use only the plugins we build in JHBuild.
-os.environ['GST_PLUGIN_SYSTEM_PATH'] = ''

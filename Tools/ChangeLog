@@ -1,3 +1,17 @@
+2014-03-11  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] The jhbuild environment should set CMAKE_PREFIX_PATH and CMAKE_LIBRARY_PATH
+        https://bugs.webkit.org/show_bug.cgi?id=130064
+
+        Reviewed by Philippe Normand.
+
+        * efl/jhbuildrc: Remove duplicated code.
+        * gtk/jhbuildrc: Remove duplicated code.
+        * jhbuild/jhbuildrc_common.py:
+        (init): Move duplicated code from jhbuildrc's and extend setting CMake environment variables to
+        GTK+. We always set the CMAKE_LIBRARY_PATH, which should be harmless for EFL 32-bit systems.
+        and is apparently necessary for GTK+.
+
 2014-03-11  László Langó  <llango.u-szeged@partner.samsung.com>
 
         check-webkit-style failed to complain about missing braces
