@@ -614,6 +614,7 @@ public:
     void drawPagesToPDF(uint64_t frameID, const PrintInfo&, uint32_t first, uint32_t count, uint64_t callbackID);
 #elif PLATFORM(GTK)
     void drawPagesForPrinting(uint64_t frameID, const PrintInfo&, uint64_t callbackID);
+    void didFinishPrintOperation(const WebCore::ResourceError&, uint64_t callbackID);
 #endif
 
     void setMediaVolume(float);

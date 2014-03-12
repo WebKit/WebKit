@@ -1,3 +1,41 @@
+2014-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Runtime error when page is closed while print operation is in progress
+        https://bugs.webkit.org/show_bug.cgi?id=129869
+
+        Reviewed by Anders Carlsson.
+
+        Sometimes when the page is closed right after printing the web
+        process aborts with the runtime message "pure virtual method
+        called terminate called without an active exception".
+        This happens because the page is closed when the pages have been
+        printed, but print job is still ongoing sending the data to the
+        printer. When print job finishes, we try to notify the UI process
+        sending the print callback message using WebPage::send(), but the
+        web page object has been destroyed. The virtual method it complains
+        about is probably MessageSender::messageSenderDestinationID() used
+        by send(). Since our print operation is always asynchronous, we
+        need a way to notify the web page when the print operation has
+        actually finished to clean it up, but also notify the print
+        operation when the page has been closed to not try to notify the
+        UI process in that case.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close): Call disconnectFromPage to notify the
+        print operation in case there's an ongoing print job.
+        (WebKit::WebPage::endPrinting): Do not cleanup the print operation
+        here, since the print opertation might not have finished yet.
+        (WebKit::WebPage::didFinishPrintOperation): Send
+        PrintFinishedCallback message to the Ui process and cleanup the
+        print operation.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::WebPrintOperationGtk::disconnectFromPage): Set m_webPage
+        to nullptr.
+        (WebKit::WebPrintOperationGtk::printDone): Call
+        didFinishPrintOperation() is the web page hasn't been closed.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.h:
+
 2014-03-12  Andreas Kling  <akling@apple.com>
 
         BundlePageDiagnosticLoggingClient leaks every string passing through it.

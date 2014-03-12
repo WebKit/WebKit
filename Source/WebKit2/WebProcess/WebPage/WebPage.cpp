@@ -845,6 +845,13 @@ void WebPage::close()
     }
 #endif
 
+#if PLATFORM(GTK)
+    if (m_printOperation) {
+        m_printOperation->disconnectFromPage();
+        m_printOperation = nullptr;
+    }
+#endif
+
     m_sandboxExtensionTracker.invalidate();
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
@@ -3465,9 +3472,6 @@ void WebPage::beginPrinting(uint64_t frameID, const PrintInfo& printInfo)
 void WebPage::endPrinting()
 {
     drawingArea()->setLayerTreeStateIsFrozen(false);
-#if PLATFORM(GTK)
-    m_printOperation = 0;
-#endif
     m_printContext = nullptr;
 }
 
@@ -3593,7 +3597,6 @@ void WebPage::drawPagesToPDF(uint64_t frameID, const PrintInfo& printInfo, uint3
 }
 
 #elif PLATFORM(GTK)
-
 void WebPage::drawPagesForPrinting(uint64_t frameID, const PrintInfo& printInfo, uint64_t callbackID)
 {
     beginPrinting(frameID, printInfo);
@@ -3603,6 +3606,12 @@ void WebPage::drawPagesForPrinting(uint64_t frameID, const PrintInfo& printInfo,
     }
 
     send(Messages::WebPageProxy::VoidCallback(callbackID));
+}
+
+void WebPage::didFinishPrintOperation(const WebCore::ResourceError& error, uint64_t callbackID)
+{
+    send(Messages::WebPageProxy::PrintFinishedCallback(error, callbackID));
+    m_printOperation = nullptr;
 }
 #endif
 
