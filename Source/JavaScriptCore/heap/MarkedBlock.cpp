@@ -129,6 +129,7 @@ MarkedBlock::FreeList MarkedBlock::sweepHelper(SweepMode sweepMode)
         // Happens when a block transitions to fully allocated.
         ASSERT(sweepMode == SweepToFreeList);
         return FreeList();
+    case Retired:
     case Allocated:
         RELEASE_ASSERT_NOT_REACHED();
         return FreeList();
@@ -226,11 +227,16 @@ void MarkedBlock::clearMarksWithCollectionType()
 #if ENABLE(GGC)
         m_rememberedSet.clearAll();
 #endif
+        // This will become true at the end of the mark phase. We set it now to
+        // avoid an extra pass to do so later.
+        m_state = Marked;
+        return;
     }
 
-    // This will become true at the end of the mark phase. We set it now to
-    // avoid an extra pass to do so later.
-    m_state = Marked;
+    ASSERT(collectionType == EdenCollection);
+    // If a block was retired then there's no way an EdenCollection can un-retire it.
+    if (m_state != Retired)
+        m_state = Marked;
 }
 
 void MarkedBlock::lastChanceToFinalize()
@@ -256,6 +262,29 @@ MarkedBlock::FreeList MarkedBlock::resumeAllocating()
 
     // Re-create our free list from before stopping allocation. 
     return sweep(SweepToFreeList);
+}
+
+void MarkedBlock::didRetireBlock(const FreeList& freeList)
+{
+    HEAP_LOG_BLOCK_STATE_TRANSITION(this);
+    FreeCell* head = freeList.head;
+
+    // Currently we don't notify the Heap that we're giving up on this block. 
+    // The Heap might be able to make a better decision about how many bytes should 
+    // be allocated before the next collection if it knew about this retired block.
+    // On the other hand we'll waste at most 10% of our Heap space between FullCollections 
+    // and only under heavy fragmentation.
+
+    // We need to zap the free list when retiring a block so that we don't try to destroy 
+    // previously destroyed objects when we re-sweep the block in the future.
+    FreeCell* next;
+    for (FreeCell* current = head; current; current = next) {
+        next = current->next;
+        reinterpret_cast<JSCell*>(current)->zap();
+    }
+
+    ASSERT(m_state == FreeListed);
+    m_state = Retired;
 }
 
 } // namespace JSC

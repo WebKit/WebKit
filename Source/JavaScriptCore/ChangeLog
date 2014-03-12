@@ -1,3 +1,44 @@
+2014-03-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        MarkedBlocks that are "full enough" shouldn't be swept after EdenCollections
+        https://bugs.webkit.org/show_bug.cgi?id=129920
+
+        Reviewed by Geoffrey Garen.
+
+        This patch introduces the notion of "retiring" MarkedBlocks. We retire a MarkedBlock
+        when the amount of free space in a MarkedBlock drops below a certain threshold.
+        Retired blocks are not considered for sweeping.
+
+        This is profitable because it reduces churn during sweeping. To build a free list, 
+        we have to scan through each cell in a block. After a collection, all objects that 
+        are live in the block will remain live until the next FullCollection, at which time
+        we un-retire all previously retired blocks. Thus, a small number of objects in a block
+        that die during each EdenCollection could cause us to do a disproportiante amount of 
+        sweeping for how much free memory we get back.
+
+        This patch looks like a consistent ~2% progression on boyer and is neutral everywhere else.
+
+        * heap/Heap.h:
+        (JSC::Heap::didRetireBlockWithFreeListSize):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::tryAllocateHelper):
+        (JSC::MarkedAllocator::removeBlock):
+        (JSC::MarkedAllocator::reset):
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::MarkedAllocator):
+        (JSC::MarkedAllocator::forEachBlock):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::sweepHelper):
+        (JSC::MarkedBlock::clearMarksWithCollectionType):
+        (JSC::MarkedBlock::didRetireBlock):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::willRemoveBlock):
+        (JSC::MarkedBlock::isLive):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::clearNewlyAllocated):
+        (JSC::MarkedSpace::clearMarks):
+        * runtime/Options.h:
+
 2014-03-11  Andreas Kling  <akling@apple.com>
 
         Streamline PropertyTable for lookup-only access.

@@ -238,6 +238,7 @@ typedef OptionRange optionRange;
     v(unsigned, opaqueRootMergeThreshold, 1000) \
     v(double, minHeapUtilization, 0.8) \
     v(double, minCopiedBlockUtilization, 0.9) \
+    v(double, minMarkedBlockUtilization, 0.9) \
     \
     v(bool, forceWeakRandomSeed, false) \
     v(unsigned, forcedWeakRandomSeed, 0) \

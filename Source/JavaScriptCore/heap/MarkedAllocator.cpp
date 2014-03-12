@@ -79,12 +79,12 @@ inline void* MarkedAllocator::tryAllocateHelper(size_t bytes)
 
             MarkedBlock::FreeList freeList = block->sweep(MarkedBlock::SweepToFreeList);
             
-            if (!freeList.head) {
-                block->didConsumeEmptyFreeList();
+            double utilization = ((double)MarkedBlock::blockSize - (double)freeList.bytes) / (double)MarkedBlock::blockSize;
+            if (utilization >= Options::minMarkedBlockUtilization()) {
+                ASSERT(freeList.bytes || !freeList.head);
                 m_blockList.remove(block);
-                m_blockList.push(block);
-                if (!m_lastFullBlock)
-                    m_lastFullBlock = block;
+                m_retiredBlocks.push(block);
+                block->didRetireBlock(freeList);
                 continue;
             }
 
@@ -211,9 +211,7 @@ void MarkedAllocator::removeBlock(MarkedBlock* block)
     if (m_nextBlockToSweep == block)
         m_nextBlockToSweep = m_nextBlockToSweep->next();
 
-    if (block == m_lastFullBlock)
-        m_lastFullBlock = m_lastFullBlock->prev();
-    
+    block->willRemoveBlock();
     m_blockList.remove(block);
 }
 
@@ -223,12 +221,9 @@ void MarkedAllocator::reset()
     m_currentBlock = 0;
     m_freeList = MarkedBlock::FreeList();
     if (m_heap->operationInProgress() == FullCollection)
-        m_lastFullBlock = 0;
+        m_blockList.append(m_retiredBlocks);
 
-    if (m_lastFullBlock)
-        m_nextBlockToSweep = m_lastFullBlock->next() ? m_lastFullBlock->next() : m_lastFullBlock;
-    else
-        m_nextBlockToSweep = m_blockList.head();
+    m_nextBlockToSweep = m_blockList.head();
 }
 
 } // namespace JSC

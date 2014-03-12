@@ -317,12 +317,6 @@ void MarkedSpace::clearNewlyAllocated()
 #endif
 }
 
-#ifndef NDEBUG
-struct VerifyMarked : MarkedBlock::VoidFunctor {
-    void operator()(MarkedBlock* block) { ASSERT(block->needsSweeping()); }
-};
-#endif
-
 void MarkedSpace::clearMarks()
 {
     if (m_heap->operationInProgress() == EdenCollection) {
@@ -330,9 +324,6 @@ void MarkedSpace::clearMarks()
             m_blocksWithNewObjects[i]->clearMarks();
     } else
         forEachBlock<ClearMarks>();
-#ifndef NDEBUG
-    forEachBlock<VerifyMarked>();
-#endif
 }
 
 void MarkedSpace::willStartIterating()
