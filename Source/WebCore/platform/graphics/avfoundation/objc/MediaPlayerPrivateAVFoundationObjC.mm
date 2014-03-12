@@ -224,7 +224,6 @@ enum MediaPlayerAVFoundationObservationContext {
 }
 -(id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC*)callback;
 -(void)disconnect;
--(void)playableKnown;
 -(void)metadataLoaded;
 -(void)didEnd:(NSNotification *)notification;
 -(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(MediaPlayerAVFoundationObservationContext)context;
@@ -719,9 +718,13 @@ void MediaPlayerPrivateAVFoundationObjC::checkPlayability()
     m_haveCheckedPlayability = true;
 
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::checkPlayability(%p)", this);
+    auto weakThis = createWeakPtr();
 
     [m_avAsset.get() loadValuesAsynchronouslyForKeys:[NSArray arrayWithObject:@"playable"] completionHandler:^{
-        [m_objcObserver.get() playableKnown];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (weakThis)
+                weakThis->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::AssetPlayabilityKnown);
+        });
     }];
 }
 
@@ -2255,14 +2258,6 @@ NSArray* itemKVOProperties()
         return;
 
     m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::AssetMetadataLoaded);
-}
-
-- (void)playableKnown
-{
-    if (!m_callback)
-        return;
-
-    m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::AssetPlayabilityKnown);
 }
 
 - (void)didEnd:(NSNotification *)unusedNotification

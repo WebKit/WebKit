@@ -1,3 +1,18 @@
+2014-03-12  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Crash when running media/fallback.html test in MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification()
+        https://bugs.webkit.org/show_bug.cgi?id=130136
+
+        Reviewed by Eric Carlson.
+
+        MediaPlayerPrivateAVFoundation is trying to lock its m_queueMutex from an async thread after
+        while being destroyed in the main thread. To resolve this race condition, redispatch from
+        the async thread to the main thread, and use a WeakPtr to determine whether the object has
+        been destroyed or not.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::checkPlayability):
+
 2014-03-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Remove use of QTSDK
