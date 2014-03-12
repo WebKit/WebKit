@@ -1,3 +1,17 @@
+2014-03-12  Andreas Kling  <akling@apple.com>
+
+        BundlePageDiagnosticLoggingClient leaks every string passing through it.
+        <https://webkit.org/b/130140>
+        <rdar://problem/15416838>
+
+        Use toAPI() instead of toCopiedAPI() so the receiving end doesn't need
+        to worry about adopting the WKStringRef.
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.cpp:
+        (WebKit::InjectedBundlePageDiagnosticLoggingClient::logDiagnosticMessage):
+
 2014-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Hook up image controls for WebKit1
