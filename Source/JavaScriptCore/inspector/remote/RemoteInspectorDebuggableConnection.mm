@@ -28,7 +28,9 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
+#import "EventLoop.h"
 #import "RemoteInspector.h"
+#import <wtf/Vector.h>
 
 #if PLATFORM(IOS)
 #import <wtf/ios/WebCoreThread.h>
@@ -36,26 +38,105 @@
 
 namespace Inspector {
 
-RemoteInspectorDebuggableConnection::RemoteInspectorDebuggableConnection(RemoteInspectorDebuggable* debuggable, NSString *connectionIdentifier, NSString *destination, RemoteInspectorDebuggable::DebuggableType type)
+class RemoteInspectorBlock {
+public:
+    RemoteInspectorBlock(void (^task)())
+        : m_task(Block_copy(task))
+    {
+    }
+
+    RemoteInspectorBlock(const RemoteInspectorBlock& other)
+        : m_task(Block_copy(other.m_task))
+    {
+    }
+
+    ~RemoteInspectorBlock()
+    {
+        Block_release(m_task);
+    }
+
+    RemoteInspectorBlock& operator=(const RemoteInspectorBlock& other)
+    {
+        void (^oldTask)() = m_task;
+        m_task = Block_copy(other.m_task);
+        Block_release(oldTask);
+        return *this;
+    }
+
+    void operator()() const
+    {
+        m_task();
+    }
+
+private:
+    void (^m_task)();
+};
+
+typedef Vector<RemoteInspectorBlock> RemoteInspectorQueue;
+static std::mutex* rwiQueueMutex;
+static CFRunLoopSourceRef rwiRunLoopSource;
+static RemoteInspectorQueue* rwiQueue;
+
+static void RemoteInspectorHandleRunSource(void*)
+{
+    ASSERT(CFRunLoopGetCurrent() == CFRunLoopGetMain());
+    ASSERT(rwiQueueMutex);
+    ASSERT(rwiRunLoopSource);
+    ASSERT(rwiQueue);
+
+    RemoteInspectorQueue queueCopy;
+    {
+        std::lock_guard<std::mutex> lock(*rwiQueueMutex);
+        queueCopy = *rwiQueue;
+        rwiQueue->clear();
+    }
+
+    for (const auto& block : queueCopy)
+        block();
+}
+
+static void RemoteInspectorQueueTask(void (^task)())
+{
+    ASSERT(rwiQueueMutex);
+    ASSERT(rwiRunLoopSource);
+    ASSERT(rwiQueue);
+
+    {
+        std::lock_guard<std::mutex> lock(*rwiQueueMutex);
+        rwiQueue->append(RemoteInspectorBlock(task));
+    }
+
+    CFRunLoopSourceSignal(rwiRunLoopSource);
+    CFRunLoopWakeUp(CFRunLoopGetMain());
+}
+
+static void RemoteInspectorInitializeQueue()
+{
+    static dispatch_once_t pred;
+    dispatch_once(&pred, ^{
+        rwiQueue = new RemoteInspectorQueue;
+        rwiQueueMutex = std::make_unique<std::mutex>().release();
+
+        CFRunLoopSourceContext runLoopSourceContext = {0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, RemoteInspectorHandleRunSource};
+        rwiRunLoopSource = CFRunLoopSourceCreate(nullptr, 1, &runLoopSourceContext);
+        // Add to the default run loop mode for default handling, and the JSContext remote inspector run loop mode when paused.
+        CFRunLoopAddSource(CFRunLoopGetMain(), rwiRunLoopSource, kCFRunLoopDefaultMode);
+        CFRunLoopAddSource(CFRunLoopGetMain(), rwiRunLoopSource, EventLoop::remoteInspectorRunLoopMode());
+    });
+}
+
+RemoteInspectorDebuggableConnection::RemoteInspectorDebuggableConnection(RemoteInspectorDebuggable* debuggable, NSString *connectionIdentifier, NSString *destination, RemoteInspectorDebuggable::DebuggableType)
     : m_debuggable(debuggable)
-    , m_queueForDebuggable(NULL)
     , m_connectionIdentifier(connectionIdentifier)
     , m_destination(destination)
     , m_identifier(debuggable->identifier())
     , m_connected(false)
 {
-    // Web debuggables must be accessed on the main queue (or the WebThread on iOS). Signal that with a NULL m_queueForDebuggable.
-    // However, JavaScript debuggables can be accessed from any thread/queue, so we create a queue for each JavaScript debuggable.
-    if (type == RemoteInspectorDebuggable::JavaScript)
-        m_queueForDebuggable = dispatch_queue_create("com.apple.JavaScriptCore.remote-inspector-debuggable-connection", DISPATCH_QUEUE_SERIAL);
+    RemoteInspectorInitializeQueue();
 }
 
 RemoteInspectorDebuggableConnection::~RemoteInspectorDebuggableConnection()
 {
-    if (m_queueForDebuggable) {
-        dispatch_release(m_queueForDebuggable);
-        m_queueForDebuggable = NULL;
-    }
 }
 
 NSString *RemoteInspectorDebuggableConnection::destination() const
@@ -70,14 +151,14 @@ NSString *RemoteInspectorDebuggableConnection::connectionIdentifier() const
 
 void RemoteInspectorDebuggableConnection::dispatchAsyncOnDebuggable(void (^block)())
 {
-    if (m_queueForDebuggable)
-        dispatch_async(m_queueForDebuggable, block);
 #if PLATFORM(IOS)
-    else if (WebCoreWebThreadIsEnabled && WebCoreWebThreadIsEnabled())
+    if (WebCoreWebThreadIsEnabled && WebCoreWebThreadIsEnabled()) {
         WebCoreWebThreadRun(block);
+        return;
+    }
 #endif
-    else
-        dispatch_async(dispatch_get_main_queue(), block);
+
+    RemoteInspectorQueueTask(block);
 }
 
 bool RemoteInspectorDebuggableConnection::setup()
@@ -135,10 +216,15 @@ void RemoteInspectorDebuggableConnection::sendMessageToBackend(NSString *message
     ref();
     dispatchAsyncOnDebuggable(^{
         {
-            std::lock_guard<std::mutex> lock(m_debuggableMutex);
+            RemoteInspectorDebuggable* debuggable = nullptr;
+            {
+                std::lock_guard<std::mutex> lock(m_debuggableMutex);
+                if (!m_debuggable)
+                    return;
+                debuggable = m_debuggable;
+            }
 
-            if (m_debuggable)
-                m_debuggable->dispatchMessageFromRemoteFrontend(message);
+            debuggable->dispatchMessageFromRemoteFrontend(message);
         }
         deref();
     });

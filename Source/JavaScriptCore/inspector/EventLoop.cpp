@@ -28,8 +28,6 @@
 
 #if OS(WINDOWS)
 #include <windows.h>
-#elif USE(CF)
-#include <CoreFoundation/CFRunLoop.h>
 #elif PLATFORM(EFL)
 #include <Ecore.h>
 #elif PLATFORM(GTK)
@@ -37,6 +35,13 @@
 #endif
 
 namespace Inspector {
+
+#if USE(CF) && !OS(WINDOWS)
+CFStringRef EventLoop::remoteInspectorRunLoopMode()
+{
+    return CFSTR("com.apple.JavaScriptCore.remote-inspector-runloop-mode");
+}
+#endif
 
 void EventLoop::cycle()
 {
@@ -54,9 +59,8 @@ void EventLoop::cycle()
     // nested. Only the debugger should control things until we continue.
     // FIXME: This is not a perfect solution, as background threads are not
     // paused and can still access and evalute script in the JSContext.
-    static const CFStringRef kRWIRunLoopMode = CFSTR("com.apple.JavaScriptCore.remote-inspector-runloop-mode");
     CFTimeInterval timeInterval = 0.05;
-    CFRunLoopRunInMode(kRWIRunLoopMode, timeInterval, true);
+    CFRunLoopRunInMode(remoteInspectorRunLoopMode(), timeInterval, true);
 #elif PLATFORM(EFL)
     ecore_main_loop_iterate();
 #elif PLATFORM(GTK)

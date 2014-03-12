@@ -28,6 +28,10 @@
 
 #include <wtf/Noncopyable.h>
 
+#if USE(CF) && !OS(WINDOWS)
+#include <CoreFoundation/CFRunLoop.h>
+#endif
+
 namespace Inspector {
 
 class EventLoop {
@@ -40,6 +44,10 @@ public:
 
     void cycle();
     bool ended() const { return m_ended; }
+
+#if USE(CF) && !OS(WINDOWS)
+    static CFStringRef remoteInspectorRunLoopMode();
+#endif
 
 private:
     bool m_ended;

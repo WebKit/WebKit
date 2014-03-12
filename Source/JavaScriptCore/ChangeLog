@@ -1,3 +1,38 @@
+2014-03-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Hang in Remote Inspection triggering breakpoint from console
+        https://bugs.webkit.org/show_bug.cgi?id=130032
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/EventLoop.h:
+        * inspector/EventLoop.cpp:
+        (Inspector::EventLoop::remoteInspectorRunLoopMode):
+        (Inspector::EventLoop::cycle):
+        Expose the run loop mode name so it can be used if needed by others.
+
+        * inspector/remote/RemoteInspectorDebuggableConnection.h:
+        * inspector/remote/RemoteInspectorDebuggableConnection.mm:
+        (Inspector::RemoteInspectorBlock::RemoteInspectorBlock):
+        (Inspector::RemoteInspectorBlock::~RemoteInspectorBlock):
+        (Inspector::RemoteInspectorBlock::operator=):
+        (Inspector::RemoteInspectorBlock::operator()):
+        (Inspector::RemoteInspectorQueueTask):
+        Instead of a dispatch_queue, have our own static Vector of debugger tasks.
+
+        (Inspector::RemoteInspectorHandleRunSource):
+        (Inspector::RemoteInspectorInitializeQueue):
+        Initialize the static queue and run loop source. When the run loop source
+        fires, it will exhaust the queue of debugger messages.
+
+        (Inspector::RemoteInspectorDebuggableConnection::RemoteInspectorDebuggableConnection):
+        (Inspector::RemoteInspectorDebuggableConnection::~RemoteInspectorDebuggableConnection):
+        When we get a debuggable connection add a run loop source for inspector commands.
+
+        (Inspector::RemoteInspectorDebuggableConnection::dispatchAsyncOnDebuggable):
+        (Inspector::RemoteInspectorDebuggableConnection::sendMessageToBackend):
+        Enqueue blocks on our Vector instead of our dispatch_queue.
+
 2014-03-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r165482.

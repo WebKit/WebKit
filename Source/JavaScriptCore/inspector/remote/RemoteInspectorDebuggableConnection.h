@@ -65,7 +65,6 @@ private:
     std::mutex m_debuggableMutex;
 
     RemoteInspectorDebuggable* m_debuggable;
-    dispatch_queue_t m_queueForDebuggable;
     RetainPtr<NSString> m_connectionIdentifier;
     RetainPtr<NSString> m_destination;
     unsigned m_identifier;
