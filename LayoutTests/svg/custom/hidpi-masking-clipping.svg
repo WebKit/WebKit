@@ -1,17 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" onload="startTest()">
-    <script>
-    function startTest() {
-        if (!window.testRunner)
-            return;
-
-        testRunner.waitUntilDone();
-        testRunner.setBackingScaleFactor(2, finishTest);
-    }
-
-    function finishTest() {
-        setTimeout(function () { testRunner.notifyDone(); }, 0);
-    }
-    </script>
+<svg xmlns="http://www.w3.org/2000/svg">
     <style>
         text {
             -webkit-font-smoothing: antialiased;

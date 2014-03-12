@@ -31,7 +31,6 @@ static void setDefaultsToConsistentValuesForTesting()
 {
     NSDictionary *dict = @{
         @"AppleKeyboardUIMode": @1,
-        @"AppleMagnifiedMode": @YES,
         @"WebKitKerningAndLigaturesEnabledByDefault": @NO,
         // FIXME: This is likely insufficient, as tests change (and don't reset) these settings via Internals.
         @"WebAutomaticQuoteSubstitutionEnabled": @NO,

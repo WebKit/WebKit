@@ -111,7 +111,10 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
     if (!bitmapContext)
         return 0;
     CGContextRef context = bitmapContext->cgContext();
-    CGContextScaleCTM(context, deviceScaleFactor, deviceScaleFactor);
+    // The final scaling gets doubled on the screen capture surface when we use the hidpi backingScaleFactor value for CTM.
+    // This is a workaround to push the scaling back.
+    float scaleForCTM = onscreen ? 1 : [view _backingScaleFactor];
+    CGContextScaleCTM(context, scaleForCTM, scaleForCTM);
 
     NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO];
     ASSERT(nsContext);
@@ -125,13 +128,7 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
                 [view displayRectIgnoringOpacity:line inContext:nsContext];
         }
     } else {
-        if (deviceScaleFactor != 1) {
-            // Call displayRectIgnoringOpacity for HiDPI tests since it ensures we paint directly into the context 
-            // that we have appropriately sized and scaled.
-            [view displayRectIgnoringOpacity:[view bounds] inContext:nsContext];
-            if ([view isTrackingRepaints])
-                paintRepaintRectOverlay(view, context);
-        } else if (onscreen) {
+      if (onscreen) {
             // displayIfNeeded does not update the CA layers if the layer-hosting view was not marked as needing display, so
             // we're at the mercy of CA's display-link callback to update layers in time. So we need to force a display of the view
             // to get AppKit to update the CA layers synchronously.
@@ -145,6 +142,12 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
             CGContextDrawImage(context, CGRectMake(0, 0, CGImageGetWidth(image), CGImageGetHeight(image)), image);
             CGImageRelease(image);
 
+            if ([view isTrackingRepaints])
+                paintRepaintRectOverlay(view, context);
+        } else if (deviceScaleFactor != 1) {
+            // Call displayRectIgnoringOpacity for HiDPI tests since it ensures we paint directly into the context
+            // that we have appropriately sized and scaled.
+            [view displayRectIgnoringOpacity:[view bounds] inContext:nsContext];
             if ([view isTrackingRepaints])
                 paintRepaintRectOverlay(view, context);
         } else {

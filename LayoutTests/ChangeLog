@@ -1,3 +1,19 @@
+2014-03-12  Zalan Bujtas  <zalan@apple.com>
+
+        Add hiDPI support for compositing content in DumpRenderTree/WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=129961
+
+        Reviewed by Simon Fraser.
+
+        Now scaled content can go through the window capturing mechanism too for compositing content.
+        AppleMagnifiedMode is redundant.
+
+        * compositing/hidpi-compositing-vs-non-compositing-check-on-testing-framework-expected.html: Added.
+        * compositing/hidpi-compositing-vs-non-compositing-check-on-testing-framework.html: Added.
+        * svg/custom/hidpi-masking-clipping-expected.svg: Added.
+        * svg/custom/hidpi-masking-clipping.svg: Renamed from LayoutTests/svg/custom/masking-clipping-hidpi.svg.
+        * svg/custom/masking-clipping-hidpi-expected.svg: Removed.
+
 2014-03-12  Antti Koivisto  <antti@apple.com>
 
         Update result after https://trac.webkit.org/r165465

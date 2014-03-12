@@ -199,9 +199,7 @@ void PlatformWebView::setWindowFrame(WKRect frame)
 void PlatformWebView::didInitializeClients()
 {
     // Set a temporary 1x1 window frame to force a WindowAndViewFramesChanged notification. <rdar://problem/13380145>
-    WKRect wkFrame = windowFrame();
-    [m_window setFrame:NSMakeRect(0, 0, 1, 1) display:YES];
-    setWindowFrame(wkFrame);
+    forceWindowFramesChanged();
 }
 
 void PlatformWebView::addChromeInputField()
@@ -253,10 +251,19 @@ void PlatformWebView::changeWindowScaleIfNeeded(float newScale)
     if (currentScale == newScale)
         return;
     [m_window _setWindowResolution:newScale displayIfChanged:YES];
+    // Instead of re-constructing the current window, let's fake resize it to ensure that the scale change gets picked up.
+    forceWindowFramesChanged();
     // Changing the scaling factor on the window does not trigger NSWindowDidChangeBackingPropertiesNotification. We need to send the notification manually.
     RetainPtr<NSMutableDictionary> notificationUserInfo = [[NSMutableDictionary alloc] initWithCapacity:1];
     [notificationUserInfo setObject:[NSNumber numberWithDouble:currentScale] forKey:NSBackingPropertyOldScaleFactorKey];
     [[NSNotificationCenter defaultCenter] postNotificationName:NSWindowDidChangeBackingPropertiesNotification object:m_window userInfo:notificationUserInfo.get()];
+}
+
+void PlatformWebView::forceWindowFramesChanged()
+{
+    WKRect wkFrame = windowFrame();
+    [m_window setFrame:NSMakeRect(0, 0, 1, 1) display:YES];
+    setWindowFrame(wkFrame);
 }
 
 } // namespace WTR

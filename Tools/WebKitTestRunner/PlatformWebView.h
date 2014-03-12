@@ -92,6 +92,8 @@ public:
     void changeWindowScaleIfNeeded(float newScale);
 
 private:
+    void forceWindowFramesChanged();
+
     PlatformWKView m_view;
     PlatformWindow m_window;
     bool m_windowIsKey;
