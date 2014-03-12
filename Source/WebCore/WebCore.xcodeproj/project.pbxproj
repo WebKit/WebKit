@@ -2292,6 +2292,14 @@
 		7ACD88D314C08BD60084EDD2 /* InspectorIndexedDBAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7ACD88D114C08BD60084EDD2 /* InspectorIndexedDBAgent.cpp */; };
 		7ACD88D414C08BD60084EDD2 /* InspectorIndexedDBAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ACD88D214C08BD60084EDD2 /* InspectorIndexedDBAgent.h */; };
 		7ADE722610CBBB9B006B3B3A /* ContextMenuProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ADE722510CBBB9B006B3B3A /* ContextMenuProvider.h */; };
+		7AF9B20218CFB2DF00C64BEF /* TextTrackRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF9B1FC18CFB2DF00C64BEF /* TextTrackRegion.cpp */; };
+		7AF9B20318CFB2DF00C64BEF /* TextTrackRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AF9B1FD18CFB2DF00C64BEF /* TextTrackRegion.h */; };
+		7AF9B20518CFB2DF00C64BEF /* TextTrackRegionList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF9B1FF18CFB2DF00C64BEF /* TextTrackRegionList.cpp */; };
+		7AF9B20618CFB2DF00C64BEF /* TextTrackRegionList.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AF9B20018CFB2DF00C64BEF /* TextTrackRegionList.h */; };
+		7AF9B20C18CFB5F400C64BEF /* JSTextTrackRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF9B20818CFB5F200C64BEF /* JSTextTrackRegion.cpp */; };
+		7AF9B20D18CFB5F400C64BEF /* JSTextTrackRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AF9B20918CFB5F200C64BEF /* JSTextTrackRegion.h */; };
+		7AF9B20E18CFB5F400C64BEF /* JSTextTrackRegionList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF9B20A18CFB5F300C64BEF /* JSTextTrackRegionList.cpp */; };
+		7AF9B20F18CFB5F400C64BEF /* JSTextTrackRegionList.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AF9B20B18CFB5F300C64BEF /* JSTextTrackRegionList.h */; };
 		7BE7427381FA906FBB4F0F2C /* JSSVGGraphicsElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 950C4C02BED8936F818E2F99 /* JSSVGGraphicsElement.h */; };
 		7C2BDD3D17C7F98C0038FF15 /* JSDOMGlobalObjectTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C2BDD3B17C7F98B0038FF15 /* JSDOMGlobalObjectTask.cpp */; };
 		7C2BDD3E17C7F98C0038FF15 /* JSDOMGlobalObjectTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C2BDD3C17C7F98B0038FF15 /* JSDOMGlobalObjectTask.h */; };
@@ -9268,6 +9276,16 @@
 		7ACD88D114C08BD60084EDD2 /* InspectorIndexedDBAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorIndexedDBAgent.cpp; sourceTree = "<group>"; };
 		7ACD88D214C08BD60084EDD2 /* InspectorIndexedDBAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorIndexedDBAgent.h; sourceTree = "<group>"; };
 		7ADE722510CBBB9B006B3B3A /* ContextMenuProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextMenuProvider.h; sourceTree = "<group>"; };
+		7AF9B1FC18CFB2DF00C64BEF /* TextTrackRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackRegion.cpp; sourceTree = "<group>"; };
+		7AF9B1FD18CFB2DF00C64BEF /* TextTrackRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackRegion.h; sourceTree = "<group>"; };
+		7AF9B1FE18CFB2DF00C64BEF /* TextTrackRegion.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TextTrackRegion.idl; sourceTree = "<group>"; };
+		7AF9B1FF18CFB2DF00C64BEF /* TextTrackRegionList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackRegionList.cpp; sourceTree = "<group>"; };
+		7AF9B20018CFB2DF00C64BEF /* TextTrackRegionList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackRegionList.h; sourceTree = "<group>"; };
+		7AF9B20118CFB2DF00C64BEF /* TextTrackRegionList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TextTrackRegionList.idl; sourceTree = "<group>"; };
+		7AF9B20818CFB5F200C64BEF /* JSTextTrackRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackRegion.cpp; sourceTree = "<group>"; };
+		7AF9B20918CFB5F200C64BEF /* JSTextTrackRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTextTrackRegion.h; sourceTree = "<group>"; };
+		7AF9B20A18CFB5F300C64BEF /* JSTextTrackRegionList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackRegionList.cpp; sourceTree = "<group>"; };
+		7AF9B20B18CFB5F300C64BEF /* JSTextTrackRegionList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTextTrackRegionList.h; sourceTree = "<group>"; };
 		7C2BDD3B17C7F98B0038FF15 /* JSDOMGlobalObjectTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMGlobalObjectTask.cpp; sourceTree = "<group>"; };
 		7C2BDD3C17C7F98B0038FF15 /* JSDOMGlobalObjectTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMGlobalObjectTask.h; sourceTree = "<group>"; };
 		7C522D4915B477E8009B7C95 /* InspectorOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorOverlay.cpp; sourceTree = "<group>"; };
@@ -18339,6 +18357,10 @@
 				070756DA14239B4E00414161 /* JSTextTrackCueList.h */,
 				07B5A2D91464320A00A81ECE /* JSTextTrackList.cpp */,
 				07B5A2DA1464320A00A81ECE /* JSTextTrackList.h */,
+				7AF9B20818CFB5F200C64BEF /* JSTextTrackRegion.cpp */,
+				7AF9B20918CFB5F200C64BEF /* JSTextTrackRegion.h */,
+				7AF9B20A18CFB5F300C64BEF /* JSTextTrackRegionList.cpp */,
+				7AF9B20B18CFB5F300C64BEF /* JSTextTrackRegionList.h */,
 				E44614120CD6826900FADA75 /* JSTimeRanges.cpp */,
 				E44614130CD6826900FADA75 /* JSTimeRanges.h */,
 				07846340145B151A00A58DF1 /* JSTrackEvent.cpp */,
@@ -19209,6 +19231,12 @@
 				076970841463AD8700F502CF /* TextTrackList.cpp */,
 				076970851463AD8700F502CF /* TextTrackList.h */,
 				07B5A3061468537100A81ECE /* TextTrackList.idl */,
+				7AF9B1FC18CFB2DF00C64BEF /* TextTrackRegion.cpp */,
+				7AF9B1FD18CFB2DF00C64BEF /* TextTrackRegion.h */,
+				7AF9B1FE18CFB2DF00C64BEF /* TextTrackRegion.idl */,
+				7AF9B1FF18CFB2DF00C64BEF /* TextTrackRegionList.cpp */,
+				7AF9B20018CFB2DF00C64BEF /* TextTrackRegionList.h */,
+				7AF9B20118CFB2DF00C64BEF /* TextTrackRegionList.idl */,
 				070334D8145A006F008D8D45 /* TrackBase.cpp */,
 				070334D61459FFD5008D8D45 /* TrackBase.h */,
 				070334D01459FFAC008D8D45 /* TrackEvent.cpp */,
@@ -23061,6 +23089,7 @@
 				BC64B4DC0CB4298A005F2B62 /* CSSFontSelector.h in Headers */,
 				A80E6CED0A1989CA007FB8C5 /* CSSFontValue.h in Headers */,
 				BC02A63C0E09A9CF004B6D2B /* CSSFunctionValue.h in Headers */,
+				7AF9B20318CFB2DF00C64BEF /* TextTrackRegion.h in Headers */,
 				BC53C6920DA591140021EB5D /* CSSGradientValue.h in Headers */,
 				650F53DC09D15DDA00C9B0C8 /* CSSGrammar.h in Headers */,
 				CD3E252418046BCD00E27F56 /* CSSGridTemplateAreasValue.h in Headers */,
@@ -23488,6 +23517,7 @@
 				85E711D70AC5D5350053270F /* DOMStyleSheetListInternal.h in Headers */,
 				BC1A37BD097C715F0019F3D8 /* DOMStylesheets.h in Headers */,
 				85ACA99C0A9B575900671E90 /* DOMText.h in Headers */,
+				7AF9B20618CFB2DF00C64BEF /* TextTrackRegionList.h in Headers */,
 				DDE63ED50B7D45A800226998 /* DOMTextEvent.h in Headers */,
 				85E711D90AC5D5350053270F /* DOMTextInternal.h in Headers */,
 				188604B40F2E654A000B6443 /* DOMTimer.h in Headers */,
@@ -24550,6 +24580,8 @@
 				070756DE14239B4E00414161 /* JSTextTrackCue.h in Headers */,
 				070756E014239B4E00414161 /* JSTextTrackCueList.h in Headers */,
 				07B5A2DC1464320A00A81ECE /* JSTextTrackList.h in Headers */,
+				7AF9B20D18CFB5F400C64BEF /* JSTextTrackRegion.h in Headers */,
+				7AF9B20F18CFB5F400C64BEF /* JSTextTrackRegionList.h in Headers */,
 				E446141B0CD6826900FADA75 /* JSTimeRanges.h in Headers */,
 				0FDA7C17188322EB00C954B5 /* JSTouch.h in Headers */,
 				0FDA7C19188322EB00C954B5 /* JSTouchEvent.h in Headers */,
@@ -26955,6 +26987,7 @@
 				0F54DCD61880F867003EEDBB /* DOMTouch.mm in Sources */,
 				0F54DCD81880F867003EEDBB /* DOMTouchEvent.mm in Sources */,
 				0F54DCDC1880F867003EEDBB /* DOMTouchList.mm in Sources */,
+				7AF9B20518CFB2DF00C64BEF /* TextTrackRegionList.cpp in Sources */,
 				E145349816A9BB6A000F6FD2 /* DOMTransitionEvent.mm in Sources */,
 				85526CD30AB0B7DA000302EA /* DOMTreeWalker.mm in Sources */,
 				85C7F4920AAF79DC004014DD /* DOMUIEvent.mm in Sources */,
@@ -28009,6 +28042,8 @@
 				07E116B11489C9A100EC5ACE /* JSTextTrackCustom.cpp in Sources */,
 				07B5A2DB1464320A00A81ECE /* JSTextTrackList.cpp in Sources */,
 				07B5A30D14687D7100A81ECE /* JSTextTrackListCustom.cpp in Sources */,
+				7AF9B20C18CFB5F400C64BEF /* JSTextTrackRegion.cpp in Sources */,
+				7AF9B20E18CFB5F400C64BEF /* JSTextTrackRegionList.cpp in Sources */,
 				E446141A0CD6826900FADA75 /* JSTimeRanges.cpp in Sources */,
 				0FDA7C16188322EB00C954B5 /* JSTouch.cpp in Sources */,
 				0FDA7C18188322EB00C954B5 /* JSTouchEvent.cpp in Sources */,
@@ -29236,6 +29271,7 @@
 				A136A00C1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp in Sources */,
 				BCDFD48F0E305290009D10AD /* XMLHttpRequestUpload.cpp in Sources */,
 				A833C80C0A2CF25600D57664 /* XMLNames.cpp in Sources */,
+				7AF9B20218CFB2DF00C64BEF /* TextTrackRegion.cpp in Sources */,
 				E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */,
 				1ACE53EA0A8D18E70022947D /* XMLSerializer.cpp in Sources */,
 				5905ADBF1302F3CE00F116DF /* XMLTreeViewer.cpp in Sources */,

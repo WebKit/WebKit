@@ -1,4 +1,4 @@
-# Copyright (C) 2006, 2007, 2008, 2012 Apple Inc. All rights reserved.
+# Copyright (C) 2006, 2007, 2008, 2012, 2014 Apple Inc. All rights reserved.
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 #
@@ -450,6 +450,8 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/html/track/TextTrackCue.idl \
     $(WebCore)/html/track/TextTrackCueList.idl \
     $(WebCore)/html/track/TextTrackList.idl \
+    $(WebCore)/html/track/TextTrackRegion.idl \
+    $(WebCore)/html/track/TextTrackRegionList.idl \
     $(WebCore)/html/track/TrackEvent.idl \
     $(WebCore)/html/track/VideoTrack.idl \
     $(WebCore)/html/track/VideoTrackList.idl \

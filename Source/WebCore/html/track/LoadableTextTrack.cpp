@@ -34,6 +34,10 @@
 #include "ScriptExecutionContext.h"
 #include "TextTrackCueList.h"
 
+#if ENABLE(WEBVTT_REGIONS)
+#include "TextTrackRegionList.h"
+#endif
+
 namespace WebCore {
 
 LoadableTextTrack::LoadableTextTrack(HTMLTrackElement* track, const String& kind, const String& label, const String& language)

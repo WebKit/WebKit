@@ -1,3 +1,21 @@
+2014-03-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Get the incomplete WebVTT Regions code to build again.
+        https://bugs.webkit.org/show_bug.cgi?id=130094
+
+        Reviewed by Eric Carlson.
+
+        The feature is not being turned on here, so there are no new tests.
+
+        * DerivedSources.make: Add missing IDL files for Regions.
+        * WebCore.xcodeproj/project.pbxproj: Add Regions-related files.
+        * html/track/InbandWebVTTTextTrack.cpp:
+        (WebCore::InbandWebVTTTextTrack::newRegionsParsed): Add stub implementation.
+        * html/track/LoadableTextTrack.cpp: Add missing include file.
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack): Correct ordering of construction
+        to avoid compiler warning.
+
 2014-03-11  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Remove unused method from BatteryController

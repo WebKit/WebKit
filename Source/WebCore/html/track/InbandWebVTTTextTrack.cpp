@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012, 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 
 #include "InbandTextTrackPrivate.h"
 #include "Logging.h"
+#include "NotImplemented.h"
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -74,7 +75,14 @@ void InbandWebVTTTextTrack::newCuesParsed()
         addCue(cue.release(), ASSERT_NO_EXCEPTION);
     }
 }
-
+    
+#if ENABLE(WEBVTT_REGIONS)
+void InbandWebVTTTextTrack::newRegionsParsed()
+{
+    notImplemented();
+}
+#endif
+    
 void InbandWebVTTTextTrack::fileFailedToParse()
 {
     LOG(Media, "Unable to parse WebVTT stream.");
