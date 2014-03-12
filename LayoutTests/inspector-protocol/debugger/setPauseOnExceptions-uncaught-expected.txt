@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: line 1: caught inline: {"line":1,"column":36}
 CONSOLE MESSAGE: line 38: catchNested caught exception: {"line":3,"column":11,"sourceURL":"exception.js"}
-CONSOLE MESSAGE: line 38: catchNested caught exception: {"code":8,"name":"NotFoundError","message":"NotFoundError: DOM Exception 8","line":8,"column":30,"sourceURL":"exception.js"}
+CONSOLE MESSAGE: line 38: catchNested caught exception: {"code":8,"message":"NotFoundError: DOM Exception 8","name":"NotFoundError","line":8,"column":30,"sourceURL":"exception.js"}
 CONSOLE MESSAGE: line 38: catchNested caught exception: "exception in host function"
 CONSOLE MESSAGE: line 38: catchNested caught exception: "exception string"
 CONSOLE MESSAGE: line 38: catchNested caught exception: {"line":18,"column":12,"sourceURL":"exception.js"}
@@ -13,7 +13,7 @@ CONSOLE MESSAGE: line 18: [object Object]
 CONSOLE MESSAGE: line 18: Error: error message
 CONSOLE MESSAGE: line 1: caught inline: {"line":1,"column":36}
 CONSOLE MESSAGE: line 38: catchNested caught exception: {"line":3,"column":11,"sourceURL":"exception.js"}
-CONSOLE MESSAGE: line 38: catchNested caught exception: {"code":8,"name":"NotFoundError","message":"NotFoundError: DOM Exception 8","line":8,"column":30,"sourceURL":"exception.js"}
+CONSOLE MESSAGE: line 38: catchNested caught exception: {"code":8,"message":"NotFoundError: DOM Exception 8","name":"NotFoundError","line":8,"column":30,"sourceURL":"exception.js"}
 CONSOLE MESSAGE: line 38: catchNested caught exception: "exception in host function"
 CONSOLE MESSAGE: line 38: catchNested caught exception: "exception string"
 CONSOLE MESSAGE: line 38: catchNested caught exception: {"line":18,"column":12,"sourceURL":"exception.js"}

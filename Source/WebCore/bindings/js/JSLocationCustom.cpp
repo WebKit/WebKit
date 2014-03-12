@@ -64,7 +64,7 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName proper
 
     // Check for the few functions that we allow, even when called cross-domain.
     // Make these read-only / non-configurable to prevent writes via defineProperty.
-    const HashTableValue* entry = JSLocationPrototype::info()->propHashTable(exec)->entry(exec, propertyName);
+    const HashEntry* entry = JSLocationPrototype::info()->propHashTable(exec)->entry(exec, propertyName);
     if (entry && (entry->attributes() & JSC::Function)) {
         if (entry->function() == jsLocationPrototypeFunctionReplace) {
             slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticReplaceFunctionGetter);
@@ -98,7 +98,7 @@ bool JSLocation::putDelegate(ExecState* exec, PropertyName propertyName, JSValue
 
     bool sameDomainAccess = shouldAllowAccessToFrame(exec, frame);
 
-    const HashTableValue* entry = JSLocation::info()->propHashTable(exec)->entry(exec, propertyName);
+    const HashEntry* entry = JSLocation::info()->propHashTable(exec)->entry(exec, propertyName);
     if (!entry) {
         if (sameDomainAccess)
             JSObject::put(this, exec, propertyName, value, slot);

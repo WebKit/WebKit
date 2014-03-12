@@ -41,8 +41,6 @@ my @keys = ();
 my @attrs = ();
 my @values = ();
 my @hashes = ();
-my @table = ();
-my @links = ();
 
 my $hasSetter = "false";
 
@@ -78,8 +76,6 @@ while (<IN>) {
         @attrs = ();
         @values = ();
         @hashes = ();
-        @table = ();
-        @links = ();
 
         $inside = 0;
     } elsif (/^(\S+)\s*(\S+)\s*([\w\|]*)\s*(\w*)\s*$/ && $inside) {
@@ -159,6 +155,8 @@ sub leftShift($$) {
 
 sub calcCompactHashSize()
 {
+    my @table = ();
+    my @links = ();
     my $compactHashSize = ceilingToPowerOf2(2 * @keys);
     $compactHashSizeMask = $compactHashSize - 1;
     $compactSize = $compactHashSize;
@@ -249,8 +247,6 @@ sub output() {
 
     my $nameEntries = "${name}Values";
     $nameEntries =~ s/:/_/g;
-    my $nameIndex = "${name}Index";
-    $nameIndex =~ s/:/_/g;
 
     print "\n#include \"JSCBuiltins.h\"\n";
     print "\n#include \"Lookup.h\"\n" if ($includelookup);
@@ -261,19 +257,8 @@ sub output() {
     } else {
         print "\nnamespace JSC {\n";
     }
-
-    print "\nstatic const struct CompactHashIndex ${nameIndex}\[$compactSize\] = {\n";
-    for (my $i = 0; $i < $compactSize; $i++) {
-        my $T = -1;
-        if (defined($table[$i])) { $T = $table[$i]; }
-        my $L = -1;
-        if (defined($links[$i])) { $L = $links[$i]; }
-        print "    { $T, $L },\n";
-    }
-    print "};\n\n";
-
-    my $packedSize = scalar @keys;
-    print "\nstatic const struct HashTableValue ${nameEntries}\[$packedSize\] = {\n";
+    my $count = scalar @keys + 1;
+    print "\nstatic const struct HashTableValue ${nameEntries}\[$count\] = {\n";
     my $i = 0;
     foreach my $key (@keys) {
         my $firstValue = "";
@@ -319,8 +304,9 @@ sub output() {
         }
         $i++;
     }
+    print "   { 0, 0, NoIntrinsic, 0, 0 }\n";
     print "};\n\n";
     print "extern const struct HashTable $name =\n";
-    print "    \{ $packedSize, $compactHashSizeMask, $hasSetter, $nameEntries, 0, $nameIndex \};\n";
+    print "    \{ $compactSize, $compactHashSizeMask, $hasSetter, $nameEntries, 0 \};\n";
     print "} // namespace\n";
 }

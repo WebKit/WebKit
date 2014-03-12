@@ -33,16 +33,12 @@ namespace WebCore {
 
 /* Hash table for constructor */
 
-static const struct CompactHashIndex JSattributeConstructorTableIndex[1] = {
-    { -1, -1 },
-};
-
-
-static const HashTableValue JSattributeConstructorTableValues[0] =
+static const HashTableValue JSattributeConstructorTableValues[] =
 {
+    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSattributeConstructorTable = { 0, 0, false, JSattributeConstructorTableValues, 0, JSattributeConstructorTableIndex };
+static const HashTable JSattributeConstructorTable = { 1, 0, false, JSattributeConstructorTableValues, 0 };
 const ClassInfo JSattributeConstructor::s_info = { "attributeConstructor", &Base::s_info, &JSattributeConstructorTable, 0, CREATE_METHOD_TABLE(JSattributeConstructor) };
 
 JSattributeConstructor::JSattributeConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -65,21 +61,14 @@ bool JSattributeConstructor::getOwnPropertySlot(JSObject* object, ExecState* exe
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSattributePrototypeTableIndex[4] = {
-    { 1, -1 },
-    { 0, -1 },
-    { -1, -1 },
-    { -1, -1 },
-};
-
-
-static const HashTableValue JSattributePrototypeTableValues[2] =
+static const HashTableValue JSattributePrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsattributeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { "readonly", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsattributeReadonly), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSattributePrototypeTable = { 2, 3, true, JSattributePrototypeTableValues, 0, JSattributePrototypeTableIndex };
+static const HashTable JSattributePrototypeTable = { 4, 3, true, JSattributePrototypeTableValues, 0 };
 const ClassInfo JSattributePrototype::s_info = { "attributePrototype", &Base::s_info, &JSattributePrototypeTable, 0, CREATE_METHOD_TABLE(JSattributePrototype) };
 
 JSObject* JSattributePrototype::self(VM& vm, JSGlobalObject* globalObject)

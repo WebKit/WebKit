@@ -33,16 +33,12 @@ namespace WebCore {
 
 /* Hash table for constructor */
 
-static const struct CompactHashIndex JSTestNamedConstructorConstructorTableIndex[1] = {
-    { -1, -1 },
-};
-
-
-static const HashTableValue JSTestNamedConstructorConstructorTableValues[0] =
+static const HashTableValue JSTestNamedConstructorConstructorTableValues[] =
 {
+    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestNamedConstructorConstructorTable = { 0, 0, false, JSTestNamedConstructorConstructorTableValues, 0, JSTestNamedConstructorConstructorTableIndex };
+static const HashTable JSTestNamedConstructorConstructorTable = { 1, 0, false, JSTestNamedConstructorConstructorTableValues, 0 };
 const ClassInfo JSTestNamedConstructorConstructor::s_info = { "TestNamedConstructorConstructor", &Base::s_info, &JSTestNamedConstructorConstructorTable, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorConstructor) };
 
 JSTestNamedConstructorConstructor::JSTestNamedConstructorConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -109,18 +105,13 @@ ConstructType JSTestNamedConstructorNamedConstructor::getConstructData(JSCell*, 
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSTestNamedConstructorPrototypeTableIndex[2] = {
-    { -1, -1 },
-    { 0, -1 },
-};
-
-
-static const HashTableValue JSTestNamedConstructorPrototypeTableValues[1] =
+static const HashTableValue JSTestNamedConstructorPrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedConstructorConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestNamedConstructorPrototypeTable = { 1, 1, true, JSTestNamedConstructorPrototypeTableValues, 0, JSTestNamedConstructorPrototypeTableIndex };
+static const HashTable JSTestNamedConstructorPrototypeTable = { 2, 1, true, JSTestNamedConstructorPrototypeTableValues, 0 };
 const ClassInfo JSTestNamedConstructorPrototype::s_info = { "TestNamedConstructorPrototype", &Base::s_info, &JSTestNamedConstructorPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorPrototype) };
 
 JSObject* JSTestNamedConstructorPrototype::self(VM& vm, JSGlobalObject* globalObject)

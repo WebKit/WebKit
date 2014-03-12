@@ -75,17 +75,19 @@ const ClassInfo JSFinalObject::s_info = { "Object", &Base::s_info, 0, 0, CREATE_
 
 static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* classInfo, PropertyNameArray& propertyNames, EnumerationMode mode, bool didReify)
 {
-    VM& vm = exec->vm();
-
     // Add properties from the static hashtables of properties
     for (; classInfo; classInfo = classInfo->parentClass) {
-        const HashTable* table = classInfo->propHashTable(vm);
+        const HashTable* table = classInfo->propHashTable(exec);
         if (!table)
             continue;
+        table->initializeIfNeeded(exec);
+        ASSERT(table->table);
 
-        for (auto iter = table->begin(vm); iter != table->end(vm); ++iter) {
-            if ((!(iter->attributes() & DontEnum) || (mode == IncludeDontEnumProperties)) && !((iter->attributes() & BuiltinOrFunction) && didReify))
-                propertyNames.add(iter.key());
+        int hashSizeMask = table->compactSize - 1;
+        const HashEntry* entry = table->table;
+        for (int i = 0; i <= hashSizeMask; ++i, ++entry) {
+            if (entry->key() && (!(entry->attributes() & DontEnum) || (mode == IncludeDontEnumProperties)) && !((entry->attributes() & BuiltinOrFunction) && didReify))
+                propertyNames.add(entry->key());
         }
     }
 }
@@ -394,7 +396,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
         }
         const ClassInfo* info = obj->classInfo();
         if (info->hasStaticSetterOrReadonlyProperties(vm)) {
-            if (const HashTableValue* entry = obj->findPropertyHashEntry(vm, propertyName)) {
+            if (const HashEntry* entry = obj->findPropertyHashEntry(vm, propertyName)) {
                 putEntry(exec, entry, obj, propertyName, value, slot);
                 return;
             }
@@ -1271,7 +1273,7 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
     }
 
     // Look in the static hashtable of properties
-    const HashTableValue* entry = thisObject->findPropertyHashEntry(vm, propertyName);
+    const HashEntry* entry = thisObject->findPropertyHashEntry(vm, propertyName);
     if (entry) {
         if (entry->attributes() & DontDelete && !vm.isInDefineOwnProperty())
             return false; // this builtin property can't be deleted
@@ -1399,11 +1401,11 @@ JSValue JSObject::defaultValue(const JSObject* object, ExecState* exec, Preferre
     return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("No default value")));
 }
 
-const HashTableValue* JSObject::findPropertyHashEntry(VM& vm, PropertyName propertyName) const
+const HashEntry* JSObject::findPropertyHashEntry(VM& vm, PropertyName propertyName) const
 {
     for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
         if (const HashTable* propHashTable = info->propHashTable(vm)) {
-            if (const HashTableValue* entry = propHashTable->entry(vm, propertyName))
+            if (const HashEntry* entry = propHashTable->entry(vm, propertyName))
                 return entry;
         }
     }
@@ -1619,13 +1621,13 @@ void JSObject::reifyStaticFunctionsForDelete(ExecState* exec)
         setStructure(vm, Structure::toUncacheableDictionaryTransition(vm, structure(vm)));
 
     for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
-        const HashTable* hashTable = info->propHashTable(vm);
+        const HashTable* hashTable = info->propHashTable(globalObject()->globalExec());
         if (!hashTable)
             continue;
         PropertySlot slot(this);
-        for (auto iter = hashTable->begin(vm); iter != hashTable->end(vm); ++iter) {
+        for (HashTable::ConstIterator iter = hashTable->begin(vm); iter != hashTable->end(vm); ++iter) {
             if (iter->attributes() & BuiltinOrFunction)
-                setUpStaticFunctionSlot(globalObject()->globalExec(), iter.value(), this, Identifier(&vm, iter.key()), slot);
+                setUpStaticFunctionSlot(globalObject()->globalExec(), *iter, this, Identifier(&vm, iter->key()), slot);
         }
     }
 

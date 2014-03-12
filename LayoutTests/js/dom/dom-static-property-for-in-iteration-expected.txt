@@ -9,102 +9,102 @@ PASS a["wibble"] is 3
 PASS a["hick"] is 4
 PASS a["hock"] is 5
 PASS a["snood"] is 6
-PASS a["charset"] is 
-PASS a["coords"] is 
-PASS a["hreflang"] is 
-PASS a["name"] is 
-PASS a["ping"] is 
+PASS a["origin"] is file://
+PASS a["hash"] is 
+PASS a["search"] is 
+PASS a["text"] is nerget
+PASS a["hostname"] is 
 PASS a["rel"] is 
+PASS a["hreflang"] is 
+PASS a["ping"] is 
 PASS a["rev"] is 
-PASS a["shape"] is 
+PASS a["host"] is 
+PASS a["charset"] is 
 PASS a["target"] is 
 PASS a["type"] is 
-PASS a["hash"] is 
-PASS a["host"] is 
-PASS a["hostname"] is 
+PASS a["coords"] is 
+PASS a["name"] is 
+PASS a["shape"] is 
 PASS a["port"] is 
 PASS a["protocol"] is file:
-PASS a["search"] is 
-PASS a["origin"] is file://
-PASS a["text"] is nerget
+PASS a["outerHTML"] is <a id="foo" href="bar">nerget</a>
+PASS a["spellcheck"] is true
+PASS a["webkitdropzone"] is 
 PASS a["title"] is 
 PASS a["lang"] is 
 PASS a["translate"] is true
+PASS a["hidden"] is false
+PASS a["innerText"] is nerget
 PASS a["dir"] is 
+PASS a["innerHTML"] is nerget
+PASS a["contentEditable"] is inherit
 PASS a["tabIndex"] is 0
 PASS a["draggable"] is true
-PASS a["webkitdropzone"] is 
-PASS a["hidden"] is false
-PASS a["accessKey"] is 
-PASS a["innerHTML"] is nerget
-PASS a["innerText"] is nerget
-PASS a["outerHTML"] is <a id="foo" href="bar">nerget</a>
 PASS a["outerText"] is nerget
+PASS a["accessKey"] is 
 PASS a["children"] is [object HTMLCollection]
-PASS a["contentEditable"] is inherit
 PASS a["isContentEditable"] is false
-PASS a["spellcheck"] is true
-PASS a["tagName"] is A
-PASS a["attributes"] is [object NamedNodeMap]
 PASS a["style"] is [object CSSStyleDeclaration]
 PASS a["id"] is foo
-PASS a["offsetLeft"] is 8
-PASS a["offsetTop"] is 774
-PASS a["offsetWidth"] is 39
-PASS a["offsetHeight"] is 18
-PASS a["offsetParent"] is [object HTMLBodyElement]
-PASS a["clientLeft"] is 0
-PASS a["clientTop"] is 0
-PASS a["clientWidth"] is 0
-PASS a["clientHeight"] is 0
-PASS a["scrollLeft"] is 0
-PASS a["scrollTop"] is 0
-PASS a["scrollWidth"] is 0
-PASS a["scrollHeight"] is 0
-PASS a["className"] is 
-PASS a["classList"] is 
 PASS a["dataset"] is [object DOMStringMap]
-PASS a["firstElementChild"] is null
-PASS a["lastElementChild"] is null
-PASS a["previousElementSibling"] is [object HTMLDivElement]
-PASS a["nextElementSibling"] is [object HTMLScriptElement]
-PASS a["childElementCount"] is 0
-PASS a["uiactions"] is 
+PASS a["clientWidth"] is 0
+PASS a["scrollWidth"] is 0
+PASS a["attributes"] is [object NamedNodeMap]
 PASS a["webkitRegionOverset"] is undefined
 PASS a["ALLOW_KEYBOARD_INPUT"] is 1
-PASS a["nodeName"] is A
-PASS a["nodeValue"] is null
-PASS a["nodeType"] is 1
-PASS a["parentNode"] is [object HTMLBodyElement]
-PASS a["childNodes"] is [object NodeList]
-PASS a["firstChild"] is [object Text]
-PASS a["lastChild"] is [object Text]
+PASS a["offsetWidth"] is 39
+PASS a["classList"] is 
+PASS a["offsetLeft"] is 8
+PASS a["className"] is 
+PASS a["clientTop"] is 0
+PASS a["lastElementChild"] is null
+PASS a["offsetParent"] is [object HTMLBodyElement]
+PASS a["nextElementSibling"] is [object HTMLScriptElement]
+PASS a["tagName"] is A
+PASS a["previousElementSibling"] is [object HTMLDivElement]
+PASS a["childElementCount"] is 0
+PASS a["scrollLeft"] is 0
+PASS a["firstElementChild"] is null
+PASS a["uiactions"] is 
+PASS a["clientLeft"] is 0
+PASS a["offsetHeight"] is 18
+PASS a["clientHeight"] is 0
+PASS a["offsetTop"] is 1074
+PASS a["scrollTop"] is 0
+PASS a["scrollHeight"] is 0
 PASS a["previousSibling"] is [object Text]
-PASS a["nextSibling"] is [object Text]
-PASS a["ownerDocument"] is [object HTMLDocument]
-PASS a["namespaceURI"] is http://www.w3.org/1999/xhtml
-PASS a["prefix"] is null
-PASS a["localName"] is a
-PASS a["textContent"] is nerget
-PASS a["parentElement"] is [object HTMLBodyElement]
-PASS a["ELEMENT_NODE"] is 1
-PASS a["ATTRIBUTE_NODE"] is 2
-PASS a["TEXT_NODE"] is 3
-PASS a["CDATA_SECTION_NODE"] is 4
-PASS a["ENTITY_REFERENCE_NODE"] is 5
-PASS a["ENTITY_NODE"] is 6
-PASS a["PROCESSING_INSTRUCTION_NODE"] is 7
-PASS a["COMMENT_NODE"] is 8
-PASS a["DOCUMENT_NODE"] is 9
-PASS a["DOCUMENT_TYPE_NODE"] is 10
-PASS a["DOCUMENT_FRAGMENT_NODE"] is 11
 PASS a["NOTATION_NODE"] is 12
+PASS a["CDATA_SECTION_NODE"] is 4
+PASS a["lastChild"] is [object Text]
+PASS a["ELEMENT_NODE"] is 1
+PASS a["nodeValue"] is null
 PASS a["DOCUMENT_POSITION_DISCONNECTED"] is 1
-PASS a["DOCUMENT_POSITION_PRECEDING"] is 2
-PASS a["DOCUMENT_POSITION_FOLLOWING"] is 4
-PASS a["DOCUMENT_POSITION_CONTAINS"] is 8
-PASS a["DOCUMENT_POSITION_CONTAINED_BY"] is 16
+PASS a["ENTITY_NODE"] is 6
+PASS a["TEXT_NODE"] is 3
+PASS a["ENTITY_REFERENCE_NODE"] is 5
+PASS a["textContent"] is nerget
+PASS a["nodeType"] is 1
 PASS a["DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC"] is 32
+PASS a["ownerDocument"] is [object HTMLDocument]
+PASS a["PROCESSING_INSTRUCTION_NODE"] is 7
+PASS a["localName"] is a
+PASS a["parentNode"] is [object HTMLBodyElement]
+PASS a["firstChild"] is [object Text]
+PASS a["DOCUMENT_POSITION_PRECEDING"] is 2
+PASS a["DOCUMENT_TYPE_NODE"] is 10
+PASS a["COMMENT_NODE"] is 8
+PASS a["nodeName"] is A
+PASS a["DOCUMENT_POSITION_FOLLOWING"] is 4
+PASS a["prefix"] is null
+PASS a["childNodes"] is [object NodeList]
+PASS a["nextSibling"] is [object Text]
+PASS a["ATTRIBUTE_NODE"] is 2
+PASS a["DOCUMENT_POSITION_CONTAINED_BY"] is 16
+PASS a["namespaceURI"] is http://www.w3.org/1999/xhtml
+PASS a["parentElement"] is [object HTMLBodyElement]
+PASS a["DOCUMENT_NODE"] is 9
+PASS a["DOCUMENT_FRAGMENT_NODE"] is 11
+PASS a["DOCUMENT_POSITION_CONTAINS"] is 8
 PASS successfullyParsed is true
 
 TEST COMPLETE

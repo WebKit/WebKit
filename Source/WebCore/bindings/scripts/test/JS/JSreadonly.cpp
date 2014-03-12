@@ -30,16 +30,12 @@ namespace WebCore {
 
 /* Hash table for constructor */
 
-static const struct CompactHashIndex JSreadonlyConstructorTableIndex[1] = {
-    { -1, -1 },
-};
-
-
-static const HashTableValue JSreadonlyConstructorTableValues[0] =
+static const HashTableValue JSreadonlyConstructorTableValues[] =
 {
+    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSreadonlyConstructorTable = { 0, 0, false, JSreadonlyConstructorTableValues, 0, JSreadonlyConstructorTableIndex };
+static const HashTable JSreadonlyConstructorTable = { 1, 0, false, JSreadonlyConstructorTableValues, 0 };
 const ClassInfo JSreadonlyConstructor::s_info = { "readonlyConstructor", &Base::s_info, &JSreadonlyConstructorTable, 0, CREATE_METHOD_TABLE(JSreadonlyConstructor) };
 
 JSreadonlyConstructor::JSreadonlyConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -62,18 +58,13 @@ bool JSreadonlyConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec
 
 /* Hash table for prototype */
 
-static const struct CompactHashIndex JSreadonlyPrototypeTableIndex[2] = {
-    { -1, -1 },
-    { 0, -1 },
-};
-
-
-static const HashTableValue JSreadonlyPrototypeTableValues[1] =
+static const HashTableValue JSreadonlyPrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsreadonlyConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSreadonlyPrototypeTable = { 1, 1, true, JSreadonlyPrototypeTableValues, 0, JSreadonlyPrototypeTableIndex };
+static const HashTable JSreadonlyPrototypeTable = { 2, 1, true, JSreadonlyPrototypeTableValues, 0 };
 const ClassInfo JSreadonlyPrototype::s_info = { "readonlyPrototype", &Base::s_info, &JSreadonlyPrototypeTable, 0, CREATE_METHOD_TABLE(JSreadonlyPrototype) };
 
 JSObject* JSreadonlyPrototype::self(VM& vm, JSGlobalObject* globalObject)
