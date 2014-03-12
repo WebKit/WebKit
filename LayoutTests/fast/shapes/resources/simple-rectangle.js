@@ -12,14 +12,23 @@ function drawTextRectangle(elementId, stylesheetId, bounds, shapeBounds, units, 
     var rules = [];
     for (var i in bounds)
         rules.push(i + ':' + bounds[i] + units);
-    var rectangleBounds = [shapeBounds.x + units, shapeBounds.y + units, shapeBounds.width + units, shapeBounds.height + units];
-    rules.push('-webkit-shape-inside: rectangle(' + rectangleBounds.join(',') + ')');
+    var rectangleBounds = {
+        top: shapeBounds.x + units,
+        left: shapeBounds.y + units,
+        bottom: (shapeBounds.y + shapeBounds.height) + units,
+        right: (shapeBounds.x + shapeBounds.width) + units
+    };
+    rules.push('-webkit-shape-inside: polygon(' +
+        rectangleBounds.left + " " + rectangleBounds.top + "," +
+        rectangleBounds.right + " " + rectangleBounds.top + "," +
+        rectangleBounds.right + " " + rectangleBounds.bottom + "," +
+        rectangleBounds.left + " " + rectangleBounds.bottom + ')');
     rules.push('position: relative');
     rules.push('overflow-wrap: break-word');
     stylesheet.insertRule('#' + elementId + '{' + rules.join(';') + '}');
 
     rules = [];
-    rules.push('left: ' + (shapeBounds.x - 1) + units, 'top: ' + (shapeBounds.y - 1) + units, 'width: ' + rectangleBounds[2], 'height: ' + rectangleBounds[3]);
+    rules.push('left: ' + (shapeBounds.x - 1) + units, 'top: ' + (shapeBounds.y - 1) + units, 'width: ' + shapeBounds.width + units, 'height: ' + shapeBounds.height + units);
     rules.push('position: absolute', 'display: block', 'content: \' \'');
     rules.push('border: 1px solid blue');
     stylesheet.insertRule('#' + elementId + ':before{' + rules.join(';') + '}');

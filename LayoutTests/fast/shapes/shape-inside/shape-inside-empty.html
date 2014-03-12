@@ -10,14 +10,6 @@
         background-color: green;
     }
 
-    #shape-inside-rectangle-width0 {
-        -webkit-shape-inside: rectangle(0px, 0px, 0px, 1em);
-    }
-
-    #shape-inside-rectangle-height0 {
-        -webkit-shape-inside: rectangle(0px, 0px, 1em, 0px);
-    }
-
     #shape-inside-circle-radius0 {
         -webkit-shape-inside: circle(0px at 0px 0px);
     }
@@ -41,13 +33,7 @@
 </head>
 <body>
 <div id="rectangles">
-    <p id="shape-inside-rectangle-width0" style="margin-top: 0px;">
-        This text should be pushed down below the green rectangle. (There is a rectangle(0px, 0px, 0px, 1em) shape-inside CSS property on the green rectangle.)
-    </p>
-    <p id="shape-inside-rectangle-height0">
-        This text should be pushed down below the green rectangle. (There is a rectangle(0px, 0px, 1em, 0px) shape-inside CSS property on the green rectangle.)
-    </p>
-    <p id="shape-inside-circle-radius0">
+    <p id="shape-inside-circle-radius0" style="margin-top: 0px;">
         This text should be pushed down below the green rectangle. (There is a circle(0px at 0px 0px) shape-inside CSS property on the green rectangle.)
     </p>
     <p id="shape-inside-ellipse-radiusX0">

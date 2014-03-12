@@ -7,10 +7,10 @@ PASS testInlineStyle("-webkit-shape-margin", "10px") is null
 PASS testComputedStyle("-webkit-shape-margin", "10px") is "0px"
 PASS testInlineStyle("-webkit-shape-padding", "10px") is null
 PASS testComputedStyle("-webkit-shape-padding", "10px") is "0px"
-PASS testInlineStyle("-webkit-shape-outside", "circle(10px, 10px, 10px)") is null
-PASS testComputedStyle("-webkit-shape-outside", "circle(10px, 10px, 10px)") is "none"
-PASS testInlineStyle("-webkit-shape-inside", "circle(10px, 10px, 10px)") is null
-PASS testComputedStyle("-webkit-shape-inside", "circle(10px, 10px, 10px)") is "none"
+PASS testInlineStyle("-webkit-shape-outside", "circle(10px at 10px 10px)") is null
+PASS testComputedStyle("-webkit-shape-outside", "circle(10px at 10px 10px)") is "none"
+PASS testInlineStyle("-webkit-shape-inside", "circle(10px at 10px 10px)") is null
+PASS testComputedStyle("-webkit-shape-inside", "circle(10px at 10px 10px)") is "none"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -9,20 +9,8 @@
     outline: 2px solid green;
 }
 
-.rectangle {
-    -webkit-shape-inside: rectangle(25px, 25px, 400px, 50px);
-}
-
-.rounded-rectangle {
-    width: 100px;
-    height: 100px;
-    -webkit-shape-inside: rectangle(0, 0, 100%, 100%, 25%, 25%);
-}
-
-.smaller-rounded-rectangle {
-    width: 100px;
-    height: 100px;
-    -webkit-shape-inside: rectangle(0, 0, 75%, 75%, 25%, 25%);
+.polygon {
+    -webkit-shape-inside: polygon(25px 25px, 425px 25px, 425px 75px, 25px 75px);
 }
 
 .details {
@@ -33,34 +21,22 @@
 </head>
 
 <body>
-  <div class="box rectangle">
+  <div class="box polygon">
     <p style="padding-top: 55px;">Content1</p>
   </div>
-<p class="details">There is a 400x50px shape-inside rectangle inside the green box.<br/>The Content1 text line's bottom equals to the shape-inside's rectangle bottom boundary, so it should fit in the shape-inside.</p>
+<p class="details">There is a 400x50px shape-inside polygon inside the green box.<br/>The Content1 text line's bottom equals to the shape-inside's polygon bottom boundary, so it should fit in the shape-inside.</p>
 <hr>
 
-<div class="box rectangle">
+<div class="box polygon">
     <p style="padding-top: 60px;">Content2</p>
 </div>
-<p class="details">There is a 400x50px shape-inside rectangle inside the green box.<br/>The Content2 text line overlaps with the shape-inside's rectangle bottom boundary, so the Content2 should be pushed below the content box.</p>
+<p class="details">There is a 400x50px shape-inside polygon inside the green box.<br/>The Content2 text line overlaps with the shape-inside's polygon bottom boundary, so the Content2 should be pushed below the content box.</p>
 <hr>
 
-<div class="box rectangle">
+<div class="box polygon">
     <p style="padding-top: 76px;">Content3</p>
 </div>
-<p class="details">There is a 400x50px shape-inside rectangle inside the green box.<br/>The Content3 text line starts after the shape-inside's rectangle bottom boundary, so the Content3 should be pushed below the content box.</p>
-<hr>
-
-<div class="box rounded-rectangle">
-  <p style="padding-top: 90px;">Content4</p>
-</div>
-<p class="details">There is a 100x100px shape-inside rounded rectangle inside the green box.<br/>The shape top and bottom boundaries match with the content box boundaries, the overflow should start on the left, below the green content box.</p>
-<hr>
-
-<div class="box smaller-rounded-rectangle">
-  <p style="padding-top: 60px;">Content5</p>
-</div>
-<p class="details">There is a 75x75px shape-inside rounded rectangle inside the green 100x100px box.<br/>The forth line should overflow, the overflow should start on the left, below the green content box.</p>
+<p class="details">There is a 400x50px shape-inside polygon inside the green box.<br/>The Content3 text line starts after the shape-inside's polygon bottom boundary, so the Content3 should be pushed below the content box.</p>
 <hr>
 
 <p>Based on a recent change on the <a href="http://dev.w3.org/csswg/css-exclusions/#shape-inside-property">exclusions specification</a>. The 'shape-inside' property adds an exclusion area to the element's wrapping context.

@@ -11,8 +11,8 @@
         display: inline-block;
     }
 
-    #rectangle-box {
-      -webkit-animation: rectangle-anim 2s linear
+    #inset-box {
+      -webkit-animation: inset-anim 2s linear
     }
 
     #circle-box {
@@ -31,9 +31,9 @@
       -webkit-animation: none-anim 2s linear
     }
 
-    @-webkit-keyframes rectangle-anim {
-        from { -webkit-clip-path: rectangle(0%, 0%, 100%, 100%); }
-        to   { -webkit-clip-path: rectangle(20%, 20%, 60%, 60%); }
+    @-webkit-keyframes inset-anim {
+        from { -webkit-clip-path: inset(0); }
+        to   { -webkit-clip-path: inset(20%); }
     }
 
     @-webkit-keyframes circle-anim {
@@ -62,7 +62,7 @@
   <script type="text/javascript">
     const expectedValues = [
       // [animation-name, time, element-id, property, expected-value, tolerance]
-      ["rectangle-anim",  1, "rectangle-box", "webkitClipPath", "rectangle(10%, 10%, 80%, 80%, 0px, 0px)", 0.05],
+      ["inset-anim",  1, "inset-box", "webkitClipPath", "inset(10% 10% 10% 10% round 0px 0px 0px 0px / 0px 0px 0px 0px)", 0.05],
       ["circle-anim",  1, "circle-box", "webkitClipPath", "circle(35% at 35% 35%)", 0.05],
       ["ellipse-anim",  1, "ellipse-box", "webkitClipPath", "ellipse(35% 30% at 35% 35%)", 0.05],
       ["polygon-anim",  1, "polygon-box", "webkitClipPath", "polygon(nonzero, 10% 10%, 90% 10%, 90% 90%, 10% 90%)", 0.05],
@@ -74,7 +74,7 @@
 </head>
 <body>
 
-<div class="box" id="rectangle-box"></div>
+<div class="box" id="inset-box"></div>
 <div class="box" id="circle-box"></div>
 <div class="box" id="ellipse-box"></div>
 <div class="box" id="polygon-box"></div>

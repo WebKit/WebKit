@@ -27,11 +27,11 @@ invalidShapeValues.forEach(function(value, i, a) {
 applyToEachArglist(
     testNotInheritedShapeProperty, 
     [// [property, parentValue, childValue, expectedValue]
-     ["-webkit-shape-inside", "none", "rectangle(10px, 20px, 30px, 40px)", "parent: none, child: rectangle(10px, 20px, 30px, 40px, 0px, 0px)"],
-     ["-webkit-shape-inside", "outside-shape", "rectangle(10px, 20px, 30px, 40px)", "parent: outside-shape, child: rectangle(10px, 20px, 30px, 40px, 0px, 0px)"],
-     ["-webkit-shape-inside", "rectangle(10px, 20px, 30px, 40px)", "initial", "parent: rectangle(10px, 20px, 30px, 40px, 0px, 0px), child: none"],
-     ["-webkit-shape-inside", "rectangle(10px, 20px, 30px, 40px)", "", "parent: rectangle(10px, 20px, 30px, 40px, 0px, 0px), child: none"],
-     ["-webkit-shape-inside", "rectangle(10px, 20px, 30px, 40px)", "inherit", "parent: rectangle(10px, 20px, 30px, 40px, 0px, 0px), child: rectangle(10px, 20px, 30px, 40px, 0px, 0px)"],
+     ["-webkit-shape-inside", "none", "circle(30px at 10px 20px)", "parent: none, child: circle(30px at 10px 20px)"],
+     ["-webkit-shape-inside", "outside-shape", "circle(30px at 10px 20px)", "parent: outside-shape, child: circle(30px at 10px 20px)"],
+     ["-webkit-shape-inside", "circle(30px at 10px 20px)", "initial", "parent: circle(30px at 10px 20px), child: none"],
+     ["-webkit-shape-inside", "circle(30px at 10px 20px)", "", "parent: circle(30px at 10px 20px), child: none"],
+     ["-webkit-shape-inside", "circle(30px at 10px 20px)", "inherit", "parent: circle(30px at 10px 20px), child: circle(30px at 10px 20px)"],
      ["-webkit-shape-inside", "", "inherit", "parent: none, child: none"],
      ["-webkit-shape-inside", "none", "inherit", "parent: none, child: none"]]
 );

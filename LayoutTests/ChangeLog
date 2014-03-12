@@ -1,3 +1,262 @@
+2014-03-12  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Remove deprecated shapes
+        https://bugs.webkit.org/show_bug.cgi?id=125235
+
+        Reviewed by Dirk Schulze.
+
+        Remove tests for deprecated shape syntax.
+
+        There are also a few shape-inside tests that have been removed because
+        they were very difficult to make work without the rectangle shape, and
+        the future of the current shape-inside implementation is questionable
+        at best.
+
+        * animations/resources/animation-test-helpers.js:
+        (parseBasicShape):
+        * compositing/contents-opaque/opaque-with-clip-path-expected.html:
+        * compositing/contents-opaque/opaque-with-clip-path.html:
+        * css3/masking/clip-path-animation-expected.txt:
+        * css3/masking/clip-path-animation.html:
+        * css3/masking/clip-path-rectangle-expected.txt: Removed.
+        * css3/masking/clip-path-rectangle.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/resources/rounded-rectangle.js: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/resources/subpixel-utils.js: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/resources/w3c-import.log: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-circle-000-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-circle-000.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-circle-001-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-circle-001.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-000-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-000.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001-ref-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001-ref.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-002-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-002.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-003-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-003.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-004-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-004.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-005-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-005.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-006-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-006.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-ellipse-000-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-ellipse-000.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-000-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-000.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-001-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-001.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-002-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-002.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-003-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-003.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-004-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-004.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-inset-rectangle-000-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-inset-rectangle-000.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-inset-rectangle-001-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-inset-rectangle-001.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-inset-rectangle-002-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-inset-rectangle-002.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-000-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-000.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-001-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-001.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-002-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-002.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-003-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-003.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-004-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-004.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-005-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-005.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-006-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-006.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-007-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-007.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-008-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-008.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-009-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-009.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-010-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-010.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-011-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-011.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-012-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-012.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-013-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-013.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-014-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-014.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-015-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-015.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-016-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-016.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-017-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-017.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-018-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-018.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-019-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-019.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-020-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-020.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-021-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-021.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-000-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-000.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-001-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-001.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-002-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-002.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-003-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-003.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-004-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-004.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-005-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-005.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-006-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-006.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-007-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-007.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-008-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-008.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-009-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-009.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-rounded-rectangle-001-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-rounded-rectangle-001.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-rounded-rectangle-002-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-rounded-rectangle-002.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-rounded-rectangle-003-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-rounded-rectangle-003.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-rounded-rectangle-004-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-rounded-rectangle-004.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-shape-margin-000-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-shape-margin-000.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-shape-margin-001-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-shape-margin-001.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-square-000-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-square-000.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-square-border-000-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-square-border-000.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-stacked-000-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-stacked-000.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-vertical-rectangle-000-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-vertical-rectangle-000.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-vertical-rectangle-001-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-vertical-rectangle-001.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-vertical-rectangle-002-expected.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-vertical-rectangle-002.html: Removed.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/w3c-import.log: Removed.
+        * fast/masking/parsing-clip-path-shape-expected.txt:
+        * fast/masking/parsing-clip-path-shape.html:
+        * fast/regions/shape-inside/shape-inside-on-additional-regions.html:
+        * fast/regions/shape-inside/shape-inside-on-first-region-block-content.html:
+        * fast/regions/shape-inside/shape-inside-on-first-region-inline-content.html:
+        * fast/regions/shape-inside/shape-inside-on-multiple-autoheight-regions.html:
+        * fast/regions/shape-inside/shape-inside-on-multiple-regions-with-negative-shape-top-expected.html: Removed.
+        * fast/regions/shape-inside/shape-inside-on-multiple-regions-with-negative-shape-top.html: Removed.
+        * fast/regions/shape-inside/shape-inside-on-regions-block-content-basic-overflow-shape-top-offset.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-block-content-overflow-bottom-positioned-multiple-shapes.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-block-content-overflow-multiple-shapes.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-expected.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content-basic-overflow-shape-top-offset.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content-overflow-bottom-positioned-multiple-shapes.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content-overflow-multiple-shapes.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content.html:
+        * fast/regions/shape-inside/shape-inside-on-regions.html:
+        * fast/regions/shape-inside/shape-inside-on-second-region-block-content.html:
+        * fast/regions/shape-inside/shape-inside-on-second-region-inline-content.html:
+        * fast/regions/shape-inside/shape-inside-recursive-layout-expected.html:
+        * fast/regions/shape-inside/shape-inside-recursive-layout.html:
+        * fast/regions/shape-inside/shape-inside-with-region-borders.html:
+        * fast/regions/shape-inside/shape-inside-with-region-padding.html:
+        * fast/shapes/css-shapes-disabled-expected.txt:
+        * fast/shapes/css-shapes-disabled.html:
+        * fast/shapes/css-shapes-enabled-expected.txt:
+        * fast/shapes/css-shapes-enabled.html:
+        * fast/shapes/parsing/parsing-shape-inside-expected.txt:
+        * fast/shapes/parsing/parsing-shape-inside.html:
+        * fast/shapes/parsing/parsing-shape-lengths-expected.txt:
+        * fast/shapes/parsing/parsing-shape-lengths.html:
+        * fast/shapes/parsing/parsing-shape-outside-expected.txt:
+        * fast/shapes/parsing/parsing-shape-outside.html:
+        * fast/shapes/parsing/parsing-test-utils.js:
+        * fast/shapes/resources/simple-rectangle.js:
+        (drawTextRectangle):
+        * fast/shapes/shape-inside/shape-inside-animation-expected.txt:
+        * fast/shapes/shape-inside/shape-inside-animation.html:
+        * fast/shapes/shape-inside/shape-inside-bottom-edge-expected.html:
+        * fast/shapes/shape-inside/shape-inside-bottom-edge.html:
+        * fast/shapes/shape-inside/shape-inside-box-sizing.html:
+        * fast/shapes/shape-inside/shape-inside-dynamic-nested-expected.html:
+        * fast/shapes/shape-inside/shape-inside-dynamic-nested.html:
+        * fast/shapes/shape-inside/shape-inside-dynamic-shape.html:
+        * fast/shapes/shape-inside/shape-inside-dynamic-text.html:
+        * fast/shapes/shape-inside/shape-inside-empty-expected.html:
+        * fast/shapes/shape-inside/shape-inside-empty.html:
+        * fast/shapes/shape-inside/shape-inside-inline-elements-expected.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-inline-elements.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-multiple-blocks-vertical.html:
+        * fast/shapes/shape-inside/shape-inside-multiple-blocks.html:
+        * fast/shapes/shape-inside/shape-inside-on-nested-container-with-unresolved-height.html:
+        * fast/shapes/shape-inside/shape-inside-outside-shape.html:
+        * fast/shapes/shape-inside/shape-inside-overflow-fixed-dimensions-block-content.html:
+        * fast/shapes/shape-inside/shape-inside-overflow-fixed-dimensions.html:
+        * fast/shapes/shape-inside/shape-inside-overflow.html:
+        * fast/shapes/shape-inside/shape-inside-percentage-auto.html:
+        * fast/shapes/shape-inside/shape-inside-percentage.html:
+        * fast/shapes/shape-inside/shape-inside-rectangle-padding-expected.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rectangle-padding.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-001-expected.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-001.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-002-expected.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-002.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-003-expected.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-003.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-004-expected.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-004.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-fit-001-expected.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-fit-001.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-fit-002-expected.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-fit-002.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-fit-003-expected.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-fit-003.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-large-radius-expected.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-large-radius.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-padding-expected.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-padding.html: Removed.
+        * fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html:
+        * fast/shapes/shape-inside/shape-inside-text.html:
+        * fast/shapes/shape-inside/shape-inside-vertical-text.html:
+        * fast/shapes/shape-outside-floats/shape-outside-animation-expected.txt:
+        * fast/shapes/shape-outside-floats/shape-outside-animation.html:
+        * fast/shapes/shape-outside-floats/shape-outside-dynamic-shape-margin.html:
+        * fast/shapes/shape-outside-floats/shape-outside-dynamic-shape-overhang.html:
+        * fast/shapes/shape-outside-floats/shape-outside-dynamic-shape.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-modes.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-margin-bottom.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-margin-left.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-margin-right.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-img-inset-rectangle-negative-width-crash-expected.txt: Removed.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-img-inset-rectangle-negative-width-crash.html: Removed.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-layout-after-initial-layout-pass.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-not-a-layer.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-outermost.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-polygon-000-expected.html: Renamed from LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-polygon-000-expected.html.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-polygon-000.html: Renamed from LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-polygon-000.html.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-polygon-001-expected.html: Renamed from LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-polygon-001-expected.html.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-polygon-001.html: Renamed from LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-polygon-001.html.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-polygon-002-expected.html: Renamed from LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-polygon-002-expected.html.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-polygon-002.html: Renamed from LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-polygon-002.html.
+        * fast/shapes/shape-outside-floats/shape-outside-shape-margin-animation.html:
+        * svg/clip-path/clip-path-shape-rounded-rect-1-expected.svg: Removed.
+        * svg/clip-path/clip-path-shape-rounded-rect-1.svg: Removed.
+        * svg/clip-path/clip-path-shape-rounded-rect-2-expected.svg: Removed.
+        * svg/clip-path/clip-path-shape-rounded-rect-2.svg: Removed.
+
 2014-03-12  Zalan Bujtas  <zalan@apple.com>
 
         Add hiDPI support for compositing content in DumpRenderTree/WebKitTestRunner

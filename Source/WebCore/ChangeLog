@@ -1,3 +1,36 @@
+2014-03-12  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Remove deprecated shapes
+        https://bugs.webkit.org/show_bug.cgi?id=125235
+
+        Reviewed by Dirk Schulze.
+
+        Remove support for deprecated shape types and syntax. These have
+        already been removed from the CSS Shapes specification, so this aligns
+        the implementation with the specification.
+
+        The "new" tests below were simply moved from the old csswg directory,
+        as they were the only tests there that applied to the current syntax.
+
+        Tests: fast/shapes/shape-outside-floats/shape-outside-floats-polygon-000.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-polygon-001.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-polygon-002.html
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBasicShape):
+        (WebCore::basicShapeForValue):
+        * css/BasicShapeFunctions.h:
+        * css/CSSBasicShapes.cpp:
+        * css/CSSBasicShapes.h:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBasicShape):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createShape):
+        * rendering/shapes/ShapeInsideInfo.cpp:
+        (WebCore::ShapeInsideInfo::isEnabledFor):
+        * rendering/style/BasicShapes.cpp:
+        * rendering/style/BasicShapes.h:
+
 2014-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] [Stable] deadlock in gobject introspection
@@ -564,7 +597,6 @@
         * rendering/RenderLayer.cpp:
         (WebCore::RenderLayer::calculateClipRects):
 
->>>>>>> .r165392
 2014-03-10  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] SVG Image valued shape fails if root element's size is relative

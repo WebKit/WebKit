@@ -26,16 +26,16 @@
         height: 130px;
     }
     .shape-inside {
-        -webkit-shape-inside: rectangle(5px, 10px, 30px, 40px);
+        -webkit-shape-inside: polygon(5px 10px, 35px 10px, 35px 50px, 5px 50px);
         font-family: Ahem, sans-serif;
         font-size: 10px;
         color: green;
     }
     .border-box.shape-inside {
-        -webkit-shape-inside: rectangle(10px, 20px, 30px, 40px) border-box;
+        -webkit-shape-inside: polygon(10px 20px, 40px 20px, 40px 60px, 10px 60px) border-box;
     }
     .border-box.border.padding.shape-inside {
-        -webkit-shape-inside: rectangle(15px, 30px, 30px, 40px) border-box;
+        -webkit-shape-inside: polygon(15px 30px, 45px 30px, 45px 70px, 15px 70px) border-box;
     }
     .vertical-lr {
         -webkit-writing-mode: vertical-lr;

@@ -1,5 +1,5 @@
 Moving Text Moving Text Moving Text Moving Text
-PASS - "webkitShapeInside" property for "rectangle-box" element at 1s saw something close to: rectangle(10%, 10%, 80%, 80%, 0px, 0px)
+PASS - "webkitShapeInside" property for "inset-box" element at 1s saw something close to: inset(10% 10% 10% 10% round 0px 0px 0px 0px / 0px 0px 0px 0px)
 PASS - "webkitShapeInside" property for "circle-box" element at 1s saw something close to: circle(35% at 35% 35%)
 PASS - "webkitShapeInside" property for "ellipse-box" element at 1s saw something close to: ellipse(35% 30% at 35% 35%)
 PASS - "webkitShapeInside" property for "polygon-box" element at 1s saw something close to: polygon(nonzero, 10% 10%, 90% 10%, 90% 90%, 10% 90%)

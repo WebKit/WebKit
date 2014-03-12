@@ -6,13 +6,6 @@
 // or: ["specified value", "CSS Text value", "Computed style value"]
 var validShapeValues = [
     "none",
-    ["rectangle(10px, 20px, 30px, 40px)", "rectangle(10px, 20px, 30px, 40px)", "rectangle(10px, 20px, 30px, 40px, 0px, 0px)"],
-    ["rectangle(10px, 20px, 30px, 40px, 5px)", "rectangle(10px, 20px, 30px, 40px, 5px)", "rectangle(10px, 20px, 30px, 40px, 5px, 5px)"],
-    "rectangle(10px, 20px, 30px, 40px, 5px, 10px)",
-
-    ["inset-rectangle(10px, 20px, 30px, 40px)", "inset-rectangle(10px, 20px, 30px, 40px)", "inset-rectangle(10px, 20px, 30px, 40px, 0px, 0px)"],
-    ["inset-rectangle(10px, 20px, 30px, 40px, 5px)", "inset-rectangle(10px, 20px, 30px, 40px, 5px)", "inset-rectangle(10px, 20px, 30px, 40px, 5px, 5px)"],
-    "inset-rectangle(10px, 20px, 30px, 40px, 5px, 10px)",
 
     ["inset(10px)", "inset(10px 10px 10px 10px)", "inset(10px 10px 10px 10px round 0px 0px 0px 0px / 0px 0px 0px 0px)"],
     ["inset(10px 9px)", "inset(10px 9px 10px 9px)", "inset(10px 9px 10px 9px round 0px 0px 0px 0px / 0px 0px 0px 0px)"],
@@ -40,8 +33,6 @@ var validShapeValues = [
     ["inset(10px 20px 30px 40px round 5px 6px)", "inset(10px 20px 30px 40px round 5px 6px 5px 6px / 5px 6px 5px 6px)", "inset(10px 20px 30px 40px round 5px 6px 5px 6px / 5px 6px 5px 6px)"],
     "inset(10px 20px 30px 40px round 5px 6px 7px 8px / 50px 60px 70px 80px)",
 
-    "circle(10px, 20px, 30px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
-
     ["circle()", "circle(at 50% 50%)", "circle(closest-side at 50% 50%)"],
     ["circle(farthest-side)", "circle(farthest-side at 50% 50%)", "circle(farthest-side at 50% 50%)"],
     ["circle(closest-side)", "circle(closest-side at 50% 50%)", "circle(closest-side at 50% 50%)"],
@@ -57,8 +48,6 @@ var validShapeValues = [
     ["circle(10px at right 10% bottom 10%)", "circle(10px at 90% 90%)"],
     ["circle(10px at right 0px bottom 0px)", "circle(10px at 100% 100%)"],
     ["circle(10px at right 10px bottom 10px)", "circle(10px at right 10px bottom 10px)"],
-
-    "ellipse(10px, 20px, 30px, 40px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
 
     ["ellipse()", "ellipse(at 50% 50%)", "ellipse(closest-side closest-side at 50% 50%)"],
     ["ellipse(10px)", "ellipse(10px at 50% 50%)", "ellipse(10px closest-side at 50% 50%)"],
@@ -105,20 +94,6 @@ var invalidShapeValues = [
     "calc()",
     "auto",
 
-    "rectangle()",
-    "rectangle(10px)",
-    "rectangle(10px, 10px)",
-    "rectangle(10px, 20px, 30px)",
-    "rectangle(10px 20px 30px 40px)",
-    "rectangle(10px, 20px, 30px, 40px, 50px, 60px, 70px)",
-
-    "inset-rectangle()",
-    "inset-rectangle(10px)",
-    "inset-rectangle(10px, 10px)",
-    "inset-rectangle(10px, 20px, 30px)",
-    "inset-rectangle(10px 20px 30px 40px)",
-    "inset-rectangle(10px, 20px, 30px, 40px, 50px, 60px, 70px)",
-
     "inset()",
     "inset(10px, 10px)",
     "inset(10px 20px, 30px)",
@@ -135,10 +110,6 @@ var invalidShapeValues = [
     "inset(/ 10px)",
     "inset(round /)",
 
-    "circle(10px, 20px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
-    "circle(10px 20px 30px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
-    "circle(10px, 20px, 30px, 40px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
-
     "circle(10px 20px)",
     "circle(10px at 10px 10px 10px)",
     "circle(10px at 10px 10px at center)",
@@ -147,10 +118,6 @@ var invalidShapeValues = [
     "circle(at 10px 10px 10px)",
     "circle(at 10px 10px at center)",
     "circle(at center center 10px)",
-
-    "ellipse(10px, 20px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
-    "ellipse(10px, 20px, 30px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
-    "ellipse(10px 20px 30px 40px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
 
     "ellipse(10px 20px 30px)",
     "ellipse(10px at 10px 10px 10px)",

@@ -51,7 +51,7 @@ bool ShapeInsideInfo::isEnabledFor(const RenderBlock& renderer)
 
     switch (shapeValue->type()) {
     case ShapeValue::Shape:
-        return shapeValue->shape() && shapeValue->shape()->type() != BasicShape::BasicShapeInsetRectangleType && shapeValue->shape()->type() != BasicShape::BasicShapeInsetType;
+        return shapeValue->shape() && shapeValue->shape()->type() != BasicShape::BasicShapeInsetType;
     case ShapeValue::Image:
         return shapeValue->isImageValid() && checkShapeImageOrigin(renderer.document(), *(shapeValue->image()->cachedImage()));
     case ShapeValue::Box:

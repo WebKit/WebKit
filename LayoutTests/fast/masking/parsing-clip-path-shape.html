@@ -41,30 +41,12 @@ function negativeTest(property, value) {
 }
 
 // absolute lengths - number serialization, units
-testInner("-webkit-clip-path", "circle(0, 0, 0)", "circle(0px, 0px, 0px)");
-testInner("-webkit-clip-path", "circle(-1px, +1px, 1px)", "circle(-1px, 1px, 1px)");
-testInner("-webkit-clip-path", "circle(-1.5px, +1.5px, 1.5px)", "circle(-1.5px, 1.5px, 1.5px)");
-testInner("-webkit-clip-path", "circle(-.5px, +.5px, .5px)", "circle(-0.5px, 0.5px, 0.5px)");
-
 testInner("-webkit-clip-path", "circle(0 at 0 0)", "circle(0px at 0% 0%)");
 testInner("-webkit-clip-path", "circle(1px at -1px +1px)", "circle(1px at -1px 1px)");
 testInner("-webkit-clip-path", "circle(1.5px at -1.5px +1.5px)", "circle(1.5px at -1.5px 1.5px)");
 testInner("-webkit-clip-path", "circle(.5px at -.5px +.5px)", "circle(0.5px at -0.5px 0.5px)");
 
-testInner("-webkit-clip-path", "rectangle(1cm, 1mm, 1in, 1px, 1pt, 1pc)", "rectangle(1cm, 1mm, 1in, 1px, 1pt, 1pc)");
-
 // font-relative lengths - number serialization, units, resolution
-testInner("-webkit-clip-path", "circle(-1em, +1em, 1em)", "circle(-1em, 1em, 1em)");
-testInner("-webkit-clip-path", "circle(-1.5em, +1.5em, 1.5em)", "circle(-1.5em, 1.5em, 1.5em)");
-testInner("-webkit-clip-path", "circle(-.5em, +.5em, .5em)", "circle(-0.5em, 0.5em, 0.5em)");
-
-testInner("-webkit-clip-path", "circle(1ex, 1ex, 1ex)", "circle(1ex, 1ex, 1ex)");
-// FIXME: Add ch test when it is supported
-testInner("-webkit-clip-path", "circle(1rem, 1rem, 1rem)", "circle(1rem, 1rem, 1rem)");
-
-testComputed("-webkit-clip-path", "circle(.5em, 1em, 1.5em)", "circle(4px, 8px, 12px)");
-testComputed("-webkit-clip-path", "circle(.5rem, 1rem, 1.5rem)", "circle(8px, 16px, 24px)");
-
 testInner("-webkit-clip-path", "circle(1em at -1em +1em)", "circle(1em at -1em 1em)");
 testInner("-webkit-clip-path", "circle(1.5em at -1.5em +1.5em)", "circle(1.5em at -1.5em 1.5em)");
 testInner("-webkit-clip-path", "circle(.5em at -.5em +.5em)", "circle(0.5em at -0.5em 0.5em)");
@@ -77,14 +59,6 @@ testComputed("-webkit-clip-path", "circle(1.5em at .5em 1em)", "circle(12px at 4
 testComputed("-webkit-clip-path", "circle(1.5rem at .5rem 1rem)", "circle(24px at 8px 16px)");
 
 // viewport-percentage lengths - units, resolution
-testInner("-webkit-clip-path", "circle(1vw, 1vw, 1vw)", "circle(1vw, 1vw, 1vw)");
-testInner("-webkit-clip-path", "circle(1vh, 1vh, 1vh)", "circle(1vh, 1vh, 1vh)");
-testInner("-webkit-clip-path", "circle(1vmin, 1vmin, 1vmin)", "circle(1vmin, 1vmin, 1vmin)");
-
-testComputed("-webkit-clip-path", "circle(.5vw, 1vw, 1.5vw)", "circle(0.5vw, 1vw, 1.5vw)");
-testComputed("-webkit-clip-path", "circle(.5vh, 1vh, 1.5vh)", "circle(0.5vh, 1vh, 1.5vh)");
-testComputed("-webkit-clip-path", "circle(.5vmin, 1vmin, 1.5vmin)", "circle(0.5vmin, 1vmin, 1.5vmin)");
-
 testInner("-webkit-clip-path", "circle(1vw at 1vw 1vw)", "circle(1vw at 1vw 1vw)");
 testInner("-webkit-clip-path", "circle(1vh at 1vh 1vh)", "circle(1vh at 1vh 1vh)");
 testInner("-webkit-clip-path", "circle(1vmin at 1vmin 1vmin)", "circle(1vmin at 1vmin 1vmin)");
@@ -94,16 +68,9 @@ testComputed("-webkit-clip-path", "circle(1.5vh at .5vh 1vh)", "circle(1.5vh at 
 testComputed("-webkit-clip-path", "circle(1.5vmin at .5vmin 1vmin)", "circle(1.5vmin at 0.5vmin 1vmin)");
 
 // percentage lengths - units
-testInner("-webkit-clip-path", "circle(100%, 100%, 100%)", "circle(100%, 100%, 100%)");
-testInner("-webkit-clip-path", "circle(100% at 100% 100%)", "circle(100% at 100% 100%)");
-testInner("-webkit-clip-path", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)");
-testInner("-webkit-clip-path", "ellipse(100%, 100%, 100%, 100%)", "ellipse(100%, 100%, 100%, 100%)");
-testInner("-webkit-clip-path", "polygon(10% 20%, 30% 40%, 40% 50%)", "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)");
-
-testComputed("-webkit-clip-path", "circle(50%, 100%, 150%)", "circle(50%, 100%, 150%)");
 testComputed("-webkit-clip-path", "circle(150% at 50% 100%)", "circle(150% at 50% 100%)");
-testComputed("-webkit-clip-path", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)");
-testComputed("-webkit-clip-path", "ellipse(100%, 100%, 100%, 100%)", "ellipse(100%, 100%, 100%, 100%)");
+testComputed("-webkit-clip-path", "inset(45% 45% 90% 60% round 25% 10%)", "inset(45% 45% 90% 60% round 25% 10% 25% 10% / 25% 10% 25% 10%)");
+testComputed("-webkit-clip-path", "ellipse(100% 100% at 100% 100%)", "ellipse(100% 100% at 100% 100%)");
 testComputed("-webkit-clip-path", "polygon(10% 20%, 30% 40%, 40% 50%)", "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)");
 
 // boxes
@@ -134,27 +101,17 @@ testComputed("-webkit-clip-path", "border-box circle(50% at 50% 50%)", "circle(5
 testComputed("-webkit-clip-path", "circle(50% at 50% 50%) fill", "circle(50% at 50% 50%) fill");
 
 // reject non-lengths
-negativeTest("-webkit-clip-path", "circle(1px, 1px, 1)");
-negativeTest("-webkit-clip-path", "circle(1px, 1px, px)");
-negativeTest("-webkit-clip-path", "circle(1px, 1px, 1p)");
-negativeTest("-webkit-clip-path", "circle(1px, 1px, calc())");
-
 negativeTest("-webkit-clip-path", "circle(1 at 1px 1px)");
 negativeTest("-webkit-clip-path", "circle(px at 1px 1px)");
 negativeTest("-webkit-clip-path", "circle(1p at 1px 1px)");
 negativeTest("-webkit-clip-path", "circle(calc() at 1px 1px)");
 
 // reject negative radiuses
-negativeTest("-webkit-clip-path", "circle(-1.5px, +1.5px, -1.5px)");
 negativeTest("-webkit-clip-path", "circle(-1.5px at -1.5px +1.5px)");
-negativeTest("-webkit-clip-path", "rectangle(1cm, 1mm, 1in, 1px, -1pt, 1pc)");
-negativeTest("-webkit-clip-path", "rectangle(1cm, 1mm, 1in, 1px, 1pt, -1pc)");
-negativeTest("-webkit-clip-path", "ellipse(1em, 1em, -1em, 1em)");
-negativeTest("-webkit-clip-path", "ellipse(1em, 1em, 1em, -1em)");
-
-// reject negative height and width
-negativeTest("-webkit-clip-path", "rectangle(1cm, 1mm, -1in, 1px, 1pt, 1pc)");
-negativeTest("-webkit-clip-path", "rectangle(1cm, 1mm, 1in, -1px, 1pt, 1pc)");
+negativeTest("-webkit-clip-path", "inset(1cm 1mm 1in 1px round -1pt, 1pc)");
+negativeTest("-webkit-clip-path", "inset(1cm 1mm 1in 1px round 1pt -1pc)");
+negativeTest("-webkit-clip-path", "ellipse(-1em 1em at 1em 1em)");
+negativeTest("-webkit-clip-path", "ellipse(1em -1em at 1em 1em)");
 
 // reject multiple <box> values
 negativeTest("-webkit-clip-path", "fill circle(50% at 50% 50%) content-box");
@@ -166,7 +123,6 @@ negativeTest("-webkit-clip-path", "none content-box");
 negativeTest("-webkit-clip-path", "url(#test) padding-box");
 
 // general negative tests
-negativeTest("-webkit-clip-path", "circle(0, 0)");
 negativeTest("-webkit-clip-path", "polygon(0, 0)");
 negativeTest("-webkit-clip-path", "polygon(0 0, 0)");
 negativeTest("-webkit-clip-path", "polygon(0)");

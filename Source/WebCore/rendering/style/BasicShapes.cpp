@@ -92,65 +92,6 @@ bool BasicShape::canBlend(const BasicShape* other) const
         && thisEllipse->radiusY().canBlend(otherEllipse->radiusY()));
 }
 
-void BasicShapeRectangle::path(Path& path, const FloatRect& boundingBox)
-{
-    ASSERT(path.isEmpty());
-    path.addRoundedRect(
-        FloatRect(
-            floatValueForLength(m_x, boundingBox.width()) + boundingBox.x(),
-            floatValueForLength(m_y, boundingBox.height()) + boundingBox.y(),
-            floatValueForLength(m_width, boundingBox.width()),
-            floatValueForLength(m_height, boundingBox.height())
-        ),
-        FloatSize(
-            floatValueForLength(m_cornerRadiusX, boundingBox.width()),
-            floatValueForLength(m_cornerRadiusY, boundingBox.height())
-        )
-    );
-}
-
-PassRefPtr<BasicShape> BasicShapeRectangle::blend(const BasicShape* other, double progress) const
-{
-    ASSERT(type() == other->type());
-
-    const BasicShapeRectangle* o = static_cast<const BasicShapeRectangle*>(other);
-    RefPtr<BasicShapeRectangle> result =  BasicShapeRectangle::create();
-    result->setX(m_x.blend(o->x(), progress));
-    result->setY(m_y.blend(o->y(), progress));
-    result->setWidth(m_width.blend(o->width(), progress));
-    result->setHeight(m_height.blend(o->height(), progress));
-    result->setCornerRadiusX(m_cornerRadiusX.blend(o->cornerRadiusX(), progress));
-    result->setCornerRadiusY(m_cornerRadiusY.blend(o->cornerRadiusY(), progress));
-    return result.release();
-}
-
-void DeprecatedBasicShapeCircle::path(Path& path, const FloatRect& boundingBox)
-{
-    ASSERT(path.isEmpty());
-    float diagonal = sqrtf((boundingBox.width() * boundingBox.width() + boundingBox.height() * boundingBox.height()) / 2);
-    float centerX = floatValueForLength(m_centerX, boundingBox.width());
-    float centerY = floatValueForLength(m_centerY, boundingBox.height());
-    float radius = floatValueForLength(m_radius, diagonal);
-    path.addEllipse(FloatRect(
-        centerX - radius + boundingBox.x(),
-        centerY - radius + boundingBox.y(),
-        radius * 2,
-        radius * 2
-    ));
-}
-
-PassRefPtr<BasicShape> DeprecatedBasicShapeCircle::blend(const BasicShape* other, double progress) const
-{
-    ASSERT(type() == other->type());
-
-    const DeprecatedBasicShapeCircle* o = static_cast<const DeprecatedBasicShapeCircle*>(other);
-    RefPtr<DeprecatedBasicShapeCircle> result =  DeprecatedBasicShapeCircle::create();
-    result->setCenterX(m_centerX.blend(o->centerX(), progress));
-    result->setCenterY(m_centerY.blend(o->centerY(), progress));
-    result->setRadius(m_radius.blend(o->radius(), progress));
-    return result.release();
-}
-
 float BasicShapeCircle::floatValueForRadiusInBox(float boxWidth, float boxHeight) const
 {
     if (m_radius.type() == BasicShapeRadius::Value)
@@ -190,34 +131,6 @@ PassRefPtr<BasicShape> BasicShapeCircle::blend(const BasicShape* other, double p
     result->setCenterX(m_centerX.blend(o->centerX(), progress));
     result->setCenterY(m_centerY.blend(o->centerY(), progress));
     result->setRadius(m_radius.blend(o->radius(), progress));
-    return result.release();
-}
-
-void DeprecatedBasicShapeEllipse::path(Path& path, const FloatRect& boundingBox)
-{
-    ASSERT(path.isEmpty());
-    float centerX = floatValueForLength(m_centerX, boundingBox.width());
-    float centerY = floatValueForLength(m_centerY, boundingBox.height());
-    float radiusX = floatValueForLength(m_radiusX, boundingBox.width());
-    float radiusY = floatValueForLength(m_radiusY, boundingBox.height());
-    path.addEllipse(FloatRect(
-        centerX - radiusX + boundingBox.x(),
-        centerY - radiusY + boundingBox.y(),
-        radiusX * 2,
-        radiusY * 2
-    ));
-}
-
-PassRefPtr<BasicShape> DeprecatedBasicShapeEllipse::blend(const BasicShape* other, double progress) const
-{
-    ASSERT(type() == other->type());
-
-    const DeprecatedBasicShapeEllipse* o = static_cast<const DeprecatedBasicShapeEllipse*>(other);
-    RefPtr<DeprecatedBasicShapeEllipse> result = DeprecatedBasicShapeEllipse::create();
-    result->setCenterX(m_centerX.blend(o->centerX(), progress));
-    result->setCenterY(m_centerY.blend(o->centerY(), progress));
-    result->setRadiusX(m_radiusX.blend(o->radiusX(), progress));
-    result->setRadiusY(m_radiusY.blend(o->radiusY(), progress));
     return result.release();
 }
 
@@ -308,40 +221,6 @@ PassRefPtr<BasicShape> BasicShapePolygon::blend(const BasicShape* other, double 
             m_values.at(i + 1).blend(o->values().at(i + 1), progress));
     }
 
-    return result.release();
-}
-
-void BasicShapeInsetRectangle::path(Path& path, const FloatRect& boundingBox)
-{
-    ASSERT(path.isEmpty());
-    float left = floatValueForLength(m_left, boundingBox.width());
-    float top = floatValueForLength(m_top, boundingBox.height());
-    path.addRoundedRect(
-        FloatRect(
-            left + boundingBox.x(),
-            top + boundingBox.y(),
-            std::max<float>(boundingBox.width() - left - floatValueForLength(m_right, boundingBox.width()), 0),
-            std::max<float>(boundingBox.height() - top - floatValueForLength(m_bottom, boundingBox.height()), 0)
-        ),
-        FloatSize(
-            floatValueForLength(m_cornerRadiusX, boundingBox.width()),
-            floatValueForLength(m_cornerRadiusY, boundingBox.height())
-        )
-    );
-}
-
-PassRefPtr<BasicShape> BasicShapeInsetRectangle::blend(const BasicShape* other, double progress) const
-{
-    ASSERT(type() == other->type());
-
-    const BasicShapeInsetRectangle* o = static_cast<const BasicShapeInsetRectangle*>(other);
-    RefPtr<BasicShapeInsetRectangle> result =  BasicShapeInsetRectangle::create();
-    result->setTop(m_top.blend(o->top(), progress));
-    result->setRight(m_right.blend(o->right(), progress));
-    result->setBottom(m_bottom.blend(o->bottom(), progress));
-    result->setLeft(m_left.blend(o->left(), progress));
-    result->setCornerRadiusX(m_cornerRadiusX.blend(o->cornerRadiusX(), progress));
-    result->setCornerRadiusY(m_cornerRadiusY.blend(o->cornerRadiusY(), progress));
     return result.release();
 }
 

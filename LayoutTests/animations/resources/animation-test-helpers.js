@@ -181,8 +181,8 @@ function parseBasicShape(s)
 
     var matches;
     switch (shapeFunction[1]) {
-    case "rectangle":
-        matches = s.match("rectangle\\((.*)\\s*,\\s*(.*)\\s*,\\s*(.*)\\,\\s*(.*)\\)");
+    case "inset":
+        matches = s.match("inset\\((.*)\\s+(.*)\\s+(.*)\\s+(.*)\\s+round\\s+(.*)\\s+(.*)\\s+(.*)\\s+(.*)\\s+/\\s+(.*)\\s+(.*)\\s+(.*)\\s+(.*)\\)");
         break;
     case "circle":
         matches = s.match("circle\\((.*)\\s+at\\s+(.*)\\s+(.*)\\)");
