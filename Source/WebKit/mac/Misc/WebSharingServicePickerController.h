@@ -23,27 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImageControlsRootElementMac_h
-#define ImageControlsRootElementMac_h
-
-#include "ImageControlsRootElement.h"
-
 #if ENABLE(IMAGE_CONTROLS)
 
-namespace WebCore {
+@class NSSharingServicePicker;
+@protocol NSSharingServiceDelegate;
+@protocol NSSharingServicePickerDelegate;
 
-class ImageControlsRootElementMac final : public ImageControlsRootElement {
-    friend class ImageControlsRootElement;
-public:
-    virtual ~ImageControlsRootElementMac();
+class WebContextMenuClient;
 
-private:
-    ImageControlsRootElementMac(Document&);
+@interface WebSharingServicePickerController : NSObject <NSSharingServiceDelegate, NSSharingServicePickerDelegate>
 
-    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
-};
+- (instancetype)initWithImage:(NSImage *)image menuClient:(WebContextMenuClient*)menuClient;
+- (NSMenu *)menu;
 
-} // namespace WebCore
+@end
 
-#endif // ENABLE(IMAGE_CONTROLS)
-#endif // ImageControlsRootElementMac_h
+#endif

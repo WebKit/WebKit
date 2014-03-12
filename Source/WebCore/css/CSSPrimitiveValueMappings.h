@@ -38,9 +38,6 @@
 #include "FontDescription.h"
 #include "FontSmoothingMode.h"
 #include "GraphicsTypes.h"
-#if ENABLE(CSS_IMAGE_ORIENTATION)
-#include "ImageOrientation.h"
-#endif
 #include "Length.h"
 #include "LineClampValue.h"
 #include "Path.h"
@@ -51,8 +48,11 @@
 #include "ThemeTypes.h"
 #include "UnicodeBidi.h"
 #include "WritingMode.h"
-
 #include <wtf/MathExtras.h>
+
+#if ENABLE(CSS_IMAGE_ORIENTATION)
+#include "ImageOrientation.h"
+#endif
 
 namespace WebCore {
 
@@ -604,6 +604,11 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
     case CapsLockIndicatorPart:
         m_value.valueID = CSSValueCapsLockIndicator;
         break;
+#if ENABLE(IMAGE_CONTROLS)
+    case ImageControlsButtonPart:
+        m_value.valueID = CSSValueImageControlsButton;
+        break;
+#endif
     case InputSpeechButtonPart:
 #if ENABLE(INPUT_SPEECH)
         m_value.valueID = CSSValueWebkitInputSpeechButton;

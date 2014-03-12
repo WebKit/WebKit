@@ -240,6 +240,7 @@ public:
     virtual bool isInsertionPointNode() const { return false; }
 #if ENABLE(IMAGE_CONTROLS)
     virtual bool isImageControlsRootElement() const { return false; }
+    virtual bool isImageControlsButtonElement() const { return false; }
 #endif
 
     bool isDocumentNode() const;

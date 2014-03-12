@@ -718,6 +718,9 @@ relevancy-level-indicator
 continuous-capacity-level-indicator
 discrete-capacity-level-indicator
 rating-level-indicator
+#if defined(ENABLE_IMAGE_CONTROLS) && ENABLE_IMAGE_CONTROLS
+image-controls-button
+#endif
 textarea
 // An appearance value that should not be accepted by the parser:
 caps-lock-indicator

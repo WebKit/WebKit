@@ -28,6 +28,10 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/HashMap.h>
 
+#if ENABLE(IMAGE_CONTROLS)
+OBJC_CLASS NSServicesRolloverButtonCell;
+#endif
+
 OBJC_CLASS WebCoreRenderThemeNotificationObserver;
 
 namespace WebCore {
@@ -203,16 +207,16 @@ private:
     void setSearchCellState(RenderObject*, const IntRect&);
     void setSearchFieldSize(RenderStyle*) const;
 
-    NSPopUpButtonCell* popupButton() const;
-    NSSearchFieldCell* search() const;
-    NSMenu* searchMenuTemplate() const;
-    NSSliderCell* sliderThumbHorizontal() const;
-    NSSliderCell* sliderThumbVertical() const;
-    NSTextFieldCell* textField() const;
+    NSPopUpButtonCell *popupButton() const;
+    NSSearchFieldCell *search() const;
+    NSMenu *searchMenuTemplate() const;
+    NSSliderCell *sliderThumbHorizontal() const;
+    NSSliderCell *sliderThumbVertical() const;
+    NSTextFieldCell *textField() const;
 
 #if ENABLE(METER_ELEMENT)
     NSLevelIndicatorStyle levelIndicatorStyleFor(ControlPart) const;
-    NSLevelIndicatorCell* levelIndicatorFor(const RenderMeter*) const;
+    NSLevelIndicatorCell *levelIndicatorFor(const RenderMeter*) const;
 #endif
 
 #if ENABLE(PROGRESS_ELEMENT)
@@ -221,7 +225,12 @@ private:
     const int* progressBarMargins(NSControlSize) const;
 #endif
 
-private:
+#if ENABLE(IMAGE_CONTROLS)
+    virtual bool paintImageControlsButton(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual IntSize imageControlsButtonSize(const RenderObject*) const override;
+    NSServicesRolloverButtonCell *servicesRolloverButtonCell() const;
+#endif
+
     mutable RetainPtr<NSPopUpButtonCell> m_popupButton;
     mutable RetainPtr<NSSearchFieldCell> m_search;
     mutable RetainPtr<NSMenu> m_searchMenuTemplate;
@@ -229,6 +238,9 @@ private:
     mutable RetainPtr<NSSliderCell> m_sliderThumbVertical;
     mutable RetainPtr<NSLevelIndicatorCell> m_levelIndicator;
     mutable RetainPtr<NSTextFieldCell> m_textField;
+#if ENABLE(IMAGE_CONTROLS)
+    mutable RetainPtr<NSServicesRolloverButtonCell> m_servicesRolloverButton;
+#endif
 
     bool m_isSliderThumbHorizontalPressed;
     bool m_isSliderThumbVerticalPressed;

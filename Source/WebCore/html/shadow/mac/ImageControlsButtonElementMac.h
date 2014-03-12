@@ -23,27 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImageControlsRootElementMac_h
-#define ImageControlsRootElementMac_h
+#ifndef ImageControlsButtonElementMac_h
+#define ImageControlsButtonElementMac_h
 
-#include "ImageControlsRootElement.h"
+#include "HTMLDivElement.h"
 
 #if ENABLE(IMAGE_CONTROLS)
 
 namespace WebCore {
 
-class ImageControlsRootElementMac final : public ImageControlsRootElement {
-    friend class ImageControlsRootElement;
+class ImageControlsButtonElementMac final : public HTMLDivElement {
 public:
-    virtual ~ImageControlsRootElementMac();
+    virtual ~ImageControlsButtonElementMac();
+
+    static PassRefPtr<ImageControlsButtonElementMac> maybeCreate(Document&);
 
 private:
-    ImageControlsRootElementMac(Document&);
+    ImageControlsButtonElementMac(Document&);
 
+    virtual void defaultEventHandler(Event*) override;
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+
+    virtual bool isImageControlsButtonElement() const override { return true; }
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(IMAGE_CONTROLS)
-#endif // ImageControlsRootElementMac_h
+
+#endif // ImageControlsButtonElementMac_h

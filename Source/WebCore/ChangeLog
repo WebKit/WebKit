@@ -1,3 +1,113 @@
+2014-03-12  Tim Horton  <timothy_horton@apple.com>
+
+        Hook up image controls for WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=130062
+        <rdar://problem/15964809>
+
+        Reviewed by Brady Eidson.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSPrimitiveValueMappings.h:
+        Fix some header ordering.
+
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        Handle mapping ImageControlsButtonPart to the -webkit-appearance value CSSValueImageControlsButton.
+
+        * css/CSSValueKeywords.in:
+        * platform/ThemeTypes.h:
+        Add a -webkit-appearance value image-controls-button, and an associated control part.
+
+        * dom/Node.h:
+        (WebCore::Node::isImageControlsButtonElement): Added.
+
+        * html/shadow/mac/ImageControlsButtonElementMac.cpp: Added.
+        (WebCore::RenderImageControlsButton::RenderImageControlsButton):
+        (WebCore::RenderImageControlsButton::~RenderImageControlsButton):
+        (WebCore::RenderImageControlsButton::updateLogicalWidth):
+        (WebCore::RenderImageControlsButton::computeLogicalHeight):
+        (WebCore::ImageControlsButtonElementMac::ImageControlsButtonElementMac):
+        (WebCore::ImageControlsButtonElementMac::~ImageControlsButtonElementMac):
+        (WebCore::ImageControlsButtonElementMac::maybeCreate):
+        (WebCore::ImageControlsButtonElementMac::defaultEventHandler):
+        (WebCore::ImageControlsButtonElementMac::createElementRenderer):
+        * html/shadow/mac/ImageControlsButtonElementMac.h: Added.
+        Add a new element/renderer pair for the single button that comprises image controls on Mac.
+        RenderImageControlsButton gets its size from the theme's imageControlsButtonSize.
+
+        * html/shadow/mac/ImageControlsRootElementMac.cpp:
+        (WebCore::RenderImageControls::RenderImageControls):
+        (WebCore::RenderImageControls::~RenderImageControls):
+        (WebCore::RenderImageControls::updateLogicalWidth):
+        (WebCore::RenderImageControls::computeLogicalHeight):
+        (WebCore::ImageControlsRootElement::maybeCreate):
+        (WebCore::ImageControlsRootElementMac::ImageControlsRootElementMac):
+        (WebCore::ImageControlsRootElementMac::~ImageControlsRootElementMac):
+        (WebCore::ImageControlsRootElementMac::createElementRenderer):
+        * html/shadow/mac/ImageControlsRootElementMac.h:
+        Add a custom renderer for the root image controls element on Mac, which inherits
+        its size from the <img> that it is shadowing.
+        Add a ImageControlsButtonElementMac as the sole child of the root element.
+
+        * html/shadow/mac/imageControlsMac.css:
+        (.x-webkit-image-controls):
+        (.x-webkit-image-controls-button):
+        (.x-webkit-image-controls:hover .x-webkit-image-controls-button):
+        The button should become opaque whenever *any* part of the image is hovered,
+        not just the button itself. Also, use the new image-controls-button -webkit-appearance
+        value to get the appropriate appearance from the theme.
+
+        * page/ContextMenuContext.cpp:
+        (WebCore::ContextMenuContext::ContextMenuContext):
+        * page/ContextMenuContext.h:
+        (WebCore::ContextMenuContext::setControlledImage):
+        (WebCore::ContextMenuContext::controlledImage):
+        Store an image on the ContextMenuContext instead of just whether we hit an image.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::handleContextMenuEvent):
+        (WebCore::ContextMenuController::showContextMenu):
+        (WebCore::imageFromImageElementNode):
+        (WebCore::ContextMenuController::maybeCreateContextMenu):
+        (WebCore::ContextMenuController::populate):
+        Keep track of the hit image in the ContextMenuContext.
+
+        (WebCore::ContextMenuController::replaceControlledImage):
+        Replace the hit image with a new one.
+
+        * page/ContextMenuController.h:
+
+        * rendering/RenderReplaced.h:
+        Fix a double-space typo.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        Handle ImageControlsButtonPart in RenderTheme's switches.
+
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::imageControlsButtonSize):
+        (WebCore::RenderTheme::paintImageControlsButton):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::servicesRolloverButtonCell):
+        (WebCore::RenderThemeMac::paintImageControlsButton):
+        (WebCore::RenderThemeMac::imageControlsButtonSize):
+        Paint the image controls button.
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::WebContentReader::readImage):
+        (WebCore::Editor::WebContentReader::readURL):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::WebContentReader::readImage):
+        * platform/URL.cpp:
+        (WebCore::URL::fakeURLWithRelativePart):
+        * platform/URL.h:
+        Factor out code to create a "fake" URL (with a UUID "hostname" and the
+        webkit-fake-url protocol), and make use of it where we construct such URLs.
+
 2014-03-12  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Crash when running media/fallback.html test in MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification()

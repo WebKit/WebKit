@@ -244,6 +244,10 @@ public:
     enum FileUploadDecorations { SingleFile, MultipleFiles };
     virtual bool paintFileUploadIconDecorations(RenderObject* /*inputRenderer*/, RenderObject* /*buttonRenderer*/, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) { return true; }
 
+#if ENABLE(IMAGE_CONTROLS)
+    virtual IntSize imageControlsButtonSize(const RenderObject*) const { return IntSize(); }
+#endif
+
 protected:
     // The platform selection color.
     virtual Color platformActiveSelectionBackgroundColor() const;
@@ -359,6 +363,10 @@ protected:
     virtual bool paintMediaFullScreenVolumeSliderThumb(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
 
     virtual bool paintSnapshottedPluginOverlay(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
+
+#if ENABLE(IMAGE_CONTROLS)
+    virtual bool paintImageControlsButton(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
+#endif
 
 public:
     // Methods for state querying

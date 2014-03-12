@@ -30,6 +30,7 @@
 
 #import "WebContextMenuClient.h"
 
+#import <WebCore/BitmapImage.h>
 #import "WebDelegateImplementationCaching.h"
 #import "WebElementDictionary.h"
 #import "WebFrame.h"
@@ -38,6 +39,7 @@
 #import "WebHTMLViewInternal.h"
 #import "WebKitVersionChecks.h"
 #import "WebNSPasteboardExtras.h"
+#import "WebSharingServicePickerController.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebView.h"
@@ -352,6 +354,22 @@ void WebContextMenuClient::stopSpeaking()
     [NSApp stopSpeaking:nil];
 }
 
+NSMenu *WebContextMenuClient::contextMenuForEvent(NSEvent *event, NSView *view)
+{
+    Page* page = [m_webView page];
+    if (!page)
+        return nil;
+
+#if ENABLE(IMAGE_CONTROLS)
+    if (Image* image = page->contextMenuController().context().controlledImage()) {
+        m_sharingServicePickerController = adoptNS([[WebSharingServicePickerController alloc] initWithImage:image->getNSImage() menuClient:this]);
+        return [m_sharingServicePickerController menu];
+    }
+#endif
+
+    return [view menuForEvent:event];
+}
+
 void WebContextMenuClient::showContextMenu()
 {
     Page* page = [m_webView page];
@@ -364,14 +382,21 @@ void WebContextMenuClient::showContextMenu()
     if (!frameView)
         return;
 
-    IntPoint point = frameView->contentsToWindow(page->contextMenuController().hitTestResult().roundedPointInInnerNodeFrame());
     NSView* view = frameView->documentView();
+    IntPoint point = frameView->contentsToRootView(page->contextMenuController().hitTestResult().roundedPointInInnerNodeFrame());
     NSPoint nsScreenPoint = [view convertPoint:point toView:nil];
-    // Show the contextual menu for this event.
     NSEvent* event = [NSEvent mouseEventWithType:NSRightMouseDown location:nsScreenPoint modifierFlags:0 timestamp:0 windowNumber:[[view window] windowNumber] context:0 eventNumber:0 clickCount:1 pressure:1];
-    NSMenu* nsMenu = [view menuForEvent:event];
-    if (nsMenu)
-        [NSMenu popUpContextMenu:nsMenu withEvent:event forView:view];
+
+    // Show the contextual menu for this event.
+    if (NSMenu *menu = contextMenuForEvent(event, view))
+        [NSMenu popUpContextMenu:menu withEvent:event forView:view];
 }
+
+#if ENABLE(IMAGE_CONTROLS)
+void WebContextMenuClient::clearSharingServicePickerController()
+{
+    m_sharingServicePickerController = nil;
+}
+#endif
 
 #endif // !PLATFORM(IOS)

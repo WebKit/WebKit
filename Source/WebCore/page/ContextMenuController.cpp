@@ -60,6 +60,7 @@
 #include "Node.h"
 #include "Page.h"
 #include "PlatformEvent.h"
+#include "RenderImage.h"
 #include "ReplaceSelectionCommand.h"
 #include "ResourceRequest.h"
 #include "Settings.h"
@@ -96,7 +97,7 @@ void ContextMenuController::clearContextMenu()
 
 void ContextMenuController::handleContextMenuEvent(Event* event)
 {
-    m_contextMenu = createContextMenu(event);
+    m_contextMenu = maybeCreateContextMenu(event);
     if (!m_contextMenu)
         return;
 
@@ -114,7 +115,7 @@ void ContextMenuController::showContextMenu(Event* event, PassRefPtr<ContextMenu
 {
     m_menuProvider = menuProvider;
 
-    m_contextMenu = createContextMenu(event);
+    m_contextMenu = maybeCreateContextMenu(event);
     if (!m_contextMenu) {
         clearContextMenu();
         return;
@@ -128,7 +129,23 @@ void ContextMenuController::showContextMenu(Event* event, PassRefPtr<ContextMenu
     showContextMenu(event);
 }
 
-PassOwnPtr<ContextMenu> ContextMenuController::createContextMenu(Event* event)
+#if ENABLE(IMAGE_CONTROLS)
+static Image* imageFromImageElementNode(Node& node)
+{
+    RenderObject* renderer = node.renderer();
+    if (!renderer)
+        return nullptr;
+    if (!renderer->isRenderImage())
+        return nullptr;
+    CachedImage* image = toRenderImage(*renderer).cachedImage();
+    if (!image || image->errorOccurred())
+        return nullptr;
+
+    return image->imageForRenderer(renderer);
+}
+#endif
+
+PassOwnPtr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event* event)
 {
     ASSERT(event);
     
@@ -145,10 +162,16 @@ PassOwnPtr<ContextMenu> ContextMenuController::createContextMenu(Event* event)
     if (!result.innerNonSharedNode())
         return nullptr;
 
-#if ENABLE(IMAGE_CONTROLS)
-    m_context = ContextMenuContext(result, node->isImageControlsRootElement());
-#else
     m_context = ContextMenuContext(result);
+
+#if ENABLE(IMAGE_CONTROLS)
+    if (node->isImageControlsButtonElement()) {
+        if (Image* image = imageFromImageElementNode(*result.innerNonSharedNode()))
+            m_context.setControlledImage(image);
+
+        // FIXME: If we couldn't get the image then we shouldn't try to show the image controls menu for it.
+        return nullptr;
+    }
 #endif
 
     return adoptPtr(new ContextMenu);
@@ -822,7 +845,7 @@ void ContextMenuController::populate()
 
 #if ENABLE(IMAGE_CONTROLS)
     // The default image control menu gets populated solely by the platform.
-    if (m_context.isImageControl())
+    if (m_context.controlledImage())
         return;
 #endif
 
@@ -1428,6 +1451,24 @@ void ContextMenuController::showImageControlsMenu(Event* event)
     clearContextMenu();
     handleContextMenuEvent(event);
     m_client.showContextMenu();
+}
+
+void ContextMenuController::replaceControlledImage(PassRefPtr<Image> newImage)
+{
+    Node* node = m_context.hitTestResult().innerNonSharedNode();
+    if (!node)
+        return;
+
+    Frame* frame = node->document().frame();
+    if (!frame)
+        return;
+
+    RenderObject* renderer = node->renderer();
+    if (!renderer || !renderer->isRenderImage())
+        return;
+
+    CachedResourceHandle<CachedImage> replacedImage = new CachedImage(URL::fakeURLWithRelativePart("image"), newImage.get(), frame->page()->sessionID());
+    toRenderImage(renderer)->imageResource().setCachedImage(replacedImage.get());
 }
 #endif
 

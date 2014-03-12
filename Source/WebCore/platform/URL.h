@@ -72,6 +72,8 @@ public:
     URL(const URL& base, const String& relative);
     URL(const URL& base, const String& relative, const TextEncoding&);
 
+    static URL fakeURLWithRelativePart(const String&);
+
     String strippedForUseAsReferrer() const;
 
     // FIXME: The above functions should be harmonized so that passing a

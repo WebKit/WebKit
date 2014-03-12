@@ -30,18 +30,20 @@
 #if ENABLE(CONTEXT_MENUS)
 
 #include "HitTestResult.h"
+#include "Image.h"
 
 namespace WebCore {
 
 class ContextMenuContext {
 public:
     ContextMenuContext();
-    ContextMenuContext(const HitTestResult&, bool isImageControl = false);
+    ContextMenuContext(const HitTestResult&);
 
     const HitTestResult& hitTestResult() const { return m_hitTestResult; }
 
 #if ENABLE(IMAGE_CONTROLS)
-    bool isImageControl() const { return m_isImageControl; }
+    void setControlledImage(Image* controlledImage) { m_controlledImage = controlledImage; }
+    Image* controlledImage() const { return m_controlledImage.get(); }
 #endif
 
 private:
@@ -49,7 +51,7 @@ private:
     HitTestResult m_hitTestResult;
 
 #if ENABLE(IMAGE_CONTROLS)
-    bool m_isImageControl;
+    RefPtr<Image> m_controlledImage;
 #endif
 };
 

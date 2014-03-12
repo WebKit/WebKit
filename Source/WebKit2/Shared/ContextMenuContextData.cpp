@@ -46,7 +46,7 @@ ContextMenuContextData::ContextMenuContextData()
 ContextMenuContextData::ContextMenuContextData(const ContextMenuContext& context)
     : m_webHitTestResultData(WebHitTestResult::Data(context.hitTestResult()))
 #if ENABLE(IMAGE_CONTROLS)
-    , m_isImageControl(context.isImageControl())
+    , m_isImageControl(context.controlledImage())
 #endif
 {
 }

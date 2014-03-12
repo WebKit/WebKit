@@ -71,10 +71,11 @@ public:
 
 #if ENABLE(IMAGE_CONTROLS)
     void showImageControlsMenu(Event*);
+    void replaceControlledImage(PassRefPtr<Image>);
 #endif
 
 private:
-    PassOwnPtr<ContextMenu> createContextMenu(Event*);
+    PassOwnPtr<ContextMenu> maybeCreateContextMenu(Event*);
     void showContextMenu(Event*);
     
     void appendItem(ContextMenuItem&, ContextMenu* parentMenu);

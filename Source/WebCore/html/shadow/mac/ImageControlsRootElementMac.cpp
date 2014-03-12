@@ -28,12 +28,70 @@
 
 #if ENABLE(IMAGE_CONTROLS)
 
-#include "ContextMenuController.h"
-#include "Event.h"
-#include "Page.h"
-#include "Text.h"
+#include "HTMLElement.h"
+#include "ImageControlsButtonElementMac.h"
+#include "RenderBlockFlow.h"
+#include "RenderImage.h"
+#include "RenderStyle.h"
 
 namespace WebCore {
+
+class RenderImageControls final : public RenderBlockFlow {
+public:
+    RenderImageControls(HTMLElement&, PassRef<RenderStyle>);
+    virtual ~RenderImageControls();
+
+private:
+    virtual void updateLogicalWidth() override;
+    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
+
+    virtual const char* renderName() const override { return "RenderImageControls"; }
+    virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
+};
+
+RenderImageControls::RenderImageControls(HTMLElement& element, PassRef<RenderStyle> style)
+    : RenderBlockFlow(element, std::move(style))
+{
+}
+
+RenderImageControls::~RenderImageControls()
+{
+}
+
+void RenderImageControls::updateLogicalWidth()
+{
+    RenderBox::updateLogicalWidth();
+
+    RenderElement* renderer = element()->shadowHost()->renderer();
+    if (!renderer->isRenderImage())
+        return;
+
+    setLogicalWidth(toRenderImage(renderer)->logicalWidth());
+}
+
+void RenderImageControls::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
+{
+    RenderBox::computeLogicalHeight(logicalHeight, logicalTop, computedValues);
+
+    RenderElement* renderer = element()->shadowHost()->renderer();
+    if (!renderer->isRenderImage())
+        return;
+
+    computedValues.m_extent = toRenderImage(renderer)->logicalHeight();
+}
+
+PassRefPtr<ImageControlsRootElement> ImageControlsRootElement::maybeCreate(Document& document)
+{
+    if (!document.page())
+        return nullptr;
+
+    RefPtr<ImageControlsRootElementMac> controls = adoptRef(new ImageControlsRootElementMac(document));
+    controls->setAttribute(HTMLNames::classAttr, "x-webkit-image-controls");
+
+    controls->appendChild(ImageControlsButtonElementMac::maybeCreate(document));
+
+    return controls.release();
+}
 
 ImageControlsRootElementMac::ImageControlsRootElementMac(Document& document)
     : ImageControlsRootElement(document)
@@ -44,36 +102,9 @@ ImageControlsRootElementMac::~ImageControlsRootElementMac()
 {
 }
 
-PassRefPtr<ImageControlsRootElement> ImageControlsRootElement::maybeCreate(Document& document)
+RenderPtr<RenderElement> ImageControlsRootElementMac::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return ImageControlsRootElementMac::maybeCreate(document);
-}
-
-PassRefPtr<ImageControlsRootElementMac> ImageControlsRootElementMac::maybeCreate(Document& document)
-{
-    if (!document.page())
-        return nullptr;
-
-    RefPtr<ImageControlsRootElementMac> controls = adoptRef(new ImageControlsRootElementMac(document));
-    controls->setAttribute(HTMLNames::classAttr, "x-webkit-imagemenu");
-    ExceptionCode ec;
-    controls->appendChild(Text::create(document, ""), ec);
-    if (ec)
-        return nullptr;
-
-    return controls.release();
-}
-
-void ImageControlsRootElementMac::defaultEventHandler(Event* event)
-{
-    if (event->type() == eventNames().clickEvent) {
-        if (Page* page = document().page())
-            page->contextMenuController().showImageControlsMenu(event);
-
-        return;
-    }
-    
-    HTMLDivElement::defaultEventHandler(event);
+    return createRenderer<RenderImageControls>(*this, std::move(style));
 }
 
 } // namespace WebCore

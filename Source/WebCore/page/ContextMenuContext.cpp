@@ -32,22 +32,15 @@
 namespace WebCore {
 
 ContextMenuContext::ContextMenuContext()
-#if ENABLE(IMAGE_CONTROLS)
-    : m_isImageControl(false)
-#endif
 {
 }
 
-ContextMenuContext::ContextMenuContext(const HitTestResult& hitTestResult, bool isImageControl)
+ContextMenuContext::ContextMenuContext(const HitTestResult& hitTestResult)
     : m_hitTestResult(hitTestResult)
 #if ENABLE(IMAGE_CONTROLS)
-    , m_isImageControl(isImageControl)
+    , m_controlledImage(nullptr)
 #endif
 {
-#if !ENABLE(IMAGE_CONTROLS)
-    UNUSED_PARAM(isImageControl);
-#endif
-    ASSERT_UNUSED(isImageControl, true);
 }
 
 } // namespace WebCore

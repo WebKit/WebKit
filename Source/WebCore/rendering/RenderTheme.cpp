@@ -253,6 +253,10 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
     case InputSpeechButtonPart:
         return adjustInputFieldSpeechButtonStyle(&styleResolver, &style, e);
 #endif
+#if ENABLE(IMAGE_CONTROLS)
+    case ImageControlsButtonPart:
+        break;
+#endif
     default:
         break;
     }
@@ -386,6 +390,10 @@ bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRe
     case InputSpeechButtonPart:
         return paintInputFieldSpeechButton(o, paintInfo, r);
 #endif
+#if ENABLE(IMAGE_CONTROLS)
+    case ImageControlsButtonPart:
+        return paintImageControlsButton(o, paintInfo, r);
+#endif
     default:
         break;
     }
@@ -439,6 +447,9 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const PaintInfo& paintInfo, c
     case SearchFieldResultsButtonPart:
 #if ENABLE(INPUT_SPEECH)
     case InputSpeechButtonPart:
+#endif
+#if ENABLE(IMAGE_CONTROLS)
+    case ImageControlsButtonPart:
 #endif
     default:
         break;
@@ -498,6 +509,9 @@ bool RenderTheme::paintDecorations(RenderObject* renderer, const PaintInfo& pain
     case SearchFieldResultsButtonPart:
 #if ENABLE(INPUT_SPEECH)
     case InputSpeechButtonPart:
+#endif
+#if ENABLE(IMAGE_CONTROLS)
+    case ImageControlsButtonPart:
 #endif
     default:
         break;

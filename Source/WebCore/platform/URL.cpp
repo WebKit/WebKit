@@ -30,6 +30,7 @@
 #include "DecodeEscapeSequences.h"
 #include "MIMETypeRegistry.h"
 #include "TextEncoding.h"
+#include "UUID.h"
 #include <stdio.h>
 #include <unicode/uidna.h>
 #include <wtf/HashMap.h>
@@ -1945,6 +1946,11 @@ String URL::stringCenterEllipsizedToLength(unsigned length) const
         return string();
 
     return string().left(length / 2 - 1) + "..." + string().right(length / 2 - 2);
+}
+
+URL URL::fakeURLWithRelativePart(const String& relativePart)
+{
+    return URL(URL(), "webkit-fake-url://" + createCanonicalUUIDString() + '/' + relativePart);
 }
 
 }

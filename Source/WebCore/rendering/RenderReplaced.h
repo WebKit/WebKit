@@ -30,7 +30,7 @@ class RenderReplaced : public RenderBox {
 public:
     virtual ~RenderReplaced();
 
-    virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const override;
+    virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred = ComputeActual) const override;
     virtual LayoutUnit computeReplacedLogicalHeight() const override;
 
     LayoutRect replacedContentRect(const LayoutSize& intrinsicSize) const;

@@ -1,3 +1,14 @@
+2014-03-12  Tim Horton  <timothy_horton@apple.com>
+
+        Hook up image controls for WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=130062
+        <rdar://problem/15964809>
+
+        Reviewed by Brady Eidson.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Add WebSharingServicePickerController.
+
 2014-03-11  Jae Hyun Park  <jaepark@webkit.org>
 
         [GTK][CMake] Add HARFBUZZ_INCLUDE_DIRS to WebKit and WebKit2

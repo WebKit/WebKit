@@ -23,16 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.x-webkit-imagemenu {
-    opacity: 0;
+.x-webkit-image-controls {
     position: relative;
-    background-color: red;
-    width: 20px;
-    height: 20px;
-    border-radius: 5px;
-    transition: opacity 0.5s;
 }
 
-.x-webkit-imagemenu:hover {
+.x-webkit-image-controls-button {
+    position: absolute;
+    right: 18px; /* FIXME: Why is right: 0px off the right edge of the parent? */
+
+    -webkit-appearance: image-controls-button;
+
+    transition: opacity 0.25s;
+    opacity: 0;
+}
+
+.x-webkit-image-controls:hover .x-webkit-image-controls-button {
     opacity: 1.0;
 }

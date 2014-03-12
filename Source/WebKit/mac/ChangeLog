@@ -1,3 +1,33 @@
+2014-03-12  Tim Horton  <timothy_horton@apple.com>
+
+        Hook up image controls for WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=130062
+        <rdar://problem/15964809>
+
+        Reviewed by Brady Eidson.
+
+        * Misc/WebSharingServicePickerController.h: Added.
+        * Misc/WebSharingServicePickerController.mm: Added.
+        (-[WebSharingServicePickerController initWithImage:menuClient:]):
+        (-[WebSharingServicePickerController menu]):
+        (-[WebSharingServicePickerController sharingServicePicker:delegateForSharingService:]):
+        (-[WebSharingServicePickerController sharingServicePicker:didChooseSharingService:]):
+        (-[WebSharingServicePickerController sharingService:didShareItems:]):
+        (-[WebSharingServicePickerController sharingService:didFailToShareItems:error:]):
+        (-[WebSharingServicePickerController sharingService:sourceWindowForShareItems:sharingContentScope:]):
+        Add a NSSharingServiceDelegate and NSSharingServicePickerDelegate, which will also
+        provide a NSMenu instance for WebContextMenuClient to pop up when image controls are needed.
+        When data is returned from the service, it is re-inserted into the image via replaceControlledImage.
+
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::contextMenuForEvent):
+        Factor out code to decide which NSMenu to use, so that we can use early-returns to simplify it.
+        If we hit an image with image controls, use the WebSharingServicePickerController's menu.
+
+        (WebContextMenuClient::showContextMenu):
+        (WebContextMenuClient::clearSharingServicePickerController):
+
 2014-03-10  Jer Noble  <jer.noble@apple.com>
 
         [iOS][WK1] Crash in HTMLMediaElement::createElementRenderer() - "-[NSSet addObject:]: object cannot be nil"
