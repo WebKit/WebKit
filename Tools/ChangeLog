@@ -1,3 +1,18 @@
+2014-03-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r165471.
+        https://bugs.webkit.org/show_bug.cgi?id=130139
+
+        Didn't really fix the issue and broke another bot (Requested
+        by mrobinson on #webkit).
+
+        Reverted changeset:
+
+        "[CMake] Newer versions of CMake cannot find older versions of
+        Freetype"
+        https://bugs.webkit.org/show_bug.cgi?id=130107
+        http://trac.webkit.org/changeset/165471
+
 2014-03-11  Filip Pizlo  <fpizlo@apple.com>
 
         It should be possible to build WebKit with FTL on iOS

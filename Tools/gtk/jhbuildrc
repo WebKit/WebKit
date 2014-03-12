@@ -31,9 +31,3 @@ module_makeargs['gtk+'] = 'LDFLAGS="-lm" ' + makeargs
 # We always enable introspection so that we can sniff out problems with our
 # annotations sooner rather than later.
 autogenargs='--enable-introspection'
-
-# After https://github.com/Kitware/CMake/commit/7435ae7c97590a0713d86b63add761d5e1607ec1
-# CMake is no longer able to find the FreeType headers in our JHBuild root. We
-# work around this by specifying FREETYPE_DIR directly as a hint to the header
-# locator in CMake's bundled FindFreetype.cmake.
-addpath('FREETYPE_DIR', os.path.join(prefix, "include", "freetype2", "freetype"))
