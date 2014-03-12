@@ -1,3 +1,19 @@
+2014-03-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Spelling is hard
+        https://bugs.webkit.org/show_bug.cgi?id=130146
+
+        Reviewed by Beth Dakin.
+        
+        Fix spelling (constained -> constrained).
+
+        * WebCoreSupport/WebFixedPositionContent.mm:
+        (-[WebFixedPositionContent scrollOrZoomChanged:]):
+        (-[WebFixedPositionContent overflowScrollPositionForLayer:changedTo:]):
+        (-[WebFixedPositionContent setViewportConstrainedLayers:WTF::WebCore::stickyContainerMap:WTF::]):
+        (-[WebFixedPositionContent hasFixedOrStickyPositionLayers]):
+        (-[WebFixedPositionContent minimumOffsetFromFixedPositionLayersToAnchorEdge:ofRect:inLayer:]):
+
 2014-02-17  Sergio Correia  <sergio.correia@openbossa.org>
 
         Replace uses of PassOwnPtr/OwnPtr with std::unique_ptr in WebCore/inspector
