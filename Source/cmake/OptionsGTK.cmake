@@ -299,3 +299,13 @@ macro(ADD_WHOLE_ARCHIVE_TO_LIBRARIES _list_name)
     endforeach ()
     set(${_list_name} "${${_list_name}_TMP}")
 endmacro()
+
+build_command(COMMAND_LINE_TO_BUILD)
+file(WRITE
+    ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/build.sh
+    "#!/bin/sh\n"
+    "${COMMAND_LINE_TO_BUILD} $@"
+)
+file(COPY ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/build.sh
+  DESTINATION ${CMAKE_BINARY_DIR}
+  FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE)

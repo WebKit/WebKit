@@ -1,3 +1,17 @@
+2014-03-12  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][CMAKE] Too verbose build output
+        https://bugs.webkit.org/show_bug.cgi?id=130076
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of building with cmake --build which isn't smart about pretty printing and
+        colors, we build with a script which calls the proper build command.
+
+        * Scripts/webkitdirs.pm:
+        (buildCMakeGeneratedProject): For GTK+ call the script that we generate during
+        the CMake configuration pass.
+
 2014-03-11  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] Newer versions of CMake cannot find older versions of Freetype
