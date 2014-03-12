@@ -420,6 +420,11 @@ WebPrintOperationGtk::~WebPrintOperationGtk()
         g_source_remove(m_printPagesIdleId);
 }
 
+void WebPrintOperationGtk::disconnectFromPage()
+{
+    m_webPage = nullptr;
+}
+
 int WebPrintOperationGtk::pageCount() const
 {
     return m_printContext ? m_printContext->pageCount() : 0;
@@ -699,8 +704,9 @@ void WebPrintOperationGtk::printDone(const WebCore::ResourceError& error)
         g_source_remove(m_printPagesIdleId);
     m_printPagesIdleId = 0;
 
-    // Print finished or failed, notify the UI process that we are done.
-    m_webPage->send(Messages::WebPageProxy::PrintFinishedCallback(error, m_callbackID));
+    // Print finished or failed, notify the UI process that we are done if the page hasn't been closed.
+    if (m_webPage)
+        m_webPage->didFinishPrintOperation(error, m_callbackID);
 }
 
 void WebPrintOperationGtk::print(cairo_surface_t* surface, double xDPI, double yDPI)

@@ -73,6 +73,8 @@ public:
     bool collateCopies() const { return m_collateCopies; }
     double scale() const { return m_scale; }
 
+    void disconnectFromPage();
+
     virtual void startPrint(WebCore::PrintContext*, uint64_t callbackID) = 0;
 
 protected:
@@ -93,6 +95,7 @@ protected:
     void prepareContextToDraw();
     void printPagesDone();
     void printDone(const WebCore::ResourceError&);
+    void sendPrintFinished(const WebCore::ResourceError&);
     WebCore::URL frameURL() const;
 
     WebPage* m_webPage;
