@@ -324,6 +324,7 @@ typedef enum {
     @abstract indicate this WebView on screen for a remote inspector.
 */
 - (void)setIndicatingForRemoteInspector:(BOOL)enabled;
+
 #if TARGET_OS_IPHONE
 /*!
     @method setHostApplicationBundleId:name

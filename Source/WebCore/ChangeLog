@@ -1,3 +1,12 @@
+2014-03-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Disable REMOTE_INSPECTOR in earlier OS X releases
+        https://bugs.webkit.org/show_bug.cgi?id=130118
+
+        Reviewed by Timothy Hatcher.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Build fix for ENABLE(IMAGE_CONTROLS) after 165479

@@ -52,8 +52,6 @@
 /* FIXME: Move out the PLATFORM specific rules into platform specific files. */
 
 /* --------- Apple IOS (but not MAC) port --------- */
-/* PLATFORM(IOS) is a specialization of PLATFORM(MAC). */
-/* PLATFORM(MAC) is always enabled when PLATFORM(IOS) is enabled. */
 #if PLATFORM(IOS)
 
 #if !defined(ENABLE_ASYNC_SCROLLING)
@@ -186,8 +184,10 @@
 #define ENABLE_FULLSCREEN_API 1
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
 #if !defined(ENABLE_REMOTE_INSPECTOR)
 #define ENABLE_REMOTE_INSPECTOR 1
+#endif
 #endif
 
 #if !defined(ENABLE_RUBBER_BANDING)

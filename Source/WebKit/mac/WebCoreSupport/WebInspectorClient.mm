@@ -183,12 +183,16 @@ void WebInspectorClient::hideHighlight()
 
 void WebInspectorClient::indicate()
 {
+#if ENABLE(REMOTE_INSPECTOR)
     [m_webView setIndicatingForRemoteInspector:YES];
+#endif
 }
 
 void WebInspectorClient::hideIndication()
 {
+#if ENABLE(REMOTE_INSPECTOR)
     [m_webView setIndicatingForRemoteInspector:NO];
+#endif
 }
 
 void WebInspectorClient::didSetSearchingForNode(bool enabled)
