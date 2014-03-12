@@ -294,6 +294,15 @@
             "antonm"
          ]
       },
+      "Anton Obzhirov" : {
+         "emails" : [
+            "a.obzhirov@samsung.com"
+         ],
+         "expertise" : "The WebKitGTK+ Port",
+         "nicks" : [
+            "aobzhirov"
+         ]
+      },
       "Arko Saha" : {
          "emails" : [
             "arko@motorola.com"
@@ -2761,14 +2770,6 @@
          ],
          "nicks" : [
             "annie"
-         ]
-      },
-      "Anton Obzhirov" : {
-         "emails" : [
-            "a.obzhirov@samsung.com"
-         ],
-         "nicks" : [
-            "aobzhirov"
          ]
       },
       "Anton Vayvod" : {
