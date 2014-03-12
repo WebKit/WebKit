@@ -35,6 +35,7 @@ namespace WebCore {
 namespace NodeRenderingTraversal {
 
 ContainerNode* parent(const Node*);
+Node* firstChild(const Node*);
 Node* nextSibling(const Node*);
 Node* previousSibling(const Node*);
 
@@ -44,11 +45,13 @@ Node* parentInScope(const Node*);
 Node* lastChildInScope(const Node*);
 
 ContainerNode* parentSlow(const Node*);
+Node* firstChildSlow(const Node*);
 Node* nextSiblingSlow(const Node*);
 Node* previousSiblingSlow(const Node*);
 
 inline ContainerNode* parent(const Node* node)
 {
+    ASSERT(!node->isPseudoElement());
     if (node->needsNodeRenderingTraversalSlowPath())
         return parentSlow(node);
 
@@ -56,8 +59,19 @@ inline ContainerNode* parent(const Node* node)
     return node->parentNodeGuaranteedHostFree();
 }
 
+inline Node* firstChild(const Node* node)
+{
+    ASSERT(!node->isPseudoElement());
+    if (node->needsNodeRenderingTraversalSlowPath())
+        return firstChildSlow(node);
+
+    ASSERT(nextSiblingSlow(node) == node->nextSibling());
+    return node->firstChild();
+}
+
 inline Node* nextSibling(const Node* node)
 {
+    ASSERT(!node->isPseudoElement());
     if (node->needsNodeRenderingTraversalSlowPath())
         return nextSiblingSlow(node);
 
@@ -67,6 +81,7 @@ inline Node* nextSibling(const Node* node)
 
 inline Node* previousSibling(const Node* node)
 {
+    ASSERT(!node->isPseudoElement());
     if (node->needsNodeRenderingTraversalSlowPath())
         return previousSiblingSlow(node);
 

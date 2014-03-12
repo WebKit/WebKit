@@ -1410,8 +1410,6 @@ static bool shouldUseNodeRenderingTraversalSlowPath(const Element& element)
 {
     if (element.isShadowRoot())
         return true;
-    if (element.isPseudoElement() || element.beforePseudoElement() || element.afterPseudoElement())
-        return true;
     return element.isInsertionPoint() || element.shadowRoot();
 }
 
@@ -2250,13 +2248,11 @@ PseudoElement* Element::afterPseudoElement() const
 void Element::setBeforePseudoElement(PassRefPtr<PseudoElement> element)
 {
     ensureElementRareData().setBeforePseudoElement(element);
-    resetNeedsNodeRenderingTraversalSlowPath();
 }
 
 void Element::setAfterPseudoElement(PassRefPtr<PseudoElement> element)
 {
     ensureElementRareData().setAfterPseudoElement(element);
-    resetNeedsNodeRenderingTraversalSlowPath();
 }
 
 static void disconnectPseudoElement(PseudoElement* pseudoElement)
@@ -2275,7 +2271,6 @@ void Element::clearBeforePseudoElement()
         return;
     disconnectPseudoElement(elementRareData()->beforePseudoElement());
     elementRareData()->setBeforePseudoElement(nullptr);
-    resetNeedsNodeRenderingTraversalSlowPath();
 }
 
 void Element::clearAfterPseudoElement()
@@ -2284,7 +2279,6 @@ void Element::clearAfterPseudoElement()
         return;
     disconnectPseudoElement(elementRareData()->afterPseudoElement());
     elementRareData()->setAfterPseudoElement(nullptr);
-    resetNeedsNodeRenderingTraversalSlowPath();
 }
 
 // ElementTraversal API

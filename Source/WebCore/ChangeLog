@@ -1,3 +1,66 @@
+2014-03-12  Antti Koivisto  <antti@apple.com>
+
+        Don't use NodeRenderingTraversal for pseudo elements
+        https://bugs.webkit.org/show_bug.cgi?id=130091
+
+        Reviewed by Andreas Kling.
+
+        Make traversing during style resolve more comprehensible by handling before/after pseudo elements explicitly.
+
+        With this patch NodeRenderingTraversal is only needed for InsertionPoints (which are nothing but an implementation
+        detail of the <details> element at this point).
+
+        * dom/Element.cpp:
+        (WebCore::shouldUseNodeRenderingTraversalSlowPath):
+        
+            PseudoElements don't need the slow path anymore.
+
+        (WebCore::Element::setBeforePseudoElement):
+        (WebCore::Element::setAfterPseudoElement):
+        (WebCore::Element::clearBeforePseudoElement):
+        (WebCore::Element::clearAfterPseudoElement):
+        * dom/NodeRenderingTraversal.cpp:
+        (WebCore::NodeRenderingTraversal::traverseParent):
+        (WebCore::NodeRenderingTraversal::firstChildSlow):
+        (WebCore::NodeRenderingTraversal::nextSiblingSlow):
+        (WebCore::NodeRenderingTraversal::previousSiblingSlow):
+        * dom/NodeRenderingTraversal.h:
+        (WebCore::NodeRenderingTraversal::firstChild):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::nextSiblingRenderer):
+        
+            Add ::before/::after pseudo element handling here.
+
+        (WebCore::Style::shouldCreateRenderer):
+        (WebCore::Style::elementInsideRegionNeedsRenderer):
+        (WebCore::Style::createRendererIfNeeded):
+        (WebCore::Style::previousSiblingRenderer):
+        
+            Add ::before pseudo element handling here (text node can't be ::after).
+
+        (WebCore::Style::reattachTextRenderersForWhitespaceOnlySiblingsAfterAttachIfNeeded):
+        (WebCore::Style::textRendererIsNeeded):
+        (WebCore::Style::createTextRendererIfNeeded):
+        (WebCore::Style::attachTextRenderer):
+        (WebCore::Style::updateTextRendererAfterContentChange):
+        (WebCore::Style::attachChildren):
+        (WebCore::Style::attachDistributedChildren):
+        
+            Handle InsertionPoints in one place.
+
+        (WebCore::Style::attachShadowRoot):
+        (WebCore::Style::attachBeforeOrAfterPseudoElementIfNeeded):
+        (WebCore::Style::attachRenderTree):
+        (WebCore::Style::resolveLocal):
+        (WebCore::Style::updateTextStyle):
+        (WebCore::Style::resolveShadowTree):
+        (WebCore::Style::updateBeforeOrAfterPseudoElement):
+        (WebCore::Style::resolveTree):
+        
+            Pass the rendering parent around to various functions instead of determining it repeatedly by calling 
+            NodeRenderingTraversal::parent. It is always the same for all direct children being resolved and generally just
+            the parent element.
+
 2014-03-12  Frédéric Wang  <fred.wang@free.fr>
 
         Invisible Operators should not add space.

@@ -92,6 +92,7 @@
 #include "Page.h"
 #include "PageRuleCollector.h"
 #include "Pair.h"
+#include "PseudoElement.h"
 #include "QuotesData.h"
 #include "Rect.h"
 #include "RenderRegion.h"
@@ -410,7 +411,7 @@ inline void StyleResolver::State::initForStyleResolve(Document& document, Elemen
     m_regionForStyling = regionForStyling;
 
     if (e) {
-        m_parentNode = NodeRenderingTraversal::parent(e);
+        m_parentNode = e->isPseudoElement() ? toPseudoElement(e)->hostElement() : NodeRenderingTraversal::parent(e);
         bool resetStyleInheritance = hasShadowRootParent(*e) && toShadowRoot(e->parentNode())->resetStyleInheritance();
         m_parentStyle = resetStyleInheritance ? 0 :
             parentStyle ? parentStyle :
