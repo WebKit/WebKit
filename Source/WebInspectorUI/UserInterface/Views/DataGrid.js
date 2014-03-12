@@ -28,6 +28,9 @@ WebInspector.DataGrid = function(columnsData, editCallback, deleteCallback)
     this.columns = new Map;
     this.orderedColumns = [];
 
+    this._sortColumnIdentifier = null;
+    this._sortOrder = WebInspector.DataGrid.SortOrder.Indeterminate;
+
     this.children = [];
     this.selectedNode = null;
     this.expandNodesWhenArrowing = false;
@@ -98,10 +101,16 @@ WebInspector.DataGrid.Event = {
     CollapsedNode: "datagrid-collapsed-node"
 };
 
-/**
- * @param {Array.<string>} columnNames
- * @param {Array.<string>} values
- */
+WebInspector.DataGrid.SortOrder = {
+    Indeterminate: "data-grid-sort-order-indeterminate",
+    Ascending: "data-grid-sort-order-ascending",
+    Descending: "data-grid-sort-order-descending"
+};
+
+WebInspector.DataGrid.SortColumnAscendingStyleClassName = "sort-ascending";
+WebInspector.DataGrid.SortColumnDescendingStyleClassName = "sort-descending";
+WebInspector.DataGrid.SortableColumnStyleClassName = "sortable";
+
 WebInspector.DataGrid.createSortableDataGrid = function(columnNames, values)
 {
     var numColumns = columnNames.length;
@@ -133,7 +142,7 @@ WebInspector.DataGrid.createSortableDataGrid = function(columnNames, values)
     function sortDataGrid()
     {
         var sortColumnIdentifier = dataGrid.sortColumnIdentifier;
-        var sortAscending = dataGrid.sortOrder === "ascending" ? 1 : -1;
+        var sortAscending = dataGrid.sortOrder === WebInspector.DataGrid.SortOrder.Ascending ? 1 : -1;
 
         for (var node of dataGrid.children) {
             if (isNaN(Number(node.data[sortColumnIdentifier] || "")))
@@ -173,6 +182,60 @@ WebInspector.DataGrid.prototype = {
     set refreshCallback(refreshCallback)
     {
         this._refreshCallback = refreshCallback;
+    },
+
+    get sortOrder()
+    {
+        return this._sortOrder;
+    },
+
+    set sortOrder(order)
+    {
+        if (order === this._sortOrder)
+            return;
+
+        this._sortOrder = order;
+
+        if (!this._sortColumnIdentifier)
+            return;
+
+        var sortHeaderCellElement = this._headerTableCellElements.get(this._sortColumnIdentifier);
+
+        sortHeaderCellElement.classList.toggle(WebInspector.DataGrid.SortColumnAscendingStyleClassName, this._sortOrder === WebInspector.DataGrid.SortOrder.Ascending);
+        sortHeaderCellElement.classList.toggle(WebInspector.DataGrid.SortColumnDescendingStyleClassName, this._sortOrder === WebInspector.DataGrid.SortOrder.Descending);
+
+        this.dispatchEventToListeners(WebInspector.DataGrid.Event.SortChanged);
+    },
+
+    get sortColumnIdentifier()
+    {
+        return this._sortColumnIdentifier;
+    },
+
+    set sortColumnIdentifier(columnIdentifier)
+    {
+        console.assert(columnIdentifier && this.columns.has(columnIdentifier));
+        console.assert(this.columns.get(columnIdentifier).has("sortable"));
+
+        if (this._sortColumnIdentifier === columnIdentifier)
+            return;
+
+        var oldSortColumnIdentifier = this._sortColumnIdentifier;
+        this._sortColumnIdentifier = columnIdentifier;
+
+        if (oldSortColumnIdentifier) {
+            var oldSortHeaderCellElement = this._headerTableCellElements.get(oldSortColumnIdentifier);
+            oldSortHeaderCellElement.classList.remove(WebInspector.DataGrid.SortColumnAscendingStyleClassName);
+            oldSortHeaderCellElement.classList.remove(WebInspector.DataGrid.SortColumnDescendingStyleClassName);
+        }
+
+        if (this._sortColumnIdentifier) {
+            var newSortHeaderCellElement = this._headerTableCellElements.get(this._sortColumnIdentifier);
+            newSortHeaderCellElement.classList.toggle(WebInspector.DataGrid.SortColumnAscendingStyleClassName, this._sortOrder === WebInspector.DataGrid.SortOrder.Ascending);
+            newSortHeaderCellElement.classList.toggle(WebInspector.DataGrid.SortColumnDescendingStyleClassName, this._sortOrder === WebInspector.DataGrid.SortOrder.Descending);
+        }
+
+        this.dispatchEventToListeners(WebInspector.DataGrid.Event.SortChanged);
     },
 
     _ondblclick: function(event)
@@ -281,20 +344,6 @@ WebInspector.DataGrid.prototype = {
         console.assert(this._editingNode.element === element.enclosingNodeOrSelfWithNodeName("tr"));
         delete this._editing;
         this._editingNode = null;
-    },
-
-    get sortColumnIdentifier()
-    {
-        return this._sortColumnCell ? this._sortColumnCell.columnIdentifier : null;
-    },
-
-    get sortOrder()
-    {
-        if (!this._sortColumnCell || this._sortColumnCell.classList.contains("sort-ascending"))
-            return "ascending";
-        if (this._sortColumnCell.classList.contains("sort-descending"))
-            return "descending";
-        return null;
     },
 
     autoSizeColumns: function(minPercent, maxPercent, maxDescentLevel)
@@ -413,14 +462,9 @@ WebInspector.DataGrid.prototype = {
         else
             div.textContent = column.get("title", "");
 
-        if (column.has("sort")) {
-            headerCellElement.classList.add("sort-" + column.get("sort"));
-            this._sortColumnCell = headerCellElement;
-        }
-
-        if (column.has("sortable")) {
-            listeners.register(headerCellElement, "click", this._clickInHeaderCell, false);
-            headerCellElement.classList.add("sortable");
+        if (column.get("sortable")) {
+            listeners.register(headerCellElement, "click", this._headerCellClicked);
+            headerCellElement.classList.add(WebInspector.DataGrid.SortableColumnStyleClassName);
         }
 
         if (column.has("group"))
@@ -483,8 +527,8 @@ WebInspector.DataGrid.prototype = {
         if (removedColumn.has("disclosure"))
             delete this.disclosureColumnIdentifier;
 
-        if (removedColumn.has("sort"))
-            delete this._sortColumnCell;
+        if (this.sortColumnIdentifier === columnIdentifier)
+            this.sortColumnIdentifier = null;
 
         this._headerTableCellElements.delete(columnIdentifier);
         this._headerTableRowElement.children[removedOrdinal].remove();
@@ -776,9 +820,17 @@ WebInspector.DataGrid.prototype = {
 
     sortNodes: function(comparator)
     {
+        if (this._sortNodesRequestId)
+            return;
+
+        this._sortNodesRequestId = window.requestAnimationFrame(this._sortNodesCallback.bind(this, comparator));
+    },
+
+    _sortNodesCallback: function(comparator)
+    {
         function comparatorWrapper(aRow, bRow)
         {
-            var reverseFactor = this.sortOrder !== "asceding" ? -1 : 1;
+            var reverseFactor = this.sortOrder !== WebInspector.DataGrid.SortOrder.Ascending ? -1 : 1;
             var aNode = aRow._dataGridNode;
             var bNode = bRow._dataGridNode;
             if (aNode._data.summaryRow || aNode.isPlaceholderNode)
@@ -788,6 +840,8 @@ WebInspector.DataGrid.prototype = {
 
             return reverseFactor * comparator(aNode, bNode);
         }
+
+        delete this._sortNodesRequestId;
 
         if (this._editing) {
             this._sortAfterEditingCallback = this.sortNodes.bind(this, comparator);
@@ -799,7 +853,7 @@ WebInspector.DataGrid.prototype = {
         var fillerRowElement = tbody.lastChild;
 
         var sortedRowElements = Array.prototype.slice.call(childNodes, 0, childNodes.length - 1);
-        sortedRowElements.sort(comparatorWrapper);
+        sortedRowElements.sort(comparatorWrapper.bind(this));
 
         tbody.removeChildren();
 
@@ -923,29 +977,20 @@ WebInspector.DataGrid.prototype = {
         return rowElement && rowElement._dataGridNode;
     },
 
-    _clickInHeaderCell: function(event)
+    _headerCellClicked: function(event)
     {
         var cell = event.target.enclosingNodeOrSelfWithNodeName("th");
-        if (!cell || !cell.columnIdentifier || !cell.classList.contains("sortable"))
+        if (!cell || !cell.columnIdentifier || !cell.classList.contains(WebInspector.DataGrid.SortableColumnStyleClassName))
             return;
 
-        var sortOrder = this.sortOrder;
-
-        if (this._sortColumnCell)
-            this._sortColumnCell.removeMatchingStyleClasses("sort-\\w+");
-
-        if (cell == this._sortColumnCell) {
-            if (sortOrder === "ascending")
-                sortOrder = "descending";
+        var clickedColumnIdentifier = cell.columnIdentifier;
+        if (this.sortColumnIdentifier === clickedColumnIdentifier) {
+            if (this.sortOrder !== WebInspector.DataGrid.SortOrder.Descending)
+                this.sortOrder = WebInspector.DataGrid.SortOrder.Descending;
             else
-                sortOrder = "ascending";
-        }
-
-        this._sortColumnCell = cell;
-
-        cell.classList.add("sort-" + sortOrder);
-
-        this.dispatchEventToListeners(WebInspector.DataGrid.Event.SortChanged);
+                this.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
+        } else
+            this.sortColumnIdentifier = clickedColumnIdentifier;
     },
 
     _mouseoverColumnCollapser: function(event)
@@ -1033,19 +1078,6 @@ WebInspector.DataGrid.prototype = {
     didToggleColumnGroup: function(columnGroup, didCollapse)
     {
         // Implemented by subclasses if needed.
-    },
-
-    isColumnSortColumn: function(columnIdentifier)
-    {
-        return this._sortColumnCell === this._headerTableCellElements.get(columnIdentifier);
-    },
-
-    markColumnAsSortedBy: function(columnIdentifier, sortOrder)
-    {
-        if (this._sortColumnCell)
-            this._sortColumnCell.removeMatchingStyleClasses("sort-\\w+");
-        this._sortColumnCell = this._headerTableCellElements.get(columnIdentifier);
-        this._sortColumnCell.classList.add("sort-" + sortOrder);
     },
 
     headerTableHeader: function(columnIdentifier)

@@ -42,7 +42,6 @@ WebInspector.ScriptTimelineView = function(recording)
     columns.startTime.title = WebInspector.UIString("Start Time");
     columns.startTime.width = "10%";
     columns.startTime.aligned = "right";
-    columns.startTime.sort = "ascending";
 
     columns.totalTime.title = WebInspector.UIString("Total Time");
     columns.totalTime.width = "10%";
@@ -62,6 +61,8 @@ WebInspector.ScriptTimelineView = function(recording)
     this._dataGrid = new WebInspector.ScriptTimelineDataGrid(this.navigationSidebarTreeOutline, columns, this);
     this._dataGrid.addEventListener(WebInspector.TimelineDataGrid.Event.FiltersDidChange, this._dataGridFiltersDidChange, this);
     this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
+    this._dataGrid.sortColumnIdentifier = "startTime";
+    this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
 
     this.element.classList.add(WebInspector.ScriptTimelineView.StyleClassName);
     this.element.appendChild(this._dataGrid.element);

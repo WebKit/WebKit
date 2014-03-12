@@ -359,22 +359,16 @@ WebInspector.ResourceDetailsSidebarPanel.prototype = {
 
         function sortDataGrid()
         {
-            var nodes = dataGrid.children.slice();
             var sortColumnIdentifier = dataGrid.sortColumnIdentifier;
-            var sortDirection = dataGrid.sortOrder === "ascending" ? 1 : -1;
 
             function comparator(a, b)
             {
                 var item1 = a.data[sortColumnIdentifier];
                 var item2 = b.data[sortColumnIdentifier];
-                return sortDirection * item1.localeCompare(item2);
+                return item1.localeCompare(item2);
             }
 
-            nodes.sort(comparator);
-
-            dataGrid.removeChildren();
-            for (var i = 0; i < nodes.length; i++)
-                dataGrid.appendChild(nodes[i]);
+            dataGrid.sortNodes(comparator);
         }
 
         return dataGrid;

@@ -79,37 +79,45 @@ WebInspector.CookieStorageContentView.prototype = {
         // FIXME: If there are no cookies, do we want to show an empty datagrid, or do something like the old
         // inspector and show some text saying there are no cookies?
         if (!this._dataGrid) {
-            var columns = { 0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7: {} };
-            columns[0].title = WebInspector.UIString("Name");
-            columns[0].sortable = true;
-            columns[0].width = "24%";
-            columns[1].title = WebInspector.UIString("Value");
-            columns[1].sortable = true;
-            columns[1].width = "34%";
-            columns[2].title = WebInspector.UIString("Domain");
-            columns[2].sortable = true;
-            columns[2].width = "7%";
-            columns[3].title = WebInspector.UIString("Path");
-            columns[3].sortable = true;
-            columns[3].width = "7%";
-            columns[4].title = WebInspector.UIString("Expires");
-            columns[4].sortable = true;
-            columns[4].width = "7%";
-            columns[5].title = WebInspector.UIString("Size");
-            columns[5].aligned = "right";
-            columns[5].sortable = true;
-            columns[5].width = "7%";
-            columns[6].title = WebInspector.UIString("HTTP");
-            columns[6].aligned = "centered";
-            columns[6].sortable = true;
-            columns[6].width = "7%";
-            columns[7].title = WebInspector.UIString("Secure");
-            columns[7].aligned = "centered";
-            columns[7].sortable = true;
-            columns[7].width = "7%";
+            var columns = {name: {}, value: {}, domain: {}, path: {}, expires: {}, size: {}, http: {}, secure: {}};
+
+            columns.name.title = WebInspector.UIString("Name");
+            columns.name.sortable = true;
+            columns.name.width = "24%";
+
+            columns.value.title = WebInspector.UIString("Value");
+            columns.value.sortable = true;
+            columns.value.width = "34%";
+
+            columns.domain.title = WebInspector.UIString("Domain");
+            columns.domain.sortable = true;
+            columns.domain.width = "7%";
+
+            columns.path.title = WebInspector.UIString("Path");
+            columns.path.sortable = true;
+            columns.path.width = "7%";
+
+            columns.expires.title = WebInspector.UIString("Expires");
+            columns.expires.sortable = true;
+            columns.expires.width = "7%";
+
+            columns.size.title = WebInspector.UIString("Size");
+            columns.size.aligned = "right";
+            columns.size.sortable = true;
+            columns.size.width = "7%";
+
+            columns.http.title = WebInspector.UIString("HTTP");
+            columns.http.aligned = "centered";
+            columns.http.sortable = true;
+            columns.http.width = "7%";
+
+            columns.secure.title = WebInspector.UIString("Secure");
+            columns.secure.aligned = "centered";
+            columns.secure.sortable = true;
+            columns.secure.width = "7%";
 
             this._dataGrid = new WebInspector.DataGrid(columns, null, this._deleteCallback.bind(this));
-            this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._rebuildTable, this);
+            this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sortDataGrid, this);
 
             this.element.appendChild(this._dataGrid.element);
             this._dataGrid.updateLayout();
@@ -118,33 +126,30 @@ WebInspector.CookieStorageContentView.prototype = {
         console.assert(this._dataGrid);
         this._dataGrid.removeChildren();
 
-        this._sortCookies(this._cookies);
-
-        for (var i = 0; i < this._cookies.length; ++i) {
-            const cookie = this._cookies[i];
-
-            var data = {};
-            data[0] = cookie.name;
-            data[1] = cookie.value;
-            data[2] = cookie.domain || "";
-            data[3] = cookie.path || "";
-
-            if (cookie.type === WebInspector.CookieType.Request)
-                data[4] = "";
-            else
-                data[4] = cookie.session ? WebInspector.UIString("Session") : new Date(cookie.expires).toLocaleString();
-
-            data[5] = Number.bytesToString(cookie.size);
+        for (var cookie of this._cookies) {
             const checkmark = "\u2713";
-            data[6] = cookie.httpOnly ? checkmark : "";
-            data[7] = cookie.secure ? checkmark : "";
+            var data = {
+                "name": cookie.name,
+                "value": cookie.value,
+                "domain": cookie.domain || "",
+                "path": cookie.path || "",
+                "expires": "",
+                "size": Number.bytesToString(cookie.size),
+                "http": cookie.httpOnly ? checkmark : "",
+                "secure": cookie.secure ? checkmark : "",
+            };
+
+            if (cookie.type !== WebInspector.CookieType.Request)
+                data["expires"] = cookie.session ? WebInspector.UIString("Session") : new Date(cookie.expires).toLocaleString();
 
             var node = new WebInspector.DataGridNode(data);
-            node.cookie = cookie;
             node.selectable = true;
+            node.cookie = cookie;
 
             this._dataGrid.appendChild(node);
         }
+
+        this._dataGrid.sortColumnIdentifier = "name";
     },
 
     _filterCookies: function(cookies)
@@ -180,45 +185,44 @@ WebInspector.CookieStorageContentView.prototype = {
         return filteredCookies;
     },
 
-    _sortCookies: function(cookies)
+    _sortDataGrid: function()
     {
-        var sortDirection = this._dataGrid.sortOrder === "ascending" ? 1 : -1;
-
-        function localeCompare(field, cookie1, cookie2)
+        function localeCompare(field, nodeA, nodeB)
         {
-            return sortDirection * (cookie1[field] + "").localeCompare(cookie2[field] + "")
+            return (nodeA.data[field] + "").localeCompare(nodeB.data[field] + "");
         }
 
-        function numberCompare(field, cookie1, cookie2)
+        function numberCompare(field, nodeA, nodeB)
         {
-            return sortDirection * (cookie1[field] - cookie2[field]);
+            return nodeA.cookie[field] - nodeB.cookie[field];
         }
 
-        function expiresCompare(cookie1, cookie2)
+        function expiresCompare(nodeA, nodeB)
         {
-            if (cookie1.session !== cookie2.session)
-                return sortDirection * (cookie1.session ? 1 : -1);
+            if (nodeA.cookie.session !== nodeB.cookie.session)
+                return nodeA.cookie.session ? 1 : -1;
 
-            if (cookie1.session)
+            if (nodeA.cookie.session)
                 return 0;
 
-            return sortDirection * (cookie1.expires - cookie2.expires);
+            return nodeA.data["expires"] - nodeB.data["expires"];
         }
 
         var comparator;
-        switch (parseInt(this._dataGrid.sortColumnIdentifier, 10)) {
-            case 0: comparator = localeCompare.bind(this, "name"); break;
-            case 1: comparator = localeCompare.bind(this, "value"); break;
-            case 2: comparator = localeCompare.bind(this, "domain"); break;
-            case 3: comparator = localeCompare.bind(this, "path"); break;
-            case 4: comparator = expiresCompare; break;
-            case 5: comparator = numberCompare.bind(this, "size"); break;
-            case 6: comparator = localeCompare.bind(this, "httpOnly"); break;
-            case 7: comparator = localeCompare.bind(this, "secure"); break;
-            default: localeCompare.bind(this, "name");
+        switch (this._dataGrid.sortColumnIdentifier) {
+            case "value": comparator = localeCompare.bind(this, "value"); break;
+            case "domain": comparator = localeCompare.bind(this, "domain"); break;
+            case "path": comparator = localeCompare.bind(this, "path"); break;
+            case "expires": comparator = expiresCompare; break;
+            case "size": comparator = numberCompare.bind(this, "size"); break;
+            case "http": comparator = localeCompare.bind(this, "http"); break;
+            case "secure": comparator = localeCompare.bind(this, "secure"); break;
+            case "name":
+            default: comparator = localeCompare.bind(this, "name"); break;
         }
 
-        cookies.sort(comparator);
+        console.assert(comparator);
+        this._dataGrid.sortNodes(comparator);
     },
 
     _deleteCallback: function(node)

@@ -50,7 +50,6 @@ WebInspector.LayoutTimelineView = function(recording)
     columns.startTime.title = WebInspector.UIString("Start Time");
     columns.startTime.width = "8%";
     columns.startTime.aligned = "right";
-    columns.startTime.sort = "ascending";
 
     columns.duration.title = WebInspector.UIString("Duration");
     columns.duration.width = "8%";
@@ -62,6 +61,9 @@ WebInspector.LayoutTimelineView = function(recording)
     this._dataGrid = new WebInspector.LayoutTimelineDataGrid(this.navigationSidebarTreeOutline, columns);
     this._dataGrid.addEventListener(WebInspector.TimelineDataGrid.Event.FiltersDidChange, this._dataGridFiltersDidChange, this);
     this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
+
+    this._dataGrid.sortColumnIdentifier = "startTime";
+    this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
 
     this.element.classList.add(WebInspector.LayoutTimelineView.StyleClassName);
     this.element.appendChild(this._dataGrid.element);

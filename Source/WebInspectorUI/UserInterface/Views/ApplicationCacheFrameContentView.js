@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @constructor
- * @extends {WebInspector.View}
- */
 WebInspector.ApplicationCacheFrameContentView = function(representedObject)
 {
     console.assert(representedObject instanceof WebInspector.ApplicationCacheFrame);
@@ -169,65 +165,65 @@ WebInspector.ApplicationCacheFrameContentView.prototype = {
 
     _createDataGrid: function()
     {
-        var columns = { 0: {}, 1: {}, 2: {} };
-        columns[0].title = WebInspector.UIString("Resource");
-        columns[0].sort = "ascending";
-        columns[0].sortable = true;
-        columns[1].title = WebInspector.UIString("Type");
-        columns[1].sortable = true;
-        columns[2].title = WebInspector.UIString("Size");
-        columns[2].aligned = "right";
-        columns[2].sortable = true;
+        var columns = {url: {}, type: {}, size: {}};
+
+        columns.url.title = WebInspector.UIString("Resource");
+        columns.url.sortable = true;
+
+        columns.type.title = WebInspector.UIString("Type");
+        columns.type.sortable = true;
+
+        columns.size.title = WebInspector.UIString("Size");
+        columns.size.aligned = "right";
+        columns.size.sortable = true;
+
         this._dataGrid = new WebInspector.DataGrid(columns);
+        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sortDataGrid, this);
+
+        this._dataGrid.sortColumnIdentifier = "url";
+        this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
+
         this.element.appendChild(this._dataGrid.element);
         this._dataGrid.updateLayout();
-        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._populateDataGrid, this);
+    },
+
+    _sortDataGrid: function()
+    {
+        function numberCompare(columnIdentifier, nodeA, nodeB)
+        {
+            console.log(columnIdentifier, nodeA, nodeB);
+            return nodeA.data[columnIdentifier] - nodeB.data[columnIdentifier];
+        }
+        function localeCompare(columnIdentifier, nodeA, nodeB)
+        {
+             return (nodeA.data[columnIdentifier] + "").localeCompare(nodeB.data[columnIdentifier] + "");
+        }
+
+        var comparator;
+        switch (this._dataGrid.sortColumnIdentifier) {
+            case "type": comparator = localeCompare.bind(this, "type"); break;
+            case "size": comparator = numberCompare.bind(this, "size"); break;
+            case "url":
+            default:  comparator = localeCompare.bind(this, "url"); break;
+        }
+
+        this._dataGrid.sortNodes(comparator);
     },
 
     _populateDataGrid: function()
     {
-        var selectedResource = this._dataGrid.selectedNode ? this._dataGrid.selectedNode.resource : null;
-        var sortDirection = this._dataGrid.sortOrder === "ascending" ? 1 : -1;
-
-        function numberCompare(field, resource1, resource2)
-        {
-            return sortDirection * (resource1[field] - resource2[field]);
-        }
-        function localeCompare(field, resource1, resource2)
-        {
-             return sortDirection * (resource1[field] + "").localeCompare(resource2[field] + "");
-        }
-
-        var comparator;
-        switch (parseInt(this._dataGrid.sortColumnIdentifier, 10)) {
-            case 0: comparator = localeCompare.bind(this, "url"); break;
-            case 1: comparator = localeCompare.bind(this, "type"); break;
-            case 2: comparator = numberCompare.bind(this, "size"); break;
-            default: localeCompare.bind(this, "resource"); // FIXME: comparator = ?
-        }
-
-        this._resources.sort(comparator);
         this._dataGrid.removeChildren();
 
-        var nodeToSelect;
-        for (var i = 0; i < this._resources.length; ++i) {
-            var data = {};
-            var resource = this._resources[i];
-            data[0] = resource.url;
-            data[1] = resource.type;
-            data[2] = Number.bytesToString(resource.size);
+        for (var resource of this._resources) {
+            var data = {
+                url: resource.url,
+                type: resource.type,
+                size: Number.bytesToString(resource.size)
+            };
             var node = new WebInspector.DataGridNode(data);
-            node.resource = resource;
             node.selectable = true;
             this._dataGrid.appendChild(node);
-            if (resource === selectedResource) {
-                nodeToSelect = node;
-                nodeToSelect.selected = true;
-            }
         }
-
-        if (!nodeToSelect && this._dataGrid.children.length)
-            this._dataGrid.children[0].selected = true;
     },
 
     _deleteButtonClicked: function(event)

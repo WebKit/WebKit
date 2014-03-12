@@ -128,10 +128,27 @@ WebInspector.LayerTreeSidebarPanel.prototype = {
 
     _buildDataGridSection: function()
     {
-        this._dataGrid = new WebInspector.LayerTreeDataGrid;
+        var columns = {name: {}, paintCount: {}, memory: {}};
 
+        columns.name.title = WebInspector.UIString("Node");
+        columns.name.sortable = false;
+
+        columns.paintCount.title = WebInspector.UIString("Paints");
+        columns.paintCount.sortable = true;
+        columns.paintCount.aligned = "right";
+        columns.paintCount.width = "50px";
+
+        columns.memory.title = WebInspector.UIString("Memory");
+        columns.memory.sortable = true;
+        columns.memory.aligned = "right";
+        columns.memory.width = "70px";
+
+        this._dataGrid = new WebInspector.DataGrid(columns);
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sortDataGrid, this);
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._selectedDataGridNodeChanged, this);
+
+        this.sortColumnIdentifier = "memory";
+        this.sortOrder = WebInspector.DataGrid.SortOrder.Descending;
 
         var element = this._dataGrid.element;
         element.addEventListener("focus", this._dataGridGainedFocus.bind(this), false);
@@ -159,26 +176,19 @@ WebInspector.LayerTreeSidebarPanel.prototype = {
         this._layersMemoryLabel = bottomBar.appendChild(document.createElement("div"));
         this._layersMemoryLabel.className = "layers-memory-label";
     },
-    
+
     _sortDataGrid: function()
     {
-        var dataGrid = this._dataGrid;
-
-        var nodes = dataGrid.children.slice();
-        var sortColumnIdentifier = dataGrid.sortColumnIdentifier;
-        var sortDirection = dataGrid.sortOrder === "ascending" ? 1 : -1;
+        var sortColumnIdentifier = this._dataGrid.sortColumnIdentifier;
 
         function comparator(a, b)
         {
             var item1 = a.layer[sortColumnIdentifier] || 0;
             var item2 = b.layer[sortColumnIdentifier] || 0;
-            return sortDirection * (item1 - item2);
+            return item1 - item2;
         };
 
-        nodes.sort(comparator);
-
-        dataGrid.setChildren(nodes);
-
+        this._dataGrid.sortNodes(comparator);
         this._updatePopoverForSelectedNode();
     },
 

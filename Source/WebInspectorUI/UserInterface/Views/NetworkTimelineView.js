@@ -63,7 +63,6 @@ WebInspector.NetworkTimelineView = function(recording)
     columns.requestSent.title = WebInspector.UIString("Start Time");
     columns.requestSent.width = "9%";
     columns.requestSent.aligned = "right";
-    columns.requestSent.sort = "ascending";
 
     columns.latency.title = WebInspector.UIString("Latency");
     columns.latency.width = "9%";
@@ -79,6 +78,8 @@ WebInspector.NetworkTimelineView = function(recording)
     this._dataGrid = new WebInspector.TimelineDataGrid(this.navigationSidebarTreeOutline, columns);
     this._dataGrid.addEventListener(WebInspector.TimelineDataGrid.Event.FiltersDidChange, this._dataGridFiltersDidChange, this);
     this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
+    this._dataGrid.sortColumnIdentifier = "requestSent";
+    this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
 
     this.element.classList.add(WebInspector.NetworkTimelineView.StyleClassName);
     this.element.appendChild(this._dataGrid.element);

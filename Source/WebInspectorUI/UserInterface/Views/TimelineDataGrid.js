@@ -320,7 +320,7 @@ WebInspector.TimelineDataGrid.prototype = {
         if (!sortColumnIdentifier)
             return 0;
 
-        var sortDirection = this.sortOrder === "ascending" ? 1 : -1;
+        var sortDirection = this.sortOrder === WebInspector.DataGrid.SortOrder.Ascending ? 1 : -1;
 
         var value1 = node1.data[sortColumnIdentifier];
         var value2 = node2.data[sortColumnIdentifier];

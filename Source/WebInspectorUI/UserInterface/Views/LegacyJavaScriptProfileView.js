@@ -419,7 +419,7 @@ WebInspector.LegacyJavaScriptProfileView.prototype = {
 
     _sortProfile: function()
     {
-        var sortAscending = this.dataGrid.sortOrder === "ascending";
+        var sortAscending = this.dataGrid.sortOrder === WebInspector.DataGrid.SortOrder.Ascending;
         var sortColumnIdentifier = this.dataGrid.sortColumnIdentifier;
         var sortProperty = {
                 "average": "averageTime",

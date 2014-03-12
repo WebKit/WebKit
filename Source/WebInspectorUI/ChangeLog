@@ -1,3 +1,74 @@
+2014-03-11  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: DataGrid should have an API to set sort column and direction
+        https://bugs.webkit.org/show_bug.cgi?id=128783
+
+        Reviewed by Timothy Hatcher.
+
+        Previously there was no way for DataGrid clients to programmatically change
+        the sort order or sort column identifier after the data grid was constructed.
+        This patch modernizes DataGrid sorting by exposing getters and setters for
+        sortOrder and sortColumnIdentifier, which trigger the SortChanged event if
+        the sort settings have changed.
+
+        This patch also modernizes sorting functionality in DataGrid clients, and in
+        a few clients it moves column identifiers from numbers to string identifiers.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/ApplicationCacheFrameContentView.js: Use string column identifiers
+        instead of numbers. Don't repopulate the entire table when the sort changes, instead
+        call DataGrid.sortNodes from the sorting callback. Explicitly set the sort order.
+
+        (WebInspector.ApplicationCacheFrameContentView.prototype._createDataGrid):
+        (WebInspector.ApplicationCacheFrameContentView.prototype._sortDataGrid):
+        (WebInspector.ApplicationCacheFrameContentView.prototype._sortDataGrid.localeCompare):
+        (WebInspector.ApplicationCacheFrameContentView.prototype._populateDataGrid):
+
+        * UserInterface/Views/CookieStorageContentView.js: Use string column identifiers instead
+        of numbers. Don't sort the cookies themselves, just the data grid nodes representing
+        each cookie. Use DataGrid.sortNodes as the sorting implementation, and provide a
+        comparator. Don't rebuild the entire table when the sort changes.
+
+        (WebInspector.CookieStorageContentView.prototype._rebuildTable):
+        (WebInspector.CookieStorageContentView.prototype._sortDataGrid):
+        (WebInspector.CookieStorageContentView.prototype._sortDataGrid.numberCompare):
+        (WebInspector.CookieStorageContentView.prototype._sortDataGrid.expiresCompare):
+
+        * UserInterface/Views/DataGrid.js: Add the DataGrid.SortOrder enum. Put sortOrder
+        and sortColumnIdentifier behind getters and setters. Pull some hardcoded style
+        class names into constants. Remove the "sort" field on column config objects; instead
+        should use the DataGrid.sortColumnIdentifier setter after construction.
+
+        (WebInspector.DataGrid): Keep sort settings in private variables.
+        (WebInspector.DataGrid.prototype.get sortOrder): Reimplemented.
+        (WebInspector.DataGrid.prototype.get sortColumnIdentifier): Reimplemented.
+        (WebInspector.DataGrid.prototype.moveToNextCell):
+        (WebInspector.DataGrid.prototype._editingCommitted):
+        (WebInspector.DataGrid.prototype.sortNodes): Use requestAnimationFrame to
+        coalesce multiple sort requests within the same draw frame.
+        (WebInspector.DataGrid.prototype._sortNodesCallback):
+        (WebInspector.DataGrid.prototype._headerCellClicked): Use the new sort API.
+        * UserInterface/Views/LayerTreeDataGrid.js: Removed. Unnecessary for performance
+        now that sort requests are coalesced by requestAnimationFrame.
+
+        * UserInterface/Views/LayerTreeSidebarPanel.js: Use DataGrid instead of LayerTreeDataGrid.
+        Hook up the _sortDataGrid method to the built-in DataGrid.sortNodes API.
+
+        (WebInspector.LayerTreeSidebarPanel.prototype._buildDataGridSection):
+        (WebInspector.LayerTreeSidebarPanel.prototype._sortDataGrid.comparator):
+        (WebInspector.LayerTreeSidebarPanel.prototype._sortDataGrid):
+        * UserInterface/Views/LayoutTimelineView.js:
+        * UserInterface/Views/LegacyJavaScriptProfileView.js:
+        (WebInspector.LegacyJavaScriptProfileView.prototype._sortProfile):
+        * UserInterface/Views/NetworkTimelineView.js:
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js: Use the DataGrid.sortNodes API.
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._createNameValueDataGrid.sortDataGrid.comparator):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._createNameValueDataGrid.sortDataGrid):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._createNameValueDataGrid):
+        * UserInterface/Views/ScriptTimelineView.js:
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.prototype._sortComparator):
+
 2014-03-10  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: Expose checked/disabled/expanded/pressed/readonly/selected
