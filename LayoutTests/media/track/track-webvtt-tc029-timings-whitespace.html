@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            numberOfTrackTests = 1;
+
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    testTrack0();
+                }
+            }
+
+            function testTrack0()
+            {
+                findMediaElement();
+                var expected =
+                {
+                    length: 12,
+                    tests:
+                    [
+                        {
+                            property: "id",
+                            values: ["1","2","3","4","5","6","7","8","9","10","11","12"],
+                        },
+                        {
+                            property: "startTime",
+                            values: [ "0.1","0.1","0.1","0.1","0.1","0.1","0.1","0.1","0.1","0.1","0.1","0.1"],
+                        },
+                        {
+                            property: "endTime",
+                            values: [ "1.5","1.5","1.5","1.5","1.5","1.5","1.5","1.5","1.5","1.5","1.5","1.5"],
+                        },
+                        {
+                            property: "text",
+                            values:
+                            [
+                              'Single U+0020 SPACE left of cue-timings separator "-->"',
+                              'Single U+0020 SPACE right of cue-timings separator "-->"',
+                              'Single U+0009 TAB left of cue-timings separator "-->"',
+                              'Single U+0009 TAB right of cue-timings separator "-->"',
+                              'Single U+000C FORM FEED left of cue-timings separator "-->"',
+                              'Single U+000C FORM FEED right of cue-timings separator "-->"',
+                              'Several U+0020 SPACE left of cue-timings separator "-->"',
+                              'Several U+0020 SPACE right of cue-timings separator "-->"',
+                              'Several U+0009 TAB left of cue-timings separator "-->"',
+                              'Several U+0009 TAB right of cue-timings separator "-->"',
+                              'Several U+000C FORM FEED left of cue-timings separator "-->"',
+                              'Several U+000C FORM FEED right of cue-timings separator "-->"',
+                            ],
+                        },
+                    ],
+                };
+                testCues(0, expected);
+
+                allTestsEnded();
+            }
+        </script>
+    </head>
+    <body onload="enableAllTextTracks()">
+      <p>Tests that "Skip whitespace" step around cue-timings separator is working correctly.</p>
+        <video>
+            <track src="captions-webvtt/tc029-timings-whitespace.vtt" onload="trackLoaded()">
+        </video>
+    </body>
+</html>

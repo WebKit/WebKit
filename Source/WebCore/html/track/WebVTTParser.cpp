@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
  * Copyright (C) 2013 Cable Television Labs, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -295,9 +295,7 @@ WebVTTParser::ParseState WebVTTParser::collectTimingsAndSettings(const String& l
         return BadCue;
     if (position >= line.length())
         return BadCue;
-    char nextChar = line[position++];
-    if (nextChar != ' ' && nextChar != '\t')
-        return BadCue;
+    
     skipWhiteSpace(line, &position);
 
     // 6-9 - If the next three characters are not "-->", abort and return failure.
@@ -306,9 +304,7 @@ WebVTTParser::ParseState WebVTTParser::collectTimingsAndSettings(const String& l
     position += 3;
     if (position >= line.length())
         return BadCue;
-    nextChar = line[position++];
-    if (nextChar != ' ' && nextChar != '\t')
-        return BadCue;
+    
     skipWhiteSpace(line, &position);
 
     // 10-11 - Collect a WebVTT timestamp. If that fails, then abort and return failure. Otherwise, let cue's text track cue end time be the collected time.
