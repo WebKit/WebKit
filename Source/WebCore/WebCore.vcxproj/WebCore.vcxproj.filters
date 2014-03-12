@@ -1473,12 +1473,6 @@
     <ClCompile Include="..\platform\graphics\win\MediaPlayerPrivateFullscreenWindow.cpp">
       <Filter>platform\graphics\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\win\MediaPlayerPrivateQuickTimeVisualContext.cpp">
-      <Filter>platform\graphics\win</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\win\MediaPlayerPrivateTaskTimer.cpp">
-      <Filter>platform\graphics\win</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\graphics\opentype\OpenTypeUtilities.cpp">
       <Filter>platform\graphics\win</Filter>
     </ClCompile>
@@ -8364,9 +8358,6 @@
     <ClInclude Include="..\platform\graphics\win\LocalWindowsContext.h">
       <Filter>platform\graphics\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\win\MediaPlayerPrivateTaskTimer.h">
-      <Filter>platform\graphics\win</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\graphics\opentype\OpenTypeTypes.h">
       <Filter>platform\graphics\win</Filter>
     </ClInclude>
@@ -14887,9 +14878,6 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuildStep Include="..\platform\graphics\win\MediaPlayerPrivateFullscreenWindow.h">
-      <Filter>platform\graphics\win</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\platform\graphics\win\MediaPlayerPrivateQuickTimeVisualContext.h">
       <Filter>platform\graphics\win</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="..\platform\graphics\win\WKCAImageQueue.h">

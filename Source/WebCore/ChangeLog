@@ -1,3 +1,40 @@
+2014-03-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Remove use of QTSDK
+        https://bugs.webkit.org/show_bug.cgi?id=130049
+
+        Reviewed by Darin Adler.
+
+        Media testing already covers this functionality.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Remove QuickTime files.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * platform/graphics/MediaPlayer.h: Remove QuickTime and Chromium
+        media references.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp: Removed.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.h: Removed.
+        * platform/graphics/win/QTCFDictionary.cpp: Removed.
+        * platform/graphics/win/QTCFDictionary.h: Removed.
+        * platform/graphics/win/QTDecompressionSession.cpp: Removed.
+        * platform/graphics/win/QTDecompressionSession.h: Removed.
+        * platform/graphics/win/QTMovie.cpp: Removed.
+        * platform/graphics/win/QTMovie.h: Removed.
+        * platform/graphics/win/QTMovieGWorld.cpp: Removed.
+        * platform/graphics/win/QTMovieGWorld.h: Removed.
+        * platform/graphics/win/QTMovieTask.cpp: Removed.
+        * platform/graphics/win/QTMovieTask.h: Removed.
+        * platform/graphics/win/QTMovieVisualContext.cpp: Removed.
+        * platform/graphics/win/QTMovieVisualContext.h: Removed.
+        * platform/graphics/win/QTMovieWinTimer.cpp: Removed.
+        * platform/graphics/win/QTMovieWinTimer.h: Removed.
+        * platform/graphics/win/QTPixelBuffer.cpp: Removed.
+        * platform/graphics/win/QTPixelBuffer.h: Removed.
+        * platform/graphics/win/QTTrack.cpp: Removed.
+        * platform/graphics/win/QTTrack.h: Removed.
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::PluginDatabase::defaultPluginDirectories): Don't look
+        for the QuickTime plugin anymore.
+
 2014-03-12  David Kilzer  <ddkilzer@apple.com>
 
         Fix build after r165472

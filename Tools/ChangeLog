@@ -1,3 +1,15 @@
+2014-03-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Remove use of QTSDK
+        https://bugs.webkit.org/show_bug.cgi?id=130049
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (initialize): Remove QuickTime code.
+        * win/AssembleBuildLogs/AssembleLogs.cmd: Don't grab logs from
+        building QTMovieWin.
+
 2014-03-12  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][CMAKE] Too verbose build output

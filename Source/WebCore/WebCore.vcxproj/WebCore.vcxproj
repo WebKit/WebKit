@@ -7782,17 +7782,6 @@
     <ClCompile Include="..\platform\graphics\win\IntRectWin.cpp" />
     <ClCompile Include="..\platform\graphics\win\IntSizeWin.cpp" />
     <ClCompile Include="..\platform\graphics\win\MediaPlayerPrivateFullscreenWindow.cpp" />
-    <ClCompile Include="..\platform\graphics\win\MediaPlayerPrivateQuickTimeVisualContext.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\win\MediaPlayerPrivateTaskTimer.cpp" />
     <ClCompile Include="..\platform\graphics\opentype\OpenTypeUtilities.cpp" />
     <ClCompile Include="..\platform\graphics\opentype\OpenTypeVerticalData.cpp" />
     <ClCompile Include="..\platform\graphics\win\SimpleFontDataCairoWin.cpp">
@@ -19124,8 +19113,6 @@
     <ClInclude Include="..\platform\graphics\win\FullScreenControllerClient.h" />
     <ClInclude Include="..\platform\graphics\win\LocalWindowsContext.h" />
     <CustomBuildStep Include="..\platform\graphics\win\MediaPlayerPrivateFullscreenWindow.h" />
-    <CustomBuildStep Include="..\platform\graphics\win\MediaPlayerPrivateQuickTimeVisualContext.h" />
-    <ClInclude Include="..\platform\graphics\win\MediaPlayerPrivateTaskTimer.h" />
     <ClInclude Include="..\platform\graphics\opentype\OpenTypeTypes.h" />
     <ClInclude Include="..\platform\graphics\opentype\OpenTypeUtilities.h" />
     <ClInclude Include="..\platform\graphics\opentype\OpenTypeVerticalData.h" />

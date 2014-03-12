@@ -118,15 +118,6 @@ echo COMPILING WebCoreGenerated...                             >> "%CONFIGURATIO
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\WebCoreGenerated\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 
-if not exist "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\QTMovieWin\BuildLog.htm" GOTO SkipQTMovieWin
-
-echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-echo COMPILING QTMovieWin...                                   >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\QTMovieWin\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-
-:SkipQTMovieWin
-
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo COMPILING WebCore...                                      >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
