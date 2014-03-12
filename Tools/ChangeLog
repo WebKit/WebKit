@@ -1,3 +1,14 @@
+2014-03-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add "System Font" to the list of whitelisted DRT fonts
+        https://bugs.webkit.org/show_bug.cgi?id=130046
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (allowedFontFamilySet):
+        * WebKitTestRunner/InjectedBundle/mac/ActivateFonts.mm:
+
 2014-03-11  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] The jhbuild environment should set CMAKE_PREFIX_PATH and CMAKE_LIBRARY_PATH
