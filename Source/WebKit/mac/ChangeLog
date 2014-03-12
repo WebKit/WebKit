@@ -1,3 +1,20 @@
+2014-03-12  Anders Carlsson  <andersca@apple.com>
+
+        <rdar://problem/16307346> Add new WebKitLegacy.framework.
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/WebKitLegacy.xcconfig:
+        Add xcconfig file for the new framework.
+
+        * WebKitLegacy/Info.plist:
+        Add Info.plist for WebKitLegacy.framework.
+
+        * WebKitLegacy/MigrateHeadersToLegacy.make:
+        Add makefile that copies headers from WebKit to WebKitLegacy and rewrites includes from WebKit/ to WebKitLegacy/
+        * WebKitLegacy/WebKitLegacy.cpp:
+        Add an empty file so we'll have something to link.
+
 2014-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Hook up image controls for WebKit1
