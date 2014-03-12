@@ -244,8 +244,7 @@ using namespace WebCore;
         return nil;
 
     Frame *frame = [self coreFrame];
-    Range *range = frame->selection().toNormalizedRange().get();
-    return [self selectionRectsForCoreRange:range];
+    return [self selectionRectsForCoreRange:frame->selection().toNormalizedRange().get()];
 }
 
 - (DOMRange *)wordAtPoint:(CGPoint)point
