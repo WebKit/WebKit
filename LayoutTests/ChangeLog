@@ -1,5 +1,15 @@
 2014-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r163479
+
+    2014-02-05  Zalan Bujtas  <zalan@apple.com>
+
+            Update expected result for media/video-controls-captions-trackmenu-sorted.html
+
+            * platform/mac/media/video-controls-captions-trackmenu-sorted-expected.txt:
+
+2014-03-12  Lucas Forschler  <lforschler@apple.com>
+
     Merge r163408 to fix layout tests.
 
 2014-03-10  Matthew Hanson  <matthew_hanson@apple.com>
