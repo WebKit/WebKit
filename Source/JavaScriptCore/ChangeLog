@@ -1,5 +1,21 @@
 2014-03-12  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Remove HandleSet::m_nextToFinalize
+        https://bugs.webkit.org/show_bug.cgi?id=130109
+
+        Reviewed by Mark Lam.
+
+        This is a remnant of when HandleSet contained things that needed to be finalized. 
+
+        * heap/HandleSet.cpp:
+        (JSC::HandleSet::HandleSet):
+        (JSC::HandleSet::writeBarrier):
+        * heap/HandleSet.h:
+        (JSC::HandleSet::allocate):
+        (JSC::HandleSet::deallocate):
+
+2014-03-12  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Layout Test fast/workers/worker-gc.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=130135
 

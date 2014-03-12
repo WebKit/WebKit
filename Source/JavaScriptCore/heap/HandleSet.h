@@ -100,7 +100,6 @@ private:
     SentinelLinkedList<Node> m_strongList;
     SentinelLinkedList<Node> m_immediateList;
     SinglyLinkedList<Node> m_freeList;
-    Node* m_nextToFinalize;
 };
 
 inline HandleSet* HandleSet::heapFor(HandleSlot handle)
@@ -125,10 +124,6 @@ inline HandleSet::Node* HandleSet::toNode(HandleSlot handle)
 
 inline HandleSlot HandleSet::allocate()
 {
-    // Forbid assignment to handles during the finalization phase, since it would violate many GC invariants.
-    // File a bug with stack trace if you hit this.
-    RELEASE_ASSERT(!m_nextToFinalize);
-
     if (m_freeList.isEmpty())
         grow();
 
@@ -141,11 +136,6 @@ inline HandleSlot HandleSet::allocate()
 inline void HandleSet::deallocate(HandleSlot handle)
 {
     HandleSet::Node* node = toNode(handle);
-    if (node == m_nextToFinalize) {
-        ASSERT(m_nextToFinalize->next());
-        m_nextToFinalize = m_nextToFinalize->next();
-    }
-
     SentinelLinkedList<HandleSet::Node>::remove(node);
     m_freeList.push(node);
 }
