@@ -61,7 +61,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_verticalScrollbarPainter(stateNode.verticalScrollbarPainter())
     , m_horizontalScrollbarPainter(stateNode.horizontalScrollbarPainter())
 #endif
-    , m_viewportConstrainedObjectRect(stateNode.viewportConstrainedObjectRect())
+    , m_viewportSize(stateNode.viewportSize())
     , m_totalContentsSize(stateNode.totalContentsSize())
     , m_scrollPosition(stateNode.scrollPosition())
     , m_scrollOrigin(stateNode.scrollOrigin())
@@ -98,13 +98,13 @@ PassOwnPtr<ScrollingStateNode> ScrollingStateScrollingNode::clone(ScrollingState
     return adoptPtr(new ScrollingStateScrollingNode(*this, adoptiveTree));
 }
 
-void ScrollingStateScrollingNode::setViewportConstrainedObjectRect(const FloatRect& viewportConstrainedObjectRect)
+void ScrollingStateScrollingNode::setViewportSize(const FloatSize& size)
 {
-    if (m_viewportConstrainedObjectRect == viewportConstrainedObjectRect)
+    if (m_viewportSize == size)
         return;
 
-    m_viewportConstrainedObjectRect = viewportConstrainedObjectRect;
-    setPropertyChanged(ViewportConstrainedObjectRect);
+    m_viewportSize = size;
+    setPropertyChanged(ViewportSize);
 }
 
 void ScrollingStateScrollingNode::setTotalContentsSize(const IntSize& totalContentsSize)
@@ -261,13 +261,11 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, int indent) con
 {
     ts << "(" << "Scrolling node" << "\n";
 
-    if (!m_viewportConstrainedObjectRect.isEmpty()) {
+    if (!m_viewportSize.isEmpty()) {
         writeIndent(ts, indent + 1);
         ts << "(viewport rect "
-            << TextStream::FormatNumberRespectingIntegers(m_viewportConstrainedObjectRect.x()) << " "
-            << TextStream::FormatNumberRespectingIntegers(m_viewportConstrainedObjectRect.y()) << " "
-            << TextStream::FormatNumberRespectingIntegers(m_viewportConstrainedObjectRect.width()) << " "
-            << TextStream::FormatNumberRespectingIntegers(m_viewportConstrainedObjectRect.height()) << ")\n";
+            << TextStream::FormatNumberRespectingIntegers(m_viewportSize.width()) << " "
+            << TextStream::FormatNumberRespectingIntegers(m_viewportSize.height()) << ")\n";
     }
 
     if (m_scrollPosition != FloatPoint()) {

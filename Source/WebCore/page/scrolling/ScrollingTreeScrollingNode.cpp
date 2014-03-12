@@ -51,8 +51,8 @@ void ScrollingTreeScrollingNode::updateBeforeChildren(const ScrollingStateNode& 
 {
     const ScrollingStateScrollingNode& state = toScrollingStateScrollingNode(stateNode);
 
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::ViewportConstrainedObjectRect))
-        m_viewportConstrainedObjectRect = state.viewportConstrainedObjectRect();
+    if (state.hasChangedProperty(ScrollingStateScrollingNode::ViewportSize))
+        m_viewportSize = state.viewportSize();
 
     if (state.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize)) {
         if (scrollingTree().isRubberBandInProgress())

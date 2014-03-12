@@ -90,9 +90,9 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
 
     node->setScrollOrigin(frameView->scrollOrigin());
 #if PLATFORM(IOS)
-    node->setViewportConstrainedObjectRect(FloatRect(FloatPoint(), frameView->viewportConstrainedVisibleContentRect().size()));
+    node->setViewportSize(frameView->viewportConstrainedVisibleContentRect().size());
 #else
-    node->setViewportConstrainedObjectRect(FloatRect(FloatPoint(), frameView->visibleContentRect().size()));
+    node->setViewportSize(frameView->visibleContentRect().size());
 #endif
     node->setTotalContentsSize(frameView->totalContentsSize());
 

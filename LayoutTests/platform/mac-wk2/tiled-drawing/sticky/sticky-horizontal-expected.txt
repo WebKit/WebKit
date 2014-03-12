@@ -1,6 +1,6 @@
 Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Right %
 (Scrolling node
-  (viewport rect 0 0 800 585)
+  (viewport rect 800 585)
   (contents size 2008 585)
   (requested scroll position 800 0)
   (children 6

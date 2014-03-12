@@ -1,5 +1,34 @@
 2014-03-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Have the scrolling tree track the viewport size, not the viewport rect
+        https://bugs.webkit.org/show_bug.cgi?id=130141
+
+        Reviewed by Beth Dakin.
+
+        The scrolling tree only needs to know the size of the viewport, not its
+        origin, since the origin is deduced from the updated scroll position.
+        
+        Tests dump a size, not a rect with a 0,0 origin now.
+
+        * platform/mac-wk2/tiled-drawing/clamp-out-of-bounds-scrolls-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/absolute-inside-fixed-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/absolute-inside-out-of-view-fixed-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/fixed-in-overflow-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/fixed-position-out-of-view-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/fixed-position-out-of-view-negative-zindex-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/four-bars-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/four-bars-with-header-and-footer-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/negative-scroll-offset-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/negative-scroll-offset-in-view-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/nested-fixed-expected.txt:
+        * platform/mac-wk2/tiled-drawing/fixed/percentage-inside-fixed-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling-tree-after-scroll-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling-tree-slow-scrolling-expected.txt:
+        * platform/mac-wk2/tiled-drawing/sticky/negative-scroll-offset-expected.txt:
+        * platform/mac-wk2/tiled-drawing/sticky/sticky-horizontal-expected.txt:
+
+2014-03-12  Simon Fraser  <simon.fraser@apple.com>
+
         Change scrollOffsetForFixedPosition() to do LayoutUnit math
         https://bugs.webkit.org/show_bug.cgi?id=129981
 

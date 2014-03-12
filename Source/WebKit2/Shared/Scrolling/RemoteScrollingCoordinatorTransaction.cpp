@@ -108,7 +108,7 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(ArgumentEncoder& encoder
 {
     encoder << static_cast<const ScrollingStateNode&>(node);
     
-    SCROLLING_NODE_ENCODE(ViewportConstrainedObjectRect, viewportConstrainedObjectRect)
+    SCROLLING_NODE_ENCODE(ViewportSize, viewportSize)
     SCROLLING_NODE_ENCODE(TotalContentsSize, totalContentsSize)
     SCROLLING_NODE_ENCODE(ScrollPosition, scrollPosition)
     SCROLLING_NODE_ENCODE(ScrollOrigin, scrollOrigin)
@@ -145,7 +145,7 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(ArgumentDecoder& decoder
     if (!decoder.decode(static_cast<ScrollingStateNode&>(node)))
         return false;
 
-    SCROLLING_NODE_DECODE(ViewportConstrainedObjectRect, FloatRect, setViewportConstrainedObjectRect);
+    SCROLLING_NODE_DECODE(ViewportSize, FloatSize, setViewportSize);
     SCROLLING_NODE_DECODE(TotalContentsSize, IntSize, setTotalContentsSize);
     SCROLLING_NODE_DECODE(ScrollPosition, FloatPoint, setScrollPosition);
     SCROLLING_NODE_DECODE(ScrollOrigin, IntPoint, setScrollOrigin);

@@ -136,8 +136,10 @@ void ScrollingTreeScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& pos
 
     ScrollBehaviorForFixedElements behaviorForFixed = scrollBehaviorForFixedElements();
     FloatPoint scrollOffset = position - toIntSize(scrollOrigin());
-
-    FloatSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(enclosingIntRect(viewportConstrainedObjectRect()), totalContentsSize(), flooredIntPoint(scrollOffset), scrollOrigin(), frameScaleFactor(), false, behaviorForFixed, headerHeight(), footerHeight());
+    FloatRect viewportRect(FloatPoint(), viewportSize());
+    
+    // FIXME: scrollOffsetForFixedPosition() needs to do float math.
+    FloatSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(enclosingLayoutRect(viewportRect), totalContentsSize(), flooredIntPoint(scrollOffset), scrollOrigin(), frameScaleFactor(), false, behaviorForFixed, headerHeight(), footerHeight());
     if (m_counterScrollingLayer)
         m_counterScrollingLayer.get().position = FloatPoint(scrollOffsetForFixedChildren);
 
@@ -147,7 +149,7 @@ void ScrollingTreeScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& pos
         // then we should recompute scrollOffsetForFixedChildren for the banner with a scale factor of 1.
         float horizontalScrollOffsetForBanner = scrollOffsetForFixedChildren.width();
         if (frameScaleFactor() != 1)
-            horizontalScrollOffsetForBanner = FrameView::scrollOffsetForFixedPosition(enclosingIntRect(viewportConstrainedObjectRect()), totalContentsSize(), flooredIntPoint(scrollOffset), scrollOrigin(), 1, false, behaviorForFixed, headerHeight(), footerHeight()).width();
+            horizontalScrollOffsetForBanner = FrameView::scrollOffsetForFixedPosition(enclosingLayoutRect(viewportRect), totalContentsSize(), flooredIntPoint(scrollOffset), scrollOrigin(), 1, false, behaviorForFixed, headerHeight(), footerHeight()).width();
 
         if (m_headerLayer)
             m_headerLayer.get().position = FloatPoint(horizontalScrollOffsetForBanner, 0);
@@ -159,7 +161,6 @@ void ScrollingTreeScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& pos
     if (!m_children)
         return;
 
-    FloatRect viewportRect = viewportConstrainedObjectRect();
     viewportRect.setLocation(FloatPoint() + scrollOffsetForFixedChildren);
 
     size_t size = m_children->size();
@@ -179,8 +180,8 @@ FloatPoint ScrollingTreeScrollingNodeIOS::minimumScrollPosition() const
 
 FloatPoint ScrollingTreeScrollingNodeIOS::maximumScrollPosition() const
 {
-    FloatPoint position(totalContentsSizeForRubberBand().width() - viewportConstrainedObjectRect().width(),
-        totalContentsSizeForRubberBand().height() - viewportConstrainedObjectRect().height());
+    FloatPoint position(totalContentsSizeForRubberBand().width() - viewportSize().width(),
+        totalContentsSizeForRubberBand().height() - viewportSize().height());
 
     position = position.expandedTo(FloatPoint());
 

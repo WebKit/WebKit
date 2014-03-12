@@ -1,5 +1,36 @@
 2014-03-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Have the scrolling tree track the viewport size, not the viewport rect
+        https://bugs.webkit.org/show_bug.cgi?id=130141
+
+        Reviewed by Beth Dakin.
+
+        The scrolling tree only needs to know the size of the viewport, not its
+        origin, since the origin is deduced from the updated scroll position.
+
+        * WebCore.exp.in:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::setViewportSize):
+        (WebCore::ScrollingStateScrollingNode::dumpProperties):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::updateBeforeChildren):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::viewportSize):
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeScrollingNodeIOS::setScrollLayerPosition):
+        (WebCore::ScrollingTreeScrollingNodeIOS::maximumScrollPosition):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::updateAfterChildren):
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
+        (WebCore::ScrollingTreeScrollingNodeMac::maximumScrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeMac::logExposedUnfilledArea):
+
+2014-03-12  Simon Fraser  <simon.fraser@apple.com>
+
         Spelling is hard
         https://bugs.webkit.org/show_bug.cgi?id=130146
 

@@ -1,5 +1,5 @@
 (Scrolling node
-  (viewport rect 0 0 800 600)
+  (viewport rect 800 600)
   (contents size 800 600)
   (Scrolling on main thread because: Has slow repaint objects)
 )

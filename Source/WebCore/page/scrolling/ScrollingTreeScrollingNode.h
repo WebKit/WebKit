@@ -60,7 +60,7 @@ protected:
     ScrollingTreeScrollingNode(ScrollingTree&, ScrollingNodeID);
 
     const FloatPoint& scrollPosition() const { return m_scrollPosition; }
-    const FloatRect& viewportConstrainedObjectRect() const { return m_viewportConstrainedObjectRect; }
+    const FloatSize& viewportSize() const { return m_viewportSize; }
     const IntSize& totalContentsSize() const { return m_totalContentsSize; }
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
 
@@ -86,7 +86,7 @@ protected:
     ScrollBehaviorForFixedElements scrollBehaviorForFixedElements() const { return m_behaviorForFixed; }
 
 private:
-    FloatRect m_viewportConstrainedObjectRect;
+    FloatSize m_viewportSize;
     IntSize m_totalContentsSize;
     IntSize m_totalContentsSizeForRubberBand;
     FloatPoint m_scrollPosition;
