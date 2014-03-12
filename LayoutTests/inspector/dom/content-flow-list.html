@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<style>
+#flow1
+{
+    -webkit-flow-into: flow1;
+}
+</style>
+<script type="text/javascript" src="../inspector-test.js"></script>
+<script>
+function removeFlow()
+{
+    document.getElementById("flow1").remove();
+}
+
+function test()
+{
+    function onRootDOMNodeInvalidated()
+    {
+        WebInspector.frameResourceManager.mainFrame.domTree.requestContentFlowList();
+    }
+
+    function onContentFlowWasAdded(event)
+    {
+        InspectorTest.expectThat(event.data.flow.name === "flow1", "ContentFlow was added");
+        InspectorTest.expectThat(WebInspector.frameResourceManager.mainFrame.domTree.flowsCount === 1, "Flow count is 1");
+
+        InspectorTest.evaluateInPage("removeFlow()");
+    }
+
+    function onContentFlowWasRemoved(event)
+    {
+        InspectorTest.expectThat(event.data.flow.name === "flow1", "ContentFlow was removed");
+        InspectorTest.expectThat(WebInspector.frameResourceManager.mainFrame.domTree.flowsCount === 0, "Flow count is 0");
+        InspectorTest.completeTest();
+    }
+
+    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, function() {
+        var domTree = WebInspector.frameResourceManager.mainFrame.domTree;
+        domTree.addEventListener(WebInspector.DOMTree.Event.RootDOMNodeInvalidated, onRootDOMNodeInvalidated, null);
+        domTree.addEventListener(WebInspector.DOMTree.Event.ContentFlowWasAdded, onContentFlowWasAdded, null);
+        domTree.addEventListener(WebInspector.DOMTree.Event.ContentFlowWasRemoved, onContentFlowWasRemoved, null);
+        domTree.requestContentFlowList();
+    });
+
+    InspectorTest.reloadPage();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that the ContentFlows events are correctly dispatched when new flows are created/removed.</p>
+
+    <div id="flow1"></div>
+</body>
+</html>

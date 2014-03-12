@@ -1902,7 +1902,7 @@ webkit.org/b/128979 inspector-protocol/debugger/pause-on-assert.html [ Pass Fail
 webkit.org/b/128979 inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local.html [ Failure ]
 webkit.org/b/128979 inspector-protocol/debugger/setBreakpoint-dfg.html [ Failure ]
 webkit.org/b/100846 inspector-protocol/debugger/terminate-dedicated-worker-while-paused.html [ Failure ]
-webkit.org/b/128979 inspector-protocol/model/content-node-region-info.html [ Pass Failure ]
+webkit.org/b/128979 inspector/dom/content-node-region-info.html [ Pass Failure ]
 webkit.org/b/128979 [ Debug ] inspector-protocol/dom/getAccessibilityPropertiesForNode.html [ Crash ]
 webkit.org/b/128979 [ Release ] inspector-protocol/dom/getAccessibilityPropertiesForNode.html [ Pass Failure ]
 

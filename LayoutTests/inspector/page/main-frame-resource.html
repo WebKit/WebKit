@@ -1,17 +1,17 @@
 <!doctype html>
 <html>
 <head>
-<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script type="text/javascript" src="../inspector-test.js"></script>
 <script>
 function test()
 {
-    InspectorTest.initializeInspectorModels();
-
-    WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.MainFrameDidChange, function(event) {
+    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, function(event) {
         var url = WebInspector.frameResourceManager.mainFrame.url;
         InspectorTest.log("Main frame: " + url.substring(url.lastIndexOf("/") + 1));
         InspectorTest.completeTest();
     });
+
+    InspectorTest.reloadPage();
 }
 </script>
 </head>

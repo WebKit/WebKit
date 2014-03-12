@@ -30,7 +30,7 @@ InspectorTestProxy._initializers = [];
 
 // Helper scripts like `debugger-test.js` must register their initialization
 // function with this method so it will be marshalled to the inspector page.
-InspectorTestProxy.register = function(initializer)
+InspectorTestProxy.registerInitializer = function(initializer)
 {
     if (typeof initializer === "function")
         this._initializers.push(initializer.toString());
@@ -42,17 +42,26 @@ InspectorTestProxy.register = function(initializer)
 // into the inspector page context.
 function runTest()
 {
+    // Don't try to use testRunner if running through the browser.
+    if (!window.testRunner)
+        return;
+
     // Set up the test page before the load event fires.
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
 
-    if (window.internals)
-        internals.setInspectorIsUnderTest(true);
+    window.internals.setInspectorIsUnderTest(true);
     testRunner.showWebInspector();
 
-    // This function runs the initializer functions in the Inspector page.
-    function initializeFrontend(initializersArray)
+    function runInitializationMethodsInFrontend(initializersArray)
     {
+        if (InspectorTest.didInjectTestCode) {
+            // If the test page reloaded but we started running the test in a previous
+            // navigation, then don't initialize the inspector frontend again.
+            InspectorTest.testPageDidLoad();
+            return;
+        }
+
         for (var initializer of initializersArray) {
             try {
                 initializer();
@@ -63,9 +72,13 @@ function runTest()
         }
     }
 
-    // This function runs the test() method in the Inspector page.
-    function runTestInFrontend(testFunction)
+    function runTestMethodInFrontend(testFunction)
     {
+        if (InspectorTest.didInjectTestCode)
+            return;
+
+        InspectorTest.didInjectTestCode = true;
+
         try {
             testFunction();
         } catch (e) {
@@ -74,16 +87,20 @@ function runTest()
         }
     }
 
-    var codeStringToEvaluate = "(" + initializeFrontend.toString() + ")([" + InspectorTestProxy._initializers + "]);";
+    var codeStringToEvaluate = "(" + runInitializationMethodsInFrontend.toString() + ")([" + InspectorTestProxy._initializers + "]);";
     testRunner.evaluateInWebInspector(0, codeStringToEvaluate);
 
     // `test` refers to a function defined in global scope in the test HTML page.
-    codeStringToEvaluate = "(" + runTestInFrontend.toString() + ")(" + test.toString() + ");";
+    codeStringToEvaluate = "(" + runTestMethodInFrontend.toString() + ")(" + test.toString() + ");";
     testRunner.evaluateInWebInspector(0, codeStringToEvaluate);
 }
 
 InspectorTestProxy.completeTest = function()
 {
+    // Don't try to use testRunner if running through the browser.
+    if (!window.testRunner)
+        return;
+
     // Close inspector asynchrously in case we want to test tear-down behavior.
     setTimeout(function() {
         testRunner.closeWebInspector();

@@ -1,3 +1,48 @@
+2014-03-12  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: convert model tests and inspector-test.js to use Test.html
+        https://bugs.webkit.org/show_bug.cgi?id=129217
+
+        Reviewed by Timothy Hatcher.
+
+        * TestExpectations: Add flaky content-flow and failing shape-outside inspector tests.
+        * inspector-protocol/model/probe-manager-add-remove-actions.html: Removed.
+        * inspector-protocol/resources/shape-info-helper.js: Removed.
+        * inspector/debugger/debugger-test.js: Added.
+        (InspectorTestProxy.registerInitializer.):
+        (InspectorTestProxy.registerInitializer):
+        * inspector/debugger/probe-manager-add-remove-actions-expected.txt: Renamed from LayoutTests/inspector-protocol/model/probe-manager-add-remove-actions-expected.txt.
+        * inspector/debugger/probe-manager-add-remove-actions.html: Added.
+        * inspector/debugger/resources/breakpoint.js: Added. Copied from LayoutTests/inspector-protocol/.
+        (breakpointActions):
+        * inspector/dom/content-flow-content-nodes-expected.txt: Renamed from LayoutTests/inspector-protocol/model/content-flow-content-nodes-expected.txt.
+        * inspector/dom/content-flow-content-nodes.html: Renamed from LayoutTests/inspector-protocol/model/content-flow-content-nodes.html.
+        * inspector/dom/content-flow-content-removal-expected.txt: Renamed from LayoutTests/inspector-protocol/model/content-flow-content-removal-expected.txt.
+        * inspector/dom/content-flow-content-removal.html: Renamed from LayoutTests/inspector-protocol/model/content-flow-content-removal.html.
+        * inspector/dom/content-flow-list-expected.txt: Renamed from LayoutTests/inspector-protocol/model/content-flow-list-expected.txt.
+        * inspector/dom/content-flow-list.html: Renamed from LayoutTests/inspector-protocol/model/content-flow-list.html.
+        * inspector/dom/content-node-region-info-expected.txt: Renamed from LayoutTests/inspector-protocol/model/content-node-region-info-expected.txt.
+        * inspector/dom/content-node-region-info.html: Renamed from LayoutTests/inspector-protocol/model/content-node-region-info.html.
+        * inspector/dom/highlight-shape-outside-expected.txt: Renamed from LayoutTests/inspector-protocol/model/highlight-shape-outside-expected.txt.
+        * inspector/dom/highlight-shape-outside-margin-expected.txt: Renamed from LayoutTests/inspector-protocol/model/highlight-shape-outside-margin-expected.txt.
+        * inspector/dom/highlight-shape-outside-margin.html: Renamed from LayoutTests/inspector-protocol/model/highlight-shape-outside-margin.html.
+        * inspector/dom/highlight-shape-outside.html: Renamed from LayoutTests/inspector-protocol/model/highlight-shape-outside.html.
+        * inspector/dom/shapes-test.js: Added. Refactor existing shape helpers to use model objects
+        where it makes sense, and use easy-to-read assertions.
+        (InspectorTestProxy.registerInitializer.):
+        * inspector/inspector-test.js: Handle reloaded test pages better. Use better names.
+        (InspectorTestProxy.registerInitializer): Renamed from `register`.
+        (runTest.runInitializationMethodsInFrontend):
+        (runTest.runTestMethodInFrontend):
+        (runTest):
+        (InspectorTestProxy.completeTest):
+        * inspector/page/main-frame-resource-expected.txt: Renamed from LayoutTests/inspector-protocol/model/main-frame-resource-expected.txt.
+        * inspector/page/main-frame-resource.html: Renamed from LayoutTests/inspector-protocol/model/main-frame-resource.html.
+        * inspector/page/resources/dummy-page.html: Added.
+        * platform/efl/TestExpectations: Move failing inspector tests to generic expectations.
+        * platform/gtk/TestExpectations: Move failing inspector tests to generic expectations.
+        * platform/win/TestExpectations: Move failing inspector tests to generic expectations.
+
 2014-03-12  Brent Fulgham  <bfulgham@apple.com>
 
         [WebVTT] HTML5 "space" cahracters around "-->" are not required

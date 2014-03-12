@@ -24,11 +24,11 @@ body {
     -webkit-shape-margin: 1px;
 }
 </style>
-<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
-<script type="text/javascript" src="../resources/shape-info-helper.js"></script>
+<script type="text/javascript" src="../inspector-test.js"></script>
+<script type="text/javascript" src="./shapes-test.js"></script>
 <script>
-function shapeTests() {
-    var tests = [
+function test() {
+    var testcases = [
     {
         'selector' : '.inset',
         'shape' : roundedRectCommands(50, 50, 50, 50, 10),
@@ -74,39 +74,26 @@ function shapeTests() {
         return commands;
     }
 
-    function testPath(actual, expected, msg) {
-        var result = InspectorTest.pathsRoughlyEqual(actual, expected);
-        expectedString = expected.map(function(item) {
-            if (typeof item === 'number')
-                return +item.toFixed(2);
-            return item;
-        }).join(' ');
-        InspectorTest.assert(result, msg + " [" + expectedString + "]");
-        if (!result)
-            InspectorTest.log("Actual shape was [" + actual.join(" ") + "]");
-    }
+    function runNextTest(tests) {
+        var testcase = tests[0];
 
-    function doTests(tests) {
-        if (!tests.length) {
-            InspectorTest.completeTest();
-            return;
-        }
-        var test = tests[0];
-        tests = tests.splice(1);
-        InspectorTest.shapeOutsideInfo(test.selector, function(shapeOutside) {
-            testPath(shapeOutside.shape, test.shape, "Shape roughly equals");
-            testPath(shapeOutside.marginShape, test.marginShape, "Margin shape roughly equals");
+        InspectorTest.Shapes.getShapeOutsideInfoForSelector(testcase.selector, function(payload) {
+            InspectorTest.log("Comparing shape information for selector: " + testcase.selector);
+            InspectorTest.Shapes.assertPathsAreRoughlyEqual(payload.shape, testcase.shape, "Shape information was not roughly equal.");
+            InspectorTest.Shapes.assertPathsAreRoughlyEqual(payload.marginShape, testcase.marginShape, "Margin shape information was not roughly equal.");
 
-            doTests(tests);
+            if (tests.length > 1)
+                runNextTest(tests.splice(1));
+            else
+                InspectorTest.completeTest();
         });
     }
 
-    doTests(tests);
+    runNextTest(testcases);
 }
-window.onload = function() { ShapeInfoHelper.runShapeTest(shapeTests); }
 </script>
 </head>
-<body>
+<body onload="runTest()">
     <div class='shape inset'></div>
     <div class='shape circle'></div>
     <div class='shape svg'></div>

@@ -50,11 +50,11 @@ body {
    -webkit-shape-outside: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAMAAABHPGVmAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRFAAD/////e9yZLAAAAAJ0Uk5T/wDltzBKAAAASUlEQVR42uzYsQ0AMAgEsWf/pTMDBURIvgXcX2qhQCAQCAQCgUA+I2kHgUAgEAgEAoFAIBAIBAKBQOYRoxMCgUAgEAjkHPIEGAA2ih1NVnaDGgAAAABJRU5ErkJggg==");
 }
 </style>
-<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
-<script type="text/javascript" src="../resources/shape-info-helper.js"></script>
+<script type="text/javascript" src="../inspector-test.js"></script>
+<script type="text/javascript" src="./shapes-test.js"></script>
 <script>
-function shapeTests() {
-    var tests = [
+function test() {
+    var testcases = [
     {
         'selector' : '.rectangle',
         'path' : ['M', 50, 50, 'L', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'Z']
@@ -105,27 +105,25 @@ function shapeTests() {
     }
     ];
 
-    function doTests(tests) {
-        if (!tests.length) {
-            InspectorTest.completeTest();
-            return;
-        }
-        var test = tests[0];
-        tests = tests.splice(1);
-        InspectorTest.shapeOutsideInfo(test.selector, function(shapeOutside) {
-            var actual = shapeOutside.shape.join(' ');
-            var expected = test.path.join(' ');
-            InspectorTest.assert(actual === expected, "Actual [" + actual + "] Expected [" + expected + "]");
-            doTests(tests);
+    function runNextTest(tests) {
+        var testcase = tests[0];
+
+        InspectorTest.Shapes.getShapeOutsideInfo(testcase.selector, function(payload) {
+            InspectorTest.Shapes.assertPathsAreRoughlyEqual(payload.shape, testcase.shape, "Shape information was not roughly equal.");
+            InspectorTest.Shapes.assertPathsAreRoughlyEqual(payload.marginShape, testcase.marginShape, "Margin shape information was not roughly equal.");
+
+            if (tests.length > 1)
+                runNextTest(tests.splice(1));
+            else
+                InspectorTest.completeTest();
         });
     }
 
-    doTests(tests);
+    runNextTest(testcases);
 }
-window.onload = function() { ShapeInfoHelper.runShapeTest(shapeTests); }
 </script>
 </head>
-<body>
+<body onload="runTest()">
     <div class='shape rectangle'></div>
     <div class='shape polygon'></div>
     <div class='shape padded rectangle'></div>

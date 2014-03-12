@@ -1324,8 +1324,6 @@ webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click.html [
 
 webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure ]
 
-webkit.org/b/124567 inspector-protocol/model/highlight-shape-outside.html [ Failure ]
-
 webkit.org/b/124770 fast/dom/access-key-iframe.html [ Failure ]
 webkit.org/b/124770 fast/forms/ValidityState-valueMissing-002.html [ Failure ]
 webkit.org/b/124770 fast/forms/access-key-for-all-elements.html [ Failure ]
@@ -1348,8 +1346,6 @@ webkit.org/b/125406 fast/regions/relative-in-absolute-borders-overflow.html [ Im
 
 webkit.org/b/126425 fast/block/float/overhanging-tall-block.html [ Failure ]
 webkit.org/b/126425 scrollbars/scrollbar-large-overflow-rectangle.html [ Failure ]
-
-webkit.org/b/126519 inspector-protocol/model/highlight-shape-outside-margin.html [ Failure ]
 
 webkit.org/b/126521 accessibility/menu-list-sends-change-notification.html [ Failure ]
 

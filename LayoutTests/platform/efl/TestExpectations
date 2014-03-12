@@ -1705,8 +1705,6 @@ webkit.org/b/124657 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure
 
 webkit.org/b/124658 fast/text/break-word-pre-wrap.html [ ImageOnlyFailure ]
 
-webkit.org/b/124660 inspector-protocol/model/highlight-shape-outside.html [ Failure ]
-
 webkit.org/b/124662 mathml/presentation/mspace-units.html [ ImageOnlyFailure ]
 
 webkit.org/b/124663 media/track/track-legacyapi-with-automatic-mode.html [ Skip ]
@@ -1777,8 +1775,6 @@ webkit.org/b/127477 css2.1/t1604-c542-letter-sp-00-b-a.html [ Missing ]
 webkit.org/b/127482 mathml/presentation/mo-stretch.html [ Failure ]
 
 webkit.org/b/127489 http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
-
-webkit.org/b/126519 inspector-protocol/model/highlight-shape-outside-margin.html [ Failure ]
 
 webkit.org/b/126619 http/tests/media/video-auth.html [ Failure ]
 

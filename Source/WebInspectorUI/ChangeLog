@@ -1,3 +1,40 @@
+2014-03-12  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: convert model tests and inspector-test.js to use Test.html
+        https://bugs.webkit.org/show_bug.cgi?id=129217
+
+        Reviewed by Timothy Hatcher.
+
+        Miscellaneous changes to make the inspector model test harness work well in
+        scenarios where the test page must navigate or reload. Also improve reporting
+        test failures so that messages will be dumped correctly even when an exception
+        is thrown in the Inspector or the test times out.
+
+        * UserInterface/Base/Test.js:
+        (WebInspector.loaded): register new managers and observers.
+        (InspectorTest.log): Stringify the argument if it's an object.
+        (InspectorTest.assert): Stringify the argument if it's an object. Don't log
+        unless the condition is false.
+
+        (InspectorTest.expectThat): Added. Like assert(), but always logs.
+        (InspectorTest.debugLog): Escape and unescape the string properly.
+        (InspectorTest.completeTest): Fix teardown so messages are not lost.
+        (InspectorTest.evaluateInPage): Accept a callback argument.
+        (InspectorTest.addResult): Don't rebuild results when adding a new result.
+        (InspectorTest._resendResults.decrementPendingResponseCount): Added.
+
+        (InspectorTest._resendResults): Added. Track the number of pending
+        responses and invoke a given callback when everything has been resent.
+
+        (InspectorTest.testPageDidLoad): Renamed from `pageLoaded`.
+        (InspectorTest.reloadPage): Added.
+        (InspectorTest.reportUncaughtException): Prevent the default handler from running.
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass.prototype.dispatch): Report uncaught exceptions when dispatching
+        messages on the inspector page without blowing away the entire call stack.
+
+        * UserInterface/Test.html: Add files used by Network and Timeline domains.
+
 2014-03-11  Brian Burg  <bburg@apple.com>
 
         Web Inspector: DataGrid should have an API to set sort column and direction

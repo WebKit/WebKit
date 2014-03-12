@@ -60,7 +60,8 @@ webkit.org/b/53990 fast/forms/search-event-delay.html [ Pass Failure ]
 fast/mediastream/MediaStream-construct-with-ended-tracks.html [ Skip ]
 fast/mediastream/MediaStream-clone.html [ Skip ]
 
-webkit.org/b/124660 inspector-protocol/model/highlight-shape-outside.html [ Failure ]
+webkit.org/b/124660 inspector/dom/highlight-shape-outside.html [ Failure ]
+webkit.org/b/126519 inspector/dom/highlight-shape-outside-margin.html [ Failure ]
 
 webkit.org/b/126142 css3/calc/transitions-dependent.html [ Pass Failure ]
 
@@ -98,4 +99,6 @@ webkit.org/b/129327 inspector-protocol/indexeddb/basics.html [ Pass Failure ]
 webkit.org/b/129331 inspector-protocol/page/deny-X-FrameOption.html [ Pass Failure ]
 
 webkit.org/b/129639 inspector-protocol/dom/dom-search-crash.html [ Skip ]
-webkit.org/b/129642 inspector/test-harness-trivially-works.html [ Skip ]
+webkit.org/b/129642 inspector [ Skip ]
+webkit.org/b/129817 inspector/dom/content-flow-list.html [ Pass Failure ]
+webkit.org/b/129817 inspector/dom/content-flow-content-removal.html [ Pass Failure ]

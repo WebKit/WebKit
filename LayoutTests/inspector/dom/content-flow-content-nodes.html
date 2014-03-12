@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<head>
+<style>
+.content
+{
+    -webkit-flow-into: flow;
+}
+.hidden
+{
+    -webkit-flow-into: none;
+}
+</style>
+<script type="text/javascript" src="../inspector-test.js"></script>
+<script>
+function changeFlowContent()
+{
+    document.getElementById("contentAddedAtTheTop").classList.remove("hidden");
+    // Force a layout to make sure the events are always fired in the expected order.
+    document.body.offsetTop;
+    document.getElementById("contentAddedAtTheBottom").classList.remove("hidden");
+    document.body.offsetTop;
+    document.getElementById("contentRemoved").classList.add("hidden");
+}
+
+function test()
+{
+    var contentFlow;
+
+    function onRootDOMNodeInvalidated()
+    {
+        WebInspector.frameResourceManager.mainFrame.domTree.requestContentFlowList();
+    }
+
+    function onContentFlowWasAdded(event)
+    {
+        contentFlow = event.data.flow;
+        InspectorTest.expectThat(contentFlow.name === "flow", "ContentFlow was added.");
+        InspectorTest.expectThat(contentFlow.contentNodes.length == 2, "ContentFlow.contentNodes has a length of 2.");
+        InspectorTest.expectThat(contentFlow.contentNodes[0].getAttribute("id") === "contentStatic", "ContentFlow.contentNodes[0].id is \"#contentStatic\".");
+        InspectorTest.expectThat(contentFlow.contentNodes[1].getAttribute("id") === "contentRemoved", "ContentFlow.contentNodes[1].id is \"#contentRemoved\".");
+
+        contentFlow.addEventListener(WebInspector.ContentFlow.Event.ContentNodeWasAdded, onContentNodeWasAdded, null);
+        contentFlow.addEventListener(WebInspector.ContentFlow.Event.ContentNodeWasRemoved, onContentNodeWasRemoved, null);
+
+        InspectorTest.evaluateInPage("changeFlowContent()");
+    }
+
+    function onContentNodeWasAdded(event)
+    {
+        switch (event.data.node.getAttribute("id")) {
+        case "contentAddedAtTheTop":
+            InspectorTest.expectThat(event.data.before.getAttribute("id") === "contentStatic", "\"#contentAddedAtTheTop\" was added before \"#contentStatic\".");
+            InspectorTest.expectThat(contentFlow.contentNodes[0] === event.data.node, "\"#contentAddedAtTheTop\" is first in the contentNodes list.");
+            break;
+        case "contentAddedAtTheBottom":
+            InspectorTest.expectThat(!event.data.before, "\"#contentAddedAtTheBottom\" was added last.");
+            InspectorTest.expectThat(contentFlow.contentNodes.lastValue === event.data.node, "\"#contentAddedAtTheBottom\" is last in the contentNodes list.");
+            break;
+        default:
+            InspectorTest.log("FAIL: Only two add events are expected.");
+        }
+    }
+
+    function onContentNodeWasRemoved(event)
+    {
+        InspectorTest.expectThat(event.data.node.getAttribute("id") === "contentRemoved", "\"#contentRemoved\" was removed.");
+        InspectorTest.expectThat(contentFlow.contentNodes.indexOf(event.data.node) === -1, "\"#contentRemoved\" cannot be found in the contentNodes list.");
+        InspectorTest.completeTest();
+    }
+
+    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, function(event) {
+        var domTree = WebInspector.frameResourceManager.mainFrame.domTree;
+        domTree.addEventListener(WebInspector.DOMTree.Event.RootDOMNodeInvalidated, onRootDOMNodeInvalidated, null);
+        domTree.addEventListener(WebInspector.DOMTree.Event.ContentFlowWasAdded, onContentFlowWasAdded, null);
+        domTree.requestContentFlowList();
+    });
+
+    InspectorTest.reloadPage();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that the ContentFlows events are correctly dispatched when nodes are attached to/detached from a flow.</p>
+
+    <div id="contentAddedAtTheTop" class="content hidden"></div>
+    <div id="contentStatic" class="content"></div>
+    <div id="contentRemoved" class="content"></div>
+    <div id="contentAddedAtTheBottom" class="content hidden"></div>
+
+</body>
+</html>

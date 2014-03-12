@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+<script type="text/javascript" src="../inspector-test.js"></script>
+<script type="text/javascript" src="./debugger-test.js"></script>
+<script type="text/javascript" src="./resources/breakpoint.js"></script>
+<script>
+function test()
+{
+    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, function() {
+        InspectorTest.startTracingBreakpoints();
+        InspectorTest.startTracingProbes();
+
+        var currentTicks = 0;
+        const expectedTicks = 2;
+
+        function incrementTick(event)
+        {
+            InspectorTest.log("Hit test checkpoint event #" + currentTicks + " with type: " + event.type);
+            if (++currentTicks === expectedTicks)
+                InspectorTest.completeTest();
+        }
+
+        WebInspector.Probe.addEventListener(WebInspector.Probe.Event.SampleAdded, incrementTick);
+
+        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
+
+            var scriptObject = event.data.script;
+
+            if (!/breakpoint\.js$/.test(scriptObject.url))
+                return;
+
+            var location = scriptObject.createSourceCodeLocation(4, 0);
+            // Create the breakpoint and its actions before sending anything to the backend.
+            var breakpoint = new WebInspector.Breakpoint(location);
+            breakpoint.autoContinue = true;
+            for (var i of [0, 1])
+                breakpoint.createAction(WebInspector.BreakpointAction.Type.Probe, null, "a");
+
+            WebInspector.debuggerManager.addBreakpoint(breakpoint);
+
+            breakpoint.addEventListener(WebInspector.Breakpoint.Event.ResolvedStateDidChange, function() {
+                InspectorTest.expectThat(breakpoint.resolved, "Breakpoint should be resolved.");
+            });
+
+
+            InspectorTest.evaluateInPage("breakpointActions(12, {x:1,y:2})");
+          });
+    });
+
+    InspectorTest.reloadPage();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that the probe manager properly handles addition and removal of related probes.</p>
+</body>
+</html>

@@ -253,7 +253,11 @@ InspectorBackendClass.prototype = {
             if (this.dumpInspectorTimeStats)
                 processingStartTime = Date.now();
 
-            dispatcher[functionName].apply(dispatcher, params);
+            try {
+                dispatcher[functionName].apply(dispatcher, params);
+            } catch (e) {
+                console.error("Uncaught exception in inspector page: ", e);
+            }
 
             if (this.dumpInspectorTimeStats)
                 console.log("time-stats: " + messageObject.method + " = " + (Date.now() - processingStartTime));

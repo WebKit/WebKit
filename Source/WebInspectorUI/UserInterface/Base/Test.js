@@ -30,7 +30,9 @@ WebInspector.loaded = function()
     InspectorBackend.registerInspectorDispatcher(new WebInspector.InspectorObserver);
     InspectorBackend.registerPageDispatcher(new WebInspector.PageObserver);
     InspectorBackend.registerDOMDispatcher(new WebInspector.DOMObserver);
+    InspectorBackend.registerNetworkDispatcher(new WebInspector.NetworkObserver);
     InspectorBackend.registerDebuggerDispatcher(new WebInspector.DebuggerObserver);
+    InspectorBackend.registerTimelineDispatcher(new WebInspector.TimelineObserver);
     InspectorBackend.registerCSSDispatcher(new WebInspector.CSSObserver);
     InspectorBackend.registerRuntimeDispatcher(new WebInspector.RuntimeObserver);
 
@@ -39,6 +41,7 @@ WebInspector.loaded = function()
     this.domTreeManager = new WebInspector.DOMTreeManager;
     this.cssStyleManager = new WebInspector.CSSStyleManager;
     this.runtimeManager = new WebInspector.RuntimeManager;
+    this.timelineManager = new WebInspector.TimelineManager;
     this.debuggerManager = new WebInspector.DebuggerManager;
     this.probeManager = new WebInspector.ProbeManager;
 
@@ -72,63 +75,92 @@ InspectorTest = {};
 // Appends a log message in the test document.
 InspectorTest.log = function(message)
 {
-    this.evaluateInPage("InspectorTestProxy.addResult(" + JSON.stringify(message) + ")");
+    var stringifiedMessage = typeof message !== "object" ? message : JSON.stringify(message);
+    InspectorTest.addResult(stringifiedMessage);
 }
 
-// Appends an assert message in the test document.
+// Appends a message in the test document only if the condition is false.
 InspectorTest.assert = function(condition, message)
 {
-    var status = condition ? "PASS" : "FAIL";
-    this.evaluateInPage("InspectorTestProxy.addResult(" + JSON.stringify(status + ": " + message) + ")");
+    if (condition)
+        return;
+
+    var stringifiedMessage = typeof message !== "object" ? message : JSON.stringify(message);
+    InspectorTest.addResult("ASSERT: " + stringifiedMessage);
+}
+
+// Appends a message in the test document whether the condition is true or not.
+InspectorTest.expectThat = function(condition, message)
+{
+    var prefix = condition ? "PASS" : "FAIL";
+    var stringifiedMessage = typeof message !== "object" ? message : JSON.stringify(message);
+    InspectorTest.addResult(prefix + ": " + stringifiedMessage);
 }
 
 // This function should only be used to debug tests and not to produce normal test output.
 InspectorTest.debugLog = function(message)
 {
-    this.evaluateInPage("InspectorTestProxy.debugLog(" + JSON.stringify(message) + ")");
+    this.evaluateInPage("InspectorTestProxy.debugLog(unescape(" + escape(JSON.stringify(message)) + "))");
 }
 
 InspectorTest.completeTest = function()
 {
-    InspectorBackend.runAfterPendingDispatches(this.evaluateInPage.bind(this, "InspectorTestProxy.completeTest()"));
+    function signalCompletionToTestPage() {
+        InspectorBackend.runAfterPendingDispatches(this.evaluateInPage.bind(this, "InspectorTestProxy.completeTest()"));
+    }
+
+    // Wait for results to be resent before requesting completeTest(). Otherwise, messages will be
+    // queued after pending dispatches run to zero and the test page will quit before processing them.
+    if (this._shouldResendResults)
+        this._resendResults(signalCompletionToTestPage.bind(this));
+    else
+        signalCompletionToTestPage.call(this);
 }
 
-InspectorTest.evaluateInPage = function(codeString)
+InspectorTest.evaluateInPage = function(codeString, callback)
 {
     // If we load this page outside of the inspector, or hit an early error when loading
     // the test frontend, then defer evaluating the commands (indefinitely in the former case).
     if (!RuntimeAgent) {
-        InspectorTest._originalConsoleMethods["error"]("Tried to evaluate in test page, but connection not yet established:", codeString);
+        this._originalConsoleMethods["error"]("Tried to evaluate in test page, but connection not yet established:", codeString);
         return;
     }
 
-    RuntimeAgent.evaluate(codeString, "test", false);
+    RuntimeAgent.evaluate.invoke({expression: codeString, objectGroup: "test", includeCommandLineAPI: false}, callback);
 }
 
 InspectorTest.addResult = function(text)
 {
     this._results.push(text);
-    // If the test page reloaded, then we need to re-add the results from before the navigation.
-    if (this._shouldRebuildResults) {
-        delete this._shouldRebuildResults;
+    this.evaluateInPage("InspectorTestProxy.addResult(unescape('" + escape(text) + "'))");
+}
 
-        this.clearResults();
-        for (var result of this._results)
-            InspectorTest.evaluateInPage("InspectorTestProxy.addResult(unescape('" + escape(text) + "'))");
+InspectorTest._resendResults = function(callback)
+{
+    console.assert(this._shouldResendResults);
+    delete this._shouldResendResults;
+
+    var pendingResponseCount = 1 + this._results.length;
+    function decrementPendingResponseCount() {
+        pendingResponseCount--;
+        if (!pendingResponseCount && typeof callback === "function")
+            callback();
     }
 
-    InspectorTest.evaluateInPage("InspectorTestProxy.addResult(unescape('" + escape(text) + "'))");
+    this.evaluateInPage("InspectorTestProxy.clearResults()", decrementPendingResponseCount);
+    for (var result of this._results)
+        this.evaluateInPage("InspectorTestProxy.addResult(unescape('" + escape(result) + "'))", decrementPendingResponseCount);
 }
 
-InspectorTest.clearResults = function(text)
+InspectorTest.testPageDidLoad = function()
 {
-    InspectorTest.evaluateInPage("InspectorTestProxy.clearResults()");
+    this._shouldResendResults = true;
+    this._resendResults();
 }
 
-InspectorTest.pageLoaded = function()
+InspectorTest.reloadPage = function(shouldIgnoreCache)
 {
-    InspectorTest._shouldRebuildResults = true;
-    InspectorTest.addResult("Page reloaded.");
+    PageAgent.reload.invoke({ignoreCache: !!shouldIgnoreCache});
 }
 
 InspectorTest.reportUncaughtException = function(message, url, lineNumber)
@@ -138,21 +170,23 @@ InspectorTest.reportUncaughtException = function(message, url, lineNumber)
     // If the connection to the test page is not set up, then just dump to console and give up.
     // Errors encountered this early can be debugged by loading Test.html in a normal browser page.
     if (!InspectorFrontendHost || !InspectorBackend) {
-        InspectorTest._originalConsoleMethods["error"](result);
-        return;
+        this._originalConsoleMethods["error"](result);
+        return false;
     }
 
-    InspectorTest.addResult(result);
-    InspectorTest.completeTest();
+    this.addResult(result);
+    this.completeTest();
+    // Stop default handler so we can empty InspectorBackend's message queue.
+    return true;
 }
 
 // Initialize reporting mechanisms before loading the rest of the inspector page.
 InspectorTest._results = [];
-InspectorTest._shouldRebuildResults = true;
+InspectorTest._shouldResendResults = true;
 InspectorTest._originalConsoleMethods = {};
 
-// Catch syntax errors, type errors, and other exceptions. Run this before loading other files.
-window.onerror = InspectorTest.reportUncaughtException;
+// Catch syntax errors, type errors, and other exceptions.
+window.onerror = InspectorTest.reportUncaughtException.bind(InspectorTest);
 
 for (var logType of ["log", "error", "info"]) {
     // Redirect console methods to log messages into the test page's DOM.

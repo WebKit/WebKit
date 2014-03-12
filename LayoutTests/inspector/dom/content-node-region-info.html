@@ -23,14 +23,13 @@
     height: 100px;
 }
 </style>
-<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script type="text/javascript" src="../inspector-test.js"></script>
 <script>
 function test()
 {
     var queryList = ["#flow", ".contentNode1", ".contentNode2", "body", "#region1", "#region2"];
     var documentNodeId;
 
-    InspectorTest.initializeInspectorModels();
     WebInspector.domTreeManager.requestDocument(function(documentNode) {
         documentNodeId = documentNode.id;
         WebInspector.domTreeManager.getNamedFlowCollection(documentNodeId);
