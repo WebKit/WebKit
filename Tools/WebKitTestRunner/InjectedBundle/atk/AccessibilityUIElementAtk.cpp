@@ -1125,7 +1125,7 @@ double AccessibilityUIElement::y()
 #if ATK_CHECK_VERSION(2,11,90)
     atk_component_get_extents(ATK_COMPONENT(m_element.get()), nullptr, &y, nullptr, nullptr, ATK_XY_SCREEN);
 #else
-    atk_component_get_position(ATK_COMPONENT(m_element.get()), &x,  nullptr, ATK_XY_SCREEN);
+    atk_component_get_position(ATK_COMPONENT(m_element.get()), nullptr, &y, ATK_XY_SCREEN);
 #endif
     return y;
 }

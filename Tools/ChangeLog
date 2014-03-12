@@ -1,3 +1,10 @@
+2014-03-12  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix on the EFL port when used lower version of ATK
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::y): Fixed typo.
+
 2014-03-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Some images are blank in the rebaseline server UI
