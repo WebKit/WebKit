@@ -1,3 +1,16 @@
+2014-03-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Some images are blank in the rebaseline server UI
+        https://bugs.webkit.org/show_bug.cgi?id=130104
+
+        Reviewed by Tim Horton.
+
+        Let the server check for images in the 'retries' directory
+        if it can't find an image otherwise.
+
+        * Scripts/webkitpy/tool/servers/rebaselineserver.py:
+        (RebaselineHTTPRequestHandler.test_result):
+
 2014-03-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK][CMake] --update-gtk has no effect

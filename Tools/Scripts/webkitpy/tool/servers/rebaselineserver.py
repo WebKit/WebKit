@@ -280,6 +280,8 @@ class RebaselineHTTPRequestHandler(ReflectionHandler):
             file_name = test_name + '-pretty-diff.html'
 
         file_path = os.path.join(self.server.test_config.results_directory, file_name)
+        if not os.path.isfile(file_path):
+            file_path = os.path.join(self.server.test_config.results_directory, 'retries', file_name)
 
         # Let results be cached for 60 seconds, so that they can be pre-fetched
         # by the UI
