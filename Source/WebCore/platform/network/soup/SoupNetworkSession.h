@@ -26,7 +26,6 @@
 #ifndef SoupNetworkSession_h
 #define SoupNetworkSession_h
 
-#include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <wtf/gobject/GRefPtr.h>
@@ -40,7 +39,6 @@ namespace WebCore {
 
 class SoupNetworkSession {
     WTF_MAKE_NONCOPYABLE(SoupNetworkSession); WTF_MAKE_FAST_ALLOCATED;
-    friend class NeverDestroyed<SoupNetworkSession>;
 public:
     ~SoupNetworkSession();
 

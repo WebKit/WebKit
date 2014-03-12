@@ -251,7 +251,6 @@ static GRefPtr<WebKitSpellChecker> textChecker = 0;
 
 static void webkitExit()
 {
-    g_object_unref(webkit_get_default_session());
 #if ENABLE(ICONDATABASE)
     g_object_unref(webkit_get_favicon_database());
 #endif

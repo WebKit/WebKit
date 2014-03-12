@@ -1,3 +1,14 @@
+2014-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] [Stable] deadlock in gobject introspection
+        https://bugs.webkit.org/show_bug.cgi?id=125651
+
+        Reviewed by Sergio Villar Senin.
+
+        * webkit/webkitglobals.cpp:
+        (webkitExit): Dot not try to unref the default network session, it
+        will be finalized automatically when the process finishes.
+
 2014-03-07  Zan Dobersek  <zdobersek@igalia.com>
 
         Move GTK WebKit1 code to std::unique_ptr
