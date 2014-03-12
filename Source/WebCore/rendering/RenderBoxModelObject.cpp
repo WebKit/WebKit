@@ -1111,14 +1111,14 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
     } else {
         geometry.setHasNonLocalGeometry();
 
-        IntRect viewportRect = pixelSnappedIntRect(view().viewRect());
+        LayoutRect viewportRect = view().viewRect();
         if (fixedBackgroundPaintsInLocalCoordinates())
-            viewportRect.setLocation(IntPoint());
+            viewportRect.setLocation(LayoutPoint());
         else
-            viewportRect.setLocation(IntPoint(view().frameView().scrollOffsetForFixedPosition()));
+            viewportRect.setLocation(toLayoutPoint(view().frameView().scrollOffsetForFixedPosition()));
 
         if (paintContainer) {
-            IntPoint absoluteContainerOffset = roundedIntPoint(paintContainer->localToAbsolute(FloatPoint()));
+            LayoutPoint absoluteContainerOffset = roundedLayoutPoint(paintContainer->localToAbsolute(FloatPoint()));
             viewportRect.moveBy(-absoluteContainerOffset);
         }
 

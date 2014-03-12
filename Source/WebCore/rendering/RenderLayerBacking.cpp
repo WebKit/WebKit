@@ -899,7 +899,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         FloatSize backgroundSize = contentsSize;
         if (backgroundLayerPaintsFixedRootBackground()) {
             const FrameView& frameView = renderer().view().frameView();
-            backgroundPosition = IntPoint(frameView.scrollOffsetForFixedPosition());
+            backgroundPosition = toLayoutPoint(frameView.scrollOffsetForFixedPosition());
             backgroundSize = frameView.visibleContentRect().size();
         }
         m_backgroundLayer->setPosition(backgroundPosition);

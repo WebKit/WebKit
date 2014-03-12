@@ -136,7 +136,7 @@ void ScrollingTreeScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& pos
 
     ScrollBehaviorForFixedElements behaviorForFixed = scrollBehaviorForFixedElements();
     FloatPoint scrollOffset = position - toIntSize(scrollOrigin());
-    // FIXME: scrollOffsetForFixedPosition() needs to do float math.
+
     FloatSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(enclosingIntRect(viewportConstrainedObjectRect()), totalContentsSize(), flooredIntPoint(scrollOffset), scrollOrigin(), frameScaleFactor(), false, behaviorForFixed, headerHeight(), footerHeight());
     if (m_counterScrollingLayer)
         m_counterScrollingLayer.get().position = FloatPoint(scrollOffsetForFixedChildren);

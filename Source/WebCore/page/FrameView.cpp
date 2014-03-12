@@ -1538,6 +1538,7 @@ LayoutRect FrameView::viewportConstrainedVisibleContentRect() const
         return customFixedPositionLayoutRect();
 #endif
     LayoutRect viewportRect = visibleContentRect();
+
     viewportRect.setLocation(toLayoutPoint(scrollOffsetForFixedPosition()));
     return viewportRect;
 }
@@ -1554,9 +1555,9 @@ LayoutRect FrameView::viewportConstrainedExtentRect() const
 #endif
 }
 
-IntSize FrameView::scrollOffsetForFixedPosition(const IntRect& visibleContentRect, const IntSize& totalContentsSize, const IntPoint& scrollPosition, const IntPoint& scrollOrigin, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame, ScrollBehaviorForFixedElements behaviorForFixed, int headerHeight, int footerHeight)
+LayoutSize FrameView::scrollOffsetForFixedPosition(const LayoutRect& visibleContentRect, const LayoutSize& totalContentsSize, const LayoutPoint& scrollPosition, const LayoutPoint& scrollOrigin, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame, ScrollBehaviorForFixedElements behaviorForFixed, int headerHeight, int footerHeight)
 {
-    IntPoint position;
+    LayoutPoint position;
     if (behaviorForFixed == StickToDocumentBounds)
         position = ScrollableArea::constrainScrollPositionForOverhang(visibleContentRect, totalContentsSize, scrollPosition, scrollOrigin, headerHeight, footerHeight);
     else {
@@ -1564,15 +1565,15 @@ IntSize FrameView::scrollOffsetForFixedPosition(const IntRect& visibleContentRec
         position.setY(position.y() - headerHeight);
     }
 
-    IntSize maxSize = totalContentsSize - visibleContentRect.size();
+    LayoutSize maxSize = totalContentsSize - visibleContentRect.size();
 
     float dragFactorX = (fixedElementsLayoutRelativeToFrame || !maxSize.width()) ? 1 : (totalContentsSize.width() - visibleContentRect.width() * frameScaleFactor) / maxSize.width();
     float dragFactorY = (fixedElementsLayoutRelativeToFrame || !maxSize.height()) ? 1 : (totalContentsSize.height() - visibleContentRect.height() * frameScaleFactor) / maxSize.height();
 
-    return IntSize(position.x() * dragFactorX / frameScaleFactor, position.y() * dragFactorY / frameScaleFactor);
+    return LayoutSize(position.x() * dragFactorX / frameScaleFactor, position.y() * dragFactorY / frameScaleFactor);
 }
 
-IntSize FrameView::scrollOffsetForFixedPosition() const
+LayoutSize FrameView::scrollOffsetForFixedPosition() const
 {
     IntRect visibleContentRect = this->visibleContentRect();
     IntSize totalContentsSize = this->totalContentsSize();

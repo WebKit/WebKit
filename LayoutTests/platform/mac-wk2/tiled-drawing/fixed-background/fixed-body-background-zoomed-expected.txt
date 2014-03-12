@@ -7,7 +7,7 @@
       (transform [2.30 0.00 0.00 0.00] [0.00 2.30 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
       (children 2
         (GraphicsLayer
-          (position 0.00 154.00)
+          (position 0.00 154.25)
           (anchor 0.00 0.00)
           (bounds 785.00 585.00)
           (contentsOpaque 1)

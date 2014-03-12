@@ -1,3 +1,18 @@
+2014-03-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Change scrollOffsetForFixedPosition() to do LayoutUnit math
+        https://bugs.webkit.org/show_bug.cgi?id=129981
+
+        Reviewed by Beth Dakin.
+
+        FrameView::scrollOffsetForFixedPosition() returned an IntSize,
+        but to allow subpixel scroll offsets, we need it to return a LayoutSize.
+
+        Update test results for the progression.
+
+        * platform/mac-wk2/tiled-drawing/fixed-background/fixed-body-background-zoomed-expected.png:
+        * platform/mac-wk2/tiled-drawing/fixed-background/fixed-body-background-zoomed-expected.txt:
+
 2014-03-12  Gavin Barraclough  <barraclough@apple.com>
 
         Reduce memory use for static property maps

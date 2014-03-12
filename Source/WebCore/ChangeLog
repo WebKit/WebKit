@@ -1,3 +1,37 @@
+2014-03-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Change scrollOffsetForFixedPosition() to do LayoutUnit math
+        https://bugs.webkit.org/show_bug.cgi?id=129981
+
+        Reviewed by Beth Dakin.
+
+        FrameView::scrollOffsetForFixedPosition() returned an IntSize,
+        but to allow subpixel scroll offsets, we need it to return a LayoutSize.
+        
+        Fix code that calls this to use more LayoutUnit math.
+        
+        This progresses fixed background images on zoom, which cam now be subpixel
+        positioned.
+
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::viewportConstrainedVisibleContentRect):
+        (WebCore::FrameView::scrollOffsetForFixedPosition):
+        * page/FrameView.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::constrainScrollPositionForOverhang):
+        * platform/ScrollableArea.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollLayerPosition):
+
 2014-03-12  Gavin Barraclough  <barraclough@apple.com>
 
         Reduce memory use for static property maps

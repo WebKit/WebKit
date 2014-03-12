@@ -1510,7 +1510,7 @@ void RenderLayerCompositor::updateScrollLayerPosition()
     m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
 
     if (GraphicsLayer* fixedBackgroundLayer = fixedRootBackgroundLayer())
-        fixedBackgroundLayer->setPosition(IntPoint(frameView.scrollOffsetForFixedPosition()));
+        fixedBackgroundLayer->setPosition(toLayoutPoint(frameView.scrollOffsetForFixedPosition()));
 }
 
 void RenderLayerCompositor::frameViewDidScroll()

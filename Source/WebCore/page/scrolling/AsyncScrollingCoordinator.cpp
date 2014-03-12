@@ -212,12 +212,12 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
             GraphicsLayer* counterScrollingLayer = counterScrollingLayerForFrameView(frameView);
             GraphicsLayer* headerLayer = headerLayerForFrameView(frameView);
             GraphicsLayer* footerLayer = footerLayerForFrameView(frameView);
-            IntSize scrollOffsetForFixed = frameView->scrollOffsetForFixedPosition();
+            LayoutSize scrollOffsetForFixed = frameView->scrollOffsetForFixedPosition();
 
             if (programmaticScroll || scrollingLayerPositionAction == SetScrollingLayerPosition) {
                 scrollLayer->setPosition(-frameView->scrollPosition());
                 if (counterScrollingLayer)
-                    counterScrollingLayer->setPosition(IntPoint(scrollOffsetForFixed));
+                    counterScrollingLayer->setPosition(toLayoutPoint(scrollOffsetForFixed));
                 if (headerLayer)
                     headerLayer->setPosition(FloatPoint(scrollOffsetForFixed.width(), 0));
                 if (footerLayer)
@@ -225,7 +225,7 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
             } else {
                 scrollLayer->syncPosition(-frameView->scrollPosition());
                 if (counterScrollingLayer)
-                    counterScrollingLayer->syncPosition(IntPoint(scrollOffsetForFixed));
+                    counterScrollingLayer->syncPosition(toLayoutPoint(scrollOffsetForFixed));
                 if (headerLayer)
                     headerLayer->syncPosition(FloatPoint(scrollOffsetForFixed.width(), 0));
                 if (footerLayer)
