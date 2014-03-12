@@ -1,3 +1,15 @@
+2014-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][CMAKE] Remove compile warnings about GTK+ deprecated API
+        https://bugs.webkit.org/show_bug.cgi?id=130014
+
+        Reviewed by Martin Robinson.
+
+        Set GDK_VERSION_MIN_REQUIRED to GDK_VERSION_3_6.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2014-03-12  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][CMAKE] Too verbose build output

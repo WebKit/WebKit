@@ -1,3 +1,17 @@
+2014-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][CMAKE] Remove compile warnings about GTK+ deprecated API
+        https://bugs.webkit.org/show_bug.cgi?id=130014
+
+        Reviewed by Martin Robinson.
+
+        Include cmake or autotools config header.
+
+        * MiniBrowser/gtk/BrowserDownloadsBar.c:
+        * MiniBrowser/gtk/BrowserSearchBar.c:
+        * MiniBrowser/gtk/BrowserWindow.c:
+        * MiniBrowser/gtk/main.c:
+
 2014-03-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r165471.

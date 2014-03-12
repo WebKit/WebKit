@@ -127,4 +127,8 @@
 #cmakedefine01 WTF_USE_TILED_BACKING_STORE
 #cmakedefine01 HAVE_LLVM
 
+#if defined(BUILDING_GTK__) && !defined(GTK_API_VERSION_2)
+#define GDK_VERSION_MIN_REQUIRED @GDK_VERSION_MIN_REQUIRED@
+#endif
+
 #endif /* CMAKECONFIG_H */
