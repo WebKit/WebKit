@@ -50,7 +50,7 @@ inline static void soupLogPrinter(SoupLogger*, SoupLoggerLogLevel, char directio
 
 SoupNetworkSession& SoupNetworkSession::defaultSession()
 {
-    static NeverDestroyed<SoupNetworkSession> networkSession(soupCookieJar());
+    static SoupNetworkSession networkSession(soupCookieJar());
     return networkSession;
 }
 
