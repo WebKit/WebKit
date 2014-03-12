@@ -1,3 +1,18 @@
+2014-03-12  Enrica Casucci  <enrica@apple.com>
+
+        [iOS WebKit2] Crash when trying to select inside a video element with longpress..
+        https://bugs.webkit.org/show_bug.cgi?id=130095
+        <rdar://problem/16294534>
+
+        Reviewed by Benjamin Poulain.
+
+        We only need to set the assisted node for nodes that will receive an
+        input peripheral (keyboard, picker, popover, etc.).
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::rangeForWebSelectionAtPosition):
+        (WebKit::WebPage::elementDidFocus):
+
 2014-03-12  Simon Fraser  <simon.fraser@apple.com>
 
         Have the scrolling tree track the viewport size, not the viewport rect

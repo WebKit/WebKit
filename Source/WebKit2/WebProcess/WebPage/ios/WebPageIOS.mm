@@ -559,7 +559,7 @@ PassRefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point,
     flags = WKIsBlockSelection;
     range = Range::create(bestChoice->document());
     range->selectNodeContents(bestChoice, ASSERT_NO_EXCEPTION);
-    return range;
+    return range->collapsed(ASSERT_NO_EXCEPTION) ? nullptr : range;
 }
 
 PassRefPtr<Range> WebPage::rangeForBlockAtPoint(const IntPoint& point)
@@ -1677,8 +1677,8 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
 
 void WebPage::elementDidFocus(WebCore::Node* node)
 {
-    m_assistedNode = node;
     if (node->hasTagName(WebCore::HTMLNames::selectTag) || node->hasTagName(WebCore::HTMLNames::inputTag) || node->hasTagName(WebCore::HTMLNames::textareaTag) || node->hasEditableStyle()) {
+        m_assistedNode = node;
         AssistedNodeInformation information;
         getAssistedNodeInformation(information);
         send(Messages::WebPageProxy::StartAssistingNode(information));
