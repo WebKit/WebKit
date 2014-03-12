@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2014 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,9 +24,14 @@
 #if ENABLE(GEOLOCATION)
 
 #include "GeolocationProviderGeoclueClient.h"
+#include <wtf/gobject/GRefPtr.h>
+
+#if USE(GEOCLUE2)
+#include "Geoclue2Interface.h"
+#else
 #include <geoclue/geoclue-master.h>
 #include <geoclue/geoclue-position.h>
-#include <wtf/gobject/GRefPtr.h>
+#endif
 
 namespace WebCore {
 
@@ -38,18 +44,41 @@ public:
     void stopUpdating();
     void setEnableHighAccuracy(bool);
 
-    // To be used from signal callbacks.
+private:
+#if USE(GEOCLUE2)
+    static void createGeoclueManagerProxyCallback(GObject*, GAsyncResult*, GeolocationProviderGeoclue*);
+    static void getGeoclueClientCallback(GObject*, GAsyncResult*, GeolocationProviderGeoclue*);
+    static void createGeoclueClientProxyCallback(GObject*, GAsyncResult*, GeolocationProviderGeoclue*);
+    static void startClientCallback(GObject*, GAsyncResult*, GeolocationProviderGeoclue*);
+    static void locationUpdatedCallback(GeoclueClient*, const gchar*, const gchar*, GeolocationProviderGeoclue*);
+    static void createLocationProxyCallback(GObject*, GAsyncResult*, GeolocationProviderGeoclue*);
+
+    void startGeoclueClient();
+    void updateLocation(GeoclueLocation*);
+#else
+    static void getPositionCallback(GeocluePosition*, GeocluePositionFields, int, double, double, double, GeoclueAccuracy*, GError*, GeolocationProviderGeoclue*);
+    static void positionChangedCallback(GeocluePosition*, GeocluePositionFields, int, double, double, double, GeoclueAccuracy*, GeolocationProviderGeoclue*);
+    static void createGeocluePositionCallback(GeoclueMasterClient*, GeocluePosition*, GError*, GeolocationProviderGeoclue*);
+    static void geoclueClientSetRequirementsCallback(GeoclueMasterClient*, GError*, GeolocationProviderGeoclue*);
+    static void createGeoclueClientCallback(GeoclueMaster*, GeoclueMasterClient*, char*, GError*, GeolocationProviderGeoclue*);
+
     void initializeGeoclueClient(GeoclueMasterClient*);
     void initializeGeocluePosition(GeocluePosition*);
-    void updateClientRequirements();
     void positionChanged(GeocluePosition*, GeocluePositionFields, int, double, double, double, GeoclueAccuracy*);
-    void errorOccurred(const char*);
+#endif
 
-private:
+    void errorOccurred(const char*);
+    void updateClientRequirements();
+
     GeolocationProviderGeoclueClient* m_client;
 
+#if USE(GEOCLUE2)
+    GRefPtr<GeoclueManager> m_managerProxy;
+    GRefPtr<GeoclueClient> m_clientProxy;
+#else
     GRefPtr<GeoclueMasterClient> m_geoclueClient;
     GRefPtr<GeocluePosition> m_geocluePosition;
+#endif
 
     double m_latitude;
     double m_longitude;
