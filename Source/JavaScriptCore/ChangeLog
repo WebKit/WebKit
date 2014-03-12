@@ -1,3 +1,24 @@
+2014-03-12  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Layout Test fast/workers/worker-gc.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=130135
+
+        Reviewed by Geoffrey Garen.
+
+        When removing MarkedBlocks, we always expect them to be in the MarkedAllocator's 
+        main list of blocks, i.e. not in the retired list. When shutting down the VM this
+        wasn't always the case which was causing ASSERTs to fire. We should rearrange things 
+        so that allocators are notified with lastChanceToFinalize. This will give them 
+        the chance to move their retired blocks back into the main list before removing them all.
+
+        * heap/MarkedAllocator.cpp:
+        (JSC::LastChanceToFinalize::operator()):
+        (JSC::MarkedAllocator::lastChanceToFinalize):
+        * heap/MarkedAllocator.h:
+        * heap/MarkedSpace.cpp:
+        (JSC::LastChanceToFinalize::operator()):
+        (JSC::MarkedSpace::lastChanceToFinalize):
+
 2014-03-12  Gavin Barraclough  <barraclough@apple.com>
 
         Reduce memory use for static property maps

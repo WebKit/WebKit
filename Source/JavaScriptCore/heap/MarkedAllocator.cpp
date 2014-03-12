@@ -226,4 +226,15 @@ void MarkedAllocator::reset()
     m_nextBlockToSweep = m_blockList.head();
 }
 
+struct LastChanceToFinalize : MarkedBlock::VoidFunctor {
+    void operator()(MarkedBlock* block) { block->lastChanceToFinalize(); }
+};
+
+void MarkedAllocator::lastChanceToFinalize()
+{
+    m_blockList.append(m_retiredBlocks);
+    LastChanceToFinalize functor;
+    forEachBlock(functor);
+}
+
 } // namespace JSC

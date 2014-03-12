@@ -108,15 +108,15 @@ MarkedSpace::~MarkedSpace()
     ASSERT(!m_blocks.set().size());
 }
 
-struct LastChanceToFinalize : MarkedBlock::VoidFunctor {
-    void operator()(MarkedBlock* block) { block->lastChanceToFinalize(); }
+struct LastChanceToFinalize {
+    void operator()(MarkedAllocator& allocator) { allocator.lastChanceToFinalize(); }
 };
 
 void MarkedSpace::lastChanceToFinalize()
 {
     DelayedReleaseScope delayedReleaseScope(*this);
     stopAllocating();
-    forEachBlock<LastChanceToFinalize>();
+    forEachAllocator<LastChanceToFinalize>();
 }
 
 void MarkedSpace::sweep()

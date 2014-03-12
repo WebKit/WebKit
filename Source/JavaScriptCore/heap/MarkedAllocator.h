@@ -21,6 +21,7 @@ public:
     static ptrdiff_t offsetOfFreeListHead();
 
     MarkedAllocator();
+    void lastChanceToFinalize();
     void reset();
     void stopAllocating();
     void resumeAllocating();
