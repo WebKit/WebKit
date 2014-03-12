@@ -42,12 +42,13 @@ namespace JSC {
 
 #if ENABLE(JIT)
 
+class PolymorphicGetByIdList;
 class PolymorphicPutByIdList;
 
 enum AccessType {
     access_get_by_id_self,
     access_get_by_id_chain,
-    access_get_by_id_self_list,
+    access_get_by_id_list,
     access_put_by_id_transition_normal,
     access_put_by_id_transition_direct,
     access_put_by_id_replace,
@@ -61,7 +62,7 @@ inline bool isGetByIdAccess(AccessType accessType)
     switch (accessType) {
     case access_get_by_id_self:
     case access_get_by_id_chain:
-    case access_get_by_id_self_list:
+    case access_get_by_id_list:
         return true;
     default:
         return false;
@@ -116,13 +117,10 @@ struct StructureStubInfo {
         u.getByIdChain.isDirect = isDirect;
     }
 
-    void initGetByIdSelfList(PolymorphicAccessStructureList* structureList, int listSize, bool didSelfPatching = false)
+    void initGetByIdList(PolymorphicGetByIdList* list)
     {
-        accessType = access_get_by_id_self_list;
-
-        u.getByIdSelfList.structureList = structureList;
-        u.getByIdSelfList.listSize = listSize;
-        u.getByIdSelfList.didSelfPatching = didSelfPatching;
+        accessType = access_get_by_id_list;
+        u.getByIdList.list = list;
     }
 
     // PutById*
@@ -233,14 +231,8 @@ struct StructureStubInfo {
             bool isDirect : 1;
         } getByIdChain;
         struct {
-            PolymorphicAccessStructureList* structureList;
-            int listSize : 31;
-            bool didSelfPatching : 1;
-        } getByIdSelfList;
-        struct {
-            PolymorphicAccessStructureList* structureList;
-            int listSize;
-        } getByIdProtoList;
+            PolymorphicGetByIdList* list;
+        } getByIdList;
         struct {
             WriteBarrierBase<Structure> previousStructure;
             WriteBarrierBase<Structure> structure;

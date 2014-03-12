@@ -1,3 +1,80 @@
+2014-03-10  Filip Pizlo  <fpizlo@apple.com>
+
+        GetById list caching should use something object-oriented rather than PolymorphicAccessStructureList
+        https://bugs.webkit.org/show_bug.cgi?id=129778
+
+        Reviewed by Geoffrey Garen.
+        
+        Also deduplicate the GetById getter call caching. Also add some small tests for
+        get stubs.
+        
+        This change reduces the amount of code involved in GetById access caching and it
+        creates data structures that can serve as an elegant scaffold for introducing other
+        kinds of caches or improving current caching styles. It will definitely make getter
+        performance improvements easier to implement.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printGetByIdCacheStatus):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfo):
+        * bytecode/PolymorphicGetByIdList.cpp: Added.
+        (JSC::GetByIdAccess::GetByIdAccess):
+        (JSC::GetByIdAccess::~GetByIdAccess):
+        (JSC::GetByIdAccess::fromStructureStubInfo):
+        (JSC::GetByIdAccess::visitWeak):
+        (JSC::PolymorphicGetByIdList::PolymorphicGetByIdList):
+        (JSC::PolymorphicGetByIdList::from):
+        (JSC::PolymorphicGetByIdList::~PolymorphicGetByIdList):
+        (JSC::PolymorphicGetByIdList::currentSlowPathTarget):
+        (JSC::PolymorphicGetByIdList::addAccess):
+        (JSC::PolymorphicGetByIdList::isFull):
+        (JSC::PolymorphicGetByIdList::isAlmostFull):
+        (JSC::PolymorphicGetByIdList::didSelfPatching):
+        (JSC::PolymorphicGetByIdList::visitWeak):
+        * bytecode/PolymorphicGetByIdList.h: Added.
+        (JSC::GetByIdAccess::GetByIdAccess):
+        (JSC::GetByIdAccess::isSet):
+        (JSC::GetByIdAccess::operator!):
+        (JSC::GetByIdAccess::type):
+        (JSC::GetByIdAccess::structure):
+        (JSC::GetByIdAccess::chain):
+        (JSC::GetByIdAccess::chainCount):
+        (JSC::GetByIdAccess::stubRoutine):
+        (JSC::GetByIdAccess::doesCalls):
+        (JSC::PolymorphicGetByIdList::isEmpty):
+        (JSC::PolymorphicGetByIdList::size):
+        (JSC::PolymorphicGetByIdList::at):
+        (JSC::PolymorphicGetByIdList::operator[]):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::deref):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        * bytecode/StructureStubInfo.h:
+        (JSC::isGetByIdAccess):
+        (JSC::StructureStubInfo::initGetByIdList):
+        * jit/Repatch.cpp:
+        (JSC::generateGetByIdStub):
+        (JSC::tryCacheGetByID):
+        (JSC::patchJumpToGetByIdStub):
+        (JSC::tryBuildGetByIDList):
+        (JSC::tryBuildPutByIdList):
+        * tests/stress/getter.js: Added.
+        (foo):
+        (.o):
+        * tests/stress/polymorphic-prototype-accesses.js: Added.
+        (Foo):
+        (Bar):
+        (foo):
+        * tests/stress/prototype-getter.js: Added.
+        (Foo):
+        (foo):
+        * tests/stress/simple-prototype-accesses.js: Added.
+        (Foo):
+        (foo):
+
 2014-03-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         MarkedBlocks that are "full enough" shouldn't be swept after EdenCollections

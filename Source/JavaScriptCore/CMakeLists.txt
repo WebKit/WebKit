@@ -78,6 +78,7 @@ set(JavaScriptCore_SOURCES
     bytecode/LazyOperandValueProfile.cpp
     bytecode/MethodOfGettingAValueProfile.cpp
     bytecode/Opcode.cpp
+    bytecode/PolymorphicGetByIdList.cpp
     bytecode/PolymorphicPutByIdList.cpp
     bytecode/PreciseJumpTargets.cpp
     bytecode/ProfiledCodeBlockJettisoningWatchpoint.cpp

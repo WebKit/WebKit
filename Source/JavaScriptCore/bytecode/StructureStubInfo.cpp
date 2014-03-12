@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,8 @@
 #include "StructureStubInfo.h"
 
 #include "JSObject.h"
+#include "PolymorphicGetByIdList.h"
 #include "PolymorphicPutByIdList.h"
-
 
 namespace JSC {
 
@@ -36,9 +36,8 @@ namespace JSC {
 void StructureStubInfo::deref()
 {
     switch (accessType) {
-    case access_get_by_id_self_list: {
-        PolymorphicAccessStructureList* polymorphicStructures = u.getByIdSelfList.structureList;
-        delete polymorphicStructures;
+    case access_get_by_id_list: {
+        delete u.getByIdList.list;
         return;
     }
     case access_put_by_id_list:
@@ -74,9 +73,8 @@ bool StructureStubInfo::visitWeakReferences()
             || !Heap::isMarked(u.getByIdChain.chain.get()))
             return false;
         break;
-    case access_get_by_id_self_list: {
-        PolymorphicAccessStructureList* polymorphicStructures = u.getByIdSelfList.structureList;
-        if (!polymorphicStructures->visitWeak(u.getByIdSelfList.listSize))
+    case access_get_by_id_list: {
+        if (!u.getByIdList.list->visitWeak())
             return false;
         break;
     }

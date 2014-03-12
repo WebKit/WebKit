@@ -27,10 +27,11 @@
 #include "GetByIdStatus.h"
 
 #include "CodeBlock.h"
+#include "JSCInlines.h"
 #include "JSScope.h"
 #include "LLIntData.h"
 #include "LowLevelInterpreter.h"
-#include "JSCInlines.h"
+#include "PolymorphicGetByIdList.h"
 #include <wtf/ListDump.h>
 
 namespace JSC {
@@ -174,13 +175,11 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
     if (stubInfo->resetByGC)
         return GetByIdStatus(TakesSlowPath, true);
 
-    PolymorphicAccessStructureList* list = 0;
-    int listSize = 0;
-    if (stubInfo->accessType == access_get_by_id_self_list) {
-        list = stubInfo->u.getByIdSelfList.structureList;
-        listSize = stubInfo->u.getByIdSelfList.listSize;
-        for (int i = 0; i < listSize; ++i) {
-            if (!list->list[i].isDirect)
+    PolymorphicGetByIdList* list = 0;
+    if (stubInfo->accessType == access_get_by_id_list) {
+        list = stubInfo->u.getByIdList.list;
+        for (unsigned i = 0; i < list->size(); ++i) {
+            if (list->at(i).doesCalls())
                 return GetByIdStatus(MakesCalls, true);
         }
     }
@@ -214,18 +213,18 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
         return result;
     }
         
-    case access_get_by_id_self_list: {
-        for (int listIndex = 0; listIndex < listSize; ++listIndex) {
-            ASSERT(list->list[listIndex].isDirect);
+    case access_get_by_id_list: {
+        for (unsigned listIndex = 0; listIndex < list->size(); ++listIndex) {
+            ASSERT(!list->at(listIndex).doesCalls());
             
-            Structure* structure = list->list[listIndex].base.get();
+            Structure* structure = list->at(listIndex).structure();
             if (structure->takesSlowPathInDFGForImpureProperty())
                 return GetByIdStatus(TakesSlowPath, true);
             
-            if (list->list[listIndex].chain.get()) {
+            if (list->at(listIndex).chain()) {
                 RefPtr<IntendedStructureChain> chain = adoptRef(new IntendedStructureChain(
-                    profiledBlock, structure, list->list[listIndex].chain.get(),
-                    list->list[listIndex].count));
+                    profiledBlock, structure, list->at(listIndex).chain(),
+                    list->at(listIndex).chainCount()));
                 if (!result.computeForChain(profiledBlock, uid, chain))
                     return GetByIdStatus(TakesSlowPath, true);
                 continue;

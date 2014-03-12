@@ -175,6 +175,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/Operands.h \
 	Source/JavaScriptCore/bytecode/OperandsInlines.h \
 	Source/JavaScriptCore/bytecode/PolymorphicAccessStructureList.h \
+	Source/JavaScriptCore/bytecode/PolymorphicGetByIdList.cpp \
+	Source/JavaScriptCore/bytecode/PolymorphicGetByIdList.h \
 	Source/JavaScriptCore/bytecode/PolymorphicPutByIdList.cpp \
 	Source/JavaScriptCore/bytecode/PolymorphicPutByIdList.h \
 	Source/JavaScriptCore/bytecode/PreciseJumpTargets.cpp \

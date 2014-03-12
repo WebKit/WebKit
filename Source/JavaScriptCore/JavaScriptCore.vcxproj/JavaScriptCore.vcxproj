@@ -333,6 +333,7 @@
     <ClCompile Include="..\bytecode\LazyOperandValueProfile.cpp" />
     <ClCompile Include="..\bytecode\MethodOfGettingAValueProfile.cpp" />
     <ClCompile Include="..\bytecode\Opcode.cpp" />
+    <ClCompile Include="..\bytecode\PolymorphicGetByIdList.cpp" />
     <ClCompile Include="..\bytecode\PolymorphicPutByIdList.cpp" />
     <ClCompile Include="..\bytecode\ProfiledCodeBlockJettisoningWatchpoint.cpp" />
     <ClCompile Include="..\bytecode\PreciseJumpTargets.cpp" />
@@ -860,6 +861,7 @@
     <ClInclude Include="..\bytecode\MethodOfGettingAValueProfile.h" />
     <ClInclude Include="..\bytecode\Opcode.h" />
     <ClInclude Include="..\bytecode\Operands.h" />
+    <ClInclude Include="..\bytecode\PolymorphicGetByIdList.h" />
     <ClInclude Include="..\bytecode\PolymorphicPutByIdList.h" />
     <ClInclude Include="..\bytecode\ProfiledCodeBlockJettisoningWatchpoint.h" />
     <ClInclude Include="..\bytecode\PreciseJumpTargets.h" />
