@@ -1,3 +1,10 @@
+2014-03-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build correction
+
+        * win/AssembleBuildLogs/AssembleBuildLogs.vcxproj: The assemble
+        build logs script must look in the right configuration directory.
+
 2014-03-10  Brent Fulgham  <bfulgham@apple.com>
 
     Merge r165393.

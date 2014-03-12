@@ -1,3 +1,10 @@
+2014-03-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj: Inspector files
+        must be copied to proper configuration build directory.
+
 2014-03-10  Brent Fulgham  <bfulgham@apple.com>
 
         Merge r165393.

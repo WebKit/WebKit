@@ -1,3 +1,10 @@
+2014-03-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Correct
+        64-bit debug symbol export definition.
+
 2014-03-10  Brent Fulgham  <bfulgham@apple.com>
 
         Merge r165393.
