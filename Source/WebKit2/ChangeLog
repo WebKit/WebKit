@@ -1,3 +1,19 @@
+2014-03-11  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r165356): [Mac] Multi-part key bindings don't work
+        https://bugs.webkit.org/show_bug.cgi?id=130100
+
+        Reviewed by Darin Adler.
+
+        Restore the previous behavior, where we only interpreted keydowns (including those
+        coming through performKeyEquivalent).
+
+        In the future, we might send all events to input methods, but not to key bindings.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView keyUp:]):
+        (-[WKView flagsChanged:]):
+
 2014-03-11  Beth Dakin  <bdakin@apple.com>
 
         _pageExtendedBackgroundColor should not be exposed on WKWebView

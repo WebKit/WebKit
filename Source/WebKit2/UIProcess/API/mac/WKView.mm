@@ -1334,11 +1334,8 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
 - (void)keyUp:(NSEvent *)theEvent
 {
     LOG(TextInput, "keyUp:%p %@", theEvent, theEvent);
-
-    Vector<KeypressCommand> commands;
-    BOOL handledByInputMethod = [self _interpretKeyEvent:theEvent savingCommandsTo:commands];
-
-    _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, handledByInputMethod, commands));
+    // We don't interpret the keyUp event, as this breaks key bindings (see <https://bugs.webkit.org/show_bug.cgi?id=130100>).
+    _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, false, Vector<KeypressCommand>()));
 }
 
 - (void)_disableComplexTextInputIfNecessary
@@ -1440,10 +1437,7 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
     if (!keyCode || keyCode == 10 || keyCode == 63)
         return;
 
-    Vector<KeypressCommand> commands;
-    BOOL handledByInputMethod = [self _interpretKeyEvent:theEvent savingCommandsTo:commands];
-
-    _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, handledByInputMethod, commands));
+    _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, false, Vector<KeypressCommand>()));
 }
 
 - (void)_executeSavedKeypressCommands
