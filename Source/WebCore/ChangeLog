@@ -1,3 +1,17 @@
+2014-03-12  David Kilzer  <ddkilzer@apple.com>
+
+        Fix build after r165472
+
+        Fixes the following build failure:
+
+            WebCore/rendering/shapes/Shape.cpp:97:20: error: unused function 'ensureRadiiDoNotOverlap' [-Werror,-Wunused-function]
+            static inline void ensureRadiiDoNotOverlap(FloatRect& bounds, FloatSize& radii)
+                               ^
+            1 error generated.
+
+        * rendering/shapes/Shape.cpp:
+        (ensureRadiiDoNotOverlap): Remove unused function.
+
 2014-03-12  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Remove deprecated shapes

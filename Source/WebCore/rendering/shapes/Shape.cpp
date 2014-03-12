@@ -94,17 +94,6 @@ static inline FloatSize physicalSizeToLogical(const FloatSize& size, WritingMode
     return size.transposedSize();
 }
 
-static inline void ensureRadiiDoNotOverlap(FloatRect& bounds, FloatSize& radii)
-{
-    float widthRatio = bounds.width() / (2 * radii.width());
-    float heightRatio = bounds.height() / (2 * radii.height());
-    float reductionRatio = std::min<float>(widthRatio, heightRatio);
-    if (reductionRatio < 1) {
-        radii.setWidth(reductionRatio * radii.width());
-        radii.setHeight(reductionRatio * radii.height());
-    }
-}
-
 PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutSize& logicalBoxSize, WritingMode writingMode, Length margin, Length padding)
 {
     ASSERT(basicShape);
