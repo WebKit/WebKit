@@ -59,8 +59,7 @@ void RenderMathMLRow::updateOperatorProperties()
 {
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isRenderMathMLBlock()) {
-            auto renderOperator = toRenderMathMLBlock(child)->unembellishedOperator();
-            if (renderOperator)
+            if (auto renderOperator = toRenderMathMLBlock(child)->unembellishedOperator())
                 renderOperator->updateOperatorProperties();
         }
     }

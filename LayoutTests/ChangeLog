@@ -1,3 +1,15 @@
+2014-03-12  Frédéric Wang  <fred.wang@free.fr>
+
+        Invisible Operators should not add space.
+        https://bugs.webkit.org/show_bug.cgi?id=115786
+
+        Reviewed by Chris Fleizach.
+
+        Add a reftest based on the examples of the MathML specification to verify that invisible operators do not add space.
+
+        * mathml/presentation/mo-invisible-expected.html: Added.
+        * mathml/presentation/mo-invisible.html: Added.
+
 2014-03-11  Frédéric Wang  <fred.wang@free.fr>
 
         Implement MathML spacing around operators .

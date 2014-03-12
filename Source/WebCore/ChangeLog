@@ -1,3 +1,19 @@
+2014-03-12  Frédéric Wang  <fred.wang@free.fr>
+
+        Invisible Operators should not add space.
+        https://bugs.webkit.org/show_bug.cgi?id=115786
+
+        Reviewed by Chris Fleizach.
+
+        This change adds special handling for invisible operator to ensure they really behave as empty box. We now ignore their glyph widths and do not paint them.
+
+        Test: mathml/presentation/mo-invisible.html
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::computePreferredLogicalWidths):
+        (WebCore::RenderMathMLOperator::paint):
+        * rendering/mathml/RenderMathMLOperator.h:
+
 2014-03-11  Frédéric Wang  <fred.wang@free.fr>
 
         Implement MathML spacing around operators .

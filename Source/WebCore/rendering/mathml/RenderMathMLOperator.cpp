@@ -1302,6 +1302,13 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
     bool allowStretching = shouldAllowStretching(stretchedCharacter);
     if (!allowStretching) {
         RenderMathMLToken::computePreferredLogicalWidths();
+        if (isInvisibleOperator()) {
+            // In some fonts, glyphs for invisible operators have nonzero width. Consequently, we subtract that width here to avoid wide gaps.
+            float glyphWidth = advanceForCharacter(m_operator);
+            ASSERT(glyphWidth <= m_minPreferredLogicalWidth);
+            m_minPreferredLogicalWidth -= glyphWidth;
+            m_maxPreferredLogicalWidth -= glyphWidth;
+        }
         return;
     }
 
@@ -1529,7 +1536,8 @@ void RenderMathMLOperator::fillWithExtensionGlyph(PaintInfo& info, const LayoutP
 
 void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
-    if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE)
+    // We skip painting for invisible operators too to avoid some "missing character" glyph to appear if appropriate math fonts are not available.
+    if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE || isInvisibleOperator())
         return;
 
     if (!m_isStretched && !m_stretchyCharacter) {
