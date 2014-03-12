@@ -1160,8 +1160,8 @@ void RenderMathMLOperator::setOperatorPropertiesFromOpDictEntry(const MathMLOper
         m_operatorFlags = entry->flags;
 
     // Leading and trailing space is specified as multiple of 1/18em.
-    m_leadingSpace = entry->lspace * style().fontSize() / 18;
-    m_trailingSpace = entry->rspace * style().fontSize() / 18;
+    m_leadingSpace = entry->lspace * style().font().size() / 18;
+    m_trailingSpace = entry->rspace * style().font().size() / 18;
 }
 
 void RenderMathMLOperator::SetOperatorProperties()
@@ -1195,9 +1195,9 @@ void RenderMathMLOperator::SetOperatorProperties()
         m_operatorFlags &= MathMLOperatorDictionary::Fence | MathMLOperatorDictionary::Separator; // This resets all but the Fence and Separator properties.
     else
         m_operatorFlags = 0; // This resets all the operator properties.
-    m_leadingSpace = 5 * style().fontSize() / 18; // This sets leading space to "thickmathspace".
-    m_trailingSpace = 5 * style().fontSize() / 18; // This sets trailing space to "thickmathspace".
-    m_minSize = style().fontSize(); // This sets minsize to "1em".
+    m_leadingSpace = 5 * style().font().size() / 18; // This sets leading space to "thickmathspace".
+    m_trailingSpace = 5 * style().font().size() / 18; // This sets trailing space to "thickmathspace".
+    m_minSize = style().font().size(); // This sets minsize to "1em".
     m_maxSize = intMaxForLayoutUnit; // This sets maxsize to "infinity".
 
     if (m_operator) {
@@ -1236,20 +1236,6 @@ void RenderMathMLOperator::SetOperatorProperties()
         const AtomicString& maxsize = element().fastGetAttribute(MathMLNames::maxsizeAttr);
         if (maxsize != "infinity")
             parseMathMLLength(maxsize, m_maxSize, &style(), false);
-    }
-
-    // FIXME: this should be removed when operator spacing is implemented (https://bugs.webkit.org/show_bug.cgi?id=115787). At the moment spacing for normal <mo> elements is handled in mathml.css and mfenced uses the arbitrary constants below.
-    if (isFencedOperator()) {
-        if (hasOperatorFlag(MathMLOperatorDictionary::Fence)) {
-            m_leadingSpace = 0.1f * style().fontSize();
-            m_trailingSpace = 0.1f * style().fontSize();
-        } else if (hasOperatorFlag(MathMLOperatorDictionary::Separator)) {
-            m_leadingSpace = 0;
-            m_trailingSpace = 0.25f * style().fontSize();
-        }
-    } else {
-        m_leadingSpace = 0;
-        m_trailingSpace = 0;
     }
 }
 
@@ -1374,6 +1360,20 @@ void RenderMathMLOperator::updateTokenContent()
     rebuildTokenContent(element().textContent());
 }
 
+void RenderMathMLOperator::updateFromElement()
+{
+    SetOperatorProperties();
+    RenderMathMLToken::updateFromElement();
+}
+
+void RenderMathMLOperator::updateOperatorProperties()
+{
+    SetOperatorProperties();
+    if (!isEmpty())
+        updateStyle();
+    setNeedsLayoutAndPrefWidthsRecalc();
+}
+
 bool RenderMathMLOperator::shouldAllowStretching(UChar& stretchedCharacter)
 {
     if (!hasOperatorFlag(MathMLOperatorDictionary::Stretchy))
@@ -1427,6 +1427,8 @@ void RenderMathMLOperator::updateStyle()
         m_isStretched = false;
 
     // We add spacing around the operator.
+    // FIXME: The spacing should be added to the whole embellished operator (https://bugs.webkit.org/show_bug.cgi?id=124831).
+    // FIXME: The spacing should only be added inside (perhaps inferred) mrow (http://www.w3.org/TR/MathML/chapter3.html#presm.opspacing).
     const auto& wrapper = toRenderElement(firstChild());
     auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
     newStyle.get().setMarginStart(Length(m_leadingSpace, Fixed));

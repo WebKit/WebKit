@@ -55,6 +55,20 @@ PassRefPtr<MathMLInlineContainerElement> MathMLInlineContainerElement::create(co
     return adoptRef(new MathMLInlineContainerElement(tagName, document));
 }
 
+void MathMLInlineContainerElement::childrenChanged(const ChildChange& change)
+{
+    if (renderer()) {
+        if (renderer()->isRenderMathMLRow())
+            toRenderMathMLRow(renderer())->updateOperatorProperties();
+        else if (hasLocalName(mathTag) || hasLocalName(msqrtTag)) {
+            auto childRenderer = renderer()->firstChild();
+            if (childRenderer && childRenderer->isRenderMathMLRow())
+                toRenderMathMLRow(childRenderer)->updateOperatorProperties();
+        }
+    }
+    MathMLElement::childrenChanged(change);
+}
+
 RenderPtr<RenderElement> MathMLInlineContainerElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     if (hasLocalName(annotation_xmlTag))

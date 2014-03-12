@@ -105,18 +105,6 @@ msubsup > mi:first-child + * + * {
     -webkit-margin-start: 0.14em; /* This is larger than 0.1em because the child's font-size is smaller than the <msubsup>'s. */
 }
 
-/* FIXME: For a RenderMathMLOperator's margin-start and margin-end, or for a MathML "embellished operator", check the operator's lspace and rspace attributes,
-   and the MathML operator dictionary. */
-math > mo, mrow > mo, msqrt > mo, mtd > mo {
-    -webkit-margin-start: 0.2em;
-    -webkit-margin-end: 0.2em;
-}
-math > mo:first-child, mrow > mo:first-child, msqrt > mo:first-child, mtd > mo:first-child,
-math > mo:last-child, mrow > mo:last-child, msqrt > mo:last-child, mtd > mo:last-child {
-    -webkit-margin-start: 0.1em;
-    -webkit-margin-end: 0.1em;
-}
-
 mroot {
     position: relative;
 }

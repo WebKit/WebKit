@@ -10,17 +10,14 @@
          <mrow> and <mo> elements, as described in the MathML specification.
          Note that the MathML operator dictionary defines "(" and ")" as fences,
          so we don't need an explicit "fence" attribute on the <mo> elements.-->
-    <!-- FIXME: <mfenced> and its expanded form do not use the same spacing,
-         so -webkit-margin-start and -webkit-margin-end are currently set
-         explicitly below. See bug 118843. -->
     <math>
       <mrow>
         <mo>(</mo>
         <mrow>
           <mspace width="48px" height="24px" depth="24px" mathbackground="#0f0"/> 
-          <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">,</mo>
+          <mo separator="true">,</mo>
           <mspace width="48px" height="24px" depth="24px" mathbackground="#0f0"/> 
-          <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">,</mo>
+          <mo separator="true">,</mo>
           <mspace width="48px" height="24px" depth="24px" mathbackground="#0f0"/> 
         </mrow> 
         <mo>)</mo>

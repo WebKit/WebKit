@@ -49,7 +49,6 @@ enum Flag {
 struct Entry {
     UChar character;
     Form form;
-    // FIXME: spacing around <mo> operators is not implemented yet (https://bugs.webkit.org/show_bug.cgi?id=115787).
     unsigned short lspace;
     unsigned short rspace;
     unsigned short flags;
@@ -81,6 +80,7 @@ public:
 
     void updateTokenContent(const String& operatorString);
     void updateTokenContent() override final;
+    void updateOperatorProperties();
 
 private:
     virtual const char* renderName() const override { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
@@ -93,6 +93,7 @@ private:
     virtual int firstLineBaseline() const override;
     virtual RenderMathMLOperator* unembellishedOperator() override { return this; }
     void rebuildTokenContent(const String& operatorString);
+    void updateFromElement() override;
 
     bool shouldAllowStretching(UChar& characterForStretching);
     StretchyCharacter* findAcceptableStretchyCharacter(UChar);

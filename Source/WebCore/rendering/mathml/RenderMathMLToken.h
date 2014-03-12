@@ -45,13 +45,13 @@ public:
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const override { return true; };
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild) override;
     virtual void updateTokenContent();
+    void updateFromElement() override;
 
 protected:
     void createWrapperIfNeeded();
 
 private:
     virtual const char* renderName() const override { return isAnonymous() ? "RenderMathMLToken (anonymous)" : "RenderMathMLToken"; }
-    void updateFromElement() override;
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     virtual void updateStyle();
 };

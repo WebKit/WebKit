@@ -40,6 +40,7 @@ public:
 
 protected:
     MathMLInlineContainerElement(const QualifiedName& tagName, Document&);
+    void childrenChanged(const ChildChange&);
 
 private:
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;

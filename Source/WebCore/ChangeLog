@@ -1,3 +1,40 @@
+2014-03-11  Frédéric Wang  <fred.wang@free.fr>
+
+        Implement MathML spacing around operators .
+        https://bugs.webkit.org/show_bug.cgi?id=115787
+
+        Reviewed by Chris Fleizach.
+
+        This makes the <mo> operators use the lspace/rspace properties to
+        determine their spacing. The spacing is now consistent with the one
+        of <mfenced> and as a consequence bug 118843 is fixed. This also ensures
+        that the rendering of <mo> elements is updated when the form or
+        attributes are changed.
+
+        Tests: mathml/presentation/dir-mo.html
+               mathml/presentation/mo-form-dynamic.html
+               mathml/presentation/mo-form-minus-plus.html
+               mathml/presentation/mo-form.html
+               mathml/presentation/mo-lspace-rspace-dynamic.html
+               mathml/presentation/mo-lspace-rspace.html
+               mathml/presentation/mo-whitespaces.html
+
+        * css/mathml.css:
+        * mathml/MathMLInlineContainerElement.cpp:
+        (WebCore::MathMLInlineContainerElement::childrenChanged):
+        * mathml/MathMLInlineContainerElement.h:
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::setOperatorPropertiesFromOpDictEntry):
+        (WebCore::RenderMathMLOperator::SetOperatorProperties):
+        (WebCore::RenderMathMLOperator::updateFromElement):
+        (WebCore::RenderMathMLOperator::updateOperatorProperties):
+        (WebCore::RenderMathMLOperator::updateStyle):
+        * rendering/mathml/RenderMathMLOperator.h:
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::updateOperatorProperties):
+        * rendering/mathml/RenderMathMLRow.h:
+        * rendering/mathml/RenderMathMLToken.h:
+
 2014-03-11  Brent Fulgham  <bfulgham@apple.com>
 
         Get the incomplete WebVTT Regions code to build again.

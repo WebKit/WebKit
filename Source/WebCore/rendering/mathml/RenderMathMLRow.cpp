@@ -55,6 +55,18 @@ RenderPtr<RenderMathMLRow> RenderMathMLRow::createAnonymousWithParentRenderer(Re
     return newMRow;
 }
 
+void RenderMathMLRow::updateOperatorProperties()
+{
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (child->isRenderMathMLBlock()) {
+            auto renderOperator = toRenderMathMLBlock(child)->unembellishedOperator();
+            if (renderOperator)
+                renderOperator->updateOperatorProperties();
+        }
+    }
+    setNeedsLayoutAndPrefWidthsRecalc();
+}
+
 void RenderMathMLRow::layout()
 {
     int stretchHeightAboveBaseline = 0, stretchDepthBelowBaseline = 0;

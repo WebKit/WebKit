@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <head>
+    <title>attribute lspace rspace</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <!-- These operators are not from the operator dictionary, the default is spacing is lspace = rspace = thickmathspace = 5/18em. -->
+    <math><mi>x</mi><mo lspace="0em" rspace="0em" style="-webkit-margin-start: 0.27777777777777em; -webkit-margin-end: 0.27777777777777em;">X</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo lspace="0em" rspace="0em" style="-webkit-margin-start: 1em; -webkit-margin-end: 0.27777777777777em;">X</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo lspace="0em" rspace="0em" style="-webkit-margin-start: 0.27777777777777em; -webkit-margin-end: 2em;">X</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo lspace="0em" rspace="0em" style="-webkit-margin-start: 3em; -webkit-margin-end: 4em;">X</mo><mi>y</mi></math>
+
+    <br/>
+
+    <!-- Same with multi-char <mo lspace="0em" rspace="0em">. -->
+    <math><mi>x</mi><mo lspace="0em" rspace="0em" style="-webkit-margin-start: 0.27777777777777em; -webkit-margin-end: 0.27777777777777em;">XXX</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo lspace="0em" rspace="0em" style="-webkit-margin-start: 1em; -webkit-margin-end: 0.27777777777777em;">XXX</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo lspace="0em" rspace="0em" style="-webkit-margin-start: 0.27777777777777em; -webkit-margin-end: 2em;">XXX</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo lspace="0em" rspace="0em" style="-webkit-margin-start: 3em; -webkit-margin-end: 4em;">XXX</mo><mi>y</mi></math>
+
+    <br/>
+
+    <!-- This should have the default spacing from operator dictionary, that is rspace = rspace = mediummathspace = 4/18em. --> 
+    <math><mi>x</mi><mo lspace="0em" rspace="0em" style="-webkit-margin-start: 0.22222222222222em; -webkit-margin-end: 0.22222222222222em;">+</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo lspace="0em" rspace="0em" style="-webkit-margin-start: 1em; -webkit-margin-end: 0.22222222222222em;">+</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo lspace="0em" rspace="0em" style="-webkit-margin-start: 0.22222222222222em; -webkit-margin-end: 2em;">+</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo lspace="0em" rspace="0em" style="-webkit-margin-start: 3em; -webkit-margin-end: 4em;">+</mo><mi>y</mi></math>
+
+    <br/>
+
+    <!-- Same with an explicit form="prefix". The default is now lspace=0 and rspace = veryverythinmathspace = 1/18em -->
+    <math><mi>x</mi><mo lspace="0em" rspace="0em" style="-webkit-margin-start: 0em; -webkit-margin-end: 0.055555555555555em;">+</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo lspace="0em" rspace="0em" style="-webkit-margin-start: 1em; -webkit-margin-end: 0.055555555555555em;">+</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo lspace="0em" rspace="0em" style="-webkit-margin-start: 0em; -webkit-margin-end: 2em;">+</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo lspace="0em" rspace="0em" style="-webkit-margin-start: 3em; -webkit-margin-end: 4em;">+</mo><mi>y</mi></math>
+
+  </body>
+</html>

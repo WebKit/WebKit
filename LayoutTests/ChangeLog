@@ -1,3 +1,32 @@
+2014-03-11  Frédéric Wang  <fred.wang@free.fr>
+
+        Implement MathML spacing around operators .
+        https://bugs.webkit.org/show_bug.cgi?id=115787
+
+        Reviewed by Chris Fleizach.
+
+        Add many new tests to verify the form/lspace/rspace properties of the
+        <mo> element and that the whitespace of the text content is collapsed.
+        Update fenced-mi now that bug 118843 is fixed.
+
+        * mathml/presentation/dir-mo-expected.html: Added.
+        * mathml/presentation/dir-mo.html: Added.
+        * mathml/presentation/fenced-expected.html:
+        * mathml/presentation/fenced-mi-expected.html:
+        * mathml/presentation/mo-form-dynamic-expected.html: Added.
+        * mathml/presentation/mo-form-dynamic.html: Added.
+        * mathml/presentation/mo-form-expected.html: Added.
+        * mathml/presentation/mo-form-minus-plus-expected.html: Added.
+        * mathml/presentation/mo-form-minus-plus.html: Added.
+        * mathml/presentation/mo-form.html: Added.
+        * mathml/presentation/mo-lspace-rspace-dynamic-expected.html: Added.
+        * mathml/presentation/mo-lspace-rspace-dynamic.html: Added.
+        * mathml/presentation/mo-lspace-rspace-expected.html: Added.
+        * mathml/presentation/mo-lspace-rspace.html: Added.
+        * mathml/presentation/mo-whitespaces-expected.html: Added.
+        * mathml/presentation/mo-whitespaces.html: Added.
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt: update reference.
+
 2014-03-11  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Add layout test for anonymous grid items

@@ -10,9 +10,6 @@
          <mrow> and <mo> elements, as described in the MathML specification.
          The MathML operator dictionary defines '(', ')', '{', '}' as fences,
          so we don't need an explicit "fence" attribute on the <mo> elements.-->
-    <!-- FIXME: <mfenced> and its expanded form do not use the same spacing,
-         so -webkit-margin-start and -webkit-margin-end are currently set
-         explicitly below. See bug 118843. -->
 
     <p>
       <math>
@@ -20,9 +17,9 @@
           <mo>(</mo>
           <mrow>
             <mi>x</mi>
-            <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">,</mo>
+            <mo separator="true">,</mo>
             <mi>y</mi>
-            <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">,</mo>
+            <mo separator="true">,</mo>
             <mi>z</mi>
           </mrow>
           <mo>)</mo>
@@ -36,9 +33,9 @@
           <mo>{</mo>
           <mrow>
             <mi>x</mi>
-            <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">1</mo>
+            <mo separator="true">1</mo>
             <mi>y</mi>
-            <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">2</mo>
+            <mo separator="true">2</mo>
             <mi>z</mi>
           </mrow>
           <mo>}</mo>
@@ -52,15 +49,15 @@
           <mo>(</mo>
           <mrow>
             <mi>x</mi>
-            <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">1</mo>
+            <mo separator="true">1</mo>
             <mi>y</mi>
-            <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">2</mo>
+            <mo separator="true">2</mo>
             <mi>z</mi>
-            <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">3</mo>
+            <mo separator="true">3</mo>
             <mi>u</mi>
-            <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">3</mo>
+            <mo separator="true">3</mo>
             <mi>v</mi>
-            <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">3</mo>
+            <mo separator="true">3</mo>
             <mi>w</mi>
           </mrow>
           <mo>)</mo>
