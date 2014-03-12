@@ -1,3 +1,13 @@
+2014-03-12  Tim Horton  <timothy_horton@apple.com>
+
+        Build fix for ENABLE(IMAGE_CONTROLS) after 165479
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::servicesRolloverButtonCell):
+        (WebCore::RenderThemeMac::paintImageControlsButton):
+        (WebCore::RenderThemeMac::imageControlsButtonSize):
+        Don't try to use the AppKit methods that are only available on 64-bit.
+
 2014-03-12  Brent Fulgham  <bfulgham@apple.com>
 
         [WebVTT] HTML5 "space" cahracters around "-->" are not required

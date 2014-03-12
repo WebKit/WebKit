@@ -44,10 +44,7 @@ typedef enum {
 
 using namespace WebCore;
 
-@implementation WebSharingServicePickerController {
-    WebContextMenuClient* _menuClient;
-    RetainPtr<NSSharingServicePicker> _picker;
-}
+@implementation WebSharingServicePickerController
 
 - (instancetype)initWithImage:(NSImage *)image menuClient:(WebContextMenuClient*)menuClient
 {

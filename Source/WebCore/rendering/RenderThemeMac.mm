@@ -74,7 +74,13 @@
 #import "HTMLMeterElement.h"
 #endif
 
-#if ENABLE(IMAGE_CONTROLS)
+#if defined(__LP64__) && __LP64__
+#define HAVE_APPKIT_IMAGE_CONTROLS_SUPPORT 1
+#else
+#define HAVE_APPKIT_IMAGE_CONTROLS_SUPPORT 0
+#endif
+
+#if ENABLE(IMAGE_CONTROLS) && HAVE(APPKIT_IMAGE_CONTROLS_SUPPORT)
 
 #if __has_include(<AppKit/AppKitDefines_Private.h>)
 #import <AppKit/AppKitDefines_Private.h>
@@ -1970,12 +1976,16 @@ String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const Font
 #if ENABLE(IMAGE_CONTROLS)
 NSServicesRolloverButtonCell* RenderThemeMac::servicesRolloverButtonCell() const
 {
+#if HAVE(APPKIT_IMAGE_CONTROLS_SUPPORT)
     if (!m_servicesRolloverButton) {
         m_servicesRolloverButton = [NSServicesRolloverButtonCell serviceRolloverButtonCellForStyle:NSSharingServicePickerStyleRollover];
         [m_servicesRolloverButton setBordered:NO];
     }
 
     return m_servicesRolloverButton.get();
+#else
+    return nil;
+#endif
 }
 
 bool RenderThemeMac::paintImageControlsButton(RenderObject* renderer, const PaintInfo& paintInfo, const IntRect& rect)
@@ -1983,6 +1993,7 @@ bool RenderThemeMac::paintImageControlsButton(RenderObject* renderer, const Pain
     if (paintInfo.phase != PaintPhaseBlockBackground)
         return true;
 
+#if HAVE(APPKIT_IMAGE_CONTROLS_SUPPORT)
     NSServicesRolloverButtonCell *cell = servicesRolloverButtonCell();
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
@@ -1994,13 +2005,21 @@ bool RenderThemeMac::paintImageControlsButton(RenderObject* renderer, const Pain
     IntRect innerFrame(IntPoint(), rect.size());
     [cell drawWithFrame:innerFrame inView:documentViewFor(renderer)];
     [cell setControlView:nil];
+#else
+    UNUSED_PARAM(renderer);
+    UNUSED_PARAM(rect);
+#endif
 
     return true;
 }
 
 IntSize RenderThemeMac::imageControlsButtonSize(const RenderObject*) const
 {
+#if HAVE(APPKIT_IMAGE_CONTROLS_SUPPORT)
     return IntSize(servicesRolloverButtonCell().cellSize);
+#else
+    return IntSize();
+#endif
 }
 #endif
 

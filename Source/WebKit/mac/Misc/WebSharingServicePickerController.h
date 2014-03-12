@@ -25,13 +25,18 @@
 
 #if ENABLE(IMAGE_CONTROLS)
 
+#import <wtf/RetainPtr.h>
+
 @class NSSharingServicePicker;
 @protocol NSSharingServiceDelegate;
 @protocol NSSharingServicePickerDelegate;
 
 class WebContextMenuClient;
 
-@interface WebSharingServicePickerController : NSObject <NSSharingServiceDelegate, NSSharingServicePickerDelegate>
+@interface WebSharingServicePickerController : NSObject <NSSharingServiceDelegate, NSSharingServicePickerDelegate> {
+    WebContextMenuClient* _menuClient;
+    RetainPtr<NSSharingServicePicker> _picker;
+}
 
 - (instancetype)initWithImage:(NSImage *)image menuClient:(WebContextMenuClient*)menuClient;
 - (NSMenu *)menu;

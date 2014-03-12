@@ -1,3 +1,11 @@
+2014-03-12  Tim Horton  <timothy_horton@apple.com>
+
+        Build fix for ENABLE(IMAGE_CONTROLS) after 165479
+
+        * Misc/WebSharingServicePickerController.h:
+        * Misc/WebSharingServicePickerController.mm:
+        Don't use new-runtime features in code that has to build 32-bit.
+
 2014-03-12  Anders Carlsson  <andersca@apple.com>
 
         <rdar://problem/16307346> Add new WebKitLegacy.framework.
