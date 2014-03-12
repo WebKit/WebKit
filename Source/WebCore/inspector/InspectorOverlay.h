@@ -121,16 +121,20 @@ public:
 
     void didSetSearchingForNode(bool enabled);
 
+    void setIndicating(bool indicating);
+
     PassRefPtr<Inspector::InspectorObject> buildObjectForHighlightedNode() const;
 
     void freePage();
 private:
+    bool shouldShowOverlay() const;
     void drawGutter();
     void drawNodeHighlight();
     void drawQuadHighlight();
     void drawPausedInDebuggerMessage();
     Page* overlayPage();
     void reset(const IntSize& viewportSize, const IntSize& frameViewFullSize);
+    void evaluateInOverlay(const String& method);
     void evaluateInOverlay(const String& method, const String& argument);
     void evaluateInOverlay(const String& method, PassRefPtr<Inspector::InspectorValue> argument);
 
@@ -142,7 +146,7 @@ private:
     std::unique_ptr<FloatQuad> m_highlightQuad;
     std::unique_ptr<Page> m_overlayPage;
     HighlightConfig m_quadHighlightConfig;
-    IntSize m_size;
+    bool m_indicating;
 };
 
 } // namespace WebCore

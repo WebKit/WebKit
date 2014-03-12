@@ -1,5 +1,46 @@
 2014-03-12  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: OS X View Indication
+        https://bugs.webkit.org/show_bug.cgi?id=130119
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::setIndicating):
+        OS X will handles this in the InspectorOverlay. iOS does not use the
+        overlay, so it handles this in the client (already implemented).
+
+        * inspector/InspectorOverlay.h:
+        Remove unused m_size, and add a boolean for the indicating state.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::InspectorOverlay):
+        (WebCore::InspectorOverlay::shouldShowOverlay):
+        Helper for determining if we should show the overlay or not.
+
+        (WebCore::InspectorOverlay::setIndicating):
+        Set the state and trigger an overlay update.
+
+        (WebCore::InspectorOverlay::paint):
+        (WebCore::InspectorOverlay::update):
+        (WebCore::InspectorOverlay::drawGutter):
+        (WebCore::InspectorOverlay::evaluateInOverlay):
+        Simplification of existing methods.
+
+        * inspector/InspectorOverlayPage.css:
+        (.indicate):
+        Give the page a blue tint, matching the node highlight color.
+
+        * inspector/InspectorOverlayPage.js:
+        (showPageIndication):
+        (hidePageIndication):
+        Add / remove a body style class.
+
+        (drawNodeHighlight):
+        Remove unused parameters.
+
+2014-03-12  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Disable REMOTE_INSPECTOR in earlier OS X releases
         https://bugs.webkit.org/show_bug.cgi?id=130118
 

@@ -26,6 +26,10 @@ body.platform-linux {
     left: 0;
 }
 
+.indicate {
+    background-color: rgba(111, 168, 220, 0.66) !important;
+}
+
 .dimmed {
     background-color: rgba(0, 0, 0, 0.31);
 }

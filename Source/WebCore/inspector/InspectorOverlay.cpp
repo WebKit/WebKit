@@ -236,6 +236,7 @@ static void buildQuadHighlight(const FloatQuad& quad, const HighlightConfig& hig
 InspectorOverlay::InspectorOverlay(Page& page, InspectorClient* client)
     : m_page(page)
     , m_client(client)
+    , m_indicating(false)
 {
 }
 
@@ -245,8 +246,9 @@ InspectorOverlay::~InspectorOverlay()
 
 void InspectorOverlay::paint(GraphicsContext& context)
 {
-    if (m_pausedInDebuggerMessage.isNull() && !m_highlightNode && !m_highlightQuad && m_size.isEmpty())
+    if (!shouldShowOverlay())
         return;
+
     GraphicsContextStateSaver stateSaver(context);
     FrameView* view = overlayPage()->mainFrame().view();
     view->updateLayoutAndStyleIfNeededRecursive();
@@ -311,9 +313,26 @@ void InspectorOverlay::didSetSearchingForNode(bool enabled)
     m_client->didSetSearchingForNode(enabled);
 }
 
+void InspectorOverlay::setIndicating(bool indicating)
+{
+    m_indicating = indicating;
+
+    if (m_indicating)
+        evaluateInOverlay(ASCIILiteral("showPageIndication"));
+    else
+        evaluateInOverlay(ASCIILiteral("hidePageIndication"));
+
+    update();
+}
+
+bool InspectorOverlay::shouldShowOverlay() const
+{
+    return m_highlightNode || m_highlightNode || m_indicating || !m_pausedInDebuggerMessage.isNull();
+}
+
 void InspectorOverlay::update()
 {
-    if (!m_highlightNode && !m_highlightQuad && m_pausedInDebuggerMessage.isNull() && m_size.isEmpty()) {
+    if (!shouldShowOverlay()) {
         m_client->hideHighlight();
         return;
     }
@@ -325,13 +344,13 @@ void InspectorOverlay::update()
     FrameView* overlayView = overlayPage()->mainFrame().view();
     IntSize viewportSize = view->visibleContentRect().size();
     IntSize frameViewFullSize = view->visibleContentRectIncludingScrollbars().size();
-    IntSize size = m_size.isEmpty() ? frameViewFullSize : m_size;
     overlayPage()->setPageScaleFactor(m_page.pageScaleFactor(), IntPoint());
-    size.scale(m_page.pageScaleFactor());
-    overlayView->resize(size);
+    frameViewFullSize.scale(m_page.pageScaleFactor());
+    overlayView->resize(frameViewFullSize);
 
     // Clear canvas and paint things.
-    reset(viewportSize, m_size.isEmpty() ? IntSize() : frameViewFullSize);
+    // FIXME: Remove extra parameter?
+    reset(viewportSize, IntSize());
 
     // Include scrollbars to avoid masking them by the gutter.
     drawGutter();
@@ -481,7 +500,7 @@ static PassRefPtr<InspectorObject> buildObjectForCSSRegionContentClip(RenderRegi
 
 void InspectorOverlay::drawGutter()
 {
-    evaluateInOverlay("drawGutter", "");
+    evaluateInOverlay("drawGutter");
 }
 
 static PassRefPtr<InspectorArray> buildObjectForRendererFragments(RenderObject* renderer, const HighlightConfig& config)
@@ -795,6 +814,13 @@ void InspectorOverlay::reset(const IntSize& viewportSize, const IntSize& frameVi
     resetData->setObject("viewportSize", buildObjectForSize(viewportSize));
     resetData->setObject("frameViewFullSize", buildObjectForSize(frameViewFullSize));
     evaluateInOverlay("reset", resetData.release());
+}
+
+void InspectorOverlay::evaluateInOverlay(const String& method)
+{
+    RefPtr<InspectorArray> command = InspectorArray::create();
+    command->pushString(method);
+    overlayPage()->mainFrame().script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ")")));
 }
 
 void InspectorOverlay::evaluateInOverlay(const String& method, const String& argument)

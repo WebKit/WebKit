@@ -370,11 +370,14 @@ Node* InspectorController::highlightedNode() const
 
 void InspectorController::setIndicating(bool indicating)
 {
-    // FIXME: For non-iOS clients, we should have InspectorOverlay do something here.
+#if !PLATFORM(IOS)
+    m_overlay->setIndicating(indicating);
+#else
     if (indicating)
         m_inspectorClient->indicate();
     else
         m_inspectorClient->hideIndication();
+#endif
 }
 
 bool InspectorController::profilerEnabled() const
