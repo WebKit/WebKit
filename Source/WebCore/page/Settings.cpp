@@ -390,10 +390,8 @@ void Settings::imageLoadingSettingsTimerFired(Timer<Settings>*)
 
 void Settings::setScriptEnabled(bool isScriptEnabled)
 {
-#if PLATFORM(IOS)
     if (m_isScriptEnabled == isScriptEnabled)
         return;
-#endif
 
     m_isScriptEnabled = isScriptEnabled;
 #if PLATFORM(IOS)

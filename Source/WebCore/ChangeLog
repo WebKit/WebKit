@@ -1,3 +1,21 @@
+2014-03-12  Brian Burg  <bburg@apple.com>
+
+        Web Inspector receives spurious setScriptEnabled instrumentation calls
+        https://bugs.webkit.org/show_bug.cgi?id=130147
+
+        Reviewed by Timothy Hatcher.
+
+        When page settings change, inspector instrumentation should only fire if
+        the scriptsEnabled setting actually changes from the previous setting. But
+        due to an unnecessary PLATFORM(IOS) guard, the inspector was being notified
+        on every settings update even if nothing changed.
+
+        This manifested as lots of Page.scriptsEnabled messages being sent to
+        the inspector frontend as the Inspector window is dragged.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setScriptEnabled): Remove PLATFORM(IOS) from early return.
+
 2014-03-12  Simon Fraser  <simon.fraser@apple.com>
 
         Have the scrolling tree track the viewport size, not the viewport rect
