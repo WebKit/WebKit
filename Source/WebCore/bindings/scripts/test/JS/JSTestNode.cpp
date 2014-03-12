@@ -33,12 +33,16 @@ namespace WebCore {
 
 /* Hash table for constructor */
 
-static const HashTableValue JSTestNodeConstructorTableValues[] =
-{
-    { 0, 0, NoIntrinsic, 0, 0 }
+static const struct CompactHashIndex JSTestNodeConstructorTableIndex[1] = {
+    { -1, -1 },
 };
 
-static const HashTable JSTestNodeConstructorTable = { 1, 0, false, JSTestNodeConstructorTableValues, 0 };
+
+static const HashTableValue JSTestNodeConstructorTableValues[0] =
+{
+};
+
+static const HashTable JSTestNodeConstructorTable = { 0, 0, false, JSTestNodeConstructorTableValues, 0, JSTestNodeConstructorTableIndex };
 EncodedJSValue JSC_HOST_CALL JSTestNodeConstructor::constructJSTestNode(ExecState* exec)
 {
     JSTestNodeConstructor* castedThis = jsCast<JSTestNodeConstructor*>(exec->callee());
@@ -74,13 +78,18 @@ ConstructType JSTestNodeConstructor::getConstructData(JSCell*, ConstructData& co
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestNodePrototypeTableValues[] =
-{
-    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNodeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { 0, 0, NoIntrinsic, 0, 0 }
+static const struct CompactHashIndex JSTestNodePrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
 };
 
-static const HashTable JSTestNodePrototypeTable = { 2, 1, true, JSTestNodePrototypeTableValues, 0 };
+
+static const HashTableValue JSTestNodePrototypeTableValues[1] =
+{
+    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNodeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+};
+
+static const HashTable JSTestNodePrototypeTable = { 1, 1, true, JSTestNodePrototypeTableValues, 0, JSTestNodePrototypeTableIndex };
 const ClassInfo JSTestNodePrototype::s_info = { "TestNodePrototype", &Base::s_info, &JSTestNodePrototypeTable, 0, CREATE_METHOD_TABLE(JSTestNodePrototype) };
 
 JSObject* JSTestNodePrototype::self(VM& vm, JSGlobalObject* globalObject)

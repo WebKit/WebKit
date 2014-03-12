@@ -65,7 +65,6 @@ inline JSCell* getCallableObject(JSValue value)
 }
 
 class GetterSetter;
-class HashEntry;
 class InternalFunction;
 class JSFunction;
 class LLIntOffsetsExtractor;
@@ -74,6 +73,7 @@ class PropertyDescriptor;
 class PropertyNameArray;
 class Structure;
 struct HashTable;
+struct HashTableValue;
 
 JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*, const String&);
 extern JS_EXPORTDATA const char* StrictModeReadonlyPropertyWriteError;
@@ -93,7 +93,7 @@ class JSObject : public JSCell {
     friend class JSCell;
     friend class JSFinalObject;
     friend class MarkedBlock;
-    JS_EXPORT_PRIVATE friend bool setUpStaticFunctionSlot(ExecState*, const HashEntry*, JSObject*, PropertyName, PropertySlot&);
+    JS_EXPORT_PRIVATE friend bool setUpStaticFunctionSlot(ExecState*, const HashTableValue*, JSObject*, PropertyName, PropertySlot&);
 
     enum PutMode {
         PutModePut,
@@ -952,7 +952,7 @@ private:
     bool inlineGetOwnPropertySlot(ExecState*, VM&, Structure&, PropertyName, PropertySlot&);
     JS_EXPORT_PRIVATE void fillGetterPropertySlot(PropertySlot&, JSValue, unsigned, PropertyOffset);
 
-    const HashEntry* findPropertyHashEntry(VM&, PropertyName) const;
+    const HashTableValue* findPropertyHashEntry(VM&, PropertyName) const;
         
     void putIndexedDescriptor(ExecState*, SparseArrayEntry*, const PropertyDescriptor&, PropertyDescriptor& old);
         

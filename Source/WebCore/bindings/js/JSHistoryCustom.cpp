@@ -66,7 +66,7 @@ bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propert
 
     // Check for the few functions that we allow, even when called cross-domain.
     // Make these read-only / non-configurable to prevent writes via defineProperty.
-    const HashEntry* entry = JSHistoryPrototype::info()->propHashTable(exec)->entry(exec, propertyName);
+    const HashTableValue* entry = JSHistoryPrototype::info()->propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
         // Allow access to back(), forward() and go() from any frame.
         if (entry->attributes() & JSC::Function) {

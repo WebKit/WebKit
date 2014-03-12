@@ -34,12 +34,16 @@ namespace WebCore {
 
 /* Hash table for constructor */
 
-static const HashTableValue JSTestOverloadedConstructorsConstructorTableValues[] =
-{
-    { 0, 0, NoIntrinsic, 0, 0 }
+static const struct CompactHashIndex JSTestOverloadedConstructorsConstructorTableIndex[1] = {
+    { -1, -1 },
 };
 
-static const HashTable JSTestOverloadedConstructorsConstructorTable = { 1, 0, false, JSTestOverloadedConstructorsConstructorTableValues, 0 };
+
+static const HashTableValue JSTestOverloadedConstructorsConstructorTableValues[0] =
+{
+};
+
+static const HashTable JSTestOverloadedConstructorsConstructorTable = { 0, 0, false, JSTestOverloadedConstructorsConstructorTableValues, 0, JSTestOverloadedConstructorsConstructorTableIndex };
 EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors1(ExecState* exec)
 {
     JSTestOverloadedConstructorsConstructor* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(exec->callee());
@@ -133,13 +137,18 @@ ConstructType JSTestOverloadedConstructorsConstructor::getConstructData(JSCell*,
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestOverloadedConstructorsPrototypeTableValues[] =
-{
-    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestOverloadedConstructorsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { 0, 0, NoIntrinsic, 0, 0 }
+static const struct CompactHashIndex JSTestOverloadedConstructorsPrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
 };
 
-static const HashTable JSTestOverloadedConstructorsPrototypeTable = { 2, 1, true, JSTestOverloadedConstructorsPrototypeTableValues, 0 };
+
+static const HashTableValue JSTestOverloadedConstructorsPrototypeTableValues[1] =
+{
+    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestOverloadedConstructorsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+};
+
+static const HashTable JSTestOverloadedConstructorsPrototypeTable = { 1, 1, true, JSTestOverloadedConstructorsPrototypeTableValues, 0, JSTestOverloadedConstructorsPrototypeTableIndex };
 const ClassInfo JSTestOverloadedConstructorsPrototype::s_info = { "TestOverloadedConstructorsPrototype", &Base::s_info, &JSTestOverloadedConstructorsPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsPrototype) };
 
 JSObject* JSTestOverloadedConstructorsPrototype::self(VM& vm, JSGlobalObject* globalObject)

@@ -28,44 +28,30 @@ namespace JSC {
 
 void HashTable::createTable(VM& vm) const
 {
-    ASSERT(!table);
-    int linkIndex = compactHashSizeMask + 1;
-    HashEntry* entries = new HashEntry[compactSize];
-    for (int i = 0; i < compactSize; ++i)
-        entries[i].setKey(0);
-    for (int i = 0; values[i].key; ++i) {
-        StringImpl& identifier = Identifier::add(&vm, values[i].key).leakRef();
-        int hashIndex = identifier.existingHash() & compactHashSizeMask;
-        HashEntry* entry = &entries[hashIndex];
+    ASSERT(!keys);
+    keys = new StringImpl*[numberOfValues];
 
-        if (entry->key()) {
-            while (entry->next()) {
-                entry = entry->next();
-            }
-            ASSERT(linkIndex < compactSize);
-            entry->setNext(&entries[linkIndex++]);
-            entry = entry->next();
-        }
-
-        entry->initialize(&identifier, values[i].attributes, values[i].value1, values[i].value2, values[i].intrinsic);
+    for (int i = 0; i < numberOfValues; ++i) {
+        if (values[i].m_key)
+            keys[i] = &Identifier::add(&vm, values[i].m_key).leakRef();
+        else
+            keys[i] = 0;
     }
-    table = entries;
 }
 
 void HashTable::deleteTable() const
 {
-    if (table) {
-        int max = compactSize;
-        for (int i = 0; i != max; ++i) {
-            if (StringImpl* key = table[i].key())
-                key->deref();
+    if (keys) {
+        for (int i = 0; i != numberOfValues; ++i) {
+            if (keys[i])
+                keys[i]->deref();
         }
-        delete [] table;
-        table = 0;
+        delete [] keys;
+        keys = nullptr;
     }
 }
 
-bool setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, PropertyName propertyName, PropertySlot& slot)
+bool setUpStaticFunctionSlot(ExecState* exec, const HashTableValue* entry, JSObject* thisObj, PropertyName propertyName, PropertySlot& slot)
 {
     ASSERT(thisObj->globalObject());
     ASSERT(entry->attributes() & BuiltinOrFunction);

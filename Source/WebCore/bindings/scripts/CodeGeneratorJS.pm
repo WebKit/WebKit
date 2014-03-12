@@ -405,7 +405,7 @@ sub GenerateGetOwnPropertySlotBody
     my $manualLookupGetterGeneration = sub {
         my $requiresManualLookup = ($indexedGetterFunction && !$hasNumericIndexedGetter) || $namedGetterFunction;
         if ($requiresManualLookup) {
-            push(@getOwnPropertySlotImpl, "    const ${namespaceMaybe}HashEntry* entry = getStaticValueSlotEntryWithoutCaching<$className>(exec, propertyName);\n");
+            push(@getOwnPropertySlotImpl, "    const ${namespaceMaybe}HashTableValue* entry = getStaticValueSlotEntryWithoutCaching<$className>(exec, propertyName);\n");
             push(@getOwnPropertySlotImpl, "    if (entry) {\n");
             push(@getOwnPropertySlotImpl, "        slot.setCustom(thisObject, entry->attributes(), entry->propertyGetter());\n");
             push(@getOwnPropertySlotImpl, "        return true;\n");
@@ -3937,6 +3937,8 @@ sub GenerateHashTable
     # Start outputing the hashtables
     my $nameEntries = "${name}Values";
     $nameEntries =~ s/:/_/g;
+    my $nameIndex = "${name}Index";
+    $nameIndex =~ s/:/_/g;
     my $hasSetter = "false";
 
     if (($name =~ /Prototype/) or ($name =~ /Constructor/)) {
@@ -3956,8 +3958,19 @@ sub GenerateHashTable
         push(@implContent, "/* Hash table */\n");
     }
 
+    push(@implContent, "\nstatic const struct CompactHashIndex ${nameIndex}\[$compactSize\] = {\n");
+    for (my $i = 0; $i < $compactSize; $i++) {
+        my $T = -1;
+        if (defined($table[$i])) { $T = $table[$i]; }
+        my $L = -1;
+        if (defined($links[$i])) { $L = $links[$i]; }
+        push(@implContent, "    { $T, $L },\n");
+    }
+    push(@implContent, "};\n\n");
+
     # Dump the hash table
-    push(@implContent, "\nstatic const HashTableValue $nameEntries\[\] =\n\{\n");
+    my $packedSize = scalar @{$keys};
+    push(@implContent, "\nstatic const HashTableValue $nameEntries\[$packedSize\] =\n\{\n");
     $i = 0;
     foreach my $key (@{$keys}) {
         my $conditional;
@@ -3980,14 +3993,17 @@ sub GenerateHashTable
             $hasSetter = "true";
         }
         push(@implContent, "    { \"$key\", @$specials[$i], NoIntrinsic, (intptr_t)" . $firstTargetType . "(@$value1[$i]), (intptr_t) " . $secondTargetType . "(@$value2[$i]) },\n");
-        push(@implContent, "#endif\n") if $conditional;
+        if ($conditional) {
+            push(@implContent, "#else\n") ;
+            push(@implContent, "    { 0, 0, NoIntrinsic, 0, 0 },\n");
+            push(@implContent, "#endif\n") ;
+        }
         ++$i;
     }
 
-    push(@implContent, "    { 0, 0, NoIntrinsic, 0, 0 }\n");
     push(@implContent, "};\n\n");
     my $compactSizeMask = $numEntries - 1;
-    push(@implContent, "static const HashTable $name = { $compactSize, $compactSizeMask, $hasSetter, $nameEntries, 0 };\n");
+    push(@implContent, "static const HashTable $name = { $packedSize, $compactSizeMask, $hasSetter, $nameEntries, 0, $nameIndex };\n");
 }
 
 sub WriteData

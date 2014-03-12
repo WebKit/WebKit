@@ -50,56 +50,101 @@ namespace WebCore {
 
 /* Hash table */
 
-static const HashTableValue JSTestInterfaceTableValues[] =
+static const struct CompactHashIndex JSTestInterfaceTableIndex[4] = {
+    { -1, -1 },
+    { 0, -1 },
+    { -1, -1 },
+    { 1, -1 },
+};
+
+
+static const HashTableValue JSTestInterfaceTableValues[2] =
 {
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "implementsStr3", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsStr3) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "supplementalStr3", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalStr3) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
-    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestInterfaceTable = { 4, 3, true, JSTestInterfaceTableValues, 0 };
+static const HashTable JSTestInterfaceTable = { 2, 3, true, JSTestInterfaceTableValues, 0, JSTestInterfaceTableIndex };
 /* Hash table for constructor */
 
-static const HashTableValue JSTestInterfaceConstructorTableValues[] =
+static const struct CompactHashIndex JSTestInterfaceConstructorTableIndex[11] = {
+    { 8, -1 },
+    { 5, -1 },
+    { -1, -1 },
+    { 0, 9 },
+    { 6, 10 },
+    { 7, -1 },
+    { 2, -1 },
+    { 1, 8 },
+    { 3, -1 },
+    { 4, -1 },
+    { 9, -1 },
+};
+
+
+static const HashTableValue JSTestInterfaceConstructorTableValues[10] =
 {
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "IMPLEMENTSCONSTANT1", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceIMPLEMENTSCONSTANT1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "IMPLEMENTSCONSTANT2", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceIMPLEMENTSCONSTANT2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "SUPPLEMENTALCONSTANT1", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSUPPLEMENTALCONSTANT1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "SUPPLEMENTALCONSTANT2", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSUPPLEMENTALCONSTANT2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "implementsStaticReadOnlyAttr", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructorImplementsStaticReadOnlyAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "implementsStaticAttr", DontDelete, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructorImplementsStaticAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceConstructorImplementsStaticAttr) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "supplementalStaticReadOnlyAttr", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "supplementalStaticAttr", DontDelete, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructorSupplementalStaticAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceConstructorSupplementalStaticAttr) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "implementsMethod4", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestInterfaceConstructorFunctionImplementsMethod4), (intptr_t) (0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "supplementalMethod4", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestInterfaceConstructorFunctionSupplementalMethod4), (intptr_t) (0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
-    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestInterfaceConstructorTable = { 11, 7, true, JSTestInterfaceConstructorTableValues, 0 };
+static const HashTable JSTestInterfaceConstructorTable = { 10, 7, true, JSTestInterfaceConstructorTableValues, 0, JSTestInterfaceConstructorTableIndex };
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
 COMPILE_ASSERT(1 == TestInterface::IMPLEMENTSCONSTANT1, TestInterfaceEnumIMPLEMENTSCONSTANT1IsWrongUseDoNotCheckConstants);
@@ -167,61 +212,161 @@ ConstructType JSTestInterfaceConstructor::getConstructData(JSCell*, ConstructDat
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestInterfacePrototypeTableValues[] =
+static const struct CompactHashIndex JSTestInterfacePrototypeTableIndex[65] = {
+    { -1, -1 },
+    { 3, 64 },
+    { 14, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 13, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 10, -1 },
+    { -1, -1 },
+    { 5, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 4, -1 },
+    { -1, -1 },
+    { 0, -1 },
+    { -1, -1 },
+    { 7, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 15, -1 },
+    { 1, -1 },
+    { 6, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 11, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 8, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 16, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+    { 9, -1 },
+    { -1, -1 },
+    { 12, -1 },
+};
+
+
+static const HashTableValue JSTestInterfacePrototypeTableValues[17] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "implementsStr1", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "implementsStr2", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsStr2) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "implementsNode", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsNode), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsNode) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "supplementalStr1", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "supplementalStr2", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalStr2) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "supplementalNode", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalNode), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalNode) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "IMPLEMENTSCONSTANT1", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceIMPLEMENTSCONSTANT1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "IMPLEMENTSCONSTANT2", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceIMPLEMENTSCONSTANT2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "SUPPLEMENTALCONSTANT1", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSUPPLEMENTALCONSTANT1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "SUPPLEMENTALCONSTANT2", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSUPPLEMENTALCONSTANT2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "implementsMethod1", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestInterfacePrototypeFunctionImplementsMethod1), (intptr_t) (0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "implementsMethod2", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestInterfacePrototypeFunctionImplementsMethod2), (intptr_t) (2) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "implementsMethod3", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestInterfacePrototypeFunctionImplementsMethod3), (intptr_t) (0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "supplementalMethod1", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestInterfacePrototypeFunctionSupplementalMethod1), (intptr_t) (0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "supplementalMethod2", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestInterfacePrototypeFunctionSupplementalMethod2), (intptr_t) (2) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "supplementalMethod3", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestInterfacePrototypeFunctionSupplementalMethod3), (intptr_t) (0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
-    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestInterfacePrototypeTable = { 65, 63, true, JSTestInterfacePrototypeTableValues, 0 };
+static const HashTable JSTestInterfacePrototypeTable = { 17, 63, true, JSTestInterfacePrototypeTableValues, 0, JSTestInterfacePrototypeTableIndex };
 const ClassInfo JSTestInterfacePrototype::s_info = { "TestInterfacePrototype", &Base::s_info, &JSTestInterfacePrototypeTable, 0, CREATE_METHOD_TABLE(JSTestInterfacePrototype) };
 
 JSObject* JSTestInterfacePrototype::self(VM& vm, JSGlobalObject* globalObject)

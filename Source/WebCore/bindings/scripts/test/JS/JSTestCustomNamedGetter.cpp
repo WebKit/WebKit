@@ -34,21 +34,30 @@ namespace WebCore {
 
 /* Hash table */
 
-static const HashTableValue JSTestCustomNamedGetterTableValues[] =
+static const struct CompactHashIndex JSTestCustomNamedGetterTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
+
+static const HashTableValue JSTestCustomNamedGetterTableValues[1] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCustomNamedGetterConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestCustomNamedGetterTable = { 2, 1, true, JSTestCustomNamedGetterTableValues, 0 };
+static const HashTable JSTestCustomNamedGetterTable = { 1, 1, true, JSTestCustomNamedGetterTableValues, 0, JSTestCustomNamedGetterTableIndex };
 /* Hash table for constructor */
 
-static const HashTableValue JSTestCustomNamedGetterConstructorTableValues[] =
-{
-    { 0, 0, NoIntrinsic, 0, 0 }
+static const struct CompactHashIndex JSTestCustomNamedGetterConstructorTableIndex[1] = {
+    { -1, -1 },
 };
 
-static const HashTable JSTestCustomNamedGetterConstructorTable = { 1, 0, false, JSTestCustomNamedGetterConstructorTableValues, 0 };
+
+static const HashTableValue JSTestCustomNamedGetterConstructorTableValues[0] =
+{
+};
+
+static const HashTable JSTestCustomNamedGetterConstructorTable = { 0, 0, false, JSTestCustomNamedGetterConstructorTableValues, 0, JSTestCustomNamedGetterConstructorTableIndex };
 const ClassInfo JSTestCustomNamedGetterConstructor::s_info = { "TestCustomNamedGetterConstructor", &Base::s_info, &JSTestCustomNamedGetterConstructorTable, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetterConstructor) };
 
 JSTestCustomNamedGetterConstructor::JSTestCustomNamedGetterConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -71,13 +80,18 @@ bool JSTestCustomNamedGetterConstructor::getOwnPropertySlot(JSObject* object, Ex
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestCustomNamedGetterPrototypeTableValues[] =
-{
-    { "anotherFunction", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestCustomNamedGetterPrototypeFunctionAnotherFunction), (intptr_t) (1) },
-    { 0, 0, NoIntrinsic, 0, 0 }
+static const struct CompactHashIndex JSTestCustomNamedGetterPrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
 };
 
-static const HashTable JSTestCustomNamedGetterPrototypeTable = { 2, 1, false, JSTestCustomNamedGetterPrototypeTableValues, 0 };
+
+static const HashTableValue JSTestCustomNamedGetterPrototypeTableValues[1] =
+{
+    { "anotherFunction", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestCustomNamedGetterPrototypeFunctionAnotherFunction), (intptr_t) (1) },
+};
+
+static const HashTable JSTestCustomNamedGetterPrototypeTable = { 1, 1, false, JSTestCustomNamedGetterPrototypeTableValues, 0, JSTestCustomNamedGetterPrototypeTableIndex };
 const ClassInfo JSTestCustomNamedGetterPrototype::s_info = { "TestCustomNamedGetterPrototype", &Base::s_info, &JSTestCustomNamedGetterPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetterPrototype) };
 
 JSObject* JSTestCustomNamedGetterPrototype::self(VM& vm, JSGlobalObject* globalObject)
