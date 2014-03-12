@@ -228,6 +228,16 @@ if (isAppleMacWebKit()) {
         (system(@copyLibrariesArgs) == 0) or die;
     } else {
         push @projects, ("Source/WebKit2");
+        
+        if ($hasFTLJIT) {
+            my @copyLibrariesArgs = (
+                "perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory",
+                "--llvm", "--prefer-system-llvm", "--llvm-subdirectory", "internal-llvm",
+                productDir()
+            );
+            print(join(" ", @copyLibrariesArgs) . "\n");
+            (system(@copyLibrariesArgs) == 0) or die;
+        }
     }
 
     # Build Tools needed for Apple ports

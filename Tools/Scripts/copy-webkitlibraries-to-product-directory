@@ -36,6 +36,8 @@ my $wksi = 0;
 my $llvmIncludePackage = "";
 my $llvmLibraryPackage = "";
 my $useFullLibPaths = 0;
+my $preferSystemLLVMOverDrops = 0;
+my $llvmSubdirectoryName = "llvm";
 my $force = 0;
 
 my $programName = basename($0);
@@ -47,6 +49,8 @@ Usage: $programName [options]
   --use-llvm-includes=<path>    Get the LLVM inludes package from <path>
   --use-llvm-libraries=<path>   Get the LLVM libraries package from <path>
   --[no-]use-full-lib-paths     Toggle using full library paths
+  --[no-]prefer-system-llvm     Toggle preferring the system LLVM over the binary drops (default: $preferSystemLLVMOverDrops)
+  --llvm-subdirectory=<name>    Set the name of the LLVM subdirectory to search for (default: $llvmSubdirectoryName)
   --[no-]force                  Toggle forcing the copy - i.e. ignoring timestamps (default: $force)
 EOF
 
@@ -57,6 +61,8 @@ GetOptions(
     'use-llvm-includes=s' => \$llvmIncludePackage,
     'use-llvm-libraries=s' => \$llvmLibraryPackage,
     'use-full-lib-paths!' => \$useFullLibPaths,
+    'prefer-system-llvm!' => \$preferSystemLLVMOverDrops,
+    'llvm-subdirectory=s' => \$llvmSubdirectoryName,
     'force!' => \$force
 );
 
@@ -140,16 +146,23 @@ if ($llvm) {
     my $useOwnLLVM = 0;
     my $ownLLVMDirectory;
     if (defined($ENV{LLVM_SOURCE_PATH})) {
+        print "Using LLVM from \$LLVM_SOURE_PATH: " . $ENV{LLVM_SOURCE_PATH} . "\n";
         $useOwnLLVM = 1;
         $ownLLVMDirectory = $ENV{LLVM_SOURCE_PATH};
-    } elsif (-d "llvm" && -e "llvm/LLVMBuild.txt") {
+    } elsif (-d $llvmSubdirectoryName && -e "$llvmSubdirectoryName/LLVMBuild.txt") {
+        print "Using LLVM from $llvmSubdirectoryName subdirectory.\n";
         $useOwnLLVM = 1;
-        $ownLLVMDirectory = sourceDir() . "/llvm";
+        $ownLLVMDirectory = sourceDir() . "/$llvmSubdirectoryName";
     } elsif ($llvmLibraryPackage ne "" && $llvmIncludePackage ne "") {
         # Command-line arguments override our other ways of finding the packages.
+        print "Using LLVM binary drops specified on command-line: $llvmLibraryPackage and $llvmIncludePackage.\n";
     } elsif (defined($ENV{LLVM_LIBRARY_PACKAGE}) && defined($ENV{LLVM_INCLUDE_PACKAGE})) {
         $llvmLibraryPackage = $ENV{LLVM_LIBRARY_PACKAGE};
         $llvmIncludePackage = $ENV{LLVM_INCLUDE_PACKAGE};
+        print "Using LLVM binary drops specified by \$LLVM_LIBRARY_PACKAGE and \$LLVM_INCLUDE_PACKAGE: $llvmLibraryPackage and $llvmIncludePackage.\n";
+    } elsif ($preferSystemLLVMOverDrops) {
+        # Don't fall through to drop detection.
+        print "Using system LLVM.\n";
     } elsif ($majorDarwinVersion == 11) {
         $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesLion.tar.bz2";
         $llvmIncludePackage = "WebKitLibraries/LLVMIncludesLion.tar.bz2";
@@ -200,13 +213,18 @@ if ($llvm) {
         }
 
         print("Building LLVM.\n");
-        chdir "$ownLLVMDirectory/wkLLVMBuild";
         my $oldPath = $ENV{"PATH"};
+        chdir "$ownLLVMDirectory/wkLLVMBuild";
         my $binariesDirectory = "binariesForLLVMBuild";
+        my $pathCommand = "";
         if (-e $binariesDirectory) {
-            $ENV{"PATH"} = File::Spec->rel2abs($binariesDirectory) . ":" . $oldPath;
+            my $binariesPath = File::Spec->rel2abs($binariesDirectory);
+            print "Detected binaries directory; prepending to path: $binariesPath\n";
+            $pathCommand = "PATH=\\\$PWD/$binariesDirectory:\\\$PATH";
         }
-        (system("(unset PROJECT_NAME ; make -j `sysctl -n hw.activecpu`)") == 0) or die;
+        my $makeCommand = "env -i bash -l -c \"$pathCommand make -j `sysctl -n hw.activecpu`\"";
+        print $makeCommand . "\n";
+        (system($makeCommand) == 0) or die;
         $ENV{"PATH"} = $oldPath;
         chdirWebKit();
         
@@ -250,7 +268,7 @@ if ($llvm) {
             }
         }
         closedir $dirHandle;
-    } else {
+    } elsif (!$preferSystemLLVMOverDrops) {
         $shouldUpdateLLVMLibraryToken =
             unpackIfNecessary($libraryDir, "$libraryDir/libLLVMCore.a", $llvmLibraryPackage, 1);
     }
@@ -262,7 +280,7 @@ if ($llvm) {
         symlink("$ownLLVMDirectory/include/llvm", "$productDir/usr/local/LLVMForJavaScriptCore/include/llvm") or die;
         symlink("$ownLLVMDirectory/include/llvm-c", "$productDir/usr/local/LLVMForJavaScriptCore/include/llvm-c") or die;
         symlink("$ownLLVMDirectory/wkLLVMBuild/include", "$productDir/ExtraIncludesForLocalLLVMBuild") or die;
-    } else {
+    } elsif (!$preferSystemLLVMOverDrops) {
         unpackIfNecessary("$productDir/usr/local/LLVMForJavaScriptCore/include", "$productDir/usr/local/LLVMForJavaScriptCore/include/llvm-c/Core.h", $llvmIncludePackage, 0);
     }
 
