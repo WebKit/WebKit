@@ -32,4 +32,37 @@ if (!function_exists('file_put_contents')) {
     }
 }
 
+if (!function_exists('stream_copy_to_stream')) {
+    function stream_copy_to_stream($source, $dest)
+    {
+        $result = 0;
+        while (!feof($source)) {
+            $bytesWritten = fwrite($dest, fread($source, 8192));
+            if (!$bytesWritten)
+                return FALSE;
+            $result = $result + $bytesWritten;
+        }
+
+        return $result;
+    }
+}
+
+if (!function_exists('scandir')) {
+    function scandir($dir)
+    {
+        if (!is_dir($dir))
+            return FALSE;
+
+        $dh = opendir($dir);
+        while ($filename = readdir($dh)) {
+            $files[] = $filename;
+        }
+
+        closedir($dh);
+        sort($files);
+
+        return $files;
+    }
+}
+
 ?>
