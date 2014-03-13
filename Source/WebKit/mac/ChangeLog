@@ -1,3 +1,14 @@
+2014-03-12  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Remove unused callId parameter from evaluateInWebInspector
+        https://bugs.webkit.org/show_bug.cgi?id=129744
+
+        Reviewed by Timothy Hatcher.
+
+        * WebInspector/WebInspector.mm:
+        (-[WebInspector evaluateInFrontend:script:]):
+        * WebInspector/WebInspectorPrivate.h:
+
 2014-03-12  Dean Jackson  <dino@apple.com>
 
         [WebGL] WebKit1 + WebKit2 iOS clients should check load policy

@@ -36,7 +36,6 @@
 #include "InspectorJSFrontendDispatchers.h"
 #include "inspector/InspectorAgentBase.h"
 #include <wtf/Forward.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace Inspector {
@@ -61,12 +60,12 @@ public:
     virtual void disable(ErrorString*) override;
 
     void inspect(PassRefPtr<TypeBuilder::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints);
-    void evaluateForTestInFrontend(long testCallId, const String& script);
+    void evaluateForTestInFrontend(const String& script);
 
 private:
     std::unique_ptr<InspectorInspectorFrontendDispatcher> m_frontendDispatcher;
     RefPtr<InspectorInspectorBackendDispatcher> m_backendDispatcher;
-    Vector<std::pair<long, String>> m_pendingEvaluateTestCommands;
+    Vector<String> m_pendingEvaluateTestCommands;
     std::pair<RefPtr<TypeBuilder::Runtime::RemoteObject>, RefPtr<InspectorObject>> m_pendingInspectData;
     bool m_enabled;
 };

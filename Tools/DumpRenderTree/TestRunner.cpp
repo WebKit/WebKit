@@ -1579,12 +1579,10 @@ static JSValueRef closeWebInspectorCallback(JSContextRef context, JSObjectRef fu
 static JSValueRef evaluateInWebInspectorCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    double callId = JSValueToNumber(context, arguments[0], exception);
-    ASSERT(!*exception);
-    JSRetainPtr<JSStringRef> script(Adopt, JSValueToStringCopy(context, arguments[1], exception));
+    JSRetainPtr<JSStringRef> script(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
-    controller->evaluateInWebInspector(static_cast<long>(callId), script.get());
+    controller->evaluateInWebInspector(script.get());
     return JSValueMakeUndefined(context);
 }
 

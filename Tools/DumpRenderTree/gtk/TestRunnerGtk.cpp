@@ -51,7 +51,7 @@
 #include <wtf/text/WTFString.h>
 
 extern "C" {
-void webkit_web_inspector_execute_script(WebKitWebInspector* inspector, long callId, const gchar* script);
+void webkit_web_inspector_execute_script(WebKitWebInspector* inspector, const gchar* script);
 }
 
 TestRunner::~TestRunner()
@@ -767,13 +767,13 @@ void TestRunner::closeWebInspector()
     webkit_web_inspector_close(inspector);
 }
 
-void TestRunner::evaluateInWebInspector(long callId, JSStringRef script)
+void TestRunner::evaluateInWebInspector(JSStringRef script)
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
     WebKitWebInspector* inspector = webkit_web_view_get_inspector(webView);
     char* scriptString = JSStringCopyUTF8CString(script);
 
-    webkit_web_inspector_execute_script(inspector, callId, scriptString);
+    webkit_web_inspector_execute_script(inspector, scriptString);
     g_free(scriptString);
 }
 

@@ -54,7 +54,7 @@ InspectorBackend.registerCommand("Debugger.setOverlayMessage", [{"name": "messag
 
 // Inspector.
 InspectorBackend.registerInspectorDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Inspector");
-InspectorBackend.registerEvent("Inspector.evaluateForTestInFrontend", ["testCallId", "script"]);
+InspectorBackend.registerEvent("Inspector.evaluateForTestInFrontend", ["script"]);
 InspectorBackend.registerEvent("Inspector.inspect", ["object", "hints"]);
 InspectorBackend.registerEvent("Inspector.detached", ["reason"]);
 InspectorBackend.registerEvent("Inspector.targetCrashed", []);

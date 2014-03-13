@@ -15,7 +15,6 @@
         {
             "name": "evaluateForTestInFrontend",
             "parameters": [
-                { "name": "testCallId", "type": "integer" },
                 { "name": "script", "type": "string" }
             ]
         },

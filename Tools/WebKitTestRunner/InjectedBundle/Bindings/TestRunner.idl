@@ -123,7 +123,7 @@ interface TestRunner {
     // For Web Inspector tests
     void showWebInspector();
     void closeWebInspector();
-    void evaluateInWebInspector(long callID, DOMString script);
+    void evaluateInWebInspector(DOMString script);
 
     void setPOSIXLocale(DOMString locale);
 

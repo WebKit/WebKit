@@ -114,7 +114,7 @@ public:
 
     bool isUnderTest() const { return m_isUnderTest; }
     void setIsUnderTest(bool isUnderTest) { m_isUnderTest = isUnderTest; }
-    void evaluateForTestInFrontend(long callId, const String& script);
+    void evaluateForTestInFrontend(const String& script);
 
     bool profilerEnabled() const;
     void setProfilerEnabled(bool);

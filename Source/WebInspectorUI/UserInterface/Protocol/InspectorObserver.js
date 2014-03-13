@@ -33,8 +33,7 @@ WebInspector.InspectorObserver.prototype = {
 
     // Events defined by the "Inspector" domain.
 
-    // FIXME: Remove plumbing for callIdentifier parameter from backend, as it's not used.
-    evaluateForTestInFrontend: function(callIdentifier, script)
+    evaluateForTestInFrontend: function(script)
     {
         if (!InspectorFrontendHost.isUnderTest())
             return;

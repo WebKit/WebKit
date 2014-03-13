@@ -973,7 +973,7 @@ void TestRunner::closeWebInspector()
     inspector->close();
 }
 
-void TestRunner::evaluateInWebInspector(long callId, JSStringRef script)
+void TestRunner::evaluateInWebInspector(JSStringRef script)
 {
     COMPtr<IWebView> webView;
     if (FAILED(frame->webView(&webView)))
@@ -991,7 +991,7 @@ void TestRunner::evaluateInWebInspector(long callId, JSStringRef script)
     if (!inspectorPrivate)
         return;
 
-    inspectorPrivate->evaluateInFrontend(callId, bstrT(script).GetBSTR());
+    inspectorPrivate->evaluateInFrontend(bstrT(script).GetBSTR());
 }
 
 typedef HashMap<unsigned, COMPtr<IWebScriptWorld> > WorldMap;

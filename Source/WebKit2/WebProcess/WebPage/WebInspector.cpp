@@ -231,9 +231,9 @@ void WebInspector::detached()
         m_frontendClient->setAttachedWindow(InspectorFrontendClient::UNDOCKED);
 }
 
-void WebInspector::evaluateScriptForTest(long callID, const String& script)
+void WebInspector::evaluateScriptForTest(const String& script)
 {
-    m_page->corePage()->inspectorController().evaluateForTestInFrontend(callID, script);
+    m_page->corePage()->inspectorController().evaluateForTestInFrontend(script);
 }
 
 void WebInspector::showConsole()

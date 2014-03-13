@@ -310,9 +310,9 @@ void InspectorController::setProcessId(long processId)
     IdentifiersFactory::setProcessId(processId);
 }
 
-void InspectorController::evaluateForTestInFrontend(long callId, const String& script)
+void InspectorController::evaluateForTestInFrontend(const String& script)
 {
-    m_inspectorAgent->evaluateForTestInFrontend(callId, script);
+    m_inspectorAgent->evaluateForTestInFrontend(script);
 }
 
 void InspectorController::drawHighlight(GraphicsContext& context) const

@@ -56,10 +56,10 @@ void WKBundleInspectorClose(WKBundleInspectorRef inspectorRef)
 #endif
 }
 
-void WKBundleInspectorEvaluateScriptForTest(WKBundleInspectorRef inspectorRef, long callID, WKStringRef script)
+void WKBundleInspectorEvaluateScriptForTest(WKBundleInspectorRef inspectorRef, WKStringRef script)
 {
 #if ENABLE(INSPECTOR)
-    toImpl(inspectorRef)->evaluateScriptForTest(callID, toWTFString(script));
+    toImpl(inspectorRef)->evaluateScriptForTest(toWTFString(script));
 #endif
 }
 

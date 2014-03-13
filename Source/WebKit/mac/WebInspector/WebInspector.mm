@@ -182,10 +182,10 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
     [_frontend detach];
 }
 
-- (void)evaluateInFrontend:(id)sender callId:(long)callId script:(NSString *)script
+- (void)evaluateInFrontend:(id)sender script:(NSString *)script
 {
     if (Page* page = core(_webView))
-        page->inspectorController().evaluateForTestInFrontend(callId, script);
+        page->inspectorController().evaluateForTestInFrontend(script);
 }
 
 - (void)setFrontend:(WebInspectorFrontend *)frontend

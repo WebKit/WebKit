@@ -198,7 +198,7 @@ public:
 
     void showWebInspector();
     void closeWebInspector();
-    void evaluateInWebInspector(long callId, JSStringRef script);
+    void evaluateInWebInspector(JSStringRef script);
 
     void setPOSIXLocale(JSStringRef);
 

@@ -453,15 +453,14 @@ bool DumpRenderTreeSupportEfl::isTargetItem(const Ewk_History_Item* ewkHistoryIt
     return historyItem->isTargetItem();
 }
 
-void DumpRenderTreeSupportEfl::evaluateInWebInspector(const Evas_Object* ewkView, long callId, const String& script)
+void DumpRenderTreeSupportEfl::evaluateInWebInspector(const Evas_Object* ewkView, const String& script)
 {
 #if ENABLE(INSPECTOR)
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
 
-    page->inspectorController().evaluateForTestInFrontend(callId, script);
+    page->inspectorController().evaluateForTestInFrontend(script);
 #else
     UNUSED_PARAM(ewkView);
-    UNUSED_PARAM(callId);
     UNUSED_PARAM(script);
 #endif
 }

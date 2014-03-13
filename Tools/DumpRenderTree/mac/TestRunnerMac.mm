@@ -829,12 +829,12 @@ void TestRunner::closeWebInspector()
 #endif
 }
 
-void TestRunner::evaluateInWebInspector(long callId, JSStringRef script)
+void TestRunner::evaluateInWebInspector(JSStringRef script)
 {
 #if ENABLE(INSPECTOR)
     RetainPtr<CFStringRef> scriptCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, script));
     NSString *scriptNS = (NSString *)scriptCF.get();
-    [[[mainFrame webView] inspector] evaluateInFrontend:nil callId:callId script:scriptNS];
+    [[[mainFrame webView] inspector] evaluateInFrontend:nil script:scriptNS];
 #endif
 }
 

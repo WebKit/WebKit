@@ -31,7 +31,7 @@ void webkit_web_inspector_set_web_view(WebKitWebInspector*, WebKitWebView*);
 
 void webkit_web_inspector_set_inspected_uri(WebKitWebInspector*, const gchar*);
 
-WEBKIT_API void webkit_web_inspector_execute_script(WebKitWebInspector*, long callId, const gchar* script);
+WEBKIT_API void webkit_web_inspector_execute_script(WebKitWebInspector*, const gchar* script);
 
 }
 

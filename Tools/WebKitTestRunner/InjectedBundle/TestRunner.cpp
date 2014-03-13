@@ -412,11 +412,11 @@ void TestRunner::closeWebInspector()
 #endif // ENABLE(INSPECTOR)
 }
 
-void TestRunner::evaluateInWebInspector(long callID, JSStringRef script)
+void TestRunner::evaluateInWebInspector(JSStringRef script)
 {
 #if ENABLE(INSPECTOR)
     WKRetainPtr<WKStringRef> scriptWK = toWK(script);
-    WKBundleInspectorEvaluateScriptForTest(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()), callID, scriptWK.get());
+    WKBundleInspectorEvaluateScriptForTest(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()), scriptWK.get());
 #endif // ENABLE(INSPECTOR)
 }
 

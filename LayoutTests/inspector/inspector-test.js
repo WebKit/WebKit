@@ -88,11 +88,11 @@ function runTest()
     }
 
     var codeStringToEvaluate = "(" + runInitializationMethodsInFrontend.toString() + ")([" + InspectorTestProxy._initializers + "]);";
-    testRunner.evaluateInWebInspector(0, codeStringToEvaluate);
+    testRunner.evaluateInWebInspector(codeStringToEvaluate);
 
     // `test` refers to a function defined in global scope in the test HTML page.
     codeStringToEvaluate = "(" + runTestMethodInFrontend.toString() + ")(" + test.toString() + ");";
-    testRunner.evaluateInWebInspector(0, codeStringToEvaluate);
+    testRunner.evaluateInWebInspector(codeStringToEvaluate);
 }
 
 InspectorTestProxy.completeTest = function()

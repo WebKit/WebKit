@@ -35,8 +35,6 @@
 
 #include "InspectorValues.h"
 #include "ScriptValue.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
 
 namespace Inspector {
 
@@ -74,8 +72,13 @@ void InspectorAgent::enable(ErrorString*)
     if (m_pendingInspectData.first)
         inspect(m_pendingInspectData.first, m_pendingInspectData.second);
 
-    for (Vector<std::pair<long, String>>::iterator it = m_pendingEvaluateTestCommands.begin(); m_frontendDispatcher && it != m_pendingEvaluateTestCommands.end(); ++it)
-        m_frontendDispatcher->evaluateForTestInFrontend(static_cast<int>((*it).first), (*it).second);
+    for (auto& testCommand : m_pendingEvaluateTestCommands) {
+        if (!m_frontendDispatcher)
+            break;
+
+        m_frontendDispatcher->evaluateForTestInFrontend(testCommand);
+    }
+
     m_pendingEvaluateTestCommands.clear();
 }
 
@@ -97,12 +100,12 @@ void InspectorAgent::inspect(PassRefPtr<TypeBuilder::Runtime::RemoteObject> obje
     m_pendingInspectData.second = hints;
 }
 
-void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script)
+void InspectorAgent::evaluateForTestInFrontend(const String& script)
 {
     if (m_enabled && m_frontendDispatcher)
-        m_frontendDispatcher->evaluateForTestInFrontend(static_cast<int>(callId), script);
+        m_frontendDispatcher->evaluateForTestInFrontend(script);
     else
-        m_pendingEvaluateTestCommands.append(std::pair<long, String>(callId, script));
+        m_pendingEvaluateTestCommands.append(script);
 }
 
 } // namespace Inspector

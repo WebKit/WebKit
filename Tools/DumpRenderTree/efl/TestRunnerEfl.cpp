@@ -687,9 +687,9 @@ void TestRunner::closeWebInspector()
     ewk_view_inspector_close(browser->mainView());
 }
 
-void TestRunner::evaluateInWebInspector(long callId, JSStringRef script)
+void TestRunner::evaluateInWebInspector(JSStringRef script)
 {
-    DumpRenderTreeSupportEfl::evaluateInWebInspector(browser->mainView(), callId, script->string());
+    DumpRenderTreeSupportEfl::evaluateInWebInspector(browser->mainView(), script->string());
 }
 
 void TestRunner::evaluateScriptInIsolatedWorldAndReturnValue(unsigned, JSObjectRef, JSStringRef)
