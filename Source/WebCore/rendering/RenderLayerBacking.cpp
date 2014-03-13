@@ -739,6 +739,8 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 
     LayoutPoint offsetFromParent;
     m_owningLayer.convertToLayerCoords(compAncestor, offsetFromParent, RenderLayer::AdjustForColumns);
+    // Device pixel fractions get accumulated through ancestor layers. Our painting offset is layout offset + parent's painting offset.
+    offsetFromParent = offsetFromParent + (compAncestor ? compAncestor->backing()->devicePixelFractionFromRenderer() : LayoutSize());
     relativeCompositingBounds.moveBy(offsetFromParent);
 
     LayoutRect enclosingRelativeCompositingBounds = LayoutRect(enclosingRectForPainting(relativeCompositingBounds, deviceScaleFactor));

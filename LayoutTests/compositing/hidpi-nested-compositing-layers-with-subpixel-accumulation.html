@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that nested compositing layers with subpixel accumulation paint to the same position as regular, non-compositing content.</title>
+<style>
+  div {
+    width: 5px;
+    height: 2px;
+    left: 0px;
+    position: absolute;
+    -webkit-transform: translateZ(0);
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  left = 0;
+  for (i = 0; i < 10; ++i, left+=6.3) {
+    var container = document.getElementById("container");
+    for (j = 0; j < 50; ++j) {
+      var e = document.createElement("div");
+      e.style.top = "1.3px";
+      if (j == 0)
+        e.style.left = left + "px";
+      e.style.backgroundColor = "rgb(0, 0, " + (j * 4) + ")";
+      container.appendChild(e);
+      container = e;
+    }
+  }
+</script>
+</body>
+</html>

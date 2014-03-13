@@ -4167,14 +4167,15 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext* context, const 
     // This involves subtracting out the position of the layer in our current coordinate space, but preserving
     // the accumulated error for sub-pixel layout.
     float deviceScaleFactor = renderer().document().deviceScaleFactor();
-    LayoutPoint delta;
-    convertToLayerCoords(paintingInfo.rootLayer, delta);
-    delta.moveBy(translationOffset);
+    LayoutPoint offsetFromParent;
+    convertToLayerCoords(paintingInfo.rootLayer, offsetFromParent);
+    offsetFromParent.moveBy(translationOffset);
     TransformationMatrix transform(renderableTransform(paintingInfo.paintBehavior));
-    FloatPoint roundedDelta = roundedForPainting(delta, deviceScaleFactor);
-    transform.translateRight(roundedDelta.x(), roundedDelta.y());
-    LayoutSize adjustedSubPixelAccumulation = paintingInfo.subPixelAccumulation + (delta - LayoutPoint(roundedDelta));
-
+    FloatPoint devicePixelFlooredOffsetFromParent = flooredForPainting(offsetFromParent, deviceScaleFactor);
+    transform.translateRight(devicePixelFlooredOffsetFromParent.x(), devicePixelFlooredOffsetFromParent.y());
+    // We handle accumulated subpixels through nested layers here. Since the context gets translated with floored device pixel value,
+    // all we need to do is add the difference to the accumulated pixels coming from ancestor layers.
+    LayoutSize adjustedSubPixelAccumulation = paintingInfo.subPixelAccumulation + (offsetFromParent - LayoutPoint(devicePixelFlooredOffsetFromParent));
     // Apply the transform.
     GraphicsContextStateSaver stateSaver(*context);
     context->concatCTM(transform.toAffineTransform());

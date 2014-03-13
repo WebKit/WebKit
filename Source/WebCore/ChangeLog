@@ -1,3 +1,37 @@
+2014-03-13  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Nested layers with subpixel accumulation paint to wrong position.
+        https://bugs.webkit.org/show_bug.cgi?id=130153
+
+        Reviewed by Simon Fraser.
+
+        Subpixels (fractional device pixels here) can accumulate through nested layers. Subpixels
+        need to be propagated through the layer tree so that painting coordinates match layout coordinates.
+        
+        Compositing case: (absolute positioning, 2x display)
+        parent layer pos(0.3, 0.3) -> floored painting position (0, 0)
+        child layer pos(10.2, 10.2) -> layout offset from parent (10.2, 10.2), 
+        but the actual painting offset is (10.5, 10.5) as the result of parent flooring.
+        
+        Non-compositing case: (absolute positioning, 2x display)
+        parent layer pos(0.3, 0.3) -> GraphicsContext is translated to (0, 0).
+        child layer pos(10.2, 10.2) -> layout offset from parent (10.2, 10.2)
+        but the GraphicsContext's offset is (10.5, 10.5) as the result of the parent's translate.   
+
+        In both cases, without the subpixel adjustment, we'd paint the current layer at (10.0, 10.0)
+        after flooring, while its painting position is actually (10.5, 10.5).
+        Subpixels do accumulate through nested layers.
+
+        Tests: compositing/hidpi-nested-compositing-layers-with-subpixel-accumulation.html
+               fast/layers/hidpi-nested-layers-with-subpixel-accumulation.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerByApplyingTransform):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        * rendering/RenderLayerBacking.h:
+        (WebCore::RenderLayerBacking::devicePixelFractionFromRenderer):
+
 2014-03-13  Radu Stavila  <stavila@adobe.com>
 
         The scrolledContentOffset method should handle the hasOverflowClip check
