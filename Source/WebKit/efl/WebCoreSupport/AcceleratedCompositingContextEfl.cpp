@@ -22,41 +22,31 @@
 #if USE(TEXTURE_MAPPER_GL)
 
 #include "AcceleratedCompositingContextEfl.h"
-#include "FrameView.h"
 #include "GraphicsLayerTextureMapper.h"
-#include "HostWindow.h"
 #include "MainFrame.h"
 #include "TextureMapperGL.h"
 #include "TextureMapperLayer.h"
 #include "ewk_view_private.h"
 
+const double compositingFrameRate = 60;
+
 namespace WebCore {
 
-PassOwnPtr<AcceleratedCompositingContext> AcceleratedCompositingContext::create(HostWindow* hostWindow)
+AcceleratedCompositingContext::AcceleratedCompositingContext(Evas_Object* ewkView, Evas_Object* compositingObject)
+    : m_view(ewkView)
+    , m_compositingObject(compositingObject)
+    , m_syncTimer(this, &AcceleratedCompositingContext::syncLayers)
 {
-    OwnPtr<AcceleratedCompositingContext> context = adoptPtr(new AcceleratedCompositingContext);
-    if (!context->initialize(hostWindow))
-        return nullptr;
-
-    return context.release();
-}
-
-AcceleratedCompositingContext::AcceleratedCompositingContext()
-    : m_view(0)
-    , m_rootTextureMapperLayer(0)
-{
+    ASSERT(m_view);
+    ASSERT(m_compositingObject);
 }
 
 AcceleratedCompositingContext::~AcceleratedCompositingContext()
 {
 }
 
-bool AcceleratedCompositingContext::initialize(HostWindow* hostWindow)
+bool AcceleratedCompositingContext::initialize()
 {
-    m_view = hostWindow->platformPageClient();
-    if (!m_view)
-        return false;
-
     m_evasGL = adoptPtr(evas_gl_new(evas_object_evas_get(m_view)));
     if (!m_evasGL)
         return false;
@@ -76,6 +66,11 @@ bool AcceleratedCompositingContext::initialize(HostWindow* hostWindow)
     return resize(webViewSize);
 }
 
+void AcceleratedCompositingContext::syncLayers(Timer<AcceleratedCompositingContext>*)
+{
+    ewk_view_mark_for_sync(m_view);
+}
+
 bool AcceleratedCompositingContext::resize(const IntSize& size)
 {
     static Evas_GL_Config evasGLConfig = {
@@ -90,33 +85,62 @@ bool AcceleratedCompositingContext::resize(const IntSize& size)
     if (!m_evasGLSurface)
         return false;
 
+    Evas_Native_Surface nativeSurface;
+    evas_gl_native_surface_get(m_evasGL.get(), m_evasGLSurface->surface(), &nativeSurface);
+    evas_object_image_native_surface_set(m_compositingObject, &nativeSurface);
     return true;
 }
 
-void AcceleratedCompositingContext::syncLayersNow()
+bool AcceleratedCompositingContext::canComposite()
 {
-    if (m_rootGraphicsLayer)
-        m_rootGraphicsLayer->flushCompositingStateForThisLayerOnly();
-
-    EWKPrivate::corePage(m_view)->mainFrame().view()->flushCompositingStateIncludingSubframes();
+    return m_rootGraphicsLayer && m_textureMapper;
 }
 
-void AcceleratedCompositingContext::renderLayers()
+void AcceleratedCompositingContext::flushAndRenderLayers()
 {
-    if (!m_rootGraphicsLayer)
+    if (!canComposite())
+        return;
+
+    MainFrame& frame = EWKPrivate::corePage(m_view)->mainFrame();
+    if (!frame.contentRenderer() || !frame.view())
+        return;
+    frame.view()->updateLayoutAndStyleIfNeededRecursive();
+
+    if (!canComposite())
         return;
 
     if (!evas_gl_make_current(m_evasGL.get(), m_evasGLSurface->surface(), m_evasGLContext->context()))
         return;
 
+    if (!flushPendingLayerChanges())
+        return;
+
+    compositeLayersToContext();
+
+    if (toTextureMapperLayer(m_rootGraphicsLayer.get())->descendantsOrSelfHaveRunningAnimations() && !m_syncTimer.isActive())
+        m_syncTimer.startOneShot(1 / compositingFrameRate);
+}
+
+bool AcceleratedCompositingContext::flushPendingLayerChanges()
+{
+    m_rootGraphicsLayer->flushCompositingStateForThisLayerOnly();
+    return EWKPrivate::corePage(m_view)->mainFrame().view()->flushCompositingStateIncludingSubframes();
+}
+
+void AcceleratedCompositingContext::compositeLayersToContext()
+{
     Evas_Coord width = 0;
     Evas_Coord height = 0;
     evas_object_geometry_get(m_view, 0, 0, &width, &height);
+
     evas_gl_api_get(m_evasGL.get())->glViewport(0, 0, width, height);
+    evas_gl_api_get(m_evasGL.get())->glClear(GL_COLOR_BUFFER_BIT);
 
     m_textureMapper->beginPainting();
-    m_rootTextureMapperLayer->paint();
+    m_textureMapper->beginClip(TransformationMatrix(), FloatRect(0, 0, width, height));
+    toTextureMapperLayer(m_rootGraphicsLayer.get())->paint();
     m_fpsCounter.updateFPSAndDisplay(m_textureMapper.get());
+    m_textureMapper->endClip();
     m_textureMapper->endPainting();
 }
 
@@ -124,19 +148,21 @@ void AcceleratedCompositingContext::attachRootGraphicsLayer(GraphicsLayer* rootL
 {
     if (!rootLayer) {
         m_rootGraphicsLayer = nullptr;
-        m_rootTextureMapperLayer = 0;
         return;
     }
 
-    m_rootGraphicsLayer = WebCore::GraphicsLayer::create(0, 0);
-    m_rootTextureMapperLayer = toTextureMapperLayer(m_rootGraphicsLayer.get());
+    if (!m_textureMapper) {
+        evas_gl_make_current(m_evasGL.get(), m_evasGLSurface->surface(), m_evasGLContext->context());
+        m_textureMapper = TextureMapperGL::create();
+    }
+
+    m_rootGraphicsLayer = GraphicsLayer::create(0, 0);
     m_rootGraphicsLayer->addChild(rootLayer);
     m_rootGraphicsLayer->setDrawsContent(false);
     m_rootGraphicsLayer->setMasksToBounds(false);
-    m_rootGraphicsLayer->setSize(WebCore::IntSize(1, 1));
+    m_rootGraphicsLayer->setSize(IntSize(1, 1));
 
-    m_textureMapper = TextureMapperGL::create();
-    m_rootTextureMapperLayer->setTextureMapper(m_textureMapper.get());
+    toTextureMapperLayer(m_rootGraphicsLayer.get())->setTextureMapper(m_textureMapper.get());
 
     m_rootGraphicsLayer->flushCompositingStateForThisLayerOnly();
 }

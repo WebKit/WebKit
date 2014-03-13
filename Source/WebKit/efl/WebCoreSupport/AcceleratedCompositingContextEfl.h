@@ -24,6 +24,7 @@
 #include "EvasGLContext.h"
 #include "EvasGLSurface.h"
 #include "TextureMapperFPSCounter.h"
+#include "Timer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 
@@ -37,25 +38,29 @@ class TextureMapperLayer;
 class AcceleratedCompositingContext {
     WTF_MAKE_NONCOPYABLE(AcceleratedCompositingContext);
 public:
-    static PassOwnPtr<AcceleratedCompositingContext> create(HostWindow*);
-    virtual ~AcceleratedCompositingContext();
+    AcceleratedCompositingContext(Evas_Object* ewkView, Evas_Object* compositingObject);
+    ~AcceleratedCompositingContext();
+
+    bool initialize();
 
     bool resize(const IntSize&);
+    void attachRootGraphicsLayer(GraphicsLayer* rootLayer);
 
-    virtual void syncLayersNow();
-    virtual void renderLayers();
-    virtual void attachRootGraphicsLayer(GraphicsLayer* rootLayer);
+    void flushAndRenderLayers();
+    bool flushPendingLayerChanges();
+    void compositeLayersToContext();
+
+    bool canComposite();
+
+    void syncLayers(Timer<AcceleratedCompositingContext>*);
 
 private:
-    AcceleratedCompositingContext();
-
-    virtual bool initialize(HostWindow*);
-
     Evas_Object* m_view;
+    Evas_Object* m_compositingObject;
 
     OwnPtr<TextureMapper> m_textureMapper;
     std::unique_ptr<GraphicsLayer> m_rootGraphicsLayer;
-    TextureMapperLayer* m_rootTextureMapperLayer;
+    Timer<AcceleratedCompositingContext> m_syncTimer;
 
     OwnPtr<Evas_GL> m_evasGL;
     OwnPtr<EvasGLContext> m_evasGLContext;

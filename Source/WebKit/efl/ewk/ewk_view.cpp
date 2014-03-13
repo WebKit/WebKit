@@ -254,7 +254,7 @@ struct _Ewk_View_Private_Data {
     OwnPtr<WebCore::Page> page;
     WebCore::ViewportArguments viewportArguments;
     Ewk_History* history;
-    OwnPtr<WebCore::AcceleratedCompositingContext> acceleratedCompositingContext;
+    std::unique_ptr<WebCore::AcceleratedCompositingContext> acceleratedCompositingContext;
     bool isCompositingActive;
     RefPtr<Evas_Object> compositingObject;
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -746,7 +746,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     pageSettings.setFullScreenEnabled(true);
 #endif
     pageSettings.setInteractiveFormValidationEnabled(true);
-    pageSettings.setAcceleratedCompositingEnabled(false);
+    pageSettings.setAcceleratedCompositingEnabled(true);
     char* debugVisualsEnvironment = getenv("WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS");
     bool showDebugVisuals = debugVisualsEnvironment && !strcmp(debugVisualsEnvironment, "1");
     pageSettings.setShowDebugBorders(showDebugVisuals);
@@ -4630,10 +4630,8 @@ void _ewk_view_accelerated_compositing_cb(void* data, Evas_Object*)
 {
     Ewk_View_Private_Data* priv = static_cast<Ewk_View_Private_Data*>(data);
 
-    if (priv->isCompositingActive) {
-        priv->acceleratedCompositingContext->syncLayersNow();
-        priv->acceleratedCompositingContext->renderLayers();
-    }
+    if (priv->isCompositingActive)
+        priv->acceleratedCompositingContext->flushAndRenderLayers();
 }
 
 bool _ewk_view_accelerated_compositing_context_create_if_needed(Evas_Object* ewkView)
@@ -4642,9 +4640,11 @@ bool _ewk_view_accelerated_compositing_context_create_if_needed(Evas_Object* ewk
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
     if (!priv->acceleratedCompositingContext) {
-        priv->acceleratedCompositingContext = WebCore::AcceleratedCompositingContext::create(&priv->page->chrome());
-        if (!priv->acceleratedCompositingContext)
+        priv->acceleratedCompositingContext = std::make_unique<WebCore::AcceleratedCompositingContext>(ewkView, priv->compositingObject.get());
+        if (!priv->acceleratedCompositingContext->initialize()) {
+            priv->acceleratedCompositingContext = nullptr;
             return false;
+        }
     }
     return true;
 }
