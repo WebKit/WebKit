@@ -1971,7 +1971,7 @@ sub removeCMakeCache(@)
 
 sub canUseNinja(@)
 {
-    system('ninja --version > /dev/null');
+    system('ninja --version > /dev/null 2>&1');
     return $? == 0;
 }
 

@@ -1,3 +1,13 @@
+2014-03-13  Jozsef Berta  <jberta.u-szeged@partner.samsung.com>
+
+        [GTK] build-webkit shouldn't show error message when ninja isn't installed
+        https://bugs.webkit.org/show_bug.cgi?id=130129
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitdirs.pm:
+        (canUseNinja): Redirecting stderr to /dev/null
+
 2014-03-13  Andres Gomez  <agomez@igalia.com>
 
         [GTK] "Tools/jhbuild/jhbuild-wrapper --gtk" build fails even after running Tools/gtk/install-dependencies due to missing proper libxml2 python bindings
