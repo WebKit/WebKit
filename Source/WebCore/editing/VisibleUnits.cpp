@@ -936,9 +936,7 @@ bool isEndOfLine(const VisiblePosition& p)
 static inline IntPoint absoluteLineDirectionPointToLocalPointInBlock(RootInlineBox& root, int lineDirectionPoint)
 {
     RenderBlockFlow& containingBlock = root.blockFlow();
-    FloatPoint absoluteBlockPoint = containingBlock.localToAbsolute(FloatPoint());
-    if (containingBlock.hasOverflowClip())
-        absoluteBlockPoint -= containingBlock.scrolledContentOffset();
+    FloatPoint absoluteBlockPoint = containingBlock.localToAbsolute(FloatPoint()) - containingBlock.scrolledContentOffset();
 
     if (containingBlock.isHorizontalWritingMode())
         return IntPoint(lineDirectionPoint - absoluteBlockPoint.x(), root.blockDirectionPointInLine());

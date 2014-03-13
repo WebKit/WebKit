@@ -2330,8 +2330,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
     // Adjust our painting position if we're inside a scrolled layer (e.g., an overflow:auto div).
     LayoutPoint scrolledOffset = paintOffset;
-    if (hasOverflowClip())
-        scrolledOffset.move(-scrolledContentOffset());
+    scrolledOffset.move(-scrolledContentOffset());
 
     // 2. paint contents
     if (paintPhase != PaintPhaseSelfOutline) {
@@ -2510,10 +2509,7 @@ GapRects RenderBlock::selectionGapRectsForRepaint(const RenderLayerModelObject* 
 
     TransformState transformState(TransformState::ApplyTransformDirection, FloatPoint());
     mapLocalToContainer(repaintContainer, transformState, ApplyContainerFlip | UseTransforms);
-    LayoutPoint offsetFromRepaintContainer = roundedLayoutPoint(transformState.mappedPoint());
-
-    if (hasOverflowClip())
-        offsetFromRepaintContainer -= scrolledContentOffset();
+    LayoutPoint offsetFromRepaintContainer = roundedLayoutPoint(transformState.mappedPoint()) - scrolledContentOffset();
 
     LogicalSelectionOffsetCaches cache(*this);
     LayoutUnit lastTop = 0;
@@ -2541,7 +2537,7 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, const LayoutPoint& paintO
                     LayoutRect localBounds(gapRectsBounds);
                     flipForWritingMode(localBounds);
                     gapRectsBounds = localToContainerQuad(FloatRect(localBounds), &layer->renderer()).enclosingBoundingBox();
-                    if (layer->renderer().hasOverflowClip())
+                    if (layer->renderer().isBox())
                         gapRectsBounds.move(layer->renderBox()->scrolledContentOffset());
                 }
                 layer->addBlockSelectionGapsBounds(gapRectsBounds);
@@ -3175,9 +3171,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     bool checkChildren = !useClip || (hasControlClip() ? locationInContainer.intersects(controlClipRect(adjustedLocation)) : locationInContainer.intersects(overflowClipRect(adjustedLocation, locationInContainer.region(), IncludeOverlayScrollbarSize)));
     if (checkChildren) {
         // Hit test descendants first.
-        LayoutSize scrolledOffset(localOffset);
-        if (hasOverflowClip())
-            scrolledOffset -= scrolledContentOffset();
+        LayoutSize scrolledOffset(localOffset - scrolledContentOffset());
 
         // Hit test contents if we don't have columns.
         if (!hasColumns()) {
@@ -3453,9 +3447,7 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point)
 void RenderBlock::offsetForContents(LayoutPoint& offset) const
 {
     offset = flipForWritingMode(offset);
-
-    if (hasOverflowClip())
-        offset += scrolledContentOffset();
+    offset += scrolledContentOffset();
 
     if (hasColumns())
         adjustPointToColumnContents(offset);

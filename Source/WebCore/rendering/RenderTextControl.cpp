@@ -166,9 +166,7 @@ void RenderTextControl::hitInnerTextElement(HitTestResult& result, const LayoutP
         return;
 
     LayoutPoint adjustedLocation = accumulatedOffset + location();
-    LayoutPoint localPoint = pointInContainer - toLayoutSize(adjustedLocation + innerText->renderBox()->location());
-    if (hasOverflowClip())
-        localPoint += scrolledContentOffset();
+    LayoutPoint localPoint = pointInContainer - toLayoutSize(adjustedLocation + innerText->renderBox()->location()) + scrolledContentOffset();
     result.setInnerNode(innerText);
     result.setInnerNonSharedNode(innerText);
     result.setLocalPoint(localPoint);

@@ -299,9 +299,8 @@ LayoutRect RenderNamedFlowThread::decorationsClipRectForBoxInNamedFlowFragment(c
     flipForWritingModeLocalCoordinates(visualOverflowRect);
     
     // Take the scrolled offset of the region into consideration.
-    RenderBlockFlow& fragmentContainer = fragment.fragmentContainer();
-    if (fragmentContainer.hasOverflowClip()) {
-        IntSize scrolledContentOffset = fragmentContainer.scrolledContentOffset();
+    IntSize scrolledContentOffset = fragment.fragmentContainer().scrolledContentOffset();
+    if (!scrolledContentOffset.isZero()) {
         if (style().isFlippedBlocksWritingMode())
             scrolledContentOffset = -scrolledContentOffset;
         

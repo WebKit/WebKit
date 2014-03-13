@@ -912,7 +912,9 @@ bool RenderBox::needsPreferredWidthsRecalculation() const
 
 IntSize RenderBox::scrolledContentOffset() const
 {
-    ASSERT(hasOverflowClip());
+    if (!hasOverflowClip())
+        return IntSize();
+
     ASSERT(hasLayer());
     return layer()->scrolledContentOffset();
 }
@@ -1960,7 +1962,7 @@ LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint& po
             offset += topLeftLocationOffset();
     }
 
-    if (o->hasOverflowClip())
+    if (o->isBox())
         offset -= toRenderBox(o)->scrolledContentOffset();
 
     if (style().position() == AbsolutePosition && o->isInFlowPositioned() && o->isRenderInline())

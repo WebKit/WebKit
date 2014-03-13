@@ -1,3 +1,43 @@
+2014-03-13  Radu Stavila  <stavila@adobe.com>
+
+        The scrolledContentOffset method should handle the hasOverflowClip check
+        https://bugs.webkit.org/show_bug.cgi?id=130028
+
+        Reviewed by Antti Koivisto.
+
+        Before this patch, every call to RenderBox::scrolledContentOffset was guarded by the
+        hasOverflowClip check, because the scrolledContentOffset method would ASSERT(hasOverflowClip()).
+        This was simplified by moving the hasOverflowClip check inside the scrolledContentOffset method
+        and returning (0, 0) for elements that do not clip the overflow.
+
+        No new tests needed, just a refactor.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::absoluteLineDirectionPointToLocalPointInBlock):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::selectionGapRectsForRepaint):
+        (WebCore::RenderBlock::paintSelection):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::offsetForContents):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::scrolledContentOffset):
+        (WebCore::RenderBox::offsetFromContainer):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::offsetFromContainer):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::mapLayerClipRectsToFragmentationLayer):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::decorationsClipRectForBoxInNamedFlowFragment):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::mapLocalToContainer):
+        (WebCore::RenderObject::pushMappingToContainer):
+        (WebCore::RenderObject::mapAbsoluteToLocalPoint):
+        (WebCore::RenderObject::offsetFromContainer):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::hitInnerTextElement):
+
 2014-03-13  Chris Fleizach  <cfleizach@apple.com>
 
         AX: accessibility data table heuristics fail on this jQuery table

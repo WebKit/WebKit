@@ -1210,7 +1210,7 @@ LayoutSize RenderInline::offsetFromContainer(RenderObject* container, const Layo
 
     container->adjustForColumns(offset, point);
 
-    if (container->hasOverflowClip())
+    if (container->isBox())
         offset -= toRenderBox(container)->scrolledContentOffset();
 
     if (offsetDependsOnPoint)
