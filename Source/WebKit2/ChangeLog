@@ -1,3 +1,23 @@
+2014-03-13  Beth Dakin  <bdakin@apple.com>
+
+        Do not show extended background during a pinch gesture on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=130152
+        -and corresponding-
+        <rdar://problem/16303819>
+
+        Reviewed by Simon Fraser.
+
+        This patch refactors the backgroundColor-setting logic into its own method so that 
+        it can be called from both _didCommitLayerTree and scrollViewDidZoom.
+
+        Only set the UIScrollView’s background color when the zoomScale is greater than or 
+        equal to the minimumZoomScale. Also do not set it during the zoom bounce 
+        animation. Otherwise, clear the background color by setting it to nil.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView updateScrollViewBackground]):
+        (-[WKWebView _didCommitLayerTree:WebKit::]):
+        (-[WKWebView scrollViewDidZoom:]):
+
 2014-03-13  Enrica Casucci  <enrica@apple.com>
 
         [iOS WebKit2] block selection should avoid large blocks.

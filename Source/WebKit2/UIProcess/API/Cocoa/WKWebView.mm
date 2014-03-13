@@ -385,6 +385,15 @@
     return [UIColor colorWithRed:(color.red() / 255.0) green:(color.green() / 255.0) blue:(color.blue() / 255.0) alpha:(color.alpha() / 255.0)];
 }
 
+- (void)_updateScrollViewBackground
+{
+    UIColor *pageExtendedBackgroundColor = [self pageExtendedBackgroundColor];
+    if (pageExtendedBackgroundColor && [self _backgroundExtendsBeyondPage] && [_scrollView zoomScale] >= [_scrollView minimumZoomScale] && ![_scrollView isZoomBouncing])
+        [_scrollView setBackgroundColor:pageExtendedBackgroundColor];
+    else
+        [_scrollView setBackgroundColor:nil];
+}
+
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
 {
     ASSERT(!_customContentView);
@@ -395,11 +404,8 @@
     [_scrollView setZoomEnabled:layerTreeTransaction.allowsUserScaling()];
     if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing] && ![_scrollView _isAnimatingZoom])
         [_scrollView setZoomScale:layerTreeTransaction.pageScaleFactor()];
-
-    if (UIColor *pageExtendedBackgroundColor = [self pageExtendedBackgroundColor]) {
-        if ([self _backgroundExtendsBeyondPage])
-            [_scrollView setBackgroundColor:pageExtendedBackgroundColor];
-    }
+    
+    [self _updateScrollViewBackground];
 
     if (_gestureController)
         _gestureController->setRenderTreeSize(layerTreeTransaction.renderTreeSize());
@@ -600,6 +606,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
+    [self _updateScrollViewBackground];
     [self _updateVisibleContentRects];
 }
 
