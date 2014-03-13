@@ -1,3 +1,15 @@
+2014-03-13  Andres Gomez  <agomez@igalia.com>
+
+        Unreviewed, rolling out r165536.
+
+        It breaks http/tests/media/media-play-stream-chunked-icy.html
+
+        Reverted changeset:
+
+        "[GStreamer] WebKit gets stalled when trying to play a stream"
+        https://bugs.webkit.org/show_bug.cgi?id=125926
+        http://trac.webkit.org/changeset/165536
+
 2014-03-13  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Remove unused callId parameter from evaluateInWebInspector
