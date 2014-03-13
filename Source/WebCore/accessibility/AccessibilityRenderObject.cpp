@@ -2271,19 +2271,19 @@ bool AccessibilityRenderObject::shouldFocusActiveDescendant() const
 AccessibilityObject* AccessibilityRenderObject::activeDescendant() const
 {
     if (!m_renderer)
-        return 0;
+        return nullptr;
     
-    if (m_renderer->node() && !m_renderer->node()->isElementNode())
-        return 0;
-    Element* element = toElement(m_renderer->node());
-        
-    const AtomicString& activeDescendantAttrStr = element->getAttribute(aria_activedescendantAttr);
+    const AtomicString& activeDescendantAttrStr = getAttribute(aria_activedescendantAttr);
     if (activeDescendantAttrStr.isNull() || activeDescendantAttrStr.isEmpty())
-        return 0;
+        return nullptr;
+    
+    Element* element = this->element();
+    if (!element)
+        return nullptr;
     
     Element* target = element->treeScope().getElementById(activeDescendantAttrStr);
     if (!target)
-        return 0;
+        return nullptr;
     
     if (AXObjectCache* cache = axObjectCache()) {
         AccessibilityObject* obj = cache->getOrCreate(target);
@@ -2292,7 +2292,7 @@ AccessibilityObject* AccessibilityRenderObject::activeDescendant() const
             return obj;
     }
     
-    return 0;
+    return nullptr;
 }
 
 void AccessibilityRenderObject::handleAriaExpandedChanged()

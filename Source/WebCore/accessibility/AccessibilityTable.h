@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class AccessibilityTableCell;
+class HTMLTableElement;
 class RenderTableSection;
     
 class AccessibilityTable : public AccessibilityRenderObject {
@@ -96,6 +97,7 @@ protected:
 
 private:
     virtual void titleElementText(Vector<AccessibilityText>&) const override;
+    HTMLTableElement* tableElement() const;
 };
 
 ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityTable, isTable())

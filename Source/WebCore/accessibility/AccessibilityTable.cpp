@@ -90,6 +90,28 @@ bool AccessibilityTable::isAccessibilityTable() const
     return m_isAccessibilityTable;
 }
 
+HTMLTableElement* AccessibilityTable::tableElement() const
+{
+    if (!m_renderer->isTable())
+        return nullptr;
+    
+    RenderTable* table = toRenderTable(m_renderer);
+    if (table->element() && isHTMLTableElement(table->element()))
+        return toHTMLTableElement(table->element());
+    
+    // If the table has a display:table-row-group, then the RenderTable does not have a pointer to it's HTMLTableElement.
+    // We can instead find it by asking the firstSection for its parent.
+    RenderTableSection* firstBody = table->firstBody();
+    if (!firstBody || !firstBody->element())
+        return nullptr;
+    
+    Element* actualTable = firstBody->element()->parentElement();
+    if (!actualTable || !isHTMLTableElement(actualTable))
+        return nullptr;
+    
+    return toHTMLTableElement(actualTable);
+}
+    
 bool AccessibilityTable::isDataTable() const
 {
     if (!m_renderer)
@@ -105,28 +127,29 @@ bool AccessibilityTable::isDataTable() const
     if (node() && node()->hasEditableStyle())
         return true;
 
+    if (!m_renderer->isTable())
+        return false;
+
     // This employs a heuristic to determine if this table should appear.
     // Only "data" tables should be exposed as tables.
     // Unfortunately, there is no good way to determine the difference
     // between a "layout" table and a "data" table.
-    
     RenderTable* table = toRenderTable(m_renderer);
-    if (!table->element() || !isHTMLTableElement(table->element()))
-        return false;
-
-    // if there is a caption element, summary, THEAD, or TFOOT section, it's most certainly a data table
-    HTMLTableElement* tableElement = toHTMLTableElement(table->element());
-    if (!tableElement->summary().isEmpty() || tableElement->tHead() || tableElement->tFoot() || tableElement->caption())
-        return true;
-    
-    // if someone used "rules" attribute than the table should appear
-    if (!tableElement->rules().isEmpty())
-        return true;    
-
-    // if there's a colgroup or col element, it's probably a data table.
-    for (const auto& child : childrenOfType<Element>(*tableElement)) {
-        if (child.hasTagName(colTag) || child.hasTagName(colgroupTag))
+    HTMLTableElement* tableElement = this->tableElement();
+    if (tableElement) {
+        // If there is a caption element, summary, THEAD, or TFOOT section, it's most certainly a data table.
+        if (!tableElement->summary().isEmpty() || tableElement->tHead() || tableElement->tFoot() || tableElement->caption())
             return true;
+        
+        // If someone used "rules" attribute than the table should appear.
+        if (!tableElement->rules().isEmpty())
+            return true;
+
+        // If there's a colgroup or col element, it's probably a data table.
+        for (const auto& child : childrenOfType<Element>(*tableElement)) {
+            if (child.hasTagName(colTag) || child.hasTagName(colgroupTag))
+                return true;
+        }
     }
     
     // go through the cell's and check for tell-tale signs of "data" table status

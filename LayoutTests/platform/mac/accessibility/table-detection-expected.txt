@@ -392,7 +392,7 @@ AXRoleDescription: group
 AXChildren: <array of size 1>
 AXHelp: 
 AXParent: <AXGroup>
-AXSize: NSSize: {769, 26}
+AXSize: NSSize: {769, 27}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -424,7 +424,7 @@ AXRoleDescription: group
 AXChildren: <array of size 1>
 AXHelp: 
 AXParent: <AXGroup>
-AXSize: NSSize: {130, 14}
+AXSize: NSSize: {130, 19}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -761,4 +761,46 @@ asdf
 asdf
 asdf
 asdf
+
+This should be a table even though it uses table-row-group for it's display type.
+
+AXRole: AXTable
+AXSubrole: (null)
+AXRoleDescription: table
+AXChildren: <array of size 5>
+AXHelp: 
+AXParent: <AXTable>
+AXSize: NSSize: {84, 47}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXTable>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXTable>
+AXEndTextMarker: <AXTable>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXTable>
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 0>
+AXRows: <array of size 2>
+AXVisibleRows: <array of size 2>
+AXColumns: <array of size 2>
+AXVisibleColumns: <array of size 2>
+AXVisibleCells: <array of size 4>
+AXColumnHeaderUIElements: <array of size 2>
+AXRowHeaderUIElements: <array of size 1>
+AXHeader: <AXTable>
+AXColumnCount: 2
+AXRowCount: 2
+AXElementBusy: 0
+
+
+head	head2
+asdf	asdf
 

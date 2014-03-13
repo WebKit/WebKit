@@ -1,3 +1,13 @@
+2014-03-12  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: accessibility data table heuristics fail on this jQuery table
+        https://bugs.webkit.org/show_bug.cgi?id=129369
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/table-detection.html:
+        * platform/mac/accessibility/table-detection-expected.txt:
+
 2014-03-12  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: LayoutTests/compositing/hidpi-simple-container-layer-on-device-pixel-expected.html fails on Mountain Lion WK2 debug

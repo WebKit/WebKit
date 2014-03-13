@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <script>
     if (window.testRunner)
@@ -209,6 +210,25 @@
     <tr><td>asdf</td></tr> <tr><td>asdf</td></tr> <tr><td>asdf</td></tr> <tr><td>asdf</td></tr>
     <tr><td>asdf</td></tr> <tr><td>asdf</td></tr> <tr><td>asdf</td></tr> <tr><td>asdf</td></tr>
     <tr><td>asdf</td></tr> <tr><td>asdf</td></tr> <tr><td>asdf</td></tr> <tr><td>asdf</td></tr>
+    </table>
+
+    <h2 tabindex=0>
+        This should be a table even though it uses table-row-group for it's display type.
+    </h2>
+
+    <style>
+    @media all { 
+       .tableRowGroup {
+          display: table-row-group !important;
+       }
+    }
+    </style>
+
+    <table border=0 class="tableRowGroup">
+    <thead><tr><th>head</th><th>head2</th></tr></thead>
+    <tbody class="rowGroup">
+    <tr><td>asdf</td><td>asdf</td></tr>
+    </tbody>
     </table>
 
     <div id="result"></div>

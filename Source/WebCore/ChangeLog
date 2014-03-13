@@ -1,3 +1,23 @@
+2014-03-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: accessibility data table heuristics fail on this jQuery table
+        https://bugs.webkit.org/show_bug.cgi?id=129369
+
+        Reviewed by Mario Sanchez Prada.
+
+        Updated accessibility/table-detection.html
+
+        If a table uses display style of table-row-group, the RenderTable gets disassociated from the HTMLTableElement.
+        We can find that element in a different way by asking for the parent of the first table section.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::activeDescendant):
+            This method was accessing an object's element unsafely and this table change exposed the issue.
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::tableElement):
+        (WebCore::AccessibilityTable::isDataTable):
+        * accessibility/AccessibilityTable.h:
+
 2014-03-13  Antti Koivisto  <antti@apple.com>
 
         Ensure that layout milestones complete in all cases
