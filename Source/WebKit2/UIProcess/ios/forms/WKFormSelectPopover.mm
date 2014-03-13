@@ -114,6 +114,7 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     
     // Even if the select is empty, there is at least one tableview section.
     _numberOfSections = 1;
+    _singleSelectionIndex = NSNotFound;
     NSInteger currentIndex = 0;
     for (size_t i = 0; i < selectOptions.size(); ++i) {
         const WKOptionItem& item = selectOptions[i];
