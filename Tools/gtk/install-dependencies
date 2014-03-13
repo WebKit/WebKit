@@ -106,6 +106,7 @@ function installDependenciesWithApt {
         libtiff5-dev \
         libxfont-dev \
         libxkbfile-dev \
+        python-dev \
         ragel \
         x11proto-bigreqs-dev \
         x11proto-composite-dev \

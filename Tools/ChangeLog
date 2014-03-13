@@ -1,3 +1,16 @@
+2014-03-13  Andres Gomez  <agomez@igalia.com>
+
+        [GTK] "Tools/jhbuild/jhbuild-wrapper --gtk" build fails even after running Tools/gtk/install-dependencies due to missing proper libxml2 python bindings
+        https://bugs.webkit.org/show_bug.cgi?id=130092
+
+        Reviewed by Csaba Osztrogonác.
+
+        Added "python-dev" as dependency for deb based distros. It is
+        already present for rpm based distros. This dependency will allow
+        libxml2 to generate its python bindings, needed by gtk-doc.
+
+        * gtk/install-dependencies:
+
 2014-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ cmake build after r165488.
