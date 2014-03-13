@@ -31,6 +31,7 @@
 #include "FrameView.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
+#include "NodeRenderStyle.h"
 #include "StyleResolver.h"
 
 namespace WebCore {

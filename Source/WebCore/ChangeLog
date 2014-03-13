@@ -1,3 +1,11 @@
+2014-03-13  Antti Koivisto  <antti@apple.com>
+
+        Try to fix release build.
+
+        * css/MediaQueryMatcher.cpp:
+        * css/StyleMedia.cpp:
+        * html/HTMLTitleElement.cpp:
+
 2014-03-11  Darin Adler  <darin@apple.com>
 
         Avoid copy-prone idiom "for (auto item : collection)"
