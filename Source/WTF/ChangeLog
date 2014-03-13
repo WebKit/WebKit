@@ -1,3 +1,12 @@
+2014-03-12  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Enable Parallel GC
+        https://bugs.webkit.org/show_bug.cgi?id=130177
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/Platform.h: Turn on ENABLE_PARALLEL_GC for the EFL build.
+
 2014-03-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Disable REMOTE_INSPECTOR in earlier OS X releases
