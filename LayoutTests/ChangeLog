@@ -1,3 +1,13 @@
+2014-03-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Fix accessibility/display-table-cell-causes-crash.html
+        <rdar://problem/16305170> 
+
+        Unreviewed.
+        Fix layout test paths that were referencing files that have moved.
+
+        * accessibility/display-table-cell-causes-crash.html:
+
 2014-03-12  Mark Lam <mark.lam@apple.com>
 
         Fix layout test expected result.
