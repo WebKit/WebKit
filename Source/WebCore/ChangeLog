@@ -1,3 +1,10 @@
+2014-03-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        Update WebAccessibilityObjectWrapperIOS after r165544
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper isSVGGroupElement]):
+
 2014-03-13  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r165542): printing/page-rule-selection.html failing
