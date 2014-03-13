@@ -37,15 +37,16 @@ namespace WebKit {
 struct InteractionInformationAtPosition {
     InteractionInformationAtPosition()
         : nodeAtPositionIsAssistedNode(false)
+        , isSelectable(false)
     {
     }
 
     WebCore::IntPoint point;
     bool nodeAtPositionIsAssistedNode;
+    bool isSelectable;
     String clickableElementName;
     String url;
     String title;
-    Vector<WebCore::SelectionRect> selectionRects;
     WebCore::IntRect bounds;
 
     void encode(IPC::ArgumentEncoder&) const;

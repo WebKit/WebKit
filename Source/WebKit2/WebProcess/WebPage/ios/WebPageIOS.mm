@@ -1491,9 +1491,12 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
         hitNode = result.innerNode();
         // Hit test could return HTMLHtmlElement that has no renderer, if the body is smaller than the document.
         if (hitNode && hitNode->renderer()) {
+            RenderObject* renderer = hitNode->renderer();
             m_page->focusController().setFocusedFrame(result.innerNodeFrame());
-            info.selectionRects.append(SelectionRect(hitNode->renderer()->absoluteBoundingBoxRect(true), true, 0));
-            info.bounds = hitNode->renderer()->absoluteBoundingBoxRect();
+            info.bounds = renderer->absoluteBoundingBoxRect(true);
+            // We don't want to select blocks that are larger than 97% of the visible area of the document.
+            const static CGFloat factor = 0.97;
+            info.isSelectable = renderer->style().userSelect() != SELECT_NONE && info.bounds.height() < result.innerNodeFrame()->view()->unobscuredContentRect().height() * factor;
         }
     }
 }

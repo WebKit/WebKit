@@ -36,10 +36,10 @@ void InteractionInformationAtPosition::encode(IPC::ArgumentEncoder& encoder) con
 {
     encoder << point;
     encoder << nodeAtPositionIsAssistedNode;
+    encoder << isSelectable;
     encoder << clickableElementName;
     encoder << url;
     encoder << title;
-    encoder << selectionRects;
     encoder << bounds;
 }
 
@@ -51,6 +51,9 @@ bool InteractionInformationAtPosition::decode(IPC::ArgumentDecoder& decoder, Int
     if (!decoder.decode(result.nodeAtPositionIsAssistedNode))
         return false;
 
+    if (!decoder.decode(result.isSelectable))
+        return false;
+
     if (!decoder.decode(result.clickableElementName))
         return false;
 
@@ -58,9 +61,6 @@ bool InteractionInformationAtPosition::decode(IPC::ArgumentDecoder& decoder, Int
         return false;
 
     if (!decoder.decode(result.title))
-        return false;
-
-    if (!decoder.decode(result.selectionRects))
         return false;
 
     if (!decoder.decode(result.bounds))

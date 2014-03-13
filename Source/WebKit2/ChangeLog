@@ -1,3 +1,29 @@
+2014-03-13  Enrica Casucci  <enrica@apple.com>
+
+        [iOS WebKit2] block selection should avoid large blocks.
+        https://bugs.webkit.org/show_bug.cgi?id=130208
+        <rdar://problem/16251785>
+
+        Reviewed by Benjamin Poulain.
+
+        When creating a block selection, we should discard blocks that
+        are larger than most of the visible portion of the document.
+        This prevents the accidental selection the entire document, which
+        is fairly common when tapping over empty areas.
+
+        * Shared/InteractionInformationAtPosition.cpp:
+        (WebKit::InteractionInformationAtPosition::encode):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * Shared/InteractionInformationAtPosition.h: Removed selectionRects that was not really needed and
+        added isSelectable to indicate whether the selection can start.
+        (WebKit::InteractionInformationAtPosition::InteractionInformationAtPosition):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView hasSelectablePositionAtPoint:]): Now uses isSelectable.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation): Takes into account the userSelect property
+        to figure out if the element can be selected and discards blocks that are
+        larger than 97% of the visible area of the document.
+
 2014-03-13  Anders Carlsson  <andersca@apple.com>
 
         Rename WKVisitedLinkProvider to _WKVisitedLinkProvider and make it private
