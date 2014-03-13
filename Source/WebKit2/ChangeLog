@@ -1,3 +1,17 @@
+2014-03-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Close the connection when we fail to read from the socket for any unhandled error
+        https://bugs.webkit.org/show_bug.cgi?id=130191
+
+        Reviewed by Martin Robinson.
+
+        We currently show an error message, but we should close the
+        connection avoid entering an infinite loop. Also provide more
+        information in the error message to help when debugging the issue.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::readyReadHandler):
+
 2014-03-13  Radu Stavila  <stavila@adobe.com>
 
         Webkit not building on XCode 5.1 due to garbage collection no longer being supported
