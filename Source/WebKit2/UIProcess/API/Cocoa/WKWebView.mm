@@ -39,22 +39,22 @@
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKHistoryDelegatePrivate.h"
 #import "WKNSData.h"
+#import "WKNSURLExtras.h"
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKRemoteObjectRegistryInternal.h"
 #import "WKUIDelegate.h"
-#import "WKVisitedLinkProviderInternal.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewContentProvider.h"
+#import "WebBackForwardList.h"
 #import "WebCertificateInfo.h"
 #import "WebContext.h"
-#import "WebBackForwardList.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
-#import "WKNSURLExtras.h"
+#import "_WKVisitedLinkProviderInternal.h"
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
@@ -134,8 +134,8 @@
     if (![_configuration preferences])
         [_configuration setPreferences:adoptNS([[WKPreferences alloc] init]).get()];
 
-    if (![_configuration visitedLinkProvider])
-        [_configuration setVisitedLinkProvider:adoptNS([[WKVisitedLinkProvider alloc] init]).get()];
+    if (![_configuration _visitedLinkProvider])
+        [_configuration _setVisitedLinkProvider:adoptNS([[_WKVisitedLinkProvider alloc] init]).get()];
 
 #if PLATFORM(IOS)
     if (![_configuration _contentProviderRegistry])
@@ -151,7 +151,7 @@
     if (WKWebView *relatedWebView = [_configuration _relatedWebView])
         webPageConfiguration.relatedPage = relatedWebView->_page.get();
 
-    webPageConfiguration.visitedLinkProvider = [_configuration visitedLinkProvider]->_visitedLinkProvider.get();
+    webPageConfiguration.visitedLinkProvider = [_configuration _visitedLinkProvider]->_visitedLinkProvider.get();
 
     RefPtr<WebKit::WebPageGroup> pageGroup;
     NSString *groupIdentifier = configuration._groupIdentifier;

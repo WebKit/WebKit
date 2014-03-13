@@ -23,13 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit2/WKFoundation.h>
+#import "config.h"
+#import "_WKVisitedLinkProviderInternal.h"
 
 #if WK_API_ENABLED
 
-WK_API_CLASS
-@interface WKVisitedLinkProvider : NSObject
+#import "VisitedLinkProvider.h"
+
+@implementation _WKVisitedLinkProvider
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _visitedLinkProvider = WebKit::VisitedLinkProvider::create();
+
+    return self;
+}
 
 @end
 

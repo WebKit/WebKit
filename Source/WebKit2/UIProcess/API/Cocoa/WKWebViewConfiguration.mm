@@ -35,7 +35,7 @@
 @implementation WKWebViewConfiguration {
     RetainPtr<WKProcessPool> _processPool;
     RetainPtr<WKPreferences> _preferences;
-    RetainPtr<WKVisitedLinkProvider> _visitedLinkProvider;
+    RetainPtr<_WKVisitedLinkProvider> _visitedLinkProvider;
     WebKit::WeakObjCPtr<WKWebView> _relatedWebView;
     RetainPtr<NSString> _groupIdentifier;
 #if PLATFORM(IOS)
@@ -82,12 +82,12 @@
     _preferences = preferences;
 }
 
-- (WKVisitedLinkProvider *)visitedLinkProvider
+- (_WKVisitedLinkProvider *)_visitedLinkProvider
 {
     return _visitedLinkProvider.get();
 }
 
-- (void)setVisitedLinkProvider:(WKVisitedLinkProvider *)visitedLinkProvider
+- (void)_setVisitedLinkProvider:(_WKVisitedLinkProvider *)visitedLinkProvider
 {
     _visitedLinkProvider = visitedLinkProvider;
 }

@@ -23,11 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKVisitedLinkProvider.h>
+#import "_WKVisitedLinkProvider.h"
 
 #if WK_API_ENABLED
 
-@interface WKVisitedLinkProvider (WKPrivate)
+#import <wtf/RefPtr.h>
+
+namespace WebKit {
+class VisitedLinkProvider;
+}
+
+@interface _WKVisitedLinkProvider () {
+@package
+    RefPtr<WebKit::VisitedLinkProvider> _visitedLinkProvider;
+}
+
 @end
 
 #endif
+

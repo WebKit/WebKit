@@ -1,5 +1,26 @@
 2014-03-13  Anders Carlsson  <andersca@apple.com>
 
+        Rename WKVisitedLinkProvider to _WKVisitedLinkProvider and make it private
+        https://bugs.webkit.org/show_bug.cgi?id=130207
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKVisitedLinkProviderPrivate.h: Removed.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _visitedLinkProvider]):
+        (-[WKWebViewConfiguration _setVisitedLinkProvider:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/_WKVisitedLinkProvider.h: Renamed from Source/WebKit2/UIProcess/API/Cocoa/WKVisitedLinkProvider.h.
+        * UIProcess/API/Cocoa/_WKVisitedLinkProvider.mm: Renamed from Source/WebKit2/UIProcess/API/Cocoa/WKVisitedLinkProvider.mm.
+        (-[_WKVisitedLinkProvider init]):
+        * UIProcess/API/Cocoa/_WKVisitedLinkProviderInternal.h: Renamed from Source/WebKit2/UIProcess/API/Cocoa/WKVisitedLinkProviderInternal.h.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-03-13  Anders Carlsson  <andersca@apple.com>
+
         Remove a commented out member function
         https://bugs.webkit.org/show_bug.cgi?id=130204
 

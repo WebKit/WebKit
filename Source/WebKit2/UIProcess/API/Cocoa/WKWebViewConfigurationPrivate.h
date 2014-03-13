@@ -28,11 +28,14 @@
 #if WK_API_ENABLED
 
 @class WKWebView;
+@class _WKVisitedLinkProvider;
 
 @interface WKWebViewConfiguration (WKPrivate)
 
 @property (nonatomic, weak, setter=_setRelatedWebView:) WKWebView *_relatedWebView;
 @property (nonatomic, copy, setter=_setGroupIdentifier:) NSString *_groupIdentifier;
+
+@property (nonatomic, strong, setter=_setVisitedLinkProvider:) _WKVisitedLinkProvider *_visitedLinkProvider;
 
 @end
 
