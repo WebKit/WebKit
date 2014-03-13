@@ -1,3 +1,32 @@
+2014-03-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix multiple console.assert stripping issues
+        https://bugs.webkit.org/show_bug.cgi?id=130166
+
+        Reviewed by Timothy Hatcher.
+
+        There were a couple console.assert stripping issues in production.
+        One line required a semicolon so was avoiding getting stripped.
+        One resulted in a logic change, when stripping the only statement
+        of a control flow block. Add a warning for such cases.
+
+        * Scripts/remove-console-asserts.pl:
+        Add warning for a console.assert being the only statement in a control flow block
+        without braces. When it is stripped it may change the flow of the function.
+
+        * Scripts/remove-console-asserts-dryrun.rb: Added.
+        Add a script to quickly test running remove console asserts on our files, to
+        help catch errors not in a production build and in the original non-combined
+        files, so you can more easily fix issues.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype._updateContentFlowFromPayload):
+        Convert the for loop into a single console.assert statement.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.removeChild):
+        Add missing semicolon.        
+
 2014-03-12  Brian Burg  <bburg@apple.com>
 
         Web Inspector: convert model tests and inspector-test.js to use Test.html

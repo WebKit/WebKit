@@ -552,8 +552,7 @@ WebInspector.DOMTreeManager.prototype = {
     _updateContentFlowFromPayload: function(contentFlow, flowPayload)
     {
         console.assert(contentFlow.contentNodes.length === flowPayload.content.length);
-        for (var i = 0; i < contentFlow.contentNodes.length; ++i)
-            console.assert(contentFlow.contentNodes[i].id === flowPayload.content[i]);
+        console.assert(contentFlow.contentNodes.every(function(node, i) { node.id === flowPayload.content[i]; }));
 
         // FIXME: Collect the regions from the payload.
         contentFlow.overset = flowPayload.overset;

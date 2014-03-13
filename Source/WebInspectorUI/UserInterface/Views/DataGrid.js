@@ -772,7 +772,7 @@ WebInspector.DataGrid.prototype = {
         if (this.children.length <= 0)
             this.hasChildren = false;
 
-        console.assert(!child.isPlaceholderNode, "Shouldn't delete the placeholder node.")
+        console.assert(!child.isPlaceholderNode, "Shouldn't delete the placeholder node.");
     },
 
     removeChildren: function()
