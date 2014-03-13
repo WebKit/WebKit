@@ -40,6 +40,12 @@
 typedef enum {
     NSSharingServicePickerStyleRollover = 1
 } NSSharingServicePickerStyle;
+
+@interface NSSharingServicePicker (Private)
+@property NSSharingServicePickerStyle style;
+- (NSMenu *)menu;
+@end
+
 #endif
 
 using namespace WebCore;

@@ -1,3 +1,9 @@
+2014-03-13  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * Misc/WebSharingServicePickerController.mm:
+
 2014-03-13  Radu Stavila  <stavila@adobe.com>
 
         Webkit not building on XCode 5.1 due to garbage collection no longer being supported
