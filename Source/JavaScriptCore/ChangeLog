@@ -1,3 +1,23 @@
+2014-03-13  Mark Lam  <mark.lam@apple.com>
+
+        JS benchmarks crash with a bus error on 32-bit x86.
+        <https://webkit.org/b/130203>
+
+        Reviewed by Geoffrey Garen.
+
+        The issue is that generateGetByIdStub() can potentially use the same register
+        for the JSValue base register and the target tag register.  After loading the
+        tag value into the target tag register, the JSValue base address is lost.
+        The code then proceeds to load the payload value using the base register, and
+        this results in a crash.
+
+        The fix is to check if the base register is the same as the target tag register.
+        If so, we should make a copy the base register first before loading the tag
+        value, and use the copy to load the payload value instead.
+
+        * jit/Repatch.cpp:
+        (JSC::generateGetByIdStub):
+
 2014-03-12  Filip Pizlo  <fpizlo@apple.com>
 
         WebKit shouldn't crash on uniprocessor machines
