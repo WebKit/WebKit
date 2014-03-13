@@ -1,3 +1,12 @@
+2014-03-12  Mark Lam <mark.lam@apple.com>
+
+        Fix layout test expected result.
+        <rdar://problem/16306749>
+
+        Reviewed by Lucas Forschler.
+
+        * fast/dom/MutationObserver/parser-mutations-expected.txt:
+
 2014-03-12  Lucas Forschler  <lforschler@apple.com>
 
         Merge r163479
