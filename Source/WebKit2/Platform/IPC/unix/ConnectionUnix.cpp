@@ -356,8 +356,8 @@ void Connection::readyReadHandler()
             if (errno == EAGAIN || errno == EWOULDBLOCK)
                 return;
 
-            // FIXME: Handle other errors here?
-            WTFLogAlways("Error receiving IPC message: %s", strerror(errno));
+            WTFLogAlways("Error receiving IPC message on socket %d in process %d: %s", m_socketDescriptor, getpid(), strerror(errno));
+            connectionDidClose();
             return;
         }
 
