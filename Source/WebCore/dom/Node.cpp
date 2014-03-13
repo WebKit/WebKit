@@ -724,10 +724,12 @@ void Document::invalidateNodeListAndCollectionCaches(const QualifiedName* attrNa
 #if !ASSERT_DISABLED
     m_inInvalidateNodeListAndCollectionCaches = true;
 #endif
-    for (auto* list : std::move(m_listsInvalidatedAtDocument))
+    HashSet<LiveNodeList*> lists = std::move(m_listsInvalidatedAtDocument);
+    for (auto* list : lists)
         list->invalidateCache(attrName);
-    for (auto* list : std::move(m_collectionsInvalidatedAtDocument))
-        list->invalidateCache(attrName);
+    HashSet<HTMLCollection*> collections = std::move(m_collectionsInvalidatedAtDocument);
+    for (auto* collection : collections)
+        collection->invalidateCache(attrName);
 #if !ASSERT_DISABLED
     m_inInvalidateNodeListAndCollectionCaches = false;
 #endif

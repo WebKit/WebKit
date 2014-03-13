@@ -1,3 +1,10 @@
+2014-03-13  Antti Koivisto  <antti@apple.com>
+
+        Try to stop asserts in debug build.
+
+        * dom/Node.cpp:
+        (WebCore::Document::invalidateNodeListAndCollectionCaches):
+
 2014-03-13  Benjamin Poulain  <bpoulain@apple.com>
 
         Update the build fix for r165544
