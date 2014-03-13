@@ -341,8 +341,7 @@ void InspectorDebuggerAgent::removeBreakpoint(ErrorString*, const String& breakp
 {
     m_javaScriptBreakpoints.remove(breakpointIdentifier);
 
-    Vector<JSC::BreakpointID> breakpointIDs = m_breakpointIdentifierToDebugServerBreakpointIDs.take(breakpointIdentifier);
-    for (auto breakpointID : breakpointIDs) {
+    for (JSC::BreakpointID breakpointID : m_breakpointIdentifierToDebugServerBreakpointIDs.take(breakpointIdentifier)) {
         const Vector<ScriptBreakpointAction>& breakpointActions = scriptDebugServer().getActionsForBreakpoint(breakpointID);
         for (auto& action : breakpointActions)
             m_injectedScriptManager->releaseObjectGroup(objectGroupForBreakpointAction(action));

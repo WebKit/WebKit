@@ -26,7 +26,7 @@
 #ifndef RenderIterator_h
 #define RenderIterator_h
 
-#include "RenderObject.h"
+#include "RenderElement.h"
 
 namespace WebCore {
 

@@ -93,7 +93,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
             RemoteLayerTreePropertyApplier::applyProperties(layer, properties, relatedLayers);
     }
 
-    for (auto destroyedLayer : transaction.destroyedLayers())
+    for (auto& destroyedLayer : transaction.destroyedLayers())
         m_layers.remove(destroyedLayer);
 
     return rootLayerChanged;

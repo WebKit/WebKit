@@ -49,7 +49,7 @@ IDBKeyData::IDBKeyData(const IDBKey* key)
     case IDBKey::InvalidType:
         break;
     case IDBKey::ArrayType:
-        for (auto key2 : key->array())
+        for (auto& key2 : key->array())
             arrayValue.append(IDBKeyData(key2.get()));
         break;
     case IDBKey::StringType:
@@ -78,7 +78,7 @@ PassRefPtr<IDBKey> IDBKeyData::maybeCreateIDBKey() const
     case IDBKey::ArrayType:
         {
             IDBKey::KeyArray array;
-            for (auto keyData : arrayValue) {
+            for (auto& keyData : arrayValue) {
                 array.append(keyData.maybeCreateIDBKey());
                 ASSERT(array.last());
             }
@@ -110,7 +110,7 @@ IDBKeyData IDBKeyData::isolatedCopy() const
     case IDBKey::InvalidType:
         return result;
     case IDBKey::ArrayType:
-        for (auto key : arrayValue)
+        for (auto& key : arrayValue)
             result.arrayValue.append(key.isolatedCopy());
         return result;
     case IDBKey::StringType:

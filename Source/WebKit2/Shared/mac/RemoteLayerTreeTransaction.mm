@@ -240,7 +240,7 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
         if (!decoder.decode(result.children))
             return false;
 
-        for (auto layerID : result.children) {
+        for (auto& layerID : result.children) {
             if (!layerID)
                 return false;
         }
@@ -455,7 +455,7 @@ bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLay
     if (!decoder.decode(result.m_destroyedLayerIDs))
         return false;
 
-    for (auto layerID : result.m_destroyedLayerIDs) {
+    for (auto& layerID : result.m_destroyedLayerIDs) {
         if (!layerID)
             return false;
     }
@@ -699,7 +699,7 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const RemoteLayerTr
     copyKeysToVector(changedLayerProperties, layerIDs);
     std::sort(layerIDs.begin(), layerIDs.end());
 
-    for (auto layerID : layerIDs) {
+    for (auto& layerID : layerIDs) {
         const RemoteLayerTreeTransaction::LayerProperties& layerProperties = *changedLayerProperties.get(layerID);
 
         ts << "\n";

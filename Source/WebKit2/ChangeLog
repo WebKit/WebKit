@@ -1,3 +1,24 @@
+2014-03-10  Darin Adler  <darin@apple.com>
+
+        Avoid copy-prone idiom "for (auto item : collection)"
+        https://bugs.webkit.org/show_bug.cgi?id=129990
+
+        Reviewed by Geoffrey Garen.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyProperties): Use auto&.
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode): Use auto&
+        even though the type is a scalar. This does no harm and makes it easier
+        to spot uses that trigger unnecessary copying with grep.
+        (WebKit::RemoteLayerTreeTransaction::decode): Ditto.
+        (WebKit::dumpChangedLayers): Ditto.
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree): Ditto.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::visitedLinkStateChanged): Ditto.
+
 2014-03-12  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Remove unused callId parameter from evaluateInWebInspector

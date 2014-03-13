@@ -80,7 +80,7 @@ public:
     // visited.
     template<typename Functor> void iterate(Functor& functor)
     {
-        for (auto &codeBlock : m_set) {
+        for (auto& codeBlock : m_set) {
             bool done = functor(codeBlock);
             if (done)
                 break;

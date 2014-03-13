@@ -75,7 +75,7 @@ void InspectorNodeFinder::performSearch(Node* parentNode)
 void InspectorNodeFinder::searchUsingDOMTreeTraversal(Node* parentNode)
 {
     // Manual plain text search.
-    for (auto node = parentNode; node; node = NodeTraversal::next(node, parentNode)) {
+    for (auto* node = parentNode; node; node = NodeTraversal::next(node, parentNode)) {
         switch (node->nodeType()) {
         case Node::TEXT_NODE:
         case Node::COMMENT_NODE:

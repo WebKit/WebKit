@@ -295,7 +295,7 @@ void SVGAnimateMotionElement::applyResultsToTarget()
         return;
 
     // ...except in case where we have additional instances in <use> trees.
-    for (auto instance : targetElement->instancesForElement()) {
+    for (auto* instance : targetElement->instancesForElement()) {
         SVGElement* shadowTreeElement = instance->shadowTreeElement();
         ASSERT(shadowTreeElement);
         AffineTransform* transform = shadowTreeElement->supplementalTransform();

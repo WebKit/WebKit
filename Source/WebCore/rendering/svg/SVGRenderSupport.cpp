@@ -226,7 +226,7 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
     bool transformChanged = transformToRootChanged(&start);
     bool hasSVGShadow = rendererHasSVGShadow(start);
     bool needsBoundariesUpdate = start.needsBoundariesUpdate();
-    HashSet<RenderObject*> notlayoutedObjects;
+    HashSet<RenderElement*> elementsThatDidNotReceiveLayout;
 
     for (RenderObject* child = start.firstChild(); child; child = child->nextSibling()) {
         bool needsLayout = selfNeedsLayout;
@@ -274,22 +274,20 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
             // parent containers call repaint().  (RenderBlock::layout* has similar logic.)
             if (!childEverHadLayout)
                 child->repaint();
-        } else if (layoutSizeChanged)
-            notlayoutedObjects.add(child);
+        } else if (layoutSizeChanged && child->isRenderElement())
+            elementsThatDidNotReceiveLayout.add(toRenderElement(child));
 
         ASSERT(!child->needsLayout());
     }
 
     if (!layoutSizeChanged) {
-        ASSERT(notlayoutedObjects.isEmpty());
+        ASSERT(elementsThatDidNotReceiveLayout.isEmpty());
         return;
     }
 
     // If the layout size changed, invalidate all resources of all children that didn't go through the layout() code path.
-    for (auto child : notlayoutedObjects) {
-        if (child->isRenderElement())
-            invalidateResourcesOfChildren(toRenderElement(*child));
-    }
+    for (auto* element : elementsThatDidNotReceiveLayout)
+        invalidateResourcesOfChildren(*element);
 }
 
 bool SVGRenderSupport::isOverflowHidden(const RenderElement& renderer)
@@ -428,8 +426,8 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext* context, const
     else {
         DashArray dashArray;
         dashArray.reserveInitialCapacity(dashes.size());
-        for (unsigned i = 0, size = dashes.size(); i < size; ++i)
-            dashArray.uncheckedAppend(dashes[i].value(lengthContext));
+        for (auto& dash : dashes)
+            dashArray.uncheckedAppend(dash.value(lengthContext));
 
         context->setLineDash(dashArray, svgStyle.strokeDashOffset().value(lengthContext));
     }
@@ -465,7 +463,7 @@ void SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(const RenderEle
     ASSERT(renderer.element()->isSVGElement());
 
     bool maskedAncestorShouldIsolateBlending = renderer.style().hasBlendMode();
-    for (auto ancestor = renderer.element()->parentElement(); ancestor && ancestor->isSVGElement(); ancestor = ancestor->parentElement()) {
+    for (auto* ancestor = renderer.element()->parentElement(); ancestor && ancestor->isSVGElement(); ancestor = ancestor->parentElement()) {
         if (!toSVGElement(ancestor)->isSVGGraphicsElement() || !isolatesBlending(*ancestor->computedStyle()))
             continue;
 

@@ -1,3 +1,73 @@
+2014-03-11  Darin Adler  <darin@apple.com>
+
+        Avoid copy-prone idiom "for (auto item : collection)"
+        https://bugs.webkit.org/show_bug.cgi?id=129990
+
+        Reviewed by Geoffrey Garen.
+
+        Most of these changes have no effect. A few of them get rid of unwanted
+        copying of the items as we iterate them. Found these with the command
+        'git grep "for (auto .*:"' or the equivalent.
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::IDBKeyData): Use auto& to avoid copying the keys.
+        (WebCore::IDBKeyData::maybeCreateIDBKey): Ditto.
+        (WebCore::IDBKeyData::isolatedCopy): Ditto.
+
+        * dom/Node.cpp:
+        (WebCore::Document::invalidateNodeListAndCollectionCaches): Use auto*
+        to make explicit the fact that these are pointers. Stop using "it" for
+        a variable that is not an iterator. Get rid of unneeded local variables
+        for the collections themselves.
+
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::adoptDocument): Use auto& to make sure we
+        don't do any unnecessary copying. Stop using "it" for a variable that
+        is not an iterator.
+
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::lastRow): Use auto* to be explicit
+        that these are pointers.
+        * inspector/InspectorNodeFinder.cpp:
+        (WebCore::InspectorNodeFinder::searchUsingDOMTreeTraversal): Ditto.
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::interpretationsForCurrentRoot): Ditto. Also got rid of
+        an unnecessary local variable.
+
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooser::chooseFiles): Use auto&. Also fix a FIXME.
+        (WebCore::FileChooser::chooseMediaFiles): Ditto.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::naturalSize): Use auto&.
+
+        * rendering/RenderIterator.h: Changed include from RenderObject.h to
+        RenderElement.h; iterators are based on RenderElement now.
+
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::removeFromCacheAndInvalidateDependencies): Use auto*.
+
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::markAllClientsForInvalidation): Use auto*.
+        (WebCore::RenderSVGResourceContainer::markAllClientLayersForInvalidation): Ditto.
+        (WebCore::RenderSVGResourceContainer::registerResource): Ditto.
+
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::layoutChildren): Updated to use a more specific
+        type, to use auto* instead of of auto, and to eliminate the slightly sloppily
+        capitalized and not-so-slightly ungrammatical notlayoutedObjects.
+        (WebCore::SVGRenderSupport::applyStrokeStyleToContext): Use auto&.
+        (WebCore::SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending): Use auto*.
+
+        * rendering/svg/SVGResourcesCycleSolver.cpp:
+        (WebCore::SVGResourcesCycleSolver::resourceContainsCycles): Use auto*.
+        (WebCore::SVGResourcesCycleSolver::resolveCycles): Ditto. Also lineageOfType.
+
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::applyResultsToTarget): Use auto*.
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::invalidateMPathDependencies): Ditto.
+
 2014-03-13  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Remove unused callId parameter from evaluateInWebInspector

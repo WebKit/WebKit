@@ -759,7 +759,7 @@ NSArray *Frame::interpretationsForCurrentRoot() const
     // The number of interpretations will be i1 * i2 * ... * iN, where iX is the number of interpretations for the Xth phrase with alternatives.
     size_t interpretationsCount = 1;
 
-    for (auto marker : markersInRoot)
+    for (auto* marker : markersInRoot)
         interpretationsCount *= marker->alternatives().size() + 1;
 
     Vector<Vector<UChar>> interpretations;
@@ -771,8 +771,7 @@ NSArray *Frame::interpretationsForCurrentRoot() const
 
     Node* pastLastNode = rangeOfRootContents->pastLastNode();
     for (Node* node = rangeOfRootContents->firstNode(); node != pastLastNode; node = NodeTraversal::next(node)) {
-        const Vector<DocumentMarker*>& markers = document()->markers().markersFor(node, DocumentMarker::MarkerTypes(DocumentMarker::DictationPhraseWithAlternatives));
-        for (auto marker : markers) {
+        for (auto* marker : document()->markers().markersFor(node, DocumentMarker::MarkerTypes(DocumentMarker::DictationPhraseWithAlternatives))) {
             // First, add text that precede the marker.
             if (precedingTextStartPosition != createLegacyEditingPosition(node, marker->startOffset())) {
                 RefPtr<Range> precedingTextRange = Range::create(*document(), precedingTextStartPosition, createLegacyEditingPosition(node, marker->startOffset()));

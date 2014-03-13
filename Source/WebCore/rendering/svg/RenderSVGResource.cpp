@@ -173,8 +173,8 @@ static inline void removeFromCacheAndInvalidateDependencies(RenderElement& rende
     HashSet<SVGElement*>* dependencies = renderer.document().accessSVGExtensions()->setOfElementsReferencingTarget(toSVGElement(renderer.element()));
     if (!dependencies)
         return;
-    for (auto element : *dependencies) {
-        if (auto renderer = element->renderer())
+    for (auto* element : *dependencies) {
+        if (auto* renderer = element->renderer())
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer, needsLayout);
     }
 }

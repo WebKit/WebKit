@@ -33,14 +33,15 @@
 #include "Page.h"
 #include "QualifiedName.h"
 #include "TagNodeList.h"
-#if ENABLE(VIDEO_TRACK)
-#include "TextTrack.h"
-#endif
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringHash.h>
+
+#if ENABLE(VIDEO_TRACK)
+#include "TextTrack.h"
+#endif
 
 namespace WebCore {
 
@@ -231,27 +232,27 @@ public:
             return;
         }
 
-        for (auto it : m_atomicNameCaches)
-            it.value->invalidateCache(*oldDocument);
+        for (auto& cache : m_atomicNameCaches.values())
+            cache->invalidateCache(*oldDocument);
 
-        for (auto it : m_nameCaches)
-            it.value->invalidateCache(*oldDocument);
+        for (auto& cache : m_nameCaches.values())
+            cache->invalidateCache(*oldDocument);
 
-        for (auto it : m_tagNodeListCacheNS) {
-            LiveNodeList& list = *it.value;
-            ASSERT(!list.isRootedAtDocument());
-            list.invalidateCache(*oldDocument);
+        for (auto& list : m_tagNodeListCacheNS.values()) {
+            ASSERT(!list->isRootedAtDocument());
+            list->invalidateCache(*oldDocument);
         }
 
-        for (auto it : m_cachedCollections)
-            it.value->invalidateCache(*oldDocument);
+        for (auto& collection : m_cachedCollections.values())
+            collection->invalidateCache(*oldDocument);
     }
 
 private:
     NodeListsNodeData()
         : m_childNodeList(nullptr)
         , m_emptyChildNodeList(nullptr)
-    { }
+    {
+    }
 
     std::pair<unsigned char, AtomicString> namedCollectionKey(CollectionType type, const AtomicString& name)
     {

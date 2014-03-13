@@ -901,10 +901,10 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
     RefPtr<DocumentFragment> fragment = document->createDocumentFragment();
 
-    for (auto node : nodesVector) {
+    for (auto* node : nodesVector) {
         RefPtr<Element> element = createDefaultParagraphElement(*document);
-        element->appendChild(node, ASSERT_NO_EXCEPTION);
-        fragment->appendChild(element.release(), ASSERT_NO_EXCEPTION);
+        element->appendChild(node);
+        fragment->appendChild(element.release());
     }
 
     return kit(fragment.release().get());

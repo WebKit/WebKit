@@ -96,7 +96,7 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
     bool needsLayout = mode == LayoutAndBoundariesInvalidation;
     bool markForInvalidation = mode != ParentOnlyInvalidation;
 
-    for (auto client : m_clients) {
+    for (auto* client : m_clients) {
         if (client->isSVGResourceContainer()) {
             toRenderSVGResourceContainer(*client).removeAllClientsFromCache(markForInvalidation);
             continue;
@@ -116,7 +116,7 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
 void RenderSVGResourceContainer::markAllClientLayersForInvalidation()
 {
 #if ENABLE(CSS_FILTERS)
-    for (auto clientLayer : m_clientLayers)
+    for (auto* clientLayer : m_clientLayers)
         clientLayer->filterNeedsRepaint();
 #endif
 }
@@ -176,11 +176,10 @@ void RenderSVGResourceContainer::registerResource()
     extensions.addResource(m_id, this);
 
     // Update cached resources of pending clients.
-    auto end = clients->end();
-    for (auto it = clients->begin(); it != end; ++it) {
-        ASSERT((*it)->hasPendingResources());
-        extensions.clearHasPendingResourcesIfPossible(*it);
-        auto renderer = (*it)->renderer();
+    for (auto* client : *clients) {
+        ASSERT(client->hasPendingResources());
+        extensions.clearHasPendingResourcesIfPossible(client);
+        auto* renderer = client->renderer();
         if (!renderer)
             continue;
         SVGResourcesCache::clientStyleChanged(*renderer, StyleDifferenceLayout, renderer->style());

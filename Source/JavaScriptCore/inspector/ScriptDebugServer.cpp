@@ -154,7 +154,7 @@ void ScriptDebugServer::dispatchBreakpointActionLog(ExecState* exec, const Strin
 
     Vector<ScriptDebugListener*> listenersCopy;
     copyToVector(*listeners, listenersCopy);
-    for (auto listener : listenersCopy)
+    for (auto* listener : listenersCopy)
         listener->breakpointActionLog(exec, message);
 }
 
@@ -172,7 +172,7 @@ void ScriptDebugServer::dispatchBreakpointActionSound(ExecState* exec, int break
 
     Vector<ScriptDebugListener*> listenersCopy;
     copyToVector(*listeners, listenersCopy);
-    for (auto listener : listenersCopy)
+    for (auto* listener : listenersCopy)
         listener->breakpointActionSound(breakpointActionIdentifier);
 }
 
@@ -190,7 +190,7 @@ void ScriptDebugServer::dispatchBreakpointActionProbe(ExecState* exec, const Scr
 
     Vector<ScriptDebugListener*> listenersCopy;
     copyToVector(*listeners, listenersCopy);
-    for (auto listener : listenersCopy)
+    for (auto* listener : listenersCopy)
         listener->breakpointActionProbe(exec, action, m_hitCount, sample);
 }
 

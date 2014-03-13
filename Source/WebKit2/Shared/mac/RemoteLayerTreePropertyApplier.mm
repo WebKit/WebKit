@@ -240,7 +240,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, const RemoteL
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
         RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
-        for (auto child : properties.children) {
+        for (auto& child : properties.children) {
             ASSERT(relatedLayers.get(child));
             [children addObject:relatedLayers.get(child)];
         }

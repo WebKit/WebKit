@@ -695,7 +695,7 @@ void SourceBufferPrivateAVFObjC::seekToTime(MediaTime time)
 
 IntSize SourceBufferPrivateAVFObjC::naturalSize()
 {
-    for (auto videoTrack : m_videoTracks) {
+    for (auto& videoTrack : m_videoTracks) {
         if (videoTrack->selected())
             return videoTrack->naturalSize();
     }

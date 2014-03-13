@@ -514,7 +514,7 @@ void WebProcess::visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHa
     // FIXME: We may want to track visited links per WebPageGroup rather than per WebContext.
     for (const auto& webPage : m_pageMap.values()) {
         if (Page* page = webPage->corePage()) {
-            for (auto linkHash : linkHashes)
+            for (auto& linkHash : linkHashes)
                 page->invalidateStylesForLink(linkHash);
         }
     }
