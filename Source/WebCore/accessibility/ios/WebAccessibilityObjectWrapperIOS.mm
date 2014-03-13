@@ -49,7 +49,7 @@
 #import "RenderView.h"
 #import "RuntimeApplicationChecksIOS.h"
 #import "SVGNames.h"
-#import "SVGElements.h"
+#import "SVGElement.h"
 #import "TextIterator.h"
 #import "WAKScrollView.h"
 #import "WAKView.h"
