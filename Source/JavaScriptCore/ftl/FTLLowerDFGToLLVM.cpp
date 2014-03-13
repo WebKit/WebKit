@@ -575,6 +575,24 @@ private:
         case CheckArgumentsNotCreated:
             compileCheckArgumentsNotCreated();
             break;
+        case IsUndefined:
+            compileIsUndefined();
+            break;
+        case IsBoolean:
+            compileIsBoolean();
+            break;
+        case IsNumber:
+            compileIsNumber();
+            break;
+        case IsString:
+            compileIsString();
+            break;
+        case IsObject:
+            compileIsObject();
+            break;
+        case IsFunction:
+            compileIsFunction();
+            break;
         case CountExecution:
             compileCountExecution();
             break;
@@ -707,27 +725,6 @@ private:
     void compileInt52ToValue()
     {
         setJSValue(lowJSValue(m_node->child1()));
-    }
-
-    void compileStoreBarrier()
-    {
-        emitStoreBarrier(lowCell(m_node->child1()));
-    }
-
-    void compileStoreBarrierWithNullCheck()
-    {
-#if ENABLE(GGC)
-        LBasicBlock isNotNull = FTL_NEW_BLOCK(m_out, ("Store barrier with null check value not null"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Store barrier continuation"));
-
-        LValue base = lowJSValue(m_node->child1());
-        m_out.branch(m_out.isZero64(base), unsure(continuation), unsure(isNotNull));
-        LBasicBlock lastNext = m_out.appendTo(isNotNull, continuation);
-        emitStoreBarrier(base);
-        m_out.appendTo(continuation, lastNext);
-#else
-        speculate(m_node->child1());
-#endif
     }
 
     void compileUpsilon()
@@ -3727,12 +3724,80 @@ private:
         checkArgumentsNotCreated();
     }
     
+    void compileIsUndefined()
+    {
+        setBoolean(equalNullOrUndefined(m_node->child1(), AllCellsAreFalse, EqualUndefined));
+    }
+    
+    void compileIsBoolean()
+    {
+        setBoolean(isBoolean(lowJSValue(m_node->child1())));
+    }
+    
+    void compileIsNumber()
+    {
+        setBoolean(isNumber(lowJSValue(m_node->child1())));
+    }
+    
+    void compileIsString()
+    {
+        LValue value = lowJSValue(m_node->child1());
+        
+        LBasicBlock isCellCase = FTL_NEW_BLOCK(m_out, ("IsString cell case"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("IsString continuation"));
+        
+        ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
+        m_out.branch(isCell(value), unsure(isCellCase), unsure(continuation));
+        
+        LBasicBlock lastNext = m_out.appendTo(isCellCase, continuation);
+        ValueFromBlock cellResult = m_out.anchor(isString(value));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        setBoolean(m_out.phi(m_out.boolean, notCellResult, cellResult));
+    }
+    
+    void compileIsObject()
+    {
+        LValue pointerResult = vmCall(
+            m_out.operation(operationIsObject), m_callFrame, lowJSValue(m_node->child1()));
+        setBoolean(m_out.notNull(pointerResult));
+    }
+    
+    void compileIsFunction()
+    {
+        LValue pointerResult = vmCall(
+            m_out.operation(operationIsFunction), lowJSValue(m_node->child1()));
+        setBoolean(m_out.notNull(pointerResult));
+    }
+    
     void compileCountExecution()
     {
         TypedPointer counter = m_out.absolute(m_node->executionCounter()->address());
         m_out.store64(m_out.add(m_out.load64(counter), m_out.constInt64(1)), counter);
     }
     
+    void compileStoreBarrier()
+    {
+        emitStoreBarrier(lowCell(m_node->child1()));
+    }
+
+    void compileStoreBarrierWithNullCheck()
+    {
+#if ENABLE(GGC)
+        LBasicBlock isNotNull = FTL_NEW_BLOCK(m_out, ("Store barrier with null check value not null"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Store barrier continuation"));
+
+        LValue base = lowJSValue(m_node->child1());
+        m_out.branch(m_out.isZero64(base), unsure(continuation), unsure(isNotNull));
+        LBasicBlock lastNext = m_out.appendTo(isNotNull, continuation);
+        emitStoreBarrier(base);
+        m_out.appendTo(continuation, lastNext);
+#else
+        speculate(m_node->child1());
+#endif
+    }
+
     LValue didOverflowStack()
     {
         // This does a very simple leaf function analysis. The invariant of FTL call
@@ -4949,6 +5014,10 @@ private:
     {
         return m_out.testIsZero64(jsValue, m_tagTypeNumber);
     }
+    LValue isNotCellOrMisc(LValue jsValue)
+    {
+        return m_out.testNonZero64(jsValue, m_tagTypeNumber);
+    }
     LValue unboxDouble(LValue jsValue)
     {
         return m_out.bitCast(m_out.add(jsValue, m_tagTypeNumber), m_out.doubleType);
@@ -4956,6 +5025,15 @@ private:
     LValue boxDouble(LValue doubleValue)
     {
         return m_out.sub(m_out.bitCast(doubleValue, m_out.int64), m_tagTypeNumber);
+    }
+    
+    LValue isNumber(LValue jsValue)
+    {
+        return isNotCellOrMisc(jsValue);
+    }
+    LValue isNotNumber(LValue jsValue)
+    {
+        return isCellOrMisc(jsValue);
     }
     
     LValue isNotCell(LValue jsValue)
@@ -4983,6 +5061,10 @@ private:
         return m_out.testNonZero64(
             m_out.bitXor(jsValue, m_out.constInt64(ValueFalse)),
             m_out.constInt64(~1));
+    }
+    LValue isBoolean(LValue jsValue)
+    {
+        return m_out.bitNot(isNotBoolean(jsValue));
     }
     LValue unboxBoolean(LValue jsValue)
     {

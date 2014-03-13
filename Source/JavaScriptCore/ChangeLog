@@ -1,3 +1,39 @@
+2014-03-13  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should support IsBlah
+        https://bugs.webkit.org/show_bug.cgi?id=130202
+
+        Reviewed by Geoffrey Garen.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileIsUndefined):
+        (JSC::FTL::LowerDFGToLLVM::compileIsBoolean):
+        (JSC::FTL::LowerDFGToLLVM::compileIsNumber):
+        (JSC::FTL::LowerDFGToLLVM::compileIsString):
+        (JSC::FTL::LowerDFGToLLVM::compileIsObject):
+        (JSC::FTL::LowerDFGToLLVM::compileIsFunction):
+        (JSC::FTL::LowerDFGToLLVM::compileStoreBarrier):
+        (JSC::FTL::LowerDFGToLLVM::compileStoreBarrierWithNullCheck):
+        (JSC::FTL::LowerDFGToLLVM::isNotCellOrMisc):
+        (JSC::FTL::LowerDFGToLLVM::isNumber):
+        (JSC::FTL::LowerDFGToLLVM::isNotNumber):
+        (JSC::FTL::LowerDFGToLLVM::isBoolean):
+        * ftl/FTLOSRExitCompiler.cpp:
+        * tests/stress/is-undefined-exit-on-masquerader.js: Added.
+        (bar):
+        (foo):
+        (test):
+        * tests/stress/is-undefined-jettison-on-masquerader.js: Added.
+        (foo):
+        (test):
+        * tests/stress/is-undefined-masquerader.js: Added.
+        (foo):
+        (test):
+
 2014-03-13  Mark Lam  <mark.lam@apple.com>
 
         JS benchmarks crash with a bus error on 32-bit x86.

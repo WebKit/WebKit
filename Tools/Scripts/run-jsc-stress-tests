@@ -547,6 +547,10 @@ def runFTLNoCJITValidate
     run("ftl-no-cjit-validate", "--enableConcurrentJIT=false", "--validateGraph=true", *FTL_OPTIONS) if $enableFTL
 end
 
+def runFTLNoCJITNoInlineValidate
+    run("ftl-no-cjit-no-inline-validate", "--enableConcurrentJIT=false", "--validateGraph=true", "--maximumInliningDepth=1", "--maximumInliningDepthForMustInline=1", *FTL_OPTIONS) if $enableFTL
+end
+
 def runFTLNoCJITOSRValidation
     run("ftl-no-cjit-osr-validation", "--enableConcurrentJIT=false", "--validateFTLOSRExitLiveness=true", *FTL_OPTIONS) if $enableFTL
 end
@@ -592,6 +596,7 @@ def defaultRun
     runDFGEagerNoCJITValidate
     runDefaultFTL
     runFTLNoCJITValidate
+    runFTLNoCJITNoInlineValidate
     runFTLNoCJITOSRValidation
     runFTLEager
     runFTLEagerNoCJITValidate

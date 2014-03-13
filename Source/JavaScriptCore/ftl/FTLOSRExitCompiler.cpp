@@ -33,6 +33,7 @@
 #include "FTLExitArgumentForOperand.h"
 #include "FTLJITCode.h"
 #include "FTLOSRExit.h"
+#include "FTLState.h"
 #include "FTLSaveRestore.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"

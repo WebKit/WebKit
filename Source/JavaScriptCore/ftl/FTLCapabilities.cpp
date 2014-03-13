@@ -143,6 +143,12 @@ inline CapabilityLevel canCompile(Node* node)
     case ThrowReferenceError:
     case Unreachable:
     case GetMyArgumentByVal:
+    case IsUndefined:
+    case IsBoolean:
+    case IsNumber:
+    case IsString:
+    case IsObject:
+    case IsFunction:
         // These are OK.
         break;
     case PutByIdDirect:
