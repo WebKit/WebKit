@@ -115,6 +115,7 @@ bool MediaSession::clientWillPausePlayback()
     }
     
     setState(Paused);
+    MediaSessionManager::sharedManager().sessionWillEndPlayback(*this);
     return true;
 }
 
@@ -127,6 +128,21 @@ void MediaSession::pauseSession()
 MediaSession::MediaType MediaSession::mediaType() const
 {
     return m_client.mediaType();
+}
+
+String MediaSession::title() const
+{
+    return m_client.mediaSessionTitle();
+}
+
+double MediaSession::duration() const
+{
+    return m_client.mediaSessionDuration();
+}
+
+double MediaSession::currentTime() const
+{
+    return m_client.mediaSessionCurrentTime();
 }
     
 }

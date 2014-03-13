@@ -65,8 +65,9 @@ public:
     SessionRestrictions restrictions(MediaSession::MediaType);
     virtual void resetRestrictions();
 
-    void sessionWillBeginPlayback(const MediaSession&) const;
-
+    virtual void sessionWillBeginPlayback(const MediaSession&);
+    virtual void sessionWillEndPlayback(const MediaSession&) { }
+    
     bool sessionRestrictsInlineVideoPlayback(const MediaSession&) const;
 
 #if ENABLE(IOS_AIRPLAY)
@@ -79,13 +80,17 @@ protected:
 
     void addSession(MediaSession&);
     void removeSession(MediaSession&);
-
+    
+    void setCurrentSession(const MediaSession* session) { m_activeSession = session; }
+    const MediaSession* currentSession() { return m_activeSession; }
+    
 private:
     void updateSessionState();
 
     SessionRestrictions m_restrictions[MediaSession::WebAudio + 1];
 
     Vector<MediaSession*> m_sessions;
+    const MediaSession* m_activeSession;
     bool m_interrupted;
 };
 

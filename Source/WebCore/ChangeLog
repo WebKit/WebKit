@@ -1,3 +1,53 @@
+2014-03-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Sync media playback with now playing
+        https://bugs.webkit.org/show_bug.cgi?id=130172
+
+        Reviewed by Jer Noble.
+        
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::play): Move clientWillBeginPlayback to
+            playInternal so it is called every time playback begins.
+        (WebCore::HTMLMediaElement::playInternal): Call clientWillBeginPlayback.
+        (WebCore::HTMLMediaElement::pause): Move clientWillPausePlayback to
+            playInternal so it is called every time playback begins.
+        (WebCore::HTMLMediaElement::playInternal): Call clientWillPausePlayback.
+        (WebCore::HTMLMediaElement::mediaSessionTitle): New. Return the 'title' attribute,
+            or currenSrc if that is empty.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::mediaSessionDuration): Return duration.
+        (WebCore::HTMLMediaElement::mediaSessionCurrentTime): Return current time.
+
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSession::clientWillPausePlayback): New, passthrough to the
+            media element.
+        (WebCore::MediaSession::title): Ditto.
+        (WebCore::MediaSession::duration): Ditto.
+        (WebCore::MediaSession::currentTime): Ditto.
+        * platform/audio/MediaSession.h:
+        (WebCore::MediaSessionClient::mediaSessionTitle):
+        (WebCore::MediaSessionClient::mediaSessionDuration):
+        (WebCore::MediaSessionClient::mediaSessionCurrentTime):
+
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::MediaSessionManager): Initialize m_activeSession.
+        (WebCore::MediaSessionManager::removeSession): Set m_activeSession if the session
+            being removed is currently active.
+        (WebCore::MediaSessionManager::sessionWillBeginPlayback): Set m_activeSession.
+        * platform/audio/MediaSessionManager.h:
+        (WebCore::MediaSessionManager::sessionWillEndPlayback):
+        (WebCore::MediaSessionManager::setCurrentSession):
+        (WebCore::MediaSessionManager::currentSession):
+
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::sessionWillBeginPlayback): Call updateNowPlayingInfo. 
+        (WebCore::MediaSessionManageriOS::sessionWillEndPlayback): Ditto.
+        (WebCore::MediaSessionManageriOS::updateNowPlayingInfo): Update MPNowPlayingInfoCenter
+            with the current media item's title, duration, and current time.
+        (-[WebMediaSessionHelper initWithCallback:]): Turn on deliver of remote control
+            events, even though we don't respond to them yet, or Now Playing won't work.
+
 2014-03-13  Radu Stavila  <stavila@adobe.com>
 
         Webkit not building on XCode 5.1 due to garbage collection no longer being supported

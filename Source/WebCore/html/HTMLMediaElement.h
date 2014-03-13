@@ -690,9 +690,13 @@ private:
     bool ensureMediaControlsInjectedScript();
 #endif
 
+    // MediaSessionClient Overrides
     virtual MediaSession::MediaType mediaType() const override;
     virtual void pausePlayback() override;
     virtual void resumePlayback() override;
+    virtual String mediaSessionTitle() const override;
+    virtual double mediaSessionDuration() const override { return duration(); }
+    virtual double mediaSessionCurrentTime() const override { return currentTime(); }
 
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_progressEventTimer;

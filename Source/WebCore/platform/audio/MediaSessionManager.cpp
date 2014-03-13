@@ -40,7 +40,8 @@ MediaSessionManager& MediaSessionManager::sharedManager()
 #endif
 
 MediaSessionManager::MediaSessionManager()
-    : m_interrupted(false)
+    : m_activeSession(nullptr)
+    , m_interrupted(false)
 {
     resetRestrictions();
 }
@@ -109,7 +110,10 @@ void MediaSessionManager::removeSession(MediaSession& session)
     ASSERT(index != notFound);
     if (index == notFound)
         return;
-
+    
+    if (m_activeSession == &session)
+        setCurrentSession(nullptr);
+    
     m_sessions.remove(index);
     updateSessionState();
 }
@@ -132,8 +136,10 @@ MediaSessionManager::SessionRestrictions MediaSessionManager::restrictions(Media
     return m_restrictions[type];
 }
 
-void MediaSessionManager::sessionWillBeginPlayback(const MediaSession& session) const
+void MediaSessionManager::sessionWillBeginPlayback(const MediaSession& session)
 {
+    setCurrentSession(&session);
+    
     MediaSession::MediaType sessionType = session.mediaType();
     SessionRestrictions restrictions = m_restrictions[sessionType];
     if (!restrictions & ConcurrentPlaybackNotPermitted)

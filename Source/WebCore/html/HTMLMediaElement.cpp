@@ -2684,18 +2684,18 @@ void HTMLMediaElement::play()
     if (ScriptController::processingUserGesture())
         removeBehaviorsRestrictionsAfterFirstUserGesture();
 
-    if (!m_mediaSession->clientWillBeginPlayback()) {
-        LOG(Media, "  returning because of interruption");
-        return;
-    }
-    
     playInternal();
 }
 
 void HTMLMediaElement::playInternal()
 {
     LOG(Media, "HTMLMediaElement::playInternal");
-
+    
+    if (!m_mediaSession->clientWillBeginPlayback()) {
+        LOG(Media, "  returning because of interruption");
+        return;
+    }
+    
     // 4.8.10.9. Playing the media resource
     if (!m_player || m_networkState == NETWORK_EMPTY)
         scheduleDelayedAction(LoadMediaResource);
@@ -2731,11 +2731,6 @@ void HTMLMediaElement::pause()
     if (!m_mediaSession->playbackPermitted(*this))
         return;
 
-    if (!m_mediaSession->clientWillPausePlayback()) {
-        LOG(Media, "  returning because of interruption");
-        return;
-    }
-
     pauseInternal();
 }
 
@@ -2744,6 +2739,11 @@ void HTMLMediaElement::pauseInternal()
 {
     LOG(Media, "HTMLMediaElement::pauseInternal");
 
+    if (!m_mediaSession->clientWillPausePlayback()) {
+        LOG(Media, "  returning because of interruption");
+        return;
+    }
+    
     // 4.8.10.9. Playing the media resource
     if (!m_player || m_networkState == NETWORK_EMPTY) {
 #if PLATFORM(IOS)
@@ -5877,6 +5877,14 @@ void HTMLMediaElement::resumePlayback()
     LOG(Media, "HTMLMediaElement::resumePlayback - paused = %s", boolString(paused()));
     if (paused())
         play();
+}
+    
+String HTMLMediaElement::mediaSessionTitle() const
+{
+    if (fastHasAttribute(titleAttr))
+        return fastGetAttribute(titleAttr);
+    
+    return m_currentSrc;
 }
 
 }

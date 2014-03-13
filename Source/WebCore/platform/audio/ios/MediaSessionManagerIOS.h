@@ -48,6 +48,11 @@ public:
 private:
     friend class MediaSessionManager;
 
+    virtual void sessionWillBeginPlayback(const MediaSession&) override;
+    virtual void sessionWillEndPlayback(const MediaSession&) override;
+    
+    void updateNowPlayingInfo();
+    
     virtual void resetRestrictions() override;
 
 #if ENABLE(IOS_AIRPLAY)

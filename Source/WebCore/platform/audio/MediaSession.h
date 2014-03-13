@@ -26,6 +26,7 @@
 #ifndef MediaSession_h
 #define MediaSession_h
 
+#include "MediaPlayer.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -70,6 +71,10 @@ public:
     bool clientWillPausePlayback();
 
     void pauseSession();
+    
+    String title() const;
+    double duration() const;
+    double currentTime() const;
 
 protected:
     MediaSessionClient& client() const { return m_client; }
@@ -89,7 +94,11 @@ public:
     virtual MediaSession::MediaType mediaType() const = 0;
     virtual void resumePlayback() = 0;
     virtual void pausePlayback() = 0;
-
+    
+    virtual String mediaSessionTitle() const { return String(); }
+    virtual double mediaSessionDuration() const { return MediaPlayer::invalidTime(); }
+    virtual double mediaSessionCurrentTime() const { return MediaPlayer::invalidTime(); }
+    
 protected:
     virtual ~MediaSessionClient() { }
 };
