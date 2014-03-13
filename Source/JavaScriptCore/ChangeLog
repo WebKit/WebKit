@@ -1,3 +1,14 @@
+2014-03-13  Andreas Kling  <akling@apple.com>
+
+        Revert "Short-circuit JSGlobalObjectInspectorController when not inspecting."
+        <https://webkit.org/b/129995>
+
+        This code path is not taken anymore on DYEB, and I can't explain why
+        it was showing up in my profiles. Backing it out per JoePeck's suggestion.
+
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::reportAPIException):
+
 2014-03-13  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should support IsBlah
