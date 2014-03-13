@@ -1,5 +1,11 @@
 2014-03-13  Benjamin Poulain  <bpoulain@apple.com>
 
+        Attempt to fix the build after r165542
+
+        * dom/NodeRenderStyle.h:
+
+2014-03-13  Benjamin Poulain  <bpoulain@apple.com>
+
         Update WebAccessibilityObjectWrapperIOS after r165544
 
         * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
