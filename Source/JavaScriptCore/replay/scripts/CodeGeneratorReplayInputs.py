@@ -630,7 +630,7 @@ class Generator:
             # headers with the relevant class declaration.
             include_for_enclosing_class = _type.is_enum() and _type.enclosing_class is not None
             # Include headers for types like URL and String which are copied, not owned or shared.
-            include_for_copyable_member = _type.mode is TypeModes.HEAVY_SCALAR or _type.mode is TypeModes.SCALAR
+            include_for_copyable_member = _type.mode is TypeModes.HEAVY_SCALAR
             if (not includes_for_types) ^ (include_for_destructor or include_for_enclosing_class or include_for_copyable_member):
                 continue
 
@@ -665,7 +665,9 @@ class Generator:
                 continue
             if _type.enclosing_class is not None:
                 continue
-            if _type.mode == TypeModes.SCALAR or _type.mode == TypeModes.HEAVY_SCALAR:
+            if _type.mode == TypeModes.HEAVY_SCALAR:
+                continue
+            if _type.mode == TypeModes.SCALAR and not (_type.is_enum() or _type.is_enum_class()):
                 continue
             if _type.is_enum():
                 declaration = "enum %s : %s;" % (_type.type_name(), _type.underlying_storage)

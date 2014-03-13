@@ -63,6 +63,12 @@ EncodedValue EncodingTraits<NondeterministicInputBase>::encodeValue(const Nondet
     WEB_REPLAY_INPUT_NAMES_FOR_EACH(ENCODE_IF_TYPE_TAG_MATCHES)
 #undef ENCODE_IF_TYPE_TAG_MATCHES
 
+    // The macro won't work here because of the class template argument.
+    if (type == inputTypes().MemoizedDOMResult) {
+        InputTraits<MemoizedDOMResultBase>::encode(encodedValue, static_cast<const MemoizedDOMResultBase&>(input));
+        return encodedValue;
+    }
+
     ASSERT_NOT_REACHED();
     return EncodedValue();
 }
@@ -86,6 +92,15 @@ bool EncodingTraits<NondeterministicInputBase>::decodeValue(EncodedValue& encode
     JS_REPLAY_INPUT_NAMES_FOR_EACH(DECODE_IF_TYPE_TAG_MATCHES)
     WEB_REPLAY_INPUT_NAMES_FOR_EACH(DECODE_IF_TYPE_TAG_MATCHES)
 #undef DECODE_IF_TYPE_TAG_MATCHES
+
+    if (type == inputTypes().MemoizedDOMResult) {
+        std::unique_ptr<MemoizedDOMResultBase> decodedInput;
+        if (!InputTraits<MemoizedDOMResultBase>::decode(encodedValue, decodedInput))
+            return false;
+
+        input = std::move(decodedInput);
+        return true;
+    }
 
     return false;
 }

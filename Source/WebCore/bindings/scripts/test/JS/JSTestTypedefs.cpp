@@ -245,7 +245,7 @@ EncodedJSValue jsTestTypedefsAttrWithGetterException(ExecState* exec, JSObject* 
     }
     ExceptionCode ec = 0;
     TestTypedefs& impl = castedThis->impl();
-    JSC::JSValue result = jsNumber(impl.attrWithGetterException(ec));
+    JSValue result = jsNumber(impl.attrWithGetterException(ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -284,7 +284,7 @@ EncodedJSValue jsTestTypedefsStringAttrWithGetterException(ExecState* exec, JSOb
     }
     ExceptionCode ec = 0;
     TestTypedefs& impl = castedThis->impl();
-    JSC::JSValue result = jsStringWithCache(exec, impl.stringAttrWithGetterException(ec));
+    JSValue result = jsStringWithCache(exec, impl.stringAttrWithGetterException(ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -506,8 +506,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithSequenceAr
     Vector<RefPtr<SerializedScriptValue>> sequenceArg((toRefPtrNativeArray<SerializedScriptValue, JSSerializedScriptValue>(exec, exec->argument(0), &toSerializedScriptValue)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-
-    JSC::JSValue result = jsNumber(impl.methodWithSequenceArg(sequenceArg));
+    JSValue result = jsNumber(impl.methodWithSequenceArg(sequenceArg));
     return JSValue::encode(result);
 }
 
@@ -573,8 +572,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionImmutablePointFuncti
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
     TestTypedefs& impl = castedThis->impl();
-
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl.immutablePointFunction())));
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl.immutablePointFunction())));
     return JSValue::encode(result);
 }
 
@@ -592,8 +590,8 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction(
     Vector<String> values(toNativeArray<String>(exec, exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
+    JSValue result = jsArray(exec, castedThis->globalObject(), impl.stringArrayFunction(values, ec));
 
-    JSC::JSValue result = jsArray(exec, castedThis->globalObject(), impl.stringArrayFunction(values, ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -612,8 +610,8 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction2
     Vector<String> values(toNativeArray<String>(exec, exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
+    JSValue result = jsArray(exec, castedThis->globalObject(), impl.stringArrayFunction2(values, ec));
 
-    JSC::JSValue result = jsArray(exec, castedThis->globalObject(), impl.stringArrayFunction2(values, ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -631,8 +629,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionCallWithSequenceThat
     Vector<RefPtr<TestEventTarget>> sequenceArg((toRefPtrNativeArray<TestEventTarget, JSTestEventTarget>(exec, exec->argument(0), &toTestEventTarget)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-
-    JSC::JSValue result = jsBoolean(impl.callWithSequenceThatRequiresInclude(sequenceArg));
+    JSValue result = jsBoolean(impl.callWithSequenceThatRequiresInclude(sequenceArg));
     return JSValue::encode(result);
 }
 

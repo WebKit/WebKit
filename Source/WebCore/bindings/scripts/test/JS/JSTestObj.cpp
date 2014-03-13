@@ -939,7 +939,7 @@ EncodedJSValue jsTestObjAttrWithGetterException(ExecState* exec, JSObject* slotB
     }
     ExceptionCode ec = 0;
     TestObj& impl = castedThis->impl();
-    JSC::JSValue result = jsNumber(impl.attrWithGetterException(ec));
+    JSValue result = jsNumber(impl.attrWithGetterException(ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -978,7 +978,7 @@ EncodedJSValue jsTestObjStringAttrWithGetterException(ExecState* exec, JSObject*
     }
     ExceptionCode ec = 0;
     TestObj& impl = castedThis->impl();
-    JSC::JSValue result = jsStringWithCache(exec, impl.stringAttrWithGetterException(ec));
+    JSValue result = jsStringWithCache(exec, impl.stringAttrWithGetterException(ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -1072,7 +1072,7 @@ EncodedJSValue jsTestObjWithScriptStateAttributeRaises(ExecState* exec, JSObject
     }
     ExceptionCode ec = 0;
     TestObj& impl = castedThis->impl();
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptStateAttributeRaises(exec, ec)));
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptStateAttributeRaises(exec, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -1095,7 +1095,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAttributeRaises(ExecState* exe
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
     TestObj& impl = castedThis->impl();
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAttributeRaises(scriptContext, ec)));
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAttributeRaises(scriptContext, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -1139,7 +1139,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
     TestObj& impl = castedThis->impl();
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateAttributeRaises(exec, scriptContext, ec)));
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateAttributeRaises(exec, scriptContext, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -1658,7 +1658,7 @@ EncodedJSValue jsTestObjNullableStringValue(ExecState* exec, JSObject* slotBase,
     ExceptionCode ec = 0;
     bool isNull = false;
     TestObj& impl = castedThis->impl();
-    JSC::JSValue result = jsNumber(impl.nullableStringValue(isNull, ec));
+    JSValue result = jsNumber(impl.nullableStringValue(isNull, ec));
     if (isNull)
         return JSValue::encode(jsNull());
     setDOMException(exec, ec);
@@ -2673,8 +2673,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethod(ExecState* exe
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-
-    JSC::JSValue result = jsNumber(impl.byteMethod());
+    JSValue result = jsNumber(impl.byteMethod());
     return JSValue::encode(result);
 }
 
@@ -2697,8 +2696,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethodWithArgs(ExecSt
     TestObj* objArg(toTestObj(exec->argument(2)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-
-    JSC::JSValue result = jsNumber(impl.byteMethodWithArgs(byteArg, strArg, objArg));
+    JSValue result = jsNumber(impl.byteMethodWithArgs(byteArg, strArg, objArg));
     return JSValue::encode(result);
 }
 
@@ -2710,8 +2708,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethod(ExecState* ex
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-
-    JSC::JSValue result = jsNumber(impl.octetMethod());
+    JSValue result = jsNumber(impl.octetMethod());
     return JSValue::encode(result);
 }
 
@@ -2734,8 +2731,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethodWithArgs(ExecS
     TestObj* objArg(toTestObj(exec->argument(2)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-
-    JSC::JSValue result = jsNumber(impl.octetMethodWithArgs(octetArg, strArg, objArg));
+    JSValue result = jsNumber(impl.octetMethodWithArgs(octetArg, strArg, objArg));
     return JSValue::encode(result);
 }
 
@@ -2747,8 +2743,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethod(ExecState* exe
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-
-    JSC::JSValue result = jsNumber(impl.longMethod());
+    JSValue result = jsNumber(impl.longMethod());
     return JSValue::encode(result);
 }
 
@@ -2771,8 +2766,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethodWithArgs(ExecSt
     TestObj* objArg(toTestObj(exec->argument(2)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-
-    JSC::JSValue result = jsNumber(impl.longMethodWithArgs(longArg, strArg, objArg));
+    JSValue result = jsNumber(impl.longMethodWithArgs(longArg, strArg, objArg));
     return JSValue::encode(result);
 }
 
@@ -2784,8 +2778,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethod(ExecState* exec
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.objMethod()));
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.objMethod()));
     return JSValue::encode(result);
 }
 
@@ -2808,8 +2801,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecSta
     TestObj* objArg(toTestObj(exec->argument(2)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.objMethodWithArgs(longArg, strArg, objArg)));
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.objMethodWithArgs(longArg, strArg, objArg)));
     return JSValue::encode(result);
 }
 
@@ -2843,8 +2835,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodReturningSequence(E
     int longArg(toInt32(exec, exec->argument(0), NormalConversion));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-
-    JSC::JSValue result = jsArray(exec, castedThis->globalObject(), impl.methodReturningSequence(longArg));
+    JSValue result = jsArray(exec, castedThis->globalObject(), impl.methodReturningSequence(longArg));
     return JSValue::encode(result);
 }
 
@@ -2884,8 +2875,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgs
     TestObj* objArg(toTestObj(exec->argument(1)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.methodThatRequiresAllArgsAndThrows(strArg, objArg, ec)));
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.methodThatRequiresAllArgsAndThrows(strArg, objArg, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -3011,8 +3002,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObj(ExecSt
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptStateObj(exec)));
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptStateObj(exec)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     return JSValue::encode(result);
@@ -3041,8 +3031,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObjExcepti
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     ExceptionCode ec = 0;
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptStateObjException(exec, ec)));
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptStateObjException(exec, ec)));
     setDOMException(exec, ec);
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
@@ -3091,8 +3081,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateObjException(exec, scriptContext, ec)));
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateObjException(exec, scriptContext, ec)));
     setDOMException(exec, ec);
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
@@ -3110,8 +3100,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
-
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateWithSpaces(exec, scriptContext)));
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateWithSpaces(exec, scriptContext)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     return JSValue::encode(result);
@@ -3353,8 +3342,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod1(ExecSt
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-
-    JSC::JSValue result = jsStringWithCache(exec, impl.conditionalMethod1());
+    JSValue result = jsStringWithCache(exec, impl.conditionalMethod1());
     return JSValue::encode(result);
 }
 
@@ -3633,16 +3621,14 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethodWithOptional
 
     size_t argsCount = exec->argumentCount();
     if (argsCount <= 0) {
-
-        JSC::JSValue result = jsNumber(TestObj::classMethodWithOptional());
+        JSValue result = jsNumber(TestObj::classMethodWithOptional());
         return JSValue::encode(result);
     }
 
     int arg(toInt32(exec, exec->argument(0), NormalConversion));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-
-    JSC::JSValue result = jsNumber(TestObj::classMethodWithOptional(arg));
+    JSValue result = jsNumber(TestObj::classMethodWithOptional(arg));
     return JSValue::encode(result);
 }
 
@@ -3761,8 +3747,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStringArrayFunction(ExecS
     Vector<String> values(toNativeArray<String>(exec, exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
+    JSValue result = jsArray(exec, castedThis->globalObject(), impl.stringArrayFunction(values, ec));
 
-    JSC::JSValue result = jsArray(exec, castedThis->globalObject(), impl.stringArrayFunction(values, ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -3781,8 +3767,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionDomStringListFunction(Exe
     RefPtr<DOMStringList> values(toDOMStringList(exec, exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.domStringListFunction(values, ec)));
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.domStringListFunction(values, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -3798,8 +3784,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetSVGDocument(ExecState*
     ExceptionCode ec = 0;
     if (!shouldAllowAccessToNode(exec, impl.getSVGDocument(ec)))
         return JSValue::encode(jsNull());
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.getSVGDocument(ec)));
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.getSVGDocument(ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -3880,8 +3866,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMutablePointFunction(Exec
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl.mutablePointFunction())));
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl.mutablePointFunction())));
     return JSValue::encode(result);
 }
 
@@ -3893,8 +3878,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionImmutablePointFunction(Ex
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl.immutablePointFunction())));
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl.immutablePointFunction())));
     return JSValue::encode(result);
 }
 
@@ -3930,8 +3914,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunction(ExecState*
     int b(toInt32(exec, exec->argument(2), NormalConversion));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.strictFunction(str, a, b, ec)));
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.strictFunction(str, a, b, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -3955,8 +3939,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithSequenc
     Vector<unsigned> a(toNativeArray<unsigned>(exec, exec->argument(1)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.strictFunctionWithSequence(objArg, a, ec)));
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.strictFunctionWithSequence(objArg, a, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -3980,8 +3964,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithArray(E
     Vector<int> array(toNativeArray<int>(exec, exec->argument(1)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.strictFunctionWithArray(objArg, array, ec)));
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.strictFunctionWithArray(objArg, array, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }

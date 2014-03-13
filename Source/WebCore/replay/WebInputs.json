@@ -31,6 +31,17 @@
                 "header": "platform/URL.h"
             },
             {
+                "name": "EncodedCType", "mode": "SCALAR", "storage": "uint8_t",
+                "flags": ["ENUM_CLASS"],
+                "values": [
+                    "Boolean",
+                    "Int",
+                    "String",
+                    "Unsigned"
+                ],
+                "header": "replay/MemoizedDOMResult.h"
+            },
+            {
                 "name": "SecurityOrigin", "mode": "SHARED",
                 "header": "page/SecurityOrigin.h"
             },

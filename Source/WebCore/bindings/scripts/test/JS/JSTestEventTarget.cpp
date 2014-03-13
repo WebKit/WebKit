@@ -210,8 +210,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* e
     }
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.item(index)));
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.item(index)));
     return JSValue::encode(result);
 }
 
@@ -259,8 +258,8 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionDispatchEvent(Exe
     Event* evt(toEvent(exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
+    JSValue result = jsBoolean(impl.dispatchEvent(evt, ec));
 
-    JSC::JSValue result = jsBoolean(impl.dispatchEvent(evt, ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }

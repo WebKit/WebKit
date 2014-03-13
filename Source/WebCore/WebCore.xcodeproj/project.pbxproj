@@ -3510,6 +3510,8 @@
 		990A1A0518ADA48400183FD1 /* ReplayInputTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 990A19F518ADA48400183FD1 /* ReplayInputTypes.h */; };
 		9920398218B95BC600B39AF9 /* UserInputBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9920398018B95BC600B39AF9 /* UserInputBridge.cpp */; };
 		9920398318B95BC600B39AF9 /* UserInputBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 9920398118B95BC600B39AF9 /* UserInputBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		99C7CCB318C663E40032E413 /* MemoizedDOMResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C7CCB218C663E40032E413 /* MemoizedDOMResult.h */; };
+		99C7CCB518C6B8990032E413 /* MemoizedDOMResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 99C7CCB418C6B8990032E413 /* MemoizedDOMResult.cpp */; };
 		99CC0B4D18BE9849006CEBCC /* AllReplayInputs.h in Headers */ = {isa = PBXBuildFile; fileRef = 99CC0B3818BE9849006CEBCC /* AllReplayInputs.h */; };
 		99CC0B4E18BE9849006CEBCC /* CapturingInputCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 99CC0B3918BE9849006CEBCC /* CapturingInputCursor.cpp */; };
 		99CC0B4F18BE9849006CEBCC /* CapturingInputCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 99CC0B3A18BE9849006CEBCC /* CapturingInputCursor.h */; };
@@ -10512,6 +10514,8 @@
 		990A19F518ADA48400183FD1 /* ReplayInputTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayInputTypes.h; sourceTree = "<group>"; };
 		9920398018B95BC600B39AF9 /* UserInputBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserInputBridge.cpp; sourceTree = "<group>"; };
 		9920398118B95BC600B39AF9 /* UserInputBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInputBridge.h; sourceTree = "<group>"; };
+		99C7CCB218C663E40032E413 /* MemoizedDOMResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoizedDOMResult.h; sourceTree = "<group>"; };
+		99C7CCB418C6B8990032E413 /* MemoizedDOMResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoizedDOMResult.cpp; sourceTree = "<group>"; };
 		99CC0B3818BE9849006CEBCC /* AllReplayInputs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllReplayInputs.h; sourceTree = "<group>"; };
 		99CC0B3918BE9849006CEBCC /* CapturingInputCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CapturingInputCursor.cpp; sourceTree = "<group>"; };
 		99CC0B3A18BE9849006CEBCC /* CapturingInputCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CapturingInputCursor.h; sourceTree = "<group>"; };
@@ -17935,6 +17939,8 @@
 				99CC0B3B18BE9849006CEBCC /* EventLoopInputDispatcher.cpp */,
 				99CC0B3C18BE9849006CEBCC /* EventLoopInputDispatcher.h */,
 				99CC0B3D18BE9849006CEBCC /* FunctorInputCursor.h */,
+				99C7CCB418C6B8990032E413 /* MemoizedDOMResult.cpp */,
+				99C7CCB218C663E40032E413 /* MemoizedDOMResult.h */,
 				99CC0B3E18BE9849006CEBCC /* ReplayController.cpp */,
 				99CC0B3F18BE9849006CEBCC /* ReplayController.h */,
 				99CC0B4018BE9849006CEBCC /* ReplayingInputCursor.cpp */,
@@ -23846,6 +23852,7 @@
 				977B386C122883E900B81FF8 /* HTMLEntitySearch.h in Headers */,
 				977B386D122883E900B81FF8 /* HTMLEntityTable.h in Headers */,
 				A81369D4097374F600D74463 /* HTMLFieldSetElement.h in Headers */,
+				99C7CCB318C663E40032E413 /* MemoizedDOMResult.h in Headers */,
 				A8CFF7A60A156978000A4234 /* HTMLFontElement.h in Headers */,
 				977B386F122883E900B81FF8 /* HTMLFormattingElementList.h in Headers */,
 				A81369CE097374F600D74463 /* HTMLFormControlElement.h in Headers */,
@@ -28905,6 +28912,7 @@
 				B237C8A70D344D110013F707 /* SVGFontData.cpp in Sources */,
 				B2A1F2AA0CEF0ABF00442F6A /* SVGFontElement.cpp in Sources */,
 				B2227A140D00BF220071B782 /* SVGFontFaceElement.cpp in Sources */,
+				99C7CCB518C6B8990032E413 /* MemoizedDOMResult.cpp in Sources */,
 				B2227A170D00BF220071B782 /* SVGFontFaceFormatElement.cpp in Sources */,
 				B2227A1A0D00BF220071B782 /* SVGFontFaceNameElement.cpp in Sources */,
 				B2227A1D0D00BF220071B782 /* SVGFontFaceSrcElement.cpp in Sources */,

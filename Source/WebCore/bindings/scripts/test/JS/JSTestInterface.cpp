@@ -685,8 +685,8 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
     TestObj* objArg(toTestObj(exec->argument(1)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.implementsMethod2(scriptContext, strArg, objArg, ec)));
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.implementsMethod2(scriptContext, strArg, objArg, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -751,8 +751,8 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
     TestObj* objArg(toTestObj(exec->argument(1)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalMethod2(&impl, scriptContext, strArg, objArg, ec)));
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalMethod2(&impl, scriptContext, strArg, objArg, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }

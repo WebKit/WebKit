@@ -1,3 +1,109 @@
+2014-03-12  Brian Burg  <bburg@apple.com>
+
+        Web Replay: add infrastructure for memoizing nondeterministic DOM APIs
+        https://bugs.webkit.org/show_bug.cgi?id=129445
+
+        Reviewed by Timothy Hatcher.
+
+        Add two pieces of infrastructure to support memoization of selected DOM APIs.
+
+        The first piece is MemoizedDOMResult, a templated replay input class that knows
+        how to serialize a DOM API's return value, ctype, and exception code.
+
+        The second piece is the addition of a new IDL attribute called `Nondeterministic`.
+        When placed on a DOM function or attribute, the code generator will emit code
+        to save the DOM API's return value or use a memoized return value instead,
+        depending on the current replay state. This new emitted code path is behind
+        a feature flag.
+
+        No new tests, as no new inputs are addressed by this change. Per-DOM API replay
+        regression tests will be added when those APIs are marked as nondeterministic.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorJS.pm: Add support of the `Nondeterministic` attribute.
+        (GenerateImplementation): Handle cases for attributes and getters with exceptions.
+        (GenerateImplementationFunctionCall): Handle function calls with and without exceptions.
+        (GetNativeTypeForMemoization): Added. Converts DOMString to WTF::String.
+        * bindings/scripts/IDLAttributes.txt: Add new `Nondeterministic` attribute.
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::jsTestEventTargetPrototypeFunctionItem):
+        (WebCore::jsTestEventTargetPrototypeFunctionDispatchEvent):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod2):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod2):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjAttrWithGetterException):
+        (WebCore::jsTestObjStringAttrWithGetterException):
+        (WebCore::jsTestObjWithScriptStateAttributeRaises):
+        (WebCore::jsTestObjWithScriptExecutionContextAttributeRaises):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises):
+        (WebCore::jsTestObjNullableStringValue):
+        (WebCore::jsTestObjPrototypeFunctionByteMethod):
+        (WebCore::jsTestObjPrototypeFunctionByteMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionOctetMethod):
+        (WebCore::jsTestObjPrototypeFunctionOctetMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionLongMethod):
+        (WebCore::jsTestObjPrototypeFunctionLongMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionObjMethod):
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodReturningSequence):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateObj):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateObjException):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjException):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpaces):
+        (WebCore::jsTestObjPrototypeFunctionConditionalMethod1):
+        (WebCore::jsTestObjConstructorFunctionClassMethodWithOptional):
+        (WebCore::jsTestObjPrototypeFunctionStringArrayFunction):
+        (WebCore::jsTestObjPrototypeFunctionDomStringListFunction):
+        (WebCore::jsTestObjPrototypeFunctionGetSVGDocument):
+        (WebCore::jsTestObjPrototypeFunctionMutablePointFunction):
+        (WebCore::jsTestObjPrototypeFunctionImmutablePointFunction):
+        (WebCore::jsTestObjPrototypeFunctionStrictFunction):
+        (WebCore::jsTestObjPrototypeFunctionStrictFunctionWithSequence):
+        (WebCore::jsTestObjPrototypeFunctionStrictFunctionWithArray):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::jsTestTypedefsAttrWithGetterException):
+        (WebCore::jsTestTypedefsStringAttrWithGetterException):
+        (WebCore::jsTestTypedefsPrototypeFunctionMethodWithSequenceArg):
+        (WebCore::jsTestTypedefsPrototypeFunctionImmutablePointFunction):
+        (WebCore::jsTestTypedefsPrototypeFunctionStringArrayFunction):
+        (WebCore::jsTestTypedefsPrototypeFunctionStringArrayFunction2):
+        (WebCore::jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresInclude):
+
+        * replay/AllReplayInputs.h:
+        * replay/MemoizedDOMResult.cpp: Added.
+        (WebCore::MemoizedDOMResultBase::type):
+        (WebCore::MemoizedDOMResultBase::createFromEncodedResult):
+        (InputTraits<MemoizedDOMResultBase>::type):
+        (InputTraits<MemoizedDOMResultBase>::encode):
+        (InputTraits<MemoizedDOMResultBase>::decode):
+
+        * replay/MemoizedDOMResult.h: Added. Every specialization of MemoizedDOMResult<T>
+        stores a binding name, ctype, result value of type T, and optional exception code.
+        The ctype-specific code uses the CTypeTraits struct to abstract over enum names and
+        compiler types. The actual encode/decode methods just use methods from EncodingTraits<T>.
+
+        (WebCore::MemoizedDOMResultBase::MemoizedDOMResultBase):
+        (WebCore::MemoizedDOMResultBase::~MemoizedDOMResultBase):
+        (WebCore::MemoizedDOMResultBase::attribute):
+        (WebCore::MemoizedDOMResultBase::ctype):
+        (WebCore::MemoizedDOMResultBase::exceptionCode):
+        (WebCore::CTypeTraits::decode):
+        (WebCore::MemoizedDOMResultBase::convertTo):
+        (JSC::InputTraits<MemoizedDOMResultBase>::queue):
+        * replay/ReplayInputTypes.cpp: See below.
+        (WebCore::ReplayInputTypes::ReplayInputTypes):
+        * replay/ReplayInputTypes.h: See below.
+        * replay/SerializationMethods.cpp: We need to special-case the encoding
+        and decoding of MemoizedDOMResult inputs because the input is not part of
+        the generated per-framework replay inputs enum.
+        (JSC::EncodingTraits<NondeterministicInputBase>::encodeValue):
+        (JSC::EncodingTraits<NondeterministicInputBase>::decodeValue):
+
+        * replay/WebInputs.json: Add the EncodedCType enum as an external enum type,
+        so that we can use a generated EncodingTraits specialization to encode the enum.
+
 2014-03-11  Jae Hyun Park  <jaepark@webkit.org>
 
         Make HTMLCanvasElement::is3D private

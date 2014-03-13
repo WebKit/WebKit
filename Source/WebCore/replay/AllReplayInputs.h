@@ -36,6 +36,7 @@
 
 #if ENABLE(WEB_REPLAY)
 
+#include "MemoizedDOMResult.h"
 #include "WebReplayInputs.h"
 #include <JavaScriptCore/JSReplayInputs.h>
 

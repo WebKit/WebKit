@@ -85,6 +85,7 @@ MasqueradesAsUndefined
 NamedConstructor=*
 NewImpurePropertyFiresWatchpoints
 NoInterfaceObject
+Nondeterministic
 NotEnumerable
 NotDeletable
 ObjCCustomImplementation
