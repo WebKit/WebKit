@@ -3755,7 +3755,7 @@ void RenderLayerCompositor::paintRelatedMilestonesTimerFired(Timer<RenderLayerCo
     if (page->chrome().client().layerTreeStateIsFrozen())
         return;
 
-    m_renderView.frameView().firePaintRelatedMilestones();
+    m_renderView.frameView().firePaintRelatedMilestonesIfNeeded();
 }
 
 } // namespace WebCore

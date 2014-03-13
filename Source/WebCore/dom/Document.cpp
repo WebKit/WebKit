@@ -2486,8 +2486,8 @@ void Document::setParsing(bool b)
     if (m_bParsing && !m_sharedObjectPool)
         m_sharedObjectPool = std::make_unique<DocumentSharedObjectPool>();
 
-    if (!m_bParsing && view())
-        view()->scheduleRelayout();
+    if (!m_bParsing && view() && !view()->needsLayout())
+        view()->fireLayoutRelatedMilestonesIfNeeded();
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!ownerElement() && !m_bParsing)

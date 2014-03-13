@@ -431,7 +431,8 @@ public:
     virtual void willEndLiveResize() override;
 
     void addPaintPendingMilestones(LayoutMilestones);
-    void firePaintRelatedMilestones();
+    void firePaintRelatedMilestonesIfNeeded();
+    void fireLayoutRelatedMilestonesIfNeeded();
     LayoutMilestones milestonesPendingPaint() const { return m_milestonesPendingPaint; }
 
     bool visualUpdatesAllowedByClient() const { return m_visualUpdatesAllowedByClient; }
