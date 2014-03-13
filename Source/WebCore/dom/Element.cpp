@@ -1386,16 +1386,6 @@ void Element::unregisterNamedFlowContentElement()
         document().renderView()->flowThreadController().unregisterNamedFlowContentElement(*this);
 }
 
-PassRef<RenderStyle> Element::styleForRenderer()
-{
-    if (hasCustomStyleResolveCallbacks()) {
-        if (RefPtr<RenderStyle> style = customStyleForRenderer())
-            return style.releaseNonNull();
-    }
-
-    return document().ensureStyleResolver().styleForElement(this);
-}
-
 ShadowRoot* Element::shadowRoot() const
 {
     return hasRareData() ? elementRareData()->shadowRoot() : 0;
@@ -2894,7 +2884,7 @@ void Element::didDetachRenderers()
     ASSERT(hasCustomStyleResolveCallbacks());
 }
 
-PassRefPtr<RenderStyle> Element::customStyleForRenderer()
+PassRefPtr<RenderStyle> Element::customStyleForRenderer(RenderStyle&)
 {
     ASSERT(hasCustomStyleResolveCallbacks());
     return 0;

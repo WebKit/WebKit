@@ -82,9 +82,9 @@ private:
     virtual void childrenChanged(const ChildChange&) override;
 
     // <option> never has a renderer so we manually manage a cached style.
-    void updateNonRenderStyle();
+    void updateNonRenderStyle(RenderStyle& parentStyle);
     virtual RenderStyle* nonRendererStyle() const override;
-    virtual PassRefPtr<RenderStyle> customStyleForRenderer() override;
+    virtual PassRefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle) override;
 
     virtual void didRecalcStyle(Style::Change) override;
 

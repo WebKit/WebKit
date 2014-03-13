@@ -70,9 +70,9 @@ PseudoElement::~PseudoElement()
     InspectorInstrumentation::pseudoElementDestroyed(document().page(), this);
 }
 
-PassRefPtr<RenderStyle> PseudoElement::customStyleForRenderer()
+PassRefPtr<RenderStyle> PseudoElement::customStyleForRenderer(RenderStyle& parentStyle)
 {
-    return m_hostElement->renderer()->getCachedPseudoStyle(m_pseudoId);
+    return m_hostElement->renderer()->getCachedPseudoStyle(m_pseudoId, &parentStyle);
 }
 
 void PseudoElement::didAttachRenderers()

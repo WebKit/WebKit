@@ -1,3 +1,72 @@
+2014-03-13  Antti Koivisto  <antti@apple.com>
+
+        Remove StyleResolver::State::m_parentNode
+        https://bugs.webkit.org/show_bug.cgi?id=130194
+
+        Reviewed by Andreas Kling.
+
+        This variable was the "parent" node where the style was being inherited from, not the actual parent.
+        The code would also recompute it even though the call sites generally know the rendering parent already.
+
+        If we consistently pass parent style to StyleResolver::styleForElement we won't need the variable and
+        the associated code. We also get rid of one more client of NodeRenderingTraversal.
+
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::prepareEvaluator):
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::StyleResolver::applySVGProperty):
+        * css/StyleMedia.cpp:
+        (WebCore::StyleMedia::matchMedium):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::clear):
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::StyleResolver::State::initForStyleResolve):
+        (WebCore::StyleResolver::applyProperty):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::document):
+        (WebCore::StyleResolver::State::State):
+        * dom/Element.cpp:
+        (WebCore::Element::customStyleForRenderer):
+        
+            Add parentStyle parameter.
+
+        * dom/Element.h:
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::customStyleForRenderer):
+        * dom/PseudoElement.h:
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::didAttachRenderers):
+        (WebCore::HTMLOptGroupElement::updateNonRenderStyle):
+        (WebCore::HTMLOptGroupElement::customStyleForRenderer):
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::didAttachRenderers):
+        (WebCore::HTMLOptionElement::updateNonRenderStyle):
+        (WebCore::HTMLOptionElement::customStyleForRenderer):
+        * html/HTMLOptionElement.h:
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::textWithDirection):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::customStyleForRenderer):
+        (WebCore::TextControlInnerTextElement::customStyleForRenderer):
+        * html/shadow/TextControlInnerElements.h:
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::computeStyleInRegion):
+        (WebCore::RenderNamedFlowFragment::computeChildrenStyleInRegion):
+        (WebCore::RenderNamedFlowFragment::setRegionObjectsRegionStyle):
+        * rendering/RenderNamedFlowFragment.h:
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::styleForElement):
+        
+            This used to be Element::styleForRenderer. It is now a standalone static.
+
+        (WebCore::Style::elementInsideRegionNeedsRenderer):
+        (WebCore::Style::createRendererIfNeeded):
+        (WebCore::Style::resolveLocal):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::customStyleForRenderer):
+        * svg/SVGElement.h:
+
 2014-03-13  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Nested layers with subpixel accumulation paint to wrong position.

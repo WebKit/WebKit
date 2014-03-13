@@ -50,7 +50,7 @@ public:
 
 protected:
     TextControlInnerElement(Document&);
-    virtual PassRefPtr<RenderStyle> customStyleForRenderer() override;
+    virtual PassRefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle) override;
 
 private:
     virtual bool isMouseFocusable() const override { return false; }
@@ -67,7 +67,7 @@ public:
 private:
     TextControlInnerTextElement(Document&);
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
-    virtual PassRefPtr<RenderStyle> customStyleForRenderer() override;
+    virtual PassRefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle) override;
     virtual bool isMouseFocusable() const override { return false; }
     virtual bool isTextControlInnerTextElement() const override { return true; }
 };

@@ -163,6 +163,15 @@ static bool shouldCreateRenderer(const Element& element, const ContainerNode& re
     return true;
 }
 
+static PassRef<RenderStyle> styleForElement(Element& element, RenderStyle& parentStyle)
+{
+    if (element.hasCustomStyleResolveCallbacks()) {
+        if (RefPtr<RenderStyle> style = element.customStyleForRenderer(parentStyle))
+            return style.releaseNonNull();
+    }
+    return element.document().ensureStyleResolver().styleForElement(&element, &parentStyle);
+}
+
 // Check the specific case of elements that are children of regions but are flowed into a flow thread themselves.
 static bool elementInsideRegionNeedsRenderer(Element& element, const ContainerNode& renderingParentNode, RefPtr<RenderStyle>& style)
 {
@@ -176,7 +185,7 @@ static bool elementInsideRegionNeedsRenderer(Element& element, const ContainerNo
         return false;
 
     if (!style)
-        style = element.styleForRenderer();
+        style = styleForElement(element, *renderingParentNode.renderStyle());
 
     // Children of this element will only be allowed to be flowed into other flow-threads if display is NOT none.
     if (element.rendererIsNeeded(*style))
@@ -216,7 +225,7 @@ static void createRendererIfNeeded(Element& element, ContainerNode& renderingPar
         return;
 
     if (!style)
-        style = element.styleForRenderer();
+        style = styleForElement(element, *renderingParentNode.renderStyle());
 
     RenderNamedFlowThread* parentFlowRenderer = 0;
 #if ENABLE(CSS_REGIONS)
@@ -661,7 +670,7 @@ static Change resolveLocal(Element& current, ContainerNode& renderingParentNode,
 
     Document& document = current.document();
     if (currentStyle && current.styleChangeType() != ReconstructRenderTree) {
-        newStyle = current.styleForRenderer();
+        newStyle = styleForElement(current, *renderingParentNode.renderStyle());
         localChange = determineChange(currentStyle.get(), newStyle.get());
     }
     if (localChange == Detach) {

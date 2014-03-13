@@ -84,7 +84,7 @@ std::unique_ptr<MediaQueryEvaluator> MediaQueryMatcher::prepareEvaluator() const
     if (!documentElement)
         return nullptr;
 
-    RefPtr<RenderStyle> rootStyle = m_document->ensureStyleResolver().styleForElement(documentElement, 0 /*defaultParent*/, DisallowStyleSharing, MatchOnlyUserAgentRules);
+    RefPtr<RenderStyle> rootStyle = m_document->ensureStyleResolver().styleForElement(documentElement, m_document->renderStyle(), DisallowStyleSharing, MatchOnlyUserAgentRules);
 
     return std::make_unique<MediaQueryEvaluator>(mediaType(), m_document->frame(), rootStyle.get());
 }

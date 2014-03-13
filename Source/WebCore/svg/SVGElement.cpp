@@ -768,18 +768,12 @@ void SVGElement::synchronizeSystemLanguage(SVGElement* contextElement)
     contextElement->synchronizeSystemLanguage();
 }
 
-PassRefPtr<RenderStyle> SVGElement::customStyleForRenderer()
+PassRefPtr<RenderStyle> SVGElement::customStyleForRenderer(RenderStyle& parentStyle)
 {
     if (!correspondingElement())
-        return document().ensureStyleResolver().styleForElement(this);
+        return document().ensureStyleResolver().styleForElement(this, &parentStyle);
 
-    RenderStyle* style = 0;
-    if (Element* parent = parentOrShadowHostElement()) {
-        if (auto renderer = parent->renderer())
-            style = &renderer->style();
-    }
-
-    return document().ensureStyleResolver().styleForElement(correspondingElement(), style, DisallowStyleSharing);
+    return document().ensureStyleResolver().styleForElement(correspondingElement(), &parentStyle, DisallowStyleSharing);
 }
 
 MutableStyleProperties* SVGElement::animatedSMILStyleProperties() const

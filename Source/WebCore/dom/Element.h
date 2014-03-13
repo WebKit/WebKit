@@ -524,8 +524,6 @@ public:
     
     virtual bool isSpellCheckingEnabled() const;
 
-    PassRef<RenderStyle> styleForRenderer();
-
     RenderNamedFlowFragment* renderNamedFlowFragment() const;
 
 #if ENABLE(CSS_REGIONS)
@@ -558,6 +556,7 @@ public:
     virtual void didAttachRenderers();
     virtual void willDetachRenderers();
     virtual void didDetachRenderers();
+    virtual PassRefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle);
 
     void setBeforePseudoElement(PassRefPtr<PseudoElement>);
     void setAfterPseudoElement(PassRefPtr<PseudoElement>);
@@ -578,8 +577,6 @@ protected:
     virtual void removedFrom(ContainerNode&) override;
     virtual void childrenChanged(const ChildChange&) override;
     virtual void removeAllEventListeners() override final;
-
-    virtual PassRefPtr<RenderStyle> customStyleForRenderer();
 
     void clearTabIndexExplicitlyIfNeeded();    
     void setTabIndexExplicitly(short);

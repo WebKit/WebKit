@@ -45,7 +45,7 @@ public:
     Element* hostElement() const { return m_hostElement; }
     void clearHostElement() { m_hostElement = nullptr; }
 
-    virtual PassRefPtr<RenderStyle> customStyleForRenderer() override;
+    virtual PassRefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle) override;
     virtual void didAttachRenderers() override;
     virtual bool rendererIsNeeded(const RenderStyle&) override;
 

@@ -88,7 +88,6 @@
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "NodeRenderStyle.h"
-#include "NodeRenderingTraversal.h"
 #include "Page.h"
 #include "PageRuleCollector.h"
 #include "Pair.h"
@@ -238,7 +237,6 @@ inline void StyleResolver::State::clear()
     m_element = nullptr;
     m_styledElement = nullptr;
     m_parentStyle = nullptr;
-    m_parentNode = nullptr;
     m_regionForStyling = nullptr;
     m_pendingImageProperties.clear();
 #if ENABLE(CSS_FILTERS)
@@ -285,7 +283,7 @@ StyleResolver::StyleResolver(Document& document, bool matchAuthorAndUserStyles)
         m_medium = std::make_unique<MediaQueryEvaluator>("all");
 
     if (root)
-        m_rootDefaultStyle = styleForElement(root, 0, DisallowStyleSharing, MatchOnlyUserAgentRules);
+        m_rootDefaultStyle = styleForElement(root, m_document.renderStyle(), DisallowStyleSharing, MatchOnlyUserAgentRules);
 
     if (m_rootDefaultStyle && view)
         m_medium = std::make_unique<MediaQueryEvaluator>(view->mediaType(), &view->frame(), m_rootDefaultStyle.get());
@@ -411,15 +409,10 @@ inline void StyleResolver::State::initForStyleResolve(Document& document, Elemen
     m_regionForStyling = regionForStyling;
 
     if (e) {
-        m_parentNode = e->isPseudoElement() ? toPseudoElement(e)->hostElement() : NodeRenderingTraversal::parent(e);
         bool resetStyleInheritance = hasShadowRootParent(*e) && toShadowRoot(e->parentNode())->resetStyleInheritance();
-        m_parentStyle = resetStyleInheritance ? 0 :
-            parentStyle ? parentStyle :
-            m_parentNode ? m_parentNode->renderStyle() : 0;
-    } else {
-        m_parentNode = 0;
+        m_parentStyle = resetStyleInheritance ? nullptr : parentStyle;
+    } else
         m_parentStyle = parentStyle;
-    }
 
     Node* docElement = e ? e->document().documentElement() : 0;
     RenderStyle* docStyle = document.renderStyle();
@@ -2125,11 +2118,10 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return applyProperty(newId, value);
     }
 
-    bool isInherit = state.parentNode() && value->isInheritedValue();
-    bool isInitial = value->isInitialValue() || (!state.parentNode() && value->isInheritedValue());
+    bool isInherit = state.parentStyle() && value->isInheritedValue();
+    bool isInitial = value->isInitialValue() || (!state.parentStyle() && value->isInheritedValue());
 
     ASSERT(!isInherit || !isInitial); // isInherit -> !isInitial && isInitial -> !isInherit
-    ASSERT(!isInherit || (state.parentNode() && state.parentStyle())); // isInherit -> (state.parentNode() && state.parentStyle())
 
     if (!state.applyPropertyToRegularStyle() && (!state.applyPropertyToVisitedLinkStyle() || !isValidVisitedLinkProperty(id))) {
         // Limit the properties that can be applied to only the ones honored by :visited.

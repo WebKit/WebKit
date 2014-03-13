@@ -110,8 +110,8 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
     const State& state = m_state;
     SVGRenderStyle& svgStyle = state.style()->accessSVGStyle();
 
-    bool isInherit = state.parentNode() && value->isInheritedValue();
-    bool isInitial = value->isInitialValue() || (!state.parentNode() && value->isInheritedValue());
+    bool isInherit = state.parentStyle() && value->isInheritedValue();
+    bool isInitial = value->isInitialValue() || (!state.parentStyle() && value->isInheritedValue());
 
     // What follows is a list that maps the CSS properties into their
     // corresponding front-end RenderStyle values. Shorthands(e.g. border,
