@@ -158,8 +158,8 @@ typedef OptionRange optionRange;
     v(bool, ftlCrashes, false) /* fool-proof way of checking that you ended up in the FTL. ;-) */\
     \
     v(bool, enableConcurrentJIT, true) \
-    v(unsigned, numberOfDFGCompilerThreads, computeNumberOfWorkerThreads(2) - 1) \
-    v(unsigned, numberOfFTLCompilerThreads, computeNumberOfWorkerThreads(8) - 1) \
+    v(unsigned, numberOfDFGCompilerThreads, computeNumberOfWorkerThreads(2, 2) - 1) \
+    v(unsigned, numberOfFTLCompilerThreads, computeNumberOfWorkerThreads(8, 2) - 1) \
     \
     v(bool, enableProfiler, false) \
     \

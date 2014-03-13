@@ -1,3 +1,17 @@
+2014-03-12  Filip Pizlo  <fpizlo@apple.com>
+
+        WebKit shouldn't crash on uniprocessor machines
+        https://bugs.webkit.org/show_bug.cgi?id=130176
+
+        Reviewed by Michael Saboff.
+        
+        Previously the math for computing the number of JIT compiler threads would come up with
+        zero threads on uniprocessor machines, and then the Worklist code would assert.
+
+        * runtime/Options.cpp:
+        (JSC::computeNumberOfWorkerThreads):
+        * runtime/Options.h:
+
 2014-03-13  Radu Stavila  <stavila@adobe.com>
 
         Webkit not building on XCode 5.1 due to garbage collection no longer being supported

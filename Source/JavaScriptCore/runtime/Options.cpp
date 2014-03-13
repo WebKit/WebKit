@@ -92,16 +92,13 @@ bool overrideOptionWithHeuristic(T& variable, const char* name)
     return false;
 }
 
-static unsigned computeNumberOfWorkerThreads(int maxNumberOfWorkerThreads)
+static unsigned computeNumberOfWorkerThreads(int maxNumberOfWorkerThreads, int minimum = 1)
 {
     int cpusToUse = std::min(WTF::numberOfProcessorCores(), maxNumberOfWorkerThreads);
 
     // Be paranoid, it is the OS we're dealing with, after all.
     ASSERT(cpusToUse >= 1);
-    if (cpusToUse < 1)
-        cpusToUse = 1;
-    
-    return cpusToUse;
+    return std::max(cpusToUse, minimum);
 }
 
 static unsigned computeNumberOfGCMarkers(unsigned maxNumberOfGCMarkers)
