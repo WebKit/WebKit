@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,27 +51,30 @@ WebInspector.DOMNodeDetailsSidebarPanel = function() {
     this._eventListenersSectionGroup = new WebInspector.DetailsSectionGroup;
     var eventListenersSection = new WebInspector.DetailsSection("dom-node-event-listeners", WebInspector.UIString("Event Listeners"), [this._eventListenersSectionGroup]);    
 
-    this._accessibilityEmptyRow = new WebInspector.DetailsSectionRow(WebInspector.UIString("No Accessibility Information"));
-    this._accessibilityNodeCheckedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Checked"));
-    this._accessibilityNodeDisabledRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Disabled"));
-    this._accessibilityNodeExpandedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Expanded"));
-    this._accessibilityNodeIgnoredRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Ignored"));
-    this._accessibilityNodeInvalidRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Invalid"));
-    this._accessibilityNodeLabelRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Label"));
-    this._accessibilityNodePressedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Pressed"));
-    this._accessibilityNodeReadonlyRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Readonly"));
-    this._accessibilityNodeRequiredRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Required"));
-    this._accessibilityNodeRoleRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Role"));
-    this._accessibilityNodeSelectedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Selected"));
-    
-    this._accessibilityGroup = new WebInspector.DetailsSectionGroup([this._accessibilityEmptyRow]);
-    var accessibilitySection = new WebInspector.DetailsSection("dom-node-accessibility", WebInspector.UIString("Accessibility"), [this._accessibilityGroup]);    
-    
     this.element.appendChild(identitySection.element);
     this.element.appendChild(attributesSection.element);
     this.element.appendChild(propertiesSection.element);
     this.element.appendChild(eventListenersSection.element);
-    this.element.appendChild(accessibilitySection.element);
+
+    if (this._accessibilitySupported()) {
+        this._accessibilityEmptyRow = new WebInspector.DetailsSectionRow(WebInspector.UIString("No Accessibility Information"));
+        this._accessibilityNodeCheckedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Checked"));
+        this._accessibilityNodeDisabledRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Disabled"));
+        this._accessibilityNodeExpandedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Expanded"));
+        this._accessibilityNodeIgnoredRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Ignored"));
+        this._accessibilityNodeInvalidRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Invalid"));
+        this._accessibilityNodeLabelRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Label"));
+        this._accessibilityNodePressedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Pressed"));
+        this._accessibilityNodeReadonlyRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Readonly"));
+        this._accessibilityNodeRequiredRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Required"));
+        this._accessibilityNodeRoleRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Role"));
+        this._accessibilityNodeSelectedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Selected"));
+    
+        this._accessibilityGroup = new WebInspector.DetailsSectionGroup([this._accessibilityEmptyRow]);
+        var accessibilitySection = new WebInspector.DetailsSection("dom-node-accessibility", WebInspector.UIString("Accessibility"), [this._accessibilityGroup]);    
+
+        this.element.appendChild(accessibilitySection.element);
+    }
 };
 
 WebInspector.DOMNodeDetailsSidebarPanel.StyleClassName = "dom-node";
@@ -99,6 +102,11 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
     },
 
     // Private
+
+    _accessibilitySupported: function()
+    {
+        return !!DOMAgent.getAccessibilityPropertiesForNode;
+    },
 
     _refreshAttributes: function()
     {
@@ -241,8 +249,7 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
         }
     },
 
-    _refreshAccessibility: (function(){
-
+    _refreshAccessibility: (function() {
         var properties = {};
         var domNode;
 
@@ -263,7 +270,6 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
         }
 
         function accessibilityPropertiesCallback(accessibilityProperties) {
-
             if (this.domNode !== domNode)
                 return;
 
@@ -332,7 +338,6 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
 
                 // Display order, not alphabetical as above.
                 this._accessibilityGroup.rows = [
-
                     // Global properties for all elements.
                     this._accessibilityNodeIgnoredRow,
                     this._accessibilityNodeRoleRow,
@@ -349,7 +354,6 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                     this._accessibilityNodePressedRow,
                     this._accessibilityNodeReadonlyRow,
                     this._accessibilityNodeSelectedRow
-
                 ];
 
                 this._accessibilityEmptyRow.hideEmptyMessage();
@@ -361,10 +365,14 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
         }
 
         function refreshAX() {
+            if (!this._accessibilitySupported())
+                return;
+
             // Make sure the domNode is available in the closure scope.
             domNode = this.domNode;
             if (!domNode)
                 return;
+
             domNode.accessibilityProperties(accessibilityPropertiesCallback.bind(this));
         }
 
