@@ -63,7 +63,7 @@ PassRefPtr<CSSValueList> SVGFontFaceSrcElement::srcValue() const
 void SVGFontFaceSrcElement::childrenChanged(const ChildChange& change)
 {
     SVGElement::childrenChanged(change);
-    if (parentNode() && isSVGFontFaceElement(parentNode()))
+    if (parentNode() && parentNode()->hasTagName(font_faceTag))
         toSVGFontFaceElement(parentNode())->rebuildFontFace();
 }
 

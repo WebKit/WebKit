@@ -260,12 +260,10 @@ public:
 #endif // ENABLE(CSS_SELECTOR_JIT)
     String tagName() const { return nodeName(); }
     bool hasTagName(const QualifiedName& tagName) const { return m_tagName.matches(tagName); }
-    bool hasTagName(const HTMLQualifiedName& tagName) const { return ContainerNode::hasTagName(tagName); }
-    bool hasTagName(const MathMLQualifiedName& tagName) const { return ContainerNode::hasTagName(tagName); }
-    bool hasTagName(const SVGQualifiedName& tagName) const { return ContainerNode::hasTagName(tagName); }
-
+    
     // A fast function for checking the local name against another atomic string.
     bool hasLocalName(const AtomicString& other) const { return m_tagName.localName() == other; }
+    bool hasLocalName(const QualifiedName& other) const { return m_tagName.localName() == other.localName(); }
 
     virtual const AtomicString& localName() const override final { return m_tagName.localName(); }
     virtual const AtomicString& prefix() const override final { return m_tagName.prefix(); }
@@ -687,6 +685,16 @@ NODE_TYPE_CASTS(Element)
 template <typename Type> bool isElementOfType(const Element&);
 template <typename Type> inline bool isElementOfType(const Node& node) { return node.isElementNode() && isElementOfType<const Type>(toElement(node)); }
 template <> inline bool isElementOfType<const Element>(const Element&) { return true; }
+
+inline bool Node::hasTagName(const QualifiedName& name) const
+{
+    return isElementNode() && toElement(this)->hasTagName(name);
+}
+    
+inline bool Node::hasLocalName(const AtomicString& name) const
+{
+    return isElementNode() && toElement(this)->hasLocalName(name);
+}
 
 inline bool Node::hasAttributes() const
 {

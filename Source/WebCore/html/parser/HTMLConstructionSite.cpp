@@ -42,7 +42,6 @@
 #include "HTMLScriptElement.h"
 #include "HTMLTemplateElement.h"
 #include "NotImplemented.h"
-#include "SVGElement.h"
 #include "Text.h"
 
 namespace WebCore {

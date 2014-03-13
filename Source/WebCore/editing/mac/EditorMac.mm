@@ -298,7 +298,7 @@ PassRefPtr<Range> Editor::adjustedSelectionRange()
     RefPtr<Range> range = selectedRange();
     Node* commonAncestor = range->commonAncestorContainer(IGNORE_EXCEPTION);
     ASSERT(commonAncestor);
-    auto* enclosingAnchor = enclosingElementWithTag(firstPositionInNode(commonAncestor), HTMLNames::aTag);
+    Node* enclosingAnchor = enclosingNodeWithTag(firstPositionInNode(commonAncestor), HTMLNames::aTag);
     if (enclosingAnchor && comparePositions(firstPositionInOrBeforeNode(range->startPosition().anchorNode()), range->startPosition()) >= 0)
         range->setStart(enclosingAnchor, 0, IGNORE_EXCEPTION);
     return range;

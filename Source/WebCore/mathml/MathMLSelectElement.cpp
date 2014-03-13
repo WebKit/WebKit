@@ -71,7 +71,7 @@ void MathMLSelectElement::childrenChanged(const ChildChange& change)
 
 void MathMLSelectElement::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason reason)
 {
-    if (hasTagName(mactionTag) && (name == MathMLNames::actiontypeAttr || name == MathMLNames::selectionAttr))
+    if (hasLocalName(mactionTag) && (name == MathMLNames::actiontypeAttr || name == MathMLNames::selectionAttr))
         updateSelectedChild();
 
     MathMLInlineContainerElement::attributeChanged(name, oldValue, newValue, reason);
@@ -79,7 +79,7 @@ void MathMLSelectElement::attributeChanged(const QualifiedName& name, const Atom
 
 int MathMLSelectElement::getSelectedActionChildAndIndex(Element*& selectedChild)
 {
-    ASSERT(hasTagName(mactionTag));
+    ASSERT(hasLocalName(mactionTag));
 
     // We "round up or down to the closest allowable value" of the selection attribute, as suggested by the MathML specification.
     selectedChild = firstElementChild();
@@ -100,7 +100,7 @@ int MathMLSelectElement::getSelectedActionChildAndIndex(Element*& selectedChild)
 
 Element* MathMLSelectElement::getSelectedActionChild()
 {
-    ASSERT(hasTagName(mactionTag));
+    ASSERT(hasLocalName(mactionTag));
 
     Element* child = firstElementChild();
     if (!child)
@@ -124,7 +124,7 @@ Element* MathMLSelectElement::getSelectedActionChild()
 
 Element* MathMLSelectElement::getSelectedSemanticsChild()
 {
-    ASSERT(hasTagName(semanticsTag));
+    ASSERT(hasLocalName(semanticsTag));
 
     Element* child = firstElementChild();
     if (!child)
@@ -143,7 +143,7 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
         if (!child->isMathMLElement())
             continue;
 
-        if (child->hasTagName(MathMLNames::annotationTag)) {
+        if (child->hasLocalName(MathMLNames::annotationTag)) {
             // If the <annotation> element has an src attribute then it is a reference to arbitrary binary data and it is not clear whether we can display it. Hence we just ignore the annotation.
             if (child->hasAttribute(MathMLNames::srcAttr))
                 continue;
@@ -151,7 +151,7 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
             return child;
         }
 
-        if (child->hasTagName(MathMLNames::annotation_xmlTag)) {
+        if (child->hasLocalName(MathMLNames::annotation_xmlTag)) {
             // If the <annotation-xml> element has an src attribute then it is a reference to arbitrary binary data and it is not clear whether we can display it. Hence we just ignore the annotation.
             if (child->hasAttribute(MathMLNames::srcAttr))
                 continue;
@@ -175,7 +175,7 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
 
 void MathMLSelectElement::updateSelectedChild()
 {
-    Element* newSelectedChild = hasTagName(mactionTag) ? getSelectedActionChild() : getSelectedSemanticsChild();
+    Element* newSelectedChild = hasLocalName(mactionTag) ? getSelectedActionChild() : getSelectedSemanticsChild();
 
     if (m_selectedChild == newSelectedChild)
         return;

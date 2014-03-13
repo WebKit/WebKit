@@ -65,7 +65,7 @@ Element* enclosingBlock(Node*, EditingBoundaryCrossingRule = CannotCrossEditingB
 Node* enclosingTableCell(const Position&);
 Node* enclosingEmptyListItem(const VisiblePosition&);
 Element* enclosingAnchorElement(const Position&);
-Element* enclosingElementWithTag(const Position&, const QualifiedName&);
+Node* enclosingNodeWithTag(const Position&, const QualifiedName&);
 Node* enclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
 
 Node* tabSpanNode(const Node*);

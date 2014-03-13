@@ -27,7 +27,6 @@
 #include "FloatRoundedRect.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
-#include "HTMLElement.h"
 #include "InlineElementBox.h"
 #include "LayoutRepainter.h"
 #include "Page.h"

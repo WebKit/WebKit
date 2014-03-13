@@ -755,7 +755,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
                     HTMLElement* body = document().body();
                     if (body) {
                         // Can't scroll a frameset document anyway.
-                        isOpaqueRoot = body->hasTagName(framesetTag);
+                        isOpaqueRoot = body->hasLocalName(framesetTag);
                     } else {
                         // SVG documents and XML documents with SVG root nodes are transparent.
                         isOpaqueRoot = !document().hasSVGRootNode();

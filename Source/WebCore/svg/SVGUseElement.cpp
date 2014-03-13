@@ -522,15 +522,15 @@ RenderPtr<RenderElement> SVGUseElement::createElementRenderer(PassRef<RenderStyl
     return createRenderer<RenderSVGTransformableContainer>(*this, std::move(style));
 }
 
-static bool isDirectReference(const SVGElement& element)
+static bool isDirectReference(const Node* node)
 {
-    return element.hasTagName(SVGNames::pathTag)
-        || element.hasTagName(SVGNames::rectTag)
-        || element.hasTagName(SVGNames::circleTag)
-        || element.hasTagName(SVGNames::ellipseTag)
-        || element.hasTagName(SVGNames::polygonTag)
-        || element.hasTagName(SVGNames::polylineTag)
-        || element.hasTagName(SVGNames::textTag);
+    return node->hasTagName(SVGNames::pathTag)
+           || node->hasTagName(SVGNames::rectTag)
+           || node->hasTagName(SVGNames::circleTag)
+           || node->hasTagName(SVGNames::ellipseTag)
+           || node->hasTagName(SVGNames::polygonTag)
+           || node->hasTagName(SVGNames::polylineTag)
+           || node->hasTagName(SVGNames::textTag);
 }
 
 void SVGUseElement::toClipPath(Path& path)
@@ -541,12 +541,12 @@ void SVGUseElement::toClipPath(Path& path)
     if (!n)
         return;
 
-    if (n->isSVGElement() && toSVGElement(*n).isSVGGraphicsElement()) {
-        if (!isDirectReference(toSVGElement(*n))) {
+    if (n->isSVGElement() && toSVGElement(n)->isSVGGraphicsElement()) {
+        if (!isDirectReference(n))
             // Spec: Indirect references are an error (14.3.5)
             document().accessSVGExtensions()->reportError("Not allowed to use indirect reference in <clip-path>");
-        } else {
-            toSVGGraphicsElement(*n).toClipPath(path);
+        else {
+            toSVGGraphicsElement(n)->toClipPath(path);
             // FIXME: Avoid manual resolution of x/y here. Its potentially harmful.
             SVGLengthContext lengthContext(this);
             path.translate(FloatSize(x().value(lengthContext), y().value(lengthContext)));
@@ -557,17 +557,14 @@ void SVGUseElement::toClipPath(Path& path)
 
 RenderElement* SVGUseElement::rendererClipChild() const
 {
-    if (!m_targetElementInstance)
-        return nullptr;
+    Node* n = m_targetElementInstance ? m_targetElementInstance->shadowTreeElement() : 0;
+    if (!n)
+        return 0;
 
-    auto* element = m_targetElementInstance->shadowTreeElement();
-    if (!element)
-        return nullptr;
+    if (n->isSVGElement() && isDirectReference(n))
+        return toSVGElement(n)->renderer();
 
-    if (!isDirectReference(*element))
-        return nullptr;
-
-    return element->renderer();
+    return 0;
 }
 
 void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* targetInstance, bool& foundProblem, bool foundUse)

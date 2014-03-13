@@ -807,12 +807,12 @@ static bool shouldEmitNewlineForNode(Node* node, bool emitsOriginalText)
 
 static bool hasHeaderTag(HTMLElement& element)
 {
-    return element.hasTagName(h1Tag)
-        || element.hasTagName(h2Tag)
-        || element.hasTagName(h3Tag)
-        || element.hasTagName(h4Tag)
-        || element.hasTagName(h5Tag)
-        || element.hasTagName(h6Tag);
+    return element.hasLocalName(h1Tag)
+        || element.hasLocalName(h2Tag)
+        || element.hasLocalName(h3Tag)
+        || element.hasLocalName(h4Tag)
+        || element.hasLocalName(h5Tag)
+        || element.hasLocalName(h6Tag);
 }
 
 static bool shouldEmitNewlinesBeforeAndAfterNode(Node& node)
@@ -825,19 +825,19 @@ static bool shouldEmitNewlinesBeforeAndAfterNode(Node& node)
             return false;
         auto& element = toHTMLElement(node);
         return hasHeaderTag(element)
-            || element.hasTagName(blockquoteTag)
-            || element.hasTagName(ddTag)
-            || element.hasTagName(divTag)
-            || element.hasTagName(dlTag)
-            || element.hasTagName(dtTag)
-            || element.hasTagName(hrTag)
-            || element.hasTagName(liTag)
-            || element.hasTagName(listingTag)
-            || element.hasTagName(olTag)
-            || element.hasTagName(pTag)
-            || element.hasTagName(preTag)
-            || element.hasTagName(trTag)
-            || element.hasTagName(ulTag);
+            || element.hasLocalName(blockquoteTag)
+            || element.hasLocalName(ddTag)
+            || element.hasLocalName(divTag)
+            || element.hasLocalName(dlTag)
+            || element.hasLocalName(dtTag)
+            || element.hasLocalName(hrTag)
+            || element.hasLocalName(liTag)
+            || element.hasLocalName(listingTag)
+            || element.hasLocalName(olTag)
+            || element.hasLocalName(pTag)
+            || element.hasLocalName(preTag)
+            || element.hasLocalName(trTag)
+            || element.hasLocalName(ulTag);
     }
     
     // Need to make an exception for table cells, because they are blocks, but we
@@ -894,7 +894,7 @@ static bool shouldEmitExtraNewlineForNode(Node& node)
     // NOTE: We only do this for a select set of nodes, and WinIE appears not to do this at all.
     if (!node.isHTMLElement())
         return false;
-    if (!(hasHeaderTag(toHTMLElement(node)) || toHTMLElement(node).hasTagName(pTag)))
+    if (!(hasHeaderTag(toHTMLElement(node)) || toHTMLElement(node).hasLocalName(pTag)))
         return false;
 
     int bottomMargin = toRenderBox(renderer)->collapsedMarginAfter();

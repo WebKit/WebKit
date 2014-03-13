@@ -26,7 +26,6 @@
 #include "config.h"
 #include "PositionIterator.h"
 
-#include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "RenderBlock.h"
 #include "RenderText.h"

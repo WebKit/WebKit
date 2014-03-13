@@ -1,3 +1,17 @@
+2014-03-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, rolling out r165544 and r165560.
+
+        It broke EFL/GTK/Windows build
+
+        Reverted changesets:
+
+        "Optimize hasTagName when called on an HTMLElement"
+        https://bugs.webkit.org/show_bug.cgi?id=130090
+        http://trac.webkit.org/changeset/165544
+
+        http://trac.webkit.org/changeset/165560
+
 2014-03-13  Antti Koivisto  <antti@apple.com>
 
         Try to stop asserts in debug build.

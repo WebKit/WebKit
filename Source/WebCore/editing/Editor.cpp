@@ -797,11 +797,11 @@ bool Editor::hasBidiSelection() const
 TriState Editor::selectionUnorderedListState() const
 {
     if (m_frame.selection().isCaret()) {
-        if (enclosingElementWithTag(m_frame.selection().selection().start(), ulTag))
+        if (enclosingNodeWithTag(m_frame.selection().selection().start(), ulTag))
             return TrueTriState;
     } else if (m_frame.selection().isRange()) {
-        auto* startNode = enclosingElementWithTag(m_frame.selection().selection().start(), ulTag);
-        auto* endNode = enclosingElementWithTag(m_frame.selection().selection().end(), ulTag);
+        Node* startNode = enclosingNodeWithTag(m_frame.selection().selection().start(), ulTag);
+        Node* endNode = enclosingNodeWithTag(m_frame.selection().selection().end(), ulTag);
         if (startNode && endNode && startNode == endNode)
             return TrueTriState;
     }
@@ -812,11 +812,11 @@ TriState Editor::selectionUnorderedListState() const
 TriState Editor::selectionOrderedListState() const
 {
     if (m_frame.selection().isCaret()) {
-        if (enclosingElementWithTag(m_frame.selection().selection().start(), olTag))
+        if (enclosingNodeWithTag(m_frame.selection().selection().start(), olTag))
             return TrueTriState;
     } else if (m_frame.selection().isRange()) {
-        auto* startNode = enclosingElementWithTag(m_frame.selection().selection().start(), olTag);
-        auto* endNode = enclosingElementWithTag(m_frame.selection().selection().end(), olTag);
+        Node* startNode = enclosingNodeWithTag(m_frame.selection().selection().start(), olTag);
+        Node* endNode = enclosingNodeWithTag(m_frame.selection().selection().end(), olTag);
         if (startNode && endNode && startNode == endNode)
             return TrueTriState;
     }

@@ -27,7 +27,7 @@
 #include "VisibleUnits.h"
 
 #include "Document.h"
-#include "HTMLElement.h"
+#include "Element.h"
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "NodeTraversal.h"

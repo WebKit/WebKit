@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005-2007, 2009, 2013-2014 Apple Inc. All rights reserved.
+# Copyright (C) 2005, 2006, 2007, 2009, 2013 Apple Inc. All rights reserved.
 # Copyright (C) 2009, Julien Chaffraix <jchaffraix@webkit.org>
 # Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
 # Copyright (C) 2011 Ericsson AB. All rights reserved.
@@ -103,7 +103,7 @@ if (length($fontNamesIn)) {
     open F, ">$header" or die "Unable to open $header for writing.";
 
     printLicenseHeader($F);
-    printHeaderHead($F, "CSS", $familyNamesFileBase, "#include <wtf/text/AtomicString.h>", "");
+    printHeaderHead($F, "CSS", $familyNamesFileBase, "#include <wtf/text/AtomicString.h>");
 
     printMacros($F, "extern const WTF::AtomicString", "", \%parameters);
     print F "#endif\n\n";
@@ -525,41 +525,34 @@ sub upperCaseName
 
 sub printHeaderHead
 {
-    my ($F, $prefix, $namespace, $includes, $definitions) = @_;
+    my ($F, $prefix, $nsName, $includes) = @_;
 
-    print F<<END
-#ifndef ${prefix}_${namespace}Names_h
+    print F "#ifndef ${prefix}_${nsName}Names_h\n";
+    print F "#define ${prefix}_${nsName}Names_h\n\n";
+    print F "$includes\n\n";
 
-#define ${prefix}_${namespace}Names_h
+    print F "namespace WebCore {\n\n";
+    print F "namespace ${nsName}Names {\n\n";
 
-$includes
-
-namespace WebCore {
-
-${definitions}namespace ${namespace}Names {
-
-#ifndef ${prefix}_${namespace}_NAMES_HIDE_GLOBALS
-
-END
-    ;
+    print F "#ifndef ${prefix}_${nsName}NAMES_HIDE_GLOBALS\n";
 }
 
 sub printCppHead
 {
-    my ($F, $prefix, $namespace, $usedNamespace) = @_;
+    my ($F, $prefix, $nsName, $usedNamespace) = @_;
 
     print F "#include \"config.h\"\n\n";
     print F "#ifdef SKIP_STATIC_CONSTRUCTORS_ON_GCC\n";
-    print F "#define ${prefix}_${namespace}_NAMES_HIDE_GLOBALS 1\n";
+    print F "#define ${prefix}_${nsName}NAMES_HIDE_GLOBALS 1\n";
     print F "#else\n";
     print F "#define QNAME_DEFAULT_CONSTRUCTOR 1\n";
     print F "#endif\n\n";
 
-    print F "#include \"${namespace}Names.h\"\n\n";
+    print F "#include \"${nsName}Names.h\"\n\n";
     print F "#include <wtf/StaticConstructors.h>\n";
 
     print F "namespace WebCore {\n\n";
-    print F "namespace ${namespace}Names {\n\n";
+    print F "namespace ${nsName}Names {\n\n";
     print F "using namespace $usedNamespace;\n\n";
 }
 
@@ -646,13 +639,13 @@ END
             if ($parsedTags{$name}{wrapperOnlyIfMediaIsAvailable}) {
                 # We need to check for HTMLUnknownElement if it might have been created by the factory.
                 print F <<END
-inline bool $checkHelper(const HTMLElement& element) { return !element.isHTMLUnknownElement() && element.hasTagName($parameters{namespace}Names::${name}Tag); }
+inline bool $checkHelper(const HTMLElement& element) { return !element.isHTMLUnknownElement() && element.hasLocalName($parameters{namespace}Names::${name}Tag); }
 inline bool $checkHelper(const HTMLElement* element) { ASSERT(element); return $checkHelper(*element); }
 END
                 ;
             } else {
                 print F <<END
-inline bool $checkHelper(const HTMLElement& element) { return element.hasTagName(HTMLNames::${name}Tag); }
+inline bool $checkHelper(const HTMLElement& element) { return element.hasLocalName(HTMLNames::${name}Tag); }
 inline bool $checkHelper(const HTMLElement* element) { ASSERT(element); return $checkHelper(*element); }
 END
                 ;
@@ -708,16 +701,15 @@ sub printNamesHeaderFile
     open F, ">$headerPath";
 
     printLicenseHeader($F);
-    printHeaderHead($F, "DOM", $parameters{namespace}, '#include "QualifiedName.h"', "class $parameters{namespace}QualifiedName : public QualifiedName { };\n\n");
+    printHeaderHead($F, "DOM", $parameters{namespace}, "#include \"QualifiedName.h\"");
 
-    my $lowercaseNamespacePrefix = lc($parameters{namespacePrefix});
-
+    my $lowerNamespace = lc($parameters{namespacePrefix});
     print F "// Namespace\n";
-    print F "extern const WTF::AtomicString ${lowercaseNamespacePrefix}NamespaceURI;\n\n";
+    print F "extern const WTF::AtomicString ${lowerNamespace}NamespaceURI;\n\n";
 
     if (keys %allTags) {
         print F "// Tags\n";
-        printMacros($F, "extern const WebCore::$parameters{namespace}QualifiedName", "Tag", \%allTags);
+        printMacros($F, "extern const WebCore::QualifiedName", "Tag", \%allTags);
     }
 
     if (keys %allAttrs) {
@@ -728,12 +720,12 @@ sub printNamesHeaderFile
 
     if (keys %allTags) {
         print F "const unsigned $parameters{namespace}TagsCount = ", scalar(keys %allTags), ";\n";
-        print F "const WebCore::$parameters{namespace}QualifiedName* const* get$parameters{namespace}Tags();\n";
+        print F "const WebCore::QualifiedName* const * get$parameters{namespace}Tags();\n";
     }
 
     if (keys %allAttrs) {
         print F "const unsigned $parameters{namespace}AttrsCount = ", scalar(keys %allAttrs), ";\n";
-        print F "const WebCore::QualifiedName* const* get$parameters{namespace}Attrs();\n";
+        print F "const WebCore::QualifiedName* const * get$parameters{namespace}Attrs();\n";
     }
 
     printInit($F, 1);
@@ -749,9 +741,9 @@ sub printNamesCppFile
     printLicenseHeader($F);
     printCppHead($F, "DOM", $parameters{namespace}, "WebCore");
     
-    my $lowercaseNamespacePrefix = lc($parameters{namespacePrefix});
+    my $lowerNamespace = lc($parameters{namespacePrefix});
 
-    print F "DEFINE_GLOBAL(AtomicString, ${lowercaseNamespacePrefix}NamespaceURI)\n\n";
+    print F "DEFINE_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI)\n\n";
 
     print F StaticString::GenerateStrings(\%allStrings);
 
@@ -761,10 +753,10 @@ sub printNamesCppFile
             print F "DEFINE_GLOBAL(QualifiedName, ", $name, "Tag)\n";
         }
         
-        print F "\n\nconst WebCore::$parameters{namespace}QualifiedName* const* get$parameters{namespace}Tags()\n";
-        print F "{\n    static const WebCore::$parameters{namespace}QualifiedName* const $parameters{namespace}Tags[] = {\n";
+        print F "\n\nconst WebCore::QualifiedName* const * get$parameters{namespace}Tags()\n";
+        print F "{\n    static const WebCore::QualifiedName* const $parameters{namespace}Tags[] = {\n";
         for my $name (sort keys %allTags) {
-            print F "        reinterpret_cast<const WebCore::$parameters{namespace}QualifiedName*>(&${name}Tag),\n";
+            print F "        reinterpret_cast<const WebCore::QualifiedName*>(&${name}Tag),\n";
         }
         print F "    };\n";
         print F "    return $parameters{namespace}Tags;\n";
@@ -776,7 +768,7 @@ sub printNamesCppFile
         for my $name (sort keys %allAttrs) {
             print F "DEFINE_GLOBAL(QualifiedName, ", $name, "Attr)\n";
         }
-        print F "\n\nconst WebCore::QualifiedName* const* get$parameters{namespace}Attrs()\n";
+        print F "\n\nconst WebCore::QualifiedName* const * get$parameters{namespace}Attrs()\n";
         print F "{\n    static const WebCore::QualifiedName* const $parameters{namespace}Attrs[] = {\n";
         for my $name (sort keys %allAttrs) {
             print F "        reinterpret_cast<const WebCore::QualifiedName*>(&${name}Attr),\n";
@@ -788,19 +780,19 @@ sub printNamesCppFile
 
     printInit($F, 0);
 
-    print(F "    AtomicString ${lowercaseNamespacePrefix}NS(\"$parameters{namespaceURI}\", AtomicString::ConstructFromLiteral);\n\n");
+    print(F "    AtomicString ${lowerNamespace}NS(\"$parameters{namespaceURI}\", AtomicString::ConstructFromLiteral);\n\n");
 
     print(F "    // Namespace\n");
-    print(F "    new (NotNull, (void*)&${lowercaseNamespacePrefix}NamespaceURI) AtomicString(${lowercaseNamespacePrefix}NS);\n");
+    print(F "    new (NotNull, (void*)&${lowerNamespace}NamespaceURI) AtomicString(${lowerNamespace}NS);\n");
     print(F "\n");
     print F StaticString::GenerateStringAsserts(\%allStrings);
 
     if (keys %allTags) {
-        my $tagsNamespace = $parameters{tagsNullNamespace} ? "nullAtom" : "${lowercaseNamespacePrefix}NS";
+        my $tagsNamespace = $parameters{tagsNullNamespace} ? "nullAtom" : "${lowerNamespace}NS";
         printDefinitions($F, \%allTags, "tags", $tagsNamespace);
     }
     if (keys %allAttrs) {
-        my $attrsNamespace = $parameters{attrsNullNamespace} ? "nullAtom" : "${lowercaseNamespacePrefix}NS";
+        my $attrsNamespace = $parameters{attrsNullNamespace} ? "nullAtom" : "${lowerNamespace}NS";
         printDefinitions($F, \%allAttrs, "attributes", $attrsNamespace);
     }
 

@@ -54,11 +54,12 @@ static inline void assertRowIsInTable(HTMLTableElement* table, HTMLTableRowEleme
 #endif
 }
 
-static inline bool isInSection(HTMLTableRowElement& row, const HTMLQualifiedName& sectionTag)
+static inline bool isInSection(HTMLTableRowElement* row, const QualifiedName& sectionTag)
 {
-    // Because we know that the parent is a table or a section, it's safe to cast it to an HTMLElement
-    // giving us access to the faster hasTagName overload from that class.
-    return toHTMLElement(row.parentNode())->hasTagName(sectionTag);
+    // Because we know that the parent is a table or a section, all of which are in the HTML
+    // namespace, it's OK to do the faster hasLocalName here instead of the more typical hasTagName,
+    // since we don't need the check for the HTML namespace.
+    return toElement(row->parentNode())->hasLocalName(sectionTag);
 }
 
 HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, HTMLTableRowElement* previous)
@@ -80,7 +81,7 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, 
     // If still looking at head sections, find the first row in the next head section.
     if (!previous)
         child = ElementTraversal::firstChild(table);
-    else if (isInSection(*previous, theadTag))
+    else if (isInSection(previous, theadTag))
         child = ElementTraversal::nextSibling(previous->parentNode());
     for (; child; child = ElementTraversal::nextSibling(child)) {
         if (child->hasTagName(theadTag)) {
@@ -90,11 +91,11 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, 
     }
 
     // If still looking at top level and bodies, find the next row in top level or the first in the next body section.
-    if (!previous || isInSection(*previous, theadTag))
+    if (!previous || isInSection(previous, theadTag))
         child = ElementTraversal::firstChild(table);
     else if (previous->parentNode() == table)
         child = ElementTraversal::nextSibling(previous);
-    else if (isInSection(*previous, tbodyTag))
+    else if (isInSection(previous, tbodyTag))
         child = ElementTraversal::nextSibling(previous->parentNode());
     for (; child; child = ElementTraversal::nextSibling(child)) {
         if (isHTMLTableRowElement(child))
@@ -106,7 +107,7 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, 
     }
 
     // Find the first row in the next foot section.
-    if (!previous || !isInSection(*previous, tfootTag))
+    if (!previous || !isInSection(previous, tfootTag))
         child = ElementTraversal::firstChild(table);
     else
         child = ElementTraversal::nextSibling(previous->parentNode());
