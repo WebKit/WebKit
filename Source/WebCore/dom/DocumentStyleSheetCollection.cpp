@@ -262,15 +262,12 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
     if (m_document.settings() && !m_document.settings()->authorAndUserStylesEnabled())
         return;
 
-    StyleSheetCandidateListHashSet::iterator begin = m_styleSheetCandidateNodes.begin();
-    StyleSheetCandidateListHashSet::iterator end = m_styleSheetCandidateNodes.end();
-    for (StyleSheetCandidateListHashSet::iterator it = begin; it != end; ++it) {
-        Node* n = *it;
-        StyleSheet* sheet = 0;
-        if (n->nodeType() == Node::PROCESSING_INSTRUCTION_NODE) {
+    for (auto& node : m_styleSheetCandidateNodes) {
+        StyleSheet* sheet = nullptr;
+        if (node->nodeType() == Node::PROCESSING_INSTRUCTION_NODE) {
             // Processing instruction (XML documents only).
             // We don't support linking to embedded CSS stylesheets, see <https://bugs.webkit.org/show_bug.cgi?id=49281> for discussion.
-            ProcessingInstruction* pi = toProcessingInstruction(n);
+            ProcessingInstruction* pi = toProcessingInstruction(node);
             sheet = pi->sheet();
 #if ENABLE(XSLT)
             // Don't apply XSL transforms to already transformed documents -- <rdar://problem/4132806>
@@ -281,47 +278,41 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
                 return;
             }
 #endif
-        } else if ((n->isHTMLElement() && (n->hasTagName(linkTag) || n->hasTagName(styleTag)))
-            || (n->isSVGElement() && n->hasTagName(SVGNames::styleTag))) {
-            Element* e = toElement(n);
-            AtomicString title = e->getAttribute(titleAttr);
+        } else if ((node->isHTMLElement() && (toHTMLElement(*node).hasTagName(linkTag) || toHTMLElement(*node).hasTagName(styleTag))) || (node->isSVGElement() && toSVGElement(*node).hasTagName(SVGNames::styleTag))) {
+            Element& element = toElement(*node);
+            AtomicString title = element.getAttribute(titleAttr);
             bool enabledViaScript = false;
-            if (e->hasTagName(linkTag)) {
+            if (isHTMLLinkElement(element)) {
                 // <LINK> element
-                HTMLLinkElement* linkElement = toHTMLLinkElement(n);
-                if (linkElement->isDisabled())
+                HTMLLinkElement& linkElement = toHTMLLinkElement(element);
+                if (linkElement.isDisabled())
                     continue;
-                enabledViaScript = linkElement->isEnabledViaScript();
-                if (linkElement->styleSheetIsLoading()) {
+                enabledViaScript = linkElement.isEnabledViaScript();
+                if (linkElement.styleSheetIsLoading()) {
                     // it is loading but we should still decide which style sheet set to use
                     if (!enabledViaScript && !title.isEmpty() && m_preferredStylesheetSetName.isEmpty()) {
-                        const AtomicString& rel = e->getAttribute(relAttr);
-                        if (!rel.contains("alternate")) {
+                        if (!linkElement.fastGetAttribute(relAttr).contains("alternate")) {
                             m_preferredStylesheetSetName = title;
                             m_selectedStylesheetSetName = title;
                         }
                     }
                     continue;
                 }
-                if (!linkElement->sheet())
+                if (!linkElement.sheet())
                     title = nullAtom;
             }
             // Get the current preferred styleset. This is the
             // set of sheets that will be enabled.
-            if (isSVGStyleElement(e))
-                sheet = toSVGStyleElement(e)->sheet();
-            else {
-                if (isHTMLLinkElement(e))
-                    sheet = toHTMLLinkElement(n)->sheet();
-                else {
-                    // <STYLE> element
-                    sheet = toHTMLStyleElement(e)->sheet();
-                }
-            }
+            if (isSVGStyleElement(element))
+                sheet = toSVGStyleElement(element).sheet();
+            else if (isHTMLLinkElement(element))
+                sheet = toHTMLLinkElement(element).sheet();
+            else
+                sheet = toHTMLStyleElement(element).sheet();
             // Check to see if this sheet belongs to a styleset
             // (thus making it PREFERRED or ALTERNATE rather than
             // PERSISTENT).
-            AtomicString rel = e->getAttribute(relAttr);
+            auto& rel = element.fastGetAttribute(relAttr);
             if (!enabledViaScript && !title.isEmpty()) {
                 // Yes, we have a title.
                 if (m_preferredStylesheetSetName.isEmpty()) {
@@ -329,15 +320,15 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
                     // we are NOT an alternate sheet, then establish
                     // us as the preferred set. Otherwise, just ignore
                     // this sheet.
-                    if (e->hasTagName(styleTag) || !rel.contains("alternate"))
+                    if (isHTMLStyleElement(element) || !rel.contains("alternate"))
                         m_preferredStylesheetSetName = m_selectedStylesheetSetName = title;
                 }
                 if (title != m_preferredStylesheetSetName)
-                    sheet = 0;
+                    sheet = nullptr;
             }
 
             if (rel.contains("alternate") && title.isEmpty())
-                sheet = 0;
+                sheet = nullptr;
         }
         if (sheet)
             sheets.append(sheet);

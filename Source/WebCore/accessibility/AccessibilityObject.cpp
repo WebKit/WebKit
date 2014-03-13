@@ -1549,9 +1549,8 @@ const AtomicString& AccessibilityObject::invalidStatus() const
  
 bool AccessibilityObject::hasTagName(const QualifiedName& tagName) const
 {
-    if (Node* node = this->node())
-        return node->hasTagName(tagName);
-    return false;
+    Node* node = this->node();
+    return node && node->isElementNode() && toElement(*node).hasTagName(tagName);
 }
     
 bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const

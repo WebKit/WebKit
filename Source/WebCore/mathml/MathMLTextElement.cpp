@@ -66,11 +66,11 @@ void MathMLTextElement::childrenChanged(const ChildChange& change)
 
 RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    if (hasLocalName(MathMLNames::moTag))
+    if (hasTagName(MathMLNames::moTag))
         return createRenderer<RenderMathMLOperator>(*this, std::move(style));
-    if (hasLocalName(MathMLNames::miTag))
+    if (hasTagName(MathMLNames::miTag))
         return createRenderer<RenderMathMLToken>(*this, std::move(style));
-    if (hasLocalName(MathMLNames::mspaceTag))
+    if (hasTagName(MathMLNames::mspaceTag))
         return createRenderer<RenderMathMLSpace>(*this, std::move(style));
 
     return MathMLElement::createElementRenderer(std::move(style));
@@ -78,7 +78,7 @@ RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(PassRef<Render
 
 bool MathMLTextElement::childShouldCreateRenderer(const Node& child) const
 {
-    return !hasLocalName(mspaceTag) && child.isTextNode();
+    return !hasTagName(mspaceTag) && child.isTextNode();
 }
 
 }

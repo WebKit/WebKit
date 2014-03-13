@@ -27,6 +27,7 @@
 #include "Editor.h"
 #include "FloatingObjects.h"
 #include "Frame.h"
+#include "HTMLElement.h"
 #include "HitTestLocation.h"
 #include "InlineTextBox.h"
 #include "LayoutRepainter.h"
@@ -44,10 +45,6 @@
 
 #if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
 #include "ShapeInsideInfo.h"
-#endif
-
-#if ENABLE(IOS_TEXT_AUTOSIZING)
-#include "HTMLElement.h"
 #endif
 
 namespace WebCore {

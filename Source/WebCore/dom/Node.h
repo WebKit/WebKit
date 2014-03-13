@@ -60,8 +60,10 @@ class EventListener;
 class FloatPoint;
 class Frame;
 class HTMLInputElement;
+class HTMLQualifiedName;
 class IntRect;
 class KeyboardEvent;
+class MathMLQualifiedName;
 class NSResolver;
 class NamedNodeMap;
 class NameNodeList;
@@ -75,6 +77,7 @@ class RenderBox;
 class RenderBoxModelObject;
 class RenderObject;
 class RenderStyle;
+class SVGQualifiedName;
 class ShadowRoot;
 class TagNodeList;
 
@@ -157,8 +160,9 @@ public:
 
     // DOM methods & attributes for Node
 
-    bool hasTagName(const QualifiedName&) const;
-    bool hasLocalName(const AtomicString&) const;
+    bool hasTagName(const HTMLQualifiedName&) const;
+    bool hasTagName(const MathMLQualifiedName&) const;
+    bool hasTagName(const SVGQualifiedName&) const;
     virtual String nodeName() const = 0;
     virtual String nodeValue() const;
     virtual void setNodeValue(const String&, ExceptionCode&);
@@ -259,7 +263,7 @@ public:
     bool hasSyntheticAttrChildNodes() const { return getFlag(HasSyntheticAttrChildNodesFlag); }
     void setHasSyntheticAttrChildNodes(bool flag) { setFlag(flag, HasSyntheticAttrChildNodesFlag); }
 
-    // If this node is in a shadow tree, returns its shadow host. Otherwise, returns 0.
+    // If this node is in a shadow tree, returns its shadow host. Otherwise, returns null.
     Element* shadowHost() const;
     // If this node is in a shadow tree, returns its shadow host. Otherwise, returns this.
     // Deprecated. Should use shadowHost() and check the return value.
@@ -267,7 +271,7 @@ public:
     ShadowRoot* containingShadowRoot() const;
     ShadowRoot* shadowRoot() const;
 
-    // Returns 0, a child of ShadowRoot, or a legacy shadow root.
+    // Returns null, a child of ShadowRoot, or a legacy shadow root.
     Node* nonBoundaryShadowTreeRootNode();
 
     // Node's parent or shadow tree host.
@@ -276,9 +280,9 @@ public:
     void setParentNode(ContainerNode*);
     Node* highestAncestor() const;
 
-    // Use when it's guaranteed to that shadowHost is 0.
+    // Use when it's guaranteed to that shadowHost is null.
     ContainerNode* parentNodeGuaranteedHostFree() const;
-    // Returns the parent node, but 0 if the parent node is a ShadowRoot.
+    // Returns the parent node, but null if the parent node is a ShadowRoot.
     ContainerNode* nonShadowBoundaryParentNode() const;
 
     bool selfOrAncestorHasDirAutoAttribute() const { return getFlag(SelfOrAncestorHasDirAutoFlag); }
@@ -377,11 +381,11 @@ public:
 
     unsigned nodeIndex() const;
 
-    // Returns the DOM ownerDocument attribute. This method never returns 0, except in the case
+    // Returns the DOM ownerDocument attribute. This method never returns null, except in the case
     // of a Document node.
     Document* ownerDocument() const;
 
-    // Returns the document associated with this node. This method never returns 0.
+    // Returns the document associated with this node.
     // A Document node returns itself.
     Document& document() const
     {
@@ -491,11 +495,11 @@ public:
     void showNode(const char* prefix = "") const;
     void showTreeForThis() const;
     void showNodePathForThis() const;
-    void showTreeAndMark(const Node* markedNode1, const char* markedLabel1, const Node* markedNode2 = 0, const char* markedLabel2 = 0) const;
+    void showTreeAndMark(const Node* markedNode1, const char* markedLabel1, const Node* markedNode2 = nullptr, const char* markedLabel2 = nullptr) const;
     void showTreeForThisAcrossFrame() const;
 #endif
 
-    void invalidateNodeListAndCollectionCachesInAncestors(const QualifiedName* attrName = 0, Element* attributeOwnerElement = 0);
+    void invalidateNodeListAndCollectionCachesInAncestors(const QualifiedName* attrName = nullptr, Element* attributeOwnerElement = nullptr);
     NodeListsNodeData* nodeLists();
     void clearNodeLists();
 
@@ -670,7 +674,7 @@ private:
     virtual void refEventTarget() override;
     virtual void derefEventTarget() override;
 
-    virtual RenderStyle* nonRendererStyle() const { return 0; }
+    virtual RenderStyle* nonRendererStyle() const { return nullptr; }
 
     Element* ancestorElement() const;
 

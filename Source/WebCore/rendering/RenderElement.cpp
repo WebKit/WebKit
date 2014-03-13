@@ -1084,7 +1084,7 @@ RenderElement& RenderElement::rendererForRootBackground()
         // anonymous blocks created by inline <body> tags etc. We can locate the <body>
         // render object very easily via the DOM.
         if (auto body = document().body()) {
-            if (body->hasLocalName(HTMLNames::bodyTag)) {
+            if (body->hasTagName(HTMLNames::bodyTag)) {
                 if (auto renderer = body->renderer())
                     return *renderer;
             }

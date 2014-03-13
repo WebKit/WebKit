@@ -91,28 +91,28 @@ bool HTMLElement::ieForbidsInsertHTML() const
     // This is also called from editing and assumed to be the list of tags
     // for which no end tag should be serialized. It's unclear if the list for
     // IE compat and the list for serialization sanity are the same.
-    if (hasLocalName(areaTag)
-        || hasLocalName(baseTag)
-        || hasLocalName(basefontTag)
-        || hasLocalName(brTag)
-        || hasLocalName(colTag)
-        || hasLocalName(embedTag)
-        || hasLocalName(frameTag)
-        || hasLocalName(hrTag)
-        || hasLocalName(imageTag)
-        || hasLocalName(imgTag)
-        || hasLocalName(inputTag)
-        || hasLocalName(isindexTag)
-        || hasLocalName(linkTag)
-        || hasLocalName(metaTag)
-        || hasLocalName(paramTag)
-        || hasLocalName(sourceTag)
-        || hasLocalName(wbrTag))
+    if (hasTagName(areaTag)
+        || hasTagName(baseTag)
+        || hasTagName(basefontTag)
+        || hasTagName(brTag)
+        || hasTagName(colTag)
+        || hasTagName(embedTag)
+        || hasTagName(frameTag)
+        || hasTagName(hrTag)
+        || hasTagName(imageTag)
+        || hasTagName(imgTag)
+        || hasTagName(inputTag)
+        || hasTagName(isindexTag)
+        || hasTagName(linkTag)
+        || hasTagName(metaTag)
+        || hasTagName(paramTag)
+        || hasTagName(sourceTag)
+        || hasTagName(wbrTag))
         return true;
     // FIXME: I'm not sure why dashboard mode would want to change the
     // serialization of <canvas>, that seems like a bad idea.
 #if ENABLE(DASHBOARD_SUPPORT)
-    if (hasLocalName(canvasTag)) {
+    if (hasTagName(canvasTag)) {
         Settings* settings = document().settings();
         if (settings && settings->usesDashboardBackwardCompatibilityMode())
             return true;
@@ -123,7 +123,7 @@ bool HTMLElement::ieForbidsInsertHTML() const
 
 static inline CSSValueID unicodeBidiAttributeForDirAuto(HTMLElement& element)
 {
-    if (element.hasLocalName(preTag) || element.hasLocalName(textareaTag))
+    if (element.hasTagName(preTag) || element.hasTagName(textareaTag))
         return CSSValueWebkitPlaintext;
     // FIXME: For bdo element, dir="auto" should result in "bidi-override isolate" but we don't support having multiple values in unicode-bidi yet.
     // See https://bugs.webkit.org/show_bug.cgi?id=73164.
@@ -134,7 +134,7 @@ unsigned HTMLElement::parseBorderWidthAttribute(const AtomicString& value) const
 {
     unsigned borderWidth = 0;
     if (value.isEmpty() || !parseHTMLNonNegativeInteger(value, borderWidth))
-        return hasLocalName(tableTag) ? 1 : borderWidth;
+        return hasTagName(tableTag) ? 1 : borderWidth;
     return borderWidth;
 }
 
@@ -378,7 +378,7 @@ void HTMLElement::setInnerHTML(const String& html, ExceptionCode& ec)
     if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(html, this, AllowScriptingContent, ec)) {
         ContainerNode* container = this;
 #if ENABLE(TEMPLATE_ELEMENT)
-        if (hasLocalName(templateTag))
+        if (hasTagName(templateTag))
             container = toHTMLTemplateElement(this)->content();
 #endif
         replaceChildrenWithFragment(*container, fragment.release(), ec);
@@ -455,16 +455,27 @@ PassRefPtr<DocumentFragment> HTMLElement::textToFragment(const String& text, Exc
     return fragment;
 }
 
+static inline bool shouldProhibitSetInnerOuterText(const HTMLElement& element)
+{
+    return element.hasTagName(colTag)
+        || element.hasTagName(colgroupTag)
+        || element.hasTagName(framesetTag)
+        || element.hasTagName(headTag)
+        || element.hasTagName(htmlTag)
+        || element.hasTagName(tableTag)
+        || element.hasTagName(tbodyTag)
+        || element.hasTagName(tfootTag)
+        || element.hasTagName(theadTag)
+        || element.hasTagName(trTag);
+}
+
 void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
 {
     if (ieForbidsInsertHTML()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
-    if (hasLocalName(colTag) || hasLocalName(colgroupTag) || hasLocalName(framesetTag) ||
-        hasLocalName(headTag) || hasLocalName(htmlTag) || hasLocalName(tableTag) || 
-        hasLocalName(tbodyTag) || hasLocalName(tfootTag) || hasLocalName(theadTag) ||
-        hasLocalName(trTag)) {
+    if (shouldProhibitSetInnerOuterText(*this)) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
@@ -509,10 +520,7 @@ void HTMLElement::setOuterText(const String& text, ExceptionCode& ec)
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
-    if (hasLocalName(colTag) || hasLocalName(colgroupTag) || hasLocalName(framesetTag) ||
-        hasLocalName(headTag) || hasLocalName(htmlTag) || hasLocalName(tableTag) || 
-        hasLocalName(tbodyTag) || hasLocalName(tfootTag) || hasLocalName(theadTag) ||
-        hasLocalName(trTag)) {
+    if (shouldProhibitSetInnerOuterText(*this)) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
@@ -791,11 +799,11 @@ PassRefPtr<HTMLCollection> HTMLElement::children()
 
 bool HTMLElement::rendererIsNeeded(const RenderStyle& style)
 {
-    if (hasLocalName(noscriptTag)) {
+    if (hasTagName(noscriptTag)) {
         Frame* frame = document().frame();
         if (frame && frame->script().canExecuteScripts(NotAboutToExecuteScript))
             return false;
-    } else if (hasLocalName(noembedTag)) {
+    } else if (hasTagName(noembedTag)) {
         Frame* frame = document().frame();
         if (frame && frame->loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin))
             return false;
@@ -805,7 +813,7 @@ bool HTMLElement::rendererIsNeeded(const RenderStyle& style)
 
 RenderPtr<RenderElement> HTMLElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    if (hasLocalName(wbrTag))
+    if (hasTagName(wbrTag))
         return createRenderer<RenderLineBreak>(*this, std::move(style));
     return RenderElement::createFor(*this, std::move(style));
 }

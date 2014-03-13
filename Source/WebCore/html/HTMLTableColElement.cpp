@@ -84,11 +84,11 @@ void HTMLTableColElement::parseAttribute(const QualifiedName& name, const Atomic
 
 const StyleProperties* HTMLTableColElement::additionalPresentationAttributeStyle()
 {
-    if (!hasLocalName(colgroupTag))
-        return 0;
+    if (!hasTagName(colgroupTag))
+        return nullptr;
     if (HTMLTableElement* table = findParentTable())
         return table->additionalGroupStyle(false);
-    return 0;
+    return nullptr;
 }
 
 void HTMLTableColElement::setSpan(int n)

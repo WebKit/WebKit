@@ -542,22 +542,24 @@ bool isListItem(const Node *n)
     return n && (isListElement(n->parentNode()) || (n->renderer() && n->renderer()->isListItem()));
 }
 
-Node* enclosingNodeWithTag(const Position& p, const QualifiedName& tagName)
+Element* enclosingElementWithTag(const Position& position, const QualifiedName& tagName)
 {
-    if (p.isNull())
-        return 0;
-        
-    Node* root = highestEditableRoot(p);
-    for (Node* n = p.deprecatedNode(); n; n = n->parentNode()) {
-        if (root && !n->hasEditableStyle())
+    if (position.isNull())
+        return nullptr;
+
+    Node* root = highestEditableRoot(position);
+    for (Node* node = position.deprecatedNode(); node; node = node->parentNode()) {
+        if (root && !node->hasEditableStyle())
             continue;
-        if (n->hasTagName(tagName))
-            return n;
-        if (n == root)
-            return 0;
+        if (!node->isElementNode())
+            continue;
+        if (toElement(*node).hasTagName(tagName))
+            return toElement(node);
+        if (node == root)
+            return nullptr;
     }
-    
-    return 0;
+
+    return nullptr;
 }
 
 Node* enclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule rule)

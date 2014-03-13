@@ -42,6 +42,7 @@
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
@@ -522,91 +523,81 @@ void HTMLTreeBuilder::processCloseWhenNestedTag(AtomicHTMLToken* token)
     m_tree.insertHTMLElement(token);
 }
 
-typedef HashMap<AtomicString, QualifiedName> PrefixedNameToQualifiedNameMap;
-
-static void mapLoweredLocalNameToName(PrefixedNameToQualifiedNameMap* map, const QualifiedName* const names[], size_t length)
+template <typename TableQualifiedName>
+static HashMap<AtomicString, QualifiedName> createCaseMap(const TableQualifiedName* const names[], unsigned length)
 {
-    for (size_t i = 0; i < length; ++i) {
+    HashMap<AtomicString, QualifiedName> map;
+    for (unsigned i = 0; i < length; ++i) {
         const QualifiedName& name = *names[i];
         const AtomicString& localName = name.localName();
         AtomicString loweredLocalName = localName.lower();
         if (loweredLocalName != localName)
-            map->add(loweredLocalName, name);
+            map.add(loweredLocalName, name);
     }
+    return map;
 }
 
-static void adjustSVGTagNameCase(AtomicHTMLToken* token)
+static void adjustSVGTagNameCase(AtomicHTMLToken& token)
 {
-    static PrefixedNameToQualifiedNameMap* caseMap = 0;
-    if (!caseMap) {
-        caseMap = new PrefixedNameToQualifiedNameMap;
-        mapLoweredLocalNameToName(caseMap, SVGNames::getSVGTags(), SVGNames::SVGTagsCount);
-    }
-
-    const QualifiedName& casedName = caseMap->get(token->name());
+    static NeverDestroyed<HashMap<AtomicString, QualifiedName>> map = createCaseMap(SVGNames::getSVGTags(), SVGNames::SVGTagsCount);
+    const QualifiedName& casedName = map.get().get(token.name());
     if (casedName.localName().isNull())
         return;
-    token->setName(casedName.localName());
+    token.setName(casedName.localName());
 }
 
-template<const QualifiedName* const * getAttrs(), unsigned length>
-static void adjustAttributes(AtomicHTMLToken* token)
+static inline void adjustAttributes(HashMap<AtomicString, QualifiedName>& map, AtomicHTMLToken& token)
 {
-    static PrefixedNameToQualifiedNameMap* caseMap = 0;
-    if (!caseMap) {
-        caseMap = new PrefixedNameToQualifiedNameMap;
-        mapLoweredLocalNameToName(caseMap, getAttrs(), length);
-    }
-
-    for (unsigned i = 0; i < token->attributes().size(); ++i) {
-        Attribute& tokenAttribute = token->attributes().at(i);
-        const QualifiedName& casedName = caseMap->get(tokenAttribute.localName());
+    for (auto& attribute : token.attributes()) {
+        const QualifiedName& casedName = map.get(attribute.localName());
         if (!casedName.localName().isNull())
-            tokenAttribute.parserSetName(casedName);
+            attribute.parserSetName(casedName);
     }
 }
 
-static void adjustSVGAttributes(AtomicHTMLToken* token)
+template<const QualifiedName* const* attributesTable(), unsigned attributesTableLength>
+static void adjustAttributes(AtomicHTMLToken& token)
+{
+    static NeverDestroyed<HashMap<AtomicString, QualifiedName>> map = createCaseMap(attributesTable(), attributesTableLength);
+    adjustAttributes(map, token);
+}
+
+static inline void adjustSVGAttributes(AtomicHTMLToken& token)
 {
     adjustAttributes<SVGNames::getSVGAttrs, SVGNames::SVGAttrsCount>(token);
 }
 
-static void adjustMathMLAttributes(AtomicHTMLToken* token)
+static inline void adjustMathMLAttributes(AtomicHTMLToken& token)
 {
     adjustAttributes<MathMLNames::getMathMLAttrs, MathMLNames::MathMLAttrsCount>(token);
 }
 
-static void addNamesWithPrefix(PrefixedNameToQualifiedNameMap* map, const AtomicString& prefix, const QualifiedName* const names[], size_t length)
+static void addNamesWithPrefix(HashMap<AtomicString, QualifiedName>& map, const AtomicString& prefix, const QualifiedName* const names[], unsigned length)
 {
-    for (size_t i = 0; i < length; ++i) {
+    for (unsigned i = 0; i < length; ++i) {
         const QualifiedName& name = *names[i];
         const AtomicString& localName = name.localName();
-        AtomicString prefixColonLocalName = prefix + ':' + localName;
-        QualifiedName nameWithPrefix(prefix, localName, name.namespaceURI());
-        map->add(prefixColonLocalName, nameWithPrefix);
+        map.add(prefix + ':' + localName, QualifiedName(prefix, localName, name.namespaceURI()));
     }
 }
 
-static void adjustForeignAttributes(AtomicHTMLToken* token)
+static HashMap<AtomicString, QualifiedName> createForeignAttributesMap()
 {
-    static PrefixedNameToQualifiedNameMap* map = 0;
-    if (!map) {
-        map = new PrefixedNameToQualifiedNameMap;
+    HashMap<AtomicString, QualifiedName> map;
 
-        addNamesWithPrefix(map, xlinkAtom, XLinkNames::getXLinkAttrs(), XLinkNames::XLinkAttrsCount);
+    addNamesWithPrefix(map, xlinkAtom, XLinkNames::getXLinkAttrs(), XLinkNames::XLinkAttrsCount);
+    addNamesWithPrefix(map, xmlAtom, XMLNames::getXMLAttrs(), XMLNames::XMLAttrsCount);
 
-        addNamesWithPrefix(map, xmlAtom, XMLNames::getXMLAttrs(), XMLNames::XMLAttrsCount);
+    map.add(WTF::xmlnsAtom, XMLNSNames::xmlnsAttr);
+    map.add("xmlns:xlink", QualifiedName(xmlnsAtom, xlinkAtom, XMLNSNames::xmlnsNamespaceURI));
 
-        map->add(WTF::xmlnsAtom, XMLNSNames::xmlnsAttr);
-        map->add("xmlns:xlink", QualifiedName(xmlnsAtom, xlinkAtom, XMLNSNames::xmlnsNamespaceURI));
-    }
+    return map;
+}
 
-    for (unsigned i = 0; i < token->attributes().size(); ++i) {
-        Attribute& tokenAttribute = token->attributes().at(i);
-        const QualifiedName& name = map->get(tokenAttribute.localName());
-        if (!name.localName().isNull())
-            tokenAttribute.parserSetName(name);
-    }
+static void adjustForeignAttributes(AtomicHTMLToken& token)
+{
+    static NeverDestroyed<HashMap<AtomicString, QualifiedName>> map = createForeignAttributesMap();
+    adjustAttributes(map, token);
 }
 
 void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken* token)
@@ -896,15 +887,15 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken* token)
     }
     if (token->name() == MathMLNames::mathTag.localName()) {
         m_tree.reconstructTheActiveFormattingElements();
-        adjustMathMLAttributes(token);
-        adjustForeignAttributes(token);
+        adjustMathMLAttributes(*token);
+        adjustForeignAttributes(*token);
         m_tree.insertForeignElement(token, MathMLNames::mathmlNamespaceURI);
         return;
     }
     if (token->name() == SVGNames::svgTag.localName()) {
         m_tree.reconstructTheActiveFormattingElements();
-        adjustSVGAttributes(token);
-        adjustForeignAttributes(token);
+        adjustSVGAttributes(*token);
+        adjustForeignAttributes(*token);
         m_tree.insertForeignElement(token, SVGNames::svgNamespaceURI);
         return;
     }
@@ -2926,18 +2917,18 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomicHTMLToken* token)
         }
         const AtomicString& currentNamespace = m_tree.currentStackItem()->namespaceURI();
         if (currentNamespace == MathMLNames::mathmlNamespaceURI)
-            adjustMathMLAttributes(token);
+            adjustMathMLAttributes(*token);
         if (currentNamespace == SVGNames::svgNamespaceURI) {
-            adjustSVGTagNameCase(token);
-            adjustSVGAttributes(token);
+            adjustSVGTagNameCase(*token);
+            adjustSVGAttributes(*token);
         }
-        adjustForeignAttributes(token);
+        adjustForeignAttributes(*token);
         m_tree.insertForeignElement(token, currentNamespace);
         break;
     }
     case HTMLToken::EndTag: {
         if (m_tree.currentStackItem()->namespaceURI() == SVGNames::svgNamespaceURI)
-            adjustSVGTagNameCase(token);
+            adjustSVGTagNameCase(*token);
 
         if (token->name() == SVGNames::scriptTag && m_tree.currentStackItem()->hasTagName(SVGNames::scriptTag)) {
             if (scriptingContentIsAllowed(m_tree.parserContentPolicy()))

@@ -1,3 +1,241 @@
+2014-03-13  Darin Adler  <darin@apple.com>
+
+        Optimize hasTagName when called on an HTMLElement
+        https://bugs.webkit.org/show_bug.cgi?id=130090
+
+        Reviewed by Antti Koivisto.
+
+        Added new hasTagName functions that have the efficiency of hasLocalName.
+        but are safe.
+
+        Now we can always use hasTagName, and we'll get a compile time error if
+        we try to use an SVG tag name with an HTML element. All call sites that
+        use the more specific tag name types are more efficient, and call sites
+        that have a specific pointer type will get even more efficient checking
+        that is exactly what we used to get by calling hasLocalName.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::hasTagName): Cast explicitly to Element
+        since Node::hasTagName no longer works on a general QualifiedName.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isDescendantOfElementType): Use
+        more specific type, RenderElement, so we can call hasTagName on Element
+        instead of Node; eliminates an unnecessary branch.
+
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::collectActiveStyleSheets): Use
+        new for loop and full words for variable names. Also use nullptr instead
+        of 0. Call toHTMLElement and toSVGElement in code that checks hasTagName
+        since it's already checking isHTMLElement and isSVGElement.
+
+        * dom/Element.cpp:
+        (WebCore::attrNodeListMap): Use NeverDestroyed and put the vectors into
+        the map rather than putting pointers to a vector into the map.
+        (WebCore::attrNodeListForElement): Take a reference rather than a pointer,
+        and update for the change above.
+        (WebCore::ensureAttrNodeListForElement): Ditto.
+        (WebCore::removeAttrNodeListForElement): Ditto.
+        (WebCore::findAttrNodeInList): Ditto.
+        (WebCore::Element::isFocusable): Use ancestorsOfType<HTMLCanvasElement>
+        to fine the canvas rather than a hand-written loop.
+        (WebCore::Element::attrNodeList): Update for above changes.
+        (WebCore::Element::setAttributeNode): Ditto.
+        (WebCore::Element::attrIfExists): Ditto.
+        (WebCore::Element::ensureAttr): Ditto.
+        (WebCore::Element::detachAttrNodeFromElementWithValue): Ditto.
+        (WebCore::Element::detachAllAttrNodesFromElement): Ditto.
+
+        * dom/Element.h: Removed the overload of hasLocalName that takes a
+        QualifiedName and ignores the non-local-name parts of it. Callers should
+        use hasTagName instead, now that it's optimized appropriately. Added
+        overloads of hasTagName for all the specific qualified name types. It's
+        more efficient to use the Node versions of these functions rather than
+        using QualifiedName::matches to do the check. Removed the hasTagName and
+        hasLocalName functions from the Node class; the only convenience functions
+        needed in Node are the specific checks for tags from HTML, MathML, and SVG,
+        not the general purpose ones.
+
+        * dom/Node.h: Removed hasLocalName and replaced the single hasTagName
+        that takes a QualifiedName with three faster ones that take HTML, MathML,
+        and SVG qualified names instead. Also updated to use nullptr instead of 0.
+
+        * dom/PositionIterator.cpp: Added now-needed include.
+        * dom/Text.cpp: Ditto.
+
+        * dom/make_names.pl:
+        (printHeaderHead): Renamed an argument for clarity and added a definitions
+        argument, which is where we insert the classes derived from QualifiedName.
+        (printCppHead): Renamed an argument for clarity.
+        (printTypeHelpers): Use hasTagName rather than hasLocalName, since the
+        former is now optimized to be the same as what the latter was.
+        (printNamesHeaderFile): Define a class derived from QualifiedName that can
+        be used at compile time to avoid having to check the namespace.
+        (printNamesCppFile): Use the new more-specific type as needed.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::isLegacyAppleStyleSpan): Use hasTagName instead of hasLocalName,
+        and references instead of pointers.
+        (WebCore::ApplyStyleCommand::ApplyStyleCommand): Removed uneeded explicit
+        construction of a smart pointer.
+        (WebCore::ApplyStyleCommand::shouldApplyInlineStyleToRun): Updated to use
+        the enclosingElementWithTag function by its new name.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionUnorderedListState): Updated to use the
+        enclosingElementWithTag function by its new name.
+        (WebCore::Editor::selectionOrderedListState): Ditto.
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply): Use a more-specific type for the list tag.
+        (WebCore::InsertListCommand::doApplyForSingleParagraph): Ditto.
+        * editing/InsertListCommand.h: Ditto.
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::serializeNodesWithNamespaces): Added an explicit
+        cast to Element in the loop that is already guarded by an isElementNode check.
+        Also use a modern C++ for loop.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuilder):
+        Updated to use the enclosingElementWithTag function by its new name.
+        (WebCore::ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds): Ditto.
+        (WebCore::ReplaceSelectionCommand::positionAtEndOfInsertedContent): Ditto.
+
+        * editing/TypingCommand.cpp: Added now-needed includes.
+        * editing/VisibleUnits.cpp: Ditto.
+
+        * editing/htmlediting.cpp:
+        (WebCore::enclosingElementWithTag): Changed to return an Element instead of a Node,
+        since nodes other than elements do not have tags.
+        * editing/htmlediting.h: Ditto.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::adjustedSelectionRange): Updated to use the enclosingElementWithTag
+        function by its new name.
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::appendText): Ditto.
+        (WebCore::StyledMarkupAccumulator::traverseNodesForSerialization): Ditto.
+        (WebCore::highestAncestorToWrapMarkup): Ditto.
+        (WebCore::createMarkupInternal): Ditto.
+        (WebCore::createContextualFragment): Ditto. Use hasTagName instead of hasLocalName,
+        since the former is now optimized to be the same as the latter was before.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::isMatchingElement): Use hasTagName instead of hasLocalName,
+        since the former is now optimized to be the same as the latter was before.
+        (WebCore::nameShouldBeVisibleInDocumentAll): Ditto.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::ieForbidsInsertHTML): Ditto.
+        (WebCore::unicodeBidiAttributeForDirAuto): Ditto.
+        (WebCore::HTMLElement::parseBorderWidthAttribute): Ditto.
+        (WebCore::HTMLElement::setInnerHTML): Ditto.
+        (WebCore::shouldProhibitSetInnerOuterText): Ditto. Added this to share code between
+        setInnerText and setOuterText.
+        (WebCore::HTMLElement::setInnerText): Ditto.
+        (WebCore::HTMLElement::setOuterText): Ditto.
+        (WebCore::HTMLElement::rendererIsNeeded): Ditto.
+        (WebCore::HTMLElement::createElementRenderer): Ditto.
+
+        * html/HTMLElement.h: Added hasTagName, which hides the one inherited from Element
+        and takes the more-specific HTMLQualifiedName type. This means we don't need to check
+        the namespace at runtime because it's known at compile time. Also put the
+        implementation of Node::hasTagName for HTMLQualifiedName into this header.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::isRecognizedTagName): Updated for change in return type of
+        HTMLNames::getHTMLTags.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::add): Use hasTagName inastead of hasLocalName.
+        (WebCore::HTMLSelectElement::value): Use isHTMLOptionElement instead of hasTagName.
+        Also use a new style for loop and emptyString() instead of "".
+        (WebCore::HTMLSelectElement::setValue): Ditto.
+        (WebCore::HTMLSelectElement::setLength): Ditto.
+        (WebCore::HTMLSelectElement::searchOptionsForValue): Ditto.
+        (WebCore::HTMLSelectElement::restoreFormControlState): Ditto.
+
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::additionalPresentationAttributeStyle): Use hasTagName
+        instead of hasLocalName.
+
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::isInSection): Updated to use hasTagName and take a reference.
+        (WebCore::HTMLTableRowsCollection::rowAfter): Pass a reference.
+
+        * html/parser/HTMLConstructionSite.cpp: Added now-needed include.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::createCaseMap): Updated to return a map rather than filling one in, and to
+        be flxible about the type of the table being used.
+        (WebCore::adjustSVGTagNameCase): Updated to use NeverDestroyed.
+        (WebCore::adjustAttributes): Added new helper so we can share more code. Updated
+        template argument names for clarity.
+        (WebCore::adjustSVGAttributes): Marked this inline, since it just turns around and
+        calls a single non-inline function.
+        (WebCore::adjustMathMLAttributes): Ditto.
+        (WebCore::addNamesWithPrefix): Changed to take argument by reference instead of pointer.
+        (WebCore::createForeignAttributesMap): Added. Factors out the map creation from the
+        function below.
+        (WebCore::adjustForeignAttributes): Updated for above changes.
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody): Updated to pass reference.
+        (WebCore::HTMLTreeBuilder::processTokenInForeignContent): Ditto.
+
+        * inspector/InspectorStyleSheet.cpp: Added now-needed include.
+
+        * mathml/MathMLElement.h: Added hasTagName, which hides the one inherited from Element
+        and takes the more-specific MathMLQualifiedName type. This means we don't need to check
+        the namespace at runtime because it's known at compile time. Also put the
+        implementation of Node::hasTagName for MathMLQualifiedName into this header.
+
+        * mathml/MathMLInlineContainerElement.cpp:
+        (WebCore::MathMLInlineContainerElement::createElementRenderer): Use hasTagName.
+
+        * mathml/MathMLSelectElement.cpp:
+        (WebCore::MathMLSelectElement::attributeChanged): Use hasTagName.
+        (WebCore::MathMLSelectElement::getSelectedActionChildAndIndex): Ditto.
+        (WebCore::MathMLSelectElement::getSelectedActionChild): Ditto.
+        (WebCore::MathMLSelectElement::getSelectedSemanticsChild): Ditto.
+        (WebCore::MathMLSelectElement::updateSelectedChild): Ditto.
+        * mathml/MathMLTextElement.cpp:
+        (WebCore::MathMLTextElement::createElementRenderer): Ditto.
+        (WebCore::MathMLTextElement::childShouldCreateRenderer): Ditto.
+
+        * platform/mac/HTMLConverter.mm: Added now-needed include.
+        * rendering/RenderBlockFlow.cpp: Ditto.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended): Use hasTagName.
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::rendererForRootBackground): Ditto.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer): Ditto.
+
+        * rendering/RenderReplaced.cpp: Added now-needed include.
+
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        (WebCore::RenderMathMLScripts::RenderMathMLScripts): Use hasTagName.
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::RenderMathMLUnderOver): Ditto.
+
+        * svg/SVGElement.h: Added hasTagName, which hides the one inherited from Element
+        and takes the more-specific SVGQualifiedName type. This means we don't need to check
+        the namespace at runtime because it's known at compile time. Also put the
+        implementation of Node::hasTagName for SVGQualifiedName into this header.
+
+        * svg/SVGFontFaceSrcElement.cpp:
+        (WebCore::SVGFontFaceSrcElement::childrenChanged): Use isSVGFontFaceElement instead
+        of calling hasTagName.
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::isDirectReference): Changed to take a reference and a more specific type.
+        (WebCore::SVGUseElement::toClipPath): Added a type cast.
+        (WebCore::SVGUseElement::rendererClipChild): Use more specific types so we don't
+        need a type cast.
+
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::parseDocumentFragment): Added explicit calls to this
+        unusual call site that has a good reason to use hasLocalName instead of hasTagName.
+
 2014-03-13  Antti Koivisto  <antti@apple.com>
 
         Try to fix iOS build.

@@ -1745,7 +1745,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
         
         // Now look at the body's renderer.
         HTMLElement* body = renderer().document().body();
-        RenderObject* bodyObject = (body && body->hasLocalName(bodyTag)) ? body->renderer() : 0;
+        RenderObject* bodyObject = (body && body->hasTagName(bodyTag)) ? body->renderer() : 0;
         if (!bodyObject)
             return false;
         

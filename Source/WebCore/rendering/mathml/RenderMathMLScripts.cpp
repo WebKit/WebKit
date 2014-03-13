@@ -30,7 +30,7 @@
 
 #include "RenderMathMLScripts.h"
 
-#include "MathMLNames.h"
+#include "MathMLElement.h"
 
 namespace WebCore {
     
@@ -61,14 +61,14 @@ RenderMathMLScripts::RenderMathMLScripts(Element& element, PassRef<RenderStyle> 
     , m_baseWrapper(0)
 {
     // Determine what kind of sub/sup expression we have by element name
-    if (element.hasLocalName(MathMLNames::msubTag))
+    if (element.hasTagName(MathMLNames::msubTag))
         m_kind = Sub;
-    else if (element.hasLocalName(MathMLNames::msupTag))
+    else if (element.hasTagName(MathMLNames::msupTag))
         m_kind = Super;
-    else if (element.hasLocalName(MathMLNames::msubsupTag))
+    else if (element.hasTagName(MathMLNames::msubsupTag))
         m_kind = SubSup;
     else {
-        ASSERT(element.hasLocalName(MathMLNames::mmultiscriptsTag));
+        ASSERT(element.hasTagName(MathMLNames::mmultiscriptsTag));
         m_kind = Multiscripts;
     }
 }
