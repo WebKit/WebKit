@@ -335,7 +335,7 @@ void HTMLCanvasElement::reset()
     setSurfaceSize(newSize);
 
 #if ENABLE(WEBGL)
-    if (m_context && m_context->is3d() && oldSize != size())
+    if (is3D() && oldSize != size())
         static_cast<WebGLRenderingContext*>(m_context.get())->reshape(width(), height());
 #endif
 
@@ -489,15 +489,15 @@ String HTMLCanvasElement::toDataURL(const String& mimeType, const double* qualit
 
 PassRefPtr<ImageData> HTMLCanvasElement::getImageData()
 {
-    if (!m_context || !m_context->is3d())
-       return 0;
+#if ENABLE(WEBGL)
+    if (!is3D())
+        return nullptr;
 
-#if ENABLE(WEBGL)    
     WebGLRenderingContext* ctx = static_cast<WebGLRenderingContext*>(m_context.get());
 
     return ctx->paintRenderingResultsToImageData();
 #else
-    return 0;
+    return nullptr;
 #endif
 }
 

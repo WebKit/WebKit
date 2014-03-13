@@ -1,3 +1,19 @@
+2014-03-11  Jae Hyun Park  <jaepark@webkit.org>
+
+        Make HTMLCanvasElement::is3D private
+        https://bugs.webkit.org/show_bug.cgi?id=130117
+
+        Reviewed by Anders Carlsson.
+
+        HTMLCanvasElement::is3D is not used anywhere except HTMLCanvasElement.
+        So, make HTMLCanvasElement::is3D a private method. Also, make more use
+        of is3D method.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::reset):
+        (WebCore::HTMLCanvasElement::getImageData):
+        * html/HTMLCanvasElement.h:
+
 2014-03-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: OS X View Indication

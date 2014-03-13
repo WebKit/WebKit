@@ -136,10 +136,6 @@ public:
 
     AffineTransform baseTransform() const;
 
-#if ENABLE(WEBGL)    
-    bool is3D() const;
-#endif
-
     void makeRenderingResultsAvailable();
     bool hasCreatedImageBuffer() const { return m_hasCreatedImageBuffer; }
 
@@ -167,6 +163,10 @@ private:
     void setSurfaceSize(const IntSize&);
 
     bool paintsIntoCanvasBuffer() const;
+
+#if ENABLE(WEBGL)
+    bool is3D() const;
+#endif
 
     HashSet<CanvasObserver*> m_observers;
 
