@@ -582,7 +582,9 @@ WebInspector.DOMTreeManager.prototype = {
             }
             this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.ContentFlowListWasUpdated, {documentNodeIdentifier: documentNodeIdentifier, flows: contentFlows});
         }
-        CSSAgent.getNamedFlowCollection(documentNodeIdentifier, onNamedFlowCollectionAvailable.bind(this));
+
+        if (CSSAgent.getNamedFlowCollection)
+            CSSAgent.getNamedFlowCollection(documentNodeIdentifier, onNamedFlowCollectionAvailable.bind(this));
     },
 
     namedFlowCreated: function(flowPayload)
