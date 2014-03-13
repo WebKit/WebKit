@@ -1,4 +1,3 @@
-#include "../../../../../Internal/Configurations/UseInternalSDK.xcconfig"
 #include "Base.xcconfig"
 
 ARCHS = $(ARCHS_STANDARD_32_64_BIT);

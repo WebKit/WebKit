@@ -21,7 +21,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
-#include "../../../../Internal/Configurations/UseInternalSDK.xcconfig"
 #include "Base.xcconfig"
 
 ARCHS = $(ARCHS_STANDARD_32_64_BIT);
