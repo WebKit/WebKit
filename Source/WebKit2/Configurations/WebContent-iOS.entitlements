@@ -8,5 +8,9 @@
         <true/>
         <key>dynamic-codesigning</key>
         <true/>
+        <key>com.apple.private.assets.accessible-asset-types</key>
+        <array>
+            <string>com.apple.MobileAsset.WebKitBlocklist</string>
+        </array>
 </dict>
 </plist>

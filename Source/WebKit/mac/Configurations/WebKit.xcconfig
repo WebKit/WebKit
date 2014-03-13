@@ -77,7 +77,7 @@ PRODUCT_NAME = WebKit;
 UMBRELLA_FRAMEWORKS_DIR = $(PRODUCTION_FRAMEWORKS_DIR)/WebKit.framework/Versions/A/Frameworks;
 
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
-OTHER_LDFLAGS_iphoneos = -lobjc -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -lMobileGestalt;
+OTHER_LDFLAGS_iphoneos = -lobjc -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework OpenGLES -framework MobileAsset -lMobileGestalt;
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
 OTHER_LDFLAGS_macosx = -sub_umbrella WebCore -framework WebKit2 -sub_umbrella WebKit2 -framework Carbon -framework Cocoa -framework DiskArbitration -framework IOKit -framework OpenGL;
 

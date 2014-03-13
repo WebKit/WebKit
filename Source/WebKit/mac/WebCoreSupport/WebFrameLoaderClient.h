@@ -199,7 +199,12 @@ private:
         const Vector<WTF::String>&, const WTF::String&, bool) override;
     virtual void recreatePlugin(WebCore::Widget*) override;
     virtual void redirectDataToPlugin(WebCore::Widget* pluginWidget) override;
-    
+
+#if ENABLE(WEBGL)
+    virtual WebCore::WebGLLoadPolicy webGLPolicyForURL(const String&) const override;
+    virtual WebCore::WebGLLoadPolicy resolveWebGLPolicyForURL(const String&) const override;
+#endif // ENABLE(WEBGL)
+
     virtual PassRefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement*, const WebCore::URL& baseURL,
         const Vector<WTF::String>& paramNames, const Vector<WTF::String>& paramValues) override;
     

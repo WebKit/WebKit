@@ -37,6 +37,7 @@
 #import "VisibleContentRectUpdateInfo.h"
 #import "WebChromeClient.h"
 #import "WebCoreArgumentCoders.h"
+#import "WebKitSystemInterface.h"
 #import "WebKitSystemInterfaceIOS.h"
 #import "WebFrame.h"
 #import "WebPageProxyMessages.h"
@@ -1759,6 +1760,18 @@ void WebPage::willStartUserTriggeredZooming()
 {
     m_userHasChangedPageScaleFactor = true;
 }
+
+#if ENABLE(WEBGL)
+WebCore::WebGLLoadPolicy WebPage::webGLPolicyForURL(WebFrame*, const String&)
+{
+    return WKShouldBlockWebGL() ? WebGLBlockCreation : WebGLAllowCreation;
+}
+
+WebCore::WebGLLoadPolicy WebPage::resolveWebGLPolicyForURL(WebFrame*, const String&)
+{
+    return WKShouldBlockWebGL() ? WebGLBlockCreation : WebGLAllowCreation;
+}
+#endif
 
 } // namespace WebKit
 

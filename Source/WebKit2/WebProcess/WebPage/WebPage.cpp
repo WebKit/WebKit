@@ -619,7 +619,7 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
-#if ENABLE(WEBGL) && !PLATFORM(MAC)
+#if ENABLE(WEBGL) && !PLATFORM(COCOA)
 WebCore::WebGLLoadPolicy WebPage::webGLPolicyForURL(WebFrame* frame, const String& url)
 {
     return WebGLAllowCreation;

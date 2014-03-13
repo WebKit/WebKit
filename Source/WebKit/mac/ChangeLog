@@ -1,3 +1,16 @@
+2014-03-12  Dean Jackson  <dino@apple.com>
+
+        [WebGL] WebKit1 + WebKit2 iOS clients should check load policy
+        https://bugs.webkit.org/show_bug.cgi?id=130162
+
+        Reviewed by Simon Fraser.
+
+        Implement the webGLPolicyForURL methods, calling into WebKitSystemInterface.
+
+        * Configurations/WebKit.xcconfig: Add MobileAsset to iOS config.
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+
 2014-03-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Disable REMOTE_INSPECTOR in earlier OS X releases

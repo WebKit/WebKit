@@ -2318,6 +2318,18 @@ String WebFrameLoaderClient::overrideMediaType() const
     return String();
 }
 
+#if ENABLE(WEBGL)
+WebCore::WebGLLoadPolicy WebFrameLoaderClient::webGLPolicyForURL(const String&) const
+{
+    return WKShouldBlockWebGL() ? WebGLBlockCreation : WebGLAllowCreation;
+}
+
+WebCore::WebGLLoadPolicy WebFrameLoaderClient::resolveWebGLPolicyForURL(const String&) const
+{
+    return WKShouldBlockWebGL() ? WebGLBlockCreation : WebGLAllowCreation;
+}
+#endif // ENABLE(WEBGL)
+
 void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& world)
 {
     WebView *webView = getWebView(m_webFrame.get());

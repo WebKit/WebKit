@@ -1,3 +1,19 @@
+2014-03-12  Dean Jackson  <dino@apple.com>
+
+        [WebGL] WebKit1 + WebKit2 iOS clients should check load policy
+        https://bugs.webkit.org/show_bug.cgi?id=130162
+
+        Reviewed by Simon Fraser.
+
+        Implement webGLPolicyForURL() methods for iOS.
+
+        * Configurations/WebContent-iOS.entitlements: Add the MobileAsset asset type.
+        * Configurations/WebKit2.xcconfig: Add MobileAsset to iOS link list.
+        * WebProcess/WebPage/WebPage.cpp: Exclude iOS.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::webGLPolicyForURL): Call into WKSI.
+        (WebKit::WebPage::resolveWebGLPolicyForURL):
+
 2014-03-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Disable REMOTE_INSPECTOR in earlier OS X releases
