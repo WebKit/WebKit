@@ -1,3 +1,14 @@
+2014-03-12  Martin Robinson  <mrobinson@igalia.com>
+
+        [CMake] Changes to the bindings generator Perl modules do not trigger regeneration of bindings
+        https://bugs.webkit.org/show_bug.cgi?id=130170
+
+        Reviewed by Daniel Bates.
+
+        * Source/cmake/WebKitMacros.cmake: Add the Perl modules used in script generation to the dependency
+        list. We must check whether or not the specific one exists first, because the InjectedBundle uses a
+        fake "TestRunner" generator.
+
 2014-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][CMAKE] Remove compile warnings about GTK+ deprecated API
