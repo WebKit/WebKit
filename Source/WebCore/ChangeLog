@@ -1,5 +1,12 @@
 2014-03-13  Antti Koivisto  <antti@apple.com>
 
+        Try to fix iOS build.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks):
+
+2014-03-13  Antti Koivisto  <antti@apple.com>
+
         Remove StyleResolver::State::m_parentNode
         https://bugs.webkit.org/show_bug.cgi?id=130194
 

@@ -2643,7 +2643,7 @@ void FrameView::performPostLayoutTasks()
     // avoid re-entering layout for the main frame while delivering a layout-related delegate
     // callback for a subframe.
     if (frame().isMainFrame())
-        page->chrome().client().didLayout();
+        frame().page()->chrome().client().didLayout();
 #endif
 
 #if ENABLE(FONT_LOAD_EVENTS)
