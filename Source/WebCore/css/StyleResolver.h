@@ -349,7 +349,7 @@ public:
 
     public:
         void initElement(Element*);
-        void initForStyleResolve(Document&, Element*, RenderStyle* parentStyle = 0, RenderRegion* regionForStyling = 0);
+        void initForStyleResolve(Document&, Element*, RenderStyle* parentStyle, RenderRegion* regionForStyling = nullptr);
         void clear();
 
         Document& document() const { return m_element->document(); }

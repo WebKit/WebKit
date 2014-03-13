@@ -892,7 +892,7 @@ void StyleResolver::keyframeStylesForAnimation(Element* e, const RenderStyle* el
     for (unsigned i = 0; i < keyframes.size(); ++i) {
         // Apply the declaration to the style. This is a simplified version of the logic in styleForElement
         initElement(e);
-        m_state.initForStyleResolve(document(), e);
+        m_state.initForStyleResolve(document(), e, nullptr);
 
         const StyleKeyframe* keyframe = keyframes[i].get();
 
@@ -989,7 +989,7 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* element, c
 
 PassRef<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 {
-    m_state.initForStyleResolve(document(), document().documentElement()); // m_rootElementStyle will be set to the document style.
+    m_state.initForStyleResolve(m_document, m_document.documentElement(), m_document.renderStyle());
 
     m_state.setStyle(RenderStyle::create());
     m_state.style()->inheritFrom(m_state.rootElementStyle());
@@ -1855,7 +1855,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
 void StyleResolver::applyPropertyToStyle(CSSPropertyID id, CSSValue* value, RenderStyle* style)
 {
     initElement(0);
-    m_state.initForStyleResolve(document(), 0, style);
+    m_state.initForStyleResolve(document(), nullptr, style);
     m_state.setStyle(*style);
     applyPropertyToCurrentStyle(id, value);
 }

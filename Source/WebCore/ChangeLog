@@ -1,3 +1,21 @@
+2014-03-13  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r165542): printing/page-rule-selection.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=130205
+
+        Reviewed by Andreas Kling.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::keyframeStylesForAnimation):
+        (WebCore::StyleResolver::styleForPage):
+        
+            Use Document style as parent when resolving page style.
+
+        (WebCore::StyleResolver::applyPropertyToStyle):
+        * css/StyleResolver.h:
+        
+            Get rid of the default null parameter.
+
 2014-03-13  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove INPUT_LIST_BUTTON from the PseudoIds
