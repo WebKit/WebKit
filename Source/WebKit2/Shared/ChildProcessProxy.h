@@ -67,11 +67,9 @@ public:
     };
     State state() const;
 
-//    bool isValid() const { return m_connection; }
-    bool canSendMessage() const { return state() != State::Terminated;}
-
     PlatformProcessIdentifier processIdentifier() const { return m_processLauncher->processIdentifier(); }
 
+    bool canSendMessage() const { return state() != State::Terminated;}
     bool sendMessage(std::unique_ptr<IPC::MessageEncoder>, unsigned messageSendFlags);
 
 protected:
