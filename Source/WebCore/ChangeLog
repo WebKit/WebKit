@@ -1,3 +1,13 @@
+2014-03-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove INPUT_LIST_BUTTON from the PseudoIds
+        https://bugs.webkit.org/show_bug.cgi?id=130108
+
+        Reviewed by Andreas Kling.
+
+        * rendering/style/RenderStyleConstants.h:
+        It is unused.
+
 2014-03-12  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Sync media playback with now playing
