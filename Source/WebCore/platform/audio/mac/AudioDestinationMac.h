@@ -62,6 +62,8 @@ private:
     OSStatus render(UInt32 numberOfFrames, AudioBufferList* ioData);
 
     virtual MediaSession::MediaType mediaType() const { return MediaSession::WebAudio; }
+    virtual bool canReceiveRemoteControlCommands() const { return false; }
+    virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) { }
 
     AudioUnit m_outputUnit;
     AudioIOCallback& m_callback;

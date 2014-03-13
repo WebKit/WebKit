@@ -102,6 +102,12 @@ void MediaSessionManager::addSession(MediaSession& session)
     if (m_interrupted)
         session.setState(MediaSession::Interrupted);
     updateSessionState();
+
+    if (m_clients.isEmpty() || !(session.mediaType() == MediaSession::Video || session.mediaType() == MediaSession::Audio))
+        return;
+
+    for (auto& client : m_clients)
+        client->startListeningForRemoteControlCommands();
 }
 
 void MediaSessionManager::removeSession(MediaSession& session)
@@ -116,6 +122,12 @@ void MediaSessionManager::removeSession(MediaSession& session)
     
     m_sessions.remove(index);
     updateSessionState();
+
+    if (m_clients.isEmpty() || !(session.mediaType() == MediaSession::Video || session.mediaType() == MediaSession::Audio))
+        return;
+
+    for (auto& client : m_clients)
+        client->startListeningForRemoteControlCommands();
 }
 
 void MediaSessionManager::addRestriction(MediaSession::MediaType type, SessionRestrictions restriction)
@@ -136,10 +148,15 @@ MediaSessionManager::SessionRestrictions MediaSessionManager::restrictions(Media
     return m_restrictions[type];
 }
 
-void MediaSessionManager::sessionWillBeginPlayback(const MediaSession& session)
+void MediaSessionManager::sessionWillBeginPlayback(MediaSession& session)
 {
     setCurrentSession(&session);
-    
+
+    if (!m_clients.isEmpty() && (session.mediaType() == MediaSession::Video || session.mediaType() == MediaSession::Audio)) {
+        for (auto& client : m_clients)
+            client->didBeginPlayback();
+    }
+
     MediaSession::MediaType sessionType = session.mediaType();
     SessionRestrictions restrictions = m_restrictions[sessionType];
     if (!restrictions & ConcurrentPlaybackNotPermitted)
@@ -187,5 +204,24 @@ void MediaSessionManager::updateSessionState()
 {
 }
 #endif
+
+void MediaSessionManager::didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType command)
+{
+    if (!m_activeSession || !m_activeSession->canReceiveRemoteControlCommands())
+        return;
+    m_activeSession->didReceiveRemoteControlCommand(command);
+}
+
+void MediaSessionManager::addClient(MediaSessionManagerClient* client)
+{
+    ASSERT(!m_clients.contains(client));
+    m_clients.append(client);
+}
+
+void MediaSessionManager::removeClient(MediaSessionManagerClient* client)
+{
+    ASSERT(m_clients.contains(client));
+    m_clients.remove(m_clients.find(client));
+}
 
 }

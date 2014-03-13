@@ -76,6 +76,20 @@ public:
     double duration() const;
     double currentTime() const;
 
+    enum RemoteControlCommandType {
+        NoCommand,
+        PlayCommand,
+        PauseCommand,
+        StopCommand,
+        TogglePlayPauseCommand,
+        BeginSeekingBackwardCommand,
+        EndSeekingBackwardCommand,
+        BeginSeekingForwardCommand,
+        EndSeekingForwardCommand,
+    };
+    bool canReceiveRemoteControlCommands() const;
+    void didReceiveRemoteControlCommand(RemoteControlCommandType);
+
 protected:
     MediaSessionClient& client() const { return m_client; }
 
@@ -94,11 +108,14 @@ public:
     virtual MediaSession::MediaType mediaType() const = 0;
     virtual void resumePlayback() = 0;
     virtual void pausePlayback() = 0;
-    
+
     virtual String mediaSessionTitle() const { return String(); }
     virtual double mediaSessionDuration() const { return MediaPlayer::invalidTime(); }
     virtual double mediaSessionCurrentTime() const { return MediaPlayer::invalidTime(); }
     
+    virtual bool canReceiveRemoteControlCommands() const = 0;
+    virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) = 0;
+
 protected:
     virtual ~MediaSessionClient() { }
 };

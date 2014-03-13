@@ -48,8 +48,8 @@ public:
 private:
     friend class MediaSessionManager;
 
-    virtual void sessionWillBeginPlayback(const MediaSession&) override;
-    virtual void sessionWillEndPlayback(const MediaSession&) override;
+    virtual void sessionWillBeginPlayback(MediaSession&) override;
+    virtual void sessionWillEndPlayback(MediaSession&) override;
     
     void updateNowPlayingInfo();
     

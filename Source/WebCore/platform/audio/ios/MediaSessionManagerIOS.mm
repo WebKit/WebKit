@@ -136,13 +136,13 @@ void MediaSessionManageriOS::showPlaybackTargetPicker()
 }
 #endif
     
-void MediaSessionManageriOS::sessionWillBeginPlayback(const MediaSession& session)
+void MediaSessionManageriOS::sessionWillBeginPlayback(MediaSession& session)
 {
     MediaSessionManager::sessionWillBeginPlayback(session);
     updateNowPlayingInfo();
 }
     
-void MediaSessionManageriOS::sessionWillEndPlayback(const MediaSession& session)
+void MediaSessionManageriOS::sessionWillEndPlayback(MediaSession& session)
 {
     MediaSessionManager::sessionWillEndPlayback(session);
     updateNowPlayingInfo();

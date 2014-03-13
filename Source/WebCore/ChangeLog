@@ -1,3 +1,62 @@
+2014-03-07  Jer Noble  <jer.noble@apple.com>
+
+        Add remote control command support to MediaSession.
+        https://bugs.webkit.org/show_bug.cgi?id=129903
+
+        Reviewed by Eric Carlson.
+
+        Add the capability to receive remote control commands (currently iOS only) and to
+        pass those commands through the MediaSessionManager.
+
+        Add a new platform class which can listen for remote control commands:
+        * platform/RemoteCommandListener.cpp: Added.
+        (WebCore::RemoteCommandListener::create):
+        * platform/RemoteCommandListener.h: Added.
+        (WebCore::RemoteCommandListenerClient::~RemoteCommandListenerClient):
+        (WebCore::RemoteCommandListener::~RemoteCommandListener):
+        (WebCore::RemoteCommandListener::RemoteCommandListener):
+        * platform/ios/RemoteCommandListenerIOS.h: Added.
+        * platform/ios/RemoteCommandListenerIOS.mm: Added.
+        (WebCore::RemoteCommandListener::create):
+        (WebCore::RemoteCommandListenerIOS::RemoteCommandListenerIOS):
+        (WebCore::RemoteCommandListenerIOS::~RemoteCommandListenerIOS):
+
+        Handle remote control command events in HTMLMediaElement and AudioDestinationMac:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+        * platform/audio/mac/AudioDestinationMac.h:
+        (WebCore::AudioDestinationMac::canReceiveRemoteControlCommands):
+        (WebCore::AudioDestinationMac::didReceiveRemoteControlCommand):
+
+        Pipe command events through MediaSessionManager:
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSession::canReceiveRemoteControlCommands):
+        (WebCore::MediaSession::didReceivRemoteControlCommand):
+        * platform/audio/MediaSession.h:
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::addSession):
+        (WebCore::MediaSessionManager::removeSession):
+        (WebCore::MediaSessionManager::sessionWillBeginPlayback):
+        (WebCore::MediaSessionManager::didReceiveRemoteControlCommand):
+        (WebCore::MediaSessionManager::addClient):
+        (WebCore::MediaSessionManager::removeClient):
+        * platform/audio/MediaSessionManager.h:
+        (WebCore::MediaSessionManagerClient::~MediaSessionManagerClient):
+        (WebCore::MediaSessionManagerClient::MediaSessionManagerClient):
+
+        Make sessionWillBegin/EndPlayback() methods take non-const parameters:
+        * platform/audio/MediaSessionManager.h:
+        (WebCore::MediaSessionManager::sessionWillEndPlayback):
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManagerIOS::sessionWillBeginPlayaback):
+        (WebCore::MediaSessionManagerIOS::sessionWillEndPlayaback):
+
+        Add new files and export new symbols:
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2014-03-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, rolling out r165544 and r165560.

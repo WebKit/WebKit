@@ -697,6 +697,8 @@ private:
     virtual String mediaSessionTitle() const override;
     virtual double mediaSessionDuration() const override { return duration(); }
     virtual double mediaSessionCurrentTime() const override { return currentTime(); }
+    virtual bool canReceiveRemoteControlCommands() const override { return true; }
+    virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override;
 
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_progressEventTimer;

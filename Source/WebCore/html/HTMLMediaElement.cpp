@@ -5887,6 +5887,12 @@ String HTMLMediaElement::mediaSessionTitle() const
     return m_currentSrc;
 }
 
+void HTMLMediaElement::didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType command)
+{
+    // FIXME(129926): Add Remote Control support to HTMLMediaElement
+    UNUSED_PARAM(command);
+}
+
 }
 
 #endif

@@ -36,6 +36,19 @@ namespace WebCore {
 class HTMLMediaElement;
 class MediaSession;
 
+class MediaSessionManagerClient {
+public:
+    virtual ~MediaSessionManagerClient() { }
+
+    virtual bool isListeningForRemoteControlCommands() = 0;
+    virtual void startListeningForRemoteControlCommands() = 0;
+    virtual void stopListeningForRemoteControlCommands() = 0;
+    virtual void didBeginPlayback() = 0;
+
+protected:
+    MediaSessionManagerClient() { }
+};
+
 class MediaSessionManager {
 public:
     static MediaSessionManager& sharedManager();
@@ -65,14 +78,19 @@ public:
     SessionRestrictions restrictions(MediaSession::MediaType);
     virtual void resetRestrictions();
 
-    virtual void sessionWillBeginPlayback(const MediaSession&);
-    virtual void sessionWillEndPlayback(const MediaSession&) { }
+    virtual void sessionWillBeginPlayback(MediaSession&);
+    virtual void sessionWillEndPlayback(MediaSession&) { }
     
     bool sessionRestrictsInlineVideoPlayback(const MediaSession&) const;
 
 #if ENABLE(IOS_AIRPLAY)
     virtual void showPlaybackTargetPicker() { }
 #endif
+
+    void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType);
+
+    void addClient(MediaSessionManagerClient*);
+    void removeClient(MediaSessionManagerClient*);
 
 protected:
     friend class MediaSession;
@@ -81,8 +99,8 @@ protected:
     void addSession(MediaSession&);
     void removeSession(MediaSession&);
     
-    void setCurrentSession(const MediaSession* session) { m_activeSession = session; }
-    const MediaSession* currentSession() { return m_activeSession; }
+    void setCurrentSession(MediaSession* session) { m_activeSession = session; }
+    MediaSession* currentSession() { return m_activeSession; }
     
 private:
     void updateSessionState();
@@ -90,7 +108,8 @@ private:
     SessionRestrictions m_restrictions[MediaSession::WebAudio + 1];
 
     Vector<MediaSession*> m_sessions;
-    const MediaSession* m_activeSession;
+    Vector<MediaSessionManagerClient*> m_clients;
+    MediaSession* m_activeSession;
     bool m_interrupted;
 };
 

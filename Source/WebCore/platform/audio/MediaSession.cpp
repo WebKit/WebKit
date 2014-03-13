@@ -145,4 +145,14 @@ double MediaSession::currentTime() const
     return m_client.mediaSessionCurrentTime();
 }
     
+bool MediaSession::canReceiveRemoteControlCommands() const
+{
+    return m_client.canReceiveRemoteControlCommands();
+}
+
+void MediaSession::didReceiveRemoteControlCommand(RemoteControlCommandType command)
+{
+    m_client.didReceiveRemoteControlCommand(command);
+}
+
 }
