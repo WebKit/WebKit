@@ -254,7 +254,7 @@ bool InPlaceAbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
     if (node->variableAccessData()->isCaptured()) {
         // If it's captured then we know that whatever value was stored into the variable last is the
         // one we care about. This is true even if the variable at tail is dead, which might happen if
-        // the last thing we did to the variable was a GetLocal and then ended up now using the
+        // the last thing we did to the variable was a GetLocal and then ended up not using the
         // GetLocal's result.
         
         source = inVariable;

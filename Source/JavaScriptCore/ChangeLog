@@ -1,3 +1,56 @@
+2014-03-11  Filip Pizlo  <fpizlo@apple.com>
+
+        ASSERTION FAILED: node->op() == Phi || node->op() == SetArgument
+        https://bugs.webkit.org/show_bug.cgi?id=130069
+
+        Reviewed by Geoffrey Garen.
+        
+        This was a great assertion, and it represents our strictest interpretation of the rules of
+        our intermediate representation. However, fixing DCE to actually preserve the relevant
+        property would be hard, and it wouldn't have an observable effect right now because nobody
+        actually uses the propery of CPS that this assertion is checking for.
+        
+        In particular, we do always require, and rely on, the fact that non-captured variables
+        have variablesAtTail refer to the last interesting use of the variable: a SetLocal if the
+        block assigns to the variable, a GetLocal if it only reads from it, and a Flush,
+        PhantomLocal, or Phi otherwise. We do preserve this property successfully and DCE was not
+        broken in this regard. But, in the strictest sense, CPS also means that for captured
+        variables, variablesAtTail also continues to point to the last relevant use of the
+        variable. In particular, if there are multiple GetLocals, then it should point to the last
+        one. This is hard for DCE to preserve. Also, nobody relies on variablesAtTail for captured
+        variables, except to check the VariableAccessData; but in that case, we don't really need
+        the *last* relevant use of the variable - any node that mentions the same variable will do
+        just fine.
+        
+        So, this change loosens the assertion and adds a detailed FIXME describing what we would
+        have to do if we wanted to preserve the more strict property.
+        
+        This also makes changes to various debug printing paths so that validation doesn't crash
+        during graph dump. This also adds tests for the interesting cases of DCE failing to
+        preserve CPS in the strictest sense. This also attempts to win the record for longest test
+        name.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::hashAsStringIfPossible):
+        (JSC::CodeBlock::dumpAssumingJITType):
+        * bytecode/CodeBlock.h:
+        * bytecode/CodeOrigin.cpp:
+        (JSC::InlineCallFrame::hashAsStringIfPossible):
+        (JSC::InlineCallFrame::dumpBriefFunctionInformation):
+        * bytecode/CodeOrigin.h:
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::run):
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::cleanVariables):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::mergeStateAtTail):
+        * runtime/FunctionExecutableDump.cpp:
+        (JSC::FunctionExecutableDump::dump):
+        * tests/stress/dead-access-to-captured-variable-preceded-by-a-live-store-in-function-with-multiple-basic-blocks.js: Added.
+        (foo):
+        * tests/stress/dead-access-to-captured-variable-preceded-by-a-live-store.js: Added.
+        (foo):
+
 2014-03-12  Brian Burg  <bburg@apple.com>
 
         Web Replay: add infrastructure for memoizing nondeterministic DOM APIs

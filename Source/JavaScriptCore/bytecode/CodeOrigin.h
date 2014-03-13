@@ -151,6 +151,7 @@ struct InlineCallFrame {
     
     CString inferredName() const;
     CodeBlockHash hash() const;
+    CString hashAsStringIfPossible() const;
     
     CodeBlock* baselineCodeBlock() const;
     

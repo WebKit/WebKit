@@ -129,13 +129,16 @@ CString CodeBlock::sourceCodeOnOneLine() const
     return reduceWhitespace(sourceCodeForTools());
 }
 
+CString CodeBlock::hashAsStringIfPossible() const
+{
+    if (hasHash() || isSafeToComputeHash())
+        return toCString(hash());
+    return "<no-hash>";
+}
+
 void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) const
 {
-    out.print(inferredName(), "#");
-    if (hasHash() || isSafeToComputeHash())
-        out.print(hash());
-    else
-        out.print("<no-hash>");
+    out.print(inferredName(), "#", hashAsStringIfPossible());
     out.print(":[", RawPointer(this), "->");
     if (!!m_alternative)
         out.print(RawPointer(m_alternative.get()), "->");

@@ -152,6 +152,12 @@ CodeBlockHash InlineCallFrame::hash() const
         specializationKind())->hash();
 }
 
+CString InlineCallFrame::hashAsStringIfPossible() const
+{
+    return jsCast<FunctionExecutable*>(executable.get())->codeBlockFor(
+        specializationKind())->hashAsStringIfPossible();
+}
+
 CString InlineCallFrame::inferredName() const
 {
     return jsCast<FunctionExecutable*>(executable.get())->inferredName().utf8();
@@ -164,7 +170,7 @@ CodeBlock* InlineCallFrame::baselineCodeBlock() const
 
 void InlineCallFrame::dumpBriefFunctionInformation(PrintStream& out) const
 {
-    out.print(inferredName(), "#", hash());
+    out.print(inferredName(), "#", hashAsStringIfPossible());
 }
 
 void InlineCallFrame::dumpInContext(PrintStream& out, DumpContext* context) const
