@@ -31,7 +31,9 @@
 
 using namespace WebKit;
 
+#if ENABLE(SQL_DATABASE)
 typedef GenericAPICallback<WKArrayRef> ArrayAPICallback;
+#endif
 
 WKTypeID WKDatabaseManagerGetTypeID()
 {
