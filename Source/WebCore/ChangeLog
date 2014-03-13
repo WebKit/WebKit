@@ -1,5 +1,13 @@
 2014-03-13  Benjamin Poulain  <bpoulain@apple.com>
 
+        Update the build fix for r165544
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper isSVGGroupElement]):
+        Use the SVG version since the name being tested is a SVG name.
+
+2014-03-13  Benjamin Poulain  <bpoulain@apple.com>
+
         Attempt to fix the build after r165542
 
         * dom/NodeRenderStyle.h:

@@ -49,6 +49,7 @@
 #import "RenderView.h"
 #import "RuntimeApplicationChecksIOS.h"
 #import "SVGNames.h"
+#import "SVGElements.h"
 #import "TextIterator.h"
 #import "WAKScrollView.h"
 #import "WAKView.h"
@@ -581,7 +582,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 {
     // If an SVG group element has a title, it should be an accessible element on iOS.
     Node* node = m_object->node();
-    if (node && node->isElementNode() && toElement(*node).hasTagName(SVGNames::gTag) && [[self accessibilityLabel] length] > 0)
+    if (node && node->hasTagName(SVGNames::gTag) && [[self accessibilityLabel] length] > 0)
         return YES;
     
     return NO;
