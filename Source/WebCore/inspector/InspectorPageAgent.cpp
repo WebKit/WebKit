@@ -540,6 +540,9 @@ static Vector<CachedResource*> cachedResourcesForFrame(Frame* frame)
     for (CachedResourceLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it) {
         CachedResource* cachedResource = it->value.get();
 
+        if (cachedResource->resourceRequest().hiddenFromInspector())
+            continue;
+
         switch (cachedResource->type()) {
         case CachedResource::ImageResource:
             // Skip images that were not auto loaded (images disabled in the user agent).
@@ -566,8 +569,12 @@ static Vector<KURL> allResourcesURLsForFrame(Frame* frame)
     result.append(frame->loader()->documentLoader()->url());
 
     Vector<CachedResource*> allResources = cachedResourcesForFrame(frame);
-    for (Vector<CachedResource*>::const_iterator it = allResources.begin(); it != allResources.end(); ++it)
-        result.append((*it)->url());
+    for (Vector<CachedResource*>::const_iterator it = allResources.begin(); it != allResources.end(); ++it) {
+        CachedResource* cachedResource = *it;
+        if (cachedResource->resourceRequest().hiddenFromInspector())
+            continue;
+        result.append(cachedResource->url());
+    }
 
     return result;
 }
@@ -705,6 +712,10 @@ void InspectorPageAgent::searchInResources(ErrorString*, const String& text, con
         Vector<CachedResource*> allResources = cachedResourcesForFrame(frame);
         for (Vector<CachedResource*>::const_iterator it = allResources.begin(); it != allResources.end(); ++it) {
             CachedResource* cachedResource = *it;
+
+            if (cachedResource->resourceRequest().hiddenFromInspector())
+                continue;
+
             if (textContentForCachedResource(cachedResource, &content)) {
                 int matchesCount = ContentSearchUtils::countRegularExpressionMatches(regex, content);
                 if (matchesCount)
@@ -1129,6 +1140,9 @@ PassRefPtr<TypeBuilder::Page::FrameResourceTree> InspectorPageAgent::buildObject
     Vector<CachedResource*> allResources = cachedResourcesForFrame(frame);
     for (Vector<CachedResource*>::const_iterator it = allResources.begin(); it != allResources.end(); ++it) {
         CachedResource* cachedResource = *it;
+
+        if (cachedResource->resourceRequest().hiddenFromInspector())
+            continue;
 
         RefPtr<TypeBuilder::Page::FrameResourceTree::Resources> resourceObject = TypeBuilder::Page::FrameResourceTree::Resources::create()
             .setUrl(cachedResource->url())

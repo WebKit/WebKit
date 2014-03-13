@@ -104,6 +104,7 @@ public:
     String getAllResponseHeaders(ExceptionCode&) const;
     String getResponseHeader(const AtomicString& name, ExceptionCode&) const;
     String responseText(ExceptionCode&);
+    String responseMIMEType() const;
     Document* responseXML(ExceptionCode&);
     Document* optionalResponseXML() const { return m_responseDocument.get(); }
     Blob* responseBlob(ExceptionCode&);
@@ -113,7 +114,8 @@ public:
     void setTimeout(unsigned long timeout, ExceptionCode&);
 #endif
 
-    void sendFromInspector(PassRefPtr<FormData>, ExceptionCode&);
+    void sendForInspector(ExceptionCode&);
+    void sendForInspectorXHRReplay(PassRefPtr<FormData>, ExceptionCode&);
 
     // Expose HTTP validation methods for other untrusted requests.
     static bool isAllowedHTTPMethod(const String&);
@@ -170,7 +172,6 @@ private:
     virtual void didFail(const ResourceError&);
     virtual void didFailRedirectCheck();
 
-    String responseMIMEType() const;
     bool responseIsXML() const;
 
     bool initSend(ExceptionCode&);
@@ -228,6 +229,7 @@ private:
     bool m_uploadComplete;
 
     bool m_sameOriginRequest;
+    bool m_sendingForInspector;
 
     // Used for onprogress tracking
     long long m_receivedLength;
