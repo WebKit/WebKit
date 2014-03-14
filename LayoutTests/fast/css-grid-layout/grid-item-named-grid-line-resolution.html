@@ -17,6 +17,11 @@ if (window.testRunner)
     -webkit-grid-template-rows: 'g' 50px 'g' 100px 'g' 200px 'g';
 }
 
+.gridFromSpecs {
+    -webkit-grid-template-columns: 'A' 10px 'B' 20px 'C' 30px 'A' 40px 'B' 50px 'C' 60px 'A' 70px 'B' 80px 'C';
+    -webkit-grid-template-rows: 100px;
+}
+
 .gridItemBToD {
     -webkit-grid-column: 'b' / 'd';
     -webkit-grid-row: 1;
@@ -154,6 +159,66 @@ if (window.testRunner)
 <div style="position: relative">
     <div class="grid gridWithRepeat">
         <div class="sizedToGridArea gridItemSpan2GNegativeG" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="300"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid gridFromSpecs">
+      <div class="sizedToGridArea" style="-webkit-grid-column: 4 / auto;" data-offset-x="60px" data-expected-width="40px"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid gridFromSpecs">
+      <div class="sizedToGridArea" style="-webkit-grid-column: auto / 6;" data-offset-x="100px" data-expected-width="50px"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid gridFromSpecs">
+      <div class="sizedToGridArea" style="-webkit-grid-column: 'C' / 'C' -1;" data-offset-x="30px" data-expected-width="330px"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid gridFromSpecs">
+      <div class="sizedToGridArea" style="-webkit-grid-column: 'C' / span 'C';" data-offset-x="30px" data-expected-width="120px"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid gridFromSpecs">
+      <div class="sizedToGridArea" style="-webkit-grid-column: span 'C' / 'C' -1;" data-offset-x="150px" data-expected-width="210px"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid gridFromSpecs">
+      <div class="sizedToGridArea" style="-webkit-grid-column: span 'C' / span 'C';" data-offset-x="0px" data-expected-width="10px"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid gridFromSpecs">
+      <div class="sizedToGridArea" style="-webkit-grid-column: 5 / 'C' -1;" data-offset-x="100px" data-expected-width="260px"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid gridFromSpecs">
+      <div class="sizedToGridArea" style="-webkit-grid-column: 5 / span 'C';" data-offset-x="100px" data-expected-width="50px"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid gridFromSpecs">
+      <div class="sizedToGridArea" style="-webkit-grid-column: 8 / 8;" data-offset-x="280px" data-expected-width="80px"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid gridFromSpecs">
+      <div class="sizedToGridArea" style="-webkit-grid-column: 'B' 2 / span 1;" data-offset-x="100px" data-expected-width="50px"></div>
     </div>
 </div>
 

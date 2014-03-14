@@ -1,3 +1,16 @@
+2014-03-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid layout] Initial position in span not correctly computed sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=130124
+
+        Reviewed by Darin Adler.
+
+        Added the grid positioning example mentioned in the specs which
+        covers this bug and some other cases.
+
+        * fast/css-grid-layout/grid-item-named-grid-line-resolution-expected.txt:
+        * fast/css-grid-layout/grid-item-named-grid-line-resolution.html:
+
 2014-03-12  Gavin Barraclough  <barraclough@apple.com>
 
         Reduce memory use for static property maps

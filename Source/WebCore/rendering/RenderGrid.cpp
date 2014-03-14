@@ -1021,16 +1021,25 @@ PassOwnPtr<GridSpan> RenderGrid::resolveNamedGridLinePositionAgainstOppositePosi
     return resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition(resolvedOppositePosition, position, it->value);
 }
 
+static inline size_t firstNamedGridLineBeforePosition(size_t position, const Vector<size_t>& gridLines)
+{
+    // The grid line inequality needs to be strict (which doesn't match the after / end case) because |position| is
+    // already converted to an index in our grid representation (ie one was removed from the grid line to account for
+    // the side).
+    size_t firstLineBeforePositionIndex = 0;
+    const size_t* firstLineBeforePosition = std::lower_bound(gridLines.begin(), gridLines.end(), position);
+    if (firstLineBeforePosition != gridLines.end()) {
+        if (*firstLineBeforePosition > position && firstLineBeforePosition != gridLines.begin())
+            --firstLineBeforePosition;
+
+        firstLineBeforePositionIndex = firstLineBeforePosition - gridLines.begin();
+    }
+    return firstLineBeforePositionIndex;
+}
+
 PassOwnPtr<GridSpan> RenderGrid::resolveRowStartColumnStartNamedGridLinePositionAgainstOppositePosition(size_t resolvedOppositePosition, const GridPosition& position, const Vector<size_t>& gridLines) const
 {
-    // The grid line inequality needs to be strict (which doesn't match the after / end case) because |resolvedOppositePosition|
-    // is already converted to an index in our grid representation (ie one was removed from the grid line to account for the side).
-    size_t firstLineBeforeOppositePositionIndex = 0;
-    const size_t* firstLineBeforeOppositePosition = std::lower_bound(gridLines.begin(), gridLines.end(), resolvedOppositePosition);
-    if (firstLineBeforeOppositePosition != gridLines.end())
-        firstLineBeforeOppositePositionIndex = firstLineBeforeOppositePosition - gridLines.begin();
-
-    size_t gridLineIndex = std::max<int>(0, firstLineBeforeOppositePositionIndex - position.spanPosition() + 1);
+    size_t gridLineIndex = std::max<int>(0, firstNamedGridLineBeforePosition(resolvedOppositePosition, gridLines) - position.spanPosition() + 1);
     size_t resolvedGridLinePosition = gridLines[gridLineIndex];
     if (resolvedGridLinePosition > resolvedOppositePosition)
         resolvedGridLinePosition = resolvedOppositePosition;

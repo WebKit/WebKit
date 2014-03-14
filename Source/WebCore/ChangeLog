@@ -1,3 +1,30 @@
+2014-03-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid layout] Initial position in span not correctly computed sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=130124
+
+        Reviewed by Darin Adler.
+
+        The code uses std::lower_bound() to get the first grid line
+        position before a given resolved position in a Vector. That
+        function returns an iterator pointing to the first value not
+        "strictly less" than the given one. Consequently, the returned
+        position might be actually located after the resolved final
+        position. In those cases we need to select the previous position
+        in the Vector (which is guaranted to be "< resolved position" due
+        to how std::lower_bound() works).
+
+        For example, if we have vector=[2,5,8] as grid positions, and we
+        need the first position before 7, std::lower_bound(vector, 7) will
+        point to 8 (first value not < 7). It's obvious that we should
+        select 5 instead. Should the pointed value be equal, then we
+        should do nothing, because the indexes mean tracks, so the item
+        will be placed in just one cell of the grid.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::firstNamedGridLineBeforePosition):
+        (WebCore::RenderGrid::resolveRowStartColumnStartNamedGridLinePositionAgainstOppositePosition):
+
 2014-03-14  Zsolt Borbely  <borbezs@inf.u-szeged.hu>
 
         Fix the !ENABLE(SVG_FONTS) build
