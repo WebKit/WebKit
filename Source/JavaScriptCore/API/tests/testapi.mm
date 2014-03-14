@@ -1289,9 +1289,12 @@ void testObjectiveCAPI()
         NSString *fetchedName1 = context.name;
         context.name = name2;
         NSString *fetchedName2 = context.name;
+        context.name = nil;
+        NSString *fetchedName3 = context.name;
         checkResult(@"fetched context.name was expected", [fetchedName1 isEqualToString:name1]);
         checkResult(@"fetched context.name was expected", [fetchedName2 isEqualToString:name2]);
         checkResult(@"fetched context.name was expected", ![fetchedName1 isEqualToString:fetchedName2]);
+        checkResult(@"fetched context.name was expected", fetchedName3 == nil);
     }
 
     @autoreleasepool {

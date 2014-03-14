@@ -1083,10 +1083,13 @@ static bool globalContextNameTest()
     JSStringRef fetchName1 = JSGlobalContextCopyName(context);
     JSGlobalContextSetName(context, name2);
     JSStringRef fetchName2 = JSGlobalContextCopyName(context);
+    JSGlobalContextSetName(context, NULL);
+    JSStringRef fetchName3 = JSGlobalContextCopyName(context);
 
     result &= assertTrue(JSStringIsEqual(name1, fetchName1), "Unexpected Context name");
     result &= assertTrue(JSStringIsEqual(name2, fetchName2), "Unexpected Context name");
     result &= assertTrue(!JSStringIsEqual(fetchName1, fetchName2), "Unexpected Context name");
+    result &= assertTrue(!fetchName3, "Unexpected Context name");
 
     JSStringRelease(name1);
     JSStringRelease(name2);
