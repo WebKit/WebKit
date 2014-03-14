@@ -88,7 +88,10 @@
 
 - (DOMRange *)currentRange
 {
-    return kit(_private->_textIterator->range().get());
+    WebCore::TextIterator& textIterator = *_private->_textIterator;
+    if (textIterator.atEnd())
+        return nullptr;
+    return kit(textIterator.range().get());
 }
 
 // FIXME: Consider deprecating this method and creating one that does not require copying 8-bit characters.

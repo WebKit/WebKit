@@ -1,3 +1,19 @@
+2014-03-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r165385): [WebTextIterator currentRange] crashes
+        https://bugs.webkit.org/show_bug.cgi?id=130271
+
+        Reviewed by Anders Carlsson.
+
+        After r165385, TextIterator::range no longer checked the nullity of m_positionNode. As a result,
+        [WebTextIterator currentRange] which simply calls TextIterator::range crashes when an application
+        that embeds WebKit doesn't check [WebTextIterator atEnd] first.
+
+        Preserve the old public API behavior by checking atEnd in [WebTextIterator currentRange].
+
+        * WebView/WebTextIterator.mm:
+        (-[WebTextIterator currentRange]):
+
 2014-03-12  Sergio Villar Senin  <svillar@igalia.com>
 
         Rename DEFINE_STATIC_LOCAL to DEPRECATED_DEFINE_STATIC_LOCAL
