@@ -1,3 +1,20 @@
+2014-03-13  Manish R Gurnaney  <m.gurnaney@samsung.com>
+
+        Scroll size is not recalculated when absolute left of child is updated
+        https://bugs.webkit.org/show_bug.cgi?id=123958
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/css/display-inline-block-scrollbar.html
+        Actual issue was that whenever there is the content change in the
+        RenderBlock having inline-block children, The InlineFlowBox while
+        computing overflow never resets previous value.
+        
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::computeOverflow):
+        Added code to clear overflow when we start computing overflow for
+        InlineFlowBox. So as to ScrollSize can be recalculated properly.
+
 2014-03-13  Zalan Bujtas  <zalan@apple.com>
 
         Pass const RenderStyle& to box decoration functions.
