@@ -46,7 +46,7 @@ struct _WebKitSoupRequestInputStreamClass {
 };
 
 GType webkit_soup_request_input_stream_get_type();
-GInputStream* webkitSoupRequestInputStreamNew(guint64 contentLength);
+GInputStream* webkitSoupRequestInputStreamNew(uint64_t contentLength);
 void webkitSoupRequestInputStreamAddData(WebKitSoupRequestInputStream*, const void* data, size_t dataLength);
 bool webkitSoupRequestInputStreamFinished(WebKitSoupRequestInputStream*);
 

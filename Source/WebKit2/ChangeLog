@@ -1,3 +1,12 @@
+2014-03-14  Landry Breuil  <landry@openbsd.org>
+
+        Use the correct type in webkitSoupRequestInputStreamNew()'s declaration.
+        Nhttps://bugs.webkit.org/show_bug.cgi?id=129974
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/soup/WebKitSoupRequestInputStream.h:
+
 2014-03-14  Anders Carlsson  <andersca@apple.com>
 
         Fix crash when resizing the visited link table
