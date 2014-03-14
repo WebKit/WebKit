@@ -1,3 +1,17 @@
+2014-03-12  Jae Hyun Park  <jaepark@webkit.org>
+
+        Remove remaining Nix port related files
+        https://bugs.webkit.org/show_bug.cgi?id=130179
+
+        Reviewed by Csaba Osztrogonác.
+
+        GLContextFromCurrentEGL was added in r155360 as a part of nix
+        upstreaming. As Nix port is removed from the source tree, these files
+        are in no use.
+
+        * platform/graphics/egl/GLContextFromCurrentEGL.cpp: Removed.
+        * platform/graphics/egl/GLContextFromCurrentEGL.h: Removed.
+
 2014-03-13  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r160806): Incorrect cascade order of prefixed and non-prefixed variants of
