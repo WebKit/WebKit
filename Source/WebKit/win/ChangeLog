@@ -1,3 +1,12 @@
+2014-03-13  Brian Burg  <bburg@apple.com>
+
+        Unreviewed build fix for Mac Windows after r165545.
+        https://bugs.webkit.org/show_bug.cgi?id=129744
+
+        Reviewed by Timothy Hatcher.
+
+        * Interfaces/IWebInspectorPrivate.idl: Remove callId from IWebInspectorPrivate.
+
 2014-03-12  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Remove unused callId parameter from evaluateInWebInspector

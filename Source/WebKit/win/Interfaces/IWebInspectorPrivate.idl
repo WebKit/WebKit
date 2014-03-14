@@ -39,5 +39,5 @@ import "ocidl.idl";
 ]
 interface IWebInspectorPrivate : IUnknown
 {
-    HRESULT evaluateInFrontend([in] ULONG callId, [in] BSTR script);
+    HRESULT evaluateInFrontend([in] BSTR script);
 }
