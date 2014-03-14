@@ -77,4 +77,10 @@ extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(void (*callback)(const char*
     return result;
 }
 
+#else
+
+// Create a dummy initializeAndGetJSCLLVMAPI to placate the build system.
+extern "C" WTF_EXPORT_PRIVATE void initializeAndGetJSCLLVMAPI();
+extern "C" void initializeAndGetJSCLLVMAPI() { }
+
 #endif // HAVE(LLVM)
