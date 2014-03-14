@@ -22,7 +22,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "iOS.xcconfig"
-#include "../../../../Internal/Configurations/UseInternalSDK.xcconfig"
+#include "../../../../../Internal/Configurations/UseInternalSDK.xcconfig"
 
 CLANG_CXX_LANGUAGE_STANDARD = gnu++0x;
 CLANG_CXX_LIBRARY = libc++;

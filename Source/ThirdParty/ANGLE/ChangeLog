@@ -1,3 +1,13 @@
+2014-03-13  Tim Horton  <timothy_horton@apple.com>
+
+        Fix relative paths to UseInternalSDK.xcconfig for ANGLE and WebKit/mac
+
+        Rubber-stamped by Mark Rowe.
+
+        One-too-few "..".
+
+        * Configurations/Base.xcconfig:
+
 2014-03-13  Radu Stavila  <stavila@adobe.com>
 
         Webkit not building on XCode 5.1 due to garbage collection no longer being supported
