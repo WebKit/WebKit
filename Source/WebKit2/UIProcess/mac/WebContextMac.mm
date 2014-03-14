@@ -49,7 +49,6 @@
 #import "NetworkProcessProxy.h"
 #endif
 
-
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 
 #if __has_include(<CFNetwork/CFURLProtocolPriv.h>)
@@ -59,6 +58,12 @@ extern "C" Boolean _CFNetworkIsKnownHSTSHostWithSession(CFURLRef url, CFURLStora
 extern "C" void _CFNetworkResetHSTSHostsWithSession(CFURLStorageSessionRef session);
 #endif
 
+#endif
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1080
+@interface NSKeyedArchiver (WKDetails)
+- (void)setRequiresSecureCoding:(BOOL)b;
+@end
 #endif
 
 using namespace WebCore;
@@ -113,6 +118,14 @@ void WebContext::updateProcessSuppressionState() const
 #if ENABLE(NETSCAPE_PLUGIN_API)
     PluginProcessManager::shared().setProcessSuppressionEnabled(processSuppressionIsEnabledForAllContexts());
 #endif
+}
+
+NSMutableDictionary *WebContext::ensureBundleParameters()
+{
+    if (!m_bundleParameters)
+        m_bundleParameters = adoptNS([[NSMutableDictionary alloc] init]);
+
+    return m_bundleParameters.get();
 }
 
 void WebContext::platformInitialize()
@@ -182,6 +195,24 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if ENABLE(NETWORK_PROCESS)
     }
 #endif
+
+    if (m_bundleParameters) {
+        auto data = adoptNS([[NSMutableData alloc] init]);
+        auto keyedArchiver = adoptNS([[NSKeyedArchiver alloc] init]);
+
+        [keyedArchiver setRequiresSecureCoding:YES];
+
+        @try {
+            [keyedArchiver encodeObject:m_bundleParameters.get() forKey:@"parameters"];
+            [keyedArchiver finishEncoding];
+        } @catch (NSException *exception) {
+            LOG_ERROR("Failed to encode bundle parameters: %@", exception);
+        }
+
+        parameters.bundleParameterData = API::Data::createWithoutCopying((const unsigned char*)[data bytes], [data length], [] (unsigned char*, const void* data) {
+            [(NSData *)data release];
+        }, data.leakRef());
+    }
 }
 
 #if ENABLE(NETWORK_PROCESS)

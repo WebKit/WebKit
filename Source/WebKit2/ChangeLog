@@ -1,3 +1,24 @@
+2014-03-14  Anders Carlsson  <andersca@apple.com>
+
+        Begin work on the bundle parameter API
+        https://bugs.webkit.org/show_bug.cgi?id=130267
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _objectForBundleParameter:]):
+        (-[WKProcessPool _setObject:forBundleParameter:]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::bundleParameters):
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::ensureBundleParameters):
+        (WebKit::WebContext::platformInitializeWebProcess):
+
 2014-03-14  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Sync extended attribute related rules with AppSandbox profile

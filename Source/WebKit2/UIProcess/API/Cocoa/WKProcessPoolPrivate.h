@@ -32,6 +32,9 @@
 - (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host;
 - (void)_setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy;
 
+- (id)_objectForBundleParameter:(NSString *)parameter;
+- (void)_setObject:(id <NSCopying, NSSecureCoding>)object forBundleParameter:(NSString *)parameter;
+
 @end
 
 #endif

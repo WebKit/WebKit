@@ -36,11 +36,16 @@
 
 #if PLATFORM(COCOA)
 #include "MachPort.h"
+
 #endif
 
 #if USE(SOUP)
 #include "HTTPCookieAcceptPolicy.h"
 #endif
+
+namespace API {
+class Data;
+}
 
 namespace IPC {
     class ArgumentDecoder;
@@ -132,6 +137,9 @@ struct WebProcessCreationParameters {
     bool shouldForceScreenFontSubstitution;
     bool shouldEnableKerningAndLigaturesByDefault;
     bool shouldEnableJIT;
+
+    RefPtr<API::Data> bundleParameterData;
+
 #endif // PLATFORM(COCOA)
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

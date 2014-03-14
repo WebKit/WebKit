@@ -62,6 +62,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSObject;
 OBJC_CLASS NSString;
 #endif
@@ -332,6 +333,9 @@ public:
 
 #if PLATFORM(COCOA)
     void updateProcessSuppressionState() const;
+
+    NSMutableDictionary *ensureBundleParameters();
+    NSMutableDictionary *bundleParameters() { return m_bundleParameters.get(); }
 #endif
 
     void setMemoryCacheDisabled(bool);
@@ -528,6 +532,10 @@ private:
 #endif
 
     bool m_memoryCacheDisabled;
+
+#if PLATFORM(COCOA)
+    RetainPtr<NSMutableDictionary> m_bundleParameters;
+#endif
 };
 
 template<typename T>

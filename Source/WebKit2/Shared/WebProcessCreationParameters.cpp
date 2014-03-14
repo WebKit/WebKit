@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebProcessCreationParameters.h"
 
+#include "APIData.h"
 #include "ArgumentCoders.h"
 
 namespace WebKit {
@@ -110,6 +111,9 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << shouldForceScreenFontSubstitution;
     encoder << shouldEnableKerningAndLigaturesByDefault;
     encoder << shouldEnableJIT;
+    encoder << !!bundleParameterData;
+    if (bundleParameterData)
+        encoder << bundleParameterData->dataReference();
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
@@ -235,6 +239,18 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
         return false;
     if (!decoder.decode(parameters.shouldEnableJIT))
         return false;
+
+    bool hasBundleParameterData;
+    if (!decoder.decode(hasBundleParameterData))
+        return false;
+
+    if (hasBundleParameterData) {
+        IPC::DataReference dataReference;
+        if (!decoder.decode(dataReference))
+            return false;
+
+        parameters.bundleParameterData = API::Data::create(dataReference.data(), dataReference.size());
+    }
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

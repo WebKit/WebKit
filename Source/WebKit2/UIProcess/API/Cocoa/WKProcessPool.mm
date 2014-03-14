@@ -142,6 +142,16 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
     _context->supplement<WebKit::WebCookieManagerProxy>()->setHTTPCookieAcceptPolicy(toHTTPCookieAcceptPolicy(policy));
 }
 
+- (id)_objectForBundleParameter:(NSString *)parameter
+{
+    return [_context->bundleParameters() objectForKey:parameter];
+}
+
+- (void)_setObject:(id <NSCopying, NSSecureCoding>)object forBundleParameter:(NSString *)parameter
+{
+    [_context->ensureBundleParameters() setObject:adoptNS([(NSObject *)object copy]).get() forKey:parameter];
+}
+
 @end
 
 #endif // WK_API_ENABLED
