@@ -458,6 +458,14 @@ float GraphicsContext::drawText(const Font& font, const TextRun& run, const Floa
 }
 #endif // !PLATFORM(IOS)
 
+void GraphicsContext::drawGlyphs(const Font& font, const SimpleFontData& fontData, const GlyphBuffer& buffer, int from, int numGlyphs, const FloatPoint& point)
+{
+    if (paintingDisabled())
+        return;
+
+    font.drawGlyphs(this, &fontData, buffer, from, numGlyphs, point);
+}
+
 void GraphicsContext::drawEmphasisMarks(const Font& font, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to)
 {
     if (paintingDisabled())

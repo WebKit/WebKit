@@ -111,6 +111,7 @@ public:
 
     enum CustomFontNotReadyAction { DoNotPaintIfFontNotReady, UseFallbackIfFontNotReady };
     float drawText(GraphicsContext*, const TextRun&, const FloatPoint&, int from = 0, int to = -1, CustomFontNotReadyAction = DoNotPaintIfFontNotReady) const;
+    void drawGlyphs(GraphicsContext*, const SimpleFontData*, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&) const;
     void drawEmphasisMarks(GraphicsContext*, const TextRun&, const AtomicString& mark, const FloatPoint&, int from = 0, int to = -1) const;
 
     DashArray dashesForIntersectionsWithRect(const TextRun&, const FloatPoint& textOrigin, const FloatRect& lineExtents) const;
@@ -194,7 +195,6 @@ private:
     float getGlyphsAndAdvancesForSimpleText(const TextRun&, int from, int to, GlyphBuffer&, ForTextEmphasisOrNot = NotForTextEmphasis) const;
     float drawSimpleText(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
     void drawEmphasisMarksForSimpleText(GraphicsContext*, const TextRun&, const AtomicString& mark, const FloatPoint&, int from, int to) const;
-    void drawGlyphs(GraphicsContext*, const SimpleFontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
     void drawGlyphBuffer(GraphicsContext*, const TextRun&, const GlyphBuffer&, FloatPoint&) const;
     void drawEmphasisMarks(GraphicsContext*, const TextRun&, const GlyphBuffer&, const AtomicString&, const FloatPoint&) const;
     float floatWidthForSimpleText(const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;

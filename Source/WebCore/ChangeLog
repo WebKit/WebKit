@@ -1,3 +1,40 @@
+2014-03-14  Frédéric Wang  <fred.wang@free.fr>
+
+        Migrate the MathML stretchy code from UChar to Glyph.
+        https://bugs.webkit.org/show_bug.cgi?id=128907
+
+        Reviewed by Chris Fleizach.
+
+        This prepares the MathML stretchy code for future support for the MATH
+        table. In particular, this uses the glyph index for measuring and
+        drawing instead of Unicode code point since the MATH table uses glyph
+        indices. Also, this merges the preferred width and stretchy character
+        selection into one common path since they will also have to share the
+        size variants measuring/selection. Finally, we expose a drawGlyphs()
+        method so that we can draw a glyph by index.
+
+        No new tests. This should not change the behavior of the stretchy code.
+
+        * platform/graphics/Font.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawGlyphs):
+        * platform/graphics/GraphicsContext.h:
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::RenderMathMLOperator):
+        (WebCore::RenderMathMLOperator::boundsForGlyph):
+        (WebCore::RenderMathMLOperator::heightForGlyph):
+        (WebCore::RenderMathMLOperator::advanceForGlyph):
+        (WebCore::RenderMathMLOperator::computePreferredLogicalWidths):
+        (WebCore::RenderMathMLOperator::findStretchyData):
+        (WebCore::RenderMathMLOperator::updateStyle):
+        (WebCore::RenderMathMLOperator::firstLineBaseline):
+        (WebCore::RenderMathMLOperator::computeLogicalHeight):
+        (WebCore::RenderMathMLOperator::paintGlyph):
+        (WebCore::RenderMathMLOperator::fillWithExtensionGlyph):
+        (WebCore::RenderMathMLOperator::paint):
+        (WebCore::RenderMathMLOperator::paintChildren):
+        * rendering/mathml/RenderMathMLOperator.h:
+
 2014-03-12  Sergio Villar Senin  <svillar@igalia.com>
 
         Rename DEFINE_STATIC_LOCAL to DEPRECATED_DEFINE_STATIC_LOCAL

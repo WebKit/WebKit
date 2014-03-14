@@ -28,9 +28,9 @@
 
 #if ENABLE(MATHML)
 
+#include "GlyphPage.h"
 #include "MathMLElement.h"
 #include "RenderMathMLToken.h"
-#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
     
@@ -70,14 +70,6 @@ public:
 
     void paint(PaintInfo&, const LayoutPoint&);
 
-    struct StretchyCharacter {
-        UChar character;
-        UChar topGlyph;
-        UChar extensionGlyph;
-        UChar bottomGlyph;
-        UChar middleGlyph;
-    };
-
     void updateTokenContent(const String& operatorString);
     void updateTokenContent() override final;
     void updateOperatorProperties();
@@ -98,27 +90,78 @@ private:
     void updateFromElement() override;
 
     bool shouldAllowStretching(UChar& characterForStretching);
-    StretchyCharacter* findAcceptableStretchyCharacter(UChar);
 
-    FloatRect glyphBoundsForCharacter(UChar);
-    float glyphHeightForCharacter(UChar);
-    float advanceForCharacter(UChar);
+    FloatRect boundsForGlyph(const GlyphData&);
+    float heightForGlyph(const GlyphData&);
+    float advanceForGlyph(const GlyphData&);
 
-    enum CharacterPaintTrimming {
+    // FIXME: DrawSizeVariant is not implemented yet.
+    enum DrawMode {
+        DrawNormal, DrawSizeVariant, DrawGlyphAssembly
+    };
+    class StretchyData {
+    public:
+        DrawMode mode() const { return m_mode; }
+        GlyphData variant() const { return m_data[0]; }
+        GlyphData top() const { return m_data[0]; }
+        GlyphData extension() const { return m_data[1]; }
+        GlyphData bottom() const { return m_data[2]; }
+        GlyphData middle() const { return m_data[3]; }
+
+        void setNormalMode()
+        {
+            m_mode = DrawNormal;
+        }
+        void setSizeVariantMode(const GlyphData& variant)
+        {
+            m_mode = DrawSizeVariant;
+            m_data[0] = variant;
+        }
+        void setGlyphAssemblyMode(const GlyphData& top, const GlyphData& extension, const GlyphData& bottom, const GlyphData& middle)
+        {
+            m_mode = DrawGlyphAssembly;
+            m_data[0] = top;
+            m_data[1] = extension;
+            m_data[2] = bottom;
+            m_data[3] = middle;
+        }
+        StretchyData()
+            : m_mode(DrawNormal) { }
+        StretchyData(const StretchyData& data)
+        {
+            switch (data.m_mode) {
+            case DrawNormal:
+                setNormalMode();
+                break;
+            case DrawSizeVariant:
+                setSizeVariantMode(data.variant());
+                break;
+            case DrawGlyphAssembly:
+                setGlyphAssemblyMode(data.top(), data.extension(), data.bottom(), data.middle());
+                break;
+            }
+        }
+    private:
+        DrawMode m_mode;
+        // FIXME: For OpenType fonts with a MATH table all the glyphs are from the same font, so we would only need to store the glyph indices here.
+        GlyphData m_data[4];
+    };
+    StretchyData findStretchyData(UChar, float* maximumGlyphWidth);
+    
+    enum GlyphPaintTrimming {
         TrimTop,
         TrimBottom,
         TrimTopAndBottom,
     };
 
-    LayoutRect paintCharacter(PaintInfo&, UChar, const LayoutPoint& origin, CharacterPaintTrimming);
+    LayoutRect paintGlyph(PaintInfo&, const GlyphData&, const LayoutPoint& origin, GlyphPaintTrimming);
     void fillWithExtensionGlyph(PaintInfo&, const LayoutPoint& from, const LayoutPoint& to);
 
     LayoutUnit m_stretchHeightAboveBaseline;
     LayoutUnit m_stretchDepthBelowBaseline;
-    bool m_isStretched;
 
     UChar m_operator;
-    StretchyCharacter* m_stretchyCharacter;
+    StretchyData m_stretchyData;
     MathMLOperatorDictionary::Form m_operatorForm;
     unsigned short m_operatorFlags;
     LayoutUnit m_leadingSpace;

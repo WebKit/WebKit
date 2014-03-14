@@ -350,6 +350,7 @@ namespace WebCore {
 #else
         float drawText(const Font&, const TextRun&, const FloatPoint&, int from = 0, int to = -1);
 #endif
+        void drawGlyphs(const Font&, const SimpleFontData&, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&);
         void drawEmphasisMarks(const Font&, const TextRun& , const AtomicString& mark, const FloatPoint&, int from = 0, int to = -1);
 #if !PLATFORM(IOS)
         void drawBidiText(const Font&, const TextRun&, const FloatPoint&, Font::CustomFontNotReadyAction = Font::DoNotPaintIfFontNotReady);
