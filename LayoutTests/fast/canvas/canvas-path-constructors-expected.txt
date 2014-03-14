@@ -3,19 +3,19 @@ Test different constructors of Path.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Test constructor Path().
+Test constructor Path2D().
 PASS imgdata[4] is 255
 PASS imgdata[5] is 255
 PASS imgdata[6] is 0
 PASS imgdata[7] is 255
 
-Test constructor Path(DOMString) which takes a SVG data string.
+Test constructor Path2D(DOMString) which takes a SVG data string.
 PASS imgdata[4] is 0
 PASS imgdata[5] is 0
 PASS imgdata[6] is 255
 PASS imgdata[7] is 255
 
-Test constructor Path(Path) which takes another Path object.
+Test constructor Path2D(Path2D) which takes another Path2D object.
 PASS imgdata[4] is 0
 PASS imgdata[5] is 128
 PASS imgdata[6] is 0

@@ -64,10 +64,6 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
 
     void beginPath();
 
-#if defined(ENABLE_CANVAS_PATH) && ENABLE_CANVAS_PATH
-    attribute DOMPath currentPath;
-#endif
-
     // FIXME: These methods should be shared with CanvasRenderingContext2D in the CanvasPathMethods interface.
     void closePath();
     void moveTo(float x, float y);
@@ -78,9 +74,16 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     void rect(float x, float y, float width, float height);
     [RaisesException] void arc(float x, float y, float radius, float startAngle, float endAngle, [Default=Undefined] optional boolean anticlockwise);
 
+#if defined(ENABLE_CANVAS_PATH) && ENABLE_CANVAS_PATH
+    void fill(DOMPath? path, optional CanvasWindingRule winding);
+    void stroke(DOMPath? path);
+    void clip(DOMPath? path, optional CanvasWindingRule winding);
+#endif
+
     void fill(optional CanvasWindingRule winding);
     void stroke();
     void clip(optional CanvasWindingRule winding);
+
     boolean isPointInPath(float x, float y, optional CanvasWindingRule winding);
     boolean isPointInStroke(float x, float y);
 

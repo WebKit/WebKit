@@ -1,0 +1,29 @@
+Test Path2D as argument for fill.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Simple test of Path2D as argumeny for fill().
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+
+Transform context and apply fill(). Context path should be ignored.
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:0,b:0,a:0}) is true
+
+Path2D should not affect context path.
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:0,b:0,a:0}) is true
+PASS areaColor(imageData.data, {r:0,g:0,b:0,a:0}) is true
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+
+Test WindingRule for Path2D.
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:0,b:0,a:0}) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

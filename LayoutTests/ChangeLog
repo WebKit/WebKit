@@ -1,3 +1,36 @@
+2014-03-14  Dirk Schulze  <krit@webkit.org>
+
+        Refactor Path to Path2D and remove currentPath
+        https://bugs.webkit.org/show_bug.cgi?id=130236
+
+        Reviewed by Dean Jackson.
+
+        Add new tests for Path2D object and new functions fill(),
+        stroke() and clip() with Path2D argument.
+
+        * fast/canvas/canvas-clip-path-expected.txt: Added.
+        * fast/canvas/canvas-clip-path.html: Added.
+        * fast/canvas/canvas-currentPath-crash-expected.txt: Removed.
+        * fast/canvas/canvas-currentPath-crash.html: Removed.
+        * fast/canvas/canvas-currentPath-expected.txt: Removed.
+        * fast/canvas/canvas-currentPath.html: Removed.
+        * fast/canvas/canvas-fill-path-expected.txt: Added.
+        * fast/canvas/canvas-fill-path.html: Added.
+        * fast/canvas/canvas-path-constructors-expected.txt:
+        * fast/canvas/canvas-path-object-expected.txt:
+        * fast/canvas/canvas-stroke-path-expected.txt: Added.
+        * fast/canvas/canvas-stroke-path.html: Added.
+        * fast/canvas/script-tests/canvas-clip-path.js: Added.
+        (areaColor):
+        * fast/canvas/script-tests/canvas-currentPath-crash.js: Removed.
+        * fast/canvas/script-tests/canvas-currentPath.js: Removed.
+        * fast/canvas/script-tests/canvas-fill-path.js: Added.
+        (areaColor):
+        * fast/canvas/script-tests/canvas-path-constructors.js:
+        * fast/canvas/script-tests/canvas-path-object.js:
+        * fast/canvas/script-tests/canvas-stroke-path.js: Added.
+        (areaColor):
+
 2014-03-14  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: Suppress axParentNodeId entirely in getAccessibilityPropertiesForNode.html b/c the int value isn't consistent enough for a layout test.

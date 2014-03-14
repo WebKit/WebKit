@@ -2,8 +2,8 @@ description("Ensure that the constructor for Path object and dependent functions
 
 shouldBe("typeof document.getElementById", '"function"');
 
-var path = new Path();
-shouldBeType("path", "Path");
+var path = new Path2D();
+shouldBeType("path", "Path2D");
 shouldBe("typeof path.closePath", '"function"');
 shouldBe("typeof path.moveTo", '"function"');
 shouldBe("typeof path.lineTo", '"function"');

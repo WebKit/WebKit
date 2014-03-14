@@ -131,14 +131,15 @@ public:
 
     void beginPath();
 
-#if ENABLE(CANVAS_PATH)
-    PassRefPtr<DOMPath> currentPath();
-    void setCurrentPath(DOMPath*);
-#endif
-
     void fill(const String& winding = "nonzero");
     void stroke();
     void clip(const String& winding = "nonzero");
+
+#if ENABLE(CANVAS_PATH)
+    void fill(DOMPath*, const String& winding = "nonzero");
+    void stroke(DOMPath*);
+    void clip(DOMPath*, const String& winding = "nonzero");
+#endif
 
     bool isPointInPath(const float x, const float y, const String& winding = "nonzero");
     bool isPointInStroke(const float x, const float y);
@@ -297,6 +298,10 @@ private:
 #if ENABLE(DASHBOARD_SUPPORT)
     void clearPathForDashboardBackwardCompatibilityMode();
 #endif
+
+    void fillInternal(const Path&, const String& winding);
+    void strokeInternal(const Path&);
+    void clipInternal(const Path&, const String& winding);
 
     void clearCanvas();
     Path transformAreaToDevice(const Path&) const;

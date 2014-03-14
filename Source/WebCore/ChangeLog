@@ -1,3 +1,33 @@
+2014-03-14  Dirk Schulze  <krit@webkit.org>
+
+        Refactor Path to Path2D and remove currentPath
+        https://bugs.webkit.org/show_bug.cgi?id=130236
+
+        Reviewed by Dean Jackson.
+
+        Other implementations prefer Path2D over Path. Furthermore, currentPath is not the right
+        way to apply a Path2D object to a context. Main argument is that currentPath creates a copy
+        of the Path2D object. Instead we pass Path2D as argument to fill, stroke and clip now.
+
+        Tests: fast/canvas/canvas-clip-path.html
+               fast/canvas/canvas-fill-path.html
+               fast/canvas/canvas-stroke-path.html
+
+        * bindings/scripts/CodeGeneratorJS.pm: WebIDL parser didn't handle enumerations
+            for overloaded methods at all.
+        (GenerateParametersCheckExpression):
+        * html/canvas/CanvasRenderingContext2D.cpp: New functions with DOMPath argument.
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::stroke):
+        (WebCore::CanvasRenderingContext2D::clip):
+        (WebCore::CanvasRenderingContext2D::fillInternal): Internal method to avoid code duplication
+            and copy operation.
+        (WebCore::CanvasRenderingContext2D::strokeInternal): Ditto.
+        (WebCore::CanvasRenderingContext2D::clipInternal): Ditto.
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * html/canvas/DOMPath.idl: Rename Path to Path2D.
+
 2014-03-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuilder should take a const reference to InsertedNodes

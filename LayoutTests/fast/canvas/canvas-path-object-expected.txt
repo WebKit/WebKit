@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS typeof document.getElementById is "function"
-PASS path is an instance of Path
+PASS path is an instance of Path2D
 PASS typeof path.closePath is "function"
 PASS typeof path.moveTo is "function"
 PASS typeof path.lineTo is "function"
