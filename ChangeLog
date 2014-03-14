@@ -1,3 +1,18 @@
+2014-03-13  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [CMake] Failure to link with older installations of WebP
+        https://bugs.webkit.org/show_bug.cgi?id=130195
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Fix the issue by using a temporary variable as the output parameter
+        to check_include_files(), setting WEBP_FOUND accordingly later.
+
+        * Source/cmake/FindWebP.cmake: Avoid reusing the WEBP_FOUND
+        variable in check_include_files(), as it will lead to misleading
+        results (will always be FALSE). Use a temporary variable instead
+        and explicitly set WEBP_FOUND to TRUE later if needed.
+
 2014-03-12  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] Changes to the bindings generator Perl modules do not trigger regeneration of bindings
