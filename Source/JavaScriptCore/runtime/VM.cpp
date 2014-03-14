@@ -524,6 +524,7 @@ void VM::discardAllCode()
 {
     waitForCompilationsToComplete();
     m_codeCache->clear();
+    m_regExpCache->invalidateCode();
     heap.deleteAllCompiledCode();
     heap.deleteAllUnlinkedFunctionCode();
     heap.reportAbandonedObjectGraph();

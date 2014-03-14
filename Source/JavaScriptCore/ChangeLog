@@ -1,5 +1,15 @@
 2014-03-13  Andreas Kling  <akling@apple.com>
 
+        VM::discardAllCode() should clear the RegExp cache.
+        <https://webkit.org/b/130144>
+
+        Reviewed by Michael Saboff.
+
+        * runtime/VM.cpp:
+        (JSC::VM::discardAllCode):
+
+2014-03-13  Andreas Kling  <akling@apple.com>
+
         Revert "Short-circuit JSGlobalObjectInspectorController when not inspecting."
         <https://webkit.org/b/129995>
 
