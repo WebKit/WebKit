@@ -63,6 +63,7 @@
                 { "name": "disabled", "type": "boolean", "optional": true, "description": "Disabled state of form controls." },
                 { "name": "exists", "type": "boolean", "description": "Indicates whether there is an existing AX object for the DOM node. If this is false, all the other properties will be default values." },
                 { "name": "expanded", "type": "boolean", "optional": true, "description": "Expanded state." },
+                { "name": "focused", "type": "boolean", "optional": true, "description": "Focused state. Only defined on focusable elements." },
                 { "name": "ignored", "type": "boolean", "optional": true, "description": "Indicates whether the accessibility of the associated AX object node is ignored, whether heuristically or explicitly." },
                 { "name": "ignoredByDefault", "type": "boolean", "optional": true, "description": "State indicating whether the accessibility of the associated AX object node is ignored by default for node type." },
                 { "name": "invalid", "type": "string", "optional": true, "description": "Invalid status of form controls: true, false, grammar, spelling." },

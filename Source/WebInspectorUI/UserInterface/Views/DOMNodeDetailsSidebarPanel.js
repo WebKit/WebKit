@@ -61,6 +61,7 @@ WebInspector.DOMNodeDetailsSidebarPanel = function() {
         this._accessibilityNodeCheckedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Checked"));
         this._accessibilityNodeDisabledRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Disabled"));
         this._accessibilityNodeExpandedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Expanded"));
+        this._accessibilityNodeFocusedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Focused"));
         this._accessibilityNodeIgnoredRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Ignored"));
         this._accessibilityNodeInvalidRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Invalid"));
         this._accessibilityNodeLabelRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Label"));
@@ -290,6 +291,7 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
 
                 var disabled = booleanValueToLocalizedStringIfTrue("disabled");
                 var expanded = booleanValueToLocalizedStringIfPropertyDefined("expanded");
+                var focused = booleanValueToLocalizedStringIfPropertyDefined("focused");
                 
                 var ignored = "";
                 if (accessibilityProperties.ignored) {
@@ -327,6 +329,7 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                 this._accessibilityNodeCheckedRow.value = checked;
                 this._accessibilityNodeDisabledRow.value = disabled;
                 this._accessibilityNodeExpandedRow.value = expanded;
+                this._accessibilityNodeFocusedRow.value = focused;
                 this._accessibilityNodeIgnoredRow.value = ignored;
                 this._accessibilityNodeInvalidRow.value = invalid;
                 this._accessibilityNodeLabelRow.value = label;
@@ -339,6 +342,7 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                 // Display order, not alphabetical as above.
                 this._accessibilityGroup.rows = [
                     // Global properties for all elements.
+                    this._accessibilityNodeFocusedRow,
                     this._accessibilityNodeIgnoredRow,
                     this._accessibilityNodeRoleRow,
                     this._accessibilityNodeLabelRow,

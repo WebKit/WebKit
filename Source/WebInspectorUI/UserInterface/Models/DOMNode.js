@@ -451,6 +451,7 @@ WebInspector.DOMNode.prototype = {
                     disabled: accessibilityProperties.disabled,
                     exists: accessibilityProperties.exists,
                     expanded: accessibilityProperties.expanded,
+                    focused: accessibilityProperties.focused,
                     ignored: accessibilityProperties.ignored,
                     ignoredByDefault: accessibilityProperties.ignoredByDefault,
                     invalid: accessibilityProperties.invalid,

@@ -1,3 +1,13 @@
+2014-03-13  Diego Pino Garcia  <dpino@igalia.com>
+
+        Web Inspector: AXI: Expose focused/focusable state in the Accessibility Node Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=129779
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt:
+        Updated test.
+
 2014-03-13  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r160806): Incorrect cascade order of prefixed and non-prefixed variants of

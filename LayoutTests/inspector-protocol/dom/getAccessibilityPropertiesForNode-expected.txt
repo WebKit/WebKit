@@ -85,6 +85,7 @@ Total elements to be tested: 50.
     exists: true
     label: 
     role: 
+    focused: false
     ignored: true
     ignoredByDefault: true
     hidden: true
@@ -123,6 +124,7 @@ Total elements to be tested: 50.
     label: 
     role: radio
     checked: true
+    focused: false
     required: false
 
 <input type="radio">
@@ -130,6 +132,7 @@ Total elements to be tested: 50.
     label: 
     role: radio
     checked: false
+    focused: false
     required: false
 
 <div role="checkbox" aria-checked="false">unchecked</div>
@@ -165,6 +168,7 @@ Total elements to be tested: 50.
     label: 
     role: checkbox
     checked: true
+    focused: false
     required: false
 
 <input type="checkbox">
@@ -172,6 +176,7 @@ Total elements to be tested: 50.
     label: 
     role: checkbox
     checked: false
+    focused: false
     required: false
 
 <div role="textbox" tabindex="0" aria-disabled="true">disabled</div>
@@ -179,6 +184,7 @@ Total elements to be tested: 50.
     label: 
     role: 
     disabled: true
+    focused: false
     readonly: true
     required: false
 
@@ -193,6 +199,7 @@ Total elements to be tested: 50.
     exists: true
     label: 
     role: 
+    focused: false
     readonly: true
     required: false
 
@@ -200,6 +207,7 @@ Total elements to be tested: 50.
     exists: true
     label: 
     role: 
+    focused: false
     readonly: true
     required: false
 
@@ -207,6 +215,7 @@ Total elements to be tested: 50.
     exists: true
     label: 
     role: 
+    focused: false
     invalid: true
     required: false
 
@@ -214,6 +223,7 @@ Total elements to be tested: 50.
     exists: true
     label: 
     role: 
+    focused: false
     invalid: spelling
     required: false
 
@@ -221,34 +231,40 @@ Total elements to be tested: 50.
     exists: true
     label: 
     role: 
+    focused: false
     required: true
 
 <input required="">
     exists: true
     label: 
     role: 
+    focused: false
     required: true
 
 <input>
     exists: true
     label: 
     role: 
+    focused: false
     required: false
 
 <input type="button">
     exists: true
     label: 
     role: button
+    focused: false
 
 <button></button>
     exists: true
     label: 
     role: button
+    focused: false
 
 <div role="button" tabindex="0" aria-pressed="false">Not Pressed.</div>
     exists: true
     label: 
     role: 
+    focused: false
     pressed: false
     required: false
 
@@ -256,6 +272,7 @@ Total elements to be tested: 50.
     exists: true
     label: 
     role: 
+    focused: false
     pressed: false
     required: false
 
@@ -264,11 +281,13 @@ Total elements to be tested: 50.
     label: 
     role: button
     disabled: true
+    focused: false
 
 <div role="button" tabindex="0"></div>
     exists: true
     label: 
     role: button
+    focused: false
 
 <span aria-hidden="true"></span>
     exists: true

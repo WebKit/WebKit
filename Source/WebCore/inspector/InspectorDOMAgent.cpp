@@ -1418,6 +1418,7 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
     bool exists = false;
     bool expanded = false;
     bool disabled = false;
+    bool focused = false;
     bool ignored = true;
     bool ignoredByDefault = false;
     String invalid = "false"; // String values: true, false, spelling, grammar, etc.
@@ -1432,6 +1433,7 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
     bool supportsExpanded = false;
     bool supportsPressed = false;
     bool supportsRequired = false;
+    bool supportsFocused = false;
 
     if (AXObjectCache* axObjectCache = node->document().axObjectCache()) {
         if (AccessibilityObject* axObject = axObjectCache->getOrCreate(node)) {
@@ -1454,6 +1456,10 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             if (supportsExpanded)
                 expanded = axObject->isExpanded();
             
+            supportsFocused = toElement(node)->isFocusable();
+            if (supportsFocused)
+                focused = axObject->isFocused();
+
             ignored = axObject->accessibilityIsIgnored();
             ignoredByDefault = axObject->accessibilityIsIgnoredByDefault();
             invalid = axObject->invalidStatus();
@@ -1490,6 +1496,8 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             value->setDisabled(disabled);
         if (supportsExpanded)
             value->setExpanded(expanded);
+        if (supportsFocused)
+            value->setFocused(focused);
         if (ignored)
             value->setIgnored(ignored);
         if (ignoredByDefault)

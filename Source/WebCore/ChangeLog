@@ -1,3 +1,15 @@
+2014-03-13  Diego Pino Garcia  <dpino@igalia.com>
+
+        Web Inspector: AXI: Expose focused/focusable state in the Accessibility Node Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=129779
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorDOMAgent.cpp: Set property "focused".
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+        * inspector/protocol/DOM.json: Add property "focused" to
+        AccessibilityProperties.
+
 2014-03-12  Jae Hyun Park  <jaepark@webkit.org>
 
         Remove remaining Nix port related files
