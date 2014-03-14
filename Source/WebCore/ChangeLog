@@ -1,3 +1,83 @@
+2014-03-13  Dirk Schulze  <krit@webkit.org>
+
+        [SVG2] support paint-order presentation attribute
+        https://bugs.webkit.org/show_bug.cgi?id=129373
+
+        Reviewed by Dean Jackson.
+
+        Add support for the paint-order property from SVG2. The presentation
+        attribute/CSS property allows to paint fill, stroke and markers in any order
+        the author desires.
+
+        Firefox supports this but behind a runtime flag. It is just activated in
+        nightly builds by default.
+
+        Chromium supports it behind a runtime flag as well but is going to ship it
+        pretty soon.
+
+        Tests: svg/paint-order/paint-order-fill-expected.svg
+               svg/paint-order/paint-order-fill-markers-expected.svg
+               svg/paint-order/paint-order-fill-markers.svg
+               svg/paint-order/paint-order-fill.svg
+               svg/paint-order/paint-order-markers-expected.svg
+               svg/paint-order/paint-order-markers-stroke-expected.svg
+               svg/paint-order/paint-order-markers-stroke.svg
+               svg/paint-order/paint-order-markers.svg
+               svg/paint-order/paint-order-normal-expected.svg
+               svg/paint-order/paint-order-normal.svg
+               svg/paint-order/paint-order-stroke-expected.svg
+               svg/paint-order/paint-order-stroke-marker-expected.svg
+               svg/paint-order/paint-order-stroke-marker.svg
+               svg/paint-order/paint-order-stroke.svg
+               svg/paint-order/paint-order-text-markers-expected.svg
+               svg/paint-order/paint-order-text-markers.svg
+               svg/paint-order/paint-order-text-normal-expected.svg
+               svg/paint-order/paint-order-text-normal.svg
+               svg/paint-order/paint-order-text-stroke-expected.svg
+               svg/paint-order/paint-order-text-stroke.svg
+               svg/paint-order/paint-order-text-tspan-001-expected.svg
+               svg/paint-order/paint-order-text-tspan-001.svg
+               svg/paint-order/paint-order-text-tspan-002-expected.svg
+               svg/paint-order/paint-order-text-tspan-002.svg
+               svg/paint-order/parsing-paint-order.html
+
+        * css/CSSComputedStyleDeclaration.cpp: Computed style for paint-order.
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::paintOrder):
+        (WebCore::ComputedStyleExtractor::svgPropertyValue):
+        * css/SVGCSSParser.cpp: Parse paint-order. Take care of serialization
+            at this point already to get element style correct.
+        (WebCore::CSSParser::parseSVGValue):
+        (WebCore::CSSParser::parsePaintOrder):
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::StyleResolver::applySVGProperty):
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::paintTypesForPaintOrder):
+        (WebCore::SVGRenderStyle::diff): Repaint on change.
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::initialPaintOrder):
+        (WebCore::SVGRenderStyle::setPaintOrder):
+        (WebCore::SVGRenderStyle::paintOrder):
+        (WebCore::SVGRenderStyle::InheritedFlags::operator==):
+        (WebCore::SVGRenderStyle::setBitDefaults):
+        * rendering/style/SVGRenderStyleDefs.h:
+        * rendering/svg/RenderSVGShape.cpp: Change order of painting based on paint-order.
+        (WebCore::RenderSVGShape::strokeShape):
+        (WebCore::RenderSVGShape::fillStrokeMarkers):
+        (WebCore::RenderSVGShape::paint):
+        (WebCore::RenderSVGShape::addFocusRingRects):
+        * rendering/svg/RenderSVGShape.h:
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paint): Ditto.
+        * svg/SVGElement.cpp: Make property a presentation attribute.
+        (WebCore::populateAttributeNameToCSSPropertyIDMap):
+        (WebCore::populateAttributeNameToAnimatedPropertyTypeMap):
+        * svg/svgattrs.in: Add paint-order attribute.
+
 2014-03-13  Andreas Kling  <akling@apple.com>
 
         Network process instantiates JSC::VM under fake memory pressure.

@@ -91,6 +91,23 @@ namespace WebCore {
         MT_ALPHA
     };
 
+    // These are all minimized combinations of paint-order.
+    enum PaintOrder {
+        PaintOrderNormal = 0,
+        PaintOrderFill = 1,
+        PaintOrderFillMarkers = 2,
+        PaintOrderStroke = 3,
+        PaintOrderStrokeMarkers = 4,
+        PaintOrderMarkers = 5,
+        PaintOrderMarkersStroke = 6
+    };
+
+    enum PaintType {
+        PaintTypeFill,
+        PaintTypeStroke,
+        PaintTypeMarkers
+    };
+
     class CSSValue;
     class CSSValueList;
     class SVGPaint;

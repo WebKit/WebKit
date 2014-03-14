@@ -256,22 +256,37 @@ void RenderSVGShape::strokeShape(const RenderStyle& style, GraphicsContext* cont
     }
 }
 
-void RenderSVGShape::fillAndStrokeShape(GraphicsContext* context)
+void RenderSVGShape::strokeShape(GraphicsContext* context)
 {
-    fillShape(style(), context);
-
     if (!style().svgStyle().hasVisibleStroke())
         return;
 
     GraphicsContextStateSaver stateSaver(*context, false);
-
     if (hasNonScalingStroke()) {
         AffineTransform nonScalingTransform = nonScalingStrokeTransform();
         if (!setupNonScalingStrokeContext(nonScalingTransform, stateSaver))
             return;
     }
-
     strokeShape(style(), context);
+}
+
+void RenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
+{
+    Vector<PaintType> paintOrder = style().svgStyle().paintTypesForPaintOrder();
+    for (unsigned i = 0; i < paintOrder.size(); ++i) {
+        switch (paintOrder.at(i)) {
+        case PaintTypeFill:
+            fillShape(style(), childPaintInfo.context);
+            break;
+        case PaintTypeStroke:
+            strokeShape(childPaintInfo.context);
+            break;
+        case PaintTypeMarkers:
+            if (!m_markerPositions.isEmpty())
+                drawMarkers(childPaintInfo);
+            break;
+        }
+    }
 }
 
 void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
@@ -296,9 +311,7 @@ void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
                 if (svgStyle.shapeRendering() == SR_CRISPEDGES)
                     childPaintInfo.context->setShouldAntialias(false);
 
-                fillAndStrokeShape(childPaintInfo.context);
-                if (!m_markerPositions.isEmpty())
-                    drawMarkers(childPaintInfo);
+                fillStrokeMarkers(childPaintInfo);
             }
         }
 

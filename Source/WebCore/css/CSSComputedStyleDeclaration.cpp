@@ -413,6 +413,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyMarkerMid,
     CSSPropertyMarkerStart,
     CSSPropertyMaskType,
+    CSSPropertyPaintOrder,
     CSSPropertyShapeRendering,
     CSSPropertyStroke,
     CSSPropertyStrokeDasharray,
@@ -3012,6 +3013,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyMarkerMid:
         case CSSPropertyMarkerStart:
         case CSSPropertyMaskType:
+        case CSSPropertyPaintOrder:
         case CSSPropertyShapeRendering:
         case CSSPropertyStroke:
         case CSSPropertyStrokeDasharray:

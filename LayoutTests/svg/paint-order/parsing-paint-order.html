@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<style>
+* { font-size: 16px; }
+div { font-size: 8px; }
+</style>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description('Test parsing, element style and computed style for paint-order property.');
+
+function computedStyle(property, value) {
+    var div = document.createElement("div");
+    document.body.appendChild(div);
+    div.style.setProperty(property, value);
+    var computedValue = getComputedStyle(div).getPropertyValue(property);
+    document.body.removeChild(div);
+    return computedValue;
+}
+
+function innerStyle(property, value) {
+    var div = document.createElement("div");
+    div.style.setProperty(property, value);
+    return div.style.getPropertyValue(property);
+}
+
+function testComputed(property, value, expected) {
+    shouldBeEqualToString('computedStyle("' + property + '", "' + value + '")', expected);
+}
+
+function testInner(property, value, expected) {
+    if (expected === null)
+        shouldBeNull('innerStyle("' + property + '", "' + value + '")');
+    else
+        shouldBeEqualToString('innerStyle("' + property + '", "' + value + '")', expected);
+}
+
+function negativeTest(property, value) {
+    testInner(property, value, null);
+    testComputed(property, value, 'normal');
+}
+
+// Test element style.
+testInner("paint-order", "normal", "normal");
+testInner("paint-order", "fill", "fill");
+testInner("paint-order", "stroke", "stroke");
+testInner("paint-order", "markers", "markers");
+testInner("paint-order", "fill stroke", "fill");
+testInner("paint-order", "fill stroke markers", "fill");
+testInner("paint-order", "fill markers", "fill markers");
+testInner("paint-order", "fill markers stroke", "fill markers");
+testInner("paint-order", "stroke fill", "stroke");
+testInner("paint-order", "stroke fill markers", "stroke");
+testInner("paint-order", "stroke markers", "stroke markers");
+testInner("paint-order", "stroke markers fill", "stroke markers");
+testInner("paint-order", "stroke fill", "stroke");
+testInner("paint-order", "stroke fill markers", "stroke");
+testInner("paint-order", "stroke markers", "stroke markers");
+testInner("paint-order", "stroke markers fill", "stroke markers");
+
+// Test computed style.
+testComputed("paint-order", "normal", "normal");
+testComputed("paint-order", "fill", "fill");
+testComputed("paint-order", "stroke", "stroke");
+testComputed("paint-order", "markers", "markers");
+testComputed("paint-order", "fill stroke", "fill");
+testComputed("paint-order", "fill stroke markers", "fill");
+testComputed("paint-order", "fill markers", "fill markers");
+testComputed("paint-order", "fill markers stroke", "fill markers");
+testComputed("paint-order", "stroke fill", "stroke");
+testComputed("paint-order", "stroke fill markers", "stroke");
+testComputed("paint-order", "stroke markers", "stroke markers");
+testComputed("paint-order", "stroke markers fill", "stroke markers");
+testComputed("paint-order", "stroke fill", "stroke");
+testComputed("paint-order", "stroke fill markers", "stroke");
+testComputed("paint-order", "stroke markers", "stroke markers");
+testComputed("paint-order", "stroke markers fill", "stroke markers");
+
+// Negative tests.
+negativeTest("paint-order", "normal fill");
+negativeTest("paint-order", "normal stroke");
+negativeTest("paint-order", "normal markers");
+negativeTest("paint-order", "fill fill");
+negativeTest("paint-order", "stroke stroke");
+negativeTest("paint-order", "markers markers");
+negativeTest("paint-order", "markers fill markers");
+negativeTest("paint-order", "markers stroke markers");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

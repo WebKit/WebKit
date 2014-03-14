@@ -203,6 +203,36 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
                 svgStyle.setClipRule(*primitiveValue);
             break;
         }
+        case CSSPropertyPaintOrder: {
+            HANDLE_INHERIT_AND_INITIAL(paintOrder, PaintOrder)
+            // 'normal' is the only primitiveValue
+            if (primitiveValue)
+                svgStyle.setPaintOrder(PaintOrderNormal);
+            if (!value->isValueList())
+                break;
+            CSSValueList* orderTypeList = toCSSValueList(value);
+
+            // Serialization happened during parsing. No additional checking needed.
+            unsigned length = orderTypeList->length();
+            primitiveValue = toCSSPrimitiveValue(orderTypeList->itemWithoutBoundsCheck(0));
+            PaintOrder paintOrder;
+            switch (primitiveValue->getValueID()) {
+            case CSSValueFill:
+                paintOrder = length > 1 ? PaintOrderFillMarkers : PaintOrderFill;
+                break;
+            case CSSValueStroke:
+                paintOrder = length > 1 ? PaintOrderStrokeMarkers : PaintOrderStroke;
+                break;
+            case CSSValueMarkers:
+                paintOrder = length > 1 ? PaintOrderMarkersStroke : PaintOrderMarkers;
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+                paintOrder = PaintOrderNormal;
+            }
+            svgStyle.setPaintOrder(static_cast<PaintOrder>(paintOrder));
+            break;
+        }
         case CSSPropertyFillRule:
         {
             HANDLE_INHERIT_AND_INITIAL(fillRule, FillRule)

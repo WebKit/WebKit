@@ -174,7 +174,12 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
                 m_valueList->next();
         }
         break;
-
+    case CSSPropertyPaintOrder:
+        if (id == CSSValueNormal)
+            valid_primitive = true;
+        else
+            parsedValue = parsePaintOrder();
+        break;
     case CSSPropertyFill:                 // <paint> | inherit
     case CSSPropertyStroke:               // <paint> | inherit
         {
@@ -361,6 +366,55 @@ PassRefPtr<CSSValue> CSSParser::parseSVGColor()
     if (!parseColorFromValue(m_valueList->current(), c))
         return 0;
     return SVGColor::createFromColor(Color(c));
+}
+
+PassRefPtr<CSSValue> CSSParser::parsePaintOrder()
+{
+    CSSParserValue* value = m_valueList->current();
+
+    Vector<CSSValueID> paintTypeList;
+    RefPtr<CSSPrimitiveValue> fill;
+    RefPtr<CSSPrimitiveValue> stroke;
+    RefPtr<CSSPrimitiveValue> markers;
+    while (value) {
+        if (value->id == CSSValueFill && !fill)
+            fill = CSSPrimitiveValue::createIdentifier(value->id);
+        else if (value->id == CSSValueStroke && !stroke)
+            stroke = CSSPrimitiveValue::createIdentifier(value->id);
+        else if (value->id == CSSValueMarkers && !markers)
+            markers = CSSPrimitiveValue::createIdentifier(value->id);
+        else
+            return nullptr;
+        paintTypeList.append(value->id);
+        value = m_valueList->next();
+    }
+
+    // After parsing we serialize the paint-order list. Since it is not possible to
+    // pop a last list items from CSSValueList without bigger cost, we create the
+    // list after parsing. 
+    CSSValueID firstPaintOrderType = paintTypeList.at(0);
+    RefPtr<CSSValueList> paintOrderList = CSSValueList::createSpaceSeparated();
+    switch (firstPaintOrderType) {
+    case CSSValueFill:
+        FALLTHROUGH;
+    case CSSValueStroke:
+        paintOrderList->append(firstPaintOrderType == CSSValueFill ? fill.release() : stroke.release());
+        if (paintTypeList.size() > 1) {
+            if (paintTypeList.at(1) == CSSValueMarkers)
+                paintOrderList->append(markers.release());
+        }
+        break;
+    case CSSValueMarkers:
+        paintOrderList->append(markers.release());
+        if (paintTypeList.size() > 1) {
+            if (paintTypeList.at(1) == CSSValueStroke)
+                paintOrderList->append(stroke.release());
+        }
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    return paintOrderList.release();
 }
 
 }

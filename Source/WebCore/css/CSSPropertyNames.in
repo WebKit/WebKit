@@ -157,6 +157,7 @@ page
 page-break-after
 page-break-before
 page-break-inside
+paint-order
 pointer-events [Inherited]
 position
 quotes [Inherited]

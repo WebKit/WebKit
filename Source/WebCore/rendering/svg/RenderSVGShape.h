@@ -116,7 +116,8 @@ private:
 
     void fillShape(const RenderStyle&, GraphicsContext*);
     void strokeShape(const RenderStyle&, GraphicsContext*);
-    void fillAndStrokeShape(GraphicsContext*);
+    void strokeShape(GraphicsContext*);
+    void fillStrokeMarkers(PaintInfo&);
     void drawMarkers(PaintInfo&);
 
 private:

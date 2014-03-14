@@ -295,16 +295,24 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
         if (decorations & TextDecorationOverline)
             paintDecoration(paintInfo.context, TextDecorationOverline, fragment);
 
-        // Fill text
-        if (hasFill) {
-            m_paintingResourceMode = ApplyToFillMode | ApplyToTextMode;
-            paintText(paintInfo.context, &style, selectionStyle, fragment, hasSelection, paintSelectedTextOnly);
-        }
-
-        // Stroke text
-        if (hasVisibleStroke) {
-            m_paintingResourceMode = ApplyToStrokeMode | ApplyToTextMode;
-            paintText(paintInfo.context, &style, selectionStyle, fragment, hasSelection, paintSelectedTextOnly);
+        Vector<PaintType> paintOrder = style.svgStyle().paintTypesForPaintOrder();
+        for (unsigned i = 0; i < paintOrder.size(); ++i) {
+            switch (paintOrder.at(i)) {
+            case PaintTypeFill:
+                if (!hasFill)
+                    continue;
+                m_paintingResourceMode = ApplyToFillMode | ApplyToTextMode;
+                paintText(paintInfo.context, &style, selectionStyle, fragment, hasSelection, paintSelectedTextOnly);
+                break;
+            case PaintTypeStroke:
+                if (!hasVisibleStroke)
+                    continue;
+                m_paintingResourceMode = ApplyToStrokeMode | ApplyToTextMode;
+                paintText(paintInfo.context, &style, selectionStyle, fragment, hasSelection, paintSelectedTextOnly);
+                break;
+            case PaintTypeMarkers:
+                continue;
+            }
         }
 
         // Spec: Line-through should be drawn after the text is filled and stroked; thus, the line-through is rendered on top of the text.

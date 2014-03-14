@@ -95,6 +95,7 @@ public:
     static String initialMarkerMidResource() { return String(); }
     static String initialMarkerEndResource() { return String(); }
     static EMaskType initialMaskType() { return MT_LUMINANCE; }
+    static PaintOrder initialPaintOrder() { return PaintOrderNormal; }
 
     static SVGLength initialBaselineShiftValue()
     {
@@ -143,6 +144,7 @@ public:
     void setGlyphOrientationHorizontal(EGlyphOrientation val) { svg_inherited_flags._glyphOrientationHorizontal = val; }
     void setGlyphOrientationVertical(EGlyphOrientation val) { svg_inherited_flags._glyphOrientationVertical = val; }
     void setMaskType(EMaskType val) { svg_noninherited_flags.f.maskType = val; }
+    void setPaintOrder(PaintOrder val) { svg_inherited_flags.paintOrder = val; }
 
     void setFillOpacity(float obj)
     {
@@ -347,6 +349,8 @@ public:
     String markerMidResource() const { return inheritedResources->markerMid; }
     String markerEndResource() const { return inheritedResources->markerEnd; }
     EMaskType maskType() const { return (EMaskType) svg_noninherited_flags.f.maskType; }
+    PaintOrder paintOrder() const { return (PaintOrder) svg_inherited_flags.paintOrder; }
+    Vector<PaintType> paintTypesForPaintOrder() const;
 
     const SVGPaint::SVGPaintType& visitedLinkFillPaintType() const { return fill->visitedLinkPaintType; }
     const Color& visitedLinkFillPaintColor() const { return fill->visitedLinkPaintColor; }
@@ -382,7 +386,8 @@ protected:
                 && (_colorInterpolationFilters == other._colorInterpolationFilters)
                 && (_writingMode == other._writingMode)
                 && (_glyphOrientationHorizontal == other._glyphOrientationHorizontal)
-                && (_glyphOrientationVertical == other._glyphOrientationVertical);
+                && (_glyphOrientationVertical == other._glyphOrientationVertical)
+                && (paintOrder == other.paintOrder);
         }
 
         bool operator!=(const InheritedFlags& other) const
@@ -402,6 +407,7 @@ protected:
         unsigned _writingMode : 3; // SVGWritingMode
         unsigned _glyphOrientationHorizontal : 3; // EGlyphOrientation
         unsigned _glyphOrientationVertical : 3; // EGlyphOrientation
+        unsigned paintOrder : 3; // PaintOrder
     } svg_inherited_flags;
 
     // don't inherit
@@ -457,6 +463,7 @@ private:
         svg_inherited_flags._writingMode = initialWritingMode();
         svg_inherited_flags._glyphOrientationHorizontal = initialGlyphOrientationHorizontal();
         svg_inherited_flags._glyphOrientationVertical = initialGlyphOrientationVertical();
+        svg_inherited_flags.paintOrder = initialPaintOrder();
 
         svg_noninherited_flags._niflags = 0;
         svg_noninherited_flags.f._alignmentBaseline = initialAlignmentBaseline();

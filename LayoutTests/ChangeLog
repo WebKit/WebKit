@@ -1,3 +1,39 @@
+2014-03-13  Dirk Schulze  <krit@webkit.org>
+
+        [SVG2] support paint-order presentation attribute
+        https://bugs.webkit.org/show_bug.cgi?id=129373
+
+        Reviewed by Dean Jackson.
+
+        Test parsing and bahvior of the paint-order property.
+
+        * svg/paint-order/paint-order-fill-expected.svg: Added.
+        * svg/paint-order/paint-order-fill-markers-expected.svg: Added.
+        * svg/paint-order/paint-order-fill-markers.svg: Added.
+        * svg/paint-order/paint-order-fill.svg: Added.
+        * svg/paint-order/paint-order-markers-expected.svg: Added.
+        * svg/paint-order/paint-order-markers-stroke-expected.svg: Added.
+        * svg/paint-order/paint-order-markers-stroke.svg: Added.
+        * svg/paint-order/paint-order-markers.svg: Added.
+        * svg/paint-order/paint-order-normal-expected.svg: Added.
+        * svg/paint-order/paint-order-normal.svg: Added.
+        * svg/paint-order/paint-order-stroke-expected.svg: Added.
+        * svg/paint-order/paint-order-stroke-marker-expected.svg: Added.
+        * svg/paint-order/paint-order-stroke-marker.svg: Added.
+        * svg/paint-order/paint-order-stroke.svg: Added.
+        * svg/paint-order/paint-order-text-markers-expected.svg: Added.
+        * svg/paint-order/paint-order-text-markers.svg: Added.
+        * svg/paint-order/paint-order-text-normal-expected.svg: Added.
+        * svg/paint-order/paint-order-text-normal.svg: Added.
+        * svg/paint-order/paint-order-text-stroke-expected.svg: Added.
+        * svg/paint-order/paint-order-text-stroke.svg: Added.
+        * svg/paint-order/paint-order-text-tspan-001-expected.svg: Added.
+        * svg/paint-order/paint-order-text-tspan-001.svg: Added.
+        * svg/paint-order/paint-order-text-tspan-002-expected.svg: Added.
+        * svg/paint-order/paint-order-text-tspan-002.svg: Added.
+        * svg/paint-order/parsing-paint-order-expected.txt: Added.
+        * svg/paint-order/parsing-paint-order.html: Added.
+
 2014-03-13  Diego Pino Garcia  <dpino@igalia.com>
 
         Web Inspector: AXI: Expose focused/focusable state in the Accessibility Node Inspector

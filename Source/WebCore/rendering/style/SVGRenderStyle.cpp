@@ -143,6 +143,46 @@ void SVGRenderStyle::copyNonInheritedFrom(const SVGRenderStyle* other)
     resources = other->resources;
 }
 
+Vector<PaintType> SVGRenderStyle::paintTypesForPaintOrder() const
+{
+    Vector<PaintType, 3> paintOrder;
+    switch (this->paintOrder()) {
+    case PaintOrderNormal:
+        FALLTHROUGH;
+    case PaintOrderFill:
+        paintOrder.append(PaintTypeFill);
+        paintOrder.append(PaintTypeStroke);
+        paintOrder.append(PaintTypeMarkers);
+        break;
+    case PaintOrderFillMarkers:
+        paintOrder.append(PaintTypeFill);
+        paintOrder.append(PaintTypeMarkers);
+        paintOrder.append(PaintTypeStroke);
+        break;
+    case PaintOrderStroke:
+        paintOrder.append(PaintTypeStroke);
+        paintOrder.append(PaintTypeFill);
+        paintOrder.append(PaintTypeMarkers);
+        break;
+    case PaintOrderStrokeMarkers:
+        paintOrder.append(PaintTypeStroke);
+        paintOrder.append(PaintTypeMarkers);
+        paintOrder.append(PaintTypeFill);
+        break;
+    case PaintOrderMarkers:
+        paintOrder.append(PaintTypeMarkers);
+        paintOrder.append(PaintTypeFill);
+        paintOrder.append(PaintTypeStroke);
+        break;
+    case PaintOrderMarkersStroke:
+        paintOrder.append(PaintTypeMarkers);
+        paintOrder.append(PaintTypeStroke);
+        paintOrder.append(PaintTypeFill);
+        break;
+    };
+    return paintOrder;
+}
+
 StyleDifference SVGRenderStyle::diff(const SVGRenderStyle* other) const
 {
     // NOTE: All comparisions that may return StyleDifferenceLayout have to go before those who return StyleDifferenceRepaint

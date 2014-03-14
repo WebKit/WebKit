@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<marker id="marker1" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5">
+  <rect width="10" height="10" fill="yellow"/>
+</marker>
+<path d="M50,50 L150,50 L150,150 L50,150 z" marker-start="url(#marker1)" stroke="green" stroke-width="20" fill="blue" paint-order="markers stroke"/>
+</svg>
