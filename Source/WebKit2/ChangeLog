@@ -1,3 +1,112 @@
+2014-03-13  Anders Carlsson  <andersca@apple.com>
+
+        Move visited link handling to VisitedLinkTableController and VisitedLinkProvider
+        https://bugs.webkit.org/show_bug.cgi?id=130223
+        <rdar://problem/16315792>
+
+        Reviewed by Dan Bernstein.
+
+        * DerivedSources.make:
+        Generate messages for VisitedLinkProvider and VisitedLinkTableController.
+        
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        Set the visited link provider.
+
+        * UIProcess/API/Cocoa/_WKVisitedLinkProvider.h:
+        Add addVisitedLinkWithURL: method.
+
+        * UIProcess/API/Cocoa/_WKVisitedLinkProvider.mm:
+        (-[_WKVisitedLinkProvider addVisitedLinkWithURL:]):
+        Compute a link hash from the absolute URL string and pass it to the underlying VisitedLinkProvider object.
+
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::VisitedLinkProvider::addProcess):
+        Add the process to the m_processes HashCountedSet. If it's the first time we're adding the process, 
+        add the VisitedLinkProvider object as a message receiver and send the visited link table to the process.
+
+        (WebKit::VisitedLinkProvider::removeProcess):
+        Remove the process from the m_processes HashCountedSet. If we're removing the last reference to the process,
+        remove ourselves as a  message receiver.
+
+        (WebKit::VisitedLinkProvider::addVisitedLinkHash):
+        Rename this from addVisitedLink to better indicate what it's doing.
+
+        (WebKit::tableSizeForKeyCount):
+        Update for constant rename.
+
+        (WebKit::VisitedLinkProvider::pendingVisitedLinksTimerFired):
+        Compute the new pending visited links table size. If it's bigger than our current table, resize the table
+        by calling resizeTable. Otherwise, simply try to add the pending hashes to our shared hash table. If successful,
+        add the link hash to the addedVisitedLinks table and eventually send it to all processes associated with the visited link provider.
+
+        (WebKit::VisitedLinkProvider::resizeTable):
+        Create a new shared memory segment, Set it as the table backing store and add all visited links from the old table. Finally,
+        add our pending visited link hashes and send the new table memory to all processes associated with the visited link provider.
+
+        (WebKit::VisitedLinkProvider::sendTable):
+        Helper function that creates a shared memory handle and sends it to a given web process.
+
+        * UIProcess/VisitedLinkProvider.h:
+        Add new members.
+
+        * UIProcess/VisitedLinkProvider.messages.in:
+        Add messages.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::processDidFinishLaunching):
+        (WebKit::WebContext::disconnectProcess):
+        The WebContext no longer needs to inform the visited link provider about the processes coming and going, that's already handled
+        by the WebPageProxy objects.
+
+        (WebKit::WebContext::addVisitedLink):
+        Call addVisitedLinkHash on the visited link provider.
+
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContext.messages.in:
+        Remove a message that is now implemented by the visited link provider.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/WebPage/VisitedLinkTableController.cpp:
+        (WebKit::VisitedLinkTableController::VisitedLinkTableController):
+        Add the table controller as a message receiver.
+
+        (WebKit::VisitedLinkTableController::~VisitedLinkTableController):
+        Remove the table controller as a message receiver.
+
+        (WebKit::VisitedLinkTableController::isLinkVisited):
+        Check if the link is visited according to the visited link table.
+
+        (WebKit::VisitedLinkTableController::addVisitedLink):
+        Send the link hash to the UI process if it's not already visited.
+
+        (WebKit::VisitedLinkTableController::setVisitedLinkTable):
+        Set the backing store memory and invalidate all styles.
+
+        (WebKit::VisitedLinkTableController::visitedLinkStateChanged):
+        Invalidate the styles for the given links.
+
+        (WebKit::VisitedLinkTableController::allVisitedLinkStateChanged):
+        Invalidate the styles for all links.
+
+        * WebProcess/WebPage/VisitedLinkTableController.h:
+        Add new members.
+
+        * WebProcess/WebPage/VisitedLinkTableController.messages.in:
+        Add new messages.
+
+        * WebProcess/WebProcess.cpp:
+        Remove unused functions; these are handled by VisitedLinkTableController now.
+
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::shouldTrackVisitedLinks):
+        Add getter.
+
+        * WebProcess/WebProcess.messages.in:
+        Remove messages.
+
 2014-03-12  Sergio Villar Senin  <svillar@igalia.com>
 
         Rename DEFINE_STATIC_LOCAL to DEPRECATED_DEFINE_STATIC_LOCAL

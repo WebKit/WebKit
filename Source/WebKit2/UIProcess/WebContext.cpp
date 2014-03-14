@@ -700,7 +700,6 @@ void WebContext::processDidFinishLaunching(WebProcessProxy* process)
 {
     ASSERT(m_processes.contains(process));
 
-    m_visitedLinkProvider->processDidFinishLaunching(process);
     if (!m_visitedLinksPopulated) {
         populateVisitedLinks();
         m_visitedLinksPopulated = true;
@@ -723,8 +722,6 @@ void WebContext::processDidFinishLaunching(WebProcessProxy* process)
 void WebContext::disconnectProcess(WebProcessProxy* process)
 {
     ASSERT(m_processes.contains(process));
-
-    m_visitedLinkProvider->processDidClose(process);
 
     if (m_haveInitialEmptyProcess && process == m_processes.last())
         m_haveInitialEmptyProcess = false;
@@ -976,13 +973,7 @@ void WebContext::addVisitedLink(const String& visitedURL)
     if (visitedURL.isEmpty())
         return;
 
-    LinkHash linkHash = visitedLinkHash(visitedURL);
-    addVisitedLinkHash(linkHash);
-}
-
-void WebContext::addVisitedLinkHash(LinkHash linkHash)
-{
-    m_visitedLinkProvider->addVisitedLink(linkHash);
+    m_visitedLinkProvider->addVisitedLinkHash(visitedLinkHash(visitedURL));
 }
 
 DownloadProxy* WebContext::createDownloadProxy()

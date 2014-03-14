@@ -26,11 +26,14 @@
 #ifndef VisitedLinkTableController_h
 #define VisitedLinkTableController_h
 
+#include "MessageReceiver.h"
+#include "SharedMemory.h"
+#include "VisitedLinkTable.h"
 #include <WebCore/VisitedLinkStore.h>
 
 namespace WebKit {
 
-class VisitedLinkTableController final : public WebCore::VisitedLinkStore {
+class VisitedLinkTableController final : public WebCore::VisitedLinkStore , private IPC::MessageReceiver {
 public:
     static PassRefPtr<VisitedLinkTableController> getOrCreate(uint64_t identifier);
     virtual ~VisitedLinkTableController();
@@ -38,12 +41,21 @@ public:
 private:
     explicit VisitedLinkTableController(uint64_t identifier);
 
+    // WebCore::VisitedLinkStore.
     virtual bool isLinkVisited(WebCore::Page&, WebCore::LinkHash, const WebCore::URL& baseURL, const AtomicString& attributeURL) override;
     virtual void addVisitedLink(WebCore::Page&, WebCore::LinkHash) override;
 
+    // IPC::MessageReceiver.
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+
+    void setVisitedLinkTable(const SharedMemory::Handle&);
+    void visitedLinkStateChanged(const Vector<WebCore::LinkHash>&);
+    void allVisitedLinkStateChanged();
+
     uint64_t m_identifier;
+    VisitedLinkTable m_visitedLinkTable;
 };
 
-} // namepsace WebKit
+} // namespace WebKit
 
 #endif // VisitedLinkTableController_h

@@ -198,7 +198,6 @@ public:
 #endif
 
     void addVisitedLink(const String&);
-    void addVisitedLinkHash(WebCore::LinkHash);
 
     // MessageReceiver.
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;

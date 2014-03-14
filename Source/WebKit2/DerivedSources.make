@@ -99,6 +99,8 @@ MESSAGE_RECEIVERS = \
     ViewGestureController \
     ViewGestureGeometryCollector \
     ViewUpdateDispatcher \
+    VisitedLinkProvider \
+    VisitedLinkTableController \
     WebApplicationCacheManager \
     WebApplicationCacheManagerProxy \
     WebConnection \

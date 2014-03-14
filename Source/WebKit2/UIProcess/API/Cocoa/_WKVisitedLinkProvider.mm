@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import "VisitedLinkProvider.h"
+#import <WebCore/LinkHash.h>
 
 @implementation _WKVisitedLinkProvider
 
@@ -40,6 +41,13 @@
     _visitedLinkProvider = WebKit::VisitedLinkProvider::create();
 
     return self;
+}
+
+- (void)addVisitedLinkWithURL:(NSURL *)URL
+{
+    auto linkHash = WebCore::visitedLinkHash(URL.absoluteString);
+
+    _visitedLinkProvider->addVisitedLinkHash(linkHash);
 }
 
 @end

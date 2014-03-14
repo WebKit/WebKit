@@ -500,50 +500,6 @@ PluginProcessConnectionManager& WebProcess::pluginProcessConnectionManager()
 }
 #endif
 
-void WebProcess::setVisitedLinkTable(const SharedMemory::Handle& handle)
-{
-    RefPtr<SharedMemory> sharedMemory = SharedMemory::create(handle, SharedMemory::ReadOnly);
-    if (!sharedMemory)
-        return;
-
-    m_visitedLinkTable.setSharedMemory(sharedMemory.release());
-}
-
-void WebProcess::visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHashes)
-{
-    // FIXME: We may want to track visited links per WebPageGroup rather than per WebContext.
-    for (const auto& webPage : m_pageMap.values()) {
-        if (Page* page = webPage->corePage()) {
-            for (auto& linkHash : linkHashes)
-                page->invalidateStylesForLink(linkHash);
-        }
-    }
-
-    pageCache()->markPagesForVistedLinkStyleRecalc();
-}
-
-void WebProcess::allVisitedLinkStateChanged()
-{
-    for (const auto& webPage : m_pageMap.values()) {
-        if (Page* page = webPage->corePage())
-            page->invalidateStylesForAllLinks();
-    }
-
-    pageCache()->markPagesForVistedLinkStyleRecalc();
-}
-
-bool WebProcess::isLinkVisited(LinkHash linkHash) const
-{
-    return m_visitedLinkTable.isLinkVisited(linkHash);
-}
-
-void WebProcess::addVisitedLink(WebCore::LinkHash linkHash)
-{
-    if (isLinkVisited(linkHash) || !m_shouldTrackVisitedLinks)
-        return;
-    parentProcessConnection()->send(Messages::WebContext::AddVisitedLinkHash(linkHash), 0);
-}
-
 void WebProcess::setCacheModel(uint32_t cm)
 {
     CacheModel cacheModel = static_cast<CacheModel>(cm);

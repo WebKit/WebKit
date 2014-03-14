@@ -54,6 +54,7 @@
 
     configuration.processPool = _processPool.get();
     configuration.preferences = _preferences.get();
+    configuration._visitedLinkProvider = _visitedLinkProvider.get();
     configuration._relatedWebView = _relatedWebView.get().get();
 #if PLATFORM(IOS)
     configuration._contentProviderRegistry = _contentProviderRegistry.get();

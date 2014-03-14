@@ -36,7 +36,6 @@
 #include "TextCheckerState.h"
 #include "ViewUpdateDispatcher.h"
 #include "VisitedLinkTable.h"
-#include <WebCore/LinkHash.h>
 #include <WebCore/SessionID.h>
 #include <WebCore/Timer.h>
 #include <wtf/Forward.h>
@@ -115,10 +114,9 @@ public:
 #if PLATFORM(COCOA)
     mach_port_t compositingRenderServerPort() const { return m_compositingRenderServerPort; }
 #endif
-    
+
+    bool shouldTrackVisitedLinks() const { return m_shouldTrackVisitedLinks; }
     void setShouldTrackVisitedLinks(bool);
-    void addVisitedLink(WebCore::LinkHash);
-    bool isLinkVisited(WebCore::LinkHash) const;
 
     bool shouldPlugInAutoStartFromOrigin(const WebPage*, const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
     void plugInDidStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
@@ -214,10 +212,6 @@ private:
     void userPreferredLanguagesChanged(const Vector<String>&) const;
     void fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled);
 
-    void setVisitedLinkTable(const SharedMemory::Handle&);
-    void visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHashes);
-    void allVisitedLinkStateChanged();
-
     bool isPlugInAutoStartOriginHash(unsigned plugInOriginHash);
     void didAddPlugInAutoStartOriginHash(unsigned plugInOriginHash, double expirationTime);
     void resetPlugInAutoStartOriginHashes(const HashMap<unsigned, double>& hashes);
@@ -287,8 +281,7 @@ private:
 
     bool m_inDidClose;
 
-    // FIXME: The visited link table should not be per process.
-    VisitedLinkTable m_visitedLinkTable;
+    // FIXME: Whether visited links should be tracked or not should be handled in the UI process.
     bool m_shouldTrackVisitedLinks;
 
     HashMap<unsigned, double> m_plugInAutoStartOriginHashes;

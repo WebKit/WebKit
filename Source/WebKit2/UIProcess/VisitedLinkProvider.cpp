@@ -27,7 +27,9 @@
 #include "VisitedLinkProvider.h"
 
 #include "SharedMemory.h"
+#include "VisitedLinkProviderMessages.h"
 #include "VisitedLinkTable.h"
+#include "VisitedLinkTableControllerMessages.h"
 #include "WebContext.h"
 #include "WebProcessMessages.h"
 
@@ -35,7 +37,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static const int VisitedLinkTableMaxLoad = 2;
+static const int visitedLinkTableMaxLoad = 2;
 
 static uint64_t generateIdentifier()
 {
@@ -66,36 +68,33 @@ void VisitedLinkProvider::addProcess(WebProcessProxy& process)
 {
     ASSERT(process.state() == WebProcessProxy::State::Running);
 
-    m_processes.add(&process);
+    if (!m_processes.add(&process).isNewEntry)
+        return;
+
+    process.addMessageReceiver(Messages::VisitedLinkProvider::messageReceiverName(), m_identifier, *this);
+
+    if (!m_keyCount)
+        return;
+
+    ASSERT(m_table.sharedMemory());
+
+    sendTable(process);
 }
 
 void VisitedLinkProvider::removeProcess(WebProcessProxy& process)
 {
     ASSERT(m_processes.contains(&process));
 
-    m_processes.remove(&process);
+    if (m_processes.remove(&process))
+        process.removeMessageReceiver(Messages::VisitedLinkProvider::messageReceiverName(), m_identifier);
 }
 
-void VisitedLinkProvider::processDidFinishLaunching(WebProcessProxy* process)
-{
-    m_processesWithoutVisitedLinkState.add(process);
-
-    if (m_keyCount)
-        m_pendingVisitedLinksTimer.startOneShot(0);
-}
-
-void VisitedLinkProvider::addVisitedLink(LinkHash linkHash)
+void VisitedLinkProvider::addVisitedLinkHash(LinkHash linkHash)
 {
     m_pendingVisitedLinks.add(linkHash);
 
     if (!m_pendingVisitedLinksTimer.isActive())
         m_pendingVisitedLinksTimer.startOneShot(0);
-}
-
-void VisitedLinkProvider::processDidClose(WebProcessProxy* process)
-{
-    m_processesWithVisitedLinkState.remove(process);
-    m_processesWithoutVisitedLinkState.remove(process);
 }
 
 static unsigned nextPowerOf2(unsigned v)
@@ -117,7 +116,7 @@ static unsigned nextPowerOf2(unsigned v)
 static unsigned tableSizeForKeyCount(unsigned keyCount)
 {
     // We want the table to be at least half empty.
-    unsigned tableSize = nextPowerOf2(keyCount * VisitedLinkTableMaxLoad);
+    unsigned tableSize = nextPowerOf2(keyCount * visitedLinkTableMaxLoad);
 
     // Ensure that the table size is at least the size of a page.
     size_t minimumTableSize = SharedMemory::systemPageSize() / sizeof(LinkHash);
@@ -129,94 +128,90 @@ static unsigned tableSizeForKeyCount(unsigned keyCount)
 
 void VisitedLinkProvider::pendingVisitedLinksTimerFired()
 {
-    Vector<WebCore::LinkHash> pendingVisitedLinks;
-    copyToVector(m_pendingVisitedLinks, pendingVisitedLinks);
-    m_pendingVisitedLinks.clear();
-
     unsigned currentTableSize = m_tableSize;
+    unsigned newTableSize = tableSizeForKeyCount(m_keyCount + m_pendingVisitedLinks.size());
 
-    // Upper bound on needed size - some of the links may be duplicates, in which case we could have done with less.
-    unsigned newTableSize = tableSizeForKeyCount(m_keyCount + pendingVisitedLinks.size());
-
-    // Never decrease table size when adding to it, to avoid unneeded churn.
     newTableSize = std::max(currentTableSize, newTableSize);
 
-    // Links that were added.
+    if (currentTableSize != newTableSize) {
+        resizeTable(newTableSize);
+        return;
+    }
+
     Vector<WebCore::LinkHash> addedVisitedLinks;
 
-    // VisitedLinkTable remains internally consistent when adding, so it's OK to modify it in place
-    // even if a web process is accessing it at the same time.
-    if (currentTableSize != newTableSize) {
-        RefPtr<SharedMemory> newTableMemory = SharedMemory::create(newTableSize * sizeof(LinkHash));
-
-        // We failed to create the shared memory.
-        if (!newTableMemory) {
-            LOG_ERROR("Could not allocate shared memory for visited link table");
-            return;
-        }
-
-        memset(newTableMemory->data(), 0, newTableMemory->size());
-
-        RefPtr<SharedMemory> currentTableMemory = m_table.sharedMemory();
-
-        m_table.setSharedMemory(newTableMemory);
-        m_tableSize = newTableSize;
-
-        if (currentTableMemory) {
-            ASSERT(currentTableMemory->size() == currentTableSize * sizeof(LinkHash));
-
-            // Go through the current hash table and re-add all entries to the new hash table.
-            const LinkHash* currentLinkHashes = static_cast<const LinkHash*>(currentTableMemory->data());
-            for (unsigned i = 0; i < currentTableSize; ++i) {
-                LinkHash linkHash = currentLinkHashes[i];
-                
-                if (!linkHash)
-                    continue;
-
-                // It should always be possible to add the link hash to a new table.
-                if (!m_table.addLinkHash(linkHash))
-                    ASSERT_NOT_REACHED();
-            }
+    for (auto linkHash : m_pendingVisitedLinks) {
+        if (m_table.addLinkHash(linkHash)) {
+            addedVisitedLinks.append(linkHash);
+            m_keyCount++;
         }
     }
 
-    for (size_t i = 0; i < pendingVisitedLinks.size(); ++i) {
-        if (m_table.addLinkHash(pendingVisitedLinks[i]))
-            addedVisitedLinks.append(pendingVisitedLinks[i]);
-    }
+    m_pendingVisitedLinks.clear();
 
-    m_keyCount += pendingVisitedLinks.size();
+    if (addedVisitedLinks.isEmpty())
+        return;
 
-
-    for (HashSet<WebProcessProxy*>::iterator iter = m_processesWithVisitedLinkState.begin(); iter != m_processesWithVisitedLinkState.end(); ++iter) {
-        WebProcessProxy* process = *iter;
-        if (currentTableSize != newTableSize) {
-            // In the rare case of needing to resize the table, we'll bypass the VisitedLinkStateChanged optimization,
-            // and unconditionally use AllVisitedLinkStateChanged for the process.
-            m_processesWithoutVisitedLinkState.add(process);
-            continue;
-        }
-
-        if (addedVisitedLinks.size() <= 20)
-            process->send(Messages::WebProcess::VisitedLinkStateChanged(addedVisitedLinks), 0);
+    for (auto& processAndCount : m_processes) {
+        if (addedVisitedLinks.size() > 20)
+            processAndCount.key->connection()->send(Messages::VisitedLinkTableController::AllVisitedLinkStateChanged(), m_identifier);
         else
-            process->send(Messages::WebProcess::AllVisitedLinkStateChanged(), 0);
+            processAndCount.key->connection()->send(Messages::VisitedLinkTableController::VisitedLinkStateChanged(addedVisitedLinks), m_identifier);
+    }
+}
+
+void VisitedLinkProvider::resizeTable(unsigned newTableSize)
+{
+    RefPtr<SharedMemory> newTableMemory = SharedMemory::create(newTableSize * sizeof(LinkHash));
+
+    if (!newTableMemory) {
+        LOG_ERROR("Could not allocate shared memory for visited link table");
+        return;
     }
 
-    for (HashSet<WebProcessProxy*>::iterator iter = m_processesWithoutVisitedLinkState.begin(); iter != m_processesWithoutVisitedLinkState.end(); ++iter) {
-        WebProcessProxy* process = *iter;
+    memset(newTableMemory->data(), 0, newTableMemory->size());
 
-        SharedMemory::Handle handle;
-        if (!m_table.sharedMemory()->createHandle(handle, SharedMemory::ReadOnly))
-            return;
+    RefPtr<SharedMemory> currentTableMemory = m_table.sharedMemory();
+    unsigned currentTableSize = m_tableSize;
 
-        process->send(Messages::WebProcess::SetVisitedLinkTable(handle), 0);
-        process->send(Messages::WebProcess::AllVisitedLinkStateChanged(), 0);
+    m_table.setSharedMemory(newTableMemory);
+    m_tableSize = newTableSize;
 
-        m_processesWithVisitedLinkState.add(process);
+    if (currentTableMemory) {
+        ASSERT_UNUSED(currentTableSize, currentTableMemory->size() == currentTableSize * sizeof(LinkHash));
+
+        // Go through the current hash table and re-add all entries to the new hash table.
+        const LinkHash* currentLinkHashes = static_cast<const LinkHash*>(currentTableMemory->data());
+        for (unsigned i = 0; i < m_tableSize; ++i) {
+            LinkHash linkHash = currentLinkHashes[i];
+
+            if (!linkHash)
+                continue;
+
+            bool didAddLinkHash = m_table.addLinkHash(linkHash);
+
+            // It should always be possible to add the link hash to a new table.
+            ASSERT_UNUSED(didAddLinkHash, didAddLinkHash);
+        }
     }
-    
-    m_processesWithoutVisitedLinkState.clear();
+
+    for (auto linkHash : m_pendingVisitedLinks) {
+        if (m_table.addLinkHash(linkHash))
+            m_keyCount++;
+    }
+    m_pendingVisitedLinks.clear();
+
+    for (auto& processAndCount : m_processes)
+        sendTable(*processAndCount.key);
+}
+
+void VisitedLinkProvider::sendTable(WebProcessProxy& process)
+{
+    SharedMemory::Handle handle;
+    if (!m_table.sharedMemory()->createHandle(handle, SharedMemory::ReadOnly))
+        return;
+
+    process.connection()->send(Messages::VisitedLinkTableController::SetVisitedLinkTable(handle), m_identifier);
 }
 
 } // namespace WebKit

@@ -27,11 +27,6 @@ messages -> WebProcess LegacyReceiver {
     # Create a new page.
     CreateWebPage(uint64_t newPageID, WebKit::WebPageCreationParameters pageCreationParameters)
 
-    # Visited link tracking.
-    SetVisitedLinkTable(WebKit::SharedMemory::Handle handle)
-    VisitedLinkStateChanged(Vector<WebCore::LinkHash> linkHashes)
-    AllVisitedLinkStateChanged()
-
     # Global preferences.
     SetShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
     SetCacheModel(uint32_t cacheModel)

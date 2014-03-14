@@ -26,7 +26,10 @@
 #include "config.h"
 #include "VisitedLinkTableController.h"
 
+#include "VisitedLinkProviderMessages.h"
+#include "VisitedLinkTableControllerMessages.h"
 #include "WebProcess.h"
+#include <WebCore/PageCache.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
@@ -55,23 +58,57 @@ PassRefPtr<VisitedLinkTableController> VisitedLinkTableController::getOrCreate(u
 VisitedLinkTableController::VisitedLinkTableController(uint64_t identifier)
     : m_identifier(identifier)
 {
+    WebProcess::shared().addMessageReceiver(Messages::VisitedLinkTableController::messageReceiverName(), m_identifier, *this);
 }
 
 VisitedLinkTableController::~VisitedLinkTableController()
 {
     ASSERT(visitedLinkTableControllers().contains(m_identifier));
 
+    WebProcess::shared().removeMessageReceiver(Messages::VisitedLinkTableController::messageReceiverName(), m_identifier);
+
     visitedLinkTableControllers().remove(m_identifier);
 }
 
 bool VisitedLinkTableController::isLinkVisited(Page&, LinkHash linkHash, const URL&, const AtomicString&)
 {
-    return WebProcess::shared().isLinkVisited(linkHash);
+    return m_visitedLinkTable.isLinkVisited(linkHash);
 }
 
 void VisitedLinkTableController::addVisitedLink(Page&, LinkHash linkHash)
 {
-    WebProcess::shared().addVisitedLink(linkHash);
+    if (m_visitedLinkTable.isLinkVisited(linkHash))
+        return;
+
+    if (!WebProcess::shared().shouldTrackVisitedLinks())
+        return;
+
+    WebProcess::shared().parentProcessConnection()->send(Messages::VisitedLinkProvider::AddVisitedLinkHash(linkHash), m_identifier);
+}
+
+void VisitedLinkTableController::setVisitedLinkTable(const SharedMemory::Handle& handle)
+{
+    RefPtr<SharedMemory> sharedMemory = SharedMemory::create(handle, SharedMemory::ReadOnly);
+    if (!sharedMemory)
+        return;
+
+    m_visitedLinkTable.setSharedMemory(sharedMemory.release());
+
+    invalidateStylesForAllLinks();
+    pageCache()->markPagesForVistedLinkStyleRecalc();
+}
+
+void VisitedLinkTableController::visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHashes)
+{
+    for (auto linkHash : linkHashes)
+        invalidateStylesForLink(linkHash);
+    pageCache()->markPagesForVistedLinkStyleRecalc();
+}
+
+void VisitedLinkTableController::allVisitedLinkStateChanged()
+{
+    invalidateStylesForAllLinks();
+    pageCache()->markPagesForVistedLinkStyleRecalc();
 }
 
 } // namespace WebKit

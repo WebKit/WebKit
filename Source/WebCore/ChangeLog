@@ -1,3 +1,15 @@
+2014-03-13  Anders Carlsson  <andersca@apple.com>
+
+        Move visited link handling to VisitedLinkTableController and VisitedLinkProvider
+        https://bugs.webkit.org/show_bug.cgi?id=130223
+        <rdar://problem/16315792>
+
+        Reviewed by Dan Bernstein.
+
+        Export symbols needed by WebKit2.
+
+        * WebCore.exp.in:
+
 2014-03-12  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Fix unused parameter warnings in the GObject WebKitDOM bindings
