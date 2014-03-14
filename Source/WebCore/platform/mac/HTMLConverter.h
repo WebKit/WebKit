@@ -31,6 +31,8 @@ namespace WebCore {
     class Range;
 }
 
+class HTMLConverterCaches;
+
 @interface WebHTMLConverter : NSObject {
     NSMutableAttributedString *_attrStr;
     NSMutableDictionary *_documentAttrs;
@@ -54,7 +56,6 @@ namespace WebCore {
     NSMutableArray *_textTableRows;
     NSMutableArray *_textTableRowArrays;
     NSMutableArray *_textTableRowBackgroundColors;
-    NSMutableDictionary *_computedStylesForElements;
     NSMutableDictionary *_specifiedStylesForElements;
     NSMutableDictionary *_stringsForNodes;
     NSMutableDictionary *_floatsForNodes;
@@ -68,6 +69,8 @@ namespace WebCore {
     NSUInteger _thumbnailLimit;
     NSInteger _errorCode;
     NSInteger _quoteLevel;
+
+    std::unique_ptr<HTMLConverterCaches> _caches;
 
     struct {
         unsigned int isSoft:1;

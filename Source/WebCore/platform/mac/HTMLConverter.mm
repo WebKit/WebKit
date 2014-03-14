@@ -29,12 +29,18 @@
 #import "ArchiveResource.h"
 #import "CachedImage.h"
 #import "ColorMac.h"
+#import "CSSComputedStyleDeclaration.h"
+#import "CSSParser.h"
+#import "CSSPrimitiveValue.h"
 #import "Document.h"
 #import "DocumentLoader.h"
+#import "DOMCSSPrimitiveValueInternal.h"
 #import "DOMDocumentInternal.h"
 #import "DOMElementInternal.h"
 #import "DOMHTMLTableCellElement.h"
+#import "DOMNodeInternal.h"
 #import "DOMPrivate.h"
+#import "DOMRGBColorInternal.h"
 #import "DOMRangeInternal.h"
 #import "Element.h"
 #import "Font.h"
@@ -43,8 +49,11 @@
 #import "HTMLNames.h"
 #import "HTMLParserIdioms.h"
 #import "LoaderNSURLExtras.h"
+#import "RGBColor.h"
 #import "RenderImage.h"
 #import "SoftLinking.h"
+#import "StyleProperties.h"
+#import "StyledElement.h"
 #import "TextIterator.h"
 #import <objc/runtime.h>
 #import <wtf/ASCIICType.h>
@@ -389,6 +398,15 @@ static NSFileWrapper *fileWrapperForElement(Element*);
 // Additional control Unicode characters
 const unichar WebNextLineCharacter = 0x0085;
 
+class HTMLConverterCaches {
+public:
+    PassRefPtr<CSSValue> computedStylePropertyForElement(Element&, String&);
+    PassRefPtr<CSSValue> inlineStylePropertyForElement(Element&, String&);
+
+private:
+    HashMap<Element*, std::unique_ptr<ComputedStyleExtractor>> m_computedStyles;
+};
+
 @interface NSTextList (WebCoreNSTextListDetails)
 + (NSDictionary *)_standardMarkerAttributesForAttributes:(NSDictionary *)attrs;
 @end
@@ -543,82 +561,76 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
     return array;
 }
 
-- (DOMCSSStyleDeclaration *)_computedStyleForElement:(DOMElement *)element
+PassRefPtr<CSSValue> HTMLConverterCaches::computedStylePropertyForElement(Element& element, String& propertyName)
 {
-    DOMDocument *document = [element ownerDocument];
-    DOMCSSStyleDeclaration *result = nil;
-    result = [_computedStylesForElements objectForKey:element];
-    if (result) {
-        if ([result isEqual:[NSNull null]])
-            result = nil;
-    } else {
-        result = [document getComputedStyle:element pseudoElement:@""] ;
-        [_computedStylesForElements setObject:(result ? (id)result : (id)[NSNull null]) forKey:element];
-    }
-    return result;
+    CSSPropertyID propetyId = cssPropertyID(propertyName);
+    if (propetyId == CSSPropertyInvalid)
+        return nullptr;
+
+    auto result = m_computedStyles.add(&element, nullptr);
+    if (result.isNewEntry)
+        result.iterator->value = std::make_unique<ComputedStyleExtractor>(&element, true);
+    ComputedStyleExtractor& computedStyle = *result.iterator->value;
+    return computedStyle.propertyValue(propetyId);
 }
 
-- (DOMCSSStyleDeclaration *)_specifiedStyleForElement:(DOMElement *)element
+PassRefPtr<CSSValue> HTMLConverterCaches::inlineStylePropertyForElement(Element& element, String& propertyName)
 {
-    DOMCSSStyleDeclaration *result = [_specifiedStylesForElements objectForKey:element];
-    if (result) {
-        if ([result isEqual:[NSNull null]])
-            result = nil;
-    } else {
-        result = [element style];
-        [_specifiedStylesForElements setObject:(result ? (id)result : (id)[NSNull null]) forKey:element];
+    CSSPropertyID propetyId = cssPropertyID(propertyName);
+    if (propetyId == CSSPropertyInvalid || !element.isStyledElement())
+        return nullptr;
+    const StyleProperties* properties = toStyledElement(element).inlineStyle();
+    if (!properties)
+        return nullptr;
+    return properties->getPropertyCSSValue(propetyId);
+}
+
+static bool stringFromCSSValue(CSSValue& value, String& result)
+{
+    if (value.isPrimitiveValue()) {
+        unsigned short primitiveType = toCSSPrimitiveValue(value).primitiveType();
+        if (primitiveType == CSSPrimitiveValue::CSS_STRING || primitiveType == CSSPrimitiveValue::CSS_URI ||
+            primitiveType == CSSPrimitiveValue::CSS_IDENT || primitiveType == CSSPrimitiveValue::CSS_ATTR) {
+            String stringValue = value.cssText();
+            if (stringValue.length()) {
+                result = stringValue;
+                return true;
+            }
+        }
+    } else if (value.isValueList()) {
+        result = value.cssText();
+        return true;
     }
-    return result;
+    return false;
 }
 
 - (NSString *)_computedStringForNode:(DOMNode *)node property:(NSString *)key
 {
-    NSString *result = nil;
-    BOOL inherit = YES;
-    DOMElement *element = (DOMElement *)node;    
-    if (element && [element nodeType] == DOM_ELEMENT_NODE) {
-        DOMCSSStyleDeclaration *computedStyle;
-        DOMCSSStyleDeclaration *specifiedStyle;
-        inherit = NO;
-        if (!result && (computedStyle = [self _computedStyleForElement:element])) {
-            DOMCSSPrimitiveValue *computedValue = (DOMCSSPrimitiveValue *)[computedStyle getPropertyCSSValue:key];
-            if (computedValue) {
-                unsigned short valueType = [computedValue cssValueType];
-                if (valueType == DOM_CSS_PRIMITIVE_VALUE) {
-                    unsigned short primitiveType = [computedValue primitiveType];
-                    if (primitiveType == DOM_CSS_STRING || primitiveType == DOM_CSS_URI || primitiveType == DOM_CSS_IDENT || primitiveType == DOM_CSS_ATTR) {
-                        result = [computedValue getStringValue];
-                        if (result && ![result length])
-                            result = nil;
-                    }
-                } else if (valueType == DOM_CSS_VALUE_LIST)
-                    result = [computedStyle getPropertyValue:key];
+    bool haveResult = false;
+    String result;
+    bool inherit = true;
+    Node* coreNode = core(node);
+    if (coreNode && coreNode->isElementNode()) {
+        Element& element = toElement(*coreNode);
+        String propertyName = key;
+        inherit = false;
+        if (!haveResult) {
+            if (RefPtr<CSSValue> value = _caches->computedStylePropertyForElement(element, propertyName))
+                haveResult = stringFromCSSValue(*value, result);
+        }
+        if (!haveResult) {
+            if (RefPtr<CSSValue> value = _caches->computedStylePropertyForElement(element, propertyName)) {
+                if (value->isInheritedValue())
+                    inherit = true;
+                else
+                    haveResult = stringFromCSSValue(*value, result);
             }
         }
-        if (!result && (specifiedStyle = [self _specifiedStyleForElement:element])) {
-            DOMCSSPrimitiveValue *specifiedValue = (DOMCSSPrimitiveValue *)[specifiedStyle getPropertyCSSValue:key];
-            if (specifiedValue) {
-                unsigned short valueType = [specifiedValue cssValueType];
-                if (valueType == DOM_CSS_PRIMITIVE_VALUE) {
-                    unsigned short primitiveType = [specifiedValue primitiveType];
-                    if (primitiveType == DOM_CSS_STRING || primitiveType == DOM_CSS_URI || primitiveType == DOM_CSS_IDENT || primitiveType == DOM_CSS_ATTR) {
-                        result = [specifiedValue getStringValue];
-                        if (result && ![result length])
-                            result = nil;
-                        if (!result)
-                            result = [specifiedStyle getPropertyValue:key];
-                    }
-                } else if (valueType == DOM_CSS_INHERIT)
-                    inherit = YES;
-                else if (valueType == DOM_CSS_VALUE_LIST)
-                    result = [specifiedStyle getPropertyValue:key];
-            }
-        }
-        if (!result) {
-            Element* coreElement = core(element);
+        Element* coreElement = &element;
+        if (!haveResult) {
             if ([@"display" isEqualToString:key]) {
                 if (coreElement->hasTagName(headTag) || coreElement->hasTagName(scriptTag) || coreElement->hasTagName(appletTag) || coreElement->hasTagName(noframesTag))
-                    result = @"none";
+                    result = "none";
                 else if (coreElement->hasTagName(addressTag) || coreElement->hasTagName(blockquoteTag) || coreElement->hasTagName(bodyTag) || coreElement->hasTagName(centerTag)
                          || coreElement->hasTagName(ddTag) || coreElement->hasTagName(dirTag) || coreElement->hasTagName(divTag) || coreElement->hasTagName(dlTag)
                          || coreElement->hasTagName(dtTag) || coreElement->hasTagName(fieldsetTag) || coreElement->hasTagName(formTag) || coreElement->hasTagName(frameTag)
@@ -626,61 +638,61 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
                          || coreElement->hasTagName(h2Tag) || coreElement->hasTagName(h3Tag) || coreElement->hasTagName(h4Tag) || coreElement->hasTagName(h5Tag)
                          || coreElement->hasTagName(h6Tag) || coreElement->hasTagName(iframeTag) || coreElement->hasTagName(menuTag) || coreElement->hasTagName(noscriptTag)
                          || coreElement->hasTagName(olTag) || coreElement->hasTagName(pTag) || coreElement->hasTagName(preTag) || coreElement->hasTagName(ulTag))
-                    result = @"block";
+                    result = "block";
                 else if (coreElement->hasTagName(liTag))
-                    result = @"list-item";
+                    result = "list-item";
                 else if (coreElement->hasTagName(tableTag))
-                    result = @"table";
+                    result = "table";
                 else if (coreElement->hasTagName(trTag))
-                    result = @"table-row";
+                    result = "table-row";
                 else if (coreElement->hasTagName(thTag) || coreElement->hasTagName(tdTag))
-                    result = @"table-cell";
+                    result = "table-cell";
                 else if (coreElement->hasTagName(theadTag))
-                    result = @"table-header-group";
+                    result = "table-header-group";
                 else if (coreElement->hasTagName(tbodyTag))
-                    result = @"table-row-group";
+                    result = "table-row-group";
                 else if (coreElement->hasTagName(tfootTag))
-                    result = @"table-footer-group";
+                    result = "table-footer-group";
                 else if (coreElement->hasTagName(colTag))
-                    result = @"table-column";
+                    result = "table-column";
                 else if (coreElement->hasTagName(colgroupTag))
-                    result = @"table-column-group";
+                    result = "table-column-group";
                 else if (coreElement->hasTagName(captionTag))
-                    result = @"table-caption";
+                    result = "table-caption";
             } else if ([@"white-space" isEqualToString:key]) {
                 if (coreElement->hasTagName(preTag))
-                    result = @"pre";
+                    result = "pre";
                 else
                     inherit = YES;
             } else if ([@"font-style" isEqualToString:key]) {
                 if (coreElement->hasTagName(iTag) || coreElement->hasTagName(citeTag) || coreElement->hasTagName(emTag) || coreElement->hasTagName(varTag) || coreElement->hasTagName(addressTag))
-                    result = @"italic";
+                    result = "italic";
                 else
                     inherit = YES;
             } else if ([@"font-weight" isEqualToString:key]) {
                 if (coreElement->hasTagName(bTag) || coreElement->hasTagName(strongTag) || coreElement->hasTagName(thTag))
-                    result = @"bolder";
+                    result = "bolder";
                 else
                     inherit = YES;
             } else if ([@"text-decoration" isEqualToString:key]) {
                 if (coreElement->hasTagName(uTag) || coreElement->hasTagName(insTag))
-                    result = @"underline";
+                    result = "underline";
                 else if (coreElement->hasTagName(sTag) || coreElement->hasTagName(strikeTag) || coreElement->hasTagName(delTag))
-                    result = @"line-through";
+                    result = "line-through";
                 else
                     inherit = YES; // ??? this is not strictly correct
             } else if ([@"text-align" isEqualToString:key]) {
                 if (coreElement->hasTagName(centerTag) || coreElement->hasTagName(captionTag) || coreElement->hasTagName(thTag))
-                    result = @"center";
+                    result = "center";
                 else
                     inherit = YES;
             } else if ([@"vertical-align" isEqualToString:key]) {
                 if (coreElement->hasTagName(supTag))
-                    result = @"super";
+                    result = "super";
                 else if (coreElement->hasTagName(subTag))
-                    result = @"sub";
+                    result = "sub";
                 else if (coreElement->hasTagName(theadTag) || coreElement->hasTagName(tbodyTag) || coreElement->hasTagName(tfootTag))
-                    result = @"middle";
+                    result = "middle";
                 else if (coreElement->hasTagName(trTag) || coreElement->hasTagName(thTag) || coreElement->hasTagName(tdTag))
                     inherit = YES;
             } else if ([@"font-family" isEqualToString:key] || [@"font-variant" isEqualToString:key] || [@"font-effect" isEqualToString:key]
@@ -691,12 +703,14 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
             }
         }
     }
-    if (!result && inherit) {
+    if (!haveResult && inherit) {
         DOMNode *parentNode = [node parentNode];
         if (parentNode)
-            result = [self _stringForNode:parentNode property:key];
+            return [self _stringForNode:parentNode property:key];
     }
-    return result ? [result lowercaseString] : nil;
+    if (haveResult)
+        return result.lower();
+    return nil;
 }
 
 - (NSString *)_stringForNode:(DOMNode *)node property:(NSString *)key
@@ -718,72 +732,82 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
     return result;
 }
 
+static inline bool floatValueFromPrimitiveValue(CSSPrimitiveValue& primitiveValue, float& result)
+{
+    // FIXME: Use CSSPrimitiveValue::computeValue.
+    switch (primitiveValue.primitiveType()) {
+    case CSSPrimitiveValue::CSS_PX:
+        result = primitiveValue.getFloatValue(CSSPrimitiveValue::CSS_PX);
+        return true;
+    case CSSPrimitiveValue::CSS_PT:
+        result = 4 * primitiveValue.getFloatValue(CSSPrimitiveValue::CSS_PT) / 3;
+        return true;
+    case CSSPrimitiveValue::CSS_PC:
+        result = 16 * primitiveValue.getFloatValue(CSSPrimitiveValue::CSS_PC);
+        return true;
+    case CSSPrimitiveValue::CSS_CM:
+        result = 96 * primitiveValue.getFloatValue(CSSPrimitiveValue::CSS_PC) / 2.54;
+        return true;
+    case CSSPrimitiveValue::CSS_MM:
+        result = 96 * primitiveValue.getFloatValue(CSSPrimitiveValue::CSS_PC) / 25.4;
+        return true;
+    case CSSPrimitiveValue::CSS_IN:
+        result = 96 * primitiveValue.getFloatValue(CSSPrimitiveValue::CSS_IN);
+        return true;
+    default:
+        return false;
+    }
+}
+
 static inline BOOL _getFloat(DOMCSSPrimitiveValue *primitiveValue, CGFloat *val)
 {
     if (!val)
         return NO;
-    switch ([primitiveValue primitiveType]) {
-        case DOM_CSS_PX:
-            *val = [primitiveValue getFloatValue:DOM_CSS_PX];
-            return YES;
-        case DOM_CSS_PT:
-            *val = 4 * [primitiveValue getFloatValue:DOM_CSS_PT] / 3;
-            return YES;
-        case DOM_CSS_PC:
-            *val = 16 * [primitiveValue getFloatValue:DOM_CSS_PC];
-            return YES;
-        case DOM_CSS_CM:
-            *val = 96 * [primitiveValue getFloatValue:DOM_CSS_CM] / (CGFloat)2.54;
-            return YES;
-        case DOM_CSS_MM:
-            *val = 96 * [primitiveValue getFloatValue:DOM_CSS_MM] / (CGFloat)25.4;
-            return YES;
-        case DOM_CSS_IN:
-            *val = 96 * [primitiveValue getFloatValue:DOM_CSS_IN];
-            return YES;
-        default:
-            return NO;
-    }
+    float result;
+    bool haveResult = floatValueFromPrimitiveValue(*core(primitiveValue), result);
+    if (haveResult && val)
+        *val = result;
+    return haveResult;
 }
 
 - (BOOL)_getComputedFloat:(CGFloat *)val forNode:(DOMNode *)node property:(NSString *)key
 {
-    BOOL result = NO;
-    BOOL inherit = YES;
-    CGFloat floatVal = 0;
-    DOMElement *element = (DOMElement *)node;    
-    if (element && [element nodeType] == DOM_ELEMENT_NODE) {
-        DOMCSSStyleDeclaration *computedStyle, *specifiedStyle;
-        inherit = NO;
-        if (!result && (computedStyle = [self _computedStyleForElement:element])) {
-            DOMCSSPrimitiveValue *computedValue = (DOMCSSPrimitiveValue *)[computedStyle getPropertyCSSValue:key];
-            if (computedValue && [computedValue cssValueType] == DOM_CSS_PRIMITIVE_VALUE)
-                result = _getFloat(computedValue, &floatVal);
-        }
-        if (!result && (specifiedStyle = [self _specifiedStyleForElement:element])) {
-            DOMCSSPrimitiveValue *specifiedValue = (DOMCSSPrimitiveValue *)[specifiedStyle getPropertyCSSValue:key];
-            if (specifiedValue) {
-                unsigned short valueType = [specifiedValue cssValueType];
-                if (valueType == DOM_CSS_PRIMITIVE_VALUE)
-                    result = _getFloat(specifiedValue, &floatVal);
-                else if (valueType == DOM_CSS_INHERIT)
-                    inherit = YES;
+    bool haveResult = false;
+    bool inherit = true;
+    float floatVal = 0;
+    Node* coreNode = core(node);
+    if (coreNode && coreNode->isElementNode()) {
+        Element& element = toElement(*coreNode);
+        String propertyName = key;
+        inherit = false;
+        if (!haveResult) {
+            if (RefPtr<CSSValue> value = _caches->computedStylePropertyForElement(element, propertyName)) {
+                if (value->isPrimitiveValue())
+                    haveResult = floatValueFromPrimitiveValue(toCSSPrimitiveValue(*value), floatVal);
             }
         }
-        if (!result) {
+        if (!haveResult) {
+            if (RefPtr<CSSValue> value = _caches->inlineStylePropertyForElement(element, propertyName)) {
+                if (value->isInheritedValue())
+                    inherit = true;
+                else if (value->isPrimitiveValue())
+                    haveResult = floatValueFromPrimitiveValue(toCSSPrimitiveValue(*value), floatVal);
+            }
+        }
+        if (!haveResult) {
             if ([@"text-indent" isEqualToString:key] || [@"letter-spacing" isEqualToString:key] || [@"word-spacing" isEqualToString:key]
                 || [@"line-height" isEqualToString:key] || [@"widows" isEqualToString:key] || [@"orphans" isEqualToString:key])
-                inherit = YES;
+                inherit = true;
         }
     }
-    if (!result && inherit) {
+    if (!haveResult && inherit) {
         DOMNode *parentNode = [node parentNode];
         if (parentNode)
-            result = [self _getFloat:&floatVal forNode:parentNode property:key];
+            return [self _getFloat:val forNode:parentNode property:key];
     }
-    if (result && val)
+    if (haveResult && val)
         *val = floatVal;
-    return result;
+    return haveResult;
 }
 
 - (BOOL)_getFloat:(CGFloat *)val forNode:(DOMNode *)node property:(NSString *)key
@@ -967,41 +991,43 @@ static inline NSShadow *_shadowForShadowStyle(NSString *shadowStyle)
 - (PlatformColor *)_computedColorForNode:(DOMNode *)node property:(NSString *)key
 {
     PlatformColor *result = nil;
-    BOOL inherit = YES;
-    BOOL haveResult = NO;
+    bool inherit = true;
+    bool haveResult = false;
     BOOL isColor = [@"color" isEqualToString:key];
     BOOL isBackgroundColor = [@"background-color" isEqualToString:key];
-    DOMElement *element = (DOMElement *)node;    
-    if (element && [element nodeType] == DOM_ELEMENT_NODE) {
-        DOMCSSStyleDeclaration *computedStyle, *specifiedStyle;
-        inherit = NO;
-        if (!haveResult && (computedStyle = [self _computedStyleForElement:element])) {
-            DOMCSSPrimitiveValue *computedValue = (DOMCSSPrimitiveValue *)[computedStyle getPropertyCSSValue:key];
-            if (computedValue && [computedValue cssValueType] == DOM_CSS_PRIMITIVE_VALUE && [computedValue primitiveType] == DOM_CSS_RGBCOLOR) {
-                result = _colorForRGBColor([computedValue getRGBColorValue], isColor);
-                haveResult = YES;
+    Node* coreNode = core(node);
+    if (coreNode && coreNode->isElementNode()) {
+        Element& element = toElement(*coreNode);
+        String propertyName = key;
+        inherit = false;
+        if (!haveResult) {
+            if (RefPtr<CSSValue> value = _caches->computedStylePropertyForElement(element, propertyName)) {
+                if (value->isPrimitiveValue() && toCSSPrimitiveValue(*value).isRGBColor()) {
+                    RefPtr<WebCore::RGBColor> color = toCSSPrimitiveValue(*value).getRGBColorValue(ASSERT_NO_EXCEPTION);
+                    result = _colorForRGBColor(kit(color.get()), isColor);
+                    haveResult = true;
+                }
             }
         }
-        if (!haveResult && (specifiedStyle = [self _specifiedStyleForElement:element])) {
-            DOMCSSPrimitiveValue *specifiedValue = (DOMCSSPrimitiveValue *)[specifiedStyle getPropertyCSSValue:key];
-            if (specifiedValue) {
-                unsigned short valueType = [specifiedValue cssValueType];
-                if (valueType == DOM_CSS_PRIMITIVE_VALUE && [specifiedValue primitiveType] == DOM_CSS_RGBCOLOR) {
-                    result = _colorForRGBColor([specifiedValue getRGBColorValue], isColor);
-                    haveResult = YES;
-                } else if (valueType == DOM_CSS_INHERIT)
-                    inherit = YES;
+        if (!haveResult) {
+            if (RefPtr<CSSValue> value = _caches->inlineStylePropertyForElement(element, propertyName)) {
+                if (value->isPrimitiveValue() && toCSSPrimitiveValue(*value).isRGBColor()) {
+                    RefPtr<WebCore::RGBColor> color = toCSSPrimitiveValue(*value).getRGBColorValue(ASSERT_NO_EXCEPTION);
+                    result = _colorForRGBColor(kit(color.get()), isColor);
+                    haveResult = true;
+                } else if (value->isInheritedValue())
+                    inherit = true;
             }
         }
         if (!result) {
-            if ((isColor && !haveResult) || (isBackgroundColor && ![self _elementHasOwnBackgroundColor:element]))
-                inherit = YES;
+            if ((isColor && !haveResult) || (isBackgroundColor && ![self _elementHasOwnBackgroundColor:static_cast<DOMElement*>(node)]))
+                inherit = true;
         }
     }
     if (!result && inherit) {
         DOMNode *parentNode = [node parentNode];
         if (parentNode && !(isBackgroundColor && [parentNode nodeType] == DOM_ELEMENT_NODE && [self _elementHasOwnBackgroundColor:(DOMElement *)parentNode]))
-            result = [self _colorForNode:parentNode property:key];
+            return [self _colorForNode:parentNode property:key];
     }
     return result;
 }
@@ -2404,7 +2430,6 @@ static NSInteger _colCompare(id block1, id block2, void *)
     [_textTableRows release];
     [_textTableRowArrays release];
     [_textTableRowBackgroundColors release];
-    [_computedStylesForElements release];
     [_specifiedStylesForElements release];
     [_stringsForNodes release];
     [_floatsForNodes release];
@@ -2434,7 +2459,6 @@ static NSInteger _colCompare(id block1, id block2, void *)
     _textTableRows = [[NSMutableArray alloc] init];
     _textTableRowArrays = [[NSMutableArray alloc] init];
     _textTableRowBackgroundColors = [[NSMutableArray alloc] init];
-    _computedStylesForElements = [[NSMutableDictionary alloc] init];
     _specifiedStylesForElements = [[NSMutableDictionary alloc] init];
     _stringsForNodes = [[NSMutableDictionary alloc] init];
     _floatsForNodes = [[NSMutableDictionary alloc] init];
@@ -2452,6 +2476,8 @@ static NSInteger _colCompare(id block1, id block2, void *)
     _errorCode = -1;
     _indexingLimit = 0;
     _thumbnailLimit = 0;
+    
+    _caches = std::make_unique<HTMLConverterCaches>();
 
     _flags.isIndexing = (_indexingLimit > 0);
     _flags.isTesting = 0;
