@@ -831,6 +831,16 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     _page->setApplicationNameForUserAgent(applicationNameForUserAgent);
 }
 
+- (NSString *)_customUserAgent
+{
+    return _page->customUserAgent();
+}
+
+- (void)_setCustomUserAgent:(NSString *)_customUserAgent
+{
+    _page->setCustomUserAgent(_customUserAgent);
+}
+
 - (pid_t)_webProcessIdentifier
 {
     return _page->processIdentifier();

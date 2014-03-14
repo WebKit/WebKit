@@ -55,6 +55,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
 @property (nonatomic, readonly) NSURL *_committedURL;
 
 @property (copy, setter=_setApplicationNameForUserAgent:) NSString *_applicationNameForUserAgent;
+@property (copy, setter=_setCustomUserAgent:) NSString *_customUserAgent;
 
 @property (nonatomic, readonly) pid_t _webProcessIdentifier;
 
