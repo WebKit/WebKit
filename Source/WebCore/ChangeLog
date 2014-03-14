@@ -1,3 +1,18 @@
+2014-03-14  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] the "grid-template-areas" is not identified as computable property.
+        https://bugs.webkit.org/show_bug.cgi?id=130073
+
+        Reviewed by Sergio Villar Senin.
+
+        The "grid-template-areas" property is a computable CSS property, so it should be
+        handled accordingly by the Web Inspector.
+
+        No new tests.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        CSSPropertyWebkitGridTemplateAreas added to the computedProperties array.
+
 2014-03-14  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid layout] Initial position in span not correctly computed sometimes

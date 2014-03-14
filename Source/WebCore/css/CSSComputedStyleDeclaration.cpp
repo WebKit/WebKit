@@ -288,6 +288,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitGridAutoRows,
     CSSPropertyWebkitGridColumnEnd,
     CSSPropertyWebkitGridColumnStart,
+    CSSPropertyWebkitGridTemplateAreas,
     CSSPropertyWebkitGridTemplateColumns,
     CSSPropertyWebkitGridTemplateRows,
     CSSPropertyWebkitGridRowEnd,
