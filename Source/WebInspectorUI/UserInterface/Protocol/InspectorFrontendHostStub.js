@@ -134,17 +134,6 @@ if (!window.InspectorFrontendHost) {
             this._socket.send(message);
         },
 
-        loadResourceSynchronously: function(url)
-        {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", url, false);
-            xhr.send(null);
-
-            if (xhr.status === 200)
-                return xhr.responseText;
-            return null;
-        },
-
         platform: function()
         {
             return (navigator.platform.match(/mac|win|linux/i) || ["other"])[0].toLowerCase();

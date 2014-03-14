@@ -69,8 +69,6 @@
     [Custom] void recordPanelShown(unsigned long panelCode);
     [Custom] void recordSettingChanged(unsigned long settingChanged);
 
-    DOMString loadResourceSynchronously(DOMString url);
-
     boolean isUnderTest();
 
     void beep();

@@ -34,24 +34,20 @@
 #include "InspectorFrontendHost.h"
 
 #include "ContextMenu.h"
-#include "ContextMenuItem.h"
 #include "ContextMenuController.h"
+#include "ContextMenuItem.h"
 #include "ContextMenuProvider.h"
 #include "DOMWrapperWorld.h"
-#include "Element.h"
+#include "Document.h"
 #include "Event.h"
-#include "FrameLoader.h"
 #include "HitTestResult.h"
-#include "HTMLFrameOwnerElement.h"
 #include "InspectorFrontendClient.h"
 #include "JSMainThreadExecState.h"
 #include "MainFrame.h"
 #include "MouseEvent.h"
+#include "Node.h"
 #include "Page.h"
 #include "Pasteboard.h"
-#include "ResourceError.h"
-#include "ResourceRequest.h"
-#include "ResourceResponse.h"
 #include "ScriptGlobalObject.h"
 #include "ScriptState.h"
 #include "Sound.h"
@@ -299,18 +295,6 @@ void InspectorFrontendHost::dispatchEventAsContextMenuEvent(Event* event)
 #else
     UNUSED_PARAM(event);
 #endif
-}
-
-String InspectorFrontendHost::loadResourceSynchronously(const String& url)
-{
-    ResourceRequest request(url);
-    request.setHTTPMethod("GET");
-
-    Vector<char> data;
-    ResourceError error;
-    ResourceResponse response;
-    m_frontendPage->mainFrame().loader().loadResourceSynchronously(request, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, error, response, data);
-    return String::fromUTF8(data.data(), data.size());
 }
 
 bool InspectorFrontendHost::isUnderTest()

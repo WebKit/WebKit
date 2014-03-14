@@ -1,5 +1,19 @@
 2014-03-13  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove InspectorFrontendHost.loadResourceSynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=130217
+
+        Reviewed by Timothy Hatcher.
+
+        This has been replaced by NetworkAgent.loadResource,
+        which loads asynchronously through the backend.
+
+        * inspector/InspectorFrontendHost.cpp:
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+
+2014-03-13  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Network.loadResource should include the response status code
         https://bugs.webkit.org/show_bug.cgi?id=130216
 
