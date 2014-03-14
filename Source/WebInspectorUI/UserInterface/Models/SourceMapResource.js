@@ -79,11 +79,11 @@ WebInspector.SourceMapResource.prototype = {
             return true;
         }
 
-        function sourceMapResourceLoaded(error, body, mimeType)
+        function sourceMapResourceLoaded(error, body, mimeType, statusCode)
         {
             const base64encoded = false;
 
-            if (error) {
+            if (error || statusCode >= 400) {
                 this.markAsFailed();
                 callback(error, body, base64encoded);
                 return;

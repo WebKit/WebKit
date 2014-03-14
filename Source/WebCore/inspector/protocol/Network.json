@@ -200,7 +200,8 @@
             ],
             "returns": [
                 { "name": "content", "type": "string", "description": "Resource content." },
-                { "name": "mimeType", "type": "string", "description": "Resource mimeType." }
+                { "name": "mimeType", "type": "string", "description": "Resource mimeType." },
+                { "name": "status", "type": "number", "description": "HTTP response status code." }
             ],
             "description": "Loads a resource in the context of a frame on the inspected page without cross origin checks."
         }

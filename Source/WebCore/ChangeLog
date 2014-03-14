@@ -1,5 +1,18 @@
 2014-03-13  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Network.loadResource should include the response status code
+        https://bugs.webkit.org/show_bug.cgi?id=130216
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorResourceAgent.cpp:
+        Record and send the http status code.
+
+        * inspector/protocol/Network.json:
+        Include status code property in the success callback.
+
+2014-03-13  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Network.loadResource XHR crash if page reloaded while request is ongoing
         https://bugs.webkit.org/show_bug.cgi?id=130211
 

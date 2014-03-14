@@ -91,6 +91,7 @@ public:
     virtual void didReceiveResponse(unsigned long, const ResourceResponse& response) override
     {
         m_mimeType = response.mimeType();
+        m_statusCode = response.httpStatusCode();
 
         // FIXME: This assumes text only responses. We should support non-text responses as well.
         TextEncoding textEncoding(response.textEncodingName());
@@ -119,7 +120,7 @@ public:
         if (m_decoder)
             m_responseText.append(m_decoder->flush());
 
-        m_callback->sendSuccess(m_responseText.toString(), m_mimeType);
+        m_callback->sendSuccess(m_responseText.toString(), m_mimeType, m_statusCode);
         dispose();
     }
 
@@ -158,6 +159,7 @@ private:
     RefPtr<TextResourceDecoder> m_decoder;
     String m_mimeType;
     StringBuilder m_responseText;
+    int m_statusCode;
 };
 
 } // namespace
