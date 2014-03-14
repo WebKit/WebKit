@@ -28,7 +28,6 @@ enum RTCIdentityOptionEnum { "yes", "no", "ifconfigured" };
 
 [
     Conditional=MEDIA_STREAM,
-    ImplementationLacksVTable,
     NoInterfaceObject,
 ] interface RTCConfiguration {
     readonly attribute RTCIceServer[] iceServers;

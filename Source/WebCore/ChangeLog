@@ -1,3 +1,17 @@
+2014-03-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unnecessary ImplementationLacksVTable IDL attribute used for RTCConfiguration, RTCIceServer
+        https://bugs.webkit.org/show_bug.cgi?id=130230
+
+        Reviewed by Philippe Normand.
+
+        The RTCConfiguration and RTCIceServer classes do not own virtual tables, so using the
+        ImplementationLacksVTable attribute in the IDL interface leads to a compile-time assertion
+        failure in the generates JSC wrappers because none of the classes is polymorphic.
+
+        * Modules/mediastream/RTCConfiguration.idl:
+        * Modules/mediastream/RTCIceServer.idl:
+
 2014-03-14  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] the "grid-template-areas" is not identified as computable property.

@@ -25,7 +25,6 @@
 
 [
     Conditional=MEDIA_STREAM,
-    ImplementationLacksVTable,
     NoInterfaceObject,
 ] interface RTCIceServer {
     readonly attribute DOMString[] urls;
