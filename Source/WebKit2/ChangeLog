@@ -1,3 +1,20 @@
+2014-03-14  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Sync extended attribute related rules with AppSandbox profile
+        https://bugs.webkit.org/show_bug.cgi?id=130263
+        <rdar://problem/16318965>
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/PlugInSandboxProfiles/com.apple.QuickTime Plugin.plugin.sb:
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+        * Resources/PlugInSandboxProfiles/com.apple.ist.ds.appleconnect.webplugin.sb:
+        * Resources/PlugInSandboxProfiles/com.macromedia.Flash Player.plugin.sb:
+        * Resources/PlugInSandboxProfiles/com.microsoft.SilverlightPlugin.sb:
+        * Resources/PlugInSandboxProfiles/com.oracle.java.JavaAppletPlugin.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2014-03-14  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Improve behavior of fixed elments on zooming
