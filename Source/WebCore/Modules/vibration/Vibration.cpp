@@ -26,11 +26,15 @@
 
 namespace WebCore {
 
+// Maximum number of entries in a vibration pattern.
+const unsigned MaxVibrationPatternLength = 99;
+// Maximum duration of a vibration in 10 seconds.
+const unsigned MaxVibrationDuration = 10000;
+
 Vibration::Vibration(VibrationClient* client)
     : m_vibrationClient(client)
-    , m_timerStart(this, &Vibration::timerStartFired)
-    , m_timerStop(this, &Vibration::timerStopFired)
-    , m_isVibrating(false)
+    , m_timer(this, &Vibration::timerFired)
+    , m_state(State::Idle)
 {
 }
 
@@ -46,80 +50,74 @@ PassOwnPtr<Vibration> Vibration::create(VibrationClient* client)
 
 bool Vibration::vibrate(const VibrationPattern& pattern)
 {
-    size_t length = pattern.size();
+    VibrationPattern& sanitized = const_cast<VibrationPattern&>(pattern);
+    size_t length = sanitized.size();
 
-    m_pattern = pattern;
-    if (length && !(length % 2))
-        m_pattern.removeLast();
+    // If the pattern is too long then truncate it.
+    if (length > MaxVibrationPatternLength) {
+        sanitized.shrink(MaxVibrationPatternLength);
+        length = MaxVibrationPatternLength;
+    }
 
-    // Pre-exsiting instance need to be canceled when vibration is called.
-    // And if time is 0, vibration have to be canceled also.
-    if (m_isVibrating || (m_pattern.size() == 1 && !m_pattern[0]))
+    // If the length of pattern is even and is not zero, then remove the last entry in pattern.
+    if (length && !(length % 2)) {
+        sanitized.removeLast();
+        length--;
+    }
+
+    // If any pattern entry is too long then truncate it.
+    for (auto& duration : sanitized)
+        duration = std::min(duration, MaxVibrationDuration);
+
+    // Pre-exisiting instance need to be canceled when vibrate() is called.
+    if (isVibrating())
         cancelVibration();
 
-    if (!m_pattern.size())
+    // If pattern is an empty list, then return true and terminate these steps.
+    if (!length || (length == 1 && !sanitized[0])) {
+        cancelVibration();
         return true;
+    }
 
-    m_timerStart.startOneShot(0);
-    m_isVibrating = true;
+    m_pattern = sanitized;
+
+    m_timer.startOneShot(0);
     return true;
 }
 
 void Vibration::cancelVibration()
 {
     m_pattern.clear();
-    if (m_isVibrating)
-        stopVibration();
+    if (isVibrating()) {
+        m_timer.stop();
+        m_state = State::Idle;
+        m_vibrationClient->cancelVibration();
+    }
 }
 
-void Vibration::suspendVibration()
+void Vibration::timerFired(Timer<Vibration>* timer)
 {
-    if (!m_isVibrating)
+    ASSERT_UNUSED(timer, timer == &m_timer);
+
+    m_timer.stop();
+
+    if (m_pattern.isEmpty()) {
+        m_state = State::Idle;
         return;
+    }
 
-    m_pattern.insert(0, m_timerStop.nextFireInterval());
-    stopVibration();
-}
-
-void Vibration::resumeVibration()
-{
-    m_timerStart.startOneShot(0);
-    m_isVibrating = true;
-}
-
-void Vibration::stopVibration()
-{
-    m_timerStart.stop();
-    m_timerStop.stop();
-    m_vibrationClient->cancelVibration();
-    m_isVibrating = false;
-}
-
-void Vibration::timerStartFired(Timer<Vibration>* timer)
-{
-    ASSERT_UNUSED(timer, timer == &m_timerStart);
-
-    m_timerStart.stop();
-
-    if (!m_pattern.isEmpty()) {
+    switch (m_state) {
+    case State::Vibrating:
+        m_state = State::Waiting;
+        break;
+    case State::Waiting:
+    case State::Idle:
+        m_state = State::Vibrating;
         m_vibrationClient->vibrate(m_pattern[0]);
-        m_timerStop.startOneShot(m_pattern[0] / 1000.0);
-        m_pattern.remove(0);
+        break;
     }
-}
-
-void Vibration::timerStopFired(Timer<Vibration>* timer)
-{
-    ASSERT_UNUSED(timer, timer == &m_timerStop);
-
-    m_timerStop.stop();
-
-    if (!m_pattern.isEmpty()) {
-        m_timerStart.startOneShot(m_pattern[0] / 1000.0);
-        m_pattern.remove(0);
-        if (m_pattern.isEmpty())
-            m_isVibrating = false;
-    }
+    m_timer.startOneShot(m_pattern[0] / 1000.0);
+    m_pattern.remove(0);
 }
 
 const char* Vibration::supplementName()

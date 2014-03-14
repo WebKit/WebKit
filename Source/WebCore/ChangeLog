@@ -1,3 +1,30 @@
+2014-03-13  Jinwoo Jeong  <jw00.jeong@samsung.com>
+
+        Refactor Vibration algorithm to use only one timer.
+        https://bugs.webkit.org/show_bug.cgi?id=130059
+
+        Reviewed by Darin Adler.
+
+        Currently Vibration is using two timers,
+        one is to start a vibration and another is to check termination of a vibration.
+        But they do not work in same time, if one of them is fired, then anothor will start.
+        Thus this patch removes one of them, and manages vibration states by enumeration.
+
+        Also, this patch implement the missing part of the algorithm,
+        which check the maximum length of the vibration pattern and the maximum duration of the vibration.
+
+        Lastly, this patch removes unused methods from Vibration.
+
+        * Modules/vibration/Vibration.cpp:
+        (WebCore::Vibration::Vibration):
+        (WebCore::Vibration::vibrate):
+        (WebCore::Vibration::cancelVibration):
+        Removed stopVibration() and its contents moved to cancelVibration().
+        (WebCore::Vibration::timerFired): Combined timerStartFired() and timerStopFired().
+        Removed suspendVibration() and resumeVibration(), which is never called since r.
+        * Modules/vibration/Vibration.h: Added new enumertaion to specify states of Vibration.
+        (WebCore::Vibration::isVibrating):
+
 2014-03-13  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: Use loc strings for known aria-invalid types

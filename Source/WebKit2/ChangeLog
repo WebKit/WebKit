@@ -1,3 +1,19 @@
+2014-03-13  Jinwoo Jeong  <jw00.jeong@samsung.com>
+
+        Refactor Vibration algorithm to use only one timer.
+        https://bugs.webkit.org/show_bug.cgi?id=130059
+
+        Reviewed by Darin Adler.
+
+        This patch adds a vibration unit test regression after r161257.
+        It consists of two short term requests to check
+        that Vibration could work properly by sequential requests.
+
+        Indeed this patch tightens condition of existing tests.
+
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2014-03-13  Paul Hankes Drielsma  <phd@apple.com>
 
         Add SPI to set a custom user agent on WKWebView

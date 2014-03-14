@@ -40,26 +40,22 @@ public:
     static PassOwnPtr<Vibration> create(VibrationClient*);
 
     bool vibrate(const VibrationPattern&);
+    // FIXME: When a visibilitychange event is dispatched while vibrating, the vibration should be canceled.
     void cancelVibration();
 
-    // FIXME : Add suspendVibration() and resumeVibration() to the page visibility feature, when the document.hidden attribute is changed.
-    void suspendVibration();
-    void resumeVibration();
-    void timerStartFired(Timer<Vibration>*);
-    void timerStopFired(Timer<Vibration>*);
+    void timerFired(Timer<Vibration>*);
 
     static const char* supplementName();
     static Vibration* from(Page* page) { return static_cast<Vibration*>(Supplement<Page>::from(page, supplementName())); }
 
-    bool isVibrating() { return m_isVibrating; }
+    bool isVibrating() { return m_state != State::Idle; }
 
 private:
-    void stopVibration();
+    enum class State { Idle, Vibrating, Waiting };
 
     VibrationClient* m_vibrationClient;
-    Timer<Vibration> m_timerStart;
-    Timer<Vibration> m_timerStop;
-    bool m_isVibrating;
+    Timer<Vibration> m_timer;
+    State m_state;
     VibrationPattern m_pattern;
 };
 

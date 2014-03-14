@@ -928,23 +928,34 @@ TEST_F(EWK2ViewTest, ewk_context_vibration_client_callbacks_set)
     // Vibrate for 5 seconds.
     loadVibrationHTMLString(webView(), "5000", &data);
     waitUntilTrue(data.testFinished);
-    ASSERT_TRUE(data.didReceiveVibrate);
+    ASSERT_TRUE(data.didReceiveVibrate && !data.didReceiveCancelVibration);
 
     // Cancel any existing vibrations.
     loadVibrationHTMLString(webView(), "0", &data);
     waitUntilTrue(data.testFinished);
-    ASSERT_TRUE(data.didReceiveCancelVibration);
+    ASSERT_TRUE(!data.didReceiveVibrate && data.didReceiveCancelVibration);
 
     // This case the pattern will cause the device to vibrate for 200 ms, be still for 100 ms, and then vibrate for 5000 ms.
     loadVibrationHTMLString(webView(), "[200, 100, 5000]", &data);
     waitUntilTrue(data.testFinished);
     ASSERT_EQ(2, data.vibrateCalledCount);
-    ASSERT_TRUE(data.didReceiveVibrate);
+    ASSERT_TRUE(data.didReceiveVibrate && !data.didReceiveCancelVibration);
 
     // Cancel outstanding vibration pattern.
     loadVibrationHTMLString(webView(), "[0]", &data);
     waitUntilTrue(data.testFinished);
-    ASSERT_TRUE(data.didReceiveCancelVibration);
+    ASSERT_TRUE(!data.didReceiveVibrate && data.didReceiveCancelVibration);
+
+    // Check that vibration works properly by continuous request.
+    data.expectedVibrationTime = 5;
+    loadVibrationHTMLString(webView(), "5", &data);
+    waitUntilTrue(data.testFinished);
+    ASSERT_TRUE(data.didReceiveVibrate && !data.didReceiveCancelVibration);
+
+    loadVibrationHTMLString(webView(), "5", &data);
+    waitUntilTrue(data.testFinished);
+    ASSERT_EQ(1, data.vibrateCalledCount);
+    ASSERT_TRUE(data.didReceiveVibrate && !data.didReceiveCancelVibration);
 
     // Stop listening for vibration events, by calling the function with null for the callbacks.
     evas_object_smart_callback_del(webView(), "vibrate", onVibrate);
