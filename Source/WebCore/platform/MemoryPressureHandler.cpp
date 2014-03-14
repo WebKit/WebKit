@@ -32,7 +32,7 @@ namespace WebCore {
 
 MemoryPressureHandler& memoryPressureHandler()
 {
-    DEFINE_STATIC_LOCAL(MemoryPressureHandler, staticMemoryPressureHandler, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(MemoryPressureHandler, staticMemoryPressureHandler, ());
     return staticMemoryPressureHandler;
 }
 

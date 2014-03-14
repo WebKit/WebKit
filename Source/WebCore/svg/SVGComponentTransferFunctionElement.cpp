@@ -62,7 +62,7 @@ SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const Q
 
 bool SVGComponentTransferFunctionElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty()) {
         supportedAttributes.add(SVGNames::typeAttr);
         supportedAttributes.add(SVGNames::tableValuesAttr);

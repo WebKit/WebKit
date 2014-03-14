@@ -1862,7 +1862,7 @@ typedef HashMap<Node*, OwnPtr<EventTargetData>> EventTargetDataMap;
 
 static EventTargetDataMap& eventTargetDataMap()
 {
-    DEFINE_STATIC_LOCAL(EventTargetDataMap, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(EventTargetDataMap, map, ());
     return map;
 }
 

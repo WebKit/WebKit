@@ -98,7 +98,7 @@ void WebCoreReportThreadViolation(const char* function, WebCore::ThreadViolation
     if (round >= MaximumThreadViolationRound)
         return;
 
-    DEFINE_STATIC_LOCAL(HashSet<String>, loggedFunctions, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, loggedFunctions, ());
     switch (threadViolationBehavior[round]) {
         case NoThreadCheck:
             break;

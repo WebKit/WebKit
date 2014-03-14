@@ -56,7 +56,7 @@ typedef HashMap<RefPtr<UserMediaRequest>, RetainPtr<WebUserMediaPolicyListener>>
 
 static UserMediaRequestsMap& userMediaRequestsMap()
 {
-    DEFINE_STATIC_LOCAL(UserMediaRequestsMap, requests, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(UserMediaRequestsMap, requests, ());
     return requests;
 }
 

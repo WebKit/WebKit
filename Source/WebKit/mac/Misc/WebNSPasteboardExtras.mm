@@ -59,7 +59,7 @@ NSString *WebURLNamePboardType = @"public.url-name";
 
 + (NSArray *)_web_writableTypesForURL
 {
-    DEFINE_STATIC_LOCAL(RetainPtr<NSArray>, types, ([[NSArray alloc] initWithObjects:
+    DEPRECATED_DEFINE_STATIC_LOCAL(RetainPtr<NSArray>, types, ([[NSArray alloc] initWithObjects:
         WebURLsWithTitlesPboardType,
         NSURLPboardType,
         WebURLPboardType,
@@ -78,7 +78,7 @@ static inline NSArray *_createWritableTypesForImageWithoutArchive()
 
 static NSArray *_writableTypesForImageWithoutArchive (void)
 {
-    DEFINE_STATIC_LOCAL(RetainPtr<NSArray>, types, (_createWritableTypesForImageWithoutArchive()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(RetainPtr<NSArray>, types, (_createWritableTypesForImageWithoutArchive()));
     return types.get();
 }
 
@@ -92,7 +92,7 @@ static inline NSArray *_createWritableTypesForImageWithArchive()
 
 static NSArray *_writableTypesForImageWithArchive (void)
 {
-    DEFINE_STATIC_LOCAL(RetainPtr<NSArray>, types, (_createWritableTypesForImageWithArchive()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(RetainPtr<NSArray>, types, (_createWritableTypesForImageWithArchive()));
     return types.get();
 }
 

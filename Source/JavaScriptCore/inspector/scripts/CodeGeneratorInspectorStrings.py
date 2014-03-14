@@ -72,7 +72,7 @@ backend_dispatcher_dispatch_method = (
 
     typedef void (${dispatcherName}::*CallHandler)(long callId, const Inspector::InspectorObject& message);
     typedef HashMap<String, CallHandler> DispatchMap;
-    DEFINE_STATIC_LOCAL(DispatchMap, dispatchMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(DispatchMap, dispatchMap, ());
     if (dispatchMap.isEmpty()) {
         static const struct MethodTable {
             const char* name;

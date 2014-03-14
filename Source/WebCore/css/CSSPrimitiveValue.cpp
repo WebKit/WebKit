@@ -176,7 +176,7 @@ CSSPrimitiveValue::UnitCategory CSSPrimitiveValue::unitCategory(CSSPrimitiveValu
 typedef HashMap<const CSSPrimitiveValue*, String> CSSTextCache;
 static CSSTextCache& cssTextCache()
 {
-    DEFINE_STATIC_LOCAL(CSSTextCache, cache, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(CSSTextCache, cache, ());
     return cache;
 }
 

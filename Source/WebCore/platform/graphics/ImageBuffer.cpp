@@ -35,8 +35,8 @@ namespace WebCore {
 #if !USE(CG)
 void ImageBuffer::transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace)
 {
-    DEFINE_STATIC_LOCAL(Vector<int>, deviceRgbLUT, ());
-    DEFINE_STATIC_LOCAL(Vector<int>, linearRgbLUT, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<int>, deviceRgbLUT, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<int>, linearRgbLUT, ());
 
     if (srcColorSpace == dstColorSpace)
         return;

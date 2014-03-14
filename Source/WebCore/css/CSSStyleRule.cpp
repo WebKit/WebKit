@@ -37,7 +37,7 @@ namespace WebCore {
 typedef HashMap<const CSSStyleRule*, String> SelectorTextCache;
 static SelectorTextCache& selectorTextCache()
 {
-    DEFINE_STATIC_LOCAL(SelectorTextCache, cache, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(SelectorTextCache, cache, ());
     return cache;
 }
 

@@ -85,7 +85,7 @@ private:
 
 static const Vector<DocumentMarker::MarkerType>& markerTypesForAutocorrection()
 {
-    DEFINE_STATIC_LOCAL(Vector<DocumentMarker::MarkerType>, markerTypesForAutoCorrection, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<DocumentMarker::MarkerType>, markerTypesForAutoCorrection, ());
     if (markerTypesForAutoCorrection.isEmpty()) {
         markerTypesForAutoCorrection.append(DocumentMarker::Replacement);
         markerTypesForAutoCorrection.append(DocumentMarker::CorrectionIndicator);
@@ -97,7 +97,7 @@ static const Vector<DocumentMarker::MarkerType>& markerTypesForAutocorrection()
 
 static const Vector<DocumentMarker::MarkerType>& markerTypesForReplacement()
 {
-    DEFINE_STATIC_LOCAL(Vector<DocumentMarker::MarkerType>, markerTypesForReplacement, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<DocumentMarker::MarkerType>, markerTypesForReplacement, ());
     if (markerTypesForReplacement.isEmpty()) {
         markerTypesForReplacement.append(DocumentMarker::Replacement);
         markerTypesForReplacement.append(DocumentMarker::SpellCheckingExemption);
@@ -107,7 +107,7 @@ static const Vector<DocumentMarker::MarkerType>& markerTypesForReplacement()
 
 static const Vector<DocumentMarker::MarkerType>& markerTypesForAppliedDictationAlternative()
 {
-    DEFINE_STATIC_LOCAL(Vector<DocumentMarker::MarkerType>, markerTypesForAppliedDictationAlternative, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<DocumentMarker::MarkerType>, markerTypesForAppliedDictationAlternative, ());
     if (markerTypesForAppliedDictationAlternative.isEmpty())
         markerTypesForAppliedDictationAlternative.append(DocumentMarker::SpellCheckingExemption);
     return markerTypesForAppliedDictationAlternative;

@@ -740,7 +740,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, Edi
 
 static const Vector<std::unique_ptr<HTMLElementEquivalent>>& htmlElementEquivalents()
 {
-    DEFINE_STATIC_LOCAL(Vector<std::unique_ptr<HTMLElementEquivalent>>, HTMLElementEquivalents, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<std::unique_ptr<HTMLElementEquivalent>>, HTMLElementEquivalents, ());
 
     if (!HTMLElementEquivalents.size()) {
         HTMLElementEquivalents.append(std::make_unique<HTMLElementEquivalent>(CSSPropertyFontWeight, CSSValueBold, HTMLNames::bTag));
@@ -779,7 +779,7 @@ bool EditingStyle::conflictsWithImplicitStyleOfElement(HTMLElement* element, Edi
 
 static const Vector<std::unique_ptr<HTMLAttributeEquivalent>>& htmlAttributeEquivalents()
 {
-    DEFINE_STATIC_LOCAL(Vector<std::unique_ptr<HTMLAttributeEquivalent>>, HTMLAttributeEquivalents, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<std::unique_ptr<HTMLAttributeEquivalent>>, HTMLAttributeEquivalents, ());
 
     if (!HTMLAttributeEquivalents.size()) {
         // elementIsStyledSpanOrHTMLEquivalent depends on the fact each HTMLAttriuteEquivalent matches exactly one attribute

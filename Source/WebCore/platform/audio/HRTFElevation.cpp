@@ -68,7 +68,7 @@ const float ResponseSampleRate = 44100;
 static AudioBus* getConcatenatedImpulseResponsesForSubject(const String& subjectName)
 {
     typedef HashMap<String, AudioBus*> AudioBusMap;
-    DEFINE_STATIC_LOCAL(AudioBusMap, audioBusMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(AudioBusMap, audioBusMap, ());
 
     AudioBus* bus;
     AudioBusMap::iterator iterator = audioBusMap.find(subjectName);

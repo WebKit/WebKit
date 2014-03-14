@@ -1,3 +1,25 @@
+2014-03-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        Rename DEFINE_STATIC_LOCAL to DEPRECATED_DEFINE_STATIC_LOCAL
+        https://bugs.webkit.org/show_bug.cgi?id=129612
+
+        Reviewed by Darin Adler.
+
+        For new code use static NeverDestroyed<T> instead.
+
+        * DumpRenderTree/JavaScriptThreading.cpp:
+        (javaScriptThreadsMutex):
+        (javaScriptThreads):
+        * DumpRenderTree/efl/EventSender.cpp:
+        (touchPointList):
+        (delayedEventQueue):
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (delegatesWithDelayedWork):
+        * Scripts/check-for-exit-time-destructors:
+        * TestWebKitAPI/Tests/WebKit2/SeccompFilters.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebProcessTest.cpp:
+        (testsMap):
+
 2014-03-13  Sanghyup Lee  <sh53.lee@samsung.com>
 
         [EFL][WK2] Fix compilation warning in Minibrowser

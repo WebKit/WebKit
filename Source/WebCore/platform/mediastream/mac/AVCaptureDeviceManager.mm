@@ -112,7 +112,7 @@ public:
 
 static Vector<CaptureDevice>& captureDeviceList()
 {
-    DEFINE_STATIC_LOCAL(Vector<CaptureDevice>, captureDeviceList, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<CaptureDevice>, captureDeviceList, ());
     static bool firstTime = true;
 
     if (firstTime && !captureDeviceList.size()) {
@@ -177,7 +177,7 @@ bool AVCaptureDeviceManager::isAvailable()
 
 AVCaptureDeviceManager& AVCaptureDeviceManager::shared()
 {
-    DEFINE_STATIC_LOCAL(AVCaptureDeviceManager, manager, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(AVCaptureDeviceManager, manager, ());
     return manager;
 }
 
@@ -456,7 +456,7 @@ void AVCaptureDeviceManager::deviceDisconnected(AVCaptureDeviceType* device)
 
 const Vector<AtomicString>& AVCaptureDeviceManager::validConstraintNames()
 {
-    DEFINE_STATIC_LOCAL(Vector<AtomicString>, constraints, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<AtomicString>, constraints, ());
     static NeverDestroyed<AtomicString> heightConstraint("height", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> widthConstraint("width", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> frameRateConstraint("frameRate", AtomicString::ConstructFromLiteral);
@@ -476,7 +476,7 @@ const Vector<AtomicString>& AVCaptureDeviceManager::validConstraintNames()
 
 const Vector<AtomicString>& AVCaptureDeviceManager::validFacingModes()
 {
-    DEFINE_STATIC_LOCAL(Vector<AtomicString>, modes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<AtomicString>, modes, ());
     
     if (!modes.size()) {
         modes.insert(MediaStreamSourceStates::User, MediaStreamSourceStates::facingMode(MediaStreamSourceStates::User));

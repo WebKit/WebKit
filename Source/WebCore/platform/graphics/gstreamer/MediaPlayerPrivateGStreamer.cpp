@@ -1650,7 +1650,7 @@ static HashSet<String> mimeTypeCache()
 {
     initializeGStreamerAndRegisterWebKitElements();
 
-    DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
     static bool typeListInitialized = false;
 
     if (typeListInitialized)

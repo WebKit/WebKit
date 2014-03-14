@@ -57,7 +57,7 @@ PassRefPtr<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, 
 
 bool SVGViewElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty()) {
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
         SVGFitToViewBox::addSupportedAttributes(supportedAttributes);

@@ -45,7 +45,7 @@ typedef HashMap<String, StorageNamespace*> LocalStorageNamespaceMap;
 
 static LocalStorageNamespaceMap& localStorageNamespaceMap()
 {
-    DEFINE_STATIC_LOCAL(LocalStorageNamespaceMap, localStorageNamespaceMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(LocalStorageNamespaceMap, localStorageNamespaceMap, ());
     return localStorageNamespaceMap;
 }
 

@@ -72,7 +72,7 @@ static Page* toPage(JSGlobalObject* globalObject)
 
 PageScriptDebugServer& PageScriptDebugServer::shared()
 {
-    DEFINE_STATIC_LOCAL(PageScriptDebugServer, server, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(PageScriptDebugServer, server, ());
     return server;
 }
 

@@ -50,8 +50,8 @@ static size_t sizeForImmutableStylePropertiesWithPropertyCount(unsigned count)
 
 static bool isInitialOrInherit(const String& value)
 {
-    DEFINE_STATIC_LOCAL(String, initial, ("initial"));
-    DEFINE_STATIC_LOCAL(String, inherit, ("inherit"));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, initial, ("initial"));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, inherit, ("inherit"));
     return value.length() == 7 && (value == initial || value == inherit);
 }
 

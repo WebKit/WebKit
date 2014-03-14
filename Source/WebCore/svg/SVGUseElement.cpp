@@ -129,7 +129,7 @@ SVGElementInstance* SVGUseElement::animatedInstanceRoot() const
 
 bool SVGUseElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty()) {
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
@@ -334,7 +334,7 @@ static bool isDisallowedElement(const Element& element)
     if (!element.isSVGElement())
         return true;
 
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, allowedElementTags, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, allowedElementTags, ());
     if (allowedElementTags.isEmpty()) {
         allowedElementTags.add(SVGNames::aTag);
         allowedElementTags.add(SVGNames::circleTag);

@@ -6791,7 +6791,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
             }
         }
         else if (object->inherits(JSArray::info())) {
-            DEFINE_STATIC_LOCAL(HashSet<JSObject*>, visitedElems, ());
+            DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<JSObject*>, visitedElems, ());
             if (!visitedElems.contains(object)) {
                 visitedElems.add(object);
                 

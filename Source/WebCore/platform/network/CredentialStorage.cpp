@@ -46,14 +46,14 @@ typedef HashMap<ProtectionSpace, Credential> ProtectionSpaceToCredentialMap;
 static ProtectionSpaceToCredentialMap& protectionSpaceToCredentialMap()
 {
     ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(ProtectionSpaceToCredentialMap, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(ProtectionSpaceToCredentialMap, map, ());
     return map;
 }
 
 static HashSet<String>& originsWithCredentials()
 {
     ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(HashSet<String>, set, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, set, ());
     return set;
 }
 
@@ -61,7 +61,7 @@ typedef HashMap<String, ProtectionSpace> PathToDefaultProtectionSpaceMap;
 static PathToDefaultProtectionSpaceMap& pathToDefaultProtectionSpaceMap()
 {
     ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(PathToDefaultProtectionSpaceMap, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(PathToDefaultProtectionSpaceMap, map, ());
     return map;
 }
 

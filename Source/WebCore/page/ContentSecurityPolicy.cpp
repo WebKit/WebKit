@@ -1061,7 +1061,7 @@ bool CSPDirectiveList::checkSourceAndReportViolation(SourceListDirective* direct
 
 bool CSPDirectiveList::allowJavaScriptURLs(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute JavaScript URL because it violates the following Content Security Policy directive: ")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute JavaScript URL because it violates the following Content Security Policy directive: ")));
     if (reportingStatus == ContentSecurityPolicy::SendReport) {
         return (checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, contextURL, contextLine, true)
                 && checkNonceAndReportViolation(m_scriptNonce.get(), String(), consoleMessage, contextURL, contextLine));
@@ -1073,7 +1073,7 @@ bool CSPDirectiveList::allowJavaScriptURLs(const String& contextURL, const WTF::
 
 bool CSPDirectiveList::allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute inline event handler because it violates the following Content Security Policy directive: ")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute inline event handler because it violates the following Content Security Policy directive: ")));
     if (reportingStatus == ContentSecurityPolicy::SendReport) {
         return (checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, contextURL, contextLine, true)
                 && checkNonceAndReportViolation(m_scriptNonce.get(), String(), consoleMessage, contextURL, contextLine));
@@ -1085,7 +1085,7 @@ bool CSPDirectiveList::allowInlineEventHandlers(const String& contextURL, const 
 
 bool CSPDirectiveList::allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute inline script because it violates the following Content Security Policy directive: ")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute inline script because it violates the following Content Security Policy directive: ")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
         checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, contextURL, contextLine, true) :
         checkInline(operativeDirective(m_scriptSrc.get()));
@@ -1093,7 +1093,7 @@ bool CSPDirectiveList::allowInlineScript(const String& contextURL, const WTF::Or
 
 bool CSPDirectiveList::allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to apply inline style because it violates the following Content Security Policy directive: ")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to apply inline style because it violates the following Content Security Policy directive: ")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
         checkInlineAndReportViolation(operativeDirective(m_styleSrc.get()), consoleMessage, contextURL, contextLine, false) :
         checkInline(operativeDirective(m_styleSrc.get()));
@@ -1101,7 +1101,7 @@ bool CSPDirectiveList::allowInlineStyle(const String& contextURL, const WTF::Ord
 
 bool CSPDirectiveList::allowEval(JSC::ExecState* state, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to evaluate script because it violates the following Content Security Policy directive: ")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to evaluate script because it violates the following Content Security Policy directive: ")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
         checkEvalAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, String(), WTF::OrdinalNumber::beforeFirst(), state) :
         checkEval(operativeDirective(m_scriptSrc.get()));
@@ -1109,7 +1109,7 @@ bool CSPDirectiveList::allowEval(JSC::ExecState* state, ContentSecurityPolicy::R
 
 bool CSPDirectiveList::allowScriptNonce(const String& nonce, const String& contextURL, const WTF::OrdinalNumber& contextLine, const URL& url) const
 {
-    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute script because it violates the following Content Security Policy directive: ")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute script because it violates the following Content Security Policy directive: ")));
     if (url.isEmpty())
         return checkNonceAndReportViolation(m_scriptNonce.get(), nonce, consoleMessage, contextURL, contextLine);
     return checkNonceAndReportViolation(m_scriptNonce.get(), nonce, "Refused to load '" + url.stringCenterEllipsizedToLength() + "' because it violates the following Content Security Policy directive: ", contextURL, contextLine);
@@ -1771,12 +1771,12 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
 
 void ContentSecurityPolicy::reportUnsupportedDirective(const String& name) const
 {
-    DEFINE_STATIC_LOCAL(String, allow, (ASCIILiteral("allow")));
-    DEFINE_STATIC_LOCAL(String, options, (ASCIILiteral("options")));
-    DEFINE_STATIC_LOCAL(String, policyURI, (ASCIILiteral("policy-uri")));
-    DEFINE_STATIC_LOCAL(String, allowMessage, (ASCIILiteral("The 'allow' directive has been replaced with 'default-src'. Please use that directive instead, as 'allow' has no effect.")));
-    DEFINE_STATIC_LOCAL(String, optionsMessage, (ASCIILiteral("The 'options' directive has been replaced with 'unsafe-inline' and 'unsafe-eval' source expressions for the 'script-src' and 'style-src' directives. Please use those directives instead, as 'options' has no effect.")));
-    DEFINE_STATIC_LOCAL(String, policyURIMessage, (ASCIILiteral("The 'policy-uri' directive has been removed from the specification. Please specify a complete policy via the Content-Security-Policy header.")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, allow, (ASCIILiteral("allow")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, options, (ASCIILiteral("options")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, policyURI, (ASCIILiteral("policy-uri")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, allowMessage, (ASCIILiteral("The 'allow' directive has been replaced with 'default-src'. Please use that directive instead, as 'allow' has no effect.")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, optionsMessage, (ASCIILiteral("The 'options' directive has been replaced with 'unsafe-inline' and 'unsafe-eval' source expressions for the 'script-src' and 'style-src' directives. Please use those directives instead, as 'options' has no effect.")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, policyURIMessage, (ASCIILiteral("The 'policy-uri' directive has been removed from the specification. Please specify a complete policy via the Content-Security-Policy header.")));
 
     String message = makeString("Unrecognized Content-Security-Policy directive '", name, "'.\n");
     if (equalIgnoringCase(name, allow))

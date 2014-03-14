@@ -1406,7 +1406,7 @@ static void addFileTypesToCache(NSArray * fileTypes, HashSet<String> &cache)
 
 static HashSet<String> mimeCommonTypesCache()
 {
-    DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
     static bool typeListInitialized = false;
 
     if (!typeListInitialized) {
@@ -1420,7 +1420,7 @@ static HashSet<String> mimeCommonTypesCache()
 
 static HashSet<String> mimeModernTypesCache()
 {
-    DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
     static bool typeListInitialized = false;
     
     if (!typeListInitialized) {

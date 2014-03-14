@@ -230,7 +230,7 @@ static bool isFileHidden(NSString *file)
 
 static Mutex& transactionBackgroundTaskIdentifierLock()
 {
-    DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
     return mutex;
 }
 

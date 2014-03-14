@@ -363,8 +363,8 @@ static RegularExpression* regExpForLabels(NSArray *labels)
     // that the app will use is equal to the number of locales is used in searching.
     static const unsigned int regExpCacheSize = 4;
     static NSMutableArray* regExpLabels = nil;
-    DEFINE_STATIC_LOCAL(Vector<RegularExpression*>, regExps, ());
-    DEFINE_STATIC_LOCAL(RegularExpression, wordRegExp, ("\\w", TextCaseSensitive));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<RegularExpression*>, regExps, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(RegularExpression, wordRegExp, ("\\w", TextCaseSensitive));
 
     RegularExpression* result;
     if (!regExpLabels)

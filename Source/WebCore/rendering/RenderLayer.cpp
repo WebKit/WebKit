@@ -3435,12 +3435,12 @@ void RenderLayer::drawPlatformResizerImage(GraphicsContext* context, const Layou
     RefPtr<Image> resizeCornerImage;
     IntSize cornerResizerSize;
     if (renderer().document().deviceScaleFactor() >= 2) {
-        DEFINE_STATIC_LOCAL(Image*, resizeCornerImageHiRes, (Image::loadPlatformResource("textAreaResizeCorner@2x").leakRef()));
+        DEPRECATED_DEFINE_STATIC_LOCAL(Image*, resizeCornerImageHiRes, (Image::loadPlatformResource("textAreaResizeCorner@2x").leakRef()));
         resizeCornerImage = resizeCornerImageHiRes;
         cornerResizerSize = resizeCornerImage->size();
         cornerResizerSize.scale(0.5f);
     } else {
-        DEFINE_STATIC_LOCAL(Image*, resizeCornerImageLoRes, (Image::loadPlatformResource("textAreaResizeCorner").leakRef()));
+        DEPRECATED_DEFINE_STATIC_LOCAL(Image*, resizeCornerImageLoRes, (Image::loadPlatformResource("textAreaResizeCorner").leakRef()));
         resizeCornerImage = resizeCornerImageLoRes;
         cornerResizerSize = resizeCornerImage->size();
     }

@@ -51,7 +51,7 @@ namespace WebCore {
 #ifndef NDEBUG
 static Mutex& activeIteratorCountMutex()
 {
-    DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
     return mutex;
 }
 

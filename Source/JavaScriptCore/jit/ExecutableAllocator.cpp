@@ -137,7 +137,7 @@ private:
     Vector<PageReservation, 16> reservations;
     static HashSet<DemandExecutableAllocator*>& allocators()
     {
-        DEFINE_STATIC_LOCAL(HashSet<DemandExecutableAllocator*>, sAllocators, ());
+        DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<DemandExecutableAllocator*>, sAllocators, ());
         return sAllocators;
     }
 

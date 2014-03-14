@@ -141,7 +141,7 @@ public:
     const SVGGlyph& svgGlyphForGlyph(Glyph glyph) const
     {
         if (!glyph || glyph > m_glyphTable.size()) {
-            DEFINE_STATIC_LOCAL(SVGGlyph, defaultGlyph, ());
+            DEPRECATED_DEFINE_STATIC_LOCAL(SVGGlyph, defaultGlyph, ());
             return defaultGlyph;
         }
         return m_glyphTable[glyph - 1];

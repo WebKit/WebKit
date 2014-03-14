@@ -60,7 +60,7 @@ FrameLoaderClientWinCE::~FrameLoaderClientWinCE()
 
 String FrameLoaderClientWinCE::userAgent(const URL&)
 {
-    DEFINE_STATIC_LOCAL(String, userAgentString, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, userAgentString, ());
 
     if (userAgentString.isNull()) {
         String webKitVersion = String::format("%d.%d", WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION);

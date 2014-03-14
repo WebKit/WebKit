@@ -91,7 +91,7 @@ public:
 private:
     static HashCountedSet<ContainerNode*>& disabledSubtreeRoots()
     {
-        DEFINE_STATIC_LOCAL(HashCountedSet<ContainerNode*>, nodes, ());
+        DEPRECATED_DEFINE_STATIC_LOCAL(HashCountedSet<ContainerNode*>, nodes, ());
         return nodes;
     }
 

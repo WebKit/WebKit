@@ -86,7 +86,7 @@ String SVGAElement::title() const
 
 bool SVGAElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty()) {
         SVGURIReference::addSupportedAttributes(supportedAttributes);
         SVGLangSpace::addSupportedAttributes(supportedAttributes);

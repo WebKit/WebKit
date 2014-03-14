@@ -49,7 +49,7 @@ static const char* cpuDescriptionForUAString()
 
 static String platformVersionForUAString()
 {
-    DEFINE_STATIC_LOCAL(String, uaOSVersion, (String()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, uaOSVersion, (String()));
     if (!uaOSVersion.isEmpty())
         return uaOSVersion;
 
@@ -69,8 +69,8 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     // browsers that are "Safari" but not running on OS X are the Safari iOS browse. Getting this
     // wrong can cause sites to load the wrong JavaScript, CSS, or custom fonts. In some cases
     // sites won't load resources at all.
-    DEFINE_STATIC_LOCAL(const CString, uaVersion, (String::format("%i.%i", USER_AGENT_GTK_MAJOR_VERSION, USER_AGENT_GTK_MINOR_VERSION).utf8()));
-    DEFINE_STATIC_LOCAL(const String, staticUA, (String::format("Mozilla/5.0 (Macintosh; %s) AppleWebKit/%s (KHTML, like Gecko) Safari/%s",
+    DEPRECATED_DEFINE_STATIC_LOCAL(const CString, uaVersion, (String::format("%i.%i", USER_AGENT_GTK_MAJOR_VERSION, USER_AGENT_GTK_MINOR_VERSION).utf8()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, staticUA, (String::format("Mozilla/5.0 (Macintosh; %s) AppleWebKit/%s (KHTML, like Gecko) Safari/%s",
         platformVersionForUAString().utf8().data(), uaVersion.data(), uaVersion.data())));
 
     if (applicationName.isEmpty())

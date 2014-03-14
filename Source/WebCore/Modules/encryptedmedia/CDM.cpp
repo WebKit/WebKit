@@ -54,7 +54,7 @@ public:
 
 static Vector<CDMFactory*>& installedCDMFactories()
 {
-    DEFINE_STATIC_LOCAL(Vector<CDMFactory*>, cdms, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<CDMFactory*>, cdms, ());
     static bool queriedCDMs = false;
     if (!queriedCDMs) {
         queriedCDMs = true;

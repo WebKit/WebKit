@@ -213,7 +213,7 @@ void FrameLoadDelegate::resetToConsistentState()
 typedef Vector<COMPtr<FrameLoadDelegate> > DelegateVector;
 static DelegateVector& delegatesWithDelayedWork()
 {
-    DEFINE_STATIC_LOCAL(DelegateVector, delegates, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(DelegateVector, delegates, ());
     return delegates;
 }
 

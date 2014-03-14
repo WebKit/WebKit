@@ -57,19 +57,19 @@ static const int undefinedPosition = -1;
 
 static const String& startKeyword()
 {
-    DEFINE_STATIC_LOCAL(const String, start, (ASCIILiteral("start")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, start, (ASCIILiteral("start")));
     return start;
 }
 
 static const String& middleKeyword()
 {
-    DEFINE_STATIC_LOCAL(const String, middle, (ASCIILiteral("middle")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, middle, (ASCIILiteral("middle")));
     return middle;
 }
 
 static const String& endKeyword()
 {
-    DEFINE_STATIC_LOCAL(const String, end, (ASCIILiteral("end")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, end, (ASCIILiteral("end")));
     return end;
 }
 
@@ -80,13 +80,13 @@ static const String& horizontalKeyword()
 
 static const String& verticalGrowingLeftKeyword()
 {
-    DEFINE_STATIC_LOCAL(const String, verticalrl, (ASCIILiteral("rl")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, verticalrl, (ASCIILiteral("rl")));
     return verticalrl;
 }
 
 static const String& verticalGrowingRightKeyword()
 {
-    DEFINE_STATIC_LOCAL(const String, verticallr, (ASCIILiteral("lr")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, verticallr, (ASCIILiteral("lr")));
     return verticallr;
 }
 
@@ -170,7 +170,7 @@ void VTTCueBox::applyCSSProperties(const IntSize&)
 
 const AtomicString& VTTCueBox::vttCueBoxShadowPseudoId()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, trackDisplayBoxShadowPseudoId, ("-webkit-media-text-track-display", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, trackDisplayBoxShadowPseudoId, ("-webkit-media-text-track-display", AtomicString::ConstructFromLiteral));
     return trackDisplayBoxShadowPseudoId;
 }
 
@@ -506,7 +506,7 @@ static bool isCueParagraphSeparator(UChar character)
 
 void VTTCue::determineTextDirection()
 {
-    DEFINE_STATIC_LOCAL(const String, rtTag, (ASCIILiteral("rt")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, rtTag, (ASCIILiteral("rt")));
     createWebVTTNodeTree();
     if (!m_webVTTNodeTree)
         return;
@@ -639,7 +639,7 @@ void VTTCue::calculateDisplayParameters()
     
 void VTTCue::markFutureAndPastNodes(ContainerNode* root, double previousTimestamp, double movieTime)
 {
-    DEFINE_STATIC_LOCAL(const String, timestampTag, (ASCIILiteral("timestamp")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, timestampTag, (ASCIILiteral("timestamp")));
     
     bool isPastNode = true;
     double currentTimestamp = previousTimestamp;
@@ -777,13 +777,13 @@ std::pair<double, double> VTTCue::getPositionCoordinates() const
 
 VTTCue::CueSetting VTTCue::settingName(const String& name)
 {
-    DEFINE_STATIC_LOCAL(const String, verticalKeyword, (ASCIILiteral("vertical")));
-    DEFINE_STATIC_LOCAL(const String, lineKeyword, (ASCIILiteral("line")));
-    DEFINE_STATIC_LOCAL(const String, positionKeyword, (ASCIILiteral("position")));
-    DEFINE_STATIC_LOCAL(const String, sizeKeyword, (ASCIILiteral("size")));
-    DEFINE_STATIC_LOCAL(const String, alignKeyword, (ASCIILiteral("align")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, verticalKeyword, (ASCIILiteral("vertical")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, lineKeyword, (ASCIILiteral("line")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, positionKeyword, (ASCIILiteral("position")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, sizeKeyword, (ASCIILiteral("size")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, alignKeyword, (ASCIILiteral("align")));
 #if ENABLE(WEBVTT_REGIONS)
-    DEFINE_STATIC_LOCAL(const String, regionIdKeyword, (ASCIILiteral("region")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, regionIdKeyword, (ASCIILiteral("region")));
 #endif
 
     if (name == verticalKeyword)

@@ -54,7 +54,7 @@ PassRefPtr<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, 
 
 bool SVGStopElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty())
         supportedAttributes.add(SVGNames::offsetAttr);
     return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);

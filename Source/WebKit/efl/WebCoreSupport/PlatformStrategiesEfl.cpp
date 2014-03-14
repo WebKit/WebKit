@@ -37,7 +37,7 @@ using namespace WebCore;
 
 void PlatformStrategiesEfl::initialize()
 {
-    DEFINE_STATIC_LOCAL(PlatformStrategiesEfl, platformStrategies, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(PlatformStrategiesEfl, platformStrategies, ());
     setPlatformStrategies(&platformStrategies);
 }
 

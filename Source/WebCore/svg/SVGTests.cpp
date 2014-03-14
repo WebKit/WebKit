@@ -89,7 +89,7 @@ SVGTests::SVGTests()
 
 SVGAttributeToPropertyMap& SVGTests::attributeToPropertyMap()
 {
-    DEFINE_STATIC_LOCAL(SVGAttributeToPropertyMap, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(SVGAttributeToPropertyMap, map, ());
     if (!map.isEmpty())
         return map;
     map.addProperty(requiredFeaturesPropertyInfo());

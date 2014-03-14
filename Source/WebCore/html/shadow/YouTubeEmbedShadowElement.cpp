@@ -53,7 +53,7 @@ HTMLPlugInImageElement* YouTubeEmbedShadowElement::pluginElement() const
 
 const AtomicString& YouTubeEmbedShadowElement::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-apple-youtube-shadow-iframe"));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-apple-youtube-shadow-iframe"));
     return pseudoId;
 }
 

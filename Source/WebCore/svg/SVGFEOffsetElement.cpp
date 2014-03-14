@@ -57,7 +57,7 @@ PassRefPtr<SVGFEOffsetElement> SVGFEOffsetElement::create(const QualifiedName& t
 
 bool SVGFEOffsetElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty()) {
         supportedAttributes.add(SVGNames::inAttr);
         supportedAttributes.add(SVGNames::dxAttr);

@@ -56,7 +56,7 @@ DateComponents::Type WeekInputType::dateType() const
 
 StepRange WeekInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
-    DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (weekDefaultStep, weekDefaultStepBase, weekStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (weekDefaultStep, weekDefaultStepBase, weekStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger));
 
     const Decimal stepBase = parseToNumber(element().fastGetAttribute(minAttr), weekDefaultStepBase);
     const Decimal minimum = parseToNumber(element().fastGetAttribute(minAttr), Decimal::fromDouble(DateComponents::minimumWeek()));

@@ -39,7 +39,7 @@ static SoupCookieJar* cookieJarForSession(const NetworkStorageSession& session)
 
 static GRefPtr<SoupCookieJar>& defaultCookieJar()
 {
-    DEFINE_STATIC_LOCAL(GRefPtr<SoupCookieJar>, cookieJar, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(GRefPtr<SoupCookieJar>, cookieJar, ());
     return cookieJar;
 }
 

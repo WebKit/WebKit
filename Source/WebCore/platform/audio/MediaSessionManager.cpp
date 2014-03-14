@@ -34,7 +34,7 @@ namespace WebCore {
 #if !PLATFORM(IOS)
 MediaSessionManager& MediaSessionManager::sharedManager()
 {
-    DEFINE_STATIC_LOCAL(MediaSessionManager, manager, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(MediaSessionManager, manager, ());
     return manager;
 }
 #endif

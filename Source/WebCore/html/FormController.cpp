@@ -342,7 +342,7 @@ AtomicString FormKeyGenerator::formKey(const HTMLFormControlElementWithState& co
 {
     HTMLFormElement* form = ownerFormForState(control);
     if (!form) {
-        DEFINE_STATIC_LOCAL(AtomicString, formKeyForNoOwner, ("No owner", AtomicString::ConstructFromLiteral));
+        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, formKeyForNoOwner, ("No owner", AtomicString::ConstructFromLiteral));
         return formKeyForNoOwner;
     }
     FormToKeyMap::const_iterator it = m_formToKeyMap.find(form);
@@ -395,7 +395,7 @@ static String formStateSignature()
     // In the legacy version of serialized state, the first item was a name
     // attribute value of a form control. The following string literal should
     // contain some characters which are rarely used for name attribute values.
-    DEFINE_STATIC_LOCAL(String, signature, (ASCIILiteral("\n\r?% WebKit serialized form state version 8 \n\r=&")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, signature, (ASCIILiteral("\n\r?% WebKit serialized form state version 8 \n\r=&")));
     return signature;
 }
 

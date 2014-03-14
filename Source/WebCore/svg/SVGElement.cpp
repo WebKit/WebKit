@@ -402,7 +402,7 @@ void SVGElement::removeInstanceMapping(SVGElementInstance* instance)
 const HashSet<SVGElementInstance*>& SVGElement::instancesForElement() const
 {
     if (!m_svgRareData) {
-        DEFINE_STATIC_LOCAL(HashSet<SVGElementInstance*>, emptyInstances, ());
+        DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<SVGElementInstance*>, emptyInstances, ());
         return emptyInstances;
     }
     return m_svgRareData->elementInstances();
@@ -698,7 +698,7 @@ void SVGElement::finishParsingChildren()
 
 bool SVGElement::childShouldCreateRenderer(const Node& child) const
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, invalidTextContent, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, invalidTextContent, ());
 
     if (invalidTextContent.isEmpty()) {
         invalidTextContent.add(SVGNames::textPathTag);

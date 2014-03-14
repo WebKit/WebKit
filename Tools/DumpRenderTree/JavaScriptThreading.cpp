@@ -46,14 +46,14 @@ static JSContextGroupRef javaScriptThreadsGroup;
 
 static Mutex& javaScriptThreadsMutex()
 {
-    DEFINE_STATIC_LOCAL(Mutex, staticMutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, staticMutex, ());
     return staticMutex;
 }
 
 typedef HashSet<ThreadIdentifier> ThreadSet;
 static ThreadSet& javaScriptThreads()
 {
-    DEFINE_STATIC_LOCAL(ThreadSet, staticJavaScriptThreads, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(ThreadSet, staticJavaScriptThreads, ());
     ASSERT(!javaScriptThreadsMutex().tryLock());
     return staticJavaScriptThreads;
 }

@@ -102,7 +102,7 @@ void threadWasJoined(ThreadIdentifier);
 
 static Mutex& threadMapMutex()
 {
-    DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
     return mutex;
 }
 
@@ -130,7 +130,7 @@ void initializeThreading()
 
 static ThreadMap& threadMap()
 {
-    DEFINE_STATIC_LOCAL(ThreadMap, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(ThreadMap, map, ());
     return map;
 }
 

@@ -40,7 +40,7 @@ using namespace WebCore;
 
 void WebPlatformStrategies::initialize()
 {
-    DEFINE_STATIC_LOCAL(WebPlatformStrategies, platformStrategies, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(WebPlatformStrategies, platformStrategies, ());
 }
 
 WebPlatformStrategies::WebPlatformStrategies()

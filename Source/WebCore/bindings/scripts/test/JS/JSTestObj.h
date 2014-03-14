@@ -91,7 +91,7 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestObj*)
 {
-    DEFINE_STATIC_LOCAL(JSTestObjOwner, jsTestObjOwner, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(JSTestObjOwner, jsTestObjOwner, ());
     return &jsTestObjOwner;
 }
 

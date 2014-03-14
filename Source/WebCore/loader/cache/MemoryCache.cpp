@@ -242,7 +242,7 @@ unsigned MemoryCache::liveCapacity() const
 // remove the usage of CFRetain() in MemoryCache::addImageToCache() so as to make the code platform-independent.
 static CachedImageClient& dummyCachedImageClient()
 {
-    DEFINE_STATIC_LOCAL(CachedImageClient, client, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(CachedImageClient, client, ());
     return client;
 }
 
@@ -731,7 +731,7 @@ void MemoryCache::removeResourcesWithOrigin(SecurityOrigin* origin)
 void MemoryCache::getOriginsWithCache(SecurityOriginSet& origins)
 {
 #if ENABLE(CACHE_PARTITIONING)
-    DEFINE_STATIC_LOCAL(String, httpString, ("http"));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, httpString, ("http"));
 #endif
     for (auto& resources : m_sessionResources) {
         CachedResourceMap::iterator e = resources.value->end();

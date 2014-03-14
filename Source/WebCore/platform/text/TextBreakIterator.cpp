@@ -277,7 +277,7 @@ static inline bool compareAndSwapNonSharedCharacterBreakIterator(TextBreakIterat
 #if ENABLE(COMPARE_AND_SWAP)
     return WTF::weakCompareAndSwap(reinterpret_cast<void**>(&nonSharedCharacterBreakIterator), expected, newValue);
 #else
-    DEFINE_STATIC_LOCAL(std::mutex, nonSharedCharacterBreakIteratorMutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(std::mutex, nonSharedCharacterBreakIteratorMutex, ());
     std::lock_guard<std::mutex> locker(nonSharedCharacterBreakIteratorMutex);
     if (nonSharedCharacterBreakIterator != expected)
         return false;

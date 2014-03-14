@@ -36,14 +36,14 @@ namespace WebCore {
 
 static const QualifiedName& nodeTypeToTagName(WebVTTNodeType nodeType)
 {
-    DEFINE_STATIC_LOCAL(QualifiedName, cTag, (nullAtom, "c", nullAtom));
-    DEFINE_STATIC_LOCAL(QualifiedName, vTag, (nullAtom, "v", nullAtom));
-    DEFINE_STATIC_LOCAL(QualifiedName, langTag, (nullAtom, "lang", nullAtom));
-    DEFINE_STATIC_LOCAL(QualifiedName, bTag, (nullAtom, "b", nullAtom));
-    DEFINE_STATIC_LOCAL(QualifiedName, uTag, (nullAtom, "u", nullAtom));
-    DEFINE_STATIC_LOCAL(QualifiedName, iTag, (nullAtom, "i", nullAtom));
-    DEFINE_STATIC_LOCAL(QualifiedName, rubyTag, (nullAtom, "ruby", nullAtom));
-    DEFINE_STATIC_LOCAL(QualifiedName, rtTag, (nullAtom, "rt", nullAtom));
+    DEPRECATED_DEFINE_STATIC_LOCAL(QualifiedName, cTag, (nullAtom, "c", nullAtom));
+    DEPRECATED_DEFINE_STATIC_LOCAL(QualifiedName, vTag, (nullAtom, "v", nullAtom));
+    DEPRECATED_DEFINE_STATIC_LOCAL(QualifiedName, langTag, (nullAtom, "lang", nullAtom));
+    DEPRECATED_DEFINE_STATIC_LOCAL(QualifiedName, bTag, (nullAtom, "b", nullAtom));
+    DEPRECATED_DEFINE_STATIC_LOCAL(QualifiedName, uTag, (nullAtom, "u", nullAtom));
+    DEPRECATED_DEFINE_STATIC_LOCAL(QualifiedName, iTag, (nullAtom, "i", nullAtom));
+    DEPRECATED_DEFINE_STATIC_LOCAL(QualifiedName, rubyTag, (nullAtom, "ruby", nullAtom));
+    DEPRECATED_DEFINE_STATIC_LOCAL(QualifiedName, rtTag, (nullAtom, "rt", nullAtom));
     switch (nodeType) {
     case WebVTTNodeTypeClass:
         return cTag;

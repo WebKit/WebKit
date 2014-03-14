@@ -68,7 +68,7 @@ static const double kGravity = 9.80665;
 
 + (WebCoreMotionManager *)sharedManager
 {
-    DEFINE_STATIC_LOCAL(RetainPtr<WebCoreMotionManager>, sharedMotionManager, ([[WebCoreMotionManager alloc] init]));
+    DEPRECATED_DEFINE_STATIC_LOCAL(RetainPtr<WebCoreMotionManager>, sharedMotionManager, ([[WebCoreMotionManager alloc] init]));
     return sharedMotionManager.get();
 }
 

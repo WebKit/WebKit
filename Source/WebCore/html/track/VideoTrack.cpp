@@ -47,37 +47,37 @@ namespace WebCore {
 
 const AtomicString& VideoTrack::alternativeKeyword()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, alternative, ("alternative", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, alternative, ("alternative", AtomicString::ConstructFromLiteral));
     return alternative;
 }
 
 const AtomicString& VideoTrack::captionsKeyword()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, captions, ("captions", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, captions, ("captions", AtomicString::ConstructFromLiteral));
     return captions;
 }
 
 const AtomicString& VideoTrack::mainKeyword()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, captions, ("main", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, captions, ("main", AtomicString::ConstructFromLiteral));
     return captions;
 }
 
 const AtomicString& VideoTrack::signKeyword()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, sign, ("sign", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, sign, ("sign", AtomicString::ConstructFromLiteral));
     return sign;
 }
 
 const AtomicString& VideoTrack::subtitlesKeyword()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, subtitles, ("subtitles", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, subtitles, ("subtitles", AtomicString::ConstructFromLiteral));
     return subtitles;
 }
 
 const AtomicString& VideoTrack::commentaryKeyword()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, commentary, ("commentary", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, commentary, ("commentary", AtomicString::ConstructFromLiteral));
     return commentary;
 }
 

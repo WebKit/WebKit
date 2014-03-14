@@ -314,13 +314,13 @@ static FontWeight toFontWeight(NSInteger appKitFontWeight)
 
 void RenderThemeMac::systemFont(CSSValueID cssValueId, FontDescription& fontDescription) const
 {
-    DEFINE_STATIC_LOCAL(FontDescription, systemFont, ());
-    DEFINE_STATIC_LOCAL(FontDescription, smallSystemFont, ());
-    DEFINE_STATIC_LOCAL(FontDescription, menuFont, ());
-    DEFINE_STATIC_LOCAL(FontDescription, labelFont, ());
-    DEFINE_STATIC_LOCAL(FontDescription, miniControlFont, ());
-    DEFINE_STATIC_LOCAL(FontDescription, smallControlFont, ());
-    DEFINE_STATIC_LOCAL(FontDescription, controlFont, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(FontDescription, systemFont, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(FontDescription, smallSystemFont, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(FontDescription, menuFont, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(FontDescription, labelFont, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(FontDescription, miniControlFont, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(FontDescription, smallControlFont, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(FontDescription, controlFont, ());
 
     FontDescription* cachedDesc;
     NSFont* font = nil;

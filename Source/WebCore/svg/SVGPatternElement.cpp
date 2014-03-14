@@ -91,7 +91,7 @@ PassRefPtr<SVGPatternElement> SVGPatternElement::create(const QualifiedName& tag
 
 bool SVGPatternElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty()) {
         SVGURIReference::addSupportedAttributes(supportedAttributes);
         SVGTests::addSupportedAttributes(supportedAttributes);

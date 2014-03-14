@@ -61,13 +61,13 @@ PassRefPtr<SVGFEGaussianBlurElement> SVGFEGaussianBlurElement::create(const Qual
 
 const AtomicString& SVGFEGaussianBlurElement::stdDeviationXIdentifier()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGStdDeviationX", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGStdDeviationX", AtomicString::ConstructFromLiteral));
     return s_identifier;
 }
 
 const AtomicString& SVGFEGaussianBlurElement::stdDeviationYIdentifier()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGStdDeviationY", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGStdDeviationY", AtomicString::ConstructFromLiteral));
     return s_identifier;
 }
 
@@ -80,7 +80,7 @@ void SVGFEGaussianBlurElement::setStdDeviation(float x, float y)
 
 bool SVGFEGaussianBlurElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty()) {
         supportedAttributes.add(SVGNames::inAttr);
         supportedAttributes.add(SVGNames::stdDeviationAttr);

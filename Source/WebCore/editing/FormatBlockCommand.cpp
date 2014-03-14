@@ -117,7 +117,7 @@ Element* FormatBlockCommand::elementForFormatBlockCommand(Range* range)
 
 bool isElementForFormatBlock(const QualifiedName& tagName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, blockTags, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, blockTags, ());
     if (blockTags.isEmpty()) {
         blockTags.add(addressTag);
         blockTags.add(articleTag);

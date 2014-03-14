@@ -97,7 +97,7 @@ private:
 
 static ObjectMap& objectMap()
 {
-    DEFINE_STATIC_LOCAL(ObjectMap, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(ObjectMap, map, ());
     return map;
 }
 

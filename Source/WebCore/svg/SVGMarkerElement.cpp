@@ -92,13 +92,13 @@ PassRefPtr<SVGMarkerElement> SVGMarkerElement::create(const QualifiedName& tagNa
 
 const AtomicString& SVGMarkerElement::orientTypeIdentifier()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGOrientType", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGOrientType", AtomicString::ConstructFromLiteral));
     return s_identifier;
 }
 
 const AtomicString& SVGMarkerElement::orientAngleIdentifier()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGOrientAngle", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGOrientAngle", AtomicString::ConstructFromLiteral));
     return s_identifier;
 }
 
@@ -109,7 +109,7 @@ AffineTransform SVGMarkerElement::viewBoxToViewTransform(float viewWidth, float 
 
 bool SVGMarkerElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty()) {
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
@@ -236,7 +236,7 @@ void SVGMarkerElement::synchronizeOrientType(SVGElement* contextElement)
     if (ownerType->m_orientType.value != SVGMarkerOrientAuto)
         return;
 
-    DEFINE_STATIC_LOCAL(AtomicString, autoString, ("auto", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, autoString, ("auto", AtomicString::ConstructFromLiteral));
     ownerType->m_orientType.synchronize(ownerType, orientTypePropertyInfo()->attributeName, autoString);
 }
 

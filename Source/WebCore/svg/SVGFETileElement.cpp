@@ -54,7 +54,7 @@ PassRefPtr<SVGFETileElement> SVGFETileElement::create(const QualifiedName& tagNa
 
 bool SVGFETileElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty())
         supportedAttributes.add(SVGNames::inAttr);
     return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);

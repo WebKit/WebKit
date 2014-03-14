@@ -63,7 +63,7 @@ static void gtkStyleChangedCallback(GObject*, GParamSpec*)
 
 static StyleContextMap& styleContextMap()
 {
-    DEFINE_STATIC_LOCAL(StyleContextMap, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(StyleContextMap, map, ());
 
     static bool initialized = false;
     if (!initialized) {

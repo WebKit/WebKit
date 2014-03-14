@@ -31,7 +31,7 @@ namespace WebCore {
 
 PluginMainThreadScheduler& PluginMainThreadScheduler::scheduler()
 {
-    DEFINE_STATIC_LOCAL(PluginMainThreadScheduler, scheduler, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(PluginMainThreadScheduler, scheduler, ());
 
     return scheduler;
 }

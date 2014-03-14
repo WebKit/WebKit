@@ -79,7 +79,7 @@ UploadButtonElement::UploadButtonElement(Document& document)
 
 const AtomicString& UploadButtonElement::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-file-upload-button", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-file-upload-button", AtomicString::ConstructFromLiteral));
     return pseudoId;
 }
 

@@ -64,19 +64,19 @@ namespace WebCore {
 
 static ImageEventSender& beforeLoadEventSender()
 {
-    DEFINE_STATIC_LOCAL(ImageEventSender, sender, (eventNames().beforeloadEvent));
+    DEPRECATED_DEFINE_STATIC_LOCAL(ImageEventSender, sender, (eventNames().beforeloadEvent));
     return sender;
 }
 
 static ImageEventSender& loadEventSender()
 {
-    DEFINE_STATIC_LOCAL(ImageEventSender, sender, (eventNames().loadEvent));
+    DEPRECATED_DEFINE_STATIC_LOCAL(ImageEventSender, sender, (eventNames().loadEvent));
     return sender;
 }
 
 static ImageEventSender& errorEventSender()
 {
-    DEFINE_STATIC_LOCAL(ImageEventSender, sender, (eventNames().errorEvent));
+    DEPRECATED_DEFINE_STATIC_LOCAL(ImageEventSender, sender, (eventNames().errorEvent));
     return sender;
 }
 
@@ -292,7 +292,7 @@ void ImageLoader::notifyFinished(CachedResource* resource)
         m_hasPendingErrorEvent = true;
         errorEventSender().dispatchEventSoon(this);
 
-        DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Cross-origin image load denied by Cross-Origin Resource Sharing policy.")));
+        DEPRECATED_DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Cross-origin image load denied by Cross-Origin Resource Sharing policy.")));
         element().document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
 
         ASSERT(!m_hasPendingLoadEvent);

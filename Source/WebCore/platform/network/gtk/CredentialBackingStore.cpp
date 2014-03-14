@@ -42,7 +42,7 @@ namespace WebCore {
 
 CredentialBackingStore& credentialBackingStore()
 {
-    DEFINE_STATIC_LOCAL(CredentialBackingStore, backingStore, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(CredentialBackingStore, backingStore, ());
     return backingStore;
 }
 

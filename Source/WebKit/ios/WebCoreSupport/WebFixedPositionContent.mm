@@ -50,7 +50,7 @@ using namespace std;
 
 static Mutex& WebFixedPositionContentDataLock()
 {
-    DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
     return mutex;
 }
 

@@ -78,7 +78,7 @@ private:
 
 PassRefPtr<GraphicsContext3D> SharedGraphicsContext3D::get()
 {
-    DEFINE_STATIC_LOCAL(SharedGraphicsContext3DImpl, impl, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(SharedGraphicsContext3DImpl, impl, ());
     return impl.getOrCreateContext();
 }
 
@@ -88,7 +88,7 @@ enum ContextOperation {
 
 static PassRefPtr<GraphicsContext3D> getOrCreateContextForImplThread(ContextOperation op)
 {
-    DEFINE_STATIC_LOCAL(SharedGraphicsContext3DImpl, impl, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(SharedGraphicsContext3DImpl, impl, ());
     return op == Create ? impl.createContext() : impl.getContext();
 }
 

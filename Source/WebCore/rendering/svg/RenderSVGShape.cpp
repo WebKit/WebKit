@@ -188,7 +188,7 @@ void RenderSVGShape::layout()
 
 Path* RenderSVGShape::nonScalingStrokePath(const Path* path, const AffineTransform& strokeTransform) const
 {
-    DEFINE_STATIC_LOCAL(Path, tempPath, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Path, tempPath, ());
 
     tempPath = *path;
     tempPath.transform(strokeTransform);

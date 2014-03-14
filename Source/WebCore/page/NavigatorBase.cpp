@@ -94,7 +94,7 @@ String NavigatorBase::platform() const
     if (!String(WEBCORE_NAVIGATOR_PLATFORM).isEmpty())
         return WEBCORE_NAVIGATOR_PLATFORM;
     struct utsname osname;
-    DEFINE_STATIC_LOCAL(String, platformName, (uname(&osname) >= 0 ? String(osname.sysname) + String(" ") + String(osname.machine) : emptyString()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, platformName, (uname(&osname) >= 0 ? String(osname.sysname) + String(" ") + String(osname.machine) : emptyString()));
     return platformName;
 #else
     return WEBCORE_NAVIGATOR_PLATFORM;

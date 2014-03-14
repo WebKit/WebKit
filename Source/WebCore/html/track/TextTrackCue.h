@@ -48,7 +48,7 @@ public:
 
     static const AtomicString& cueShadowPseudoId()
     {
-        DEFINE_STATIC_LOCAL(const AtomicString, cue, ("cue", AtomicString::ConstructFromLiteral));
+        DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, cue, ("cue", AtomicString::ConstructFromLiteral));
         return cue;
     }
 

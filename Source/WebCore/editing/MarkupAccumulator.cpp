@@ -280,7 +280,7 @@ bool MarkupAccumulator::shouldAddNamespaceElement(const Element& element)
     if (prefix.isEmpty())
         return !element.hasAttribute(xmlnsAtom);
 
-    DEFINE_STATIC_LOCAL(String, xmlnsWithColon, (ASCIILiteral("xmlns:")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, xmlnsWithColon, (ASCIILiteral("xmlns:")));
     return !element.hasAttribute(xmlnsWithColon + prefix);
 }
 

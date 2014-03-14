@@ -87,7 +87,7 @@ namespace WebCore {
 // FIXME: We should return a reference instead of a pointer since we never return a nullptr.
 FontCache* fontCache()
 {
-    DEFINE_STATIC_LOCAL(FontCache, globalFontCache, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(FontCache, globalFontCache, ());
     return &globalFontCache;
 }
 
@@ -285,7 +285,7 @@ struct FontVerticalDataCacheKeyTraits : WTF::GenericHashTraits<FontCache::FontFi
     static const bool needsDestruction = true;
     static const FontCache::FontFileKey& emptyValue()
     {
-        DEFINE_STATIC_LOCAL(FontCache::FontFileKey, key, (nullAtom));
+        DEPRECATED_DEFINE_STATIC_LOCAL(FontCache::FontFileKey, key, (nullAtom));
         return key;
     }
     static void constructDeletedValue(FontCache::FontFileKey& slot)
@@ -302,7 +302,7 @@ typedef HashMap<FontCache::FontFileKey, RefPtr<OpenTypeVerticalData>, FontVertic
 
 FontVerticalDataCache& fontVerticalDataCacheInstance()
 {
-    DEFINE_STATIC_LOCAL(FontVerticalDataCache, fontVerticalDataCache, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(FontVerticalDataCache, fontVerticalDataCache, ());
     return fontVerticalDataCache;
 }
 
@@ -340,7 +340,7 @@ struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
     static const bool needsDestruction = true;
     static const FontPlatformData& emptyValue()
     {
-        DEFINE_STATIC_LOCAL(FontPlatformData, key, (0.f, false, false));
+        DEPRECATED_DEFINE_STATIC_LOCAL(FontPlatformData, key, (0.f, false, false));
         return key;
     }
     static void constructDeletedValue(FontPlatformData& slot)

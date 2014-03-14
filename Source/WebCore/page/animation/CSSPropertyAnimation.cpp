@@ -584,11 +584,11 @@ static inline size_t shadowListLength(const ShadowData* shadow)
 
 static inline const ShadowData* shadowForBlending(const ShadowData* srcShadow, const ShadowData* otherShadow)
 {
-    DEFINE_STATIC_LOCAL(ShadowData, defaultShadowData, (IntPoint(), 0, 0, Normal, false, Color::transparent));
-    DEFINE_STATIC_LOCAL(ShadowData, defaultInsetShadowData, (IntPoint(), 0, 0, Inset, false, Color::transparent));
+    DEPRECATED_DEFINE_STATIC_LOCAL(ShadowData, defaultShadowData, (IntPoint(), 0, 0, Normal, false, Color::transparent));
+    DEPRECATED_DEFINE_STATIC_LOCAL(ShadowData, defaultInsetShadowData, (IntPoint(), 0, 0, Inset, false, Color::transparent));
 
-    DEFINE_STATIC_LOCAL(ShadowData, defaultWebKitBoxShadowData, (IntPoint(), 0, 0, Normal, true, Color::transparent));
-    DEFINE_STATIC_LOCAL(ShadowData, defaultInsetWebKitBoxShadowData, (IntPoint(), 0, 0, Inset, true, Color::transparent));
+    DEPRECATED_DEFINE_STATIC_LOCAL(ShadowData, defaultWebKitBoxShadowData, (IntPoint(), 0, 0, Normal, true, Color::transparent));
+    DEPRECATED_DEFINE_STATIC_LOCAL(ShadowData, defaultInsetWebKitBoxShadowData, (IntPoint(), 0, 0, Inset, true, Color::transparent));
 
     if (srcShadow)
         return srcShadow;
@@ -1080,7 +1080,7 @@ public:
     static CSSPropertyAnimationWrapperMap& instance()
     {
         // FIXME: This data is never destroyed. Maybe we should ref count it and toss it when the last AnimationController is destroyed?
-        DEFINE_STATIC_LOCAL(OwnPtr<CSSPropertyAnimationWrapperMap>, map, ());
+        DEPRECATED_DEFINE_STATIC_LOCAL(OwnPtr<CSSPropertyAnimationWrapperMap>, map, ());
         if (!map)
             map = adoptPtr(new CSSPropertyAnimationWrapperMap);
         return *map;

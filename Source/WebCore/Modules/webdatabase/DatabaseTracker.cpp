@@ -1283,7 +1283,7 @@ bool DatabaseTracker::deleteDatabaseFileIfEmpty(const String& path)
 
 Mutex& DatabaseTracker::openDatabaseMutex()
 {
-    DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
     return mutex;
 }
 
@@ -1335,7 +1335,7 @@ void DatabaseTracker::setClient(DatabaseManagerClient* client)
 
 static Mutex& notificationMutex()
 {
-    DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
     return mutex;
 }
 
@@ -1343,7 +1343,7 @@ typedef Vector<std::pair<RefPtr<SecurityOrigin>, String>> NotificationQueue;
 
 static NotificationQueue& notificationQueue()
 {
-    DEFINE_STATIC_LOCAL(NotificationQueue, queue, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(NotificationQueue, queue, ());
     return queue;
 }
 

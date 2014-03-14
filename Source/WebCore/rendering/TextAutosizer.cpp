@@ -73,7 +73,7 @@ struct TextAutosizingClusterInfo {
 static const Vector<QualifiedName>& formInputTags()
 {
     // Returns the tags for the form input elements.
-    DEFINE_STATIC_LOCAL(Vector<QualifiedName>, formInputTags, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<QualifiedName>, formInputTags, ());
     if (formInputTags.isEmpty()) {
         formInputTags.append(inputTag);
         formInputTags.append(buttonTag);

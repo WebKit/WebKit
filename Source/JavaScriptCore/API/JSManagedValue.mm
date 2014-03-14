@@ -46,7 +46,7 @@ public:
 
 static JSManagedValueHandleOwner* managedValueHandleOwner()
 {
-    DEFINE_STATIC_LOCAL(JSManagedValueHandleOwner, jsManagedValueHandleOwner, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(JSManagedValueHandleOwner, jsManagedValueHandleOwner, ());
     return &jsManagedValueHandleOwner;
 }
 

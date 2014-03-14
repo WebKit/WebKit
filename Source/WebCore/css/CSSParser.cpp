@@ -237,7 +237,7 @@ private:
 
 const CSSParserContext& strictCSSParserContext()
 {
-    DEFINE_STATIC_LOCAL(CSSParserContext, strictContext, (CSSStrictMode));
+    DEPRECATED_DEFINE_STATIC_LOCAL(CSSParserContext, strictContext, (CSSStrictMode));
     return strictContext;
 }
 

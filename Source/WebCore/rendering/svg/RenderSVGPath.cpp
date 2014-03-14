@@ -131,7 +131,7 @@ bool RenderSVGPath::shouldStrokeZeroLengthSubpath() const
 
 Path* RenderSVGPath::zeroLengthLinecapPath(const FloatPoint& linecapPosition) const
 {
-    DEFINE_STATIC_LOCAL(Path, tempPath, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Path, tempPath, ());
 
     tempPath.clear();
     if (style().svgStyle().capStyle() == SquareCap)

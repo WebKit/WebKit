@@ -133,7 +133,7 @@ void DisplayRefreshMonitor::displayDidRefresh()
 
 DisplayRefreshMonitorManager* DisplayRefreshMonitorManager::sharedManager()
 {
-    DEFINE_STATIC_LOCAL(DisplayRefreshMonitorManager, manager, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(DisplayRefreshMonitorManager, manager, ());
     return &manager;
 }
 

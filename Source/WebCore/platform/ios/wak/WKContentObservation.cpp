@@ -77,7 +77,7 @@ static HashMap<void *, void *> * WebThreadGetObservedContentModifiers()
 {
     ASSERT(WebThreadIsLockedOrDisabled());
     typedef HashMap<void *, void *> VoidVoidMap;
-    DEFINE_STATIC_LOCAL(VoidVoidMap, observedContentModifiers, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(VoidVoidMap, observedContentModifiers, ());
     return &observedContentModifiers;
 }
 

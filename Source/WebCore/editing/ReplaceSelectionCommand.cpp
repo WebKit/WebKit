@@ -101,14 +101,14 @@ private:
 
 static bool isInterchangeNewlineNode(const Node *node)
 {
-    DEFINE_STATIC_LOCAL(String, interchangeNewlineClassString, (AppleInterchangeNewline));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, interchangeNewlineClassString, (AppleInterchangeNewline));
     return node && node->hasTagName(brTag) && 
            static_cast<const Element *>(node)->getAttribute(classAttr) == interchangeNewlineClassString;
 }
 
 static bool isInterchangeConvertedSpaceSpan(const Node *node)
 {
-    DEFINE_STATIC_LOCAL(String, convertedSpaceSpanClassString, (AppleConvertedSpace));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, convertedSpaceSpanClassString, (AppleConvertedSpace));
     return node->isHTMLElement() && 
            static_cast<const HTMLElement *>(node)->getAttribute(classAttr) == convertedSpaceSpanClassString;
 }
@@ -563,7 +563,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
 static bool isProhibitedParagraphChild(const AtomicString& name)
 {
     // https://dvcs.w3.org/hg/editing/raw-file/57abe6d3cb60/editing.html#prohibited-paragraph-child
-    DEFINE_STATIC_LOCAL(HashSet<AtomicString>, elements, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<AtomicString>, elements, ());
     if (elements.isEmpty()) {
         elements.add(addressTag.localName());
         elements.add(articleTag.localName());

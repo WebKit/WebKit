@@ -52,7 +52,7 @@ const char* InspectorDebuggerAgent::backtraceObjectGroup = "backtrace";
 // create objects in the same group.
 static String objectGroupForBreakpointAction(const ScriptBreakpointAction& action)
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, objectGroup, ("breakpoint-action-", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, objectGroup, ("breakpoint-action-", AtomicString::ConstructFromLiteral));
     return makeString(objectGroup, String::number(action.identifier));
 }
 

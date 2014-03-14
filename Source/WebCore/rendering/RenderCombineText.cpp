@@ -139,7 +139,7 @@ void RenderCombineText::combineText()
         m_combineFontStyle->font().update(fontSelector);
 
     if (m_isCombined) {
-        DEFINE_STATIC_LOCAL(String, objectReplacementCharacterString, (&objectReplacementCharacter, 1));
+        DEPRECATED_DEFINE_STATIC_LOCAL(String, objectReplacementCharacterString, (&objectReplacementCharacter, 1));
         RenderText::setTextInternal(objectReplacementCharacterString.impl());
     }
 }

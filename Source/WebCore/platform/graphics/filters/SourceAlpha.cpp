@@ -38,7 +38,7 @@ PassRefPtr<SourceAlpha> SourceAlpha::create(Filter* filter)
 
 const AtomicString& SourceAlpha::effectName()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, s_effectName, ("SourceAlpha", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, s_effectName, ("SourceAlpha", AtomicString::ConstructFromLiteral));
     return s_effectName;
 }
 

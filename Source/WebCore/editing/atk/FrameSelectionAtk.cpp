@@ -53,7 +53,7 @@ static void maybeEmitTextFocusChange(PassRefPtr<AccessibilityObject> prpObject)
     // This static variable is needed to keep track of the old object
     // as per previous calls to this function, in order to properly
     // decide whether to emit some signals or not.
-    DEFINE_STATIC_LOCAL(RefPtr<AccessibilityObject>, oldObject, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(RefPtr<AccessibilityObject>, oldObject, ());
 
     RefPtr<AccessibilityObject> object = prpObject;
 

@@ -166,7 +166,7 @@ PassRefPtr<SimpleFontData> FontCache::similarFontPlatformData(const FontDescript
         if (family.isEmpty())
             continue;
         static String* matchWords[3] = { new String("Arabic"), new String("Pashto"), new String("Urdu") };
-        DEFINE_STATIC_LOCAL(AtomicString, geezaStr, ("Geeza Pro", AtomicString::ConstructFromLiteral));
+        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, geezaStr, ("Geeza Pro", AtomicString::ConstructFromLiteral));
         for (int j = 0; j < 3 && !simpleFontData; ++j)
             if (family.contains(*matchWords[j], false))
                 simpleFontData = getCachedFontData(description, geezaStr);
@@ -176,7 +176,7 @@ PassRefPtr<SimpleFontData> FontCache::similarFontPlatformData(const FontDescript
 
 PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, timesStr, ("Times", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, timesStr, ("Times", AtomicString::ConstructFromLiteral));
 
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
@@ -188,7 +188,7 @@ PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescri
     // the user doesn't have it, we fall back on Lucida Grande because that's
     // guaranteed to be there, according to Nathan Taylor. This is good enough
     // to avoid a crash at least.
-    DEFINE_STATIC_LOCAL(AtomicString, lucidaGrandeStr, ("Lucida Grande", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, lucidaGrandeStr, ("Lucida Grande", AtomicString::ConstructFromLiteral));
     return getCachedFontData(fontDescription, lucidaGrandeStr, false, shouldRetain);
 }
 

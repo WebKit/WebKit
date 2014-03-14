@@ -47,7 +47,7 @@ static bool gPersistentPluginMetadataCacheIsEnabled;
 
 String& persistentPluginMetadataCachePath()
 {
-    DEFINE_STATIC_LOCAL(String, cachePath, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, cachePath, ());
     return cachePath;
 }
 #endif

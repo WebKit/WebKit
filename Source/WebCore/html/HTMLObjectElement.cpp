@@ -395,7 +395,7 @@ void HTMLObjectElement::renderFallbackContent()
 // FIXME: This should be removed, all callers are almost certainly wrong.
 static bool isRecognizedTagName(const QualifiedName& tagName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, tagList, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, tagList, ());
     if (tagList.isEmpty()) {
         const QualifiedName* const * tags = HTMLNames::getHTMLTags();
         for (size_t i = 0; i < HTMLNames::HTMLTagsCount; i++) {

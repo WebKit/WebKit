@@ -78,7 +78,7 @@ static const double removeSnapshotTimerDelay = 1.5;
 
 static const String titleText(Page* page, String mimeType)
 {
-    DEFINE_STATIC_LOCAL(MimeTypeToLocalizedStringMap, mimeTypeToLabelTitleMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(MimeTypeToLocalizedStringMap, mimeTypeToLabelTitleMap, ());
     String titleText = mimeTypeToLabelTitleMap.get(mimeType);
     if (!titleText.isEmpty())
         return titleText;
@@ -92,7 +92,7 @@ static const String titleText(Page* page, String mimeType)
 
 static const String subtitleText(Page* page, String mimeType)
 {
-    DEFINE_STATIC_LOCAL(MimeTypeToLocalizedStringMap, mimeTypeToLabelSubtitleMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(MimeTypeToLocalizedStringMap, mimeTypeToLabelSubtitleMap, ());
     String subtitleText = mimeTypeToLabelSubtitleMap.get(mimeType);
     if (!subtitleText.isEmpty())
         return subtitleText;
@@ -419,7 +419,7 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 
 bool HTMLPlugInImageElement::partOfSnapshotOverlay(Node* node)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, selector, (".snapshot-overlay", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, selector, (".snapshot-overlay", AtomicString::ConstructFromLiteral));
     RefPtr<Element> snapshotLabel = ensureUserAgentShadowRoot().querySelector(selector, ASSERT_NO_EXCEPTION);
     return node && snapshotLabel && (node == snapshotLabel.get() || node->isDescendantOf(snapshotLabel.get()));
 }

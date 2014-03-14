@@ -75,7 +75,7 @@ private:
     MeterBarElement(Document& document)
         : MeterShadowElement(document)
     {
-        DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-meter-bar", AtomicString::ConstructFromLiteral));
+        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-meter-bar", AtomicString::ConstructFromLiteral));
         setPseudo(pseudoId);
     }
 };

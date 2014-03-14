@@ -44,7 +44,7 @@ static void collect(void*)
 
 GCController& gcController()
 {
-    DEFINE_STATIC_LOCAL(GCController, staticGCController, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(GCController, staticGCController, ());
     return staticGCController;
 }
 

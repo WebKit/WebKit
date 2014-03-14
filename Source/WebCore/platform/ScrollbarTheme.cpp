@@ -34,7 +34,7 @@ namespace WebCore {
 ScrollbarTheme* ScrollbarTheme::theme()
 {
     if (Settings::mockScrollbarsEnabled()) {
-        DEFINE_STATIC_LOCAL(ScrollbarThemeMock, mockTheme, ());
+        DEPRECATED_DEFINE_STATIC_LOCAL(ScrollbarThemeMock, mockTheme, ());
         return &mockTheme;
     }
     return nativeTheme();

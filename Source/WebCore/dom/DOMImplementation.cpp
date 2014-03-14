@@ -86,7 +86,7 @@ static bool isSupportedSVG10Feature(const String& feature, const String& version
         return false;
 
     static bool initialized = false;
-    DEFINE_STATIC_LOCAL(FeatureSet, svgFeatures, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(FeatureSet, svgFeatures, ());
     if (!initialized) {
 #if ENABLE(FILTERS) && ENABLE(SVG_FONTS)
         addString(svgFeatures, "svg");
@@ -115,7 +115,7 @@ static bool isSupportedSVG11Feature(const String& feature, const String& version
         return false;
 
     static bool initialized = false;
-    DEFINE_STATIC_LOCAL(FeatureSet, svgFeatures, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(FeatureSet, svgFeatures, ());
     if (!initialized) {
         // Sadly, we cannot claim to implement any of the SVG 1.1 generic feature sets
         // lack of Font and Filter support.

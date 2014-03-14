@@ -114,7 +114,7 @@ namespace WebCore {
 
 ScrollbarTheme* ScrollbarTheme::nativeTheme()
 {
-    DEFINE_STATIC_LOCAL(ScrollbarThemeMac, theme, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(ScrollbarThemeMac, theme, ());
     return &theme;
 }
 

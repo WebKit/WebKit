@@ -32,8 +32,8 @@ namespace WebCore {
 
 static const AtomicString& stringForPlaybackTargetAvailability(bool available)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, availableString, ("available", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, notAvailableString, ("not-available", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, availableString, ("available", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, notAvailableString, ("not-available", AtomicString::ConstructFromLiteral));
 
     return available ? availableString : notAvailableString;
 }

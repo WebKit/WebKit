@@ -65,19 +65,19 @@ PassRefPtr<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const Qualifie
 
 const AtomicString& SVGFETurbulenceElement::baseFrequencyXIdentifier()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGBaseFrequencyX", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGBaseFrequencyX", AtomicString::ConstructFromLiteral));
     return s_identifier;
 }
 
 const AtomicString& SVGFETurbulenceElement::baseFrequencyYIdentifier()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGBaseFrequencyY", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGBaseFrequencyY", AtomicString::ConstructFromLiteral));
     return s_identifier;
 }
 
 bool SVGFETurbulenceElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty()) {
         supportedAttributes.add(SVGNames::baseFrequencyAttr);
         supportedAttributes.add(SVGNames::numOctavesAttr);

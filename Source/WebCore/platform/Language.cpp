@@ -39,7 +39,7 @@ namespace WebCore {
 typedef HashMap<void*, LanguageChangeObserverFunction> ObserverMap;
 static ObserverMap& observerMap()
 {
-    DEFINE_STATIC_LOCAL(ObserverMap, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(ObserverMap, map, ());
     return map;
 }
 
@@ -72,7 +72,7 @@ String defaultLanguage()
 
 static Vector<String>& preferredLanguagesOverride()
 {
-    DEFINE_STATIC_LOCAL(Vector<String>, override, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<String>, override, ());
     return override;
 }
 

@@ -43,7 +43,7 @@ static uint32_t magicNumber()
 
 const String& fileExtension()
 {
-    DEFINE_STATIC_LOCAL(const String, extension, (ASCIILiteral(".download")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, extension, (ASCIILiteral(".download")));
     return extension;
 }
 

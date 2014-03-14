@@ -83,7 +83,7 @@ private:
 typedef HashMap<mach_port_t, NetscapePluginHostProxy*> PluginProxyMap;
 static PluginProxyMap& pluginProxyMap()
 {
-    DEFINE_STATIC_LOCAL(PluginProxyMap, pluginProxyMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(PluginProxyMap, pluginProxyMap, ());
     
     return pluginProxyMap;
 }

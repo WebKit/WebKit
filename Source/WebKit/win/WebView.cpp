@@ -1321,8 +1321,8 @@ bool WebView::canHandleRequest(const WebCore::ResourceRequest& request)
 
 String WebView::standardUserAgentWithApplicationName(const String& applicationName)
 {
-    DEFINE_STATIC_LOCAL(String, osVersion, (windowsVersionForUAString()));
-    DEFINE_STATIC_LOCAL(String, webKitVersion, (webKitVersionString()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, osVersion, (windowsVersionForUAString()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, webKitVersion, (webKitVersionString()));
 
     return makeString("Mozilla/5.0 (", osVersion, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko)", applicationName.isEmpty() ? "" : " ", applicationName);
 }

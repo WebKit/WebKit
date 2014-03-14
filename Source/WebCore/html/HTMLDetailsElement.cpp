@@ -36,7 +36,7 @@ using namespace HTMLNames;
 
 static const AtomicString& summaryQuerySelector()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, selector, ("summary:first-of-type", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, selector, ("summary:first-of-type", AtomicString::ConstructFromLiteral));
     return selector;
 };
 

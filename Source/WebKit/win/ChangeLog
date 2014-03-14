@@ -1,3 +1,23 @@
+2014-03-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        Rename DEFINE_STATIC_LOCAL to DEPRECATED_DEFINE_STATIC_LOCAL
+        https://bugs.webkit.org/show_bug.cgi?id=129612
+
+        Reviewed by Darin Adler.
+
+        For new code use static NeverDestroyed<T> instead.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::initialize):
+        * WebHistory.cpp:
+        (sharedHistoryStorage):
+        * WebLocalizableStrings.cpp:
+        (mainBundleLocStrings):
+        (frameworkLocStringsMutex):
+        (frameworkLocStrings):
+        * WebView.cpp:
+        (WebView::standardUserAgentWithApplicationName):
+
 2014-03-13  Brian Burg  <bburg@apple.com>
 
         Unreviewed build fix for Mac Windows after r165545.

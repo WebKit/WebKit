@@ -1599,7 +1599,7 @@ ApplicationCacheStorage::ApplicationCacheStorage()
 
 ApplicationCacheStorage& cacheStorage()
 {
-    DEFINE_STATIC_LOCAL(ApplicationCacheStorage, storage, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(ApplicationCacheStorage, storage, ());
     
     return storage;
 }

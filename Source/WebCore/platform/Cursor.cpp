@@ -188,259 +188,259 @@ PlatformCursor Cursor::platformCursor() const
 
 const Cursor& pointerCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Pointer));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Pointer));
     return c;
 }
 
 const Cursor& crossCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Cross));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Cross));
     return c;
 }
 
 const Cursor& handCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Hand));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Hand));
     return c;
 }
 
 const Cursor& moveCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Move));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Move));
     return c;
 }
 
 const Cursor& verticalTextCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::VerticalText));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::VerticalText));
     return c;
 }
 
 const Cursor& cellCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Cell));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Cell));
     return c;
 }
 
 const Cursor& contextMenuCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::ContextMenu));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::ContextMenu));
     return c;
 }
 
 const Cursor& aliasCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Alias));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Alias));
     return c;
 }
 
 const Cursor& zoomInCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::ZoomIn));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::ZoomIn));
     return c;
 }
 
 const Cursor& zoomOutCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::ZoomOut));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::ZoomOut));
     return c;
 }
 
 const Cursor& copyCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Copy));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Copy));
     return c;
 }
 
 const Cursor& noneCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::None));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::None));
     return c;
 }
 
 const Cursor& progressCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Progress));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Progress));
     return c;
 }
 
 const Cursor& noDropCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NoDrop));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NoDrop));
     return c;
 }
 
 const Cursor& notAllowedCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NotAllowed));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NotAllowed));
     return c;
 }
 
 const Cursor& iBeamCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::IBeam));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::IBeam));
     return c;
 }
 
 const Cursor& waitCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Wait));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Wait));
     return c;
 }
 
 const Cursor& helpCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Help));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Help));
     return c;
 }
 
 const Cursor& eastResizeCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::EastResize));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::EastResize));
     return c;
 }
 
 const Cursor& northResizeCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthResize));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthResize));
     return c;
 }
 
 const Cursor& northEastResizeCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthEastResize));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthEastResize));
     return c;
 }
 
 const Cursor& northWestResizeCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthWestResize));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthWestResize));
     return c;
 }
 
 const Cursor& southResizeCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::SouthResize));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::SouthResize));
     return c;
 }
 
 const Cursor& southEastResizeCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::SouthEastResize));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::SouthEastResize));
     return c;
 }
 
 const Cursor& southWestResizeCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::SouthWestResize));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::SouthWestResize));
     return c;
 }
 
 const Cursor& westResizeCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::WestResize));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::WestResize));
     return c;
 }
 
 const Cursor& northSouthResizeCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthSouthResize));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthSouthResize));
     return c;
 }
 
 const Cursor& eastWestResizeCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::EastWestResize));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::EastWestResize));
     return c;
 }
 
 const Cursor& northEastSouthWestResizeCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthEastSouthWestResize));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthEastSouthWestResize));
     return c;
 }
 
 const Cursor& northWestSouthEastResizeCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthWestSouthEastResize));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthWestSouthEastResize));
     return c;
 }
 
 const Cursor& columnResizeCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::ColumnResize));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::ColumnResize));
     return c;
 }
 
 const Cursor& rowResizeCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::RowResize));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::RowResize));
     return c;
 }
 
 const Cursor& middlePanningCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::MiddlePanning));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::MiddlePanning));
     return c;
 }
     
 const Cursor& eastPanningCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::EastPanning));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::EastPanning));
     return c;
 }
     
 const Cursor& northPanningCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthPanning));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthPanning));
     return c;
 }
     
 const Cursor& northEastPanningCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthEastPanning));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthEastPanning));
     return c;
 }
     
 const Cursor& northWestPanningCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthWestPanning));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthWestPanning));
     return c;
 }
     
 const Cursor& southPanningCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::SouthPanning));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::SouthPanning));
     return c;
 }
     
 const Cursor& southEastPanningCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::SouthEastPanning));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::SouthEastPanning));
     return c;
 }
     
 const Cursor& southWestPanningCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::SouthWestPanning));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::SouthWestPanning));
     return c;
 }
     
 const Cursor& westPanningCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::WestPanning));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::WestPanning));
     return c;
 }
 
 const Cursor& grabCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Grab));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Grab));
     return c;
 }
 
 const Cursor& grabbingCursor()
 {
-    DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Grabbing));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Grabbing));
     return c;
 }
 

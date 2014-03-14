@@ -1154,8 +1154,8 @@ const AtomicString& RenderStyle::hyphenString() const
         return hyphenationString;
 
     // FIXME: This should depend on locale.
-    DEFINE_STATIC_LOCAL(AtomicString, hyphenMinusString, (&hyphenMinus, 1));
-    DEFINE_STATIC_LOCAL(AtomicString, hyphenString, (&hyphen, 1));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, hyphenMinusString, (&hyphenMinus, 1));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, hyphenString, (&hyphen, 1));
     return font().primaryFontHasGlyphForCharacter(hyphen) ? hyphenString : hyphenMinusString;
 }
 
@@ -1167,28 +1167,28 @@ const AtomicString& RenderStyle::textEmphasisMarkString() const
     case TextEmphasisMarkCustom:
         return textEmphasisCustomMark();
     case TextEmphasisMarkDot: {
-        DEFINE_STATIC_LOCAL(AtomicString, filledDotString, (&bullet, 1));
-        DEFINE_STATIC_LOCAL(AtomicString, openDotString, (&whiteBullet, 1));
+        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, filledDotString, (&bullet, 1));
+        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, openDotString, (&whiteBullet, 1));
         return textEmphasisFill() == TextEmphasisFillFilled ? filledDotString : openDotString;
     }
     case TextEmphasisMarkCircle: {
-        DEFINE_STATIC_LOCAL(AtomicString, filledCircleString, (&blackCircle, 1));
-        DEFINE_STATIC_LOCAL(AtomicString, openCircleString, (&whiteCircle, 1));
+        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, filledCircleString, (&blackCircle, 1));
+        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, openCircleString, (&whiteCircle, 1));
         return textEmphasisFill() == TextEmphasisFillFilled ? filledCircleString : openCircleString;
     }
     case TextEmphasisMarkDoubleCircle: {
-        DEFINE_STATIC_LOCAL(AtomicString, filledDoubleCircleString, (&fisheye, 1));
-        DEFINE_STATIC_LOCAL(AtomicString, openDoubleCircleString, (&bullseye, 1));
+        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, filledDoubleCircleString, (&fisheye, 1));
+        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, openDoubleCircleString, (&bullseye, 1));
         return textEmphasisFill() == TextEmphasisFillFilled ? filledDoubleCircleString : openDoubleCircleString;
     }
     case TextEmphasisMarkTriangle: {
-        DEFINE_STATIC_LOCAL(AtomicString, filledTriangleString, (&blackUpPointingTriangle, 1));
-        DEFINE_STATIC_LOCAL(AtomicString, openTriangleString, (&whiteUpPointingTriangle, 1));
+        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, filledTriangleString, (&blackUpPointingTriangle, 1));
+        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, openTriangleString, (&whiteUpPointingTriangle, 1));
         return textEmphasisFill() == TextEmphasisFillFilled ? filledTriangleString : openTriangleString;
     }
     case TextEmphasisMarkSesame: {
-        DEFINE_STATIC_LOCAL(AtomicString, filledSesameString, (&sesameDot, 1));
-        DEFINE_STATIC_LOCAL(AtomicString, openSesameString, (&whiteSesameDot, 1));
+        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, filledSesameString, (&sesameDot, 1));
+        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, openSesameString, (&whiteSesameDot, 1));
         return textEmphasisFill() == TextEmphasisFillFilled ? filledSesameString : openSesameString;
     }
     case TextEmphasisMarkAuto:
@@ -1203,13 +1203,13 @@ const AtomicString& RenderStyle::textEmphasisMarkString() const
 #if ENABLE(DASHBOARD_SUPPORT)
 const Vector<StyleDashboardRegion>& RenderStyle::initialDashboardRegions()
 {
-    DEFINE_STATIC_LOCAL(Vector<StyleDashboardRegion>, emptyList, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<StyleDashboardRegion>, emptyList, ());
     return emptyList;
 }
 
 const Vector<StyleDashboardRegion>& RenderStyle::noneDashboardRegions()
 {
-    DEFINE_STATIC_LOCAL(Vector<StyleDashboardRegion>, noneList, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<StyleDashboardRegion>, noneList, ());
     static bool noneListInitialized = false;
 
     if (!noneListInitialized) {

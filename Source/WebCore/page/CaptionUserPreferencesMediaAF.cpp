@@ -276,7 +276,7 @@ String CaptionUserPreferencesMediaAF::captionsBackgroundCSS() const
 {
     // This default value must be the same as the one specified in mediaControls.css for -webkit-media-text-track-past-nodes
     // and webkit-media-text-track-future-nodes.
-    DEFINE_STATIC_LOCAL(Color, defaultBackgroundColor, (Color(0, 0, 0, 0.8 * 255)));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Color, defaultBackgroundColor, (Color(0, 0, 0, 0.8 * 255)));
 
     MACaptionAppearanceBehavior behavior;
 
@@ -379,10 +379,10 @@ String CaptionUserPreferencesMediaAF::colorPropertyCSS(CSSPropertyID id, const C
 
 String CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
 {
-    DEFINE_STATIC_LOCAL(const String, edgeStyleRaised, (" -.05em -.05em 0 ", String::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const String, edgeStyleDepressed, (" .05em .05em 0 ", String::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const String, edgeStyleDropShadow, (" .075em .075em 0 ", String::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const String, edgeStyleUniform, (" .03em ", String::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, edgeStyleRaised, (" -.05em -.05em 0 ", String::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, edgeStyleDepressed, (" .05em .05em 0 ", String::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, edgeStyleDropShadow, (" .075em .075em 0 ", String::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, edgeStyleUniform, (" .03em ", String::ConstructFromLiteral));
 
     bool unused;
     Color color = captionsTextColor(unused);

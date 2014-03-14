@@ -47,7 +47,7 @@ namespace WebCore {
 typedef HashMap<const GraphicsLayer*, Vector<FloatRect>> RepaintMap;
 static RepaintMap& repaintRectMap()
 {
-    DEFINE_STATIC_LOCAL(RepaintMap, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(RepaintMap, map, ());
     return map;
 }
 

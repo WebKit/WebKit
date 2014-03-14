@@ -116,7 +116,7 @@ static bool isLegacySupportedJavaScriptLanguage(const String& language)
 
     // FIXME: This function is not HTML5 compliant. These belong in the MIME registry as "text/javascript<version>" entries.
     typedef HashSet<String, CaseFoldingHash> LanguageSet;
-    DEFINE_STATIC_LOCAL(LanguageSet, languages, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(LanguageSet, languages, ());
     if (languages.isEmpty()) {
         languages.add("javascript");
         languages.add("javascript");
@@ -347,7 +347,7 @@ void ScriptElement::notifyFinished(CachedResource* resource)
         && !m_cachedScript->passesAccessControlCheck(m_element->document().securityOrigin())) {
 
         dispatchErrorEvent();
-        DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Cross-origin script load denied by Cross-Origin Resource Sharing policy.")));
+        DEPRECATED_DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Cross-origin script load denied by Cross-Origin Resource Sharing policy.")));
         m_element->document().addConsoleMessage(MessageSource::JS, MessageLevel::Error, consoleMessage);
         return;
     }

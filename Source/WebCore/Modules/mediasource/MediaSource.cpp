@@ -92,19 +92,19 @@ MediaSource::~MediaSource()
 
 const AtomicString& MediaSource::openKeyword()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, open, ("open", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, open, ("open", AtomicString::ConstructFromLiteral));
     return open;
 }
 
 const AtomicString& MediaSource::closedKeyword()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, closed, ("closed", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, closed, ("closed", AtomicString::ConstructFromLiteral));
     return closed;
 }
 
 const AtomicString& MediaSource::endedKeyword()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, ended, ("ended", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, ended, ("ended", AtomicString::ConstructFromLiteral));
     return ended;
 }
 
@@ -305,8 +305,8 @@ void MediaSource::endOfStream(const AtomicString& error, ExceptionCode& ec)
 
 void MediaSource::streamEndedWithError(const AtomicString& error, ExceptionCode& ec)
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, network, ("network", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const AtomicString, decode, ("decode", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, network, ("network", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, decode, ("decode", AtomicString::ConstructFromLiteral));
 
     // 2.4.7 https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#end-of-stream-algorithm
     // 1. Change the readyState attribute value to "ended".

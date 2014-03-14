@@ -59,7 +59,7 @@ using namespace HTMLNames;
 
 static LinkEventSender& linkLoadEventSender()
 {
-    DEFINE_STATIC_LOCAL(LinkEventSender, sharedLoadEventSender, (eventNames().loadEvent));
+    DEPRECATED_DEFINE_STATIC_LOCAL(LinkEventSender, sharedLoadEventSender, (eventNames().loadEvent));
     return sharedLoadEventSender;
 }
 

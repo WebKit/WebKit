@@ -39,7 +39,7 @@ typedef HashSet<IdentifierRep*> IdentifierSet;
 
 static IdentifierSet& identifierSet()
 {
-    DEFINE_STATIC_LOCAL(IdentifierSet, identifierSet, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(IdentifierSet, identifierSet, ());
     return identifierSet;
 }
     
@@ -47,7 +47,7 @@ typedef HashMap<int, IdentifierRep*> IntIdentifierMap;
 
 static IntIdentifierMap& intIdentifierMap()
 {
-    DEFINE_STATIC_LOCAL(IntIdentifierMap, intIdentifierMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(IntIdentifierMap, intIdentifierMap, ());
     return intIdentifierMap;
 }
 
@@ -81,7 +81,7 @@ typedef HashMap<RefPtr<StringImpl>, IdentifierRep*> StringIdentifierMap;
 
 static StringIdentifierMap& stringIdentifierMap()
 {
-    DEFINE_STATIC_LOCAL(StringIdentifierMap, stringIdentifierMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(StringIdentifierMap, stringIdentifierMap, ());
     return stringIdentifierMap;
 }
 

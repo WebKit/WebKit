@@ -42,16 +42,16 @@ using namespace WebKit;
 
 namespace TestWebKitAPI {
 
-DEFINE_STATIC_LOCAL(String, rootDir, (ASCIILiteral("/")));
-DEFINE_STATIC_LOCAL(String, homeDir, (String(getenv("HOME"))));
-DEFINE_STATIC_LOCAL(String, usrDir, (ASCIILiteral("/usr")));
-DEFINE_STATIC_LOCAL(String, usrSbinDir, (ASCIILiteral("/usr/sbin")));
-DEFINE_STATIC_LOCAL(String, testDirRead, (ASCIILiteral("/tmp/WebKitSeccompFilters/testRead")));
-DEFINE_STATIC_LOCAL(String, testDirWrite, (ASCIILiteral("/tmp/WebKitSeccompFilters/testWrite")));
-DEFINE_STATIC_LOCAL(String, testDirReadAndWrite, (ASCIILiteral("/tmp/WebKitSeccompFilters/testReadAndWrite")));
-DEFINE_STATIC_LOCAL(String, testDirNotAllowed, (ASCIILiteral("/tmp/WebKitSeccompFilters/testNotAllowed")));
-DEFINE_STATIC_LOCAL(String, testFileNotAllowed, (testDirReadAndWrite + "/testFilePolicy"));
-DEFINE_STATIC_LOCAL(String, testFileReadAndWrite, (testDirNotAllowed + "/testFilePolicy"));
+DEPRECATED_DEFINE_STATIC_LOCAL(String, rootDir, (ASCIILiteral("/")));
+DEPRECATED_DEFINE_STATIC_LOCAL(String, homeDir, (String(getenv("HOME"))));
+DEPRECATED_DEFINE_STATIC_LOCAL(String, usrDir, (ASCIILiteral("/usr")));
+DEPRECATED_DEFINE_STATIC_LOCAL(String, usrSbinDir, (ASCIILiteral("/usr/sbin")));
+DEPRECATED_DEFINE_STATIC_LOCAL(String, testDirRead, (ASCIILiteral("/tmp/WebKitSeccompFilters/testRead")));
+DEPRECATED_DEFINE_STATIC_LOCAL(String, testDirWrite, (ASCIILiteral("/tmp/WebKitSeccompFilters/testWrite")));
+DEPRECATED_DEFINE_STATIC_LOCAL(String, testDirReadAndWrite, (ASCIILiteral("/tmp/WebKitSeccompFilters/testReadAndWrite")));
+DEPRECATED_DEFINE_STATIC_LOCAL(String, testDirNotAllowed, (ASCIILiteral("/tmp/WebKitSeccompFilters/testNotAllowed")));
+DEPRECATED_DEFINE_STATIC_LOCAL(String, testFileNotAllowed, (testDirReadAndWrite + "/testFilePolicy"));
+DEPRECATED_DEFINE_STATIC_LOCAL(String, testFileReadAndWrite, (testDirNotAllowed + "/testFilePolicy"));
 
 static const mode_t defaultMode = S_IRUSR | S_IWUSR | S_IXUSR;
 

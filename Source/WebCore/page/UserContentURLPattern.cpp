@@ -64,7 +64,7 @@ bool UserContentURLPattern::matchesPatterns(const URL& url, const Vector<String>
 
 bool UserContentURLPattern::parse(const String& pattern)
 {
-    DEFINE_STATIC_LOCAL(const String, schemeSeparator, (ASCIILiteral("://")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, schemeSeparator, (ASCIILiteral("://")));
 
     size_t schemeEndPos = pattern.find(schemeSeparator);
     if (schemeEndPos == notFound)

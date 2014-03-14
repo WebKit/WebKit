@@ -258,7 +258,7 @@ void EventTarget::fireEventListeners(Event* event, EventTargetData* d, EventList
 
 const EventListenerVector& EventTarget::getEventListeners(const AtomicString& eventType)
 {
-    DEFINE_STATIC_LOCAL(EventListenerVector, emptyVector, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(EventListenerVector, emptyVector, ());
 
     EventTargetData* d = eventTargetData();
     if (!d)

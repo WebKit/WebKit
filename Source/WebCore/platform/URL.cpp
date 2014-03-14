@@ -1783,7 +1783,7 @@ bool protocolIsInHTTPFamily(const String& url)
 
 const URL& blankURL()
 {
-    DEFINE_STATIC_LOCAL(URL, staticBlankURL, (ParsedURLString, "about:blank"));
+    DEPRECATED_DEFINE_STATIC_LOCAL(URL, staticBlankURL, (ParsedURLString, "about:blank"));
     return staticBlankURL;
 }
 
@@ -1798,7 +1798,7 @@ bool isDefaultPortForProtocol(unsigned short port, const String& protocol)
         return false;
 
     typedef HashMap<String, unsigned, CaseFoldingHash> DefaultPortsMap;
-    DEFINE_STATIC_LOCAL(DefaultPortsMap, defaultPorts, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(DefaultPortsMap, defaultPorts, ());
     if (defaultPorts.isEmpty()) {
         defaultPorts.set("http", 80);
         defaultPorts.set("https", 443);

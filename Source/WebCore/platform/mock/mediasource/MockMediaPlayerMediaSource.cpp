@@ -51,7 +51,7 @@ PassOwnPtr<MediaPlayerPrivateInterface> MockMediaPlayerMediaSource::create(Media
 
 static HashSet<String> mimeTypeCache()
 {
-    DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
     static bool isInitialized = false;
 
     if (!isInitialized) {

@@ -271,7 +271,7 @@ static const char *boolString(bool val)
 typedef HashMap<MediaPlayer*, MediaPlayerPrivateAVFoundationObjC*> PlayerToPrivateMapType;
 static PlayerToPrivateMapType& playerToPrivateMap()
 {
-    DEFINE_STATIC_LOCAL(PlayerToPrivateMapType, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(PlayerToPrivateMapType, map, ());
     return map;
 };
 #endif
@@ -1118,7 +1118,7 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator(GraphicsContext
 
 static HashSet<String> mimeTypeCache()
 {
-    DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
     static bool typeListInitialized = false;
 
     if (typeListInitialized)

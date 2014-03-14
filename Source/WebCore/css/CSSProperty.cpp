@@ -173,7 +173,7 @@ static CSSPropertyID resolveToPhysicalProperty(WritingMode writingMode, LogicalE
 static const StylePropertyShorthand& borderDirections()
 {
     static const CSSPropertyID properties[4] = { CSSPropertyBorderTop, CSSPropertyBorderRight, CSSPropertyBorderBottom, CSSPropertyBorderLeft };
-    DEFINE_STATIC_LOCAL(StylePropertyShorthand, borderDirections, (CSSPropertyBorder, properties, WTF_ARRAY_LENGTH(properties)));
+    DEPRECATED_DEFINE_STATIC_LOCAL(StylePropertyShorthand, borderDirections, (CSSPropertyBorder, properties, WTF_ARRAY_LENGTH(properties)));
     return borderDirections;
 }
 

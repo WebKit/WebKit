@@ -230,7 +230,7 @@ int SentenceBreakIterator::previous()
 
 TextBreakIterator* wordBreakIterator(const UChar* string, int length)
 {
-    DEFINE_STATIC_LOCAL(WordBreakIterator, iterator, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(WordBreakIterator, iterator, ());
     iterator.reset(string, length);
     return &iterator;
 }
@@ -288,7 +288,7 @@ void releaseLineBreakIterator(TextBreakIterator* iterator)
 
 TextBreakIterator* sentenceBreakIterator(const UChar* string, int length)
 {
-    DEFINE_STATIC_LOCAL(SentenceBreakIterator, iterator, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(SentenceBreakIterator, iterator, ());
     iterator.reset(string, length);
     return &iterator;
 }
@@ -340,7 +340,7 @@ bool isWordTextBreak(TextBreakIterator*)
 
 TextBreakIterator* cursorMovementIterator(const UChar* string, int length)
 {
-    DEFINE_STATIC_LOCAL(CharBreakIterator, iterator, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(CharBreakIterator, iterator, ());
     iterator.reset(string, length);
     return &iterator;
 }

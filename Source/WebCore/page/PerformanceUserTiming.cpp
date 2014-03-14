@@ -41,7 +41,7 @@ namespace {
 typedef HashMap<String, NavigationTimingFunction> RestrictedKeyMap;
 static RestrictedKeyMap restrictedKeyMap()
 {
-    DEFINE_STATIC_LOCAL(RestrictedKeyMap, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(RestrictedKeyMap, map, ());
     if (map.isEmpty()) {
         map.add("navigationStart", &PerformanceTiming::navigationStart);
         map.add("unloadEventStart", &PerformanceTiming::unloadEventStart);

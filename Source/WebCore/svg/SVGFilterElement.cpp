@@ -84,13 +84,13 @@ PassRefPtr<SVGFilterElement> SVGFilterElement::create(const QualifiedName& tagNa
 
 const AtomicString& SVGFilterElement::filterResXIdentifier()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGFilterResX", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGFilterResX", AtomicString::ConstructFromLiteral));
     return s_identifier;
 }
 
 const AtomicString& SVGFilterElement::filterResYIdentifier()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGFilterResY", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGFilterResY", AtomicString::ConstructFromLiteral));
     return s_identifier;
 }
 
@@ -105,7 +105,7 @@ void SVGFilterElement::setFilterRes(unsigned filterResX, unsigned filterResY)
 
 bool SVGFilterElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty()) {
         SVGURIReference::addSupportedAttributes(supportedAttributes);
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
@@ -200,7 +200,7 @@ bool SVGFilterElement::childShouldCreateRenderer(const Node& child) const
 
     const SVGElement& svgElement = toSVGElement(child);
 
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, allowedChildElementTags, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, allowedChildElementTags, ());
     if (allowedChildElementTags.isEmpty()) {
         allowedChildElementTags.add(SVGNames::feBlendTag);
         allowedChildElementTags.add(SVGNames::feColorMatrixTag);

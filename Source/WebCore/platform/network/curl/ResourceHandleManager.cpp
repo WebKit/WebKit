@@ -128,9 +128,9 @@ static char* cookieJarPath()
 }
 
 static Mutex* sharedResourceMutex(curl_lock_data data) {
-    DEFINE_STATIC_LOCAL(Mutex, cookieMutex, ());
-    DEFINE_STATIC_LOCAL(Mutex, dnsMutex, ());
-    DEFINE_STATIC_LOCAL(Mutex, shareMutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, cookieMutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, dnsMutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, shareMutex, ());
 
     switch (data) {
         case CURL_LOCK_DATA_COOKIE:

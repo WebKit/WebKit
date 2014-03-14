@@ -50,7 +50,7 @@ namespace WebKit {
 
 NetscapePluginHostManager& NetscapePluginHostManager::shared()
 {
-    DEFINE_STATIC_LOCAL(NetscapePluginHostManager, pluginHostManager, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(NetscapePluginHostManager, pluginHostManager, ());
     
     return pluginHostManager;
 }

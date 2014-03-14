@@ -564,13 +564,13 @@ HTMLInputElement* SliderThumbElement::hostInput() const
 
 static const AtomicString& sliderThumbShadowPseudoId()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, sliderThumb, ("-webkit-slider-thumb", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, sliderThumb, ("-webkit-slider-thumb", AtomicString::ConstructFromLiteral));
     return sliderThumb;
 }
 
 static const AtomicString& mediaSliderThumbShadowPseudoId()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, mediaSliderThumb, ("-webkit-media-slider-thumb", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, mediaSliderThumb, ("-webkit-media-slider-thumb", AtomicString::ConstructFromLiteral));
     return mediaSliderThumb;
 }
 
@@ -620,8 +620,8 @@ RenderPtr<RenderElement> SliderContainerElement::createElementRenderer(PassRef<R
 
 const AtomicString& SliderContainerElement::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, mediaSliderContainer, ("-webkit-media-slider-container", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const AtomicString, sliderContainer, ("-webkit-slider-container", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, mediaSliderContainer, ("-webkit-media-slider-container", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, sliderContainer, ("-webkit-slider-container", AtomicString::ConstructFromLiteral));
 
     HTMLInputElement* input = shadowHost()->toInputElement();
     if (!input)

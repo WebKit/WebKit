@@ -163,7 +163,7 @@ typedef HashMap<String, UScriptCode, DefaultHash<String>::Hash, ScriptNameCodeMa
 
 UScriptCode scriptNameToCode(const String& scriptName)
 {
-    DEFINE_STATIC_LOCAL(ScriptNameCodeMap, scriptNameCodeMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(ScriptNameCodeMap, scriptNameCodeMap, ());
     if (scriptNameCodeMap.isEmpty()) {
         for (size_t i = 0; i < sizeof(scriptNameCodeList) / sizeof(ScriptNameCode); ++i)
             scriptNameCodeMap.set(ASCIILiteral(scriptNameCodeList[i].name), scriptNameCodeList[i].code);
@@ -389,7 +389,7 @@ typedef HashMap<String, UScriptCode, DefaultHash<String>::Hash, LocaleScriptMapH
 
 UScriptCode localeToScriptCodeForFontSelection(const String& locale)
 {
-    DEFINE_STATIC_LOCAL(LocaleScriptMap, localeScriptMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(LocaleScriptMap, localeScriptMap, ());
     if (localeScriptMap.isEmpty()) {
         for (size_t i = 0; i < sizeof(localeScriptList) / sizeof(LocaleScript); ++i)
             localeScriptMap.set(ASCIILiteral(localeScriptList[i].locale), localeScriptList[i].script);

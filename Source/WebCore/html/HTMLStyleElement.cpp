@@ -41,7 +41,7 @@ using namespace HTMLNames;
 
 static StyleEventSender& styleLoadEventSender()
 {
-    DEFINE_STATIC_LOCAL(StyleEventSender, sharedLoadEventSender, (eventNames().loadEvent));
+    DEPRECATED_DEFINE_STATIC_LOCAL(StyleEventSender, sharedLoadEventSender, (eventNames().loadEvent));
     return sharedLoadEventSender;
 }
 

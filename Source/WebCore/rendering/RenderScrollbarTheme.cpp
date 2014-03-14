@@ -33,7 +33,7 @@ namespace WebCore {
 
 RenderScrollbarTheme* RenderScrollbarTheme::renderScrollbarTheme()
 {
-    DEFINE_STATIC_LOCAL(RenderScrollbarTheme, theme, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(RenderScrollbarTheme, theme, ());
     return &theme;
 }
 

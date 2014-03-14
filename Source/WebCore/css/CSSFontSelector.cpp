@@ -619,7 +619,7 @@ bool CSSFontSelector::resolvesFamilyFor(const FontDescription& description) cons
             continue;
         if (m_fontFaces.contains(familyName))
             return true;
-        DEFINE_STATIC_LOCAL(String, webkitPrefix, ("-webkit-"));
+        DEPRECATED_DEFINE_STATIC_LOCAL(String, webkitPrefix, ("-webkit-"));
         if (familyName.startsWith(webkitPrefix))
             return true;
             

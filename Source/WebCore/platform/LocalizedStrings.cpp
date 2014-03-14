@@ -79,7 +79,7 @@ static String truncatedStringForLookupMenuItem(const String& original)
 
     // Truncate the string if it's too long. This is in consistency with AppKit.
     unsigned maxNumberOfGraphemeClustersInLookupMenuItem = 24;
-    DEFINE_STATIC_LOCAL(String, ellipsis, (&horizontalEllipsis, 1));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, ellipsis, (&horizontalEllipsis, 1));
 
     String trimmed = original.stripWhiteSpace();
     unsigned numberOfCharacters = numCharactersInGraphemeClusters(trimmed, maxNumberOfGraphemeClustersInLookupMenuItem);

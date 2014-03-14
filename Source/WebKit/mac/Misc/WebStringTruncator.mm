@@ -51,7 +51,7 @@ static NSFont *defaultMenuFont()
 static Font& fontFromNSFont(NSFont *font)
 {
     static NSFont *currentFont;
-    DEFINE_STATIC_LOCAL(Font, currentRenderer, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Font, currentRenderer, ());
 
     if ([font isEqual:currentFont])
         return currentRenderer;

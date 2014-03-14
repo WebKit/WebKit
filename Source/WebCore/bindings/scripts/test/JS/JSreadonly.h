@@ -78,7 +78,7 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, readonly*)
 {
-    DEFINE_STATIC_LOCAL(JSreadonlyOwner, jsreadonlyOwner, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(JSreadonlyOwner, jsreadonlyOwner, ());
     return &jsreadonlyOwner;
 }
 

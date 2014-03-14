@@ -78,7 +78,7 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, attribute*)
 {
-    DEFINE_STATIC_LOCAL(JSattributeOwner, jsattributeOwner, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(JSattributeOwner, jsattributeOwner, ());
     return &jsattributeOwner;
 }
 

@@ -53,7 +53,7 @@ protected:
     KeygenSelectElement(Document& document)
         : HTMLSelectElement(selectTag, document, 0)
     {
-        DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-keygen-select", AtomicString::ConstructFromLiteral));
+        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-keygen-select", AtomicString::ConstructFromLiteral));
         setPseudo(pseudoId);
     }
 
@@ -112,7 +112,7 @@ bool HTMLKeygenElement::appendFormData(FormDataList& encoded_values, bool)
 
 const AtomicString& HTMLKeygenElement::formControlType() const
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, keygen, ("keygen", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, keygen, ("keygen", AtomicString::ConstructFromLiteral));
     return keygen;
 }
 

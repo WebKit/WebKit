@@ -79,7 +79,7 @@ void TileControllerMemoryHandler::trimUnparentedTilesToTarget(int target)
 
 TileControllerMemoryHandler& tileControllerMemoryHandler()
 {
-    DEFINE_STATIC_LOCAL(TileControllerMemoryHandler, staticTileControllerMemoryHandler, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(TileControllerMemoryHandler, staticTileControllerMemoryHandler, ());
     return staticTileControllerMemoryHandler;
 }
 

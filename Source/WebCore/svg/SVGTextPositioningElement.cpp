@@ -55,7 +55,7 @@ SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagNam
 
 bool SVGTextPositioningElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty()) {
         supportedAttributes.add(SVGNames::xAttr);
         supportedAttributes.add(SVGNames::yAttr);

@@ -234,7 +234,7 @@ static bool operator==(const FontGlyphsCacheKey& a, const FontGlyphsCacheKey& b)
 
 static FontGlyphsCache& fontGlyphsCache()
 {
-    DEFINE_STATIC_LOCAL(FontGlyphsCache, cache, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(FontGlyphsCache, cache, ());
     return cache;
 }
 

@@ -1484,15 +1484,15 @@ const String& AccessibilityObject::actionVerb() const
 {
 #if !PLATFORM(IOS)
     // FIXME: Need to add verbs for select elements.
-    DEFINE_STATIC_LOCAL(const String, buttonAction, (AXButtonActionVerb()));
-    DEFINE_STATIC_LOCAL(const String, textFieldAction, (AXTextFieldActionVerb()));
-    DEFINE_STATIC_LOCAL(const String, radioButtonAction, (AXRadioButtonActionVerb()));
-    DEFINE_STATIC_LOCAL(const String, checkedCheckBoxAction, (AXCheckedCheckBoxActionVerb()));
-    DEFINE_STATIC_LOCAL(const String, uncheckedCheckBoxAction, (AXUncheckedCheckBoxActionVerb()));
-    DEFINE_STATIC_LOCAL(const String, linkAction, (AXLinkActionVerb()));
-    DEFINE_STATIC_LOCAL(const String, menuListAction, (AXMenuListActionVerb()));
-    DEFINE_STATIC_LOCAL(const String, menuListPopupAction, (AXMenuListPopupActionVerb()));
-    DEFINE_STATIC_LOCAL(const String, listItemAction, (AXListItemActionVerb()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, buttonAction, (AXButtonActionVerb()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, textFieldAction, (AXTextFieldActionVerb()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, radioButtonAction, (AXRadioButtonActionVerb()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, checkedCheckBoxAction, (AXCheckedCheckBoxActionVerb()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, uncheckedCheckBoxAction, (AXUncheckedCheckBoxActionVerb()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, linkAction, (AXLinkActionVerb()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, menuListAction, (AXMenuListActionVerb()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, menuListPopupAction, (AXMenuListPopupActionVerb()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, listItemAction, (AXListItemActionVerb()));
 
     switch (roleValue()) {
     case ButtonRole:
@@ -1530,8 +1530,8 @@ bool AccessibilityObject::ariaIsMultiline() const
 
 const AtomicString& AccessibilityObject::invalidStatus() const
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, invalidStatusFalse, ("false", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const AtomicString, invalidStatusTrue, ("true", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, invalidStatusFalse, ("false", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, invalidStatusTrue, ("true", AtomicString::ConstructFromLiteral));
     
     // aria-invalid can return false (default), grammer, spelling, or true.
     const AtomicString& ariaInvalid = getAttribute(aria_invalidAttr);

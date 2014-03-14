@@ -84,7 +84,7 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestSerializedScriptValueInterface*)
 {
-    DEFINE_STATIC_LOCAL(JSTestSerializedScriptValueInterfaceOwner, jsTestSerializedScriptValueInterfaceOwner, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(JSTestSerializedScriptValueInterfaceOwner, jsTestSerializedScriptValueInterfaceOwner, ());
     return &jsTestSerializedScriptValueInterfaceOwner;
 }
 

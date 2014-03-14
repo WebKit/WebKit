@@ -43,19 +43,19 @@ namespace WebCore {
 
 const AtomicString& MediaControlsHost::automaticKeyword()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, automatic, ("automatic", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, automatic, ("automatic", AtomicString::ConstructFromLiteral));
     return automatic;
 }
 
 const AtomicString& MediaControlsHost::forcedOnlyKeyword()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, forcedOn, ("forced-only", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, forcedOn, ("forced-only", AtomicString::ConstructFromLiteral));
     return forcedOn;
 }
 
 const AtomicString& MediaControlsHost::alwaysOnKeyword()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, alwaysOn, ("always-on", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, alwaysOn, ("always-on", AtomicString::ConstructFromLiteral));
     return alwaysOn;
 }
 
@@ -184,12 +184,12 @@ String MediaControlsHost::externalDeviceDisplayName() const
 
 String MediaControlsHost::externalDeviceType() const
 {
-    DEFINE_STATIC_LOCAL(String, none, (ASCIILiteral("none")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, none, (ASCIILiteral("none")));
     String type = none;
     
 #if ENABLE(IOS_AIRPLAY)
-    DEFINE_STATIC_LOCAL(String, airplay, (ASCIILiteral("airplay")));
-    DEFINE_STATIC_LOCAL(String, tvout, (ASCIILiteral("tvout")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, airplay, (ASCIILiteral("airplay")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, tvout, (ASCIILiteral("tvout")));
     
     MediaPlayer* player = m_mediaElement->player();
     if (!player) {

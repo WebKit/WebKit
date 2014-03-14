@@ -48,7 +48,7 @@ typedef HashSet<RootObject*> RootObjectSet;
 
 static RootObjectSet* rootObjectSet()
 {
-    DEFINE_STATIC_LOCAL(RootObjectSet, staticRootObjectSet, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(RootObjectSet, staticRootObjectSet, ());
     return &staticRootObjectSet;
 }
 

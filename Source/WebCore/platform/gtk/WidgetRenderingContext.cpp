@@ -61,7 +61,7 @@ private:
 
 static void scheduleScratchBufferPurge()
 {
-    DEFINE_STATIC_LOCAL(PurgeScratchBufferTimer, purgeScratchBufferTimer, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(PurgeScratchBufferTimer, purgeScratchBufferTimer, ());
     if (purgeScratchBufferTimer.isActive())
         purgeScratchBufferTimer.stop();
     purgeScratchBufferTimer.startOneShot(2);

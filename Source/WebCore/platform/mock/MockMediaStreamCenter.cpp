@@ -63,7 +63,7 @@ typedef HashMap<String, RefPtr<MockSource>> MockSourceMap;
 
 static MockSourceMap& mockSourceMap()
 {
-    DEFINE_STATIC_LOCAL(MockSourceMap, mockSourceMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(MockSourceMap, mockSourceMap, ());
     return mockSourceMap;
 }
 
@@ -119,7 +119,7 @@ static void initializeMockSources()
 
 void MockMediaStreamCenter::registerMockMediaStreamCenter()
 {
-    DEFINE_STATIC_LOCAL(MockMediaStreamCenter, center, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(MockMediaStreamCenter, center, ());
     static bool registered = false;
     if (!registered) {
         registered = true;

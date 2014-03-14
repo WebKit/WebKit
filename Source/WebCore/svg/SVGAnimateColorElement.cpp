@@ -39,7 +39,7 @@ PassRefPtr<SVGAnimateColorElement> SVGAnimateColorElement::create(const Qualifie
 
 static bool attributeValueIsCurrentColor(const String& value)
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, currentColor, ("currentColor", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, currentColor, ("currentColor", AtomicString::ConstructFromLiteral));
     return value == currentColor;
 }
 

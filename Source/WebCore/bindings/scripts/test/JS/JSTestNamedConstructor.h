@@ -80,7 +80,7 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestNamedConstructor*)
 {
-    DEFINE_STATIC_LOCAL(JSTestNamedConstructorOwner, jsTestNamedConstructorOwner, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(JSTestNamedConstructorOwner, jsTestNamedConstructorOwner, ());
     return &jsTestNamedConstructorOwner;
 }
 

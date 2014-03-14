@@ -194,7 +194,7 @@ static MediaPlayerFactory* nextMediaEngine(MediaPlayerFactory* current);
 enum RequeryEngineOptions { DoNotResetEngines, ResetEngines };
 static Vector<MediaPlayerFactory*>& installedMediaEngines(RequeryEngineOptions requeryFlags = DoNotResetEngines )
 {
-    DEFINE_STATIC_LOCAL(Vector<MediaPlayerFactory*>, installedEngines, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<MediaPlayerFactory*>, installedEngines, ());
     static bool enginesQueried = false;
 
     if (requeryFlags == ResetEngines) {
@@ -250,19 +250,19 @@ static void addMediaEngine(CreateMediaEnginePlayer constructor, MediaEngineSuppo
 
 static const AtomicString& applicationOctetStream()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, applicationOctetStream, ("application/octet-stream", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, applicationOctetStream, ("application/octet-stream", AtomicString::ConstructFromLiteral));
     return applicationOctetStream;
 }
 
 static const AtomicString& textPlain()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, textPlain, ("text/plain", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, textPlain, ("text/plain", AtomicString::ConstructFromLiteral));
     return textPlain;
 }
 
 static const AtomicString& codecs()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, codecs, ("codecs", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, codecs, ("codecs", AtomicString::ConstructFromLiteral));
     return codecs;
 }
 

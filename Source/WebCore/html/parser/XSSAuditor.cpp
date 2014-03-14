@@ -261,7 +261,7 @@ void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
 
     String httpBodyAsString;
     if (DocumentLoader* documentLoader = document->frame()->loader().documentLoader()) {
-        DEFINE_STATIC_LOCAL(String, XSSProtectionHeader, (ASCIILiteral("X-XSS-Protection")));
+        DEPRECATED_DEFINE_STATIC_LOCAL(String, XSSProtectionHeader, (ASCIILiteral("X-XSS-Protection")));
         String headerValue = documentLoader->response().httpHeaderField(XSSProtectionHeader);
         String errorDetails;
         unsigned errorPosition = 0;
@@ -510,7 +510,7 @@ bool XSSAuditor::filterButtonToken(const FilterTokenRequest& request)
 
 bool XSSAuditor::eraseDangerousAttributesIfInjected(const FilterTokenRequest& request)
 {
-    DEFINE_STATIC_LOCAL(String, safeJavaScriptURL, (ASCIILiteral("javascript:void(0)")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, safeJavaScriptURL, (ASCIILiteral("javascript:void(0)")));
 
     bool didBlockScript = false;
     for (size_t i = 0; i < request.token.attributes().size(); ++i) {

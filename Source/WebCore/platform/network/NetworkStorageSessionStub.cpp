@@ -53,7 +53,7 @@ std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrows
 
 NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
 {
-    DEFINE_STATIC_LOCAL(NetworkStorageSession, session, (0));
+    DEPRECATED_DEFINE_STATIC_LOCAL(NetworkStorageSession, session, (0));
     return session;
 }
 

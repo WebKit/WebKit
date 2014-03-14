@@ -60,7 +60,7 @@ typedef HashMap<BackForwardList*, WebBackForwardList*> BackForwardListMap;
 // with a pointer to a WebBackForwardList in it.
 static BackForwardListMap& backForwardLists()
 {
-    DEFINE_STATIC_LOCAL(BackForwardListMap, staticBackForwardLists, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(BackForwardListMap, staticBackForwardLists, ());
     return staticBackForwardLists;
 }
 

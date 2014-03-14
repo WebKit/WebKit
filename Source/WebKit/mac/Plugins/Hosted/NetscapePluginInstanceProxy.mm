@@ -1663,7 +1663,7 @@ void NetscapePluginInstanceProxy::privateBrowsingModeDidChange(bool isPrivateBro
 
 static String& globalExceptionString()
 {
-    DEFINE_STATIC_LOCAL(String, exceptionString, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, exceptionString, ());
     return exceptionString;
 }
 

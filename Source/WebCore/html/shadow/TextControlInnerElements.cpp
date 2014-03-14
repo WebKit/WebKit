@@ -142,9 +142,9 @@ PassRefPtr<SearchFieldResultsButtonElement> SearchFieldResultsButtonElement::cre
 
 const AtomicString& SearchFieldResultsButtonElement::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, resultsId, ("-webkit-search-results-button", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, resultsDecorationId, ("-webkit-search-results-decoration", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, decorationId, ("-webkit-search-decoration", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, resultsId, ("-webkit-search-results-button", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, resultsDecorationId, ("-webkit-search-results-decoration", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, decorationId, ("-webkit-search-decoration", AtomicString::ConstructFromLiteral));
     Element* host = shadowHost();
     if (!host)
         return resultsId;
@@ -202,7 +202,7 @@ PassRefPtr<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::creat
 
 const AtomicString& SearchFieldCancelButtonElement::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-search-cancel-button", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-search-cancel-button", AtomicString::ConstructFromLiteral));
     return pseudoId;
 }
 
@@ -461,7 +461,7 @@ void InputFieldSpeechButtonElement::stopSpeechInput()
 
 const AtomicString& InputFieldSpeechButtonElement::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-input-speech-button", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-input-speech-button", AtomicString::ConstructFromLiteral));
     return pseudoId;
 }
 

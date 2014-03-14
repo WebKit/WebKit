@@ -112,7 +112,7 @@ typedef HashMap<AtomicString, SpaceSplitStringData*, DefaultHash<AtomicString>::
 
 static SpaceSplitStringDataMap& sharedDataMap()
 {
-    DEFINE_STATIC_LOCAL(SpaceSplitStringDataMap, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(SpaceSplitStringDataMap, map, ());
     return map;
 }
 

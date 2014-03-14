@@ -36,7 +36,7 @@ public:
     T get(const AtomicString& key)
     {
         if (key.isNull()) {
-            DEFINE_STATIC_LOCAL(T, valueForNull, (createValueForNullKey()));
+            DEPRECATED_DEFINE_STATIC_LOCAL(T, valueForNull, (createValueForNullKey()));
             return valueForNull;
         }
 

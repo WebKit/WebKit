@@ -317,7 +317,7 @@ static PassOwnPtr<JSC::Yarr::RegularExpression> createRegExpForLabels(const Vect
     // REVIEW- version of this call in FrameMac.mm caches based on the NSArray ptrs being
     // the same across calls.  We can't do that.
 
-    DEFINE_STATIC_LOCAL(JSC::Yarr::RegularExpression, wordRegExp, ("\\w", TextCaseSensitive));
+    DEPRECATED_DEFINE_STATIC_LOCAL(JSC::Yarr::RegularExpression, wordRegExp, ("\\w", TextCaseSensitive));
     String pattern("(");
     unsigned int numLabels = labels.size();
     unsigned int i;

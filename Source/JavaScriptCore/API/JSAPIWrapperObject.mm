@@ -45,7 +45,7 @@ public:
 
 static JSAPIWrapperObjectHandleOwner* jsAPIWrapperObjectHandleOwner()
 {
-    DEFINE_STATIC_LOCAL(JSAPIWrapperObjectHandleOwner, jsWrapperObjectHandleOwner, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(JSAPIWrapperObjectHandleOwner, jsWrapperObjectHandleOwner, ());
     return &jsWrapperObjectHandleOwner;
 }
 

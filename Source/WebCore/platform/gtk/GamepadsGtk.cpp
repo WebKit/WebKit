@@ -216,7 +216,7 @@ gboolean GamepadsGtk::isGamepadDevice(GUdevDevice* device)
 
 void sampleGamepads(GamepadList* into)
 {
-    DEFINE_STATIC_LOCAL(GamepadsGtk, gamepadsGtk, (into->length()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(GamepadsGtk, gamepadsGtk, (into->length()));
     gamepadsGtk.updateGamepadList(into);
 }
 

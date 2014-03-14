@@ -600,7 +600,7 @@ bool SecurityOrigin::isSameSchemeHostPort(const SecurityOrigin* other) const
 String SecurityOrigin::urlWithUniqueSecurityOrigin()
 {
     ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(const String, uniqueSecurityOriginURL, (ASCIILiteral("data:,")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, uniqueSecurityOriginURL, (ASCIILiteral("data:,")));
     return uniqueSecurityOriginURL;
 }
 

@@ -63,7 +63,7 @@ void SVGStyleElement::setDisabled(bool setDisabled)
 
 const AtomicString& SVGStyleElement::type() const
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("text/css", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("text/css", AtomicString::ConstructFromLiteral));
     const AtomicString& n = getAttribute(SVGNames::typeAttr);
     return n.isNull() ? defaultValue : n;
 }
@@ -75,7 +75,7 @@ void SVGStyleElement::setType(const AtomicString& type, ExceptionCode&)
 
 const AtomicString& SVGStyleElement::media() const
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("all", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("all", AtomicString::ConstructFromLiteral));
     const AtomicString& n = fastGetAttribute(SVGNames::mediaAttr);
     return n.isNull() ? defaultValue : n;
 }
@@ -97,7 +97,7 @@ void SVGStyleElement::setTitle(const AtomicString& title, ExceptionCode&)
 
 bool SVGStyleElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty()) {
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
         supportedAttributes.add(SVGNames::titleAttr);

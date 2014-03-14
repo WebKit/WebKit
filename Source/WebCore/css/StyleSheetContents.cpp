@@ -306,7 +306,7 @@ void StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
     }
     if (m_parserContext.needsSiteSpecificQuirks && isStrictParserMode(m_parserContext.mode)) {
         // Work around <https://bugs.webkit.org/show_bug.cgi?id=28350>.
-        DEFINE_STATIC_LOCAL(const String, mediaWikiKHTMLFixesStyleSheet, (ASCIILiteral("/* KHTML fix stylesheet */\n/* work around the horizontal scrollbars */\n#column-content { margin-left: 0; }\n\n")));
+        DEPRECATED_DEFINE_STATIC_LOCAL(const String, mediaWikiKHTMLFixesStyleSheet, (ASCIILiteral("/* KHTML fix stylesheet */\n/* work around the horizontal scrollbars */\n#column-content { margin-left: 0; }\n\n")));
         // There are two variants of KHTMLFixes.css. One is equal to mediaWikiKHTMLFixesStyleSheet,
         // while the other lacks the second trailing newline.
         if (baseURL().string().endsWith("/KHTMLFixes.css") && !sheetText.isNull() && mediaWikiKHTMLFixesStyleSheet.startsWith(sheetText)

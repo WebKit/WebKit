@@ -179,7 +179,7 @@ void SVGTRefElement::detachTarget()
 
 bool SVGTRefElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty())
         SVGURIReference::addSupportedAttributes(supportedAttributes);
     return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);

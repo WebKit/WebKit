@@ -378,7 +378,7 @@ PassRefPtr<CSSPrimitiveValue> SVGLength::toCSSPrimitiveValue(const SVGLength& le
 SVGLengthMode SVGLength::lengthModeForAnimatedLengthAttribute(const QualifiedName& attrName)
 {
     typedef HashMap<QualifiedName, SVGLengthMode> LengthModeForLengthAttributeMap;
-    DEFINE_STATIC_LOCAL(LengthModeForLengthAttributeMap, s_lengthModeMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(LengthModeForLengthAttributeMap, s_lengthModeMap, ());
     
     if (s_lengthModeMap.isEmpty()) {
         s_lengthModeMap.set(SVGNames::xAttr, LengthModeWidth);

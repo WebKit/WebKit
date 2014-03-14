@@ -1,3 +1,23 @@
+2014-03-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        Rename DEFINE_STATIC_LOCAL to DEPRECATED_DEFINE_STATIC_LOCAL
+        https://bugs.webkit.org/show_bug.cgi?id=129612
+
+        Reviewed by Darin Adler.
+
+        For new code use static NeverDestroyed<T> instead.
+
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::current):
+        * wtf/StdLibExtras.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::threadMapMutex):
+        (WTF::threadMap):
+        * wtf/efl/MainThreadEfl.cpp:
+        (WTF::pipeObject):
+        * wtf/text/StringStatics.cpp:
+        (WTF::StringImpl::empty):
+
 2014-03-13  Radu Stavila  <stavila@adobe.com>
 
         Webkit not building on XCode 5.1 due to garbage collection no longer being supported

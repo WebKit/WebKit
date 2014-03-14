@@ -35,7 +35,7 @@ namespace WebCore {
 
 AudioSession& AudioSession::sharedSession()
 {
-    DEFINE_STATIC_LOCAL(AudioSession, session, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(AudioSession, session, ());
     return session;
 }
 

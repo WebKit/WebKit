@@ -36,7 +36,7 @@ using namespace WebCore;
 
 void PlatformStrategiesWinCE::initialize()
 {
-    DEFINE_STATIC_LOCAL(PlatformStrategiesWinCE, platformStrategies, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(PlatformStrategiesWinCE, platformStrategies, ());
 }
 
 PlatformStrategiesWinCE::PlatformStrategiesWinCE()

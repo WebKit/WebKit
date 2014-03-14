@@ -194,7 +194,7 @@ using namespace HTMLNames;
 typedef HashMap<Document*, HashSet<HTMLMediaElement*>> DocumentElementSetMap;
 static DocumentElementSetMap& documentToElementSetMap()
 {
-    DEFINE_STATIC_LOCAL(DocumentElementSetMap, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(DocumentElementSetMap, map, ());
     return map;
 }
 

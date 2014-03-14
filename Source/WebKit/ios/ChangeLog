@@ -1,3 +1,17 @@
+2014-03-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        Rename DEFINE_STATIC_LOCAL to DEPRECATED_DEFINE_STATIC_LOCAL
+        https://bugs.webkit.org/show_bug.cgi?id=129612
+
+        Reviewed by Darin Adler.
+
+        For new code use static NeverDestroyed<T> instead.
+
+        * Misc/EmojiFallbackFontSelector.cpp:
+        (EmojiFallbackFontSelector::getFallbackFontData):
+        * WebCoreSupport/WebFixedPositionContent.mm:
+        (WebFixedPositionContentDataLock):
+
 2014-03-13  Benjamin Poulain  <bpoulain@apple.com>
 
         The viewport code should not depend on WebKitSystemInterface

@@ -59,13 +59,13 @@ public:
 
     static const QualifiedName& voiceAttributeName()
     {
-        DEFINE_STATIC_LOCAL(QualifiedName, voiceAttr, (nullAtom, "voice", nullAtom));
+        DEPRECATED_DEFINE_STATIC_LOCAL(QualifiedName, voiceAttr, (nullAtom, "voice", nullAtom));
         return voiceAttr;
     }
     
     static const QualifiedName& langAttributeName()
     {
-        DEFINE_STATIC_LOCAL(QualifiedName, voiceAttr, (nullAtom, "lang", nullAtom));
+        DEPRECATED_DEFINE_STATIC_LOCAL(QualifiedName, voiceAttr, (nullAtom, "lang", nullAtom));
         return voiceAttr;
     }
 

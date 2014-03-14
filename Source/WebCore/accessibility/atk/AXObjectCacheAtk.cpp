@@ -119,8 +119,8 @@ static void notifyChildrenSelectionChange(AccessibilityObject* object)
     // focused object and its associated list object, as per previous
     // calls to this function, in order to properly decide whether to
     // emit some signals or not.
-    DEFINE_STATIC_LOCAL(RefPtr<AccessibilityObject>, oldListObject, ());
-    DEFINE_STATIC_LOCAL(RefPtr<AccessibilityObject>, oldFocusedObject, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(RefPtr<AccessibilityObject>, oldListObject, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(RefPtr<AccessibilityObject>, oldFocusedObject, ());
 
     // Only list boxes and menu lists supported so far.
     if (!object || !(object->isListBox() || object->isMenuList()))

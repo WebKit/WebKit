@@ -43,7 +43,7 @@ namespace WebCore {
 typedef HashMap<ContainerNode*, ChildListMutationAccumulator*> AccumulatorMap;
 static AccumulatorMap& accumulatorMap()
 {
-    DEFINE_STATIC_LOCAL(AccumulatorMap, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(AccumulatorMap, map, ());
     return map;
 }
 

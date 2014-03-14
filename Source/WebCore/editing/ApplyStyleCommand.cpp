@@ -61,7 +61,7 @@ static int toIdentifier(PassRefPtr<CSSValue> value)
 
 static String& styleSpanClassString()
 {
-    DEFINE_STATIC_LOCAL(String, styleSpanClassString, ((AppleStyleSpanClass)));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, styleSpanClassString, ((AppleStyleSpanClass)));
     return styleSpanClassString;
 }
 

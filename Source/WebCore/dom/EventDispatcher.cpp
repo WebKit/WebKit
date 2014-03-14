@@ -208,7 +208,7 @@ void EventDispatcher::dispatchSimulatedClick(Element* element, Event* underlying
     if (element->isDisabledFormControl())
         return;
 
-    DEFINE_STATIC_LOCAL(HashSet<Element*>, elementsDispatchingSimulatedClicks, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<Element*>, elementsDispatchingSimulatedClicks, ());
     if (!elementsDispatchingSimulatedClicks.add(element).isNewEntry)
         return;
 

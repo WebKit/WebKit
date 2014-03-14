@@ -78,7 +78,7 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestMediaQueryListListener*)
 {
-    DEFINE_STATIC_LOCAL(JSTestMediaQueryListListenerOwner, jsTestMediaQueryListListenerOwner, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(JSTestMediaQueryListListenerOwner, jsTestMediaQueryListListenerOwner, ());
     return &jsTestMediaQueryListListenerOwner;
 }
 

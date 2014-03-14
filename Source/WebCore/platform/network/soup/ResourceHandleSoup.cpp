@@ -232,14 +232,14 @@ static bool gIgnoreSSLErrors = false;
 
 static HashSet<String>& allowsAnyHTTPSCertificateHosts()
 {
-    DEFINE_STATIC_LOCAL(HashSet<String>, hosts, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, hosts, ());
     return hosts;
 }
 
 typedef HashMap<String, HostTLSCertificateSet> CertificatesMap;
 static CertificatesMap& clientCertificates()
 {
-    DEFINE_STATIC_LOCAL(CertificatesMap, certificates, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(CertificatesMap, certificates, ());
     return certificates;
 }
 

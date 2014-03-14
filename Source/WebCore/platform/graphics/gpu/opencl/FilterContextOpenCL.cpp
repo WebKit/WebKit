@@ -178,8 +178,8 @@ inline bool FilterContextOpenCL::compileTransformColorSpaceProgram()
 
 void FilterContextOpenCL::openCLTransformColorSpace(OpenCLHandle& source, IntRect sourceSize, ColorSpace srcColorSpace, ColorSpace dstColorSpace)
 {
-    DEFINE_STATIC_LOCAL(OpenCLHandle, deviceRgbLUT, ());
-    DEFINE_STATIC_LOCAL(OpenCLHandle, linearRgbLUT, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(OpenCLHandle, deviceRgbLUT, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(OpenCLHandle, linearRgbLUT, ());
 
     if (srcColorSpace == dstColorSpace || inError())
         return;

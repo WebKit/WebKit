@@ -90,7 +90,7 @@ Decimal MonthInputType::defaultValueForStepUp() const
 
 StepRange MonthInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
-    DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (monthDefaultStep, monthDefaultStepBase, monthStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (monthDefaultStep, monthDefaultStepBase, monthStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger));
 
     const Decimal stepBase = parseToNumber(element().fastGetAttribute(minAttr), Decimal::fromDouble(monthDefaultStepBase));
     const Decimal minimum = parseToNumber(element().fastGetAttribute(minAttr), Decimal::fromDouble(DateComponents::minimumMonth()));

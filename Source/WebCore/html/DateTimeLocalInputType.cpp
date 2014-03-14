@@ -68,7 +68,7 @@ void DateTimeLocalInputType::setValueAsDate(double value, ExceptionCode& ec) con
 
 StepRange DateTimeLocalInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
-    DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (dateTimeLocalDefaultStep, dateTimeLocalDefaultStepBase, dateTimeLocalStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (dateTimeLocalDefaultStep, dateTimeLocalDefaultStepBase, dateTimeLocalStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger));
 
     const Decimal stepBase = parseToNumber(element().fastGetAttribute(minAttr), 0);
     const Decimal minimum = parseToNumber(element().fastGetAttribute(minAttr), Decimal::fromDouble(DateComponents::minimumDateTime()));

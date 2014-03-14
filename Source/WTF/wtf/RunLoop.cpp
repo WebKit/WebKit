@@ -56,7 +56,7 @@ void RunLoop::initializeMainRunLoop()
 
 RunLoop* RunLoop::current()
 {
-    DEFINE_STATIC_LOCAL(WTF::ThreadSpecific<RunLoop::Holder>, runLoopHolder, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(WTF::ThreadSpecific<RunLoop::Holder>, runLoopHolder, ());
     return runLoopHolder->runLoop();
 }
 

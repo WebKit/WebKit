@@ -69,7 +69,7 @@ SQLiteIDBCursor::SQLiteIDBCursor(SQLiteIDBTransaction* transaction, const IDBIde
 
 static const String& getIndexStatement(bool hasLowerKey, bool isLowerOpen, bool hasUpperKey, bool isUpperOpen, bool descending, bool unique)
 {
-    DEFINE_STATIC_LOCAL(Vector<String>, indexStatements, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<String>, indexStatements, ());
 
     if (indexStatements.isEmpty()) {
         indexStatements.reserveInitialCapacity(12);
@@ -115,7 +115,7 @@ static const String& getIndexStatement(bool hasLowerKey, bool isLowerOpen, bool 
 
 static const String& getObjectStoreStatement(bool hasLowerKey, bool isLowerOpen, bool hasUpperKey, bool isUpperOpen, bool descending)
 {
-    DEFINE_STATIC_LOCAL(Vector<String>, statements, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<String>, statements, ());
 
     if (statements.isEmpty()) {
         statements.reserveCapacity(8);

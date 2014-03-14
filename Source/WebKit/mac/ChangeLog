@@ -1,3 +1,41 @@
+2014-03-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        Rename DEFINE_STATIC_LOCAL to DEPRECATED_DEFINE_STATIC_LOCAL
+        https://bugs.webkit.org/show_bug.cgi?id=129612
+
+        Reviewed by Darin Adler.
+
+        For new code use static NeverDestroyed<T> instead.
+
+        * History/WebBackForwardList.mm:
+        (backForwardLists):
+        * History/WebHistoryItem.mm:
+        (historyItemWrappers):
+        * Misc/WebNSPasteboardExtras.mm:
+        (+[NSPasteboard _web_writableTypesForURL]):
+        (_writableTypesForImageWithoutArchive):
+        (_writableTypesForImageWithArchive):
+        * Misc/WebStringTruncator.mm:
+        (fontFromNSFont):
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::shared):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::pluginProxyMap):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::globalExceptionString):
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::proxyClass):
+        * Plugins/WebNetscapePluginStream.mm:
+        (streams):
+        * Storage/WebDatabaseManager.mm:
+        (transactionBackgroundTaskIdentifierLock):
+        * WebCoreSupport/WebUserMediaClient.mm:
+        (userMediaRequestsMap):
+        * WebView/WebHTMLRepresentation.mm:
+        (regExpForLabels):
+        * WebView/WebView.mm:
+        (aeDescFromJSValue):
+
 2014-03-13  Tim Horton  <timothy_horton@apple.com>
 
         Fix relative paths to UseInternalSDK.xcconfig for ANGLE and WebKit/mac

@@ -42,7 +42,7 @@ namespace WebCore {
 typedef HashMap<Window, RedirectedXCompositeWindow*> WindowHashMap;
 static WindowHashMap& getWindowHashMap()
 {
-    DEFINE_STATIC_LOCAL(WindowHashMap, windowHashMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(WindowHashMap, windowHashMap, ());
     return windowHashMap;
 }
 

@@ -56,7 +56,7 @@ namespace Bindings {
 
 static String& globalExceptionString()
 {
-    DEFINE_STATIC_LOCAL(String, exceptionStr, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, exceptionStr, ());
     return exceptionStr;
 }
 

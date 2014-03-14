@@ -105,7 +105,7 @@ void InlineStyleSheetOwner::clearSheet()
 
 inline bool isValidCSSContentType(Element& element, const AtomicString& type)
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, cssContentType, ("text/css", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, cssContentType, ("text/css", AtomicString::ConstructFromLiteral));
     if (type.isEmpty())
         return true;
     return element.isHTMLElement() ? equalIgnoringCase(type, cssContentType) : type == cssContentType;

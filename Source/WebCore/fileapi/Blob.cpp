@@ -73,7 +73,7 @@ void BlobURLRegistry::unregisterURL(const URL& url)
 
 URLRegistry& BlobURLRegistry::registry()
 {
-    DEFINE_STATIC_LOCAL(BlobURLRegistry, instance, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(BlobURLRegistry, instance, ());
     return instance;
 }
 

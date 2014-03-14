@@ -1153,7 +1153,7 @@ sub GenerateHeader
         push(@headerContent, "\n");
         push(@headerContent, "inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, $implType*)\n");
         push(@headerContent, "{\n");
-        push(@headerContent, "    DEFINE_STATIC_LOCAL(JS${interfaceName}Owner, js${interfaceName}Owner, ());\n");
+        push(@headerContent, "    DEPRECATED_DEFINE_STATIC_LOCAL(JS${interfaceName}Owner, js${interfaceName}Owner, ());\n");
         push(@headerContent, "    return &js${interfaceName}Owner;\n");
         push(@headerContent, "}\n");
         push(@headerContent, "\n");

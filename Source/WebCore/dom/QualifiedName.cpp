@@ -74,7 +74,7 @@ struct QNameComponentsTranslator {
 
 static inline QNameSet& qualifiedNameCache()
 {
-    DEFINE_STATIC_LOCAL(QNameSet, nameCache, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(QNameSet, nameCache, ());
     return nameCache;
 }
 
@@ -132,7 +132,7 @@ void QualifiedName::init()
 
 const QualifiedName& nullQName()
 {
-    DEFINE_STATIC_LOCAL(QualifiedName, nullName, (nullAtom, nullAtom, nullAtom));
+    DEPRECATED_DEFINE_STATIC_LOCAL(QualifiedName, nullName, (nullAtom, nullAtom, nullAtom));
     return nullName;
 }
 

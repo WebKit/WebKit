@@ -225,7 +225,7 @@ RefPtr<MediaConstraints> MediaStreamTrackPrivate::constraints() const
 const MediaStreamSourceStates& MediaStreamTrackPrivate::states() const
 {
     if (!m_source) {
-        DEFINE_STATIC_LOCAL(const MediaStreamSourceStates, noState, ());
+        DEPRECATED_DEFINE_STATIC_LOCAL(const MediaStreamSourceStates, noState, ());
         return noState;
     }
     

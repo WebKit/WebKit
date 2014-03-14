@@ -996,8 +996,8 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
             continue;
 
         const UChar ellipsisAndSpace[2] = { horizontalEllipsis, ' ' };
-        DEFINE_STATIC_LOCAL(AtomicString, ellipsisAndSpaceStr, (ellipsisAndSpace, 2));
-        DEFINE_STATIC_LOCAL(AtomicString, ellipsisStr, (&horizontalEllipsis, 1));
+        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, ellipsisAndSpaceStr, (ellipsisAndSpace, 2));
+        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, ellipsisStr, (&horizontalEllipsis, 1));
         const RenderStyle& lineStyle = numVisibleLines == 1 ? firstLineStyle() : style();
         const Font& font = lineStyle.font();
 

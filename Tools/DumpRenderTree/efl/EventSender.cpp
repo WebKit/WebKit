@@ -169,13 +169,13 @@ static unsigned touchModifiers;
 
 WTF::Vector<TouchEventInfo>& touchPointList()
 {
-    DEFINE_STATIC_LOCAL(WTF::Vector<TouchEventInfo>, staticTouchPointList, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(WTF::Vector<TouchEventInfo>, staticTouchPointList, ());
     return staticTouchPointList;
 }
 
 WTF::Vector<DelayedEvent>& delayedEventQueue()
 {
-    DEFINE_STATIC_LOCAL(WTF::Vector<DelayedEvent>, staticDelayedEventQueue, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(WTF::Vector<DelayedEvent>, staticDelayedEventQueue, ());
     return staticDelayedEventQueue;
 }
 

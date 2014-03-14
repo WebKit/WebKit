@@ -68,13 +68,13 @@ static inline bool elementCanUseSimpleDefaultStyle(Element* e)
 
 static const MediaQueryEvaluator& screenEval()
 {
-    DEFINE_STATIC_LOCAL(const MediaQueryEvaluator, staticScreenEval, ("screen"));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const MediaQueryEvaluator, staticScreenEval, ("screen"));
     return staticScreenEval;
 }
 
 static const MediaQueryEvaluator& printEval()
 {
-    DEFINE_STATIC_LOCAL(const MediaQueryEvaluator, staticPrintEval, ("print"));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const MediaQueryEvaluator, staticPrintEval, ("print"));
     return staticPrintEval;
 }
 

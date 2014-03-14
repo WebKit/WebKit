@@ -81,14 +81,14 @@ namespace WebCore {
 
 static HashSet<String>& allowsAnyHTTPSCertificateHosts()
 {
-    DEFINE_STATIC_LOCAL(HashSet<String>, hosts, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, hosts, ());
     return hosts;
 }
 
 static HashMap<String, RetainPtr<CFDataRef>>& clientCerts()
 {
     typedef HashMap<String, RetainPtr<CFDataRef>> CertsMap;
-    DEFINE_STATIC_LOCAL(CertsMap, certs, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(CertsMap, certs, ());
     return certs;
 }
 

@@ -57,7 +57,7 @@ template <typename ArchiveClass> static PassRefPtr<Archive> archiveFactoryCreate
 
 static ArchiveMIMETypesMap& archiveMIMETypes()
 {
-    DEFINE_STATIC_LOCAL(ArchiveMIMETypesMap, mimeTypes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(ArchiveMIMETypesMap, mimeTypes, ());
     static bool initialized = false;
 
     if (initialized)

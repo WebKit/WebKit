@@ -35,7 +35,7 @@ namespace WebCore {
 
 LayerChangesFlusher& LayerChangesFlusher::shared()
 {
-    DEFINE_STATIC_LOCAL(LayerChangesFlusher, flusher, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(LayerChangesFlusher, flusher, ());
     return flusher;
 }
 

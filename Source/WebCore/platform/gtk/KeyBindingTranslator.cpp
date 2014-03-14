@@ -213,8 +213,8 @@ void KeyBindingTranslator::getEditorCommandsForKeyEvent(GdkEventKey* event, Even
         return;
     }
 
-    DEFINE_STATIC_LOCAL(IntConstCharHashMap, keyDownCommandsMap, ());
-    DEFINE_STATIC_LOCAL(IntConstCharHashMap, keyPressCommandsMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(IntConstCharHashMap, keyDownCommandsMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(IntConstCharHashMap, keyPressCommandsMap, ());
 
     if (keyDownCommandsMap.isEmpty()) {
         for (unsigned i = 0; i < G_N_ELEMENTS(keyDownEntries); i++)

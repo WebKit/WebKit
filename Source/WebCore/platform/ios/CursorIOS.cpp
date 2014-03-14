@@ -30,7 +30,7 @@ namespace WebCore {
 
 static const Cursor& cursor()
 {
-    DEFINE_STATIC_LOCAL(const Cursor, cursor, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(const Cursor, cursor, ());
     return cursor;
 }
 

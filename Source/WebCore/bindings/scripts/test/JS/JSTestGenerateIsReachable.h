@@ -78,7 +78,7 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestGenerateIsReachable*)
 {
-    DEFINE_STATIC_LOCAL(JSTestGenerateIsReachableOwner, jsTestGenerateIsReachableOwner, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(JSTestGenerateIsReachableOwner, jsTestGenerateIsReachableOwner, ());
     return &jsTestGenerateIsReachableOwner;
 }
 

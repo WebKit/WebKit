@@ -65,7 +65,7 @@ Field* ProxyClass::fieldNamed(PropertyName propertyName, Instance* instance) con
 
 static ProxyClass* proxyClass()
 {
-    DEFINE_STATIC_LOCAL(ProxyClass, proxyClass, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(ProxyClass, proxyClass, ());
     return &proxyClass;
 }
     

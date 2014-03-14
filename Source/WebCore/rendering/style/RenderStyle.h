@@ -1743,7 +1743,7 @@ public:
     static unsigned short initialColumnCount() { return 1; }
     static ColumnFill initialColumnFill() { return ColumnFillBalance; }
     static ColumnSpan initialColumnSpan() { return ColumnSpanNone; }
-    static const TransformOperations& initialTransform() { DEFINE_STATIC_LOCAL(TransformOperations, ops, ()); return ops; }
+    static const TransformOperations& initialTransform() { DEPRECATED_DEFINE_STATIC_LOCAL(TransformOperations, ops, ()); return ops; }
     static Length initialTransformOriginX() { return Length(50.0, Percent); }
     static Length initialTransformOriginY() { return Length(50.0, Percent); }
     static EPointerEvents initialPointerEvents() { return PE_AUTO; }
@@ -1827,7 +1827,7 @@ public:
     static const Vector<StyleDashboardRegion>& noneDashboardRegions();
 #endif
 #if ENABLE(CSS_FILTERS)
-    static const FilterOperations& initialFilter() { DEFINE_STATIC_LOCAL(FilterOperations, ops, ()); return ops; }
+    static const FilterOperations& initialFilter() { DEPRECATED_DEFINE_STATIC_LOCAL(FilterOperations, ops, ()); return ops; }
 #endif
 #if ENABLE(CSS_COMPOSITING)
     static BlendMode initialBlendMode() { return BlendModeNormal; }

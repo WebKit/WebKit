@@ -166,7 +166,7 @@ void TextTrackRegion::setViewportAnchorY(double value, ExceptionCode& ec)
 
 const AtomicString TextTrackRegion::scroll() const
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, upScrollValueKeyword, ("up", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, upScrollValueKeyword, ("up", AtomicString::ConstructFromLiteral));
 
     if (m_scroll)
         return upScrollValueKeyword;
@@ -176,7 +176,7 @@ const AtomicString TextTrackRegion::scroll() const
 
 void TextTrackRegion::setScroll(const AtomicString& value, ExceptionCode& ec)
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, upScrollValueKeyword, ("up", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, upScrollValueKeyword, ("up", AtomicString::ConstructFromLiteral));
 
     if (value != emptyString() && value != upScrollValueKeyword) {
         ec = SYNTAX_ERR;
@@ -215,12 +215,12 @@ void TextTrackRegion::setRegionSettings(const String& input)
 
 TextTrackRegion::RegionSetting TextTrackRegion::getSettingFromString(const String& setting)
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, idKeyword, ("id", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const AtomicString, heightKeyword, ("height", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const AtomicString, widthKeyword, ("width", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const AtomicString, regionAnchorKeyword, ("regionanchor", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const AtomicString, viewportAnchorKeyword, ("viewportanchor", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const AtomicString, scrollKeyword, ("scroll", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, idKeyword, ("id", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, heightKeyword, ("height", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, widthKeyword, ("width", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, regionAnchorKeyword, ("regionanchor", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, viewportAnchorKeyword, ("viewportanchor", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, scrollKeyword, ("scroll", AtomicString::ConstructFromLiteral));
 
     if (setting == idKeyword)
         return Id;
@@ -240,7 +240,7 @@ TextTrackRegion::RegionSetting TextTrackRegion::getSettingFromString(const Strin
 
 void TextTrackRegion::parseSettingValue(RegionSetting setting, const String& value)
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, scrollUpValueKeyword, ("up", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, scrollUpValueKeyword, ("up", AtomicString::ConstructFromLiteral));
 
     bool isValidSetting;
     String numberAsString;

@@ -163,7 +163,7 @@ int ewk_shutdown(void)
 
 static WebCore::StorageTrackerClientEfl* trackerClient()
 {
-    DEFINE_STATIC_LOCAL(WebCore::StorageTrackerClientEfl, trackerClient, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(WebCore::StorageTrackerClientEfl, trackerClient, ());
     return &trackerClient;
 }
 

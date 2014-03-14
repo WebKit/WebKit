@@ -80,7 +80,7 @@ ImageBufferBackingStoreCache::ImageBufferBackingStoreCache()
 
 ImageBufferBackingStoreCache& ImageBufferBackingStoreCache::get()
 {
-    DEFINE_STATIC_LOCAL(ImageBufferBackingStoreCache, cache, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(ImageBufferBackingStoreCache, cache, ());
     return cache;
 }
 

@@ -88,7 +88,7 @@ PassRefPtr<LightSource> SVGFELightElement::findLightSource(const SVGElement* svg
 
 bool SVGFELightElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty()) {
         supportedAttributes.add(SVGNames::azimuthAttr);
         supportedAttributes.add(SVGNames::elevationAttr);

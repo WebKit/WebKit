@@ -45,7 +45,7 @@ namespace WebCore {
 MediaStreamCenter& MediaStreamCenter::platformCenter()
 {
     ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(MediaStreamCenterMac, center, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(MediaStreamCenterMac, center, ());
     return center;
 }
 

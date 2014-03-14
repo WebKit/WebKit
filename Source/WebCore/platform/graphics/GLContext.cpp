@@ -68,7 +68,7 @@ inline ThreadGlobalGLContext* currentContext()
 
 GLContext* GLContext::sharingContext()
 {
-    DEFINE_STATIC_LOCAL(OwnPtr<GLContext>, sharing, (createOffscreenContext()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(OwnPtr<GLContext>, sharing, (createOffscreenContext()));
     return sharing.get();
 }
 
@@ -100,7 +100,7 @@ void GLContext::cleanupSharedX11Display()
 typedef Vector<GLContext*> ActiveContextList;
 static ActiveContextList& activeContextList()
 {
-    DEFINE_STATIC_LOCAL(ActiveContextList, activeContexts, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(ActiveContextList, activeContexts, ());
     return activeContexts;
 }
 

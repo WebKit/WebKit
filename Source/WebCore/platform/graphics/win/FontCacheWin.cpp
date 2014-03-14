@@ -307,7 +307,7 @@ PassRefPtr<SimpleFontData> FontCache::fontDataFromDescriptionAndLogFont(const Fo
 
 PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, fallbackFontName, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, fallbackFontName, ());
     if (!fallbackFontName.isEmpty())
         return getCachedFontData(fontDescription, fallbackFontName, false, shouldRetain);
 

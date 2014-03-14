@@ -41,7 +41,7 @@ static size_t committedBytesCount = 0;
 
 static Mutex& stackStatisticsMutex()
 {
-    DEFINE_STATIC_LOCAL(Mutex, staticMutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, staticMutex, ());
     return staticMutex;
 }    
 #endif // ENABLE(LLINT_C_LOOP)

@@ -107,7 +107,7 @@ static inline WebCoreHistoryItem* core(WebHistoryItemPrivate* itemPrivate)
 
 static HistoryItemMap& historyItemWrappers()
 {
-    DEFINE_STATIC_LOCAL(HistoryItemMap, historyItemWrappers, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HistoryItemMap, historyItemWrappers, ());
     return historyItemWrappers;
 }
 

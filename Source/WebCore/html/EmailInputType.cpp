@@ -44,7 +44,7 @@ static bool isValidEmailAddress(const String& address)
     if (!addressLength)
         return false;
 
-    DEFINE_STATIC_LOCAL(const JSC::Yarr::RegularExpression, regExp, (emailPattern, TextCaseInsensitive));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const JSC::Yarr::RegularExpression, regExp, (emailPattern, TextCaseInsensitive));
 
     int matchLength;
     int matchOffset = regExp.match(address, 0, &matchLength);

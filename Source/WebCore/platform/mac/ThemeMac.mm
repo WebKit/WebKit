@@ -124,7 +124,7 @@ enum {
 
 Theme* platformTheme()
 {
-    DEFINE_STATIC_LOCAL(ThemeMac, themeMac, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(ThemeMac, themeMac, ());
     return &themeMac;
 }
 

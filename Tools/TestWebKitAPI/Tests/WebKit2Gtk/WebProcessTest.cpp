@@ -26,7 +26,7 @@
 typedef HashMap<String, std::function<PassOwnPtr<WebProcessTest> ()>> TestsMap;
 static TestsMap& testsMap()
 {
-    DEFINE_STATIC_LOCAL(TestsMap, s_testsMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(TestsMap, s_testsMap, ());
     return s_testsMap;
 }
 

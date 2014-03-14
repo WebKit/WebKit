@@ -50,7 +50,7 @@ String preferredExtensionForImageSourceType(const String& type)
         return String();
 
     typedef HashMap<String, String> StringMap;
-    DEFINE_STATIC_LOCAL(StringMap, UTIMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(StringMap, UTIMap, ());
     if (UTIMap.isEmpty()) {
         UTIMap.add("public.html", "html");
         UTIMap.add("public.jpeg", "jpeg");

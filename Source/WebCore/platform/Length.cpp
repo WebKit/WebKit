@@ -203,7 +203,7 @@ private:
     
 static CalculationValueHandleMap& calcHandles()
 {
-    DEFINE_STATIC_LOCAL(CalculationValueHandleMap, handleMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(CalculationValueHandleMap, handleMap, ());
     return handleMap;
 }
 

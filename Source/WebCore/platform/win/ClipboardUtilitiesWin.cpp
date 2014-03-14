@@ -302,7 +302,7 @@ void markupToCFHTML(const String& markup, const String& srcURL, Vector<char>& re
 
 void replaceNewlinesWithWindowsStyleNewlines(String& str)
 {
-    DEFINE_STATIC_LOCAL(String, windowsNewline, (ASCIILiteral("\r\n")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, windowsNewline, (ASCIILiteral("\r\n")));
     StringBuilder result;
     for (unsigned index = 0; index < str.length(); ++index) {
         if (str[index] != '\n' || (index > 0 && str[index - 1] == '\r'))

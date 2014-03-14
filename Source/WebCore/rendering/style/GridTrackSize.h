@@ -72,7 +72,7 @@ public:
     {
         ASSERT(!m_minTrackBreadth.isLength() || !m_minTrackBreadth.length().isUndefined());
         if (m_minTrackBreadth.isLength() && m_minTrackBreadth.length().isAuto()) {
-            DEFINE_STATIC_LOCAL(GridLength, minContent, (MinContent));
+            DEPRECATED_DEFINE_STATIC_LOCAL(GridLength, minContent, (MinContent));
             return minContent;
         }
         return m_minTrackBreadth;
@@ -82,7 +82,7 @@ public:
     {
         ASSERT(!m_maxTrackBreadth.isLength() || !m_maxTrackBreadth.length().isUndefined());
         if (m_maxTrackBreadth.isLength() && m_maxTrackBreadth.length().isAuto()) {
-            DEFINE_STATIC_LOCAL(GridLength, maxContent, (MaxContent));
+            DEPRECATED_DEFINE_STATIC_LOCAL(GridLength, maxContent, (MaxContent));
             return maxContent;
         }
         return m_maxTrackBreadth;

@@ -62,7 +62,7 @@ const int kPreferredBufferSize = 256;
 typedef HashSet<AudioDestinationIOS*> AudioDestinationSet;
 static AudioDestinationSet& audioDestinations()
 {
-    DEFINE_STATIC_LOCAL(AudioDestinationSet, audioDestinationSet, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(AudioDestinationSet, audioDestinationSet, ());
     return audioDestinationSet;
 }
 

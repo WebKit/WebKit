@@ -47,25 +47,25 @@ typedef HashMap<String, LocalizedString*> LocalizedStringMap;
 
 static Mutex& mainBundleLocStringsMutex()
 {
-    DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
     return mutex;
 }
 
 static LocalizedStringMap& mainBundleLocStrings()
 {
-    DEFINE_STATIC_LOCAL(LocalizedStringMap, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(LocalizedStringMap, map, ());
     return map;
 }
 
 static Mutex& frameworkLocStringsMutex()
 {
-    DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
     return mutex;
 }
 
 static LocalizedStringMap frameworkLocStrings()
 {
-    DEFINE_STATIC_LOCAL(LocalizedStringMap, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(LocalizedStringMap, map, ());
     return map;
 }
 

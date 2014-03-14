@@ -176,7 +176,7 @@ static void registerSIGSYSHandler()
 
 SeccompBrokerClient& SeccompBrokerClient::shared(int socket)
 {
-    DEFINE_STATIC_LOCAL(SeccompBrokerClient, brokerClient, (socket));
+    DEPRECATED_DEFINE_STATIC_LOCAL(SeccompBrokerClient, brokerClient, (socket));
 
     return brokerClient;
 }

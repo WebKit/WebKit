@@ -1,3 +1,24 @@
+2014-03-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        Rename DEFINE_STATIC_LOCAL to DEPRECATED_DEFINE_STATIC_LOCAL
+        https://bugs.webkit.org/show_bug.cgi?id=129612
+
+        Reviewed by Darin Adler.
+
+        For new code use static NeverDestroyed<T> instead.
+
+        * API/JSAPIWrapperObject.mm:
+        (jsAPIWrapperObjectHandleOwner):
+        * API/JSManagedValue.mm:
+        (managedValueHandleOwner):
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::objectGroupForBreakpointAction):
+        * inspector/scripts/CodeGeneratorInspectorStrings.py:
+        * interpreter/JSStack.cpp:
+        (JSC::stackStatisticsMutex):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::DemandExecutableAllocator::allocators):
+
 2014-03-12  Gavin Barraclough  <barraclough@apple.com>
 
         Reduce memory use for static property maps

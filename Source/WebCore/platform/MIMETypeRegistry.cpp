@@ -392,7 +392,7 @@ static void initializeSupportedNonImageMimeTypes()
 
 static MediaMIMETypeMap& mediaMIMETypeMap()
 {
-    DEFINE_STATIC_LOCAL(MediaMIMETypeMap, mediaMIMETypeForExtensionMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(MediaMIMETypeMap, mediaMIMETypeForExtensionMap, ());
 
     if (!mediaMIMETypeForExtensionMap.isEmpty())
         return mediaMIMETypeForExtensionMap;
@@ -693,7 +693,7 @@ HashSet<String>& MIMETypeRegistry::getUnsupportedTextMIMETypes()
 
 const String& defaultMIMEType()
 {
-    DEFINE_STATIC_LOCAL(const String, defaultMIMEType, (ASCIILiteral("application/octet-stream")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, defaultMIMEType, (ASCIILiteral("application/octet-stream")));
     return defaultMIMEType;
 }
 

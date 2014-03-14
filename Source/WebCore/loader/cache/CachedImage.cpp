@@ -175,11 +175,11 @@ void CachedImage::allClientsRemoved()
 std::pair<Image*, float> CachedImage::brokenImage(float deviceScaleFactor) const
 {
     if (deviceScaleFactor >= 2) {
-        DEFINE_STATIC_LOCAL(Image*, brokenImageHiRes, (Image::loadPlatformResource("missingImage@2x").leakRef()));
+        DEPRECATED_DEFINE_STATIC_LOCAL(Image*, brokenImageHiRes, (Image::loadPlatformResource("missingImage@2x").leakRef()));
         return std::make_pair(brokenImageHiRes, 2);
     }
 
-    DEFINE_STATIC_LOCAL(Image*, brokenImageLoRes, (Image::loadPlatformResource("missingImage").leakRef()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(Image*, brokenImageLoRes, (Image::loadPlatformResource("missingImage").leakRef()));
     return std::make_pair(brokenImageLoRes, 1);
 }
 

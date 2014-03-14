@@ -169,13 +169,13 @@ typedef HashCountedSet<DOMWindow*> DOMWindowSet;
 
 static DOMWindowSet& windowsWithUnloadEventListeners()
 {
-    DEFINE_STATIC_LOCAL(DOMWindowSet, windowsWithUnloadEventListeners, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(DOMWindowSet, windowsWithUnloadEventListeners, ());
     return windowsWithUnloadEventListeners;
 }
 
 static DOMWindowSet& windowsWithBeforeUnloadEventListeners()
 {
-    DEFINE_STATIC_LOCAL(DOMWindowSet, windowsWithBeforeUnloadEventListeners, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(DOMWindowSet, windowsWithBeforeUnloadEventListeners, ());
     return windowsWithBeforeUnloadEventListeners;
 }
 

@@ -73,7 +73,7 @@ static void initGdkAtoms()
 
 PasteboardHelper* PasteboardHelper::defaultPasteboardHelper()
 {
-    DEFINE_STATIC_LOCAL(PasteboardHelper, defaultHelper, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(PasteboardHelper, defaultHelper, ());
     return &defaultHelper;
 }
 

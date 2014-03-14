@@ -78,7 +78,7 @@ public:
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestTypedefs*)
 {
-    DEFINE_STATIC_LOCAL(JSTestTypedefsOwner, jsTestTypedefsOwner, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(JSTestTypedefsOwner, jsTestTypedefsOwner, ());
     return &jsTestTypedefsOwner;
 }
 

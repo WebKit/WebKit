@@ -83,7 +83,7 @@ const AtomicString& CachedResourceRequest::initiatorName() const
     if (!m_initiatorName.isEmpty())
         return m_initiatorName;
 
-    DEFINE_STATIC_LOCAL(AtomicString, defaultName, ("resource", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, defaultName, ("resource", AtomicString::ConstructFromLiteral));
     return defaultName;
 }
 

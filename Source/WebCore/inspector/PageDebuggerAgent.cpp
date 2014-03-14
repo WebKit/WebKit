@@ -71,8 +71,8 @@ void PageDebuggerAgent::disable(bool isBeingDestroyed)
 
 String PageDebuggerAgent::sourceMapURLForScript(const Script& script)
 {
-    DEFINE_STATIC_LOCAL(String, sourceMapHTTPHeader, (ASCIILiteral("SourceMap")));
-    DEFINE_STATIC_LOCAL(String, sourceMapHTTPHeaderDeprecated, (ASCIILiteral("X-SourceMap")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, sourceMapHTTPHeader, (ASCIILiteral("SourceMap")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, sourceMapHTTPHeaderDeprecated, (ASCIILiteral("X-SourceMap")));
 
     if (!script.url.isEmpty()) {
         CachedResource* resource = m_pageAgent->cachedResource(m_pageAgent->mainFrame(), URL(ParsedURLString, script.url));

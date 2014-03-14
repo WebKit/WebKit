@@ -77,7 +77,7 @@ PassRefPtr<SVGRadialGradientElement> SVGRadialGradientElement::create(const Qual
 
 bool SVGRadialGradientElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty()) {
         supportedAttributes.add(SVGNames::cxAttr);
         supportedAttributes.add(SVGNames::cyAttr);

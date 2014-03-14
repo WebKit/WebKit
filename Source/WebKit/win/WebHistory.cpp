@@ -238,7 +238,7 @@ ULONG STDMETHODCALLTYPE WebHistory::Release(void)
 
 static inline COMPtr<WebHistory>& sharedHistoryStorage()
 {
-    DEFINE_STATIC_LOCAL(COMPtr<WebHistory>, sharedHistory, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(COMPtr<WebHistory>, sharedHistory, ());
     return sharedHistory;
 }
 

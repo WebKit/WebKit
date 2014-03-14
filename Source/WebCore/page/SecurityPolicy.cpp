@@ -46,7 +46,7 @@ typedef HashMap<String, OwnPtr<OriginAccessWhiteList>> OriginAccessMap;
 
 static OriginAccessMap& originAccessMap()
 {
-    DEFINE_STATIC_LOCAL(OriginAccessMap, originAccessMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(OriginAccessMap, originAccessMap, ());
     return originAccessMap;
 }
 

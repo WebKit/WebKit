@@ -80,7 +80,7 @@ private:
 typedef HashMap<NPStream*, NPP> StreamMap;
 static StreamMap& streams()
 {
-    DEFINE_STATIC_LOCAL(StreamMap, staticStreams, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(StreamMap, staticStreams, ());
     return staticStreams;
 }
 

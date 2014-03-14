@@ -2644,7 +2644,7 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
     // ARIA spec says that when a parent object is presentational, and it has required child elements,
     // those child elements are also presentational. For example, <li> becomes presentational from <ul>.
     // http://www.w3.org/WAI/PF/aria/complete#presentation
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, listItemParents, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, listItemParents, ());
 
     HashSet<QualifiedName>* possibleParentTagNames = 0;
     switch (roleValue()) {
@@ -3027,9 +3027,9 @@ bool AccessibilityRenderObject::canHaveChildren() const
 
 const AtomicString& AccessibilityRenderObject::ariaLiveRegionStatus() const
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, liveRegionStatusAssertive, ("assertive", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const AtomicString, liveRegionStatusPolite, ("polite", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const AtomicString, liveRegionStatusOff, ("off", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, liveRegionStatusAssertive, ("assertive", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, liveRegionStatusPolite, ("polite", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, liveRegionStatusOff, ("off", AtomicString::ConstructFromLiteral));
     
     const AtomicString& liveRegionStatus = getAttribute(aria_liveAttr);
     // These roles have implicit live region status.
@@ -3054,7 +3054,7 @@ const AtomicString& AccessibilityRenderObject::ariaLiveRegionStatus() const
 
 const AtomicString& AccessibilityRenderObject::ariaLiveRegionRelevant() const
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, defaultLiveRegionRelevant, ("additions text", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, defaultLiveRegionRelevant, ("additions text", AtomicString::ConstructFromLiteral));
     const AtomicString& relevant = getAttribute(aria_relevantAttr);
 
     // Default aria-relevant = "additions text".
@@ -3166,12 +3166,12 @@ const String& AccessibilityRenderObject::actionVerb() const
 {
 #if !PLATFORM(IOS)
     // FIXME: Need to add verbs for select elements.
-    DEFINE_STATIC_LOCAL(const String, buttonAction, (AXButtonActionVerb()));
-    DEFINE_STATIC_LOCAL(const String, textFieldAction, (AXTextFieldActionVerb()));
-    DEFINE_STATIC_LOCAL(const String, radioButtonAction, (AXRadioButtonActionVerb()));
-    DEFINE_STATIC_LOCAL(const String, checkedCheckBoxAction, (AXCheckedCheckBoxActionVerb()));
-    DEFINE_STATIC_LOCAL(const String, uncheckedCheckBoxAction, (AXUncheckedCheckBoxActionVerb()));
-    DEFINE_STATIC_LOCAL(const String, linkAction, (AXLinkActionVerb()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, buttonAction, (AXButtonActionVerb()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, textFieldAction, (AXTextFieldActionVerb()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, radioButtonAction, (AXRadioButtonActionVerb()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, checkedCheckBoxAction, (AXCheckedCheckBoxActionVerb()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, uncheckedCheckBoxAction, (AXUncheckedCheckBoxActionVerb()));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, linkAction, (AXLinkActionVerb()));
 
     switch (roleValue()) {
     case ButtonRole:

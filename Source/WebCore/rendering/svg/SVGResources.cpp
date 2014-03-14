@@ -44,7 +44,7 @@ SVGResources::SVGResources()
 
 static HashSet<AtomicString>& clipperFilterMaskerTags()
 {
-    DEFINE_STATIC_LOCAL(HashSet<AtomicString>, s_tagList, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<AtomicString>, s_tagList, ());
     if (s_tagList.isEmpty()) {
         // "container elements": http://www.w3.org/TR/SVG11/intro.html#TermContainerElement
         // "graphics elements" : http://www.w3.org/TR/SVG11/intro.html#TermGraphicsElement
@@ -93,7 +93,7 @@ static HashSet<AtomicString>& clipperFilterMaskerTags()
 
 static HashSet<AtomicString>& markerTags()
 {
-    DEFINE_STATIC_LOCAL(HashSet<AtomicString>, s_tagList, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<AtomicString>, s_tagList, ());
     if (s_tagList.isEmpty()) {
         s_tagList.add(SVGNames::lineTag.localName());
         s_tagList.add(SVGNames::pathTag.localName());
@@ -106,7 +106,7 @@ static HashSet<AtomicString>& markerTags()
 
 static HashSet<AtomicString>& fillAndStrokeTags()
 {
-    DEFINE_STATIC_LOCAL(HashSet<AtomicString>, s_tagList, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<AtomicString>, s_tagList, ());
     if (s_tagList.isEmpty()) {
         s_tagList.add(SVGNames::altGlyphTag.localName());
         s_tagList.add(SVGNames::circleTag.localName());
@@ -127,7 +127,7 @@ static HashSet<AtomicString>& fillAndStrokeTags()
 
 static HashSet<AtomicString>& chainableResourceTags()
 {
-    DEFINE_STATIC_LOCAL(HashSet<AtomicString>, s_tagList, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<AtomicString>, s_tagList, ());
     if (s_tagList.isEmpty()) {
         s_tagList.add(SVGNames::linearGradientTag.localName());
         s_tagList.add(SVGNames::filterTag.localName());

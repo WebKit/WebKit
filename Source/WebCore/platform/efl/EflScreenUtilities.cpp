@@ -97,7 +97,7 @@ CursorMap::CursorMap()
 
 int getEcoreCursor(const String& cursorString)
 {
-    DEFINE_STATIC_LOCAL(CursorMap, cursorStringMap, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(CursorMap, cursorStringMap, ());
 
     return cursorStringMap.cursor(cursorString);
 }

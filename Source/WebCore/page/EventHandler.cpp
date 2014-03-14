@@ -394,7 +394,7 @@ EventHandler::~EventHandler()
 #if ENABLE(DRAG_SUPPORT)
 DragState& EventHandler::dragState()
 {
-    DEFINE_STATIC_LOCAL(DragState, state, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(DragState, state, ());
     return state;
 }
 #endif // ENABLE(DRAG_SUPPORT)
@@ -3026,10 +3026,10 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 
 static FocusDirection focusDirectionForKey(const AtomicString& keyIdentifier)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, Down, ("Down", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, Up, ("Up", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, Left, ("Left", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, Right, ("Right", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, Down, ("Down", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, Up, ("Up", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, Left, ("Left", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, Right, ("Right", AtomicString::ConstructFromLiteral));
 
     FocusDirection retVal = FocusDirectionNone;
 

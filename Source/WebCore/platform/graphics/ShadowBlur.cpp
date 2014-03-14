@@ -161,7 +161,7 @@ private:
 
 ScratchBuffer& ScratchBuffer::shared()
 {
-    DEFINE_STATIC_LOCAL(ScratchBuffer, scratchBuffer, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(ScratchBuffer, scratchBuffer, ());
     return scratchBuffer;
 }
 

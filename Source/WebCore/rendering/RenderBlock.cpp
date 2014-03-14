@@ -2412,7 +2412,7 @@ RenderBlock* RenderBlock::blockElementContinuation() const
     
 static ContinuationOutlineTableMap* continuationOutlineTable()
 {
-    DEFINE_STATIC_LOCAL(ContinuationOutlineTableMap, table, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(ContinuationOutlineTableMap, table, ());
     return &table;
 }
 

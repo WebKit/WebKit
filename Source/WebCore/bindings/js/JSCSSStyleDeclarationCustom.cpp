@@ -189,7 +189,7 @@ static CSSPropertyInfo cssPropertyIDForJSCSSPropertyName(PropertyName propertyNa
 
     String stringForCache = String(propertyNameString);
     typedef HashMap<String, CSSPropertyInfo> CSSPropertyInfoMap;
-    DEFINE_STATIC_LOCAL(CSSPropertyInfoMap, propertyInfoCache, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(CSSPropertyInfoMap, propertyInfoCache, ());
     propertyInfo = propertyInfoCache.get(stringForCache);
     if (propertyInfo.propertyID)
         return propertyInfo;

@@ -45,7 +45,7 @@ RemoveFormatCommand::RemoveFormatCommand(Document& document)
 
 static bool isElementForRemoveFormatCommand(const Element* element)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, elements, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, elements, ());
     if (elements.isEmpty()) {
         elements.add(acronymTag);
         elements.add(bTag);

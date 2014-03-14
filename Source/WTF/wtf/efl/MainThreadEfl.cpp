@@ -43,7 +43,7 @@ namespace WTF {
 
 static OwnPtr<Ecore_Pipe>& pipeObject()
 {
-    DEFINE_STATIC_LOCAL(OwnPtr<Ecore_Pipe>, pipeObject, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(OwnPtr<Ecore_Pipe>, pipeObject, ());
     return pipeObject;
 }
 

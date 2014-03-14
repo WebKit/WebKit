@@ -289,19 +289,19 @@ void MediaController::setMuted(bool flag)
 
 static const AtomicString& playbackStateWaiting()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, waiting, ("waiting", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, waiting, ("waiting", AtomicString::ConstructFromLiteral));
     return waiting;
 }
 
 static const AtomicString& playbackStatePlaying()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, playing, ("playing", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, playing, ("playing", AtomicString::ConstructFromLiteral));
     return playing;
 }
 
 static const AtomicString& playbackStateEnded()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, ended, ("ended", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, ended, ("ended", AtomicString::ConstructFromLiteral));
     return ended;
 }
 

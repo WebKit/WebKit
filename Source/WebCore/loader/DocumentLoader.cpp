@@ -604,7 +604,7 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
     if (willLoadFallback)
         return;
 
-    DEFINE_STATIC_LOCAL(AtomicString, xFrameOptionHeader, ("x-frame-options", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, xFrameOptionHeader, ("x-frame-options", AtomicString::ConstructFromLiteral));
 
     auto it = response.httpHeaderFields().find(xFrameOptionHeader);
     if (it != response.httpHeaderFields().end()) {

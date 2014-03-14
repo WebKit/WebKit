@@ -157,7 +157,7 @@ struct FixedSizeFontDataKeyTraits : WTF::GenericHashTraits<FixedSizeFontDataKey>
     static const bool emptyValueIsZero = true;
     static const FixedSizeFontDataKey& emptyValue()
     {
-        DEFINE_STATIC_LOCAL(FixedSizeFontDataKey, key, (nullAtom));
+        DEPRECATED_DEFINE_STATIC_LOCAL(FixedSizeFontDataKey, key, (nullAtom));
         return key;
     }
     static void constructDeletedValue(FixedSizeFontDataKey& slot)

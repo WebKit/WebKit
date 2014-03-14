@@ -329,10 +329,10 @@ static PassRefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
     if (!key->getString("type", &type))
         return nullptr;
 
-    DEFINE_STATIC_LOCAL(String, number, (ASCIILiteral("number")));
-    DEFINE_STATIC_LOCAL(String, string, (ASCIILiteral("string")));
-    DEFINE_STATIC_LOCAL(String, date, (ASCIILiteral("date")));
-    DEFINE_STATIC_LOCAL(String, array, (ASCIILiteral("array")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, number, (ASCIILiteral("number")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, string, (ASCIILiteral("string")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, date, (ASCIILiteral("date")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, array, (ASCIILiteral("array")));
 
     if (type == number) {
         double number;

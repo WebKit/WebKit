@@ -152,7 +152,7 @@ bool NumberInputType::typeMismatch() const
 
 StepRange NumberInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
-    DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (numberDefaultStep, numberDefaultStepBase, numberStepScaleFactor));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (numberDefaultStep, numberDefaultStepBase, numberStepScaleFactor));
     const Decimal stepBase = parseToDecimalForNumberType(element().fastGetAttribute(minAttr), numberDefaultStepBase);
     // FIXME: We should use numeric_limits<double>::max for number input type.
     const Decimal floatMax = Decimal::fromDouble(std::numeric_limits<float>::max());

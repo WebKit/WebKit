@@ -351,14 +351,14 @@ void findCharsetInMediaType(const String& mediaType, unsigned int& charsetPos, u
 
 ContentSecurityPolicy::ReflectedXSSDisposition parseXSSProtectionHeader(const String& header, String& failureReason, unsigned& failurePosition, String& reportURL)
 {
-    DEFINE_STATIC_LOCAL(String, failureReasonInvalidToggle, (ASCIILiteral("expected 0 or 1")));
-    DEFINE_STATIC_LOCAL(String, failureReasonInvalidSeparator, (ASCIILiteral("expected semicolon")));
-    DEFINE_STATIC_LOCAL(String, failureReasonInvalidEquals, (ASCIILiteral("expected equals sign")));
-    DEFINE_STATIC_LOCAL(String, failureReasonInvalidMode, (ASCIILiteral("invalid mode directive")));
-    DEFINE_STATIC_LOCAL(String, failureReasonInvalidReport, (ASCIILiteral("invalid report directive")));
-    DEFINE_STATIC_LOCAL(String, failureReasonDuplicateMode, (ASCIILiteral("duplicate mode directive")));
-    DEFINE_STATIC_LOCAL(String, failureReasonDuplicateReport, (ASCIILiteral("duplicate report directive")));
-    DEFINE_STATIC_LOCAL(String, failureReasonInvalidDirective, (ASCIILiteral("unrecognized directive")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, failureReasonInvalidToggle, (ASCIILiteral("expected 0 or 1")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, failureReasonInvalidSeparator, (ASCIILiteral("expected semicolon")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, failureReasonInvalidEquals, (ASCIILiteral("expected equals sign")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, failureReasonInvalidMode, (ASCIILiteral("invalid mode directive")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, failureReasonInvalidReport, (ASCIILiteral("invalid report directive")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, failureReasonDuplicateMode, (ASCIILiteral("duplicate mode directive")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, failureReasonDuplicateReport, (ASCIILiteral("duplicate report directive")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, failureReasonInvalidDirective, (ASCIILiteral("unrecognized directive")));
 
     unsigned pos = 0;
 

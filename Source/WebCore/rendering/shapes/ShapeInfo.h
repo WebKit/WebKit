@@ -60,7 +60,7 @@ private:
     typedef HashMap<const KeyType*, std::unique_ptr<InfoType>> InfoMap;
     static InfoMap& infoMap()
     {
-        DEFINE_STATIC_LOCAL(InfoMap, staticInfoMap, ());
+        DEPRECATED_DEFINE_STATIC_LOCAL(InfoMap, staticInfoMap, ());
         return staticInfoMap;
     }
 };

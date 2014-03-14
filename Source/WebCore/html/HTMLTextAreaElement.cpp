@@ -116,7 +116,7 @@ void HTMLTextAreaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 
 const AtomicString& HTMLTextAreaElement::formControlType() const
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, textarea, ("textarea", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, textarea, ("textarea", AtomicString::ConstructFromLiteral));
     return textarea;
 }
 

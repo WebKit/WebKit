@@ -97,7 +97,7 @@ for my $file (sort @files) {
 }
 
 if ($sawError and !$coverageBuild) {
-    print "ERROR: Use DEFINE_STATIC_LOCAL from <wtf/StdLibExtras.h>\n";
+    print "ERROR: Use static NeverDestroyed<T> from <wtf/NeverDestroyed.h>\n";
     unlink $executablePath;
     exit 1;
 }

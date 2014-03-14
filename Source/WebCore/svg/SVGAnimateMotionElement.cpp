@@ -97,7 +97,7 @@ bool SVGAnimateMotionElement::hasValidAttributeName()
 
 bool SVGAnimateMotionElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty())
         supportedAttributes.add(SVGNames::pathAttr);
     return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
@@ -122,8 +122,8 @@ void SVGAnimateMotionElement::parseAttribute(const QualifiedName& name, const At
     
 SVGAnimateMotionElement::RotateMode SVGAnimateMotionElement::rotateMode() const
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, autoVal, ("auto", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const AtomicString, autoReverse, ("auto-reverse", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, autoVal, ("auto", AtomicString::ConstructFromLiteral));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, autoReverse, ("auto-reverse", AtomicString::ConstructFromLiteral));
     const AtomicString& rotate = getAttribute(SVGNames::rotateAttr);
     if (rotate == autoVal)
         return RotateAuto;

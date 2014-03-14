@@ -45,7 +45,7 @@ static NSMapTable* DOMWrapperCache;
 #ifdef NEEDS_WRAPPER_CACHE_LOCK
 static Mutex& wrapperCacheLock()
 {
-    DEFINE_STATIC_LOCAL(Mutex, wrapperCacheMutex, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, wrapperCacheMutex, ());
     return wrapperCacheMutex;
 }
 #endif

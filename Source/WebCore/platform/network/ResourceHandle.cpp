@@ -48,7 +48,7 @@ static BuiltinResourceHandleConstructorMap& builtinResourceHandleConstructorMap(
 #else
     ASSERT(isMainThread());
 #endif
-    DEFINE_STATIC_LOCAL(BuiltinResourceHandleConstructorMap, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(BuiltinResourceHandleConstructorMap, map, ());
     return map;
 }
 
@@ -61,7 +61,7 @@ typedef HashMap<AtomicString, ResourceHandle::BuiltinSynchronousLoader> BuiltinR
 static BuiltinResourceHandleSynchronousLoaderMap& builtinResourceHandleSynchronousLoaderMap()
 {
     ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(BuiltinResourceHandleSynchronousLoaderMap, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(BuiltinResourceHandleSynchronousLoaderMap, map, ());
     return map;
 }
 

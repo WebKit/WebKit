@@ -232,21 +232,21 @@ static CFArrayRef metadataKeyNames()
 // FIXME: It would be better if AVCFTimedMetadataGroup.h exported this key.
 static CFStringRef CMTimeRangeStartKey()
 {
-    DEFINE_STATIC_LOCAL(CFStringRef, key, (CFSTR("start")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(CFStringRef, key, (CFSTR("start")));
     return key;
 }
 
 // FIXME: It would be better if AVCFTimedMetadataGroup.h exported this key.
 static CFStringRef CMTimeRangeDurationKey()
 {
-    DEFINE_STATIC_LOCAL(CFStringRef, key, (CFSTR("duration")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(CFStringRef, key, (CFSTR("duration")));
     return key;
 }
 
 // FIXME: It would be better if AVCF exported this notification name.
 static CFStringRef CACFContextNeedsFlushNotification()
 {
-    DEFINE_STATIC_LOCAL(CFStringRef, name, (CFSTR("kCACFContextNeedsFlushNotification")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(CFStringRef, name, (CFSTR("kCACFContextNeedsFlushNotification")));
     return name;
 }
 
@@ -816,7 +816,7 @@ void MediaPlayerPrivateAVFoundationCF::paint(GraphicsContext* context, const Int
 
 static HashSet<String> mimeTypeCache()
 {
-    DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
     static bool typeListInitialized = false;
 
     if (typeListInitialized)

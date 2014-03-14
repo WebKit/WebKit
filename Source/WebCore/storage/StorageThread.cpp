@@ -36,7 +36,7 @@ namespace WebCore {
 static HashSet<StorageThread*>& activeStorageThreads()
 {
     ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(HashSet<StorageThread*>, threads, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<StorageThread*>, threads, ());
     return threads;
 }
 

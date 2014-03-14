@@ -212,8 +212,8 @@ void StyledMarkupAccumulator::appendStyleNodeOpenTag(StringBuilder& out, StylePr
 
 const String& StyledMarkupAccumulator::styleNodeCloseTag(bool isBlock)
 {
-    DEFINE_STATIC_LOCAL(const String, divClose, (ASCIILiteral("</div>")));
-    DEFINE_STATIC_LOCAL(const String, styleSpanClose, (ASCIILiteral("</span>")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, divClose, (ASCIILiteral("</div>")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, styleSpanClose, (ASCIILiteral("</span>")));
     return isBlock ? divClose : styleSpanClose;
 }
 
@@ -558,7 +558,7 @@ static Node* highestAncestorToWrapMarkup(const Range* range, EAnnotateForInterch
 static String createMarkupInternal(Document& document, const Range& range, const Range& updatedRange, Vector<Node*>* nodes,
     EAnnotateForInterchange shouldAnnotate, bool convertBlocksToInlines, EAbsoluteURLs shouldResolveURLs)
 {
-    DEFINE_STATIC_LOCAL(const String, interchangeNewlineString, (ASCIILiteral("<br class=\"" AppleInterchangeNewline "\">")));
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, interchangeNewlineString, (ASCIILiteral("<br class=\"" AppleInterchangeNewline "\">")));
 
     bool collapsed = updatedRange.collapsed(ASSERT_NO_EXCEPTION);
     if (collapsed)
