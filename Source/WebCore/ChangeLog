@@ -1,3 +1,20 @@
+2014-03-14  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] CSS parser accepts trailing position arguments
+        https://bugs.webkit.org/show_bug.cgi?id=129514
+
+        Reviewed by Andreas Kling.
+
+        Add a check to make sure there are no remaining function args
+        following a position in the circle() and ellipse() css shape
+        functions.
+
+        Updated existing parsing tests.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBasicShapeCircle):
+        (WebCore::CSSParser::parseBasicShapeEllipse):
+
 2014-03-14  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the iOS build and sort the exports file.

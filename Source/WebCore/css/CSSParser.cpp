@@ -5510,7 +5510,7 @@ PassRefPtr<CSSBasicShape> CSSParser::parseBasicShapeCircle(CSSParserValueList* a
             RefPtr<CSSValue> centerY;
             args->next(); // set list to start of position center
             parseFillPosition(args, centerX, centerY);
-            if (centerX && centerY) {
+            if (centerX && centerY && !args->current()) {
                 ASSERT(centerX->isPrimitiveValue());
                 ASSERT(centerY->isPrimitiveValue());
                 shape->setCenterX(toCSSPrimitiveValue(centerX.get()));
@@ -5561,7 +5561,7 @@ PassRefPtr<CSSBasicShape> CSSParser::parseBasicShapeEllipse(CSSParserValueList* 
         RefPtr<CSSValue> centerY;
         args->next(); // set list to start of position center
         parseFillPosition(args, centerX, centerY);
-        if (!centerX || !centerY)
+        if (!centerX || !centerY || args->current())
             return 0;
 
         ASSERT(centerX->isPrimitiveValue());
