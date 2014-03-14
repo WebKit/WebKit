@@ -1,3 +1,15 @@
+2014-03-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Remove -fno-tree-sra workaround for GCC 4.5
+        https://bugs.webkit.org/show_bug.cgi?id=130258
+
+        Reviewed by Martin Robinson.
+
+        GCC compilers 4.7 and later are supported, so there's no need for disabling
+        the -ftree-sra optimization which was causing problems when enabled on GCC 4.5.
+
+        * Source/cmake/WebKitHelpers.cmake:
+
 2014-03-14  Landry Breuil  <landry@openbsd.org>
 
         Add autotools boilerplate for proper os defines on OpenBSD/NetBSD/DragonFly
