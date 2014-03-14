@@ -1,3 +1,19 @@
+2014-03-14  Frédéric Wang  <fred.wang@free.fr>
+
+        FontCache: Replace DEPRECATED_DEFINE_STATIC_LOCAL with static NeverDestroyed<T>.
+        https://bugs.webkit.org/show_bug.cgi?id=130233
+
+        Reviewed by Andreas Kling.
+
+        No new tests.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::fontCache):
+        (WebCore::FontVerticalDataCacheKeyTraits::emptyValue):
+        (WebCore::fontVerticalDataCacheInstance):
+        (WebCore::FontDataCacheKeyTraits::emptyValue):
+        * platform/graphics/FontCache.h:
+
 2014-03-11  Oliver Hunt  <oliver@apple.com>
 
         Improve dom error messages

@@ -104,6 +104,7 @@ struct FontDescriptionFontDataCacheKey {
 
 class FontCache {
     friend class FontCachePurgePreventer;
+    friend class WTF::NeverDestroyed<FontCache>;
 
     WTF_MAKE_NONCOPYABLE(FontCache); WTF_MAKE_FAST_ALLOCATED;
 public:

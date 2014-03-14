@@ -37,6 +37,7 @@
 #include "WebKitFontFamilyNames.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/StringHash.h>
@@ -87,8 +88,8 @@ namespace WebCore {
 // FIXME: We should return a reference instead of a pointer since we never return a nullptr.
 FontCache* fontCache()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(FontCache, globalFontCache, ());
-    return &globalFontCache;
+    static NeverDestroyed<FontCache> globalFontCache;
+    return &globalFontCache.get();
 }
 
 FontCache::FontCache()
@@ -285,7 +286,7 @@ struct FontVerticalDataCacheKeyTraits : WTF::GenericHashTraits<FontCache::FontFi
     static const bool needsDestruction = true;
     static const FontCache::FontFileKey& emptyValue()
     {
-        DEPRECATED_DEFINE_STATIC_LOCAL(FontCache::FontFileKey, key, (nullAtom));
+        static NeverDestroyed<FontCache::FontFileKey> key = nullAtom;
         return key;
     }
     static void constructDeletedValue(FontCache::FontFileKey& slot)
@@ -302,7 +303,7 @@ typedef HashMap<FontCache::FontFileKey, RefPtr<OpenTypeVerticalData>, FontVertic
 
 FontVerticalDataCache& fontVerticalDataCacheInstance()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(FontVerticalDataCache, fontVerticalDataCache, ());
+    static NeverDestroyed<FontVerticalDataCache> fontVerticalDataCache;
     return fontVerticalDataCache;
 }
 
@@ -340,7 +341,7 @@ struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
     static const bool needsDestruction = true;
     static const FontPlatformData& emptyValue()
     {
-        DEPRECATED_DEFINE_STATIC_LOCAL(FontPlatformData, key, (0.f, false, false));
+        static NeverDestroyed<FontPlatformData> key(0.f, false, false);
         return key;
     }
     static void constructDeletedValue(FontPlatformData& slot)
