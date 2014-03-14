@@ -170,17 +170,6 @@ protected:
 
 private:
     virtual void setActive(bool /*flag*/ = true, bool /*pause*/ = false) override final;
-
-    void startTimer();
-    void stopTimer();
-    double nextRate() const;
-    void seekTimerFired(Timer<MediaControlSeekButtonElement>&);
-
-    enum ActionType { Nothing, Play, Pause };
-    ActionType m_actionOnStop;
-    enum SeekType { Skip, Scan };
-    SeekType m_seekType;
-    Timer<MediaControlSeekButtonElement> m_seekTimer;
 };
 
 // ----------------------------

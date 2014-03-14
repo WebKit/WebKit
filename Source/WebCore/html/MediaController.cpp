@@ -612,6 +612,18 @@ void MediaController::endScrubbing()
         m_clock->start();
 }
 
+void MediaController::beginScanning(ScanDirection direction)
+{
+    for (auto& mediaElement : m_mediaElements)
+        mediaElement->beginScanning(direction);
+}
+
+void MediaController::endScanning()
+{
+    for (auto& mediaElement : m_mediaElements)
+        mediaElement->endScanning();
+}
+
 bool MediaController::canPlay() const
 {
     if (m_paused)

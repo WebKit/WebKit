@@ -84,6 +84,13 @@ public:
     virtual void beginScrubbing() = 0;
     virtual void endScrubbing() = 0;
 
+    enum ScanDirection {
+        Backward,
+        Forward,
+    };
+    virtual void beginScanning(ScanDirection) = 0;
+    virtual void endScanning() = 0;
+
     virtual bool canPlay() const = 0;
 
     virtual bool isLiveStream() const = 0;

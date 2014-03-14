@@ -46,12 +46,6 @@ using namespace HTMLNames;
 
 class Event;
 
-// FIXME: These constants may need to be tweaked to better match the seeking in the QuickTime plug-in.
-static const double cSkipRepeatDelay = 0.1;
-static const double cSkipTime = 0.2;
-static const double cScanRepeatDelay = 1.5;
-static const double cScanMaximumRate = 8;
-
 HTMLMediaElement* parentMediaElement(Node* node)
 {
     if (!node)
@@ -168,9 +162,6 @@ void MediaControlMuteButtonElement::updateDisplayType()
 
 MediaControlSeekButtonElement::MediaControlSeekButtonElement(Document& document, MediaControlElementType displayType)
     : MediaControlInputElement(document, displayType)
-    , m_actionOnStop(Nothing)
-    , m_seekType(Skip)
-    , m_seekTimer(this, &MediaControlSeekButtonElement::seekTimerFired)
 {
 }
 
@@ -188,60 +179,11 @@ void MediaControlSeekButtonElement::setActive(bool flag, bool pause)
         return;
 
     if (flag)
-        startTimer();
+        mediaController()->beginScanning(isForwardButton() ? MediaControllerInterface::Forward : MediaControllerInterface::Backward);
     else
-        stopTimer();
+        mediaController()->endScanning();
 
     MediaControlInputElement::setActive(flag, pause);
-}
-
-void MediaControlSeekButtonElement::startTimer()
-{
-    m_seekType = mediaController()->supportsScanning() ? Scan : Skip;
-
-    if (m_seekType == Skip) {
-        // Seeking by skipping requires the video to be paused during seeking.
-        m_actionOnStop = mediaController()->paused() ? Nothing : Play;
-        mediaController()->pause();
-    } else {
-        // Seeking by scanning requires the video to be playing during seeking.
-        m_actionOnStop = mediaController()->paused() ? Pause : Nothing;
-        mediaController()->play();
-        mediaController()->setPlaybackRate(nextRate());
-    }
-
-    m_seekTimer.start(0, m_seekType == Skip ? cSkipRepeatDelay : cScanRepeatDelay);
-}
-
-void MediaControlSeekButtonElement::stopTimer()
-{
-    if (m_seekType == Scan)
-        mediaController()->setPlaybackRate(mediaController()->defaultPlaybackRate());
-
-    if (m_actionOnStop == Play)
-        mediaController()->play();
-    else if (m_actionOnStop == Pause)
-        mediaController()->pause();
-
-    if (m_seekTimer.isActive())
-        m_seekTimer.stop();
-}
-
-double MediaControlSeekButtonElement::nextRate() const
-{
-    double rate = std::min(cScanMaximumRate, fabs(mediaController()->playbackRate() * 2));
-    if (!isForwardButton())
-        rate *= -1;
-    return rate;
-}
-
-void MediaControlSeekButtonElement::seekTimerFired(Timer<MediaControlSeekButtonElement>&)
-{
-    if (m_seekType == Skip) {
-        double skipTime = isForwardButton() ? cSkipTime : -cSkipTime;
-        mediaController()->setCurrentTime(mediaController()->currentTime() + skipTime);
-    } else
-        mediaController()->setPlaybackRate(nextRate());
 }
 
 // ----------------------------

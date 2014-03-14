@@ -249,7 +249,11 @@ public:
     void togglePlayState();
     virtual void beginScrubbing() override;
     virtual void endScrubbing() override;
-    
+
+    virtual void beginScanning(ScanDirection) override;
+    virtual void endScanning() override;
+    double nextScanRate();
+
     virtual bool canPlay() const override;
 
     double percentLoaded() const;
@@ -583,6 +587,7 @@ private:
     void loadTimerFired(Timer<HTMLMediaElement>&);
     void progressEventTimerFired(Timer<HTMLMediaElement>&);
     void playbackProgressTimerFired(Timer<HTMLMediaElement>&);
+    void scanTimerFired(Timer<HTMLMediaElement>&);
     void startPlaybackProgressTimer();
     void startProgressEventTimer();
     void stopPeriodicTimers();
@@ -703,6 +708,7 @@ private:
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_progressEventTimer;
     Timer<HTMLMediaElement> m_playbackProgressTimer;
+    Timer<HTMLMediaElement> m_scanTimer;
     RefPtr<TimeRanges> m_playedTimeRanges;
     GenericEventQueue m_asyncEventQueue;
 
@@ -768,6 +774,15 @@ private:
 
     typedef unsigned PendingActionFlags;
     PendingActionFlags m_pendingActionFlags;
+
+    enum ActionAfterScanType {
+        Nothing, Play, Pause
+    };
+    ActionAfterScanType m_actionAfterScan;
+
+    enum ScanType { Seek, Scan };
+    ScanType m_scanType;
+    ScanDirection m_scanDirection;
 
     bool m_playing : 1;
     bool m_isWaitingUntilMediaCanStart : 1;

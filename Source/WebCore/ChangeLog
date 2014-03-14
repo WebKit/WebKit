@@ -1,3 +1,28 @@
+2014-03-07  Jer Noble  <jer.noble@apple.com>
+
+        Add Remote Control command support to HTLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=129926
+
+        Reviewed by Eric Carlson.
+
+        Support the new MediaSession remote control commands by pulling in code from
+        MediaControlElementTypes to control scanning.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        * html/HTMLMediaElement.h:
+        * html/MediaController.cpp:
+        (MediaController::beginScanning): Moved from MediaControlElementTypes.
+        (MediaController::endScanning): Ditto.
+        * html/MediaController.h:
+        * html/MediaControllerInterface.h:
+
+        Remove all the scanning code from MediaControlSeekButtonElement.
+        * html/shadow/MediaControlElementTypes.cpp:
+        (WebCore::MediaControlSeekButtonElement::MediaControlSeekButtonElement):
+        (WebCore::MediaControlSeekButtonElement::setActive):
+        * html/shadow/MediaControlElementTypes.h:
+
 2014-03-14  Krzysztof Czech  <k.czech@samsung.com>
 
         Move WebSpeech code to use std::unique_ptr

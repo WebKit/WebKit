@@ -98,6 +98,8 @@ public:
     
     virtual void beginScrubbing() override;
     virtual void endScrubbing() override;
+    virtual void beginScanning(ScanDirection) override;
+    virtual void endScanning() override;
     
     virtual bool canPlay() const override;
     

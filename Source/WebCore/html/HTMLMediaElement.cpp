@@ -146,6 +146,11 @@
 
 namespace WebCore {
 
+static const double SeekRepeatDelay = 0.1;
+static const double SeekTime = 0.2;
+static const double ScanRepeatDelay = 1.5;
+static const double ScanMaximumRate = 8;
+
 static void setFlags(unsigned& value, unsigned flags)
 {
     value |= flags;
@@ -261,6 +266,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_loadTimer(this, &HTMLMediaElement::loadTimerFired)
     , m_progressEventTimer(this, &HTMLMediaElement::progressEventTimerFired)
     , m_playbackProgressTimer(this, &HTMLMediaElement::playbackProgressTimerFired)
+    , m_scanTimer(this, &HTMLMediaElement::scanTimerFired)
     , m_playedTimeRanges()
     , m_asyncEventQueue(*this)
     , m_playbackRate(1.0f)
@@ -294,6 +300,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_fragmentStartTime(MediaPlayer::invalidTime())
     , m_fragmentEndTime(MediaPlayer::invalidTime())
     , m_pendingActionFlags(0)
+    , m_actionAfterScan(Nothing)
+    , m_scanType(Scan)
+    , m_scanDirection(Forward)
     , m_playing(false)
     , m_isWaitingUntilMediaCanStart(false)
     , m_shouldDelayLoadEvent(false)
@@ -3004,6 +3013,56 @@ void HTMLMediaElement::endScrubbing()
 
     if (m_pausedInternal)
         setPausedInternal(false);
+}
+
+void HTMLMediaElement::beginScanning(ScanDirection direction)
+{
+    m_scanType = supportsScanning() ? Scan : Seek;
+    m_scanDirection = direction;
+
+    if (m_scanType == Seek) {
+        // Scanning by seeking requires the video to be paused during scanning.
+        m_actionAfterScan = paused() ? Nothing : Play;
+        pause();
+    } else {
+        // Scanning by scanning requires the video to be playing during scanninging.
+        m_actionAfterScan = paused() ? Pause : Nothing;
+        play();
+        setPlaybackRate(nextScanRate());
+    }
+
+    m_scanTimer.start(0, m_scanType == Seek ? SeekRepeatDelay : ScanRepeatDelay);
+}
+
+void HTMLMediaElement::endScanning()
+{
+    if (m_scanType == Scan)
+        setPlaybackRate(defaultPlaybackRate());
+
+    if (m_actionAfterScan == Play)
+        play();
+    else if (m_actionAfterScan == Pause)
+        pause();
+
+    if (m_scanTimer.isActive())
+        m_scanTimer.stop();
+}
+
+double HTMLMediaElement::nextScanRate()
+{
+    double rate = std::min(ScanMaximumRate, fabs(playbackRate() * 2));
+    if (m_scanDirection == Backward)
+        rate *= -1;
+    return rate;
+}
+
+void HTMLMediaElement::scanTimerFired(Timer<HTMLMediaElement>&)
+{
+    if (m_scanType == Seek) {
+        double seekTime = m_scanDirection == Forward ? SeekTime : -SeekTime;
+        setCurrentTime(currentTime() + seekTime);
+    } else
+        setPlaybackRate(nextScanRate());
 }
 
 // The spec says to fire periodic timeupdate events (those sent while playing) every
@@ -5889,8 +5948,29 @@ String HTMLMediaElement::mediaSessionTitle() const
 
 void HTMLMediaElement::didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType command)
 {
-    // FIXME(129926): Add Remote Control support to HTMLMediaElement
-    UNUSED_PARAM(command);
+    switch (command) {
+    case MediaSession::PlayCommand:
+        play();
+        break;
+    case MediaSession::PauseCommand:
+        pause();
+        break;
+    case MediaSession::TogglePlayPauseCommand:
+        canPlay() ? play() : pause();
+        break;
+    case MediaSession::BeginSeekingBackwardCommand:
+        beginScanning(Backward);
+        break;
+    case MediaSession::BeginSeekingForwardCommand:
+        beginScanning(Forward);
+        break;
+    case MediaSession::EndSeekingBackwardCommand:
+    case MediaSession::EndSeekingForwardCommand:
+        endScanning();
+        break;
+    default:
+        { } // Do nothing
+    }
 }
 
 }
