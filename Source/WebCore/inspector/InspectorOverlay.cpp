@@ -702,6 +702,15 @@ static PassRefPtr<InspectorObject> buildObjectForElementInfo(Node* node)
     }
 #endif
 
+    // Need to enable AX to get the computed role.
+    if (!WebCore::AXObjectCache::accessibilityEnabled())
+        WebCore::AXObjectCache::enableAccessibility();
+
+    if (AXObjectCache* axObjectCache = node->document().axObjectCache()) {
+        if (AccessibilityObject* axObject = axObjectCache->getOrCreate(node))
+            elementInfo->setString("role", axObject->computedRoleString());
+    }
+
     return elementInfo.release();
 }
 

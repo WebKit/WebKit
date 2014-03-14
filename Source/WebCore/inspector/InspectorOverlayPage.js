@@ -366,6 +366,7 @@ function _createElementTitle(elementInfo)
     builder.appendSpan("node-height", elementInfo.nodeHeight);
     builder.appendSpan("px", "px");
 
+    builder.appendPropertyIfNotNull("role-name", "Role", elementInfo.role);
     builder.appendPropertyIfNotNull("region-flow-name", "Region Flow", elementInfo.regionFlowInfo ? elementInfo.regionFlowInfo.name : null);
     builder.appendPropertyIfNotNull("content-flow-name", "Content Flow", elementInfo.contentFlowInfo ? elementInfo.contentFlowInfo.name : null);
 

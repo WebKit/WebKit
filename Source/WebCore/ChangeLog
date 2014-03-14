@@ -1,5 +1,19 @@
 2014-03-14  James Craig  <jcraig@apple.com>
 
+        Web Inspector: AXI: Include Role as an extra attribute in the page overlay.
+        https://bugs.webkit.org/show_bug.cgi?id=130214
+
+        Reviewed by Timothy Hatcher.
+
+        Adding Role to the Web Inspector element overlay.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForElementInfo):
+        * inspector/InspectorOverlayPage.js:
+        (_createElementTitle):
+
+2014-03-14  James Craig  <jcraig@apple.com>
+
         Web Inspector: AXI: Expose Accessibility Tree parent of the selected node
         https://bugs.webkit.org/show_bug.cgi?id=129943
 
