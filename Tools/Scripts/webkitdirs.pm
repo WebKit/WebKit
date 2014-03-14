@@ -332,6 +332,8 @@ sub determineArchitecture
         $architecture = `uname -m`;
         chomp $architecture;
     }
+
+    $architecture = 'x86_64' if ($architecture =~ /amd64/ && isBSD());
 }
 
 sub determineNumberOfCPUs
@@ -349,7 +351,7 @@ sub determineNumberOfCPUs
     } elsif (isWindows() || isCygwin()) {
         # Assumes cygwin
         $numberOfCPUs = `ls /proc/registry/HKEY_LOCAL_MACHINE/HARDWARE/DESCRIPTION/System/CentralProcessor | wc -w`;
-    } elsif (isDarwin() || isFreeBSD()) {
+    } elsif (isDarwin() || isBSD()) {
         chomp($numberOfCPUs = `sysctl -n hw.ncpu`);
     }
 }
@@ -1083,9 +1085,9 @@ sub isLinux()
     return ($^O eq "linux") || 0;
 }
 
-sub isFreeBSD()
+sub isBSD()
 {
-    return ($^O eq "freebsd") || 0;
+    return ($^O eq "freebsd") || ($^O eq "openbsd") || ($^O eq "netbsd") || 0;
 }
 
 sub isARM()
@@ -1782,7 +1784,7 @@ sub buildAutotoolsProject($@)
 {
     my ($project, $clean, $prefix, $makeArgs, $noWebKit1, $noWebKit2, @features) = @_;
 
-    my $make = 'make';
+    my $make =  $ENV{'MAKE'} //= 'make';
     my $dir = productDir();
     my $config = passedConfiguration() || configuration();
 

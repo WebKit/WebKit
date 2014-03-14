@@ -49,7 +49,7 @@ class PlatformInfo(object):
         self.os_name = self._determine_os_name(sys_module.platform)
         if self.os_name == 'linux':
             self.os_version = self._determine_linux_version()
-        if self.os_name == 'freebsd':
+        if self.os_name == 'freebsd' or self.os_name == 'openbsd' or self.os_name == 'netbsd':
             self.os_version = platform_module.release()
         if self.os_name.startswith('mac'):
             self.os_version = self._determine_mac_version(platform_module.mac_ver()[0])
@@ -71,6 +71,12 @@ class PlatformInfo(object):
 
     def is_freebsd(self):
         return self.os_name == 'freebsd'
+
+    def is_openbsd(self):
+        return self.os_name == 'openbsd'
+
+    def is_netbsd(self):
+        return self.os_name == 'netbsd'
 
     def display_name(self):
         # platform.platform() returns Darwin information for Mac, which is just confusing.
@@ -121,6 +127,8 @@ class PlatformInfo(object):
             return 'win'
         if sys_platform.startswith('freebsd'):
             return 'freebsd'
+        if sys_platform.startswith('openbsd'):
+            return 'openbsd'
         raise AssertionError('unrecognized platform string "%s"' % sys_platform)
 
     def _determine_mac_version(self, mac_version_string):
