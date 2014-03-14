@@ -1,3 +1,18 @@
+2014-03-13  Juergen Ributzka  <juergen@apple.com>
+
+        Only export initializeAndGetJSCLLVMAPI from libllvmForJSC.dylib
+        https://bugs.webkit.org/show_bug.cgi?id=130224
+
+        Reviewed by Filip Pizlo.
+
+        This limits the exported symbols to only initializeAndGetJSCLLVMAPI from
+        the LLVM dylib. This allows the dylib to be safely used with other LLVM
+        dylibs on the same system. It also reduces the dynamic linking overhead
+        and also reduces the size by 6MB, because the linker can now dead strip
+        many unused functions.
+
+        * Configurations/LLVMForJSC.xcconfig:
+
 2014-03-13  Andreas Kling  <akling@apple.com>
 
         VM::discardAllCode() should clear the RegExp cache.

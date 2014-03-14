@@ -24,8 +24,8 @@
 #include "FeatureDefines.xcconfig"
 #include "Version.xcconfig"
 
-// Prevent C++ standard library operator new, delete and their related exception types from being exported as weak symbols.
-OTHER_LDFLAGS_HIDE_SYMBOLS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv -Wl,-all_load;
+// Only export our hook for initializing LLVM and returning the API struct.
+OTHER_LDFLAGS_HIDE_SYMBOLS = -Wl,-exported_symbol -Wl,_initializeAndGetJSCLLVMAPI -Wl,-all_load;
 
 LLVM_LIBS_iphoneos = -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMARM64Disassembler -lLLVMARM64AsmParser -lLLVMARM64CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMARM64Desc -lLLVMARM64Info -lLLVMARM64AsmPrinter -lLLVMIRReader -lLLVMAsmParser -lLLVMMCDisassembler -lLLVMMCParser -lLLVMInstrumentation -lLLVMBitReader -lLLVMInterpreter -lLLVMipo -lLLVMVectorize -lLLVMLinker -lLLVMBitWriter -lLLVMMCJIT -lLLVMJIT -lLLVMCodeGen -lLLVMObjCARCOpts -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMTarget -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport;
 LLVM_LIBS_macosx = -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMIRReader -lLLVMAsmParser -lLLVMMCDisassembler -lLLVMMCParser -lLLVMInstrumentation -lLLVMBitReader -lLLVMInterpreter -lLLVMipo -lLLVMVectorize -lLLVMLinker -lLLVMBitWriter -lLLVMMCJIT -lLLVMJIT -lLLVMCodeGen -lLLVMObjCARCOpts -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMTarget -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport;
