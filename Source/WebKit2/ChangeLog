@@ -1,3 +1,9 @@
+2014-03-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [CMake] URTBF after r165619.
+
+        * CMakeLists.txt: Add new files.
+
 2014-03-14  Anders Carlsson  <andersca@apple.com>
 
         Remove WebContext::addVisitedLink

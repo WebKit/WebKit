@@ -593,6 +593,7 @@ set(WebKit2_MESSAGES_IN_FILES
     Shared/Network/CustomProtocols/CustomProtocolManager.messages.in
 
     UIProcess/DrawingAreaProxy.messages.in
+    UIProcess/VisitedLinkProvider.messages.in
     UIProcess/WebApplicationCacheManagerProxy.messages.in
     UIProcess/WebBatteryManagerProxy.messages.in
     UIProcess/WebContext.messages.in
@@ -659,6 +660,7 @@ set(WebKit2_MESSAGES_IN_FILES
 
     WebProcess/WebPage/DrawingArea.messages.in
     WebProcess/WebPage/EventDispatcher.messages.in
+    WebProcess/WebPage/VisitedLinkTableController.messages.in
     WebProcess/WebPage/WebInspector.messages.in
     WebProcess/WebPage/WebPage.messages.in
     WebProcess/WebPage/WebPageGroupProxy.messages.in
