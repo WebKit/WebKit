@@ -1,3 +1,9 @@
+2014-03-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove an unused function fix builds.
+
+        * platform/mac/HTMLConverter.mm:
+
 2014-03-14  Frédéric Wang  <fred.wang@free.fr>
 
         FontCache: Replace DEPRECATED_DEFINE_STATIC_LOCAL with static NeverDestroyed<T>.

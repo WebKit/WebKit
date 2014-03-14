@@ -759,17 +759,6 @@ static inline bool floatValueFromPrimitiveValue(CSSPrimitiveValue& primitiveValu
     }
 }
 
-static inline BOOL _getFloat(DOMCSSPrimitiveValue *primitiveValue, CGFloat *val)
-{
-    if (!val)
-        return NO;
-    float result;
-    bool haveResult = floatValueFromPrimitiveValue(*core(primitiveValue), result);
-    if (haveResult && val)
-        *val = result;
-    return haveResult;
-}
-
 - (BOOL)_getComputedFloat:(CGFloat *)val forNode:(DOMNode *)node property:(NSString *)key
 {
     bool haveResult = false;
