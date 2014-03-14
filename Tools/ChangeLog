@@ -1,3 +1,14 @@
+2014-03-14  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][MiniBrowser] Revise help messages of command line parameters
+        https://bugs.webkit.org/show_bug.cgi?id=130222
+
+        Reviewed by Csaba Osztrogonác.
+
+        Correct the default value description and make help messages to be consistent.
+
+        * MiniBrowser/efl/main.c:
+
 2014-03-12  Sergio Villar Senin  <svillar@igalia.com>
 
         Rename DEFINE_STATIC_LOCAL to DEPRECATED_DEFINE_STATIC_LOCAL

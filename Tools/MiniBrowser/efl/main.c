@@ -147,30 +147,30 @@ static const Ecore_Getopt options = {
     "Test Web Browser using the Enlightenment Foundation Libraries (EFL) port of WebKit2",
     EINA_TRUE, {
         ECORE_GETOPT_STORE_STR
-            ('e', "engine", "ecore-evas engine to use."),
+            ('e', "engine", "Ecore-evas engine to use."),
         ECORE_GETOPT_STORE_STR
-            ('s', "window-size", "window size in following format (width)x(height)."),
+            ('s', "window-size", "Window size in following format (width)x(height)."),
         ECORE_GETOPT_STORE_STR
-            ('u', "user-agent", "user agent to set."),
+            ('u', "user-agent", "User agent to set."),
         ECORE_GETOPT_STORE_DOUBLE
             ('r', "device-pixel-ratio", "Ratio between the CSS units and device pixels."),
         ECORE_GETOPT_CALLBACK_NOARGS
-            ('E', "list-engines", "list ecore-evas engines.",
+            ('E', "list-engines", "List ecore-evas engines.",
              ecore_getopt_callback_ecore_evas_list_engines, NULL),
         ECORE_GETOPT_STORE_DEF_BOOL
-            ('c', "encoding-detector", "enable/disable encoding detector", EINA_FALSE),
+            ('c', "encoding-detector", "Enable/disable encoding detector.", EINA_FALSE),
         ECORE_GETOPT_STORE_DEF_BOOL
-            ('f', "flattening", "frame flattening.", EINA_FALSE),
+            ('f', "flattening", "Enable/disable frame flattening.", EINA_FALSE),
         ECORE_GETOPT_STORE_DEF_BOOL
-            ('l', "local-storage", "HTML5 local storage support (enabled by default).", EINA_TRUE),
+            ('l', "local-storage", "Enable/disable HTML5 local storage.", EINA_TRUE),
         ECORE_GETOPT_STORE_DEF_BOOL
-            ('F', "full-screen", "start in full-screen.", EINA_FALSE),
+            ('F', "full-screen", "Start in full-screen.", EINA_FALSE),
         ECORE_GETOPT_STORE_DEF_BOOL
-            ('t', "text-checking", "text spell checking enabled", EINA_TRUE),
+            ('t', "text-checking", "Enable/disable text spell checking.", EINA_FALSE),
         ECORE_GETOPT_STORE_DEF_BOOL
-            ('T', "touch-events", "touch events enabled", EINA_FALSE),
+            ('T', "touch-events", "Enable/disable touch events.", EINA_FALSE),
         ECORE_GETOPT_STORE_DEF_BOOL
-            ('L', "fixed-layout", "enable/disable to use fixed layout", EINA_FALSE),
+            ('L', "fixed-layout", "Enable/disable fixed layout.", EINA_FALSE),
         ECORE_GETOPT_STORE_DEF_STR
             ('p', "policy-cookies", "Cookies policy:\n  always - always accept,\n  never - never accept,\n  no-third-party - don't accept third-party cookies.", "no-third-party"),
         ECORE_GETOPT_VERSION
