@@ -737,7 +737,6 @@ add_custom_command(
         --include=Gtk-${WEBKITGTK_API_VERSION}
         --include=Soup-2.4
         --include-uninstalled=${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir
-        --include-uninstalled=${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
         --library=webkit2gtk-${WEBKITGTK_API_VERSION}
         --library=javascriptcoregtk-${WEBKITGTK_API_VERSION}
         -L${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
@@ -761,6 +760,8 @@ add_custom_command(
         -I${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk
         ${GObjectDOMBindings_GIR_HEADERS}
         ${WebKit2WebExtension_INSTALLED_HEADERS}
+        ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitURIRequest.h
+        ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitURIResponse.h
         ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/*.cpp
 )
 

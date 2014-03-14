@@ -353,7 +353,6 @@ WebKit2WebExtension-@WEBKITGTK_API_VERSION@.gir: $(G_IR_SCANNER) WebKit2-@WEBKIT
 	     --include=GObject-2.0 \
 	     --include=Gtk-3.0 \
 	     --include-uninstalled=JavaScriptCore-@WEBKITGTK_API_VERSION@.gir \
-	     --include-uninstalled=WebKit2-@WEBKITGTK_API_VERSION@.gir \
 	     --library=webkit2gtk-@WEBKITGTK_API_VERSION@ \
 	     --library=javascriptcoregtk-@WEBKITGTK_API_VERSION@ \
 	     --libtool="$(LIBTOOL)" \
@@ -380,6 +379,8 @@ WebKit2WebExtension-@WEBKITGTK_API_VERSION@.gir: $(G_IR_SCANNER) WebKit2-@WEBKIT
 	     -DWEBKIT2_COMPILATION \
 	     $(webkit2gtk_web_extension_h_api) \
 	     $(webkitgtk_gdom_built_h_api) \
+	     $(WebKit2)/UIProcess/API/gtk/WebKitURIRequest.h \
+	     $(WebKit2)/UIProcess/API/gtk/WebKitURIResponse.h \
 	     $(WebKit2)/WebProcess/InjectedBundle/API/gtk/*.cpp
 
 WebKit2WebExtension-@WEBKITGTK_API_VERSION@.typelib: WebKit2WebExtension-@WEBKITGTK_API_VERSION@.gir $(G_IR_COMPILER)
