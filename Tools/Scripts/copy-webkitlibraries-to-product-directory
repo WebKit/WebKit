@@ -38,6 +38,7 @@ my $llvmLibraryPackage = "";
 my $useFullLibPaths = 0;
 my $preferSystemLLVMOverDrops = 0;
 my $llvmSubdirectoryName = "llvm";
+my $sdkName = "";
 my $force = 0;
 
 my $programName = basename($0);
@@ -51,6 +52,7 @@ Usage: $programName [options]
   --[no-]use-full-lib-paths     Toggle using full library paths
   --[no-]prefer-system-llvm     Toggle preferring the system LLVM over the binary drops (default: $preferSystemLLVMOverDrops)
   --llvm-subdirectory=<name>    Set the name of the LLVM subdirectory to search for (default: $llvmSubdirectoryName)
+  --sdk-name=<name>             Set the name of the Xcode SDK to use.
   --[no-]force                  Toggle forcing the copy - i.e. ignoring timestamps (default: $force)
 EOF
 
@@ -63,6 +65,7 @@ GetOptions(
     'use-full-lib-paths!' => \$useFullLibPaths,
     'prefer-system-llvm!' => \$preferSystemLLVMOverDrops,
     'llvm-subdirectory=s' => \$llvmSubdirectoryName,
+    'sdk-name=s' => \$sdkName,
     'force!' => \$force
 );
 
@@ -80,7 +83,11 @@ if ($productDir) {
 
 chdirWebKit();
 
-my $ranlib = `xcrun -find ranlib`;
+my $xcrunOptions = "";
+if ($sdkName ne "") {
+    $xcrunOptions .= " -sdk $sdkName";
+}
+my $ranlib = `xcrun $xcrunOptions -find ranlib`;
 chomp $ranlib;
 
 sub unpackIfNecessary

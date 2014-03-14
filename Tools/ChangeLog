@@ -1,3 +1,13 @@
+2014-03-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Sometimes we need to be explicit about the SDK when running ranlib on Darwin
+        https://bugs.webkit.org/show_bug.cgi?id=130265
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/build-webkit:
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2014-03-14  Landry Breuil  <landry@openbsd.org>
 
         Recognize openbsd/netbsd and am64 archs in Tools/Scripts.

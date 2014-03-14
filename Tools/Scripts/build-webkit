@@ -232,8 +232,8 @@ if (isAppleMacWebKit()) {
         if ($hasFTLJIT) {
             my @copyLibrariesArgs = (
                 "perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory",
-                "--llvm", "--prefer-system-llvm", "--llvm-subdirectory", "internal-llvm",
-                productDir()
+                "--sdk", xcodeSDK(), "--llvm", "--prefer-system-llvm",
+                "--llvm-subdirectory", "internal-llvm", productDir()
             );
             print(join(" ", @copyLibrariesArgs) . "\n");
             (system(@copyLibrariesArgs) == 0) or die;
