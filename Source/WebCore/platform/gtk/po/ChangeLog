@@ -1,3 +1,12 @@
+2014-03-14  Jiro Matsuzawa  <jmatsuzawa@gnome.org>
+
+        Add Japanese translation for webkitgtk+
+        https://bugs.webkit.org/show_bug.cgi?id=125638
+
+        Reviewed by Gustavo Noronha.
+
+        * ja.po: Added.
+
 2014-01-23  Max Vujovic  <mvujovic@adobe.com>
 
         Remove CSS Custom Filters code and tests
