@@ -1,3 +1,23 @@
+2014-03-14  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Extend the lifetime of MediaKeySession.
+        https://bugs.webkit.org/show_bug.cgi?id=129841
+
+        Reviewed by Eric Carlson.
+
+        Test: media/encrypted-media/encrypted-media-session-lifetime.html
+
+        In anticipation of guidance to be added to the EME Spec <https://www.w3.org/Bugs/Public/show_bug.cgi?id=24771>,
+        extend the lifetime of MediaKeySession by making the session an ActiveDOMObject, and returning true to
+        hasPendingActivity when the session is both not closed and is associated with a live MediaKeys object.
+
+        Additionally, keep the object from being destroyed while events are pending.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::MediaKeySession):
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/MediaKeySession.idl:
+
 2014-03-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove an unused function fix builds.

@@ -1,3 +1,13 @@
+2014-03-14  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Extend the lifetime of MediaKeySession.
+        https://bugs.webkit.org/show_bug.cgi?id=129841
+
+        Reviewed by Eric Carlson.
+
+        * media/encrypted-media/encrypted-media-session-lifetime-expected.txt: Added.
+        * media/encrypted-media/encrypted-media-session-lifetime.html: Added.
+
 2014-03-11  Oliver Hunt  <oliver@apple.com>
 
         Improve dom error messages

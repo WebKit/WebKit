@@ -28,7 +28,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 
-#include "ContextDestructionObserver.h"
+#include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "ExceptionCode.h"
 #include "GenericEventQueue.h"
@@ -45,7 +45,7 @@ class MediaKeyError;
 class MediaKeys;
 class CDMSession;
 
-class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ContextDestructionObserver {
+class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
     static PassRefPtr<MediaKeySession> create(ScriptExecutionContext*, MediaKeys*, const String& keySystem);
     ~MediaKeySession();
@@ -61,6 +61,8 @@ public:
 
     void generateKeyRequest(const String& mimeType, Uint8Array* initData);
     void update(Uint8Array* key, ExceptionCode&);
+
+    bool isClosed() const { return !m_session; }
     void close();
 
     using RefCounted<MediaKeySession>::ref;
@@ -68,12 +70,15 @@ public:
 
     void enqueueEvent(PassRefPtr<Event>);
 
+    // ActiveDOMObject
+    virtual bool hasPendingActivity() const override { return (m_keys && !isClosed()) || m_asyncEventQueue.hasPendingEvents(); }
+
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeyadded);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeyerror);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeymessage);
 
     virtual EventTargetInterface eventTargetInterface() const override { return MediaKeySessionEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const override { return ContextDestructionObserver::scriptExecutionContext(); }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
 
 protected:
     MediaKeySession(ScriptExecutionContext*, MediaKeys*, const String& keySystem);

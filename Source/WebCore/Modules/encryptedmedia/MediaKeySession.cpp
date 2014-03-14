@@ -44,7 +44,7 @@ PassRefPtr<MediaKeySession> MediaKeySession::create(ScriptExecutionContext* cont
 }
 
 MediaKeySession::MediaKeySession(ScriptExecutionContext* context, MediaKeys* keys, const String& keySystem)
-    : ContextDestructionObserver(context)
+    : ActiveDOMObject(context)
     , m_keys(keys)
     , m_keySystem(keySystem)
     , m_asyncEventQueue(*this)

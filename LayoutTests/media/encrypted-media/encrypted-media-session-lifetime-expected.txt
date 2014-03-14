@@ -1,0 +1,9 @@
+This tests that the MediaKeySession object is not garbage collected when associated with an open mediaKeys object.
+
+RUN(mediaKeys = new WebKitMediaKeys("com.webcore.mock"))
+RUN(mediaKeySession = mediaKeys.createSession("video/mock", initData))
+RUN(delete mediaKeySession)
+RUN(gc())
+EVENT(webkitkeymessage)
+END OF TEST
+
