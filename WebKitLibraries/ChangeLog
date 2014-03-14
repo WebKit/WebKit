@@ -1,3 +1,13 @@
+2014-03-13  Dean Jackson  <dino@apple.com>
+
+        <rdar://problem/16317198>
+
+        Update WKSI to fix a small leak on iOS.
+
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMavericks.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2014-03-12  Dean Jackson  <dino@apple.com>
 
         [WebGL] WebKit1 + WebKit2 iOS clients should check load policy
