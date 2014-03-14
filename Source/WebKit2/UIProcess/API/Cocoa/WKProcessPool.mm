@@ -35,11 +35,20 @@
 #import "WKProcessPoolConfigurationPrivate.h"
 #import "WebCertificateInfo.h"
 #import "WebContext.h"
+#import "WebCookieManagerProxy.h"
 #import <WebCore/CertificateInfo.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
 #import <WebCore/WebCoreThreadSystemInterface.h>
+#endif
+
+#if __has_include(<CFNetwork/CFNSURLConnection.h>)
+#import <CFNetwork/CFNSURLConnection.h>
+#else
+enum : NSUInteger {
+    NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3,
+};
 #endif
 
 @implementation WKProcessPool
@@ -109,6 +118,28 @@
 - (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host
 {
     _context->allowSpecificHTTPSCertificateForHost(WebKit::WebCertificateInfo::create(WebCore::CertificateInfo((CFArrayRef)certificateChain)).get(), host);
+}
+
+static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAcceptPolicy policy)
+{
+    switch (static_cast<NSUInteger>(policy)) {
+    case NSHTTPCookieAcceptPolicyAlways:
+        return WebKit::HTTPCookieAcceptPolicyAlways;
+    case NSHTTPCookieAcceptPolicyNever:
+        return WebKit::HTTPCookieAcceptPolicyNever;
+    case NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
+        return WebKit::HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+    case NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain:
+        return WebKit::HTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebKit::HTTPCookieAcceptPolicyAlways;
+}
+
+- (void)_setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy
+{
+    _context->supplement<WebKit::WebCookieManagerProxy>()->setHTTPCookieAcceptPolicy(toHTTPCookieAcceptPolicy(policy));
 }
 
 @end

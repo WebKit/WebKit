@@ -30,6 +30,7 @@
 @interface WKProcessPool (WKPrivate)
 
 - (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host;
+- (void)_setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy;
 
 @end
 

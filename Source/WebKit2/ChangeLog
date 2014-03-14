@@ -1,3 +1,17 @@
+2014-03-14  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Expose a way to set the cookie accept policy
+        https://bugs.webkit.org/show_bug.cgi?id=130251
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (toHTTPCookieAcceptPolicy): Added a helper function that maps from NSHTTPCookieAcceptPolicy
+        values to WebKit::HTTPCookieAcceptPolicy values.
+        (-[WKProcessPool _setCookieAcceptPolicy:]): Added. Calls
+        WebCookieManagerProxy::setHTTPCookieAcceptPolicy. 
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h: Declared new method.
+
 2014-03-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKit2WebExtension GIR can't be used in vala
