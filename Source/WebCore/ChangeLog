@@ -1,3 +1,14 @@
+2014-03-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Crash when using a mixture of In-Band and Out-of-Band Tracks
+        https://bugs.webkit.org/show_bug.cgi?id=130247
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks): Do not include
+        the new Out-of-Band placeholder tracks in our counts of in-band tracks.
+
 2014-03-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         [Mac] Avoid creating DOMCSSStyleDeclaration in WebHTMLConverter

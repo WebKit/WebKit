@@ -966,11 +966,18 @@ void MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(const Vector
             m_textTracks.remove(i);
         }
     }
-    
+
+    unsigned inBandCount = 0;
     for (unsigned i = 0; i < m_textTracks.size(); ++i) {
         RefPtr<InbandTextTrackPrivateAVF> track = m_textTracks[i];
-        
-        track->setTextTrackIndex(i);
+
+#if ENABLE(AVF_CAPTIONS)
+        if (track->textTrackCategory() == InbandTextTrackPrivateAVF::OutOfBand)
+            continue;
+#endif
+
+        track->setTextTrackIndex(inBandCount);
+        ++inBandCount;
         if (track->hasBeenReported())
             continue;
         
