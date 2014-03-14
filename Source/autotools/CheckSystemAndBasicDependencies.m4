@@ -3,6 +3,9 @@ AC_CANONICAL_HOST
 os_win32=no
 os_linux=no
 os_freebsd=no
+os_openbsd=no
+os_netbsd=no
+os_dragonfly=no
 os_gnu=no
 
 case "$host_os" in
@@ -11,6 +14,15 @@ case "$host_os" in
         ;;
     freebsd*)
         os_freebsd=yes
+        ;;
+    openbsd*)
+        os_openbsd=yes
+        ;;
+    netbsd*)
+        os_netbsd=yes
+        ;;
+    dragonfly*)
+        os_dragonfly=yes
         ;;
     linux*)
         os_linux=yes

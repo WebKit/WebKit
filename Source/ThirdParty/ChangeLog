@@ -1,3 +1,13 @@
+2014-03-14  Landry Breuil  <landry@openbsd.org>
+
+        Fix leveldb build on OpenBSD/NetBSD by using the FreeBSD codepaths.
+        https://bugs.webkit.org/show_bug.cgi?id=129966
+
+        Reviewed by Andreas Kling.
+
+        * leveldb/GNUmakefile.am:
+        * leveldb/port/port_posix.h:
+
 2014-01-12  Andy Estes  <aestes@apple.com>
 
         Fix the Mac build after r161777.

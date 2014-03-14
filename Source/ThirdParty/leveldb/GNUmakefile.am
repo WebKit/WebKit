@@ -30,6 +30,21 @@ libLevelDB_la_CPPFLAGS += \
 	-DOS_FREEBSD
 endif
 
+if OS_NETBSD
+libLevelDB_la_CPPFLAGS += \
+	-DOS_NETBSD
+endif
+
+if OS_OPENBSD
+libLevelDB_la_CPPFLAGS += \
+	-DOS_OPENBSD
+endif
+
+if OS_DRAGONFLY
+libLevelDB_la_CPPFLAGS += \
+	-DOS_DRAGONFLY
+endif
+
 if OS_DARWIN
 libLevelDB_la_CPPFLAGS += \
 	-DOS_MACOSX
