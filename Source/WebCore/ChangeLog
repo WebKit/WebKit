@@ -1,3 +1,18 @@
+2014-03-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuilder should take a const reference to InsertedNodes
+        https://bugs.webkit.org/show_bug.cgi?id=130232
+
+        Reviewed by Andreas Kling.
+
+        This method doesn't modify InsertedNodes object.
+
+        No new tests, no behavior change.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuilder):
+        * editing/ReplaceSelectionCommand.h:
+
 2014-03-14  Jer Noble  <jer.noble@apple.com>
 
         [EME] Extend the lifetime of MediaKeySession.
