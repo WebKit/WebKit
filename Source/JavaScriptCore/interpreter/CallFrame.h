@@ -85,9 +85,7 @@ namespace JSC  {
         const MarkedArgumentBuffer& emptyList() const { return *vm().emptyList; }
         Interpreter* interpreter() { return vm().interpreter; }
         Heap* heap() { return &vm().heap; }
-#ifndef NDEBUG
-        void dumpCaller();
-#endif
+
         static const HashTable& arrayConstructorTable(VM& vm) { return *vm.arrayConstructorTable; }
         static const HashTable& arrayPrototypeTable(VM& vm) { return *vm.arrayPrototypeTable; }
         static const HashTable& booleanPrototypeTable(VM& vm) { return *vm.booleanPrototypeTable; }

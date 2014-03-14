@@ -1,3 +1,16 @@
+2014-03-14  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        Remove unused method declaration.
+        https://bugs.webkit.org/show_bug.cgi?id=130238
+
+        Reviewed by Filip Pizlo.
+
+        The implementation of CallFrame::dumpCaller was removed in
+        http://trac.webkit.org/changeset/153183, but the declaration of it was not.
+
+        * interpreter/CallFrame.h:
+        Remove CallFrame::dumpCaller() method declaration.
+
 2014-03-12  Sergio Villar Senin  <svillar@igalia.com>
 
         Rename DEFINE_STATIC_LOCAL to DEPRECATED_DEFINE_STATIC_LOCAL
