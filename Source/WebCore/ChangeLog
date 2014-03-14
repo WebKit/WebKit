@@ -1,3 +1,19 @@
+2014-03-14  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Inline-block child of content node incorrectly clipped
+        https://bugs.webkit.org/show_bug.cgi?id=130229
+
+        Reviewed by Andrei Bucur.
+
+        Constrain the target box rect to the region box rect only if we are able
+        to determine the region range for box. If we cannot do that, getRegionRangeForBox
+        returns null values for start and end region and we should not perform the clamping.
+
+        Test: fast/regions/inlineblock-child-inlineblock-contentnode-in-region.html
+
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::rectFlowPortionForBox):
+
 2014-03-14  Zan Dobersek  <zdobersek@igalia.com>
 
         Unnecessary ImplementationLacksVTable IDL attribute used for RTCConfiguration, RTCIceServer

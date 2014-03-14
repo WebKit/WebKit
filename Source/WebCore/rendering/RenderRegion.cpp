@@ -471,23 +471,24 @@ void RenderRegion::ensureOverflowForBox(const RenderBox* box, RefPtr<RenderOverf
 
 LayoutRect RenderRegion::rectFlowPortionForBox(const RenderBox* box, const LayoutRect& rect) const
 {
+    LayoutRect mappedRect = m_flowThread->mapFromLocalToFlowThread(box, rect);
+
     RenderRegion* startRegion = 0;
     RenderRegion* endRegion = 0;
     m_flowThread->getRegionRangeForBox(box, startRegion, endRegion);
 
-    LayoutRect mappedRect = m_flowThread->mapFromLocalToFlowThread(box, rect);
-    if (flowThread()->isHorizontalWritingMode()) {
-        if (this != startRegion)
-            mappedRect.shiftYEdgeTo(std::max<LayoutUnit>(logicalTopForFlowThreadContent(), mappedRect.y()));
-
-        if (this != endRegion)
-            mappedRect.setHeight(std::max<LayoutUnit>(0, std::min<LayoutUnit>(logicalBottomForFlowThreadContent() - mappedRect.y(), mappedRect.height())));
-    } else {
-        if (this != startRegion)
-            mappedRect.shiftXEdgeTo(std::max<LayoutUnit>(logicalTopForFlowThreadContent(), mappedRect.x()));
-            
-        if (this != endRegion)
-            mappedRect.setWidth(std::max<LayoutUnit>(0, std::min<LayoutUnit>(logicalBottomForFlowThreadContent() - mappedRect.x(), mappedRect.width())));
+    if (startRegion && endRegion) {
+        if (flowThread()->isHorizontalWritingMode()) {
+            if (this != startRegion)
+                mappedRect.shiftYEdgeTo(std::max<LayoutUnit>(logicalTopForFlowThreadContent(), mappedRect.y()));
+            if (this != endRegion)
+                mappedRect.setHeight(std::max<LayoutUnit>(0, std::min<LayoutUnit>(logicalBottomForFlowThreadContent() - mappedRect.y(), mappedRect.height())));
+        } else {
+            if (this != startRegion)
+                mappedRect.shiftXEdgeTo(std::max<LayoutUnit>(logicalTopForFlowThreadContent(), mappedRect.x()));
+            if (this != endRegion)
+                mappedRect.setWidth(std::max<LayoutUnit>(0, std::min<LayoutUnit>(logicalBottomForFlowThreadContent() - mappedRect.x(), mappedRect.width())));
+        }
     }
 
     if (shouldClipFlowThreadContent()) {
