@@ -1,3 +1,19 @@
+2014-03-13  Andreas Kling  <akling@apple.com>
+
+        Network process instantiates JSC::VM under fake memory pressure.
+        <https://webkit.org/b/130143>
+
+        Stop calling GCController::garbageCollectSoon() in the fake memory
+        pressure callback. The pressure relief code already schedules GC
+        by way of discardAllCode() which does reportAbandonedObjectGraph().
+        This way we don't accidentally instantiate a VM in the networking
+        process for no reason.
+
+        Reviewed by Geoffrey Garen.
+
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::install):
+
 2014-03-13  Diego Pino Garcia  <dpino@igalia.com>
 
         Web Inspector: AXI: Expose focused/focusable state in the Accessibility Node Inspector
