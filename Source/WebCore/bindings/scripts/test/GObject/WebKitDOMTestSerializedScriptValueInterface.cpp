@@ -97,7 +97,10 @@ static void webkit_dom_test_serialized_script_value_interface_get_property(GObje
 #if ENABLE(Condition1) || ENABLE(Condition2)
     WebKitDOMTestSerializedScriptValueInterface* self = WEBKIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(object);
     WebCore::TestSerializedScriptValueInterface* coreSelf = WebKit::core(self);
+#else
+    UNUSED_PARAM(value);
 #endif // ENABLE(Condition1) || ENABLE(Condition2)
+
     switch (propertyId) {
     case PROP_VALUE: {
 #if ENABLE(Condition1) || ENABLE(Condition2)
@@ -221,6 +224,7 @@ WebKitDOMSerializedScriptValue* webkit_dom_test_serialized_script_value_interfac
     RefPtr<WebCore::SerializedScriptValue> gobjectResult = WTF::getPtr(item->value());
     return WebKit::kit(gobjectResult.get());
 #else
+    UNUSED_PARAM(self);
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
     return 0;
@@ -237,6 +241,8 @@ void webkit_dom_test_serialized_script_value_interface_set_value(WebKitDOMTestSe
     WebCore::SerializedScriptValue* convertedValue = WebKit::core(value);
     item->setValue(convertedValue);
 #else
+    UNUSED_PARAM(self);
+    UNUSED_PARAM(value);
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
@@ -251,6 +257,7 @@ WebKitDOMSerializedScriptValue* webkit_dom_test_serialized_script_value_interfac
     RefPtr<WebCore::SerializedScriptValue> gobjectResult = WTF::getPtr(item->readonlyValue());
     return WebKit::kit(gobjectResult.get());
 #else
+    UNUSED_PARAM(self);
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
     return 0;
@@ -266,6 +273,7 @@ WebKitDOMSerializedScriptValue* webkit_dom_test_serialized_script_value_interfac
     RefPtr<WebCore::SerializedScriptValue> gobjectResult = WTF::getPtr(item->cachedValue());
     return WebKit::kit(gobjectResult.get());
 #else
+    UNUSED_PARAM(self);
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
     return 0;
@@ -282,6 +290,8 @@ void webkit_dom_test_serialized_script_value_interface_set_cached_value(WebKitDO
     WebCore::SerializedScriptValue* convertedValue = WebKit::core(value);
     item->setCachedValue(convertedValue);
 #else
+    UNUSED_PARAM(self);
+    UNUSED_PARAM(value);
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
@@ -296,6 +306,7 @@ WebKitDOMSerializedScriptValue* webkit_dom_test_serialized_script_value_interfac
     RefPtr<WebCore::SerializedScriptValue> gobjectResult = WTF::getPtr(item->cachedReadonlyValue());
     return WebKit::kit(gobjectResult.get());
 #else
+    UNUSED_PARAM(self);
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
     return 0;

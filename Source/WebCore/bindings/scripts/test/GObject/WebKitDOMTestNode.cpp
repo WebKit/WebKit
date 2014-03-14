@@ -93,9 +93,11 @@ G_DEFINE_TYPE_WITH_CODE(WebKitDOMTestNode, webkit_dom_test_node, WEBKIT_TYPE_DOM
 
 static void webkit_dom_test_node_class_init(WebKitDOMTestNodeClass* requestClass)
 {
+    UNUSED_PARAM(requestClass);
 }
 
 static void webkit_dom_test_node_init(WebKitDOMTestNode* request)
 {
+    UNUSED_PARAM(request);
 }
 

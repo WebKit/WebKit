@@ -120,6 +120,7 @@ gboolean webkit_dom_test_callback_callback_with_no_param(WebKitDOMTestCallback* 
     gboolean result = item->callbackWithNoParam();
     return result;
 #else
+    UNUSED_PARAM(self);
     WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
     return static_cast<gboolean>(0);
 #endif /* ENABLE(SQL_DATABASE) */
@@ -136,6 +137,8 @@ gboolean webkit_dom_test_callback_callback_with_array_param(WebKitDOMTestCallbac
     gboolean result = item->callbackWithArrayParam(convertedArrayParam);
     return result;
 #else
+    UNUSED_PARAM(self);
+    UNUSED_PARAM(arrayParam);
     WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
     return static_cast<gboolean>(0);
 #endif /* ENABLE(SQL_DATABASE) */
@@ -154,6 +157,9 @@ gboolean webkit_dom_test_callback_callback_with_serialized_script_value_param(We
     gboolean result = item->callbackWithSerializedScriptValueParam(convertedSrzParam, convertedStrArg);
     return result;
 #else
+    UNUSED_PARAM(self);
+    UNUSED_PARAM(srzParam);
+    UNUSED_PARAM(strArg);
     WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
     return static_cast<gboolean>(0);
 #endif /* ENABLE(SQL_DATABASE) */
@@ -170,6 +176,8 @@ glong webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestC
     glong result = item->callbackWithNonBoolReturnType(convertedStrArg);
     return result;
 #else
+    UNUSED_PARAM(self);
+    UNUSED_PARAM(strArg);
     WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
     return static_cast<glong>(0);
 #endif /* ENABLE(SQL_DATABASE) */
@@ -186,6 +194,8 @@ gboolean webkit_dom_test_callback_callback_with_string_list(WebKitDOMTestCallbac
     gboolean result = item->callbackWithStringList(convertedListParam);
     return result;
 #else
+    UNUSED_PARAM(self);
+    UNUSED_PARAM(listParam);
     WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
     return static_cast<gboolean>(0);
 #endif /* ENABLE(SQL_DATABASE) */
@@ -200,6 +210,8 @@ gboolean webkit_dom_test_callback_callback_with_boolean(WebKitDOMTestCallback* s
     gboolean result = item->callbackWithBoolean(boolParam);
     return result;
 #else
+    UNUSED_PARAM(self);
+    UNUSED_PARAM(boolParam);
     WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
     return static_cast<gboolean>(0);
 #endif /* ENABLE(SQL_DATABASE) */
@@ -216,6 +228,9 @@ gboolean webkit_dom_test_callback_callback_requires_this_to_pass(WebKitDOMTestCa
     gboolean result = item->callbackRequiresThisToPass(longParam, convertedTestNodeParam);
     return result;
 #else
+    UNUSED_PARAM(self);
+    UNUSED_PARAM(longParam);
+    UNUSED_PARAM(testNodeParam);
     WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
     return static_cast<gboolean>(0);
 #endif /* ENABLE(SQL_DATABASE) */

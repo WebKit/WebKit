@@ -56,7 +56,7 @@ void DOMObjectCache::forget(void* objectHandle)
     domObjects().take(objectHandle);
 }
 
-static void weakRefNotify(gpointer data, GObject* zombie)
+static void weakRefNotify(gpointer data, GObject*)
 {
     gboolean* objectDead = static_cast<gboolean*>(data);
     *objectDead = TRUE;

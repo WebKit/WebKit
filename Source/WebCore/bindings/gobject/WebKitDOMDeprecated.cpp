@@ -64,12 +64,12 @@ WebKitDOMDOMTokenList* webkit_dom_html_element_get_class_list(WebKitDOMHTMLEleme
     return webkit_dom_element_get_class_list(WEBKIT_DOM_ELEMENT(element));
 }
 
-void webkit_dom_html_form_element_dispatch_form_change(WebKitDOMHTMLFormElement* self)
+void webkit_dom_html_form_element_dispatch_form_change(WebKitDOMHTMLFormElement*)
 {
     g_warning("The onformchange functionality has been removed from the DOM spec, this function does nothing.");
 }
 
-void webkit_dom_html_form_element_dispatch_form_input(WebKitDOMHTMLFormElement* self)
+void webkit_dom_html_form_element_dispatch_form_input(WebKitDOMHTMLFormElement*)
 {
     g_warning("The onforminput functionality has been removed from the DOM spec, this function does nothing.");
 }
@@ -253,7 +253,7 @@ enum {
     HTML_PROPERTIES_COLLECTION_PROP_NAMES,
 };
 
-static void webkit_dom_html_properties_collection_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
+static void webkit_dom_html_properties_collection_get_property(GObject* object, guint propertyId, GValue*, GParamSpec* pspec)
 {
     switch (propertyId) {
     case HTML_PROPERTIES_COLLECTION_PROP_LENGTH: {
@@ -294,7 +294,7 @@ static void webkit_dom_html_properties_collection_class_init(WebKitDOMHTMLProper
             WEBKIT_PARAM_READABLE));
 }
 
-static void webkit_dom_html_properties_collection_init(WebKitDOMHTMLPropertiesCollection* request)
+static void webkit_dom_html_properties_collection_init(WebKitDOMHTMLPropertiesCollection*)
 {
 }
 
@@ -541,13 +541,13 @@ gdouble webkit_dom_html_media_element_get_initial_time(WebKitDOMHTMLMediaElement
 
 // WebKitDOMProcessingInstruction
 
-gchar* webkit_dom_processing_instruction_get_data(WebKitDOMProcessingInstruction* self)
+gchar* webkit_dom_processing_instruction_get_data(WebKitDOMProcessingInstruction*)
 {
     g_warning("%s: this functionality has been removed from WebKit, this function does nothing.", __func__);
     return g_strdup("");
 }
 
-void webkit_dom_processing_instruction_set_data(WebKitDOMProcessingInstruction* self, const gchar* value, GError** error)
+void webkit_dom_processing_instruction_set_data(WebKitDOMProcessingInstruction*, const gchar*, GError**)
 {
     g_warning("%s: this functionality has been removed from WebKit, this function does nothing.", __func__);
 }

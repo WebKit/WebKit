@@ -15,17 +15,13 @@ enum {
 
 G_DEFINE_TYPE(WebKitDOMObject, webkit_dom_object, G_TYPE_OBJECT)
 
-static void webkit_dom_object_init(WebKitDOMObject* object)
+static void webkit_dom_object_init(WebKitDOMObject*)
 {
 }
 
-static void webkit_dom_object_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
+static void webkit_dom_object_get_property(GObject* object, guint propertyId, GValue*, GParamSpec* paramSpec)
 {
-    switch (prop_id) {
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-        break;
-    }
+    G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, paramSpec);
 }
 
 static void webkit_dom_object_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)

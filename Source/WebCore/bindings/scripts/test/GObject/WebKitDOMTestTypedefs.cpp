@@ -93,7 +93,6 @@ static void webkit_dom_test_typedefs_finalize(GObject* object)
 static void webkit_dom_test_typedefs_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
-
     WebKitDOMTestTypedefs* self = WEBKIT_DOM_TEST_TYPEDEFS(object);
     WebCore::TestTypedefs* coreSelf = WebKit::core(self);
 
@@ -129,7 +128,6 @@ static void webkit_dom_test_typedefs_set_property(GObject* object, guint propert
 static void webkit_dom_test_typedefs_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
-
     WebKitDOMTestTypedefs* self = WEBKIT_DOM_TEST_TYPEDEFS(object);
     WebCore::TestTypedefs* coreSelf = WebKit::core(self);
 

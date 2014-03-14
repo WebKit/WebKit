@@ -84,7 +84,6 @@ static void webkit_dom_test_exception_finalize(GObject* object)
 static void webkit_dom_test_exception_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
-
     WebKitDOMTestException* self = WEBKIT_DOM_TEST_EXCEPTION(object);
     WebCore::TestException* coreSelf = WebKit::core(self);
 

@@ -650,45 +650,34 @@ enum {
 EOF
         push(@cBodyProperties, $implContent);
 
-        my $txtGetProp = << "EOF";
-static void ${lowerCaseIfaceName}_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
-{
-    WebCore::JSMainThreadNullState state;
-EOF
-        push(@txtGetProps, $txtGetProp);
-        $txtGetProp = << "EOF";
-$conditionGuardStart
-    ${className}* self = WEBKIT_DOM_${clsCaps}(object);
-    $privFunction
-$conditionGuardEnd
-EOF
-        push(@txtGetProps, $txtGetProp);
-
-        $txtGetProp = << "EOF";
-    switch (propertyId) {
-EOF
-        push(@txtGetProps, $txtGetProp);
+        push(@txtGetProps, "static void ${lowerCaseIfaceName}_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)\n");
+        push(@txtGetProps, "{\n");
+        push(@txtGetProps, "    WebCore::JSMainThreadNullState state;\n");
+        push(@txtGetProps, "${conditionGuardStart}\n") if $conditionalString;
+        push(@txtGetProps, "    ${className}* self = WEBKIT_DOM_${clsCaps}(object);\n");
+        push(@txtGetProps, "    ${privFunction}\n");
+        if ($conditionalString) {
+            push(@txtGetProps, "#else\n");
+            push(@txtGetProps, "    UNUSED_PARAM(value);\n");
+            push(@txtGetProps, "${conditionGuardEnd}\n");
+        }
+        push(@txtGetProps, "\n");
+        push(@txtGetProps, "    switch (propertyId) {\n");
 
         if (scalar @writeableProperties > 0) {
-            my $txtSetProps = << "EOF";
-static void ${lowerCaseIfaceName}_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
-{
-    WebCore::JSMainThreadNullState state;
-EOF
-            push(@txtSetProps, $txtSetProps);
-
-            $txtSetProps = << "EOF";
-$conditionGuardStart
-    ${className}* self = WEBKIT_DOM_${clsCaps}(object);
-    $privFunction
-$conditionGuardEnd
-EOF
-            push(@txtSetProps, $txtSetProps);
-
-            $txtSetProps = << "EOF";
-    switch (propertyId) {
-EOF
-            push(@txtSetProps, $txtSetProps);
+            push(@txtSetProps, "static void ${lowerCaseIfaceName}_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)\n");
+            push(@txtSetProps, "{\n");
+            push(@txtSetProps, "    WebCore::JSMainThreadNullState state;\n");
+            push(@txtSetProps, "${conditionGuardStart}\n") if $conditionalString;
+            push(@txtSetProps, "    ${className}* self = WEBKIT_DOM_${clsCaps}(object);\n");
+            push(@txtSetProps, "    ${privFunction}\n");
+            if ($conditionalString) {
+                push(@txtSetProps, "#else\n");
+                push(@txtSetProps, "    UNUSED_PARAM(value);\n");
+                push(@txtSetProps, "${conditionGuardEnd}\n");
+            }
+            push(@txtSetProps, "\n");
+            push(@txtSetProps, "    switch (propertyId) {\n");
         }
 
         foreach my $attribute (@readableProperties) {
@@ -791,6 +780,8 @@ EOF
             push(@cBodyProperties, "\n");
             push(@cBodyProperties, @txtInstallProps);
         }
+    } else {
+        push(@cBodyProperties, "    UNUSED_PARAM(requestClass);\n");
     }
     $implContent = << "EOF";
 }
@@ -806,6 +797,8 @@ EOF
     new (priv) ${className}Private();
 EOF
         push(@cBodyProperties, $implContent);
+    } else {
+        push(@cBodyProperties, "    UNUSED_PARAM(request);\n");
     }
     $implContent = << "EOF";
 }
@@ -1230,6 +1223,13 @@ EOF
 
     if ($conditionalString) {
         push(@cBody, "#else\n");
+
+        push(@cBody, "    UNUSED_PARAM(self);\n");
+        foreach my $param (@{$function->parameters}) {
+            push(@cBody, "    UNUSED_PARAM(" . $param->name . ");\n");
+        }
+        push(@cBody, "    UNUSED_PARAM(error);\n") if $raisesException;
+
         push(@cBody, @conditionalWarn) if scalar(@conditionalWarn);
         if ($returnType ne "void") {
             if ($codeGenerator->IsNonPointerType($functionSigType)) {
@@ -1243,6 +1243,13 @@ EOF
 
     if ($parentConditionalString) {
         push(@cBody, "#else\n");
+
+        push(@cBody, "    UNUSED_PARAM(self);\n");
+        foreach my $param (@{$function->parameters}) {
+            push(@cBody, "    UNUSED_PARAM(" . $param->name . ");\n");
+        }
+        push(@cBody, "    UNUSED_PARAM(error);\n") if $raisesException;
+
         push(@cBody, @parentConditionalWarn) if scalar(@parentConditionalWarn);
         if ($returnType ne "void") {
             if ($codeGenerator->IsNonPointerType($functionSigType)) {
@@ -1459,27 +1466,44 @@ sub GenerateEventTargetIface {
     push(@cBodyProperties, "    if (ec) {\n        WebCore::ExceptionCodeDescription description(ec);\n");
     push(@cBodyProperties, "        g_set_error_literal(error, g_quark_from_string(\"WEBKIT_DOM\"), description.code, description.name);\n    }\n");
     push(@cBodyProperties, "    return result;\n");
-    push(@cBodyProperties, "#else\n") if $conditionalString;
-    push(@cBodyProperties, @conditionalWarn) if scalar(@conditionalWarn);
-    push(@cBodyProperties, "    return false;\n#endif // ${conditionalString}\n") if $conditionalString;
+    if ($conditionalString) {
+        push(@cBodyProperties, "#else\n");
+        push(@cBodyProperties, "    UNUSED_PARAM(target);\n");
+        push(@cBodyProperties, "    UNUSED_PARAM(event);\n");
+        push(@cBodyProperties, "    UNUSED_PARAM(error);\n");
+        push(@cBodyProperties, @conditionalWarn) if scalar(@conditionalWarn);
+        push(@cBodyProperties, "    return false;\n#endif // ${conditionalString}\n");
+    }
     push(@cBodyProperties, "}\n\n");
 
     push(@cBodyProperties, "static gboolean webkit_dom_${decamelize}_add_event_listener(WebKitDOMEventTarget* target, const char* eventName, GClosure* handler, gboolean useCapture)\n{\n");
     push(@cBodyProperties, "#if ${conditionalString}\n") if $conditionalString;
     push(@cBodyProperties, "    WebCore::${interfaceName}* coreTarget = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(target)->coreObject);\n");
     push(@cBodyProperties, "    return WebCore::GObjectEventListener::addEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);\n");
-    push(@cBodyProperties, "#else\n") if $conditionalString;
-    push(@cBodyProperties, @conditionalWarn) if scalar(@conditionalWarn);
-    push(@cBodyProperties, "    return false;\n#endif // ${conditionalString}\n") if $conditionalString;
+    if ($conditionalString) {
+        push(@cBodyProperties, "#else\n");
+        push(@cBodyProperties, "    UNUSED_PARAM(target);\n");
+        push(@cBodyProperties, "    UNUSED_PARAM(eventName);\n");
+        push(@cBodyProperties, "    UNUSED_PARAM(handler);\n");
+        push(@cBodyProperties, "    UNUSED_PARAM(useCapture);\n");
+        push(@cBodyProperties, @conditionalWarn) if scalar(@conditionalWarn);
+        push(@cBodyProperties, "    return false;\n#endif // ${conditionalString}\n");
+    }
     push(@cBodyProperties, "}\n\n");
 
     push(@cBodyProperties, "static gboolean webkit_dom_${decamelize}_remove_event_listener(WebKitDOMEventTarget* target, const char* eventName, GClosure* handler, gboolean useCapture)\n{\n");
     push(@cBodyProperties, "#if ${conditionalString}\n") if $conditionalString;
     push(@cBodyProperties, "    WebCore::${interfaceName}* coreTarget = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(target)->coreObject);\n");
     push(@cBodyProperties, "    return WebCore::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);\n");
-    push(@cBodyProperties, "#else\n") if $conditionalString;
-    push(@cBodyProperties, @conditionalWarn) if scalar(@conditionalWarn);
-    push(@cBodyProperties, "    return false;\n#endif // ${conditionalString}\n") if $conditionalString;
+    if ($conditionalString) {
+        push(@cBodyProperties, "#else\n");
+        push(@cBodyProperties, "    UNUSED_PARAM(target);\n");
+        push(@cBodyProperties, "    UNUSED_PARAM(eventName);\n");
+        push(@cBodyProperties, "    UNUSED_PARAM(handler);\n");
+        push(@cBodyProperties, "    UNUSED_PARAM(useCapture);\n");
+        push(@cBodyProperties, @conditionalWarn) if scalar(@conditionalWarn);
+        push(@cBodyProperties, "    return false;\n#endif // ${conditionalString}\n");
+    }
     push(@cBodyProperties, "}\n\n");
 
     push(@cBodyProperties, "static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)\n{\n");
