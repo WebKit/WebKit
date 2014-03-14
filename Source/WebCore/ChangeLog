@@ -1,3 +1,43 @@
+2014-03-14  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Improve behavior of fixed elments on zooming
+        https://bugs.webkit.org/show_bug.cgi?id=130253
+
+        Reviewed by Beth Dakin.
+
+        Correctly reposition right- and bottom-relative position:fixed
+        elements on zooming in WK2 iOS by telling the scrolling tree
+        about zoom-related viewport changes.
+
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::rectForViewportConstrainedObjects):
+        (WebCore::FrameView::viewportConstrainedObjectsRect): We need to be able to
+        recompute the fixed position rect from the scrolling tree on iOS, so we need
+        a static function, similar to scrollOffsetForFixedPosition(), that computes
+        the constrained viewport.
+        * page/FrameView.h:
+        * page/Page.cpp:
+        (WebCore::Page::setPageScaleFactor): When scrolling (and, by implication, zooming)
+        is delegated, then setPageScaleFactor() should not affect the scroll position.
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated): Go back to just
+        passing the visibleContentRect() for iOS.
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::viewportChangedViaDelegatedScrolling): Entrypoint to
+        the scrolling tree, called when the viewport is changed by zooming.
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.h:
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeScrollingNodeIOS::setScrollLayerPosition): Use the
+        new FrameView::rectForViewportConstrainedObjects() to compute the correct viewport
+        for fixed/sticky child nodes.
+        (WebCore::ScrollingTreeScrollingNodeIOS::updateForViewport):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::updateForViewport):
+
 2014-03-14  Dirk Schulze  <krit@webkit.org>
 
         Refactor Path to Path2D and remove currentPath

@@ -68,6 +68,7 @@ private:
     FloatPoint scrollPosition() const;
     virtual void setScrollPosition(const FloatPoint&) override;
     virtual void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) override;
+    virtual void updateForViewport(const FloatRect& viewportRect, double scale) override;
 
     void setScrollLayerPosition(const FloatPoint&);
 

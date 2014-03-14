@@ -46,6 +46,7 @@
 #import "WebPageGroup.h"
 #import "WebSystemInterface.h"
 #import "WebKitSystemInterfaceIOS.h"
+#import <WebCore/FrameView.h>
 #import <UIKit/UIWindow_Private.h>
 #import <wtf/RetainPtr.h>
 
@@ -163,20 +164,21 @@ using namespace WebKit;
     return [self isEditable];
 }
 
-- (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect scale:(CGFloat)scale inStableState:(BOOL)isStableState
+- (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect scale:(CGFloat)zoomScale inStableState:(BOOL)isStableState
 {
     double scaleNoiseThreshold = 0.0005;
-    if (!isStableState && fabs(scale - _page->displayedContentScale()) < scaleNoiseThreshold) {
+    CGFloat filteredScale = zoomScale;
+    if (!isStableState && fabs(filteredScale - _page->displayedContentScale()) < scaleNoiseThreshold) {
         // Tiny changes of scale during interactive zoom cause content to jump by one pixel, creating
         // visual noise. We filter those useless updates.
-        scale = _page->displayedContentScale();
+        filteredScale = _page->displayedContentScale();
     }
 
-    FloatRect fixedPosRect = [self fixedPositionRectFromExposedRect:unobscuredRect scale:scale];
-    _page->updateVisibleContentRects(VisibleContentRectUpdateInfo(_page->nextVisibleContentRectUpdateID(), visibleRect, unobscuredRect, fixedPosRect, scale, isStableState));
-
+    CGRect customFixedPositionRect = [self fixedPositionRectFromExposedRect:unobscuredRect scale:zoomScale];
+    _page->updateVisibleContentRects(VisibleContentRectUpdateInfo(_page->nextVisibleContentRectUpdateID(), visibleRect, unobscuredRect, customFixedPositionRect, filteredScale, isStableState));
+    
     RemoteScrollingCoordinatorProxy* scrollingCoordinator = _page->scrollingCoordinatorProxy();
-    scrollingCoordinator->scrollPositionChangedViaDelegatedScrolling(scrollingCoordinator->rootScrollingNodeID(), unobscuredRect.origin);
+    scrollingCoordinator->viewportChangedViaDelegatedScrolling(scrollingCoordinator->rootScrollingNodeID(), unobscuredRect, zoomScale);
 
     if (auto drawingArea = _page->drawingArea())
         drawingArea->updateDebugIndicator();
@@ -187,11 +189,9 @@ using namespace WebKit;
     _page->drawingArea()->setSize(IntSize(size), IntSize(), IntSize());
 }
 
-- (FloatRect)fixedPositionRectFromExposedRect:(FloatRect)exposedRect scale:(float)scale
+- (CGRect)fixedPositionRectFromExposedRect:(CGRect)unobscuredRect scale:(CGFloat)scale
 {
-    // FIXME: This should modify the rect based on the scale.
-    UNUSED_PARAM(scale);
-    return exposedRect;
+    return (FloatRect)FrameView::rectForViewportConstrainedObjects(enclosingLayoutRect(unobscuredRect), roundedLayoutSize(FloatSize([self bounds].size)), scale, false, StickToViewportBounds);
 }
 
 - (void)setMinimumLayoutSize:(CGSize)size

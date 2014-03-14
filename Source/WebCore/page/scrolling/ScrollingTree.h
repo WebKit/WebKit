@@ -63,7 +63,7 @@ public:
     virtual EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) = 0;
     bool shouldHandleWheelEventSynchronously(const PlatformWheelEvent&);
     
-    virtual void scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID, const FloatPoint&);
+    virtual void viewportChangedViaDelegatedScrolling(ScrollingNodeID, const WebCore::FloatRect& viewportRect, double scale);
 
     void setMainFrameIsRubberBanding(bool);
     bool isRubberBandInProgress();

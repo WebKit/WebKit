@@ -43,7 +43,7 @@ static LayerRepresentation layerRepresentationFromLayerOrView(LayerOrView *layer
     return LayerRepresentation(layerOrView.layer);
 }
 
-void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)
+void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost, bool& fixedOrStickyLayerChanged)
 {
     for (auto& currNode : stateTree.nodeMap().values()) {
         switch (currNode->nodeType()) {
@@ -68,12 +68,16 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
             break;
         }
         case FixedNode:
-            if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
+            if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer)) {
                 currNode->setLayer(layerRepresentationFromLayerOrView(layerTreeHost.getLayer(currNode->layer())));
+                fixedOrStickyLayerChanged = true;
+            }
             break;
         case StickyNode:
-            if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
+            if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer)) {
                 currNode->setLayer(layerRepresentationFromLayerOrView(layerTreeHost.getLayer(currNode->layer())));
+                fixedOrStickyLayerChanged = true;
+            }
             break;
         }
     }

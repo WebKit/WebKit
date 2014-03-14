@@ -26,7 +26,6 @@
 #import "config.h"
 #import "RemoteLayerTreeHost.h"
 
-#import "Logging.h"
 #import "RemoteLayerTreePropertyApplier.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "ShareableBitmap.h"
@@ -54,8 +53,6 @@ RemoteLayerTreeHost::~RemoteLayerTreeHost()
 
 bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& transaction, float indicatorScaleFactor)
 {
-    LOG(RemoteLayerTree, "%s", transaction.description().data());
-
     for (const auto& createdLayer : transaction.createdLayers())
         createLayer(createdLayer);
 

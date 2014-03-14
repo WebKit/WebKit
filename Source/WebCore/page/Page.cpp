@@ -723,7 +723,9 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin)
     if (view && view->scrollPosition() != origin) {
         if (!m_settings->delegatesPageScaling() && document->renderView() && document->renderView()->needsLayout() && view->didFirstLayout())
             view->layout();
-        view->setScrollPosition(origin);
+        
+        if (!view->delegatesScrolling())
+            view->setScrollPosition(origin);
     }
 }
 

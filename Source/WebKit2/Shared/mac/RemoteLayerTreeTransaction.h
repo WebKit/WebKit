@@ -47,7 +47,7 @@ class PlatformCALayerRemote;
 
 class RemoteLayerTreeTransaction {
 public:
-    enum LayerChange {
+    enum LayerChanges {
         NoChange = 0,
         NameChanged = 1 << 1,
         ChildrenChanged = 1 << 2,
@@ -77,6 +77,7 @@ public:
         EdgeAntialiasingMaskChanged = 1 << 26,
         CustomAppearanceChanged = 1 << 27
     };
+    typedef unsigned LayerChange;
 
     struct LayerCreationProperties {
         LayerCreationProperties();
@@ -97,10 +98,10 @@ public:
         void encode(IPC::ArgumentEncoder&) const;
         static bool decode(IPC::ArgumentDecoder&, LayerProperties&);
 
-        void notePropertiesChanged(LayerChange layerChanges)
+        void notePropertiesChanged(LayerChange changeFlags)
         {
-            changedProperties = static_cast<LayerChange>(changedProperties | layerChanges);
-            everChangedProperties = static_cast<LayerChange>(everChangedProperties | layerChanges);
+            changedProperties |= changeFlags;
+            everChangedProperties |= changeFlags;
         }
 
         LayerChange changedProperties;

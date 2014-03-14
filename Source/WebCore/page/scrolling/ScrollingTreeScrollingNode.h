@@ -52,7 +52,8 @@ public:
     virtual void handleWheelEvent(const PlatformWheelEvent&) = 0;
     virtual void setScrollPosition(const FloatPoint&) = 0;
     virtual void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) = 0;
-
+    virtual void updateForViewport(const FloatRect& viewportRect, double scale) = 0;
+    
     SynchronousScrollingReasons synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
     bool shouldUpdateScrollLayerPositionSynchronously() const { return m_synchronousScrollingReasons; }
 

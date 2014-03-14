@@ -1,3 +1,44 @@
+2014-03-14  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Improve behavior of fixed elments on zooming
+        https://bugs.webkit.org/show_bug.cgi?id=130253
+
+        Reviewed by Beth Dakin.
+
+        Correctly reposition right- and bottom-relative position:fixed
+        elements on zooming in WK2 iOS by telling the scrolling tree
+        about zoom-related viewport changes.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::notePropertiesChanged):
+        Drive-by cleanup; typedef the flags field to an unsigned, to avoid ugly casting.
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::updateScrollingTree): Pass out a flag to say
+        if the update contained a new fixed or sticky layer.
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        (WebKit::RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling):
+        Call into the new ScrolingTree::viewportChangedViaDelegatedScrolling().
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm: If we got a new fixed
+        or sticky layer, set fixedOrStickyLayerChanged to true.
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers): Ditto.
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:scale:inStableState:]):
+        Remember both the old zoomScale and the filteredScale, since the fixed position rect
+        should be computed using the unfiltered scale.
+        Some FloatRect -> CGRect changes.
+        Now call viewportChangedViaDelegatedScrolling() on the scrolling coordinator.
+        (-[WKContentView fixedPositionRectFromExposedRect:scale:]): Call the
+        FrameView function to compute the iOS fixed position rect.
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree): If the update
+        got a new fixed or sticky layer, run the scrolling tree logic to make sure
+        it gets into the right place.
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree): If we logged here,
+        we'd log twice if the tiled scrolling indicator was enabled, so 
+        hoisted the logging out into the caller.
+
 2014-03-14  Landry Breuil  <landry@openbsd.org>
 
         Use the correct type in webkitSoupRequestInputStreamNew()'s declaration.
