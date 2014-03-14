@@ -27,6 +27,7 @@
 #import "MemoryPressureHandler.h"
 
 #import <WebCore/CSSValuePool.h>
+#import <WebCore/Document.h>
 #import <WebCore/GCController.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/MemoryCache.h>
@@ -170,7 +171,8 @@ void MemoryPressureHandler::releaseMemory(bool)
 
     clearWidthCaches();
 
-    Page::jettisonStyleResolversInAllDocuments();
+    for (auto* document : Document::allDocuments())
+        document->clearStyleResolver();
 
     gcController().discardAllCompiledCode();
 

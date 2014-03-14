@@ -1,3 +1,20 @@
+2014-03-14  Andreas Kling  <akling@apple.com>
+
+        Simplify jettisoning of style resolvers on memory pressure.
+        <https://webkit.org/b/129644>
+
+        Now that we have Document::allDocuments(), we can jettison all the
+        style resolvers by walking the set of live documents and calling
+        clearStyleResolver() on each one, instead of having a function on
+        Page that walks the frame tree of every living page, etc.
+
+        Reviewed by Antti Koivisto.
+
+        * page/Page.cpp:
+        * page/Page.h:
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::releaseMemory):
+
 2014-03-07  Jer Noble  <jer.noble@apple.com>
 
         Add Remote Control command support to HTLMediaElement

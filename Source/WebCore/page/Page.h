@@ -117,7 +117,6 @@ class Page : public Supplementable<Page> {
 
 public:
     static void updateStyleForAllPagesAfterGlobalChangeInEnvironment();
-    static void jettisonStyleResolversInAllDocuments();
 
     // It is up to the platform to ensure that non-null clients are provided where required.
     struct PageClients {

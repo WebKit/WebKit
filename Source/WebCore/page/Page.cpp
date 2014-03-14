@@ -433,20 +433,6 @@ void Page::setNeedsRecalcStyleInAllFrames()
     }
 }
 
-void Page::jettisonStyleResolversInAllDocuments()
-{
-    if (!allPages)
-        return;
-
-    for (auto it = allPages->begin(), end = allPages->end(); it != end; ++it) {
-        Page& page = **it;
-        for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-            if (Document* document = frame->document())
-                document->clearStyleResolver();
-        }
-    }
-}
-
 void Page::refreshPlugins(bool reload)
 {
     if (!allPages)
