@@ -1,3 +1,15 @@
+2014-03-14  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: Suppress axParentNodeId entirely in getAccessibilityPropertiesForNode.html b/c the int value isn't consistent enough for a layout test.
+        https://bugs.webkit.org/show_bug.cgi?id=130259
+
+        Reviewed by Alexey Proskuryakov.
+
+        Removing flaky nodeId-based output from test.
+
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode.html:
+
 2014-03-14  Jer Noble  <jer.noble@apple.com>
 
         [EME] Extend the lifetime of MediaKeySession.

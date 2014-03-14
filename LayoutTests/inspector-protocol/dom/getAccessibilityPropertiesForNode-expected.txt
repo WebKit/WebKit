@@ -6,40 +6,34 @@ Total elements to be tested: 51.
     exists: true
     label: 
     role: treeitem
-    axParentNodeId: (suppressed)
     expanded: false
 
 <li role="treeitem" aria-expanded="true">expanded</li>
     exists: true
     label: 
     role: treeitem
-    axParentNodeId: (suppressed)
     expanded: true
 
 <div role="tab" aria-selected="false">not selected</div>
     exists: true
     label: 
     role: tab
-    axParentNodeId: (suppressed)
 
 <div role="tab" aria-selected="true">selected</div>
     exists: true
     label: 
     role: tab
-    axParentNodeId: (suppressed)
     selected: true
 
 <div role="option" aria-selected="false">not selected</div>
     exists: true
     label: 
     role: option
-    axParentNodeId: (suppressed)
 
 <div role="option" aria-selected="true">selected</div>
     exists: true
     label: 
     role: option
-    axParentNodeId: (suppressed)
     selected: true
 
 <option>not selected</option>
@@ -106,7 +100,6 @@ Total elements to be tested: 51.
     exists: true
     label: 
     role: radio
-    axParentNodeId: 1 (#document)
     checked: false
     required: false
 
@@ -114,7 +107,6 @@ Total elements to be tested: 51.
     exists: true
     label: 
     role: radio
-    axParentNodeId: 1 (#document)
     checked: false
     required: false
 
@@ -122,7 +114,6 @@ Total elements to be tested: 51.
     exists: true
     label: 
     role: radio
-    axParentNodeId: 1 (#document)
     checked: true
     required: false
 
@@ -130,7 +121,6 @@ Total elements to be tested: 51.
     exists: true
     label: 
     role: radio
-    axParentNodeId: 1 (#document)
     checked: false
     required: false
 
@@ -154,7 +144,6 @@ Total elements to be tested: 51.
     exists: true
     label: 
     role: checkbox
-    axParentNodeId: 1 (#document)
     checked: false
     required: false
 
@@ -162,7 +151,6 @@ Total elements to be tested: 51.
     exists: true
     label: 
     role: checkbox
-    axParentNodeId: 1 (#document)
     checked: mixed
     required: false
 
@@ -170,7 +158,6 @@ Total elements to be tested: 51.
     exists: true
     label: 
     role: checkbox
-    axParentNodeId: 1 (#document)
     checked: true
     required: false
 
@@ -178,7 +165,6 @@ Total elements to be tested: 51.
     exists: true
     label: 
     role: checkbox
-    axParentNodeId: 1 (#document)
     checked: false
     required: false
 
@@ -202,7 +188,6 @@ Total elements to be tested: 51.
     exists: true
     label: 
     role: 
-    axParentNodeId: 1 (#document)
     disabled: true
     focused: false
     readonly: true
@@ -219,7 +204,6 @@ Total elements to be tested: 51.
     exists: true
     label: 
     role: 
-    axParentNodeId: 1 (#document)
     focused: false
     readonly: true
     required: false
@@ -285,7 +269,6 @@ Total elements to be tested: 51.
     exists: true
     label: 
     role: 
-    axParentNodeId: 1 (#document)
     focused: false
     pressed: false
     required: false
@@ -294,7 +277,6 @@ Total elements to be tested: 51.
     exists: true
     label: 
     role: 
-    axParentNodeId: 1 (#document)
     focused: false
     pressed: false
     required: false
@@ -303,7 +285,6 @@ Total elements to be tested: 51.
     exists: true
     label: 
     role: button
-    axParentNodeId: 1 (#document)
     disabled: true
     focused: false
 
@@ -311,14 +292,12 @@ Total elements to be tested: 51.
     exists: true
     label: 
     role: button
-    axParentNodeId: 1 (#document)
     focused: false
 
 <span aria-hidden="true"></span>
     exists: true
     label: 
     role: 
-    axParentNodeId: 1 (#document)
     ignored: true
     ignoredByDefault: true
     hidden: true
@@ -327,7 +306,6 @@ Total elements to be tested: 51.
     exists: true
     label: 
     role: 
-    axParentNodeId: 1 (#document)
     ignored: true
     ignoredByDefault: true
 
@@ -335,7 +313,6 @@ Total elements to be tested: 51.
     exists: true
     label: 
     role: 
-    axParentNodeId: 1 (#document)
     ignored: true
     ignoredByDefault: true
     hidden: true
@@ -344,28 +321,24 @@ Total elements to be tested: 51.
     exists: true
     label: 
     role: 
-    axParentNodeId: 1 (#document)
     ignored: true
 
 <div role="presentation"><div></div></div>
     exists: true
     label: 
     role: presentation
-    axParentNodeId: 1 (#document)
     ignored: true
 
 <div><div></div></div>
     exists: true
     label: 
     role: 
-    axParentNodeId: 1 (#document)
     ignored: true
 
 <script style="display:block;"></script>
     exists: true
     label: 
     role: group
-    axParentNodeId: 1 (#document)
     ignored: true
 
 <script></script>

@@ -131,10 +131,8 @@ function test() {
         InspectorTest.checkForError(response);
         for (var key in response.result.properties) {
             var value = response.result.properties[key];
-            if (key === "nodeId")
+            if (key === "nodeId" || key === "axParentNodeId")
                 continue;
-            if (key === "axParentNodeId")
-                value = (value === 1) ? "1 (#document)" : "(suppressed)";
             InspectorTest.log("    " + key + ": " + value);
         }
         examples.pop();
