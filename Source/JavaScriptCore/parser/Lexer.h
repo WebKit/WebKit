@@ -40,7 +40,7 @@ public:
         return m_keywordTable.entry(m_vm, ident);
     }
     
-    const HashEntry* getKeyword(const Identifier& ident) const
+    const HashTableValue* getKeyword(const Identifier& ident) const
     {
         return m_keywordTable.entry(m_vm, ident);
     }

@@ -44,23 +44,46 @@ using namespace JSC;
 
 namespace WebCore {
 
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
+#endif
 /* Hash table */
 
-static const HashTableValue JSTestTypedefsTableValues[] =
-{
-    { 0, 0, NoIntrinsic, 0, 0 }
+static const struct CompactHashIndex JSTestTypedefsTableIndex[2] = {
+    { -1, -1 },
+    { -1, -1 },
 };
 
-static const HashTable JSTestTypedefsTable = { 2, 1, false, JSTestTypedefsTableValues, 0 };
+
+static const HashTableValue JSTestTypedefsTableValues[0] =
+{
+};
+
+static const HashTable JSTestTypedefsTable = { 0, 1, false, JSTestTypedefsTableValues, 0, JSTestTypedefsTableIndex };
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
+#endif
 /* Hash table for constructor */
 
-static const HashTableValue JSTestTypedefsConstructorTableValues[] =
-{
-    { "TestSubObj", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsConstructorTestSubObj), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { 0, 0, NoIntrinsic, 0, 0 }
+static const struct CompactHashIndex JSTestTypedefsConstructorTableIndex[1] = {
+    { 0, -1 },
 };
 
-static const HashTable JSTestTypedefsConstructorTable = { 1, 0, true, JSTestTypedefsConstructorTableValues, 0 };
+
+static const HashTableValue JSTestTypedefsConstructorTableValues[1] =
+{
+    { "TestSubObj", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsConstructorTestSubObj), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+};
+
+static const HashTable JSTestTypedefsConstructorTable = { 1, 0, true, JSTestTypedefsConstructorTableValues, 0, JSTestTypedefsConstructorTableIndex };
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::constructJSTestTypedefs(ExecState* exec)
 {
     JSTestTypedefsConstructor* castedThis = jsCast<JSTestTypedefsConstructor*>(exec->callee());
@@ -102,9 +125,83 @@ ConstructType JSTestTypedefsConstructor::getConstructData(JSCell*, ConstructData
     return ConstructTypeHost;
 }
 
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
+#endif
 /* Hash table for prototype */
 
-static const HashTableValue JSTestTypedefsPrototypeTableValues[] =
+static const struct CompactHashIndex JSTestTypedefsPrototypeTableIndex[66] = {
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 9, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 16, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 0, 64 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 11, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 5, -1 },
+    { -1, -1 },
+    { 8, -1 },
+    { -1, -1 },
+    { 12, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 15, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 14, -1 },
+    { -1, -1 },
+    { 1, -1 },
+    { 3, -1 },
+    { 4, 65 },
+    { -1, -1 },
+    { -1, -1 },
+    { 10, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 13, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 6, -1 },
+    { 7, -1 },
+};
+
+
+static const HashTableValue JSTestTypedefsPrototypeTableValues[17] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { "unsignedLongLongAttr", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsUnsignedLongLongAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsUnsignedLongLongAttr) },
@@ -123,10 +220,12 @@ static const HashTableValue JSTestTypedefsPrototypeTableValues[] =
     { "stringArrayFunction2", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionStringArrayFunction2), (intptr_t) (1) },
     { "callWithSequenceThatRequiresInclude", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresInclude), (intptr_t) (1) },
     { "methodWithException", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionMethodWithException), (intptr_t) (0) },
-    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestTypedefsPrototypeTable = { 66, 63, true, JSTestTypedefsPrototypeTableValues, 0 };
+static const HashTable JSTestTypedefsPrototypeTable = { 17, 63, true, JSTestTypedefsPrototypeTableValues, 0, JSTestTypedefsPrototypeTableIndex };
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 const ClassInfo JSTestTypedefsPrototype::s_info = { "TestTypedefsPrototype", &Base::s_info, &JSTestTypedefsPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestTypedefsPrototype) };
 
 JSObject* JSTestTypedefsPrototype::self(VM& vm, JSGlobalObject* globalObject)
@@ -245,7 +344,7 @@ EncodedJSValue jsTestTypedefsAttrWithGetterException(ExecState* exec, JSObject* 
     }
     ExceptionCode ec = 0;
     TestTypedefs& impl = castedThis->impl();
-    JSValue result = jsNumber(impl.attrWithGetterException(ec));
+    JSC::JSValue result = jsNumber(impl.attrWithGetterException(ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -284,7 +383,7 @@ EncodedJSValue jsTestTypedefsStringAttrWithGetterException(ExecState* exec, JSOb
     }
     ExceptionCode ec = 0;
     TestTypedefs& impl = castedThis->impl();
-    JSValue result = jsStringWithCache(exec, impl.stringAttrWithGetterException(ec));
+    JSC::JSValue result = jsStringWithCache(exec, impl.stringAttrWithGetterException(ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -506,7 +605,8 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithSequenceAr
     Vector<RefPtr<SerializedScriptValue>> sequenceArg((toRefPtrNativeArray<SerializedScriptValue, JSSerializedScriptValue>(exec, exec->argument(0), &toSerializedScriptValue)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = jsNumber(impl.methodWithSequenceArg(sequenceArg));
+
+    JSC::JSValue result = jsNumber(impl.methodWithSequenceArg(sequenceArg));
     return JSValue::encode(result);
 }
 
@@ -572,7 +672,8 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionImmutablePointFuncti
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
     TestTypedefs& impl = castedThis->impl();
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl.immutablePointFunction())));
+
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl.immutablePointFunction())));
     return JSValue::encode(result);
 }
 
@@ -590,8 +691,8 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction(
     Vector<String> values(toNativeArray<String>(exec, exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = jsArray(exec, castedThis->globalObject(), impl.stringArrayFunction(values, ec));
 
+    JSC::JSValue result = jsArray(exec, castedThis->globalObject(), impl.stringArrayFunction(values, ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -610,8 +711,8 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction2
     Vector<String> values(toNativeArray<String>(exec, exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = jsArray(exec, castedThis->globalObject(), impl.stringArrayFunction2(values, ec));
 
+    JSC::JSValue result = jsArray(exec, castedThis->globalObject(), impl.stringArrayFunction2(values, ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -629,7 +730,8 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionCallWithSequenceThat
     Vector<RefPtr<TestEventTarget>> sequenceArg((toRefPtrNativeArray<TestEventTarget, JSTestEventTarget>(exec, exec->argument(0), &toTestEventTarget)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = jsBoolean(impl.callWithSequenceThatRequiresInclude(sequenceArg));
+
+    JSC::JSValue result = jsBoolean(impl.callWithSequenceThatRequiresInclude(sequenceArg));
     return JSValue::encode(result);
 }
 

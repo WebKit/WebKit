@@ -1,3 +1,20 @@
+2014-03-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Reduce memory use for static property maps
+        https://bugs.webkit.org/show_bug.cgi?id=129986
+
+        Reviewed by Andreas Kling.
+
+        Static property tables are currently duplicated on first use from read-only memory into dirty memory
+        in every process, and since the entries are large (48 bytes) and the tables can be unusually sparse
+        (we use a custom hash table without a rehash) a lot of memory may be wasted.
+
+        * inspector-protocol/debugger/setPauseOnExceptions-all-expected.txt:
+        * inspector-protocol/debugger/setPauseOnExceptions-none-expected.txt:
+        * inspector-protocol/debugger/setPauseOnExceptions-uncaught-expected.txt:
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+            - Properties now iterated in correct order, not permuted by hash table.
+
 2014-03-13  Manish R Gurnaney  <m.gurnaney@samsung.com>
 
         Scroll size is not recalculated when absolute left of child is updated

@@ -1,3 +1,83 @@
+2014-03-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Reduce memory use for static property maps
+        https://bugs.webkit.org/show_bug.cgi?id=129986
+
+        Reviewed by Andreas Kling.
+
+        Static property tables are currently duplicated on first use from read-only memory into dirty memory
+        in every process, and since the entries are large (48 bytes) and the tables can be unusually sparse
+        (we use a custom hash table without a rehash) a lot of memory may be wasted.
+
+        First, reduce the size of the hashtable. Instead of storing values in the table the hashtable maps
+        from string hashes to indicies into a densely packed array of values. Compute the index table at
+        compile time as a part of the derived sources step, such that this may be read-only data.
+
+        Second, don't copy all data from the HashTableValue array into a HashEntry objects. Instead refer
+        directly to the HashTableValue entries. The only data that needs to be allocated at runtime are the
+        keys, which are Identifiers.
+
+        * create_hash_table:
+            - emit the hash table index into the derived source (we were calculating this already to ensure chaining does not get too deep).
+        * parser/Lexer.cpp:
+        (JSC::Lexer<LChar>::parseIdentifier):
+        (JSC::Lexer<UChar>::parseIdentifier):
+        (JSC::Lexer<T>::parseIdentifierSlowCase):
+            - HashEntry -> HashTableValue.
+        * parser/Lexer.h:
+        (JSC::Keywords::getKeyword):
+            - HashEntry -> HashTableValue.
+        * runtime/ClassInfo.h:
+            - removed HashEntry.
+        * runtime/JSObject.cpp:
+        (JSC::getClassPropertyNames):
+            - use HashTable::ConstIterator.
+        (JSC::JSObject::put):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::findPropertyHashEntry):
+            - HashEntry -> HashTableValue.
+        (JSC::JSObject::reifyStaticFunctionsForDelete):
+            - changed HashTable::ConstIterator interface.
+        * runtime/JSObject.h:
+            - HashEntry -> HashTableValue.
+        * runtime/Lookup.cpp:
+        (JSC::HashTable::createTable):
+            - table -> keys, keys array is now densely packed.
+        (JSC::HashTable::deleteTable):
+            - table -> keys.
+        (JSC::setUpStaticFunctionSlot):
+            - HashEntry -> HashTableValue.
+        * runtime/Lookup.h:
+        (JSC::HashTableValue::builtinGenerator):
+        (JSC::HashTableValue::function):
+        (JSC::HashTableValue::functionLength):
+        (JSC::HashTableValue::propertyGetter):
+        (JSC::HashTableValue::propertyPutter):
+        (JSC::HashTableValue::lexerValue):
+            - added accessor methods from HashEntry.
+        (JSC::HashTable::copy):
+            - fields changed.
+        (JSC::HashTable::initializeIfNeeded):
+            - table -> keys.
+        (JSC::HashTable::entry):
+            - HashEntry -> HashTableValue.
+        (JSC::HashTable::ConstIterator::ConstIterator):
+            - iterate packed value array, so no need to skipInvalidKeys().
+        (JSC::HashTable::ConstIterator::value):
+        (JSC::HashTable::ConstIterator::key):
+        (JSC::HashTable::ConstIterator::operator->):
+            - accessors now get HashTableValue/StringImpl* separately.
+        (JSC::HashTable::ConstIterator::operator++):
+            - iterate packed value array, so no need to skipInvalidKeys().
+        (JSC::HashTable::end):
+            - end is now size of dense not sparse array.
+        (JSC::getStaticPropertySlot):
+        (JSC::getStaticFunctionSlot):
+        (JSC::getStaticValueSlot):
+        (JSC::putEntry):
+        (JSC::lookupPut):
+            - HashEntry -> HashTableValue.
+
 2014-03-13  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix Mac no-FTL build.

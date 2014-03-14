@@ -28,14 +28,25 @@ using namespace JSC;
 
 namespace WebCore {
 
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
+#endif
 /* Hash table for constructor */
 
-static const HashTableValue JSTestGenerateIsReachableConstructorTableValues[] =
-{
-    { 0, 0, NoIntrinsic, 0, 0 }
+static const struct CompactHashIndex JSTestGenerateIsReachableConstructorTableIndex[1] = {
+    { -1, -1 },
 };
 
-static const HashTable JSTestGenerateIsReachableConstructorTable = { 1, 0, false, JSTestGenerateIsReachableConstructorTableValues, 0 };
+
+static const HashTableValue JSTestGenerateIsReachableConstructorTableValues[0] =
+{
+};
+
+static const HashTable JSTestGenerateIsReachableConstructorTable = { 0, 0, false, JSTestGenerateIsReachableConstructorTableValues, 0, JSTestGenerateIsReachableConstructorTableIndex };
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 const ClassInfo JSTestGenerateIsReachableConstructor::s_info = { "TestGenerateIsReachableConstructor", &Base::s_info, &JSTestGenerateIsReachableConstructorTable, 0, CREATE_METHOD_TABLE(JSTestGenerateIsReachableConstructor) };
 
 JSTestGenerateIsReachableConstructor::JSTestGenerateIsReachableConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -56,15 +67,27 @@ bool JSTestGenerateIsReachableConstructor::getOwnPropertySlot(JSObject* object, 
     return getStaticValueSlot<JSTestGenerateIsReachableConstructor, JSDOMWrapper>(exec, JSTestGenerateIsReachableConstructorTable, jsCast<JSTestGenerateIsReachableConstructor*>(object), propertyName, slot);
 }
 
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
+#endif
 /* Hash table for prototype */
 
-static const HashTableValue JSTestGenerateIsReachablePrototypeTableValues[] =
-{
-    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGenerateIsReachableConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { 0, 0, NoIntrinsic, 0, 0 }
+static const struct CompactHashIndex JSTestGenerateIsReachablePrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
 };
 
-static const HashTable JSTestGenerateIsReachablePrototypeTable = { 2, 1, true, JSTestGenerateIsReachablePrototypeTableValues, 0 };
+
+static const HashTableValue JSTestGenerateIsReachablePrototypeTableValues[1] =
+{
+    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGenerateIsReachableConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+};
+
+static const HashTable JSTestGenerateIsReachablePrototypeTable = { 1, 1, true, JSTestGenerateIsReachablePrototypeTableValues, 0, JSTestGenerateIsReachablePrototypeTableIndex };
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 const ClassInfo JSTestGenerateIsReachablePrototype::s_info = { "TestGenerateIsReachablePrototype", &Base::s_info, &JSTestGenerateIsReachablePrototypeTable, 0, CREATE_METHOD_TABLE(JSTestGenerateIsReachablePrototype) };
 
 JSObject* JSTestGenerateIsReachablePrototype::self(VM& vm, JSGlobalObject* globalObject)

@@ -74,32 +74,114 @@ using namespace JSC;
 
 namespace WebCore {
 
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
+#endif
 /* Hash table */
 
-static const HashTableValue JSTestObjTableValues[] =
+static const struct CompactHashIndex JSTestObjTableIndex[17] = {
+    { 5, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 4, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+    { 0, 16 },
+    { -1, -1 },
+    { 1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 3, -1 },
+};
+
+
+static const HashTableValue JSTestObjTableValues[6] =
 {
     { "TestSubObjEnabledBySetting", DontEnum, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjTestSubObjEnabledBySettingConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjTestSubObjEnabledBySettingConstructor) },
     { "customAttr", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCustomAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjCustomAttr) },
 #if ENABLE(Condition1)
     { "conditionalAttr4", DontEnum, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionalAttr4Constructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjConditionalAttr4Constructor) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition1) && ENABLE(Condition2)
     { "conditionalAttr5", DontEnum, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionalAttr5Constructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjConditionalAttr5Constructor) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition1) || ENABLE(Condition2)
     { "conditionalAttr6", DontEnum, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionalAttr6Constructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjConditionalAttr6Constructor) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
     { "contentDocument", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjContentDocument), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestObjTable = { 17, 15, true, JSTestObjTableValues, 0 };
+static const HashTable JSTestObjTable = { 6, 15, true, JSTestObjTableValues, 0, JSTestObjTableIndex };
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
+#endif
 /* Hash table for constructor */
 
-static const HashTableValue JSTestObjConstructorTableValues[] =
+static const struct CompactHashIndex JSTestObjConstructorTableIndex[39] = {
+    { -1, -1 },
+    { 9, 34 },
+    { 21, -1 },
+    { 2, -1 },
+    { 1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 0, -1 },
+    { 12, -1 },
+    { 16, -1 },
+    { 5, 32 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 10, -1 },
+    { 7, 36 },
+    { 15, -1 },
+    { 3, -1 },
+    { -1, -1 },
+    { 11, 33 },
+    { -1, -1 },
+    { -1, -1 },
+    { 8, 37 },
+    { 18, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 4, -1 },
+    { 6, -1 },
+    { 13, -1 },
+    { 14, 35 },
+    { 17, -1 },
+    { 19, 38 },
+    { 20, -1 },
+    { 22, -1 },
+};
+
+
+static const HashTableValue JSTestObjConstructorTableValues[23] =
 {
 #if ENABLE(Condition1)
     { "CONDITIONAL_CONST", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONDITIONAL_CONST), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
     { "CONST_VALUE_0", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_0), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { "CONST_VALUE_1", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
@@ -124,11 +206,15 @@ static const HashTableValue JSTestObjConstructorTableValues[] =
     { "classMethod2", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjConstructorFunctionClassMethod2), (intptr_t) (1) },
 #if ENABLE(Condition1)
     { "overloadedMethod1", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjConstructorFunctionOverloadedMethod1), (intptr_t) (1) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
-    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestObjConstructorTable = { 39, 31, true, JSTestObjConstructorTableValues, 0 };
+static const HashTable JSTestObjConstructorTable = { 23, 31, true, JSTestObjConstructorTableValues, 0, JSTestObjConstructorTableIndex };
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 
 #if ENABLE(Condition1)
 COMPILE_ASSERT(0 == TestObj::CONDITIONAL_CONST, TestObjEnumCONDITIONAL_CONSTIsWrongUseDoNotCheckConstants);
@@ -185,9 +271,547 @@ ConstructType JSTestObjConstructor::getConstructData(JSCell*, ConstructData& con
     return ConstructTypeHost;
 }
 
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
+#endif
 /* Hash table for prototype */
 
-static const HashTableValue JSTestObjPrototypeTableValues[] =
+static const struct CompactHashIndex JSTestObjPrototypeTableIndex[530] = {
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 23, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 49, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 16, 513 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 47, -1 },
+    { 73, -1 },
+    { -1, -1 },
+    { 41, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 102, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 15, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 110, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 27, 522 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 126, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 101, -1 },
+    { 100, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 4, -1 },
+    { -1, -1 },
+    { 17, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 5, -1 },
+    { 134, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 53, -1 },
+    { 32, 517 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 93, -1 },
+    { 87, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 31, -1 },
+    { -1, -1 },
+    { 55, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 117, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 78, -1 },
+    { 70, -1 },
+    { -1, -1 },
+    { 25, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 22, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 96, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 114, -1 },
+    { -1, -1 },
+    { 6, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 86, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 33, -1 },
+    { 51, -1 },
+    { -1, -1 },
+    { 71, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 92, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 127, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 72, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 67, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 24, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 89, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 82, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 3, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 45, -1 },
+    { -1, -1 },
+    { 77, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 36, 526 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 8, 512 },
+    { -1, -1 },
+    { 130, -1 },
+    { -1, -1 },
+    { 58, 528 },
+    { 135, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 64, 524 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 131, -1 },
+    { -1, -1 },
+    { 103, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 39, 515 },
+    { -1, -1 },
+    { -1, -1 },
+    { 113, -1 },
+    { 90, -1 },
+    { 120, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 34, -1 },
+    { -1, -1 },
+    { 18, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 61, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 128, -1 },
+    { 123, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 26, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 76, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 84, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 43, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 12, -1 },
+    { -1, -1 },
+    { 59, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 0, -1 },
+    { -1, -1 },
+    { 99, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 30, -1 },
+    { 28, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 124, -1 },
+    { -1, -1 },
+    { 35, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 65, 518 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 88, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 46, 521 },
+    { 80, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 44, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 69, -1 },
+    { -1, -1 },
+    { 62, -1 },
+    { -1, -1 },
+    { 2, -1 },
+    { -1, -1 },
+    { 50, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 95, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 38, 523 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 57, -1 },
+    { 68, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 107, 527 },
+    { -1, -1 },
+    { 108, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 14, -1 },
+    { 20, 529 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 112, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 118, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 79, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 60, -1 },
+    { 52, -1 },
+    { -1, -1 },
+    { 74, -1 },
+    { 132, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 54, 516 },
+    { -1, -1 },
+    { 85, -1 },
+    { 9, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 105, -1 },
+    { 29, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 37, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 19, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 109, -1 },
+    { 13, 514 },
+    { 40, -1 },
+    { 111, -1 },
+    { -1, -1 },
+    { 7, 525 },
+    { -1, -1 },
+    { 125, -1 },
+    { 106, -1 },
+    { 75, 520 },
+    { -1, -1 },
+    { 122, -1 },
+    { 83, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 119, -1 },
+    { -1, -1 },
+    { 10, 519 },
+    { 11, -1 },
+    { 21, -1 },
+    { 42, -1 },
+    { 48, -1 },
+    { 56, -1 },
+    { 63, -1 },
+    { 66, -1 },
+    { 81, -1 },
+    { 91, -1 },
+    { 94, -1 },
+    { 97, -1 },
+    { 98, -1 },
+    { 104, -1 },
+    { 115, -1 },
+    { 116, -1 },
+    { 121, -1 },
+    { 129, -1 },
+    { 133, -1 },
+};
+
+
+static const HashTableValue JSTestObjPrototypeTableValues[136] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { "readOnlyLongAttr", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyLongAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
@@ -229,12 +853,18 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "withScriptArgumentsAndCallStackAttribute", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptArgumentsAndCallStackAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjWithScriptArgumentsAndCallStackAttribute) },
 #if ENABLE(Condition1)
     { "conditionalAttr1", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionalAttr1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjConditionalAttr1) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition1) && ENABLE(Condition2)
     { "conditionalAttr2", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionalAttr2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjConditionalAttr2) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition1) || ENABLE(Condition2)
     { "conditionalAttr3", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionalAttr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjConditionalAttr3) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
     { "cachedAttribute1", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCachedAttribute1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { "cachedAttribute2", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCachedAttribute2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
@@ -257,6 +887,8 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "attributeWithReservedEnumType", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttributeWithReservedEnumType), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttributeWithReservedEnumType) },
 #if ENABLE(Condition1)
     { "CONDITIONAL_CONST", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONDITIONAL_CONST), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
     { "CONST_VALUE_0", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_0), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { "CONST_VALUE_1", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
@@ -312,12 +944,18 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "methodWithCallbackAndOptionalArg", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg), (intptr_t) (0) },
 #if ENABLE(Condition1)
     { "conditionalMethod1", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionConditionalMethod1), (intptr_t) (0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition1) && ENABLE(Condition2)
     { "conditionalMethod2", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionConditionalMethod2), (intptr_t) (0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
 #if ENABLE(Condition1) || ENABLE(Condition2)
     { "conditionalMethod3", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionConditionalMethod3), (intptr_t) (0) },
+#else
+    { 0, 0, NoIntrinsic, 0, 0 },
 #endif
     { "overloadedMethod", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadedMethod), (intptr_t) (2) },
     { "classMethodWithClamp", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionClassMethodWithClamp), (intptr_t) (2) },
@@ -339,10 +977,12 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "variadicDoubleMethod", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVariadicDoubleMethod), (intptr_t) (2) },
     { "variadicNodeMethod", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVariadicNodeMethod), (intptr_t) (2) },
     { "any", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionAny), (intptr_t) (2) },
-    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestObjPrototypeTable = { 530, 511, true, JSTestObjPrototypeTableValues, 0 };
+static const HashTable JSTestObjPrototypeTable = { 136, 511, true, JSTestObjPrototypeTableValues, 0, JSTestObjPrototypeTableIndex };
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjectPrototype", &Base::s_info, &JSTestObjPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };
 
 JSObject* JSTestObjPrototype::self(VM& vm, JSGlobalObject* globalObject)
@@ -939,7 +1579,7 @@ EncodedJSValue jsTestObjAttrWithGetterException(ExecState* exec, JSObject* slotB
     }
     ExceptionCode ec = 0;
     TestObj& impl = castedThis->impl();
-    JSValue result = jsNumber(impl.attrWithGetterException(ec));
+    JSC::JSValue result = jsNumber(impl.attrWithGetterException(ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -978,7 +1618,7 @@ EncodedJSValue jsTestObjStringAttrWithGetterException(ExecState* exec, JSObject*
     }
     ExceptionCode ec = 0;
     TestObj& impl = castedThis->impl();
-    JSValue result = jsStringWithCache(exec, impl.stringAttrWithGetterException(ec));
+    JSC::JSValue result = jsStringWithCache(exec, impl.stringAttrWithGetterException(ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -1072,7 +1712,7 @@ EncodedJSValue jsTestObjWithScriptStateAttributeRaises(ExecState* exec, JSObject
     }
     ExceptionCode ec = 0;
     TestObj& impl = castedThis->impl();
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptStateAttributeRaises(exec, ec)));
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptStateAttributeRaises(exec, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -1095,7 +1735,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAttributeRaises(ExecState* exe
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
     TestObj& impl = castedThis->impl();
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAttributeRaises(scriptContext, ec)));
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAttributeRaises(scriptContext, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -1139,7 +1779,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
     TestObj& impl = castedThis->impl();
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateAttributeRaises(exec, scriptContext, ec)));
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateAttributeRaises(exec, scriptContext, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -1658,7 +2298,7 @@ EncodedJSValue jsTestObjNullableStringValue(ExecState* exec, JSObject* slotBase,
     ExceptionCode ec = 0;
     bool isNull = false;
     TestObj& impl = castedThis->impl();
-    JSValue result = jsNumber(impl.nullableStringValue(isNull, ec));
+    JSC::JSValue result = jsNumber(impl.nullableStringValue(isNull, ec));
     if (isNull)
         return JSValue::encode(jsNull());
     setDOMException(exec, ec);
@@ -2673,7 +3313,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethod(ExecState* exe
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    JSValue result = jsNumber(impl.byteMethod());
+
+    JSC::JSValue result = jsNumber(impl.byteMethod());
     return JSValue::encode(result);
 }
 
@@ -2696,7 +3337,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethodWithArgs(ExecSt
     TestObj* objArg(toTestObj(exec->argument(2)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = jsNumber(impl.byteMethodWithArgs(byteArg, strArg, objArg));
+
+    JSC::JSValue result = jsNumber(impl.byteMethodWithArgs(byteArg, strArg, objArg));
     return JSValue::encode(result);
 }
 
@@ -2708,7 +3350,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethod(ExecState* ex
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    JSValue result = jsNumber(impl.octetMethod());
+
+    JSC::JSValue result = jsNumber(impl.octetMethod());
     return JSValue::encode(result);
 }
 
@@ -2731,7 +3374,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethodWithArgs(ExecS
     TestObj* objArg(toTestObj(exec->argument(2)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = jsNumber(impl.octetMethodWithArgs(octetArg, strArg, objArg));
+
+    JSC::JSValue result = jsNumber(impl.octetMethodWithArgs(octetArg, strArg, objArg));
     return JSValue::encode(result);
 }
 
@@ -2743,7 +3387,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethod(ExecState* exe
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    JSValue result = jsNumber(impl.longMethod());
+
+    JSC::JSValue result = jsNumber(impl.longMethod());
     return JSValue::encode(result);
 }
 
@@ -2766,7 +3411,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethodWithArgs(ExecSt
     TestObj* objArg(toTestObj(exec->argument(2)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = jsNumber(impl.longMethodWithArgs(longArg, strArg, objArg));
+
+    JSC::JSValue result = jsNumber(impl.longMethodWithArgs(longArg, strArg, objArg));
     return JSValue::encode(result);
 }
 
@@ -2778,7 +3424,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethod(ExecState* exec
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.objMethod()));
+
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.objMethod()));
     return JSValue::encode(result);
 }
 
@@ -2801,7 +3448,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecSta
     TestObj* objArg(toTestObj(exec->argument(2)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.objMethodWithArgs(longArg, strArg, objArg)));
+
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.objMethodWithArgs(longArg, strArg, objArg)));
     return JSValue::encode(result);
 }
 
@@ -2835,7 +3483,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodReturningSequence(E
     int longArg(toInt32(exec, exec->argument(0), NormalConversion));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = jsArray(exec, castedThis->globalObject(), impl.methodReturningSequence(longArg));
+
+    JSC::JSValue result = jsArray(exec, castedThis->globalObject(), impl.methodReturningSequence(longArg));
     return JSValue::encode(result);
 }
 
@@ -2875,8 +3524,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgs
     TestObj* objArg(toTestObj(exec->argument(1)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.methodThatRequiresAllArgsAndThrows(strArg, objArg, ec)));
 
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.methodThatRequiresAllArgsAndThrows(strArg, objArg, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -3002,7 +3651,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObj(ExecSt
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptStateObj(exec)));
+
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptStateObj(exec)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     return JSValue::encode(result);
@@ -3031,8 +3681,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObjExcepti
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     ExceptionCode ec = 0;
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptStateObjException(exec, ec)));
 
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptStateObjException(exec, ec)));
     setDOMException(exec, ec);
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
@@ -3081,8 +3731,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateObjException(exec, scriptContext, ec)));
 
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateObjException(exec, scriptContext, ec)));
     setDOMException(exec, ec);
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
@@ -3100,7 +3750,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateWithSpaces(exec, scriptContext)));
+
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateWithSpaces(exec, scriptContext)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     return JSValue::encode(result);
@@ -3342,7 +3993,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod1(ExecSt
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    JSValue result = jsStringWithCache(exec, impl.conditionalMethod1());
+
+    JSC::JSValue result = jsStringWithCache(exec, impl.conditionalMethod1());
     return JSValue::encode(result);
 }
 
@@ -3621,14 +4273,16 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethodWithOptional
 
     size_t argsCount = exec->argumentCount();
     if (argsCount <= 0) {
-        JSValue result = jsNumber(TestObj::classMethodWithOptional());
+
+        JSC::JSValue result = jsNumber(TestObj::classMethodWithOptional());
         return JSValue::encode(result);
     }
 
     int arg(toInt32(exec, exec->argument(0), NormalConversion));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = jsNumber(TestObj::classMethodWithOptional(arg));
+
+    JSC::JSValue result = jsNumber(TestObj::classMethodWithOptional(arg));
     return JSValue::encode(result);
 }
 
@@ -3747,8 +4401,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStringArrayFunction(ExecS
     Vector<String> values(toNativeArray<String>(exec, exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = jsArray(exec, castedThis->globalObject(), impl.stringArrayFunction(values, ec));
 
+    JSC::JSValue result = jsArray(exec, castedThis->globalObject(), impl.stringArrayFunction(values, ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -3767,8 +4421,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionDomStringListFunction(Exe
     RefPtr<DOMStringList> values(toDOMStringList(exec, exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.domStringListFunction(values, ec)));
 
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.domStringListFunction(values, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -3784,8 +4438,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetSVGDocument(ExecState*
     ExceptionCode ec = 0;
     if (!shouldAllowAccessToNode(exec, impl.getSVGDocument(ec)))
         return JSValue::encode(jsNull());
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.getSVGDocument(ec)));
 
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.getSVGDocument(ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -3866,7 +4520,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMutablePointFunction(Exec
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl.mutablePointFunction())));
+
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl.mutablePointFunction())));
     return JSValue::encode(result);
 }
 
@@ -3878,7 +4533,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionImmutablePointFunction(Ex
         return throwVMTypeError(exec);
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl.immutablePointFunction())));
+
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl.immutablePointFunction())));
     return JSValue::encode(result);
 }
 
@@ -3914,8 +4570,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunction(ExecState*
     int b(toInt32(exec, exec->argument(2), NormalConversion));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.strictFunction(str, a, b, ec)));
 
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.strictFunction(str, a, b, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -3939,8 +4595,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithSequenc
     Vector<unsigned> a(toNativeArray<unsigned>(exec, exec->argument(1)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.strictFunctionWithSequence(objArg, a, ec)));
 
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.strictFunctionWithSequence(objArg, a, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -3964,8 +4620,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithArray(E
     Vector<int> array(toNativeArray<int>(exec, exec->argument(1)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.strictFunctionWithArray(objArg, array, ec)));
 
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.strictFunctionWithArray(objArg, array, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }

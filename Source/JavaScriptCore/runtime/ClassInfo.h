@@ -30,7 +30,6 @@
 
 namespace JSC {
 
-class HashEntry;
 class JSArrayBufferView;
 struct HashTable;
 

@@ -38,23 +38,46 @@ using namespace JSC;
 
 namespace WebCore {
 
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
+#endif
 /* Hash table */
 
-static const HashTableValue JSTestEventTargetTableValues[] =
+static const struct CompactHashIndex JSTestEventTargetTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
+
+static const HashTableValue JSTestEventTargetTableValues[1] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestEventTargetConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
-    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestEventTargetTable = { 2, 1, true, JSTestEventTargetTableValues, 0 };
+static const HashTable JSTestEventTargetTable = { 1, 1, true, JSTestEventTargetTableValues, 0, JSTestEventTargetTableIndex };
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
+#endif
 /* Hash table for constructor */
 
-static const HashTableValue JSTestEventTargetConstructorTableValues[] =
-{
-    { 0, 0, NoIntrinsic, 0, 0 }
+static const struct CompactHashIndex JSTestEventTargetConstructorTableIndex[1] = {
+    { -1, -1 },
 };
 
-static const HashTable JSTestEventTargetConstructorTable = { 1, 0, false, JSTestEventTargetConstructorTableValues, 0 };
+
+static const HashTableValue JSTestEventTargetConstructorTableValues[0] =
+{
+};
+
+static const HashTable JSTestEventTargetConstructorTable = { 0, 0, false, JSTestEventTargetConstructorTableValues, 0, JSTestEventTargetConstructorTableIndex };
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 const ClassInfo JSTestEventTargetConstructor::s_info = { "TestEventTargetConstructor", &Base::s_info, &JSTestEventTargetConstructorTable, 0, CREATE_METHOD_TABLE(JSTestEventTargetConstructor) };
 
 JSTestEventTargetConstructor::JSTestEventTargetConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -75,18 +98,36 @@ bool JSTestEventTargetConstructor::getOwnPropertySlot(JSObject* object, ExecStat
     return getStaticValueSlot<JSTestEventTargetConstructor, JSDOMWrapper>(exec, JSTestEventTargetConstructorTable, jsCast<JSTestEventTargetConstructor*>(object), propertyName, slot);
 }
 
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
+#endif
 /* Hash table for prototype */
 
-static const HashTableValue JSTestEventTargetPrototypeTableValues[] =
+static const struct CompactHashIndex JSTestEventTargetPrototypeTableIndex[8] = {
+    { 2, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 3, -1 },
+    { 1, -1 },
+    { 0, -1 },
+};
+
+
+static const HashTableValue JSTestEventTargetPrototypeTableValues[4] =
 {
     { "item", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestEventTargetPrototypeFunctionItem), (intptr_t) (1) },
     { "addEventListener", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestEventTargetPrototypeFunctionAddEventListener), (intptr_t) (2) },
     { "removeEventListener", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestEventTargetPrototypeFunctionRemoveEventListener), (intptr_t) (2) },
     { "dispatchEvent", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestEventTargetPrototypeFunctionDispatchEvent), (intptr_t) (1) },
-    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
-static const HashTable JSTestEventTargetPrototypeTable = { 8, 7, false, JSTestEventTargetPrototypeTableValues, 0 };
+static const HashTable JSTestEventTargetPrototypeTable = { 4, 7, false, JSTestEventTargetPrototypeTableValues, 0, JSTestEventTargetPrototypeTableIndex };
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 const ClassInfo JSTestEventTargetPrototype::s_info = { "TestEventTargetPrototype", &Base::s_info, &JSTestEventTargetPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestEventTargetPrototype) };
 
 JSObject* JSTestEventTargetPrototype::self(VM& vm, JSGlobalObject* globalObject)
@@ -134,7 +175,7 @@ bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, ExecState* exec, Pr
 {
     JSTestEventTarget* thisObject = jsCast<JSTestEventTarget*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    const HashEntry* entry = getStaticValueSlotEntryWithoutCaching<JSTestEventTarget>(exec, propertyName);
+    const HashTableValue* entry = getStaticValueSlotEntryWithoutCaching<JSTestEventTarget>(exec, propertyName);
     if (entry) {
         slot.setCustom(thisObject, entry->attributes(), entry->propertyGetter());
         return true;
@@ -210,7 +251,8 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* e
     }
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.item(index)));
+
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.item(index)));
     return JSValue::encode(result);
 }
 
@@ -258,8 +300,8 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionDispatchEvent(Exe
     Event* evt(toEvent(exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = jsBoolean(impl.dispatchEvent(evt, ec));
 
+    JSC::JSValue result = jsBoolean(impl.dispatchEvent(evt, ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
