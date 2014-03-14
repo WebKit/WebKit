@@ -182,7 +182,7 @@ void VisitedLinkProvider::resizeTable(unsigned newTableSize)
 
         // Go through the current hash table and re-add all entries to the new hash table.
         const LinkHash* currentLinkHashes = static_cast<const LinkHash*>(currentTableMemory->data());
-        for (unsigned i = 0; i < m_tableSize; ++i) {
+        for (unsigned i = 0; i < currentTableSize; ++i) {
             LinkHash linkHash = currentLinkHashes[i];
 
             if (!linkHash)

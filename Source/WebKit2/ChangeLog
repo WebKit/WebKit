@@ -1,3 +1,16 @@
+2014-03-14  Anders Carlsson  <andersca@apple.com>
+
+        Fix crash when resizing the visited link table
+        https://bugs.webkit.org/show_bug.cgi?id=130257
+        <rdar://problem/16328177>
+
+        Reviewed by Dan Bernstein.
+
+        We're iterating over the old table, so use currentTableSize in the loop termination condition.
+
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::VisitedLinkProvider::resizeTable):
+
 2014-03-14  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Expose a way to set the cookie accept policy
