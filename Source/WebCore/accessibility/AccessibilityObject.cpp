@@ -40,6 +40,7 @@
 #include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "LocalizedStrings.h"
 #include "MainFrame.h"
 #include "MathMLNames.h"
@@ -1528,23 +1529,28 @@ bool AccessibilityObject::ariaIsMultiline() const
     return equalIgnoringCase(getAttribute(aria_multilineAttr), "true");
 }
 
-const AtomicString& AccessibilityObject::invalidStatus() const
+String AccessibilityObject::invalidStatus() const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, invalidStatusFalse, ("false", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, invalidStatusTrue, ("true", AtomicString::ConstructFromLiteral));
+    String grammarValue = ASCIILiteral("grammar");
+    String falseValue = ASCIILiteral("false");
+    String spellingValue = ASCIILiteral("spelling");
+    String trueValue = ASCIILiteral("true");
+    String undefinedValue = ASCIILiteral("undefined");
+
+    // aria-invalid can return false (default), grammar, spelling, or true.
+    String ariaInvalid = stripLeadingAndTrailingHTMLSpaces(getAttribute(aria_invalidAttr));
     
-    // aria-invalid can return false (default), grammer, spelling, or true.
-    const AtomicString& ariaInvalid = getAttribute(aria_invalidAttr);
-    
-    // If 'false', empty or not present, it should return false.
-    if (ariaInvalid.isEmpty() || equalIgnoringCase(ariaInvalid, invalidStatusFalse))
-        return invalidStatusFalse;
-    
-    // Only 'true', 'grammar' and 'spelling' are values recognised by the WAI-ARIA
-    // specification. Any other non empty string should be treated as 'true'.
-    if (equalIgnoringCase(ariaInvalid, "spelling") || equalIgnoringCase(ariaInvalid, "grammar"))
-        return ariaInvalid;
-    return invalidStatusTrue;
+    // If "false", "undefined" [sic, string value], empty, or missing, return "false".
+    if (ariaInvalid.isEmpty() || ariaInvalid == falseValue || ariaInvalid == undefinedValue)
+        return falseValue;
+    // Besides true/false/undefined, the only tokens defined by WAI-ARIA 1.0...
+    // ...for @aria-invalid are "grammar" and "spelling".
+    if (ariaInvalid == grammarValue)
+        return grammarValue;
+    if (ariaInvalid == spellingValue)
+        return spellingValue;
+    // Any other non empty string should be treated as "true".
+    return trueValue;
 }
  
 bool AccessibilityObject::hasTagName(const QualifiedName& tagName) const

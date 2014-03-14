@@ -204,7 +204,7 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
     if (!language.isEmpty())
         result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_LANGUAGE), language.utf8().data());
 
-    String invalidStatus = object->invalidStatus().string();
+    String invalidStatus = object->invalidStatus();
     if (invalidStatus != "false") {
         // Register the custom attribute for 'aria-invalid' if not done yet.
         if (atkTextAttributeInvalid == ATK_TEXT_ATTR_INVALID)

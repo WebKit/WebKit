@@ -585,7 +585,7 @@ public:
     virtual bool ariaHasPopup() const { return false; }
     virtual bool ariaPressedIsPresent() const;
     bool ariaIsMultiline() const;
-    virtual const AtomicString& invalidStatus() const;
+    String invalidStatus() const;
     bool supportsARIAExpanded() const;
     bool supportsChecked() const;
     AccessibilitySortDirection sortDirection() const;

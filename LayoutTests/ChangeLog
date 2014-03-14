@@ -1,3 +1,15 @@
+2014-03-14  James Craig  <jcraig@apple.com>
+
+        AX: AccessibilityObject::invalidStatus() is incorrect when aria-invalid="undefined" or whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=130071
+
+        Reviewed by Chris Fleizach.
+
+        Accounted for whitespace values and the explicit string, "undefined".
+
+        * accessibility/aria-invalid-expected.txt:
+        * accessibility/aria-invalid.html:
+
 2014-03-14  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] CSS parser accepts trailing position arguments

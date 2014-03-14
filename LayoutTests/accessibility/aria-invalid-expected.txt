@@ -1,17 +1,29 @@
-      
 This tests that aria-invalid causes the right attribute to be returned and it ensures a notification is sent when it changes.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS accessibilityController.focusedElement.stringAttributeValue('AXInvalid') is 'true'
-PASS accessibilityController.focusedElement.stringAttributeValue('AXInvalid') is 'grammar'
-PASS accessibilityController.focusedElement.stringAttributeValue('AXInvalid') is 'spelling'
-PASS accessibilityController.focusedElement.stringAttributeValue('AXInvalid') is 'true'
-PASS accessibilityController.focusedElement.stringAttributeValue('AXInvalid') is 'false'
-PASS accessibilityController.focusedElement.stringAttributeValue('AXInvalid') is 'false'
-PASS accessibilityController.focusedElement.stringAttributeValue('AXInvalid') is 'false'
+PASS: AXInvalid is false.
+PASS: AXInvalid is false.
+PASS: AXInvalid is false.
+PASS: AXInvalid is false.
+PASS: AXInvalid is false.
+PASS: AXInvalid is false.
+PASS: AXInvalid is false.
+PASS: AXInvalid is false.
+PASS: AXInvalid is grammar.
+PASS: AXInvalid is grammar.
+PASS: AXInvalid is spelling.
+PASS: AXInvalid is spelling.
+PASS: AXInvalid is true.
+PASS: AXInvalid is true.
+PASS: AXInvalid is true.
+PASS: AXInvalid is true.
+PASS: AXInvalid is true.
+PASS: AXInvalid is true.
+PASS: AXInvalid is true.
 PASS addedNotification is true
+PASS: AXInvalid is spelling.
 PASS successfullyParsed is true
 
 TEST COMPLETE

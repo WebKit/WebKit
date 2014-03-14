@@ -5,14 +5,35 @@
 </head>
 <body id="body">
 
+<div id="examples">
+    <!-- All of these eval to AXInvalid: 'false' -->
+    <input class="ex" data-expected="false" type="text">
+    <input class="ex" data-expected="false" type="text" aria-invalid>
+    <input class="ex" data-expected="false" type="text" aria-invalid="">
+    <input class="ex" data-expected="false" type="text" aria-invalid=" ">
+    <input class="ex" data-expected="false" type="text" aria-invalid="	"><!-- [sic] tab char -->
+    <input class="ex" data-expected="false" type="text" aria-invalid="
+    "><!-- [sic] newline char -->
+    <input class="ex" data-expected="false" type="text" aria-invalid="false">
+    <input class="ex" data-expected="false" type="text" aria-invalid="undefined">
 
-<input type="text" id="text1" aria-invalid="true">
-<input type="text" id="text2" aria-invalid="grammar">
-<input type="text" id="text3" aria-invalid="spelling">
-<input type="text" id="text4" aria-invalid="notallowed">
-<input type="text" id="text5" aria-invalid="false">
-<input type="text" id="text6" aria-invalid="">
-<input type="text" id="text7">
+    <!-- Known token values in ARIA 1.0. -->
+    <input class="ex" data-expected="grammar" type="text" aria-invalid="grammar">
+    <input class="ex" data-expected="grammar" type="text" aria-invalid="grammar	"><!-- [sic] tab char -->
+    <input class="ex" data-expected="spelling" type="text" aria-invalid="spelling">
+    <input class="ex" data-expected="spelling" type="text" aria-invalid="spelling
+    "><!-- [sic] newline char -->
+
+    <!-- All other string values are truthy, including a combination of otherwise valid tokens. -->
+    <input class="ex" data-expected="true" type="text" aria-invalid="true">
+    <input class="ex" data-expected="true" type="text" aria-invalid="notallowed">
+    <input class="ex" data-expected="true" type="text" aria-invalid="…">
+    <input class="ex" data-expected="true" type="text" aria-invalid="Ç">
+    <input class="ex" data-expected="true" type="text" aria-invalid="spelling grammar">
+    <input class="ex" data-expected="true" type="text" aria-invalid="spelling	grammar"><!-- [sic] tab char -->
+    <input class="ex" data-expected="true" type="text" aria-invalid="spelling
+    grammar"><!-- [sic] newline char -->
+</div>
 
 <p id="description"></p>
 <div id="console"></div>
@@ -22,44 +43,47 @@
 
     description("This tests that aria-invalid causes the right attribute to be returned and it ensures a notification is sent when it changes.");
 
-    var notificationElement = 0;
+    function $(id){
+        return document.getElementById(id);
+    }
+
+    var axNotificationElement = null;
     function notificationCallback(notification) {
         if (notification == "AXInvalidStatusChanged") {
-            document.getElementById("notifications").innerHTML += "Notification received successfully.";
-            notificationElement.removeNotificationListener();
+            $("notifications").innerHTML += "Notification received successfully.";
+            axNotificationElement.removeNotificationListener();
+            $("examples").hidden = true;
             window.testRunner.notifyDone();
         }
+    }
+
+    var result = $('console');
+    function verify(value, expectation, element) {
+      if (value === expectation)
+        result.innerText += "PASS: AXInvalid is " + value + ".\n";
+      else
+        result.innerText += "FAIL: AXInvalid is " + value + ". Expected: " + expectation + ". " + (element ? element.outerHTML : "") + "\n";
     }
 
     if (window.accessibilityController) {
         window.testRunner.waitUntilDone();
 
-        document.getElementById("text1").focus();
-        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'true'");
-
-        document.getElementById("text2").focus();
-        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'grammar'");
-
-        document.getElementById("text3").focus();
-        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'spelling'");
-
-        document.getElementById("text4").focus();
-        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'true'");
-
-        document.getElementById("text5").focus();
-        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'false'");
-
-        document.getElementById("text6").focus();
-        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'false'");
-
-        document.getElementById("text7").focus();
-        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'false'");
-
-        notificationElement = accessibilityController.focusedElement;
-        var addedNotification = notificationElement.addNotificationListener(notificationCallback);
+        var examples = document.querySelectorAll(".ex");
+        for (var i = 0, c = examples.length; i < c; i++) {
+            var el = examples[i];
+            el.focus();
+            var expectation = el.getAttribute("data-expected");
+            var value = accessibilityController.focusedElement.stringAttributeValue('AXInvalid');
+            verify(value, expectation, el);
+        }
+        
+        var domNotificationElement = document.querySelector(".ex");
+        domNotificationElement.focus();
+        axNotificationElement = accessibilityController.focusedElement;
+        var addedNotification = axNotificationElement.addNotificationListener(notificationCallback);
         shouldBeTrue("addedNotification");
-
-        document.getElementById("text7").setAttribute("aria-invalid", "spelling");
+        domNotificationElement.setAttribute("aria-invalid", "spelling");
+        verify(axNotificationElement.stringAttributeValue('AXInvalid'), "spelling", domNotificationElement);
     }
 
 </script>
