@@ -1,3 +1,17 @@
+2014-03-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r165540.
+        https://bugs.webkit.org/show_bug.cgi?id=130199
+
+        caused 1 hidpi test fail (Requested by zalan on #webkit).
+
+        Reverted changeset:
+
+        "Subpixel rendering: Nested layers with subpixel accumulation
+        paint to wrong position."
+        https://bugs.webkit.org/show_bug.cgi?id=130153
+        http://trac.webkit.org/changeset/165540
+
 2014-03-13  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix a bunch of mistakes in the parsing of ::cue( and ::cue
