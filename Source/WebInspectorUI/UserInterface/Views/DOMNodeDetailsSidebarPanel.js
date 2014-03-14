@@ -65,6 +65,7 @@ WebInspector.DOMNodeDetailsSidebarPanel = function() {
         this._accessibilityNodeIgnoredRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Ignored"));
         this._accessibilityNodeInvalidRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Invalid"));
         this._accessibilityNodeLabelRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Label"));
+        this._accessibilityNodeParentRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Parent"));
         this._accessibilityNodePressedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Pressed"));
         this._accessibilityNodeReadonlyRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Readonly"));
         this._accessibilityNodeRequiredRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Required"));
@@ -279,6 +280,14 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
 
             if (accessibilityProperties && accessibilityProperties.exists) {
 
+                var axParentNodeLink = null;
+                if (accessibilityProperties.axParentNodeId !== undefined) {
+                    var axParentNode = WebInspector.domTreeManager.nodeForId(accessibilityProperties.axParentNodeId);
+                    axParentNodeLink = WebInspector.linkifyNodeReference(axParentNode);
+                    axParentNodeLink.title += WebInspector.roleSelectorForNode(axParentNode);
+                    axParentNodeLink.textContent = axParentNode.computedRole() || axParentNodeLink.title;
+                }
+
                 var checked = "";
                 if (accessibilityProperties.checked !== undefined) {
                     if (accessibilityProperties.checked === DOMAgent.AccessibilityPropertiesChecked.True)
@@ -339,6 +348,7 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                 this._accessibilityNodeIgnoredRow.value = ignored;
                 this._accessibilityNodeInvalidRow.value = invalid;
                 this._accessibilityNodeLabelRow.value = label;
+                this._accessibilityNodeParentRow.value = axParentNodeLink || "";
                 this._accessibilityNodePressedRow.value = pressed;
                 this._accessibilityNodeReadonlyRow.value = readonly;
                 this._accessibilityNodeRequiredRow.value = required;
@@ -352,6 +362,7 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                     this._accessibilityNodeIgnoredRow,
                     this._accessibilityNodeRoleRow,
                     this._accessibilityNodeLabelRow,
+                    this._accessibilityNodeParentRow,
 
                     // Properties exposed for all input-type elements.
                     this._accessibilityNodeDisabledRow,

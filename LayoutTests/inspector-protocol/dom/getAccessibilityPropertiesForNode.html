@@ -25,6 +25,7 @@
 <button class="ex"></button>
 <input class="ex" type="button">
 
+<!-- FIXME: Inputs missing axParentNodeId http://webkit.org/b/130181 -->
 <input class="ex">
 <input class="ex" required>
 <input class="ex" aria-required="true" value="required">
@@ -52,11 +53,13 @@
 <input class="ex" aria-hidden="true">
 <input class="ex" style="display:none;">
 
-<img class="ex" src="./404.gif">
-<img class="ex" src="./404.gif" alt="">
-<img class="ex" src="./404.gif" alt="x">
-<img class="ex" src="./404.gif" alt="x" aria-hidden="true">
-<img class="ex" src="./404.gif" alt="x" style="display:none;">
+<!-- FIXME: Images missing axParentNodeId http://webkit.org/b/130181 -->
+<img class="ex" src="./404.gif"><!-- img:not([alt]) ignored if it does not load.  -->
+<img class="ex" src="data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7">
+<img class="ex" src="data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7" alt="">
+<img class="ex" src="data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7" alt="x">
+<img class="ex" src="data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7" alt="x" aria-hidden="true">
+<img class="ex" src="data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7" alt="x" style="display:none;">
 
 <select multiple>
     <option class="ex" selected>FIXME: Selected is false. Expected true. http://webkit.org/b/129835</option>
@@ -117,15 +120,22 @@ function test() {
 
     function onGotOuterHTML(response) {
         InspectorTest.checkForError(response);
-        InspectorTest.log("\n" + response.result.outerHTML.replace(" class=\"ex\"", ""));
+        var outerHTML = response.result.outerHTML;
+        outerHTML = outerHTML.replace(" class=\"ex\"", ""); // remove any duplicated, unnecessary class attributes
+        outerHTML = outerHTML.replace(/;base64,.*?"/, "...\""); // suppress full data URIs in output
+        InspectorTest.log("\n" + outerHTML);
         InspectorTest.sendCommand("DOM.getAccessibilityPropertiesForNode", {"nodeId": examples[examples.length-1]}, onGotAXProps);
     }
 
     function onGotAXProps(response) {
         InspectorTest.checkForError(response);
-        for (prop in response.result.properties) {
-            if (prop !== "nodeId")
-                InspectorTest.log("    " + prop + ": " + response.result.properties[prop]);
+        for (var key in response.result.properties) {
+            var value = response.result.properties[key];
+            if (key === "nodeId")
+                continue;
+            if (key === "axParentNodeId")
+                value = (value === 1) ? "1 (#document)" : "(suppressed)";
+            InspectorTest.log("    " + key + ": " + value);
         }
         examples.pop();
         loop();

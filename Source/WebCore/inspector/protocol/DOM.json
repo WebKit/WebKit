@@ -35,7 +35,8 @@
                 { "name": "frameId", "$ref": "Network.FrameId", "optional": true, "description": "Frame ID for frame owner elements." },
                 { "name": "contentDocument", "$ref": "Node", "optional": true, "description": "Content document for frame owner elements." },
                 { "name": "shadowRoots", "type": "array", "optional": true, "items": { "$ref": "Node" }, "description": "Shadow root list for given element host." },
-                { "name": "templateContent", "$ref": "Node", "optional": true, "description": "Content document fragment for template elements" }
+                { "name": "templateContent", "$ref": "Node", "optional": true, "description": "Content document fragment for template elements" },
+                { "name": "role", "type": "string", "optional": true, "description": "Computed value for first recognized role token, default role per element, or overridden role." }
             ],
             "description": "DOM interaction is implemented in terms of mirror objects that represent the actual DOM nodes. DOMNode is a base node mirror type."
         },
@@ -59,6 +60,7 @@
             "description": "A structure holding accessibility properties.",
             "type": "object",
             "properties": [
+                { "name": "axParentNodeId", "$ref": "NodeId", "optional": true, "description": "<code>DOMNode</code> id of the accessibility tree parent object if available." },
                 { "name": "checked", "type": "string", "optional": true, "enum": ["true", "false", "mixed"], "description": "Checked state of certain form controls." },
                 { "name": "disabled", "type": "boolean", "optional": true, "description": "Disabled state of form controls." },
                 { "name": "exists", "type": "boolean", "description": "Indicates whether there is an existing AX object for the DOM node. If this is false, all the other properties will be default values." },

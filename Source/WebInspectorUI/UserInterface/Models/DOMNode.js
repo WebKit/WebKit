@@ -50,6 +50,7 @@ WebInspector.DOMNode = function(domAgent, doc, isInShadowTree, payload) {
     this._nodeName = payload.nodeName;
     this._localName = payload.localName;
     this._nodeValue = payload.nodeValue;
+    this._computedRole = payload.role;
 
     if (this._nodeType === Node.DOCUMENT_NODE)
         this.ownerDocument = this;
@@ -205,6 +206,14 @@ WebInspector.DOMNode.prototype = {
         this._childNodeCount = count;
     },
     
+    /**
+     * @return {string}
+     */
+    computedRole: function()
+    {
+        return this._computedRole;
+    },
+
     /**
      * @return {boolean}
      */
@@ -447,6 +456,7 @@ WebInspector.DOMNode.prototype = {
         {
             if (!error && callback && accessibilityProperties) {
                 callback({
+                    axParentNodeId: accessibilityProperties.axParentNodeId,
                     checked: accessibilityProperties.checked,
                     disabled: accessibilityProperties.disabled,
                     exists: accessibilityProperties.exists,

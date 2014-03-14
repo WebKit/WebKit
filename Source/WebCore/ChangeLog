@@ -1,3 +1,20 @@
+2014-03-14  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: Expose Accessibility Tree parent of the selected node
+        https://bugs.webkit.org/show_bug.cgi?id=129943
+
+        Reviewed by Timothy Hatcher.
+
+        Tests: inspector-protocol/dom/getAccessibilityPropertiesForNode.html
+
+        Web Accessibility Node Inspector now displays a link to the AX parent node,
+        because it's not a 1:1 match with the DOMNode parent.
+
+        * inspector/InspectorDOMAgent.cpp: Support for DOMNode.role and AccessibilityProperties.axParentNodeId.
+        (WebCore::InspectorDOMAgent::buildObjectForNode): Support for role.
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties): Support for axParentNodeId.
+        * inspector/protocol/DOM.json: Added axParentNodeId on AccessibilityProperties, and role on DOMNode.
+
 2014-03-14  Andreas Kling  <akling@apple.com>
 
         [Mac] Remove NSURLCache logic from WebCore pressure relief code.

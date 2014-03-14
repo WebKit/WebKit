@@ -1,3 +1,20 @@
+2014-03-14  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: Expose Accessibility Tree parent of the selected node
+        https://bugs.webkit.org/show_bug.cgi?id=129943
+
+        Reviewed by Timothy Hatcher.
+
+        Tests: inspector-protocol/dom/getAccessibilityPropertiesForNode.html
+
+        Web Accessibility Node Inspector now displays a link to the AX parent node,
+        because it's not a 1:1 match with the DOMNode parent.
+
+        * Localizations/en.lproj/localizedStrings.js: new "Parent" string.
+        * UserInterface/Base/DOMUtilities.js: Updating linkifyNodeReference to include role; adding new roleSelectorForNode method.
+        * UserInterface/Models/DOMNode.js: AX Parent support and adding role to DOMNode (will be exposed as AX Parent link and in overlays).
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js: Accessibility parent node.
+
 2014-03-14  Diego Pino Garcia  <dpino@igalia.com>
 
         Web Inspector: Resource and Frame saveIdentityToCookie should store URL hashes not URLs

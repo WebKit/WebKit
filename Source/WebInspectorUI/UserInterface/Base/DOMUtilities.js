@@ -59,12 +59,24 @@ WebInspector.displayNameForNode = function(node)
     return title;
 }
 
+WebInspector.roleSelectorForNode = function(node)
+{
+    // This is proposed syntax for CSS 4 computed role selector :role(foo) and subject to change.
+    // See http://lists.w3.org/Archives/Public/www-style/2013Jul/0104.html
+    var title = "";
+    var role = node.computedRole();
+    if (role)
+        title = ":role(" + role + ")";
+    return title;
+}
+
 WebInspector.linkifyNodeReference = function(node)
 {
     var displayName = WebInspector.displayNameForNode(node);
 
     var link = document.createElement("span");
     link.appendChild(document.createTextNode(displayName));
+    link.setAttribute("role", "link");
     link.className = "node-link";
     link.title = displayName;
 

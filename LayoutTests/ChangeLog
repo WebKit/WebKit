@@ -1,3 +1,18 @@
+2014-03-14  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: Expose Accessibility Tree parent of the selected node
+        https://bugs.webkit.org/show_bug.cgi?id=129943
+
+        Reviewed by Timothy Hatcher.
+
+        Tests: inspector-protocol/dom/getAccessibilityPropertiesForNode.html
+
+        Web Accessibility Node Inspector now displays a link to the AX parent node,
+        because it's not a 1:1 match with the DOMNode parent.
+
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode.html:
+
 2014-03-14  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: LayoutTests/compositing/hidpi-simple-container-layer-on-device-pixel-expected.html fails on Mountain Lion WK2 debug
