@@ -117,7 +117,6 @@ if ($wksi) {
     (system("mkdir", "-p", $libraryDir) == 0) or die;
 
     my @librariesToCopy = (
-        "libWebKitSystemInterfaceLion.a",
         "libWebKitSystemInterfaceMountainLion.a",
         "libWebKitSystemInterfaceMavericks.a",
     );
@@ -163,9 +162,6 @@ if ($llvm) {
     } elsif ($preferSystemLLVMOverDrops) {
         # Don't fall through to drop detection.
         print "Using system LLVM.\n";
-    } elsif ($majorDarwinVersion == 11) {
-        $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesLion.tar.bz2";
-        $llvmIncludePackage = "WebKitLibraries/LLVMIncludesLion.tar.bz2";
     } elsif ($majorDarwinVersion == 12) {
         $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesMountainLion.tar.bz2";
         $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMountainLion.tar.bz2";
