@@ -48,10 +48,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
-#endif
 /* Hash table */
 
 static const struct CompactHashIndex JSTestInterfaceTableIndex[4] = {
@@ -62,7 +58,7 @@ static const struct CompactHashIndex JSTestInterfaceTableIndex[4] = {
 };
 
 
-static const HashTableValue JSTestInterfaceTableValues[2] =
+static const HashTableValue JSTestInterfaceTableValues[] =
 {
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "implementsStr3", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsStr3) },
@@ -77,13 +73,6 @@ static const HashTableValue JSTestInterfaceTableValues[2] =
 };
 
 static const HashTable JSTestInterfaceTable = { 2, 3, true, JSTestInterfaceTableValues, 0, JSTestInterfaceTableIndex };
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
-#endif
 /* Hash table for constructor */
 
 static const struct CompactHashIndex JSTestInterfaceConstructorTableIndex[11] = {
@@ -101,7 +90,7 @@ static const struct CompactHashIndex JSTestInterfaceConstructorTableIndex[11] = 
 };
 
 
-static const HashTableValue JSTestInterfaceConstructorTableValues[10] =
+static const HashTableValue JSTestInterfaceConstructorTableValues[] =
 {
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "IMPLEMENTSCONSTANT1", DontDelete | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceIMPLEMENTSCONSTANT1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
@@ -156,9 +145,6 @@ static const HashTableValue JSTestInterfaceConstructorTableValues[10] =
 };
 
 static const HashTable JSTestInterfaceConstructorTable = { 10, 7, true, JSTestInterfaceConstructorTableValues, 0, JSTestInterfaceConstructorTableIndex };
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
 COMPILE_ASSERT(1 == TestInterface::IMPLEMENTSCONSTANT1, TestInterfaceEnumIMPLEMENTSCONSTANT1IsWrongUseDoNotCheckConstants);
@@ -224,10 +210,6 @@ ConstructType JSTestInterfaceConstructor::getConstructData(JSCell*, ConstructDat
 }
 #endif // ENABLE(TEST_INTERFACE)
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
-#endif
 /* Hash table for prototype */
 
 static const struct CompactHashIndex JSTestInterfacePrototypeTableIndex[65] = {
@@ -299,7 +281,7 @@ static const struct CompactHashIndex JSTestInterfacePrototypeTableIndex[65] = {
 };
 
 
-static const HashTableValue JSTestInterfacePrototypeTableValues[17] =
+static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 #if ENABLE(Condition22) || ENABLE(Condition23)
@@ -385,9 +367,6 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[17] =
 };
 
 static const HashTable JSTestInterfacePrototypeTable = { 17, 63, true, JSTestInterfacePrototypeTableValues, 0, JSTestInterfacePrototypeTableIndex };
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 const ClassInfo JSTestInterfacePrototype::s_info = { "TestInterfacePrototype", &Base::s_info, &JSTestInterfacePrototypeTable, 0, CREATE_METHOD_TABLE(JSTestInterfacePrototype) };
 
 JSObject* JSTestInterfacePrototype::self(VM& vm, JSGlobalObject* globalObject)
@@ -851,8 +830,8 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
     TestObj* objArg(toTestObj(exec->argument(1)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.implementsMethod2(scriptContext, strArg, objArg, ec)));
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.implementsMethod2(scriptContext, strArg, objArg, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -917,8 +896,8 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
     TestObj* objArg(toTestObj(exec->argument(1)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalMethod2(&impl, scriptContext, strArg, objArg, ec)));
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalMethod2(&impl, scriptContext, strArg, objArg, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }

@@ -33,10 +33,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
-#endif
 /* Hash table */
 
 static const struct CompactHashIndex JSTestActiveDOMObjectTableIndex[4] = {
@@ -47,20 +43,13 @@ static const struct CompactHashIndex JSTestActiveDOMObjectTableIndex[4] = {
 };
 
 
-static const HashTableValue JSTestActiveDOMObjectTableValues[2] =
+static const HashTableValue JSTestActiveDOMObjectTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestActiveDOMObjectConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { "excitingAttr", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestActiveDOMObjectExcitingAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
 static const HashTable JSTestActiveDOMObjectTable = { 2, 3, true, JSTestActiveDOMObjectTableValues, 0, JSTestActiveDOMObjectTableIndex };
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
-#endif
 /* Hash table for constructor */
 
 static const struct CompactHashIndex JSTestActiveDOMObjectConstructorTableIndex[1] = {
@@ -68,14 +57,12 @@ static const struct CompactHashIndex JSTestActiveDOMObjectConstructorTableIndex[
 };
 
 
-static const HashTableValue JSTestActiveDOMObjectConstructorTableValues[0] =
+static const HashTableValue JSTestActiveDOMObjectConstructorTableValues[] =
 {
+    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
 static const HashTable JSTestActiveDOMObjectConstructorTable = { 0, 0, false, JSTestActiveDOMObjectConstructorTableValues, 0, JSTestActiveDOMObjectConstructorTableIndex };
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 const ClassInfo JSTestActiveDOMObjectConstructor::s_info = { "TestActiveDOMObjectConstructor", &Base::s_info, &JSTestActiveDOMObjectConstructorTable, 0, CREATE_METHOD_TABLE(JSTestActiveDOMObjectConstructor) };
 
 JSTestActiveDOMObjectConstructor::JSTestActiveDOMObjectConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -96,10 +83,6 @@ bool JSTestActiveDOMObjectConstructor::getOwnPropertySlot(JSObject* object, Exec
     return getStaticValueSlot<JSTestActiveDOMObjectConstructor, JSDOMWrapper>(exec, JSTestActiveDOMObjectConstructorTable, jsCast<JSTestActiveDOMObjectConstructor*>(object), propertyName, slot);
 }
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
-#endif
 /* Hash table for prototype */
 
 static const struct CompactHashIndex JSTestActiveDOMObjectPrototypeTableIndex[4] = {
@@ -110,16 +93,13 @@ static const struct CompactHashIndex JSTestActiveDOMObjectPrototypeTableIndex[4]
 };
 
 
-static const HashTableValue JSTestActiveDOMObjectPrototypeTableValues[2] =
+static const HashTableValue JSTestActiveDOMObjectPrototypeTableValues[] =
 {
     { "excitingFunction", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestActiveDOMObjectPrototypeFunctionExcitingFunction), (intptr_t) (1) },
     { "postMessage", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestActiveDOMObjectPrototypeFunctionPostMessage), (intptr_t) (1) },
 };
 
 static const HashTable JSTestActiveDOMObjectPrototypeTable = { 2, 3, false, JSTestActiveDOMObjectPrototypeTableValues, 0, JSTestActiveDOMObjectPrototypeTableIndex };
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 const ClassInfo JSTestActiveDOMObjectPrototype::s_info = { "TestActiveDOMObjectPrototype", &Base::s_info, &JSTestActiveDOMObjectPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestActiveDOMObjectPrototype) };
 
 JSObject* JSTestActiveDOMObjectPrototype::self(VM& vm, JSGlobalObject* globalObject)

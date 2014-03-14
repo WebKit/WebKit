@@ -4024,11 +4024,6 @@ sub GenerateHashTable
         $maxDepth = $depth if ($depth > $maxDepth);
     }
 
-    push(@implContent, "#if COMPILER(MSVC)\n");
-    push(@implContent, "#pragma warning(push)\n");
-    push(@implContent, "#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning\n");
-    push(@implContent, "#endif\n");
-
     # Start outputing the hashtables
     my $nameEntries = "${name}Values";
     $nameEntries =~ s/:/_/g;
@@ -4065,7 +4060,7 @@ sub GenerateHashTable
 
     # Dump the hash table
     my $packedSize = scalar @{$keys};
-    push(@implContent, "\nstatic const HashTableValue $nameEntries\[$packedSize\] =\n\{\n");
+    push(@implContent, "\nstatic const HashTableValue $nameEntries\[\] =\n\{\n");
     $i = 0;
     foreach my $key (@{$keys}) {
         my $conditional;
@@ -4096,13 +4091,10 @@ sub GenerateHashTable
         ++$i;
     }
 
+    push(@implContent, "    { 0, 0, NoIntrinsic, 0, 0 }\n") if (!$packedSize);
     push(@implContent, "};\n\n");
     my $compactSizeMask = $numEntries - 1;
     push(@implContent, "static const HashTable $name = { $packedSize, $compactSizeMask, $hasSetter, $nameEntries, 0, $nameIndex };\n");
-
-    push(@implContent, "#if COMPILER(MSVC)\n");
-    push(@implContent, "#pragma warning(pop)\n");
-    push(@implContent, "#endif\n");
 }
 
 sub WriteData

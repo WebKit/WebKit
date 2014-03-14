@@ -33,10 +33,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
-#endif
 /* Hash table for constructor */
 
 static const struct CompactHashIndex JSTestEventConstructorConstructorTableIndex[1] = {
@@ -44,14 +40,12 @@ static const struct CompactHashIndex JSTestEventConstructorConstructorTableIndex
 };
 
 
-static const HashTableValue JSTestEventConstructorConstructorTableValues[0] =
+static const HashTableValue JSTestEventConstructorConstructorTableValues[] =
 {
+    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
 static const HashTable JSTestEventConstructorConstructorTable = { 0, 0, false, JSTestEventConstructorConstructorTableValues, 0, JSTestEventConstructorConstructorTableIndex };
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::constructJSTestEventConstructor(ExecState* exec)
 {
     JSTestEventConstructorConstructor* jsConstructor = jsCast<JSTestEventConstructorConstructor*>(exec->callee());
@@ -116,10 +110,6 @@ ConstructType JSTestEventConstructorConstructor::getConstructData(JSCell*, Const
     return ConstructTypeHost;
 }
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
-#endif
 /* Hash table for prototype */
 
 static const struct CompactHashIndex JSTestEventConstructorPrototypeTableIndex[9] = {
@@ -135,7 +125,7 @@ static const struct CompactHashIndex JSTestEventConstructorPrototypeTableIndex[9
 };
 
 
-static const HashTableValue JSTestEventConstructorPrototypeTableValues[3] =
+static const HashTableValue JSTestEventConstructorPrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestEventConstructorConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { "attr1", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestEventConstructorAttr1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
@@ -143,9 +133,6 @@ static const HashTableValue JSTestEventConstructorPrototypeTableValues[3] =
 };
 
 static const HashTable JSTestEventConstructorPrototypeTable = { 3, 7, true, JSTestEventConstructorPrototypeTableValues, 0, JSTestEventConstructorPrototypeTableIndex };
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 const ClassInfo JSTestEventConstructorPrototype::s_info = { "TestEventConstructorPrototype", &Base::s_info, &JSTestEventConstructorPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestEventConstructorPrototype) };
 
 JSObject* JSTestEventConstructorPrototype::self(VM& vm, JSGlobalObject* globalObject)

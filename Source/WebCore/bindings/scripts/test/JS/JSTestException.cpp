@@ -31,10 +31,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
-#endif
 /* Hash table */
 
 static const struct CompactHashIndex JSTestExceptionTableIndex[2] = {
@@ -43,19 +39,12 @@ static const struct CompactHashIndex JSTestExceptionTableIndex[2] = {
 };
 
 
-static const HashTableValue JSTestExceptionTableValues[1] =
+static const HashTableValue JSTestExceptionTableValues[] =
 {
     { "name", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestExceptionName), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
 static const HashTable JSTestExceptionTable = { 1, 1, true, JSTestExceptionTableValues, 0, JSTestExceptionTableIndex };
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
-#endif
 /* Hash table for constructor */
 
 static const struct CompactHashIndex JSTestExceptionConstructorTableIndex[1] = {
@@ -63,14 +52,12 @@ static const struct CompactHashIndex JSTestExceptionConstructorTableIndex[1] = {
 };
 
 
-static const HashTableValue JSTestExceptionConstructorTableValues[0] =
+static const HashTableValue JSTestExceptionConstructorTableValues[] =
 {
+    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
 static const HashTable JSTestExceptionConstructorTable = { 0, 0, false, JSTestExceptionConstructorTableValues, 0, JSTestExceptionConstructorTableIndex };
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 const ClassInfo JSTestExceptionConstructor::s_info = { "TestExceptionConstructor", &Base::s_info, &JSTestExceptionConstructorTable, 0, CREATE_METHOD_TABLE(JSTestExceptionConstructor) };
 
 JSTestExceptionConstructor::JSTestExceptionConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -91,10 +78,6 @@ bool JSTestExceptionConstructor::getOwnPropertySlot(JSObject* object, ExecState*
     return getStaticValueSlot<JSTestExceptionConstructor, JSDOMWrapper>(exec, JSTestExceptionConstructorTable, jsCast<JSTestExceptionConstructor*>(object), propertyName, slot);
 }
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
-#endif
 /* Hash table for prototype */
 
 static const struct CompactHashIndex JSTestExceptionPrototypeTableIndex[2] = {
@@ -103,15 +86,12 @@ static const struct CompactHashIndex JSTestExceptionPrototypeTableIndex[2] = {
 };
 
 
-static const HashTableValue JSTestExceptionPrototypeTableValues[1] =
+static const HashTableValue JSTestExceptionPrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestExceptionConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
 static const HashTable JSTestExceptionPrototypeTable = { 1, 1, true, JSTestExceptionPrototypeTableValues, 0, JSTestExceptionPrototypeTableIndex };
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 const ClassInfo JSTestExceptionPrototype::s_info = { "TestExceptionPrototype", &Base::s_info, &JSTestExceptionPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestExceptionPrototype) };
 
 JSObject* JSTestExceptionPrototype::self(VM& vm, JSGlobalObject* globalObject)

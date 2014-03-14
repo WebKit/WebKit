@@ -32,10 +32,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
-#endif
 /* Hash table for constructor */
 
 static const struct CompactHashIndex JSTestOverloadedConstructorsConstructorTableIndex[1] = {
@@ -43,14 +39,12 @@ static const struct CompactHashIndex JSTestOverloadedConstructorsConstructorTabl
 };
 
 
-static const HashTableValue JSTestOverloadedConstructorsConstructorTableValues[0] =
+static const HashTableValue JSTestOverloadedConstructorsConstructorTableValues[] =
 {
+    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
 static const HashTable JSTestOverloadedConstructorsConstructorTable = { 0, 0, false, JSTestOverloadedConstructorsConstructorTableValues, 0, JSTestOverloadedConstructorsConstructorTableIndex };
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors1(ExecState* exec)
 {
     JSTestOverloadedConstructorsConstructor* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(exec->callee());
@@ -142,10 +136,6 @@ ConstructType JSTestOverloadedConstructorsConstructor::getConstructData(JSCell*,
     return ConstructTypeHost;
 }
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
-#endif
 /* Hash table for prototype */
 
 static const struct CompactHashIndex JSTestOverloadedConstructorsPrototypeTableIndex[2] = {
@@ -154,15 +144,12 @@ static const struct CompactHashIndex JSTestOverloadedConstructorsPrototypeTableI
 };
 
 
-static const HashTableValue JSTestOverloadedConstructorsPrototypeTableValues[1] =
+static const HashTableValue JSTestOverloadedConstructorsPrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestOverloadedConstructorsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
 static const HashTable JSTestOverloadedConstructorsPrototypeTable = { 1, 1, true, JSTestOverloadedConstructorsPrototypeTableValues, 0, JSTestOverloadedConstructorsPrototypeTableIndex };
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 const ClassInfo JSTestOverloadedConstructorsPrototype::s_info = { "TestOverloadedConstructorsPrototype", &Base::s_info, &JSTestOverloadedConstructorsPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsPrototype) };
 
 JSObject* JSTestOverloadedConstructorsPrototype::self(VM& vm, JSGlobalObject* globalObject)

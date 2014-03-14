@@ -36,10 +36,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
-#endif
 /* Hash table for constructor */
 
 static const struct CompactHashIndex JSTestSerializedScriptValueInterfaceConstructorTableIndex[1] = {
@@ -47,14 +43,12 @@ static const struct CompactHashIndex JSTestSerializedScriptValueInterfaceConstru
 };
 
 
-static const HashTableValue JSTestSerializedScriptValueInterfaceConstructorTableValues[0] =
+static const HashTableValue JSTestSerializedScriptValueInterfaceConstructorTableValues[] =
 {
+    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
 static const HashTable JSTestSerializedScriptValueInterfaceConstructorTable = { 0, 0, false, JSTestSerializedScriptValueInterfaceConstructorTableValues, 0, JSTestSerializedScriptValueInterfaceConstructorTableIndex };
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 const ClassInfo JSTestSerializedScriptValueInterfaceConstructor::s_info = { "TestSerializedScriptValueInterfaceConstructor", &Base::s_info, &JSTestSerializedScriptValueInterfaceConstructorTable, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterfaceConstructor) };
 
 JSTestSerializedScriptValueInterfaceConstructor::JSTestSerializedScriptValueInterfaceConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -75,10 +69,6 @@ bool JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertySlot(JSObjec
     return getStaticValueSlot<JSTestSerializedScriptValueInterfaceConstructor, JSDOMWrapper>(exec, JSTestSerializedScriptValueInterfaceConstructorTable, jsCast<JSTestSerializedScriptValueInterfaceConstructor*>(object), propertyName, slot);
 }
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 2466) // Disable 'cannot allocate an array of constant size 0' warning
-#endif
 /* Hash table for prototype */
 
 static const struct CompactHashIndex JSTestSerializedScriptValueInterfacePrototypeTableIndex[17] = {
@@ -102,7 +92,7 @@ static const struct CompactHashIndex JSTestSerializedScriptValueInterfacePrototy
 };
 
 
-static const HashTableValue JSTestSerializedScriptValueInterfacePrototypeTableValues[6] =
+static const HashTableValue JSTestSerializedScriptValueInterfacePrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
     { "value", DontDelete | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializedScriptValueInterfaceValue) },
@@ -113,9 +103,6 @@ static const HashTableValue JSTestSerializedScriptValueInterfacePrototypeTableVa
 };
 
 static const HashTable JSTestSerializedScriptValueInterfacePrototypeTable = { 6, 15, true, JSTestSerializedScriptValueInterfacePrototypeTableValues, 0, JSTestSerializedScriptValueInterfacePrototypeTableIndex };
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
 const ClassInfo JSTestSerializedScriptValueInterfacePrototype::s_info = { "TestSerializedScriptValueInterfacePrototype", &Base::s_info, &JSTestSerializedScriptValueInterfacePrototypeTable, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterfacePrototype) };
 
 JSObject* JSTestSerializedScriptValueInterfacePrototype::self(VM& vm, JSGlobalObject* globalObject)
