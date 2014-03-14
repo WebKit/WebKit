@@ -1,5 +1,20 @@
 2014-03-14  Andreas Kling  <akling@apple.com>
 
+        [Mac] Remove NSURLCache logic from WebCore pressure relief code.
+        <https://webkit.org/b/130248>
+
+        The NSURLCache lives in the networking process and should be cleared
+        on that end. Furthermore, this code doesn't really do what we thought
+        it was doing; it merely sets and and resets the limits. No truncation
+        ever occurred. The intended functionality was implemented in r165342.
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::releaseMemory):
+
+2014-03-14  Andreas Kling  <akling@apple.com>
+
         Simplify jettisoning of style resolvers on memory pressure.
         <https://webkit.org/b/129644>
 

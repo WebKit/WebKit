@@ -154,11 +154,6 @@ void MemoryPressureHandler::releaseMemory(bool)
     pageCache()->setCapacity(0);
     pageCache()->setCapacity(savedPageCacheCapacity);
 
-    NSURLCache *nsurlCache = [NSURLCache sharedURLCache];
-    NSUInteger savedNsurlCacheMemoryCapacity = [nsurlCache memoryCapacity];
-    [nsurlCache setMemoryCapacity:0];
-    [nsurlCache setMemoryCapacity:savedNsurlCacheMemoryCapacity];
-
     fontCache()->purgeInactiveFontData();
 
     memoryCache()->pruneToPercentage(0);
