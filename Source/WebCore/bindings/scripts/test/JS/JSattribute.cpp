@@ -141,7 +141,7 @@ EncodedJSValue jsattributeReadonly(ExecState* exec, JSObject* slotBase, EncodedJ
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'readonly' on a non-attribute object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "attribute", ".", "readonly", " getter can only be used on instances of ", "attribute"));
     }
     UNUSED_PARAM(exec);
     attribute& impl = castedThis->impl();

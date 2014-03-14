@@ -1,3 +1,14 @@
+2014-03-14  Oliver Hunt  <oliver@apple.com>
+
+        Improve dom error messages
+        https://bugs.webkit.org/show_bug.cgi?id=130103
+
+        Reviewed by Andreas Kling.
+
+        Make windows build.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-03-12  Anders Carlsson  <andersca@apple.com>
 
         <rdar://problem/16307346> Add new WebKitLegacy.framework.

@@ -452,7 +452,7 @@ EncodedJSValue jsTestInterfaceImplementsStr1(ExecState* exec, JSObject* slotBase
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'implementsStr1' on a non-TestInterface object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestInterface", ".", "implementsStr1", " getter can only be used on instances of ", "TestInterface"));
     }
     UNUSED_PARAM(exec);
     TestInterface& impl = castedThis->impl();
@@ -473,7 +473,7 @@ EncodedJSValue jsTestInterfaceImplementsStr2(ExecState* exec, JSObject* slotBase
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'implementsStr2' on a non-TestInterface object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestInterface", ".", "implementsStr2", " getter can only be used on instances of ", "TestInterface"));
     }
     UNUSED_PARAM(exec);
     TestInterface& impl = castedThis->impl();
@@ -494,7 +494,7 @@ EncodedJSValue jsTestInterfaceImplementsStr3(ExecState* exec, JSObject* slotBase
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'implementsStr3' on a non-TestInterface object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestInterface", ".", "implementsStr3", " getter can only be used on instances of ", "TestInterface"));
     }
     return JSValue::encode(castedThis->implementsStr3(exec));
 }
@@ -512,7 +512,7 @@ EncodedJSValue jsTestInterfaceImplementsNode(ExecState* exec, JSObject* slotBase
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'implementsNode' on a non-TestInterface object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestInterface", ".", "implementsNode", " getter can only be used on instances of ", "TestInterface"));
     }
     UNUSED_PARAM(exec);
     TestInterface& impl = castedThis->impl();
@@ -557,7 +557,7 @@ EncodedJSValue jsTestInterfaceSupplementalStr1(ExecState* exec, JSObject* slotBa
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'supplementalStr1' on a non-TestInterface object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestInterface", ".", "supplementalStr1", " getter can only be used on instances of ", "TestInterface"));
     }
     UNUSED_PARAM(exec);
     TestInterface& impl = castedThis->impl();
@@ -578,7 +578,7 @@ EncodedJSValue jsTestInterfaceSupplementalStr2(ExecState* exec, JSObject* slotBa
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'supplementalStr2' on a non-TestInterface object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestInterface", ".", "supplementalStr2", " getter can only be used on instances of ", "TestInterface"));
     }
     UNUSED_PARAM(exec);
     TestInterface& impl = castedThis->impl();
@@ -599,7 +599,7 @@ EncodedJSValue jsTestInterfaceSupplementalStr3(ExecState* exec, JSObject* slotBa
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'supplementalStr3' on a non-TestInterface object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestInterface", ".", "supplementalStr3", " getter can only be used on instances of ", "TestInterface"));
     }
     return JSValue::encode(castedThis->supplementalStr3(exec));
 }
@@ -617,7 +617,7 @@ EncodedJSValue jsTestInterfaceSupplementalNode(ExecState* exec, JSObject* slotBa
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'supplementalNode' on a non-TestInterface object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestInterface", ".", "supplementalNode", " getter can only be used on instances of ", "TestInterface"));
     }
     UNUSED_PARAM(exec);
     TestInterface& impl = castedThis->impl();
@@ -677,7 +677,7 @@ void setJSTestInterfaceImplementsStr2(ExecState* exec, JSObject* /* baseObject *
     UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestInterface", ".", "implementsStr2", " setter can only be used on instances of ", "TestInterface"));
         return;
     }
     TestInterface& impl = castedThis->impl();
@@ -696,7 +696,7 @@ void setJSTestInterfaceImplementsStr3(ExecState* exec, JSObject* /* baseObject *
     UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestInterface", ".", "implementsStr3", " setter can only be used on instances of ", "TestInterface"));
         return;
     }
     castedThis->setImplementsStr3(exec, value);
@@ -711,7 +711,7 @@ void setJSTestInterfaceImplementsNode(ExecState* exec, JSObject* /* baseObject *
     UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestInterface", ".", "implementsNode", " setter can only be used on instances of ", "TestInterface"));
         return;
     }
     TestInterface& impl = castedThis->impl();
@@ -743,7 +743,7 @@ void setJSTestInterfaceSupplementalStr2(ExecState* exec, JSObject* /* baseObject
     UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestInterface", ".", "supplementalStr2", " setter can only be used on instances of ", "TestInterface"));
         return;
     }
     TestInterface& impl = castedThis->impl();
@@ -762,7 +762,7 @@ void setJSTestInterfaceSupplementalStr3(ExecState* exec, JSObject* /* baseObject
     UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestInterface", ".", "supplementalStr3", " setter can only be used on instances of ", "TestInterface"));
         return;
     }
     castedThis->setSupplementalStr3(exec, value);
@@ -777,7 +777,7 @@ void setJSTestInterfaceSupplementalNode(ExecState* exec, JSObject* /* baseObject
     UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestInterface", ".", "supplementalNode", " setter can only be used on instances of ", "TestInterface"));
         return;
     }
     TestInterface& impl = castedThis->impl();
@@ -800,7 +800,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod1(E
     JSValue thisValue = exec->hostThisValue();
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestInterface", ".", "implementsMethod1", " on instances of ", "TestInterface"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     TestInterface& impl = castedThis->impl();
     impl.implementsMethod1();
@@ -815,7 +815,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
     JSValue thisValue = exec->hostThisValue();
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestInterface", ".", "implementsMethod2", " on instances of ", "TestInterface"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     TestInterface& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
@@ -844,7 +844,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod3(E
     JSValue thisValue = exec->hostThisValue();
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestInterface", ".", "implementsMethod3", " on instances of ", "TestInterface"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     return JSValue::encode(castedThis->implementsMethod3(exec));
 }
@@ -866,7 +866,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1
     JSValue thisValue = exec->hostThisValue();
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestInterface", ".", "supplementalMethod1", " on instances of ", "TestInterface"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     TestInterface& impl = castedThis->impl();
     TestSupplemental::supplementalMethod1(&impl);
@@ -881,7 +881,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
     JSValue thisValue = exec->hostThisValue();
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestInterface", ".", "supplementalMethod2", " on instances of ", "TestInterface"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     TestInterface& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
@@ -910,7 +910,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod3
     JSValue thisValue = exec->hostThisValue();
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestInterface", ".", "supplementalMethod3", " on instances of ", "TestInterface"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     return JSValue::encode(castedThis->supplementalMethod3(exec));
 }

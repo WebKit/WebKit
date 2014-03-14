@@ -5,14 +5,14 @@ Make sure DOM attributes handle different types of |this| properly
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS objectWithDocumentAsPrototype.all threw exception TypeError: Type error.
+PASS objectWithDocumentAsPrototype.all threw exception TypeError: The HTMLDocument.all getter can only be used on instances of HTMLDocument.
 See what happens if we put the anchor prototype on a div
 PASS testDiv instanceof HTMLAnchorElement is true
 PASS testDiv.href is undefined.
-PASS testDiv.href='error' threw exception TypeError: Type error.
+PASS testDiv.href='error' threw exception TypeError: The HTMLAnchorElement.href setter can only be used on instances of HTMLAnchorElement.
 PASS testDiv instanceof HTMLAnchorElement is true
 PASS testDiv.href is undefined.
-PASS testDiv.href='error' threw exception TypeError: Type error.
+PASS testDiv.href='error' threw exception TypeError: The HTMLAnchorElement.href setter can only be used on instances of HTMLAnchorElement.
 PASS successfullyParsed is true
 
 TEST COMPLETE

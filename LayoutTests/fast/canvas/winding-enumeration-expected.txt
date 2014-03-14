@@ -1,12 +1,12 @@
 PASS context.fill() did not throw exception.
 PASS context.fill('nonzero') did not throw exception.
-PASS context.fill('randomstring') threw exception TypeError: Type error.
+PASS context.fill('randomstring') threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.fill must be one of: "nonzero", "evenodd".
 PASS context.clip() did not throw exception.
 PASS context.clip('nonzero') did not throw exception.
-PASS context.clip('randomstring') threw exception TypeError: Type error.
+PASS context.clip('randomstring') threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.clip must be one of: "nonzero", "evenodd".
 PASS context.isPointInPath(0, 0) did not throw exception.
 PASS context.isPointInPath(0, 0, 'nonzero') did not throw exception.
-PASS context.isPointInPath(0, 0, 'randomstring') threw exception TypeError: Type error.
+PASS context.isPointInPath(0, 0, 'randomstring') threw exception TypeError: Argument 3 ('winding') to CanvasRenderingContext2D.isPointInPath must be one of: "nonzero", "evenodd".
 PASS successfullyParsed is true
 
 TEST COMPLETE

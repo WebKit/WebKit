@@ -10,9 +10,9 @@ PASS dumpTransform(circle1.transform.baseVal.getItem(0)) is "type=SVG_TRANSFORM_
 PASS dumpTransform(circle1.transform.baseVal.getItem(1)) is "type=SVG_TRANSFORM_TRANSLATE matrix=[1.0 0.0 0.0 1.0 10.0 10.0]"
 
 Test uncommon arguments for initialize()
-PASS circle1.transform.baseVal.initialize(30) threw exception TypeError: Type error.
-PASS circle1.transform.baseVal.initialize('aString') threw exception TypeError: Type error.
-PASS circle1.transform.baseVal.initialize(circle1) threw exception TypeError: Type error.
+PASS circle1.transform.baseVal.initialize(30) threw exception TypeError: Argument 1 ('item') to SVGTransformList.initialize must be an instance of SVGTransform.
+PASS circle1.transform.baseVal.initialize('aString') threw exception TypeError: Argument 1 ('item') to SVGTransformList.initialize must be an instance of SVGTransform.
+PASS circle1.transform.baseVal.initialize(circle1) threw exception TypeError: Argument 1 ('item') to SVGTransformList.initialize must be an instance of SVGTransform.
 PASS circle1.transform.baseVal.initialize(null) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
 
 Test uncommon arguments for getItem()
@@ -46,9 +46,9 @@ PASS circle1.transform.baseVal.numberOfItems is 2
 PASS dumpTransform(circle1.transform.baseVal.getItem(0)) is "type=SVG_TRANSFORM_SCALE matrix=[2.0 0.0 0.0 2.0 0.0 0.0]"
 PASS dumpTransform(circle1.transform.baseVal.getItem(1)) is "type=SVG_TRANSFORM_TRANSLATE matrix=[1.0 0.0 0.0 1.0 10.0 10.0]"
 PASS circle1.getAttribute('transform') is "scale(2 2) translate(10 10)"
-PASS circle1.transform.baseVal.insertItemBefore(30, 0) threw exception TypeError: Type error.
-PASS circle1.transform.baseVal.insertItemBefore('aString', 0) threw exception TypeError: Type error.
-PASS circle1.transform.baseVal.insertItemBefore(circle1, 0) threw exception TypeError: Type error.
+PASS circle1.transform.baseVal.insertItemBefore(30, 0) threw exception TypeError: Argument 1 ('item') to SVGTransformList.insertItemBefore must be an instance of SVGTransform.
+PASS circle1.transform.baseVal.insertItemBefore('aString', 0) threw exception TypeError: Argument 1 ('item') to SVGTransformList.insertItemBefore must be an instance of SVGTransform.
+PASS circle1.transform.baseVal.insertItemBefore(circle1, 0) threw exception TypeError: Argument 1 ('item') to SVGTransformList.insertItemBefore must be an instance of SVGTransform.
 PASS circle1.transform.baseVal.insertItemBefore(null, 0) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
 
 Set transform='rotate(90) scale(2 2) translate(10 10) skewX(45)' for circle1
@@ -65,9 +65,9 @@ PASS circle1.transform.baseVal.replaceItem(30) threw exception TypeError: Not en
 PASS circle1.transform.baseVal.replaceItem('aString') threw exception TypeError: Not enough arguments.
 PASS circle1.transform.baseVal.replaceItem(circle1) threw exception TypeError: Not enough arguments.
 PASS circle1.transform.baseVal.replaceItem(null) threw exception TypeError: Not enough arguments.
-PASS circle1.transform.baseVal.replaceItem(30, 0) threw exception TypeError: Type error.
-PASS circle1.transform.baseVal.replaceItem('aString', 0) threw exception TypeError: Type error.
-PASS circle1.transform.baseVal.replaceItem(circle1, 0) threw exception TypeError: Type error.
+PASS circle1.transform.baseVal.replaceItem(30, 0) threw exception TypeError: Argument 1 ('item') to SVGTransformList.replaceItem must be an instance of SVGTransform.
+PASS circle1.transform.baseVal.replaceItem('aString', 0) threw exception TypeError: Argument 1 ('item') to SVGTransformList.replaceItem must be an instance of SVGTransform.
+PASS circle1.transform.baseVal.replaceItem(circle1, 0) threw exception TypeError: Argument 1 ('item') to SVGTransformList.replaceItem must be an instance of SVGTransform.
 PASS circle1.transform.baseVal.replaceItem(null, 0) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
 PASS circle1.transform.baseVal.replaceItem(circle1.transform.baseVal.getItem(0), 0) is circle1.transform.baseVal.getItem(0)
 PASS circle1.transform.baseVal.numberOfItems is 4
@@ -116,9 +116,9 @@ PASS dumpTransform(circle1.transform.baseVal.getItem(0)) is "type=SVG_TRANSFORM_
 PASS circle1.getAttribute('transform') is "skewX(45)"
 
 Test uncommon arguments for appendItem()
-PASS circle1.transform.baseVal.appendItem(30) threw exception TypeError: Type error.
-PASS circle1.transform.baseVal.appendItem('aString') threw exception TypeError: Type error.
-PASS circle1.transform.baseVal.appendItem(circle1) threw exception TypeError: Type error.
+PASS circle1.transform.baseVal.appendItem(30) threw exception TypeError: Argument 1 ('item') to SVGTransformList.appendItem must be an instance of SVGTransform.
+PASS circle1.transform.baseVal.appendItem('aString') threw exception TypeError: Argument 1 ('item') to SVGTransformList.appendItem must be an instance of SVGTransform.
+PASS circle1.transform.baseVal.appendItem(circle1) threw exception TypeError: Argument 1 ('item') to SVGTransformList.appendItem must be an instance of SVGTransform.
 PASS circle1.transform.baseVal.appendItem(null) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
 
 Testing animVal clear throws

@@ -50,11 +50,11 @@ PASS transform.matrix.f is 0
 
 Check passing invalid arguments to 'setMatrix'
 PASS transform.setMatrix() threw exception TypeError: Not enough arguments.
-PASS transform.setMatrix(transform) threw exception TypeError: Type error.
-PASS transform.setMatrix(svgElement) threw exception TypeError: Type error.
-PASS transform.setMatrix('aString') threw exception TypeError: Type error.
-PASS transform.setMatrix(1) threw exception TypeError: Type error.
-PASS transform.setMatrix(false) threw exception TypeError: Type error.
+PASS transform.setMatrix(transform) threw exception TypeError: Argument 1 ('matrix') to SVGTransform.setMatrix must be an instance of SVGMatrix.
+PASS transform.setMatrix(svgElement) threw exception TypeError: Argument 1 ('matrix') to SVGTransform.setMatrix must be an instance of SVGMatrix.
+PASS transform.setMatrix('aString') threw exception TypeError: Argument 1 ('matrix') to SVGTransform.setMatrix must be an instance of SVGMatrix.
+PASS transform.setMatrix(1) threw exception TypeError: Argument 1 ('matrix') to SVGTransform.setMatrix must be an instance of SVGMatrix.
+PASS transform.setMatrix(false) threw exception TypeError: Argument 1 ('matrix') to SVGTransform.setMatrix must be an instance of SVGMatrix.
 
 Check passing invalid arguments to 'setTranslate'
 PASS transform.setTranslate() threw exception TypeError: Not enough arguments.

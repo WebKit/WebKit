@@ -392,7 +392,7 @@ Selection :
 String(Selection) : 
 String([Selection]) : 
 Selection.toString : function toString() { [native code] }
-TypeError: Type error
+TypeError: Can only call DOMSelection.toString on instances of DOMSelection
 Selection.toString() : 
 [Selection].toString() : 
 Selection.valueOf() : 

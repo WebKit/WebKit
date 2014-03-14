@@ -163,7 +163,7 @@ EncodedJSValue jsTestSerializedScriptValueInterfaceValue(ExecState* exec, JSObje
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'value' on a non-TestSerializedScriptValueInterface object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestSerializedScriptValueInterface", ".", "value", " getter can only be used on instances of ", "TestSerializedScriptValueInterface"));
     }
     UNUSED_PARAM(exec);
     TestSerializedScriptValueInterface& impl = castedThis->impl();
@@ -182,7 +182,7 @@ EncodedJSValue jsTestSerializedScriptValueInterfaceReadonlyValue(ExecState* exec
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'readonlyValue' on a non-TestSerializedScriptValueInterface object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestSerializedScriptValueInterface", ".", "readonlyValue", " getter can only be used on instances of ", "TestSerializedScriptValueInterface"));
     }
     UNUSED_PARAM(exec);
     TestSerializedScriptValueInterface& impl = castedThis->impl();
@@ -201,7 +201,7 @@ EncodedJSValue jsTestSerializedScriptValueInterfaceCachedValue(ExecState* exec, 
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'cachedValue' on a non-TestSerializedScriptValueInterface object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestSerializedScriptValueInterface", ".", "cachedValue", " getter can only be used on instances of ", "TestSerializedScriptValueInterface"));
     }
     UNUSED_PARAM(exec);
     if (JSValue cachedValue = castedThis->m_cachedValue.get())
@@ -223,7 +223,7 @@ EncodedJSValue jsTestSerializedScriptValueInterfacePorts(ExecState* exec, JSObje
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'ports' on a non-TestSerializedScriptValueInterface object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestSerializedScriptValueInterface", ".", "ports", " getter can only be used on instances of ", "TestSerializedScriptValueInterface"));
     }
     UNUSED_PARAM(exec);
     TestSerializedScriptValueInterface& impl = castedThis->impl();
@@ -242,7 +242,7 @@ EncodedJSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValue(ExecState
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'cachedReadonlyValue' on a non-TestSerializedScriptValueInterface object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestSerializedScriptValueInterface", ".", "cachedReadonlyValue", " getter can only be used on instances of ", "TestSerializedScriptValueInterface"));
     }
     UNUSED_PARAM(exec);
     if (JSValue cachedValue = castedThis->m_cachedReadonlyValue.get())
@@ -270,7 +270,7 @@ void setJSTestSerializedScriptValueInterfaceValue(ExecState* exec, JSObject* /* 
     UNUSED_PARAM(exec);
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestSerializedScriptValueInterface", ".", "value", " setter can only be used on instances of ", "TestSerializedScriptValueInterface"));
         return;
     }
     TestSerializedScriptValueInterface& impl = castedThis->impl();
@@ -287,7 +287,7 @@ void setJSTestSerializedScriptValueInterfaceCachedValue(ExecState* exec, JSObjec
     UNUSED_PARAM(exec);
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestSerializedScriptValueInterface", ".", "cachedValue", " setter can only be used on instances of ", "TestSerializedScriptValueInterface"));
         return;
     }
     TestSerializedScriptValueInterface& impl = castedThis->impl();

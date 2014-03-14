@@ -1,3 +1,15 @@
+2014-03-11  Oliver Hunt  <oliver@apple.com>
+
+        Improve dom error messages
+        https://bugs.webkit.org/show_bug.cgi?id=130103
+
+        Reviewed by Andreas Kling.
+
+        Add new helper function.
+
+        * runtime/Error.h:
+        (JSC::throwVMTypeError):
+
 2014-03-14  László Langó  <llango.u-szeged@partner.samsung.com>
 
         Remove unused method declaration.

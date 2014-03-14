@@ -219,7 +219,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* e
     JSValue thisValue = exec->hostThisValue();
     JSTestEventTarget* castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestEventTarget", ".", "item", " on instances of ", "TestEventTarget"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
     TestEventTarget& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -240,7 +240,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionAddEventListener(
     JSValue thisValue = exec->hostThisValue();
     JSTestEventTarget* castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestEventTarget", ".", "addEventListener", " on instances of ", "TestEventTarget"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
     TestEventTarget& impl = castedThis->impl();
     JSValue listener = exec->argument(1);
@@ -255,7 +255,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionRemoveEventListen
     JSValue thisValue = exec->hostThisValue();
     JSTestEventTarget* castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestEventTarget", ".", "removeEventListener", " on instances of ", "TestEventTarget"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
     TestEventTarget& impl = castedThis->impl();
     JSValue listener = exec->argument(1);
@@ -270,7 +270,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionDispatchEvent(Exe
     JSValue thisValue = exec->hostThisValue();
     JSTestEventTarget* castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestEventTarget", ".", "dispatchEvent", " on instances of ", "TestEventTarget"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
     TestEventTarget& impl = castedThis->impl();
     if (exec->argumentCount() < 1)

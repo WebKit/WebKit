@@ -42,6 +42,7 @@
 #include <runtime/ErrorHandlingScope.h>
 #include <runtime/ExceptionHelpers.h>
 #include <runtime/JSFunction.h>
+#include <stdarg.h>
 #include <wtf/MathExtras.h>
 
 using namespace JSC;
@@ -525,5 +526,19 @@ bool BindingSecurity::shouldAllowAccessToNode(JSC::ExecState* state, Node* targe
 {
     return target && canAccessDocument(state, &target->document());
 }
-
+    
+String makeDOMBindingsTypeErrorStringInternal(const char* first, ...)
+{
+    StringBuilder builder;
+    const char* str = first;
+    va_list list;
+    va_start(list, first);
+    do {
+        builder.append(str);
+        str = va_arg(list, char*);
+    } while (str);
+    va_end(list);
+    return builder.toString();
+}
+    
 } // namespace WebCore

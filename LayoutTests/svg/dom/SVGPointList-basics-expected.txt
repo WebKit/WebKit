@@ -20,9 +20,9 @@ PASS poly1.points.initialize(point) is point
 PASS poly1.points.numberOfItems is 1
 PASS dumpPoint(poly1.points.getItem(0)) is "x=200 y=100"
 PASS poly1.getAttribute('points').formatPointsAttribute() is "200 100"
-PASS poly1.points.initialize(poly1) threw exception TypeError: Type error.
-PASS poly1.points.initialize(0) threw exception TypeError: Type error.
-PASS poly1.points.initialize('aString') threw exception TypeError: Type error.
+PASS poly1.points.initialize(poly1) threw exception TypeError: Argument 1 ('item') to SVGPointList.initialize must be an instance of SVGPoint.
+PASS poly1.points.initialize(0) threw exception TypeError: Argument 1 ('item') to SVGPointList.initialize must be an instance of SVGPoint.
+PASS poly1.points.initialize('aString') threw exception TypeError: Argument 1 ('item') to SVGPointList.initialize must be an instance of SVGPoint.
 
 Reset points attribute to 0 0 100 0 100 100 0 100
 PASS poly1.setAttribute('points', '0 0 100 0 100 100 0 100') is undefined.
@@ -71,9 +71,9 @@ PASS dumpPoint(poly1.points.getItem(1)) is "x=100 y=0"
 PASS dumpPoint(poly1.points.getItem(2)) is "x=100 y=100"
 PASS dumpPoint(poly1.points.getItem(3)) is "x=0 y=100"
 PASS poly1.getAttribute('points').formatPointsAttribute() is "0 0 100 0 100 100 0 100"
-PASS poly1.points.insertItemBefore(30, 0) threw exception TypeError: Type error.
-PASS poly1.points.insertItemBefore('aString', 0) threw exception TypeError: Type error.
-PASS poly1.points.insertItemBefore(poly1, 0) threw exception TypeError: Type error.
+PASS poly1.points.insertItemBefore(30, 0) threw exception TypeError: Argument 1 ('item') to SVGPointList.insertItemBefore must be an instance of SVGPoint.
+PASS poly1.points.insertItemBefore('aString', 0) threw exception TypeError: Argument 1 ('item') to SVGPointList.insertItemBefore must be an instance of SVGPoint.
+PASS poly1.points.insertItemBefore(poly1, 0) threw exception TypeError: Argument 1 ('item') to SVGPointList.insertItemBefore must be an instance of SVGPoint.
 PASS poly1.points.insertItemBefore(null, 0) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
 
 Test uncommon arguments for replaceItem()
@@ -81,9 +81,9 @@ PASS poly1.points.replaceItem(30) threw exception TypeError: Not enough argument
 PASS poly1.points.replaceItem('aString') threw exception TypeError: Not enough arguments.
 PASS poly1.points.replaceItem(poly1) threw exception TypeError: Not enough arguments.
 PASS poly1.points.replaceItem(null, 0) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
-PASS poly1.points.replaceItem('aString', 0) threw exception TypeError: Type error.
-PASS poly1.points.replaceItem(poly1, 0) threw exception TypeError: Type error.
-PASS poly1.points.replaceItem(1, 0) threw exception TypeError: Type error.
+PASS poly1.points.replaceItem('aString', 0) threw exception TypeError: Argument 1 ('item') to SVGPointList.replaceItem must be an instance of SVGPoint.
+PASS poly1.points.replaceItem(poly1, 0) threw exception TypeError: Argument 1 ('item') to SVGPointList.replaceItem must be an instance of SVGPoint.
+PASS poly1.points.replaceItem(1, 0) threw exception TypeError: Argument 1 ('item') to SVGPointList.replaceItem must be an instance of SVGPoint.
 
 Test uncommon arguments for replaceItem() and xml-dom synchronization
 PASS poly1.points.numberOfItems is 4
@@ -139,9 +139,9 @@ PASS dumpPoint(poly1.points.getItem(0)) is "x=0 y=100"
 PASS poly1.getAttribute('points').formatPointsAttribute() is "0 100"
 
 Test uncommon arguments for appendItem()
-PASS poly1.points.appendItem(30) threw exception TypeError: Type error.
-PASS poly1.points.appendItem('aString') threw exception TypeError: Type error.
-PASS poly1.points.appendItem(poly1) threw exception TypeError: Type error.
+PASS poly1.points.appendItem(30) threw exception TypeError: Argument 1 ('item') to SVGPointList.appendItem must be an instance of SVGPoint.
+PASS poly1.points.appendItem('aString') threw exception TypeError: Argument 1 ('item') to SVGPointList.appendItem must be an instance of SVGPoint.
+PASS poly1.points.appendItem(poly1) threw exception TypeError: Argument 1 ('item') to SVGPointList.appendItem must be an instance of SVGPoint.
 PASS poly1.points.appendItem(null) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
 PASS dumpPoint(poly1.points.appendItem(point)) is "x=200 y=100"
 PASS poly1.points.numberOfItems is 2

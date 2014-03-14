@@ -4,7 +4,7 @@ PASS: Not enough arguments
 PASS: undefined
 PASS: undefined
 PASS: undefined
-PASS: Type error
+PASS: Argument 5 ('creationCallback') to WorkerGlobalScope.openDatabaseSync must be a function
 PASS: openDatabaseSync() succeeded.
 PASS: openDatabaseSync() succeeded.
 PASS: calling openDatabaseSync() with a creation callback succeeded.

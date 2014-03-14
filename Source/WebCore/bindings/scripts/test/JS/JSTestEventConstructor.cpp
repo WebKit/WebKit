@@ -193,7 +193,7 @@ EncodedJSValue jsTestEventConstructorAttr1(ExecState* exec, JSObject* slotBase, 
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'attr1' on a non-TestEventConstructor object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestEventConstructor", ".", "attr1", " getter can only be used on instances of ", "TestEventConstructor"));
     }
     UNUSED_PARAM(exec);
     TestEventConstructor& impl = castedThis->impl();
@@ -212,7 +212,7 @@ EncodedJSValue jsTestEventConstructorAttr2(ExecState* exec, JSObject* slotBase, 
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'attr2' on a non-TestEventConstructor object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestEventConstructor", ".", "attr2", " getter can only be used on instances of ", "TestEventConstructor"));
     }
     UNUSED_PARAM(exec);
     TestEventConstructor& impl = castedThis->impl();

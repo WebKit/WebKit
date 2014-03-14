@@ -2145,7 +2145,7 @@ sub GenerateImplementation
                 push(@implContent, "            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String(\"Deprecated attempt to access property '$name' on a non-$interfaceName object.\"));\n");
                 push(@implContent, "            return JSValue::encode(jsUndefined());\n");
                 push(@implContent, "        }\n");
-                push(@implContent, "        return throwVMTypeError(exec);\n");
+                push(@implContent, "        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString(\"The \", \"$interfaceName\", \".\", \"$name\", \" getter can only be used on instances of \", \"$interfaceName\"));\n");
                 push(@implContent, "    }\n");
             } else {
                 push(@implContent, "    UNUSED_PARAM(thisValue);\n");
@@ -2496,7 +2496,7 @@ sub GenerateImplementation
                         push(@implContent, "    }\n");
                     }
                     push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
-                    push(@implContent, "        throwVMTypeError(exec);\n");
+                    push(@implContent, "        throwVMTypeError(exec, makeDOMBindingsTypeErrorString(\"The \", \"$interfaceName\", \".\", \"$name\", \" setter can only be used on instances of \", \"$interfaceName\"));\n");
                     push(@implContent, "        return;\n");
                     push(@implContent, "    }\n");
                 }
@@ -2557,7 +2557,7 @@ sub GenerateImplementation
                         my $argType = $attribute->signature->type;
                         if ($codeGenerator->IsWrapperType($argType)) {
                             push(@implContent, "    if (!value.isUndefinedOrNull() && !value.inherits(JS${argType}::info())) {\n");
-                            push(@implContent, "        throwVMTypeError(exec);\n");
+                            push(@implContent, "        throwVMTypeError(exec, makeDOMBindingsTypeErrorString(\"The \", \"$interfaceName\", \".\", \"$name\", \" attribute must an instance of \", \"$argType\"));\n");
                             push(@implContent, "        return;\n");
                             push(@implContent, "    };\n");
                         }
@@ -2729,8 +2729,9 @@ sub GenerateImplementation
                 } else {
                     push(@implContent, "    JSValue thisValue = exec->hostThisValue();\n");
                     push(@implContent, "    $className* castedThis = jsDynamicCast<$className*>(thisValue);\n");
+                    my $domFunctionName = $function->signature->name;
                     push(@implContent, "    if (UNLIKELY(!castedThis))\n");
-                    push(@implContent, "        return throwVMTypeError(exec);\n");
+                    push(@implContent, "        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString(\"Can only call \", \"$interfaceName\", \".\", \"$domFunctionName\", \" on instances of \", \"$interfaceName\"));\n");
                 }
 
                 push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, ${className}::info());\n");
@@ -3156,7 +3157,8 @@ sub GenerateParametersCheck
     my $argsIndex = 0;
     my $hasOptionalArguments = 0;
     my $raisesException = $function->signature->extendedAttributes->{"RaisesException"};
-
+    
+    my $className = $interface->name;
     my @arguments;
     my $functionName;
     my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
@@ -3171,17 +3173,23 @@ sub GenerateParametersCheck
     } else {
         $functionName = "impl.${functionImplementationName}";
     }
-
+    
+    
+    my $prettyFunctionName;
     if (!$function->signature->extendedAttributes->{"Constructor"}) {
+        my $name = $function->signature->name;
+        $prettyFunctionName = "\"$interfaceName\", \".\", \"$name\"";
         push(@arguments, GenerateCallWith($function->signature->extendedAttributes->{"CallWith"}, \@$outputArray, "JSValue::encode(jsUndefined())", $function));
+    } else {
+        $prettyFunctionName = "\"the \", \"$interfaceName\", \" constructor\"";
     }
 
     $implIncludes{"ExceptionCode.h"} = 1;
     $implIncludes{"JSDOMBinding.h"} = 1;
-
+    my $argumentIndex = 0;
     foreach my $parameter (@{$function->parameters}) {
         my $argType = $parameter->type;
-
+        $argumentIndex = $argumentIndex + 1;
         # Optional arguments with [Optional] should generate an early call with fewer arguments.
         # Optional arguments with [Optional=...] should not generate the early call.
         # Optional Dictionary arguments always considered to have default of empty dictionary.
@@ -3220,7 +3228,7 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    RefPtr<$argType> $name;\n");
                 push(@$outputArray, "    if (!exec->argument($argsIndex).isUndefinedOrNull()) {\n");
                 push(@$outputArray, "        if (!exec->uncheckedArgument($argsIndex).isFunction())\n");
-                push(@$outputArray, "            return throwVMTypeError(exec);\n");
+                push(@$outputArray, "            return throwVMTypeError(exec, makeDOMBindingsTypeErrorString(\"Argument \", \"$argumentIndex\", \" ('\", \"$name\", \"') to \", $prettyFunctionName, \" must be a function\"));\n");
                 if ($function->isStatic) {
                     AddToImplIncludes("CallbackFunction.h");
                     push(@$outputArray, "        $name = createFunctionOnlyCallback<${callbackClassName}>(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->uncheckedArgument($argsIndex));\n");
@@ -3230,7 +3238,7 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    }\n");
             } else {
                 push(@$outputArray, "    if (!exec->argument($argsIndex).isFunction())\n");
-                push(@$outputArray, "        return throwVMTypeError(exec);\n");
+                push(@$outputArray, "        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString(\"Argument \", \"$argumentIndex\", \" ('\", \"$name\", \"') to \", $prettyFunctionName, \" must be a function\"));\n");
                 if ($function->isStatic) {
                     AddToImplIncludes("CallbackFunction.h");
                     push(@$outputArray, "    RefPtr<$argType> $name = createFunctionOnlyCallback<${callbackClassName}>(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->uncheckedArgument($argsIndex));\n");
@@ -3258,7 +3266,7 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    Vector<$nativeElementType> $name;\n");
                 push(@$outputArray, "    for (unsigned i = $argsIndex, count = exec->argumentCount(); i < count; ++i) {\n");
                 push(@$outputArray, "        if (!exec->uncheckedArgument(i).inherits(JS${argType}::info()))\n");
-                push(@$outputArray, "            return throwVMTypeError(exec);\n");
+                push(@$outputArray, "            return throwVMTypeError(exec, makeDOMBindingsTypeErrorString(\"Argument \", \"$argumentIndex\", \" ('\", \"$name\", \"') to \", $prettyFunctionName, \" must be a function\"));\n");
                 push(@$outputArray, "        $name.append(to$argType(exec->uncheckedArgument(i)));\n");
                 push(@$outputArray, "    }\n")
             } else {
@@ -3278,11 +3286,18 @@ sub GenerateParametersCheck
 
             my @enumValues = $codeGenerator->ValidEnumValues($argType);
             my @enumChecks = ();
+            my $enums = 0;
             foreach my $enumValue (@enumValues) {
                 push(@enumChecks, "${name} != \"$enumValue\"");
+                if (!$enums) {
+                    $enums = "\\\"$enumValue\\\"";
+                } else {
+                    $enums = $enums . ", \\\"" . $enumValue . "\\\"";
+                }
+                
             }
             push (@$outputArray, "    if (" . join(" && ", @enumChecks) . ")\n");
-            push (@$outputArray, "        return throwVMTypeError(exec);\n");
+            push (@$outputArray, "        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString(\"Argument \", \"$argumentIndex\", \" ('\", \"$name\", \"') to \", $prettyFunctionName, \" must be one of: \", \"$enums\"));\n");
         } else {
             # If the "StrictTypeChecking" extended attribute is present, and the argument's type is an
             # interface type, then if the incoming value does not implement that interface, a TypeError
@@ -3295,7 +3310,7 @@ sub GenerateParametersCheck
                 my $argValue = "exec->argument($argsIndex)";
                 if ($codeGenerator->IsWrapperType($argType)) {
                     push(@$outputArray, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.inherits(JS${argType}::info()))\n");
-                    push(@$outputArray, "        return throwVMTypeError(exec);\n");
+                    push(@$outputArray, "        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString(\"Argument \", \"$argumentIndex\", \" ('\", \"$name\", \"') to \", $prettyFunctionName, \" must be an instance of \", \"$argType\"));\n");
                 }
             }
 

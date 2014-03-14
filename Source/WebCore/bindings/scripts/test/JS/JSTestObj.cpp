@@ -225,7 +225,7 @@ EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::constructJSTestObj(ExecState*
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     if (!exec->argument(0).isFunction())
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Argument ", "1", " ('", "testCallback", "') to ", "the ", "TestObj", " constructor", " must be a function"));
     RefPtr<TestCallback> testCallback = JSTestCallback::create(asObject(exec->uncheckedArgument(0)), castedThis->globalObject());
     RefPtr<TestObj> object = TestObj::create(testCallback);
     return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));
@@ -1022,7 +1022,7 @@ EncodedJSValue jsTestObjReadOnlyLongAttr(ExecState* exec, JSObject* slotBase, En
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'readOnlyLongAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "readOnlyLongAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1041,7 +1041,7 @@ EncodedJSValue jsTestObjReadOnlyStringAttr(ExecState* exec, JSObject* slotBase, 
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'readOnlyStringAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "readOnlyStringAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1060,7 +1060,7 @@ EncodedJSValue jsTestObjReadOnlyTestObjAttr(ExecState* exec, JSObject* slotBase,
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'readOnlyTestObjAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "readOnlyTestObjAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1099,7 +1099,7 @@ EncodedJSValue jsTestObjConstructorTestSubObj(ExecState* exec, JSObject* slotBas
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'TestSubObj' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "TestSubObj", " getter can only be used on instances of ", "TestObj"));
     }
     return JSValue::encode(JSTestSubObj::getConstructor(exec->vm(), castedThis->globalObject()));
 }
@@ -1115,7 +1115,7 @@ EncodedJSValue jsTestObjTestSubObjEnabledBySettingConstructor(ExecState* exec, J
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'TestSubObjEnabledBySetting' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "TestSubObjEnabledBySetting", " getter can only be used on instances of ", "TestObj"));
     }
     if (!castedThis->impl().frame())
         return JSValue::encode(jsUndefined());
@@ -1136,7 +1136,7 @@ EncodedJSValue jsTestObjEnumAttr(ExecState* exec, JSObject* slotBase, EncodedJSV
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'enumAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "enumAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1155,7 +1155,7 @@ EncodedJSValue jsTestObjByteAttr(ExecState* exec, JSObject* slotBase, EncodedJSV
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'byteAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "byteAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1174,7 +1174,7 @@ EncodedJSValue jsTestObjOctetAttr(ExecState* exec, JSObject* slotBase, EncodedJS
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'octetAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "octetAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1193,7 +1193,7 @@ EncodedJSValue jsTestObjShortAttr(ExecState* exec, JSObject* slotBase, EncodedJS
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'shortAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "shortAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1212,7 +1212,7 @@ EncodedJSValue jsTestObjUnsignedShortAttr(ExecState* exec, JSObject* slotBase, E
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'unsignedShortAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "unsignedShortAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1231,7 +1231,7 @@ EncodedJSValue jsTestObjLongAttr(ExecState* exec, JSObject* slotBase, EncodedJSV
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'longAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "longAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1250,7 +1250,7 @@ EncodedJSValue jsTestObjLongLongAttr(ExecState* exec, JSObject* slotBase, Encode
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'longLongAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "longLongAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1269,7 +1269,7 @@ EncodedJSValue jsTestObjUnsignedLongLongAttr(ExecState* exec, JSObject* slotBase
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'unsignedLongLongAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "unsignedLongLongAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1288,7 +1288,7 @@ EncodedJSValue jsTestObjStringAttr(ExecState* exec, JSObject* slotBase, EncodedJ
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'stringAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "stringAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1307,7 +1307,7 @@ EncodedJSValue jsTestObjTestObjAttr(ExecState* exec, JSObject* slotBase, Encoded
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'testObjAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "testObjAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1326,7 +1326,7 @@ EncodedJSValue jsTestObjXMLObjAttr(ExecState* exec, JSObject* slotBase, EncodedJ
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'XMLObjAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "XMLObjAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1345,7 +1345,7 @@ EncodedJSValue jsTestObjCreate(ExecState* exec, JSObject* slotBase, EncodedJSVal
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'create' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "create", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1364,7 +1364,7 @@ EncodedJSValue jsTestObjReflectedStringAttr(ExecState* exec, JSObject* slotBase,
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'reflectedStringAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "reflectedStringAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1383,7 +1383,7 @@ EncodedJSValue jsTestObjReflectedIntegralAttr(ExecState* exec, JSObject* slotBas
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'reflectedIntegralAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "reflectedIntegralAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1402,7 +1402,7 @@ EncodedJSValue jsTestObjReflectedUnsignedIntegralAttr(ExecState* exec, JSObject*
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'reflectedUnsignedIntegralAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "reflectedUnsignedIntegralAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1421,7 +1421,7 @@ EncodedJSValue jsTestObjReflectedBooleanAttr(ExecState* exec, JSObject* slotBase
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'reflectedBooleanAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "reflectedBooleanAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1440,7 +1440,7 @@ EncodedJSValue jsTestObjReflectedURLAttr(ExecState* exec, JSObject* slotBase, En
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'reflectedURLAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "reflectedURLAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1459,7 +1459,7 @@ EncodedJSValue jsTestObjReflectedStringAttr(ExecState* exec, JSObject* slotBase,
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'reflectedStringAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "reflectedStringAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1478,7 +1478,7 @@ EncodedJSValue jsTestObjReflectedCustomIntegralAttr(ExecState* exec, JSObject* s
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'reflectedCustomIntegralAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "reflectedCustomIntegralAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1497,7 +1497,7 @@ EncodedJSValue jsTestObjReflectedCustomBooleanAttr(ExecState* exec, JSObject* sl
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'reflectedCustomBooleanAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "reflectedCustomBooleanAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1516,7 +1516,7 @@ EncodedJSValue jsTestObjReflectedCustomURLAttr(ExecState* exec, JSObject* slotBa
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'reflectedCustomURLAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "reflectedCustomURLAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1535,7 +1535,7 @@ EncodedJSValue jsTestObjTypedArrayAttr(ExecState* exec, JSObject* slotBase, Enco
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'typedArrayAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "typedArrayAttr", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1554,7 +1554,7 @@ EncodedJSValue jsTestObjAttrWithGetterException(ExecState* exec, JSObject* slotB
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'attrWithGetterException' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "attrWithGetterException", " getter can only be used on instances of ", "TestObj"));
     }
     ExceptionCode ec = 0;
     TestObj& impl = castedThis->impl();
@@ -1574,7 +1574,7 @@ EncodedJSValue jsTestObjAttrWithSetterException(ExecState* exec, JSObject* slotB
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'attrWithSetterException' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "attrWithSetterException", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1593,7 +1593,7 @@ EncodedJSValue jsTestObjStringAttrWithGetterException(ExecState* exec, JSObject*
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'stringAttrWithGetterException' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "stringAttrWithGetterException", " getter can only be used on instances of ", "TestObj"));
     }
     ExceptionCode ec = 0;
     TestObj& impl = castedThis->impl();
@@ -1613,7 +1613,7 @@ EncodedJSValue jsTestObjStringAttrWithSetterException(ExecState* exec, JSObject*
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'stringAttrWithSetterException' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "stringAttrWithSetterException", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1632,7 +1632,7 @@ EncodedJSValue jsTestObjCustomAttr(ExecState* exec, JSObject* slotBase, EncodedJ
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'customAttr' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "customAttr", " getter can only be used on instances of ", "TestObj"));
     }
     return JSValue::encode(castedThis->customAttr(exec));
 }
@@ -1648,7 +1648,7 @@ EncodedJSValue jsTestObjWithScriptStateAttribute(ExecState* exec, JSObject* slot
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'withScriptStateAttribute' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "withScriptStateAttribute", " getter can only be used on instances of ", "TestObj"));
     }
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.withScriptStateAttribute(exec));
@@ -1666,7 +1666,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAttribute(ExecState* exec, JSO
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'withScriptExecutionContextAttribute' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "withScriptExecutionContextAttribute", " getter can only be used on instances of ", "TestObj"));
     }
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
@@ -1687,7 +1687,7 @@ EncodedJSValue jsTestObjWithScriptStateAttributeRaises(ExecState* exec, JSObject
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'withScriptStateAttributeRaises' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "withScriptStateAttributeRaises", " getter can only be used on instances of ", "TestObj"));
     }
     ExceptionCode ec = 0;
     TestObj& impl = castedThis->impl();
@@ -1707,7 +1707,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAttributeRaises(ExecState* exe
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'withScriptExecutionContextAttributeRaises' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "withScriptExecutionContextAttributeRaises", " getter can only be used on instances of ", "TestObj"));
     }
     ExceptionCode ec = 0;
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
@@ -1730,7 +1730,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecSt
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'withScriptExecutionContextAndScriptStateAttribute' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "withScriptExecutionContextAndScriptStateAttribute", " getter can only be used on instances of ", "TestObj"));
     }
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
@@ -1751,7 +1751,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'withScriptExecutionContextAndScriptStateAttributeRaises' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "withScriptExecutionContextAndScriptStateAttributeRaises", " getter can only be used on instances of ", "TestObj"));
     }
     ExceptionCode ec = 0;
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
@@ -1774,7 +1774,7 @@ EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttrib
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'withScriptExecutionContextAndScriptStateWithSpacesAttribute' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "withScriptExecutionContextAndScriptStateWithSpacesAttribute", " getter can only be used on instances of ", "TestObj"));
     }
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
@@ -1795,7 +1795,7 @@ EncodedJSValue jsTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* exec
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'withScriptArgumentsAndCallStackAttribute' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "withScriptArgumentsAndCallStackAttribute", " getter can only be used on instances of ", "TestObj"));
     }
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptArgumentsAndCallStackAttribute()));
@@ -1814,7 +1814,7 @@ EncodedJSValue jsTestObjConditionalAttr1(ExecState* exec, JSObject* slotBase, En
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'conditionalAttr1' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "conditionalAttr1", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1835,7 +1835,7 @@ EncodedJSValue jsTestObjConditionalAttr2(ExecState* exec, JSObject* slotBase, En
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'conditionalAttr2' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "conditionalAttr2", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1856,7 +1856,7 @@ EncodedJSValue jsTestObjConditionalAttr3(ExecState* exec, JSObject* slotBase, En
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'conditionalAttr3' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "conditionalAttr3", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1877,7 +1877,7 @@ EncodedJSValue jsTestObjConditionalAttr4Constructor(ExecState* exec, JSObject* s
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'conditionalAttr4' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "conditionalAttr4", " getter can only be used on instances of ", "TestObj"));
     }
     return JSValue::encode(JSTestObjectA::getConstructor(exec->vm(), castedThis->globalObject()));
 }
@@ -1895,7 +1895,7 @@ EncodedJSValue jsTestObjConditionalAttr5Constructor(ExecState* exec, JSObject* s
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'conditionalAttr5' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "conditionalAttr5", " getter can only be used on instances of ", "TestObj"));
     }
     return JSValue::encode(JSTestObjectB::getConstructor(exec->vm(), castedThis->globalObject()));
 }
@@ -1913,7 +1913,7 @@ EncodedJSValue jsTestObjConditionalAttr6Constructor(ExecState* exec, JSObject* s
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'conditionalAttr6' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "conditionalAttr6", " getter can only be used on instances of ", "TestObj"));
     }
     return JSValue::encode(JSTestObjectC::getConstructor(exec->vm(), castedThis->globalObject()));
 }
@@ -1930,7 +1930,7 @@ EncodedJSValue jsTestObjCachedAttribute1(ExecState* exec, JSObject* slotBase, En
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'cachedAttribute1' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "cachedAttribute1", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     if (JSValue cachedValue = castedThis->m_cachedAttribute1.get())
@@ -1952,7 +1952,7 @@ EncodedJSValue jsTestObjCachedAttribute2(ExecState* exec, JSObject* slotBase, En
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'cachedAttribute2' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "cachedAttribute2", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     if (JSValue cachedValue = castedThis->m_cachedAttribute2.get())
@@ -1974,7 +1974,7 @@ EncodedJSValue jsTestObjAnyAttribute(ExecState* exec, JSObject* slotBase, Encode
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'anyAttribute' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "anyAttribute", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -1993,7 +1993,7 @@ EncodedJSValue jsTestObjContentDocument(ExecState* exec, JSObject* slotBase, Enc
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'contentDocument' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "contentDocument", " getter can only be used on instances of ", "TestObj"));
     }
     TestObj& impl = castedThis->impl();
     return JSValue::encode(shouldAllowAccessToNode(exec, impl.contentDocument()) ? toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.contentDocument())) : jsNull());
@@ -2010,7 +2010,7 @@ EncodedJSValue jsTestObjMutablePoint(ExecState* exec, JSObject* slotBase, Encode
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'mutablePoint' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "mutablePoint", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -2029,7 +2029,7 @@ EncodedJSValue jsTestObjImmutablePoint(ExecState* exec, JSObject* slotBase, Enco
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'immutablePoint' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "immutablePoint", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -2048,7 +2048,7 @@ EncodedJSValue jsTestObjStrawberry(ExecState* exec, JSObject* slotBase, EncodedJ
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'strawberry' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "strawberry", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -2067,7 +2067,7 @@ EncodedJSValue jsTestObjStrictFloat(ExecState* exec, JSObject* slotBase, Encoded
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'strictFloat' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "strictFloat", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -2086,7 +2086,7 @@ EncodedJSValue jsTestObjDescription(ExecState* exec, JSObject* slotBase, Encoded
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'description' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "description", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -2105,7 +2105,7 @@ EncodedJSValue jsTestObjId(ExecState* exec, JSObject* slotBase, EncodedJSValue t
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'id' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "id", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -2124,7 +2124,7 @@ EncodedJSValue jsTestObjHash(ExecState* exec, JSObject* slotBase, EncodedJSValue
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'hash' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "hash", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -2143,7 +2143,7 @@ EncodedJSValue jsTestObjReplaceableAttribute(ExecState* exec, JSObject* slotBase
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'replaceableAttribute' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "replaceableAttribute", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -2162,7 +2162,7 @@ EncodedJSValue jsTestObjNullableDoubleAttribute(ExecState* exec, JSObject* slotB
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'nullableDoubleAttribute' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "nullableDoubleAttribute", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     bool isNull = false;
@@ -2184,7 +2184,7 @@ EncodedJSValue jsTestObjNullableLongAttribute(ExecState* exec, JSObject* slotBas
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'nullableLongAttribute' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "nullableLongAttribute", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     bool isNull = false;
@@ -2206,7 +2206,7 @@ EncodedJSValue jsTestObjNullableBooleanAttribute(ExecState* exec, JSObject* slot
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'nullableBooleanAttribute' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "nullableBooleanAttribute", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     bool isNull = false;
@@ -2228,7 +2228,7 @@ EncodedJSValue jsTestObjNullableStringAttribute(ExecState* exec, JSObject* slotB
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'nullableStringAttribute' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "nullableStringAttribute", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     bool isNull = false;
@@ -2250,7 +2250,7 @@ EncodedJSValue jsTestObjNullableLongSettableAttribute(ExecState* exec, JSObject*
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'nullableLongSettableAttribute' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "nullableLongSettableAttribute", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     bool isNull = false;
@@ -2272,7 +2272,7 @@ EncodedJSValue jsTestObjNullableStringValue(ExecState* exec, JSObject* slotBase,
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'nullableStringValue' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "nullableStringValue", " getter can only be used on instances of ", "TestObj"));
     }
     ExceptionCode ec = 0;
     bool isNull = false;
@@ -2295,7 +2295,7 @@ EncodedJSValue jsTestObjAttribute(ExecState* exec, JSObject* slotBase, EncodedJS
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'attribute' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "attribute", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -2314,7 +2314,7 @@ EncodedJSValue jsTestObjAttributeWithReservedEnumType(ExecState* exec, JSObject*
             scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'attributeWithReservedEnumType' on a non-TestObj object."));
             return JSValue::encode(jsUndefined());
         }
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "attributeWithReservedEnumType", " getter can only be used on instances of ", "TestObj"));
     }
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
@@ -2350,7 +2350,7 @@ void setJSTestObjTestSubObjEnabledBySettingConstructor(ExecState* exec, JSObject
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "TestSubObjEnabledBySetting", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     // Shadowing a built-in constructor
@@ -2364,7 +2364,7 @@ void setJSTestObjEnumAttr(ExecState* exec, JSObject* /* baseObject */, EncodedJS
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "enumAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2383,7 +2383,7 @@ void setJSTestObjByteAttr(ExecState* exec, JSObject* /* baseObject */, EncodedJS
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "byteAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2400,7 +2400,7 @@ void setJSTestObjOctetAttr(ExecState* exec, JSObject* /* baseObject */, EncodedJ
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "octetAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2417,7 +2417,7 @@ void setJSTestObjShortAttr(ExecState* exec, JSObject* /* baseObject */, EncodedJ
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "shortAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2434,7 +2434,7 @@ void setJSTestObjUnsignedShortAttr(ExecState* exec, JSObject* /* baseObject */, 
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "unsignedShortAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2451,7 +2451,7 @@ void setJSTestObjLongAttr(ExecState* exec, JSObject* /* baseObject */, EncodedJS
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "longAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2468,7 +2468,7 @@ void setJSTestObjLongLongAttr(ExecState* exec, JSObject* /* baseObject */, Encod
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "longLongAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2485,7 +2485,7 @@ void setJSTestObjUnsignedLongLongAttr(ExecState* exec, JSObject* /* baseObject *
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "unsignedLongLongAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2502,7 +2502,7 @@ void setJSTestObjStringAttr(ExecState* exec, JSObject* /* baseObject */, Encoded
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "stringAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2519,7 +2519,7 @@ void setJSTestObjTestObjAttr(ExecState* exec, JSObject* /* baseObject */, Encode
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "testObjAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2536,7 +2536,7 @@ void setJSTestObjXMLObjAttr(ExecState* exec, JSObject* /* baseObject */, Encoded
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "XMLObjAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2553,7 +2553,7 @@ void setJSTestObjCreate(ExecState* exec, JSObject* /* baseObject */, EncodedJSVa
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "create", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2570,7 +2570,7 @@ void setJSTestObjReflectedStringAttr(ExecState* exec, JSObject* /* baseObject */
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "reflectedStringAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2587,7 +2587,7 @@ void setJSTestObjReflectedIntegralAttr(ExecState* exec, JSObject* /* baseObject 
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "reflectedIntegralAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2604,7 +2604,7 @@ void setJSTestObjReflectedUnsignedIntegralAttr(ExecState* exec, JSObject* /* bas
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "reflectedUnsignedIntegralAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2621,7 +2621,7 @@ void setJSTestObjReflectedBooleanAttr(ExecState* exec, JSObject* /* baseObject *
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "reflectedBooleanAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2638,7 +2638,7 @@ void setJSTestObjReflectedURLAttr(ExecState* exec, JSObject* /* baseObject */, E
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "reflectedURLAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2655,7 +2655,7 @@ void setJSTestObjReflectedStringAttr(ExecState* exec, JSObject* /* baseObject */
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "reflectedStringAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2672,7 +2672,7 @@ void setJSTestObjReflectedCustomIntegralAttr(ExecState* exec, JSObject* /* baseO
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "reflectedCustomIntegralAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2689,7 +2689,7 @@ void setJSTestObjReflectedCustomBooleanAttr(ExecState* exec, JSObject* /* baseOb
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "reflectedCustomBooleanAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2706,7 +2706,7 @@ void setJSTestObjReflectedCustomURLAttr(ExecState* exec, JSObject* /* baseObject
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "reflectedCustomURLAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2723,7 +2723,7 @@ void setJSTestObjTypedArrayAttr(ExecState* exec, JSObject* /* baseObject */, Enc
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "typedArrayAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2740,7 +2740,7 @@ void setJSTestObjAttrWithGetterException(ExecState* exec, JSObject* /* baseObjec
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "attrWithGetterException", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2757,7 +2757,7 @@ void setJSTestObjAttrWithSetterException(ExecState* exec, JSObject* /* baseObjec
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "attrWithSetterException", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2776,7 +2776,7 @@ void setJSTestObjStringAttrWithGetterException(ExecState* exec, JSObject* /* bas
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "stringAttrWithGetterException", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2793,7 +2793,7 @@ void setJSTestObjStringAttrWithSetterException(ExecState* exec, JSObject* /* bas
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "stringAttrWithSetterException", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2812,7 +2812,7 @@ void setJSTestObjCustomAttr(ExecState* exec, JSObject* /* baseObject */, Encoded
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "customAttr", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     castedThis->setCustomAttr(exec, value);
@@ -2825,7 +2825,7 @@ void setJSTestObjWithScriptStateAttribute(ExecState* exec, JSObject* /* baseObje
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "withScriptStateAttribute", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2842,7 +2842,7 @@ void setJSTestObjWithScriptExecutionContextAttribute(ExecState* exec, JSObject* 
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "withScriptExecutionContextAttribute", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2862,7 +2862,7 @@ void setJSTestObjWithScriptStateAttributeRaises(ExecState* exec, JSObject* /* ba
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "withScriptStateAttributeRaises", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2879,7 +2879,7 @@ void setJSTestObjWithScriptExecutionContextAttributeRaises(ExecState* exec, JSOb
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "withScriptExecutionContextAttributeRaises", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2899,7 +2899,7 @@ void setJSTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecState* ex
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "withScriptExecutionContextAndScriptStateAttribute", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2919,7 +2919,7 @@ void setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecSta
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "withScriptExecutionContextAndScriptStateAttributeRaises", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2939,7 +2939,7 @@ void setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(Exe
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "withScriptExecutionContextAndScriptStateWithSpacesAttribute", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2959,7 +2959,7 @@ void setJSTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* exec, JSObj
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "withScriptArgumentsAndCallStackAttribute", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2977,7 +2977,7 @@ void setJSTestObjConditionalAttr1(ExecState* exec, JSObject* /* baseObject */, E
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "conditionalAttr1", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -2996,7 +2996,7 @@ void setJSTestObjConditionalAttr2(ExecState* exec, JSObject* /* baseObject */, E
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "conditionalAttr2", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -3015,7 +3015,7 @@ void setJSTestObjConditionalAttr3(ExecState* exec, JSObject* /* baseObject */, E
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "conditionalAttr3", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -3034,7 +3034,7 @@ void setJSTestObjConditionalAttr4Constructor(ExecState* exec, JSObject* /* baseO
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "conditionalAttr4", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     // Shadowing a built-in constructor
@@ -3050,7 +3050,7 @@ void setJSTestObjConditionalAttr5Constructor(ExecState* exec, JSObject* /* baseO
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "conditionalAttr5", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     // Shadowing a built-in constructor
@@ -3066,7 +3066,7 @@ void setJSTestObjConditionalAttr6Constructor(ExecState* exec, JSObject* /* baseO
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "conditionalAttr6", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     // Shadowing a built-in constructor
@@ -3081,7 +3081,7 @@ void setJSTestObjAnyAttribute(ExecState* exec, JSObject* /* baseObject */, Encod
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "anyAttribute", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -3098,7 +3098,7 @@ void setJSTestObjMutablePoint(ExecState* exec, JSObject* /* baseObject */, Encod
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "mutablePoint", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -3115,7 +3115,7 @@ void setJSTestObjImmutablePoint(ExecState* exec, JSObject* /* baseObject */, Enc
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "immutablePoint", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -3132,7 +3132,7 @@ void setJSTestObjStrawberry(ExecState* exec, JSObject* /* baseObject */, Encoded
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "strawberry", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -3149,7 +3149,7 @@ void setJSTestObjStrictFloat(ExecState* exec, JSObject* /* baseObject */, Encode
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "strictFloat", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -3166,7 +3166,7 @@ void setJSTestObjId(ExecState* exec, JSObject* /* baseObject */, EncodedJSValue 
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "id", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -3183,7 +3183,7 @@ void setJSTestObjReplaceableAttribute(ExecState* exec, JSObject* /* baseObject *
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "replaceableAttribute", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     // Shadowing a built-in object
@@ -3197,7 +3197,7 @@ void setJSTestObjNullableLongSettableAttribute(ExecState* exec, JSObject* /* bas
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "nullableLongSettableAttribute", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -3214,7 +3214,7 @@ void setJSTestObjNullableStringValue(ExecState* exec, JSObject* /* baseObject */
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "nullableStringValue", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -3231,7 +3231,7 @@ void setJSTestObjAttributeWithReservedEnumType(ExecState* exec, JSObject* /* bas
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        throwVMTypeError(exec);
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestObj", ".", "attributeWithReservedEnumType", " setter can only be used on instances of ", "TestObj"));
         return;
     }
     TestObj& impl = castedThis->impl();
@@ -3254,7 +3254,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethod(ExecState* exe
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "voidMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     impl.voidMethod();
@@ -3266,7 +3266,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(ExecSt
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "voidMethodWithArgs", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 3)
@@ -3289,7 +3289,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethod(ExecState* exe
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "byteMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.byteMethod());
@@ -3301,7 +3301,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethodWithArgs(ExecSt
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "byteMethodWithArgs", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 3)
@@ -3324,7 +3324,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethod(ExecState* ex
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "octetMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.octetMethod());
@@ -3336,7 +3336,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethodWithArgs(ExecS
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "octetMethodWithArgs", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 3)
@@ -3359,7 +3359,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethod(ExecState* exe
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "longMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.longMethod());
@@ -3371,7 +3371,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethodWithArgs(ExecSt
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "longMethodWithArgs", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 3)
@@ -3394,7 +3394,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethod(ExecState* exec
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "objMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.objMethod()));
@@ -3406,7 +3406,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecSta
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "objMethodWithArgs", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 3)
@@ -3429,7 +3429,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithSequenceArg(Exe
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "methodWithSequenceArg", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -3446,7 +3446,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodReturningSequence(E
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "methodReturningSequence", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -3463,7 +3463,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithEnumArg(ExecSta
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "methodWithEnumArg", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -3472,7 +3472,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithEnumArg(ExecSta
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     if (enumArg != "" && enumArg != "EnumValue1" && enumArg != "EnumValue2" && enumArg != "EnumValue3")
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Argument ", "1", " ('", "enumArg", "') to ", "TestObj", ".", "methodWithEnumArg", " must be one of: ", "\"\", \"EnumValue1\", \"EnumValue2\", \"EnumValue3\""));
     impl.methodWithEnumArg(enumArg);
     return JSValue::encode(jsUndefined());
 }
@@ -3482,7 +3482,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgs
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "methodThatRequiresAllArgsAndThrows", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
@@ -3505,7 +3505,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(ExecState
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "serializedValue", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -3522,7 +3522,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOptionsObject(ExecState* 
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "optionsObject", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -3542,7 +3542,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithException(ExecS
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "methodWithException", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     ExceptionCode ec = 0;
@@ -3556,7 +3556,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethod(ExecState* e
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "customMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     return JSValue::encode(castedThis->customMethod(exec));
 }
@@ -3566,7 +3566,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethodWithArgs(Exec
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "customMethodWithArgs", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     return JSValue::encode(castedThis->customMethodWithArgs(exec));
 }
@@ -3576,7 +3576,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAddEventListener(ExecStat
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "addEventListener", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     JSValue listener = exec->argument(1);
@@ -3591,7 +3591,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionRemoveEventListener(ExecS
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "removeEventListener", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     JSValue listener = exec->argument(1);
@@ -3606,7 +3606,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoid(ExecS
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "withScriptStateVoid", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     impl.withScriptStateVoid(exec);
@@ -3618,7 +3618,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObj(ExecSt
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "withScriptStateObj", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptStateObj(exec)));
@@ -3632,7 +3632,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoidExcept
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "withScriptStateVoidException", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     ExceptionCode ec = 0;
@@ -3646,7 +3646,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObjExcepti
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "withScriptStateObjException", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     ExceptionCode ec = 0;
@@ -3663,7 +3663,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "withScriptExecutionContext", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
@@ -3678,7 +3678,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "withScriptExecutionContextAndScriptState", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
@@ -3693,7 +3693,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "withScriptExecutionContextAndScriptStateObjException", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     ExceptionCode ec = 0;
@@ -3713,7 +3713,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "withScriptExecutionContextAndScriptStateWithSpaces", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
@@ -3730,7 +3730,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptArgumentsAndCal
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "withScriptArgumentsAndCallStack", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     RefPtr<Inspector::ScriptArguments> scriptArguments(Inspector::createScriptArguments(exec, 0));
@@ -3743,7 +3743,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArg(Exe
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "methodWithOptionalArg", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
 
@@ -3765,7 +3765,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "methodWithNonOptionalArgAndOptionalArg", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -3792,7 +3792,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "methodWithNonOptionalArgAndTwoOptionalArgs", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -3827,7 +3827,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalString(
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "methodWithOptionalString", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
 
@@ -3849,7 +3849,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringI
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "methodWithOptionalStringIsUndefined", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     const String& str(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
@@ -3864,7 +3864,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringI
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "methodWithOptionalStringIsNullString", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     const String& str(argumentOrNull(exec, 0).isEmpty() ? String() : argumentOrNull(exec, 0).toString(exec)->value(exec));
@@ -3879,13 +3879,13 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(Exe
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "methodWithCallbackArg", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     if (!exec->argument(0).isFunction())
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Argument ", "1", " ('", "callback", "') to ", "TestObj", ".", "methodWithCallbackArg", " must be a function"));
     RefPtr<TestCallback> callback = JSTestCallback::create(asObject(exec->uncheckedArgument(0)), castedThis->globalObject());
     impl.methodWithCallbackArg(callback);
     return JSValue::encode(jsUndefined());
@@ -3896,7 +3896,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "methodWithNonCallbackArgAndCallbackArg", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
@@ -3905,7 +3905,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     if (!exec->argument(1).isFunction())
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Argument ", "2", " ('", "callback", "') to ", "TestObj", ".", "methodWithNonCallbackArgAndCallbackArg", " must be a function"));
     RefPtr<TestCallback> callback = JSTestCallback::create(asObject(exec->uncheckedArgument(1)), castedThis->globalObject());
     impl.methodWithNonCallbackArgAndCallbackArg(nonCallback, callback);
     return JSValue::encode(jsUndefined());
@@ -3916,13 +3916,13 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOpti
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "methodWithCallbackAndOptionalArg", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     RefPtr<TestCallback> callback;
     if (!exec->argument(0).isUndefinedOrNull()) {
         if (!exec->uncheckedArgument(0).isFunction())
-            return throwVMTypeError(exec);
+            return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Argument ", "1", " ('", "callback", "') to ", "TestObj", ".", "methodWithCallbackAndOptionalArg", " must be a function"));
         callback = JSTestCallback::create(asObject(exec->uncheckedArgument(0)), castedThis->globalObject());
     }
     impl.methodWithCallbackAndOptionalArg(callback);
@@ -3934,7 +3934,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbac
     RefPtr<TestCallback> callback;
     if (!exec->argument(0).isUndefinedOrNull()) {
         if (!exec->uncheckedArgument(0).isFunction())
-            return throwVMTypeError(exec);
+            return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Argument ", "1", " ('", "callback", "') to ", "TestObj", ".", "staticMethodWithCallbackAndOptionalArg", " must be a function"));
         callback = createFunctionOnlyCallback<JSTestCallback>(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->uncheckedArgument(0));
     }
     TestObj::staticMethodWithCallbackAndOptionalArg(callback);
@@ -3946,7 +3946,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbac
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     if (!exec->argument(0).isFunction())
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Argument ", "1", " ('", "callback", "') to ", "TestObj", ".", "staticMethodWithCallbackArg", " must be a function"));
     RefPtr<TestCallback> callback = createFunctionOnlyCallback<JSTestCallback>(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->uncheckedArgument(0));
     TestObj::staticMethodWithCallbackArg(callback);
     return JSValue::encode(jsUndefined());
@@ -3958,7 +3958,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod1(ExecSt
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "conditionalMethod1", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.conditionalMethod1());
@@ -3973,7 +3973,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod2(ExecSt
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "conditionalMethod2", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     impl.conditionalMethod2();
@@ -3988,7 +3988,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod3(ExecSt
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "conditionalMethod3", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     impl.conditionalMethod3();
@@ -4002,7 +4002,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod1(
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "overloadedMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
@@ -4022,7 +4022,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod2(
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "overloadedMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4049,7 +4049,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod3(
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "overloadedMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4066,7 +4066,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod4(
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "overloadedMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4083,13 +4083,13 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod5(
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "overloadedMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     if (!exec->argument(0).isFunction())
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Argument ", "1", " ('", "callback", "') to ", "TestObj", ".", "overloadedMethod", " must be a function"));
     RefPtr<TestCallback> callback = JSTestCallback::create(asObject(exec->uncheckedArgument(0)), castedThis->globalObject());
     impl.overloadedMethod(callback);
     return JSValue::encode(jsUndefined());
@@ -4100,7 +4100,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod6(
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "overloadedMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4117,7 +4117,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod7(
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "overloadedMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4134,7 +4134,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod8(
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "overloadedMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4151,7 +4151,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod9(
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "overloadedMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4168,7 +4168,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod10
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "overloadedMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4185,7 +4185,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod11
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "overloadedMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4310,7 +4310,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithClamp(Exec
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "classMethodWithClamp", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
@@ -4340,7 +4340,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUnsignedLongSeq
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "methodWithUnsignedLongSequence", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4357,7 +4357,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStringArrayFunction(ExecS
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "stringArrayFunction", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4377,7 +4377,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionDomStringListFunction(Exe
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "domStringListFunction", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4397,7 +4397,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetSVGDocument(ExecState*
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "getSVGDocument", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     ExceptionCode ec = 0;
@@ -4414,7 +4414,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert1(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "convert1", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4431,7 +4431,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert2(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "convert2", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4448,7 +4448,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert4(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "convert4", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4465,7 +4465,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert5(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "convert5", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4482,7 +4482,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMutablePointFunction(Exec
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "mutablePointFunction", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl.mutablePointFunction())));
@@ -4494,7 +4494,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionImmutablePointFunction(Ex
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "immutablePointFunction", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl.immutablePointFunction())));
@@ -4506,7 +4506,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOrange(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "orange", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     impl.banana();
@@ -4518,7 +4518,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunction(ExecState*
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "strictFunction", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 3)
@@ -4544,14 +4544,14 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithSequenc
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "strictFunctionWithSequence", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
     if (exec->argumentCount() > 0 && !exec->argument(0).isUndefinedOrNull() && !exec->argument(0).inherits(JSTestObj::info()))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Argument ", "1", " ('", "objArg", "') to ", "TestObj", ".", "strictFunctionWithSequence", " must be an instance of ", "TestObj"));
     TestObj* objArg(toTestObj(exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
@@ -4569,14 +4569,14 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithArray(E
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "strictFunctionWithArray", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
     if (exec->argumentCount() > 0 && !exec->argument(0).isUndefinedOrNull() && !exec->argument(0).inherits(JSTestObj::info()))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Argument ", "1", " ('", "objArg", "') to ", "TestObj", ".", "strictFunctionWithArray", " must be an instance of ", "TestObj"));
     TestObj* objArg(toTestObj(exec->argument(0)));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
@@ -4594,7 +4594,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicStringMethod(Exec
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "variadicStringMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4614,7 +4614,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicDoubleMethod(Exec
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "variadicDoubleMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4634,7 +4634,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(ExecSt
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "variadicNodeMethod", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -4645,7 +4645,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(ExecSt
     Vector<Node*> tail;
     for (unsigned i = 1, count = exec->argumentCount(); i < count; ++i) {
         if (!exec->uncheckedArgument(i).inherits(JSNode::info()))
-            return throwVMTypeError(exec);
+            return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Argument ", "2", " ('", "tail", "') to ", "TestObj", ".", "variadicNodeMethod", " must be a function"));
         tail.append(toNode(exec->uncheckedArgument(i)));
     }
     impl.variadicNodeMethod(head, tail);
@@ -4657,7 +4657,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAny(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec);
+        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestObj", ".", "any", " on instances of ", "TestObj"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 2)

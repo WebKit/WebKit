@@ -91,10 +91,10 @@ PASS matrix.f is 0
 
 Check calling 'multiply' with invalid arguments
 PASS matrix.multiply() threw exception TypeError: Not enough arguments.
-PASS matrix.multiply(true) threw exception TypeError: Type error.
-PASS matrix.multiply(2) threw exception TypeError: Type error.
-PASS matrix.multiply('aString') threw exception TypeError: Type error.
-PASS matrix.multiply(svgElement) threw exception TypeError: Type error.
+PASS matrix.multiply(true) threw exception TypeError: Argument 1 ('secondMatrix') to SVGMatrix.multiply must be an instance of SVGMatrix.
+PASS matrix.multiply(2) threw exception TypeError: Argument 1 ('secondMatrix') to SVGMatrix.multiply must be an instance of SVGMatrix.
+PASS matrix.multiply('aString') threw exception TypeError: Argument 1 ('secondMatrix') to SVGMatrix.multiply must be an instance of SVGMatrix.
+PASS matrix.multiply(svgElement) threw exception TypeError: Argument 1 ('secondMatrix') to SVGMatrix.multiply must be an instance of SVGMatrix.
 
 Check calling 'translate' with invalid arguments
 PASS matrix.translate() threw exception TypeError: Not enough arguments.

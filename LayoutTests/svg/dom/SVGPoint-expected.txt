@@ -29,11 +29,11 @@ PASS newPoint.y is 210
 
 Check invalid arguments for 'matrixTransform'
 PASS point.matrixTransform() threw exception TypeError: Not enough arguments.
-PASS point.matrixTransform(-1) threw exception TypeError: Type error.
-PASS point.matrixTransform(5) threw exception TypeError: Type error.
-PASS point.matrixTransform('aString') threw exception TypeError: Type error.
-PASS point.matrixTransform(point) threw exception TypeError: Type error.
-PASS point.matrixTransform(svgElement) threw exception TypeError: Type error.
+PASS point.matrixTransform(-1) threw exception TypeError: Argument 1 ('matrix') to SVGPoint.matrixTransform must be an instance of SVGMatrix.
+PASS point.matrixTransform(5) threw exception TypeError: Argument 1 ('matrix') to SVGPoint.matrixTransform must be an instance of SVGMatrix.
+PASS point.matrixTransform('aString') threw exception TypeError: Argument 1 ('matrix') to SVGPoint.matrixTransform must be an instance of SVGMatrix.
+PASS point.matrixTransform(point) threw exception TypeError: Argument 1 ('matrix') to SVGPoint.matrixTransform must be an instance of SVGMatrix.
+PASS point.matrixTransform(svgElement) threw exception TypeError: Argument 1 ('matrix') to SVGPoint.matrixTransform must be an instance of SVGMatrix.
 PASS successfullyParsed is true
 
 TEST COMPLETE

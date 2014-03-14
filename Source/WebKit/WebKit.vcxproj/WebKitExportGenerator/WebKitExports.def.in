@@ -478,3 +478,5 @@ EXPORTS
         symbolWithPointer(?disableAccessibility@AXObjectCache@WebCore@@SAXXZ, ?disableAccessibility@AXObjectCache@WebCore@@SAXXZ)
         symbolWithPointer(?sessionID@Page@WebCore@@QBE?AVSessionID@2@XZ, ?sessionID@Page@WebCore@@QEBA?AVSessionID@2@XZ)
         symbolWithPointer(?resourceForURL@MemoryCache@WebCore@@QAEPAVCachedResource@2@ABVURL@2@VSessionID@2@@Z, ?resourceForURL@MemoryCache@WebCore@@QEAAPEAVCachedResource@2@AEBVURL@2@VSessionID@2@@Z)
+        ?makeDOMBindingsTypeErrorStringInternal@WebCore@@YA?AVString@WTF@@PBDZZ
+

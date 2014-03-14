@@ -646,7 +646,11 @@ public:
     static bool shouldAllowAccessToDOMWindow(JSC::ExecState*, DOMWindow&, SecurityReportingOption = ReportSecurityError);
     static bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*, SecurityReportingOption = ReportSecurityError);
 };
-
+    
+    
+#define makeDOMBindingsTypeErrorString(...) makeDOMBindingsTypeErrorStringInternal(__VA_ARGS__, (const char*)nullptr)
+String makeDOMBindingsTypeErrorStringInternal(const char*, ...);
+    
 } // namespace WebCore
 
 #endif // JSDOMBinding_h

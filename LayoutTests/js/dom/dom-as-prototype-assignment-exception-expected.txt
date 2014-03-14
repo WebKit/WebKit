@@ -6,8 +6,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS testObject.id is undefined.
-PASS testObject.id="foo" threw exception TypeError: Type error.
-PASS testObject.length threw exception TypeError: Type error.
+PASS testObject.id="foo" threw exception TypeError: The Element.id setter can only be used on instances of Element.
+PASS testObject.length threw exception TypeError: The NodeList.length getter can only be used on instances of NodeList.
 PASS div.id is 'test'
 PASS div.hasOwnProperty('id') is false
 PASS div.__proto__.id is undefined.

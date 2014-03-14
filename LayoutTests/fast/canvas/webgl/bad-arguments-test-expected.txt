@@ -5,21 +5,21 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS Program Compiled
 PASS Shader Compiled
 PASS getUniformLocation succeeded
-PASS context.compileShader(argument) threw exception TypeError: Type error.
-PASS context.linkProgram(argument) threw exception TypeError: Type error.
-PASS context.attachShader(program, argument) threw exception TypeError: Type error.
-PASS context.attachShader(argument, shader) threw exception TypeError: Type error.
-PASS context.detachShader(program, argument) threw exception TypeError: Type error.
-PASS context.detachShader(argument, shader) threw exception TypeError: Type error.
-PASS context.useProgram(argument) threw exception TypeError: Type error.
-PASS context.shaderSource(argument, 'foo') threw exception TypeError: Type error.
-PASS context.bindAttribLocation(argument, 0, 'foo') threw exception TypeError: Type error.
-PASS context.bindBuffer(context.ARRAY_BUFFER, argument) threw exception TypeError: Type error.
-PASS context.bindFramebuffer(context.FRAMEBUFFER, argument) threw exception TypeError: Type error.
-PASS context.bindRenderbuffer(context.RENDERBUFFER, argument) threw exception TypeError: Type error.
-PASS context.bindTexture(context.TEXTURE_2D, argument) threw exception TypeError: Type error.
-PASS context.framebufferRenderbuffer(context.FRAMEBUFFER, context.DEPTH_ATTACHMENT, context.RENDERBUFFER, argument) threw exception TypeError: Type error.
-PASS context.framebufferTexture2D(context.FRAMEBUFFER, context.COLOR_ATTACHMENT0, context.TEXTURE_2D, argument, 0) threw exception TypeError: Type error.
+PASS context.compileShader(argument) threw exception TypeError: Argument 1 ('shader') to WebGLRenderingContext.compileShader must be an instance of WebGLShader.
+PASS context.linkProgram(argument) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.linkProgram must be an instance of WebGLProgram.
+PASS context.attachShader(program, argument) threw exception TypeError: Argument 2 ('shader') to WebGLRenderingContext.attachShader must be an instance of WebGLShader.
+PASS context.attachShader(argument, shader) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.attachShader must be an instance of WebGLProgram.
+PASS context.detachShader(program, argument) threw exception TypeError: Argument 2 ('shader') to WebGLRenderingContext.detachShader must be an instance of WebGLShader.
+PASS context.detachShader(argument, shader) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.detachShader must be an instance of WebGLProgram.
+PASS context.useProgram(argument) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.useProgram must be an instance of WebGLProgram.
+PASS context.shaderSource(argument, 'foo') threw exception TypeError: Argument 1 ('shader') to WebGLRenderingContext.shaderSource must be an instance of WebGLShader.
+PASS context.bindAttribLocation(argument, 0, 'foo') threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.bindAttribLocation must be an instance of WebGLProgram.
+PASS context.bindBuffer(context.ARRAY_BUFFER, argument) threw exception TypeError: Argument 2 ('buffer') to WebGLRenderingContext.bindBuffer must be an instance of WebGLBuffer.
+PASS context.bindFramebuffer(context.FRAMEBUFFER, argument) threw exception TypeError: Argument 2 ('framebuffer') to WebGLRenderingContext.bindFramebuffer must be an instance of WebGLFramebuffer.
+PASS context.bindRenderbuffer(context.RENDERBUFFER, argument) threw exception TypeError: Argument 2 ('renderbuffer') to WebGLRenderingContext.bindRenderbuffer must be an instance of WebGLRenderbuffer.
+PASS context.bindTexture(context.TEXTURE_2D, argument) threw exception TypeError: Argument 2 ('texture') to WebGLRenderingContext.bindTexture must be an instance of WebGLTexture.
+PASS context.framebufferRenderbuffer(context.FRAMEBUFFER, context.DEPTH_ATTACHMENT, context.RENDERBUFFER, argument) threw exception TypeError: Argument 4 ('renderbuffer') to WebGLRenderingContext.framebufferRenderbuffer must be an instance of WebGLRenderbuffer.
+PASS context.framebufferTexture2D(context.FRAMEBUFFER, context.COLOR_ATTACHMENT0, context.TEXTURE_2D, argument, 0) threw exception TypeError: Argument 4 ('texture') to WebGLRenderingContext.framebufferTexture2D must be an instance of WebGLTexture.
 PASS context.uniform2fv(argument, new Float32Array([0.0, 0.0])) threw exception TypeError: Type error.
 PASS context.uniform2iv(argument, new Int32Array([0, 0])) threw exception TypeError: Type error.
 PASS context.uniformMatrix2fv(argument, false, new Float32Array([0.0, 0.0, 0.0, 0.0])) threw exception TypeError: Type error.
@@ -27,25 +27,25 @@ PASS context.getProgramParameter(argument, 0) threw exception TypeError: Type er
 PASS context.getShaderParameter(argument, 0) threw exception TypeError: Type error.
 PASS context.getUniform(argument, loc) threw exception TypeError: Type error.
 PASS context.getUniform(program, argument) threw exception TypeError: Type error.
-PASS context.getUniformLocation(argument, 'u_modelViewProjMatrix') threw exception TypeError: Type error.
-PASS context.getProgramInfoLog(argument) threw exception TypeError: Type error.
-PASS context.getShaderInfoLog(argument) threw exception TypeError: Type error.
-PASS context.getShaderSource(argument) threw exception TypeError: Type error.
-PASS context.compileShader(argument) threw exception TypeError: Type error.
-PASS context.linkProgram(argument) threw exception TypeError: Type error.
-PASS context.attachShader(program, argument) threw exception TypeError: Type error.
-PASS context.attachShader(argument, shader) threw exception TypeError: Type error.
-PASS context.detachShader(program, argument) threw exception TypeError: Type error.
-PASS context.detachShader(argument, shader) threw exception TypeError: Type error.
-PASS context.useProgram(argument) threw exception TypeError: Type error.
-PASS context.shaderSource(argument, 'foo') threw exception TypeError: Type error.
-PASS context.bindAttribLocation(argument, 0, 'foo') threw exception TypeError: Type error.
-PASS context.bindBuffer(context.ARRAY_BUFFER, argument) threw exception TypeError: Type error.
-PASS context.bindFramebuffer(context.FRAMEBUFFER, argument) threw exception TypeError: Type error.
-PASS context.bindRenderbuffer(context.RENDERBUFFER, argument) threw exception TypeError: Type error.
-PASS context.bindTexture(context.TEXTURE_2D, argument) threw exception TypeError: Type error.
-PASS context.framebufferRenderbuffer(context.FRAMEBUFFER, context.DEPTH_ATTACHMENT, context.RENDERBUFFER, argument) threw exception TypeError: Type error.
-PASS context.framebufferTexture2D(context.FRAMEBUFFER, context.COLOR_ATTACHMENT0, context.TEXTURE_2D, argument, 0) threw exception TypeError: Type error.
+PASS context.getUniformLocation(argument, 'u_modelViewProjMatrix') threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.getUniformLocation must be an instance of WebGLProgram.
+PASS context.getProgramInfoLog(argument) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.getProgramInfoLog must be an instance of WebGLProgram.
+PASS context.getShaderInfoLog(argument) threw exception TypeError: Argument 1 ('shader') to WebGLRenderingContext.getShaderInfoLog must be an instance of WebGLShader.
+PASS context.getShaderSource(argument) threw exception TypeError: Argument 1 ('shader') to WebGLRenderingContext.getShaderSource must be an instance of WebGLShader.
+PASS context.compileShader(argument) threw exception TypeError: Argument 1 ('shader') to WebGLRenderingContext.compileShader must be an instance of WebGLShader.
+PASS context.linkProgram(argument) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.linkProgram must be an instance of WebGLProgram.
+PASS context.attachShader(program, argument) threw exception TypeError: Argument 2 ('shader') to WebGLRenderingContext.attachShader must be an instance of WebGLShader.
+PASS context.attachShader(argument, shader) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.attachShader must be an instance of WebGLProgram.
+PASS context.detachShader(program, argument) threw exception TypeError: Argument 2 ('shader') to WebGLRenderingContext.detachShader must be an instance of WebGLShader.
+PASS context.detachShader(argument, shader) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.detachShader must be an instance of WebGLProgram.
+PASS context.useProgram(argument) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.useProgram must be an instance of WebGLProgram.
+PASS context.shaderSource(argument, 'foo') threw exception TypeError: Argument 1 ('shader') to WebGLRenderingContext.shaderSource must be an instance of WebGLShader.
+PASS context.bindAttribLocation(argument, 0, 'foo') threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.bindAttribLocation must be an instance of WebGLProgram.
+PASS context.bindBuffer(context.ARRAY_BUFFER, argument) threw exception TypeError: Argument 2 ('buffer') to WebGLRenderingContext.bindBuffer must be an instance of WebGLBuffer.
+PASS context.bindFramebuffer(context.FRAMEBUFFER, argument) threw exception TypeError: Argument 2 ('framebuffer') to WebGLRenderingContext.bindFramebuffer must be an instance of WebGLFramebuffer.
+PASS context.bindRenderbuffer(context.RENDERBUFFER, argument) threw exception TypeError: Argument 2 ('renderbuffer') to WebGLRenderingContext.bindRenderbuffer must be an instance of WebGLRenderbuffer.
+PASS context.bindTexture(context.TEXTURE_2D, argument) threw exception TypeError: Argument 2 ('texture') to WebGLRenderingContext.bindTexture must be an instance of WebGLTexture.
+PASS context.framebufferRenderbuffer(context.FRAMEBUFFER, context.DEPTH_ATTACHMENT, context.RENDERBUFFER, argument) threw exception TypeError: Argument 4 ('renderbuffer') to WebGLRenderingContext.framebufferRenderbuffer must be an instance of WebGLRenderbuffer.
+PASS context.framebufferTexture2D(context.FRAMEBUFFER, context.COLOR_ATTACHMENT0, context.TEXTURE_2D, argument, 0) threw exception TypeError: Argument 4 ('texture') to WebGLRenderingContext.framebufferTexture2D must be an instance of WebGLTexture.
 PASS context.uniform2fv(argument, new Float32Array([0.0, 0.0])) threw exception TypeError: Type error.
 PASS context.uniform2iv(argument, new Int32Array([0, 0])) threw exception TypeError: Type error.
 PASS context.uniformMatrix2fv(argument, false, new Float32Array([0.0, 0.0, 0.0, 0.0])) threw exception TypeError: Type error.
@@ -53,10 +53,10 @@ PASS context.getProgramParameter(argument, 0) threw exception TypeError: Type er
 PASS context.getShaderParameter(argument, 0) threw exception TypeError: Type error.
 PASS context.getUniform(argument, loc) threw exception TypeError: Type error.
 PASS context.getUniform(program, argument) threw exception TypeError: Type error.
-PASS context.getUniformLocation(argument, 'u_modelViewProjMatrix') threw exception TypeError: Type error.
-PASS context.getProgramInfoLog(argument) threw exception TypeError: Type error.
-PASS context.getShaderInfoLog(argument) threw exception TypeError: Type error.
-PASS context.getShaderSource(argument) threw exception TypeError: Type error.
+PASS context.getUniformLocation(argument, 'u_modelViewProjMatrix') threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.getUniformLocation must be an instance of WebGLProgram.
+PASS context.getProgramInfoLog(argument) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.getProgramInfoLog must be an instance of WebGLProgram.
+PASS context.getShaderInfoLog(argument) threw exception TypeError: Argument 1 ('shader') to WebGLRenderingContext.getShaderInfoLog must be an instance of WebGLShader.
+PASS context.getShaderSource(argument) threw exception TypeError: Argument 1 ('shader') to WebGLRenderingContext.getShaderSource must be an instance of WebGLShader.
 PASS context.compileShader(argument) is undefined.
 PASS context.linkProgram(argument) is undefined.
 PASS context.attachShader(program, argument) is undefined.

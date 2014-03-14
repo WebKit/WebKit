@@ -14,10 +14,10 @@ PASS context.detachShader(undefined, shader) was expected value: INVALID_VALUE.
 PASS context.shaderSource(undefined, undefined) was expected value: INVALID_VALUE.
 PASS context.shaderSource(undefined, 'foo') was expected value: INVALID_VALUE.
 PASS context.bindAttribLocation(undefined, 0, 'foo') was expected value: INVALID_VALUE.
-PASS context.bindBuffer(context.ARRAY_BUFFER, 0) threw exception TypeError: Type error.
-PASS context.bindFramebuffer(context.FRAMEBUFFER, 0) threw exception TypeError: Type error.
-PASS context.bindRenderbuffer(context.RENDERBUFFER, 0) threw exception TypeError: Type error.
-PASS context.bindTexture(context.TEXTURE_2D, 0) threw exception TypeError: Type error.
+PASS context.bindBuffer(context.ARRAY_BUFFER, 0) threw exception TypeError: Argument 2 ('buffer') to WebGLRenderingContext.bindBuffer must be an instance of WebGLBuffer.
+PASS context.bindFramebuffer(context.FRAMEBUFFER, 0) threw exception TypeError: Argument 2 ('framebuffer') to WebGLRenderingContext.bindFramebuffer must be an instance of WebGLFramebuffer.
+PASS context.bindRenderbuffer(context.RENDERBUFFER, 0) threw exception TypeError: Argument 2 ('renderbuffer') to WebGLRenderingContext.bindRenderbuffer must be an instance of WebGLRenderbuffer.
+PASS context.bindTexture(context.TEXTURE_2D, 0) threw exception TypeError: Argument 2 ('texture') to WebGLRenderingContext.bindTexture must be an instance of WebGLTexture.
 PASS context.bindBuffer(context.ARRAY_BUFFER, null) was expected value: NO_ERROR.
 PASS context.bindFramebuffer(context.FRAMEBUFFER, null) was expected value: NO_ERROR.
 PASS context.bindRenderbuffer(context.RENDERBUFFER, null) was expected value: NO_ERROR.
