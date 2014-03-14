@@ -60,7 +60,7 @@ extern "C" void _CFNetworkResetHSTSHostsWithSession(CFURLStorageSessionRef sessi
 
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1080
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1080
 @interface NSKeyedArchiver (WKDetails)
 - (void)setRequiresSecureCoding:(BOOL)b;
 @end
