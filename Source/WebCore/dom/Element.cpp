@@ -653,7 +653,7 @@ static int adjustForLocalZoom(LayoutUnit value, RenderElement* renderer)
 #else
     // Needed because computeLengthInt truncates (rather than rounds) when scaling up.
     if (zoomFactor > 1)
-        value++;
+        ++value;
     return static_cast<int>(value / zoomFactor);
 #endif
 }

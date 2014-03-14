@@ -1,3 +1,16 @@
+2014-03-14  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Build fix with SUBPIXEL_LAYOUT disabled
+        https://bugs.webkit.org/show_bug.cgi?id=130210
+
+        Reviewed by Daniel Bates.
+
+        Use pre-incremeent operator for LayoutUnit instead of post-increment operator as LayoutUnit doesn't support the
+        latter and we don't make use of the return value.
+
+        * dom/Element.cpp:
+        (WebCore::adjustForLocalZoom):
+
 2014-03-14  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Inline-block child of content node incorrectly clipped
