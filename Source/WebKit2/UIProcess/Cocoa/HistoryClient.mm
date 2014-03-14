@@ -44,6 +44,9 @@ HistoryClient::~HistoryClient()
 
 void HistoryClient::didNavigateWithNavigationData(WebContext*, WebPageProxy* webPageProxy, const WebNavigationDataStore& navigationDataStore, WebFrameProxy* webFrameProxy)
 {
+    if (!webFrameProxy->isMainFrame())
+        return;
+
     auto& navigationState = NavigationState::fromWebPage(*webPageProxy);
 
     navigationState.didNavigateWithNavigationData(navigationDataStore);
@@ -51,6 +54,9 @@ void HistoryClient::didNavigateWithNavigationData(WebContext*, WebPageProxy* web
 
 void HistoryClient::didPerformClientRedirect(WebContext*, WebPageProxy* webPageProxy, const WTF::String& sourceURL, const WTF::String& destinationURL, WebFrameProxy* webFrameProxy)
 {
+    if (!webFrameProxy->isMainFrame())
+        return;
+
     auto& navigationState = NavigationState::fromWebPage(*webPageProxy);
 
     navigationState.didPerformClientRedirect(sourceURL, destinationURL);
@@ -58,6 +64,9 @@ void HistoryClient::didPerformClientRedirect(WebContext*, WebPageProxy* webPageP
 
 void HistoryClient::didPerformServerRedirect(WebContext*, WebPageProxy* webPageProxy, const WTF::String& sourceURL, const WTF::String& destinationURL, WebFrameProxy* webFrameProxy)
 {
+    if (!webFrameProxy->isMainFrame())
+        return;
+
     auto& navigationState = NavigationState::fromWebPage(*webPageProxy);
 
     navigationState.didPerformServerRedirect(sourceURL, destinationURL);
@@ -65,6 +74,9 @@ void HistoryClient::didPerformServerRedirect(WebContext*, WebPageProxy* webPageP
 
 void HistoryClient::didUpdateHistoryTitle(WebContext*, WebPageProxy* webPageProxy, const WTF::String& title, const WTF::String& url, WebFrameProxy* webFrameProxy)
 {
+    if (!webFrameProxy->isMainFrame())
+        return;
+
     auto& navigationState = NavigationState::fromWebPage(*webPageProxy);
 
     navigationState.didUpdateHistoryTitle(title, url);

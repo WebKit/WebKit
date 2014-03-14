@@ -1,3 +1,17 @@
+2014-03-14  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/16319722> [Cocoa] WKHistoryDelegate is being called for subframes
+        https://bugs.webkit.org/show_bug.cgi?id=130228
+
+        Reviewed by Mark Rowe.
+
+        * UIProcess/Cocoa/HistoryClient.mm:
+        (WebKit::HistoryClient::didNavigateWithNavigationData): Bail out if the frame is not the
+        main frame.
+        (WebKit::HistoryClient::didPerformClientRedirect): Ditto.
+        (WebKit::HistoryClient::didPerformServerRedirect): Ditto.
+        (WebKit::HistoryClient::didUpdateHistoryTitle): Ditto.
+
 2014-03-13  Jinwoo Jeong  <jw00.jeong@samsung.com>
 
         Refactor Vibration algorithm to use only one timer.
