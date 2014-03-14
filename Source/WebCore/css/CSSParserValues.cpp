@@ -208,13 +208,13 @@ void CSSParserSelector::setPseudoTypeValue(const CSSParserString& pseudoTypeStri
     switch (pseudoType) {
     case CSSSelector::PseudoAfter:
     case CSSSelector::PseudoBefore:
-#if ENABLE(VIDEO_TRACK)
-    case CSSSelector::PseudoCue:
-#endif
     case CSSSelector::PseudoFirstLetter:
     case CSSSelector::PseudoFirstLine:
         compat = true;
         FALLTHROUGH;
+#if ENABLE(VIDEO_TRACK)
+    case CSSSelector::PseudoCue:
+#endif
     case CSSSelector::PseudoResizer:
     case CSSSelector::PseudoScrollbar:
     case CSSSelector::PseudoScrollbarCorner:

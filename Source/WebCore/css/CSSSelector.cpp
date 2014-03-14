@@ -259,8 +259,10 @@ CSSSelector::PseudoType CSSSelector::parsePseudoType(const String& name)
         if (name.startsWith("-webkit-"))
             type = PseudoWebKitCustomElement;
 
-        // FIXME: This is strange. Why would all strings that start with "cue" be "user agent custom"?
-        if (name.startsWith("x-") || name.startsWith("cue"))
+        if (name == "cue")
+            type = PseudoWebKitCustomElement;
+
+        if (name.startsWith("x-"))
             type = PseudoUserAgentCustomElement;
     }
     return type;

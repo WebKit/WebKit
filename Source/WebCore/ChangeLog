@@ -1,3 +1,25 @@
+2014-03-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix a bunch of mistakes in the parsing of ::cue( and ::cue
+        https://bugs.webkit.org/show_bug.cgi?id=130113
+
+        Reviewed by Andreas Kling.
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::setPseudoTypeValue):
+        The ::cue() pseudo element "function" was passed as a PseudoClass.
+        The type was then parsed and considered as a compatibility type to flip
+        the match type back to PseudoElement.
+
+        Instead of all that jazz, just pass the right type from the grammar.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::parsePseudoType):
+        The non-function ::cue pseudo element use shadow pseudo ID for matching the element.
+        Since it is unprefixed, it needs to map to one of the Custom types. The previous code
+        was using String::startsWith() for some reason, change that to a simple equality.
+
 2014-03-13  Benjamin Poulain  <benjamin@webkit.org>
 
         Clean up RenderStyle creation

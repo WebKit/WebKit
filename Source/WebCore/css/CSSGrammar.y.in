@@ -1198,11 +1198,11 @@ pseudo:
         $$ = nullptr;
         if ($5) {
             auto selector = std::make_unique<CSSParserSelector>();
-            selector->setMatch(CSSSelector::PseudoClass);
+            selector->setMatch(CSSSelector::PseudoElement);
             selector->adoptSelectorVector(*std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>($5));
             selector->setPseudoTypeValue($3);
-            if (selector->pseudoType() == CSSSelector::PseudoCue)
-                $$ = selector.release();
+            ASSERT(selector->pseudoType() == CSSSelector::PseudoCue);
+            $$ = selector.release();
         }
     }
 #endif
