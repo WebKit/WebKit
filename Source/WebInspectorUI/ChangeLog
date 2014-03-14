@@ -1,3 +1,15 @@
+2014-03-14  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Add autocomplete for -webkit-shape-outside
+        https://bugs.webkit.org/show_bug.cgi?id=130268
+
+        Reviewed by Joseph Pecoraro.
+
+        Add completions for -webkit-shape-outside. Also add the box shapes to
+        the possible completions for clip-path.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2014-03-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Update shapes autocompletion suggestions

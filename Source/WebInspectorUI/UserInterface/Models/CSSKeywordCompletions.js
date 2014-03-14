@@ -546,7 +546,10 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "auto", "rect()"
     ],
     "clip-path": [
-        "none", "url()", "circle()", "ellipse()", "inset()", "polygon()"
+        "none", "url()", "circle()", "ellipse()", "inset()", "polygon()", "margin-box", "border-box", "padding-box", "content-box"
+    ],
+    "-webkit-shape-outside": [
+        "none", "url()", "circle()", "ellipse()", "inset()", "polygon()", "margin-box", "border-box", "padding-box", "content-box"
     ],
     "orphans": [
         "auto"
