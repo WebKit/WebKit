@@ -68,24 +68,24 @@ var validShapeValues = [
     ["ellipse(10px 10px at right 10% bottom 10%)", "ellipse(10px 10px at 90% 90%)"],
     ["ellipse(10px 10px at right 0px bottom 0px)", "ellipse(10px 10px at 100% 100%)"],
 
-    ["polygon(10px 20px, 30px 40px, 40px 50px)", "polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)"],
+    ["polygon(10px 20px, 30px 40px, 40px 50px)", "polygon(10px 20px, 30px 40px, 40px 50px)"],
     ["polygon(evenodd, 10px 20px, 30px 40px, 40px 50px)", "polygon(evenodd, 10px 20px, 30px 40px, 40px 50px)"],
-    ["polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)", "polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)"],
+    ["polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)", "polygon(10px 20px, 30px 40px, 40px 50px)"],
 
     "content-box",
     "padding-box",
     "border-box",
     "margin-box",
 
-    "polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) content-box",
-    "polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) padding-box",
-    "polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) border-box",
-    "polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) margin-box",
+    ["polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) content-box", "polygon(0px 0px, 10px 10px, 10px 0px) content-box"],
+    ["polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) padding-box", "polygon(0px 0px, 10px 10px, 10px 0px) padding-box"],
+    ["polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) border-box", "polygon(0px 0px, 10px 10px, 10px 0px) border-box"],
+    ["polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) margin-box", "polygon(0px 0px, 10px 10px, 10px 0px) margin-box"],
 
-    ["content-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "content-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) content-box"],
-    ["padding-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "padding-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) padding-box"],
-    ["border-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "border-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) border-box"],
-    ["margin-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "margin-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "polygon(nonzero, 0px 0px, 10px 10px, 10px 0px) margin-box"]
+    ["content-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "content-box polygon(0px 0px, 10px 10px, 10px 0px)", "polygon(0px 0px, 10px 10px, 10px 0px) content-box"],
+    ["padding-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "padding-box polygon(0px 0px, 10px 10px, 10px 0px)", "polygon(0px 0px, 10px 10px, 10px 0px) padding-box"],
+    ["border-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "border-box polygon(0px 0px, 10px 10px, 10px 0px)", "polygon(0px 0px, 10px 10px, 10px 0px) border-box"],
+    ["margin-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "margin-box polygon(0px 0px, 10px 10px, 10px 0px)", "polygon(0px 0px, 10px 10px, 10px 0px) margin-box"]
 ];
 
 // Invalid values for both shape-inside and shape-outside. When an invalid shape value is specified, the 

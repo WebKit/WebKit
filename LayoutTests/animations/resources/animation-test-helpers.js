@@ -191,7 +191,12 @@ function parseBasicShape(s)
         matches = s.match("ellipse\\((.*)\\s+(.*)\\s+at\\s+(.*)\\s+(.*)\\)");
         break;
     case "polygon":
-        matches = s.match("polygon\\((evenodd|nonzero), (.*)\\s+(.*)\\s*,\\s*(.*)\\s+(.*)\\s*,\\s*(.*)\\s+(.*)\\s*,\\s*(.*)\\s+(.*)\\)");
+        matches = s.match("polygon\\(\\s*(.*)\\s*\\)");
+        matches = matches[1].split(/\s*,\s*/);
+        matches = matches.map(function(match) {
+            return match.split(/\s+/);
+        });
+        matches = Array.prototype.concat.apply([s], matches);
         break;
     default:
         return null;

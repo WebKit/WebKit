@@ -1,3 +1,29 @@
+2014-03-14  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] polygon default fill-rule should be omitted from the serialization
+        https://bugs.webkit.org/show_bug.cgi?id=129840
+
+        Reviewed by Dirk Schulze.
+
+        Modifying tests to expect the default fill-rule to be omitted. In addition,
+        animation-test-helpers now parses its arguments as an unbounded list, rather
+        than as a fixed number of capturing parentheses.
+
+        * animations/resources/animation-test-helpers.js:
+        * css3/masking/clip-path-animation-expected.txt:
+        * css3/masking/clip-path-animation.html:
+        * fast/masking/parsing-clip-path-shape-expected.txt:
+        * fast/masking/parsing-clip-path-shape.html:
+        * fast/shapes/parsing/parsing-shape-inside-expected.txt:
+        * fast/shapes/parsing/parsing-shape-lengths-expected.txt:
+        * fast/shapes/parsing/parsing-shape-lengths.html:
+        * fast/shapes/parsing/parsing-shape-outside-expected.txt:
+        * fast/shapes/parsing/parsing-test-utils.js:
+        * fast/shapes/shape-inside/shape-inside-animation-expected.txt:
+        * fast/shapes/shape-inside/shape-inside-animation.html:
+        * fast/shapes/shape-outside-floats/shape-outside-animation-expected.txt:
+        * fast/shapes/shape-outside-floats/shape-outside-animation.html:
+
 2014-03-14  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: Expose Accessibility Tree parent of the selected node

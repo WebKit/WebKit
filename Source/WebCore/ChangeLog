@@ -1,3 +1,18 @@
+2014-03-14  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] polygon default fill-rule should be omitted from the serialization
+        https://bugs.webkit.org/show_bug.cgi?id=129840
+
+        Reviewed by Dirk Schulze.
+
+        Modifying the default polygon string opening to be "polygon(" rather than
+        "polygon(nonzero".
+
+        Updated existing parsing tests.
+
+        * css/CSSBasicShapes.cpp:
+        (WebCore::buildPolygonString):
+
 2014-03-14  Brent Fulgham  <bfulgham@apple.com>
 
         Crash when using a mixture of In-Band and Out-of-Band Tracks

@@ -72,12 +72,12 @@ testComputedStyleValue("circle(1.5vmin at .5vmin 1vmin)", "circle(1.5vmin at 0.5
 testStyleValue("circle(100% at 100% 100%)", "circle(100% at 100% 100%)");
 testStyleValue("inset(45% 45% 90% 60% round 25% 10%)", "inset(45% 45% 90% 60% round 25% 10% 25% 10% / 25% 10% 25% 10%)");
 testStyleValue("ellipse(100% 100% at 100% 100%)", "ellipse(100% 100% at 100% 100%)");
-testStyleValue("polygon(10% 20%, 30% 40%, 40% 50%)", "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)");
+testStyleValue("polygon(10% 20%, 30% 40%, 40% 50%)", "polygon(10% 20%, 30% 40%, 40% 50%)");
 
 testComputedStyleValue("circle(150% at 50% 100%)", "circle(150% at 50% 100%)");
 testComputedStyleValue("inset(45% 45% 90% 60% round 25% 10%)", "inset(45% 45% 90% 60% round 25% 10% 25% 10% / 25% 10% 25% 10%)");
 testComputedStyleValue("ellipse(100% 100% at 100% 100%)", "ellipse(100% 100% at 100% 100%)");
-testComputedStyleValue("polygon(10% 20%, 30% 40%, 40% 50%)", "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)");
+testComputedStyleValue("polygon(10% 20%, 30% 40%, 40% 50%)", "polygon(10% 20%, 30% 40%, 40% 50%)");
 
 // reject non-lengths
 testInvalidValue("-webkit-shape-outside", "circle(1 at 1px 1px)");

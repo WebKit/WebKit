@@ -23,7 +23,7 @@ PASS computedStyle("-webkit-clip-path", "circle(1.5vmin at .5vmin 1vmin)") is "c
 PASS computedStyle("-webkit-clip-path", "circle(150% at 50% 100%)") is "circle(150% at 50% 100%)"
 PASS computedStyle("-webkit-clip-path", "inset(45% 45% 90% 60% round 25% 10%)") is "inset(45% 45% 90% 60% round 25% 10% 25% 10% / 25% 10% 25% 10%)"
 PASS computedStyle("-webkit-clip-path", "ellipse(100% 100% at 100% 100%)") is "ellipse(100% 100% at 100% 100%)"
-PASS computedStyle("-webkit-clip-path", "polygon(10% 20%, 30% 40%, 40% 50%)") is "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)"
+PASS computedStyle("-webkit-clip-path", "polygon(10% 20%, 30% 40%, 40% 50%)") is "polygon(10% 20%, 30% 40%, 40% 50%)"
 PASS innerStyle("-webkit-clip-path", "content-box") is "content-box"
 PASS innerStyle("-webkit-clip-path", "padding-box") is "padding-box"
 PASS innerStyle("-webkit-clip-path", "border-box") is "border-box"

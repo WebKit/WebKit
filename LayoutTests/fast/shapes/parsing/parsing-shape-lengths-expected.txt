@@ -28,11 +28,11 @@ PASS getComputedStyleValue("-webkit-shape-inside", "circle(1.5vmin at .5vmin 1vm
 PASS getStyleValue("-webkit-shape-inside", "circle(100% at 100% 100%)") is "circle(100% at 100% 100%)"
 PASS getStyleValue("-webkit-shape-inside", "inset(45% 45% 90% 60% round 25% 10%)") is "inset(45% 45% 90% 60% round 25% 10% 25% 10% / 25% 10% 25% 10%)"
 PASS getStyleValue("-webkit-shape-inside", "ellipse(100% 100% at 100% 100%)") is "ellipse(100% 100% at 100% 100%)"
-PASS getStyleValue("-webkit-shape-inside", "polygon(10% 20%, 30% 40%, 40% 50%)") is "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)"
+PASS getStyleValue("-webkit-shape-inside", "polygon(10% 20%, 30% 40%, 40% 50%)") is "polygon(10% 20%, 30% 40%, 40% 50%)"
 PASS getComputedStyleValue("-webkit-shape-inside", "circle(150% at 50% 100%)") is "circle(150% at 50% 100%)"
 PASS getComputedStyleValue("-webkit-shape-inside", "inset(45% 45% 90% 60% round 25% 10%)") is "inset(45% 45% 90% 60% round 25% 10% 25% 10% / 25% 10% 25% 10%)"
 PASS getComputedStyleValue("-webkit-shape-inside", "ellipse(100% 100% at 100% 100%)") is "ellipse(100% 100% at 100% 100%)"
-PASS getComputedStyleValue("-webkit-shape-inside", "polygon(10% 20%, 30% 40%, 40% 50%)") is "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)"
+PASS getComputedStyleValue("-webkit-shape-inside", "polygon(10% 20%, 30% 40%, 40% 50%)") is "polygon(10% 20%, 30% 40%, 40% 50%)"
 PASS getStyleValue("-webkit-shape-inside", "circle(1 at 1px 1px)") is null
 PASS getComputedStyleValue("-webkit-shape-inside", "circle(1 at 1px 1px)") is "none"
 PASS getStyleValue("-webkit-shape-inside", "circle(px at 1px 1px)") is null
