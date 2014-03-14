@@ -30,6 +30,7 @@
 
 #import "JSDOMWindowBase.h"
 #import "ThreadGlobalData.h"
+#import "RuntimeApplicationChecksIOS.h"
 #import "WebCoreThreadInternal.h"
 #import "WebCoreThreadMessage.h"
 #import "WebCoreThreadRun.h"
@@ -1001,7 +1002,9 @@ void WebThreadSetDelegateSourceRunLoopMode(CFStringRef mode)
 
 void WebThreadEnable(void)
 {
-    static pthread_once_t initControl = PTHREAD_ONCE_INIT; 
+    RELEASE_ASSERT_WITH_MESSAGE(!WebCore::applicationIsWebProcess(), "The WebProcess should never run a Web Thread");
+
+    static pthread_once_t initControl = PTHREAD_ONCE_INIT;
     pthread_once(&initControl, StartWebThread);
 }
 
