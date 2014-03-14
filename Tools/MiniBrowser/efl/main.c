@@ -602,7 +602,11 @@ on_download_request(void *user_data, Evas_Object *ewk_view, void *event_info)
     else {
         // Generate a unique file name since no name was suggested.
         char unique_path[] = "/tmp/downloaded-file.XXXXXX";
-        eina_strbuf_append(destination_path, mktemp(unique_path));
+        if (mkstemp(unique_path) == -1) {
+            info("ERROR: Could not generate a unique file name.");
+            return;
+        }
+        eina_strbuf_append(destination_path, unique_path);
     }
 
     ewk_download_job_destination_set(download, eina_strbuf_string_get(destination_path));

@@ -1,3 +1,15 @@
+2014-03-13  Sanghyup Lee  <sh53.lee@samsung.com>
+
+        [EFL][WK2] Fix compilation warning in Minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=130132
+
+        Reviewed by Csaba Osztrogonác.
+
+        Replace mktemp() with mkstemp() to fix compilation warning in MiniBrowser.
+
+        * MiniBrowser/efl/main.c:
+        (on_download_request):
+
 2014-03-13  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should support IsBlah
