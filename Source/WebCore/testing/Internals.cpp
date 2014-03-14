@@ -667,7 +667,7 @@ void Internals::enableMockSpeechSynthesizer()
     if (!synthesis)
         return;
     
-    synthesis->setPlatformSynthesizer(PlatformSpeechSynthesizerMock::create(synthesis));
+    synthesis->setPlatformSynthesizer(std::make_unique<PlatformSpeechSynthesizerMock>(synthesis));
 }
 #endif
 

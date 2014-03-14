@@ -30,14 +30,13 @@
 
 #include "PlatformSpeechSynthesizer.h"
 #include "Timer.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
     
 class PlatformSpeechSynthesizerMock : public PlatformSpeechSynthesizer {
 public:
-    static PassOwnPtr<PlatformSpeechSynthesizerMock> create(PlatformSpeechSynthesizerClient*);
-    
+    explicit PlatformSpeechSynthesizerMock(PlatformSpeechSynthesizerClient*);
+
     virtual ~PlatformSpeechSynthesizerMock();
     virtual void speak(PassRefPtr<PlatformSpeechSynthesisUtterance>);
     virtual void pause();
@@ -45,7 +44,6 @@ public:
     virtual void cancel();
     
 private:
-    explicit PlatformSpeechSynthesizerMock(PlatformSpeechSynthesizerClient*);
     virtual void initializeVoiceList();
     void speakingFinished(Timer<PlatformSpeechSynthesizerMock>*);
     

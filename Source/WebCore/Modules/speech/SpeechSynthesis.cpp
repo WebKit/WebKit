@@ -51,9 +51,9 @@ SpeechSynthesis::SpeechSynthesis()
 {
 }
     
-void SpeechSynthesis::setPlatformSynthesizer(PassOwnPtr<PlatformSpeechSynthesizer> synthesizer)
+void SpeechSynthesis::setPlatformSynthesizer(std::unique_ptr<PlatformSpeechSynthesizer> synthesizer)
 {
-    m_platformSpeechSynthesizer = synthesizer;
+    m_platformSpeechSynthesizer = std::move(synthesizer);
     m_voiceList.clear();
     m_currentSpeechUtterance = 0;
     m_utteranceQueue.clear();
@@ -71,7 +71,7 @@ const Vector<RefPtr<SpeechSynthesisVoice>>& SpeechSynthesis::getVoices()
         return m_voiceList;
 
     if (!m_platformSpeechSynthesizer)
-        m_platformSpeechSynthesizer = PlatformSpeechSynthesizer::create(this);
+        m_platformSpeechSynthesizer = std::make_unique<PlatformSpeechSynthesizer>(this);
 
     // If the voiceList is empty, that's the cue to get the voices from the platform again.
     const Vector<RefPtr<PlatformSpeechSynthesisVoice>>& platformVoices = m_platformSpeechSynthesizer->voiceList();
@@ -115,7 +115,7 @@ void SpeechSynthesis::startSpeakingImmediately(SpeechSynthesisUtterance* utteran
     }
     
     if (!m_platformSpeechSynthesizer)
-        m_platformSpeechSynthesizer = PlatformSpeechSynthesizer::create(this);
+        m_platformSpeechSynthesizer = std::make_unique<PlatformSpeechSynthesizer>(this);
     m_platformSpeechSynthesizer->speak(utterance->platformUtterance());
 }
 

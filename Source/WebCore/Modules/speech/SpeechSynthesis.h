@@ -58,7 +58,7 @@ public:
     const Vector<RefPtr<SpeechSynthesisVoice>>& getVoices();
     
     // Used in testing to use a mock platform synthesizer
-    void setPlatformSynthesizer(PassOwnPtr<PlatformSpeechSynthesizer>);
+    void setPlatformSynthesizer(std::unique_ptr<PlatformSpeechSynthesizer>);
     
 private:
     SpeechSynthesis();
@@ -87,8 +87,7 @@ private:
     bool userGestureRequiredForSpeechStart() const { return m_restrictions & RequireUserGestureForSpeechStartRestriction; }
     void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
 #endif
-    
-    OwnPtr<PlatformSpeechSynthesizer> m_platformSpeechSynthesizer;
+    std::unique_ptr<PlatformSpeechSynthesizer> m_platformSpeechSynthesizer;
     Vector<RefPtr<SpeechSynthesisVoice>> m_voiceList;
     SpeechSynthesisUtterance* m_currentSpeechUtterance;
     Deque<RefPtr<SpeechSynthesisUtterance>> m_utteranceQueue;

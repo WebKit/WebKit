@@ -30,12 +30,12 @@
 
 #include "Page.h"
 #include "SpeechRecognitionClient.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class SpeechRecognitionController : public Supplement<Page> {
 public:
+    explicit SpeechRecognitionController(SpeechRecognitionClient*);
     virtual ~SpeechRecognitionController();
 
     void start(SpeechRecognition* recognition, const SpeechGrammarList* grammars, const String& lang, bool continuous, bool interimResults, unsigned long maxAlternatives)
@@ -46,13 +46,10 @@ public:
     void stop(SpeechRecognition* recognition) { m_client->stop(recognition); }
     void abort(SpeechRecognition* recognition) { m_client->abort(recognition); }
 
-    static PassOwnPtr<SpeechRecognitionController> create(SpeechRecognitionClient*);
     static const char* supplementName();
     static SpeechRecognitionController* from(Page* page) { return static_cast<SpeechRecognitionController*>(Supplement<Page>::from(page, supplementName())); }
 
 private:
-    explicit SpeechRecognitionController(SpeechRecognitionClient*);
-
     SpeechRecognitionClient* m_client;
 };
 

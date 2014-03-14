@@ -1,3 +1,29 @@
+2014-03-14  Krzysztof Czech  <k.czech@samsung.com>
+
+        Move WebSpeech code to use std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=130231
+
+        Reviewed by Anders Carlsson.
+
+        Replace uses of OwnPtr and PassOwnPtr in WebSpeech code with std::unique_ptr.
+
+        No new tests. Covered by existing ones.
+
+        * Modules/speech/SpeechRecognitionController.cpp:
+        * Modules/speech/SpeechRecognitionController.h:
+        * Modules/speech/SpeechSynthesis.cpp:
+        (WebCore::SpeechSynthesis::setPlatformSynthesizer):
+        (WebCore::SpeechSynthesis::getVoices):
+        (WebCore::SpeechSynthesis::startSpeakingImmediately):
+        * Modules/speech/SpeechSynthesis.h:
+        * WebCore.exp.in:
+        * platform/PlatformSpeechSynthesizer.cpp:
+        * platform/PlatformSpeechSynthesizer.h:
+        * platform/mock/PlatformSpeechSynthesizerMock.cpp:
+        * platform/mock/PlatformSpeechSynthesizerMock.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::enableMockSpeechSynthesizer):
+
 2014-03-13  Anders Carlsson  <andersca@apple.com>
 
         Move visited link handling to VisitedLinkTableController and VisitedLinkProvider

@@ -31,11 +31,6 @@
 
 namespace WebCore {
 
-PassOwnPtr<PlatformSpeechSynthesizerMock> PlatformSpeechSynthesizerMock::create(PlatformSpeechSynthesizerClient* client)
-{
-    return adoptPtr(new PlatformSpeechSynthesizerMock(client));
-}
-    
 PlatformSpeechSynthesizerMock::PlatformSpeechSynthesizerMock(PlatformSpeechSynthesizerClient* client)
     : PlatformSpeechSynthesizer(client)
     , m_speakingFinishedTimer(this, &PlatformSpeechSynthesizerMock::speakingFinished)

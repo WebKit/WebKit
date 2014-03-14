@@ -61,7 +61,7 @@ protected:
 
 class PlatformSpeechSynthesizer {
 public:
-    static PassOwnPtr<PlatformSpeechSynthesizer> create(PlatformSpeechSynthesizerClient*);
+    explicit PlatformSpeechSynthesizer(PlatformSpeechSynthesizerClient*);
 
     // FIXME: We have multiple virtual functions just so we can support a mock for testing.
     // Seems wasteful. Would be nice to find a better way.
@@ -76,8 +76,6 @@ public:
     PlatformSpeechSynthesizerClient* client() const { return m_speechSynthesizerClient; }
 
 protected:
-    explicit PlatformSpeechSynthesizer(PlatformSpeechSynthesizerClient*);
-
     Vector<RefPtr<PlatformSpeechSynthesisVoice>> m_voiceList;
 
 private:

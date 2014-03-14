@@ -30,11 +30,6 @@
 
 namespace WebCore {
     
-PassOwnPtr<PlatformSpeechSynthesizer> PlatformSpeechSynthesizer::create(PlatformSpeechSynthesizerClient* client)
-{
-    return adoptPtr(new PlatformSpeechSynthesizer(client));
-}
-
 const Vector<RefPtr<PlatformSpeechSynthesisVoice>>& PlatformSpeechSynthesizer::voiceList() const
 {
     if (!m_voiceListIsInitialized) {
