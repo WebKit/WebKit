@@ -1,3 +1,38 @@
+2014-03-13  Zalan Bujtas  <zalan@apple.com>
+
+        Pass const RenderStyle& to box decoration functions.
+        https://bugs.webkit.org/show_bug.cgi?id=130201
+
+        Reviewed by Andreas Goran Kling.
+
+        No change in functionality.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBoxShadow):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::paintMaskImages):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+        (WebCore::RenderBoxModelObject::paintOneBorderSide):
+        (WebCore::RenderBoxModelObject::paintBorderSides):
+        (WebCore::RenderBoxModelObject::paintTranslucentBorderSides):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::RenderBoxModelObject::drawBoxSideFromPath):
+        (WebCore::RenderBoxModelObject::getBorderEdgeInfo):
+        (WebCore::RenderBoxModelObject::borderObscuresBackgroundEdge):
+        (WebCore::RenderBoxModelObject::borderObscuresBackground):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintBoxDecorations):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBoxDecorations):
+
 2014-03-13  Jinwoo Jeong  <jw00.jeong@samsung.com>
 
         Refactor Vibration algorithm to use only one timer.

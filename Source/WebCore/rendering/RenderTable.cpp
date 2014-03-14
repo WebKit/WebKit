@@ -734,12 +734,12 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& p
 
     BackgroundBleedAvoidance bleedAvoidance = determineBackgroundBleedAvoidance(paintInfo.context);
     if (!boxShadowShouldBeAppliedToBackground(bleedAvoidance))
-        paintBoxShadow(paintInfo, rect, &style(), Normal);
+        paintBoxShadow(paintInfo, rect, style(), Normal);
     paintBackground(paintInfo, rect, bleedAvoidance);
-    paintBoxShadow(paintInfo, rect, &style(), Inset);
+    paintBoxShadow(paintInfo, rect, style(), Inset);
 
     if (style().hasBorder() && !collapseBorders())
-        paintBorder(paintInfo, rect, &style());
+        paintBorder(paintInfo, rect, style());
 }
 
 void RenderTable::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

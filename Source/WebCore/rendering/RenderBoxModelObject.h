@@ -165,9 +165,9 @@ public:
 
     virtual void childBecameNonInline(RenderObject* /*child*/) { }
 
-    void paintBorder(const PaintInfo&, const LayoutRect&, const RenderStyle*, BackgroundBleedAvoidance = BackgroundBleedNone, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
-    bool paintNinePieceImage(GraphicsContext*, const LayoutRect&, const RenderStyle*, const NinePieceImage&, CompositeOperator = CompositeSourceOver);
-    void paintBoxShadow(const PaintInfo&, const LayoutRect&, const RenderStyle*, ShadowStyle, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
+    void paintBorder(const PaintInfo&, const LayoutRect&, const RenderStyle&, BackgroundBleedAvoidance = BackgroundBleedNone, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
+    bool paintNinePieceImage(GraphicsContext*, const LayoutRect&, const RenderStyle&, const NinePieceImage&, CompositeOperator = CompositeSourceOver);
+    void paintBoxShadow(const PaintInfo&, const LayoutRect&, const RenderStyle&, ShadowStyle, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
     void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer*, const LayoutRect&, BackgroundBleedAvoidance, InlineFlowBox* = 0, const LayoutSize& = LayoutSize(), CompositeOperator = CompositeSourceOver, RenderElement* backgroundObject = 0);
 
     virtual bool boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance, InlineFlowBox* = 0) const;
@@ -264,7 +264,7 @@ protected:
     LayoutPoint adjustedPositionRelativeToOffsetParent(const LayoutPoint&) const;
 
     void calculateBackgroundImageGeometry(const RenderLayerModelObject* paintContainer, const FillLayer*, const LayoutRect& paintRect, BackgroundImageGeometry&, RenderElement* = 0) const;
-    void getBorderEdgeInfo(class BorderEdge[], const RenderStyle*, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
+    void getBorderEdgeInfo(class BorderEdge[], const RenderStyle&, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
     bool borderObscuresBackgroundEdge(const FloatSize& contextScale) const;
     bool borderObscuresBackground() const;
     RoundedRect backgroundRoundedRectAdjustedForBleedAvoidance(const GraphicsContext&, const LayoutRect&, BackgroundBleedAvoidance, InlineFlowBox*, const LayoutSize&, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const;
@@ -330,17 +330,17 @@ private:
     void clipBorderSidePolygon(GraphicsContext*, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
                                BoxSide, bool firstEdgeMatches, bool secondEdgeMatches);
     void clipBorderSideForComplexInnerPath(GraphicsContext*, const RoundedRect&, const RoundedRect&, BoxSide, const class BorderEdge[]);
-    void paintOneBorderSide(GraphicsContext*, const RenderStyle*, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
+    void paintOneBorderSide(GraphicsContext*, const RenderStyle&, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
         const LayoutRect& sideRect, BoxSide, BoxSide adjacentSide1, BoxSide adjacentSide2, const class BorderEdge[],
         const Path*, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, const Color* overrideColor = 0);
-    void paintTranslucentBorderSides(GraphicsContext*, const RenderStyle*, const RoundedRect& outerBorder, const RoundedRect& innerBorder, const IntPoint& innerBorderAdjustment,
+    void paintTranslucentBorderSides(GraphicsContext*, const RenderStyle&, const RoundedRect& outerBorder, const RoundedRect& innerBorder, const IntPoint& innerBorderAdjustment,
         const class BorderEdge[], BorderEdgeFlags, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias = false);
-    void paintBorderSides(GraphicsContext*, const RenderStyle*, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
+    void paintBorderSides(GraphicsContext*, const RenderStyle&, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
         const IntPoint& innerBorderAdjustment, const class BorderEdge[], BorderEdgeFlags, BackgroundBleedAvoidance,
         bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias = false, const Color* overrideColor = 0);
     void drawBoxSideFromPath(GraphicsContext*, const LayoutRect&, const Path&, const class BorderEdge[],
-                            float thickness, float drawThickness, BoxSide, const RenderStyle*, 
-                            Color, EBorderStyle, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
+        float thickness, float drawThickness, BoxSide, const RenderStyle&,
+        Color, EBorderStyle, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
     void paintMaskForTextFillBox(ImageBuffer*, const IntRect&, InlineFlowBox*, const LayoutRect&, RenderNamedFlowFragment*);
 };
 

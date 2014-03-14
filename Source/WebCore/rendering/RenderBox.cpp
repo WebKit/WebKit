@@ -1205,7 +1205,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     // FIXME: Should eventually give the theme control over whether the box shadow should paint, since controls could have
     // custom shadows of their own.
     if (!boxShadowShouldBeAppliedToBackground(bleedAvoidance))
-        paintBoxShadow(paintInfo, paintRect, &style(), Normal);
+        paintBoxShadow(paintInfo, paintRect, style(), Normal);
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context, false);
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer) {
@@ -1224,18 +1224,18 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     bool themePainted = style().hasAppearance() && !theme().paint(this, paintInfo, snappedPaintRect);
     if (!themePainted) {
         if (bleedAvoidance == BackgroundBleedBackgroundOverBorder)
-            paintBorder(paintInfo, paintRect, &style(), bleedAvoidance);
+            paintBorder(paintInfo, paintRect, style(), bleedAvoidance);
 
         paintBackground(paintInfo, paintRect, bleedAvoidance);
 
         if (style().hasAppearance())
             theme().paintDecorations(this, paintInfo, snappedPaintRect);
     }
-    paintBoxShadow(paintInfo, paintRect, &style(), Inset);
+    paintBoxShadow(paintInfo, paintRect, style(), Inset);
 
     // The theme will tell us whether or not we should also paint the CSS border.
     if (bleedAvoidance != BackgroundBleedBackgroundOverBorder && (!style().hasAppearance() || (!themePainted && theme().paintBorderOnly(this, paintInfo, snappedPaintRect))) && style().hasBorder())
-        paintBorder(paintInfo, paintRect, &style(), bleedAvoidance);
+        paintBorder(paintInfo, paintRect, style(), bleedAvoidance);
 
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer)
         paintInfo.context->endTransparencyLayer();
@@ -1450,7 +1450,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
 
     if (allMaskImagesLoaded) {
         paintFillLayers(paintInfo, Color(), style().maskLayers(), paintRect, BackgroundBleedNone, compositeOp);
-        paintNinePieceImage(paintInfo.context, paintRect, &style(), style().maskBoxImage(), compositeOp);
+        paintNinePieceImage(paintInfo.context, paintRect, style(), style().maskBoxImage(), compositeOp);
     }
     
     if (pushTransparencyLayer)

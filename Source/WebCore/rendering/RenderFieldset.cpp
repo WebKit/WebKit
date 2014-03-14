@@ -160,9 +160,9 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint
     }
 
     if (!boxShadowShouldBeAppliedToBackground(determineBackgroundBleedAvoidance(paintInfo.context)))
-        paintBoxShadow(paintInfo, paintRect, &style(), Normal);
+        paintBoxShadow(paintInfo, paintRect, style(), Normal);
     paintFillLayers(paintInfo, style().visitedDependentColor(CSSPropertyBackgroundColor), style().backgroundLayers(), paintRect);
-    paintBoxShadow(paintInfo, paintRect, &style(), Inset);
+    paintBoxShadow(paintInfo, paintRect, style(), Inset);
 
     if (!style().hasBorder())
         return;
@@ -184,7 +184,7 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint
         graphicsContext->clipOut(pixelSnappedIntRect(clipLeft, paintRect.y() + legend->y(), clipWidth, legend->height()));
     }
 
-    paintBorder(paintInfo, paintRect, &style());
+    paintBorder(paintInfo, paintRect, style());
 }
 
 void RenderFieldset::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

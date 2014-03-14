@@ -1319,17 +1319,17 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoin
         return;
 
     LayoutRect paintRect = LayoutRect(paintOffset, pixelSnappedSize());
-    paintBoxShadow(paintInfo, paintRect, &style(), Normal);
+    paintBoxShadow(paintInfo, paintRect, style(), Normal);
     
     // Paint our cell background.
     paintBackgroundsBehindCell(paintInfo, paintOffset, this);
 
-    paintBoxShadow(paintInfo, paintRect, &style(), Inset);
+    paintBoxShadow(paintInfo, paintRect, style(), Inset);
 
     if (!style().hasBorder() || tableElt->collapseBorders())
         return;
 
-    paintBorder(paintInfo, paintRect, &style());
+    paintBorder(paintInfo, paintRect, style());
 }
 
 void RenderTableCell::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
