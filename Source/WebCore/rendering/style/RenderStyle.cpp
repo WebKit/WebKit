@@ -85,7 +85,7 @@ inline RenderStyle& defaultStyle()
 
 PassRef<RenderStyle> RenderStyle::create()
 {
-    return adoptRef(*new RenderStyle());
+    return adoptRef(*new RenderStyle(defaultStyle()));
 }
 
 PassRef<RenderStyle> RenderStyle::createDefaultStyle()
@@ -116,21 +116,6 @@ PassRef<RenderStyle> RenderStyle::createStyleInheritingFromPseudoStyle(const Ren
     return style;
 }
 
-ALWAYS_INLINE RenderStyle::RenderStyle()
-    : m_box(defaultStyle().m_box)
-    , visual(defaultStyle().visual)
-    , m_background(defaultStyle().m_background)
-    , surround(defaultStyle().surround)
-    , rareNonInheritedData(defaultStyle().rareNonInheritedData)
-    , rareInheritedData(defaultStyle().rareInheritedData)
-    , inherited(defaultStyle().inherited)
-    , m_svgStyle(defaultStyle().m_svgStyle)
-{
-    setBitDefaults(); // Would it be faster to copy this from the default style?
-    COMPILE_ASSERT((sizeof(InheritedFlags) <= 8), InheritedFlags_does_not_grow);
-    COMPILE_ASSERT((sizeof(NonInheritedFlags) <= 8), NonInheritedFlags_does_not_grow);
-}
-
 ALWAYS_INLINE RenderStyle::RenderStyle(bool)
     : m_box(StyleBoxData::create())
     , visual(StyleVisualData::create())
@@ -142,6 +127,9 @@ ALWAYS_INLINE RenderStyle::RenderStyle(bool)
     , m_svgStyle(SVGRenderStyle::create())
 {
     setBitDefaults();
+
+    static_assert((sizeof(InheritedFlags) <= 8), "InheritedFlags does not grow");
+    static_assert((sizeof(NonInheritedFlags) <= 8), "NonInheritedFlags does not grow");
 }
 
 ALWAYS_INLINE RenderStyle::RenderStyle(const RenderStyle& o)

@@ -339,7 +339,6 @@ protected:
     }
 
 private:
-    ALWAYS_INLINE RenderStyle();
     // used to create the default style.
     ALWAYS_INLINE RenderStyle(bool);
     ALWAYS_INLINE RenderStyle(const RenderStyle&);

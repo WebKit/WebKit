@@ -1,3 +1,18 @@
+2014-03-13  Benjamin Poulain  <benjamin@webkit.org>
+
+        Clean up RenderStyle creation
+        https://bugs.webkit.org/show_bug.cgi?id=130180
+
+        Reviewed by Andreas Kling.
+
+        Use the copy constructor with the default style instead of having a special
+        constructor for that.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::create):
+        (WebCore::RenderStyle::RenderStyle):
+        * rendering/style/RenderStyle.h:
+
 2014-03-13  Benjamin Poulain  <bpoulain@apple.com>
 
         The viewport code should not depend on WebKitSystemInterface
