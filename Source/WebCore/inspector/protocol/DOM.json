@@ -66,7 +66,7 @@
                 { "name": "focused", "type": "boolean", "optional": true, "description": "Focused state. Only defined on focusable elements." },
                 { "name": "ignored", "type": "boolean", "optional": true, "description": "Indicates whether the accessibility of the associated AX object node is ignored, whether heuristically or explicitly." },
                 { "name": "ignoredByDefault", "type": "boolean", "optional": true, "description": "State indicating whether the accessibility of the associated AX object node is ignored by default for node type." },
-                { "name": "invalid", "type": "string", "optional": true, "description": "Invalid status of form controls: true, false, grammar, spelling." },
+                { "name": "invalid", "type": "string", "optional": true, "enum": ["true", "false", "grammar", "spelling"], "description": "Invalid status of form controls." },
                 { "name": "hidden", "type": "boolean", "optional": true, "description": "Hidden state. True if node or an ancestor is hidden via CSS or explicit @aria-hidden, to clarify why the element is ignored." },
                 { "name": "label", "type": "string", "description": "Computed label value for the node, sometimes calculated by referencing other nodes." },
                 { "name": "nodeId", "$ref": "NodeId", "description": "Target <code>DOMNode</code> id." },

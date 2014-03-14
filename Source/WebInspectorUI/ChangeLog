@@ -1,3 +1,18 @@
+2014-03-13  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: Use loc strings for known aria-invalid types
+        https://bugs.webkit.org/show_bug.cgi?id=129952
+
+        Reviewed by Joseph Pecoraro.
+
+        Updating inspector-protocol and UI display values for @aria-invalid.
+
+        Test: inspector-protocol/dom/getAccessibilityPropertiesForNode.html
+
+        * Localizations/en.lproj/localizedStrings.js: "Grammar" and "Spelling" value strings.
+        * UserInterface/Protocol/InspectorWebBackendCommands.js: New enum for DOM.AccessibilityPropertiesInvalid
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js: Use enum instead of passing value through directly.
+
 2014-03-13  Diego Pino Garcia  <dpino@igalia.com>
 
         Web Inspector: AXI: Expose focused/focusable state in the Accessibility Node Inspector

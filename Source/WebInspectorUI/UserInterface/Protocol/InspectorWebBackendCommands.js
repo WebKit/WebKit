@@ -66,6 +66,7 @@ InspectorBackend.registerCommand("Canvas.getResourceState", [{"name": "traceLogI
 // DOM.
 InspectorBackend.registerDOMDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "DOM");
 InspectorBackend.registerEnum("DOM.AccessibilityPropertiesChecked", {True: "true", False: "false", Mixed: "mixed"});
+InspectorBackend.registerEnum("DOM.AccessibilityPropertiesInvalid", {True: "true", False: "false", Grammar: "grammar", Spelling: "spelling"});
 InspectorBackend.registerEvent("DOM.documentUpdated", []);
 InspectorBackend.registerEvent("DOM.setChildNodes", ["parentId", "nodes"]);
 InspectorBackend.registerEvent("DOM.attributeModified", ["nodeId", "name", "value"]);

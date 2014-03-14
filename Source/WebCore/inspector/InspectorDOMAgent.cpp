@@ -1421,7 +1421,7 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
     bool focused = false;
     bool ignored = true;
     bool ignoredByDefault = false;
-    String invalid = "false"; // String values: true, false, spelling, grammar, etc.
+    TypeBuilder::DOM::AccessibilityProperties::Invalid::Enum invalid = TypeBuilder::DOM::AccessibilityProperties::Invalid::False;
     bool hidden = false;
     String label; // FIXME: Waiting on http://webkit.org/b/121134
     bool pressed = false;
@@ -1462,7 +1462,16 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
 
             ignored = axObject->accessibilityIsIgnored();
             ignoredByDefault = axObject->accessibilityIsIgnoredByDefault();
-            invalid = axObject->invalidStatus();
+            
+            String invalidValue = axObject->invalidStatus();
+            if (invalidValue == "false")
+                invalid = TypeBuilder::DOM::AccessibilityProperties::Invalid::False;
+            else if (invalidValue == "grammar")
+                invalid = TypeBuilder::DOM::AccessibilityProperties::Invalid::Grammar;
+            else if (invalidValue == "spelling")
+                invalid = TypeBuilder::DOM::AccessibilityProperties::Invalid::Spelling;
+            else // Future versions of ARIA may allow additional truthy values. Ex. format, order, or size.
+                invalid = TypeBuilder::DOM::AccessibilityProperties::Invalid::True;
             
             if (axObject->isARIAHidden() || axObject->isDOMHidden())
                 hidden = true;
@@ -1502,7 +1511,7 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             value->setIgnored(ignored);
         if (ignoredByDefault)
             value->setIgnoredByDefault(ignoredByDefault);
-        if (invalid != "false")
+        if (invalid != TypeBuilder::DOM::AccessibilityProperties::Invalid::False)
             value->setInvalid(invalid);
         if (hidden)
             value->setHidden(hidden);

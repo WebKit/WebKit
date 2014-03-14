@@ -302,7 +302,13 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                         ignored = WebInspector.UIString("%s (default)").format(ignored);
                 }
 
-                var invalid = accessibilityProperties.invalid ? accessibilityProperties.invalid : "";
+                var invalid = "";
+                if (accessibilityProperties.invalid === DOMAgent.AccessibilityPropertiesInvalid.True)
+                    invalid = WebInspector.UIString("Yes");
+                else if (accessibilityProperties.invalid === DOMAgent.AccessibilityPropertiesInvalid.Grammar)
+                    invalid = WebInspector.UIString("Grammar");
+                else if (accessibilityProperties.invalid === DOMAgent.AccessibilityPropertiesInvalid.Spelling)
+                    invalid = WebInspector.UIString("Spelling");
 
                 // FIXME: label will always come back as empty. Blocked by http://webkit.org/b/121134
                 var label = accessibilityProperties.label;

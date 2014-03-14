@@ -1,3 +1,18 @@
+2014-03-13  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: Use loc strings for known aria-invalid types
+        https://bugs.webkit.org/show_bug.cgi?id=129952
+
+        Reviewed by Joseph Pecoraro.
+
+        Updating inspector-protocol enum and UI display values for @aria-invalid.
+
+        Test: inspector-protocol/dom/getAccessibilityPropertiesForNode.html
+
+        * inspector/InspectorDOMAgent.cpp: Enum for DOM.AccessibilityPropertiesInvalid
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+        * inspector/protocol/DOM.json: Enum for DOM.AccessibilityPropertiesInvalid
+
 2014-03-13  Dirk Schulze  <krit@webkit.org>
 
         [SVG2] support paint-order presentation attribute
