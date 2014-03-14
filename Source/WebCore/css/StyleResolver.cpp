@@ -1595,6 +1595,12 @@ Length StyleResolver::convertToFloatLength(const CSSPrimitiveValue* primitiveVal
 static bool shouldApplyPropertyInParseOrder(CSSPropertyID propertyID)
 {
     switch (propertyID) {
+    case CSSPropertyWebkitBackgroundClip:
+    case CSSPropertyBackgroundClip:
+    case CSSPropertyWebkitBackgroundOrigin:
+    case CSSPropertyBackgroundOrigin:
+    case CSSPropertyWebkitBackgroundSize:
+    case CSSPropertyBackgroundSize:
     case CSSPropertyWebkitBorderImage:
     case CSSPropertyBorderImage:
     case CSSPropertyBorderImageSlice:
@@ -1602,6 +1608,8 @@ static bool shouldApplyPropertyInParseOrder(CSSPropertyID propertyID)
     case CSSPropertyBorderImageOutset:
     case CSSPropertyBorderImageRepeat:
     case CSSPropertyBorderImageWidth:
+    case CSSPropertyWebkitBoxShadow:
+    case CSSPropertyBoxShadow:
     case CSSPropertyWebkitTextDecoration:
     case CSSPropertyWebkitTextDecorationLine:
     case CSSPropertyWebkitTextDecorationStyle:

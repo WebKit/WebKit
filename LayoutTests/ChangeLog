@@ -1,3 +1,28 @@
+2014-03-13  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r160806): Incorrect cascade order of prefixed and non-prefixed variants of
+        CSS properties box-shadow and background-{clip, origin, size}
+        https://bugs.webkit.org/show_bug.cgi?id=130102
+        <rdar://problem/16187037>
+
+        Reviewed by Andreas Kling.
+
+        Add tests to ensure that we correctly cascade the prefixed and non-prefixed variants
+        of the CSS properties box-shadow and background-{clip, origin, size}.
+
+        * fast/css/cascade/background-clip-and-webkit-background-clip-cascade-order-expected.html: Added.
+        * fast/css/cascade/background-clip-and-webkit-background-clip-cascade-order.html: Added.
+        * fast/css/cascade/background-origin-and-webkit-background-origin-cascade-order-expected.html: Added.
+        * fast/css/cascade/background-origin-and-webkit-background-origin-cascade-order.html: Added.
+        * fast/css/cascade/background-size-and-webkit-background-size-cascade-order-expected.html: Added.
+        * fast/css/cascade/background-size-and-webkit-background-size-cascade-order.html: Added.
+        * fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order-expected.html: Added.
+        * fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html: Added.
+        * fast/css/resources/green-128x128.png: Added.
+        * fast/css/resources/green-square-above-red-square.png: Added.
+        * fast/css/resources/red-square-above-green-square.png: Added.
+        * fast/css/resources/red-square-in-green-square.png: Added.
+
 2014-03-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r165540.

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.square {
+    display: inline-block;
+    height: 128px;
+    width: 128px;
+    background-repeat: no-repeat;
+}
+
+#webkit-background-size-before-background-size {
+    background-image: url("../resources/green-square-above-red-square.png");
+    -webkit-background-size: 128px;
+    background-size: 128px; /* Should override -webkit-background-size */
+}
+
+#background-size-before-webkit-background-size {
+    background-image: url("../resources/red-square-above-green-square.png");
+    background-position-y: -64px;
+    background-size: 128px;
+    -webkit-background-size: 128px; /* Should override background-size */
+}
+</style>
+</head>
+<body>
+    <!-- Test that we apply background-size and -webkit-background-size in the order they are parsed. -->
+    <div class="square" id="webkit-background-size-before-background-size"></div>
+    <div class="square" id="background-size-before-webkit-background-size"></div>
+</body>
+</html>

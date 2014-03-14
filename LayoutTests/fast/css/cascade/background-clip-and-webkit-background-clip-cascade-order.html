@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "Ahem";
+    src: url("../../../resources/Ahem.ttf");
+}
+
+body {
+    background-color: white;
+    font-family: "Ahem";
+    font-size: 20px; /* For some reason this needs to be multiple of 10 for the test to pass (why?). */
+}
+
+.square {
+    display: inline-block;
+    height: 128px;
+    width: 128px;
+    background-repeat: no-repeat;
+    color: transparent;
+}
+
+#webkit-background-clip-before-background-clip {
+    background-image: url("../resources/green-128x128.png");
+    -webkit-background-clip: text, border;
+    background-clip: border-box; /* Should override -webkit-background-clip */
+}
+
+#background-clip-before-webkit-background-clip {
+    background-color: #00FF00;
+    background-clip: border-box;
+    -webkit-background-clip: text, border; /* Should override background-clip */
+}
+</style>
+</head>
+<body>
+    <!-- Tests that we apply background-clip and -webkit-background-clip in the order they are parsed. -->
+    <div class="square" id="webkit-background-clip-before-background-clip"></div>
+    <div class="square" id="background-clip-before-webkit-background-clip">X</div>
+</body>
+</html>
