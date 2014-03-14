@@ -2198,7 +2198,7 @@ sub GenerateImplementation
                 my $nativeType = GetNativeType($type);
                 my $memoizedType = GetNativeTypeForMemoization($type);
                 my $exceptionCode = $getterExceptions ? "ec" : "0";
-                push(@implContent, "    DEFINE_STATIC_LOCAL(const AtomicString, bindingName, (\"$interfaceName.$name\", AtomicString::ConstructFromLiteral));\n");
+                push(@implContent, "    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, bindingName, (\"$interfaceName.$name\", AtomicString::ConstructFromLiteral));\n");
                 push(@implContent, "    if (cursor.isCapturing()) {\n");
                 push(@implContent, "        $memoizedType memoizedResult = castedThis->impl().$implGetterFunctionName(" . join(", ", @arguments) . ");\n");
                 push(@implContent, "        cursor.appendInput<MemoizedDOMResult<$memoizedType>>(bindingName, memoizedResult, $exceptionCode);\n");

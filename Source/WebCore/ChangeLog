@@ -1,3 +1,12 @@
+2014-03-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed build fix after r165607. There were two missing replaces.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * dom/Element.cpp:
+        (WebCore::attrNodeListMap):
+
 2014-03-14  Frédéric Wang  <fred.wang@free.fr>
 
         Migrate the MathML stretchy code from UChar to Glyph.

@@ -98,7 +98,7 @@ typedef HashMap<Element*, OwnPtr<AttrNodeList>> AttrNodeListMap;
 
 static AttrNodeListMap& attrNodeListMap()
 {
-    DEFINE_STATIC_LOCAL(AttrNodeListMap, map, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(AttrNodeListMap, map, ());
     return map;
 }
 
