@@ -82,6 +82,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
 @property (readonly) NSColor *_pageExtendedBackgroundColor;
 #endif
 
+- (void)_runJavaScriptInMainFrame:(NSString *)scriptString;
+
 @end
 
 #endif

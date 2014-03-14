@@ -886,6 +886,11 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     _page->listenForLayoutMilestones(layoutMilestones(observedRenderingProgressEvents));
 }
 
+- (void)_runJavaScriptInMainFrame:(NSString *)scriptString
+{
+    _page->runJavaScriptInMainFrame(scriptString, WebKit::ScriptValueCallback::create([](bool, WebKit::WebSerializedScriptValue*){}));
+}
+
 #pragma mark iOS-specific methods
 
 #if PLATFORM(IOS)

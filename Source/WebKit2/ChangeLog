@@ -1,3 +1,13 @@
+2014-03-13  Paul Hankes Drielsma  <phd@apple.com>
+
+        Add SPI to run javascript in main frame on WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=130047
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _runJavaScriptInMainFrame:]):
+
 2014-03-13  Benjamin Poulain  <bpoulain@apple.com>
 
         The viewport code should not depend on WebKitSystemInterface
