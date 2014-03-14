@@ -968,14 +968,6 @@ void WebContext::setDefaultRequestTimeoutInterval(double timeoutInterval)
     sendToAllProcesses(Messages::WebProcess::SetDefaultRequestTimeoutInterval(timeoutInterval));
 }
 
-void WebContext::addVisitedLink(const String& visitedURL)
-{
-    if (visitedURL.isEmpty())
-        return;
-
-    m_visitedLinkProvider->addVisitedLinkHash(visitedLinkHash(visitedURL));
-}
-
 DownloadProxy* WebContext::createDownloadProxy()
 {
 #if ENABLE(NETWORK_PROCESS)

@@ -197,7 +197,7 @@ public:
     void registerURLSchemeAsCachePartitioned(const String&);
 #endif
 
-    void addVisitedLink(const String&);
+    VisitedLinkProvider& visitedLinkProvider() { return *m_visitedLinkProvider; }
 
     // MessageReceiver.
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;

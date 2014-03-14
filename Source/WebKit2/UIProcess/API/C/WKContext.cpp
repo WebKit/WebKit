@@ -61,6 +61,7 @@ template<> struct ClientTraits<WKContextHistoryClientBase> {
 };
 }
 
+using namespace WebCore;
 using namespace WebKit;
 
 typedef GenericAPICallback<WKDictionaryRef> DictionaryAPICallback;
@@ -188,7 +189,11 @@ void WKContextGetGlobalStatistics(WKContextStatistics* statistics)
 
 void WKContextAddVisitedLink(WKContextRef contextRef, WKStringRef visitedURL)
 {
-    toImpl(contextRef)->addVisitedLink(toImpl(visitedURL)->string());
+    String visitedURLString = toImpl(visitedURL)->string();
+    if (visitedURLString.isEmpty())
+        return;
+
+    toImpl(contextRef)->visitedLinkProvider().addVisitedLinkHash(visitedLinkHash(visitedURLString));
 }
 
 void WKContextSetCacheModel(WKContextRef contextRef, WKCacheModel cacheModel)
