@@ -248,7 +248,10 @@ private:
 
     virtual void enableSuddenTermination() override;
     virtual void disableSuddenTermination() override;
-    
+
+#if PLATFORM(IOS)
+    virtual WebCore::FloatSize viewportScreenSize() const override;
+#endif
     virtual void dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments&) const override;
 
     virtual void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&) override;

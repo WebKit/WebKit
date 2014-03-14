@@ -493,6 +493,11 @@ void WebPageProxy::blurAssistedNode()
     process().send(Messages::WebPage::BlurAssistedNode(), m_pageID);
 }
 
+FloatSize WebPageProxy::viewportScreenSize()
+{
+    return FloatSize(WKGetViewportScreenSize());
+}
+
 void WebPageProxy::didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius)
 {
     m_pageClient.didGetTapHighlightGeometries(requestID, color, highlightedQuads, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);

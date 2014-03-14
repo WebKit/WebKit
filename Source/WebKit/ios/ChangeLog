@@ -1,3 +1,15 @@
+2014-03-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        The viewport code should not depend on WebKitSystemInterface
+        https://bugs.webkit.org/show_bug.cgi?id=130218
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::viewportScreenSize):
+        Get the viewport size from WebKitSystemInterface.
+
 2014-03-12  Enrica Casucci  <enrica@apple.com>
 
         Incorrect reference counting of Range in WebFrame.

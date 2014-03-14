@@ -60,6 +60,10 @@
 #import <WebCore/WAKWindow.h>
 #import <WebCore/WebCoreThreadMessage.h>
 
+#if PLATFORM(IOS)
+#include "WebKitSystemInterface.h"
+#endif
+
 using namespace WebCore;
 
 void WebChromeClientIOS::setWindowRect(const WebCore::FloatRect& r)
@@ -165,6 +169,11 @@ static inline NSDictionary* dictionaryForViewportArguments(const WebCore::Viewpo
               @"width":@(arguments.width),
               @"height":@(arguments.height),
               @"minimal-ui":@(arguments.minimalUI) };
+}
+
+FloatSize WebChromeClientIOS::viewportScreenSize() const
+{
+    return FloatSize(WKGetViewportScreenSize());
 }
 
 void WebChromeClientIOS::dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments& arguments) const

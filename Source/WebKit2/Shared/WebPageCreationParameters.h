@@ -33,6 +33,7 @@
 #include "WebPageGroupData.h"
 #include "WebPreferencesStore.h"
 #include <WebCore/Color.h>
+#include <WebCore/FloatSize.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/Pagination.h>
 #include <WebCore/ScrollTypes.h>
@@ -104,6 +105,9 @@ struct WebPageCreationParameters {
 
 #if PLATFORM(COCOA)
     ColorSpaceData colorSpace;
+#endif
+#if PLATFORM(IOS)
+    WebCore::FloatSize viewportScreenSize;
 #endif
 };
 

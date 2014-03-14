@@ -1184,6 +1184,8 @@ private:
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS)
+    WebCore::FloatSize viewportScreenSize();
+
     void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& geometries, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius);
 
     void startAssistingNode(const AssistedNodeInformation&);

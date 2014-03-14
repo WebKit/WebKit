@@ -841,6 +841,13 @@ void WebChromeClient::exitFullScreenForElement(WebCore::Element* element)
 }
 #endif
 
+#if PLATFORM(IOS)
+FloatSize WebChromeClient::viewportScreenSize() const
+{
+    return m_page->viewportScreenSize();
+}
+#endif
+
 void WebChromeClient::dispatchViewportPropertiesDidChange(const ViewportArguments& viewportArguments) const
 {
     UNUSED_PARAM(viewportArguments);

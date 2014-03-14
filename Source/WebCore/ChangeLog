@@ -1,3 +1,27 @@
+2014-03-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        The viewport code should not depend on WebKitSystemInterface
+        https://bugs.webkit.org/show_bug.cgi?id=130218
+
+        Reviewed by Tim Horton.
+
+        The viewport code cannot be generalized to other ports because it relies
+        on WebKit system interface to get the device screen size.
+        This patch fixes that by going through ChromeClient to get the data.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processViewport):
+        Get the screensize from chrome client.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::computeViewportAttributes):
+        This is dead code. Nothing should ever use computeViewportAttributes().
+
+        (WebCore::finalizeViewportArguments):
+        * dom/ViewportArguments.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::viewportScreenSize):
+
 2014-03-07  Jer Noble  <jer.noble@apple.com>
 
         Add remote control command support to MediaSession.

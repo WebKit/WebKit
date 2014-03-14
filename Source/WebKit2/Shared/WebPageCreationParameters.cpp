@@ -66,6 +66,9 @@ void WebPageCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
 #if PLATFORM(COCOA)
     encoder << colorSpace;
 #endif
+#if PLATFORM(IOS)
+    encoder << viewportScreenSize;
+#endif
 }
 
 bool WebPageCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebPageCreationParameters& parameters)
@@ -133,6 +136,12 @@ bool WebPageCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebPageCre
     if (!decoder.decode(parameters.colorSpace))
         return false;
 #endif
+
+#if PLATFORM(IOS)
+    if (!decoder.decode(parameters.viewportScreenSize))
+        return false;
+#endif
+
 
     return true;
 }

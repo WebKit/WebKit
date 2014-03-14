@@ -4012,6 +4012,9 @@ WebPageCreationParameters WebPageProxy::creationParameters()
 #if PLATFORM(MAC)
     parameters.colorSpace = m_pageClient.colorSpace();
 #endif
+#if PLATFORM(IOS)
+    parameters.viewportScreenSize = viewportScreenSize();
+#endif
 
     return parameters;
 }

@@ -115,6 +115,11 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
     return false;
 }
 
+FloatSize WebPage::viewportScreenSize() const
+{
+    return m_viewportScreenSize;
+}
+
 void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArguments)
 {
     m_viewportConfiguration.setViewportArguments(viewportArguments);

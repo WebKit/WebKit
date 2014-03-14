@@ -285,6 +285,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_lastVisibleContentRectUpdateID(0)
     , m_scaleWasSetByUIProcess(false)
     , m_userHasChangedPageScaleFactor(false)
+    , m_viewportScreenSize(parameters.viewportScreenSize)
 #endif
     , m_inspectorClient(0)
     , m_backgroundColor(Color::white)
