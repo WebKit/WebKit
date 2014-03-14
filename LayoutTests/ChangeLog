@@ -1,3 +1,26 @@
+2014-03-14  Andres Gomez  <agomez@igalia.com>
+
+        [GStreamer] WebKit gets stalled when trying to play a stream
+        https://bugs.webkit.org/show_bug.cgi?id=125926
+
+        Reviewed by Philippe Normand.
+
+        Added new test for checking the playback on Icecast/Shoutcast
+        streamed media.
+
+        * http/tests/media/media-play-stream-chunked-icy-expected.txt: Added.
+        * http/tests/media/media-play-stream-chunked-icy.html: Added.
+        * http/tests/media/resources/create-id3-db.php: Added.
+        * http/tests/media/resources/serve-video.php: Added support for
+        chunked streams and Icecast/Shoutcast headers.
+        * http/tests/resources/dir-helpers.php: Added.
+        * http/tests/resources/portabilityLayer.php: Added a couple of new
+        fallback functions when they are not available in old PHP
+        versions.
+        * media/content/metadata.db: Added.
+        * media/content/silence.mp3: Added.
+        * platform/mac/TestExpectations: Skipped on Mavericks Mac port.
+
 2014-03-14  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Inline-block child of content node incorrectly clipped

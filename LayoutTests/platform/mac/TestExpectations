@@ -559,6 +559,8 @@ http/tests/media/video-play-stall-seek.html
 http/tests/media/video-play-stall.html
 media/media-fullscreen-not-in-document.html
 
+webkit.org/b/130234 [ Mavericks ] http/tests/media/media-play-stream-chunked-icy.html [ Skip ]
+
 # Media playback control is passed to AVFoundation that doesn't like fancy PHP URLs like the one used in the test and, in addition, they won't care about HTTP servers not supporting "Range" requests
 http/tests/media/media-seeking-no-ranges-server.html
 
