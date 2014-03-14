@@ -699,7 +699,7 @@ WebInspector.Resource.prototype = {
 
     saveIdentityToCookie: function(cookie)
     {
-        cookie[WebInspector.Resource.URLCookieKey] = this.url;
+        cookie[WebInspector.Resource.URLCookieKey] = this.url.hash;
         cookie[WebInspector.Resource.MainResourceCookieKey] = this.isMainResource();
     }
 };

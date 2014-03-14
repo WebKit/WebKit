@@ -464,7 +464,7 @@ WebInspector.Frame.prototype = {
 
     saveIdentityToCookie: function(cookie)
     {
-        cookie[WebInspector.Frame.MainResourceURLCookieKey] = this.mainResource.url;
+        cookie[WebInspector.Frame.MainResourceURLCookieKey] = this.mainResource.url.hash;
     },
 
     // Private

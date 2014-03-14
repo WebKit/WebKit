@@ -1,3 +1,15 @@
+2014-03-14  Diego Pino Garcia  <dpino@igalia.com>
+
+        Web Inspector: Resource and Frame saveIdentityToCookie should store URL hashes not URLs
+        https://bugs.webkit.org/show_bug.cgi?id=126833
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/Frame.js:
+        (WebInspector.Frame.prototype.saveIdentityToCookie):
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource.prototype.saveIdentityToCookie):
+
 2014-03-13  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: Use loc strings for known aria-invalid types
