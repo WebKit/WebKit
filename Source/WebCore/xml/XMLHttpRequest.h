@@ -122,7 +122,6 @@ public:
     bool responseCacheIsValid() const { return m_responseCacheIsValid; }
     void didCacheResponseJSON();
 
-    void sendForInspector(ExceptionCode&);
     void sendForInspectorXHRReplay(PassRefPtr<FormData>, ExceptionCode&);
 
     // Expose HTTP validation methods for other untrusted requests.
@@ -246,7 +245,6 @@ private:
     bool m_uploadComplete;
 
     bool m_sameOriginRequest;
-    bool m_sendingForInspector;
 
     // Used for onprogress tracking
     long long m_receivedLength;

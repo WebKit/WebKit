@@ -1,3 +1,35 @@
+2014-03-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network.loadResource XHR crash if page reloaded while request is ongoing
+        https://bugs.webkit.org/show_bug.cgi?id=130211
+
+        Reviewed by Timothy Hatcher.
+
+        Merged from Blink with changes, (patch by vsevik@chromium.org):
+        http://src.chromium.org/viewvc/blink?view=revision&revision=152712
+
+        Using an XMLHttpRequest to download resources had a few issues. Being an
+        Active DOM Object the load could be paused. Without an extra retain,
+        when the load was cancelled (e.g. a page reload) the XHR would get
+        destructed and could cause a crash if the list of active DOM objects
+        was actively being iterated.
+
+        Switch to a DocumentThreadableLoader to manage the load ourselves.
+        This still uses the Memory cache, but we have a little more control.
+
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::InspectorResourceAgent):
+        (WebCore::InspectorResourceAgent::loadResource):
+        Switch from XHR to DocumentThreadableLoader.
+
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::sendForInspector):
+        Remove the now unnecessary XHR sendForInspector path.
+
 2014-03-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r165540.

@@ -57,7 +57,6 @@ class HTTPHeaderMap;
 class InspectorClient;
 class InspectorPageAgent;
 class InstrumentingAgents;
-class URL;
 class NetworkResourcesData;
 class Page;
 class ResourceError;
@@ -66,6 +65,7 @@ class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
 class ThreadableLoaderClient;
+class URL;
 class XHRReplayData;
 class XMLHttpRequest;
 
@@ -121,23 +121,20 @@ public:
     void didReceiveWebSocketFrameError(unsigned long identifier, const String&);
 #endif
 
-    // called from Internals for layout test purposes.
+    // Called from Internals for layout test purposes.
     void setResourcesDataSizeLimitsFromInternals(int maximumResourcesContentSize, int maximumSingleResourceContentSize);
 
-    // Called from frontend
+    // Called from frontend.
     virtual void enable(ErrorString*) override;
     virtual void disable(ErrorString*) override;
     virtual void setExtraHTTPHeaders(ErrorString*, const RefPtr<Inspector::InspectorObject>&) override;
     virtual void getResponseBody(ErrorString*, const String& requestId, String* content, bool* base64Encoded) override;
-
     virtual void replayXHR(ErrorString*, const String& requestId) override;
-
     virtual void canClearBrowserCache(ErrorString*, bool*) override;
     virtual void clearBrowserCache(ErrorString*) override;
     virtual void canClearBrowserCookies(ErrorString*, bool*) override;
     virtual void clearBrowserCookies(ErrorString*) override;
     virtual void setCacheDisabled(ErrorString*, bool cacheDisabled) override;
-
     virtual void loadResource(ErrorString*, const String& frameId, const String& url, PassRefPtr<LoadResourceCallback>) override;
 
 private:
