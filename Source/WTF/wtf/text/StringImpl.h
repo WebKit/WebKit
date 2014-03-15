@@ -915,95 +915,105 @@ inline bool equal(const LChar* a, StringImpl* b) { return equal(b, a); }
 inline bool equal(const char* a, StringImpl* b) { return equal(b, reinterpret_cast<const LChar*>(a)); }
 WTF_EXPORT_STRING_API bool equal(const StringImpl& a, const StringImpl& b);
 
+template<typename T>
+inline T loadUnaligned(const char* s)
+{
+    T tmp;
+    memcpy(&tmp, s, sizeof(T));
+    return tmp;
+}
+
 // Do comparisons 8 or 4 bytes-at-a-time on architectures where it's safe.
 #if CPU(X86_64) || CPU(ARM64)
-ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
+ALWAYS_INLINE bool equal(const LChar* aLChar, const LChar* bLChar, unsigned length)
 {
     unsigned dwordLength = length >> 3;
 
+    const char* a = reinterpret_cast<const char*>(aLChar);
+    const char* b = reinterpret_cast<const char*>(bLChar);
+
     if (dwordLength) {
-        const uint64_t* aDWordCharacters = reinterpret_cast<const uint64_t*>(a);
-        const uint64_t* bDWordCharacters = reinterpret_cast<const uint64_t*>(b);
-
         for (unsigned i = 0; i != dwordLength; ++i) {
-            if (*aDWordCharacters++ != *bDWordCharacters++)
+            if (loadUnaligned<uint64_t>(a) != loadUnaligned<uint64_t>(b))
                 return false;
-        }
 
-        a = reinterpret_cast<const LChar*>(aDWordCharacters);
-        b = reinterpret_cast<const LChar*>(bDWordCharacters);
+            a += sizeof(uint64_t);
+            b += sizeof(uint64_t);
+        }
     }
 
     if (length & 4) {
-        if (*reinterpret_cast<const uint32_t*>(a) != *reinterpret_cast<const uint32_t*>(b))
+        if (loadUnaligned<uint32_t>(a) != loadUnaligned<uint32_t>(b))
             return false;
 
-        a += 4;
-        b += 4;
+        a += sizeof(uint32_t);
+        b += sizeof(uint32_t);
     }
 
     if (length & 2) {
-        if (*reinterpret_cast<const uint16_t*>(a) != *reinterpret_cast<const uint16_t*>(b))
+        if (loadUnaligned<uint16_t>(a) != loadUnaligned<uint16_t>(b))
             return false;
 
-        a += 2;
-        b += 2;
+        a += sizeof(uint16_t);
+        b += sizeof(uint16_t);
     }
 
-    if (length & 1 && (*a != *b))
+    if (length & 1 && (*reinterpret_cast<const LChar*>(a) != *reinterpret_cast<const LChar*>(b)))
         return false;
 
     return true;
 }
 
-ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length)
+ALWAYS_INLINE bool equal(const UChar* aUChar, const UChar* bUChar, unsigned length)
 {
     unsigned dwordLength = length >> 2;
-    
+
+    const char* a = reinterpret_cast<const char*>(aUChar);
+    const char* b = reinterpret_cast<const char*>(bUChar);
+
     if (dwordLength) {
-        const uint64_t* aDWordCharacters = reinterpret_cast<const uint64_t*>(a);
-        const uint64_t* bDWordCharacters = reinterpret_cast<const uint64_t*>(b);
-
         for (unsigned i = 0; i != dwordLength; ++i) {
-            if (*aDWordCharacters++ != *bDWordCharacters++)
+            if (loadUnaligned<uint64_t>(a) != loadUnaligned<uint64_t>(b))
                 return false;
-        }
 
-        a = reinterpret_cast<const UChar*>(aDWordCharacters);
-        b = reinterpret_cast<const UChar*>(bDWordCharacters);
+            a += sizeof(uint64_t);
+            b += sizeof(uint64_t);
+        }
     }
 
     if (length & 2) {
-        if (*reinterpret_cast<const uint32_t*>(a) != *reinterpret_cast<const uint32_t*>(b))
+        if (loadUnaligned<uint32_t>(a) != loadUnaligned<uint32_t>(b))
             return false;
 
-        a += 2;
-        b += 2;
+        a += sizeof(uint32_t);
+        b += sizeof(uint32_t);
     }
 
-    if (length & 1 && (*a != *b))
+    if (length & 1 && (*reinterpret_cast<const UChar*>(a) != *reinterpret_cast<const UChar*>(b)))
         return false;
 
     return true;
 }
 #elif CPU(X86)
-ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
+ALWAYS_INLINE bool equal(const LChar* aLChar, const LChar* bLChar, unsigned length)
 {
-    const uint32_t* aCharacters = reinterpret_cast<const uint32_t*>(a);
-    const uint32_t* bCharacters = reinterpret_cast<const uint32_t*>(b);
+    const char* a = reinterpret_cast<const char*>(aLChar);
+    const char* b = reinterpret_cast<const char*>(bLChar);
 
     unsigned wordLength = length >> 2;
     for (unsigned i = 0; i != wordLength; ++i) {
-        if (*aCharacters++ != *bCharacters++)
+        if (loadUnaligned<uint32_t>(a) != loadUnaligned<uint32_t>(b))
             return false;
+        a += sizeof(uint32_t);
+        b += sizeof(uint32_t);
     }
 
     length &= 3;
 
     if (length) {
-        const LChar* aRemainder = reinterpret_cast<const LChar*>(aCharacters);
-        const LChar* bRemainder = reinterpret_cast<const LChar*>(bCharacters);
-        
+        const LChar* aRemainder = reinterpret_cast<const LChar*>(a);
+        const LChar* bRemainder = reinterpret_cast<const LChar*>(b);
+
         for (unsigned i = 0; i <  length; ++i) {
             if (aRemainder[i] != bRemainder[i])
                 return false;
@@ -1013,20 +1023,22 @@ ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
     return true;
 }
 
-ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length)
+ALWAYS_INLINE bool equal(const UChar* aUChar, const UChar* bUChar, unsigned length)
 {
-    const uint32_t* aCharacters = reinterpret_cast<const uint32_t*>(a);
-    const uint32_t* bCharacters = reinterpret_cast<const uint32_t*>(b);
-    
+    const char* a = reinterpret_cast<const char*>(aUChar);
+    const char* b = reinterpret_cast<const char*>(bUChar);
+
     unsigned wordLength = length >> 1;
     for (unsigned i = 0; i != wordLength; ++i) {
-        if (*aCharacters++ != *bCharacters++)
+        if (loadUnaligned<uint32_t>(a) != loadUnaligned<uint32_t>(b))
             return false;
+        a += sizeof(uint32_t);
+        b += sizeof(uint32_t);
     }
-    
-    if (length & 1 && *reinterpret_cast<const UChar*>(aCharacters) != *reinterpret_cast<const UChar*>(bCharacters))
+
+    if (length & 1 && *reinterpret_cast<const UChar*>(a) != *reinterpret_cast<const UChar*>(b))
         return false;
-    
+
     return true;
 }
 #elif PLATFORM(IOS) && WTF_ARM_ARCH_AT_LEAST(7)

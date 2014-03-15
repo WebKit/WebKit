@@ -1,3 +1,15 @@
+2014-03-15  David Kilzer  <ddkilzer@apple.com>
+
+        Fix undefined behavior in WTF::equal() in StringImpl.h for i386/x86_64
+        <http://webkit.org/b/130283>
+        <rdar://problem/16281477>
+
+        Reviewed by Geoff Garen.
+
+        * wtf/text/StringImpl.h:
+        (WTF::loadUnaligned): Add template method.
+        (WTF::equal): Switch to using loadUnaligned<>().
+
 2014-03-14  Mark Rowe  <mrowe@apple.com>
 
         Fix the production build.
