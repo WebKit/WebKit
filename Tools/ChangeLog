@@ -1,3 +1,14 @@
+2014-03-15  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Improve ninja detection in webkitdirs.pm
+        https://bugs.webkit.org/show_bug.cgi?id=129902
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitdirs.pm:
+        (canUseNinja): Use which instead of trying to invoke ninja directly. This also allows
+        us to look for ninja-build as well.
+
 2014-03-14  Maciej Stachowiak  <mjs@apple.com>
 
         Replace "Apple Computer, Inc." with "Apple Inc." in copyright headers

@@ -1973,7 +1973,8 @@ sub removeCMakeCache(@)
 
 sub canUseNinja(@)
 {
-    system('ninja --version > /dev/null 2>&1');
+    # Test both ninja and ninja-build. Fedora uses ninja-build and has patched CMake to also call ninja-build.
+    system('which ninja > /dev/null || which ninja-build > /dev/null');
     return $? == 0;
 }
 
