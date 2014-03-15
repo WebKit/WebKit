@@ -1,3 +1,12 @@
+2014-03-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Layout test fixes. js-test-pre.js is in fast/js/resources instead of resources/.
+
+        * editing/selection/selection-change-in-blur-event-by-remove-children.html:
+        * editing/selection/selection-change-in-mutation-event-by-remove-children.html:
+        * fast/dom/Range/range-created-during-remove-children.html:
+        * fast/forms/number/number-type-update-by-change-event.html:
+
 2014-03-13  Chris Fleizach  <cfleizach@apple.com>
 
         Fix accessibility/display-table-cell-causes-crash.html

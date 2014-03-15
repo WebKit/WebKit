@@ -1,7 +1,7 @@
 <!DOCTYPE>
 <html>
 <body>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../js/resources/js-test-pre.js"></script>
 <input type="number" onchange="handleChange(this);">
 <script>
 function sendKey(keyName) {
@@ -23,6 +23,6 @@ sendKey('Up');
 testPassed('if not crashed in ASAN build.');
 shouldBe('changeEventCounter', '1');
 </script>
-<script src="../../../resources/js-test-post.js"></script>
+<script src="../../js/resources/js-test-post.js"></script>
 </body>
 </html>

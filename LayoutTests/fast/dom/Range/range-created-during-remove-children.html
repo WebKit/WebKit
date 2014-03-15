@@ -3,7 +3,7 @@
 <div id="sample"><span contenteditable="true">foobar</span></div>
 </div>
 <div id="console"></div>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
 <script>
 description('Range objects should be updated after set innerHTML.');
 
@@ -34,4 +34,4 @@ shouldBe('ranges["DOMNodeRemovedFromDocument"].endOffset', '0');
 if (window.testRunner)
     document.getElementById('container').outerHTML = '';
 </script>
-<script src="../../../resources/js-test-post.js"></script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
