@@ -486,6 +486,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
                 next(TreeBuilder::DontBuildStrings); // consume '='
                 TreeExpression rhs = parseExpression(context);
                 node = context.createDeconstructingAssignment(location, pattern, rhs);
+                lastInitializer = rhs;
             }
         }
         
@@ -734,18 +735,21 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         if (match(SEMICOLON))
             goto standardForLoop;
         
-        failIfFalse(declarations == 1, "must declare variables after 'var'");
-        failIfTrue(forInInitializer, "Cannot use initialiser syntax in a for-in loop");
-        
+        failIfFalse(declarations == 1, "can only declare a single variable in an enumeration");
+        failIfTrueIfStrict(forInInitializer, "Cannot use initialiser syntax in a strict mode enumeration");
+
+        if (forInInitializer)
+            failIfFalse(context.isBindingNode(forInTarget), "Cannot use initialiser syntax when binding to a pattern during enumeration");
+
         // Handle for-in with var declaration
         JSTextPosition inLocation = tokenStartPosition();
         bool isOfEnumeration = false;
         if (!consume(INTOKEN)) {
             failIfFalse(match(IDENT) && *m_token.m_data.ident == m_vm->propertyNames->of, "Expected either 'in' or 'of' in enumeration syntax");
             isOfEnumeration = true;
+            failIfTrue(forInInitializer, "Cannot use initialiser syntax in a for-of enumeration");
             next();
         }
-        
         TreeExpression expr = parseExpression(context);
         failIfFalse(expr, "Expected expression to enumerate");
         JSTextPosition exprEnd = lastTokenEndPosition();

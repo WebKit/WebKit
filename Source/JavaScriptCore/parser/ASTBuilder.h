@@ -406,6 +406,11 @@ public:
         return result;
     }
 
+    bool isBindingNode(const DeconstructionPattern& pattern)
+    {
+        return pattern->isBindingNode();
+    }
+
     StatementNode* createEmptyStatement(const JSTokenLocation& location) { return new (m_vm) EmptyStatementNode(location); }
 
     StatementNode* createVarStatement(const JSTokenLocation& location, ExpressionNode* expr, int start, int end)

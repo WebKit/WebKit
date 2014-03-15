@@ -111,9 +111,10 @@ public:
     typedef int Clause;
     typedef int ConstDeclList;
     typedef int BinaryOperand;
+    enum { BindingDeconstruction = 1, ArrayDeconstruction, ObjectDeconstruction };
     typedef int DeconstructionPattern;
-    typedef int ArrayPattern;
-    typedef int ObjectPattern;
+    typedef DeconstructionPattern ArrayPattern;
+    typedef DeconstructionPattern ObjectPattern;
 
     static const bool CreatesAST = false;
     static const bool NeedsFreeVariableInfo = false;
@@ -265,7 +266,7 @@ public:
     
     ArrayPattern createArrayPattern(const JSTokenLocation&)
     {
-        return 1;
+        return ArrayDeconstruction;
     }
     void appendArrayPatternSkipEntry(ArrayPattern, const JSTokenLocation&)
     {
@@ -275,15 +276,21 @@ public:
     }
     ObjectPattern createObjectPattern(const JSTokenLocation&)
     {
-        return 1;
+        return ObjectDeconstruction;
     }
     void appendObjectPatternEntry(ArrayPattern, const JSTokenLocation&, bool, const Identifier&, DeconstructionPattern)
     {
     }
     DeconstructionPattern createBindingLocation(const JSTokenLocation&, const Identifier&, const JSTextPosition&, const JSTextPosition&)
     {
-        return 1;
+        return BindingDeconstruction;
     }
+
+    bool isBindingNode(DeconstructionPattern pattern)
+    {
+        return pattern == BindingDeconstruction;
+    }
+
 private:
     int m_topBinaryExpr;
     int m_topUnaryToken;

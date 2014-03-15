@@ -1,3 +1,15 @@
+2014-03-14  Oliver Hunt  <oliver@apple.com>
+
+        Reinstate intialiser syntax in for-in loops
+        https://bugs.webkit.org/show_bug.cgi?id=130269
+
+        Reviewed by Michael Saboff.
+
+        Update and add test.
+
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+
 2014-03-14  Mark Lam  <mark.lam@apple.com>
 
         Accessing __lookupGetter__ and __lookupSetter__ should not crash the VM when undefined.

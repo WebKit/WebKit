@@ -1,3 +1,22 @@
+2014-03-14  Oliver Hunt  <oliver@apple.com>
+
+        Reinstate intialiser syntax in for-in loops
+        https://bugs.webkit.org/show_bug.cgi?id=130269
+
+        Reviewed by Michael Saboff.
+
+        Disallowing the initialiser broke some sites so this patch re-allows
+        the syntax.  We still disallow the syntax in 'of' and pattern based
+        enumeration.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::isBindingNode):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseVarDeclarationList):
+        (JSC::Parser<LexerType>::parseForStatement):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::operatorStackPop):
+
 2014-03-14  Mark Lam  <mark.lam@apple.com>
 
         Accessing __lookupGetter__ and __lookupSetter__ should not crash the VM when undefined.
