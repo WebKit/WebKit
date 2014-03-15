@@ -1,3 +1,12 @@
+2014-03-14  Mark Rowe  <mrowe@apple.com>
+
+        Fix the production build.
+
+        Don't rely on USE_INTERNAL_SDK being set for the Production configuration since UseInternalSDK.xcconfig won't
+        be at the expected relative path when working from installed source.
+
+        * Configurations/Base.xcconfig:
+
 2014-03-14  Maciej Stachowiak  <mjs@apple.com>
 
         Replace "Apple Computer, Inc." with "Apple Inc." in copyright headers
