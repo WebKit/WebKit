@@ -1,8 +1,8 @@
-layer at (0,0) size 785x961
+layer at (0,0) size 785x964
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x961
-  RenderBlock {HTML} at (0,0) size 785x961
-    RenderBody {BODY} at (8,8) size 769x945
+layer at (0,0) size 785x964
+  RenderBlock {HTML} at (0,0) size 785x964
+    RenderBody {BODY} at (8,8) size 769x948
       RenderBlock {DIV} at (0,0) size 769x450 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,5) size 274x28
           text run at (1,5) width 274: "\x{A7}\x{A9}\x{AE}\x{FF1B}\x{B6}\x{BC}\x{BD}\x{BE}"
@@ -10,9 +10,9 @@ layer at (0,0) size 785x961
         RenderText {#text} at (1,37) size 170x28
           text run at (1,37) width 170: "\x{2E5}\x{2E6}\x{2E7}\x{2E8}\x{2E9}\x{2EA}\x{2EB}"
         RenderBR {BR} at (170,60) size 1x0
-        RenderText {#text} at (1,68) size 187x28
-          text run at (1,68) width 187: "\x{1100}\x{1101}\x{1401}\x{1402}\x{1800}\x{1801}"
-        RenderBR {BR} at (188,91) size 0x0
+        RenderText {#text} at (1,68) size 185x28
+          text run at (1,68) width 185: "\x{1100}\x{1101}\x{1401}\x{1402}\x{1800}\x{1801}"
+        RenderBR {BR} at (186,91) size 0x0
         RenderText {#text} at (1,98) size 222x28
           text run at (1,98) width 222: "\x{2016}\x{2018}\x{2019}\x{2020}\x{2021}\x{2030}\x{2031}"
         RenderBR {BR} at (222,121) size 1x0
@@ -44,7 +44,7 @@ layer at (0,0) size 785x961
         RenderText {#text} at (1,417) size 349x28
           text run at (1,417) width 349: "\x{FF40}\x{FF5A}\x{FFE0}\x{FFE2}\x{FFE4}\x{FFFD}\x{D834}\x{DF00}\x{D83D}\x{DE4F}\x{D83D}\x{DE80}"
         RenderBR {BR} at (349,440) size 1x0
-      RenderBlock {DIV} at (0,450) size 446x495 [border: (1px solid #0000FF)]
+      RenderBlock {DIV} at (0,450) size 446x498 [border: (1px solid #0000FF)]
         RenderText {#text} at (5,1) size 28x295
           text run at (5,1) width 295: "\x{A7}\x{A9}\x{AE}\x{FF1B}\x{B6}\x{BC}\x{BD}\x{BE}"
         RenderBR {BR} at (19,295) size 0x1
@@ -66,10 +66,10 @@ layer at (0,0) size 785x961
         RenderText {#text} at (195,1) size 28x170
           text run at (195,1) width 170: "\x{2145}\x{2146}\x{2149}\x{214A}\x{214D}"
         RenderBR {BR} at (200,170) size 0x1
-        RenderText {#text} at (233,1) size 28x493
+        RenderText {#text} at (233,1) size 28x496
           text run at (233,1) width 262: "\x{2300}\x{2307}\x{230C}\x{231F}\x{2322}\x{232B}\x{237D}\x{239A} "
-          text run at (233,262) width 231: "\x{23B4}\x{23B6}\x{23BA}\x{23CF}\x{23D1}\x{23DB}\x{23E2}\x{24FF}"
-        RenderBR {BR} at (247,493) size 0x1
+          text run at (233,262) width 234: "\x{23B4}\x{23B6}\x{23BA}\x{23CF}\x{23D1}\x{23DB}\x{23E2}\x{24FF}"
+        RenderBR {BR} at (247,496) size 0x1
         RenderText {#text} at (269,1) size 28x320
           text run at (269,1) width 320: "\x{25A0}\x{2619}\x{2620}\x{2767}\x{2776}\x{2793}\x{2B12}\x{2B2F}\x{2E80}\x{2007}"
         RenderBR {BR} at (283,320) size 0x1
