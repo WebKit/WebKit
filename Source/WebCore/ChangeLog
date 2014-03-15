@@ -1,3 +1,17 @@
+2014-03-14  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] background-attachment: fixed renders oddly, moves around
+        https://bugs.webkit.org/show_bug.cgi?id=130277
+        <rdar://problem/16332883>
+
+        Reviewed by Tim Horton.
+
+        If we have a counter-scrolling layer (for a fixed background), move
+        it around when changing the viewport.
+
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeScrollingNodeIOS::updateForViewport):
+
 2014-03-14  Jae Hyun Park  <jaepark@webkit.org>
 
         [Texmap] Remove duplicated code in TextureMapperLayer

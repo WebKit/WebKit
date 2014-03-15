@@ -122,6 +122,12 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(ArgumentEncoder& encoder
     SCROLLING_NODE_ENCODE(RequestedScrollPosition, requestedScrollPositionRepresentsProgrammaticScroll)
     SCROLLING_NODE_ENCODE(HeaderHeight, headerHeight)
     SCROLLING_NODE_ENCODE(FooterHeight, footerHeight)
+
+    if (node.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
+        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer());
+
+    if (node.hasChangedProperty(ScrollingStateScrollingNode::CounterScrollingLayer))
+        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.counterScrollingLayer());
 }
 
 #define SCROLLING_NODE_DECODE(property, type, setter) \
@@ -170,6 +176,20 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(ArgumentDecoder& decoder
 
     SCROLLING_NODE_DECODE(HeaderHeight, int, setHeaderHeight);
     SCROLLING_NODE_DECODE(FooterHeight, int, setFooterHeight);
+
+    if (node.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer)) {
+        GraphicsLayer::PlatformLayerID layerID;
+        if (!decoder.decode(layerID))
+            return false;
+        node.setScrolledContentsLayer(layerID);
+    }
+
+    if (node.hasChangedProperty(ScrollingStateScrollingNode::CounterScrollingLayer)) {
+        GraphicsLayer::PlatformLayerID layerID;
+        if (!decoder.decode(layerID))
+            return false;
+        node.setCounterScrollingLayer(layerID);
+    }
 
     return true;
 }
