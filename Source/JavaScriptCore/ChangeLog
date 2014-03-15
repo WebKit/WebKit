@@ -1,3 +1,24 @@
+2014-03-15  David Kilzer  <ddkilzer@apple.com>
+
+        Fix build: using integer absolute value function 'abs' when argument is of floating point type
+        <http://webkit.org/b/130286>
+
+        Reviewed by Filip Pizlo.
+
+        Fixes the following build failure using trunk clang:
+
+            JavaScriptCore/assembler/MacroAssembler.h:992:17: error: using integer absolute value function 'abs' when argument is of floating point type [-Werror,-Wabsolute-value]
+                    value = abs(value);
+                            ^
+            JavaScriptCore/assembler/MacroAssembler.h:992:17: note: use function 'fabs' instead
+                    value = abs(value);
+                            ^~~
+                            fabs
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::shouldBlindDouble): Switch from abs() to
+        fabs().
+
 2014-03-14  Oliver Hunt  <oliver@apple.com>
 
         Reinstate intialiser syntax in for-in loops
