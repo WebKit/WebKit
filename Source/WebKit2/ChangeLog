@@ -1,3 +1,17 @@
+2014-03-14  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Sync extended attribute related rules with AppSandbox profile
+        https://bugs.webkit.org/show_bug.cgi?id=130263
+        <rdar://problem/16318965>
+
+        Reviewed by Sam Weinig.
+
+        Update the fix to use a different syntax in some OS versions.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2014-03-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert erroneous changes made to UIProcess/API/Cocoa in r165676.

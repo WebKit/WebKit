@@ -399,6 +399,8 @@
             ;; Reserve a namespace for additional protected extended attributes.
             (deny file-read-xattr file-write-xattr (xattr #"^com\.apple\.security\.private\."))
             ;; FIXME: Should be removed once <rdar://problem/16329087> is fixed.
-            (deny file-write-xattr (xattr "com.apple.quarantine") (with no-log))
+            (if (defined? 'xattr-regex)
+                (deny file-read-xattr file-write-xattr (xattr-regex #"^com\.apple\.security\.private\."))
+                (deny file-read-xattr file-write-xattr (xattr #"^com\.apple\.security\.private\.")))
             (original-%finalize))))
    (set! %finalize webkit-%finalize))

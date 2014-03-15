@@ -149,7 +149,11 @@
 (deny file-write-xattr (xattr "com.apple.quarantine") (with no-log))
 
 ;; Reserve a namespace for additional protected extended attributes.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 1090
+(deny file-read-xattr file-write-xattr (xattr-regex #"^com\.apple\.security\.private\."))
+#else
 (deny file-read-xattr file-write-xattr (xattr #"^com\.apple\.security\.private\."))
+#endif
 
 (deny file-read* file-write* (with no-log)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1080
