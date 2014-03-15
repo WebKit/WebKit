@@ -82,12 +82,7 @@ LINKER_DISPLAYS_MANGLED_NAMES = YES;
 PREBINDING = NO;
 WARNING_CFLAGS = -Wall -Wextra -Wcast-qual -Wchar-subscripts -Wextra-tokens -Wformat=2 -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough;
 
-SYSTEM_LLVM_SEARCH_PATHS = $(SYSTEM_LLVM_SEARCH_PATHS_$(PLATFORM_NAME));
-SYSTEM_LLVM_SEARCH_PATHS_macosx = /usr/local/LLVMForJavaScriptCore/include;
-SYSTEM_LLVM_SEARCH_PATHS_iphoneos = ;
-SYSTEM_LLVM_SEARCH_PATHS_iphonesimulator = ;
-
-HEADER_SEARCH_PATHS = . icu "${BUILT_PRODUCTS_DIR}/usr/local/LLVMForJavaScriptCore/include" "${BUILT_PRODUCTS_DIR}/ExtraIncludesForLocalLLVMBuild" $(SYSTEM_LLVM_SEARCH_PATHS) "${BUILT_PRODUCTS_DIR}/usr/local/include" $(HEADER_SEARCH_PATHS);
+HEADER_SEARCH_PATHS = . icu "${BUILT_PRODUCTS_DIR}/usr/local/LLVMForJavaScriptCore/include" "${BUILT_PRODUCTS_DIR}/ExtraIncludesForLocalLLVMBuild" /usr/local/LLVMForJavaScriptCore/include "${BUILT_PRODUCTS_DIR}/usr/local/include" $(HEADER_SEARCH_PATHS);
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
 

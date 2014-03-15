@@ -1,3 +1,13 @@
+2014-03-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Final FTL iOS build magic
+        https://bugs.webkit.org/show_bug.cgi?id=130281
+
+        Reviewed by Michael Saboff.
+
+        * Configurations/Base.xcconfig: For now our LLVM headers are in /usr/local/LLVMForJavaScriptCore/include, which is the same as OS X.
+        * Configurations/LLVMForJSC.xcconfig: We need to be more careful about how we specify library paths if we want to get the prioritzation right. Also we need protobuf because things. :-/
+
 2014-03-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Gracefully handle nil name -[JSContext setName:]
