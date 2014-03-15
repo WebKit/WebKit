@@ -1,3 +1,15 @@
+2014-03-14  Mark Lam  <mark.lam@apple.com>
+
+        Accessing __lookupGetter__ and __lookupSetter__ should not crash the VM when undefined.
+        <https://webkit.org/b/130279>
+
+        Reviewed by Filip Pizlo.
+
+        * js/property-getters-and-setters-expected.txt:
+        * js/script-tests/property-getters-and-setters.js:
+        (o11.new.Object.getB):
+        (o12.new.Object.setB):
+
 2014-03-14  Maciej Stachowiak  <mjs@apple.com>
 
         Replace "Apple Computer, Inc." with "Apple Inc." in copyright headers

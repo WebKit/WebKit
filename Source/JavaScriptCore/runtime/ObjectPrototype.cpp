@@ -156,8 +156,10 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupGetter(ExecState* exec)
 
     PropertySlot slot(thisObject);
     if (thisObject->getPropertySlot(exec, Identifier(exec, exec->argument(0).toString(exec)->value(exec)), slot)
-        && slot.isAccessor())
-        return JSValue::encode(slot.getterSetter()->getter());
+        && slot.isAccessor()) {
+        JSObject* getter = slot.getterSetter()->getter();
+        return getter ? JSValue::encode(getter) : JSValue::encode(jsUndefined());
+    }
 
     return JSValue::encode(jsUndefined());
 }
@@ -170,8 +172,10 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState* exec)
 
     PropertySlot slot(thisObject);
     if (thisObject->getPropertySlot(exec, Identifier(exec, exec->argument(0).toString(exec)->value(exec)), slot)
-        && slot.isAccessor())
-        return JSValue::encode(slot.getterSetter()->setter());
+        && slot.isAccessor()) {
+        JSObject* setter = slot.getterSetter()->setter();
+        return setter ? JSValue::encode(setter) : JSValue::encode(jsUndefined());
+    }
 
     return JSValue::encode(jsUndefined());
 }

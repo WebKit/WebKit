@@ -36,6 +36,13 @@ PASS o9.b is 11
 the get set with numeric property name
 PASS o10[42] is 8
 PASS o10[42] is 11
+Defining getter only and accessing __lookupSetter__ should not crash
+PASS o11.__lookupSetter__('b') is void 0
+Defining setter only and accessing __lookupGetter__ should not crash
+PASS o12.__lookupGetter__('b') is void 0
+When undefined, accessing __lookupGetter__ and __lookupSetter__ should not crash
+PASS o13.__lookupGetter__('b') is void 0
+PASS o13.__lookupSetter__('b') is void 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -79,3 +79,23 @@ var o10 = { 'a':7, get 42() { return this.a + 1 }, set 42(x) { this.a = x } }
 shouldBe("o10[42]", "8");
 o10[42] = 10;
 shouldBe("o10[42]", "11");
+
+debug("Defining getter only and accessing __lookupSetter__ should not crash");
+var o11 = new Object()
+function getB() { return this.a }
+o11.__defineGetter__('b', getB)
+
+shouldBe("o11.__lookupSetter__('b')", "void 0");
+
+debug("Defining setter only and accessing __lookupGetter__ should not crash");
+var o12 = new Object()
+function setB(x) { this.a = x }
+o12.__defineSetter__('b', setB)
+
+shouldBe("o12.__lookupGetter__('b')", "void 0");
+
+debug("When undefined, accessing __lookupGetter__ and __lookupSetter__ should not crash");
+var o13 = new Object()
+
+shouldBe("o13.__lookupGetter__('b')", "void 0");
+shouldBe("o13.__lookupSetter__('b')", "void 0");

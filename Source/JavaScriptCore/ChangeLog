@@ -1,3 +1,25 @@
+2014-03-14  Mark Lam  <mark.lam@apple.com>
+
+        Accessing __lookupGetter__ and __lookupSetter__ should not crash the VM when undefined.
+        <https://webkit.org/b/130279>
+
+        Reviewed by Filip Pizlo.
+
+        If neither the getter nor setter are defined, accessing __lookupGetter__
+        and __lookupSetter__ will return undefined as expected.  However, if the
+        getter is defined but the setter is not, accessing __lookupSetter__ will
+        crash the VM.  Similarly, accessing __lookupGetter__ when only the setter
+        is defined will crash the VM.
+
+        The reason is because objectProtoFuncLookupGetter() and
+        objectProtoFuncLookupSetter() did not check if the getter and setter
+        value is non-null before returning it as an EncodedJSValue.  The fix is
+        to add the appropriate null checks.
+
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+
 2014-03-14  Mark Rowe  <mrowe@apple.com>
 
         Fix the production build.
