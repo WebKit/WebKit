@@ -485,7 +485,7 @@ void ScrollingTreeScrollingNodeMac::logExposedUnfilledArea()
     }
 
     FloatPoint scrollPosition = this->scrollPosition();
-    FloatRect viewPortRect(scrollPosition, viewportSize());
+    FloatRect viewPortRect(FloatPoint(), viewportSize());
     unsigned unfilledArea = TileController::blankPixelCountForTiles(tiles, viewPortRect, IntPoint(-scrollPosition.x(), -scrollPosition.y()));
 
     if (unfilledArea || m_lastScrollHadUnfilledPixels)
