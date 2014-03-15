@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2013 Apple Computer, Inc.
+ * Copyright (C) 2007, 2008, 2009, 2013 Apple Inc.
  * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

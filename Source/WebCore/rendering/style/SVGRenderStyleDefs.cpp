@@ -7,7 +7,7 @@
     Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
     Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
     Copyright (C) 2002-2003 Dirk Mueller (mueller@kde.org)
-    Copyright (C) 2002 Apple Computer, Inc.
+    Copyright (C) 2002 Apple Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public

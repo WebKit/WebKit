@@ -1,3 +1,26 @@
+2014-03-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Replace "Apple Computer, Inc." with "Apple Inc." in copyright headers
+        https://bugs.webkit.org/show_bug.cgi?id=130276
+        <rdar://problem/16266927>
+
+        Reviewed by Simon Fraser.
+
+        * APPLE_IMAGES_LICENSE.rtf:
+        * UserInterface/Base/DOMUtilities.js:
+        * UserInterface/Models/Color.js:
+        * UserInterface/Views/ConsoleCommand.js:
+        * UserInterface/Views/ConsoleCommandResult.js:
+        * UserInterface/Views/ConsoleGroup.js:
+        * UserInterface/Views/ConsoleMessage.js:
+        * UserInterface/Views/ConsoleMessageImpl.js:
+        * UserInterface/Views/DOMTreeElement.js:
+        * UserInterface/Views/DOMTreeOutline.js:
+        * UserInterface/Views/DOMTreeUpdater.js:
+        * UserInterface/Views/GradientSlider.css:
+        * UserInterface/Views/GradientSlider.js:
+        * UserInterface/Views/TreeOutline.js:
+
 2014-03-14  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Add autocomplete for -webkit-shape-outside

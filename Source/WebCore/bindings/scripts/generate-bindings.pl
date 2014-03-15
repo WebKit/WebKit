@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-# Copyright (C) 2005 Apple Computer, Inc.
+# Copyright (C) 2005 Apple Inc.
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
 # 
 # This file is part of WebKit

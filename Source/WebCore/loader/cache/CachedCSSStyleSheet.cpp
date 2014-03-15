@@ -3,7 +3,7 @@
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
     Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
-    Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+    Copyright (C) 2004, 2005, 2006 Apple Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public

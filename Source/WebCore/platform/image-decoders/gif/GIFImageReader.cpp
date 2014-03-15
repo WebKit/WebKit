@@ -21,7 +21,7 @@
  *
  * Contributor(s):
  *   Chris Saari <saari@netscape.com>
- *   Apple Computer
+ *   Apple Inc.
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or

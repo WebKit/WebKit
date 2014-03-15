@@ -2,7 +2,7 @@
     Copyright (C) 2008 Eric Seidel <eric@webkit.org>
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2007, 2010 Rob Buis <buis@kde.org>
-    Copyright (C) 2005, 2006 Apple Computer, Inc.
+    Copyright (C) 2005, 2006 Apple Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public

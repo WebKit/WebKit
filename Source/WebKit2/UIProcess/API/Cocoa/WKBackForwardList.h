@@ -27,7 +27,7 @@
 
 #if WK_API_ENABLED
 
-#import <WebKit2/WKBackForwardListItem.h>
+@class WKNavigation;
 
 /*! Posted when a back-forward list changes. The notification object is the WKBackForwardList
         that changed. The <code>userInfo</code> dictionary may contain the
@@ -38,25 +38,25 @@ WK_EXTERN NSString * const WKBackForwardListDidChangeNotification;
 
 /*! A key in the <code>userInfo</code> dictionary of a
         @link WKBackForwardListDidChangeNotification @/link, whose value is the
-        @link WKBackForwardListItem @/link that was appended to the list.
+        @link WKNavigation @/link that was appended to the list.
 */
 WK_EXTERN NSString * const WKBackForwardListAddedItemKey;
 
 
 /*! A key in the <code>userInfo</code> dictionary of a
         @link WKBackForwardListDidChangeNotification @/link, whose value is an NSArray of
-        @link WKBackForwardListItem@/link instances that were removed from the list.
+        @link WKNavigation@/link instances that were removed from the list.
 */
 WK_EXTERN NSString * const WKBackForwardListRemovedItemsKey;
 
 WK_API_CLASS
 @interface WKBackForwardList : NSObject
 
-@property (readonly) WKBackForwardListItem *currentItem;
-@property (readonly) WKBackForwardListItem *backItem;
-@property (readonly) WKBackForwardListItem *forwardItem;
+@property (readonly) WKNavigation *currentItem;
+@property (readonly) WKNavigation *backItem;
+@property (readonly) WKNavigation *forwardItem;
 
-- (WKBackForwardListItem *)itemAtIndex:(NSInteger)index;
+- (WKNavigation *)itemAtIndex:(NSInteger)index;
 
 @property (readonly) NSUInteger backListCount;
 @property (readonly) NSUInteger forwardListCount;

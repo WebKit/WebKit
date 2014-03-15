@@ -1,7 +1,7 @@
 /**
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2005, 2006, 2012 Apple Computer, Inc.
+ * Copyright (C) 2002, 2005, 2006, 2012 Apple Inc.
  * Copyright (C) 2006 Samuel Weinig (sam@webkit.org)
  *
  * This library is free software; you can redistribute it and/or

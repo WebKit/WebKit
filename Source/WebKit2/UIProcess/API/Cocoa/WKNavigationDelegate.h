@@ -29,8 +29,6 @@
 #if WK_API_ENABLED
 
 @class WKNavigation;
-@class WKNavigationAction;
-@class WKNavigationResponse;
 @class WKWebView;
 
 typedef NS_ENUM(NSInteger, WKNavigationPolicyDecision) {
@@ -39,18 +37,12 @@ typedef NS_ENUM(NSInteger, WKNavigationPolicyDecision) {
     WKNavigationPolicyDecisionDownload
 };
 
-typedef NS_ENUM(NSInteger, WKNavigationResponsePolicyDecision) {
-    WKNavigationResponsePolicyDecisionCancel,
-    WKNavigationResponsePolicyDecisionAllow,
-    WKNavigationResponsePolicyDecisionBecomeDownload
-};
-
 @protocol WKNavigationDelegate <NSObject>
 
 @optional
 
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationPolicyDecision))decisionHandler;
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicyDecision))decisionHandler;
+- (void)webView:(WKWebView *)webView decideActionPolicyForNavigation:(WKNavigation *)navigation decisionHandler:(void (^)(WKNavigationPolicyDecision))decisionHandler;
+- (void)webView:(WKWebView *)webView decideResponsePolicyForNavigation:(WKNavigation *)navigationResponse decisionHandler:(void (^)(WKNavigationPolicyDecision))decisionHandler;
 
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation;
 - (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation;

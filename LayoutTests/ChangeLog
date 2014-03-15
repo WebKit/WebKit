@@ -1,3 +1,43 @@
+2014-03-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Replace "Apple Computer, Inc." with "Apple Inc." in copyright headers
+        https://bugs.webkit.org/show_bug.cgi?id=130276
+        <rdar://problem/16266927>
+
+        Reviewed by Simon Fraser.
+
+        * editing/resources/TIFF-pasteboard-data.dat:
+        * fast/backgrounds/repeat/resources/gradient.gif:
+        * fast/forms/resources/apple.gif:
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/fragmentShader.frag:
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/vertexShader.vert:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wk2/TestExpectations:
+        * webgl/1.0.1/resources/webgl_test_files/conformance/attribs/gl-vertexattribpointer-offsets.html:
+        * webgl/1.0.1/resources/webgl_test_files/conformance/context/context-attribute-preserve-drawing-buffer.html:
+        * webgl/1.0.1/resources/webgl_test_files/conformance/context/incorrect-context-object-behaviour.html:
+        * webgl/1.0.1/resources/webgl_test_files/conformance/misc/bad-arguments-test.html:
+        * webgl/1.0.1/resources/webgl_test_files/conformance/misc/invalid-passed-params.html:
+        * webgl/1.0.1/resources/webgl_test_files/conformance/misc/null-object-behaviour.html:
+        * webgl/1.0.1/resources/webgl_test_files/conformance/misc/type-conversion-test.html:
+        * webgl/1.0.1/resources/webgl_test_files/conformance/programs/get-active-test.html:
+        * webgl/1.0.1/resources/webgl_test_files/conformance/rendering/draw-arrays-out-of-bounds.html:
+        * webgl/1.0.1/resources/webgl_test_files/conformance/rendering/draw-elements-out-of-bounds.html:
+        * webgl/1.0.1/resources/webgl_test_files/conformance/rendering/line-loop-tri-fan.html:
+        * webgl/1.0.1/resources/webgl_test_files/conformance/rendering/triangle.html:
+        * webgl/1.0.1/resources/webgl_test_files/conformance/resources/fragmentShader.frag:
+        * webgl/1.0.1/resources/webgl_test_files/conformance/resources/vertexShader.vert:
+        * webgl/1.0.1/resources/webgl_test_files/conformance/resources/webgl-test.js:
+        * webgl/1.0.1/resources/webgl_test_files/conformance/state/gl-get-calls.html:
+        * webgl/1.0.1/resources/webgl_test_files/conformance/state/gl-object-get-calls.html:
+        * webgl/1.0.1/resources/webgl_test_files/conformance/typedarrays/array-unit-tests.html:
+        * webgl/1.0.1/resources/webgl_test_files/extra/canvas-compositing-test.html:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/resources/fragmentShader.frag:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/resources/vertexShader.vert:
+        * webgl/resources/webgl_test_files/conformance/resources/fragmentShader.frag:
+        * webgl/resources/webgl_test_files/conformance/resources/vertexShader.vert:
+
 2014-03-14  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: border-radius painting falls back to rectangle at subpixel positions.

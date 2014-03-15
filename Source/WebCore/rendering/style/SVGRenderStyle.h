@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
-    Copyright (C) 2005, 2006 Apple Computer, Inc.
+    Copyright (C) 2005, 2006 Apple Inc.
     Copyright (C) Research In Motion Limited 2010. All rights reserved.
 
     This library is free software; you can redistribute it and/or

@@ -28,10 +28,24 @@
 
 #if WK_API_ENABLED
 
+@class WKFrameInfo;
+@class WKNavigationTrigger;
+
 WK_API_CLASS
 @interface WKNavigation : NSObject
 
+// What triggered this action?
+@property (nonatomic, readonly) WKNavigationTrigger *trigger;
+
+// Where is it going?
+@property (nonatomic, readonly) NSURLRequest *originalRequest;
 @property (nonatomic, readonly) NSURLRequest *request;
+@property (nonatomic, readonly) WKFrameInfo *targetFrame;
+
+// What do we know so far? XXX: should this be factored into a separate result object? 
+@property (nonatomic, readonly) NSURLResponse *response;
+@property (nonatomic, readonly) BOOL canShowMIMEType;
+@property (readonly) NSString *title;
 
 @end
 

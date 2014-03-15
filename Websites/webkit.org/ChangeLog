@@ -1,3 +1,75 @@
+2014-03-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Replace "Apple Computer, Inc." with "Apple Inc." in copyright headers
+        https://bugs.webkit.org/show_bug.cgi?id=130276
+        <rdar://problem/16266927>
+        
+        Reviewed by Simon Fraser.
+
+        * blog/wp-content/textfield_screenshot.jpg:
+        * misc/WebKitDetect.html:
+        * misc/WebKitDetect.js:
+        * perf/sunspider-0.9.1/sunspider-0.9.1/driver.html:
+        * perf/sunspider-0.9.1/sunspider-0.9.1/results.html:
+        * perf/sunspider-0.9.1/sunspider-0.9.1/sunspider-test-contents.js:
+        * perf/sunspider-0.9.1/sunspider-0.9/driver.html:
+        * perf/sunspider-0.9.1/sunspider-0.9/results.html:
+        * perf/sunspider-0.9.1/sunspider-0.9/sunspider-test-contents.js:
+        * perf/sunspider-0.9.1/sunspider-analyze-results.js:
+        * perf/sunspider-0.9.1/sunspider-compare-results.js:
+        * perf/sunspider-0.9/3d-cube.html:
+        * perf/sunspider-0.9/3d-morph.html:
+        * perf/sunspider-0.9/3d-raytrace.html:
+        * perf/sunspider-0.9/access-binary-trees.html:
+        * perf/sunspider-0.9/access-fannkuch.html:
+        * perf/sunspider-0.9/access-nbody.html:
+        * perf/sunspider-0.9/access-nsieve.html:
+        * perf/sunspider-0.9/bitops-3bit-bits-in-byte.html:
+        * perf/sunspider-0.9/bitops-bits-in-byte.html:
+        * perf/sunspider-0.9/bitops-bitwise-and.html:
+        * perf/sunspider-0.9/bitops-nsieve-bits.html:
+        * perf/sunspider-0.9/controlflow-recursive.html:
+        * perf/sunspider-0.9/crypto-aes.html:
+        * perf/sunspider-0.9/crypto-md5.html:
+        * perf/sunspider-0.9/crypto-sha1.html:
+        * perf/sunspider-0.9/date-format-tofte.html:
+        * perf/sunspider-0.9/date-format-xparb.html:
+        * perf/sunspider-0.9/math-cordic.html:
+        * perf/sunspider-0.9/math-partial-sums.html:
+        * perf/sunspider-0.9/math-spectral-norm.html:
+        * perf/sunspider-0.9/regexp-dna.html:
+        * perf/sunspider-0.9/string-base64.html:
+        * perf/sunspider-0.9/string-fasta.html:
+        * perf/sunspider-0.9/string-tagcloud.html:
+        * perf/sunspider-0.9/string-unpack-code.html:
+        * perf/sunspider-0.9/string-validate-input.html:
+        * perf/sunspider-0.9/sunspider-analyze-results.js:
+        * perf/sunspider-0.9/sunspider-compare-results.js:
+        * perf/sunspider-0.9/sunspider-driver.html:
+        * perf/sunspider-0.9/sunspider-record-result.js:
+        * perf/sunspider-0.9/sunspider-results.html:
+        * perf/sunspider-1.0.1/sunspider-1.0.1/driver.html:
+        * perf/sunspider-1.0.1/sunspider-1.0.1/results.html:
+        * perf/sunspider-1.0.1/sunspider-1.0.1/sunspider-test-contents.js:
+        * perf/sunspider-1.0.1/sunspider-analyze-results.js:
+        * perf/sunspider-1.0.1/sunspider-compare-results.js:
+        * perf/sunspider-1.0.1/sunspider.html:
+        * perf/sunspider-1.0.2/sunspider-1.0.2/driver.html:
+        * perf/sunspider-1.0.2/sunspider-1.0.2/results.html:
+        * perf/sunspider-1.0.2/sunspider-1.0.2/sunspider-test-contents.js:
+        * perf/sunspider-1.0.2/sunspider-analyze-results.js:
+        * perf/sunspider-1.0.2/sunspider-compare-results.js:
+        * perf/sunspider-1.0.2/sunspider.html:
+        * perf/sunspider-1.0/sunspider-1.0/driver.html:
+        * perf/sunspider-1.0/sunspider-1.0/results.html:
+        * perf/sunspider-1.0/sunspider-1.0/sunspider-test-contents.js:
+        * perf/sunspider-1.0/sunspider-analyze-results.js:
+        * perf/sunspider-1.0/sunspider-compare-results.js:
+        * perf/sunspider-1.0/sunspider.html:
+        * perf/sunspider/sunspider.html:
+        * perf/sunspider/versions.html:
+        * quality/reporting.html:
+
 2014-03-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use DYEBench v0.9 by default.

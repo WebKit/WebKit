@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Apple Inc.
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2007, 2008, 2009 Rob Buis <buis@kde.org>
  * Copyright (C) 2009 Google, Inc.

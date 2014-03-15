@@ -1,3 +1,50 @@
+2014-03-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Replace "Apple Computer, Inc." with "Apple Inc." in copyright headers
+        https://bugs.webkit.org/show_bug.cgi?id=130276
+        <rdar://problem/16266927>
+        
+        Reviewed by Simon Fraser.
+
+        * Shared/AsyncRequest.cpp:
+        * Shared/AsyncRequest.h:
+        * Shared/ContextMenuContextData.cpp:
+        * Shared/ContextMenuContextData.h:
+        * Shared/Databases/DatabaseProcessCreationParameters.h:
+        * Shared/Databases/IndexedDB/IDBUtilities.cpp:
+        * Shared/Databases/IndexedDB/IDBUtilities.h:
+        * Shared/mac/RemoteLayerBackingStore.h:
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        * UIProcess/API/Cocoa/WKBackForwardList.h:
+        * UIProcess/API/Cocoa/WKBackForwardListItem.h: Removed.
+        * UIProcess/API/Cocoa/WKNavigation.h:
+        * UIProcess/API/Cocoa/WKNavigationAction.h: Removed.
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/API/Cocoa/WKNavigationResponse.h: Removed.
+        * UIProcess/API/Cocoa/WKNavigationTrigger.h: Added.
+        (NS_ENUM):
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/CoordinatedGraphics/WKCoordinatedScene.cpp:
+        * UIProcess/API/CoordinatedGraphics/WKCoordinatedScene.h:
+        * UIProcess/CoordinatedGraphics/WKCoordinatedSceneAPICast.h:
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.cpp:
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.h:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/Databases/WebToDatabaseProcessConnection.cpp:
+        * WebProcess/Databases/WebToDatabaseProcessConnection.h:
+        * WebProcess/WebCoreSupport/WebAlternativeTextClient.h:
+        * WebProcess/WebCoreSupport/mac/WebAlternativeTextClient.cpp:
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.cpp:
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.cpp:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.h:
+
 2014-03-14  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] background-attachment: fixed renders oddly, moves around

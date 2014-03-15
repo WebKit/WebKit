@@ -1,3 +1,22 @@
+2014-03-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Replace "Apple Computer, Inc." with "Apple Inc." in copyright headers
+        https://bugs.webkit.org/show_bug.cgi?id=130276
+        <rdar://problem/16266927>
+
+        Reviewed by Simon Fraser.
+
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-3d-raytrace.html:
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-bitops-bitwise-and.html:
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-math-cordic.html:
+        * Dromaeo/resources/dromaeo/web/tests/sunspider-string-tagcloud.html:
+        * LongSpider/3d-morph.js:
+        * LongSpider/3d-raytrace.js:
+        * LongSpider/math-cordic.js:
+        * LongSpider/string-tagcloud.js:
+        * Parser/resources/html5-8266.html:
+        * Parser/resources/html5.html:
+
 2014-03-10  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Add performance tests for SVG shape with shape-margin

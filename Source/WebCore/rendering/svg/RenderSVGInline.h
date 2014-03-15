@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
- * Copyright (C) 2006 Apple Computer Inc.
+ * Copyright (C) 2006 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public

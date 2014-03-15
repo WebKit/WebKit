@@ -1804,7 +1804,7 @@ REFERENCES
            Stanford University, August 1995.
 
 [RFC2152]  Goldsmith, D., M. Davis, "UTF-7: A Mail-Safe Transformation
-	   Format of Unicode", RFC 2152, Apple Computer, Inc.,
+	   Format of Unicode", RFC 2152, Apple Inc.,
 	   Taligent Inc., May 1997.
 
 [RFC2279]  Yergeau, F., "UTF-8, A Transformation Format of ISO 10646",

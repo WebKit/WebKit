@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Apple Inc.
  * Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>

@@ -1,3 +1,17 @@
+2014-03-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Replace "Apple Computer, Inc." with "Apple Inc." in copyright headers
+        https://bugs.webkit.org/show_bug.cgi?id=130276
+        <rdar://problem/16266927>
+
+        Reviewed by Simon Fraser.
+
+        * NetscapeCocoaPlugin/MenuHandler.h:
+        * NetscapeCocoaPlugin/MenuHandler.m:
+        * NetscapeCocoaPlugin/main.m:
+        * NetscapeCoreAnimationPlugin/main.m:
+        * NetscapeInputMethodPlugin/main.m:
+
 2011-03-17  Jeff Miller  <jeffm@apple.com>
 
         Use a consistent set of file patterns in the svn:ignore property for all .xcodeproj directories, specifically:

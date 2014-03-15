@@ -1,7 +1,7 @@
 /*
  * This file is part of the WebKit project.
  *
- * Copyright (C) 2006, 2008, 2013 Apple Computer, Inc.
+ * Copyright (C) 2006, 2008, 2013 Apple Inc.
  * Copyright (C) 2009 Kenneth Rohde Christiansen
  *
  * This library is free software; you can redistribute it and/or
