@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-WK_API_CLASS
-@interface WKNavigation : NSObject
+#import <Foundation/Foundation.h>
 
-@property (nonatomic, readonly) NSURLRequest *request;
+WK_API_CLASS
+@interface WKBackForwardListItem : NSObject
+
+@property (readonly) NSURL *URL;
+@property (readonly) NSString *title;
+@property (readonly) NSURL *originalURL;
 
 @end
 
-#endif
+#endif // WK_API_ENABLED

@@ -1,3 +1,17 @@
+2014-03-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Revert erroneous changes made to UIProcess/API/Cocoa in r165676.
+
+        * UIProcess/API/Cocoa/WKBackForwardList.h:
+        * UIProcess/API/Cocoa/WKBackForwardListItem.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKBackForwardListItem.h.
+        * UIProcess/API/Cocoa/WKNavigation.h:
+        * UIProcess/API/Cocoa/WKNavigationAction.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKNavigationAction.h.
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        (NS_ENUM):
+        * UIProcess/API/Cocoa/WKNavigationResponse.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKNavigationResponse.h.
+        * UIProcess/API/Cocoa/WKNavigationTrigger.h: Removed.
+        * UIProcess/API/Cocoa/WKWebView.h:
+
 2014-03-14  Mark Rowe  <mrowe@apple.com>
 
         Fix the production build.

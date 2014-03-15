@@ -40,12 +40,13 @@ typedef NS_ENUM(NSInteger, WKNavigationType) {
 };
 
 WK_API_CLASS
-@interface WKNavigationTrigger : NSObject
+@interface WKNavigationAction : NSObject
 
-@property (nonatomic, readonly) WKFrameInfo *originatingFrame;
+@property (nonatomic, readonly) WKFrameInfo *sourceFrame;
+@property (nonatomic, readonly) WKFrameInfo *destinationFrame;
+
 @property (nonatomic, readonly) WKNavigationType navigationType;
-@property (nonatomic, readonly) NSUInteger modifierFlags;
-@property (nonatomic, readonly) NSUInteger mouseButton;
+@property (nonatomic, readonly) NSURLRequest *request;
 
 @end
 

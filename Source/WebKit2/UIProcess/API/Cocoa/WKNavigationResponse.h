@@ -28,10 +28,14 @@
 
 #if WK_API_ENABLED
 
-WK_API_CLASS
-@interface WKNavigation : NSObject
+@class WKFrameInfo;
 
-@property (nonatomic, readonly) NSURLRequest *request;
+WK_API_CLASS
+@interface WKNavigationResponse : NSObject
+
+@property (nonatomic, readonly) WKFrameInfo *frame;
+@property (nonatomic, readonly) NSURLResponse *response;
+@property (nonatomic, readonly) BOOL canShowMIMEType;
 
 @end
 
