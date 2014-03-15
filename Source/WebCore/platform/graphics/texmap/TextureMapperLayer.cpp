@@ -462,10 +462,9 @@ void TextureMapperLayer::paintRecursive(const TextureMapperPaintOptions& options
 TextureMapperLayer::~TextureMapperLayer()
 {
     for (int i = m_children.size() - 1; i >= 0; --i)
-        m_children[i]->m_parent = 0;
+        m_children[i]->m_parent = nullptr;
 
-    if (m_parent)
-        m_parent->m_children.remove(m_parent->m_children.find(this));
+    removeFromParent();
 }
 
 TextureMapper* TextureMapperLayer::textureMapper() const
@@ -494,16 +493,12 @@ void TextureMapperLayer::addChild(TextureMapperLayer* childLayer)
 void TextureMapperLayer::removeFromParent()
 {
     if (m_parent) {
-        unsigned i;
-        for (i = 0; i < m_parent->m_children.size(); i++) {
-            if (this == m_parent->m_children[i]) {
-                m_parent->m_children.remove(i);
-                break;
-            }
-        }
-
-        m_parent = 0;
+        size_t index = m_parent->m_children.find(this);
+        ASSERT(index != notFound);
+        m_parent->m_children.remove(index);
     }
+
+    m_parent = nullptr;
 }
 
 void TextureMapperLayer::removeAllChildren()

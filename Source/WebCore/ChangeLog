@@ -1,3 +1,17 @@
+2014-03-14  Jae Hyun Park  <jaepark@webkit.org>
+
+        [Texmap] Remove duplicated code in TextureMapperLayer
+        https://bugs.webkit.org/show_bug.cgi?id=130173
+
+        Reviewed by Martin Robinson.
+
+        This patch is a simple refactoring to remove duplicated code in
+        TextureMapperLayer.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::~TextureMapperLayer):
+        (WebCore::TextureMapperLayer::removeFromParent):
+
 2014-03-14  Simon Fraser  <simon.fraser@apple.com>
 
         Release-assert if someone starts the WebThread in the WebProcess
