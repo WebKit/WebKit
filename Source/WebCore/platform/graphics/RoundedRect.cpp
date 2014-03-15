@@ -239,7 +239,7 @@ bool RoundedRect::intersectsQuad(const FloatQuad& quad) const
 
 FloatRoundedRect RoundedRect::pixelSnappedRoundedRectForPainting(float deviceScaleFactor) const
 {
-    const LayoutRect& originalRect = rect();
+    LayoutRect originalRect = rect();
     FloatRect paintingRect = pixelSnappedForPainting(rect(), deviceScaleFactor);
     FloatRoundedRect::Radii paintingRadii = radii();
     paintingRadii.shrink(paintingRect.y() - originalRect.y(), originalRect.maxY() - paintingRect.maxY(), paintingRect.x() - originalRect.x(), originalRect.maxX() - paintingRect.maxX());

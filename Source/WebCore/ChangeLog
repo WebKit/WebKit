@@ -3,6 +3,16 @@
         Subpixel rendering: border-radius painting falls back to rectangle at subpixel positions.
         https://bugs.webkit.org/show_bug.cgi?id=130272
 
+        Unreviewed. Missing piece from http://trac.webkit.org/changeset/165670
+
+        * platform/graphics/RoundedRect.cpp:
+        (WebCore::RoundedRect::pixelSnappedRoundedRectForPainting):
+
+2014-03-14  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: border-radius painting falls back to rectangle at subpixel positions.
+        https://bugs.webkit.org/show_bug.cgi?id=130272
+
         Reviewed by Simon Fraser.
 
         Rounded rectangle's radius needs adjustment after its containing rect gets pixel snapped.
