@@ -1,3 +1,17 @@
+2014-03-14  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: border-radius painting falls back to rectangle at subpixel positions.
+        https://bugs.webkit.org/show_bug.cgi?id=130272
+
+        Reviewed by Simon Fraser.
+
+        Rounded rectangle's radius needs adjustment after its containing rect gets pixel snapped.
+        Keeping the old radius value could make rounded rectangle non-renderable, because the
+        originally calculated radius length does not fit the snapped rectangle anymore.
+
+        * fast/borders/hidpi-border-radius-outer-border-goes-rectangle-expected-mismatch.html: Added.
+        * fast/borders/hidpi-border-radius-outer-border-goes-rectangle.html: Added.
+
 2014-03-14  Byungseon Shin  <sun.shin@lge.com>
 
         Incorrect Date returned between March 1, 2034 and February 28, 2100.

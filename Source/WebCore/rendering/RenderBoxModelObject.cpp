@@ -1883,11 +1883,11 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
             && (haveAllSolidEdges || (!outerBorder.isRounded() && !innerBorder.isRounded()))) {
             Path path;
             
-            FloatRoundedRect pixelSnappedRoundedRect = outerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
-            if (pixelSnappedRoundedRect.isRounded() && bleedAvoidance != BackgroundBleedUseTransparencyLayer)
-                path.addRoundedRect(pixelSnappedRoundedRect);
+            FloatRoundedRect pixelSnappedOuterBorder = outerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+            if (pixelSnappedOuterBorder.isRounded() && bleedAvoidance != BackgroundBleedUseTransparencyLayer)
+                path.addRoundedRect(pixelSnappedOuterBorder);
             else
-                path.addRect(pixelSnappedRoundedRect.rect());
+                path.addRect(pixelSnappedOuterBorder.rect());
 
             if (haveAllDoubleEdges) {
                 LayoutRect innerThirdRect = outerBorder.rect();
@@ -1928,11 +1928,11 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
                     path.addRect(pixelSnappedInnerThird.rect());
             }
 
-            FloatRoundedRect snappedInnerBorder = innerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
-            if (snappedInnerBorder.isRounded())
-                path.addRoundedRect(snappedInnerBorder);
+            FloatRoundedRect pixelSnappedInnerBorder = innerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+            if (pixelSnappedInnerBorder.isRounded())
+                path.addRoundedRect(pixelSnappedInnerBorder);
             else
-                path.addRect(snappedInnerBorder.rect());
+                path.addRect(pixelSnappedInnerBorder.rect());
             
             graphicsContext->setFillRule(RULE_EVENODD);
             graphicsContext->setFillColor(edges[firstVisibleEdge].color, style.colorSpace());
