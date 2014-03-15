@@ -1,3 +1,16 @@
+2014-03-14  Byungseon Shin  <sun.shin@lge.com>
+
+        Incorrect Date returned between March 1, 2034 and February 28, 2100.
+        https://bugs.webkit.org/show_bug.cgi?id=130123
+
+        Reviewed by Mark Lam.
+
+        Fix logic by using predefined Date APIs.
+
+        * js/date-constructor-expected.txt:
+        * js/script-tests/date-constructor.js:
+        (testDate):
+
 2014-03-14  James Craig  <jcraig@apple.com>
 
         AX: AccessibilityObject::invalidStatus() is incorrect when aria-invalid="undefined" or whitespace

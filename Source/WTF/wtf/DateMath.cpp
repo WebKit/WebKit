@@ -517,12 +517,10 @@ void initializeDates()
 
 static inline double ymdhmsToSeconds(int year, long mon, long day, long hour, long minute, double second)
 {
-    double days = (day - 32075)
-        + floor(1461 * (year + 4800.0 + (mon - 14) / 12) / 4)
-        + 367 * (mon - 2 - (mon - 14) / 12 * 12) / 12
-        - floor(3 * ((year + 4900.0 + (mon - 14) / 12) / 100) / 4)
-        - 2440588;
-    return ((days * hoursPerDay + hour) * minutesPerHour + minute) * secondsPerMinute + second;
+    int mday = firstDayOfMonth[isLeapYear(year)][mon - 1];
+    double ydays = daysFrom1970ToYear(year);
+
+    return (second + minute * secondsPerMinute + hour * secondsPerHour + (mday + day - 1 + ydays) * secondsPerDay);
 }
 
 // We follow the recommendation of RFC 2822 to consider all

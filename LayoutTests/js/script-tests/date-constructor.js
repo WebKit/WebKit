@@ -68,3 +68,38 @@ shouldBe('testStr', '\"1234567\"');
 testStr = "";
 Date.UTC(year, month, date, hours, minutes, seconds, ms);
 shouldBe('testStr', '\"1234567\"');
+
+// Regression test for Bug 130123 (https://bugs.webkit.org/show_bug.cgi?id=130123)
+var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+function testDate(year, month, date) {
+    var success = true;
+    var dateString = monthNames[month] + " " + date + ", " + year;
+    var dateObj = new Date(dateString);
+
+    if (dateObj.getFullYear() != year) {
+        shouldBe("new Date(" + dateString + ").getFullYear()", year);
+        success = false;
+    } if (dateObj.getMonth() != month) {
+        shouldBe("new Date(" + dateString + ").getMonth()", month);
+        success = false;
+    } if (dateObj.getDate() != date) {
+        shouldBe("new Date(" + dateString + ").getDate()", date);
+        success = false;
+    }
+    return success;
+}
+
+var leapTestResult = true;
+var year = 100;
+var month = 0;
+var date = 1;
+
+while (year < 10000) {
+    leapTestResult = leapTestResult && testDate(year, month, date);
+    year += 1;
+    month = (month + 7) % 12;
+    date = (date + 13) % 28 + 1;
+}
+
+shouldBeTrue("leapTestResult");

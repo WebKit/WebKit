@@ -35,6 +35,7 @@ PASS Number(new Date(new Date(1, 1, 1, 1, 1, 1, 1, 1, Infinity)).getTime() - tim
 PASS new Date(6501480442020679337816440, 81696082856817131586190070, 1, 1, 1, 1, 1).getTime() is Number.NaN
 PASS testStr is "1234567"
 PASS testStr is "1234567"
+PASS leapTestResult is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
