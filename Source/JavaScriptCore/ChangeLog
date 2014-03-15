@@ -1,5 +1,17 @@
 2014-03-15  David Kilzer  <ddkilzer@apple.com>
 
+        [iOS] Define SYSTEM_VERSION_PREFIX consistently
+        <http://webkit.org/b/130293>
+        <rdar://problem/15926359>
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Version.xcconfig:
+        (SYSTEM_VERSION_PREFIX_iphoneos): Sync with
+        Source/WebKit/mac/Version.xcconfig.
+
+2014-03-15  David Kilzer  <ddkilzer@apple.com>
+
         Fix build: using integer absolute value function 'abs' when argument is of floating point type
         <http://webkit.org/b/130286>
 

@@ -1,3 +1,15 @@
+2014-03-15  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Define SYSTEM_VERSION_PREFIX consistently
+        <http://webkit.org/b/130293>
+        <rdar://problem/15926359>
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Version.xcconfig:
+        (SYSTEM_VERSION_PREFIX): Sync with
+        Source/WebKit/mac/Version.xcconfig.
+
 2014-03-14  Maciej Stachowiak  <mjs@apple.com>
 
         Replace "Apple Computer, Inc." with "Apple Inc." in copyright headers

@@ -32,7 +32,7 @@ SHORT_VERSION_STRING = $(SHORT_VERSION_STRING_$(CONFIGURATION))
 
 // The system version prefix is based on the current system version.
 SYSTEM_VERSION_PREFIX = $(SYSTEM_VERSION_PREFIX_$(PLATFORM_NAME));
-SYSTEM_VERSION_PREFIX_iphoneos = 6; // iOS is most like SnowLeopard currently.
+SYSTEM_VERSION_PREFIX_iphoneos = 8;
 SYSTEM_VERSION_PREFIX_iphonesimulator = $(SYSTEM_VERSION_PREFIX_iphoneos);
 SYSTEM_VERSION_PREFIX_macosx = $(SYSTEM_VERSION_PREFIX_macosx_$(TARGET_MAC_OS_X_VERSION_MAJOR));
 SYSTEM_VERSION_PREFIX_macosx_1080 = 8;
