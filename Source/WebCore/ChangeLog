@@ -1,3 +1,32 @@
+2014-03-16  David Kilzer  <ddkilzer@apple.com>
+
+        PlatformTimeRanges::nearest() truncates closestDelta values from double to float
+        <http://webkit.org/b/130298>
+
+        Reviewed by Darin Adler.
+
+        Fixes the following build failures using trunk clang:
+
+            WebCore/platform/graphics/PlatformTimeRanges.cpp:210:28: error: absolute value function 'fabsf' given an argument of type 'double' but has parameter of type 'float' which may cause truncation of value [-Werror,-Wabsolute-value]
+                        closestDelta = fabsf(startTime - time);
+                                       ^
+            WebCore/platform/graphics/PlatformTimeRanges.cpp:210:28: note: use function 'fabs' instead
+                        closestDelta = fabsf(startTime - time);
+                                       ^~~~~
+                                       fabs
+            WebCore/platform/graphics/PlatformTimeRanges.cpp:214:28: error: absolute value function 'fabsf' given an argument of type 'double' but has parameter of type 'float' which may cause truncation of value [-Werror,-Wabsolute-value]
+                        closestDelta = fabsf(endTime - time);
+                                       ^
+            WebCore/platform/graphics/PlatformTimeRanges.cpp:214:28: note: use function 'fabs' instead
+                        closestDelta = fabsf(endTime - time);
+                                       ^~~~~
+                                       fabs
+
+        * platform/graphics/PlatformTimeRanges.cpp:
+        (WebCore::PlatformTimeRanges::nearest): Extract start and end
+        time deltas into local variables so they don't have to be
+        computed twice, using fabs() instead of fabsf().
+
 2014-03-16  Darin Adler  <darin@apple.com>
 
         Optimize hasTagName when called on an HTMLElement

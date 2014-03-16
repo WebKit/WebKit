@@ -205,13 +205,17 @@ double PlatformTimeRanges::nearest(double time) const
         double endTime = end(ndx, ignoreInvalid);
         if (time >= startTime && time <= endTime)
             return time;
-        if (fabs(startTime - time) < closestDelta) {
+
+        double startTimeDelta = fabs(startTime - time);
+        if (startTimeDelta < closestDelta) {
             closestTime = startTime;
-            closestDelta = fabsf(startTime - time);
+            closestDelta = startTimeDelta;
         }
-        if (fabs(endTime - time) < closestDelta) {
+
+        double endTimeDelta = fabs(endTime - time);
+        if (endTimeDelta < closestDelta) {
             closestTime = endTime;
-            closestDelta = fabsf(endTime - time);
+            closestDelta = endTimeDelta;
         }
     }
     return closestTime;
