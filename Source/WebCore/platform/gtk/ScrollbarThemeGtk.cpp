@@ -279,7 +279,7 @@ IntSize ScrollbarThemeGtk::buttonSize(ScrollbarThemeClient* scrollbar)
     return IntSize(m_stepperSize, m_thumbFatness);
 }
 
-int ScrollbarThemeGtk::minimumThumbLength(ScrollbarThemeClient* scrollbar)
+int ScrollbarThemeGtk::minimumThumbLength(ScrollbarThemeClient*)
 {
     return m_minThumbLength;
 }

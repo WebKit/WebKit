@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-static void gtkStyleSetCallback(GtkWidget* widget, GtkStyle* previous, ScrollbarThemeGtk* scrollbarTheme)
+static void gtkStyleSetCallback(GtkWidget*, GtkStyle*, ScrollbarThemeGtk* scrollbarTheme)
 {
     scrollbarTheme->updateThemeProperties();
 }

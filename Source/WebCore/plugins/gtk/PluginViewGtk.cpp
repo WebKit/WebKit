@@ -489,7 +489,7 @@ static void getVisualAndColormap(int depth, Visual** visual, Colormap* colormap)
         *colormap = XCreateColormap(display, GDK_ROOT_WINDOW(), *visual, AllocNone);
 }
 
-gboolean PluginView::plugRemovedCallback(GtkSocket* socket, PluginView* view)
+gboolean PluginView::plugRemovedCallback(GtkSocket*, PluginView* view)
 {
     view->m_plugAdded = false;
     return TRUE;
@@ -497,7 +497,7 @@ gboolean PluginView::plugRemovedCallback(GtkSocket* socket, PluginView* view)
 
 void PluginView::plugAddedCallback(GtkSocket* socket, PluginView* view)
 {
-    ASSERT(socket);
+    ASSERT_UNUSED(socket, socket);
     ASSERT(view);
     view->m_plugAdded = true;
     view->updateWidgetAllocationAndClip();

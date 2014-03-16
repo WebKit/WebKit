@@ -47,7 +47,7 @@ MainFrameScrollbarGtk::MainFrameScrollbarGtk(ScrollableArea* scrollableArea, Scr
     resize(0, 0);
 }
 
-void MainFrameScrollbarGtk::paint(GraphicsContext* context, const IntRect& rect)
+void MainFrameScrollbarGtk::paint(GraphicsContext*, const IntRect&)
 {
     // Main frame scrollbars are not painted by WebCore.
     return;

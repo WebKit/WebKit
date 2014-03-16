@@ -55,6 +55,8 @@ bool GtkTouchContextHelper::handleEvent(GdkEvent* touchEvent)
     default:
         return false;
     }
+#else
+    UNUSED_PARAM(touchEvent);
 #endif // GTK_API_VERSION_2
 
     return true;

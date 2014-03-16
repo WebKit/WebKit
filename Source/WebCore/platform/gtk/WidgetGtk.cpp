@@ -52,7 +52,7 @@ Widget::~Widget()
     releasePlatformWidget();
 }
 
-void Widget::setFocus(bool focused)
+void Widget::setFocus(bool)
 {
 }
 
@@ -80,7 +80,7 @@ void Widget::hide()
         gtk_widget_hide(platformWidget());
 }
 
-void Widget::paint(GraphicsContext* context, const IntRect& rect)
+void Widget::paint(GraphicsContext*, const IntRect&)
 {
 }
 

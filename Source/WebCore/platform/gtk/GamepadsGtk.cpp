@@ -187,7 +187,7 @@ void GamepadsGtk::updateGamepadList(GamepadList* into)
     }
 }
 
-void GamepadsGtk::onUEventCallback(GUdevClient* udevClient, gchar* action, GUdevDevice* device, gpointer data)
+void GamepadsGtk::onUEventCallback(GUdevClient*, gchar* action, GUdevDevice* device, gpointer data)
 {
     if (!isGamepadDevice(device))
         return;

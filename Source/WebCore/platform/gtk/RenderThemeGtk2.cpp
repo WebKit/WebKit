@@ -142,7 +142,7 @@ static GtkStateType getGtkStateType(RenderThemeGtk* theme, RenderObject* object)
     return GTK_STATE_NORMAL;
 }
 
-static void setToggleSize(const RenderThemeGtk* theme, RenderStyle* style, GtkWidget* widget)
+static void setToggleSize(const RenderThemeGtk*, RenderStyle* style, GtkWidget* widget)
 {
     // The width and height are both specified, so we shouldn't change them.
     if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
@@ -667,7 +667,7 @@ GRefPtr<GdkPixbuf> getStockIconForWidgetType(GType widgetType, const char* iconN
                                               static_cast<GtkIconSize>(iconSize), 0, 0));
 }
 
-GRefPtr<GdkPixbuf> getStockSymbolicIconForWidgetType(GType widgetType, const char* symbolicIconName, const char* fallbackStockIconName, gint direction, gint state, gint iconSize)
+GRefPtr<GdkPixbuf> getStockSymbolicIconForWidgetType(GType widgetType, const char* /* symbolicIconName */, const char* fallbackStockIconName, gint direction, gint state, gint iconSize)
 {
     if (!fallbackStockIconName)
         return nullptr;
@@ -735,7 +735,7 @@ Color RenderThemeGtk::systemColor(CSSValueID cssValueId) const
     }
 }
 
-static void gtkStyleSetCallback(GtkWidget* widget, GtkStyle* previous, RenderTheme* renderTheme)
+static void gtkStyleSetCallback(GtkWidget*, GtkStyle*, RenderTheme* renderTheme)
 {
     // FIXME: Make sure this function doesn't get called many times for a single GTK+ style change signal.
     renderTheme->platformColorsDidChange();

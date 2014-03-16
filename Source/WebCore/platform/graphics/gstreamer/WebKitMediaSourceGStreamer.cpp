@@ -480,7 +480,7 @@ static gchar* webKitMediaSrcGetUri(GstURIHandler* handler)
     return ret;
 }
 
-static gboolean webKitMediaSrcSetUri(GstURIHandler* handler, const gchar* uri, GError** error)
+static gboolean webKitMediaSrcSetUri(GstURIHandler* handler, const gchar* uri, GError**)
 {
     WebKitMediaSrc* src = WEBKIT_MEDIA_SRC(handler);
     WebKitMediaSrcPrivate* priv = src->priv;
@@ -659,13 +659,13 @@ static void webKitMediaAudioSrcEnoughDataCb(GstAppSrc*, gpointer userData)
     GST_OBJECT_UNLOCK(src);
 }
 
-static gboolean webKitMediaVideoSrcSeekMainCb(WebKitMediaSrc* src)
+static gboolean webKitMediaVideoSrcSeekMainCb(WebKitMediaSrc*)
 {
     notImplemented();
     return FALSE;
 }
 
-static gboolean webKitMediaAudioSrcSeekMainCb(WebKitMediaSrc* src)
+static gboolean webKitMediaAudioSrcSeekMainCb(WebKitMediaSrc*)
 {
     notImplemented();
     return FALSE;

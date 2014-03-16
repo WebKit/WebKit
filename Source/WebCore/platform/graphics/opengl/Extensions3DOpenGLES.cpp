@@ -78,7 +78,7 @@ void Extensions3DOpenGLES::renderbufferStorageMultisampleIMG(unsigned long targe
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void Extensions3DOpenGLES::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
+void Extensions3DOpenGLES::blitFramebuffer(long /* srcX0 */, long /* srcY0 */, long /* srcX1 */, long /* srcY1 */, long /* dstX0 */, long /* dstY0 */, long /* dstX1 */, long /* dstY1 */, unsigned long /* mask */, unsigned long /* filter */)
 {
     notImplemented();
 }
@@ -156,9 +156,10 @@ void Extensions3DOpenGLES::bindVertexArrayOES(Platform3DObject array)
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
-void Extensions3DOpenGLES::drawBuffersEXT(GC3Dsizei n, const GC3Denum* bufs)
+void Extensions3DOpenGLES::drawBuffersEXT(GC3Dsizei /* n */, const GC3Denum* /* bufs */)
 {
     // FIXME: implement the support.
+    notImplemented();
 }
 
 int Extensions3DOpenGLES::getGraphicsResetStatusARB()

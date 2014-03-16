@@ -46,7 +46,7 @@ namespace WebCore {
 const double EventHandler::TextDragDelay = 0.0;
 #endif
 
-bool EventHandler::tabsToAllFormControls(KeyboardEvent* event) const
+bool EventHandler::tabsToAllFormControls(KeyboardEvent*) const
 {
     // We always allow tabs to all controls
     return true;
@@ -72,7 +72,7 @@ bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)
     return passMouseDownEventToWidget(renderWidget->widget());
 }
 
-bool EventHandler::passMouseDownEventToWidget(Widget* widget)
+bool EventHandler::passMouseDownEventToWidget(Widget*)
 {
     notImplemented();
     return false;

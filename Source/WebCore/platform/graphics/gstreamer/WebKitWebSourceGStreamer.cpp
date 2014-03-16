@@ -1100,7 +1100,7 @@ void ResourceHandleStreamingClient::didReceiveResponse(ResourceHandle*, const Re
     handleResponseReceived(response);
 }
 
-void ResourceHandleStreamingClient::didReceiveData(ResourceHandle*, const char* data, unsigned length, int)
+void ResourceHandleStreamingClient::didReceiveData(ResourceHandle*, const char* /* data */, unsigned /* length */, int)
 {
     ASSERT_NOT_REACHED();
 }

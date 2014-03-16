@@ -47,7 +47,7 @@ static WindowHashMap& getWindowHashMap()
 }
 
 static int gDamageEventBase;
-static GdkFilterReturn filterXDamageEvent(GdkXEvent* gdkXEvent, GdkEvent* event, void*)
+static GdkFilterReturn filterXDamageEvent(GdkXEvent* gdkXEvent, GdkEvent*, void*)
 {
     XEvent* xEvent = static_cast<XEvent*>(gdkXEvent);
     if (xEvent->type != gDamageEventBase + XDamageNotify)

@@ -511,6 +511,8 @@ static inline void adjustFocusRingColor(Color& color)
 #if !PLATFORM(GTK)
     // Force the alpha to 50%.  This matches what the Mac does with outline rings.
     color.setRGB(makeRGBA(color.red(), color.green(), color.blue(), 127));
+#else
+    UNUSED_PARAM(color);
 #endif
 }
 

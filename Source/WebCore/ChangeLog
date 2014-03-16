@@ -1,3 +1,38 @@
+2014-03-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix WebCore unused parameter warnings for WebKitGTK+ CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=130252
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Modules/mediastream/HTMLMediaElementMediaStream.cpp: Fix unused parameters.
+        * html/RangeInputType.cpp: Ditto.
+        * page/gtk/EventHandlerGtk.cpp: Ditto.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp: Ditto.
+        * platform/graphics/gstreamer/WebKitMediaSourceGStreamer.cpp: Ditto.
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp: Ditto.
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp: Ditto.
+        * platform/gtk/GamepadsGtk.cpp: Ditto.
+        * platform/gtk/GtkClickCounter.cpp: Ditto.
+        * platform/gtk/GtkPopupMenu.cpp: Ditto.
+        * platform/gtk/GtkTouchContextHelper.cpp: Ditto.
+        * platform/gtk/GtkVersioning.c: Ditto.
+        * platform/gtk/MainFrameScrollbarGtk.cpp: Ditto.
+        * platform/gtk/PasteboardGtk.cpp: Ditto.
+        * platform/gtk/PasteboardHelper.cpp: Ditto.
+        * platform/gtk/RedirectedXCompositeWindow.cpp: Ditto.
+        * platform/gtk/RenderThemeGtk.cpp: Ditto.
+        * platform/gtk/RenderThemeGtk.h: Ditto.
+        * platform/gtk/RenderThemeGtk2.cpp: Ditto.
+        * platform/gtk/ScrollbarThemeGtk.cpp: Ditto.
+        * platform/gtk/ScrollbarThemeGtk2.cpp: Ditto.
+        * platform/gtk/WidgetGtk.cpp: Ditto.
+        * platform/network/gtk/CredentialBackingStore.cpp: Ditto.
+        * platform/soup/SharedBufferSoup.cpp: Ditto.
+        * plugins/gtk/PluginViewGtk.cpp: Ditto.
+        * plugins/gtk/gtk2xtbin.c: Ditto.
+        * rendering/InlineTextBox.cpp: Ditto.
+
 2014-03-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         RenderTextControl::hasValidAvgCharWidth doesn't detect System Font

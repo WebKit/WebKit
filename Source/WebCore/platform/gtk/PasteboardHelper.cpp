@@ -230,7 +230,7 @@ GtkTargetList* PasteboardHelper::targetListForDataObject(DataObjectGtk* dataObje
     return list;
 }
 
-void PasteboardHelper::fillDataObjectFromDropData(GtkSelectionData* data, guint info, DataObjectGtk* dataObject)
+void PasteboardHelper::fillDataObjectFromDropData(GtkSelectionData* data, guint /* info */, DataObjectGtk* dataObject)
 {
     if (!gtk_selection_data_get_data(data))
         return;
@@ -290,7 +290,7 @@ Vector<GdkAtom> PasteboardHelper::dropAtomsForContext(GtkWidget* widget, GdkDrag
 
 static DataObjectGtk* settingClipboardDataObject = 0;
 
-static void getClipboardContentsCallback(GtkClipboard* clipboard, GtkSelectionData *selectionData, guint info, gpointer data)
+static void getClipboardContentsCallback(GtkClipboard* clipboard, GtkSelectionData *selectionData, guint info, gpointer)
 {
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
     ASSERT(dataObject);

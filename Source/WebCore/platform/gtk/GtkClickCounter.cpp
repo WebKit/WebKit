@@ -39,7 +39,7 @@ void GtkClickCounter::reset()
     m_previousClickButton = 0;
 }
 
-bool GtkClickCounter::shouldProcessButtonEvent(GdkEventButton* buttonEvent)
+bool GtkClickCounter::shouldProcessButtonEvent(GdkEventButton*)
 {
     // For double and triple clicks GDK sends both a normal button press event
     // and a specific type (like GDK_2BUTTON_PRESS). If we detect a special press

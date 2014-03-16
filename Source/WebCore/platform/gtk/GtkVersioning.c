@@ -34,6 +34,7 @@ GdkDevice *getDefaultGDKPointerDevice(GdkWindow* window)
     GdkDeviceManager *manager =  gdk_display_get_device_manager(gdk_window_get_display(window));
     return gdk_device_manager_get_client_pointer(manager);
 #else
+    UNUSED_PARAM(window);
     return gdk_device_get_core_pointer();
 #endif // GTK_API_VERSION_2
 }
@@ -86,6 +87,8 @@ convert_alpha(guchar * destData, int destStride,
               guchar * srcData, int srcStride,
               int srcX, int srcY, int width, int height)
 {
+    UNUSED_PARAM(srcX);
+
     int x, y;
 
     srcData += srcStride * srcY + srcY * 4;

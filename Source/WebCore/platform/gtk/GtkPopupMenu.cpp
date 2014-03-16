@@ -226,7 +226,7 @@ void GtkPopupMenu::selectItemCallback(GtkMenuItem* item, GtkPopupMenu* popupMenu
     popupMenu->m_currentlySelectedMenuItem = GTK_WIDGET(item);
 }
 
-gboolean GtkPopupMenu::keyPressEventCallback(GtkWidget* widget, GdkEventKey* event, GtkPopupMenu* popupMenu)
+gboolean GtkPopupMenu::keyPressEventCallback(GtkWidget*, GdkEventKey* event, GtkPopupMenu* popupMenu)
 {
     return popupMenu->typeAheadFind(event);
 }

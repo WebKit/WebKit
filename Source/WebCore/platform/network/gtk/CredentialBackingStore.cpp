@@ -118,6 +118,7 @@ void CredentialBackingStore::credentialForChallenge(const AuthenticationChalleng
         reinterpret_cast<GAsyncReadyCallback>(credentialForChallengeAsyncReadyCallback),
         callbackData);
 #else
+    UNUSED_PARAM(challenge);
     callback(Credential(), data);
 #endif // ENABLE(CREDENTIAL_STORAGE)
 }
@@ -138,6 +139,9 @@ void CredentialBackingStore::storeCredentialsForChallenge(const AuthenticationCh
         0, // cancellable
         0, // callback
         0); // data
+#else
+    UNUSED_PARAM(challenge);
+    UNUSED_PARAM(credential);
 #endif // ENABLE(CREDENTIAL_STORAGE)
 }
 

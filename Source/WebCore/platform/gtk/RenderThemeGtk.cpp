@@ -129,7 +129,7 @@ PassRefPtr<RenderTheme> RenderThemeGtk::create()
     return adoptRef(new RenderThemeGtk());
 }
 
-PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
+PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page*)
 {
     static RenderTheme* rt = RenderThemeGtk::create().leakRef();
     return rt;
@@ -627,7 +627,7 @@ bool RenderThemeGtk::paintMediaSliderThumb(RenderObject* o, const PaintInfo& pai
     return false;
 }
 
-bool RenderThemeGtk::paintMediaVolumeSliderContainer(RenderObject*, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeGtk::paintMediaVolumeSliderContainer(RenderObject*, const PaintInfo&, const IntRect&)
 {
     return true;
 }
@@ -670,7 +670,7 @@ String RenderThemeGtk::formatMediaControlsCurrentTime(float currentTime, float d
     return formatMediaControlsTime(currentTime) + " / " + formatMediaControlsTime(duration);
 }
 
-bool RenderThemeGtk::paintMediaCurrentTime(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeGtk::paintMediaCurrentTime(RenderObject*, const PaintInfo&, const IntRect&)
 {
     return false;
 }

@@ -171,6 +171,8 @@ void RangeInputType::handleTouchEvent(TouchEvent* event)
         typedSliderThumbElement().setPositionFromPoint(touches->item(0)->absoluteLocation());
         event->setDefaultHandled();
     }
+#else
+    UNUSED_PARAM(event);
 #endif
 }
 
