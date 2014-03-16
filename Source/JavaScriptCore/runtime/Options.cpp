@@ -101,6 +101,14 @@ static unsigned computeNumberOfWorkerThreads(int maxNumberOfWorkerThreads, int m
     return std::max(cpusToUse, minimum);
 }
 
+static int32_t computePriorityDeltaOfWorkerThreads(int32_t twoCorePriorityDelta, int32_t multiCorePriorityDelta)
+{
+    if (WTF::numberOfProcessorCores() <= 2)
+        return twoCorePriorityDelta;
+
+    return multiCorePriorityDelta;
+}
+
 static unsigned computeNumberOfGCMarkers(unsigned maxNumberOfGCMarkers)
 {
 #if ENABLE(PARALLEL_GC)

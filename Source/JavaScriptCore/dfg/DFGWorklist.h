@@ -49,7 +49,7 @@ public:
 
     ~Worklist();
     
-    static PassRefPtr<Worklist> create(unsigned numberOfThreads);
+    static PassRefPtr<Worklist> create(unsigned numberOfThreads, int relativePriority = 0);
     
     void enqueue(PassRefPtr<Plan>);
     
@@ -77,7 +77,7 @@ public:
     
 private:
     Worklist();
-    void finishCreation(unsigned numberOfThreads);
+    void finishCreation(unsigned numberOfThreads, int);
     
     void runThread(ThreadData*);
     static void threadFunction(void* argument);

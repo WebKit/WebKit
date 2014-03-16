@@ -1952,8 +1952,8 @@
 		1A5B1C5318987EDF004FCF9B /* WebDocumentLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDocumentLoader.h; sourceTree = "<group>"; };
 		1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerState.h; sourceTree = "<group>"; };
 		1A60224918C16B0800C3E8C9 /* VisitedLinkProvider.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = VisitedLinkProvider.messages.in; sourceTree = "<group>"; };
-		1A60224A18C16B9F00C3E8C9 /* VisitedLinkProviderMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VisitedLinkProviderMessageReceiver.cpp; path = VisitedLinkProviderMessageReceiver.cpp; sourceTree = "<group>"; };
-		1A60224B18C16B9F00C3E8C9 /* VisitedLinkProviderMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VisitedLinkProviderMessages.h; path = VisitedLinkProviderMessages.h; sourceTree = "<group>"; };
+		1A60224A18C16B9F00C3E8C9 /* VisitedLinkProviderMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkProviderMessageReceiver.cpp; sourceTree = "<group>"; };
+		1A60224B18C16B9F00C3E8C9 /* VisitedLinkProviderMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkProviderMessages.h; sourceTree = "<group>"; };
 		1A6420E212DCE2FF00CAAE2C /* ShareableBitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableBitmap.cpp; sourceTree = "<group>"; };
 		1A6420E312DCE2FF00CAAE2C /* ShareableBitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareableBitmap.h; sourceTree = "<group>"; };
 		1A64228A12DD024700CAAE2C /* DrawingArea.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DrawingArea.messages.in; sourceTree = "<group>"; };

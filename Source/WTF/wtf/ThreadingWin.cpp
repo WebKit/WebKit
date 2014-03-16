@@ -246,6 +246,17 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
     return threadID;
 }
 
+void changeThreadPriority(ThreadIdentifier threadID, int delta)
+{
+    ASSERT(threadID);
+
+    HANDLE threadHandle = threadHandleForIdentifier(threadID);
+    if (!threadHandle)
+        LOG_ERROR("ThreadIdentifier %u does not correspond to an active thread", threadID);
+
+    SetThreadPriority(threadHandle, THREAD_PRIORITY_NORMAL + delta);
+}
+
 int waitForThreadCompletion(ThreadIdentifier threadID)
 {
     ASSERT(threadID);

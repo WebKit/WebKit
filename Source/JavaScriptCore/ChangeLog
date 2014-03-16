@@ -1,3 +1,31 @@
+2014-03-15  Michael Saboff  <msaboff@apple.com>
+
+        It should be possible to adjust DFG and FTL compiler thread priorities
+        https://bugs.webkit.org/show_bug.cgi?id=130288
+
+        Reviewed by Filip Pizlo.
+
+        Added ability to change thread priorities relative to its current priority.
+        Created options to adjust the priority of the DFG and FTL compilation work thread
+        pools.  For two core systems, there might be three runnable threads, the main thread,
+        the DFG compilation thread and the FTL compilation thread.  With the same priority,
+        the scheduler is free to schedule whatever thread it wants.  By lowering the
+        compilation threads, the main thread can run.  Further tests may suggest better values
+        for the new options, priorityDeltaOfDFGCompilerThreads and priorityDeltaOfFTLCompilerThreads.
+
+        For a two-core device, this change has a net positive improvement of 1-3% across
+        SunSpider, Octane, Kraken and AsmBench.
+
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::finishCreation):
+        (JSC::DFG::Worklist::create):
+        (JSC::DFG::ensureGlobalDFGWorklist):
+        (JSC::DFG::ensureGlobalFTLWorklist):
+        * dfg/DFGWorklist.h:
+        * runtime/Options.cpp:
+        (JSC::computePriorityDeltaOfWorkerThreads):
+        * runtime/Options.h:
+
 2014-03-15  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Define SYSTEM_VERSION_PREFIX consistently

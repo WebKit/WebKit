@@ -203,7 +203,30 @@ void initializeCurrentThreadInternal(const char* threadName)
     ASSERT(id);
     ThreadIdentifierData::initialize(id);
 }
+    
+void changeThreadPriority(ThreadIdentifier threadID, int delta)
+{
+    pthread_t pthreadHandle;
+    ASSERT(threadID);
 
+    {
+        // We don't want to lock across the call to join, since that can block our thread and cause deadlock.
+        MutexLocker locker(threadMapMutex());
+        pthreadHandle = pthreadHandleForIdentifierWithLockAlreadyHeld(threadID);
+        ASSERT(pthreadHandle);
+    }
+
+    int policy;
+    struct sched_param param;
+
+    if (pthread_getschedparam(pthread_self(), &policy, &param))
+        return;
+
+    param.sched_priority += delta;
+
+    pthread_setschedparam(pthread_self(), policy, &param);
+}
+    
 int waitForThreadCompletion(ThreadIdentifier threadID)
 {
     pthread_t pthreadHandle;
