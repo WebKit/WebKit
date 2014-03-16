@@ -179,7 +179,7 @@ void WebSoupRequestManager::send(GTask* task)
     GUniquePtr<char> uriString(soup_uri_to_string(soup_request_get_uri(soupRequest), FALSE));
 
     uint64_t requestID = generateSoupRequestID();
-    m_requestMap.set(requestID, adoptPtr(new WebSoupRequestAsyncData(task, request)));
+    m_requestMap.set(requestID, std::make_unique<WebSoupRequestAsyncData>(task, request));
 
     uint64_t initiatingPageID = WebCore::ResourceRequest(soupRequest).initiatingPageID();
     m_process->parentProcessConnection()->send(Messages::WebPageProxy::DidReceiveURIRequest(String::fromUTF8(uriString.get()), requestID), initiatingPageID);

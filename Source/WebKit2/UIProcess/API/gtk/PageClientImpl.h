@@ -36,6 +36,7 @@
 #include "WindowsKeyboardCodes.h"
 #include <WebCore/IntSize.h>
 #include <gtk/gtk.h>
+#include <memory>
 
 namespace WebKit {
 
@@ -48,10 +49,9 @@ class PageClientImpl : public PageClient
 #endif
 {
 public:
-    ~PageClientImpl();
-    static PassOwnPtr<PageClientImpl> create(GtkWidget* viewWidget)
+    static std::unique_ptr<PageClientImpl> create(GtkWidget* viewWidget)
     {
-        return adoptPtr(new PageClientImpl(viewWidget));
+        return std::unique_ptr<PageClientImpl>(new PageClientImpl(viewWidget));
     }
 
     GtkWidget* viewWidget() { return m_viewWidget; }

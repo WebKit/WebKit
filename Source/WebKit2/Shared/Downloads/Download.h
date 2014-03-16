@@ -40,6 +40,7 @@ OBJC_CLASS WKDownloadAsDelegate;
 #if PLATFORM(GTK) || PLATFORM(EFL)
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceHandleClient.h>
+#include <memory>
 #endif
 
 #if USE(CFNETWORK)
@@ -131,7 +132,7 @@ private:
     RefPtr<DownloadAuthenticationClient> m_authenticationClient;
 #endif
 #if PLATFORM(GTK) || PLATFORM(EFL)
-    OwnPtr<WebCore::ResourceHandleClient> m_downloadClient;
+    std::unique_ptr<WebCore::ResourceHandleClient> m_downloadClient;
     RefPtr<WebCore::ResourceHandle> m_resourceHandle;
 #endif
 };

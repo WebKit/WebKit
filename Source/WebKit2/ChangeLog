@@ -1,3 +1,43 @@
+2014-03-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move GTK WebKit2 code to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=129672
+
+        Reviewed by Anders Carlsson.
+
+        Repace uses of OwnPtr and PassOwnPtr in GTK-specific WebKit2 code with std::unique_ptr.
+
+        * Shared/Downloads/Download.h:
+        * Shared/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::Download::start):
+        (WebKit::Download::startWithHandle):
+        (WebKit::Download::platformInvalidate):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitContextMenuItem.cpp:
+        (webkitContextMenuItemCreate):
+        (webkitContextMenuItemCreateForGtkItem):
+        (webkit_context_menu_item_new):
+        (webkit_context_menu_item_new_from_stock_action):
+        (webkit_context_menu_item_new_from_stock_action_with_label):
+        (webkit_context_menu_item_new_with_submenu):
+        (webkit_context_menu_item_new_separator):
+        * UIProcess/API/gtk/WebKitTextChecker.h:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (createDefaultWebContext):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseConstructed):
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::WebPrintOperationGtk::print):
+        * WebProcess/gtk/WebGtkExtensionManager.cpp:
+        (WebKit::WebGtkExtensionManager::initialize):
+        * WebProcess/soup/WebKitSoupRequestInputStream.cpp:
+        (webkitSoupRequestInputStreamPendingReadAsyncComplete):
+        (webkitSoupRequestInputStreamReadAsync):
+        * WebProcess/soup/WebSoupRequestManager.cpp:
+        (WebKit::WebSoupRequestManager::send):
+        * WebProcess/soup/WebSoupRequestManager.h:
+
 2014-03-16  Brian Burg  <bburg@apple.com>
 
         Web Inspector: vended backend commands file should be generated as part of the build

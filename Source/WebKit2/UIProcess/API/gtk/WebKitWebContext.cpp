@@ -46,9 +46,9 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
 #include <WebCore/Language.h>
+#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/gobject/GRefPtr.h>
@@ -149,7 +149,7 @@ struct _WebKitWebContextPrivate {
     RefPtr<WebKitBatteryProvider> batteryProvider;
 #endif
 #if ENABLE(SPELLCHECK)
-    OwnPtr<WebKitTextChecker> textChecker;
+    std::unique_ptr<WebKitTextChecker> textChecker;
 #endif
     CString faviconDatabaseDirectory;
     WebKitTLSErrorsPolicy tlsErrorsPolicy;

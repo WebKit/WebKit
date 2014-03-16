@@ -29,8 +29,7 @@
 #include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuItem.h>
 #include <gtk/gtk.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
+#include <memory>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 
@@ -57,7 +56,7 @@ struct _WebKitContextMenuItemPrivate {
             webkitContextMenuSetParentItem(subMenu.get(), 0);
     }
 
-    OwnPtr<ContextMenuItem> menuItem;
+    std::unique_ptr<ContextMenuItem> menuItem;
     GRefPtr<WebKitContextMenu> subMenu;
 };
 
@@ -95,7 +94,7 @@ WebKitContextMenuItem* webkitContextMenuItemCreate(WebContextMenuItem* webItem)
 {
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, NULL));
     WebContextMenuItemData* itemData = webItem->data();
-    item->priv->menuItem = WTF::adoptPtr(new ContextMenuItem(itemData->type(), itemData->action(), itemData->title(), itemData->enabled(), itemData->checked()));
+    item->priv->menuItem = std::make_unique<ContextMenuItem>(itemData->type(), itemData->action(), itemData->title(), itemData->enabled(), itemData->checked());
     const Vector<WebContextMenuItemData>& subMenu = itemData->submenu();
     if (!subMenu.size())
         return item;
@@ -112,7 +111,7 @@ WebKitContextMenuItem* webkitContextMenuItemCreate(WebContextMenuItem* webItem)
 static WebKitContextMenuItem* webkitContextMenuItemCreateForGtkItem(GtkMenuItem* menuItem)
 {
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, NULL));
-    item->priv->menuItem = WTF::adoptPtr(new ContextMenuItem(menuItem));
+    item->priv->menuItem = std::make_unique<ContextMenuItem>(menuItem);
     webkitContextMenuItemSetSubMenuFromGtkMenu(item, GTK_MENU(gtk_menu_item_get_submenu(menuItem)));
 
     return item;
@@ -165,7 +164,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new(GtkAction* action)
     g_return_val_if_fail(GTK_IS_ACTION(action), 0);
 
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, NULL));
-    item->priv->menuItem = WTF::adoptPtr(new ContextMenuItem(GTK_MENU_ITEM(gtk_action_create_menu_item(action))));
+    item->priv->menuItem = std::make_unique<ContextMenuItem>(GTK_MENU_ITEM(gtk_action_create_menu_item(action)));
     item->priv->menuItem->setAction(ContextMenuItemBaseApplicationTag);
 
     return item;
@@ -193,7 +192,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new_from_stock_action(WebKitCont
 
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, NULL));
     ContextMenuItemType type = webkitContextMenuActionIsCheckable(action) ? CheckableActionType : ActionType;
-    item->priv->menuItem = WTF::adoptPtr(new ContextMenuItem(type, webkitContextMenuActionGetActionTag(action), webkitContextMenuActionGetLabel(action)));
+    item->priv->menuItem = std::make_unique<ContextMenuItem>(type, webkitContextMenuActionGetActionTag(action), webkitContextMenuActionGetLabel(action));
 
     return item;
 }
@@ -215,7 +214,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new_from_stock_action_with_label
 
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, NULL));
     ContextMenuItemType type = webkitContextMenuActionIsCheckable(action) ? CheckableActionType : ActionType;
-    item->priv->menuItem = WTF::adoptPtr(new ContextMenuItem(type, webkitContextMenuActionGetActionTag(action), String::fromUTF8(label)));
+    item->priv->menuItem = std::make_unique<ContextMenuItem>(type, webkitContextMenuActionGetActionTag(action), String::fromUTF8(label));
 
     return item;
 }
@@ -238,7 +237,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new_with_submenu(const gchar* la
         return 0;
 
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, NULL));
-    item->priv->menuItem = WTF::adoptPtr(new ContextMenuItem(SubmenuType, ContextMenuItemBaseApplicationTag, String::fromUTF8(label)));
+    item->priv->menuItem = std::make_unique<ContextMenuItem>(SubmenuType, ContextMenuItemBaseApplicationTag, String::fromUTF8(label));
     item->priv->subMenu = submenu;
     webkitContextMenuSetParentItem(submenu, item);
 
@@ -255,7 +254,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new_with_submenu(const gchar* la
 WebKitContextMenuItem* webkit_context_menu_item_new_separator(void)
 {
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, NULL));
-    item->priv->menuItem = WTF::adoptPtr(new ContextMenuItem(SeparatorType, ContextMenuItemTagNoAction, String()));
+    item->priv->menuItem = std::make_unique<ContextMenuItem>(SeparatorType, ContextMenuItemTagNoAction, String());
 
     return item;
 }

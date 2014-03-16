@@ -53,10 +53,6 @@ PageClientImpl::PageClientImpl(GtkWidget* viewWidget)
 {
 }
 
-PageClientImpl::~PageClientImpl()
-{
-}
-
 void PageClientImpl::getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent& event, const AtomicString& eventType, Vector<WTF::String>& commandList)
 {
     ASSERT(eventType == eventNames().keydownEvent || eventType == eventNames().keypressEvent);

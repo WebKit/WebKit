@@ -65,6 +65,7 @@
 #ifdef GDK_WINDOWING_X11
 #include <gdk/gdkx.h>
 #endif
+#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
@@ -88,7 +89,7 @@ void redirectedWindowDamagedCallback(void* data);
 
 struct _WebKitWebViewBasePrivate {
     WebKitWebViewChildrenMap children;
-    OwnPtr<PageClientImpl> pageClient;
+    std::unique_ptr<PageClientImpl> pageClient;
     RefPtr<WebPageProxy> pageProxy;
     bool shouldForwardNextKeyEvent;
     GtkClickCounter clickCounter;

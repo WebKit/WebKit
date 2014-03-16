@@ -40,6 +40,7 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/URL.h>
 #include <gtk/gtk.h>
+#include <memory>
 #include <wtf/Vector.h>
 #include <wtf/gobject/GUniquePtr.h>
 
@@ -713,7 +714,7 @@ void WebPrintOperationGtk::print(cairo_surface_t* surface, double xDPI, double y
 {
     ASSERT(m_printContext);
 
-    OwnPtr<PrintPagesData> data = adoptPtr(new PrintPagesData(this));
+    auto data = std::make_unique<PrintPagesData>(this);
     if (!data->isValid) {
         cairo_surface_finish(surface);
         printDone(invalidPageRangeToPrint(frameURL()));
@@ -729,7 +730,7 @@ void WebPrintOperationGtk::print(cairo_surface_t* surface, double xDPI, double y
     // operation has finished. See https://bugs.webkit.org/show_bug.cgi?id=122801.
     unsigned idlePriority = m_printMode == PrintInfo::PrintModeSync ? G_PRIORITY_DEFAULT - 10 : G_PRIORITY_DEFAULT_IDLE + 10;
     GMainLoop* mainLoop = data->mainLoop.get();
-    m_printPagesIdleId = gdk_threads_add_idle_full(idlePriority, printPagesIdle, data.leakPtr(), printPagesIdleDone);
+    m_printPagesIdleId = gdk_threads_add_idle_full(idlePriority, printPagesIdle, data.release(), printPagesIdleDone);
     if (m_printMode == PrintInfo::PrintModeSync) {
         ASSERT(mainLoop);
         g_main_loop_run(mainLoop);

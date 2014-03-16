@@ -24,9 +24,9 @@
 #include "MessageReceiver.h"
 #include "WebProcessSupplement.h"
 #include <WebCore/ResourceError.h>
+#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -61,7 +61,7 @@ private:
 
     WebProcess* m_process;
     GRefPtr<GPtrArray> m_schemes;
-    HashMap<uint64_t, OwnPtr<WebSoupRequestAsyncData> > m_requestMap;
+    HashMap<uint64_t, std::unique_ptr<WebSoupRequestAsyncData> > m_requestMap;
 };
 
 } // namespace WebKit

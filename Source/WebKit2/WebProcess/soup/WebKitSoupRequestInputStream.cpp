@@ -20,8 +20,6 @@
 #include "config.h"
 #include "WebKitSoupRequestInputStream.h"
 
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/gobject/GRefPtr.h>
 
@@ -46,7 +44,7 @@ struct _WebKitSoupRequestInputStreamPrivate {
     uint64_t bytesRead;
 
     Mutex readLock;
-    OwnPtr<AsyncReadData> pendingAsyncRead;
+    std::unique_ptr<AsyncReadData> pendingAsyncRead;
 };
 
 G_DEFINE_TYPE(WebKitSoupRequestInputStream, webkit_soup_request_input_stream, G_TYPE_MEMORY_INPUT_STREAM)
@@ -70,7 +68,7 @@ static void webkitSoupRequestInputStreamPendingReadAsyncComplete(WebKitSoupReque
 
     AsyncReadData* data = stream->priv->pendingAsyncRead.get();
     webkitSoupRequestInputStreamReadAsyncResultComplete(stream, data->result.get(), data->buffer, data->count, data->cancellable.get());
-    stream->priv->pendingAsyncRead.clear();
+    stream->priv->pendingAsyncRead = nullptr;
 }
 
 static bool webkitSoupRequestInputStreamHasDataToRead(WebKitSoupRequestInputStream* stream)
@@ -101,7 +99,7 @@ static void webkitSoupRequestInputStreamReadAsync(GInputStream* inputStream, voi
         return;
     }
 
-    stream->priv->pendingAsyncRead = adoptPtr(new AsyncReadData(result.get(), buffer, count, cancellable));
+    stream->priv->pendingAsyncRead = std::make_unique<AsyncReadData>(result.get(), buffer, count, cancellable);
 }
 
 static gssize webkitSoupRequestInputStreamReadFinish(GInputStream*, GAsyncResult* result, GError**)

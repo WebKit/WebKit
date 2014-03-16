@@ -24,7 +24,7 @@
 
 #include <WebCore/TextCheckerEnchant.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/PassOwnPtr.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
@@ -33,8 +33,11 @@ class WebKitTextChecker {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    static PassOwnPtr<WebKitTextChecker> create() { return adoptPtr(new WebKitTextChecker()); }
-    virtual ~WebKitTextChecker();
+    static std::unique_ptr<WebKitTextChecker> create()
+    {
+        return std::unique_ptr<WebKitTextChecker>(new WebKitTextChecker);
+    }
+    ~WebKitTextChecker();
 
     // For implementing TextCheckerClient.
     bool isSpellCheckingEnabled() { return m_spellCheckingEnabled; }

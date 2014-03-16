@@ -212,7 +212,7 @@ void Download::start()
 {
     ASSERT(!m_downloadClient);
     ASSERT(!m_resourceHandle);
-    m_downloadClient = adoptPtr(new DownloadClient(this));
+    m_downloadClient = std::make_unique<DownloadClient>(this);
     m_resourceHandle = ResourceHandle::create(0, m_request, m_downloadClient.get(), false, false);
     didStart();
 }
@@ -221,7 +221,7 @@ void Download::startWithHandle(ResourceHandle* resourceHandle, const ResourceRes
 {
     ASSERT(!m_downloadClient);
     ASSERT(!m_resourceHandle);
-    m_downloadClient = adoptPtr(new DownloadClient(this));
+    m_downloadClient = std::make_unique<DownloadClient>(this);
     resourceHandle->setClient(m_downloadClient.get());
     m_resourceHandle = resourceHandle;
     didStart();
@@ -247,7 +247,8 @@ void Download::platformInvalidate()
         m_resourceHandle->cancel();
         m_resourceHandle = 0;
     }
-    m_downloadClient.release();
+
+    m_downloadClient = nullptr;
 }
 
 void Download::didDecideDestination(const String& /*destination*/, bool /*allowOverwrite*/)
