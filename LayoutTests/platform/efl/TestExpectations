@@ -1705,8 +1705,6 @@ webkit.org/b/124657 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure
 
 webkit.org/b/124658 fast/text/break-word-pre-wrap.html [ ImageOnlyFailure ]
 
-webkit.org/b/124662 mathml/presentation/mspace-units.html [ ImageOnlyFailure ]
-
 webkit.org/b/124663 media/track/track-legacyapi-with-automatic-mode.html [ Skip ]
 
 webkit.org/b/124890 platform/efl/accessibility/media-emits-object-replacement.html [ Failure ]

@@ -1313,8 +1313,6 @@ webkit.org/b/122147 fast/css/drop-shadow-viewport-width.html [ ImageOnlyFailure 
 
 webkit.org/b/124360 media/video-canvas-drawing-output.html [ Failure ]
 
-webkit.org/b/124503 mathml/presentation/mspace-units.html [ ImageOnlyFailure ]
-
 webkit.org/b/124504 fast/text/break-word-pre-wrap.html [ ImageOnlyFailure ]
 
 webkit.org/b/124507 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]

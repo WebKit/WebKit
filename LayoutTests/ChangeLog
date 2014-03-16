@@ -1,3 +1,23 @@
+2014-03-16  Frédéric Wang  <fred.wang@free.fr>
+
+        [regression] foreign content not displayed in MathML
+        <https://webkit.org/b/124128>
+
+        Reviewed by Chris Fleizach.
+
+        * mathml/presentation/foreign-mi-dynamic-expected.html: Added.
+        * mathml/presentation/foreign-mi-dynamic.html: Added.
+        * mathml/presentation/foreign-mi-expected-mismatch.html: Added.
+        * mathml/presentation/foreign-mi.html: Added.
+        * mathml/presentation/foreign-mn-expected-mismatch.html: Added.
+        * mathml/presentation/foreign-mn.html: Added.
+        * mathml/presentation/foreign-mtext-expected-mismatch.html: Added.
+        * mathml/presentation/foreign-mtext-rejected-expected.html: Added.
+        * mathml/presentation/foreign-mtext-rejected.html: Added.
+        * mathml/presentation/foreign-mtext.html: Added.
+        * platform/efl/TestExpectations: reenable the test.
+        * platform/gtk/TestExpectations: ditto.
+
 2014-03-14  Oliver Hunt  <oliver@apple.com>
 
         Reinstate intialiser syntax in for-in loops

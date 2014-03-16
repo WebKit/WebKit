@@ -54,6 +54,9 @@ private:
     virtual const char* renderName() const override { return isAnonymous() ? "RenderMathMLToken (anonymous)" : "RenderMathMLToken"; }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     virtual void updateStyle();
+
+    // This boolean indicates whether the token element contains some RenderElement descendants, other than the anonymous renderers created for layout purpose.
+    bool m_containsElement;
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderMathMLToken, isRenderMathMLToken())

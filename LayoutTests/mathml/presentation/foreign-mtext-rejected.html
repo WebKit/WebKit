@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Foreign content in mtext</title>
+  </head>
+  <body>
+
+    <!-- These HTML-in-MathML elements are not phrasing content and should be rejected. -->
+
+    _<math><mtext><p>HTML-in-MathML</p></mtext></math>_
+
+    _<math><mtext><div>HTML-in-MathML</div></mtext></math>_
+
+    _<math><mtext><blockquote>HTML-in-MathML</blockquote></mtext></math>_
+
+  </body>
+</html>

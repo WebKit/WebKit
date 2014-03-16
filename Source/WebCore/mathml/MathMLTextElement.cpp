@@ -30,10 +30,14 @@
 
 #include "MathMLTextElement.h"
 
+#include "HTMLElement.h"
+#include "HTMLNames.h"
 #include "MathMLNames.h"
 #include "RenderMathMLOperator.h"
 #include "RenderMathMLSpace.h"
 #include "RenderMathMLToken.h"
+#include "SVGElement.h"
+#include "SVGNames.h"
 
 namespace WebCore {
     
@@ -68,17 +72,100 @@ RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(PassRef<Render
 {
     if (hasTagName(MathMLNames::moTag))
         return createRenderer<RenderMathMLOperator>(*this, std::move(style));
-    if (hasTagName(MathMLNames::miTag))
-        return createRenderer<RenderMathMLToken>(*this, std::move(style));
     if (hasTagName(MathMLNames::mspaceTag))
         return createRenderer<RenderMathMLSpace>(*this, std::move(style));
 
-    return MathMLElement::createElementRenderer(std::move(style));
+    ASSERT(hasTagName(MathMLNames::miTag) || hasTagName(MathMLNames::mnTag) || hasTagName(MathMLNames::msTag) || hasTagName(MathMLNames::mtextTag));
+
+    return createRenderer<RenderMathMLToken>(*this, std::move(style));
+}
+
+static bool isPhrasingContent(const Node& node)
+{
+    // Phrasing content is described in the HTML 5 specification:
+    // http://www.w3.org/TR/html5/dom.html#phrasing-content.
+
+    if (!node.isElementNode())
+        return node.isTextNode();
+
+    auto& element = toElement(node);
+
+    if (element.isMathMLElement()) {
+        auto& mathmlElement = toMathMLElement(element);
+        return mathmlElement.hasTagName(MathMLNames::mathTag);
+    }
+
+    if (element.isSVGElement()) {
+        auto& svgElement = toSVGElement(element);
+        return svgElement.hasTagName(SVGNames::svgTag);
+    }
+
+    if (element.isHTMLElement()) {
+        // FIXME: add the <data> and <time> tags when they are implemented.
+        auto& htmlElement = toHTMLElement(element);
+        return htmlElement.hasTagName(HTMLNames::aTag)
+            || htmlElement.hasTagName(HTMLNames::abbrTag)
+            || htmlElement.hasTagName(HTMLNames::areaTag)
+            || htmlElement.hasTagName(HTMLNames::audioTag)
+            || htmlElement.hasTagName(HTMLNames::bTag)
+            || htmlElement.hasTagName(HTMLNames::bdiTag)
+            || htmlElement.hasTagName(HTMLNames::bdoTag)
+            || htmlElement.hasTagName(HTMLNames::brTag)
+            || htmlElement.hasTagName(HTMLNames::buttonTag)
+            || htmlElement.hasTagName(HTMLNames::canvasTag)
+            || htmlElement.hasTagName(HTMLNames::citeTag)
+            || htmlElement.hasTagName(HTMLNames::codeTag)
+            || htmlElement.hasTagName(HTMLNames::datalistTag)
+            || htmlElement.hasTagName(HTMLNames::delTag)
+            || htmlElement.hasTagName(HTMLNames::dfnTag)
+            || htmlElement.hasTagName(HTMLNames::emTag)
+            || htmlElement.hasTagName(HTMLNames::embedTag)
+            || htmlElement.hasTagName(HTMLNames::iTag)
+            || htmlElement.hasTagName(HTMLNames::iframeTag)
+            || htmlElement.hasTagName(HTMLNames::imgTag)
+            || htmlElement.hasTagName(HTMLNames::inputTag)
+            || htmlElement.hasTagName(HTMLNames::insTag)
+            || htmlElement.hasTagName(HTMLNames::kbdTag)
+            || htmlElement.hasTagName(HTMLNames::keygenTag)
+            || htmlElement.hasTagName(HTMLNames::labelTag)
+            || htmlElement.hasTagName(HTMLNames::mapTag)
+            || htmlElement.hasTagName(HTMLNames::markTag)
+            || htmlElement.hasTagName(HTMLNames::meterTag)
+            || htmlElement.hasTagName(HTMLNames::noscriptTag)
+            || htmlElement.hasTagName(HTMLNames::objectTag)
+            || htmlElement.hasTagName(HTMLNames::outputTag)
+            || htmlElement.hasTagName(HTMLNames::progressTag)
+            || htmlElement.hasTagName(HTMLNames::qTag)
+            || htmlElement.hasTagName(HTMLNames::rubyTag)
+            || htmlElement.hasTagName(HTMLNames::sTag)
+            || htmlElement.hasTagName(HTMLNames::sampTag)
+            || htmlElement.hasTagName(HTMLNames::scriptTag)
+            || htmlElement.hasTagName(HTMLNames::selectTag)
+            || htmlElement.hasTagName(HTMLNames::smallTag)
+            || htmlElement.hasTagName(HTMLNames::spanTag)
+            || htmlElement.hasTagName(HTMLNames::strongTag)
+            || htmlElement.hasTagName(HTMLNames::subTag)
+            || htmlElement.hasTagName(HTMLNames::supTag)
+            || htmlElement.hasTagName(HTMLNames::templateTag)
+            || htmlElement.hasTagName(HTMLNames::textareaTag)
+            || htmlElement.hasTagName(HTMLNames::uTag)
+            || htmlElement.hasTagName(HTMLNames::varTag)
+            || htmlElement.hasTagName(HTMLNames::videoTag)
+            || htmlElement.hasTagName(HTMLNames::wbrTag);
+    }
+
+    return false;
 }
 
 bool MathMLTextElement::childShouldCreateRenderer(const Node& child) const
 {
-    return !hasTagName(mspaceTag) && child.isTextNode();
+    // The HTML specification defines <mi>, <mo>, <mn>, <ms> and <mtext> as insertion points.
+
+    // FIXME: phrasing content should be accepted in <mo> elements too (https://bugs.webkit.org/show_bug.cgi?id=130245).
+    if (hasTagName(moTag))
+        return child.isTextNode();
+
+    return !hasTagName(MathMLNames::mspaceTag) && isPhrasingContent(child);
 }
 
 }

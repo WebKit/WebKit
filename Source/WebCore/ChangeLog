@@ -1,3 +1,28 @@
+2014-03-16  Frédéric Wang  <fred.wang@free.fr>
+
+        [regression] foreign content not displayed in MathML
+        <https://webkit.org/b/124128>
+
+        Reviewed by Chris Fleizach.
+
+        This restores foreign content in <mtext>, <mn> and <mi> elements, but only when it is "phrasing content" as defined per the HTML5 specification. Other token elements are not handled here. This change makes mspace-units.html work again on Linux.
+
+        Tests: mathml/presentation/foreign-mi-dynamic.html
+               mathml/presentation/foreign-mi.html
+               mathml/presentation/foreign-mn.html
+               mathml/presentation/foreign-mtext-rejected.html
+               mathml/presentation/foreign-mtext.html
+
+        * mathml/MathMLTextElement.cpp:
+        (WebCore::MathMLTextElement::createElementRenderer): create a RenderMathMLToken for mn, ms and mtext.
+        (WebCore::isPhrasingContent): helper function to check phrasing content, as defined by the HTML spec.
+        (WebCore::MathMLTextElement::childShouldCreateRenderer): <mi>, <mn>, <mtext> and, <ms> now accepts phrasing content.
+        * rendering/mathml/RenderMathMLToken.cpp:
+        (WebCore::RenderMathMLToken::RenderMathMLToken):
+        (WebCore::RenderMathMLToken::updateTokenContent): initialize the m_containsElement boolean when updating the token content.
+        (WebCore::RenderMathMLToken::updateStyle): move <mi> specific handling in its own section and only apply the single-char rule when it does not contain elements.
+        * rendering/mathml/RenderMathMLToken.h: add an m_containsElement boolean to handle token element specifically.
+
 2014-03-16  David Kilzer  <ddkilzer@apple.com>
 
         PlatformTimeRanges::nearest() truncates closestDelta values from double to float
