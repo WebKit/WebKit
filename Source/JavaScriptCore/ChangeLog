@@ -1,5 +1,27 @@
 2014-03-15  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL ArrayifyToStructure shouldn't fail every time that it actually arrayifies
+        https://bugs.webkit.org/show_bug.cgi?id=130296
+
+        Reviewed by Andreas Kling.
+        
+        During the 32-bit structure ID work, the second load of the structure was removed.
+        That's wrong. The whole point of loading the structure ID again is that the structure
+        ID would have been changed by the arrayification call, and we're verifying that the
+        arrayification succeeded in changing the structure. If we check the old structure - as
+        the code was doing after the 32-bit structure ID work - then this check is guaranteed
+        to fail, causing a significant performance regression.
+        
+        It's actually amazing that the regression wasn't bigger. The reason is that if FTL
+        code pathologically exits but the equivalent DFG code doesn't, then the exponential
+        backoff almost perfectly guarantees that we just end up in the DFG. For this code, at
+        the time at least, the DFG wasn't much slower so this didn't cause too much pain.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileArrayifyToStructure):
+
+2014-03-15  Filip Pizlo  <fpizlo@apple.com>
+
         FTL should support CheckHasInstance/InstanceOf
         https://bugs.webkit.org/show_bug.cgi?id=130285
 

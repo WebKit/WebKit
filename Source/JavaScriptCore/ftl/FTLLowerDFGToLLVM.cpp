@@ -1657,6 +1657,7 @@ private:
             break;
         }
         
+        structureID = m_out.load32(cell, m_heaps.JSCell_structureID);
         speculate(
             BadIndexingType, jsValueValue(cell), 0,
             m_out.notEqual(structureID, weakStructure(m_node->structure())));
