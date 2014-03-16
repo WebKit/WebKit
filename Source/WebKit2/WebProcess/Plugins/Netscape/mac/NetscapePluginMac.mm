@@ -37,6 +37,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/text/StringView.h>
 
 using namespace WebCore;
 
