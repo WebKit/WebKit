@@ -1,3 +1,19 @@
+2014-03-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove OwnPtr.h, PassOwnPtr.h header inclusions in Source/WebCore/html/parser/ code
+        https://bugs.webkit.org/show_bug.cgi?id=129667
+
+        Reviewed by Anders Carlsson.
+
+        Remove unnecessary inclusions of the OwnPtr.h and PassOwnPtr.h headers
+        in the code under Source/WebCore/html/parser/.
+
+        * html/parser/HTMLParserScheduler.h:
+        * html/parser/HTMLToken.h:
+        * html/parser/HTMLTreeBuilder.h:
+        * html/parser/XSSAuditor.h:
+        * html/parser/XSSAuditorDelegate.h:
+
 2014-03-16  Darin Adler  <darin@apple.com>
 
         Remove uses of "cat" in DerivedSources.make outside platform-specific rules

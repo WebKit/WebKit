@@ -27,8 +27,6 @@
 #define XSSAuditorDelegate_h
 
 #include "URL.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
 

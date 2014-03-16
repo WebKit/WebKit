@@ -31,7 +31,6 @@
 #include "URL.h"
 #include "SuffixTree.h"
 #include "TextEncoding.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
