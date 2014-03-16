@@ -29,8 +29,6 @@ macro(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
             set(OLD_COMPILE_FLAGS "-fPIC ${OLD_COMPILE_FLAGS}")
         endif ()
 
-        set(OLD_COMPILE_FLAGS "-fno-exceptions -fno-strict-aliasing ${OLD_COMPILE_FLAGS}")
-
         # Enable warnings by default
         if (NOT ${OPTION_IGNORECXX_WARNINGS})
             set(OLD_COMPILE_FLAGS "-Wall -Wextra -Wcast-align -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wundef -Wwrite-strings ${OLD_COMPILE_FLAGS}")

@@ -86,7 +86,7 @@ add_dependencies(TestWebKitAPIInjectedBundle ${ForwardingHeadersForTestWebKitAPI
 
 get_property(TestWebKitAPIInjectedBundle_PATH TARGET TestWebKitAPIInjectedBundle PROPERTY LOCATION)
 
-add_definitions(-DGTEST_LINKED_AS_SHARED_LIBRARY=1
+add_definitions(-DGTEST_LINKED_AS_SHARED_LIBRARY=1 -DGTEST_HAS_RTTI=0
     -DTEST_WEBKIT2_RESOURCES_DIR=\"${TESTWEBKITAPI_DIR}/Tests/WebKit2\"
     -DTEST_INJECTED_BUNDLE_PATH=\"${TestWebKitAPIInjectedBundle_PATH}\"
 )
