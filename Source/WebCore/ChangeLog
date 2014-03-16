@@ -1,3 +1,22 @@
+2014-03-16  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: generated backend commands should reflect build system ENABLE settings
+        https://bugs.webkit.org/show_bug.cgi?id=130111
+
+        Reviewed by Timothy Hatcher.
+
+        Add guards for conditional inspector domains.
+
+        For Makefile-based build systems, force regeneration of the
+        combined file if the list of domains has changed.
+
+        Combine only the Inspector domains listed in INSPECTOR_DOMAINS,
+        instead of globbing any .json file.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+
 2014-03-16  David Kilzer  <ddkilzer@apple.com>
 
         Follow-up: Double values passed to fabsf() in maxScaleFromTransform()

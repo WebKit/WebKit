@@ -831,18 +831,18 @@ ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/parser/Lexer.cpp ${DERIVED_S
 set(JavaScriptCore_INSPECTOR_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/inspector/scripts")
 
 set(JavaScriptCore_INSPECTOR_DOMAINS
-    inspector/protocol/Console.json
-    inspector/protocol/Debugger.json
-    inspector/protocol/GenericTypes.json
-    inspector/protocol/InspectorDomain.json
-    inspector/protocol/Runtime.json
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/Console.json
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/Debugger.json
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/GenericTypes.json
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/InspectorDomain.json
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/Runtime.json
 )
 
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJS.json
     MAIN_DEPENDENCY ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-combined-inspector-json.py
     DEPENDS ${JavaScriptCore_INSPECTOR_DOMAINS}
-    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-combined-inspector-json.py ${JAVASCRIPTCORE_DIR}/inspector/protocol > ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJS.json
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-combined-inspector-json.py ${JavaScriptCore_INSPECTOR_DOMAINS} > ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJS.json
     VERBATIM)
 
 # Inspector Backend Dispatchers, Frontend Dispatchers, Type Builders

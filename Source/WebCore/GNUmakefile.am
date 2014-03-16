@@ -346,9 +346,7 @@ WebCore_INSPECTOR_DOMAINS := \
     $(WebCore)/inspector/protocol/DOM.json \
     $(WebCore)/inspector/protocol/DOMDebugger.json \
     $(WebCore)/inspector/protocol/DOMStorage.json \
-    $(WebCore)/inspector/protocol/Database.json \
     $(WebCore)/inspector/protocol/HeapProfiler.json \
-    $(WebCore)/inspector/protocol/IndexedDB.json \
     $(WebCore)/inspector/protocol/Input.json \
     $(WebCore)/inspector/protocol/LayerTree.json \
     $(WebCore)/inspector/protocol/Network.json \
@@ -357,7 +355,23 @@ WebCore_INSPECTOR_DOMAINS := \
     $(WebCore)/inspector/protocol/Timeline.json \
     $(WebCore)/inspector/protocol/Worker.json
 
-DerivedSources/WebCore/InspectorWeb.json: $(INSPECTOR_SCRIPTS_DIR)/generate-combined-inspector-json.py $(WebCore_INSPECTOR_DOMAINS)
+
+if ENABLE_SQL_DATABASE
+    WebCore_INSPECTOR_DOMAINS += $(WebCore)/inspector/protocol/Database.json
+endif
+
+if ENABLE_INDEXED_DATABASE
+    WebCore_INSPECTOR_DOMAINS += $(WebCore)/inspector/protocol/IndexedDB.json
+endif
+
+# The combined JSON file depends on the actual set of domains and their file contents, so that
+# adding, modifying, or removing domains will trigger regeneration of inspector files.
+
+.PHONY: force
+EnabledInspectorDomains: force
+	echo '$(WebCore_INSPECTOR_DOMAINS)' | cmp -s - $@ || echo '$(WebCore_INSPECTOR_DOMAINS)' > $@
+
+DerivedSources/WebCore/InspectorWeb.json: $(INSPECTOR_SCRIPTS_DIR)/generate-combined-inspector-json.py $(WebCore_INSPECTOR_DOMAINS) EnabledInspectorDomains
 	$(AM_V_GEN)$(PYTHON) $(INSPECTOR_SCRIPTS_DIR)/generate-combined-inspector-json.py $(WebCore)/inspector/protocol > $(GENSOURCES_WEBCORE)/InspectorWeb.json
 
 # All Web Inspector generated files are created with this one call to CodeGeneratorInspector.py

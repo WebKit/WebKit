@@ -1115,18 +1115,27 @@ INSPECTOR_DOMAINS = \
     $(WebCore)/inspector/protocol/DOM.json \
     $(WebCore)/inspector/protocol/DOMDebugger.json \
     $(WebCore)/inspector/protocol/DOMStorage.json \
-    $(WebCore)/inspector/protocol/Database.json \
     $(WebCore)/inspector/protocol/HeapProfiler.json \
-    $(WebCore)/inspector/protocol/IndexedDB.json \
     $(WebCore)/inspector/protocol/Input.json \
     $(WebCore)/inspector/protocol/LayerTree.json \
     $(WebCore)/inspector/protocol/Network.json \
     $(WebCore)/inspector/protocol/Page.json \
     $(WebCore)/inspector/protocol/Profiler.json \
-    $(WebCore)/inspector/protocol/Replay.json \
     $(WebCore)/inspector/protocol/Timeline.json \
     $(WebCore)/inspector/protocol/Worker.json \
 #
+
+ifeq ($(findstring ENABLE_SQL_DATABASE,$(FEATURE_DEFINES)), ENABLE_SQL_DATABASE)
+    INSPECTOR_DOMAINS := $(INSPECTOR_DOMAINS) $(WebCore)/inspector/protocol/Database.json
+endif
+
+ifeq ($(findstring ENABLE_INDEXED_DATABASE,$(FEATURE_DEFINES)), ENABLE_INDEXED_DATABASE)
+    INSPECTOR_DOMAINS := $(INSPECTOR_DOMAINS) $(WebCore)/inspector/protocol/IndexedDB.json
+endif
+
+ifeq ($(findstring ENABLE_WEB_REPLAY,$(FEATURE_DEFINES)), ENABLE_WEB_REPLAY)
+    INSPECTOR_DOMAINS := $(INSPECTOR_DOMAINS) $(WebCore)/inspector/protocol/Replay.json
+endif
 
 INSPECTOR_GENERATOR_SCRIPTS = \
 	$(InspectorScripts)/CodeGeneratorInspector.py \
@@ -1135,8 +1144,15 @@ INSPECTOR_GENERATOR_SCRIPTS = \
 
 all : InspectorWeb.json
 
-InspectorWeb.json : $(InspectorScripts)/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS)
-	python $(InspectorScripts)/generate-combined-inspector-json.py $(WebCore)/inspector/protocol > ./InspectorWeb.json
+# The combined JSON file depends on the actual set of domains and their file contents, so that
+# adding, modifying, or removing domains will trigger regeneration of inspector files.
+
+.PHONY: force
+EnabledInspectorDomains : force
+	echo '$(INSPECTOR_DOMAINS)' | cmp -s - $@ || echo '$(INSPECTOR_DOMAINS)' > $@
+
+InspectorWeb.json : $(InspectorScripts)/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) EnabledInspectorDomains
+	python $(InspectorScripts)/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) > ./InspectorWeb.json
 
 all : InspectorWebFrontendDispatchers.h
 
