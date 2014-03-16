@@ -1,3 +1,15 @@
+2014-03-16  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up: Fix undefined behavior in WTF::equal() in StringImpl.h for i386/x86_64
+        <http://webkit.org/b/130283>
+        <rdar://problem/16281477>
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/StringImpl.h:
+        (WTF::loadUnaligned): Restore behavior prior to r165681 for
+        compilers other than clang.
+
 2014-03-16  Darin Adler  <darin@apple.com>
 
         Remove all uses of deprecatedCharacters from JavaScriptCore

@@ -918,9 +918,14 @@ WTF_EXPORT_STRING_API bool equal(const StringImpl& a, const StringImpl& b);
 template<typename T>
 inline T loadUnaligned(const char* s)
 {
+#if COMPILER(CLANG)
     T tmp;
     memcpy(&tmp, s, sizeof(T));
     return tmp;
+#else
+    // This may result in undefined behavior due to unaligned access.
+    return *reinterpret_cast<const T*>(s);
+#endif
 }
 
 // Do comparisons 8 or 4 bytes-at-a-time on architectures where it's safe.
