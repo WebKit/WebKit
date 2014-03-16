@@ -210,7 +210,6 @@ void changeThreadPriority(ThreadIdentifier threadID, int delta)
     ASSERT(threadID);
 
     {
-        // We don't want to lock across the call to join, since that can block our thread and cause deadlock.
         MutexLocker locker(threadMapMutex());
         pthreadHandle = pthreadHandleForIdentifierWithLockAlreadyHeld(threadID);
         ASSERT(pthreadHandle);
@@ -219,12 +218,12 @@ void changeThreadPriority(ThreadIdentifier threadID, int delta)
     int policy;
     struct sched_param param;
 
-    if (pthread_getschedparam(pthread_self(), &policy, &param))
+    if (pthread_getschedparam(pthreadHandle, &policy, &param))
         return;
 
     param.sched_priority += delta;
 
-    pthread_setschedparam(pthread_self(), policy, &param);
+    pthread_setschedparam(pthreadHandle, policy, &param);
 }
     
 int waitForThreadCompletion(ThreadIdentifier threadID)

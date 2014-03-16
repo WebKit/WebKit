@@ -1,3 +1,12 @@
+2014-03-15  Darin Adler  <darin@apple.com>
+
+        Try to fix EFL build.
+
+        * wtf/ThreadingPthreads.cpp: (WTF::changeThreadPriority): Code in this function
+        was setting the priority of the current thread instead of the passed-in thread.
+        That was triggering an unused variable warning in the compiler used to build for
+        EFL. Fixed by using the thread handle instead of pthread_self.
+
 2014-03-15  Michael Saboff  <msaboff@apple.com>
 
         It should be possible to adjust DFG and FTL compiler thread priorities
