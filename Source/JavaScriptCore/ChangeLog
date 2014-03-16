@@ -1,3 +1,26 @@
+2014-03-15  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should support CheckHasInstance/InstanceOf
+        https://bugs.webkit.org/show_bug.cgi?id=130285
+
+        Reviewed by Sam Weinig.
+        
+        Fairly straightforward; I also discovered an inaccurate FIXME in the process.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileCheckHasInstance):
+        (JSC::FTL::LowerDFGToLLVM::compileInstanceOf):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::phi):
+        * tests/stress/instanceof.js: Added.
+        * tests/stress/instanceof-not-cell.js: Added.
+
 2014-03-15  Michael Saboff  <msaboff@apple.com>
 
         It should be possible to adjust DFG and FTL compiler thread priorities

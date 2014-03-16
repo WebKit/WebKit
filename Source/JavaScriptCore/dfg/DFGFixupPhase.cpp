@@ -903,8 +903,6 @@ private:
         }
             
         case InstanceOf: {
-            // FIXME: This appears broken: CheckHasInstance already does an unconditional cell
-            // check. https://bugs.webkit.org/show_bug.cgi?id=107479
             if (!(node->child1()->prediction() & ~SpecCell))
                 fixEdge<CellUse>(node->child1());
             fixEdge<CellUse>(node->child2());

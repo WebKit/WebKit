@@ -99,13 +99,12 @@ public:
     LValue constDouble(double value) { return constReal(doubleType, value); }
     
     LValue phi(LType type) { return buildPhi(m_builder, type); }
-    LValue phi(LType type, ValueFromBlock value1)
+    template<typename... Params>
+    LValue phi(LType type, ValueFromBlock value, Params... theRest)
     {
-        return buildPhi(m_builder, type, value1);
-    }
-    LValue phi(LType type, ValueFromBlock value1, ValueFromBlock value2)
-    {
-        return buildPhi(m_builder, type, value1, value2);
+        LValue result = phi(type, theRest...);
+        addIncoming(result, value);
+        return result;
     }
     template<typename VectorType>
     LValue phi(LType type, const VectorType& vector)

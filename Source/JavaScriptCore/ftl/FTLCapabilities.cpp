@@ -149,6 +149,8 @@ inline CapabilityLevel canCompile(Node* node)
     case IsString:
     case IsObject:
     case IsFunction:
+    case CheckHasInstance:
+    case InstanceOf:
         // These are OK.
         break;
     case PutByIdDirect:

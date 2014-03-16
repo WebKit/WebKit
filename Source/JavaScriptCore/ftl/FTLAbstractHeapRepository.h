@@ -67,9 +67,10 @@ namespace JSC { namespace FTL {
     macro(MarkedBlock_markBits, MarkedBlock::offsetOfMarks()) \
     macro(StringImpl_data, StringImpl::dataOffset()) \
     macro(StringImpl_hashAndFlags, StringImpl::flagsOffset()) \
-    macro(Structure_structureID, Structure::structureIDOffset()) \
     macro(Structure_classInfo, Structure::classInfoOffset()) \
     macro(Structure_globalObject, Structure::globalObjectOffset()) \
+    macro(Structure_prototype, Structure::prototypeOffset()) \
+    macro(Structure_structureID, Structure::structureIDOffset())
 
 #define FOR_EACH_INDEXED_ABSTRACT_HEAP(macro) \
     macro(JSRopeString_fibers, JSRopeString::offsetOfFibers(), sizeof(WriteBarrier<JSString>)) \
