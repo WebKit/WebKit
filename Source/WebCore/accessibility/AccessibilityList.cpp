@@ -30,6 +30,7 @@
 #include "AccessibilityList.h"
 
 #include "AXObjectCache.h"
+#include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "RenderListItem.h"
 #include "RenderObject.h"

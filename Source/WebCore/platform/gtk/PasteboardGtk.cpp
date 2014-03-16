@@ -34,6 +34,7 @@
 #include "URL.h"
 #include "PasteboardHelper.h"
 #include "RenderImage.h"
+#include "SVGElement.h"
 #include "SVGNames.h"
 #include "XLinkNames.h"
 #include "markup.h"

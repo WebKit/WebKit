@@ -44,9 +44,9 @@
 #include "FocusEvent.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
+#include "HTMLCanvasElement.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
-#include "HTMLElement.h"
 #include "HTMLFormControlsCollection.h"
 #include "HTMLLabelElement.h"
 #include "HTMLNameCollection.h"
@@ -93,50 +93,46 @@ static inline bool shouldIgnoreAttributeCase(const Element& element)
     return element.isHTMLElement() && element.document().isHTMLDocument();
 }
 
-typedef Vector<RefPtr<Attr>> AttrNodeList;
-typedef HashMap<Element*, OwnPtr<AttrNodeList>> AttrNodeListMap;
-
-static AttrNodeListMap& attrNodeListMap()
+static HashMap<Element*, Vector<RefPtr<Attr>>>& attrNodeListMap()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AttrNodeListMap, map, ());
+    static NeverDestroyed<HashMap<Element*, Vector<RefPtr<Attr>>>> map;
     return map;
 }
 
-static AttrNodeList* attrNodeListForElement(Element* element)
+static Vector<RefPtr<Attr>>* attrNodeListForElement(Element& element)
 {
-    if (!element->hasSyntheticAttrChildNodes())
-        return 0;
-    ASSERT(attrNodeListMap().contains(element));
-    return attrNodeListMap().get(element);
+    if (!element.hasSyntheticAttrChildNodes())
+        return nullptr;
+    ASSERT(attrNodeListMap().contains(&element));
+    return &attrNodeListMap().find(&element)->value;
 }
 
-static AttrNodeList& ensureAttrNodeListForElement(Element* element)
+static Vector<RefPtr<Attr>>& ensureAttrNodeListForElement(Element& element)
 {
-    if (element->hasSyntheticAttrChildNodes()) {
-        ASSERT(attrNodeListMap().contains(element));
-        return *attrNodeListMap().get(element);
+    if (element.hasSyntheticAttrChildNodes()) {
+        ASSERT(attrNodeListMap().contains(&element));
+        return attrNodeListMap().find(&element)->value;
     }
-    ASSERT(!attrNodeListMap().contains(element));
-    element->setHasSyntheticAttrChildNodes(true);
-    AttrNodeListMap::AddResult result = attrNodeListMap().add(element, adoptPtr(new AttrNodeList));
-    return *result.iterator->value;
+    ASSERT(!attrNodeListMap().contains(&element));
+    element.setHasSyntheticAttrChildNodes(true);
+    return attrNodeListMap().add(&element, Vector<RefPtr<Attr>>()).iterator->value;
 }
 
-static void removeAttrNodeListForElement(Element* element)
+static void removeAttrNodeListForElement(Element& element)
 {
-    ASSERT(element->hasSyntheticAttrChildNodes());
-    ASSERT(attrNodeListMap().contains(element));
-    attrNodeListMap().remove(element);
-    element->setHasSyntheticAttrChildNodes(false);
+    ASSERT(element.hasSyntheticAttrChildNodes());
+    ASSERT(attrNodeListMap().contains(&element));
+    attrNodeListMap().remove(&element);
+    element.setHasSyntheticAttrChildNodes(false);
 }
 
-static Attr* findAttrNodeInList(AttrNodeList& attrNodeList, const QualifiedName& name)
+static Attr* findAttrNodeInList(Vector<RefPtr<Attr>>& attrNodeList, const QualifiedName& name)
 {
-    for (unsigned i = 0; i < attrNodeList.size(); ++i) {
-        if (attrNodeList.at(i)->qualifiedName() == name)
-            return attrNodeList.at(i).get();
+    for (auto& node : attrNodeList) {
+        if (node->qualifiedName() == name)
+            return node.get();
     }
-    return 0;
+    return nullptr;
 }
 
 PassRefPtr<Element> Element::create(const QualifiedName& tagName, Document& document)
@@ -434,11 +430,9 @@ bool Element::isFocusable() const
     // Elements in canvas fallback content are not rendered, but they are allowed to be
     // focusable as long as their canvas is displayed and visible.
     if (isInCanvasSubtree()) {
-        const Element* e = this;
-        while (e && !e->hasLocalName(canvasTag))
-            e = e->parentElement();
-        ASSERT(e);
-        return e->renderer() && e->renderer()->style().visibility() == VISIBLE;
+        ASSERT(lineageOfType<HTMLCanvasElement>(*this).first());
+        auto& canvas = *lineageOfType<HTMLCanvasElement>(*this).first();
+        return canvas.renderer() && canvas.renderer()->style().visibility() == VISIBLE;
     }
 
     if (!renderer()) {
@@ -1638,7 +1632,7 @@ void Element::formatForDebugger(char* buffer, unsigned length) const
 const Vector<RefPtr<Attr>>& Element::attrNodeList()
 {
     ASSERT(hasSyntheticAttrChildNodes());
-    return *attrNodeListForElement(this);
+    return *attrNodeListForElement(*this);
 }
 
 PassRefPtr<Attr> Element::setAttributeNode(Attr* attrNode, ExceptionCode& ec)
@@ -1674,7 +1668,7 @@ PassRefPtr<Attr> Element::setAttributeNode(Attr* attrNode, ExceptionCode& ec)
 
     attrNode->attachToElement(this);
     treeScope().adoptIfNeeded(attrNode);
-    ensureAttrNodeListForElement(this).append(attrNode);
+    ensureAttrNodeListForElement(*this).append(attrNode);
 
     return oldAttrNode.release();
 }
@@ -2769,14 +2763,14 @@ void Element::setSavedLayerScrollOffset(const IntSize& size)
 
 PassRefPtr<Attr> Element::attrIfExists(const QualifiedName& name)
 {
-    if (AttrNodeList* attrNodeList = attrNodeListForElement(this))
+    if (auto* attrNodeList = attrNodeListForElement(*this))
         return findAttrNodeInList(*attrNodeList, name);
-    return 0;
+    return nullptr;
 }
 
 PassRefPtr<Attr> Element::ensureAttr(const QualifiedName& name)
 {
-    AttrNodeList& attrNodeList = ensureAttrNodeListForElement(this);
+    auto& attrNodeList = ensureAttrNodeListForElement(*this);
     RefPtr<Attr> attrNode = findAttrNodeInList(attrNodeList, name);
     if (!attrNode) {
         attrNode = Attr::create(this, name);
@@ -2791,12 +2785,12 @@ void Element::detachAttrNodeFromElementWithValue(Attr* attrNode, const AtomicStr
     ASSERT(hasSyntheticAttrChildNodes());
     attrNode->detachFromElementWithValue(value);
 
-    AttrNodeList* attrNodeList = attrNodeListForElement(this);
+    auto* attrNodeList = attrNodeListForElement(*this);
     for (unsigned i = 0; i < attrNodeList->size(); ++i) {
         if (attrNodeList->at(i)->qualifiedName() == attrNode->qualifiedName()) {
             attrNodeList->remove(i);
             if (attrNodeList->isEmpty())
-                removeAttrNodeListForElement(this);
+                removeAttrNodeListForElement(*this);
             return;
         }
     }
@@ -2805,7 +2799,7 @@ void Element::detachAttrNodeFromElementWithValue(Attr* attrNode, const AtomicStr
 
 void Element::detachAllAttrNodesFromElement()
 {
-    AttrNodeList* attrNodeList = attrNodeListForElement(this);
+    auto* attrNodeList = attrNodeListForElement(*this);
     ASSERT(attrNodeList);
 
     for (const Attribute& attribute : attributesIterator()) {
@@ -2813,7 +2807,7 @@ void Element::detachAllAttrNodesFromElement()
             attrNode->detachFromElementWithValue(attribute.value());
     }
 
-    removeAttrNodeListForElement(this);
+    removeAttrNodeListForElement(*this);
 }
 
 void Element::resetComputedStyle()

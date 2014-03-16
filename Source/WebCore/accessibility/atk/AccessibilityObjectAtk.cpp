@@ -21,8 +21,8 @@
 #include "config.h"
 #include "AccessibilityObject.h"
 
+#include "HTMLElement.h"
 #include "HTMLNames.h"
-#include "RenderObject.h"
 #include "RenderText.h"
 #include <glib-object.h>
 

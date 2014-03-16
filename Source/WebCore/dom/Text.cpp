@@ -25,13 +25,13 @@
 #include "RenderCombineText.h"
 #include "RenderSVGInlineText.h"
 #include "RenderText.h"
+#include "SVGElement.h"
+#include "SVGNames.h"
 #include "ScopedEventQueue.h"
 #include "ShadowRoot.h"
-#include "SVGNames.h"
-#include "TextNodeTraversal.h"
-
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
+#include "TextNodeTraversal.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>

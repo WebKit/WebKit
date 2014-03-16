@@ -207,10 +207,10 @@ EXPORTS
         symbolWithPointer(?getElementById@TreeScope@WebCore@@QBEPAVElement@2@ABVString@WTF@@@Z, ?getElementById@TreeScope@WebCore@@QEBAPEAVElement@2@AEBVString@WTF@@@Z)
         symbolWithPointer(?getLocationAndLengthFromRange@TextIterator@WebCore@@SA_NPAVNode@2@PBVRange@2@AAI2@Z, ?getLocationAndLengthFromRange@TextIterator@WebCore@@SA_NPEAVNode@2@PEBVRange@2@AEA_K2@Z)
         symbolWithPointer(?hitTest@RenderView@WebCore@@QAE_NABVHitTestRequest@2@AAVHitTestResult@2@@Z, ?hitTest@RenderView@WebCore@@QEAA_NAEBVHitTestRequest@2@AEAVHitTestResult@2@@Z)
-        ?inputTag@HTMLNames@WebCore@@3VQualifiedName@2@B
+        ?inputTag@HTMLNames@WebCore@@3VHTMLQualifiedName@2@B
         symbolWithPointer(?intersects@IntRect@WebCore@@QBE_NABV12@@Z, ?intersects@IntRect@WebCore@@QEBA_NAEBV12@@Z)
         symbolWithPointer(?item@StaticNodeList@WebCore@@UBEPAVNode@2@I@Z, ?item@StaticNodeList@WebCore@@UEBAPEAVNode@2@I@Z)
-        ?selectTag@HTMLNames@WebCore@@3VQualifiedName@2@B
+        ?selectTag@HTMLNames@WebCore@@3VHTMLQualifiedName@2@B
 #if ENABLE(INSPECTOR)
         symbolWithPointer(?buildObjectForHighlightedNode@InspectorController@WebCore@@QBE?AV?$PassRefPtr@VInspectorObject@Inspector@@@WTF@@XZ, ?buildObjectForHighlightedNode@InspectorController@WebCore@@QEBA?AV?$PassRefPtr@VInspectorObject@Inspector@@@WTF@@XZ)
         symbolWithPointer(?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@@Z, ?getHighlight@InspectorController@WebCore@@QEBAXPEAUHighlight@2@@Z)
@@ -310,7 +310,7 @@ EXPORTS
         symbolWithPointer(?suggestedValue@HTMLInputElement@WebCore@@QBEABVString@WTF@@XZ, ?suggestedValue@HTMLInputElement@WebCore@@QEBAAEBVString@WTF@@XZ)
         symbolWithPointer(?target@HistoryItem@WebCore@@QBEABVString@WTF@@XZ, ?target@HistoryItem@WebCore@@QEBAAEBVString@WTF@@XZ)
         symbolWithPointer(?text@Range@WebCore@@QBE?AVString@WTF@@XZ, ?text@Range@WebCore@@QEBA?AVString@WTF@@XZ)
-        ?textareaTag@HTMLNames@WebCore@@3VQualifiedName@2@B
+        ?textareaTag@HTMLNames@WebCore@@3VHTMLQualifiedName@2@B
         symbolWithPointer(?textContent@Node@WebCore@@QBE?AVString@WTF@@_N@Z, ?textContent@Node@WebCore@@QEBA?AVString@WTF@@_N@Z)
         symbolWithPointer(?toDocument@WebCore@@YAPAVDocument@1@VJSValue@JSC@@@Z, ?toDocument@WebCore@@YAPEAVDocument@1@VJSValue@JSC@@@Z)
         symbolWithPointer(?toDOMStringList@WebCore@@YA?AV?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@PAVExecState@JSC@@VJSValue@5@@Z, ?toDOMStringList@WebCore@@YA?AV?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@PEAVExecState@JSC@@VJSValue@5@@Z)

@@ -397,7 +397,7 @@ static bool isRecognizedTagName(const QualifiedName& tagName)
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, tagList, ());
     if (tagList.isEmpty()) {
-        const QualifiedName* const * tags = HTMLNames::getHTMLTags();
+        auto* tags = HTMLNames::getHTMLTags();
         for (size_t i = 0; i < HTMLNames::HTMLTagsCount; i++) {
             if (*tags[i] == bgsoundTag
                 || *tags[i] == commandTag

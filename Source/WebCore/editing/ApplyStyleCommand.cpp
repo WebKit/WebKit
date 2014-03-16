@@ -65,13 +65,13 @@ static String& styleSpanClassString()
     return styleSpanClassString;
 }
 
-bool isLegacyAppleStyleSpan(const Node *node)
+bool isLegacyAppleStyleSpan(const Node* node)
 {
     if (!node || !node->isHTMLElement())
         return false;
 
-    const HTMLElement* elem = toHTMLElement(node);
-    return elem->hasLocalName(spanAttr) && elem->getAttribute(classAttr) == styleSpanClassString();
+    const HTMLElement& element = toHTMLElement(*node);
+    return element.hasTagName(spanTag) && element.fastGetAttribute(classAttr) == styleSpanClassString();
 }
 
 static bool hasNoAttributeOrOnlyStyleAttribute(const StyledElement* element, ShouldStyleAttributeBeEmpty shouldStyleAttributeBeEmpty)
@@ -130,7 +130,6 @@ ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* sty
     , m_start(endingSelection().start().downstream())
     , m_end(endingSelection().end().upstream())
     , m_useEndingSelection(true)
-    , m_styledInlineElement(0)
     , m_removeOnly(false)
     , m_isInlineElementToRemoveFunction(0)
 {
@@ -144,7 +143,6 @@ ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* sty
     , m_start(start)
     , m_end(end)
     , m_useEndingSelection(false)
-    , m_styledInlineElement(0)
     , m_removeOnly(false)
     , m_isInlineElementToRemoveFunction(0)
 {
@@ -172,7 +170,6 @@ ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* sty
     , m_start(endingSelection().start().downstream())
     , m_end(endingSelection().end().upstream())
     , m_useEndingSelection(true)
-    , m_styledInlineElement(0)
     , m_removeOnly(true)
     , m_isInlineElementToRemoveFunction(isInlineElementToRemoveFunction)
 {
@@ -850,7 +847,7 @@ bool ApplyStyleCommand::shouldApplyInlineStyleToRun(EditingStyle* style, Node* r
         // We don't consider m_isInlineElementToRemoveFunction here because we never apply style when m_isInlineElementToRemoveFunction is specified
         if (!style->styleIsPresentInComputedStyleOfNode(node))
             return true;
-        if (m_styledInlineElement && !enclosingNodeWithTag(positionBeforeNode(node), m_styledInlineElement->tagQName()))
+        if (m_styledInlineElement && !enclosingElementWithTag(positionBeforeNode(node), m_styledInlineElement->tagQName()))
             return true;
     }
     return false;

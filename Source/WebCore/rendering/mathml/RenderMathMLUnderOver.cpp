@@ -29,7 +29,7 @@
 
 #include "RenderMathMLUnderOver.h"
 
-#include "MathMLNames.h"
+#include "MathMLElement.h"
 
 namespace WebCore {
 
@@ -39,12 +39,12 @@ RenderMathMLUnderOver::RenderMathMLUnderOver(Element& element, PassRef<RenderSty
     : RenderMathMLBlock(element, std::move(style))
 {
     // Determine what kind of under/over expression we have by element name
-    if (element.hasLocalName(MathMLNames::munderTag))
+    if (element.hasTagName(MathMLNames::munderTag))
         m_kind = Under;
-    else if (element.hasLocalName(MathMLNames::moverTag))
+    else if (element.hasTagName(MathMLNames::moverTag))
         m_kind = Over;
     else {
-        ASSERT(element.hasLocalName(MathMLNames::munderoverTag));
+        ASSERT(element.hasTagName(MathMLNames::munderoverTag));
         m_kind = UnderOver;
     }
 }

@@ -176,38 +176,38 @@ inline bool isMatchingElement(const HTMLCollection& htmlCollection, Element& ele
 
     switch (type) {
     case DocImages:
-        return element.hasLocalName(imgTag);
+        return element.hasTagName(imgTag);
     case DocScripts:
-        return element.hasLocalName(scriptTag);
+        return element.hasTagName(scriptTag);
     case DocForms:
-        return element.hasLocalName(formTag);
+        return element.hasTagName(formTag);
     case TableTBodies:
-        return element.hasLocalName(tbodyTag);
+        return element.hasTagName(tbodyTag);
     case TRCells:
-        return element.hasLocalName(tdTag) || element.hasLocalName(thTag);
+        return element.hasTagName(tdTag) || element.hasTagName(thTag);
     case TSectionRows:
-        return element.hasLocalName(trTag);
+        return element.hasTagName(trTag);
     case SelectOptions:
-        return element.hasLocalName(optionTag);
+        return element.hasTagName(optionTag);
     case SelectedOptions:
-        return element.hasLocalName(optionTag) && toHTMLOptionElement(element).selected();
+        return element.hasTagName(optionTag) && toHTMLOptionElement(element).selected();
     case DataListOptions:
-        if (element.hasLocalName(optionTag)) {
+        if (element.hasTagName(optionTag)) {
             HTMLOptionElement& option = toHTMLOptionElement(element);
             if (!option.isDisabledFormControl() && !option.value().isEmpty())
                 return true;
         }
         return false;
     case MapAreas:
-        return element.hasLocalName(areaTag);
+        return element.hasTagName(areaTag);
     case DocApplets:
-        return element.hasLocalName(appletTag) || (element.hasLocalName(objectTag) && toHTMLObjectElement(element).containsJavaApplet());
+        return element.hasTagName(appletTag) || (element.hasTagName(objectTag) && toHTMLObjectElement(element).containsJavaApplet());
     case DocEmbeds:
-        return element.hasLocalName(embedTag);
+        return element.hasTagName(embedTag);
     case DocLinks:
-        return (element.hasLocalName(aTag) || element.hasLocalName(areaTag)) && element.fastHasAttribute(hrefAttr);
+        return (element.hasTagName(aTag) || element.hasTagName(areaTag)) && element.fastHasAttribute(hrefAttr);
     case DocAnchors:
-        return element.hasLocalName(aTag) && element.fastHasAttribute(nameAttr);
+        return element.hasTagName(aTag) && element.fastHasAttribute(nameAttr);
     case DocAll:
     case NodeChildren:
         return true;
@@ -269,13 +269,13 @@ static inline bool nameShouldBeVisibleInDocumentAll(HTMLElement& element)
 {
     // The document.all collection returns only certain types of elements by name,
     // although it returns any type of element by id.
-    return element.hasLocalName(appletTag)
-        || element.hasLocalName(embedTag)
-        || element.hasLocalName(formTag)
-        || element.hasLocalName(imgTag)
-        || element.hasLocalName(inputTag)
-        || element.hasLocalName(objectTag)
-        || element.hasLocalName(selectTag);
+    return element.hasTagName(appletTag)
+        || element.hasTagName(embedTag)
+        || element.hasTagName(formTag)
+        || element.hasTagName(imgTag)
+        || element.hasTagName(inputTag)
+        || element.hasTagName(objectTag)
+        || element.hasTagName(selectTag);
 }
 
 inline Element* firstMatchingChildElement(const HTMLCollection& nodeList, ContainerNode& root)

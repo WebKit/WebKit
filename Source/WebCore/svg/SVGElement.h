@@ -140,6 +140,8 @@ public:
     virtual bool shouldMoveToFlowThread(const RenderStyle&) const override;
 #endif
 
+    bool hasTagName(const SVGQualifiedName& name) const { return hasLocalName(name.localName()); }
+
 protected:
     SVGElement(const QualifiedName&, Document&);
     virtual ~SVGElement();
@@ -212,6 +214,11 @@ inline bool isSVGElement(const Node& node) { return node.isSVGElement(); }
 template <> inline bool isElementOfType<const SVGElement>(const Element& element) { return element.isSVGElement(); }
 
 NODE_TYPE_CASTS(SVGElement)
+
+inline bool Node::hasTagName(const SVGQualifiedName& name) const
+{
+    return isSVGElement() && toSVGElement(*this).hasTagName(name);
+}
 
 }
 

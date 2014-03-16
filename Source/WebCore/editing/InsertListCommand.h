@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class HTMLElement;
+class HTMLQualifiedName;
 
 class InsertListCommand : public CompositeEditCommand {
 public:
@@ -54,7 +55,7 @@ private:
     HTMLElement* fixOrphanedListChild(Node*);
     bool selectionHasListOfType(const VisibleSelection& selection, const QualifiedName&);
     PassRefPtr<HTMLElement> mergeWithNeighboringLists(PassRefPtr<HTMLElement>);
-    void doApplyForSingleParagraph(bool forceCreateList, const QualifiedName&, Range* currentSelection);
+    void doApplyForSingleParagraph(bool forceCreateList, const HTMLQualifiedName&, Range* currentSelection);
     void unlistifyParagraph(const VisiblePosition& originalStart, HTMLElement* listNode, Node* listChildNode);
     PassRefPtr<HTMLElement> listifyParagraph(const VisiblePosition& originalStart, const QualifiedName& listTag);
     RefPtr<HTMLElement> m_listElement;

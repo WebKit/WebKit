@@ -220,7 +220,7 @@ int HTMLSelectElement::activeSelectionEndListIndex() const
 
 void HTMLSelectElement::add(HTMLElement* element, HTMLElement* before, ExceptionCode& ec)
 {
-    if (!element || !(element->hasLocalName(optionTag) || element->hasLocalName(hrTag)))
+    if (!element || !(isHTMLOptionElement(*element) || element->hasTagName(hrTag)))
         return;
 
     // Make sure the element is ref'd and deref'd so we don't leak it.
@@ -249,15 +249,14 @@ void HTMLSelectElement::remove(HTMLOptionElement* option)
 
 String HTMLSelectElement::value() const
 {
-    const Vector<HTMLElement*>& items = listItems();
-    for (unsigned i = 0; i < items.size(); i++) {
-        if (items[i]->hasLocalName(optionTag)) {
-            HTMLOptionElement* option = toHTMLOptionElement(items[i]);
-            if (option->selected())
-                return option->value();
+    for (auto* item : listItems()) {
+        if (isHTMLOptionElement(*item)) {
+            HTMLOptionElement& option = toHTMLOptionElement(*item);
+            if (option.selected())
+                return option.value();
         }
     }
-    return "";
+    return emptyString();
 }
 
 void HTMLSelectElement::setValue(const String &value)
@@ -269,15 +268,14 @@ void HTMLSelectElement::setValue(const String &value)
     }
 
     // Find the option with value() matching the given parameter and make it the current selection.
-    const Vector<HTMLElement*>& items = listItems();
     unsigned optionIndex = 0;
-    for (unsigned i = 0; i < items.size(); i++) {
-        if (items[i]->hasLocalName(optionTag)) {
-            if (toHTMLOptionElement(items[i])->value() == value) {
+    for (auto* item : listItems()) {
+        if (isHTMLOptionElement(*item)) {
+            if (toHTMLOptionElement(*item).value() == value) {
                 setSelectedIndex(optionIndex);
                 return;
             }
-            optionIndex++;
+            ++optionIndex;
         }
     }
 
@@ -484,18 +482,16 @@ void HTMLSelectElement::setLength(unsigned newLen, ExceptionCode& ec)
         // of elements that we intend to remove then attempt to remove them one at a time.
         Vector<RefPtr<Element>> itemsToRemove;
         size_t optionIndex = 0;
-        for (size_t i = 0; i < items.size(); ++i) {
-            Element* item = items[i];
-            if (item->hasLocalName(optionTag) && optionIndex++ >= newLen) {
+        for (auto& item : items) {
+            if (isHTMLOptionElement(*item) && optionIndex++ >= newLen) {
                 ASSERT(item->parentNode());
                 itemsToRemove.append(item);
             }
         }
 
-        for (size_t i = 0; i < itemsToRemove.size(); ++i) {
-            Element* item = itemsToRemove[i].get();
+        for (auto& item : itemsToRemove) {
             if (item->parentNode())
-                item->parentNode()->removeChild(item, ec);
+                item->parentNode()->removeChild(item.get(), ec);
         }
     }
     setNeedsValidityCheck();
@@ -997,7 +993,7 @@ size_t HTMLSelectElement::searchOptionsForValue(const String& value, size_t list
     const Vector<HTMLElement*>& items = listItems();
     size_t loopEndIndex = std::min(items.size(), listIndexEnd);
     for (size_t i = listIndexStart; i < loopEndIndex; ++i) {
-        if (!items[i]->hasLocalName(optionTag))
+        if (!isHTMLOptionElement(items[i]))
             continue;
         if (toHTMLOptionElement(items[i])->value() == value)
             return i;
@@ -1015,7 +1011,7 @@ void HTMLSelectElement::restoreFormControlState(const FormControlState& state)
         return;
 
     for (size_t i = 0; i < itemsSize; ++i) {
-        if (!items[i]->hasLocalName(optionTag))
+        if (!isHTMLOptionElement(items[i]))
             continue;
         toHTMLOptionElement(items[i])->setSelectedState(false);
     }
@@ -1495,9 +1491,9 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
         } else if (m_multiple && keyCode == ' ' && m_allowsNonContiguousSelection) {
             // Use space to toggle selection change.
             m_activeSelectionState = !m_activeSelectionState;
-            ASSERT(m_activeSelectionEndIndex >= 0
-                && m_activeSelectionEndIndex < static_cast<int>(listItems.size())
-                && listItems[m_activeSelectionEndIndex]->hasTagName(optionTag));
+            ASSERT(m_activeSelectionEndIndex >= 0);
+            ASSERT(m_activeSelectionEndIndex < static_cast<int>(listItems.size()));
+            ASSERT(isHTMLOptionElement(*listItems[m_activeSelectionEndIndex]));
             updateSelectedState(m_activeSelectionEndIndex, true /*multi*/, false /*shift*/);
             listBoxOnChange();
             event->setDefaultHandled();

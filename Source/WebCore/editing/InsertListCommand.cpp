@@ -130,7 +130,7 @@ void InsertListCommand::doApply()
     if (visibleEnd != visibleStart && isStartOfParagraph(visibleEnd, CanSkipOverEditingBoundary))
         setEndingSelection(VisibleSelection(visibleStart, visibleEnd.previous(CannotCrossEditingBoundary), endingSelection().isDirectional()));
 
-    const QualifiedName& listTag = (m_type == OrderedList) ? olTag : ulTag;
+    auto& listTag = (m_type == OrderedList) ? olTag : ulTag;
     if (endingSelection().isRange()) {
         VisibleSelection selection = selectionForParagraphIteration(endingSelection());
         ASSERT(selection.isRange());
@@ -192,7 +192,7 @@ void InsertListCommand::doApply()
     doApplyForSingleParagraph(false, listTag, endingSelection().firstRange().get());
 }
 
-void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const QualifiedName& listTag, Range* currentSelection)
+void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HTMLQualifiedName& listTag, Range* currentSelection)
 {
     // FIXME: This will produce unexpected results for a selection that starts just before a
     // table and ends inside the first cell, selectionForParagraphIteration should probably
@@ -207,9 +207,10 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const Qu
             listNode = fixOrphanedListChild(listChildNode);
             listNode = mergeWithNeighboringLists(listNode);
         }
-        if (!listNode->hasTagName(listTag))
+        if (!listNode->hasTagName(listTag)) {
             // listChildNode will be removed from the list and a list of type m_type will be created.
             switchListType = true;
+        }
 
         // If the list is of the desired type, and we are not removing the list, then exit early.
         if (!switchListType && forceCreateList)

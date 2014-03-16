@@ -1,3 +1,13 @@
+2014-03-16  Darin Adler  <darin@apple.com>
+
+        Optimize hasTagName when called on an HTMLElement
+        https://bugs.webkit.org/show_bug.cgi?id=130090
+
+        Reviewed by Antti Koivisto.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Updated exports for QualifiedName -> HTMLQualifiedName change.
+
 2014-03-14  Maciej Stachowiak  <mjs@apple.com>
 
         Replace "Apple Computer, Inc." with "Apple Inc." in copyright headers

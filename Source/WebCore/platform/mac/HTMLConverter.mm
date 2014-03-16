@@ -46,6 +46,7 @@
 #import "Font.h"
 #import "Frame.h"
 #import "FrameLoader.h"
+#import "HTMLElement.h"
 #import "HTMLNames.h"
 #import "HTMLParserIdioms.h"
 #import "LoaderNSURLExtras.h"

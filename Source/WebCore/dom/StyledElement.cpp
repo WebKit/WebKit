@@ -30,6 +30,7 @@
 #include "CSSValuePool.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMTokenList.h"
+#include "HTMLElement.h"
 #include "HTMLParserIdioms.h"
 #include "InspectorInstrumentation.h"
 #include "PropertySetCSSStyleDeclaration.h"

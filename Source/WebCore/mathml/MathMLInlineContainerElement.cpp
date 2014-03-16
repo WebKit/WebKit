@@ -60,7 +60,7 @@ void MathMLInlineContainerElement::childrenChanged(const ChildChange& change)
     if (renderer()) {
         if (renderer()->isRenderMathMLRow())
             toRenderMathMLRow(renderer())->updateOperatorProperties();
-        else if (hasLocalName(mathTag) || hasLocalName(msqrtTag)) {
+        else if (hasTagName(mathTag) || hasTagName(msqrtTag)) {
             auto childRenderer = renderer()->firstChild();
             if (childRenderer && childRenderer->isRenderMathMLRow())
                 toRenderMathMLRow(childRenderer)->updateOperatorProperties();
@@ -71,33 +71,33 @@ void MathMLInlineContainerElement::childrenChanged(const ChildChange& change)
 
 RenderPtr<RenderElement> MathMLInlineContainerElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    if (hasLocalName(annotation_xmlTag))
+    if (hasTagName(annotation_xmlTag))
         return createRenderer<RenderMathMLRow>(*this, std::move(style));
-    if (hasLocalName(merrorTag) || hasLocalName(mphantomTag) || hasLocalName(mrowTag) || hasLocalName(mstyleTag))
+    if (hasTagName(merrorTag) || hasTagName(mphantomTag) || hasTagName(mrowTag) || hasTagName(mstyleTag))
         return createRenderer<RenderMathMLRow>(*this, std::move(style));
-    if (hasLocalName(msubTag))
+    if (hasTagName(msubTag))
         return createRenderer<RenderMathMLScripts>(*this, std::move(style));
-    if (hasLocalName(msupTag))
+    if (hasTagName(msupTag))
         return createRenderer<RenderMathMLScripts>(*this, std::move(style));
-    if (hasLocalName(msubsupTag))
+    if (hasTagName(msubsupTag))
         return createRenderer<RenderMathMLScripts>(*this, std::move(style));
-    if (hasLocalName(mmultiscriptsTag))
+    if (hasTagName(mmultiscriptsTag))
         return createRenderer<RenderMathMLScripts>(*this, std::move(style));
-    if (hasLocalName(moverTag))
+    if (hasTagName(moverTag))
         return createRenderer<RenderMathMLUnderOver>(*this, std::move(style));
-    if (hasLocalName(munderTag))
+    if (hasTagName(munderTag))
         return createRenderer<RenderMathMLUnderOver>(*this, std::move(style));
-    if (hasLocalName(munderoverTag))
+    if (hasTagName(munderoverTag))
         return createRenderer<RenderMathMLUnderOver>(*this, std::move(style));
-    if (hasLocalName(mfracTag))
+    if (hasTagName(mfracTag))
         return createRenderer<RenderMathMLFraction>(*this, std::move(style));
-    if (hasLocalName(msqrtTag))
+    if (hasTagName(msqrtTag))
         return createRenderer<RenderMathMLSquareRoot>(*this, std::move(style));
-    if (hasLocalName(mrootTag))
+    if (hasTagName(mrootTag))
         return createRenderer<RenderMathMLRoot>(*this, std::move(style));
-    if (hasLocalName(mfencedTag))
+    if (hasTagName(mfencedTag))
         return createRenderer<RenderMathMLFenced>(*this, std::move(style));
-    if (hasLocalName(mtableTag))
+    if (hasTagName(mtableTag))
         return createRenderer<RenderMathMLTable>(*this, std::move(style));
 
     return createRenderer<RenderMathMLBlock>(*this, std::move(style));

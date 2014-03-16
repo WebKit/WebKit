@@ -32,6 +32,7 @@
 #include "AXObjectCache.h"
 #include "AccessibilityTable.h"
 #include "AccessibilityTableRow.h"
+#include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "RenderObject.h"
 #include "RenderTableCell.h"
