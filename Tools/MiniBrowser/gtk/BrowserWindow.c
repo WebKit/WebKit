@@ -534,6 +534,16 @@ static gboolean toggleWebInspector(BrowserWindow *window, gpointer user_data)
     return TRUE;
 }
 
+static void reloadPage(BrowserWindow *window, gpointer user_data)
+{
+    webkit_web_view_reload(window->webView);
+}
+
+static void reloadPageIgnoringCache(BrowserWindow *window, gpointer user_data)
+{
+    webkit_web_view_reload_bypass_cache(window->webView);
+}
+
 static void browserWindowFinalize(GObject *gObject)
 {
     BrowserWindow *window = BROWSER_WINDOW(gObject);
@@ -606,6 +616,18 @@ static void browser_window_init(BrowserWindow *window)
         g_cclosure_new_swap(G_CALLBACK(toggleWebInspector), window, NULL));
     gtk_accel_group_connect(window->accelGroup, GDK_KEY_F12, 0, GTK_ACCEL_VISIBLE,
         g_cclosure_new_swap(G_CALLBACK(toggleWebInspector), window, NULL));
+
+    /* Reload page */ 
+    gtk_accel_group_connect(window->accelGroup, GDK_KEY_F5, 0, GTK_ACCEL_VISIBLE,
+        g_cclosure_new_swap(G_CALLBACK(reloadPage), window, NULL));
+    gtk_accel_group_connect(window->accelGroup, GDK_KEY_R, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
+        g_cclosure_new_swap(G_CALLBACK(reloadPage), window, NULL));
+
+    /* Reload page ignoring cache */
+    gtk_accel_group_connect(window->accelGroup, GDK_KEY_F5, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
+        g_cclosure_new_swap(G_CALLBACK(reloadPageIgnoringCache), window, NULL));
+    gtk_accel_group_connect(window->accelGroup, GDK_KEY_R, GDK_CONTROL_MASK | GDK_SHIFT_MASK, GTK_ACCEL_VISIBLE,
+        g_cclosure_new_swap(G_CALLBACK(reloadPageIgnoringCache), window, NULL));
 
     GtkWidget *toolbar = gtk_toolbar_new();
     window->toolbar = toolbar;

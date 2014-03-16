@@ -1,3 +1,15 @@
+2014-03-16  Diego Pino García  <dpino@igalia.com>
+
+        [GTK] Minibrowser: Add shortcuts for reloading page and reloading page ignoring cache
+        https://bugs.webkit.org/show_bug.cgi?id=128999
+
+        Reviewed by Philippe Normand.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (reloadPage):
+        (reloadPageIgnoringCache):
+        (browser_window_init):
+
 2014-03-15  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Improve ninja detection in webkitdirs.pm
