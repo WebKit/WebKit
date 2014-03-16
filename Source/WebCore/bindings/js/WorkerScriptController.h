@@ -79,7 +79,7 @@ namespace WebCore {
 
         void disableEval(const String& errorMessage);
 
-        JSC::VM* vm() { return m_vm.get(); }
+        JSC::VM& vm() { return *m_vm; }
 
         void attachDebugger(JSC::Debugger*);
         void detachDebugger(JSC::Debugger*);

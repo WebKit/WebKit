@@ -84,10 +84,10 @@ void WorkerScriptDebugServer::removeListener(ScriptDebugListener* listener, bool
 
 void WorkerScriptDebugServer::recompileAllJSFunctions()
 {
-    JSC::VM* vm = m_workerGlobalScope->script()->vm();
+    JSC::VM& vm = m_workerGlobalScope->script()->vm();
 
     JSC::JSLockHolder lock(vm);
-    JSC::Debugger::recompileAllJSFunctions(vm);
+    JSC::Debugger::recompileAllJSFunctions(&vm);
 }
 
 void WorkerScriptDebugServer::runEventLoopWhilePaused()

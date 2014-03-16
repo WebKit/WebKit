@@ -598,7 +598,7 @@ void HTMLCanvasElement::createImageBuffer() const
 
     JSC::JSLockHolder lock(scriptExecutionContext()->vm());
     size_t numBytes = 4 * m_imageBuffer->internalSize().width() * m_imageBuffer->internalSize().height();
-    scriptExecutionContext()->vm()->heap.reportExtraMemoryCost(numBytes);
+    scriptExecutionContext()->vm().heap.reportExtraMemoryCost(numBytes);
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
     if (m_context && m_context->is2d())

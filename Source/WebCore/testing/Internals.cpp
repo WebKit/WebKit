@@ -1198,8 +1198,8 @@ private:
 
 String Internals::parserMetaData(Deprecated::ScriptValue value)
 {
-    JSC::VM* vm = contextDocument()->vm();
-    JSC::ExecState* exec = vm->topCallFrame;
+    JSC::VM& vm = contextDocument()->vm();
+    JSC::ExecState* exec = vm.topCallFrame;
     JSC::JSValue code = value.jsValue();
     ScriptExecutable* executable;
 

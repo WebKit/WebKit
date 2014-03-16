@@ -1,3 +1,32 @@
+2014-03-16  Andreas Kling  <akling@apple.com>
+
+        ScriptExecutionContext::vm() should return a reference.
+        <https://webkit.org/b/129611>
+
+        Every ScriptExecutionContext has a VM, so this can never return null.
+        Made WorkerScriptController::vm() return a reference as well, since
+        that was needed for this change.
+
+        Reviewed by Geoffrey Garen.
+
+        * bindings/js/WorkerScriptController.h:
+        (WebCore::WorkerScriptController::vm):
+        * bindings/js/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::recompileAllJSFunctions):
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ruleMatches):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::vm):
+        * dom/ScriptExecutionContext.h:
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::execute):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::dropProtection):
+        * testing/Internals.cpp:
+        (WebCore::Internals::parserMetaData):
+
 2014-03-16  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove OwnPtr.h, PassOwnPtr.h header inclusions in Source/WebCore/html/parser/ code

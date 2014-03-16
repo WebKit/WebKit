@@ -403,16 +403,12 @@ ScriptExecutionContext::Task::~Task()
 {
 }
 
-JSC::VM* ScriptExecutionContext::vm()
+JSC::VM& ScriptExecutionContext::vm()
 {
      if (isDocument())
-        return &JSDOMWindow::commonVM();
+        return JSDOMWindow::commonVM();
 
-    if (isWorkerGlobalScope())
-        return toWorkerGlobalScope(this)->script()->vm();
-
-    ASSERT_NOT_REACHED();
-    return 0;
+    return toWorkerGlobalScope(*this).script()->vm();
 }
 
 #if ENABLE(SQL_DATABASE)
