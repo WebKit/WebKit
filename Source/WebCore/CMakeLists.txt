@@ -2082,6 +2082,7 @@ set(WebCore_SOURCES
 
     rendering/AutoTableLayout.cpp
     rendering/BidiRun.cpp
+    rendering/BorderEdge.cpp
     rendering/CounterNode.cpp
     rendering/EllipsisBox.cpp
     rendering/FilterEffectRenderer.cpp

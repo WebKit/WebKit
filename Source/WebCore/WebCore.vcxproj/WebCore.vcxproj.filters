@@ -2328,6 +2328,9 @@
     <ClCompile Include="..\rendering\BidiRun.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\BorderEdge.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\break_lines.cpp">
       <Filter>rendering</Filter>
     </ClCompile>

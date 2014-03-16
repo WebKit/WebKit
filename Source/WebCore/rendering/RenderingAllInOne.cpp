@@ -28,6 +28,7 @@
 
 #include "AutoTableLayout.cpp"
 #include "BidiRun.cpp"
+#include "BorderEdge.cpp"
 #include "CounterNode.cpp"
 #include "EllipsisBox.cpp"
 #include "FilterEffectRenderer.cpp"

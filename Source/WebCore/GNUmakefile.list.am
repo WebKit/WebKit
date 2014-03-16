@@ -4260,6 +4260,8 @@ webcore_sources += \
 	Source/WebCore/rendering/AutoTableLayout.h \
 	Source/WebCore/rendering/BidiRun.cpp \
 	Source/WebCore/rendering/BidiRun.h \
+	Source/WebCore/rendering/BorderEdge.cpp \
+	Source/WebCore/rendering/BorderEdge.h \
 	Source/WebCore/rendering/break_lines.cpp \
 	Source/WebCore/rendering/break_lines.h \
 	Source/WebCore/rendering/ClipPathOperation.h \

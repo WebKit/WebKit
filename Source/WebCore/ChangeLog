@@ -1,3 +1,48 @@
+2014-03-15  Zalan Bujtas  <zalan@apple.com>
+
+        Move BorderEdge class to its own file.
+        https://bugs.webkit.org/show_bug.cgi?id=130294
+
+        Reviewed by Sam Weinig.
+
+        This is in preparation to have better encapsulation for border box decoration painting.
+
+        No change in functionality.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/BorderEdge.cpp: Added.
+        (WebCore::BorderEdge::BorderEdge):
+        (WebCore::BorderEdge::getBorderEdgeInfo):
+        (WebCore::BorderEdge::includesAdjacentEdges):
+        (WebCore::BorderEdge::obscuresBackgroundEdge):
+        (WebCore::BorderEdge::obscuresBackground):
+        (WebCore::BorderEdge::getDoubleBorderStripeWidths):
+        * rendering/BorderEdge.h: Added.
+        (WebCore::BorderEdge::edgeFlagForSide):
+        (WebCore::BorderEdge::includesEdge):
+        (WebCore::BorderEdge::edgesShareColor):
+        (WebCore::BorderEdge::hasVisibleColorAndStyle):
+        (WebCore::BorderEdge::shouldRender):
+        (WebCore::BorderEdge::presentButInvisible):
+        (WebCore::BorderEdge::widthForPainting):
+        (WebCore::BorderEdge::borderWidthInDevicePixel):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::borderStyleHasUnmatchedColorsAtCorner):
+        (WebCore::colorsMatchAtCorner):
+        (WebCore::colorNeedsAntiAliasAtCorner):
+        (WebCore::willBeOverdrawn):
+        (WebCore::joinRequiresMitre):
+        (WebCore::RenderBoxModelObject::paintBorderSides):
+        (WebCore::RenderBoxModelObject::paintTranslucentBorderSides):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::RenderBoxModelObject::borderObscuresBackgroundEdge):
+        (WebCore::RenderBoxModelObject::borderObscuresBackground):
+        * rendering/RenderBoxModelObject.h:
+
 2014-03-15  Martin Robinson  <mrobinson@igalia.com>
 
         Fix WebCore unused parameter warnings for WebKitGTK+ CMake build
