@@ -1,4 +1,6 @@
 ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml: GNUmakefile \
+    $(GENSOURCES_JAVASCRIPTCORE)/InspectorJSBackendCommands.js \
+    $(GENSOURCES_WEBCORE)/InspectorWebBackendCommands.js \
     $(WebInspectorUI)/UserInterface/*.html \
     $(WebInspectorUI)/UserInterface/Base/*.js \
     $(WebInspectorUI)/UserInterface/Controllers/*.css \
@@ -31,6 +33,8 @@ webcore_built_sources += \
 
 EXTRA_DIST += \
     $(WebInspectorUI)/Localizations/en.lproj/localizedStrings.js \
+    $(shell ls $(GENSOURCES_JAVASCRIPTCORE)/InspectorJSBackendCommands.js) \
+    $(shell ls $(GENSOURCES_WEBCORE)/InspectorWebBackendCommands.js) \
     $(shell ls $(WebInspectorUI)/UserInterface/*.html) \
     $(shell ls $(WebInspectorUI)/UserInterface/Base/*.js) \
     $(shell ls $(WebInspectorUI)/UserInterface/Controllers/*.css) \

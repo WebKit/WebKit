@@ -42,6 +42,10 @@ EOF
 
 CODE_MIRROR_LICENSE=$(echo "/*" && sed 's/^/ * /' "${SRCROOT}/UserInterface/External/CodeMirror/LICENSE" && echo " */")
 
+# Copy over dynamically loaded files from other frameworks, even if we aren't combining resources.
+ditto "${JAVASCRIPTCORE_PRIVATE_HEADERS_DIR}/InspectorJSBackendCommands.js" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Protocol/InspectorJSBackendCommands.js"
+ditto "${WEBCORE_PRIVATE_HEADERS_DIR}/InspectorWebBackendCommands.js" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Protocol/InspectorWebBackendCommands.js"
+
 if [[ ${COMBINE_INSPECTOR_RESOURCES:=YES} == "YES" ]]; then
     # Combine the JavaScript and CSS files in Production builds into single files (Main.js and Main.css).
     "${SRCROOT}/Scripts/combine-resources.pl" --input-html "${SRCROOT}/UserInterface/Main.html" --derived-sources-dir "${DERIVED_SOURCES_DIR}" --output-dir "${DERIVED_SOURCES_DIR}" --output-script-name "Main.js" --output-style-name "Main.css"
@@ -74,9 +78,7 @@ if [[ ${COMBINE_INSPECTOR_RESOURCES:=YES} == "YES" ]]; then
     ditto "${DERIVED_SOURCES_DIR}/Main.html" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Main.html"
     ditto "${SRCROOT}/UserInterface/Images" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Images"
 
-    # Copy over files that are dynamically loaded. The default Inspector*BackendCommands.js and the Legacy directory.
-    ditto "${SRCROOT}/UserInterface/Protocol/InspectorJSBackendCommands.js" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Protocol/InspectorJSBackendCommands.js"
-    ditto "${SRCROOT}/UserInterface/Protocol/InspectorWebBackendCommands.js" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Protocol/InspectorWebBackendCommands.js"
+    # Copy the Legacy directory.
     ditto "${SRCROOT}/UserInterface/Protocol/Legacy" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Protocol/Legacy"
 else
     # Keep the files separate for engineering builds.

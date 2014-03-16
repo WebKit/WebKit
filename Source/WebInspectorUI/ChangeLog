@@ -1,3 +1,22 @@
+2014-03-16  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: vended backend commands file should be generated as part of the build
+        https://bugs.webkit.org/show_bug.cgi?id=130110
+
+        Reviewed by Timothy Hatcher.
+
+        Copy the backend commands generated in other frameworks into our built products directory.
+
+        * Configurations/WebInspectorUIFramework.xcconfig: Set up variables so we can pull backend
+        commands files from the private headers directory of other frameworks.
+        * Scripts/copy-user-interface-resources.sh: Always ditto inspector backend commands.
+        * UserInterface/Protocol/InspectorJSBackendCommands.js: Removed.
+        * UserInterface/Protocol/InspectorWebBackendCommands.js: Removed.
+        * WebInspectorUI.vcxproj/WebInspectorUIPostBuild.cmd: Copy over the generated
+        backend commands files from the other frameworks.
+        * WebInspectorUI.xcodeproj/project.pbxproj: Add JavaScriptCore and WebCore as
+        framework dependencies so Xcode builds them first.
+
 2014-03-15  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Define SYSTEM_VERSION_PREFIX consistently

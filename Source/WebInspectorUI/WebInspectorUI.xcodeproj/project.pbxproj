@@ -25,6 +25,8 @@
 		1C60FFE114E79B0F006CD77D /* copy-user-interface-resources.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "copy-user-interface-resources.sh"; sourceTree = "<group>"; };
 		1C78EE131760E115002F6AA5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1C78EE1617611340002F6AA5 /* WebInspectorUI.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = WebInspectorUI.c; sourceTree = "<group>"; };
+		996231EB18D1811700C03FDA /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		996231EC18D1829300C03FDA /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A54C2257148B23DF00373FA3 /* WebInspectorUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebInspectorUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -61,6 +63,15 @@
 			path = Scripts;
 			sourceTree = "<group>";
 		};
+		996231EA18D180C200C03FDA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				996231EC18D1829300C03FDA /* JavaScriptCore.framework */,
+				996231EB18D1811700C03FDA /* WebCore.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		A54C224B148B23DE00373FA3 = {
 			isa = PBXGroup;
 			children = (
@@ -68,6 +79,7 @@
 				A54C2258148B23DF00373FA3 /* Products */,
 				1C60FF1514E6E39B006CD77D /* Resources */,
 				1C60FFE014E79B0F006CD77D /* Scripts */,
+				996231EA18D180C200C03FDA /* Frameworks */,
 				1C60FF1014E6D992006CD77D /* UserInterface */,
 				1C78EE1617611340002F6AA5 /* WebInspectorUI.c */,
 			);

@@ -622,8 +622,6 @@
     <None Include="..\UserInterface\IndeterminateProgressSpinner.css" />
     <None Include="..\UserInterface\IndeterminateProgressSpinner.js" />
     <None Include="..\UserInterface\InspectorBackend.js" />
-    <None Include="..\UserInterface\InspectorJSBackendCommands.js" />
-    <None Include="..\UserInterface\InspectorWebBackendCommands.js" />
     <None Include="..\UserInterface\InspectorFrontendAPI.js" />
     <None Include="..\UserInterface\InspectorFrontendHostStub.js" />
     <None Include="..\UserInterface\InspectorObserver.js" />

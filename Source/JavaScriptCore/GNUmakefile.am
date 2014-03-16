@@ -268,7 +268,14 @@ JavaScriptCore_INSPECTOR_DOMAINS := \
     $(JavaScriptCore)/inspector/protocol/InspectorDomain.json \
     $(JavaScriptCore)/inspector/protocol/Runtime.json
 
-DerivedSources/JavaScriptCore/InspectorJS.json: $(INSPECTOR_SCRIPTS_DIR)/generate-combined-inspector-json.py $(JavaScriptCore_INSPECTOR_DOMAINS)
+# The combined JSON file depends on the actual set of domains and their file contents, so that
+# adding, modifying, or removing domains will trigger regeneration of inspector files.
+
+.PHONY: force
+EnabledInspectorDomains : force
+	echo '$(INSPECTOR_DOMAINS)' | cmp -s - $@ || echo '$(INSPECTOR_DOMAINS)' > $@
+
+DerivedSources/JavaScriptCore/InspectorJS.json: $(INSPECTOR_SCRIPTS_DIR)/generate-combined-inspector-json.py $(JavaScriptCore_INSPECTOR_DOMAINS) EnabledInspectorDomains
 	$(AM_V_GEN)$(PYTHON) $(INSPECTOR_SCRIPTS_DIR)/generate-combined-inspector-json.py $(JavaScriptCore)/inspector/protocol > $(GENSOURCES_JAVASCRIPTCORE)/InspectorJS.json
 
 # Inspector Backend Dispatchers, Frontend Dispatchers, Type Builders

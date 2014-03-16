@@ -576,12 +576,6 @@
     <None Include="..\UserInterface\InspectorBackend.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\InspectorJSBackendCommands.js">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\InspectorWebBackendCommands.js">
-      <Filter>UserInterface</Filter>
-    </None>
     <None Include="..\UserInterface\InspectorFrontendAPI.js">
       <Filter>UserInterface</Filter>
     </None>

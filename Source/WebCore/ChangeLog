@@ -1,3 +1,13 @@
+2014-03-16  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: vended backend commands file should be generated as part of the build
+        https://bugs.webkit.org/show_bug.cgi?id=130110
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCore.xcodeproj/project.pbxproj: Copy InspectorWebBackendCommands.js to the
+        private headers directory.
+
 2014-03-16  Frédéric Wang  <fred.wang@free.fr>
 
         [regression] foreign content not displayed in MathML

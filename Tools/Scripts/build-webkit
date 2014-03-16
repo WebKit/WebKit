@@ -215,8 +215,9 @@ if (isAppleMacWebKit()) {
     if (!isIOSWebKit()) {
         push @projects, ("Tools/MiniBrowser");
 
-        # WebInspectorUI must come before WebKit and WebKit2
-        unshift @projects, ("Source/WebInspectorUI");
+        # WebInspectorUI must come after JavaScriptCore and WebCore but before WebKit and WebKit2
+        my $webKitIndex = first { $projects[$_] eq "Source/WebKit" } 0..$#projects;
+        splice(@projects, $webKitIndex, 0, "Source/WebInspectorUI");
 
         # Copy library and header from WebKitLibraries to a findable place in the product directory.
         my @copyLibrariesArgs = ("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory", "--wksi");
