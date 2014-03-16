@@ -284,7 +284,7 @@ static float maxScaleFromTransform(const TransformationMatrix& t)
 
     TransformationMatrix::Decomposed4Type decomposeData;
     t.decompose4(decomposeData);
-    return std::max(fabsf(decomposeData.scaleX), fabsf(decomposeData.scaleY));
+    return std::max(fabsf(static_cast<float>(decomposeData.scaleX)), fabsf(static_cast<float>(decomposeData.scaleY)));
 }
 
 #if ENABLE(CSS_FILTERS) || !ASSERT_DISABLED

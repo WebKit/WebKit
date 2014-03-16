@@ -1,3 +1,31 @@
+2014-03-16  David Kilzer  <ddkilzer@apple.com>
+
+        Double values passed to fabsf() in maxScaleFromTransform()
+        <http://webkit.org/b/130297>
+
+        Reviewed by Darin Adler.
+
+        Fixes the following build failures using trunk clang:
+
+            WebCore/platform/graphics/ca/GraphicsLayerCA.cpp:287:21: error: absolute value function 'fabsf' given an argument of type 'double' but has parameter of type 'float' which may cause truncation of value [-Werror,-Wabsolute-value]
+                return std::max(fabsf(decomposeData.scaleX), fabsf(decomposeData.scaleY));
+                                ^
+            WebCore/platform/graphics/ca/GraphicsLayerCA.cpp:287:21: note: use function 'fabs' instead
+                return std::max(fabsf(decomposeData.scaleX), fabsf(decomposeData.scaleY));
+                                ^~~~~
+                                fabs
+            WebCore/platform/graphics/ca/GraphicsLayerCA.cpp:287:50: error: absolute value function 'fabsf' given an argument of type 'double' but has parameter of type 'float' which may cause truncation of value [-Werror,-Wabsolute-value]
+                return std::max(fabsf(decomposeData.scaleX), fabsf(decomposeData.scaleY));
+                                                             ^
+            WebCore/platform/graphics/ca/GraphicsLayerCA.cpp:287:50: note: use function 'fabs' instead
+                return std::max(fabsf(decomposeData.scaleX), fabsf(decomposeData.scaleY));
+                                                             ^~~~~
+                                                             fabs
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::maxScaleFromTransform): Use static_cast<float>() to
+        convert float values to double values.
+
 2014-03-15  Zalan Bujtas  <zalan@apple.com>
 
         Move BorderEdge class to its own file.
