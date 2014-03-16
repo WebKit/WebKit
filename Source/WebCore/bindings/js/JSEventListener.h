@@ -20,8 +20,8 @@
 #ifndef JSEventListener_h
 #define JSEventListener_h
 
+#include "DOMWrapperWorld.h"
 #include "EventListener.h"
-#include "JSDOMWindow.h"
 #include <heap/StrongInlines.h>
 #include <heap/Weak.h>
 #include <heap/WeakInlines.h>

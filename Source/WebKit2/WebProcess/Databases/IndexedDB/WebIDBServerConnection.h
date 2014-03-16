@@ -35,6 +35,7 @@
 
 namespace WebCore {
 struct IDBKeyData;
+class SecurityOrigin;
 }
 
 namespace WebKit {

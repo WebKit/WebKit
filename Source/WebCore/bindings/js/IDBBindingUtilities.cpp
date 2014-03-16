@@ -34,6 +34,7 @@
 #include "IDBKey.h"
 #include "IDBKeyData.h"
 #include "IDBKeyPath.h"
+#include "JSDOMBinding.h"
 #include "Logging.h"
 #include "SharedBuffer.h"
 

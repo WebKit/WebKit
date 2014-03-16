@@ -1,3 +1,15 @@
+2014-03-16  Andreas Kling  <akling@apple.com>
+
+        Stop pulling in JSDOMBinding.h via JSEventListener.h
+        <https://webkit.org/b/130299>
+
+        Just chippin' away at the compile time monster.
+
+        Reviewed by Darin Adler.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        * bindings/js/JSEventListener.h:
+
 2014-03-16  David Kilzer  <ddkilzer@apple.com>
 
         Double values passed to fabsf() in maxScaleFromTransform()
