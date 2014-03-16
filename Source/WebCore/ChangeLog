@@ -1,3 +1,12 @@
+2014-03-16  Darin Adler  <darin@apple.com>
+
+        Remove uses of "cat" in DerivedSources.make outside platform-specific rules
+        https://bugs.webkit.org/show_bug.cgi?id=130307
+
+        Reviewed by Anders Carlsson.
+
+        * DerivedSources.make: Use "perl -pe ''" instead of "cat".
+
 2014-03-16  Brian Burg  <bburg@apple.com>
 
         Web Inspector: vended backend commands file should be generated as part of the build
