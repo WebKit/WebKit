@@ -3469,18 +3469,18 @@ int64_t WebPageProxy::spellDocumentTag()
 #if USE(UNIFIED_TEXT_CHECKING)
 void WebPageProxy::checkTextOfParagraph(const String& text, uint64_t checkingTypes, Vector<TextCheckingResult>& results)
 {
-    results = TextChecker::checkTextOfParagraph(spellDocumentTag(), text.deprecatedCharacters(), text.length(), checkingTypes);
+    results = TextChecker::checkTextOfParagraph(spellDocumentTag(), text, checkingTypes);
 }
 #endif
 
 void WebPageProxy::checkSpellingOfString(const String& text, int32_t& misspellingLocation, int32_t& misspellingLength)
 {
-    TextChecker::checkSpellingOfString(spellDocumentTag(), text.deprecatedCharacters(), text.length(), misspellingLocation, misspellingLength);
+    TextChecker::checkSpellingOfString(spellDocumentTag(), text, misspellingLocation, misspellingLength);
 }
 
 void WebPageProxy::checkGrammarOfString(const String& text, Vector<GrammarDetail>& grammarDetails, int32_t& badGrammarLocation, int32_t& badGrammarLength)
 {
-    TextChecker::checkGrammarOfString(spellDocumentTag(), text.deprecatedCharacters(), text.length(), grammarDetails, badGrammarLocation, badGrammarLength);
+    TextChecker::checkGrammarOfString(spellDocumentTag(), text, grammarDetails, badGrammarLocation, badGrammarLength);
 }
 
 void WebPageProxy::spellingUIIsShowing(bool& isShowing)

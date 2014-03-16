@@ -120,19 +120,19 @@ void TextChecker::closeSpellDocumentWithTag(int64_t tag)
 }
 
 #if ENABLE(SPELLCHECK)
-static int nextWordOffset(const UChar* text, int length, int currentOffset)
+static unsigned nextWordOffset(StringView text, unsigned currentOffset)
 {
     // FIXME: avoid creating textIterator object here, it could be passed as a parameter.
     //        isTextBreak() leaves the iterator pointing to the first boundary position at
     //        or after "offset" (ubrk_isBoundary side effect).
     //        For many word separators, the method doesn't properly determine the boundaries
     //        without resetting the iterator.
-    TextBreakIterator* textIterator = wordBreakIterator(StringView(text, length));
+    TextBreakIterator* textIterator = wordBreakIterator(text);
     if (!textIterator)
         return currentOffset;
 
-    int wordOffset = currentOffset;
-    while (wordOffset < length && isTextBreak(textIterator, wordOffset))
+    unsigned wordOffset = currentOffset;
+    while (wordOffset < text.length() && isTextBreak(textIterator, wordOffset))
         ++wordOffset;
 
     // Do not treat the word's boundary as a separator.
@@ -148,26 +148,26 @@ static int nextWordOffset(const UChar* text, int length, int currentOffset)
 #endif // ENABLE(SPELLCHECK)
 
 #if USE(UNIFIED_TEXT_CHECKING)
-Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, const UChar* text, int length, uint64_t checkingTypes)
+Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, StringView text, uint64_t checkingTypes)
 {
     Vector<TextCheckingResult> paragraphCheckingResult;
 #if ENABLE(SPELLCHECK)
     if (checkingTypes & TextCheckingTypeSpelling) {
-        TextBreakIterator* textIterator = wordBreakIterator(StringView(text, length));
+        TextBreakIterator* textIterator = wordBreakIterator(text);
         if (!textIterator)
             return paragraphCheckingResult;
 
         // Omit the word separators at the beginning/end of the text to don't unnecessarily
         // involve the client to check spelling for them.
-        int offset = nextWordOffset(text, length, 0);
-        int lengthStrip = length;
+        unsigned offset = nextWordOffset(text, 0);
+        unsigned lengthStrip = text.length();
         while (lengthStrip > 0 && isTextBreak(textIterator, lengthStrip - 1))
             --lengthStrip;
 
-        while (offset >= 0 && offset < lengthStrip) {
+        while (offset < lengthStrip) {
             int32_t misspellingLocation = -1;
             int32_t misspellingLength = 0;
-            checkSpellingOfString(spellDocumentTag, text + offset, lengthStrip - offset, misspellingLocation, misspellingLength);
+            checkSpellingOfString(spellDocumentTag, text.substring(offset, lengthStrip - offset), misspellingLocation, misspellingLength);
             if (!misspellingLength)
                 break;
 
@@ -178,7 +178,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocume
             paragraphCheckingResult.append(misspellingResult);
             offset += misspellingLocation + misspellingLength;
             // Generally, we end up checking at the word separator, move to the adjacent word.
-            offset = nextWordOffset(text, lengthStrip, offset);
+            offset = nextWordOffset(text.substring(0, lengthStrip), offset);
         }
     }
 #else
@@ -191,10 +191,10 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocume
 }
 #endif
 
-void TextChecker::checkSpellingOfString(int64_t spellDocumentTag, const UChar* text, uint32_t length, int32_t& misspellingLocation, int32_t& misspellingLength)
+void TextChecker::checkSpellingOfString(int64_t spellDocumentTag, StringView text, int32_t& misspellingLocation, int32_t& misspellingLength)
 {
 #if ENABLE(SPELLCHECK)
-    WebTextChecker::shared()->client().checkSpellingOfString(spellDocumentTag, String(text, length), misspellingLocation, misspellingLength);
+    WebTextChecker::shared()->client().checkSpellingOfString(spellDocumentTag, text.toStringWithoutCopying(), misspellingLocation, misspellingLength);
 #else
     UNUSED_PARAM(spellDocumentTag);
     UNUSED_PARAM(text);
@@ -204,7 +204,7 @@ void TextChecker::checkSpellingOfString(int64_t spellDocumentTag, const UChar* t
 #endif
 }
 
-void TextChecker::checkGrammarOfString(int64_t, const UChar*, uint32_t, Vector<GrammarDetail>&, int32_t&, int32_t&)
+void TextChecker::checkGrammarOfString(int64_t, StringView, Vector<GrammarDetail>&, int32_t&, int32_t&)
 {
     notImplemented();
 }
@@ -271,10 +271,7 @@ void TextChecker::requestCheckingOfString(PassRefPtr<TextCheckerCompletion> comp
     ASSERT(request.sequence() != unrequestedTextCheckingSequence);
     ASSERT(request.mask() != TextCheckingTypeNone);
 
-    String text = request.text();
-    Vector<TextCheckingResult> result = checkTextOfParagraph(completion->spellDocumentTag(), text.deprecatedCharacters(), text.length(), request.mask());
-
-    completion->didFinishCheckingText(result);
+    completion->didFinishCheckingText(checkTextOfParagraph(completion->spellDocumentTag(), request.text(), request.mask()));
 #else
     UNUSED_PARAM(completion);
 #endif

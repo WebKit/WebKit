@@ -28,7 +28,7 @@
 
 #include "DataReference.h"
 #include "WebCoreArgumentCoders.h"
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringView.h>
 
 namespace WebKit {
 
@@ -108,7 +108,7 @@ void EncoderAdapter::encodeString(const String& value)
 
     uint64_t lengthInBytes = length * sizeof(UChar);
     m_encoder << lengthInBytes;
-    m_encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(value.deprecatedCharacters()), length * sizeof(UChar), alignof(UChar));
+    m_encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(StringView(value).upconvertedCharacters().get()), length * sizeof(UChar), alignof(UChar));
 }
 
 }

@@ -31,6 +31,7 @@
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/UTF8.h>
 
@@ -68,11 +69,10 @@ public:
     size_t length() const { return m_string.length(); }
     size_t getCharacters(UChar* buffer, size_t bufferLength) const
     {
-        if (!bufferLength)
-            return 0;
-        bufferLength = std::min(bufferLength, static_cast<size_t>(m_string.length()));
-        memcpy(buffer, m_string.deprecatedCharacters(), bufferLength * sizeof(UChar));
-        return bufferLength;
+        unsigned unsignedBufferLength = std::min<size_t>(bufferLength, std::numeric_limits<unsigned>::max());
+        StringView substring = StringView(m_string).substring(0, unsignedBufferLength);
+        substring.getCharactersWithUpconvert(buffer);
+        return substring.length();
     }
 
     size_t maximumUTF8CStringSize() const { return m_string.length() * 3 + 1; }
@@ -81,11 +81,17 @@ public:
         if (!bufferSize)
             return 0;
         char* p = buffer;
-        const UChar* d = m_string.deprecatedCharacters();
-        WTF::Unicode::ConversionResult result = WTF::Unicode::convertUTF16ToUTF8(&d, d + m_string.length(), &p, p + bufferSize - 1, /* strict */ true);
-        *p++ = '\0';
+        WTF::Unicode::ConversionResult result;
+        if (m_string.is8Bit()) {
+            const LChar* characters = m_string.characters8();
+            result = WTF::Unicode::convertLatin1ToUTF8(&characters, characters + m_string.length(), &p, p + bufferSize - 1);
+        } else {
+            const UChar* characters = m_string.characters16();
+            result = WTF::Unicode::convertUTF16ToUTF8(&characters, characters + m_string.length(), &p, p + bufferSize - 1, /* strict */ true);
+        }
         if (result != WTF::Unicode::conversionOK && result != WTF::Unicode::targetExhausted)
             return 0;
+        *p++ = '\0';
         return p - buffer;
     }
 

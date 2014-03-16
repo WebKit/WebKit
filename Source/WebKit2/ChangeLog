@@ -1,3 +1,58 @@
+2014-03-15  Darin Adler  <darin@apple.com>
+
+        Remove all uses of deprecatedCharacters from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=130197
+
+        Reviewed by Andreas Kling.
+
+        * Shared/APIString.h: Rewrote getCharacters to use StringView,
+        substring, and getCharactersWithUpconvert. Added an 8-bit case
+        to getUTF8CString.
+
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::writeByte): Added.
+        (WebKit::writeCharacter): Added.
+        (WebKit::writeLine): Added. Uses operator[] instead of characters16 to get
+        the UTF-16 characters out of the string.
+        (WebKit::NetscapePluginModule::scanPlugin): Replaced code that writes out
+        text to stdout with much simpler version using the functions above.
+
+        * UIProcess/TextChecker.h: Changed text arguments to use StringView instead
+        of UChar/int pairs.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::internalShowContextMenu): Updated to pass StringView.
+
+        * UIProcess/efl/TextCheckerEfl.cpp:
+        (WebKit::nextWordOffset): Changed function to use StringView and unsigned.
+        (WebKit::TextChecker::checkTextOfParagraph): Changed to use StringView and
+        substring.
+        (WebKit::TextChecker::checkSpellingOfString): Ditto.
+        (WebKit::TextChecker::checkGrammarOfString): Ditto.
+        (WebKit::TextChecker::requestCheckingOfString): Pass in a StringView, so no
+        need to call deprecatedCharacters.
+
+        * UIProcess/ios/TextCheckerIOS.mm:
+        (WebKit::TextChecker::checkTextOfParagraph): Changed to take StringView.
+        (WebKit::TextChecker::checkSpellingOfString): Ditto.
+        (WebKit::TextChecker::checkGrammarOfString): Ditto.
+
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::checkTextOfParagraph): Changed to take StringView and
+        use StringView::createNSStringWithoutCopying.
+        (WebKit::TextChecker::checkSpellingOfString): CHanged to take StringView.
+        (WebKit::TextChecker::checkGrammarOfString): Ditto.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::convertStringToKeyCodes): Changed to take StringView and use
+        upconvertedCharacters instead of deprecatedCharacters. Also use move instead
+        of swap.
+        (WebKit::NetscapePlugin::sendComplexTextInput): Updated to new style for loop.
+
+        * WebProcess/WebPage/EncoderAdapter.cpp:
+        (WebKit::EncoderAdapter::encodeString): Use StringView::upconvertedCharacters
+        instead of String::deprecatedCharacters.
+
 2014-03-15  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Define SYSTEM_VERSION_PREFIX consistently

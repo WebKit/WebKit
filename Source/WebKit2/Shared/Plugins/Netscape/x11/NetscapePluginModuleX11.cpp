@@ -185,23 +185,28 @@ void NetscapePluginModule::determineQuirks()
 #endif
 }
 
-static String truncateToSingleLine(const String& string)
+static void writeByte(char byte)
 {
-    unsigned oldLength = string.length();
-    UChar* buffer;
-    String stringBuffer(StringImpl::createUninitialized(oldLength + 1, buffer));
+    int result;
+    while ((result = fputc(byte, stdout)) == EOF && errno == EINTR) { }
+    ASSERT(result != EOF);
+}
 
-    unsigned newLength = 0;
-    const UChar* start = string.deprecatedCharacters();
-    for (const UChar* c = start; c < start + oldLength; ++c) {
-        if (*c != UChar('\n'))
-            buffer[newLength++] = *c;
+static void writeCharacter(UChar character)
+{
+    writeByte(reinterpret_cast<const char*>(&character)[0]);
+    writeByte(reinterpret_cast<const char*>(&character)[1]);
+}
+
+static void writeLine(const String& line)
+{
+    unsigned length = line.length();
+    for (unsigned i = 0; i < length; ++i) {
+        UChar character = line[i];
+        if (character != '\n')
+            writeCharacter(character);
     }
-    buffer[newLength++] = UChar('\n');
-
-    String result = (newLength == oldLength + 1) ? stringBuffer : String(stringBuffer.characters16(), newLength);
-    ASSERT(result.endsWith(UChar('\n')));
-    return result;
+    writeCharacter('\n');
 }
 
 bool NetscapePluginModule::scanPlugin(const String& pluginPath)
@@ -227,22 +232,9 @@ bool NetscapePluginModule::scanPlugin(const String& pluginPath)
     }
 
     // Write data to standard output for the UI process.
-    String output[3] = {
-        truncateToSingleLine(metaData.name),
-        truncateToSingleLine(metaData.description),
-        truncateToSingleLine(metaData.mimeDescription)
-    };
-    for (unsigned i = 0; i < 3; ++i) {
-        const String& line = output[i];
-        const char* current = reinterpret_cast<const char*>(line.characters16());
-        const char* end = reinterpret_cast<const char*>(line.characters16()) + (line.length() * sizeof(UChar));
-        while (current < end) {
-            int result;
-            while ((result = fputc(*current, stdout)) == EOF && errno == EINTR) { }
-            ASSERT(result != EOF);
-            ++current;
-        }
-    }
+    writeLine(metaData.name);
+    writeLine(metaData.description);
+    writeLine(metaData.mimeDescription);
 
     fflush(stdout);
 

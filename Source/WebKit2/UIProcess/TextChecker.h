@@ -67,10 +67,10 @@ public:
     static int64_t uniqueSpellDocumentTag(WebPageProxy*);
     static void closeSpellDocumentWithTag(int64_t);
 #if USE(UNIFIED_TEXT_CHECKING)
-    static Vector<WebCore::TextCheckingResult> checkTextOfParagraph(int64_t spellDocumentTag, const UChar* text, int length, uint64_t checkingTypes);
+    static Vector<WebCore::TextCheckingResult> checkTextOfParagraph(int64_t spellDocumentTag, StringView text, uint64_t checkingTypes);
 #endif
-    static void checkSpellingOfString(int64_t spellDocumentTag, const UChar* text, uint32_t length, int32_t& misspellingLocation, int32_t& misspellingLength);
-    static void checkGrammarOfString(int64_t spellDocumentTag, const UChar* text, uint32_t length, Vector<WebCore::GrammarDetail>&, int32_t& badGrammarLocation, int32_t& badGrammarLength);
+    static void checkSpellingOfString(int64_t spellDocumentTag, StringView text, int32_t& misspellingLocation, int32_t& misspellingLength);
+    static void checkGrammarOfString(int64_t spellDocumentTag, StringView text, Vector<WebCore::GrammarDetail>&, int32_t& badGrammarLocation, int32_t& badGrammarLength);
     static bool spellingUIIsShowing();
     static void toggleSpellingUIIsShowing();
     static void updateSpellingUIWithMisspelledWord(int64_t spellDocumentTag, const String& misspelledWord);

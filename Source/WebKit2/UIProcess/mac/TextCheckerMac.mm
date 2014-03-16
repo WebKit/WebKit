@@ -31,6 +31,7 @@
 #import "TextCheckerState.h"
 #import <WebCore/NotImplemented.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/StringView.h>
 
 @interface NSSpellChecker (WebNSSpellCheckerDetails)
 - (NSString *)languageForWordRange:(NSRange)range inString:(NSString *)string orthography:(NSOrthography *)orthography;
@@ -295,13 +296,13 @@ void TextChecker::closeSpellDocumentWithTag(int64_t tag)
 
 #if USE(UNIFIED_TEXT_CHECKING)
 
-Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, const UChar* text, int length, uint64_t checkingTypes)
+Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, StringView text, uint64_t checkingTypes)
 {
     Vector<TextCheckingResult> results;
 
-    RetainPtr<NSString> textString = adoptNS([[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(text) length:length freeWhenDone:NO]);
-    NSArray *incomingResults = [[NSSpellChecker sharedSpellChecker] checkString:textString .get()
-                                                                          range:NSMakeRange(0, length)
+    RetainPtr<NSString> textString = text.createNSStringWithoutCopying();
+    NSArray *incomingResults = [[NSSpellChecker sharedSpellChecker] checkString:textString.get()
+                                                                          range:NSMakeRange(0, text.length())
                                                                           types:checkingTypes | NSTextCheckingTypeOrthography
                                                                         options:nil
                                                          inSpellDocumentWithTag:spellDocumentTag 
@@ -384,13 +385,13 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocume
 
 #endif
 
-void TextChecker::checkSpellingOfString(int64_t, const UChar*, uint32_t, int32_t&, int32_t&)
+void TextChecker::checkSpellingOfString(int64_t, StringView, int32_t&, int32_t&)
 {
     // Mac uses checkTextOfParagraph instead.
     notImplemented();
 }
 
-void TextChecker::checkGrammarOfString(int64_t, const UChar*, uint32_t, Vector<WebCore::GrammarDetail>&, int32_t&, int32_t&)
+void TextChecker::checkGrammarOfString(int64_t, StringView, Vector<WebCore::GrammarDetail>&, int32_t&, int32_t&)
 {
     // Mac uses checkTextOfParagraph instead.
     notImplemented();
