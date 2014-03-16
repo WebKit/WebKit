@@ -1,3 +1,14 @@
+2014-03-16  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up: Double values passed to fabsf() in maxScaleFromTransform()
+        <http://webkit.org/b/130297>
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::maxScaleFromTransform): Use narrowPrecisionToFloat()
+        instead of static_cast<float>().
+
 2014-03-16  Andreas Kling  <akling@apple.com>
 
         ScriptExecutionContext::vm() should return a reference.
