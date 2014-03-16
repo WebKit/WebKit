@@ -154,6 +154,8 @@ public:
     float spaceWidth() const { return primaryFont()->spaceWidth() + m_letterSpacing; }
     float tabWidth(const SimpleFontData&, unsigned tabSize, float position) const;
     float tabWidth(unsigned tabSize, float position) const { return tabWidth(*primaryFont(), tabSize, position); }
+    bool hasValidAverageCharWidth() const;
+    bool fastAverageCharWidthIfAvailable(float &width) const; // returns true on success
 
     int emphasisMarkAscent(const AtomicString&) const;
     int emphasisMarkDescent(const AtomicString&) const;

@@ -426,6 +426,82 @@ float Font::width(TextLayout&, unsigned, unsigned, HashSet<const SimpleFontData*
 }
 #endif
 
+
+
+static const char* fontFamiliesWithInvalidCharWidth[] = {
+    "American Typewriter",
+    "Arial Hebrew",
+    "Chalkboard",
+    "Cochin",
+    "Corsiva Hebrew",
+    "Courier",
+    "Euphemia UCAS",
+    "Geneva",
+    "Gill Sans",
+    "Hei",
+    "Helvetica",
+    "Hoefler Text",
+    "InaiMathi",
+    "Kai",
+    "Lucida Grande",
+    "Marker Felt",
+    "Monaco",
+    "Mshtakan",
+    "New Peninim MT",
+    "Osaka",
+    "Raanana",
+    "STHeiti",
+    "Symbol",
+    "Times",
+    "Apple Braille",
+    "Apple LiGothic",
+    "Apple LiSung",
+    "Apple Symbols",
+    "AppleGothic",
+    "AppleMyungjo",
+    "#GungSeo",
+    "#HeadLineA",
+    "#PCMyungjo",
+    "#PilGi",
+};
+
+// For font families where any of the fonts don't have a valid entry in the OS/2 table
+// for avgCharWidth, fallback to the legacy webkit behavior of getting the avgCharWidth
+// from the width of a '0'. This only seems to apply to a fixed number of Mac fonts,
+// but, in order to get similar rendering across platforms, we do this check for
+// all platforms.
+bool Font::hasValidAverageCharWidth() const
+{
+    AtomicString family = firstFamily();
+    if (family.isEmpty())
+        return false;
+
+    // Internal fonts on OS X also have an invalid entry in the table for avgCharWidth.
+    // They are hidden by having a name that begins with a period, so simply search
+    // for that here rather than try to keep the list up to date.
+    if (family.startsWith('.') || family == "System Font")
+        return false;
+
+    static HashSet<AtomicString>* fontFamiliesWithInvalidCharWidthMap = 0;
+
+    if (!fontFamiliesWithInvalidCharWidthMap) {
+        fontFamiliesWithInvalidCharWidthMap = new HashSet<AtomicString>;
+
+        for (size_t i = 0; i < WTF_ARRAY_LENGTH(fontFamiliesWithInvalidCharWidth); ++i)
+            fontFamiliesWithInvalidCharWidthMap->add(AtomicString(fontFamiliesWithInvalidCharWidth[i]));
+    }
+
+    return !fontFamiliesWithInvalidCharWidthMap->contains(family);
+}
+
+bool Font::fastAverageCharWidthIfAvailable(float& width) const
+{
+    bool success = hasValidAverageCharWidth();
+    if (success)
+        width = roundf(primaryFont()->avgCharWidth()); // FIXME: primaryFont() might not correspond to firstFamily().
+    return success;
+}
+
 FloatRect Font::selectionRectForText(const TextRun& run, const FloatPoint& point, int h, int from, int to) const
 {
     to = (to == -1 ? run.length() : to);

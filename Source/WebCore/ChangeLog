@@ -1,3 +1,28 @@
+2014-03-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        RenderTextControl::hasValidAvgCharWidth doesn't detect System Font
+        https://bugs.webkit.org/show_bug.cgi?id=130168
+
+        Reviewed by Dean Jackson.
+
+        No new tests.
+
+        * platform/graphics/Font.cpp: Moved functions from RenderTextControl
+        (WebCore::Font::hasValidAverageCharWidth):
+        (WebCore::Font::fastAverageCharWidthIfAvailable):
+        * platform/graphics/Font.h:
+        * rendering/RenderTextControl.cpp: Moved functions to Font.cpp
+        (WebCore::RenderTextControl::getAverageCharWidth): Removed redundant function argument
+        (WebCore::RenderTextControl::computeIntrinsicLogicalWidths):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::getAverageCharWidth): Removed redundant function argument
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::getAverageCharWidth): Removed redundant function argument
+        (WebCore::RenderTextControlSingleLine::preferredContentLogicalWidth):
+        * rendering/RenderTextControlSingleLine.h:
+
 2014-03-15  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Define SYSTEM_VERSION_PREFIX consistently

@@ -73,7 +73,7 @@ private:
     virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = 0) override final;
 
     int textBlockWidth() const;
-    virtual float getAvgCharWidth(AtomicString family) override;
+    virtual float getAverageCharWidth() override;
     virtual LayoutUnit preferredContentLogicalWidth(float charWidth) const override;
     virtual LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;
     

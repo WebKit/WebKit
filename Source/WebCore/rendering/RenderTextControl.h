@@ -62,8 +62,7 @@ protected:
 
     float scaleEmToUnits(int x) const;
 
-    static bool hasValidAvgCharWidth(AtomicString family);
-    virtual float getAvgCharWidth(AtomicString family);
+    virtual float getAverageCharWidth();
     virtual LayoutUnit preferredContentLogicalWidth(float charWidth) const = 0;
     virtual LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const = 0;
 

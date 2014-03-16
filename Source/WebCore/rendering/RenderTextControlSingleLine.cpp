@@ -312,18 +312,18 @@ LayoutRect RenderTextControlSingleLine::controlClipRect(const LayoutPoint& addit
     return clipRect;
 }
 
-float RenderTextControlSingleLine::getAvgCharWidth(AtomicString family)
+float RenderTextControlSingleLine::getAverageCharWidth()
 {
 #if !PLATFORM(IOS)
     // Since Lucida Grande is the default font, we want this to match the width
     // of MS Shell Dlg, the default font for textareas in Firefox, Safari Win and
     // IE for some encodings (in IE, the default font is encoding specific).
     // 901 is the avgCharWidth value in the OS/2 table for MS Shell Dlg.
-    if (family == "Lucida Grande")
+    if (style().font().firstFamily() == "Lucida Grande")
         return scaleEmToUnits(901);
 #endif
 
-    return RenderTextControl::getAvgCharWidth(family);
+    return RenderTextControl::getAverageCharWidth();
 }
 
 LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charWidth) const
@@ -345,7 +345,7 @@ LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charW
     // 4027 is the (xMax - xMin) value in the "head" font table for MS Shell Dlg.
     if (family == "Lucida Grande")
         maxCharWidth = scaleEmToUnits(4027);
-    else if (hasValidAvgCharWidth(family))
+    else if (style().font().hasValidAverageCharWidth())
         maxCharWidth = roundf(style().font().primaryFont()->maxCharWidth());
 #endif
 
