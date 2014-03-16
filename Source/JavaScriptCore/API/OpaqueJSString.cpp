@@ -29,6 +29,7 @@
 #include "CallFrame.h"
 #include "Identifier.h"
 #include "JSGlobalObject.h"
+#include <wtf/text/StringView.h>
 
 using namespace JSC;
 
@@ -47,7 +48,7 @@ OpaqueJSString::~OpaqueJSString()
     if (!characters)
         return;
 
-    if (!m_string.is8Bit() && m_string.deprecatedCharacters() == characters)
+    if (!m_string.is8Bit() && m_string.characters16() == characters)
         return;
 
     fastFree(characters);
@@ -70,10 +71,7 @@ Identifier OpaqueJSString::identifier(VM* vm) const
     if (m_string.isEmpty())
         return Identifier(Identifier::EmptyIdentifier);
 
-    if (m_string.is8Bit())
-        return Identifier(vm, m_string.characters8(), m_string.length());
-
-    return Identifier(vm, m_string.characters16(), m_string.length());
+    return Identifier(vm, m_string);
 }
 
 const UChar* OpaqueJSString::characters()
@@ -91,12 +89,7 @@ const UChar* OpaqueJSString::characters()
 
     unsigned length = m_string.length();
     UChar* newCharacters = static_cast<UChar*>(fastMalloc(length * sizeof(UChar)));
-
-    if (m_string.is8Bit()) {
-        for (size_t i = 0; i < length; ++i)
-            newCharacters[i] = m_string.characters8()[i];
-    } else
-        memcpy(newCharacters, m_string.characters16(), length * sizeof(UChar));
+    StringView(m_string).getCharactersWithUpconvert(newCharacters);
 
     if (!m_characters.compare_exchange_strong(characters, newCharacters)) {
         fastFree(newCharacters);

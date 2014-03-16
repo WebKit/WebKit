@@ -30,7 +30,6 @@
 #include "JSDateMath.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
-#include "JSStringBuilder.h"
 #include "Lookup.h"
 #include "ObjectPrototype.h"
 #include "JSCInlines.h"

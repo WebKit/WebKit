@@ -37,6 +37,7 @@
 #include "Yarr.h"
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace JSC::Yarr;
 
@@ -47,17 +48,16 @@ static const char regexSpecialCharacters[] = "[](){}+-*.,?\\^$|";
 
 static String createSearchRegexSource(const String& text)
 {
-    String result;
-    const UChar* characters = text.deprecatedCharacters();
-    String specials(regexSpecialCharacters);
+    StringBuilder result;
 
     for (unsigned i = 0; i < text.length(); i++) {
-        if (specials.find(characters[i]) != notFound)
-            result.append("\\");
-        result.append(characters[i]);
+        UChar character = text[i];
+        if (isASCII(character) && strchr(regexSpecialCharacters, character))
+            result.append('\\');
+        result.append(character);
     }
 
-    return result;
+    return result.toString();
 }
 
 static inline size_t sizetExtractor(const size_t* value)

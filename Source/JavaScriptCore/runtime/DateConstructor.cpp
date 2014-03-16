@@ -29,7 +29,6 @@
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
-#include "JSStringBuilder.h"
 #include "ObjectPrototype.h"
 #include "JSCInlines.h"
 #include <math.h>

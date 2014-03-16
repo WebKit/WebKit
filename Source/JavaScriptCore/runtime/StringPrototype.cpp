@@ -1408,6 +1408,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState* exec)
     if (a0.getUInt32(smallInteger) && smallInteger <= 9) {
         unsigned stringSize = s.length();
         unsigned bufferSize = 22 + stringSize;
+        // FIXME: Should we have an 8-bit version of this code path too? Or maybe only an 8-bit version?
         UChar* buffer;
         PassRefPtr<StringImpl> impl = StringImpl::tryCreateUninitialized(bufferSize, buffer);
         if (!impl)
@@ -1427,7 +1428,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState* exec)
         buffer[12] = '0' + smallInteger;
         buffer[13] = '"';
         buffer[14] = '>';
-        memcpy(&buffer[15], s.deprecatedCharacters(), stringSize * sizeof(UChar));
+        StringView(s).getCharactersWithUpconvert(&buffer[15]);
         buffer[15 + stringSize] = '<';
         buffer[16 + stringSize] = '/';
         buffer[17 + stringSize] = 'f';
@@ -1470,6 +1471,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLink(ExecState* exec)
     unsigned linkTextSize = linkText.length();
     unsigned stringSize = s.length();
     unsigned bufferSize = 15 + linkTextSize + stringSize;
+    // FIXME: Should we have an 8-bit version of this code path too? Or maybe only an 8-bit version?
     UChar* buffer;
     PassRefPtr<StringImpl> impl = StringImpl::tryCreateUninitialized(bufferSize, buffer);
     if (!impl)
@@ -1483,10 +1485,10 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLink(ExecState* exec)
     buffer[6] = 'f';
     buffer[7] = '=';
     buffer[8] = '"';
-    memcpy(&buffer[9], linkText.deprecatedCharacters(), linkTextSize * sizeof(UChar));
+    StringView(linkText).getCharactersWithUpconvert(&buffer[9]);
     buffer[9 + linkTextSize] = '"';
     buffer[10 + linkTextSize] = '>';
-    memcpy(&buffer[11 + linkTextSize], s.deprecatedCharacters(), stringSize * sizeof(UChar));
+    StringView(s).getCharactersWithUpconvert(&buffer[11 + linkTextSize]);
     buffer[11 + linkTextSize + stringSize] = '<';
     buffer[12 + linkTextSize + stringSize] = '/';
     buffer[13 + linkTextSize + stringSize] = 'a';

@@ -25,7 +25,6 @@
 #include "GetterSetter.h"
 #include "JSFunction.h"
 #include "JSString.h"
-#include "JSStringBuilder.h"
 #include "JSCInlines.h"
 #include "StructureRareDataInlines.h"
 

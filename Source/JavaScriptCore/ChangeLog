@@ -1,3 +1,66 @@
+2014-03-16  Darin Adler  <darin@apple.com>
+
+        Remove all uses of deprecatedCharacters from JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=130304
+
+        Reviewed by Anders Carlsson.
+
+        * API/JSValueRef.cpp:
+        (JSValueMakeFromJSONString): Use characters16 in the 16-bit code path.
+        * API/OpaqueJSString.cpp:
+        (OpaqueJSString::~OpaqueJSString): Use characters 16 in the 16-bit code path.
+        (OpaqueJSString::identifier): Get rid of custom Identifier constructor, and
+        juse use the standard one that takes a String.
+        (OpaqueJSString::characters): Use getCharactersWithUpconvert instead of a
+        hand-written alternative.
+
+        * bindings/ScriptValue.cpp:
+        (Deprecated::jsToInspectorValue): Create InspectorString from String directly
+        instead of involving a character pointer. Use the String from Identifier
+        directly instead of making a new String.
+
+        * inspector/ContentSearchUtilities.cpp:
+        (Inspector::ContentSearchUtilities::createSearchRegexSource): Use StringBuilder
+        instead of building a String a character at a time. This is still a very slow
+        way to do this. Also use strchr to search for a character instead of building
+        a String every time just to use find on it.
+
+        * inspector/InspectorValues.cpp:
+        (Inspector::doubleQuoteString): Remove unnecessary trip through a
+        character pointer. This is still a really slow way to do this.
+        (Inspector::InspectorValue::parseJSON): Use StringView::upconvertedCharacters
+        instead of String::deprecatedCharacters. Still slow to always upconvert.
+
+        * runtime/DateConstructor.cpp: Removed unneeded include.
+        * runtime/DatePrototype.cpp: Ditto.
+
+        * runtime/Identifier.h: Removed deprecatedCharacters function.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode): Added a type cast to avoid ambiguity with the two character-
+        appending functions from JSStringBuilder. Removed unneeded code duplicating
+        what JSStringBuilder already does in its character append function.
+        (JSC::decode): Deleted code that creates a JSStringBuilder that is never used.
+        (JSC::parseIntOverflow): Changed lengths to unsigned. Made only the overload that
+        is used outside this file have external linkage. Added a new overload that takes
+        a StringView.
+        (JSC::parseInt): Use StringView::substring to call parseIntOverflow.
+        (JSC::globalFuncEscape): Use JSBuilder::append in a more efficient way for a
+        single character.
+
+        * runtime/JSGlobalObjectFunctions.h: Removed unused overloads of parseIntOverflow.
+
+        * runtime/JSStringBuilder.h: Marked this "lightly deprecated".
+        (JSC::JSStringBuilder::append): Overloaded for better speed with 8-bit characters.
+        Made one overload private. Fixed a performance bug where we would reserve capacity
+        in the 8-bit buffer but then append to the 16-bit buffer.
+
+        * runtime/ObjectPrototype.cpp: Removed unneeded include.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncFontsize): Use StringView::getCharactersWithUpconvert.
+        (JSC::stringProtoFuncLink): Ditto.
+
 2014-03-15  Filip Pizlo  <fpizlo@apple.com>
 
         FTL ArrayifyToStructure shouldn't fail every time that it actually arrayifies

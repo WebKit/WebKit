@@ -470,9 +470,7 @@ inline void doubleQuoteString(const String& str, StringBuilder* dst)
                 // 1. Escaping <, > to prevent script execution.
                 // 2. Technically, we could also pass through c > 126 as UTF8, but this
                 //    is also optional.  It would also be a pain to implement here.
-                unsigned int symbol = static_cast<unsigned int>(c);
-                String symbolCode = String::format("\\u%04X", symbol);
-                dst->append(symbolCode.deprecatedCharacters(), symbolCode.length());
+                dst->append(String::format("\\u%04X", c));
             } else
                 dst->append(c);
         }
@@ -560,9 +558,11 @@ PassRefPtr<InspectorArray> InspectorValue::asArray()
 
 PassRefPtr<InspectorValue> InspectorValue::parseJSON(const String& json)
 {
-    const UChar* start = json.deprecatedCharacters();
-    const UChar* end = json.deprecatedCharacters() + json.length();
-    const UChar *tokenEnd;
+    // FIXME: This whole file should just use StringView instead of UChar/length and avoid upconverting.
+    auto characters = StringView(json).upconvertedCharacters();
+    const UChar* start = characters;
+    const UChar* end = start + json.length();
+    const UChar* tokenEnd;
     RefPtr<InspectorValue> value = buildValue(start, end, &tokenEnd, 0);
     if (!value || tokenEnd != end)
         return nullptr;

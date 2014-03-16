@@ -32,6 +32,7 @@
 
 namespace JSC {
 
+// FIXME: Should move the last few callers over from this to WTF::StringBuilder.
 class JSStringBuilder {
 public:
     JSStringBuilder()
@@ -40,84 +41,32 @@ public:
     {
     }
 
-    void append(const UChar u)
+    void append(LChar character)
     {
         if (m_is8Bit) {
-            if (u < 0xff) {
-                LChar c = u;
-                m_okay &= buffer8.tryAppend(&c, 1);
+            m_okay &= buffer8.tryAppend(&character, 1);
+            return;
+        }
+        UChar upconvertedCharacter = character;
+        m_okay &= buffer16.tryAppend(&upconvertedCharacter, 1);
+    }
+
+    void append(UChar character)
+    {
+        if (m_is8Bit) {
+            if (character < 0x100) {
+                LChar narrowedCharacter = character;
+                m_okay &= buffer8.tryAppend(&narrowedCharacter, 1);
                 return;
             }
             upConvert();
         }
-        m_okay &= buffer16.tryAppend(&u, 1);
+        m_okay &= buffer16.tryAppend(&character, 1);
     }
 
     void append(const char* str)
     {
-        append(str, strlen(str));
-    }
-
-    void append(const char* str, size_t len)
-    {
-        if (m_is8Bit) {
-            m_okay &= buffer8.tryAppend(reinterpret_cast<const LChar*>(str), len);
-            return;
-        }
-        m_okay &= buffer8.tryReserveCapacity(buffer16.size() + len);
-        for (size_t i = 0; i < len; i++) {
-            UChar u = static_cast<unsigned char>(str[i]);
-            m_okay &= buffer16.tryAppend(&u, 1);
-        }
-    }
-
-    void append(const LChar* str, size_t len)
-    {
-        if (m_is8Bit) {
-            m_okay &= buffer8.tryAppend(str, len);
-            return;
-        }
-        m_okay &= buffer8.tryReserveCapacity(buffer16.size() + len);
-        for (size_t i = 0; i < len; i++) {
-            UChar u = str[i];
-            m_okay &= buffer16.tryAppend(&u, 1);
-        }
-    }
-    
-    void append(const UChar* str, size_t len)
-    {
-        if (m_is8Bit)
-            upConvert(); // FIXME: We could check character by character its size.
-        m_okay &= buffer16.tryAppend(str, len);
-    }
-
-    void append(const String& str)
-    {
-        unsigned length = str.length();
-
-        if (!length)
-            return;
-
-        if (m_is8Bit) {
-            if (str.is8Bit()) {
-                m_okay &= buffer8.tryAppend(str.characters8(), length);
-                return;
-            }
-            upConvert();
-        }
-        m_okay &= buffer16.tryAppend(str.deprecatedCharacters(), length);
-    }
-
-    void upConvert()
-    {
-        ASSERT(m_is8Bit);
-        size_t len = buffer8.size();
-
-        for (size_t i = 0; i < len; i++)
-            buffer16.append(buffer8[i]);
-
-        buffer8.clear();
-        m_is8Bit = false;
+        append(reinterpret_cast<const LChar*>(str), strlen(str));
     }
 
     JSValue build(ExecState* exec)
@@ -136,7 +85,33 @@ public:
         return jsString(exec, String::adopt(buffer16));
     }
 
-protected:
+private:
+    void append(const LChar* characters, size_t length)
+    {
+        if (m_is8Bit) {
+            m_okay &= buffer8.tryAppend(characters, length);
+            return;
+        }
+        // FIXME: There must be a more efficient way of doing this.
+        m_okay &= buffer16.tryReserveCapacity(buffer16.size() + length);
+        for (size_t i = 0; i < length; i++) {
+            UChar upconvertedCharacter = characters[i];
+            m_okay &= buffer16.tryAppend(&upconvertedCharacter, 1);
+        }
+    }
+
+    void upConvert()
+    {
+        ASSERT(m_is8Bit);
+        size_t len = buffer8.size();
+
+        for (size_t i = 0; i < len; i++)
+            buffer16.append(buffer8[i]);
+
+        buffer8.clear();
+        m_is8Bit = false;
+    }
+
     Vector<LChar, 64, UnsafeVectorOverflow> buffer8;
     Vector<UChar, 64, UnsafeVectorOverflow> buffer16;
     bool m_okay;

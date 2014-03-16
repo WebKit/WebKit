@@ -1,3 +1,13 @@
+2014-03-16  Darin Adler  <darin@apple.com>
+
+        Remove all uses of deprecatedCharacters from JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=130304
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/dtoa.h:
+        (WTF::parseDouble): Added an overload that takes a StringView.
+
 2014-03-15  Darin Adler  <darin@apple.com>
 
         Remove all uses of deprecatedCharacters from WebKit2
