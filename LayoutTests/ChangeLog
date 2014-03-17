@@ -1,3 +1,16 @@
+2014-01-29  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] getComputedStyle() not using author's order when showing named grid lines
+        https://bugs.webkit.org/show_bug.cgi?id=127837
+
+        Reviewed by David Hyatt.
+
+        Grid line names are now shown using the exact same order as the one used in the CSS.
+
+        * fast/css-grid-layout/named-grid-line-get-set-expected.txt:
+        * fast/css-grid-layout/named-grid-line-get-set.html:
+        * fast/css-grid-layout/non-named-grid-line-get-set-expected.txt:
+
 2014-03-17  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         Safari should not render a cell if the <td> is empty

@@ -1,3 +1,26 @@
+2014-01-29  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] getComputedStyle() not using author's order when showing named grid lines
+        https://bugs.webkit.org/show_bug.cgi?id=127837
+
+        Reviewed by David Hyatt.
+
+        Added a couple of new Vectors to store the names of the grid lines
+        respecting their order. They will be used to get the right outcome
+        for getComputedStyle().
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::addValuesForNamedGridLinesAtIndex):
+        (WebCore::valueForGridTrackList):
+        * css/StyleResolver.cpp:
+        (WebCore::createGridTrackList):
+        (WebCore::StyleResolver::applyProperty):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleGridData.cpp:
+        (WebCore::StyleGridData::StyleGridData):
+        * rendering/style/StyleGridData.h:
+        (WebCore::StyleGridData::operator==):
+
 2014-03-17  Zsolt Borbely  <borbezs@inf.u-szeged.hu>
 
         Fix the !ENABLE(PROMISES) build
