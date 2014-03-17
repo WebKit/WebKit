@@ -69,6 +69,10 @@
 #include "SelectionRect.h"
 #endif
 
+#ifndef NDEBUG
+#include <cstdio>
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;

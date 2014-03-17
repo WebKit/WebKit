@@ -1,3 +1,20 @@
+2014-03-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        Explicitly include cstdio header for debug builds in InlineTextBox, RenderLayer, RenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=130310
+
+        Reviewed by Darin Adler.
+
+        Building the GTK port with Clang through CMake falls into a configuration where
+        the cstdio header is not indirectly included in InlineTextBox, RenderLayer and
+        RenderObject source files. fprintf() is required for helper functions that print
+        out helpful debugging information in debug builds, so the cstdio header should
+        be included explicitly in that case.
+
+        * rendering/InlineTextBox.cpp:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderObject.cpp:
+
 2014-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Cleanup WebKitDOMObject

@@ -53,6 +53,10 @@
 #include "break_lines.h"
 #include <wtf/text/CString.h>
 
+#ifndef NDEBUG
+#include <cstdio>
+#endif
+
 namespace WebCore {
 
 struct SameSizeAsInlineTextBox : public InlineBox {
