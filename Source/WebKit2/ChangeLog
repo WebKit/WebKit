@@ -1,5 +1,11 @@
 2014-03-17  Simon Fraser  <simon.fraser@apple.com>
 
+        Address some style nits.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+2014-03-17  Simon Fraser  <simon.fraser@apple.com>
+
         Add transparent window support back into MiniBrowser
         https://bugs.webkit.org/show_bug.cgi?id=130363
 

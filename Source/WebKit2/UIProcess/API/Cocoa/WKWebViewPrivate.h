@@ -81,7 +81,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
 - (void)_endInteractiveObscuredInsetsChange;
 #else
 @property (readonly) NSColor *_pageExtendedBackgroundColor;
-@property (nonatomic, setter=_setDrawsTransparentBackground:)BOOL _drawsTransparentBackground;
+@property (nonatomic, setter=_setDrawsTransparentBackground:) BOOL _drawsTransparentBackground;
 #endif
 
 - (void)_runJavaScriptInMainFrame:(NSString *)scriptString;

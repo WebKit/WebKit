@@ -29,10 +29,10 @@
 
 #import "AppDelegate.h"
 #import <WebKit2/WKFrameInfo.h>
-#import <WebKit2/WKWebView.h>
-#import <WebKit2/WKWebViewPrivate.h>
 #import <WebKit2/WKNavigationDelegate.h>
 #import <WebKit2/WKUIDelegate.h>
+#import <WebKit2/WKWebView.h>
+#import <WebKit2/WKWebViewPrivate.h>
 
 static void* keyValueObservingContext = &keyValueObservingContext;
 static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
