@@ -1,3 +1,26 @@
+2014-03-17  Darin Adler  <darin@apple.com>
+
+        Stop using deprecatedCharacters in HTMLTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=130323
+
+        Reviewed by Andreas Kling.
+
+        Keeping this separate from other patches because of concern that this could affect
+        page load performance.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::ExternalCharacterTokenBuffer):
+        Use a StringView instead of a character pointer.
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::isEmpty): Ditto.
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::skipAtMostOneLeadingNewline):
+        Ditto.
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::takeRemaining): Ditto.
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::giveRemainingTo): Ditto.
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::takeRemainingWhitespace): Ditto.
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::skipLeading): Ditto.
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::takeLeading): Ditto.
+        (WebCore::HTMLTreeBuilder::linkifyPhoneNumbers): Use StringView::upconvertedCharacters.
+
 2014-03-17  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Make some Module class constructors return PassRef.

@@ -138,17 +138,15 @@ class HTMLTreeBuilder::ExternalCharacterTokenBuffer {
     WTF_MAKE_NONCOPYABLE(ExternalCharacterTokenBuffer);
 public:
     explicit ExternalCharacterTokenBuffer(AtomicHTMLToken* token)
-        : m_current(token->characters())
-        , m_end(m_current + token->charactersLength())
+        : m_text(token->characters(), token->charactersLength())
         , m_isAll8BitData(token->isAll8BitData())
     {
         ASSERT(!isEmpty());
     }
 
     explicit ExternalCharacterTokenBuffer(const String& string)
-        : m_current(string.deprecatedCharacters())
-        , m_end(m_current + string.length())
-        , m_isAll8BitData(string.length() && string.is8Bit())
+        : m_text(string)
+        , m_isAll8BitData(m_text.length() && m_text.is8Bit())
     {
         ASSERT(!isEmpty());
     }
@@ -158,15 +156,15 @@ public:
         ASSERT(isEmpty());
     }
 
-    bool isEmpty() const { return m_current == m_end; }
+    bool isEmpty() const { return m_text.isEmpty(); }
 
     bool isAll8BitData() const { return m_isAll8BitData; }
 
     void skipAtMostOneLeadingNewline()
     {
         ASSERT(!isEmpty());
-        if (*m_current == '\n')
-            ++m_current;
+        if (m_text[0] == '\n')
+            m_text = m_text.substring(1);
     }
 
     void skipLeadingWhitespace()
@@ -186,37 +184,38 @@ public:
 
     String takeRemaining()
     {
-        ASSERT(!isEmpty());
-        const UChar* start = m_current;
-        m_current = m_end;
-        size_t length = m_current - start;
-
-        if (isAll8BitData())
-            return String::make8BitFrom16BitSource(start, length);
-
-        return String(start, length);
+        String result;
+        if (m_text.is8Bit() || !isAll8BitData())
+            result = m_text.toString();
+        else
+            result = String::make8BitFrom16BitSource(m_text.characters16(), m_text.length());
+        m_text = StringView();
+        return result;
     }
 
     void giveRemainingTo(StringBuilder& recipient)
     {
-        recipient.append(m_current, m_end - m_current);
-        m_current = m_end;
+        recipient.append(m_text);
+        m_text = StringView();
     }
 
     String takeRemainingWhitespace()
     {
         ASSERT(!isEmpty());
-        Vector<UChar> whitespace;
+        Vector<LChar, 8> whitespace;
         do {
-            UChar cc = *m_current++;
-            if (isHTMLSpace(cc))
-                whitespace.append(cc);
-        } while (m_current < m_end);
+            UChar character = m_text[0];
+            if (isHTMLSpace(character))
+                whitespace.append(character);
+            m_text = m_text.substring(1);
+        } while (!m_text.isEmpty());
+
         // Returning the null string when there aren't any whitespace
         // characters is slightly cleaner semantically because we don't want
         // to insert a text node (as opposed to inserting an empty text node).
         if (whitespace.isEmpty())
             return String();
+
         return String::adopt(whitespace);
     }
 
@@ -225,8 +224,9 @@ private:
     void skipLeading()
     {
         ASSERT(!isEmpty());
-        while (characterPredicate(*m_current)) {
-            if (++m_current == m_end)
+        while (characterPredicate(m_text[0])) {
+            m_text = m_text.substring(1);
+            if (m_text.isEmpty())
                 return;
         }
     }
@@ -235,17 +235,17 @@ private:
     String takeLeading()
     {
         ASSERT(!isEmpty());
-        const UChar* start = m_current;
+        StringView start = m_text;
         skipLeading<characterPredicate>();
-        if (start == m_current)
+        if (start.length() == m_text.length())
             return String();
-        if (isAll8BitData())
-            return String::make8BitFrom16BitSource(start, m_current - start);
-        return String(start, m_current - start);
+        StringView leading = start.substring(0, start.length() - m_text.length());
+        if (leading.is8Bit() || !isAll8BitData())
+            return leading.toString();
+        return String::make8BitFrom16BitSource(leading.characters16(), leading.length());
     }
 
-    const UChar* m_current;
-    const UChar* m_end;
+    StringView m_text;
     bool m_isAll8BitData;
 };
 
@@ -2338,8 +2338,10 @@ void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string)
     int relativeStartPosition = 0;
     int relativeEndPosition = 0;
 
+    auto characters = string.upconvertedCharacters();
+
     // While there's a phone number in the rest of the string...
-    while ((scannerPosition < length) && TelephoneNumberDetector::find(&string.deprecatedCharacters()[scannerPosition], length - scannerPosition, &relativeStartPosition, &relativeEndPosition)) {
+    while (scannerPosition < length && TelephoneNumberDetector::find(&characters[scannerPosition], length - scannerPosition, &relativeStartPosition, &relativeEndPosition)) {
         // The convention in the Data Detectors framework is that the end position is the first character NOT in the phone number
         // (that is, the length of the range is relativeEndPosition - relativeStartPosition). So substract 1 to get the same
         // convention as the old WebCore phone number parser (so that the rest of the code is still valid if we want to go back
