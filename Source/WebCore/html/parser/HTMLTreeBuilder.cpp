@@ -2338,7 +2338,7 @@ void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string)
     int relativeStartPosition = 0;
     int relativeEndPosition = 0;
 
-    auto characters = string.upconvertedCharacters();
+    auto characters = StringView(string).upconvertedCharacters();
 
     // While there's a phone number in the rest of the string...
     while (scannerPosition < length && TelephoneNumberDetector::find(&characters[scannerPosition], length - scannerPosition, &relativeStartPosition, &relativeEndPosition)) {

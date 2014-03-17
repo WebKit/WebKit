@@ -1,3 +1,10 @@
+2014-03-17  Jessie Berlin  <jberlin@apple.com>
+
+        Speculative build fix for ENABLE(TELEPHONE_NUMBER_DETECTION) after r165724.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::linkifyPhoneNumbers):
+
 2014-03-17  Zan Dobersek  <zdobersek@igalia.com>
 
         Only supplement Page with UserMediaController once
