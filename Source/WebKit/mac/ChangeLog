@@ -1,3 +1,14 @@
+2014-03-17  David Farler  <dfarler@apple.com>
+
+        REGRESSION: WebKitLegacy causes ASan build to fail
+        <rdar://problem/16344326>
+
+        Reviewed by David Kilzer.
+
+        * Configurations/DebugRelease.xcconfig: Remove $(inherited) from
+        OTHER_CFLAGS, OTHER_CPLUSPLUSFLAGS, OTHER_LDFLAGS to prevent
+        double complete ASAN flags.
+
 2014-03-16  Brent Fulgham  <bfulgham@apple.com>
 
         Provide preference to enable additional AVFoundation options
