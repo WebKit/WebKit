@@ -214,6 +214,11 @@ if (ENABLE_GEOLOCATION)
     endif ()
 endif ()
 
+find_package(GTKUnixPrint)
+if (GTK_UNIX_PRINTING_FOUND)
+    set(HAVE_GTK_UNIX_PRINTING)
+endif ()
+
 # We don't use find_package for GLX because it is part of -lGL, unlike EGL.
 find_package(OpenGL)
 check_include_files("GL/glx.h" GLX_FOUND)

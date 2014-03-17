@@ -24,6 +24,7 @@ include_directories(
     ${ATSPI_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${GTK3_INCLUDE_DIRS}
+    ${GTK_UNIX_PRINT_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
 )
 
@@ -72,6 +73,7 @@ macro(ADD_WK2_TEST test_name)
         ${ATSPI_LIBRARIES}
         ${GLIB_LIBRARIES}
         ${GTK3_LIBRARIES}
+        ${GTK_UNIX_PRINT_LIBRARIES}
         ${LIBSOUP_LIBRARIES}
     )
     set_target_properties(${test_name} PROPERTIES

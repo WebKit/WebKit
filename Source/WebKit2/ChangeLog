@@ -1,3 +1,12 @@
+2014-03-17  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][CMake] Ensure that HAVE_GTK_UNIX_PRINTING is defined when appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=130155
+
+        Reviewed by Philippe Normand.
+
+        * PlatformGTK.cmake: Add GTK_UNIX_PRINT flags to the build.
+
 2014-03-17  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Restore cursor when moving mouse into webview

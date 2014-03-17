@@ -439,6 +439,7 @@ set(WebKit2CommonIncludeDirectories ${WebKit2_INCLUDE_DIRECTORIES})
 list(APPEND WebKit2_INCLUDE_DIRECTORIES
     ${GLIB_INCLUDE_DIRS}
     ${GTK_INCLUDE_DIRS}
+    ${GTK_UNIX_PRINT_INCLUDE_DIRS}
 )
 
 list(APPEND WebProcess_SOURCES
@@ -453,11 +454,10 @@ set(SharedWebKit2Libraries
     ${WebKit2_LIBRARIES}
 )
 
-# Since the GObjectDOMBindings convenience library exports API that is unused except
-# in embedding applications we need to instruct the linker to link all symbols explicitly.
 list(APPEND WebKit2_LIBRARIES
     GObjectDOMBindings
     WebCorePlatformGTK
+    ${GTK_UNIX_PRINT_LIBRARIES}
 )
 ADD_WHOLE_ARCHIVE_TO_LIBRARIES(WebKit2_LIBRARIES)
 
