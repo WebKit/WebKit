@@ -1,3 +1,16 @@
+2014-03-16  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r165703): JSC tests crashing in StringImpl::destroy().
+        <https://webkit.org/b/130304>
+
+        Reviewed by Anders Carlsson.
+
+        Unreviewed, restoring the old behavior of OpaqueJSString::identifier()
+        that doesn't put a potentially unwanted string into the Identifier table.
+
+        * API/OpaqueJSString.cpp:
+        (OpaqueJSString::identifier):
+
 2014-03-16  Brian Burg  <bburg@apple.com>
 
         Web Inspector: generated backend commands should reflect build system ENABLE settings

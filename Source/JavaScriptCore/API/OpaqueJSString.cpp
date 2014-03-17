@@ -71,7 +71,10 @@ Identifier OpaqueJSString::identifier(VM* vm) const
     if (m_string.isEmpty())
         return Identifier(Identifier::EmptyIdentifier);
 
-    return Identifier(vm, m_string);
+    if (m_string.is8Bit())
+        return Identifier(vm, m_string.characters8(), m_string.length());
+
+    return Identifier(vm, m_string.characters16(), m_string.length());
 }
 
 const UChar* OpaqueJSString::characters()
