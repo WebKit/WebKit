@@ -482,7 +482,7 @@ void WebDownload::didFinish()
         
         bool reportBundlePathAsFinalPath = true;
 
-        BString destinationBSTR(m_destination.deprecatedCharacters(), m_destination.length());
+        BString destinationBSTR(m_destination);
         if (FAILED(m_delegate->decideDestinationWithSuggestedFilename(this, destinationBSTR)))
             LOG_ERROR("delegate->decideDestinationWithSuggestedFilename() failed");
 

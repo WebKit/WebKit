@@ -691,9 +691,8 @@ void BinaryPropertyListSerializer::appendInteger(size_t integer)
 void BinaryPropertyListSerializer::appendStringObject(const String& string)
 {
     startObject();
-    const UChar* characters = string.deprecatedCharacters();
     unsigned length = string.length();
-    if (charactersAreAllASCII(characters, length)) {
+    if (string.containsOnlyASCII()) {
         if (length <= maxLengthInMarkerByte)
             appendByte(static_cast<unsigned char>(asciiStringMarkerByte | length));
         else {
@@ -701,7 +700,7 @@ void BinaryPropertyListSerializer::appendStringObject(const String& string)
             appendInteger(length);
         }
         for (unsigned i = 0; i < length; ++i)
-            appendByte(characters[i]);
+            appendByte(string[i]);
     } else {
         if (length <= maxLengthInMarkerByte)
             appendByte(static_cast<unsigned char>(unicodeStringMarkerByte | length));
@@ -710,8 +709,8 @@ void BinaryPropertyListSerializer::appendStringObject(const String& string)
             appendInteger(length);
         }
         for (unsigned i = 0; i < length; ++i) {
-            appendByte(characters[i] >> 8);
-            appendByte(characters[i]);
+            appendByte(string[i] >> 8);
+            appendByte(string[i]);
         }
     }
 }

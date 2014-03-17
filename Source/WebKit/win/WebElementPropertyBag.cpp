@@ -31,6 +31,7 @@
 #include "DOMCoreClasses.h"
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
+#include <WebCore/BString.h>
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/HitTestResult.h>
@@ -102,7 +103,7 @@ static bool isEqual(LPCWSTR s1, LPCWSTR s2)
 static HRESULT convertStringToVariant(VARIANT* pVar, const String& string)
 {
     V_VT(pVar) = VT_BSTR;
-    V_BSTR(pVar) = SysAllocStringLen(string.deprecatedCharacters(), string.length());
+    V_BSTR(pVar) = BString(string).release();
     if (string.length() && !V_BSTR(pVar))
         return E_OUTOFMEMORY;
 

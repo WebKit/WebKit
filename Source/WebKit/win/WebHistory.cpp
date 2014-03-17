@@ -565,8 +565,6 @@ COMPtr<IWebHistoryItem> WebHistory::itemForURLString(const String& urlString) co
 
 void WebHistory::addVisitedLinksToPageGroup(PageGroup& group)
 {
-    for (auto it = m_entriesByURL.begin(); it != m_entriesByURL.end(); ++it) {
-        const String& url = it->key;
-        group.addVisitedLink(url.deprecatedCharacters(), url.length());
-    }
+    for (auto& url : m_entriesByURL.keys())
+        group.addVisitedLinkHash(visitedLinkHash(url));
 }

@@ -1366,7 +1366,7 @@ HRESULT WebFrame::searchForLabelsBeforeElement(const BSTR* labels, unsigned cLab
     bool resultIsInCellAbove;
     String label = coreFrame->searchForLabelsBeforeElement(labelStrings, coreElement, &resultDistance, &resultIsInCellAbove);
     
-    *result = SysAllocStringLen(label.deprecatedCharacters(), label.length());
+    *result = BString(label).release();
     if (label.length() && !*result)
         return E_OUTOFMEMORY;
     if (outResultDistance)
@@ -1404,7 +1404,7 @@ HRESULT WebFrame::matchLabelsAgainstElement(const BSTR* labels, int cLabels, IDO
 
     String label = coreFrame->matchLabelsAgainstElement(labelStrings, coreElement);
     
-    *result = SysAllocStringLen(label.deprecatedCharacters(), label.length());
+    *result = BString(label).release();
     if (label.length() && !*result)
         return E_OUTOFMEMORY;
     return S_OK;

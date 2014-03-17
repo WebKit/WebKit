@@ -27,6 +27,7 @@
 #include "WebKitDLL.h"
 #include "DOMCSSClasses.h"
 
+#include <WebCore/BString.h>
 #include <wtf/text/WTFString.h>
 
 // DOMCSSStyleDeclaration - DOMCSSStyleDeclaration ----------------------------
@@ -102,7 +103,7 @@ HRESULT STDMETHODCALLTYPE DOMCSSStyleDeclaration::getPropertyValue(
 {
     WTF::String propertyNameString(propertyName);
     WTF::String value = m_style->getPropertyValue(propertyNameString);
-    *result = SysAllocStringLen(value.deprecatedCharacters(), value.length());
+    *result = WebCore::BString(value).release();
     if (value.length() && !*result)
         return E_OUTOFMEMORY;
     return S_OK;

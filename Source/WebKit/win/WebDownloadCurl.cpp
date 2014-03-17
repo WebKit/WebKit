@@ -180,7 +180,7 @@ void WebDownload::didReceiveResponse()
         if (suggestedFilename.isEmpty())
             suggestedFilename = pathGetFileName(response.url().string());
         suggestedFilename = decodeURLEscapeSequences(suggestedFilename);
-        BString suggestedFilenameBSTR(suggestedFilename.deprecatedCharacters(), suggestedFilename.length());
+        BString suggestedFilenameBSTR(suggestedFilename);
         m_delegate->decideDestinationWithSuggestedFilename(this, suggestedFilenameBSTR);
     }
 }

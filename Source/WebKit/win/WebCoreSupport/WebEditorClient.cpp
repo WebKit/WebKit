@@ -668,7 +668,7 @@ void WebEditorClient::checkSpellingOfString(StringView text, int* misspellingLoc
         return;
 
     initViewSpecificSpelling(m_webView);
-    ed->checkSpellingOfString(m_webView, text.toStringWithoutCopying().deprecatedCharacters(), text.length(), misspellingLocation, misspellingLength);
+    ed->checkSpellingOfString(m_webView, text.upconvertedCharacters(), text.length(), misspellingLocation, misspellingLength);
 }
 
 String WebEditorClient::getAutoCorrectSuggestionForMisspelledWord(const String& inputWord)
@@ -690,7 +690,7 @@ void WebEditorClient::checkGrammarOfString(StringView text, Vector<GrammarDetail
 
     initViewSpecificSpelling(m_webView);
     COMPtr<IEnumWebGrammarDetails> enumDetailsObj;
-    if (FAILED(ed->checkGrammarOfString(m_webView, text.toStringWithoutCopying().deprecatedCharacters(), text.length(), &enumDetailsObj, badGrammarLocation, badGrammarLength)))
+    if (FAILED(ed->checkGrammarOfString(m_webView, text.upconvertedCharacters(), text.length(), &enumDetailsObj, badGrammarLocation, badGrammarLength)))
         return;
 
     while (true) {

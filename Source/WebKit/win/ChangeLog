@@ -1,3 +1,74 @@
+2014-03-16  Darin Adler  <darin@apple.com>
+
+        Remove all deprecatedCharacters use from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=130305
+
+        Reviewed by Andreas Kling.
+
+        * AccessibleTextImpl.cpp:
+        (AccessibleText::get_text): Use BString instead of SysAllocStringLen,
+        which handles String directly.
+        (AccessibleText::get_textBeforeOffset): Ditto.
+        (AccessibleText::get_textAfterOffset): Ditto.
+        (AccessibleText::get_textAtOffset): Ditto.
+        (AccessibleText::get_attributes): Ditto.
+        * DOMCSSClasses.cpp:
+        (DOMCSSStyleDeclaration::getPropertyValue): Ditto.
+        * DOMCoreClasses.cpp:
+        (DOMNode::nodeValue): Ditto.
+        (DOMElement::getAttribute): Ditto.
+        (DOMElement::font): Rework this to leak a string, since it returns a
+        pointer to a font family name's characters with no defined lifetime.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLElement::innerText): Use BString's String-based constructor,
+        instead of explicitly passing a character pointer.
+        (DOMHTMLFormElement::action): Ditto.
+        (DOMHTMLFormElement::method): Ditto.
+        (DOMHTMLInputElement::value): Ditto.
+        (DOMHTMLTextAreaElement::value): Ditto.
+
+        * MarshallingHelpers.cpp:
+        (MarshallingHelpers::PathStringToFileCFURLRef): Use String::createCFString.
+
+        * WebCoreSupport/WebEditorClient.cpp:
+        (WebEditorClient::checkSpellingOfString): Use StringView::upconvertedCharacters.
+        (WebEditorClient::checkGrammarOfString): Ditto.
+
+        * WebDataSource.cpp:
+        (WebDataSource::unreachableURL): Use BString's String-based constructor,
+        instead of explicitly passing a character pointer.
+
+        * WebDownload.cpp:
+        (WebDownload::bundlePathForTargetPath): Use BString instead of SysAllocStringLen.
+
+        * WebDownloadCFNet.cpp:
+        (WebDownload::didFinish): Use BString's String-based constructor,
+        instead of explicitly passing a character pointer.
+        * WebDownloadCurl.cpp:
+        (WebDownload::didReceiveResponse): Ditto.
+
+        * WebElementPropertyBag.cpp:
+        (convertStringToVariant): Use BString instead of SysAllocStringLen.
+        * WebFrame.cpp:
+        (WebFrame::searchForLabelsBeforeElement): Ditto.
+        (WebFrame::matchLabelsAgainstElement): Ditto.
+
+        * WebHistory.cpp:
+        (WebHistory::addVisitedLinksToPageGroup): Use a better loop and call
+        visitedLinkHash, since it can take a String.
+
+        * WebKitGraphics.cpp:
+        (CenterTruncateStringToWidth): Use StringView::getCharactersWithUpconvert.
+        (RightTruncateStringToWidth): Ditto.
+
+        * WebView.cpp:
+        (WebView::applicationNameForUserAgent): Use BString instead of SysAllocStringLen.
+        (WebView::customUserAgent): Ditto.
+        (WebView::groupName): Ditto.
+        (WebView::selectedText): Ditto.
+        (WebView::onIMERequestReconvertString): Use StringView::getCharactersWithUpconvert.
+
 2014-03-14  Maciej Stachowiak  <mjs@apple.com>
 
         Replace "Apple Computer, Inc." with "Apple Inc." in copyright headers

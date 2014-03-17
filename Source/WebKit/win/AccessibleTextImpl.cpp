@@ -192,7 +192,7 @@ HRESULT AccessibleText::get_text(long startOffset, long endOffset, BSTR* text)
     endOffset = convertSpecialOffset(endOffset);
     WTF::String substringText = m_object->stringValue().substring(startOffset, endOffset - startOffset);
 
-    *text = SysAllocStringLen(substringText.deprecatedCharacters(), substringText.length());
+    *text = BString(substringText).release();
     if (substringText.length() && !*text)
         return E_OUTOFMEMORY;
 
@@ -256,7 +256,7 @@ HRESULT AccessibleText::get_textBeforeOffset(long offset, enum IA2TextBoundaryTy
         return S_FALSE;
 
     WTF::String substringText = m_object->text().substring(*startOffset, *endOffset - *startOffset);
-    *text = SysAllocStringLen(substringText.deprecatedCharacters(), substringText.length());
+    *text = BString(substringText).release();
 
     if (substringText.length() && !*text)
         return E_OUTOFMEMORY;
@@ -324,7 +324,7 @@ HRESULT AccessibleText::get_textAfterOffset(long offset, enum IA2TextBoundaryTyp
         return S_FALSE;
 
     WTF::String substringText = m_object->text().substring(*startOffset, *endOffset - *startOffset);
-    *text = SysAllocStringLen(substringText.deprecatedCharacters(), substringText.length());
+    *text = BString(substringText).release();
     if (substringText.length() && !*text)
         return E_OUTOFMEMORY;
 
@@ -384,7 +384,7 @@ HRESULT AccessibleText::get_textAtOffset(long offset, enum IA2TextBoundaryType b
         return S_FALSE;
 
     WTF::String substringText = m_object->text().substring(*startOffset, *endOffset - *startOffset);
-    *text = SysAllocStringLen(substringText.deprecatedCharacters(), substringText.length());
+    *text = BString(substringText).release();
 
     if (substringText.length() && !*text)
         return E_OUTOFMEMORY;
@@ -674,7 +674,7 @@ HRESULT AccessibleText::setAttributes(long startOffset, long endOffset, BSTR* at
 HRESULT AccessibleText::get_attributes(BSTR* attributes)
 {
     WTF::String text("text-model:a1");
-    *attributes = SysAllocStringLen(text.deprecatedCharacters(), text.length());
+    *attributes = BString(text).release();
     return S_OK;
 }
 

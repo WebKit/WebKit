@@ -38,6 +38,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/StringTruncator.h>
 #include <WebCore/WebCoreTextRenderer.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -117,7 +118,7 @@ unsigned CenterTruncateStringToWidth(LPCTSTR text, int length, const WebFontDesc
     FontCachePurgePreventer fontCachePurgePreventer;
 
     String result = StringTruncator::centerTruncate(String(text, length), width, makeFont(description), StringTruncator::EnableRoundingHacks);
-    memcpy(buffer, result.deprecatedCharacters(), result.length() * sizeof(UChar));
+    StringView(result).getCharactersWithUpconvert(buffer);
     buffer[result.length()] = '\0';
     return result.length();
 }
@@ -129,7 +130,7 @@ unsigned RightTruncateStringToWidth(LPCTSTR text, int length, const WebFontDescr
     FontCachePurgePreventer fontCachePurgePreventer;
 
     String result = StringTruncator::rightTruncate(String(text, length), width, makeFont(description), StringTruncator::EnableRoundingHacks);
-    memcpy(buffer, result.deprecatedCharacters(), result.length() * sizeof(UChar));
+    StringView(result).getCharactersWithUpconvert(buffer);
     buffer[result.length()] = '\0';
     return result.length();
 }
