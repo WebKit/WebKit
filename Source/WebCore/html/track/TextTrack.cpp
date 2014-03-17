@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
  * Copyright (C) 2011-2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -139,8 +139,10 @@ TextTrack::~TextTrack()
         for (size_t i = 0; i < m_cues->length(); ++i)
             m_cues->item(i)->setTrack(0);
 #if ENABLE(WEBVTT_REGIONS)
-        for (size_t i = 0; i < m_regions->length(); ++i)
-            m_regions->item(i)->setTrack(0);
+        if (m_regions) {
+            for (size_t i = 0; i < m_regions->length(); ++i)
+                m_regions->item(i)->setTrack(0);
+        }
 #endif
     }
     clearClient();

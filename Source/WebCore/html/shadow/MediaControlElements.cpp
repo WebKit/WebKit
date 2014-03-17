@@ -59,6 +59,10 @@
 #include "RenderWidget.h"
 #endif
 
+#if ENABLE(WEBVTT_REGIONS)
+#include "TextTrackRegionList.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -1292,11 +1296,34 @@ void MediaControlTextTrackContainerElement::updateDisplay()
             continue;
 
         RefPtr<VTTCueBox> displayBox = cue->getDisplayTree(m_videoDisplaySize.size());
-        if (displayBox->hasChildNodes() && !contains(displayBox.get())) {
-            // Note: the display tree of a cue is removed when the active flag of the cue is unset.
-            appendChild(displayBox, ASSERT_NO_EXCEPTION);
-            cue->setFontSize(m_fontSize, m_videoDisplaySize.size(), m_fontSizeIsImportant);
+#if ENABLE(WEBVTT_REGIONS)
+        if (cue->track()->mode() == TextTrack::disabledKeyword())
+            continue;
+
+        TextTrackRegion* region = cue->track()->regions()->getRegionById(cue->regionId());
+        if (!region) {
+            // If cue has an empty text track cue region identifier or there is no
+            // WebVTT region whose region identifier is identical to cue's text
+            // track cue region identifier, run the following substeps:
+#endif
+            if (displayBox->hasChildNodes() && !contains(displayBox.get())) {
+                // Note: the display tree of a cue is removed when the active flag of the cue is unset.
+                appendChild(displayBox, ASSERT_NO_EXCEPTION);
+                cue->setFontSize(m_fontSize, m_videoDisplaySize.size(), m_fontSizeIsImportant);
+            }
+#if ENABLE(WEBVTT_REGIONS)
+        } else {
+            // Let region be the WebVTT region whose region identifier
+            // matches the text track cue region identifier of cue.
+            RefPtr<HTMLDivElement> regionNode = region->getDisplayTree();
+
+            // Append the region to the viewport, if it was not already.
+            if (!contains(regionNode.get()))
+                appendChild(region->getDisplayTree());
+
+            region->appendTextTrackCueBox(displayBox);
         }
+#endif
     }
 
     // 11. Return output.

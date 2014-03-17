@@ -51,6 +51,10 @@
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
 
+#if ENABLE(WEBVTT_REGIONS)
+#include "TextTrackRegionList.h"
+#endif
+
 namespace WebCore {
 
 static const int undefinedPosition = -1;
@@ -107,6 +111,12 @@ VTTCue* VTTCueBox::getCue() const
 void VTTCueBox::applyCSSProperties(const IntSize&)
 {
     // FIXME: Apply all the initial CSS positioning properties. http://wkb.ug/79916
+#if ENABLE(WEBVTT_REGIONS)
+    if (!m_cue->regionId().isEmpty()) {
+        setInlineStyleProperty(CSSPropertyPosition, CSSValueRelative);
+        return;
+    }
+#endif
 
     // 3.5.1 On the (root) List of WebVTT Node Objects:
 
@@ -210,7 +220,10 @@ VTTCue::VTTCue(ScriptExecutionContext& context, double start, double end, const 
 
 VTTCue::~VTTCue()
 {
-    removeDisplayTree();
+    if (!hasDisplayTree())
+        return;
+
+    displayTreeInternal()->remove(ASSERT_NO_EXCEPTION);
 }
 
 PassRefPtr<VTTCueBox> VTTCue::createDisplayTree()
@@ -458,7 +471,7 @@ void VTTCue::setIsActive(bool active)
             return;
 
         // Remove the display tree as soon as the cue becomes inactive.
-        displayTreeInternal()->remove(ASSERT_NO_EXCEPTION);
+        removeDisplayTree();
     }
 }
 
@@ -732,6 +745,16 @@ VTTCueBox* VTTCue::getDisplayTree(const IntSize& videoSize)
 
 void VTTCue::removeDisplayTree()
 {
+#if ENABLE(WEBVTT_REGIONS)
+    // The region needs to be informed about the cue removal.
+    if (track()) {
+        if (TextTrackRegionList* regions = track()->regions()) {
+            if (TextTrackRegion* region = regions->getRegionById(m_regionId))
+                region->willRemoveTextTrackCueBox(m_displayTree.get());
+        }
+    }
+#endif
+
     if (!hasDisplayTree())
         return;
     displayTreeInternal()->remove(ASSERT_NO_EXCEPTION);

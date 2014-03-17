@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Victor Carbune (victor@rosedu.org)
+ * Copyright (C) 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +46,15 @@ void RenderVTTCue::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     RenderBlockFlow::layout();
+
+#if ENABLE(WEBVTT_REGIONS)
+    // If WebVTT Regions are used, the regular WebVTT layout algorithm is no
+    // longer necessary, since cues having the region parameter set do not have
+    // any positioning parameters. Also, in this case, the regions themselves
+    // have positioning information.
+    if (!m_cue->regionId().isEmpty())
+        return;
+#endif
 
     LayoutStateMaintainer statePusher(view(), *this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
     

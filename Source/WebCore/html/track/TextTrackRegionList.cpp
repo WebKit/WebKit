@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,10 +51,14 @@ TextTrackRegion* TextTrackRegionList::item(unsigned index) const
 
 TextTrackRegion* TextTrackRegionList::getRegionById(const String& id) const
 {
-    for (size_t i = 0; i < m_list.size(); ++i) {
-        if (m_list[i]->id() == id)
-            return m_list[i].get();
+    if (id.isEmpty())
+        return 0;
+
+    for (const auto& region : m_list) {
+        if (region->id() == id)
+            return region.get();
     }
+
     return 0;
 }
 

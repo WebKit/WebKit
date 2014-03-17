@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc.  All rights reserved.
+ * Copyright (C) 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,17 +34,22 @@
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
 
+#include "ContextDestructionObserver.h"
+#include "Document.h"
 #include "FloatPoint.h"
 #include "TextTrack.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class TextTrackRegion : public RefCounted<TextTrackRegion> {
+class HTMLDivElement;
+class VTTCueBox;
+
+class TextTrackRegion : public RefCounted<TextTrackRegion>, public ContextDestructionObserver {
 public:
-    static PassRefPtr<TextTrackRegion> create()
+    static PassRefPtr<TextTrackRegion> create(ScriptExecutionContext& context)
     {
-        return adoptRef(new TextTrackRegion());
+        return adoptRef(new TextTrackRegion(context));
     }
 
     virtual ~TextTrackRegion();
@@ -80,8 +86,25 @@ public:
     const String& regionSettings() const { return m_settings; }
     void setRegionSettings(const String&);
 
+    bool isScrollingRegion() { return m_scroll; }
+
+    PassRefPtr<HTMLDivElement> getDisplayTree();
+    
+    void appendTextTrackCueBox(PassRefPtr<VTTCueBox>);
+    void displayLastTextTrackCueBox();
+    void willRemoveTextTrackCueBox(VTTCueBox*);
+
 private:
-    TextTrackRegion();
+    TextTrackRegion(ScriptExecutionContext&);
+
+    Document* ownerDocument() { return toDocument(m_scriptExecutionContext); }
+
+    void prepareRegionDisplayTree();
+
+    // The timer is needed to continue processing when cue scrolling ended.
+    void startTimer();
+    void stopTimer();
+    void scrollTimerFired(Timer<TextTrackRegion>*);
 
     enum RegionSetting {
         None,
@@ -98,6 +121,10 @@ private:
     void parseSettingValue(RegionSetting, const String&);
     void parseSetting(const String&, unsigned*);
 
+    static const AtomicString& textTrackCueContainerShadowPseudoId();
+    static const AtomicString& textTrackCueContainerScrollingClass();
+    static const AtomicString& textTrackRegionShadowPseudoId();
+
     String m_id;
     String m_settings;
 
@@ -109,11 +136,27 @@ private:
 
     bool m_scroll;
 
+    RefPtr<HTMLDivElement> m_regionDisplayTree;
+
+    // The cue container is the container that is scrolled up to obtain the
+    // effect of scrolling cues when this is enabled for the regions.
+    RefPtr<HTMLDivElement> m_cueContainer;
+
     // The member variable track can be a raw pointer as it will never
     // reference a destroyed TextTrack, as this member variable
     // is cleared in the TextTrack destructor and it is generally
     // set/reset within the addRegion and removeRegion methods.
     TextTrack* m_track;
+
+    // Keep track of the current numeric value of the css "top" property.
+    double m_currentTop;
+
+    // The timer is used to display the next cue line after the current one has
+    // been displayed. It's main use is for scrolling regions and it triggers as
+    // soon as the animation for rolling out one line has finished, but
+    // currently it is used also for non-scrolling regions to use a single
+    // code path.
+    Timer<TextTrackRegion> m_scrollTimer;
 };
 
 } // namespace WebCore

@@ -1,3 +1,56 @@
+2014-03-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebVTT] Extending WebVTT Rendering with Regions
+        https://bugs.webkit.org/show_bug.cgi?id=109822
+
+        Reviewed by Eric Carlson.
+
+        Merged from Blink (patch by Victor Carbune vcarbune@chromium.org):
+        https://chromium.googlesource.com/chromium/blink/+/0cdebc1d76d41bfcb9c4b022e54a4fbff132225d
+
+        No new tests, as this feature is not active in default builds. New tests will be added
+        in an upcoming bug.
+
+        * css/mediaControls.css:
+        (video::-webkit-media-text-track-region):
+        (video::-webkit-media-text-track-region-container):
+        (video::-webkit-media-text-track-region-container.scrolling):
+        (video::-webkit-media-text-track-display):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay):
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::~TextTrack):
+        * html/track/TextTrackCue.cpp:
+        * html/track/TextTrackRegion.cpp:
+        (WebCore::TextTrackRegion::TextTrackRegion):
+        (WebCore::TextTrackRegion::textTrackCueContainerScrollingClass):
+        (WebCore::TextTrackRegion::textTrackCueContainerShadowPseudoId):
+        (WebCore::TextTrackRegion::textTrackRegionShadowPseudoId):
+        (WebCore::TextTrackRegion::appendTextTrackCueBox):
+        (WebCore::TextTrackRegion::displayLastTextTrackCueBox):
+        (WebCore::TextTrackRegion::willRemoveTextTrackCueBox):
+        (WebCore::TextTrackRegion::getDisplayTree):
+        (WebCore::TextTrackRegion::prepareRegionDisplayTree):
+        (WebCore::TextTrackRegion::startTimer):
+        (WebCore::TextTrackRegion::stopTimer):
+        (WebCore::TextTrackRegion::scrollTimerFired):
+        * html/track/TextTrackRegion.h:
+        (WebCore::TextTrackRegion::create):
+        (WebCore::TextTrackRegion::isScrollingRegion):
+        (WebCore::TextTrackRegion::ownerDocument):
+        * html/track/TextTrackRegion.idl:
+        * html/track/TextTrackRegionList.cpp:
+        (WebCore::TextTrackRegionList::getRegionById):
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCueBox::applyCSSProperties):
+        (WebCore::VTTCue::~VTTCue):
+        (WebCore::VTTCue::setIsActive):
+        (WebCore::VTTCue::removeDisplayTree):
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::createNewRegion):
+        * rendering/RenderVTTCue.cpp:
+        (WebCore::RenderVTTCue::layout):
+
 2014-03-17  Brendan Long  <b.long@cablelabs.com>
 
         [GStreamer] human readable language code for tracks

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
  * Copyright (C) 2013 Cable Television Labs, Inc.
+ * Copyright (C) 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -398,7 +399,7 @@ void WebVTTParser::createNewRegion()
     if (!m_currentHeaderValue.length())
         return;
 
-    RefPtr<TextTrackRegion> region = TextTrackRegion::create();
+    RefPtr<TextTrackRegion> region = TextTrackRegion::create(*m_scriptExecutionContext);
     region->setRegionSettings(m_currentHeaderValue);
 
     // 15.5.10 If the text track list of regions regions contains a region
