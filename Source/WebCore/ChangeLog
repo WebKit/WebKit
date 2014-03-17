@@ -1,3 +1,15 @@
+2014-03-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed.
+
+        Addressing reviewing comments by Darin in bug #130310 that I forgot
+        to address before landing the changes in r165732.
+        https://bugs.webkit.org/show_bug.cgi?id=130310
+
+        * rendering/InlineTextBox.cpp:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderObject.cpp:
+
 2014-03-17  Jessie Berlin  <jberlin@apple.com>
 
         Speculative build fix for ENABLE(TELEPHONE_NUMBER_DETECTION) after r165724.

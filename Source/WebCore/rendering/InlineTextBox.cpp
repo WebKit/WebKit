@@ -51,11 +51,8 @@
 #include "TextPaintStyle.h"
 #include "TextPainter.h"
 #include "break_lines.h"
+#include <stdio.h>
 #include <wtf/text/CString.h>
-
-#ifndef NDEBUG
-#include <cstdio>
-#endif
 
 namespace WebCore {
 

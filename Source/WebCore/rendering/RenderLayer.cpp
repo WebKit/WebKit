@@ -111,6 +111,7 @@
 #include "TextStream.h"
 #include "TransformationMatrix.h"
 #include "TranslateTransformOperation.h"
+#include <stdio.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
@@ -120,11 +121,6 @@
 #include "FilterEffectRenderer.h"
 #include "RenderLayerFilterInfo.h"
 #endif
-
-#ifndef NDEBUG
-#include <cstdio>
-#endif
-
 
 #define MIN_INTERSECT_FOR_REVEAL 32
 

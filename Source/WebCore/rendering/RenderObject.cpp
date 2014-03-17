@@ -63,14 +63,11 @@
 #include "TransformState.h"
 #include "htmlediting.h"
 #include <algorithm>
+#include <stdio.h>
 #include <wtf/RefCountedLeakCounter.h>
 
 #if PLATFORM(IOS)
 #include "SelectionRect.h"
-#endif
-
-#ifndef NDEBUG
-#include <cstdio>
 #endif
 
 namespace WebCore {
