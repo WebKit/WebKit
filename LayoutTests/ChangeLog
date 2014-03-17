@@ -1,3 +1,17 @@
+2014-03-17  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        Safari should not render a cell if the <td> is empty
+        https://bugs.webkit.org/show_bug.cgi?id=15273
+
+        Reviewed by Darin Adler.
+
+        * fast/table/table-cell-border-doctype-expected.html: Added.
+        * fast/table/table-cell-border-doctype.html: Added.
+        * fast/table/table-cell-border-no-doctype-expected.html: Added.
+        * fast/table/table-cell-border-no-doctype.html: Added.
+        Added new test cases to check the behaviour of table cell border when
+        table has doctype/no doctype and table cell has child/nochild.
+
 2014-03-16  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Do not compute region range for a box unless the parent has one

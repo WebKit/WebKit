@@ -1326,7 +1326,7 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoin
 
     paintBoxShadow(paintInfo, paintRect, style(), Inset);
 
-    if (!style().hasBorder() || tableElt->collapseBorders())
+    if (!style().hasBorder() || tableElt->collapseBorders() || (!firstChild() && document().inQuirksMode()))
         return;
 
     paintBorder(paintInfo, paintRect, style());
