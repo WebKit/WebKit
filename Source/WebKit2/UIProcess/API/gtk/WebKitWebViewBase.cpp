@@ -165,7 +165,7 @@ static void toplevelWindowResizeGripVisibilityChanged(GObject*, GParamSpec*, Web
     webkitWebViewBaseNotifyResizerSize(webViewBase);
 }
 
-static gboolean toplevelWindowFocusInEvent(GtkWidget* widget, GdkEventFocus*, WebKitWebViewBase* webViewBase)
+static gboolean toplevelWindowFocusInEvent(GtkWidget*, GdkEventFocus*, WebKitWebViewBase* webViewBase)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (!priv->isInWindowActive) {
@@ -176,7 +176,7 @@ static gboolean toplevelWindowFocusInEvent(GtkWidget* widget, GdkEventFocus*, We
     return FALSE;
 }
 
-static gboolean toplevelWindowFocusOutEvent(GtkWidget* widget, GdkEventFocus*, WebKitWebViewBase* webViewBase)
+static gboolean toplevelWindowFocusOutEvent(GtkWidget*, GdkEventFocus*, WebKitWebViewBase* webViewBase)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (priv->isInWindowActive) {
@@ -726,7 +726,7 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
     return TRUE;
 }
 
-static gboolean webkitWebViewBaseQueryTooltip(GtkWidget* widget, gint x, gint y, gboolean keyboardMode, GtkTooltip* tooltip)
+static gboolean webkitWebViewBaseQueryTooltip(GtkWidget* widget, gint /* x */, gint /* y */, gboolean keyboardMode, GtkTooltip* tooltip)
 {
     WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
 
@@ -750,7 +750,7 @@ static gboolean webkitWebViewBaseQueryTooltip(GtkWidget* widget, gint x, gint y,
 }
 
 #if ENABLE(DRAG_SUPPORT)
-static void webkitWebViewBaseDragDataGet(GtkWidget* widget, GdkDragContext* context, GtkSelectionData* selectionData, guint info, guint time)
+static void webkitWebViewBaseDragDataGet(GtkWidget* widget, GdkDragContext* context, GtkSelectionData* selectionData, guint info, guint /* time */)
 {
     WEBKIT_WEB_VIEW_BASE(widget)->priv->dragAndDropHelper.handleGetDragData(context, selectionData, info);
 }
@@ -770,7 +770,7 @@ static void webkitWebViewBaseDragEnd(GtkWidget* widget, GdkDragContext* context)
                                             gdkDragActionToDragOperation(gdk_drag_context_get_selected_action(context)));
 }
 
-static void webkitWebViewBaseDragDataReceived(GtkWidget* widget, GdkDragContext* context, gint x, gint y, GtkSelectionData* selectionData, guint info, guint time)
+static void webkitWebViewBaseDragDataReceived(GtkWidget* widget, GdkDragContext* context, gint /* x */, gint /* y */, GtkSelectionData* selectionData, guint info, guint time)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     IntPoint position;
@@ -842,7 +842,7 @@ static void dragExitedCallback(GtkWidget* widget, DragData& dragData, bool dropH
     webViewBase->priv->pageProxy->resetDragOperation();
 }
 
-static void webkitWebViewBaseDragLeave(GtkWidget* widget, GdkDragContext* context, guint time)
+static void webkitWebViewBaseDragLeave(GtkWidget* widget, GdkDragContext* context, guint /* time */)
 {
     WEBKIT_WEB_VIEW_BASE(widget)->priv->dragAndDropHelper.handleDragLeave(context, dragExitedCallback);
 }
@@ -864,7 +864,7 @@ static gboolean webkitWebViewBaseDragDrop(GtkWidget* widget, GdkDragContext* con
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
-static void webkitWebViewBaseParentSet(GtkWidget* widget, GtkWidget* oldParent)
+static void webkitWebViewBaseParentSet(GtkWidget* widget, GtkWidget* /* oldParent */)
 {
     if (!gtk_widget_get_parent(widget))
         webkitWebViewBaseSetToplevelOnScreenWindow(WEBKIT_WEB_VIEW_BASE(widget), 0);

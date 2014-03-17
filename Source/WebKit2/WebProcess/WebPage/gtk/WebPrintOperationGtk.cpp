@@ -385,6 +385,8 @@ PassRefPtr<WebPrintOperationGtk> WebPrintOperationGtk::create(WebPage* page, con
 #elif defined(G_OS_WIN32)
     return adoptRef(new WebPrintOperationGtkWin32(page, printInfo));
 #else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(printInfo);
     return 0;
 #endif
 }

@@ -265,7 +265,7 @@ static gboolean webkitWebViewScriptDialog(WebKitWebView* webView, WebKitScriptDi
     return TRUE;
 }
 
-static gboolean webkitWebViewDecidePolicy(WebKitWebView* webView, WebKitPolicyDecision* decision, WebKitPolicyDecisionType decisionType)
+static gboolean webkitWebViewDecidePolicy(WebKitWebView*, WebKitPolicyDecision* decision, WebKitPolicyDecisionType decisionType)
 {
     if (decisionType != WEBKIT_POLICY_DECISION_TYPE_RESPONSE) {
         webkit_policy_decision_use(decision);
@@ -365,7 +365,7 @@ static void webkitWebViewUpdateFaviconURI(WebKitWebView* webView, const char* fa
     webkitWebViewRequestFavicon(webView);
 }
 
-static void faviconChangedCallback(WebKitFaviconDatabase* database, const char* pageURI, const char* faviconURI, WebKitWebView* webView)
+static void faviconChangedCallback(WebKitFaviconDatabase*, const char* pageURI, const char* faviconURI, WebKitWebView* webView)
 {
     if (webView->priv->activeURI != pageURI)
         return;
@@ -398,7 +398,7 @@ static void webkitWebViewDisconnectSettingsSignalHandlers(WebKitWebView* webView
     g_signal_handlers_disconnect_by_func(settings, reinterpret_cast<gpointer>(userAgentChanged), webView);
 }
 
-static void webkitWebViewSettingsChanged(WebKitWebViewGroup* group, GParamSpec*, WebKitWebView* webView)
+static void webkitWebViewSettingsChanged(WebKitWebViewGroup*, GParamSpec*, WebKitWebView* webView)
 {
     webkitWebViewDisconnectSettingsSignalHandlers(webView);
     webkitWebViewUpdateSettings(webView);

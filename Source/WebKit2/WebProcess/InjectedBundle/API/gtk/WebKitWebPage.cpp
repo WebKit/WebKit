@@ -115,7 +115,7 @@ static void didStartProvisionalLoadForFrame(WKBundlePageRef, WKBundleFrameRef fr
     webkitWebPageSetURI(WEBKIT_WEB_PAGE(clientInfo), getProvisionalURLForFrame(toImpl(frame)));
 }
 
-static void didReceiveServerRedirectForProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo)
+static void didReceiveServerRedirectForProvisionalLoadForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKTypeRef* /* userData */, const void *clientInfo)
 {
     if (!WKBundleFrameIsMainFrame(frame))
         return;
@@ -123,7 +123,7 @@ static void didReceiveServerRedirectForProvisionalLoadForFrame(WKBundlePageRef p
     webkitWebPageSetURI(WEBKIT_WEB_PAGE(clientInfo), getProvisionalURLForFrame(toImpl(frame)));
 }
 
-static void didSameDocumentNavigationForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKSameDocumentNavigationType type, WKTypeRef* userData, const void *clientInfo)
+static void didSameDocumentNavigationForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKSameDocumentNavigationType, WKTypeRef* /* userData */, const void *clientInfo)
 {
     if (!WKBundleFrameIsMainFrame(frame))
         return;
@@ -139,7 +139,7 @@ static void didFinishDocumentLoadForFrame(WKBundlePageRef, WKBundleFrameRef fram
     g_signal_emit(WEBKIT_WEB_PAGE(clientInfo), signals[DOCUMENT_LOADED], 0);
 }
 
-static void willDestroyFrame(WKBundlePageRef, WKBundleFrameRef frame, const void *clientInfo)
+static void willDestroyFrame(WKBundlePageRef, WKBundleFrameRef frame, const void* /* clientInfo */)
 {
     webFrameMap().remove(toImpl(frame));
 }
@@ -150,7 +150,7 @@ static void didClearWindowObjectForFrame(WKBundlePageRef, WKBundleFrameRef frame
         webkitScriptWorldWindowObjectCleared(world, WEBKIT_WEB_PAGE(clientInfo), webkitFrameGetOrCreate(toImpl(frame)));
 }
 
-static void didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, bool pageLoadIsProvisional, const void*)
+static void didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, bool /* pageLoadIsProvisional */, const void*)
 {
     ImmutableDictionary::MapType message;
     message.set(String::fromUTF8("Page"), toImpl(page));

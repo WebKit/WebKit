@@ -24,7 +24,7 @@
 
 using namespace WebKit;
 
-static void startLoading(WKSoupCustomProtocolRequestManagerRef soupRequestManagerRef, uint64_t customProtocolID, WKURLRequestRef requestRef, const void* clientInfo)
+static void startLoading(WKSoupCustomProtocolRequestManagerRef, uint64_t customProtocolID, WKURLRequestRef requestRef, const void* clientInfo)
 {
     webkitWebContextStartLoadingCustomProtocol(WEBKIT_WEB_CONTEXT(clientInfo), customProtocolID, toImpl(requestRef));
 }

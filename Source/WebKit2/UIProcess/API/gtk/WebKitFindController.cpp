@@ -101,17 +101,17 @@ static inline WebKitFindOptions toWebKitFindOptions(uint32_t findOptions)
         | (findOptions & FindOptionsWrapAround ? WEBKIT_FIND_OPTIONS_WRAP_AROUND : 0));
 }
 
-static void didFindString(WKPageRef page, WKStringRef string, unsigned matchCount, const void* clientInfo)
+static void didFindString(WKPageRef, WKStringRef, unsigned matchCount, const void* clientInfo)
 {
     g_signal_emit(WEBKIT_FIND_CONTROLLER(clientInfo), signals[FOUND_TEXT], 0, matchCount);
 }
 
-static void didFailToFindString(WKPageRef page, WKStringRef string, const void* clientInfo)
+static void didFailToFindString(WKPageRef, WKStringRef, const void* clientInfo)
 {
     g_signal_emit(WEBKIT_FIND_CONTROLLER(clientInfo), signals[FAILED_TO_FIND_TEXT], 0);
 }
 
-static void didCountStringMatches(WKPageRef page, WKStringRef string, unsigned matchCount, const void* clientInfo)
+static void didCountStringMatches(WKPageRef, WKStringRef, unsigned matchCount, const void* clientInfo)
 {
     g_signal_emit(WEBKIT_FIND_CONTROLLER(clientInfo), signals[COUNTED_MATCHES], 0, matchCount);
 }

@@ -36,7 +36,7 @@ struct _WebKitFramePrivate {
 
 WEBKIT_DEFINE_TYPE(WebKitFrame, webkit_frame, G_TYPE_OBJECT)
 
-static void webkit_frame_class_init(WebKitFrameClass* klass)
+static void webkit_frame_class_init(WebKitFrameClass*)
 {
 }
 

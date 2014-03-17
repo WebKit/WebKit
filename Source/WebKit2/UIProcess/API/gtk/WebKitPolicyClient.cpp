@@ -50,7 +50,7 @@ static inline WebKitNavigationType toWebKitNavigationType(WKFrameNavigationType 
     }
 }
 
-static void decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKFrameRef originatingFrame, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKFrameRef, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef /* userData */, const void* clientInfo)
 {
     GRefPtr<WebKitNavigationPolicyDecision> decision =
         adoptGRef(webkitNavigationPolicyDecisionCreate(toWebKitNavigationType(navigationType),
@@ -64,7 +64,7 @@ static void decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WK
                                     WEBKIT_POLICY_DECISION(decision.get()));
 }
 
-static void decidePolicyForNewWindowAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+static void decidePolicyForNewWindowAction(WKPageRef, WKFrameRef, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef /* userData */, const void* clientInfo)
 {
     GRefPtr<WebKitNavigationPolicyDecision> decision =
         adoptGRef(webkitNavigationPolicyDecisionCreate(toWebKitNavigationType(navigationType),
@@ -78,7 +78,7 @@ static void decidePolicyForNewWindowAction(WKPageRef page, WKFrameRef frame, WKF
                                     WEBKIT_POLICY_DECISION(decision.get()));
 }
 
-static void decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, bool canShowMIMEType, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+static void decidePolicyForResponse(WKPageRef, WKFrameRef, WKURLResponseRef response, WKURLRequestRef request, bool canShowMIMEType, WKFramePolicyListenerRef listener, WKTypeRef /* userData */, const void* clientInfo)
 {
     GRefPtr<WebKitResponsePolicyDecision> decision =
         adoptGRef(webkitResponsePolicyDecisionCreate(toImpl(request), toImpl(response), canShowMIMEType, toImpl(listener)));

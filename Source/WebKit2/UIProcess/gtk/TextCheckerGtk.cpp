@@ -123,7 +123,7 @@ void TextChecker::updateSpellingUIWithGrammarString(int64_t spellDocumentTag, co
     WebTextChecker::shared()->client().updateSpellingUIWithGrammarString(spellDocumentTag, badGrammarPhrase, grammarDetail);
 }
 
-void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, Vector<String>& guesses)
+void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& /* context */, Vector<String>& guesses)
 {
     WebTextChecker::shared()->client().guessesForWord(spellDocumentTag, word, guesses);
 }

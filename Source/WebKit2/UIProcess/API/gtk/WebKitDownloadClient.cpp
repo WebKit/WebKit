@@ -38,7 +38,7 @@ static void didStart(WKContextRef, WKDownloadRef wkDownload, const void* clientI
     webkitWebContextDownloadStarted(WEBKIT_WEB_CONTEXT(clientInfo), download.get());
 }
 
-static void didReceiveResponse(WKContextRef, WKDownloadRef wkDownload, WKURLResponseRef wkResponse, const void* clientInfo)
+static void didReceiveResponse(WKContextRef, WKDownloadRef wkDownload, WKURLResponseRef wkResponse, const void* /* clientInfo */)
 {
     GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(toImpl(wkDownload));
     if (webkitDownloadIsCancelled(download.get()))
@@ -48,13 +48,13 @@ static void didReceiveResponse(WKContextRef, WKDownloadRef wkDownload, WKURLResp
     webkitDownloadSetResponse(download.get(), response.get());
 }
 
-static void didReceiveData(WKContextRef, WKDownloadRef wkDownload, uint64_t length, const void* clientInfo)
+static void didReceiveData(WKContextRef, WKDownloadRef wkDownload, uint64_t length, const void* /* clientInfo */)
 {
     GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(toImpl(wkDownload));
     webkitDownloadNotifyProgress(download.get(), length);
 }
 
-static WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownloadRef wkDownload, WKStringRef filename, bool* allowOverwrite, const void* clientInfo)
+static WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownloadRef wkDownload, WKStringRef filename, bool* /* allowOverwrite */, const void* /* clientInfo */)
 {
     GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(toImpl(wkDownload));
     CString destinationURI = webkitDownloadDecideDestinationWithSuggestedFilename(download.get(),
@@ -62,13 +62,13 @@ static WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownlo
     return WKStringCreateWithUTF8CString(destinationURI.data());
 }
 
-static void didCreateDestination(WKContextRef, WKDownloadRef wkDownload, WKStringRef path, const void* clientInfo)
+static void didCreateDestination(WKContextRef, WKDownloadRef wkDownload, WKStringRef path, const void* /* clientInfo */)
 {
     GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(toImpl(wkDownload));
     webkitDownloadDestinationCreated(download.get(), toImpl(path)->string().utf8());
 }
 
-static void didFail(WKContextRef, WKDownloadRef wkDownload, WKErrorRef error, const void *clientInfo)
+static void didFail(WKContextRef, WKDownloadRef wkDownload, WKErrorRef error, const void* /* clientInfo */)
 {
     GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(toImpl(wkDownload));
     if (webkitDownloadIsCancelled(download.get())) {
@@ -79,14 +79,14 @@ static void didFail(WKContextRef, WKDownloadRef wkDownload, WKErrorRef error, co
     webkitWebContextRemoveDownload(toImpl(wkDownload));
 }
 
-static void didCancel(WKContextRef, WKDownloadRef wkDownload, const void *clientInfo)
+static void didCancel(WKContextRef, WKDownloadRef wkDownload, const void* /* clientInfo */)
 {
     GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(toImpl(wkDownload));
     webkitDownloadCancelled(download.get());
     webkitWebContextRemoveDownload(toImpl(wkDownload));
 }
 
-static void didFinish(WKContextRef wkContext, WKDownloadRef wkDownload, const void *clientInfo)
+static void didFinish(WKContextRef, WKDownloadRef wkDownload, const void* /* clientInfo */)
 {
     GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(toImpl(wkDownload));
     webkitDownloadFinished(download.get());

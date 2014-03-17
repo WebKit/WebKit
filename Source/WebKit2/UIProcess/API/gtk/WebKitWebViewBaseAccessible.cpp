@@ -29,7 +29,7 @@ struct _WebKitWebViewBaseAccessiblePrivate {
 
 WEBKIT_DEFINE_TYPE(WebKitWebViewBaseAccessible, webkit_web_view_base_accessible, ATK_TYPE_SOCKET)
 
-static void webkitWebViewBaseAccessibleWidgetDestroyed(GtkWidget* widget, WebKitWebViewBaseAccessible* accessible)
+static void webkitWebViewBaseAccessibleWidgetDestroyed(GtkWidget*, WebKitWebViewBaseAccessible* accessible)
 {
     accessible->priv->widget = 0;
     atk_object_notify_state_change(ATK_OBJECT(accessible), ATK_STATE_DEFUNCT, TRUE);

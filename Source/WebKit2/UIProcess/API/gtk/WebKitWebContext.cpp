@@ -559,7 +559,7 @@ static void destroyPluginList(GList* plugins)
     g_list_free_full(plugins, g_object_unref);
 }
 
-static void webkitWebContextGetPluginThread(GTask* task, gpointer object, gpointer taskData, GCancellable*)
+static void webkitWebContextGetPluginThread(GTask* task, gpointer object, gpointer /* taskData */, GCancellable*)
 {
     Vector<PluginModuleInfo> plugins = WEBKIT_WEB_CONTEXT(object)->priv->context->pluginInfoStore().plugins();
     GList* returnValue = 0;

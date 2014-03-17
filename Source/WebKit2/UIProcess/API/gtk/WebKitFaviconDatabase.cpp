@@ -181,7 +181,7 @@ static void processPendingIconsForPageURL(WebKitFaviconDatabase* database, const
     deletePendingIconRequests(database, pendingIconRequests, pageURL);
 }
 
-static void didChangeIconForPageURLCallback(WKIconDatabaseRef wkIconDatabase, WKURLRef wkPageURL, const void* clientInfo)
+static void didChangeIconForPageURLCallback(WKIconDatabaseRef, WKURLRef wkPageURL, const void* clientInfo)
 {
     WebKitFaviconDatabase* database = WEBKIT_FAVICON_DATABASE(clientInfo);
     if (!database->priv->iconDatabase->isUrlImportCompleted())
@@ -203,7 +203,7 @@ static void didChangeIconForPageURLCallback(WKIconDatabaseRef wkIconDatabase, WK
     g_signal_emit(database, signals[FAVICON_CHANGED], 0, pageURL.utf8().data(), currentIconURL.utf8().data());
 }
 
-static void iconDataReadyForPageURLCallback(WKIconDatabaseRef wkIconDatabase, WKURLRef wkPageURL, const void* clientInfo)
+static void iconDataReadyForPageURLCallback(WKIconDatabaseRef, WKURLRef wkPageURL, const void* clientInfo)
 {
     ASSERT(RunLoop::isMain());
     processPendingIconsForPageURL(WEBKIT_FAVICON_DATABASE(clientInfo), toImpl(wkPageURL)->string());

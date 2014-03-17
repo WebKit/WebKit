@@ -26,7 +26,7 @@
 
 using namespace WebKit;
 
-static void getContextMenuFromProposedMenu(WKPageRef, WKArrayRef proposedMenu, WKArrayRef*, WKHitTestResultRef hitTestResult, WKTypeRef userData, const void* clientInfo)
+static void getContextMenuFromProposedMenu(WKPageRef, WKArrayRef proposedMenu, WKArrayRef*, WKHitTestResultRef hitTestResult, WKTypeRef /* userData */, const void* clientInfo)
 {
     webkitWebViewPopulateContextMenu(WEBKIT_WEB_VIEW(clientInfo), toImpl(proposedMenu), toImpl(hitTestResult));
 }

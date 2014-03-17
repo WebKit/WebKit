@@ -62,7 +62,7 @@ struct _WebKitContextMenuItemPrivate {
 
 WEBKIT_DEFINE_TYPE(WebKitContextMenuItem, webkit_context_menu_item, G_TYPE_INITIALLY_UNOWNED)
 
-static void webkit_context_menu_item_class_init(WebKitContextMenuItemClass* itemClass)
+static void webkit_context_menu_item_class_init(WebKitContextMenuItemClass*)
 {
 }
 

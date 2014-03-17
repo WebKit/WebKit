@@ -55,7 +55,7 @@ struct _WebKitPluginPrivate {
 
 WEBKIT_DEFINE_TYPE(WebKitPlugin, webkit_plugin, G_TYPE_OBJECT)
 
-static void webkit_plugin_class_init(WebKitPluginClass* pluginClass)
+static void webkit_plugin_class_init(WebKitPluginClass*)
 {
 }
 

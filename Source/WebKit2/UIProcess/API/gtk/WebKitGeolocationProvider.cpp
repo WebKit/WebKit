@@ -38,12 +38,12 @@ static inline WebKitGeolocationProvider* toGeolocationProvider(const void* clien
     return static_cast<WebKitGeolocationProvider*>(const_cast<void*>(clientInfo));
 }
 
-static void startUpdatingCallback(WKGeolocationManagerRef geolocationManager, const void* clientInfo)
+static void startUpdatingCallback(WKGeolocationManagerRef, const void* clientInfo)
 {
     toGeolocationProvider(clientInfo)->startUpdating();
 }
 
-static void stopUpdatingCallback(WKGeolocationManagerRef geolocationManager, const void* clientInfo)
+static void stopUpdatingCallback(WKGeolocationManagerRef, const void* clientInfo)
 {
     toGeolocationProvider(clientInfo)->stopUpdating();
 }
@@ -92,7 +92,7 @@ void WebKitGeolocationProvider::notifyPositionChanged(int timestamp, double lati
     m_geolocationManager->providerDidChangePosition(position.get());
 }
 
-void WebKitGeolocationProvider::notifyErrorOccurred(const char* message)
+void WebKitGeolocationProvider::notifyErrorOccurred(const char* /* message */)
 {
     m_geolocationManager->providerDidFailToDeterminePosition();
 }

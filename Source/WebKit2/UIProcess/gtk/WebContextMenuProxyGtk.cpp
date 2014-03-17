@@ -53,7 +53,7 @@ static void contextMenuItemActivatedCallback(GtkAction* action, WebPageProxy* pa
     page->contextMenuItemSelected(item);
 }
 
-static void contextMenuItemVisibilityChanged(GtkAction* action, GParamSpec*, WebContextMenuProxyGtk* contextMenuProxy)
+static void contextMenuItemVisibilityChanged(GtkAction*, GParamSpec*, WebContextMenuProxyGtk* contextMenuProxy)
 {
     GtkMenu* menu = contextMenuProxy->gtkMenu();
     if (!menu)

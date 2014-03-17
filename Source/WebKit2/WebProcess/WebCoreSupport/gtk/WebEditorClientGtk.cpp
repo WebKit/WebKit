@@ -148,7 +148,7 @@ public:
 private:
     GClosure* m_closure;
 
-    static void destroyOnClosureFinalization(gpointer data, GClosure* closure)
+    static void destroyOnClosureFinalization(gpointer data, GClosure*)
     {
         // Calling delete void* will free the memory but won't invoke
         // the destructor, something that is a must for us.
@@ -159,7 +159,7 @@ private:
 
 static Frame* frameSettingClipboard;
 
-static void collapseSelection(GtkClipboard* clipboard, Frame* frame)
+static void collapseSelection(GtkClipboard*, Frame* frame)
 {
     if (frameSettingClipboard && frameSettingClipboard == frame)
         return;

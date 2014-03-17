@@ -49,7 +49,7 @@ struct _WebKitBackForwardListItemPrivate {
 
 WEBKIT_DEFINE_TYPE(WebKitBackForwardListItem, webkit_back_forward_list_item, G_TYPE_INITIALLY_UNOWNED)
 
-static void webkit_back_forward_list_item_class_init(WebKitBackForwardListItemClass* listItemClass)
+static void webkit_back_forward_list_item_class_init(WebKitBackForwardListItemClass*)
 {
 }
 
@@ -61,7 +61,7 @@ static HistoryItemsMap& historyItemsMap()
     return itemsMap;
 }
 
-static void webkitBackForwardListItemFinalized(gpointer webListItem, GObject* finalizedListItem)
+static void webkitBackForwardListItemFinalized(gpointer webListItem, GObject* /* finalizedListItem */)
 {
     ASSERT(G_OBJECT(historyItemsMap().get(static_cast<WebBackForwardListItem*>(webListItem))) == finalizedListItem);
     historyItemsMap().remove(static_cast<WebBackForwardListItem*>(webListItem));
