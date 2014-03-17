@@ -1,3 +1,10 @@
+2014-03-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Undo some accidental Gtk changes from http://trac.webkit.org/changeset/165759
+
+        * UIProcess/WebPageProxy.cpp:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2014-03-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2] URTBF after r165755 for non Apple platforms, stub functions added.
