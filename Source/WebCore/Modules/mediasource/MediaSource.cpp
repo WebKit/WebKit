@@ -184,6 +184,13 @@ void MediaSource::monitorSourceBuffers()
 {
     // 2.4.4 SourceBuffer Monitoring
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#buffer-monitoring
+
+    // Note, the behavior if activeSourceBuffers is empty is undefined.
+    if (!m_activeSourceBuffers) {
+        m_private->setReadyState(MediaPlayer::HaveNothing);
+        return;
+    }
+
     // ↳ If buffered for all objects in activeSourceBuffers do not contain TimeRanges for the current
     // playback position:
     auto begin = m_activeSourceBuffers->begin();

@@ -408,6 +408,9 @@ void SourceBuffer::appendBufferInternal(unsigned char* data, unsigned size, Exce
 
 void SourceBuffer::appendBufferTimerFired(Timer<SourceBuffer>&)
 {
+    if (isRemoved())
+        return;
+
     ASSERT(m_updating);
 
     // Section 3.5.5 Buffer Append Algorithm
@@ -481,7 +484,7 @@ const AtomicString& SourceBuffer::networkError()
 
 VideoTrackList* SourceBuffer::videoTracks()
 {
-    if (!m_source->mediaElement())
+    if (!m_source || !m_source->mediaElement())
         return nullptr;
 
     if (!m_videoTracks)
@@ -492,7 +495,7 @@ VideoTrackList* SourceBuffer::videoTracks()
 
 AudioTrackList* SourceBuffer::audioTracks()
 {
-    if (!m_source->mediaElement())
+    if (!m_source || !m_source->mediaElement())
         return nullptr;
 
     if (!m_audioTracks)
@@ -503,7 +506,7 @@ AudioTrackList* SourceBuffer::audioTracks()
 
 TextTrackList* SourceBuffer::textTracks()
 {
-    if (!m_source->mediaElement())
+    if (!m_source || !m_source->mediaElement())
         return nullptr;
 
     if (!m_textTracks)
@@ -519,12 +522,14 @@ void SourceBuffer::setActive(bool active)
 
     m_active = active;
     m_private->setActive(active);
-    m_source->sourceBufferDidChangeAcitveState(this, active);
+    if (!isRemoved())
+        m_source->sourceBufferDidChangeAcitveState(this, active);
 }
 
 void SourceBuffer::sourceBufferPrivateDidEndStream(SourceBufferPrivate*, const WTF::AtomicString& error)
 {
-    m_source->endOfStream(error, IgnorableExceptionCode());
+    if (!isRemoved())
+        m_source->endOfStream(error, IgnorableExceptionCode());
 }
 
 void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBufferPrivate*, const InitializationSegment& segment)
@@ -1201,7 +1206,7 @@ void SourceBuffer::monitorBufferingRate()
 
 bool SourceBuffer::hasCurrentTime() const
 {
-    if (!m_buffered->length())
+    if (isRemoved() || !m_buffered->length())
         return false;
 
     double currentTime = m_source->currentTime();
@@ -1210,8 +1215,14 @@ bool SourceBuffer::hasCurrentTime() const
 
 bool SourceBuffer::hasFutureTime() const
 {
+    if (isRemoved())
+        return false;
+
     double currentTime = m_source->currentTime();
     const PlatformTimeRanges& ranges = m_buffered->ranges();
+    if (!ranges.length())
+        return false;
+
     double nearest = m_buffered->nearest(m_source->currentTime());
     if (fabs(m_buffered->nearest(m_source->currentTime()) - currentTime) > CurrentTimeFudgeFactor)
         return false;
@@ -1225,6 +1236,9 @@ bool SourceBuffer::hasFutureTime() const
 
 bool SourceBuffer::canPlayThrough()
 {
+    if (isRemoved())
+        return false;
+
     monitorBufferingRate();
 
     // Assuming no fluctuations in the buffering rate, loading 1 second per second or greater

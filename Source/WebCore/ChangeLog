@@ -1,3 +1,26 @@
+2014-03-17  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Add NULL protections in SourceBuffer and MediaSource.
+        https://bugs.webkit.org/show_bug.cgi?id=130266
+
+        Reviewed by Eric Carlson.
+
+        Add NULL checks in places which may be called after a SourceBuffer has been removed:
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::monitorSourceBuffers): Protect against a SourceBuffer being removed
+            (and thus activeSourceBuffers being empty) when monitoring source buffer state.
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::appendBufferTimerFired): Protect against SourceBuffer being removed.
+        (WebCore::SourceBuffer::videoTracks): Ditto.
+        (WebCore::SourceBuffer::audioTracks): Ditto.
+        (WebCore::SourceBuffer::textTracks): Ditto.
+        (WebCore::SourceBuffer::setActive): Ditto.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidEndStream): Ditto.
+        (WebCore::SourceBuffer::hasCurrentTime): Ditto.
+        (WebCore::SourceBuffer::canPlayThrough): Ditto.
+        (WebCore::SourceBuffer::hasFutureTime): Ditto, and check for an empty buffered ranges.
+
 2014-03-17  Tim Horton  <timothy_horton@apple.com>
 
         WKThumbnailView should support snapshots
