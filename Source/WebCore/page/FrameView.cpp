@@ -2840,7 +2840,7 @@ void FrameView::sendResizeEventIfNeeded()
         return;
 
     bool isMainFrame = page && page->mainFrame() == m_frame;
-    bool canSendResizeEventSynchronously = isMainFrame && !isInLayout();
+    bool canSendResizeEventSynchronously = !m_shouldAutoSize && isMainFrame && !isInLayout();
 
     // If we resized during layout, queue up a resize event for later, otherwise fire it right away.
     RefPtr<Event> resizeEvent = Event::create(eventNames().resizeEvent, false, false);
