@@ -185,28 +185,12 @@ void WebPage::cancelComposition(EditorState&)
     notImplemented();
 }
 
-static PassRefPtr<Range> convertToRange(Frame* frame, NSRange nsrange)
-{
-    if (nsrange.location > INT_MAX)
-        return 0;
-    if (nsrange.length > INT_MAX || nsrange.location + nsrange.length > INT_MAX)
-        nsrange.length = INT_MAX - nsrange.location;
-    
-    // our critical assumption is that we are only called by input methods that
-    // concentrate on a given area containing the selection
-    // We have to do this because of text fields and textareas. The DOM for those is not
-    // directly in the document DOM, so serialization is problematic. Our solution is
-    // to use the root editable element of the selection start as the positional base.
-    // That fits with AppKit's idea of an input context.
-    return TextIterator::rangeFromLocationAndLength(frame->selection().rootEditableElementOrDocumentElement(), nsrange.location, nsrange.length);
-}
-
 void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     
     if (replacementRangeStart != NSNotFound) {
-        RefPtr<Range> replacementRange = convertToRange(&frame, NSMakeRange(replacementRangeStart, replacementRangeLength));
+        RefPtr<Range> replacementRange = rangeFromEditingLocationAndLength(frame, replacementRangeStart, replacementRangeLength);
         if (replacementRange)
             frame.selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
     }

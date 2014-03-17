@@ -927,6 +927,8 @@ private:
     static PluginView* focusedPluginViewForFrame(WebCore::Frame&);
     static PluginView* pluginViewForFrame(WebCore::Frame*);
 
+    PassRefPtr<WebCore::Range> rangeFromEditingLocationAndLength(WebCore::Frame&, uint64_t location, uint64_t length);
+
     void reportUsedFeatures();
 
     uint64_t m_pageID;

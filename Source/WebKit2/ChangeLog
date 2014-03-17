@@ -1,3 +1,25 @@
+2014-03-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Move convertToRange() helper to cross-platform WebPage.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=130365
+
+        Reviewed by Tim Horton.
+
+        Also renamed it to rangeFromEditingLocationAndLength().
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::rangeFromEditingLocationAndLength):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::insertText):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::insertText):
+        (WebKit::WebPage::insertDictatedText):
+        (WebKit::WebPage::getAttributedSubstringFromRange):
+        (WebKit::WebPage::characterIndexForPoint):
+        (WebKit::WebPage::firstRectForCharacterRange):
+
 2014-03-17  Anders Carlsson  <andersca@apple.com>
 
         Follow-up fix.

@@ -4336,4 +4336,21 @@ void WebPage::getBytecodeProfile(uint64_t callbackID)
     send(Messages::WebPageProxy::StringCallback(result, callbackID));
 }
 
+PassRefPtr<Range> WebPage::rangeFromEditingLocationAndLength(Frame& frame, uint64_t location, uint64_t length)
+{
+    // Sanitize the input, because TextIterator::rangeFromLocationAndLength takes signed integers.
+    if (location > INT_MAX)
+        return 0;
+    if (length > INT_MAX || location + length > INT_MAX)
+        length = INT_MAX - location;
+
+    // Our critical assumption is that we are only called by input methods that
+    // concentrate on a given area containing the selection.
+    // We have to do this because of text fields and textareas. The DOM for those is not
+    // directly in the document DOM, so serialization is problematic. Our solution is
+    // to use the root editable element of the selection start as the positional base.
+    // That fits with AppKit's idea of an input context.
+    return TextIterator::rangeFromLocationAndLength(frame.selection().rootEditableElementOrDocumentElement(), location, length);
+}
+
 } // namespace WebKit
