@@ -23,26 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKFoundation.h>
+#import "_WKThumbnailView.h"
 
 #if WK_API_ENABLED
 
-#if !TARGET_OS_IPHONE
+#if PLATFORM(MAC)
 
-#import <AppKit/AppKit.h>
+@interface _WKThumbnailView ()
 
-@class WKView;
-
-WK_API_CLASS
-@interface WKThumbnailView : NSView
-
-- (instancetype)initWithFrame:(NSRect)frame fromWKView:(WKView *)wkView;
-
-@property (nonatomic) CGFloat scale;
-@property (nonatomic) BOOL usesSnapshot;
+@property (nonatomic, assign, setter = _setThumbnailLayer:) CALayer *_thumbnailLayer;
+@property (nonatomic, assign, setter = _setWaitingForSnapshot:) BOOL _waitingForSnapshot;
 
 @end
 
-#endif // TARGET_OS_IPHONE
+#endif // PLATFORM(MAC)
 
 #endif // WK_API_ENABLED

@@ -1,3 +1,12 @@
+2014-03-17  Tim Horton  <timothy_horton@apple.com>
+
+        Rename WKThumbnailView to _WKThumbnailView
+        https://bugs.webkit.org/show_bug.cgi?id=130361
+
+        Reviewed by Anders Carlsson.
+
+        * MigrateHeaders.make:
+
 2014-03-17  David Farler  <dfarler@apple.com>
 
         REGRESSION: WebKitLegacy causes ASan build to fail

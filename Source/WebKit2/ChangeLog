@@ -1,3 +1,31 @@
+2014-03-17  Tim Horton  <timothy_horton@apple.com>
+
+        Rename WKThumbnailView to _WKThumbnailView
+        https://bugs.webkit.org/show_bug.cgi?id=130361
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/_WKThumbnailView.h: Renamed from Source/WebKit2/UIProcess/API/Cocoa/WKThumbnailView.h.
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm: Renamed from Source/WebKit2/UIProcess/API/Cocoa/WKThumbnailView.mm.
+        (-[_WKThumbnailView initWithFrame:fromWKView:]):
+        (-[_WKThumbnailView _viewWasUnparented]):
+        (-[_WKThumbnailView _viewWasParented]):
+        (-[_WKThumbnailView _requestSnapshotIfNeeded]):
+        (-[_WKThumbnailView _didTakeSnapshot:]):
+        (-[_WKThumbnailView viewDidMoveToWindow]):
+        (-[_WKThumbnailView setScale:]):
+        (-[_WKThumbnailView setUsesSnapshot:]):
+        (-[_WKThumbnailView _setThumbnailLayer:]):
+        (-[_WKThumbnailView _thumbnailLayer]):
+        * UIProcess/API/Cocoa/_WKThumbnailViewInternal.h: Renamed from Source/WebKit2/UIProcess/API/Cocoa/WKThumbnailViewInternal.h.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setThumbnailView:]):
+        (-[WKView _thumbnailView]):
+        (-[WKView _updateThumbnailViewLayer]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-03-17  Anders Carlsson  <andersca@apple.com>
 
         Add SPI for getting bundle parameters from the injected bundle

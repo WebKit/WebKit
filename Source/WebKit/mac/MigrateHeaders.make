@@ -272,7 +272,6 @@ WEBKIT2_HEADERS = \
     WKProcessPoolConfiguration.h \
     WKProcessPoolConfigurationPrivate.h \
     WKProcessPoolPrivate.h \
-    WKThumbnailView.h \
     WKUIDelegate.h \
     WKUIDelegatePrivate.h \
     WKVisitedLinkProvider.h \
@@ -283,6 +282,7 @@ WEBKIT2_HEADERS = \
     WKWebViewPrivate.h \
     _WKActivatedElementInfo.h \
     _WKElementAction.h \
+    _WKThumbnailView.h \
 #
 
 WEBKIT2_PUBLIC_HEADERS = $(addprefix $(PUBLIC_HEADERS_DIR)/, $(filter $(WEBKIT2_HEADERS),$(notdir $(wildcard $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework/Headers/*))))

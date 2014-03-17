@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WKThumbnailViewInternal.h"
+#import "_WKThumbnailViewInternal.h"
 
 #if WK_API_ENABLED
 
@@ -44,7 +44,7 @@
 using namespace WebCore;
 using namespace WebKit;
 
-@implementation WKThumbnailView {
+@implementation _WKThumbnailView {
     RetainPtr<WKView> _wkView;
     WebPageProxy* _webPageProxy;
 
@@ -106,7 +106,7 @@ using namespace WebKit;
 
     _waitingForSnapshot = YES;
 
-    RetainPtr<WKThumbnailView> thumbnailView = self;
+    RetainPtr<_WKThumbnailView> thumbnailView = self;
     _webPageProxy->takeThumbnailSnapshot([thumbnailView](bool, const ShareableBitmap::Handle& imageHandle) {
         RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(imageHandle, SharedMemory::ReadOnly);
         RetainPtr<CGImageRef> cgImage = bitmap->makeCGImage();

@@ -59,8 +59,6 @@
 #import "WKProcessPoolInternal.h"
 #import "WKStringCF.h"
 #import "WKTextInputWindowController.h"
-#import "WKThumbnailView.h"
-#import "WKThumbnailViewInternal.h"
 #import "WKViewInternal.h"
 #import "WKViewPrivate.h"
 #import "WebBackForwardList.h"
@@ -73,6 +71,7 @@
 #import "WebPreferences.h"
 #import "WebProcessProxy.h"
 #import "WebSystemInterface.h"
+#import "_WKThumbnailViewInternal.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ColorMac.h>
@@ -228,7 +227,7 @@ struct WKViewInterpretKeyEventsParameters {
     RetainPtr<CALayer> _rootLayer;
 
 #if WK_API_ENABLED
-    WKThumbnailView *_thumbnailView;
+    _WKThumbnailView *_thumbnailView;
 #endif
 }
 
@@ -2966,7 +2965,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 }
 
 #if WK_API_ENABLED
-- (void)_setThumbnailView:(WKThumbnailView *)thumbnailView
+- (void)_setThumbnailView:(_WKThumbnailView *)thumbnailView
 {
     ASSERT(!_data->_thumbnailView || !thumbnailView);
 
@@ -2980,14 +2979,14 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_page->viewStateDidChange(ViewState::WindowIsActive | ViewState::IsInWindow | ViewState::IsVisible);
 }
 
-- (WKThumbnailView *)_thumbnailView
+- (_WKThumbnailView *)_thumbnailView
 {
     return _data->_thumbnailView;
 }
 
 - (void)_updateThumbnailViewLayer
 {
-    WKThumbnailView *thumbnailView = _data->_thumbnailView;
+    _WKThumbnailView *thumbnailView = _data->_thumbnailView;
     ASSERT(thumbnailView);
 
     if (!thumbnailView.usesSnapshot || thumbnailView._waitingForSnapshot)

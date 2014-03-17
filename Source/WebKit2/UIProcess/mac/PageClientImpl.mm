@@ -39,13 +39,13 @@
 #import "WKAPICast.h"
 #import "WKFullScreenWindowController.h"
 #import "WKStringCF.h"
-#import "WKThumbnailView.h"
 #import "WKViewInternal.h"
 #import "WebColorPickerMac.h"
 #import "WebContextMenuProxyMac.h"
 #import "WebEditCommandProxy.h"
 #import "WebPopupMenuProxyMac.h"
 #import "WindowServerConnection.h"
+#import "_WKThumbnailView.h"
 #import <WebCore/AlternativeTextUIController.h>
 #import <WebCore/BitmapImage.h>
 #import <WebCore/Cursor.h>
