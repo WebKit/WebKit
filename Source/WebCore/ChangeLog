@@ -1,3 +1,16 @@
+2014-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Cleanup WebKitDOMObject
+        https://bugs.webkit.org/show_bug.cgi?id=130246
+
+        Reviewed by Martin Robinson.
+
+        Remove unneeded getter and fix coding style.
+
+        * bindings/gobject/WebKitDOMObject.cpp:
+        (webkitDOMObjectSetProperty):
+        (webkit_dom_object_class_init):
+
 2014-03-17  Darin Adler  <darin@apple.com>
 
         Stop using deprecatedCharacters in HTMLTreeBuilder

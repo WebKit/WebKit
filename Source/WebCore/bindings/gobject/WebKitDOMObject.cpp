@@ -19,19 +19,14 @@ static void webkit_dom_object_init(WebKitDOMObject*)
 {
 }
 
-static void webkit_dom_object_get_property(GObject* object, guint propertyId, GValue*, GParamSpec* paramSpec)
+static void webkitDOMObjectSetProperty(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
 {
-    G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, paramSpec);
-}
-
-static void webkit_dom_object_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
-{
-    switch (prop_id) {
+    switch (propertyId) {
     case PROP_CORE_OBJECT:
         WEBKIT_DOM_OBJECT(object)->coreObject = g_value_get_pointer(value);
         break;
     default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
     }
 }
@@ -39,14 +34,14 @@ static void webkit_dom_object_set_property(GObject* object, guint prop_id, const
 static void webkit_dom_object_class_init(WebKitDOMObjectClass* klass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(klass);
-    gobjectClass->set_property = webkit_dom_object_set_property;
-    gobjectClass->get_property = webkit_dom_object_get_property;
+    gobjectClass->set_property = webkitDOMObjectSetProperty;
 
-    g_object_class_install_property(gobjectClass,
-                                    PROP_CORE_OBJECT,
-                                    g_param_spec_pointer("core-object",
-                                                         "Core Object",
-                                                         "The WebCore object the WebKitDOMObject wraps",
-                                                         static_cast<GParamFlags>(G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY)));
+    g_object_class_install_property(
+        gobjectClass,
+        PROP_CORE_OBJECT,
+        g_param_spec_pointer(
+            "core-object",
+            "Core Object",
+            "The WebCore object the WebKitDOMObject wraps",
+            static_cast<GParamFlags>(G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB)));
 }
-
