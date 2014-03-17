@@ -33,8 +33,19 @@
 #include <wtf/StackBounds.h>
 #include <wtf/StackStats.h>
 #include <wtf/text/StringHash.h>
+
+#if defined(__has_include) && __has_include(<System/pthread_machdep.h>)
+#include <System/pthread_machdep.h>
+#endif
+
+#if defined(__PTK_FRAMEWORK_JAVASCRIPTCORE_KEY1)
+#define WTF_USE_PTHREAD_GETSPECIFIC_DIRECT 1
+#endif
+
+#if !USE(PTHREAD_GETSPECIFIC_DIRECT)
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
+#endif
 
 // FIXME: This is a temporary layering violation until we move more of the string code from JavaScriptCore to WTF.
 namespace JSC {
@@ -141,7 +152,13 @@ private:
     void* m_savedStackPointerAtVMEntry;
     void* m_savedLastStackTop;
 
+#if USE(PTHREAD_GETSPECIFIC_DIRECT)
+    static const pthread_key_t directKey = __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY1;
+    WTF_EXPORT_PRIVATE static WTFThreadData& createAndRegisterForGetspecificDirect();
+#else
     static WTF_EXPORTDATA ThreadSpecific<WTFThreadData>* staticData;
+#endif
+
     friend WTFThreadData& wtfThreadData();
     friend class AtomicStringTable;
 };
@@ -154,9 +171,15 @@ inline WTFThreadData& wtfThreadData()
     // WRT JavaScriptCore:
     //    wtfThreadData() is initially called from initializeThreading(), ensuring
     //    this is initially called in a pthread_once locked context.
+#if !USE(PTHREAD_GETSPECIFIC_DIRECT)
     if (!WTFThreadData::staticData)
         WTFThreadData::staticData = new ThreadSpecific<WTFThreadData>;
     return **WTFThreadData::staticData;
+#else
+    if (WTFThreadData* data = static_cast<WTFThreadData*>(_pthread_getspecific_direct(WTFThreadData::directKey)))
+        return *data;
+    return WTFThreadData::createAndRegisterForGetspecificDirect();
+#endif
 }
 
 } // namespace WTF

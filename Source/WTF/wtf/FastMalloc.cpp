@@ -461,16 +461,12 @@ extern "C" WTF_EXPORT_PRIVATE const int jscore_fastmalloc_introspection = 0;
 #include <dispatch/dispatch.h>
 #endif
 
-#ifdef __has_include
-#if __has_include(<System/pthread_machdep.h>)
-
+#if defined(__has_include) && __has_include(<System/pthread_machdep.h>)
 #include <System/pthread_machdep.h>
+#endif
 
 #if defined(__PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0)
 #define WTF_USE_PTHREAD_GETSPECIFIC_DIRECT 1
-#endif
-
-#endif
 #endif
 
 #ifndef PRIuS

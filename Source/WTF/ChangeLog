@@ -1,3 +1,20 @@
+2014-03-17  Andreas Kling  <akling@apple.com>
+
+        [Mac] WTFThreadData should use _pthread_getspecific_direct().
+        <https://webkit.org/b/130320>
+
+        Hack WTFThreadData to use a direct key for TLS access when available.
+        This mechanism uses a dedicated segment register and is the same way
+        we implement the fast path in FastMalloc.
+
+        Reviewed by Darin Adler.
+
+        * wtf/FastMalloc.cpp:
+        * wtf/WTFThreadData.cpp:
+        (WTF::WTFThreadData::createAndRegisterForGetspecificDirect):
+        * wtf/WTFThreadData.h:
+        (WTF::wtfThreadData):
+
 2014-03-16  Darin Adler  <darin@apple.com>
 
         Remove most uses of deprecatedCharacter in WTF

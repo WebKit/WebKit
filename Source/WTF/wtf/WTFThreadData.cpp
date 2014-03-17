@@ -35,7 +35,9 @@
 
 namespace WTF {
 
+#if !USE(PTHREAD_GETSPECIFIC_DIRECT)
 ThreadSpecific<WTFThreadData>* WTFThreadData::staticData;
+#endif
 
 WTFThreadData::WTFThreadData()
     : m_apiData(0)
@@ -70,6 +72,18 @@ WTFThreadData::~WTFThreadData()
         m_atomicStringTableDestructor(m_atomicStringTable);
     delete m_defaultIdentifierTable;
 }
+
+#if USE(PTHREAD_GETSPECIFIC_DIRECT)
+WTFThreadData& WTFThreadData::createAndRegisterForGetspecificDirect()
+{
+    WTFThreadData* data = new WTFThreadData;
+    _pthread_setspecific_direct(directKey, data);
+    pthread_key_init_np(directKey, [](void* data){
+        delete static_cast<WTFThreadData*>(data);
+    });
+    return *data;
+}
+#endif
 
 } // namespace WTF
 
