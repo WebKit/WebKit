@@ -1,3 +1,18 @@
+2014-03-17  Giovanni Campagna  <gcampagna@src.gnome.org>
+
+        [GTK] Don't busy loop when the socket is full
+        https://bugs.webkit.org/show_bug.cgi?id=129802
+
+        Reviewed by Carlos Garcia Campos.
+
+        When the socket is full and we see EAGAIN or EWOULDBLOCK
+        (because the socket is non blocking), don't busy loop by
+        tring to write again, instead poll() until the socket
+        becomes writable.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::sendOutgoingMessage):
+
 2014-03-17  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][CMake] Ensure that HAVE_GTK_UNIX_PRINTING is defined when appropriate
