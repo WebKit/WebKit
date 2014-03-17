@@ -1,3 +1,17 @@
+2014-03-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        Use RunLoop objects through references instead of pointers
+        https://bugs.webkit.org/show_bug.cgi?id=130313
+
+        Reviewed by Andreas Kling.
+
+        Adjust the code accordingly now that RunLoop::current() and RunLoop::main()
+        return RunLoop reference instead of a pointer.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/DOMDOMWindowTest.cpp:
+        (loadedCallback):
+        (clickedCallback):
+
 2014-03-17  Tim Horton  <timothy_horton@apple.com>
 
         sort-export-file --help doesn't work (missing 'use')

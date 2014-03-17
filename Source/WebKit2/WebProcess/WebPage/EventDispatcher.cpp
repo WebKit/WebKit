@@ -140,7 +140,7 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
     UNUSED_PARAM(canRubberBandAtBottom);
 #endif
 
-    RunLoop::main()->dispatch(bind(&EventDispatcher::dispatchWheelEvent, this, pageID, wheelEvent));
+    RunLoop::main().dispatch(bind(&EventDispatcher::dispatchWheelEvent, this, pageID, wheelEvent));
 }
 
 void EventDispatcher::dispatchWheelEvent(uint64_t pageID, const WebWheelEvent& wheelEvent)

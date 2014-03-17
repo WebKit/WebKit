@@ -304,7 +304,7 @@ void NetscapePlugin::popPopupsEnabledState()
 
 void NetscapePlugin::pluginThreadAsyncCall(void (*function)(void*), void* userData)
 {
-    RunLoop::main()->dispatch(WTF::bind(&NetscapePlugin::handlePluginThreadAsyncCall, this, function, userData));
+    RunLoop::main().dispatch(WTF::bind(&NetscapePlugin::handlePluginThreadAsyncCall, this, function, userData));
 }
     
 void NetscapePlugin::handlePluginThreadAsyncCall(void (*function)(void*), void* userData)

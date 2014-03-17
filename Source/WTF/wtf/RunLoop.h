@@ -47,13 +47,14 @@
 namespace WTF {
 
 class RunLoop : public FunctionDispatcher {
+    WTF_MAKE_NONCOPYABLE(RunLoop);
 public:
     // Must be called from the main thread (except for the Mac platform, where it
     // can be called from any thread).
     WTF_EXPORT_PRIVATE static void initializeMainRunLoop();
 
-    WTF_EXPORT_PRIVATE static RunLoop* current();
-    WTF_EXPORT_PRIVATE static RunLoop* main();
+    WTF_EXPORT_PRIVATE static RunLoop& current();
+    WTF_EXPORT_PRIVATE static RunLoop& main();
     WTF_EXPORT_PRIVATE static bool isMain();
     ~RunLoop();
 
@@ -70,7 +71,7 @@ public:
     class TimerBase {
         friend class RunLoop;
     public:
-        WTF_EXPORT_PRIVATE explicit TimerBase(RunLoop*);
+        WTF_EXPORT_PRIVATE explicit TimerBase(RunLoop&);
         WTF_EXPORT_PRIVATE virtual ~TimerBase();
 
         void startRepeating(double repeatInterval) { start(repeatInterval, true); }
@@ -84,7 +85,7 @@ public:
     private:
         WTF_EXPORT_PRIVATE void start(double nextFireInterval, bool repeat);
 
-        RunLoop* m_runLoop;
+        RunLoop& m_runLoop;
 
 #if PLATFORM(WIN)
         static void timerFired(RunLoop*, uint64_t ID);
@@ -111,7 +112,7 @@ public:
     public:
         typedef void (TimerFiredClass::*TimerFiredFunction)();
 
-        Timer(RunLoop* runLoop, TimerFiredClass* o, TimerFiredFunction f)
+        Timer(RunLoop& runLoop, TimerFiredClass* o, TimerFiredFunction f)
             : TimerBase(runLoop)
             , m_object(o)
             , m_function(f)

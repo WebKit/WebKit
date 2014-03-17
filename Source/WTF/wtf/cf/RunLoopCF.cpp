@@ -65,14 +65,14 @@ void RunLoop::wakeUp()
 
 void RunLoop::run()
 {
-    current()->m_nestingLevel++;
+    current().m_nestingLevel++;
     
     {
         AutodrainedPool pool;
         CFRunLoopRun();
     }
     
-    current()->m_nestingLevel--;
+    current().m_nestingLevel--;
 }
 
 void RunLoop::stop()
@@ -91,7 +91,7 @@ void RunLoop::TimerBase::timerFired(CFRunLoopTimerRef, void* context)
     timer->fired();
 }
 
-RunLoop::TimerBase::TimerBase(RunLoop* runLoop)
+RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
     : m_runLoop(runLoop)
 {
 }
@@ -109,7 +109,7 @@ void RunLoop::TimerBase::start(double nextFireInterval, bool repeat)
     CFRunLoopTimerContext context = { 0, this, 0, 0, 0 };
     CFTimeInterval repeatInterval = repeat ? nextFireInterval : 0;
     m_timer = adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + nextFireInterval, repeatInterval, 0, 0, timerFired, &context));
-    CFRunLoopAddTimer(m_runLoop->m_runLoop.get(), m_timer.get(), kCFRunLoopCommonModes);
+    CFRunLoopAddTimer(m_runLoop.m_runLoop.get(), m_timer.get(), kCFRunLoopCommonModes);
 }
 
 void RunLoop::TimerBase::stop()

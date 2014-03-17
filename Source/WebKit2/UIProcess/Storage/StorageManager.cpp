@@ -421,14 +421,14 @@ void StorageManager::processWillCloseConnection(WebProcessProxy* webProcessProxy
     m_queue->dispatch(bind(&StorageManager::invalidateConnectionInternal, this, RefPtr<IPC::Connection>(webProcessProxy->connection())));
 }
 
-void StorageManager::getOrigins(FunctionDispatcher* callbackDispatcher, void* context, void (*callback)(const Vector<RefPtr<WebCore::SecurityOrigin>>& securityOrigins, void* context))
+void StorageManager::getOrigins(FunctionDispatcher& callbackDispatcher, void* context, void (*callback)(const Vector<RefPtr<WebCore::SecurityOrigin>>& securityOrigins, void* context))
 {
-    m_queue->dispatch(bind(&StorageManager::getOriginsInternal, this, RefPtr<FunctionDispatcher>(callbackDispatcher), context, callback));
+    m_queue->dispatch(bind(&StorageManager::getOriginsInternal, this, RefPtr<FunctionDispatcher>(&callbackDispatcher), context, callback));
 }
 
-void StorageManager::getStorageDetailsByOrigin(FunctionDispatcher* callbackDispatcher, void* context, void (*callback)(const Vector<LocalStorageDetails>& storageDetails, void* context))
+void StorageManager::getStorageDetailsByOrigin(FunctionDispatcher& callbackDispatcher, void* context, void (*callback)(const Vector<LocalStorageDetails>& storageDetails, void* context))
 {
-    m_queue->dispatch(bind(&StorageManager::getStorageDetailsByOriginInternal, this, RefPtr<FunctionDispatcher>(callbackDispatcher), context, callback));
+    m_queue->dispatch(bind(&StorageManager::getStorageDetailsByOriginInternal, this, RefPtr<FunctionDispatcher>(&callbackDispatcher), context, callback));
 }
 
 void StorageManager::deleteEntriesForOrigin(SecurityOrigin* securityOrigin)

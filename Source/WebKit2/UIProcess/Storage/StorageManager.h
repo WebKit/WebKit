@@ -62,8 +62,8 @@ public:
 
     // FIXME: Instead of a context + C function, this should take a WTF::Function, but we currently don't
     // support arguments in functions.
-    void getOrigins(FunctionDispatcher* callbackDispatcher, void* context, void (*callback)(const Vector<RefPtr<WebCore::SecurityOrigin>>&, void* context));
-    void getStorageDetailsByOrigin(FunctionDispatcher* callbackDispatcher, void* context, void (*callback)(const Vector<LocalStorageDetails>&, void* context));
+    void getOrigins(FunctionDispatcher& callbackDispatcher, void* context, void (*callback)(const Vector<RefPtr<WebCore::SecurityOrigin>>&, void* context));
+    void getStorageDetailsByOrigin(FunctionDispatcher& callbackDispatcher, void* context, void (*callback)(const Vector<LocalStorageDetails>&, void* context));
     void deleteEntriesForOrigin(WebCore::SecurityOrigin*);
     void deleteAllEntries();
 

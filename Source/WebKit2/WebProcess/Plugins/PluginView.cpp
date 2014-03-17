@@ -1573,7 +1573,7 @@ void PluginView::unprotectPluginFromDestruction()
     // the destroyed object higher on the stack. To prevent this, if the plug-in has
     // only one remaining reference, call deref() asynchronously.
     if (hasOneRef())
-        RunLoop::main()->dispatch(bind(derefPluginView, this));
+        RunLoop::main().dispatch(bind(derefPluginView, this));
     else
         deref();
 }

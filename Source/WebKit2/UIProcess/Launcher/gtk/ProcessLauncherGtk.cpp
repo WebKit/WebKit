@@ -132,7 +132,7 @@ void ProcessLauncher::launchProcess()
     m_processIdentifier = pid;
 
     // We've finished launching the process, message back to the main run loop.
-    RunLoop::main()->dispatch(bind(&ProcessLauncher::didFinishLaunchingProcess, this, m_processIdentifier, sockets[1]));
+    RunLoop::main().dispatch(bind(&ProcessLauncher::didFinishLaunchingProcess, this, m_processIdentifier, sockets[1]));
 }
 
 void ProcessLauncher::terminateProcess()

@@ -139,7 +139,7 @@ static uint64_t generateTimerID()
     return uniqueTimerID++;
 }
 
-RunLoop::TimerBase::TimerBase(RunLoop* runLoop)
+RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
     : m_runLoop(runLoop)
     , m_ID(generateTimerID())
     , m_isRepeating(false)
@@ -154,23 +154,23 @@ RunLoop::TimerBase::~TimerBase()
 void RunLoop::TimerBase::start(double nextFireInterval, bool repeat)
 {
     m_isRepeating = repeat;
-    m_runLoop->m_activeTimers.set(m_ID, this);
-    ::SetTimer(m_runLoop->m_runLoopMessageWindow, m_ID, nextFireInterval * 1000, 0);
+    m_runLoop.m_activeTimers.set(m_ID, this);
+    ::SetTimer(m_runLoop.m_runLoopMessageWindow, m_ID, nextFireInterval * 1000, 0);
 }
 
 void RunLoop::TimerBase::stop()
 {
-    TimerMap::iterator it = m_runLoop->m_activeTimers.find(m_ID);
-    if (it == m_runLoop->m_activeTimers.end())
+    TimerMap::iterator it = m_runLoop.m_activeTimers.find(m_ID);
+    if (it == m_runLoop.m_activeTimers.end())
         return;
 
-    m_runLoop->m_activeTimers.remove(it);
-    ::KillTimer(m_runLoop->m_runLoopMessageWindow, m_ID);
+    m_runLoop.m_activeTimers.remove(it);
+    ::KillTimer(m_runLoop.m_runLoopMessageWindow, m_ID);
 }
 
 bool RunLoop::TimerBase::isActive() const
 {
-    return m_runLoop->m_activeTimers.contains(m_ID);
+    return m_runLoop.m_activeTimers.contains(m_ID);
 }
 
 } // namespace WTF

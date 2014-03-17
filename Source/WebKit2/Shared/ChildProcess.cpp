@@ -150,7 +150,7 @@ void ChildProcess::terminationTimerFired()
 
 void ChildProcess::stopRunLoop()
 {
-    RunLoop::main()->stop();
+    RunLoop::main().stop();
 }
 
 void ChildProcess::terminate()

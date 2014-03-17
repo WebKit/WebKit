@@ -127,8 +127,8 @@ public:
     static Connection::SocketPair createPlatformConnection();
 #endif
 
-    static PassRefPtr<Connection> createServerConnection(Identifier, Client*, WTF::RunLoop* clientRunLoop);
-    static PassRefPtr<Connection> createClientConnection(Identifier, Client*, WTF::RunLoop* clientRunLoop);
+    static PassRefPtr<Connection> createServerConnection(Identifier, Client*, WTF::RunLoop& clientRunLoop);
+    static PassRefPtr<Connection> createClientConnection(Identifier, Client*, WTF::RunLoop& clientRunLoop);
     ~Connection();
 
     Client* client() const { return m_client; }
@@ -177,7 +177,7 @@ public:
     Identifier identifier() const;
     
 private:
-    Connection(Identifier, bool isServer, Client*, WTF::RunLoop* clientRunLoop);
+    Connection(Identifier, bool isServer, Client*, WTF::RunLoop& clientRunLoop);
     void platformInitialize(Identifier);
     void platformInvalidate();
     
@@ -223,7 +223,7 @@ private:
 
     bool m_isConnected;
     RefPtr<WorkQueue> m_connectionQueue;
-    WTF::RunLoop* m_clientRunLoop;
+    WTF::RunLoop& m_clientRunLoop;
 
     HashMap<StringReference, std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver>>> m_workQueueMessageReceivers;
 

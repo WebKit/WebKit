@@ -885,7 +885,7 @@ void WebPage::close()
     WebProcess::shared().removeWebPage(m_pageID);
 
     if (isRunningModal)
-        RunLoop::main()->stop();
+        RunLoop::main().stop();
 }
 
 void WebPage::tryClose()

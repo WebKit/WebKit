@@ -83,8 +83,9 @@ void RunLoop::wakeUp()
     }
 }
 
-RunLoop::TimerBase::TimerBase(RunLoop*)
-    : m_timer(0)
+RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
+    : m_runLoop(runLoop)
+    , m_timer(0)
     , m_isRepeating(false)
 {
 }

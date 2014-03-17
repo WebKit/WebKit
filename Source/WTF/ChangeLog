@@ -1,3 +1,41 @@
+2014-03-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        Use RunLoop objects through references instead of pointers
+        https://bugs.webkit.org/show_bug.cgi?id=130313
+
+        Reviewed by Andreas Kling.
+
+        Make RunLoop::current() and RunLoop::main() return a RunLoop reference instead
+        of a pointer. RunLoop::Holder now uses a Ref<RunLoop> member. Timer and TimerBase
+        constructors take in a RunLoop reference, with TimerBase now storing a RunLoop
+        reference member instead of a pointer. Platform-specific bits of the RunLoop
+        class are updated accordingly.
+
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::Holder::Holder):
+        (WTF::RunLoop::Holder::runLoop):
+        (WTF::RunLoop::initializeMainRunLoop):
+        (WTF::RunLoop::current):
+        (WTF::RunLoop::main):
+        (WTF::RunLoop::isMain):
+        * wtf/RunLoop.h:
+        (WTF::RunLoop::Timer::Timer):
+        * wtf/cf/RunLoopCF.cpp:
+        (WTF::RunLoop::run):
+        (WTF::RunLoop::TimerBase::TimerBase):
+        (WTF::RunLoop::TimerBase::start):
+        * wtf/efl/RunLoopEfl.cpp:
+        (WTF::RunLoop::TimerBase::TimerBase):
+        * wtf/gtk/RunLoopGtk.cpp:
+        (WTF::RunLoop::run):
+        (WTF::RunLoop::TimerBase::TimerBase):
+        (WTF::RunLoop::TimerBase::start):
+        * wtf/win/RunLoopWin.cpp:
+        (WTF::RunLoop::TimerBase::TimerBase):
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::TimerBase::stop):
+        (WTF::RunLoop::TimerBase::isActive):
+
 2014-03-17  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         One more fix after r165725.

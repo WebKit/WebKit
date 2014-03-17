@@ -1,3 +1,72 @@
+2014-03-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        Use RunLoop objects through references instead of pointers
+        https://bugs.webkit.org/show_bug.cgi?id=130313
+
+        Reviewed by Andreas Kling.
+
+        Adjust the code accordingly now that RunLoop::current() and RunLoop::main()
+        return RunLoop reference instead of a pointer.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::didClose):
+        (WebKit::DatabaseProcess::didReceiveInvalidMessage):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::postMainThreadTask):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didClose):
+        (WebKit::NetworkProcess::didReceiveInvalidMessage):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::SyncMessageState::getOrCreate):
+        (IPC::Connection::SyncMessageState::SyncMessageState):
+        (IPC::Connection::SyncMessageState::~SyncMessageState):
+        (IPC::Connection::SyncMessageState::processIncomingMessage):
+        (IPC::Connection::SyncMessageState::dispatchMessages):
+        (IPC::Connection::createServerConnection):
+        (IPC::Connection::createClientConnection):
+        (IPC::Connection::Connection):
+        (IPC::Connection::addWorkQueueMessageReceiver):
+        (IPC::Connection::removeWorkQueueMessageReceiver):
+        (IPC::Connection::sendSyncMessage):
+        (IPC::Connection::sendSyncMessageFromSecondaryThread):
+        (IPC::Connection::waitForSyncReply):
+        (IPC::Connection::processIncomingMessage):
+        (IPC::Connection::connectionDidClose):
+        (IPC::Connection::dispatchDidReceiveInvalidMessage):
+        (IPC::Connection::enqueueIncomingMessage):
+        (IPC::Connection::wakeUpRunLoop):
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ConnectionMac.cpp:
+        (IPC::Connection::receiveSourceEventHandler):
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::stopRunLoop):
+        * Shared/Plugins/NPObjectProxy.cpp:
+        (WebKit::NPObjectProxy::NP_Deallocate):
+        * UIProcess/Launcher/efl/ProcessLauncherEfl.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::connectToService):
+        (WebKit::tryPreexistingProcess):
+        (WebKit::createProcess):
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::getOrigins):
+        (WebKit::StorageManager::getStorageDetailsByOrigin):
+        * UIProcess/Storage/StorageManager.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::pluginThreadAsyncCall):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::unprotectPluginFromDestruction):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+        * WebProcess/WebPage/ViewUpdateDispatcher.cpp:
+        (WebKit::ViewUpdateDispatcher::visibleContentRectUpdate):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+
 2014-03-17  Giovanni Campagna  <gcampagna@src.gnome.org>
 
         [GTK] Don't busy loop when the socket is full

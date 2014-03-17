@@ -231,7 +231,7 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
             // And the receive right.
             mach_port_mod_refs(mach_task_self(), listeningPort, MACH_PORT_RIGHT_RECEIVE, -1);
 
-            RunLoop::main()->dispatch(bind(didFinishLaunchingProcessFunction, that, 0, IPC::Connection::Identifier()));
+            RunLoop::main().dispatch(bind(didFinishLaunchingProcessFunction, that, 0, IPC::Connection::Identifier()));
         } else {
             ASSERT(type == XPC_TYPE_DICTIONARY);
             ASSERT(!strcmp(xpc_dictionary_get_string(reply, "message-name"), "process-finished-launching"));
@@ -240,7 +240,7 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
             pid_t processIdentifier = xpc_connection_get_pid(connection);
 
             // We've finished launching the process, message back to the main run loop.
-            RunLoop::main()->dispatch(bind(didFinishLaunchingProcessFunction, that, processIdentifier, IPC::Connection::Identifier(listeningPort, connection)));
+            RunLoop::main().dispatch(bind(didFinishLaunchingProcessFunction, that, processIdentifier, IPC::Connection::Identifier(listeningPort, connection)));
         }
 
         that->deref();
@@ -358,7 +358,7 @@ static bool tryPreexistingProcess(const ProcessLauncher::LaunchOptions& launchOp
     }
     
     // We've finished launching the process, message back to the main run loop.
-    RunLoop::main()->dispatch(bind(didFinishLaunchingProcessFunction, that, processIdentifier, IPC::Connection::Identifier(listeningPort)));
+    RunLoop::main().dispatch(bind(didFinishLaunchingProcessFunction, that, processIdentifier, IPC::Connection::Identifier(listeningPort)));
     return true;
 }
 
@@ -498,7 +498,7 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
     }
 
     // We've finished launching the process, message back to the main run loop.
-    RunLoop::main()->dispatch(bind(didFinishLaunchingProcessFunction, that, processIdentifier, IPC::Connection::Identifier(listeningPort)));
+    RunLoop::main().dispatch(bind(didFinishLaunchingProcessFunction, that, processIdentifier, IPC::Connection::Identifier(listeningPort)));
 }
 
 void ProcessLauncher::launchProcess()

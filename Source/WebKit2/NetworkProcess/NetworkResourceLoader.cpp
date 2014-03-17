@@ -250,7 +250,7 @@ void NetworkResourceLoader::continueWillSendRequest(const ResourceRequest& newRe
     m_suggestedRequestForWillSendRequest.updateFromDelegatePreservingOldHTTPBody(newRequest);
 #endif
 
-    RunLoop::main()->dispatch(bind(&NetworkResourceLoadScheduler::receivedRedirect, &NetworkProcess::shared().networkResourceLoadScheduler(), this, m_suggestedRequestForWillSendRequest.url()));
+    RunLoop::main().dispatch(bind(&NetworkResourceLoadScheduler::receivedRedirect, &NetworkProcess::shared().networkResourceLoadScheduler(), this, m_suggestedRequestForWillSendRequest.url()));
 
     m_request = m_suggestedRequestForWillSendRequest;
     m_suggestedRequestForWillSendRequest = ResourceRequest();

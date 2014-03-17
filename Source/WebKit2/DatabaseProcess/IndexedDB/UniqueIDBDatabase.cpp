@@ -1085,7 +1085,7 @@ void UniqueIDBDatabase::postMainThreadTask(std::unique_ptr<AsyncTask> task, Data
 
     // Balanced by an adoptRef() in ::performNextMainThreadTask
     ref();
-    RunLoop::main()->dispatch(bind(&UniqueIDBDatabase::performNextMainThreadTask, this));
+    RunLoop::main().dispatch(bind(&UniqueIDBDatabase::performNextMainThreadTask, this));
 }
 
 void UniqueIDBDatabase::performNextMainThreadTask()

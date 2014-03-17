@@ -53,8 +53,8 @@ RunLoop::~RunLoop()
 
 void RunLoop::run()
 {
-    RunLoop* mainRunLoop = RunLoop::current();
-    GMainLoop* innermostLoop = mainRunLoop->innermostLoop();
+    RunLoop& mainRunLoop = RunLoop::current();
+    GMainLoop* innermostLoop = mainRunLoop.innermostLoop();
     if (!g_main_loop_is_running(innermostLoop)) {
         g_main_loop_run(innermostLoop);
         return;
@@ -62,9 +62,9 @@ void RunLoop::run()
 
     // Create and run a nested loop if the innermost one was already running.
     GMainLoop* nestedMainLoop = g_main_loop_new(0, FALSE);
-    mainRunLoop->pushNestedMainLoop(nestedMainLoop);
+    mainRunLoop.pushNestedMainLoop(nestedMainLoop);
     g_main_loop_run(nestedMainLoop);
-    mainRunLoop->popNestedMainLoop();
+    mainRunLoop.popNestedMainLoop();
 }
 
 GMainLoop* RunLoop::innermostLoop()
@@ -113,7 +113,7 @@ void RunLoop::wakeUp()
     g_main_context_wakeup(m_runLoopContext.get());
 }
 
-RunLoop::TimerBase::TimerBase(RunLoop* runLoop)
+RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
     : m_runLoop(runLoop)
     , m_timerSource(0)
 {
@@ -149,7 +149,7 @@ void RunLoop::TimerBase::start(double fireInterval, bool repeat)
     m_timerSource = adoptGRef(g_timeout_source_new(static_cast<guint>(fireInterval * 1000)));
     m_isRepeating = repeat;
     g_source_set_callback(m_timerSource.get(), reinterpret_cast<GSourceFunc>(&RunLoop::TimerBase::timerFiredCallback), this, 0);
-    g_source_attach(m_timerSource.get(), m_runLoop->m_runLoopContext.get());
+    g_source_attach(m_timerSource.get(), m_runLoop.m_runLoopContext.get());
 }
 
 void RunLoop::TimerBase::stop()

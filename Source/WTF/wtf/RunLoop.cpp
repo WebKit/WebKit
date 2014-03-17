@@ -37,39 +37,39 @@ static RunLoop* s_mainRunLoop;
 class RunLoop::Holder {
 public:
     Holder()
-        : m_runLoop(adoptRef(new RunLoop))
+        : m_runLoop(adoptRef(*new RunLoop))
     {
     }
 
-    RunLoop* runLoop() const { return m_runLoop.get(); }
+    RunLoop& runLoop() { return m_runLoop.get(); }
 
 private:
-    RefPtr<RunLoop> m_runLoop;
+    Ref<RunLoop> m_runLoop;
 };
 
 void RunLoop::initializeMainRunLoop()
 {
     if (s_mainRunLoop)
         return;
-    s_mainRunLoop = RunLoop::current();
+    s_mainRunLoop = &RunLoop::current();
 }
 
-RunLoop* RunLoop::current()
+RunLoop& RunLoop::current()
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(WTF::ThreadSpecific<RunLoop::Holder>, runLoopHolder, ());
     return runLoopHolder->runLoop();
 }
 
-RunLoop* RunLoop::main()
+RunLoop& RunLoop::main()
 {
     ASSERT(s_mainRunLoop);
-    return s_mainRunLoop;
+    return *s_mainRunLoop;
 }
 
 bool RunLoop::isMain()
 {
     ASSERT(s_mainRunLoop);
-    return s_mainRunLoop == RunLoop::current();
+    return s_mainRunLoop == &RunLoop::current();
 }
 
 void RunLoop::performWork()

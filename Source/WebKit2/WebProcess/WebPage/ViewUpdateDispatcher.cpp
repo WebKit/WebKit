@@ -60,7 +60,7 @@ void ViewUpdateDispatcher::visibleContentRectUpdate(uint64_t pageID, const Visib
         MutexLocker locker(m_dataMutex);
         m_latestUpdate.set(pageID, visibleContentRectUpdateInfo);
     }
-    RunLoop::main()->dispatch(bind(&ViewUpdateDispatcher::dispatchVisibleContentRectUpdate, this));
+    RunLoop::main().dispatch(bind(&ViewUpdateDispatcher::dispatchVisibleContentRectUpdate, this));
 }
 
 void ViewUpdateDispatcher::dispatchVisibleContentRectUpdate()

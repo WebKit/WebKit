@@ -67,12 +67,12 @@ bool DatabaseProcess::shouldTerminate()
 
 void DatabaseProcess::didClose(IPC::Connection*)
 {
-    RunLoop::current()->stop();
+    RunLoop::current().stop();
 }
 
 void DatabaseProcess::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference)
 {
-    RunLoop::current()->stop();
+    RunLoop::current().stop();
 }
 
 PassRefPtr<UniqueIDBDatabase> DatabaseProcess::getOrCreateUniqueIDBDatabase(const UniqueIDBDatabaseIdentifier& identifier)
