@@ -1,3 +1,16 @@
+2014-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] MiniBrowser fails to load injected bundle lib
+        https://bugs.webkit.org/show_bug.cgi?id=130332
+
+        Reviewed by Anders Carlsson.
+
+        This is because WEBKIT_INJECTED_BUNDLE_PATH env var is set too late.
+
+        * MiniBrowser/gtk/main.c:
+        (main): Make sure WEBKIT_INJECTED_BUNDLE_PATH is set before a web
+        process is spawn.
+
 2014-03-16  Kim Byung Jun  <bj1987.kim@samsung.com>
 
         [EFL] Enable TOUCH_SLIDER macro
