@@ -1,3 +1,17 @@
+2014-03-16  Praveen R Jadhav  <praveen.j@samsung.com>
+
+        AudioBufferSourceNode stop attribute shouldn't throw exception in finished state.
+        https://bugs.webkit.org/show_bug.cgi?id=130000.
+
+        Reviewed by Jer Noble.
+
+        AudioBufferSourceNode may go to FINISHED_STATE even before "stop" method is called 
+        as silence rendered after audio data is played out when its not looping.
+        A call to "stop" method after this shouldn't throw exception.
+
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::stop):
+
 2014-03-16  Brian Burg  <bburg@apple.com>
 
         Web Inspector: generated backend commands should reflect build system ENABLE settings
