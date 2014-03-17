@@ -217,6 +217,7 @@ protected:
     RenderObject* m_renderer;
     
     void setRenderObject(RenderObject* renderer) { m_renderer = renderer; }
+    void ariaElementsFromAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
     bool needsToUpdateChildren() const { return m_childrenDirty; }
     virtual ScrollableArea* getScrollableAreaIfScrollable() const override;
     virtual void scrollTo(const IntPoint&) const override;
@@ -227,7 +228,6 @@ protected:
     virtual bool computeAccessibilityIsIgnored() const override;
 
 private:
-    void ariaElementsFromAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
     void ariaListboxSelectedChildren(AccessibilityChildrenVector&);
     void ariaListboxVisibleChildren(AccessibilityChildrenVector&);
     bool isAllowedChildOfTree() const;

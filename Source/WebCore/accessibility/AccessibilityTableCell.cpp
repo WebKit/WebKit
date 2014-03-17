@@ -160,14 +160,7 @@ void AccessibilityTableCell::columnHeaders(AccessibilityChildrenVector& headers)
         return;
 
     // Choose columnHeaders as the place where the "headers" attribute is reported.
-    AXObjectCache* cache = axObjectCache();
-    Vector<Element*> elements;
-    elementsFromAttribute(elements, headersAttr);
-    for (auto& element : elements) {
-        if (AccessibilityObject* object = cache->getOrCreate(element))
-            headers.append(object);
-    }
-    
+    ariaElementsFromAttribute(headers, headersAttr);
     // If the headers attribute returned valid values, then do not further search for column headers.
     if (!headers.isEmpty())
         return;
