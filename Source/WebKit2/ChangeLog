@@ -1,3 +1,9 @@
+2014-03-17  Tim Horton  <timothy_horton@apple.com>
+
+        Address some style nits.
+
+        * UIProcess/API/Cocoa/_WKThumbnailViewInternal.h:
+
 2014-03-17  Simon Fraser  <simon.fraser@apple.com>
 
         Address some style nits.
