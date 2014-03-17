@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKit2/WKFoundation.h>
+
 #if WK_API_ENABLED
 
 @interface WKWebProcessBundleParameters : NSObject

@@ -1,3 +1,9 @@
+2014-03-17  Anders Carlsson  <andersca@apple.com>
+
+        Follow-up fix.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessBundleParameters.h:
+
 2014-03-17  Enrica Casucci  <enrica@apple.com>
 
         WK2: support data detectors driven action sheet..
