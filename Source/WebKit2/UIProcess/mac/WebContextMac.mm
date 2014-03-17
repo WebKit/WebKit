@@ -60,7 +60,7 @@ extern "C" void _CFNetworkResetHSTSHostsWithSession(CFURLStorageSessionRef sessi
 
 #endif
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1080
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1080
 @interface NSKeyedArchiver (WKDetails)
 - (void)setRequiresSecureCoding:(BOOL)b;
 @end
@@ -198,7 +198,7 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     if (m_bundleParameters) {
         auto data = adoptNS([[NSMutableData alloc] init]);
-        auto keyedArchiver = adoptNS([[NSKeyedArchiver alloc] init]);
+        auto keyedArchiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
 
         [keyedArchiver setRequiresSecureCoding:YES];
 

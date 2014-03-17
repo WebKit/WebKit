@@ -46,6 +46,7 @@
 #include "WebPage.h"
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"
+#include "WebProcessCreationParameters.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/ApplicationCache.h>
@@ -84,11 +85,11 @@ using namespace JSC;
 
 namespace WebKit {
 
-InjectedBundle::InjectedBundle(const String& path)
-    : m_path(path)
+InjectedBundle::InjectedBundle(const WebProcessCreationParameters& parameters)
+    : m_path(parameters.injectedBundlePath)
     , m_platformBundle(0)
 {
-    initializeClient(0);
+    platformInitialize(parameters);
 }
 
 InjectedBundle::~InjectedBundle()

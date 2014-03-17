@@ -1,3 +1,30 @@
+2014-03-17  Anders Carlsson  <andersca@apple.com>
+
+        Add SPI for getting bundle parameters from the injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=130355
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessBundleParameters.h: Copied from Source/WebKit2/WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.h.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessBundleParameters.mm: Copied from Source/WebKit2/WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.h.
+        (-[WKWebProcessBundleParameters initWithDictionary:]):
+        (-[WKWebProcessBundleParameters valueForKey:]):
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm:
+        (-[WKWebProcessPlugInController parameters]):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::InjectedBundle):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (WebKit::InjectedBundle::create):
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::bundleParameters):
+        (WebKit::InjectedBundle::platformInitialize):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2014-03-17  Brent Fulgham  <bfulgham@apple.com>
 
         Provide preference to enable additional AVFoundation options

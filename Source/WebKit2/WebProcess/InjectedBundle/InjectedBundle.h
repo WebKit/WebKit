@@ -33,6 +33,7 @@
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserScriptTypes.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(GTK)
@@ -45,6 +46,8 @@ typedef struct _GModule GModule;
 
 #if USE(FOUNDATION)
 OBJC_CLASS NSBundle;
+OBJC_CLASS NSMutableDictionary;
+OBJC_CLASS WKWebProcessBundleParameters;
 #endif
 
 namespace API {
@@ -73,12 +76,13 @@ class WebConnection;
 class WebFrame;
 class WebPage;
 class WebPageGroupProxy;
+struct WebProcessCreationParameters;
 
 class InjectedBundle : public API::ObjectImpl<API::Object::Type::Bundle> {
 public:
-    static PassRefPtr<InjectedBundle> create(const String& path)
+    static PassRefPtr<InjectedBundle> create(const WebProcessCreationParameters& parameters)
     {
-        return adoptRef(new InjectedBundle(path));
+        return adoptRef(new InjectedBundle(parameters));
     }
     ~InjectedBundle();
 
@@ -168,8 +172,14 @@ public:
     void setCSSCompositingEnabled(bool);
     void dispatchPendingLoadRequests();
 
+#if PLATFORM(COCOA)
+    WKWebProcessBundleParameters *bundleParameters();
+#endif
+
 private:
-    explicit InjectedBundle(const String&);
+    explicit InjectedBundle(const WebProcessCreationParameters&);
+
+    void platformInitialize(const WebProcessCreationParameters&);
 
     String m_path;
     PlatformBundle m_platformBundle; // This is leaked right now, since we never unload the bundle/module.
@@ -177,6 +187,10 @@ private:
     RefPtr<SandboxExtension> m_sandboxExtension;
 
     InjectedBundleClient m_client;
+
+#if PLATFORM(COCOA)
+    RetainPtr<WKWebProcessBundleParameters> m_bundleParameters;
+#endif
 };
 
 } // namespace WebKit

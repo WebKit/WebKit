@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKFoundation.h>
+#import "config.h"
+#import "WKWebProcessBundleParameters.h"
 
-#if WK_API_ENABLED
+#import <wtf/RetainPtr.h>
 
-#import <Foundation/Foundation.h>
-#import <WebKit2/WKBase.h>
+@implementation WKWebProcessBundleParameters {
+    RetainPtr<NSMutableDictionary> _parameters;
+}
 
-@class WKConnection;
-@class WKWebProcessPlugInController;
-@class WKWebProcessPlugInBrowserContextController;
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary
+{
+    if (!(self = [super init]))
+        return nil;
 
-@protocol WKWebProcessPlugIn <NSObject>
-@optional
-- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController initializeWithObject:(id)initializationObject;
-- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController;
-- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController willDestroyBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController;
+    _parameters = adoptNS([[NSMutableDictionary alloc] initWithDictionary:dictionary]);
+
+    return self;
+}
+
+- (NSString *)valueForKey:(NSString *)key
+{
+    return [_parameters valueForKey:key];
+}
+
 @end
-
-WK_API_CLASS
-@interface WKWebProcessPlugInController : NSObject
-
-@property (readonly) WKConnection *connection;
-
-@property (readonly) id parameters;
-
-@end
-
-#endif // WK_API_ENABLED

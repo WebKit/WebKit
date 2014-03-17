@@ -96,6 +96,11 @@ static void setUpBundleClient(WKWebProcessPlugInController *plugInController, In
     return wrapper(*_bundle->webConnectionToUIProcess());
 }
 
+- (id)parameters
+{
+    return _bundle->bundleParameters();
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
