@@ -58,4 +58,8 @@ void InjectedBundle::activateMacFontAscentHack()
 {
 }
 
+void InjectedBundle::platformInitialize(const WebProcessCreationParameters&)
+{
+}
+
 } // namespace WebKit

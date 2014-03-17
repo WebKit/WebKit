@@ -1,3 +1,12 @@
+2014-03-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] URTBF after r165755 for non Apple platforms, stub functions added.
+
+        * WebProcess/InjectedBundle/efl/InjectedBundleEfl.cpp:
+        (WebKit::InjectedBundle::platformInitialize):
+        * WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp:
+        (WebKit::InjectedBundle::platformInitialize):
+
 2014-03-17  Alexey Proskuryakov  <ap@apple.com>
 
         Move convertToRange() helper to cross-platform WebPage.cpp
