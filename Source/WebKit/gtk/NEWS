@@ -1,4 +1,23 @@
 =================
+WebKitGTK+ 2.3.92
+=================
+
+What's new in WebKitGTK+ 2.3.92?
+
+  - Add support for Geoclue2.
+  - Always finalize the soup session object when the networking
+    process finishes.
+  - Make sure the web process doesn't finish if there's an ongoing
+    print operation.
+  - Fix runtime critical warnings about main loop sources not found
+    when trying to remove them.
+  - Fixed several crashes in JavaScriptCore when visiting facebook.
+  - Improve CSS properties performance.
+  - Fix web process leak when the WebView is leaked by the application.
+  - Fix the build when using vala bindings due to UI and web process
+    main headers included together.
+
+=================
 WebKitGTK+ 2.3.91
 =================
 

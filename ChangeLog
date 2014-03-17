@@ -1,3 +1,9 @@
+2014-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.3.92 release.
+
+        * Source/autotools/Versions.m4: Bump version numbers.
+
 2014-03-10  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Add support for Geoclue2
