@@ -122,12 +122,6 @@ void RenderLayerFilterInfo::notifyFinished(CachedResource*)
     renderer->repaint();
 }
 
-// FIXME: Remove this helper function when <rdar://problem/16230015> is fixed.
-NEVER_INLINE Node* RenderLayerFilterInfo::layerElement() const
-{
-    return m_layer->renderer()->node();
-}
-
 void RenderLayerFilterInfo::updateReferenceFilterClients(const FilterOperations& operations)
 {
     removeReferenceFilterClients();
@@ -146,7 +140,7 @@ void RenderLayerFilterInfo::updateReferenceFilterClients(const FilterOperations&
         } else {
             // Reference is internal; add layer as a client so we can trigger
             // filter repaint on SVG attribute change.
-            Element* filter = layerElement()->document()->getElementById(referenceFilterOperation->fragment());
+            Element* filter = m_layer->renderer()->node()->document()->getElementById(referenceFilterOperation->fragment());
             if (!filter || !filter->renderer() || !filter->renderer()->isSVGResourceFilter())
                 continue;
             filter->renderer()->toRenderSVGResourceContainer()->addClientRenderLayer(m_layer);

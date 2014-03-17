@@ -97,8 +97,6 @@ private:
     RenderLayerFilterInfo(RenderLayer*);
     ~RenderLayerFilterInfo();
     
-    Node* layerElement() const; 
-
     RenderLayer* m_layer;
     
     RefPtr<FilterEffectRenderer> m_renderer;
