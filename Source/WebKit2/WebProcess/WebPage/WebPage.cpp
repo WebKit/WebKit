@@ -1513,15 +1513,29 @@ void WebPage::showPageBanners()
 }
 #endif // !PLATFORM(IOS)
 
+void WebPage::takeThumbnailSnapshot(uint64_t callbackID)
+{
+    IntRect snapshotRect(IntPoint(), m_viewSize);
+    snapshotRect = m_drawingArea->rootLayerTransform().inverse().mapRect(snapshotRect);
+
+    RefPtr<WebImage> image = scaledSnapshotWithOptions(snapshotRect, 1, SnapshotOptionsShareable | SnapshotOptionsInViewCoordinates);
+
+    ShareableBitmap::Handle handle;
+    if (image)
+        image->bitmap()->createHandle(handle, SharedMemory::ReadOnly);
+
+    send(Messages::WebPageProxy::ImageCallback(handle, callbackID));
+}
+
 PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, double scaleFactor, SnapshotOptions options)
 {
     Frame* coreFrame = m_mainFrame->coreFrame();
     if (!coreFrame)
-        return 0;
+        return nullptr;
 
     FrameView* frameView = coreFrame->view();
     if (!frameView)
-        return 0;
+        return nullptr;
 
     IntSize bitmapSize = rect.size();
     float combinedScaleFactor = scaleFactor * corePage()->deviceScaleFactor();
@@ -1529,7 +1543,7 @@ PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, dou
 
     RefPtr<WebImage> snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options));
     if (!snapshot->bitmap())
-        return 0;
+        return nullptr;
 
     auto graphicsContext = snapshot->bitmap()->createGraphicsContext();
 
@@ -4307,7 +4321,7 @@ void WebPage::setThumbnailScale(double thumbnailScale)
     transform.translate((newScrollPosition.x() * inverseScale) - m_scrollPositionIgnoringThumbnailScale.x(), (newScrollPosition.y() * inverseScale) - m_scrollPositionIgnoringThumbnailScale.y());
     transform.scale(inverseScale);
 
-    drawingArea()->setTransform(transform);
+    drawingArea()->setRootLayerTransform(transform);
 }
 
 void WebPage::getBytecodeProfile(uint64_t callbackID)

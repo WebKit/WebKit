@@ -826,7 +826,7 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, Float
     m_transientZoomScale = 1;
 }
 
-void TiledCoreAnimationDrawingArea::setTransform(const TransformationMatrix& transform)
+void TiledCoreAnimationDrawingArea::setRootLayerTransform(const TransformationMatrix& transform)
 {
     m_transform = transform;
     [m_rootLayer setSublayerTransform:transform];

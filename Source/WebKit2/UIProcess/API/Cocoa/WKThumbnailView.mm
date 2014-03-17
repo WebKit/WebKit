@@ -54,6 +54,8 @@ using namespace WebKit;
     BOOL _shouldApplyThumbnailScale;
 }
 
+@synthesize _waitingForSnapshot = _waitingForSnapshot;
+
 - (instancetype)initWithFrame:(NSRect)frame fromWKView:(WKView *)wkView
 {
     if (!(self = [super initWithFrame:frame]))
@@ -76,6 +78,9 @@ using namespace WebKit;
         _webPageProxy->setThumbnailScale(1);
 
     [_wkView _setThumbnailView:nil];
+
+    self.layer.contents = nil;
+
     _webPageProxy->setMayStartMediaWhenInWindow(_originalMayStartMediaWhenInWindow);
 }
 
@@ -90,7 +95,30 @@ using namespace WebKit;
     if (!_originalSourceViewIsInWindow)
         _webPageProxy->setMayStartMediaWhenInWindow(false);
 
+    [self _requestSnapshotIfNeeded];
     [_wkView _setThumbnailView:self];
+}
+
+- (void)_requestSnapshotIfNeeded
+{
+    if (!_usesSnapshot || _waitingForSnapshot || self.layer.contents)
+        return;
+
+    _waitingForSnapshot = YES;
+
+    RetainPtr<WKThumbnailView> thumbnailView = self;
+    _webPageProxy->takeThumbnailSnapshot([thumbnailView](bool, const ShareableBitmap::Handle& imageHandle) {
+        RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(imageHandle, SharedMemory::ReadOnly);
+        RetainPtr<CGImageRef> cgImage = bitmap->makeCGImage();
+        [thumbnailView _didTakeSnapshot:cgImage.get()];
+    });
+}
+
+- (void)_didTakeSnapshot:(CGImageRef)image
+{
+    _waitingForSnapshot = NO;
+    self.layer.sublayers = @[];
+    self.layer.contents = (id)image;
 }
 
 - (void)viewDidMoveToWindow
@@ -103,18 +131,37 @@ using namespace WebKit;
 
 - (void)setScale:(CGFloat)scale
 {
+    if (_scale == scale)
+        return;
+
     _scale = scale;
 
     if (self.window && _shouldApplyThumbnailScale)
         _webPageProxy->setThumbnailScale(_scale);
 }
 
-- (void)setThumbnailLayer:(CALayer *)layer
+- (void)setUsesSnapshot:(BOOL)usesSnapshot
+{
+    if (_usesSnapshot == usesSnapshot)
+        return;
+
+    _usesSnapshot = usesSnapshot;
+
+    if (!self.window)
+        return;
+
+    if (usesSnapshot)
+        [self _requestSnapshotIfNeeded];
+    else
+        [_wkView _reparentLayerTreeInThumbnailView];
+}
+
+- (void)_setThumbnailLayer:(CALayer *)layer
 {
     self.layer.sublayers = layer ? @[ layer ] : @[ ];
 }
 
-- (CALayer *)thumbnailLayer
+- (CALayer *)_thumbnailLayer
 {
     if (!self.layer.sublayers.count)
         return nil;

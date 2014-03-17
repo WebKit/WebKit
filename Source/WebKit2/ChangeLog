@@ -1,3 +1,74 @@
+2014-03-17  Tim Horton  <timothy_horton@apple.com>
+
+        WKThumbnailView should support snapshots
+        https://bugs.webkit.org/show_bug.cgi?id=130335
+        <rdar://problem/16255139>
+
+        Reviewed by Simon Fraser.
+
+        Add a mode where WKThumbnailView takes a software snapshot of the web content,
+        replacing the live layer tree with said snapshot once it returns from the
+        web process. This may improve animation performance in cases where the
+        layer tree would otherwise be very complex.
+
+        * UIProcess/API/Cocoa/WKThumbnailView.h:
+        Add a property, usesSnapshot, which determines whether the thumbnail view
+        should use the live layer tree or a snapshot of the content.
+
+        * UIProcess/API/Cocoa/WKThumbnailView.mm:
+        (-[WKThumbnailView initWithFrame:fromWKView:]):
+        (-[WKThumbnailView _viewWasUnparented]):
+        Clear the snapshot when unparented.
+
+        (-[WKThumbnailView _viewWasParented]):
+        Take a snapshot of the web content when parented, if needed.
+
+        (-[WKThumbnailView _requestSnapshotIfNeeded]):
+        If we're using snapshots, and haven't already dispatched an async snapshot request,
+        and don't already have a snapshot, request a snapshot from the web process.
+
+        When it returns, use it as the contents of the WKThumbnailView layer, and
+        unparent the live layer tree.
+
+        (-[WKThumbnailView setScale:]):
+        (-[WKThumbnailView setUsesSnapshot:]):
+        (-[WKThumbnailView _setThumbnailLayer:]):
+        (-[WKThumbnailView _thumbnailLayer]):
+        * UIProcess/API/Cocoa/WKThumbnailViewInternal.h:
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setAcceleratedCompositingModeRootLayer:]):
+        (-[WKView _acceleratedCompositingModeRootLayer]):
+        WKView should always keep track of the current root layer, instead of totally
+        handing control over to WKThumbnailView when it is used.
+
+        (-[WKView _setThumbnailView:]):
+        (-[WKView _updateThumbnailViewLayer]):
+        (-[WKView _reparentLayerTreeInThumbnailView]):
+        If needed (either we're not using snapshots, or still waiting for the snapshot to be painted),
+        push the WKView's live layer tree into the thumbnail view.
+
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::takeThumbnailSnapshot):
+        Add a message that asynchronously returns a snapshot that respects the
+        current thumbnail scale and position.
+
+        (WebKit::WebPage::scaledSnapshotWithOptions):
+        Use some nullptr.
+
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::transform):
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        Add a getter for the DrawingArea's transform.
+        Rename it to rootLayerTransform.
+
 2014-03-17  Zan Dobersek  <zdobersek@igalia.com>
 
         Use RunLoop objects through references instead of pointers

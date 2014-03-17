@@ -112,7 +112,8 @@ private:
     virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
     void applyTransientZoomToPage(double scale, WebCore::FloatPoint origin);
 
-    virtual void setTransform(const WebCore::TransformationMatrix&) override;
+    virtual WebCore::TransformationMatrix rootLayerTransform() const override {  return m_transform; }
+    virtual void setRootLayerTransform(const WebCore::TransformationMatrix&) override;
 
     void updateLayerHostingContext();
 

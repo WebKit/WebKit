@@ -846,6 +846,7 @@ private:
     void getWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID);
     void runJavaScriptInMainFrame(const String&, uint64_t callbackID);
     void forceRepaint(uint64_t callbackID);
+    void takeThumbnailSnapshot(uint64_t callbackID);
 
     void preferencesDidChange(const WebPreferencesStore&);
     void platformPreferencesDidChange(const WebPreferencesStore&);

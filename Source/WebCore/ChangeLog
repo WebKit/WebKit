@@ -1,3 +1,13 @@
+2014-03-17  Tim Horton  <timothy_horton@apple.com>
+
+        WKThumbnailView should support snapshots
+        https://bugs.webkit.org/show_bug.cgi?id=130335
+        <rdar://problem/16255139>
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+
 2014-01-29  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] getComputedStyle() not using author's order when showing named grid lines

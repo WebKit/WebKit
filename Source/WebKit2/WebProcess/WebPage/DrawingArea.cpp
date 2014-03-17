@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "DrawingArea.h"
+#include <WebCore/TransformationMatrix.h>
 #include <wtf/Functional.h>
 
 // Subclasses
@@ -40,6 +41,8 @@
 #endif
 
 #include "WebPageCreationParameters.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -81,6 +84,11 @@ void DrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(std::function<void 
 {
     // Scroll position updates are synchronous by default so we can just call the function right away here.
     function();
+}
+
+TransformationMatrix DrawingArea::rootLayerTransform() const
+{
+    return TransformationMatrix();
 }
 
 } // namespace WebKit

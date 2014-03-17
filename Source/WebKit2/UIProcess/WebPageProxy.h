@@ -917,6 +917,8 @@ public:
 
     void setThumbnailScale(double);
 
+    void takeThumbnailSnapshot(ImageCallback::CallbackFunction);
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);
     void platformInitialize();

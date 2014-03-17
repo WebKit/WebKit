@@ -4567,4 +4567,17 @@ void WebPageProxy::addMIMETypeWithCustomContentProvider(const String& mimeType)
     m_process->send(Messages::WebPage::AddMIMETypeWithCustomContentProvider(mimeType), m_pageID);
 }
 
+void WebPageProxy::takeThumbnailSnapshot(ImageCallback::CallbackFunction callbackFunction)
+{
+    if (!isValid())
+        return;
+
+    RefPtr<ImageCallback> callback = ImageCallback::create(callbackFunction);
+
+    uint64_t callbackID = callback->callbackID();
+    m_imageCallbacks.set(callbackID, callback.get());
+
+    m_process->send(Messages::WebPage::TakeThumbnailSnapshot(callbackID), m_pageID);
+}
+
 } // namespace WebKit

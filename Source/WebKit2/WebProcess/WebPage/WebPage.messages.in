@@ -336,5 +336,7 @@ messages -> WebPage LegacyReceiver {
     SetThumbnailScale(double scale)
 
     GetBytecodeProfile(uint64_t callbackID)
+    
+    TakeThumbnailSnapshot(uint64_t callbackID)
 
 }

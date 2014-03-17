@@ -225,6 +225,8 @@ struct WKViewInterpretKeyEventsParameters {
     BOOL _allowsMagnification;
     BOOL _allowsBackForwardNavigationGestures;
 
+    RetainPtr<CALayer> _rootLayer;
+
 #if WK_API_ENABLED
     WKThumbnailView *_thumbnailView;
 #endif
@@ -2498,9 +2500,11 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 {
     [rootLayer web_disableAllActions];
 
+    _data->_rootLayer = rootLayer;
+
 #if WK_API_ENABLED
     if (_data->_thumbnailView) {
-        _data->_thumbnailView.thumbnailLayer = rootLayer;
+        [self _updateThumbnailViewLayer];
         return;
     }
 #endif
@@ -2544,15 +2548,7 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 
 - (CALayer *)_acceleratedCompositingModeRootLayer
 {
-    NSView *hostView = _data->_layerHostingView.get();
-
-    if (!hostView)
-        return nullptr;
-
-    if (!hostView.layer.sublayers.count)
-        return nullptr;
-
-    return [hostView.layer.sublayers objectAtIndex:0];
+    return _data->_rootLayer.get();
 }
 
 - (RetainPtr<CGImageRef>)_takeViewSnapshot
@@ -2974,14 +2970,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 {
     ASSERT(!_data->_thumbnailView || !thumbnailView);
 
-    RetainPtr<CALayer> thumbnailLayer = _data->_thumbnailView.thumbnailLayer;
-
     _data->_thumbnailView = thumbnailView;
 
     if (thumbnailView)
-        thumbnailView.thumbnailLayer = [self _acceleratedCompositingModeRootLayer];
+        [self _updateThumbnailViewLayer];
     else
-        [self _setAcceleratedCompositingModeRootLayer:thumbnailLayer.get()];
+        [self _setAcceleratedCompositingModeRootLayer:_data->_rootLayer.get()];
 
     _data->_page->viewStateDidChange(ViewState::WindowIsActive | ViewState::IsInWindow | ViewState::IsVisible);
 }
@@ -2989,6 +2983,20 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (WKThumbnailView *)_thumbnailView
 {
     return _data->_thumbnailView;
+}
+
+- (void)_updateThumbnailViewLayer
+{
+    WKThumbnailView *thumbnailView = _data->_thumbnailView;
+    ASSERT(thumbnailView);
+
+    if (!thumbnailView.usesSnapshot || thumbnailView._waitingForSnapshot)
+        [self _reparentLayerTreeInThumbnailView];
+}
+
+- (void)_reparentLayerTreeInThumbnailView
+{
+    _data->_thumbnailView._thumbnailLayer = _data->_rootLayer.get();
 }
 #endif // WK_API_ENABLED
 

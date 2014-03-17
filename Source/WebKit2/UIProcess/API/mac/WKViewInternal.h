@@ -109,6 +109,7 @@ struct WebPageConfiguration;
 
 #if WK_API_ENABLED
 @property (nonatomic, setter=_setThumbnailView:) WKThumbnailView *_thumbnailView;
+- (void)_reparentLayerTreeInThumbnailView;
 #endif
 
 // FullScreen

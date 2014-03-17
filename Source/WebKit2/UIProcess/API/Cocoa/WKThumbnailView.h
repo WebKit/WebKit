@@ -39,6 +39,7 @@ WK_API_CLASS
 - (instancetype)initWithFrame:(NSRect)frame fromWKView:(WKView *)wkView;
 
 @property (nonatomic) CGFloat scale;
+@property (nonatomic) BOOL usesSnapshot;
 
 @end
 

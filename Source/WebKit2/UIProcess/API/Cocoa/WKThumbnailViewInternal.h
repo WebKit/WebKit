@@ -31,7 +31,8 @@
 
 @interface WKThumbnailView ()
 
-@property (nonatomic, assign) CALayer *thumbnailLayer;
+@property (nonatomic, assign, setter = _setThumbnailLayer:) CALayer *_thumbnailLayer;
+@property (nonatomic, assign, setter = _setWaitingForSnapshot:) BOOL _waitingForSnapshot;
 
 @end
 

@@ -107,7 +107,8 @@ public:
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;
     virtual void scheduleCompositingLayerFlush() = 0;
 
-    virtual void setTransform(const WebCore::TransformationMatrix&) { }
+    virtual WebCore::TransformationMatrix rootLayerTransform() const;
+    virtual void setRootLayerTransform(const WebCore::TransformationMatrix&) { }
 
 #if USE(COORDINATED_GRAPHICS)
     virtual void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection*, IPC::MessageDecoder&) = 0;
