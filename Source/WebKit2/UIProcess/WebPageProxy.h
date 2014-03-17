@@ -532,7 +532,7 @@ public:
     bool insertDictatedText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, const Vector<WebCore::TextAlternativeWithRange>& dictationAlternatives);
     void getMarkedRange(uint64_t& location, uint64_t& length);
     void getSelectedRange(uint64_t& location, uint64_t& length);
-    void getAttributedSubstringFromRange(uint64_t location, uint64_t length, AttributedString&);
+    void getAttributedSubstringFromRange(uint64_t rangeStart, uint64_t rangeEnd, AttributedString&);
     uint64_t characterIndexForPoint(const WebCore::IntPoint);
     WebCore::IntRect firstRectForCharacterRange(uint64_t, uint64_t);
     bool executeKeypressCommands(const Vector<WebCore::KeypressCommand>&);

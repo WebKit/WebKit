@@ -294,7 +294,7 @@ messages -> WebPage LegacyReceiver {
     CancelComposition() -> (WebKit::EditorState newState)
     GetMarkedRange() -> (uint64_t location, uint64_t length)
     GetSelectedRange() -> (uint64_t location, uint64_t length)
-    GetAttributedSubstringFromRange(uint64_t location, uint64_t length) -> (WebKit::AttributedString result)
+    GetAttributedSubstringFromRange(uint64_t rangeStart, uint64_t rangeEnd) -> (WebKit::AttributedString result)
     CharacterIndexForPoint(WebCore::IntPoint point) -> (uint64_t result)
     FirstRectForCharacterRange(uint64_t location, uint64_t length) -> (WebCore::IntRect resultRect)
     ExecuteKeypressCommands(Vector<WebCore::KeypressCommand> savedCommands) -> (bool handled, WebKit::EditorState newState)

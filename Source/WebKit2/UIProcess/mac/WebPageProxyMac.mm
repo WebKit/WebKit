@@ -241,11 +241,11 @@ void WebPageProxy::getSelectedRange(uint64_t& location, uint64_t& length)
     process().sendSync(Messages::WebPage::GetSelectedRange(), Messages::WebPage::GetSelectedRange::Reply(location, length), m_pageID);
 }
 
-void WebPageProxy::getAttributedSubstringFromRange(uint64_t location, uint64_t length, AttributedString& result)
+void WebPageProxy::getAttributedSubstringFromRange(uint64_t rangeStart, uint64_t rangeEnd, AttributedString& result)
 {
     if (!isValid())
         return;
-    process().sendSync(Messages::WebPage::GetAttributedSubstringFromRange(location, length), Messages::WebPage::GetAttributedSubstringFromRange::Reply(result), m_pageID);
+    process().sendSync(Messages::WebPage::GetAttributedSubstringFromRange(rangeStart, rangeEnd), Messages::WebPage::GetAttributedSubstringFromRange::Reply(result), m_pageID);
 }
 
 uint64_t WebPageProxy::characterIndexForPoint(const IntPoint point)

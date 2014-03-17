@@ -1,3 +1,23 @@
+2014-03-17  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] getAttributedSubstringFromRange arguments are incorrectly named
+        https://bugs.webkit.org/show_bug.cgi?id=130349
+
+        Reviewed by Tim Horton.
+
+        There is a mess of start/end and start/length pairs in IPC. One day we'll fix them
+        all, but now, let's at least name them correctly.
+
+        No behavior change.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::getAttributedSubstringFromRange):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::getAttributedSubstringFromRange):
+
 2014-03-17  Tim Horton  <timothy_horton@apple.com>
 
         WKThumbnailView should support snapshots

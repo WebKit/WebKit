@@ -347,7 +347,7 @@ void WebPage::getSelectedRange(uint64_t& location, uint64_t& length)
     }
 }
 
-void WebPage::getAttributedSubstringFromRange(uint64_t location, uint64_t length, AttributedString& result)
+void WebPage::getAttributedSubstringFromRange(uint64_t rangeStart, uint64_t rangeEnd, AttributedString& result)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
@@ -355,7 +355,7 @@ void WebPage::getAttributedSubstringFromRange(uint64_t location, uint64_t length
     if (selection.isNone() || !selection.isContentEditable() || selection.isInPasswordField())
         return;
 
-    NSRange nsRange = NSMakeRange(location, length - location);
+    NSRange nsRange = NSMakeRange(rangeStart, rangeEnd - rangeStart);
     RefPtr<Range> range = convertToRange(&frame, nsRange);
     if (!range)
         return;
