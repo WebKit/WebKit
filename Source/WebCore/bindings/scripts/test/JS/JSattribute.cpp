@@ -174,7 +174,7 @@ bool JSattributeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> hand
 
 void JSattributeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSattribute* jsattribute = jsCast<JSattribute*>(handle.get().asCell());
+    JSattribute* jsattribute = jsCast<JSattribute*>(handle.slot()->asCell());
     DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsattribute->impl(), jsattribute);
     jsattribute->releaseImpl();

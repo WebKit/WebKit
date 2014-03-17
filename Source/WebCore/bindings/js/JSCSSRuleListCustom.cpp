@@ -38,7 +38,7 @@ namespace WebCore {
 
 bool JSCSSRuleListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    JSCSSRuleList* jsCSSRuleList = jsCast<JSCSSRuleList*>(handle.get().asCell());
+    JSCSSRuleList* jsCSSRuleList = jsCast<JSCSSRuleList*>(handle.slot()->asCell());
     if (!jsCSSRuleList->hasCustomProperties())
         return false;
     if (CSSStyleSheet* styleSheet = jsCSSRuleList->impl().styleSheet())

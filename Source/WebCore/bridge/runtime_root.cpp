@@ -200,7 +200,7 @@ void RootObject::removeRuntimeObject(RuntimeObject* object)
 
 void RootObject::finalize(JSC::Handle<JSC::Unknown> handle, void*)
 {
-    RuntimeObject* object = static_cast<RuntimeObject*>(handle.get().asCell());
+    RuntimeObject* object = static_cast<RuntimeObject*>(handle.slot()->asCell());
 
     Ref<RootObject> protect(*this);
     object->invalidate();

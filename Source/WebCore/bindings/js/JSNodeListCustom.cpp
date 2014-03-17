@@ -39,7 +39,7 @@ namespace WebCore {
 
 bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    JSNodeList* jsNodeList = jsCast<JSNodeList*>(handle.get().asCell());
+    JSNodeList* jsNodeList = jsCast<JSNodeList*>(handle.slot()->asCell());
     if (!jsNodeList->hasCustomProperties())
         return false;
     if (jsNodeList->impl().isLiveNodeList())

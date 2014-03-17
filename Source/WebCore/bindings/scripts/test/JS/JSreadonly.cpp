@@ -149,7 +149,7 @@ bool JSreadonlyOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handl
 
 void JSreadonlyOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSreadonly* jsreadonly = jsCast<JSreadonly*>(handle.get().asCell());
+    JSreadonly* jsreadonly = jsCast<JSreadonly*>(handle.slot()->asCell());
     DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsreadonly->impl(), jsreadonly);
     jsreadonly->releaseImpl();

@@ -305,7 +305,7 @@ EncodedJSValue JSTestEventTarget::indexGetter(ExecState* exec, JSObject* slotBas
 
 bool JSTestEventTargetOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    JSTestEventTarget* jsTestEventTarget = jsCast<JSTestEventTarget*>(handle.get().asCell());
+    JSTestEventTarget* jsTestEventTarget = jsCast<JSTestEventTarget*>(handle.slot()->asCell());
     if (jsTestEventTarget->impl().isFiringEventListeners())
         return true;
     UNUSED_PARAM(visitor);
@@ -314,7 +314,7 @@ bool JSTestEventTargetOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown
 
 void JSTestEventTargetOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSTestEventTarget* jsTestEventTarget = jsCast<JSTestEventTarget*>(handle.get().asCell());
+    JSTestEventTarget* jsTestEventTarget = jsCast<JSTestEventTarget*>(handle.slot()->asCell());
     DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestEventTarget->impl(), jsTestEventTarget);
     jsTestEventTarget->releaseImpl();

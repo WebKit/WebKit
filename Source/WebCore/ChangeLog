@@ -1,3 +1,35 @@
+2014-03-17  Andreas Kling  <akling@apple.com>
+
+        Remove unnecessary JSC::Handle null checks in bindings code.
+        <https://webkit.org/b/130356>
+
+        Use Handle::slot() directly instead of going through Handle::get().
+        This avoids null checking the HandleSlot, which isn't necessary here
+        anyway, and the code already assumes it'll never be null.
+
+        Reviewed by Gavin Barraclough.
+
+        * bindings/js/JSCSSRuleListCustom.cpp:
+        (WebCore::JSCSSRuleListOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::JSCSSValueOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSCSSValueOwner::finalize):
+        * bindings/js/JSMutationObserverCustom.cpp:
+        (WebCore::JSMutationObserverOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNodeOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::JSNodeListOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSTextTrackCueCustom.cpp:
+        (WebCore::JSTextTrackCueOwner::isReachableFromOpaqueRoots):
+        * bindings/js/WebCoreTypedArrayController.cpp:
+        (WebCore::WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots):
+        (WebCore::WebCoreTypedArrayController::JSArrayBufferOwner::finalize):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bridge/runtime_root.cpp:
+        (JSC::Bindings::RootObject::finalize):
+
 2014-03-17  Krzysztof Czech  <k.czech@samsung.com>
 
         AX: Reducing some code by using helper function ariaElementsFromAttribute

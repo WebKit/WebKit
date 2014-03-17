@@ -128,7 +128,7 @@ static inline bool isReachableFromDOM(JSNode* jsNode, Node* node, SlotVisitor& v
 
 bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    JSNode* jsNode = jsCast<JSNode*>(handle.get().asCell());
+    JSNode* jsNode = jsCast<JSNode*>(handle.slot()->asCell());
     return isReachableFromDOM(jsNode, &jsNode->impl(), visitor);
 }
 

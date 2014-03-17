@@ -49,7 +49,7 @@ namespace WebCore {
 
 bool JSCSSValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void* context, SlotVisitor& visitor)
 {
-    JSCSSValue* jsCSSValue = jsCast<JSCSSValue*>(handle.get().asCell());
+    JSCSSValue* jsCSSValue = jsCast<JSCSSValue*>(handle.slot()->asCell());
     if (!jsCSSValue->hasCustomProperties())
         return false;
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
@@ -61,7 +61,7 @@ bool JSCSSValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handl
 
 void JSCSSValueOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSCSSValue* jsCSSValue = jsCast<JSCSSValue*>(handle.get().asCell());
+    JSCSSValue* jsCSSValue = jsCast<JSCSSValue*>(handle.slot()->asCell());
     DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
     world.m_cssValueRoots.remove(&jsCSSValue->impl());
     uncacheWrapper(world, &jsCSSValue->impl(), jsCSSValue);
