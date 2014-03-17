@@ -34,8 +34,10 @@
 #include <wtf/StackStats.h>
 #include <wtf/text/StringHash.h>
 
-#if OS(DARWIN) && defined(__has_include) && __has_include(<System/pthread_machdep.h>)
+#if OS(DARWIN)
+#if defined(__has_include) && __has_include(<System/pthread_machdep.h>)
 #include <System/pthread_machdep.h>
+#endif
 #endif
 
 #if defined(__PTK_FRAMEWORK_JAVASCRIPTCORE_KEY1)
