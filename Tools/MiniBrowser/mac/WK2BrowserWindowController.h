@@ -28,9 +28,6 @@
 #if WK_API_ENABLED
 
 @interface WK2BrowserWindowController : BrowserWindowController <BrowserController>
-
-- (id)initWithProcessGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup;
-
 @end
 
 #endif // WK_API_ENABLED

@@ -29,8 +29,6 @@
 #import "WK2BrowserWindowController.h"
 #import <WebKit/WebHistory.h>
 #import <WebKit2/WebKit2.h>
-#import <WebKit2/WKStringCF.h>
-#import <WebKit2/WKURLCF.h>
 
 static NSString *defaultURL = @"http://www.webkit.org/";
 
@@ -45,11 +43,6 @@ enum {
 {
     self = [super init];
     if (self) {
-#if WK_API_ENABLED
-        NSURL *url = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForAuxiliaryExecutable:@"MiniBrowser.wkbundle"]];
-        _processGroup = [[WKProcessGroup alloc] initWithInjectedBundleURL:url];
-        _browsingContextGroup = [[WKBrowsingContextGroup alloc] initWithIdentifier:@"MiniBrowser"];
-#endif
         _browserWindows = [[NSMutableSet alloc] init];
     }
 
@@ -64,9 +57,8 @@ enum {
         controller = [[WK1BrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
 #if WK_API_ENABLED
     else if ([sender tag] == WebKit2NewWindowTag)
-        controller = [[WK2BrowserWindowController alloc] initWithProcessGroup:_processGroup browsingContextGroup:_browsingContextGroup];
+        controller = [[WK2BrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
 #endif
-
     if (!controller)
         return;
 
@@ -98,14 +90,6 @@ enum {
         BrowserWindowController *controller = (BrowserWindowController *)delegate;
         [controller applicationTerminating];
     }
-
-#if WK_API_ENABLED
-    [_processGroup release];
-    _processGroup = nil;
-
-    [_browsingContextGroup release];
-    _browsingContextGroup = nil;
-#endif
 }
 
 - (BrowserWindowController *)frontmostBrowserWindowController
@@ -140,20 +124,19 @@ enum {
         return;
     }
 
-#if WK_API_ENABLED
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
     [openPanel beginWithCompletionHandler:^(NSInteger result) {
         if (result != NSOKButton)
             return;
 
         // FIXME: add a way to open in WK1 also.
-        BrowserWindowController *newBrowserWindowController = [[WK2BrowserWindowController alloc] initWithProcessGroup:_processGroup browsingContextGroup:_browsingContextGroup];
+        
+        BrowserWindowController *newBrowserWindowController = [[WK2BrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
         [newBrowserWindowController.window makeKeyAndOrderFront:self];
 
         NSURL *url = [openPanel.URLs objectAtIndex:0];
         [newBrowserWindowController loadURLString:[url absoluteString]];
     }];
-#endif // WK_API_ENABLED
 }
 
 @end

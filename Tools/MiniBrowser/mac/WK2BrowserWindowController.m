@@ -28,53 +28,50 @@
 #if WK_API_ENABLED
 
 #import "AppDelegate.h"
-#import <WebKit2/WKBrowsingContextControllerPrivate.h>
-#import <WebKit2/WKBrowsingContextHistoryDelegate.h>
-#import <WebKit2/WKBrowsingContextLoadDelegatePrivate.h>
-#import <WebKit2/WKBrowsingContextPolicyDelegate.h>
-#import <WebKit2/WKNavigationData.h>
-#import <WebKit2/WKStringCF.h>
-#import <WebKit2/WKURLCF.h>
-#import <WebKit2/WKView.h>
-#import <WebKit2/WKViewPrivate.h>
+#import <WebKit2/WKFrameInfo.h>
+#import <WebKit2/WKWebView.h>
+#import <WebKit2/WKNavigationDelegate.h>
+#import <WebKit2/WKUIDelegate.h>
 
 static void* keyValueObservingContext = &keyValueObservingContext;
 static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
 
-@interface WK2BrowserWindowController () <WKBrowsingContextLoadDelegatePrivate, WKBrowsingContextPolicyDelegate, WKBrowsingContextHistoryDelegate>
+@interface WK2BrowserWindowController () <WKNavigationDelegate, WKUIDelegate>
 @end
 
 @implementation WK2BrowserWindowController {
-    WKProcessGroup *_processGroup;
-    WKBrowsingContextGroup *_browsingContextGroup;
-
-    WKView *_webView;
+    WKWebView *_webView;
 }
 
-- (id)initWithProcessGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup
+- (void)awakeFromNib
 {
-    if ((self = [super initWithWindowNibName:@"BrowserWindow"])) {
-        _processGroup = [processGroup retain];
-        _browsingContextGroup = [browsingContextGroup retain];
-        _zoomTextOnly = NO;
-    }
-    
-    return self;
+    _webView = [[WKWebView alloc] initWithFrame:[containerView bounds]];
+
+    _webView.allowsMagnification = YES;
+    _webView.allowsBackForwardNavigationGestures = YES;
+
+    [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+    [containerView addSubview:_webView];
+
+    [progressIndicator bind:NSHiddenBinding toObject:_webView withKeyPath:@"loading" options:@{ NSValueTransformerNameBindingOption : NSNegateBooleanTransformerName }];
+    [progressIndicator bind:NSValueBinding toObject:_webView withKeyPath:@"estimatedProgress" options:nil];
+
+    [_webView addObserver:self forKeyPath:@"title" options:0 context:keyValueObservingContext];
+    [_webView addObserver:self forKeyPath:@"activeURL" options:0 context:keyValueObservingContext];
+
+    _webView.navigationDelegate = self;
+    _webView.UIDelegate = self;
 }
 
 - (void)dealloc
 {
+    [_webView removeObserver:self forKeyPath:@"title"];
+    [_webView removeObserver:self forKeyPath:@"activeURL"];
+    
     [progressIndicator unbind:NSHiddenBinding];
     [progressIndicator unbind:NSValueBinding];
 
-    [_webView.browsingContextController removeObserver:self forKeyPath:@"title" context:keyValueObservingContext];
-    [_webView.browsingContextController removeObserver:self forKeyPath:@"activeURL" context:keyValueObservingContext];
-    _webView.browsingContextController.loadDelegate = nil;
-    _webView.browsingContextController.policyDelegate = nil;
     [_webView release];
-
-    [_browsingContextGroup release];
-    [_processGroup release];
 
     [super dealloc];
 }
@@ -83,7 +80,7 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 {
     [urlText setStringValue:[self addProtocolIfNecessary:[urlText stringValue]]];
 
-    [_webView.browsingContextController loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[urlText stringValue]]]];
+    [_webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[urlText stringValue]]]];
 }
 
 - (IBAction)showHideWebView:(id)sender
@@ -114,17 +111,21 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
         return [self canZoomOut];
     if (action == @selector(resetZoom:))
         return [self canResetZoom];
-
+    
+    // Disabled until missing WK2 functionality is exposed via API/SPI.
+    if (action == @selector(reload:)
+        || action == @selector(toggleZoomMode:)
+        || action == @selector(resetZoom:)
+        || action == @selector(dumpSourceToConsole:)
+        || action == @selector(find:)
+        || action == @selector(togglePaginationMode:)
+        || action == @selector(toggleTransparentWindow:))
+        return NO;
+    
     if (action == @selector(showHideWebView:))
         [menuItem setTitle:[_webView isHidden] ? @"Show Web View" : @"Hide Web View"];
     else if (action == @selector(removeReinsertWebView:))
         [menuItem setTitle:[_webView window] ? @"Remove Web View" : @"Insert Web View"];
-    else if (action == @selector(toggleZoomMode:))
-        [menuItem setState:_zoomTextOnly ? NSOnState : NSOffState];
-    else if ([menuItem action] == @selector(togglePaginationMode:))
-        [menuItem setState:[self isPaginated] ? NSOnState : NSOffState];
-    else if ([menuItem action] == @selector(toggleTransparentWindow:))
-        [menuItem setState:[[self window] isOpaque] ? NSOffState : NSOnState];
     else if ([menuItem action] == @selector(toggleUISideCompositing:))
         [menuItem setState:[self isUISideCompositingEnabled] ? NSOnState : NSOffState];
 
@@ -133,7 +134,6 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 
 - (IBAction)reload:(id)sender
 {
-    [_webView.browsingContextController reload];
 }
 
 - (IBAction)forceRepaint:(id)sender
@@ -143,12 +143,33 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 
 - (IBAction)goBack:(id)sender
 {
-    [_webView.browsingContextController goBack];
+    [_webView goBack];
 }
 
 - (IBAction)goForward:(id)sender
 {
-    [_webView.browsingContextController goForward];
+    [_webView goForward];
+}
+
+- (IBAction)toggleZoomMode:(id)sender
+{
+}
+
+- (IBAction)resetZoom:(id)sender
+{
+}
+
+- (BOOL)canResetZoom
+{
+    return NO;
+}
+
+- (IBAction)dumpSourceToConsole:(id)sender
+{
+}
+
+- (IBAction)togglePaginationMode:(id)sender
+{
 }
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
@@ -156,10 +177,10 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
     SEL action = [item action];
 
     if (action == @selector(goBack:))
-        return _webView && [_webView.browsingContextController canGoBack];
+        return _webView && [_webView canGoBack];
     
     if (action == @selector(goForward:))
-        return _webView && [_webView.browsingContextController canGoForward];
+        return _webView && [_webView canGoForward];
     
     return YES;
 }
@@ -171,9 +192,7 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 
 - (BOOL)windowShouldClose:(id)sender
 {
-    LOG(@"windowShouldClose");
-    BOOL canCloseImmediately = WKPageTryClose(_webView.pageRef);
-    return canCloseImmediately;
+    return YES;
 }
 
 - (void)windowWillClose:(NSNotification *)notification
@@ -184,8 +203,6 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 
 - (void)applicationTerminating
 {
-    // FIXME: Why are we bothering to close the page? This doesn't even prevent LEAK output.
-    WKPageClose(_webView.pageRef);
 }
 
 #define DefaultMinimumZoomFactor (.5)
@@ -194,20 +211,16 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 
 - (CGFloat)currentZoomFactor
 {
-    return _zoomTextOnly ? _webView.browsingContextController.textZoom : _webView.browsingContextController.pageZoom;
+    return 1;
 }
 
 - (void)setCurrentZoomFactor:(CGFloat)factor
 {
-    if (_zoomTextOnly)
-        _webView.browsingContextController.textZoom = factor;
-    else
-        _webView.browsingContextController.pageZoom = factor;
 }
 
 - (BOOL)canZoomIn
 {
-    return [self currentZoomFactor] * DefaultZoomFactorRatio < DefaultMaximumZoomFactor;
+    return NO;
 }
 
 - (void)zoomIn:(id)sender
@@ -221,7 +234,7 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 
 - (BOOL)canZoomOut
 {
-    return [self currentZoomFactor] / DefaultZoomFactorRatio > DefaultMinimumZoomFactor;
+    return NO;
 }
 
 - (void)zoomOut:(id)sender
@@ -233,62 +246,8 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
     [self setCurrentZoomFactor:factor];
 }
 
-- (BOOL)canResetZoom
-{
-    return _zoomTextOnly ? (_webView.browsingContextController.textZoom != 1) : (_webView.browsingContextController.pageZoom != 1);
-}
-
-- (void)resetZoom:(id)sender
-{
-    if (![self canResetZoom])
-        return;
-
-    if (_zoomTextOnly)
-        _webView.browsingContextController.textZoom = 1;
-    else
-        _webView.browsingContextController.pageZoom = 1;
-}
-
-- (IBAction)toggleZoomMode:(id)sender
-{
-    if (_zoomTextOnly) {
-        _zoomTextOnly = NO;
-        double currentTextZoom = _webView.browsingContextController.textZoom;
-        WKPageSetPageAndTextZoomFactors(_webView.pageRef, currentTextZoom, 1);
-    } else {
-        _zoomTextOnly = YES;
-        double currentPageZoom = _webView.browsingContextController.pageZoom;
-        WKPageSetPageAndTextZoomFactors(_webView.pageRef, 1, currentPageZoom);
-    }
-}
-
-- (BOOL)isPaginated
-{
-    return _webView.browsingContextController.paginationMode != WKPaginationModeUnpaginated;
-}
-
-- (IBAction)togglePaginationMode:(id)sender
-{
-    if ([self isPaginated])
-        _webView.browsingContextController.paginationMode = WKPaginationModeUnpaginated;
-    else {
-        _webView.browsingContextController.paginationMode = WKPaginationModeLeftToRight;
-        _webView.browsingContextController.pageLength = _webView.bounds.size.width / 2;
-        _webView.browsingContextController.gapBetweenPages = 10;
-    }
-}
-
 - (IBAction)toggleTransparentWindow:(id)sender
 {
-    BOOL isTransparent = _webView.drawsTransparentBackground;
-    isTransparent = !isTransparent;
-
-    [[self window] setOpaque:!isTransparent];
-    [[self window] setHasShadow:!isTransparent];
-
-    _webView.drawsTransparentBackground = isTransparent;
-
-    [[self window] display];    
 }
 
 - (BOOL)isUISideCompositingEnabled
@@ -303,288 +262,72 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
     [userDefaults setBool:newValue forKey:WebKit2UseRemoteLayerTreeDrawingAreaKey];
 }
 
-static void dumpSource(WKStringRef source, WKErrorRef error, void* context)
-{
-    if (!source)
-        return;
-
-    LOG(@"Main frame source\n \"%@\"", CFBridgingRelease(WKStringCopyCFString(0, source)));
-}
-
-- (IBAction)dumpSourceToConsole:(id)sender
-{
-    WKPageGetSourceForFrame(_webView.pageRef, WKPageGetMainFrame(_webView.pageRef), NULL, dumpSource);
-}
-
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (context != keyValueObservingContext || object != _webView.browsingContextController)
+    if (context != keyValueObservingContext || object != _webView)
         return;
 
     if ([keyPath isEqualToString:@"title"])
-        self.window.title = [_webView.browsingContextController.title stringByAppendingString:_webView.isUsingUISideCompositing ? @" [WK2 UI]" : @" [WK2]"];
+        self.window.title = [_webView.title stringByAppendingString:@" [WK2]"];
     else if ([keyPath isEqualToString:@"activeURL"])
-        [self updateTextFieldFromURL:_webView.browsingContextController.activeURL];
+        [self updateTextFieldFromURL:_webView.activeURL];
 }
 
-// MARK: UI Client Callbacks
-
-static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef request, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton button, const void* clientInfo)
-{
-    LOG(@"createNewPage");
-    WK2BrowserWindowController *originator = (WK2BrowserWindowController *)clientInfo;
-    WK2BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithProcessGroup:originator->_processGroup browsingContextGroup:originator->_browsingContextGroup];
-    [controller loadWindow];
-
-    return WKRetain(controller->_webView.pageRef);
-}
-
-static void showPage(WKPageRef page, const void *clientInfo)
-{
-    LOG(@"showPage");
-    [[(BrowserWindowController *)clientInfo window] orderFront:nil];
-}
-
-static void closePage(WKPageRef page, const void *clientInfo)
-{
-    LOG(@"closePage");
-    WKPageClose(page);
-    [[(BrowserWindowController *)clientInfo window] close];
-}
-
-static void runJavaScriptAlert(WKPageRef page, WKStringRef message, WKFrameRef frame, const void* clientInfo)
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)())completionHandler
 {
     NSAlert* alert = [[NSAlert alloc] init];
 
-    WKURLRef wkURL = WKFrameCopyURL(frame);
-    CFURLRef cfURL = WKURLCopyCFURL(0, wkURL);
-    WKRelease(wkURL);
-
-    [alert setMessageText:[NSString stringWithFormat:@"JavaScript alert dialog from %@.", [(NSURL *)cfURL absoluteString]]];
-    CFRelease(cfURL);
-
-    CFStringRef cfMessage = WKStringCopyCFString(0, message);
-    [alert setInformativeText:(NSString *)cfMessage];
-    CFRelease(cfMessage);
-
+    [alert setMessageText:[NSString stringWithFormat:@"JavaScript alert dialog from %@.", [frame.request.URL absoluteString]]];
+    [alert setInformativeText:message];
     [alert addButtonWithTitle:@"OK"];
 
-    [alert runModal];
-    [alert release];
-}
-
-static bool runJavaScriptConfirm(WKPageRef page, WKStringRef message, WKFrameRef frame, const void* clientInfo)
-{
-    NSAlert* alert = [[NSAlert alloc] init];
-
-    WKURLRef wkURL = WKFrameCopyURL(frame);
-    CFURLRef cfURL = WKURLCopyCFURL(0, wkURL);
-    WKRelease(wkURL);
-
-    [alert setMessageText:[NSString stringWithFormat:@"JavaScript confirm dialog from %@.", [(NSURL *)cfURL absoluteString]]];
-    CFRelease(cfURL);
-
-    CFStringRef cfMessage = WKStringCopyCFString(0, message);
-    [alert setInformativeText:(NSString *)cfMessage];
-    CFRelease(cfMessage);
-
-    [alert addButtonWithTitle:@"OK"];
-    [alert addButtonWithTitle:@"Cancel"];
-
-    NSInteger button = [alert runModal];
-    [alert release];
-
-    return button == NSAlertFirstButtonReturn;
-}
-
-static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef frame, const void* clientInfo)
-{
-    NSAlert* alert = [[NSAlert alloc] init];
-
-    WKURLRef wkURL = WKFrameCopyURL(frame);
-    CFURLRef cfURL = WKURLCopyCFURL(0, wkURL);
-    WKRelease(wkURL);
-
-    [alert setMessageText:[NSString stringWithFormat:@"JavaScript prompt dialog from %@.", [(NSURL *)cfURL absoluteString]]];
-    CFRelease(cfURL);
-
-    CFStringRef cfMessage = WKStringCopyCFString(0, message);
-    [alert setInformativeText:(NSString *)cfMessage];
-    CFRelease(cfMessage);
-
-    [alert addButtonWithTitle:@"OK"];
-    [alert addButtonWithTitle:@"Cancel"];
-
-    NSTextField* input = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 200, 24)];
-    CFStringRef cfDefaultValue = WKStringCopyCFString(0, defaultValue);
-    [input setStringValue:(NSString *)cfDefaultValue];
-    CFRelease(cfDefaultValue);
-
-    [alert setAccessoryView:input];
-
-    NSInteger button = [alert runModal];
-
-    NSString* result = nil;
-    if (button == NSAlertFirstButtonReturn) {
-        [input validateEditing];
-        result = [input stringValue];
-    }
-
-    [alert release];
-
-    if (!result)
-        return 0;
-    return WKStringCreateWithCFString((CFStringRef)result);
-}
-
-static void setStatusText(WKPageRef page, WKStringRef text, const void* clientInfo)
-{
-    LOG(@"setStatusText");
-}
-
-static void mouseDidMoveOverElement(WKPageRef page, WKHitTestResultRef hitTestResult, WKEventModifiers modifiers, WKTypeRef userData, const void *clientInfo)
-{
-    LOG(@"mouseDidMoveOverElement");
-}
-
-static WKRect getWindowFrame(WKPageRef page, const void* clientInfo)
-{
-    NSRect rect = [[(BrowserWindowController *)clientInfo window] frame];
-    WKRect wkRect;
-    wkRect.origin.x = rect.origin.x;
-    wkRect.origin.y = rect.origin.y;
-    wkRect.size.width = rect.size.width;
-    wkRect.size.height = rect.size.height;
-    return wkRect;
-}
-
-static void setWindowFrame(WKPageRef page, WKRect rect, const void* clientInfo)
-{
-    [[(BrowserWindowController *)clientInfo window] setFrame:NSMakeRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height) display:YES];
-}
-
-static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKFrameRef frame, const void* clientInfo)
-{
-    NSAlert *alert = [[NSAlert alloc] init];
-
-    WKURLRef wkURL = WKFrameCopyURL(frame);
-    CFURLRef cfURL = WKURLCopyCFURL(0, wkURL);
-    WKRelease(wkURL);
-
-    [alert setMessageText:[NSString stringWithFormat:@"BeforeUnload confirm dialog from %@.", [(NSURL *)cfURL absoluteString]]];
-    CFRelease(cfURL);
-
-    CFStringRef cfMessage = WKStringCopyCFString(0, message);
-    [alert setInformativeText:(NSString *)cfMessage];
-    CFRelease(cfMessage);
-
-    [alert addButtonWithTitle:@"OK"];
-    [alert addButtonWithTitle:@"Cancel"];
-
-    NSInteger button = [alert runModal];
-    [alert release];
-
-    return button == NSAlertFirstButtonReturn;
-}
-
-static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void* clientInfo)
-{
-    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-    [openPanel setAllowsMultipleSelection:WKOpenPanelParametersGetAllowsMultipleFiles(parameters)];
-
-    WKRetain(listener);
-
-    [openPanel beginSheetModalForWindow:[(BrowserWindowController *)clientInfo window] completionHandler:^(NSInteger result) {
-        if (result == NSFileHandlingPanelOKButton) {
-            WKMutableArrayRef fileURLs = WKMutableArrayCreate();
-
-            NSURL *nsURL;
-            for (nsURL in [openPanel URLs]) {
-                WKURLRef wkURL = WKURLCreateWithCFURL((CFURLRef)nsURL);
-                WKArrayAppendItem(fileURLs, wkURL);
-                WKRelease(wkURL);
-            }
-
-            WKOpenPanelResultListenerChooseFiles(listener, fileURLs);
-
-            WKRelease(fileURLs);
-        } else
-            WKOpenPanelResultListenerCancel(listener);
-        
-        WKRelease(listener);
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    [alert beginSheetModalForWindow:self.window completionHandler:^void (NSModalResponse response) {
+        completionHandler();
+        [alert release];
     }];
+#endif
 }
 
-- (void)awakeFromNib
+- (void)webView:(WKWebView *)webView runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL result))completionHandler
 {
-    _webView = [[WKView alloc] initWithFrame:[containerView bounds] processGroup:_processGroup browsingContextGroup:_browsingContextGroup];
+    NSAlert* alert = [[NSAlert alloc] init];
 
-    _webView.allowsMagnification = YES;
-    _webView.allowsBackForwardNavigationGestures = YES;
+    [alert setMessageText:[NSString stringWithFormat:@"JavaScript confirm dialog from %@.", [frame.request.URL  absoluteString]]];
+    [alert setInformativeText:message];
+    
+    [alert addButtonWithTitle:@"OK"];
+    [alert addButtonWithTitle:@"Cancel"];
 
-    [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-    [containerView addSubview:_webView];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    [alert beginSheetModalForWindow:self.window completionHandler:^void (NSModalResponse response) {
+        completionHandler(response == NSAlertFirstButtonReturn);
+        [alert release];
+    }];
+#endif
+}
 
-    [progressIndicator bind:NSHiddenBinding toObject:_webView.browsingContextController withKeyPath:@"loading" options:@{ NSValueTransformerNameBindingOption : NSNegateBooleanTransformerName }];
-    [progressIndicator bind:NSValueBinding toObject:_webView.browsingContextController withKeyPath:@"estimatedProgress" options:nil];
+- (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString *result))completionHandler
+{
+    NSAlert* alert = [[NSAlert alloc] init];
 
-    [_webView.browsingContextController addObserver:self forKeyPath:@"title" options:0 context:keyValueObservingContext];
-    [_webView.browsingContextController addObserver:self forKeyPath:@"activeURL" options:0 context:keyValueObservingContext];
-
-    _webView.browsingContextController.loadDelegate = self;
-    _webView.browsingContextController.policyDelegate = self;
-    _webView.browsingContextController.historyDelegate = self;
-
-    WKPageUIClientV2 uiClient = {
-        { 2, self },
-        0,          /* createNewPage_deprecatedForUseWithV0 */
-        showPage,
-        closePage,
-        0,          /* takeFocus */
-        0,          /* focus */
-        0,          /* unfocus */
-        runJavaScriptAlert,
-        runJavaScriptConfirm,
-        runJavaScriptPrompt,
-        setStatusText,
-        0,          /* mouseDidMoveOverElement_deprecatedForUseWithV0 */
-        0,          /* missingPluginButtonClicked */
-        0,          /* didNotHandleKeyEvent */
-        0,          /* didNotHandleWheelEvent */
-        0,          /* toolbarsAreVisible */
-        0,          /* setToolbarsAreVisible */
-        0,          /* menuBarIsVisible */
-        0,          /* setMenuBarIsVisible */
-        0,          /* statusBarIsVisible */
-        0,          /* setStatusBarIsVisible */
-        0,          /* isResizable */
-        0,          /* setIsResizable */
-        getWindowFrame,
-        setWindowFrame,
-        runBeforeUnloadConfirmPanel,
-        0,          /* didDraw */
-        0,          /* pageDidScroll */
-        0,          /* exceededDatabaseQuota */
-        runOpenPanel,
-        0,          /* decidePolicyForGeolocationPermissionRequest */
-        0, // headerHeight
-        0, // footerHeight
-        0, // drawHeader
-        0, // drawFooter
-        0, // printFrame
-        0, // showModal
-        0, // didCompleteRubberBandForMainFrame
-        0, // saveDataToFileInDownloadsFolder
-        0, // shouldInterruptJavaScript
-        createNewPage,
-        mouseDidMoveOverElement,
-        0, // decidePolicyForNotificationPermissionRequest
-        0, // unavailablePluginButtonClicked_deprecatedForUseWithV1
-        0, // showColorPicker
-        0, // hideColorPicker
-        0, // unavailablePluginButtonClicked
-    };
-    WKPageSetPageUIClient(_webView.pageRef, &uiClient.base);
+    [alert setMessageText:[NSString stringWithFormat:@"JavaScript prompt dialog from %@.", [frame.request.URL absoluteString]]];
+    [alert setInformativeText:prompt];
+    
+    [alert addButtonWithTitle:@"OK"];
+    [alert addButtonWithTitle:@"Cancel"];
+    
+    NSTextField* input = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 200, 24)];
+    [input setStringValue:defaultText];
+    [alert setAccessoryView:input];
+    
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    [alert beginSheetModalForWindow:self.window completionHandler:^void (NSModalResponse response) {
+        [input validateEditing];
+        completionHandler(response == NSAlertFirstButtonReturn ? [input stringValue] : nil);
+        [alert release];
+    }];
+#endif
 }
 
 - (void)updateTextFieldFromURL:(NSURL *)URL
@@ -612,101 +355,44 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
 
 - (IBAction)find:(id)sender
 {
-    WKStringRef string = WKStringCreateWithCFString((CFStringRef)[sender stringValue]);
-
-    WKPageFindString(_webView.pageRef, string, kWKFindOptionsCaseInsensitive | kWKFindOptionsWrapAround | kWKFindOptionsShowFindIndicator | kWKFindOptionsShowOverlay, 100);
 }
 
-#pragma mark WKBrowsingContextLoadDelegate
+#pragma mark WKNavigationDelegate
 
-- (void)browsingContextControllerDidStartProvisionalLoad:(WKBrowsingContextController *)sender
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicyDecision))decisionHandler
 {
-    LOG(@"didStartProvisionalLoad");
+    LOG(@"decidePolicyForNavigationResponse");
+    decisionHandler(WKNavigationResponsePolicyDecisionAllow);
 }
 
-- (void)browsingContextControllerDidReceiveServerRedirectForProvisionalLoad:(WKBrowsingContextController *)sender
+- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
 {
-    LOG(@"didReceiveServerRedirectForProvisionalLoad");
+    LOG(@"didStartProvisionalNavigation");
 }
 
-- (void)browsingContextController:(WKBrowsingContextController *)sender didFailProvisionalLoadWithError:(NSError *)error
+- (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation
 {
-    LOG(@"didFailProvisionalLoadWithError: %@", error);
+    LOG(@"didReceiveServerRedirectForProvisionalNavigation");
 }
 
-- (void)browsingContextControllerDidCommitLoad:(WKBrowsingContextController *)sender
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
-    LOG(@"didCommitLoad");
+    LOG(@"didFailProvisionalNavigation: %@", error);
 }
 
-- (void)browsingContextControllerDidFinishLoad:(WKBrowsingContextController *)sender
+- (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
 {
-    LOG(@"didFinishLoad");
+    LOG(@"didCommitNavigation: %@", error);
 }
 
-- (void)browsingContextController:(WKBrowsingContextController *)sender didFailLoadWithError:(NSError *)error
+- (void)webView:(WKWebView *)webView didFinishLoadingNavigation:(WKNavigation *)navigation
 {
-    LOG(@"didFailLoadWithError: %@", error);
+    LOG(@"didFinishLoadingNavigation");
 }
 
-- (void)browsingContextControllerDidChangeBackForwardList:(WKBrowsingContextController *)sender addedItem:(WKBackForwardListItem *)addedItem removedItems:(NSArray *)removedItems
+- (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
-    [self validateToolbar];
-}
-
-#pragma mark WKBrowsingContextLoadDelegatePrivate
-
-- (BOOL)browsingContextController:(WKBrowsingContextController *)sender canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace
-{
-    LOG(@"canAuthenticateAgainstProtectionSpace: %@", protectionSpace);
-    return YES;
-}
-
-- (void)browsingContextController:(WKBrowsingContextController *)sender didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-    LOG(@"didReceiveAuthenticationChallenge: %@", challenge);
-    [challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
-}
-
-#pragma mark WKBrowsingContextPolicyDelegate
-
-- (void)browsingContextController:(WKBrowsingContextController *)browsingContext decidePolicyForNavigationAction:(NSDictionary *)actionInformation decisionHandler:(WKPolicyDecisionHandler)decisionHandler
-{
-    LOG(@"decidePolicyForNavigationAction");
-    decisionHandler(WKPolicyDecisionAllow);
-}
-
-- (void)browsingContextController:(WKBrowsingContextController *)browsingContext decidePolicyForNewWindowAction:(NSDictionary *)actionInformation decisionHandler:(WKPolicyDecisionHandler)decisionHandler
-{
-    LOG(@"decidePolicyForNewWindowAction");
-    decisionHandler(WKPolicyDecisionAllow);
-}
-
-- (void)browsingContextController:(WKBrowsingContextController *)browsingContext decidePolicyForResponseAction:(NSDictionary *)actionInformation decisionHandler:(WKPolicyDecisionHandler)decisionHandler
-{
-    decisionHandler(WKPolicyDecisionAllow);
-}
-
-#pragma mark WKBrowsingContextHistoryDelegate
-
-- (void)browsingContextController:(WKBrowsingContextController *)browsingContextController didNavigateWithNavigationData:(WKNavigationData *)navigationData
-{
-    LOG(@"WKBrowsingContextHistoryDelegate - didNavigateWithNavigationData - title: %@ - url: %@", navigationData.title, navigationData.originalRequest.URL);
-}
-
-- (void)browsingContextController:(WKBrowsingContextController *)browsingContextController didPerformClientRedirectFromURL:(NSURL *)sourceURL toURL:(NSURL *)destinationURL
-{
-    LOG(@"WKBrowsingContextHistoryDelegate - didPerformClientRedirect - fromURL: %@ - toURL: %@", sourceURL, destinationURL);
-}
-
-- (void)browsingContextController:(WKBrowsingContextController *)browsingContextController didPerformServerRedirectFromURL:(NSURL *)sourceURL toURL:(NSURL *)destinationURL
-{
-    LOG(@"WKBrowsingContextHistoryDelegate - didPerformServerRedirect - fromURL: %@ - toURL: %@", sourceURL, destinationURL);
-}
-
-- (void)browsingContextController:(WKBrowsingContextController *)browsingContextController didUpdateHistoryTitle:(NSString *)title forURL:(NSURL *)URL
-{
-    LOG(@"browsingContextController - didUpdateHistoryTitle - title: %@ - URL: %@", title, URL);
+    LOG(@"didFailNavigation: %@", error);
 }
 
 @end

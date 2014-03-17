@@ -1,3 +1,65 @@
+2014-03-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert MiniBrowser to use WKWebView API
+        https://bugs.webkit.org/show_bug.cgi?id=130061
+
+        Reviewed by Anders Carlsson.
+        
+        Convert the MiniBrowser WK2 window to use WebKit2 API as much
+        as possible.
+        
+        Some functionality was removed temporarily:
+            - text zoom, page zoom
+            - reload
+            - pagination mode
+            - transparent window
+            - dumping source
+            - window.open support
+            - beforeUnload panel
+            - find in page
+
+        * MiniBrowser/mac/AppDelegate.h:
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate init]):
+        (-[BrowserAppDelegate newWindow:]):
+        (-[BrowserAppDelegate applicationWillTerminate:]):
+        (-[BrowserAppDelegate openDocument:]):
+        * MiniBrowser/mac/WK2BrowserWindowController.h:
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+        (-[WK2BrowserWindowController dealloc]):
+        (-[WK2BrowserWindowController fetch:]):
+        (-[WK2BrowserWindowController validateMenuItem:]):
+        (-[WK2BrowserWindowController reload:]):
+        (-[WK2BrowserWindowController goBack:]):
+        (-[WK2BrowserWindowController goForward:]):
+        (-[WK2BrowserWindowController toggleZoomMode:]):
+        (-[WK2BrowserWindowController resetZoom:]):
+        (-[WK2BrowserWindowController canResetZoom]):
+        (-[WK2BrowserWindowController dumpSourceToConsole:]):
+        (-[WK2BrowserWindowController togglePaginationMode:]):
+        (-[WK2BrowserWindowController validateUserInterfaceItem:]):
+        (-[WK2BrowserWindowController windowShouldClose:]):
+        (-[WK2BrowserWindowController applicationTerminating]):
+        (-[WK2BrowserWindowController currentZoomFactor]):
+        (-[WK2BrowserWindowController setCurrentZoomFactor:]):
+        (-[WK2BrowserWindowController toggleTransparentWindow:]):
+        (-[WK2BrowserWindowController observeValueForKeyPath:ofObject:change:context:]):
+        (-[WK2BrowserWindowController webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (-[WK2BrowserWindowController webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (-[WK2BrowserWindowController webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:]):
+        (-[WK2BrowserWindowController find:]):
+        (-[WK2BrowserWindowController webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        (-[WK2BrowserWindowController webView:didStartProvisionalNavigation:]):
+        (-[WK2BrowserWindowController webView:didReceiveServerRedirectForProvisionalNavigation:]):
+        (-[WK2BrowserWindowController webView:didFailProvisionalNavigation:withError:]):
+        (-[WK2BrowserWindowController webView:didCommitNavigation:]):
+        (-[WK2BrowserWindowController webView:didFinishLoadingNavigation:]):
+        (-[WK2BrowserWindowController webView:didFailNavigation:withError:]):
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+
 2014-03-17  Zan Dobersek  <zdobersek@igalia.com>
 
         Use RunLoop objects through references instead of pointers
