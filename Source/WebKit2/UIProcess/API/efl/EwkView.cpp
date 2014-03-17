@@ -218,6 +218,15 @@ void EwkViewEventHandler<EVAS_CALLBACK_MOUSE_WHEEL>::handleEvent(void* data, Eva
 }
 
 template <>
+void EwkViewEventHandler<EVAS_CALLBACK_MOUSE_IN>::handleEvent(void* data, Evas*, Evas_Object*, void*)
+{
+    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
+    EwkView* self = toEwkView(smartData);
+
+    self->updateCursor();
+}
+
+template <>
 void EwkViewEventHandler<EVAS_CALLBACK_KEY_DOWN>::handleEvent(void* data, Evas*, Evas_Object*, void* eventInfo)
 {
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
@@ -274,7 +283,7 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
 #endif
     , m_backForwardList(std::make_unique<EwkBackForwardList>(WKPageGetBackForwardList(wkPage())))
     , m_settings(std::make_unique<EwkSettings>(this))
-    , m_cursorIdentifier(0)
+    , m_useCustomCursor(false)
     , m_userAgent(WKEinaSharedString(AdoptWK, WKPageCopyUserAgent(wkPage())))
     , m_mouseEventsEnabled(false)
 #if ENABLE(TOUCH_EVENTS)
@@ -408,41 +417,37 @@ WKPageRef EwkView::wkPage() const
     return WKViewGetPage(wkView());
 }
 
-void EwkView::setCursor(const Cursor& cursor)
+void EwkView::updateCursor()
 {
-    if (cursor.image()) {
-        // Custom cursor.
-        if (cursor.image() == m_cursorIdentifier)
+    Ewk_View_Smart_Data* sd = smartData();
+
+    if (m_useCustomCursor) {
+        Image* cursorImage = static_cast<Image*>(m_cursorIdentifier.image);
+        if (!cursorImage)
             return;
 
-        m_cursorIdentifier = cursor.image();
-
-        Ewk_View_Smart_Data* sd = smartData();
-        RefPtr<Evas_Object> cursorObject = adoptRef(cursor.image()->getEvasObject(sd->base.evas));
+        RefPtr<Evas_Object> cursorObject = adoptRef(cursorImage->getEvasObject(sd->base.evas));
         if (!cursorObject)
             return;
 
+        IntSize cursorSize = cursorImage->size();
         // Resize cursor.
-        evas_object_resize(cursorObject.get(), cursor.image()->size().width(), cursor.image()->size().height());
+        evas_object_resize(cursorObject.get(), cursorSize.width(), cursorSize.height());
 
         // Get cursor hot spot.
         IntPoint hotSpot;
-        cursor.image()->getHotSpot(hotSpot);
+        cursorImage->getHotSpot(hotSpot);
 
         Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(sd->base.evas);
         // ecore_evas takes care of freeing the cursor object.
         ecore_evas_object_cursor_set(ecoreEvas, cursorObject.release().leakRef(), EVAS_LAYER_MAX, hotSpot.x(), hotSpot.y());
-
         return;
     }
 
-    // Standard cursor.
-    const char* group = cursor.platformCursor();
-    if (!group || group == m_cursorIdentifier)
+    const char* group = static_cast<const char*>(m_cursorIdentifier.group);
+    if (!group)
         return;
 
-    m_cursorIdentifier = group;
-    Ewk_View_Smart_Data* sd = smartData();
     RefPtr<Evas_Object> cursorObject = adoptRef(edje_object_add(sd->base.evas));
 
     Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(sd->base.evas);
@@ -480,6 +485,28 @@ void EwkView::setCursor(const Cursor& cursor)
 
     // ecore_evas takes care of freeing the cursor object.
     ecore_evas_object_cursor_set(ecoreEvas, cursorObject.release().leakRef(), EVAS_LAYER_MAX, hotspotX, hotspotY);
+}
+
+void EwkView::setCursor(const Cursor& cursor)
+{
+    if (cursor.image()) {
+        // Custom cursor.
+        if (cursor.image() == m_cursorIdentifier.image)
+            return;
+
+        m_cursorIdentifier.image = cursor.image();
+        m_useCustomCursor = true;
+    } else {
+        // Standard cursor.
+        const char* group = cursor.platformCursor();
+        if (!group || group == m_cursorIdentifier.group)
+            return;
+
+        m_cursorIdentifier.group = group;
+        m_useCustomCursor = false;
+    }
+
+    updateCursor();
 }
 
 void EwkView::setDeviceScaleFactor(float scale)
@@ -1134,6 +1161,7 @@ void EwkView::handleEvasObjectAdd(Evas_Object* evasObject)
 
     EwkViewEventHandler<EVAS_CALLBACK_FOCUS_IN>::subscribe(evasObject);
     EwkViewEventHandler<EVAS_CALLBACK_FOCUS_OUT>::subscribe(evasObject);
+    EwkViewEventHandler<EVAS_CALLBACK_MOUSE_IN>::subscribe(evasObject);
     EwkViewEventHandler<EVAS_CALLBACK_MOUSE_WHEEL>::subscribe(evasObject);
     EwkViewEventHandler<EVAS_CALLBACK_KEY_DOWN>::subscribe(evasObject);
     EwkViewEventHandler<EVAS_CALLBACK_KEY_UP>::subscribe(evasObject);

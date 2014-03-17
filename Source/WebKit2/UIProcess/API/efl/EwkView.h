@@ -76,6 +76,7 @@ class AffineTransform;
 class Color;
 class CoordinatedGraphicsScene;
 class Cursor;
+class Image;
 class IntSize;
 class TransformationMatrix;
 }
@@ -143,6 +144,7 @@ public:
     void doneWithTouchEvent(WKTouchEventRef, bool);
 #endif
 
+    void updateCursor();
     void setCursor(const WebCore::Cursor& cursor);
 
     void scheduleUpdateDisplay();
@@ -268,7 +270,16 @@ private:
     std::unique_ptr<EwkBackForwardList> m_backForwardList;
     std::unique_ptr<EwkSettings> m_settings;
     RefPtr<EwkWindowFeatures> m_windowFeatures;
-    const void* m_cursorIdentifier; // This is an address, do not free it.
+    union CursorIdentifier {
+        CursorIdentifier()
+            : image(nullptr)
+        {
+        }
+        WebCore::Image* image;
+        const char* group;
+    } m_cursorIdentifier;
+    bool m_useCustomCursor;
+
     WKEinaSharedString m_url;
     mutable WKEinaSharedString m_title;
     WKEinaSharedString m_theme;

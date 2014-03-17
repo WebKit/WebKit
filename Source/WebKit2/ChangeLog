@@ -1,3 +1,26 @@
+2014-03-17  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Restore cursor when moving mouse into webview
+        https://bugs.webkit.org/show_bug.cgi?id=130182
+
+        Reviewed by Gyuyoung Kim.
+
+        We changed mouse cursor when the type of cursor is changed.
+        But once mouse is moved out of webview, ewebkit will not know whether cursor
+        is changed or not.
+
+        So, this patch added a logic to restore the last applied type of cursor when
+        mouse is moved into webview again.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkViewEventHandler<EVAS_CALLBACK_MOUSE_IN>::handleEvent):
+        Call updateCursor to restore the last applied type of cursor.
+        (EwkView::EwkView):
+        (EwkView::updateCursor): Extracted from setCursor.
+        (EwkView::setCursor):
+        (EwkView::handleEvasObjectAdd):
+        * UIProcess/API/efl/EwkView.h:
+
 2014-03-16  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Add ewk_application_cache_manager APIs
