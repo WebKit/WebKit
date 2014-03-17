@@ -287,6 +287,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)mediaPlaybackAllowsAirPlay;
 #endif
 
+- (BOOL)isInheritURIQueryComponentEnabled;
+- (void)setEnableInheritURIQueryComponent:(BOOL)flag;
+
 // Other private methods
 #if TARGET_OS_IPHONE
 - (size_t)_maximumImageSize;

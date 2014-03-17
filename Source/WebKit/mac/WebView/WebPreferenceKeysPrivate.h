@@ -209,3 +209,5 @@
 #define WebKitTextFieldRemoteInspectionEnabledPreferenceKey @"WebKitTextFieldRemoteInspectionEnabled"
 #endif
 #endif
+
+#define WebKitEnableInheritURIQueryComponentPreferenceKey @"WebKitEnableInheritURIQueryComponent"

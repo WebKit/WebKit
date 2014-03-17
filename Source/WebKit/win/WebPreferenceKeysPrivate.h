@@ -166,3 +166,5 @@
 #define WebKitMockScrollbarsEnabledPreferenceKey "WebKitMockScrollbarsEnabled"
 
 #define WebKitScreenFontSubstitutionEnabledPreferenceKey "WebKitScreenFontSubstitutionEnabledPreferenceKey"
+
+#define WebKitEnableInheritURIQueryComponentPreferenceKey "WebKitEnableInheritURIQueryComponent"

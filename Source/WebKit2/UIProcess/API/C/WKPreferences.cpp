@@ -1255,3 +1255,13 @@ bool WKPreferencesGetTelephoneNumberParsingEnabled(WKPreferencesRef preferencesR
 {
     return toImpl(preferencesRef)->telephoneNumberParsingEnabled();
 }
+
+void WKPreferencesSetEnableInheritURIQueryComponent(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setEnableInheritURIQueryComponent(enabled);
+}
+
+bool WKPreferencesGetEnableInheritURIQueryComponent(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->enableInheritURIQueryComponent();
+}

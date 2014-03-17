@@ -148,4 +148,7 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT screenFontSubstitutionEnabled([out, retval] BOOL* enabled);
     HRESULT setScreenFontSubstitutionEnabled([in] BOOL enabled);
+
+    HRESULT isInheritURIQueryComponentEnabled([out, retval] BOOL* enabled);
+    HRESULT setEnableInheritURIQueryComponent([in] BOOL enabled);
 }

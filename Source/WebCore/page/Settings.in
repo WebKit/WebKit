@@ -218,3 +218,5 @@ imageControlsEnabled initial=false, conditional=IMAGE_CONTROLS
 
 # FIXME: This is unneeded and should be removed.
 alwaysUseBaselineOfPrimaryFont initial=false
+
+enableInheritURIQueryComponent initial=false

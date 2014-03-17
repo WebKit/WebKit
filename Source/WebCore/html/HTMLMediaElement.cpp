@@ -5973,6 +5973,20 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(MediaSession::RemoteContro
     }
 }
 
+bool HTMLMediaElement::doesHaveAttribute(const AtomicString& attribute) const
+{
+    QualifiedName attributeName(nullAtom, attribute, nullAtom);
+    if (!fastHasAttribute(attributeName))
+        return false;
+    
+    if (Settings* settings = document().settings()) {
+        if (attributeName == HTMLNames::x_itunes_inherit_uri_query_componentAttr)
+            return settings->enableInheritURIQueryComponent();
+    }
+    
+    return true;
+}
+    
 }
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2011, 2012, 2014 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -598,6 +598,7 @@ public:
 #if ENABLE(IMAGE_CONTROLS)
         [NSNumber numberWithBool:NO], WebKitImageControlsEnabledPreferenceKey,
 #endif
+        [NSNumber numberWithBool:NO], WebKitEnableInheritURIQueryComponentPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS)
@@ -2154,6 +2155,16 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)isHixie76WebSocketProtocolEnabled
 {
     return false;
+}
+
+- (BOOL)isInheritURIQueryComponentEnabled
+{
+    return [self _boolValueForKey: WebKitEnableInheritURIQueryComponentPreferenceKey];
+}
+
+- (void)setEnableInheritURIQueryComponent:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey: WebKitEnableInheritURIQueryComponentPreferenceKey];
 }
 
 #if PLATFORM(IOS)

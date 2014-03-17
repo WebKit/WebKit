@@ -247,6 +247,7 @@ public:
     virtual HostWindow* mediaPlayerHostWindow() { return 0; }
     virtual IntRect mediaPlayerWindowClipRect() { return IntRect(); }
     virtual CachedResourceLoader* mediaPlayerCachedResourceLoader() { return 0; }
+    virtual bool doesHaveAttribute(const AtomicString&) const { return false; }
 
 #if ENABLE(VIDEO_TRACK)
     virtual void mediaPlayerDidAddAudioTrack(PassRefPtr<AudioTrackPrivate>) { }
@@ -261,7 +262,6 @@ public:
     virtual Vector<RefPtr<PlatformTextTrack>> outOfBandTrackSources() { return Vector<RefPtr<PlatformTextTrack>>(); }
 #endif
 #endif
-
 
     virtual bool mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&) { return false; }
 };
@@ -298,6 +298,7 @@ public:
     bool supportsSave() const;
     bool supportsScanning() const;
     bool requiresImmediateCompositing() const;
+    bool doesHaveAttribute(const AtomicString&) const;
     PlatformMedia platformMedia() const;
     PlatformLayer* platformLayer() const;
 #if PLATFORM(IOS)

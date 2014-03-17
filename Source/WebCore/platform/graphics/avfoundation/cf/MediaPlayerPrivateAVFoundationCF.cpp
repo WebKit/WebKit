@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -98,7 +98,7 @@ public:
     void destroyImageGenerator();
     RetainPtr<CGImageRef> createImageForTimeInRect(float, const IntRect&);
 
-    void createAssetForURL(const String& url);
+    void createAssetForURL(const String& url, bool inheritURI);
     void setAsset(AVCFURLAssetRef);
     
     void createPlayer(IDirect3DDevice9*);
@@ -412,8 +412,10 @@ void MediaPlayerPrivateAVFoundationCF::createAVAssetForURL(const String& url)
 
     setDelayCallbacks(true);
 
+    bool inheritURI = player()->doesHaveAttribute("x-itunes-inherit-uri-query-component");
+
     m_avfWrapper = new AVFWrapper(this);
-    m_avfWrapper->createAssetForURL(url);
+    m_avfWrapper->createAssetForURL(url, inheritURI);
     setDelayCallbacks(false);
 }
 
@@ -1324,13 +1326,18 @@ void AVFWrapper::disconnectAndDeleteAVFWrapper(void* context)
     dispatch_async_f(dispatch_get_main_queue(), context, destroyAVFWrapper);
 }
 
-void AVFWrapper::createAssetForURL(const String& url)
+void AVFWrapper::createAssetForURL(const String& url, bool inheritURI)
 {
     ASSERT(!avAsset());
 
     RetainPtr<CFURLRef> urlRef = URL(ParsedURLString, url).createCFURL();
 
-    AVCFURLAssetRef assetRef = AVCFURLAssetCreateWithURLAndOptions(kCFAllocatorDefault, urlRef.get(), 0, m_notificationQueue);
+    RetainPtr<CFMutableDictionaryRef> optionsRef = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    if (inheritURI)
+        CFDictionarySetValue(optionsRef.get(), AVCFURLAssetInheritURIQueryComponentFromReferencingURIKey, kCFBooleanTrue);
+
+    AVCFURLAssetRef assetRef = AVCFURLAssetCreateWithURLAndOptions(kCFAllocatorDefault, urlRef.get(), optionsRef.get(), m_notificationQueue);
     m_avAsset = adoptCF(assetRef);
 }
 

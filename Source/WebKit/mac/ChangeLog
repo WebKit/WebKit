@@ -1,3 +1,19 @@
+2014-03-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Provide preference to enable additional AVFoundation options
+        https://bugs.webkit.org/show_bug.cgi?id=130275
+
+        Reviewed by Eric Carlson.
+
+        * WebView/WebPreferenceKeysPrivate.h: Added new preference.
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Initialize preference to false.
+        (-[WebPreferences isInheritURIQueryComponentEnabled]): Added.
+        (-[WebPreferences setEnableInheritURIQueryComponent:]): Added.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Handle new preference.
+
 2014-03-16  Darin Adler  <darin@apple.com>
 
         Remove all deprecatedCharacters use from WebKit directory

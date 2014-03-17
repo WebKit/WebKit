@@ -2392,6 +2392,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings.setShouldConvertPositionStyleOnCopy([preferences shouldConvertPositionStyleOnCopy]);
 
+    settings.setEnableInheritURIQueryComponent([preferences isInheritURIQueryComponentEnabled]);
+
     switch ([preferences storageBlockingPolicy]) {
     case WebAllowAllStorage:
         settings.setStorageBlockingPolicy(SecurityOrigin::AllowAllStorage);

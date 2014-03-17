@@ -1,3 +1,26 @@
+2014-03-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Provide preference to enable additional AVFoundation options
+        https://bugs.webkit.org/show_bug.cgi?id=130275
+
+        Reviewed by Eric Carlson.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::doesHaveAttribute): Added.
+        * html/HTMLMediaElement.h:
+        * page/Settings.in: Add new attribute.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::doesHaveAttribute): Added stub to call private player object's
+        implementation of doesHaveAttribute.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::doesHaveAttribute):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::AVFWrapper::createAssetForURL): Check the <media> object,
+        and notify AVFoundationCF to use URI option if relevant.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL): Check the <media> object,
+        and notify AVFoundation to use URI option if relevant.
+
 2014-03-17  Jer Noble  <jer.noble@apple.com>
 
         [EME] Add NULL protections in SourceBuffer and MediaSource.

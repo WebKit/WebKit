@@ -483,6 +483,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE screenFontSubstitutionEnabled(BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setScreenFontSubstitutionEnabled(BOOL);
 
+    virtual HRESULT STDMETHODCALLTYPE isInheritURIQueryComponentEnabled(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setEnableInheritURIQueryComponent(BOOL);
+
     // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.
