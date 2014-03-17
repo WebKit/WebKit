@@ -129,9 +129,7 @@ enum {
         if (result != NSOKButton)
             return;
 
-        // FIXME: add a way to open in WK1 also.
-        
-        BrowserWindowController *newBrowserWindowController = [[WK2BrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
+        BrowserWindowController *newBrowserWindowController = [[WK1BrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
         [newBrowserWindowController.window makeKeyAndOrderFront:self];
 
         NSURL *url = [openPanel.URLs objectAtIndex:0];

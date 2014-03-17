@@ -1,5 +1,12 @@
 2014-03-17  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the 32-bit build; make the open panel make a WK1 window.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate openDocument:]):
+
+2014-03-17  Simon Fraser  <simon.fraser@apple.com>
+
         Convert MiniBrowser to use WKWebView API
         https://bugs.webkit.org/show_bug.cgi?id=130061
 
