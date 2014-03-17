@@ -1,3 +1,15 @@
+2014-03-17  Zsolt Borbely  <borbezs@inf.u-szeged.hu>
+
+        Fix the !ENABLE(PROMISES) build
+        https://bugs.webkit.org/show_bug.cgi?id=130328
+
+        Reviewed by Darin Adler.
+
+        Add missing ENABLE(PROMISES) guards.
+
+        * bindings/js/JSDOMPromise.cpp:
+        * bindings/js/JSDOMPromise.h:
+
 2014-03-17  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         Safari should not render a cell if the <td> is empty

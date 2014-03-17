@@ -282,8 +282,10 @@ namespace JSC {
         Strong<Structure> propertyTableStructure;
         Strong<Structure> mapDataStructure;
         Strong<Structure> weakMapDataStructure;
+#if ENABLE(PROMISES)
         Strong<Structure> promiseDeferredStructure;
         Strong<Structure> promiseReactionStructure;
+#endif
         Strong<JSCell> iterationTerminator;
 
         IdentifierTable* identifierTable;

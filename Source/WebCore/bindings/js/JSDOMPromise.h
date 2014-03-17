@@ -26,6 +26,8 @@
 #ifndef JSDOMPromise_h
 #define JSDOMPromise_h
 
+#if ENABLE(PROMISES)
+
 #include "JSCryptoKey.h"
 #include "JSCryptoKeyPair.h"
 #include "JSDOMBinding.h"
@@ -112,5 +114,7 @@ inline void DeferredWrapper::reject<String>(const String& result)
 }
 
 }
+
+#endif // ENABLE(PROMISES)
 
 #endif // JSDOMPromise_h

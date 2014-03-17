@@ -164,7 +164,9 @@ protected:
     WriteBarrier<NativeErrorConstructor> m_syntaxErrorConstructor;
     WriteBarrier<NativeErrorConstructor> m_typeErrorConstructor;
     WriteBarrier<NativeErrorConstructor> m_URIErrorConstructor;
+#if ENABLE(PROMISES)
     WriteBarrier<JSPromiseConstructor> m_promiseConstructor;
+#endif
     WriteBarrier<ObjectConstructor> m_objectConstructor;
 
     WriteBarrier<JSFunction> m_evalFunction;
@@ -176,7 +178,9 @@ protected:
     WriteBarrier<FunctionPrototype> m_functionPrototype;
     WriteBarrier<ArrayPrototype> m_arrayPrototype;
     WriteBarrier<RegExpPrototype> m_regExpPrototype;
+#if ENABLE(PROMISES)
     WriteBarrier<JSPromisePrototype> m_promisePrototype;
+#endif
 
     WriteBarrier<Structure> m_withScopeStructure;
     WriteBarrier<Structure> m_strictEvalActivationStructure;
@@ -352,7 +356,9 @@ public:
     NativeErrorConstructor* syntaxErrorConstructor() const { return m_syntaxErrorConstructor.get(); }
     NativeErrorConstructor* typeErrorConstructor() const { return m_typeErrorConstructor.get(); }
     NativeErrorConstructor* URIErrorConstructor() const { return m_URIErrorConstructor.get(); }
+#if ENABLE(PROMISES)
     JSPromiseConstructor* promiseConstructor() const { return m_promiseConstructor.get(); }
+#endif
 
     JSFunction* evalFunction() const { return m_evalFunction.get(); }
     JSFunction* callFunction() const { return m_callFunction.get(); }
@@ -373,7 +379,9 @@ public:
     DatePrototype* datePrototype() const { return m_datePrototype.get(); }
     RegExpPrototype* regExpPrototype() const { return m_regExpPrototype.get(); }
     ErrorPrototype* errorPrototype() const { return m_errorPrototype.get(); }
+#if ENABLE(PROMISES)
     JSPromisePrototype* promisePrototype() const { return m_promisePrototype.get(); }
+#endif
 
     Structure* withScopeStructure() const { return m_withScopeStructure.get(); }
     Structure* strictEvalActivationStructure() const { return m_strictEvalActivationStructure.get(); }

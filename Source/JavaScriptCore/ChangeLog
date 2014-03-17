@@ -1,3 +1,24 @@
+2014-03-17  Zsolt Borbely  <borbezs@inf.u-szeged.hu>
+
+        Fix the !ENABLE(PROMISES) build
+        https://bugs.webkit.org/show_bug.cgi?id=130328
+
+        Reviewed by Darin Adler.
+
+        Add missing ENABLE(PROMISES) guards.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSPromiseDeferred.cpp:
+        * runtime/JSPromiseDeferred.h:
+        * runtime/JSPromiseReaction.cpp:
+        * runtime/JSPromiseReaction.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2014-03-16  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r165703): JSC tests crashing in StringImpl::destroy().

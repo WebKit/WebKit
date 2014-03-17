@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSPromiseReaction.h"
 
+#if ENABLE(PROMISES)
+
 #include "Error.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
@@ -156,3 +158,5 @@ void JSPromiseReaction::visitChildren(JSCell* cell, SlotVisitor& visitor)
 }
 
 } // namespace JSC
+
+#endif // ENABLE(PROMISES)

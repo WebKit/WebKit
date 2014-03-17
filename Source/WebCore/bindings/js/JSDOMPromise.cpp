@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSDOMPromise.h"
 
+#if ENABLE(PROMISES)
+
 using namespace JSC;
 
 namespace WebCore {
@@ -70,3 +72,5 @@ void DeferredWrapper::reject(ExecState* exec, JSValue reason)
 }
 
 }
+
+#endif // ENABLE(PROMISES)

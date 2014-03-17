@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSPromiseDeferred.h"
 
+#if ENABLE(PROMISES)
+
 #include "Error.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
@@ -244,3 +246,5 @@ JSValue abruptRejection(ExecState* exec, JSPromiseDeferred* deferred)
 }
 
 } // namespace JSC
+
+#endif // ENABLE(PROMISES)
