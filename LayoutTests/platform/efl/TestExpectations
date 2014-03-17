@@ -1839,3 +1839,5 @@ webkit.org/b/128499 svg/clip-path/clip-path-content-use-006.svg [ ImageOnlyFailu
 webkit.org/b/102097 compositing/hidpi-absolute-subpixel-positioned-transformed-elements.html [ ImageOnlyFailure ]
 webkit.org/b/102097 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
 webkit.org/b/102097 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html [ Failure ]
+
+webkit.org/b/130353 mathml/wbr-in-mroot-crash.html [ Crash ]

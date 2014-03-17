@@ -1,3 +1,13 @@
+2014-03-17  Jer Noble  <jer.noble@apple.com>
+
+        Layout Test mathml/wbr-in-mroot-crash.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=130353
+
+        Unreviewed TestExpectations update.
+
+        * platform/efl/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2014-01-29  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] getComputedStyle() not using author's order when showing named grid lines
