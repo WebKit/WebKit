@@ -108,6 +108,10 @@ if (ENABLE_LLINT_C_LOOP)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_FTL_JIT OFF)
 endif ()
 
+if (ENABLE_TOUCH_EVENTS)
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_TOUCH_SLIDER ON)
+endif ()
+
 # FIXME: Perhaps we need a more generic way of defining dependencies between features.
 # VIDEO_TRACK depends on VIDEO.
 if (NOT ENABLE_VIDEO AND ENABLE_VIDEO_TRACK)
