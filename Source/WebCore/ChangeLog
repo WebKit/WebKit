@@ -1,3 +1,16 @@
+2014-03-17  Frédéric Wang  <fred.wang@free.fr>
+
+        Fix handling of <annotation> in MathMLTextElement.
+        https://bugs.webkit.org/show_bug.cgi?id=124128.
+
+        Reviewed by Darin Adler.
+
+        No new tests.
+
+        * mathml/MathMLTextElement.cpp:
+        (WebCore::MathMLTextElement::createElementRenderer): do not create the special RenderMathMLToken for the <annotation> tag.
+        (WebCore::MathMLTextElement::childShouldCreateRenderer): only allow text inside <annotation>.
+
 2014-03-17  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][CMake] Credential storage is not enabled

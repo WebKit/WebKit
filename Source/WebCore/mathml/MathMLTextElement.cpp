@@ -74,6 +74,8 @@ RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(PassRef<Render
         return createRenderer<RenderMathMLOperator>(*this, std::move(style));
     if (hasTagName(MathMLNames::mspaceTag))
         return createRenderer<RenderMathMLSpace>(*this, std::move(style));
+    if (hasTagName(MathMLNames::annotationTag))
+        return MathMLElement::createElementRenderer(std::move(style));
 
     ASSERT(hasTagName(MathMLNames::miTag) || hasTagName(MathMLNames::mnTag) || hasTagName(MathMLNames::msTag) || hasTagName(MathMLNames::mtextTag));
 
@@ -159,13 +161,15 @@ static bool isPhrasingContent(const Node& node)
 
 bool MathMLTextElement::childShouldCreateRenderer(const Node& child) const
 {
-    // The HTML specification defines <mi>, <mo>, <mn>, <ms> and <mtext> as insertion points.
+    if (hasTagName(MathMLNames::mspaceTag))
+        return false;
 
     // FIXME: phrasing content should be accepted in <mo> elements too (https://bugs.webkit.org/show_bug.cgi?id=130245).
-    if (hasTagName(moTag))
+    if (hasTagName(MathMLNames::annotationTag) || hasTagName(MathMLNames::moTag))
         return child.isTextNode();
 
-    return !hasTagName(MathMLNames::mspaceTag) && isPhrasingContent(child);
+    // The HTML specification defines <mi>, <mo>, <mn>, <ms> and <mtext> as insertion points.
+    return isPhrasingContent(child);
 }
 
 }
