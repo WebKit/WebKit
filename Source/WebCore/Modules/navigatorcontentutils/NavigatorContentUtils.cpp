@@ -126,9 +126,9 @@ NavigatorContentUtils::~NavigatorContentUtils()
 {
 }
 
-PassRefPtr<NavigatorContentUtils> NavigatorContentUtils::create(NavigatorContentUtilsClient* client)
+PassRef<NavigatorContentUtils> NavigatorContentUtils::create(NavigatorContentUtilsClient* client)
 {
-    return adoptRef(new NavigatorContentUtils(client));
+    return adoptRef(*new NavigatorContentUtils(client));
 }
 
 void NavigatorContentUtils::registerProtocolHandler(Navigator* navigator, const String& scheme, const String& url, const String& title, ExceptionCode& ec)

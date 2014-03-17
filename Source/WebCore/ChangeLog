@@ -1,3 +1,41 @@
+2014-03-17  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Make some Module class constructors return PassRef.
+        https://bugs.webkit.org/show_bug.cgi?id=130282
+
+        Reviewed by Andreas Kling.
+
+        Make the constructor helpers for the following classes return PassRef
+        instead of PassRefPtr since they will never return null.
+         - GamepadList
+         - Geolocation
+         - NavigatorContentUtils
+         - NetworkInfoConnection
+         - Notification
+         - NotificationCenter
+         - DeviceProximityEvent
+
+        * Modules/gamepad/GamepadList.h:
+        (WebCore::GamepadList::create):
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::create):
+        * Modules/geolocation/Geolocation.h:
+        (WebCore::Geolocation::GeoNotifier::create):
+        * Modules/navigatorcontentutils/NavigatorContentUtils.cpp:
+        (WebCore::NavigatorContentUtils::create):
+        * Modules/navigatorcontentutils/NavigatorContentUtils.h:
+        * Modules/networkinfo/NetworkInfoConnection.cpp:
+        (WebCore::NetworkInfoConnection::create):
+        * Modules/networkinfo/NetworkInfoConnection.h:
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::create):
+        * Modules/notifications/Notification.h:
+        * Modules/notifications/NotificationCenter.cpp:
+        (WebCore::NotificationCenter::create):
+        * Modules/notifications/NotificationCenter.h:
+        * Modules/proximity/DeviceProximityEvent.h:
+        (WebCore::DeviceProximityEvent::create):
+
 2014-03-16  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Do not compute region range for a box unless the parent has one

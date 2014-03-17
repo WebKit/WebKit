@@ -225,11 +225,11 @@ void Geolocation::Watchers::getNotifiersVector(GeoNotifierVector& copy) const
     copyValuesToVector(m_idToNotifierMap, copy);
 }
 
-PassRefPtr<Geolocation> Geolocation::create(ScriptExecutionContext* context)
+PassRef<Geolocation> Geolocation::create(ScriptExecutionContext* context)
 {
-    RefPtr<Geolocation> geolocation = adoptRef(new Geolocation(context));
-    geolocation->suspendIfNeeded();
-    return geolocation.release();
+    auto geolocation = adoptRef(*new Geolocation(context));
+    geolocation.get().suspendIfNeeded();
+    return geolocation;
 }
 
 Geolocation::Geolocation(ScriptExecutionContext* context)

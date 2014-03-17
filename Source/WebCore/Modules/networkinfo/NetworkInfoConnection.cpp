@@ -37,11 +37,11 @@
 
 namespace WebCore {
 
-PassRefPtr<NetworkInfoConnection> NetworkInfoConnection::create(Navigator* navigator)
+PassRef<NetworkInfoConnection> NetworkInfoConnection::create(Navigator* navigator)
 {
-    RefPtr<NetworkInfoConnection> networkInfoConnection(adoptRef(new NetworkInfoConnection(navigator)));
-    networkInfoConnection->suspendIfNeeded();
-    return networkInfoConnection.release();
+    auto networkInfoConnection = adoptRef(*new NetworkInfoConnection(navigator));
+    networkInfoConnection.get().suspendIfNeeded();
+    return networkInfoConnection;
 }
 
 NetworkInfoConnection::NetworkInfoConnection(Navigator* navigator)

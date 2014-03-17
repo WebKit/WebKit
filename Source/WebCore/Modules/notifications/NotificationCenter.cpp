@@ -42,11 +42,11 @@
 
 namespace WebCore {
 
-PassRefPtr<NotificationCenter> NotificationCenter::create(ScriptExecutionContext* context, NotificationClient* client)
+PassRef<NotificationCenter> NotificationCenter::create(ScriptExecutionContext* context, NotificationClient* client)
 {
-    RefPtr<NotificationCenter> notificationCenter(adoptRef(new NotificationCenter(context, client)));
-    notificationCenter->suspendIfNeeded();
-    return notificationCenter.release();
+    auto notificationCenter = adoptRef(*new NotificationCenter(context, client));
+    notificationCenter.get().suspendIfNeeded();
+    return notificationCenter;
 }
 
 NotificationCenter::NotificationCenter(ScriptExecutionContext* context, NotificationClient* client)

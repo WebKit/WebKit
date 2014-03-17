@@ -51,7 +51,7 @@ class ScriptExecutionContext;
 class Geolocation : public ScriptWrappable, public RefCounted<Geolocation>, public ActiveDOMObject
 {
 public:
-    static PassRefPtr<Geolocation> create(ScriptExecutionContext*);
+    static PassRef<Geolocation> create(ScriptExecutionContext*);
     ~Geolocation();
 
 #if PLATFORM(IOS)
@@ -87,7 +87,7 @@ private:
 
     class GeoNotifier : public RefCounted<GeoNotifier> {
     public:
-        static PassRefPtr<GeoNotifier> create(Geolocation* geolocation, PassRefPtr<PositionCallback> positionCallback, PassRefPtr<PositionErrorCallback> positionErrorCallback, PassRefPtr<PositionOptions> options) { return adoptRef(new GeoNotifier(geolocation, positionCallback, positionErrorCallback, options)); }
+        static PassRef<GeoNotifier> create(Geolocation* geolocation, PassRefPtr<PositionCallback> positionCallback, PassRefPtr<PositionErrorCallback> positionErrorCallback, PassRefPtr<PositionOptions> options) { return adoptRef(*new GeoNotifier(geolocation, positionCallback, positionErrorCallback, options)); }
 
         PositionOptions* options() const { return m_options.get(); };
         void setFatalError(PassRefPtr<PositionError>);

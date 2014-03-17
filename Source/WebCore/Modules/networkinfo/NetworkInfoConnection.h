@@ -47,7 +47,7 @@ class NetworkInfoController;
 
 class NetworkInfoConnection : public RefCounted<NetworkInfoConnection>, public EventTarget, public ActiveDOMObject {
 public:
-    static PassRefPtr<NetworkInfoConnection> create(Navigator*);
+    static PassRef<NetworkInfoConnection> create(Navigator*);
 
     ~NetworkInfoConnection();
 

@@ -55,7 +55,7 @@ public:
     static void unregisterProtocolHandler(Navigator*, const String& scheme, const String& url, ExceptionCode&);
 #endif
 
-    static PassRefPtr<NavigatorContentUtils> create(NavigatorContentUtilsClient*);
+    static PassRef<NavigatorContentUtils> create(NavigatorContentUtilsClient*);
 
 private:
     explicit NavigatorContentUtils(NavigatorContentUtilsClient* client)
