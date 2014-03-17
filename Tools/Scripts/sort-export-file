@@ -29,6 +29,7 @@
 use strict;
 
 use Cwd;
+use File::Basename;
 use FindBin;
 use Getopt::Long;
 
@@ -111,7 +112,7 @@ for my $exportFile (@ARGV) {
             next;
         }
         if ($line =~ /^\#endif$/) {
-            popTopConditional() or sawError("#else without matching #if");
+            popTopConditional() or sawError("#endif without matching #if");
             next;
         }
         if ($line =~ /^(\.?[A-Za-z0-9_\?]+)$/) {

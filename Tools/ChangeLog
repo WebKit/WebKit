@@ -1,3 +1,13 @@
+2014-03-17  Tim Horton  <timothy_horton@apple.com>
+
+        sort-export-file --help doesn't work (missing 'use')
+        https://bugs.webkit.org/show_bug.cgi?id=130338
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/sort-export-file:
+        Add a missing 'use', and fix a typo in an error message.
+
 2014-03-17  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][CMake] Ensure that HAVE_GTK_UNIX_PRINTING is defined when appropriate
