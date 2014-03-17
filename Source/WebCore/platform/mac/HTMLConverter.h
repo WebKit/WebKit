@@ -56,8 +56,6 @@ class HTMLConverterCaches;
     NSMutableArray *_textTableRows;
     NSMutableArray *_textTableRowArrays;
     NSMutableArray *_textTableRowBackgroundColors;
-    NSMutableDictionary *_specifiedStylesForElements;
-    NSMutableDictionary *_stringsForNodes;
     NSMutableDictionary *_floatsForNodes;
     NSMutableDictionary *_colorsForNodes;
     NSMutableDictionary *_attributesForElements;

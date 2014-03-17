@@ -1,3 +1,22 @@
+2014-03-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [Mac] Rewrite WebHTMLConverter::_computedStringForNode in C++
+        https://bugs.webkit.org/show_bug.cgi?id=130274
+
+        Reviewed by Andreas Kling.
+
+        Rewrote WebHTMLConverter::_computedStringForNode as HTMLConverterCaches::propertyValueForNode.
+
+        * platform/mac/HTMLConverter.h: Removed unused caches.
+        * platform/mac/HTMLConverter.mm:
+        (HTMLConverterCaches::computedStylePropertyForElement): Added use const String& instead of String& on property name.
+        (HTMLConverterCaches::inlineStylePropertyForElement): Ditto.
+        (HTMLConverterCaches::propertyValueForNode): Renamed and rewritten from _computedStringForNode.
+        (-[WebHTMLConverter _stringForNode:property:]): Simply return the computed value instead of storing it in the cache
+        now that the computing the value is fast.
+        (-[WebHTMLConverter dealloc]):
+        (-[WebHTMLConverter init]):
+
 2014-03-17  Andreas Kling  <akling@apple.com>
 
         Remove unnecessary JSC::Handle null checks in bindings code.

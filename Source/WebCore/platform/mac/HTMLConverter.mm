@@ -401,8 +401,10 @@ const unichar WebNextLineCharacter = 0x0085;
 
 class HTMLConverterCaches {
 public:
-    PassRefPtr<CSSValue> computedStylePropertyForElement(Element&, String&);
-    PassRefPtr<CSSValue> inlineStylePropertyForElement(Element&, String&);
+    String propertyValueForNode(Node&, const String& propertyName);
+
+    PassRefPtr<CSSValue> computedStylePropertyForElement(Element&, const String&);
+    PassRefPtr<CSSValue> inlineStylePropertyForElement(Element&, const String&);
 
 private:
     HashMap<Element*, std::unique_ptr<ComputedStyleExtractor>> m_computedStyles;
@@ -562,7 +564,7 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
     return array;
 }
 
-PassRefPtr<CSSValue> HTMLConverterCaches::computedStylePropertyForElement(Element& element, String& propertyName)
+PassRefPtr<CSSValue> HTMLConverterCaches::computedStylePropertyForElement(Element& element, const String& propertyName)
 {
     CSSPropertyID propetyId = cssPropertyID(propertyName);
     if (propetyId == CSSPropertyInvalid)
@@ -575,7 +577,7 @@ PassRefPtr<CSSValue> HTMLConverterCaches::computedStylePropertyForElement(Elemen
     return computedStyle.propertyValue(propetyId);
 }
 
-PassRefPtr<CSSValue> HTMLConverterCaches::inlineStylePropertyForElement(Element& element, String& propertyName)
+PassRefPtr<CSSValue> HTMLConverterCaches::inlineStylePropertyForElement(Element& element, const String& propertyName)
 {
     CSSPropertyID propetyId = cssPropertyID(propertyName);
     if (propetyId == CSSPropertyInvalid || !element.isStyledElement())
@@ -605,131 +607,132 @@ static bool stringFromCSSValue(CSSValue& value, String& result)
     return false;
 }
 
-- (NSString *)_computedStringForNode:(DOMNode *)node property:(NSString *)key
+String HTMLConverterCaches::propertyValueForNode(Node& node, const String& propertyName)
 {
-    bool haveResult = false;
-    String result;
-    bool inherit = true;
-    Node* coreNode = core(node);
-    if (coreNode && coreNode->isElementNode()) {
-        Element& element = toElement(*coreNode);
-        String propertyName = key;
-        inherit = false;
-        if (!haveResult) {
-            if (RefPtr<CSSValue> value = _caches->computedStylePropertyForElement(element, propertyName))
-                haveResult = stringFromCSSValue(*value, result);
-        }
-        if (!haveResult) {
-            if (RefPtr<CSSValue> value = _caches->computedStylePropertyForElement(element, propertyName)) {
-                if (value->isInheritedValue())
-                    inherit = true;
-                else
-                    haveResult = stringFromCSSValue(*value, result);
-            }
-        }
-        Element* coreElement = &element;
-        if (!haveResult) {
-            if ([@"display" isEqualToString:key]) {
-                if (coreElement->hasTagName(headTag) || coreElement->hasTagName(scriptTag) || coreElement->hasTagName(appletTag) || coreElement->hasTagName(noframesTag))
-                    result = "none";
-                else if (coreElement->hasTagName(addressTag) || coreElement->hasTagName(blockquoteTag) || coreElement->hasTagName(bodyTag) || coreElement->hasTagName(centerTag)
-                         || coreElement->hasTagName(ddTag) || coreElement->hasTagName(dirTag) || coreElement->hasTagName(divTag) || coreElement->hasTagName(dlTag)
-                         || coreElement->hasTagName(dtTag) || coreElement->hasTagName(fieldsetTag) || coreElement->hasTagName(formTag) || coreElement->hasTagName(frameTag)
-                         || coreElement->hasTagName(framesetTag) || coreElement->hasTagName(hrTag) || coreElement->hasTagName(htmlTag) || coreElement->hasTagName(h1Tag)
-                         || coreElement->hasTagName(h2Tag) || coreElement->hasTagName(h3Tag) || coreElement->hasTagName(h4Tag) || coreElement->hasTagName(h5Tag)
-                         || coreElement->hasTagName(h6Tag) || coreElement->hasTagName(iframeTag) || coreElement->hasTagName(menuTag) || coreElement->hasTagName(noscriptTag)
-                         || coreElement->hasTagName(olTag) || coreElement->hasTagName(pTag) || coreElement->hasTagName(preTag) || coreElement->hasTagName(ulTag))
-                    result = "block";
-                else if (coreElement->hasTagName(liTag))
-                    result = "list-item";
-                else if (coreElement->hasTagName(tableTag))
-                    result = "table";
-                else if (coreElement->hasTagName(trTag))
-                    result = "table-row";
-                else if (coreElement->hasTagName(thTag) || coreElement->hasTagName(tdTag))
-                    result = "table-cell";
-                else if (coreElement->hasTagName(theadTag))
-                    result = "table-header-group";
-                else if (coreElement->hasTagName(tbodyTag))
-                    result = "table-row-group";
-                else if (coreElement->hasTagName(tfootTag))
-                    result = "table-footer-group";
-                else if (coreElement->hasTagName(colTag))
-                    result = "table-column";
-                else if (coreElement->hasTagName(colgroupTag))
-                    result = "table-column-group";
-                else if (coreElement->hasTagName(captionTag))
-                    result = "table-caption";
-            } else if ([@"white-space" isEqualToString:key]) {
-                if (coreElement->hasTagName(preTag))
-                    result = "pre";
-                else
-                    inherit = YES;
-            } else if ([@"font-style" isEqualToString:key]) {
-                if (coreElement->hasTagName(iTag) || coreElement->hasTagName(citeTag) || coreElement->hasTagName(emTag) || coreElement->hasTagName(varTag) || coreElement->hasTagName(addressTag))
-                    result = "italic";
-                else
-                    inherit = YES;
-            } else if ([@"font-weight" isEqualToString:key]) {
-                if (coreElement->hasTagName(bTag) || coreElement->hasTagName(strongTag) || coreElement->hasTagName(thTag))
-                    result = "bolder";
-                else
-                    inherit = YES;
-            } else if ([@"text-decoration" isEqualToString:key]) {
-                if (coreElement->hasTagName(uTag) || coreElement->hasTagName(insTag))
-                    result = "underline";
-                else if (coreElement->hasTagName(sTag) || coreElement->hasTagName(strikeTag) || coreElement->hasTagName(delTag))
-                    result = "line-through";
-                else
-                    inherit = YES; // ??? this is not strictly correct
-            } else if ([@"text-align" isEqualToString:key]) {
-                if (coreElement->hasTagName(centerTag) || coreElement->hasTagName(captionTag) || coreElement->hasTagName(thTag))
-                    result = "center";
-                else
-                    inherit = YES;
-            } else if ([@"vertical-align" isEqualToString:key]) {
-                if (coreElement->hasTagName(supTag))
-                    result = "super";
-                else if (coreElement->hasTagName(subTag))
-                    result = "sub";
-                else if (coreElement->hasTagName(theadTag) || coreElement->hasTagName(tbodyTag) || coreElement->hasTagName(tfootTag))
-                    result = "middle";
-                else if (coreElement->hasTagName(trTag) || coreElement->hasTagName(thTag) || coreElement->hasTagName(tdTag))
-                    inherit = YES;
-            } else if ([@"font-family" isEqualToString:key] || [@"font-variant" isEqualToString:key] || [@"font-effect" isEqualToString:key]
-                       || [@"text-transform" isEqualToString:key] || [@"text-shadow" isEqualToString:key] || [@"visibility" isEqualToString:key]
-                       || [@"border-collapse" isEqualToString:key] || [@"empty-cells" isEqualToString:key] || [@"word-spacing" isEqualToString:key]
-                       || [@"list-style-type" isEqualToString:key] || [@"direction" isEqualToString:key]) {
-                inherit = YES;
-            }
-        }
+    if (!node.isElementNode()) {
+        if (Node* parent = node.parentNode())
+            return propertyValueForNode(*parent, propertyName);
+        return String();
     }
-    if (!haveResult && inherit) {
-        DOMNode *parentNode = [node parentNode];
-        if (parentNode)
-            return [self _stringForNode:parentNode property:key];
+
+    bool inherit = false;
+    Element& element = toElement(node);
+    if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyName)) {
+        String result;
+        if (stringFromCSSValue(*value, result))
+            return result;
     }
-    if (haveResult)
-        return result.lower();
-    return nil;
+
+    if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyName)) {
+        String result;
+        if (value->isInheritedValue())
+            inherit = true;
+        else if (stringFromCSSValue(*value, result))
+            return result;
+    }
+
+    switch (cssPropertyID(propertyName)) {
+    case CSSPropertyDisplay:
+        if (element.hasTagName(headTag) || element.hasTagName(scriptTag) || element.hasTagName(appletTag) || element.hasTagName(noframesTag))
+            return "none";
+        else if (element.hasTagName(addressTag) || element.hasTagName(blockquoteTag) || element.hasTagName(bodyTag) || element.hasTagName(centerTag)
+             || element.hasTagName(ddTag) || element.hasTagName(dirTag) || element.hasTagName(divTag) || element.hasTagName(dlTag)
+             || element.hasTagName(dtTag) || element.hasTagName(fieldsetTag) || element.hasTagName(formTag) || element.hasTagName(frameTag)
+             || element.hasTagName(framesetTag) || element.hasTagName(hrTag) || element.hasTagName(htmlTag) || element.hasTagName(h1Tag)
+             || element.hasTagName(h2Tag) || element.hasTagName(h3Tag) || element.hasTagName(h4Tag) || element.hasTagName(h5Tag)
+             || element.hasTagName(h6Tag) || element.hasTagName(iframeTag) || element.hasTagName(menuTag) || element.hasTagName(noscriptTag)
+             || element.hasTagName(olTag) || element.hasTagName(pTag) || element.hasTagName(preTag) || element.hasTagName(ulTag))
+            return "block";
+        else if (element.hasTagName(liTag))
+            return "list-item";
+        else if (element.hasTagName(tableTag))
+            return "table";
+        else if (element.hasTagName(trTag))
+            return "table-row";
+        else if (element.hasTagName(thTag) || element.hasTagName(tdTag))
+            return "table-cell";
+        else if (element.hasTagName(theadTag))
+            return "table-header-group";
+        else if (element.hasTagName(tbodyTag))
+            return "table-row-group";
+        else if (element.hasTagName(tfootTag))
+            return "table-footer-group";
+        else if (element.hasTagName(colTag))
+            return "table-column";
+        else if (element.hasTagName(colgroupTag))
+            return "table-column-group";
+        else if (element.hasTagName(captionTag))
+            return "table-caption";
+        break;
+    case CSSPropertyWhiteSpace:
+        if (element.hasTagName(preTag))
+            return "pre";
+        inherit = true;
+        break;
+    case CSSPropertyFontStyle:
+        if (element.hasTagName(iTag) || element.hasTagName(citeTag) || element.hasTagName(emTag) || element.hasTagName(varTag) || element.hasTagName(addressTag))
+            return "italic";
+        inherit = true;
+        break;
+    case CSSPropertyFontWeight:
+        if (element.hasTagName(bTag) || element.hasTagName(strongTag) || element.hasTagName(thTag))
+            return "bolder";
+        inherit = true;
+        break;
+    case CSSPropertyTextDecoration:
+        if (element.hasTagName(uTag) || element.hasTagName(insTag))
+            return "underline";
+        else if (element.hasTagName(sTag) || element.hasTagName(strikeTag) || element.hasTagName(delTag))
+            return "line-through";
+        inherit = true; // FIXME: This is not strictly correct
+        break;
+    case CSSPropertyTextAlign:
+        if (element.hasTagName(centerTag) || element.hasTagName(captionTag) || element.hasTagName(thTag))
+            return "center";
+        inherit = true;
+        break;
+    case CSSPropertyVerticalAlign:
+        if (element.hasTagName(supTag))
+            return "super";
+        else if (element.hasTagName(subTag))
+            return "sub";
+        else if (element.hasTagName(theadTag) || element.hasTagName(tbodyTag) || element.hasTagName(tfootTag))
+            return "middle";
+        else if (element.hasTagName(trTag) || element.hasTagName(thTag) || element.hasTagName(tdTag))
+            inherit = true;
+        break;
+    case CSSPropertyFontFamily:
+    case CSSPropertyFontVariant:
+    case CSSPropertyTextTransform:
+    case CSSPropertyTextShadow:
+    case CSSPropertyVisibility:
+    case CSSPropertyBorderCollapse:
+    case CSSPropertyEmptyCells:
+    case CSSPropertyWordSpacing:
+    case CSSPropertyListStyleType:
+    case CSSPropertyDirection:
+        inherit = true; // FIXME: Let classes in the css component figure this out.
+        break;
+    default:
+        break;
+    }
+
+    if (inherit) {
+        if (Node* parent = node.parentNode())
+            return propertyValueForNode(*parent, propertyName);
+    }
+    
+    return String();
 }
 
 - (NSString *)_stringForNode:(DOMNode *)node property:(NSString *)key
 {
-    NSString *result = nil;
-    RetainPtr<NSMutableDictionary> attributeDictionary = [_stringsForNodes objectForKey:node];
-    if (!attributeDictionary) {
-        attributeDictionary = adoptNS([[NSMutableDictionary alloc] init]);
-        [_stringsForNodes setObject:attributeDictionary.get() forKey:node];
-    }
-    result = [attributeDictionary objectForKey:key];
-    if (result) {
-        if ([result isEqualToString:@""])
-            result = nil;
-    } else {
-        result = [self _computedStringForNode:node property:key];
-        [attributeDictionary setObject:(result ? result : @"") forKey:key];
-    }
+    Node* coreNode = core(node);
+    if (!coreNode)
+        return nil;
+    String result = _caches->propertyValueForNode(*coreNode, String(key));
+    if (!result.length())
+        return nil;
     return result;
 }
 
@@ -2420,8 +2423,6 @@ static NSInteger _colCompare(id block1, id block2, void *)
     [_textTableRows release];
     [_textTableRowArrays release];
     [_textTableRowBackgroundColors release];
-    [_specifiedStylesForElements release];
-    [_stringsForNodes release];
     [_floatsForNodes release];
     [_colorsForNodes release];
     [_attributesForElements release];
@@ -2449,8 +2450,6 @@ static NSInteger _colCompare(id block1, id block2, void *)
     _textTableRows = [[NSMutableArray alloc] init];
     _textTableRowArrays = [[NSMutableArray alloc] init];
     _textTableRowBackgroundColors = [[NSMutableArray alloc] init];
-    _specifiedStylesForElements = [[NSMutableDictionary alloc] init];
-    _stringsForNodes = [[NSMutableDictionary alloc] init];
     _floatsForNodes = [[NSMutableDictionary alloc] init];
     _colorsForNodes = [[NSMutableDictionary alloc] init];
     _attributesForElements = [[NSMutableDictionary alloc] init];
