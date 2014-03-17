@@ -1,3 +1,13 @@
+2014-03-16  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Do not compute region range for a box unless the parent has one
+        https://bugs.webkit.org/show_bug.cgi?id=130249
+
+        Reviewed by Andrei Bucur.
+
+        * fast/regions/inline-block-flowed-in-regions-expected.html: Added.
+        * fast/regions/inline-block-flowed-in-regions.html: Added.
+
 2014-03-16  Frédéric Wang  <fred.wang@free.fr>
 
         [regression] foreign content not displayed in MathML

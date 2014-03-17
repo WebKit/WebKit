@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #region1 { position: absolute; top: 150px; left: 100px; width: 100px; height: 100px; }
+            #content1 { display: inline-block; background-color: red; }
+
+            #div1, #div2 { width: 100px; height: 100px; }
+            #div1 { background-color: orange; }
+            #div2 { background-color: green; }
+        </style>
+    </head>
+    <body>
+        <p>Test that an inline block collected in a named flow with 2 regions is properly displayed.</p>
+        <p>The inline block should be displayed only in the first region.</p>
+        <p>On success, you should see 2 rectangles, the first one orange and the second one green and no red.</p>
+        <div id="region1">
+            <div id="content1">
+                <div id="div1"></div>
+                <div id="div2"></div>
+            </div>
+        </div>
+    </body>
+</html>

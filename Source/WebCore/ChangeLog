@@ -1,3 +1,23 @@
+2014-03-16  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Do not compute region range for a box unless the parent has one
+        https://bugs.webkit.org/show_bug.cgi?id=130249
+
+        Reviewed by Andrei Bucur.
+
+        If the containing block does not have a region range computed, do not attempt to compute
+        a region range for a child. In such cases, the range computation for a child can lead to
+        a result that is wrong, possibly leading to an incorrect clipping.
+
+        Test: fast/regions/inline-block-flowed-in-regions.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::canComputeRegionRangeForBox):
+        (WebCore::RenderBlock::computeRegionRangeForBoxChild):
+        (WebCore::RenderBlock::estimateRegionRangeForBoxChild):
+        (WebCore::RenderBlock::updateRegionRangeForBoxChild):
+        * rendering/RenderFlowThread.h:
+
 2014-03-16  Andreas Kling  <akling@apple.com>
 
         CSSValueList should assert that no null values are added to it.
