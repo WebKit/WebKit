@@ -1,5 +1,21 @@
 2014-03-17  Zan Dobersek  <zdobersek@igalia.com>
 
+        Only supplement Page with UserMediaController once
+        https://bugs.webkit.org/show_bug.cgi?id=130311
+
+        Reviewed by Darin Adler.
+
+        Don't supplement the Page with an UserMediaController object if that Page was
+        already supplemented with one. This avoids triggering an assertion in
+        Supplementable::provideSupplement() that ensures no supplement with the same key
+        exists yet. The cause of this is calling provideUserMediaTo() in the Internals
+        constructor that's using the same Page for two subsequent tests.
+
+        * Modules/mediastream/UserMediaController.cpp:
+        (WebCore::provideUserMediaTo):
+
+2014-03-17  Zan Dobersek  <zdobersek@igalia.com>
+
         Explicitly include cstdio header for debug builds in InlineTextBox, RenderLayer, RenderObject
         https://bugs.webkit.org/show_bug.cgi?id=130310
 
