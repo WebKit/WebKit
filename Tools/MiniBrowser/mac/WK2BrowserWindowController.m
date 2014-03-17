@@ -30,6 +30,7 @@
 #import "AppDelegate.h"
 #import <WebKit2/WKFrameInfo.h>
 #import <WebKit2/WKWebView.h>
+#import <WebKit2/WKWebViewPrivate.h>
 #import <WebKit2/WKNavigationDelegate.h>
 #import <WebKit2/WKUIDelegate.h>
 
@@ -118,14 +119,15 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
         || action == @selector(resetZoom:)
         || action == @selector(dumpSourceToConsole:)
         || action == @selector(find:)
-        || action == @selector(togglePaginationMode:)
-        || action == @selector(toggleTransparentWindow:))
+        || action == @selector(togglePaginationMode:))
         return NO;
     
     if (action == @selector(showHideWebView:))
         [menuItem setTitle:[_webView isHidden] ? @"Show Web View" : @"Hide Web View"];
     else if (action == @selector(removeReinsertWebView:))
         [menuItem setTitle:[_webView window] ? @"Remove Web View" : @"Insert Web View"];
+    else if ([menuItem action] == @selector(toggleTransparentWindow:))
+        [menuItem setState:[[self window] isOpaque] ? NSOffState : NSOnState];
     else if ([menuItem action] == @selector(toggleUISideCompositing:))
         [menuItem setState:[self isUISideCompositingEnabled] ? NSOnState : NSOffState];
 
@@ -248,6 +250,15 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 
 - (IBAction)toggleTransparentWindow:(id)sender
 {
+    BOOL isTransparent = _webView._drawsTransparentBackground;
+    isTransparent = !isTransparent;
+
+    [[self window] setOpaque:!isTransparent];
+    [[self window] setHasShadow:!isTransparent];
+
+    _webView._drawsTransparentBackground = isTransparent;
+
+    [[self window] display];    
 }
 
 - (BOOL)isUISideCompositingEnabled

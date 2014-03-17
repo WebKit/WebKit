@@ -975,6 +975,16 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     return nsColor(color);
 }
 
+- (BOOL)_drawsTransparentBackground
+{
+    return _page->drawsTransparentBackground();
+}
+
+- (void)_setDrawsTransparentBackground:(BOOL)drawsTransparentBackground
+{
+    _page->setDrawsTransparentBackground(drawsTransparentBackground);
+}
+
 #endif
 
 @end

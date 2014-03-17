@@ -1,5 +1,18 @@
 2014-03-17  Simon Fraser  <simon.fraser@apple.com>
 
+        Add transparent window support back into MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=130363
+
+        Reviewed by Anders Carlsson.
+        
+        Re-enable transparent window support for WK2.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController validateMenuItem:]):
+        (-[WK2BrowserWindowController toggleTransparentWindow:]):
+
+2014-03-17  Simon Fraser  <simon.fraser@apple.com>
+
         Fix the 32-bit build; make the open panel make a WK1 window.
 
         * MiniBrowser/mac/AppDelegate.m:
