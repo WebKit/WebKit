@@ -56,6 +56,11 @@ SOFT_LINK_CONSTANT(TCC, kTCCServicePhotos, CFStringRef)
 SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsUI)
 SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
 
+// FIXME: This will be removed as soon as <rdar://problem/16346913> is fixed.
+@interface DDDetectionController (WKDDActionPrivate)
+- (NSArray *)actionsForAnchor:(id)anchor url:(NSURL *)targetURL forFrame:(id)frame;
+@end
+
 using namespace WebKit;
 
 @implementation WKActionSheetAssistant {
@@ -296,13 +301,7 @@ using namespace WebKit;
     if (![[getDDDetectionControllerClass() tapAndHoldSchemes] containsObject:[targetURL scheme]])
         return;
 
-    // FIXME: This needs to be changed.
-    // We need a different API for DDDectectionController that doesn't take DOMNode and WebFrame objects.
-    // NSArray *dataDetectorsActions = [[getDDDetectionControllerClass() sharedController] actionsForDOMNode:_interaction.element forFrame:[_webView mainFrame]];
-    NSArray *dataDetectorsActions = nil;
-
-    // FIXME: The following condition will always be true for now, since there are no viable calls to retrieve
-    // data detector actions.
+    NSArray *dataDetectorsActions = [[getDDDetectionControllerClass() sharedController] actionsForAnchor:nil url:targetURL forFrame:nil];
     if ([dataDetectorsActions count] == 0)
         return;
 
