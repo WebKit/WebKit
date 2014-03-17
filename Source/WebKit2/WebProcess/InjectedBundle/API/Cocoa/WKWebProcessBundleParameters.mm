@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKWebProcessBundleParameters.h"
 
+#if WK_API_ENABLED
+
 #import <wtf/RetainPtr.h>
 
 @implementation WKWebProcessBundleParameters {
@@ -48,3 +50,5 @@
 }
 
 @end
+
+#endif

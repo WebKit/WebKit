@@ -172,7 +172,7 @@ public:
     void setCSSCompositingEnabled(bool);
     void dispatchPendingLoadRequests();
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) && WK_API_ENABLED
     WKWebProcessBundleParameters *bundleParameters();
 #endif
 
@@ -188,7 +188,7 @@ private:
 
     InjectedBundleClient m_client;
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) && WK_API_ENABLED
     RetainPtr<WKWebProcessBundleParameters> m_bundleParameters;
 #endif
 };

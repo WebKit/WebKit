@@ -1,3 +1,13 @@
+2014-03-17  Anders Carlsson  <andersca@apple.com>
+
+        Fix 32-bit OS X build.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessBundleParameters.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessBundleParameters.mm:
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::platformInitialize):
+
 2014-03-17  Jae Hyun Park  <jaepark@webkit.org>
 
         [GTK][CMake] Fix WebKit2 unused parameter warnings

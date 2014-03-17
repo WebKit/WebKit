@@ -134,15 +134,18 @@ void InjectedBundle::activateMacFontAscentHack()
 }
 
 
+#if WK_API_ENABLED
 WKWebProcessBundleParameters *InjectedBundle::bundleParameters()
 {
     ASSERT(m_bundleParameters);
 
     return m_bundleParameters.get();
 }
+#endif
 
 void InjectedBundle::platformInitialize(const WebProcessCreationParameters& parameters)
 {
+#if WK_API_ENABLED
     if (!parameters.bundleParameterData)
         return;
 
@@ -159,6 +162,7 @@ void InjectedBundle::platformInitialize(const WebProcessCreationParameters& para
     }
 
     m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:dictionary]);
+#endif
 }
 
 } // namespace WebKit

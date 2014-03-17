@@ -23,8 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if WK_API_ENABLED
+
 @interface WKWebProcessBundleParameters : NSObject
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 
 @end
+
+#endif
