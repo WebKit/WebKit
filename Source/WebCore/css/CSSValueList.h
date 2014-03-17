@@ -54,8 +54,8 @@ public:
     CSSValue* itemWithoutBoundsCheck(size_t index) { return m_values[index].get(); }
     const CSSValue* itemWithoutBoundsCheck(size_t index) const { ASSERT(index < m_values.size()); return m_values[index].get(); }
 
-    void append(PassRefPtr<CSSValue> value) { m_values.append(value); }
-    void prepend(PassRefPtr<CSSValue> value) { m_values.insert(0, value); }
+    void append(PassRefPtr<CSSValue>);
+    void prepend(PassRefPtr<CSSValue>);
     bool removeAll(CSSValue*);
     bool hasValue(CSSValue*) const;
     PassRefPtr<CSSValueList> copy();
@@ -82,6 +82,18 @@ private:
 };
 
 CSS_VALUE_TYPE_CASTS(CSSValueList, isValueList())
+
+inline void CSSValueList::append(PassRefPtr<CSSValue> value)
+{
+    ASSERT(value);
+    m_values.append(value);
+}
+
+inline void CSSValueList::prepend(PassRefPtr<CSSValue> value)
+{
+    ASSERT(value);
+    m_values.insert(0, value);
+}
 
 // Objects of this class are intended to be stack-allocated and scoped to a single function.
 // Please take care not to pass these around as they do hold onto a raw pointer.

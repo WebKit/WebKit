@@ -1,3 +1,25 @@
+2014-03-16  Andreas Kling  <akling@apple.com>
+
+        CSSValueList should assert that no null values are added to it.
+        <https://webkit.org/b/130315>
+
+        Add assertions in CSSValueList's append() and prepend() that we are
+        not adding a null value. This caught a single place in CSSParser
+        that was appending an alread-released RefPtr to a CSSValueList.
+        That list was eventually discarded anyway (due to "foundClip" now
+        being true), so the fix is simply to remove the adding.
+
+        Eventually we should use Ref and PassRef all over for CSSValueList,
+        this is just a first step on the way.
+
+        Reviewed by Darin Adler.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFillShorthand):
+        * css/CSSValueList.h:
+        (WebCore::CSSValueList::append):
+        (WebCore::CSSValueList::prepend):
+
 2014-03-16  Praveen R Jadhav  <praveen.j@samsung.com>
 
         AudioBufferSourceNode stop attribute shouldn't throw exception in finished state.
