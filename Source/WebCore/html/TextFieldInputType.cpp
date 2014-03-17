@@ -176,21 +176,30 @@ void TextFieldInputType::forwardEvent(Event* event)
             return;
     }
 
-    if (element().renderer() && (event->isMouseEvent() || event->isDragEvent() || event->eventInterface() == WheelEventInterfaceType || event->type() == eventNames().blurEvent || event->type() == eventNames().focusEvent)) {
-        RenderTextControlSingleLine* renderTextControl = toRenderTextControlSingleLine(element().renderer());
-        if (event->type() == eventNames().blurEvent) {
-            if (RenderTextControlInnerBlock* innerTextRenderer = innerTextElement()->renderer()) {
-                if (RenderLayer* innerLayer = innerTextRenderer->layer()) {
-                    IntSize scrollOffset(!renderTextControl->style().isLeftToRightDirection() ? innerLayer->scrollWidth() : 0, 0);
-                    innerLayer->scrollToOffset(scrollOffset, RenderLayer::ScrollOffsetClamped);
+    if (event->isMouseEvent()
+        || event->isDragEvent()
+        || event->eventInterface() == WheelEventInterfaceType
+        || event->type() == eventNames().blurEvent
+        || event->type() == eventNames().focusEvent)
+    {
+        element().document().updateStyleIfNeededForNode(element());
+
+        if (element().renderer()) {
+            RenderTextControlSingleLine* renderTextControl = toRenderTextControlSingleLine(element().renderer());
+            if (event->type() == eventNames().blurEvent) {
+                if (RenderTextControlInnerBlock* innerTextRenderer = innerTextElement()->renderer()) {
+                    if (RenderLayer* innerLayer = innerTextRenderer->layer()) {
+                        IntSize scrollOffset(!renderTextControl->style().isLeftToRightDirection() ? innerLayer->scrollWidth() : 0, 0);
+                        innerLayer->scrollToOffset(scrollOffset, RenderLayer::ScrollOffsetClamped);
+                    }
                 }
-            }
 
-            renderTextControl->capsLockStateMayHaveChanged();
-        } else if (event->type() == eventNames().focusEvent)
-            renderTextControl->capsLockStateMayHaveChanged();
+                renderTextControl->capsLockStateMayHaveChanged();
+            } else if (event->type() == eventNames().focusEvent)
+                renderTextControl->capsLockStateMayHaveChanged();
 
-        element().forwardEvent(event);
+            element().forwardEvent(event);
+        }
     }
 }
 

@@ -1176,7 +1176,6 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
             return;
     }
 
-    document().updateStyleIfNeededForNode(*this);
     m_inputType->forwardEvent(evt);
 
     if (!callBaseClassEarly && !evt->defaultHandled())

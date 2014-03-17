@@ -1,3 +1,22 @@
+2014-03-16  Andreas Kling  <akling@apple.com>
+
+        HTMLInputElement::defaultEventHandler() shouldn't force style updates.
+        <https://webkit.org/b/130303>
+
+        Move the updateStyleIfNeeded() call down to TextFieldInputType instead
+        of doing it for every HTMLInputEvent.
+
+        There might be a better way to do this; we only want to know about this
+        specific element's renderer, and don't need the rest of the tree.
+        This is still an easy hack to avoid a lot of unnecessary work.
+
+        Reviewed by Anders Carlsson.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::forwardEvent):
+
 2014-03-17  Brent Fulgham  <bfulgham@apple.com>
 
         [WebVTT] Extending WebVTT Rendering with Regions
