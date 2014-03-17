@@ -1,3 +1,11 @@
+2014-03-17  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        Buildfix after r165725 for non Mac platforms.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * wtf/WTFThreadData.h:
+
 2014-03-17  Andreas Kling  <akling@apple.com>
 
         [Mac] WTFThreadData should use _pthread_getspecific_direct().

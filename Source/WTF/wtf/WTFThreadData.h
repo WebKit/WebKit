@@ -34,7 +34,7 @@
 #include <wtf/StackStats.h>
 #include <wtf/text/StringHash.h>
 
-#if defined(__has_include) && __has_include(<System/pthread_machdep.h>)
+#if OS(DARWIN) && defined(__has_include) && __has_include(<System/pthread_machdep.h>)
 #include <System/pthread_machdep.h>
 #endif
 
