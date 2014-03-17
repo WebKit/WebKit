@@ -27,11 +27,13 @@
 #include "NetworkInfoProvider.h"
 #include "RequestManagerClientEfl.h"
 #include "WKAPICast.h"
+#include "WKContextPrivate.h"
 #include "WKContextSoup.h"
 #include "WKNumber.h"
 #include "WKString.h"
 #include "WebContext.h"
 #include "WebIconDatabase.h"
+#include "ewk_application_cache_manager_private.h"
 #include "ewk_context_private.h"
 #include "ewk_cookie_manager_private.h"
 #include "ewk_database_manager_private.h"
@@ -137,6 +139,14 @@ EwkContext* EwkContext::defaultContext()
     static EwkContext* defaultInstance = create().leakRef();
 
     return defaultInstance;
+}
+
+EwkApplicationCacheManager* EwkContext::applicationCacheManager()
+{
+    if (!m_applicationCacheManager)
+        m_applicationCacheManager = std::make_unique<EwkApplicationCacheManager>(WKContextGetApplicationCacheManager(m_context.get()));
+
+    return m_applicationCacheManager.get();
 }
 
 EwkCookieManager* EwkContext::cookieManager()
@@ -247,6 +257,13 @@ JSGlobalContextRef EwkContext::jsGlobalContext()
         m_jsGlobalContext = JSGlobalContextCreate(0);
 
     return m_jsGlobalContext;
+}
+
+Ewk_Application_Cache_Manager* ewk_context_application_cache_manager_get(const Ewk_Context* ewkContext)
+{
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, ewkContext, impl, nullptr);
+
+    return const_cast<EwkContext*>(impl)->applicationCacheManager();
 }
 
 Ewk_Cookie_Manager* ewk_context_cookie_manager_get(const Ewk_Context* ewkContext)

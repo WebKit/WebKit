@@ -30,6 +30,7 @@
 
 using namespace WebKit;
 
+class EwkApplicationCacheManager;
 class EwkCookieManager;
 class EwkFaviconDatabase;
 
@@ -57,8 +58,8 @@ public:
 
     ~EwkContext();
 
+    EwkApplicationCacheManager* applicationCacheManager();
     EwkCookieManager* cookieManager();
-
     EwkDatabaseManager* databaseManager();
 
     bool setFaviconDatabaseDirectoryPath(const String& databaseDirectory);
@@ -100,6 +101,7 @@ private:
 
     WKRetainPtr<WKContextRef> m_context;
 
+    std::unique_ptr<EwkApplicationCacheManager> m_applicationCacheManager;
     std::unique_ptr<EwkCookieManager> m_cookieManager;
     std::unique_ptr<EwkDatabaseManager> m_databaseManager;
     std::unique_ptr<EwkFaviconDatabase> m_faviconDatabase;

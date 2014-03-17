@@ -37,6 +37,7 @@
 #ifndef ewk_context_h
 #define ewk_context_h
 
+#include "ewk_application_cache_manager.h"
 #include "ewk_cookie_manager.h"
 #include "ewk_database_manager.h"
 #include "ewk_favicon_database.h"
@@ -159,6 +160,15 @@ EAPI Ewk_Context *ewk_context_new(void);
  * @see ewk_context_new
  */
 EAPI Ewk_Context *ewk_context_new_with_injected_bundle_path(const char *path);
+
+/**
+ * Gets the application cache manager instance for this @a context.
+ *
+ * @param context context object to query.
+ *
+ * @return Ewk_Cookie_Manager object instance or @c NULL in case of failure.
+ */
+EAPI Ewk_Application_Cache_Manager *ewk_context_application_cache_manager_get(const Ewk_Context *context);
 
 /**
  * Gets the cookie manager instance for this @a context.

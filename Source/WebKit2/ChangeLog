@@ -1,3 +1,46 @@
+2014-03-16  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Add ewk_application_cache_manager APIs
+        https://bugs.webkit.org/show_bug.cgi?id=102853
+
+        Reviewed by Gyuyoung Kim.
+
+        Implemented application cache manager to get list of origins which stores
+        application cache and remove specified origin or all.
+
+        * PlatformEfl.cmake: Added newly added files.
+        * UIProcess/API/efl/ewk_application_cache_manager.cpp: Added.
+        (EwkApplicationCacheManager::EwkApplicationCacheManager):
+        (EwkApplicationCacheManager::~EwkApplicationCacheManager):
+        (Get_Origins_Data::Get_Origins_Data):
+        (getApplicationCacheOriginsCallback):
+        (ewk_application_cache_manager_origins_get):
+        (ewk_application_cache_origins_free):
+        (ewk_application_cache_manager_delete_all):
+        (ewk_application_cache_manager_delete):
+        * UIProcess/API/efl/ewk_application_cache_manager.h: Added.
+        * UIProcess/API/efl/ewk_application_cache_manager_private.h: Added.
+        (EwkApplicationCacheManager::impl):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::applicationCacheManager):
+        (ewk_context_application_cache_manager_get):
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_context_private.h:
+        * UIProcess/API/efl/ewk_security_origin_private.h:
+        (EwkSecurityOrigin::wkSecurityOrigin):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestServer.cpp:
+        (EWK2UnitTestServer::port):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestServer.h:
+        * UIProcess/API/efl/tests/test_ewk2_application_cache_manager.cpp:
+        Added to test application_cache_manager.
+        (serverCallback):
+        (getOriginsCallback):
+        (timerCallback):
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        Added test case to test getter of application_cache_manager.
+        (TEST_F):
+
 2014-03-16  Zan Dobersek  <zdobersek@igalia.com>
 
         Move GTK WebKit2 code to std::unique_ptr

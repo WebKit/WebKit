@@ -55,6 +55,14 @@ TEST_F(EWK2ContextTest, ewk_context_default_get)
     ASSERT_EQ(defaultContext, ewk_context_default_get());
 }
 
+TEST_F(EWK2UnitTestBase, ewk_context_application_cache_manager_get)
+{
+    Ewk_Context* context = ewk_view_context_get(webView());
+    Ewk_Application_Cache_Manager* applicationCacheManager = ewk_context_application_cache_manager_get(context);
+    ASSERT_TRUE(applicationCacheManager);
+    ASSERT_EQ(applicationCacheManager, ewk_context_application_cache_manager_get(context));
+}
+
 TEST_F(EWK2ContextTest, ewk_context_cookie_manager_get)
 {
     Ewk_Context* context = ewk_view_context_get(webView());

@@ -54,3 +54,8 @@ CString EWK2UnitTestServer::getURLForPath(const char* path) const
 
     return urlString;
 }
+
+unsigned EWK2UnitTestServer::port() const
+{
+    return soup_server_get_port(m_soupServer);
+}

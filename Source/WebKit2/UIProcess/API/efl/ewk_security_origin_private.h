@@ -49,6 +49,8 @@ public:
     const char* protocol() const;
     uint32_t port() const;
 
+    WKSecurityOriginRef wkSecurityOrigin() const { return m_wkOrigin.get(); }
+
 private:
     explicit EwkSecurityOrigin(WKSecurityOriginRef originRef);
     explicit EwkSecurityOrigin(const char* url);

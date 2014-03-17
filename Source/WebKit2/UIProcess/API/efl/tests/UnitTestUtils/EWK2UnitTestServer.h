@@ -30,6 +30,8 @@ public:
     virtual ~EWK2UnitTestServer();
 
     CString getURLForPath(const char* path) const;
+    unsigned port() const;
+
     void run(SoupServerCallback);
 
 private:
