@@ -431,6 +431,7 @@ if test "$enable_video" = "yes" || test "$enable_web_audio" = "yes"; then
         gstreamer-fft-1.0,
         gstreamer-base-1.0,
         gstreamer-pbutils-1.0,
+        gstreamer-tag-1.0,
         gstreamer-video-1.0])
     AC_SUBST([GSTREAMER_CFLAGS])
     AC_SUBST([GSTREAMER_LIBS])

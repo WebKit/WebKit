@@ -179,7 +179,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     add_definitions(-DWTF_USE_GSTREAMER=1)
 
     if (ENABLE_VIDEO)
-        list(APPEND GSTREAMER_COMPONENTS video)
+        list(APPEND GSTREAMER_COMPONENTS video tag)
     endif ()
 
     if (ENABLE_WEB_AUDIO)

@@ -34,7 +34,9 @@
 #include "TrackPrivateBase.h"
 #include <glib-object.h>
 #include <gst/gst.h>
+#include <gst/tag/tag.h>
 #include <wtf/gobject/GUniquePtr.h>
+#include <wtf/text/CString.h>
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
@@ -146,6 +148,20 @@ void TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged()
     setActive(active);
 }
 
+bool TrackPrivateBaseGStreamer::getLanguageCode(GstTagList* tags, String& value)
+{
+    String language;
+    if (getTag(tags, GST_TAG_LANGUAGE_CODE, language)) {
+        language = gst_tag_get_language_code_iso_639_1(language.utf8().data());
+        INFO_MEDIA_MESSAGE("Converted track %d's language code to %s.", m_index, language.utf8().data());
+        if (language != value) {
+            value = language;
+            return true;
+        }
+    }
+    return false;
+}
+
 bool TrackPrivateBaseGStreamer::getTag(GstTagList* tags, const gchar* tagName, String& value)
 {
     GUniqueOutPtr<gchar> tagValue;
@@ -164,6 +180,9 @@ void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
         return;
 
     TrackPrivateBaseClient* client = m_owner->client();
+    if (!client)
+        return;
+
     GRefPtr<GstTagList> tags;
     {
         MutexLocker lock(m_tagMutex);
@@ -172,10 +191,10 @@ void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
     if (!tags)
         return;
 
-    if (getTag(tags.get(), GST_TAG_TITLE, m_label) && client)
+    if (getTag(tags.get(), GST_TAG_TITLE, m_label))
         client->labelChanged(m_owner, m_label);
 
-    if (getTag(tags.get(), GST_TAG_LANGUAGE_CODE, m_language) && client)
+    if (getLanguageCode(tags.get(), m_language))
         client->languageChanged(m_owner, m_language);
 }
 

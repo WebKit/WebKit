@@ -63,6 +63,7 @@ protected:
     GRefPtr<GstPad> m_pad;
 
 private:
+    bool getLanguageCode(GstTagList* tags, String& value);
     bool getTag(GstTagList* tags, const gchar* tagName, String& value);
 
     TrackPrivateBase* m_owner;
