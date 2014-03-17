@@ -1,15 +1,16 @@
-# Korean translation for webkit.
-# This file is distributed under the same license as the webkit package.
+# Korean translations for WebKit package.
+# This file is distributed under the same license as the WebKit package.
 #
 # Changwoo Ryu <cwryu@debian.org>, 2010.
+# ChangSeok Oh <changseok@gnome.org>, 2014.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: webkit HEAD\n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
 "POT-Creation-Date: 2013-03-15 17:34-0300\n"
-"PO-Revision-Date: 2010-09-26 00:38+0900\n"
-"Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
+"PO-Revision-Date: 2014-01-15 06:03+0900\n"
+"Last-Translator: ChangSeok Oh <changseok@gnome.org>\n"
 "Language-Team: GNOME Korea <gnome-kr@googlegroups.com>\n"
 "Language: Korean\n"
 "MIME-Version: 1.0\n"
@@ -51,17 +52,16 @@ msgstr "사용자가 다운로드를 취소했습니다"
 
 #: ErrorsGtk.cpp:105
 msgid "Printer not found"
-msgstr ""
+msgstr "프린터를 찾을 수 없습니다"
 
 #: ErrorsGtk.cpp:112
-#, fuzzy
 msgid "Invalid page range"
-msgstr "페이지 캐시 사용"
+msgstr "유효하지 않은 페이지 범위"
 
 #: GtkAuthenticationDialog.cpp:171
 #, c-format
 msgid "The site %s:%i requests a username and password"
-msgstr ""
+msgstr "사이트가(%s:%i) 사용자 이름과 암호를 요구합니다"
 
 #: GtkAuthenticationDialog.cpp:175
 msgid "_Remember password"
@@ -89,7 +89,7 @@ msgstr "초기화"
 
 #: LocalizedStringsGtk.cpp:71
 msgid "Details"
-msgstr ""
+msgstr "상세정보"
 
 #: LocalizedStringsGtk.cpp:76
 msgid "This is a searchable index. Enter search keywords: "
@@ -100,7 +100,6 @@ msgid "Choose File"
 msgstr "파일 선택"
 
 #: LocalizedStringsGtk.cpp:86
-#, fuzzy
 msgid "Choose Files"
 msgstr "파일 선택"
 
@@ -133,13 +132,12 @@ msgid "Cop_y Image"
 msgstr "그림 복사(_Y)"
 
 #: LocalizedStringsGtk.cpp:131
-#, fuzzy
 msgid "Copy Image _Address"
-msgstr "그림 복사(_Y)"
+msgstr "그림 주소 복사(_A)"
 
 #: LocalizedStringsGtk.cpp:136
 msgid "Open _Video in New Window"
-msgstr "새 창에서 영상 열기(_V)"
+msgstr "새 창에서 비디오 열기(_V)"
 
 #: LocalizedStringsGtk.cpp:141
 msgid "Open _Audio in New Window"
@@ -147,7 +145,7 @@ msgstr "새 창에서 오디오 열기(_A)"
 
 #: LocalizedStringsGtk.cpp:146
 msgid "Cop_y Video Link Location"
-msgstr "영상 링크 위치 복사(_Y)"
+msgstr "비디오 링크 위치 복사(_Y)"
 
 #: LocalizedStringsGtk.cpp:151
 msgid "Cop_y Audio Link Location"
@@ -163,7 +161,7 @@ msgstr "미디어 반복 재생 토글(_L)"
 
 #: LocalizedStringsGtk.cpp:166
 msgid "Switch Video to _Fullscreen"
-msgstr "영상을 전체 화면으로 전환(_F)"
+msgstr "비디오를 전체 화면으로 전환(_F)"
 
 #: LocalizedStringsGtk.cpp:171
 msgid "_Play"
@@ -313,7 +311,7 @@ msgstr "최근 검색 지우기(_C)"
 # 사전
 #: LocalizedStringsGtk.cpp:412
 msgid "definition"
-msgstr "설명"
+msgstr "정의"
 
 # 사전
 #: LocalizedStringsGtk.cpp:417
@@ -322,7 +320,6 @@ msgstr "용어"
 
 # 사전
 #: LocalizedStringsGtk.cpp:422
-#, fuzzy
 msgid "description"
 msgstr "설명"
 
@@ -431,14 +428,12 @@ msgid "status"
 msgstr "상태"
 
 #: LocalizedStringsGtk.cpp:561
-#, fuzzy
 msgid "enter fullscreen"
-msgstr "전체 화면"
+msgstr "전체 화면 전환"
 
 #: LocalizedStringsGtk.cpp:563
-#, fuzzy
 msgid "exit fullscreen"
-msgstr "전체 화면 끝내기"
+msgstr "전체 화면 나가기"
 
 #: LocalizedStringsGtk.cpp:565
 msgid "fast forward"
@@ -457,9 +452,8 @@ msgid "hide closed captions"
 msgstr "자막 감추기"
 
 #: LocalizedStringsGtk.cpp:573
-#, fuzzy
 msgid "media controls"
-msgstr "미디어 조정판 토글(_T)"
+msgstr "미디어 조정판"
 
 #: LocalizedStringsGtk.cpp:582
 msgid "audio element playback controls and status display"
@@ -491,7 +485,7 @@ msgstr "동영상 시간 표시"
 
 #: LocalizedStringsGtk.cpp:596
 msgid "movie time scrubber thumb"
-msgstr "동영상 시간 표시 자"
+msgstr "동영상 시간 표시자"
 
 #: LocalizedStringsGtk.cpp:598
 msgid "seek movie back 30 seconds"
@@ -526,7 +520,6 @@ msgid "Play movie in fullscreen mode"
 msgstr "전체 화면 모드에서 동영상 재생"
 
 #: LocalizedStringsGtk.cpp:614
-#, fuzzy
 msgid "Exit fullscreen mode"
 msgstr "전체 화면 모드 끝내기"
 
@@ -572,7 +565,7 @@ msgstr "단계 불일치"
 
 #: LocalizedStringsGtk.cpp:741
 msgid "Unacceptable TLS certificate"
-msgstr ""
+msgstr "부적절한 TLS 인증서"
 
 #: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:328
 msgid "Play"
@@ -629,11 +622,11 @@ msgstr "파일을 저장할 위치의 URI"
 #: ../../../WebKit/gtk/webkit/webkitdownload.cpp:321
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:150
 msgid "Suggested Filename"
-msgstr "파일 이름 제안"
+msgstr "제안하는 파일 이름"
 
 #: ../../../WebKit/gtk/webkit/webkitdownload.cpp:322
 msgid "The filename suggested as default when saving"
-msgstr "저장할 때 기본으로 제안할 파일 이름"
+msgstr "저장할 때 기본으로 제안하는 파일 이름"
 
 #: ../../../WebKit/gtk/webkit/webkitdownload.cpp:339
 msgid "Progress"
@@ -671,64 +664,57 @@ msgstr "파일의 전체 크기"
 #: ../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:144
 #: ../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:579
 msgid "Operation was cancelled"
-msgstr ""
+msgstr "작업이 취소되었습니다"
 
 #: ../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:253
 #: ../../../WebKit/gtk/webkit/webkiticondatabase.cpp:148
 msgid "Path"
-msgstr ""
+msgstr "경로"
 
 #: ../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:254
 #: ../../../WebKit/gtk/webkit/webkiticondatabase.cpp:149
-#, fuzzy
 msgid "The absolute path of the icon database folder"
-msgstr "웹 저장 데이터베이스의 절대 경로 파일 이름"
+msgstr "아이콘 데이터베이스 폴더의 절대 경로"
 
 #: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:129
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:128
-#, fuzzy
 msgid "MIME types filter"
-msgstr "MIME 형식"
+msgstr "MIME 종류 필터"
 
 #: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:130
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:129
-#, fuzzy
 msgid "The filter currently associated with the request"
-msgstr "히트 테스트 결과와 관련된 내부 DOM 노드."
+msgstr "현재 요청과 관련된 필터"
 
 #: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:145
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:142
-#, fuzzy
 msgid "MIME types"
-msgstr "MIME 형식"
+msgstr "MIME 종류"
 
 #: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:146
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:143
-#, fuzzy
 msgid "The list of MIME types associated with the request"
-msgstr "히트 테스트 결과와 관련된 내부 DOM 노드."
+msgstr "현재 요청과 관련된 MIME 종류 목록"
 
 #: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:161
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:157
 msgid "Select multiple files"
-msgstr ""
+msgstr "여러개 파일을 선택하세요"
 
 #: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:162
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:158
 msgid "Whether the file chooser should allow selecting multiple files"
-msgstr ""
+msgstr "파일 선택자가 여러 파일을 선택하는 것을 허용할 것인지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:177
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:171
-#, fuzzy
 msgid "Selected files"
-msgstr " 파일"
+msgstr "선택된 파일"
 
 #: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:178
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:172
-#, fuzzy
 msgid "The list of selected files associated with the request"
-msgstr "히트 테스트 결과와 관련된 내부 DOM 노드."
+msgstr "현재 요청과 관련된 선택 파일 목록"
 
 #: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:175
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:152
@@ -780,19 +766,19 @@ msgstr "히트 테스트 결과와 관련된 내부 DOM 노드."
 
 #: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:254
 msgid "X coordinate"
-msgstr ""
+msgstr "X 좌표"
 
 #: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:255
 msgid "The x coordinate of the event relative to the view's window."
-msgstr ""
+msgstr "뷰 윈도에 대한 이벤트의 상대적 x 좌표"
 
 #: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:268
 msgid "Y coordinate"
-msgstr ""
+msgstr "Y 좌표"
 
 #: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:269
 msgid "The y coordinate of the event relative to the view's window."
-msgstr ""
+msgstr "뷰 윈도에 대한 이벤트의 상대적 y 좌표"
 
 #: ../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:134
 #: ../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:143
@@ -830,14 +816,12 @@ msgid "The SoupMessage that backs the response."
 msgstr "응답이 들어 있는 SoupMessage."
 
 #: ../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:171
-#, fuzzy
 msgid "Suggested filename"
-msgstr "파일 이름 제안"
+msgstr "제안하는 파일 이름"
 
 #: ../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:172
-#, fuzzy
 msgid "The suggested filename for the response."
-msgstr "자원의 텍스트 인코딩 이름"
+msgstr "응답을 위해 제안하는 파일 이름"
 
 #: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:150
 msgid "Protocol"
@@ -881,135 +865,125 @@ msgstr "보안 원본의 웹 데이터베이스 제한 용량, 바이트 단위"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:138
 msgid "Device Width"
-msgstr ""
+msgstr "장치 넓이"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:139
-#, fuzzy
 msgid "The width of the screen."
-msgstr "자원의 URI"
+msgstr "화면 넓이"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:160
 msgid "Device Height"
-msgstr ""
+msgstr "장치 높이"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:161
-#, fuzzy
 msgid "The height of the screen."
-msgstr "자원의 URI"
+msgstr "화면의 높이"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:184
 msgid "Available Width"
-msgstr ""
+msgstr "가용한 넓이"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:185
-#, fuzzy
 msgid "The width of the visible area."
-msgstr "기록 항목의 제목"
+msgstr "보이는 영역의 넓이"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:208
 msgid "Available Height"
-msgstr ""
+msgstr "가용한 높이"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:209
-#, fuzzy
 msgid "The height of the visible area."
-msgstr "기록 항목의 제목"
+msgstr "보이는 영역의 높이"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:230
 msgid "Desktop Width"
-msgstr ""
+msgstr "데스크톱 넓이"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:231
 msgid ""
 "The width of viewport that works well for most web pages designed for "
 "desktop."
-msgstr ""
+msgstr "대부분의 웹 페이지에 최적화된 뷰포트의 넓이"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:253
 msgid "Device DPI"
-msgstr ""
+msgstr "장치 DPI"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:254
 msgid "The number of dots per inch of the screen."
-msgstr ""
+msgstr "화면의 인치당 화소 수"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:272
 msgid "Width"
-msgstr ""
+msgstr "넓이"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:273
-#, fuzzy
 msgid "The width of the viewport."
-msgstr "기록 항목의 제목"
+msgstr "뷰포트의 넓이"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:291
 msgid "Height"
-msgstr ""
+msgstr "높이"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:292
-#, fuzzy
 msgid "The height of the viewport."
-msgstr "기록 항목의 제목"
+msgstr "뷰포트의 높이."
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:310
 msgid "Initial Scale Factor"
-msgstr ""
+msgstr "초기 스케일 설정값"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:311
-#, fuzzy
 msgid "The initial scale of the viewport."
-msgstr "파일의 전체 크기"
+msgstr "뷰포트의 초기 스케일"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:329
-#, fuzzy
 msgid "Minimum Scale Factor"
-msgstr "최소 논리적 글꼴 크기"
+msgstr "최소 스케일 설정값"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:330
-#, fuzzy
 msgid "The minimum scale of the viewport."
-msgstr "기록 항목의 제목"
+msgstr "뷰포트의 최소 스케일"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:348
 msgid "Maximum Scale Factor"
-msgstr ""
+msgstr "최대 스케일 설정값"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:349
-#, fuzzy
 msgid "The maximum scale of the viewport."
-msgstr "자원의 프레임 이름"
+msgstr "뷰포트의 최대 스케일"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:367
 msgid "Device Pixel Ratio"
-msgstr ""
+msgstr "장치 화소 비율"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:368
 msgid "The device pixel ratio of the viewport."
-msgstr ""
+msgstr "뷰포트의 장치 화소 비율"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:386
 msgid "user-scalable"
-msgstr ""
+msgstr "사용자-확장가능한"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:387
 msgid "User Scalable"
-msgstr ""
+msgstr "사용자 확장가능한"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:388
 msgid "Determines whether or not the user can zoom in and out."
-msgstr ""
+msgstr "사용자가 확대/축소를 할 수 있도록 할 지 선택하세요."
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:405
 msgid "valid"
-msgstr ""
+msgstr "유효한"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:406
 msgid "Valid"
-msgstr ""
+msgstr "유효한"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:407
 msgid "Determines whether or not the attributes are valid, and can be used."
-msgstr ""
+msgstr "속성값이 유효한지, 그리고 사용될 수 있을 지 선택하세요."
 
 #: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:176
 msgid "Security Origin"
@@ -1136,7 +1110,7 @@ msgstr "웹 뷰"
 
 #: ../../../WebKit/gtk/webkit/webkitwebinspector.cpp:274
 msgid "The Web View that renders the Web Inspector itself"
-msgstr "웹 점검 자체를 렌더링할 웹 뷰"
+msgstr "웹 인스펙터 자체를 렌더링할 웹 뷰"
 
 #: ../../../WebKit/gtk/webkit/webkitwebinspector.cpp:287
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:122
@@ -1170,7 +1144,7 @@ msgstr "이유"
 
 #: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:149
 msgid "The reason why this navigation is occurring"
-msgstr "이 네비게이션이 이루어지는 이유"
+msgstr "이 네비게이션이 일어나는 이유"
 
 #: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:164
 msgid "The URI that was requested as the target for the navigation"
@@ -1182,7 +1156,7 @@ msgstr "단추"
 
 #: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:179
 msgid "The button used to click"
-msgstr "마우스로 누를 수 있는 단추"
+msgstr "클릭으로 사용할 단추"
 
 #: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:194
 msgid "Modifier state"
@@ -1201,17 +1175,14 @@ msgid "The target frame for the navigation"
 msgstr "네비게이션 대상 프레임"
 
 #: ../../../WebKit/gtk/webkit/webkitwebplugin.cpp:115
-#, fuzzy
 msgid "Enabled"
-msgstr "편집 가능"
+msgstr "사용"
 
 #: ../../../WebKit/gtk/webkit/webkitwebplugin.cpp:116
-#, fuzzy
 msgid "Whether the plugin is enabled"
-msgstr "페이지 캐시를 사용할지 여부"
+msgstr "플러그인을 사용할지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebresource.cpp:210
-#, fuzzy
 msgid "The URI of the resource"
 msgstr "자원의 URI"
 
@@ -1283,19 +1254,19 @@ msgstr "글을 표시할 때 사용할 기본 고정폭 글꼴 계열."
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:195
 msgid "Sans Serif Font Family"
-msgstr "돋움체 글꼴 계열"
+msgstr "산세리프 글꼴 계열"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:196
 msgid "The default Sans Serif font family used to display text."
-msgstr "글을 표시할 때 사용할 기본 돋움체 글꼴 계열."
+msgstr "글을 표시할 때 사용할 기본 산세리프 글꼴 계열."
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:204
 msgid "Serif Font Family"
-msgstr "바탕체 글꼴 계열"
+msgstr "세리프 글꼴 계열"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:205
 msgid "The default Serif font family used to display text."
-msgstr "글을 표시할 때 사용할 기본 바탕체 글꼴 계열."
+msgstr "글을 표시할 때 사용할 기본 세리프 글꼴 계열."
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:213
 msgid "Default Font Size"
@@ -1359,11 +1330,11 @@ msgstr "자동으로 그림을 축소해서 크기에 맞춥니다."
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:287
 msgid "Respect Image Orientation"
-msgstr ""
+msgstr "이미지 방향을 고려"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:288
 msgid "Whether WebKit should respect image orientation."
-msgstr ""
+msgstr "웹킷이 이미지의 방향을 고려해야하는지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:296
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:870
@@ -1393,7 +1364,7 @@ msgstr "내장 플러그인 오브젝트를 사용합니다."
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:323
 msgid "Resizable Text Areas"
-msgstr "글 입력란 크기 조정 가능"
+msgstr "크기 조정이 가능한 글 입력란"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:324
 msgid "Whether text areas are resizable."
@@ -1475,12 +1446,11 @@ msgstr "HTML5 로컬 저장 공간 기능을 사용할지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:490
 msgid "Local Storage Database Path"
-msgstr ""
+msgstr "로컬 저장 데이터베이스 경로"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:491
-#, fuzzy
 msgid "The path to where HTML5 Local Storage databases are stored."
-msgstr "HTML5 로컬 저장 공간 기능을 사용할지 여부"
+msgstr "HTML5 로컬 저장 데이터베이스를 저장할 경로"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:505
 msgid "Enable XSS Auditor"
@@ -1495,19 +1465,16 @@ msgid "Enable Spatial Navigation"
 msgstr "스페이셜 네비게이션 사용"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:525
-#, fuzzy
 msgid "Whether to enable Spatial Navigation"
 msgstr "스페이셜 네비게이션을 사용할지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:543
-#, fuzzy
 msgid "Enable Frame Flattening"
-msgstr "사생활 보호 기능 사용"
+msgstr "프레임 평탄화 사용"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:544
-#, fuzzy
 msgid "Whether to enable Frame Flattening"
-msgstr "DOM 붙여넣기를 사용할지 여부"
+msgstr "프레임 평탄화를 사용할지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:561
 msgid "User Agent"
@@ -1554,11 +1521,11 @@ msgstr "편집 모드에서 사용할 방식"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:652
 msgid "Enable universal access from file URIs"
-msgstr "file URI에서 일반 접근 사용"
+msgstr "file URI에서 유니버셜 엑세스 사용"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:653
 msgid "Whether to allow universal access from file URIs"
-msgstr "file URI에서 일반 접근을 허용할지 여부"
+msgstr "file URI에서 유니버셜 엑세스를 허용할지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:668
 msgid "Enable DOM paste"
@@ -1623,134 +1590,121 @@ msgid "Whether Java Applet support through <applet> should be enabled"
 msgstr "<applet>을 통한 자바 애플릿 기능을 사용할지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:823
-#, fuzzy
 msgid "Enable Hyperlink Auditing"
-msgstr "시간별 프로파일링 사용"
+msgstr "하이퍼링크 검사 사용"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:824
-#, fuzzy
 msgid "Whether <a ping> should be able to send pings"
-msgstr "페이지 캐시를 사용할지 여부"
+msgstr "<a ping>이 핑을 보낼지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:832
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:857
-#, fuzzy
 msgid "Enable Fullscreen"
-msgstr "전체 화면 끝내기"
+msgstr "전체 화면 사용"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:833
-#, fuzzy
 msgid "Whether the Mozilla style API should be enabled."
-msgstr "페이지 캐시를 사용할지 여부"
+msgstr "모질라 스타일의 API를 사용할지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:848
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:904
 msgid "Enable WebGL"
-msgstr ""
+msgstr "웹지엘 사용"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:849
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:905
-#, fuzzy
 msgid "Whether WebGL content should be rendered"
-msgstr "배경 그림을 인쇄할지 여부."
+msgstr "웹지엘을 그릴지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:865
-#, fuzzy
 msgid "Enable accelerated compositing"
-msgstr "사생활 보호 기능 사용"
+msgstr "하드웨어 가속 사용"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:866
-#, fuzzy
 msgid "Whether accelerated compositing should be enabled"
-msgstr "<applet>을 통한 자바 애플릿 기능을 사용할지 여부"
+msgstr "하드웨어 가속을 사용할지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:884
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:889
-#, fuzzy
 msgid "Enable WebAudio"
-msgstr "XSS 검사 기능 사용"
+msgstr "웹오디오 사용"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:885
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:890
-#, fuzzy
 msgid "Whether WebAudio content should be handled"
-msgstr "페이지 캐시를 사용할지 여부"
+msgstr "웹오디오를 처리할 지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:901
 msgid "WebKit prefetches domain names"
-msgstr ""
+msgstr "웹킷이 도메인 이름을 미리 가져옵니다"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:902
 msgid "Whether WebKit prefetches domain names"
-msgstr ""
+msgstr "웹킷이 도메인 이름을 미리 가져올지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:920
-#, fuzzy
 msgid "Enable Media Stream"
-msgstr "DOM 붙여넣기 사용"
+msgstr "미디어 스트림 사용"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:921
-#, fuzzy
 msgid "Whether Media Stream should be enabled"
-msgstr "페이지 캐시를 사용할지 여부"
+msgstr "미디어 스트림을 사용할지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:936
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1072
-#, fuzzy
 msgid "Enable smooth scrolling"
-msgstr "캐럿 모드 사용"
+msgstr "부드러운 스크롤 사용"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:937
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1073
-#, fuzzy
 msgid "Whether to enable smooth scrolling"
-msgstr "XSS 검사 기능을 사용할지 여부"
+msgstr "부드러운 스크롤 사용 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:955
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:970
 msgid "Media playback requires user gesture"
-msgstr ""
+msgstr "미디어 재생에 사용자의 제스쳐를 사용합니다"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:956
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:971
 msgid "Whether media playback requires user gesture"
-msgstr ""
+msgstr "미디어 재생에 사용자 제스쳐를 사용할지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:972
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:985
 msgid "Media playback allows inline"
-msgstr ""
+msgstr "미디어 재생이 인라인을 허용합니다"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:973
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:986
 msgid "Whether media playback allows inline"
-msgstr ""
+msgstr "미디어 재생이 인라인을 허용할지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1007
 msgid "Enable display of insecure content"
-msgstr ""
+msgstr "안전하지 않은 내용을 표시"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1008
 msgid "Whether non-HTTPS resources can display on HTTPS pages."
-msgstr ""
+msgstr "HTTPS가 아닌 자원을 HTTPS 페이지 상에 표시할지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1023
 msgid "Enable running of insecure content"
-msgstr ""
+msgstr "안전하지 않은 내용을 실행"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1024
 msgid "Whether non-HTTPS resources can run on HTTPS pages."
-msgstr ""
+msgstr "HTTPS가 아닌 자원을 HTTPS 페이지 상에 실행할지 여부"
 
 #: ../../../WebKit/gtk/webkit/webkitwebview.cpp:1314
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:425
 msgid "Select Files"
-msgstr ""
+msgstr "여러개 파일을 선택"
 
 #: ../../../WebKit/gtk/webkit/webkitwebview.cpp:1314
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:425
 msgid "Select File"
-msgstr ""
+msgstr "파일을 선택"
 
 #: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3225
 msgid "Returns the @web_view's document title"
@@ -1762,11 +1716,11 @@ msgstr "web_view에서 표시하는 내용의 현재 URI를 리턴합니다"
 
 #: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3252
 msgid "Copy target list"
-msgstr "복사 대상 목록"
+msgstr "대상 목록을 복사"
 
 #: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3253
 msgid "The list of targets this web view supports for clipboard copying"
-msgstr "이 웹 뷰가 클립보드 복사에 지원하는 대상 목록"
+msgstr "이 웹 뷰가 클립보드 복사를 지원하는 대상 목록"
 
 #: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3266
 msgid "Paste target list"
@@ -1774,7 +1728,7 @@ msgstr "붙여넣기 대상 목록"
 
 #: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3267
 msgid "The list of targets this web view supports for clipboard pasting"
-msgstr "이 웹 뷰가 클립보드 붙여넣기에 지원하는 대상 목록"
+msgstr "이 웹 뷰가 클립보드 붙여넣기를 지원하는 대상 목록"
 
 #: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3273
 msgid "Settings"
@@ -1788,7 +1742,7 @@ msgstr "관련 WebKitWebSettings 인스턴스"
 #: ../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:93
 #: ../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:153
 msgid "Web Inspector"
-msgstr "웹 점검"
+msgstr "웹 인스펙터"
 
 #: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3288
 msgid "The associated WebKitWebInspector instance"
@@ -1796,12 +1750,11 @@ msgstr "관련 WebKitWebInspector 인스턴스"
 
 #: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3301
 msgid "Viewport Attributes"
-msgstr ""
+msgstr "뷰포트 속성들"
 
 #: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3302
-#, fuzzy
 msgid "The associated WebKitViewportAttributes instance"
-msgstr "관련 WebKitWebInspector 인스턴스"
+msgstr "관련 WebKitViewportAttributes 인스턴스"
 
 #: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3322
 msgid "Editable"
@@ -1859,303 +1812,266 @@ msgstr "#WebKitWebView 사용할 파비콘 URI."
 #, c-format
 msgid ""
 "Cannot determine destination URI for download with suggested filename %s"
-msgstr ""
+msgstr "입력한 파일 이름(%s)으로는 다운로드할 목적지의 URI를 특정할 수 없음"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:139
-#, fuzzy
 msgid "Destination"
-msgstr "저장 URI"
+msgstr "목적지"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:140
-#, fuzzy
 msgid "The local URI to where the download will be saved"
-msgstr "응답을 할 URI."
+msgstr "다운로드할 로컬 URI."
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:152
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:122
-#, fuzzy
 msgid "Response"
 msgstr "네트워크 응답"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:153
-#, fuzzy
 msgid "The response of the download"
-msgstr "다운로드의 현재 진행률"
+msgstr "다운로드의 응답"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:170
-#, fuzzy
 msgid "Estimated Progress"
-msgstr "진행률"
+msgstr "예상되는 진행률"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:141
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:255
 #, c-format
 msgid "Unknown favicon for page %s"
-msgstr ""
+msgstr "페이지(%s)에 대한 알수없는 파비콘"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:147
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:251
 #, c-format
 msgid "Page %s does not have a favicon"
-msgstr ""
+msgstr "페이지(%s)에 파비콘이 없습니다"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:247
 msgid "Favicons database not initialized yet"
-msgstr ""
+msgstr "파비콘 데이터베이스가 아직 설치되지 않음"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:174
-#, fuzzy
 msgid "Search text"
-msgstr "웹 검색(_S)"
+msgstr "문자 검색"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:175
-#, fuzzy
 msgid "Text to search for in the view"
-msgstr "웹 뷰의 사용자 설정 인코딩"
+msgstr "뷰 내에서 검색할 문자"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:187
 msgid "Search Options"
-msgstr ""
+msgstr "옵션 검색"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:188
 msgid "Search options to be used in the search operation"
-msgstr ""
+msgstr "검색 작업에 사용될 옵션 검색"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:201
 msgid "Maximum matches count"
-msgstr ""
+msgstr "최대 매칭 수"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:202
-#, fuzzy
 msgid "The maximum number of matches in a given text to report"
-msgstr "자원의 프레임 이름"
+msgstr "입력한 문자로 표시할 매칭의 최대값"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:214
-#, fuzzy
 msgid "WebView"
-msgstr "웹 뷰"
+msgstr "웹뷰"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:215
-#, fuzzy
 msgid "The WebView associated with this find controller"
-msgstr "히트 테스트 결과와 관련된 내부 DOM 노드."
+msgstr "이 찾기 툴과 관련된 웹뷰"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:153
 msgid "Flags with the context of the WebKitHitTestResult"
-msgstr ""
+msgstr "WebKitHitTestResult의 컨텍스트 플래그"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:167
-#, fuzzy
 msgid "The link URI"
 msgstr "링크 URI"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:179
-#, fuzzy
 msgid "Link Title"
-msgstr "제목"
+msgstr "링크 제목"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:180
 msgid "The link title"
-msgstr ""
+msgstr "링크 제목"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:192
 msgid "Link Label"
-msgstr ""
+msgstr "링크 라벨"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:193
 msgid "The link label"
-msgstr ""
+msgstr "링크 라벨"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:206
-#, fuzzy
 msgid "The image URI"
 msgstr "그림 URI"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:219
-#, fuzzy
 msgid "The media URI"
 msgstr "미디어 URI"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:105
 msgid "Navigation type"
-msgstr ""
+msgstr "네비게이션 종류"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:106
 msgid "The type of navigation triggering this decision"
-msgstr ""
+msgstr "이 선택을 일으킨 네비게이션의 종류"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:123
 msgid "Mouse button"
-msgstr ""
+msgstr "마우스 버튼"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:124
 msgid "The mouse button used if this decision was triggered by a mouse event"
-msgstr ""
+msgstr "마우스 이벤트에 의해 이 선택이 발생했을 때 사용된 마우스 버튼"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:140
 msgid "Mouse event modifiers"
-msgstr ""
+msgstr "마우스 이벤트 변경자"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:141
 msgid "The modifiers active if this decision was triggered by a mouse event"
-msgstr ""
+msgstr "마우스 이벤트에 의해 이 선택이 발생했을 때 활성화된 변경자"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:154
 msgid "Navigation URI request"
-msgstr ""
+msgstr "네비게이션 URI 요청"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:155
-#, fuzzy
 msgid "The URI request that is associated with this navigation"
-msgstr "네비게이션의 대상으로 요청한 URI"
+msgstr "네비게이션과 관련된 URI 요청"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:170
-#, fuzzy
 msgid "Frame name"
 msgstr "프레임 이름"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:171
 msgid "The name of the new frame this navigation action targets"
-msgstr ""
+msgstr "이 네비게이션이 대상으로하는 새 프레임의 이름"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:155
 msgid "The web view that will be printed"
-msgstr ""
+msgstr "인쇄할 웹 뷰"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:167
-#, fuzzy
 msgid "Print Settings"
-msgstr "설정"
+msgstr "인쇄 설정"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:168
 msgid "The initial print settings for the print operation"
-msgstr ""
+msgstr "초기 인쇄 설정"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:179
 msgid "Page Setup"
-msgstr ""
+msgstr "페이지 설정"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:180
-#, fuzzy
 msgid "The initial page setup for the print operation"
-msgstr "파일의 전체 크기"
+msgstr "인쇄를 위한 초기 페이지 설정"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:91
 msgid "Response URI request"
-msgstr ""
+msgstr "URI 요청에 응답"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:92
 msgid "The URI request that is associated with this policy decision"
-msgstr ""
+msgstr "이 정책 결정과 관련된 URI 요청"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:105
 msgid "URI response"
-msgstr ""
+msgstr "URI 응답"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:106
 msgid "The URI response that is associated with this policy decision"
-msgstr ""
+msgstr "이 정책 결정과 관련된 URI 응답"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:442
-#, fuzzy
 msgid "Enable JavaScript"
-msgstr "스크립트 사용"
+msgstr "자바스크립트 사용"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:443
-#, fuzzy
 msgid "Enable JavaScript."
-msgstr "스크립트 사용"
+msgstr "자바스크립트 사용"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:457
-#, fuzzy
 msgid "Auto load images"
 msgstr "그림 읽어들이기 자동"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:471
 msgid "Load icons ignoring image load setting"
-msgstr ""
+msgstr "그림 읽어들이기 설정에 반하는 아이콘 읽어들이기"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:472
 msgid "Whether to load site icons ignoring image load setting."
-msgstr ""
+msgstr "그림 읽어들이기 설정에 반하는 사이트 아이콘을 읽어들일지 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:490
-#, fuzzy
 msgid "Whether to enable offline web application cache."
 msgstr "오프라인 웹 프로그램 캐시를 사용할지 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:506
-#, fuzzy
 msgid "Enable HTML5 local storage"
 msgstr "HTML5 로컬 저장 공간 사용"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:507
-#, fuzzy
 msgid "Whether to enable HTML5 Local Storage support."
 msgstr "HTML5 로컬 저장 공간 기능을 사용할지 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:524
-#, fuzzy
 msgid "Enable HTML5 database"
 msgstr "HTML5 데이터베이스 사용"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:525
-#, fuzzy
 msgid "Whether to enable HTML5 database support."
 msgstr "HTML5 데이터베이스 기능을 사용할지 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:538
-#, fuzzy
 msgid "Enable XSS auditor"
 msgstr "XSS 검사 기능 사용"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:539
-#, fuzzy
 msgid "Whether to enable the XSS auditor."
 msgstr "XSS 검사 기능을 사용할지 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:554
-#, fuzzy
 msgid "Enable frame flattening"
-msgstr "사생활 보호 기능 사용"
+msgstr "프레임 평탄화 사용"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:555
-#, fuzzy
 msgid "Whether to enable frame flattening."
-msgstr "DOM 붙여넣기를 사용할지 여부"
+msgstr "프레임 평탄화를 사용할지 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:567
-#, fuzzy
 msgid "Enable plugins"
 msgstr "플러그인 사용"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:580
-#, fuzzy
 msgid "Enable Java"
-msgstr "자바 애플릿 사용"
+msgstr "자바 사용"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:581
-#, fuzzy
 msgid "Whether Java support should be enabled."
-msgstr "페이지 캐시를 사용할지 여부"
+msgstr "자바 지원을 사용할지 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:595
-#, fuzzy
 msgid "Whether JavaScript can open windows automatically."
 msgstr "자바스크립트에서 창을 열 수 있는지 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:610
-#, fuzzy
 msgid "Enable hyperlink auditing"
-msgstr "시간별 프로파일링 사용"
+msgstr "하이퍼링크 검사 사용"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:611
-#, fuzzy
 msgid "Whether <a ping> should be able to send pings."
-msgstr "페이지 캐시를 사용할지 여부"
+msgstr "<a ping>이 핑을 보낼지 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:623
-#, fuzzy
 msgid "Default font family"
 msgstr "기본 글꼴 계열"
 
@@ -2164,368 +2080,315 @@ msgid ""
 "The font family to use as the default for content that does not specify a "
 "font."
 msgstr ""
+"글꼴을 지정하지 않은 글에 대해서 사용할 기본 글꼴 계열."
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:637
-#, fuzzy
 msgid "Monospace font family"
 msgstr "고정폭 글꼴 계열"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:638
-#, fuzzy
 msgid "The font family used as the default for content using monospace font."
-msgstr "글을 표시할 때 사용할 기본 고정폭 글꼴 계열."
+msgstr "고정폭 글꼴을 사용한 글을 표시할 때 사용할 기본 고정폭 글꼴 계열."
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:650
-#, fuzzy
 msgid "Serif font family"
-msgstr "바탕체 글꼴 계열"
+msgstr "세리프 글꼴 계열"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:651
 msgid "The font family used as the default for content using serif font."
-msgstr ""
+msgstr "세리프 글꼴을 사용한 글을 표시할 때 사용할 기본 글꼴 계열."
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:663
-#, fuzzy
 msgid "Sans-serif font family"
-msgstr "돋움체 글꼴 계열"
+msgstr "산세리프 글꼴 계열"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:664
 msgid "The font family used as the default for content using sans-serif font."
-msgstr ""
+msgstr "산세리프 글꼴을 사용한 글을 표시할 때 사용할 기본 글꼴 계열."
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:676
-#, fuzzy
 msgid "Cursive font family"
 msgstr "필기체 글꼴 계열"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:677
 msgid "The font family used as the default for content using cursive font."
-msgstr ""
+msgstr "필기체 글꼴을 사용한 글을 표시할 때 사용할 기본 글꼴 계열."
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:689
-#, fuzzy
 msgid "Fantasy font family"
 msgstr "고어체 글꼴 계열"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:690
 msgid "The font family used as the default for content using fantasy font."
-msgstr ""
+msgstr "고어체 글꼴을 사용한 글을 표시할 때 사용할 기본 글꼴 계열."
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:702
 msgid "Pictograph font family"
-msgstr ""
+msgstr "그림문자 글꼴 계열"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:703
 msgid "The font family used as the default for content using pictograph font."
-msgstr ""
+msgstr "그림문자 글꼴을 사용한 글을 표시할 때 사용할 기본 글꼴 계열"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:716
-#, fuzzy
 msgid "Default font size"
 msgstr "기본 글꼴 크기"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:730
-#, fuzzy
 msgid "Default monospace font size"
 msgstr "기본 고정폭 글꼴 크기"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:745
-#, fuzzy
 msgid "Minimum font size"
 msgstr "최소 글꼴 크기"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:758
 msgid "Default charset"
-msgstr ""
+msgstr "기본 문자셋"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:759
 msgid ""
 "The default text charset used when interpreting content with unspecified "
 "charset."
 msgstr ""
+"불특정 문자셋을 사용한 글을 해석할 때 사용할 기본 문자셋."
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:772
-#, fuzzy
 msgid "Enable private browsing"
-msgstr "사생활 보호 기능 사용"
+msgstr "개인 정보 보호 브라우징 사용"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:773
-#, fuzzy
 msgid "Whether to enable private browsing"
-msgstr "DOM 붙여넣기를 사용할지 여부"
+msgstr "개인 정보 보호 브라우징을 사용할지 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:785
-#, fuzzy
 msgid "Enable developer extras"
 msgstr "개발자 추가 기능 사용"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:786
-#, fuzzy
 msgid "Whether to enable developer extras"
-msgstr "개발자 추가 기능 사용"
+msgstr "개발자 추가 기능 사용 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:798
-#, fuzzy
 msgid "Enable resizable text areas"
-msgstr "글 입력란 크기 조정 가능"
+msgstr "크기 조정이 가능한 글 입력란 사용"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:799
-#, fuzzy
 msgid "Whether to enable resizable text areas"
-msgstr "DOM 붙여넣기를 사용할지 여부"
+msgstr "크기 조정이 가능한 글 입력란 사용 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:814
-#, fuzzy
 msgid "Enable tabs to links"
-msgstr "플러그인 사용"
+msgstr "링크를 탭에 표시 사용"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:815
-#, fuzzy
 msgid "Whether to enable tabs to links"
-msgstr "XSS 검사 기능을 사용할지 여부"
+msgstr "링크를 탭에 표시 사용 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:828
-#, fuzzy
 msgid "Enable DNS prefetching"
-msgstr "맞춤법 검사 사용"
+msgstr "DNS 미리가져오기 사용"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:829
-#, fuzzy
 msgid "Whether to enable DNS prefetching"
-msgstr "DOM 붙여넣기를 사용할지 여부"
+msgstr "DNS 미리가져오기 사용 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:858
-#, fuzzy
 msgid "Whether to enable the Javascriipt Fullscreen API"
-msgstr "XSS 검사 기능을 사용할지 여부"
+msgstr "자바스크립트 Fullscreen API 사용 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:871
-#, fuzzy
 msgid "Whether background images should be drawn during printing"
 msgstr "배경 그림을 인쇄할지 여부."
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:922
 msgid "Allow modal dialogs"
-msgstr ""
+msgstr "모달창 허용"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:923
 msgid "Whether it is possible to create modal dialogs"
-msgstr ""
+msgstr "모달창 생성 가능 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:938
 msgid "Zoom Text Only"
-msgstr ""
+msgstr "글자만 확대/축소"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:939
 msgid "Whether zoom level of web view changes only the text size"
-msgstr ""
+msgstr "웹뷰의 확대/축소 단계가 글자 크기만 변경할지 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:953
-#, fuzzy
 msgid "JavaScript can access clipboard"
 msgstr "자바스크립트에서 클립보드 접근 가능"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1000
 msgid "Draw compositing indicators"
-msgstr ""
+msgstr "하드웨어 가속 사용 시 합성할 레이어의 경계 그리기"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1001
 msgid "Whether to draw compositing borders and repaint counters"
-msgstr ""
+msgstr "하드웨어 가속 사용 시 합성할 레이어의 경계와 다시 그린 횟수를 표시할지 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1059
-#, fuzzy
 msgid "User agent string"
-msgstr "User Agent"
+msgstr "User agent 문자열"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1060
-#, fuzzy
 msgid "The user agent string"
-msgstr "WebKitGtk에서 사용할 User-Agent 문자열"
+msgstr "User agent 문자열"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:100
-#, fuzzy
 msgid "The URI for which the response was made."
-msgstr "응답을 할 URI."
+msgstr "응답이 온 곳의 URI."
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:111
-#, fuzzy
 msgid "Status Code"
-msgstr "상태"
+msgstr "상태 코드"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:112
 msgid "The status code of the response as returned by the server."
-msgstr ""
+msgstr "서버로부터 되돌아온 응답의 상태 코드."
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:124
 msgid "Content Length"
-msgstr ""
+msgstr "내용 길이"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:125
-#, fuzzy
 msgid "The expected content length of the response."
-msgstr "자원의 텍스트 인코딩 이름"
+msgstr "응답의 예상되는 내용 길이"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:138
-#, fuzzy
 msgid "The MIME type of the response"
-msgstr "자원의 MIME 형식"
+msgstr "응답의 MIME 형식"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:151
-#, fuzzy
 msgid "The suggested filename for the URI response"
-msgstr "자원의 텍스트 인코딩 이름"
+msgstr "URI 응답에 대한 제안하는 파일 이름"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:134
 msgid "Attached Height"
-msgstr ""
+msgstr "부착된 높이"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:135
 msgid "The height that the inspector view should have when it is attached"
-msgstr ""
+msgstr "인스펙터 뷰가 부착되었을 때의 높이"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:110
-#, fuzzy
 msgid "The current active URI of the resource"
-msgstr "자원의 URI"
+msgstr "자원의 현재 활성화된 URI"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:123
-#, fuzzy
 msgid "The response of the resource"
-msgstr "자원의 프레임 이름"
+msgstr "자원의 응답"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:577
-#, fuzzy
 msgid "Web Context"
-msgstr "컨텍스트"
+msgstr "웹 컨텍스트"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:578
-#, fuzzy
 msgid "The web context for the view"
-msgstr "기록 항목의 제목"
+msgstr "뷰에 대한 웹 컨텍스트"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:592
 msgid "Main frame document title"
-msgstr ""
+msgstr "주 프레임 문서의 제목"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:610
 msgid "Estimated Load Progress"
-msgstr ""
+msgstr "예상되는 읽어들이기 진행률"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:611
 msgid "An estimate of the percent completion for a document load"
-msgstr ""
+msgstr "문서 읽어들이기에 대한 예상되는 백분위 진행률"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:623
 msgid "Favicon"
-msgstr ""
+msgstr "파비콘"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:624
-#, fuzzy
 msgid "The favicon associated to the view, if any"
-msgstr "히트 테스트 결과와 관련된 내부 DOM 노드."
+msgstr "뷰와 관련된 파비콘 (있다면)"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:636
-#, fuzzy
 msgid "The current active URI of the view"
-msgstr "프레임의 문서 제목"
+msgstr "뷰의 현재 활성화된 URI"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:650
-#, fuzzy
 msgid "The zoom level of the view content"
-msgstr "페이지 내용의 확대/축소 단계"
+msgstr "뷰 내용의 확대/축소 단계"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:668
-#, fuzzy
 msgid "Whether the view is loading a page"
-msgstr "페이지 캐시를 사용할지 여부"
+msgstr "뷰가 페이지를 읽어들이고 있는지 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:682
 msgid "The view mode to display the web view contents"
-msgstr ""
+msgstr "웹뷰 내용을 표시할 뷰 모드"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2416
 msgid "An exception was raised in JavaScript"
-msgstr ""
+msgstr "자바스크립트에서 예외가 발생했습니다"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:209
 msgid "Geometry"
-msgstr ""
+msgstr "기하 도형적 배열"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:210
 msgid "The size and position of the window on the screen."
-msgstr ""
+msgstr "화면 상에 표시된 창의 크기와 위치"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:222
 msgid "Toolbar Visible"
-msgstr ""
+msgstr "도구 모음 보이기"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:223
-#, fuzzy
 msgid "Whether the toolbar should be visible for the window."
-msgstr "페이지 캐시를 사용할지 여부"
+msgstr "창에 도구 모음을 표시할지 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:235
 msgid "Statusbar Visible"
-msgstr ""
+msgstr "상태표시영역 보이기"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:236
-#, fuzzy
 msgid "Whether the statusbar should be visible for the window."
-msgstr "페이지 캐시를 사용할지 여부"
+msgstr "창에 상태표시영역을 표시할지 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:248
 msgid "Scrollbars Visible"
-msgstr ""
+msgstr "스크롤바 보이기"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:249
-#, fuzzy
 msgid "Whether the scrollbars should be visible for the window."
-msgstr "페이지 캐시를 사용할지 여부"
+msgstr "창에 스크롤바를 표시할지 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:261
 msgid "Menubar Visible"
-msgstr ""
+msgstr "메뉴모음 보이기"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:262
-#, fuzzy
 msgid "Whether the menubar should be visible for the window."
-msgstr "페이지 캐시를 사용할지 여부"
+msgstr "창에 메뉴모음을 표시할지 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:274
 msgid "Locationbar Visible"
-msgstr ""
+msgstr "위치표시영역 보이기"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:275
-#, fuzzy
 msgid "Whether the locationbar should be visible for the window."
-msgstr "페이지 캐시를 사용할지 여부"
+msgstr "창에 위치표시영역을 표시할지 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:286
-#, fuzzy
 msgid "Resizable"
-msgstr "글 입력란 크기 조정 가능"
+msgstr "크기 조정 가능"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:287
-#, fuzzy
 msgid "Whether the window can be resized."
-msgstr "글 입력란이 크기 조정 가능한지 여부."
+msgstr "창의 크기 조정 허용 여부"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:299
-#, fuzzy
 msgid "Fullscreen"
-msgstr "전체 화면 끝내기"
+msgstr "전체 화면"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:300
 msgid "Whether window will be displayed fullscreen."
-msgstr ""
-
-#~ msgid "Upload File"
-#~ msgstr "파일 업로드"
-
-#~ msgid "A username and password are being requested by the site %s"
-#~ msgstr "사용자 이름과 암호를 %s 사이트에서 요청했습니다"
-
-#~ msgctxt "Title string for images"
-#~ msgid "%s  (%dx%d pixels)"
-#~ msgstr "%s  (%dx%d 픽셀)"
+msgstr "전체 화면으로 창을 표시할지 여부"
