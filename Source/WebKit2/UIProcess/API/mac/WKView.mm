@@ -1289,9 +1289,9 @@ NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
     eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
     bool eventHandled;
     if (!dictationAlternatives.isEmpty())
-        eventHandled = _data->_page->insertDictatedText(eventText, replacementRange.location, NSMaxRange(replacementRange), dictationAlternatives);
+        eventHandled = _data->_page->insertDictatedText(eventText, replacementRange.location, replacementRange.length, dictationAlternatives);
     else
-        eventHandled = _data->_page->insertText(eventText, replacementRange.location, NSMaxRange(replacementRange));
+        eventHandled = _data->_page->insertText(eventText, replacementRange.location, replacementRange.length);
 
     if (parameters)
         parameters->eventInterpretationHadSideEffects |= eventHandled;
@@ -1608,13 +1608,13 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         ASSERT(!_data->_page->editorState().hasComposition);
         [self _notifyInputContextAboutDiscardedComposition];
         if ([text length] == 1 && [[text decomposedStringWithCanonicalMapping] characterAtIndex:0] < 0x80) {
-            _data->_page->insertText(text, replacementRange.location, NSMaxRange(replacementRange));
+            _data->_page->insertText(text, replacementRange.location, replacementRange.length);
         } else
             NSBeep();
         return;
     }
 
-    _data->_page->setComposition(text, underlines, newSelRange.location, NSMaxRange(newSelRange), replacementRange.location, NSMaxRange(replacementRange));
+    _data->_page->setComposition(text, underlines, newSelRange.location, newSelRange.length, replacementRange.location, replacementRange.length);
 }
 
 - (NSRange)markedRange
@@ -1642,7 +1642,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         return nil;
 
     AttributedString result;
-    _data->_page->getAttributedSubstringFromRange(nsRange.location, NSMaxRange(nsRange), result);
+    _data->_page->getAttributedSubstringFromRange(nsRange.location, nsRange.length, result);
 
     if (actualRange) {
         *actualRange = nsRange;

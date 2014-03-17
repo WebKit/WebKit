@@ -455,8 +455,8 @@ public:
     void syncApplyAutocorrection(const String& correction, const String& originalText, bool& correctionApplied);
     void requestAutocorrectionContext(uint64_t callbackID);
     void getAutocorrectionContext(String& beforeText, String& markedText, String& selectedText, String& afterText, uint64_t& location, uint64_t& length);
-    void insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd);
-    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd);
+    void insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength);
+    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionLength);
     void confirmComposition();
     void getPositionInformation(const WebCore::IntPoint&, InteractionInformationAtPosition&);
     void requestPositionInformation(const WebCore::IntPoint&);
@@ -521,7 +521,7 @@ public:
 #endif
 
 #if PLATFORM(GTK)
-    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd);
+    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeLength);
     void confirmComposition(const String& text, int64_t selectionStart, int64_t selectionLength);
     void cancelComposition();
 #endif
@@ -538,13 +538,13 @@ public:
 
     void cancelComposition(EditorState& newState);
 #if !PLATFORM(IOS)
-    void insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, bool& handled, EditorState& newState);
-    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, EditorState& newState);
+    void insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength, bool& handled, EditorState& newState);
+    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionLength, uint64_t replacementRangeStart, uint64_t replacementRangeLength, EditorState& newState);
     void confirmComposition(EditorState& newState);
 #endif
     void getMarkedRange(uint64_t& location, uint64_t& length);
     void getSelectedRange(uint64_t& location, uint64_t& length);
-    void getAttributedSubstringFromRange(uint64_t rangeStart, uint64_t rangeEnd, AttributedString&);
+    void getAttributedSubstringFromRange(uint64_t rangeStart, uint64_t rangeLength, AttributedString&);
     void characterIndexForPoint(const WebCore::IntPoint point, uint64_t& result);
     void firstRectForCharacterRange(uint64_t location, uint64_t length, WebCore::IntRect& resultRect);
     void executeKeypressCommands(const Vector<WebCore::KeypressCommand>&, bool& handled, EditorState& newState);
@@ -554,7 +554,7 @@ public:
     void shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent&, bool& result);
     void acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent&, bool& result);
     bool performNonEditingBehaviorForSelector(const String&, WebCore::KeyboardEvent*);
-    void insertDictatedText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool& handled, EditorState& newState);
+    void insertDictatedText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool& handled, EditorState& newState);
 #elif PLATFORM(EFL)
     void confirmComposition(const String& compositionString);
     void setComposition(const WTF::String& compositionString, const WTF::Vector<WebCore::CompositionUnderline>& underlines, uint64_t cursorPosition);

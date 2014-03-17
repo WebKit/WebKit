@@ -3909,7 +3909,7 @@ void WebPage::confirmComposition(const String& compositionString, int64_t select
     send(Messages::WebPageProxy::EditorStateChanged(editorState()));
 }
 
-void WebPage::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementStart, uint64_t replacementLength)
+void WebPage::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionLength, uint64_t replacementStart, uint64_t replacementLength)
 {
     Frame* targetFrame = targetFrameForEditing(this);
     if (!targetFrame || !targetFrame->selection().selection().isContentEditable()) {
@@ -3928,7 +3928,7 @@ void WebPage::setComposition(const String& text, Vector<CompositionUnderline> un
         targetFrame->editor().setIgnoreCompositionSelectionChange(false);
     }
 
-    targetFrame->editor().setComposition(text, underlines, selectionStart, selectionEnd);
+    targetFrame->editor().setComposition(text, underlines, selectionStart, selectionStart + selectionLength);
     send(Messages::WebPageProxy::EditorStateChanged(editorState()));
 }
 

@@ -1,3 +1,46 @@
+2014-03-17  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Standardize on start/length in text input IPC methods
+        https://bugs.webkit.org/show_bug.cgi?id=130359
+
+        Reviewed by Anders Carlsson.
+
+        Some IPC methods used start/length, and others use start/end. This was confusing.
+
+        While here, changed WebPageMac.mm to not use NSMakeRange where we don't need it
+        (I want to move this code to WebPage.cpp, where it could be shared with iOS and
+        other platforms, as it doesn't depend on Foundation much).
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView insertText:replacementRange:]):
+        (-[WKView setMarkedText:selectedRange:replacementRange:]):
+        (-[WKView attributedSubstringForProposedRange:actualRange:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::setComposition):
+        (WebKit::WebPageProxy::insertText):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setComposition):
+        (WebKit::WebPageProxy::insertText):
+        (WebKit::WebPageProxy::insertDictatedText):
+        (WebKit::WebPageProxy::getAttributedSubstringFromRange):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setComposition):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::insertText):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::insertText):
+        (WebKit::WebPage::insertDictatedText):
+        (WebKit::WebPage::getAttributedSubstringFromRange):
+        (WebKit::convertToRange):
+        (WebKit::WebPage::firstRectForCharacterRange):
+
 2014-03-17  Tim Horton  <timothy_horton@apple.com>
 
         Rename WKThumbnailView to _WKThumbnailView

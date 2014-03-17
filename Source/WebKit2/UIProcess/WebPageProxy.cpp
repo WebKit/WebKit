@@ -4482,7 +4482,7 @@ void WebPageProxy::didReceiveURIRequest(String uriString, uint64_t requestID)
 #endif
 
 #if PLATFORM(GTK)
-void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
+void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRange)
 {
     // FIXME: We need to find out how to proper handle the crashes case.
     if (!isValid())

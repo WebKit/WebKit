@@ -76,7 +76,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static PassRefPtr<Range> convertToRange(Frame*, NSRange);
+static PassRefPtr<Range> convertToRange(Frame*, uint64_t location, uint64_t length);
 
 void WebPage::platformInitialize()
 {
@@ -247,18 +247,18 @@ void WebPage::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdenti
     }
 }
 
-void WebPage::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, EditorState& newState)
+void WebPage::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionLength, uint64_t replacementRangeStart, uint64_t replacementRangeLength, EditorState& newState)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     if (frame.selection().selection().isContentEditable()) {
         RefPtr<Range> replacementRange;
         if (replacementRangeStart != NSNotFound) {
-            replacementRange = convertToRange(&frame, NSMakeRange(replacementRangeStart, replacementRangeEnd - replacementRangeStart));
+            replacementRange = convertToRange(&frame, replacementRangeStart, replacementRangeLength);
             frame.selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
         }
 
-        frame.editor().setComposition(text, underlines, selectionStart, selectionEnd);
+        frame.editor().setComposition(text, underlines, selectionStart, selectionStart + selectionLength);
     }
 
     newState = editorState();
@@ -278,12 +278,12 @@ void WebPage::cancelComposition(EditorState& newState)
     newState = editorState();
 }
 
-void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, bool& handled, EditorState& newState)
+void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength, bool& handled, EditorState& newState)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     if (replacementRangeStart != NSNotFound) {
-        RefPtr<Range> replacementRange = convertToRange(&frame, NSMakeRange(replacementRangeStart, replacementRangeEnd - replacementRangeStart));
+        RefPtr<Range> replacementRange = convertToRange(&frame, replacementRangeStart, replacementRangeLength);
         if (replacementRange)
             frame.selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
     }
@@ -300,12 +300,12 @@ void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uin
     newState = editorState();
 }
 
-void WebPage::insertDictatedText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool& handled, EditorState& newState)
+void WebPage::insertDictatedText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool& handled, EditorState& newState)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     if (replacementRangeStart != NSNotFound) {
-        RefPtr<Range> replacementRange = convertToRange(&frame, NSMakeRange(replacementRangeStart, replacementRangeEnd - replacementRangeStart));
+        RefPtr<Range> replacementRange = convertToRange(&frame, replacementRangeStart, replacementRangeLength);
         if (replacementRange)
             frame.selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
     }
@@ -347,7 +347,7 @@ void WebPage::getSelectedRange(uint64_t& location, uint64_t& length)
     }
 }
 
-void WebPage::getAttributedSubstringFromRange(uint64_t rangeStart, uint64_t rangeEnd, AttributedString& result)
+void WebPage::getAttributedSubstringFromRange(uint64_t rangeStart, uint64_t rangeLength, AttributedString& result)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
@@ -355,8 +355,7 @@ void WebPage::getAttributedSubstringFromRange(uint64_t rangeStart, uint64_t rang
     if (selection.isNone() || !selection.isContentEditable() || selection.isInPasswordField())
         return;
 
-    NSRange nsRange = NSMakeRange(rangeStart, rangeEnd - rangeStart);
-    RefPtr<Range> range = convertToRange(&frame, nsRange);
+    RefPtr<Range> range = convertToRange(&frame, rangeStart, rangeLength);
     if (!range)
         return;
 
@@ -366,10 +365,10 @@ void WebPage::getAttributedSubstringFromRange(uint64_t rangeStart, uint64_t rang
     // [WebHTMLConverter editingAttributedStringFromRange:] insists on inserting a trailing 
     // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
     // To work around this we truncate the resultant string to the correct length.
-    if ([attributedString length] > nsRange.length) {
-        ASSERT([attributedString length] == nsRange.length + 1);
-        ASSERT([[attributedString string] characterAtIndex:nsRange.length] == '\n' || [[attributedString string] characterAtIndex:nsRange.length] == ' ');
-        result.string = [attributedString attributedSubstringFromRange:NSMakeRange(0, nsRange.length)];
+    if ([attributedString length] > rangeLength) {
+        ASSERT([attributedString length] == rangeLength + 1);
+        ASSERT([[attributedString string] characterAtIndex:rangeLength] == '\n' || [[attributedString string] characterAtIndex:rangeLength] == ' ');
+        result.string = [attributedString attributedSubstringFromRange:NSMakeRange(0, rangeLength)];
     }
 }
 
@@ -390,12 +389,12 @@ void WebPage::characterIndexForPoint(IntPoint point, uint64_t& index)
         index = static_cast<uint64_t>(location);
 }
 
-PassRefPtr<Range> convertToRange(Frame* frame, NSRange nsrange)
+PassRefPtr<Range> convertToRange(Frame* frame, uint64_t location, uint64_t length)
 {
-    if (nsrange.location > INT_MAX)
+    if (location > INT_MAX)
         return 0;
-    if (nsrange.length > INT_MAX || nsrange.location + nsrange.length > INT_MAX)
-        nsrange.length = INT_MAX - nsrange.location;
+    if (length > INT_MAX || location + length > INT_MAX)
+        length = INT_MAX - location;
         
     // our critical assumption is that we are only called by input methods that
     // concentrate on a given area containing the selection
@@ -403,7 +402,7 @@ PassRefPtr<Range> convertToRange(Frame* frame, NSRange nsrange)
     // directly in the document DOM, so serialization is problematic. Our solution is
     // to use the root editable element of the selection start as the positional base.
     // That fits with AppKit's idea of an input context.
-    return TextIterator::rangeFromLocationAndLength(frame->selection().rootEditableElementOrDocumentElement(), nsrange.location, nsrange.length);
+    return TextIterator::rangeFromLocationAndLength(frame->selection().rootEditableElementOrDocumentElement(), location, length);
 }
     
 void WebPage::firstRectForCharacterRange(uint64_t location, uint64_t length, WebCore::IntRect& resultRect)
@@ -412,7 +411,7 @@ void WebPage::firstRectForCharacterRange(uint64_t location, uint64_t length, Web
     resultRect.setLocation(IntPoint(0, 0));
     resultRect.setSize(IntSize(0, 0));
     
-    RefPtr<Range> range = convertToRange(&frame, NSMakeRange(location, length));
+    RefPtr<Range> range = convertToRange(&frame, location, length);
     if (!range)
         return;
     

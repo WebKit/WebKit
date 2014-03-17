@@ -98,12 +98,12 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect&, const FloatPoint
     notImplemented();
 }
 
-void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderline> underline, uint64_t selectionStart, uint64_t selectionEnd, uint64_t, uint64_t)
+void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderline> underline, uint64_t selectionStart, uint64_t selectionLength, uint64_t, uint64_t)
 {
     if (!isValid())
         return;
 
-    process().send(Messages::WebPage::SetComposition(text, underline, selectionStart, selectionEnd), m_pageID);
+    process().send(Messages::WebPage::SetComposition(text, underline, selectionStart, selectionLength), m_pageID);
 }
 
 void WebPageProxy::confirmComposition()
@@ -120,12 +120,12 @@ void WebPageProxy::cancelComposition()
 
 }
 
-bool WebPageProxy::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
+bool WebPageProxy::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength)
 {
     if (!isValid())
         return true;
     
-    process().send(Messages::WebPage::InsertText(text, replacementRangeStart, replacementRangeEnd), m_pageID);
+    process().send(Messages::WebPage::InsertText(text, replacementRangeStart, replacementRangeLength), m_pageID);
     return true;
 }
 

@@ -166,12 +166,12 @@ void WebPage::sendComplexTextInputToPlugin(uint64_t, const String&)
     notImplemented();
 }
 
-void WebPage::setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd)
+void WebPage::setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionLength)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     if (frame.selection().selection().isContentEditable())
-        frame.editor().setComposition(text, underlines, selectionStart, selectionEnd);
+        frame.editor().setComposition(text, underlines, selectionStart, selectionStart + selectionLength);
 }
 
 void WebPage::confirmComposition()
@@ -201,12 +201,12 @@ static PassRefPtr<Range> convertToRange(Frame* frame, NSRange nsrange)
     return TextIterator::rangeFromLocationAndLength(frame->selection().rootEditableElementOrDocumentElement(), nsrange.location, nsrange.length);
 }
 
-void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
+void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     
     if (replacementRangeStart != NSNotFound) {
-        RefPtr<Range> replacementRange = convertToRange(&frame, NSMakeRange(replacementRangeStart, replacementRangeEnd - replacementRangeStart));
+        RefPtr<Range> replacementRange = convertToRange(&frame, NSMakeRange(replacementRangeStart, replacementRangeLength));
         if (replacementRange)
             frame.selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
     }
