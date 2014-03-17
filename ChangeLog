@@ -1,5 +1,16 @@
 2014-03-17  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK][CMake] Credential storage is not enabled
+        https://bugs.webkit.org/show_bug.cgi?id=130149
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/OptionsGTK.cmake: Add an ENABLE_CREDENTIAL_STORAGE option to the configuration
+        and look libsecret when it's enabled.
+        * Source/cmakeconfig.h.cmake: Expose the ENABLE_CREDENTIAL_STORAGE option to the build.
+
+2014-03-17  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK][CMake] Ensure that HAVE_GTK_UNIX_PRINTING is defined when appropriate
         https://bugs.webkit.org/show_bug.cgi?id=130155
 

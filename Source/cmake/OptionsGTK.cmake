@@ -26,6 +26,7 @@ set(WEBKIT_MINOR_VERSION ${PROJECT_VERSION_MINOR})
 set(WEBKIT_MAJOR_VERSION ${PROJECT_VERSION_MAJOR})
 
 set(USE_GTK2 OFF CACHE BOOL "Whether or not to use GTK+ 2. WebKit2 only supports GTK+ 3.")
+set(ENABLE_CREDENTIAL_STORAGE ON CACHE BOOL "Whether or not to enable support for credential storage using libsecret.")
 
 # FIXME: We want to expose fewer options to downstream, but for now everything is public.
 WEBKIT_OPTION_BEGIN()
@@ -217,6 +218,11 @@ endif ()
 find_package(GTKUnixPrint)
 if (GTK_UNIX_PRINTING_FOUND)
     set(HAVE_GTK_UNIX_PRINTING)
+endif ()
+
+if (ENABLE_CREDENTIAL_STORAGE)
+    find_package(Libsecret)
+    set(ENABLE_CREDENTIAL_STORAGE 1)
 endif ()
 
 # We don't use find_package for GLX because it is part of -lGL, unlike EGL.
