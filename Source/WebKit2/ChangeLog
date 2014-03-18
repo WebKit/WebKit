@@ -1,5 +1,14 @@
 2014-03-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Add a newline to the end of WKPreferences.cpp to suppress -Werror, -pedantic, and -Wnewline-eof.
+
+        Unreviewed build fix.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesGetEnableInheritURIQueryComponent):
+
+2014-03-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Remove consecutive single quotations, as the C compiler does not recognize scheme comments.
 
         Unreviewed build fix.
