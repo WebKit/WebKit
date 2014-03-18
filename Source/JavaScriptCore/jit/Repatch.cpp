@@ -374,66 +374,97 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
     CodeBlock* codeBlock = exec->codeBlock();
     VM* vm = &exec->vm();
     
-    if (isJSArray(baseValue) && propertyName == exec->propertyNames().length) {
+    if ((isJSArray(baseValue) || isJSString(baseValue)) && propertyName == exec->propertyNames().length) {
         GPRReg baseGPR = static_cast<GPRReg>(stubInfo.patch.baseGPR);
 #if USE(JSVALUE32_64)
         GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.patch.valueTagGPR);
 #endif
         GPRReg resultGPR = static_cast<GPRReg>(stubInfo.patch.valueGPR);
-        GPRReg scratchGPR = TempRegisterSet(stubInfo.patch.usedRegisters).getFreeGPR();
-        bool needToRestoreScratch = false;
-        
-        MacroAssembler stubJit;
-        
-        if (scratchGPR == InvalidGPRReg) {
-#if USE(JSVALUE64)
-            scratchGPR = AssemblyHelpers::selectScratchGPR(baseGPR, resultGPR);
-#else
-            scratchGPR = AssemblyHelpers::selectScratchGPR(baseGPR, resultGPR, resultTagGPR);
-#endif
-            stubJit.pushToSave(scratchGPR);
-            needToRestoreScratch = true;
-        }
-        
-        MacroAssembler::JumpList failureCases;
-       
-        stubJit.load8(MacroAssembler::Address(baseGPR, JSCell::indexingTypeOffset()), scratchGPR);
-        failureCases.append(stubJit.branchTest32(MacroAssembler::Zero, scratchGPR, MacroAssembler::TrustedImm32(IsArray)));
-        failureCases.append(stubJit.branchTest32(MacroAssembler::Zero, scratchGPR, MacroAssembler::TrustedImm32(IndexingShapeMask)));
-        
-        stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
-        stubJit.load32(MacroAssembler::Address(scratchGPR, ArrayStorage::lengthOffset()), scratchGPR);
-        failureCases.append(stubJit.branch32(MacroAssembler::LessThan, scratchGPR, MacroAssembler::TrustedImm32(0)));
 
-        stubJit.move(scratchGPR, resultGPR);
+        MacroAssembler stubJit;
+
+        if (isJSArray(baseValue)) {
+            GPRReg scratchGPR = TempRegisterSet(stubInfo.patch.usedRegisters).getFreeGPR();
+            bool needToRestoreScratch = false;
+
+            if (scratchGPR == InvalidGPRReg) {
+#if USE(JSVALUE64)
+                scratchGPR = AssemblyHelpers::selectScratchGPR(baseGPR, resultGPR);
+#else
+                scratchGPR = AssemblyHelpers::selectScratchGPR(baseGPR, resultGPR, resultTagGPR);
+#endif
+                stubJit.pushToSave(scratchGPR);
+                needToRestoreScratch = true;
+            }
+
+            MacroAssembler::JumpList failureCases;
+
+            stubJit.load8(MacroAssembler::Address(baseGPR, JSCell::indexingTypeOffset()), scratchGPR);
+            failureCases.append(stubJit.branchTest32(MacroAssembler::Zero, scratchGPR, MacroAssembler::TrustedImm32(IsArray)));
+            failureCases.append(stubJit.branchTest32(MacroAssembler::Zero, scratchGPR, MacroAssembler::TrustedImm32(IndexingShapeMask)));
+
+            stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
+            stubJit.load32(MacroAssembler::Address(scratchGPR, ArrayStorage::lengthOffset()), scratchGPR);
+            failureCases.append(stubJit.branch32(MacroAssembler::LessThan, scratchGPR, MacroAssembler::TrustedImm32(0)));
+
+            stubJit.move(scratchGPR, resultGPR);
+#if USE(JSVALUE64)
+            stubJit.or64(AssemblyHelpers::TrustedImm64(TagTypeNumber), resultGPR);
+#elif USE(JSVALUE32_64)
+            stubJit.move(AssemblyHelpers::TrustedImm32(0xffffffff), resultTagGPR); // JSValue::Int32Tag
+#endif
+
+            MacroAssembler::Jump success, fail;
+
+            emitRestoreScratch(stubJit, needToRestoreScratch, scratchGPR, success, fail, failureCases);
+            
+            LinkBuffer patchBuffer(*vm, &stubJit, codeBlock);
+
+            linkRestoreScratch(patchBuffer, needToRestoreScratch, stubInfo, success, fail, failureCases);
+
+            stubInfo.stubRoutine = FINALIZE_CODE_FOR_STUB(
+                exec->codeBlock(), patchBuffer,
+                ("GetById array length stub for %s, return point %p",
+                    toCString(*exec->codeBlock()).data(), stubInfo.callReturnLocation.labelAtOffset(
+                        stubInfo.patch.deltaCallToDone).executableAddress()));
+
+            RepatchBuffer repatchBuffer(codeBlock);
+            replaceWithJump(repatchBuffer, stubInfo, stubInfo.stubRoutine->code().code());
+            repatchCall(repatchBuffer, stubInfo.callReturnLocation, operationGetById);
+
+            return true;
+        }
+
+        // String.length case
+        MacroAssembler::Jump failure = stubJit.branch8(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR, JSCell::typeInfoTypeOffset()), MacroAssembler::TrustedImm32(StringType));
+
+        stubJit.load32(MacroAssembler::Address(baseGPR, JSString::offsetOfLength()), resultGPR);
+
 #if USE(JSVALUE64)
         stubJit.or64(AssemblyHelpers::TrustedImm64(TagTypeNumber), resultGPR);
 #elif USE(JSVALUE32_64)
         stubJit.move(AssemblyHelpers::TrustedImm32(0xffffffff), resultTagGPR); // JSValue::Int32Tag
 #endif
 
-        MacroAssembler::Jump success, fail;
-        
-        emitRestoreScratch(stubJit, needToRestoreScratch, scratchGPR, success, fail, failureCases);
-        
+        MacroAssembler::Jump success = stubJit.jump();
+
         LinkBuffer patchBuffer(*vm, &stubJit, codeBlock);
-        
-        linkRestoreScratch(patchBuffer, needToRestoreScratch, stubInfo, success, fail, failureCases);
-        
+
+        patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone));
+        patchBuffer.link(failure, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToSlowCase));
+
         stubInfo.stubRoutine = FINALIZE_CODE_FOR_STUB(
             exec->codeBlock(), patchBuffer,
-            ("GetById array length stub for %s, return point %p",
+            ("GetById string length stub for %s, return point %p",
                 toCString(*exec->codeBlock()).data(), stubInfo.callReturnLocation.labelAtOffset(
                     stubInfo.patch.deltaCallToDone).executableAddress()));
-        
+
         RepatchBuffer repatchBuffer(codeBlock);
         replaceWithJump(repatchBuffer, stubInfo, stubInfo.stubRoutine->code().code());
         repatchCall(repatchBuffer, stubInfo.callReturnLocation, operationGetById);
-        
+
         return true;
     }
-    
-    // FIXME: should support length access for String.
 
     // FIXME: Cache property access for immediates.
     if (!baseValue.isCell())

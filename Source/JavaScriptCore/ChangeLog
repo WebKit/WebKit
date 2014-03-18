@@ -1,3 +1,19 @@
+2014-03-17  Michael Saboff  <msaboff@apple.com>
+
+        V8 regexp spends most of its time in operationGetById
+        https://bugs.webkit.org/show_bug.cgi?id=130380
+
+        Reviewed by Filip Pizlo.
+
+        Added String.length case to tryCacheGetByID that will only help the BaseLine JIT.
+        When V8 regexp is run from the command line, this nets a 2% performance improvement.
+        When the test is run for a longer amount of time, there is much less benefit as the
+        DFG will emit the appropriate code for String.length.  This does remove
+        operationGetById as the hottest function whne run from the command line.
+
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+
 2014-03-17  Andreas Kling  <akling@apple.com>
 
         Add one-deep cache to opaque roots hashset.
