@@ -27,6 +27,7 @@
 #define MediaSessionManager_h
 
 #include "MediaSession.h"
+#include "RemoteCommandListener.h"
 #include "Settings.h"
 #include <map>
 #include <wtf/Vector.h>
@@ -35,6 +36,7 @@ namespace WebCore {
 
 class HTMLMediaElement;
 class MediaSession;
+class RemoteCommandListener;
 
 class MediaSessionManagerClient {
 public:
@@ -49,7 +51,7 @@ protected:
     MediaSessionManagerClient() { }
 };
 
-class MediaSessionManager {
+class MediaSessionManager : RemoteCommandListenerClient {
 public:
     static MediaSessionManager& sharedManager();
     virtual ~MediaSessionManager() { }
@@ -87,7 +89,7 @@ public:
     virtual void showPlaybackTargetPicker() { }
 #endif
 
-    void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType);
+    virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override;
 
     void addClient(MediaSessionManagerClient*);
     void removeClient(MediaSessionManagerClient*);
@@ -109,6 +111,7 @@ private:
 
     Vector<MediaSession*> m_sessions;
     Vector<MediaSessionManagerClient*> m_clients;
+    std::unique_ptr<RemoteCommandListener> m_remoteCommandListener;
     MediaSession* m_activeSession;
     bool m_interrupted;
 };

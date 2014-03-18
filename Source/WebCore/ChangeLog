@@ -1,3 +1,23 @@
+2014-03-17  Jer Noble  <jer.noble@apple.com>
+
+        Add RemoteCommandListener support to MediaSessionManager.
+        https://bugs.webkit.org/show_bug.cgi?id=130354
+
+        Reviewed by Eric Carlson.
+
+        Listen for remote commands in MediaSessionManager.
+
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::addSession):
+        (WebCore::MediaSessionManager::removeSession):
+        * platform/audio/MediaSessionManager.h:
+
+        Add RemoteCommandListener to the project files:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+
 2014-03-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rewrite WebHTMLConverter::_elementHasOwnBackgroundColor in C++

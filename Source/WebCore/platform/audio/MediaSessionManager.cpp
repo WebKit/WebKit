@@ -103,6 +103,9 @@ void MediaSessionManager::addSession(MediaSession& session)
         session.setState(MediaSession::Interrupted);
     updateSessionState();
 
+    if (!m_remoteCommandListener)
+        m_remoteCommandListener = RemoteCommandListener::create(*this);
+
     if (m_clients.isEmpty() || !(session.mediaType() == MediaSession::Video || session.mediaType() == MediaSession::Audio))
         return;
 
@@ -122,6 +125,9 @@ void MediaSessionManager::removeSession(MediaSession& session)
     
     m_sessions.remove(index);
     updateSessionState();
+
+    if (m_sessions.isEmpty())
+        m_remoteCommandListener = nullptr;
 
     if (m_clients.isEmpty() || !(session.mediaType() == MediaSession::Video || session.mediaType() == MediaSession::Audio))
         return;

@@ -7446,6 +7446,7 @@
     <ClCompile Include="..\platform\NotImplemented.cpp" />
     <ClCompile Include="..\platform\PlatformEvent.cpp" />
     <ClCompile Include="..\platform\PlatformStrategies.cpp" />
+    <ClCompile Include="..\platform\RemoteCommandListener.cpp" />
     <ClCompile Include="..\platform\RuntimeApplicationChecks.cpp" />
     <ClCompile Include="..\platform\SchemeRegistry.cpp" />
     <ClCompile Include="..\platform\ScrollableArea.cpp" />
@@ -18992,6 +18993,7 @@
     <ClInclude Include="..\platform\PopupMenuStyle.h" />
     <ClInclude Include="..\platform\PurgeableBuffer.h" />
     <ClInclude Include="..\platform\ReferrerPolicy.h" />
+    <ClInclude Include="..\platform\RemoteCommandListener.h" />
     <ClInclude Include="..\platform\RuntimeApplicationChecks.h" />
     <ClInclude Include="..\platform\SchemeRegistry.h" />
     <ClInclude Include="..\platform\ScrollableArea.h" />

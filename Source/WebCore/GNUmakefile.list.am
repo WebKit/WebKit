@@ -5475,6 +5475,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/soup/SoupNetworkSession.h \
 	Source/WebCore/platform/network/soup/SoupNetworkSession.cpp \
 	Source/WebCore/platform/network/soup/SynchronousLoaderClientSoup.cpp \
+	Source/WebCore/platform/RemoteCommandListener.cpp \
+	Source/WebCore/platform/RemoteCommandListener.h \
 	Source/WebCore/platform/ScrollableArea.cpp \
 	Source/WebCore/platform/ScrollableArea.h \
 	Source/WebCore/platform/ScrollbarThemeClient.h \

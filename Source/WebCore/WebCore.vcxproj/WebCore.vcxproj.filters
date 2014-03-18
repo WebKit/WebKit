@@ -7004,6 +7004,7 @@
     <ClCompile Include="..\inspector\InspectorNodeFinder.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBKeyData.cpp" />
     <ClCompile Include="..\page\ContextMenuContext.cpp" />
+    <ClCompile Include="..\platform\RemoteCommandListener.cpp" />
     <ClCompile Include="..\platform\audio\AudioSession.cpp" />
     <ClCompile Include="..\platform\audio\MediaSession.cpp" />
     <ClCompile Include="..\platform\audio\MediaSessionManager.cpp" />
@@ -14799,6 +14800,7 @@
     <ClInclude Include="..\page\ContextMenuContext.h" />
     <ClInclude Include="..\page\DefaultVisitedLinkStore.h" />
     <ClInclude Include="..\page\VisitedLinkStore.h" />
+    <ClInclude Include="..\platform\RemoteCommandListener.h" />
     <ClInclude Include="..\platform\audio\AudioSession.h" />
     <ClInclude Include="..\platform\audio\AudioSessionListener.h" />
     <ClInclude Include="..\platform\audio\MediaSession.h" />
