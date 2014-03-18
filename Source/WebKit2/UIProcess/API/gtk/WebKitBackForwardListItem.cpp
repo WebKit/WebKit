@@ -61,9 +61,9 @@ static HistoryItemsMap& historyItemsMap()
     return itemsMap;
 }
 
-static void webkitBackForwardListItemFinalized(gpointer webListItem, GObject* /* finalizedListItem */)
+static void webkitBackForwardListItemFinalized(gpointer webListItem, GObject* finalizedListItem)
 {
-    ASSERT(G_OBJECT(historyItemsMap().get(static_cast<WebBackForwardListItem*>(webListItem))) == finalizedListItem);
+    ASSERT_UNUSED(finalizedListItem, G_OBJECT(historyItemsMap().get(static_cast<WebBackForwardListItem*>(webListItem))) == finalizedListItem);
     historyItemsMap().remove(static_cast<WebBackForwardListItem*>(webListItem));
 }
 

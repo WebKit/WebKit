@@ -1,3 +1,15 @@
+2014-03-17  Jae Hyun Park  <jaepark@webkit.org>
+
+        [GTK] Build fix for debug build
+
+        Unreviewed.
+
+        finalizedListItem was actually used in ASSERT.  So, use ASSERT_UNUSED
+        instead of ASSERT.
+
+        * UIProcess/API/gtk/WebKitBackForwardListItem.cpp:
+        (webkitBackForwardListItemFinalized):
+
 2014-03-17  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [WK2] Getting rid of compilation warnings
