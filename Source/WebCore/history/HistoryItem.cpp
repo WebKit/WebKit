@@ -652,8 +652,8 @@ void HistoryItem::encodeBackForwardTreeNode(KeyedEncoder& encoder) const
 
     encoder.encodeString("formContentType", m_formContentType);
 
-    encoder.encodeConditionalObject("formData", m_formData.get(), [](KeyedEncoder&, const FormData&) {
-        // FIXME: Implement.
+    encoder.encodeConditionalObject("formData", m_formData.get(), [](KeyedEncoder& encoder, const FormData& formData) {
+        formData.encode(encoder);
     });
 
     encoder.encodeInt64("itemSequenceNumber", m_itemSequenceNumber);
