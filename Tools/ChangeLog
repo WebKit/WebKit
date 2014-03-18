@@ -1,3 +1,19 @@
+2014-03-18  Robert Plociennik  <r.plociennik@samsung.com>
+
+        [EFL] fontconfig-2.8.0 is not compliant with C++11 leading to a build break
+        https://bugs.webkit.org/show_bug.cgi?id=130336
+
+        Reviewed by Gyuyoung Kim.
+
+        Compilation with gcc 4.8.x results in 'invalid suffix on literal; C++11
+        requires a space between literal and string macro [-Wliteral-suffix]'
+        warning treated as error.
+
+        This patch applies a solution from r162448 to the EFL port.
+
+        * efl/patches/fontconfig-C-11-requires-a-space-between-literal-and-identifier.patch: Added.
+        * efl/jhbuild.modules: Added appropriate patch section.
+
 2014-03-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         webkitpy test rebaseline.

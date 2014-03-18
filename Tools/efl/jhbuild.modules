@@ -134,6 +134,7 @@
             repo="freedesktop.org"
             hash="sha256:fa2a1c6eea654d9fce7a4b1220f10c99cdec848dccaf1625c01f076b31382335"
             md5sum="77e15a92006ddc2adbb06f840d591c0e">
+      <patch file="fontconfig-C-11-requires-a-space-between-literal-and-identifier.patch" strip="1"/>
     </branch>
   </autotools>
 
