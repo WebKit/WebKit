@@ -159,6 +159,9 @@ public:
 
 protected:
     TextTrack(ScriptExecutionContext*, TextTrackClient*, const AtomicString& kind, const AtomicString& id, const AtomicString& label, const AtomicString& language, TextTrackType);
+#if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
+    TextTrackRegionList* regionList();
+#endif
 
     RefPtr<TextTrackCueList> m_cues;
 

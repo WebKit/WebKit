@@ -109,7 +109,6 @@ public:
 #if ENABLE(WEBVTT_REGIONS)
     const String& regionId() const { return m_regionId; }
     void setRegionId(const String&);
-    void notifyRegionWhenRemovingDisplayTree(bool);
 #endif
 
     virtual void setIsActive(bool);
@@ -217,7 +216,6 @@ private:
 #if ENABLE(WEBVTT_REGIONS)
     String m_regionId;
 #endif
-    bool m_notifyRegion;
 };
 
 VTTCue* toVTTCue(TextTrackCue*);

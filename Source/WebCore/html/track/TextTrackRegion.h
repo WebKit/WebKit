@@ -136,10 +136,11 @@ private:
 
     bool m_scroll;
 
+    RefPtr<HTMLDivElement> m_regionDisplayTree;
+
     // The cue container is the container that is scrolled up to obtain the
     // effect of scrolling cues when this is enabled for the regions.
     RefPtr<HTMLDivElement> m_cueContainer;
-    RefPtr<HTMLDivElement> m_regionDisplayTree;
 
     // The member variable track can be a raw pointer as it will never
     // reference a destroyed TextTrack, as this member variable

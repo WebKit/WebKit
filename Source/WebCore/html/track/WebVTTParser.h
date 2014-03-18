@@ -100,6 +100,9 @@ public:
     enum ParseState {
         Initial,
         Header,
+#if ENABLE(WEBVTT_REGIONS)
+        Metadata,
+#endif
         Id,
         TimingsAndSettings,
         CueText,
@@ -166,7 +169,7 @@ private:
     void resetCueValues();
 
 #if ENABLE(WEBVTT_REGIONS)
-    void collectMetadataHeader(const String&);
+    void collectHeader(const String&);
     void createNewRegion();
 #endif
 

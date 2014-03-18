@@ -1,7 +1,6 @@
 Tests TextTrackRegionList functionality: length, operator[], and getRegionById()
 
 
-
 ** Implicit mode disabled and the regions attribute is null **
 EXPECTED (testTrack.track.mode == 'disabled') OK
 EXPECTED (testTrack.track.regions == 'null') OK
