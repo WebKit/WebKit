@@ -20021,7 +20021,7 @@
     <ClInclude Include="..\dom\ElementAncestorIterator.h" />
     <ClInclude Include="..\dom\ElementChildIterator.h" />
     <ClInclude Include="..\dom\ElementData.h" />
-    <ClInclude Include="..\dom\ElementDescendantIterator.h" />
+    <ClInclude Include="..\dom\TypedElementDescendantIterator.h" />
     <ClInclude Include="..\dom\ElementIterator.h" />
     <ClInclude Include="..\dom\ElementIteratorAssertions.h" />
     <ClInclude Include="..\dom\ElementTraversal.h" />

@@ -14493,7 +14493,7 @@
     <ClInclude Include="..\dom\ElementData.h">
       <Filter>dom</Filter>
     </ClInclude>
-    <ClInclude Include="..\dom\ElementDescendantIterator.h">
+    <ClInclude Include="..\dom\TypedElementDescendantIterator.h">
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\ElementIterator.h">

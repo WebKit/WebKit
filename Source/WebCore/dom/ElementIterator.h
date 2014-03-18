@@ -372,6 +372,6 @@ inline bool ElementConstIterator<ElementType>::operator!=(const ElementConstIter
 
 #include "ElementAncestorIterator.h"
 #include "ElementChildIterator.h"
-#include "ElementDescendantIterator.h"
+#include "TypedElementDescendantIterator.h"
 
 #endif

@@ -2848,7 +2848,6 @@ webcore_sources += \
 	Source/WebCore/dom/ElementChildIterator.h \
 	Source/WebCore/dom/ElementData.cpp \
 	Source/WebCore/dom/ElementData.h \
-	Source/WebCore/dom/ElementDescendantIterator.h \
 	Source/WebCore/dom/ElementIterator.h \
 	Source/WebCore/dom/ElementIteratorAssertions.h \
 	Source/WebCore/dom/ElementRareData.cpp \
@@ -3037,6 +3036,7 @@ webcore_sources += \
 	Source/WebCore/dom/TreeScopeAdopter.h \
 	Source/WebCore/dom/TreeWalker.cpp \
 	Source/WebCore/dom/TreeWalker.h \
+	Source/WebCore/dom/TypedElementDescendantIterator.h \
 	Source/WebCore/dom/UIEvent.cpp \
 	Source/WebCore/dom/UIEvent.h \
 	Source/WebCore/dom/UIEventWithKeyState.cpp \

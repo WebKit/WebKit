@@ -1,3 +1,35 @@
+2014-03-18  Andreas Kling  <akling@apple.com>
+
+        Rename ElementDescendantIterator to TypedElementDescendantIterator.
+        Romper-stubbed by Antti "Latte Lung" Koivisto.
+
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ElementDescendantIterator.h: Removed.
+        * dom/ElementIterator.h:
+        * dom/TypedElementDescendantIterator.h: Added.
+        (WebCore::TypedElementDescendantIterator<ElementType>::TypedElementDescendantIterator):
+        (WebCore::TypedElementDescendantIterator<ElementType>::operator):
+        (WebCore::TypedElementDescendantConstIterator<ElementType>::TypedElementDescendantConstIterator):
+        (WebCore::TypedElementDescendantConstIterator<ElementType>::operator):
+        (WebCore::TypedElementDescendantIteratorAdapter<ElementType>::TypedElementDescendantIteratorAdapter):
+        (WebCore::TypedElementDescendantIteratorAdapter<ElementType>::begin):
+        (WebCore::TypedElementDescendantIteratorAdapter<ElementType>::end):
+        (WebCore::TypedElementDescendantIteratorAdapter<ElementType>::beginAt):
+        (WebCore::TypedElementDescendantIteratorAdapter<ElementType>::from):
+        (WebCore::TypedElementDescendantIteratorAdapter<ElementType>::first):
+        (WebCore::TypedElementDescendantIteratorAdapter<ElementType>::last):
+        (WebCore::TypedElementDescendantConstIteratorAdapter<ElementType>::TypedElementDescendantConstIteratorAdapter):
+        (WebCore::TypedElementDescendantConstIteratorAdapter<ElementType>::begin):
+        (WebCore::TypedElementDescendantConstIteratorAdapter<ElementType>::end):
+        (WebCore::TypedElementDescendantConstIteratorAdapter<ElementType>::beginAt):
+        (WebCore::TypedElementDescendantConstIteratorAdapter<ElementType>::from):
+        (WebCore::TypedElementDescendantConstIteratorAdapter<ElementType>::first):
+        (WebCore::TypedElementDescendantConstIteratorAdapter<ElementType>::last):
+        (WebCore::descendantsOfType):
+
 2014-03-18  Ion Rosca  <rosca@adobe.com>
 
         Add blend mode property to dumped information in GraphicsLayer.
