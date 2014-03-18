@@ -1,3 +1,37 @@
+2014-03-18  Andreas Kling  <akling@apple.com>
+
+        Micro-optimize element descendant iterator.
+        <https://webkit.org/b/130384>
+
+        Add a slightly more efficient ElementDescendantIterator that keeps a stack
+        of relevant ancestor siblings instead of walking up the parent chain every
+        time we run out of children.
+
+        Reviewed by Antti Koivisto.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ElementDescendantIterator.h: Added.
+        (WebCore::ElementDescendantIterator::ElementDescendantIterator):
+        (WebCore::ElementDescendantIterator::operator++):
+        (WebCore::ElementDescendantConstIterator::ElementDescendantConstIterator):
+        (WebCore::ElementDescendantConstIterator::operator++):
+        (WebCore::ElementDescendantIteratorAdapter::ElementDescendantIteratorAdapter):
+        (WebCore::ElementDescendantIteratorAdapter::begin):
+        (WebCore::ElementDescendantIteratorAdapter::end):
+        (WebCore::ElementDescendantConstIteratorAdapter::ElementDescendantConstIteratorAdapter):
+        (WebCore::ElementDescendantConstIteratorAdapter::begin):
+        (WebCore::ElementDescendantConstIteratorAdapter::end):
+        (WebCore::elementDescendants):
+        * dom/ElementIterator.h:
+        * dom/SelectorQuery.cpp:
+        (WebCore::elementsForLocalName):
+        (WebCore::anyElement):
+        (WebCore::SelectorDataList::executeSingleTagNameSelectorData):
+        (WebCore::SelectorDataList::executeSingleClassNameSelectorData):
+        (WebCore::SelectorDataList::executeSingleSelectorData):
+        (WebCore::SelectorDataList::executeSingleMultiSelectorData):
+        (WebCore::SelectorDataList::executeCompiledSimpleSelectorChecker):
+
 2014-03-18  Antti Koivisto  <antti@apple.com>
 
         Mutating rules returned by getMatchedCSSRules can result in crash

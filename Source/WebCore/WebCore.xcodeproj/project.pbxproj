@@ -11293,6 +11293,7 @@
 		AD726FEC16D9F4B9003A4E6D /* JSStyleSheetCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStyleSheetCustom.h; sourceTree = "<group>"; };
 		ADDF1AD41257CD9A0003A759 /* RenderSVGPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGPath.cpp; sourceTree = "<group>"; };
 		ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGPath.h; sourceTree = "<group>"; };
+		ADE11F4A18D8311B0078983B /* ElementDescendantIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementDescendantIterator.h; sourceTree = "<group>"; };
 		ADE16736181050C300463A2E /* RenderPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderPtr.h; sourceTree = "<group>"; };
 		B10B697D140C174000BC1C26 /* WebVTTToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVTTToken.h; sourceTree = "<group>"; };
 		B10B697E140C174000BC1C26 /* WebVTTTokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebVTTTokenizer.cpp; sourceTree = "<group>"; };
@@ -22123,6 +22124,7 @@
 				B5B7A16F17C1080600E4AA0A /* ElementData.cpp */,
 				B5B7A16E17C1048000E4AA0A /* ElementData.h */,
 				E46A2B1B17CA65B9000DBCD8 /* TypedElementDescendantIterator.h */,
+				ADE11F4A18D8311B0078983B /* ElementDescendantIterator.h */,
 				E4AE7C1517D1BB950009FB31 /* ElementIterator.h */,
 				E401C27417CE53EC00C41A35 /* ElementIteratorAssertions.h */,
 				4FAB48641643A66D00F70C07 /* ElementRareData.cpp */,
