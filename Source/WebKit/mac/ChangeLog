@@ -1,3 +1,15 @@
+2014-03-17  Anders Carlsson  <andersca@apple.com>
+
+        WebKitLegacy headers should #import the relevant WebKit headers
+        https://bugs.webkit.org/show_bug.cgi?id=130372
+        <rdar://problem/16349094>
+
+        Reviewed by Dan Bernstein.
+
+        Create forwarding headers instead.
+
+        * WebKitLegacy/MigrateHeadersToLegacy.make:
+
 2014-03-17  Tim Horton  <timothy_horton@apple.com>
 
         Rename WKThumbnailView to _WKThumbnailView
