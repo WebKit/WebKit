@@ -62,4 +62,8 @@ void InjectedBundle::platformInitialize(const WebProcessCreationParameters&)
 {
 }
 
+void InjectedBundle::setBundleParameter(WTF::String const&, IPC::DataReference const&)
+{
+}
+
 } // namespace WebKit
