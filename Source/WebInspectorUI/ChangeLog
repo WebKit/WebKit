@@ -1,5 +1,16 @@
 2014-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Make update-InspectorBackendCommands.rb only update legacy protocol versions
+        https://bugs.webkit.org/show_bug.cgi?id=130412
+
+        Reviewed by Timothy Hatcher.
+
+        Rename the script and simplify to only update Legacy protocol versions.
+
+        * Scripts/update-LegacyInspectorBackendCommands.rb: Renamed from Source/WebInspectorUI/Scripts/update-InspectorBackendCommands.rb.
+
+2014-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: sourceMapResourceLoaded expects statusCode parameter
         https://bugs.webkit.org/show_bug.cgi?id=130377
 
