@@ -502,24 +502,24 @@ RTCConfiguration* RTCPeerConnection::getConfiguration() const
     return m_configuration.get();
 }
 
-MediaStreamVector RTCPeerConnection::getLocalStreams() const
+Vector<RefPtr<MediaStream>> RTCPeerConnection::getLocalStreams() const
 {
     return m_localStreams;
 }
 
-MediaStreamVector RTCPeerConnection::getRemoteStreams() const
+Vector<RefPtr<MediaStream>> RTCPeerConnection::getRemoteStreams() const
 {
     return m_remoteStreams;
 }
 
 MediaStream* RTCPeerConnection::getStreamById(const String& streamId)
 {
-    for (MediaStreamVector::iterator iter = m_localStreams.begin(); iter != m_localStreams.end(); ++iter) {
+    for (auto iter = m_localStreams.begin(); iter != m_localStreams.end(); ++iter) {
         if ((*iter)->id() == streamId)
             return iter->get();
     }
 
-    for (MediaStreamVector::iterator iter = m_remoteStreams.begin(); iter != m_remoteStreams.end(); ++iter) {
+    for (auto iter = m_remoteStreams.begin(); iter != m_remoteStreams.end(); ++iter) {
         if ((*iter)->id() == streamId)
             return iter->get();
     }
@@ -551,7 +551,7 @@ PassRefPtr<RTCDataChannel> RTCPeerConnection::createDataChannel(String label, co
 
 bool RTCPeerConnection::hasLocalStreamWithTrackId(const String& trackId)
 {
-    for (MediaStreamVector::iterator iter = m_localStreams.begin(); iter != m_localStreams.end(); ++iter) {
+    for (auto iter = m_localStreams.begin(); iter != m_localStreams.end(); ++iter) {
         if ((*iter)->getTrackById(trackId))
             return true;
     }
