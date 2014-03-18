@@ -1,3 +1,10 @@
+2014-03-18  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed Mountain Lion build fix.  Work around "empty character constant" error
+        by replacing double single-quotes with single double-quotes.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
 2014-03-17  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r165753.
