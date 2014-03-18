@@ -1,3 +1,36 @@
+2014-03-17  Darin Adler  <darin@apple.com>
+
+        Remove most uses of deprecatedCharacter in WTF
+        https://bugs.webkit.org/show_bug.cgi?id=130317
+
+        Reviewed by Andreas Kling.
+
+        Re-landing after fixing the "80 instead of 0x80" typo in equalLatin1WithUTF8.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::HashAndUTF8CharactersTranslator::equal): Add an 8-bit code path to the
+        non-ASCII path.
+        (WTF::SubstringTranslator8::hash): Added.
+        (WTF::SubstringTranslator8::equal): Added.
+        (WTF::SubstringTranslator16::hash): Renamed class.
+        (WTF::SubstringTranslator16::equal): Ditto.
+        (WTF::AtomicString::add): Added an 8-bit code path to the substring case.
+
+        * wtf/text/Base64.cpp:
+        (WTF::base64Decode): Added an 8 bit code path.
+        (WTF::base64URLDecode): Ditto.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::find): Fixed a case that was incorrectly using characters16
+        without first using is8Bit. Need to return later to remove use of deprecatedCharacters.
+
+        * wtf/unicode/UTF8.cpp:
+        (WTF::Unicode::equalUTF16WithUTF8): Added a case for when the UTF-16 characters
+        are ASCII. Also removed the aEnd argument, since the caller only calls this when the
+        lengths are equal.
+        (WTF::Unicode::equalLatin1WithUTF8): Added.
+        * wtf/unicode/UTF8.h: Updated as described above.
+
 2014-03-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r165721.

@@ -187,9 +187,10 @@ struct HashAndUTF8CharactersTranslator {
 
         // If buffer contains only ASCII characters UTF-8 and UTF16 length are the same.
         if (buffer.utf16Length != buffer.length) {
-            const UChar* stringCharacters = string->deprecatedCharacters();
+            if (string->is8Bit())
+                return equalLatin1WithUTF8(string->characters8(), buffer.characters, buffer.characters + buffer.length);
 
-            return equalUTF16WithUTF8(stringCharacters, stringCharacters + string->length(), buffer.characters, buffer.characters + buffer.length);
+            return equalUTF16WithUTF8(string->characters16(), buffer.characters, buffer.characters + buffer.length);
         }
 
         if (string->is8Bit()) {
@@ -281,16 +282,6 @@ struct SubstringLocation {
 };
 
 struct SubstringTranslator {
-    static unsigned hash(const SubstringLocation& buffer)
-    {
-        return StringHasher::computeHashAndMaskTop8Bits(buffer.baseString->deprecatedCharacters() + buffer.start, buffer.length);
-    }
-
-    static bool equal(StringImpl* const& string, const SubstringLocation& buffer)
-    {
-        return WTF::equal(string, buffer.baseString->deprecatedCharacters() + buffer.start, buffer.length);
-    }
-
     static void translate(StringImpl*& location, const SubstringLocation& buffer, unsigned hash)
     {
         location = &StringImpl::createSubstringSharingImpl(buffer.baseString, buffer.start, buffer.length).leakRef();
@@ -299,10 +290,34 @@ struct SubstringTranslator {
     }
 };
 
+struct SubstringTranslator8 : SubstringTranslator {
+    static unsigned hash(const SubstringLocation& buffer)
+    {
+        return StringHasher::computeHashAndMaskTop8Bits(buffer.baseString->characters8() + buffer.start, buffer.length);
+    }
+
+    static bool equal(StringImpl* const& string, const SubstringLocation& buffer)
+    {
+        return WTF::equal(string, buffer.baseString->characters8() + buffer.start, buffer.length);
+    }
+};
+
+struct SubstringTranslator16 : SubstringTranslator {
+    static unsigned hash(const SubstringLocation& buffer)
+    {
+        return StringHasher::computeHashAndMaskTop8Bits(buffer.baseString->characters16() + buffer.start, buffer.length);
+    }
+
+    static bool equal(StringImpl* const& string, const SubstringLocation& buffer)
+    {
+        return WTF::equal(string, buffer.baseString->characters16() + buffer.start, buffer.length);
+    }
+};
+
 PassRefPtr<StringImpl> AtomicString::add(StringImpl* baseString, unsigned start, unsigned length)
 {
     if (!baseString)
-        return 0;
+        return nullptr;
 
     if (!length || start >= baseString->length())
         return StringImpl::empty();
@@ -315,7 +330,9 @@ PassRefPtr<StringImpl> AtomicString::add(StringImpl* baseString, unsigned start,
     }
 
     SubstringLocation buffer = { baseString, start, length };
-    return addToStringTable<SubstringLocation, SubstringTranslator>(buffer);
+    if (baseString->is8Bit())
+        return addToStringTable<SubstringLocation, SubstringTranslator8>(buffer);
+    return addToStringTable<SubstringLocation, SubstringTranslator16>(buffer);
 }
     
 typedef HashTranslatorCharBuffer<LChar> LCharBuffer;

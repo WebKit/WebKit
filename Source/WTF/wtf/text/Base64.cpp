@@ -250,7 +250,10 @@ static inline bool base64DecodeInternal(const T* data, unsigned length, Vector<c
 
 bool base64Decode(const String& in, SignedOrUnsignedCharVectorAdapter out, Base64DecodePolicy policy)
 {
-    return base64DecodeInternal<UChar>(in.deprecatedCharacters(), in.length(), out, policy, base64DecMap);
+    unsigned length = in.length();
+    if (!length || in.is8Bit())
+        return base64DecodeInternal(in.characters8(), length, out, policy, base64DecMap);
+    return base64DecodeInternal(in.characters16(), length, out, policy, base64DecMap);
 }
 
 bool base64Decode(const Vector<char>& in, SignedOrUnsignedCharVectorAdapter out, Base64DecodePolicy policy)
@@ -261,17 +264,20 @@ bool base64Decode(const Vector<char>& in, SignedOrUnsignedCharVectorAdapter out,
     if (in.size() > UINT_MAX)
         return false;
 
-    return base64DecodeInternal<char>(in.data(), in.size(), out, policy, base64DecMap);
+    return base64DecodeInternal(reinterpret_cast<const LChar*>(in.data()), in.size(), out, policy, base64DecMap);
 }
 
 bool base64Decode(const char* data, unsigned len, SignedOrUnsignedCharVectorAdapter out, Base64DecodePolicy policy)
 {
-    return base64DecodeInternal<char>(data, len, out, policy, base64DecMap);
+    return base64DecodeInternal(reinterpret_cast<const LChar*>(data), len, out, policy, base64DecMap);
 }
 
 bool base64URLDecode(const String& in, SignedOrUnsignedCharVectorAdapter out)
 {
-    return base64DecodeInternal<UChar>(in.deprecatedCharacters(), in.length(), out, Base64FailOnInvalidCharacter, base64URLDecMap);
+    unsigned length = in.length();
+    if (!length || in.is8Bit())
+        return base64DecodeInternal(in.characters8(), length, out, Base64FailOnInvalidCharacter, base64URLDecMap);
+    return base64DecodeInternal(in.characters16(), length, out, Base64FailOnInvalidCharacter, base64URLDecMap);
 }
 
 bool base64URLDecode(const Vector<char>& in, SignedOrUnsignedCharVectorAdapter out)
@@ -282,12 +288,12 @@ bool base64URLDecode(const Vector<char>& in, SignedOrUnsignedCharVectorAdapter o
     if (in.size() > UINT_MAX)
         return false;
 
-    return base64DecodeInternal<char>(in.data(), in.size(), out, Base64FailOnInvalidCharacter, base64URLDecMap);
+    return base64DecodeInternal(reinterpret_cast<const LChar*>(in.data()), in.size(), out, Base64FailOnInvalidCharacter, base64URLDecMap);
 }
 
 bool base64URLDecode(const char* data, unsigned len, SignedOrUnsignedCharVectorAdapter out)
 {
-    return base64DecodeInternal<char>(data, len, out, Base64FailOnInvalidCharacter, base64URLDecMap);
+    return base64DecodeInternal(reinterpret_cast<const LChar*>(data), len, out, Base64FailOnInvalidCharacter, base64URLDecMap);
 }
 
 } // namespace WTF

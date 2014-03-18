@@ -77,7 +77,9 @@ namespace Unicode {
 
     WTF_EXPORT_PRIVATE unsigned calculateStringHashAndLengthFromUTF8MaskingTop8Bits(const char* data, const char* dataEnd, unsigned& dataLength, unsigned& utf16Length);
 
-    WTF_EXPORT_PRIVATE bool equalUTF16WithUTF8(const UChar* a, const UChar* aEnd, const char* b, const char* bEnd);
+    // The caller of these functions already knows that the lengths are the same, so we omit an end argument for UTF-16 and Latin-1.
+    bool equalUTF16WithUTF8(const UChar* stringInUTF16, const char* stringInUTF8, const char* stringInUTF8End);
+    bool equalLatin1WithUTF8(const LChar* stringInLatin1, const char* stringInUTF8, const char* stringInUTF8End);
 
 } // namespace Unicode
 } // namespace WTF
