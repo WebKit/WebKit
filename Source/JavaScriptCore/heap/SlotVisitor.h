@@ -29,6 +29,7 @@
 #include "CopyToken.h"
 #include "HandleTypes.h"
 #include "MarkStack.h"
+#include "OpaqueRootSet.h"
 
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
@@ -134,7 +135,7 @@ private:
     void donateKnownParallel();
 
     MarkStackArray m_stack;
-    HashSet<void*> m_opaqueRoots; // Handle-owning data structures not visible to the garbage collector.
+    OpaqueRootSet m_opaqueRoots; // Handle-owning data structures not visible to the garbage collector.
     
     size_t m_bytesVisited;
     size_t m_bytesCopied;

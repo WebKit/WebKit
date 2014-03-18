@@ -1,3 +1,28 @@
+2014-03-17  Andreas Kling  <akling@apple.com>
+
+        Add one-deep cache to opaque roots hashset.
+        <https://webkit.org/b/130357>
+
+        The vast majority of WebCore JS wrappers will have their Document*
+        as the root(). This change adds a simple optimization where we cache
+        the last lookup and avoid going to the hashset for repeated queries.
+
+        Looks like 0.4% progression on DYEB on my MBP.
+
+        Reviewed by Mark Hahnenberg.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/OpaqueRootSet.h: Added.
+        (JSC::OpaqueRootSet::OpaqueRootSet):
+        (JSC::OpaqueRootSet::contains):
+        (JSC::OpaqueRootSet::isEmpty):
+        (JSC::OpaqueRootSet::clear):
+        (JSC::OpaqueRootSet::add):
+        (JSC::OpaqueRootSet::size):
+        (JSC::OpaqueRootSet::begin):
+        (JSC::OpaqueRootSet::end):
+        * heap/SlotVisitor.h:
+
 2014-03-17  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Implement Math.hypot
