@@ -57,6 +57,13 @@ bool ShareableBitmap::Handle::decode(IPC::ArgumentDecoder& decoder, Handle& hand
     return true;
 }
 
+void ShareableBitmap::Handle::clear()
+{
+    m_handle.clear();
+    m_size = IntSize();
+    m_flags = Flag::NoFlags;
+}
+
 PassRefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Flags flags)
 {
     size_t numBytes = numBytesForSize(size);

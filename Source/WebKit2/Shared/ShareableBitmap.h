@@ -63,6 +63,8 @@ public:
 
         bool isNull() const { return m_handle.isNull(); }
 
+        void clear();
+
         void encode(IPC::ArgumentEncoder&) const;
         static bool decode(IPC::ArgumentDecoder&, Handle&);
 

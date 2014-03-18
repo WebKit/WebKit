@@ -742,6 +742,10 @@ public:
 
     void getBytecodeProfile(uint64_t callbackID);
 
+#if ENABLE(IMAGE_CONTROLS)
+    void replaceControlledImage(const ShareableBitmap::Handle&);
+#endif
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

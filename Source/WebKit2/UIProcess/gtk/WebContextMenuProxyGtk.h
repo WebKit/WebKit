@@ -46,7 +46,7 @@ public:
     }
     ~WebContextMenuProxyGtk();
 
-    virtual void showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&);
+    virtual void showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&, const ContextMenuContextData&);
     virtual void hideContextMenu();
 
     void populate(Vector<WebCore::ContextMenuItem>&);

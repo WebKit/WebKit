@@ -343,4 +343,7 @@ messages -> WebPage LegacyReceiver {
     
     TakeThumbnailSnapshot(uint64_t callbackID)
 
+#if ENABLE(IMAGE_CONTROLS)
+    ReplaceControlledImage(WebKit::ShareableBitmap::Handle newBitmapHandle)
+#endif
 }

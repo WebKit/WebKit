@@ -47,7 +47,7 @@ WebContextMenuProxyEfl::~WebContextMenuProxyEfl()
 {
 }
 
-void WebContextMenuProxyEfl::showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&)
+void WebContextMenuProxyEfl::showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&, const ContextMenuContextData&)
 {
     notImplemented();
 }

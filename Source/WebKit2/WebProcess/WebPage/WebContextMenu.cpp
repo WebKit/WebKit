@@ -54,9 +54,6 @@ WebContextMenu::~WebContextMenu()
 void WebContextMenu::show()
 {
     ContextMenuController& controller = m_page->corePage()->contextMenuController();
-    ContextMenu* menu = controller.contextMenu();
-    if (!menu)
-        return;
     Frame* frame = controller.hitTestResult().innerNodeFrame();
     if (!frame)
         return;
@@ -79,6 +76,13 @@ void WebContextMenu::itemSelected(const WebContextMenuItemData& item)
     ContextMenuItem coreItem(ActionType, static_cast<ContextMenuAction>(item.action()), item.title());
     m_page->corePage()->contextMenuController().contextMenuItemSelected(&coreItem);
 }
+
+#if ENABLE(IMAGE_CONTROLS)
+void WebContextMenu::replaceControlledImage(PassRefPtr<Image> newImage)
+{
+    m_page->corePage()->contextMenuController().replaceControlledImage(newImage);
+}
+#endif
 
 void WebContextMenu::menuItemsWithUserData(Vector<WebContextMenuItemData> &menuItems, RefPtr<API::Object>& userData) const
 {

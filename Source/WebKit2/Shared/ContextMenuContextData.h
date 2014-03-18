@@ -29,6 +29,7 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
+#include "ShareableBitmap.h"
 #include "WebHitTestResult.h"
 
 namespace IPC {
@@ -46,11 +47,14 @@ class ContextMenuContextData {
 public:
     ContextMenuContextData();
     ContextMenuContextData(const WebCore::ContextMenuContext&);
+
+    ContextMenuContextData(const ContextMenuContextData&);
+    ContextMenuContextData& operator=(const ContextMenuContextData&);
     
     const WebHitTestResult::Data& webHitTestResultData() const { return m_webHitTestResultData; }
 
 #if ENABLE(IMAGE_CONTROLS)
-    bool isImageControl() const { return m_isImageControl; }
+    const ShareableBitmap::Handle& controlledImageHandle() const { return m_controlledImageHandle; }
 #endif
 
     void encode(IPC::ArgumentEncoder&) const;
@@ -61,7 +65,7 @@ private:
     WebHitTestResult::Data m_webHitTestResultData;
 
 #if ENABLE(IMAGE_CONTROLS)
-    bool m_isImageControl;
+    ShareableBitmap::Handle m_controlledImageHandle;
 #endif
 };
 

@@ -57,6 +57,8 @@ public:
 
         bool isNull() const;
 
+        void clear();
+
         void encode(IPC::ArgumentEncoder&) const;
         static bool decode(IPC::ArgumentDecoder&, Handle&);
 

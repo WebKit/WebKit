@@ -138,7 +138,7 @@ void WebContextMenuProxyGtk::populate(const Vector<WebContextMenuItemData>& item
     }
 }
 
-void WebContextMenuProxyGtk::showContextMenu(const WebCore::IntPoint& position, const Vector<WebContextMenuItemData>& items)
+void WebContextMenuProxyGtk::showContextMenu(const WebCore::IntPoint& position, const Vector<WebContextMenuItemData>& items, const ContextMenuContextData&)
 {
     if (!items.isEmpty())
         populate(items);

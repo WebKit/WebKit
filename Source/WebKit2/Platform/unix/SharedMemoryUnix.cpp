@@ -54,6 +54,11 @@ SharedMemory::Handle::Handle()
 
 SharedMemory::Handle::~Handle()
 {
+    clear();
+}
+
+void SharedMemory::Handle::clear()
+{
     if (!isNull())
         closeWithRetry(m_fileDescriptor);
 }

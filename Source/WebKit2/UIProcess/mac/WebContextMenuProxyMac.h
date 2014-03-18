@@ -32,10 +32,12 @@
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSPopUpButtonCell;
+OBJC_CLASS NSWindow;
 OBJC_CLASS WKView;
 
 namespace WebKit {
 
+class ShareableBitmap;
 class WebPageProxy;
 
 class WebContextMenuProxyMac : public WebContextMenuProxy {
@@ -46,17 +48,31 @@ public:
     }
     ~WebContextMenuProxyMac();
 
-    virtual void showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&);
-    virtual void hideContextMenu();
+    virtual void showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&, const ContextMenuContextData&) override;
+    virtual void hideContextMenu() override;
     
     void contextMenuItemSelected(const WebContextMenuItemData&);
+
+#if ENABLE(IMAGE_CONTROLS)
+    void clearImageServicesMenu();
+    void replaceControlledImage(CGImageRef newImage);
+#endif
+
+    NSWindow *window() const;
 
 private:
     WebContextMenuProxyMac(WKView*, WebPageProxy*);
 
-    void populate(const Vector<WebContextMenuItemData>&);
+    void populate(const Vector<WebContextMenuItemData>&, const ContextMenuContextData&);
+
+#if ENABLE(IMAGE_CONTROLS)
+    void setupImageServicesMenu(ShareableBitmap&);
+#endif
 
     RetainPtr<NSPopUpButtonCell> m_popup;
+#if ENABLE(IMAGE_CONTROLS)
+    RetainPtr<NSMenu> m_servicesMenu;
+#endif
     WKView* m_webView;
     WebPageProxy* m_page;
 };

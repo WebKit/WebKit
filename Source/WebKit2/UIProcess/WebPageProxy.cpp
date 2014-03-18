@@ -3309,21 +3309,31 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
     // Unless this is an image control, give the PageContextMenuClient one last swipe at changing the menu.
     Vector<WebContextMenuItemData> items;
     bool useProposedItems = true;
-
+    bool askClientToChangeMenu = true;
 #if ENABLE(IMAGE_CONTROLS)
-    if (!contextMenuContextData.isImageControl() && m_contextMenuClient.getContextMenuFromProposedMenu(this, proposedItems, items, contextMenuContextData.webHitTestResultData(), userData.get())) {
-#else
-    if (m_contextMenuClient.getContextMenuFromProposedMenu(this, proposedItems, items, contextMenuContextData.webHitTestResultData(), userData.get())) {
+    if (!contextMenuContextData.controlledImageHandle().isNull())
+        askClientToChangeMenu = false;
 #endif
+
+    if (askClientToChangeMenu && m_contextMenuClient.getContextMenuFromProposedMenu(this, proposedItems, items, contextMenuContextData.webHitTestResultData(), userData.get()))
         useProposedItems = false;
-    }
     
     const Vector<WebContextMenuItemData>& itemsToShow = useProposedItems ? proposedItems : items;
     if (!m_contextMenuClient.showContextMenu(this, menuLocation, itemsToShow))
-        m_activeContextMenu->showContextMenu(menuLocation, itemsToShow);
-    
+        m_activeContextMenu->showContextMenu(menuLocation, itemsToShow, contextMenuContextData);
+
     m_contextMenuClient.contextMenuDismissed(this);
 }
+
+#if ENABLE(IMAGE_CONTROLS)
+void WebPageProxy::replaceControlledImage(PassRefPtr<ShareableBitmap> newBitmap)
+{
+    RefPtr<ShareableBitmap> bitmap = newBitmap;
+    ShareableBitmap::Handle bitmapHandle;
+    bitmap->createHandle(bitmapHandle);
+    m_process->send(Messages::WebPage::ReplaceControlledImage(bitmapHandle), m_pageID);
+}
+#endif
 
 void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
 {

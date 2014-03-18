@@ -46,13 +46,21 @@ SharedMemory::Handle::Handle()
 
 SharedMemory::Handle::~Handle()
 {
-    if (m_port)
-        mach_port_deallocate(mach_task_self(), m_port);
+    clear();
 }
 
 bool SharedMemory::Handle::isNull() const
 {
     return !m_port;
+}
+
+void SharedMemory::Handle::clear()
+{
+    if (m_port)
+        mach_port_deallocate(mach_task_self(), m_port);
+
+    m_port = MACH_PORT_NULL;
+    m_size = 0;
 }
 
 void SharedMemory::Handle::encode(IPC::ArgumentEncoder& encoder) const

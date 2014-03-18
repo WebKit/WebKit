@@ -1,3 +1,76 @@
+2014-03-18  Brady Eidson  <beidson@apple.com>
+
+        Make image controls menu work in WK2
+        <rdar://problem/16294412> and https://bugs.webkit.org/show_bug.cgi?id=130424
+
+        Reviewed by Tim Horton.
+
+        * Platform/SharedMemory.h:
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::Handle::~Handle):
+        (WebKit::SharedMemory::Handle::clear):
+
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::Handle::~Handle):
+        (WebKit::SharedMemory::Handle::clear):
+
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        (WebKit::ContextMenuContextData::operator=):
+        (WebKit::ContextMenuContextData::encode):
+        (WebKit::ContextMenuContextData::decode):
+        * Shared/ContextMenuContextData.h:
+        (WebKit::ContextMenuContextData::controlledImageHandle):
+
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::Handle::clear):
+        * Shared/ShareableBitmap.h:
+        * UIProcess/WebContextMenuProxy.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        (WebKit::WebPageProxy::replaceControlledImage):
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/efl/WebContextMenuProxyEfl.cpp:
+        (WebKit::WebContextMenuProxyEfl::showContextMenu):
+        * UIProcess/efl/WebContextMenuProxyEfl.h:
+
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::showContextMenu):
+        * UIProcess/gtk/WebContextMenuProxyGtk.h:
+
+        Add a sharing service context menu that lives side-by-side with the normal one:
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (+[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate]):
+        (-[WKSharingServicePickerDelegate setMenuProxy:WebKit::]):
+        (-[WKSharingServicePickerDelegate setPicker:]):
+        (-[WKSharingServicePickerDelegate sharingServicePicker:delegateForSharingService:]):
+        (-[WKSharingServicePickerDelegate sharingService:willShareItems:]):
+        (-[WKSharingServicePickerDelegate sharingService:didShareItems:]):
+        (-[WKSharingServicePickerDelegate sharingService:sourceFrameOnScreenForShareItem:]):
+        (-[WKSharingServicePickerDelegate sharingService:transitionImageForShareItem:contentRect:]):
+        (-[WKSharingServicePickerDelegate sharingService:sourceWindowForShareItems:sharingContentScope:]):
+        (WebKit::WebContextMenuProxyMac::contextMenuItemSelected):
+        (WebKit::WebContextMenuProxyMac::setupImageServicesMenu):
+        (WebKit::WebContextMenuProxyMac::clearImageServicesMenu):
+        (WebKit::WebContextMenuProxyMac::populate):
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+        (WebKit::WebContextMenuProxyMac::window):
+        (WebKit::WebContextMenuProxyMac::replaceControlledImage):
+
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::show):
+        (WebKit::WebContextMenu::replaceControlledImage):
+        * WebProcess/WebPage/WebContextMenu.h:
+
+        Teach the WebProcess how to accept the replaced image.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::replaceControlledImage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2014-03-18  Anders Carlsson  <andersca@apple.com>
 
         Begin cleaning up KeyedDecoder and KeyedEncoder
