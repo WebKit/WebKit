@@ -1,3 +1,14 @@
+2014-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Add Copyright to framework.sb
+        https://bugs.webkit.org/show_bug.cgi?id=130413
+
+        Reviewed by Timothy Hatcher.
+
+        Other sb files got the copyright. Follow suit.
+
+        * framework.sb:
+
 2014-03-18  Matthew Mirman  <mmirman@apple.com>
 
         Removed extra parens from if statement in a preprocessor define.
