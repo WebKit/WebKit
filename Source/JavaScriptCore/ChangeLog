@@ -1,3 +1,14 @@
+2014-03-17  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Implement Math.hypot
+        https://bugs.webkit.org/show_bug.cgi?id=129486
+
+        Reviewed by Darin Adler.
+
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::finishCreation):
+        (JSC::mathProtoFuncHypot):
+
 2014-03-17  Zsolt Borbely  <borbezs@inf.u-szeged.hu>
 
         Fix the !ENABLE(PROMISES) build

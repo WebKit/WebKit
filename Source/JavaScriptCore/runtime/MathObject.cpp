@@ -29,6 +29,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/RandomNumberSeed.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
 
@@ -50,6 +51,7 @@ static EncodedJSValue JSC_HOST_CALL mathProtoFuncExp(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncExpm1(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncFloor(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncFround(ExecState*);
+static EncodedJSValue JSC_HOST_CALL mathProtoFuncHypot(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncLog(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncLog1p(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncLog10(ExecState*);
@@ -108,6 +110,7 @@ void MathObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "expm1"), 1, mathProtoFuncExpm1, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "floor"), 1, mathProtoFuncFloor, FloorIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "fround"), 1, mathProtoFuncFround, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "hypot"), 2, mathProtoFuncHypot, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "log"), 1, mathProtoFuncLog, LogIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "log10"), 1, mathProtoFuncLog10, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "log1p"), 1, mathProtoFuncLog1p, NoIntrinsic, DontEnum | Function);
@@ -173,6 +176,35 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncExp(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL mathProtoFuncFloor(ExecState* exec)
 {
     return JSValue::encode(jsNumber(floor(exec->argument(0).toNumber(exec))));
+}
+
+EncodedJSValue JSC_HOST_CALL mathProtoFuncHypot(ExecState* exec)
+{
+    unsigned argsCount = exec->argumentCount();
+    double max = 0;
+    Vector<double, 8> args;
+    args.reserveInitialCapacity(argsCount);
+    for (unsigned i = 0; i < argsCount; ++i) {
+        args.uncheckedAppend(exec->uncheckedArgument(i).toNumber(exec));
+        if (exec->hadException())
+            return JSValue::encode(jsNull());
+        if (std::isinf(args[i]))
+            return JSValue::encode(jsDoubleNumber(+std::numeric_limits<double>::infinity()));
+        max = std::max(fabs(args[i]), max);
+    }
+    if (!max)
+        max = 1;
+    // Kahan summation algorithm significantly reduces the numerical error in the total obtained.
+    double sum = 0;
+    double compensation = 0;
+    for (double argument : args) {
+        double scaledArgument = argument / max;
+        double summand = scaledArgument * scaledArgument - compensation;
+        double preliminary = sum + summand;
+        compensation = (preliminary - sum) - summand;
+        sum = preliminary;
+    }
+    return JSValue::encode(jsDoubleNumber(sqrt(sum) * max));
 }
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncLog(ExecState* exec)
