@@ -10,7 +10,6 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/API"
     "${WEBKIT2_DIR}/Shared/API/c"
     "${WEBKIT2_DIR}/Shared/Authentication"
-    "${WEBKIT2_DIR}/Shared/CoordinatedGraphics"
     "${WEBKIT2_DIR}/Shared/CoreIPCSupport"
     "${WEBKIT2_DIR}/Shared/Databases/IndexedDB"
     "${WEBKIT2_DIR}/Shared/Downloads"
@@ -23,10 +22,8 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess"
     "${WEBKIT2_DIR}/UIProcess/API"
     "${WEBKIT2_DIR}/UIProcess/API/C"
-    "${WEBKIT2_DIR}/UIProcess/API/CoordinatedGraphics"
     "${WEBKIT2_DIR}/UIProcess/API/cpp"
     "${WEBKIT2_DIR}/UIProcess/Authentication"
-    "${WEBKIT2_DIR}/UIProcess/CoordinatedGraphics"
     "${WEBKIT2_DIR}/UIProcess/Downloads"
     "${WEBKIT2_DIR}/UIProcess/InspectorServer"
     "${WEBKIT2_DIR}/UIProcess/Launcher"
@@ -61,7 +58,6 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/Storage"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport"
     "${WEBKIT2_DIR}/WebProcess/WebPage"
-    "${WEBKIT2_DIR}/WebProcess/WebPage/CoordinatedGraphics"
     "${WEBCORE_DIR}"
     "${WEBCORE_DIR}/Modules/battery"
     "${WEBCORE_DIR}/Modules/mediastream"
@@ -91,7 +87,6 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/page"
     "${WEBCORE_DIR}/page/animation"
     "${WEBCORE_DIR}/page/scrolling"
-    "${WEBCORE_DIR}/page/scrolling/coordinatedgraphics"
     "${WEBCORE_DIR}/platform"
     "${WEBCORE_DIR}/platform/animation"
     "${WEBCORE_DIR}/platform/audio"
@@ -271,9 +266,6 @@ set(WebKit2_SOURCES
 
     Shared/Authentication/AuthenticationManager.cpp
 
-    Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp
-    Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp
-
     Shared/Downloads/Download.cpp
     Shared/Downloads/DownloadAuthenticationClient.cpp
     Shared/Downloads/DownloadManager.cpp
@@ -400,16 +392,10 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKVibration.cpp
     UIProcess/API/C/WKViewportAttributes.cpp
 
-    UIProcess/API/CoordinatedGraphics/WKCoordinatedScene.cpp
-
     UIProcess/Authentication/AuthenticationChallengeProxy.cpp
     UIProcess/Authentication/AuthenticationDecisionListener.cpp
     UIProcess/Authentication/WebCredential.cpp
     UIProcess/Authentication/WebProtectionSpace.cpp
-
-    UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp
-    UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp
-    UIProcess/CoordinatedGraphics/WebPageProxyCoordinatedGraphics.cpp
 
     UIProcess/Downloads/DownloadProxy.cpp
     UIProcess/Downloads/DownloadProxyMap.cpp
@@ -569,10 +555,6 @@ set(WebKit2_SOURCES
     WebProcess/WebPage/WebPageGroupProxy.cpp
     WebProcess/WebPage/VisitedLinkTableController.cpp
     WebProcess/WebPage/WebUndoStep.cpp
-
-    WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp
-    WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp
-    WebProcess/WebPage/CoordinatedGraphics/WebPageCoordinatedGraphics.cpp
 )
 
 set(WebKit2_MESSAGES_IN_FILES
@@ -610,8 +592,6 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/WebProcessProxy.messages.in
     UIProcess/WebResourceCacheManagerProxy.messages.in
     UIProcess/WebVibrationProxy.messages.in
-
-    UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.messages.in
 
     UIProcess/Downloads/DownloadProxy.messages.in
 
@@ -664,8 +644,6 @@ set(WebKit2_MESSAGES_IN_FILES
     WebProcess/WebPage/WebInspector.messages.in
     WebProcess/WebPage/WebPage.messages.in
     WebProcess/WebPage/WebPageGroupProxy.messages.in
-
-    WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.messages.in
 )
 
 set(WebProcess_LIBRARIES

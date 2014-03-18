@@ -78,8 +78,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/DefaultUndoController.cpp
     UIProcess/DrawingAreaProxyImpl.cpp
 
-    UIProcess/API/C/CoordinatedGraphics/WKView.cpp
-
     UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp
 
     UIProcess/API/C/gtk/WKFullScreenClientGtk.cpp
@@ -235,9 +233,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebViewBaseInputMethodFilter.cpp
     UIProcess/API/gtk/WebViewBaseInputMethodFilter.h
     UIProcess/API/gtk/webkit2.h
-
-    UIProcess/CoordinatedGraphics/WebView.cpp
-    UIProcess/CoordinatedGraphics/WebViewClient.cpp
 
     UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp
 

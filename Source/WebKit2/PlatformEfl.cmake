@@ -23,6 +23,9 @@ list(APPEND WebKit2_SOURCES
 
     Shared/API/c/efl/WKArrayEfl.cpp
 
+    Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp
+    Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp
+
     Shared/Downloads/efl/DownloadSoupErrorsEfl.cpp
 
     Shared/Downloads/soup/DownloadSoup.cpp
@@ -68,6 +71,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/C/soup/WKCookieManagerSoup.cpp
     UIProcess/API/C/soup/WKSoupRequestManager.cpp
 
+    UIProcess/API/CoordinatedGraphics/WKCoordinatedScene.cpp
+
     UIProcess/API/cpp/efl/WKEinaSharedString.cpp
 
     UIProcess/API/efl/EwkView.cpp
@@ -105,7 +110,10 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_view.cpp
     UIProcess/API/efl/ewk_window_features.cpp
 
+    UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp
+    UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp
     UIProcess/CoordinatedGraphics/PageViewportController.cpp
+    UIProcess/CoordinatedGraphics/WebPageProxyCoordinatedGraphics.cpp
     UIProcess/CoordinatedGraphics/WebView.cpp
     UIProcess/CoordinatedGraphics/WebViewClient.cpp
 
@@ -179,6 +187,10 @@ list(APPEND WebKit2_SOURCES
 
     WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp
 
+    WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp
+    WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp
+    WebProcess/WebPage/CoordinatedGraphics/WebPageCoordinatedGraphics.cpp
+
     WebProcess/WebPage/atk/WebPageAccessibilityObjectAtk.cpp
 
     WebProcess/WebPage/efl/WebInspectorEfl.cpp
@@ -194,7 +206,11 @@ list(APPEND WebKit2_SOURCES
 )
 
 list(APPEND WebKit2_MESSAGES_IN_FILES
+    UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.messages.in
+
     UIProcess/soup/WebSoupRequestManagerProxy.messages.in
+
+    WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.messages.in
 
     WebProcess/soup/WebSoupRequestManager.messages.in
 )
@@ -209,6 +225,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/NetworkProcess/unix"
     "${WEBKIT2_DIR}/Platform/efl"
     "${WEBKIT2_DIR}/Shared/API/c/efl"
+    "${WEBKIT2_DIR}/Shared/CoordinatedGraphics"
     "${WEBKIT2_DIR}/Shared/Downloads/soup"
     "${WEBKIT2_DIR}/Shared/efl"
     "${WEBKIT2_DIR}/Shared/soup"
@@ -218,12 +235,14 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/API/C/soup"
     "${WEBKIT2_DIR}/UIProcess/API/cpp/efl"
     "${WEBKIT2_DIR}/UIProcess/API/efl"
+    "${WEBKIT2_DIR}/UIProcess/CoordinatedGraphics"
     "${WEBKIT2_DIR}/UIProcess/efl"
     "${WEBKIT2_DIR}/UIProcess/soup"
     "${WEBKIT2_DIR}/WebProcess/efl"
     "${WEBKIT2_DIR}/WebProcess/soup"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/efl"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/soup"
+    "${WEBKIT2_DIR}/WebProcess/WebPage/CoordinatedGraphics"
     "${WTF_DIR}/wtf/efl/"
     "${WTF_DIR}/wtf/gobject"
     ${CAIRO_INCLUDE_DIRS}

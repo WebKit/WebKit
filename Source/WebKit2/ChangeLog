@@ -1,3 +1,16 @@
+2014-03-18  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [CMAKE][WK2]Move CoordinatedGraphics related files out of WebKit2/CMakeLists.txt
+        https://bugs.webkit.org/show_bug.cgi?id=130390
+
+        Reviewed by Martin Robinson.
+
+        Now, only EFL port use CoordinatedGraphics among CMake based ports.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake: Removed CoordinatedGraphics related files.
+
 2014-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Race condition when the socket event source is cancelled
