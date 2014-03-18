@@ -404,6 +404,7 @@ public:
     String propertyValueForNode(Node&, const String& propertyName);
     bool floatPropertyValueForNode(Node&, const String& propertyName, float&);
     bool isBlockElement(Element&);
+    bool elementHasOwnBackgroundColor(Element&);
 
     PassRefPtr<CSSValue> computedStylePropertyForElement(Element&, const String&);
     PassRefPtr<CSSValue> inlineStylePropertyForElement(Element&, const String&);
@@ -942,6 +943,15 @@ bool HTMLConverterCaches::isBlockElement(Element& element)
     return false;
 }
 
+bool HTMLConverterCaches::elementHasOwnBackgroundColor(Element& element)
+{
+    if (!isBlockElement(element))
+        return false;
+    // In the text system, text blocks (table elements) and documents (body elements)
+    // have their own background colors, which should not be inherited.
+    return element.hasTagName(htmlTag) || element.hasTagName(bodyTag) || propertyValueForNode(element, "display").startsWith("table");
+}
+
 - (BOOL)_elementIsBlockLevel:(DOMElement *)element
 {
     return element && _caches->isBlockElement(*core(element));
@@ -949,17 +959,9 @@ bool HTMLConverterCaches::isBlockElement(Element& element)
 
 - (BOOL)_elementHasOwnBackgroundColor:(DOMElement *)element
 {
-    // In the text system, text blocks (table elements) and documents (body elements)
-    // have their own background colors, which should not be inherited.
-    if ([self _elementIsBlockLevel:element]) {
-        Element* coreElement = core(element);
-        NSString *displayVal = [self _stringForNode:element property:@"display"];
-        if (coreElement->hasTagName(htmlTag) || coreElement->hasTagName(bodyTag) || [displayVal hasPrefix:@"table"])
-            return YES;
-    }
-    return NO;
+    return element && _caches->elementHasOwnBackgroundColor(*core(element));
 }
-    
+
 - (DOMElement *)_blockLevelElementForNode:(DOMNode *)node
 {
     DOMElement *element = (DOMElement *)node;

@@ -1,5 +1,18 @@
 2014-03-17  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Rewrite WebHTMLConverter::_elementHasOwnBackgroundColor in C++
+        https://bugs.webkit.org/show_bug.cgi?id=130291
+
+        Reviewed by Andreas Kling.
+
+        Extracted HTMLConverterCaches::elementHasOwnBackgroundColor.
+
+        * platform/mac/HTMLConverter.mm:
+        (HTMLConverterCaches::elementHasOwnBackgroundColor):
+        (-[WebHTMLConverter _elementHasOwnBackgroundColor:]):
+
+2014-03-17  Ryosuke Niwa  <rniwa@webkit.org>
+
         Rewrite WebHTMLConverter::_elementIsBlockLevel in C++
         https://bugs.webkit.org/show_bug.cgi?id=130287
 
