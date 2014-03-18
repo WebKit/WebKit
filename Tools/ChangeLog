@@ -1,3 +1,18 @@
+2014-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove stale ReportMemoryUsagePlugin
+        https://bugs.webkit.org/show_bug.cgi?id=130405
+
+        Reviewed by Andreas Kling.
+
+        This clang plugin looks like it was used for the old Inspector memory
+        instrumentation that was removed. So the tool can be removed.
+
+        * clang/ReportMemoryUsagePlugin/CMakeLists.txt: Removed.
+        * clang/ReportMemoryUsagePlugin/Makefile: Removed.
+        * clang/ReportMemoryUsagePlugin/ReportMemoryUsage.cpp: Removed.
+        * clang/ReportMemoryUsagePlugin/tests/Source/WebCore/Test.cpp: Removed.
+
 2014-03-18  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         webkit-patch land shouldn't add a reviewer for unreviewed build fixes
