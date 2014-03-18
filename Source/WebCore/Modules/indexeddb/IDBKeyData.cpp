@@ -177,7 +177,7 @@ bool IDBKeyData::decode(KeyedDecoder& decoder, IDBKeyData& result)
             || value == IDBKey::NumberType
             || value == IDBKey::MinType;
     };
-    if (!decoder.decodeVerifiedEnum("type", result.type, enumFunction))
+    if (!decoder.decodeEnum("type", result.type, enumFunction))
         return false;
 
     if (result.type == IDBKey::InvalidType)

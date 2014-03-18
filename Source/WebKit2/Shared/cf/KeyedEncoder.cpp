@@ -139,9 +139,8 @@ void KeyedEncoder::endArray()
 
 PassRefPtr<SharedBuffer> KeyedEncoder::finishEncoding()
 {
-    CFErrorRef error = nullptr;
-    RetainPtr<CFDataRef> data = adoptCF(CFPropertyListCreateData(kCFAllocatorDefault, m_rootDictionary.get(), kCFPropertyListBinaryFormat_v1_0, 0, &error));
-    if (error)
+    RetainPtr<CFDataRef> data = adoptCF(CFPropertyListCreateData(kCFAllocatorDefault, m_rootDictionary.get(), kCFPropertyListBinaryFormat_v1_0, 0, nullptr));
+    if (!data)
         return nullptr;
 
     return SharedBuffer::wrapCFData(data.get());

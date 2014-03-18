@@ -40,13 +40,13 @@ protected:
 
 public:
     virtual bool decodeBool(const String& key, bool&) = 0;
-    virtual bool decodeDouble(const String& key, double&) = 0;
-    virtual bool decodeInt64(const String& key, int64_t&) = 0;
     virtual bool decodeUInt32(const String& key, uint32_t&) = 0;
+    virtual bool decodeInt64(const String& key, int64_t&) = 0;
+    virtual bool decodeDouble(const String& key, double&) = 0;
     virtual bool decodeString(const String& key, String&) = 0;
 
     template<typename T, typename F>
-    bool decodeVerifiedEnum(const String& key, T& value, F&& function)
+    bool decodeEnum(const String& key, T& value, F&& isValidEnumFunction)
     {
         static_assert(std::is_enum<T>::value, "T must be an enum type");
 
@@ -54,7 +54,7 @@ public:
         if (!decodeInt64(key, intValue))
             return false;
 
-        if (!function(intValue))
+        if (!isValidEnumFunction(intValue))
             return false;
 
         value = static_cast<T>(intValue);

@@ -32,14 +32,14 @@ namespace WebKit {
 
 KeyedDecoder::KeyedDecoder(const uint8_t* data, size_t size)
 {
-    auto cfData = adoptCF(CFDataCreate(kCFAllocatorDefault, data, size));
-    m_rootDictionary = adoptCF(static_cast<CFDictionaryRef>(CFPropertyListCreateWithData(kCFAllocatorDefault, cfData.get(), kCFPropertyListImmutable, 0, 0)));
+    auto cfData = adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, data, size, kCFAllocatorNull));
+    auto rootDictionary = adoptCF(CFPropertyListCreateWithData(kCFAllocatorDefault, cfData.get(), kCFPropertyListImmutable, nullptr, nullptr));
 
-    if (m_rootDictionary && CFGetTypeID(m_rootDictionary.get()) != CFDictionaryGetTypeID())
-        m_rootDictionary = nullptr;
-
-    if (m_rootDictionary)
-        m_dictionaryStack.append(m_rootDictionary.get());
+    if (rootDictionary && CFGetTypeID(rootDictionary.get()) == CFDictionaryGetTypeID())
+        m_rootDictionary = adoptCF(static_cast<CFDictionaryRef>(rootDictionary.leakRef()));
+    else
+        m_rootDictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, nullptr, nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    m_dictionaryStack.append(m_rootDictionary.get());
 }
 
 KeyedDecoder::~KeyedDecoder()
@@ -52,9 +52,6 @@ KeyedDecoder::~KeyedDecoder()
 
 bool KeyedDecoder::decodeBool(const String& key, bool& result)
 {
-    if (!m_dictionaryStack.last())
-        return false;
-
     CFBooleanRef boolean = static_cast<CFBooleanRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
     if (!boolean || CFGetTypeID(boolean) != CFBooleanGetTypeID())
         return false;
@@ -63,47 +60,35 @@ bool KeyedDecoder::decodeBool(const String& key, bool& result)
     return true;
 }
 
-bool KeyedDecoder::decodeDouble(const String& key, double& result)
-{
-    if (!m_dictionaryStack.last())
-        return false;
-
-    CFNumberRef number = static_cast<CFNumberRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
-    if (!number || CFGetTypeID(number) != CFNumberGetTypeID() || (CFNumberGetType(number) != kCFNumberDoubleType && CFNumberGetType(number) != kCFNumberFloat64Type))
-        return false;
-
-    return CFNumberGetValue(number, kCFNumberDoubleType, &result);
-}
-
-bool KeyedDecoder::decodeInt64(const String& key, int64_t& result)
-{
-    if (!m_dictionaryStack.last())
-        return false;
-
-    CFNumberRef number = static_cast<CFNumberRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
-    if (!number || CFGetTypeID(number) != CFNumberGetTypeID() || CFNumberGetType(number) != kCFNumberSInt64Type)
-        return false;
-
-    return CFNumberGetValue(number, kCFNumberSInt64Type, &result);
-}
-
 bool KeyedDecoder::decodeUInt32(const String& key, uint32_t& result)
 {
-    if (!m_dictionaryStack.last())
-        return false;
-
     CFNumberRef number = static_cast<CFNumberRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
-    if (!number || CFGetTypeID(number) != CFNumberGetTypeID() || CFNumberGetType(number) != kCFNumberSInt32Type)
+    if (!number || CFGetTypeID(number) != CFNumberGetTypeID())
         return false;
 
     return CFNumberGetValue(number, kCFNumberSInt32Type, &result);
 }
 
-bool KeyedDecoder::decodeString(const String& key, String& result)
+bool KeyedDecoder::decodeInt64(const String& key, int64_t& result)
 {
-    if (!m_dictionaryStack.last())
+    CFNumberRef number = static_cast<CFNumberRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
+    if (!number || CFGetTypeID(number) != CFNumberGetTypeID())
         return false;
 
+    return CFNumberGetValue(number, kCFNumberSInt64Type, &result);
+}
+
+bool KeyedDecoder::decodeDouble(const String& key, double& result)
+{
+    CFNumberRef number = static_cast<CFNumberRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
+    if (!number || CFGetTypeID(number) != CFNumberGetTypeID())
+        return false;
+
+    return CFNumberGetValue(number, kCFNumberDoubleType, &result);
+}
+
+bool KeyedDecoder::decodeString(const String& key, String& result)
+{
     CFStringRef string = static_cast<CFStringRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
     if (!string || CFGetTypeID(string) != CFStringGetTypeID())
         return false;
@@ -114,9 +99,6 @@ bool KeyedDecoder::decodeString(const String& key, String& result)
 
 bool KeyedDecoder::beginObject(const String& key)
 {
-    if (!m_dictionaryStack.last())
-        return false;
-
     CFDictionaryRef dictionary = static_cast<CFDictionaryRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
     if (!dictionary || CFGetTypeID(dictionary) != CFDictionaryGetTypeID())
         return false;
@@ -132,9 +114,6 @@ void KeyedDecoder::endObject()
 
 bool KeyedDecoder::beginArray(const String& key)
 {
-    if (!m_dictionaryStack.last())
-        return false;
-
     CFArrayRef array = static_cast<CFArrayRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
     if (!array || CFGetTypeID(array) != CFArrayGetTypeID())
         return false;
@@ -152,8 +131,6 @@ bool KeyedDecoder::beginArray(const String& key)
 
 bool KeyedDecoder::beginArrayElement()
 {
-    ASSERT(m_dictionaryStack.last());
-
     if (m_arrayIndexStack.last() >= CFArrayGetCount(m_arrayStack.last()))
         return false;
 

@@ -285,7 +285,7 @@ bool IDBKeyPath::decode(KeyedDecoder& decoder, IDBKeyPath& result)
         return value == NullType || value == StringType || value == ArrayType;
     };
 
-    if (!decoder.decodeVerifiedEnum("type", result.m_type, enumFunction))
+    if (!decoder.decodeEnum("type", result.m_type, enumFunction))
         return false;
 
     if (result.m_type == NullType)

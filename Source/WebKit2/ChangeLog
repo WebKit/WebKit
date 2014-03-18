@@ -1,3 +1,48 @@
+2014-03-18  Anders Carlsson  <andersca@apple.com>
+
+        Begin cleaning up KeyedDecoder and KeyedEncoder
+        https://bugs.webkit.org/show_bug.cgi?id=130431
+
+        Reviewed by Tim Horton.
+
+        * Shared/cf/KeyedDecoder.cpp:
+        (WebKit::KeyedDecoder::KeyedDecoder):
+        If we can't parse the property list data, just add an empty dictionary to the stack.
+
+        (WebKit::KeyedDecoder::decodeBool):
+        Remove unneeded m_dictionaryStack.last() null check. m_dictionaryStack would either be empty
+        or at least have a root element; it would never have a null element.
+        
+        (WebKit::KeyedDecoder::decodeDouble):
+        Remove the same check as above and remove the CFNumberGetType checks since CFNumberGetValue will
+        do the type conversion for us and return false if it's lossy.
+
+        (WebKit::KeyedDecoder::decodeInt64):
+        Remove the m_dictionaryStack.last() check.
+
+        (WebKit::KeyedDecoder::decodeUInt32):
+        Ditto.
+
+        (WebKit::KeyedDecoder::decodeString):
+        Ditto.
+
+        (WebKit::KeyedDecoder::beginObject):
+        Ditto.
+
+        (WebKit::KeyedDecoder::beginArray):
+        Ditto.
+
+        (WebKit::KeyedDecoder::beginArrayElement):
+        Ditto.
+
+        * Shared/cf/KeyedDecoder.h:
+        Sort functions to be in the same logical order as the base class.
+
+        * Shared/cf/KeyedEncoder.cpp:
+        (WebKit::KeyedEncoder::finishEncoding):
+        Don't check for a non-null CFErrorRef here (which we incidentally never released on error). Instead,
+        just null check the returned CFDataRef object.
+
 2014-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed typo build fix for r165846.

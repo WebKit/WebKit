@@ -1,3 +1,20 @@
+2014-03-18  Anders Carlsson  <andersca@apple.com>
+
+        Begin cleaning up KeyedDecoder and KeyedEncoder
+        https://bugs.webkit.org/show_bug.cgi?id=130431
+
+        Reviewed by Tim Horton.
+
+        Rename KeyedDecoder::decodeVerifiedEnum to decodeEnum to match the encode function,
+        and sort the decode functions to be in the same logical order as the encode functions.
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::decode):
+        * Modules/indexeddb/IDBKeyPath.cpp:
+        (WebCore::IDBKeyPath::decode):
+        * platform/KeyedCoding.h:
+        (WebCore::KeyedDecoder::decodeEnum):
+
 2014-03-18  Darin Adler  <darin@apple.com>
 
         Reduce use of deprecatedCharacters in WebCore
