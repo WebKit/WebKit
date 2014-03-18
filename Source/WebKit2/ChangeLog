@@ -1,3 +1,17 @@
+2014-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        WebPageCreationParameters colorSpace should be MAC not COCOA
+        https://bugs.webkit.org/show_bug.cgi?id=130414
+
+        Reviewed by Dan Bernstein.
+
+        The colorSpace param was only set and used on Mac, not iOS.
+
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+
 2014-03-18  Simon Fraser  <simon.fraser@apple.com>
 
         Dan says that options should be unsigned, and enums should be signed.
