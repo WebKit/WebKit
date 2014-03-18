@@ -30,6 +30,7 @@
 
 #include "MediaPlayerPrivateAVFoundation.h"
 #include <wtf/HashMap.h>
+#include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVAssetImageGenerator;
 OBJC_CLASS AVAssetResourceLoadingRequest;
@@ -91,6 +92,8 @@ public:
 
 private:
     MediaPlayerPrivateAVFoundationObjC(MediaPlayer*);
+
+    WeakPtr<MediaPlayerPrivateAVFoundationObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
     // engine support
     static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
@@ -181,6 +184,8 @@ private:
 #if !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     void processLegacyClosedCaptionsTracks();
 #endif
+
+    WeakPtrFactory<MediaPlayerPrivateAVFoundationObjC> m_weakPtrFactory;
 
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;

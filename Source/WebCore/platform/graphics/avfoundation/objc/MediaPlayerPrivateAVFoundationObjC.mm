@@ -161,7 +161,6 @@ enum MediaPlayerAVFoundationObservationContext {
 }
 -(id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC*)callback;
 -(void)disconnect;
--(void)playableKnown;
 -(void)metadataLoaded;
 -(void)seekCompleted:(BOOL)finished;
 -(void)didEnd:(NSNotification *)notification;
@@ -232,6 +231,7 @@ void MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(MediaEngineRegistra
 
 MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlayer* player)
     : MediaPlayerPrivateAVFoundation(player)
+    , m_weakPtrFactory(this)
     , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithCallback:this]))
     , m_videoFrameHasDrawn(false)
     , m_haveCheckedPlayability(false)
@@ -502,9 +502,13 @@ void MediaPlayerPrivateAVFoundationObjC::checkPlayability()
     m_haveCheckedPlayability = true;
 
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::checkPlayability(%p)", this);
+    auto weakThis = createWeakPtr();
 
     [m_avAsset.get() loadValuesAsynchronouslyForKeys:[NSArray arrayWithObject:@"playable"] completionHandler:^{
-        [m_objcObserver.get() playableKnown];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (weakThis)
+                weakThis->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::AssetPlayabilityKnown);
+        });
     }];
 }
 
@@ -1588,14 +1592,6 @@ NSArray* itemKVOProperties()
         return;
 
     m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::AssetMetadataLoaded);
-}
-
-- (void)playableKnown
-{
-    if (!m_callback)
-        return;
-
-    m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::AssetPlayabilityKnown);
 }
 
 - (void)seekCompleted:(BOOL)finished
