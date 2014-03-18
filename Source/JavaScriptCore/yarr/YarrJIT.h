@@ -108,7 +108,37 @@ public:
     }
 
 #if ENABLE(REGEXP_TRACING)
-    void *getAddr() { return m_ref.code().executableAddress(); }
+    void *get8BitMatchOnlyAddr()
+    {
+        if (!has8BitCodeMatchOnly())
+            return 0;
+
+        return m_matchOnly8.code().executableAddress();
+    }
+
+    void *get16BitMatchOnlyAddr()
+    {
+        if (!has16BitCodeMatchOnly())
+            return 0;
+
+        return m_matchOnly16.code().executableAddress();
+    }
+
+    void *get8BitMatchAddr()
+    {
+        if (!has8BitCode())
+            return 0;
+
+        return m_ref8.code().executableAddress();
+    }
+
+    void *get16BitMatchAddr()
+    {
+        if (!has16BitCode())
+            return 0;
+
+        return m_ref16.code().executableAddress();
+    }
 #endif
 
     void clear()

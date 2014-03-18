@@ -117,6 +117,10 @@ namespace JSC {
         const char* m_constructionError;
         unsigned m_numSubpatterns;
 #if ENABLE(REGEXP_TRACING)
+        double m_rtMatchOnlyTotalSubjectStringLen;
+        double m_rtMatchTotalSubjectStringLen;
+        unsigned m_rtMatchOnlyCallCount;
+        unsigned m_rtMatchOnlyFoundCount;
         unsigned m_rtMatchCallCount;
         unsigned m_rtMatchFoundCount;
 #endif

@@ -458,7 +458,7 @@ namespace JSC {
         BumpPointerAllocator m_regExpAllocator;
 
 #if ENABLE(REGEXP_TRACING)
-        typedef ListHashSet<RefPtr<RegExp>> RTTraceList;
+        typedef ListHashSet<RegExp*> RTTraceList;
         RTTraceList* m_rtTraceList;
 #endif
 
@@ -473,7 +473,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE void dumpSampleData(ExecState* exec);
         RegExpCache* regExpCache() { return m_regExpCache; }
 #if ENABLE(REGEXP_TRACING)
-        void addRegExpToTrace(PassRefPtr<RegExp> regExp);
+        void addRegExpToTrace(RegExp*);
 #endif
         JS_EXPORT_PRIVATE void dumpRegExpTrace();
 

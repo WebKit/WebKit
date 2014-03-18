@@ -849,6 +849,7 @@ void logSanitizeStack(VM* vm)
 #if ENABLE(REGEXP_TRACING)
 void VM::addRegExpToTrace(RegExp* regExp)
 {
+    gcProtect(regExp);
     m_rtTraceList->add(regExp);
 }
 
@@ -859,14 +860,16 @@ void VM::dumpRegExpTrace()
     
     if (iter != m_rtTraceList->end()) {
         dataLogF("\nRegExp Tracing\n");
-        dataLogF("                                                            match()    matches\n");
-        dataLogF("Regular Expression                          JIT Address      calls      found\n");
-        dataLogF("----------------------------------------+----------------+----------+----------\n");
+        dataLogF("Regular Expression                              8 Bit          16 Bit        match()    Matches    Average\n");
+        dataLogF(" <Match only / Match>                         JIT Addr      JIT Address       calls      found   String len\n");
+        dataLogF("----------------------------------------+----------------+----------------+----------+----------+-----------\n");
     
         unsigned reCount = 0;
     
-        for (; iter != m_rtTraceList->end(); ++iter, ++reCount)
+        for (; iter != m_rtTraceList->end(); ++iter, ++reCount) {
             (*iter)->printTraceData();
+            gcUnprotect(*iter);
+        }
 
         dataLogF("%d Regular Expressions\n", reCount);
     }

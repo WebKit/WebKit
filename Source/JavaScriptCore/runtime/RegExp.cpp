@@ -227,6 +227,10 @@ RegExp::RegExp(VM& vm, const String& patternString, RegExpFlags flags)
     , m_constructionError(0)
     , m_numSubpatterns(0)
 #if ENABLE(REGEXP_TRACING)
+    , m_rtMatchOnlyTotalSubjectStringLen(0.0)
+    , m_rtMatchTotalSubjectStringLen(0.0)
+    , m_rtMatchOnlyCallCount(0)
+    , m_rtMatchOnlyFoundCount(0)
     , m_rtMatchCallCount(0)
     , m_rtMatchFoundCount(0)
 #endif
@@ -324,6 +328,7 @@ int RegExp::match(VM& vm, const String& s, unsigned startOffset, Vector<int, 32>
 {
 #if ENABLE(REGEXP_TRACING)
     m_rtMatchCallCount++;
+    m_rtMatchTotalSubjectStringLen += (double)(s.length() - startOffset);
 #endif
 
     ASSERT(m_state != ParseError);
@@ -445,7 +450,8 @@ void RegExp::compileIfNecessaryMatchOnly(VM& vm, Yarr::YarrCharSize charSize)
 MatchResult RegExp::match(VM& vm, const String& s, unsigned startOffset)
 {
 #if ENABLE(REGEXP_TRACING)
-    m_rtMatchCallCount++;
+    m_rtMatchOnlyCallCount++;
+    m_rtMatchOnlyTotalSubjectStringLen += (double)(s.length() - startOffset);
 #endif
 
     ASSERT(m_state != ParseError);
@@ -458,7 +464,7 @@ MatchResult RegExp::match(VM& vm, const String& s, unsigned startOffset)
             m_regExpJITCode.execute(s.characters16(), startOffset, s.length());
 #if ENABLE(REGEXP_TRACING)
         if (!result)
-            m_rtMatchFoundCount++;
+            m_rtMatchOnlyFoundCount++;
 #endif
         return result;
     }
@@ -476,7 +482,7 @@ MatchResult RegExp::match(VM& vm, const String& s, unsigned startOffset)
 
     if (r >= 0) {
 #if ENABLE(REGEXP_TRACING)
-        m_rtMatchFoundCount++;
+        m_rtMatchOnlyFoundCount++;
 #endif
         return MatchResult(r, reinterpret_cast<unsigned*>(offsetVector)[1]);
     }
@@ -563,16 +569,32 @@ void RegExp::matchCompareWithInterpreter(const String& s, int startOffset, int* 
         Yarr::YarrCodeBlock& codeBlock = m_regExpJITCode;
 
         const size_t jitAddrSize = 20;
-        char jitAddr[jitAddrSize];
-        if (m_state == JITCode)
-            snprintf(jitAddr, jitAddrSize, "fallback");
-        else
-            snprintf(jitAddr, jitAddrSize, "0x%014lx", reinterpret_cast<unsigned long int>(codeBlock.getAddr()));
+        char jit8BitMatchOnlyAddr[jitAddrSize];
+        char jit16BitMatchOnlyAddr[jitAddrSize];
+        char jit8BitMatchAddr[jitAddrSize];
+        char jit16BitMatchAddr[jitAddrSize];
+        if (m_state == ByteCode) {
+            snprintf(jit8BitMatchOnlyAddr, jitAddrSize, "fallback    ");
+            snprintf(jit16BitMatchOnlyAddr, jitAddrSize, "----      ");
+            snprintf(jit8BitMatchAddr, jitAddrSize, "fallback    ");
+            snprintf(jit16BitMatchAddr, jitAddrSize, "----      ");
+        } else {
+            snprintf(jit8BitMatchOnlyAddr, jitAddrSize, "0x%014lx", reinterpret_cast<unsigned long int>(codeBlock.get8BitMatchOnlyAddr()));
+            snprintf(jit16BitMatchOnlyAddr, jitAddrSize, "0x%014lx", reinterpret_cast<unsigned long int>(codeBlock.get16BitMatchOnlyAddr()));
+            snprintf(jit8BitMatchAddr, jitAddrSize, "0x%014lx", reinterpret_cast<unsigned long int>(codeBlock.get8BitMatchAddr()));
+            snprintf(jit16BitMatchAddr, jitAddrSize, "0x%014lx", reinterpret_cast<unsigned long int>(codeBlock.get16BitMatchAddr()));
+        }
 #else
-        const char* jitAddr = "JIT Off";
+        const char* jit8BitMatchOnlyAddr = "JIT Off";
+        const char* jit16BitMatchOnlyAddr = "";
+        const char* jit8BitMatchAddr = "JIT Off";
+        const char* jit16BitMatchAddr = "";
 #endif
+        unsigned averageMatchOnlyStringLen = (unsigned)(m_rtMatchOnlyTotalSubjectStringLen / m_rtMatchOnlyCallCount);
+        unsigned averageMatchStringLen = (unsigned)(m_rtMatchTotalSubjectStringLen / m_rtMatchCallCount);
 
-        printf("%-40.40s %16.16s %10d %10d\n", formattedPattern, jitAddr, m_rtMatchCallCount, m_rtMatchFoundCount);
+        printf("%-40.40s %16.16s %16.16s %10d %10d %10u\n", formattedPattern, jit8BitMatchOnlyAddr, jit16BitMatchOnlyAddr, m_rtMatchOnlyCallCount, m_rtMatchOnlyFoundCount, averageMatchOnlyStringLen);
+        printf("                                         %16.16s %16.16s %10d %10d %10u\n", jit8BitMatchAddr, jit16BitMatchAddr, m_rtMatchCallCount, m_rtMatchFoundCount, averageMatchStringLen);
     }
 #endif
 
