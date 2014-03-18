@@ -136,7 +136,7 @@ bool WebPageCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebPageCre
         return false;
 
 #if ENABLE(REMOTE_INSPECTOR)
-    if (!decoder.decoder(parameters.allowsRemoteInspection))
+    if (!decoder.decode(parameters.allowsRemoteInspection))
         return false;
 #endif
 

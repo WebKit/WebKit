@@ -1,5 +1,12 @@
 2014-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Unreviewed typo build fix for r165846.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::decode):
+
+2014-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
         WebKit2 SPI to disable remote inspection on a WKWebView / WKPage
         https://bugs.webkit.org/show_bug.cgi?id=130371
 
