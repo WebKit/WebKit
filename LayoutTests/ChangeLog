@@ -1,5 +1,17 @@
 2014-03-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        Unreviewed GTK Gardening.
+
+        Move expected accesibility results to the right path and update them.
+
+        * platform/gtk/accessibility/aria-help-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/accessibility/aria-help-expected.txt.
+        * platform/gtk/accessibility/aria-hidden-false-works-in-subtrees-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/accessibility/aria-hidden-false-works-in-subtrees-expected.txt.
+        * platform/gtk/accessibility/fieldset-element-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/accessibility/fieldset-element-expected.txt.
+        * platform/gtk/accessibility/meter-element-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/accessibility/meter-element-expected.txt.
+        * platform/gtk/accessibility/negative-tabindex-does-not-expose-label-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/accessibility/negative-tabindex-does-not-expose-label-expected.txt.
+
+2014-03-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         Unreviewed GTK gardening.
 
         Test fast/events/touch/touch-target-limited.html crashes.

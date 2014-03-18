@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 86: TypeError: undefined is not an object (evaluating 'accessibilityController.accessibleElementById("l0").childAtIndex(0).stringValue')
 Name: 
 High Score:
 Name: 
@@ -23,7 +22,8 @@ AXDescription: New High Score:
 AXDescription: 
 AXDescription: High Score:
 AXDescription: 
-FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+PASS successfullyParsed is true
 
 TEST COMPLETE
 
