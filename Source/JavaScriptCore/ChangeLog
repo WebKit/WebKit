@@ -1,3 +1,12 @@
+2014-03-18  Matthew Mirman  <mmirman@apple.com>
+
+        Removed extra parens from if statement in a preprocessor define.
+        https://bugs.webkit.org/show_bug.cgi?id=130408
+
+        Reviewed by Filip Pizlo.
+
+        * parser/Parser.cpp:
+
 2014-03-18  Filip Pizlo  <fpizlo@apple.com>
 
         More FTL enabling.
