@@ -1,3 +1,11 @@
+2014-03-18  Filip Pizlo  <fpizlo@apple.com>
+
+        More FTL enabling.
+
+        Rubber stamped by Dan Bernstein and Mark Hahnenberg.
+
+        * wtf/Platform.h:
+
 2014-03-17  Darin Adler  <darin@apple.com>
 
         Remove most uses of deprecatedCharacter in WTF

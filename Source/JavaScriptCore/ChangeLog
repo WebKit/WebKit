@@ -1,3 +1,13 @@
+2014-03-18  Filip Pizlo  <fpizlo@apple.com>
+
+        More FTL enabling.
+
+        Rubber stamped by Dan Bernstein and Mark Hahnenberg.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+
 2014-03-17  Michael Saboff  <msaboff@apple.com>
 
         V8 regexp spends most of its time in operationGetById

@@ -1,3 +1,11 @@
+2014-03-17  Filip Pizlo  <fpizlo@apple.com>
+
+        More FTL enabling.
+
+        Rubber stamped by Dan Bernstein.
+
+        * Tools/Scripts/build-webkit:
+
 2014-03-17  Simon Fraser  <simon.fraser@apple.com>
 
         Renable pagination mode in WK2 MiniBrowser

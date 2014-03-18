@@ -499,7 +499,10 @@ void compile(State& state)
             &state, mmAllocateCodeSection, mmAllocateDataSection, mmApplyPermissions, mmDestroy);
     
         LLVMExecutionEngineRef engine;
-    
+        
+        if (isARM64())
+            llvm->SetTarget(state.module, "arm64-apple-ios");
+        
         if (llvm->CreateMCJITCompilerForModule(&engine, state.module, &options, sizeof(options), &error)) {
             dataLog("FATAL: Could not create LLVM execution engine: ", error, "\n");
             CRASH();
