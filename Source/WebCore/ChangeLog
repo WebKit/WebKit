@@ -1,3 +1,18 @@
+2014-03-18  Renata Hodovan  <rhodovan.u-szeged@partner.samsung.com>
+
+        Bad cast with toRenderBox in WebCore::RenderView::repaintViewRectangle
+        https://bugs.webkit.org/show_bug.cgi?id=129104
+
+        Reviewed by Simon Fraser.
+
+        We should not cast the renderer of a RenderView's owner to RenderBox
+        unless we are sure it is one.
+
+        Test: plugins/crash-invalid-data-reference.html
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintViewRectangle):
+
 2014-03-18  Andreas Kling  <akling@apple.com>
 
         Micro-optimize element descendant iterator.

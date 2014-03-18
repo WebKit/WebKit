@@ -545,9 +545,9 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect) const
         return;
 
     if (auto ownerElement = document().ownerElement()) {
-        if (!ownerElement->renderer())
+        RenderBox* ownerBox = ownerElement->renderBox();
+        if (!ownerBox)
             return;
-        auto& ownerBox = toRenderBox(*ownerElement->renderer());
         LayoutRect viewRect = this->viewRect();
 #if PLATFORM(IOS)
         // Don't clip using the visible rect since clipping is handled at a higher level on iPhone.
@@ -556,8 +556,8 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect) const
         LayoutRect adjustedRect = intersection(repaintRect, viewRect);
 #endif
         adjustedRect.moveBy(-viewRect.location());
-        adjustedRect.moveBy(ownerBox.contentBoxRect().location());
-        ownerBox.repaintRectangle(adjustedRect);
+        adjustedRect.moveBy(ownerBox->contentBoxRect().location());
+        ownerBox->repaintRectangle(adjustedRect);
         return;
     }
 

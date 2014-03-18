@@ -1,3 +1,13 @@
+2014-03-18  Renata Hodovan  <rhodovan.u-szeged@partner.samsung.com>
+
+        Bad cast with toRenderBox in WebCore::RenderView::repaintViewRectangle
+        https://bugs.webkit.org/show_bug.cgi?id=129104
+
+        Reviewed by Simon Fraser.
+
+        * plugins/crash-invalid-data-reference-expected.txt: Added.
+        * plugins/crash-invalid-data-reference.html: Added.
+
 2014-03-18  Antti Koivisto  <antti@apple.com>
 
         Mutating rules returned by getMatchedCSSRules can result in crash
