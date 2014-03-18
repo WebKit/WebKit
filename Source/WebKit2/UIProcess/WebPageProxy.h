@@ -360,6 +360,11 @@ public:
     WebInspectorProxy* inspector();
 #endif
 
+#if ENABLE(REMOTE_INSPECTOR)
+    bool allowsRemoteInspection() const { return m_allowsRemoteInspection; }
+    void setAllowsRemoteInspection(bool);
+#endif
+
 #if ENABLE(VIBRATION)
     WebVibrationProxy* vibration() { return m_vibration.get(); }
 #endif
@@ -1393,6 +1398,10 @@ private:
     Ref<API::Session> m_session;
 
     bool m_isPageSuspended;
+
+#if ENABLE(REMOTE_INSPECTOR)
+    bool m_allowsRemoteInspection;
+#endif
 
 #if PLATFORM(COCOA)
     bool m_isSmartInsertDeleteEnabled;

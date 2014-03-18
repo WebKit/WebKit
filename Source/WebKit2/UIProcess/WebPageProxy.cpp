@@ -305,6 +305,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_pageID(pageID)
     , m_session(*configuration.session)
     , m_isPageSuspended(false)
+#if ENABLE(REMOTE_INSPECTOR)
+    , m_allowsRemoteInspection(true)
+#endif
 #if PLATFORM(COCOA)
     , m_isSmartInsertDeleteEnabled(TextChecker::isSmartInsertDeleteEnabled())
 #endif
@@ -886,6 +889,19 @@ bool WebPageProxy::canShowMIMEType(const String& mimeType)
 
     return false;
 }
+
+#if ENABLE(REMOTE_INSPECTOR)
+void WebPageProxy::setAllowsRemoteInspection(bool allow)
+{
+    if (m_allowsRemoteInspection == allow)
+        return;
+
+    m_allowsRemoteInspection = allow;
+
+    if (isValid())
+        m_process->send(Messages::WebPage::SetAllowsRemoteInspection(allow), m_pageID);
+}
+#endif
 
 void WebPageProxy::setDrawsBackground(bool drawsBackground)
 {
@@ -4008,7 +4024,9 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.scrollPinningBehavior = m_scrollPinningBehavior;
     parameters.backgroundExtendsBeyondPage = m_backgroundExtendsBeyondPage;
     parameters.layerHostingMode = m_layerHostingMode;
-
+#if ENABLE(REMOTE_INSPECTOR)
+    parameters.allowsRemoteInspection = m_allowsRemoteInspection;
+#endif
 #if PLATFORM(MAC)
     parameters.colorSpace = m_pageClient.colorSpace();
 #endif

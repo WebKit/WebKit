@@ -828,6 +828,10 @@ private:
 
     void didRemoveBackForwardItem(uint64_t);
 
+#if ENABLE(REMOTE_INSPECTOR)
+    void setAllowsRemoteInspection(bool);
+#endif
+
     void setDrawsBackground(bool);
     void setDrawsTransparentBackground(bool);
 

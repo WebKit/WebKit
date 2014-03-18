@@ -87,6 +87,9 @@ WK_EXPORT WKImageRef WKPageCreateSnapshotOfVisibleContent(WKPageRef page);
 
 WK_EXPORT void WKPageSetShouldSendEventsSynchronously(WKPageRef page, bool sync);
 
+WK_EXPORT bool WKPageGetAllowsRemoteInspection(WKPageRef page);
+WK_EXPORT void WKPageSetAllowsRemoteInspection(WKPageRef page, bool allow);
+
 WK_EXPORT void WKPageSetMediaVolume(WKPageRef page, float volume);
 WK_EXPORT void WKPageSetMayStartMediaWhenInWindow(WKPageRef page, bool mayStartMedia);
 

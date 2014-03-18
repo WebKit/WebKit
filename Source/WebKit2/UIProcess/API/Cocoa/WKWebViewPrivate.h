@@ -72,6 +72,8 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
 
 @property (nonatomic, setter=_setPrivateBrowsingEnabled:) BOOL _privateBrowsingEnabled;
 
+@property (nonatomic, setter=_setAllowsRemoteInspection:) BOOL _allowsRemoteInspection;
+
 - (void)_close;
 
 #if TARGET_OS_IPHONE

@@ -1973,6 +1973,13 @@ void WebPage::centerSelectionInVisibleArea()
     m_findController.showFindIndicatorInSelection();
 }
 
+#if ENABLE(REMOTE_INSPECTOR)
+void WebPage::setAllowsRemoteInspection(bool allow)
+{
+    m_page->setRemoteInspectionAllowed(allow);
+}
+#endif
+
 void WebPage::setDrawsBackground(bool drawsBackground)
 {
     if (m_drawsBackground == drawsBackground)

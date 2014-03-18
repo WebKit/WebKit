@@ -103,6 +103,10 @@ struct WebPageCreationParameters {
 
     LayerHostingMode layerHostingMode;
 
+#if ENABLE(REMOTE_INSPECTOR)
+    bool allowsRemoteInspection;
+#endif
+
 #if PLATFORM(MAC)
     ColorSpaceData colorSpace;
 #endif

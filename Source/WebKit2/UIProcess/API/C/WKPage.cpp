@@ -1641,6 +1641,26 @@ void WKPageSetShouldSendEventsSynchronously(WKPageRef page, bool sync)
     toImpl(page)->setShouldSendEventsSynchronously(sync);
 }
 
+bool WKPageGetAllowsRemoteInspection(WKPageRef page)
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    return toImpl(page)->allowsRemoteInspection();
+#else
+    UNUSED_PARAM(page);
+    return false;
+#endif    
+}
+
+void WKPageSetAllowsRemoteInspection(WKPageRef page, bool allow)
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    toImpl(page)->setAllowsRemoteInspection(allow);
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(allow);
+#endif
+}
+
 void WKPageSetMediaVolume(WKPageRef page, float volume)
 {
     toImpl(page)->setMediaVolume(volume);    

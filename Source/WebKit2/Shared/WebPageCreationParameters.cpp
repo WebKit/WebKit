@@ -63,6 +63,9 @@ void WebPageCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << backgroundExtendsBeyondPage;
     encoder.encodeEnum(layerHostingMode);
 
+#if ENABLE(REMOTE_INSPECTOR)
+    encoder << allowsRemoteInspection;
+#endif
 #if PLATFORM(MAC)
     encoder << colorSpace;
 #endif
@@ -131,7 +134,12 @@ bool WebPageCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebPageCre
         return false;
     if (!decoder.decodeEnum(parameters.layerHostingMode))
         return false;
-    
+
+#if ENABLE(REMOTE_INSPECTOR)
+    if (!decoder.decoder(parameters.allowsRemoteInspection))
+        return false;
+#endif
+
 #if PLATFORM(MAC)
     if (!decoder.decode(parameters.colorSpace))
         return false;

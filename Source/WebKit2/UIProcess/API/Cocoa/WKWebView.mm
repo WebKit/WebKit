@@ -877,6 +877,22 @@ static void releaseNSData(unsigned char*, const void* data)
     [_configuration preferences]->_preferences->setPrivateBrowsingEnabled(privateBrowsingEnabled);
 }
 
+- (BOOL)_allowsRemoteInspection
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    return _page->allowsRemoteInspection();
+#else
+    return NO;
+#endif
+}
+
+- (void)_setAllowsRemoteInspection:(BOOL)allow
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    _page->setAllowsRemoteInspection(allow);
+#endif
+}
+
 static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEvents events)
 {
     WebCore::LayoutMilestones milestones = 0;

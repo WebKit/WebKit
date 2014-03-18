@@ -1,3 +1,40 @@
+2014-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        WebKit2 SPI to disable remote inspection on a WKWebView / WKPage
+        https://bugs.webkit.org/show_bug.cgi?id=130371
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        Add allowsRemoteInspection bool.
+
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetAllowsRemoteInspection):
+        (WKPageSetAllowsRemoteInspection):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _allowsRemoteInspection]):
+        (-[WKWebView _setAllowsRemoteInspection:]):
+        Getter and setter for allowing remote inspection state.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::allowsRemoteInspection):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setAllowsRemoteInspection):
+        (WebKit::WebPageProxy::creationParameters):
+        Cached allows remote inspection state, with getter and setter.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setAllowsRemoteInspection):
+        When setting, call into WebCore to adjust the Page's setting.
+
 2014-03-18  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION: Visited link coloring seems to be completely broken in tip of tree
