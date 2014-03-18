@@ -556,6 +556,16 @@ class ChangeLogTest(unittest.TestCase):
         * Scripts/bugzilla-tool:
 '''
 
+    _new_entry_boilerplate_with_unreviewed = '''2009-08-19  Eric Seidel  <eric@webkit.org>
+
+        Need a short description (OOPS!).
+        https://bugs.webkit.org/show_bug.cgi?id=12345
+
+        Unreviewed.
+
+        * Scripts/bugzilla-tool:
+'''
+
     _new_entry_boilerplate_with_multiple_bugurl = '''2009-08-19  Eric Seidel  <eric@webkit.org>
 
         Need a short description (OOPS!).
@@ -594,6 +604,12 @@ class ChangeLogTest(unittest.TestCase):
         actual_contents = fs.read_text_file(self._changelog_path)
         expected_contents = changelog_contents.replace('NOBODY (OOPS!)', reviewer_name)
         self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
+
+        changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate_with_unreviewed, self._example_changelog)
+        fs.write_text_file(self._changelog_path, changelog_contents)
+        ChangeLog(self._changelog_path, fs).set_reviewer(reviewer_name)
+        actual_contents = fs.read_text_file(self._changelog_path)
+        self.assertEqual(actual_contents.splitlines(), changelog_contents.splitlines())
 
         changelog_contents_without_reviewer_line = u"%s\n%s" % (self._new_entry_boilerplate_without_reviewer_line, self._example_changelog)
         fs.write_text_file(self._changelog_path, changelog_contents_without_reviewer_line)

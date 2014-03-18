@@ -1,3 +1,15 @@
+2014-03-18  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        webkit-patch land shouldn't add a reviewer for unreviewed build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=130220
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (ChangeLog.set_reviewer):
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        (test_set_reviewer):
+
 2014-03-17  Filip Pizlo  <fpizlo@apple.com>
 
         More FTL enabling.
