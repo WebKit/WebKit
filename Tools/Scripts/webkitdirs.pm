@@ -1933,9 +1933,11 @@ sub shouldRemoveCMakeCache(@)
     }
 
     # We check this first, because we always want to create this file for a fresh build.
-    my $optionsCache = File::Spec->catdir(baseProductDir(), configuration(), "build-webkit-options.txt");
+    my $productDir = File::Spec->catdir(baseProductDir(), configuration());
+    my $optionsCache = File::Spec->catdir($productDir, "build-webkit-options.txt");
     my $joinedBuildArgs = join(" ", @buildArgs);
     if (isCachedArgumentfileOutOfDate($optionsCache, $joinedBuildArgs)) {
+        File::Path::mkpath($productDir) unless -d $productDir;
         open(CACHED_ARGUMENTS, ">", $optionsCache);
         print CACHED_ARGUMENTS $joinedBuildArgs;
         close(CACHED_ARGUMENTS);

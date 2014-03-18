@@ -1,3 +1,14 @@
+2014-03-18  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] [CMake] build-webkit-options.txt is not generated during a fresh build
+        https://bugs.webkit.org/show_bug.cgi?id=130388
+
+        Reviewed by Sergio Villar Senin.
+
+        * Scripts/webkitdirs.pm:
+        (shouldRemoveCMakeCache): make sure that the build directory
+        exists before attempting to create a file in it.
+
 2014-03-18  Robert Plociennik  <r.plociennik@samsung.com>
 
         [EFL] fontconfig-2.8.0 is not compliant with C++11 leading to a build break
