@@ -5481,7 +5481,7 @@ PassRefPtr<CSSBasicShape> CSSParser::parseBasicShapeCircle(CSSParserValueList* a
     ASSERT(args);
 
     // circle(radius)
-    // circle(radius at <position>
+    // circle(radius at <position>)
     // circle(at <position>)
     // where position defines centerX and centerY using a CSS <position> data type.
     RefPtr<CSSBasicShapeCircle> shape = CSSBasicShapeCircle::create();
@@ -5502,10 +5502,9 @@ PassRefPtr<CSSBasicShape> CSSParser::parseBasicShapeCircle(CSSParserValueList* a
             return 0;
         }
 
-        if (argument->id == CSSValueAt) {
+        if (argument->id == CSSValueAt && args->next()) {
             RefPtr<CSSValue> centerX;
             RefPtr<CSSValue> centerY;
-            args->next(); // set list to start of position center
             parseFillPosition(args, centerX, centerY);
             if (centerX && centerY && !args->current()) {
                 ASSERT(centerX->isPrimitiveValue());
@@ -5526,9 +5525,9 @@ PassRefPtr<CSSBasicShape> CSSParser::parseBasicShapeEllipse(CSSParserValueList* 
     ASSERT(args);
 
     // ellipse(radiusX)
-    // ellipse(radiusX at <position>
+    // ellipse(radiusX at <position>)
     // ellipse(radiusX radiusY)
-    // ellipse(radiusX radiusY at <position>
+    // ellipse(radiusX radiusY at <position>)
     // ellipse(at <position>)
     // where position defines centerX and centerY using a CSS <position> data type.
     RefPtr<CSSBasicShapeEllipse> shape = CSSBasicShapeEllipse::create();
@@ -5552,11 +5551,11 @@ PassRefPtr<CSSBasicShape> CSSParser::parseBasicShapeEllipse(CSSParserValueList* 
             return 0;
         }
 
-        if (argument->id != CSSValueAt)
+        if (argument->id != CSSValueAt || !args->next()) // expecting ellipse(.. at <position>)
             return 0;
+
         RefPtr<CSSValue> centerX;
         RefPtr<CSSValue> centerY;
-        args->next(); // set list to start of position center
         parseFillPosition(args, centerX, centerY);
         if (!centerX || !centerY || args->current())
             return 0;

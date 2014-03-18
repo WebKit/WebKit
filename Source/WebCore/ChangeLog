@@ -1,3 +1,19 @@
+2014-03-18  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] shape-outside: ellipse(50% 50% at) causes crash
+        https://bugs.webkit.org/show_bug.cgi?id=130366
+
+        Reviewed by Andreas Kling.
+
+        The BasicShape ellipse and circle functions now report a syntax error
+        if the "at" keyword is not followed by a position.
+
+        The existing parsing tests have been updated to include this case.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBasicShapeCircle):
+        (WebCore::CSSParser::parseBasicShapeEllipse):
+
 2014-03-18  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Removing MediaStreamVector typedef
