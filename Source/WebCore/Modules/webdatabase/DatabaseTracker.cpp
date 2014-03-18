@@ -48,6 +48,7 @@
 #include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
@@ -1283,7 +1284,7 @@ bool DatabaseTracker::deleteDatabaseFileIfEmpty(const String& path)
 
 Mutex& DatabaseTracker::openDatabaseMutex()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    static NeverDestroyed<Mutex> mutex;
     return mutex;
 }
 
@@ -1335,7 +1336,7 @@ void DatabaseTracker::setClient(DatabaseManagerClient* client)
 
 static Mutex& notificationMutex()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    static NeverDestroyed<Mutex> mutex;
     return mutex;
 }
 
@@ -1343,7 +1344,7 @@ typedef Vector<std::pair<RefPtr<SecurityOrigin>, String>> NotificationQueue;
 
 static NotificationQueue& notificationQueue()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(NotificationQueue, queue, ());
+    static NeverDestroyed<NotificationQueue> queue;
     return queue;
 }
 

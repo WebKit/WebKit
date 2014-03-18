@@ -1,3 +1,15 @@
+2014-03-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        webdatabase: Replace DEPRECATED_DEFINE_STATIC_LOCAL by static NeverDestroyed<T>
+        https://bugs.webkit.org/show_bug.cgi?id=130347
+
+        Reviewed by Darin Adler.
+
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::openDatabaseMutex):
+        (WebCore::notificationMutex):
+        (WebCore::notificationQueue):
+
 2014-03-17  Jer Noble  <jer.noble@apple.com>
 
         Add RemoteCommandListener support to MediaSessionManager.
