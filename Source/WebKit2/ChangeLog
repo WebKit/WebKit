@@ -1,3 +1,10 @@
+2014-03-17  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed, EFL build fix after r165789
+
+        * WebProcess/InjectedBundle/efl/InjectedBundleEfl.cpp:
+        (WebKit::InjectedBundle::setBundleParameter): Implemented.
+
 2014-03-17  Jae Hyun Park  <jaepark@webkit.org>
 
         [GTK] Build fix for debug build

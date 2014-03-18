@@ -58,6 +58,10 @@ bool InjectedBundle::load(API::Object* initializationUserData)
     return true;
 }
 
+void InjectedBundle::setBundleParameter(const String& /*key*/, const IPC::DataReference& /*data*/)
+{
+}
+
 void InjectedBundle::activateMacFontAscentHack()
 {
 }
