@@ -1,3 +1,18 @@
+2014-03-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        Test fast/events/touch/touch-target-limited.html crashes.
+
+        Some tests on editing/spelling are timing out, but not longer failing:
+        editing/spelling/spellcheck-paste.html
+        editing/spelling/spelling-changed-text.html
+        editing/spelling/spellcheck-paste-disabled.html
+        editing/spelling/spellcheck-paste-continuous-disabled.html
+
+        * platform/gtk-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2014-03-18  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r162334): RenderTableCol::styleDidChange uses out-of-date table information

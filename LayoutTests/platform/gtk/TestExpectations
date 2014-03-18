@@ -787,6 +787,11 @@ webkit.org/b/122571 inspector-protocol/css/getSupportedCSSProperties.html [ Time
 
 webkit.org/b/124487 [ Release ] media/video-duration-known-after-eos.html [ Timeout ]
 
+webkit.org/b/130411 editing/spelling/spellcheck-paste.html [ Timeout ]
+webkit.org/b/130411 editing/spelling/spelling-changed-text.html [ Timeout ]
+webkit.org/b/130411 editing/spelling/spellcheck-paste-disabled.html [ Timeout ]
+webkit.org/b/130411 editing/spelling/spellcheck-paste-continuous-disabled.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -944,9 +949,6 @@ webkit.org/b/40601 fast/events/mouse-click-events.html [ Failure ]
 webkit.org/b/40601 fast/events/mouseup-from-button2.html [ Failure ]
 webkit.org/b/40601 fast/events/right-click-focus.html [ Failure ]
 webkit.org/b/40601 editing/selection/5354455-1.html [ Failure ]
-
-webkit.org/b/122121 editing/spelling/spellcheck-paste.html [ Timeout ]
-webkit.org/b/122121 editing/spelling/spelling-changed-text.html [ Failure Timeout ]
 
 # Tests that fail across all platforms.
 # Even though some platforms don't skip these tests, there are platform-specific

@@ -118,11 +118,6 @@ Bug(GTK) editing/selection/extend-after-mouse-selection.html [ Failure ]
 # WebKit2 needs textInputController.selectedRange
 Bug(GTK) editing/selection/mixed-editability-10.html [ Failure ]
 
-# Implement testRunner.setAsynchronousSpellCheckingEnabled
-# http://webkit.org/b/81042
-webkit.org/b/81042 editing/spelling/spellcheck-paste.html [ Timeout Failure ]
-webkit.org/b/81042 editing/spelling/spellcheck-paste-disabled.html [ Failure ]
-
 # Implement testRunner.numberOfPendingGeolocationPermissionRequests()
 # http://webkit.org/b/93977
 webkit.org/b/93977 fast/dom/Geolocation/page-reload-cancel-permission-requests.html [ Timeout ]
@@ -198,7 +193,7 @@ webkit.org/b/128172 fast/events/touch/multi-touch-inside-iframes.html [ Timeout 
 webkit.org/b/128172 fast/events/touch/basic-single-touch-events.html [ Timeout ]
 webkit.org/b/128172 fast/events/touch/page-scaled-touch-gesture-click.html [ Timeout ]
 webkit.org/b/128172 fast/events/touch/touch-target.html [ Timeout ]
-webkit.org/b/128172 fast/events/touch/touch-target-limited.html [ Timeout ]
+webkit.org/b/128172 fast/events/touch/touch-target-limited.html [ Crash Timeout ]
 webkit.org/b/128172 fast/events/touch/send-oncancel-event.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -427,8 +422,6 @@ Bug(GTK) editing/spelling/context-menu-suggestions.html [ Failure ]
 Bug(GTK) editing/spelling/spellcheck-input-search-crash.html [ Failure ]
 
 webkit.org/b/118416 [ Release ] storage/websql/sql-error-codes.html [ Failure ]
-
-Bug(GTK) editing/spelling/spellcheck-paste-continuous-disabled.html [ Failure ]
 
 Bug(GTK) http/tests/misc/iframe-beforeunload-dialog-matching-ancestor-securityorigin.html [ Failure ]
 
