@@ -118,14 +118,15 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
         || action == @selector(toggleZoomMode:)
         || action == @selector(resetZoom:)
         || action == @selector(dumpSourceToConsole:)
-        || action == @selector(find:)
-        || action == @selector(togglePaginationMode:))
+        || action == @selector(find:))
         return NO;
     
     if (action == @selector(showHideWebView:))
         [menuItem setTitle:[_webView isHidden] ? @"Show Web View" : @"Hide Web View"];
     else if (action == @selector(removeReinsertWebView:))
         [menuItem setTitle:[_webView window] ? @"Remove Web View" : @"Insert Web View"];
+    else if ([menuItem action] == @selector(togglePaginationMode:))
+        [menuItem setState:[self isPaginated] ? NSOnState : NSOffState];
     else if ([menuItem action] == @selector(toggleTransparentWindow:))
         [menuItem setState:[[self window] isOpaque] ? NSOffState : NSOnState];
     else if ([menuItem action] == @selector(toggleUISideCompositing:))
@@ -167,10 +168,6 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 }
 
 - (IBAction)dumpSourceToConsole:(id)sender
-{
-}
-
-- (IBAction)togglePaginationMode:(id)sender
 {
 }
 
@@ -246,6 +243,22 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 
     CGFloat factor = [self currentZoomFactor] / DefaultZoomFactorRatio;
     [self setCurrentZoomFactor:factor];
+}
+
+- (BOOL)isPaginated
+{
+    return _webView._paginationMode != _WKPaginationModeUnpaginated;
+}
+
+- (IBAction)togglePaginationMode:(id)sender
+{
+    if ([self isPaginated])
+        _webView._paginationMode = _WKPaginationModeUnpaginated;
+    else {
+        _webView._paginationMode = _WKPaginationModeLeftToRight;
+        _webView._pageLength = _webView.bounds.size.width / 2;
+        _webView._gapBetweenPages = 10;
+    }
 }
 
 - (IBAction)toggleTransparentWindow:(id)sender

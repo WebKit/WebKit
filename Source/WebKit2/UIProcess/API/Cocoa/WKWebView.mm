@@ -901,6 +901,86 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     _page->runJavaScriptInMainFrame(scriptString, WebKit::ScriptValueCallback::create([](bool, WebKit::WebSerializedScriptValue*){}));
 }
 
+- (_WKPaginationMode)_paginationMode
+{
+    switch (_page->paginationMode()) {
+    case WebCore::Pagination::Unpaginated:
+        return _WKPaginationModeUnpaginated;
+    case WebCore::Pagination::LeftToRightPaginated:
+        return _WKPaginationModeLeftToRight;
+    case WebCore::Pagination::RightToLeftPaginated:
+        return _WKPaginationModeRightToLeft;
+    case WebCore::Pagination::TopToBottomPaginated:
+        return _WKPaginationModeTopToBottom;
+    case WebCore::Pagination::BottomToTopPaginated:
+        return _WKPaginationModeBottomToTop;
+    }
+
+    ASSERT_NOT_REACHED();
+    return _WKPaginationModeUnpaginated;
+}
+
+- (void)_setPaginationMode:(_WKPaginationMode)paginationMode
+{
+    WebCore::Pagination::Mode mode;
+    switch (paginationMode) {
+    case _WKPaginationModeUnpaginated:
+        mode = WebCore::Pagination::Unpaginated;
+        break;
+    case _WKPaginationModeLeftToRight:
+        mode = WebCore::Pagination::LeftToRightPaginated;
+        break;
+    case _WKPaginationModeRightToLeft:
+        mode = WebCore::Pagination::RightToLeftPaginated;
+        break;
+    case _WKPaginationModeTopToBottom:
+        mode = WebCore::Pagination::TopToBottomPaginated;
+        break;
+    case _WKPaginationModeBottomToTop:
+        mode = WebCore::Pagination::BottomToTopPaginated;
+        break;
+    default:
+        return;
+    }
+
+    _page->setPaginationMode(mode);
+}
+
+- (BOOL)_paginationBehavesLikeColumns
+{
+    return _page->paginationBehavesLikeColumns();
+}
+
+- (void)_setPaginationBehavesLikeColumns:(BOOL)behavesLikeColumns
+{
+    _page->setPaginationBehavesLikeColumns(behavesLikeColumns);
+}
+
+- (CGFloat)_pageLength
+{
+    return _page->pageLength();
+}
+
+- (void)_setPageLength:(CGFloat)pageLength
+{
+    _page->setPageLength(pageLength);
+}
+
+- (CGFloat)_gapBetweenPages
+{
+    return _page->gapBetweenPages();
+}
+
+- (void)_setGapBetweenPages:(CGFloat)gapBetweenPages
+{
+    _page->setGapBetweenPages(gapBetweenPages);
+}
+
+- (NSUInteger)_pageCount
+{
+    return _page->pageCount();
+}
+
 #pragma mark iOS-specific methods
 
 #if PLATFORM(IOS)

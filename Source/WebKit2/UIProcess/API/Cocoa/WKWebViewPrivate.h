@@ -32,6 +32,14 @@ typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
     _WKRenderingProgressEventFirstPaintWithSignificantArea = 1 << 2,
 };
 
+typedef NS_ENUM(NSUInteger, _WKPaginationMode) {
+    _WKPaginationModeUnpaginated,
+    _WKPaginationModeLeftToRight,
+    _WKPaginationModeRightToLeft,
+    _WKPaginationModeTopToBottom,
+    _WKPaginationModeBottomToTop,
+};
+
 @class WKBrowsingContextHandle;
 @class WKRemoteObjectRegistry;
 @protocol WKHistoryDelegatePrivate;
@@ -85,6 +93,15 @@ typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
 #endif
 
 - (void)_runJavaScriptInMainFrame:(NSString *)scriptString;
+
+@property (nonatomic, setter=_setPaginationMode:) _WKPaginationMode _paginationMode;
+// Whether the column-break-{before,after} properties are respected instead of the
+// page-break-{before,after} properties.
+@property (nonatomic, setter=_setPaginationBehavesLikeColumns:) BOOL _paginationBehavesLikeColumns;
+// Set to 0 to have the page length equal the view length.
+@property (nonatomic, setter=_setPageLength:) CGFloat _pageLength;
+@property (nonatomic, setter=_setGapBetweenPages:) CGFloat _gapBetweenPages;
+@property (readonly) NSUInteger _pageCount;
 
 @end
 

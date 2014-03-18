@@ -1,3 +1,18 @@
+2014-03-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Renable pagination mode in WK2 MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=130374
+
+        Reviewed by Anders Carlsson.
+        
+        Put the implementation of togglePaginationMode: back, and correctly
+        enable the menu item.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController validateMenuItem:]):
+        (-[WK2BrowserWindowController isPaginated]):
+        (-[WK2BrowserWindowController togglePaginationMode:]):
+
 2014-03-18  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Add --reset option to Tools/Scripts/set-webkit-configuration script
