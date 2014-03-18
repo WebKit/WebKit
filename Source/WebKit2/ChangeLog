@@ -1,3 +1,17 @@
+2014-03-18  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION: Visited link coloring seems to be completely broken in tip of tree
+        https://bugs.webkit.org/show_bug.cgi?id=130419
+        <rdar://problem/16337850>
+
+        Reviewed by Dan Bernstein.
+
+        Make sure to send any queued up messages before calling connectionWillOpen so we'll ensure
+        FIFO ordering if any messages are sent from within connectionWillOpen.
+
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::didFinishLaunching):
+
 2014-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         WebPageCreationParameters colorSpace should be MAC not COCOA

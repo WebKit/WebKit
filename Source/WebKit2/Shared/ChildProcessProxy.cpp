@@ -132,14 +132,14 @@ void ChildProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::Id
     m_connection->setShouldCloseConnectionOnMachExceptions();
 #endif
 
-    connectionWillOpen(m_connection.get());
-    m_connection->open();
-
     for (size_t i = 0; i < m_pendingMessages.size(); ++i) {
         std::unique_ptr<IPC::MessageEncoder> message = std::move(m_pendingMessages[i].first);
         unsigned messageSendFlags = m_pendingMessages[i].second;
         m_connection->sendMessage(std::move(message), messageSendFlags);
     }
+
+    connectionWillOpen(m_connection.get());
+    m_connection->open();
 
     m_pendingMessages.clear();
 }
