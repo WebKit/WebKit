@@ -5038,7 +5038,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = prefsPrivate->isInheritURIQueryComponentEnabled(&enabled); 
     if (FAILED(hr)) 
         return hr; 
-    settings.setEnableInheritURIQueryComponent(enabled);
+    settings->setEnableInheritURIQueryComponent(enabled);
 
     return S_OK;
 }

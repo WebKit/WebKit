@@ -1770,12 +1770,12 @@ HRESULT WebPreferences::requestAnimationFrameEnabled(BOOL* enabled)
 
 HRESULT WebPreferences::isInheritURIQueryComponentEnabled(BOOL* enabled)
 {
-    *enabled = boolValueForKey(WebKitEnableInheritURIQueryComponentPreferenceKey);
+    *enabled = boolValueForKey(CFSTR(WebKitEnableInheritURIQueryComponentPreferenceKey));
     return S_OK;
 }
 
 HRESULT WebPreferences::setEnableInheritURIQueryComponent(BOOL enabled)
 {
-    setBoolValue(WebKitEnableInheritURIQueryComponentPreferenceKey, enabled);
+    setBoolValue(CFSTR(WebKitEnableInheritURIQueryComponentPreferenceKey), enabled);
     return S_OK;
 }
