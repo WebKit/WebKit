@@ -2144,7 +2144,7 @@ public:
         }
         if (!value->isValueList())
             return;
-        LayoutBox referenceBox = BoxMissing;
+        CSSBoxType referenceBox = BoxMissing;
         RefPtr<ClipPathOperation> operation;
         auto& valueList = toCSSValueList(*value);
         for (unsigned i = 0; i < valueList.length(); ++i) {
@@ -2159,7 +2159,7 @@ public:
                 || primitiveValue.getValueID() == CSSValueStroke
                 || primitiveValue.getValueID() == CSSValueViewBox)
                 && referenceBox == BoxMissing)
-                referenceBox = LayoutBox(primitiveValue);
+                referenceBox = CSSBoxType(primitiveValue);
             else
                 return;
         }
@@ -2196,7 +2196,7 @@ public:
             setValue(styleResolver->style(), shape.release());
         } else if (value->isValueList()) {
             RefPtr<BasicShape> shape;
-            LayoutBox layoutBox = BoxMissing;
+            CSSBoxType referenceBox = BoxMissing;
             CSSValueList* valueList = toCSSValueList(value);
             for (unsigned i = 0; i < valueList->length(); ++i) {
                 CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(valueList->itemWithoutBoundsCheck(i));
@@ -2206,15 +2206,15 @@ public:
                     || primitiveValue->getValueID() == CSSValueBorderBox
                     || primitiveValue->getValueID() == CSSValuePaddingBox
                     || primitiveValue->getValueID() == CSSValueMarginBox)
-                    layoutBox = LayoutBox(*primitiveValue);
+                    referenceBox = CSSBoxType(*primitiveValue);
                 else
                     return;
             }
 
             if (shape)
-                setValue(styleResolver->style(), ShapeValue::createShapeValue(shape.release(), layoutBox));
-            else if (layoutBox != BoxMissing)
-                setValue(styleResolver->style(), ShapeValue::createLayoutBoxValue(layoutBox));
+                setValue(styleResolver->style(), ShapeValue::createShapeValue(shape.release(), referenceBox));
+            else if (referenceBox != BoxMissing)
+                setValue(styleResolver->style(), ShapeValue::createBoxShapeValue(referenceBox));
 
         }
     }

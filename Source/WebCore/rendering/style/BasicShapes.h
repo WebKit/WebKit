@@ -63,17 +63,17 @@ public:
 
     virtual Type type() const = 0;
 
-    LayoutBox layoutBox() const { return m_layoutBox; }
-    void setLayoutBox(LayoutBox layoutBox) { m_layoutBox = layoutBox; }
+    CSSBoxType referenceBox() const { return m_referenceBox; }
+    void setReferenceBox(CSSBoxType referenceBox) { m_referenceBox = referenceBox; }
 
 protected:
     BasicShape()
-        : m_layoutBox(BoxMissing)
+        : m_referenceBox(BoxMissing)
     {
     }
 
 private:
-    LayoutBox m_layoutBox;
+    CSSBoxType m_referenceBox;
 };
 
 class BasicShapeCenterCoordinate {

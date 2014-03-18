@@ -107,12 +107,12 @@ public:
     }
 
 protected:
-    virtual LayoutBox referenceBox() const override
+    virtual CSSBoxType referenceBox() const override
     {
-        if (shapeValue()->layoutBox() == BoxMissing)
+        if (shapeValue()->cssBox() == BoxMissing)
             return ContentBox;
 
-        return shapeValue()->layoutBox();
+        return shapeValue()->cssBox();
     }
 
     virtual const RenderStyle& styleForWritingMode() const override;

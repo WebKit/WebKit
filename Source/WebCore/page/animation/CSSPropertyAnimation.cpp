@@ -148,7 +148,7 @@ static inline PassRefPtr<ShapeValue> blendFunc(const AnimationBase*, ShapeValue*
     if (from->type() != ShapeValue::Shape || to->type() != ShapeValue::Shape)
         return to;
 
-    if (from->layoutBox() != to->layoutBox())
+    if (from->cssBox() != to->cssBox())
         return to;
 
     const BasicShape* fromShape = from->shape();
@@ -157,7 +157,7 @@ static inline PassRefPtr<ShapeValue> blendFunc(const AnimationBase*, ShapeValue*
     if (!fromShape->canBlend(toShape))
         return to;
 
-    return ShapeValue::createShapeValue(toShape->blend(fromShape, progress), to->layoutBox());
+    return ShapeValue::createShapeValue(toShape->blend(fromShape, progress), to->cssBox());
 }
 #endif
 

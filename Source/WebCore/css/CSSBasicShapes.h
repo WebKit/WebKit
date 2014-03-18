@@ -51,15 +51,15 @@ public:
     virtual String cssText() const = 0;
     virtual bool equals(const CSSBasicShape&) const = 0;
 
-    CSSPrimitiveValue* layoutBox() const { return m_layoutBox.get(); }
-    void setLayoutBox(PassRefPtr<CSSPrimitiveValue> layoutBox) { m_layoutBox = layoutBox; }
+    CSSPrimitiveValue* referenceBox() const { return m_referenceBox.get(); }
+    void setReferenceBox(PassRefPtr<CSSPrimitiveValue> referenceBox) { m_referenceBox = referenceBox; }
 
 public:
     virtual ~CSSBasicShape() { }
 
 protected:
     CSSBasicShape() { }
-    RefPtr<CSSPrimitiveValue> m_layoutBox;
+    RefPtr<CSSPrimitiveValue> m_referenceBox;
 };
 
 class CSSBasicShapeInset : public CSSBasicShape {

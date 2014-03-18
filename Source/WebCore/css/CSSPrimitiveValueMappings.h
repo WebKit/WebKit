@@ -5162,11 +5162,11 @@ template<> inline CSSPrimitiveValue::operator ImageOrientationEnum() const
 
 #endif // ENABLE(CSS_IMAGE_ORIENTATION)
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LayoutBox layoutBox)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CSSBoxType cssBox)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_VALUE_ID;
-    switch (layoutBox) {
+    switch (cssBox) {
     case MarginBox:
         m_value.valueID = CSSValueMarginBox;
         break;
@@ -5195,7 +5195,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LayoutBox layoutBox)
     }
 }
 
-template<> inline CSSPrimitiveValue::operator LayoutBox() const
+template<> inline CSSPrimitiveValue::operator CSSBoxType() const
 {
     switch (getValueID()) {
     case CSSValueMarginBox:

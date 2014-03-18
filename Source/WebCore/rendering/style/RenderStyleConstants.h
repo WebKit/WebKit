@@ -556,7 +556,7 @@ enum TextIndentType { TextIndentNormal, TextIndentHanging };
 enum Isolation { IsolationAuto, IsolationIsolate };
 
 // Fill, Stroke, ViewBox are just used for SVG.
-enum LayoutBox { BoxMissing = 0, MarginBox, BorderBox, PaddingBox, ContentBox, Fill, Stroke, ViewBox };
+enum CSSBoxType { BoxMissing = 0, MarginBox, BorderBox, PaddingBox, ContentBox, Fill, Stroke, ViewBox };
 
 } // namespace WebCore
 

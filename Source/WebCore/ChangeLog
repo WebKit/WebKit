@@ -1,3 +1,67 @@
+2014-03-18  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        LayoutBox is a terrible name
+        https://bugs.webkit.org/show_bug.cgi?id=130351
+
+        Reviewed by Simon Fraser.
+
+        Rename LayoutBox to CSSBoxType. Also rename the functions and methods
+        that mention "LayoutBox" to something that makes sense for each
+        specific situation.
+
+        No new tests, no behavior change.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBasicShape):
+        (WebCore::basicShapeForValue):
+        * css/CSSBasicShapes.cpp:
+        (WebCore::CSSBasicShapeCircle::cssText):
+        (WebCore::CSSBasicShapeCircle::equals):
+        (WebCore::CSSBasicShapeEllipse::cssText):
+        (WebCore::CSSBasicShapeEllipse::equals):
+        (WebCore::CSSBasicShapePolygon::cssText):
+        (WebCore::CSSBasicShapePolygon::equals):
+        (WebCore::CSSBasicShapeInset::cssText):
+        * css/CSSBasicShapes.h:
+        (WebCore::CSSBasicShape::referenceBox):
+        (WebCore::CSSBasicShape::setReferenceBox):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::shapePropertyValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator CSSBoxType):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyClipPath::applyValue):
+        (WebCore::ApplyPropertyShape::applyValue):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        * rendering/ClipPathOperation.h:
+        (WebCore::ShapeClipPathOperation::setReferenceBox):
+        (WebCore::ShapeClipPathOperation::referenceBox):
+        (WebCore::BoxClipPathOperation::create):
+        (WebCore::BoxClipPathOperation::referenceBox):
+        (WebCore::BoxClipPathOperation::BoxClipPathOperation):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createBoxShape):
+        * rendering/shapes/Shape.h:
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::ShapeInfo<RenderType>::computedShape):
+        * rendering/shapes/ShapeInfo.h:
+        * rendering/shapes/ShapeInsideInfo.h:
+        * rendering/shapes/ShapeOutsideInfo.h:
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShape::canBlend):
+        * rendering/style/BasicShapes.h:
+        (WebCore::BasicShape::referenceBox):
+        (WebCore::BasicShape::setReferenceBox):
+        (WebCore::BasicShape::BasicShape):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/ShapeValue.h:
+        (WebCore::ShapeValue::createShapeValue):
+        (WebCore::ShapeValue::createBoxShapeValue):
+        (WebCore::ShapeValue::cssBox):
+        (WebCore::ShapeValue::ShapeValue):
+
 2014-03-18  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r162334): RenderTableCol::styleDidChange uses out-of-date table information

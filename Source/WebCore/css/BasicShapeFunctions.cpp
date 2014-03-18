@@ -124,8 +124,8 @@ PassRefPtr<CSSValue> valueForBasicShape(const RenderStyle* style, const BasicSha
         break;
     }
 
-    if (basicShape->layoutBox() != BoxMissing)
-        basicShapeValue->setLayoutBox(pool.createValue(basicShape->layoutBox()));
+    if (basicShape->referenceBox() != BoxMissing)
+        basicShapeValue->setReferenceBox(pool.createValue(basicShape->referenceBox()));
 
     return pool.createValue(basicShapeValue.release());
 }
@@ -264,8 +264,8 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
         break;
     }
 
-    if (basicShapeValue->layoutBox())
-        basicShape->setLayoutBox(LayoutBox(*basicShapeValue->layoutBox()));
+    if (basicShapeValue->referenceBox())
+        basicShape->setReferenceBox(CSSBoxType(*basicShapeValue->referenceBox()));
 
     return basicShape.release();
 }

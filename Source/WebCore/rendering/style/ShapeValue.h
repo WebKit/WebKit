@@ -48,14 +48,14 @@ public:
         Image
     };
 
-    static PassRefPtr<ShapeValue> createShapeValue(PassRefPtr<BasicShape> shape, LayoutBox layoutBox)
+    static PassRefPtr<ShapeValue> createShapeValue(PassRefPtr<BasicShape> shape, CSSBoxType cssBox)
     {
-        return adoptRef(new ShapeValue(shape, layoutBox));
+        return adoptRef(new ShapeValue(shape, cssBox));
     }
 
-    static PassRefPtr<ShapeValue> createLayoutBoxValue(LayoutBox layoutBox)
+    static PassRefPtr<ShapeValue> createBoxShapeValue(CSSBoxType boxShape)
     {
-        return adoptRef(new ShapeValue(layoutBox));
+        return adoptRef(new ShapeValue(boxShape));
     }
 
     static PassRefPtr<ShapeValue> createOutsideValue()
@@ -70,7 +70,7 @@ public:
 
     ShapeValueType type() const { return m_type; }
     BasicShape* shape() const { return m_shape.get(); }
-    LayoutBox layoutBox() const { return m_layoutBox; }
+    CSSBoxType cssBox() const { return m_cssBox; }
 
     StyleImage* image() const { return m_image.get(); }
     bool isImageValid() const { return image() && image()->cachedImage() && image()->cachedImage()->hasImage(); }
@@ -84,33 +84,33 @@ public:
     bool operator==(const ShapeValue& other) const { return type() == other.type(); }
 
 private:
-    ShapeValue(PassRefPtr<BasicShape> shape, LayoutBox layoutBox)
+    ShapeValue(PassRefPtr<BasicShape> shape, CSSBoxType cssBox)
         : m_type(Shape)
         , m_shape(shape)
-        , m_layoutBox(layoutBox)
+        , m_cssBox(cssBox)
     {
     }
     ShapeValue(ShapeValueType type)
         : m_type(type)
-        , m_layoutBox(BoxMissing)
+        , m_cssBox(BoxMissing)
     {
     }
     ShapeValue(PassRefPtr<StyleImage> image)
         : m_type(Image)
         , m_image(image)
-        , m_layoutBox(BoxMissing)
+        , m_cssBox(BoxMissing)
     {
     }
-    ShapeValue(LayoutBox layoutBox)
+    ShapeValue(CSSBoxType cssBox)
         : m_type(Box)
-        , m_layoutBox(layoutBox)
+        , m_cssBox(cssBox)
     {
     }
 
     ShapeValueType m_type;
     RefPtr<BasicShape> m_shape;
     RefPtr<StyleImage> m_image;
-    LayoutBox m_layoutBox;
+    CSSBoxType m_cssBox;
 };
 
 }

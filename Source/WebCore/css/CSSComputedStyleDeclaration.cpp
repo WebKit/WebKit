@@ -1630,7 +1630,7 @@ static PassRefPtr<CSSValue> shapePropertyValue(const RenderStyle* style, const S
         return cssValuePool().createIdentifierValue(CSSValueOutsideShape);
 
     if (shapeValue->type() == ShapeValue::Box)
-        return cssValuePool().createValue(shapeValue->layoutBox());
+        return cssValuePool().createValue(shapeValue->cssBox());
 
     if (shapeValue->type() == ShapeValue::Image)
         return shapeValue->image() ? shapeValue->image()->cssValue() : cssValuePool().createIdentifierValue(CSSValueNone);
@@ -1639,8 +1639,8 @@ static PassRefPtr<CSSValue> shapePropertyValue(const RenderStyle* style, const S
 
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     list->append(valueForBasicShape(style, shapeValue->shape()));
-    if (shapeValue->layoutBox() != BoxMissing)
-        list->append(cssValuePool().createValue(shapeValue->layoutBox()));
+    if (shapeValue->cssBox() != BoxMissing)
+        list->append(cssValuePool().createValue(shapeValue->cssBox()));
     return list.release();
 }
 #endif

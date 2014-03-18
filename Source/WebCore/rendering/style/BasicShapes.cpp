@@ -65,7 +65,7 @@ bool BasicShape::canBlend(const BasicShape* other) const
         return false;
 
     // Both shapes must use the same reference box.
-    if (layoutBox() != other->layoutBox())
+    if (referenceBox() != other->referenceBox())
         return false;
 
     // Just polygons with same number of vertices can be animated.

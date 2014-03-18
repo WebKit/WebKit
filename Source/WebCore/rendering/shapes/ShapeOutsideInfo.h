@@ -63,14 +63,14 @@ public:
     }
 
 protected:
-    virtual LayoutBox referenceBox() const override
+    virtual CSSBoxType referenceBox() const override
     {
-        if (shapeValue()->layoutBox() == BoxMissing) {
+        if (shapeValue()->cssBox() == BoxMissing) {
             if (shapeValue()->type() == ShapeValue::Image)
                 return ContentBox;
             return MarginBox;
         }
-        return shapeValue()->layoutBox();
+        return shapeValue()->cssBox();
     }
 
 private:
