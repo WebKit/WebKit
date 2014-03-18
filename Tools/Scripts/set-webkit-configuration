@@ -38,6 +38,7 @@ Usage: $programName [options]
   --64-bit                Set the default architecture to 64-bit
   --debug                 Set the default configuration to debug
   --release               Set the default configuration to release
+  --reset                 Reset configurations
 EOF
 
 my $configuration = passedConfiguration();
@@ -54,13 +55,19 @@ if (!$architecture) {
     }
 }
 
+my $baseProductDir = baseProductDir();
+system "mkdir", "-p", "$baseProductDir";
+
+if (checkForArgumentAndRemoveFromARGV("--reset")) {
+    unlink "$baseProductDir/Configuration";
+    unlink "$baseProductDir/Architecture";
+    exit 0;
+}
+
 if (!$configuration && !$architecture) {
     print STDERR $usage;
     exit 1;
 }
-
-my $baseProductDir = baseProductDir();
-system "mkdir", "-p", "$baseProductDir";
 
 if ($configuration) {
     open CONFIGURATION, ">", "$baseProductDir/Configuration" or die;

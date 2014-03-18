@@ -1,3 +1,12 @@
+2014-03-18  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Add --reset option to Tools/Scripts/set-webkit-configuration script
+        https://bugs.webkit.org/show_bug.cgi?id=130401
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/set-webkit-configuration:
+
 2014-03-18  Alberto Garcia  <berto@igalia.com>
 
         [GTK] [CMake] build-webkit-options.txt is not generated during a fresh build
