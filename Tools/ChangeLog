@@ -1,5 +1,12 @@
 2014-03-17  Ryosuke Niwa  <rniwa@webkit.org>
 
+        webkitpy test rebaseline.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (MainTest.test_default_args):
+
+2014-03-17  Ryosuke Niwa  <rniwa@webkit.org>
+
         --profile should imply --test-runner-count=1 in run-perf-tests
         https://bugs.webkit.org/show_bug.cgi?id=130375
 

@@ -120,7 +120,7 @@ class MainTest(unittest.TestCase):
         self.assertTrue(options.show_results)
         self.assertTrue(options.use_skipped_list)
         self.assertEqual(options.repeat, 1)
-        self.assertEqual(options.test_runner_count, DEFAULT_TEST_RUNNER_COUNT)
+        self.assertEqual(options.test_runner_count, -1)
 
     def test_parse_args(self):
         runner, port = self.create_runner()
