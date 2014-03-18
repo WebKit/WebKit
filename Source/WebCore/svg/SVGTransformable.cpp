@@ -28,6 +28,7 @@
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGTransformList.h"
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -171,7 +172,8 @@ static inline bool parseAndSkipType(const UChar*& currTransform, const UChar* en
 SVGTransform::SVGTransformType SVGTransformable::parseTransformType(const String& typeString)
 {
     unsigned short type = SVGTransform::SVG_TRANSFORM_UNKNOWN;
-    const UChar* characters = typeString.deprecatedCharacters();
+    auto upconvertedCharacters = StringView(typeString).upconvertedCharacters();
+    const UChar* characters = upconvertedCharacters;
     parseAndSkipType(characters, characters + typeString.length(), type);
     return static_cast<SVGTransform::SVGTransformType>(type);
 }

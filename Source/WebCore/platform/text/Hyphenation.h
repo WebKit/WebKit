@@ -32,7 +32,7 @@
 namespace WebCore {
 
 bool canHyphenate(const AtomicString& localeIdentifier);
-size_t lastHyphenLocation(const UChar*, size_t length, size_t beforeIndex, const AtomicString& localeIdentifier);
+size_t lastHyphenLocation(StringView, size_t beforeIndex, const AtomicString& localeIdentifier);
 
 } // namespace WebCore
 

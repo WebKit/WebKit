@@ -31,6 +31,7 @@
 #include "TextBreakIteratorInternalICU.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -73,15 +74,13 @@ bool canHyphenate(const AtomicString& localeIdentifier)
 #endif // PLATFORM(IOS)
 }
 
-size_t lastHyphenLocation(const UChar* characters, size_t length, size_t beforeIndex, const AtomicString& localeIdentifier)
+size_t lastHyphenLocation(StringView text, size_t beforeIndex, const AtomicString& localeIdentifier)
 {
-    RetainPtr<CFStringRef> string = adoptCF(CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(characters), length, kCFAllocatorNull));
-
     RetainPtr<CFLocaleRef> locale = cfLocaleCache().get(localeIdentifier);
     ASSERT(locale);
 
     CFOptionFlags searchAcrossWordBoundaries = 1;
-    CFIndex result = CFStringGetHyphenationLocationBeforeIndex(string.get(), beforeIndex, CFRangeMake(0, length), searchAcrossWordBoundaries, locale.get(), 0);
+    CFIndex result = CFStringGetHyphenationLocationBeforeIndex(text.createCFStringWithoutCopying().get(), beforeIndex, CFRangeMake(0, text.length()), searchAcrossWordBoundaries, locale.get(), 0);
     return result == kCFNotFound ? 0 : result;
 }
 

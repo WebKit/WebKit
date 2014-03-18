@@ -1155,13 +1155,13 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
             ASSERT_WITH_SECURITY_IMPLICATION(n->isTextNode());
             type = Position::PositionIsOffsetInAnchor;
             if (style.preserveNewline()) {
-                const UChar* chars = toRenderText(r)->deprecatedCharacters();
-                int i = toRenderText(r)->textLength();
+                StringImpl& text = *toRenderText(r)->text();
+                int i = text.length();
                 int o = offset;
                 if (n == startNode && o < i)
                     i = std::max(0, o);
                 while (--i >= 0) {
-                    if (chars[i] == '\n')
+                    if (text[i] == '\n')
                         return VisiblePosition(Position(toText(n), i + 1), DOWNSTREAM);
                 }
             }
@@ -1236,13 +1236,13 @@ VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossing
         // FIXME: We avoid returning a position where the renderer can't accept the caret.
         if (r->isText() && toRenderText(r)->hasRenderedText()) {
             ASSERT_WITH_SECURITY_IMPLICATION(n->isTextNode());
-            int length = toRenderText(r)->textLength();
             type = Position::PositionIsOffsetInAnchor;
             if (style.preserveNewline()) {
-                const UChar* chars = toRenderText(r)->deprecatedCharacters();
+                StringImpl& text = *toRenderText(r)->text();
                 int o = n == startNode ? offset : 0;
+                int length = text.length();
                 for (int i = o; i < length; ++i) {
-                    if (chars[i] == '\n')
+                    if (text[i] == '\n')
                         return VisiblePosition(Position(toText(n), i), DOWNSTREAM);
                 }
             }

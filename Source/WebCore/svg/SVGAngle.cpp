@@ -25,7 +25,7 @@
 #include "ExceptionCode.h"
 #include "SVGParserUtilities.h"
 #include <wtf/MathExtras.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -140,7 +140,8 @@ void SVGAngle::setValueAsString(const String& value, ExceptionCode& ec)
     }
 
     float valueInSpecifiedUnits = 0;
-    const UChar* ptr = value.deprecatedCharacters();
+    auto upconvertedCharacters = StringView(value).upconvertedCharacters();
+    const UChar* ptr = upconvertedCharacters;
     const UChar* end = ptr + value.length();
 
     if (!parseNumber(ptr, end, valueInSpecifiedUnits, false)) {

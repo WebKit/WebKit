@@ -5277,9 +5277,9 @@ TextRun RenderBlock::constructTextRun(RenderObject* context, const Font& font, c
 {
     unsigned length = string.length();
 
-    if (length && string.is8Bit())
+    if (!length || string.is8Bit())
         return constructTextRunInternal(context, font, string.characters8(), length, style, expansion, flags);
-    return constructTextRunInternal(context, font, string.deprecatedCharacters(), length, style, expansion, flags);
+    return constructTextRunInternal(context, font, string.characters16(), length, style, expansion, flags);
 }
 
 RenderBlock* RenderBlock::createAnonymousWithParentRendererAndDisplay(const RenderObject* parent, EDisplay display)

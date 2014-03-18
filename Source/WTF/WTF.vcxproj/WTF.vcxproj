@@ -129,6 +129,7 @@
     <ClCompile Include="..\wtf\text\cf\AtomicStringCF.cpp" />
     <ClCompile Include="..\wtf\text\cf\StringCF.cpp" />
     <ClCompile Include="..\wtf\text\cf\StringImplCF.cpp" />
+    <ClCompile Include="..\wtf\text\cf\StringViewCF.cpp" />
     <ClCompile Include="..\wtf\Threading.cpp" />
     <ClCompile Include="..\wtf\ThreadingWin.cpp" />
     <ClCompile Include="..\wtf\threadspecificWin.cpp" />

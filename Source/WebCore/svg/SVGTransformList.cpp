@@ -74,7 +74,8 @@ String SVGTransformList::valueAsString() const
 
 void SVGTransformList::parse(const String& transform)
 {
-    const UChar* start = transform.deprecatedCharacters();
+    auto upconvertedCharacters = StringView(transform).upconvertedCharacters();
+    const UChar* start = upconvertedCharacters;
     if (!SVGTransformable::parseTransformAttribute(*this, start, start + transform.length()))
         clear();
 }

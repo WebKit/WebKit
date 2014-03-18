@@ -23,10 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "StringView.h"
+#include "config.h"
+#include <wtf/text/StringView.h>
 
-#import "RetainPtr.h"
+#if USE(CF)
+
+#include <CoreFoundation/CoreFoundation.h>
+#include <wtf/RetainPtr.h>
 
 namespace WTF {
 
@@ -35,7 +38,9 @@ RetainPtr<CFStringRef> StringView::createCFStringWithoutCopying() const
     if (is8Bit())
         return adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, characters8(), length(), kCFStringEncodingISOLatin1, false, kCFAllocatorNull));
 
-    return adoptCF(CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, characters16(), length(), kCFAllocatorNull));
+    return adoptCF(CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(characters16()), length(), kCFAllocatorNull));
 }
 
 }
+
+#endif // USE(CF)

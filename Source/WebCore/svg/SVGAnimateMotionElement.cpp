@@ -38,6 +38,7 @@
 #include "SVGTransformList.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
     
@@ -156,7 +157,8 @@ static bool parsePoint(const String& s, FloatPoint& point)
 {
     if (s.isEmpty())
         return false;
-    const UChar* cur = s.deprecatedCharacters();
+    auto upconvertedCharacters = StringView(s).upconvertedCharacters();
+    const UChar* cur = upconvertedCharacters;
     const UChar* end = cur + s.length();
     
     if (!skipOptionalSVGSpaces(cur, end))

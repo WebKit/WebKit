@@ -27,6 +27,7 @@
 #include "SVGParserUtilities.h"
 #include "XLinkNames.h"
 #include <wtf/text/AtomicString.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -66,7 +67,8 @@ bool SVGGlyphRefElement::hasValidGlyphElement(String& glyphName) const
 
 void SVGGlyphRefElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    const UChar* startPtr = value.string().deprecatedCharacters();
+    auto upconvertedCharacters = StringView(value.string()).upconvertedCharacters();
+    const UChar* startPtr = upconvertedCharacters;
     const UChar* endPtr = startPtr + value.length();
 
     // FIXME: We need some error handling here.

@@ -155,7 +155,7 @@ void TypingCommand::insertText(Document& document, const String& text, Options o
     ASSERT(frame);
 
     if (!text.isEmpty())
-        frame->editor().updateMarkersForWordsAffectedByEditing(isSpaceOrNewline(text.deprecatedCharacters()[0]));
+        frame->editor().updateMarkersForWordsAffectedByEditing(isSpaceOrNewline(text[0]));
     
     insertText(document, text, frame->selection().selection(), options, composition);
 }

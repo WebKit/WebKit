@@ -28,7 +28,6 @@
 #include <mutex>
 #include <wtf/Atomics.h>
 #include <wtf/text/StringView.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -43,16 +42,19 @@ static TextBreakIterator* initializeIterator(UBreakIteratorType type, const char
 }
 
 #if !PLATFORM(IOS)
+
 static TextBreakIterator* initializeIteratorWithRules(const char* breakRules)
 {
     UParseError parseStatus;
     UErrorCode openStatus = U_ZERO_ERROR;
-    String rules(breakRules);
-    TextBreakIterator* iterator = reinterpret_cast<TextBreakIterator*>(ubrk_openRules(rules.deprecatedCharacters(), rules.length(), 0, 0, &parseStatus, &openStatus));
+    unsigned length = strlen(breakRules);
+    auto upconvertedCharacters = StringView(reinterpret_cast<const LChar*>(breakRules), length).upconvertedCharacters();
+    TextBreakIterator* iterator = reinterpret_cast<TextBreakIterator*>(ubrk_openRules(upconvertedCharacters, length, 0, 0, &parseStatus, &openStatus));
     ASSERT_WITH_MESSAGE(U_SUCCESS(openStatus), "ICU could not open a break iterator: %s (%d)", u_errorName(openStatus), openStatus);
     return iterator;
 }
-#endif // !PLATFORM(IOS)
+
+#endif
 
 
 // Iterator text setting

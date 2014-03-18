@@ -207,7 +207,8 @@ static const UChar viewTargetSpec[] =  {'v', 'i', 'e', 'w', 'T', 'a', 'r', 'g', 
 
 bool SVGViewSpec::parseViewSpec(const String& viewSpec)
 {
-    const UChar* currViewSpec = viewSpec.deprecatedCharacters();
+    auto upconvertedCharacters = StringView(viewSpec).upconvertedCharacters();
+    const UChar* currViewSpec = upconvertedCharacters;
     const UChar* end = currViewSpec + viewSpec.length();
 
     if (currViewSpec >= end || !m_contextElement)

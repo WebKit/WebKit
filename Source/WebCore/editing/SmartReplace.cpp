@@ -34,15 +34,14 @@
 
 #include <unicode/uset.h>
 #include <wtf/Assertions.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
 static void addAllCodePoints(USet* smartSet, const String& string)
 {
-    const UChar* characters = string.deprecatedCharacters();
     for (size_t i = 0; i < string.length(); i++)
-        uset_add(smartSet, characters[i]);
+        uset_add(smartSet, string[i]);
 }
 
 // This is mostly a port of the code in WebCore/editing/SmartReplaceCF.cpp
@@ -56,7 +55,7 @@ static USet* getSmartSet(bool isPreviousCharacter)
         // Whitespace and newline (kCFCharacterSetWhitespaceAndNewline)
         UErrorCode ec = U_ZERO_ERROR;
         String whitespaceAndNewline = ASCIILiteral("[[:WSpace:] [\\u000A\\u000B\\u000C\\u000D\\u0085]]");
-        smartSet = uset_openPattern(whitespaceAndNewline.deprecatedCharacters(), whitespaceAndNewline.length(), &ec);
+        smartSet = uset_openPattern(StringView(whitespaceAndNewline).upconvertedCharacters(), whitespaceAndNewline.length(), &ec);
         ASSERT(U_SUCCESS(ec));
 
         // CJK ranges
@@ -83,7 +82,7 @@ static USet* getSmartSet(bool isPreviousCharacter)
             // Punctuation (kCFCharacterSetPunctuation)
             UErrorCode ec = U_ZERO_ERROR;
             String punctuationClass = ASCIILiteral("[:P:]");
-            USet* icuPunct = uset_openPattern(punctuationClass.deprecatedCharacters(), punctuationClass.length(), &ec);
+            USet* icuPunct = uset_openPattern(StringView(punctuationClass).upconvertedCharacters(), punctuationClass.length(), &ec);
             ASSERT(U_SUCCESS(ec));
             uset_addAll(smartSet, icuPunct);
             uset_close(icuPunct);

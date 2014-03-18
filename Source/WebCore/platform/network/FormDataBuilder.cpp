@@ -28,12 +28,12 @@
 #include "Blob.h"
 #include "Document.h"
 #include "TextEncoding.h"
-
 #include <limits>
 #include <wtf/Assertions.h>
 #include <wtf/HexNumber.h>
-#include <wtf/text/CString.h>
 #include <wtf/RandomNumber.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -61,12 +61,11 @@ static void appendQuotedString(Vector<char>& buffer, const CString& string)
     size_t length = string.length();
     for (size_t i = 0; i < length; ++i) {
         char c = string.data()[i];
-
         switch (c) {
-        case  0x0a:
+        case 0xA:
             append(buffer, "%0A");
             break;
-        case 0x0d:
+        case 0xD:
             append(buffer, "%0D");
             break;
         case '"':
@@ -86,11 +85,9 @@ TextEncoding FormDataBuilder::encodingFromAcceptCharset(const String& acceptChar
     Vector<String> charsets;
     normalizedAcceptCharset.split(' ', charsets);
 
-    TextEncoding encoding;
-
-    Vector<String>::const_iterator end = charsets.end();
-    for (Vector<String>::const_iterator it = charsets.begin(); it != end; ++it) {
-        if ((encoding = TextEncoding(*it)).isValid())
+    for (auto& charset : charsets) {
+        TextEncoding encoding(charset);
+        if (encoding.isValid())
             return encoding;
     }
 
@@ -165,7 +162,7 @@ void FormDataBuilder::addFilenameToMultiPartHeader(Vector<char>& buffer, const T
     // FIXME: This loses data irreversibly if the filename includes characters you can't encode
     // in the website's character set.
     append(buffer, "; filename=\"");
-    appendQuotedString(buffer, encoding.encode(filename.deprecatedCharacters(), filename.length(), QuestionMarksForUnencodables));
+    appendQuotedString(buffer, encoding.encode(filename, QuestionMarksForUnencodables));
     append(buffer, '"');
 }
 

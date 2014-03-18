@@ -116,11 +116,11 @@ public:
         , m_disableSpacing(false)
         , m_tabSize(0)
     {
-        if (m_charactersLength && s.is8Bit()) {
+        if (!m_charactersLength || s.is8Bit()) {
             m_data.characters8 = s.characters8();
             m_is8Bit = true;
         } else {
-            m_data.characters16 = s.deprecatedCharacters();
+            m_data.characters16 = s.characters16();
             m_is8Bit = false;
         }
     }

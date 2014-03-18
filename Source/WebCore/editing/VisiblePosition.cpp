@@ -590,8 +590,7 @@ UChar32 VisiblePosition::characterAfter() const
         return 0;
 
     UChar32 ch;
-    const UChar* characters = textNode->data().deprecatedCharacters();
-    U16_NEXT(characters, offset, length, ch);
+    U16_NEXT(textNode->data(), offset, length, ch);
     return ch;
 }
 

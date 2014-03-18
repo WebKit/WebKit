@@ -447,6 +447,19 @@ template <typename T> static bool writeLittleEndian(Vector<uint8_t>& buffer, con
     return true;
 }
 
+static bool writeLittleEndianUInt16(Vector<uint8_t>& buffer, const LChar* values, uint32_t length)
+{
+    if (length > std::numeric_limits<uint32_t>::max() / 2)
+        return false;
+
+    for (unsigned i = 0; i < length; ++i) {
+        buffer.append(values[i]);
+        buffer.append(0);
+    }
+
+    return true;
+}
+
 template <> bool writeLittleEndian<uint8_t>(Vector<uint8_t>& buffer, const uint8_t* values, uint32_t length)
 {
     buffer.append(values, length);
@@ -472,7 +485,9 @@ public:
         }
         writeLittleEndian<uint8_t>(out, StringTag);
         writeLittleEndian(out, s.length());
-        return writeLittleEndian(out, s.impl()->deprecatedCharacters(), s.length());
+        if (s.is8Bit())
+            return writeLittleEndianUInt16(out, s.characters8(), s.length());
+        return writeLittleEndian(out, s.characters16(), s.length());
     }
 
     static void serializeUndefined(Vector<uint8_t>& out)
@@ -969,21 +984,28 @@ private:
             return;
         }
 
+        unsigned length = str.length();
+
         // This condition is unlikely to happen as they would imply an ~8gb
         // string but we should guard against it anyway
-        if (str.length() >= StringPoolTag) {
+        if (length >= StringPoolTag) {
             fail();
             return;
         }
 
         // Guard against overflow
-        if (str.length() > (std::numeric_limits<uint32_t>::max() - sizeof(uint32_t)) / sizeof(UChar)) {
+        if (length > (std::numeric_limits<uint32_t>::max() - sizeof(uint32_t)) / sizeof(UChar)) {
             fail();
             return;
         }
 
-        writeLittleEndian<uint32_t>(m_buffer, str.length());
-        if (!writeLittleEndian<uint16_t>(m_buffer, reinterpret_cast<const uint16_t*>(str.deprecatedCharacters()), str.length()))
+        writeLittleEndian<uint32_t>(m_buffer, length);
+        if (!length || str.is8Bit()) {
+            if (!writeLittleEndianUInt16(m_buffer, str.characters8(), length))
+                fail();
+            return;
+        }
+        if (!writeLittleEndian(m_buffer, str.characters16(), length))
             fail();
     }
 

@@ -84,6 +84,12 @@
     <ClCompile Include="..\wtf\text\cf\StringCF.cpp">
       <Filter>text</Filter>
     </ClCompile>
+    <ClCompile Include="..\wtf\text\cf\StringImplCF.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\text\cf\StringViewCF.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
     <ClCompile Include="..\wtf\win\MainThreadWin.cpp">
       <Filter>win</Filter>
     </ClCompile>
@@ -236,9 +242,6 @@
     </ClCompile>
     <ClCompile Include="..\wtf\win\RunLoopWin.cpp">
       <Filter>win</Filter>
-    </ClCompile>
-    <ClCompile Include="..\wtf\text\cf\StringImplCF.cpp">
-      <Filter>text</Filter>
     </ClCompile>
     <ClCompile Include="..\wtf\FastBitVector.cpp" />
   </ItemGroup>

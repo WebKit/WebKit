@@ -51,19 +51,19 @@ struct Unicode16BitEscapeSequence {
         }
         return runEnd;
     }
-    static String decodeRun(const UChar* run, size_t runLength, const TextEncoding&)
+    static String decodeRun(StringView run, const TextEncoding&)
     {
         // Each %u-escape sequence represents a UTF-16 code unit.
         // See <http://www.w3.org/International/iri-edit/draft-duerst-iri.html#anchor29>.
         // For 16-bit escape sequences, we know that findEndOfRun() has given us a contiguous run of sequences
         // without any intervening characters, so decode the run without additional checks.
-        size_t numberOfSequences = runLength / sequenceSize;
+        auto numberOfSequences = run.length() / sequenceSize;
         StringBuilder builder;
         builder.reserveCapacity(numberOfSequences);
         while (numberOfSequences--) {
             UChar codeUnit = (toASCIIHexValue(run[2]) << 12) | (toASCIIHexValue(run[3]) << 8) | (toASCIIHexValue(run[4]) << 4) | toASCIIHexValue(run[5]);
             builder.append(codeUnit);
-            run += sequenceSize;
+            run = run.substring(sequenceSize);
         }
         return builder.toString();
     }
@@ -96,21 +96,20 @@ struct URLEscapeSequence {
         }
         return runEnd;
     }
-    static String decodeRun(const UChar* run, size_t runLength, const TextEncoding& encoding)
+    static String decodeRun(StringView run, const TextEncoding& encoding)
     {
         // For URL escape sequences, we know that findEndOfRun() has given us a run where every %-sign introduces
         // a valid escape sequence, but there may be characters between the sequences.
         Vector<char, 512> buffer;
-        buffer.resize(runLength); // Unescaping hex sequences only makes the length smaller.
+        buffer.resize(run.length()); // Unescaping hex sequences only makes the length smaller.
         char* p = buffer.data();
-        const UChar* runEnd = run + runLength;
-        while (run < runEnd) {
+        while (!run.isEmpty()) {
             if (run[0] == '%') {
                 *p++ = (toASCIIHexValue(run[1]) << 4) | toASCIIHexValue(run[2]);
-                run += sequenceSize;
+                run = run.substring(sequenceSize);
             } else {
                 *p++ = run[0];
-                run += 1;
+                run = run.substring(1);
             }
         }
         ASSERT(buffer.size() >= static_cast<size_t>(p - buffer.data())); // Prove buffer not overrun.
@@ -134,7 +133,7 @@ String decodeEscapeSequences(const String& string, const TextEncoding& encoding)
             continue;
         }
 
-        String decoded = EscapeSequence::decodeRun(string.deprecatedCharacters() + encodedRunPosition, encodedRunEnd - encodedRunPosition, encoding);
+        String decoded = EscapeSequence::decodeRun(StringView(string).substring(encodedRunPosition, encodedRunEnd - encodedRunPosition), encoding);
         if (decoded.isEmpty())
             continue;
 

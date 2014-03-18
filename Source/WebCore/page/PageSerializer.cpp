@@ -216,7 +216,7 @@ void PageSerializer::serializeFrame(Frame* frame)
         return;
     }
     String text = accumulator.serializeNodes(*document->documentElement(), 0, IncludeNode);
-    CString frameHTML = textEncoding.encode(text.deprecatedCharacters(), text.length(), EntitiesForUnencodables);
+    CString frameHTML = textEncoding.encode(text, EntitiesForUnencodables);
     m_resources->append(Resource(url, document->suggestedMIMEType(), SharedBuffer::create(frameHTML.data(), frameHTML.length())));
     m_resourceURLs.add(url);
 
@@ -283,7 +283,7 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const URL
         TextEncoding textEncoding(styleSheet->contents().charset());
         ASSERT(textEncoding.isValid());
         String textString = cssText.toString();
-        CString text = textEncoding.encode(textString.deprecatedCharacters(), textString.length(), EntitiesForUnencodables);
+        CString text = textEncoding.encode(textString, EntitiesForUnencodables);
         m_resources->append(Resource(url, String("text/css"), SharedBuffer::create(text.data(), text.length())));
         m_resourceURLs.add(url);
     }

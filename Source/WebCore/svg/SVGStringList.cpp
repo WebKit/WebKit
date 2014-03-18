@@ -48,7 +48,8 @@ void SVGStringList::parse(const String& data, UChar delimiter)
     // TODO : more error checking/reporting
     clear();
 
-    const UChar* ptr = data.deprecatedCharacters();
+    auto upconvertedCharacters = StringView(data).upconvertedCharacters();
+    const UChar* ptr = upconvertedCharacters;
     const UChar* end = ptr + data.length();
     while (ptr < end) {
         const UChar* start = ptr;

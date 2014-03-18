@@ -71,7 +71,7 @@ String stripLeadingAndTrailingHTMLSpaces(const String& string)
     if (string.is8Bit())
         return stripLeadingAndTrailingHTMLSpaces(string, string.characters8(), length);
 
-    return stripLeadingAndTrailingHTMLSpaces(string, string.deprecatedCharacters(), length);
+    return stripLeadingAndTrailingHTMLSpaces(string, string.characters16(), length);
 }
 
 String serializeForNumberType(const Decimal& number)
@@ -267,12 +267,12 @@ bool parseHTMLNonNegativeInteger(const String& input, unsigned& value)
     // Step 1
     // Step 2
     unsigned length = input.length();
-    if (length && input.is8Bit()) {
+    if (!length || input.is8Bit()) {
         const LChar* start = input.characters8();
         return parseHTMLNonNegativeIntegerInternal(start, start + length, value);
     }
     
-    const UChar* start = input.deprecatedCharacters();
+    const UChar* start = input.characters16();
     return parseHTMLNonNegativeIntegerInternal(start, start + length, value);
 }
 
@@ -326,7 +326,10 @@ static bool parseDescriptors(const String& attribute, size_t start, size_t end, 
         if (isFoundScaleFactor)
             return false;
 
-        imageScaleFactor = charactersToFloat(attribute.deprecatedCharacters() + descriptorStart, descriptorEnd - descriptorStart, &isValid);
+        if (attribute.is8Bit())
+            imageScaleFactor = charactersToFloat(attribute.characters8() + descriptorStart, descriptorEnd - descriptorStart, &isValid);
+        else
+            imageScaleFactor = charactersToFloat(attribute.characters16() + descriptorStart, descriptorEnd - descriptorStart, &isValid);
         isFoundScaleFactor = true;
     }
 

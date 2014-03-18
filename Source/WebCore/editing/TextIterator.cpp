@@ -92,7 +92,8 @@ private:
     bool isBadMatch(const UChar*, size_t length) const;
     bool isWordStartMatch(size_t start, size_t length) const;
 
-    String m_target;
+    const String m_target;
+    const StringView::UpconvertedCharacters m_targetCharacters;
     FindOptions m_options;
 
     Vector<UChar> m_buffer;
@@ -101,7 +102,7 @@ private:
     bool m_atBreak;
     bool m_needsMoreContext;
 
-    bool m_targetRequiresKanaWorkaround;
+    const bool m_targetRequiresKanaWorkaround;
     Vector<UChar> m_normalizedTarget;
     mutable Vector<UChar> m_normalizedMatch;
 
@@ -1649,17 +1650,22 @@ static inline UChar foldQuoteMarkOrSoftHyphen(UChar c)
     }
 }
 
-static inline void foldQuoteMarksAndSoftHyphens(String& s)
+// FIXME: We'd like to tailor the searcher to fold quote marks for us instead
+// of doing it in a separate replacement pass here, but ICU doesn't offer a way
+// to add tailoring on top of the locale-specific tailoring as of this writing.
+static inline String foldQuoteMarksAndSoftHyphens(String string)
 {
-    s.replace(hebrewPunctuationGeresh, '\'');
-    s.replace(hebrewPunctuationGershayim, '"');
-    s.replace(leftDoubleQuotationMark, '"');
-    s.replace(leftSingleQuotationMark, '\'');
-    s.replace(rightDoubleQuotationMark, '"');
-    s.replace(rightSingleQuotationMark, '\'');
-    // Replace soft hyphen with an ignorable character so that their presence or absence will
-    // not affect string comparison.
-    s.replace(softHyphen, 0);
+    string.replace(hebrewPunctuationGeresh, '\'');
+    string.replace(hebrewPunctuationGershayim, '"');
+    string.replace(leftDoubleQuotationMark, '"');
+    string.replace(leftSingleQuotationMark, '\'');
+    string.replace(rightDoubleQuotationMark, '"');
+    string.replace(rightSingleQuotationMark, '\'');
+
+    // Replace soft hyphens with an ignorable character so that presence or absence will not affect string comparison.
+    string.replace(softHyphen, 0);
+
+    return string;
 }
 
 #if !UCONFIG_NO_COLLATION
@@ -1943,7 +1949,8 @@ static inline bool isSeparator(UChar32 character)
 }
 
 inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
-    : m_target(target)
+    : m_target(foldQuoteMarksAndSoftHyphens(target))
+    , m_targetCharacters(StringView(m_target).upconvertedCharacters())
     , m_options(options)
     , m_prefixLength(0)
     , m_atBreak(true)
@@ -1951,11 +1958,6 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
     , m_targetRequiresKanaWorkaround(containsKanaLetters(m_target))
 {
     ASSERT(!m_target.isEmpty());
-
-    // FIXME: We'd like to tailor the searcher to fold quote marks for us instead
-    // of doing it in a separate replacement pass here, but ICU doesn't offer a way
-    // to add tailoring on top of the locale-specific tailoring as of this writing.
-    foldQuoteMarksAndSoftHyphens(m_target);
 
     size_t targetLength = m_target.length();
     m_buffer.reserveInitialCapacity(std::max(targetLength * 8, minimumSearchBufferSize));
@@ -2000,12 +2002,12 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
     usearch_setAttribute(searcher, USEARCH_ELEMENT_COMPARISON, comparator, &status);
     ASSERT(status == U_ZERO_ERROR);
 
-    usearch_setPattern(searcher, m_target.deprecatedCharacters(), targetLength, &status);
+    usearch_setPattern(searcher, m_targetCharacters, targetLength, &status);
     ASSERT(status == U_ZERO_ERROR);
 
     // The kana workaround requires a normalized copy of the target string.
     if (m_targetRequiresKanaWorkaround)
-        normalizeCharacters(m_target.deprecatedCharacters(), m_target.length(), m_normalizedTarget);
+        normalizeCharacters(m_targetCharacters, targetLength, m_normalizedTarget);
 }
 
 inline SearchBuffer::~SearchBuffer()

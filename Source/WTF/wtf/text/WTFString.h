@@ -66,7 +66,7 @@ intptr_t charactersToIntPtr(const UChar*, size_t, bool* ok = 0); // ignores trai
 // It would be better if these were more consistent with the above functions instead.
 WTF_EXPORT_STRING_API double charactersToDouble(const LChar*, size_t, bool* ok = 0);
 WTF_EXPORT_STRING_API double charactersToDouble(const UChar*, size_t, bool* ok = 0);
-float charactersToFloat(const LChar*, size_t, bool* ok = 0);
+WTF_EXPORT_STRING_API float charactersToFloat(const LChar*, size_t, bool* ok = 0);
 WTF_EXPORT_STRING_API float charactersToFloat(const UChar*, size_t, bool* ok = 0);
 WTF_EXPORT_STRING_API float charactersToFloat(const LChar*, size_t, size_t& parsedLength);
 WTF_EXPORT_STRING_API float charactersToFloat(const UChar*, size_t, size_t& parsedLength);

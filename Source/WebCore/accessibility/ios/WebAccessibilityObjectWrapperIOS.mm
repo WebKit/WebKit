@@ -1660,7 +1660,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
                 String listMarkerText = m_object->listMarkerTextForNodeAndPosition(node, VisiblePosition(it.range()->startPosition())); 
                 
                 if (!listMarkerText.isEmpty()) 
-                    [array addObject:[NSString stringWithCharacters:listMarkerText.deprecatedCharacters() length:listMarkerText.length()]];
+                    [array addObject:listMarkerText];
                 // There was not an element representation, so just return the text.
                 [array addObject:it.text().createNSString().get()];
             }

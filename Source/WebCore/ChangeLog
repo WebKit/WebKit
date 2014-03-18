@@ -1,3 +1,256 @@
+2014-03-18  Darin Adler  <darin@apple.com>
+
+        Reduce use of deprecatedCharacters in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=130318
+
+        Reviewed by Andreas Kling.
+
+        * Modules/indexeddb/IDBKeyPath.cpp:
+        (WebCore::IDBKeyPathLexer::IDBKeyPathLexer): Use StringView for parsing.
+        (WebCore::IDBKeyPathLexer::lex): Ditto.
+        (WebCore::IDBKeyPathLexer::lexIdentifier): Ditto.
+
+        * Modules/indexeddb/leveldb/IDBLevelDBCoding.cpp:
+        (WebCore::IDBLevelDBCoding::encodeString): Index directly into string instead of
+        using deprecatedCharacters.
+
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::setSubprotocol): Use
+        StringView::getCharactersWithUpconvert.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::setExtensions): Ditto.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper arrayOfTextForTextMarkers:attributed:]):
+        Use operator NSString * instead of explicitly creating an NSString.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::writeLittleEndianUInt16): Added.
+        (WebCore::CloneSerializer::serialize): Added a separate code path for 8-bit strings.
+        (WebCore::CloneSerializer::write): Ditto.
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:JSC::originRootObject:rootObject:]):
+        Use operator NSString * instead of explicitly creating an NSString.
+
+        * dom/Document.cpp:
+        (WebCore::Document::parseQualifiedName): Index directly into string instead of
+        using deprecatedCharacters.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::containsOnlyWhitespace): Ditto.
+        * editing/SmartReplace.cpp:
+        (WebCore::addAllCodePoints): Ditto.
+        (WebCore::getSmartSet): Use StringView::upconvertedCharacters.
+
+        * editing/TextIterator.cpp:
+        (WebCore::foldQuoteMarksAndSoftHyphens): Changed to return a value so it can be
+        used in initialization rather than assignment.
+        (WebCore::SearchBuffer::SearchBuffer): Use StringView::upconvertedCharacters.
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::insertText): Index directly into string instead of using
+        deprecatedCharacters.
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::characterAfter): Ditto.
+        * editing/VisibleUnits.cpp:
+        (WebCore::startOfParagraph): Ditto.
+        (WebCore::endOfParagraph): Ditto.
+
+        * fileapi/WebKitBlobBuilder.cpp:
+        (WebCore::BlobBuilder::append): Pass a StringView to TextEncoding::encode.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::parseToDateComponents): Use
+        StringView::upconvertedCharacters.
+
+        * html/FormDataList.cpp:
+        (WebCore::FormDataList::appendString): Pass a StringView to TextEncoding::encode.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::normalizeSpaces): Use StringView::getCharactersWithUpconvert.
+
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::stripLeadingAndTrailingHTMLSpaces): Use characters16 for a code path
+        that already handled 8-bit characters separately.
+        (WebCore::parseHTMLNonNegativeInteger): Ditto.
+        (WebCore::parseDescriptors): Added an 8-bit code path.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::newLineAndWhitespaceDelimiters): Index directly into
+        string instead of using deprecatedCharacters.
+        * inspector/InspectorStyleTextEditor.cpp:
+        (WebCore::InspectorStyleTextEditor::insertProperty): Ditto.
+        (WebCore::InspectorStyleTextEditor::internalReplaceProperty): Ditto.
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::isSourceListNone): Use StringView::upconvertedCharacters.
+        (WebCore::CSPSourceList::parse): Ditto.
+        (WebCore::NonceDirective::parse): Ditto.
+        (WebCore::MediaListDirective::parse): Ditto.
+        (WebCore::CSPDirectiveList::parse): Ditto.
+        (WebCore::CSPDirectiveList::parseReportURI): Ditto.
+        (WebCore::CSPDirectiveList::parseReflectedXSS): Ditto.
+        (WebCore::ContentSecurityPolicy::didReceiveHeader): Ditto.
+
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeFrame): Pass a StringView into
+        TextEncoding::encode.
+        (WebCore::PageSerializer::serializeCSSStyleSheet): Ditto.
+
+        * platform/Length.cpp:
+        (WebCore::countCharacter): Index directly into string instead of using
+        deprecatedCharacters. Also changed to take a StringImpl&.
+        (WebCore::newCoordsArray): Ditto. Call countCharacter the new way, and
+        use StringView::upconvertedCharacters.
+        (WebCore::newLengthArray): Ditto.
+
+        * platform/LinkHash.cpp:
+        (WebCore::visitedLinkHash): Use characters16 for the 16-bit path.
+        Also removed unused visitedURL function.
+        * platform/LinkHash.h: Removed unused visitedURL function.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::utf8Buffer): Added an 8-bit code path.
+        * platform/URL.cpp:
+        (WebCore::URL::port): Ditto.
+        (WebCore::encodeRelativeString): Use StringView to call TextEncoding::encode.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::parseHexColor): Use characters16 in the 16-bit path.
+        (WebCore::Color::Color): Ditto.
+
+        * platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp:
+        (WebCore::harfBuzzGetGlyph): Use StringView to call TextEncoding::encode.
+
+        * platform/graphics/StringTruncator.cpp:
+        (WebCore::centerTruncateToBuffer): Use StringView::getCharactersWithUpconvert.
+        (WebCore::rightTruncateToBuffer): Ditto.
+        (WebCore::rightClipToCharacterBuffer): Ditto.
+        (WebCore::rightClipToWordBuffer): Ditto.
+        (WebCore::leftTruncateToBuffer): Ditto.
+        (WebCore::truncateString): Ditto.
+
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun): Use characters16 in the 16-bit code path.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource):
+        Use StringView::upconvertedCharacters.
+
+        * platform/network/DataURL.cpp:
+        (WebCore::handleDataURL): Use StringView to call TextEncoding::encode.
+        * platform/network/FormDataBuilder.cpp:
+        (WebCore::FormDataBuilder::addFilenameToMultiPartHeader): Ditto.
+
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::bindBlob): Use StringView::upconvertedCharacters.
+        (WebCore::SQLiteStatement::bindText): Ditto.
+
+        * platform/text/DecodeEscapeSequences.h:
+        (WebCore::Unicode16BitEscapeSequence::decodeRun): Changed to take a StringView.
+        (WebCore::URLEscapeSequence::decodeRun): Ditto.
+        (WebCore::decodeEscapeSequences): Pass StringView to decodeRun.
+
+        * platform/text/Hyphenation.cpp:
+        (WebCore::lastHyphenLocation): Take a StringView.
+        * platform/text/Hyphenation.h: Make lastHyphenLocation take a StringView.
+
+        * platform/text/TextBreakIterator.cpp:
+        (WebCore::initializeIteratorWithRules): Use StringView::upconvertedCharacters.
+
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::encode): Use StringView::upconvertedCharacters.
+        Change argument type to StringView.
+        * platform/text/TextEncoding.h: Ditto.
+
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::atomicCanonicalTextEncodingName): Use characters16 for the 16-bit path.
+
+        * platform/text/cf/HyphenationCF.cpp:
+        (WebCore::lastHyphenLocation): Use StringView::text.createCFStringWithoutCopying.
+        Change argument type to StringView.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::constructTextRun): Use characters16 for the 16-bit path.
+
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::width): Removed check for null characters pointer,
+        since the pointer will never be null, and even if it was there would be no need
+        for an early exit.
+
+        * rendering/RenderText.cpp:
+        (WebCore::maxWordFragmentWidth): Take a StringView.
+        (WebCore::RenderText::computePreferredLogicalWidths): Pass in a StringView.
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::tryHyphenating): Ditto.
+
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::layoutTextOnLineOrPath): Use
+        StringView::upconvertedCharacters.
+
+        * rendering/svg/SVGTextMetrics.cpp:
+        (WebCore::SVGTextMetrics::SVGTextMetrics): Use String::substring.
+
+        * svg/SVGAngle.cpp:
+        (WebCore::SVGAngle::setValueAsString): Use StringView::upconvertedCharacters.
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::parsePoint): Ditto.
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::parseKeySplines): Ditto.
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseViewBox): Ditto.
+
+        * svg/SVGFontData.cpp:
+        (WebCore::SVGFontData::applySVGGlyphSelection): Pass StringView to
+        createStringWIthMirroredCharacters.
+        (WebCore::createStringWithMirroredCharacters): Changed to use StringView and
+        use indexing into that instead of a characters pointer.
+
+        * svg/SVGFontData.h: Removed createStringWithMirroredCharacters member function,
+        since it has nothing to do with the SVGFontData object. Now it's just a private
+        helper function in the SVGFontData.cpp source file.
+
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::registerLigaturesInGlyphCache): Index into the string
+        instead of using deprecatedCharacters.
+
+        * svg/SVGGlyphMap.h:
+        (WebCore::SVGGlyphMap::addGlyph): Use StringView::upconvertedCharacters.
+        (WebCore::SVGGlyphMap::collectGlyphsForString): Ditto.
+        * svg/SVGGlyphRefElement.cpp:
+        (WebCore::SVGGlyphRefElement::parseAttribute): Ditto.
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::setValueAsString): Ditto.
+        * svg/SVGLengthList.cpp:
+        (WebCore::SVGLengthList::parse): Ditto.
+        * svg/SVGNumberList.cpp:
+        (WebCore::SVGNumberList::parse): Ditto.
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::parseNumberFromString): Ditto.
+        (WebCore::parseNumberOptionalNumber): Ditto.
+        (WebCore::parseRect): Ditto.
+        (WebCore::pointsListFromSVGData): Ditto.
+        (WebCore::parseGlyphName): Ditto.
+        (WebCore::parseKerningUnicodeString): Ditto.
+        (WebCore::parseDelimitedString): Ditto.
+        * svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::parse): Ditto.
+        * svg/SVGStringList.cpp:
+        (WebCore::SVGStringList::parse): Ditto.
+        * svg/SVGTransformList.cpp:
+        (WebCore::SVGTransformList::parse): Ditto.
+        * svg/SVGTransformable.cpp:
+        (WebCore::SVGTransformable::parseTransformType): Ditto.
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::parseViewSpec): Ditto.
+        * svg/SVGZoomAndPan.h:
+        (WebCore::SVGZoomAndPan::parseAttribute): Ditto.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send): Pass a StringView to TextEncoding::encode.
+
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::parseString): Use StringView::upconvertedCharacters.
+
 2014-03-18  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         LayoutBox is a terrible name

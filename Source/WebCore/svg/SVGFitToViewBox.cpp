@@ -29,15 +29,15 @@
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGPreserveAspectRatio.h"
-#include <wtf/text/StringImpl.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
 bool SVGFitToViewBox::parseViewBox(Document* doc, const String& s, FloatRect& viewBox)
 {
-    const UChar* c = s.deprecatedCharacters();
-    const UChar* end = c + s.length();
-    return parseViewBox(doc, c, end, viewBox, true);
+    auto upconvertedCharacters = StringView(s).upconvertedCharacters();
+    const UChar* characters = upconvertedCharacters;
+    return parseViewBox(doc, characters, characters + s.length(), viewBox, true);
 }
 
 bool SVGFitToViewBox::parseViewBox(Document* doc, const UChar*& c, const UChar* end, FloatRect& viewBox, bool validate)

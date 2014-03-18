@@ -45,8 +45,7 @@ public:
 
     explicit IDBKeyPathLexer(const String& s)
         : m_string(s)
-        , m_ptr(s.deprecatedCharacters())
-        , m_end(s.deprecatedCharacters() + s.length())
+        , m_remainingText(s)
         , m_currentTokenType(TokenError)
     {
     }
@@ -64,23 +63,23 @@ public:
 private:
     TokenType lex(String&);
     TokenType lexIdentifier(String&);
+
     String m_currentElement;
-    String m_string;
-    const UChar* m_ptr;
-    const UChar* m_end;
+    const String m_string;
+    StringView m_remainingText;
     TokenType m_currentTokenType;
 };
 
 IDBKeyPathLexer::TokenType IDBKeyPathLexer::lex(String& element)
 {
-    if (m_ptr >= m_end)
+    if (m_remainingText.isEmpty())
         return TokenEnd;
-    ASSERT_WITH_SECURITY_IMPLICATION(m_ptr < m_end);
 
-    if (*m_ptr == '.') {
-        ++m_ptr;
+    if (m_remainingText[0] == '.') {
+        m_remainingText = m_remainingText.substring(1);
         return TokenDot;
     }
+
     return lexIdentifier(element);
 }
 
@@ -108,16 +107,16 @@ static inline bool isIdentifierCharacter(UChar c)
 
 IDBKeyPathLexer::TokenType IDBKeyPathLexer::lexIdentifier(String& element)
 {
-    const UChar* start = m_ptr;
-    if (m_ptr < m_end && isIdentifierStartCharacter(*m_ptr))
-        ++m_ptr;
+    StringView start = m_remainingText;
+    if (!m_remainingText.isEmpty() && isIdentifierStartCharacter(m_remainingText[0]))
+        m_remainingText = m_remainingText.substring(1);
     else
         return TokenError;
 
-    while (m_ptr < m_end && isIdentifierCharacter(*m_ptr))
-        ++m_ptr;
+    while (!m_remainingText.isEmpty() && isIdentifierCharacter(m_remainingText[0]))
+        m_remainingText = m_remainingText.substring(1);
 
-    element = String(start, m_ptr - start);
+    element = start.substring(0, start.length() - m_remainingText.length()).toString();
     return TokenIdentifier;
 }
 

@@ -24,6 +24,7 @@
 #include "QualifiedName.h"
 #include "SVGNames.h"
 #include <wtf/HashSet.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -59,7 +60,8 @@ public:
     {
         ASSERT(target);
         if (name == SVGNames::zoomAndPanAttr) {
-            const UChar* start = value.string().deprecatedCharacters();
+            auto upconvertedCharacters = StringView(value.string()).upconvertedCharacters();
+            const UChar* start = upconvertedCharacters;
             const UChar* end = start + value.length();
             SVGZoomAndPanType zoomAndPan = SVGZoomAndPanUnknown;
             parseZoomAndPan(start, end, zoomAndPan);

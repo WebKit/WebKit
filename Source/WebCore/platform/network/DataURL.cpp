@@ -35,6 +35,7 @@
 #include "TextEncoding.h"
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -84,7 +85,7 @@ void handleDataURL(ResourceHandle* handle)
         data = decodeURLEscapeSequences(data, encoding);
         handle->client()->didReceiveResponse(handle, response);
 
-        CString encodedData = encoding.encode(data.deprecatedCharacters(), data.length(), URLEncodedEntitiesForUnencodables);
+        CString encodedData = encoding.encode(data, URLEncodedEntitiesForUnencodables);
         response.setExpectedContentLength(encodedData.length());
         if (encodedData.length())
             handle->client()->didReceiveData(handle, encodedData.data(), encodedData.length(), 0);

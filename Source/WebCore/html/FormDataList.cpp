@@ -22,6 +22,7 @@
 #include "FormDataList.h"
 
 #include "LineEnding.h"
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -32,7 +33,7 @@ FormDataList::FormDataList(const TextEncoding& c)
 
 void FormDataList::appendString(const String& s)
 {
-    CString cstr = m_encoding.encode(s.deprecatedCharacters(), s.length(), EntitiesForUnencodables);
+    CString cstr = m_encoding.encode(s, EntitiesForUnencodables);
     m_items.append(normalizeLineEndingsToCRLF(cstr));
 }
 

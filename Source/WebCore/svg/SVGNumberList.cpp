@@ -31,7 +31,8 @@ void SVGNumberList::parse(const String& value)
     clear();
 
     float number = 0;
-    const UChar* ptr = value.deprecatedCharacters();
+    auto upconvertedCharacters = StringView(value).upconvertedCharacters();
+    const UChar* ptr = upconvertedCharacters;
     const UChar* end = ptr + value.length();
 
     // The spec strangely doesn't allow leading whitespace.  We might choose to violate that intentionally. (section 4.1)

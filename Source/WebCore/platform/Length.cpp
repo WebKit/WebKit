@@ -30,7 +30,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuffer.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringView.h>
 
 using namespace WTF;
 
@@ -77,21 +77,21 @@ static Length parseLength(const UChar* data, unsigned length)
     return Length(0, Relative);
 }
 
-static int countCharacter(const UChar* data, unsigned length, UChar character)
+static unsigned countCharacter(StringImpl& string, UChar character)
 {
-    int count = 0;
-    for (int i = 0; i < static_cast<int>(length); ++i)
-        count += data[i] == character;
+    unsigned count = 0;
+    unsigned length = string.length();
+    for (unsigned i = 0; i < length; ++i)
+        count += string[i] == character;
     return count;
 }
 
 std::unique_ptr<Length[]> newCoordsArray(const String& string, int& len)
 {
     unsigned length = string.length();
-    const UChar* data = string.deprecatedCharacters();
     StringBuffer<UChar> spacified(length);
     for (unsigned i = 0; i < length; i++) {
-        UChar cc = data[i];
+        UChar cc = string[i];
         if (cc > '9' || (cc < '0' && cc != '-' && cc != '*' && cc != '.'))
             spacified[i] = ' ';
         else
@@ -101,18 +101,19 @@ std::unique_ptr<Length[]> newCoordsArray(const String& string, int& len)
 
     str = str->simplifyWhiteSpace();
 
-    len = countCharacter(str->deprecatedCharacters(), str->length(), ' ') + 1;
+    len = countCharacter(*str, ' ') + 1;
     auto r = std::make_unique<Length[]>(len);
 
     int i = 0;
     unsigned pos = 0;
     size_t pos2;
 
+    auto upconvertedCharacters = StringView(str.get()).upconvertedCharacters();
     while ((pos2 = str->find(' ', pos)) != notFound) {
-        r[i++] = parseLength(str->deprecatedCharacters() + pos, pos2 - pos);
+        r[i++] = parseLength(upconvertedCharacters + pos, pos2 - pos);
         pos = pos2+1;
     }
-    r[i] = parseLength(str->deprecatedCharacters() + pos, str->length() - pos);
+    r[i] = parseLength(upconvertedCharacters + pos, str->length() - pos);
 
     ASSERT(i == len - 1);
 
@@ -127,15 +128,16 @@ std::unique_ptr<Length[]> newLengthArray(const String& string, int& len)
         return nullptr;
     }
 
-    len = countCharacter(str->deprecatedCharacters(), str->length(), ',') + 1;
+    len = countCharacter(*str, ',') + 1;
     auto r = std::make_unique<Length[]>(len);
 
     int i = 0;
     unsigned pos = 0;
     size_t pos2;
 
+    auto upconvertedCharacters = StringView(str.get()).upconvertedCharacters();
     while ((pos2 = str->find(',', pos)) != notFound) {
-        r[i++] = parseLength(str->deprecatedCharacters() + pos, pos2 - pos);
+        r[i++] = parseLength(upconvertedCharacters + pos, pos2 - pos);
         pos = pos2+1;
     }
 
@@ -143,7 +145,7 @@ std::unique_ptr<Length[]> newLengthArray(const String& string, int& len)
 
     // IE Quirk: If the last comma is the last char skip it and reduce len by one.
     if (str->length()-pos > 0)
-        r[i] = parseLength(str->deprecatedCharacters() + pos, str->length() - pos);
+        r[i] = parseLength(upconvertedCharacters + pos, str->length() - pos);
     else
         len--;
 

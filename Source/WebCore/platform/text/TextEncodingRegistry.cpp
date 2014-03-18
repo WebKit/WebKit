@@ -336,12 +336,12 @@ const char* atomicCanonicalTextEncodingName(const CharacterType* characters, siz
 const char* atomicCanonicalTextEncodingName(const String& alias)
 {
     if (!alias.length())
-        return 0;
+        return nullptr;
 
     if (alias.is8Bit())
-        return atomicCanonicalTextEncodingName<LChar>(alias.characters8(), alias.length());
+        return atomicCanonicalTextEncodingName(alias.characters8(), alias.length());
 
-    return atomicCanonicalTextEncodingName<UChar>(alias.deprecatedCharacters(), alias.length());
+    return atomicCanonicalTextEncodingName(alias.characters16(), alias.length());
 }
 
 bool noExtendedTextEncodingNameUsed()

@@ -26,7 +26,7 @@
 #include "ExceptionCode.h"
 #include "FloatRect.h"
 #include "SVGParserUtilities.h"
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -58,7 +58,8 @@ void SVGPreserveAspectRatio::setMeetOrSlice(unsigned short meetOrSlice, Exceptio
 
 void SVGPreserveAspectRatio::parse(const String& value)
 {
-    const UChar* begin = value.deprecatedCharacters();
+    auto upconvertedCharacters = StringView(value).upconvertedCharacters();
+    const UChar* begin = upconvertedCharacters;
     parseInternal(begin, begin + value.length(), true);
 }
 

@@ -297,10 +297,9 @@ Vector<char> encodeString(const String& s)
     size_t length = s.length();
     Vector<char> ret(length * sizeof(UChar));
 
-    const UChar* src = s.deprecatedCharacters();
     UChar* dst = reinterpret_cast<UChar*>(ret.data());
     for (unsigned i = 0; i < length; ++i)
-        *dst++ = htons(*src++);
+        *dst++ = htons(s[i]);
 
     return ret;
 }

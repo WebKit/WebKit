@@ -597,11 +597,11 @@ inline void tryHyphenating(RenderText* text, const Font& font, const AtomicStrin
     if (prefixLength < minimumPrefixLength)
         return;
 
-    prefixLength = lastHyphenLocation(text->deprecatedCharacters() + lastSpace, pos - lastSpace, std::min(prefixLength, pos - lastSpace - minimumSuffixLength) + 1, localeIdentifier);
+    prefixLength = lastHyphenLocation(StringView(text->text()).substring(lastSpace, pos - lastSpace), std::min(prefixLength, pos - lastSpace - minimumSuffixLength) + 1, localeIdentifier);
     if (!prefixLength || prefixLength < minimumPrefixLength)
         return;
 
-    // When lastSapce is a space, which it always is except sometimes at the beginning of a line or after collapsed
+    // When lastSpace is a space, which it always is except sometimes at the beginning of a line or after collapsed
     // space, it should not count towards hyphenate-limit-before.
     if (prefixLength == minimumPrefixLength) {
         UChar characterAtLastSpace = text->characterAt(lastSpace);

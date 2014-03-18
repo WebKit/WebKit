@@ -29,9 +29,8 @@
 #include "FloatConversion.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-
 #include <wtf/MathExtras.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -224,7 +223,8 @@ void SVGLength::setValueAsString(const String& string, ExceptionCode& ec)
         return;
 
     float convertedNumber = 0;
-    const UChar* ptr = string.deprecatedCharacters();
+    auto upconvertedCharacters = StringView(string).upconvertedCharacters();
+    const UChar* ptr = upconvertedCharacters;
     const UChar* end = ptr + string.length();
 
     if (!parseNumber(ptr, end, convertedNumber, false)) {

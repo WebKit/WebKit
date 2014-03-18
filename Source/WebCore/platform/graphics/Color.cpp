@@ -165,7 +165,7 @@ bool Color::parseHexColor(const String& name, RGBA32& rgb)
         return false;
     if (name.is8Bit())
         return parseHexColor(name.characters8(), name.length(), rgb);
-    return parseHexColor(name.deprecatedCharacters(), name.length(), rgb);
+    return parseHexColor(name.characters16(), name.length(), rgb);
 }
 
 int differenceSquared(const Color& c1, const Color& c2)
@@ -182,7 +182,7 @@ Color::Color(const String& name)
         if (name.is8Bit())
             m_valid = parseHexColor(name.characters8() + 1, name.length() - 1, m_color);
         else
-            m_valid = parseHexColor(name.deprecatedCharacters() + 1, name.length() - 1, m_color);
+            m_valid = parseHexColor(name.characters16() + 1, name.length() - 1, m_color);
     } else
         setNamedColor(name);
 }

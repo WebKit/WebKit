@@ -1,3 +1,18 @@
+2014-03-18  Darin Adler  <darin@apple.com>
+
+        Reduce use of deprecatedCharacters in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=130318
+
+        Reviewed by Andreas Kling.
+
+        * wtf/text/WTFString.h: Export another overload of charactersToFloat since it's used
+        in WebCore now.
+
+        * wtf/text/cf/StringViewCF.cpp: Change so this can build on Windows.
+
+        * WTF.vcxproj/WTF.vcxproj: Added StringViewCF.cpp.
+        * WTF.vcxproj/WTF.vcxproj.filters: Added StringViewCF.cpp.
+
 2014-03-18  Filip Pizlo  <fpizlo@apple.com>
 
         More FTL enabling.

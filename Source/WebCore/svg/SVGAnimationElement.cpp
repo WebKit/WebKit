@@ -38,6 +38,7 @@
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include <wtf/MathExtras.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -92,7 +93,9 @@ static void parseKeySplines(const String& parse, Vector<UnitBezier>& result)
     result.clear();
     if (parse.isEmpty())
         return;
-    const UChar* cur = parse.deprecatedCharacters();
+
+    auto upconvertedCharacters = StringView(parse).upconvertedCharacters();
+    const UChar* cur = upconvertedCharacters;
     const UChar* end = cur + parse.length();
 
     skipOptionalSVGSpaces(cur, end);
