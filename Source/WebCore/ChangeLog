@@ -1,3 +1,20 @@
+2014-03-18  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Follow-up fix for the merge of r163579.
+
+    2014-03-17  Jeffrey Pfau  <jpfau@apple.com>
+
+            Merge parts from Blink CLs 169865acce3b6bc85ac1adf07b2798aaf9aad67a and 04f613e7f0c35f444d5a9bd42da55c69df65cf64 that weren't merged to trunk
+            <rdar://problem/16307742>
+
+            Unreviewed Layout Test fix.
+
+            * html/parser/HTMLConstructionSite.cpp:
+            (WebCore::insert):
+            (WebCore::executeInsertTask):
+            (WebCore::executeReparentTask):
+            (WebCore::executeInsertAlreadyParsedChildTask):
+
 2014-03-17  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r165753.

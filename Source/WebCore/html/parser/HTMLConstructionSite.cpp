@@ -86,8 +86,11 @@ static inline bool isAllWhitespace(const String& string)
 {
     return string.isAllSpecialCharacters<isHTMLSpace>();
 }
-
-static inline void insert(HTMLConstructionSiteTask& task)
+// The |lazyAttach| parameter to this function exists for historical reasons.
+// There used to be two code paths, one that used lazyAttach and one that
+// didn't. We should make the two code paths consistent and either use
+// lazyAttach or non-lazyAttach, but we wanted to make that change separately.
+static inline void insert(HTMLConstructionSiteTask& task, bool lazyAttach)
 {
 #if ENABLE(TEMPLATE_ELEMENT)
     if (task.parent->hasTagName(templateTag))
@@ -105,15 +108,19 @@ static inline void insert(HTMLConstructionSiteTask& task)
     // JavaScript run from beforeload (or DOM Mutation or event handlers)
     // might have removed the child, in which case we should not attach it.
 
-    if (task.child->parentNode() && task.parent->attached() && !task.child->attached())
-        task.child->attach();
+    if (task.child->parentNode() && task.parent->attached() && !task.child->attached()) {
+        if (lazyAttach)
+            task.child->lazyAttach();
+        else
+            task.child->attach();
+    }
 }
 
 static inline void executeInsertTask(HTMLConstructionSiteTask& task)
 {
     ASSERT(task.operation == HTMLConstructionSiteTask::Insert);
 
-    insert(task);
+    insert(task, false);
 
     task.child->beginParsingChildren();
 
@@ -129,13 +136,16 @@ static inline void executeReparentTask(HTMLConstructionSiteTask& task)
         parent->parserRemoveChild(task.child.get());
 
     task.parent->parserAppendChild(task.child);
+
+    if (task.child->parentElement()->attached() && !task.child->attached())
+        task.child->lazyAttach();
 }
 
 static inline void executeInsertAlreadyParsedChildTask(HTMLConstructionSiteTask& task)
 {
     ASSERT(task.operation == HTMLConstructionSiteTask::InsertAlreadyParsedChild);
 
-    insert(task);
+    insert(task, true);
 }
 
 static inline void executeTakeAllChildrenTask(HTMLConstructionSiteTask& task)
