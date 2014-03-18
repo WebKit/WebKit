@@ -436,6 +436,26 @@ private:
                 fixEdge<MiscUse>(node->child2());
                 break;
             }
+            if (node->child1()->shouldSpeculateStringIdent()
+                && node->child2()->shouldSpeculateNotStringVar()) {
+                fixEdge<StringIdentUse>(node->child1());
+                fixEdge<NotStringVarUse>(node->child2());
+                break;
+            }
+            if (node->child2()->shouldSpeculateStringIdent()
+                && node->child1()->shouldSpeculateNotStringVar()) {
+                fixEdge<StringIdentUse>(node->child2());
+                fixEdge<NotStringVarUse>(node->child1());
+                break;
+            }
+            if (node->child1()->shouldSpeculateString()) {
+                fixEdge<StringUse>(node->child1());
+                break;
+            }
+            if (node->child2()->shouldSpeculateString()) {
+                fixEdge<StringUse>(node->child2());
+                break;
+            }
             break;
         }
 

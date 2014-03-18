@@ -693,7 +693,8 @@ public:
         
         JumpList(Jump jump)
         {
-            append(jump);
+            if (jump.isSet())
+                append(jump);
         }
 
         void link(AbstractMacroAssembler<AssemblerType>* masm)

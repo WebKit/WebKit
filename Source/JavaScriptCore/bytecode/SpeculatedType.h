@@ -120,6 +120,11 @@ inline bool isStringIdentSpeculation(SpeculatedType value)
     return value == SpecStringIdent;
 }
 
+inline bool isNotStringVarSpeculation(SpeculatedType value)
+{
+    return !(value & SpecStringVar);
+}
+
 inline bool isStringSpeculation(SpeculatedType value)
 {
     return !!value && (value & SpecString) == value;

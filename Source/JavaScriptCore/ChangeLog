@@ -1,3 +1,111 @@
+2014-03-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Add CompareStrictEq(StringIdent:, NotStringVar:) and CompareStrictEq(String:, Untyped:)
+        https://bugs.webkit.org/show_bug.cgi?id=130300
+
+        Reviewed by Mark Hahnenberg.
+        
+        We can quickly strictly compare StringIdent's to NotStringVar's and String's to Untyped's.
+        This makes the DFG aware of this.
+        
+        Also adds StringIdent-to-StringIdent and StringIdent-to-NotStringVar strict comparisons to
+        the FTL. Also adds StringIdent-to-StringIdent non-strict comparisons to the FTL.
+        
+        This also gives the DFG some abstractions for checking something is a cell or is other.
+        This made this patch easier to write and also simplified a bunch of other stuff.
+        
+        1% speed-up on Octane.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::JumpList::JumpList):
+        * bytecode/SpeculatedType.h:
+        (JSC::isNotStringVarSpeculation):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::childFor):
+        (JSC::DFG::Node::shouldSpeculateNotStringVar):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIn):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOfForObject):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOf):
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        (JSC::DFG::SpeculativeJIT::compileBooleanCompare):
+        (JSC::DFG::SpeculativeJIT::compileStringEquality):
+        (JSC::DFG::SpeculativeJIT::compileStringToUntypedEquality):
+        (JSC::DFG::SpeculativeJIT::compileStringIdentEquality):
+        (JSC::DFG::SpeculativeJIT::compileStringIdentToNotStringVarEquality):
+        (JSC::DFG::SpeculativeJIT::compileStringZeroLength):
+        (JSC::DFG::SpeculativeJIT::speculateObjectOrOther):
+        (JSC::DFG::SpeculativeJIT::speculateString):
+        (JSC::DFG::SpeculativeJIT::speculateStringIdentAndLoadStorage):
+        (JSC::DFG::SpeculativeJIT::speculateNotStringVar):
+        (JSC::DFG::SpeculativeJIT::speculateNotCell):
+        (JSC::DFG::SpeculativeJIT::speculateOther):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        (JSC::DFG::SpeculativeJIT::emitSwitchChar):
+        (JSC::DFG::SpeculativeJIT::emitSwitchString):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::blessedBooleanResult):
+        (JSC::DFG::SpeculativeJIT::unblessedBooleanResult):
+        (JSC::DFG::SpeculativeJIT::booleanResult):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::branchIsCell):
+        (JSC::DFG::branchNotCell):
+        (JSC::DFG::SpeculativeJIT::branchIsOther):
+        (JSC::DFG::SpeculativeJIT::branchNotOther):
+        (JSC::DFG::SpeculativeJIT::moveTrueTo):
+        (JSC::DFG::SpeculativeJIT::moveFalseTo):
+        (JSC::DFG::SpeculativeJIT::blessBoolean):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        (JSC::DFG::SpeculativeJIT::branchIsCell):
+        (JSC::DFG::SpeculativeJIT::branchNotCell):
+        (JSC::DFG::SpeculativeJIT::branchIsOther):
+        (JSC::DFG::SpeculativeJIT::branchNotOther):
+        (JSC::DFG::SpeculativeJIT::moveTrueTo):
+        (JSC::DFG::SpeculativeJIT::moveFalseTo):
+        (JSC::DFG::SpeculativeJIT::blessBoolean):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEq):
+        (JSC::FTL::LowerDFGToLLVM::lowString):
+        (JSC::FTL::LowerDFGToLLVM::lowStringIdent):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::speculateString):
+        (JSC::FTL::LowerDFGToLLVM::speculateStringIdent):
+        (JSC::FTL::LowerDFGToLLVM::speculateNotStringVar):
+        * runtime/JSCJSValue.h:
+        * tests/stress/string-ident-to-not-string-var-equality.js: Added.
+        (foo):
+        (bar):
+        (test):
+
 2014-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Add Copyright to framework.sb

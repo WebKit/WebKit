@@ -1340,6 +1340,17 @@ struct Node {
         return isBinaryUseKind(useKind, useKind);
     }
     
+    Edge childFor(UseKind useKind)
+    {
+        if (child1().useKind() == useKind)
+            return child1();
+        if (child2().useKind() == useKind)
+            return child2();
+        if (child3().useKind() == useKind)
+            return child3();
+        return Edge();
+    }
+    
     SpeculatedType prediction()
     {
         return m_prediction;
@@ -1418,6 +1429,11 @@ struct Node {
     bool shouldSpeculateStringIdent()
     {
         return isStringIdentSpeculation(prediction());
+    }
+    
+    bool shouldSpeculateNotStringVar()
+    {
+        return isNotStringVarSpeculation(prediction());
     }
  
     bool shouldSpeculateString()

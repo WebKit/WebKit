@@ -100,6 +100,12 @@ union EncodedValueDescriptor {
 #define TagOffset (OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag))
 #define PayloadOffset (OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload))
 
+#if USE(JSVALUE64)
+#define CellPayloadOffset 0
+#else
+#define CellPayloadOffset PayloadOffset
+#endif
+
 enum WhichValueWord {
     TagWord,
     PayloadWord

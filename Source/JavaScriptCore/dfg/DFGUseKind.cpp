@@ -91,6 +91,9 @@ void printInternal(PrintStream& out, UseKind useKind)
     case StringOrStringObjectUse:
         out.print("StringOrStringObject");
         break;
+    case NotStringVarUse:
+        out.print("NotStringVar");
+        break;
     case NotCellUse:
         out.print("NotCell");
         break;

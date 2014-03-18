@@ -861,8 +861,11 @@ public:
         GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
         info.initCell(node, node->refCount(), reg);
     }
-    void booleanResult(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
+    void blessedBooleanResult(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
     {
+#if USE(JSVALUE64)
+        jsValueResult(reg, node, DataFormatJSBoolean, mode);
+#else
         if (mode == CallUseChildren)
             useChildren(node);
 
@@ -870,6 +873,14 @@ public:
         m_gprs.retain(reg, virtualRegister, SpillOrderBoolean);
         GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
         info.initBoolean(node, node->refCount(), reg);
+#endif
+    }
+    void unblessedBooleanResult(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
+    {
+#if USE(JSVALUE64)
+        blessBoolean(reg);
+#endif
+        blessedBooleanResult(reg, node, mode);
     }
 #if USE(JSVALUE64)
     void jsValueResult(GPRReg reg, Node* node, DataFormat format = DataFormatJS, UseChildrenMode mode = CallUseChildren)
@@ -890,6 +901,16 @@ public:
         jsValueResult(reg, node, DataFormatJS, mode);
     }
 #elif USE(JSVALUE32_64)
+    void booleanResult(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
+    {
+        if (mode == CallUseChildren)
+            useChildren(node);
+
+        VirtualRegister virtualRegister = node->virtualRegister();
+        m_gprs.retain(reg, virtualRegister, SpillOrderBoolean);
+        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
+        info.initBoolean(node, node->refCount(), reg);
+    }
     void jsValueResult(GPRReg tag, GPRReg payload, Node* node, DataFormat format = DataFormatJS, UseChildrenMode mode = CallUseChildren)
     {
         if (mode == CallUseChildren)
@@ -1980,8 +2001,15 @@ public:
     void compileObjectToObjectOrOtherEquality(Edge leftChild, Edge rightChild);
     void compileObjectOrOtherLogicalNot(Edge value);
     void compileLogicalNot(Node*);
+    void compileStringEquality(
+        Node*, GPRReg leftGPR, GPRReg rightGPR, GPRReg lengthGPR,
+        GPRReg leftTempGPR, GPRReg rightTempGPR, GPRReg leftTemp2GPR,
+        GPRReg rightTemp2GPR, JITCompiler::JumpList fastTrue,
+        JITCompiler::JumpList fastSlow);
     void compileStringEquality(Node*);
     void compileStringIdentEquality(Node*);
+    void compileStringToUntypedEquality(Node*, Edge stringEdge, Edge untypedEdge);
+    void compileStringIdentToNotStringVarEquality(Node*, Edge stringEdge, Edge notStringVarEdge);
     void compileStringZeroLength(Node*);
     void compileMiscStrictEq(Node*);
 
@@ -2077,6 +2105,15 @@ public:
     void compileNewFunctionNoCheck(Node*);
     void compileNewFunctionExpression(Node*);
     bool compileRegExpExec(Node*);
+    
+    JITCompiler::Jump branchIsCell(JSValueRegs);
+    JITCompiler::Jump branchNotCell(JSValueRegs);
+    JITCompiler::Jump branchIsOther(JSValueRegs, GPRReg tempGPR);
+    JITCompiler::Jump branchNotOther(JSValueRegs, GPRReg tempGPR);
+    
+    void moveTrueTo(GPRReg);
+    void moveFalseTo(GPRReg);
+    void blessBoolean(GPRReg);
     
     // size can be an immediate or a register, and must be in bytes. If size is a register,
     // it must be a different register than resultGPR. Emits code that place a pointer to
@@ -2193,6 +2230,7 @@ public:
     void speculateStringIdent(Edge edge, GPRReg string);
     void speculateStringIdent(Edge);
     void speculateString(Edge);
+    void speculateNotStringVar(Edge);
     template<typename StructureLocationType>
     void speculateStringObjectForStructure(Edge, StructureLocationType);
     void speculateStringObject(Edge, GPRReg);

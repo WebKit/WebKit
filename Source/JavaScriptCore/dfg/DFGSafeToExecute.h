@@ -57,6 +57,7 @@ public:
         case StringUse:
         case StringObjectUse:
         case StringOrStringObjectUse:
+        case NotStringVarUse:
         case NotCellUse:
         case OtherUse:
         case MiscUse:

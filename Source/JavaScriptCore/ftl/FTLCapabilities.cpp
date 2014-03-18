@@ -238,6 +238,8 @@ inline CapabilityLevel canCompile(Node* node)
             break;
         if (node->isBinaryUseKind(NumberUse))
             break;
+        if (node->isBinaryUseKind(StringIdentUse))
+            break;
         if (node->isBinaryUseKind(ObjectUse))
             break;
         if (node->isBinaryUseKind(UntypedUse))
@@ -256,6 +258,8 @@ inline CapabilityLevel canCompile(Node* node)
             break;
         if (node->isBinaryUseKind(NumberUse))
             break;
+        if (node->isBinaryUseKind(StringIdentUse))
+            break;
         if (node->isBinaryUseKind(ObjectUse))
             break;
         if (node->isBinaryUseKind(BooleanUse))
@@ -263,6 +267,10 @@ inline CapabilityLevel canCompile(Node* node)
         if (node->isBinaryUseKind(MiscUse, UntypedUse))
             break;
         if (node->isBinaryUseKind(UntypedUse, MiscUse))
+            break;
+        if (node->isBinaryUseKind(StringIdentUse, NotStringVarUse))
+            break;
+        if (node->isBinaryUseKind(NotStringVarUse, StringIdentUse))
             break;
         return CannotCompile;
     case CompareLess:
@@ -358,6 +366,8 @@ CapabilityLevel canCompile(Graph& graph)
                 case NotCellUse:
                 case OtherUse:
                 case MiscUse:
+                case StringIdentUse:
+                case NotStringVarUse:
                     // These are OK.
                     break;
                 default:
