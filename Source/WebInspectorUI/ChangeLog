@@ -1,3 +1,12 @@
+2014-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: sourceMapResourceLoaded expects statusCode parameter
+        https://bugs.webkit.org/show_bug.cgi?id=130377
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/SourceMapResource.js:
+
 2014-03-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Uncaught Exception in JSContext Inspector
