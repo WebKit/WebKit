@@ -29,6 +29,7 @@
 #if PLATFORM(IOS)
 
 #import "DataReference.h"
+#import "EditingRange.h"
 #import "NativeWebKeyboardEvent.h"
 #import "PageClient.h"
 #import "RemoteLayerTreeTransaction.h"
@@ -98,12 +99,12 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect&, const FloatPoint
     notImplemented();
 }
 
-void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderline> underline, uint64_t selectionStart, uint64_t selectionLength, uint64_t, uint64_t)
+void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderline> underline, const EditingRange& selectionRange, const EditingRange&)
 {
     if (!isValid())
         return;
 
-    process().send(Messages::WebPage::SetComposition(text, underline, selectionStart, selectionLength), m_pageID);
+    process().send(Messages::WebPage::SetComposition(text, underline, selectionRange), m_pageID);
 }
 
 void WebPageProxy::confirmComposition()
@@ -120,32 +121,32 @@ void WebPageProxy::cancelComposition()
 
 }
 
-bool WebPageProxy::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength)
+bool WebPageProxy::insertText(const String& text, const EditingRange& replacementRange)
 {
     if (!isValid())
         return true;
     
-    process().send(Messages::WebPage::InsertText(text, replacementRangeStart, replacementRangeLength), m_pageID);
+    process().send(Messages::WebPage::InsertText(text, replacementRange), m_pageID);
     return true;
 }
 
-bool WebPageProxy::insertDictatedText(const String&, uint64_t, uint64_t, const Vector<WebCore::TextAlternativeWithRange>&)
+bool WebPageProxy::insertDictatedText(const String&, const EditingRange&, const Vector<WebCore::TextAlternativeWithRange>&)
 {
     notImplemented();
     return false;
 }
 
-void WebPageProxy::getMarkedRange(uint64_t&, uint64_t&)
+void WebPageProxy::getMarkedRange(EditingRange&)
 {
     notImplemented();
 }
 
-void WebPageProxy::getSelectedRange(uint64_t&, uint64_t&)
+void WebPageProxy::getSelectedRange(EditingRange&)
 {
     notImplemented();
 }
 
-void WebPageProxy::getAttributedSubstringFromRange(uint64_t, uint64_t, AttributedString&)
+void WebPageProxy::getAttributedSubstringFromRange(const EditingRange&, AttributedString&)
 {
     notImplemented();
 }
@@ -156,7 +157,7 @@ uint64_t WebPageProxy::characterIndexForPoint(const IntPoint)
     return 0;
 }
 
-IntRect WebPageProxy::firstRectForCharacterRange(uint64_t, uint64_t)
+IntRect WebPageProxy::firstRectForCharacterRange(const EditingRange&)
 {
     notImplemented();
     return IntRect();

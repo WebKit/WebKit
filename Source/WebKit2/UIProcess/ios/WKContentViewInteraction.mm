@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS)
 
+#import "EditingRange.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebTouchEvent.h"
 #import "SmartMagnificationController.h"
@@ -1409,7 +1410,7 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 - (void)setMarkedText:(NSString *)markedText selectedRange:(NSRange)selectedRange
 {
     _markedText = markedText;
-    _page->setComposition(markedText, Vector<WebCore::CompositionUnderline>(), selectedRange.location, selectedRange.length, 0, 0);
+    _page->setComposition(markedText, Vector<WebCore::CompositionUnderline>(), selectedRange, EditingRange());
 }
 
 - (void)unmarkText
@@ -1506,7 +1507,7 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 // Inserts the given string, replacing any selected or marked text.
 - (void)insertText:(NSString *)aStringValue
 {
-    _page->insertText(aStringValue, NSNotFound, 0);
+    _page->insertText(aStringValue, EditingRange());
 }
 
 - (BOOL)hasText

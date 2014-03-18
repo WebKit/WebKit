@@ -34,6 +34,7 @@
 #include "DragControllerAction.h"
 #include "DrawingArea.h"
 #include "DrawingAreaMessages.h"
+#include "EditingRange.h"
 #include "EditorState.h"
 #include "EventDispatcher.h"
 #include "InjectedBundle.h"
@@ -4336,13 +4337,18 @@ void WebPage::getBytecodeProfile(uint64_t callbackID)
     send(Messages::WebPageProxy::StringCallback(result, callbackID));
 }
 
-PassRefPtr<Range> WebPage::rangeFromEditingLocationAndLength(Frame& frame, uint64_t location, uint64_t length)
+PassRefPtr<WebCore::Range> WebPage::rangeFromEditingRange(WebCore::Frame& frame, const EditingRange& range)
 {
+    ASSERT(range.location != notFound);
+
     // Sanitize the input, because TextIterator::rangeFromLocationAndLength takes signed integers.
-    if (location > INT_MAX)
+    if (range.location > INT_MAX)
         return 0;
-    if (length > INT_MAX || location + length > INT_MAX)
-        length = INT_MAX - location;
+    int length;
+    if (range.length <= INT_MAX && range.location + range.length <= INT_MAX)
+        length = static_cast<int>(range.length);
+    else
+        length = INT_MAX - range.location;
 
     // Our critical assumption is that we are only called by input methods that
     // concentrate on a given area containing the selection.
@@ -4350,7 +4356,8 @@ PassRefPtr<Range> WebPage::rangeFromEditingLocationAndLength(Frame& frame, uint6
     // directly in the document DOM, so serialization is problematic. Our solution is
     // to use the root editable element of the selection start as the positional base.
     // That fits with AppKit's idea of an input context.
-    return TextIterator::rangeFromLocationAndLength(frame.selection().rootEditableElementOrDocumentElement(), location, length);
+    return TextIterator::rangeFromLocationAndLength(frame.selection().rootEditableElementOrDocumentElement(), static_cast<int>(range.location), length);
 }
+
 
 } // namespace WebKit

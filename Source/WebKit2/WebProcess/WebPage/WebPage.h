@@ -163,6 +163,7 @@ class WebVideoFullscreenManager;
 class WebWheelEvent;
 struct AssistedNodeInformation;
 struct AttributedString;
+struct EditingRange;
 struct EditorState;
 struct InteractionInformationAtPosition;
 struct PrintInfo;
@@ -455,8 +456,8 @@ public:
     void syncApplyAutocorrection(const String& correction, const String& originalText, bool& correctionApplied);
     void requestAutocorrectionContext(uint64_t callbackID);
     void getAutocorrectionContext(String& beforeText, String& markedText, String& selectedText, String& afterText, uint64_t& location, uint64_t& length);
-    void insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength);
-    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionLength);
+    void insertText(const String& text, const EditingRange& replacementRange);
+    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, const EditingRange& selectionRange);
     void confirmComposition();
     void getPositionInformation(const WebCore::IntPoint&, InteractionInformationAtPosition&);
     void requestPositionInformation(const WebCore::IntPoint&);
@@ -538,15 +539,15 @@ public:
 
     void cancelComposition(EditorState& newState);
 #if !PLATFORM(IOS)
-    void insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength, bool& handled, EditorState& newState);
-    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionLength, uint64_t replacementRangeStart, uint64_t replacementRangeLength, EditorState& newState);
+    void insertText(const String& text, const EditingRange& replacementRange, bool& handled, EditorState& newState);
+    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementRange, EditorState& newState);
     void confirmComposition(EditorState& newState);
 #endif
-    void getMarkedRange(uint64_t& location, uint64_t& length);
-    void getSelectedRange(uint64_t& location, uint64_t& length);
-    void getAttributedSubstringFromRange(uint64_t rangeStart, uint64_t rangeLength, AttributedString&);
+    void getMarkedRange(EditingRange&);
+    void getSelectedRange(EditingRange&);
+    void getAttributedSubstringFromRange(const EditingRange&, AttributedString&);
     void characterIndexForPoint(const WebCore::IntPoint point, uint64_t& result);
-    void firstRectForCharacterRange(uint64_t location, uint64_t length, WebCore::IntRect& resultRect);
+    void firstRectForCharacterRange(const EditingRange&, WebCore::IntRect& resultRect);
     void executeKeypressCommands(const Vector<WebCore::KeypressCommand>&, bool& handled, EditorState& newState);
     void readSelectionFromPasteboard(const WTF::String& pasteboardName, bool& result);
     void getStringSelectionForPasteboard(WTF::String& stringValue);
@@ -554,7 +555,7 @@ public:
     void shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent&, bool& result);
     void acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent&, bool& result);
     bool performNonEditingBehaviorForSelector(const String&, WebCore::KeyboardEvent*);
-    void insertDictatedText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool& handled, EditorState& newState);
+    void insertDictatedText(const String& text, const EditingRange& replacementRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool& handled, EditorState& newState);
 #elif PLATFORM(EFL)
     void confirmComposition(const String& compositionString);
     void setComposition(const WTF::String& compositionString, const WTF::Vector<WebCore::CompositionUnderline>& underlines, uint64_t cursorPosition);
@@ -927,7 +928,7 @@ private:
     static PluginView* focusedPluginViewForFrame(WebCore::Frame&);
     static PluginView* pluginViewForFrame(WebCore::Frame*);
 
-    PassRefPtr<WebCore::Range> rangeFromEditingLocationAndLength(WebCore::Frame&, uint64_t location, uint64_t length);
+    static PassRefPtr<WebCore::Range> rangeFromEditingRange(WebCore::Frame&, const EditingRange&);
 
     void reportUsedFeatures();
 

@@ -33,6 +33,7 @@
 #import "ColorSpaceData.h"
 #import "DataReference.h"
 #import "DictionaryPopupInfo.h"
+#import "EditingRange.h"
 #import "EditorState.h"
 #import "NativeWebKeyboardEvent.h"
 #import "PageClient.h"
@@ -151,7 +152,7 @@ void WebPageProxy::setMainFrameIsScrollable(bool isScrollable)
     process().send(Messages::WebPage::SetMainFrameIsScrollable(isScrollable), m_pageID);
 }
 
-void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionLength, uint64_t replacementRangeStart, uint64_t replacementRangeLength)
+void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementRange)
 {
     if (!isValid()) {
         // If this fails, we should call -discardMarkedText on input context to notify the input method.
@@ -159,7 +160,7 @@ void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderlin
         return;
     }
 
-    process().sendSync(Messages::WebPage::SetComposition(text, underlines, selectionStart, selectionLength, replacementRangeStart, replacementRangeLength), Messages::WebPage::SetComposition::Reply(m_editorState), m_pageID);
+    process().sendSync(Messages::WebPage::SetComposition(text, underlines, selectionRange, replacementRange), Messages::WebPage::SetComposition::Reply(m_editorState), m_pageID);
 }
 
 void WebPageProxy::confirmComposition()
@@ -178,23 +179,23 @@ void WebPageProxy::cancelComposition()
     process().sendSync(Messages::WebPage::CancelComposition(), Messages::WebPage::ConfirmComposition::Reply(m_editorState), m_pageID);
 }
 
-bool WebPageProxy::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength)
+bool WebPageProxy::insertText(const String& text, const EditingRange& replacementRange)
 {
     if (!isValid())
         return true;
 
     bool handled = true;
-    process().sendSync(Messages::WebPage::InsertText(text, replacementRangeStart, replacementRangeLength), Messages::WebPage::InsertText::Reply(handled, m_editorState), m_pageID);
+    process().sendSync(Messages::WebPage::InsertText(text, replacementRange), Messages::WebPage::InsertText::Reply(handled, m_editorState), m_pageID);
     m_temporarilyClosedComposition = false;
 
     return handled;
 }
 
-bool WebPageProxy::insertDictatedText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength, const Vector<TextAlternativeWithRange>& dictationAlternativesWithRange)
+bool WebPageProxy::insertDictatedText(const String& text, const EditingRange& replacementRange, const Vector<TextAlternativeWithRange>& dictationAlternativesWithRange)
 {
 #if USE(DICTATION_ALTERNATIVES)
     if (dictationAlternativesWithRange.isEmpty())
-        return insertText(text, replacementRangeStart, replacementRangeLength);
+        return insertText(text, replacementRange);
 
     if (!isValid())
         return true;
@@ -209,43 +210,43 @@ bool WebPageProxy::insertDictatedText(const String& text, uint64_t replacementRa
     }
 
     if (dictationAlternatives.isEmpty())
-        return insertText(text, replacementRangeStart, replacementRangeLength);
+        return insertText(text, replacementRange);
 
     bool handled = true;
-    process().sendSync(Messages::WebPage::InsertDictatedText(text, replacementRangeStart, replacementRangeLength, dictationAlternatives), Messages::WebPage::InsertDictatedText::Reply(handled, m_editorState), m_pageID);
+    process().sendSync(Messages::WebPage::InsertDictatedText(text, replacementRange, dictationAlternatives), Messages::WebPage::InsertDictatedText::Reply(handled, m_editorState), m_pageID);
     return handled;
 #else
-    return insertText(text, replacementRangeStart, replacementRangeLength);
+    return insertText(text, replacementRange);
 #endif
 }
 
-void WebPageProxy::getMarkedRange(uint64_t& location, uint64_t& length)
+void WebPageProxy::getMarkedRange(EditingRange& result)
 {
-    location = NSNotFound;
-    length = 0;
+    result = EditingRange();
 
     if (!isValid())
         return;
 
-    process().sendSync(Messages::WebPage::GetMarkedRange(), Messages::WebPage::GetMarkedRange::Reply(location, length), m_pageID);
+    process().sendSync(Messages::WebPage::GetMarkedRange(), Messages::WebPage::GetMarkedRange::Reply(result), m_pageID);
+    MESSAGE_CHECK(result.isValid());
 }
 
-void WebPageProxy::getSelectedRange(uint64_t& location, uint64_t& length)
+void WebPageProxy::getSelectedRange(EditingRange& result)
 {
-    location = NSNotFound;
-    length = 0;
+    result = EditingRange();
 
     if (!isValid())
         return;
 
-    process().sendSync(Messages::WebPage::GetSelectedRange(), Messages::WebPage::GetSelectedRange::Reply(location, length), m_pageID);
+    process().sendSync(Messages::WebPage::GetSelectedRange(), Messages::WebPage::GetSelectedRange::Reply(result), m_pageID);
+    MESSAGE_CHECK(result.isValid());
 }
 
-void WebPageProxy::getAttributedSubstringFromRange(uint64_t rangeStart, uint64_t rangeLength, AttributedString& result)
+void WebPageProxy::getAttributedSubstringFromRange(const EditingRange& range, AttributedString& result)
 {
     if (!isValid())
         return;
-    process().sendSync(Messages::WebPage::GetAttributedSubstringFromRange(rangeStart, rangeLength), Messages::WebPage::GetAttributedSubstringFromRange::Reply(result), m_pageID);
+    process().sendSync(Messages::WebPage::GetAttributedSubstringFromRange(range), Messages::WebPage::GetAttributedSubstringFromRange::Reply(result), m_pageID);
 }
 
 uint64_t WebPageProxy::characterIndexForPoint(const IntPoint point)
@@ -258,13 +259,13 @@ uint64_t WebPageProxy::characterIndexForPoint(const IntPoint point)
     return result;
 }
 
-IntRect WebPageProxy::firstRectForCharacterRange(uint64_t location, uint64_t length)
+IntRect WebPageProxy::firstRectForCharacterRange(const EditingRange& range)
 {
     if (!isValid())
         return IntRect();
 
     IntRect resultRect;
-    process().sendSync(Messages::WebPage::FirstRectForCharacterRange(location, length), Messages::WebPage::FirstRectForCharacterRange::Reply(resultRect), m_pageID);
+    process().sendSync(Messages::WebPage::FirstRectForCharacterRange(range), Messages::WebPage::FirstRectForCharacterRange::Reply(resultRect), m_pageID);
     return resultRect;
 }
 

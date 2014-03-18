@@ -30,6 +30,7 @@
 
 #import "AttributedString.h"
 #import "DataReference.h"
+#import "EditingRange.h"
 #import "EditorState.h"
 #import "PDFKitImports.h"
 #import "PageBanner.h"
@@ -245,18 +246,18 @@ void WebPage::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdenti
     }
 }
 
-void WebPage::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionLength, uint64_t replacementRangeStart, uint64_t replacementRangeLength, EditorState& newState)
+void WebPage::setComposition(const String& text, Vector<CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementEditingRange, EditorState& newState)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     if (frame.selection().selection().isContentEditable()) {
         RefPtr<Range> replacementRange;
-        if (replacementRangeStart != NSNotFound) {
-            replacementRange = rangeFromEditingLocationAndLength(frame, replacementRangeStart, replacementRangeLength);
+        if (replacementEditingRange.location != notFound) {
+            replacementRange = rangeFromEditingRange(frame, replacementEditingRange);
             frame.selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
         }
 
-        frame.editor().setComposition(text, underlines, selectionStart, selectionStart + selectionLength);
+        frame.editor().setComposition(text, underlines, selectionRange.location, selectionRange.location + selectionRange.length);
     }
 
     newState = editorState();
@@ -276,12 +277,12 @@ void WebPage::cancelComposition(EditorState& newState)
     newState = editorState();
 }
 
-void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength, bool& handled, EditorState& newState)
+void WebPage::insertText(const String& text, const EditingRange& replacementEditingRange, bool& handled, EditorState& newState)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
-    if (replacementRangeStart != NSNotFound) {
-        RefPtr<Range> replacementRange = rangeFromEditingLocationAndLength(frame, replacementRangeStart, replacementRangeLength);
+    if (replacementEditingRange.location != notFound) {
+        RefPtr<Range> replacementRange = rangeFromEditingRange(frame, replacementEditingRange);
         if (replacementRange)
             frame.selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
     }
@@ -298,12 +299,12 @@ void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uin
     newState = editorState();
 }
 
-void WebPage::insertDictatedText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool& handled, EditorState& newState)
+void WebPage::insertDictatedText(const String& text, const EditingRange& replacementEditingRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool& handled, EditorState& newState)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
-    if (replacementRangeStart != NSNotFound) {
-        RefPtr<Range> replacementRange = rangeFromEditingLocationAndLength(frame, replacementRangeStart, replacementRangeLength);
+    if (replacementEditingRange.location != notFound) {
+        RefPtr<Range> replacementRange = rangeFromEditingRange(frame, replacementEditingRange);
         if (replacementRange)
             frame.selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
     }
@@ -313,39 +314,33 @@ void WebPage::insertDictatedText(const String& text, uint64_t replacementRangeSt
     newState = editorState();
 }
 
-void WebPage::getMarkedRange(uint64_t& location, uint64_t& length)
+void WebPage::getMarkedRange(EditingRange& result)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     RefPtr<Range> range = frame.editor().compositionRange();
     size_t locationSize;
     size_t lengthSize;
-    if (range && TextIterator::getLocationAndLengthFromRange(frame.selection().rootEditableElementOrDocumentElement(), range.get(), locationSize, lengthSize)) {
-        location = static_cast<uint64_t>(locationSize);
-        length = static_cast<uint64_t>(lengthSize);
-    } else {
-        location = NSNotFound;
-        length = 0;
-    }
+    if (range && TextIterator::getLocationAndLengthFromRange(frame.selection().rootEditableElementOrDocumentElement(), range.get(), locationSize, lengthSize))
+        result = EditingRange(static_cast<uint64_t>(locationSize), static_cast<uint64_t>(lengthSize));
+    else
+        result = EditingRange();
 }
 
-void WebPage::getSelectedRange(uint64_t& location, uint64_t& length)
+void WebPage::getSelectedRange(EditingRange& result)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     size_t locationSize;
     size_t lengthSize;
     RefPtr<Range> range = frame.selection().toNormalizedRange();
-    if (range && TextIterator::getLocationAndLengthFromRange(frame.selection().rootEditableElementOrDocumentElement(), range.get(), locationSize, lengthSize)) {
-        location = static_cast<uint64_t>(locationSize);
-        length = static_cast<uint64_t>(lengthSize);
-    } else {
-        location = NSNotFound;
-        length = 0;
-    }
+    if (range && TextIterator::getLocationAndLengthFromRange(frame.selection().rootEditableElementOrDocumentElement(), range.get(), locationSize, lengthSize))
+        result = EditingRange(static_cast<uint64_t>(locationSize), static_cast<uint64_t>(lengthSize));
+    else
+        result = EditingRange();
 }
 
-void WebPage::getAttributedSubstringFromRange(uint64_t rangeStart, uint64_t rangeLength, AttributedString& result)
+void WebPage::getAttributedSubstringFromRange(const EditingRange& editingRange, AttributedString& result)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
@@ -353,7 +348,7 @@ void WebPage::getAttributedSubstringFromRange(uint64_t rangeStart, uint64_t rang
     if (selection.isNone() || !selection.isContentEditable() || selection.isInPasswordField())
         return;
 
-    RefPtr<Range> range = rangeFromEditingLocationAndLength(frame, rangeStart, rangeLength);
+    RefPtr<Range> range = rangeFromEditingRange(frame, editingRange);
     if (!range)
         return;
 
@@ -363,16 +358,16 @@ void WebPage::getAttributedSubstringFromRange(uint64_t rangeStart, uint64_t rang
     // [WebHTMLConverter editingAttributedStringFromRange:] insists on inserting a trailing 
     // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
     // To work around this we truncate the resultant string to the correct length.
-    if ([attributedString length] > rangeLength) {
-        ASSERT([attributedString length] == rangeLength + 1);
-        ASSERT([[attributedString string] characterAtIndex:rangeLength] == '\n' || [[attributedString string] characterAtIndex:rangeLength] == ' ');
-        result.string = [attributedString attributedSubstringFromRange:NSMakeRange(0, rangeLength)];
+    if ([attributedString length] > editingRange.length) {
+        ASSERT([attributedString length] == editingRange.length + 1);
+        ASSERT([[attributedString string] characterAtIndex:editingRange.length] == '\n' || [[attributedString string] characterAtIndex:editingRange.length] == ' ');
+        result.string = [attributedString attributedSubstringFromRange:NSMakeRange(0, editingRange.length)];
     }
 }
 
 void WebPage::characterIndexForPoint(IntPoint point, uint64_t& index)
 {
-    index = NSNotFound;
+    index = notFound;
 
     HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point);
     Frame* frame = result.innerNonSharedNode() ? result.innerNodeFrame() : &m_page->focusController().focusedOrMainFrame();
@@ -387,13 +382,13 @@ void WebPage::characterIndexForPoint(IntPoint point, uint64_t& index)
         index = static_cast<uint64_t>(location);
 }
     
-void WebPage::firstRectForCharacterRange(uint64_t location, uint64_t length, WebCore::IntRect& resultRect)
+void WebPage::firstRectForCharacterRange(const EditingRange& editingRange, WebCore::IntRect& resultRect)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     resultRect.setLocation(IntPoint(0, 0));
     resultRect.setSize(IntSize(0, 0));
     
-    RefPtr<Range> range = rangeFromEditingLocationAndLength(frame, location, length);
+    RefPtr<Range> range = rangeFromEditingRange(frame, editingRange);
     if (!range)
         return;
     

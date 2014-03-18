@@ -30,6 +30,7 @@
 
 #import "AssistedNodeInformation.h"
 #import "DataReference.h"
+#import "EditingRange.h"
 #import "EditorState.h"
 #import "InteractionInformationAtPosition.h"
 #import "PluginView.h"
@@ -166,12 +167,12 @@ void WebPage::sendComplexTextInputToPlugin(uint64_t, const String&)
     notImplemented();
 }
 
-void WebPage::setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionLength)
+void WebPage::setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, const EditingRange& selectionRange)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     if (frame.selection().selection().isContentEditable())
-        frame.editor().setComposition(text, underlines, selectionStart, selectionStart + selectionLength);
+        frame.editor().setComposition(text, underlines, selectionRange.location, selectionRange.location + selectionRange.length);
 }
 
 void WebPage::confirmComposition()
@@ -185,12 +186,12 @@ void WebPage::cancelComposition(EditorState&)
     notImplemented();
 }
 
-void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength)
+void WebPage::insertText(const String& text, const EditingRange& replacementEditingRange)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     
-    if (replacementRangeStart != NSNotFound) {
-        RefPtr<Range> replacementRange = rangeFromEditingLocationAndLength(frame, replacementRangeStart, replacementRangeLength);
+    if (replacementEditingRange.location != notFound) {
+        RefPtr<Range> replacementRange = rangeFromEditingRange(frame, replacementEditingRange);
         if (replacementRange)
             frame.selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
     }
@@ -203,22 +204,22 @@ void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uin
         frame.editor().confirmComposition(text);
 }
 
-void WebPage::insertDictatedText(const String&, uint64_t, uint64_t, const Vector<WebCore::DictationAlternative>&, bool&, EditorState&)
+void WebPage::insertDictatedText(const String&, const EditingRange&, const Vector<WebCore::DictationAlternative>&, bool&, EditorState&)
 {
     notImplemented();
 }
 
-void WebPage::getMarkedRange(uint64_t&, uint64_t&)
+void WebPage::getMarkedRange(EditingRange&)
 {
     notImplemented();
 }
 
-void WebPage::getSelectedRange(uint64_t&, uint64_t&)
+void WebPage::getSelectedRange(EditingRange&)
 {
     notImplemented();
 }
 
-void WebPage::getAttributedSubstringFromRange(uint64_t, uint64_t, AttributedString&)
+void WebPage::getAttributedSubstringFromRange(const EditingRange&, AttributedString&)
 {
     notImplemented();
 }
@@ -228,7 +229,7 @@ void WebPage::characterIndexForPoint(IntPoint, uint64_t&)
     notImplemented();
 }
 
-void WebPage::firstRectForCharacterRange(uint64_t, uint64_t, WebCore::IntRect&)
+void WebPage::firstRectForCharacterRange(const EditingRange&, WebCore::IntRect&)
 {
     notImplemented();
 }

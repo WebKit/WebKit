@@ -1,3 +1,73 @@
+2014-03-17  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Pass ranges over IPC in a cross-platform manner
+        https://bugs.webkit.org/show_bug.cgi?id=130376
+
+        Reviewed by Anders Carlsson.
+
+        Added an EditingRange class for IPC, which automatically converts to and from
+        NSRanges, knowing the difference between notFound and NSNotFound.
+
+        Manually applied the same fix to characterIndexForPoint.
+
+        * Scripts/webkit2/messages.py:
+        (struct_or_class):
+        * Shared/EditingRange.h: Added.
+        (WebKit::EditingRange::EditingRange):
+        (WebKit::EditingRange::isValid):
+        (WebKit::EditingRange::operator NSRange):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView insertText:replacementRange:]):
+        (-[WKView selectedRange]):
+        (-[WKView hasMarkedText]):
+        (-[WKView setMarkedText:selectedRange:replacementRange:]):
+        (-[WKView markedRange]):
+        (-[WKView attributedSubstringForProposedRange:actualRange:]):
+        (-[WKView characterIndexForPoint:]):
+        (-[WKView firstRectForCharacterRange:actualRange:]):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setMarkedText:selectedRange:]):
+        (-[WKContentView insertText:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::setComposition):
+        (WebKit::WebPageProxy::insertText):
+        (WebKit::WebPageProxy::insertDictatedText):
+        (WebKit::WebPageProxy::getMarkedRange):
+        (WebKit::WebPageProxy::getSelectedRange):
+        (WebKit::WebPageProxy::getAttributedSubstringFromRange):
+        (WebKit::WebPageProxy::firstRectForCharacterRange):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setComposition):
+        (WebKit::WebPageProxy::insertText):
+        (WebKit::WebPageProxy::insertDictatedText):
+        (WebKit::WebPageProxy::getMarkedRange):
+        (WebKit::WebPageProxy::getSelectedRange):
+        (WebKit::WebPageProxy::getAttributedSubstringFromRange):
+        (WebKit::WebPageProxy::firstRectForCharacterRange):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::rangeFromEditingRange):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::insertText):
+        (WebKit::WebPage::insertDictatedText):
+        (WebKit::WebPage::getMarkedRange):
+        (WebKit::WebPage::getSelectedRange):
+        (WebKit::WebPage::getAttributedSubstringFromRange):
+        (WebKit::WebPage::firstRectForCharacterRange):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::insertText):
+        (WebKit::WebPage::insertDictatedText):
+        (WebKit::WebPage::getMarkedRange):
+        (WebKit::WebPage::getSelectedRange):
+        (WebKit::WebPage::getAttributedSubstringFromRange):
+        (WebKit::WebPage::characterIndexForPoint):
+        (WebKit::WebPage::firstRectForCharacterRange):
+
 2014-03-17  Filip Pizlo  <fpizlo@apple.com>
 
         More FTL enabling.

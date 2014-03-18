@@ -211,6 +211,7 @@ def struct_or_class(namespace, type):
         'WebKit::DatabaseProcessCreationParameters',
         'WebKit::DictionaryPopupInfo',
         'WebKit::DrawingAreaInfo',
+        'WebKit::EditingRange',
         'WebKit::EditorState',
         'WebKit::InteractionInformationAtPosition',
         'WebKit::NavigationActionData',

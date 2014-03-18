@@ -160,6 +160,7 @@ class WebWheelEvent;
 struct AttributedString;
 struct ColorSpaceData;
 struct DictionaryPopupInfo;
+struct EditingRange;
 struct EditorState;
 struct PlatformPopupMenuData;
 struct PrintInfo;
@@ -525,16 +526,16 @@ public:
     void windowAndViewFramesChanged(const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
     void setMainFrameIsScrollable(bool);
 
-    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionLength, uint64_t replacementRangeStart, uint64_t replacementRangeLength);
+    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementRange);
     void confirmComposition();
     void cancelComposition();
-    bool insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength);
-    bool insertDictatedText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeLength, const Vector<WebCore::TextAlternativeWithRange>& dictationAlternatives);
-    void getMarkedRange(uint64_t& location, uint64_t& length);
-    void getSelectedRange(uint64_t& location, uint64_t& length);
-    void getAttributedSubstringFromRange(uint64_t rangeStart, uint64_t rangeLength, AttributedString&);
+    bool insertText(const String& text, const EditingRange& replacementRange);
+    bool insertDictatedText(const String& text, const EditingRange& replacementRange, const Vector<WebCore::TextAlternativeWithRange>& dictationAlternatives);
+    void getMarkedRange(EditingRange&);
+    void getSelectedRange(EditingRange&);
+    void getAttributedSubstringFromRange(const EditingRange&, AttributedString&);
     uint64_t characterIndexForPoint(const WebCore::IntPoint);
-    WebCore::IntRect firstRectForCharacterRange(uint64_t, uint64_t);
+    WebCore::IntRect firstRectForCharacterRange(const EditingRange&);
     bool executeKeypressCommands(const Vector<WebCore::KeypressCommand>&);
 
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
