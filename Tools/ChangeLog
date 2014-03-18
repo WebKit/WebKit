@@ -1,3 +1,18 @@
+2014-03-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        --profile should imply --test-runner-count=1 in run-perf-tests
+        https://bugs.webkit.org/show_bug.cgi?id=130375
+
+        Reviewed by Benjamin Poulain.
+
+        Use the test runner count of 1 when --profile is specified but not --test-runner-count.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args): Use -1 as the default value.
+        (PerfTestsRunner._collect_tests): If --test-runner-count is set (i.e. it's a positive value),
+        then use that value. Otherwise, if it's never set and --profile is present, test-runner-count
+        should be 1.
+
 2014-03-17  Simon Fraser  <simon.fraser@apple.com>
 
         Address some style nits.

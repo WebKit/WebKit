@@ -125,7 +125,7 @@ class PerfTestsRunner(object):
                 help="Alternative DumpRenderTree binary to use"),
             optparse.make_option("--repeat", default=1, type="int",
                 help="Specify number of times to run test set (default: 1)."),
-            optparse.make_option("--test-runner-count", default=DEFAULT_TEST_RUNNER_COUNT, type="int",
+            optparse.make_option("--test-runner-count", default=-1, type="int",
                 help="Specify number of times to invoke test runner for each performance test."),
             ]
         return optparse.OptionParser(option_list=(perf_option_list)).parse_args(args)
@@ -152,11 +152,18 @@ class PerfTestsRunner(object):
         skipped_directories = set(['.svn', 'resources'])
         test_files = find_files.find(filesystem, self._base_path, paths, skipped_directories, _is_test_file)
         tests = []
+
+        test_runner_count = DEFAULT_TEST_RUNNER_COUNT
+        if self._options.test_runner_count > 0:
+            test_runner_count = self._options.test_runner_count
+        elif self._options.profile:
+            test_runner_count = 1
+
         for path in test_files:
             relative_path = filesystem.relpath(path, self._base_path).replace('\\', '/')
             if self._options.use_skipped_list and self._port.skips_perf_test(relative_path) and filesystem.normpath(relative_path) not in paths:
                 continue
-            test = PerfTestFactory.create_perf_test(self._port, relative_path, path, test_runner_count=self._options.test_runner_count)
+            test = PerfTestFactory.create_perf_test(self._port, relative_path, path, test_runner_count=test_runner_count)
             tests.append(test)
 
         return tests
