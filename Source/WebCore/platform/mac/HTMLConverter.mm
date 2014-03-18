@@ -402,6 +402,7 @@ const unichar WebNextLineCharacter = 0x0085;
 class HTMLConverterCaches {
 public:
     String propertyValueForNode(Node&, const String& propertyName);
+    bool floatPropertyValueForNode(Node&, const String& propertyName, float&);
 
     PassRefPtr<CSSValue> computedStylePropertyForElement(Element&, const String&);
     PassRefPtr<CSSValue> inlineStylePropertyForElement(Element&, const String&);
@@ -763,69 +764,60 @@ static inline bool floatValueFromPrimitiveValue(CSSPrimitiveValue& primitiveValu
     }
 }
 
-- (BOOL)_getComputedFloat:(CGFloat *)val forNode:(DOMNode *)node property:(NSString *)key
+bool HTMLConverterCaches::floatPropertyValueForNode(Node& node, const String& propertyName, float& result)
 {
-    bool haveResult = false;
-    bool inherit = true;
-    float floatVal = 0;
-    Node* coreNode = core(node);
-    if (coreNode && coreNode->isElementNode()) {
-        Element& element = toElement(*coreNode);
-        String propertyName = key;
-        inherit = false;
-        if (!haveResult) {
-            if (RefPtr<CSSValue> value = _caches->computedStylePropertyForElement(element, propertyName)) {
-                if (value->isPrimitiveValue())
-                    haveResult = floatValueFromPrimitiveValue(toCSSPrimitiveValue(*value), floatVal);
-            }
-        }
-        if (!haveResult) {
-            if (RefPtr<CSSValue> value = _caches->inlineStylePropertyForElement(element, propertyName)) {
-                if (value->isInheritedValue())
-                    inherit = true;
-                else if (value->isPrimitiveValue())
-                    haveResult = floatValueFromPrimitiveValue(toCSSPrimitiveValue(*value), floatVal);
-            }
-        }
-        if (!haveResult) {
-            if ([@"text-indent" isEqualToString:key] || [@"letter-spacing" isEqualToString:key] || [@"word-spacing" isEqualToString:key]
-                || [@"line-height" isEqualToString:key] || [@"widows" isEqualToString:key] || [@"orphans" isEqualToString:key])
-                inherit = true;
-        }
+    if (!node.isElementNode()) {
+        if (ContainerNode* parent = node.parentNode())
+            return floatPropertyValueForNode(*parent, propertyName, result);
+        return false;
     }
-    if (!haveResult && inherit) {
-        DOMNode *parentNode = [node parentNode];
-        if (parentNode)
-            return [self _getFloat:val forNode:parentNode property:key];
+
+    Element& element = toElement(node);
+    if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyName)) {
+        if (value->isPrimitiveValue() && floatValueFromPrimitiveValue(toCSSPrimitiveValue(*value), result))
+            return true;
     }
-    if (haveResult && val)
-        *val = floatVal;
-    return haveResult;
+
+    bool inherit = false;
+    if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyName)) {
+        if (value->isPrimitiveValue() && floatValueFromPrimitiveValue(toCSSPrimitiveValue(*value), result))
+            return true;
+        if (value->isInheritedValue())
+            inherit = true;
+    }
+
+    switch (cssPropertyID(propertyName)) {
+    case CSSPropertyTextIndent:
+    case CSSPropertyLetterSpacing:
+    case CSSPropertyWordSpacing:
+    case CSSPropertyLineHeight:
+    case CSSPropertyWidows:
+    case CSSPropertyOrphans:
+        inherit = true;
+        break;
+    default:
+        break;
+    }
+
+    if (inherit) {
+        if (ContainerNode* parent = node.parentNode())
+            return floatPropertyValueForNode(*parent, propertyName, result);
+    }
+
+    return false;
 }
 
 - (BOOL)_getFloat:(CGFloat *)val forNode:(DOMNode *)node property:(NSString *)key
 {
-    BOOL result = NO;
-    CGFloat floatVal = 0;
-    NSNumber *floatNumber;
-    RetainPtr<NSMutableDictionary> attributeDictionary = [_floatsForNodes objectForKey:node];
-    if (!attributeDictionary) {
-        attributeDictionary = adoptNS([[NSMutableDictionary alloc] init]);
-        [_floatsForNodes setObject:attributeDictionary.get() forKey:node];
-    }
-    floatNumber = [attributeDictionary objectForKey:key];
-    if (floatNumber) {
-        if (![[NSNull null] isEqual:floatNumber]) {
-            result = YES;
-            floatVal = [floatNumber floatValue];
-        }
-    } else {
-        result = [self _getComputedFloat:&floatVal forNode:node property:key];
-        [attributeDictionary setObject:(result ? (id)[NSNumber numberWithDouble:floatVal] : (id)[NSNull null]) forKey:key];
-    }
-    if (result && val)
-        *val = floatVal;
-    return result;
+    Node* coreNode = core(node);
+    if (!coreNode)
+        return NO;
+    float result;
+    if (!_caches->floatPropertyValueForNode(*coreNode, String(key), result))
+        return NO;
+    if (val)
+        *val = result;
+    return YES;
 }
 
 static NSString *_NSFirstPathForDirectoriesInDomains(NSSearchPathDirectory directory, NSSearchPathDomainMask domainMask, BOOL expandTilde)
@@ -2423,7 +2415,6 @@ static NSInteger _colCompare(id block1, id block2, void *)
     [_textTableRows release];
     [_textTableRowArrays release];
     [_textTableRowBackgroundColors release];
-    [_floatsForNodes release];
     [_colorsForNodes release];
     [_attributesForElements release];
     [_elementIsBlockLevel release];
@@ -2450,7 +2441,6 @@ static NSInteger _colCompare(id block1, id block2, void *)
     _textTableRows = [[NSMutableArray alloc] init];
     _textTableRowArrays = [[NSMutableArray alloc] init];
     _textTableRowBackgroundColors = [[NSMutableArray alloc] init];
-    _floatsForNodes = [[NSMutableDictionary alloc] init];
     _colorsForNodes = [[NSMutableDictionary alloc] init];
     _attributesForElements = [[NSMutableDictionary alloc] init];
     _elementIsBlockLevel = [[NSMutableDictionary alloc] init];

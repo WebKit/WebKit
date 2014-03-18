@@ -1,3 +1,20 @@
+2014-03-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rewrite WebHTMLConverter::_getComputedFloat in C++
+        https://bugs.webkit.org/show_bug.cgi?id=130284
+
+        Reviewed by Andreas Kling.
+
+        Rewrote _getComputedFloat as HTMLConverterCaches::floatPropertyValueForNode.
+
+        * platform/mac/HTMLConverter.h:
+        * platform/mac/HTMLConverter.mm:
+        (HTMLConverterCaches::floatPropertyValueForNode):
+        (-[WebHTMLConverter _getFloat:forNode:property:]): Now that computing the float value is fast, we don't need to
+        store it in the cache.
+        (-[WebHTMLConverter dealloc]):
+        (-[WebHTMLConverter init]):
+
 2014-03-16  Andreas Kling  <akling@apple.com>
 
         HTMLInputElement::defaultEventHandler() shouldn't force style updates.
