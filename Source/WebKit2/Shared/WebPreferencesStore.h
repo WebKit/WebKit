@@ -163,6 +163,7 @@ namespace WebKit {
     macro(LowPowerVideoAudioBufferSizeEnabled, lowPowerVideoAudioBufferSizeEnabled, Bool, bool, false) \
     macro(UseLegacyTextAlignPositionedElementBehavior, useLegacyTextAlignPositionedElementBehavior, Bool, bool, false) \
     \
+    macro(EnableInheritURIQueryComponent, enableInheritURIQueryComponent, Bool, bool, false) \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
     macro(PDFScaleFactor, pdfScaleFactor, Double, double, 0) \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -292,6 +292,10 @@ WK_EXPORT void WKPreferencesResetTestRunnerOverrides(WKPreferencesRef preference
 // Defaults to false.
 WK_EXPORT void WKPreferencesSetUseLegacyTextAlignPositionedElementBehavior(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesUseLegacyTextAlignPositionedElementBehavior(WKPreferencesRef preferencesRef);
+
+// Default to false.
+WK_EXPORT void WKPreferencesSetEnableInheritURIQueryComponent(WKPreferencesRef preferencesRef, bool enabled);
+WK_EXPORT bool WKPreferencesGetEnableInheritURIQueryComponent(WKPreferencesRef preferencesRef);
 
 #ifdef __cplusplus
 }

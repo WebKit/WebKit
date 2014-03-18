@@ -1558,6 +1558,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings->setUseLegacyTextAlignPositionedElementBehavior([preferences useLegacyTextAlignPositionedElementBehavior]);
 
+    settings->setEnableInheritURIQueryComponent([preferences isInheritURIQueryComponentEnabled]);
+
     switch ([preferences storageBlockingPolicy]) {
     case WebAllowAllStorage:
         settings->setStorageBlockingPolicy(SecurityOrigin::AllowAllStorage);

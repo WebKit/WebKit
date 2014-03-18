@@ -1154,3 +1154,13 @@ double WKPreferencesGetIncrementalRenderingSuppressionTimeout(WKPreferencesRef p
 {
     return toAPI(toImpl(preferencesRef)->incrementalRenderingSuppressionTimeout());
 }
+
+void WKPreferencesSetEnableInheritURIQueryComponent(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setEnableInheritURIQueryComponent(enabled);
+}
+
+bool WKPreferencesGetEnableInheritURIQueryComponent(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->enableInheritURIQueryComponent();
+}

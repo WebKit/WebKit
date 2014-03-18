@@ -52,6 +52,7 @@
 #import <wtf/Uint32Array.h>
 #import <wtf/Uint8Array.h>
 #import <wtf/text/CString.h>
+#import <wtf/text/StringBuilder.h>
 
 #import <AVFoundation/AVFoundation.h>
 #import <CoreMedia/CoreMedia.h>
@@ -94,6 +95,7 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaTypeClosedCaption, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeVideo, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeAudio, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVPlayerItemDidPlayToEndTimeNotification, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVURLAssetInheritURIQueryComponentFromReferencingURIKey, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVAssetImageGeneratorApertureModeCleanAperture, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVURLAssetReferenceRestrictionsKey, NSString *)
 
@@ -112,6 +114,7 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime)
 #define AVMediaTypeVideo getAVMediaTypeVideo()
 #define AVMediaTypeAudio getAVMediaTypeAudio()
 #define AVPlayerItemDidPlayToEndTimeNotification getAVPlayerItemDidPlayToEndTimeNotification()
+#define AVURLAssetInheritURIQueryComponentFromReferencingURIKey getAVURLAssetInheritURIQueryComponentFromReferencingURIKey()
 #define AVAssetImageGeneratorApertureModeCleanAperture getAVAssetImageGeneratorApertureModeCleanAperture()
 #define AVURLAssetReferenceRestrictionsKey getAVURLAssetReferenceRestrictionsKey()
 
@@ -417,6 +420,10 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
 
     if ([headerFields.get() count])
         [options.get() setObject:headerFields.get() forKey:@"AVURLAssetHTTPHeaderFieldsKey"];
+
+    if (player()->doesHaveAttribute("x-itunes-inherit-uri-query-component"))
+        [options.get() setObject: [NSNumber numberWithBool: TRUE] forKey: AVURLAssetInheritURIQueryComponentFromReferencingURIKey];
+
 #endif
 
     NSURL *cocoaURL = KURL(ParsedURLString, url);
