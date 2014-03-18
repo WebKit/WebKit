@@ -134,24 +134,21 @@ public:
     void didReceiveWebSocketFrameError(unsigned long identifier, const String&);
 #endif
 
-    // called from Internals for layout test purposes.
+    // Called from Internals for layout test purposes.
     void setResourcesDataSizeLimitsFromInternals(int maximumResourcesContentSize, int maximumSingleResourceContentSize);
 
-    // Called from frontend
+    // Called from frontend.
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
     virtual void setUserAgentOverride(ErrorString*, const String& userAgent);
     virtual void setExtraHTTPHeaders(ErrorString*, const RefPtr<InspectorObject>&);
     virtual void getResponseBody(ErrorString*, const String& requestId, String* content, bool* base64Encoded);
-
     virtual void replayXHR(ErrorString*, const String& requestId);
-
     virtual void canClearBrowserCache(ErrorString*, bool*);
     virtual void clearBrowserCache(ErrorString*);
     virtual void canClearBrowserCookies(ErrorString*, bool*);
     virtual void clearBrowserCookies(ErrorString*);
     virtual void setCacheDisabled(ErrorString*, bool cacheDisabled);
-
     virtual void loadResource(ErrorString*, const String& frameId, const String& url, PassRefPtr<LoadResourceCallback>) override;
 
 private:

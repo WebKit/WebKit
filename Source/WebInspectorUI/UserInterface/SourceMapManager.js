@@ -89,9 +89,9 @@ WebInspector.SourceMapManager.prototype = {
             return;
         }
 
-        function sourceMapLoaded(error, content, mimeType)
+        function sourceMapLoaded(error, content, mimeType, statusCode)
         {
-            if (error) {
+            if (error || statusCode >= 400) {
                 this._loadAndParseFailed(sourceMapURL);
                 return;
             }
