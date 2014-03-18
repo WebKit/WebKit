@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../../media-controls.js></script>
+        <script src=../../media-file.js></script>
+        <script src=../../video-test.js></script>
+        <script>
+        var testTrack;
+        var region;
+        var container;
+
+        function testRegionsDisplay()
+        {
+            testTrack = video.textTracks[0];
+
+            consoleWrite("** The text track has only one region **");
+            testExpected("testTrack.regions.length", 1);
+
+            try {
+              region = textTrackDisplayElement(video, 'region');
+              container = textTrackDisplayElement(video, 'region-container');
+            } catch(e) {
+              consoleWrite(e);
+            }
+
+            consoleWrite("<br>** Inspecting the default DOM layout used for regions display **");
+
+            consoleWrite("<br>** Only one region should be displayed **");
+            testExpected("region.children.length", 1);
+
+            consoleWrite("<br>** The child of the region should be the container **");
+            testExpected("region.children[0] == container", true);
+
+            consoleWrite("<br>** Default pseudo IDs should be set properly");
+            testExpected("region.getAttribute('pseudo')", "-webkit-media-text-track-region");
+            testExpected("container.getAttribute('pseudo')", "-webkit-media-text-track-region-container");
+
+            endTest();
+        }
+
+        function startTest()
+        {
+            if (!window.TextTrackRegion) {
+                failTest();
+                return;
+            }
+
+            findMediaElement();
+
+            video.src = findMediaFile('video', '../../content/test');
+            waitForEvent('canplaythrough', testRegionsDisplay);
+        }
+
+        </script>
+    </head>
+    <body>
+        <p>Tests default DOM layout structure for a TextTrackRegion.</p>
+        <video controls>
+            <track src="../captions-webvtt/captions-regions.vtt" kind="captions" default onload="startTest()">
+        </video>
+    </body>
+</html>

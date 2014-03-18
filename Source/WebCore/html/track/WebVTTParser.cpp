@@ -167,8 +167,10 @@ void WebVTTParser::parseBytes(const char* data, unsigned length)
             break;
 
         case Header:
-            // 13-18 - Allow a header (comment area) under the WEBVTT line.
 #if ENABLE(WEBVTT_REGIONS)
+            collectMetadataHeader(line);
+
+            // 13-18 - Allow a header (comment area) under the WEBVTT line.
             if (line.isEmpty()) {
                 if (m_client && m_regionList.size())
                     m_client->newRegionsParsed();
@@ -176,14 +178,7 @@ void WebVTTParser::parseBytes(const char* data, unsigned length)
                 m_state = Id;
                 break;
             }
-            collectHeader(line);
-
-            break;
-
-        case Metadata:
 #endif
-            if (line.isEmpty())
-                m_state = Id;
             break;
 
         case Id:
@@ -252,7 +247,7 @@ bool WebVTTParser::hasRequiredFileIdentifier(const String& line)
 }
 
 #if ENABLE(WEBVTT_REGIONS)
-void WebVTTParser::collectHeader(const String& line)
+void WebVTTParser::collectMetadataHeader(const String& line)
 {
     // 4.1 Extension of WebVTT header parsing (11 - 15)
     DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, regionHeaderName, ("Region", AtomicString::ConstructFromLiteral));

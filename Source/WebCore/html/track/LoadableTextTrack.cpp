@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -142,7 +142,7 @@ void LoadableTextTrack::newRegionsAvailable(TextTrackLoader* loader)
 
     for (size_t i = 0; i < newRegions.size(); ++i) {
         newRegions[i]->setTrack(this);
-        regionList()->add(newRegions[i]);
+        regions()->add(newRegions[i]);
     }
 }
 #endif

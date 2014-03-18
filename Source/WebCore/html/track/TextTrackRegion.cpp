@@ -76,8 +76,8 @@ TextTrackRegion::TextTrackRegion(ScriptExecutionContext& context)
     , m_regionAnchor(FloatPoint(defaultAnchorPointX, defaultAnchorPointY))
     , m_viewportAnchor(FloatPoint(defaultAnchorPointX, defaultAnchorPointY))
     , m_scroll(defaultScroll)
-    , m_regionDisplayTree(nullptr)
     , m_cueContainer(nullptr)
+    , m_regionDisplayTree(nullptr)
     , m_track(nullptr)
     , m_currentTop(0)
     , m_scrollTimer(this, &TextTrackRegion::scrollTimerFired)
@@ -354,6 +354,8 @@ const AtomicString& TextTrackRegion::textTrackRegionShadowPseudoId()
 
 void TextTrackRegion::appendTextTrackCueBox(PassRefPtr<VTTCueBox> displayBox)
 {
+    ASSERT(m_cueContainer);
+
     if (m_cueContainer->contains(displayBox.get()))
         return;
 
