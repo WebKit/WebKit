@@ -58,6 +58,7 @@ class Data;
 namespace IPC {
 class ArgumentDecoder;
 class Connection;
+class DataReference;
 }
 
 namespace WebKit {
@@ -88,6 +89,8 @@ public:
 
     bool load(API::Object* initializationUserData);
     void setSandboxExtension(PassRefPtr<SandboxExtension> sandboxExtension) { m_sandboxExtension = sandboxExtension; }
+
+    void setBundleParameter(const String& key, const IPC::DataReference&);
 
     // API
     void initializeClient(const WKBundleClientBase*);

@@ -36,6 +36,7 @@
 #import "WebCertificateInfo.h"
 #import "WebContext.h"
 #import "WebCookieManagerProxy.h"
+#import "WebProcessMessages.h"
 #import <WebCore/CertificateInfo.h>
 #import <wtf/RetainPtr.h>
 
@@ -49,6 +50,12 @@
 enum : NSUInteger {
     NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3,
 };
+#endif
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1080
+@interface NSKeyedArchiver (WKDetails)
+- (void)setRequiresSecureCoding:(BOOL)b;
+@end
 #endif
 
 @implementation WKProcessPool
@@ -149,7 +156,21 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
 
 - (void)_setObject:(id <NSCopying, NSSecureCoding>)object forBundleParameter:(NSString *)parameter
 {
-    [_context->ensureBundleParameters() setObject:adoptNS([(NSObject *)object copy]).get() forKey:parameter];
+    auto copy = adoptNS([(NSObject *)object copy]);
+
+    auto data = adoptNS([[NSMutableData alloc] init]);
+    auto keyedArchiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
+    [keyedArchiver setRequiresSecureCoding:YES];
+
+    @try {
+        [keyedArchiver encodeObject:copy.get() forKey:@"parameter"];
+        [keyedArchiver finishEncoding];
+    } @catch (NSException *exception) {
+        LOG_ERROR("Failed to encode bundle parameter: %@", exception);
+    }
+
+    [_context->ensureBundleParameters() setObject:copy.get() forKey:parameter];
+    _context->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameter(parameter, IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length])));
 }
 
 @end

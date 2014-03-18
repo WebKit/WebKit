@@ -243,6 +243,7 @@ private:
     void setMemoryCacheDisabled(bool);
 
     void postInjectedBundleMessage(const IPC::DataReference& messageData);
+    void setInjectedBundleParameter(const String& key, const IPC::DataReference&);
 
     // ChildProcess
     virtual void initializeProcess(const ChildProcessInitializationParameters&) override;

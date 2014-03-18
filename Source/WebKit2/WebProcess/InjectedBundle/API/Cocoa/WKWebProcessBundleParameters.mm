@@ -49,6 +49,13 @@
     return [_parameters valueForKey:key];
 }
 
+- (void)setParameter:(id)parameter forKey:(NSString *)key
+{
+    [self willChangeValueForKey:key];
+    [_parameters setValue:parameter forKey:key];
+    [self didChangeValueForKey:key];
+}
+
 @end
 
 #endif

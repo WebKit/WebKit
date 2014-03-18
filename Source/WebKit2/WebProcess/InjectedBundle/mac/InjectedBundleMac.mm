@@ -143,6 +143,26 @@ WKWebProcessBundleParameters *InjectedBundle::bundleParameters()
 }
 #endif
 
+void InjectedBundle::setBundleParameter(const String& key, const IPC::DataReference& value)
+{
+#if WK_API_ENABLED
+    auto bundleParameterData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(value.data())) length:value.size() freeWhenDone:NO]);
+
+    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:bundleParameterData.get()]);
+    [unarchiver setRequiresSecureCoding:YES];
+
+    id parameter = nil;
+    @try {
+        parameter = [unarchiver decodeObjectForKey:@"parameter"];
+    } @catch (NSException *exception) {
+        LOG_ERROR("Failed to decode bundle parameter: %@", exception);
+    }
+
+    [m_bundleParameters setParameter:parameter forKey:key];
+#endif
+}
+
+
 void InjectedBundle::platformInitialize(const WebProcessCreationParameters& parameters)
 {
 #if WK_API_ENABLED

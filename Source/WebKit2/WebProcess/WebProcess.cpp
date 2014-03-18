@@ -948,6 +948,15 @@ void WebProcess::postInjectedBundleMessage(const IPC::DataReference& messageData
     injectedBundle->didReceiveMessage(messageName, messageBody.get());
 }
 
+void WebProcess::setInjectedBundleParameter(const String& key, const IPC::DataReference& value)
+{
+    InjectedBundle* injectedBundle = WebProcess::shared().injectedBundle();
+    if (!injectedBundle)
+        return;
+
+    injectedBundle->setBundleParameter(key, value);
+}
+
 bool WebProcess::usesNetworkProcess() const
 {
 #if ENABLE(NETWORK_PROCESS)
