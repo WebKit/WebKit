@@ -1363,10 +1363,6 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         // SVG text layout code expects us to be a block-level style element.
         if ((e->hasTagName(SVGNames::foreignObjectTag) || e->hasTagName(SVGNames::textTag)) && style.isDisplayInlineType())
             style.setDisplay(BLOCK);
-
-        // SVG text layout code expects us to be an inline-level style element.
-        if ((e->hasTagName(SVGNames::tspanTag) || e->hasTagName(SVGNames::textPathTag)) && style.display() != NONE && !style.isDisplayInlineType())
-            style.setDisplay(INLINE);
     }
 }
 

@@ -1,3 +1,17 @@
+2014-03-18  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r163560): ASSERTION FAILED: childrenInline() in WebCore::RenderSVGText::layout
+        https://bugs.webkit.org/show_bug.cgi?id=130346
+
+        Reviewed by Andreas Kling.
+
+        Added tests to ensure that SVG <a> and <tref> are always treated as inline-level elements.
+
+        * svg/text/a-display-block-expected.txt: Added.
+        * svg/text/a-display-block.html: Added.
+        * svg/text/tref-display-inherit-expected.txt: Added.
+        * svg/text/tref-display-inherit.html: Added.
+
 2014-03-18  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] shape-outside: ellipse(50% 50% at) causes crash

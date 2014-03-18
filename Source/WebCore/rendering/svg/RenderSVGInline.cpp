@@ -112,6 +112,14 @@ void RenderSVGInline::styleDidChange(StyleDifference diff, const RenderStyle* ol
     SVGResourcesCache::clientStyleChanged(*this, diff, style());
 }
 
+void RenderSVGInline::updateFromStyle()
+{
+    RenderInline::updateFromStyle();
+
+    // SVG text layout code expects us to be an inline-level element.
+    setInline(true);
+}
+
 void RenderSVGInline::addChild(RenderObject* child, RenderObject* beforeChild)
 {
     RenderInline::addChild(child, beforeChild);

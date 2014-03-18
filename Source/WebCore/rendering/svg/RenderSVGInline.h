@@ -39,6 +39,8 @@ private:
     virtual bool requiresLayer() const override final { return false; }
     virtual bool isSVGInline() const override final { return true; }
 
+    virtual void updateFromStyle() override final;
+
     // Chapter 10.4 of the SVG Specification say that we should use the
     // object bounding box of the parent text element.
     // We search for the root text element and take its bounding box.

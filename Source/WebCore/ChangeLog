@@ -1,3 +1,32 @@
+2014-03-18  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r163560): ASSERTION FAILED: childrenInline() in WebCore::RenderSVGText::layout
+        https://bugs.webkit.org/show_bug.cgi?id=130346
+
+        Reviewed by Andreas Kling.
+
+        Following <http://trac.webkit.org/changeset/163560>, SVG inline elements may be treated as block-
+        level elements depending on their CSS styles (e.g. display: block). But such elements should always
+        be treated as inline-level elements.
+
+        Partially revert <http://trac.webkit.org/changeset/164368> as it addressed a similar issue for
+        <tspan> and <tref>. Instead we should implement RenderSVGInline::updateFromStyle() to ensure that
+        RenderSVGInline and any derived classes (e.g. RenderSVGTSpan) are always treated as inline elements
+        regardless of their CSS style because the SVG text layout code depends on this assumption as part
+        of a performance optimization. We may want to revaluate the benefits of this optimization with respect
+        to code clarity and ensuring the code is less error prone.
+
+        Test: svg/text/a-display-block.html
+              svg/text/tref-display-inherit.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle): Revert changes from <http://trac.webkit.org/changeset/164368>.
+        * rendering/RenderInline.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::updateFromStyle): Added; ensure that RenderSVGInline and any derived
+        classes are treated as inline elements because the SVG text layout code depends on this assumption.
+        * rendering/svg/RenderSVGInline.h:
+
 2014-03-18  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] shape-outside: ellipse(50% 50% at) causes crash
