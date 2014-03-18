@@ -1,3 +1,19 @@
+2014-03-18  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [EFL] Update baselines and test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=130249111
+
+        Unreviewed EFL gardening.
+
+        * fast/events/touch/touch-slider-expected.txt:
+        * fast/events/touch/touch-slider-no-js-touch-listener-expected.txt:
+        Update baselines after enabling TOUCH_SLIDER macro (r165722).
+        * platform/efl-wk2/TestExpectations:
+        fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html
+        is failing after adding in r165587
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt:
+        Update baselines after refactoring Path to Path2D (r165651).
+
 2014-03-18  Ion Rosca  <rosca@adobe.com>
 
         Add blend mode property to dumped information in GraphicsLayer.

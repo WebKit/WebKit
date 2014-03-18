@@ -553,3 +553,5 @@ webkit.org/b/129820 svg/clip-path/mask-userspaceonuse-content-clip.svg [ ImageOn
 webkit.org/b/129821 svg/css/svg-resource-fragment-identifier-img-src.html [ ImageOnlyFailure ]
 
 webkit.org/b/130020 webaudio/codec-tests/wav/24bit-22khz-resample.html [ Failure ]
+
+webkit.org/b/130340 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html [ ImageOnlyFailure ]
