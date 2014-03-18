@@ -1,3 +1,15 @@
+2014-03-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] ResourceLoaderSoup.cpp was added by mistake
+        https://bugs.webkit.org/show_bug.cgi?id=130396
+
+        Reviewed by Carlos Garcia Campos.
+
+        This file was committed by mistake in r152778 and is not built by
+        any port.
+
+        * loader/soup/ResourceLoaderSoup.cpp: Removed.
+
 2014-03-18  Andreas Kling  <akling@apple.com>
 
         Rename ElementDescendantIterator to TypedElementDescendantIterator.
