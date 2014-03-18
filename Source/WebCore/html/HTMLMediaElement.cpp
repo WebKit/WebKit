@@ -467,9 +467,16 @@ void HTMLMediaElement::didMoveToNewDocument(Document* oldDocument)
     }
 
     if (oldDocument) {
+#if ENABLE(PAGE_VISIBILITY_API)
+        oldDocument->unregisterForVisibilityStateChangedCallbacks(this);
+#endif
         oldDocument->unregisterForMediaVolumeCallbacks(this);
         removeElementFromDocumentMap(*this, *oldDocument);
     }
+
+#if ENABLE(PAGE_VISIBILITY_API)
+    document().registerForVisibilityStateChangedCallbacks(this);
+#endif
 
     document().registerForMediaVolumeCallbacks(this);
     addElementToDocumentMap(*this, document());

@@ -1,3 +1,13 @@
+2014-03-17  Jeffrey Pfau  <jpfau@apple.com>
+
+        <media> elements are not properly moved to new documents' visibility callback lists
+        https://bugs.webkit.org/show_bug.cgi?id=127711
+
+        Reviewed by David Kilzer.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::didMoveToNewDocument):
+
 2014-03-18  Filip Pizlo  <fpizlo@apple.com>
 
         More FTL enabling.
