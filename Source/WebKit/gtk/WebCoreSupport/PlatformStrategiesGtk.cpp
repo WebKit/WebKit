@@ -112,7 +112,7 @@ void PlatformStrategiesGtk::refreshPlugins()
     PluginDatabase::installedPlugins()->refresh();
 }
 
-void PlatformStrategiesGtk::getPluginInfo(const Page* page, Vector<PluginInfo>& outPlugins)
+void PlatformStrategiesGtk::getPluginInfo(const Page*, Vector<PluginInfo>& outPlugins)
 {
     PluginDatabase* database = PluginDatabase::installedPlugins();
     const Vector<PluginPackage*> &plugins = database->plugins();

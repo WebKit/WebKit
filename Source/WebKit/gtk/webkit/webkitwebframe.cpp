@@ -921,7 +921,7 @@ static void draw_page_callback(GtkPrintOperation*, GtkPrintContext* gtkPrintCont
     corePrintContext->spoolPage(graphicsContext, pageNumber, pageWidth);
 }
 
-static void end_print_callback(GtkPrintOperation* op, GtkPrintContext* context, gpointer user_data)
+static void end_print_callback(GtkPrintOperation*, GtkPrintContext*, gpointer user_data)
 {
     PrintContext* printContext = reinterpret_cast<PrintContext*>(user_data);
     printContext->end();

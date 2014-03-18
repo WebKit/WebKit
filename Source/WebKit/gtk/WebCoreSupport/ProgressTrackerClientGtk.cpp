@@ -49,7 +49,7 @@ void ProgressTrackerClient::progressStarted(WebCore::Frame& originatingProgressF
 
 void ProgressTrackerClient::progressEstimateChanged(WebCore::Frame& originatingProgressFrame)
 {
-    ASSERT(m_webView == getViewFromFrame(kit(&originatingProgressFrame)));
+    ASSERT_UNUSED(originatingProgressFrame, (m_webView == getViewFromFrame(kit(&originatingProgressFrame))));
 
     WebCore::Page* corePage = core(m_webView);
     g_signal_emit_by_name(m_webView, "load-progress-changed", lround(corePage->progress().estimatedProgress()*100));

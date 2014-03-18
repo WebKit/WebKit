@@ -76,7 +76,7 @@ DragSourceAction DragClient::dragSourceActionMaskForPoint(const IntPoint&)
     return DragSourceActionAny;
 }
 
-void DragClient::startDrag(DragImageRef image, const IntPoint& dragImageOrigin, const IntPoint& eventPos, Clipboard& clipboard, Frame& frame, bool linkDrag)
+void DragClient::startDrag(DragImageRef image, const IntPoint& dragImageOrigin, const IntPoint& eventPos, Clipboard& clipboard, Frame& frame, bool /* linkDrag */)
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(kit(&frame));
     RefPtr<DataObjectGtk> dataObject = clipboard.pasteboard().dataObject();

@@ -102,7 +102,7 @@ void WebViewInputMethodFilter::cancelCurrentComposition()
     frame->editor().cancelComposition();
 }
 
-void WebViewInputMethodFilter::setPreedit(String newPreedit, int cursorOffset)
+void WebViewInputMethodFilter::setPreedit(String newPreedit, int /* cursorOffset */)
 {
     Frame* frame = focusedOrMainFrame();
     if (!frame || !frame->editor().canEdit())

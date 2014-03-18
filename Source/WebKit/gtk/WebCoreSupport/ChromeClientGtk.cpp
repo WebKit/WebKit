@@ -195,7 +195,7 @@ void ChromeClient::unfocus()
         gtk_window_set_focus(GTK_WINDOW(window), NULL);
 }
 
-Page* ChromeClient::createWindow(Frame* frame, const FrameLoadRequest& frameLoadRequest, const WindowFeatures& coreFeatures, const NavigationAction&)
+Page* ChromeClient::createWindow(Frame* frame, const FrameLoadRequest&, const WindowFeatures& coreFeatures, const NavigationAction&)
 {
     WebKitWebView* webView = 0;
 
@@ -361,7 +361,7 @@ bool ChromeClient::runBeforeUnloadConfirmPanel(const WTF::String& message, WebCo
     return runJavaScriptConfirm(frame, message);
 }
 
-void ChromeClient::addMessageToConsole(JSC::MessageSource source, JSC::MessageLevel level, const WTF::String& message, unsigned lineNumber, unsigned columnNumber, const WTF::String& sourceId)
+void ChromeClient::addMessageToConsole(JSC::MessageSource, JSC::MessageLevel, const WTF::String& message, unsigned lineNumber, unsigned /* columnNumber */, const WTF::String& sourceId)
 {
     gboolean retval;
     g_signal_emit_by_name(m_webView, "console-message", message.utf8().data(), lineNumber, sourceId.utf8().data(), &retval);
@@ -668,7 +668,7 @@ void ChromeClient::invalidateContentsForSlowScroll(const IntRect& updateRect)
     invalidateContentsAndRootView(updateRect);
 }
 
-void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, const IntRect& clipRect)
+void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, const IntRect& /* clipRect */)
 {
     m_adjustmentWatcher.updateAdjustmentsFromScrollbarsLater();
 
@@ -784,7 +784,7 @@ void ChromeClient::scrollbarsModeDidChange() const
                                    horizontalPolicy, verticalPolicy);
 }
 
-void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned modifierFlags)
+void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned /* modifierFlags */)
 {
     // check if the element is a link...
     bool isLink = hit.isLiveLink();
@@ -840,7 +840,7 @@ void ChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseNam
 }
 #endif
 
-void ChromeClient::reachedMaxAppCacheSize(int64_t spaceNeeded)
+void ChromeClient::reachedMaxAppCacheSize(int64_t /* spaceNeeded */)
 {
     // FIXME: Free some space.
     notImplemented();
@@ -862,7 +862,7 @@ void ChromeClient::loadIconForFiles(const Vector<WTF::String>& filenames, WebCor
     loader->notifyFinished(Icon::createIconForFiles(filenames));
 }
 
-void ChromeClient::dispatchViewportPropertiesDidChange(const ViewportArguments& arguments) const
+void ChromeClient::dispatchViewportPropertiesDidChange(const ViewportArguments&) const
 {
     // Recompute the viewport attributes making it valid.
     webkitViewportAttributesRecompute(webkit_web_view_get_viewport_attributes(m_webView));
@@ -916,12 +916,12 @@ PassRefPtr<WebCore::SearchPopupMenu> ChromeClient::createSearchPopupMenu(WebCore
 }
 
 #if ENABLE(FULLSCREEN_API)
-bool ChromeClient::supportsFullScreenForElement(const WebCore::Element* element, bool withKeyboard)
+bool ChromeClient::supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard)
 {
     return !withKeyboard;
 }
 
-static gboolean onFullscreenGtkKeyPressEvent(GtkWidget* widget, GdkEventKey* event, ChromeClient* chromeClient)
+static gboolean onFullscreenGtkKeyPressEvent(GtkWidget*, GdkEventKey* event, ChromeClient* chromeClient)
 {
     switch (event->keyval) {
     case GDK_KEY_Escape:
@@ -989,7 +989,7 @@ void ChromeClient::exitFullScreenForElement(WebCore::Element*)
 }
 #endif
 
-void ChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* rootLayer)
+void ChromeClient::attachRootGraphicsLayer(Frame*, GraphicsLayer* rootLayer)
 {
     AcceleratedCompositingContext* context = m_webView->priv->acceleratedCompositingContext.get();
     bool turningOffCompositing = !rootLayer && context->enabled();

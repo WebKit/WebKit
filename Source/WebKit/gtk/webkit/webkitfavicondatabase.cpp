@@ -82,7 +82,7 @@ public:
 
     // Called when an icon is requested while the initial import is
     // going on.
-    virtual void didImportIconURLForPageURL(const String& URL) { };
+    virtual void didImportIconURLForPageURL(const String& /* URL */) { };
 
     // Called whenever a retained icon is read from database.
     virtual void didImportIconDataForPageURL(const String& URL)
@@ -96,7 +96,7 @@ public:
         webkitFaviconDatabaseProcessPendingIconsForURI(database, URL);
     }
 
-    virtual void didChangeIconForPageURL(const String& URL)
+    virtual void didChangeIconForPageURL(const String& /* URL */)
     {
         // Called when the the favicon for a particular URL changes.
         // It does not mean that the new icon data is available yet.
@@ -315,7 +315,7 @@ const gchar* webkit_favicon_database_get_path(WebKitFaviconDatabase* database)
     return database->priv->path.get();
 }
 
-static void webkitFaviconDatabaseClose(WebKitFaviconDatabase* database)
+static void webkitFaviconDatabaseClose(WebKitFaviconDatabase*)
 {
     if (iconDatabase().isEnabled()) {
         iconDatabase().setEnabled(false);
@@ -386,7 +386,7 @@ gchar* webkit_favicon_database_get_favicon_uri(WebKitFaviconDatabase* database, 
     return g_strdup(iconURI.utf8().data());
 }
 
-static GdkPixbuf* getIconPixbufSynchronously(WebKitFaviconDatabase* database, const String& pageURL, const IntSize& iconSize)
+static GdkPixbuf* getIconPixbufSynchronously(WebKitFaviconDatabase*, const String& pageURL, const IntSize& iconSize)
 {
     ASSERT(isMainThread());
 
@@ -484,7 +484,7 @@ static void getIconPixbufCancelled(void* userData)
         webkitfavicondatabaseDeleteRequests(database, icons, pageURL);
 }
 
-static void webkitFaviconDatabaseGetIconPixbufCancelled(GCancellable* cancellable, PendingIconRequest* request)
+static void webkitFaviconDatabaseGetIconPixbufCancelled(GCancellable*, PendingIconRequest* request)
 {
     // Handle cancelled in a in idle since it might be called from any thread.
     callOnMainThread(getIconPixbufCancelled, request);
@@ -573,7 +573,7 @@ void webkit_favicon_database_get_favicon_pixbuf(WebKitFaviconDatabase* database,
  *
  * Since: 1.8
  */
-GdkPixbuf* webkit_favicon_database_get_favicon_pixbuf_finish(WebKitFaviconDatabase* database, GAsyncResult* result, GError** error)
+GdkPixbuf* webkit_favicon_database_get_favicon_pixbuf_finish(WebKitFaviconDatabase*, GAsyncResult* result, GError** error)
 {
     GSimpleAsyncResult* simpleResult = G_SIMPLE_ASYNC_RESULT(result);
     g_return_val_if_fail(g_simple_async_result_get_source_tag(simpleResult) == webkit_favicon_database_get_favicon_pixbuf, 0);

@@ -226,7 +226,7 @@ void FrameLoaderClient::committedLoad(WebCore::DocumentLoader* loader, const cha
     }
 }
 
-bool FrameLoaderClient::shouldUseCredentialStorage(WebCore::DocumentLoader*, unsigned long  identifier)
+bool FrameLoaderClient::shouldUseCredentialStorage(WebCore::DocumentLoader*, unsigned long  /* identifier */)
 {
     return true;
 }
@@ -268,7 +268,7 @@ void FrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(WebCore::Docum
     gtk_widget_show(authDialog);
 }
 
-void FrameLoaderClient::dispatchDidCancelAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long  identifier, const AuthenticationChallenge&)
+void FrameLoaderClient::dispatchDidCancelAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long /* identifier */, const AuthenticationChallenge&)
 {
     notImplemented();
 }
@@ -528,8 +528,7 @@ PassRefPtr<Widget> FrameLoaderClient::createPlugin(const IntSize& pluginSize, HT
     return 0;
 }
 
-PassRefPtr<Frame> FrameLoaderClient::createFrame(const URL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
-                                                 const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
+PassRefPtr<Frame> FrameLoaderClient::createFrame(const URL& url, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer, bool /* allowsScrolling */, int /* marginWidth */, int /* marginHeight */)
 {
     ASSERT(m_frame);
     Frame* parentFrame = core(m_frame);
@@ -919,7 +918,7 @@ bool FrameLoaderClient::canHandleRequest(const ResourceRequest&) const
     return true;
 }
 
-bool FrameLoaderClient::canShowMIMETypeAsHTML(const String& MIMEType) const
+bool FrameLoaderClient::canShowMIMETypeAsHTML(const String& /* MIMEType */) const
 {
     notImplemented();
     return false;
@@ -967,7 +966,7 @@ void FrameLoaderClient::prepareForDataSourceReplacement()
     notImplemented();
 }
 
-void FrameLoaderClient::setTitle(const StringWithDirection& title, const URL& url)
+void FrameLoaderClient::setTitle(const StringWithDirection& title, const URL&)
 {
     WebKitWebFramePrivate* frameData = m_frame->priv;
     g_free(frameData->title);
@@ -1042,7 +1041,7 @@ void FrameLoaderClient::dispatchDidFailLoading(WebCore::DocumentLoader* loader, 
     webkitWebViewRemoveSubresource(webView, identifierString.get());
 }
 
-bool FrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length)
+bool FrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int /* length */)
 {
     notImplemented();
     return false;
@@ -1190,7 +1189,7 @@ void FrameLoaderClient::updateGlobalHistoryRedirectLinks()
     notImplemented();
 }
 
-void FrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFrame)
+void FrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame*)
 {
 }
 
@@ -1217,7 +1216,7 @@ static void postCommitFrameViewSetup(WebKitWebFrame *frame)
 
 void FrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame* cachedFrame)
 {
-    ASSERT(cachedFrame->view());
+    ASSERT_UNUSED(cachedFrame, cachedFrame->view());
 
     Frame* frame = core(m_frame);
     if (frame != &frame->page()->mainFrame())

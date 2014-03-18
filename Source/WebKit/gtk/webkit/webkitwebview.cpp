@@ -1128,7 +1128,7 @@ static WebKitNavigationResponse webkit_web_view_real_navigation_requested(WebKit
     return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
 }
 
-static void webkit_web_view_real_window_object_cleared(WebKitWebView*, WebKitWebFrame*, JSGlobalContextRef context, JSObjectRef window_object)
+static void webkit_web_view_real_window_object_cleared(WebKitWebView*, WebKitWebFrame*, JSGlobalContextRef, JSObjectRef)
 {
     notImplemented();
 }
@@ -1232,7 +1232,7 @@ static gboolean webkit_web_view_real_script_prompt(WebKitWebView* webView, WebKi
     return TRUE;
 }
 
-static gboolean webkit_web_view_real_console_message(WebKitWebView* webView, const gchar* message, unsigned int line, const gchar* sourceId)
+static gboolean webkit_web_view_real_console_message(WebKitWebView*, const gchar* message, unsigned line, const gchar* sourceId)
 {
     g_message("console message: %s @%d: %s\n", sourceId, line, message);
     return TRUE;
@@ -1332,12 +1332,12 @@ static gboolean webkit_web_view_real_should_allow_editing_action(WebKitWebView*)
     return TRUE;
 }
 
-static gboolean webkit_web_view_real_entering_fullscreen(WebKitWebView* webView)
+static gboolean webkit_web_view_real_entering_fullscreen(WebKitWebView*)
 {
     return FALSE;
 }
 
-static gboolean webkit_web_view_real_leaving_fullscreen(WebKitWebView* webView)
+static gboolean webkit_web_view_real_leaving_fullscreen(WebKitWebView*)
 {
     return FALSE;
 }
@@ -1440,7 +1440,7 @@ static void webkit_web_view_finalize(GObject* object)
     G_OBJECT_CLASS(webkit_web_view_parent_class)->finalize(object);
 }
 
-static gboolean webkit_signal_accumulator_object_handled(GSignalInvocationHint* ihint, GValue* returnAccu, const GValue* handlerReturn, gpointer dummy)
+static gboolean webkit_signal_accumulator_object_handled(GSignalInvocationHint*, GValue* returnAccu, const GValue* handlerReturn, gpointer)
 {
     gpointer newWebView = g_value_get_object(handlerReturn);
     g_value_set_object(returnAccu, newWebView);
@@ -1449,7 +1449,7 @@ static gboolean webkit_signal_accumulator_object_handled(GSignalInvocationHint* 
     return !newWebView;
 }
 
-static gboolean webkit_navigation_request_handled(GSignalInvocationHint* ihint, GValue* returnAccu, const GValue* handlerReturn, gpointer dummy)
+static gboolean webkit_navigation_request_handled(GSignalInvocationHint*, GValue* returnAccu, const GValue* handlerReturn, gpointer)
 {
     WebKitNavigationResponse navigationResponse = (WebKitNavigationResponse)g_value_get_enum(handlerReturn);
     g_value_set_enum(returnAccu, navigationResponse);
@@ -1522,7 +1522,7 @@ static inline gint webViewConvertFontSizeToPixels(WebKitWebView* webView, double
     return fontSize / 72.0 * webViewGetDPI(webView);
 }
 
-static void webkit_web_view_screen_changed(GtkWidget* widget, GdkScreen* previousScreen)
+static void webkit_web_view_screen_changed(GtkWidget* widget, GdkScreen*)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
     WebKitWebViewPrivate* priv = webView->priv;
@@ -1596,7 +1596,7 @@ static void dragExitedCallback(GtkWidget* widget, DragData& dragData, bool dropH
     core(WEBKIT_WEB_VIEW(widget))->dragController().dragEnded();
 }
 
-static void webkit_web_view_drag_leave(GtkWidget* widget, GdkDragContext* context, guint time)
+static void webkit_web_view_drag_leave(GtkWidget* widget, GdkDragContext* context, guint /* time */)
 {
     WEBKIT_WEB_VIEW(widget)->priv->dragAndDropHelper.handleDragLeave(context, dragExitedCallback);
 }
@@ -1615,7 +1615,7 @@ static gboolean webkit_web_view_drag_motion(GtkWidget* widget, GdkDragContext* c
     return TRUE;
 }
 
-static void webkit_web_view_drag_data_received(GtkWidget* widget, GdkDragContext* context, gint x, gint y, GtkSelectionData* selectionData, guint info, guint time)
+static void webkit_web_view_drag_data_received(GtkWidget* widget, GdkDragContext* context, gint /* x */, gint /* y */, GtkSelectionData* selectionData, guint info, guint time)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
     IntPoint position;
@@ -1643,7 +1643,7 @@ static gboolean webkit_web_view_drag_drop(GtkWidget* widget, GdkDragContext* con
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
-static gboolean webkit_web_view_query_tooltip(GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip)
+static gboolean webkit_web_view_query_tooltip(GtkWidget *widget, gint /* x */, gint /* y */, gboolean keyboard_mode, GtkTooltip *tooltip)
 {
     WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW(widget)->priv;
 
@@ -5235,7 +5235,7 @@ void webkit_web_view_redo(WebKitWebView* webView)
  * Since: 1.1.14
  * Deprecated: 2.6
  */
-void webkit_web_view_set_view_source_mode (WebKitWebView* webView, gboolean mode)
+void webkit_web_view_set_view_source_mode (WebKitWebView* webView, gboolean /* mode */)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
@@ -5544,7 +5544,7 @@ webkit_web_view_get_snapshot(WebKitWebView* webView)
 }
 
 #if ENABLE(ICONDATABASE)
-void webkitWebViewIconLoaded(WebKitFaviconDatabase* database, const char* frameURI, WebKitWebView* webView)
+void webkitWebViewIconLoaded(WebKitFaviconDatabase*, const char* /* frameURI */, WebKitWebView* webView)
 {
     // Since we definitely have an icon the WebView doesn't need to
     // listen for notifications any longer.
@@ -5568,7 +5568,7 @@ void webkitWebViewRegisterForIconNotification(WebKitWebView* webView, bool shoul
 }
 #endif
 
-void webkitWebViewDirectionChanged(WebKitWebView* webView, GtkTextDirection previousDirection, gpointer)
+void webkitWebViewDirectionChanged(WebKitWebView* webView, GtkTextDirection, gpointer)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 

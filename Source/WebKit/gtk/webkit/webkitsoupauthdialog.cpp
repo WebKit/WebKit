@@ -46,7 +46,7 @@ class WebKitSoupAuthDialogAuthenticationClient : public WebCore::AuthenticationC
 using RefCounted<WebKitSoupAuthDialogAuthenticationClient>::ref;
 using RefCounted<WebKitSoupAuthDialogAuthenticationClient>::deref;
 public:
-    virtual void didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
+    virtual void didReceiveAuthenticationChallenge(const AuthenticationChallenge&)
     {
     }
 

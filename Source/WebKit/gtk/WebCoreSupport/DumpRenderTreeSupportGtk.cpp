@@ -584,7 +584,7 @@ void DumpRenderTreeSupportGtk::setCSSGridLayoutEnabled(WebKitWebView* webView, b
     core(webView)->settings().setCSSGridLayoutEnabled(enabled);
 }
 
-void DumpRenderTreeSupportGtk::setCSSRegionsEnabled(WebKitWebView* webView, bool enabled)
+void DumpRenderTreeSupportGtk::setCSSRegionsEnabled(WebKitWebView*, bool enabled)
 {
     RuntimeEnabledFeatures::sharedFeatures().setCSSRegionsEnabled(enabled);
 }

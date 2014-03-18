@@ -314,7 +314,7 @@ void AcceleratedCompositingContext::resizeRootLayer(const IntSize& newSize)
     scheduleLayerFlush();
 }
 
-void AcceleratedCompositingContext::scrollNonCompositedContents(const IntRect& scrollRect, const IntSize& scrollOffset)
+void AcceleratedCompositingContext::scrollNonCompositedContents(const IntRect& scrollRect, const IntSize& /* scrollOffset */)
 {
     m_nonCompositedContentLayer->setNeedsDisplayInRect(scrollRect);
     scheduleLayerFlush();
@@ -387,7 +387,7 @@ void AcceleratedCompositingContext::layerFlushTimerFired()
     flushAndRenderLayers();
 }
 
-void AcceleratedCompositingContext::notifyAnimationStarted(const GraphicsLayer*, double time)
+void AcceleratedCompositingContext::notifyAnimationStarted(const GraphicsLayer*, double /* time */)
 {
 
 }

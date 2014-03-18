@@ -943,12 +943,12 @@ void DownloadClient::didReceiveResponse(ResourceHandle*, const ResourceResponse&
     }
 }
 
-void DownloadClient::didReceiveData(ResourceHandle*, const char* data, unsigned length, int encodedDataLength)
+void DownloadClient::didReceiveData(ResourceHandle*, const char* /* data */, unsigned /* length */, int /* encodedDataLength */)
 {
     ASSERT_NOT_REACHED();
 }
 
-void DownloadClient::didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer> buffer, int encodedLength)
+void DownloadClient::didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer> buffer, int /* encodedLength */)
 {
     // This pattern is suggested by SharedBuffer.h.
     const char* segment;

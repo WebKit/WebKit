@@ -76,7 +76,7 @@ static void checkSpellingOfString(WebKitSpellChecker* checker, const char* strin
     priv->textCheckerEnchant->checkSpellingOfString(String::fromUTF8(string), *misspellingLocation, *misspellingLength);
 }
 
-static char** getGuessesForWord(WebKitSpellChecker* checker, const char* word, const char* context)
+static char** getGuessesForWord(WebKitSpellChecker* checker, const char* word, const char* /* context */)
 {
     WebKitSpellCheckerEnchantPrivate* priv = WEBKIT_SPELL_CHECKER_ENCHANT(checker)->priv;
 
@@ -104,7 +104,7 @@ static void updateSpellCheckingLanguages(WebKitSpellChecker* checker, const char
     priv->textCheckerEnchant->updateSpellCheckingLanguages(languagesVector);
 }
 
-static char* getAutocorrectSuggestionsForMisspelledWord(WebKitSpellChecker* checker, const char* word)
+static char* getAutocorrectSuggestionsForMisspelledWord(WebKitSpellChecker*, const char* /* word */)
 {
     return 0;
 }

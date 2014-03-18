@@ -38,7 +38,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static void notifyWebViewDestroyed(WebKitWebView* webView, InspectorFrontendClient* inspectorFrontendClient)
+static void notifyWebViewDestroyed(WebKitWebView*, InspectorFrontendClient* inspectorFrontendClient)
 {
     inspectorFrontendClient->destroyInspectorWindow(true);
 }
@@ -50,13 +50,13 @@ public:
     virtual ~InspectorFrontendSettingsGtk() { }
 
 private:
-    virtual String getProperty(const String& name)
+    virtual String getProperty(const String& /* name */)
     {
         notImplemented();
         return String();
     }
 
-    virtual void setProperty(const String& name, const String& value)
+    virtual void setProperty(const String& /* name */, const String& /* value */)
     {
         notImplemented();
     }
@@ -84,7 +84,7 @@ void InspectorClient::inspectorDestroyed()
     delete this;
 }
 
-InspectorFrontendChannel* InspectorClient::openInspectorFrontend(InspectorController* controller)
+InspectorFrontendChannel* InspectorClient::openInspectorFrontend(InspectorController*)
 {
     // This g_object_get will ref the inspector. We're not doing an
     // unref if this method succeeds because the inspector object must
@@ -241,17 +241,17 @@ void InspectorFrontendClient::detachWindow()
     g_signal_emit_by_name(m_webInspector.get(), "detach-window", &handled);
 }
 
-void InspectorFrontendClient::setAttachedWindowHeight(unsigned height)
+void InspectorFrontendClient::setAttachedWindowHeight(unsigned /* height */)
 {
     notImplemented();
 }
 
-void InspectorFrontendClient::setAttachedWindowWidth(unsigned width)
+void InspectorFrontendClient::setAttachedWindowWidth(unsigned /* width */)
 {
     notImplemented();
 }
 
-void InspectorFrontendClient::setToolbarHeight(unsigned height)
+void InspectorFrontendClient::setToolbarHeight(unsigned /* height */)
 {
     notImplemented();
 }

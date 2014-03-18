@@ -32,7 +32,7 @@
 
 G_DEFINE_INTERFACE(WebKitSpellChecker, webkit_spell_checker, G_TYPE_OBJECT);
 
-static void webkit_spell_checker_default_init(WebKitSpellCheckerInterface* interface)
+static void webkit_spell_checker_default_init(WebKitSpellCheckerInterface*)
 {
 }
 

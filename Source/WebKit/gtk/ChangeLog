@@ -1,3 +1,29 @@
+2014-03-18  Jae Hyun Park  <jaepark@webkit.org>
+
+        [GTK][CMake] Fix WebKit unused parameter warnings
+        https://bugs.webkit.org/show_bug.cgi?id=130383
+
+        Reviewed by Martin Robinson.
+
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp: Fix unused parameters warning.
+        * WebCoreSupport/ChromeClientGtk.cpp: Ditto.
+        * WebCoreSupport/DragClientGtk.cpp: Ditto.
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp: Ditto.
+        * WebCoreSupport/EditorClientGtk.cpp: Ditto.
+        * WebCoreSupport/FrameLoaderClientGtk.cpp: Ditto.
+        * WebCoreSupport/InspectorClientGtk.cpp: Ditto.
+        * WebCoreSupport/PlatformStrategiesGtk.cpp: Ditto.
+        * WebCoreSupport/ProgressTrackerClientGtk.cpp: Ditto.
+        * WebCoreSupport/WebViewInputMethodFilter.cpp: Ditto.
+        * webkit/webkitdownload.cpp: Ditto.
+        * webkit/webkitfavicondatabase.cpp: Ditto.
+        * webkit/webkitsoupauthdialog.cpp: Ditto.
+        * webkit/webkitspellchecker.cpp: Ditto.
+        * webkit/webkitspellcheckerenchant.cpp: Ditto.
+        * webkit/webkitwebframe.cpp: Ditto.
+        * webkit/webkitwebinspector.cpp: Ditto.
+        * webkit/webkitwebview.cpp: Ditto.
+
 2014-03-14  Maciej Stachowiak  <mjs@apple.com>
 
         Replace "Apple Computer, Inc." with "Apple Inc." in copyright headers

@@ -204,7 +204,7 @@ void EditorClient::respondToChangedContents()
 }
 
 static WebKitWebView* viewSettingClipboard = 0;
-static void collapseSelection(GtkClipboard* clipboard, WebKitWebView* webView)
+static void collapseSelection(GtkClipboard*, WebKitWebView* webView)
 {
     if (viewSettingClipboard && viewSettingClipboard == webView)
         return;
