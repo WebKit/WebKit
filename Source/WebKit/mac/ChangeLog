@@ -1,3 +1,11 @@
+2014-03-17  Andy Estes  <aestes@apple.com>
+
+        Remove staging code added for <http://webkit.org/b/164757> [iOS] Support network state notification using CPNetworkObserver
+
+        Reviewed by Enrica Casucci.
+
+        * WebView/WebView.mm:
+
 2014-03-17  Anders Carlsson  <andersca@apple.com>
 
         WebKitLegacy headers should #import the relevant WebKit headers

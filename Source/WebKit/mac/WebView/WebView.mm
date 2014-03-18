@@ -3609,11 +3609,6 @@ static inline IMP getMethod(id o, SEL s)
     return _private->allowsMessaging;
 }
 
-// FIXME: Remove once this is no longer necessary for UIKit binary compatibility.
-- (void)_setNetworkStateIsOnline:(BOOL)isOnLine
-{
-}
-
 - (void)_setFixedLayoutSize:(CGSize)size
 {
     ASSERT(WebThreadIsLocked());
