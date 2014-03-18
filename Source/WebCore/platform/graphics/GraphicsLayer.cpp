@@ -614,7 +614,14 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
         writeIndent(ts, indent + 1);
         ts << "(opacity " << m_opacity << ")\n";
     }
-    
+
+#if ENABLE(CSS_COMPOSITING)
+    if (m_blendMode != BlendModeNormal) {
+        writeIndent(ts, indent + 1);
+        ts << "(blendMode " << compositeOperatorName(CompositeSourceOver, m_blendMode) << ")\n";
+    }
+#endif
+
     if (m_usingTiledBacking) {
         writeIndent(ts, indent + 1);
         ts << "(usingTiledLayer " << m_usingTiledBacking << ")\n";

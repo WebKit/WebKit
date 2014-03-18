@@ -12,6 +12,7 @@
             (GraphicsLayer
               (position 8.00 10.00)
               (bounds 100.00 100.00)
+              (blendMode difference)
               (children 1
                 (GraphicsLayer
                   (position 10.00 0.00)

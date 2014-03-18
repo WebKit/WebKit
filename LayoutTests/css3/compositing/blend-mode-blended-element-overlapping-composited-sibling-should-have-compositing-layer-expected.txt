@@ -16,6 +16,7 @@
             (GraphicsLayer
               (position 8.00 78.00)
               (bounds 100.00 100.00)
+              (blendMode difference)
             )
           )
         )

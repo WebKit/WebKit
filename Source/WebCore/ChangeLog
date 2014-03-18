@@ -1,3 +1,16 @@
+2014-03-18  Ion Rosca  <rosca@adobe.com>
+
+        Add blend mode property to dumped information in GraphicsLayer.
+        https://bugs.webkit.org/show_bug.cgi?id=130331
+
+        Reviewed by Simon Fraser.
+
+        Functionality is not changed, therefore no new tests added.
+        I adjusted the affected test results generated with layerTreeAsText.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties):
+
 2014-03-17  Sergio Villar Senin  <svillar@igalia.com>
 
         webdatabase: Replace DEPRECATED_DEFINE_STATIC_LOCAL by static NeverDestroyed<T>
