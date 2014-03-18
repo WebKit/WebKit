@@ -1,3 +1,14 @@
+2014-03-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught Exception in JSContext Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=130368
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._accessibilitySupported):
+        Feature check DOMAgent as well as the function.
+
 2014-03-16  Brian Burg  <bburg@apple.com>
 
         Web Inspector: vended backend commands file should be generated as part of the build

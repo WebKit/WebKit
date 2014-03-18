@@ -107,7 +107,7 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
 
     _accessibilitySupported: function()
     {
-        return !!DOMAgent.getAccessibilityPropertiesForNode;
+        return window.DOMAgent && DOMAgent.getAccessibilityPropertiesForNode;
     },
 
     _refreshAttributes: function()
