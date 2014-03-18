@@ -1,3 +1,15 @@
+2014-03-18  Antti Koivisto  <antti@apple.com>
+
+        Mutating rules returned by getMatchedCSSRules can result in crash
+        https://bugs.webkit.org/show_bug.cgi?id=130209
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/getMatchedCSSProperties-rule-mutation-expected.txt: Added.
+        * fast/css/getMatchedCSSProperties-rule-mutation.html: Added.
+        * fast/css/getMatchedCSSRules-crash-expected.txt: Added.
+        * fast/css/getMatchedCSSRules-crash.html: Added.
+
 2014-03-18  Brent Fulgham  <bfulgham@apple.com>
 
         TextTrackRegion Not Implemented

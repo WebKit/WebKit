@@ -1,3 +1,52 @@
+2014-03-18  Antti Koivisto  <antti@apple.com>
+
+        Mutating rules returned by getMatchedCSSRules can result in crash
+        https://bugs.webkit.org/show_bug.cgi?id=130209
+
+        Reviewed by Andreas Kling.
+        
+        The non-standard getMatchedCSSRules API returns CSSStyleRule objects that don't
+        have parent stylesheet pointer (as we don't know which sheet the rule originated from).
+        Mutating the rule via such wrapper can lead to crashes later as we fail to invalidate
+        the underlying stylesheet.
+        
+        Fix by disallowing mutation of style rules that don't have parent sheet pointer. CSSStyleRule
+        has two mutable properties selectorText and style. The latter gives back CSSStyleDeclaration.
+        This patch disallows mutations in both cases for CSSStyleRules that don't have parent stylesheet
+        pointer.
+        
+        While it is technically possible to have CSSRules that are legitimately disconnected
+        from stylesheet (by removing rule from sheet while holding a reference to it) it never
+        makes sense to mutate such rule as there is no way to do anything with it afterwards.
+
+        Tests: fast/css/getMatchedCSSProperties-rule-mutation.html
+               fast/css/getMatchedCSSRules-crash.html
+
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::setSelectorText):
+
+            Bail out if parent stylesheet is null.
+
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::setCssText):
+        (WebCore::PropertySetCSSStyleDeclaration::setProperty):
+        (WebCore::PropertySetCSSStyleDeclaration::removeProperty):
+        (WebCore::PropertySetCSSStyleDeclaration::setPropertyInternal):
+        
+            Allow StyleRuleCSSStyleDeclaration subclass cancel the mutation via
+            boolean return value from willMutate.
+
+        (WebCore::StyleRuleCSSStyleDeclaration::willMutate):
+        
+            Disallow mutation if the owning CSSStyleRule is null or has null stylesheet.
+
+        (WebCore::StyleRuleCSSStyleDeclaration::didMutate):
+        
+            We never get here with null rule or stylesheet anymore.
+
+        * css/PropertySetCSSStyleDeclaration.h:
+        (WebCore::PropertySetCSSStyleDeclaration::willMutate):
+
 2014-03-17  Jeffrey Pfau  <jpfau@apple.com>
 
         <media> elements are not properly moved to new documents' visibility callback lists

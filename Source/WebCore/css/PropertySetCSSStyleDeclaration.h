@@ -74,7 +74,7 @@ private:
     
 protected:
     enum MutationType { NoChanges, PropertyChanged };
-    virtual void willMutate() { }
+    virtual bool willMutate() WARN_UNUSED_RETURN { return true; }
     virtual void didMutate(MutationType) { }
 
     MutableStyleProperties* m_propertySet;
@@ -104,7 +104,7 @@ private:
 
     virtual CSSRule* parentRule() const override { return m_parentRule;  }
 
-    virtual void willMutate() override;
+    virtual bool willMutate() override WARN_UNUSED_RETURN;
     virtual void didMutate(MutationType) override;
 
     unsigned m_refCount;

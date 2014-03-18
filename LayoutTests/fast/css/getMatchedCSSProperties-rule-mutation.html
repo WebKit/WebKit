@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#test { color: blue; }
+@media all {
+    #test { color: blue; }
+}
+</style>
+</head>
+<body>
+<div id=test>
+</div>
+<script>
+
+description("Test that CSSStyleRules returned by getMatchedCSSRules can't be mutated");
+
+var testDiv = document.getElementById('test');
+var rules = getMatchedCSSRules(testDiv);
+
+function tryMutateSelector(index) {
+    originalText = rules[index].selectorText;
+    rules[index].selectorText = "#mutated";
+    shouldBe("rules["+index+"].selectorText", "originalText");
+}
+
+function tryMutateCSSText(index) {
+    originalText = rules[index].style.cssText;
+    rules[index].style.cssText = "color: red";
+    shouldBe("rules["+index+"].style.cssText", "originalText");
+}
+
+function tryMutateProperty(index) {
+    originalText = rules[index].style.color;
+    rules[index].style.color = "green";
+    shouldBe("rules["+index+"].style.color", "originalText");
+}
+
+function tryMutateProperty2(index) {
+    originalText = rules[index].style.getPropertyValue("color");
+    rules[index].style.setProperty("color", "white");
+    shouldBe("rules["+index+"].style.getPropertyValue('color')", "originalText");
+}
+
+function tryRemoveProperty(index) {
+    originalText = rules[index].style.color;
+    rules[index].style.removeProperty("color");
+    shouldBe("rules["+index+"].style.color", "originalText");
+}
+
+shouldBe("rules.length", "2");
+tryMutateSelector(0);
+tryMutateSelector(1);
+tryMutateCSSText(0);
+tryMutateCSSText(1);
+tryMutateProperty(0);
+tryMutateProperty(1);
+tryMutateProperty2(0);
+tryMutateProperty2(1);
+tryRemoveProperty(0);
+tryRemoveProperty(1);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
