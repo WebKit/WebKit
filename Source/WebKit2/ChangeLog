@@ -1,3 +1,12 @@
+2014-03-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Dan says that options should be unsigned, and enums should be signed.
+        
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        (NS_ENUM):
+
 2014-03-17  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Pass ranges over IPC in a cross-platform manner

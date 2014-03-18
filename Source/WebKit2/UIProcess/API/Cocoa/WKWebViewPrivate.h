@@ -32,7 +32,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
     _WKRenderingProgressEventFirstPaintWithSignificantArea = 1 << 2,
 };
 
-typedef NS_ENUM(NSUInteger, _WKPaginationMode) {
+typedef NS_ENUM(NSInteger, _WKPaginationMode) {
     _WKPaginationModeUnpaginated,
     _WKPaginationModeLeftToRight,
     _WKPaginationModeRightToLeft,
