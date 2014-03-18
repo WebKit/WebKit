@@ -1,3 +1,11 @@
+2014-03-18  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Remove consecutive single quotations, as the C compiler does not recognize scheme comments.
+
+        Unreviewed build fix.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2014-03-18  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed Mountain Lion build fix.  Work around "empty character constant" error
