@@ -1,3 +1,26 @@
+2014-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Race condition when the socket event source is cancelled
+        https://bugs.webkit.org/show_bug.cgi?id=130395
+
+        Reviewed by Martin Robinson.
+
+        In some cases when the socket event source is cancelled the socket
+        event source callback is called with the condition of the previous
+        poll instead of 0. This can happen sometimes when the source is
+        cancelled from the socket event source callback. Once the socket
+        event source is cancelled, it's dispatched by glib without
+        polling, so the condition is never reset again and the callback is
+        called again and again with the previous condition. When the
+        condition is G_IO_IN, the source is re-scheduled entering into an
+        infinite loop. We should always check if the source has been
+        cancelled at the beginning of the callback to destroy the source
+        instead of relying on the condition being 0.
+
+        * Platform/gtk/WorkQueueGtk.cpp:
+        (WorkQueue::SocketEventSource::isCancelled):
+        (WorkQueue::SocketEventSource::eventCallback):
+
 2014-03-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [GTK] URTFB after r165789. Stub function added.

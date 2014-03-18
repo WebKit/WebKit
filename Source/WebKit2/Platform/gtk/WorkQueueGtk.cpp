@@ -87,11 +87,21 @@ public:
         m_closeFunction();
     }
 
+    bool isCancelled() const
+    {
+        return g_cancellable_is_cancelled(m_cancellable);
+    }
+
     static gboolean eventCallback(GSocket*, GIOCondition condition, SocketEventSource* eventSource)
     {
         ASSERT(eventSource);
 
-        if (condition & G_IO_HUP || condition & G_IO_ERR) {
+        if (eventSource->isCancelled()) {
+            // EventSource has been cancelled, return FALSE to destroy the source.
+            return FALSE;
+        }
+
+        if (condition & G_IO_HUP || condition & G_IO_ERR || condition & G_IO_NVAL) {
             eventSource->didClose();
             return FALSE;
         }
@@ -101,7 +111,7 @@ public:
             return TRUE;
         }
 
-        // EventSource has been cancelled, return FALSE to destroy the source.
+        ASSERT_NOT_REACHED();
         return FALSE;
     }
 
