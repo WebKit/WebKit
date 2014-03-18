@@ -1,6 +1,6 @@
 2014-03-17  Andy Estes  <aestes@apple.com>
 
-        Remove staging code added for <http://webkit.org/b/164757> [iOS] Support network state notification using CPNetworkObserver
+        Remove staging code added for <http://webkit.org/b/129358> [iOS] Support network state notification using CPNetworkObserver
 
         Reviewed by Enrica Casucci.
 
