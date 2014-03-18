@@ -142,15 +142,30 @@ public:
     const RenderTableCell* firstRowCellAdjoiningTableStart() const;
     const RenderTableCell* firstRowCellAdjoiningTableEnd() const;
 
-    CellStruct& cellAt(unsigned row,  unsigned col) { return m_grid[row].row[col]; }
-    const CellStruct& cellAt(unsigned row, unsigned col) const { return m_grid[row].row[col]; }
+    CellStruct& cellAt(unsigned row,  unsigned col)
+    {
+        recalcCellsIfNeeded();
+        return m_grid[row].row[col];
+    }
+
+    const CellStruct& cellAt(unsigned row, unsigned col) const
+    {
+        ASSERT(!m_needsCellRecalc);
+        return m_grid[row].row[col];
+    }
+
     RenderTableCell* primaryCellAt(unsigned row, unsigned col)
     {
+        recalcCellsIfNeeded();
         CellStruct& c = m_grid[row].row[col];
         return c.primaryCell();
     }
 
-    RenderTableRow* rowRendererAt(unsigned row) const { return m_grid[row].rowRenderer; }
+    RenderTableRow* rowRendererAt(unsigned row) const
+    {
+        ASSERT(!m_needsCellRecalc);
+        return m_grid[row].rowRenderer;
+    }
 
     void appendColumn(unsigned pos);
     void splitColumn(unsigned pos, unsigned first);
@@ -194,7 +209,12 @@ public:
     return styleForCellFlow->isLeftToRightDirection() ? outerBorderEnd() : outerBorderStart();
     }
 
-    unsigned numRows() const { return m_grid.size(); }
+    unsigned numRows() const
+    {
+        ASSERT(!m_needsCellRecalc);
+        return m_grid.size();
+    }
+
     unsigned numColumns() const;
     void recalcCells();
     void recalcCellsIfNeeded()
@@ -206,7 +226,11 @@ public:
     bool needsCellRecalc() const { return m_needsCellRecalc; }
     void setNeedsCellRecalc();
 
-    LayoutUnit rowBaseline(unsigned row) { return m_grid[row].baseline; }
+    LayoutUnit rowBaseline(unsigned row)
+    {
+        recalcCellsIfNeeded();
+        return m_grid[row].baseline;
+    }
 
     void rowLogicalHeightChanged(unsigned rowIndex);
 
@@ -263,7 +287,12 @@ private:
     bool hasOverflowingCell() const { return m_overflowingCells.size() || m_forceSlowPaintPathWithOverflowingCell; }
     void computeOverflowFromCells(unsigned totalRows, unsigned nEffCols);
 
-    CellSpan fullTableRowSpan() const { return CellSpan(0, m_grid.size()); }
+    CellSpan fullTableRowSpan() const
+    {
+        ASSERT(!m_needsCellRecalc);
+        return CellSpan(0, m_grid.size());
+    }
+
     CellSpan fullTableColumnSpan() const { return CellSpan(0, table()->columns().size()); }
 
     // Flip the rect so it aligns with the coordinates used by the rowPos and columnPos vectors.

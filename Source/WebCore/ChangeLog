@@ -1,5 +1,33 @@
 2014-03-18  Daniel Bates  <dabates@apple.com>
 
+        REGRESSION (r162334): RenderTableCol::styleDidChange uses out-of-date table information
+        https://bugs.webkit.org/show_bug.cgi?id=129561
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/table/update-col-width-and-remove-table-cell-crash.html
+
+        Fixes an issue where a table column or table column group may query an out-
+        of-date model of its associated table as part of its process to propagate
+        style changes to affected table cells.
+
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::styleDidChange): Ensure that all sections in the table
+        are up-to-date before querying for a table cell.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::recalcCells): Update comment to read well. In
+        particular, remove the reference to RenderTableSection::fillRowsWithDefaultStartingAtPosition()
+        as this function was removed in <http://trac.webkit.org/changeset/99919>.
+        (WebCore::RenderTableSection::setNeedsCellRecalc): Clear the grid preemptively to
+        to ensure that accessors cannot access stale data. We'll build the grid again
+        in RenderTableSection::recalcCells().
+        (WebCore::RenderTableSection::numColumns): Add ASSERT(!m_needsCellRecalc) to assert
+        that the grid cells are up-to-date. That is, we don't need to calculate them again.
+        * rendering/RenderTableSection.h: Add ASSERT(!m_needsCellRecalc) or call recalcCellsIfNeeded()
+        before accessing the grid to ensure that it's up-to-date.
+
+2014-03-18  Daniel Bates  <dabates@apple.com>
+
         REGRESSION (r163560): ASSERTION FAILED: childrenInline() in WebCore::RenderSVGText::layout
         https://bugs.webkit.org/show_bug.cgi?id=130346
 

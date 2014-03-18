@@ -1361,9 +1361,9 @@ void RenderTableSection::imageChanged(WrappedImagePtr, const IntRect*)
 void RenderTableSection::recalcCells()
 {
     ASSERT(m_needsCellRecalc);
-    // We reset the flag here to ensure that |addCell| works. This is safe to do as
-    // fillRowsWithDefaultStartingAtPosition makes sure we match the table's columns
-    // representation.
+    // We reset the flag here to ensure that addCell() works. This is safe to do because we clear the grid
+    // and update its dimensions to be consistent with the table's column representation before we rebuild
+    // the grid using addCell().
     m_needsCellRecalc = false;
 
     m_cCol = 0;
@@ -1403,12 +1403,17 @@ void RenderTableSection::rowLogicalHeightChanged(unsigned rowIndex)
 void RenderTableSection::setNeedsCellRecalc()
 {
     m_needsCellRecalc = true;
+
+    // Clear the grid now to ensure that we don't hold onto any stale pointers (e.g. a cell renderer that is being removed).
+    m_grid.clear();
+
     if (RenderTable* t = table())
         t->setNeedsSectionRecalc();
 }
 
 unsigned RenderTableSection::numColumns() const
 {
+    ASSERT(!m_needsCellRecalc);
     unsigned result = 0;
     
     for (unsigned r = 0; r < m_grid.size(); ++r) {

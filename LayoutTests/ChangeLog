@@ -1,5 +1,18 @@
 2014-03-18  Daniel Bates  <dabates@apple.com>
 
+        REGRESSION (r162334): RenderTableCol::styleDidChange uses out-of-date table information
+        https://bugs.webkit.org/show_bug.cgi?id=129561
+
+        Reviewed by Antti Koivisto.
+
+        Add a test to ensure that a table column propagates a style change to applicable
+        table cells.
+
+        * fast/table/update-col-width-and-remove-table-cell-crash-expected.txt: Added.
+        * fast/table/update-col-width-and-remove-table-cell-crash.html: Added.
+
+2014-03-18  Daniel Bates  <dabates@apple.com>
+
         REGRESSION (r163560): ASSERTION FAILED: childrenInline() in WebCore::RenderSVGText::layout
         https://bugs.webkit.org/show_bug.cgi?id=130346
 
