@@ -1,5 +1,23 @@
 2014-03-17  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Rewrite WebHTMLConverter::_elementIsBlockLevel in C++
+        https://bugs.webkit.org/show_bug.cgi?id=130287
+
+        Reviewed by Andreas Kling.
+
+        Rewrote _elementIsBlockLevel as HTMLConverterCaches::isBlockElement. Also removed the code to update
+        _elementIsBlockLevel in _traverseNode as computing the value of _elementIsBlockLevel is now fast.
+
+        * platform/mac/HTMLConverter.h:
+        * platform/mac/HTMLConverter.mm:
+        (HTMLConverterCaches::isBlockElement):
+        (-[WebHTMLConverter _elementIsBlockLevel:]):
+        (-[WebHTMLConverter _traverseNode:depth:embedded:]):
+        (-[WebHTMLConverter dealloc]):
+        (-[WebHTMLConverter init]):
+
+2014-03-17  Ryosuke Niwa  <rniwa@webkit.org>
+
         Rewrite WebHTMLConverter::_getComputedFloat in C++
         https://bugs.webkit.org/show_bug.cgi?id=130284
 

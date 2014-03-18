@@ -403,6 +403,7 @@ class HTMLConverterCaches {
 public:
     String propertyValueForNode(Node&, const String& propertyName);
     bool floatPropertyValueForNode(Node&, const String& propertyName, float&);
+    bool isBlockElement(Element&);
 
     PassRefPtr<CSSValue> computedStylePropertyForElement(Element&, const String&);
     PassRefPtr<CSSValue> inlineStylePropertyForElement(Element&, const String&);
@@ -930,24 +931,20 @@ static inline NSShadow *_shadowForShadowStyle(NSString *shadowStyle)
     return shadow;
 }
 
+bool HTMLConverterCaches::isBlockElement(Element& element)
+{
+    String displayValue = propertyValueForNode(element, "display");
+    if (displayValue == "block" || displayValue == "list-item" || displayValue.startsWith("table"))
+        return true;
+    String floatValue = propertyValueForNode(element, "float");
+    if (floatValue == "left" || floatValue == "right")
+        return true;
+    return false;
+}
+
 - (BOOL)_elementIsBlockLevel:(DOMElement *)element
 {
-    BOOL isBlockLevel = NO;
-    NSNumber *val = nil;
-    val = [_elementIsBlockLevel objectForKey:element];
-    if (val)
-        isBlockLevel = [val boolValue];
-    else {
-        NSString *displayVal = [self _stringForNode:element property:@"display"];
-        NSString *floatVal = [self _stringForNode:element property:@"float"];
-        if (floatVal && ([@"left" isEqualToString:floatVal] || [@"right" isEqualToString:floatVal]))
-            isBlockLevel = YES;
-        else if (displayVal)
-            isBlockLevel = ([@"block" isEqualToString:displayVal] || [@"list-item" isEqualToString:displayVal] || [displayVal hasPrefix:@"table"]);
-
-        [_elementIsBlockLevel setObject:[NSNumber numberWithBool:isBlockLevel] forKey:element];
-    }
-    return isBlockLevel;
+    return element && _caches->isBlockElement(*core(element));
 }
 
 - (BOOL)_elementHasOwnBackgroundColor:(DOMElement *)element
@@ -2282,14 +2279,7 @@ static NSInteger _colCompare(id block1, id block2, void *)
         }
     } else if (nodeType == DOM_ELEMENT_NODE) {
         DOMElement *element = (DOMElement *)node;
-        NSString *tag = [element tagName], *displayVal = [self _stringForNode:element property:@"display"], *floatVal = [self _stringForNode:element property:@"float"];
-        BOOL isBlockLevel = NO;
-        if (floatVal && ([@"left" isEqualToString:floatVal] || [@"right" isEqualToString:floatVal])) {
-            isBlockLevel = YES;
-        } else if (displayVal) {
-            isBlockLevel = ([@"block" isEqualToString:displayVal] || [@"list-item" isEqualToString:displayVal] || [displayVal hasPrefix:@"table"]);
-        }
-        [_elementIsBlockLevel setObject:[NSNumber numberWithBool:isBlockLevel] forKey:element];
+        NSString *tag = [element tagName], *displayVal = [self _stringForNode:element property:@"display"];
         if ([self _enterElement:element tag:tag display:displayVal embedded:embedded]) {
             NSUInteger startIndex = [_attrStr length];
             if ([self _processElement:element tag:tag display:displayVal depth:depth]) {
@@ -2417,7 +2407,6 @@ static NSInteger _colCompare(id block1, id block2, void *)
     [_textTableRowBackgroundColors release];
     [_colorsForNodes release];
     [_attributesForElements release];
-    [_elementIsBlockLevel release];
     [_fontCache release];
     [_writingDirectionArray release];
     [super dealloc];
@@ -2443,7 +2432,6 @@ static NSInteger _colCompare(id block1, id block2, void *)
     _textTableRowBackgroundColors = [[NSMutableArray alloc] init];
     _colorsForNodes = [[NSMutableDictionary alloc] init];
     _attributesForElements = [[NSMutableDictionary alloc] init];
-    _elementIsBlockLevel = [[NSMutableDictionary alloc] init];
     _fontCache = [[NSMutableDictionary alloc] init];
     _writingDirectionArray = [[NSMutableArray alloc] init];
 
