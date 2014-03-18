@@ -1,5 +1,11 @@
 2014-03-17  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Unreviewed build fix.
+
+        * WebView/WebPreferenceKeysPrivate.h: add endline to EOF
+
+2014-03-17  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r165753.
 
     2014-03-16  Brent Fulgham  <bfulgham@apple.com>
