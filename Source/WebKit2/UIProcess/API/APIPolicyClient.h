@@ -51,10 +51,26 @@ class PolicyClient {
 public:
     virtual ~PolicyClient() { }
 
-    virtual void decidePolicyForNavigationAction(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebKit::NavigationActionData&, WebKit::WebFrameProxy* originatingFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest&, RefPtr<WebKit::WebFramePolicyListenerProxy> listener, API::Object* userData) { listener->use(); }
-    virtual void decidePolicyForNewWindowAction(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebKit::NavigationActionData&, const WebCore::ResourceRequest&, const WTF::String& frameName, RefPtr<WebKit::WebFramePolicyListenerProxy> listener, API::Object* userData) { listener->use(); }
-    virtual void decidePolicyForResponse(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, RefPtr<WebKit::WebFramePolicyListenerProxy> listener, API::Object* userData) { listener->use(); }
-    virtual void unableToImplementPolicy(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::ResourceError&, API::Object* userData) { }
+    virtual void decidePolicyForNavigationAction(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebKit::NavigationActionData&, WebKit::WebFrameProxy* originatingFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest&, RefPtr<WebKit::WebFramePolicyListenerProxy> listener, API::Object* userData)
+    {
+        UNUSED_PARAM(originatingFrame);
+        UNUSED_PARAM(originalRequest);
+        UNUSED_PARAM(userData);
+        listener->use();
+    }
+    virtual void decidePolicyForNewWindowAction(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebKit::NavigationActionData&, const WebCore::ResourceRequest&, const WTF::String& frameName, RefPtr<WebKit::WebFramePolicyListenerProxy> listener, API::Object* userData)
+    {
+        UNUSED_PARAM(frameName);
+        UNUSED_PARAM(userData);
+        listener->use();
+    }
+    virtual void decidePolicyForResponse(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, RefPtr<WebKit::WebFramePolicyListenerProxy> listener, API::Object* userData)
+    {
+        UNUSED_PARAM(canShowMIMEType);
+        UNUSED_PARAM(userData);
+        listener->use();
+    }
+    virtual void unableToImplementPolicy(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::ResourceError&, API::Object* userData) { UNUSED_PARAM(userData); }
 };
 
 } // namespace API

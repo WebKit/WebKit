@@ -53,13 +53,13 @@ class LoaderClient {
 public:
     virtual ~LoaderClient() { }
 
-    virtual void didStartProvisionalLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t navigationID, API::Object*) { }
-    virtual void didReceiveServerRedirectForProvisionalLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t navigationID, API::Object*) { }
-    virtual void didFailProvisionalLoadWithErrorForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t navigationID, const WebCore::ResourceError&, API::Object*) { }
-    virtual void didCommitLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t navigationID, API::Object*) { }
+    virtual void didStartProvisionalLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t navigationID, API::Object*) { UNUSED_PARAM(navigationID); }
+    virtual void didReceiveServerRedirectForProvisionalLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t navigationID, API::Object*) { UNUSED_PARAM(navigationID); }
+    virtual void didFailProvisionalLoadWithErrorForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t navigationID, const WebCore::ResourceError&, API::Object*) { UNUSED_PARAM(navigationID); }
+    virtual void didCommitLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t navigationID, API::Object*) { UNUSED_PARAM(navigationID); }
     virtual void didFinishDocumentLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
-    virtual void didFinishLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t navigationID, API::Object*) { }
-    virtual void didFailLoadWithErrorForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t navigationID, const WebCore::ResourceError&, API::Object*) { }
+    virtual void didFinishLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t navigationID, API::Object*) { UNUSED_PARAM(navigationID); }
+    virtual void didFailLoadWithErrorForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t navigationID, const WebCore::ResourceError&, API::Object*) { UNUSED_PARAM(navigationID); }
     virtual void didSameDocumentNavigationForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::SameDocumentNavigationType, API::Object*) { }
     virtual void didReceiveTitleForFrame(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, API::Object*) { }
     virtual void didFirstLayoutForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, API::Object*) { }
@@ -87,7 +87,11 @@ public:
     virtual void processDidBecomeResponsive(WebKit::WebPageProxy*) { }
     virtual void processDidCrash(WebKit::WebPageProxy*) { }
 
-    virtual void didChangeBackForwardList(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem* addedItem, Vector<RefPtr<WebKit::WebBackForwardListItem>> removedItems) { }
+    virtual void didChangeBackForwardList(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem* addedItem, Vector<RefPtr<WebKit::WebBackForwardListItem>> removedItems)
+    {
+        UNUSED_PARAM(addedItem);
+        UNUSED_PARAM(removedItems);
+    }
     virtual void willGoToBackForwardListItem(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem*, API::Object*) { }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

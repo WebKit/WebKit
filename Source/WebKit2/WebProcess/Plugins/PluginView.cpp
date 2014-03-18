@@ -500,6 +500,8 @@ void PluginView::viewStateDidChange(ViewState::Flags changed)
 {
 #if PLATFORM(COCOA)
     platformViewStateDidChange(changed);
+#else
+    UNUSED_PARAM(changed);
 #endif
 }
 
