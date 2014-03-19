@@ -3996,6 +3996,7 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
                 // changes paused to true and fires a simple event named pause at the media element.
                 m_paused = true;
                 scheduleEvent(eventNames().pauseEvent);
+                m_mediaSession->clientWillPausePlayback();
             }
             // Queue a task to fire a simple event named ended at the media element.
             if (!m_sentEndEvent) {
@@ -5975,6 +5976,8 @@ String HTMLMediaElement::mediaSessionTitle() const
 
 void HTMLMediaElement::didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType command)
 {
+    LOG(Media, "HTMLMediaElement::didReceiveRemoteControlCommand(%i)", static_cast<int>(command));
+
     switch (command) {
     case MediaSession::PlayCommand:
         play();

@@ -1,0 +1,63 @@
+  
+Test play and pause with "remote control" interface.
+
+EVENT(canplaythrough)
+EVENT(canplaythrough)
+
+** Play both videos, the last one started (video[1]) should get focus...
+RUN(videos[0].play())
+RUN(videos[1].play())
+
+EVENT(playing)
+EVENT(playing)
+
+** Send a pause command, it should go to video[1].
+RUN(internals.postRemoteControlCommand('pause'))
+
+EVENT(pause)
+EXPECTED (event.target.id == 'two') OK
+EXPECTED (videos[0].paused == 'false') OK
+EXPECTED (videos[1].paused == 'true') OK
+
+** Pause video[0], so they both stop playing...
+RUN(videos[0].pause())
+
+EVENT(pause)
+EXPECTED (event.target.id == 'one') OK
+EXPECTED (videos[0].paused == 'true') OK
+EXPECTED (videos[1].paused == 'true') OK
+
+** Seek so video[1] will pause automatically when playback ends.
+RUN(videos[0].currentTime = 0)
+RUN(videos[1].currentTime = 5.5)
+
+EVENT(seeked)
+EVENT(seeked)
+
+** Send a play command, it should go to videos[0] because it was playing most recently.
+RUN(internals.postRemoteControlCommand('play'))
+
+EVENT(playing)
+EXPECTED (event.target.id == 'one') OK
+
+** Start videos[1], wait for it to pause at duration.
+RUN(videos[1].play())
+
+EVENT(playing)
+EXPECTED (event.target.id == 'two') OK
+
+EVENT(pause)
+EXPECTED (event.target.id == 'two') OK
+EXPECTED (videos[0].paused == 'false') OK
+EXPECTED (videos[1].paused == 'true') OK
+
+** Send a pause command, videos[0] is still playing so it should get the command.
+RUN(internals.postRemoteControlCommand('pause'))
+
+EVENT(pause)
+EXPECTED (event.target.id == 'one') OK
+EXPECTED (videos[0].paused == 'true') OK
+EXPECTED (videos[1].paused == 'true') OK
+
+END OF TEST
+

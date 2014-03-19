@@ -29,6 +29,7 @@
 #if PLATFORM(IOS)
 
 #import "Logging.h"
+#import "MediaPlayer.h"
 #import "MediaSession.h"
 #import "NotImplemented.h"
 #import "SoftLinking.h"

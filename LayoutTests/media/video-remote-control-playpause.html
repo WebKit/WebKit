@@ -1,0 +1,146 @@
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var playCount = 0;
+            var pauseCount = 0;
+            var seekedCount = 0;
+            var playThroughCount = 0;
+            var videos = [];
+
+            function logEvent(evt)
+            {
+                consoleWrite("EVENT(" + evt.type + ")");
+            }
+
+            function ended(evt)
+            {
+                logEvent(evt);
+            }
+
+            function seeked(evt)
+            {
+                logEvent(evt);
+
+                switch (++seekedCount)
+                {
+                case 2:
+                    consoleWrite("<br>** Send a play command, it should go to videos[0] because it was playing most recently.");
+                    run("internals.postRemoteControlCommand('play')");
+                    consoleWrite("");
+                    break;
+                }
+            }
+
+            function pause(evt)
+            {
+                logEvent(evt);
+
+                switch (++pauseCount)
+                {
+                case 1:
+                    testExpected("event.target.id", "two");
+                    testExpected("videos[0].paused", false);
+                    testExpected("videos[1].paused", true);
+                    consoleWrite("<br>** Pause video[0], so they both stop playing...");
+                    run("videos[0].pause()");
+                    consoleWrite("");
+                    break;
+                case 2:
+                    testExpected("event.target.id", "one");
+                    testExpected("videos[0].paused", true);
+                    testExpected("videos[1].paused", true);
+
+                    consoleWrite("<br>** Seek so video[1] will pause automatically when playback ends.");
+                    
+                    var seekTime = (videos[1].duration - .5).toFixed(1);
+                    run("videos[0].currentTime = 0");
+                    run("videos[1].currentTime = " + seekTime);
+                    consoleWrite("");
+                    break;
+                case 3:
+                    testExpected("event.target.id", "two");
+                    testExpected("videos[0].paused", false);
+                    testExpected("videos[1].paused", true);
+
+                    consoleWrite("<br>** Send a pause command, videos[0] is still playing so it should get the command.");
+                    run("internals.postRemoteControlCommand('pause')");
+                    consoleWrite("");
+                    break;
+                case 4:
+                    testExpected("event.target.id", "one");
+                    testExpected("videos[0].paused", true);
+                    testExpected("videos[1].paused", true);
+                    consoleWrite("");
+                    endTest();
+                    break;
+                case 4:
+                }
+            }
+
+            function playing(evt)
+            {
+                logEvent(evt);
+
+                switch (++playCount)
+                {
+                case 2:
+                    consoleWrite("<br>** Send a pause command, it should go to video[1].");
+                    run("internals.postRemoteControlCommand('pause')");
+                    consoleWrite("");
+                    break;
+                case 3:
+                    testExpected("event.target.id", "one");
+                    consoleWrite("<br>** Start videos[1], wait for it to pause at duration.");
+                    run("videos[1].play()");
+                    consoleWrite("");
+                    break;
+                case 4:
+                    testExpected("event.target.id", "two");
+                    consoleWrite("");
+                    break;
+                }
+            }
+
+            function canplaythrough(evt)
+            {
+                logEvent(evt);
+
+                if (++playThroughCount < 2)
+                    return;
+
+                consoleWrite("<br>** Play both videos, the last one started (video[1]) should get focus...");
+                run("videos[0].play()");
+                run("videos[1].play()");
+
+                consoleWrite("");
+            }
+
+            function start()
+            {
+                if (!window.internals) {
+                    failTest('This test requires window.internals.');
+                    return;
+                }
+
+                videos = document.getElementsByTagName('video');
+                for (var i = 0; i < videos.length; ++i) {
+                    video = videos[i];
+                    video.addEventListener("canplaythrough", canplaythrough);
+                    video.addEventListener('playing', playing);
+                    video.addEventListener('pause', pause);
+                    video.addEventListener('seeked', seeked);
+                    video.addEventListener('ended');
+                    video.src = findMediaFile("video", "content/test");
+                }
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls id="one"></video>
+        <video controls id="two"></video>
+        <p>Test play and pause with "remote control" interface.</p>
+    </body>
+</html>

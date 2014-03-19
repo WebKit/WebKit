@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,7 +81,7 @@ public:
     virtual void resetRestrictions();
 
     virtual void sessionWillBeginPlayback(MediaSession&);
-    virtual void sessionWillEndPlayback(MediaSession&) { }
+    virtual void sessionWillEndPlayback(MediaSession&);
     
     bool sessionRestrictsInlineVideoPlayback(const MediaSession&) const;
 
@@ -101,8 +101,8 @@ protected:
     void addSession(MediaSession&);
     void removeSession(MediaSession&);
     
-    void setCurrentSession(MediaSession* session) { m_activeSession = session; }
-    MediaSession* currentSession() { return m_activeSession; }
+    void setCurrentSession(MediaSession&);
+    MediaSession* currentSession();
     
 private:
     void updateSessionState();
@@ -112,7 +112,6 @@ private:
     Vector<MediaSession*> m_sessions;
     Vector<MediaSessionManagerClient*> m_clients;
     std::unique_ptr<RemoteCommandListener> m_remoteCommandListener;
-    MediaSession* m_activeSession;
     bool m_interrupted;
 };
 

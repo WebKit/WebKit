@@ -1,3 +1,43 @@
+2014-03-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Make Remote Control commands testable
+        https://bugs.webkit.org/show_bug.cgi?id=130358
+
+        Reviewed by Jer Noble.
+
+        Test: media/video-remote-control-playpause.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged): Call session->clientWillPausePlayback.
+        (WebCore::HTMLMediaElement::didReceiveRemoteControlCommand): Log the command.
+
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSessionClient::mediaSessionTitle): Move from header file.
+        (WebCore::MediaSessionClient::mediaSessionDuration): Ditto.
+        (WebCore::MediaSessionClient::mediaSessionCurrentTime): Ditto.
+        * platform/audio/MediaSession.h:
+
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::MediaSessionManager): Get rid of m_activeSession.
+        (WebCore::MediaSessionManager::removeSession): No need to clear m_activeSession because 
+            we use the m_sessions vector.
+        (WebCore::MediaSessionManager::sessionWillBeginPlayback): setCurrentSession takes a 
+            MediaSession&.
+        (WebCore::MediaSessionManager::sessionWillEndPlayback): Keep m_sessions sorted so playing
+            sessions are before paused sessions.
+        (WebCore::MediaSessionManager::setCurrentSession): Move the session that is beginning to
+            play to the head of m_sessions.
+        (WebCore::MediaSessionManager::currentSession): Return m_sessions[0] or nullptr.
+        (WebCore::MediaSessionManager::didReceiveRemoteControlCommand):
+        * platform/audio/MediaSessionManager.h:
+
+        * platform/audio/ios/MediaSessionManagerIOS.mm: Include MediaPlayer.h.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::postRemoteControlCommand): New.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-03-19  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Improving webkitGetUserMedia error handling and error messages

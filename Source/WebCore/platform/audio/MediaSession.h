@@ -26,8 +26,8 @@
 #ifndef MediaSession_h
 #define MediaSession_h
 
-#include "MediaPlayer.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -109,9 +109,9 @@ public:
     virtual void resumePlayback() = 0;
     virtual void pausePlayback() = 0;
 
-    virtual String mediaSessionTitle() const { return String(); }
-    virtual double mediaSessionDuration() const { return MediaPlayer::invalidTime(); }
-    virtual double mediaSessionCurrentTime() const { return MediaPlayer::invalidTime(); }
+    virtual String mediaSessionTitle() const;
+    virtual double mediaSessionDuration() const;
+    virtual double mediaSessionCurrentTime() const;
     
     virtual bool canReceiveRemoteControlCommands() const = 0;
     virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) = 0;
