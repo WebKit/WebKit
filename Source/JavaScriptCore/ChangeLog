@@ -1,3 +1,13 @@
+2014-03-12  Mark Lam  <mark.lam@apple.com>
+
+        Update type of local vars to match the type of String length.
+        <https://webkit.org/b/130077>
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSStringJoiner.cpp:
+        (JSC::JSStringJoiner::join):
+
 2014-03-18  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of Flush in SSA
