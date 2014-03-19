@@ -1,3 +1,20 @@
+2014-03-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        Page::setPageScaleFactor should not force the scroll view position when using delegatesScrolling()
+        https://bugs.webkit.org/show_bug.cgi?id=130429
+
+        Reviewed by Simon Fraser.
+
+        When setting the same scale mutliple time (for example on load), Page was asking the top scrollview
+        to scroll to the origin. This is bogus since the scroll view is driving Page::setDeviceScaleFactor,
+        not the other way around.
+
+        Simon fixed the general case in http://trac.webkit.org/changeset/165652/trunk/Source/WebCore/page/Page.cpp
+        but this branch was still scrolling content.
+
+        * page/Page.cpp:
+        (WebCore::Page::setPageScaleFactor):
+
 2014-03-19  Brady Eidson  <beidson@apple.com>
 
         Filter out editable services from image menu for non-contenteditable images

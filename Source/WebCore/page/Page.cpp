@@ -695,10 +695,12 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin)
     FrameView* view = document->view();
 
     if (scale == m_pageScaleFactor) {
-        if (view && (view->scrollPosition() != origin || view->delegatesScrolling())) {
+        if (view && view->scrollPosition() != origin) {
             if (!m_settings->delegatesPageScaling())
                 document->updateLayoutIgnorePendingStylesheets();
-            view->setScrollPosition(origin);
+
+            if (!view->delegatesScrolling())
+                view->setScrollPosition(origin);
         }
         return;
     }
@@ -728,7 +730,6 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin)
             view->setScrollPosition(origin);
     }
 }
-
 
 void Page::setDeviceScaleFactor(float scaleFactor)
 {
