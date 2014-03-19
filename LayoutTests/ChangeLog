@@ -1,3 +1,17 @@
+2014-03-19  Dirk Schulze  <krit@webkit.org>
+
+        Implement method addPath for Path2D
+        https://bugs.webkit.org/show_bug.cgi?id=130461
+
+        Reviewed by Dean Jackson.
+
+        Test the addPath Path2D method.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * fast/canvas/canvas-path-addPath-expected.txt: Added.
+        * fast/canvas/canvas-path-addPath.html: Added.
+
 2014-03-19  Brent Fulgham  <bfulgham@apple.com>
 
         Fix cue rendering test and include support for left/right alignment

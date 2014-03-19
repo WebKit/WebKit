@@ -133,6 +133,8 @@ namespace WebCore {
         void addRoundedRect(const FloatRoundedRect&, RoundedRectStrategy = PreferNativeRoundedRect);
         void addRoundedRect(const RoundedRect&);
 
+        void addPath(const Path&, const AffineTransform&);
+
         void translate(const FloatSize&);
 
         // To keep Path() cheap, it does not allocate a PlatformPath immediately

@@ -1,3 +1,27 @@
+2014-03-19  Dirk Schulze  <krit@webkit.org>
+
+        Implement method addPath for Path2D
+        https://bugs.webkit.org/show_bug.cgi?id=130461
+
+        Reviewed by Dean Jackson.
+
+        Add support for the Path2D method addPath. The method allows
+        to append and existing Path2D object to another one. It can be
+        combined with a transformation matrix SVGMatrix.
+
+        Test: fast/canvas/canvas-path-addPath.html
+
+        * html/canvas/DOMPath.h: Add new method addPath().
+        (WebCore::DOMPath::addPath):
+        * html/canvas/DOMPath.idl:
+        * platform/graphics/Path.h: Add support for appending paths.
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::addPath):
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::addPath):
+        * platform/graphics/wince/PathWinCE.cpp:
+        (WebCore::Path::addPath):
+
 2014-03-19  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         [iOS] WebKit2 Quicklook.

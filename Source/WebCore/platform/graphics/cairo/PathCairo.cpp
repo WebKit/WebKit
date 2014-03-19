@@ -29,6 +29,7 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
+#include "NotImplemented.h"
 #include "OwnPtrCairo.h"
 #include "PlatformPathCairo.h"
 #include "StrokeStyleApplier.h"
@@ -291,6 +292,12 @@ void Path::addEllipse(const FloatRect& rect)
     cairo_scale(cr, xRadius, yRadius);
     cairo_arc(cr, 0., 0., 1., 0., 2 * piDouble);
     cairo_restore(cr);
+}
+
+void Path::addPath(const Path&, const AffineTransform&)
+{
+    // FIXME: This should probably be very similar to Path::transform.
+    notImplemented();
 }
 
 void Path::closeSubpath()

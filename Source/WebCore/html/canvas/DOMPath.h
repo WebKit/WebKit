@@ -31,6 +31,7 @@
 #if ENABLE(CANVAS_PATH)
 
 #include "CanvasPathMethods.h"
+#include "SVGMatrix.h"
 #include "SVGPathUtilities.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -49,6 +50,14 @@ public:
         Path path;
         buildPathFromString(pathData, path);
         return create(path);
+    }
+
+    void addPath(const DOMPath* path) { addPath(path, AffineTransform()); }
+    void addPath(const DOMPath* path, const AffineTransform& transform)
+    {
+        if (!path || !transform.isInvertible())
+            return;
+        m_path.addPath(path->path(), transform);
     }
 
     const Path& path() const { return m_path; }

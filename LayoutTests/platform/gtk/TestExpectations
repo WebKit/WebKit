@@ -823,6 +823,9 @@ webkit.org/b/83560 fast/events/drop-with-file-paths.html [ Failure Pass ]
 # Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# Path::addPath needs to be implemented
+webkit.org/b/130464 fast/canvas/canvas-path-addPath.html
+
 webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 
 webkit.org/b/79757 fast/selectors/selection-window-inactive.html [ ImageOnlyFailure ]

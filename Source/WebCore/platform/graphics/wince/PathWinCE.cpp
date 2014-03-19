@@ -113,6 +113,11 @@ void Path::addEllipse(const FloatRect& r)
     m_path->addEllipse(r);
 }
 
+void Path::addPath(const Path&, const AffineTransform&)
+{
+    notImplemented();
+}
+
 void Path::clear()
 {
     m_path->clear();

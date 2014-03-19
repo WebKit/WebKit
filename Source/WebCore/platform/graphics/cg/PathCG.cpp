@@ -299,6 +299,24 @@ void Path::addEllipse(const FloatRect& r)
     CGPathAddEllipseInRect(ensurePlatformPath(), 0, r);
 }
 
+void Path::addPath(const Path& path, const AffineTransform& transform)
+{
+    if (!path.platformPath())
+        return;
+
+    CGAffineTransform transformCG = transform;
+    // CG doesn't allow adding a path to itself. Optimize for the common case
+    // and copy the path for the self referencing case.
+    if (ensurePlatformPath() != path.platformPath()) {
+        CGPathAddPath(ensurePlatformPath(), &transformCG, path.platformPath());
+        return;
+    }
+    CGPathRef pathCopy = CGPathCreateCopy(path.platformPath());
+    CGPathAddPath(ensurePlatformPath(), &transformCG, path.platformPath());
+    CGPathRelease(pathCopy);
+}
+
+
 void Path::clear()
 {
     if (isNull())
