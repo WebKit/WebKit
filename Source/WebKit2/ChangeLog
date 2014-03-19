@@ -1,3 +1,23 @@
+2014-03-19  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures: Swipe gesture can track vertical movement instead of horizontal movement
+        https://bugs.webkit.org/show_bug.cgi?id=130441
+        <rdar://problem/16337279>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::scrollEventCanBecomeSwipe):
+        Factor logic that determines if a scroll event can become a swipe
+        out into scrollEventCanBecomeSwipe.
+        Use <= instead of < when comparing the axes, because we don't want
+        to start a swipe on a completely diagonal scroll either (because AppKit
+        can start tracking a vertical swipe in that case).
+
+        (WebKit::ViewGestureController::handleScrollWheelEvent):
+        (WebKit::ViewGestureController::wheelEventWasNotHandledByWebCore):
+        Make use of scrollEventCanBecomeSwipe.
+
 2014-03-18  Anders Carlsson  <andersca@apple.com>
 
         Add new functionality that will be required by the history item decoding

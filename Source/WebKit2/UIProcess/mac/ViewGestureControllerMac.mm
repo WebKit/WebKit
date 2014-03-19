@@ -247,30 +247,39 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
     m_lastMagnificationGestureWasSmartMagnification = true;
 }
 
-bool ViewGestureController::handleScrollWheelEvent(NSEvent *event)
+static bool scrollEventCanBecomeSwipe(NSEvent *event, WebPageProxy& webPageProxy, ViewGestureController::SwipeDirection& potentialSwipeDirection)
 {
-    if (m_activeGestureType != ViewGestureType::None)
-        return false;
-
     if (event.phase != NSEventPhaseBegan)
         return false;
-
-    m_hasPendingSwipe = false;
-
-    if (fabs(event.scrollingDeltaX) < fabs(event.scrollingDeltaY))
-        return false;
-
-    bool willSwipeLeft = event.scrollingDeltaX > 0 && m_webPageProxy.isPinnedToLeftSide() && m_webPageProxy.backForwardList().backItem();
-    bool willSwipeRight = event.scrollingDeltaX < 0 && m_webPageProxy.isPinnedToRightSide() && m_webPageProxy.backForwardList().forwardItem();
-    if (!willSwipeLeft && !willSwipeRight)
-        return false;
-
-    SwipeDirection direction = willSwipeLeft ? SwipeDirection::Left : SwipeDirection::Right;
 
     if (!event.hasPreciseScrollingDeltas)
         return false;
 
     if (![NSEvent isSwipeTrackingFromScrollEventsEnabled])
+        return false;
+
+    if (fabs(event.scrollingDeltaX) <= fabs(event.scrollingDeltaY))
+        return false;
+
+    bool willSwipeLeft = event.scrollingDeltaX > 0 && webPageProxy.isPinnedToLeftSide() && webPageProxy.backForwardList().backItem();
+    bool willSwipeRight = event.scrollingDeltaX < 0 && webPageProxy.isPinnedToRightSide() && webPageProxy.backForwardList().forwardItem();
+    if (!willSwipeLeft && !willSwipeRight)
+        return false;
+
+    potentialSwipeDirection = willSwipeLeft ? ViewGestureController::SwipeDirection::Left : ViewGestureController::SwipeDirection::Right;
+
+    return true;
+}
+
+bool ViewGestureController::handleScrollWheelEvent(NSEvent *event)
+{
+    m_hasPendingSwipe = false;
+
+    if (m_activeGestureType != ViewGestureType::None)
+        return false;
+
+    SwipeDirection direction;
+    if (!scrollEventCanBecomeSwipe(event, m_webPageProxy, direction))
         return false;
 
     if (m_webPageProxy.willHandleHorizontalScrollEvents()) {
@@ -291,7 +300,8 @@ void ViewGestureController::wheelEventWasNotHandledByWebCore(NSEvent *event)
 
     m_hasPendingSwipe = false;
 
-    if (event.phase != NSEventPhaseBegan)
+    SwipeDirection direction;
+    if (!scrollEventCanBecomeSwipe(event, m_webPageProxy, direction))
         return;
 
     trackSwipeGesture(event, m_pendingSwipeDirection);
