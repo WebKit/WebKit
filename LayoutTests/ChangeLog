@@ -1,3 +1,10 @@
+2014-03-19  Oliver Hunt  <oliver@apple.com>
+
+        Don't use ES6 features in testcase.
+
+        * fast/workers/resources/worker-copy-shared-blob-url-worker.js:
+        (count.0.onmessage):
+
 2014-03-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rebaselined the test. See <rdar://problem/16305719>.
