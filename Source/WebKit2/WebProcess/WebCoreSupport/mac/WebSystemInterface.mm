@@ -234,5 +234,7 @@ void InitWebCoreSystemInterface(void)
         
         INIT(ExernalDeviceTypeForPlayer);
         INIT(ExernalDeviceDisplayNameForPlayer);
+
+        INIT(QueryDecoderAvailability);
     });
 }

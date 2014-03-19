@@ -1998,6 +1998,7 @@ _wkHTTPCookies
 _wkHTTPCookiesForURL
 _wkHTTPRequestEnablePipelining
 _wkInitializeMaximumHTTPConnectionCountPerHost
+_wkQueryDecoderAvailability
 _wkSetBaseCTM
 _wkSetCFURLResponseMIMEType
 _wkSetCONNECTProxyAuthorizationForStream

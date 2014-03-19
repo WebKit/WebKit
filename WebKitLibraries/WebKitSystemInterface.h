@@ -561,6 +561,8 @@ typedef enum {
 int WKExernalDeviceTypeForPlayer(AVPlayer *);
 NSString *WKExernalDeviceDisplayNameForPlayer(AVPlayer *);
 
+bool WKQueryDecoderAvailability(void);
+
 #ifdef __cplusplus
 }
 #endif

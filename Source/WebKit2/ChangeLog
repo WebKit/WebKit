@@ -1,3 +1,13 @@
+2014-03-19  Jer Noble  <jer.noble@apple.com>
+
+        [Mac][EME] Query whether decoder support exists before creating a new MediaKeys object.
+        https://bugs.webkit.org/show_bug.cgi?id=130459
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Initialize the new WCSI method.
+
 2014-03-19  Brady Eidson  <beidson@apple.com>
 
         Filter out editable services from image menu for non-contenteditable images

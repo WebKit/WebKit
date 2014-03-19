@@ -34,6 +34,7 @@
 #import "MediaTimeMac.h"
 #import "PlatformClockCM.h"
 #import "SoftLinking.h"
+#import "WebCoreSystemInterface.h"
 #import <AVFoundation/AVAsset.h>
 #import <CoreMedia/CMSync.h>
 #import <QuartzCore/CALayer.h>
@@ -243,6 +244,9 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(con
 bool MediaPlayerPrivateMediaSourceAVFObjC::supportsKeySystem(const String& keySystem, const String& mimeType)
 {
 #if ENABLE(ENCRYPTED_MEDIA_V2)
+    if (!wkQueryDecoderAvailability())
+        return false;
+
     if (!keySystem.isEmpty()) {
         if (!keySystemIsSupported(keySystem))
             return false;

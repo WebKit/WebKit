@@ -215,3 +215,5 @@ CFStringRef (*wkCachePartitionKey)(void);
 
 int (*wkExernalDeviceTypeForPlayer)(AVPlayer *);
 NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);
+
+bool (*wkQueryDecoderAvailability)(void);

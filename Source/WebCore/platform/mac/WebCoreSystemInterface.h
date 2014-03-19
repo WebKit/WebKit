@@ -379,6 +379,8 @@ typedef enum {
 extern int (*wkExernalDeviceTypeForPlayer)(AVPlayer *);
 extern NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);
 
+extern bool (*wkQueryDecoderAvailability)(void);
+
 }
 
 #endif
