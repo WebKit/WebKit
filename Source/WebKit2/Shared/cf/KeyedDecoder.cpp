@@ -62,6 +62,11 @@ bool KeyedDecoder::decodeBool(const String& key, bool& result)
 
 bool KeyedDecoder::decodeUInt32(const String& key, uint32_t& result)
 {
+    return decodeInt32(key, reinterpret_cast<int32_t&>(result));
+}
+
+bool KeyedDecoder::decodeInt32(const String& key, int32_t& result)
+{
     CFNumberRef number = static_cast<CFNumberRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
     if (!number || CFGetTypeID(number) != CFNumberGetTypeID())
         return false;
@@ -76,6 +81,15 @@ bool KeyedDecoder::decodeInt64(const String& key, int64_t& result)
         return false;
 
     return CFNumberGetValue(number, kCFNumberSInt64Type, &result);
+}
+
+bool KeyedDecoder::decodeFloat(const String& key, float& result)
+{
+    CFNumberRef number = static_cast<CFNumberRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
+    if (!number || CFGetTypeID(number) != CFNumberGetTypeID())
+        return false;
+
+    return CFNumberGetValue(number, kCFNumberFloatType, &result);
 }
 
 bool KeyedDecoder::decodeDouble(const String& key, double& result)

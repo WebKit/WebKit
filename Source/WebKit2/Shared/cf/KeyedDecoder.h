@@ -40,7 +40,9 @@ public:
 private:
     virtual bool decodeBool(const String& key, bool&) override;
     virtual bool decodeUInt32(const String& key, uint32_t&) override;
+    virtual bool decodeInt32(const String& key, int32_t&) override;
     virtual bool decodeInt64(const String& key, int64_t&) override;
+    virtual bool decodeFloat(const String& key, float&) override;
     virtual bool decodeDouble(const String& key, double&) override;
     virtual bool decodeString(const String& key, String&) override;
 

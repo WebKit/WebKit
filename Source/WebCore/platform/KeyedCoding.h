@@ -41,7 +41,9 @@ protected:
 public:
     virtual bool decodeBool(const String& key, bool&) = 0;
     virtual bool decodeUInt32(const String& key, uint32_t&) = 0;
+    virtual bool decodeInt32(const String& key, int32_t&) = 0;
     virtual bool decodeInt64(const String& key, int64_t&) = 0;
+    virtual bool decodeFloat(const String& key, float&) = 0;
     virtual bool decodeDouble(const String& key, double&) = 0;
     virtual bool decodeString(const String& key, String&) = 0;
 
@@ -66,6 +68,21 @@ public:
     {
         if (!beginObject(key))
             return false;
+        bool result = function(*this, object);
+        endObject();
+        return result;
+    }
+
+    template<typename T, typename F>
+    bool decodeConditionalObject(const String& key, T& object, F&& function)
+    {
+        // FIXME: beginObject can return false for two reasons: either the
+        // key doesn't exist or the key refers to something that isn't an object.
+        // Because of this, decodeConditionalObject won't distinguish between a
+        // missing object or a value that isn't an object.
+        if (!beginObject(key))
+            return true;
+
         bool result = function(*this, object);
         endObject();
         return result;

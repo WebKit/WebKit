@@ -1,3 +1,13 @@
+2014-03-18  Anders Carlsson  <andersca@apple.com>
+
+        Add new functionality that will be required by the history item decoding
+        https://bugs.webkit.org/show_bug.cgi?id=130433
+
+        Reviewed by Sam Weinig.
+
+        * platform/KeyedCoding.h:
+        (WebCore::KeyedDecoder::decodeConditionalObject):
+
 2014-03-19  Tim Horton  <timothy_horton@apple.com>
 
         Fix the iOS build.
