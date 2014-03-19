@@ -1,3 +1,12 @@
+2014-03-19  Frédéric Wang  <fred.wang@free.fr>
+
+        Unreviewed gardening.
+
+        * platform/efl/TestExpectations: remove failures for mo/row since they are already in skipped in the main TestExpectations.
+        * platform/gtk/mathml/presentation/mspace-children-expected.png: Move mspace-children-expected.png to platform/gtk.
+        * platform/gtk/mathml/presentation/mspace-children-expected.txt: Move mspace-children-expected.txt to platform/gtk.
+        * platform/win/TestExpectations: remove failures for mo/row/roots since they are already in skipped in the main TestExpectations.
+
 2014-03-19  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Transform origin is miscalculated when RenderLayer's

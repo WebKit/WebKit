@@ -964,10 +964,6 @@ Bug(EFL) editing/pasteboard/crash-accessing-clipboardData-types.html [ Failure ]
 Bug(EFL) editing/pasteboard/dataTransfer-setData-getData.html [ Failure ]
 Bug(EFL) editing/pasteboard/pasting-empty-html-falls-back-to-text.html [ Failure ]
 
-# MathML: Absolute and Integral operators are not stacked properly
-webkit.org/b/47744 mathml/presentation/mo.xhtml
-webkit.org/b/47744 mathml/presentation/row.xhtml
-
 # EFL has not fully implemented about some SVG attributes
 Bug(EFL) svg/custom
 Bug(EFL) svg/zoom/page/zoom-zoom-coords.xhtml
