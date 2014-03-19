@@ -196,7 +196,7 @@ void JSNode::visitChildren(JSCell* cell, SlotVisitor& visitor)
 static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)
 {
     ASSERT(node);
-    ASSERT(!getCachedWrapper(currentWorld(exec), node));
+    ASSERT(!getCachedWrapper(globalObject->world(), node));
     
     JSDOMWrapper* wrapper;    
     switch (node->nodeType()) {

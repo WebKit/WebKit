@@ -594,7 +594,7 @@ JSValue JSDOMWindow::postMessage(ExecState* exec)
 JSValue JSDOMWindow::setTimeout(ExecState* exec)
 {
     ContentSecurityPolicy* contentSecurityPolicy = impl().document() ? impl().document()->contentSecurityPolicy() : 0;
-    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec), contentSecurityPolicy);
+    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, globalObject()->world(), contentSecurityPolicy);
     if (exec->hadException())
         return jsUndefined();
 
@@ -613,7 +613,7 @@ JSValue JSDOMWindow::setTimeout(ExecState* exec)
 JSValue JSDOMWindow::setInterval(ExecState* exec)
 {
     ContentSecurityPolicy* contentSecurityPolicy = impl().document() ? impl().document()->contentSecurityPolicy() : 0;
-    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec), contentSecurityPolicy);
+    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, globalObject()->world(), contentSecurityPolicy);
     if (exec->hadException())
         return jsUndefined();
     int delay = exec->argument(1).toInt32(exec);
@@ -638,7 +638,7 @@ JSValue JSDOMWindow::addEventListener(ExecState* exec)
     if (!listener.isObject())
         return jsUndefined();
 
-    impl().addEventListener(exec->argument(0).toString(exec)->value(exec), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)), exec->argument(2).toBoolean(exec));
+    impl().addEventListener(exec->argument(0).toString(exec)->value(exec), JSEventListener::create(asObject(listener), this, false, globalObject()->world()), exec->argument(2).toBoolean(exec));
     return jsUndefined();
 }
 
@@ -652,7 +652,7 @@ JSValue JSDOMWindow::removeEventListener(ExecState* exec)
     if (!listener.isObject())
         return jsUndefined();
 
-    impl().removeEventListener(exec->argument(0).toString(exec)->value(exec), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)).get(), exec->argument(2).toBoolean(exec));
+    impl().removeEventListener(exec->argument(0).toString(exec)->value(exec), JSEventListener::create(asObject(listener), this, false, globalObject()->world()).get(), exec->argument(2).toBoolean(exec));
     return jsUndefined();
 }
 

@@ -64,7 +64,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, SVGPathSeg* objec
     if (!object)
         return jsNull();
 
-    if (JSObject* wrapper = getCachedWrapper(currentWorld(exec), object))
+    if (JSObject* wrapper = getCachedWrapper(globalObject->world(), object))
         return wrapper;
 
     switch (object->pathSegType()) {

@@ -40,7 +40,7 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, 
     if (!node)
         return JSC::jsNull();
 
-    JSNode* wrapper = JSC::jsCast<JSNode*>(getCachedWrapper(currentWorld(exec), node));
+    JSNode* wrapper = JSC::jsCast<JSNode*>(getCachedWrapper(globalObject->world(), node));
     if (wrapper)
         return wrapper;
 

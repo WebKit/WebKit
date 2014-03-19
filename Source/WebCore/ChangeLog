@@ -1,3 +1,63 @@
+2014-03-19  Andreas Kling  <akling@apple.com>
+
+        JSC bindings should use the passed-in global object for wrapper caching.
+        <https://webkit.org/b/130458>
+
+        Take a shorter path to the DOMWrapperWorld by using the passed-in
+        global object instead of getting the lexical global from ExecState.
+        Removed an old FIXME that no longer applies since JSObjects can
+        always find the right global object these days.
+
+        Reviewed by Geoff Garen.
+
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::getPropertyCSSValue):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::createWrapper):
+        (WebCore::wrap):
+        (WebCore::getExistingWrapper):
+        (WebCore::createNewWrapper):
+        (WebCore::toJS):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setTimeout):
+        (WebCore::JSDOMWindow::setInterval):
+        (WebCore::JSDOMWindow::addEventListener):
+        (WebCore::JSDOMWindow::removeEventListener):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::location):
+        (WebCore::toJS):
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSHTMLTemplateElementCustom.cpp:
+        (WebCore::JSHTMLTemplateElement::content):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapperInline):
+        * bindings/js/JSNodeCustom.h:
+        (WebCore::toJS):
+        * bindings/js/JSSVGPathSegCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSTextTrackCueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSTrackCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSWorkerGlobalScopeCustom.cpp:
+        (WebCore::JSWorkerGlobalScope::setTimeout):
+        (WebCore::JSWorkerGlobalScope::setInterval):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+
 2014-03-19  Benjamin Poulain  <bpoulain@apple.com>
 
         Page::setPageScaleFactor should not force the scroll view position when using delegatesScrolling()

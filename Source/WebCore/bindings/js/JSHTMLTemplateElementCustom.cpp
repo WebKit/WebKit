@@ -49,7 +49,7 @@ JSValue JSHTMLTemplateElement::content(ExecState* exec) const
 
     DocumentFragment* content = impl().content();
 
-    JSObject* wrapper = getCachedWrapper(currentWorld(exec), content);
+    JSObject* wrapper = getCachedWrapper(globalObject()->world(), content);
     if (wrapper)
         return wrapper;
 

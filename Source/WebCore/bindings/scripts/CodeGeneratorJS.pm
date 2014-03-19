@@ -3032,10 +3032,10 @@ END
 END
 
         if ($svgPropertyType) {
-            push(@implContent, "    if (JSValue result = getExistingWrapper<$className, $implType>(exec, impl))\n");
+            push(@implContent, "    if (JSValue result = getExistingWrapper<$className, $implType>(globalObject, impl))\n");
             push(@implContent, "        return result;\n");
         } else {
-            push(@implContent, "    if (JSValue result = getExistingWrapper<$className>(exec, impl))\n");
+            push(@implContent, "    if (JSValue result = getExistingWrapper<$className>(globalObject, impl))\n");
             push(@implContent, "        return result;\n");
         }
         push(@implContent, <<END) if $vtableNameGnu;

@@ -95,7 +95,7 @@ JSValue JSWorkerGlobalScope::importScripts(ExecState* exec)
 
 JSValue JSWorkerGlobalScope::setTimeout(ExecState* exec)
 {
-    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec), impl().contentSecurityPolicy());
+    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, globalObject()->world(), impl().contentSecurityPolicy());
     if (exec->hadException())
         return jsUndefined();
     if (!action)
@@ -106,7 +106,7 @@ JSValue JSWorkerGlobalScope::setTimeout(ExecState* exec)
 
 JSValue JSWorkerGlobalScope::setInterval(ExecState* exec)
 {
-    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec), impl().contentSecurityPolicy());
+    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, globalObject()->world(), impl().contentSecurityPolicy());
     if (exec->hadException())
         return jsUndefined();
     if (!action)

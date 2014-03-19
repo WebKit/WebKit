@@ -199,11 +199,9 @@ template <typename DOMClass, typename WrapperClass> inline void uncacheWrapper(D
 template<class WrapperClass, class DOMClass> inline JSDOMWrapper* createWrapper(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* node)
 {
     ASSERT(node);
-    ASSERT(!getCachedWrapper(currentWorld(exec), node));
+    ASSERT(!getCachedWrapper(globalObject->world(), node));
     WrapperClass* wrapper = WrapperClass::create(getDOMStructure<WrapperClass>(exec->vm(), globalObject), globalObject, node);
-    // FIXME: The entire function can be removed, once we fix caching.
-    // This function is a one-off hack to make Nodes cache in the right global object.
-    cacheWrapper(currentWorld(exec), node, wrapper);
+    cacheWrapper(globalObject->world(), node, wrapper);
     return wrapper;
 }
 
@@ -211,21 +209,21 @@ template<class WrapperClass, class DOMClass> inline JSC::JSValue wrap(JSC::ExecS
 {
     if (!domObject)
         return JSC::jsNull();
-    if (JSC::JSObject* wrapper = getCachedWrapper(currentWorld(exec), domObject))
+    if (JSC::JSObject* wrapper = getCachedWrapper(globalObject->world(), domObject))
         return wrapper;
     return createWrapper<WrapperClass>(exec, globalObject, domObject);
 }
 
-template<class WrapperClass, class DOMClass> inline JSC::JSValue getExistingWrapper(JSC::ExecState* exec, DOMClass* domObject)
+template<class WrapperClass, class DOMClass> inline JSC::JSValue getExistingWrapper(JSDOMGlobalObject* globalObject, DOMClass* domObject)
 {
     ASSERT(domObject);
-    return getCachedWrapper(currentWorld(exec), domObject);
+    return getCachedWrapper(globalObject->world(), domObject);
 }
 
 template<class WrapperClass, class DOMClass> inline JSC::JSValue createNewWrapper(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* domObject)
 {
     ASSERT(domObject);
-    ASSERT(!getCachedWrapper(currentWorld(exec), domObject));
+    ASSERT(!getCachedWrapper(globalObject->world(), domObject));
     return createWrapper<WrapperClass>(exec, globalObject, domObject);
 }
 
@@ -348,11 +346,11 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, 
 {
     if (!buffer)
         return JSC::jsNull();
-    if (JSC::JSValue result = getExistingWrapper<JSC::JSArrayBuffer>(exec, buffer))
+    if (JSC::JSValue result = getExistingWrapper<JSC::JSArrayBuffer>(globalObject, buffer))
         return result;
     buffer->ref();
     JSC::JSArrayBuffer* wrapper = JSC::JSArrayBuffer::create(exec->vm(), globalObject->arrayBufferStructure(), buffer);
-    cacheWrapper(currentWorld(exec), buffer, wrapper);
+    cacheWrapper(globalObject->world(), buffer, wrapper);
     return wrapper;
 }
 

@@ -63,7 +63,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, TextTrackCue* cue
     if (!cue)
         return jsNull();
 
-    JSObject* wrapper = getCachedWrapper(currentWorld(exec), cue);
+    JSObject* wrapper = getCachedWrapper(globalObject->world(), cue);
 
     if (wrapper)
         return wrapper;
