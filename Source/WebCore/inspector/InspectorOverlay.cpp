@@ -516,11 +516,11 @@ static PassRefPtr<InspectorArray> buildObjectForRendererFragments(RenderObject* 
         RenderBox* enclosingBox = renderer->enclosingBox();
         RenderRegion* startRegion = nullptr;
         RenderRegion* endRegion = nullptr;
-        containingFlowThread->getRegionRangeForBox(enclosingBox, startRegion, endRegion);
-        if (!startRegion) {
+        if (!containingFlowThread->getRegionRangeForBox(enclosingBox, startRegion, endRegion)) {
             // The flow has no visible regions. The renderer is not visible on screen.
             return nullptr;
         }
+
         const RenderRegionList& regionList = containingFlowThread->renderRegionList();
         for (RenderRegionList::const_iterator iter = regionList.find(startRegion); iter != regionList.end(); ++iter) {
             RenderRegion* region = *iter;

@@ -2632,10 +2632,9 @@ void RenderBoxModelObject::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, Tra
     // The point inside a box that's inside a region has its coordinates relative to the region,
     // not the FlowThread that is its container in the RenderObject tree.
     if (o->isRenderFlowThread() && isBox()) {
-        RenderRegion* startRegion;
-        RenderRegion* endRegion;
-        toRenderFlowThread(o)->getRegionRangeForBox(toRenderBox(this), startRegion, endRegion);
-        if (startRegion)
+        RenderRegion* startRegion = nullptr;
+        RenderRegion* endRegion = nullptr;
+        if (toRenderFlowThread(o)->getRegionRangeForBox(toRenderBox(this), startRegion, endRegion))
             o = startRegion;
     }
 

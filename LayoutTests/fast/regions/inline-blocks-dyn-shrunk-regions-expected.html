@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #green1, #green2 {
+                width: 100px;
+                height: 100px;
+                background-color: green;
+                position: absolute;
+                top: 100px;
+            }
+            #green1 { left: 100px; }
+            #green2 { left: 300px; }
+        </style>
+    </head>
+    <body>
+        <p>Test that inline blocks are correctly displayed in regions when the height of the regions is dynamically shrunk.</p>
+        <p>On success you should see 2 green rectangles and no red.</p>
+        <div id="green1"></div>
+        <div id="green2"></div>
+    </body>
+</html>

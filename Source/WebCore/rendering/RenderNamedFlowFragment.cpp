@@ -283,9 +283,10 @@ void RenderNamedFlowFragment::layoutBlock(bool relayoutChildren, LayoutUnit)
             return;
         }
 
-        if ((oldRegionRect.width() != pageLogicalWidth() || oldRegionRect.height() != pageLogicalHeight()) && !m_flowThread->inFinalLayoutPhase())
+        if ((oldRegionRect.width() != pageLogicalWidth() || oldRegionRect.height() != pageLogicalHeight()) && !m_flowThread->inFinalLayoutPhase()) {
             // This can happen even if we are in the inConstrainedLayoutPhase and it will trigger a pathological layout of the flow thread.
             m_flowThread->invalidateRegions();
+        }
     }
 }
 

@@ -1,3 +1,19 @@
+2014-03-19  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Compute region ranges for children of inline blocks
+        https://bugs.webkit.org/show_bug.cgi?id=130392
+
+        Reviewed by Andrei Bucur.
+
+        * fast/regions/inline-block-inline-children-flowed-in-regions-expected.html: Added.
+        * fast/regions/inline-block-inline-children-flowed-in-regions.html: Added.
+        * fast/regions/inline-blocks-dyn-enlarged-regions-expected.html: Added.
+        * fast/regions/inline-blocks-dyn-enlarged-regions.html: Added.
+        * fast/regions/inline-blocks-dyn-shrunk-regions-expected.html: Added.
+        * fast/regions/inline-blocks-dyn-shrunk-regions.html: Added.
+        * fast/regions/inline-blocks-in-two-regions-expected.html: Added.
+        * fast/regions/inline-blocks-in-two-regions.html: Added.
+
 2014-03-19  Frédéric Wang  <fred.wang@free.fr>
 
         Fix reftest failure of mathml/presentation/bug95404.html.

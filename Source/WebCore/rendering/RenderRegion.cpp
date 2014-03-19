@@ -473,11 +473,9 @@ LayoutRect RenderRegion::rectFlowPortionForBox(const RenderBox* box, const Layou
 {
     LayoutRect mappedRect = m_flowThread->mapFromLocalToFlowThread(box, rect);
 
-    RenderRegion* startRegion = 0;
-    RenderRegion* endRegion = 0;
-    m_flowThread->getRegionRangeForBox(box, startRegion, endRegion);
-
-    if (startRegion && endRegion) {
+    RenderRegion* startRegion = nullptr;
+    RenderRegion* endRegion = nullptr;
+    if (m_flowThread->getRegionRangeForBox(box, startRegion, endRegion)) {
         if (flowThread()->isHorizontalWritingMode()) {
             if (this != startRegion)
                 mappedRect.shiftYEdgeTo(std::max<LayoutUnit>(logicalTopForFlowThreadContent(), mappedRect.y()));

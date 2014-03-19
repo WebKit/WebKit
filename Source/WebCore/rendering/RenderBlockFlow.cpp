@@ -1674,17 +1674,15 @@ bool RenderBlockFlow::hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule pag
     RenderRegion* region = flowThread->regionAtBlockOffset(this, pageOffset, true);
     if (!region)
         return false;
+
     if (region->isLastRegion())
         return region->isRenderRegionSet() || region->style().regionFragment() == BreakRegionFragment
             || (pageBoundaryRule == IncludePageBoundary && pageOffset == region->logicalTopForFlowThreadContent());
 
-    RenderRegion* startRegion = 0;
-    RenderRegion* endRegion = 0;
+    RenderRegion* startRegion = nullptr;
+    RenderRegion* endRegion = nullptr;
     flowThread->getRegionRangeForBox(this, startRegion, endRegion);
-
-    if (region == endRegion)
-        return false;
-    return true;
+    return region != endRegion;
 }
 
 LayoutUnit RenderBlockFlow::adjustForUnsplittableChild(RenderBox& child, LayoutUnit logicalOffset, bool includeMargins)

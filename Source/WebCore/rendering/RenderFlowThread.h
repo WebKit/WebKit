@@ -123,7 +123,7 @@ public:
     void updatePreviousRegionCount() { m_previousRegionCount = m_regionList.size(); };
 
     void setRegionRangeForBox(const RenderBox*, RenderRegion*, RenderRegion*);
-    void getRegionRangeForBox(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
+    bool getRegionRangeForBox(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
     bool hasRegionRangeForBox(const RenderBox* box) const { ASSERT(box); return m_regionRangeMap.contains(box); }
 
     // Check if the object is in region and the region is part of this flow thread.
@@ -244,6 +244,8 @@ protected:
     inline void clearOffsetFromLogicalTopOfFirstRegion(const RenderBox*);
 
     inline const RenderBox* currentActiveRenderBox() const;
+
+    bool getRegionRangeForBoxFromCachedInfo(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
 
     RenderRegionList m_regionList;
     unsigned short m_previousRegionCount;

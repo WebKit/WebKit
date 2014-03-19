@@ -369,9 +369,7 @@ RenderNamedFlowFragment* RenderNamedFlowThread::fragmentFromAbsolutePointAndBox(
 {
     RenderRegion* startRegion = nullptr;
     RenderRegion* endRegion = nullptr;
-    getRegionRangeForBox(&flowedBox, startRegion, endRegion);
-    
-    if (!startRegion)
+    if (!getRegionRangeForBox(&flowedBox, startRegion, endRegion))
         return nullptr;
     
     for (auto iter = m_regionList.find(startRegion), end = m_regionList.end(); iter != end; ++iter) {

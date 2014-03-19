@@ -5111,14 +5111,14 @@ bool RenderBlock::updateRegionRangeForBoxChild(const RenderBox& box) const
     if (!canComputeRegionRangeForBox(this, box, flowThread))
         return false;
 
-    RenderRegion* startRegion = 0;
-    RenderRegion* endRegion = 0;
+    RenderRegion* startRegion = nullptr;
+    RenderRegion* endRegion = nullptr;
     flowThread->getRegionRangeForBox(&box, startRegion, endRegion);
 
     computeRegionRangeForBoxChild(box);
 
-    RenderRegion* newStartRegion = 0;
-    RenderRegion* newEndRegion = 0;
+    RenderRegion* newStartRegion = nullptr;
+    RenderRegion* newEndRegion = nullptr;
     flowThread->getRegionRangeForBox(&box, newStartRegion, newEndRegion);
 
     // The region range of the box has changed. Some boxes (e.g floats) may have been positioned assuming

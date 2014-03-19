@@ -1,3 +1,65 @@
+2014-03-19  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Compute region ranges for children of inline blocks
+        https://bugs.webkit.org/show_bug.cgi?id=130392
+
+        Reviewed by Andrei Bucur.
+
+        Extend the region ranges computation for children of inline blocks.
+        When we cannot retrieve the region range for a box using cached information,
+        either from region range map or from the region cached on the RootInlineBox,
+        try to find the top most unsplittable box up to the flow thread boundary.
+        If we find such unsplittable box and the box has a region range, then return
+        this range.
+
+        Before this patch, method getRegionRangeForBox did not return true/false
+        if it was able to retrieve the range and the caller checked the returned
+        region values. I modified the method to return true if we were able to compute
+        the range.
+
+        Tests: fast/regions/inline-block-inline-children-flowed-in-regions.html
+               fast/regions/inline-blocks-dyn-enlarged-regions.html
+               fast/regions/inline-blocks-dyn-shrunk-regions.html
+               fast/regions/inline-blocks-in-two-regions.html
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForRendererFragments):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateRegionRangeForBoxChild):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::hasNextPage):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::clampToStartAndEndRegions):
+        (WebCore::RenderBox::borderBoxRectInRegion):
+        (WebCore::RenderBox::computeRectForRepaint):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::mapAbsoluteToLocalPoint):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::regionForCompositedLayer):
+        (WebCore::RenderFlowThread::adjustedPositionRelativeToOffsetParent):
+        (WebCore::RenderFlowThread::removeRenderBoxRegionInfo):
+        (WebCore::RenderFlowThread::logicalWidthChangedInRegionsForBlock):
+        (WebCore::RenderFlowThread::getRegionRangeForBoxFromCachedInfo):
+        (WebCore::RenderFlowThread::getRegionRangeForBox):
+        (WebCore::RenderFlowThread::objectShouldPaintInFlowRegion):
+        (WebCore::RenderFlowThread::objectInFlowRegion):
+        (WebCore::RenderFlowThread::addRegionsVisualEffectOverflow):
+        (WebCore::RenderFlowThread::addRegionsVisualOverflowFromTheme):
+        (WebCore::RenderFlowThread::addRegionsOverflowFromChild):
+        (WebCore::RenderFlowThread::addRegionsLayoutOverflow):
+        (WebCore::RenderFlowThread::addRegionsVisualOverflow):
+        (WebCore::RenderFlowThread::clearRegionsOverflow):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::fragmentFromAbsolutePointAndBox):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::locateFlowThreadContainingBlock):
+        Make sure we return the right render flow thread in the case of
+        region-based multicolumn inside named flows.
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::rectFlowPortionForBox):
+
 2014-03-19  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL] vibration/cancelVibration-during-pattern-vibrating.html is failing after r165598

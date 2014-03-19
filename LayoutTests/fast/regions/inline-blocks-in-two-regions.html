@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #article {
+                -webkit-flow-into: flow;
+            }
+            #article1, #article2 { display: inline-block; }
+
+            #red1, #red2 {
+                width: 100px;
+                height: 100px;
+                background-color: red;
+                position: absolute;
+                top: 100px;
+            }
+            #red1 {
+                left: 100px;
+            }
+            #red2 {
+                left: 300px;
+            }
+
+            #inside1, #inside2 {
+                width: 100px;
+                height: 100px;
+                background-color: green;
+            }
+
+            #region1, #region2 {
+                -webkit-flow-from: flow;
+                width: 100px;
+                height: 120px;
+                position: absolute;
+                top: 100px;
+            }
+
+            #region1 { left: 100px; }
+            #region2 { left: 300px; }
+        </style>
+    </head>
+    <body>
+        <p>Test that 2 inline blocks are correctly displayed in 2 regions.</p>
+        <p>On success you should see 2 green rectangles and no red.</p>
+        <div id="red1"></div>
+        <div id="red2"></div>
+        <div id="article">
+            <div id="article1">
+                <div id="inside1"></div>
+            </div><div id="article2">
+                <div id="inside2"></div>
+            </div>
+        </div>
+        <div id="region1"></div>
+        <div id="region2"></div>
+    </body>
+</html>
