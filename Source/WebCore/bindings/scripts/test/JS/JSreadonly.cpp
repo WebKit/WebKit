@@ -159,7 +159,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, readonl
 {
     if (!impl)
         return jsNull();
-    if (JSValue result = getExistingWrapper<JSreadonly>(exec, impl))
+    if (JSValue result = getExistingWrapper<JSreadonly>(globalObject, impl))
         return result;
 #if COMPILER(CLANG)
     // If you hit this failure the interface definition has the ImplementationLacksVTable

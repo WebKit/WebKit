@@ -203,7 +203,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestExc
 {
     if (!impl)
         return jsNull();
-    if (JSValue result = getExistingWrapper<JSTestException>(exec, impl))
+    if (JSValue result = getExistingWrapper<JSTestException>(globalObject, impl))
         return result;
 
 #if ENABLE(BINDING_INTEGRITY)

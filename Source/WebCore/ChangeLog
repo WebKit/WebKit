@@ -1,3 +1,9 @@
+2014-03-19  Andreas Kling  <akling@apple.com>
+
+        Rebaseline bindings tests.
+
+        * bindings/scripts/test/JS/*:
+
 2014-03-04  Jer Noble  <jer.noble@apple.com>
 
         [iOS][MediaControls] Reverse-pinching using the built-in controls should enter full screen

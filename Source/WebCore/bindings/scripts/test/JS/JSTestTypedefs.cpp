@@ -753,7 +753,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestTyp
 {
     if (!impl)
         return jsNull();
-    if (JSValue result = getExistingWrapper<JSTestTypedefs>(exec, impl))
+    if (JSValue result = getExistingWrapper<JSTestTypedefs>(globalObject, impl))
         return result;
 
 #if ENABLE(BINDING_INTEGRITY)

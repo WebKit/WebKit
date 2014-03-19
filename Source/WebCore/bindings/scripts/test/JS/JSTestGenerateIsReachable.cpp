@@ -176,7 +176,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestGen
 {
     if (!impl)
         return jsNull();
-    if (JSValue result = getExistingWrapper<JSTestGenerateIsReachable>(exec, impl))
+    if (JSValue result = getExistingWrapper<JSTestGenerateIsReachable>(globalObject, impl))
         return result;
 
 #if ENABLE(BINDING_INTEGRITY)

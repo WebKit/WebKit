@@ -191,7 +191,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestMed
 {
     if (!impl)
         return jsNull();
-    if (JSValue result = getExistingWrapper<JSTestMediaQueryListListener>(exec, impl))
+    if (JSValue result = getExistingWrapper<JSTestMediaQueryListListener>(globalObject, impl))
         return result;
 
 #if ENABLE(BINDING_INTEGRITY)

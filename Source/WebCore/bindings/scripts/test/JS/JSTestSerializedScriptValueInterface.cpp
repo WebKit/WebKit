@@ -341,7 +341,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestSer
 {
     if (!impl)
         return jsNull();
-    if (JSValue result = getExistingWrapper<JSTestSerializedScriptValueInterface>(exec, impl))
+    if (JSValue result = getExistingWrapper<JSTestSerializedScriptValueInterface>(globalObject, impl))
         return result;
 
 #if ENABLE(BINDING_INTEGRITY)
