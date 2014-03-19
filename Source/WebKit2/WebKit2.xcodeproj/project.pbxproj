@@ -451,6 +451,7 @@
 		1F7506B61859165700EC0FF7 /* WKWebProcessPlugInNodeHandleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F0181711858DC1600F92884 /* WKWebProcessPlugInNodeHandleInternal.h */; };
 		1F7506B71859165A00EC0FF7 /* WKWebProcessPlugInHitTestResultInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F01816E1858DC1600F92884 /* WKWebProcessPlugInHitTestResultInternal.h */; };
 		1F7506B81859165D00EC0FF7 /* WKWebProcessPlugInFrameInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F01816B1858DC1500F92884 /* WKWebProcessPlugInFrameInternal.h */; };
+		1F8724B718D7632B0076D4B4 /* WebResourceLoaderIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1F8724B318D7631D0076D4B4 /* WebResourceLoaderIOS.mm */; };
 		1FB00AC7185F76460019142E /* WKWebProcessPlugInPageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FB00AC4185F76460019142E /* WKWebProcessPlugInPageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1FB00AC8185F76460019142E /* WKWebProcessPlugInPageGroup.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1FB00AC5185F76460019142E /* WKWebProcessPlugInPageGroup.mm */; };
 		1FB00AC9185F76460019142E /* WKWebProcessPlugInPageGroupInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FB00AC6185F76460019142E /* WKWebProcessPlugInPageGroupInternal.h */; };
@@ -2210,6 +2211,7 @@
 		1F335BBF185B84D8001A201A /* WKWebProcessPlugInLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInLoadDelegate.h; sourceTree = "<group>"; };
 		1F604BA61889FA7400EE0395 /* WKRenderingProgressEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRenderingProgressEvents.h; sourceTree = "<group>"; };
 		1F604BA71889FA7400EE0395 /* WKRenderingProgressEventsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRenderingProgressEventsInternal.h; sourceTree = "<group>"; };
+		1F8724B318D7631D0076D4B4 /* WebResourceLoaderIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebResourceLoaderIOS.mm; path = ios/WebResourceLoaderIOS.mm; sourceTree = "<group>"; };
 		1FB00AC4185F76460019142E /* WKWebProcessPlugInPageGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInPageGroup.h; sourceTree = "<group>"; };
 		1FB00AC5185F76460019142E /* WKWebProcessPlugInPageGroup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebProcessPlugInPageGroup.mm; sourceTree = "<group>"; };
 		1FB00AC6185F76460019142E /* WKWebProcessPlugInPageGroupInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInPageGroupInternal.h; sourceTree = "<group>"; };
@@ -4290,6 +4292,14 @@
 			path = Cocoa;
 			sourceTree = "<group>";
 		};
+		1F8724B218D763040076D4B4 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				1F8724B318D7631D0076D4B4 /* WebResourceLoaderIOS.mm */,
+			);
+			name = ios;
+			sourceTree = "<group>";
+		};
 		2989A40E167D1813004F96D2 /* CustomProtocols */ = {
 			isa = PBXGroup;
 			children = (
@@ -4646,6 +4656,7 @@
 		5105B0D2162F7A5E00E27709 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				1F8724B218D763040076D4B4 /* ios */,
 				5105B0D4162F7A7A00E27709 /* NetworkProcessConnection.cpp */,
 				5105B0D5162F7A7A00E27709 /* NetworkProcessConnection.h */,
 				51FB0902163A3B1C00EC324A /* NetworkProcessConnection.messages.in */,
@@ -8410,6 +8421,7 @@
 				37948403150C350600E52CE9 /* WebRenderLayer.cpp in Sources */,
 				2D28F3E61885CCC1004B9EAE /* WebEditorClientIOS.mm in Sources */,
 				3760881E150413E900FC82C7 /* WebRenderObject.cpp in Sources */,
+				1F8724B718D7632B0076D4B4 /* WebResourceLoaderIOS.mm in Sources */,
 				51217464164C21370037A5C1 /* WebResourceBuffer.cpp in Sources */,
 				3336762F130C9998006C9DE2 /* WebResourceCacheManager.cpp in Sources */,
 				33F9D5B91312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp in Sources */,

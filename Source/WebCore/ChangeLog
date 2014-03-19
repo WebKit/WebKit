@@ -1,3 +1,21 @@
+2014-03-19  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        [iOS] WebKit2 Quicklook.
+        https://bugs.webkit.org/show_bug.cgi?id=130360
+
+        Reviewed by Tim Horton.
+
+        Since ResourceLoaders using WebKit2 network process don't have ResourceHandle any more, we
+        need to make it possible to create QuickLookHandle from ResourceLoader.
+
+        * WebCore.exp.in: Make some QuickLookHandle methods visible from WebKit2.
+        * loader/ResourceLoader.h: Add m_quickLookHandle data member to ResourceLoader.
+        (WebCore::ResourceLoader::quickLookHandle):
+        (WebCore::ResourceLoader::setQuickLookHandle):
+        * platform/network/ios/QuickLook.h: Add a new method to create QuickLookHandle from ResourceLoader.
+        * platform/network/ios/QuickLook.mm:
+        (WebCore::QuickLookHandle::create):
+
 2014-03-19  Brent Fulgham  <bfulgham@apple.com>
 
         Fix cue rendering test and include support for left/right alignment

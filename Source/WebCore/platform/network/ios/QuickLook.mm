@@ -31,6 +31,7 @@
 #import "FileSystemIOS.h"
 #import "Logging.h"
 #import "ResourceHandle.h"
+#import "ResourceLoader.h"
 #import "RuntimeApplicationChecksIOS.h"
 #import "SoftLinking.h"
 #import "SynchronousResourceHandleCFURLConnectionDelegate.h"
@@ -391,6 +392,14 @@ CFURLResponseRef QuickLookHandle::cfResponse()
     return [m_nsResponse _CFURLResponse];
 }
 #endif
+
+PassOwnPtr<QuickLookHandle> QuickLookHandle::create(ResourceLoader* loader, NSURLResponse *response, id delegate)
+{
+    if (loader->request().isMainResourceRequest() && [WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:[response MIMEType]])
+        return adoptPtr(new QuickLookHandle(NULL, nil, response, delegate));
+
+    return nullptr;
+}
 
 NSURLResponse *QuickLookHandle::nsResponse()
 {

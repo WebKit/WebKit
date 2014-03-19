@@ -38,6 +38,10 @@
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
+#if USE(QUICK_LOOK)
+#include "QuickLook.h"
+#endif
+
 namespace WebCore {
 
 class AuthenticationChallenge;
@@ -154,6 +158,11 @@ public:
 
     void setDataBufferingPolicy(DataBufferingPolicy);
 
+#if USE(QUICK_LOOK)
+    QuickLookHandle* quickLookHandle() const { return m_quickLookHandle.get(); }
+    void setQuickLookHandle(PassOwnPtr<QuickLookHandle> handle) { m_quickLookHandle = handle; }
+#endif
+
 protected:
     ResourceLoader(Frame*, ResourceLoaderOptions);
 
@@ -202,6 +211,9 @@ private:
     bool m_defersLoading;
     ResourceRequest m_deferredRequest;
     ResourceLoaderOptions m_options;
+#if USE(QUICK_LOOK)
+    OwnPtr<QuickLookHandle> m_quickLookHandle;
+#endif
 };
 
 inline const ResourceResponse& ResourceLoader::response() const

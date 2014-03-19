@@ -88,6 +88,10 @@ private:
     void canAuthenticateAgainstProtectionSpace(const WebCore::ProtectionSpace&);
 #endif
 
+#if USE(QUICK_LOOK)
+    void setUpQuickLookHandleIfNeeded(const WebCore::ResourceResponse&);
+#endif
+
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
 };
 

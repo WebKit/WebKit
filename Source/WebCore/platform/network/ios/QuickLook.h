@@ -60,6 +60,7 @@ typedef struct _CFURLConnection* CFURLConnectionRef;
 namespace WebCore {
 
 class ResourceHandle;
+class ResourceLoader;
 class SynchronousResourceHandleCFURLConnectionDelegate;
 
 Class QLPreviewConverterClass();
@@ -91,6 +92,7 @@ public:
 #if USE(CFNETWORK)
     static PassOwnPtr<QuickLookHandle> create(ResourceHandle*, SynchronousResourceHandleCFURLConnectionDelegate*, CFURLResponseRef);
 #endif
+    static PassOwnPtr<QuickLookHandle> create(ResourceLoader*, NSURLResponse *, id delegate);
     ~QuickLookHandle();
 
     bool didReceiveDataArray(CFArrayRef);

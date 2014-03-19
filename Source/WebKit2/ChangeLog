@@ -1,3 +1,27 @@
+2014-03-19  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        [iOS] WebKit2 Quicklook.
+        https://bugs.webkit.org/show_bug.cgi?id=130360
+
+        For WebKit2 resource loads, if we detect a quicklook content that QLConverter is able to
+        convert, handle the response data to QLConverter and use its delegate WKWebResourceQuickLookDelegate
+        to rounte the converted results (HTML) back into WebCore.  Thie similiar logic has been in place
+        for WebKit1.
+
+        Reviewed by Tim Horton.
+
+        * WebKit2.xcodeproj/project.pbxproj: Add WebResourceLoaderIOS.mm to the project.
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        * WebProcess/ios/WebResourceLoaderIOS.mm: Added.
+        (-[WKWebResourceQuickLookDelegate initWithWebResourceLoader:WebKit::]): WKWebResourceQuickLookDelegate holds
+            the original WebResourceLoader so that we could send converted result to WebCore.
+        (-[WKWebResourceQuickLookDelegate connection:didReceiveDataArray:]):
+        (-[WKWebResourceQuickLookDelegate connection:didReceiveData:lengthReceived:]):
+        (-[WKWebResourceQuickLookDelegate connectionDidFinishLoading:]):
+        (-[WKWebResourceQuickLookDelegate connection:didFailWithError:]):
+        (-[WKWebResourceQuickLookDelegate clearHandle]):
+        (WebKit::WebResourceLoader::setUpQuickLookHandleIfNeeded):
+
 2014-03-19  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures: Swipe gesture can track vertical movement instead of horizontal movement
