@@ -1,3 +1,17 @@
+2014-03-19  Frédéric Wang  <fred.wang@free.fr>
+
+        Fix reftest failure of mathml/presentation/bug95404.html.
+
+        Unreviewed gardering.
+
+        After bug 116600, the test is only failing because of some difference
+        invisible by the naked eye, due to antialiasing of the radical symbol.
+
+        * mathml/presentation/bug95404-expected.html: add a 2px border to prevent antialiasing.
+        * mathml/presentation/bug95404.html: ditto.
+        * platform/efl/TestExpectations: remove test failure.
+        * platform/gtk/TestExpectations: ditto.
+
 2014-03-18  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Strange layout for content with region breaks

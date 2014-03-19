@@ -1653,9 +1653,6 @@ webkit.org/b/122511 fast/regions/selection/selecting-text-ignoring-region-vert-l
 webkit.org/b/122511 fast/regions/selection/selecting-text-in-2-regions-horiz-bt.html [ ImageOnlyFailure ]
 webkit.org/b/122511 fast/regions/selection/selecting-text-in-2-regions-vert-lr.html [ ImageOnlyFailure ]
 
-# Radical sign is overflowing red background
-webkit.org/b/124045 mathml/presentation/bug95404.html [ ImageOnlyFailure ]
-
 # css3 reftests are failing after r154875
 webkit.org/b/120596 css3/background/background-repeat-space-border.html [ ImageOnlyFailure ]
 webkit.org/b/120596 css3/background/background-repeat-space-content.html [ ImageOnlyFailure ]

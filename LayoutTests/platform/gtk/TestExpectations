@@ -1277,9 +1277,6 @@ webkit.org/b/118420 [ Release ] fast/dom/gc-dom-tree-lifetime.html [ Failure ]
 # May take too long on the bots.
 Bug(GTK) mathml/very-large-stretchy-operators.html [ Pass Timeout ]
 
-# MathML tests failing after MathML pixel tests were replaced with ref tests
-webkit.org/b/118904 mathml/presentation/bug95404.html [ ImageOnlyFailure ]
-
 webkit.org/b/119840 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Failure ]
 
 webkit.org/b/119841 fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
