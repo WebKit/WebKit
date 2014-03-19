@@ -510,8 +510,8 @@ public:
         [NSNumber numberWithBool:NO],   WebKitAsynchronousSpellCheckingEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitHyperlinkAuditingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUsePreHTML5ParserQuirksKey,
-#if !PLATFORM(IOS)
         [NSNumber numberWithBool:YES],  WebKitAVFoundationEnabledKey,
+#if !PLATFORM(IOS)
         [NSNumber numberWithBool:NO],   WebKitMediaPlaybackRequiresUserGesturePreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitMediaPlaybackAllowsInlinePreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebAudioEnabledPreferenceKey,
@@ -524,12 +524,11 @@ public:
         [NSNumber numberWithBool:YES],  WebKitNotificationsEnabledKey,
         [NSNumber numberWithBool:NO],   WebKitShouldRespectImageOrientationKey,
 #else
-        [NSNumber numberWithBool:NO],   WebKitAVFoundationEnabledKey,
         [NSNumber numberWithBool:YES],  WebKitMediaPlaybackRequiresUserGesturePreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitMediaPlaybackAllowsInlinePreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitMediaPlaybackAllowsAirPlayPreferenceKey,
         [NSNumber numberWithUnsignedInt:AudioSession::None],  WebKitAudioSessionCategoryOverride,
-        [NSNumber numberWithBool:NO],   WebKitAVKitEnabled,
+        [NSNumber numberWithBool:YES],  WebKitAVKitEnabled,
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
 
         // Per-Origin Quota on iOS is 25MB. When the quota is reached for a particular origin
@@ -587,11 +586,7 @@ public:
         
         [NSNumber numberWithBool:NO], WebKitUseLegacyTextAlignPositionedElementBehaviorPreferenceKey,
         
-#if !PLATFORM(IOS)
         [NSNumber numberWithBool:NO],   WebKitVideoPluginProxyEnabledKey,
-#else
-        [NSNumber numberWithBool:YES],   WebKitVideoPluginProxyEnabledKey,
-#endif
 #if ENABLE(MEDIA_SOURCE)
         [NSNumber numberWithBool:NO], WebKitMediaSourceEnabledPreferenceKey,
 #endif

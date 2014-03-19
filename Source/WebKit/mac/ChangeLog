@@ -1,3 +1,16 @@
+2014-03-19  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Disable the video plugin proxy by default on WK1.
+        https://bugs.webkit.org/show_bug.cgi?id=130460
+
+        Reviewed by Eric Carlson.
+
+        Update the defaults to universally enable the AVFoundationEnabled preference, disable the
+        VideoPluginProxyEnabled preference, and on iOS only enable the AVKitEnabled preference.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2014-03-18  Samuel White  <samuel_white@apple.com>
 
         AX: Not able to use arrow keys to read text with VoiceOver before selection is set someplace (anyplace).
