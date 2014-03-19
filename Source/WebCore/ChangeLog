@@ -1,3 +1,11 @@
+2014-03-19  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the iOS build.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::parseToDateComponents):
+        Missing a StringView().
+
 2014-03-19  Antti Koivisto  <antti@apple.com>
 
         Tighten ElementRuleCollector::m_matchedRuleList typing
