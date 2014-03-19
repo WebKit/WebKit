@@ -9,6 +9,7 @@ Fader
       (children 2
         (GraphicsLayer
           (position 8.00 8.00)
+          (anchor 1.00 1.00)
           (bounds 1.00 1.00)
         )
         (GraphicsLayer

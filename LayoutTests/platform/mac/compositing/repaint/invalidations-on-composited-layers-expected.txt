@@ -18,6 +18,7 @@
           (children 1
             (GraphicsLayer
               (position 50.00 50.00)
+              (anchor 0.51 0.51)
               (bounds 75.00 75.00)
               (contentsOpaque 1)
             )

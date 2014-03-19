@@ -1,3 +1,19 @@
+2014-03-19  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Transform origin is miscalculated when RenderLayer's
+        offsetfromRenderer has device pixel fraction value.
+        https://bugs.webkit.org/show_bug.cgi?id=129859
+
+        Reviewed by Simon Fraser.
+
+        We need to calculate the transformed origin using the painting coordinates to produce
+        pixel precise result.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::computeTransformOriginForPainting):
+        * rendering/RenderLayerBacking.h:
+
 2014-03-19  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GStreamer] Clean timeout source ids

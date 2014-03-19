@@ -11,6 +11,7 @@
       (children 1
         (GraphicsLayer
           (position 8.00 8.00)
+          (anchor 0.50 0.50)
           (bounds 402.00 207.00)
           (drawsContent 1)
           (repaint rects

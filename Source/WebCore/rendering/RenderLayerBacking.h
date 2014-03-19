@@ -250,10 +250,8 @@ private:
     GraphicsLayerPaintingPhase paintingPhaseForPrimaryLayer() const;
     
     LayoutSize contentOffsetInCompostingLayer() const;
-    // Result is transform origin in pixels.
-    FloatPoint3D computeTransformOrigin(const LayoutRect& borderBox) const;
-    // Result is perspective origin in pixels.
-    FloatPoint computePerspectiveOrigin(const LayoutRect& borderBox) const;
+    // Result is transform origin in device pixels.
+    FloatPoint3D computeTransformOriginForPainting(const LayoutRect& borderBox) const;
 
     void updateOpacity(const RenderStyle*);
     void updateTransform(const RenderStyle*);
