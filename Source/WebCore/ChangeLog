@@ -1,3 +1,11 @@
+2014-03-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Build fix for iOS after r165926
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonVM):
+        * platform/ios/WebSafeGCActivityCallbackIOS.h:
+
 2014-03-19  Eric Carlson  <eric.carlson@apple.com>
 
         Allow media engine to update HTMLMediaElement state when playing to external device
