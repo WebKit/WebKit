@@ -1891,6 +1891,14 @@
             "litherum"
          ]
       },
+      "Nadav Rotem" : {
+         "emails" : [
+            "nrotem@apple.com"
+         ],
+         "nicks" : [
+            "nadav"
+         ]
+      },
       "Naoki Takano" : {
          "emails" : [
             "honten@chromium.org",
@@ -2756,6 +2764,15 @@
             "amarinichev"
          ]
       },
+      "Andrew Trick" : {
+         "emails" : [
+            "atrick@apple.com"
+         ],
+         "expertise" : "JavaScript/ECMAScript",
+         "nicks" : [
+            "atrick"
+         ]
+      },
       "Anne van Kesteren" : {
          "emails" : [
             "annevk@annevk.nl"
@@ -3019,6 +3036,15 @@
          ],
          "nicks" : [
             "backer"
+         ]
+      },
+      "Juergen Ributzka" : {
+         "emails" : [
+            "juergen@apple.com"
+         ],
+         "expertise" : "JavaScript/ECMAScript",
+         "nicks" : [
+            "juergen"
          ]
       },
       "Koji Hara" : {
@@ -4146,14 +4172,6 @@
          "expertise" : "CSS Regions, CSS Exclusions",
          "nicks" : [
             "mihnea"
-         ]
-      },
-      "Nadav Rotem" : {
-         "emails" : [
-            "nrotem@apple.com"
-         ],
-         "nicks" : [
-            "nadav"
          ]
       },
       "Nate Chapin" : {

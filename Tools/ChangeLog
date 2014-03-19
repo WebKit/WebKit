@@ -1,3 +1,10 @@
+2014-03-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, add some contributors, and fix Nadav's entry (he's not really a reviewer
+        yet).
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove stale ReportMemoryUsagePlugin
