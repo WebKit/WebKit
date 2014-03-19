@@ -11,7 +11,10 @@ function test(expression, expressionShouldThrow, expectedException) {
     }
 }
 
+var errorCallbackError = new TypeError("Argument 3 ('errorCallback') to Navigator.webkitGetUserMedia must be a function")
+var invalidDictionaryError = new TypeError('First argument of webkitGetUserMedia must be a valid Dictionary')
 var notSupportedError = new Error('NotSupportedError: DOM Exception 9');
+var successCallbackError = new TypeError("Argument 2 ('successCallback') to Navigator.webkitGetUserMedia must be a function")
 var typeError = new TypeError('Type error');
 var typeNotAnObjectError = new TypeError('Not an object.');
 
@@ -33,22 +36,22 @@ test('navigator.webkitGetUserMedia(emptyFunction)', true);
 
 // 2 Arguments.
 test('navigator.webkitGetUserMedia({video: true}, emptyFunction)', false);
-test('navigator.webkitGetUserMedia(undefined, emptyFunction)', true, notSupportedError);
-test('navigator.webkitGetUserMedia(null, emptyFunction)', true, notSupportedError);
+test('navigator.webkitGetUserMedia(undefined, emptyFunction)', true, invalidDictionaryError);
+test('navigator.webkitGetUserMedia(null, emptyFunction)', true, invalidDictionaryError);
 test('navigator.webkitGetUserMedia({ }, emptyFunction)', true, notSupportedError);
-test('navigator.webkitGetUserMedia(true, emptyFunction)', true, typeNotAnObjectError);
-test('navigator.webkitGetUserMedia(42, emptyFunction)', true, typeNotAnObjectError);
-test('navigator.webkitGetUserMedia(Infinity, emptyFunction)', true, typeNotAnObjectError);
-test('navigator.webkitGetUserMedia(-Infinity, emptyFunction)', true, typeNotAnObjectError);
+test('navigator.webkitGetUserMedia(true, emptyFunction)', true, invalidDictionaryError);
+test('navigator.webkitGetUserMedia(42, emptyFunction)', true, invalidDictionaryError);
+test('navigator.webkitGetUserMedia(Infinity, emptyFunction)', true, invalidDictionaryError);
+test('navigator.webkitGetUserMedia(-Infinity, emptyFunction)', true, invalidDictionaryError);
 test('navigator.webkitGetUserMedia(emptyFunction, emptyFunction)', true, notSupportedError);
-test('navigator.webkitGetUserMedia({video: true}, "foobar")', true, typeError);
-test('navigator.webkitGetUserMedia({video: true}, undefined)', true, typeError);
-test('navigator.webkitGetUserMedia({video: true}, null)', true, typeError);
-test('navigator.webkitGetUserMedia({video: true}, {})', true, typeError);
-test('navigator.webkitGetUserMedia({video: true}, true)', true, typeError);
-test('navigator.webkitGetUserMedia({video: true}, 42)', true, typeError);
-test('navigator.webkitGetUserMedia({video: true}, Infinity)', true, typeError);
-test('navigator.webkitGetUserMedia({video: true}, -Infinity)', true, typeError);
+test('navigator.webkitGetUserMedia({video: true}, "foobar")', true, successCallbackError);
+test('navigator.webkitGetUserMedia({video: true}, undefined)', true, successCallbackError);
+test('navigator.webkitGetUserMedia({video: true}, null)', true, successCallbackError);
+test('navigator.webkitGetUserMedia({video: true}, {})', true, successCallbackError);
+test('navigator.webkitGetUserMedia({video: true}, true)', true, successCallbackError);
+test('navigator.webkitGetUserMedia({video: true}, 42)', true, successCallbackError);
+test('navigator.webkitGetUserMedia({video: true}, Infinity)', true, successCallbackError);
+test('navigator.webkitGetUserMedia({video: true}, -Infinity)', true, successCallbackError);
 
 // 3 Arguments.
 test('navigator.webkitGetUserMedia({ }, emptyFunction, emptyFunction)', true, notSupportedError);
@@ -56,12 +59,12 @@ test('navigator.webkitGetUserMedia({video: true}, emptyFunction, emptyFunction)'
 test('navigator.webkitGetUserMedia({video: true}, emptyFunction, undefined)', false);
 test('navigator.webkitGetUserMedia({audio:true, video:true}, emptyFunction, undefined)', false);
 test('navigator.webkitGetUserMedia({audio:true}, emptyFunction, undefined)', false);
-test('navigator.webkitGetUserMedia({video: true}, emptyFunction, "video")', true, typeError);
+test('navigator.webkitGetUserMedia({video: true}, emptyFunction, "video")', true, errorCallbackError);
 test('navigator.webkitGetUserMedia({video: true}, emptyFunction, null)', false );
-test('navigator.webkitGetUserMedia({video: true}, emptyFunction, {})', true, typeError);
-test('navigator.webkitGetUserMedia({video: true}, emptyFunction, true)', true, typeError);
-test('navigator.webkitGetUserMedia({video: true}, emptyFunction, 42)', true, typeError);
-test('navigator.webkitGetUserMedia({video: true}, emptyFunction, Infinity)', true, typeError);
-test('navigator.webkitGetUserMedia({video: true}, emptyFunction, -Infinity)', true, typeError);
+test('navigator.webkitGetUserMedia({video: true}, emptyFunction, {})', true, errorCallbackError);
+test('navigator.webkitGetUserMedia({video: true}, emptyFunction, true)', true, errorCallbackError);
+test('navigator.webkitGetUserMedia({video: true}, emptyFunction, 42)', true, errorCallbackError);
+test('navigator.webkitGetUserMedia({video: true}, emptyFunction, Infinity)', true, errorCallbackError);
+test('navigator.webkitGetUserMedia({video: true}, emptyFunction, -Infinity)', true, errorCallbackError);
 
 window.jsTestIsAsync = false;

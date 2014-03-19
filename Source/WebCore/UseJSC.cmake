@@ -108,6 +108,7 @@ list(APPEND WebCore_SOURCES
     bindings/js/JSMutationCallback.cpp
     bindings/js/JSMutationObserverCustom.cpp
     bindings/js/JSNamedNodeMapCustom.cpp
+    bindings/js/JSNavigatorCustom.cpp
     bindings/js/JSNodeCustom.cpp
     bindings/js/JSNodeFilterCondition.cpp
     bindings/js/JSNodeFilterCustom.cpp

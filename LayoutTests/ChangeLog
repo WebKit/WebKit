@@ -1,3 +1,16 @@
+2014-03-19  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Improving webkitGetUserMedia error handling and error messages
+        https://bugs.webkit.org/show_bug.cgi?id=130452
+
+        Reviewed by Eric Carlson.
+
+        Checking if first argument of webkitGetUserMedia is a valid Dictionary. If not, throw an exception with a
+        clearer message of the error.
+
+        * fast/mediastream/argument-types-expected.txt:
+        * fast/mediastream/script-tests/argument-types.js:
+
 2014-03-19  Dirk Schulze  <krit@webkit.org>
 
         Implement method addPath for Path2D

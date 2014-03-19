@@ -20,7 +20,7 @@
 [
     Conditional=MEDIA_STREAM,
 ] partial interface Navigator {
-    [RaisesException] void webkitGetUserMedia(Dictionary options,
+    [Custom, RaisesException] void webkitGetUserMedia(Dictionary options,
                                                  NavigatorUserMediaSuccessCallback successCallback,
                                                  optional NavigatorUserMediaErrorCallback errorCallback);
 };
