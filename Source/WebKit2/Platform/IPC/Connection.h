@@ -191,8 +191,6 @@ private:
     void processIncomingMessage(std::unique_ptr<MessageDecoder>);
     void processIncomingSyncReply(std::unique_ptr<MessageDecoder>);
 
-    void addWorkQueueMessageReceiverOnConnectionWorkQueue(StringReference messageReceiverName, WorkQueue*, WorkQueueMessageReceiver*);
-    void removeWorkQueueMessageReceiverOnConnectionWorkQueue(StringReference messageReceiverName);
     void dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceiver*, MessageDecoder*);
 
     bool canSendOutgoingMessages() const;

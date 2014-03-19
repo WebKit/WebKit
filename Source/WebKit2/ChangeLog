@@ -1,3 +1,15 @@
+2014-03-19  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of two IPC::Connection functions by folding them into lambdas
+        https://bugs.webkit.org/show_bug.cgi?id=130482
+
+        Reviewed by Tim Horton.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::addWorkQueueMessageReceiver):
+        (IPC::Connection::removeWorkQueueMessageReceiver):
+        * Platform/IPC/Connection.h:
+
 2014-03-19  Simon Fraser  <simon.fraser@apple.com>
 
         Expose text and page zoom in WK2 SPI, and hook them up in MiniBrowser

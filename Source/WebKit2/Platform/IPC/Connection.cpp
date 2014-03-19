@@ -256,29 +256,23 @@ void Connection::addWorkQueueMessageReceiver(StringReference messageReceiverName
     ASSERT(&RunLoop::current() == &m_clientRunLoop);
     ASSERT(!m_isConnected);
 
-    m_connectionQueue->dispatch(bind(&Connection::addWorkQueueMessageReceiverOnConnectionWorkQueue, this, messageReceiverName, RefPtr<WorkQueue>(workQueue), RefPtr<WorkQueueMessageReceiver>(workQueueMessageReceiver)));
+    RefPtr<Connection> connection(this);
+    m_connectionQueue->dispatch([connection, messageReceiverName, workQueue, workQueueMessageReceiver] {
+        ASSERT(!connection->m_workQueueMessageReceivers.contains(messageReceiverName));
+
+        connection->m_workQueueMessageReceivers.add(messageReceiverName, std::make_pair(workQueue, workQueueMessageReceiver));
+    });
 }
 
 void Connection::removeWorkQueueMessageReceiver(StringReference messageReceiverName)
 {
     ASSERT(&RunLoop::current() == &m_clientRunLoop);
 
-    m_connectionQueue->dispatch(bind(&Connection::removeWorkQueueMessageReceiverOnConnectionWorkQueue, this, messageReceiverName));
-}
-
-void Connection::addWorkQueueMessageReceiverOnConnectionWorkQueue(StringReference messageReceiverName, WorkQueue* workQueue, WorkQueueMessageReceiver* workQueueMessageReceiver)
-{
-    ASSERT(workQueue);
-    ASSERT(workQueueMessageReceiver);
-    ASSERT(!m_workQueueMessageReceivers.contains(messageReceiverName));
-
-    m_workQueueMessageReceivers.add(messageReceiverName, std::make_pair(workQueue, workQueueMessageReceiver));
-}
-
-void Connection::removeWorkQueueMessageReceiverOnConnectionWorkQueue(StringReference messageReceiverName)
-{
-    ASSERT(m_workQueueMessageReceivers.contains(messageReceiverName));
-    m_workQueueMessageReceivers.remove(messageReceiverName);
+    RefPtr<Connection> connection(this);
+    m_connectionQueue->dispatch([connection, messageReceiverName] {
+        ASSERT(connection->m_workQueueMessageReceivers.contains(messageReceiverName));
+        connection->m_workQueueMessageReceivers.remove(messageReceiverName);
+    });
 }
 
 void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceiver* workQueueMessageReceiver, MessageDecoder* incomingMessageDecoder)
