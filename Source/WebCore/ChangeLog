@@ -1,5 +1,14 @@
 2014-03-18  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed Win64 build fix; explicit operators are not valid in VS2010.
+
+        With the 'explicit bool' operator removed, just test weakThis.get() explicitly.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::checkPlayability):
+
+2014-03-18  Jer Noble  <jer.noble@apple.com>
+
         Merge r165478.
 
     2014-03-12  Jer Noble  <jer.noble@apple.com>

@@ -1,5 +1,11 @@
 2014-03-18  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed Win64 build fix; explicit operators are not valid in VS2010.
+
+        * wtf/WeakPtr.h: Remove the 'explicit bool' operator.
+
+2014-03-18  Jer Noble  <jer.noble@apple.com>
+
         Merge r165425.
 
     2014-03-10  Jer Noble  <jer.noble@apple.com>

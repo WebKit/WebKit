@@ -506,7 +506,7 @@ void MediaPlayerPrivateAVFoundationObjC::checkPlayability()
 
     [m_avAsset.get() loadValuesAsynchronouslyForKeys:[NSArray arrayWithObject:@"playable"] completionHandler:^{
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (weakThis)
+            if (weakThis.get())
                 weakThis->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::AssetPlayabilityKnown);
         });
     }];
