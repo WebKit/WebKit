@@ -1,3 +1,13 @@
+2014-03-19  Antti Koivisto  <antti@apple.com>
+
+        Crash with long selector list
+        https://bugs.webkit.org/show_bug.cgi?id=123006
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/long-selector-list-crash-expected.txt: Added.
+        * fast/css/long-selector-list-crash.html: Added.
+
 2014-03-19  Eric Carlson  <eric.carlson@apple.com>
 
         Make Remote Control commands testable

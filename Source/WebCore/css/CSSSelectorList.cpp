@@ -35,6 +35,8 @@ namespace WebCore {
 CSSSelectorList::CSSSelectorList(const CSSSelectorList& other)
 {
     unsigned otherComponentCount = other.componentCount();
+    ASSERT_WITH_SECURITY_IMPLICATION(otherComponentCount);
+
     m_selectorArray = reinterpret_cast<CSSSelector*>(fastMalloc(sizeof(CSSSelector) * otherComponentCount));
     for (unsigned i = 0; i < otherComponentCount; ++i)
         new (NotNull, &m_selectorArray[i]) CSSSelector(other.m_selectorArray[i]);
@@ -43,11 +45,14 @@ CSSSelectorList::CSSSelectorList(const CSSSelectorList& other)
 CSSSelectorList::CSSSelectorList(CSSSelectorList&& other)
     : m_selectorArray(other.m_selectorArray)
 {
+    ASSERT_WITH_SECURITY_IMPLICATION(componentCount());
     other.m_selectorArray = nullptr;
 }
 
 void CSSSelectorList::adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector)
 {
+    ASSERT_WITH_SECURITY_IMPLICATION(!selectorVector.isEmpty());
+
     deleteSelectors();
     size_t flattenedSize = 0;
     for (size_t i = 0; i < selectorVector.size(); ++i) {
@@ -96,6 +101,8 @@ CSSSelectorList& CSSSelectorList::operator=(CSSSelectorList&& other)
     deleteSelectors();
     m_selectorArray = other.m_selectorArray;
     other.m_selectorArray = nullptr;
+
+    ASSERT_WITH_SECURITY_IMPLICATION(componentCount());
     return *this;
 }
 

@@ -1,3 +1,25 @@
+2014-03-19  Antti Koivisto  <antti@apple.com>
+
+        Crash with long selector list
+        https://bugs.webkit.org/show_bug.cgi?id=123006
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/css/long-selector-list-crash.html
+
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::CSSSelectorList):
+        (WebCore::CSSSelectorList::adoptSelectorVector):
+        (WebCore::CSSSelectorList::operator=):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRule::create):
+
+            Add a bunch of asserts.
+
+        (WebCore::StyleRule::splitIntoMultipleRulesWithMaximumSelectorComponentCount):
+        
+            This could produce a zero-length selector list.
+
 2014-03-19  Andreas Kling  <akling@apple.com>
 
         Rebaseline bindings tests.
