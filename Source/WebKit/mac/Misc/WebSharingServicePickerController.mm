@@ -52,7 +52,7 @@ using namespace WebCore;
 
 @implementation WebSharingServicePickerController
 
-- (instancetype)initWithImage:(NSImage *)image menuClient:(WebContextMenuClient*)menuClient
+- (instancetype)initWithImage:(NSImage *)image includeEditorServices:(BOOL)includeEditorServices menuClient:(WebContextMenuClient*)menuClient
 {
     if (!(self = [super init]))
         return nil;
@@ -61,6 +61,7 @@ using namespace WebCore;
     [_picker setStyle:NSSharingServicePickerStyleRollover];
     [_picker setDelegate:self];
 
+    _includeEditorServices = includeEditorServices;
     _menuClient = menuClient;
 
     return self;
@@ -80,6 +81,22 @@ using namespace WebCore;
 }
 
 #pragma mark NSSharingServicePickerDelegate methods
+
+
+- (NSArray *)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker sharingServicesForItems:(NSArray *)items mask:(NSSharingServiceMask)mask proposedSharingServices:(NSArray *)proposedServices
+{
+    if (_includeEditorServices)
+        return proposedServices;
+        
+    NSMutableArray *services = [[NSMutableArray alloc] initWithCapacity:[proposedServices count]];
+    
+    for (NSSharingService *service in proposedServices) {
+        if (service.type != NSSharingServiceTypeEditor)
+            [services addObject:service];
+    }
+    
+    return services;
+}
 
 - (id <NSSharingServiceDelegate>)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker delegateForSharingService:(NSSharingService *)sharingService
 {

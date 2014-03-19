@@ -1,3 +1,18 @@
+2014-03-19  Brady Eidson  <beidson@apple.com>
+
+        Filter out editable services from image menu for non-contenteditable images
+        <rdar://problem/16319645> and https://bugs.webkit.org/show_bug.cgi?id=130437
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (-[WKSharingServicePickerDelegate setIncludeEditorServices:]):
+        (-[WKSharingServicePickerDelegate sharingServicePicker:sharingServicesForItems:mask:proposedSharingServices:]):
+          Filter out editing services based on the includeEditorServices flag.
+        (WebKit::WebContextMenuProxyMac::setupImageServicesMenu):
+        (WebKit::WebContextMenuProxyMac::populate):
+
 2014-03-19  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         [iOS] WebKit2 Quicklook.

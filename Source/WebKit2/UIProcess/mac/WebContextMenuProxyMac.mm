@@ -131,12 +131,14 @@ using namespace WebCore;
 @interface WKSharingServicePickerDelegate : NSObject <NSSharingServiceDelegate, NSSharingServicePickerDelegate> {
     WebKit::WebContextMenuProxyMac* _menuProxy;
     RetainPtr<NSSharingServicePicker> _picker;
+    BOOL _includeEditorServices;
 }
 
 + (WKSharingServicePickerDelegate *)sharedSharingServicePickerDelegate;
 - (WebKit::WebContextMenuProxyMac*)menuProxy;
 - (void)setMenuProxy:(WebKit::WebContextMenuProxyMac*)menuProxy;
 - (void)setPicker:(NSSharingServicePicker *)picker;
+- (void)setIncludeEditorServices:(BOOL)includeEditorServices;
 @end
 
 // FIXME: We probably need to hang on the picker itself until the context menu operation is done, and this object will probably do that.
@@ -160,6 +162,26 @@ using namespace WebCore;
 - (void)setPicker:(NSSharingServicePicker *)picker
 {
     _picker = picker;
+}
+
+- (void)setIncludeEditorServices:(BOOL)includeEditorServices
+{
+    _includeEditorServices = includeEditorServices;
+}
+
+- (NSArray *)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker sharingServicesForItems:(NSArray *)items mask:(NSSharingServiceMask)mask proposedSharingServices:(NSArray *)proposedServices
+{
+    if (_includeEditorServices)
+        return proposedServices;
+        
+    NSMutableArray *services = [[NSMutableArray alloc] initWithCapacity:[proposedServices count]];
+    
+    for (NSSharingService *service in proposedServices) {
+        if (service.type != NSSharingServiceTypeEditor)
+            [services addObject:service];
+    }
+    
+    return services;
 }
 
 - (id <NSSharingServiceDelegate>)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker delegateForSharingService:(NSSharingService *)sharingService
@@ -274,7 +296,7 @@ static Vector<RetainPtr<NSMenuItem>> nsMenuItemVector(const Vector<WebContextMen
 }
 
 #if ENABLE(IMAGE_CONTROLS)
-void WebContextMenuProxyMac::setupImageServicesMenu(ShareableBitmap& image)
+void WebContextMenuProxyMac::setupImageServicesMenu(ShareableBitmap& image, bool includeEditorServices)
 {
     RetainPtr<CGImageRef> cgImage = image.makeCGImage();
     RetainPtr<NSImage> nsImage = adoptNS([[NSImage alloc] initWithCGImage:cgImage.get() size:image.size()]);
@@ -283,6 +305,7 @@ void WebContextMenuProxyMac::setupImageServicesMenu(ShareableBitmap& image)
     [picker setStyle:NSSharingServicePickerStyleRollover];
     [picker setDelegate:[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate]];
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setPicker:picker.get()];
+    [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setIncludeEditorServices:includeEditorServices];
 
     m_servicesMenu = [picker menu];
 }
@@ -298,7 +321,7 @@ void WebContextMenuProxyMac::populate(const Vector<WebContextMenuItemData>& item
 {
 #if ENABLE(IMAGE_CONTROLS)
     if (RefPtr<ShareableBitmap> image = ShareableBitmap::create(context.controlledImageHandle())) {
-        setupImageServicesMenu(*image);
+        setupImageServicesMenu(*image, context.webHitTestResultData().isContentEditable);
         return;
     }
 #endif

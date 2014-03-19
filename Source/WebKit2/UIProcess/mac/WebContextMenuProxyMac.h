@@ -66,7 +66,7 @@ private:
     void populate(const Vector<WebContextMenuItemData>&, const ContextMenuContextData&);
 
 #if ENABLE(IMAGE_CONTROLS)
-    void setupImageServicesMenu(ShareableBitmap&);
+    void setupImageServicesMenu(ShareableBitmap&, bool includeEditorServices);
 #endif
 
     RetainPtr<NSPopUpButtonCell> m_popup;

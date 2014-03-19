@@ -362,7 +362,10 @@ NSMenu *WebContextMenuClient::contextMenuForEvent(NSEvent *event, NSView *view)
 
 #if ENABLE(IMAGE_CONTROLS)
     if (Image* image = page->contextMenuController().context().controlledImage()) {
-        m_sharingServicePickerController = adoptNS([[WebSharingServicePickerController alloc] initWithImage:image->getNSImage() menuClient:this]);
+        ASSERT(page->contextMenuController().context().hitTestResult().innerNode());
+        bool isContentEditable = page->contextMenuController().context().hitTestResult().innerNode()->isContentEditable();
+        m_sharingServicePickerController = adoptNS([[WebSharingServicePickerController alloc] initWithImage:image->getNSImage() includeEditorServices:isContentEditable menuClient:this]);
+        
         return [m_sharingServicePickerController menu];
     }
 #endif

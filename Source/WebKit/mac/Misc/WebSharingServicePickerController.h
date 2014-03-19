@@ -36,9 +36,10 @@ class WebContextMenuClient;
 @interface WebSharingServicePickerController : NSObject <NSSharingServiceDelegate, NSSharingServicePickerDelegate> {
     WebContextMenuClient* _menuClient;
     RetainPtr<NSSharingServicePicker> _picker;
+    BOOL _includeEditorServices;
 }
 
-- (instancetype)initWithImage:(NSImage *)image menuClient:(WebContextMenuClient*)menuClient;
+- (instancetype)initWithImage:(NSImage *)image includeEditorServices:(BOOL)includeEditorServices menuClient:(WebContextMenuClient*)menuClient;
 - (NSMenu *)menu;
 
 @end
