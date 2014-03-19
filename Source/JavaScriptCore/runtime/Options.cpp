@@ -242,15 +242,6 @@ void Options::initialize()
     JSC_OPTIONS(FOR_EACH_OPTION)
 #undef FOR_EACH_OPTION
         
-#if USE(CF) || OS(UNIX)
-    objectsAreImmortal() = !!getenv("JSImmortalZombieEnabled");
-    useZombieMode() = !!getenv("JSImmortalZombieEnabled") || !!getenv("JSZombieEnabled");
-
-    gcMaxHeapSize() = getenv("GCMaxHeapSize") ? HeapStatistics::parseMemoryAmount(getenv("GCMaxHeapSize")) : 0;
-    recordGCPauseTimes() = !!getenv("JSRecordGCPauseTimes");
-    logHeapStatisticsAtExit() = gcMaxHeapSize() || recordGCPauseTimes();
-#endif
-
     // Allow environment vars to override options if applicable.
     // The evn var should be the name of the option prefixed with
     // "JSC_".

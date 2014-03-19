@@ -1,3 +1,13 @@
+2014-03-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Normalize some of the older JSC options
+        https://bugs.webkit.org/show_bug.cgi?id=128753
+
+        Reviewed by Michael Saboff.
+
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+
 2014-03-12  Mark Lam  <mark.lam@apple.com>
 
         Update type of local vars to match the type of String length.
