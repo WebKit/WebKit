@@ -32,6 +32,7 @@
 #import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
+#import <UIKit/UIKit.h>
 #import <WebCore/Clipboard.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/EventNames.h>
@@ -41,6 +42,7 @@
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/MouseEvent.h>
+#import <WebCore/SoftLinking.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebJSPDFDoc.h>
@@ -50,6 +52,9 @@
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/Vector.h>
+
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK_CLASS(UIKit, UIColor)
 
 using namespace WebCore;
 
@@ -225,6 +230,13 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 
     [self setBoundsSize:boundingSize];
 
+    if ([self.delegate respondsToSelector:@selector(setBackgroundColor:)]) {
+        if (CGSizeEqualToSize(boundingSize, CGSizeZero))
+            [self.delegate setBackgroundColor:[getUIColorClass() whiteColor]];
+        else
+            [self.delegate setBackgroundColor:[getUIColorClass() blackColor]];
+    }
+
     _didCompleteLayout = YES;
     [self _notifyDidCompleteLayout];
 }
@@ -384,29 +396,27 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 
 - (CGSize)_computePageRects:(CGPDFDocumentRef)pdfDocument
 {
-    CGSize boundingSize = CGSizeZero;
-
     // Do we even need to compute the page rects?
     if (self.pageRects)
         return [self bounds].size;
 
     if (!pdfDocument)
-        return boundingSize;
+        return CGSizeZero;
 
     if (!CGPDFDocumentIsUnlocked(pdfDocument))
-        return boundingSize;
+        return CGSizeZero;
 
     size_t pageCount = CGPDFDocumentGetNumberOfPages(pdfDocument);
     if (!pageCount)
-        return boundingSize;
+        return CGSizeZero;
 
     NSMutableArray *pageRects = [NSMutableArray array];
     if (!pageRects)
-        return boundingSize;
+        return CGSizeZero;
 
     NSMutableArray *pageYOrigins = [NSMutableArray array];
     if (!pageYOrigins)
-        return boundingSize;
+        return CGSizeZero;
 
     // Temporary vector to avoid getting the page rects twice.
     WTF::Vector<CGRect> pageCropBoxes;
@@ -416,7 +426,6 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 
     // CG uses page numbers instead of page indices, so 1 based.
     for (size_t i = 1; i <= pageCount; i++) {
-
         CGPDFPageRef page = CGPDFDocumentGetPage(pdfDocument, i);
         if (!page) {
             // So if there is a missing page, then effectively the document ends here.
@@ -431,6 +440,9 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 
         pageCropBoxes.append(pageRect);
     }
+
+    if (!pageCount)
+        return CGSizeZero;
 
     CGFloat scalingFactor = _containerSize.width / maxPageWidth;
     if (_containerSize.width < FLT_EPSILON)

@@ -27,6 +27,7 @@
 
 #if TARGET_OS_IPHONE
 
+@class UIColor;
 @class UIPDFDocument;
 @protocol WebPDFViewPlaceholderDelegate;
 
@@ -161,6 +162,8 @@
  the WebPDFViewPlaceholderDelegate will be asked for the document.
  */
 - (CGPDFDocumentRef)cgPDFDocument;
+
+- (void)setBackgroundColor:(UIColor *)backgroundColor;
 
 @end
 

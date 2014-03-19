@@ -68,6 +68,9 @@ const CGFloat pdfMaximumZoomScale = 5;
     for (NSUInteger page = 0; page < [_pdfDocument numberOfPages]; ++page) {
         UIPDFPage *pdfPage = [_pdfDocument pageAtIndex:page];
 
+        if (!pdfPage)
+            continue;
+
         // FIXME: We should create and destroy views instead of depending on tiling.
         RetainPtr<UIPDFPageView> pageView = adoptNS([[UIPDFPageView alloc] initWithPage:pdfPage tiledContent:YES]);
         [self addSubview:pageView.get()];
