@@ -1,7 +1,7 @@
 WEBVTT FILE
 
 1
-00:00:00.000 --> 00:00:00.500
+00:00:00.000 --> 00:00:00.500 line:100% position:50%
 This is a demo track to illustrate positioning features of cues.
 
 2
@@ -17,11 +17,11 @@ For example, here is a cue on the top left-corner.
 Or on the top-right corner.
 
 5
-00:00:02.000 --> 00:00:02.500 line:100% position:100% align:end
+00:00:02.000 --> 00:00:02.500 line:100% position:100% align:right
 Bottom-right corner.
 
 6
-00:00:02.500 --> 00:00:03.000 line:100% position:0% align:start
+00:00:02.500 --> 00:00:03.000 line:100% position:0% align:left
 And, as you might expect, the bottom-left one.
 
 7
@@ -29,7 +29,7 @@ And, as you might expect, the bottom-left one.
 Cues are implicitly displayed within the viewport area.
 
 8
-00:00:03.500 --> 00:00:04.000 line:100% position:50%
+00:00:03.500 --> 00:00:04.000 line:100% position:50% align:middle
 And always on top of the controls, if these are visible.
 
 9
@@ -53,9 +53,9 @@ Bottom cue.
 Random cue 1.
 
 14
-00:00:04.000 --> 00:00:05.000 line:33% position:44%
+00:00:04.000 --> 00:00:05.000 line:33% position:44% align:start
 Random cue 2.
 
 15
-00:00:04.000 --> 00:00:05.000 line:55% position:23%
+00:00:04.000 --> 00:00:05.000 line:55% position:23% align:start
 Random cue 3.

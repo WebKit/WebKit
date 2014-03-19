@@ -1,5 +1,20 @@
 2014-03-19  Brent Fulgham  <bfulgham@apple.com>
 
+        Fix cue rendering test and include support for left/right alignment
+        https://bugs.webkit.org/show_bug.cgi?id=130406
+
+        Reviewed by Eric Carlson.
+
+        Merged from Blink (patch by vcarbune@chromium.org):
+        https://chromium.googlesource.com/chromium/blink/+/e695703cb603421c741e59a557a7989113c13b94
+        http://crbug.com/25155003
+
+        * media/track/captions-webvtt/captions-snap-to-lines-not-set.vtt: Revised for left/right alignment tags.
+        * media/track/track-cue-rendering-snap-to-lines-not-set-expected.txt: Ditto.
+        * media/track/track-cue-rendering-snap-to-lines-not-set.html: Ditto.
+
+2014-03-19  Brent Fulgham  <bfulgham@apple.com>
+
         Unreviewed test system fix.
 
         * TestExpectations: I mistakenly checked in the region-webvtt tests as enabled. This feature is not

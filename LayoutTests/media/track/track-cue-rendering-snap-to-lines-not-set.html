@@ -44,12 +44,12 @@
             consoleWrite("Active cues: " + testTrack.track.activeCues.length);
 
             for (var i = 0; i < testTrack.track.activeCues.length; ++i) {
-                
                 cueDisplayElement = textTrackDisplayElement(video, 'display', i);
 
                 consoleWrite("");
                 consoleWrite("* Cue " + i + " *");
                 testExpected("cueDisplayElement.innerText", testTrack.track.activeCues[i].text);
+                consoleWrite("Cue alignment (default or as specified): " + testTrack.track.activeCues[i].align);
 
                 consoleWrite("Cue left position (percentage): " + Math.round(cueDisplayElement.offsetLeft / cueDisplayContainer.offsetWidth * 100));
                 consoleWrite("Cue top position (percentage): " + Math.round(cueDisplayElement.offsetTop / cueDisplayContainer.offsetHeight * 100));
@@ -74,14 +74,6 @@
             currentTestCase++;
         }
 
-        function testInitialContainer()
-        {
-            consoleWrite("");
-            consoleWrite("The track container and the media controls should completely cover the video element");
-            testExpected("cueDisplayContainer.offsetHeight + controlsPanelElement.offsetHeight == video.videoHeight", true);
-            testExpected("cueDisplayContainer.offsetWidth == video.videoWidth", true);
-        }
-
         function loaded()
         {
             consoleWrite("Test that TextTrack's cues are rendered correctly when the snap to lines flag is not set.");
@@ -93,7 +85,6 @@
 
             waitForEvent('canplaythrough', function() {
                 cueDisplayContainer = textTrackDisplayElement(video);
-                testInitialContainer();
                 runNextTestCase();
             });
         }

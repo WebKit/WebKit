@@ -1,3 +1,29 @@
+2014-03-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Fix cue rendering test and include support for left/right alignment
+        https://bugs.webkit.org/show_bug.cgi?id=130406
+
+        Reviewed by Eric Carlson.
+
+        Merged from Blink (patch by vcarbune@chromium.org):
+        https://chromium.googlesource.com/chromium/blink/+/e695703cb603421c741e59a557a7989113c13b94
+        http://crbug.com/25155003
+
+        No new tests. Covered by media/track/track-cue-rendering-snap-to-lines-not-set.html.
+
+        * html/track/VTTCue.cpp:
+        (WebCore::leftKeyword): Added.
+        (WebCore::rightKeyword): Added.
+        (WebCore::VTTCueBox::applyCSSProperties): Added.
+        (WebCore::VTTCue::VTTCue):
+        (WebCore::VTTCue::align): Handle left/right alignment.
+        (WebCore::VTTCue::setAlign): Ditto.
+        (WebCore::VTTCue::calculateDisplayParameters): Refactored and revised for left/right tokens.
+        (WebCore::VTTCue::setCueSettings): Ditto.
+        (WebCore::VTTCue::getCSSAlignment): Added.
+        (WebCore::VTTCue::getCSSWritingMode): Added.
+        * html/track/VTTCue.h:
+
 2014-03-18  Anders Carlsson  <andersca@apple.com>
 
         Add new functionality that will be required by the history item decoding
