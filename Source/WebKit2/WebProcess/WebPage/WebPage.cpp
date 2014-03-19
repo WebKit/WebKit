@@ -1514,12 +1514,12 @@ void WebPage::showPageBanners()
 }
 #endif // !PLATFORM(IOS)
 
-void WebPage::takeThumbnailSnapshot(uint64_t callbackID)
+void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t options, uint64_t callbackID)
 {
-    IntRect snapshotRect(IntPoint(), m_viewSize);
-    snapshotRect = m_drawingArea->rootLayerTransform().inverse().mapRect(snapshotRect);
+    SnapshotOptions snapshotOptions = static_cast<SnapshotOptions>(options);
+    snapshotOptions |= SnapshotOptionsShareable;
 
-    RefPtr<WebImage> image = scaledSnapshotWithOptions(snapshotRect, 1, SnapshotOptionsShareable | SnapshotOptionsInViewCoordinates);
+    RefPtr<WebImage> image = snapshotAtSize(snapshotRect, bitmapSize, snapshotOptions);
 
     ShareableBitmap::Handle handle;
     if (image)
@@ -1530,6 +1530,18 @@ void WebPage::takeThumbnailSnapshot(uint64_t callbackID)
 
 PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, double scaleFactor, SnapshotOptions options)
 {
+    IntRect snapshotRect = rect;
+    if (options & SnapshotOptionsRespectDrawingAreaTransform)
+        snapshotRect = m_drawingArea->rootLayerTransform().inverse().mapRect(snapshotRect);
+
+    IntSize bitmapSize = snapshotRect.size();
+    bitmapSize.scale(scaleFactor * corePage()->deviceScaleFactor());
+
+    return snapshotAtSize(rect, bitmapSize, options);
+}
+
+PassRefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options)
+{
     Frame* coreFrame = m_mainFrame->coreFrame();
     if (!coreFrame)
         return nullptr;
@@ -1538,9 +1550,13 @@ PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, dou
     if (!frameView)
         return nullptr;
 
-    IntSize bitmapSize = rect.size();
-    float combinedScaleFactor = scaleFactor * corePage()->deviceScaleFactor();
-    bitmapSize.scale(combinedScaleFactor);
+    IntRect snapshotRect = rect;
+    if (options & SnapshotOptionsRespectDrawingAreaTransform)
+        snapshotRect = m_drawingArea->rootLayerTransform().inverse().mapRect(snapshotRect);
+
+    float horizontalScaleFactor = static_cast<float>(bitmapSize.width()) / rect.width();
+    float verticalScaleFactor = static_cast<float>(bitmapSize.height()) / rect.height();
+    float scaleFactor = std::min(horizontalScaleFactor, verticalScaleFactor);
 
     RefPtr<WebImage> snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options));
     if (!snapshot->bitmap())
@@ -1548,10 +1564,13 @@ PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, dou
 
     auto graphicsContext = snapshot->bitmap()->createGraphicsContext();
 
-    graphicsContext->clearRect(IntRect(IntPoint(), bitmapSize));
+    graphicsContext->fillRect(IntRect(IntPoint(), bitmapSize), frameView->baseBackgroundColor(), ColorSpaceDeviceRGB);
 
-    graphicsContext->applyDeviceScaleFactor(combinedScaleFactor);
-    graphicsContext->translate(-rect.x(), -rect.y());
+    if (!(options & SnapshotOptionsExcludeDeviceScaleFactor))
+        graphicsContext->applyDeviceScaleFactor(corePage()->deviceScaleFactor());
+
+    graphicsContext->scale(FloatSize(scaleFactor, scaleFactor));
+    graphicsContext->translate(-snapshotRect.x(), -snapshotRect.y());
 
     FrameView::SelectionInSnapshot shouldPaintSelection = FrameView::IncludeSelection;
     if (options & SnapshotOptionsExcludeSelectionHighlighting)
@@ -1561,14 +1580,14 @@ PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, dou
     if (options & SnapshotOptionsInViewCoordinates)
         coordinateSpace = FrameView::ViewCoordinates;
 
-    frameView->paintContentsForSnapshot(graphicsContext.get(), rect, shouldPaintSelection, coordinateSpace);
+    frameView->paintContentsForSnapshot(graphicsContext.get(), snapshotRect, shouldPaintSelection, coordinateSpace);
 
     if (options & SnapshotOptionsPaintSelectionRectangle) {
         FloatRect selectionRectangle = m_mainFrame->coreFrame()->selection().selectionBounds();
         graphicsContext->setStrokeColor(Color(0xFF, 0, 0), ColorSpaceDeviceRGB);
         graphicsContext->strokeRect(selectionRectangle, 1);
     }
-
+    
     return snapshot.release();
 }
 

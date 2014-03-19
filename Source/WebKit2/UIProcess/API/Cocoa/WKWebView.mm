@@ -415,7 +415,7 @@
         [_scrollView setContentOffset:CGPointMake(-inset.left, -inset.top)];
         _isWaitingForNewLayerTreeAfterDidCommitLoad = NO;
     }
-    
+
 }
 
 - (RetainPtr<CGImageRef>)_takeViewSnapshot
@@ -1056,6 +1056,35 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     ASSERT(_isChangingObscuredInsetsInteractively);
     _isChangingObscuredInsetsInteractively = NO;
     [self _updateVisibleContentRects];
+}
+
+- (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler
+{
+    CGRect snapshotRectInContentCoordinates = [self convertRect:rectInViewCoordinates toView:_contentView.get()];
+    CGFloat imageHeight = imageWidth / snapshotRectInContentCoordinates.size.width * snapshotRectInContentCoordinates.size.height;
+    CGSize imageSize = CGSizeMake(imageWidth, imageHeight);
+
+    void(^copiedCompletionHandler)(CGImageRef) = [completionHandler copy];
+    _page->takeSnapshot(WebCore::enclosingIntRect(snapshotRectInContentCoordinates), WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebKit::SnapshotOptionsExcludeDeviceScaleFactor, [copiedCompletionHandler](bool, const WebKit::ShareableBitmap::Handle& imageHandle) {
+        if (imageHandle.isNull()) {
+            copiedCompletionHandler(nullptr);
+            [copiedCompletionHandler release];
+            return;
+        }
+
+        RefPtr<WebKit::ShareableBitmap> bitmap = WebKit::ShareableBitmap::create(imageHandle, WebKit::SharedMemory::ReadOnly);
+
+        if (!bitmap) {
+            copiedCompletionHandler(nullptr);
+            [copiedCompletionHandler release];
+            return;
+        }
+
+        RetainPtr<CGImageRef> cgImage;
+        cgImage = bitmap->makeCGImage();
+        copiedCompletionHandler(cgImage.get());
+        [copiedCompletionHandler release];
+    });
 }
 
 #else

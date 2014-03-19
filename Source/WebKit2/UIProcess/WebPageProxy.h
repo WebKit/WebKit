@@ -923,7 +923,7 @@ public:
 
     void setThumbnailScale(double);
 
-    void takeThumbnailSnapshot(ImageCallback::CallbackFunction);
+    void takeSnapshot(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions, ImageCallback::CallbackFunction);
 
 #if ENABLE(IMAGE_CONTROLS)
     void replaceControlledImage(PassRefPtr<ShareableBitmap>);

@@ -1,3 +1,46 @@
+2014-03-18  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS][WebKit2] Provide generic software-snapshotting API
+        https://bugs.webkit.org/show_bug.cgi?id=130385
+        <rdar://problem/16005957>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:WebKit::]):
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        (-[_WKThumbnailView initWithFrame:fromWKView:]):
+        (-[_WKThumbnailView _requestSnapshotIfNeeded]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::takeSnapshot):
+        (WebKit::WebPage::scaledSnapshotWithOptions):
+        (WebKit::WebPage::snapshotAtSize):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Rename TakeThumbnailSnapshot message to TakeSnapshot.
+
+        Fill the snapshot image with the FrameView's background color, to avoid
+        half-pixel alpha around the edges.
+
+        Factor snapshotAtSize out of scaledSnapshotWithOptions.
+
+        Don't apply both the custom and device scale factor to the base CTM,
+        only the device scale factor. Custom scale factor should only be
+        applied to the user CTM.
+
+        * Shared/ImageOptions.h:
+        Add a snapshot option, RespectDrawingAreaTransform, that maps
+        the rect through the drawing area's root layer transform.
+        Use this in place of the thumbnail-specific code in TakeThumbnailSnapshot.
+        Add a snapshot option, ExcludeDeviceScaleFactor, which means that
+        snapshotting will not factor the device scale in (useful for drawing
+        to a bitmap at an exact requested size).
+
 2014-03-18  Samuel White  <samuel_white@apple.com>
 
         AX: Not able to use arrow keys to read text with VoiceOver before selection is set someplace (anyplace).

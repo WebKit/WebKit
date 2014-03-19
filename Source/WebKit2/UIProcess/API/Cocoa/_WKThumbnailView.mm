@@ -30,6 +30,7 @@
 
 #if PLATFORM(MAC)
 
+#import "ImageOptions.h"
 #import "WKAPICast.h"
 #import "WKView.h"
 #import "WKViewInternal.h"
@@ -69,6 +70,9 @@ using namespace WebKit;
     _originalSourceViewIsInWindow = !![_wkView window];
 
     _shouldApplyThumbnailScale = !_originalSourceViewIsInWindow;
+
+    self.usesSnapshot = YES;
+
     return self;
 }
 
@@ -107,7 +111,11 @@ using namespace WebKit;
     _waitingForSnapshot = YES;
 
     RetainPtr<_WKThumbnailView> thumbnailView = self;
-    _webPageProxy->takeThumbnailSnapshot([thumbnailView](bool, const ShareableBitmap::Handle& imageHandle) {
+    IntRect snapshotRect(IntPoint(), _webPageProxy->viewSize());
+    SnapshotOptions options = SnapshotOptionsRespectDrawingAreaTransform | SnapshotOptionsInViewCoordinates;
+    IntSize bitmapSize = snapshotRect.size();
+    bitmapSize.scale(_webPageProxy->deviceScaleFactor());
+    _webPageProxy->takeSnapshot(snapshotRect, bitmapSize, options, [thumbnailView](bool, const ShareableBitmap::Handle& imageHandle) {
         RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(imageHandle, SharedMemory::ReadOnly);
         RetainPtr<CGImageRef> cgImage = bitmap->makeCGImage();
         [thumbnailView _didTakeSnapshot:cgImage.get()];

@@ -36,7 +36,9 @@ enum {
     SnapshotOptionsShareable = 1 << 0,
     SnapshotOptionsExcludeSelectionHighlighting = 1 << 1,
     SnapshotOptionsInViewCoordinates = 1 << 2,
-    SnapshotOptionsPaintSelectionRectangle = 1 << 3
+    SnapshotOptionsPaintSelectionRectangle = 1 << 3,
+    SnapshotOptionsRespectDrawingAreaTransform = 1 << 4,
+    SnapshotOptionsExcludeDeviceScaleFactor = 1 << 5,
 };
 typedef uint32_t SnapshotOptions;
 
