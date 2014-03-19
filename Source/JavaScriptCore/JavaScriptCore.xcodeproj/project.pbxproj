@@ -5946,7 +5946,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nif [[ $ENABLE_FTL_JIT != \"ENABLE_FTL_JIT\" ]]\nthen\n    exit 0\nfi\n\nif [[ ${CONFIGURATION:=Debug} != \"Production\" ]]\nthen\n    # Copy the llvmForJSC library into the framework.\n    ditto \"${BUILT_PRODUCTS_DIR}/libllvmForJSC.dylib\" \"${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Libraries/libllvmForJSC.dylib\"\nfi\n\nif [ ! -e \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Libraries\" ]\nthen\n    ln -fs \"Versions/Current/Libraries\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Libraries\"\nfi";
+			shellScript = "set -e\n\nif [[ $ENABLE_FTL_JIT != \"ENABLE_FTL_JIT\" ]]\nthen\n    exit 0\nfi\n\nif [[ ${CONFIGURATION:=Debug} != \"Production\" ]]\nthen\n    # Copy the llvmForJSC library into the framework.\n    ditto \"${BUILT_PRODUCTS_DIR}/libllvmForJSC.dylib\" \"${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Libraries/libllvmForJSC.dylib\"\nfi\n\nif [[ $PLATFORM_NAME != \"macosx\" ]]\nthen\n    exit 0\nfi\n\nif [ ! -e \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Libraries\" ]\nthen\n    ln -fs \"Versions/Current/Libraries\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Libraries\"\nfi";
 		};
 		3713F014142905240036387F /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;

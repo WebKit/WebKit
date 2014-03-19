@@ -1,3 +1,9 @@
+2014-03-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix iOS production build.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2014-03-18  Michael Saboff  <msaboff@apple.com>
 
         Update RegExp Tracing code
