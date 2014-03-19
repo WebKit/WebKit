@@ -51,6 +51,9 @@ ControllerIOS.prototype = {
         startPlaybackButton.setAttribute('pseudo', '-webkit-media-controls-start-playback-button');
         startPlaybackButton.setAttribute('aria-label', this.UIString('Start Playback'));
 
+        this.listenFor(this.base, 'gesturestart', this.handleBaseGestureStart);
+        this.listenFor(this.base, 'gesturechange', this.handleBaseGestureChange);
+        this.listenFor(this.base, 'gestureend', this.handleBaseGestureEnd);
         this.listenFor(this.base, 'touchstart', this.handleWrapperTouchStart);
         this.stopListeningFor(this.base, 'mousemove', this.handleWrapperMouseMove);
         this.stopListeningFor(this.base, 'mouseout', this.handleWrapperMouseOut);
@@ -282,6 +285,32 @@ ControllerIOS.prototype = {
     handlePlayButtonTouchCancel: function(event) {
         this.controls.playButton.classList.remove('active');
         event.stopPropagation();
+    },
+
+    handleBaseGestureStart: function(event) {
+        this.gestureStartTime = new Date();
+    },
+
+    handleBaseGestureChange: function(event) {
+        if (!this.video.controls || this.isAudio() || this.isFullScreen() || this.gestureStartTime === undefined)
+            return;
+
+        var currentGestureTime = new Date();
+        var duration = (currentGestureTime - this.gestureStartTime) / 1000;
+        if (!duration)
+            return;
+
+        var velocity = Math.abs(event.scale - 1) / duration;
+
+        if (event.scale < 1.25 || velocity < 2)
+            return;
+
+        delete this.gestureStartTime;
+        this.video.webkitEnterFullscreen();
+    },
+
+    handleBaseGestureEnd: function(event) {
+        delete this.gestureStartTime;
     },
 
     handleWrapperTouchStart: function(event) {

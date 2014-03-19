@@ -1,3 +1,20 @@
+2014-03-04  Jer Noble  <jer.noble@apple.com>
+
+        [iOS][MediaControls] Reverse-pinching using the built-in controls should enter full screen
+        https://bugs.webkit.org/show_bug.cgi?id=129707
+
+        Reviewed by Eric Carlson.
+
+        The default controls on iOS should respond to a pinch gesture by entering fullscreen. Add a gesture
+        event listener, and enter full screen if the user does a quick (>2 velocity) reverse (>1.25 scale) pinch.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.createBase):
+        (ControllerIOS.prototype.handlePlayButtonTouchEnd):
+        (ControllerIOS.prototype.handleBaseGestureStart):
+        (ControllerIOS.prototype.handleBaseGestureChange):
+        (ControllerIOS.prototype.handleBaseGestureEnd):
+
 2014-03-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r156316): Scrollbar on a large document is broken
