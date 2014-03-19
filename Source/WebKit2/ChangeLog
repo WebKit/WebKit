@@ -1,3 +1,19 @@
+2014-03-19  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of WKProcessClass
+        https://bugs.webkit.org/show_bug.cgi?id=130478
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKProcessClass.h: Removed.
+        * UIProcess/API/Cocoa/WKProcessClass.mm: Removed.
+        * UIProcess/API/Cocoa/WKProcessClassConfiguration.h: Removed.
+        * UIProcess/API/Cocoa/WKProcessClassConfiguration.mm: Removed.
+        * UIProcess/API/Cocoa/WKProcessClassConfigurationPrivate.h: Removed.
+        * UIProcess/API/Cocoa/WKProcessClassPrivate.h: Removed.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationToBeRemoved.mm: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-03-19  Jer Noble  <jer.noble@apple.com>
 
         [Mac][EME] Query whether decoder support exists before creating a new MediaKeys object.

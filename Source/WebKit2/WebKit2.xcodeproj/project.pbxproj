@@ -277,13 +277,6 @@
 		1A9E329E1822FEDD00F5D04C /* WKRemoteObjectCoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9E329C1822FEDD00F5D04C /* WKRemoteObjectCoder.mm */; };
 		1A9E329F1822FEDD00F5D04C /* WKRemoteObjectCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E329D1822FEDD00F5D04C /* WKRemoteObjectCoder.h */; };
 		1A9E32A11823018900F5D04C /* WKRemoteObjectRegistryInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E32A01823018900F5D04C /* WKRemoteObjectRegistryInternal.h */; };
-		1A9EA31218BBDE00004F7C95 /* WKProcessClass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9EA31018BBDE00004F7C95 /* WKProcessClass.mm */; };
-		1A9EA31318BBDE00004F7C95 /* WKProcessClass.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9EA31118BBDE00004F7C95 /* WKProcessClass.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1A9EA31618BBDE13004F7C95 /* WKProcessClassConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9EA31418BBDE13004F7C95 /* WKProcessClassConfiguration.mm */; };
-		1A9EA31718BBDE13004F7C95 /* WKProcessClassConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9EA31518BBDE13004F7C95 /* WKProcessClassConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1A9EA31918BBDE98004F7C95 /* WKProcessClassConfigurationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9EA31818BBDE98004F7C95 /* WKProcessClassConfigurationPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1A9EA31B18BBDF16004F7C95 /* WKProcessClassPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9EA31A18BBDF16004F7C95 /* WKProcessClassPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1A9EA31E18BBDF4B004F7C95 /* WKWebViewConfigurationToBeRemoved.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9EA31C18BBDF4B004F7C95 /* WKWebViewConfigurationToBeRemoved.mm */; };
 		1A9FBA8D13FF04E600DEED67 /* PluginComplexTextInputState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9FBA8C13FF04E600DEED67 /* PluginComplexTextInputState.h */; };
 		1AA20D5118AD50E0005D1ED4 /* WKNavigationDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA20D5018AD50E0005D1ED4 /* WKNavigationDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AA2E51D12E4C05E00BC4966 /* CGUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA2E51B12E4C05E00BC4966 /* CGUtilities.h */; };
@@ -2020,13 +2013,6 @@
 		1A9E329C1822FEDD00F5D04C /* WKRemoteObjectCoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKRemoteObjectCoder.mm; sourceTree = "<group>"; };
 		1A9E329D1822FEDD00F5D04C /* WKRemoteObjectCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRemoteObjectCoder.h; sourceTree = "<group>"; };
 		1A9E32A01823018900F5D04C /* WKRemoteObjectRegistryInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRemoteObjectRegistryInternal.h; sourceTree = "<group>"; };
-		1A9EA31018BBDE00004F7C95 /* WKProcessClass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKProcessClass.mm; sourceTree = "<group>"; };
-		1A9EA31118BBDE00004F7C95 /* WKProcessClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessClass.h; sourceTree = "<group>"; };
-		1A9EA31418BBDE13004F7C95 /* WKProcessClassConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKProcessClassConfiguration.mm; sourceTree = "<group>"; };
-		1A9EA31518BBDE13004F7C95 /* WKProcessClassConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessClassConfiguration.h; sourceTree = "<group>"; };
-		1A9EA31818BBDE98004F7C95 /* WKProcessClassConfigurationPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessClassConfigurationPrivate.h; sourceTree = "<group>"; };
-		1A9EA31A18BBDF16004F7C95 /* WKProcessClassPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessClassPrivate.h; sourceTree = "<group>"; };
-		1A9EA31C18BBDF4B004F7C95 /* WKWebViewConfigurationToBeRemoved.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewConfigurationToBeRemoved.mm; sourceTree = "<group>"; };
 		1A9FBA8C13FF04E600DEED67 /* PluginComplexTextInputState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginComplexTextInputState.h; sourceTree = "<group>"; };
 		1AA1C79A100E7FC50078DEBC /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4187,20 +4173,6 @@
 			path = Cocoa;
 			sourceTree = "<group>";
 		};
-		1AC5C47A18BBCB7D0089F57F /* To Be Removed */ = {
-			isa = PBXGroup;
-			children = (
-				1A9EA31118BBDE00004F7C95 /* WKProcessClass.h */,
-				1A9EA31018BBDE00004F7C95 /* WKProcessClass.mm */,
-				1A9EA31518BBDE13004F7C95 /* WKProcessClassConfiguration.h */,
-				1A9EA31418BBDE13004F7C95 /* WKProcessClassConfiguration.mm */,
-				1A9EA31818BBDE98004F7C95 /* WKProcessClassConfigurationPrivate.h */,
-				1A9EA31A18BBDF16004F7C95 /* WKProcessClassPrivate.h */,
-				1A9EA31C18BBDF4B004F7C95 /* WKWebViewConfigurationToBeRemoved.mm */,
-			);
-			name = "To Be Removed";
-			sourceTree = "<group>";
-		};
 		1AE00D6818327C1200087DD7 /* IPC */ = {
 			isa = PBXGroup;
 			children = (
@@ -4543,7 +4515,6 @@
 		37C4C08318149C2A003688B9 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				1AC5C47A18BBCB7D0089F57F /* To Be Removed */,
 				1A43E826188F38E2009E4D30 /* Deprecated */,
 				37A5E01218BBF937000A081E /* _WKActivatedElementInfo.h */,
 				37A5E01118BBF937000A081E /* _WKActivatedElementInfo.mm */,
@@ -6769,7 +6740,6 @@
 				1AD3306F16B1D991004F60E7 /* StorageAreaImpl.h in Headers */,
 				1A4D664E18A3031B00D82E21 /* WKFrameInfoInternal.h in Headers */,
 				1AF4129B18B40FCD00546FDC /* WKNavigationActionPrivate.h in Headers */,
-				1A9EA31318BBDE00004F7C95 /* WKProcessClass.h in Headers */,
 				1ACECD2517162DB1001FC9EF /* StorageAreaMap.h in Headers */,
 				1A334DEE16DE8F88006A8E38 /* StorageAreaMapMessages.h in Headers */,
 				1A8E7D3D18C15149005A702A /* VisitedLinkTableControllerMessages.h in Headers */,
@@ -6888,7 +6858,6 @@
 				9391F2CB121B67AD00EBF7E8 /* WebFrameNetworkingContext.h in Headers */,
 				BCB9F6A01123A84B00A137E0 /* WebFramePolicyListenerProxy.h in Headers */,
 				BC9B38A110F538BE00443A15 /* WebFrameProxy.h in Headers */,
-				1A9EA31918BBDE98004F7C95 /* WKProcessClassConfigurationPrivate.h in Headers */,
 				BC1BE1E012D54A410004A228 /* WebGeolocationClient.h in Headers */,
 				BC0E5FE512D697160012A72A /* WebGeolocationManager.h in Headers */,
 				BC0E606212D6BA910012A72A /* WebGeolocationManagerMessages.h in Headers */,
@@ -6910,7 +6879,6 @@
 				1C8E28201275D15400BC7BD0 /* WebInspector.h in Headers */,
 				1A3CC16718906ACF001E6ED8 /* WKWebView.h in Headers */,
 				BC032D8210F4378D0058C15A /* WebInspectorClient.h in Headers */,
-				1A9EA31718BBDE13004F7C95 /* WKProcessClassConfiguration.h in Headers */,
 				1C8E25A91270E3BC00BC7BD0 /* WebInspectorFrontendClient.h in Headers */,
 				1C8E2A361277852400BC7BD0 /* WebInspectorMessages.h in Headers */,
 				1C8E28341275D73800BC7BD0 /* WebInspectorProxy.h in Headers */,
@@ -7049,7 +7017,6 @@
 				BC1B419811D41D570011E8DD /* WKBundlePagePrivate.h in Headers */,
 				BCF049E711FE20F600F86A58 /* WKBundlePrivate.h in Headers */,
 				BC60C5791240A546008C5E29 /* WKBundleRangeHandle.h in Headers */,
-				1A9EA31B18BBDF16004F7C95 /* WKProcessClassPrivate.h in Headers */,
 				BC5D24C716CD73C5007D5461 /* WKBundleRangeHandlePrivate.h in Headers */,
 				BC14DF9F120B635F00826C0C /* WKBundleScriptWorld.h in Headers */,
 				1AF4CEF018BC481800BC2D34 /* VisitedLinkTableController.h in Headers */,
@@ -7946,7 +7913,6 @@
 				BC82837B16B36A4F00A278FE /* ChildProcessEntryPoint.mm in Sources */,
 				9F54F88F16488E87007DF81A /* ChildProcessMac.mm in Sources */,
 				1AA2E56618D77508003814BD /* WKWebProcessBundleParameters.mm in Sources */,
-				1A9EA31E18BBDF4B004F7C95 /* WKWebViewConfigurationToBeRemoved.mm in Sources */,
 				E1513C66166EABB200149FCB /* ChildProcessProxy.cpp in Sources */,
 				1A2A4B0E1586A2240090C9E9 /* ColorSpaceData.mm in Sources */,
 				1A6F9FB711E1408500DB1371 /* CommandLinePOSIX.cpp in Sources */,
@@ -8183,7 +8149,6 @@
 				1AA3D75B1651B44F008713D0 /* RemoteLayerTreeHost.mm in Sources */,
 				1AF1AC6B1651759E00C17D7F /* RemoteLayerTreeTransaction.mm in Sources */,
 				E1B78473163F253E0007B692 /* RemoteNetworkingContext.mm in Sources */,
-				1A9EA31618BBDE13004F7C95 /* WKProcessClassConfiguration.mm in Sources */,
 				BC111B09112F5E3C00337BAB /* ResponsivenessTimer.cpp in Sources */,
 				1AAB4AAA1296F1540023952F /* SandboxExtensionMac.mm in Sources */,
 				E1E552C416AE065F004ED653 /* SandboxInitialiationParametersMac.mm in Sources */,
@@ -8340,7 +8305,6 @@
 				51D02F6B132EC73700BEAA96 /* WebIconDatabaseProxyMessageReceiver.cpp in Sources */,
 				BCCF6ABC12C91EF9008F9C35 /* WebImage.cpp in Sources */,
 				1C8E28211275D15400BC7BD0 /* WebInspector.cpp in Sources */,
-				1A9EA31218BBDE00004F7C95 /* WKProcessClass.mm in Sources */,
 				BC111A60112F4FBB00337BAB /* WebInspectorClient.cpp in Sources */,
 				1C8E25A81270E3BB00BC7BD0 /* WebInspectorFrontendClient.cpp in Sources */,
 				1CA8B954127C891500576C2B /* WebInspectorMac.mm in Sources */,
