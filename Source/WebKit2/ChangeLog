@@ -1,3 +1,20 @@
+2014-03-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Expose text and page zoom in WK2 SPI, and hook them up in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=130476
+
+        Reviewed by Anders Carlsson.
+        
+        Expose page and text zoom as SPI.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _supportsTextZoom]):
+        (-[WKWebView _textZoomFactor]):
+        (-[WKWebView _setTextZoomFactor:]):
+        (-[WKWebView _pageZoomFactor]):
+        (-[WKWebView _setPageZoomFactor:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2014-03-19  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Reduce the extended background's opacity when WKContentView is smaller than its WKWebView

@@ -1009,6 +1009,31 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     return _page->pageCount();
 }
 
+- (BOOL)_supportsTextZoom
+{
+    return _page->supportsTextZoom();
+}
+
+- (double)_textZoomFactor
+{
+    return _page->textZoomFactor();
+}
+
+- (void)_setTextZoomFactor:(double)zoomFactor
+{
+    _page->setTextZoomFactor(zoomFactor);
+}
+
+- (double)_pageZoomFactor
+{
+    return _page->pageZoomFactor();
+}
+
+- (void)_setPageZoomFactor:(double)zoomFactor
+{
+    _page->setPageZoomFactor(zoomFactor);
+}
+
 #pragma mark iOS-specific methods
 
 #if PLATFORM(IOS)

@@ -42,6 +42,7 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 
 @implementation WK2BrowserWindowController {
     WKWebView *_webView;
+    BOOL _zoomTextOnly;
 }
 
 - (void)awakeFromNib
@@ -62,6 +63,8 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 
     _webView.navigationDelegate = self;
     _webView.UIDelegate = self;
+    
+    _zoomTextOnly = NO;
 }
 
 - (void)dealloc
@@ -114,10 +117,7 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
         return [self canResetZoom];
     
     // Disabled until missing WK2 functionality is exposed via API/SPI.
-    if (action == @selector(reload:)
-        || action == @selector(toggleZoomMode:)
-        || action == @selector(resetZoom:)
-        || action == @selector(dumpSourceToConsole:)
+    if (action == @selector(dumpSourceToConsole:)
         || action == @selector(find:))
         return NO;
     
@@ -125,6 +125,8 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
         [menuItem setTitle:[_webView isHidden] ? @"Show Web View" : @"Hide Web View"];
     else if (action == @selector(removeReinsertWebView:))
         [menuItem setTitle:[_webView window] ? @"Remove Web View" : @"Insert Web View"];
+    else if (action == @selector(toggleZoomMode:))
+        [menuItem setState:_zoomTextOnly ? NSOnState : NSOffState];
     else if ([menuItem action] == @selector(togglePaginationMode:))
         [menuItem setState:[self isPaginated] ? NSOnState : NSOffState];
     else if ([menuItem action] == @selector(toggleTransparentWindow:))
@@ -137,6 +139,7 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 
 - (IBAction)reload:(id)sender
 {
+    [_webView _reload];
 }
 
 - (IBAction)forceRepaint:(id)sender
@@ -156,15 +159,33 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 
 - (IBAction)toggleZoomMode:(id)sender
 {
+    if (_zoomTextOnly) {
+        _zoomTextOnly = NO;
+        double currentTextZoom = _webView._textZoomFactor;
+        _webView._textZoomFactor = 1;
+        _webView._pageZoomFactor = currentTextZoom;
+    } else {
+        _zoomTextOnly = YES;
+        double currentPageZoom = _webView._pageZoomFactor;
+        _webView._textZoomFactor = currentPageZoom;
+        _webView._pageZoomFactor = 1;
+    }
 }
 
 - (IBAction)resetZoom:(id)sender
 {
+    if (![self canResetZoom])
+        return;
+
+    if (_zoomTextOnly)
+        _webView._textZoomFactor = 1;
+    else
+        _webView._pageZoomFactor = 1;
 }
 
 - (BOOL)canResetZoom
 {
-    return NO;
+    return _zoomTextOnly ? (_webView._textZoomFactor != 1) : (_webView._pageZoomFactor != 1);
 }
 
 - (IBAction)dumpSourceToConsole:(id)sender
@@ -210,39 +231,41 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 
 - (CGFloat)currentZoomFactor
 {
-    return 1;
+    return _zoomTextOnly ? _webView._textZoomFactor : _webView._pageZoomFactor;
 }
 
 - (void)setCurrentZoomFactor:(CGFloat)factor
 {
+    if (_zoomTextOnly)
+        _webView._textZoomFactor = factor;
+    else
+        _webView._pageZoomFactor = factor;
 }
 
 - (BOOL)canZoomIn
 {
-    return NO;
+    return self.currentZoomFactor * DefaultZoomFactorRatio < DefaultMaximumZoomFactor;
 }
 
 - (void)zoomIn:(id)sender
 {
-    if (![self canZoomIn])
+    if (!self.canZoomIn)
         return;
 
-    CGFloat factor = [self currentZoomFactor] * DefaultZoomFactorRatio;
-    [self setCurrentZoomFactor:factor];
+    self.currentZoomFactor *= DefaultZoomFactorRatio;
 }
 
 - (BOOL)canZoomOut
 {
-    return NO;
+    return self.currentZoomFactor / DefaultZoomFactorRatio > DefaultMinimumZoomFactor;
 }
 
 - (void)zoomOut:(id)sender
 {
-    if (![self canZoomIn])
+    if (!self.canZoomIn)
         return;
 
-    CGFloat factor = [self currentZoomFactor] / DefaultZoomFactorRatio;
-    [self setCurrentZoomFactor:factor];
+    self.currentZoomFactor /= DefaultZoomFactorRatio;
 }
 
 - (BOOL)isPaginated
@@ -252,7 +275,7 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 
 - (IBAction)togglePaginationMode:(id)sender
 {
-    if ([self isPaginated])
+    if (self.isPaginated)
         _webView._paginationMode = _WKPaginationModeUnpaginated;
     else {
         _webView._paginationMode = _WKPaginationModeLeftToRight;

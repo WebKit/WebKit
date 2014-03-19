@@ -107,6 +107,10 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
 @property (nonatomic, setter=_setGapBetweenPages:) CGFloat _gapBetweenPages;
 @property (readonly) NSUInteger _pageCount;
 
+@property (nonatomic, readonly) BOOL _supportsTextZoom;
+@property (nonatomic, setter=_setTextZoomFactor:) double _textZoomFactor;
+@property (nonatomic, setter=_setPageZoomFactor:) double _pageZoomFactor;
+
 @end
 
 #endif

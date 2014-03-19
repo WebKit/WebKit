@@ -1,3 +1,28 @@
+2014-03-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Expose text and page zoom in WK2 SPI, and hook them up in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=130476
+
+        Reviewed by Anders Carlsson.
+        
+        Hook up page/text zoom in MiniBrowser, make reload work, remove some logging.
+
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController webView:decidePolicyForNavigationAction:request:frame:decisionListener:]):
+        Remove log.
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+        (-[WK2BrowserWindowController validateMenuItem:]):
+        (-[WK2BrowserWindowController reload:]):
+        Hook up reload.
+        (-[WK2BrowserWindowController toggleZoomMode:]):
+        (-[WK2BrowserWindowController resetZoom:]):
+        (-[WK2BrowserWindowController canResetZoom]):
+        (-[WK2BrowserWindowController currentZoomFactor]):
+        (-[WK2BrowserWindowController setCurrentZoomFactor:]):
+        (-[WK2BrowserWindowController canZoomIn]):
+        (-[WK2BrowserWindowController canZoomOut]):
+
 2014-03-19  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (OS X 10.9.2): PageVisibilityStateWithWindowChanges.WebKit2 API test fails
