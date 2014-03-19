@@ -98,7 +98,7 @@ protected:
     Ewk_Cookie_Accept_Policy getAcceptPolicy(Ewk_Cookie_Manager* manager)
     {
         Ewk_Cookie_Accept_Policy policy = EWK_COOKIE_ACCEPT_POLICY_ALWAYS;
-        ewk_cookie_manager_async_accept_policy_get(manager, getAcceptPolicyCallback, &policy);
+        ewk_cookie_manager_accept_policy_async_get(manager, getAcceptPolicyCallback, &policy);
         ecore_main_loop_begin();
         return policy;
     }
@@ -106,7 +106,7 @@ protected:
     Eina_List* getHostnamesWithCookies(Ewk_Cookie_Manager* manager)
     {
         Eina_List* ret = 0;
-        ewk_cookie_manager_async_hostnames_with_cookies_get(manager, getHostnamesWithCookiesCallback, &ret);
+        ewk_cookie_manager_hostnames_with_cookies_async_get(manager, getHostnamesWithCookiesCallback, &ret);
         ecore_main_loop_begin();
         return ret;
     }

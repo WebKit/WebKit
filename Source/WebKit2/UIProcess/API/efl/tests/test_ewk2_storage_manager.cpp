@@ -79,7 +79,7 @@ public:
 
         if (originData->didReceiveOriginsCallback) {
             originData->didReceiveOriginsCallback = false;
-            ewk_storage_manager_origins_get(originData->manager, getStorageOriginsCallback, originData);
+            ewk_storage_manager_origins_async_get(originData->manager, getStorageOriginsCallback, originData);
         }
 
         return ECORE_CALLBACK_RENEW;
@@ -102,7 +102,7 @@ protected:
     }
 };
 
-TEST_F(EWK2StorageManagerTest, ewk_storage_manager_origins_get)
+TEST_F(EWK2StorageManagerTest, ewk_storage_manager_origins_async_get)
 {
     Evas_Object* view = webView();
     const char* storageHTML =
@@ -117,7 +117,7 @@ TEST_F(EWK2StorageManagerTest, ewk_storage_manager_origins_get)
 
     OriginData originData;
     originData.manager = ewk_context_storage_manager_get(ewk_view_context_get(view));
-    ASSERT_TRUE(ewk_storage_manager_origins_get(originData.manager, getStorageOriginsCallback, &originData));
+    ASSERT_TRUE(ewk_storage_manager_origins_async_get(originData.manager, getStorageOriginsCallback, &originData));
     Ecore_Timer* storage_timer = ecore_timer_add(1, reinterpret_cast<Ecore_Task_Cb>(timerCallback), &originData);
 
     ecore_main_loop_begin();

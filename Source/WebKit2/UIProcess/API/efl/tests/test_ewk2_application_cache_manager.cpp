@@ -91,7 +91,7 @@ static void getOriginsCallback(Eina_List* origins, void* event_info)
 static Eina_Bool timerCallback(void* userData)
 {
     OriginsData* data = static_cast<OriginsData*>(userData);
-    ewk_application_cache_manager_origins_get(data->manager, getOriginsCallback, &data->items);
+    ewk_application_cache_manager_origins_async_get(data->manager, getOriginsCallback, &data->items);
 
     return true;
 }

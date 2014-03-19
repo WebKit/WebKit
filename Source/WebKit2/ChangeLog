@@ -1,3 +1,49 @@
+2014-03-18  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Rename async APIs for better consistency with EFL
+        https://bugs.webkit.org/show_bug.cgi?id=130319
+
+        Reviewed by Gyuyoung Kim.
+
+        There are inconsistency with async keyword in several ewebkit2 APIs.
+        This patch rename them to {module/feature}_async_{verb} for better consistency with EFL.
+        In addition, added Async keyword into their callback name.
+
+        * UIProcess/API/efl/ewk_application_cache_manager.cpp:
+        (EwkApplicationCacheOriginsAsyncData::EwkApplicationCacheOriginsAsyncData):
+        (getApplicationCacheOriginsCallback):
+        (ewk_application_cache_manager_origins_async_get):
+        * UIProcess/API/efl/ewk_application_cache_manager.h:
+        * UIProcess/API/efl/ewk_cookie_manager.cpp:
+        (EwkCookiePolicyAsyncData::EwkCookiePolicyAsyncData):
+        (getAcceptPolicyCallback):
+        (ewk_cookie_manager_accept_policy_async_get):
+        (EwkCookieHostnamesAsyncData::EwkCookieHostnamesAsyncData):
+        (getHostnamesWithCookiesCallback):
+        (ewk_cookie_manager_hostnames_with_cookies_async_get):
+        * UIProcess/API/efl/ewk_cookie_manager.h:
+        * UIProcess/API/efl/ewk_database_manager.cpp:
+        (EwkDatabaseOriginsAsyncData::EwkDatabaseOriginsAsyncData):
+        (getDatabaseOriginsCallback):
+        (ewk_database_manager_origins_async_get):
+        * UIProcess/API/efl/ewk_database_manager.h:
+        * UIProcess/API/efl/ewk_storage_manager.cpp:
+        (EwkStorageOriginsAsyncData::EwkStorageOriginsAsyncData):
+        (getStorageOriginsCallback):
+        (ewk_storage_manager_origins_async_get):
+        * UIProcess/API/efl/ewk_storage_manager.h:
+        * UIProcess/API/efl/tests/test_ewk2_application_cache_manager.cpp:
+        (timerCallback):
+        * UIProcess/API/efl/tests/test_ewk2_cookie_manager.cpp:
+        (EWK2CookieManagerTest::getAcceptPolicy):
+        (EWK2CookieManagerTest::getHostnamesWithCookies):
+        * UIProcess/API/efl/tests/test_ewk2_database_manager.cpp:
+        (EWK2DatabaseManagerTest::timerCallback):
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_storage_manager.cpp:
+        (EWK2StorageManagerTest::timerCallback):
+        (TEST_F):
+
 2014-03-18  Tim Horton  <timothy_horton@apple.com>
 
         [iOS][WebKit2] Mark layer contents as being opaque if they are

@@ -79,14 +79,14 @@ public:
 
         if (originData->didReceiveOriginsCallback) {
             originData->didReceiveOriginsCallback = false;
-            ewk_database_manager_origins_get(originData->manager, databaseOriginsCallback, originData);
+            ewk_database_manager_origins_async_get(originData->manager, databaseOriginsCallback, originData);
         }
 
         return ECORE_CALLBACK_RENEW;
     }
 };
 
-TEST_F(EWK2DatabaseManagerTest, ewk_database_manager_origins_get)
+TEST_F(EWK2DatabaseManagerTest, ewk_database_manager_origins_async_get)
 {
     Evas_Object* view = webView();
     const char* databaseHTML =
@@ -102,7 +102,7 @@ TEST_F(EWK2DatabaseManagerTest, ewk_database_manager_origins_get)
 
     OriginData originData;
     originData.manager = ewk_context_database_manager_get(ewk_view_context_get(view));
-    ASSERT_TRUE(ewk_database_manager_origins_get(originData.manager, databaseOriginsCallback, &originData));
+    ASSERT_TRUE(ewk_database_manager_origins_async_get(originData.manager, databaseOriginsCallback, &originData));
     Ecore_Timer* database_timer = ecore_timer_add(1, timerCallback, &originData);
 
     ecore_main_loop_begin();

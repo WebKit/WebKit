@@ -63,12 +63,12 @@ Eina_List* EwkStorageManager::createOriginList(WKArrayRef origins) const
     return originList;
 }
 
-struct Ewk_Storage_Origins_Async_Get_Context {
+struct EwkStorageOriginsAsyncData {
     const Ewk_Storage_Manager* manager;
-    Ewk_Storage_Origins_Get_Cb callback;
+    Ewk_Storage_Origins_Async_Get_Cb callback;
     void* userData;
 
-    Ewk_Storage_Origins_Async_Get_Context(const Ewk_Storage_Manager* manager, Ewk_Storage_Origins_Get_Cb callback, void* userData)
+    EwkStorageOriginsAsyncData(const Ewk_Storage_Manager* manager, Ewk_Storage_Origins_Async_Get_Cb callback, void* userData)
         : manager(manager)
         , callback(callback)
         , userData(userData)
@@ -78,7 +78,7 @@ struct Ewk_Storage_Origins_Async_Get_Context {
 static void getStorageOriginsCallback(WKArrayRef origins, WKErrorRef wkError, void* context)
 {
     Eina_List* originList = 0;
-    auto webStorageContext = std::unique_ptr<Ewk_Storage_Origins_Async_Get_Context>(static_cast<Ewk_Storage_Origins_Async_Get_Context*>(context));
+    auto webStorageContext = std::unique_ptr<EwkStorageOriginsAsyncData>(static_cast<EwkStorageOriginsAsyncData*>(context));
 
     originList = webStorageContext->manager->createOriginList(origins);
 
@@ -86,12 +86,12 @@ static void getStorageOriginsCallback(WKArrayRef origins, WKErrorRef wkError, vo
     webStorageContext->callback(originList, ewkError.get(), webStorageContext->userData);
 }
 
-Eina_Bool ewk_storage_manager_origins_get(const Ewk_Storage_Manager* ewkStorageManager, Ewk_Storage_Origins_Get_Cb callback, void* userData)
+Eina_Bool ewk_storage_manager_origins_async_get(const Ewk_Storage_Manager* ewkStorageManager, Ewk_Storage_Origins_Async_Get_Cb callback, void* userData)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(ewkStorageManager, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(callback, false);
 
-    Ewk_Storage_Origins_Async_Get_Context* context = new Ewk_Storage_Origins_Async_Get_Context(ewkStorageManager, callback, userData);
+    EwkStorageOriginsAsyncData* context = new EwkStorageOriginsAsyncData(ewkStorageManager, callback, userData);
     ewkStorageManager->getStorageOrigins(context, getStorageOriginsCallback);
 
     return true;

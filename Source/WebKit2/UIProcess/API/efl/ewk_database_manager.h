@@ -44,14 +44,14 @@ extern "C" {
 typedef struct EwkDatabaseManager Ewk_Database_Manager;
 
 /**
- * @typedef Ewk_Database_Origins_Get_Cb Ewk_Database_Origins_Get_Cb
- * @brief Callback type for use with ewk_database_manager_origins_get()
+ * @typedef Ewk_Database_Origins_Async_Get_Cb Ewk_Database_Origins_Async_Get_Cb
+ * @brief Callback type for use with ewk_database_manager_origins_async_get()
  *
  * @param origins @c Eina_List containing @c Ewk_Security_Origin elements or @c NULL in case of error,
  *                        the Eina_List and its items should be freed after use. Use ewk_object_unref()
  *                        to free the items
  */
-typedef void (*Ewk_Database_Origins_Get_Cb)(Eina_List *origins, Ewk_Error *error, void *user_data);
+typedef void (*Ewk_Database_Origins_Async_Get_Cb)(Eina_List *origins, Ewk_Error *error, void *user_data);
 
 /**
  * Gets list of origins using web database asynchronously.
@@ -65,7 +65,7 @@ typedef void (*Ewk_Database_Origins_Get_Cb)(Eina_List *origins, Ewk_Error *error
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
  */
-EAPI Eina_Bool ewk_database_manager_origins_get(const Ewk_Database_Manager *manager, Ewk_Database_Origins_Get_Cb callback, void *user_data);
+EAPI Eina_Bool ewk_database_manager_origins_async_get(const Ewk_Database_Manager *manager, Ewk_Database_Origins_Async_Get_Cb callback, void *user_data);
 
 #ifdef __cplusplus
 }

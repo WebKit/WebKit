@@ -42,8 +42,8 @@ extern "C" {
 typedef struct EwkApplicationCacheManager Ewk_Application_Cache_Manager;
 
 /**
- * @typedef Ewk_Application_Cache_Origins_Get_Cb Ewk_Application_Cache_Origins_Get_Cb
- * @brief Callback for ewk_application_cache_manager_origins_get
+ * @typedef Ewk_Application_Cache_Origins_Async_Get_Cb Ewk_Application_Cache_Origins_Async_Get_Cb
+ * @brief Callback for ewk_application_cache_manager_origins_async_get
  *
  * @note The @a origins should be freed like below code after use.
  *
@@ -61,7 +61,7 @@ typedef struct EwkApplicationCacheManager Ewk_Application_Cache_Manager;
  *
  * @endcode
  */
-typedef void (*Ewk_Application_Cache_Origins_Get_Cb)(Eina_List *origins, void *user_data);
+typedef void (*Ewk_Application_Cache_Origins_Async_Get_Cb)(Eina_List *origins, void *user_data);
 
 /**
  * Requests for getting web application cache origins.
@@ -70,9 +70,9 @@ typedef void (*Ewk_Application_Cache_Origins_Get_Cb)(Eina_List *origins, void *u
  * @param result_callback callback to get web application cache origins
  * @param user_data user_data will be passsed when result_callback is called
  *
- * @see Ewk_Application_Cache_Origins_Get_Cb
+ * @see Ewk_Application_Cache_Origins_Async_Get_Cb
  */
-EAPI void ewk_application_cache_manager_origins_get(const Ewk_Application_Cache_Manager *manager, Ewk_Application_Cache_Origins_Get_Cb callback, void *data);
+EAPI void ewk_application_cache_manager_origins_async_get(const Ewk_Application_Cache_Manager *manager, Ewk_Application_Cache_Origins_Async_Get_Cb callback, void *data);
 
 /**
  * Requests for deleting all web application caches.

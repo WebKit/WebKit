@@ -42,11 +42,11 @@ EwkApplicationCacheManager::~EwkApplicationCacheManager()
 {
 }
 
-struct Get_Origins_Data {
-    Ewk_Application_Cache_Origins_Get_Cb callback;
+struct EwkApplicationCacheOriginsAsyncData {
+    Ewk_Application_Cache_Origins_Async_Get_Cb callback;
     void* userData;
 
-    Get_Origins_Data(Ewk_Application_Cache_Origins_Get_Cb callback, void* userData)
+    EwkApplicationCacheOriginsAsyncData(Ewk_Application_Cache_Origins_Async_Get_Cb callback, void* userData)
         : callback(callback)
         , userData(userData)
     { }
@@ -55,7 +55,7 @@ struct Get_Origins_Data {
 static void getApplicationCacheOriginsCallback(WKArrayRef wkOrigins, WKErrorRef, void* context)
 {
     Eina_List* origins = nullptr;
-    auto callbackData = std::unique_ptr<Get_Origins_Data>(static_cast<Get_Origins_Data*>(context));
+    auto callbackData = std::unique_ptr<EwkApplicationCacheOriginsAsyncData>(static_cast<EwkApplicationCacheOriginsAsyncData*>(context));
 
     const size_t originsCount = WKArrayGetSize(wkOrigins);
     for (size_t i = 0; i < originsCount; ++i) {
@@ -66,12 +66,12 @@ static void getApplicationCacheOriginsCallback(WKArrayRef wkOrigins, WKErrorRef,
     callbackData->callback(origins, callbackData->userData);
 }
 
-void ewk_application_cache_manager_origins_get(const Ewk_Application_Cache_Manager* manager, Ewk_Application_Cache_Origins_Get_Cb callback, void* userData)
+void ewk_application_cache_manager_origins_async_get(const Ewk_Application_Cache_Manager* manager, Ewk_Application_Cache_Origins_Async_Get_Cb callback, void* userData)
 {
     EINA_SAFETY_ON_NULL_RETURN(manager);
     EINA_SAFETY_ON_NULL_RETURN(callback);
 
-    Get_Origins_Data* callbackData = new Get_Origins_Data(callback, userData);
+    EwkApplicationCacheOriginsAsyncData* callbackData = new EwkApplicationCacheOriginsAsyncData(callback, userData);
     WKApplicationCacheManagerGetApplicationCacheOrigins(manager->impl(), callbackData, getApplicationCacheOriginsCallback);
 }
 
