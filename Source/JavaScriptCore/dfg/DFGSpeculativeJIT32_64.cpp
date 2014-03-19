@@ -169,8 +169,24 @@ bool SpeculativeJIT::fillJSValue(Edge edge, GPRReg& tagGPR, GPRReg& payloadGPR, 
     }
 }
 
-void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
+void SpeculativeJIT::cachedGetById(
+    CodeOrigin codeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR,
+    unsigned identifierNumber, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
 {
+    // This is a hacky fix for when the register allocator decides to alias the base payload with the result tag. This only happens
+    // in the case of GetByIdFlush, which has a relatively expensive register allocation story already so we probably don't need to
+    // trip over one move instruction.
+    if (basePayloadGPR == resultTagGPR) {
+        RELEASE_ASSERT(basePayloadGPR != resultPayloadGPR);
+        
+        if (baseTagGPROrNone == resultPayloadGPR) {
+            m_jit.swap(basePayloadGPR, baseTagGPROrNone);
+            baseTagGPROrNone = resultTagGPR;
+        } else
+            m_jit.move(basePayloadGPR, resultPayloadGPR);
+        basePayloadGPR = resultPayloadGPR;
+    }
+    
     JITGetByIdGenerator gen(
         m_jit.codeBlock(), codeOrigin, usedRegisters(),
         JSValueRegs(baseTagGPROrNone, basePayloadGPR),
@@ -3659,8 +3675,8 @@ void SpeculativeJIT::compile(Node* node)
         switch (node->child1().useKind()) {
         case CellUse: {
             SpeculateCellOperand base(this, node->child1());
-            GPRTemporary resultTag(this, Reuse, base);
-            GPRTemporary resultPayload(this);
+            GPRTemporary resultTag(this);
+            GPRTemporary resultPayload(this, Reuse, base);
             
             GPRReg baseGPR = base.gpr();
             GPRReg resultTagGPR = resultTag.gpr();
@@ -3676,8 +3692,8 @@ void SpeculativeJIT::compile(Node* node)
         
         case UntypedUse: {
             JSValueOperand base(this, node->child1());
-            GPRTemporary resultTag(this, Reuse, base, TagWord);
-            GPRTemporary resultPayload(this);
+            GPRTemporary resultTag(this);
+            GPRTemporary resultPayload(this, Reuse, base, TagWord);
         
             GPRReg baseTagGPR = base.tagGPR();
             GPRReg basePayloadGPR = base.payloadGPR();
@@ -3713,10 +3729,10 @@ void SpeculativeJIT::compile(Node* node)
             
             GPRReg baseGPR = base.gpr();
 
-            GPRResult resultTag(this);
-            GPRResult2 resultPayload(this);
-            GPRReg resultTagGPR = resultTag.gpr();
+            GPRResult resultPayload(this);
+            GPRResult2 resultTag(this);
             GPRReg resultPayloadGPR = resultPayload.gpr();
+            GPRReg resultTagGPR = resultTag.gpr();
 
             base.use();
             
@@ -3733,10 +3749,10 @@ void SpeculativeJIT::compile(Node* node)
             GPRReg baseTagGPR = base.tagGPR();
             GPRReg basePayloadGPR = base.payloadGPR();
 
-            GPRResult resultTag(this);
-            GPRResult2 resultPayload(this);
-            GPRReg resultTagGPR = resultTag.gpr();
+            GPRResult resultPayload(this);
+            GPRResult2 resultTag(this);
             GPRReg resultPayloadGPR = resultPayload.gpr();
+            GPRReg resultTagGPR = resultTag.gpr();
 
             base.use();
         

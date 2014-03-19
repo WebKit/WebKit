@@ -301,13 +301,8 @@ static void generateGetByIdStub(
 #if USE(JSVALUE64)
         stubJit.load64(MacroAssembler::Address(storageGPR, offsetRelativeToBase(offset)), loadedValueGPR);
 #else
-        GPRReg copyOfStorageGPR = storageGPR;
-        if (storageGPR == resultTagGPR) {
-            copyOfStorageGPR = loadedValueGPR;
-            stubJit.move(storageGPR, copyOfStorageGPR);
-        }
         stubJit.load32(MacroAssembler::Address(storageGPR, offsetRelativeToBase(offset) + TagOffset), resultTagGPR);
-        stubJit.load32(MacroAssembler::Address(copyOfStorageGPR, offsetRelativeToBase(offset) + PayloadOffset), loadedValueGPR);
+        stubJit.load32(MacroAssembler::Address(storageGPR, offsetRelativeToBase(offset) + PayloadOffset), loadedValueGPR);
 #endif
     }
 

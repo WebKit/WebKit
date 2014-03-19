@@ -95,11 +95,8 @@ public:
     JITGetByIdGenerator() { }
 
     JITGetByIdGenerator(
-    CodeBlock* codeBlock, CodeOrigin codeOrigin, const RegisterSet& usedRegisters,
-    JSValueRegs base, JSValueRegs value, SpillRegistersMode spillMode)
-    : JITByIdGenerator(codeBlock, codeOrigin, usedRegisters, base, value, spillMode)
-    {
-    }
+        CodeBlock*, CodeOrigin, const RegisterSet& usedRegisters, JSValueRegs base,
+        JSValueRegs value, SpillRegistersMode spillMode);
     
     void generateFastPath(MacroAssembler&);
 };

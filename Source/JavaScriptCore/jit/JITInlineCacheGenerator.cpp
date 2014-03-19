@@ -110,6 +110,14 @@ void JITByIdGenerator::generateFastPathChecks(MacroAssembler& jit, GPRReg butter
         MacroAssembler::Address(m_base.payloadGPR(), JSObject::butterflyOffset()), butterfly);
 }
 
+JITGetByIdGenerator::JITGetByIdGenerator(
+    CodeBlock* codeBlock, CodeOrigin codeOrigin, const RegisterSet& usedRegisters,
+    JSValueRegs base, JSValueRegs value, SpillRegistersMode spillMode)
+    : JITByIdGenerator(codeBlock, codeOrigin, usedRegisters, base, value, spillMode)
+{
+    RELEASE_ASSERT(base.payloadGPR() != value.tagGPR());
+}
+
 void JITGetByIdGenerator::generateFastPath(MacroAssembler& jit)
 {
     generateFastPathChecks(jit, m_value.payloadGPR());

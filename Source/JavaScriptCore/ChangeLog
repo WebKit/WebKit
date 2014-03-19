@@ -1,3 +1,21 @@
+2014-03-19  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r165459): It broke 109 jsc stress test on ARM Thumb2 and Mac 32 bit
+        https://bugs.webkit.org/show_bug.cgi?id=130134
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode): Can't do some optimizations if you don't have a lot of registers.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById): Move stuff around before going into the IC code to ensure that we give the IC code the invariants it needs. This only happens in case of GetByIdFlush, where we are forced into using weird combinations of registers because the results have to be in t0/t1.
+        (JSC::DFG::SpeculativeJIT::compile): For a normal GetById, the register allocator should just do the right thing so nobody has to move anything around.
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITGetByIdGenerator::JITGetByIdGenerator): Assert the things we want.
+        * jit/JITInlineCacheGenerator.h:
+        * jit/Repatch.cpp:
+        (JSC::generateGetByIdStub): Remove a previous incomplete hack to try to work around the DFG's problem.
+
 2014-03-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Normalize some of the older JSC options
