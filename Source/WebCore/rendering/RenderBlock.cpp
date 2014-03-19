@@ -5054,6 +5054,18 @@ static bool canComputeRegionRangeForBox(const RenderBlock* parentBlock, const Re
     return flowThreadContainingBlock->hasRegionRangeForBox(parentBlock);
 }
 
+bool RenderBlock::childBoxIsUnsplittableForFragmentation(const RenderBox& child) const
+{
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    bool isInsideMulticolFlowThread = flowThread && !flowThread->isRenderNamedFlowThread();
+    bool checkColumnBreaks = isInsideMulticolFlowThread || view().layoutState()->isPaginatingColumns();
+    bool checkPageBreaks = !checkColumnBreaks && view().layoutState()->m_pageLogicalHeight;
+    bool checkRegionBreaks = flowThread && flowThread->isRenderNamedFlowThread();
+    return child.isUnsplittableForPagination() || (checkColumnBreaks && child.style().columnBreakInside() == PBAVOID)
+        || (checkPageBreaks && child.style().pageBreakInside() == PBAVOID)
+        || (checkRegionBreaks && child.style().regionBreakInside() == PBAVOID);
+}
+
 void RenderBlock::computeRegionRangeForBoxChild(const RenderBox& box) const
 {
     RenderFlowThread* flowThread = flowThreadContainingBlock();
@@ -5062,7 +5074,7 @@ void RenderBlock::computeRegionRangeForBoxChild(const RenderBox& box) const
     RenderRegion* startRegion;
     RenderRegion* endRegion;
     LayoutUnit offsetFromLogicalTopOfFirstRegion = box.offsetFromLogicalTopOfFirstPage();
-    if (box.isUnsplittableForPagination())
+    if (childBoxIsUnsplittableForFragmentation(box))
         startRegion = endRegion = flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstRegion, true);
     else {
         startRegion = flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstRegion, true);
@@ -5078,7 +5090,7 @@ void RenderBlock::estimateRegionRangeForBoxChild(const RenderBox& box) const
     if (!canComputeRegionRangeForBox(this, box, flowThread))
         return;
 
-    if (box.isUnsplittableForPagination()) {
+    if (childBoxIsUnsplittableForFragmentation(box)) {
         computeRegionRangeForBoxChild(box);
         return;
     }

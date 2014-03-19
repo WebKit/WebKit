@@ -1689,16 +1689,10 @@ bool RenderBlockFlow::hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule pag
 
 LayoutUnit RenderBlockFlow::adjustForUnsplittableChild(RenderBox& child, LayoutUnit logicalOffset, bool includeMargins)
 {
-    RenderFlowThread* flowThread = flowThreadContainingBlock();
-    bool isInsideMulticolFlowThread = flowThread && !flowThread->isRenderNamedFlowThread();
-    bool checkColumnBreaks = isInsideMulticolFlowThread || view().layoutState()->isPaginatingColumns();
-    bool checkPageBreaks = !checkColumnBreaks && view().layoutState()->m_pageLogicalHeight;
-    bool checkRegionBreaks = flowThread && flowThread->isRenderNamedFlowThread();
-    bool isUnsplittable = child.isUnsplittableForPagination() || (checkColumnBreaks && child.style().columnBreakInside() == PBAVOID)
-        || (checkPageBreaks && child.style().pageBreakInside() == PBAVOID)
-        || (checkRegionBreaks && child.style().regionBreakInside() == PBAVOID);
-    if (!isUnsplittable)
+    if (!childBoxIsUnsplittableForFragmentation(child))
         return logicalOffset;
+
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
     LayoutUnit childLogicalHeight = logicalHeightForChild(child) + (includeMargins ? marginBeforeForChild(child) + marginAfterForChild(child) : LayoutUnit());
     LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset);
     bool hasUniformPageLogicalHeight = !flowThread || flowThread->regionsHaveUniformLogicalHeight();

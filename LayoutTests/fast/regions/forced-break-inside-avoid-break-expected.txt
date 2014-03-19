@@ -1,0 +1,8 @@
+Test for [CSS Regions] Strange layout for content with region breaks.
+
+The green rectangle is flowed inside three regions with blue borders. The first region should contain the whole green rectangle. The second and the third regions should have a height of 0px.
+
+PASS
+PASS
+PASS
+

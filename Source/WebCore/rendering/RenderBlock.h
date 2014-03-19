@@ -421,6 +421,8 @@ protected:
     // FIXME: Can de-virtualize this once old columns go away.
     virtual void setComputedColumnCountAndWidth(int, LayoutUnit);
 
+    bool childBoxIsUnsplittableForFragmentation(const RenderBox& child) const;
+
 public:
     virtual void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false);
     void clearLayoutOverflow();

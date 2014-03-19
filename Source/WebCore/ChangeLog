@@ -1,3 +1,37 @@
+2014-03-18  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Strange layout for content with region breaks
+        https://bugs.webkit.org/show_bug.cgi?id=121318
+
+        Reviewed by Mihnea Ovidenie.
+
+        When break-inside: avoid is used on an element, the implementation tries to
+        force it inside a single fragmentation container even though the descendants
+        of the element specify forced breaks. This leads to unexpected results and
+        unstable layout.
+
+        The change extends the definition of unsplittable elements for flow threads
+        using the same conditions found inside RenderBlockFlow::adjustForUnsplittableChild.
+        This change forces elements that require break avoidance to have a single region
+        in the region range. As a result, forced breaks have no effect inside them.
+
+        It should be noted this may not the behavior defined by the CSS3 Fragmentation spec.
+        From my understanding of the text, forced breaks override any avoidance specified
+        by ancestor elements. However, implementing this is a larger change that will require
+        a fundamental new approach in handling break avoidance. This patch just brings
+        consistency to the API.
+
+        Test: fast/regions/forced-break-inside-avoid-break.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::childBoxIsUnsplittableForFragmentation):
+        (WebCore::RenderBlock::computeRegionRangeForBoxChild):
+        (WebCore::RenderBlock::estimateRegionRangeForBoxChild):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustForUnsplittableChild): Move the avoidance conditions inside
+        a helper method RenderBlock::childBoxIsUnsplittableForFragmentation.
+
 2014-03-18  Samuel White  <samuel_white@apple.com>
 
         AX: Not able to use arrow keys to read text with VoiceOver before selection is set someplace (anyplace).

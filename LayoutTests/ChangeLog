@@ -1,3 +1,16 @@
+2014-03-18  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Strange layout for content with region breaks
+        https://bugs.webkit.org/show_bug.cgi?id=121318
+
+        Reviewed by Mihnea Ovidenie.
+
+        The test verifies that elements specifying break-inside: avoid can't
+        be splitted by forced breaks applied inside of them.
+
+        * fast/regions/forced-break-inside-avoid-break-expected.txt: Added.
+        * fast/regions/forced-break-inside-avoid-break.html: Added.
+
 2014-03-18  Samuel White  <samuel_white@apple.com>
 
         AX: Not able to use arrow keys to read text with VoiceOver before selection is set someplace (anyplace).
