@@ -444,7 +444,7 @@
 
 - (void)_zoomToRect:(WebCore::FloatRect)targetRect atScale:(double)scale origin:(WebCore::FloatPoint)origin
 {
-    WebCore::FloatSize unobscuredContentSize = _page->unobscuredContentRect().size();
+    WebCore::FloatSize unobscuredContentSize([self _contentRectForUserInteraction].size);
     WebCore::FloatSize targetRectSizeAfterZoom = targetRect.size();
     targetRectSizeAfterZoom.scale(scale);
 
@@ -470,7 +470,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (BOOL)_scrollToRect:(WebCore::FloatRect)targetRect origin:(WebCore::FloatPoint)origin minimumScrollDistance:(float)minimumScrollDistance
 {
-    WebCore::FloatRect unobscuredContentRect = _page->unobscuredContentRect();
+    WebCore::FloatRect unobscuredContentRect([self _contentRectForUserInteraction]);
     WebCore::FloatPoint unobscuredContentOffset = unobscuredContentRect.location();
     WebCore::FloatSize contentSize([_contentView bounds].size);
 
@@ -517,7 +517,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     double currentScale = [_scrollView zoomScale];
 
-    WebCore::FloatSize unobscuredContentSize = _page->unobscuredContentRect().size();
+    WebCore::FloatSize unobscuredContentSize([self _contentRectForUserInteraction].size);
     double horizontalScale = unobscuredContentSize.width() * currentScale / targetRect.width();
     double verticalScale = unobscuredContentSize.height() * currentScale / targetRect.height();
 
@@ -629,6 +629,16 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [self _updateVisibleContentRects];
 }
 
+// Unobscured content rect where the user can interact. When the keyboard is up, this should be the area above or bellow the keyboard, wherever there is enough space.
+- (CGRect)_contentRectForUserInteraction
+{
+    // FIXME: handle split keyboard.
+    UIEdgeInsets obscuredInsets = _obscuredInsets;
+    obscuredInsets.bottom = std::max(_obscuredInsets.bottom, _keyboardVerticalOverlap);
+    CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, obscuredInsets);
+    return [self convertRect:unobscuredRect toView:_contentView.get()];
+}
+
 - (void)_updateVisibleContentRects
 {
     if (![self usesStandardContentView])
@@ -637,9 +647,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     CGRect fullViewRect = self.bounds;
     CGRect visibleRectInContentCoordinates = [self convertRect:fullViewRect toView:_contentView.get()];
 
-    UIEdgeInsets obscuredInsets = _obscuredInsets;
-    obscuredInsets.bottom = std::max(_obscuredInsets.bottom, _keyboardVerticalOverlap);
-    CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, obscuredInsets);
+    CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, _obscuredInsets);
     CGRect unobscuredRectInContentCoordinates = [self convertRect:unobscuredRect toView:_contentView.get()];
 
     CGFloat scaleFactor = [_scrollView zoomScale];

@@ -1,3 +1,21 @@
+2014-03-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WebKit2] <rdar://problem/16330387> Do not use the keyboard rect for computing the general unobscuredRect, only use it for centering
+        https://bugs.webkit.org/show_bug.cgi?id=130382
+
+        Reviewed by Simon Fraser.
+
+        Always accumulating the keyboard rect out of the exposedRect caused some issues (see <rdar://problem/16330387>).
+        This patch split the rect in two: unobscured rect for WebCore, and unobscuredContentRectIncludingKeyboard for centering
+        UI Elements in view.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _zoomToRect:WebCore::atScale:origin:WebCore::]):
+        (-[WKWebView _scrollToRect:WebCore::origin:WebCore::minimumScrollDistance:]):
+        (-[WKWebView _zoomToRect:WebCore::withOrigin:WebCore::fitEntireRect:minimumScale:maximumScale:minimumScrollDistance:]):
+        (-[WKWebView _contentRectForUserInteraction]):
+        (-[WKWebView _updateVisibleContentRects]):
+
 2014-03-19  Anders Carlsson  <andersca@apple.com>
 
         Get rid of WKProcessClass
