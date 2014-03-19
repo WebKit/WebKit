@@ -157,29 +157,13 @@ private:
     // Used to construct static strings, which have an special refCount that can never hit zero.
     // This means that the static string will never be destroyed, which is important because
     // static strings will be shared across threads & ref-counted in a non-threadsafe manner.
-    enum ConstructStaticStringTag { ConstructStaticString };
-    StringImpl(const UChar* characters, unsigned length, ConstructStaticStringTag)
+    friend class NeverDestroyed<StringImpl>;
+    enum ConstructEmptyStringTag { ConstructEmptyString };
+    StringImpl(ConstructEmptyStringTag)
         : m_refCount(s_refCountFlagIsStaticString)
-        , m_length(length)
-        , m_data16(characters)
-        , m_hashAndFlags(s_hashFlagIsIdentifier | BufferOwned)
-    {
-        // Ensure that the hash is computed so that AtomicStringHash can call existingHash()
-        // with impunity. The empty string is special because it is never entered into
-        // AtomicString's HashKey, but still needs to compare correctly.
-        STRING_STATS_ADD_16BIT_STRING(m_length);
-
-        hash();
-    }
-
-    // Used to construct static strings, which have an special refCount that can never hit zero.
-    // This means that the static string will never be destroyed, which is important because
-    // static strings will be shared across threads & ref-counted in a non-threadsafe manner.
-    StringImpl(const LChar* characters, unsigned length, ConstructStaticStringTag)
-        : m_refCount(s_refCountFlagIsStaticString)
-        , m_length(length)
-        , m_data8(characters)
-        , m_hashAndFlags(s_hashFlag8BitBuffer | s_hashFlagIsIdentifier | BufferOwned)
+        , m_length(0)
+        , m_data8(reinterpret_cast<const LChar*>(&m_length))
+        , m_hashAndFlags(s_hashFlag8BitBuffer | s_hashFlagIsIdentifier | s_hashFlagIsAtomic | BufferOwned)
     {
         // Ensure that the hash is computed so that AtomicStringHash can call existingHash()
         // with impunity. The empty string is special because it is never entered into

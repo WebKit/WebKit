@@ -1,3 +1,26 @@
+2014-03-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Small cleanup of empty string
+        https://bugs.webkit.org/show_bug.cgi?id=130438
+
+        Reviewed by Anders Carlson.
+
+        The empty string is weird becuase it is used as the impl for an AtomicString, but isAtomic()
+        returns false.
+        Also, we set a valid pointer for the characters pointer due to an old PCRE bug; remove this.
+        Also, we currently only create one 'static' string, the empty string. Adding more might break
+        assumtions, inhibit the constructor from being used to create other static strings for now.
+
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::add):
+            - update assert.
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+            - Merge ConstructStaticString constructors, only allow the empty static string to be constructed.
+        * wtf/text/StringStatics.cpp:
+        (WTF::StringImpl::empty):
+            - ConstructStaticString -> ConstructEmptyString, remove arguments, DEPRECATED_DEFINE_STATIC_LOCAL -> NeverDestroyed.
+
 2014-03-18  Darin Adler  <darin@apple.com>
 
         Reduce use of deprecatedCharacters in WebCore
