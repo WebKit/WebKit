@@ -68,7 +68,7 @@ public:
     bool hasAnyMatchingRules(RuleSet*);
 
     StyleResolver::MatchResult& matchedResult();
-    const Vector<RefPtr<StyleRuleBase>>& matchedRuleList() const;
+    const Vector<RefPtr<StyleRule>>& matchedRuleList() const;
 
     bool hasMatchedRules() const { return m_matchedRules && !m_matchedRules->isEmpty(); }
     void clearMatchedRules();
@@ -103,7 +103,7 @@ private:
     std::unique_ptr<Vector<const RuleData*, 32>> m_matchedRules;
 
     // Output.
-    Vector<RefPtr<StyleRuleBase>> m_matchedRuleList;
+    Vector<RefPtr<StyleRule>> m_matchedRuleList;
     StyleResolver::MatchResult m_result;
 };
 

@@ -189,8 +189,8 @@ public:
         AllButEmptyCSSRules = UAAndUserCSSRules | AuthorCSSRules | CrossOriginCSSRules,
         AllCSSRules         = AllButEmptyCSSRules | EmptyCSSRules,
     };
-    Vector<RefPtr<StyleRuleBase>> styleRulesForElement(Element*, unsigned rulesToInclude = AllButEmptyCSSRules);
-    Vector<RefPtr<StyleRuleBase>> pseudoStyleRulesForElement(Element*, PseudoId, unsigned rulesToInclude = AllButEmptyCSSRules);
+    Vector<RefPtr<StyleRule>> styleRulesForElement(Element*, unsigned rulesToInclude = AllButEmptyCSSRules);
+    Vector<RefPtr<StyleRule>> pseudoStyleRulesForElement(Element*, PseudoId, unsigned rulesToInclude = AllButEmptyCSSRules);
 
 public:
     void applyPropertyToStyle(CSSPropertyID, CSSValue*, RenderStyle*);

@@ -1,3 +1,28 @@
+2014-03-19  Antti Koivisto  <antti@apple.com>
+
+        Tighten ElementRuleCollector::m_matchedRuleList typing
+        https://bugs.webkit.org/show_bug.cgi?id=130446
+
+        Reviewed by Anders Carlsson.
+
+        StyleRuleBase -> StyleRule.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchedRuleList):
+        * css/ElementRuleCollector.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleRulesForElement):
+        (WebCore::StyleResolver::pseudoStyleRulesForElement):
+        * css/StyleResolver.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::styleFromMatchedRulesForElement):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getMatchedStylesForNode):
+        (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+        * inspector/InspectorCSSAgent.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getMatchedCSSRules):
+
 2014-03-19  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] An unsplittable box is always displayed in a single region
