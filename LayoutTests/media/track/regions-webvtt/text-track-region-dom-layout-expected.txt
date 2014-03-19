@@ -1,0 +1,20 @@
+Tests default DOM layout structure for a TextTrackRegion.
+
+
+EVENT(canplaythrough)
+** The text track has only one region **
+EXPECTED (testTrack.regions.length == '1') OK
+
+** Inspecting the default DOM layout used for regions display **
+
+** Only one region should be displayed **
+EXPECTED (region.children.length == '1') OK
+
+** The child of the region should be the container **
+EXPECTED (region.children[0] == container == 'true') OK
+
+** Default pseudo IDs should be set properly
+EXPECTED (region.getAttribute('pseudo') == '-webkit-media-text-track-region') OK
+EXPECTED (container.getAttribute('pseudo') == '-webkit-media-text-track-region-container') OK
+END OF TEST
+

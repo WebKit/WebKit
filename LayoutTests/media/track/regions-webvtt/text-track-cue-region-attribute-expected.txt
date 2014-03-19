@@ -1,6 +1,7 @@
 Tests the regionId attribute of a cue.
 
 
+
 ** Test the setter and getter through the JS API **
 EXPECTED (cue.regionId == '') OK
 EXPECTED (cue.regionId == 'someId') OK

@@ -207,6 +207,7 @@ VTTCue::VTTCue(ScriptExecutionContext& context, double start, double end, const 
     , m_displayDirection(CSSValueLtr)
     , m_displayWritingMode(CSSValueInherit)
     , m_displaySize(0)
+    , m_notifyRegion(true)
 {
     // 4. If the text track cue writing direction is horizontal, then let
     // writing-mode be 'horizontal-tb'. Otherwise, if the text track cue writing
@@ -459,6 +460,11 @@ void VTTCue::setRegionId(const String& regionId)
     willChange();
     m_regionId = regionId;
     didChange();
+}
+
+void VTTCue::notifyRegionWhenRemovingDisplayTree(bool notifyRegion)
+{
+    m_notifyRegion = notifyRegion;
 }
 #endif
 
@@ -747,7 +753,7 @@ void VTTCue::removeDisplayTree()
 {
 #if ENABLE(WEBVTT_REGIONS)
     // The region needs to be informed about the cue removal.
-    if (track()) {
+    if (m_notifyRegion && track()) {
         if (TextTrackRegionList* regions = track()->regions()) {
             if (TextTrackRegion* region = regions->getRegionById(m_regionId))
                 region->willRemoveTextTrackCueBox(m_displayTree.get());

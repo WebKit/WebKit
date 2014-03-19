@@ -167,23 +167,17 @@ void WebVTTParser::parseBytes(const char* data, unsigned length)
             break;
 
         case Header:
-            // 13-18 - Allow a header (comment area) under the WEBVTT line.
-#if ENABLE(WEBVTT_REGIONS)
+            collectMetadataHeader(line);
+
             if (line.isEmpty()) {
+#if ENABLE(WEBVTT_REGIONS)
+                // 13-18 - Allow a header (comment area) under the WEBVTT line.
                 if (m_client && m_regionList.size())
                     m_client->newRegionsParsed();
-
+#endif
                 m_state = Id;
                 break;
             }
-            collectHeader(line);
-
-            break;
-
-        case Metadata:
-#endif
-            if (line.isEmpty())
-                m_state = Id;
             break;
 
         case Id:
@@ -251,9 +245,9 @@ bool WebVTTParser::hasRequiredFileIdentifier(const String& line)
     return true;
 }
 
-#if ENABLE(WEBVTT_REGIONS)
-void WebVTTParser::collectHeader(const String& line)
+void WebVTTParser::collectMetadataHeader(const String& line)
 {
+#if ENABLE(WEBVTT_REGIONS)
     // 4.1 Extension of WebVTT header parsing (11 - 15)
     DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, regionHeaderName, ("Region", AtomicString::ConstructFromLiteral));
 
@@ -272,8 +266,10 @@ void WebVTTParser::collectHeader(const String& line)
         // 15.5.1 - 15.5.8 Region creation: Let region be a new text track region [...]
         createNewRegion();
     }
-}
+#else
+    UNUSED_PARAM(line);
 #endif
+}
 
 WebVTTParser::ParseState WebVTTParser::collectCueId(const String& line)
 {

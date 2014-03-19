@@ -1,3 +1,23 @@
+2014-03-18  Brent Fulgham  <bfulgham@apple.com>
+
+        TextTrackRegion Not Implemented
+        https://bugs.webkit.org/show_bug.cgi?id=116546
+
+        Reviewed by Eric Carlson.
+
+        Merged from Blink (patch by vcarbune@chromium.org):
+        https://chromium.googlesource.com/chromium/blink/+/4940f89a087fea5b5ea628e98d0b355d398a9eea
+        http://crbug.com/25798003
+
+        * media/track/captions-webvtt/captions-regions.vtt: Added.
+        * media/track/regions-webvtt/text-track-cue-region-attribute-expected.txt: Rebaseline.
+        * media/track/regions-webvtt/text-track-region-display-expected.txt: Added.
+        * media/track/regions-webvtt/text-track-region-display.html: Added.
+        * media/track/regions-webvtt/text-track-region-dom-layout-expected.txt: Added.
+        * media/track/regions-webvtt/text-track-region-dom-layout.html: Added.
+        * media/track/regions-webvtt/text-track-region-list-expected.txt: Rebaseline.
+        * media/track/regions-webvtt/text-track-region-parser-expected.txt: Rebaseline.
+
 2014-03-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Unreviewed GTK Gardening.

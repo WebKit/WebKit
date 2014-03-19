@@ -1,3 +1,37 @@
+2014-03-18  Brent Fulgham  <bfulgham@apple.com>
+
+        TextTrackRegion Not Implemented
+        https://bugs.webkit.org/show_bug.cgi?id=116546
+
+        Reviewed by Eric Carlson.
+
+        Merged from Blink (patch by vcarbune@chromium.org):
+        https://chromium.googlesource.com/chromium/blink/+/4940f89a087fea5b5ea628e98d0b355d398a9eea
+        http://crbug.com/25798003
+
+        Tests: media/track/regions-webvtt/text-track-region-display.html
+               media/track/regions-webvtt/text-track-region-dom-layout.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::newRegionsAvailable):
+        * html/track/TextTrack.cpp:
+        * html/track/TextTrack.h:
+        * html/track/TextTrackRegion.cpp:
+        (WebCore::TextTrackRegion::TextTrackRegion):
+        (WebCore::TextTrackRegion::appendTextTrackCueBox):
+        * html/track/TextTrackRegion.h:
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::VTTCue):
+        (WebCore::VTTCue::notifyRegionWhenRemovingDisplayTree):
+        (WebCore::VTTCue::removeDisplayTree):
+        * html/track/VTTCue.h:
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::parseBytes):
+        (WebCore::WebVTTParser::collectMetadataHeader):
+        * html/track/WebVTTParser.h:
+
 2014-03-18  Andreas Kling  <akling@apple.com>
 
         Share MemoryPressureHandler::releaseMemory() between platforms.
