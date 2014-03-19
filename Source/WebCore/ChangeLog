@@ -1,3 +1,26 @@
+2014-03-19  Sam Weinig  <sam@webkit.org>
+
+        Rewrite WebHTMLConverter::_colorForNode in C++
+        https://bugs.webkit.org/show_bug.cgi?id=130443
+
+        Reviewed by Andreas Kling.
+
+        * platform/mac/HTMLConverter.mm:
+        (_platformColor):
+        Rename from _colorForRGBColor and simplify to just do the platform conversion.
+
+        (normalizedColor):
+        Extract normalization out of _colorForRGBColor and remove cases that are impossible to hit
+        due to us only ever using the device color space.
+
+        (HTMLConverterCaches::colorPropertyValueForNode):
+        (-[WebHTMLConverter _colorForNode:property:]):
+        Convert to C++.
+
+        (-[WebHTMLConverter dealloc]):
+        (-[WebHTMLConverter init]):
+        Remove caches, we already cache in ColorMac.
+
 2014-03-18  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Strange layout for content with region breaks

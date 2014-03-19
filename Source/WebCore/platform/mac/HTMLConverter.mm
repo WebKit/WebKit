@@ -403,6 +403,8 @@ class HTMLConverterCaches {
 public:
     String propertyValueForNode(Node&, const String& propertyName);
     bool floatPropertyValueForNode(Node&, const String& propertyName, float&);
+    Color colorPropertyValueForNode(Node&, const String& propertyName);
+
     bool isBlockElement(Element&);
     bool elementHasOwnBackgroundColor(Element&);
 
@@ -842,39 +844,14 @@ static NSString *_NSSystemLibraryPath(void)
 }
 
 #if PLATFORM(IOS)
-static inline UIColor *_colorForRGBColor(DOMRGBColor *domRGBColor, BOOL)
+static inline UIColor *_platformColor(Color color)
 {
-    return [getUIColorClass() _disambiguated_due_to_CIImage_colorWithCGColor:[domRGBColor color]];
+    return [getUIColorClass() _disambiguated_due_to_CIImage_colorWithCGColor:cachedCGColor(color, WebCore::ColorSpaceDeviceRGB)];
 }
-
 #else
-static inline NSColor *_colorForRGBColor(DOMRGBColor *domRGBColor, BOOL ignoreBlack)
+static inline NSColor *_platformColor(Color color)
 {
-    NSColor *color = [domRGBColor _color];
-    NSColorSpace *colorSpace = [color colorSpace];
-    const CGFloat ColorEpsilon = 1 / (2 * (CGFloat)255.0);
-    
-    if (color) {
-        if ([colorSpace isEqual:[NSColorSpace genericGrayColorSpace]] || [colorSpace isEqual:[NSColorSpace deviceGrayColorSpace]]) {
-            CGFloat white, alpha;
-            [color getWhite:&white alpha:&alpha];
-            if (white < ColorEpsilon && (ignoreBlack || alpha < ColorEpsilon))
-                color = nil;
-        } else {
-            NSColor *rgbColor = nil;
-            if ([colorSpace isEqual:[NSColorSpace genericRGBColorSpace]] || [colorSpace isEqual:[NSColorSpace deviceRGBColorSpace]])
-                rgbColor = color;
-            if (!rgbColor)
-                rgbColor = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-            if (rgbColor) {
-                CGFloat red, green, blue, alpha;
-                [rgbColor getRed:&red green:&green blue:&blue alpha:&alpha];
-                if (red < ColorEpsilon && green < ColorEpsilon && blue < ColorEpsilon && (ignoreBlack || alpha < ColorEpsilon))
-                    color = nil;
-            }
-        }
-    }
-    return color;
+    return nsColor(color);
 }
 #endif
 
@@ -972,64 +949,76 @@ bool HTMLConverterCaches::elementHasOwnBackgroundColor(Element& element)
     return element;
 }
 
-- (PlatformColor *)_computedColorForNode:(DOMNode *)node property:(NSString *)key
+static Color normalizedColor(Color color, bool ignoreBlack)
 {
-    PlatformColor *result = nil;
-    bool inherit = true;
-    bool haveResult = false;
-    BOOL isColor = [@"color" isEqualToString:key];
-    BOOL isBackgroundColor = [@"background-color" isEqualToString:key];
-    Node* coreNode = core(node);
-    if (coreNode && coreNode->isElementNode()) {
-        Element& element = toElement(*coreNode);
-        String propertyName = key;
-        inherit = false;
-        if (!haveResult) {
-            if (RefPtr<CSSValue> value = _caches->computedStylePropertyForElement(element, propertyName)) {
-                if (value->isPrimitiveValue() && toCSSPrimitiveValue(*value).isRGBColor()) {
-                    RefPtr<WebCore::RGBColor> color = toCSSPrimitiveValue(*value).getRGBColorValue(ASSERT_NO_EXCEPTION);
-                    result = _colorForRGBColor(kit(color.get()), isColor);
-                    haveResult = true;
-                }
-            }
-        }
-        if (!haveResult) {
-            if (RefPtr<CSSValue> value = _caches->inlineStylePropertyForElement(element, propertyName)) {
-                if (value->isPrimitiveValue() && toCSSPrimitiveValue(*value).isRGBColor()) {
-                    RefPtr<WebCore::RGBColor> color = toCSSPrimitiveValue(*value).getRGBColorValue(ASSERT_NO_EXCEPTION);
-                    result = _colorForRGBColor(kit(color.get()), isColor);
-                    haveResult = true;
-                } else if (value->isInheritedValue())
+    const double ColorEpsilon = 1 / (2 * (double)255.0);
+    
+    double red, green, blue, alpha;
+    color.getRGBA(red, green, blue, alpha);
+    if (red < ColorEpsilon && green < ColorEpsilon && blue < ColorEpsilon && (ignoreBlack || alpha < ColorEpsilon))
+        return Color();
+    
+    return color;
+}
+
+Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, const String& propertyName)
+{
+    if (!node.isElementNode()) {
+        if (Node* parent = node.parentNode())
+            return colorPropertyValueForNode(*parent, propertyName);
+        return Color();
+    }
+
+    Element& element = toElement(node);
+    if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyName)) {
+        if (value->isPrimitiveValue() && toCSSPrimitiveValue(*value).isRGBColor())
+            return normalizedColor(Color(toCSSPrimitiveValue(*value).getRGBA32Value()), propertyName == "color");
+    }
+
+    bool inherit = false;
+    if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyName)) {
+        if (value->isPrimitiveValue() && toCSSPrimitiveValue(*value).isRGBColor())
+            return normalizedColor(Color(toCSSPrimitiveValue(*value).getRGBA32Value()), propertyName == "color");
+        if (value->isInheritedValue())
+            inherit = true;
+    }
+
+    switch (cssPropertyID(propertyName)) {
+    case CSSPropertyColor:
+        inherit = true;
+        break;
+    case CSSPropertyBackgroundColor:
+        if (!elementHasOwnBackgroundColor(element)) {
+            if (Element* parentElement = node.parentElement()) {
+                if (!elementHasOwnBackgroundColor(*parentElement))
                     inherit = true;
             }
         }
-        if (!result) {
-            if ((isColor && !haveResult) || (isBackgroundColor && ![self _elementHasOwnBackgroundColor:static_cast<DOMElement*>(node)]))
-                inherit = true;
-        }
+        break;
+    default:
+        break;
     }
-    if (!result && inherit) {
-        DOMNode *parentNode = [node parentNode];
-        if (parentNode && !(isBackgroundColor && [parentNode nodeType] == DOM_ELEMENT_NODE && [self _elementHasOwnBackgroundColor:(DOMElement *)parentNode]))
-            return [self _colorForNode:parentNode property:key];
+
+    if (inherit) {
+        if (Node* parent = node.parentNode())
+            return colorPropertyValueForNode(*parent, propertyName);
     }
-    return result;
+
+    return Color();
 }
 
-- (PlatformColor *)_colorForNode:(DOMNode *)node property:(NSString *)key {
-    RetainPtr<NSMutableDictionary> attributeDictionary = [_colorsForNodes objectForKey:node];
-    if (!attributeDictionary) {
-        attributeDictionary = adoptNS([[NSMutableDictionary alloc] init]);
-        [_colorsForNodes setObject:attributeDictionary.get() forKey:node];
-    }
-    PlatformColor *result = [attributeDictionary objectForKey:key];
-    if (!result) {
-        result = [self _computedColorForNode:node property:key];
-        [attributeDictionary setObject:(result ? result : [PlatformColorClass clearColor]) forKey:key];
-    }
-    if ([[PlatformColorClass clearColor] isEqual:result] || ([result alphaComponent] == 0.0) )
-        result = nil;
-    return result;
+- (PlatformColor *)_colorForNode:(DOMNode *)node property:(NSString *)key
+{
+    Node* coreNode = core(node);
+    if (!coreNode)
+        return nil;
+    Color result = _caches->colorPropertyValueForNode(*coreNode, String(key));
+    if (!result.isValid())
+        return nil;
+    PlatformColor *platformResult = _platformColor(result);
+    if ([[PlatformColorClass clearColor] isEqual:platformResult] || ([platformResult alphaComponent] == 0.0))
+        return nil;
+    return platformResult;
 }
 
 #define UIFloatIsZero(number) (fabs(number - 0) < FLT_EPSILON)
@@ -2407,7 +2396,6 @@ static NSInteger _colCompare(id block1, id block2, void *)
     [_textTableRows release];
     [_textTableRowArrays release];
     [_textTableRowBackgroundColors release];
-    [_colorsForNodes release];
     [_attributesForElements release];
     [_fontCache release];
     [_writingDirectionArray release];
@@ -2432,7 +2420,6 @@ static NSInteger _colCompare(id block1, id block2, void *)
     _textTableRows = [[NSMutableArray alloc] init];
     _textTableRowArrays = [[NSMutableArray alloc] init];
     _textTableRowBackgroundColors = [[NSMutableArray alloc] init];
-    _colorsForNodes = [[NSMutableDictionary alloc] init];
     _attributesForElements = [[NSMutableDictionary alloc] init];
     _fontCache = [[NSMutableDictionary alloc] init];
     _writingDirectionArray = [[NSMutableArray alloc] init];
