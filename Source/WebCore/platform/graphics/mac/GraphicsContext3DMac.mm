@@ -295,6 +295,7 @@ GraphicsContext3D::~GraphicsContext3D()
     if (m_contextObj) {
 #if PLATFORM(IOS)
         makeContextCurrent();
+        [m_contextObj renderbufferStorage:GL_RENDERBUFFER fromDrawable:nil];
         ::glDeleteRenderbuffers(1, &m_texture);
         ::glDeleteRenderbuffers(1, &m_compositorTexture);
 #else

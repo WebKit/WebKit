@@ -1,3 +1,17 @@
+2014-03-18  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Destroy EAGLContext's backing store
+        https://bugs.webkit.org/show_bug.cgi?id=130439
+        <rdar://problem/16295217>
+
+        Reviewed by Tim Horton.
+
+        When a GraphicsContext3D is being destroyed, we should
+        also remove any EAGLContext backing store.
+
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+
 2014-03-18  Tim Horton  <timothy_horton@apple.com>
 
         [iOS][WebKit2] Mark layer contents as being opaque if they are
