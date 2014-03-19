@@ -1,4 +1,21 @@
 =================
+WebKitGTK+  2.2.6
+=================
+
+What's new in WebKitGTK+ 2.2.6?
+
+  - Fix infinite loop in WebProcess due to a race condition that can
+    happen when the socket event source is cancelled.
+  - Use a persistent cache for plugins metadata to avoid blocking the
+    UI while scanning plugins during page loads.
+  - Make sure the web process doesn't finish if there's an ongoing
+    print operation.
+  - Fix web process leak when the WebView is leaked by the
+    application.
+  - Fix the generation of g_return macros for GObject DOM bindings in
+    some cases where non pointer parameters were handled as pointers.
+
+=================
 WebKitGTK+  2.2.5
 =================
 
