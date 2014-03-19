@@ -1655,7 +1655,7 @@ void GraphicsLayerCA::updateContentsOpaque(float pageScaleFactor)
     bool contentsOpaque = m_contentsOpaque;
     if (contentsOpaque) {
         float contentsScale = clampedContentsScaleForScale(m_rootRelativeScaleFactor * pageScaleFactor * deviceScaleFactor());
-        if (!isIntegral(contentsScale))
+        if (!isIntegral(contentsScale) && !m_client->paintsOpaquelyAtNonIntegralScales(this))
             contentsOpaque = false;
     }
     

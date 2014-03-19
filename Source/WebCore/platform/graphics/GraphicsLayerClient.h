@@ -88,6 +88,7 @@ public:
     virtual float pageScaleFactor() const { return 1; }
 
     virtual float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const { return 1; }
+    virtual bool paintsOpaquelyAtNonIntegralScales(const GraphicsLayer*) const { return false; }
 
     virtual bool isTrackingRepaints() const { return false; }
 

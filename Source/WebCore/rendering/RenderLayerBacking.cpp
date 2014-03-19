@@ -2257,6 +2257,11 @@ float RenderLayerBacking::contentsScaleMultiplierForNewTiles(const GraphicsLayer
     return compositor().contentsScaleMultiplierForNewTiles(layer);
 }
 
+bool RenderLayerBacking::paintsOpaquelyAtNonIntegralScales(const GraphicsLayer*) const
+{
+    return m_isMainFrameRenderViewLayer;
+}
+
 void RenderLayerBacking::didCommitChangesForLayer(const GraphicsLayer* layer) const
 {
     compositor().didFlushChangesForLayer(m_owningLayer, layer);

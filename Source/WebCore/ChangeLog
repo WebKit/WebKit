@@ -1,3 +1,25 @@
+2014-03-18  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS][WebKit2] Mark layer contents as being opaque if they are
+        https://bugs.webkit.org/show_bug.cgi?id=130427
+        <rdar://problem/15540434>
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::paintsOpaquelyAtNonIntegralScales):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateContentsOpaque):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintsOpaquelyAtNonIntegralScales):
+        * rendering/RenderLayerBacking.h:
+        r159463 stopped us from setting layers opaque if they were being painted
+        at non-integral scale. This makes sense for compositing layers, which
+        are painted by arbitrary elements, but the main frame's RenderView
+        will always paint its entire contents. To restore the opaque contents
+        optimization to the main frame's tiles, don't de-opaquify layers
+        belonging to the main frame's RenderView.
+
 2014-03-18  Jeffrey Pfau  <jpfau@apple.com>
 
         Unify <media> element callback registration and unregistration

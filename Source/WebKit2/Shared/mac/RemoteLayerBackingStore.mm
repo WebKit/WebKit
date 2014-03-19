@@ -31,6 +31,7 @@
 #import "PlatformCALayerRemote.h"
 #import "ShareableBitmap.h"
 #import "WebCoreArgumentCoders.h"
+#import <QuartzCore/QuartzCore.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/WebLayer.h>
 
@@ -38,7 +39,7 @@
 #import <mach/mach_port.h>
 #endif
 
-#if defined(__has_include) && __has_include(<ApplicationServices/ApplicationServicesPriv.h>)
+#if __has_include(<ApplicationServices/ApplicationServicesPriv.h>)
 #import <ApplicationServices/ApplicationServicesPriv.h>
 #endif
 
@@ -49,23 +50,33 @@ CGContextRef CGIOSurfaceContextCreate(IOSurfaceRef, size_t, size_t, size_t, size
 CGImageRef CGIOSurfaceContextCreateImage(CGContextRef);
 }
 
+#if __has_include(<QuartzCore/CALayerPrivate.h>)
+#import <QuartzCore/CALayerPrivate.h>
+#endif
+
+@interface CALayer (Details)
+@property BOOL contentsOpaque;
+@end
+
 using namespace WebCore;
 using namespace WebKit;
 
 RemoteLayerBackingStore::RemoteLayerBackingStore()
     : m_layer(nullptr)
+    , m_isOpaque(false)
 {
 }
 
-void RemoteLayerBackingStore::ensureBackingStore(PlatformCALayerRemote* layer, IntSize size, float scale, bool acceleratesDrawing)
+void RemoteLayerBackingStore::ensureBackingStore(PlatformCALayerRemote* layer, IntSize size, float scale, bool acceleratesDrawing, bool isOpaque)
 {
-    if (m_layer == layer && m_size == size && m_scale == scale && m_acceleratesDrawing == acceleratesDrawing)
+    if (m_layer == layer && m_size == size && m_scale == scale && m_acceleratesDrawing == acceleratesDrawing && m_isOpaque == isOpaque)
         return;
 
     m_layer = layer;
     m_size = size;
     m_scale = scale;
     m_acceleratesDrawing = acceleratesDrawing;
+    m_isOpaque = isOpaque;
 
 #if USE(IOSURFACE)
     m_frontSurface = nullptr;
@@ -78,6 +89,7 @@ void RemoteLayerBackingStore::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_size;
     encoder << m_scale;
     encoder << m_acceleratesDrawing;
+    encoder << m_isOpaque;
 
 #if USE(IOSURFACE)
     if (m_acceleratesDrawing) {
@@ -103,6 +115,9 @@ bool RemoteLayerBackingStore::decode(IPC::ArgumentDecoder& decoder, RemoteLayerB
         return false;
 
     if (!decoder.decode(result.m_acceleratesDrawing))
+        return false;
+
+    if (!decoder.decode(result.m_isOpaque))
         return false;
 
 #if USE(IOSURFACE)
@@ -174,7 +189,7 @@ static RetainPtr<IOSurfaceRef> createIOSurface(IntSize size)
 }
 #endif // USE(IOSURFACE)
 
-RetainPtr<CGImageRef> RemoteLayerBackingStore::image() const
+RetainPtr<CGImageRef> RemoteLayerBackingStore::createImageForFrontBuffer() const
 {
     if (!m_frontBuffer || m_acceleratesDrawing)
         return nullptr;
@@ -249,8 +264,8 @@ bool RemoteLayerBackingStore::display()
     ASSERT(!m_acceleratesDrawing);
 #endif
 
-    RetainPtr<CGImageRef> frontImage = image();
-    m_frontBuffer = ShareableBitmap::createShareable(expandedScaledSize, ShareableBitmap::SupportsAlpha);
+    RetainPtr<CGImageRef> frontImage = createImageForFrontBuffer();
+    m_frontBuffer = ShareableBitmap::createShareable(expandedScaledSize, m_isOpaque ? ShareableBitmap::NoFlags : ShareableBitmap::SupportsAlpha);
     std::unique_ptr<GraphicsContext> context = m_frontBuffer->createGraphicsContext();
     drawInContext(*context, frontImage.get());
     
@@ -346,4 +361,19 @@ void RemoteLayerBackingStore::enumerateRectsBeingDrawn(CGContextRef context, voi
         CGRect rectToDraw = CGRectApplyAffineTransform(rect, inverseTransform);
         block(rectToDraw);
     }
+}
+
+void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer)
+{
+#if USE(IOSURFACE)
+    if (acceleratesDrawing())
+        layer.contents = (id)m_frontSurface.get();
+    else
+        layer.contents = (id)createImageForFrontBuffer().get();
+#else
+    ASSERT(!acceleratesDrawing());
+    layer.contents = (id)createImageForFrontBuffer().get();
+#endif
+
+    layer.contentsOpaque = m_isOpaque;
 }

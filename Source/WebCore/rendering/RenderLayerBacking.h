@@ -177,6 +177,8 @@ public:
     virtual float deviceScaleFactor() const override;
     virtual float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const override;
 
+    virtual bool paintsOpaquelyAtNonIntegralScales(const GraphicsLayer*) const override;
+
     virtual float pageScaleFactor() const override;
     virtual void didCommitChangesForLayer(const GraphicsLayer*) const override;
     virtual bool getCurrentTransform(const GraphicsLayer*, TransformationMatrix&) const override;

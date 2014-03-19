@@ -31,11 +31,18 @@
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/PlatformCAFilters.h>
 #import <WebCore/ScrollbarThemeMac.h>
+
 #if PLATFORM(IOS)
 #import <UIKit/UIView.h>
 #endif
 
-using namespace WebCore;
+#if __has_include(<QuartzCore/CALayerPrivate.h>)
+#import <QuartzCore/CALayerPrivate.h>
+#endif
+
+@interface CALayer (Details)
+@property BOOL contentsOpaque;
+@end
 
 #if PLATFORM(IOS)
 @interface UIView (WKUIViewUtilities)
@@ -55,6 +62,8 @@ using namespace WebCore;
 
 @end
 #endif
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -172,18 +181,12 @@ static void applyPropertiesToLayer(CALayer *layer, const RemoteLayerTreeTransact
         layer.timeOffset = properties.timeOffset;
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged) {
-        if (RemoteLayerBackingStore* backingStore = properties.backingStore.get()) {
-#if USE(IOSURFACE)
-            if (backingStore->acceleratesDrawing())
-                layer.contents = (id)backingStore->surface().get();
-            else
-                layer.contents = (id)backingStore->image().get();
-#else
-            ASSERT(!backingStore->acceleratesDrawing());
-            layer.contents = (id)backingStore->image().get();
-#endif
-        } else
+        if (RemoteLayerBackingStore* backingStore = properties.backingStore.get())
+            backingStore->applyBackingStoreToLayer(layer);
+        else {
             layer.contents = nil;
+            layer.contentsOpaque = NO;
+        }
     }
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::FiltersChanged)
