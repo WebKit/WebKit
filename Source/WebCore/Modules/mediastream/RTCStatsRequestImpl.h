@@ -41,12 +41,12 @@ class RTCPeerConnectionErrorCallback;
 
 class RTCStatsRequestImpl : public RTCStatsRequest, public ActiveDOMObject {
 public:
-    static PassRefPtr<RTCStatsRequestImpl> create(ScriptExecutionContext*, PassRefPtr<RTCStatsCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>, PassRefPtr<MediaStreamTrack>);
+    static PassRefPtr<RTCStatsRequestImpl> create(ScriptExecutionContext*, PassRefPtr<RTCStatsCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>, PassRefPtr<MediaStreamTrackPrivate>);
     virtual ~RTCStatsRequestImpl();
 
     virtual PassRefPtr<RTCStatsResponseBase> createResponse() override;
     virtual bool hasSelector() override;
-    virtual MediaStreamTrack* track() override;
+    virtual MediaStreamTrackPrivate* track() override;
 
     virtual void requestSucceeded(PassRefPtr<RTCStatsResponseBase>) override;
     virtual void requestFailed(const String&) override;
@@ -55,13 +55,13 @@ public:
     virtual void stop() override;
 
 private:
-    RTCStatsRequestImpl(ScriptExecutionContext*, PassRefPtr<RTCStatsCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>, PassRefPtr<MediaStreamTrack>);
+    RTCStatsRequestImpl(ScriptExecutionContext*, PassRefPtr<RTCStatsCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>, PassRefPtr<MediaStreamTrackPrivate>);
 
     void clear();
 
     RefPtr<RTCStatsCallback> m_successCallback;
     RefPtr<RTCPeerConnectionErrorCallback> m_errorCallback;
-    RefPtr<MediaStreamTrack> m_track;
+    RefPtr<MediaStreamTrackPrivate> m_track;
 };
 
 } // namespace WebCore

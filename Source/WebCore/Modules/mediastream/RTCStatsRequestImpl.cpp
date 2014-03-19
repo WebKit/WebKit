@@ -36,14 +36,14 @@
 
 namespace WebCore {
 
-PassRefPtr<RTCStatsRequestImpl> RTCStatsRequestImpl::create(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> successCallback, PassRefPtr<RTCPeerConnectionErrorCallback> errorCallback, PassRefPtr<MediaStreamTrack> selector)
+PassRefPtr<RTCStatsRequestImpl> RTCStatsRequestImpl::create(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> successCallback, PassRefPtr<RTCPeerConnectionErrorCallback> errorCallback, PassRefPtr<MediaStreamTrackPrivate> selector)
 {
     RefPtr<RTCStatsRequestImpl> request = adoptRef(new RTCStatsRequestImpl(context, successCallback, errorCallback, selector));
     request->suspendIfNeeded();
     return request.release();
 }
 
-RTCStatsRequestImpl::RTCStatsRequestImpl(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> successCallback, PassRefPtr<RTCPeerConnectionErrorCallback> errorCallback, PassRefPtr<MediaStreamTrack> selector)
+RTCStatsRequestImpl::RTCStatsRequestImpl(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> successCallback, PassRefPtr<RTCPeerConnectionErrorCallback> errorCallback, PassRefPtr<MediaStreamTrackPrivate> selector)
     : ActiveDOMObject(context)
     , m_successCallback(successCallback)
     , m_errorCallback(errorCallback)
@@ -65,7 +65,7 @@ bool RTCStatsRequestImpl::hasSelector()
     return m_track;
 }
 
-MediaStreamTrack* RTCStatsRequestImpl::track()
+MediaStreamTrackPrivate* RTCStatsRequestImpl::track()
 {
     return m_track.get();
 }

@@ -1,3 +1,23 @@
+2014-03-18  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [WebRTC] Fix layering violation in RTCStatsRequest
+        https://bugs.webkit.org/show_bug.cgi?id=130426
+
+        Reviewed by Eric Carlson.
+
+        RTCStatsRequest::track() should return a MediaStreamTrackPrivate*.
+
+        No new tests needed.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::getStats):
+        * Modules/mediastream/RTCStatsRequestImpl.cpp:
+        (WebCore::RTCStatsRequestImpl::create):
+        (WebCore::RTCStatsRequestImpl::RTCStatsRequestImpl):
+        (WebCore::RTCStatsRequestImpl::track):
+        * Modules/mediastream/RTCStatsRequestImpl.h:
+        * platform/mediastream/RTCStatsRequest.h:
+
 2014-03-18  Anders Carlsson  <andersca@apple.com>
 
         Fix a trivial FIXME
