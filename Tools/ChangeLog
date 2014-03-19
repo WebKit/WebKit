@@ -1,3 +1,10 @@
+2014-03-19  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (OS X 10.9.2): PageVisibilityStateWithWindowChanges.WebKit2 API test fails
+        https://bugs.webkit.org/show_bug.cgi?id=130463
+
+        * TestWebKitAPI/Tests/mac/PageVisibilityStateWithWindowChanges.mm: Disable the test.
+
 2014-03-18  Samuel White  <samuel_white@apple.com>
 
         AX: Not able to use arrow keys to read text with VoiceOver before selection is set someplace (anyplace).
