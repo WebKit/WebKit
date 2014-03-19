@@ -143,8 +143,6 @@ struct BasicBlock : RefCounted<BasicBlock> {
     unsigned innerMostLoopIndices[numberOfInnerMostLoopIndices];
 
     struct SSAData {
-        Operands<FlushedAt> flushAtHead;
-        Operands<FlushedAt> flushAtTail;
         Operands<Availability> availabilityAtHead;
         Operands<Availability> availabilityAtTail;
         HashSet<Node*> liveAtHead;

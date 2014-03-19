@@ -608,7 +608,6 @@ private:
         case StoreBarrierWithNullCheck:
             compileStoreBarrierWithNullCheck();
             break;
-        case Flush:
         case PhantomLocal:
         case SetArgument:
         case LoopHint:

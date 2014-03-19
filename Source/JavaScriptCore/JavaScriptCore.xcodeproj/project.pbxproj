@@ -1249,8 +1249,6 @@
 		A7D89CF617A0B8CC00773AD8 /* DFGCriticalEdgeBreakingPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D89CE717A0B8CC00773AD8 /* DFGCriticalEdgeBreakingPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7D89CF717A0B8CC00773AD8 /* DFGFlushFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D89CE817A0B8CC00773AD8 /* DFGFlushFormat.cpp */; };
 		A7D89CF817A0B8CC00773AD8 /* DFGFlushFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D89CE917A0B8CC00773AD8 /* DFGFlushFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A7D89CF917A0B8CC00773AD8 /* DFGFlushLivenessAnalysisPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D89CEA17A0B8CC00773AD8 /* DFGFlushLivenessAnalysisPhase.cpp */; };
-		A7D89CFA17A0B8CC00773AD8 /* DFGFlushLivenessAnalysisPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D89CEB17A0B8CC00773AD8 /* DFGFlushLivenessAnalysisPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7D89CFB17A0B8CC00773AD8 /* DFGLivenessAnalysisPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D89CEC17A0B8CC00773AD8 /* DFGLivenessAnalysisPhase.cpp */; };
 		A7D89CFC17A0B8CC00773AD8 /* DFGLivenessAnalysisPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D89CED17A0B8CC00773AD8 /* DFGLivenessAnalysisPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7D89CFD17A0B8CC00773AD8 /* DFGOSRAvailabilityAnalysisPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D89CEE17A0B8CC00773AD8 /* DFGOSRAvailabilityAnalysisPhase.cpp */; };
@@ -2798,8 +2796,6 @@
 		A7D89CE717A0B8CC00773AD8 /* DFGCriticalEdgeBreakingPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCriticalEdgeBreakingPhase.h; path = dfg/DFGCriticalEdgeBreakingPhase.h; sourceTree = "<group>"; };
 		A7D89CE817A0B8CC00773AD8 /* DFGFlushFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGFlushFormat.cpp; path = dfg/DFGFlushFormat.cpp; sourceTree = "<group>"; };
 		A7D89CE917A0B8CC00773AD8 /* DFGFlushFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGFlushFormat.h; path = dfg/DFGFlushFormat.h; sourceTree = "<group>"; };
-		A7D89CEA17A0B8CC00773AD8 /* DFGFlushLivenessAnalysisPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGFlushLivenessAnalysisPhase.cpp; path = dfg/DFGFlushLivenessAnalysisPhase.cpp; sourceTree = "<group>"; };
-		A7D89CEB17A0B8CC00773AD8 /* DFGFlushLivenessAnalysisPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGFlushLivenessAnalysisPhase.h; path = dfg/DFGFlushLivenessAnalysisPhase.h; sourceTree = "<group>"; };
 		A7D89CEC17A0B8CC00773AD8 /* DFGLivenessAnalysisPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGLivenessAnalysisPhase.cpp; path = dfg/DFGLivenessAnalysisPhase.cpp; sourceTree = "<group>"; };
 		A7D89CED17A0B8CC00773AD8 /* DFGLivenessAnalysisPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGLivenessAnalysisPhase.h; path = dfg/DFGLivenessAnalysisPhase.h; sourceTree = "<group>"; };
 		A7D89CEE17A0B8CC00773AD8 /* DFGOSRAvailabilityAnalysisPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSRAvailabilityAnalysisPhase.cpp; path = dfg/DFGOSRAvailabilityAnalysisPhase.cpp; sourceTree = "<group>"; };
@@ -4367,8 +4363,6 @@
 				0F9D339517FFC4E60073C2BC /* DFGFlushedAt.h */,
 				A7D89CE817A0B8CC00773AD8 /* DFGFlushFormat.cpp */,
 				A7D89CE917A0B8CC00773AD8 /* DFGFlushFormat.h */,
-				A7D89CEA17A0B8CC00773AD8 /* DFGFlushLivenessAnalysisPhase.cpp */,
-				A7D89CEB17A0B8CC00773AD8 /* DFGFlushLivenessAnalysisPhase.h */,
 				86EC9DB61328DF82002B2AD7 /* DFGGenerationInfo.h */,
 				86EC9DB71328DF82002B2AD7 /* DFGGraph.cpp */,
 				86EC9DB81328DF82002B2AD7 /* DFGGraph.h */,
@@ -5086,7 +5080,6 @@
 				0F2BDC16151C5D4F00CD8910 /* DFGFixupPhase.h in Headers */,
 				0F9D339717FFC4E60073C2BC /* DFGFlushedAt.h in Headers */,
 				A7D89CF817A0B8CC00773AD8 /* DFGFlushFormat.h in Headers */,
-				A7D89CFA17A0B8CC00773AD8 /* DFGFlushLivenessAnalysisPhase.h in Headers */,
 				86EC9DC61328DF82002B2AD7 /* DFGGenerationInfo.h in Headers */,
 				86EC9DC81328DF82002B2AD7 /* DFGGraph.h in Headers */,
 				0F2FCCFA18A60070001A27F8 /* DFGGraphSafepoint.h in Headers */,
@@ -6287,7 +6280,6 @@
 				0F2BDC15151C5D4D00CD8910 /* DFGFixupPhase.cpp in Sources */,
 				0F9D339617FFC4E60073C2BC /* DFGFlushedAt.cpp in Sources */,
 				A7D89CF717A0B8CC00773AD8 /* DFGFlushFormat.cpp in Sources */,
-				A7D89CF917A0B8CC00773AD8 /* DFGFlushLivenessAnalysisPhase.cpp in Sources */,
 				86EC9DC71328DF82002B2AD7 /* DFGGraph.cpp in Sources */,
 				0F2FCCF918A60070001A27F8 /* DFGGraphSafepoint.cpp in Sources */,
 				A704D90517A0BAA8006BA554 /* DFGInPlaceAbstractState.cpp in Sources */,

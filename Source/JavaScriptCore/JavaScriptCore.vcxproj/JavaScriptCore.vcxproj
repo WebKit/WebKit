@@ -395,7 +395,6 @@
     <ClCompile Include="..\dfg\DFGFixupPhase.cpp" />
     <ClCompile Include="..\dfg\DFGFlushedAt.cpp" />
     <ClCompile Include="..\dfg\DFGFlushFormat.cpp" />
-    <ClCompile Include="..\dfg\DFGFlushLivenessAnalysisPhase.cpp" />
     <ClCompile Include="..\dfg\DFGGraph.cpp" />
     <ClCompile Include="..\dfg\DFGGraphSafepoint.cpp" />
     <ClCompile Include="..\dfg\DFGInPlaceAbstractState.cpp" />
@@ -948,7 +947,6 @@
     <ClInclude Include="..\dfg\DFGFixupPhase.h" />
     <ClInclude Include="..\dfg\DFGFlushedAt.h" />
     <ClInclude Include="..\dfg\DFGFlushFormat.h" />
-    <ClInclude Include="..\dfg\DFGFlushLivenessAnalysisPhase.h" />
     <ClInclude Include="..\dfg\DFGFPRInfo.h" />
     <ClInclude Include="..\dfg\DFGGenerationInfo.h" />
     <ClInclude Include="..\dfg\DFGGPRInfo.h" />

@@ -453,7 +453,6 @@ void Graph::dump(PrintStream& out, DumpContext* context)
             
         case SSA: {
             RELEASE_ASSERT(block->ssa);
-            out.print("  Flush format: ", block->ssa->flushAtHead, "\n");
             out.print("  Availability: ", block->ssa->availabilityAtHead, "\n");
             out.print("  Live: ", nodeListDump(block->ssa->liveAtHead), "\n");
             out.print("  Values: ", nodeMapDump(block->ssa->valuesAtHead, context), "\n");
@@ -479,7 +478,6 @@ void Graph::dump(PrintStream& out, DumpContext* context)
             
         case SSA: {
             RELEASE_ASSERT(block->ssa);
-            out.print("  Flush format: ", block->ssa->flushAtTail, "\n");
             out.print("  Availability: ", block->ssa->availabilityAtTail, "\n");
             out.print("  Live: ", nodeListDump(block->ssa->liveAtTail), "\n");
             out.print("  Values: ", nodeMapDump(block->ssa->valuesAtTail, context), "\n");

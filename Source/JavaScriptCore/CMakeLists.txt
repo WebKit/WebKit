@@ -142,7 +142,6 @@ set(JavaScriptCore_SOURCES
     dfg/DFGFinalizer.cpp
     dfg/DFGFixupPhase.cpp
     dfg/DFGFlushFormat.cpp
-    dfg/DFGFlushLivenessAnalysisPhase.cpp
     dfg/DFGFlushedAt.cpp
     dfg/DFGGraph.cpp
     dfg/DFGGraphSafepoint.cpp

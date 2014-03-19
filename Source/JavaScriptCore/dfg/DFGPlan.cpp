@@ -39,7 +39,6 @@
 #include "DFGCriticalEdgeBreakingPhase.h"
 #include "DFGDCEPhase.h"
 #include "DFGFailedFinalizer.h"
-#include "DFGFlushLivenessAnalysisPhase.h"
 #include "DFGFixupPhase.h"
 #include "DFGGraphSafepoint.h"
 #include "DFGIntegerCheckCombiningPhase.h"
@@ -317,7 +316,6 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performDCE(dfg); // We rely on this to convert dead SetLocals into the appropriate hint, and to kill dead code that won't be recognized as dead by LLVM.
         performStackLayout(dfg);
         performLivenessAnalysis(dfg);
-        performFlushLivenessAnalysis(dfg);
         performOSRAvailabilityAnalysis(dfg);
         performWatchpointCollection(dfg);
         

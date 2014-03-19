@@ -314,8 +314,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGFixupPhase.h \
 	Source/JavaScriptCore/dfg/DFGFlushFormat.cpp \
 	Source/JavaScriptCore/dfg/DFGFlushFormat.h \
-	Source/JavaScriptCore/dfg/DFGFlushLivenessAnalysisPhase.cpp \
-	Source/JavaScriptCore/dfg/DFGFlushLivenessAnalysisPhase.h \
 	Source/JavaScriptCore/dfg/DFGFlushedAt.cpp \
 	Source/JavaScriptCore/dfg/DFGFlushedAt.h \
 	Source/JavaScriptCore/dfg/DFGGenerationInfo.h \
