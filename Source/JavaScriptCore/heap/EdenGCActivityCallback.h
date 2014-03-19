@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HeapOperation_h
-#define HeapOperation_h
+#ifndef EdenGCActivityCallback_h
+#define EdenGCActivityCallback_h
+
+#include "GCActivityCallback.h"
 
 namespace JSC {
 
-enum HeapOperation { NoOperation, Allocation, FullCollection, EdenCollection, AnyCollection };
+class EdenGCActivityCallback : public GCActivityCallback {
+public:
+    EdenGCActivityCallback(Heap*);
+
+    virtual void doCollection() override;
+
+protected:
+#if USE(CF)
+    EdenGCActivityCallback(Heap* heap, CFRunLoopRef runLoop)
+        : GCActivityCallback(heap, runLoop)
+    {
+    }
+#endif
+
+    virtual double lastGCLength() override;
+    virtual double gcTimeSlice(size_t bytes) override;
+    virtual double deathRate() override;
+};
+
+inline PassRefPtr<GCActivityCallback> GCActivityCallback::createEdenTimer(Heap* heap)
+{
+    return s_shouldCreateGCTimer ? adoptRef(new EdenGCActivityCallback(heap)) : nullptr;
+}
 
 } // namespace JSC
 
-#endif // HeapOperation_h
+#endif // EdenGCActivityCallback_h

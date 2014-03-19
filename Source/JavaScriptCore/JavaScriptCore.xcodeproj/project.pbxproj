@@ -786,6 +786,10 @@
 		2A68295B1875F80500B6C3E2 /* CopyWriteBarrier.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A68295A1875F80500B6C3E2 /* CopyWriteBarrier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2A6F462617E959CE00C45C98 /* HeapOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A6F462517E959CE00C45C98 /* HeapOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2A7A58EF1808A4C40020BDF7 /* DeferGC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A7A58EE1808A4C40020BDF7 /* DeferGC.cpp */; };
+		2A83638518D7D0EE0000EBCC /* EdenGCActivityCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A83638318D7D0EE0000EBCC /* EdenGCActivityCallback.cpp */; };
+		2A83638618D7D0EE0000EBCC /* EdenGCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2A83638918D7D0FE0000EBCC /* FullGCActivityCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A83638718D7D0FE0000EBCC /* FullGCActivityCallback.cpp */; };
+		2A83638A18D7D0FE0000EBCC /* FullGCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AAAA31218BD49D100394CC8 /* StructureIDBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AAAA31018BD49D100394CC8 /* StructureIDBlob.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AACE63C18CA5A0300ED0191 /* GCActivityCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AACE63A18CA5A0300ED0191 /* GCActivityCallback.cpp */; };
 		2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AACE63B18CA5A0300ED0191 /* GCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2268,6 +2272,10 @@
 		2A68295A1875F80500B6C3E2 /* CopyWriteBarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopyWriteBarrier.h; sourceTree = "<group>"; };
 		2A6F462517E959CE00C45C98 /* HeapOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapOperation.h; sourceTree = "<group>"; };
 		2A7A58EE1808A4C40020BDF7 /* DeferGC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeferGC.cpp; sourceTree = "<group>"; };
+		2A83638318D7D0EE0000EBCC /* EdenGCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EdenGCActivityCallback.cpp; sourceTree = "<group>"; };
+		2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EdenGCActivityCallback.h; sourceTree = "<group>"; };
+		2A83638718D7D0FE0000EBCC /* FullGCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FullGCActivityCallback.cpp; sourceTree = "<group>"; };
+		2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullGCActivityCallback.h; sourceTree = "<group>"; };
 		2AAAA31018BD49D100394CC8 /* StructureIDBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureIDBlob.h; sourceTree = "<group>"; };
 		2AACE63A18CA5A0300ED0191 /* GCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCActivityCallback.cpp; sourceTree = "<group>"; };
 		2AACE63B18CA5A0300ED0191 /* GCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCActivityCallback.h; sourceTree = "<group>"; };
@@ -3601,6 +3609,10 @@
 				2A4EC90A1860D6C20094F782 /* WriteBarrierBuffer.h */,
 				0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */,
 				0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */,
+				2A83638318D7D0EE0000EBCC /* EdenGCActivityCallback.cpp */,
+				2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */,
+				2A83638718D7D0FE0000EBCC /* FullGCActivityCallback.cpp */,
+				2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */,
 			);
 			path = heap;
 			sourceTree = "<group>";
@@ -4920,6 +4932,8 @@
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
 				A584032018BFFBE1005A0811 /* InspectorAgent.h in Headers */,
 				2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */,
+				2A83638618D7D0EE0000EBCC /* EdenGCActivityCallback.h in Headers */,
+				2A83638A18D7D0FE0000EBCC /* FullGCActivityCallback.h in Headers */,
 				2AAAA31218BD49D100394CC8 /* StructureIDBlob.h in Headers */,
 				A54E8EB118BFFBBE00556D28 /* GCSegmentedArrayInlines.h in Headers */,
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
@@ -6223,6 +6237,7 @@
 				147F39C2107EC37600427A48 /* Completion.cpp in Sources */,
 				146B16D812EB5B59001BEC1B /* ConservativeRoots.cpp in Sources */,
 				A5FD0079189B051000633231 /* ConsoleMessage.cpp in Sources */,
+				2A83638518D7D0EE0000EBCC /* EdenGCActivityCallback.cpp in Sources */,
 				1428082E107EC0570013E7B2 /* ConstructData.cpp in Sources */,
 				A57D23F11891B5B40031C7FA /* ContentSearchUtilities.cpp in Sources */,
 				C240305514B404E60079EB64 /* CopiedSpace.cpp in Sources */,
@@ -6523,6 +6538,7 @@
 				0F919D10157F3329004A4E7D /* JSSegmentedVariableObject.cpp in Sources */,
 				A7299D9D17D12837005F5FF9 /* JSSet.cpp in Sources */,
 				A790DD6F182F499700588807 /* JSSetIterator.cpp in Sources */,
+				2A83638918D7D0FE0000EBCC /* FullGCActivityCallback.cpp in Sources */,
 				1428083A107EC0750013E7B2 /* JSStack.cpp in Sources */,
 				147F39D5107EC37600427A48 /* JSString.cpp in Sources */,
 				2600B5A6152BAAA70091EE5F /* JSStringJoiner.cpp in Sources */,

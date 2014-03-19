@@ -577,18 +577,14 @@ EncodedJSValue JSC_HOST_CALL functionGCAndSweep(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionFullGC(ExecState* exec)
 {
     JSLockHolder lock(exec);
-    Heap* heap = exec->heap();
-    heap->setShouldDoFullCollection(true);
-    exec->heap()->collect();
+    exec->heap()->collect(FullCollection);
     return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL functionEdenGC(ExecState* exec)
 {
     JSLockHolder lock(exec);
-    Heap* heap = exec->heap();
-    heap->setShouldDoFullCollection(false);
-    heap->collect();
+    exec->heap()->collect(EdenCollection);
     return JSValue::encode(jsUndefined());
 }
 
