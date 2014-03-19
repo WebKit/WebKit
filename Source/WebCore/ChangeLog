@@ -1,3 +1,21 @@
+2014-03-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Allow media engine to update HTMLMediaElement state when playing to external device
+        https://bugs.webkit.org/show_bug.cgi?id=130480
+
+        Reviewed by Jer Noble.
+
+        * html/HTMLMediaElement.h: Add mediaPlayerHandlePlaybackCommand.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::handlePlaybackCommand): New.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerHandlePlaybackCommand):
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::rateChanged): Send Play and Pause commands when
+            playing to an external device.
+
 2014-03-19  Dirk Schulze  <krit@webkit.org>
 
         Implement isPointInPath and isPointInStroke with Path2D argument

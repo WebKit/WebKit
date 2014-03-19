@@ -616,6 +616,11 @@ void MediaPlayerPrivateAVFoundation::metadataLoaded()
 
 void MediaPlayerPrivateAVFoundation::rateChanged()
 {
+#if ENABLE(IOS_AIRPLAY)
+    if (isCurrentPlaybackTargetWireless())
+        m_player->handlePlaybackCommand(rate() ? MediaSession::PlayCommand : MediaSession::PauseCommand);
+#endif
+
     m_player->rateChanged();
 }
 

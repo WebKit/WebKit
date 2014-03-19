@@ -38,6 +38,7 @@
 #include "IntRect.h"
 #include "URL.h"
 #include "LayoutRect.h"
+#include "MediaSession.h"
 #include "NativeImagePtr.h"
 #include "PlatformLayer.h"
 #include "Timer.h"
@@ -264,6 +265,7 @@ public:
 #endif
 
     virtual bool mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&) { return false; }
+    virtual void mediaPlayerHandlePlaybackCommand(MediaSession::RemoteControlCommandType) { }
 };
 
 class MediaPlayerSupportsTypeClient {
@@ -573,6 +575,7 @@ public:
 #endif
 
     bool shouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&);
+    void handlePlaybackCommand(MediaSession::RemoteControlCommandType);
 
 private:
     MediaPlayer(MediaPlayerClient*);

@@ -1398,6 +1398,14 @@ bool MediaPlayer::shouldWaitForResponseToAuthenticationChallenge(const Authentic
 
     return m_mediaPlayerClient->mediaPlayerShouldWaitForResponseToAuthenticationChallenge(challenge);
 }
+    
+void MediaPlayer::handlePlaybackCommand(MediaSession::RemoteControlCommandType command)
+{
+    if (!m_mediaPlayerClient)
+        return;
+    
+    m_mediaPlayerClient->mediaPlayerHandlePlaybackCommand(command);
+}
 
 void MediaPlayerFactorySupport::callRegisterMediaEngine(MediaEngineRegister registerMediaEngine)
 {
