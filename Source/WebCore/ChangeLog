@@ -1,3 +1,20 @@
+2014-03-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r156316): Scrollbar on a large document is broken
+        https://bugs.webkit.org/show_bug.cgi?id=130474
+        <rdar://problem/16371523>
+
+        Reviewed by Anders Carlsson.
+
+        The bug was caused by updateArrowPlacement() doing the work even though Scrollbar Overlay API is available.
+        Prior to r156316, this function exited early:
+        http://trac.webkit.org/browser/trunk/Source/WebCore/platform/mac/ScrollbarThemeMac.mm?rev=156315#L147
+
+        Fixed the bug by deleting updateArrowPlacement() entirely.
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::preferencesChanged):
+
 2014-03-19  Jer Noble  <jer.noble@apple.com>
 
         [Mac][EME] Query whether decoder support exists before creating a new MediaKeys object.
