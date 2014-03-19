@@ -1,3 +1,16 @@
+2014-03-19  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [EFL] vibration/cancelVibration-during-pattern-vibrating.html is failing after r165598
+        https://bugs.webkit.org/show_bug.cgi?id=130333
+
+        Reviewed by Gyuyoung Kim.
+
+        Added setting m_state when calling Vibration::vibrate. It was missing after
+        refactoring Vibration (r165598).
+
+        * Modules/vibration/Vibration.cpp:
+        (WebCore::Vibration::vibrate):
+
 2014-03-19  Sam Weinig  <sam@webkit.org>
 
         Rewrite WebHTMLConverter::_colorForNode in C++
