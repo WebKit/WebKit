@@ -1,3 +1,19 @@
+2014-03-19  Dirk Schulze  <krit@webkit.org>
+
+        Implement isPointInPath and isPointInStroke with Path2D argument
+        https://bugs.webkit.org/show_bug.cgi?id=130473
+
+        Reviewed by Dean Jackson.
+
+        Test isPointInPath and isPointInStroke with Path2D argument.
+
+        * fast/canvas/canvas-path-isPointInPath-expected.txt: Added.
+        * fast/canvas/canvas-path-isPointInPath.html: Added.
+        * fast/canvas/canvas-path-isPointInStroke-expected.txt: Added.
+        * fast/canvas/canvas-path-isPointInStroke.html: Added.
+        * fast/canvas/script-tests/canvas-path-isPointInPath.js: Added.
+        * fast/canvas/script-tests/canvas-path-isPointInStroke.js: Added.
+
 2014-03-19  Antti Koivisto  <antti@apple.com>
 
         Crash with long selector list

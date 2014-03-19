@@ -996,6 +996,28 @@ void CanvasRenderingContext2D::clipInternal(const Path& path, const String& wind
 
 bool CanvasRenderingContext2D::isPointInPath(const float x, const float y, const String& windingRuleString)
 {
+    return isPointInPathInternal(m_path, x, y, windingRuleString);
+}
+
+bool CanvasRenderingContext2D::isPointInStroke(const float x, const float y)
+{
+    return isPointInStrokeInternal(m_path, x, y);
+}
+
+#if ENABLE(CANVAS_PATH)
+bool CanvasRenderingContext2D::isPointInPath(DOMPath* path, const float x, const float y, const String& windingRuleString)
+{
+    return isPointInPathInternal(path->path(), x, y, windingRuleString);
+}
+
+bool CanvasRenderingContext2D::isPointInStroke(DOMPath* path, const float x, const float y)
+{
+    return isPointInStrokeInternal(path->path(), x, y);
+}
+#endif
+
+bool CanvasRenderingContext2D::isPointInPathInternal(const Path& path, float x, float y, const String& windingRuleString)
+{
     GraphicsContext* c = drawingContext();
     if (!c)
         return false;
@@ -1012,11 +1034,10 @@ bool CanvasRenderingContext2D::isPointInPath(const float x, const float y, const
     if (!parseWinding(windingRuleString, windRule))
         return false;
     
-    return m_path.contains(transformedPoint, windRule);
+    return path.contains(transformedPoint, windRule);
 }
 
-
-bool CanvasRenderingContext2D::isPointInStroke(const float x, const float y)
+bool CanvasRenderingContext2D::isPointInStrokeInternal(const Path& path, float x, float y)
 {
     GraphicsContext* c = drawingContext();
     if (!c)
@@ -1031,7 +1052,7 @@ bool CanvasRenderingContext2D::isPointInStroke(const float x, const float y)
         return false;
 
     CanvasStrokeStyleApplier applier(this);
-    return m_path.strokeContains(&applier, transformedPoint);
+    return path.strokeContains(&applier, transformedPoint);
 }
 
 void CanvasRenderingContext2D::clearRect(float x, float y, float width, float height)

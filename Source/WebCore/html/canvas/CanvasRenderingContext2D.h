@@ -144,6 +144,11 @@ public:
     bool isPointInPath(const float x, const float y, const String& winding = "nonzero");
     bool isPointInStroke(const float x, const float y);
 
+#if ENABLE(CANVAS_PATH)
+    bool isPointInPath(DOMPath*, const float x, const float y, const String& winding = "nonzero");
+    bool isPointInStroke(DOMPath*, const float x, const float y);
+#endif
+
     void clearRect(float x, float y, float width, float height);
     void fillRect(float x, float y, float width, float height);
     void strokeRect(float x, float y, float width, float height);
@@ -302,6 +307,9 @@ private:
     void fillInternal(const Path&, const String& winding);
     void strokeInternal(const Path&);
     void clipInternal(const Path&, const String& winding);
+
+    bool isPointInPathInternal(const Path&, float x, float y, const String& winding);
+    bool isPointInStrokeInternal(const Path&, float x, float y);
 
     void clearCanvas();
     Path transformAreaToDevice(const Path&) const;

@@ -1,3 +1,25 @@
+2014-03-19  Dirk Schulze  <krit@webkit.org>
+
+        Implement isPointInPath and isPointInStroke with Path2D argument
+        https://bugs.webkit.org/show_bug.cgi?id=130473
+
+        Reviewed by Dean Jackson.
+
+        Implement isPointInPath and isPointInStroke for 2D Canvas contxts
+        with Path2D argument.
+
+
+        Tests: fast/canvas/canvas-path-isPointInPath.html
+               fast/canvas/canvas-path-isPointInStroke.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::isPointInPath):
+        (WebCore::CanvasRenderingContext2D::isPointInStroke):
+        (WebCore::CanvasRenderingContext2D::isPointInPathInternal):
+        (WebCore::CanvasRenderingContext2D::isPointInStrokeInternal):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+
 2014-03-13  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         GC timer should intelligently choose between EdenCollections and FullCollections

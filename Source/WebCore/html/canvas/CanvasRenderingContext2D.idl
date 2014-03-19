@@ -84,6 +84,11 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     void stroke();
     void clip(optional CanvasWindingRule winding);
 
+#if defined(ENABLE_CANVAS_PATH) && ENABLE_CANVAS_PATH
+    boolean isPointInPath(DOMPath path, float x, float y, optional CanvasWindingRule winding);
+    boolean isPointInStroke(DOMPath path, float x, float y);
+#endif
+
     boolean isPointInPath(float x, float y, optional CanvasWindingRule winding);
     boolean isPointInStroke(float x, float y);
 
