@@ -1,3 +1,16 @@
+2014-03-19  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] An unsplittable box is always displayed in a single region
+        https://bugs.webkit.org/show_bug.cgi?id=130451
+
+        Reviewed by Andrei Bucur.
+
+        Add an ASSERT stating that an unsplittable box region range always contains 1 region.
+        No new functionality, no new tests.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::getRegionRangeForBox):
+
 2014-03-19  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Transform origin is miscalculated when RenderLayer's

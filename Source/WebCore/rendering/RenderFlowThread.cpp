@@ -798,7 +798,7 @@ bool RenderFlowThread::getRegionRangeForBox(const RenderBox* box, RenderRegion*&
 
     if (topMostUnsplittable) {
         if (getRegionRangeForBoxFromCachedInfo(topMostUnsplittable, startRegion, endRegion)) {
-            endRegion = startRegion;
+            ASSERT(endRegion == startRegion);
             return true;
         }
     }
