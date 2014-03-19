@@ -394,6 +394,17 @@ void AccessibilityController::winAddNotificationListener(PlatformUIElement eleme
     m_notificationListeners.add(element, functionCallback);
 }
 
+void AccessibilityController::enableEnhancedAccessibility(bool)
+{
+    // FIXME: implement
+}
+
+bool AccessibilityController::enhancedAccessibilityEnabled()
+{
+    // FIXME: implement
+    return false;
+}
+
 JSRetainPtr<JSStringRef> AccessibilityController::platformName() const
 {
     JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("win"));

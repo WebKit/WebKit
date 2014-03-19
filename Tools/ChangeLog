@@ -1,3 +1,35 @@
+2014-03-18  Samuel White  <samuel_white@apple.com>
+
+        AX: Not able to use arrow keys to read text with VoiceOver before selection is set someplace (anyplace).
+        https://bugs.webkit.org/show_bug.cgi?id=130250
+
+        Reviewed by Chris Fleizach.
+
+        Added ability to toggle enhanced accessibility on and off to support tests that require it.
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        (enableEnhancedAccessibilityCallback):
+        (getEnhancedAccessibilityEnabledCallback):
+        (AccessibilityController::getJSClass):
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/atk/AccessibilityControllerAtk.cpp:
+        (AccessibilityController::enableEnhancedAccessibility):
+        (AccessibilityController::enhancedAccessibilityEnabled):
+        * DumpRenderTree/ios/AccessibilityControllerIOS.mm:
+        (AccessibilityController::enableEnhancedAccessibility):
+        (AccessibilityController::enhancedAccessibilityEnabled):
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::enableEnhancedAccessibility):
+        (AccessibilityController::enhancedAccessibilityEnabled):
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::enableEnhancedAccessibility):
+        (AccessibilityController::enhancedAccessibilityEnabled):
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::enableEnhancedAccessibility):
+        (WTR::AccessibilityController::enhancedAccessibilityEnabled):
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityController.idl:
+
 2014-03-18  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, add some contributors, and fix Nadav's entry (he's not really a reviewer

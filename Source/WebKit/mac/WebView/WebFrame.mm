@@ -2157,6 +2157,22 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 #endif
 }
 
+- (BOOL)enhancedAccessibilityEnabled
+{
+#if HAVE(ACCESSIBILITY)
+    return AXObjectCache::accessibilityEnhancedUserInterfaceEnabled();
+#else
+    return NO;
+#endif
+}
+
+- (void)setEnhancedAccessibility:(BOOL)enable
+{
+#if HAVE(ACCESSIBILITY)
+    AXObjectCache::setEnhancedUserInterfaceAccessibility(enable);
+#endif
+}
+
 - (NSString*)_layerTreeAsText
 {
     Frame* coreFrame = _private->coreFrame;

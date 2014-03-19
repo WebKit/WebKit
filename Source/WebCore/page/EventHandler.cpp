@@ -91,6 +91,7 @@
 #include "TextIterator.h"
 #include "UserGestureIndicator.h"
 #include "UserTypingGestureIndicator.h"
+#include "VisibleUnits.h"
 #include "WheelEvent.h"
 #include "WindowsKeyboardCodes.h"
 #include <wtf/Assertions.h>
@@ -3045,14 +3046,18 @@ static FocusDirection focusDirectionForKey(const AtomicString& keyIdentifier)
     return retVal;
 }
 
-static void handleKeyboardSelectionMovement(FrameSelection& selection, KeyboardEvent* event)
+static void handleKeyboardSelectionMovement(Frame& frame, KeyboardEvent* event)
 {
     if (!event)
         return;
 
-    bool isOptioned = event->getModifierState("Alt");
-    bool isCommanded = event->getModifierState("Meta");
+    FrameSelection& selection = frame.selection();
 
+    bool isCommanded = event->getModifierState("Meta");
+    bool isOptioned = event->getModifierState("Alt");
+    bool isSelection = !selection.isNone();
+
+    FrameSelection::EAlteration alternation = event->getModifierState("Shift") ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove;
     SelectionDirection direction = DirectionForward;
     TextGranularity granularity = CharacterGranularity;
 
@@ -3081,8 +3086,11 @@ static void handleKeyboardSelectionMovement(FrameSelection& selection, KeyboardE
         break;
     }
 
-    FrameSelection::EAlteration alternation = event->getModifierState("Shift") ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove;
-    selection.modify(alternation, direction, granularity, UserTriggered);
+    if (isSelection)
+        selection.modify(alternation, direction, granularity, UserTriggered);
+    else
+        selection.setSelection(startOfDocument(frame.document()), FrameSelection::defaultSetSelectionOptions(UserTriggered));
+
     event->setDefaultHandled();
 }
 
@@ -3090,7 +3098,7 @@ void EventHandler::handleKeyboardSelectionMovementForAccessibility(KeyboardEvent
 {
     if (event->type() == eventNames().keydownEvent) {
         if (AXObjectCache::accessibilityEnhancedUserInterfaceEnabled())
-            handleKeyboardSelectionMovement(m_frame.selection(), event);
+            handleKeyboardSelectionMovement(m_frame, event);
     }
 }
 

@@ -1,3 +1,17 @@
+2014-03-18  Samuel White  <samuel_white@apple.com>
+
+        AX: Not able to use arrow keys to read text with VoiceOver before selection is set someplace (anyplace).
+        https://bugs.webkit.org/show_bug.cgi?id=130250
+
+        Reviewed by Chris Fleizach.
+
+        Added ability to toggle enhanced accessibility on and off to support tests that require it.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKAccessibilityEnableEnhancedAccessibility):
+        (WKAccessibilityEnhancedAccessibilityEnabled):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+
 2014-03-18  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Rename async APIs for better consistency with EFL

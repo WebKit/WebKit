@@ -1,3 +1,15 @@
+2014-03-18  Samuel White  <samuel_white@apple.com>
+
+        AX: Not able to use arrow keys to read text with VoiceOver before selection is set someplace (anyplace).
+        https://bugs.webkit.org/show_bug.cgi?id=130250
+
+        Reviewed by Chris Fleizach.
+
+        Added test to ensure that initial selection gets set when enhanced accessibility is enabled and an arrow key is pressed.
+
+        * platform/mac/accessibility/selection-initial-expected.txt: Added.
+        * platform/mac/accessibility/selection-initial.html: Added.
+
 2014-03-18  Brent Fulgham  <bfulgham@apple.com>
 
         TextTrackRegion Not Implemented

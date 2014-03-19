@@ -1,0 +1,22 @@
+This tests that initial selection is set when arrow keys are pressed and no selection exists.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS isSelectionAtStartOfDocument() is false
+PASS isSelectionAtStartOfDocument() is false
+PASS accessibilityController.enhancedAccessibilityEnabled is true
+PASS isSelectionAtStartOfDocument() is false
+PASS isSelectionAtStartOfDocument() is true
+PASS isSelectionAtStartOfDocument() is false
+PASS isSelectionAtStartOfDocument() is true
+PASS isSelectionAtStartOfDocument() is false
+PASS isSelectionAtStartOfDocument() is true
+PASS isSelectionAtStartOfDocument() is false
+PASS isSelectionAtStartOfDocument() is true
+PASS isSelectionAtStartOfDocument() is false
+PASS isSelectionAtStartOfDocument() is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

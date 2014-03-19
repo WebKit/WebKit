@@ -264,6 +264,22 @@ void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
 #endif
 }
 
+void WKAccessibilityEnableEnhancedAccessibility(bool enable)
+{
+#if HAVE(ACCESSIBILITY)
+    WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility(enable);
+#endif
+}
+
+bool WKAccessibilityEnhancedAccessibilityEnabled()
+{
+#if HAVE(ACCESSIBILITY)
+    return WebCore::AXObjectCache::accessibilityEnhancedUserInterfaceEnabled();
+#else
+    return false;
+#endif
+}
+
 void WKBundlePageStopLoading(WKBundlePageRef pageRef)
 {
     toImpl(pageRef)->stopLoading();

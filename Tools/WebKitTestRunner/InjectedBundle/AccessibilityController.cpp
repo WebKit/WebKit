@@ -61,6 +61,16 @@ JSClassRef AccessibilityController::wrapperClass()
     return JSAccessibilityController::accessibilityControllerClass();
 }
 
+void AccessibilityController::enableEnhancedAccessibility(bool enable)
+{
+    WKAccessibilityEnableEnhancedAccessibility(enable);
+}
+
+bool AccessibilityController::enhancedAccessibilityEnabled()
+{
+    return WKAccessibilityEnhancedAccessibilityEnabled();
+}
+
 #if !PLATFORM(GTK) && !PLATFORM(EFL)
 PassRefPtr<AccessibilityUIElement> AccessibilityController::rootElement()
 {

@@ -127,6 +127,16 @@ void AccessibilityController::removeNotificationListener()
 {
 }
 
+void AccessibilityController::enableEnhancedAccessibility(bool enable)
+{
+    [mainFrame setEnhancedAccessibility:enable];
+}
+
+bool AccessibilityController::enhancedAccessibilityEnabled()
+{
+    return [mainFrame enhancedAccessibilityEnabled];
+}
+
 JSRetainPtr<JSStringRef> AccessibilityController::platformName() const
 {
     JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("ios"));

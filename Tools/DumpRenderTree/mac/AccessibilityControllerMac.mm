@@ -145,6 +145,16 @@ void AccessibilityController::removeNotificationListener()
     // No longer a need to cleanup for tests, since resetToConsistentState will remove the listener.
 }
 
+void AccessibilityController::enableEnhancedAccessibility(bool enable)
+{
+    [mainFrame setEnhancedAccessibility:enable];
+}
+
+bool AccessibilityController::enhancedAccessibilityEnabled()
+{
+    return [mainFrame enhancedAccessibilityEnabled];
+}
+
 JSRetainPtr<JSStringRef> AccessibilityController::platformName() const
 {
     JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("mac"));

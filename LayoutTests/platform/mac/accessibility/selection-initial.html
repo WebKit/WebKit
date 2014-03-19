@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<title>Selection Initial</title>
+</head>
+<body>
+
+<p id="text">Text.</p>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that initial selection is set when arrow keys are pressed and no selection exists.");
+    
+    function clearSelection() {
+        window.getSelection().removeAllRanges();
+    }
+    
+    function isSelectionAtStartOfDocument() {
+        var selection = window.getSelection();
+        return selection.rangeCount >= 1 && selection.getRangeAt(0).endOffset === 0 && selection.getRangeAt(0).startOffset === 0;
+    }
+    
+    if (window.accessibilityController && window.eventSender) {
+        // Down arrow key (should NOT set initial selection before enhanced accessibility is enabled).
+        shouldBe("isSelectionAtStartOfDocument()", "false");
+        eventSender.keyDown("downArrow");
+        shouldBe("isSelectionAtStartOfDocument()", "false");
+        clearSelection();
+        
+        // Enable enhanced accessibility (necessary for accessibility specific selection handling).
+        accessibilityController.enableEnhancedAccessibility(true);
+        shouldBe("accessibilityController.enhancedAccessibilityEnabled", "true");
+        
+        // Down arrow key.
+        shouldBe("isSelectionAtStartOfDocument()", "false");
+        eventSender.keyDown("downArrow");
+        shouldBe("isSelectionAtStartOfDocument()", "true");
+        clearSelection();
+        
+        // Left arrow key.
+        shouldBe("isSelectionAtStartOfDocument()", "false");
+        eventSender.keyDown("leftArrow");
+        shouldBe("isSelectionAtStartOfDocument()", "true");
+        clearSelection();
+        
+        // Right arrow key.
+        shouldBe("isSelectionAtStartOfDocument()", "false");
+        eventSender.keyDown("rightArrow");
+        shouldBe("isSelectionAtStartOfDocument()", "true");
+        clearSelection();
+        
+        // Up arrow key.
+        shouldBe("isSelectionAtStartOfDocument()", "false");
+        eventSender.keyDown("upArrow");
+        shouldBe("isSelectionAtStartOfDocument()", "true");
+        clearSelection();
+        
+        // Z key (only arrow keys should set initial selection if no selection exists).
+        shouldBe("isSelectionAtStartOfDocument()", "false");
+        eventSender.keyDown("Z");
+        shouldBe("isSelectionAtStartOfDocument()", "false");
+        
+        // Hide superfluous text.
+        document.getElementById("text").style.display = "none";
+    }
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

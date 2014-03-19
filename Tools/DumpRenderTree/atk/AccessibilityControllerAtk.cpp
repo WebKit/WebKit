@@ -106,6 +106,17 @@ void AccessibilityController::removeNotificationListener()
     m_globalNotificationHandler = nullptr;
 }
 
+void AccessibilityController::enableEnhancedAccessibility(bool)
+{
+    // FIXME: implement
+}
+
+bool AccessibilityController::enhancedAccessibilityEnabled()
+{
+    // FIXME: implement
+    return false;
+}
+
 JSRetainPtr<JSStringRef> AccessibilityController::platformName() const
 {
     JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("atk"));
