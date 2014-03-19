@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011, 2014 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,20 @@
 #include "config.h"
 #include "MemoryPressureHandler.h"
 
+#include "CSSValuePool.h"
+#include "Document.h"
+#include "Font.h"
+#include "FontCache.h"
+#include "GCController.h"
+#include "MemoryCache.h"
+#include "Page.h"
+#include "PageCache.h"
+#include "ScrollingThread.h"
+#include "StorageThread.h"
+#include "WorkerThread.h"
+#include <wtf/CurrentTime.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/Functional.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -51,15 +65,43 @@ MemoryPressureHandler::MemoryPressureHandler()
 {
 }
 
+void MemoryPressureHandler::releaseMemory(bool critical)
+{
+    int savedPageCacheCapacity = pageCache()->capacity();
+    pageCache()->setCapacity(0);
+    pageCache()->setCapacity(savedPageCacheCapacity);
+
+    fontCache()->purgeInactiveFontData();
+
+    memoryCache()->pruneToPercentage(0);
+
+    cssValuePool().drain();
+
+    clearWidthCaches();
+
+    for (auto* document : Document::allDocuments())
+        document->clearStyleResolver();
+
+    gcController().discardAllCompiledCode();
+
+    platformReleaseMemory(critical);
+
+    // FastMalloc has lock-free thread specific caches that can only be cleared from the thread itself.
+    StorageThread::releaseFastMallocFreeMemoryInAllThreads();
+    WorkerThread::releaseFastMallocFreeMemoryInAllThreads();
+#if ENABLE(ASYNC_SCROLLING)
+    ScrollingThread::dispatch(bind(WTF::releaseFastMallocFreeMemory));
+#endif
+    WTF::releaseFastMallocFreeMemory();
+}
+
 #if !PLATFORM(MAC)
 
 void MemoryPressureHandler::install() { }
 void MemoryPressureHandler::uninstall() { }
 void MemoryPressureHandler::holdOff(unsigned) { }
 void MemoryPressureHandler::respondToMemoryPressure() { }
-#if !PLATFORM(IOS)
-void MemoryPressureHandler::releaseMemory(bool) { }
-#endif // !PLATFORM(IOS)
+void MemoryPressureHandler::platformReleaseMemory(bool) { }
 
 #endif
 

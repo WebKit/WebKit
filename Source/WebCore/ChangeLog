@@ -1,3 +1,25 @@
+2014-03-18  Andreas Kling  <akling@apple.com>
+
+        Share MemoryPressureHandler::releaseMemory() between platforms.
+        <https://webkit.org/b/130416>
+
+        Move the code that scours WebKit for things we can free up right now
+        to the common part of MemoryPressureHandler. This will enable other
+        platforms to do the same thing under pressure.
+
+        There's now also a platformReleaseMemory() where platform-specific
+        pressure relief stuff can go.
+
+        Reviewed by Antti Koivisto.
+
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseMemory):
+        (WebCore::MemoryPressureHandler::platformReleaseMemory):
+        * platform/MemoryPressureHandler.h:
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::respondToMemoryPressure):
+        (WebCore::MemoryPressureHandler::platformReleaseMemory):
+
 2014-03-18  Dean Jackson  <dino@apple.com>
 
         [WebGL] Destroy EAGLContext's backing store

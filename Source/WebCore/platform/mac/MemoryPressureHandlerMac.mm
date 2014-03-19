@@ -26,20 +26,8 @@
 #import "config.h"
 #import "MemoryPressureHandler.h"
 
-#import <WebCore/CSSValuePool.h>
-#import <WebCore/Document.h>
-#import <WebCore/GCController.h>
-#import <WebCore/FontCache.h>
-#import <WebCore/MemoryCache.h>
-#import <WebCore/Page.h>
-#import <WebCore/PageCache.h>
 #import <WebCore/LayerPool.h>
-#import <WebCore/ScrollingThread.h>
-#import <WebCore/StorageThread.h>
-#import <WebCore/WorkerThread.h>
 #import <wtf/CurrentTime.h>
-#import <wtf/FastMalloc.h>
-#import <wtf/Functional.h>
 #import <malloc/malloc.h>
 
 #if !PLATFORM(IOS)
@@ -146,38 +134,12 @@ void MemoryPressureHandler::respondToMemoryPressure()
 
     holdOff(std::max(holdOffTime, s_minimumHoldOffTime));
 }
-#endif // !PLATFORM(IOS)
 
-void MemoryPressureHandler::releaseMemory(bool)
+void MemoryPressureHandler::platformReleaseMemory(bool)
 {
-    int savedPageCacheCapacity = pageCache()->capacity();
-    pageCache()->setCapacity(0);
-    pageCache()->setCapacity(savedPageCacheCapacity);
-
-    fontCache()->purgeInactiveFontData();
-
-    memoryCache()->pruneToPercentage(0);
-
-#if !PLATFORM(IOS)
     LayerPool::sharedPool()->drain();
-#endif
-
-    cssValuePool().drain();
-
-    clearWidthCaches();
-
-    for (auto* document : Document::allDocuments())
-        document->clearStyleResolver();
-
-    gcController().discardAllCompiledCode();
-
-    // FastMalloc has lock-free thread specific caches that can only be cleared from the thread itself.
-    StorageThread::releaseFastMallocFreeMemoryInAllThreads();
-    WorkerThread::releaseFastMallocFreeMemoryInAllThreads();
-#if ENABLE(ASYNC_SCROLLING)
-    ScrollingThread::dispatch(bind(WTF::releaseFastMallocFreeMemory));
-#endif
-    WTF::releaseFastMallocFreeMemory();
 }
+
+#endif // !PLATFORM(IOS)
 
 } // namespace WebCore

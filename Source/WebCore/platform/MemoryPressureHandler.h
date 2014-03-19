@@ -78,6 +78,7 @@ private:
 
     void respondToMemoryPressure();
     static void releaseMemory(bool critical);
+    static void platformReleaseMemory(bool critical);
 
     bool m_installed;
     time_t m_lastRespondTime;
