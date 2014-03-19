@@ -1,3 +1,18 @@
+2014-03-18  Jeffrey Pfau  <jpfau@apple.com>
+
+        Unify <media> element callback registration and unregistration
+        https://bugs.webkit.org/show_bug.cgi?id=130417
+
+        Reviewed by Eric Carlson.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::registerWithDocument):
+        (WebCore::HTMLMediaElement::unregisterWithDocument):
+        (WebCore::HTMLMediaElement::didMoveToNewDocument):
+        * html/HTMLMediaElement.h:
+
 2014-03-18  Jer Noble  <jer.noble@apple.com>
 
         MediaDocument should set a max-width on its <video> element.

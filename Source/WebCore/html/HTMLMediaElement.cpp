@@ -361,13 +361,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     // FIXME: We should clean up and look to better merge the iOS and non-iOS code below.
     Settings* settings = document.settings();
 #if !PLATFORM(IOS)
-    document.registerForMediaVolumeCallbacks(this);
-    document.registerForPrivateBrowsingStateChangedCallbacks(this);
-
-#if ENABLE(PAGE_VISIBILITY_API)
-    document.registerForVisibilityStateChangedCallbacks(this);
-#endif
-
     if (settings && settings->mediaPlaybackRequiresUserGesture()) {
         m_mediaSession->addBehaviorRestriction(HTMLMediaSession::RequireUserGestureForRateChange);
         m_mediaSession->addBehaviorRestriction(HTMLMediaSession::RequireUserGestureForLoad);
@@ -382,13 +375,12 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     }
 #endif // !PLATFORM(IOS)
 
-    addElementToDocumentMap(*this, document);
-
 #if ENABLE(VIDEO_TRACK)
-    document.registerForCaptionPreferencesChangedCallbacks(this);
     if (document.page())
         m_captionDisplayMode = document.page()->group().captionPreferences()->captionDisplayMode();
 #endif
+
+    registerWithDocument(document);
 }
 
 HTMLMediaElement::~HTMLMediaElement()
@@ -397,18 +389,10 @@ HTMLMediaElement::~HTMLMediaElement()
 
     m_asyncEventQueue.close();
 
-    if (m_isWaitingUntilMediaCanStart)
-        document().removeMediaCanStartListener(this);
     setShouldDelayLoadEvent(false);
-    document().unregisterForMediaVolumeCallbacks(this);
-    document().unregisterForPrivateBrowsingStateChangedCallbacks(this);
-
-#if ENABLE(PAGE_VISIBILITY_API)
-    document().unregisterForVisibilityStateChangedCallbacks(this);
-#endif
+    unregisterWithDocument(document());
 
 #if ENABLE(VIDEO_TRACK)
-    document().unregisterForCaptionPreferencesChangedCallbacks(this);
     if (m_audioTracks) {
         m_audioTracks->clearElement();
         for (unsigned i = 0; i < m_audioTracks->length(); ++i)
@@ -445,21 +429,53 @@ HTMLMediaElement::~HTMLMediaElement()
     setMediaKeys(0);
 #endif
 
-    removeElementFromDocumentMap(*this, document());
-
     m_completelyLoaded = true;
     if (m_player)
         m_player->clearMediaPlayerClient();
 }
 
+void HTMLMediaElement::registerWithDocument(Document& document)
+{
+    if (m_isWaitingUntilMediaCanStart)
+        document.addMediaCanStartListener(this);
+
+#if !PLATFORM(IOS)
+    document.registerForMediaVolumeCallbacks(this);
+    document.registerForPrivateBrowsingStateChangedCallbacks(this);
+#if ENABLE(PAGE_VISIBILITY_API)
+    document.registerForVisibilityStateChangedCallbacks(this);
+#endif
+#endif
+
+#if ENABLE(VIDEO_TRACK)
+    document.registerForCaptionPreferencesChangedCallbacks(this);
+#endif
+
+    addElementToDocumentMap(*this, document);
+}
+
+void HTMLMediaElement::unregisterWithDocument(Document& document)
+{
+    if (m_isWaitingUntilMediaCanStart)
+        document.removeMediaCanStartListener(this);
+
+#if !PLATFORM(IOS)
+    document.unregisterForMediaVolumeCallbacks(this);
+    document.unregisterForPrivateBrowsingStateChangedCallbacks(this);
+#if ENABLE(PAGE_VISIBILITY_API)
+    document.unregisterForVisibilityStateChangedCallbacks(this);
+#endif
+#endif
+
+#if ENABLE(VIDEO_TRACK)
+    document.unregisterForCaptionPreferencesChangedCallbacks(this);
+#endif
+
+    removeElementFromDocumentMap(*this, document);
+}
+
 void HTMLMediaElement::didMoveToNewDocument(Document* oldDocument)
 {
-    if (m_isWaitingUntilMediaCanStart) {
-        if (oldDocument)
-            oldDocument->removeMediaCanStartListener(this);
-        document().addMediaCanStartListener(this);
-    }
-
     if (m_shouldDelayLoadEvent) {
         if (oldDocument)
             oldDocument->decrementLoadEventDelayCount();
@@ -467,19 +483,10 @@ void HTMLMediaElement::didMoveToNewDocument(Document* oldDocument)
     }
 
     if (oldDocument) {
-#if ENABLE(PAGE_VISIBILITY_API)
-        oldDocument->unregisterForVisibilityStateChangedCallbacks(this);
-#endif
-        oldDocument->unregisterForMediaVolumeCallbacks(this);
-        removeElementFromDocumentMap(*this, *oldDocument);
+        unregisterWithDocument(*oldDocument);
     }
 
-#if ENABLE(PAGE_VISIBILITY_API)
-    document().registerForVisibilityStateChangedCallbacks(this);
-#endif
-
-    document().registerForMediaVolumeCallbacks(this);
-    addElementToDocumentMap(*this, document());
+    registerWithDocument(document());
 
     HTMLElement::didMoveToNewDocument(oldDocument);
 }

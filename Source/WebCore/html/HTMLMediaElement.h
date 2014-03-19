@@ -707,6 +707,9 @@ private:
     virtual bool canReceiveRemoteControlCommands() const override { return true; }
     virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override;
 
+    void registerWithDocument(Document&);
+    void unregisterWithDocument(Document&);
+
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_progressEventTimer;
     Timer<HTMLMediaElement> m_playbackProgressTimer;
