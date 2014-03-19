@@ -388,10 +388,14 @@
 - (void)_updateScrollViewBackground
 {
     UIColor *pageExtendedBackgroundColor = [self pageExtendedBackgroundColor];
-    if (pageExtendedBackgroundColor && [self _backgroundExtendsBeyondPage] && [_scrollView zoomScale] >= [_scrollView minimumZoomScale] && ![_scrollView isZoomBouncing])
-        [_scrollView setBackgroundColor:pageExtendedBackgroundColor];
-    else
-        [_scrollView setBackgroundColor:nil];
+
+    if ([_scrollView zoomScale] < [_scrollView minimumZoomScale]) {
+        CGFloat slope = 12;
+        CGFloat opacity = std::max(1 - slope * ([_scrollView minimumZoomScale] - [_scrollView zoomScale]), static_cast<CGFloat>(0));
+        pageExtendedBackgroundColor = [pageExtendedBackgroundColor colorWithAlphaComponent:opacity];
+    }
+
+    [_scrollView setBackgroundColor:pageExtendedBackgroundColor];
 }
 
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
