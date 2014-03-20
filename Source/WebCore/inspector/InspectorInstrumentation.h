@@ -264,6 +264,7 @@ public:
     static void playbackStarted(Page*);
     static void playbackPaused(Page*, const ReplayPosition&);
     static void playbackHitPosition(Page*, const ReplayPosition&);
+    static void playbackFinished(Page*);
 #endif
 
 #if ENABLE(WEB_SOCKETS)
@@ -461,6 +462,7 @@ private:
     static void playbackStartedImpl(InstrumentingAgents*);
     static void playbackPausedImpl(InstrumentingAgents*, const ReplayPosition&);
     static void playbackHitPositionImpl(InstrumentingAgents*, const ReplayPosition&);
+    static void playbackFinishedImpl(InstrumentingAgents*);
 #endif
 
 #if ENABLE(WEB_SOCKETS)
@@ -1946,6 +1948,17 @@ inline void InspectorInstrumentation::playbackPaused(Page* page, const ReplayPos
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(position);
+#endif
+}
+
+inline void InspectorInstrumentation::playbackFinished(Page* page)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        playbackFinishedImpl(instrumentingAgents);
+#else
+    UNUSED_PARAM(page);
 #endif
 }
 

@@ -120,9 +120,10 @@ void ReplayController::completeSegment()
     InspectorInstrumentation::sessionModified(&m_page, m_loadedSession);
 }
 
-void ReplayController::loadSegment(PassRefPtr<ReplaySessionSegment> prpSegment)
+void ReplayController::loadSegmentAtIndex(size_t segmentIndex)
 {
-    RefPtr<ReplaySessionSegment> segment = prpSegment;
+    ASSERT(segmentIndex < m_loadedSession->size());
+    RefPtr<ReplaySessionSegment> segment = m_loadedSession->at(segmentIndex);
 
     ASSERT(m_sessionState == SessionState::Replaying);
     ASSERT(m_segmentState == SegmentState::Unloaded);
@@ -132,8 +133,10 @@ void ReplayController::loadSegment(PassRefPtr<ReplaySessionSegment> prpSegment)
     m_loadedSegment = segment;
     m_segmentState = SegmentState::Loaded;
 
+    m_currentPosition.segmentOffset = segmentIndex;
+    m_currentPosition.inputOffset = 0;
+
     m_activeCursor = m_loadedSegment->createReplayingCursor(m_page, this);
-    dispatcher().setDispatchSpeed(m_dispatchSpeed);
 
     LOG(WebReplay, "%-20sLoading segment: %p.\n", "ReplayController", segment.get());
     InspectorInstrumentation::segmentLoaded(&m_page, segment);
@@ -200,6 +203,7 @@ void ReplayController::startPlayback()
     LOG(WebReplay, "%-20s Starting playback to position (segment: %d, input: %d).\n", "ReplayController", m_targetPosition.segmentOffset, m_targetPosition.inputOffset);
     InspectorInstrumentation::playbackStarted(&m_page);
 
+    dispatcher().setDispatchSpeed(m_dispatchSpeed);
     dispatcher().run();
 }
 
@@ -208,9 +212,10 @@ void ReplayController::pausePlayback()
     ASSERT(m_sessionState == SessionState::Replaying);
     ASSERT(m_segmentState == SegmentState::Dispatching);
 
-    m_segmentState = SegmentState::Loaded;
+    if (dispatcher().isRunning())
+        dispatcher().pause();
 
-    dispatcher().pause();
+    m_segmentState = SegmentState::Loaded;
 
     LOG(WebReplay, "%-20s Pausing playback at position (segment: %d, input: %d).\n", "ReplayController", m_currentPosition.segmentOffset, m_currentPosition.inputOffset);
     InspectorInstrumentation::playbackPaused(&m_page, m_currentPosition);
@@ -230,6 +235,7 @@ void ReplayController::cancelPlayback()
     ASSERT(m_segmentState == SegmentState::Loaded);
     unloadSegment();
     m_sessionState = SessionState::Inactive;
+    InspectorInstrumentation::playbackFinished(&m_page);
 }
 
 void ReplayController::replayToPosition(const ReplayPosition& position, DispatchSpeed speed)
@@ -244,12 +250,12 @@ void ReplayController::replayToPosition(const ReplayPosition& position, Dispatch
         m_sessionState = SessionState::Replaying;
 
     if (m_segmentState == SegmentState::Unloaded)
-        loadSegment(m_loadedSession->at(position.segmentOffset));
+        loadSegmentAtIndex(position.segmentOffset);
     else if (position.segmentOffset != m_currentPosition.segmentOffset || m_currentPosition.inputOffset > position.inputOffset) {
         // If the desired segment is not loaded or we have gone past the desired input
         // offset, then unload the current segment and load the appropriate segment.
         unloadSegment();
-        loadSegment(m_loadedSession->at(position.segmentOffset));
+        loadSegmentAtIndex(position.segmentOffset);
     }
 
     ASSERT(m_currentPosition.segmentOffset == position.segmentOffset);
@@ -347,14 +353,18 @@ void ReplayController::didDispatchFinalInput()
 {
     ASSERT(m_segmentState == SegmentState::Dispatching);
 
-    pause();
-    unloadSegment();
-
     // No more segments left to replay; stop.
-    if (++m_currentPosition.segmentOffset == m_loadedSession->size())
-        return;
+    if (m_currentPosition.segmentOffset + 1 == m_loadedSession->size()) {
+        // Normally the position is adjusted when loading the next segment.
+        m_currentPosition.segmentOffset++;
+        m_currentPosition.inputOffset = 0;
 
-    loadSegment(m_loadedSession->at(m_currentPosition.segmentOffset));
+        cancelPlayback();
+        return;
+    }
+
+    unloadSegment();
+    loadSegmentAtIndex(m_currentPosition.segmentOffset + 1);
     startPlayback();
 }
 

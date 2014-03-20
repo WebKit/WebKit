@@ -66,6 +66,8 @@ public:
 
     void setDispatchSpeed(DispatchSpeed speed) { m_speed = speed; }
     DispatchSpeed dispatchSpeed() const { return m_speed; }
+
+    bool isRunning() const { return m_running; }
 private:
     void dispatchInputSoon();
     void dispatchInput();
@@ -78,7 +80,9 @@ private:
 
     // This pointer is valid when an event loop input is presently dispatching.
     EventLoopInputBase* m_runningInput;
+    // Whether the dispatcher is currently calling out to an inputs' dispatch() method.
     bool m_dispatching;
+    // Whether the dispatcher is waiting to dispatch or actively dispatching inputs.
     bool m_running;
 
     DispatchSpeed m_speed;

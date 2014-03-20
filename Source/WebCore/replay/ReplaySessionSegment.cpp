@@ -69,9 +69,9 @@ PassRefPtr<ReplayingInputCursor> ReplaySessionSegment::createReplayingCursor(Pag
     return ReplayingInputCursor::create(*m_storage, page, client);
 }
 
-std::unique_ptr<FunctorInputCursor> ReplaySessionSegment::createFunctorCursor()
+PassRefPtr<FunctorInputCursor> ReplaySessionSegment::createFunctorCursor()
 {
-    return std::make_unique<FunctorInputCursor>(*m_storage);
+    return FunctorInputCursor::create(*m_storage);
 }
 
 } // namespace WebCore

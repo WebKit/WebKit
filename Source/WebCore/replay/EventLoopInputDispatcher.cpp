@@ -89,7 +89,7 @@ void EventLoopInputDispatcher::dispatchInputSoon()
 
     // We may already have an input if replay was paused just before dispatching.
     if (!m_runningInput)
-        m_runningInput = safeCast<EventLoopInputBase*>(m_cursor.uncheckedLoadInput(InputQueue::EventLoopInput));
+        m_runningInput = static_cast<EventLoopInputBase*>(m_cursor.uncheckedLoadInput(InputQueue::EventLoopInput));
 
     if (m_timer.isActive())
         m_timer.stop();
@@ -159,6 +159,7 @@ void EventLoopInputDispatcher::dispatchInput()
     m_client->didDispatchInput(*dispatchedInput);
     if (dispatchedInput->type() == inputTypes().EndSegmentSentinel) {
         m_running = false;
+        m_dispatching = false;
         m_client->didDispatchFinalInput();
         return;
     }

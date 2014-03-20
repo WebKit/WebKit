@@ -1134,6 +1134,12 @@ void InspectorInstrumentation::playbackHitPositionImpl(InstrumentingAgents* inst
     if (InspectorReplayAgent* replayAgent = instrumentingAgents->inspectorReplayAgent())
         replayAgent->playbackHitPosition(position);
 }
+
+void InspectorInstrumentation::playbackFinishedImpl(InstrumentingAgents* instrumentingAgents)
+{
+    if (InspectorReplayAgent* replayAgent = instrumentingAgents->inspectorReplayAgent())
+        replayAgent->playbackFinished();
+}
 #endif
 
 void InspectorInstrumentation::networkStateChangedImpl(InstrumentingAgents* instrumentingAgents)

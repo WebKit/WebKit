@@ -87,6 +87,7 @@ public:
     void playbackStarted();
     void playbackPaused(const ReplayPosition&);
     void playbackHitPosition(const ReplayPosition&);
+    void playbackFinished();
 
     // Calls from the Inspector frontend.
     virtual void startCapturing(ErrorString*) override;

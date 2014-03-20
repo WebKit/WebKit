@@ -1,3 +1,49 @@
+2014-03-20  Brian Burg  <bburg@apple.com>
+
+        Web Replay: fix some oversights in the replay backend
+        https://bugs.webkit.org/show_bug.cgi?id=130435
+
+        Reviewed by Andreas Kling.
+
+        This functionality will be covered by tests in https://webkit.org/b/130145.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::playbackFinishedImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::playbackFinished):
+        * inspector/InspectorReplayAgent.cpp:
+        (WebCore::buildInspectorObjectForSegment):
+        (WebCore::InspectorReplayAgent::playbackFinished):
+        * inspector/InspectorReplayAgent.h: Add a playbackFinished event to Inspector
+        instrumentation. This is fired by ReplayController when playback is cancelled or 
+        playback of the final segment has completed.
+
+        * replay/EventLoopInputDispatcher.cpp:
+        (WebCore::EventLoopInputDispatcher::dispatchInputSoon): Fix wrong cast.
+        (WebCore::EventLoopInputDispatcher::dispatchInput): Ensure that m_dispatching is
+        false when m_running is false.
+        * replay/EventLoopInputDispatcher.h: Distinguish 'dispaching' and 'running' in comments.
+        (WebCore::EventLoopInputDispatcher::isRunning): Added.
+
+        * replay/FunctorInputCursor.h: Since the base class InputCursor is RefCounted, the
+        Functor subclass cannot be put into a unique_ptr. Add create() method instead.
+
+        * replay/ReplayController.cpp:
+        (WebCore::ReplayController::loadSegmentAtIndex): Renamed from loadSegment(). Callers
+        now pass in the desired segment index rather than the segment itself. The index is
+        necessary to properly reset m_position after the segment is loaded.
+
+        (WebCore::ReplayController::startPlayback): Set the dispatcher's speed before run().
+        (WebCore::ReplayController::pausePlayback): Only pause the dispatcher if it's running.
+        (WebCore::ReplayController::cancelPlayback): Add playbackFinished instrumentation.
+        (WebCore::ReplayController::replayToPosition):
+        (WebCore::ReplayController::didDispatchFinalInput): If there are no more segments to load,
+        manually adjust the final m_position and defer to cancelPlayback to unload the segment.
+        * replay/ReplayController.h:
+        * replay/ReplaySessionSegment.cpp:
+        (WebCore::ReplaySessionSegment::createFunctorCursor):
+        * replay/ReplaySessionSegment.h:
+
 2014-03-20  Pratik Solanki  <psolanki@apple.com>
 
         [iOS] Get code to compile on older iOS versions

@@ -52,7 +52,7 @@ public:
 
     PassRefPtr<CapturingInputCursor> createCapturingCursor(Page&);
     PassRefPtr<ReplayingInputCursor> createReplayingCursor(Page&, EventLoopInputDispatcherClient*);
-    std::unique_ptr<FunctorInputCursor> createFunctorCursor();
+    PassRefPtr<FunctorInputCursor> createFunctorCursor();
 private:
     ReplaySessionSegment();
 

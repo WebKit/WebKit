@@ -122,7 +122,8 @@ static PassRefPtr<TypeBuilder::Replay::SessionSegment> buildInspectorObjectForSe
     for (size_t i = 0; i < static_cast<size_t>(InputQueue::Count); i++) {
         SerializeInputToJSONFunctor collector;
         InputQueue queue = static_cast<InputQueue>(i);
-        RefPtr<TypeBuilder::Array<TypeBuilder::Replay::ReplayInput>> queueInputs = segment->createFunctorCursor()->forEachInputInQueue(queue, collector);
+        RefPtr<FunctorInputCursor> functorCursor = segment->createFunctorCursor();
+        RefPtr<TypeBuilder::Array<TypeBuilder::Replay::ReplayInput>> queueInputs = functorCursor->forEachInputInQueue(queue, collector);
 
         RefPtr<TypeBuilder::Replay::ReplayInputQueue> queueObject = TypeBuilder::Replay::ReplayInputQueue::create()
             .setType(EncodingTraits<InputQueue>::encodeValue(queue).convertTo<String>())
@@ -285,6 +286,13 @@ void InspectorReplayAgent::playbackPaused(const ReplayPosition& position)
 void InspectorReplayAgent::playbackHitPosition(const ReplayPosition& position)
 {
     m_frontendDispatcher->playbackHitPosition(buildInspectorObjectForPosition(position), monotonicallyIncreasingTime());
+}
+
+void InspectorReplayAgent::playbackFinished()
+{
+    LOG(WebReplay, "-----REPLAY FINISHED-----");
+
+    m_frontendDispatcher->playbackFinished();
 }
 
 void InspectorReplayAgent::startCapturing(ErrorString* errorString)

@@ -42,8 +42,10 @@ namespace WebCore {
 class FunctorInputCursor final : public InputCursor {
     WTF_MAKE_NONCOPYABLE(FunctorInputCursor);
 public:
-    FunctorInputCursor(SegmentedInputStorage&);
-    virtual ~FunctorInputCursor() { }
+    static PassRefPtr<FunctorInputCursor> create(SegmentedInputStorage& storage)
+    {
+        return adoptRef(new FunctorInputCursor(storage));
+    }
 
     // InputCursor
     virtual bool isCapturing() const override { return false; }
@@ -57,6 +59,8 @@ public:
 protected:
     virtual NondeterministicInputBase* loadInput(InputQueue, const AtomicString&) override;
 private:
+    FunctorInputCursor(SegmentedInputStorage&);
+
     SegmentedInputStorage& m_storage;
 };
 

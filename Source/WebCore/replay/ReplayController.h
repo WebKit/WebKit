@@ -145,7 +145,7 @@ private:
     void createSegment();
     void completeSegment();
 
-    void loadSegment(PassRefPtr<ReplaySessionSegment>);
+    void loadSegmentAtIndex(size_t);
     void unloadSegment(bool suppressNotifications = false);
 
     EventLoopInputDispatcher& dispatcher() const;
