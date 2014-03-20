@@ -24,6 +24,13 @@ add_library(gtest SHARED
 
 add_definitions(-DGTEST_CREATE_SHARED_LIBRARY=1 -DGTEST_HAS_RTTI=0)
 
+# FIXME: This works around compatibility problems in the old version of the third-pary
+# googletest source code checkout. It should be removed once we upgrade to a newer version.
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    add_definitions(-DGTEST_HAS_TR1_TUPLE=0)
+endif ()
+
+
 target_link_libraries(gtest
     WTF
 )

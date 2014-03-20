@@ -293,9 +293,15 @@ set(WebKit2WebExtension_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/Source/WebKit2/webkit
 set(SHOULD_INSTALL_JS_SHELL ON)
 
 # Push of rbp is needed after JSC JIT uses CStack. See http://wkbug.com/127777.
-if (CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
-    set(CMAKE_C_FLAGS_RELEASE "-fno-omit-frame-pointer -fno-tree-dce ${CMAKE_C_FLAGS_RELEASE}")
-    set(CMAKE_CXX_FLAGS_RELEASE "-fno-omit-frame-pointer -fno-tree-dce ${CMAKE_CXX_FLAGS_RELEASE}")
+if (UNIX AND NOT APPLE)
+    if (CMAKE_COMPILER_IS_GNUCXX)
+        set(CMAKE_C_FLAGS_RELEASE "-fno-omit-frame-pointer -fno-tree-dce ${CMAKE_C_FLAGS_RELEASE}")
+        set(CMAKE_CXX_FLAGS_RELEASE "-fno-omit-frame-pointer -fno-tree-dce ${CMAKE_CXX_FLAGS_RELEASE}")
+    endif ()
+    if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+        set(CMAKE_C_FLAGS_RELEASE "-fno-omit-frame-pointer ${CMAKE_C_FLAGS_RELEASE}")
+        set(CMAKE_CXX_FLAGS_RELEASE "-fno-omit-frame-pointer ${CMAKE_CXX_FLAGS_RELEASE}")
+    endif ()
 endif ()
 
 # Add a typelib file to the list of all typelib dependencies. This makes it easy to

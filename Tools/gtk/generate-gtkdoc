@@ -169,10 +169,6 @@ def prepare_environment_for_gtkdoc_generation():
     cflags += ' -DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_32'
     os.environ['CFLAGS'] = cflags
 
-    # Clang can be noisy, throwing unnecessary warnings for unused arguments.
-    if os.environ.get('CC') == "clang":
-        os.environ['CFLAGS'] += ' -Qunused-arguments'
-
     # Paths from the GNUmakefile generated configuration files are relative to the build directory.
     os.chdir(common.build_path())
 

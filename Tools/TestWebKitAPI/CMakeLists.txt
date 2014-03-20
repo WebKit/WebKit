@@ -91,6 +91,12 @@ add_definitions(-DGTEST_LINKED_AS_SHARED_LIBRARY=1 -DGTEST_HAS_RTTI=0
     -DTEST_INJECTED_BUNDLE_PATH=\"${TestWebKitAPIInjectedBundle_PATH}\"
 )
 
+# FIXME: This works around compatibility problems in the old version of the third-pary
+# googletest source code checkout. It should be removed once we upgrade to a newer version.
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    add_definitions(-DGTEST_HAS_TR1_TUPLE=0)
+endif ()
+
 add_executable(TestWTF
     ${test_main_SOURCES}
     ${TESTWEBKITAPI_DIR}/TestsController.cpp

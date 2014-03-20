@@ -1,3 +1,17 @@
+2014-03-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][CMake] Add support for building with Clang
+        https://bugs.webkit.org/show_bug.cgi?id=130260
+
+        Reviewed by Martin Robinson.
+
+        * TestWebKitAPI/CMakeLists.txt: When building with Clang TestWebKitAPI should be
+        built with GTEST_HAS_TR1_TUPLE defined to 0 to avoid build failures occuring in the
+        included GTest framework headers.
+        * gtk/generate-gtkdoc:
+        (prepare_environment_for_gtkdoc_generation): Don't modify the CFLAGS env anymore
+        in case of using Clang since that is now set by the CMake rule.
+
 2014-03-19  Simon Fraser  <simon.fraser@apple.com>
 
         Expose text and page zoom in WK2 SPI, and hook them up in MiniBrowser
