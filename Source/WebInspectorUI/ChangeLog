@@ -1,3 +1,17 @@
+2014-03-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: DebuggerDashboardView looks scrunched debugging JSContext
+        https://bugs.webkit.org/show_bug.cgi?id=130527
+
+        Reviewed by Timothy Hatcher.
+
+        Instead of using body.javascript to force a collapsed style,
+        actually use the toolbar's collapsed class.
+
+        * UserInterface/Views/DashboardContainerView.css:
+        (.toolbar.collapsed .dashboard-container):
+        * UserInterface/Views/Toolbar.js:
+
 2014-03-20  Katie Madonna  <madonnk@gmail.com>
 
         Web Inspector: probe sidebar should use overflow:scroll and split space evenly

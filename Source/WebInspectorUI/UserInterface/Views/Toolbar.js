@@ -143,6 +143,12 @@ WebInspector.Toolbar.prototype = {
         if (!this._leftSectionElement || !this._centerSectionElement || !this._rightSectionElement)
             return;
 
+        // Force collapsed style for JavaScript debuggables.
+        if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript) {
+            this._element.classList.add(WebInspector.NavigationBar.CollapsedStyleClassName)
+            return;
+        }
+
         // Remove the collapsed style class to test if the items can fit at full width.
         this._element.classList.remove(WebInspector.NavigationBar.CollapsedStyleClassName);
 

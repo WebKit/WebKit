@@ -43,8 +43,7 @@ body.window-inactive .toolbar .dashboard-container {
     background-color: rgb(239, 239, 239);
 }
 
-.toolbar.collapsed .dashboard-container,
-body.javascript .toolbar .dashboard-container {
+.toolbar.collapsed .dashboard-container {
     width: 175px;
 }
 
