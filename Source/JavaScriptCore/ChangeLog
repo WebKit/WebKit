@@ -1,3 +1,9 @@
+2014-03-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, revert the DFGCommon.h change in r165938. It was not intentional.
+
+        * dfg/DFGCommon.h:
+
 2014-03-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         GC timer should intelligently choose between EdenCollections and FullCollections

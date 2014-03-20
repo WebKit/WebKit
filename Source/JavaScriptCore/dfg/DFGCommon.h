@@ -103,7 +103,7 @@ enum OptimizationFixpointState { BeforeFixpoint, FixpointNotConverged, FixpointC
 // Describes the form you can expect the entire graph to be in.
 enum GraphForm {
     // LoadStore form means that basic blocks may freely use GetLocal, SetLocal,
-    // and GetLocalUnlinked for accessing local variables and indicating
+    // GetLocalUnlinked, and Flush for accessing local variables and indicating
     // where their live ranges ought to be. Data flow between local accesses is
     // implicit. Liveness is only explicit at block heads (variablesAtHead).
     // This is only used by the DFG simplifier and is only preserved by same.
