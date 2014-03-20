@@ -1,3 +1,36 @@
+2014-03-20  Anders Carlsson  <andersca@apple.com>
+
+        Make WKProcessPoolConfiguration SPI
+        https://bugs.webkit.org/show_bug.cgi?id=130537
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKProcessPool.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool init]):
+        (-[WKProcessPool dealloc]):
+        (-[WKProcessPool description]):
+        (-[WKProcessPool _configuration]):
+        (-[WKProcessPool API::]):
+        (-[WKProcessPool _initWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/WKProcessPoolConfiguration.mm:
+        (-[WKProcessPoolConfiguration _injectedBundleURL]):
+        (-[WKProcessPoolConfiguration _setInjectedBundleURL:]):
+        * UIProcess/API/Cocoa/WKProcessPoolConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPoolInternal.h:
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPoolToBeRemoved.mm: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKProcessPoolPrivate.h.
+        (-[WKProcessPool initWithConfiguration:]):
+        (-[WKProcessPool configuration]):
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKProcessPoolConfigurationPrivate.h.
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKProcessPoolConfiguration.mm.
+        (-[_WKProcessPoolConfiguration injectedBundleURL]):
+        (-[_WKProcessPoolConfiguration setInjectedBundleURL:]):
+        (-[_WKProcessPoolConfiguration description]):
+        (-[_WKProcessPoolConfiguration copyWithZone:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-03-20  Tim Horton  <timothy_horton@apple.com>
 
         Add WebCore::IOSurface wrapper

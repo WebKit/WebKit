@@ -24,45 +24,18 @@
  */
 
 #import "config.h"
-#import "WKProcessPoolConfigurationPrivate.h"
+#import "WKProcessPoolConfiguration.h"
 
-#if WK_API_ENABLED
-
-#import <wtf/RetainPtr.h>
-
-@implementation WKProcessPoolConfiguration {
-    RetainPtr<NSURL> _injectedBundleURL;
-}
+@implementation WKProcessPoolConfiguration
 
 - (NSURL *)_injectedBundleURL
 {
-    return _injectedBundleURL.get();
+    return self.injectedBundleURL;
 }
 
-- (void)_setInjectedBundleURL:(NSURL *)injectedBundleURL
+- (void)_setInjectedBundleURL:(NSURL *)_injectedBundleURL
 {
-    _injectedBundleURL = adoptNS([injectedBundleURL copy]);
-}
-
-- (NSString *)description
-{
-    NSString *description = [NSString stringWithFormat:@"<%@: %p; maximumProcessCount = %lu", NSStringFromClass(self.class), self, static_cast<unsigned long>(_maximumProcessCount)];
-    if (_injectedBundleURL)
-        return [description stringByAppendingFormat:@"; injectedBundleURL: \"%@\">", _injectedBundleURL.get()];
-
-    return [description stringByAppendingString:@">"];
-}
-
-- (id)copyWithZone:(NSZone *)zone
-{
-    WKProcessPoolConfiguration *configuration = [[[self class] allocWithZone:zone] init];
-
-    configuration.maximumProcessCount = self.maximumProcessCount;
-    configuration._injectedBundleURL = self._injectedBundleURL;
-
-    return configuration;
+    self.injectedBundleURL = _injectedBundleURL;
 }
 
 @end
-
-#endif

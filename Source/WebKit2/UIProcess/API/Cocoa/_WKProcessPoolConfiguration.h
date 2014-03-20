@@ -23,27 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/_WKProcessPoolConfiguration.h>
+#import <Foundation/Foundation.h>
+#import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-#import <WebKit2/WKProcessPool.h>
-
 WK_API_CLASS
-@interface WKProcessPoolConfiguration : _WKProcessPoolConfiguration
+@interface _WKProcessPoolConfiguration : NSObject <NSCopying>
 
-@property (nonatomic, copy, setter=_setInjectedBundleURL:) NSURL *_injectedBundleURL;
-
-@end
-
-
-@interface WKProcessPool (WKToBeRemoved)
-
-- (instancetype)initWithConfiguration:(WKProcessPoolConfiguration *)configuration;
-
-@property (nonatomic, readonly) WKProcessPoolConfiguration *configuration;
+@property (nonatomic, copy) NSURL *injectedBundleURL;
+@property (nonatomic) NSUInteger maximumProcessCount;
 
 @end
 
 #endif
-

@@ -27,7 +27,13 @@
 
 #if WK_API_ENABLED
 
+@class _WKProcessPoolConfiguration;
+
 @interface WKProcessPool (WKPrivate)
+
+- (instancetype)_initWithConfiguration:(_WKProcessPoolConfiguration *)configuration WK_DESIGNATED_INITIALIZER;
+
+@property (nonatomic, readonly) _WKProcessPoolConfiguration *_configuration;
 
 - (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host;
 - (void)_setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy;

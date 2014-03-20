@@ -23,27 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/_WKProcessPoolConfiguration.h>
+#include "config.h"
+#include "WKProcessPoolPrivate.h"
 
 #if WK_API_ENABLED
 
-#import <WebKit2/WKProcessPool.h>
+#import "WKProcessPoolConfiguration.h"
 
-WK_API_CLASS
-@interface WKProcessPoolConfiguration : _WKProcessPoolConfiguration
+@implementation WKProcessPool (WKToBeRemoved)
 
-@property (nonatomic, copy, setter=_setInjectedBundleURL:) NSURL *_injectedBundleURL;
+- (instancetype)initWithConfiguration:(WKProcessPoolConfiguration *)configuration
+{
+    return [self _initWithConfiguration:configuration];
+}
 
-@end
-
-
-@interface WKProcessPool (WKToBeRemoved)
-
-- (instancetype)initWithConfiguration:(WKProcessPoolConfiguration *)configuration;
-
-@property (nonatomic, readonly) WKProcessPoolConfiguration *configuration;
+- (WKProcessPoolConfiguration *)configuration
+{
+    return (WKProcessPoolConfiguration *)self._configuration;
+}
 
 @end
 
 #endif
-

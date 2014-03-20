@@ -23,27 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/_WKProcessPoolConfiguration.h>
+#import "config.h"
+#import "WKProcessPoolConfigurationPrivate.h"
 
 #if WK_API_ENABLED
 
-#import <WebKit2/WKProcessPool.h>
+#import <wtf/RetainPtr.h>
 
-WK_API_CLASS
-@interface WKProcessPoolConfiguration : _WKProcessPoolConfiguration
+@implementation _WKProcessPoolConfiguration {
+    RetainPtr<NSURL> _injectedBundleURL;
+}
 
-@property (nonatomic, copy, setter=_setInjectedBundleURL:) NSURL *_injectedBundleURL;
+- (NSURL *)injectedBundleURL
+{
+    return _injectedBundleURL.get();
+}
 
-@end
+- (void)setInjectedBundleURL:(NSURL *)injectedBundleURL
+{
+    _injectedBundleURL = adoptNS([injectedBundleURL copy]);
+}
 
+- (NSString *)description
+{
+    NSString *description = [NSString stringWithFormat:@"<%@: %p; maximumProcessCount = %lu", NSStringFromClass(self.class), self, static_cast<unsigned long>(_maximumProcessCount)];
+    if (_injectedBundleURL)
+        return [description stringByAppendingFormat:@"; injectedBundleURL: \"%@\">", _injectedBundleURL.get()];
 
-@interface WKProcessPool (WKToBeRemoved)
+    return [description stringByAppendingString:@">"];
+}
 
-- (instancetype)initWithConfiguration:(WKProcessPoolConfiguration *)configuration;
+- (id)copyWithZone:(NSZone *)zone
+{
+    _WKProcessPoolConfiguration *configuration = [[[self class] allocWithZone:zone] init];
 
-@property (nonatomic, readonly) WKProcessPoolConfiguration *configuration;
+    configuration.maximumProcessCount = self.maximumProcessCount;
+    configuration.injectedBundleURL = self.injectedBundleURL;
+
+    return configuration;
+}
 
 @end
 
 #endif
-

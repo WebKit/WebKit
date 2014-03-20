@@ -62,10 +62,36 @@ enum : NSUInteger {
 
 - (instancetype)init
 {
-    return [self initWithConfiguration:adoptNS([[WKProcessPoolConfiguration alloc] init]).get()];
+    return [self _initWithConfiguration:adoptNS([[_WKProcessPoolConfiguration alloc] init]).get()];
 }
 
-- (instancetype)initWithConfiguration:(WKProcessPoolConfiguration *)configuration
+- (void)dealloc
+{
+    _context->~WebContext();
+
+    [super dealloc];
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@: %p; configuration = %@>", NSStringFromClass(self.class), self, _configuration.get()];
+}
+
+- (_WKProcessPoolConfiguration *)_configuration
+{
+    return [[_configuration copy] autorelease];
+}
+
+- (API::Object&)_apiObject
+{
+    return *_context;
+}
+
+@end
+
+@implementation WKProcessPool (WKPrivate)
+
+- (instancetype)_initWithConfiguration:(_WKProcessPoolConfiguration *)configuration
 {
     if (!(self = [super init]))
         return nil;
@@ -78,7 +104,7 @@ enum : NSUInteger {
 #endif
 
     String bundlePath;
-    if (NSURL *bundleURL = [_configuration _injectedBundleURL]) {
+    if (NSURL *bundleURL = [_configuration injectedBundleURL]) {
         if (!bundleURL.isFileURL)
             [NSException raise:NSInvalidArgumentException format:@"Injected Bundle URL must be a file URL"];
 
@@ -95,32 +121,6 @@ enum : NSUInteger {
 
     return self;
 }
-
-- (void)dealloc
-{
-    _context->~WebContext();
-
-    [super dealloc];
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"<%@: %p; configuration = %@>", NSStringFromClass(self.class), self, _configuration.get()];
-}
-
-- (WKProcessPoolConfiguration *)configuration
-{
-    return [[_configuration copy] autorelease];
-}
-
-- (API::Object&)_apiObject
-{
-    return *_context;
-}
-
-@end
-
-@implementation WKProcessPool (WKPrivate)
 
 - (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host
 {
