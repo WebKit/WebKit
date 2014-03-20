@@ -1780,10 +1780,6 @@ static NSView *pluginView(WebFrame *frame, WebPluginPackage *pluginPackage,
         LOG(Plugins, "arguments:\n%@", arguments);
     }
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 80000
-    view = [WebPluginController plugInViewWithArguments:arguments fromPluginPackage:pluginPackage];
-    [attributes release];
-#else
     view = [pluginController plugInViewWithArguments:arguments fromPluginPackage:pluginPackage];
     [attributes release];
 
@@ -1795,8 +1791,6 @@ static NSView *pluginView(WebFrame *frame, WebPluginPackage *pluginPackage,
     if (node->hasTagName(HTMLNames::videoTag) || node->hasTagName(HTMLNames::audioTag))
         [pluginController mediaPlugInProxyViewCreated:view];
 #endif
-#endif
-
     return view;
 }
 

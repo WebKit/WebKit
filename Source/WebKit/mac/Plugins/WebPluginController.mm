@@ -140,23 +140,6 @@ static void initializeAudioSession()
 
 @implementation WebPluginController
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 80000
-+ (id)plugInViewWithArguments:(NSDictionary *)arguments fromPluginPackage:(WebPluginPackage *)pluginPackage
-{
-    initializeAudioSession();
-    [pluginPackage load];
-    Class viewFactory = [pluginPackage viewFactory];
-
-    id view = nil;
-
-    if ([viewFactory respondsToSelector:@selector(plugInViewWithArguments:)]) {
-        JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
-        view = [viewFactory plugInViewWithArguments:arguments];
-    }
-
-    return view;
-}
-#else
 - (NSView *)plugInViewWithArguments:(NSDictionary *)arguments fromPluginPackage:(WebPluginPackage *)pluginPackage
 {
 #if PLATFORM(IOS)
@@ -195,7 +178,6 @@ static void initializeAudioSession()
 
     return view;
 }
-#endif
 
 #if PLATFORM(IOS)
 + (void)addPlugInView:(NSView *)view
