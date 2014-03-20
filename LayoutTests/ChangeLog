@@ -1,3 +1,20 @@
+2014-03-20  Lorenzo Tilve  <ltilve@igalia.com>
+
+        Dispatch input event for Range element keyboard event
+        https://bugs.webkit.org/show_bug.cgi?id=129929
+
+        Reviewed by Kent Tamura.
+
+        For any value update, dispatch both input and change event.
+        Also removes extra dispatch change event, as event is dispatched
+        from TextFieldInputType:setValue.
+
+        Merged from Blink (patch by Habib Virji):
+        https://src.chromium.org/viewvc/blink?revision=168558&view=revision
+
+        * fast/forms/range/range-keyboard-oninput-event-expected.txt: Added.
+        * fast/forms/range/range-keyboard-oninput-event.html: Added.
+
 2014-03-20  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Content flowed in 0px height region not displayed
