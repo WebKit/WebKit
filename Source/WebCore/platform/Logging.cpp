@@ -45,9 +45,12 @@ WTFLogChannel* logChannels[] = {
 
 size_t logChannelCount = WTF_ARRAY_LENGTH(logChannels);
 
-WTFLogChannel* logChannelByName(const String& name)
+bool isLogChannelEnabled(const String& name)
 {
-    return WTFLogChannelByName(logChannels, logChannelCount, name.utf8().data());
+    WTFLogChannel* channel = WTFLogChannelByName(logChannels, logChannelCount, name.utf8().data());
+    if (!channel)
+        return false;
+    return channel->state != WTFLogChannelOff;
 }
 
 void initializeLoggingChannelsIfNecessary()

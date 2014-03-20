@@ -80,7 +80,7 @@ WEBCORE_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
 #undef DECLARE_LOG_CHANNEL
 
     String logLevelString();
-    WTFLogChannel* logChannelByName(const String&);
+    bool isLogChannelEnabled(const String& name);
     void initializeLoggingChannelsIfNecessary();
 }
 

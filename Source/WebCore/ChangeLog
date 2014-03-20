@@ -1,3 +1,19 @@
+2014-03-20  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Refactor checking log channel state in MediaPlayerPrivateGStreamerBase.
+        https://bugs.webkit.org/show_bug.cgi?id=130241
+
+        Reviewed by Philippe Normand.
+
+        The channel was passed around only to check its state. Cleaned this up
+        by adding a method to check whether a log channel is enabled.
+
+        * platform/Logging.cpp:
+        (WebCore::isLogChannelEnabled):
+        * platform/Logging.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::createVideoSink):
+
 2014-03-20  Lorenzo Tilve  <ltilve@igalia.com>
 
         Dispatch input event for Range element keyboard event

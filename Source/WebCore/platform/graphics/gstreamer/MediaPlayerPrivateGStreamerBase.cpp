@@ -466,8 +466,7 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSink()
 #if LOG_DISABLED
         g_object_set(m_fpsSink.get(), "text-overlay", FALSE , nullptr);
 #else
-        WTFLogChannel* channel = logChannelByName("Media");
-        if (channel->state != WTFLogChannelOn)
+        if (!isLogChannelEnabled("Media"))
             g_object_set(m_fpsSink.get(), "text-overlay", FALSE , nullptr);
 #endif // LOG_DISABLED
 
