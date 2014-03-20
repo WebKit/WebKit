@@ -1,3 +1,13 @@
+2014-03-20  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Unreviewed GTK Gardening.
+
+        Update expectation of accessibility/table-detection.html after r165535.
+        Update expectation of accessibility/aria-hidden-false-works-in-subtrees.html.
+
+        * platform/gtk/accessibility/aria-hidden-false-works-in-subtrees-expected.txt:
+        * platform/gtk/accessibility/table-detection-expected.txt:
+
 2014-03-20  Mihai Tica  <mitica@adobe.com>
 
         [CSS Blending] Blending operation is not isolated when setting z-index on parent from javascript

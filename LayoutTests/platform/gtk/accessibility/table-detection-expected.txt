@@ -4,7 +4,7 @@ This should be a table because it has a thead.
 AXRole: AXTable
 AXParent: AXWebArea
 AXChildren: 4
-AXPosition: { 8.000000, 54.000000 }
+AXPosition: { 8.000000, 66.000000 }
 AXSize: { 62.000000, 45.000000 }
 AXTitle: 
 AXDescription: 
@@ -227,7 +227,7 @@ AXRole: AXTable
 AXParent: AXWebArea
 AXChildren: 2
 AXPosition: { 8.000000, 346.000000 }
-AXSize: { 769.000000, 26.000000 }
+AXSize: { 769.000000, 27.000000 }
 AXTitle: 
 AXDescription: 
 AXFocusable: 0
@@ -249,7 +249,7 @@ AXRole: AXTable
 AXParent: AXWebArea
 AXChildren: 7
 AXPosition: { 8.000000, 346.000000 }
-AXSize: { 130.000000, 86.000000 }
+AXSize: { 130.000000, 121.000000 }
 AXTitle: 
 AXDescription: 
 AXFocusable: 0
@@ -454,4 +454,27 @@ asdf
 asdf
 asdf
 asdf
+
+This should be a table even though it uses table-row-group for it's display type.
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 4
+AXPosition: { 8.000000, 548.000000 }
+AXSize: { 84.000000, 45.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitGtk
+
+head	head2
+asdf	asdf
 
