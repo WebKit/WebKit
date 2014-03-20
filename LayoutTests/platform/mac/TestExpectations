@@ -1335,3 +1335,6 @@ webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]
 webkit.org/b/124836 platform/mac/accessibility/mathml-elements.html [ Failure ]
 
 webkit.org/b/130353 mathml/wbr-in-mroot-crash.html [ Crash ]
+
+# This test frequently fails on the bots 
+webkit.org/b/130490 media/video-remote-control-playpause.html [ Pass Failure ]
