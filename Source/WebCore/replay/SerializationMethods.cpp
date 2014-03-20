@@ -31,10 +31,15 @@
 #if ENABLE(WEB_REPLAY)
 
 #include "AllReplayInputs.h"
+#include "PlatformMouseEvent.h"
 #include "ReplayInputTypes.h"
 #include "SecurityOrigin.h"
 #include "URL.h"
 
+using WebCore::IntPoint;
+using WebCore::MouseButton;
+using WebCore::PlatformEvent;
+using WebCore::PlatformMouseEvent;
 using WebCore::SecurityOrigin;
 using WebCore::URL;
 using WebCore::inputTypes;
@@ -44,6 +49,14 @@ using WebCore::name; \
 
 WEB_REPLAY_INPUT_NAMES_FOR_EACH(IMPORT_FROM_WEBCORE_NAMESPACE)
 #undef IMPORT_FROM_WEBCORE_NAMESPACE
+
+#define ENCODE_SCALAR_TYPE_WITH_KEY(_encodedValue, _type, _key, _value) \
+    _encodedValue.put<_type>(ASCIILiteral(#_key), _value)
+
+#define DECODE_SCALAR_TYPE_WITH_KEY(_encodedValue, _type, _key) \
+    _type _key; \
+    if (!_encodedValue.get<_type>(ASCIILiteral(#_key), _key)) \
+        return false
 
 namespace JSC {
 
@@ -103,6 +116,48 @@ bool EncodingTraits<NondeterministicInputBase>::decodeValue(EncodedValue& encode
     }
 
     return false;
+}
+
+EncodedValue EncodingTraits<PlatformMouseEvent>::encodeValue(const PlatformMouseEvent& input)
+{
+    EncodedValue encodedValue = EncodedValue::createObject();
+
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, positionX, input.position().x());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, positionY, input.position().y());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, globalPositionX, input.globalPosition().x());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, globalPositionY, input.globalPosition().y());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, MouseButton, button, input.button());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, PlatformEvent::Type, type, input.type());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, clickCount, input.clickCount());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, shiftKey, input.shiftKey());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, ctrlKey, input.ctrlKey());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, altKey, input.altKey());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, metaKey, input.metaKey());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, timestamp, input.timestamp());
+
+    return encodedValue;
+}
+
+bool EncodingTraits<PlatformMouseEvent>::decodeValue(EncodedValue& encodedValue, std::unique_ptr<PlatformMouseEvent>& input)
+{
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, positionX);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, positionY);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, globalPositionX);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, globalPositionY);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, MouseButton, button);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, PlatformEvent::Type, type);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, clickCount);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, shiftKey);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, ctrlKey);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, altKey);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, metaKey);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, timestamp);
+
+    input = std::make_unique<PlatformMouseEvent>(IntPoint(positionX, positionY),
+        IntPoint(globalPositionX, globalPositionY),
+        button, type, clickCount,
+        shiftKey, ctrlKey, altKey, metaKey, timestamp);
+    return true;
 }
 
 EncodedValue EncodingTraits<SecurityOrigin>::encodeValue(RefPtr<SecurityOrigin> input)

@@ -121,4 +121,14 @@ PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, UINT message, WPARAM wParam, L
     }
 }
 
+bool operator==(unsigned short a, MouseButton b)
+{
+    return a == static_cast<unsigned short>(b);
+}
+
+bool operator!=(unsigned short a, MouseButton b)
+{
+    return a != static_cast<unsigned short>(b);
+}
+
 } // namespace WebCore

@@ -44,7 +44,7 @@ typedef struct _Evas_Event_Mouse_Move Evas_Event_Mouse_Move;
 namespace WebCore {
     
     // These button numbers match the ones used in the DOM API, 0 through 2, except for NoButton which isn't specified.
-    enum MouseButton { NoButton = -1, LeftButton, MiddleButton, RightButton };
+    enum MouseButton : int8_t { NoButton = -1, LeftButton, MiddleButton, RightButton };
 
     class PlatformMouseEvent : public PlatformEvent {
     public:
@@ -127,6 +127,13 @@ namespace WebCore {
         bool m_didActivateWebView;
 #endif
     };
+
+#if PLATFORM(WIN)
+    // These methods are necessary to work around the fact that MSVC will not find a most-specific
+    // operator== to use after implicitly converting MouseButton to an unsigned short.
+    bool operator==(unsigned short a, MouseButton b);
+    bool operator!=(unsigned short a, MouseButton b);
+#endif
 
 } // namespace WebCore
 

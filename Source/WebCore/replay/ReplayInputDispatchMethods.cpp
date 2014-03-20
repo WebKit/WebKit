@@ -34,6 +34,7 @@
 #include "Page.h"
 #include "ReplayController.h"
 #include "URL.h"
+#include "UserInputBridge.h"
 
 namespace WebCore {
 
@@ -50,6 +51,25 @@ void EndSegmentSentinel::dispatch(ReplayController&)
 void InitialNavigation::dispatch(ReplayController& controller)
 {
     controller.page().mainFrame().navigationScheduler().scheduleLocationChange(m_securityOrigin.get(), m_url, m_referrer, true, true);
+}
+
+// User interaction inputs.
+void HandleMouseMove::dispatch(ReplayController& controller)
+{
+    if (m_scrollbarTargeted)
+        controller.page().userInputBridge().handleMouseMoveOnScrollbarEvent(platformEvent(), InputSource::Synthetic);
+    else
+        controller.page().userInputBridge().handleMouseMoveEvent(platformEvent(), InputSource::Synthetic);
+}
+
+void HandleMousePress::dispatch(ReplayController& controller)
+{
+    controller.page().userInputBridge().handleMousePressEvent(platformEvent(), InputSource::Synthetic);
+}
+
+void HandleMouseRelease::dispatch(ReplayController& controller)
+{
+    controller.page().userInputBridge().handleMouseReleaseEvent(platformEvent(), InputSource::Synthetic);
 }
 
 } // namespace WebCore

@@ -38,12 +38,32 @@
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 
+#if ENABLE(WEB_REPLAY)
+#include "ReplayController.h"
+#include "SerializationMethods.h"
+#include "WebReplayInputs.h"
+#include <replay/InputCursor.h>
+#endif
+
+#define EARLY_RETURN_IF_SHOULD_IGNORE_INPUT \
+    do { \
+        if (inputSource == InputSource::User && m_state == UserInputBridge::State::Replaying) \
+            return true; \
+    } while (false)
+
 namespace WebCore {
 
 UserInputBridge::UserInputBridge(Page& page)
     : m_page(page)
 {
 }
+
+#if ENABLE(WEB_REPLAY)
+InputCursor& UserInputBridge::activeCursor() const
+{
+    return m_page.replayController().activeInputCursor();
+}
+#endif
 
 #if ENABLE(CONTEXT_MENUS)
 bool UserInputBridge::handleContextMenuEvent(const PlatformMouseEvent& mouseEvent, const Frame* frame, InputSource)
@@ -52,23 +72,67 @@ bool UserInputBridge::handleContextMenuEvent(const PlatformMouseEvent& mouseEven
 }
 #endif
 
-bool UserInputBridge::handleMousePressEvent(const PlatformMouseEvent& mouseEvent, InputSource)
+bool UserInputBridge::handleMousePressEvent(const PlatformMouseEvent& mouseEvent, InputSource inputSource)
 {
+#if ENABLE(WEB_REPLAY)
+    EARLY_RETURN_IF_SHOULD_IGNORE_INPUT;
+
+    if (activeCursor().isCapturing()) {
+        std::unique_ptr<PlatformMouseEvent> ownedEvent = std::make_unique<PlatformMouseEvent>(mouseEvent);
+        activeCursor().appendInput<HandleMousePress>(std::move(ownedEvent));
+    }
+#else
+    UNUSED_PARAM(inputSource);
+#endif
+
     return m_page.mainFrame().eventHandler().handleMousePressEvent(mouseEvent);
 }
 
-bool UserInputBridge::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent, InputSource)
+bool UserInputBridge::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent, InputSource inputSource)
 {
+#if ENABLE(WEB_REPLAY)
+    EARLY_RETURN_IF_SHOULD_IGNORE_INPUT;
+
+    if (activeCursor().isCapturing()) {
+        std::unique_ptr<PlatformMouseEvent> ownedEvent = std::make_unique<PlatformMouseEvent>(mouseEvent);
+        activeCursor().appendInput<HandleMouseRelease>(std::move(ownedEvent));
+    }
+#else
+    UNUSED_PARAM(inputSource);
+#endif
+
     return m_page.mainFrame().eventHandler().handleMouseReleaseEvent(mouseEvent);
 }
 
-bool UserInputBridge::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, InputSource)
+bool UserInputBridge::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, InputSource inputSource)
 {
+#if ENABLE(WEB_REPLAY)
+    EARLY_RETURN_IF_SHOULD_IGNORE_INPUT;
+
+    if (activeCursor().isCapturing()) {
+        std::unique_ptr<PlatformMouseEvent> ownedEvent = std::make_unique<PlatformMouseEvent>(mouseEvent);
+        activeCursor().appendInput<HandleMouseMove>(std::move(ownedEvent), false);
+    }
+#else
+    UNUSED_PARAM(inputSource);
+#endif
+
     return m_page.mainFrame().eventHandler().mouseMoved(mouseEvent);
 }
 
-bool UserInputBridge::handleMouseMoveOnScrollbarEvent(const PlatformMouseEvent& mouseEvent, InputSource)
+bool UserInputBridge::handleMouseMoveOnScrollbarEvent(const PlatformMouseEvent& mouseEvent, InputSource inputSource)
 {
+#if ENABLE(WEB_REPLAY)
+    EARLY_RETURN_IF_SHOULD_IGNORE_INPUT;
+
+    if (activeCursor().isCapturing()) {
+        std::unique_ptr<PlatformMouseEvent> ownedEvent = std::make_unique<PlatformMouseEvent>(mouseEvent);
+        activeCursor().appendInput<HandleMouseMove>(std::move(ownedEvent), true);
+    }
+#else
+    UNUSED_PARAM(inputSource);
+#endif
+
     return m_page.mainFrame().eventHandler().passMouseMovedEventToScrollbars(mouseEvent);
 }
 

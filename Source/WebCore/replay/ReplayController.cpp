@@ -44,6 +44,7 @@
 #include "ReplaySessionSegment.h"
 #include "ReplayingInputCursor.h"
 #include "ScriptController.h"
+#include "UserInputBridge.h"
 #include "WebReplayInputs.h"
 #include <replay/EmptyInputCursor.h>
 #include <wtf/text/CString.h>
@@ -62,6 +63,32 @@ ReplayController::ReplayController(Page& page)
     , m_sessionState(SessionState::Inactive)
     , m_dispatchSpeed(DispatchSpeed::FastForward)
 {
+}
+
+void ReplayController::setSessionState(SessionState state)
+{
+    ASSERT(state != m_sessionState);
+
+    switch (m_sessionState) {
+    case SessionState::Capturing:
+        ASSERT(state == SessionState::Inactive);
+
+        m_sessionState = state;
+        m_page.userInputBridge().setState(UserInputBridge::State::Capturing);
+        break;
+
+    case SessionState::Inactive:
+        m_sessionState = state;
+        m_page.userInputBridge().setState(UserInputBridge::State::Open);
+        break;
+
+    case SessionState::Replaying:
+        ASSERT(state == SessionState::Inactive);
+
+        m_sessionState = state;
+        m_page.userInputBridge().setState(UserInputBridge::State::Replaying);
+        break;
+    }
 }
 
 void ReplayController::switchSession(PassRefPtr<ReplaySession> session)
@@ -171,12 +198,13 @@ void ReplayController::startCapturing()
     ASSERT(m_sessionState == SessionState::Inactive);
     ASSERT(m_segmentState == SegmentState::Unloaded);
 
-    m_sessionState = SessionState::Capturing;
+    setSessionState(SessionState::Capturing);
 
     LOG(WebReplay, "%-20s Starting capture.\n", "ReplayController");
     InspectorInstrumentation::captureStarted(&m_page);
 
     m_currentPosition = ReplayPosition(0, 0);
+
     createSegment();
 }
 
@@ -187,7 +215,7 @@ void ReplayController::stopCapturing()
 
     completeSegment();
 
-    m_sessionState = SessionState::Inactive;
+    setSessionState(SessionState::Inactive);
 
     LOG(WebReplay, "%-20s Stopping capture.\n", "ReplayController");
     InspectorInstrumentation::captureStopped(&m_page);
@@ -247,7 +275,7 @@ void ReplayController::replayToPosition(const ReplayPosition& position, Dispatch
     m_dispatchSpeed = speed;
 
     if (m_sessionState != SessionState::Replaying)
-        m_sessionState = SessionState::Replaying;
+        setSessionState(SessionState::Replaying);
 
     if (m_segmentState == SegmentState::Unloaded)
         loadSegmentAtIndex(position.segmentOffset);

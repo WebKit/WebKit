@@ -1,3 +1,16 @@
+2014-03-20  Brian Burg  <bburg@apple.com>
+
+        Web Replay: capture and replay mouse events
+        https://bugs.webkit.org/show_bug.cgi?id=129395
+
+        Reviewed by Joseph Pecoraro.
+
+        Create a manual test for capture/replay of mouse events.
+        Copy over the crypto-md5.js library from SunSpider.
+
+        * ManualTests/inspector/replay-mouse-events.html: Added.
+        * ManualTests/inspector/resources/crypto-md5.js: Added.
+
 2014-03-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][CMake] Add support for building with Clang

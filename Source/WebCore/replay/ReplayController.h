@@ -150,6 +150,8 @@ private:
 
     EventLoopInputDispatcher& dispatcher() const;
 
+    void setSessionState(SessionState);
+
     Page& m_page;
 
     RefPtr<ReplaySessionSegment> m_loadedSegment;

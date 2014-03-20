@@ -37,6 +37,7 @@ namespace WebCore {
 class Document;
 class Frame;
 class Page;
+class PlatformMouseEvent;
 class SecurityOrigin;
 class URL;
 } // namespace WebCore
@@ -49,6 +50,13 @@ template<> struct EncodingTraits<NondeterministicInputBase> {
 
     static EncodedValue encodeValue(const NondeterministicInputBase& value);
     static bool decodeValue(EncodedValue&, std::unique_ptr<NondeterministicInputBase>& value);
+};
+
+template<> struct EncodingTraits<WebCore::PlatformMouseEvent> {
+    typedef WebCore::PlatformMouseEvent DecodedType;
+
+    static EncodedValue encodeValue(const WebCore::PlatformMouseEvent& value);
+    static bool decodeValue(EncodedValue&, std::unique_ptr<WebCore::PlatformMouseEvent>& value);
 };
 
 template<> struct EncodingTraits<WebCore::URL> {

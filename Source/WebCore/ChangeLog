@@ -1,3 +1,58 @@
+2014-03-20  Brian Burg  <bburg@apple.com>
+
+        Web Replay: capture and replay mouse events
+        https://bugs.webkit.org/show_bug.cgi?id=129395
+
+        Reviewed by Joseph Pecoraro.
+
+        Add support for capturing and replaying mouse inputs that come from WebKit2.
+        Hook up the UserInputBridge to session state changes in the ReplayController so
+        that the bridge knows when to capture or deny mouse inputs.
+
+        Test: ManualTests/inspector/replay-mouse-events.html
+
+        * platform/PlatformEvent.h: Give explicit storage types to Modifiers and Type enums
+        so they can be forward-declared.
+        * platform/PlatformMouseEvent.h: Give an explicit storage type to enum MouseButton.
+        Add operator== and operator!= for MouseButton to work around an MSVC bug.
+
+        * replay/ReplayController.cpp: Perform session state changes in a helper function, and
+        at the same time change the state of the page's user input bridge.
+        (WebCore::ReplayController::setSessionState):
+        (WebCore::ReplayController::startCapturing):
+        (WebCore::ReplayController::stopCapturing):
+        (WebCore::ReplayController::startPlayback):
+        (WebCore::ReplayController::cancelPlayback):
+
+        * replay/ReplayInputDispatchMethods.cpp: Add dispatch methods for new inputs.
+        (WebCore::HandleMouseMove::dispatch):
+        (WebCore::HandleMousePress::dispatch):
+        (WebCore::HandleMouseRelease::dispatch):
+
+        * replay/SerializationMethods.cpp: Add helper macros so that encode/decode methods look
+        symmetric with one data member per line. This helps reduce unintentional inconsistencies.
+        (JSC::EncodingTraits<PlatformMouseEvent>::encodeValue): Added.
+        (JSC::EncodingTraits<PlatformMouseEvent>::decodeValue): Added.
+        * replay/SerializationMethods.h:
+
+        * replay/UserInputBridge.cpp: Fill in the bridge method implementations for mouse
+        events, adding helpers and macros as necessary to reduce boilerplate.
+        (WebCore::UserInputBridge::activeCursor): Added.
+        (WebCore::UserInputBridge::handleMousePressEvent):
+        (WebCore::UserInputBridge::handleMouseReleaseEvent):
+        (WebCore::UserInputBridge::handleMouseMoveEvent):
+        (WebCore::UserInputBridge::handleMouseMoveOnScrollbarEvent):
+
+        * replay/UserInputBridge.h: Add a bridge state enum along with getters and setters.
+        The enum value controls whether the bridge should capture commands, deny non-synthetic
+        commands (from the user), or allow anything to pass (the default).
+        (WebCore::UserInputBridge::setState): Added.
+        (WebCore::UserInputBridge::state): Added.
+
+        * replay/WebInputs.json: Add inputs HandleMouseMove, HandleMousePress, HandleMouseRelease.
+        Add enum definitions for PlatformEvent::Type, PlatformEvent::Modifiers, and PlatformMouseEvent::MouseButton.
+        Alphabetize the existing data type definitions.
+
 2014-03-20  Tim Horton  <timothy_horton@apple.com>
 
         Add WebCore::IOSurface wrapper
