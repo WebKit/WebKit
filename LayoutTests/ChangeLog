@@ -1,3 +1,11 @@
+2014-03-20  Krzysztof Czech  <k.czech@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Update expectation of table-detection.html after r165535.
+
+        * platform/efl-wk2/accessibility/table-detection-expected.txt:
+
 2014-03-20  Lorenzo Tilve  <ltilve@igalia.com>
 
         Dispatch input event for Range element keyboard event

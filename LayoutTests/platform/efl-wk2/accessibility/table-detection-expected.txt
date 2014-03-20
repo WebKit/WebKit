@@ -227,7 +227,7 @@ AXRole: AXTable
 AXParent: AXWebArea
 AXChildren: 2
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 769.000000, 26.000000 }
+AXSize: { 769.000000, 27.000000 }
 AXTitle: 
 AXDescription: 
 AXFocusable: 0
@@ -249,7 +249,7 @@ AXRole: AXTable
 AXParent: AXWebArea
 AXChildren: 7
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 130.000000, 93.000000 }
+AXSize: { 130.000000, 128.000000 }
 AXTitle: 
 AXDescription: 
 AXFocusable: 0
@@ -454,4 +454,28 @@ asdf
 asdf
 asdf
 asdf
+
+This should be a table even though it uses table-row-group for it's display type.
+
+AXRole: AXGroup
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 35.000000, 21.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: head
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitEfl
+
+head	head2
+asdf	asdf
 
