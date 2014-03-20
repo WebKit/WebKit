@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,18 +39,24 @@ class MacroAssembler;
 namespace FTL {
 
 struct StackMaps {
+    struct ParseContext {
+        unsigned version;
+        DataView* view;
+        unsigned offset;
+    };
+    
     struct Constant {
         int64_t integer;
         
-        void parse(DataView*, unsigned& offset);
+        void parse(ParseContext&);
         void dump(PrintStream& out) const;
     };
 
     struct StackSize {
-        uint32_t functionOffset;
-        uint32_t size;
+        uint64_t functionOffset;
+        uint64_t size;
 
-        void parse(DataView*, unsigned& offset);
+        void parse(ParseContext&);
         void dump(PrintStream&) const;
     };
 
@@ -69,7 +75,7 @@ struct StackMaps {
         Kind kind;
         int32_t offset;
         
-        void parse(DataView*, unsigned& offset);
+        void parse(ParseContext&);
         void dump(PrintStream& out) const;
         
         GPRReg directGPR() const;
@@ -83,10 +89,11 @@ struct StackMaps {
         
         Vector<Location> locations;
         
-        bool parse(DataView*, unsigned& offset);
+        bool parse(ParseContext&);
         void dump(PrintStream&) const;
     };
 
+    unsigned version;
     Vector<StackSize> stackSizes;
     Vector<Constant> constants;
     Vector<Record> records;

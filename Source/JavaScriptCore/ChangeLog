@@ -1,5 +1,30 @@
 2014-03-20  Filip Pizlo  <fpizlo@apple.com>
 
+        Implement stackmap header version check and support new stackmap formats
+        https://bugs.webkit.org/show_bug.cgi?id=130535
+        <rdar://problem/16164284>
+
+        Reviewed by Geoffrey Garen.
+        
+        Add the notion of versioning so that LLVMers can happily implement new stackmap formats
+        without worrying about WebKit getting version-locked to LLVM. In the future, we will have
+        to implement parsing for a new LLVM stackmap format before it lands in LLVM, or we'll have
+        to have a "max usable LLVM revision" limit. But, thanks to versioning, we'll always be
+        happy to move backward in time to older versions of LLVM.
+
+        * ftl/FTLStackMaps.cpp:
+        (JSC::FTL::readObject):
+        (JSC::FTL::StackMaps::Constant::parse):
+        (JSC::FTL::StackMaps::StackSize::parse):
+        (JSC::FTL::StackMaps::Location::parse):
+        (JSC::FTL::StackMaps::Record::parse):
+        (JSC::FTL::StackMaps::parse):
+        (JSC::FTL::StackMaps::dump):
+        (JSC::FTL::StackMaps::dumpMultiline):
+        * ftl/FTLStackMaps.h:
+
+2014-03-20  Filip Pizlo  <fpizlo@apple.com>
+
         Crash beneath operationTearOffActivation running this JS compression demo
         https://bugs.webkit.org/show_bug.cgi?id=130295
         <rdar://problem/16332337>

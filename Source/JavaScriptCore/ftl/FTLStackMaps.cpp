@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,16 +36,16 @@
 namespace JSC { namespace FTL {
 
 template<typename T>
-T readObject(DataView* view, unsigned& offset)
+T readObject(StackMaps::ParseContext& context)
 {
     T result;
-    result.parse(view, offset);
+    result.parse(context);
     return result;
 }
 
-void StackMaps::Constant::parse(DataView* view, unsigned& offset)
+void StackMaps::Constant::parse(StackMaps::ParseContext& context)
 {
-    integer = view->read<int64_t>(offset, true);
+    integer = context.view->read<int64_t>(context.offset, true);
 }
 
 void StackMaps::Constant::dump(PrintStream& out) const
@@ -53,10 +53,19 @@ void StackMaps::Constant::dump(PrintStream& out) const
     out.printf("0x%016llx", integer);
 }
 
-void StackMaps::StackSize::parse(DataView* view, unsigned& offset)
+void StackMaps::StackSize::parse(StackMaps::ParseContext& context)
 {
-    functionOffset = view->read<uint32_t>(offset, true);
-    size = view->read<uint32_t>(offset, true);
+    switch (context.version) {
+    case 0:
+        functionOffset = context.view->read<uint32_t>(context.offset, true);
+        size = context.view->read<uint32_t>(context.offset, true);
+        break;
+        
+    default:
+        functionOffset = context.view->read<uint64_t>(context.offset, true);
+        size = context.view->read<uint64_t>(context.offset, true);
+        break;
+    }
 }
 
 void StackMaps::StackSize::dump(PrintStream& out) const
@@ -64,12 +73,12 @@ void StackMaps::StackSize::dump(PrintStream& out) const
     out.print("(off:", functionOffset, ", size:", size, ")");
 }
 
-void StackMaps::Location::parse(DataView* view, unsigned& offset)
+void StackMaps::Location::parse(StackMaps::ParseContext& context)
 {
-    kind = static_cast<Kind>(view->read<uint8_t>(offset, true));
-    size = view->read<uint8_t>(offset, true);
-    dwarfRegNum = view->read<uint16_t>(offset, true);
-    this->offset = view->read<int32_t>(offset, true);
+    kind = static_cast<Kind>(context.view->read<uint8_t>(context.offset, true));
+    size = context.view->read<uint8_t>(context.offset, true);
+    dwarfRegNum = context.view->read<uint16_t>(context.offset, true);
+    this->offset = context.view->read<int32_t>(context.offset, true);
 }
 
 void StackMaps::Location::dump(PrintStream& out) const
@@ -88,26 +97,34 @@ void StackMaps::Location::restoreInto(
     FTL::Location::forStackmaps(&stackmaps, *this).restoreInto(jit, savedRegisters, result);
 }
 
-bool StackMaps::Record::parse(DataView* view, unsigned& offset)
+bool StackMaps::Record::parse(StackMaps::ParseContext& context)
 {
-    int64_t id = view->read<int64_t>(offset, true);
+    int64_t id = context.view->read<int64_t>(context.offset, true);
     ASSERT(static_cast<int32_t>(id) == id);
     patchpointID = static_cast<uint32_t>(id);
     if (static_cast<int32_t>(patchpointID) < 0)
         return false;
     
-    instructionOffset = view->read<uint32_t>(offset, true);
-    flags = view->read<uint16_t>(offset, true);
+    instructionOffset = context.view->read<uint32_t>(context.offset, true);
+    flags = context.view->read<uint16_t>(context.offset, true);
     
-    unsigned length = view->read<uint16_t>(offset, true);
+    unsigned length = context.view->read<uint16_t>(context.offset, true);
     while (length--)
-        locations.append(readObject<Location>(view, offset));
+        locations.append(readObject<Location>(context));
     
-    unsigned numLiveOuts = view->read<uint16_t>(offset, true);
+    if (context.version >= 1)
+        context.view->read<uint16_t>(context.offset, true); // padding
+    unsigned numLiveOuts = context.view->read<uint16_t>(context.offset, true);
     while (numLiveOuts--) {
-        view->read<uint16_t>(offset, true); // regnum
-        view->read<uint8_t>(offset, true); // reserved
-        view->read<uint8_t>(offset, true); // size in bytes
+        context.view->read<uint16_t>(context.offset, true); // regnum
+        context.view->read<uint8_t>(context.offset, true); // reserved
+        context.view->read<uint8_t>(context.offset, true); // size in bytes
+    }
+    if (context.version >= 1) {
+        if (context.offset & 7) {
+            ASSERT(!(context.offset & 3));
+            context.view->read<uint32_t>(context.offset, true); // padding
+        }
     }
     
     return true;
@@ -122,24 +139,38 @@ void StackMaps::Record::dump(PrintStream& out) const
 
 bool StackMaps::parse(DataView* view)
 {
-    unsigned offset = 0;
+    ParseContext context;
+    context.offset = 0;
+    context.view = view;
     
-    view->read<uint32_t>(offset, true); // Reserved (header)
+    version = context.version = context.view->read<uint8_t>(context.offset, true);
+
+    context.view->read<uint8_t>(context.offset, true); // Reserved
+    context.view->read<uint8_t>(context.offset, true); // Reserved
+    context.view->read<uint8_t>(context.offset, true); // Reserved
+
+    uint32_t numFunctions;
+    uint32_t numConstants;
+    uint32_t numRecords;
     
-    uint32_t numFunctions = view->read<uint32_t>(offset, true);
-    ASSERT(numFunctions == 1); // There should only be one stack size record
-    while (numFunctions--) {
-        stackSizes.append(readObject<StackSize>(view, offset));
+    numFunctions = context.view->read<uint32_t>(context.offset, true);
+    if (context.version >= 1) {
+        numConstants = context.view->read<uint32_t>(context.offset, true);
+        numRecords = context.view->read<uint32_t>(context.offset, true);
     }
+    while (numFunctions--)
+        stackSizes.append(readObject<StackSize>(context));
     
-    uint32_t numConstants = view->read<uint32_t>(offset, true);
+    if (!context.version)
+        numConstants = context.view->read<uint32_t>(context.offset, true);
     while (numConstants--)
-        constants.append(readObject<Constant>(view, offset));
+        constants.append(readObject<Constant>(context));
     
-    uint32_t numRecords = view->read<uint32_t>(offset, true);
+    if (!context.version)
+        numRecords = context.view->read<uint32_t>(context.offset, true);
     while (numRecords--) {
         Record record;
-        if (!record.parse(view, offset))
+        if (!record.parse(context))
             return false;
         records.append(record);
     }
@@ -149,11 +180,12 @@ bool StackMaps::parse(DataView* view)
 
 void StackMaps::dump(PrintStream& out) const
 {
-    out.print("StackSizes[", listDump(stackSizes), "], Constants:[", listDump(constants), "], Records:[", listDump(records), "]");
+    out.print("Version:", version, ", StackSizes[", listDump(stackSizes), "], Constants:[", listDump(constants), "], Records:[", listDump(records), "]");
 }
 
 void StackMaps::dumpMultiline(PrintStream& out, const char* prefix) const
 {
+    out.print(prefix, "Version: ", version, "\n");
     out.print(prefix, "StackSizes:\n");
     for (unsigned i = 0; i < stackSizes.size(); ++i)
         out.print(prefix, "    ", stackSizes[i], "\n");
