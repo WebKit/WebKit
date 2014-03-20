@@ -37,6 +37,31 @@
 
 using namespace WebCore;
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 80000
+
+@implementation WebVideoFullscreenController
+- (void)setMediaElement:(WebCore::HTMLMediaElement*)mediaElement
+{
+    UNUSED_PARAM(mediaElement);
+}
+
+- (WebCore::HTMLMediaElement*)mediaElement
+{
+    return nullptr;
+}
+
+- (void)enterFullscreen:(UIScreen *)screen
+{
+    UNUSED_PARAM(screen);
+}
+
+- (void)exitFullscreen
+{
+}
+@end
+
+#else
+
 @interface WebVideoFullscreenController (FullscreenObservation)
 - (void)didEnterFullscreen;
 - (void)didExitFullscreen;
@@ -127,4 +152,6 @@ public:
 
 @end
 
-#endif
+#endif // __IPHONE_OS_VERSION_MIN_REQUIRED < 80000
+
+#endif // PLATFORM(IOS)

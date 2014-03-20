@@ -1,3 +1,27 @@
+2014-03-19  Pratik Solanki  <psolanki@apple.com>
+
+        [iOS] Get code to compile on older iOS versions
+        https://bugs.webkit.org/show_bug.cgi?id=130142
+        <rdar://problem/16302908>
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in:
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (-[WebVideoFullscreenController WebCore::]):
+        (-[WebVideoFullscreenController enterFullscreen:]):
+        (-[WebVideoFullscreenController exitFullscreen]):
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        * platform/mac/HTMLConverter.mm:
+        (_dateForString):
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (WebCore::copyCookiesForURLWithFirstPartyURL):
+        * platform/text/ios/LocalizedDateCache.mm:
+        (WebCore::LocalizedDateCache::calculateMaximumWidth):
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore::LocaleMac::LocaleMac):
+
 2014-03-19  Byungseon Shin  <sun.shin@lge.com>
 
         Fix "WEBKIT_WEBGL_compressed_texture_pvrtc" extension support

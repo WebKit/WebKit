@@ -27,7 +27,7 @@
 #ifndef WebVideoFullscreenInterfaceAVKit_h
 #define WebVideoFullscreenInterfaceAVKit_h
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000
 
 #include <WebCore/EventListener.h>
 #include <WebCore/HTMLMediaElement.h>

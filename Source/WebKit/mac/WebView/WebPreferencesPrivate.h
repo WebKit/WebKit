@@ -441,4 +441,8 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setImageControlsEnabled:(BOOL)flag;
 - (BOOL)imageControlsEnabled;
 
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 80000
+- (void)_setAllowCompositingLayerVisualDegradation:(BOOL)flag;
+#endif
+
 @end

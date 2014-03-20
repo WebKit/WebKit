@@ -156,7 +156,11 @@ float LocalizedDateCache::calculateMaximumWidth(DateComponents::Type type, const
     // typically all equally wide. Force UTC timezone for the test date below so the
     // date doesn't adjust for the current timezone. This is an arbitrary date
     // (x-27-2007) and time (10:45 PM).
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000
     RetainPtr<NSCalendar> gregorian = adoptNS([[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian]);
+#else
+    RetainPtr<NSCalendar> gregorian = adoptNS([[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]);
+#endif
     [gregorian.get() setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
     RetainPtr<NSDateComponents> components = adoptNS([[NSDateComponents alloc] init]);
     [components.get() setDay:27];

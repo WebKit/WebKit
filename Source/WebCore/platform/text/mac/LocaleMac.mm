@@ -85,7 +85,7 @@ static RetainPtr<NSDateFormatter> createDateTimeFormatter(NSLocale* locale, NSCa
 
 LocaleMac::LocaleMac(NSLocale* locale)
     : m_locale(locale)
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
     , m_gregorianCalendar(adoptNS([[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian]))
 #else
     , m_gregorianCalendar(adoptNS([[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]))
