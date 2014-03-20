@@ -118,7 +118,6 @@ list(APPEND WebCore_SOURCES
     platform/network/soup/CredentialStorageSoup.cpp
     platform/network/soup/DNSSoup.cpp
     platform/network/soup/NetworkStorageSessionSoup.cpp
-    platform/network/soup/ProxyResolverSoup.cpp
     platform/network/soup/ProxyServerSoup.cpp
     platform/network/soup/ResourceErrorSoup.cpp
     platform/network/soup/ResourceHandleSoup.cpp
