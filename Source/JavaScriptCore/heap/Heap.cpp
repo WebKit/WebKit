@@ -28,8 +28,6 @@
 #include "CopyVisitorInlines.h"
 #include "DFGWorklist.h"
 #include "DelayedReleaseScope.h"
-#include "EdenGCActivityCallback.h"
-#include "FullGCActivityCallback.h"
 #include "GCActivityCallback.h"
 #include "GCIncomingRefCountedSetInlines.h"
 #include "HeapIterationScope.h"
@@ -255,12 +253,8 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_ramSize(ramSize())
     , m_minBytesPerCycle(minHeapSize(m_heapType, m_ramSize))
     , m_sizeAfterLastCollect(0)
-    , m_sizeAfterLastFullCollect(0)
-    , m_sizeBeforeLastFullCollect(0)
-    , m_sizeAfterLastEdenCollect(0)
-    , m_sizeBeforeLastEdenCollect(0)
     , m_bytesAllocatedThisCycle(0)
-    , m_bytesAbandonedSinceLastFullCollect(0)
+    , m_bytesAbandonedThisCycle(0)
     , m_maxEdenSize(m_minBytesPerCycle)
     , m_maxHeapSize(m_minBytesPerCycle)
     , m_shouldDoFullCollection(false)
@@ -280,15 +274,9 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_isSafeToCollect(false)
     , m_writeBarrierBuffer(256)
     , m_vm(vm)
-    , m_lastFullGCLength(0)
-    , m_lastEdenGCLength(0)
+    , m_lastGCLength(0)
     , m_lastCodeDiscardTime(WTF::monotonicallyIncreasingTime())
-    , m_fullActivityCallback(GCActivityCallback::createFullTimer(this))
-#if ENABLE(GGC)
-    , m_edenActivityCallback(GCActivityCallback::createEdenTimer(this))
-#else
-    , m_edenActivityCallback(m_fullActivityCallback)
-#endif
+    , m_activityCallback(DefaultGCActivityCallback::create(this))
     , m_sweeper(IncrementalSweeper::create(this))
     , m_deferralDepth(0)
 {
@@ -335,7 +323,7 @@ void Heap::reportAbandonedObjectGraph()
 {
     // Our clients don't know exactly how much memory they
     // are abandoning so we just guess for them.
-    double abandonedBytes = 0.1 * m_sizeAfterLastCollect;
+    double abandonedBytes = 0.10 * m_sizeAfterLastCollect;
 
     // We want to accelerate the next collection. Because memory has just 
     // been abandoned, the next collection has the potential to 
@@ -346,11 +334,9 @@ void Heap::reportAbandonedObjectGraph()
 
 void Heap::didAbandon(size_t bytes)
 {
-    if (m_fullActivityCallback) {
-        m_fullActivityCallback->didAllocate(
-            m_sizeAfterLastCollect - m_sizeAfterLastFullCollect + m_bytesAllocatedThisCycle + m_bytesAbandonedSinceLastFullCollect);
-    }
-    m_bytesAbandonedSinceLastFullCollect += bytes;
+    if (m_activityCallback)
+        m_activityCallback->didAllocate(m_bytesAllocatedThisCycle + m_bytesAbandonedThisCycle);
+    m_bytesAbandonedThisCycle += bytes;
 }
 
 void Heap::protect(JSValue k)
@@ -860,7 +846,8 @@ void Heap::collectAllGarbage()
     if (!m_isSafeToCollect)
         return;
 
-    collect(FullCollection);
+    m_shouldDoFullCollection = true;
+    collect();
 
     SamplingRegion samplingRegion("Garbage Collection: Sweeping");
     DelayedReleaseScope delayedReleaseScope(m_objectSpace);
@@ -870,7 +857,7 @@ void Heap::collectAllGarbage()
 
 static double minute = 60.0;
 
-void Heap::collect(HeapOperation collectionType)
+void Heap::collect()
 {
 #if ENABLE(ALLOCATION_LOGGING)
     dataLogF("JSC GC starting collection.\n");
@@ -893,7 +880,7 @@ void Heap::collect(HeapOperation collectionType)
     RELEASE_ASSERT(m_operationInProgress == NoOperation);
 
     suspendCompilerThreads();
-    willStartCollection(collectionType);
+    willStartCollection();
 
     double gcStartTime = WTF::monotonicallyIncreasingTime();
 
@@ -940,10 +927,10 @@ void Heap::suspendCompilerThreads()
 #endif
 }
 
-void Heap::willStartCollection(HeapOperation collectionType)
+void Heap::willStartCollection()
 {
     GCPHASE(StartingCollection);
-    if (shouldDoFullCollection(collectionType)) {
+    if (shouldDoFullCollection()) {
         m_operationInProgress = FullCollection;
         m_slotVisitor.clearMarkStack();
         m_shouldDoFullCollection = false;
@@ -954,19 +941,11 @@ void Heap::willStartCollection(HeapOperation collectionType)
         if (Options::logGC())
             dataLog("EdenCollection, ");
     }
-    if (m_operationInProgress == FullCollection) {
-        m_sizeBeforeLastFullCollect = m_sizeAfterLastCollect + m_bytesAllocatedThisCycle;
+    if (m_operationInProgress == FullCollection)
         m_extraMemoryUsage = 0;
 
-        if (m_fullActivityCallback)
-            m_fullActivityCallback->willCollect();
-    } else {
-        ASSERT(m_operationInProgress == EdenCollection);
-        m_sizeBeforeLastEdenCollect = m_sizeAfterLastCollect + m_bytesAllocatedThisCycle;
-    }
-
-    if (m_edenActivityCallback)
-        m_edenActivityCallback->willCollect();
+    if (m_activityCallback)
+        m_activityCallback->willCollect();
 }
 
 void Heap::deleteOldCode(double gcStartTime)
@@ -1064,26 +1043,20 @@ void Heap::updateAllocationLimits()
         // fixed minimum.
         m_maxHeapSize = max(minHeapSize(m_heapType, m_ramSize), proportionalHeapSize(currentHeapSize, m_ramSize));
         m_maxEdenSize = m_maxHeapSize - currentHeapSize;
-        m_sizeAfterLastFullCollect = currentHeapSize;
-        m_bytesAbandonedSinceLastFullCollect = 0;
     } else {
         ASSERT(currentHeapSize >= m_sizeAfterLastCollect);
         m_maxEdenSize = m_maxHeapSize - currentHeapSize;
-        m_sizeAfterLastEdenCollect = currentHeapSize;
         double edenToOldGenerationRatio = (double)m_maxEdenSize / (double)m_maxHeapSize;
         double minEdenToOldGenerationRatio = 1.0 / 3.0;
         if (edenToOldGenerationRatio < minEdenToOldGenerationRatio)
             m_shouldDoFullCollection = true;
         m_maxHeapSize += currentHeapSize - m_sizeAfterLastCollect;
         m_maxEdenSize = m_maxHeapSize - currentHeapSize;
-        if (m_fullActivityCallback) {
-            ASSERT(currentHeapSize >= m_sizeAfterLastFullCollect);
-            m_fullActivityCallback->didAllocate(currentHeapSize - m_sizeAfterLastFullCollect);
-        }
     }
 
     m_sizeAfterLastCollect = currentHeapSize;
     m_bytesAllocatedThisCycle = 0;
+    m_bytesAbandonedThisCycle = 0;
 
     if (Options::logGC())
         dataLog(currentHeapSize / 1024, " kb, ");
@@ -1093,10 +1066,7 @@ void Heap::didFinishCollection(double gcStartTime)
 {
     GCPHASE(FinishingCollection);
     double gcEndTime = WTF::monotonicallyIncreasingTime();
-    if (m_operationInProgress == FullCollection)
-        m_lastFullGCLength = gcEndTime - gcStartTime;
-    else
-        m_lastEdenGCLength = gcEndTime - gcStartTime;
+    m_lastGCLength = gcEndTime - gcStartTime;
 
     if (Options::recordGCPauseTimes())
         HeapStatistics::recordGCPauseTime(gcStartTime, gcEndTime);
@@ -1132,24 +1102,14 @@ void Heap::markDeadObjects()
     m_objectSpace.forEachDeadCell<MarkObject>(iterationScope);
 }
 
-void Heap::setFullActivityCallback(PassRefPtr<FullGCActivityCallback> activityCallback)
+void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)
 {
-    m_fullActivityCallback = activityCallback;
+    m_activityCallback = activityCallback;
 }
 
-void Heap::setEdenActivityCallback(PassRefPtr<EdenGCActivityCallback> activityCallback)
+GCActivityCallback* Heap::activityCallback()
 {
-    m_edenActivityCallback = activityCallback;
-}
-
-GCActivityCallback* Heap::fullActivityCallback()
-{
-    return m_fullActivityCallback.get();
-}
-
-GCActivityCallback* Heap::edenActivityCallback()
-{
-    return m_edenActivityCallback.get();
+    return m_activityCallback.get();
 }
 
 void Heap::setIncrementalSweeper(PassOwnPtr<IncrementalSweeper> sweeper)
@@ -1164,16 +1124,14 @@ IncrementalSweeper* Heap::sweeper()
 
 void Heap::setGarbageCollectionTimerEnabled(bool enable)
 {
-    if (m_fullActivityCallback)
-        m_fullActivityCallback->setEnabled(enable);
-    if (m_edenActivityCallback)
-        m_edenActivityCallback->setEnabled(enable);
+    if (m_activityCallback)
+        m_activityCallback->setEnabled(enable);
 }
 
 void Heap::didAllocate(size_t bytes)
 {
-    if (m_edenActivityCallback)
-        m_edenActivityCallback->didAllocate(m_bytesAllocatedThisCycle + m_bytesAbandonedSinceLastFullCollect);
+    if (m_activityCallback)
+        m_activityCallback->didAllocate(m_bytesAllocatedThisCycle + m_bytesAbandonedThisCycle);
     m_bytesAllocatedThisCycle += bytes;
 }
 
@@ -1256,27 +1214,11 @@ void Heap::flushWriteBarrierBuffer(JSCell* cell)
 #endif
 }
 
-bool Heap::shouldDoFullCollection(HeapOperation requestedCollectionType) const
+bool Heap::shouldDoFullCollection() const
 {
 #if ENABLE(GGC)
-    if (Options::alwaysDoFullCollection())
-        return true;
-
-    switch (requestedCollectionType) {
-    case EdenCollection:
-        return false;
-    case FullCollection:
-        return true;
-    case AnyCollection:
-        return m_shouldDoFullCollection;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        return false;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return false;
+    return Options::alwaysDoFullCollection() || m_shouldDoFullCollection;
 #else
-    UNUSED_PARAM(requestedCollectionType);
     return true;
 #endif
 }

@@ -557,10 +557,6 @@ javascriptcore_sources += \
     Source/JavaScriptCore/heap/DeferGC.cpp \
 	Source/JavaScriptCore/heap/DeferGC.h \
     Source/JavaScriptCore/heap/DelayedReleaseScope.h \
-	Source/JavaScriptCore/heap/EdenGCActivityCallback.cpp \
-	Source/JavaScriptCore/heap/EdenGCActivityCallback.h \
-	Source/JavaScriptCore/heap/FullGCActivityCallback.cpp \
-	Source/JavaScriptCore/heap/FullGCActivityCallback.h \
 	Source/JavaScriptCore/heap/GCActivityCallback.cpp \
 	Source/JavaScriptCore/heap/GCActivityCallback.h \
 	Source/JavaScriptCore/heap/GCSegmentedArray.h \

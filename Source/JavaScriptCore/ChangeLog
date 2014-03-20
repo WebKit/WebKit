@@ -1,3 +1,17 @@
+2014-03-19  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r165926.
+        https://bugs.webkit.org/show_bug.cgi?id=130488
+
+        broke the iOS build (Requested by estes on #webkit).
+
+        Reverted changeset:
+
+        "GC timer should intelligently choose between EdenCollections
+        and FullCollections"
+        https://bugs.webkit.org/show_bug.cgi?id=128261
+        http://trac.webkit.org/changeset/165926
+
 2014-03-13  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         GC timer should intelligently choose between EdenCollections and FullCollections

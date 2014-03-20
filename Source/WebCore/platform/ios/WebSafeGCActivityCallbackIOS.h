@@ -27,42 +27,26 @@
 #define WebSafeGCActivityCallbackIOS_h
 
 #include "WebCoreThread.h"
-#include <JavaScriptCore/EdenGCActivityCallback.h>
-#include <JavaScriptCore/FullGCActivityCallback.h>
+#include <JavaScriptCore/GCActivityCallback.h>
 
 namespace WebCore {
 
-class WebSafeFullGCActivityCallback final : public JSC::FullGCActivityCallback {
+class WebSafeGCActivityCallback final : public JSC::DefaultGCActivityCallback {
 public:
-    static PassOwnPtr<WebSafeFullGCActivityCallback> create(JSC::Heap* heap)
+    static PassOwnPtr<WebSafeGCActivityCallback> create(JSC::Heap* heap)
     {
-        return adoptPtr(new WebSafeFullGCActivityCallback(heap));
+        return adoptPtr(new WebSafeGCActivityCallback(heap));
     }
 
-    virtual ~WebSafeFullGCActivityCallback() override { }
+    virtual ~WebSafeGCActivityCallback() override { }
 
 private:
-    WebSafeFullGCActivityCallback(JSC::Heap* heap)
-        : JSC::FullGCActivityCallback(heap, WebThreadRunLoop())
+    WebSafeGCActivityCallback(JSC::Heap* heap)
+        : JSC::DefaultGCActivityCallback(heap, WebThreadRunLoop())
     {
     }
 };
 
-class WebSafeEdenGCActivityCallback final : public JSC::EdenGCActivityCallback {
-public:
-    static PassOwnPtr<WebSafeEdenGCActivityCallback> create(JSC::Heap* heap)
-    {
-        return adoptPtr(new WebSafeEdenGCActivityCallback(heap));
-    }
-
-    virtual ~WebSafeEdenGCActivityCallback() override { }
-
-private:
-    WebSafeEdenGCActivityCallback(JSC::Heap* heap)
-        : JSC::EdenGCActivityCallback(heap, WebThreadRunLoop())
-    {
-    }
-};
 } // namespace WebCore
 
 #endif // WebSafeGCActivityCallbackIOS_h

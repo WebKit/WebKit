@@ -228,12 +228,6 @@
     <ClCompile Include="..\heap\CopyVisitor.cpp">
       <Filter>heap</Filter>
     </ClCompile>
-    <ClCompile Include="..\heap\EdenGCActivityCallback.cpp">
-      <Filter>heap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\heap\FullGCActivityCallback.cpp">
-      <Filter>heap</Filter>
-    </ClCompile>
     <ClCompile Include="..\heap\GCActivityCallback.cpp">
       <Filter>heap</Filter>
     </ClCompile>
@@ -1689,12 +1683,6 @@
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\DeferGC.h">
-      <Filter>heap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\heap\EdenGCActivityCallback.h">
-      <Filter>heap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\heap\FullGCActivityCallback.h">
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\GCActivityCallback.h">

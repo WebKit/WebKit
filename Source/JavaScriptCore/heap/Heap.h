@@ -52,8 +52,6 @@ namespace JSC {
     class CopiedSpace;
     class CodeBlock;
     class ExecutableBase;
-    class EdenGCActivityCallback;
-    class FullGCActivityCallback;
     class GCActivityCallback;
     class GCAwareJITStubRoutine;
     class GlobalCodeBlock;
@@ -120,10 +118,8 @@ namespace JSC {
         MarkedSpace& objectSpace() { return m_objectSpace; }
         MachineThreads& machineThreads() { return m_machineThreads; }
 
-        JS_EXPORT_PRIVATE GCActivityCallback* fullActivityCallback();
-        JS_EXPORT_PRIVATE GCActivityCallback* edenActivityCallback();
-        JS_EXPORT_PRIVATE void setFullActivityCallback(PassRefPtr<FullGCActivityCallback>);
-        JS_EXPORT_PRIVATE void setEdenActivityCallback(PassRefPtr<EdenGCActivityCallback>);
+        JS_EXPORT_PRIVATE GCActivityCallback* activityCallback();
+        JS_EXPORT_PRIVATE void setActivityCallback(PassOwnPtr<GCActivityCallback>);
         JS_EXPORT_PRIVATE void setGarbageCollectionTimerEnabled(bool);
 
         JS_EXPORT_PRIVATE IncrementalSweeper* sweeper();
@@ -152,7 +148,9 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE void collectAllGarbage();
         bool shouldCollect();
-        JS_EXPORT_PRIVATE void collect(HeapOperation collectionType = AnyCollection);
+        void gcTimerDidFire() { m_shouldDoFullCollection = true; }
+        void setShouldDoFullCollection(bool shouldDoFullCollection) { m_shouldDoFullCollection = shouldDoFullCollection; }
+        JS_EXPORT_PRIVATE void collect();
         bool collectIfNecessaryOrDefer(); // Returns true if it did collect.
 
         void reportExtraMemoryCost(size_t cost);
@@ -188,14 +186,8 @@ namespace JSC {
         void didFinishIterating();
         void getConservativeRegisterRoots(HashSet<JSCell*>& roots);
 
-        double lastFullGCLength() const { return m_lastFullGCLength; }
-        double lastEdenGCLength() const { return m_lastEdenGCLength; }
-        void increaseLastFullGCLength(double amount) { m_lastFullGCLength += amount; }
-
-        size_t sizeBeforeLastEdenCollection() const { return m_sizeBeforeLastEdenCollect; }
-        size_t sizeAfterLastEdenCollection() const { return m_sizeAfterLastEdenCollect; }
-        size_t sizeBeforeLastFullCollection() const { return m_sizeBeforeLastFullCollect; }
-        size_t sizeAfterLastFullCollection() const { return m_sizeAfterLastFullCollect; }
+        double lastGCLength() { return m_lastGCLength; }
+        void increaseLastGCLength(double amount) { m_lastGCLength += amount; }
 
         JS_EXPORT_PRIVATE void deleteAllCompiledCode();
         void deleteAllUnlinkedFunctionCode();
@@ -260,7 +252,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE void reportExtraMemoryCostSlowCase(size_t);
 
         void suspendCompilerThreads();
-        void willStartCollection(HeapOperation collectionType);
+        void willStartCollection();
         void deleteOldCode(double gcStartTime);
         void flushOldStructureIDTables();
         void flushWriteBarrierBuffer();
@@ -304,7 +296,7 @@ namespace JSC {
         void zombifyDeadObjects();
         void markDeadObjects();
 
-        bool shouldDoFullCollection(HeapOperation requestedCollectionType) const;
+        bool shouldDoFullCollection() const;
         size_t sizeAfterCollect();
 
         JSStack& stack();
@@ -317,13 +309,9 @@ namespace JSC {
         const size_t m_ramSize;
         const size_t m_minBytesPerCycle;
         size_t m_sizeAfterLastCollect;
-        size_t m_sizeAfterLastFullCollect;
-        size_t m_sizeBeforeLastFullCollect;
-        size_t m_sizeAfterLastEdenCollect;
-        size_t m_sizeBeforeLastEdenCollect;
 
         size_t m_bytesAllocatedThisCycle;
-        size_t m_bytesAbandonedSinceLastFullCollect;
+        size_t m_bytesAbandonedThisCycle;
         size_t m_maxEdenSize;
         size_t m_maxHeapSize;
         bool m_shouldDoFullCollection;
@@ -361,14 +349,12 @@ namespace JSC {
         WriteBarrierBuffer m_writeBarrierBuffer;
 
         VM* m_vm;
-        double m_lastFullGCLength;
-        double m_lastEdenGCLength;
+        double m_lastGCLength;
         double m_lastCodeDiscardTime;
 
         DoublyLinkedList<ExecutableBase> m_compiledCode;
         
-        RefPtr<GCActivityCallback> m_fullActivityCallback;
-        RefPtr<GCActivityCallback> m_edenActivityCallback;
+        OwnPtr<GCActivityCallback> m_activityCallback;
         OwnPtr<IncrementalSweeper> m_sweeper;
         Vector<MarkedBlock*> m_blockSnapshot;
         
