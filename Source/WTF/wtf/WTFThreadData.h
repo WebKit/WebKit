@@ -49,28 +49,10 @@
 #include <wtf/Threading.h>
 #endif
 
-// FIXME: This is a temporary layering violation until we move more of the string code from JavaScriptCore to WTF.
-namespace JSC {
-
-class IdentifierTable {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WTF_EXPORT_PRIVATE ~IdentifierTable();
-
-    WTF_EXPORT_PRIVATE HashSet<StringImpl*>::AddResult add(StringImpl*);
-    template<typename U, typename V> HashSet<StringImpl*>::AddResult add(U);
-
-    bool remove(StringImpl* identifier) { return m_table.remove(identifier); }
-
-private:
-    HashSet<StringImpl*> m_table;
-};
-
-}
-
 namespace WTF {
 
 class AtomicStringTable;
+typedef AtomicStringTable IdentifierTable;
 
 typedef void (*AtomicStringTableDestructor)(AtomicStringTable*);
 
@@ -82,24 +64,24 @@ public:
 
     AtomicStringTable* atomicStringTable()
     {
-        return m_atomicStringTable;
+        return m_currentAtomicStringTable;
     }
 
-    JSC::IdentifierTable* currentIdentifierTable()
+    IdentifierTable* currentIdentifierTable()
     {
-        return m_currentIdentifierTable;
+        return m_currentAtomicStringTable;
     }
 
-    JSC::IdentifierTable* setCurrentIdentifierTable(JSC::IdentifierTable* identifierTable)
+    IdentifierTable* setCurrentIdentifierTable(IdentifierTable* identifierTable)
     {
-        JSC::IdentifierTable* oldIdentifierTable = m_currentIdentifierTable;
-        m_currentIdentifierTable = identifierTable;
+        IdentifierTable* oldIdentifierTable = m_currentAtomicStringTable;
+        m_currentAtomicStringTable = identifierTable;
         return oldIdentifierTable;
     }
 
     void resetCurrentIdentifierTable()
     {
-        m_currentIdentifierTable = m_defaultIdentifierTable;
+        m_currentAtomicStringTable = m_defaultAtomicStringTable;
     }
 
     const StackBounds& stack()
@@ -142,11 +124,10 @@ public:
     void* m_apiData;
 
 private:
-    AtomicStringTable* m_atomicStringTable;
+    AtomicStringTable* m_currentAtomicStringTable;
+    AtomicStringTable* m_defaultAtomicStringTable;
     AtomicStringTableDestructor m_atomicStringTableDestructor;
 
-    JSC::IdentifierTable* m_defaultIdentifierTable;
-    JSC::IdentifierTable* m_currentIdentifierTable;
     StackBounds m_stackBounds;
 #if ENABLE(STACK_STATS)
     StackStats::PerThreadStats m_stackStats;
@@ -188,5 +169,6 @@ inline WTFThreadData& wtfThreadData()
 
 using WTF::WTFThreadData;
 using WTF::wtfThreadData;
+using WTF::IdentifierTable;
 
 #endif // WTFThreadData_h

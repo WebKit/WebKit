@@ -27,13 +27,10 @@
 #include "JSAPIWrapperObject.h"
 
 #include "DelayedReleaseScope.h"
-#include "JSCJSValueInlines.h"
+#include "JSCInlines.h"
 #include "JSCallbackObject.h"
-#include "JSCellInlines.h"
 #include "JSVirtualMachineInternal.h"
-#include "SlotVisitorInlines.h"
 #include "Structure.h"
-#include "StructureInlines.h"
 
 #if JSC_OBJC_API_ENABLED
 

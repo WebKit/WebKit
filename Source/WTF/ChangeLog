@@ -1,3 +1,63 @@
+2014-03-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Merge AtomicString, Identifier
+        https://bugs.webkit.org/show_bug.cgi?id=128624
+
+        Reviewed by Geoff Garen.
+
+        WTF::StringImpl currently supports two uniquing mechanism - AtomicString and
+        Identifer - that is one too many.
+
+        Remove Identifier in favour of AtomicString. Identifier had two interesting
+        mechanisms that we preserve.
+
+        (1) JSC API VMs each get their own string table, switch the string table on
+            API entry/exit.
+        (2) JSC caches a pointer to the string table on the VM to avoid a thread
+            specific access. Adds a new AtomicString::add method to support this.
+
+        * wtf/WTFThreadData.cpp:
+        (WTF::WTFThreadData::WTFThreadData):
+            - remove allocation of IdentifierTable.
+        (WTF::WTFThreadData::~WTFThreadData):
+            - remove deletion of IdentifierTable.
+        * wtf/WTFThreadData.h:
+        (WTF::WTFThreadData::atomicStringTable):
+            - table is now switched by JSC API, return the current table.
+        (WTF::WTFThreadData::currentIdentifierTable):
+            - now returns the current AtomicStringTable.
+        (WTF::WTFThreadData::setCurrentIdentifierTable):
+            - now sets the current AtomicStringTable.
+        (WTF::WTFThreadData::resetCurrentIdentifierTable):
+            - now resets the AtomicStringTable.
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::addSlowCase):
+            - add without thread-specific access to access string table.
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::addWithStringTableProvider):
+            - add without thread-specific access (used by JSC, string table provided by VM or ExecState).
+        * wtf/text/AtomicStringTable.cpp:
+        (WTF::AtomicStringTable::create):
+            - renamed m_atomicStringTable -> m_defaultAtomicStringTable.
+        (WTF::AtomicStringTable::~AtomicStringTable):
+        (WTF::AtomicStringTable::destroy):
+            - clearing of table moved from AtomicStringTable::destroy to destructor.
+        * wtf/text/AtomicStringTable.h:
+            - added destructor.
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl):
+            - Identifers no longer exist; no need to remove them from IdentifierTable.
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+            - removed s_hashFlagIsIdentifier.
+        (WTF::StringImpl::flagIsIdentifier):
+            - s_hashFlagIsIdentifier -> s_hashFlagIsAtomic.
+        (WTF::StringImpl::isIdentifier):
+            - now synonymous to isAtomic().
+        * wtf/text/StringStatics.cpp:
+        (WTF::StringImpl::hashAndFlagsForEmptyUnique):
+            - removed s_hashFlagIsIdentifier.
+
 2014-03-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed Clang build fix for the GTK port after r165952.

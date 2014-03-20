@@ -77,7 +77,6 @@ namespace JSC {
     class ExecState;
     class HandleStack;
     class Identifier;
-    class IdentifierTable;
     class Interpreter;
     class JSGlobalObject;
     class JSObject;
@@ -295,6 +294,8 @@ namespace JSC {
         NumericStrings numericStrings;
         DateInstanceCache dateInstanceCache;
         WTF::SimpleStats machineCodeBytesPerBytecodeWordForBaselineJIT;
+
+        IdentifierTable& atomicStringTable() const { return *identifierTable; }
 
         void setInDefineOwnProperty(bool inDefineOwnProperty)
         {

@@ -33,6 +33,7 @@ class StringImpl;
 class AtomicStringTable {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    WTF_EXPORT_PRIVATE ~AtomicStringTable();
 
     static void create(WTFThreadData&);
     HashSet<StringImpl*>& table() { return m_table; }

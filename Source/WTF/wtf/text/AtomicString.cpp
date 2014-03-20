@@ -414,6 +414,24 @@ PassRefPtr<StringImpl> AtomicString::addSlowCase(StringImpl* string)
     return *addResult.iterator;
 }
 
+PassRefPtr<StringImpl> AtomicString::addSlowCase(AtomicStringTable& stringTable, StringImpl* string)
+{
+    if (!string->length())
+        return StringImpl::empty();
+
+    ASSERT_WITH_MESSAGE(!string->isAtomic(), "AtomicString should not hit the slow case if the string is already atomic.");
+
+    AtomicStringTableLocker locker;
+    HashSet<StringImpl*>::AddResult addResult = stringTable.table().add(string);
+
+    if (addResult.isNewEntry) {
+        ASSERT(*addResult.iterator == string);
+        string->setIsAtomic(true);
+    }
+
+    return *addResult.iterator;
+}
+
 template<typename CharacterType>
 static inline HashSet<StringImpl*>::iterator findString(const StringImpl* stringImpl)
 {

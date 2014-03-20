@@ -21,8 +21,8 @@
 #include "config.h"
 #include "PropertyNameArray.h"
 
+#include "JSCInlines.h"
 #include "JSObject.h"
-
 #include "Structure.h"
 #include "StructureChain.h"
 

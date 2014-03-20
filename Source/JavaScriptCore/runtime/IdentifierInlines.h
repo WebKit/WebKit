@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,56 +21,31 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- *
  */
 
-#include "config.h"
-#include "WTFThreadData.h"
+#ifndef IdentifierInlines_h
+#define IdentifierInlines_h
 
-#include <wtf/text/AtomicStringTable.h>
+#include "CallFrame.h"
+#include "Identifier.h"
 
-#if USE(WEB_THREAD)
-#include <wtf/MainThread.h>
-#endif
+namespace JSC  {
 
-namespace WTF {
-
-#if !USE(PTHREAD_GETSPECIFIC_DIRECT)
-ThreadSpecific<WTFThreadData>* WTFThreadData::staticData;
-#endif
-
-WTFThreadData::WTFThreadData()
-    : m_apiData(0)
-    , m_currentAtomicStringTable(0)
-    , m_defaultAtomicStringTable(0)
-    , m_atomicStringTableDestructor(0)
-    , m_stackBounds(StackBounds::currentThreadStackBounds())
-#if ENABLE(STACK_STATS)
-    , m_stackStats()
-#endif
-    , m_savedStackPointerAtVMEntry(0)
-    , m_savedLastStackTop(stack().origin())
+inline PassRef<StringImpl> Identifier::add(ExecState* exec, StringImpl* r)
 {
-    AtomicStringTable::create(*this);
-    m_currentAtomicStringTable = m_defaultAtomicStringTable;
+#ifndef NDEBUG
+    checkCurrentIdentifierTable(exec);
+#endif
+    return *AtomicString::addWithStringTableProvider(*exec, r);
+}
+inline PassRef<StringImpl> Identifier::add(VM* vm, StringImpl* r)
+{
+#ifndef NDEBUG
+    checkCurrentIdentifierTable(vm);
+#endif
+    return *AtomicString::addWithStringTableProvider(*vm, r);
 }
 
-WTFThreadData::~WTFThreadData()
-{
-    if (m_atomicStringTableDestructor)
-        m_atomicStringTableDestructor(m_defaultAtomicStringTable);
-}
+} // namespace JSC
 
-#if USE(PTHREAD_GETSPECIFIC_DIRECT)
-WTFThreadData& WTFThreadData::createAndRegisterForGetspecificDirect()
-{
-    WTFThreadData* data = new WTFThreadData;
-    _pthread_setspecific_direct(directKey, data);
-    pthread_key_init_np(directKey, [](void* data){
-        delete static_cast<WTFThreadData*>(data);
-    });
-    return *data;
-}
-#endif
-
-} // namespace WTF
+#endif // IdentifierInlines_h

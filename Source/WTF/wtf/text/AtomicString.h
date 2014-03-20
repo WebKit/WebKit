@@ -35,6 +35,7 @@
 
 namespace WTF {
 
+class AtomicStringTable;
 struct AtomicStringHash;
 
 class AtomicString {
@@ -168,12 +169,6 @@ public:
     void show() const;
 #endif
 
-private:
-    // The explicit constructors with AtomicString::ConstructFromLiteral must be used for literals.
-    AtomicString(ASCIILiteral);
-
-    String m_string;
-    
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> add(const LChar*);
     ALWAYS_INLINE static PassRefPtr<StringImpl> add(const char* s) { return add(reinterpret_cast<const LChar*>(s)); };
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> add(const LChar*, unsigned length);
@@ -191,10 +186,28 @@ private:
         return addSlowCase(string);
     }
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> addFromLiteralData(const char* characters, unsigned length);
-    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> addSlowCase(StringImpl*);
 #if USE(CF)
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> add(CFStringRef);
 #endif
+
+    template<typename StringTableProvider>
+    ALWAYS_INLINE static PassRefPtr<StringImpl> addWithStringTableProvider(StringTableProvider& stringTableProvider, StringImpl* string)
+    {
+        if (!string || string->isAtomic()) {
+            ASSERT_WITH_MESSAGE(!string || !string->length() || isInAtomicStringTable(string), "The atomic string comes from an other thread!");
+            return string;
+        }
+        return addSlowCase(stringTableProvider.atomicStringTable(), string);
+    }
+
+private:
+    // The explicit constructors with AtomicString::ConstructFromLiteral must be used for literals.
+    AtomicString(ASCIILiteral);
+
+    String m_string;
+    
+    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> addSlowCase(StringImpl*);
+    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> addSlowCase(AtomicStringTable&, StringImpl*);
 
     WTF_EXPORT_STRING_API static AtomicStringImpl* findSlowCase(StringImpl&);
     WTF_EXPORT_STRING_API static AtomicString fromUTF8Internal(const char*, const char*);

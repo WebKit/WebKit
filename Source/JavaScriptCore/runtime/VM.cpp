@@ -195,7 +195,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , promiseConstructorTable(adoptPtr(new HashTable(JSC::promiseConstructorTable)))
 #endif
     , identifierTable(vmType == Default ? wtfThreadData().currentIdentifierTable() : createIdentifierTable())
-    , propertyNames(new CommonIdentifiers(this))
+    , propertyNames(nullptr)
     , emptyList(new MarkedArgumentBuffer)
     , parserArena(adoptPtr(new ParserArena))
     , keywords(adoptPtr(new Keywords(*this)))
@@ -246,6 +246,7 @@ VM::VM(VMType vmType, HeapType heapType)
     // Need to be careful to keep everything consistent here
     JSLockHolder lock(this);
     IdentifierTable* existingEntryIdentifierTable = wtfThreadData().setCurrentIdentifierTable(identifierTable);
+    propertyNames = new CommonIdentifiers(this);
     structureStructure.set(*this, Structure::createStructure(*this));
     structureRareDataStructure.set(*this, StructureRareData::createStructure(*this, 0, jsNull()));
     debuggerActivationStructure.set(*this, DebuggerActivation::createStructure(*this, 0, jsNull()));

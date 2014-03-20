@@ -1,3 +1,61 @@
+2014-03-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Merge AtomicString, Identifier
+        https://bugs.webkit.org/show_bug.cgi?id=128624
+
+        Reviewed by Geoff Garen.
+
+        WTF::StringImpl currently supports two uniquing mechanism - AtomicString and
+        Identifer - that is one too many.
+
+        Remove Identifier in favour of AtomicString. Identifier had two interesting
+        mechanisms that we preserve.
+
+        (1) JSC API VMs each get their own string table, switch the string table on
+            API entry/exit.
+        (2) JSC caches a pointer to the string table on the VM to avoid a thread
+            specific access. Adds a new AtomicString::add method to support this.
+
+        * API/JSAPIWrapperObject.mm:
+            - updated includes.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+            - added IdentifierInlines.h.
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+            - updated includes.
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::atomicStringTable):
+            - added, used via AtomicString::add to avoid thread-specific access.
+        * runtime/ConsolePrototype.cpp:
+            - updated includes.
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::add):
+        (JSC::Identifier::add8):
+            - vm->smallStrings.singleCharacterStringRep now returns Atomic strings, use AtomicString::add.
+        * runtime/Identifier.h:
+        (JSC::Identifier::Identifier):
+            - added ASSERTS.
+        (JSC::Identifier::add):
+            - vm->smallStrings.singleCharacterStringRep now returns Atomic strings, use AtomicString::add.
+        * runtime/IdentifierInlines.h: Added.
+        (JSC::Identifier::add):
+            - moved from Identifier.h, use AtomicString::add.
+        * runtime/JSCInlines.h:
+            - added IdentifierInlines.h.
+        * runtime/JSLock.h:
+            - removed IdentifierTable.
+        * runtime/PropertyNameArray.cpp:
+            - updated includes.
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStringsStorage::SmallStringsStorage):
+            - ensure all single character strings are Atomic.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+            - instantiate CommonIdentifiers with the correct AtomicStringTable set on thread data.
+        * runtime/VM.h:
+        (JSC::VM::atomicStringTable):
+            - added, used via AtomicString::add to avoid thread-specific access.
+
 2014-03-20  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [ARM64] Fix assembler build issues and add cacheFlush support for Linux

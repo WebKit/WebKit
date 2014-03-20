@@ -32,7 +32,7 @@
 #include "GetterSetter.h"
 #include "Identifier.h"
 #include "InjectedScriptHost.h"
-#include "JSCJSValueInlines.h"
+#include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSInjectedScriptHost.h"
 

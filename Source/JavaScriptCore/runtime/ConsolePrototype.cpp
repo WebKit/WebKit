@@ -29,11 +29,10 @@
 #include "ConsoleClient.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
-#include "JSCJSValueInlines.h"
+#include "JSCInlines.h"
 #include "JSConsole.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStackFactory.h"
-#include "StructureInlines.h"
 
 namespace JSC {
 

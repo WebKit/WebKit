@@ -44,14 +44,9 @@ typedef const struct __CFString * CFStringRef;
 @class NSString;
 #endif
 
-// FIXME: This is a temporary layering violation while we move string code to WTF.
-// Landing the file moves in one patch, will follow on with patches to change the namespaces.
 namespace JSC {
-struct IdentifierASCIIStringTranslator;
 namespace LLInt { class Data; }
 class LLIntOffsetsExtractor;
-template <typename T> struct IdentifierCharBufferTranslator;
-struct IdentifierLCharFromUCharTranslator;
 }
 
 namespace WTF {
@@ -132,10 +127,6 @@ struct StringStats {
 
 class StringImpl {
     WTF_MAKE_NONCOPYABLE(StringImpl); WTF_MAKE_FAST_ALLOCATED;
-    friend struct JSC::IdentifierASCIIStringTranslator;
-    friend struct JSC::IdentifierCharBufferTranslator<LChar>;
-    friend struct JSC::IdentifierCharBufferTranslator<UChar>;
-    friend struct JSC::IdentifierLCharFromUCharTranslator;
     friend struct WTF::CStringTranslator;
     template<typename CharacterType> friend struct WTF::HashAndCharactersTranslator;
     friend struct WTF::HashAndUTF8CharactersTranslator;
@@ -163,7 +154,7 @@ private:
         : m_refCount(s_refCountFlagIsStaticString)
         , m_length(0)
         , m_data8(reinterpret_cast<const LChar*>(&m_length))
-        , m_hashAndFlags(s_hashFlag8BitBuffer | s_hashFlagIsIdentifier | s_hashFlagIsAtomic | BufferOwned)
+        , m_hashAndFlags(s_hashFlag8BitBuffer | s_hashFlagIsAtomic | BufferOwned)
     {
         // Ensure that the hash is computed so that AtomicStringHash can call existingHash()
         // with impunity. The empty string is special because it is never entered into
@@ -404,7 +395,7 @@ public:
 
     static unsigned flagsOffset() { return OBJECT_OFFSETOF(StringImpl, m_hashAndFlags); }
     static unsigned flagIs8Bit() { return s_hashFlag8BitBuffer; }
-    static unsigned flagIsIdentifier() { return s_hashFlagIsIdentifier; }
+    static unsigned flagIsIdentifier() { return s_hashFlagIsAtomic; }
     static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
 
     template<typename CharType, size_t inlineCapacity, typename OverflowHandler>
@@ -472,18 +463,7 @@ public:
 
     bool has16BitShadow() const { return m_hashAndFlags & s_hashFlagHas16BitShadow; }
     WTF_EXPORT_STRING_API void upconvertCharacters(unsigned, unsigned) const;
-    bool isIdentifier() const { return m_hashAndFlags & s_hashFlagIsIdentifier; }
-    bool isIdentifierOrUnique() const { return isIdentifier() || isEmptyUnique(); }
-    void setIsIdentifier(bool isIdentifier)
-    {
-        ASSERT(!isStatic());
-        ASSERT(!isEmptyUnique());
-        if (isIdentifier)
-            m_hashAndFlags |= s_hashFlagIsIdentifier;
-        else
-            m_hashAndFlags &= ~s_hashFlagIsIdentifier;
-    }
-
+    bool isIdentifier() const { return isAtomic(); }
     bool isEmptyUnique() const
     {
         return !length() && !isStatic();
@@ -814,7 +794,6 @@ private:
     static const unsigned s_hashFlag8BitBuffer = 1u << 5;
     static const unsigned s_hashFlagIsAtomic = 1u << 4;
     static const unsigned s_hashFlagDidReportCost = 1u << 3;
-    static const unsigned s_hashFlagIsIdentifier = 1u << 2;
     static const unsigned s_hashMaskBufferOwnership = 1u | (1u << 1);
 
 #ifdef STRING_STATS

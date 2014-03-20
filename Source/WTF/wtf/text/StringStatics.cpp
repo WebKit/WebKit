@@ -56,7 +56,7 @@ StringImpl* StringImpl::empty()
 // lead to lots of conflicts.
 unsigned StringImpl::hashAndFlagsForEmptyUnique()
 {
-    static unsigned s_nextHashAndFlagsForEmptyUnique = BufferInternal | s_hashFlag8BitBuffer | s_hashFlagIsIdentifier | s_hashFlagIsAtomic;
+    static unsigned s_nextHashAndFlagsForEmptyUnique = BufferInternal | s_hashFlag8BitBuffer | s_hashFlagIsAtomic;
     s_nextHashAndFlagsForEmptyUnique += 1 << s_flagCount;
     s_nextHashAndFlagsForEmptyUnique |= 1 << 31;
     return s_nextHashAndFlagsForEmptyUnique;

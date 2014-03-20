@@ -37,25 +37,28 @@ void AtomicStringTable::create(WTFThreadData& data)
 
     bool currentThreadIsWebThread = isWebThread();
     if (currentThreadIsWebThread || isUIThread())
-        data.m_atomicStringTable = sharedStringTable;
+        data.m_defaultAtomicStringTable = sharedStringTable;
     else
-        data.m_atomicStringTable = new AtomicStringTable;
+        data.m_defaultAtomicStringTable = new AtomicStringTable;
 
     // We do the following so that its destruction happens only
     // once - on the main UI thread.
     if (!currentThreadIsWebThread)
         data.m_atomicStringTableDestructor = AtomicStringTable::destroy;
 #else
-    data.m_atomicStringTable = new AtomicStringTable;
+    data.m_defaultAtomicStringTable = new AtomicStringTable;
     data.m_atomicStringTableDestructor = AtomicStringTable::destroy;
 #endif // USE(WEB_THREAD)
 }
 
+AtomicStringTable::~AtomicStringTable()
+{
+    for (auto* string : m_table)
+        string->setIsAtomic(false);
+}
+
 void AtomicStringTable::destroy(AtomicStringTable* table)
 {
-    HashSet<StringImpl*>::iterator end = table->m_table.end();
-    for (HashSet<StringImpl*>::iterator iter = table->m_table.begin(); iter != end; ++iter)
-        (*iter)->setIsAtomic(false);
     delete table;
 }
 
