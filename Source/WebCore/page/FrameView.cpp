@@ -3553,11 +3553,9 @@ void FrameView::didPaintContents(GraphicsContext* context, const IntRect& dirtyR
 
 void FrameView::paintContents(GraphicsContext* context, const IntRect& dirtyRect)
 {
-    Document* document = frame().document();
-
 #ifndef NDEBUG
     bool fillWithRed;
-    if (document->printing())
+    if (frame().document()->printing())
         fillWithRed = false; // Printing, don't fill with red (can't remember why).
     else if (frame().ownerElement())
         fillWithRed = false; // Subframe, don't fill with red.
