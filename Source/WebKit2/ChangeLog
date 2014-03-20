@@ -1,3 +1,13 @@
+2014-03-20  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        Rename WKPreferencesPrivate.h to WKPreferencesRefPrivate.h.
+
+        * UIProcess/API/C/WKPreferencesRefPrivate.h: Renamed from Source/WebKit2/UIProcess/API/C/WKPreferencesPrivate.h.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-03-20  Gavin Barraclough  <barraclough@apple.com>
 
         Merge AtomicString, Identifier

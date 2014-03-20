@@ -23,6 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <WebKit2/WKPreferencesRefPrivate.h>
+
+#ifdef __OBJC__
+
 #import <WebKit2/WKPreferences.h>
 
 #if WK_API_ENABLED
@@ -32,5 +36,7 @@
 @property (nonatomic, setter=_setTelephoneNumberDetectionIsEnabled:) BOOL _telephoneNumberDetectionIsEnabled;
 
 @end
+
+#endif
 
 #endif
