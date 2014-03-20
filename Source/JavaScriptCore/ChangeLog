@@ -57,89 +57,6 @@
         * heap/HeapTimer.cpp:
         (JSC::HeapTimer::timerDidFire):
 
-<<<<<<< .mine
-2014-03-18  Mark Hahnenberg  <mhahnenberg@apple.com>
-
-        GC timer should intelligently choose between EdenCollections and FullCollections
-        https://bugs.webkit.org/show_bug.cgi?id=128261
-
-        Reviewed by Geoffrey Garen.
-
-        Most of the GCs while browsing the web are due to the GC timer. Currently the GC timer 
-        always does FullCollections. To reduce the impact of the GC timer on the system this patch
-        changes Heap so that it has two timers, one for each type of collection. The FullCollection
-        timer is notified at the end of EdenCollections how much the Heap has grown since the last 
-        FullCollection and when somebody notifies the Heap of abandoned memory (which usually wouldn't 
-        be detected by an EdenCollection).
-
-        * CMakeLists.txt:
-        * GNUmakefile.list.am:
-        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
-        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
-        * JavaScriptCore.xcodeproj/project.pbxproj:
-        * heap/EdenGCActivityCallback.cpp: Added.
-        (JSC::EdenGCActivityCallback::EdenGCActivityCallback):
-        (JSC::EdenGCActivityCallback::doCollection):
-        (JSC::EdenGCActivityCallback::lastGCLength):
-        (JSC::EdenGCActivityCallback::deathRate):
-        (JSC::EdenGCActivityCallback::gcTimeSlice):
-        * heap/EdenGCActivityCallback.h: Added.
-        (JSC::EdenGCActivityCallback::EdenGCActivityCallback):
-        (JSC::GCActivityCallback::createEdenTimer):
-        * heap/FullGCActivityCallback.cpp: Added.
-        (JSC::FullGCActivityCallback::FullGCActivityCallback):
-        (JSC::FullGCActivityCallback::doCollection):
-        (JSC::FullGCActivityCallback::lastGCLength):
-        (JSC::FullGCActivityCallback::deathRate):
-        (JSC::FullGCActivityCallback::gcTimeSlice):
-        * heap/FullGCActivityCallback.h: Added.
-        (JSC::FullGCActivityCallback::FullGCActivityCallback):
-        (JSC::GCActivityCallback::createFullTimer):
-        * heap/GCActivityCallback.cpp:
-        (JSC::GCActivityCallback::GCActivityCallback):
-        (JSC::GCActivityCallback::doWork):
-        (JSC::GCActivityCallback::scheduleTimer):
-        (JSC::GCActivityCallback::cancelTimer):
-        (JSC::GCActivityCallback::didAllocate):
-        (JSC::GCActivityCallback::willCollect):
-        (JSC::GCActivityCallback::cancel):
-        * heap/GCActivityCallback.h:
-        (JSC::GCActivityCallback::GCActivityCallback):
-        * heap/Heap.cpp:
-        (JSC::Heap::Heap):
-        (JSC::Heap::reportAbandonedObjectGraph):
-        (JSC::Heap::didAbandon):
-        (JSC::Heap::collectAllGarbage):
-        (JSC::Heap::collect):
-        (JSC::Heap::willStartCollection):
-        (JSC::Heap::updateAllocationLimits):
-        (JSC::Heap::didFinishCollection):
-        (JSC::Heap::setFullActivityCallback):
-        (JSC::Heap::setEdenActivityCallback):
-        (JSC::Heap::fullActivityCallback):
-        (JSC::Heap::edenActivityCallback):
-        (JSC::Heap::setGarbageCollectionTimerEnabled):
-        (JSC::Heap::didAllocate):
-        (JSC::Heap::shouldDoFullCollection):
-        * heap/Heap.h:
-        (JSC::Heap::lastFullGCLength):
-        (JSC::Heap::lastEdenGCLength):
-        (JSC::Heap::increaseLastFullGCLength):
-        (JSC::Heap::sizeBeforeLastEdenCollection):
-        (JSC::Heap::sizeAfterLastEdenCollection):
-        (JSC::Heap::sizeBeforeLastFullCollection):
-        (JSC::Heap::sizeAfterLastFullCollection):
-        * heap/HeapOperation.h:
-        * heap/HeapStatistics.cpp:
-        (JSC::HeapStatistics::showObjectStatistics):
-        * heap/HeapTimer.cpp:
-        (JSC::HeapTimer::timerDidFire):
-        * jsc.cpp:
-        (functionFullGC):
-        (functionEdenGC):
-        * runtime/Options.h:
-
-=======
 2014-03-19  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r165459): It broke 109 jsc stress test on ARM Thumb2 and Mac 32 bit
@@ -178,7 +95,6 @@
         * runtime/JSStringJoiner.cpp:
         (JSC::JSStringJoiner::join):
 
->>>>>>> .r165925
 2014-03-18  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of Flush in SSA
