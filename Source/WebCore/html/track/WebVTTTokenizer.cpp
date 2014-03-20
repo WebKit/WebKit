@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
+ * Copyright (C) 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -42,22 +43,16 @@ namespace WebCore {
 #define WEBVTT_BEGIN_STATE(stateName) BEGIN_STATE(WebVTTTokenizerState, stateName)
 #define WEBVTT_ADVANCE_TO(stateName) ADVANCE_TO(WebVTTTokenizerState, stateName)
 
+template<unsigned charactersCount>
+ALWAYS_INLINE bool equalLiteral(const StringBuilder& s, const char (&characters)[charactersCount])
+{
+    return WTF::equal(s, reinterpret_cast<const LChar*>(characters), charactersCount - 1);
+}
+
 WebVTTTokenizer::WebVTTTokenizer()
     : m_inputStreamPreprocessor(this)
 {
     reset();
-}
-
-template <typename CharacterType>
-inline bool vectorEqualsString(const Vector<CharacterType, 32>& vector, const String& string)
-{
-    if (vector.size() != string.length())
-        return false;
-
-    if (!string.length())
-        return true;
-
-    return equal(string.impl(), vector.data(), vector.size());
 }
 
 void WebVTTTokenizer::reset()
@@ -86,8 +81,7 @@ bool WebVTTTokenizer::nextToken(SegmentedString& source, WebVTTToken& token)
             m_buffer.append(static_cast<LChar>(cc));
             WEBVTT_ADVANCE_TO(EscapeState);
         } else if (cc == '<') {
-            if (m_token->type() == WebVTTTokenTypes::Uninitialized
-                || vectorEqualsString<UChar>(m_token->characters(), emptyString()))
+            if (m_token->type() == WebVTTTokenTypes::Uninitialized || m_token->characters().isEmpty())
                 WEBVTT_ADVANCE_TO(TagState);
             else
                 return emitAndResumeIn(source, WebVTTTokenizerState::TagState);
@@ -102,17 +96,17 @@ bool WebVTTTokenizer::nextToken(SegmentedString& source, WebVTTToken& token)
 
     WEBVTT_BEGIN_STATE(EscapeState) {
         if (cc == ';') {
-            if (vectorEqualsString(m_buffer, "&amp"))
+            if (equalLiteral(m_buffer, "&amp"))
                 bufferCharacter('&');
-            else if (vectorEqualsString(m_buffer, "&lt"))
+            else if (equalLiteral(m_buffer, "&lt"))
                 bufferCharacter('<');
-            else if (vectorEqualsString(m_buffer, "&gt"))
+            else if (equalLiteral(m_buffer, "&gt"))
                 bufferCharacter('>');
-            else if (vectorEqualsString(m_buffer, "&lrm"))
+            else if (equalLiteral(m_buffer, "&lrm"))
                 bufferCharacter(leftToRightMark);
-            else if (vectorEqualsString(m_buffer, "&rlm"))
+            else if (equalLiteral(m_buffer, "&rlm"))
                 bufferCharacter(rightToLeftMark);
-            else if (vectorEqualsString(m_buffer, "&nbsp"))
+            else if (equalLiteral(m_buffer, "&nbsp"))
                 bufferCharacter(noBreakSpace);
             else {
                 m_buffer.append(static_cast<LChar>(cc));
@@ -127,7 +121,7 @@ bool WebVTTTokenizer::nextToken(SegmentedString& source, WebVTTToken& token)
             m_token->appendToCharacter(m_buffer);
             return emitEndOfFile(source);
         } else {
-            if (!vectorEqualsString(m_buffer, "&"))
+            if (!equalLiteral(m_buffer, "&"))
                 m_token->appendToCharacter(m_buffer);
             m_buffer.clear();
             WEBVTT_ADVANCE_TO(DataState);

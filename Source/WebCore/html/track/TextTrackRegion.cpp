@@ -265,7 +265,6 @@ void TextTrackRegion::parseSettingValue(RegionSetting setting, const String& val
     bool isValidSetting;
     String numberAsString;
     int number;
-    unsigned position;
     FloatPoint anchorPosition;
 
     switch (setting) {
@@ -280,17 +279,14 @@ void TextTrackRegion::parseSettingValue(RegionSetting setting, const String& val
         else
             LOG(Media, "TextTrackRegion::parseSettingValue, invalid Width");
         break;
-    case Height:
-        position = 0;
-
-        numberAsString = WebVTTParser::collectDigits(value, &position);
-        number = value.toInt(&isValidSetting);
-
-        if (isValidSetting && number >= 0)
+    case Height: {
+        unsigned position = 0;
+        if (WebVTTParser::collectDigitsToInt(value, &position, number) && position == value.length())
             m_heightInLines = number;
         else
             LOG(Media, "TextTrackRegion::parseSettingValue, invalid Height");
         break;
+    }
     case RegionAnchor:
         anchorPosition = WebVTTParser::parseFloatPercentageValuePair(value, ',', isValidSetting);
         if (isValidSetting)

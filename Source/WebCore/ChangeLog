@@ -1,3 +1,67 @@
+2014-03-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge Misc. WebVTT Updates from Blink.
+        https://bugs.webkit.org/show_bug.cgi?id=130491
+
+        Reviewed by Eric Carlson.
+
+        Test: media/track/track-webvtt-tc030-interspersed-non-cue.html
+
+        Merged from Blink (patch by vcarbune@chromium.org):
+        https://chromium.googlesource.com/chromium/blink/+/fb62b2b54944bd19026192c049a1db250756fc12
+        http://crbug.com/40323003
+        https://chromium.googlesource.com/chromium/blink/+/29176fb0b394a97e85f4dabc07e18329f3ceae41
+        http://crbug.com/54463002
+        https://chromium.googlesource.com/chromium/blink/+/29476f839a08cb17c5a3fc713f7e454e7cea9c60
+        http://crbug.com/55853002
+        https://chromium.googlesource.com/chromium/blink/+/ba2378ef873e786cf2937034e012669cdd37dfe8
+        http://crbug.com/65343003
+        https://chromium.googlesource.com/chromium/blink/+/1915b9aa1bba45aebf28531b40ae627ecf9a3d59
+        http://crbug.com/62833005
+        https://chromium.googlesource.com/chromium/blink/+/ea46dbd0f1f29779a1cd4f59b19361b803f09a9b
+        http://crbug.com/64273013
+        https://chromium.googlesource.com/chromium/blink/+/9eb4bb6b627357bb94d66386a4123ec004cccfc4
+        http://crbug.com/101513002
+        https://chromium.googlesource.com/chromium/blink/+/192a843b32eafb77bf92c50ec50d334ba935028a
+        http://crbug.com/102403002
+        https://chromium.googlesource.com/chromium/blink/+/15f9efcc952fcf73184e28fb9db79633c1fa6653
+        http://crbug.com/104443002
+        https://chromium.googlesource.com/chromium/blink/+/74fd66b451a464683f7cb748855b1740a54b2c16
+        http://crbug.com/75243004
+
+        * html/track/TextTrackRegion.cpp:
+        (WebCore::TextTrackRegion::parseSettingValue):
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::markFutureAndPastNodes):
+        (WebCore::VTTCue::setCueSettings):
+        * html/track/WebVTTParser.cpp:
+        (WebCore::scanDigits):
+        (WebCore::WebVTTParser::collectDigitsToInt):
+        (WebCore::WebVTTParser::parseFloatPercentageValue):
+        (WebCore::WebVTTParser::parseBytes):
+        (WebCore::WebVTTParser::collectMetadataHeader):
+        (WebCore::WebVTTParser::collectTimingsAndSettings):
+        (WebCore::WebVTTParser::createDocumentFragmentFromCueText):
+        (WebCore::WebVTTParser::createNewCue):
+        (WebCore::WebVTTParser::createNewRegion):
+        (WebCore::WebVTTParser::collectTimeStamp):
+        (WebCore::tokenToNodeType):
+        (WebCore::WebVTTParser::constructTreeFromToken):
+        * html/track/WebVTTParser.h:
+        * html/track/WebVTTToken.h:
+        (WebCore::WebVTTToken::name):
+        (WebCore::WebVTTToken::characters):
+        (WebCore::WebVTTToken::appendToCharacter):
+        (WebCore::WebVTTToken::addNewClass):
+        (WebCore::WebVTTToken::classes):
+        (WebCore::WebVTTToken::addNewAnnotation):
+        (WebCore::WebVTTToken::annotation):
+        * html/track/WebVTTTokenizer.cpp:
+        (WebCore::equalLiteral):
+        (WebCore::WebVTTTokenizer::WebVTTTokenizer):
+        (WebCore::WebVTTTokenizer::nextToken):
+        * html/track/WebVTTTokenizer.h:
+
 2014-03-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         GC timer should intelligently choose between EdenCollections and FullCollections

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
+ * Copyright (C) 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -35,6 +36,7 @@
 
 #include "InputStreamPreprocessor.h"
 #include "WebVTTToken.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -103,7 +105,7 @@ private:
     WebVTTToken* m_token;
     WebVTTTokenizerState::State m_state;
 
-    Vector<LChar, 32> m_buffer;
+    StringBuilder m_buffer;
 
     // ://www.whatwg.org/specs/web-apps/current-work/#preprocessing-the-input-stream
     InputStreamPreprocessor<WebVTTTokenizer> m_inputStreamPreprocessor;

@@ -1,6 +1,6 @@
 Tests that empty cues are discarded.
 
 
-EXPECTED (video.textTracks[0].cues.length == '0') OK
+EXPECTED (video.textTracks[0].cues.length == '0'), OBSERVED '3' FAIL
 END OF TEST
 

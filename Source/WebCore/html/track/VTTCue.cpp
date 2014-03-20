@@ -696,7 +696,7 @@ void VTTCue::markFutureAndPastNodes(ContainerNode* root, double previousTimestam
         if (child->nodeName() == timestampTag) {
             unsigned position = 0;
             String timestamp = child->nodeValue();
-            double currentTimestamp = std::make_unique<WebVTTParser>(nullptr, scriptExecutionContext())->collectTimeStamp(timestamp, &position);
+            double currentTimestamp = WebVTTParser::collectTimeStamp(timestamp, &position);
             ASSERT(currentTimestamp != -1);
             
             if (currentTimestamp > movieTime)
@@ -969,8 +969,8 @@ void VTTCue::setCueSettings(const String& input)
             //    U+0030 DIGIT ZERO (0) to U+0039 DIGIT NINE (9), then jump to the step labeled next setting.
             // 2. If value does not contain at least one character in the range U+0030 DIGIT ZERO (0) to U+0039 DIGIT NINE (9),
             //    then jump to the step labeled next setting.
-            String textPosition = WebVTTParser::collectDigits(input, &position);
-            if (textPosition.isEmpty())
+            int number;
+            if (!WebVTTParser::collectDigitsToInt(input, &position, number))
                 break;
             if (position >= input.length())
                 break;
@@ -987,10 +987,6 @@ void VTTCue::setCueSettings(const String& input)
             // 5. Ignoring the trailing percent sign, interpret value as an integer, and let number be that number.
             // 6. If number is not in the range 0 ≤ number ≤ 100, then jump to the step labeled next setting.
             // NOTE: toInt ignores trailing non-digit characters, such as '%'.
-            bool validNumber;
-            int number = textPosition.toInt(&validNumber);
-            if (!validNumber)
-                break;
             if (number < 0 || number > 100)
                 break;
 
@@ -1004,8 +1000,8 @@ void VTTCue::setCueSettings(const String& input)
             //    range U+0030 DIGIT ZERO (0) to U+0039 DIGIT NINE (9), then jump to the step labeled next setting.
             // 2. If value does not contain at least one character in the range U+0030 DIGIT ZERO (0) to U+0039 DIGIT 
             //    NINE (9), then jump to the step labeled next setting.
-            String cueSize = WebVTTParser::collectDigits(input, &position);
-            if (cueSize.isEmpty())
+            int number;
+            if (!WebVTTParser::collectDigitsToInt(input, &position, number))
                 break;
             if (position >= input.length())
                 break;
@@ -1021,10 +1017,6 @@ void VTTCue::setCueSettings(const String& input)
 
             // 5. Ignoring the trailing percent sign, interpret value as an integer, and let number be that number.
             // 6. If number is not in the range 0 ≤ number ≤ 100, then jump to the step labeled next setting.
-            bool validNumber;
-            int number = cueSize.toInt(&validNumber);
-            if (!validNumber)
-                break;
             if (number < 0 || number > 100)
                 break;
 

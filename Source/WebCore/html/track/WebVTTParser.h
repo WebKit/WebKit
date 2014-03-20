@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
  * Copyright (C) 2013 Cable Television Labs, Inc.
+ * Copyright (C) 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -93,10 +94,8 @@ private:
     String m_settings;
 };
 
-class WebVTTParser {
+class WebVTTParser final {
 public:
-    virtual ~WebVTTParser() { }
-
     enum ParseState {
         Initial,
         Header,
@@ -129,8 +128,9 @@ public:
         // U+0020 SPACE characters or U+0009 CHARACTER TABULATION (tab) characters.
         return c == ' ' || c == '\t';
     }
-    static String collectDigits(const String&, unsigned*);
+    static unsigned collectDigitsToInt(const String&, unsigned* position, int& number);
     static String collectWord(const String&, unsigned*);
+    static double collectTimeStamp(const String&, unsigned*);
 
 #if ENABLE(WEBVTT_REGIONS)
     // Useful functions for parsing percentage settings.
@@ -149,7 +149,6 @@ public:
 #endif
 
     PassRefPtr<DocumentFragment> createDocumentFragmentFromCueText(const String&);
-    double collectTimeStamp(const String&, unsigned*);
 
 protected:
     ScriptExecutionContext* m_scriptExecutionContext;
@@ -167,16 +166,14 @@ private:
 
     void collectMetadataHeader(const String&);
 #if ENABLE(WEBVTT_REGIONS)
-    void createNewRegion();
+    void createNewRegion(const String& headerValue);
 #endif
 
-    void skipWhiteSpace(const String&, unsigned*);
+    static void skipWhiteSpace(const String&, unsigned*);
+
     String collectNextLine(const char* data, unsigned length, unsigned*);
 
     void constructTreeFromToken(Document*);
-
-    String m_currentHeaderName;
-    String m_currentHeaderValue;
 
     Vector<char> m_buffer;
     String m_currentId;

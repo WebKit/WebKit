@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
+ * Copyright (C) 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,6 +34,8 @@
 
 #if ENABLE(VIDEO_TRACK)
 
+#include <wtf/text/StringBuilder.h>
+
 namespace WebCore {
 
 class WebVTTTokenTypes {
@@ -52,7 +55,6 @@ class WebVTTToken {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef WebVTTTokenTypes Type;
-    typedef WTF::Vector<UChar, 1024> DataVector; // FIXME: Is this too large for WebVTT?
 
     WebVTTToken() { clear(); }
 
@@ -65,12 +67,12 @@ public:
 
     Type::Type type() const { return m_type; }
 
-    const DataVector& name() const
+    StringBuilder& name()
     {
         return m_data;
     }
 
-    const DataVector& characters() const
+    StringBuilder& characters()
     {
         ASSERT(m_type == Type::Character || m_type == Type::TimestampTag);
         return m_data;
@@ -96,10 +98,10 @@ public:
         m_data.append(character);
     }
 
-    void appendToCharacter(const Vector<LChar, 32>& characters)
+    void appendToCharacter(const StringBuilder& characters)
     {
         ASSERT(m_type == Type::Character);
-        m_data.appendVector(characters);
+        m_data.append(characters);
     }
 
     void beginEmptyStartTag()
@@ -149,11 +151,11 @@ public:
         ASSERT(m_type == Type::StartTag);
         if (!m_classes.isEmpty())
             m_classes.append(' ');
-        m_classes.appendVector(m_currentBuffer);
+        m_classes.append(m_currentBuffer);
         m_currentBuffer.clear();
     }
     
-    const DataVector& classes() const
+    StringBuilder& classes()
     {
         return m_classes;
     }
@@ -167,11 +169,11 @@ public:
     {
         ASSERT(m_type == Type::StartTag);
         m_annotation.clear();
-        m_annotation.appendVector(m_currentBuffer);
+        m_annotation.append(m_currentBuffer);
         m_currentBuffer.clear();
     }
     
-    const DataVector& annotation() const
+    StringBuilder& annotation()
     {
         return m_annotation;
     }
@@ -200,10 +202,10 @@ private:
     }
 
     Type::Type m_type;
-    DataVector m_data;
-    DataVector m_annotation;
-    DataVector m_classes;
-    DataVector m_currentBuffer;
+    StringBuilder m_data;
+    StringBuilder m_annotation;
+    StringBuilder m_classes;
+    StringBuilder m_currentBuffer;
 };
 
 }
