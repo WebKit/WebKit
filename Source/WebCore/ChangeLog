@@ -1,3 +1,11 @@
+2014-03-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the iOS build.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::willPaintContents):
+        (WebCore::FrameView::didPaintContents):
+
 2014-03-20  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] clamp RasterShape shapeMargin to reference box size

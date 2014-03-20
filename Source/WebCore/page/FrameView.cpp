@@ -3481,7 +3481,7 @@ void FrameView::willPaintContents(GraphicsContext* context, const IntRect& dirty
 
 #if PLATFORM(IOS)
     // FIXME: Remove PLATFORM(IOS)-guard once we upstream the iOS changes to MemoryPressureHandler.h.
-    if (isTopLevelPainter && memoryPressureHandler().hasReceivedMemoryPressure()) {
+    if (paintingState.isTopLevelPainter && memoryPressureHandler().hasReceivedMemoryPressure()) {
         LOG(MemoryPressure, "Under memory pressure: %s", __PRETTY_FUNCTION__);
 
         // To avoid unnecessary image decoding, we don't prune recently-decoded live resources here since
@@ -3530,7 +3530,7 @@ void FrameView::didPaintContents(GraphicsContext* context, const IntRect& dirtyR
     // Painting can lead to decoding of large amounts of bitmaps
     // If we are low on memory, wipe them out after the paint.
     // FIXME: Remove PLATFORM(IOS)-guard once we upstream the iOS changes to MemoryPressureHandler.h.
-    if (isTopLevelPainter && memoryPressureHandler().hasReceivedMemoryPressure())
+    if (paintingState.isTopLevelPainter && memoryPressureHandler().hasReceivedMemoryPressure())
         memoryCache()->pruneLiveResources(true);
 #endif
 
