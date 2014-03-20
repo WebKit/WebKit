@@ -47,39 +47,26 @@ bool GCActivityCallback::s_shouldCreateGCTimer = true;
 
 #if USE(CF) || PLATFORM(EFL)
 
-const double gcTimeSlicePerMB = 0.01; // Percentage of CPU time we will spend to reclaim 1 MB
-const double maxGCTimeSlice = 0.05; // The maximum amount of CPU time we want to use for opportunistic timer-triggered collections.
 const double timerSlop = 2.0; // Fudge factor to avoid performance cost of resetting timer.
 
-#if !PLATFORM(IOS)
-const double pagingTimeOut = 0.1; // Time in seconds to allow opportunistic timer to iterate over all blocks to see if the Heap is paged out.
-#endif
-
-#if !USE(CF)
-const double hour = 60 * 60;
-#endif
-
 #if USE(CF)
-DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
+GCActivityCallback::GCActivityCallback(Heap* heap)
     : GCActivityCallback(heap->vm(), CFRunLoopGetCurrent())
-    , m_delay(s_decade)
 {
 }
 
-DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap, CFRunLoopRef runLoop)
+GCActivityCallback::GCActivityCallback(Heap* heap, CFRunLoopRef runLoop)
     : GCActivityCallback(heap->vm(), runLoop)
-    , m_delay(s_decade)
 {
 }
 #elif PLATFORM(EFL)
-DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
+GCActivityCallback::GCActivityCallback(Heap* heap)
     : GCActivityCallback(heap->vm(), WTF::isMainThread())
-    , m_delay(hour)
 {
 }
 #endif
 
-void DefaultGCActivityCallback::doWork()
+void GCActivityCallback::doWork()
 {
     Heap* heap = &m_vm->heap;
     if (!isEnabled())
@@ -91,20 +78,11 @@ void DefaultGCActivityCallback::doWork()
         return;
     }
 
-#if !PLATFORM(IOS)
-    double startTime = WTF::monotonicallyIncreasingTime();
-    if (heap->isPagedOut(startTime + pagingTimeOut)) {
-        heap->activityCallback()->cancel();
-        heap->increaseLastGCLength(pagingTimeOut);
-        return;
-    }
-#endif
-    heap->gcTimerDidFire();
-    heap->collect();
+    doCollection();
 }
-    
+
 #if USE(CF)
-void DefaultGCActivityCallback::scheduleTimer(double newDelay)
+void GCActivityCallback::scheduleTimer(double newDelay)
 {
     if (newDelay * timerSlop > m_delay)
         return;
@@ -113,13 +91,13 @@ void DefaultGCActivityCallback::scheduleTimer(double newDelay)
     CFRunLoopTimerSetNextFireDate(m_timer.get(), CFRunLoopTimerGetNextFireDate(m_timer.get()) - delta);
 }
 
-void DefaultGCActivityCallback::cancelTimer()
+void GCActivityCallback::cancelTimer()
 {
     m_delay = s_decade;
     CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + s_decade);
 }
 #elif PLATFORM(EFL)
-void DefaultGCActivityCallback::scheduleTimer(double newDelay)
+void GCActivityCallback::scheduleTimer(double newDelay)
 {
     if (newDelay * timerSlop > m_delay)
         return;
@@ -131,14 +109,14 @@ void DefaultGCActivityCallback::scheduleTimer(double newDelay)
     m_timer = add(newDelay, this);
 }
 
-void DefaultGCActivityCallback::cancelTimer()
+void GCActivityCallback::cancelTimer()
 {
-    m_delay = hour;
+    m_delay = s_hour;
     stop();
 }
 #endif
 
-void DefaultGCActivityCallback::didAllocate(size_t bytes)
+void GCActivityCallback::didAllocate(size_t bytes)
 {
 #if PLATFORM(EFL)
     if (!isEnabled())
@@ -151,42 +129,41 @@ void DefaultGCActivityCallback::didAllocate(size_t bytes)
     // We pretend it's one byte so that we don't ignore this allocation entirely.
     if (!bytes)
         bytes = 1;
-    Heap* heap = static_cast<Heap*>(&m_vm->heap);
-    double gcTimeSlice = std::min((static_cast<double>(bytes) / MB) * gcTimeSlicePerMB, maxGCTimeSlice);
-    double newDelay = heap->lastGCLength() / gcTimeSlice;
+    double bytesExpectedToReclaim = static_cast<double>(bytes) * deathRate();
+    double newDelay = lastGCLength() / gcTimeSlice(bytesExpectedToReclaim);
     scheduleTimer(newDelay);
 }
 
-void DefaultGCActivityCallback::willCollect()
+void GCActivityCallback::willCollect()
 {
     cancelTimer();
 }
 
-void DefaultGCActivityCallback::cancel()
+void GCActivityCallback::cancel()
 {
     cancelTimer();
 }
 
 #else
 
-DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
+GCActivityCallback::GCActivityCallback(Heap* heap)
     : GCActivityCallback(heap->vm())
 {
 }
 
-void DefaultGCActivityCallback::doWork()
+void GCActivityCallback::doWork()
 {
 }
 
-void DefaultGCActivityCallback::didAllocate(size_t)
+void GCActivityCallback::didAllocate(size_t)
 {
 }
 
-void DefaultGCActivityCallback::willCollect()
+void GCActivityCallback::willCollect()
 {
 }
 
-void DefaultGCActivityCallback::cancel()
+void GCActivityCallback::cancel()
 {
 }
 

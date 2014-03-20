@@ -242,6 +242,10 @@ typedef OptionRange optionRange;
     v(double, minCopiedBlockUtilization, 0.9) \
     v(double, minMarkedBlockUtilization, 0.9) \
     \
+    v(double, percentCPUPerMBForFullTimer, 0.0003125) \
+    v(double, percentCPUPerMBForEdenTimer, 0.0025) \
+    v(double, collectionTimerMaxPercentCPU, 0.05) \
+    \
     v(bool, forceWeakRandomSeed, false) \
     v(unsigned, forcedWeakRandomSeed, 0) \
     \

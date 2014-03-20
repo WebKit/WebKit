@@ -1,3 +1,18 @@
+2014-03-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        GC timer should intelligently choose between EdenCollections and FullCollections
+        https://bugs.webkit.org/show_bug.cgi?id=128261
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        Updated WebSafeGCActivityCallbacks for both Eden and Full timers.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonVM):
+        * platform/ios/WebSafeGCActivityCallbackIOS.h:
+
 2014-03-19  Andy Estes  <aestes@apple.com>
 
         Fix the iOS build after r165917.

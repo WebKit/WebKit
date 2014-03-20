@@ -233,7 +233,7 @@ void HeapStatistics::showObjectStatistics(Heap* heap)
     dataLogF("\n=== Heap Statistics: ===\n");
     dataLogF("size: %ldkB\n", static_cast<long>(heap->m_sizeAfterLastCollect / KB));
     dataLogF("capacity: %ldkB\n", static_cast<long>(heap->capacity() / KB));
-    dataLogF("pause time: %lfms\n\n", heap->m_lastGCLength);
+    dataLogF("pause time: %lfms\n\n", heap->m_lastFullGCLength);
 
     StorageStatistics storageStatistics;
     {

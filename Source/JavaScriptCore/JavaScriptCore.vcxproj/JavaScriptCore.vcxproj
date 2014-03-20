@@ -463,6 +463,8 @@
     <ClCompile Include="..\heap\CopiedSpace.cpp" />
     <ClCompile Include="..\heap\CopyVisitor.cpp" />
     <ClCompile Include="..\heap\DeferGC.cpp" />
+    <ClCompile Include="..\heap\EdenGCActivityCallback.cpp" />
+    <ClCompile Include="..\heap\FullGCActivityCallback.cpp" />
     <ClCompile Include="..\heap\GCActivityCallback.cpp" />
     <ClCompile Include="..\heap\GCThread.cpp" />
     <ClCompile Include="..\heap\GCThreadSharedData.cpp" />
@@ -1044,6 +1046,8 @@
     <ClInclude Include="..\heap\CopyWriteBarrier.h" />
     <ClInclude Include="..\heap\DeferGC.h" />
     <ClInclude Include="..\heap\DelayedReleaseScope.h" />
+    <ClInclude Include="..\heap\EdenGCActivityCallback.h" />
+    <ClInclude Include="..\heap\FullGCActivityCallback.h" />
     <ClInclude Include="..\heap\GCActivityCallback.h" />
     <ClInclude Include="..\heap\GCSegmentedArray.h" />
     <ClInclude Include="..\heap\GCSegmentedArrayInlines.h" />

@@ -85,8 +85,10 @@ void HeapTimer::timerDidFire(CFRunLoopTimerRef timer, void* context)
     }
 
     HeapTimer* heapTimer = 0;
-    if (vm->heap.activityCallback() && vm->heap.activityCallback()->m_timer.get() == timer)
-        heapTimer = vm->heap.activityCallback();
+    if (vm->heap.fullActivityCallback() && vm->heap.fullActivityCallback()->m_timer.get() == timer)
+        heapTimer = vm->heap.fullActivityCallback();
+    else if (vm->heap.edenActivityCallback() && vm->heap.edenActivityCallback()->m_timer.get() == timer)
+        heapTimer = vm->heap.edenActivityCallback();
     else if (vm->heap.sweeper()->m_timer.get() == timer)
         heapTimer = vm->heap.sweeper();
     else

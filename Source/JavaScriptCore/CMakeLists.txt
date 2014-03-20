@@ -215,6 +215,8 @@ set(JavaScriptCore_SOURCES
     heap/CopiedSpace.cpp
     heap/CopyVisitor.cpp
     heap/DeferGC.cpp
+    heap/EdenGCActivityCallback.cpp
+    heap/FullGCActivityCallback.cpp
     heap/GCActivityCallback.cpp
     heap/GCThread.cpp
     heap/GCThreadSharedData.cpp
