@@ -1657,7 +1657,6 @@ public:
     union {
         Node* replacement;
         BasicBlock* owner;
-        bool needsBarrier;
     } misc;
 };
 

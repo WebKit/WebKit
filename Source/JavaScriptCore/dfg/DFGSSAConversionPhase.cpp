@@ -57,25 +57,6 @@ public:
             m_graph.dump();
         }
         
-        // Figure out which SetLocal's need flushing. Need to do this while the
-        // Phi graph is still intact.
-        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
-            BasicBlock* block = m_graph.block(blockIndex);
-            if (!block)
-                continue;
-            for (unsigned nodeIndex = block->size(); nodeIndex--;) {
-                Node* node = block->at(nodeIndex);
-                if (node->op() != Flush)
-                    continue;
-                addFlushedLocalOp(node);
-            }
-        }
-        while (!m_flushedLocalOpWorklist.isEmpty()) {
-            Node* node = m_flushedLocalOpWorklist.takeLast();
-            ASSERT(m_flushedLocalOps.contains(node));
-            DFG_NODE_DO_TO_CHILDREN(m_graph, node, addFlushedLocalEdge);
-        }
-        
         // Eliminate all duplicate or self-pointing Phi edges. This means that
         // we transform:
         //
@@ -158,7 +139,7 @@ public:
                 }
                 RELEASE_ASSERT(node->op() == Phi || node->op() == SetArgument);
                 
-                bool isFlushed = m_flushedLocalOps.contains(node);
+                bool isFlushed = !!(node->flags() & NodeIsFlushed);
                 
                 if (node->op() == Phi) {
                     if (!nonTrivialPhis.operand(node->local())) {
@@ -334,7 +315,7 @@ public:
                 switch (node->op()) {
                 case SetLocal: {
                     VariableAccessData* variable = node->variableAccessData();
-                    if (variable->isCaptured() || m_flushedLocalOps.contains(node))
+                    if (variable->isCaptured() || !!(node->flags() & NodeIsFlushed))
                         node->mergeFlags(NodeMustGenerate);
                     else
                         node->setOpAndDefaultFlags(Check);
@@ -476,22 +457,7 @@ private:
         }
     }
     
-    void addFlushedLocalOp(Node* node)
-    {
-        if (m_flushedLocalOps.contains(node))
-            return;
-        m_flushedLocalOps.add(node);
-        m_flushedLocalOpWorklist.append(node);
-    }
-
-    void addFlushedLocalEdge(Node*, Edge edge)
-    {
-        addFlushedLocalOp(edge.node());
-    }
-    
     InsertionSet m_insertionSet;
-    HashSet<Node*> m_flushedLocalOps;
-    Vector<Node*> m_flushedLocalOpWorklist;
     bool m_changed;
 };
 

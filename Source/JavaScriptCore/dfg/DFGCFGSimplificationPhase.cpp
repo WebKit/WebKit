@@ -263,16 +263,19 @@ private:
                 m_graph, SpecNone, Jump, branch->origin, OpInfo(targetBlock));
         }
     }
-
+    
     void keepOperandAlive(BasicBlock* block, BasicBlock* jettisonedBlock, NodeOrigin nodeOrigin, VirtualRegister operand)
     {
         Node* livenessNode = jettisonedBlock->variablesAtHead.operand(operand);
         if (!livenessNode)
             return;
-        if (livenessNode->variableAccessData()->isCaptured())
-            return;
+        NodeType nodeType;
+        if (livenessNode->flags() & NodeIsFlushed)
+            nodeType = Flush;
+        else
+            nodeType = PhantomLocal;
         block->appendNode(
-            m_graph, SpecNone, PhantomLocal, nodeOrigin, 
+            m_graph, SpecNone, nodeType, nodeOrigin, 
             OpInfo(livenessNode->variableAccessData()));
     }
     

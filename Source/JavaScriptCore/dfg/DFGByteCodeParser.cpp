@@ -481,7 +481,7 @@ private:
         if (argumentPosition)
             argumentPosition->addVariable(variable);
     }
-
+    
     void flush(InlineStackEntry* inlineStackEntry)
     {
         int numArguments;
@@ -502,15 +502,28 @@ private:
         }
     }
 
-    void flushAllArgumentsAndCapturedVariablesInInlineStack()
+    void flushForTerminal()
     {
         for (InlineStackEntry* inlineStackEntry = m_inlineStackTop; inlineStackEntry; inlineStackEntry = inlineStackEntry->m_caller)
             flush(inlineStackEntry);
     }
 
-    void flushArgumentsAndCapturedVariables()
+    void flushForReturn()
     {
         flush(m_inlineStackTop);
+    }
+    
+    void flushIfTerminal(SwitchData& data)
+    {
+        if (data.fallThrough.bytecodeIndex() > m_currentIndex)
+            return;
+        
+        for (unsigned i = data.cases.size(); i--;) {
+            if (data.cases[i].target.bytecodeIndex() > m_currentIndex)
+                return;
+        }
+        
+        flushForTerminal();
     }
 
     // NOTE: Only use this to construct constants that arise from non-speculative
@@ -720,6 +733,9 @@ private:
 
     BranchData* branchData(unsigned taken, unsigned notTaken)
     {
+        // We assume that branches originating from bytecode always have a fall-through. We
+        // use this assumption to avoid checking for the creation of terminal blocks.
+        ASSERT((taken > m_currentIndex) || (notTaken > m_currentIndex));
         BranchData* data = m_graph.m_branchData.add();
         *data = BranchData::withBytecodeIndices(taken, notTaken);
         return data;
@@ -2726,7 +2742,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         // === Block terminators. ===
 
         case op_jmp: {
-            unsigned relativeOffset = currentInstruction[1].u.operand;
+            int relativeOffset = currentInstruction[1].u.operand;
+            if (relativeOffset <= 0)
+                flushForTerminal();
             addToGraph(Jump, OpInfo(m_currentIndex + relativeOffset));
             LAST_OPCODE(op_jmp);
         }
@@ -3007,6 +3025,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     continue;
                 data.cases.append(SwitchCase::withBytecodeIndex(jsNumber(static_cast<int32_t>(table.min + i)), target));
             }
+            flushIfTerminal(data);
             addToGraph(Switch, OpInfo(&data), get(VirtualRegister(currentInstruction[3].u.operand)));
             LAST_OPCODE(op_switch_imm);
         }
@@ -3026,6 +3045,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 data.cases.append(
                     SwitchCase::withBytecodeIndex(LazyJSValue::singleCharacterString(table.min + i), target));
             }
+            flushIfTerminal(data);
             addToGraph(Switch, OpInfo(&data), get(VirtualRegister(currentInstruction[3].u.operand)));
             LAST_OPCODE(op_switch_char);
         }
@@ -3045,12 +3065,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 data.cases.append(
                     SwitchCase::withBytecodeIndex(LazyJSValue::knownStringImpl(iter->key.get()), target));
             }
+            flushIfTerminal(data);
             addToGraph(Switch, OpInfo(&data), get(VirtualRegister(currentInstruction[3].u.operand)));
             LAST_OPCODE(op_switch_string);
         }
 
         case op_ret:
-            flushArgumentsAndCapturedVariables();
+            flushForReturn();
             if (inlineCallFrame()) {
                 ASSERT(m_inlineStackTop->m_returnValue.isValid());
                 setDirect(m_inlineStackTop->m_returnValue, get(VirtualRegister(currentInstruction[1].u.operand)), ImmediateSet);
@@ -3078,20 +3099,20 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_ret);
             
         case op_end:
-            flushArgumentsAndCapturedVariables();
+            flushForReturn();
             ASSERT(!inlineCallFrame());
             addToGraph(Return, get(VirtualRegister(currentInstruction[1].u.operand)));
             LAST_OPCODE(op_end);
 
         case op_throw:
             addToGraph(Throw, get(VirtualRegister(currentInstruction[1].u.operand)));
-            flushAllArgumentsAndCapturedVariablesInInlineStack();
+            flushForTerminal();
             addToGraph(Unreachable);
             LAST_OPCODE(op_throw);
             
         case op_throw_static_error:
             addToGraph(ThrowReferenceError);
-            flushAllArgumentsAndCapturedVariablesInInlineStack();
+            flushForTerminal();
             addToGraph(Unreachable);
             LAST_OPCODE(op_throw_static_error);
             

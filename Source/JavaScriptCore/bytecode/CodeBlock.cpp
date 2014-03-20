@@ -2439,8 +2439,6 @@ bool CodeBlock::isCaptured(VirtualRegister operand, InlineCallFrame* inlineCallF
     // Ditto for the arguments object.
     if (usesArguments() && operand == argumentsRegister())
         return true;
-
-    // Ditto for the arguments object.
     if (usesArguments() && operand == unmodifiedArgumentsRegister(argumentsRegister()))
         return true;
 

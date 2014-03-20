@@ -780,6 +780,8 @@ public:
     
     void invalidateCFG();
     
+    void clearFlagsOnAllNodes(NodeFlags);
+    
     void clearReplacements();
     void initializeNodeOwners();
     

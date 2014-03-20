@@ -55,6 +55,7 @@ public:
         canonicalizeLocalsInBlocks();
         propagatePhis<LocalOperand>();
         propagatePhis<ArgumentOperand>();
+        computeIsFlushed();
         
         m_graph.m_form = ThreadedCPS;
         return true;
@@ -482,9 +483,43 @@ private:
         return m_localPhiStack;
     }
     
+    void computeIsFlushed()
+    {
+        m_graph.clearFlagsOnAllNodes(NodeIsFlushed);
+        
+        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
+            BasicBlock* block = m_graph.block(blockIndex);
+            if (!block)
+                continue;
+            for (unsigned nodeIndex = block->size(); nodeIndex--;) {
+                Node* node = block->at(nodeIndex);
+                if (node->op() != Flush)
+                    continue;
+                addFlushedLocalOp(node);
+            }
+        }
+        while (!m_flushedLocalOpWorklist.isEmpty()) {
+            Node* node = m_flushedLocalOpWorklist.takeLast();
+            ASSERT(node->flags() & NodeIsFlushed);
+            DFG_NODE_DO_TO_CHILDREN(m_graph, node, addFlushedLocalEdge);
+        }
+    }
+    
+    void addFlushedLocalOp(Node* node)
+    {
+        if (node->mergeFlags(NodeIsFlushed))
+            m_flushedLocalOpWorklist.append(node);
+    }
+
+    void addFlushedLocalEdge(Node*, Edge edge)
+    {
+        addFlushedLocalOp(edge.node());
+    }
+
     BasicBlock* m_block;
     Vector<PhiStackEntry, 128> m_argumentPhiStack;
     Vector<PhiStackEntry, 128> m_localPhiStack;
+    Vector<Node*, 128> m_flushedLocalOpWorklist;
 };
 
 bool performCPSRethreading(Graph& graph)

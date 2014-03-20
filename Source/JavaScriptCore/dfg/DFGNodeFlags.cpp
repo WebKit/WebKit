@@ -100,6 +100,9 @@ void dumpNodeFlags(PrintStream& actualOut, NodeFlags flags)
     if (!(flags & NodeDoesNotExit))
         out.print(comma, "CanExit");
     
+    if (flags & NodeIsFlushed)
+        out.print(comma, "IsFlushed");
+    
     CString string = out.toCString();
     if (!string.length())
         actualOut.print("<empty>");

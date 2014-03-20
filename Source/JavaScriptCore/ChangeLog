@@ -1,3 +1,91 @@
+2014-03-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Crash beneath operationTearOffActivation running this JS compression demo
+        https://bugs.webkit.org/show_bug.cgi?id=130295
+        <rdar://problem/16332337>
+
+        Reviewed by Oliver Hunt.
+        
+        Make sure that we flush things as if we were at a terminal, if we are at a block with
+        no forward edges. This fixes infinitely loopy code with captured variables.
+
+        Make sure that the CFG simplifier adds explicit flushes whenever it jettisons a block.
+        
+        Make it so that NodeIsFlushed is a thing. Previously only SSA used it and it computed
+        it by itself. Now it's an artifact of CPS rethreading.
+        
+        Add a bunch of tests. All of them previously either crashed or returned bad output due
+        to memory corruption.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::isCaptured):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::flushForTerminal):
+        (JSC::DFG::ByteCodeParser::flushForReturn):
+        (JSC::DFG::ByteCodeParser::flushIfTerminal):
+        (JSC::DFG::ByteCodeParser::branchData):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::keepOperandAlive):
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::run):
+        (JSC::DFG::CPSRethreadingPhase::computeIsFlushed):
+        (JSC::DFG::CPSRethreadingPhase::addFlushedLocalOp):
+        (JSC::DFG::CPSRethreadingPhase::addFlushedLocalEdge):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::clearFlagsOnAllNodes):
+        * dfg/DFGGraph.h:
+        * dfg/DFGNode.h:
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::dumpNodeFlags):
+        * dfg/DFGNodeFlags.h:
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * tests/stress/activation-test-loop.js: Added.
+        (Inner.this.doStuff):
+        (Inner):
+        (foo.inner.isDone):
+        (foo):
+        * tests/stress/inferred-infinite-loop-that-uses-captured-variables.js: Added.
+        (bar):
+        (foo):
+        (noInline):
+        * tests/stress/infinite-loop-that-uses-captured-variables-before-throwing.js: Added.
+        (bar):
+        (foo):
+        (noInline):
+        * tests/stress/infinite-loop-that-uses-captured-variables-but-they-do-not-escape.js: Added.
+        (bar):
+        (foo):
+        (noInline):
+        * tests/stress/infinite-loop-that-uses-captured-variables-with-osr-entry.js: Added.
+        (bar):
+        (foo):
+        (noInline):
+        * tests/stress/infinite-loop-that-uses-captured-variables.js: Added.
+        (bar):
+        (foo):
+        (noInline):
+        * tests/stress/tricky-indirectly-inferred-infinite-loop-that-uses-captured-variables-and-creates-the-activation-outside-the-loop.js: Added.
+        (bar):
+        (fuzz):
+        (foo.f):
+        (foo):
+        * tests/stress/tricky-inferred-infinite-loop-that-uses-captured-variables-and-creates-the-activation-outside-the-loop.js: Added.
+        (bar):
+        (foo.f):
+        (foo):
+        * tests/stress/tricky-infinite-loop-that-uses-captured-variables-and-creates-the-activation-outside-the-loop.js: Added.
+        (bar):
+        (foo.f):
+        (foo):
+        * tests/stress/tricky-infinite-loop-that-uses-captured-variables.js: Added.
+        (bar):
+        (foo):
+        (noInline):
+
 2014-03-20  Oliver Hunt  <oliver@apple.com>
 
         Incorrect behavior when mutating a typed array during set.

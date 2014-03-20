@@ -1225,13 +1225,15 @@ private:
         }
             
         case Flush: {
-            if (m_graph.m_form == SSA) {
-                // FIXME: Enable Flush store elimination in SSA form.
-                // https://bugs.webkit.org/show_bug.cgi?id=125429
-                break;
-            }
+            ASSERT(m_graph.m_form != SSA);
             VariableAccessData* variableAccessData = node->variableAccessData();
             VirtualRegister local = variableAccessData->local();
+            if (!node->child1()) {
+                // FIXME: It's silly that we punt on flush-eliminating here. We don't really
+                // need child1 to figure out what's going on.
+                // https://bugs.webkit.org/show_bug.cgi?id=130521
+                break;
+            }
             Node* replacement = node->child1().node();
             if (replacement->op() != SetLocal)
                 break;
