@@ -1,5 +1,12 @@
 2014-03-19  Tim Horton  <timothy_horton@apple.com>
 
+        Address late review comment and style nit after r165934.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+
+2014-03-19  Tim Horton  <timothy_horton@apple.com>
+
         [iOS][WebKit2] Back-forward swipe doesn't always complete with fingers down
         https://bugs.webkit.org/show_bug.cgi?id=130489
         <rdar://problem/16027007>

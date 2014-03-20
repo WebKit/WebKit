@@ -54,7 +54,7 @@ using namespace WebCore;
 - (instancetype)initWithViewGestureController:(WebKit::ViewGestureController*)gestureController gestureRecognizerView:(UIView *)gestureRecognizerView;
 @end
 
-@interface _UIViewControllerTransitionContext (Details)
+@interface _UIViewControllerTransitionContext (WKDetails)
 @property (nonatomic, copy, setter=_setInteractiveUpdateHandler:)  void (^_interactiveUpdateHandler)(BOOL interactionIsOver, CGFloat percentComplete, BOOL transitionCompleted, _UIViewControllerTransitionContext *);
 @end
 
@@ -198,7 +198,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     [transitionContext _setInteractor:transition];
     [transitionContext _setTransitionIsInFlight:YES];
     [transitionContext _setCompletionHandler:^(_UIViewControllerTransitionContext *context, BOOL didComplete) { endSwipeGesture(targetItem, context, !didComplete); }];
-    [transitionContext _setInteractiveUpdateHandler: ^(BOOL, CGFloat, BOOL, _UIViewControllerTransitionContext *) { }];
+    [transitionContext _setInteractiveUpdateHandler:^(BOOL, CGFloat, BOOL, _UIViewControllerTransitionContext *) { }];
 
     [transition setAnimationController:animationController.get()];
     [transition startInteractiveTransition:transitionContext.get()];
