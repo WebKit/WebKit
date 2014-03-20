@@ -1,3 +1,9 @@
+2014-03-20  Beth Dakin  <bdakin@apple.com>
+
+        Speculative build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-03-20  Alex Christensen  <achristensen@webkit.org>
 
         Build fixes for Win64.
