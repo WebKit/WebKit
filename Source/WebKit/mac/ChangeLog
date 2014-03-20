@@ -1,3 +1,9 @@
+2014-03-20  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * MigrateHeaders.make:
+
 2014-03-20  Pratik Solanki  <psolanki@apple.com>
 
         [iOS] Get code to compile on older iOS versions
