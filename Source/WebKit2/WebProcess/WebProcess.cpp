@@ -985,7 +985,7 @@ NetworkProcessConnection* WebProcess::networkConnection()
 void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connection)
 {
     ASSERT(m_networkProcessConnection);
-    ASSERT(m_networkProcessConnection == connection);
+    ASSERT_UNUSED(connection, m_networkProcessConnection == connection);
 
     m_networkProcessConnection = 0;
     

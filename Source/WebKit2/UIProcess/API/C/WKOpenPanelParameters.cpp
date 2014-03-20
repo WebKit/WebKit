@@ -49,7 +49,7 @@ WKArrayRef WKOpenPanelParametersCopyAcceptedMIMETypes(WKOpenPanelParametersRef p
 }
 
 // Deprecated.
-WKStringRef WKOpenPanelParametersCopyCapture(WKOpenPanelParametersRef parametersRef)
+WKStringRef WKOpenPanelParametersCopyCapture(WKOpenPanelParametersRef)
 {
     return 0;
 }

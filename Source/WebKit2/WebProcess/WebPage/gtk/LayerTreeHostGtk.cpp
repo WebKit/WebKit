@@ -269,7 +269,7 @@ void LayerTreeHostGtk::setPageOverlayNeedsDisplay(PageOverlay* pageOverlay, cons
     scheduleLayerFlush();
 }
 
-void LayerTreeHostGtk::notifyAnimationStarted(const WebCore::GraphicsLayer*, double time)
+void LayerTreeHostGtk::notifyAnimationStarted(const WebCore::GraphicsLayer*, double /* time */)
 {
 }
 

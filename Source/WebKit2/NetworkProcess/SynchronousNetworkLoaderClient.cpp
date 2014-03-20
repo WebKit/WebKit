@@ -52,7 +52,7 @@ SynchronousNetworkLoaderClient::~SynchronousNetworkLoaderClient()
     ASSERT(!m_delayedReply);
 }
 
-void SynchronousNetworkLoaderClient::willSendRequest(NetworkResourceLoader* loader, ResourceRequest& proposedRequest, const ResourceResponse& redirectResponse)
+void SynchronousNetworkLoaderClient::willSendRequest(NetworkResourceLoader* loader, ResourceRequest& proposedRequest, const ResourceResponse& /* redirectResponse */)
 {
     // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
     // This includes at least updating host records, and comparing the current request instead of the original request here.
@@ -81,7 +81,7 @@ void SynchronousNetworkLoaderClient::didReceiveResponse(NetworkResourceLoader*, 
     m_response = response;
 }
 
-void SynchronousNetworkLoaderClient::didReceiveBuffer(NetworkResourceLoader*, SharedBuffer* buffer, int encodedDataLength)
+void SynchronousNetworkLoaderClient::didReceiveBuffer(NetworkResourceLoader*, SharedBuffer* buffer, int /* encodedDataLength */)
 {
     // FIXME: There's a potential performance improvement here by preallocating a SharedMemory region
     // of the expected content length to avoid a copy when we send it to the WebProcess on completion.

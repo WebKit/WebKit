@@ -1155,6 +1155,9 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
     if (!isValid())
         return;
 #if PLATFORM(GTK)
+    UNUSED_PARAM(dragStorageName);
+    UNUSED_PARAM(sandboxExtensionHandle);
+    UNUSED_PARAM(sandboxExtensionsForUpload);
     m_process->send(Messages::WebPage::PerformDragControllerAction(action, dragData), m_pageID);
 #else
     m_process->send(Messages::WebPage::PerformDragControllerAction(action, dragData.clientPosition(), dragData.globalPosition(), dragData.draggingSourceOperationMask(), dragStorageName, dragData.flags(), sandboxExtensionHandle, sandboxExtensionsForUpload), m_pageID);
@@ -1421,6 +1424,8 @@ bool WebPageProxy::shouldStartTrackingTouchEvents(const WebTouchEvent& touchStar
     }
 
     return false;
+#else
+    UNUSED_PARAM(touchStartEvent);
 #endif // ENABLE(ASYNC_SCROLLING)
     return true;
 }

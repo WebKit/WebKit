@@ -105,7 +105,7 @@ public:
         print(surface, 72, 72);
     }
 
-    void startPage(cairo_t* cr) override
+    void startPage(cairo_t*) override
     {
         if (!currentPageIsFirstPageOfSheet())
           return;
@@ -140,7 +140,7 @@ public:
             cairo_show_page(cr);
     }
 
-    static void printJobComplete(GtkPrintJob* printJob, WebPrintOperationGtkUnix* printOperation, const GError* error)
+    static void printJobComplete(GtkPrintJob*, WebPrintOperationGtkUnix* printOperation, const GError* error)
     {
         printOperation->printDone(error ? printError(printOperation->frameURL(), error->message) : WebCore::ResourceError());
         printOperation->m_printJob = 0;

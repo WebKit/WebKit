@@ -55,7 +55,7 @@ struct _WebKitSecurityManagerPrivate {
 
 WEBKIT_DEFINE_TYPE(WebKitSecurityManager, webkit_security_manager, G_TYPE_OBJECT)
 
-static void webkit_security_manager_class_init(WebKitSecurityManagerClass* klass)
+static void webkit_security_manager_class_init(WebKitSecurityManagerClass*)
 {
 }
 
