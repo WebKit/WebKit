@@ -1,3 +1,42 @@
+2014-03-20  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Blending] Blending operation is not isolated when setting z-index on parent from javascript
+        https://bugs.webkit.org/show_bug.cgi?id=129307
+
+        Reviewed by Dean Jackson.
+
+        Reimplement the logic behind isolating blend modes. The blending operation should be limited to the
+        contents of the parent stacking context. The proposed solution implies adding logic in updateDescendantDependentFlags,
+        to track child elements that have blending and create a transparency layer that triggers isolation.
+
+        Tests: css3/compositing/blend-mode-background.html
+               fast/repaint/blend-mode-isolate-stacking-context.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer): Remove old members, add new members to constructor.
+        (WebCore::RenderLayer::updateBlendMode): Update parent stacking context isolation on blend mode change.
+        (WebCore::RenderLayer::updateNonCompositedParentStackingContextHasBlendedChild):
+        - Set m_hasBlendedElementInChildStackingContext for the non composited parent stacking context.
+        (WebCore::RenderLayer::dirtyAncestorParentStackingContextHasBlendedElement):
+        - Set flag so isolation should be considered in updateDescendantDependentFlags.
+        (WebCore::RenderLayer::nonCompositedParentStackingContextHasBlendedChild):
+        - Return whether the non composited parent stacking context isolates blending.
+        (WebCore::RenderLayer::updateDescendantDependentFlags): Add logic for isolating blending.
+        (WebCore::RenderLayer::addChild): Call to updateNonCompositedParentStackingContextHasBlendedChild if needed.
+        (WebCore::RenderLayer::removeChild): Call to dirtyAncestorParentStackingContextHasBlendedElement if needed.
+        (WebCore::RenderLayer::updateStackingContextsAfterStyleChange): Update isolation when a stacking context was set or unset.
+        (WebCore::RenderLayer::styleChanged): Removed oldStyle parameter from updateBlendMode call.
+         Update parent stacking context isolation on blend mode change.
+        * rendering/RenderLayer.h:
+        - Add members, getters and setters for tracking whether the element has a blended child:
+            - m_hasBlendedElementInChildStackingContext
+            - m_hasBlendedElementInChildStackingContextStatusDirty
+        - Removed m_updateParentStackingContextShouldIsolateBlendingDirty (replaced with m_hasBlendedElementInChildStackingContextStatusDirty)
+        - Removed m_isolatesBlending (replaced with m_hasBlendedElementInChildStackingContext)
+        - Updated the isolatesBlending method to return true only when the element is a stacking context and has a blended child.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements): Removed layer.updateParentStackingContextShouldIsolateBlending call.
+
 2014-03-20  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Do not compile ProxyResolverSoup.cpp

@@ -185,8 +185,8 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
 #endif
 #if ENABLE(CSS_COMPOSITING)
     , m_blendMode(BlendModeNormal)
-    , m_isolatesBlending(false)
-    , m_updateParentStackingContextShouldIsolateBlendingDirty(false)
+    , m_hasBlendedElementInChildStackingContext(false)
+    , m_hasBlendedElementInChildStackingContextStatusDirty(false)
 #endif
     , m_renderer(rendererLayerModelObject)
     , m_parent(0)
@@ -803,12 +803,15 @@ void RenderLayer::positionNewlyCreatedOverflowControls()
 
 #if ENABLE(CSS_COMPOSITING)
 
-void RenderLayer::updateBlendMode(const RenderStyle* oldStyle)
+void RenderLayer::updateBlendMode()
 {
-    m_updateParentStackingContextShouldIsolateBlendingDirty = false;
-
-    if ((!oldStyle && renderer().style().hasBlendMode()) || (oldStyle && oldStyle->hasBlendMode() != renderer().style().hasBlendMode()))
-        m_updateParentStackingContextShouldIsolateBlendingDirty = true;
+    bool hadBlendMode = m_blendMode != BlendModeNormal;
+    if (hadBlendMode != hasBlendMode()) {
+        if (hasBlendMode())
+            updateNonCompositedParentStackingContextHasBlendedChild(true);
+        else
+            dirtyAncestorParentStackingContextHasBlendedElement();
+    }
 
     BlendMode newBlendMode = renderer().style().blendMode();
     if (newBlendMode != m_blendMode) {
@@ -818,24 +821,37 @@ void RenderLayer::updateBlendMode(const RenderStyle* oldStyle)
     }
 }
 
-void RenderLayer::updateParentStackingContextShouldIsolateBlending()
+void RenderLayer::updateNonCompositedParentStackingContextHasBlendedChild(bool hasBlendedChild)
 {
-    if (!m_updateParentStackingContextShouldIsolateBlendingDirty)
+    if (isComposited())
         return;
 
-    if (isComposited()) {
-        m_updateParentStackingContextShouldIsolateBlendingDirty = false;
-        return;
-    }
+    for (auto ancestor = parent(); ancestor && !ancestor->isComposited() && !ancestor->renderer().isRoot(); ancestor = ancestor->parent()) {
+        ancestor->m_hasBlendedElementInChildStackingContext = hasBlendedChild;
 
-    for (auto ancestor = parent(); ancestor && !ancestor->isComposited() && !ancestor->isRootLayer(); ancestor = ancestor->parent()) {
-        if (ancestor->isStackingContext()) {
-            ancestor->m_isolatesBlending = renderer().style().hasBlendMode();
+        if (ancestor->isStackingContext())
             break;
-        }
+    }
+}
+
+void RenderLayer::dirtyAncestorParentStackingContextHasBlendedElement()
+{
+    for (auto layer = this; layer && !layer->isComposited() && !layer->m_hasBlendedElementInChildStackingContextStatusDirty; layer = layer->parent()) {
+        layer->m_hasBlendedElementInChildStackingContextStatusDirty = true;
+
+        if (layer->isStackingContext())
+            break;
+    }
+}
+
+bool RenderLayer::nonCompositedParentStackingContextHasBlendedChild() const
+{
+    for (auto ancestor = parent(); ancestor && !ancestor->isComposited() && !ancestor->renderer().isRoot(); ancestor = ancestor->parent()) {
+        if (ancestor->isStackingContext())
+            return ancestor->hasBlendedElementInChildStackingContext();
     }
 
-    m_updateParentStackingContextShouldIsolateBlendingDirty = false;
+    return false;
 }
 
 #endif
@@ -1080,10 +1096,11 @@ void RenderLayer::setAncestorChainHasVisibleDescendant()
 
 void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* outOfFlowDescendantContainingBlocks)
 {
-    if (m_visibleDescendantStatusDirty || m_hasSelfPaintingLayerDescendantDirty || m_hasOutOfFlowPositionedDescendantDirty) {
+    if (m_visibleDescendantStatusDirty || m_hasSelfPaintingLayerDescendantDirty || m_hasOutOfFlowPositionedDescendantDirty || hasBlendedElementInChildStackingContextStatusDirty()) {
         m_hasVisibleDescendant = false;
         m_hasSelfPaintingLayerDescendant = false;
         m_hasOutOfFlowPositionedDescendant = false;
+        setHasBlendedElementInChildStackingContext(false);
 
         HashSet<const RenderObject*> childOutOfFlowDescendantContainingBlocks;
         for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
@@ -1103,12 +1120,14 @@ void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* o
             bool hasVisibleDescendant = child->m_hasVisibleContent || child->m_hasVisibleDescendant;
             bool hasSelfPaintingLayerDescendant = child->isSelfPaintingLayer() || child->hasSelfPaintingLayerDescendant();
             bool hasOutOfFlowPositionedDescendant = !childOutOfFlowDescendantContainingBlocks.isEmpty();
+            bool hasBlendedElementInChildStackingContext = child->hasBlendMode() || child->hasBlendedElementInChildStackingContext();
 
             m_hasVisibleDescendant |= hasVisibleDescendant;
             m_hasSelfPaintingLayerDescendant |= hasSelfPaintingLayerDescendant;
             m_hasOutOfFlowPositionedDescendant |= hasOutOfFlowPositionedDescendant;
+            setHasBlendedElementInChildStackingContext(this->hasBlendedElementInChildStackingContext() | hasBlendedElementInChildStackingContext);
 
-            if (m_hasVisibleDescendant && m_hasSelfPaintingLayerDescendant && m_hasOutOfFlowPositionedDescendant)
+            if (m_hasVisibleDescendant && m_hasSelfPaintingLayerDescendant && m_hasOutOfFlowPositionedDescendant && this->hasBlendedElementInChildStackingContext())
                 break;
         }
 
@@ -1122,6 +1141,8 @@ void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* o
             updateNeedsCompositedScrolling();
 
         m_hasOutOfFlowPositionedDescendantDirty = false;
+
+        setHasBlendedElementInChildStackingContextStatusDirty(false);
     }
 
     if (m_visibleContentStatusDirty) {
@@ -1777,6 +1798,11 @@ void RenderLayer::addChild(RenderLayer* child, RenderLayer* beforeChild)
     if (child->renderer().isOutOfFlowPositioned() || child->hasOutOfFlowPositionedDescendant())
         setAncestorChainHasOutOfFlowPositionedDescendant(child->renderer().containingBlock());
 
+#if ENABLE(CSS_COMPOSITING)
+    if (child->hasBlendMode() || (!child->isStackingContext() && child->hasBlendedElementInChildStackingContext()))
+        child->updateNonCompositedParentStackingContextHasBlendedChild(true);
+#endif
+
     compositor().layerWasAdded(*this, *child);
 }
 
@@ -1818,6 +1844,11 @@ RenderLayer* RenderLayer::removeChild(RenderLayer* oldChild)
 
     if (oldChild->isSelfPaintingLayer() || oldChild->hasSelfPaintingLayerDescendant())
         dirtyAncestorChainHasSelfPaintingLayerDescendantStatus();
+
+#if ENABLE(CSS_COMPOSITING)
+    if (oldChild->hasBlendMode() || oldChild->isolatesBlending())
+        dirtyAncestorParentStackingContextHasBlendedElement();
+#endif
 
     return oldChild;
 }
@@ -6405,6 +6436,12 @@ void RenderLayer::updateStackingContextsAfterStyleChange(const RenderStyle* oldS
             dirtyZOrderLists();
         else
             clearZOrderLists();
+
+#if ENABLE(CSS_COMPOSITING)
+            m_hasBlendedElementInChildStackingContext = isStackingContext ? nonCompositedParentStackingContextHasBlendedChild() : false;
+            dirtyAncestorParentStackingContextHasBlendedElement();
+#endif
+
         return;
     }
 
@@ -6555,7 +6592,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
     updateDescendantDependentFlags();
     updateTransform();
 #if ENABLE(CSS_COMPOSITING)
-    updateBlendMode(oldStyle);
+    updateBlendMode();
 #endif
 #if ENABLE(CSS_FILTERS)
     updateOrRemoveFilterClients();

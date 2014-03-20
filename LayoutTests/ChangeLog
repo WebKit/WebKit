@@ -1,3 +1,19 @@
+2014-03-20  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Blending] Blending operation is not isolated when setting z-index on parent from javascript
+        https://bugs.webkit.org/show_bug.cgi?id=129307
+
+        Reviewed by Dean Jackson.
+
+        Test if setting or unsetting stacking context or blend mode from script correctly updates blending
+        isolation.
+
+        * css3/compositing/blend-mode-background.html: Added.
+        * fast/repaint/blend-mode-isolate-stacking-context-expected.txt: Added.
+        * fast/repaint/blend-mode-isolate-stacking-context.html: Added.
+        * platform/mac/css3/compositing/blend-mode-background-expected.png: Added.
+        * platform/mac/css3/compositing/blend-mode-background-expected.txt: Added.
+
 2014-03-20  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Remove "visibility:hidden" from overflow-scrollable* tests

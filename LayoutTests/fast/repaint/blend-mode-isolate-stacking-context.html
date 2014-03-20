@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+    div {
+        margin: 20px;
+        width: 60px;
+        height: 60px;
+    }
+
+    .parent {
+        background: #0F0;
+    }
+
+    .child {
+        background: #00F;
+    }
+
+    .stacking {
+        position: relative;
+        z-index: 0;
+    }
+
+    .stacking2 {
+        opacity: 0.99;
+    }
+
+    .blender {
+        -webkit-mix-blend-mode: difference;
+    }
+
+    .blender2 {
+        -webkit-mix-blend-mode: screen;
+    }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText(true);
+</script>
+<script src="resources/text-based-repaint.js" type="text/javascript"></script>
+<!-- Repaint test to ensure that setting a blend mode dynamically triggers this operation
+    only with the contents of the nearest ancestor stacking context. -->
+<body onload="runRepaintTest()">
+    <p>Test if setting blend mode creates isolation.</p>
+    <div class="parent stacking">
+        <div id="first" class="child"></div>
+    </div>
+
+    <p>Test if unsetting blend mode removes isolation.</p>
+    <div class="parent stacking">
+        <div id="second" class="child blender"></div>
+    </div>
+
+    <p>Test if unsetting a parent's stacking context correctly removes isolation.</p>
+    <div id="third" class="parent stacking">
+        <div class="child blender"></div>
+    </div>
+
+    <p>Test if switching a blend mode preserves isolation.</p>
+     <div class="parent stacking">
+         <div id="fourth" class="child blender"></div>
+     </div>
+
+    <p>Test if switching the property that causes the parent to create a stacking context preserves isolation.</p>
+    <div id="fifth" class="parent stacking">
+        <div class="child blender"></div>
+    </div>
+
+    <p>Test if unsetting a parent's stacking context correctly updates its parent isolation.</p>
+    <div class="parent stacking">
+        <div id="sixth" class="parent stacking">
+            <div class="child blender"></div>
+        </div>
+    </div>
+
+    <script>
+        function repaintTest() {
+            document.getElementById('first').className = "child blender";
+            document.getElementById('second').className = "child";
+
+            document.getElementById('third').className = "parent";
+
+            document.getElementById('fourth').className = "child blender2";
+
+            document.getElementById('fifth').className = "parent stacking2";
+            document.getElementById('sixth').className = "parent";
+        }
+     </script>
+ </body>

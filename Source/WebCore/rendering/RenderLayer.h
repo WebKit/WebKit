@@ -503,8 +503,7 @@ public:
     void updateTransform();
     
 #if ENABLE(CSS_COMPOSITING)
-    void updateBlendMode(const RenderStyle*);
-    void updateParentStackingContextShouldIsolateBlending();
+    void updateBlendMode();
 #endif
 
     const LayoutSize& offsetForInFlowPosition() const { return m_offsetForInFlowPosition; }
@@ -790,9 +789,45 @@ public:
     bool isolatesBlending() const
     {
 #if ENABLE(CSS_COMPOSITING)
-        return m_isolatesBlending;
+        return m_hasBlendedElementInChildStackingContext && isStackingContext();
 #else
         return false;
+#endif
+    }
+
+    bool hasBlendedElementInChildStackingContext() const
+    {
+#if ENABLE(CSS_COMPOSITING)
+        return m_hasBlendedElementInChildStackingContext;
+#else
+        return false;
+#endif
+    }
+
+    void setHasBlendedElementInChildStackingContext(bool hasBlendedElementInChildStackingContext)
+    {
+#if ENABLE(CSS_COMPOSITING)
+        m_hasBlendedElementInChildStackingContext = hasBlendedElementInChildStackingContext;
+#else
+        UNUSED_PARAM(hasBlendedElementInChildStackingContext);
+#endif
+    }
+
+    bool hasBlendedElementInChildStackingContextStatusDirty() const
+    {
+#if ENABLE(CSS_COMPOSITING)
+        return m_hasBlendedElementInChildStackingContextStatusDirty;
+#else
+        return false;
+#endif
+    }
+
+    void setHasBlendedElementInChildStackingContextStatusDirty(bool hasBlendedElementInChildStackingContextStatusDirty)
+    {
+#if ENABLE(CSS_COMPOSITING)
+        m_hasBlendedElementInChildStackingContextStatusDirty = hasBlendedElementInChildStackingContextStatusDirty;
+#else
+        UNUSED_PARAM(hasBlendedElementInChildStackingContextStatusDirty);
 #endif
     }
 
@@ -1109,6 +1144,12 @@ private:
     void updateOrRemoveFilterEffectRenderer();
 #endif
 
+#if ENABLE(CSS_COMPOSITING)
+    void updateNonCompositedParentStackingContextHasBlendedChild(bool hasBlendedChild);
+    void dirtyAncestorParentStackingContextHasBlendedElement();
+    bool nonCompositedParentStackingContextHasBlendedChild() const;
+#endif
+
     void parentClipRects(const ClipRectsContext&, ClipRects&) const;
     ClipRect backgroundClipRect(const ClipRectsContext&) const;
 
@@ -1246,8 +1287,8 @@ private:
 
 #if ENABLE(CSS_COMPOSITING)
     BlendMode m_blendMode : 5;
-    bool m_isolatesBlending : 1;
-    bool m_updateParentStackingContextShouldIsolateBlendingDirty : 1;
+    bool m_hasBlendedElementInChildStackingContext : 1;
+    bool m_hasBlendedElementInChildStackingContextStatusDirty : 1;
 #endif
 
     RenderLayerModelObject& m_renderer;
