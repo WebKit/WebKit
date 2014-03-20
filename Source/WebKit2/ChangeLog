@@ -1,3 +1,16 @@
+2014-03-20  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [EFL][GTK] Get CMake to find Freetype2 properly
+        https://bugs.webkit.org/show_bug.cgi?id=130150
+
+        Reviewed by Csaba Osztrogonác.
+
+        Newer versions of CMake are not able to find Freetype2 correctly.
+        FindFreetype2.cmake checks for the version number in freetype.h header, since it seems that bug exists in
+        freetype2 repo, because a completely different version number is found in freetype2.pc.
+
+        * PlatformEfl.cmake:
+
 2014-03-20  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] test_ewk2_application_cache_manager is flaky
