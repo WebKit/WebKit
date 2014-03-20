@@ -1,3 +1,28 @@
+2014-03-20  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Refine BatteryStatus module
+        https://bugs.webkit.org/show_bug.cgi?id=130495
+
+        Reviewed by Andreas Kling.
+
+        Small refinements:
+         - Return PassRef instead of PassRefPtr in create method
+         - Switched to nullptr instead of 0 where appropriate.
+         - Removed unused function and header file.
+         - Removed unnecessary empty lines.
+
+        * Modules/battery/BatteryController.h:
+        * Modules/battery/BatteryManager.cpp:
+        (WebCore::BatteryManager::create): Make return passRef.
+        * Modules/battery/BatteryManager.h:
+        (WebCore::BatteryManager::batteryControllerDestroyed): Use nullptr.
+        * Modules/battery/BatteryStatus.cpp:
+        (WebCore::BatteryStatus::create): Make return passRef.
+        * Modules/battery/BatteryStatus.h:
+        * Modules/battery/NavigatorBattery.cpp:
+        (WebCore::NavigatorBattery::webkitBattery): Remove batteryManager().
+        * Modules/battery/NavigatorBattery.h:
+
 2014-03-19  Pratik Solanki  <psolanki@apple.com>
 
         [iOS] Get code to compile on older iOS versions

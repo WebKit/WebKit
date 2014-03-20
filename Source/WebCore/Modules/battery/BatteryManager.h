@@ -35,7 +35,7 @@ class ScriptExecutionContext;
 class BatteryManager : public ActiveDOMObject, public RefCounted<BatteryManager>, public EventTarget {
 public:
     virtual ~BatteryManager();
-    static PassRefPtr<BatteryManager> create(Navigator*);
+    static PassRef<BatteryManager> create(Navigator*);
 
     // EventTarget implementation.
     virtual EventTargetInterface eventTargetInterface() const override { return BatteryManagerEventTargetInterfaceType; }
@@ -53,7 +53,7 @@ public:
 
     void didChangeBatteryStatus(PassRefPtr<Event>, PassRefPtr<BatteryStatus>);
     void updateBatteryStatus(PassRefPtr<BatteryStatus>);
-    void batteryControllerDestroyed() { m_batteryController = 0; }
+    void batteryControllerDestroyed() { m_batteryController = nullptr; }
 
     using RefCounted<BatteryManager>::ref;
     using RefCounted<BatteryManager>::deref;

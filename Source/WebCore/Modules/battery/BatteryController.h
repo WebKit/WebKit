@@ -59,4 +59,3 @@ private:
 
 #endif // BATTERY_STATUS
 #endif // BatteryController_h
-

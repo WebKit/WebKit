@@ -29,8 +29,8 @@ namespace WebCore {
 
 class BatteryStatus : public RefCounted<BatteryStatus> {
 public:
-    static PassRefPtr<BatteryStatus> create();
-    static PassRefPtr<BatteryStatus> create(bool charging, double chargingTime, double dischargingTime, double level);
+    static PassRef<BatteryStatus> create();
+    static PassRef<BatteryStatus> create(bool charging, double chargingTime, double dischargingTime, double level);
 
     bool charging() const { return m_charging; }
     double chargingTime() const  { return m_chargingTime; }
@@ -51,4 +51,3 @@ private:
 
 #endif // BATTERY_STATUS
 #endif // BatteryStatus_h
-

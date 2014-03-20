@@ -32,11 +32,11 @@
 
 namespace WebCore {
 
-PassRefPtr<BatteryManager> BatteryManager::create(Navigator* navigator)
+PassRef<BatteryManager> BatteryManager::create(Navigator* navigator)
 {
-    RefPtr<BatteryManager> batteryManager(adoptRef(new BatteryManager(navigator)));
-    batteryManager->suspendIfNeeded();
-    return batteryManager.release();
+    auto batteryManager = adoptRef(*new BatteryManager(navigator));
+    batteryManager.get().suspendIfNeeded();
+    return std::move(batteryManager);
 }
 
 BatteryManager::~BatteryManager()
@@ -109,4 +109,3 @@ void BatteryManager::stop()
 } // namespace WebCore
 
 #endif // BATTERY_STATUS
-
