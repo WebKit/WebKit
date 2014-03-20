@@ -19,9 +19,10 @@
  */
 
 #include "config.h"
-#include "CookieJarSoup.h"
 
 #if USE(SOUP)
+
+#include "CookieJarSoup.h"
 
 #include "Cookie.h"
 #include "GUniquePtrSoup.h"

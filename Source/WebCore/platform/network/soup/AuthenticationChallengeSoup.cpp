@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "AuthenticationChallenge.h"
 
 #if USE(SOUP)
+
+#include "AuthenticationChallenge.h"
 
 #include "ResourceError.h"
 #include <libsoup/soup.h>

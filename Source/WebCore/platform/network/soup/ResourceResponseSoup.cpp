@@ -19,9 +19,10 @@
  */
 
 #include "config.h"
-#include "ResourceResponse.h"
 
 #if USE(SOUP)
+
+#include "ResourceResponse.h"
 
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"

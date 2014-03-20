@@ -1,3 +1,14 @@
+2014-03-20  Alex Christensen  <achristensen@webkit.org>
+
+        [WinCairo] Unreviewed speculative build after my r165996.
+
+        * platform/network/soup/AuthenticationChallengeSoup.cpp:
+        * platform/network/soup/CertificateInfo.cpp:
+        * platform/network/soup/CookieJarSoup.cpp:
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        * platform/network/soup/SynchronousLoaderClientSoup.cpp:
+
 2014-03-20  Brent Fulgham  <bfulgham@apple.com>
 
         Add a flushing mechanism for the WebVTTParser

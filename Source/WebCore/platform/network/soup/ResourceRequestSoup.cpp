@@ -18,9 +18,10 @@
  */
 
 #include "config.h"
-#include "ResourceRequest.h"
 
 #if USE(SOUP)
+
+#include "ResourceRequest.h"
 
 #include "GUniquePtrSoup.h"
 #include "HTTPParsers.h"

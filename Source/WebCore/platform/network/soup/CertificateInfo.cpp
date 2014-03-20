@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "CertificateInfo.h"
 
 #if USE(SOUP)
+
+#include "CertificateInfo.h"
 
 #include <ResourceError.h>
 #include <ResourceResponse.h>

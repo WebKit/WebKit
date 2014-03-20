@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "SynchronousLoaderClient.h"
 
 #if USE(SOUP)
+
+#include "SynchronousLoaderClient.h"
 
 #include "AuthenticationChallenge.h"
 #include "NotImplemented.h"
