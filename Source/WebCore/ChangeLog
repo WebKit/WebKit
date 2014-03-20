@@ -1,3 +1,38 @@
+2014-03-20  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Nested layers with subpixel accumulation paint to wrong position.
+        https://bugs.webkit.org/show_bug.cgi?id=130153
+
+        Reviewed by Simon Fraser.
+
+        Subpixels (fractional device pixels here) can accumulate through nested layers. Subpixels
+        need to be propagated through the layer tree so that painting coordinates match layout coordinates.
+
+        Subpixel accumulation through nesting (absolute positioning, 2x display):
+        non-compositing case:
+        (nested boxes)  (layout pos) (norm.paint pos) (translate accumulation, subpixel accumulation, final paint pos)
+        div -> top: 1.3px   1.3px     1.5px      1.5px 0.2px -> snapped 0.0px -> 1.5px
+         div -> top: 1.3px   2.6px     2.5px      3.0px 0.4px -> snapped 0.5px -> 2.5px
+          div -> top: 1.3px   3.9px     4.0px      4.5px 0.6px -> snapped 0.5px -> 4.0px
+           div -> top: 1.3px   5.2px     5.0px      6.0px 0.8px -> snapped 1.0px -> 5.0px
+
+        compositing case:
+        (nested boxes)  (layout pos) (norm.paint pos) (device pixel offset + fractional offset, final pos)
+        div -> top: 1.3px   1.3px      1.5px      1.0px + 0.3px -> snapped -> 1.5px
+         div -> top: 1.3px   2.6px      2.5px      2.5px + 0.1px -> snapped -> 2.5px
+          div -> top: 1.3px   3.9px      4.0px      3.5px + 0.4px -> snapped -> 4.0px
+           div -> top: 1.3px   5.2px      5.0px      5.0px + 0.2px -> snapped -> 5.0px
+
+        Tests: compositing/hidpi-nested-compositing-layers-with-subpixel-accumulation.html
+               fast/layers/hidpi-nested-layers-with-subpixel-accumulation.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerByApplyingTransform):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        * rendering/RenderLayerBacking.h:
+        (WebCore::RenderLayerBacking::devicePixelFractionFromRenderer):
+
 2014-03-20  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [EFL][GTK] Get CMake to find Freetype2 properly

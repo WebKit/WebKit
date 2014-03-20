@@ -4167,14 +4167,18 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext* context, const 
     // This involves subtracting out the position of the layer in our current coordinate space, but preserving
     // the accumulated error for sub-pixel layout.
     float deviceScaleFactor = renderer().document().deviceScaleFactor();
-    LayoutPoint delta;
-    convertToLayerCoords(paintingInfo.rootLayer, delta);
-    delta.moveBy(translationOffset);
+    LayoutPoint offsetFromParent;
+    convertToLayerCoords(paintingInfo.rootLayer, offsetFromParent);
+    offsetFromParent.moveBy(translationOffset);
     TransformationMatrix transform(renderableTransform(paintingInfo.paintBehavior));
-    FloatPoint roundedDelta = roundedForPainting(delta, deviceScaleFactor);
-    transform.translateRight(roundedDelta.x(), roundedDelta.y());
-    LayoutSize adjustedSubPixelAccumulation = paintingInfo.subPixelAccumulation + (delta - LayoutPoint(roundedDelta));
-
+    FloatPoint devicePixelSnappeddOffsetFromParent = roundedForPainting(offsetFromParent, deviceScaleFactor);
+    // Translate the graphics context to the snapping position to avoid off-device-pixel positing.
+    transform.translateRight(devicePixelSnappeddOffsetFromParent.x(), devicePixelSnappeddOffsetFromParent.y());
+    // We handle accumulated subpixels through nested layers here. Since the context gets translated to device pixels,
+    // all we need to do is add the delta to the accumulated pixels coming from ancestor layers. With deep nesting of subpixel positioned
+    // boxes, this could grow to a relatively large number, but the translateRight() balances it.
+    FloatSize delta = offsetFromParent - devicePixelSnappeddOffsetFromParent;
+    LayoutSize adjustedSubPixelAccumulation = paintingInfo.subPixelAccumulation + LayoutSize(delta);
     // Apply the transform.
     GraphicsContextStateSaver stateSaver(*context);
     context->concatCTM(transform.toAffineTransform());

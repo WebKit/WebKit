@@ -215,6 +215,8 @@ public:
     void setBlendMode(BlendMode);
 #endif
 
+    LayoutSize devicePixelFractionFromRenderer() const { return m_devicePixelFractionFromRenderer; }
+
 private:
     FloatRect backgroundBoxForPainting() const;
 
