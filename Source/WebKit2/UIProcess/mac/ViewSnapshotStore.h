@@ -26,15 +26,12 @@
 #ifndef ViewSnapshotStore_h
 #define ViewSnapshotStore_h
 
+#include <WebCore/IOSurface.h>
 #include <chrono>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
-
-#if USE(IOSURFACE)
-#include <IOSurface/IOSurface.h>
-#endif
 
 namespace WebKit {
 
@@ -51,7 +48,7 @@ public:
 
     void recordSnapshot(WebPageProxy&);
 #if USE(IOSURFACE)
-    std::pair<RetainPtr<IOSurfaceRef>, uint64_t> snapshotAndRenderTreeSize(WebBackForwardListItem*);
+    std::pair<RefPtr<WebCore::IOSurface>, uint64_t> snapshotAndRenderTreeSize(WebBackForwardListItem*);
 #else
     std::pair<RetainPtr<CGImageRef>, uint64_t> snapshotAndRenderTreeSize(WebBackForwardListItem*);
 #endif
@@ -64,8 +61,7 @@ private:
 
     struct Snapshot {
 #if USE(IOSURFACE)
-        RetainPtr<IOSurfaceRef> surface;
-        RetainPtr<CGContextRef> surfaceContext;
+        RefPtr<WebCore::IOSurface> surface;
 #else
         RetainPtr<CGImageRef> image;
 #endif

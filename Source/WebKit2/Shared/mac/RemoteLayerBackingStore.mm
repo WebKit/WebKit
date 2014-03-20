@@ -33,22 +33,12 @@
 #import "WebCoreArgumentCoders.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/GraphicsContextCG.h>
+#import <WebCore/IOSurface.h>
 #import <WebCore/WebLayer.h>
 
 #if USE(IOSURFACE)
 #import <mach/mach_port.h>
 #endif
-
-#if __has_include(<ApplicationServices/ApplicationServicesPriv.h>)
-#import <ApplicationServices/ApplicationServicesPriv.h>
-#endif
-
-extern "C" {
-#if USE(IOSURFACE)
-CGContextRef CGIOSurfaceContextCreate(IOSurfaceRef, size_t, size_t, size_t, size_t, CGColorSpaceRef, CGBitmapInfo);
-#endif
-CGImageRef CGIOSurfaceContextCreateImage(CGContextRef);
-}
 
 #if __has_include(<QuartzCore/CALayerPrivate.h>)
 #import <QuartzCore/CALayerPrivate.h>
@@ -93,7 +83,7 @@ void RemoteLayerBackingStore::encode(IPC::ArgumentEncoder& encoder) const
 
 #if USE(IOSURFACE)
     if (m_acceleratesDrawing) {
-        mach_port_t port = IOSurfaceCreateMachPort(m_frontSurface.get());
+        mach_port_t port = m_frontSurface->createMachPort();
         encoder << IPC::MachPort(port, MACH_MSG_TYPE_MOVE_SEND);
         return;
     }
@@ -125,7 +115,7 @@ bool RemoteLayerBackingStore::decode(IPC::ArgumentDecoder& decoder, RemoteLayerB
         IPC::MachPort machPort;
         if (!decoder.decode(machPort))
             return false;
-        result.m_frontSurface = adoptCF(IOSurfaceLookupFromMachPort(machPort.port()));
+        result.m_frontSurface = IOSurface::createFromMachPort(machPort.port(), ColorSpaceDeviceRGB);
         mach_port_deallocate(mach_task_self(), machPort.port());
         return true;
     }
@@ -150,44 +140,6 @@ void RemoteLayerBackingStore::setNeedsDisplay()
 {
     setNeedsDisplay(IntRect(IntPoint(), m_size));
 }
-
-#if USE(IOSURFACE)
-static RetainPtr<CGContextRef> createIOSurfaceContext(IOSurfaceRef surface, IntSize size, CGColorSpaceRef colorSpace)
-{
-    if (!surface)
-        return nullptr;
-
-    CGBitmapInfo bitmapInfo = kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host;
-    size_t bitsPerComponent = 8;
-    size_t bitsPerPixel = 32;
-    return adoptCF(CGIOSurfaceContextCreate(surface, size.width(), size.height(), bitsPerComponent, bitsPerPixel, colorSpace, bitmapInfo));
-}
-
-static RetainPtr<IOSurfaceRef> createIOSurface(IntSize size)
-{
-    unsigned pixelFormat = 'BGRA';
-    unsigned bytesPerElement = 4;
-    int width = size.width();
-    int height = size.height();
-
-    size_t bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerElement);
-    ASSERT(bytesPerRow);
-
-    size_t allocSize = IOSurfaceAlignProperty(kIOSurfaceAllocSize, height * bytesPerRow);
-    ASSERT(allocSize);
-
-    NSDictionary *dict = @{
-        (id)kIOSurfaceWidth: @(width),
-        (id)kIOSurfaceHeight: @(height),
-        (id)kIOSurfacePixelFormat: @(pixelFormat),
-        (id)kIOSurfaceBytesPerElement: @(bytesPerElement),
-        (id)kIOSurfaceBytesPerRow: @(bytesPerRow),
-        (id)kIOSurfaceAllocSize: @(allocSize)
-    };
-
-    return adoptCF(IOSurfaceCreate((CFDictionaryRef)dict));
-}
-#endif // USE(IOSURFACE)
 
 RetainPtr<CGImageRef> RemoteLayerBackingStore::createImageForFrontBuffer() const
 {
@@ -233,30 +185,22 @@ bool RemoteLayerBackingStore::display()
 
 #if USE(IOSURFACE)
     if (m_acceleratesDrawing) {
-        RetainPtr<IOSurfaceRef> backSurface = createIOSurface(expandedScaledSize);
-        RetainPtr<CGContextRef> cgContext = createIOSurfaceContext(backSurface.get(), expandedScaledSize, sRGBColorSpaceRef());
-        GraphicsContext context(cgContext.get());
+        RefPtr<IOSurface> backSurface = IOSurface::create(expandedScaledSize, ColorSpaceDeviceRGB);
+        GraphicsContext& context = backSurface->ensureGraphicsContext();
         context.clearRect(FloatRect(FloatPoint(), expandedScaledSize));
         context.scale(FloatSize(1, -1));
         context.translate(0, -expandedScaledSize.height());
 
-        RetainPtr<CGContextRef> frontContext;
         RetainPtr<CGImageRef> frontImage;
-        if (m_frontSurface) {
-            frontContext = createIOSurfaceContext(m_frontSurface.get(), expandedIntSize(m_size * m_scale), sRGBColorSpaceRef());
-            frontImage = adoptCF(CGIOSurfaceContextCreateImage(frontContext.get()));
-        }
-
+        if (m_frontSurface)
+            frontImage = m_frontSurface->createImage();
         drawInContext(context, frontImage.get());
-        m_frontSurface = backSurface;
 
         // If our frontImage is derived from an IOSurface, we need to
         // destroy the image before the CGContext it's derived from,
         // so that the context doesn't make a CPU copy of the surface data.
-        if (frontImage) {
-            frontImage = nullptr;
-            ASSERT(frontContext);
-        }
+        frontImage = nullptr;
+        m_frontSurface = backSurface;
 
         return true;
     }
@@ -367,7 +311,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer)
 {
 #if USE(IOSURFACE)
     if (acceleratesDrawing())
-        layer.contents = (id)m_frontSurface.get();
+        layer.contents = (id)m_frontSurface->surface();
     else
         layer.contents = (id)createImageForFrontBuffer().get();
 #else

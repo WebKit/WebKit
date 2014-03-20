@@ -63,6 +63,7 @@ static const int maxIOSurfaceDimension = 2048;
 static const int maxIOSurfaceDimension = 4096;
 #endif
 
+// FIXME: Adopt WebCore::IOSurface.
 static RetainPtr<IOSurfaceRef> createIOSurface(const IntSize& size)
 {
     unsigned pixelFormat = 'BGRA';

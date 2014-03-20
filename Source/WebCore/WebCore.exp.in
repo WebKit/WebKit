@@ -2711,11 +2711,6 @@ __ZN7WebCore28getDefaultWebCryptoMasterKeyERN3WTF6VectorIhLm0ENS0_15CrashOnOverf
 _wkCTFontTransformGlyphs
 #endif
 
-#if !PLATFORM(IOS_SIMULATOR)
-_wkIOSurfaceContextCreate
-_wkIOSurfaceContextCreateImage
-#endif
-
 #if ENABLE(3D_RENDERING)
 _WebCoreHas3DRendering
 #endif
@@ -3053,6 +3048,18 @@ __ZN7WebCore16findIntersectionERKNS_10FloatPointES2_S2_S2_RS0_
 __ZNK7WebCore19InspectorController12getHighlightEPNS_9HighlightE
 __ZNK7WebCore9FloatQuad12containsQuadERKS0_
 __ZNK7WebCore9FloatQuad13containsPointERKNS_10FloatPointE
+#endif
+
+#if USE(IOSURFACE)
+__ZN7WebCore9IOSurface14setIsPurgeableEb
+__ZN7WebCore9IOSurface18createFromMachPortEjNS_10ColorSpaceE
+__ZN7WebCore9IOSurface21ensureGraphicsContextEv
+__ZN7WebCore9IOSurface21ensurePlatformContextEv
+__ZN7WebCore9IOSurface6createENS_7IntSizeENS_10ColorSpaceE
+__ZNK7WebCore9IOSurface11createImageEv
+__ZNK7WebCore9IOSurface14createMachPortEv
+_wkIOSurfaceContextCreate
+_wkIOSurfaceContextCreateImage
 #endif
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)

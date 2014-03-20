@@ -40,21 +40,8 @@
 #import "WebProcessProxy.h"
 #import <Cocoa/Cocoa.h>
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/IOSurface.h>
 #import <WebCore/WebCoreCALayerExtras.h>
-
-#if defined(__has_include) && __has_include(<IOSurface/IOSurfacePrivate.h>)
-#import <IOSurface/IOSurfacePrivate.h>
-#else
-enum {
-    kIOSurfacePurgeableNonVolatile = 0,
-    kIOSurfacePurgeableVolatile = 1,
-    kIOSurfacePurgeableEmpty = 2,
-};
-#endif
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-extern "C" IOReturn IOSurfaceSetPurgeable(IOSurfaceRef buffer, uint32_t newState, uint32_t *oldState);
-#endif
 
 #if defined(__has_include) && __has_include(<QuartzCore/QuartzCorePrivate.h>)
 #import <QuartzCore/QuartzCorePrivate.h>
@@ -373,18 +360,11 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     m_swipeSnapshotLayer = adoptNS([[CALayer alloc] init]);
     [m_swipeSnapshotLayer setBackgroundColor:CGColorGetConstantColor(kCGColorWhite)];
 
-    RetainPtr<IOSurfaceRef> snapshot = ViewSnapshotStore::shared().snapshotAndRenderTreeSize(targetItem).first;
+    RefPtr<IOSurface> snapshot = ViewSnapshotStore::shared().snapshotAndRenderTreeSize(targetItem).first;
 
-    if (snapshot) {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-        uint32_t purgeabilityState = kIOSurfacePurgeableNonVolatile;
-        IOSurfaceSetPurgeable(snapshot.get(), kIOSurfacePurgeableNonVolatile, &purgeabilityState);
-
-        if (purgeabilityState != kIOSurfacePurgeableEmpty)
-            [m_swipeSnapshotLayer setContents:(id)snapshot.get()];
-#else
-        [m_swipeSnapshotLayer setContents:(id)snapshot.get()];
-#endif
+    if (snapshot && snapshot->setIsPurgeable(false) == IOSurface::SurfaceState::Valid) {
+        m_currentSwipeSnapshotSurface = snapshot;
+        [m_swipeSnapshotLayer setContents:(id)snapshot->surface()];
     }
 
     m_currentSwipeCustomViewBounds = windowRelativeBoundsForCustomSwipeViews();
@@ -530,11 +510,9 @@ void ViewGestureController::removeSwipeSnapshot()
     if (m_activeGestureType != ViewGestureType::Swipe)
         return;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    IOSurfaceRef snapshotSurface = (IOSurfaceRef)[m_swipeSnapshotLayer contents];
-    if (snapshotSurface)
-        IOSurfaceSetPurgeable(snapshotSurface, kIOSurfacePurgeableVolatile, nullptr);
-#endif
+    if (m_currentSwipeSnapshotSurface)
+        m_currentSwipeSnapshotSurface->setIsPurgeable(true);
+    m_currentSwipeSnapshotSurface = nullptr;
 
     for (const auto& layer : m_currentSwipeLiveLayers)
         [layer setTransform:CATransform3DIdentity];

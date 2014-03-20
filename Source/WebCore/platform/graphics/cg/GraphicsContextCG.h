@@ -36,6 +36,20 @@ CGColorSpaceRef deviceRGBColorSpaceRef();
 CGColorSpaceRef sRGBColorSpaceRef();
 CGColorSpaceRef linearRGBColorSpaceRef();
 
+static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
+{
+    switch (colorSpace) {
+    case ColorSpaceDeviceRGB:
+        return deviceRGBColorSpaceRef();
+    case ColorSpaceSRGB:
+        return sRGBColorSpaceRef();
+    case ColorSpaceLinearRGB:
+        return linearRGBColorSpaceRef();
+    }
+    ASSERT_NOT_REACHED();
+    return deviceRGBColorSpaceRef();
+}
+
 }
 
 #endif

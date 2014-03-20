@@ -1,3 +1,29 @@
+2014-03-20  Tim Horton  <timothy_horton@apple.com>
+
+        Add WebCore::IOSurface wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=130529
+
+        Reviewed by Simon Fraser.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (RemoteLayerBackingStore::encode):
+        (RemoteLayerBackingStore::decode):
+        (RemoteLayerBackingStore::display):
+        (RemoteLayerBackingStore::applyBackingStoreToLayer):
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        * UIProcess/mac/ViewGestureController.h:
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        * UIProcess/mac/ViewSnapshotStore.h:
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::createIOSurfaceFromImage):
+        (WebKit::ViewSnapshotStore::recordSnapshot):
+        Adopt WebCore::IOSurface.
+
 2014-03-20  Alexey Proskuryakov  <ap@apple.com>
 
         Update iOS input method code to use new cross-platform async functions

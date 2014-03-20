@@ -28,11 +28,8 @@
 
 #include "ShareableBitmap.h"
 #include <WebCore/FloatRect.h>
+#include <WebCore/IOSurface.h>
 #include <WebCore/Region.h>
-
-#if USE(IOSURFACE)
-#include <IOSurface/IOSurface.h>
-#endif
 
 OBJC_CLASS CALayer;
 
@@ -93,7 +90,7 @@ private:
 
     RefPtr<ShareableBitmap> m_frontBuffer;
 #if USE(IOSURFACE)
-    RetainPtr<IOSurfaceRef> m_frontSurface;
+    RefPtr<WebCore::IOSurface> m_frontSurface;
 #endif
 
     bool m_acceleratesDrawing;

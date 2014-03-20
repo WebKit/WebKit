@@ -36,17 +36,13 @@
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import <WebCore/IOSurface.h>
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIScreenEdgePanGestureRecognizer.h>
 #import <UIKit/UIViewControllerTransitioning_Private.h>
 #import <UIKit/UIWebTouchEventsGestureRecognizer.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
 #import <UIKit/_UINavigationParallaxTransition.h>
-
-#if USE(IOSURFACE)
-#import <IOSurface/IOSurface.h>
-#import <IOSurface/IOSurfacePrivate.h>
-#endif
 
 using namespace WebCore;
 
@@ -161,11 +157,10 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     m_snapshotView = adoptNS([[UIView alloc] initWithFrame:[m_liveSwipeView frame]]);
     if (snapshot) {
 #if USE(IOSURFACE)
-        uint32_t purgeabilityState = kIOSurfacePurgeableNonVolatile;
-        IOSurfaceSetPurgeable(snapshot.get(), kIOSurfacePurgeableNonVolatile, &purgeabilityState);
-        
-        if (purgeabilityState != kIOSurfacePurgeableEmpty)
+        if (snapshot->setIsPurgeable(false) == IOSurface::SurfaceState::Valid) {
             [m_snapshotView layer].contents = (id)snapshot.get();
+            m_currentSwipeSnapshotSurface = snapshot;
+        }
 #else
         [m_snapshotView layer].contents = (id)snapshot.get();
 #endif
@@ -268,9 +263,9 @@ void ViewGestureController::removeSwipeSnapshot()
         return;
     
 #if USE(IOSURFACE)
-    IOSurfaceRef snapshotSurface = (IOSurfaceRef)[m_snapshotView layer].contents;
-    if (snapshotSurface)
-        IOSurfaceSetPurgeable(snapshotSurface, kIOSurfacePurgeableVolatile, nullptr);
+    if (m_currentSwipeSnapshotSurface)
+        m_currentSwipeSnapshotSurface->setIsPurgeable(true);
+    m_currentSwipeSnapshotSurface = nullptr;
 #endif
     
     [m_snapshotView removeFromSuperview];

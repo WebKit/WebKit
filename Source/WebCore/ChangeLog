@@ -1,3 +1,39 @@
+2014-03-20  Tim Horton  <timothy_horton@apple.com>
+
+        Add WebCore::IOSurface wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=130529
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/cg/ColorCG.cpp:
+        * platform/graphics/cg/GraphicsContextCG.h:
+        (WebCore::cachedCGColorSpace):
+        Move cachedCGColorSpace out so that other clients of GraphicsContextCG
+        can use its mapping from WebCore::ColorSpace -> CGColorSpaceRef.
+
+        * platform/graphics/cg/ImageBufferBackingStoreCache.cpp:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        Add FIXMEs for ImageBuffer to adopt WebCore::IOSurface.
+
+        * platform/graphics/cocoa/IOSurface.h: Added.
+        * platform/graphics/cocoa/IOSurface.mm: Added.
+        (IOSurface::create):
+        (IOSurface::createFromMachPort):
+        (IOSurface::createFromSurface):
+        (IOSurface::IOSurface):
+        (IOSurface::maximumSize):
+        (IOSurface::createMachPort):
+        (IOSurface::createImage):
+        (IOSurface::ensurePlatformContext):
+        (IOSurface::ensureGraphicsContext):
+        (IOSurface::state):
+        (IOSurface::isPurgeable):
+        (IOSurface::setIsPurgeable):
+        (IOSurface::inUse):
+        Add WebCore::IOSurface.
+
 2014-03-20  Pratik Solanki  <psolanki@apple.com>
 
         iOS build fix after r165992.

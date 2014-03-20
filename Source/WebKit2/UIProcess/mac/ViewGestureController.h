@@ -43,6 +43,10 @@ OBJC_CLASS NSEvent;
 OBJC_CLASS NSView;
 #endif
 
+namespace WebCore {
+class IOSurface;
+}
+
 namespace WebKit {
 
 class WebBackForwardListItem;
@@ -120,6 +124,10 @@ private:
     ViewGestureType m_activeGestureType;
     
     WebCore::Timer<ViewGestureController> m_swipeWatchdogTimer;
+
+#if USE(IOSURFACE)
+    RefPtr<WebCore::IOSurface> m_currentSwipeSnapshotSurface;
+#endif
 
 #if !PLATFORM(IOS)
     double m_magnification;

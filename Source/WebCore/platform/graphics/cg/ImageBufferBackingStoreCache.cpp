@@ -34,6 +34,7 @@ static const double purgeInterval = 5;
 
 namespace WebCore {
 
+// FIXME: Adopt WebCore::IOSurface.
 static RetainPtr<IOSurfaceRef> createIOSurface(const IntSize& size)
 {
     unsigned pixelFormat = 'BGRA';

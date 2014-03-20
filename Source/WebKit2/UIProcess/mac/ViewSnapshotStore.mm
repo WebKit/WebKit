@@ -29,28 +29,8 @@
 #import "WebBackForwardList.h"
 #import "WebPageProxy.h"
 #import <CoreGraphics/CoreGraphics.h>
+#import <WebCore/IOSurface.h>
 #import <WebCore/UUID.h>
-
-#if defined(__has_include) && __has_include(<CoreGraphics/CoreGraphicsPrivate.h>)
-#import <CoreGraphics/CoreGraphicsPrivate.h>
-#endif
-
-#if USE(IOSURFACE)
-#import <IOSurface/IOSurface.h>
-extern "C" CGContextRef CGIOSurfaceContextCreate(IOSurfaceRef surface, size_t width, size_t height, size_t bitsPerComponent, size_t bitsPerPixel, CGColorSpaceRef space, CGBitmapInfo bitmapInfo);
-
-#if defined(__has_include) && __has_include(<IOSurface/IOSurfacePrivate.h>)
-#import <IOSurface/IOSurfacePrivate.h>
-#else
-enum {
-    kIOSurfacePurgeableVolatile = 1,
-};
-#endif
-
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-extern "C" IOReturn IOSurfaceSetPurgeable(IOSurfaceRef buffer, uint32_t newState, uint32_t *oldState);
-#endif
-#endif
 
 using namespace WebCore;
 
@@ -119,36 +99,17 @@ void ViewSnapshotStore::pruneSnapshots(WebPageProxy& webPageProxy)
 }
 
 #if USE(IOSURFACE)
-static std::pair<RetainPtr<IOSurfaceRef>, RetainPtr<CGContextRef>> createIOSurfaceFromImage(CGImageRef image)
+static RefPtr<IOSurface> createIOSurfaceFromImage(CGImageRef image)
 {
-    unsigned pixelFormat = 'BGRA';
-    size_t bitsPerComponent = 8;
-    size_t bitsPerPixel = 32;
-    size_t bytesPerElement = 4;
     size_t width = CGImageGetWidth(image);
     size_t height = CGImageGetHeight(image);
-    size_t bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerElement);
-    ASSERT(bytesPerRow);
 
-    size_t allocSize = IOSurfaceAlignProperty(kIOSurfaceAllocSize, height * bytesPerRow);
-    ASSERT(allocSize);
-
-    NSDictionary *properties = @{
-        (id)kIOSurfaceWidth: @(width),
-        (id)kIOSurfaceHeight: @(height),
-        (id)kIOSurfacePixelFormat: @(pixelFormat),
-        (id)kIOSurfaceBytesPerElement: @(bytesPerElement),
-        (id)kIOSurfaceBytesPerRow: @(bytesPerRow),
-        (id)kIOSurfaceAllocSize: @(allocSize)
-    };
-
-    RetainPtr<IOSurfaceRef> surface = adoptCF(IOSurfaceCreate((CFDictionaryRef)properties));
-    CGBitmapInfo bitmapInfo = kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host;
-    RetainPtr<CGContextRef> surfaceContext = adoptCF(CGIOSurfaceContextCreate(surface.get(), width, height, bitsPerComponent, bitsPerPixel, CGImageGetColorSpace(image), bitmapInfo));
+    RefPtr<IOSurface> surface = IOSurface::create(IntSize(width, height), ColorSpaceDeviceRGB);
+    RetainPtr<CGContextRef> surfaceContext = surface->ensurePlatformContext();
     CGContextDrawImage(surfaceContext.get(), CGRectMake(0, 0, width, height), image);
     CGContextFlush(surfaceContext.get());
 
-    return std::make_pair(surface, surfaceContext);
+    return surface;
 }
 #endif
 
@@ -180,12 +141,8 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy)
     snapshot.creationTime = std::chrono::steady_clock::now();
 
 #if USE(IOSURFACE)
-    auto surfaceAndContext = createIOSurfaceFromImage(snapshotImage.get());
-    snapshot.surface = surfaceAndContext.first;
-    snapshot.surfaceContext = surfaceAndContext.second;
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    IOSurfaceSetPurgeable(snapshot.surface.get(), kIOSurfacePurgeableVolatile, nullptr);
-#endif
+    snapshot.surface = createIOSurfaceFromImage(snapshotImage.get());
+    snapshot.surface->setIsPurgeable(true);
 #else
     snapshot.image = snapshotImage;
 #endif
@@ -195,7 +152,7 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy)
 }
 
 #if USE(IOSURFACE)
-std::pair<RetainPtr<IOSurfaceRef>, uint64_t> ViewSnapshotStore::snapshotAndRenderTreeSize(WebBackForwardListItem* item)
+std::pair<RefPtr<IOSurface>, uint64_t> ViewSnapshotStore::snapshotAndRenderTreeSize(WebBackForwardListItem* item)
 #else
 std::pair<RetainPtr<CGImageRef>, uint64_t> ViewSnapshotStore::snapshotAndRenderTreeSize(WebBackForwardListItem* item)
 #endif
