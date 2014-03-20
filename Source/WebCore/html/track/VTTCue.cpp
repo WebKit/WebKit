@@ -427,7 +427,7 @@ void VTTCue::setText(const String& text)
 void VTTCue::createWebVTTNodeTree()
 {
     if (!m_webVTTNodeTree)
-        m_webVTTNodeTree = std::make_unique<WebVTTParser>(nullptr, scriptExecutionContext())->createDocumentFragmentFromCueText(m_content);
+        m_webVTTNodeTree = WebVTTParser::createDocumentFragmentFromCueText(ownerDocument(), m_content);
 }
 
 void VTTCue::copyWebVTTNodeToDOMTree(ContainerNode* webVTTNode, ContainerNode* parent)
@@ -696,8 +696,9 @@ void VTTCue::markFutureAndPastNodes(ContainerNode* root, double previousTimestam
         if (child->nodeName() == timestampTag) {
             unsigned position = 0;
             String timestamp = child->nodeValue();
-            double currentTimestamp = WebVTTParser::collectTimeStamp(timestamp, &position);
-            ASSERT(currentTimestamp != -1);
+            double currentTimestamp;
+            bool check = WebVTTParser::collectTimeStamp(timestamp, position, currentTimestamp);
+            ASSERT_UNUSED(check, check);
             
             if (currentTimestamp > movieTime)
                 isPastNode = false;
@@ -970,7 +971,7 @@ void VTTCue::setCueSettings(const String& input)
             // 2. If value does not contain at least one character in the range U+0030 DIGIT ZERO (0) to U+0039 DIGIT NINE (9),
             //    then jump to the step labeled next setting.
             int number;
-            if (!WebVTTParser::collectDigitsToInt(input, &position, number))
+            if (!WebVTTParser::collectDigitsToInt(input, position, number))
                 break;
             if (position >= input.length())
                 break;
@@ -986,7 +987,6 @@ void VTTCue::setCueSettings(const String& input)
 
             // 5. Ignoring the trailing percent sign, interpret value as an integer, and let number be that number.
             // 6. If number is not in the range 0 ≤ number ≤ 100, then jump to the step labeled next setting.
-            // NOTE: toInt ignores trailing non-digit characters, such as '%'.
             if (number < 0 || number > 100)
                 break;
 
@@ -1001,7 +1001,7 @@ void VTTCue::setCueSettings(const String& input)
             // 2. If value does not contain at least one character in the range U+0030 DIGIT ZERO (0) to U+0039 DIGIT 
             //    NINE (9), then jump to the step labeled next setting.
             int number;
-            if (!WebVTTParser::collectDigitsToInt(input, &position, number))
+            if (!WebVTTParser::collectDigitsToInt(input, position, number))
                 break;
             if (position >= input.length())
                 break;

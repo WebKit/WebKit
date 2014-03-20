@@ -2725,6 +2725,7 @@ if (ENABLE_VIDEO_TRACK)
     list(APPEND WebCore_SOURCES
         html/track/AudioTrack.cpp
         html/track/AudioTrackList.cpp
+        html/track/BufferedLineReader.cpp
         html/track/DataCue.cpp
         html/track/InbandGenericTextTrack.cpp
         html/track/InbandTextTrack.cpp

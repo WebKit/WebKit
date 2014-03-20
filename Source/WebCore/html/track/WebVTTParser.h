@@ -35,8 +35,10 @@
 
 #if ENABLE(VIDEO_TRACK)
 
+#include "BufferedLineReader.h"
 #include "DocumentFragment.h"
 #include "HTMLNames.h"
+#include "TextResourceDecoder.h"
 #include "TextTrackRegion.h"
 #include "WebVTTTokenizer.h"
 #include <memory>
@@ -128,18 +130,19 @@ public:
         // U+0020 SPACE characters or U+0009 CHARACTER TABULATION (tab) characters.
         return c == ' ' || c == '\t';
     }
-    static unsigned collectDigitsToInt(const String&, unsigned* position, int& number);
+    static unsigned collectDigitsToInt(const String&, unsigned& position, int& number);
     static String collectWord(const String&, unsigned*);
-    static double collectTimeStamp(const String&, unsigned*);
+    static bool collectTimeStamp(const String&, unsigned&, double&);
 
 #if ENABLE(WEBVTT_REGIONS)
     // Useful functions for parsing percentage settings.
-    static float parseFloatPercentageValue(const String&, bool&);
-    static FloatPoint parseFloatPercentageValuePair(const String&, char, bool&);
+    static bool parseFloatPercentageValue(const String&, float&);
+    static bool parseFloatPercentageValuePair(const String&, char, FloatPoint&);
 #endif
 
     // Input data to the parser to parse.
     void parseBytes(const char* data, unsigned length);
+    void flush();
     void fileFinished();
 
     // Transfers ownership of last parsed cues to caller.
@@ -148,13 +151,16 @@ public:
     void getNewRegions(Vector<RefPtr<TextTrackRegion>>&);
 #endif
 
-    PassRefPtr<DocumentFragment> createDocumentFragmentFromCueText(const String&);
+    // Create the DocumentFragment representation of the WebVTT cue text.
+    static PassRefPtr<DocumentFragment> createDocumentFragmentFromCueText(Document&, const String&);
 
 protected:
     ScriptExecutionContext* m_scriptExecutionContext;
     ParseState m_state;
 
 private:
+    void parse();
+    void flushPendingCue();
     bool hasRequiredFileIdentifier(const String&);
     ParseState collectCueId(const String&);
     ParseState collectTimingsAndSettings(const String&);
@@ -169,27 +175,18 @@ private:
     void createNewRegion(const String& headerValue);
 #endif
 
-    static void skipWhiteSpace(const String&, unsigned*);
+    static void skipWhiteSpace(const String&, unsigned&);
 
-    String collectNextLine(const char* data, unsigned length, unsigned*);
-
-    void constructTreeFromToken(Document*);
-
-    Vector<char> m_buffer;
+    BufferedLineReader m_lineReader;
+    RefPtr<TextResourceDecoder> m_decoder;
     String m_currentId;
     double m_currentStartTime;
     double m_currentEndTime;
     StringBuilder m_currentContent;
     String m_currentSettings;
     
-    WebVTTToken m_token;
-    std::unique_ptr<WebVTTTokenizer> m_tokenizer;
-
-    RefPtr<ContainerNode> m_currentNode;
-
     WebVTTParserClient* m_client;
 
-    Vector<AtomicString> m_languageStack;
     Vector<RefPtr<WebVTTCueData>> m_cuelist;
 
 #if ENABLE(WEBVTT_REGIONS)

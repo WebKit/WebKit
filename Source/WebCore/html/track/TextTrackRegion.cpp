@@ -262,25 +262,22 @@ void TextTrackRegion::parseSettingValue(RegionSetting setting, const String& val
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, scrollUpValueKeyword, ("up", AtomicString::ConstructFromLiteral));
 
-    bool isValidSetting;
-    String numberAsString;
-    int number;
-    FloatPoint anchorPosition;
-
     switch (setting) {
     case Id:
         if (value.find("-->") == notFound)
             m_id = value;
         break;
-    case Width:
-        number = WebVTTParser::parseFloatPercentageValue(value, isValidSetting);
-        if (isValidSetting)
-            m_width = number;
+    case Width: {
+        float floatWidth;
+        if (WebVTTParser::parseFloatPercentageValue(value, floatWidth))
+            m_width = floatWidth;
         else
             LOG(Media, "TextTrackRegion::parseSettingValue, invalid Width");
         break;
+    }
     case Height: {
         unsigned position = 0;
+        int number;
         if (WebVTTParser::collectDigitsToInt(value, &position, number) && position == value.length())
             m_heightInLines = number;
         else
@@ -288,17 +285,11 @@ void TextTrackRegion::parseSettingValue(RegionSetting setting, const String& val
         break;
     }
     case RegionAnchor:
-        anchorPosition = WebVTTParser::parseFloatPercentageValuePair(value, ',', isValidSetting);
-        if (isValidSetting)
-            m_regionAnchor = anchorPosition;
-        else
+        if (!WebVTTParser::parseFloatPercentageValuePair(value, ',', m_regionAnchor))
             LOG(Media, "TextTrackRegion::parseSettingValue, invalid RegionAnchor");
         break;
     case ViewportAnchor:
-        anchorPosition = WebVTTParser::parseFloatPercentageValuePair(value, ',', isValidSetting);
-        if (isValidSetting)
-            m_viewportAnchor = anchorPosition;
-        else
+        if (!WebVTTParser::parseFloatPercentageValuePair(value, ',', m_viewportAnchor))
             LOG(Media, "TextTrackRegion::parseSettingValue, invalid ViewportAnchor");
         break;
     case Scroll:

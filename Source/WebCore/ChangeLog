@@ -1,3 +1,44 @@
+2014-03-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Add a flushing mechanism for the WebVTTParser
+        https://bugs.webkit.org/show_bug.cgi?id=130532
+
+        Reviewed by Eric Carlson.
+
+        Merged from Blink (patch by vcarbune@chromium.org):
+        https://chromium.googlesource.com/chromium/blink/+/1ac2b3081492ab8661429230004013a9a3623f0f
+        http://crbug.com/54203003
+        https://chromium.googlesource.com/chromium/blink/+/24343d32bc36d20d59ef3e10040faddde65929e6
+        http://crbug.com/59453002
+        https://chromium.googlesource.com/chromium/blink/+/ef2793f1d9d207389589ecf9a136ea5c7170b4af
+        http://crbug.com/75233002
+        https://chromium.googlesource.com/chromium/blink/+/a29f2f8324abcd4826b41e7dc34373dee2ec57a9
+        http://crbug.com/52713005
+        https://chromium.googlesource.com/chromium/blink/+/7ce003c8d47b39f116f1f2a592a5dfb4a9e77228
+        http://crbug.com/64303004
+        https://chromium.googlesource.com/chromium/blink/+/18f896b3498478311e880f782813d5dfc8c0c7d1
+        http://crbug.com/96933004
+        https://chromium.googlesource.com/chromium/blink/+/8670e8ecb13254a651f5493ec83f4484d18c154e
+        http://crbug.com/98783005
+        https://chromium.googlesource.com/chromium/blink/+/4ac55780a6af3d76e0159c1d145330964ad56647
+        http://crbug.com/104713002
+
+        Tests: http/tests/media/track/track-webvtt-slow-loading-2.html
+               http/tests/media/track/track-webvtt-slow-loading.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/track/BufferedLineReader.cpp: Added.
+        * html/track/BufferedLineReader.h: Added.
+        * html/track/TextTrackRegion.cpp:
+        * html/track/VTTCue.cpp:
+        * html/track/WebVTTParser.cpp:
+        * html/track/WebVTTParser.h:
+        * loader/TextTrackLoader.cpp:
+
 2014-03-20  Alex Christensen  <achristensen@webkit.org>
 
         Preparation for using Soup on Windows.

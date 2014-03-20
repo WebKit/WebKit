@@ -3682,6 +3682,8 @@ webcore_sources += \
 	Source/WebCore/html/track/AudioTrack.h \
 	Source/WebCore/html/track/AudioTrackList.cpp \
 	Source/WebCore/html/track/AudioTrackList.h \
+	Source/WebCore/html/track/BufferedLineReader.cpp \
+	Source/WebCore/html/track/BufferedLineReader.h \
 	Source/WebCore/html/track/DataCue.cpp \
 	Source/WebCore/html/track/DataCue.h \
 	Source/WebCore/html/track/InbandGenericTextTrack.cpp \

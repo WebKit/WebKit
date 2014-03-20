@@ -2280,6 +2280,8 @@
 		7A24587C1021EAF4000A00AA /* InspectorDOMAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A24587A1021EAF4000A00AA /* InspectorDOMAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7A29BA6A187B7C1D00F29CEB /* TemporaryOpenGLSetting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A29BA69187B781C00F29CEB /* TemporaryOpenGLSetting.cpp */; };
 		7A29F57218C69514004D0F81 /* OutOfBandTextTrackPrivateAVF.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A29F57118C69514004D0F81 /* OutOfBandTextTrackPrivateAVF.h */; };
+		7A45032F18DB717200377B34 /* BufferedLineReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A45032D18DB717200377B34 /* BufferedLineReader.cpp */; };
+		7A45033018DB717200377B34 /* BufferedLineReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A45032E18DB717200377B34 /* BufferedLineReader.h */; };
 		7A54857F14E02D51006AE05A /* InspectorHistory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A54857D14E02D51006AE05A /* InspectorHistory.cpp */; };
 		7A54858014E02D51006AE05A /* InspectorHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A54857E14E02D51006AE05A /* InspectorHistory.h */; };
 		7A54881714E432A1006AE05A /* DOMPatchSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A54881514E432A1006AE05A /* DOMPatchSupport.h */; };
@@ -9275,6 +9277,8 @@
 		7A29BA67187B732200F29CEB /* TemporaryOpenGLSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryOpenGLSetting.h; sourceTree = "<group>"; };
 		7A29BA69187B781C00F29CEB /* TemporaryOpenGLSetting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporaryOpenGLSetting.cpp; sourceTree = "<group>"; };
 		7A29F57118C69514004D0F81 /* OutOfBandTextTrackPrivateAVF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OutOfBandTextTrackPrivateAVF.h; path = objc/OutOfBandTextTrackPrivateAVF.h; sourceTree = "<group>"; };
+		7A45032D18DB717200377B34 /* BufferedLineReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BufferedLineReader.cpp; sourceTree = "<group>"; };
+		7A45032E18DB717200377B34 /* BufferedLineReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BufferedLineReader.h; sourceTree = "<group>"; };
 		7A54857D14E02D51006AE05A /* InspectorHistory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorHistory.cpp; sourceTree = "<group>"; };
 		7A54857E14E02D51006AE05A /* InspectorHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorHistory.h; sourceTree = "<group>"; };
 		7A54881514E432A1006AE05A /* DOMPatchSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMPatchSupport.h; sourceTree = "<group>"; };
@@ -19231,6 +19235,8 @@
 		B1AD4E7713A12A7200846B27 /* track */ = {
 			isa = PBXGroup;
 			children = (
+				7A45032D18DB717200377B34 /* BufferedLineReader.cpp */,
+				7A45032E18DB717200377B34 /* BufferedLineReader.h */,
 				BE88E0CC1715D2A200658D98 /* AudioTrack.cpp */,
 				BE88E0CD1715D2A200658D98 /* AudioTrack.h */,
 				BE88E0CE1715D2A200658D98 /* AudioTrack.idl */,
@@ -23163,6 +23169,7 @@
 				A80E6D0C0A1989CA007FB8C5 /* CSSStyleRule.h in Headers */,
 				A8EA80070A19516E00A8EF5F /* CSSStyleSheet.h in Headers */,
 				FC54D05716A7673100575E4D /* CSSSupportsRule.h in Headers */,
+				7A45033018DB717200377B34 /* BufferedLineReader.h in Headers */,
 				BC80C9880CD294EE00A0B7B3 /* CSSTimingFunctionValue.h in Headers */,
 				A882DA231593848D000115ED /* CSSToStyleMap.h in Headers */,
 				371F53E90D2704F900ECE0D5 /* CSSUnicodeRangeValue.h in Headers */,
@@ -28033,6 +28040,7 @@
 				B2FA3DCE0AB75A6F000E5AC4 /* JSSVGPathSegLinetoAbs.cpp in Sources */,
 				B2FA3DD00AB75A6F000E5AC4 /* JSSVGPathSegLinetoHorizontalAbs.cpp in Sources */,
 				B2FA3DD20AB75A6F000E5AC4 /* JSSVGPathSegLinetoHorizontalRel.cpp in Sources */,
+				7A45032F18DB717200377B34 /* BufferedLineReader.cpp in Sources */,
 				B2FA3DD40AB75A6F000E5AC4 /* JSSVGPathSegLinetoRel.cpp in Sources */,
 				B2FA3DD60AB75A6F000E5AC4 /* JSSVGPathSegLinetoVerticalAbs.cpp in Sources */,
 				B2FA3DD80AB75A6F000E5AC4 /* JSSVGPathSegLinetoVerticalRel.cpp in Sources */,
