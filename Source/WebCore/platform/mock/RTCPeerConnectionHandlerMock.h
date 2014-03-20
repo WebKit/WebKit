@@ -41,7 +41,7 @@ public:
 
     virtual ~RTCPeerConnectionHandlerMock() { }
 
-    virtual bool initialize(PassRefPtr<RTCConfiguration>) override;
+    virtual bool initialize(PassRefPtr<RTCConfigurationPrivate>) override;
 
     virtual void createOffer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<RTCOfferOptions>) override;
     virtual void createAnswer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<RTCOfferAnswerOptions>) override;
@@ -49,7 +49,7 @@ public:
     virtual void setRemoteDescription(PassRefPtr<RTCVoidRequest>, PassRefPtr<RTCSessionDescriptionDescriptor>) override;
     virtual PassRefPtr<RTCSessionDescriptionDescriptor> localDescription() override;
     virtual PassRefPtr<RTCSessionDescriptionDescriptor> remoteDescription() override;
-    virtual bool updateIce(PassRefPtr<RTCConfiguration>) override;
+    virtual bool updateIce(PassRefPtr<RTCConfigurationPrivate>) override;
     virtual bool addIceCandidate(PassRefPtr<RTCVoidRequest>, PassRefPtr<RTCIceCandidateDescriptor>) override;
     virtual bool addStream(PassRefPtr<MediaStreamPrivate>) override;
     virtual void removeStream(PassRefPtr<MediaStreamPrivate>) override;

@@ -193,7 +193,7 @@ RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext& context, PassRefPtr
 
     document.frame()->loader().client().dispatchWillStartUsingPeerConnectionHandler(m_peerHandler.get());
 
-    if (!m_peerHandler->initialize(m_configuration)) {
+    if (!m_peerHandler->initialize(m_configuration->privateConfiguration())) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
@@ -366,7 +366,7 @@ void RTCPeerConnection::updateIce(const Dictionary& rtcConfiguration, ExceptionC
     if (ec)
         return;
 
-    bool valid = m_peerHandler->updateIce(m_configuration);
+    bool valid = m_peerHandler->updateIce(m_configuration->privateConfiguration());
     if (!valid)
         ec = SYNTAX_ERR;
 }

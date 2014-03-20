@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RTCIceServer_h
-#define RTCIceServer_h
+#ifndef RTCIceServerPrivate_h
+#define RTCIceServerPrivate_h
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -35,20 +35,20 @@
 
 namespace WebCore {
 
-class RTCIceServer : public RefCounted<RTCIceServer> {
+class RTCIceServerPrivate : public RefCounted<RTCIceServerPrivate> {
 public:
-    static PassRefPtr<RTCIceServer> create(const Vector<String>& urls, const String& credential, const String& username)
+    static PassRefPtr<RTCIceServerPrivate> create(const Vector<String>& urls, const String& credential, const String& username)
     {
-        return adoptRef(new RTCIceServer(urls, credential, username));
+        return adoptRef(new RTCIceServerPrivate(urls, credential, username));
     }
-    virtual ~RTCIceServer() { }
+    virtual ~RTCIceServerPrivate() { }
 
     const Vector<String>& urls() { return m_urls; }
     const String& credential() { return m_credential; }
     const String& username() { return m_username; }
 
 private:
-    RTCIceServer(const Vector<String>& urls, const String& credential, const String& username)
+    RTCIceServerPrivate(const Vector<String>& urls, const String& credential, const String& username)
         : m_urls(urls)
         , m_credential(credential)
         , m_username(username)
@@ -64,4 +64,4 @@ private:
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // RTCIceServer_h
+#endif // RTCIceServerPrivate_h

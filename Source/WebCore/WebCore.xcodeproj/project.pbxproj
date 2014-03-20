@@ -259,7 +259,6 @@
 		078E093817D16B2C00420AA1 /* MediaStreamSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B9F17CF0AD400848E51 /* MediaStreamSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E093917D16B2C00420AA1 /* MediaStreamCreationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BA017CF0AD400848E51 /* MediaStreamCreationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E093A17D16E1C00420AA1 /* MediaConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B9917CF0AD400848E51 /* MediaConstraints.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		078E093B17D16E1C00420AA1 /* RTCConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BA117CF0AD400848E51 /* RTCConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E093C17D16E1C00420AA1 /* RTCDataChannelHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BA217CF0AD400848E51 /* RTCDataChannelHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E093D17D16E1C00420AA1 /* RTCDataChannelHandlerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BA317CF0AD400848E51 /* RTCDataChannelHandlerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E093E17D16E1C00420AA1 /* RTCDTMFSenderHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BA417CF0AD400848E51 /* RTCDTMFSenderHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -310,6 +309,10 @@
 		07A6D1EC1491137700051D0C /* MediaFragmentURIParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 07A6D1EA1491137700051D0C /* MediaFragmentURIParser.h */; };
 		07AA6B6B166D2C0700D45671 /* InbandTextTrackPrivateAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07AA6B6A166D019500D45671 /* InbandTextTrackPrivateAVFObjC.mm */; };
 		07AA6B6C166D2C1300D45671 /* InbandTextTrackPrivateAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 07AA6B69166D019500D45671 /* InbandTextTrackPrivateAVFObjC.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		07AB996918DA3C010018771E /* RTCConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 07AB996518DA3C010018771E /* RTCConfiguration.h */; };
+		07AB996B18DA3C010018771E /* RTCIceServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 07AB996718DA3C010018771E /* RTCIceServer.h */; };
+		07AB996F18DA3C740018771E /* RTCConfigurationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 07AB996D18DA3C740018771E /* RTCConfigurationPrivate.h */; };
+		07AB997018DA3C740018771E /* RTCIceServerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 07AB996E18DA3C740018771E /* RTCIceServerPrivate.h */; };
 		07B0113F1032242200FBDC33 /* AccessibilityMediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */; };
 		07B442D6166C70B000556CAD /* InbandTextTrackPrivateAVF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B442D4166C70B000556CAD /* InbandTextTrackPrivateAVF.cpp */; };
 		07B442D7166C70B000556CAD /* InbandTextTrackPrivateAVF.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B442D5166C70B000556CAD /* InbandTextTrackPrivateAVF.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6961,7 +6964,6 @@
 		07221B9E17CF0AD400848E51 /* MediaStreamSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamSource.cpp; sourceTree = "<group>"; };
 		07221B9F17CF0AD400848E51 /* MediaStreamSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamSource.h; sourceTree = "<group>"; };
 		07221BA017CF0AD400848E51 /* MediaStreamCreationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamCreationClient.h; sourceTree = "<group>"; };
-		07221BA117CF0AD400848E51 /* RTCConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCConfiguration.h; sourceTree = "<group>"; };
 		07221BA217CF0AD400848E51 /* RTCDataChannelHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDataChannelHandler.h; sourceTree = "<group>"; };
 		07221BA317CF0AD400848E51 /* RTCDataChannelHandlerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDataChannelHandlerClient.h; sourceTree = "<group>"; };
 		07221BA417CF0AD400848E51 /* RTCDTMFSenderHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDTMFSenderHandler.h; sourceTree = "<group>"; };
@@ -7088,6 +7090,12 @@
 		07A6D1EA1491137700051D0C /* MediaFragmentURIParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaFragmentURIParser.h; sourceTree = "<group>"; };
 		07AA6B69166D019500D45671 /* InbandTextTrackPrivateAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InbandTextTrackPrivateAVFObjC.h; path = objc/InbandTextTrackPrivateAVFObjC.h; sourceTree = "<group>"; };
 		07AA6B6A166D019500D45671 /* InbandTextTrackPrivateAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InbandTextTrackPrivateAVFObjC.mm; path = objc/InbandTextTrackPrivateAVFObjC.mm; sourceTree = "<group>"; };
+		07AB996518DA3C010018771E /* RTCConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCConfiguration.h; sourceTree = "<group>"; };
+		07AB996618DA3C010018771E /* RTCConfiguration.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCConfiguration.idl; sourceTree = "<group>"; };
+		07AB996718DA3C010018771E /* RTCIceServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceServer.h; sourceTree = "<group>"; };
+		07AB996818DA3C010018771E /* RTCIceServer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCIceServer.idl; sourceTree = "<group>"; };
+		07AB996D18DA3C740018771E /* RTCConfigurationPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCConfigurationPrivate.h; sourceTree = "<group>"; };
+		07AB996E18DA3C740018771E /* RTCIceServerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceServerPrivate.h; sourceTree = "<group>"; };
 		07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMediaControls.h; sourceTree = "<group>"; };
 		07B442D4166C70B000556CAD /* InbandTextTrackPrivateAVF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InbandTextTrackPrivateAVF.cpp; sourceTree = "<group>"; };
 		07B442D5166C70B000556CAD /* InbandTextTrackPrivateAVF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrackPrivateAVF.h; sourceTree = "<group>"; };
@@ -14098,6 +14106,8 @@
 				07221B6017CEC32700848E51 /* NavigatorUserMediaErrorCallback.idl */,
 				07221B6117CEC32700848E51 /* NavigatorUserMediaSuccessCallback.h */,
 				07221B6217CEC32700848E51 /* NavigatorUserMediaSuccessCallback.idl */,
+				07AB996518DA3C010018771E /* RTCConfiguration.h */,
+				07AB996618DA3C010018771E /* RTCConfiguration.idl */,
 				07221B6317CEC32700848E51 /* RTCDataChannel.cpp */,
 				07221B6417CEC32700848E51 /* RTCDataChannel.h */,
 				07221B6517CEC32700848E51 /* RTCDataChannel.idl */,
@@ -14116,6 +14126,8 @@
 				07221B7417CEC32700848E51 /* RTCIceCandidateEvent.cpp */,
 				07221B7517CEC32700848E51 /* RTCIceCandidateEvent.h */,
 				07221B7617CEC32700848E51 /* RTCIceCandidateEvent.idl */,
+				07AB996718DA3C010018771E /* RTCIceServer.h */,
+				07AB996818DA3C010018771E /* RTCIceServer.idl */,
 				07221B7717CEC32700848E51 /* RTCPeerConnection.cpp */,
 				07221B7817CEC32700848E51 /* RTCPeerConnection.h */,
 				07221B7917CEC32700848E51 /* RTCPeerConnection.idl */,
@@ -14174,13 +14186,14 @@
 				07FFDE66181AED420072D409 /* MediaStreamTrackPrivate.cpp */,
 				07FFDE67181AED420072D409 /* MediaStreamTrackPrivate.h */,
 				076306E217E22A43005A7C4E /* MediaStreamTrackSourcesRequestClient.h */,
-				07221BA117CF0AD400848E51 /* RTCConfiguration.h */,
+				07AB996D18DA3C740018771E /* RTCConfigurationPrivate.h */,
 				07221BA217CF0AD400848E51 /* RTCDataChannelHandler.h */,
 				07221BA317CF0AD400848E51 /* RTCDataChannelHandlerClient.h */,
 				07221BA417CF0AD400848E51 /* RTCDTMFSenderHandler.h */,
 				07221BA517CF0AD400848E51 /* RTCDTMFSenderHandlerClient.h */,
 				07221BA617CF0AD400848E51 /* RTCIceCandidateDescriptor.cpp */,
 				07221BA717CF0AD400848E51 /* RTCIceCandidateDescriptor.h */,
+				07AB996E18DA3C740018771E /* RTCIceServerPrivate.h */,
 				07221BA817CF0AD400848E51 /* RTCPeerConnectionHandler.cpp */,
 				07221BA917CF0AD400848E51 /* RTCPeerConnectionHandler.h */,
 				07221BAA17CF0AD400848E51 /* RTCPeerConnectionHandlerClient.h */,
@@ -23526,6 +23539,7 @@
 				85E711D40AC5D5350053270F /* DOMNotationInternal.h in Headers */,
 				856C8AE40A912649005C687B /* DOMObject.h in Headers */,
 				BC53DA601143141A000D817E /* DOMObjectHashTableMap.h in Headers */,
+				07AB997018DA3C740018771E /* RTCIceServerPrivate.h in Headers */,
 				85C7F5D00AAFB8D9004014DD /* DOMOverflowEvent.h in Headers */,
 				85989DCF0ACC8BBD00A0BC51 /* DOMOverflowEventInternal.h in Headers */,
 				E1284BD61044A01E00EAEB52 /* DOMPageTransitionEvent.h in Headers */,
@@ -25127,6 +25141,7 @@
 				439046D812DA25E800AF80A2 /* RenderMathMLBlock.h in Headers */,
 				439046DA12DA25E800AF80A2 /* RenderMathMLFenced.h in Headers */,
 				439046DC12DA25E800AF80A2 /* RenderMathMLFraction.h in Headers */,
+				07AB996F18DA3C740018771E /* RTCConfigurationPrivate.h in Headers */,
 				439046DE12DA25E800AF80A2 /* RenderMathMLMath.h in Headers */,
 				439046E012DA25E800AF80A2 /* RenderMathMLOperator.h in Headers */,
 				439046E212DA25E800AF80A2 /* RenderMathMLRoot.h in Headers */,
@@ -25256,7 +25271,6 @@
 				A8CFF5E10A155A05000A4234 /* RootInlineBox.h in Headers */,
 				49E911C90EF86D47009D0CAF /* RotateTransformOperation.h in Headers */,
 				A73F95FF12C97BFE0031AAF9 /* RoundedRect.h in Headers */,
-				078E093B17D16E1C00420AA1 /* RTCConfiguration.h in Headers */,
 				078E091E17D14D1C00420AA1 /* RTCDataChannel.h in Headers */,
 				078E091F17D14D1C00420AA1 /* RTCDataChannelEvent.h in Headers */,
 				078E093C17D16E1C00420AA1 /* RTCDataChannelHandler.h in Headers */,
@@ -25306,6 +25320,7 @@
 				08A484780E5272C500C3FE76 /* ScriptElement.h in Headers */,
 				E11C9D9B0EB3681200E409DB /* ScriptExecutionContext.h in Headers */,
 				41F066E40F64BCF600A07EAC /* ScriptGlobalObject.h in Headers */,
+				07AB996B18DA3C010018771E /* RTCIceServer.h in Headers */,
 				9F3B947E12241758005304E7 /* ScriptHeapSnapshot.h in Headers */,
 				FD31603612B0267600C1A359 /* ScriptProcessorNode.h in Headers */,
 				9F72304F11184B4100AD0126 /* ScriptProfile.h in Headers */,
@@ -25950,6 +25965,7 @@
 				3FFFF9AE159D9B060020BBD5 /* ViewportStyleResolver.h in Headers */,
 				8678D0BB1878E891003ABDE6 /* ViewState.h in Headers */,
 				93309E20099E64920056E581 /* VisiblePosition.h in Headers */,
+				07AB996918DA3C010018771E /* RTCConfiguration.h in Headers */,
 				A883DF280F3D045D00F19BF6 /* VisibleSelection.h in Headers */,
 				93309E1E099E64920056E581 /* VisibleUnits.h in Headers */,
 				419BC2DF1685329900D64D6D /* VisitedLinkState.h in Headers */,

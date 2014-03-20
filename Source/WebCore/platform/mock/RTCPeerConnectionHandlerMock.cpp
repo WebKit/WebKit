@@ -51,7 +51,7 @@ RTCPeerConnectionHandlerMock::RTCPeerConnectionHandlerMock(RTCPeerConnectionHand
 {
 }
 
-bool RTCPeerConnectionHandlerMock::initialize(PassRefPtr<RTCConfiguration>)
+bool RTCPeerConnectionHandlerMock::initialize(PassRefPtr<RTCConfigurationPrivate>)
 {
     RefPtr<IceConnectionNotifier> notifier = adoptRef(new IceConnectionNotifier(m_client, RTCPeerConnectionHandlerClient::IceConnectionStateCompleted, RTCPeerConnectionHandlerClient::IceGatheringStateComplete));
     m_timerEvents.append(adoptRef(new TimerEvent(this, notifier)));
@@ -126,7 +126,7 @@ PassRefPtr<RTCSessionDescriptionDescriptor> RTCPeerConnectionHandlerMock::remote
     return m_remoteSessionDescription;
 }
 
-bool RTCPeerConnectionHandlerMock::updateIce(PassRefPtr<RTCConfiguration>)
+bool RTCPeerConnectionHandlerMock::updateIce(PassRefPtr<RTCConfigurationPrivate>)
 {
     return true;
 }
