@@ -1,3 +1,33 @@
+2014-03-20  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] The height of a scrollable element flowed inside a scrollable region is not computed correctly
+        https://bugs.webkit.org/show_bug.cgi?id=129487
+
+        Reviewed by Andrei Bucur.
+
+        Added tests for different situations using scrollable regions and fixed a couple existing tests.
+
+        * fast/regions/clip-to-padding-box-margins.html: overflow-x and overflow-y cannot be hidden & visible.
+        * fast/regions/scrollable-last-region-expected.html: "hack" no longer needed now that the scroll content size is properly computed.
+        * fast/regions/scrollable-region-content-size-expected.html: Added.
+        * fast/regions/scrollable-region-content-size-horiz-bt-expected.html: Added.
+        * fast/regions/scrollable-region-content-size-horiz-bt.html: Added.
+        * fast/regions/scrollable-region-content-size-no-overflow-expected.html: Added.
+        * fast/regions/scrollable-region-content-size-no-overflow-horiz-bt-expected.html: Added.
+        * fast/regions/scrollable-region-content-size-no-overflow-horiz-bt.html: Added.
+        * fast/regions/scrollable-region-content-size-no-overflow-vert-rl-expected.html: Added.
+        * fast/regions/scrollable-region-content-size-no-overflow-vert-rl.html: Added.
+        * fast/regions/scrollable-region-content-size-no-overflow.html: Added.
+        * fast/regions/scrollable-region-content-size-relative-expected.html: Added.
+        * fast/regions/scrollable-region-content-size-relative.html: Added.
+        * fast/regions/scrollable-region-content-size-vert-rl-expected.html: Added.
+        * fast/regions/scrollable-region-content-size-vert-rl.html: Added.
+        * fast/regions/scrollable-region-content-size-vertical-lr-expected.html: Added.
+        * fast/regions/scrollable-region-content-size-vertical-lr.html: Added.
+        * fast/regions/scrollable-region-content-size.html: Added.
+        * fast/regions/scrollable-region-scrollable-content-expected.html: Added.
+        * fast/regions/scrollable-region-scrollable-content.html: Added.
+
 2014-03-20  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Nested layers with subpixel accumulation paint to wrong position.

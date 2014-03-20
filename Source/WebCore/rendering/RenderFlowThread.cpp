@@ -1342,6 +1342,33 @@ void RenderFlowThread::addRegionsOverflowFromChild(const RenderBox* box, const R
 
         LayoutRect childLayoutOverflowRect = region->layoutOverflowRectForBoxForPropagation(child);
         childLayoutOverflowRect.move(delta);
+        
+        // When propagating the layout overflow to the flow thread object, make sure to include
+        // the logical bottom padding of the scrollable region and the bottom margin of the flowed element.
+        // In order to behave in a similar manner to the non-regions case, content overflowing the box
+        // flowed into the region must be painted on top of the region's padding and the box's margin.
+        // See http://lists.w3.org/Archives/Public/www-style/2014Jan/0089.html
+        if (box->isRenderNamedFlowThread()) {
+            ASSERT(box == this);
+            RenderBlockFlow& fragmentContainer = toRenderNamedFlowFragment(region)->fragmentContainer();
+            LayoutUnit spacingAfterLayout = fragmentContainer.paddingAfter() + child->marginAfter();
+            if (isHorizontalWritingMode()) {
+                if (fragmentContainer.scrollsOverflowY()) {
+                    LayoutUnit layoutMaxLogicalY = child->frameRect().maxY() + spacingAfterLayout;
+                    LayoutUnit maxYDiff = layoutMaxLogicalY - childLayoutOverflowRect.maxY();
+                    if (maxYDiff > 0)
+                        childLayoutOverflowRect.expand(0, maxYDiff);
+                }
+            } else {
+                if (fragmentContainer.scrollsOverflowX()) {
+                    LayoutUnit layoutMaxLogicalY = child->frameRect().maxX() + spacingAfterLayout;
+                    LayoutUnit maxYDiff = layoutMaxLogicalY - childLayoutOverflowRect.maxX();
+                    if (maxYDiff > 0)
+                        childLayoutOverflowRect.expand(maxYDiff, 0);
+                }
+            }
+        }
+        
         region->addLayoutOverflowForBox(box, childLayoutOverflowRect);
 
         if (child->hasSelfPaintingLayer() || box->hasOverflowClip()) {

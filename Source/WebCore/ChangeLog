@@ -1,3 +1,31 @@
+2014-03-20  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] The height of a scrollable element flowed inside a scrollable region is not computed correctly
+        https://bugs.webkit.org/show_bug.cgi?id=129487
+
+        Reviewed by Andrei Bucur.
+
+        When propagating the layout overflow from the flowed element up to the flow thread itself,
+        the region's logical bottom padding and the element's logical bottom margin must be taken into consideration.
+        However, if the flowed element has overflow, the overflow will be painted over the region's padding
+        and the element's margin, in order to be compatible with the non-regions case.
+        More info can be found here: http://lists.w3.org/Archives/Public/www-style/2014Jan/0089.html
+
+        Tests: fast/regions/scrollable-region-content-size-horiz-bt.html
+               fast/regions/scrollable-region-content-size-no-overflow-horiz-bt.html
+               fast/regions/scrollable-region-content-size-no-overflow-vert-rl.html
+               fast/regions/scrollable-region-content-size-no-overflow.html
+               fast/regions/scrollable-region-content-size-relative.html
+               fast/regions/scrollable-region-content-size-vert-rl.html
+               fast/regions/scrollable-region-content-size-vertical-lr.html
+               fast/regions/scrollable-region-content-size.html
+               fast/regions/scrollable-region-scrollable-content.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::addRegionsOverflowFromChild):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::rectFlowPortionForBox):
+
 2014-03-20  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Nested layers with subpixel accumulation paint to wrong position.

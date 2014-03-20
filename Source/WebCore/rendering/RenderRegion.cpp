@@ -489,16 +489,6 @@ LayoutRect RenderRegion::rectFlowPortionForBox(const RenderBox* box, const Layou
         }
     }
 
-    if (shouldClipFlowThreadContent()) {
-        LayoutRect portionRect;
-        if (isRenderNamedFlowFragment())
-            portionRect = toRenderNamedFlowFragment(this)->flowThreadPortionRectForClipping(this == startRegion, this == endRegion);
-        else
-            portionRect = flowThreadPortionRect();
-        
-        mappedRect.intersect(portionRect);
-    }
-
     return mappedRect.isEmpty() ? mappedRect : m_flowThread->mapFromFlowThreadToLocal(box, mappedRect);
 }
 
