@@ -180,7 +180,7 @@ static inline bool isValidSharedInstanceThreadState(VM* vm)
 
 static inline bool isValidThreadState(VM* vm)
 {
-    if (vm->identifierTable != wtfThreadData().currentIdentifierTable())
+    if (vm->atomicStringTable() != wtfThreadData().atomicStringTable())
         return false;
 
     if (vm->isSharedInstance() && !isValidSharedInstanceThreadState(vm))
@@ -887,7 +887,7 @@ void Heap::collect(HeapOperation collectionType)
     RELEASE_ASSERT(!m_deferralDepth);
     GCPHASE(Collect);
     ASSERT(vm()->currentThreadIsHoldingAPILock());
-    RELEASE_ASSERT(vm()->identifierTable == wtfThreadData().currentIdentifierTable());
+    RELEASE_ASSERT(vm()->atomicStringTable() == wtfThreadData().atomicStringTable());
     ASSERT(m_isSafeToCollect);
     JAVASCRIPTCORE_GC_BEGIN();
     RELEASE_ASSERT(m_operationInProgress == NoOperation);

@@ -454,7 +454,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     Vector<Identifier, 0, UnsafeVectorOverflow> variables;
     variables.reserveCapacity(numVariables);
     for (size_t i = 0; i < numVariables; ++i) {
-        ASSERT(varStack[i].first.impl()->isIdentifier());
+        ASSERT(varStack[i].first.impl()->isAtomic());
         variables.append(varStack[i].first);
     }
     codeBlock->adoptVariables(variables);

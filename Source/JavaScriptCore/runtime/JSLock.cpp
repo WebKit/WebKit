@@ -139,7 +139,7 @@ void JSLock::didAcquireLock()
     WTFThreadData& threadData = wtfThreadData();
     m_vm->setLastStackTop(threadData.savedLastStackTop());
 
-    m_entryIdentifierTable = threadData.setCurrentIdentifierTable(m_vm->identifierTable);
+    m_entryAtomicStringTable = threadData.setCurrentAtomicStringTable(m_vm->atomicStringTable());
     m_vm->heap.machineThreads().addCurrentThread();
 }
 
@@ -170,7 +170,7 @@ void JSLock::willReleaseLock()
     if (m_vm)
         m_vm->setStackPointerAtVMEntry(nullptr);
 
-    wtfThreadData().setCurrentIdentifierTable(m_entryIdentifierTable);
+    wtfThreadData().setCurrentAtomicStringTable(m_entryAtomicStringTable);
 }
 
 void JSLock::lock(ExecState* exec)
@@ -251,7 +251,7 @@ JSLock::DropAllLocks::DropAllLocks(VM* vm)
 {
     if (!m_vm)
         return;
-    wtfThreadData().resetCurrentIdentifierTable();
+    wtfThreadData().resetCurrentAtomicStringTable();
     RELEASE_ASSERT(!m_vm->isCollectorBusy());
     m_droppedLockCount = m_vm->apiLock().dropAllLocks(this);
 }
@@ -271,7 +271,7 @@ JSLock::DropAllLocks::~DropAllLocks()
     if (!m_vm)
         return;
     m_vm->apiLock().grabAllLocks(this, m_droppedLockCount);
-    wtfThreadData().setCurrentIdentifierTable(m_vm->identifierTable);
+    wtfThreadData().setCurrentAtomicStringTable(m_vm->atomicStringTable());
 }
 
 } // namespace JSC

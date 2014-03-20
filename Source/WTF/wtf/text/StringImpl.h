@@ -395,7 +395,7 @@ public:
 
     static unsigned flagsOffset() { return OBJECT_OFFSETOF(StringImpl, m_hashAndFlags); }
     static unsigned flagIs8Bit() { return s_hashFlag8BitBuffer; }
-    static unsigned flagIsIdentifier() { return s_hashFlagIsAtomic; }
+    static unsigned flagIsAtomic() { return s_hashFlagIsAtomic; }
     static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
 
     template<typename CharType, size_t inlineCapacity, typename OverflowHandler>
@@ -463,7 +463,6 @@ public:
 
     bool has16BitShadow() const { return m_hashAndFlags & s_hashFlagHas16BitShadow; }
     WTF_EXPORT_STRING_API void upconvertCharacters(unsigned, unsigned) const;
-    bool isIdentifier() const { return isAtomic(); }
     bool isEmptyUnique() const
     {
         return !length() && !isStatic();

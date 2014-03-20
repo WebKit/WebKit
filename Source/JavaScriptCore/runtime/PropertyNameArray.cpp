@@ -32,7 +32,7 @@ static const size_t setThreshold = 20;
 
 void PropertyNameArray::add(StringImpl* identifier)
 {
-    ASSERT(!identifier || identifier == StringImpl::empty() || identifier->isIdentifier());
+    ASSERT(!identifier || identifier == StringImpl::empty() || identifier->isAtomic());
 
     size_t size = m_data->propertyNameVector().size();
     if (size < setThreshold) {

@@ -287,7 +287,7 @@ namespace JSC {
 #endif
         Strong<JSCell> iterationTerminator;
 
-        IdentifierTable* identifierTable;
+        AtomicStringTable* m_atomicStringTable;
         CommonIdentifiers* propertyNames;
         const MarkedArgumentBuffer* emptyList; // Lists are supposed to be allocated on the stack to have their elements properly marked, which is not the case here - but this list has nothing to mark.
         SmallStrings smallStrings;
@@ -295,7 +295,7 @@ namespace JSC {
         DateInstanceCache dateInstanceCache;
         WTF::SimpleStats machineCodeBytesPerBytecodeWordForBaselineJIT;
 
-        IdentifierTable& atomicStringTable() const { return *identifierTable; }
+        AtomicStringTable* atomicStringTable() const { return m_atomicStringTable; }
 
         void setInDefineOwnProperty(bool inDefineOwnProperty)
         {

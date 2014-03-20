@@ -32,22 +32,11 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/ASCIIFastPath.h>
-#include <wtf/text/AtomicStringTable.h>
 #include <wtf/text/StringHash.h>
 
 using WTF::ThreadSpecific;
 
 namespace JSC {
-
-IdentifierTable* createIdentifierTable()
-{
-    return new IdentifierTable;
-}
-
-void deleteIdentifierTable(IdentifierTable* table)
-{
-    delete table;
-}
 
 PassRef<StringImpl> Identifier::add(VM* vm, const char* c)
 {
@@ -110,24 +99,24 @@ Identifier Identifier::from(VM* vm, double value)
 
 #ifndef NDEBUG
 
-void Identifier::checkCurrentIdentifierTable(VM* vm)
+void Identifier::checkCurrentAtomicStringTable(VM* vm)
 {
     // Check the identifier table accessible through the threadspecific matches the
     // vm's identifier table.
-    ASSERT_UNUSED(vm, vm->identifierTable == wtfThreadData().currentIdentifierTable());
+    ASSERT_UNUSED(vm, vm->atomicStringTable() == wtfThreadData().atomicStringTable());
 }
 
-void Identifier::checkCurrentIdentifierTable(ExecState* exec)
+void Identifier::checkCurrentAtomicStringTable(ExecState* exec)
 {
-    checkCurrentIdentifierTable(&exec->vm());
+    checkCurrentAtomicStringTable(&exec->vm());
 }
 
 #else
 
 // These only exists so that our exports are the same for debug and release builds.
 // This would be an RELEASE_ASSERT_NOT_REACHED(), but we're in NDEBUG only code here!
-NO_RETURN_DUE_TO_CRASH void Identifier::checkCurrentIdentifierTable(VM*) { CRASH(); }
-NO_RETURN_DUE_TO_CRASH void Identifier::checkCurrentIdentifierTable(ExecState*) { CRASH(); }
+NO_RETURN_DUE_TO_CRASH void Identifier::checkCurrentAtomicStringTable(VM*) { CRASH(); }
+NO_RETURN_DUE_TO_CRASH void Identifier::checkCurrentAtomicStringTable(ExecState*) { CRASH(); }
 
 #endif
 

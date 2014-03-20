@@ -107,6 +107,68 @@
 
 2014-03-20  Gavin Barraclough  <barraclough@apple.com>
 
+        Remove IdentifierTable typedef, isIdentifier()
+        https://bugs.webkit.org/show_bug.cgi?id=130533
+
+        Rubber stamped by Geoff Garen.
+
+        Code should use AtomicStringTable, isAtomic() directly.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::~OpaqueJSClass):
+        (OpaqueJSClassContextData::OpaqueJSClassContextData):
+        (OpaqueJSClass::className):
+        * API/JSClassRef.h:
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationFromCell):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIn):
+        (JSC::DFG::SpeculativeJIT::speculateStringIdentAndLoadStorage):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::speculateStringIdent):
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::atomicStringTable):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::addVar):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::createBindingPattern):
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::evaluate):
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::checkCurrentAtomicStringTable):
+        * runtime/Identifier.h:
+        (JSC::Identifier::Identifier):
+        * runtime/IdentifierInlines.h:
+        (JSC::Identifier::add):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dumpInContext):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        (JSC::JSLock::willReleaseLock):
+        (JSC::JSLock::DropAllLocks::DropAllLocks):
+        (JSC::JSLock::DropAllLocks::~DropAllLocks):
+        * runtime/JSLock.h:
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::find):
+        (JSC::PropertyTable::get):
+        (JSC::PropertyTable::findWithString):
+        * runtime/PropertyName.h:
+        (JSC::PropertyName::PropertyName):
+        * runtime/PropertyNameArray.cpp:
+        (JSC::PropertyNameArray::add):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        * runtime/VM.h:
+        (JSC::VM::atomicStringTable):
+
+2014-03-20  Gavin Barraclough  <barraclough@apple.com>
+
         Merge AtomicString, Identifier
         https://bugs.webkit.org/show_bug.cgi?id=128624
 

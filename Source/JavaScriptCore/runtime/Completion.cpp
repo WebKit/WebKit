@@ -38,7 +38,7 @@ namespace JSC {
 bool checkSyntax(ExecState* exec, const SourceCode& source, JSValue* returnedException)
 {
     JSLockHolder lock(exec);
-    RELEASE_ASSERT(exec->vm().identifierTable == wtfThreadData().currentIdentifierTable());
+    RELEASE_ASSERT(exec->vm().atomicStringTable() == wtfThreadData().atomicStringTable());
 
     ProgramExecutable* program = ProgramExecutable::create(exec, source);
     JSObject* error = program->checkSyntax(exec);
@@ -54,7 +54,7 @@ bool checkSyntax(ExecState* exec, const SourceCode& source, JSValue* returnedExc
 bool checkSyntax(VM& vm, const SourceCode& source, ParserError& error)
 {
     JSLockHolder lock(vm);
-    RELEASE_ASSERT(vm.identifierTable == wtfThreadData().currentIdentifierTable());
+    RELEASE_ASSERT(vm.atomicStringTable() == wtfThreadData().atomicStringTable());
     RefPtr<ProgramNode> programNode = parse<ProgramNode>(&vm, source, 0, Identifier(), JSParseNormal, JSParseProgramCode, error);
     return programNode;
 }
@@ -62,7 +62,7 @@ bool checkSyntax(VM& vm, const SourceCode& source, ParserError& error)
 JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, JSValue* returnedException)
 {
     JSLockHolder lock(exec);
-    RELEASE_ASSERT(exec->vm().identifierTable == wtfThreadData().currentIdentifierTable());
+    RELEASE_ASSERT(exec->vm().atomicStringTable() == wtfThreadData().atomicStringTable());
     RELEASE_ASSERT(!exec->vm().isCollectorBusy());
 
     CodeProfiling profile(source);

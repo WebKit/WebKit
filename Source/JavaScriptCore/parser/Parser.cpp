@@ -508,7 +508,7 @@ template <class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::create
     ASSERT(!name.isEmpty());
     ASSERT(!name.isNull());
     
-    ASSERT(name.impl()->isIdentifier());
+    ASSERT(name.impl()->isAtomic());
     if (depth) {
         if (kind == DeconstructToVariables)
             failIfFalseIfStrict(declareVariable(&name), "Cannot deconstruct to a variable named '", name.impl(), "' in strict mode");

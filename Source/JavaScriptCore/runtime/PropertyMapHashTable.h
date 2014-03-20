@@ -284,7 +284,7 @@ inline PropertyTable::const_iterator PropertyTable::end() const
 inline PropertyTable::find_iterator PropertyTable::find(const KeyType& key)
 {
     ASSERT(key);
-    ASSERT(key->isIdentifier() || key->isEmptyUnique());
+    ASSERT(key->isAtomic() || key->isEmptyUnique());
     unsigned hash = key->existingHash();
     unsigned step = 0;
 
@@ -316,7 +316,7 @@ inline PropertyTable::find_iterator PropertyTable::find(const KeyType& key)
 inline PropertyTable::ValueType* PropertyTable::get(const KeyType& key)
 {
     ASSERT(key);
-    ASSERT(key->isIdentifier() || key->isEmptyUnique());
+    ASSERT(key->isAtomic() || key->isEmptyUnique());
 
     if (!m_keyCount)
         return nullptr;
@@ -352,7 +352,7 @@ inline PropertyTable::ValueType* PropertyTable::get(const KeyType& key)
 inline PropertyTable::find_iterator PropertyTable::findWithString(const KeyType& key)
 {
     ASSERT(key);
-    ASSERT(!key->isIdentifier() && !key->hasHash());
+    ASSERT(!key->isAtomic() && !key->hasHash());
     unsigned hash = key->hash();
     unsigned step = 0;
 
@@ -365,7 +365,7 @@ inline PropertyTable::find_iterator PropertyTable::findWithString(const KeyType&
         if (entryIndex == EmptyEntryIndex)
             return std::make_pair((ValueType*)0, hash & m_indexMask);
         const KeyType& keyInMap = table()[entryIndex - 1].key;
-        if (equal(key, keyInMap) && keyInMap->isIdentifier())
+        if (equal(key, keyInMap) && keyInMap->isAtomic())
             return std::make_pair(&table()[entryIndex - 1], hash & m_indexMask);
 
 #if DUMP_PROPERTYMAP_STATS

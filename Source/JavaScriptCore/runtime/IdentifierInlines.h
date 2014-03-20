@@ -34,14 +34,14 @@ namespace JSC  {
 inline PassRef<StringImpl> Identifier::add(ExecState* exec, StringImpl* r)
 {
 #ifndef NDEBUG
-    checkCurrentIdentifierTable(exec);
+    checkCurrentAtomicStringTable(exec);
 #endif
     return *AtomicString::addWithStringTableProvider(*exec, r);
 }
 inline PassRef<StringImpl> Identifier::add(VM* vm, StringImpl* r)
 {
 #ifndef NDEBUG
-    checkCurrentIdentifierTable(vm);
+    checkCurrentAtomicStringTable(vm);
 #endif
     return *AtomicString::addWithStringTableProvider(*vm, r);
 }

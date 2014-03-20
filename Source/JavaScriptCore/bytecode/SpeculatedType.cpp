@@ -331,7 +331,7 @@ SpeculatedType speculationFromCell(JSCell* cell)
 {
     if (JSString* string = jsDynamicCast<JSString*>(cell)) {
         if (const StringImpl* impl = string->tryGetValueImpl()) {
-            if (impl->isIdentifier())
+            if (impl->isAtomic())
                 return SpecStringIdent;
         }
         return SpecStringVar;

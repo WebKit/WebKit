@@ -5436,7 +5436,7 @@ private:
             BadType, jsValueValue(string), edge.node(),
             m_out.testIsZero32(
                 m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags),
-                m_out.constInt32(StringImpl::flagIsIdentifier())));
+                m_out.constInt32(StringImpl::flagIsAtomic())));
         m_interpreter.filter(edge, SpecStringIdent | ~SpecString);
     }
     

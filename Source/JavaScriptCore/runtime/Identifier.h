@@ -36,21 +36,21 @@ namespace JSC {
     public:
         Identifier() { }
         enum EmptyIdentifierFlag { EmptyIdentifier };
-        Identifier(EmptyIdentifierFlag) : m_string(StringImpl::empty()) { ASSERT(m_string.impl()->isIdentifier()); }
+        Identifier(EmptyIdentifierFlag) : m_string(StringImpl::empty()) { ASSERT(m_string.impl()->isAtomic()); }
 
         // Only to be used with string literals.
         template<unsigned charactersCount>
-        Identifier(ExecState* exec, const char (&characters)[charactersCount]) : m_string(add(exec, characters)) { ASSERT(m_string.impl()->isIdentifier()); }
+        Identifier(ExecState* exec, const char (&characters)[charactersCount]) : m_string(add(exec, characters)) { ASSERT(m_string.impl()->isAtomic()); }
         template<unsigned charactersCount>
-        Identifier(VM* vm, const char (&characters)[charactersCount]) : m_string(add(vm, characters)) { ASSERT(m_string.impl()->isIdentifier()); }
+        Identifier(VM* vm, const char (&characters)[charactersCount]) : m_string(add(vm, characters)) { ASSERT(m_string.impl()->isAtomic()); }
 
-        Identifier(ExecState* exec, StringImpl* rep) : m_string(add(exec, rep)) { ASSERT(m_string.impl()->isIdentifier()); }
-        Identifier(ExecState* exec, const String& s) : m_string(add(exec, s.impl())) { ASSERT(m_string.impl()->isIdentifier()); }
+        Identifier(ExecState* exec, StringImpl* rep) : m_string(add(exec, rep)) { ASSERT(m_string.impl()->isAtomic()); }
+        Identifier(ExecState* exec, const String& s) : m_string(add(exec, s.impl())) { ASSERT(m_string.impl()->isAtomic()); }
 
-        Identifier(VM* vm, const LChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isIdentifier()); }
-        Identifier(VM* vm, const UChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isIdentifier()); }
-        Identifier(VM* vm, StringImpl* rep) : m_string(add(vm, rep)) { ASSERT(m_string.impl()->isIdentifier()); }
-        Identifier(VM* vm, const String& s) : m_string(add(vm, s.impl())) { ASSERT(m_string.impl()->isIdentifier()); }
+        Identifier(VM* vm, const LChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtomic()); }
+        Identifier(VM* vm, const UChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtomic()); }
+        Identifier(VM* vm, StringImpl* rep) : m_string(add(vm, rep)) { ASSERT(m_string.impl()->isAtomic()); }
+        Identifier(VM* vm, const String& s) : m_string(add(vm, s.impl())) { ASSERT(m_string.impl()->isAtomic()); }
 
         const String& string() const { return m_string; }
         StringImpl* impl() const { return m_string.impl(); }
@@ -113,8 +113,8 @@ namespace JSC {
         static PassRef<StringImpl> add(ExecState*, StringImpl*);
         static PassRef<StringImpl> add(VM*, StringImpl*);
 
-        JS_EXPORT_PRIVATE static void checkCurrentIdentifierTable(ExecState*);
-        JS_EXPORT_PRIVATE static void checkCurrentIdentifierTable(VM*);
+        JS_EXPORT_PRIVATE static void checkCurrentAtomicStringTable(ExecState*);
+        JS_EXPORT_PRIVATE static void checkCurrentAtomicStringTable(VM*);
     };
 
     template <> ALWAYS_INLINE bool Identifier::canUseSingleCharacterString(LChar)
@@ -187,9 +187,6 @@ namespace JSC {
         return WTF::equal(r, s, length);
     }
     
-    IdentifierTable* createIdentifierTable();
-    void deleteIdentifierTable(IdentifierTable*);
-
     struct IdentifierRepHash : PtrHash<RefPtr<StringImpl>> {
         static unsigned hash(const RefPtr<StringImpl>& key) { return key->existingHash(); }
         static unsigned hash(StringImpl* key) { return key->existingHash(); }

@@ -52,7 +52,6 @@
 namespace WTF {
 
 class AtomicStringTable;
-typedef AtomicStringTable IdentifierTable;
 
 typedef void (*AtomicStringTableDestructor)(AtomicStringTable*);
 
@@ -67,19 +66,14 @@ public:
         return m_currentAtomicStringTable;
     }
 
-    IdentifierTable* currentIdentifierTable()
+    AtomicStringTable* setCurrentAtomicStringTable(AtomicStringTable* atomicStringTable)
     {
-        return m_currentAtomicStringTable;
+        AtomicStringTable* oldAtomicStringTable = m_currentAtomicStringTable;
+        m_currentAtomicStringTable = atomicStringTable;
+        return oldAtomicStringTable;
     }
 
-    IdentifierTable* setCurrentIdentifierTable(IdentifierTable* identifierTable)
-    {
-        IdentifierTable* oldIdentifierTable = m_currentAtomicStringTable;
-        m_currentAtomicStringTable = identifierTable;
-        return oldIdentifierTable;
-    }
-
-    void resetCurrentIdentifierTable()
+    void resetCurrentAtomicStringTable()
     {
         m_currentAtomicStringTable = m_defaultAtomicStringTable;
     }
@@ -169,6 +163,6 @@ inline WTFThreadData& wtfThreadData()
 
 using WTF::WTFThreadData;
 using WTF::wtfThreadData;
-using WTF::IdentifierTable;
+using WTF::AtomicStringTable;
 
 #endif // WTFThreadData_h

@@ -88,19 +88,19 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
 OpaqueJSClass::~OpaqueJSClass()
 {
     // The empty string is shared across threads & is an identifier, in all other cases we should have done a deep copy in className(), below. 
-    ASSERT(!m_className.length() || !m_className.impl()->isIdentifier());
+    ASSERT(!m_className.length() || !m_className.impl()->isAtomic());
 
 #ifndef NDEBUG
     if (m_staticValues) {
         OpaqueJSClassStaticValuesTable::const_iterator end = m_staticValues->end();
         for (OpaqueJSClassStaticValuesTable::const_iterator it = m_staticValues->begin(); it != end; ++it)
-            ASSERT(!it->key->isIdentifier());
+            ASSERT(!it->key->isAtomic());
     }
 
     if (m_staticFunctions) {
         OpaqueJSClassStaticFunctionsTable::const_iterator end = m_staticFunctions->end();
         for (OpaqueJSClassStaticFunctionsTable::const_iterator it = m_staticFunctions->begin(); it != end; ++it)
-            ASSERT(!it->key->isIdentifier());
+            ASSERT(!it->key->isAtomic());
     }
 #endif
     
@@ -134,7 +134,7 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(JSC::VM&, OpaqueJSClass* jsCl
         staticValues = std::make_unique<OpaqueJSClassStaticValuesTable>();
         OpaqueJSClassStaticValuesTable::const_iterator end = jsClass->m_staticValues->end();
         for (OpaqueJSClassStaticValuesTable::const_iterator it = jsClass->m_staticValues->begin(); it != end; ++it) {
-            ASSERT(!it->key->isIdentifier());
+            ASSERT(!it->key->isAtomic());
             String valueName = it->key->isolatedCopy();
             staticValues->add(valueName.impl(), std::make_unique<StaticValueEntry>(it->value->getProperty, it->value->setProperty, it->value->attributes, valueName));
         }
@@ -144,7 +144,7 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(JSC::VM&, OpaqueJSClass* jsCl
         staticFunctions = std::make_unique<OpaqueJSClassStaticFunctionsTable>();
         OpaqueJSClassStaticFunctionsTable::const_iterator end = jsClass->m_staticFunctions->end();
         for (OpaqueJSClassStaticFunctionsTable::const_iterator it = jsClass->m_staticFunctions->begin(); it != end; ++it) {
-            ASSERT(!it->key->isIdentifier());
+            ASSERT(!it->key->isAtomic());
             staticFunctions->add(it->key->isolatedCopy(), std::make_unique<StaticFunctionEntry>(it->value->callAsFunction, it->value->attributes));
         }
     }
@@ -160,7 +160,7 @@ OpaqueJSClassContextData& OpaqueJSClass::contextData(ExecState* exec)
 
 String OpaqueJSClass::className()
 {
-    // Make a deep copy, so that the caller has no chance to put the original into IdentifierTable.
+    // Make a deep copy, so that the caller has no chance to put the original into AtomicStringTable.
     return m_className.isolatedCopy();
 }
 

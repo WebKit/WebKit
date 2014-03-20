@@ -207,7 +207,7 @@ private:
     String m_string;
     
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> addSlowCase(StringImpl*);
-    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> addSlowCase(AtomicStringTable&, StringImpl*);
+    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> addSlowCase(AtomicStringTable*, StringImpl*);
 
     WTF_EXPORT_STRING_API static AtomicStringImpl* findSlowCase(StringImpl&);
     WTF_EXPORT_STRING_API static AtomicString fromUTF8Internal(const char*, const char*);

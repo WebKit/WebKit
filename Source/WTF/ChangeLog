@@ -1,5 +1,22 @@
 2014-03-20  Gavin Barraclough  <barraclough@apple.com>
 
+        Remove IdentifierTable typedef, isIdentifier()
+        https://bugs.webkit.org/show_bug.cgi?id=130533
+
+        Rubber stamped by Geoff Garen.
+
+        Code should use AtomicStringTable, isAtomic() directly.
+
+        * wtf/WTFThreadData.h:
+        (WTF::WTFThreadData::setCurrentAtomicStringTable):
+        (WTF::WTFThreadData::resetCurrentAtomicStringTable):
+            - removed IdentifierTypedef.
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::flagIsAtomic):
+            - renamed flagIsIdentfier -> flagIsAtomic.
+
+2014-03-20  Gavin Barraclough  <barraclough@apple.com>
+
         Merge AtomicString, Identifier
         https://bugs.webkit.org/show_bug.cgi?id=128624
 

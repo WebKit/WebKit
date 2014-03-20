@@ -139,7 +139,7 @@ namespace JSC {
         unsigned m_lockDropDepth;
         bool m_hasExclusiveThread;
         VM* m_vm;
-        IdentifierTable* m_entryIdentifierTable; 
+        AtomicStringTable* m_entryAtomicStringTable; 
     };
 
 } // namespace

@@ -216,7 +216,7 @@ void JSValue::dumpInContext(PrintStream& out, DumpContext* context) const
             if (impl) {
                 if (impl->isAtomic())
                     out.print(" (atomic)");
-                if (impl->isIdentifier())
+                if (impl->isAtomic())
                     out.print(" (identifier)");
                 if (impl->isEmptyUnique())
                     out.print(" (unique)");

@@ -81,7 +81,7 @@ namespace JSC  {
         JSValue exception() const { return vm().exception(); }
         bool hadException() const { return !vm().exception().isEmpty(); }
 
-        IdentifierTable& atomicStringTable() const { return vm().atomicStringTable(); }
+        AtomicStringTable* atomicStringTable() const { return vm().atomicStringTable(); }
         const CommonIdentifiers& propertyNames() const { return *vm().propertyNames; }
         const MarkedArgumentBuffer& emptyList() const { return *vm().emptyList; }
         Interpreter* interpreter() { return vm().interpreter; }
