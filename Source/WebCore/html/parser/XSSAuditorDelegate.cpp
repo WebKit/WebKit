@@ -50,13 +50,13 @@ XSSAuditorDelegate::XSSAuditorDelegate(Document& document)
     ASSERT(isMainThread());
 }
 
-static inline String buildConsoleError(const XSSInfo& xssInfo, const String& url)
+static inline String buildConsoleError(const XSSInfo& xssInfo)
 {
     StringBuilder message;
     message.append("The XSS Auditor ");
     message.append(xssInfo.m_didBlockEntirePage ? "blocked access to" : "refused to execute a script in");
     message.append(" '");
-    message.append(url);
+    message.append(xssInfo.m_originalURL);
     message.append("' because ");
     message.append(xssInfo.m_didBlockEntirePage ? "the source code of a script" : "its source code");
     message.append(" was found within the request.");
@@ -71,7 +71,7 @@ static inline String buildConsoleError(const XSSInfo& xssInfo, const String& url
     return message.toString();
 }
 
-PassRefPtr<FormData> XSSAuditorDelegate::generateViolationReport()
+PassRefPtr<FormData> XSSAuditorDelegate::generateViolationReport(const XSSInfo& xssInfo)
 {
     ASSERT(isMainThread());
 
@@ -83,7 +83,7 @@ PassRefPtr<FormData> XSSAuditorDelegate::generateViolationReport()
     }
 
     RefPtr<InspectorObject> reportDetails = InspectorObject::create();
-    reportDetails->setString("request-url", m_document.url().string());
+    reportDetails->setString("request-url", xssInfo.m_originalURL);
     reportDetails->setString("request-body", httpBody);
 
     RefPtr<InspectorObject> reportObject = InspectorObject::create();
@@ -96,7 +96,7 @@ void XSSAuditorDelegate::didBlockScript(const XSSInfo& xssInfo)
 {
     ASSERT(isMainThread());
 
-    m_document.addConsoleMessage(MessageSource::JS, MessageLevel::Error, buildConsoleError(xssInfo, m_document.url().string()));
+    m_document.addConsoleMessage(MessageSource::JS, MessageLevel::Error, buildConsoleError(xssInfo));
 
     FrameLoader& frameLoader = m_document.frame()->loader();
     if (xssInfo.m_didBlockEntirePage)
@@ -108,7 +108,7 @@ void XSSAuditorDelegate::didBlockScript(const XSSInfo& xssInfo)
         frameLoader.client().didDetectXSS(m_document.url(), xssInfo.m_didBlockEntirePage);
 
         if (!m_reportURL.isEmpty())
-            PingLoader::sendViolationReport(*m_document.frame(), m_reportURL, generateViolationReport());
+            PingLoader::sendViolationReport(*m_document.frame(), m_reportURL, generateViolationReport(xssInfo));
     }
 
     if (xssInfo.m_didBlockEntirePage)

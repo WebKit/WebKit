@@ -1,5 +1,23 @@
 2014-03-20  Daniel Bates  <dabates@apple.com>
 
+        Preserve original document URL for XSSAuditor reports
+
+        Merged from Blink (patch by Tom Sepez):
+        https://src.chromium.org/viewvc/blink?view=rev&revision=158406
+
+        Test: http/tests/security/xssAuditor/report-script-tag-replace-state.html
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::filterToken):
+        * html/parser/XSSAuditorDelegate.cpp:
+        (WebCore::buildConsoleError):
+        (WebCore::XSSAuditorDelegate::generateViolationReport):
+        (WebCore::XSSAuditorDelegate::didBlockScript):
+        * html/parser/XSSAuditorDelegate.h:
+        (WebCore::XSSInfo::XSSInfo):
+
+2014-03-20  Daniel Bates  <dabates@apple.com>
+
         XSSAuditor bypass with frameset tags
 
         Merged from Blink (patch by Tom Sepez):

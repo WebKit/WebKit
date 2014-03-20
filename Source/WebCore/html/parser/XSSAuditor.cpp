@@ -328,7 +328,7 @@ std::unique_ptr<XSSInfo> XSSAuditor::filterToken(const FilterTokenRequest& reque
         return nullptr;
 
     bool didBlockEntirePage = (m_xssProtection == ContentSecurityPolicy::BlockReflectedXSS);
-    return std::make_unique<XSSInfo>(didBlockEntirePage, m_didSendValidXSSProtectionHeader, m_didSendValidCSPHeader);
+    return std::make_unique<XSSInfo>(m_documentURL, didBlockEntirePage, m_didSendValidXSSProtectionHeader, m_didSendValidCSPHeader);
 }
 
 bool XSSAuditor::filterStartToken(const FilterTokenRequest& request)

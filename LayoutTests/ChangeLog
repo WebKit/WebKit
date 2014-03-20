@@ -1,5 +1,16 @@
 2014-03-20  Daniel Bates  <dabates@apple.com>
 
+        Preserve original document URL for XSSAuditor reports
+
+        Merged from Blink (patch by Tom Sepez):
+        https://src.chromium.org/viewvc/blink?view=rev&revision=158406
+
+        * http/tests/security/xssAuditor/report-script-tag-replace-state-expected.txt: Added.
+        * http/tests/security/xssAuditor/report-script-tag-replace-state.html: Added.
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl:
+
+2014-03-20  Daniel Bates  <dabates@apple.com>
+
         XSSAuditor bypass with frameset tags
 
         Merged from Blink (patch by Tom Sepez):

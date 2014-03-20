@@ -29,6 +29,7 @@
 #include "URL.h"
 #include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -37,13 +38,15 @@ class FormData;
 
 class XSSInfo {
 public:
-    XSSInfo(bool didBlockEntirePage, bool didSendXSSProtectionHeader, bool didSendCSPHeader)
-        : m_didBlockEntirePage(didBlockEntirePage)
+    XSSInfo(const String& originalURL, bool didBlockEntirePage, bool didSendXSSProtectionHeader, bool didSendCSPHeader)
+        : m_originalURL(originalURL.isolatedCopy())
+        , m_didBlockEntirePage(didBlockEntirePage)
         , m_didSendXSSProtectionHeader(didSendXSSProtectionHeader)
         , m_didSendCSPHeader(didSendCSPHeader)
     {
     }
 
+    String m_originalURL;
     bool m_didBlockEntirePage;
     bool m_didSendXSSProtectionHeader;
     bool m_didSendCSPHeader;
@@ -59,7 +62,7 @@ public:
     void setReportURL(const URL& url) { m_reportURL = url; }
 
 private:
-    PassRefPtr<FormData> generateViolationReport();
+    PassRefPtr<FormData> generateViolationReport(const XSSInfo&);
 
     Document& m_document;
     bool m_didSendNotifications;

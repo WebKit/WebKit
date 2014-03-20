@@ -89,6 +89,9 @@ if ($cgi->param('inHead')) {
 } else {
     print "<body>\n";
 }
+if ($cgi->param('replaceState')) {
+    print "<script>history.replaceState({}, '', '#must-not-appear');</script>\n";
+}
 print $cgi->param('q');
 if ($cgi->param('clutter')) {
     print $cgi->param('clutter');
