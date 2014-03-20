@@ -1,3 +1,10 @@
+2014-03-20  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the Mountain Lion build.
+
+        * platform/graphics/cocoa/IOSurface.mm:
+        (IOSurface::setIsPurgeable):
+
 2014-03-20  Brian Burg  <bburg@apple.com>
 
         Web Replay: capture and replay mouse events

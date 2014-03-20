@@ -176,6 +176,8 @@ IOSurface::SurfaceState IOSurface::setIsPurgeable(bool isPurgeable)
 
     if (previousState == kIOSurfacePurgeableEmpty)
         return IOSurface::SurfaceState::Empty;
+#else
+    UNUSED_PARAM(isPurgeable);
 #endif
 
     return IOSurface::SurfaceState::Valid;
