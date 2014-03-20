@@ -54,4 +54,18 @@
 
 @end
 
+@implementation WKPreferences (WKPrivate)
+
+- (BOOL)_telephoneNumberDetectionIsEnabled
+{
+    return _preferences->telephoneNumberParsingEnabled();
+}
+
+- (void)_setTelephoneNumberDetectionIsEnabled:(BOOL)telephoneNumberDetectionIsEnabled
+{
+    _preferences->setTelephoneNumberParsingEnabled(telephoneNumberDetectionIsEnabled);
+}
+
+@end
+
 #endif // WK_API_ENABLED

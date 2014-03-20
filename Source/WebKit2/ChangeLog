@@ -1,3 +1,17 @@
+2014-03-20  Sam Weinig  <sam@webkit.org>
+
+        [Cocoa] Expose preference to enable telephone number detection
+        https://bugs.webkit.org/show_bug.cgi?id=130524
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _telephoneNumberDetectionIsEnabled]):
+        (-[WKPreferences _setTelephoneNumberDetectionIsEnabled:]):
+        * UIProcess/API/Cocoa/WKPreferencesInternal.h:
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-03-19  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Support asynchronous NSTextInputClient

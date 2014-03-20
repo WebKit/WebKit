@@ -23,20 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKPreferencesPrivate.h"
+#import <WebKit2/WKPreferences.h>
 
 #if WK_API_ENABLED
 
-#import <wtf/RefPtr.h>
+@interface WKPreferences (WKPrivate)
 
-namespace WebKit {
-class WebPreferences;
-}
-
-@interface WKPreferences () {
-@package
-    RefPtr<WebKit::WebPreferences> _preferences;
-}
+@property (nonatomic, setter=_setTelephoneNumberDetectionIsEnabled:) BOOL _telephoneNumberDetectionIsEnabled;
 
 @end
 
