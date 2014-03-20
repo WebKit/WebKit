@@ -98,7 +98,7 @@ sub preprocessorMacros($\@)
 
     chomp(my $sdk_version = `xcrun --sdk $ENV{SDKROOT} --show-sdk-version`);
     if ($ENV{PLATFORM_NAME} eq "iphoneos") {
-        push(@args, "-miphoneos-min-version=" . $sdk_version);
+        push(@args, "-miphoneos-version-min=" . $sdk_version);
     }
     if ($ENV{PLATFORM_NAME} eq "iphonesimulator") {
         push(@args, "-mios-simulator-version-min=" . $sdk_version);
