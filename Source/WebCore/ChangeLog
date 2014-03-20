@@ -1,3 +1,23 @@
+2014-03-20  Laszlo Vidacs  <lvidacs.u-szeged@partner.samsung.com>
+
+        Optimize RenderTable::colToEffCol() for tables without colspans
+        https://bugs.webkit.org/show_bug.cgi?id=129298
+
+        Reviewed by Simon Fraser.
+
+        Create an alternative fast path to RenderTable colToEffCol() and effColToCol()
+        when there is no colspan or colspan does not exceed the width of table.
+        Blink merge https://codereview.chromium.org/154243002 by rhogan
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::RenderTable):
+        (WebCore::RenderTable::appendColumn):
+        (WebCore::RenderTable::recalcSections):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::colToEffCol):
+        (WebCore::RenderTable::effColToCol):
+        (WebCore::RenderTable::hasCellColspanThatDeterminesTableWidth):
+
 2014-03-20  Simon Fraser  <simon.fraser@apple.com>
 
         FrameView::paintContents() is not called for composited content

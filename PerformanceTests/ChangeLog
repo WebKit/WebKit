@@ -1,3 +1,20 @@
+2014-03-20  Laszlo Vidacs  <lvidacs.u-szeged@partner.samsung.com>
+
+        Optimize RenderTable::colToEffCol() for tables without colspans
+        https://bugs.webkit.org/show_bug.cgi?id=129298
+
+        Reviewed by Simon Fraser.
+
+        Create an alternative fast path to RenderTable colToEffCol() and effColToCol()
+        when there is no colspan or colspan does not exceed the width of table.
+        Blink merge https://codereview.chromium.org/154243002 by rhogan
+
+        * Layout/large-table-with-collapsed-borders-and-colspans-wider-than-table.html: Added.
+        * Layout/large-table-with-collapsed-borders-and-colspans.html: Added.
+        * Layout/large-table-with-collapsed-borders-and-no-colspans.html: Added.
+        * Layout/resources/large-table-with-collapsed-borders.css: Added.
+        * Layout/resources/large-table-with-collapsed-borders.js: Added.
+
 2014-03-14  Maciej Stachowiak  <mjs@apple.com>
 
         Replace "Apple Computer, Inc." with "Apple Inc." in copyright headers

@@ -173,6 +173,9 @@ public:
     
     unsigned colToEffCol(unsigned column) const
     {
+        if (!m_hasCellColspanThatDeterminesTableWidth)
+            return column;
+
         unsigned effColumn = 0;
         unsigned numColumns = numEffCols();
         for (unsigned c = 0; effColumn < numColumns && c + m_columns[effColumn].span - 1 < column; ++effColumn)
@@ -182,6 +185,9 @@ public:
     
     unsigned effColToCol(unsigned effCol) const
     {
+        if (!m_hasCellColspanThatDeterminesTableWidth)
+            return effCol;
+
         unsigned c = 0;
         for (unsigned i = 0; i < effCol; i++)
             c += m_columns[i].span;
@@ -345,6 +351,16 @@ private:
 
     bool m_columnLogicalWidthChanged : 1;
     mutable bool m_columnRenderersValid: 1;
+    mutable bool m_hasCellColspanThatDeterminesTableWidth : 1;
+
+    bool hasCellColspanThatDeterminesTableWidth() const
+    {
+        for (unsigned c = 0; c < numEffCols(); c++) {
+            if (m_columns[c].span > 1)
+                return true;
+        }
+        return false;
+    }
 
     short m_hSpacing;
     short m_vSpacing;

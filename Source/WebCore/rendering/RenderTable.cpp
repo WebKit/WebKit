@@ -60,6 +60,7 @@ RenderTable::RenderTable(Element& element, PassRef<RenderStyle> style)
     , m_needsSectionRecalc(false)
     , m_columnLogicalWidthChanged(false)
     , m_columnRenderersValid(false)
+    , m_hasCellColspanThatDeterminesTableWidth(false)
     , m_hSpacing(0)
     , m_vSpacing(0)
     , m_borderStart(0)
@@ -82,6 +83,7 @@ RenderTable::RenderTable(Document& document, PassRef<RenderStyle> style)
     , m_needsSectionRecalc(false)
     , m_columnLogicalWidthChanged(false)
     , m_columnRenderersValid(false)
+    , m_hasCellColspanThatDeterminesTableWidth(false)
     , m_hSpacing(0)
     , m_vSpacing(0)
     , m_borderStart(0)
@@ -831,6 +833,10 @@ void RenderTable::appendColumn(unsigned span)
     unsigned newColumnIndex = m_columns.size();
     m_columns.append(ColumnStruct(span));
 
+    // Unless the table has cell(s) with colspan that exceed the number of columns afforded
+    // by the other rows in the table we can use the fast path when mapping columns to effective columns.
+    m_hasCellColspanThatDeterminesTableWidth = m_hasCellColspanThatDeterminesTableWidth || span > 1;
+
     // Propagate the change in our columns representation to the sections that don't need
     // cell recalc. If they do, they will be synced up directly with m_columns later.
     for (auto& section : childrenOfType<RenderTableSection>(*this)) {
@@ -989,6 +995,7 @@ void RenderTable::recalcSections() const
     m_foot = 0;
     m_firstBody = 0;
     m_hasColElements = false;
+    m_hasCellColspanThatDeterminesTableWidth = hasCellColspanThatDeterminesTableWidth();
 
     // We need to get valid pointers to caption, head, foot and first body again
     RenderObject* nextSibling;
