@@ -1,3 +1,16 @@
+2014-03-20  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Content flowed in 0px height region not displayed
+        https://bugs.webkit.org/show_bug.cgi?id=98265
+
+        After the past work on overflow, this looks fixed. Add a test to make sure
+        we are covered for future regressions.
+
+        Reviewed by Andrei Bucur.
+
+        * fast/regions/overflow-content-zero-height-region-expected.html: Added.
+        * fast/regions/overflow-content-zero-height-region.html: Added.
+
 2014-03-19  Brent Fulgham  <bfulgham@apple.com>
 
         Merge Misc. WebVTT Updates from Blink.
