@@ -727,7 +727,7 @@ void MediaPlayerPrivateAVFoundationObjC::checkPlayability()
     auto weakThis = createWeakPtr();
 
     [m_avAsset.get() loadValuesAsynchronouslyForKeys:[NSArray arrayWithObject:@"playable"] completionHandler:^{
-        dispatch_async(dispatch_get_main_queue(), ^{
+        callOnMainThread([weakThis] {
             if (weakThis)
                 weakThis->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::AssetPlayabilityKnown);
         });
