@@ -1,3 +1,13 @@
+2014-03-20  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] test_ewk2_application_cache_manager is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=130501
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/API/efl/tests/test_ewk2_application_cache_manager.cpp:
+        (timerCallback): Return ECORE_CALLBACK_CANCEL to clear the timer.
+
 2014-03-19  Tim Horton  <timothy_horton@apple.com>
 
         Address late review comment and style nit after r165934.

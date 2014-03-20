@@ -93,7 +93,7 @@ static Eina_Bool timerCallback(void* userData)
     OriginsData* data = static_cast<OriginsData*>(userData);
     ewk_application_cache_manager_origins_async_get(data->manager, getOriginsCallback, &data->items);
 
-    return true;
+    return ECORE_CALLBACK_CANCEL;
 }
 
 TEST_F(EWK2UnitTestBase, ewk_application_cache_manager)
