@@ -1,3 +1,16 @@
+2014-03-20  Alexey Proskuryakov  <ap@apple.com>
+
+        ASSERTION FAILED: event == [NSApp currentEvent] hitting Command-+
+        https://bugs.webkit.org/show_bug.cgi?id=130526
+        <rdar://problem/16371612>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm: (-[WKView performKeyEquivalent:]): Cut custom
+        processing short whenever we are redispatching an event, not just when the event
+        we are handling is the one being redispatched. There shouldn't be any other unrelated
+        events here, just the one being redispatched and synthetic ones generated from it by AppKit.
+
 2014-03-20  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

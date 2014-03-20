@@ -2077,10 +2077,12 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if ([[event charactersIgnoringModifiers] isEqualToString:@"\e"] && !([event modifierFlags] & NSDeviceIndependentModifierFlagsMask))
         return [super performKeyEquivalent:event];
 
-    // If we are already re-sending the event, then WebCore has already seen it, no need for custom processing.
-    BOOL eventWasSentToWebCore = (_data->_keyDownEventBeingResent == event);
-    if (eventWasSentToWebCore)
+    if (_data->_keyDownEventBeingResent) {
+        // WebCore has already seen the event, no need for custom processing.
+        // Note that we can get multiple events for each event being re-sent. For example, for Cmd+'=' AppKit
+        // first performs the original key equivalent, and if that isn't handled, it dispatches a synthetic Cmd+'+'.
         return [super performKeyEquivalent:event];
+    }
 
     ASSERT(event == [NSApp currentEvent]);
 
