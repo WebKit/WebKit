@@ -1,3 +1,20 @@
+2014-03-20  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [ARM64] Fix assembler build issues and add cacheFlush support for Linux
+        https://bugs.webkit.org/show_bug.cgi?id=130502
+
+        Reviewed by Michael Saboff.
+
+        Add limits.h for INT_MIN in ARM64Assembler(). Delete shouldBlindForSpecificArch(uintptr_t)
+        because on ARM64 uint64_t and uintptr_t is the same with GCC and Clang as well.
+        Add cacheFlush support for Linux.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::linuxPageFlush):
+        (JSC::ARM64Assembler::cacheFlush):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::shouldBlindForSpecificArch):
+
 2014-03-19  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=130494
