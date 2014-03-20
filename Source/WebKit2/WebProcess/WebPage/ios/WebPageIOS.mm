@@ -110,12 +110,6 @@ void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)
     notImplemented();
 }
 
-bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>&, KeyboardEvent*)
-{
-    notImplemented();
-    return false;
-}
-
 FloatSize WebPage::viewportScreenSize() const
 {
     return m_viewportScreenSize;
@@ -163,68 +157,6 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event)
 }
 
 void WebPage::sendComplexTextInputToPlugin(uint64_t, const String&)
-{
-    notImplemented();
-}
-
-void WebPage::setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, const EditingRange& selectionRange)
-{
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-
-    if (frame.selection().selection().isContentEditable())
-        frame.editor().setComposition(text, underlines, selectionRange.location, selectionRange.location + selectionRange.length);
-}
-
-void WebPage::confirmComposition()
-{
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-    frame.editor().confirmComposition();
-}
-
-void WebPage::cancelComposition(EditorState&)
-{
-    notImplemented();
-}
-
-void WebPage::insertText(const String& text, const EditingRange& replacementEditingRange)
-{
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-    
-    if (replacementEditingRange.location != notFound) {
-        RefPtr<Range> replacementRange = rangeFromEditingRange(frame, replacementEditingRange);
-        if (replacementRange)
-            frame.selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
-    }
-    
-    if (!frame.editor().hasComposition()) {
-        // An insertText: might be handled by other responders in the chain if we don't handle it.
-        // One example is space bar that results in scrolling down the page.
-        frame.editor().insertText(text, nullptr);
-    } else
-        frame.editor().confirmComposition(text);
-}
-
-void WebPage::getMarkedRange(EditingRange&)
-{
-    notImplemented();
-}
-
-void WebPage::getSelectedRange(EditingRange&)
-{
-    notImplemented();
-}
-
-void WebPage::characterIndexForPoint(IntPoint, uint64_t&)
-{
-    notImplemented();
-}
-
-void WebPage::firstRectForCharacterRange(const EditingRange&, WebCore::IntRect&)
-{
-    notImplemented();
-}
-
-void WebPage::executeKeypressCommands(const Vector<WebCore::KeypressCommand>&, bool&, EditorState&)
 {
     notImplemented();
 }

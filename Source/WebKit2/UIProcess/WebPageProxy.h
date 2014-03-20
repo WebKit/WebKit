@@ -628,16 +628,6 @@ public:
     void windowAndViewFramesChanged(const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
     void setMainFrameIsScrollable(bool);
 
-    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementRange);
-    void confirmComposition();
-    void cancelComposition();
-    bool insertText(const String& text, const EditingRange& replacementRange);
-    void getMarkedRange(EditingRange&);
-    void getSelectedRange(EditingRange&);
-    uint64_t characterIndexForPoint(const WebCore::IntPoint);
-    WebCore::IntRect firstRectForCharacterRange(const EditingRange&);
-    bool executeKeypressCommands(const Vector<WebCore::KeypressCommand>&);
-
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
     bool shouldDelayWindowOrderingForEvent(const WebMouseEvent&);
     bool acceptsFirstMouse(int eventNumber, const WebMouseEvent&);
@@ -653,11 +643,24 @@ public:
     void setCompositionAsync(const String& text, Vector<WebCore::CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementRange);
     void confirmCompositionAsync();
 
+    void cancelComposition();
+
 #if PLATFORM(MAC)
-    bool insertDictatedText(const String& text, const EditingRange& replacementRange, const Vector<WebCore::TextAlternativeWithRange>& dictationAlternatives);
     void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::TextAlternativeWithRange>& dictationAlternatives);
-    void getAttributedSubstringFromRange(const EditingRange&, AttributedString&);
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, PassRefPtr<AttributedStringForCharacterRangeCallback>);
+
+#if !USE(ASYNC_NSTEXTINPUTCLIENT)
+    bool insertText(const String& text, const EditingRange& replacementRange);
+    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementRange);
+    void confirmComposition();
+    bool insertDictatedText(const String& text, const EditingRange& replacementRange, const Vector<WebCore::TextAlternativeWithRange>& dictationAlternatives);
+    void getAttributedSubstringFromRange(const EditingRange&, AttributedString&);
+    void getMarkedRange(EditingRange&);
+    void getSelectedRange(EditingRange&);
+    uint64_t characterIndexForPoint(const WebCore::IntPoint);
+    WebCore::IntRect firstRectForCharacterRange(const EditingRange&);
+    bool executeKeypressCommands(const Vector<WebCore::KeypressCommand>&);
+#endif
 
     WKView* wkView() const;
     void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize);

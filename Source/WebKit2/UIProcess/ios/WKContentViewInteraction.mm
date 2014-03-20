@@ -1410,13 +1410,13 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 - (void)setMarkedText:(NSString *)markedText selectedRange:(NSRange)selectedRange
 {
     _markedText = markedText;
-    _page->setComposition(markedText, Vector<WebCore::CompositionUnderline>(), selectedRange, EditingRange());
+    _page->setCompositionAsync(markedText, Vector<WebCore::CompositionUnderline>(), selectedRange, EditingRange());
 }
 
 - (void)unmarkText
 {
     _markedText = nil;
-    _page->confirmComposition();
+    _page->confirmCompositionAsync();
 }
 
 - (UITextPosition *)beginningOfDocument
@@ -1507,7 +1507,7 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
 // Inserts the given string, replacing any selected or marked text.
 - (void)insertText:(NSString *)aStringValue
 {
-    _page->insertText(aStringValue, EditingRange());
+    _page->insertTextAsync(aStringValue, EditingRange());
 }
 
 - (BOOL)hasText

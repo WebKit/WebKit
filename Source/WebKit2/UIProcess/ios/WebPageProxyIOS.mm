@@ -99,63 +99,9 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect&, const FloatPoint
     notImplemented();
 }
 
-void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderline> underline, const EditingRange& selectionRange, const EditingRange&)
-{
-    if (!isValid())
-        return;
-
-    process().send(Messages::WebPage::SetComposition(text, underline, selectionRange), m_pageID);
-}
-
-void WebPageProxy::confirmComposition()
-{
-    if (!isValid())
-        return;
-
-    process().send(Messages::WebPage::ConfirmComposition(), m_pageID);
-}
-
 void WebPageProxy::cancelComposition()
 {
     notImplemented();
-
-}
-
-bool WebPageProxy::insertText(const String& text, const EditingRange& replacementRange)
-{
-    if (!isValid())
-        return true;
-    
-    process().send(Messages::WebPage::InsertText(text, replacementRange), m_pageID);
-    return true;
-}
-
-void WebPageProxy::getMarkedRange(EditingRange&)
-{
-    notImplemented();
-}
-
-void WebPageProxy::getSelectedRange(EditingRange&)
-{
-    notImplemented();
-}
-
-uint64_t WebPageProxy::characterIndexForPoint(const IntPoint)
-{
-    notImplemented();
-    return 0;
-}
-
-IntRect WebPageProxy::firstRectForCharacterRange(const EditingRange&)
-{
-    notImplemented();
-    return IntRect();
-}
-
-bool WebPageProxy::executeKeypressCommands(const Vector<WebCore::KeypressCommand>&)
-{
-    notImplemented();
-    return false;
 }
 
 String WebPageProxy::stringSelectionForPasteboard()

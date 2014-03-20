@@ -246,6 +246,8 @@ void WebPage::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdenti
     }
 }
 
+#if !USE(ASYNC_NSTEXTINPUTCLIENT)
+
 void WebPage::setComposition(const String& text, Vector<CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementEditingRange, EditorState& newState)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
@@ -267,13 +269,6 @@ void WebPage::confirmComposition(EditorState& newState)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     frame.editor().confirmComposition();
-    newState = editorState();
-}
-
-void WebPage::cancelComposition(EditorState& newState)
-{
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-    frame.editor().cancelComposition();
     newState = editorState();
 }
 
@@ -312,20 +307,6 @@ void WebPage::insertDictatedText(const String& text, const EditingRange& replace
     ASSERT(!frame.editor().hasComposition());
     handled = frame.editor().insertDictatedText(text, dictationAlternativeLocations, nullptr);
     newState = editorState();
-}
-
-void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& replacementEditingRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations)
-{
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-
-    if (replacementEditingRange.location != notFound) {
-        RefPtr<Range> replacementRange = rangeFromEditingRange(frame, replacementEditingRange);
-        if (replacementRange)
-            frame.selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
-    }
-
-    ASSERT(!frame.editor().hasComposition());
-    frame.editor().insertDictatedText(text, dictationAlternativeLocations, nullptr);
 }
 
 void WebPage::getMarkedRange(EditingRange& result)
@@ -379,39 +360,6 @@ void WebPage::getAttributedSubstringFromRange(const EditingRange& editingRange, 
     }
 }
 
-void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& editingRange, uint64_t callbackID)
-{
-    AttributedString result;
-
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-
-    const VisibleSelection& selection = frame.selection().selection();
-    if (selection.isNone() || !selection.isContentEditable() || selection.isInPasswordField()) {
-        send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(result, EditingRange(), callbackID));
-        return;
-    }
-
-    RefPtr<Range> range = rangeFromEditingRange(frame, editingRange);
-    if (!range) {
-        send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(result, EditingRange(), callbackID));
-        return;
-    }
-
-    result.string = [WebHTMLConverter editingAttributedStringFromRange:range.get()];
-    NSAttributedString* attributedString = result.string.get();
-    
-    // [WebHTMLConverter editingAttributedStringFromRange:] insists on inserting a trailing 
-    // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
-    // To work around this we truncate the resultant string to the correct length.
-    if ([attributedString length] > editingRange.length) {
-        ASSERT([attributedString length] == editingRange.length + 1);
-        ASSERT([[attributedString string] characterAtIndex:editingRange.length] == '\n' || [[attributedString string] characterAtIndex:editingRange.length] == ' ');
-        result.string = [attributedString attributedSubstringFromRange:NSMakeRange(0, editingRange.length)];
-    }
-
-    send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(result, EditingRange(editingRange.location, [result.string length]), callbackID));
-}
-
 void WebPage::characterIndexForPoint(IntPoint point, uint64_t& index)
 {
     index = notFound;
@@ -450,6 +398,62 @@ void WebPage::executeKeypressCommands(const Vector<WebCore::KeypressCommand>& co
 {
     handled = executeKeypressCommandsInternal(commands, nullptr);
     newState = editorState();
+}
+
+#endif // !USE(ASYNC_NSTEXTINPUTCLIENT)
+
+void WebPage::cancelComposition(EditorState& newState)
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    frame.editor().cancelComposition();
+    newState = editorState();
+}
+
+void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& replacementEditingRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations)
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+
+    if (replacementEditingRange.location != notFound) {
+        RefPtr<Range> replacementRange = rangeFromEditingRange(frame, replacementEditingRange);
+        if (replacementRange)
+            frame.selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
+    }
+
+    ASSERT(!frame.editor().hasComposition());
+    frame.editor().insertDictatedText(text, dictationAlternativeLocations, nullptr);
+}
+
+void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& editingRange, uint64_t callbackID)
+{
+    AttributedString result;
+
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+
+    const VisibleSelection& selection = frame.selection().selection();
+    if (selection.isNone() || !selection.isContentEditable() || selection.isInPasswordField()) {
+        send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(result, EditingRange(), callbackID));
+        return;
+    }
+
+    RefPtr<Range> range = rangeFromEditingRange(frame, editingRange);
+    if (!range) {
+        send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(result, EditingRange(), callbackID));
+        return;
+    }
+
+    result.string = [WebHTMLConverter editingAttributedStringFromRange:range.get()];
+    NSAttributedString* attributedString = result.string.get();
+    
+    // [WebHTMLConverter editingAttributedStringFromRange:] insists on inserting a trailing 
+    // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
+    // To work around this we truncate the resultant string to the correct length.
+    if ([attributedString length] > editingRange.length) {
+        ASSERT([attributedString length] == editingRange.length + 1);
+        ASSERT([[attributedString string] characterAtIndex:editingRange.length] == '\n' || [[attributedString string] characterAtIndex:editingRange.length] == ' ');
+        result.string = [attributedString attributedSubstringFromRange:NSMakeRange(0, editingRange.length)];
+    }
+
+    send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(result, EditingRange(editingRange.location, [result.string length]), callbackID));
 }
 
 static bool isPositionInRange(const VisiblePosition& position, Range* range)
