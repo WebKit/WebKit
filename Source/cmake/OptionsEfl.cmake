@@ -159,7 +159,7 @@ find_package(Eet ${EFL_REQUIRED_VERSION} REQUIRED ${EFL_CONFIG_MODE})
 find_package(Eeze ${EFL_REQUIRED_VERSION} REQUIRED ${EFL_CONFIG_MODE})
 find_package(Efreet ${EFL_REQUIRED_VERSION} REQUIRED ${EFL_CONFIG_MODE})
 
-find_package(Freetype2 2.4.11 REQUIRED)
+find_package(Freetype 2.4.2 REQUIRED)
 find_package(HarfBuzz 0.9.2 REQUIRED)
 add_definitions(-DWTF_USE_FREETYPE=1)
 add_definitions(-DWTF_USE_HARFBUZZ=1)

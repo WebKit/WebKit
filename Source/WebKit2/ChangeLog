@@ -1,3 +1,16 @@
+2014-03-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r165962.
+        https://bugs.webkit.org/show_bug.cgi?id=130512
+
+        It broke the build (Requested by Ossy on #webkit).
+
+        Reverted changeset:
+
+        "[EFL][GTK] Get CMake to find Freetype2 properly"
+        https://bugs.webkit.org/show_bug.cgi?id=130150
+        http://trac.webkit.org/changeset/165962
+
 2014-03-20  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [EFL][GTK] Get CMake to find Freetype2 properly
