@@ -538,15 +538,27 @@ public:
     
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
 
-    void cancelComposition(EditorState& newState);
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
     void insertText(const String& text, const EditingRange& replacementRange, bool& handled, EditorState& newState);
     void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementRange, EditorState& newState);
     void confirmComposition(EditorState& newState);
+    void insertDictatedText(const String& text, const EditingRange& replacementRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool& handled, EditorState& newState);
+    void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations);
+    void getAttributedSubstringFromRange(const EditingRange&, AttributedString&);
+    void attributedSubstringForCharacterRangeAsync(const EditingRange&, uint64_t callbackID);
 #endif
+
+    void insertTextAsync(const String& text, const EditingRange& replacementRange);
+    void getMarkedRangeAsync(uint64_t callbackID);
+    void getSelectedRangeAsync(uint64_t callbackID);
+    void characterIndexForPointAsync(const WebCore::IntPoint&, uint64_t callbackID);
+    void firstRectForCharacterRangeAsync(const EditingRange&, uint64_t callbackID);
+    void setCompositionAsync(const String& text, Vector<WebCore::CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementRange);
+    void confirmCompositionAsync();
+
+    void cancelComposition(EditorState& newState);
     void getMarkedRange(EditingRange&);
     void getSelectedRange(EditingRange&);
-    void getAttributedSubstringFromRange(const EditingRange&, AttributedString&);
     void characterIndexForPoint(const WebCore::IntPoint point, uint64_t& result);
     void firstRectForCharacterRange(const EditingRange&, WebCore::IntRect& resultRect);
     void executeKeypressCommands(const Vector<WebCore::KeypressCommand>&, bool& handled, EditorState& newState);
@@ -556,7 +568,6 @@ public:
     void shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent&, bool& result);
     void acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent&, bool& result);
     bool performNonEditingBehaviorForSelector(const String&, WebCore::KeyboardEvent*);
-    void insertDictatedText(const String& text, const EditingRange& replacementRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool& handled, EditorState& newState);
 #elif PLATFORM(EFL)
     void confirmComposition(const String& compositionString);
     void setComposition(const WTF::String& compositionString, const WTF::Vector<WebCore::CompositionUnderline>& underlines, uint64_t cursorPosition);

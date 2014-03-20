@@ -151,6 +151,12 @@ messages -> WebPageProxy {
     ScriptValueCallback(IPC::DataReference resultData, uint64_t callbackID)
     ComputedPagesCallback(Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, uint64_t callbackID)
     ValidateCommandCallback(String command, bool isEnabled, int32_t state, uint64_t callbackID)
+    EditingRangeCallback(WebKit::EditingRange range, uint64_t callbackID)
+    UnsignedCallback(uint64_t result, uint64_t callbackID)
+    RectForCharacterRangeCallback(WebCore::IntRect rect, WebKit::EditingRange actualRange, uint64_t callbackID)
+#if PLATFORM(MAC)
+    AttributedStringForCharacterRangeCallback(WebKit::AttributedString string, WebKit::EditingRange actualRange, uint64_t callbackID)
+#endif
 #if PLATFORM(IOS)
     GestureCallback(WebCore::IntPoint point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, uint64_t callbackID)
     TouchesCallback(WebCore::IntPoint point, uint32_t touches, uint64_t callbackID)

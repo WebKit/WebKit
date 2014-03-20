@@ -1,3 +1,55 @@
+2014-03-19  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Support asynchronous NSTextInputClient
+        https://bugs.webkit.org/show_bug.cgi?id=130479
+
+        Reviewed by Anders Carlsson.
+
+        The implementation is currently disabled, pending lower level support.
+        Most of the code is not under compile time guard however, to facilitate cross-platform
+        reuse, or at least under a PLATFORM(COCOA) guard to share the code with iOS.
+
+        * UIProcess/API/mac/WKView.mm: Added a compile time branch for USE(ASYNC_NSTEXTINPUTCLIENT).
+        We still implement sync NSTextInputClient here, in order to get assertions when
+        its methods are unexpectedly called.
+        The new code first sends an event to input method asynchronously, handling any callbacks
+        that may arrive. During this time, we no longer care about WKViewInterpretKeyEventsParameters
+        at all. Once done, we interpret key bindings synchronously, collecting them into
+        a vector.
+
+        * UIProcess/API/mac/WKViewInternal.h: We no longer expose _interpretKeyEvent outside
+        WKView.
+
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        Added async calls and callbacks. Removed unnecessary and slightly harmful .get() when moving
+        a callback pointer into map. Moved insertDictatedText() and getAttributedSubstringFromRange()
+        from PLATFORM(COCOA) to PLATFORM(MAC), because they are unused and unimplemented on
+        iOS, and unlikely to be needed any time soon. Changed USE(APPKIT) to PLATFORM(MAC),
+        because that's more accurate in this case (nothing depends on AppKit, it's just code
+        that we only need on Mac).
+
+        * UIProcess/WebPageProxy.messages.in: Added messages for new async IM responses.
+
+        * UIProcess/ios/WebPageProxyIOS.mm: Removed insertDictatedText() and getAttributedSubstringFromRange().
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::insertDictatedTextAsync):
+        (WebKit::WebPageProxy::attributedSubstringForCharacterRangeAsync):
+        (WebKit::WebPageProxy::attributedStringForCharacterRangeCallback):
+        Added async calls and callbacks that are Mac only.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        Added async implementations (which are essentially the same as sync ones, sadly).
+
+        * WebProcess/WebPage/WebPage.messages.in: Added async messages, moved some messages
+        under PLATFORM(MAC).
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm: More of deleting functions that are Mac only,
+        and cannot be easily implemented in WebPage.cpp with shared code.
+
 2014-03-20  Martin Robinson  <mrobinson@igalia.com>
 
         Remove remaining GTK+ unused parameter warnings from WebKit2

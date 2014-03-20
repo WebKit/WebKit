@@ -130,23 +130,12 @@ bool WebPageProxy::insertText(const String& text, const EditingRange& replacemen
     return true;
 }
 
-bool WebPageProxy::insertDictatedText(const String&, const EditingRange&, const Vector<WebCore::TextAlternativeWithRange>&)
-{
-    notImplemented();
-    return false;
-}
-
 void WebPageProxy::getMarkedRange(EditingRange&)
 {
     notImplemented();
 }
 
 void WebPageProxy::getSelectedRange(EditingRange&)
-{
-    notImplemented();
-}
-
-void WebPageProxy::getAttributedSubstringFromRange(const EditingRange&, AttributedString&)
 {
     notImplemented();
 }

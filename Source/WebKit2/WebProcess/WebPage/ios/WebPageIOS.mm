@@ -204,22 +204,12 @@ void WebPage::insertText(const String& text, const EditingRange& replacementEdit
         frame.editor().confirmComposition(text);
 }
 
-void WebPage::insertDictatedText(const String&, const EditingRange&, const Vector<WebCore::DictationAlternative>&, bool&, EditorState&)
-{
-    notImplemented();
-}
-
 void WebPage::getMarkedRange(EditingRange&)
 {
     notImplemented();
 }
 
 void WebPage::getSelectedRange(EditingRange&)
-{
-    notImplemented();
-}
-
-void WebPage::getAttributedSubstringFromRange(const EditingRange&, AttributedString&)
 {
     notImplemented();
 }
