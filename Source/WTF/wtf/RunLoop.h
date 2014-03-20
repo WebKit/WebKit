@@ -37,7 +37,7 @@
 #include <wtf/Threading.h>
 
 #if USE(GLIB)
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GMainLoopSource.h>
 #endif
 
 #if PLATFORM(EFL)
@@ -99,11 +99,7 @@ public:
         Ecore_Timer* m_timer;
         bool m_isRepeating;
 #elif USE(GLIB)
-        static gboolean timerFiredCallback(RunLoop::TimerBase*);
-        gboolean isRepeating() const { return m_isRepeating; }
-        void clearTimerSource();
-        GRefPtr<GSource> m_timerSource;
-        gboolean m_isRepeating;
+        GMainLoopSource m_timerSource;
 #endif
     };
 

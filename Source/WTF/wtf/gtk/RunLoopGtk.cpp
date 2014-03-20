@@ -97,25 +97,16 @@ void RunLoop::stop()
         g_main_loop_quit(lastMainLoop.get());
 }
 
-gboolean RunLoop::queueWork(RunLoop* runLoop)
-{
-    runLoop->performWork();
-    return FALSE;
-}
-
 void RunLoop::wakeUp()
 {
-    GRefPtr<GSource> source = adoptGRef(g_idle_source_new());
-    g_source_set_priority(source.get(), G_PRIORITY_DEFAULT);
-    g_source_set_callback(source.get(), reinterpret_cast<GSourceFunc>(&RunLoop::queueWork), this, 0);
-    g_source_attach(source.get(), m_runLoopContext.get());
-
+    ref();
+    GMainLoopSource::createAndDeleteOnDestroy().schedule("[WebKit] RunLoop work", std::bind(&RunLoop::performWork, this),
+        G_PRIORITY_DEFAULT, [this] { deref(); });
     g_main_context_wakeup(m_runLoopContext.get());
 }
 
 RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
     : m_runLoop(runLoop)
-    , m_timerSource(0)
 {
 }
 
@@ -124,46 +115,20 @@ RunLoop::TimerBase::~TimerBase()
     stop();
 }
 
-void RunLoop::TimerBase::clearTimerSource()
-{
-    m_timerSource = 0;
-}
-
-gboolean RunLoop::TimerBase::timerFiredCallback(RunLoop::TimerBase* timer)
-{
-    GSource* currentTimerSource = timer->m_timerSource.get();
-    bool isRepeating = timer->isRepeating();
-    // This can change the timerSource by starting a new timer within the callback.
-    if (!isRepeating && currentTimerSource == timer->m_timerSource.get())
-        timer->clearTimerSource();
-
-    timer->fired();
-    return isRepeating;
-}
-
 void RunLoop::TimerBase::start(double fireInterval, bool repeat)
 {
-    if (m_timerSource)
-        stop();
-
-    m_timerSource = adoptGRef(g_timeout_source_new(static_cast<guint>(fireInterval * 1000)));
-    m_isRepeating = repeat;
-    g_source_set_callback(m_timerSource.get(), reinterpret_cast<GSourceFunc>(&RunLoop::TimerBase::timerFiredCallback), this, 0);
-    g_source_attach(m_timerSource.get(), m_runLoop.m_runLoopContext.get());
+    m_timerSource.scheduleAfterDelay("[WebKit] RunLoop::Timer", std::function<bool ()>([this, repeat] { fired(); return repeat; }),
+        std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<double>(fireInterval)));
 }
 
 void RunLoop::TimerBase::stop()
 {
-    if (!m_timerSource)
-        return;
-
-    g_source_destroy(m_timerSource.get());
-    clearTimerSource();
+    m_timerSource.cancel();
 }
 
 bool RunLoop::TimerBase::isActive() const
 {
-    return m_timerSource;
+    return m_timerSource.isScheduled();
 }
 
 } // namespace WTF

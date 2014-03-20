@@ -1,3 +1,56 @@
+2014-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Add GMainLoopSource class to wrap idle and timeout sources
+        https://bugs.webkit.org/show_bug.cgi?id=130027
+
+        Reviewed by Martin Robinson.
+
+        GLib main loop sources like idle and timeouts are sometimes
+        unconvenient to use and it's very common to forget canceling the
+        source when the object is destroyed or reset the source ID in the
+        callback when called. GMainLoopSource is a wrapper class to make it
+        easier to handle sources and also to avoid those typical mistakes.
+        It forces to create sources with a name and the user doesn't have
+        to deal with the source ID anymore. The source is cancelled when
+        the object is deleted or when a new source is scheduled. It uses
+        std::function for callbacks so that we no longer need to use the
+        "proxy" static callbacks either. We can use std::bind to use a
+        function pointer or a member or even lambda functions. It also handles
+        repeating sources automatically depending on whether the given
+        function returns a bool or not.
+
+        * GNUmakefile.list.am:
+        * wtf/PlatformEfl.cmake:
+        * wtf/PlatformGTK.cmake:
+        * wtf/RunLoop.h:
+        * wtf/gobject/GMainLoopSource.cpp: Added.
+        (WTF::GMainLoopSource::createAndDeleteOnDestroy):
+        (WTF::GMainLoopSource::GMainLoopSource):
+        (WTF::GMainLoopSource::~GMainLoopSource):
+        (WTF::GMainLoopSource::cancel):
+        (WTF::GMainLoopSource::reset):
+        (WTF::GMainLoopSource::scheduleIdleSource):
+        (WTF::GMainLoopSource::schedule):
+        (WTF::GMainLoopSource::scheduleTimeoutSource):
+        (WTF::GMainLoopSource::scheduleAfterDelay):
+        (WTF::GMainLoopSource::voidCallback):
+        (WTF::GMainLoopSource::boolCallback):
+        (WTF::GMainLoopSource::socketCallback):
+        (WTF::GMainLoopSource::destroy):
+        (WTF::GMainLoopSource::voidSourceCallback):
+        (WTF::GMainLoopSource::boolSourceCallback):
+        (WTF::GMainLoopSource::socketSourceCallback):
+        * wtf/gobject/GMainLoopSource.h: Added.
+        (WTF::GMainLoopSource::isScheduled):
+        * wtf/gtk/MainThreadGtk.cpp:
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        * wtf/gtk/RunLoopGtk.cpp:
+        (WTF::RunLoop::wakeUp):
+        (WTF::RunLoop::TimerBase::TimerBase):
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::TimerBase::stop):
+        (WTF::RunLoop::TimerBase::isActive):
+
 2014-03-19  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=130494
