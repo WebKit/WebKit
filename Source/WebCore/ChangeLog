@@ -1,3 +1,27 @@
+2014-03-20  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] clamp RasterShape shapeMargin to reference box size
+        https://bugs.webkit.org/show_bug.cgi?id=130350
+
+        Reviewed by Dean Jackson.
+
+        Corrected the way the maximum shape-margin value was computed for image valued
+        shapes. The limiting case is an image with just one above threshold pixel. The
+        largest possible value for shapeMargin is the radius of a circle that encloses
+        the size of the shape-outside element's margin-box, since the shape-outside's
+        boundary is clipped to the margin-box. The radius is just sqrt(2) * the margin-box's
+        largest dimension.
+
+        Also cleaned up up a few poorly named parameters.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-one-pixel.html
+
+        * rendering/shapes/RasterShape.cpp:
+        (WebCore::RasterShape::marginIntervals):
+        * rendering/shapes/RasterShape.h:
+        (WebCore::RasterShape::RasterShape):
+        * rendering/shapes/Shape.h:
+
 2014-03-20  Beth Dakin  <bdakin@apple.com>
 
         Build fix.

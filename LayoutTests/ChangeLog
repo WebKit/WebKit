@@ -1,3 +1,17 @@
+2014-03-20  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] clamp RasterShape shapeMargin to reference box size
+        https://bugs.webkit.org/show_bug.cgi?id=130350
+
+        Reviewed by Dean Jackson.
+
+        Verify that a very large shape-margin value combined with a very small
+        shape-outside image defines a shape that matches the shape-outside
+        element's margin-box.
+
+        * fast/shapes/shape-outside-floats/shape-outside-one-pixel-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-one-pixel.html: Added.
+
 2014-03-20  Beth Dakin  <bdakin@apple.com>
 
         Implement contentInset for Mac WebKit2

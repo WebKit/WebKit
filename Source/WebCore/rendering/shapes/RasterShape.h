@@ -92,9 +92,9 @@ private:
 class RasterShape : public Shape {
     WTF_MAKE_NONCOPYABLE(RasterShape);
 public:
-    RasterShape(PassOwnPtr<RasterShapeIntervals> intervals, const IntSize& imageSize)
+    RasterShape(PassOwnPtr<RasterShapeIntervals> intervals, const IntSize& marginRectSize)
         : m_intervals(intervals)
-        , m_imageSize(imageSize)
+        , m_marginRectSize(marginRectSize)
     {
     }
 
@@ -118,7 +118,7 @@ private:
 
     OwnPtr<RasterShapeIntervals> m_intervals;
     mutable OwnPtr<RasterShapeIntervals> m_marginIntervals;
-    IntSize m_imageSize;
+    IntSize m_marginRectSize;
 };
 
 } // namespace WebCore

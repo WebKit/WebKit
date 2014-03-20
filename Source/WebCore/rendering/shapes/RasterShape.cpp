@@ -215,8 +215,6 @@ void RasterShapeIntervals::getExcludedIntervals(int y1, int y2, IntShapeInterval
     }
 }
 
-// Currently limited to computing the margin boundary for shape-outside for floats, see https://bugs.webkit.org/show_bug.cgi?id=116348.
-
 PassOwnPtr<RasterShapeIntervals> RasterShapeIntervals::computeShapeMarginIntervals(int shapeMargin) const
 {
     int marginIntervalsSize = (offset() > shapeMargin) ? size() : size() - offset() * 2 + shapeMargin * 2;
@@ -273,11 +271,10 @@ const RasterShapeIntervals& RasterShape::marginIntervals() const
     if (!shapeMargin())
         return *m_intervals;
 
-    int marginBoundaryRadius = std::min(clampToInteger(ceil(shapeMargin())), std::max(m_imageSize.width(), m_imageSize.height()));
-    if (!m_marginIntervals) {
-        ASSERT(marginBoundaryRadius >= 0);
-        m_marginIntervals = m_intervals->computeShapeMarginIntervals(marginBoundaryRadius);
-    }
+    int shapeMarginInt = clampToPositiveInteger(ceil(shapeMargin()));
+    int maxShapeMarginInt = std::max(m_marginRectSize.width(), m_marginRectSize.height()) * sqrt(2);
+    if (!m_marginIntervals)
+        m_marginIntervals = m_intervals->computeShapeMarginIntervals(std::min(shapeMarginInt, maxShapeMarginInt));
 
     return *m_marginIntervals;
 }
