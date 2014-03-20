@@ -330,15 +330,21 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
     if (Image::supportsType(type))
         return ImageDocument::create(frame, url);
 
-#if ENABLE(VIDEO) && !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-     // Check to see if the type can be played by our MediaPlayer, if so create a MediaDocument
-    // Key system is not applicable here.
-    DOMImplementationSupportsTypeClient client(frame && frame->settings().needsSiteSpecificQuirks(), url.host());
-    MediaEngineSupportParameters parameters;
-    parameters.type = type;
-    parameters.url = url;
-    if (MediaPlayer::supportsType(parameters, &client))
-         return MediaDocument::create(frame, url);
+#if ENABLE(VIDEO)
+    
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    if (!frame || !frame->settings().isVideoPluginProxyEnabled())
+#endif
+    {
+        // Check to see if the type can be played by our MediaPlayer, if so create a MediaDocument
+        // Key system is not applicable here.
+        DOMImplementationSupportsTypeClient client(frame && frame->settings().needsSiteSpecificQuirks(), url.host());
+        MediaEngineSupportParameters parameters;
+        parameters.type = type;
+        parameters.url = url;
+        if (MediaPlayer::supportsType(parameters, &client))
+            return MediaDocument::create(frame, url);
+    }
 #endif
 
     // Everything else except text/plain can be overridden by plugins. In particular, Adobe SVG Viewer should be used for SVG, if installed.

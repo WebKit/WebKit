@@ -1,3 +1,14 @@
+2014-03-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Support MediaDocument when building with PLUGIN_PROXY_FOR_VIDEO
+        https://bugs.webkit.org/show_bug.cgi?id=130520
+
+        Reviewed by Jer Noble.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument): Check the isVideoPluginProxyEnabled setting 
+            when building with ENABLE_PLUGIN_PROXY_FOR_VIDEO.
+
 2014-03-20  Mihai Tica  <mitica@adobe.com>
 
         [CSS Blending] Blending operation is not isolated when setting z-index on parent from javascript
