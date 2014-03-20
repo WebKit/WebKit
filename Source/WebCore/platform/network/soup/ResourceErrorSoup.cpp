@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ResourceError.h"
 
+#if USE(SOUP)
+
 #include "LocalizedStrings.h"
 #include <libsoup/soup.h>
 #include <wtf/gobject/GUniquePtr.h>
@@ -108,3 +110,5 @@ bool ResourceError::platformCompare(const ResourceError& a, const ResourceError&
 }
 
 } // namespace WebCore
+
+#endif

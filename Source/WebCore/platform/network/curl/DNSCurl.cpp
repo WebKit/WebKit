@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DNS.h"
 
+#if USE(CURL)
+
 #include "NotImplemented.h"
 
 namespace WebCore {
@@ -36,3 +38,5 @@ void prefetchDNS(const String& /* hostname */)
 }
 
 }
+
+#endif

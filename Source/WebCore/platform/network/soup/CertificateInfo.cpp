@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CertificateInfo.h"
 
+#if USE(SOUP)
+
 #include <ResourceError.h>
 #include <ResourceResponse.h>
 #include <libsoup/soup.h>
@@ -60,3 +62,5 @@ CertificateInfo::~CertificateInfo()
 }
 
 } // namespace WebCore
+
+#endif

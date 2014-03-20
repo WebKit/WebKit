@@ -19,6 +19,8 @@
 #include "config.h"
 #include "CookieStorage.h"
 
+#if USE(SOUP)
+
 #include "CookieJarSoup.h"
 #include "NotImplemented.h"
 
@@ -50,3 +52,5 @@ void stopObservingCookieChanges()
 }
 
 }
+
+#endif

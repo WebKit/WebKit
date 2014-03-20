@@ -29,6 +29,9 @@
  */
 
 #include "config.h"
+
+#if USE(CURL)
+
 #include "FormDataStreamCurl.h"
 
 #include "FormData.h"
@@ -111,3 +114,5 @@ bool FormDataStream::hasMoreElements() const
 }
 
 } // namespace WebCore
+
+#endif

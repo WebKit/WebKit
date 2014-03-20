@@ -331,6 +331,9 @@
     <Filter Include="platform\graphics\gstreamer">
       <UniqueIdentifier>{8178404b-8759-4480-93d4-0217a74ae338}</UniqueIdentifier>
     </Filter>
+    <Filter Include="platform\network\soup">
+      <UniqueIdentifier>{f9947de2-8c4a-4e86-a0db-828f03ada050}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DerivedSources.cpp">
@@ -7013,6 +7016,54 @@
     <ClCompile Include="..\platform\text\icu\UTextProviderUTF16.cpp" />
     <ClCompile Include="..\dom\CollectionIndexCache.cpp" />
     <ClCompile Include="..\html\HTMLMediaSession.cpp" />
+    <ClCompile Include="..\platform\network\soup\AuthenticationChallengeSoup.cpp">
+      <Filter>platform\network\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\soup\CertificateInfo.cpp">
+      <Filter>platform\network\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\soup\CookieJarSoup.cpp">
+      <Filter>platform\network\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\soup\CookieStorageSoup.cpp">
+      <Filter>platform\network\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\soup\CredentialStorageSoup.cpp">
+      <Filter>platform\network\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\soup\DNSSoup.cpp">
+      <Filter>platform\network\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\soup\NetworkStorageSessionSoup.cpp">
+      <Filter>platform\network\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\soup\ProxyResolverSoup.cpp">
+      <Filter>platform\network\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\soup\ProxyServerSoup.cpp">
+      <Filter>platform\network\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\soup\ResourceErrorSoup.cpp">
+      <Filter>platform\network\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\soup\ResourceHandleSoup.cpp">
+      <Filter>platform\network\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\soup\ResourceRequestSoup.cpp">
+      <Filter>platform\network\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\soup\ResourceResponseSoup.cpp">
+      <Filter>platform\network\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\soup\SocketStreamHandleSoup.cpp">
+      <Filter>platform\network\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\soup\SoupNetworkSession.cpp">
+      <Filter>platform\network\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\soup\SynchronousLoaderClientSoup.cpp">
+      <Filter>platform\network\soup</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\geolocation\Coordinates.h">
@@ -14807,6 +14858,40 @@
     <ClInclude Include="..\platform\audio\MediaSessionManager.h" />
     <ClInclude Include="..\html\ElementMediaSession.h" />
     <ClInclude Include="..\html\URLUtils.h" />
+    <ClInclude Include="..\rendering\BorderEdge.h" />
+    <ClInclude Include="..\platform\network\soup\AuthenticationChallenge.h">
+      <Filter>platform\network\soup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\network\soup\CertificateInfo.h">
+      <Filter>platform\network\soup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\network\soup\CookieJarSoup.h">
+      <Filter>platform\network\soup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\network\soup\GUniquePtrSoup.h">
+      <Filter>platform\network\soup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\network\soup\ProxyResolverSoup.h">
+      <Filter>platform\network\soup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\network\soup\ResourceError.h">
+      <Filter>platform\network\soup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\network\soup\ResourceRequest.h">
+      <Filter>platform\network\soup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\network\soup\ResourceResponse.h">
+      <Filter>platform\network\soup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\network\soup\SocketStreamError.h">
+      <Filter>platform\network\soup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\network\soup\SocketStreamHandle.h">
+      <Filter>platform\network\soup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\network\soup\SoupNetworkSession.h">
+      <Filter>platform\network\soup</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">

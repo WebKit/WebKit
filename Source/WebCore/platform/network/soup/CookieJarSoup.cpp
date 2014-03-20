@@ -21,6 +21,8 @@
 #include "config.h"
 #include "CookieJarSoup.h"
 
+#if USE(SOUP)
+
 #include "Cookie.h"
 #include "GUniquePtrSoup.h"
 #include "URL.h"
@@ -229,3 +231,5 @@ void deleteAllCookiesModifiedAfterDate(const NetworkStorageSession&, double)
 }
 
 }
+
+#endif

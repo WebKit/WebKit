@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if USE(SOUP)
+
 #include "ProxyResolverSoup.h"
 
 #include <libsoup/soup.h>
@@ -208,3 +211,5 @@ SoupProxyURIResolver* soupProxyResolverWkNew(const char* httpProxy, const char* 
 
     return resolver;
 }
+
+#endif

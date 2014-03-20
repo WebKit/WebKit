@@ -17,6 +17,8 @@
 #include "config.h"
 #include "PlatformCookieJar.h"
 
+#if USE(CURL)
+
 #include "Cookie.h"
 #include "URL.h"
 #include "ResourceHandleManager.h"
@@ -332,3 +334,5 @@ void deleteAllCookiesModifiedAfterDate(const NetworkStorageSession&, double)
 }
 
 }
+
+#endif

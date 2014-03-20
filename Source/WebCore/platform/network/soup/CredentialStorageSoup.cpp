@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CredentialStorage.h"
 
+#if USE(SOUP)
+
 #include "Credential.h"
 
 namespace WebCore {
@@ -36,3 +38,5 @@ Credential CredentialStorage::getFromPersistentStorage(const ProtectionSpace&)
 }
 
 } // namespace WebCore
+
+#endif

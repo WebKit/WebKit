@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CredentialStorage.h"
 
+#if USE(CURL)
+
 #include "Credential.h"
 #include "NotImplemented.h"
 
@@ -38,3 +40,5 @@ Credential CredentialStorage::getFromPersistentStorage(const ProtectionSpace& /*
 }
 
 } // namespace WebCore
+
+#endif

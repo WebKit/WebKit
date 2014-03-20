@@ -32,6 +32,8 @@
 #include "config.h"
 #include "SocketStreamHandle.h"
 
+#if USE(CURL)
+
 #include "URL.h"
 #include "Logging.h"
 #include "NotImplemented.h"
@@ -87,3 +89,5 @@ void SocketStreamHandle::receivedCancellation(const AuthenticationChallenge&)
 }
 
 }  // namespace WebCore
+
+#endif

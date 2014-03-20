@@ -29,6 +29,8 @@
 #include "config.h"
 #include "ResourceHandle.h"
 
+#if USE(SOUP)
+
 #include "CookieJarSoup.h"
 #include "CredentialStorage.h"
 #include "FileSystem.h"
@@ -1378,3 +1380,5 @@ static gboolean requestTimeoutCallback(gpointer data)
 }
 
 }
+
+#endif

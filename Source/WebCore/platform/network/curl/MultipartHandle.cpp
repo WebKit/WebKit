@@ -26,6 +26,8 @@
 #include "config.h"
 #include "MultipartHandle.h"
 
+#if USE(CURL)
+
 #include "HTTPParsers.h"
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
@@ -359,3 +361,4 @@ void MultipartHandle::didReceiveResponse()
 
 } // namespace WebCore
 
+#endif

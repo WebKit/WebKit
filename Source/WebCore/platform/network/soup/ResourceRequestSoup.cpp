@@ -20,6 +20,8 @@
 #include "config.h"
 #include "ResourceRequest.h"
 
+#if USE(SOUP)
+
 #include "GUniquePtrSoup.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
@@ -174,3 +176,5 @@ GUniquePtr<SoupURI> ResourceRequest::createSoupURI() const
 }
 
 }
+
+#endif

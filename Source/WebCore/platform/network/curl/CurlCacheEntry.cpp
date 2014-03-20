@@ -26,6 +26,8 @@
 
 #include "config.h"
 
+#if USE(CURL)
+
 #include "CurlCacheEntry.h"
 
 #include "FileSystem.h"
@@ -360,3 +362,5 @@ size_t CurlCacheEntry::entrySize()
 }
 
 }
+
+#endif

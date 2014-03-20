@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if USE(SOUP)
+
 #include "SoupNetworkSession.h"
 
 #include "AuthenticationChallenge.h"
@@ -281,3 +284,4 @@ void SoupNetworkSession::setAcceptLanguages(const Vector<String>& languages)
 
 } // namespace WebCore
 
+#endif

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SynchronousLoaderClient.h"
 
+#if USE(SOUP)
+
 #include "AuthenticationChallenge.h"
 #include "NotImplemented.h"
 #include "ResourceHandle.h"
@@ -44,3 +46,6 @@ ResourceError SynchronousLoaderClient::platformBadResponseError()
 }
 
 }
+
+#endif
+

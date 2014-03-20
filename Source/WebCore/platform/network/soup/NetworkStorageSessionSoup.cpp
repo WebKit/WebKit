@@ -27,6 +27,8 @@
 #include "config.h"
 #include "NetworkStorageSession.h"
 
+#if USE(SOUP)
+
 #include "ResourceHandle.h"
 #include "SoupNetworkSession.h"
 #include <wtf/MainThread.h>
@@ -81,3 +83,5 @@ void NetworkStorageSession::setSoupNetworkSession(std::unique_ptr<SoupNetworkSes
 }
 
 }
+
+#endif

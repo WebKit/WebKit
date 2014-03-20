@@ -28,6 +28,8 @@
 #include "DNS.h"
 #include "DNSResolveQueue.h"
 
+#if USE(SOUP)
+
 #include "SoupNetworkSession.h"
 #include <libsoup/soup.h>
 #include <wtf/MainThread.h>
@@ -65,3 +67,5 @@ void prefetchDNS(const String& hostname)
 }
 
 }
+
+#endif

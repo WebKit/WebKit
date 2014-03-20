@@ -37,6 +37,8 @@
 #include "config.h"
 #include "ResourceHandleManager.h"
 
+#if USE(CURL)
+
 #include "CredentialStorage.h"
 #include "CurlCacheManager.h"
 #include "DataURL.h"
@@ -1085,3 +1087,5 @@ void ResourceHandleManager::cancel(ResourceHandle* job)
 }
 
 } // namespace WebCore
+
+#endif

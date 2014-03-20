@@ -32,6 +32,8 @@
 #include "config.h"
 #include "SocketStreamHandle.h"
 
+#if USE(SOUP)
+
 #include "URL.h"
 #include "Logging.h"
 #include "NotImplemented.h"
@@ -289,3 +291,5 @@ static gboolean writeReadyCallback(GPollableOutputStream*, void* id)
 }
 
 } // namespace WebCore
+
+#endif
