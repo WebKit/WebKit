@@ -17,6 +17,14 @@ PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
 PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
 PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
 
+PASS ctx.stroke(0) threw exception TypeError: Type error.
+PASS ctx.stroke(null) threw exception TypeError: Type error.
+PASS ctx.stroke('path2d') threw exception TypeError: Type error.
+PASS ctx.stroke(undefined) threw exception TypeError: Type error.
+PASS ctx.stroke(Number.MAX_VALUE) threw exception TypeError: Type error.
+PASS ctx.stroke(function() {}) threw exception TypeError: Type error.
+PASS ctx.stroke(false) threw exception TypeError: Type error.
+PASS ctx.stroke(new Date()) threw exception TypeError: Type error.
 PASS successfullyParsed is true
 
 TEST COMPLETE

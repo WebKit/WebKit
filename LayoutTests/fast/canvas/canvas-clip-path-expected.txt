@@ -24,6 +24,22 @@ PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
 PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
 PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
 PASS areaColor(imageData.data, {r:0,g:0,b:0,a:0}) is true
+PASS ctx.clip(0) threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.clip must be one of: "nonzero", "evenodd".
+PASS ctx.clip(null) threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.clip must be one of: "nonzero", "evenodd".
+PASS ctx.clip('path2d') threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.clip must be one of: "nonzero", "evenodd".
+PASS ctx.clip(undefined) threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.clip must be one of: "nonzero", "evenodd".
+PASS ctx.clip(Number.MAX_VALUE) threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.clip must be one of: "nonzero", "evenodd".
+PASS ctx.clip(function() {}) threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.clip must be one of: "nonzero", "evenodd".
+PASS ctx.clip(false) threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.clip must be one of: "nonzero", "evenodd".
+PASS ctx.clip(new Date()) threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.clip must be one of: "nonzero", "evenodd".
+PASS ctx.clip(0, 'nonzero') threw exception TypeError: Type error.
+PASS ctx.clip(null, 'nonzero') threw exception TypeError: Type error.
+PASS ctx.clip('path2d', 'nonzero') threw exception TypeError: Type error.
+PASS ctx.clip(undefined, 'nonzero') threw exception TypeError: Type error.
+PASS ctx.clip(Number.MAX_VALUE, 'nonzero') threw exception TypeError: Type error.
+PASS ctx.clip(function() {}, 'nonzero') threw exception TypeError: Type error.
+PASS ctx.clip(false, 'nonzero') threw exception TypeError: Type error.
+PASS ctx.clip(new Date(), 'nonzero') threw exception TypeError: Type error.
 PASS successfullyParsed is true
 
 TEST COMPLETE

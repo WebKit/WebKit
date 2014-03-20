@@ -65,3 +65,12 @@ shouldBe('areaColor(imageData.data, {r:0,g:255,b:0,a:255})', 'true');
 imageData = ctx.getImageData(140, 140, 20, 10);
 shouldBe('areaColor(imageData.data, {r:0,g:255,b:0,a:255})', 'true');
 debug('');
+
+shouldThrow("ctx.stroke(0)");
+shouldThrow("ctx.stroke(null)");
+shouldThrow("ctx.stroke('path2d')");
+shouldThrow("ctx.stroke(undefined)");
+shouldThrow("ctx.stroke(Number.MAX_VALUE)");
+shouldThrow("ctx.stroke(function() {})");
+shouldThrow("ctx.stroke(false)");
+shouldThrow("ctx.stroke(new Date())");

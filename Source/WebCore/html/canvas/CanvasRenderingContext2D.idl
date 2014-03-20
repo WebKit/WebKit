@@ -75,9 +75,9 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     [RaisesException] void arc(float x, float y, float radius, float startAngle, float endAngle, [Default=Undefined] optional boolean anticlockwise);
 
 #if defined(ENABLE_CANVAS_PATH) && ENABLE_CANVAS_PATH
-    void fill(DOMPath? path, optional CanvasWindingRule winding);
-    void stroke(DOMPath? path);
-    void clip(DOMPath? path, optional CanvasWindingRule winding);
+    void fill(DOMPath path, optional CanvasWindingRule winding);
+    void stroke(DOMPath path);
+    void clip(DOMPath path, optional CanvasWindingRule winding);
 #endif
 
     void fill(optional CanvasWindingRule winding);
