@@ -1,3 +1,14 @@
+2014-03-19  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r165929.
+        https://bugs.webkit.org/show_bug.cgi?id=130487
+
+        in order to roll out r165926 (Requested by estes on #webkit).
+
+        Reverted changeset:
+
+        http://trac.webkit.org/changeset/165929
+
 2014-03-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Build fix for iOS after r165926

@@ -214,12 +214,7 @@ VM& JSDOMWindowBase::commonVM()
 #if !PLATFORM(IOS)
         vm->setExclusiveThread(std::this_thread::get_id());
 #else
-        vm->heap.setFullActivityCallback(WebSafeFullGCActivityCallback::create(&vm->heap));
-#if ENABLE(GGC)
-        vm->heap.setEdenActivityCallback(WebSafeEdenGCActivityCallback::create(&vm->heap));
-#else
-        vm->heap.setEdenActivityCallback(vm->heap.fullActivityCallback());
-#endif
+        vm->heap.setActivityCallback(WebSafeGCActivityCallback::create(&vm->heap));
         vm->heap.setIncrementalSweeper(WebSafeIncrementalSweeper::create(&vm->heap));
         vm->makeUsableFromMultipleThreads();
         vm->heap.machineThreads().addCurrentThread();

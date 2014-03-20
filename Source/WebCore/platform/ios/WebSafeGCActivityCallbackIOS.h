@@ -34,9 +34,9 @@ namespace WebCore {
 
 class WebSafeFullGCActivityCallback final : public JSC::FullGCActivityCallback {
 public:
-    static PassRefPtr<WebSafeFullGCActivityCallback> create(JSC::Heap* heap)
+    static PassOwnPtr<WebSafeFullGCActivityCallback> create(JSC::Heap* heap)
     {
-        return adoptRef(new WebSafeFullGCActivityCallback(heap));
+        return adoptPtr(new WebSafeFullGCActivityCallback(heap));
     }
 
     virtual ~WebSafeFullGCActivityCallback() override { }
@@ -50,9 +50,9 @@ private:
 
 class WebSafeEdenGCActivityCallback final : public JSC::EdenGCActivityCallback {
 public:
-    static PassRefPtr<WebSafeEdenGCActivityCallback> create(JSC::Heap* heap)
+    static PassOwnPtr<WebSafeEdenGCActivityCallback> create(JSC::Heap* heap)
     {
-        return adoptRef(new WebSafeEdenGCActivityCallback(heap));
+        return adoptPtr(new WebSafeEdenGCActivityCallback(heap));
     }
 
     virtual ~WebSafeEdenGCActivityCallback() override { }
