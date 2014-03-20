@@ -1,3 +1,16 @@
+2014-03-19  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS][WebKit2] Back-forward swipe doesn't always complete with fingers down
+        https://bugs.webkit.org/show_bug.cgi?id=130489
+        <rdar://problem/16027007>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        In order to have fingers-down swipe completion work correctly, we need
+        to give UIKit an empty interactive update block.
+
 2014-03-19  Anders Carlsson  <andersca@apple.com>
 
         Get rid of two IPC::Connection functions by folding them into lambdas
