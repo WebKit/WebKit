@@ -49,6 +49,19 @@ StringImpl* StringImpl::empty()
     return &emptyString.get();
 }
 
+// Set the hash early, so that all empty unique StringImpls have a hash,
+// and don't use the normal hashing algorithm - the unique nature of these
+// keys means that we don't need them to match any other string (in fact,
+// that's exactly the oposite of what we want!), and the normal hash would
+// lead to lots of conflicts.
+unsigned StringImpl::hashAndFlagsForEmptyUnique()
+{
+    static unsigned s_nextHashAndFlagsForEmptyUnique = BufferInternal | s_hashFlag8BitBuffer | s_hashFlagIsIdentifier | s_hashFlagIsAtomic;
+    s_nextHashAndFlagsForEmptyUnique += 1 << s_flagCount;
+    s_nextHashAndFlagsForEmptyUnique |= 1 << 31;
+    return s_nextHashAndFlagsForEmptyUnique;
+}
+
 WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, nullAtom)
 WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, emptyAtom)
 WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, textAtom)

@@ -1,3 +1,36 @@
+2014-03-19  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=130494
+        EmptyUnique strings are Identifiers/Atomic
+
+        Reviewed by Geoff Garen.
+
+        EmptyUnique strings should set the Identifier/Atomic flag.
+
+        This fixes an unreproducible bug we believe exists in Identifier handling.
+        Expected behaviour is that while Identifiers may reference EmptyUniques
+        (StringImpls allocated as UIDs for PrivateNames), these are not created
+        through the main Identifier constructor, the Identifier flag is not set
+        on PrivateNames, and we should never lookup EmptyUnique strings in the
+        IdentifierTable.
+
+        Unfortunately that was happening. Some tables used to implement property
+        access in the JIT hold StringImpl*s, and turn these back into Identifiers
+        using the identfiier constructor. Since the code generator will now plant
+        by-id (cachable) accesses to PrivateNames we can end up passing an
+        EmptyUnique to Identifier::add, potentially leading to PrivateNames being
+        uniqued together (though hard to prove, since the hash codes are random).
+
+        * runtime/PropertyName.h:
+        (JSC::PropertyName::PropertyName):
+        (JSC::PropertyName::uid):
+        (JSC::PropertyName::publicName):
+        (JSC::PropertyName::asIndex):
+            - PropertyName assumed that PrivateNames are not Identifiers - instead check isEmptyUnique().
+        * runtime/Structure.cpp:
+        (JSC::Structure::getPropertyNamesFromStructure):
+            - Structure assumed that PrivateNames are not Identifiers - instead check isEmptyUnique().
+
 2014-03-19  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, revert the DFGCommon.h change in r165938. It was not intentional.

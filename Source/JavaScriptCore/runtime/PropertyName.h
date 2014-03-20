@@ -81,7 +81,7 @@ public:
     PropertyName(const Identifier& propertyName)
         : m_impl(propertyName.impl())
     {
-        ASSERT(!m_impl || m_impl->isIdentifier() || m_impl->isEmptyUnique());
+        ASSERT(!m_impl || m_impl->isIdentifier());
     }
 
     PropertyName(const PrivateName& propertyName)
@@ -92,21 +92,18 @@ public:
 
     StringImpl* uid() const
     {
-        ASSERT(!m_impl || (m_impl->isIdentifier() == !m_impl->isEmptyUnique()));
         return m_impl;
     }
 
     StringImpl* publicName() const
     {
-        ASSERT(!m_impl || (m_impl->isIdentifier() == !m_impl->isEmptyUnique()));
-        return m_impl->isIdentifier() ? m_impl : 0;
+        return m_impl->isEmptyUnique() ? 0 : m_impl;
     }
 
     static const uint32_t NotAnIndex = UINT_MAX;
 
     uint32_t asIndex()
     {
-        ASSERT(!m_impl || (m_impl->isIdentifier() == !m_impl->isEmptyUnique()));
         return m_impl ? toUInt32FromStringImpl(m_impl) : NotAnIndex;
     }
 

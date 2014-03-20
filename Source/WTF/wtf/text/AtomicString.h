@@ -185,7 +185,7 @@ private:
     ALWAYS_INLINE static PassRefPtr<StringImpl> add(StringImpl* string)
     {
         if (!string || string->isAtomic()) {
-            ASSERT_WITH_MESSAGE(!string || string == StringImpl::empty() || isInAtomicStringTable(string), "The atomic string comes from an other thread!");
+            ASSERT_WITH_MESSAGE(!string || !string->length() || isInAtomicStringTable(string), "The atomic string comes from an other thread!");
             return string;
         }
         return addSlowCase(string);

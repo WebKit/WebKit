@@ -293,18 +293,9 @@ private:
         // We expect m_length to be initialized to 0 as we use it
         // to represent a null terminated buffer.
         , m_data8(reinterpret_cast<const LChar*>(&m_length))
+        , m_hashAndFlags(hashAndFlagsForEmptyUnique())
     {
         ASSERT(m_data8);
-        // Set the hash early, so that all empty unique StringImpls have a hash,
-        // and don't use the normal hashing algorithm - the unique nature of these
-        // keys means that we don't need them to match any other string (in fact,
-        // that's exactly the oposite of what we want!), and teh normal hash would
-        // lead to lots of conflicts.
-        unsigned hash = cryptographicallyRandomNumber() | 1;
-        hash <<= s_flagCount;
-        if (!hash)
-            hash = 1 << s_flagCount;
-        m_hashAndFlags = hash | BufferInternal | s_hashFlag8BitBuffer;
 
         STRING_STATS_ADD_8BIT_STRING(m_length);
     }
@@ -808,6 +799,7 @@ private:
     template <typename CharType> static PassRef<StringImpl> createInternal(const CharType*, unsigned);
     WTF_EXPORT_STRING_API NEVER_INLINE const UChar* getData16SlowCase() const;
     WTF_EXPORT_PRIVATE NEVER_INLINE unsigned hashSlowCase() const;
+    WTF_EXPORT_PRIVATE unsigned hashAndFlagsForEmptyUnique();
 
     // The bottom bit in the ref count indicates a static (immortal) string.
     static const unsigned s_refCountFlagIsStaticString = 0x1;

@@ -113,9 +113,9 @@ StringImpl::~StringImpl()
 
     STRING_STATS_REMOVE_STRING(this);
 
-    if (isAtomic())
+    if (isAtomic() && m_length)
         AtomicString::remove(this);
-    if (isIdentifier()) {
+    if (isIdentifier() && m_length) {
         if (!wtfThreadData().currentIdentifierTable()->remove(this))
             CRASH();
     }

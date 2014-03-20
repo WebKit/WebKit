@@ -1,5 +1,30 @@
 2014-03-19  Gavin Barraclough  <barraclough@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=130494
+        EmptyUnique strings are Identifiers/Atomic
+
+        Reviewed by Geoff Garen.
+
+        EmptyUnique strings should set the Identifier/Atomic flag.
+
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::add):
+            - Previously we assumed the only StringImpl that was validly allowed to claim to be
+              Atomic but not be in a table was the canonical empty string. Now that EmptyUniques
+              are also marked Atomic, all empty strings may pass this condition.
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl):
+            - EmptyUnique strings are not in the Atomic/Identfiier tabels, so don't need removing.
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+            - Change EmptyUnique constructor to call hashAndFlagsForEmptyUnique.
+        * wtf/text/StringStatics.cpp:
+        (WTF::StringImpl::hashAndFlagsForEmptyUnique):
+            - Allocate a sequential hash code (this should be just as good for distribution & better
+              for debugging than the random value) and set flags, now including Atomic & Identifier.
+
+2014-03-19  Gavin Barraclough  <barraclough@apple.com>
+
         Small cleanup of empty string
         https://bugs.webkit.org/show_bug.cgi?id=130438
 
