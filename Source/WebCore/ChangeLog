@@ -1,3 +1,17 @@
+2014-03-20  Daniel Bates  <dabates@apple.com>
+
+        XSSAuditor bypass with frameset tags
+
+        Merged from Blink (patch by Tom Sepez):
+        https://src.chromium.org/viewvc/blink?view=rev&revision=157794
+
+        Test: http/tests/security/xssAuditor/frameset-injection.html
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::filterStartToken):
+        (WebCore::XSSAuditor::filterFrameToken):
+        * html/parser/XSSAuditor.h:
+
 2014-03-20  Brian Burg  <bburg@apple.com>
 
         Web Replay: fix some oversights in the replay backend

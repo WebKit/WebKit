@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 4: The XSS Auditor refused to execute a script in 'http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?inHead=1&q=%3Cframeset%3E%3Cframe%20src='data:text/html,%3Cscript%3Ealert(0)%3C/script%3E'%3E%3C/frameset%3E' because its source code was found within the request. The auditor was enabled as the server sent neither an 'X-XSS-Protection' nor 'Content-Security-Policy' header.
+
