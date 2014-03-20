@@ -1,3 +1,9 @@
+2014-03-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed Clang build fix for the GTK port after r165952.
+
+        * wtf/gobject/GMainLoopSource.h: Include the <functional> header for the std::function<> objects.
+
 2014-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Add GMainLoopSource class to wrap idle and timeout sources

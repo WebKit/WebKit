@@ -26,6 +26,7 @@
 #ifndef GMainLoopSource_h
 #define GMainLoopSource_h
 
+#include <functional>
 #include <glib.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/gobject/GRefPtr.h>
