@@ -99,8 +99,6 @@ private:
     void propagateLineGridInfo(RenderBox*);
     void establishLineGrid(RenderBlockFlow*);
 
-    void computeLineGridPaginationOrigin(RenderBox*);
-
 public:
     // Do not add anything apart from bitfields until after m_columnInfo. See https://bugs.webkit.org/show_bug.cgi?id=100173
     bool m_clipped : 1;

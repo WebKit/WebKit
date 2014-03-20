@@ -1,3 +1,19 @@
+2014-03-20  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] getClientRects returns wrong rectangle
+        https://bugs.webkit.org/show_bug.cgi?id=128614
+
+        Reviewed by Sam Weinig.
+
+        Added fast/multicol/newmulticol/client-rects.html and beefed up existing
+        fast/multicol/client-rects.html to use more writing modes.
+
+        * fast/multicol/client-rects.html:
+        * fast/multicol/newmulticol/client-rects-expected.html: Added.
+        * fast/multicol/newmulticol/client-rects.html: Added.
+        * platform/mac/fast/multicol/client-rects-expected.png:
+        * platform/mac/fast/multicol/client-rects-expected.txt:
+
 2014-03-19  Oliver Hunt  <oliver@apple.com>
 
         Incorrect behavior when mutating a typed array during set.

@@ -655,10 +655,9 @@ void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, cons
     }
 }
 
-void RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect(const LayoutPoint& layerOffset, LayoutRect& regionBounds)
+LayoutPoint RenderMultiColumnSet::columnTranslationForOffset(const LayoutUnit& offset) const
 {
-    LayoutUnit layerLogicalTop = isHorizontalWritingMode() ? layerOffset.y() : layerOffset.x();
-    unsigned startColumn = columnIndexAtOffset(layerLogicalTop);
+    unsigned startColumn = columnIndexAtOffset(offset);
     
     LayoutUnit colGap = columnGap();
     LayoutUnit colLogicalWidth = computedColumnWidth();
@@ -694,11 +693,15 @@ void RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect(const Lay
     
     if (!isHorizontalWritingMode())
         translationOffset = translationOffset.transposedPoint();
-
+    
     // FIXME: The translation needs to include the multicolumn set's content offset within the
     // multicolumn block as well. This won't be an issue until we start creating multiple multicolumn sets.
-    
-    regionBounds.moveBy(roundedIntPoint(-translationOffset));
+    return translationOffset;
+}
+
+void RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect(const LayoutPoint& layerOffset, LayoutRect& regionBounds)
+{
+    regionBounds.moveBy(roundedIntPoint(-columnTranslationForOffset(isHorizontalWritingMode() ? layerOffset.y() : layerOffset.x())));
 }
 
 void RenderMultiColumnSet::addOverflowFromChildren()

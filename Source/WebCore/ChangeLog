@@ -1,3 +1,33 @@
+2014-03-20  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] getClientRects returns wrong rectangle
+        https://bugs.webkit.org/show_bug.cgi?id=128614
+
+        Reviewed by Sam Weinig.
+
+        Added fast/multicol/newmulticol/client-rects.html and beefed up existing
+        fast/multicol/client-rects.html to use more writing modes.
+
+        * rendering/LayoutState.h:
+        Removed unused function.
+
+        * rendering/RenderFlowThread.h:
+        Make mapFlowToRegion virtual so that RenderMultiColumnFlowThread can
+        override it.
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::mapFromFlowToRegion):
+        * rendering/RenderMultiColumnFlowThread.h:
+        Implement mapFlowToRegion to correctly translate a flow thread position
+        into a column offset within a region.
+
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::columnTranslationForOffset):
+        (WebCore::RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect):
+        * rendering/RenderMultiColumnSet.h:
+        Refactored some code to make a columnTranslationForOffset helper that
+        can be used by RenderMultiColumnFlowThread.
+
 2014-03-20  Daniel Bates  <dabates@apple.com>
 
         Preserve original document URL for XSSAuditor reports

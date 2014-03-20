@@ -1,3 +1,7 @@
+<head>
+<script>
+internals.settings.setRegionBasedColumnsEnabled(true)
+</script>
 <style>
     div.columns {
         display:inline-block;
@@ -37,7 +41,9 @@
 
     .vertical { -webkit-writing-mode: vertical-lr; }
     .vertical.flipped { -webkit-writing-mode: vertical-rl; }
+
 </style>
+</head>
 <p>
     The blue borders should coincide with light blue squares, like this:
     <span style="display: inline-block; background-color: lightblue; border: solid rgba(0, 0, 255, 0.5); width: 19px; height: 19px;"></span>.

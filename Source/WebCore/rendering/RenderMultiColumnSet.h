@@ -82,6 +82,8 @@ public:
 
     void prepareForLayout();
 
+    LayoutPoint columnTranslationForOffset(const LayoutUnit&) const;
+
 protected:
     void addOverflowFromChildren() override;
     

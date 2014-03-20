@@ -63,6 +63,8 @@ public:
     
     virtual void computeLineGridPaginationOrigin(LayoutState&) const override;
     
+    virtual RenderRegion* mapFromFlowToRegion(TransformState&) const override;
+    
 private:
     virtual const char* renderName() const override;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;

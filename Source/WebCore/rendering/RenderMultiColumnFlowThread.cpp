@@ -28,6 +28,7 @@
 
 #include "LayoutState.h"
 #include "RenderMultiColumnSet.h"
+#include "TransformState.h"
 
 namespace WebCore {
 
@@ -171,6 +172,43 @@ void RenderMultiColumnFlowThread::computeLineGridPaginationOrigin(LayoutState& l
                 layoutState.setLineGridPaginationOrigin(LayoutSize(paginationDelta, layoutState.lineGridPaginationOrigin().height()));
         }
     }
+}
+
+RenderRegion* RenderMultiColumnFlowThread::mapFromFlowToRegion(TransformState& transformState) const
+{
+    if (!hasValidRegionInfo())
+        return nullptr;
+
+    // Get back into our local flow thread space.
+    LayoutRect boxRect = transformState.mappedQuad().enclosingBoundingBox();
+    flipForWritingMode(boxRect);
+
+    // FIXME: We need to refactor RenderObject::absoluteQuads to be able to split the quads across regions,
+    // for now we just take the center of the mapped enclosing box and map it to a column.
+    LayoutPoint center = boxRect.center();
+    LayoutUnit centerOffset = isHorizontalWritingMode() ? center.y() : center.x();
+    RenderRegion* renderRegion = const_cast<RenderMultiColumnFlowThread*>(this)->regionAtBlockOffset(this, centerOffset, true, DisallowRegionAutoGeneration);
+    if (!renderRegion)
+        return nullptr;
+
+    // Now that we know which multicolumn set we hit, we need to get the appropriate translation offset for the column.
+    RenderMultiColumnSet* columnSet = toRenderMultiColumnSet(renderRegion);
+    LayoutPoint translationOffset = columnSet->columnTranslationForOffset(centerOffset);
+    
+    // Now we know how we want the rect to be translated into the region.
+    LayoutRect flippedRegionRect(renderRegion->flowThreadPortionRect());
+    if (isHorizontalWritingMode())
+        flippedRegionRect.setHeight(columnSet->computedColumnHeight());
+    else
+        flippedRegionRect.setWidth(columnSet->computedColumnHeight());
+    flipForWritingMode(flippedRegionRect);
+    
+    flippedRegionRect.moveBy(-translationOffset);
+    
+    // There is an additional offset to apply, which is the offset of the region within the multi-column space.
+    transformState.move(renderRegion->contentBoxRect().location() - flippedRegionRect.location());
+
+    return renderRegion;
 }
 
 }
