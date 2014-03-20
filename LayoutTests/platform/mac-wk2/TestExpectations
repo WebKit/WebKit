@@ -315,8 +315,9 @@ webkit.org/b/118925 fast/layers/no-clipping-overflow-hidden-added-after-transiti
 webkit.org/b/118925 fast/multicol/mixed-opacity-fixed-test.html  [ Pass ImageOnlyFailure ]
 webkit.org/b/118925 fast/regions/fixed-pos-elem-in-region.html  [ Pass ImageOnlyFailure ]
 webkit.org/b/118925 svg/repaint/buffered-rendering-static-image.html  [ Pass ImageOnlyFailure ]
-# hidpi subpixel WebKitTestRunner failure.
+# hidpi subpixel WebKitTestRunner failure. -blurry generated images.
 webkit.org/b/130175 [ MountainLion Debug ] compositing/hidpi-simple-container-layer-on-device-pixel.html [ ImageOnlyFailure ]
+webkit.org/b/130175 [ MountainLion Debug ] compositing/hidpi-transform-with-render-layer-on-fractional-pixel-value.html [ ImageOnlyFailure ]
 
 # Only failing on WK1
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Pass ]
