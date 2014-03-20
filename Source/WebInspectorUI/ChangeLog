@@ -1,3 +1,17 @@
+2014-03-20  Katie Madonna  <madonnk@gmail.com>
+
+        Web Inspector: probe sidebar should use overflow:scroll and split space evenly
+        https://bugs.webkit.org/show_bug.cgi?id=129627
+
+        Reviewed by Timothy Hatcher.
+
+        Use flexbox to split space evenly in the probe sidebar, which required changes to collapse
+        format, remove scrollbar styles from old timelapse branch.
+
+        * UserInterface/Views/ProbeDetailsSidebarPanel.css: Space elements evenly with flexbox
+        and make collapse correctly, remove scrollbar style.
+        * UserInterface/Views/ProbeSetDetailsSection.js: Removed inline style.
+
 2014-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Make update-InspectorBackendCommands.rb only update legacy protocol versions

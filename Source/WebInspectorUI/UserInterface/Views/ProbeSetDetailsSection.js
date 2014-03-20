@@ -52,7 +52,6 @@ WebInspector.ProbeSetDetailsSection = function(probeSet)
     optionsElement.appendChild(titleElement);
 
     this._dataGrid = new WebInspector.ProbeSetDataGrid(probeSet);
-    this._dataGrid.element.classList.add("inline");
     var singletonRow = new WebInspector.DetailsSectionRow;
     singletonRow.element.appendChild(this._dataGrid.element);
     var probeSectionGroup = new WebInspector.DetailsSectionGroup([singletonRow]);
