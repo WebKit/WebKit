@@ -96,12 +96,12 @@ bool WebVTTParser::parseFloatPercentageValue(const String& value, float& percent
         return false;
 
     unsigned position = 0;
-    unsigned digitsBeforeDot = scanDigits(value, &position);
+    unsigned digitsBeforeDot = scanDigits(value, position);
     unsigned digitsAfterDot = 0;
     if (value[position] == '.') {
         position++;
 
-        digitsAfterDot = scanDigits(value, &position);
+        digitsAfterDot = scanDigits(value, position);
     }
 
     // At least one digit is required
@@ -155,7 +155,7 @@ void WebVTTParser::getNewCues(Vector<RefPtr<WebVTTCueData>>& outputCues)
 }
 
 #if ENABLE(WEBVTT_REGIONS)
-void WebVTTParser::getNewRegions(Vector<RefPtr<TextTrackRegion>>& outputRegions)
+void WebVTTParser::getNewRegions(Vector<RefPtr<VTTRegion>>& outputRegions)
 {
     outputRegions = m_regionList;
     m_regionList.clear();
@@ -451,7 +451,7 @@ void WebVTTParser::createNewRegion(const String& headerValue)
         return;
 
     // Steps 12.5.1 - 12.5.9 - Construct and initialize a WebVTT Region object.
-    RefPtr<TextTrackRegion> region = TextTrackRegion::create(*m_scriptExecutionContext);
+    RefPtr<VTTRegion> region = VTTRegion::create(*m_scriptExecutionContext);
     region->setRegionSettings(headerValue);
 
     // Step 12.5.10 If the text track list of regions regions contains a region

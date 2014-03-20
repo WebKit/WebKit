@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -225,7 +226,7 @@ void TextTrackLoader::getNewCues(Vector<RefPtr<TextTrackCue>>& outputCues)
 }
 
 #if ENABLE(WEBVTT_REGIONS)
-void TextTrackLoader::getNewRegions(Vector<RefPtr<TextTrackRegion>>& outputRegions)
+void TextTrackLoader::getNewRegions(Vector<RefPtr<VTTRegion>>& outputRegions)
 {
     ASSERT(m_cueParser);
     if (m_cueParser)

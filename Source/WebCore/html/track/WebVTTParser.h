@@ -39,7 +39,7 @@
 #include "DocumentFragment.h"
 #include "HTMLNames.h"
 #include "TextResourceDecoder.h"
-#include "TextTrackRegion.h"
+#include "VTTRegion.h"
 #include "WebVTTTokenizer.h"
 #include <memory>
 #include <wtf/text/StringBuilder.h>
@@ -148,7 +148,7 @@ public:
     // Transfers ownership of last parsed cues to caller.
     void getNewCues(Vector<RefPtr<WebVTTCueData>>&);
 #if ENABLE(WEBVTT_REGIONS)
-    void getNewRegions(Vector<RefPtr<TextTrackRegion>>&);
+    void getNewRegions(Vector<RefPtr<VTTRegion>>&);
 #endif
 
     // Create the DocumentFragment representation of the WebVTT cue text.
@@ -190,7 +190,7 @@ private:
     Vector<RefPtr<WebVTTCueData>> m_cuelist;
 
 #if ENABLE(WEBVTT_REGIONS)
-    Vector<RefPtr<TextTrackRegion>> m_regionList;
+    Vector<RefPtr<VTTRegion>> m_regionList;
 #endif
 };
 

@@ -42,7 +42,7 @@
 
         function startTest()
         {
-            if (!window.TextTrackRegion) {
+            if (!window.VTTRegion) {
                 failTest();
                 return;
             }
@@ -56,7 +56,7 @@
         </script>
     </head>
     <body>
-        <p>Tests default DOM layout structure for a TextTrackRegion.</p>
+        <p>Tests default DOM layout structure for a VTTRegion.</p>
         <video controls>
             <track src="../captions-webvtt/captions-regions.vtt" kind="captions" default onload="startTest()">
         </video>

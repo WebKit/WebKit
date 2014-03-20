@@ -450,8 +450,8 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/html/track/TextTrackCue.idl \
     $(WebCore)/html/track/TextTrackCueList.idl \
     $(WebCore)/html/track/TextTrackList.idl \
-    $(WebCore)/html/track/TextTrackRegion.idl \
-    $(WebCore)/html/track/TextTrackRegionList.idl \
+    $(WebCore)/html/track/VTTRegion.idl \
+    $(WebCore)/html/track/VTTRegionList.idl \
     $(WebCore)/html/track/TrackEvent.idl \
     $(WebCore)/html/track/VideoTrack.idl \
     $(WebCore)/html/track/VideoTrackList.idl \

@@ -52,7 +52,7 @@
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(WEBVTT_REGIONS)
-#include "TextTrackRegionList.h"
+#include "VTTRegionList.h"
 #endif
 
 namespace WebCore {
@@ -782,8 +782,8 @@ void VTTCue::removeDisplayTree()
 #if ENABLE(WEBVTT_REGIONS)
     // The region needs to be informed about the cue removal.
     if (m_notifyRegion && track()) {
-        if (TextTrackRegionList* regions = track()->regions()) {
-            if (TextTrackRegion* region = regions->getRegionById(m_regionId))
+        if (VTTRegionList* regions = track()->regions()) {
+            if (VTTRegion* region = regions->getRegionById(m_regionId))
                 region->willRemoveTextTrackCueBox(m_displayTree.get());
         }
     }

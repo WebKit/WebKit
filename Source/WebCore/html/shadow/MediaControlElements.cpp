@@ -60,7 +60,7 @@
 #endif
 
 #if ENABLE(WEBVTT_REGIONS)
-#include "TextTrackRegionList.h"
+#include "VTTRegionList.h"
 #endif
 
 namespace WebCore {
@@ -1300,7 +1300,7 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         if (cue->track()->mode() == TextTrack::disabledKeyword())
             continue;
 
-        TextTrackRegion* region = cue->track()->regions()->getRegionById(cue->regionId());
+        VTTRegion* region = cue->track()->regions()->getRegionById(cue->regionId());
         if (!region) {
             // If cue has an empty text track cue region identifier or there is no
             // WebVTT region whose region identifier is identical to cue's text

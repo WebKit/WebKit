@@ -1,4 +1,4 @@
-Tests default DOM layout structure for a TextTrackRegion.
+Tests default DOM layout structure for a VTTRegion.
 
 
 EVENT(canplaythrough)

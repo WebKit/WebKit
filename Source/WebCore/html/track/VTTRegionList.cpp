@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +24,64 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextTrackRegionList_h
-#define TextTrackRegionList_h
+#include "config.h"
+#include "VTTRegionList.h"
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
 
-#include "TextTrackRegion.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class TextTrackRegionList : public RefCounted<TextTrackRegionList> {
-public:
-    static PassRefPtr<TextTrackRegionList> create()
-    {
-        return adoptRef(new TextTrackRegionList());
+VTTRegionList::VTTRegionList()
+{
+}
+
+unsigned long VTTRegionList::length() const
+{
+    return m_list.size();
+}
+
+VTTRegion* VTTRegionList::item(unsigned index) const
+{
+    if (index < m_list.size())
+        return m_list[index].get();
+
+    return 0;
+}
+
+VTTRegion* VTTRegionList::getRegionById(const String& id) const
+{
+    if (id.isEmpty())
+        return 0;
+
+    for (const auto& region : m_list) {
+        if (region->id() == id)
+            return region.get();
     }
 
-    ~TextTrackRegionList() { }
+    return 0;
+}
 
-    unsigned long length() const;
+void VTTRegionList::add(PassRefPtr<VTTRegion> region)
+{
+    m_list.append(region);
+}
 
-    TextTrackRegion* item(unsigned index) const;
-    TextTrackRegion* getRegionById(const String&) const;
+bool VTTRegionList::remove(VTTRegion* region)
+{
+    size_t index = m_list.find(region);
+    if (index == notFound)
+        return false;
 
-    void add(PassRefPtr<TextTrackRegion>);
-    bool remove(TextTrackRegion*);
+    m_list.remove(index);
+    return true;
+}
 
-private:
-    TextTrackRegionList();
-    void clear();
-
-    Vector<RefPtr<TextTrackRegion> > m_list;
-};
+void VTTRegionList::clear()
+{
+    m_list.clear();
+}
 
 } // namespace WebCore
 
-#endif
 #endif

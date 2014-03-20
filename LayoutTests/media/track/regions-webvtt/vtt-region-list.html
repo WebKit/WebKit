@@ -22,11 +22,11 @@
             testTrack.track.mode = "hidden";
             regions = testTrack.track.regions;
 
-            consoleWrite("<br>** The regions attribute should be an empty TextTrackRegionList **");
+            consoleWrite("<br>** The regions attribute should be an empty VTTRegionList **");
             testExpected("regions != null", true);
             testExpected("regions.length", 0);
 
-            region = new TextTrackRegion();
+            region = new VTTRegion();
             region.id = "TestId";
 
             consoleWrite("<br>** The default value of the track attribute of the region is null**");
@@ -34,7 +34,7 @@
 
             testTrack.track.addRegion(region);
 
-            consoleWrite("<br>** The addRegion() method properly updates the TextTrackRegionList object **");
+            consoleWrite("<br>** The addRegion() method properly updates the VTTRegionList object **");
             testExpected("regions.length", 1);
             testExpected("regions[0] == region", true);
             testExpected("regions[0].track == testTrack.track", true);
@@ -42,7 +42,7 @@
             consoleWrite("<br>** The track attribute should correctly reflect the track to which the region was added to**");
             testExpected("region.track == testTrack.track", true);
 
-            updatedRegion = new TextTrackRegion();
+            updatedRegion = new VTTRegion();
             updatedRegion.id = region.id;
             updatedRegion.viewportAnchorX = 59;
             updatedRegion.viewportAnchorY = 68;
@@ -90,9 +90,9 @@
         </script>
     </head>
     <body onload="startTestWithDelay()">
-        <p>Tests TextTrackRegionList functionality: length, operator[], and getRegionById()</p>
+        <p>Tests VTTRegionList functionality: length, operator[], and getRegionById()</p>
         <video>
-            <track id="testTrack" src="captions-webvtt/captions-fast.vtt">
+            <track id="testTrack" src="../captions-webvtt/captions-fast.vtt">
         </video>
     </body>
 </html>

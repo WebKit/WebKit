@@ -11,12 +11,14 @@
 
             function startTest()
             {
-                if (!window.TextTrackRegion) {
+                if (!window.VTTRegion) {
                     failTest();
                     return;
                 }
 
-                region = new TextTrackRegion();
+                region = new VTTRegion();
+                consoleWrite("** Test instanceof VTTRegion. **");
+                testExpected("region instanceof VTTRegion", true);
 
                 consoleWrite("** Test the default indexs of a region. **");
                 testExpected("region.track", null);
@@ -72,6 +74,6 @@
         </script>
     </head>
     <body onload="startTest()">
-        <p>Tests the constructor and mutation of TextTrackRegion.</p>
+        <p>Tests the constructor and mutation of VTTRegion.</p>
     </body>
 </html>

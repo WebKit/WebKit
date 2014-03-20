@@ -46,8 +46,8 @@ class ScriptExecutionContext;
 class TextTrack;
 class TextTrackCueList;
 #if ENABLE(WEBVTT_REGIONS)
-class TextTrackRegion;
-class TextTrackRegionList;
+class VTTRegion;
+class VTTRegionList;
 #endif
 
 class TextTrackClient {
@@ -113,9 +113,9 @@ public:
     bool hasCue(VTTCue*, VTTCue::CueMatchRules = VTTCue::MatchAllFields);
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
-    TextTrackRegionList* regions();
-    void addRegion(PassRefPtr<TextTrackRegion>);
-    void removeRegion(TextTrackRegion*, ExceptionCode&);
+    VTTRegionList* regions();
+    void addRegion(PassRefPtr<VTTRegion>);
+    void removeRegion(VTTRegion*, ExceptionCode&);
 #endif
 
     void cueWillChange(TextTrackCue*);
@@ -171,8 +171,8 @@ private:
     virtual void derefEventTarget() override final { deref(); }
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
-    TextTrackRegionList* ensureTextTrackRegionList();
-    RefPtr<TextTrackRegionList> m_regions;
+    VTTRegionList* ensureVTTRegionList();
+    RefPtr<VTTRegionList> m_regions;
 #endif
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)

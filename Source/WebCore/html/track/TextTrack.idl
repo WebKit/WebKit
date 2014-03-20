@@ -45,9 +45,9 @@
     [RaisesException] void removeCue(TextTrackCue cue);
 
 #if defined(ENABLE_WEBVTT_REGIONS) && ENABLE_WEBVTT_REGIONS
-    readonly attribute TextTrackRegionList regions;
-    void addRegion(TextTrackRegion region);
-    [RaisesException] void removeRegion(TextTrackRegion region);
+    readonly attribute VTTRegionList regions;
+    void addRegion(VTTRegion region);
+    [RaisesException] void removeRegion(VTTRegion region);
 #endif
 
     // EventTarget interface

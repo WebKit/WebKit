@@ -51,7 +51,7 @@
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(WEBVTT_REGIONS)
-#include "TextTrackRegionList.h"
+#include "VTTRegionList.h"
 #endif
 
 namespace WebCore {

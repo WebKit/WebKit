@@ -1,3 +1,96 @@
+2014-03-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Rename TextTrackRegion/TextTrackRegionList to VTTRegion/VTTRegionList
+        https://bugs.webkit.org/show_bug.cgi?id=130543
+
+        Reviewed by Dean Jackson.
+
+        Merged from Blink (patch by philipj@opera.com):
+        https://chromium.googlesource.com/chromium/blink/+/69ee6d3399d64163e4936ac1bde222036c54c4b8
+        http://crbug.com/55653003
+
+        Tests: media/track/regions-webvtt/vtt-region-constructor.html
+               media/track/regions-webvtt/vtt-region-display.html
+               media/track/regions-webvtt/vtt-region-dom-layout.html
+               media/track/regions-webvtt/vtt-region-list.html
+               media/track/regions-webvtt/vtt-region-parser.html
+
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay):
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::newRegionsAvailable):
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::ensureVTTRegionList):
+        (WebCore::TextTrack::regions):
+        (WebCore::TextTrack::addRegion):
+        (WebCore::TextTrack::removeRegion):
+        * html/track/TextTrack.h:
+        * html/track/TextTrack.idl:
+        * html/track/TextTrackCue.cpp:
+        * html/track/TextTrackRegion.cpp: Removed.
+        * html/track/TextTrackRegion.h: Removed.
+        * html/track/TextTrackRegion.idl: Removed.
+        * html/track/TextTrackRegionList.cpp: Removed.
+        * html/track/TextTrackRegionList.h: Removed.
+        * html/track/TextTrackRegionList.idl: Removed.
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::removeDisplayTree):
+        * html/track/VTTRegion.cpp: Copied from Source/WebCore/html/track/TextTrackRegion.cpp.
+        (WebCore::VTTRegion::VTTRegion):
+        (WebCore::VTTRegion::~VTTRegion):
+        (WebCore::VTTRegion::setTrack):
+        (WebCore::VTTRegion::setId):
+        (WebCore::VTTRegion::setWidth):
+        (WebCore::VTTRegion::setHeight):
+        (WebCore::VTTRegion::setRegionAnchorX):
+        (WebCore::VTTRegion::setRegionAnchorY):
+        (WebCore::VTTRegion::setViewportAnchorX):
+        (WebCore::VTTRegion::setViewportAnchorY):
+        (WebCore::VTTRegion::scroll):
+        (WebCore::VTTRegion::setScroll):
+        (WebCore::VTTRegion::updateParametersFromRegion):
+        (WebCore::VTTRegion::setRegionSettings):
+        (WebCore::VTTRegion::getSettingFromString):
+        (WebCore::VTTRegion::parseSettingValue):
+        (WebCore::VTTRegion::parseSetting):
+        (WebCore::VTTRegion::textTrackCueContainerScrollingClass):
+        (WebCore::VTTRegion::textTrackCueContainerShadowPseudoId):
+        (WebCore::VTTRegion::textTrackRegionShadowPseudoId):
+        (WebCore::VTTRegion::appendTextTrackCueBox):
+        (WebCore::VTTRegion::displayLastTextTrackCueBox):
+        (WebCore::VTTRegion::willRemoveTextTrackCueBox):
+        (WebCore::VTTRegion::getDisplayTree):
+        (WebCore::VTTRegion::prepareRegionDisplayTree):
+        (WebCore::VTTRegion::startTimer):
+        (WebCore::VTTRegion::stopTimer):
+        (WebCore::VTTRegion::scrollTimerFired):
+        * html/track/VTTRegion.h: Copied from Source/WebCore/html/track/TextTrackRegion.h.
+        (WebCore::VTTRegion::create):
+        * html/track/VTTRegion.idl: Copied from Source/WebCore/html/track/TextTrackRegion.idl.
+        * html/track/VTTRegionList.cpp: Copied from Source/WebCore/html/track/TextTrackRegionList.cpp.
+        (WebCore::VTTRegionList::VTTRegionList):
+        (WebCore::VTTRegionList::length):
+        (WebCore::VTTRegionList::item):
+        (WebCore::VTTRegionList::getRegionById):
+        (WebCore::VTTRegionList::add):
+        (WebCore::VTTRegionList::remove):
+        (WebCore::VTTRegionList::clear):
+        * html/track/VTTRegionList.h: Copied from Source/WebCore/html/track/TextTrackRegionList.h.
+        (WebCore::VTTRegionList::create):
+        (WebCore::VTTRegionList::~VTTRegionList):
+        * html/track/VTTRegionList.idl: Copied from Source/WebCore/html/track/TextTrackRegionList.idl.
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::parseFloatPercentageValue):
+        (WebCore::WebVTTParser::getNewRegions):
+        (WebCore::WebVTTParser::createNewRegion):
+        * html/track/WebVTTParser.h:
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::getNewRegions):
+        * loader/TextTrackLoader.h:
+
 2014-03-20  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the iOS build.

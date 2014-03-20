@@ -1,4 +1,4 @@
-Tests default rendering for TextTrackCues that belong to a TextTrackRegion.
+Tests default rendering for TextTrackCues that belong to a VTTRegion.
 
 
 EVENT(canplaythrough)

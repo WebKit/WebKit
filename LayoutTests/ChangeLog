@@ -1,3 +1,36 @@
+2014-03-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Rename TextTrackRegion/TextTrackRegionList to VTTRegion/VTTRegionList
+        https://bugs.webkit.org/show_bug.cgi?id=130543
+
+        Reviewed by Dean Jackson.
+
+        Merged from Blink (patch by philipj@opera.com):
+        https://chromium.googlesource.com/chromium/blink/+/69ee6d3399d64163e4936ac1bde222036c54c4b8
+        http://crbug.com/55653003
+
+        * media/track/regions-webvtt/text-track-cue-region-attribute.html:
+        * media/track/regions-webvtt/text-track-region-constructor-expected.txt: Removed.
+        * media/track/regions-webvtt/text-track-region-constructor.html: Removed.
+        * media/track/regions-webvtt/text-track-region-display-expected.txt: Removed.
+        * media/track/regions-webvtt/text-track-region-display.html: Removed.
+        * media/track/regions-webvtt/text-track-region-dom-layout-expected.txt: Removed.
+        * media/track/regions-webvtt/text-track-region-dom-layout.html: Removed.
+        * media/track/regions-webvtt/text-track-region-list-expected.txt: Removed.
+        * media/track/regions-webvtt/text-track-region-list.html: Removed.
+        * media/track/regions-webvtt/text-track-region-parser-expected.txt: Removed.
+        * media/track/regions-webvtt/text-track-region-parser.html: Removed.
+        * media/track/regions-webvtt/vtt-region-constructor-expected.txt: Copied from LayoutTests/media/track/regions-webvtt/text-track-region-constructor-expected.txt.
+        * media/track/regions-webvtt/vtt-region-constructor.html: Copied from LayoutTests/media/track/regions-webvtt/text-track-region-constructor.html.
+        * media/track/regions-webvtt/vtt-region-display-expected.txt: Copied from LayoutTests/media/track/regions-webvtt/text-track-region-display-expected.txt.
+        * media/track/regions-webvtt/vtt-region-display.html: Copied from LayoutTests/media/track/regions-webvtt/text-track-region-display.html.
+        * media/track/regions-webvtt/vtt-region-dom-layout-expected.txt: Copied from LayoutTests/media/track/regions-webvtt/text-track-region-dom-layout-expected.txt.
+        * media/track/regions-webvtt/vtt-region-dom-layout.html: Copied from LayoutTests/media/track/regions-webvtt/text-track-region-dom-layout.html.
+        * media/track/regions-webvtt/vtt-region-list-expected.txt: Copied from LayoutTests/media/track/regions-webvtt/text-track-region-list-expected.txt.
+        * media/track/regions-webvtt/vtt-region-list.html: Copied from LayoutTests/media/track/regions-webvtt/text-track-region-list.html.
+        * media/track/regions-webvtt/vtt-region-parser-expected.txt: Copied from LayoutTests/media/track/regions-webvtt/text-track-region-parser-expected.txt.
+        * media/track/regions-webvtt/vtt-region-parser.html: Copied from LayoutTests/media/track/regions-webvtt/text-track-region-parser.html.
+
 2014-03-20  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] clamp RasterShape shapeMargin to reference box size

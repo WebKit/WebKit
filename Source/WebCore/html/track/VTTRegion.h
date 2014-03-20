@@ -29,8 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextTrackRegion_h
-#define TextTrackRegion_h
+#ifndef VTTRegion_h
+#define VTTRegion_h
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
 
@@ -45,14 +45,14 @@ namespace WebCore {
 class HTMLDivElement;
 class VTTCueBox;
 
-class TextTrackRegion : public RefCounted<TextTrackRegion>, public ContextDestructionObserver {
+class VTTRegion : public RefCounted<VTTRegion>, public ContextDestructionObserver {
 public:
-    static PassRefPtr<TextTrackRegion> create(ScriptExecutionContext& context)
+    static PassRefPtr<VTTRegion> create(ScriptExecutionContext& context)
     {
-        return adoptRef(new TextTrackRegion(context));
+        return adoptRef(new VTTRegion(context));
     }
 
-    virtual ~TextTrackRegion();
+    virtual ~VTTRegion();
 
     TextTrack* track() const { return m_track; }
     void setTrack(TextTrack*);
@@ -81,7 +81,7 @@ public:
     const AtomicString scroll() const;
     void setScroll(const AtomicString&, ExceptionCode&);
 
-    void updateParametersFromRegion(TextTrackRegion*);
+    void updateParametersFromRegion(VTTRegion*);
 
     const String& regionSettings() const { return m_settings; }
     void setRegionSettings(const String&);
@@ -95,7 +95,7 @@ public:
     void willRemoveTextTrackCueBox(VTTCueBox*);
 
 private:
-    TextTrackRegion(ScriptExecutionContext&);
+    VTTRegion(ScriptExecutionContext&);
 
     Document* ownerDocument() { return toDocument(m_scriptExecutionContext); }
 
@@ -104,7 +104,7 @@ private:
     // The timer is needed to continue processing when cue scrolling ended.
     void startTimer();
     void stopTimer();
-    void scrollTimerFired(Timer<TextTrackRegion>*);
+    void scrollTimerFired(Timer<VTTRegion>*);
 
     enum RegionSetting {
         None,
@@ -155,7 +155,7 @@ private:
     // soon as the animation for rolling out one line has finished, but
     // currently it is used also for non-scrolling regions to use a single
     // code path.
-    Timer<TextTrackRegion> m_scrollTimer;
+    Timer<VTTRegion> m_scrollTimer;
 };
 
 } // namespace WebCore

@@ -1,5 +1,7 @@
-Tests the constructor and mutation of TextTrackRegion.
+Tests the constructor and mutation of VTTRegion.
 
+** Test instanceof VTTRegion. **
+EXPECTED (region instanceof VTTRegion == 'true') OK
 ** Test the default indexs of a region. **
 EXPECTED (region.track == 'null') OK
 EXPECTED (region.scroll == '') OK

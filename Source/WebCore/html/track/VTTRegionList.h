@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2013 Google Inc.  All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,16 +21,46 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    NoInterfaceObject,
-    Conditional=VIDEO_TRACK & WEBVTT_REGIONS,
-    ImplementationLacksVTable,
-] interface TextTrackRegionList {
-    readonly attribute unsigned long length;
-    getter TextTrackRegion item(unsigned long index);
-    TextTrackRegion getRegionById(DOMString id);
+#ifndef VTTRegionList_h
+#define VTTRegionList_h
+
+#if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
+
+#include "VTTRegion.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
+
+namespace WebCore {
+
+class VTTRegionList : public RefCounted<VTTRegionList> {
+public:
+    static PassRefPtr<VTTRegionList> create()
+    {
+        return adoptRef(new VTTRegionList());
+    }
+
+    ~VTTRegionList() { }
+
+    unsigned long length() const;
+
+    VTTRegion* item(unsigned index) const;
+    VTTRegion* getRegionById(const String&) const;
+
+    void add(PassRefPtr<VTTRegion>);
+    bool remove(VTTRegion*);
+
+private:
+    VTTRegionList();
+    void clear();
+
+    Vector<RefPtr<VTTRegion> > m_list;
 };
 
+} // namespace WebCore
+
+#endif
+#endif

@@ -35,7 +35,7 @@
 #include "TextTrackCueList.h"
 
 #if ENABLE(WEBVTT_REGIONS)
-#include "TextTrackRegionList.h"
+#include "VTTRegionList.h"
 #endif
 
 namespace WebCore {
@@ -137,7 +137,7 @@ void LoadableTextTrack::newRegionsAvailable(TextTrackLoader* loader)
 {
     ASSERT_UNUSED(loader, m_loader.get() == loader);
 
-    Vector<RefPtr<TextTrackRegion>> newRegions;
+    Vector<RefPtr<VTTRegion>> newRegions;
     m_loader->getNewRegions(newRegions);
 
     for (size_t i = 0; i < newRegions.size(); ++i) {

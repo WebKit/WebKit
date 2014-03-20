@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc.  All rights reserved.
  * Copyright (C) 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -21,67 +21,24 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+[
+    Conditional=VIDEO_TRACK & WEBVTT_REGIONS,
+    JSGenerateToNativeObject,
+    Constructor(),
+    ConstructorCallWith=ScriptExecutionContext
+] interface VTTRegion {
+    readonly attribute TextTrack track;
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
+    attribute DOMString id;
+    [SetterRaisesException] attribute double width;
+    [SetterRaisesException] attribute long height;
+    [SetterRaisesException] attribute double regionAnchorX;
+    [SetterRaisesException] attribute double regionAnchorY;
+    [SetterRaisesException] attribute double viewportAnchorX;
+    [SetterRaisesException] attribute double viewportAnchorY;
+    [SetterRaisesException] attribute DOMString scroll;
+};
 
-#include "TextTrackRegionList.h"
-
-namespace WebCore {
-
-TextTrackRegionList::TextTrackRegionList()
-{
-}
-
-unsigned long TextTrackRegionList::length() const
-{
-    return m_list.size();
-}
-
-TextTrackRegion* TextTrackRegionList::item(unsigned index) const
-{
-    if (index < m_list.size())
-        return m_list[index].get();
-
-    return 0;
-}
-
-TextTrackRegion* TextTrackRegionList::getRegionById(const String& id) const
-{
-    if (id.isEmpty())
-        return 0;
-
-    for (const auto& region : m_list) {
-        if (region->id() == id)
-            return region.get();
-    }
-
-    return 0;
-}
-
-void TextTrackRegionList::add(PassRefPtr<TextTrackRegion> region)
-{
-    m_list.append(region);
-}
-
-bool TextTrackRegionList::remove(TextTrackRegion* region)
-{
-    size_t index = m_list.find(region);
-    if (index == notFound)
-        return false;
-
-    m_list.remove(index);
-    return true;
-}
-
-void TextTrackRegionList::clear()
-{
-    m_list.clear();
-}
-
-} // namespace WebCore
-
-#endif
