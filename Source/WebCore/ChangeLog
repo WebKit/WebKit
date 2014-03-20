@@ -1,3 +1,26 @@
+2014-03-20  Lorenzo Tilve  <ltilve@igalia.com>
+
+        "input" event is not fired when changing a select element's value
+        https://bugs.webkit.org/show_bug.cgi?id=117526
+
+        Reviewed by Antti Koivisto.
+
+        Add a call to dispatch input event when listbox or menulist
+        values are modified.
+
+        According to the spec: "When the user agent is to send select update
+        notifications, queue a task to first fire a simple even that bubbles
+        named input at the select element, and then fire a simple event that
+        bubbles named change at the select element, using the user interaction
+        task source as the task source."
+
+        Tests: fast/forms/select/listbox-oninput-fired.html
+               fast/forms/select/menulist-oninput-fired.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxOnChange):
+        (WebCore::HTMLSelectElement::dispatchChangeEventForMenuList):
+
 2014-03-20  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] The height of a scrollable element flowed inside a scrollable region is not computed correctly

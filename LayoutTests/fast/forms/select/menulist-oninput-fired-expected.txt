@@ -1,0 +1,9 @@
+Selecting menu list options should fire input event
+
+
+Pressing 2 key
+PASS
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

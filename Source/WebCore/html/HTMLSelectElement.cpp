@@ -682,8 +682,10 @@ void HTMLSelectElement::listBoxOnChange()
         m_lastOnChangeSelection[i] = selected;
     }
 
-    if (fireOnChange)
+    if (fireOnChange) {
+        dispatchInputEvent();
         dispatchFormControlChangeEvent();
+    }
 }
 
 void HTMLSelectElement::dispatchChangeEventForMenuList()
@@ -694,6 +696,7 @@ void HTMLSelectElement::dispatchChangeEventForMenuList()
     if (m_lastOnChangeIndex != selected && m_isProcessingUserDrivenChange) {
         m_lastOnChangeIndex = selected;
         m_isProcessingUserDrivenChange = false;
+        dispatchInputEvent();
         dispatchFormControlChangeEvent();
     }
 }

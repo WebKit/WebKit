@@ -1,3 +1,18 @@
+2014-03-20  Lorenzo Tilve  <ltilve@igalia.com>
+
+        "input" event is not fired when changing a select element's value
+        https://bugs.webkit.org/show_bug.cgi?id=117526
+
+        Reviewed by Antti Koivisto.
+
+        Add tests to verify that input event is dispatched when listbox
+        or menulist values are modified.
+
+        * fast/forms/select/listbox-oninput-fired-expected.txt: Added.
+        * fast/forms/select/listbox-oninput-fired.html: Added.
+        * fast/forms/select/menulist-oninput-fired-expected.txt: Added.
+        * fast/forms/select/menulist-oninput-fired.html: Added.
+
 2014-03-20  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] The height of a scrollable element flowed inside a scrollable region is not computed correctly
