@@ -97,9 +97,7 @@
                 fragment = document.createDocumentFragment();
                 fragment.appendChild(document.createTextNode("The following bear is not ruby annotated and markup is removed:\nI said "));
                 fragment.appendChild(document.createTextNode("Bear"));
-                var rt = document.createElement("rt");
-                rt.appendChild(document.createTextNode("bear with me"));
-                fragment.appendChild(rt);
+                fragment.appendChild(document.createTextNode("bear with me"));
                 fragment.appendChild(document.createTextNode(" is coming!!!!"));
 
                 testExpected(fragment.isEqualNode(video.textTracks[i].cues[3].getCueAsHTML()), true);
