@@ -262,6 +262,7 @@ void StyleRule::setProperties(PassRefPtr<StylePropertySet> properties)
 
 PassRefPtr<StyleRule> StyleRule::create(int sourceLine, const Vector<const CSSSelector*>& selectors, PassRefPtr<StylePropertySet> properties)
 {
+    ASSERT_WITH_SECURITY_IMPLICATION(!selectors.isEmpty());
     CSSSelector* selectorListArray = reinterpret_cast<CSSSelector*>(fastMalloc(sizeof(CSSSelector) * selectors.size()));
     for (unsigned i = 0; i < selectors.size(); ++i)
         new (NotNull, &selectorListArray[i]) CSSSelector(*selectors.at(i));
@@ -284,7 +285,7 @@ Vector<RefPtr<StyleRule> > StyleRule::splitIntoMultipleRulesWithMaximumSelectorC
         for (const CSSSelector* component = selector; component; component = component->tagHistory())
             componentsInThisSelector.append(component);
 
-        if (componentsInThisSelector.size() + componentsSinceLastSplit.size() > maxCount) {
+        if (componentsInThisSelector.size() + componentsSinceLastSplit.size() > maxCount && !componentsSinceLastSplit.isEmpty()) {
             rules.append(create(sourceLine(), componentsSinceLastSplit, m_properties));
             componentsSinceLastSplit.clear();
         }
