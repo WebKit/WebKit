@@ -1,3 +1,20 @@
+2014-03-20  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Remove "visibility:hidden" from overflow-scrollable* tests
+        https://bugs.webkit.org/show_bug.cgi?id=130510
+
+        Reviewed by Andrei Bucur.
+
+        The visibility hidden option was needed to prevent these tests from failing before the 
+        visual overflow was properly implemented (bug 118665). It is now no longer required.
+
+        * fast/regions/overflow-scrollable-rel-pos-fragment-expected.html:
+        * fast/regions/overflow-scrollable-rel-pos-fragment.html:
+        * fast/regions/overflow-scrollable-rotated-fragment-expected.html:
+        * fast/regions/overflow-scrollable-rotated-fragment.html:
+        * fast/regions/overflow-scrollable-unsplittable-fragment-expected.html:
+        * fast/regions/overflow-scrollable-unsplittable-fragment.html:
+
 2014-03-20  Lorenzo Tilve  <ltilve@igalia.com>
 
         "input" event is not fired when changing a select element's value
