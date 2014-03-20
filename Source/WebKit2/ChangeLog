@@ -1,3 +1,13 @@
+2014-03-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Merge AtomicString, Identifier
+        https://bugs.webkit.org/show_bug.cgi?id=128624
+
+        Unreviewed build fix following r165982.
+
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+            - update includes.
+
 2014-03-20  Sam Weinig  <sam@webkit.org>
 
         [WebKit2] Implement NetworkingContext::sourceApplicationAuditData() for WebKit2
