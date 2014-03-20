@@ -26,6 +26,7 @@
 #import "config.h"
 #import "RemoteNetworkingContext.h"
 
+#import "NetworkProcess.h"
 #import "SessionTracker.h"
 #import "WebErrors.h"
 #import <WebCore/ResourceError.h>
@@ -69,7 +70,11 @@ NetworkStorageSession& RemoteNetworkingContext::storageSession() const
 
 RetainPtr<CFDataRef> RemoteNetworkingContext::sourceApplicationAuditData() const
 {
-    return nil;
+    audit_token_t auditToken;
+    if (!NetworkProcess::shared().parentProcessConnection()->getAuditToken(auditToken))
+        return nullptr;
+    
+    return adoptCF(CFDataCreate(0, (const UInt8*)&auditToken, sizeof(auditToken)));
 }
 
 ResourceError RemoteNetworkingContext::blockedError(const ResourceRequest& request) const

@@ -1,5 +1,23 @@
 2014-03-20  Sam Weinig  <sam@webkit.org>
 
+        [WebKit2] Implement NetworkingContext::sourceApplicationAuditData() for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=130528
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ConnectionMac.cpp:
+        (IPC::Connection::getAuditToken):
+        Expose the audit data if available. 
+
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::sourceApplicationAuditData):
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::sourceApplicationAuditData):
+        Pass the audit data corresponding to the UIProcess.
+
+2014-03-20  Sam Weinig  <sam@webkit.org>
+
         [Cocoa] Expose preference to enable telephone number detection
         https://bugs.webkit.org/show_bug.cgi?id=130524
 

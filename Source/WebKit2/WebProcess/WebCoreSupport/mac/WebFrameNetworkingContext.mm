@@ -24,10 +24,11 @@
  */
 
 #include "config.h"
+#include "WebFrameNetworkingContext.h"
 
 #include "SessionTracker.h"
 #include "WebCookieManager.h"
-#include "WebFrameNetworkingContext.h"
+#include "WebProcess.h"
 #include "WebPage.h"
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
@@ -90,7 +91,11 @@ SchedulePairHashSet* WebFrameNetworkingContext::scheduledRunLoopPairs() const
 
 RetainPtr<CFDataRef> WebFrameNetworkingContext::sourceApplicationAuditData() const
 {
-    return RetainPtr<CFDataRef>();
+    audit_token_t auditToken;
+    if (!WebProcess::shared().parentProcessConnection()->getAuditToken(auditToken))
+        return nullptr;
+    
+    return adoptCF(CFDataCreate(0, (const UInt8*)&auditToken, sizeof(auditToken)));
 }
 
 ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& request) const
