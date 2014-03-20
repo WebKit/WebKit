@@ -1,3 +1,15 @@
+2014-03-19  Byungseon Shin  <sun.shin@lge.com>
+
+        Fix "WEBKIT_WEBGL_compressed_texture_pvrtc" extension support
+        https://bugs.webkit.org/show_bug.cgi?id=130292
+
+        Reviewed by Dean Jackson.
+
+        WebGLRenderingContext::getExtension was not returning WEBGL_compressed_texture_pvrtc extension.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+
 2014-03-19  Brent Fulgham  <bfulgham@apple.com>
 
         Merge Misc. WebVTT Updates from Blink.

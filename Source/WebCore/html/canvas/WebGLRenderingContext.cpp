@@ -2475,6 +2475,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         && WebGLCompressedTexturePVRTC::supported(this)) {
         if (!m_webglCompressedTexturePVRTC)
             m_webglCompressedTexturePVRTC = std::make_unique<WebGLCompressedTexturePVRTC>(this);
+        return m_webglCompressedTexturePVRTC.get();
     }
     if (equalIgnoringCase(name, "WEBGL_compressed_texture_s3tc")
         && WebGLCompressedTextureS3TC::supported(this)) {
