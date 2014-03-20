@@ -1,5 +1,12 @@
 2014-03-20  Simon Fraser  <simon.fraser@apple.com>
 
+        Followup build fix: AnimationBase.h needs to be private because
+        it's included by AnimationController.h.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2014-03-20  Simon Fraser  <simon.fraser@apple.com>
+
         A completed fill-forwards animation should not disable overlap testing
         https://bugs.webkit.org/show_bug.cgi?id=130522
         <rdar://problem/15862395>

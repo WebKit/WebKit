@@ -1177,7 +1177,7 @@
 		316FE0810E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316FE07B0E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.mm */; };
 		316FE0820E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRuleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE07C0E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRuleInternal.h */; };
 		316FE1110E6E1DA700BF6088 /* AnimationBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE1070E6E1DA700BF6088 /* AnimationBase.cpp */; };
-		316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE1080E6E1DA700BF6088 /* AnimationBase.h */; };
+		316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE1080E6E1DA700BF6088 /* AnimationBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		316FE1130E6E1DA700BF6088 /* AnimationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE1090E6E1DA700BF6088 /* AnimationController.cpp */; };
 		316FE1140E6E1DA700BF6088 /* AnimationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE10A0E6E1DA700BF6088 /* AnimationController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		316FE1150E6E1DA700BF6088 /* CompositeAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE10B0E6E1DA700BF6088 /* CompositeAnimation.cpp */; };
