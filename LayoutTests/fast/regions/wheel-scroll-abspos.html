@@ -7,7 +7,7 @@
         -webkit-flow-from: flow;
         width: 250px;
         height: 55px;
-        border: 1px solid red;
+        border: 1px solid blue;
         padding: 2px;
         overflow: visible;
     }
@@ -61,7 +61,7 @@
         The text passes if everything can be scrolled normally using the mouse wheel: 
         <ul>
             <li>Scrolling inside the green div should work until it reaches the end and then the blue container should scroll.</li>
-            <li>Scrolling inside the orange div should work until it reaches the end and then the blue container should NOT scroll because the region in which the orange div is flowed is absolutely positioned</li>
+            <li>Scrolling inside the brown div should work until it reaches the end and then the blue container should NOT scroll because the region in which the orange div is flowed is absolutely positioned</li>
         </ul>
     </div>
 
@@ -73,7 +73,7 @@
                 <p>Assume that there is enough content in the flow to fill the regions and the size of the container is less than the size of regions so that the container gets vertical scrollbar. Case1. If the mouse cursor is over the flow thread fragmented content inside a region, the user is unable to scroll the content inside the container. Case2. However, if the mouse is outside the flow thread content but still inside the container, then the user is able to scroll the container content. There *should be* a possibility to scroll the container content even when the mouse cursor is over the flow thread content in regions. (Case1)</p>
             </div>
             <p>is less than the size of regions so that the container gets vertical scrollbar. Case1. If the mouse cursor is over the flow thread fragmented content inside a region, the user is unable to scroll the content inside the container. </p>
-            <div class="inner_scroll" style="border-color: orange;">
+            <div class="inner_scroll" style="border-color: brown;">
                 <p>Assume that there is enough content in the flow to fill the regions and the size of the container is less than the size of regions so that the container gets vertical scrollbar. Case1. If the mouse cursor is over the flow thread fragmented content inside a region, the user is unable to scroll the content inside the container. Case2. However, if the mouse is outside the flow thread content but still inside the container, then the user is able to scroll the container content. There *should be* a possibility to scroll the container content even when the mouse cursor is over the flow thread content in regions. (Case1)</p>
             </div>
             <p>Assume that there is enough content in the flow to fill the regions and the size of the container is less than the size of regions so that the container gets vertical scrollbar. Case1.</p>

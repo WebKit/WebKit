@@ -1,3 +1,33 @@
+2014-03-20  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Cleanup scrollable regions tests
+        https://bugs.webkit.org/show_bug.cgi?id=130505
+
+        Reviewed by Mihnea Ovidenie.
+
+        Tests should only display red in case of failure. Purpose of the test should be very clearly stated.
+
+        * fast/regions/scrollable-last-region-expected.html:
+        * fast/regions/scrollable-last-region.html:
+        * fast/regions/scrollable-regions-hit-testing-inside-expected.html:
+        * fast/regions/scrollable-regions-hit-testing-inside.html:
+        * fast/regions/scrollable-single-region-bt-expected.html:
+        * fast/regions/scrollable-single-region-bt.html:
+        * fast/regions/scrollable-single-region-expected.html:
+        * fast/regions/scrollable-single-region-lr-expected.html:
+        * fast/regions/scrollable-single-region-lr.html:
+        * fast/regions/scrollable-single-region-relative-element-expected.html:
+        * fast/regions/scrollable-single-region-relative-element.html:
+        * fast/regions/scrollable-single-region-rl-expected.html:
+        * fast/regions/scrollable-single-region-rl.html:
+        * fast/regions/scrollable-single-region.html:
+        * fast/regions/wheel-scroll-abspos-expected.html:
+        * fast/regions/wheel-scroll-abspos.html:
+        * fast/regions/wheel-scroll-expected.html:
+        * fast/regions/wheel-scroll.html:
+        * fast/regions/wheel-scrollable-single-region-expected.html:
+        * fast/regions/wheel-scrollable-single-region.html:
+
 2014-03-20  Simon Fraser  <simon.fraser@apple.com>
 
         A completed fill-forwards animation should not disable overlap testing
