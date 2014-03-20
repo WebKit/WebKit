@@ -1,5 +1,11 @@
 2014-03-20  Anders Carlsson  <andersca@apple.com>
 
+        Fix 32-bit build.
+
+        * UIProcess/API/Cocoa/WKProcessPoolConfiguration.mm:
+
+2014-03-20  Anders Carlsson  <andersca@apple.com>
+
         Make WKProcessPoolConfiguration SPI
         https://bugs.webkit.org/show_bug.cgi?id=130537
 

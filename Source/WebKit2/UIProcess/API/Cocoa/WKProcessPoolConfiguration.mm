@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKProcessPoolConfiguration.h"
 
+#if WK_API_ENABLED
+
 @implementation WKProcessPoolConfiguration
 
 - (NSURL *)_injectedBundleURL
@@ -39,3 +41,5 @@
 }
 
 @end
+
+#endif
