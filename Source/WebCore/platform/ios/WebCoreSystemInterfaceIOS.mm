@@ -150,3 +150,6 @@ CFStringRef (*wkGetVendorNameForNavigator)(void);
 
 int (*wkExernalDeviceTypeForPlayer)(AVPlayer *);
 NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);
+
+bool (*wkQueryDecoderAvailability)(void);
+
