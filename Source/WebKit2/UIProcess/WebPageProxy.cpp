@@ -274,6 +274,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_pageScaleFactor(1)
     , m_intrinsicDeviceScaleFactor(1)
     , m_customDeviceScaleFactor(0)
+    , m_topContentInset(0)
     , m_layerHostingMode(LayerHostingMode::InProcess)
     , m_drawsBackground(true)
     , m_drawsTransparentBackground(false)
@@ -923,6 +924,17 @@ void WebPageProxy::setDrawsTransparentBackground(bool drawsTransparentBackground
 
     if (isValid())
         m_process->send(Messages::WebPage::SetDrawsTransparentBackground(drawsTransparentBackground), m_pageID);
+}
+
+void WebPageProxy::setTopContentInset(float contentInset)
+{
+    if (m_topContentInset == contentInset)
+        return;
+
+    m_topContentInset = contentInset;
+
+    if (isValid())
+        m_process->send(Messages::WebPage::SetTopContentInset(contentInset), m_pageID);
 }
 
 void WebPageProxy::setUnderlayColor(const Color& color)
@@ -4078,6 +4090,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.canRunBeforeUnloadConfirmPanel = m_uiClient->canRunBeforeUnloadConfirmPanel();
     parameters.canRunModal = m_canRunModal;
     parameters.deviceScaleFactor = deviceScaleFactor();
+    parameters.topContentInset = m_topContentInset;
     parameters.mediaVolume = m_mediaVolume;
     parameters.mayStartMediaWhenInWindow = m_mayStartMediaWhenInWindow;
     parameters.minimumLayoutSize = m_minimumLayoutSize;

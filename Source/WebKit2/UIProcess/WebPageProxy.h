@@ -523,6 +523,9 @@ public:
     bool drawsTransparentBackground() const { return m_drawsTransparentBackground; }
     void setDrawsTransparentBackground(bool);
 
+    float topContentInset() const { return m_topContentInset; }
+    void setTopContentInset(float);
+
     WebCore::Color underlayColor() const { return m_underlayColor; }
     void setUnderlayColor(const WebCore::Color&);
 
@@ -1461,6 +1464,7 @@ private:
     double m_pageScaleFactor;
     float m_intrinsicDeviceScaleFactor;
     float m_customDeviceScaleFactor;
+    float m_topContentInset;
 
     LayerHostingMode m_layerHostingMode;
 

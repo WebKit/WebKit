@@ -929,6 +929,15 @@ void FrameView::setFooterHeight(int footerHeight)
         renderView->setNeedsLayout();
 }
 
+float FrameView::topContentInset() const
+{
+    if (!frame().isMainFrame())
+        return 0;
+    
+    Page* page = frame().page();
+    return page ? page->topContentInset() : 0;
+}
+    
 bool FrameView::hasCompositedContent() const
 {
     if (RenderView* renderView = this->renderView())

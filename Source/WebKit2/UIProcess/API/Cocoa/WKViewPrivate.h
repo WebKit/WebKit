@@ -81,6 +81,7 @@
 @property (readwrite) BOOL allowsMagnification;
 @property (readwrite) double magnification;
 @property (readwrite) BOOL allowsBackForwardNavigationGestures;
+@property (nonatomic, setter=_setTopContentInset:) CGFloat _topContentInset;
 
 @property (readonly) NSColor *_pageExtendedBackgroundColor;
 @property(copy, nonatomic) NSColor *underlayColor;

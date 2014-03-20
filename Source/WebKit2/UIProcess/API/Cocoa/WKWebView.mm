@@ -1147,6 +1147,16 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     _page->setDrawsTransparentBackground(drawsTransparentBackground);
 }
 
+- (void)_setTopContentInset:(CGFloat)contentInset
+{
+    _page->setTopContentInset(contentInset);
+}
+
+- (CGFloat)_topContentInset
+{
+    return _page->topContentInset();
+}
+
 #endif
 
 @end

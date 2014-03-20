@@ -3742,6 +3742,16 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return _data->_allowsBackForwardNavigationGestures;
 }
 
+- (void)_setTopContentInset:(CGFloat)contentInset
+{
+    _data->_page->setTopContentInset(contentInset);
+}
+
+- (CGFloat)_topContentInset
+{
+    return _data->_page->topContentInset();
+}
+
 - (NSColor *)_pageExtendedBackgroundColor
 {
     WebCore::Color color = _data->_page->pageExtendedBackgroundColor();

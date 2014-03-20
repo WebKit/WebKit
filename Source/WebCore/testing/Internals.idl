@@ -214,6 +214,8 @@
     void setHeaderHeight(float height);
     void setFooterHeight(float height);
 
+    void setTopContentInset(float contentInset);
+
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
     void webkitWillEnterFullScreenForElement(Element element);
     void webkitDidEnterFullScreenForElement(Element element);

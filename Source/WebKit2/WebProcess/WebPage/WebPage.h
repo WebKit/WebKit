@@ -850,6 +850,8 @@ private:
     void setDrawsBackground(bool);
     void setDrawsTransparentBackground(bool);
 
+    void setTopContentInset(float);
+
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
 

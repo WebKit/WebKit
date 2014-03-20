@@ -30,6 +30,8 @@ messages -> WebPage LegacyReceiver {
     SetDrawsBackground(bool drawsBackground)
     SetDrawsTransparentBackground(bool drawsTransparentBackground)
 
+    SetTopContentInset(float contentInset)
+
     SetUnderlayColor(WebCore::Color color)
 
     ViewWillStartLiveResize()

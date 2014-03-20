@@ -404,6 +404,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     setScrollPinningBehavior(parameters.scrollPinningBehavior);
     setBackgroundExtendsBeyondPage(parameters.backgroundExtendsBeyondPage);
 
+    setTopContentInset(parameters.topContentInset);
+
     m_userAgent = parameters.userAgent;
 
     WebBackForwardListProxy::setHighestItemIDFromUIProcess(parameters.highestUsedBackForwardItemID);
@@ -2030,6 +2032,11 @@ void WebPage::setDrawsTransparentBackground(bool drawsTransparentBackground)
 
     m_drawingArea->pageBackgroundTransparencyChanged();
     m_drawingArea->setNeedsDisplay();
+}
+
+void WebPage::setTopContentInset(float contentInset)
+{
+    m_page->setTopContentInset(contentInset);
 }
 
 void WebPage::viewWillStartLiveResize()

@@ -94,6 +94,7 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
 #else
 @property (readonly) NSColor *_pageExtendedBackgroundColor;
 @property (nonatomic, setter=_setDrawsTransparentBackground:) BOOL _drawsTransparentBackground;
+@property (nonatomic, setter=_setTopContentInset:) CGFloat _topContentInset;
 #endif
 
 - (void)_runJavaScriptInMainFrame:(NSString *)scriptString;

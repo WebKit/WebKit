@@ -1472,7 +1472,7 @@ void RenderLayerCompositor::frameViewDidChangeSize()
 {
     if (m_clipLayer) {
         const FrameView& frameView = m_renderView.frameView();
-        m_clipLayer->setSize(frameView.unscaledVisibleContentSize());
+        m_clipLayer->setSize(frameView.unscaledTotalVisibleContentSize());
 
         frameViewDidScroll();
         updateOverflowControlsLayers();
@@ -1875,11 +1875,12 @@ void RenderLayerCompositor::updateRootLayerPosition()
 {
     if (m_rootContentLayer) {
         const IntRect& documentRect = m_renderView.documentRect();
-        m_rootContentLayer->setSize(documentRect.size());
-        m_rootContentLayer->setPosition(FloatPoint(documentRect.x(), documentRect.y() + m_renderView.frameView().headerHeight()));
+        m_rootContentLayer->setSize(documentRect.size());        
+        m_rootContentLayer->setPosition(FloatPoint(documentRect.x(), documentRect.y() + m_renderView.frameView().headerHeight()
+            + m_renderView.frameView().topContentInset()));
     }
     if (m_clipLayer)
-        m_clipLayer->setSize(m_renderView.frameView().unscaledVisibleContentSize());
+        m_clipLayer->setSize(m_renderView.frameView().unscaledTotalVisibleContentSize());
 
 #if ENABLE(RUBBER_BANDING)
     if (m_contentShadowLayer) {
@@ -3123,7 +3124,7 @@ void RenderLayerCompositor::ensureRootLayer()
             m_clipLayer->addChild(m_scrollLayer.get());
             m_scrollLayer->addChild(m_rootContentLayer.get());
 
-            m_clipLayer->setSize(m_renderView.frameView().unscaledVisibleContentSize());
+            m_clipLayer->setSize(m_renderView.frameView().unscaledTotalVisibleContentSize());
 
             updateOverflowControlsLayers();
 

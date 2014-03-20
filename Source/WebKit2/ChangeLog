@@ -1,3 +1,37 @@
+2014-03-20  Beth Dakin  <bdakin@apple.com>
+
+        Implement contentInset for Mac WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=130273
+
+        Reviewed by Simon Fraser.
+
+        This patch adds WKView API for setting a topContentInset(). All of this work gets 
+        that number plumbed down to WebCore.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setTopContentInset:]):
+        (-[WKWebView _topContentInset]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setTopContentInset:]):
+        (-[WKView _topContentInset]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setTopContentInset):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::topContentInset):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::setTopContentInset):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2014-03-20  Anders Carlsson  <andersca@apple.com>
 
         Fix 32-bit build.

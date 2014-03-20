@@ -1,3 +1,17 @@
+2014-03-20  Beth Dakin  <bdakin@apple.com>
+
+        Implement contentInset for Mac WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=130273
+
+        Reviewed by Simon Fraser.
+
+        Add two tests for hit-testing with a topContentInset.
+
+        * platform/mac-wk2/tiled-drawing/content-inset-hit-testing-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/content-inset-hit-testing-in-frame-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/content-inset-hit-testing-in-frame.html: Added.
+        * platform/mac-wk2/tiled-drawing/content-inset-hit-testing.html: Added.
+
 2014-03-20  Brent Fulgham  <bfulgham@apple.com>
 
         Add a flushing mechanism for the WebVTTParser

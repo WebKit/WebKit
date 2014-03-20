@@ -153,9 +153,11 @@ public:
     void setCanBlitOnScroll(bool);
     bool canBlitOnScroll() const;
 
-    // The visible content rect has a location that is the scrolled offset of the document. The width and height are the viewport width
-    // and height. By default the scrollbars themselves are excluded from this rectangle, but an optional boolean argument allows them to be
-    // included.
+    virtual float topContentInset() const { return 0; }
+
+    // The visible content rect has a location that is the scrolled offset of the document. The width and height are the unobscured viewport
+    // width and height. By default the scrollbars themselves are excluded from this rectangle, but an optional boolean argument allows them
+    // to be included.
     // In the situation the client is responsible for the scrolling (ie. with a tiled backing store) it is possible to use
     // the setFixedVisibleContentRect instead for the mainframe, though this must be updated manually, e.g just before resuming the page
     // which usually will happen when panning, pinching and rotation ends, or when scale or position are changed manually.
@@ -173,7 +175,7 @@ public:
     IntRect unobscuredContentRect() const;
     IntRect unobscuredContentRectIncludingScrollbars() const { return unobscuredContentRect(); }
 #else
-    IntRect unobscuredContentRect() const { return visibleContentRect(); }
+    IntRect unobscuredContentRect(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
     IntRect unobscuredContentRectIncludingScrollbars() const { return visibleContentRectIncludingScrollbars(); }
 #endif
 
@@ -189,11 +191,13 @@ public:
     TileCache* tileCache();
 #endif
 
-    // visibleContentRect().size() is computed from unscaledVisibleContentSize() divided by the value of visibleContentScaleFactor.
+    // visibleContentRect().size() is computed from unscaledUnobscuredVisibleContentSize() divided by the value of visibleContentScaleFactor.
     // visibleContentScaleFactor is usually 1, except when the setting delegatesPageScaling is true and the
     // ScrollView is the main frame; in that case, visibleContentScaleFactor is equal to the page's pageScaleFactor.
-    // Ports that don't use pageScaleFactor can treat unscaledVisibleContentSize and visibleContentRect().size() as equivalent.
-    IntSize unscaledVisibleContentSize(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
+    // Ports that don't use pageScaleFactor can treat unscaledUnobscuredVisibleContentSize and visibleContentRect().size() as equivalent.
+    // unscaledTotalVisibleContentSize() includes areas in the content that might be obscured by UI elements.
+    IntSize unscaledUnobscuredVisibleContentSize(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
+    IntSize unscaledTotalVisibleContentSize(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
     virtual float visibleContentScaleFactor() const { return 1; }
 
     // Functions for getting/setting the size webkit should use to layout the contents. By default this is the same as the visible

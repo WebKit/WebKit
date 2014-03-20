@@ -1,3 +1,86 @@
+2014-03-20  Beth Dakin  <bdakin@apple.com>
+
+        Implement contentInset for Mac WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=130273
+
+        Reviewed by Simon Fraser.
+
+        This patch adds support for topContentInset(). If a page has a topContentInset(), 
+        the root layer’s position is adjusted to account for the inset. It is assumed that 
+        the area accounted for by the inset is visible but obscured, so scrollbars need to 
+        be moved so that they only cover the non-obscured area, and most parts of WebCore 
+        that wonder about visibleContentSize only care about the unobscured area, so this 
+        patch makes that visibleContentRect return the unobscuredRect. Finally since this 
+        is achieved by moving a layer’s position, the topContentInset() also needs to be 
+        factored into various functions that are used to convert between coordinate 
+        spaces. 
+
+        Return Page::topContentInset() if this is the main frame.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::topContentInset):
+        * page/FrameView.h:
+
+        Cache the inset on Page.
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::topContentInset):
+        (WebCore::Page::setTopContentInset):
+
+        unobscuredContentRect() used to unconditionally return visibleContentRect() on 
+        non-iOS platforms. Now that it is possible for some technically visible content to 
+        be obscured, this code needed to be re-worked a bit to make some more sense. 
+        visibleContentRect() now represents that visible content that is completely 
+        unobscured, so it should call into unobscuredContentRect() rather than the other 
+        way around.
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::unobscuredContentRect):
+
+        unscaledTotalVisibleContentSize() includes the size of all content that might be 
+        visible. Some of this content might be obscured.
+        (WebCore::ScrollView::unscaledTotalVisibleContentSize):
+
+        Most of the time, we only care about the content that is FULLY visible. That is 
+        what you get from unscaledUnobscuredVisibleContentSize().
+        (WebCore::ScrollView::unscaledUnobscuredVisibleContentSize):
+
+        Use the unobscured size for these computations.
+        (WebCore::ScrollView::visibleContentRectInternal):
+        (WebCore::ScrollView::layoutSize):
+
+        Factor in the topContentInset().
+        (WebCore::ScrollView::scrollOffsetRelativeToDocument):
+        (WebCore::ScrollView::scrollPositionRelativeToDocument):
+
+        The scrollbars should be positioned to cover the non-obscured content only. 
+        (WebCore::ScrollView::updateScrollbars):
+
+        Again, factor the topContentInset() into these conversions since the root layer’s 
+        position has been adjusted to account for it.
+        (WebCore::ScrollView::contentsToRootView):
+        (WebCore::ScrollView::contentsToWindow):
+
+         Just like the scrollbars, the scroll corner must be moved the account for the 
+        inset.
+        (WebCore::ScrollView::scrollCornerRect):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::topContentInset):
+
+        RenderLayerCompositor cares about unscaledTotalVisibleContentSize(). It does not 
+        care if some of that content is obscured.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::frameViewDidChangeSize):
+
+        Move the root layer’s position based on the contentInset.
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+
+        Allow setting contentInset via Internals for testing purposes.
+        * testing/Internals.cpp:
+        (WebCore::Internals::setTopContentInset):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-03-20  Laszlo Vidacs  <lvidacs.u-szeged@partner.samsung.com>
 
         Optimize RenderTable::colToEffCol() for tables without colspans

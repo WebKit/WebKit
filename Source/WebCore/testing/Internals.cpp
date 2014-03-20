@@ -1827,6 +1827,16 @@ void Internals::setFooterHeight(float height)
     FrameView* frameView = document->view();
     frameView->setFooterHeight(height);
 }
+    
+void Internals::setTopContentInset(float contentInset)
+{
+    Document* document = contextDocument();
+    if (!document)
+        return;
+    
+    Page* page = document->page();
+    page->setTopContentInset(contentInset);
+}
 
 #if ENABLE(FULLSCREEN_API)
 void Internals::webkitWillEnterFullScreenForElement(Element* element)

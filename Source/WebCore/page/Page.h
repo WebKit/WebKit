@@ -278,6 +278,9 @@ public:
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
     void setDeviceScaleFactor(float);
 
+    float topContentInset() const { return m_topContentInset; }
+    void setTopContentInset(float);
+
     bool shouldSuppressScrollbarAnimations() const { return m_suppressScrollbarAnimations; }
     void setShouldSuppressScrollbarAnimations(bool suppressAnimations);
     void lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars);
@@ -488,6 +491,8 @@ private:
 
     float m_pageScaleFactor;
     float m_deviceScaleFactor;
+
+    float m_topContentInset;
 
     bool m_suppressScrollbarAnimations;
 

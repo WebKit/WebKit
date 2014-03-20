@@ -90,6 +90,8 @@ struct WebPageCreationParameters {
     bool canRunModal;
 
     float deviceScaleFactor;
+
+    float topContentInset;
     
     float mediaVolume;
     bool mayStartMediaWhenInWindow;
