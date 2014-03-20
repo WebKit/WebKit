@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description(
+"This test makes sure we don't crash when mutating a typed array while assigning to it"
+);
+
+var buffer = new ArrayBuffer(100);
+var byteArray = new Uint8Array(buffer);
+var mutator = {
+	valueOf: function() {
+		var w = new Worker("unneeded");
+		shouldBe("buffer.byteLength", "100");
+		w.postMessage(buffer, [buffer]);
+		shouldBe("buffer.byteLength", "0");
+	    return 17;
+	}
+};
+var errorCreator = {
+	valueOf: function() {
+		throw "fail"
+	}
+};
+
+var array = [0, 0, 0, 0, mutator, errorCreator, 0, 0, 0, 0, 0];
+shouldBeUndefined("byteArray.set(array)");
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

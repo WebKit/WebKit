@@ -266,7 +266,8 @@ bool JSGenericTypedArrayView<Adaptor>::set(
             return false;
         // We could optimize this case. But right now, we don't.
         for (unsigned i = 0; i < length; ++i) {
-            if (!setIndexQuickly(exec, offset + i, object->get(exec, i)))
+            JSValue value = object->get(exec, i);
+            if (!setIndex(exec, offset + i, value))
                 return false;
         }
         return true;
@@ -389,13 +390,7 @@ void JSGenericTypedArrayView<Adaptor>::putByIndex(
         return;
     }
     
-    if (!thisObject->canSetIndexQuickly(propertyName)) {
-        // Yes, really. Firefox returns without throwing anything if you store beyond
-        // the bounds.
-        return;
-    }
-    
-    thisObject->setIndexQuickly(exec, propertyName, value);
+    thisObject->setIndex(exec, propertyName, value);
 }
 
 template<typename Adaptor>

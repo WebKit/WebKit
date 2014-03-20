@@ -154,11 +154,15 @@ public:
         setIndexQuicklyToNativeValue(i, toNativeFromValue<Adaptor>(value));
     }
     
-    bool setIndexQuickly(ExecState* exec, unsigned i, JSValue jsValue)
+    bool setIndex(ExecState* exec, unsigned i, JSValue jsValue)
     {
         typename Adaptor::Type value = toNativeFromValue<Adaptor>(exec, jsValue);
         if (exec->hadException())
             return false;
+
+        if (i >= m_length)
+            return false;
+
         setIndexQuicklyToNativeValue(i, value);
         return true;
     }

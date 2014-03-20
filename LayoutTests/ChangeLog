@@ -1,3 +1,15 @@
+2014-03-19  Oliver Hunt  <oliver@apple.com>
+
+        Incorrect behavior when mutating a typed array during set.
+        https://bugs.webkit.org/show_bug.cgi?id=130428
+
+        Reviewed by Geoffrey Garen.
+
+        Test behaviour of TypedArray.set(array) when we neuter the array.
+
+        * js/typed-array-mutated-during-set-expected.txt: Added.
+        * js/typed-array-mutated-during-set.html: Added.
+
 2014-03-20  Daniel Bates  <dabates@apple.com>
 
         Preserve original document URL for XSSAuditor reports

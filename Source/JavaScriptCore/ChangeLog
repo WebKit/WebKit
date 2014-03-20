@@ -1,3 +1,22 @@
+2014-03-20  Oliver Hunt  <oliver@apple.com>
+
+        Incorrect behavior when mutating a typed array during set.
+        https://bugs.webkit.org/show_bug.cgi?id=130428
+
+        Reviewed by Geoffrey Garen.
+
+        This fixes a null derefence that occurs if a typed array
+        is mutated during the set() operation. The patch gets rid
+        of the "Quickly" version of setIndex that is assigning
+        JSValues of unknown type, as the numeric conversion can trigger
+        side effects that lead to neutering, and so we deref null.
+
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::JSGenericTypedArrayView::setIndex):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::set):
+        (JSC::JSGenericTypedArrayView<Adaptor>::putByIndex):
+
 2014-03-20  Gavin Barraclough  <barraclough@apple.com>
 
         Merge AtomicString, Identifier
