@@ -1,3 +1,29 @@
+2014-03-20  Simon Fraser  <simon.fraser@apple.com>
+
+        FrameView::paintContents() is not called for composited content
+        https://bugs.webkit.org/show_bug.cgi?id=130541
+
+        Reviewed by Beth Dakin.
+
+        FrameView::paintContents() is not called for frames that have
+        composited contents, yet it contains code that is expected
+        to run for all Frames.
+        
+        Fix by factoring into will/didPaintContents(), and calling
+        the will/did functions from RenderLayerBacking::paintIntoLayer().
+        
+        Also add a SetLayoutNeededForbiddenScope check for composited-layer
+        painting.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateControlTints):
+        (WebCore::FrameView::willPaintContents):
+        (WebCore::FrameView::didPaintContents):
+        (WebCore::FrameView::paintContents):
+        * page/FrameView.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+
 2014-03-20  Tim Horton  <timothy_horton@apple.com>
 
         Fix the Mountain Lion build.

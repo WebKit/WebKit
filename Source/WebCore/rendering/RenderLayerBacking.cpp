@@ -2157,13 +2157,24 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
         paintFlags |= (RenderLayer::PaintLayerPaintingRootBackgroundOnly | RenderLayer::PaintLayerPaintingCompositingForegroundPhase); // Need PaintLayerPaintingCompositingForegroundPhase to walk child layers.
     else if (compositor().fixedRootBackgroundLayer())
         paintFlags |= RenderLayer::PaintLayerPaintingSkipRootBackground;
-    
+
+#ifndef NDEBUG
+    RenderElement::SetLayoutNeededForbiddenScope forbidSetNeedsLayout(&m_owningLayer.renderer());
+#endif
+
+    FrameView::PaintingState paintingState;
+    if (m_owningLayer.isRootLayer())
+        m_owningLayer.renderer().view().frameView().willPaintContents(context, paintDirtyRect, paintingState);
+
     // FIXME: GraphicsLayers need a way to split for RenderRegions.
     RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, paintDirtyRect, paintBehavior, m_devicePixelFractionFromRenderer);
     m_owningLayer.paintLayerContents(context, paintingInfo, paintFlags);
 
     if (m_owningLayer.containsDirtyOverlayScrollbars())
         m_owningLayer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerPaintingOverlayScrollbars);
+
+    if (m_owningLayer.isRootLayer())
+        m_owningLayer.renderer().view().frameView().didPaintContents(context, paintDirtyRect, paintingState);
 
     compositor().didPaintBacking(this);
 

@@ -3461,7 +3461,88 @@ void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
     adjustTiledBackingCoverage();
 }
 
-void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
+void FrameView::willPaintContents(GraphicsContext* context, const IntRect& dirtyRect, PaintingState& paintingState)
+{
+    Document* document = frame().document();
+
+    if (!context->paintingDisabled())
+        InspectorInstrumentation::willPaint(renderView());
+
+    paintingState.isTopLevelPainter = !sCurrentPaintTimeStamp;
+
+#if PLATFORM(IOS)
+    // FIXME: Remove PLATFORM(IOS)-guard once we upstream the iOS changes to MemoryPressureHandler.h.
+    if (isTopLevelPainter && memoryPressureHandler().hasReceivedMemoryPressure()) {
+        LOG(MemoryPressure, "Under memory pressure: %s", __PRETTY_FUNCTION__);
+
+        // To avoid unnecessary image decoding, we don't prune recently-decoded live resources here since
+        // we might need some live bitmaps on painting.
+        memoryCache()->prune();
+    }
+#endif
+    if (paintingState.isTopLevelPainter)
+        sCurrentPaintTimeStamp = monotonicallyIncreasingTime();
+
+    if (!context->paintingDisabled() && !document->printing())
+        flushCompositingStateForThisFrame(&frame());
+
+    paintingState.paintBehavior = m_paintBehavior;
+    
+    if (FrameView* parentView = parentFrameView()) {
+        if (parentView->paintBehavior() & PaintBehaviorFlattenCompositingLayers)
+            m_paintBehavior |= PaintBehaviorFlattenCompositingLayers;
+    }
+    
+    if (m_paintBehavior == PaintBehaviorNormal)
+        document->markers().invalidateRenderedRectsForMarkersInRect(dirtyRect);
+
+    if (document->printing())
+        m_paintBehavior |= PaintBehaviorFlattenCompositingLayers;
+
+    paintingState.isFlatteningPaintOfRootFrame = (m_paintBehavior & PaintBehaviorFlattenCompositingLayers) && !frame().ownerElement();
+    if (paintingState.isFlatteningPaintOfRootFrame)
+        notifyWidgetsInAllFrames(WillPaintFlattened);
+
+    ASSERT(!m_isPainting);
+    m_isPainting = true;
+}
+
+void FrameView::didPaintContents(GraphicsContext* context, const IntRect& dirtyRect, PaintingState& paintingState)
+{
+    m_isPainting = false;
+
+    if (paintingState.isFlatteningPaintOfRootFrame)
+        notifyWidgetsInAllFrames(DidPaintFlattened);
+
+    m_paintBehavior = paintingState.paintBehavior;
+    m_lastPaintTime = monotonicallyIncreasingTime();
+
+#if PLATFORM(IOS)
+    // Painting can lead to decoding of large amounts of bitmaps
+    // If we are low on memory, wipe them out after the paint.
+    // FIXME: Remove PLATFORM(IOS)-guard once we upstream the iOS changes to MemoryPressureHandler.h.
+    if (isTopLevelPainter && memoryPressureHandler().hasReceivedMemoryPressure())
+        memoryCache()->pruneLiveResources(true);
+#endif
+
+    Document* document = frame().document();
+    // Regions may have changed as a result of the visibility/z-index of element changing.
+#if ENABLE(DASHBOARD_SUPPORT)
+    if (document->annotatedRegionsDirty())
+        updateAnnotatedRegions();
+#endif
+
+    if (paintingState.isTopLevelPainter)
+        sCurrentPaintTimeStamp = 0;
+
+    if (!context->paintingDisabled()) {
+        InspectorInstrumentation::didPaint(renderView(), context, dirtyRect);
+        // FIXME: should probably not fire milestones for snapshot painting. https://bugs.webkit.org/show_bug.cgi?id=117623
+        firePaintRelatedMilestonesIfNeeded();
+    }
+}
+
+void FrameView::paintContents(GraphicsContext* context, const IntRect& dirtyRect)
 {
     Document* document = frame().document();
 
@@ -3481,7 +3562,7 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
         fillWithRed = true;
     
     if (fillWithRed)
-        p->fillRect(rect, Color(0xFF, 0, 0), ColorSpaceDeviceRGB);
+        context->fillRect(dirtyRect, Color(0xFF, 0, 0), ColorSpaceDeviceRGB);
 #endif
 
     RenderView* renderView = this->renderView();
@@ -3494,48 +3575,10 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     if (needsLayout())
         return;
 
-    if (!p->paintingDisabled())
-        InspectorInstrumentation::willPaint(renderView);
-
-    bool isTopLevelPainter = !sCurrentPaintTimeStamp;
-#if PLATFORM(IOS)
-    // FIXME: Remove PLATFORM(IOS)-guard once we upstream the iOS changes to MemoryPressureHandler.h.
-    if (isTopLevelPainter && memoryPressureHandler().hasReceivedMemoryPressure()) {
-        LOG(MemoryPressure, "Under memory pressure: %s", __PRETTY_FUNCTION__);
-
-        // To avoid unnecessary image decoding, we don't prune recently-decoded live resources here since
-        // we might need some live bitmaps on painting.
-        memoryCache()->prune();
-    }
-#endif
-    if (isTopLevelPainter)
-        sCurrentPaintTimeStamp = monotonicallyIncreasingTime();
+    PaintingState paintingState;
+    willPaintContents(context, dirtyRect, paintingState);
 
     FontCachePurgePreventer fontCachePurgePreventer;
-
-    if (!p->paintingDisabled() && !document->printing())
-        flushCompositingStateForThisFrame(&frame());
-
-    PaintBehavior oldPaintBehavior = m_paintBehavior;
-    
-    if (FrameView* parentView = parentFrameView()) {
-        if (parentView->paintBehavior() & PaintBehaviorFlattenCompositingLayers)
-            m_paintBehavior |= PaintBehaviorFlattenCompositingLayers;
-    }
-    
-    if (m_paintBehavior == PaintBehaviorNormal)
-        document->markers().invalidateRenderedRectsForMarkersInRect(rect);
-
-    if (document->printing())
-        m_paintBehavior |= PaintBehaviorFlattenCompositingLayers;
-
-    bool flatteningPaint = m_paintBehavior & PaintBehaviorFlattenCompositingLayers;
-    bool isRootFrame = !frame().ownerElement();
-    if (flatteningPaint && isRootFrame)
-        notifyWidgetsInAllFrames(WillPaintFlattened);
-
-    ASSERT(!m_isPainting);
-    m_isPainting = true;
 
     // m_nodeToDraw is used to draw only one element (and its descendants)
     RenderObject* eltRenderer = m_nodeToDraw ? m_nodeToDraw->renderer() : 0;
@@ -3545,41 +3588,11 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     RenderElement::SetLayoutNeededForbiddenScope forbidSetNeedsLayout(&rootLayer->renderer());
 #endif
 
-    rootLayer->paint(p, rect, m_paintBehavior, eltRenderer);
-
+    rootLayer->paint(context, dirtyRect, m_paintBehavior, eltRenderer);
     if (rootLayer->containsDirtyOverlayScrollbars())
-        rootLayer->paintOverlayScrollbars(p, rect, m_paintBehavior, eltRenderer);
+        rootLayer->paintOverlayScrollbars(context, dirtyRect, m_paintBehavior, eltRenderer);
 
-    m_isPainting = false;
-
-    if (flatteningPaint && isRootFrame)
-        notifyWidgetsInAllFrames(DidPaintFlattened);
-
-    m_paintBehavior = oldPaintBehavior;
-    m_lastPaintTime = monotonicallyIncreasingTime();
-
-#if PLATFORM(IOS)
-    // Painting can lead to decoding of large amounts of bitmaps
-    // If we are low on memory, wipe them out after the paint.
-    // FIXME: Remove PLATFORM(IOS)-guard once we upstream the iOS changes to MemoryPressureHandler.h.
-    if (isTopLevelPainter && memoryPressureHandler().hasReceivedMemoryPressure())
-        memoryCache()->pruneLiveResources(true);
-#endif
-
-    // Regions may have changed as a result of the visibility/z-index of element changing.
-#if ENABLE(DASHBOARD_SUPPORT)
-    if (document->annotatedRegionsDirty())
-        updateAnnotatedRegions();
-#endif
-
-    if (isTopLevelPainter)
-        sCurrentPaintTimeStamp = 0;
-
-    if (!p->paintingDisabled()) {
-        InspectorInstrumentation::didPaint(renderView, p, rect);
-        // FIXME: should probably not fire milestones for snapshot painting. https://bugs.webkit.org/show_bug.cgi?id=117623
-        firePaintRelatedMilestonesIfNeeded();
-    }
+    didPaintContents(context, dirtyRect, paintingState);
 }
 
 void FrameView::setPaintBehavior(PaintBehavior behavior)
