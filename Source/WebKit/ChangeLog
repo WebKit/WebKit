@@ -1,3 +1,16 @@
+2014-03-20  Alex Christensen  <achristensen@webkit.org>
+
+        Build fixes for Win64.
+        https://bugs.webkit.org/show_bug.cgi?id=130481
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.vcxproj/WebKit.sln:
+        Don't build ANGLE projects for now, corrected build configurations,
+        and build WebInspectorUI.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Added 64-bit linker symbol.
+
 2014-03-20  Gavin Barraclough  <barraclough@apple.com>
 
         Merge AtomicString, Identifier

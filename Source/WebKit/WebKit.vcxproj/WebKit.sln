@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2013 for Windows Desktop
+# Visual Studio 2013
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WTF Projects", "WTF Projects", "{7F982CAD-225B-4FCE-9937-3B72C14D968D}"
@@ -877,7 +877,6 @@ Global
 		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Release|x64.Build.0 = Release|x64
 		{E746FCA9-64C3-433E-85E8-9A5A67AB7ED6}.Debug_WinCairo|Win32.ActiveCfg = Debug_WinCairo|Win32
 		{E746FCA9-64C3-433E-85E8-9A5A67AB7ED6}.Debug_WinCairo|x64.ActiveCfg = Debug_WinCairo|x64
-		{E746FCA9-64C3-433E-85E8-9A5A67AB7ED6}.Debug_WinCairo|x64.Build.0 = Debug_WinCairo|x64
 		{E746FCA9-64C3-433E-85E8-9A5A67AB7ED6}.Debug|Win32.ActiveCfg = Debug|Win32
 		{E746FCA9-64C3-433E-85E8-9A5A67AB7ED6}.Debug|x64.ActiveCfg = Debug|x64
 		{E746FCA9-64C3-433E-85E8-9A5A67AB7ED6}.DebugSuffix|Win32.ActiveCfg = Debug|Win32
@@ -888,12 +887,10 @@ Global
 		{E746FCA9-64C3-433E-85E8-9A5A67AB7ED6}.Production|x64.ActiveCfg = Production|x64
 		{E746FCA9-64C3-433E-85E8-9A5A67AB7ED6}.Release_WinCairo|Win32.ActiveCfg = Release_WinCairo|Win32
 		{E746FCA9-64C3-433E-85E8-9A5A67AB7ED6}.Release_WinCairo|x64.ActiveCfg = Release_WinCairo|x64
-		{E746FCA9-64C3-433E-85E8-9A5A67AB7ED6}.Release_WinCairo|x64.Build.0 = Release_WinCairo|x64
 		{E746FCA9-64C3-433E-85E8-9A5A67AB7ED6}.Release|Win32.ActiveCfg = Release|Win32
 		{E746FCA9-64C3-433E-85E8-9A5A67AB7ED6}.Release|x64.ActiveCfg = Release|x64
 		{B5871A7A-968C-42E3-A33B-981E6F448E78}.Debug_WinCairo|Win32.ActiveCfg = Debug_WinCairo|Win32
 		{B5871A7A-968C-42E3-A33B-981E6F448E78}.Debug_WinCairo|x64.ActiveCfg = Debug_WinCairo|x64
-		{B5871A7A-968C-42E3-A33B-981E6F448E78}.Debug_WinCairo|x64.Build.0 = Debug_WinCairo|x64
 		{B5871A7A-968C-42E3-A33B-981E6F448E78}.Debug|Win32.ActiveCfg = Debug|Win32
 		{B5871A7A-968C-42E3-A33B-981E6F448E78}.Debug|x64.ActiveCfg = Debug|x64
 		{B5871A7A-968C-42E3-A33B-981E6F448E78}.DebugSuffix|Win32.ActiveCfg = Debug|Win32
@@ -904,12 +901,10 @@ Global
 		{B5871A7A-968C-42E3-A33B-981E6F448E78}.Production|x64.ActiveCfg = Production|x64
 		{B5871A7A-968C-42E3-A33B-981E6F448E78}.Release_WinCairo|Win32.ActiveCfg = Release_WinCairo|Win32
 		{B5871A7A-968C-42E3-A33B-981E6F448E78}.Release_WinCairo|x64.ActiveCfg = Release_WinCairo|x64
-		{B5871A7A-968C-42E3-A33B-981E6F448E78}.Release_WinCairo|x64.Build.0 = Release_WinCairo|x64
 		{B5871A7A-968C-42E3-A33B-981E6F448E78}.Release|Win32.ActiveCfg = Release|Win32
 		{B5871A7A-968C-42E3-A33B-981E6F448E78}.Release|x64.ActiveCfg = Release|x64
 		{5B3A6DB8-1E7E-40D7-92B9-DA8AAE619FAD}.Debug_WinCairo|Win32.ActiveCfg = Debug_WinCairo|Win32
 		{5B3A6DB8-1E7E-40D7-92B9-DA8AAE619FAD}.Debug_WinCairo|x64.ActiveCfg = Debug_WinCairo|x64
-		{5B3A6DB8-1E7E-40D7-92B9-DA8AAE619FAD}.Debug_WinCairo|x64.Build.0 = Debug_WinCairo|x64
 		{5B3A6DB8-1E7E-40D7-92B9-DA8AAE619FAD}.Debug|Win32.ActiveCfg = Debug|Win32
 		{5B3A6DB8-1E7E-40D7-92B9-DA8AAE619FAD}.Debug|x64.ActiveCfg = Debug|x64
 		{5B3A6DB8-1E7E-40D7-92B9-DA8AAE619FAD}.DebugSuffix|Win32.ActiveCfg = Debug|Win32
@@ -920,12 +915,10 @@ Global
 		{5B3A6DB8-1E7E-40D7-92B9-DA8AAE619FAD}.Production|x64.ActiveCfg = Production|x64
 		{5B3A6DB8-1E7E-40D7-92B9-DA8AAE619FAD}.Release_WinCairo|Win32.ActiveCfg = Release_WinCairo|Win32
 		{5B3A6DB8-1E7E-40D7-92B9-DA8AAE619FAD}.Release_WinCairo|x64.ActiveCfg = Release_WinCairo|x64
-		{5B3A6DB8-1E7E-40D7-92B9-DA8AAE619FAD}.Release_WinCairo|x64.Build.0 = Release_WinCairo|x64
 		{5B3A6DB8-1E7E-40D7-92B9-DA8AAE619FAD}.Release|Win32.ActiveCfg = Release|Win32
 		{5B3A6DB8-1E7E-40D7-92B9-DA8AAE619FAD}.Release|x64.ActiveCfg = Release|x64
 		{23C3AC97-A1BF-4188-A092-8C78CF022DD7}.Debug_WinCairo|Win32.ActiveCfg = Debug_WinCairo|Win32
 		{23C3AC97-A1BF-4188-A092-8C78CF022DD7}.Debug_WinCairo|x64.ActiveCfg = Debug_WinCairo|x64
-		{23C3AC97-A1BF-4188-A092-8C78CF022DD7}.Debug_WinCairo|x64.Build.0 = Debug_WinCairo|x64
 		{23C3AC97-A1BF-4188-A092-8C78CF022DD7}.Debug|Win32.ActiveCfg = Debug|Win32
 		{23C3AC97-A1BF-4188-A092-8C78CF022DD7}.Debug|x64.ActiveCfg = Debug|x64
 		{23C3AC97-A1BF-4188-A092-8C78CF022DD7}.DebugSuffix|Win32.ActiveCfg = Debug|Win32
@@ -936,12 +929,10 @@ Global
 		{23C3AC97-A1BF-4188-A092-8C78CF022DD7}.Production|x64.ActiveCfg = Production|x64
 		{23C3AC97-A1BF-4188-A092-8C78CF022DD7}.Release_WinCairo|Win32.ActiveCfg = Release_WinCairo|Win32
 		{23C3AC97-A1BF-4188-A092-8C78CF022DD7}.Release_WinCairo|x64.ActiveCfg = Release_WinCairo|x64
-		{23C3AC97-A1BF-4188-A092-8C78CF022DD7}.Release_WinCairo|x64.Build.0 = Release_WinCairo|x64
 		{23C3AC97-A1BF-4188-A092-8C78CF022DD7}.Release|Win32.ActiveCfg = Release|Win32
 		{23C3AC97-A1BF-4188-A092-8C78CF022DD7}.Release|x64.ActiveCfg = Release|x64
 		{74D9486C-8F75-46FD-B2B7-6142E09AE3A8}.Debug_WinCairo|Win32.ActiveCfg = Debug_WinCairo|Win32
 		{74D9486C-8F75-46FD-B2B7-6142E09AE3A8}.Debug_WinCairo|x64.ActiveCfg = Debug_WinCairo|x64
-		{74D9486C-8F75-46FD-B2B7-6142E09AE3A8}.Debug_WinCairo|x64.Build.0 = Debug_WinCairo|x64
 		{74D9486C-8F75-46FD-B2B7-6142E09AE3A8}.Debug|Win32.ActiveCfg = Debug|Win32
 		{74D9486C-8F75-46FD-B2B7-6142E09AE3A8}.Debug|x64.ActiveCfg = Debug|x64
 		{74D9486C-8F75-46FD-B2B7-6142E09AE3A8}.DebugSuffix|Win32.ActiveCfg = Debug|Win32
@@ -952,12 +943,10 @@ Global
 		{74D9486C-8F75-46FD-B2B7-6142E09AE3A8}.Production|x64.ActiveCfg = Production|x64
 		{74D9486C-8F75-46FD-B2B7-6142E09AE3A8}.Release_WinCairo|Win32.ActiveCfg = Release_WinCairo|Win32
 		{74D9486C-8F75-46FD-B2B7-6142E09AE3A8}.Release_WinCairo|x64.ActiveCfg = Release_WinCairo|x64
-		{74D9486C-8F75-46FD-B2B7-6142E09AE3A8}.Release_WinCairo|x64.Build.0 = Release_WinCairo|x64
 		{74D9486C-8F75-46FD-B2B7-6142E09AE3A8}.Release|Win32.ActiveCfg = Release|Win32
 		{74D9486C-8F75-46FD-B2B7-6142E09AE3A8}.Release|x64.ActiveCfg = Release|x64
 		{8C6B55FF-783C-4AA4-BAC2-24A1CDBEDC8A}.Debug_WinCairo|Win32.ActiveCfg = Debug_WinCairo|Win32
 		{8C6B55FF-783C-4AA4-BAC2-24A1CDBEDC8A}.Debug_WinCairo|x64.ActiveCfg = Debug_WinCairo|x64
-		{8C6B55FF-783C-4AA4-BAC2-24A1CDBEDC8A}.Debug_WinCairo|x64.Build.0 = Debug_WinCairo|x64
 		{8C6B55FF-783C-4AA4-BAC2-24A1CDBEDC8A}.Debug|Win32.ActiveCfg = Debug|Win32
 		{8C6B55FF-783C-4AA4-BAC2-24A1CDBEDC8A}.Debug|x64.ActiveCfg = Debug|x64
 		{8C6B55FF-783C-4AA4-BAC2-24A1CDBEDC8A}.DebugSuffix|Win32.ActiveCfg = Debug|Win32
@@ -968,12 +957,12 @@ Global
 		{8C6B55FF-783C-4AA4-BAC2-24A1CDBEDC8A}.Production|x64.ActiveCfg = Production|x64
 		{8C6B55FF-783C-4AA4-BAC2-24A1CDBEDC8A}.Release_WinCairo|Win32.ActiveCfg = Release_WinCairo|Win32
 		{8C6B55FF-783C-4AA4-BAC2-24A1CDBEDC8A}.Release_WinCairo|x64.ActiveCfg = Release_WinCairo|x64
-		{8C6B55FF-783C-4AA4-BAC2-24A1CDBEDC8A}.Release_WinCairo|x64.Build.0 = Release_WinCairo|x64
 		{8C6B55FF-783C-4AA4-BAC2-24A1CDBEDC8A}.Release|Win32.ActiveCfg = Release|Win32
 		{8C6B55FF-783C-4AA4-BAC2-24A1CDBEDC8A}.Release|x64.ActiveCfg = Release|x64
 		{0473724F-0AB3-4F12-892E-9FAB0186C804}.Debug_WinCairo|Win32.ActiveCfg = Debug_WinCairo|Win32
 		{0473724F-0AB3-4F12-892E-9FAB0186C804}.Debug_WinCairo|Win32.Build.0 = Debug_WinCairo|Win32
-		{0473724F-0AB3-4F12-892E-9FAB0186C804}.Debug_WinCairo|x64.ActiveCfg = Debug|x64
+		{0473724F-0AB3-4F12-892E-9FAB0186C804}.Debug_WinCairo|x64.ActiveCfg = Debug_WinCairo|x64
+		{0473724F-0AB3-4F12-892E-9FAB0186C804}.Debug_WinCairo|x64.Build.0 = Debug_WinCairo|x64
 		{0473724F-0AB3-4F12-892E-9FAB0186C804}.Debug|Win32.ActiveCfg = Debug|Win32
 		{0473724F-0AB3-4F12-892E-9FAB0186C804}.Debug|Win32.Build.0 = Debug|Win32
 		{0473724F-0AB3-4F12-892E-9FAB0186C804}.Debug|x64.ActiveCfg = Debug|x64
@@ -985,7 +974,8 @@ Global
 		{0473724F-0AB3-4F12-892E-9FAB0186C804}.Production|x64.ActiveCfg = Release|x64
 		{0473724F-0AB3-4F12-892E-9FAB0186C804}.Release_WinCairo|Win32.ActiveCfg = Release_WinCairo|Win32
 		{0473724F-0AB3-4F12-892E-9FAB0186C804}.Release_WinCairo|Win32.Build.0 = Release_WinCairo|Win32
-		{0473724F-0AB3-4F12-892E-9FAB0186C804}.Release_WinCairo|x64.ActiveCfg = Release|x64
+		{0473724F-0AB3-4F12-892E-9FAB0186C804}.Release_WinCairo|x64.ActiveCfg = Release_WinCairo|x64
+		{0473724F-0AB3-4F12-892E-9FAB0186C804}.Release_WinCairo|x64.Build.0 = Release_WinCairo|x64
 		{0473724F-0AB3-4F12-892E-9FAB0186C804}.Release|Win32.ActiveCfg = Release|Win32
 		{0473724F-0AB3-4F12-892E-9FAB0186C804}.Release|Win32.Build.0 = Release|Win32
 		{0473724F-0AB3-4F12-892E-9FAB0186C804}.Release|x64.ActiveCfg = Release|x64
