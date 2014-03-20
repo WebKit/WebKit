@@ -1,3 +1,10 @@
+2014-03-20  Pratik Solanki  <psolanki@apple.com>
+
+        iOS build fix after r165979.
+
+        * generate-export-file:
+        (preprocessorMacros):
+
 2014-03-20  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] getClientRects returns wrong rectangle

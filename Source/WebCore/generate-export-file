@@ -96,6 +96,14 @@ sub preprocessorMacros($\@)
     push(@args, "-I" . $ENV{BUILT_PRODUCTS_DIR} . $ENV{SDKROOT} . "/usr/local/include") if $ENV{BUILT_PRODUCTS_DIR};
     push(@args, "-I" . $ENV{SDKROOT} . "/usr/local/include");
 
+    chomp(my $sdk_version = `xcrun --sdk $ENV{SDKROOT} --show-sdk-version`);
+    if ($ENV{PLATFORM_NAME} eq "iphoneos") {
+        push(@args, "-miphoneos-min-version=" . $sdk_version);
+    }
+    if ($ENV{PLATFORM_NAME} eq "iphonesimulator") {
+        push(@args, "-mios-simulator-version-min=" . $sdk_version);
+    }
+
     # Print out #define lines for all macros.
     push(@args, qw(-dM /dev/null));
 
