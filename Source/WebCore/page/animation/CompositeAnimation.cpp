@@ -473,14 +473,14 @@ void CompositeAnimation::resumeOverriddenImplicitAnimations(CSSPropertyID proper
     }
 }
 
-bool CompositeAnimation::isAnimatingProperty(CSSPropertyID property, bool acceleratedOnly, bool isRunningNow) const
+bool CompositeAnimation::isAnimatingProperty(CSSPropertyID property, bool acceleratedOnly, AnimationBase::RunningState runningState) const
 {
     if (!m_keyframeAnimations.isEmpty()) {
         m_keyframeAnimations.checkConsistency();
         AnimationNameMap::const_iterator animationsEnd = m_keyframeAnimations.end();
         for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != animationsEnd; ++it) {
             KeyframeAnimation* anim = it->value.get();
-            if (anim && anim->isAnimatingProperty(property, acceleratedOnly, isRunningNow))
+            if (anim && anim->isAnimatingProperty(property, acceleratedOnly, runningState))
                 return true;
         }
     }
@@ -489,7 +489,7 @@ bool CompositeAnimation::isAnimatingProperty(CSSPropertyID property, bool accele
         CSSPropertyTransitionsMap::const_iterator transitionsEnd = m_transitions.end();
         for (CSSPropertyTransitionsMap::const_iterator it = m_transitions.begin(); it != transitionsEnd; ++it) {
             ImplicitAnimation* anim = it->value.get();
-            if (anim && anim->isAnimatingProperty(property, acceleratedOnly, isRunningNow))
+            if (anim && anim->isAnimatingProperty(property, acceleratedOnly, runningState))
                 return true;
         }
     }

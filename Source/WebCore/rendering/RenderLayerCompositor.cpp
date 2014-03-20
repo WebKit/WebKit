@@ -2368,13 +2368,14 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
     if (!(m_compositingTriggers & ChromeClient::AnimationTrigger))
         return false;
 
+    const AnimationBase::RunningState activeAnimationState = AnimationBase::Running | AnimationBase::Paused | AnimationBase::FillingFowards;
     AnimationController& animController = renderer.animation();
-    return (animController.isRunningAnimationOnRenderer(&renderer, CSSPropertyOpacity)
+    return (animController.isRunningAnimationOnRenderer(&renderer, CSSPropertyOpacity, activeAnimationState)
             && (inCompositingMode() || (m_compositingTriggers & ChromeClient::AnimatedOpacityTrigger)))
 #if ENABLE(CSS_FILTERS)
-            || animController.isRunningAnimationOnRenderer(&renderer, CSSPropertyWebkitFilter)
+            || animController.isRunningAnimationOnRenderer(&renderer, CSSPropertyWebkitFilter, activeAnimationState)
 #endif // CSS_FILTERS
-            || animController.isRunningAnimationOnRenderer(&renderer, CSSPropertyWebkitTransform);
+            || animController.isRunningAnimationOnRenderer(&renderer, CSSPropertyWebkitTransform, activeAnimationState);
 }
 
 bool RenderLayerCompositor::requiresCompositingForIndirectReason(RenderLayerModelObject& renderer, bool hasCompositedDescendants, bool hasBlendedDescendants, bool has3DTransformedDescendants, RenderLayer::IndirectCompositingReason& reason) const
@@ -2554,7 +2555,7 @@ bool RenderLayerCompositor::isRunningAcceleratedTransformAnimation(RenderLayerMo
     if (!(m_compositingTriggers & ChromeClient::AnimationTrigger))
         return false;
 
-    return renderer.animation().isRunningAnimationOnRenderer(&renderer, CSSPropertyWebkitTransform);
+    return renderer.animation().isRunningAcceleratedAnimationOnRenderer(&renderer, CSSPropertyWebkitTransform, AnimationBase::Running | AnimationBase::Paused);
 }
 
 // If an element has negative z-index children, those children render in front of the 

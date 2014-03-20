@@ -670,11 +670,11 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 
     // Set transform property, if it is not animating. We have to do this here because the transform
     // is affected by the layer dimensions.
-    if (!renderer().animation().isRunningAcceleratedAnimationOnRenderer(&renderer(), CSSPropertyWebkitTransform))
+    if (!renderer().animation().isRunningAcceleratedAnimationOnRenderer(&renderer(), CSSPropertyWebkitTransform, AnimationBase::Running | AnimationBase::Paused | AnimationBase::FillingFowards))
         updateTransform(&renderer().style());
 
     // Set opacity, if it is not animating.
-    if (!renderer().animation().isRunningAcceleratedAnimationOnRenderer(&renderer(), CSSPropertyOpacity))
+    if (!renderer().animation().isRunningAcceleratedAnimationOnRenderer(&renderer(), CSSPropertyOpacity, AnimationBase::Running | AnimationBase::Paused | AnimationBase::FillingFowards))
         updateOpacity(&renderer().style());
         
 #if ENABLE(CSS_FILTERS)

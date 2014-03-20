@@ -29,13 +29,13 @@
 #ifndef AnimationController_h
 #define AnimationController_h
 
+#include "AnimationBase.h"
 #include "CSSPropertyNames.h"
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-class AnimationBase;
 class AnimationControllerPrivate;
 class Document;
 class Element;
@@ -59,8 +59,8 @@ public:
     bool pauseTransitionAtTime(RenderElement*, const String& property, double t); // To be used only for testing
     unsigned numberOfActiveAnimations(Document*) const; // To be used only for testing
     
-    bool isRunningAnimationOnRenderer(RenderElement*, CSSPropertyID, bool isRunningNow = true) const;
-    bool isRunningAcceleratedAnimationOnRenderer(RenderElement*, CSSPropertyID, bool isRunningNow = true) const;
+    bool isRunningAnimationOnRenderer(RenderElement*, CSSPropertyID, AnimationBase::RunningState) const;
+    bool isRunningAcceleratedAnimationOnRenderer(RenderElement*, CSSPropertyID, AnimationBase::RunningState) const;
 
     bool isSuspended() const;
     void suspendAnimations();

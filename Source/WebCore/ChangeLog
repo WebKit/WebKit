@@ -1,3 +1,46 @@
+2014-03-20  Simon Fraser  <simon.fraser@apple.com>
+
+        A completed fill-forwards animation should not disable overlap testing
+        https://bugs.webkit.org/show_bug.cgi?id=130522
+        <rdar://problem/15862395>
+
+        Reviewed by Dean Jackson.
+        
+        Previously, if -webkit-transform was being keyframe-animated, and the
+        animation had fill-forwards, then we would continue to think that the
+        animation is running and turn off compositing overlap testing. This
+        caused some sites to keep too much backing store around.
+        
+        Fix by having isRunning{Accelerated}AnimationOnRenderer take some flags
+        so that more specific questions about the running state can be asked.
+        For layer creation, keep using the same criteria as before (for now)
+        which includes paused and fill-forwards animations. For overlap testing,
+        don't include the fill-forwards test.
+
+        Tests: compositing/animation/filling-animation-overlap-at-end.html
+               compositing/animation/filling-animation-overlap.html
+               compositing/animation/layer-for-filling-animation.html
+
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::fillingForwards):
+        (WebCore::AnimationBase::inPausedState):
+        (WebCore::AnimationBase::isAnimatingProperty):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::isRunningAnimationOnRenderer):
+        (WebCore::AnimationControllerPrivate::isRunningAcceleratedAnimationOnRenderer):
+        (WebCore::AnimationController::isRunningAnimationOnRenderer):
+        (WebCore::AnimationController::isRunningAcceleratedAnimationOnRenderer):
+        * page/animation/AnimationController.h:
+        * page/animation/AnimationControllerPrivate.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::isAnimatingProperty):
+        * page/animation/CompositeAnimation.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForAnimation):
+        (WebCore::RenderLayerCompositor::isRunningAcceleratedTransformAnimation):
+
 2014-03-20  Dirk Schulze  <krit@webkit.org>
 
         Canvas methods clip/fill/stroke should not except 0 argument

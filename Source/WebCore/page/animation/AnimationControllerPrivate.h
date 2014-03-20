@@ -29,6 +29,7 @@
 #ifndef AnimationControllerPrivate_h
 #define AnimationControllerPrivate_h
 
+#include "AnimationBase.h"
 #include "CSSPropertyNames.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
@@ -85,8 +86,8 @@ public:
     void resumeAnimationsForDocument(Document*);
     void startAnimationsIfNotSuspended(Document*);
 
-    bool isRunningAnimationOnRenderer(RenderElement*, CSSPropertyID, bool isRunningNow) const;
-    bool isRunningAcceleratedAnimationOnRenderer(RenderElement*, CSSPropertyID, bool isRunningNow) const;
+    bool isRunningAnimationOnRenderer(RenderElement*, CSSPropertyID, AnimationBase::RunningState) const;
+    bool isRunningAcceleratedAnimationOnRenderer(RenderElement*, CSSPropertyID, AnimationBase::RunningState) const;
 
     bool pauseAnimationAtTime(RenderElement*, const AtomicString& name, double t);
     bool pauseTransitionAtTime(RenderElement*, const String& property, double t);

@@ -236,16 +236,16 @@ void AnimationControllerPrivate::animationTimerFired(Timer<AnimationControllerPr
     fireEventsAndUpdateStyle();
 }
 
-bool AnimationControllerPrivate::isRunningAnimationOnRenderer(RenderElement* renderer, CSSPropertyID property, bool isRunningNow) const
+bool AnimationControllerPrivate::isRunningAnimationOnRenderer(RenderElement* renderer, CSSPropertyID property, AnimationBase::RunningState runningState) const
 {
     const CompositeAnimation* animation = m_compositeAnimations.get(renderer);
-    return animation && animation->isAnimatingProperty(property, false, isRunningNow);
+    return animation && animation->isAnimatingProperty(property, false, runningState);
 }
 
-bool AnimationControllerPrivate::isRunningAcceleratedAnimationOnRenderer(RenderElement* renderer, CSSPropertyID property, bool isRunningNow) const
+bool AnimationControllerPrivate::isRunningAcceleratedAnimationOnRenderer(RenderElement* renderer, CSSPropertyID property, AnimationBase::RunningState runningState) const
 {
     const CompositeAnimation* animation = m_compositeAnimations.get(renderer);
-    return animation && animation->isAnimatingProperty(property, true, isRunningNow);
+    return animation && animation->isAnimatingProperty(property, true, runningState);
 }
 
 void AnimationControllerPrivate::suspendAnimations()
@@ -555,14 +555,14 @@ bool AnimationController::pauseTransitionAtTime(RenderElement* renderer, const S
     return m_data->pauseTransitionAtTime(renderer, property, t);
 }
 
-bool AnimationController::isRunningAnimationOnRenderer(RenderElement* renderer, CSSPropertyID property, bool isRunningNow) const
+bool AnimationController::isRunningAnimationOnRenderer(RenderElement* renderer, CSSPropertyID property, AnimationBase::RunningState runningState) const
 {
-    return m_data->isRunningAnimationOnRenderer(renderer, property, isRunningNow);
+    return m_data->isRunningAnimationOnRenderer(renderer, property, runningState);
 }
 
-bool AnimationController::isRunningAcceleratedAnimationOnRenderer(RenderElement* renderer, CSSPropertyID property, bool isRunningNow) const
+bool AnimationController::isRunningAcceleratedAnimationOnRenderer(RenderElement* renderer, CSSPropertyID property, AnimationBase::RunningState runningState) const
 {
-    return m_data->isRunningAcceleratedAnimationOnRenderer(renderer, property, isRunningNow);
+    return m_data->isRunningAcceleratedAnimationOnRenderer(renderer, property, runningState);
 }
 
 bool AnimationController::isSuspended() const
