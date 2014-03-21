@@ -65,6 +65,9 @@
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>
 
+// This is to suppress warnings about gdk_threads_leave and gdk_threads_enter.
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 /* uncomment this if you want debugging information about widget
    creation and destruction */
 #undef DEBUG_XTBIN

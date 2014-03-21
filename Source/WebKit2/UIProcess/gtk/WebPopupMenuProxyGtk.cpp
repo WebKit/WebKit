@@ -97,9 +97,13 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
     // menu right after calling WebPopupMenuProxy::showPopupMenu().
     m_runLoop = adoptGRef(g_main_loop_new(0, FALSE));
 
+// This is to suppress warnings about gdk_threads_leave and gdk_threads_enter.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     gdk_threads_leave();
     g_main_loop_run(m_runLoop.get());
     gdk_threads_enter();
+#pragma GCC diagnostic pop
 
     m_runLoop.clear();
 

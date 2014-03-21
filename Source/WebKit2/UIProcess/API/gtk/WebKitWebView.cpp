@@ -1646,9 +1646,14 @@ void webkitWebViewRunAsModal(WebKitWebView* webView)
     g_signal_emit(webView, signals[RUN_AS_MODAL], 0, NULL);
 
     webView->priv->modalLoop = adoptGRef(g_main_loop_new(0, FALSE));
+
+// This is to suppress warnings about gdk_threads_leave and gdk_threads_enter.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     gdk_threads_leave();
     g_main_loop_run(webView->priv->modalLoop.get());
     gdk_threads_enter();
+#pragma GCC diagnostic pop
 }
 
 void webkitWebViewClosePage(WebKitWebView* webView)
