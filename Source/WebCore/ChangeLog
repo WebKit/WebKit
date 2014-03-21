@@ -1,3 +1,52 @@
+2014-03-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge WebVTT Tokenizer Updates
+        https://bugs.webkit.org/show_bug.cgi?id=130565
+
+        Reviewed by Eric Carlson.
+
+        Merged from Blink (patch by fs@opera.com):
+        https://chromium.googlesource.com/chromium/blink/+/923db263aa65d6efd71c5b55708ad7eea6b23f53
+        http://crbug.com/73813002
+        https://chromium.googlesource.com/chromium/blink/+/48375b1d56b2d8850ae93a6c6fb01c69fae82c75
+        http://crbug.com/77553004
+        https://chromium.googlesource.com/chromium/blink/+/98d4fc4f5cb716a31d11907120b10538d4ba0f09
+        http://crbug.com/78833002
+        https://chromium.googlesource.com/chromium/blink/+/0e53d4f9f140e979b7f32de495551684bc7f4cd2
+        http://crbug.com/81113003
+        https://chromium.googlesource.com/chromium/blink/+/730ef1e7f9a1919964f7e74e7ccb2f343e10a148
+        http://crbug.com/97103002
+        https://chromium.googlesource.com/chromium/blink/+/c373ee914ffabeaf833939129538251d8f2f4eca
+        http://crbug.com/98763004
+        https://chromium.googlesource.com/chromium/blink/+/4ddb4d57948228fa05e49e06bd58a1179c09f212
+        http://crbug.com/118263002
+ 
+        * html/track/VTTCue.cpp:
+        (WebCore::scanPercentage):
+        (WebCore::VTTCue::setCueSettings):
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTTreeBuilder::buildFromString):
+        (WebCore::WebVTTTreeBuilder::constructTreeFromToken):
+        * html/track/WebVTTToken.h:
+        (WebCore::WebVTTToken::WebVTTToken):
+        (WebCore::WebVTTToken::StringToken):
+        (WebCore::WebVTTToken::StartTag):
+        (WebCore::WebVTTToken::EndTag):
+        (WebCore::WebVTTToken::TimestampTag):
+        (WebCore::WebVTTToken::type):
+        (WebCore::WebVTTToken::name):
+        (WebCore::WebVTTToken::characters):
+        (WebCore::WebVTTToken::classes):
+        (WebCore::WebVTTToken::annotation):
+        * html/track/WebVTTTokenizer.cpp:
+        (WebCore::addNewClass):
+        (WebCore::emitToken):
+        (WebCore::advanceAndEmitToken):
+        (WebCore::WebVTTTokenizer::WebVTTTokenizer):
+        (WebCore::WebVTTTokenizer::nextToken):
+        * html/track/WebVTTTokenizer.h:
+        (WebCore::WebVTTTokenizer::shouldSkipNullCharacters):
+
 2014-03-21  Frédéric Wang  <fred.wang@free.fr>
 
         Bug 130345 - Refine childShouldCreateRenderer for MathML elements

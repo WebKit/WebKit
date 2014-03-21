@@ -861,6 +861,37 @@ VTTCue::CueSetting VTTCue::settingName(const String& name)
     return None;
 }
 
+// Used for 'position' and 'size'.
+static bool scanPercentage(const String& input, unsigned& position, int& number)
+{
+    // 1. If value contains any characters other than U+0025 PERCENT SIGN
+    //    characters (%) and characters in the range U+0030 DIGIT ZERO (0) to
+    //    U+0039 DIGIT NINE (9), then jump to the step labeled next setting.
+    // 2. If value does not contain at least one character in the range U+0030
+    //    DIGIT ZERO (0) to U+0039 DIGIT NINE (9), then jump to the step
+    //    labeled next setting.
+    if (!WebVTTParser::collectDigitsToInt(input, position, number))
+        return false;
+    if (position >= input.length())
+        return false;
+
+    // 3. If any character in value other than the last character is a U+0025
+    //    PERCENT SIGN character (%), then jump to the step labeled next
+    //    setting.
+    // 4. If the last character in value is not a U+0025 PERCENT SIGN character
+    //    (%), then jump to the step labeled next setting.
+    if (input[position++] != '%')
+        return false;
+    if (position < input.length() && !WebVTTParser::isValidSettingDelimiter(input[position]))
+        return false;
+
+    // 5. Ignoring the trailing percent sign, interpret value as an integer,
+    //    and let number be that number.
+    // 6. If number is not in the range 0 ≤ number ≤ 100, then jump to the step
+    //    labeled next setting.
+    return number >= 0 && number <= 100;
+}
+
 void VTTCue::setCueSettings(const String& input)
 {
     m_settings = input;
@@ -898,8 +929,7 @@ void VTTCue::setCueSettings(const String& input)
 
         // 4. Run the appropriate substeps that apply for the value of name, as follows:
         switch (name) {
-        case Vertical:
-            {
+        case Vertical: {
             // If name is a case-sensitive match for "vertical"
             // 1. If value is a case-sensitive match for the string "rl", then let cue's text track cue writing direction 
             //    be vertical growing left.
@@ -911,10 +941,9 @@ void VTTCue::setCueSettings(const String& input)
             //    direction be vertical growing right.
             else if (writingDirection == verticalGrowingRightKeyword())
                 m_writingDirection = VerticalGrowingRight;
-            }
             break;
-        case Line:
-            {
+        }
+        case Line: {
             // 1-2 - Collect chars that are either '-', '%', or a digit.
             // 1. If value contains any characters other than U+002D HYPHEN-MINUS characters (-), U+0025 PERCENT SIGN 
             //    characters (%), and characters in the range U+0030 DIGIT ZERO (0) to U+0039 DIGIT NINE (9), then jump
@@ -962,70 +991,29 @@ void VTTCue::setCueSettings(const String& input)
             }
 
             m_linePosition = number;
-            }
             break;
-        case Position:
-            {
-            // 1. If value contains any characters other than U+0025 PERCENT SIGN characters (%) and characters in the range 
-            //    U+0030 DIGIT ZERO (0) to U+0039 DIGIT NINE (9), then jump to the step labeled next setting.
-            // 2. If value does not contain at least one character in the range U+0030 DIGIT ZERO (0) to U+0039 DIGIT NINE (9),
-            //    then jump to the step labeled next setting.
+        }
+        case Position: {
             int number;
-            if (!WebVTTParser::collectDigitsToInt(input, position, number))
-                break;
-            if (position >= input.length())
-                break;
-
-            // 3. If any character in value other than the last character is a U+0025 PERCENT SIGN character (%), then jump
-            //    to the step labeled next setting.
-            // 4. If the last character in value is not a U+0025 PERCENT SIGN character (%), then jump to the step labeled
-            //    next setting.
-            if (input[position++] != '%')
-                break;
-            if (position < input.length() && !WebVTTParser::isValidSettingDelimiter(input[position]))
-                break;
-
-            // 5. Ignoring the trailing percent sign, interpret value as an integer, and let number be that number.
-            // 6. If number is not in the range 0 ≤ number ≤ 100, then jump to the step labeled next setting.
-            if (number < 0 || number > 100)
+            // Steps 1 - 6.
+            if (!scanPercentage(input, position, number))            
                 break;
 
             // 7. Let cue's text track cue text position be number.
             m_textPosition = number;
-            }
             break;
-        case Size:
-            {
-            // 1. If value contains any characters other than U+0025 PERCENT SIGN characters (%) and characters in the
-            //    range U+0030 DIGIT ZERO (0) to U+0039 DIGIT NINE (9), then jump to the step labeled next setting.
-            // 2. If value does not contain at least one character in the range U+0030 DIGIT ZERO (0) to U+0039 DIGIT 
-            //    NINE (9), then jump to the step labeled next setting.
+        }
+        case Size: {
             int number;
-            if (!WebVTTParser::collectDigitsToInt(input, position, number))
-                break;
-            if (position >= input.length())
-                break;
-
-            // 3. If any character in value other than the last character is a U+0025 PERCENT SIGN character (%),
-            //    then jump to the step labeled next setting.
-            // 4. If the last character in value is not a U+0025 PERCENT SIGN character (%), then jump to the step
-            //    labeled next setting.
-            if (input[position++] != '%')
-                break;
-            if (position < input.length() && !WebVTTParser::isValidSettingDelimiter(input[position]))
-                break;
-
-            // 5. Ignoring the trailing percent sign, interpret value as an integer, and let number be that number.
-            // 6. If number is not in the range 0 ≤ number ≤ 100, then jump to the step labeled next setting.
-            if (number < 0 || number > 100)
+            // Steps 1 - 6.
+            if (!scanPercentage(input, position, number))            
                 break;
 
             // 7. Let cue's text track cue size be number.
             m_cueSize = number;
-            }
             break;
-        case Align:
-            {
+        }
+        case Align: {
             String cueAlignment = WebVTTParser::collectWord(input, &position);
 
             // 1. If value is a case-sensitive match for the string "start", then let cue's text track cue alignment be start alignment.
@@ -1047,8 +1035,8 @@ void VTTCue::setCueSettings(const String& input)
             // 5. If value is a case-sensitive match for the string "right", then let cue's text track cue alignment be right alignment.
             else if (cueAlignment == rightKeyword())
                 m_cueAlignment = Right;
-            }
             break;
+        }
 #if ENABLE(WEBVTT_REGIONS)
         case RegionId:
             m_regionId = WebVTTParser::collectWord(input, &position);

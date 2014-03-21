@@ -404,12 +404,10 @@ PassRefPtr<DocumentFragment> WebVTTTreeBuilder::buildFromString(const String& cu
 
     m_currentNode = fragment;
 
-    std::unique_ptr<WebVTTTokenizer> tokenizer(std::make_unique<WebVTTTokenizer>());
-    m_token.clear();
+    WebVTTTokenizer tokenizer(cueText);
     m_languageStack.clear();
 
-    SegmentedString content(cueText);
-    while (tokenizer->nextToken(content, m_token))
+    while (tokenizer.nextToken(m_token))
         constructTreeFromToken(m_document);
     
     return fragment.release();
@@ -552,8 +550,7 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
 
     switch (m_token.type()) {
     case WebVTTTokenTypes::Character: {
-        String content = m_token.characters().toString();
-        RefPtr<Text> child = Text::create(document, content);
+        RefPtr<Text> child = Text::create(document, m_token.characters());
         m_currentNode->parserAppendChild(child);
         break;
     }
@@ -569,12 +566,12 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
 
         RefPtr<WebVTTElement> child = WebVTTElement::create(nodeType, document);
         if (!m_token.classes().isEmpty())
-            child->setAttribute(classAttr, m_token.classes().toAtomicString());
+            child->setAttribute(classAttr, m_token.classes());
 
         if (nodeType == WebVTTNodeTypeVoice)
-            child->setAttribute(WebVTTElement::voiceAttributeName(), m_token.annotation().toAtomicString());
+            child->setAttribute(WebVTTElement::voiceAttributeName(), m_token.annotation());
         else if (nodeType == WebVTTNodeTypeLanguage) {
-            m_languageStack.append(m_token.annotation().toAtomicString());
+            m_languageStack.append(m_token.annotation());
             child->setAttribute(WebVTTElement::langAttributeName(), m_languageStack.last());
         }
         if (!m_languageStack.isEmpty())
@@ -611,7 +608,7 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
     }
     case WebVTTTokenTypes::TimestampTag: {
         unsigned position = 0;
-        String charactersString = m_token.characters().toString();
+        String charactersString = m_token.characters();
         double parsedTimeStamp;
         if (WebVTTParser::collectTimeStamp(charactersString, position, parsedTimeStamp))
             m_currentNode->parserAppendChild(ProcessingInstruction::create(document, "timestamp", charactersString));
@@ -620,7 +617,6 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
     default:
         break;
     }
-    m_token.clear();
 }
 
 void WebVTTParser::skipWhiteSpace(const String& line, unsigned& position)
