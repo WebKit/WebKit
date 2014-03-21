@@ -1,3 +1,13 @@
+2014-03-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix a long-standing typo that's now breaking USE(ASYNC_NSTEXTINPUTCLIENT) build.
+
+        Rubber-stamped by Tim Horton.
+
+        * UIProcess/mac/WebPageProxyMac.mm: (WebKit::WebPageProxy::cancelComposition):
+        Use a correct type for reply (it's really the same type, but ConfirmComposition
+        is behind an ifdef, and not available).
+
 2014-03-20  Enrica Casucci  <enrica@apple.com>
 
         [iOS WebKit2] typing and deleting text lags behind the caret movement on google.com.

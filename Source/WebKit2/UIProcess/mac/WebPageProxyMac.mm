@@ -280,7 +280,7 @@ void WebPageProxy::cancelComposition()
     if (!isValid())
         return;
 
-    process().sendSync(Messages::WebPage::CancelComposition(), Messages::WebPage::ConfirmComposition::Reply(m_editorState), m_pageID);
+    process().sendSync(Messages::WebPage::CancelComposition(), Messages::WebPage::CancelComposition::Reply(m_editorState), m_pageID);
 }
 
 void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<TextAlternativeWithRange>& dictationAlternativesWithRange)
