@@ -1,3 +1,10 @@
+2014-03-21  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed WebKitGtk+ rebaseline.
+
+        * platform/gtk-wk1/js/dom/global-constructors-attributes-expected.txt: Renamed from LayoutTests/platform/gtk/js/dom/global-constructors-attributes-expected.txt.
+        * platform/gtk-wk2/js/dom/global-constructors-attributes-expected.txt:
+
 2014-03-21  Brent Fulgham  <bfulgham@apple.com>
 
         Handle recovery on "timestamp-looking" lines in the WebVTT parser
