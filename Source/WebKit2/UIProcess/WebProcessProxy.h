@@ -98,6 +98,7 @@ public:
 
     void willAcquireUniversalFileReadSandboxExtension() { m_mayHaveUniversalFileReadSandboxExtension = true; }
     void assumeReadAccessToBaseURL(const String&);
+    bool hasAssumedReadAccessToURL(const WebCore::KURL&) const;
 
     bool checkURLReceivedFromWebProcess(const String&);
     bool checkURLReceivedFromWebProcess(const WebCore::KURL&);

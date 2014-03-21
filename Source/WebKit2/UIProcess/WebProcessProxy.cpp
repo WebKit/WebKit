@@ -244,6 +244,21 @@ void WebProcessProxy::assumeReadAccessToBaseURL(const String& urlString)
     m_localPathsWithAssumedReadAccess.add(baseURL.fileSystemPath());
 }
 
+bool WebProcessProxy::hasAssumedReadAccessToURL(const KURL& url) const
+{
+    if (!url.isLocalFile())
+        return false;
+
+    String path = url.fileSystemPath();
+    for (const String& assumedAccessPath : m_localPathsWithAssumedReadAccess) {
+        // There are no ".." components, because URL removes those.
+        if (path.startsWith(assumedAccessPath))
+            return true;
+    }
+
+    return false;
+}
+
 bool WebProcessProxy::checkURLReceivedFromWebProcess(const String& urlString)
 {
     return checkURLReceivedFromWebProcess(KURL(KURL(), urlString));
@@ -262,15 +277,12 @@ bool WebProcessProxy::checkURLReceivedFromWebProcess(const KURL& url)
         return true;
 
     // If we loaded a string with a file base URL before, loading resources from that subdirectory is fine.
-    // There are no ".." components, because all URLs received from WebProcess are parsed with KURL, which removes those.
-    String path = url.fileSystemPath();
-    for (HashSet<String>::const_iterator iter = m_localPathsWithAssumedReadAccess.begin(); iter != m_localPathsWithAssumedReadAccess.end(); ++iter) {
-        if (path.startsWith(*iter))
-            return true;
-    }
+    if (hasAssumedReadAccessToURL(url))
+        return true;
 
     // Items in back/forward list have been already checked.
     // One case where we don't have sandbox extensions for file URLs in b/f list is if the list has been reinstated after a crash or a browser restart.
+    String path = url.fileSystemPath();
     for (WebBackForwardListItemMap::iterator iter = m_backForwardListItemMap.begin(), end = m_backForwardListItemMap.end(); iter != end; ++iter) {
         if (KURL(KURL(), iter->value->url()).fileSystemPath() == path)
             return true;
