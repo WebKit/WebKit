@@ -1955,7 +1955,7 @@ Label* ContinueNode::trivialTarget(BytecodeGenerator& generator)
     if (generator.shouldEmitDebugHooks())
         return 0;
 
-    LabelScope* scope = generator.continueTarget(m_ident);
+    LabelScopePtr scope = generator.continueTarget(m_ident);
     ASSERT(scope);
 
     if (generator.scopeDepth() != scope->scopeDepth())
@@ -1968,7 +1968,7 @@ void ContinueNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
     generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
     
-    LabelScope* scope = generator.continueTarget(m_ident);
+    LabelScopePtr scope = generator.continueTarget(m_ident);
     ASSERT(scope);
 
     generator.emitPopScopes(scope->scopeDepth());
@@ -1982,7 +1982,7 @@ Label* BreakNode::trivialTarget(BytecodeGenerator& generator)
     if (generator.shouldEmitDebugHooks())
         return 0;
 
-    LabelScope* scope = generator.breakTarget(m_ident);
+    LabelScopePtr scope = generator.breakTarget(m_ident);
     ASSERT(scope);
 
     if (generator.scopeDepth() != scope->scopeDepth())
@@ -1995,7 +1995,7 @@ void BreakNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
     generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
     
-    LabelScope* scope = generator.breakTarget(m_ident);
+    LabelScopePtr scope = generator.breakTarget(m_ident);
     ASSERT(scope);
 
     generator.emitPopScopes(scope->scopeDepth());

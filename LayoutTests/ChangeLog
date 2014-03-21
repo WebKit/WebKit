@@ -1,3 +1,15 @@
+2014-03-21  Mark Lam  <mark.lam@apple.com>
+
+        Crash when BytecodeGenerator::emitJump calls Label::bind on null pointer.
+        <https://webkit.org/b/124508>
+
+        Reviewed by Oliver Hunt.
+
+        * js/regress-124508-expected.txt: Added.
+        * js/regress-124508.html: Added.
+        * js/script-tests/regress-124508.js: Added.
+        (function_0):
+
 2014-03-21  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Make <img> positioning subpixel aware.

@@ -451,8 +451,8 @@ namespace JSC {
             m_forInContextStack.removeLast();
         }
 
-        LabelScope* breakTarget(const Identifier&);
-        LabelScope* continueTarget(const Identifier&);
+        LabelScopePtr breakTarget(const Identifier&);
+        LabelScopePtr continueTarget(const Identifier&);
 
         void beginSwitch(RegisterID*, SwitchInfo::SwitchType);
         void endSwitch(uint32_t clauseCount, RefPtr<Label>*, ExpressionNode**, Label* defaultLabel, int32_t min, int32_t range);

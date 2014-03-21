@@ -580,7 +580,7 @@ LabelScopePtr BytecodeGenerator::newLabelScope(LabelScope::Type type, const Iden
     // Allocate new label scope.
     LabelScope scope(type, name, scopeDepth(), newLabel(), type == LabelScope::Loop ? newLabel() : PassRefPtr<Label>()); // Only loops have continue targets.
     m_labelScopes.append(scope);
-    return LabelScopePtr(&m_labelScopes, m_labelScopes.size() - 1);
+    return LabelScopePtr(m_labelScopes, m_labelScopes.size() - 1);
 }
 
 PassRefPtr<Label> BytecodeGenerator::newLabel()
@@ -1989,7 +1989,7 @@ void BytecodeGenerator::popFinallyContext()
     m_finallyDepth--;
 }
 
-LabelScope* BytecodeGenerator::breakTarget(const Identifier& name)
+LabelScopePtr BytecodeGenerator::breakTarget(const Identifier& name)
 {
     // Reclaim free label scopes.
     //
@@ -2005,7 +2005,7 @@ LabelScope* BytecodeGenerator::breakTarget(const Identifier& name)
     }
 
     if (!m_labelScopes.size())
-        return 0;
+        return LabelScopePtr::null();
 
     // We special-case the following, which is a syntax error in Firefox:
     // label:
@@ -2015,55 +2015,55 @@ LabelScope* BytecodeGenerator::breakTarget(const Identifier& name)
             LabelScope* scope = &m_labelScopes[i];
             if (scope->type() != LabelScope::NamedLabel) {
                 ASSERT(scope->breakTarget());
-                return scope;
+                return LabelScopePtr(m_labelScopes, i);
             }
         }
-        return 0;
+        return LabelScopePtr::null();
     }
 
     for (int i = m_labelScopes.size() - 1; i >= 0; --i) {
         LabelScope* scope = &m_labelScopes[i];
         if (scope->name() && *scope->name() == name) {
             ASSERT(scope->breakTarget());
-            return scope;
+            return LabelScopePtr(m_labelScopes, i);
         }
     }
-    return 0;
+    return LabelScopePtr::null();
 }
 
-LabelScope* BytecodeGenerator::continueTarget(const Identifier& name)
+LabelScopePtr BytecodeGenerator::continueTarget(const Identifier& name)
 {
     // Reclaim free label scopes.
     while (m_labelScopes.size() && !m_labelScopes.last().refCount())
         m_labelScopes.removeLast();
 
     if (!m_labelScopes.size())
-        return 0;
+        return LabelScopePtr::null();
 
     if (name.isEmpty()) {
         for (int i = m_labelScopes.size() - 1; i >= 0; --i) {
             LabelScope* scope = &m_labelScopes[i];
             if (scope->type() == LabelScope::Loop) {
                 ASSERT(scope->continueTarget());
-                return scope;
+                return LabelScopePtr(m_labelScopes, i);
             }
         }
-        return 0;
+        return LabelScopePtr::null();
     }
 
     // Continue to the loop nested nearest to the label scope that matches
     // 'name'.
-    LabelScope* result = 0;
+    LabelScopePtr result = LabelScopePtr::null();
     for (int i = m_labelScopes.size() - 1; i >= 0; --i) {
         LabelScope* scope = &m_labelScopes[i];
         if (scope->type() == LabelScope::Loop) {
             ASSERT(scope->continueTarget());
-            result = scope;
+            result = LabelScopePtr(m_labelScopes, i);
         }
         if (scope->name() && *scope->name() == name)
-            return result; // may be 0
+            return result; // may be null.
     }
-    return 0;
+    return LabelScopePtr::null();
 }
 
 void BytecodeGenerator::emitComplexPopScopes(ControlFlowContext* topScope, ControlFlowContext* bottomScope)

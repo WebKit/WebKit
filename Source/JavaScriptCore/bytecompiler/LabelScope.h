@@ -85,8 +85,8 @@ namespace JSC {
             , m_index(0)
         {
         }
-        LabelScopePtr(LabelScopeStore* owner, size_t index)
-            : m_owner(owner)
+        LabelScopePtr(LabelScopeStore& owner, size_t index)
+            : m_owner(&owner)
             , m_index(index)
         {
             m_owner->at(index).ref();
@@ -117,10 +117,14 @@ namespace JSC {
                 m_owner->at(m_index).deref();
         }
 
+        bool operator!() const { return !m_owner; }
+
         LabelScope& operator*() { ASSERT(m_owner); return m_owner->at(m_index); }
         LabelScope* operator->() { ASSERT(m_owner); return &m_owner->at(m_index); }
         const LabelScope& operator*() const { ASSERT(m_owner); return m_owner->at(m_index); }
         const LabelScope* operator->() const { ASSERT(m_owner); return &m_owner->at(m_index); }
+
+        static LabelScopePtr null() { return LabelScopePtr(); }
 
     private:
         LabelScopeStore* m_owner;

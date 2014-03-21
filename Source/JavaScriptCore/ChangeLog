@@ -1,3 +1,44 @@
+2014-03-21  Mark Lam  <mark.lam@apple.com>
+
+        Crash when BytecodeGenerator::emitJump calls Label::bind on null pointer.
+        <https://webkit.org/b/124508>
+
+        Reviewed by Oliver Hunt.
+
+        The issue is that BreakNode::emitBytecode() is holding onto a LabelScope
+        pointer from the BytecodeGenerator's m_localScopes vector, and then it
+        calls emitPopScopes().  emitPopScopes() may do finally clause handling
+        which will require the m_localScopes to be cloned so that it can change
+        the local scopes for the finally block, and then restore it after
+        handling the finally clause.  These modifications of the m_localScopes
+        vector will result in the LabelScope pointer in BreakNode::emitBytecode()
+        becoming stale, thereby causing the crash.
+
+        The same issue applies to the ContinueNode as well.
+
+        The fix is to use the existing LabelScopePtr abstraction instead of raw
+        LabelScope pointers.  The LabelScopePtr is resilient to the underlying
+        vector re-allocating its backing store.
+
+        I also changed the LabelScopePtr constructor that takes a LabelScopeStore
+        to expect a reference to the owner store instead of a pointer because the
+        owner store should never be a null pointer.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::newLabelScope):
+        (JSC::BytecodeGenerator::breakTarget):
+        (JSC::BytecodeGenerator::continueTarget):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/LabelScope.h:
+        (JSC::LabelScopePtr::LabelScopePtr):
+        (JSC::LabelScopePtr::operator bool):
+        (JSC::LabelScopePtr::null):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ContinueNode::trivialTarget):
+        (JSC::ContinueNode::emitBytecode):
+        (JSC::BreakNode::trivialTarget):
+        (JSC::BreakNode::emitBytecode):
+
 2014-03-21  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         6% SunSpider commandline regression due to r165940
