@@ -1,3 +1,16 @@
+2014-03-20  Zoltan Horvath  <zoltan@webkit.org>
+
+        Add option for hiding Confidence Interval Delta on the performance tests results page
+        https://bugs.webkit.org/show_bug.cgi?id=130483
+
+        Reviewed by Ryosuke Niwa.
+
+        I've found it useful to hide the confidence interval delta from the results table
+        sometimes, for example on copying data, or for a clearer look. This patch introduces
+        a new button for it on the local results page.
+
+        * resources/results-template.html:
+
 2014-03-20  Laszlo Vidacs  <lvidacs.u-szeged@partner.samsung.com>
 
         Optimize RenderTable::colToEffCol() for tables without colspans

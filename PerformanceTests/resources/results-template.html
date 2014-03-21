@@ -132,6 +132,7 @@ td.missing {
 <div style="padding: 0 10px;">
 Result <span id="time-memory" class="checkbox"><span class="checked">Time</span><span>Memory</span></span>
 Reference <span id="reference" class="checkbox"></span>
+<span title="Confidence Interval Delta">CI&#916;</span> <span id="confidenceIntervalDelta" class="checkbox"><span class="checked">Show</span><span>Hide</span></span>
 </div>
 <table id="container"></table>
 <script>
@@ -389,9 +390,14 @@ function formatPercentage(fraction) {
     return (fraction * 100).toFixed(2) + '%';
 }
 
-function createTable(tests, runs, shouldIgnoreMemory, referenceIndex) {
+function createTable(tests, runs, shouldIgnoreMemory, referenceIndex, hideConfidenceIntervalDelta) {
     $('#container').html('<thead><tr><th>Test</th><th>Unit</th>' + runs.map(function (run, index) {
-        return '<th colspan="' + (index == referenceIndex ? 2 : 3) + '" class="{sorter: \'comparison\'}">' + run.label() + '</th>';
+        var colspan = 2;
+        if (index != referenceIndex)
+            colspan = 3;
+        if (hideConfidenceIntervalDelta)
+            colspan--;
+        return '<th colspan="' + colspan + '" class="{sorter: \'comparison\'}">' + run.label() + '</th>';
     }).reduce(function (markup, cell) { return markup + cell; }, '') + '</tr></head><tbody></tbody>');
 
     var testNames = [];
@@ -401,7 +407,7 @@ function createTable(tests, runs, shouldIgnoreMemory, referenceIndex) {
     testNames.sort().map(function (testName) {
         var test = tests[testName];
         if (test.isMemoryTest() != shouldIgnoreMemory)
-            createTableRow(runs, test, referenceIndex);
+            createTableRow(runs, test, referenceIndex, hideConfidenceIntervalDelta);
     });
 
     $('#container').tablesorter({widgets: ['zebra']});
@@ -445,7 +451,7 @@ var warningSign = '<svg viewBox="0 0 100 100" style="width: 18px; height: 18px; 
     + '<circle cx="50" cy="73" r="6" fill="white" />'
     + '</svg>';
 
-function createTableRow(runs, test, referenceIndex) {
+function createTableRow(runs, test, referenceIndex, hideConfidenceIntervalDelta) {
     var tableRow = $('<tr><td class="test">' + test.name() + '</td><td class="unit">' + test.unit() + '</td></tr>');
 
     function markupForRun(result, referenceResult) {
@@ -481,10 +487,15 @@ function createTableRow(runs, test, referenceIndex) {
         var statistics = '&sigma;=' + toFixedWidthPrecision(result.confidenceIntervalDelta()) + ', min=' + toFixedWidthPrecision(result.min())
             + ', max=' + toFixedWidthPrecision(result.max()) + '\n' + regressionAnalysis;
 
+        var confidenceIntervalDeltaCell = '';
+        if (!hideConfidenceIntervalDelta) {
+            confidenceIntervalDeltaCell = '<td class="confidenceIntervalDelta" title="' + statistics + '">&plusmn; '
+                + formatPercentage(result.confidenceIntervalDeltaRatio()) + warning + '</td>';
+        }
+
         // Tablesorter doesn't know about the second cell so put the comparison in the invisible element.
         return '<td class="result" title="' + statistics + '">' + toFixedWidthPrecision(result.mean()) + hiddenValue
-            + '</td><td class="confidenceIntervalDelta" title="' + statistics + '">&plusmn; '
-            + formatPercentage(result.confidenceIntervalDeltaRatio()) + warning + '</td>' + comparisonCell;
+            + '</td>' + confidenceIntervalDeltaCell + comparisonCell;
     }
 
     function markupForMissingRun(isReference) {
@@ -580,12 +591,13 @@ function init() {
 
     var shouldIgnoreMemory= true;
     var referenceIndex = 0;
+    var hideConfidenceIntervalDelta = false;
 
     createTable(metrics, runs, shouldIgnoreMemory, referenceIndex);
 
     $('#time-memory').bind('change', function (event, checkedElement) {
         shouldIgnoreMemory = checkedElement.textContent == 'Time';
-        createTable(metrics, runs, shouldIgnoreMemory, referenceIndex);
+        createTable(metrics, runs, shouldIgnoreMemory, referenceIndex, hideConfidenceIntervalDelta);
     });
 
     runs.map(function (run, index) {
@@ -594,7 +606,12 @@ function init() {
 
     $('#reference').bind('change', function (event, checkedElement) {
         referenceIndex = parseInt(checkedElement.getAttribute('value'));
-        createTable(metrics, runs, shouldIgnoreMemory, referenceIndex);
+        createTable(metrics, runs, shouldIgnoreMemory, referenceIndex, hideConfidenceIntervalDelta);
+    });
+
+    $('#confidenceIntervalDelta').bind('change', function (event, checkedElement) {
+        hideConfidenceIntervalDelta = checkedElement.textContent == 'Hide';
+        createTable(metrics, runs, shouldIgnoreMemory, referenceIndex, hideConfidenceIntervalDelta);
     });
 
     $('.checkbox').each(function (index, checkbox) {
