@@ -73,8 +73,7 @@ const String& CachedScript::script()
     ASSERT(!isPurgeable());
 
     if (!m_script && m_data) {
-        m_script = m_decoder->decode(m_data->data(), encodedSize());
-        m_script.append(m_decoder->flush());
+        m_script = m_decoder->decodeAndFlush(m_data->data(), encodedSize());
         setDecodedSize(m_script.sizeInBytes());
     }
     m_decodedDataDeletionTimer.restart();

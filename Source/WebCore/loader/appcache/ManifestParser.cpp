@@ -43,9 +43,7 @@ bool parseManifest(const URL& manifestURL, const char* data, int length, Manifes
 
     Mode mode = Explicit;
 
-    RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("text/cache-manifest", "UTF-8");
-    String s = decoder->decode(data, length);
-    s.append(decoder->flush());
+    String s = TextResourceDecoder::create("text/cache-manifest", "UTF-8")->decodeAndFlush(data, length);
     
     // Look for the magic signature: "^\xFEFF?CACHE MANIFEST[ \t]?" (the BOM is removed by TextResourceDecoder).
     // Example: "CACHE MANIFEST #comment" is a valid signature.

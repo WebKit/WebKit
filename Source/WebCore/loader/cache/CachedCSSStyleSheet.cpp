@@ -88,9 +88,7 @@ const String CachedCSSStyleSheet::sheetText(bool enforceMIMEType, bool* hasValid
         return m_decodedSheetText;
     
     // Don't cache the decoded text, regenerating is cheap and it can use quite a bit of memory
-    String sheetText = m_decoder->decode(m_data->data(), m_data->size());
-    sheetText.append(m_decoder->flush());
-    return sheetText;
+    return m_decoder->decodeAndFlush(m_data->data(), m_data->size());
 }
 
 void CachedCSSStyleSheet::finishLoading(ResourceBuffer* data)
@@ -98,10 +96,8 @@ void CachedCSSStyleSheet::finishLoading(ResourceBuffer* data)
     m_data = data;
     setEncodedSize(m_data.get() ? m_data->size() : 0);
     // Decode the data to find out the encoding and keep the sheet text around during checkNotify()
-    if (m_data) {
-        m_decodedSheetText = m_decoder->decode(m_data->data(), m_data->size());
-        m_decodedSheetText.append(m_decoder->flush());
-    }
+    if (m_data)
+        m_decodedSheetText = m_decoder->decodeAndFlush(m_data->data(), m_data->size());
     setLoading(false);
     checkNotify();
     // Clear the decoded text as it is unlikely to be needed immediately again and is cheap to regenerate.

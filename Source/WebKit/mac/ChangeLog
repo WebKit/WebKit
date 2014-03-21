@@ -1,3 +1,13 @@
+2014-03-21  Darin Adler  <darin@apple.com>
+
+        Add a combined decodeAndFlush to TextResourceDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=130560
+
+        Reviewed by Andreas Kling.
+
+        * WebView/WebView.mm:
+        (+[WebView _decodeData:]): Use decodeAndFlush.
+
 2014-03-20  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

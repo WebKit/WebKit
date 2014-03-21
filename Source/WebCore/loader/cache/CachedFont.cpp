@@ -36,6 +36,7 @@
 #include "ResourceBuffer.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
+#include "TypedElementDescendantIterator.h"
 #include "WOFFFileFormat.h"
 #include <wtf/Vector.h>
 
@@ -129,52 +130,33 @@ FontPlatformData CachedFont::platformDataFromCustomData(float size, bool bold, b
 }
 
 #if ENABLE(SVG_FONTS)
+
 bool CachedFont::ensureSVGFontData()
 {
     if (!m_externalSVGDocument && !errorOccurred() && !isLoading() && m_data) {
-        m_externalSVGDocument = SVGDocument::create(0, URL());
-
+        m_externalSVGDocument = SVGDocument::create(nullptr, URL());
         RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("application/xml");
-        String svgSource = decoder->decode(m_data->data(), m_data->size());
-        svgSource.append(decoder->flush());
-        
-        m_externalSVGDocument->setContent(svgSource);
-        
+        m_externalSVGDocument->setContent(decoder->decodeAndFlush(m_data->data(), m_data->size()));
         if (decoder->sawError())
-            m_externalSVGDocument = 0;
+            m_externalSVGDocument = nullptr;
     }
-
     return m_externalSVGDocument;
 }
 
 SVGFontElement* CachedFont::getSVGFontById(const String& fontName) const
 {
-    RefPtr<NodeList> list = m_externalSVGDocument->getElementsByTagNameNS(SVGNames::fontTag.namespaceURI(), SVGNames::fontTag.localName());
-    if (!list)
-        return 0;
-
-    unsigned listLength = list->length();
-    if (!listLength)
-        return 0;
-
-#ifndef NDEBUG
-    for (unsigned i = 0; i < listLength; ++i) {
-        ASSERT(list->item(i));
-        ASSERT(isSVGFontElement(list->item(i)));
-    }
-#endif
+    auto elements = descendantsOfType<SVGFontElement>(*m_externalSVGDocument);
 
     if (fontName.isEmpty())
-        return toSVGFontElement(list->item(0));
+        return elements.first();
 
-    for (unsigned i = 0; i < listLength; ++i) {
-        SVGFontElement* element = toSVGFontElement(list->item(i));
-        if (element->getIdAttribute() == fontName)
-            return element;
+    for (auto& element : elements) {
+        if (element.getIdAttribute() == fontName)
+            return &element;
     }
-
-    return 0;
+    return nullptr;
 }
+
 #endif
 
 void CachedFont::allClientsRemoved()

@@ -316,15 +316,12 @@ void FileReaderLoader::convertToText()
     // requirement in order to be consistent with how WebKit decodes the web content: always has the BOM override the
     // provided encoding.     
     // FIXME: consider supporting incremental decoding to improve the perf.
-    StringBuilder builder;
     if (!m_decoder)
         m_decoder = TextResourceDecoder::create("text/plain", m_encoding.isValid() ? m_encoding : UTF8Encoding());
-    builder.append(m_decoder->decode(static_cast<const char*>(m_rawData->data()), m_bytesLoaded));
-
     if (isCompleted())
-        builder.append(m_decoder->flush());
-
-    m_stringResult = builder.toString();
+        m_stringResult = m_decoder->decodeAndFlush(static_cast<const char*>(m_rawData->data()), m_bytesLoaded);
+    else
+        m_stringResult = m_decoder->decode(static_cast<const char*>(m_rawData->data()), m_bytesLoaded);
 }
 
 void FileReaderLoader::convertToDataURL()

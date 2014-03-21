@@ -186,8 +186,7 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
             // We show content for raw resources only for certain mime types (text, html and xml). Otherwise decoder will be null.
             if (!decoder)
                 return false;
-            String content = decoder->decode(buffer->data(), buffer->size());
-            *result = content + decoder->flush();
+            *result = decoder->decodeAndFlush(buffer->data(), buffer->size());
             return true;
         }
         default:

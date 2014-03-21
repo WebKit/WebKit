@@ -135,8 +135,7 @@ size_t NetworkResourcesData::ResourceData::decodeDataToContent()
 {
     ASSERT(!hasContent());
     size_t dataLength = m_dataBuffer->size();
-    m_content = m_decoder->decode(m_dataBuffer->data(), m_dataBuffer->size());
-    m_content.append(m_decoder->flush());
+    m_content = m_decoder->decodeAndFlush(m_dataBuffer->data(), m_dataBuffer->size());
     m_dataBuffer = nullptr;
     return contentSizeInBytes(m_content) - dataLength;
 }

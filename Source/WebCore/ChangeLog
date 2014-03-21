@@ -1,3 +1,44 @@
+2014-03-21  Darin Adler  <darin@apple.com>
+
+        Add a combined decodeAndFlush to TextResourceDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=130560
+
+        Reviewed by Andreas Kling.
+
+        * WebCore.exp.in: Added new symbol for decodeAndFlush. Also re-did
+        the geometry types #if so it would sort more logically.
+
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::convertToText): Use decodeAndFlush.
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResourceContent): Ditto.
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::ResourceData::decodeDataToContent): Ditto.
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::decodeAndFlush): Added.
+        * loader/TextResourceDecoder.h: Ditto.
+
+        * loader/appcache/ManifestParser.cpp:
+        (WebCore::parseManifest): Use decodeAndFlush.
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::sheetText): Ditto.
+        (WebCore::CachedCSSStyleSheet::finishLoading): Ditto.
+
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::ensureSVGFontData): Use decodeAndFlush. Also use nullptr.
+        (WebCore::CachedFont::getSVGFontById): Use descendantsOfType<SVGFontElement>
+        instead of using a NodeList. Much more efficient!
+
+        * loader/cache/CachedSVGDocument.cpp:
+        (WebCore::CachedSVGDocument::finishLoading): Use decodeAndFlush.
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::script): Ditto.
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::finishLoading): Ditto.
+        * page/Page.cpp:
+        (WebCore::Page::userStyleSheet): Ditto.
+
 2014-03-20  Darin Adler  <darin@apple.com>
 
         Remove a couple of unused functions from CSSOMUtils

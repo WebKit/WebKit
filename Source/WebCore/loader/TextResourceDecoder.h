@@ -55,6 +55,8 @@ public:
     String decode(const char* data, size_t length);
     String flush();
 
+    String decodeAndFlush(const char* data, size_t length);
+
     void setHintEncoding(const TextResourceDecoder* hintDecoder)
     {
         // hintEncoding is for use with autodetection, which should be 

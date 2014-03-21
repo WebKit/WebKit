@@ -2017,11 +2017,6 @@ _wkSignalCFReadStreamEnd
 _wkSignalCFReadStreamError
 _wkSignalCFReadStreamHasBytes
 
-#if !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES) && PLATFORM(MAC)
-__ZN7WebCore7IntSizeC1ERK7_NSSize
-__ZNK7WebCore7IntSizecv7_NSSizeEv
-#endif
-
 #if !defined(NDEBUG)
 __ZN7WebCore14SQLiteDatabase22disableThreadingChecksEv
 __ZN7WebCore24NoEventDispatchAssertion7s_countE
@@ -2146,6 +2141,7 @@ __ZN7WebCore17ScrollbarThemeMac23setUpOverhangAreaShadowEP7CALayer
 __ZN7WebCore17ScrollbarThemeMac24removeOverhangAreaShadowEP7CALayer
 __ZN7WebCore17ScrollbarThemeMac27setUpOverhangAreaBackgroundEP7CALayerRKNS_5ColorE
 __ZN7WebCore17ScrollbarThemeMac28removeOverhangAreaBackgroundEP7CALayer
+__ZN7WebCore19TextResourceDecoder14decodeAndFlushEPKcm
 __ZN7WebCore19applicationIsSafariEv
 __ZN7WebCore20PlatformEventFactory24createPlatformMouseEventEP7NSEventP6NSView
 __ZN7WebCore20PlatformEventFactory27createPlatformKeyboardEventEP7NSEvent
@@ -2313,6 +2309,11 @@ _wkSpeechSynthesisGetVoiceIdentifiers
 _wkUnregisterUniqueIdForElement
 _wkWindowSetAlpha
 _wkWindowSetScaledFrame
+#endif
+
+#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
+__ZN7WebCore7IntSizeC1ERK7_NSSize
+__ZNK7WebCore7IntSizecv7_NSSizeEv
 #endif
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080

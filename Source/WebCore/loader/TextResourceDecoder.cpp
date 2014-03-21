@@ -663,4 +663,10 @@ String TextResourceDecoder::flush()
     return result;
 }
 
+String TextResourceDecoder::decodeAndFlush(const char* data, size_t length)
+{
+    String decoded = decode(data, length);
+    return decoded + flush();
+}
+
 }

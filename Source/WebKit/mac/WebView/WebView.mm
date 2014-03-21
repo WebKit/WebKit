@@ -2759,10 +2759,7 @@ static inline IMP getMethod(id o, SEL s)
 + (NSString *)_decodeData:(NSData *)data
 {
     HTMLNames::init(); // this method is used for importing bookmarks at startup, so HTMLNames are likely to be uninitialized yet
-    RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("text/html"); // bookmark files are HTML
-    String result = decoder->decode(static_cast<const char*>([data bytes]), [data length]);
-    result.append(decoder->flush());
-    return result;
+    return TextResourceDecoder::create("text/html")->decodeAndFlush(static_cast<const char*>([data bytes]), [data length]); // bookmark files are HTML
 }
 
 - (void)_pushPerformingProgrammaticFocus
