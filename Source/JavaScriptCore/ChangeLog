@@ -1,3 +1,21 @@
+2014-03-21  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        6% SunSpider commandline regression due to r165940
+        https://bugs.webkit.org/show_bug.cgi?id=130617
+
+        Reviewed by Michael Saboff.
+
+        In GCActivityCallback::didAllocate, lastGCLength() returns 0 if we've never collected 
+        before. Some of the benchmarks are never running a single EdenCollection, which causes 
+        them to repeatedly call scheduleTimer with a newDelay of 0. This defeats our timer 
+        slop heuristic, causing us to invoke CFRunLoopTimerSetNextFireDate a couple orders of 
+        magnitude more than we normally would.
+
+        The fix is to seed the last GC lengths in Heap with a non-zero length so that our heuristic works.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+
 2014-03-21  Filip Pizlo  <fpizlo@apple.com>
 
         Constants folded by DFG::ByteCodeParser should not be dead.

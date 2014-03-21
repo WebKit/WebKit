@@ -280,8 +280,10 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_isSafeToCollect(false)
     , m_writeBarrierBuffer(256)
     , m_vm(vm)
-    , m_lastFullGCLength(0)
-    , m_lastEdenGCLength(0)
+    // We seed with 10ms so that GCActivityCallback::didAllocate doesn't continuously 
+    // schedule the timer if we've never done a collection.
+    , m_lastFullGCLength(0.01)
+    , m_lastEdenGCLength(0.01)
     , m_lastCodeDiscardTime(WTF::monotonicallyIncreasingTime())
     , m_fullActivityCallback(GCActivityCallback::createFullTimer(this))
 #if ENABLE(GGC)
