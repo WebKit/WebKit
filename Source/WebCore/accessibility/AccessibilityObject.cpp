@@ -64,6 +64,7 @@
 #include "UserGestureIndicator.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -1485,15 +1486,15 @@ const String& AccessibilityObject::actionVerb() const
 {
 #if !PLATFORM(IOS)
     // FIXME: Need to add verbs for select elements.
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, buttonAction, (AXButtonActionVerb()));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, textFieldAction, (AXTextFieldActionVerb()));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, radioButtonAction, (AXRadioButtonActionVerb()));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, checkedCheckBoxAction, (AXCheckedCheckBoxActionVerb()));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, uncheckedCheckBoxAction, (AXUncheckedCheckBoxActionVerb()));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, linkAction, (AXLinkActionVerb()));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, menuListAction, (AXMenuListActionVerb()));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, menuListPopupAction, (AXMenuListPopupActionVerb()));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, listItemAction, (AXListItemActionVerb()));
+    static NeverDestroyed<const String> buttonAction(AXButtonActionVerb());
+    static NeverDestroyed<const String> textFieldAction(AXTextFieldActionVerb());
+    static NeverDestroyed<const String> radioButtonAction(AXRadioButtonActionVerb());
+    static NeverDestroyed<const String> checkedCheckBoxAction(AXCheckedCheckBoxActionVerb());
+    static NeverDestroyed<const String> uncheckedCheckBoxAction(AXUncheckedCheckBoxActionVerb());
+    static NeverDestroyed<const String> linkAction(AXLinkActionVerb());
+    static NeverDestroyed<const String> menuListAction(AXMenuListActionVerb());
+    static NeverDestroyed<const String> menuListPopupAction(AXMenuListPopupActionVerb());
+    static NeverDestroyed<const String> listItemAction(AXListItemActionVerb());
 
     switch (roleValue()) {
     case ButtonRole:
