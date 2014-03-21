@@ -25,7 +25,7 @@
 
 #include "config.h"
 #include "PlatformUtilities.h"
-#include <WebKit2/WKPreferencesPrivate.h>
+#include <WebKit2/WKPreferencesRefPrivate.h>
 #include <WebKit2/WKRetainPtr.h>
 
 namespace TestWebKitAPI {

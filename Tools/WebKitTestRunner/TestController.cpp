@@ -42,7 +42,7 @@
 #include <WebKit2/WKNumber.h>
 #include <WebKit2/WKPageGroup.h>
 #include <WebKit2/WKPagePrivate.h>
-#include <WebKit2/WKPreferencesPrivate.h>
+#include <WebKit2/WKPreferencesRefPrivate.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <algorithm>
 #include <cstdio>

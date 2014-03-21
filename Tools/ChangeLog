@@ -1,3 +1,13 @@
+2014-03-20  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed buildfix after r165983 for non Cocoa platforms
+
+        Renamed WKPreferencesPrivate.h to WKPreferencesRefPrivate.h
+
+        * TestWebKitAPI/Tests/WebKit2/ScrollPinningBehaviors.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WKPreferences.cpp:
+        * WebKitTestRunner/TestController.cpp:
+
 2014-03-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][CMake] Add support for building with Clang
