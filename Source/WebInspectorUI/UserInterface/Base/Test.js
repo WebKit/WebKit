@@ -35,6 +35,8 @@ WebInspector.loaded = function()
     InspectorBackend.registerTimelineDispatcher(new WebInspector.TimelineObserver);
     InspectorBackend.registerCSSDispatcher(new WebInspector.CSSObserver);
     InspectorBackend.registerRuntimeDispatcher(new WebInspector.RuntimeObserver);
+    if (InspectorBackend.registerReplayDispatcher)
+        InspectorBackend.registerReplayDispatcher(new WebInspector.ReplayObserver);
 
     // Instantiate controllers used by tests.
     this.frameResourceManager = new WebInspector.FrameResourceManager;
@@ -44,6 +46,7 @@ WebInspector.loaded = function()
     this.timelineManager = new WebInspector.TimelineManager;
     this.debuggerManager = new WebInspector.DebuggerManager;
     this.probeManager = new WebInspector.ProbeManager;
+    this.replayManager = new WebInspector.ReplayManager;
 
     document.addEventListener("DOMContentLoaded", this.contentLoaded.bind(this));
 
@@ -68,6 +71,29 @@ WebInspector.updateDockedState = function()
 // in the Web Inspector page. They rely on equivalents in the actual test page
 // which are provided by `inspector-test.js`.
 InspectorTest = {};
+
+// This is a workaround for the fact that it would be hard to set up a constructor,
+// prototype, and prototype chain for the singleton InspectorTest.
+InspectorTest.EventDispatcher = function()
+{
+    WebInspector.Object.call(this);
+};
+
+InspectorTest.EventDispatcher.Event = {
+    TestPageDidLoad: "inspector-test-test-page-did-load"
+};
+
+InspectorTest.EventDispatcher.prototype = {
+    __proto__: WebInspector.Object.prototype,
+    constructor: InspectorTest.EventDispatcher,
+
+    dispatchEvent: function(event)
+    {
+        this.dispatchEventToListeners(event);
+    }
+};
+
+InspectorTest.eventDispatcher = new InspectorTest.EventDispatcher;
 
 // Note: Additional InspectorTest methods are included on a per-test basis from
 // files like `debugger-test.js`.
@@ -100,7 +126,7 @@ InspectorTest.expectThat = function(condition, message)
 // This function should only be used to debug tests and not to produce normal test output.
 InspectorTest.debugLog = function(message)
 {
-    this.evaluateInPage("InspectorTestProxy.debugLog(unescape(" + escape(JSON.stringify(message)) + "))");
+    this.evaluateInPage("InspectorTestProxy.debugLog(unescape('" + escape(JSON.stringify(message)) + "'))");
 }
 
 InspectorTest.completeTest = function()
@@ -132,7 +158,9 @@ InspectorTest.evaluateInPage = function(codeString, callback)
 InspectorTest.addResult = function(text)
 {
     this._results.push(text);
-    this.evaluateInPage("InspectorTestProxy.addResult(unescape('" + escape(text) + "'))");
+
+    if (!this._testPageIsReloading)
+        this.evaluateInPage("InspectorTestProxy.addResult(unescape('" + escape(text) + "'))");
 }
 
 InspectorTest._resendResults = function(callback)
@@ -154,13 +182,21 @@ InspectorTest._resendResults = function(callback)
 
 InspectorTest.testPageDidLoad = function()
 {
-    this._shouldResendResults = true;
+    this._testPageIsReloading = false;
     this._resendResults();
+
+    this.eventDispatcher.dispatchEvent(InspectorTest.EventDispatcher.Event.TestPageDidLoad);
 }
 
 InspectorTest.reloadPage = function(shouldIgnoreCache)
 {
-    PageAgent.reload.invoke({ignoreCache: !!shouldIgnoreCache});
+    return PageAgent.reload.promise(!!shouldIgnoreCache)
+        .then(function() {
+            this._shouldResendResults = true;
+            this._testPageIsReloading = true;
+
+            return Promise.resolve(null);
+        });
 }
 
 InspectorTest.reportUncaughtException = function(message, url, lineNumber)

@@ -55,12 +55,12 @@ function runTest()
 
     function runInitializationMethodsInFrontend(initializersArray)
     {
-        if (InspectorTest.didInjectTestCode) {
-            // If the test page reloaded but we started running the test in a previous
-            // navigation, then don't initialize the inspector frontend again.
-            InspectorTest.testPageDidLoad();
+        InspectorTest.testPageDidLoad();
+
+        // If the test page reloaded but we started running the test in a previous
+        // navigation, then don't initialize the inspector frontend again.
+        if (InspectorTest.didInjectTestCode)
             return;
-        }
 
         for (var initializer of initializersArray) {
             try {

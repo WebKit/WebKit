@@ -1,3 +1,30 @@
+2014-03-20  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add frontend controller and models for replay sessions
+        https://bugs.webkit.org/show_bug.cgi?id=130145
+
+        Reviewed by Joseph Pecoraro.
+
+        Add tests for existing nondeterministic inputs handled in JSC.
+        They are skipped for all platforms until WEB_REPLAY is enabled.
+
+        The new mechanism here is the single-segment replay reftest. It will
+        load the test page once to inject test code into the inspector. Then,
+        the reftest will reload the test page and start capturing. The test
+        page performs some nondeterministic computation before the load event.
+        Then, the inspector test dumps the computed nondeterministic state.
+        Capturing is stopped, and the session is replayed once. When the load
+        event fires on the replayed page execution, the nondeterministic states
+        from capturing and replaying are compared. They should be the same.
+
+        * inspector/replay/javascript-random-seed-expected.txt: Added.
+        * inspector/replay/javascript-random-seed.html: Added.
+        * inspector/replay/replay-test.js: Added. This contains the bulk of
+        the replay-specific testing logic for the added tests.
+
+        (InspectorTestProxy.registerInitializer.):
+        (InspectorTestProxy.registerInitializer):
+
 2014-03-20  Brent Fulgham  <bfulgham@apple.com>
 
         Rename TextTrackRegion/TextTrackRegionList to VTTRegion/VTTRegionList

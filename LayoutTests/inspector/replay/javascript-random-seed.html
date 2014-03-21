@@ -1,0 +1,29 @@
+<html>
+<head>
+<script type="text/javascript" src="../inspector-test.js"></script>
+<script type="text/javascript" src="./replay-test.js"></script>
+<script>
+
+window._randomNumber = Math.random();
+
+function dumpNondeterministicState()
+{
+    return window._randomNumber;
+}
+
+function test()
+{
+    function statesAreEqual(a, b)
+    {
+        return a === b;
+    }
+
+    InspectorTest.Replay.runSingleSegmentRefTest(statesAreEqual);
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that we can capture and replay nondeterminism in Math.random().</p>
+</body>
+</html>

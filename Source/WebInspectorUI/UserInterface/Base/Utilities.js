@@ -90,6 +90,16 @@ Object.defineProperty(Object.prototype, "valueForCaseInsensitiveKey",
     }
 });
 
+Object.defineProperty(Map.prototype, "take",
+{
+    value: function(key)
+    {
+        var deletedValue = this.get(key);
+        this.delete(key);
+        return deletedValue;
+    }
+});
+
 Object.defineProperty(Node.prototype, "enclosingNodeOrSelfWithClass",
 {
     value: function(className)

@@ -1,3 +1,102 @@
+2014-03-20  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add frontend controller and models for replay sessions
+        https://bugs.webkit.org/show_bug.cgi?id=130145
+
+        Reviewed by Joseph Pecoraro.
+
+        Upstream the frontend models and controller for web replay. The replay manager
+        syncs with the backend controller's replay state and replay sessions by using
+        the same state machines and transitions.
+
+        Session and segment models update their data asynchronously using promises.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded): Add the replay manager.
+        * UserInterface/Base/Test.js:
+        (WebInspector.loaded): Add the replay manager.
+        (InspectorTest.debugLog): Fix a bug in the unescape/escape trick.
+        (InspectorTest.addResult): Don't try to add results until the test page has loaded.
+        (InspectorTest.testPageDidLoad): Clear the isReloading flag.
+        (InspectorTest.reloadPage): Reimplement using promises. Return a promise.
+        * UserInterface/Base/Utilities.js: Implement Map.take in the obvious way.
+        * UserInterface/Controllers/ReplayManager.js: Added.
+        (WebInspector.ReplayManager):
+        (WebInspector):
+        (WebInspector.ReplayManager.prototype.get sessionState):
+        (WebInspector.ReplayManager.prototype.get segmentState):
+        (WebInspector.ReplayManager.prototype.get activeSessionIdentifier):
+        (WebInspector.ReplayManager.prototype.get activeSegmentIdentifier):
+        (WebInspector.ReplayManager.prototype.get playbackSpeed):
+        (WebInspector.ReplayManager.prototype.set playbackSpeed):
+        (WebInspector.ReplayManager.prototype.get currentPosition):
+        (WebInspector.ReplayManager.prototype.getSession.get var):
+        (WebInspector.ReplayManager.prototype.getSegment.get var):
+        (WebInspector.ReplayManager.prototype.captureStarted):
+        (WebInspector.ReplayManager.prototype.captureStopped):
+        (WebInspector.ReplayManager.prototype.playbackStarted):
+        (WebInspector.ReplayManager.prototype.playbackHitPosition):
+        (WebInspector.ReplayManager.prototype.playbackPaused):
+        (WebInspector.ReplayManager.prototype.playbackFinished):
+        (WebInspector.ReplayManager.prototype.sessionCreated.set catch):
+        (WebInspector.ReplayManager.prototype.sessionCreated.this):
+        (WebInspector.ReplayManager.prototype.sessionCreated):
+        (WebInspector.ReplayManager.prototype.sessionModified):
+        (WebInspector.ReplayManager.prototype.sessionRemoved.then):
+        (WebInspector.ReplayManager.prototype.sessionRemoved):
+        (WebInspector.ReplayManager.prototype.segmentCreated.set this):
+        (WebInspector.ReplayManager.prototype.segmentCompleted.set catch):
+        (WebInspector.ReplayManager.prototype.segmentCompleted):
+        (WebInspector.ReplayManager.prototype.segmentRemoved.then):
+        (WebInspector.ReplayManager.prototype.segmentRemoved):
+        (WebInspector.ReplayManager.prototype.segmentLoaded):
+        (WebInspector.ReplayManager.prototype.segmentUnloaded):
+        (WebInspector.ReplayManager.prototype.startCapturing):
+        (WebInspector.ReplayManager.prototype.stopCapturing):
+        (WebInspector.ReplayManager.prototype.replayToMarkIndex):
+        (WebInspector.ReplayManager.prototype.replayToCompletion):
+        (WebInspector.ReplayManager.prototype.pausePlayback):
+        (WebInspector.ReplayManager.prototype.stopPlayback):
+        (WebInspector.ReplayManager.prototype._changeSessionState):
+        (WebInspector.ReplayManager.prototype._changeSegmentState):
+        * UserInterface/Main.html:
+        * UserInterface/Models/ReplaySession.js: Added.
+        (WebInspector.ReplaySession):
+        (WebInspector.ReplaySession.fromPayload):
+        (WebInspector.ReplaySession.prototype.get segments):
+        (WebInspector.ReplaySession.prototype.segmentsChanged):
+        (WebInspector.ReplaySession.prototype._updateFromPayload):
+        * UserInterface/Models/ReplaySessionSegment.js: Added.
+        (WebInspector.IncompleteSessionSegment):
+        (WebInspector.IncompleteSessionSegment.prototype.get isComplete):
+        (WebInspector.ReplaySessionSegment):
+        (WebInspector.ReplaySessionSegment.prototype.get isComplete):
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass.prototype.registerCommand):
+        (InspectorBackendClass.prototype._promise): Add a promise-returning method for
+        invoking backend commands that return a result asynchronously.
+        * UserInterface/Protocol/ReplayObserver.js: Added.
+        (WebInspector.ReplayPosition):
+        (WebInspector.ReplayPosition.fromProtocol):
+        (WebInspector.ReplayObserver):
+        (WebInspector.ReplayObserver.prototype.captureStarted):
+        (WebInspector.ReplayObserver.prototype.captureStopped):
+        (WebInspector.ReplayObserver.prototype.playbackStarted):
+        (WebInspector.ReplayObserver.prototype.playbackHitPosition):
+        (WebInspector.ReplayObserver.prototype.playbackPaused):
+        (WebInspector.ReplayObserver.prototype.playbackFinished):
+        (WebInspector.ReplayObserver.prototype.inputSuppressionChanged):
+        (WebInspector.ReplayObserver.prototype.sessionCreated):
+        (WebInspector.ReplayObserver.prototype.sessionModified):
+        (WebInspector.ReplayObserver.prototype.sessionRemoved):
+        (WebInspector.ReplayObserver.prototype.sessionLoaded):
+        (WebInspector.ReplayObserver.prototype.segmentCreated):
+        (WebInspector.ReplayObserver.prototype.segmentRemoved):
+        (WebInspector.ReplayObserver.prototype.segmentCompleted):
+        (WebInspector.ReplayObserver.prototype.segmentLoaded):
+        (WebInspector.ReplayObserver.prototype.segmentUnloaded):
+        * UserInterface/Test.html:
+
 2014-03-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: DebuggerDashboardView looks scrunched debugging JSContext
