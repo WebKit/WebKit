@@ -1,3 +1,9 @@
+2014-03-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test fix after my last checkin. Add missing test expectation.
+
+        * http/tests/media/track/track-webvtt-slow-loading-expected.txt: Added.
+
 2014-03-21  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] incorrect clipping when the content has CSS Transforms like rotation
