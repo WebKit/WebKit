@@ -1,3 +1,28 @@
+2014-03-21  Michael Saboff  <msaboff@apple.com>
+
+        Change CodeGeneratorJS.pm special cases for "DOMWindow" to be general purpose
+        https://bugs.webkit.org/show_bug.cgi?id=130553
+
+        Reviewed by Geoffrey Garen.
+
+        Eliminated 'if ($interfaceName eq "DOMWindow") {' sections in CodeGeneratorJS where
+        it was used to do DOMWindow specific casting to a JSObject, either a JSDOMWindow* or
+        a JSDOMWindowShell*.  Instead the code generator will use the existing 
+        JSDOMWindow* toJSDOMWindow(JSValue value) function based on a newly added attribute
+        "CustomProxyToJSObject".  That attribute will emit a call to the function
+        ${className}* to${className}(JSValue).
+
+        This is being done to clean up the code generator and for a subsequent patch that
+        will use a similar custom to{className} function for workers,
+        JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(JSValue).
+
+        Changes covered by existing tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        * page/DOMWindow.idl:
+
 2014-03-21  Krzysztof Czech  <k.czech@samsung.com>
 
         AX: Replace DEPRECATED_DEFINE_STATIC_LOCAL by static NeverDestroyed
