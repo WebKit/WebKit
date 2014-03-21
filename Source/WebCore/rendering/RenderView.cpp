@@ -588,20 +588,6 @@ void RenderView::flushAccumulatedRepaintRegion() const
     m_accumulatedRepaintRegion = nullptr;
 }
 
-void RenderView::repaintRectangleInViewAndCompositedLayers(const LayoutRect& ur)
-{
-    if (!shouldRepaint(ur))
-        return;
-
-    repaintViewRectangle(ur);
-
-    RenderLayerCompositor& compositor = this->compositor();
-    if (compositor.inCompositingMode()) {
-        IntRect repaintRect = pixelSnappedIntRect(ur);
-        compositor.repaintCompositedLayers(&repaintRect);
-    }
-}
-
 void RenderView::repaintViewAndCompositedLayers()
 {
     repaintRootContents();
