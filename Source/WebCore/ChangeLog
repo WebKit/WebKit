@@ -1,3 +1,9 @@
+2014-03-21  Pratik Solanki  <psolanki@apple.com>
+
+        Unreviewed. iOS build fix after r166046.
+
+        * WebCore.exp.in:
+
 2014-03-21  Laszlo Vidacs  <lvidacs.u-szeged@partner.samsung.com>
 
         Fix the !ENABLE(FILTERS) build
