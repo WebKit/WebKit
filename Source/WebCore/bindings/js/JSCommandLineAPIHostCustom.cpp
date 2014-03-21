@@ -45,6 +45,7 @@
 #include <bindings/ScriptValue.h>
 #include <inspector/InspectorValues.h>
 #include <parser/SourceCode.h>
+#include <runtime/IdentifierInlines.h>
 #include <runtime/JSArray.h>
 #include <runtime/JSFunction.h>
 #include <runtime/JSLock.h>

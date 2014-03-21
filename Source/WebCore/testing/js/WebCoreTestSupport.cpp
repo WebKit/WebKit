@@ -33,6 +33,7 @@
 #include "JSInternals.h"
 #include <JavaScriptCore/APICast.h>
 #include <interpreter/CallFrame.h>
+#include <runtime/IdentifierInlines.h>
 
 using namespace JSC;
 using namespace WebCore;

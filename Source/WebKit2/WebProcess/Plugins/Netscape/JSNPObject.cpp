@@ -33,6 +33,7 @@
 #include "NPRuntimeObjectMap.h"
 #include "NPRuntimeUtilities.h"
 #include <JavaScriptCore/Error.h>
+#include <JavaScriptCore/IdentifierInlines.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/ObjectPrototype.h>

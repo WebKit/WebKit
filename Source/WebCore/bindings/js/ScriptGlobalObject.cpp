@@ -33,6 +33,7 @@
 
 #include "JSDOMBinding.h"
 #include <bindings/ScriptObject.h>
+#include <runtime/IdentifierInlines.h>
 #include <runtime/JSLock.h>
 
 #if ENABLE(INSPECTOR)

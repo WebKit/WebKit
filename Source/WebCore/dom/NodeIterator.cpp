@@ -29,6 +29,8 @@
 #include "ExceptionCode.h"
 #include "NodeTraversal.h"
 
+#include <runtime/JSCJSValueInlines.h>
+
 namespace WebCore {
 
 NodeIterator::NodePointer::NodePointer()

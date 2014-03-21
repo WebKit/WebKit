@@ -1,3 +1,28 @@
+2014-03-20  Andreas Kling  <akling@apple.com>
+
+        Less inclusion of JSCInlines.h.
+        <https://webkit.org/b/130545>
+
+        Stop including JSCInlines.h from JSDOMGlobalObject.h!
+
+        Reviewed by Simon Fraser.
+
+        * ForwardingHeaders/runtime/IdentifierInlines.h: Added.
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        * bindings/js/JSCommandLineAPIHostCustom.cpp:
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMStringMapCustom.cpp:
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        * bindings/js/JSHTMLFormControlsCollectionCustom.cpp:
+        * bindings/js/JSLazyEventListener.cpp:
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        * bindings/js/JSStorageCustom.cpp:
+        * bindings/js/ScriptGlobalObject.cpp:
+        * dom/NodeIterator.cpp:
+        * dom/TreeWalker.cpp:
+        * testing/Internals.cpp:
+        * testing/js/WebCoreTestSupport.cpp:
+
 2014-03-21  Oliver Hunt  <oliver@apple.com>
 
         Fix a crash when assigning an object to document.location

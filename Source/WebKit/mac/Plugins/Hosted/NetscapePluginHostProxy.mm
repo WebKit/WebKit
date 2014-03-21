@@ -36,6 +36,7 @@
 #import "WebFrameInternal.h"
 #import "WebHostedNetscapePluginView.h"
 #import "WebKitSystemInterface.h"
+#import <JavaScriptCore/IdentifierInlines.h>
 #import <WebCore/Frame.h>
 #import <WebCore/IdentifierRep.h>
 #import <WebCore/ScriptController.h>

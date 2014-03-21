@@ -35,6 +35,7 @@
 #include "ExceptionCode.h"
 #include "SQLValue.h"
 #include "SQLResultSetRowList.h"
+#include <runtime/IdentifierInlines.h>
 #include <runtime/ObjectConstructor.h>
 
 using namespace JSC;

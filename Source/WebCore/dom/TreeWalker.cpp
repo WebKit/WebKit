@@ -29,6 +29,8 @@
 #include "ContainerNode.h"
 #include "NodeTraversal.h"
 
+#include <runtime/JSCJSValueInlines.h>
+
 namespace WebCore {
 
 TreeWalker::TreeWalker(PassRefPtr<Node> rootNode, unsigned whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)

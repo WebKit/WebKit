@@ -25,6 +25,7 @@
 #include "JSNode.h"
 #include "ScriptController.h"
 #include <runtime/FunctionConstructor.h>
+#include <runtime/IdentifierInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>

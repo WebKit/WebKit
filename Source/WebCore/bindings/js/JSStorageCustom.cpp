@@ -27,6 +27,7 @@
 #include "JSStorage.h"
 
 #include "Storage.h"
+#include <runtime/IdentifierInlines.h>
 #include <runtime/PropertyNameArray.h>
 #include <wtf/text/WTFString.h>
 

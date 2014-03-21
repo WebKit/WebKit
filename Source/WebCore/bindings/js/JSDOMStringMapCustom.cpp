@@ -28,6 +28,7 @@
 
 #include "DOMStringMap.h"
 #include "JSNode.h"
+#include <runtime/IdentifierInlines.h>
 #include <wtf/text/AtomicString.h>
 
 using namespace JSC;
