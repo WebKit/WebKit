@@ -7,50 +7,50 @@ EXPECTED (cues.length == '12') OK
 EXPECTED (cues[0].id == '1') OK
 EXPECTED (cues[0].startTime == '0.1') OK
 EXPECTED (cues[0].endTime == '1.5') OK
-EXPECTED (cues[0].text == 'Single U+0020 SPACE left of cue-timings separator "-->"') OK
+EXPECTED (cues[0].text == 'Single U+0020 SPACE left of cue-timings separator') OK
 EXPECTED (cues[1].id == '2') OK
 EXPECTED (cues[1].startTime == '0.1') OK
 EXPECTED (cues[1].endTime == '1.5') OK
-EXPECTED (cues[1].text == 'Single U+0020 SPACE right of cue-timings separator "-->"') OK
+EXPECTED (cues[1].text == 'Single U+0020 SPACE right of cue-timings separator') OK
 EXPECTED (cues[2].id == '3') OK
 EXPECTED (cues[2].startTime == '0.1') OK
 EXPECTED (cues[2].endTime == '1.5') OK
-EXPECTED (cues[2].text == 'Single U+0009 TAB left of cue-timings separator "-->"') OK
+EXPECTED (cues[2].text == 'Single U+0009 TAB left of cue-timings separator') OK
 EXPECTED (cues[3].id == '4') OK
 EXPECTED (cues[3].startTime == '0.1') OK
 EXPECTED (cues[3].endTime == '1.5') OK
-EXPECTED (cues[3].text == 'Single U+0009 TAB right of cue-timings separator "-->"') OK
+EXPECTED (cues[3].text == 'Single U+0009 TAB right of cue-timings separator') OK
 EXPECTED (cues[4].id == '5') OK
 EXPECTED (cues[4].startTime == '0.1') OK
 EXPECTED (cues[4].endTime == '1.5') OK
-EXPECTED (cues[4].text == 'Single U+000C FORM FEED left of cue-timings separator "-->"') OK
+EXPECTED (cues[4].text == 'Single U+000C FORM FEED left of cue-timings separator') OK
 EXPECTED (cues[5].id == '6') OK
 EXPECTED (cues[5].startTime == '0.1') OK
 EXPECTED (cues[5].endTime == '1.5') OK
-EXPECTED (cues[5].text == 'Single U+000C FORM FEED right of cue-timings separator "-->"') OK
+EXPECTED (cues[5].text == 'Single U+000C FORM FEED right of cue-timings separator') OK
 EXPECTED (cues[6].id == '7') OK
 EXPECTED (cues[6].startTime == '0.1') OK
 EXPECTED (cues[6].endTime == '1.5') OK
-EXPECTED (cues[6].text == 'Several U+0020 SPACE left of cue-timings separator "-->"') OK
+EXPECTED (cues[6].text == 'Several U+0020 SPACE left of cue-timings separator') OK
 EXPECTED (cues[7].id == '8') OK
 EXPECTED (cues[7].startTime == '0.1') OK
 EXPECTED (cues[7].endTime == '1.5') OK
-EXPECTED (cues[7].text == 'Several U+0020 SPACE right of cue-timings separator "-->"') OK
+EXPECTED (cues[7].text == 'Several U+0020 SPACE right of cue-timings separator') OK
 EXPECTED (cues[8].id == '9') OK
 EXPECTED (cues[8].startTime == '0.1') OK
 EXPECTED (cues[8].endTime == '1.5') OK
-EXPECTED (cues[8].text == 'Several U+0009 TAB left of cue-timings separator "-->"') OK
+EXPECTED (cues[8].text == 'Several U+0009 TAB left of cue-timings separator') OK
 EXPECTED (cues[9].id == '10') OK
 EXPECTED (cues[9].startTime == '0.1') OK
 EXPECTED (cues[9].endTime == '1.5') OK
-EXPECTED (cues[9].text == 'Several U+0009 TAB right of cue-timings separator "-->"') OK
+EXPECTED (cues[9].text == 'Several U+0009 TAB right of cue-timings separator') OK
 EXPECTED (cues[10].id == '11') OK
 EXPECTED (cues[10].startTime == '0.1') OK
 EXPECTED (cues[10].endTime == '1.5') OK
-EXPECTED (cues[10].text == 'Several U+000C FORM FEED left of cue-timings separator "-->"') OK
+EXPECTED (cues[10].text == 'Several U+000C FORM FEED left of cue-timings separator') OK
 EXPECTED (cues[11].id == '12') OK
 EXPECTED (cues[11].startTime == '0.1') OK
 EXPECTED (cues[11].endTime == '1.5') OK
-EXPECTED (cues[11].text == 'Several U+000C FORM FEED right of cue-timings separator "-->"') OK
+EXPECTED (cues[11].text == 'Several U+000C FORM FEED right of cue-timings separator') OK
 END OF TEST
 

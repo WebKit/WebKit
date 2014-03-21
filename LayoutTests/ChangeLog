@@ -2,6 +2,12 @@
 
         Unreviewed test fix after r166080.
 
+        * media/track/track-webvtt-tc029-timings-whitespace-expected.txt: Forgot to update this!
+
+2014-03-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test fix after r166080.
+
         The cue-timing separator will trigger the creation of a new cue. So this test needs to remove
         use of the separator in the cue, so we can read the cue text.
 
