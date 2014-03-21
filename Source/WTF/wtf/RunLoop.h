@@ -42,6 +42,7 @@
 
 #if PLATFORM(EFL)
 #include <Ecore.h>
+#include <wtf/efl/UniquePtrEfl.h>
 #endif
 
 namespace WTF {
@@ -147,7 +148,7 @@ private:
     int m_nestingLevel;
 #elif PLATFORM(EFL)
     Mutex m_pipeLock;
-    OwnPtr<Ecore_Pipe> m_pipe;
+    EflUniquePtr<Ecore_Pipe> m_pipe;
 
     Mutex m_wakeUpEventRequestedLock;
     bool m_wakeUpEventRequested;

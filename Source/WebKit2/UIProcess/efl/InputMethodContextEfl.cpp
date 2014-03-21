@@ -31,9 +31,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-InputMethodContextEfl::InputMethodContextEfl(EwkView* view, PassOwnPtr<Ecore_IMF_Context> context)
+InputMethodContextEfl::InputMethodContextEfl(EwkView* view, EflUniquePtr<Ecore_IMF_Context> context)
     : m_view(view)
-    , m_context(context)
+    , m_context(std::move(context))
     , m_focused(false)
 {
     ASSERT(m_context);
@@ -73,13 +73,13 @@ void InputMethodContextEfl::onIMFPreeditSequenceChanged(void* data, Ecore_IMF_Co
     inputMethodContext->m_view->page()->setComposition(preeditString, underlines, 0);
 }
 
-PassOwnPtr<Ecore_IMF_Context> InputMethodContextEfl::createIMFContext(Evas* canvas)
+EflUniquePtr<Ecore_IMF_Context> InputMethodContextEfl::createIMFContext(Evas* canvas)
 {
     const char* defaultContextID = ecore_imf_context_default_id_get();
     if (!defaultContextID)
         return nullptr;
 
-    OwnPtr<Ecore_IMF_Context> imfContext = adoptPtr(ecore_imf_context_add(defaultContextID));
+    EflUniquePtr<Ecore_IMF_Context> imfContext(ecore_imf_context_add(defaultContextID));
     if (!imfContext)
         return nullptr;
 
@@ -87,7 +87,7 @@ PassOwnPtr<Ecore_IMF_Context> InputMethodContextEfl::createIMFContext(Evas* canv
     ecore_imf_context_client_window_set(imfContext.get(), reinterpret_cast<void*>(ecore_evas_window_get(ecoreEvas)));
     ecore_imf_context_client_canvas_set(imfContext.get(), canvas);
 
-    return imfContext.release();
+    return imfContext;
 }
 
 void InputMethodContextEfl::handleMouseUpEvent(const Evas_Event_Mouse_Up*)

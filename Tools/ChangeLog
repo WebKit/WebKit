@@ -1,3 +1,20 @@
+2014-03-20  Hyowon Kim  <hw1008.kim@samsung.com>
+
+        Move to using std::unique_ptr for EFL objects.
+        https://bugs.webkit.org/show_bug.cgi?id=129853
+
+        Reviewed by Gyuyoung Kim.
+
+        EflUniquePtr is a template alias of std::unique_ptr
+        with a custom deleter for each Efl Objects, which is motivated by GUniquePtr.
+        This patch replaces uses of OwnPtr and PassOwnPtr for Efl objects with EflUniquePtr.
+
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        (main):
+        * ImageDiff/efl/ImageDiff.cpp:
+        (initEfl):
+        (main):
+
 2014-03-20  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed buildfix after r165983 for non Cocoa platforms

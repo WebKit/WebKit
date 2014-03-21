@@ -22,8 +22,8 @@
 #include "EWKTestConfig.h"
 #include <Ecore_Evas.h>
 #include <Evas.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/efl/RefPtrEfl.h>
+#include <wtf/efl/UniquePtrEfl.h>
 
 namespace EWKUnitTests {
 
@@ -38,7 +38,7 @@ private:
     EWKTestView(const EWKTestView&);
     EWKTestView& operator=(const EWKTestView&);
 
-    OwnPtr<Ecore_Evas> m_ecoreEvas;
+    EflUniquePtr<Ecore_Evas> m_ecoreEvas;
     RefPtr<Evas_Object> m_webView;
 };
 

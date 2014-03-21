@@ -191,7 +191,7 @@ PassOwnPtr<RenderThemeEfl::ThemePartCacheEntry> RenderThemeEfl::ThemePartCacheEn
 
     OwnPtr<ThemePartCacheEntry> entry = adoptPtr(new ThemePartCacheEntry);
 
-    entry->m_canvas = adoptPtr(ecore_evas_buffer_new(size.width(), size.height()));
+    entry->m_canvas = EflUniquePtr<Ecore_Evas>(ecore_evas_buffer_new(size.width(), size.height()));
     if (!entry->canvas()) {
         EINA_LOG_ERR("ecore_evas_buffer_new(%d, %d) failed.", size.width(), size.height());
         return nullptr;
@@ -496,7 +496,7 @@ bool RenderThemeEfl::loadTheme()
     ASSERT(!m_themePath.isEmpty());
 
     if (!canvas()) {
-        m_canvas = adoptPtr(ecore_evas_buffer_new(1, 1));
+        m_canvas = EflUniquePtr<Ecore_Evas>(ecore_evas_buffer_new(1, 1));
         _ASSERT_ON_RELEASE_RETURN_VAL(canvas(), false,
                 "Could not create canvas required by theme, things will not work properly.");
     }

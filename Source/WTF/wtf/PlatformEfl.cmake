@@ -1,6 +1,5 @@
 list(APPEND WTF_SOURCES
     efl/MainThreadEfl.cpp
-    efl/OwnPtrEfl.cpp
     efl/RefPtrEfl.cpp
     efl/RunLoopEfl.cpp
 

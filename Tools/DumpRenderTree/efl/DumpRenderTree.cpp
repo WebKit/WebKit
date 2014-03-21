@@ -50,6 +50,7 @@
 #include <unistd.h>
 #include <wtf/Assertions.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/efl/UniquePtrEfl.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -457,7 +458,7 @@ int main(int argc, char** argv)
 
     WTFInstallReportBacktraceOnCrashHook();
 
-    OwnPtr<Ecore_Evas> ecoreEvas = adoptPtr(initEcoreEvas());
+    EflUniquePtr<Ecore_Evas> ecoreEvas(initEcoreEvas());
     browser = DumpRenderTreeChrome::create(ecore_evas_get(ecoreEvas.get()));
     addFontsToEnvironment();
 
@@ -470,7 +471,7 @@ int main(int argc, char** argv)
             runTest(argv[i]);
     }
 
-    ecoreEvas.clear();
+    ecoreEvas = nullptr;
 
     shutdownEfl();
     return EXIT_SUCCESS;

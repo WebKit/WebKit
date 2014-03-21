@@ -28,7 +28,7 @@ namespace WebKit {
 
 bool Module::load()
 {
-    m_module = adoptPtr(eina_module_new(m_path.utf8().data()));
+    m_module = EflUniquePtr<Eina_Module>(eina_module_new(m_path.utf8().data()));
     if (!m_module || !eina_module_load(m_module.get())) {
         m_module = nullptr;
         return false;

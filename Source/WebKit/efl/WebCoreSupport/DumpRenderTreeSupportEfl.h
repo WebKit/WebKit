@@ -35,6 +35,12 @@
 #include <atk/atk.h>
 #endif
 
+#if USE(EO)
+typedef struct _Eo_Opaque Evas_Object;
+#else
+typedef struct _Evas_Object Evas_Object;
+#endif
+
 typedef struct _Ewk_History_Item Ewk_History_Item;
 
 typedef Vector<Ewk_History_Item*> HistoryItemChildrenVector;

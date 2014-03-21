@@ -35,15 +35,14 @@
 #include "MainThread.h"
 
 #include <Ecore.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/efl/UniquePtrEfl.h>
 
 namespace WTF {
 
-static OwnPtr<Ecore_Pipe>& pipeObject()
+static EflUniquePtr<Ecore_Pipe>& pipeObject()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(OwnPtr<Ecore_Pipe>, pipeObject, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(EflUniquePtr<Ecore_Pipe>, pipeObject, ());
     return pipeObject;
 }
 
@@ -54,7 +53,7 @@ static void monitorDispatchFunctions(void*, void*, unsigned int)
 
 void initializeMainThreadPlatform()
 {
-    pipeObject() = adoptPtr(ecore_pipe_add(monitorDispatchFunctions, 0));
+    pipeObject() = EflUniquePtr<Ecore_Pipe>(ecore_pipe_add(monitorDispatchFunctions, 0));
 }
 
 void scheduleDispatchFunctionsOnMainThread()

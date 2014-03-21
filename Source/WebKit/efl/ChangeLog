@@ -1,3 +1,28 @@
+2014-03-20  Hyowon Kim  <hw1008.kim@samsung.com>
+
+        Move to using std::unique_ptr for EFL objects.
+        https://bugs.webkit.org/show_bug.cgi?id=129853
+
+        Reviewed by Gyuyoung Kim.
+
+        EflUniquePtr is a template alias of std::unique_ptr
+        with a custom deleter for each Efl Objects, which is motivated by GUniquePtr.
+        This patch replaces uses of OwnPtr and PassOwnPtr for Efl objects with EflUniquePtr.
+
+        * WebCoreSupport/AcceleratedCompositingContextEfl.cpp:
+        (WebCore::AcceleratedCompositingContext::initialize):
+        * WebCoreSupport/AcceleratedCompositingContextEfl.h:
+        * WebCoreSupport/BatteryClientEfl.h:
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+        * WebCoreSupport/EditorClientEfl.h:
+        * WebCoreSupport/FrameNetworkingContextEfl.h:
+        * WebCoreSupport/NavigatorContentUtilsClientEfl.h:
+        * ewk/ewk_view.cpp:
+        (_ewk_view_editor_command_string_get):
+        * tests/UnitTestUtils/EWKTestView.cpp:
+        (EWKUnitTests::EWKTestView::init):
+        * tests/UnitTestUtils/EWKTestView.h:
+
 2014-03-14  Maciej Stachowiak  <mjs@apple.com>
 
         Replace "Apple Computer, Inc." with "Apple Inc." in copyright headers

@@ -42,11 +42,10 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/efl/RefPtrEfl.h>
+#include <wtf/efl/UniquePtrEfl.h>
 
 enum PixelComponent {
     Red,
@@ -55,7 +54,7 @@ enum PixelComponent {
     Alpha
 };
 
-static OwnPtr<Ecore_Evas> gEcoreEvas;
+static EflUniquePtr<Ecore_Evas> gEcoreEvas;
 static double gTolerance = 0;
 
 static void abortWithErrorMessage(const char* errorMessage);
@@ -318,7 +317,7 @@ static Evas* initEfl()
     ecore_init();
     ecore_evas_init();
 
-    gEcoreEvas = adoptPtr(ecore_evas_buffer_new(1, 1));
+    gEcoreEvas = EflUniquePtr<Ecore_Evas>(ecore_evas_buffer_new(1, 1));
     Evas* evas = ecore_evas_get(gEcoreEvas.get());
     if (!evas)
         abortWithErrorMessage("could not create Ecore_Evas buffer");
@@ -361,7 +360,7 @@ int main(int argc, char* argv[])
         fflush(stdout);
     }
 
-    gEcoreEvas.clear(); // Make sure ecore_evas_free is called before the EFL are shut down
+    gEcoreEvas = nullptr; // Make sure ecore_evas_free is called before the EFL are shut down
 
     shutdownEfl();
     return EXIT_SUCCESS;

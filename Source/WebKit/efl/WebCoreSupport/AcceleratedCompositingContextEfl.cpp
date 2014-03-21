@@ -47,7 +47,7 @@ AcceleratedCompositingContext::~AcceleratedCompositingContext()
 
 bool AcceleratedCompositingContext::initialize()
 {
-    m_evasGL = adoptPtr(evas_gl_new(evas_object_evas_get(m_view)));
+    m_evasGL = EflUniquePtr<Evas_GL>(evas_gl_new(evas_object_evas_get(m_view)));
     if (!m_evasGL)
         return false;
 

@@ -25,6 +25,7 @@
 typedef struct _Eo_Opaque Evas;
 #else
 typedef struct _Evas Evas;
+typedef struct _Ecore_Evas Ecore_Evas;
 #endif
 
 namespace WebCore {

@@ -39,7 +39,7 @@ namespace WTF {
 RunLoop::RunLoop()
     : m_wakeUpEventRequested(false)
 {
-    m_pipe = adoptPtr(ecore_pipe_add(wakeUpEvent, this));
+    m_pipe = EflUniquePtr<Ecore_Pipe>(ecore_pipe_add(wakeUpEvent, this));
 }
 
 RunLoop::~RunLoop()

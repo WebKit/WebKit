@@ -1482,10 +1482,10 @@ static Eina_Bool _ewk_view_smart_enable_render(Ewk_View_Smart_Data* smartData)
 
 static const char* _ewk_view_editor_command_string_get(Ewk_View_Private_Data*, Ewk_Editor_Command ewkCommand)
 {
-    static OwnPtr<Eina_Hash> editorCommandHash;
+    static EflUniquePtr<Eina_Hash> editorCommandHash;
 
     if (!editorCommandHash) {
-        editorCommandHash = adoptPtr(eina_hash_int32_new(0));
+        editorCommandHash = EflUniquePtr<Eina_Hash>(eina_hash_int32_new(0));
         for (int i = 0; editorCommands[i].ewkEditorCommand != EWK_EDITOR_COMMAND_NONE; i++)
             eina_hash_add(editorCommandHash.get(), &editorCommands[i].ewkEditorCommand, editorCommands[i].editorCommandString);
     }

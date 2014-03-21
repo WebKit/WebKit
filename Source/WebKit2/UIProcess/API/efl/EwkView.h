@@ -251,9 +251,9 @@ private:
     Evas_Object* m_evasObject;
     RefPtr<EwkContext> m_context;
     RefPtr<EwkPageGroup> m_pageGroup;
-    OwnPtr<Evas_GL> m_evasGL;
-    OwnPtr<WebCore::EvasGLContext> m_evasGLContext;
-    OwnPtr<WebCore::EvasGLSurface> m_evasGLSurface;
+    EflUniquePtr<Evas_GL> m_evasGL;
+    std::unique_ptr<WebCore::EvasGLContext> m_evasGLContext;
+    std::unique_ptr<WebCore::EvasGLSurface> m_evasGLSurface;
     bool m_pendingSurfaceResize;
 
     WebCore::TransformationMatrix m_userViewportTransform;

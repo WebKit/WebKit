@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Intel Corporation. All rights reserved.
+ * Copyright (C) 2014 Samsung Electronics
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EvasGLSurface_h
-#define EvasGLSurface_h
+#ifndef UniquePtrEfl_h
+#define UniquePtrEfl_h
 
-#include "IntSize.h"
+#if PLATFORM(EFL)
 
+#include <Ecore.h>
+#include <Ecore_Evas.h>
+#include <Ecore_IMF.h>
+#include <Eina.h>
+#include <Evas.h>
 #include <Evas_GL.h>
-#include <wtf/PassOwnPtr.h>
 
-namespace WebCore {
+namespace WTF {
 
-class EvasGLSurface {
-public:
-    static std::unique_ptr<EvasGLSurface> create(Evas_GL* evasGL, Evas_GL_Config* cfg, const WebCore::IntSize& size)
-    {
-        ASSERT(evasGL);
-        ASSERT(cfg);
-
-        Evas_GL_Surface* surface = 0;
-
-        // Ensure that the surface is created with valid size.
-        if (size.width() && size.height())
-            surface = evas_gl_surface_create(evasGL, cfg, size.width(), size.height());
-
-        if (!surface)
-            return nullptr;
-
-        // Ownership of surface is passed to EvasGLSurface.
-        return std::make_unique<EvasGLSurface>(evasGL, surface);
-    }
-
-    EvasGLSurface(Evas_GL*, Evas_GL_Surface* passSurface);
-    ~EvasGLSurface();
-
-    Evas_GL_Surface* surface() { return m_surface; }
-
-private:
-    Evas_GL* m_evasGL;
-    Evas_GL_Surface* m_surface;
+template<typename T> struct EflPtrDeleter {
+    void operator()(T* ptr) const = delete;
 };
 
-} // namespace WebCore
+template<typename T>
+using EflUniquePtr = std::unique_ptr<T, EflPtrDeleter<T>>;
 
-#endif // EvasGLSurface_h
+#define FOR_EACH_EFL_DELETER(macro) \
+    macro(Ecore_Evas, ecore_evas_free) \
+    macro(Ecore_IMF_Context, ecore_imf_context_del) \
+    macro(Ecore_Pipe, ecore_pipe_del) \
+    macro(Eina_Hash, eina_hash_free) \
+    macro(Eina_Module, eina_module_free) \
+    macro(Evas_Object, evas_object_del) \
+    macro(Evas_GL, evas_gl_free)
+
+#define WTF_DEFINE_EFLPTR_DELETER(typeName, deleterFunc) \
+    template<> struct EflPtrDeleter<typeName> \
+    { \
+        void operator() (typeName* ptr) const \
+        { \
+            if (ptr) \
+                deleterFunc(ptr); \
+        } \
+    };
+
+FOR_EACH_EFL_DELETER(WTF_DEFINE_EFLPTR_DELETER)
+#undef FOR_EACH_EFL_DELETER
+
+} // namespace WTF
+
+using WTF::EflUniquePtr;
+
+#endif // PLATFORM(EFL)
+
+#endif // UniquePtrEfl_h

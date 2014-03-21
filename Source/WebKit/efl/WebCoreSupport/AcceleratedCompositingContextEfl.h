@@ -27,6 +27,7 @@
 #include "Timer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/efl/UniquePtrEfl.h>
 
 namespace WebCore {
 
@@ -62,9 +63,9 @@ private:
     std::unique_ptr<GraphicsLayer> m_rootGraphicsLayer;
     Timer<AcceleratedCompositingContext> m_syncTimer;
 
-    OwnPtr<Evas_GL> m_evasGL;
-    OwnPtr<EvasGLContext> m_evasGLContext;
-    OwnPtr<EvasGLSurface> m_evasGLSurface;
+    EflUniquePtr<Evas_GL> m_evasGL;
+    std::unique_ptr<EvasGLContext> m_evasGLContext;
+    std::unique_ptr<EvasGLSurface> m_evasGLSurface;
 
     TextureMapperFPSCounter m_fpsCounter;
 };
