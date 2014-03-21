@@ -171,11 +171,10 @@ public:
     // Parts of the document can be visible through transparent or blured UI widgets of the chrome. Those parts
     // contribute to painting but not to the scrollable area.
     // The unobscuredContentRect is the area that is not covered by UI elements.
-#if PLATFORM(IOS)
-    IntRect unobscuredContentRect() const;
-    IntRect unobscuredContentRectIncludingScrollbars() const { return unobscuredContentRect(); }
-#else
     IntRect unobscuredContentRect(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
+#if PLATFORM(IOS)
+    IntRect unobscuredContentRectIncludingScrollbars() const { return unobscuredContentRect(IncludeScrollbars); }
+#else
     IntRect unobscuredContentRectIncludingScrollbars() const { return visibleContentRectIncludingScrollbars(); }
 #endif
 
@@ -392,6 +391,7 @@ protected:
 
 private:
     virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const override;
+    IntRect unobscuredContentRectInternal(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
 
     RefPtr<Scrollbar> m_horizontalScrollbar;
     RefPtr<Scrollbar> m_verticalScrollbar;

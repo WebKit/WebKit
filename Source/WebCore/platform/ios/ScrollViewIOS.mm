@@ -96,7 +96,7 @@ bool ScrollView::platformCanBlitOnScroll() const
     return [[scrollView() contentView] copiesOnScroll];
 }
 
-IntRect ScrollView::unobscuredContentRect() const
+IntRect ScrollView::unobscuredContentRect(VisibleContentRectIncludesScrollbars) const
 {
     if (WAKScrollView *view = static_cast<WAKScrollView *>(platformWidget())) {
         CGRect r = CGRectZero;
@@ -109,7 +109,7 @@ IntRect ScrollView::unobscuredContentRect() const
     if (!m_unobscuredContentRect.isEmpty())
         return m_unobscuredContentRect;
 
-    return visibleContentRectIncludingScrollbars();
+    return unobscuredContentRectInternal();
 }
 
 void ScrollView::setUnobscuredContentRect(const IntRect& rect)

@@ -1,3 +1,28 @@
+2014-03-21  Simon Fraser  <simon.fraser@apple.com>
+
+        unobscuredContentRect() should have the same signature on iOS and other platforms,
+        and should not recurse on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=130604
+        <rdar://problem/16392587>
+
+        Reviewed by Tim Horton and Beth Dakin.
+
+        Having different signatures on different platforms is a recipe for
+        build breakage. Give the iOS unobscuredContentRect() an unused 
+        VisibleContentRectIncludesScrollbars parameter.
+        
+        Also avoid recursion via unobscuredContentRect() calling visibleContentRectInternal().
+
+        * WebCore.exp.in:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::unobscuredContentRect):
+        (WebCore::ScrollView::unobscuredContentRectInternal):
+        (WebCore::ScrollView::visibleContentRectInternal):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::unobscuredContentRectIncludingScrollbars):
+        * platform/ios/ScrollViewIOS.mm:
+        (WebCore::ScrollView::unobscuredContentRect):
+
 2014-03-21  Brent Fulgham  <bfulgham@apple.com>
 
         Handle recovery on "timestamp-looking" lines in the WebVTT parser

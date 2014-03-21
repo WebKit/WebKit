@@ -235,16 +235,21 @@ void ScrollView::setDelegatesScrolling(bool delegatesScrolling)
     m_delegatesScrolling = delegatesScrolling;
     delegatesScrollingDidChange();
 }
-    
+
 #if !PLATFORM(IOS)
 IntRect ScrollView::unobscuredContentRect(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
+{
+    return unobscuredContentRectInternal(scrollbarInclusion);
+}
+#endif
+
+IntRect ScrollView::unobscuredContentRectInternal(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
 {
     FloatSize visibleContentSize = unscaledUnobscuredVisibleContentSize(scrollbarInclusion);
     visibleContentSize.scale(1 / visibleContentScaleFactor());
     return IntRect(IntPoint(m_scrollOffset), expandedIntSize(visibleContentSize));
 }
-#endif
-    
+
 IntSize ScrollView::unscaledTotalVisibleContentSize(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
 {
     if (platformWidget())
@@ -294,7 +299,7 @@ IntRect ScrollView::visibleContentRectInternal(VisibleContentRectIncludesScrollb
     }
     
     if (platformWidget())
-        return unobscuredContentRect();
+        return unobscuredContentRect(scrollbarInclusion);
 #else
     UNUSED_PARAM(visibleContentRectBehavior);
 #endif
@@ -307,11 +312,7 @@ IntRect ScrollView::visibleContentRectInternal(VisibleContentRectIncludesScrollb
         return m_fixedVisibleContentRect;
 #endif
 
-#if PLATFORM(IOS)
-    return unobscuredContentRect();
-#else
-    return unobscuredContentRect(scrollbarInclusion);
-#endif
+    return unobscuredContentRectInternal(scrollbarInclusion);
 }
 #endif
 
