@@ -112,11 +112,11 @@ q {
     display: inline
 }
 
-q:before {
+q::before {
     content: open-quote;
 }
 
-q:after {
+q::after {
     content: close-quote;
 }
 

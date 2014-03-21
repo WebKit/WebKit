@@ -4,13 +4,6 @@
 -webkit-autofill
 -webkit-drag
 -webkit-full-page-media
--webkit-resizer
--webkit-scrollbar
--webkit-scrollbar-button
--webkit-scrollbar-corner
--webkit-scrollbar-thumb
--webkit-scrollbar-track
--webkit-scrollbar-track-piece
 active
 after
 before
@@ -53,7 +46,6 @@ read-write
 required
 root
 scope
-selection
 single-button
 start
 target
@@ -70,7 +62,6 @@ window-inactive
 #endif
 
 #if ENABLE(VIDEO_TRACK)
-cue(
 future
 past
 #endif

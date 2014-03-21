@@ -172,6 +172,8 @@ class CSSParserSelector {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static CSSParserSelector* parsePagePseudoSelector(const CSSParserString& pseudoTypeString);
+    static CSSParserSelector* parsePseudoElementSelector(CSSParserString& pseudoTypeString);
+    static CSSParserSelector* parsePseudoCueFunctionSelector(const CSSParserString& functionIdentifier, Vector<std::unique_ptr<CSSParserSelector>>* selectorVector);
 
     CSSParserSelector();
     explicit CSSParserSelector(const QualifiedName&);

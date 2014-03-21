@@ -1173,8 +1173,8 @@ CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(PassRefPtr<Node> n, boo
     , m_refCount(1)
 {
     unsigned nameWithoutColonsStart = pseudoElementName[0] == ':' ? (pseudoElementName[1] == ':' ? 2 : 1) : 0;
-    m_pseudoElementSpecifier = CSSSelector::pseudoId(CSSSelector::parsePseudoType(
-        AtomicString(pseudoElementName.substring(nameWithoutColonsStart))));
+    m_pseudoElementSpecifier = CSSSelector::pseudoId(CSSSelector::parsePseudoElementType(
+    (pseudoElementName.substringSharingImpl(nameWithoutColonsStart))));
 }
 
 CSSComputedStyleDeclaration::~CSSComputedStyleDeclaration()

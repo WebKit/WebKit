@@ -186,7 +186,7 @@ namespace WebCore {
             return static_cast<PseudoType>(m_pseudoType);
         }
 
-        static PseudoType parsePseudoType(const String&);
+        static PseudoType parsePseudoElementType(const String&);
         static PseudoId pseudoId(PseudoType);
 
         // Selectors are kept in an array by CSSSelectorList. The next component of the selector is

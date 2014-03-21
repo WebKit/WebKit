@@ -1,3 +1,50 @@
+2014-03-21  Benjamin Poulain  <bpoulain@apple.com>
+
+        Pseudo type cleanup part 2: split pseudo elements parsing
+        https://bugs.webkit.org/show_bug.cgi?id=130370
+
+        Reviewed by Andreas Kling.
+
+        With this patch, pseudo elements are handled separately. The only thing left in
+        the old path is compatibility pseudo elements and pseudo classes.
+
+        The list of special pseudo elements is now separated and is stored in SelectorPseudoElementTypeMap.in.
+        The script makeSelectorPseudoElementsMap.py takes that list to make the pseudo elements hash table.
+
+        The other pseudo elements are the prefixed ones, they are filtered in CSSSelector::parsePseudoElementType().
+
+        All the non-compatibility selectors are removed from SelectorPseudoTypeMap.in. CSSParserSelector::setPseudoTypeValue()
+        is updated accordingly. The next step will be to clean that part.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::CSSComputedStyleDeclaration):
+        * css/CSSGrammar.y.in:
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::parsePseudoElementSelector):
+        (WebCore::CSSParserSelector::parsePseudoCueFunctionSelector):
+        (WebCore::CSSParserSelector::setPseudoTypeValue):
+        * css/CSSParserValues.h:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::parsePseudoElementType):
+        * css/CSSSelector.h:
+        * css/SelectorPseudoElementTypeMap.in: Added.
+        * css/SelectorPseudoTypeMap.h:
+        * css/SelectorPseudoTypeMap.in:
+        * css/html.css:
+        (q::before):
+        (q::after):
+        * css/makeSelectorPseudoElementsMap.py: Added.
+        (enumerablePseudoType):
+        (expand_ifdef_condition):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getMatchedCSSRules):
+
 2014-03-20  Andreas Kling  <akling@apple.com>
 
         Less inclusion of JSCInlines.h.

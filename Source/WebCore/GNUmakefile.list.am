@@ -855,6 +855,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/PlugInsResourcesData.cpp \
 	DerivedSources/WebCore/PlugInsResources.h \
 	DerivedSources/WebCore/SettingsMacros.h \
+	DerivedSources/WebCore/SelectorPseudoElementTypeMap.cpp \
 	DerivedSources/WebCore/SelectorPseudoTypeMap.cpp \
 	DerivedSources/WebCore/UserAgentScriptsData.cpp \
 	DerivedSources/WebCore/UserAgentScripts.h \

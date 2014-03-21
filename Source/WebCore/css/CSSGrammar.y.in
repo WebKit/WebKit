@@ -1184,26 +1184,12 @@ pseudo:
             $$ = selector.release();
     }
     | ':' ':' IDENT {
-        $$ = nullptr;
-        auto selector = std::make_unique<CSSParserSelector>();
-        selector->setMatch(CSSSelector::PseudoElement);
-        $3.lower();
-        selector->setPseudoTypeValue($3);
-        if (selector->pseudoType() != CSSSelector::PseudoUnknown)
-            $$ = selector.release();
+        $$ = CSSParserSelector::parsePseudoElementSelector($3);
     }
 #if ENABLE_VIDEO_TRACK
     // used by ::cue(:past/:future)
     | ':' ':' CUEFUNCTION maybe_space simple_selector_list maybe_space ')' {
-        $$ = nullptr;
-        if ($5) {
-            auto selector = std::make_unique<CSSParserSelector>();
-            selector->setMatch(CSSSelector::PseudoElement);
-            selector->adoptSelectorVector(*std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>($5));
-            selector->setPseudoTypeValue($3);
-            ASSERT(selector->pseudoType() == CSSSelector::PseudoCue);
-            $$ = selector.release();
-        }
+        $$ = CSSParserSelector::parsePseudoCueFunctionSelector($3, $5);
     }
 #endif
     // use by :-webkit-any.

@@ -249,17 +249,14 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
     return NOPSEUDO;
 }
 
-CSSSelector::PseudoType CSSSelector::parsePseudoType(const String& name)
+CSSSelector::PseudoType CSSSelector::parsePseudoElementType(const String& name)
 {
     if (name.isNull())
         return PseudoUnknown;
 
-    PseudoType type = parsePseudoTypeString(*name.impl());
+    PseudoType type = parsePseudoElementString(*name.impl());
     if (type == PseudoUnknown) {
         if (name.startsWith("-webkit-"))
-            type = PseudoWebKitCustomElement;
-
-        if (name == "cue")
             type = PseudoWebKitCustomElement;
 
         if (name.startsWith("x-"))
