@@ -1,3 +1,12 @@
+2014-03-20  Enrica Casucci  <enrica@apple.com>
+
+        Build fix.
+
+        Removing unused variable.
+        
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didPaintContents):
+
 2014-03-20  Brent Fulgham  <bfulgham@apple.com>
 
         Rename TextTrackRegion/TextTrackRegionList to VTTRegion/VTTRegionList

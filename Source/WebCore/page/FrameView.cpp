@@ -3534,10 +3534,9 @@ void FrameView::didPaintContents(GraphicsContext* context, const IntRect& dirtyR
         memoryCache()->pruneLiveResources(true);
 #endif
 
-    Document* document = frame().document();
     // Regions may have changed as a result of the visibility/z-index of element changing.
 #if ENABLE(DASHBOARD_SUPPORT)
-    if (document->annotatedRegionsDirty())
+    if (frame().document()->annotatedRegionsDirty())
         updateAnnotatedRegions();
 #endif
 
