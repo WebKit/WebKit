@@ -230,7 +230,7 @@ void GraphicsContext::restorePlatformState()
 }
 
 // Draws a filled rectangle with a stroked border.
-void GraphicsContext::drawRect(const FloatRect& rect)
+void GraphicsContext::drawRect(const FloatRect& rect, float)
 {
     if (paintingDisabled())
         return;

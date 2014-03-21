@@ -1,3 +1,34 @@
+2014-03-21  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make <img> positioning subpixel aware.
+        https://bugs.webkit.org/show_bug.cgi?id=130596
+
+        Reviewed by Simon Fraser.
+
+        Change <img> positioning from integral to device pixel. It enables us
+        to paint hairline borders around <img> properly.
+        This patch changes the behavior of broken image representation from constant 1 CSS px border
+        to a dynamic 1 device px.
+
+        Test: fast/images/hidpi-image-position-on-device-pixels.html
+
+        * WebCore.exp.in:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::paintIntoRect):
+        * rendering/RenderImage.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::drawPlatformResizerImage):
+
 2014-03-21  Brent Fulgham  <bfulgham@apple.com>
 
         Merge VTTScanner Code from Blink

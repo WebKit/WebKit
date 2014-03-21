@@ -625,7 +625,7 @@ void GraphicsContext::restorePlatformState()
     m_data->restore();
 }
 
-void GraphicsContext::drawRect(const FloatRect& rect)
+void GraphicsContext::drawRect(const FloatRect& rect, float)
 {
     if (!m_data->m_opacity || paintingDisabled() || rect.isEmpty())
         return;

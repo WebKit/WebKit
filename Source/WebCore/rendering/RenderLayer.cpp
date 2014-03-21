@@ -3482,12 +3482,12 @@ void RenderLayer::drawPlatformResizerImage(GraphicsContext* context, const Layou
         context->save();
         context->translate(resizerCornerRect.x() + cornerResizerSize.width(), resizerCornerRect.y() + resizerCornerRect.height() - cornerResizerSize.height());
         context->scale(FloatSize(-1.0, 1.0));
-        context->drawImage(resizeCornerImage.get(), renderer().style().colorSpace(), IntRect(IntPoint(), cornerResizerSize));
+        context->drawImage(resizeCornerImage.get(), renderer().style().colorSpace(), FloatRect(FloatPoint(), cornerResizerSize));
         context->restore();
         return;
     }
-    LayoutRect imageRect(resizerCornerRect.maxXMaxYCorner() - cornerResizerSize, cornerResizerSize);
-    context->drawImage(resizeCornerImage.get(), renderer().style().colorSpace(), pixelSnappedIntRect(imageRect));
+    FloatRect imageRect = pixelSnappedForPainting(LayoutRect(resizerCornerRect.maxXMaxYCorner() - cornerResizerSize, cornerResizerSize), renderer().document().deviceScaleFactor());
+    context->drawImage(resizeCornerImage.get(), renderer().style().colorSpace(), imageRect);
 }
 
 void RenderLayer::paintResizer(GraphicsContext* context, const LayoutPoint& paintOffset, const LayoutRect& damageRect)

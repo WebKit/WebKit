@@ -390,6 +390,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     LayoutUnit topPad = paddingTop();
 
     GraphicsContext* context = paintInfo.context;
+    float deviceScaleFactor = document().deviceScaleFactor();
 
     Page* page = frame().page();
 
@@ -401,13 +402,13 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             page->addRelevantUnpaintedObject(this, visualOverflowRect());
 
         if (cWidth > 2 && cHeight > 2) {
-            const int borderWidth = 1;
+            LayoutUnit borderWidth = LayoutUnit(1 / deviceScaleFactor);
 
             // Draw an outline rect where the image should be.
             context->setStrokeStyle(SolidStroke);
             context->setStrokeColor(Color::lightGray, style().colorSpace());
             context->setFillColor(Color::transparent, style().colorSpace());
-            context->drawRect(pixelSnappedIntRect(LayoutRect(paintOffset.x() + leftBorder + leftPad, paintOffset.y() + topBorder + topPad, cWidth, cHeight)));
+            context->drawRect(pixelSnappedForPainting(LayoutRect(paintOffset.x() + leftBorder + leftPad, paintOffset.y() + topBorder + topPad, cWidth, cHeight), deviceScaleFactor), borderWidth);
 
             bool errorPictureDrawn = false;
             LayoutSize imageOffset;
@@ -437,7 +438,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 #if ENABLE(CSS_IMAGE_ORIENTATION)
                 orientationDescription.setImageOrientationEnum(style().imageOrientation());
 #endif
-                context->drawImage(image.get(), style().colorSpace(), pixelSnappedIntRect(LayoutRect(paintOffset + imageOffset, imageSize)), CompositeSourceOver, orientationDescription);
+                context->drawImage(image.get(), style().colorSpace(), pixelSnappedForPainting(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), CompositeSourceOver, orientationDescription);
                 errorPictureDrawn = true;
             }
 
@@ -478,7 +479,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         if (clip)
             context->clip(contentRect);
 
-        paintIntoRect(context, paintRect);
+        paintIntoRect(context, pixelSnappedForPainting(paintRect, deviceScaleFactor));
         
         if (cachedImage() && page && paintInfo.phase == PaintPhaseForeground) {
             // For now, count images as unpainted if they are still progressively loading. We may want 
@@ -549,25 +550,24 @@ void RenderImage::areaElementFocusChanged(HTMLAreaElement* element)
     repaint();
 }
 
-void RenderImage::paintIntoRect(GraphicsContext* context, const LayoutRect& rect)
+void RenderImage::paintIntoRect(GraphicsContext* context, const FloatRect& rect)
 {
-    IntRect alignedRect = pixelSnappedIntRect(rect);
-    if (!imageResource().hasImage() || imageResource().errorOccurred() || alignedRect.width() <= 0 || alignedRect.height() <= 0)
+    if (!imageResource().hasImage() || imageResource().errorOccurred() || rect.width() <= 0 || rect.height() <= 0)
         return;
 
-    RefPtr<Image> img = imageResource().image(alignedRect.width(), alignedRect.height());
+    RefPtr<Image> img = imageResource().image(rect.width(), rect.height());
     if (!img || img->isNull())
         return;
 
     HTMLImageElement* imageElt = (element() && isHTMLImageElement(element())) ? toHTMLImageElement(element()) : 0;
     CompositeOperator compositeOperator = imageElt ? imageElt->compositeOperator() : CompositeSourceOver;
     Image* image = imageResource().image().get();
-    bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, image, alignedRect.size());
+    bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, image, LayoutSize(rect.size()));
     ImageOrientationDescription orientationDescription(shouldRespectImageOrientation());
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     orientationDescription.setImageOrientationEnum(style().imageOrientation());
 #endif
-    context->drawImage(imageResource().image(alignedRect.width(), alignedRect.height()).get(), style().colorSpace(), alignedRect, compositeOperator, orientationDescription, useLowQualityScaling);
+    context->drawImage(imageResource().image(rect.width(), rect.height()).get(), style().colorSpace(), rect, compositeOperator, orientationDescription, useLowQualityScaling);
 }
 
 bool RenderImage::boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox*) const

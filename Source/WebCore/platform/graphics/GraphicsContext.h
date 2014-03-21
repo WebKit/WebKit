@@ -271,7 +271,7 @@ namespace WebCore {
         // FIXME: ...except drawRect(), which fills properly but always strokes
         // using a 1-pixel stroke inset from the rect borders (of the correct
         // stroke color).
-        void drawRect(const FloatRect&);
+        void drawRect(const FloatRect&, float borderThickness = 1);
         void drawLine(const FloatPoint&, const FloatPoint&);
 
 #if PLATFORM(IOS)
@@ -302,10 +302,9 @@ namespace WebCore {
 
         void strokeRect(const FloatRect&, float lineWidth);
 
-        void drawImage(Image*, ColorSpace styleColorSpace, const IntPoint&, CompositeOperator = CompositeSourceOver, ImageOrientationDescription = ImageOrientationDescription());
-        void drawImage(Image*, ColorSpace styleColorSpace, const IntRect&, CompositeOperator = CompositeSourceOver, ImageOrientationDescription = ImageOrientationDescription(), bool useLowQualityScale = false);
-        void drawImage(Image*, ColorSpace styleColorSpace, const IntPoint& destPoint, const IntRect& srcRect, CompositeOperator = CompositeSourceOver, ImageOrientationDescription = ImageOrientationDescription());
-        void drawImage(Image*, ColorSpace styleColorSpace, const FloatRect& destRect);
+        void drawImage(Image*, ColorSpace styleColorSpace, const FloatPoint&, CompositeOperator = CompositeSourceOver, ImageOrientationDescription = ImageOrientationDescription());
+        void drawImage(Image*, ColorSpace styleColorSpace, const FloatRect&, CompositeOperator = CompositeSourceOver, ImageOrientationDescription = ImageOrientationDescription(), bool useLowQualityScale = false);
+        void drawImage(Image*, ColorSpace styleColorSpace, const FloatPoint& destPoint, const IntRect& srcRect, CompositeOperator = CompositeSourceOver, ImageOrientationDescription = ImageOrientationDescription());
         void drawImage(Image*, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, ImageOrientationDescription = ImageOrientationDescription(), bool useLowQualityScale = false);
         void drawImage(Image*, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator, BlendMode, ImageOrientationDescription = ImageOrientationDescription(), bool useLowQualityScale = false);
         

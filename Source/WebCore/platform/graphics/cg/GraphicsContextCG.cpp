@@ -280,7 +280,7 @@ void GraphicsContext::drawNativeImage(PassNativeImagePtr imagePtr, const FloatSi
 }
 
 // Draws a filled rectangle with a stroked border.
-void GraphicsContext::drawRect(const FloatRect& rect)
+void GraphicsContext::drawRect(const FloatRect& rect, float borderThickness)
 {
     // FIXME: this function does not handle patterns and gradients
     // like drawPath does, it probably should.
@@ -299,10 +299,10 @@ void GraphicsContext::drawRect(const FloatRect& rect)
         if (oldFillColor != strokeColor())
             setCGFillColor(context, strokeColor(), strokeColorSpace());
         CGRect rects[4] = {
-            FloatRect(rect.x(), rect.y(), rect.width(), 1),
-            FloatRect(rect.x(), rect.maxY() - 1, rect.width(), 1),
-            FloatRect(rect.x(), rect.y() + 1, 1, rect.height() - 2),
-            FloatRect(rect.maxX() - 1, rect.y() + 1, 1, rect.height() - 2)
+            FloatRect(rect.x(), rect.y(), rect.width(), borderThickness),
+            FloatRect(rect.x(), rect.maxY() - borderThickness, rect.width(), borderThickness),
+            FloatRect(rect.x(), rect.y() + borderThickness, borderThickness, rect.height() - 2 * borderThickness),
+            FloatRect(rect.maxX() - borderThickness, rect.y() + borderThickness, borderThickness, rect.height() - 2 * borderThickness)
         };
         CGContextFillRects(context, rects, 4);
         if (oldFillColor != strokeColor())

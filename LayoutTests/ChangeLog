@@ -1,3 +1,18 @@
+2014-03-21  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make <img> positioning subpixel aware.
+        https://bugs.webkit.org/show_bug.cgi?id=130596
+
+        Reviewed by Simon Fraser.
+
+        Change <img> positioning from integral to device pixel. It enables us
+        to paint hairline borders around <img> properly.
+        This patch changes the behavior of broken image representation from constant 1 CSS px border
+        to a dynamic 1 device px.
+
+        * fast/images/hidpi-image-position-on-device-pixels-expected.html: Added.
+        * fast/images/hidpi-image-position-on-device-pixels.html: Added.
+
 2014-03-21  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix after r166080.

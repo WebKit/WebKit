@@ -555,35 +555,28 @@ void GraphicsContext::drawHighlightForText(const Font& font, const TextRun& run,
     fillRect(font.selectionRectForText(run, point, h, from, to), backgroundColor, colorSpace);
 }
 
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntPoint& p, CompositeOperator op, ImageOrientationDescription description)
+void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatPoint& p, CompositeOperator op, ImageOrientationDescription description)
 {
     if (!image)
         return;
-    drawImage(image, styleColorSpace, FloatRect(IntRect(p, image->size())), FloatRect(FloatPoint(), FloatSize(image->size())), op, description);
+    drawImage(image, styleColorSpace, FloatRect(p, image->size()), FloatRect(FloatPoint(), image->size()), op, description);
 }
 
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntRect& r, CompositeOperator op, ImageOrientationDescription description, bool useLowQualityScale)
+void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& r, CompositeOperator op, ImageOrientationDescription description, bool useLowQualityScale)
 {
     if (!image)
         return;
-    drawImage(image, styleColorSpace, FloatRect(r), FloatRect(FloatPoint(), FloatSize(image->size())), op, description, useLowQualityScale);
+    drawImage(image, styleColorSpace, r, FloatRect(FloatPoint(), image->size()), op, description, useLowQualityScale);
 }
 
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntPoint& dest, const IntRect& srcRect, CompositeOperator op, ImageOrientationDescription description)
+void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatPoint& dest, const IntRect& srcRect, CompositeOperator op, ImageOrientationDescription description)
 {
-    drawImage(image, styleColorSpace, FloatRect(IntRect(dest, srcRect.size())), FloatRect(srcRect), op, description);
+    drawImage(image, styleColorSpace, FloatRect(dest, srcRect.size()), FloatRect(srcRect), op, description);
 }
 
 void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op, ImageOrientationDescription description, bool useLowQualityScale)
 {
     drawImage(image, styleColorSpace, dest, src, op, BlendModeNormal, description, useLowQualityScale);
-}
-
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& dest)
-{
-    if (!image)
-        return;
-    drawImage(image, styleColorSpace, dest, FloatRect(IntRect(IntPoint(), image->size())));
 }
 
 void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op, BlendMode blendMode, ImageOrientationDescription description, bool useLowQualityScale)
