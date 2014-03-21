@@ -1,3 +1,10 @@
+2014-03-20  Pratik Solanki  <psolanki@apple.com>
+
+        Unreviewed. iOS build fix after r166017, r166032.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::visibleContentRectInternal):
+
 2014-03-20  Hyowon Kim  <hw1008.kim@samsung.com>
 
         Move to using std::unique_ptr for EFL objects.
