@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MediaSession.h"
 
+#if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
 #include "Logging.h"
 #include "MediaPlayer.h"
@@ -175,3 +176,4 @@ double MediaSessionClient::mediaSessionCurrentTime() const
 }
 
 }
+#endif

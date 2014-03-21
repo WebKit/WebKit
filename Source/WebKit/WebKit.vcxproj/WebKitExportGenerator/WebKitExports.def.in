@@ -243,6 +243,7 @@ EXPORTS
         symbolWithPointer(?markerTextForListItem@WebCore@@YA?AVString@WTF@@PAVElement@1@@Z, ?markerTextForListItem@WebCore@@YA?AVString@WTF@@PEAVElement@1@@Z)
         symbolWithPointer(?length@StaticNodeList@WebCore@@UBEIXZ, ?length@StaticNodeList@WebCore@@UEBAIXZ)
         symbolWithPointer(?shadowRoot@Element@WebCore@@QBEPAVShadowRoot@2@XZ, ?shadowRoot@Element@WebCore@@QEBAPEAVShadowRoot@2@XZ)
+#if ENABLE(VIDEO)
         symbolWithPointer(?sharedManager@MediaSessionManager@WebCore@@SAAAV12@XZ, ?sharedManager@MediaSessionManager@WebCore@@SAAEAV12@XZ)
         symbolWithPointer(?beginInterruption@MediaSessionManager@WebCore@@QAEXXZ, ?beginInterruption@MediaSessionManager@WebCore@@QEAAXXZ)
         symbolWithPointer(?endInterruption@MediaSessionManager@WebCore@@QAEXW4EndInterruptionFlags@MediaSession@2@@Z, ?endInterruption@MediaSessionManager@WebCore@@QEAAXW4EndInterruptionFlags@MediaSession@2@@Z)
@@ -251,6 +252,7 @@ EXPORTS
         symbolWithPointer(?restrictions@MediaSessionManager@WebCore@@QAEIW4MediaType@MediaSession@2@@Z, ?restrictions@MediaSessionManager@WebCore@@QEAAIW4MediaType@MediaSession@2@@Z)
         symbolWithPointer(?applicationWillEnterForeground@MediaSessionManager@WebCore@@QBEXXZ, ?applicationWillEnterForeground@MediaSessionManager@WebCore@@QEBAXXZ)
         symbolWithPointer(?applicationWillEnterBackground@MediaSessionManager@WebCore@@QBEXXZ, ?applicationWillEnterBackground@MediaSessionManager@WebCore@@QEBAXXZ)
+ #endif
         ?localUserSpecificStorageDirectory@WebCore@@YA?AVString@WTF@@XZ
         symbolWithPointer(?namedItem@StaticNodeList@WebCore@@UBEPAVNode@2@ABVAtomicString@WTF@@@Z, ?namedItem@StaticNodeList@WebCore@@UEBAPEAVNode@2@AEBVAtomicString@WTF@@@Z)
         ?number@String@WTF@@SA?AV12@_J@Z

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "MediaSessionManager.h"
 
+#if ENABLE(VIDEO)
+
 #include "Logging.h"
 #include "MediaSession.h"
 
@@ -300,3 +302,5 @@ void MediaSessionManager::removeClient(MediaSessionManagerClient* client)
 }
 
 }
+
+#endif

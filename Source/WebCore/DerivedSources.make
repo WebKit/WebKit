@@ -752,7 +752,6 @@ all : \
     SVGElementFactory.cpp \
     SVGNames.cpp \
     SelectorPseudoTypeMap.cpp \
-    UserAgentScripts.h \
     UserAgentStyleSheets.h \
     WebKitFontFamilyNames.cpp \
     WebKitFontFamilyNames.h \
@@ -914,6 +913,8 @@ ifeq ($(OS),MACOS)
 endif
 
 ifdef USER_AGENT_SCRIPTS
+all : UserAgentScripts.h
+
 UserAgentScripts.h : Scripts/make-js-file-arrays.py $(USER_AGENT_SCRIPTS)
 	PYTHONPATH=$(InspectorScripts) python $< $@ UserAgentScriptsData.cpp $(USER_AGENT_SCRIPTS)
 endif
