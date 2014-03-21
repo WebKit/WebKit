@@ -317,6 +317,21 @@ void MarkedSpace::clearNewlyAllocated()
 #endif
 }
 
+#ifndef NDEBUG 
+struct VerifyMarkedOrRetired : MarkedBlock::VoidFunctor { 
+    void operator()(MarkedBlock* block)
+    {
+        switch (block->m_state) {
+        case MarkedBlock::Marked:
+        case MarkedBlock::Retired:
+            return;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+}; 
+#endif 
+
 void MarkedSpace::clearMarks()
 {
     if (m_heap->operationInProgress() == EdenCollection) {
@@ -324,6 +339,11 @@ void MarkedSpace::clearMarks()
             m_blocksWithNewObjects[i]->clearMarks();
     } else
         forEachBlock<ClearMarks>();
+
+#ifndef NDEBUG
+    VerifyMarkedOrRetired verifyFunctor;
+    forEachBlock(verifyFunctor);
+#endif
 }
 
 void MarkedSpace::willStartIterating()

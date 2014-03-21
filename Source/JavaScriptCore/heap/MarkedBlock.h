@@ -71,7 +71,7 @@ namespace JSC {
 
     class MarkedBlock : public HeapBlock<MarkedBlock> {
         friend class LLIntOffsetsExtractor;
-
+        friend struct VerifyMarkedOrRetired;
     public:
         static const size_t atomSize = 16; // bytes
         static const size_t atomShiftAmount = 4; // log_2(atomSize) FIXME: Change atomSize to 16.
