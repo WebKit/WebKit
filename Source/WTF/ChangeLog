@@ -1,3 +1,12 @@
+2014-03-20  Darin Adler  <darin@apple.com>
+
+        Fix a header guard mistake (harmless but clearly wrong)
+        https://bugs.webkit.org/show_bug.cgi?id=130559
+
+        Reviewed by Andreas Kling.
+
+        * wtf/text/StringConcatenate.h: Correct the macro name in the header guard.
+
 2014-03-20  Hyowon Kim  <hw1008.kim@samsung.com>
 
         Move to using std::unique_ptr for EFL objects.

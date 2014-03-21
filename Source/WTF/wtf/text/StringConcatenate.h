@@ -28,7 +28,7 @@
 
 #include <string.h>
 
-#ifndef WTFString_h
+#ifndef AtomicString_h
 #include <wtf/text/AtomicString.h>
 #endif
 
