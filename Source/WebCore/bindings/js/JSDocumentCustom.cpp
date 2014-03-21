@@ -48,30 +48,30 @@ namespace WebCore {
 
 JSValue JSDocument::location(ExecState* exec) const
 {
-    Frame* frame = impl().frame();
+    RefPtr<Frame> frame = impl().frame();
     if (!frame)
         return jsNull();
 
-    Location* location = frame->document()->domWindow()->location();
-    if (JSObject* wrapper = getCachedWrapper(globalObject()->world(), location))
+    RefPtr<Location> location = frame->document()->domWindow()->location();
+    if (JSObject* wrapper = getCachedWrapper(globalObject()->world(), location.get()))
         return wrapper;
 
-    JSLocation* jsLocation = JSLocation::create(getDOMStructure<JSLocation>(exec->vm(), globalObject()), globalObject(), location);
-    cacheWrapper(globalObject()->world(), location, jsLocation);
+    JSLocation* jsLocation = JSLocation::create(getDOMStructure<JSLocation>(exec->vm(), globalObject()), globalObject(), location.get());
+    cacheWrapper(globalObject()->world(), location.get(), jsLocation);
     return jsLocation;
 }
 
 void JSDocument::setLocation(ExecState* exec, JSValue value)
 {
-    Frame* frame = impl().frame();
-    if (!frame)
-        return;
-
     String locationString = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
 
-    if (Location* location = frame->document()->domWindow()->location())
+    RefPtr<Frame> frame = impl().frame();
+    if (!frame)
+        return;
+
+    if (RefPtr<Location> location = frame->document()->domWindow()->location())
         location->setHref(locationString, activeDOMWindow(exec), firstDOMWindow(exec));
 }
 

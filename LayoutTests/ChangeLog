@@ -1,3 +1,13 @@
+2014-03-21  Oliver Hunt  <oliver@apple.com>
+
+        Fix semantics of JS execution when assigning an object to document.location
+        https://bugs.webkit.org/show_bug.cgi?id=130213
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/dom/navigation-with-sideeffects-expected.txt: Added.
+        * fast/dom/navigation-with-sideeffects.html: Added.
+
 2014-03-21  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         Refactor css3/filters/huge-region test

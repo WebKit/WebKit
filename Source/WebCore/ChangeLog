@@ -1,3 +1,20 @@
+2014-03-21  Oliver Hunt  <oliver@apple.com>
+
+        Fix a crash when assigning an object to document.location
+        https://bugs.webkit.org/show_bug.cgi?id=130213
+
+        Reviewed by Geoffrey Garen.
+
+        Convert location to string before we make use the document.
+        This prevents us from attempting to navigate a frame that
+        has already been removed.
+
+        Test: fast/dom/navigation-with-sideeffects-crash.html
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::location):
+        (WebCore::JSDocument::setLocation):
+
 2014-03-21  Brian Burg  <bburg@apple.com>
 
         Web Replay: replay controller is improperly setting user input bridge state
