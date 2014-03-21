@@ -1,3 +1,16 @@
+2014-03-20  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should correctly compile GetByVal on Uint32Array that claims to return non-int32 values
+        https://bugs.webkit.org/show_bug.cgi?id=130562
+        <rdar://problem/16382842>
+
+        Reviewed by Geoffrey Garen.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        * tests/stress/uint32array-unsigned-load.js: Added.
+        (foo):
+
 2014-03-20  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add frontend controller and models for replay sessions

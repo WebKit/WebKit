@@ -2042,6 +2042,11 @@ private:
                         return;
                     }
                     
+                    if (m_node->shouldSpeculateMachineInt()) {
+                        setStrictInt52(m_out.zeroExt(result, m_out.int64));
+                        return;
+                    }
+                    
                     setDouble(m_out.unsignedToFP(result, m_out.doubleType));
                     return;
                 }
