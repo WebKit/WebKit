@@ -2,13 +2,20 @@
 <html>
 <head>
   <title>Semantics</title>
+  <style type="text/css">
+    .nospacing {
+      border: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+  </style>
 </head>
 
 <body onload="document.getElementById('a').setAttribute('encoding', 'MathML-Presentation')">
 
   <!-- This test verifies that setting the encoding dynamically updates the selected annotation. This should render the same as the static reference. -->
 
-  <p><math><semantics><csymbol>Content MathML</csymbol><annotation-xml id="a"><mtext>PASS</mtext></annotation-xml><annotation>FAIL</annotation></semantics></math></p>
+  <p><math><semantics><csymbol>Content MathML</csymbol><annotation-xml id="a"><math class="nospacing"><mtext>PASS</mtext></math></annotation-xml><annotation>FAIL</annotation></semantics></math></p>
 
 </body>
 </html>

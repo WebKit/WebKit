@@ -2,6 +2,13 @@
 <html>
 <head>
   <title>Semantics</title>
+  <style type="text/css">
+    .nospacing {
+      border: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -12,11 +19,11 @@
 
   <!-- Presentation MathML: the child is displayed -->
   <p>presentation MathML ; annotation: <math><semantics><mtext>presentation MathML</mtext><annotation>annotation</annotation></semantics></math></p>
-  <p>presentation MathML ; annotation-xml: <math><semantics><mtext>presentation MathML</mtext><annotation-xml encoding="application/mathml-presentation+xml"><mtext>annotation-xml</mtext></annotation-xml></semantics></math></p>
+  <p>presentation MathML ; annotation-xml: <math><semantics><mtext>presentation MathML</mtext><annotation-xml encoding="application/mathml-presentation+xml"><math class="nospacing"><mtext>annotation-xml</mtext></math></annotation-xml></semantics></math></p>
 
   <!-- Content MathML: the annotation is displayed -->
   <p>content MathML ; annotation: <math><semantics><csymbol>content MathML</csymbol><annotation>annotation</annotation></semantics></math></p>
-  <p>content MathML ; annotation-xml: <math><semantics><csymbol>content MathML</csymbol><annotation-xml encoding="application/mathml-presentation+xml"><mtext>annotation-xml</mtext></annotation-xml></semantics></math></p>
+  <p>content MathML ; annotation-xml: <math><semantics><csymbol>content MathML</csymbol><annotation-xml encoding="application/mathml-presentation+xml"><math class="nospacing"><mtext>annotation-xml</mtext></math></annotation-xml></semantics></math></p>
 
 </body>
 </html>

@@ -66,6 +66,9 @@ protected:
     virtual bool isPresentationAttribute(const QualifiedName&) const override;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
+    bool isPhrasingContent(const Node&) const;
+    bool isFlowContent(const Node&) const;
+
 private:
     virtual void updateSelectedChild() { }
 };

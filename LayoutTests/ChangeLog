@@ -1,3 +1,34 @@
+2014-03-21  Frédéric Wang  <fred.wang@free.fr>
+
+        Bug 130345 - Refine childShouldCreateRenderer for MathML elements
+        https://bugs.webkit.org/show_bug.cgi?id=130345
+
+        Reviewed by Chris Fleizach.
+
+        We update the references of some tests after the additional
+        restrictions on MathML children. We replace the foreign-*.html with a
+        single foreign-element-in-token.html and write more tests to verify the
+        accepted and reject content.
+
+        * mathml/msub-anonymous-child-render-crash-expected.txt: Update reference now that text is only allowed in some token MathML elements.
+        * mathml/presentation/annotation-children-expected.html: Added.
+        * mathml/presentation/annotation-children.html: Added.
+        * mathml/presentation/foreign-element-in-annotation-xml.html: Added.
+        * mathml/presentation/foreign-element-in-annotation-xml-expected.txt: Added.
+        * mathml/presentation/foreign-element-in-token-expected.txt: Added.
+        * mathml/presentation/foreign-element-in-token.html: Added.
+        * mathml/presentation/foreign-mi-expected-mismatch.html: Removed.
+        * mathml/presentation/foreign-mi.html: Removed.
+        * mathml/presentation/foreign-mn-expected-mismatch.html: Removed.
+        * mathml/presentation/foreign-mn.html: Removed.
+        * mathml/presentation/foreign-mtext-expected-mismatch.html: Removed.
+        * mathml/presentation/foreign-mtext-rejected-expected.html: Removed.
+        * mathml/presentation/foreign-mtext-rejected.html: Removed.
+        * mathml/presentation/foreign-mtext.html: Removed.
+        * mathml/presentation/semantics-2.html: the mtext elements can not be direct child of annotation-xml. wrap them in a math tag.
+        * mathml/presentation/semantics-3.html: ditto.
+        * mathml/presentation/semantics-4.html: ditto.
+
 2014-03-21  Mark Lam  <mark.lam@apple.com>
 
         StackLayoutPhase should find the union'ed calleeVariable before accessing its machineLocal.

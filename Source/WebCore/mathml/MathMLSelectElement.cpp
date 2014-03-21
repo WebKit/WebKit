@@ -29,8 +29,12 @@
 #if ENABLE(MATHML)
 
 #include "Event.h"
+#include "HTMLElement.h"
+#include "HTMLNames.h"
 #include "MathMLNames.h"
 #include "RenderMathMLRow.h"
+#include "SVGElement.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 
@@ -50,6 +54,29 @@ PassRefPtr<MathMLSelectElement> MathMLSelectElement::create(const QualifiedName&
 RenderPtr<RenderElement> MathMLSelectElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     return createRenderer<RenderMathMLRow>(*this, std::move(style));
+}
+
+//  We recognize the following values for the encoding attribute of the <semantics> element:
+//
+// - "MathML-Presentation", which is mentioned in the MathML 3 recommendation.
+// - "SVG1.1" which is mentioned in the W3C note.
+//   http://www.w3.org/Math/Documents/Notes/graphics.xml
+// - Other MIME Content-Types for MathML, SVG and HTML.
+//
+// We exclude "application/mathml+xml" which is ambiguous about whether it is Presentation or Content MathML. Authors must use a more explicit encoding value.
+bool MathMLSelectElement::isMathMLEncoding(const AtomicString& value)
+{
+    return value == "application/mathml-presentation+xml" || value == "MathML-Presentation";
+}
+
+bool MathMLSelectElement::isSVGEncoding(const AtomicString& value)
+{
+    return value == "image/svg+xml" || value == "SVG1.1";
+}
+
+bool MathMLSelectElement::isHTMLEncoding(const AtomicString& value)
+{
+    return value == "application/xhtml+xml" || value == "text/html";
 }
 
 bool MathMLSelectElement::childShouldCreateRenderer(const Node& child) const
@@ -155,16 +182,9 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
             // If the <annotation-xml> element has an src attribute then it is a reference to arbitrary binary data and it is not clear whether we can display it. Hence we just ignore the annotation.
             if (child->hasAttribute(MathMLNames::srcAttr))
                 continue;
-            // If the <annotation-xml> element has an encoding attribute describing presentation MathML, SVG or HTML we assume the content can be displayed and we stop here. We recognize the following encoding values:
-            //
-            // - "MathML-Presentation", which is mentioned in the MathML 3 recommendation.
-            // - "SVG1.1" which is mentioned in the W3C note.
-            //   http://www.w3.org/Math/Documents/Notes/graphics.xml
-            // - Other MIME Content-Types for SVG and HTML.
-            //
-            // We exclude "application/mathml+xml" which is ambiguous about whether it is Presentation or Content MathML. Authors must use a more explicit encoding value.
+            // If the <annotation-xml> element has an encoding attribute describing presentation MathML, SVG or HTML we assume the content can be displayed and we stop here.
             const AtomicString& value = child->fastGetAttribute(MathMLNames::encodingAttr);
-            if (value == "application/mathml-presentation+xml" || value == "MathML-Presentation" || value == "image/svg+xml" || value == "SVG1.1" || value == "application/xhtml+xml" || value == "text/html")
+            if (isMathMLEncoding(value) || isSVGEncoding(value) || isHTMLEncoding(value))
                 return child;
         }
     }

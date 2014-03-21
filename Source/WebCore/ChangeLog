@@ -1,3 +1,36 @@
+2014-03-21  Frédéric Wang  <fred.wang@free.fr>
+
+        Bug 130345 - Refine childShouldCreateRenderer for MathML elements
+        https://bugs.webkit.org/show_bug.cgi?id=130345
+
+        Reviewed by Chris Fleizach.
+
+        This is a follow-up of bug 124128. We add more restrictions on foreign
+        content of MathML elements.
+
+        Tests: mathml/presentation/annotation-children.html
+               mathml/presentation/foreign-element-in-token.html
+
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::isPresentationMathML): fix line wrapping
+        (WebCore::MathMLElement::isPhrasingContent):
+        - move the function from MathMLSelectElement.cpp
+        - add the constraint "is descendant of a map element" for area.
+        (WebCore::MathMLElement::isFlowContent): new function to test flow content.
+        (WebCore::MathMLElement::childShouldCreateRenderer):
+        - remove annotation since it is now tested in MathMLTextElement
+        - refine testing of annotation-xml
+        - do not create renderer for text content in MathML. Such content is only allowed inside token elements.
+        * mathml/MathMLElement.h: Declare isPhrasingContent and isFlowContent.
+        * mathml/MathMLSelectElement.cpp: Add new function to test MathML/SVG/HTML encodings.
+        (WebCore::MathMLSelectElement::isMathMLEncoding):
+        (WebCore::MathMLSelectElement::isSVGEncoding):
+        (WebCore::MathMLSelectElement::isHTMLEncoding):
+        (WebCore::MathMLSelectElement::getSelectedSemanticsChild): use the new functions.
+        * mathml/MathMLSelectElement.h: Declare the new public functions.
+        * mathml/MathMLTextElement.cpp: remove the isPhrasingContent function.
+        (WebCore::MathMLTextElement::childShouldCreateRenderer): Just in case, use the generic StyledElement::childShouldCreateRenderer.
+
 2014-03-21  Darin Adler  <darin@apple.com>
 
         Stop using deprecatedCharacters in WebCore/platform/win
