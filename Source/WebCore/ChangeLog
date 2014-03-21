@@ -1,3 +1,24 @@
+2014-03-21  Sergio Villar Senin  <svillar@igalia.com>
+
+        Replace DEPRECATED_DEFINE_STATIC_LOCAL by static NeverDestroyed<T> in bridge/
+        https://bugs.webkit.org/show_bug.cgi?id=130601
+
+        Reviewed by Darin Adler.
+
+        * bridge/IdentifierRep.cpp:
+        (WebCore::identifierSet):
+        (WebCore::intIdentifierMap):
+        (WebCore::stringIdentifierMap):
+        * bridge/NP_jsobject.cpp:
+        (objectMap):
+        * bridge/runtime_root.cpp:
+        (JSC::Bindings::rootObjectSet): Return a reference instead of
+        a pointer.
+        (JSC::Bindings::findProtectingRootObject):
+        (JSC::Bindings::findRootObject):
+        (JSC::Bindings::RootObject::RootObject):
+        (JSC::Bindings::RootObject::invalidate):
+
 2014-03-21  Michael Saboff  <msaboff@apple.com>
 
         Change CodeGeneratorJS.pm special cases for "DOMWindow" to be general purpose

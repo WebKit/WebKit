@@ -28,6 +28,7 @@
 
 #include "JSDOMBinding.h"
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,7 +40,7 @@ typedef HashSet<IdentifierRep*> IdentifierSet;
 
 static IdentifierSet& identifierSet()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(IdentifierSet, identifierSet, ());
+    static NeverDestroyed<IdentifierSet> identifierSet;
     return identifierSet;
 }
     
@@ -47,7 +48,7 @@ typedef HashMap<int, IdentifierRep*> IntIdentifierMap;
 
 static IntIdentifierMap& intIdentifierMap()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(IntIdentifierMap, intIdentifierMap, ());
+    static NeverDestroyed<IntIdentifierMap> intIdentifierMap;
     return intIdentifierMap;
 }
 
@@ -81,7 +82,7 @@ typedef HashMap<RefPtr<StringImpl>, IdentifierRep*> StringIdentifierMap;
 
 static StringIdentifierMap& stringIdentifierMap()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(StringIdentifierMap, stringIdentifierMap, ());
+    static NeverDestroyed<StringIdentifierMap> stringIdentifierMap;
     return stringIdentifierMap;
 }
 

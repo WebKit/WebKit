@@ -34,6 +34,7 @@
 #include <runtime/JSGlobalObject.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>
 
@@ -46,10 +47,10 @@ namespace JSC { namespace Bindings {
 
 typedef HashSet<RootObject*> RootObjectSet;
 
-static RootObjectSet* rootObjectSet()
+static RootObjectSet& rootObjectSet()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(RootObjectSet, staticRootObjectSet, ());
-    return &staticRootObjectSet;
+    static NeverDestroyed<RootObjectSet> staticRootObjectSet;
+    return staticRootObjectSet;
 }
 
 // FIXME:  These two functions are a potential performance problem.  We could 
@@ -57,8 +58,8 @@ static RootObjectSet* rootObjectSet()
 
 RootObject* findProtectingRootObject(JSObject* jsObject)
 {
-    RootObjectSet::const_iterator end = rootObjectSet()->end();
-    for (RootObjectSet::const_iterator it = rootObjectSet()->begin(); it != end; ++it) {
+    RootObjectSet::const_iterator end = rootObjectSet().end();
+    for (RootObjectSet::const_iterator it = rootObjectSet().begin(); it != end; ++it) {
         if ((*it)->gcIsProtected(jsObject))
             return *it;
     }
@@ -67,8 +68,8 @@ RootObject* findProtectingRootObject(JSObject* jsObject)
 
 RootObject* findRootObject(JSGlobalObject* globalObject)
 {
-    RootObjectSet::const_iterator end = rootObjectSet()->end();
-    for (RootObjectSet::const_iterator it = rootObjectSet()->begin(); it != end; ++it) {
+    RootObjectSet::const_iterator end = rootObjectSet().end();
+    for (RootObjectSet::const_iterator it = rootObjectSet().begin(); it != end; ++it) {
         if ((*it)->globalObject() == globalObject)
             return *it;
     }
@@ -90,7 +91,7 @@ RootObject::RootObject(const void* nativeHandle, JSGlobalObject* globalObject)
     , m_globalObject(globalObject->vm(), globalObject)
 {
     ASSERT(globalObject);
-    rootObjectSet()->add(this);
+    rootObjectSet().add(this);
 }
 
 RootObject::~RootObject()
@@ -134,7 +135,7 @@ void RootObject::invalidate()
         JSC::gcUnprotect(it->key);
     m_protectCountSet.clear();
 
-    rootObjectSet()->remove(this);
+    rootObjectSet().remove(this);
 }
 
 void RootObject::gcProtect(JSObject* jsObject)

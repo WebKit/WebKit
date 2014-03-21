@@ -43,6 +43,7 @@
 #include <runtime/PropertyNameArray.h>
 #include <parser/SourceCode.h>
 #include <runtime/Completion.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
 using namespace JSC;
@@ -97,7 +98,7 @@ private:
 
 static ObjectMap& objectMap()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(ObjectMap, map, ());
+    static NeverDestroyed<ObjectMap> map;
     return map;
 }
 
