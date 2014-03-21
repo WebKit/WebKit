@@ -81,7 +81,7 @@ using namespace WebKit;
 
     _page = context.createWebPage(*_pageClient, std::move(webPageConfiguration));
     _page->initializeWebPage();
-    _page->setIntrinsicDeviceScaleFactor([UIScreen mainScreen].scale);
+    _page->setIntrinsicDeviceScaleFactor(WKGetScaleFactorForScreen([UIScreen mainScreen]));
     _page->setUseFixedLayout(true);
     _page->setDelegatesScrolling(true);
 
@@ -238,7 +238,7 @@ using namespace WebKit;
 - (void)_updateForScreen:(UIScreen *)screen
 {
     ASSERT(screen);
-    _page->setIntrinsicDeviceScaleFactor(screen.scale);
+    _page->setIntrinsicDeviceScaleFactor(WKGetScaleFactorForScreen(screen));
     [self _accessibilityRegisterUIProcessTokens];
 }
 

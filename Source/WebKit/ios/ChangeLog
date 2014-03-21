@@ -1,3 +1,13 @@
+2014-03-21  Tim Horton  <timothy_horton@apple.com>
+
+        Always retrieve the screen scale factor from WKSI
+        <rdar://problem/16329679>
+
+        Reviewed by Sam Weinig.
+
+        * Misc/WebUIKitSupport.mm:
+        (WebKitSetIsClassic): Empty this out; it's no longer needed, but will still be called.
+
 2014-03-19  Tim Horton  <timothy_horton@apple.com>
 
         [iOS] WebPDFViewPlaceholder divides-by-zero with an empty document

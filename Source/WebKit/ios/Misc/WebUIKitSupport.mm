@@ -79,7 +79,7 @@ void WebKitInitialize(void)
 
 void WebKitSetIsClassic(BOOL flag)
 {
-    WKSetIsClassic(flag);
+    // FIXME: Remove this once it stops being called.
 }
 
 float WebKitGetMinimumZoomFontSize(void)

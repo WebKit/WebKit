@@ -1,3 +1,15 @@
+2014-03-21  Tim Horton  <timothy_horton@apple.com>
+
+        Always retrieve the screen scale factor from WKSI
+        <rdar://problem/16329679>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView initWithFrame:context:WebKit::configuration:WebKit::webView:]):
+        (-[WKContentView _updateForScreen:]):
+        Use WKGetScreenScaleFactor/WKGetScaleFactorForScreen.
+
 2014-03-21  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         [Webkit2] Add APIDownloadClient for download support.
