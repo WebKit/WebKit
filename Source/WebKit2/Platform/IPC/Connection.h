@@ -114,7 +114,7 @@ public:
     };
     static bool identifierIsNull(Identifier identifier) { return identifier.port == MACH_PORT_NULL; }
     xpc_connection_t xpcConnection() { return m_xpcConnection; }
-    bool getAuditToken(audit_token_t&);
+
 #elif USE(UNIX_DOMAIN_SOCKETS)
     typedef int Identifier;
     static bool identifierIsNull(Identifier identifier) { return !identifier; }
