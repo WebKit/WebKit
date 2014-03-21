@@ -1,3 +1,14 @@
+2014-03-21  David Hyatt  <hyatt@apple.com>
+
+        Crash in RenderBlock::addChildIgnoringAnonymousColumnBlocks.
+        https://bugs.webkit.org/show_bug.cgi?id=129948
+        <rdar://problem/16074072>
+        
+        Reviewed by Simon Fraser.
+
+        * fast/multicol/multicol-li-crash-expected.txt: Added.
+        * fast/multicol/multicol-li-crash.html: Added.
+
 2014-03-21  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed. Rebaseline expectations after r165651.

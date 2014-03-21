@@ -30,6 +30,7 @@
 #include "InlineElementBox.h"
 #include "PseudoElement.h"
 #include "RenderListMarker.h"
+#include "RenderMultiColumnFlowThread.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
 #include <wtf/StackStats.h>
@@ -279,7 +280,10 @@ void RenderListItem::insertOrMoveMarkerRendererIfNeeded()
         // in this case.
         if (currentParent && currentParent->isAnonymousBlock())
             return;
-        newParent = this;
+        if (multiColumnFlowThread())
+            newParent = multiColumnFlowThread();
+        else
+            newParent = this;
     }
 
     if (newParent != currentParent) {
