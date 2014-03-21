@@ -359,6 +359,8 @@ void WebVideoFullscreenInterfaceAVKit::exitFullscreen()
         [m_viewController dismissViewControllerAnimated:YES completion:^{
             [m_window setHidden:YES];
             [m_window setRootViewController:nil];
+            [m_playerViewController setDelegate:nil];
+            [m_playerViewController setPlayerController:nil];
             m_playerViewController = nil;
             m_viewController = nil;
             m_window = nil;

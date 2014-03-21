@@ -1,5 +1,18 @@
 2014-03-21  Eric Carlson  <eric.carlson@apple.com>
 
+        [iOS] clean up fullscreen player controller when exiting fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=130621
+
+        Reviewed by Jer Noble.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVVideoLayer setBounds:]): Do nothing if _avPlayerController is nil.
+        (-[WebAVVideoLayer setVideoLayerGravity:]): Ditto.
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreen): Set m_playerViewController delegate
+            and player controller to nil.
+
+2014-03-21  Eric Carlson  <eric.carlson@apple.com>
+
         [iOS] remote command callbacks must happen on the WebThread
         https://bugs.webkit.org/show_bug.cgi?id=130618
 
