@@ -1,3 +1,14 @@
+2014-03-21  David Kilzer  <ddkilzer@apple.com>
+
+        fix-blink-patch: tool to fix up renamed directory paths in Blink
+        <http://webkit.org/b/130609>
+
+        Reviewed by Ryosuke Niwa.
+
+        Usage: cat blink.patch | fix-blink-patch | svn-apply
+
+        * Scripts/fix-blink-patch: Added.
+
 2014-03-21  Darin Adler  <darin@apple.com>
 
         Remove use of deprecatedCharacters in WebKit API tests
