@@ -257,7 +257,7 @@ class ChangeLogEntry(object):
     def has_valid_reviewer(self):
         if self._reviewers_text_list:
             for reviewer in self._reviewers_text_list:
-                reviewer = self._committer_list.committer_by_name(reviewer)
+                reviewer = self._committer_list.reviewer_by_name(reviewer)
                 if reviewer:
                     return True
         return bool(re.search("unreviewed", self._contents, re.IGNORECASE))

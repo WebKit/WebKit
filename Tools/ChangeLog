@@ -1,3 +1,21 @@
+2014-03-21  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        [webkitpy] Fix has_valid_reviewer()
+        https://bugs.webkit.org/show_bug.cgi?id=130589
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (ChangeLogEntry.has_valid_reviewer):
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        (test_has_valid_reviewer):
+        * Scripts/webkitpy/common/config/committers.py:
+        (CommitterList._reviewer_only):
+        (CommitterList.committer_by_name):
+        (CommitterList.reviewer_by_email):
+        (CommitterList):
+        (CommitterList.reviewer_by_name):
+
 2014-03-21  Jozsef Berta  <jberta.u-szeged@partner.samsung.com>
 
         Add cache support for jhbuild

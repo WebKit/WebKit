@@ -184,9 +184,6 @@ class CommitterList(object):
             return None
         return record
 
-    def committer_by_name(self, name):
-        return self._committer_only(self.contributor_by_name(name))
-
     def contributor_by_irc_nickname(self, irc_nickname):
         for contributor in self.contributors():
             # FIXME: This should do case-insensitive comparison or assert that all IRC nicknames are in lowercase
@@ -269,5 +266,11 @@ class CommitterList(object):
     def committer_by_email(self, email):
         return self._committer_only(self.contributor_by_email(email))
 
+    def committer_by_name(self, name):
+        return self._committer_only(self.contributor_by_name(name))
+
     def reviewer_by_email(self, email):
         return self._reviewer_only(self.contributor_by_email(email))
+
+    def reviewer_by_name(self, email):
+        return self._reviewer_only(self.contributor_by_name(email))
