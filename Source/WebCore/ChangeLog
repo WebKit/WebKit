@@ -1,3 +1,19 @@
+2014-03-20  Andreas Kling  <akling@apple.com>
+
+        Stop pulling in JSCInlines.h all over the place.
+        <https://webkit.org/b/130105>
+
+        JSDOMBinding.h is included by everyone and their uncle, so try to
+        cut down on the amount of JSC *Inlines.h it includes.
+
+        Reviewed by Geoff Garen.
+
+        * ForwardingHeaders/heap/SlotVisitorInlines.h: Added.
+        * ForwardingHeaders/runtime/JSCJSValueInlines.h: Added.
+        * ForwardingHeaders/runtime/JSCellInlines.h: Added.
+        * ForwardingHeaders/runtime/StructureInlines.h: Added.
+        * bindings/js/JSDOMBinding.h:
+
 2014-03-21  David Kilzer  <ddkilzer@apple.com>
 
         WindowFeatures.{x|y|width|height} are not initialized
