@@ -1,3 +1,17 @@
+2014-03-21  Mark Lam  <mark.lam@apple.com>
+
+        StackLayoutPhase should find the union'ed calleeVariable before accessing its machineLocal.
+        <https://webkit.org/b/130566>
+
+        Reviewed by Filip Pizlo.
+
+        * js/regress-130566-expected.txt: Added.
+        * js/regress-130566.html: Added.
+        * js/script-tests/regress-130566.js: Added.
+        (test.doTest):
+        (test.for):
+        (test):
+
 2014-03-21  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: RenderBox is positioned off by one when non-compositing transform is present.

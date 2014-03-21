@@ -197,9 +197,10 @@ public:
             
             RELEASE_ASSERT(inlineCallFrame->isClosureCall == !!data.calleeVariable);
             if (inlineCallFrame->isClosureCall) {
+                VariableAccessData* variable = data.calleeVariable->find();
                 ValueSource source = ValueSource::forFlushFormat(
-                    data.calleeVariable->machineLocal(),
-                    data.calleeVariable->flushFormat());
+                    variable->machineLocal(),
+                    variable->flushFormat());
                 inlineCallFrame->calleeRecovery = source.valueRecovery();
             } else
                 RELEASE_ASSERT(inlineCallFrame->calleeRecovery.isConstant());

@@ -1,3 +1,13 @@
+2014-03-21  Mark Lam  <mark.lam@apple.com>
+
+        StackLayoutPhase should find the union'ed calleeVariable before accessing its machineLocal.
+        <https://webkit.org/b/130566>
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+
 2014-03-20  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should correctly compile GetByVal on Uint32Array that claims to return non-int32 values
