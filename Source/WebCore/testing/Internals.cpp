@@ -272,6 +272,7 @@ void Internals::resetToConsistentState(Page* page)
     if (mainFrameView) {
         mainFrameView->setHeaderHeight(0);
         mainFrameView->setFooterHeight(0);
+        page->setTopContentInset(0);
     }
 
     TextRun::setAllowsRoundingHacks(false);

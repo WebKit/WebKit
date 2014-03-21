@@ -1,3 +1,16 @@
+2014-03-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Cleanup in aisle r166017.
+        
+        visibleContentRectInternal() was dropping the scrollbar
+        inclusiveness on the floor, and we need to reset the top inset
+        between tests.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::visibleContentRectInternal):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+
 2014-03-20  Enrica Casucci  <enrica@apple.com>
 
         Build fix.
