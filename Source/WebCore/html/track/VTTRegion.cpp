@@ -41,6 +41,7 @@
 #include "Logging.h"
 #include "RenderElement.h"
 #include "VTTCue.h"
+#include "VTTScanner.h"
 #include "WebVTTParser.h"
 #include <wtf/MathExtras.h>
 
@@ -216,83 +217,100 @@ void VTTRegion::updateParametersFromRegion(VTTRegion* region)
     setScroll(region->scroll(), ASSERT_NO_EXCEPTION);
 }
 
-void VTTRegion::setRegionSettings(const String& input)
+void VTTRegion::setRegionSettings(const String& inputString)
 {
-    m_settings = input;
-    unsigned position = 0;
+    m_settings = inputString;
+    VTTScanner input(inputString);
 
-    while (position < input.length()) {
-        while (position < input.length() && WebVTTParser::isValidSettingDelimiter(input[position]))
-            position++;
-
-        if (position >= input.length())
+    while (!input.isAtEnd()) {
+        input.skipWhile<WebVTTParser::isValidSettingDelimiter>();
+        if (input.isAtEnd())
             break;
 
-        parseSetting(input, &position);
+        // Scan the name part.
+        RegionSetting name = scanSettingName(input);
+
+        // Verify that we're looking at a '='.
+        if (name == None || !input.scan('=')) {
+            input.skipUntil<WebVTTParser::isASpace>();
+            continue;
+        }
+
+        // Scan the value part.
+        parseSettingValue(name, input);
     }
 }
 
-VTTRegion::RegionSetting VTTRegion::getSettingFromString(const String& setting)
+VTTRegion::RegionSetting VTTRegion::scanSettingName(VTTScanner& input)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, idKeyword, ("id", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, heightKeyword, ("height", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, widthKeyword, ("width", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, regionAnchorKeyword, ("regionanchor", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, viewportAnchorKeyword, ("viewportanchor", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, scrollKeyword, ("scroll", AtomicString::ConstructFromLiteral));
-
-    if (setting == idKeyword)
+    if (input.scan("id"))
         return Id;
-    if (setting == heightKeyword)
+    if (input.scan("height"))
         return Height;
-    if (setting == widthKeyword)
+    if (input.scan("width"))
         return Width;
-    if (setting == viewportAnchorKeyword)
+    if (input.scan("viewportanchor"))
         return ViewportAnchor;
-    if (setting == regionAnchorKeyword)
+    if (input.scan("regionanchor"))
         return RegionAnchor;
-    if (setting == scrollKeyword)
+    if (input.scan("scroll"))
         return Scroll;
 
     return None;
 }
 
-void VTTRegion::parseSettingValue(RegionSetting setting, const String& value)
+static inline bool parsedEntireRun(const VTTScanner& input, const VTTScanner::Run& run)
+{
+    return input.isAt(run.end()); 
+}
+
+void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, scrollUpValueKeyword, ("up", AtomicString::ConstructFromLiteral));
 
+    VTTScanner::Run valueRun = input.collectUntil<WebVTTParser::isASpace>();
+
     switch (setting) {
-    case Id:
-        if (value.find("-->") == notFound)
-            m_id = value;
+    case Id: {
+        String stringValue = input.extractString(valueRun);
+        if (stringValue.find("-->") == notFound)
+            m_id = stringValue;
         break;
+    }
     case Width: {
         float floatWidth;
-        if (WebVTTParser::parseFloatPercentageValue(value, floatWidth))
+        if (WebVTTParser::parseFloatPercentageValue(input, floatWidth) && parsedEntireRun(input, valueRun))
             m_width = floatWidth;
         else
             LOG(Media, "VTTRegion::parseSettingValue, invalid Width");
         break;
     }
     case Height: {
-        unsigned position = 0;
         int number;
-        if (WebVTTParser::collectDigitsToInt(value, position, number) && position == value.length())
+        if (input.scanDigits(number) && parsedEntireRun(input, valueRun))
             m_heightInLines = number;
         else
             LOG(Media, "VTTRegion::parseSettingValue, invalid Height");
         break;
     }
-    case RegionAnchor:
-        if (!WebVTTParser::parseFloatPercentageValuePair(value, ',', m_regionAnchor))
+    case RegionAnchor: {
+        FloatPoint anchor;
+        if (WebVTTParser::parseFloatPercentageValuePair(input, ',', anchor) && parsedEntireRun(input, valueRun))
+            m_regionAnchor = anchor;
+        else
             LOG(Media, "VTTRegion::parseSettingValue, invalid RegionAnchor");
         break;
-    case ViewportAnchor:
-        if (!WebVTTParser::parseFloatPercentageValuePair(value, ',', m_viewportAnchor))
+    }
+    case ViewportAnchor: {
+        FloatPoint anchor;
+        if (WebVTTParser::parseFloatPercentageValuePair(input, ',', anchor) && parsedEntireRun(input, valueRun))
+            m_viewportAnchor = anchor;
+        else
             LOG(Media, "VTTRegion::parseSettingValue, invalid ViewportAnchor");
         break;
+    }
     case Scroll:
-        if (value == scrollUpValueKeyword)
+        if (input.scanRun(valueRun, scrollUpValueKeyword))
             m_scroll = true;
         else
             LOG(Media, "VTTRegion::parseSettingValue, invalid Scroll");
@@ -300,22 +318,10 @@ void VTTRegion::parseSettingValue(RegionSetting setting, const String& value)
     case None:
         break;
     }
+
+    input.skipRun(valueRun);
 }
 
-void VTTRegion::parseSetting(const String& input, unsigned* position)
-{
-    String setting = WebVTTParser::collectWord(input, position);
-
-    size_t equalOffset = setting.find('=', 1);
-    if (equalOffset == notFound || !equalOffset || equalOffset == setting.length() - 1)
-        return;
-
-    RegionSetting name = getSettingFromString(setting.substring(0, equalOffset));
-    String value = setting.substring(equalOffset + 1, setting.length() - 1);
-
-    parseSettingValue(name, value);
-}
-    
 const AtomicString& VTTRegion::textTrackCueContainerScrollingClass()
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, trackRegionCueContainerScrollingClass, ("scrolling", AtomicString::ConstructFromLiteral));

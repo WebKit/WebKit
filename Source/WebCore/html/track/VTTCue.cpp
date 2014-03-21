@@ -46,6 +46,7 @@
 #include "Text.h"
 #include "TextTrack.h"
 #include "TextTrackCueList.h"
+#include "VTTScanner.h"
 #include "WebVTTElement.h"
 #include "WebVTTParser.h"
 #include <wtf/MathExtras.h>
@@ -694,10 +695,8 @@ void VTTCue::markFutureAndPastNodes(ContainerNode* root, double previousTimestam
     
     for (Node* child = root->firstChild(); child; child = NodeTraversal::next(child, root)) {
         if (child->nodeName() == timestampTag) {
-            unsigned position = 0;
-            String timestamp = child->nodeValue();
             double currentTimestamp;
-            bool check = WebVTTParser::collectTimeStamp(timestamp, position, currentTimestamp);
+            bool check = WebVTTParser::collectTimeStamp(child->nodeValue(), currentTimestamp);
             ASSERT_UNUSED(check, check);
             
             if (currentTimestamp > movieTime)
@@ -832,37 +831,32 @@ std::pair<double, double> VTTCue::getPositionCoordinates() const
     return coordinates;
 }
 
-VTTCue::CueSetting VTTCue::settingName(const String& name)
+VTTCue::CueSetting VTTCue::settingName(VTTScanner& input)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, verticalKeyword, (ASCIILiteral("vertical")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, lineKeyword, (ASCIILiteral("line")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, positionKeyword, (ASCIILiteral("position")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, sizeKeyword, (ASCIILiteral("size")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, alignKeyword, (ASCIILiteral("align")));
+    CueSetting parsedSetting = None;
+    if (input.scan("vertical"))
+        parsedSetting = Vertical;
+    else if (input.scan("line"))
+        parsedSetting = Line;
+    else if (input.scan("position"))
+        parsedSetting = Position;
+    else if (input.scan("size"))
+        parsedSetting = Size;
+    else if (input.scan("align"))
+        parsedSetting = Align;
 #if ENABLE(WEBVTT_REGIONS)
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, regionIdKeyword, (ASCIILiteral("region")));
+    else if (input.scan("region"))
+        parsedSetting = RegionId;
 #endif
-
-    if (name == verticalKeyword)
-        return Vertical;
-    if (name == lineKeyword)
-        return Line;
-    if (name == positionKeyword)
-        return Position;
-    if (name == sizeKeyword)
-        return Size;
-    if (name == alignKeyword)
-        return Align;
-#if ENABLE(WEBVTT_REGIONS)
-    if (name == regionIdKeyword)
-        return RegionId;
-#endif
+    // Verify that a ':' follows.
+    if (parsedSetting != None && input.scan(':'))
+        return parsedSetting;
 
     return None;
 }
 
 // Used for 'position' and 'size'.
-static bool scanPercentage(const String& input, unsigned& position, int& number)
+static bool scanPercentage(VTTScanner& input, const VTTScanner::Run& valueRun, int& number)
 {
     // 1. If value contains any characters other than U+0025 PERCENT SIGN
     //    characters (%) and characters in the range U+0030 DIGIT ZERO (0) to
@@ -870,9 +864,7 @@ static bool scanPercentage(const String& input, unsigned& position, int& number)
     // 2. If value does not contain at least one character in the range U+0030
     //    DIGIT ZERO (0) to U+0039 DIGIT NINE (9), then jump to the step
     //    labeled next setting.
-    if (!WebVTTParser::collectDigitsToInt(input, position, number))
-        return false;
-    if (position >= input.length())
+    if (!input.scanDigits(number))
         return false;
 
     // 3. If any character in value other than the last character is a U+0025
@@ -880,9 +872,7 @@ static bool scanPercentage(const String& input, unsigned& position, int& number)
     //    setting.
     // 4. If the last character in value is not a U+0025 PERCENT SIGN character
     //    (%), then jump to the step labeled next setting.
-    if (input[position++] != '%')
-        return false;
-    if (position < input.length() && !WebVTTParser::isValidSettingDelimiter(input[position]))
+    if (!input.scan('%') || !input.isAt(valueRun.end()))
         return false;
 
     // 5. Ignoring the trailing percent sign, interpret value as an integer,
@@ -892,18 +882,16 @@ static bool scanPercentage(const String& input, unsigned& position, int& number)
     return number >= 0 && number <= 100;
 }
 
-void VTTCue::setCueSettings(const String& input)
+void VTTCue::setCueSettings(const String& inputString)
 {
-    m_settings = input;
-    unsigned position = 0;
+    VTTScanner input(inputString);
 
-    while (position < input.length()) {
+    while (!input.isAtEnd()) {
 
         // The WebVTT cue settings part of a WebVTT cue consists of zero or more of the following components, in any order, 
-        // separated from each other by one or more U+0020 SPACE characters or U+0009 CHARACTER TABULATION (tab) characters. 
-        while (position < input.length() && WebVTTParser::isValidSettingDelimiter(input[position]))
-            position++;
-        if (position >= input.length())
+        // separated from each other by one or more U+0020 SPACE characters or U+0009 CHARACTER TABULATION (tab) characters.
+        input.skipWhile<WebVTTParser::isValidSettingDelimiter>();
+        if (input.isAtEnd())
             break;
 
         // When the user agent is to parse the WebVTT settings given by a string input for a text track cue cue, 
@@ -912,20 +900,11 @@ void VTTCue::setCueSettings(const String& input)
         // 2. For each token setting in the list settings, run the following substeps:
         //    1. If setting does not contain a U+003A COLON character (:), or if the first U+003A COLON character (:) 
         //       in setting is either the first or last character of setting, then jump to the step labeled next setting.
-        unsigned endOfSetting = position;
-        String setting = WebVTTParser::collectWord(input, &endOfSetting);
-        CueSetting name;
-        size_t colonOffset = setting.find(':', 1);
-        if (colonOffset == notFound || !colonOffset || colonOffset == setting.length() - 1)
-            goto NextSetting;
-
-        // 2. Let name be the leading substring of setting up to and excluding the first U+003A COLON character (:) in that string.
-        name = settingName(setting.substring(0, colonOffset));
+        //    2. Let name be the leading substring of setting up to and excluding the first U+003A COLON character (:) in that string.
+        CueSetting name = settingName(input);
 
         // 3. Let value be the trailing substring of setting starting from the character immediately after the first U+003A COLON character (:) in that string.
-        position += colonOffset + 1;
-        if (position >= input.length())
-            break;
+        VTTScanner::Run valueRun = input.collectUntil<WebVTTParser::isValidSettingDelimiter>();
 
         // 4. Run the appropriate substeps that apply for the value of name, as follows:
         switch (name) {
@@ -933,13 +912,12 @@ void VTTCue::setCueSettings(const String& input)
             // If name is a case-sensitive match for "vertical"
             // 1. If value is a case-sensitive match for the string "rl", then let cue's text track cue writing direction 
             //    be vertical growing left.
-            String writingDirection = WebVTTParser::collectWord(input, &position);
-            if (writingDirection == verticalGrowingLeftKeyword())
+            if (input.scanRun(valueRun, verticalGrowingLeftKeyword()))
                 m_writingDirection = VerticalGrowingLeft;
             
             // 2. Otherwise, if value is a case-sensitive match for the string "lr", then let cue's text track cue writing 
             //    direction be vertical growing right.
-            else if (writingDirection == verticalGrowingRightKeyword())
+            else if (input.scanRun(valueRun, verticalGrowingRightKeyword()))
                 m_writingDirection = VerticalGrowingRight;
             break;
         }
@@ -948,10 +926,12 @@ void VTTCue::setCueSettings(const String& input)
             // 1. If value contains any characters other than U+002D HYPHEN-MINUS characters (-), U+0025 PERCENT SIGN 
             //    characters (%), and characters in the range U+0030 DIGIT ZERO (0) to U+0039 DIGIT NINE (9), then jump
             //    to the step labeled next setting.
-            StringBuilder linePositionBuilder;
-            while (position < input.length() && (input[position] == '-' || input[position] == '%' || isASCIIDigit(input[position])))
-                linePositionBuilder.append(input[position++]);
-            if (position < input.length() && !WebVTTParser::isValidSettingDelimiter(input[position]))
+            bool isNegative = input.scan('-');
+            int linePosition;
+            unsigned numDigits = input.scanDigits(linePosition);
+            bool isPercentage = input.scan('%');
+
+            if (!input.isAt(valueRun.end()))
                 break;
 
             // 2. If value does not contain at least one character in the range U+0030 DIGIT ZERO (0) to U+0039 DIGIT 
@@ -960,43 +940,38 @@ void VTTCue::setCueSettings(const String& input)
             //    jump to the step labeled next setting.
             // 4. If any character in value other than the last character is a U+0025 PERCENT SIGN character (%), then
             //    jump to the step labeled next setting.
-            String linePosition = linePositionBuilder.toString();
-            if (linePosition.find('-', 1) != notFound || linePosition.reverseFind("%", linePosition.length() - 2) != notFound)
-                break;
-
             // 5. If the first character in value is a U+002D HYPHEN-MINUS character (-) and the last character in value is a 
             //    U+0025 PERCENT SIGN character (%), then jump to the step labeled next setting.
-            if (linePosition[0] == '-' && linePosition[linePosition.length() - 1] == '%')
+            if (!numDigits || (isPercentage && isNegative))
                 break;
 
             // 6. Ignoring the trailing percent sign, if any, interpret value as a (potentially signed) integer, and 
             //    let number be that number. 
-            // NOTE: toInt ignores trailing non-digit characters, such as '%'.
-            bool validNumber;
-            int number = linePosition.toInt(&validNumber);
-            if (!validNumber)
-                break;
-
             // 7. If the last character in value is a U+0025 PERCENT SIGN character (%), but number is not in the range 
             //    0 ≤ number ≤ 100, then jump to the step labeled next setting.
             // 8. Let cue's text track cue line position be number.
             // 9. If the last character in value is a U+0025 PERCENT SIGN character (%), then let cue's text track cue 
             //    snap-to-lines flag be false. Otherwise, let it be true.
-            if (linePosition[linePosition.length() - 1] == '%') {
-                if (number < 0 || number > 100)
+            if (isPercentage) {
+                if (linePosition < 0 || linePosition > 100)
                     break;
 
                 // 10 - If '%' then set snap-to-lines flag to false.
                 m_snapToLines = false;
+            } else {
+                if (isNegative)
+                    linePosition = -linePosition;
+
+                m_snapToLines = true;
             }
 
-            m_linePosition = number;
+            m_linePosition = linePosition;
             break;
         }
         case Position: {
             int number;
             // Steps 1 - 6.
-            if (!scanPercentage(input, position, number))            
+            if (!scanPercentage(input, valueRun, number))            
                 break;
 
             // 7. Let cue's text track cue text position be number.
@@ -1006,7 +981,7 @@ void VTTCue::setCueSettings(const String& input)
         case Size: {
             int number;
             // Steps 1 - 6.
-            if (!scanPercentage(input, position, number))            
+            if (!scanPercentage(input, valueRun, number))            
                 break;
 
             // 7. Let cue's text track cue size be number.
@@ -1014,40 +989,38 @@ void VTTCue::setCueSettings(const String& input)
             break;
         }
         case Align: {
-            String cueAlignment = WebVTTParser::collectWord(input, &position);
-
             // 1. If value is a case-sensitive match for the string "start", then let cue's text track cue alignment be start alignment.
-            if (cueAlignment == startKeyword())
+            if (input.scanRun(valueRun, startKeyword()))
                 m_cueAlignment = Start;
 
             // 2. If value is a case-sensitive match for the string "middle", then let cue's text track cue alignment be middle alignment.
-            else if (cueAlignment == middleKeyword())
+            else if (input.scanRun(valueRun, middleKeyword()))
                 m_cueAlignment = Middle;
 
             // 3. If value is a case-sensitive match for the string "end", then let cue's text track cue alignment be end alignment.
-            else if (cueAlignment == endKeyword())
+            else if (input.scanRun(valueRun, endKeyword()))
                 m_cueAlignment = End;
 
             // 4. If value is a case-sensitive match for the string "left", then let cue's text track cue alignment be left alignment.
-            else if (cueAlignment == leftKeyword())
+            else if (input.scanRun(valueRun, leftKeyword()))
                 m_cueAlignment = Left;
 
             // 5. If value is a case-sensitive match for the string "right", then let cue's text track cue alignment be right alignment.
-            else if (cueAlignment == rightKeyword())
+            else if (input.scanRun(valueRun, rightKeyword()))
                 m_cueAlignment = Right;
             break;
         }
 #if ENABLE(WEBVTT_REGIONS)
         case RegionId:
-            m_regionId = WebVTTParser::collectWord(input, &position);
+            m_regionId = input.extractString(valueRun);
             break;
 #endif
         case None:
             break;
         }
 
-NextSetting:
-        position = endOfSetting;
+        // Make sure the entire run is consumed.
+        input.skipRun(valueRun);
     }
 #if ENABLE(WEBVTT_REGIONS)
     // If cue's line position is not auto or cue's size is not 100 or cue's

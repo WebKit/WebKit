@@ -15850,6 +15850,7 @@
     <ClCompile Include="..\html\track\TrackBase.cpp" />
     <ClCompile Include="..\html\track\TrackEvent.cpp" />
     <ClCompile Include="..\html\track\VTTCue.cpp" />
+    <ClCompile Include="..\html\track\VTTScanner.cpp" />
     <ClCompile Include="..\html\track\WebVTTParser.cpp" />
     <ClCompile Include="..\html\track\WebVTTTokenizer.cpp" />
     <ClCompile Include="..\bindings\generic\ActiveDOMCallback.cpp" />
@@ -20592,6 +20593,7 @@
     <ClInclude Include="..\html\track\InbandTextTrack.h" />
     <ClInclude Include="..\html\track\InbandWebVTTTextTrack.h" />
     <ClInclude Include="..\html\track\LoadableTextTrack.h" />
+    <ClInclude Include="..\html\track\ParsingUtilities.h" />
     <ClInclude Include="..\html\track\TextTrack.h" />
     <ClInclude Include="..\html\track\TextTrackCue.h" />
     <ClInclude Include="..\html\track\TextTrackCueList.h" />
@@ -20599,6 +20601,7 @@
     <ClInclude Include="..\html\track\TrackBase.h" />
     <ClInclude Include="..\html\track\TrackEvent.h" />
     <ClInclude Include="..\html\track\VTTCue.h" />
+    <ClInclude Include="..\html\track\VTTScanner.h" />
     <ClInclude Include="..\html\track\WebVTTParser.h" />
     <ClInclude Include="..\html\track\WebVTTToken.h" />
     <ClInclude Include="..\html\track\WebVTTTokenizer.h" />

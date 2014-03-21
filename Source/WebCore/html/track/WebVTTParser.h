@@ -49,6 +49,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 class Document;
+class VTTScanner;
 
 class WebVTTParserClient {
 public:
@@ -119,25 +120,23 @@ public:
             || tagName == rtTag;
     }
 
-    static inline bool isASpace(char c)
+    static inline bool isASpace(UChar c)
     {
         // WebVTT space characters are U+0020 SPACE, U+0009 CHARACTER TABULATION (tab), U+000A LINE FEED (LF), U+000C FORM FEED (FF), and U+000D CARRIAGE RETURN    (CR).
         return c == ' ' || c == '\t' || c == '\n' || c == '\f' || c == '\r';
     }
-    static inline bool isValidSettingDelimiter(char c)
+    static inline bool isValidSettingDelimiter(UChar c)
     {
         // ... a WebVTT cue consists of zero or more of the following components, in any order, separated from each other by one or more 
         // U+0020 SPACE characters or U+0009 CHARACTER TABULATION (tab) characters.
         return c == ' ' || c == '\t';
     }
-    static unsigned collectDigitsToInt(const String&, unsigned& position, int& number);
-    static String collectWord(const String&, unsigned*);
-    static bool collectTimeStamp(const String&, unsigned&, double&);
+    static bool collectTimeStamp(const String&, double&);
 
 #if ENABLE(WEBVTT_REGIONS)
     // Useful functions for parsing percentage settings.
-    static bool parseFloatPercentageValue(const String&, float&);
-    static bool parseFloatPercentageValuePair(const String&, char, FloatPoint&);
+    static bool parseFloatPercentageValue(VTTScanner& valueScanner, float&);
+    static bool parseFloatPercentageValuePair(VTTScanner& valueScanner, char, FloatPoint&);
 #endif
 
     // Input data to the parser to parse.
@@ -176,7 +175,7 @@ private:
     void createNewRegion(const String& headerValue);
 #endif
 
-    static void skipWhiteSpace(const String&, unsigned&);
+    static bool collectTimeStamp(VTTScanner& input, double& timeStamp);
 
     BufferedLineReader m_lineReader;
     RefPtr<TextResourceDecoder> m_decoder;

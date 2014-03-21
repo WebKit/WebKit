@@ -1,3 +1,86 @@
+2014-03-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge VTTScanner Code from Blink
+        https://bugs.webkit.org/show_bug.cgi?id=130616
+
+        Reviewed by Eric Carlson.
+
+        Merged from Blink (patch by fs@opera.com):
+        https://chromium.googlesource.com/chromium/blink/+/f1ceb058d574a1174b524c57f67350510a942071
+        http://crbug.com/75273002
+        https://chromium.googlesource.com/chromium/blink/+/3e2c67969486e86347b328c72c67cacabfe6f4a1
+        http://crbug.com/134173002
+        https://chromium.googlesource.com/chromium/blink/+/5962b7bbb001838f3fc7f24817637528b86bfd9b
+        http://crbug.com/134153002
+        https://chromium.googlesource.com/chromium/blink/+/6c81f51438013edca920a19fc6a31026fc562af2
+        http://crbug.com/137033002
+        https://chromium.googlesource.com/chromium/blink/+/fa286dca17a291da3ae8be80111e2264de6d5cfd
+        http://crbug.com/140503004
+        https://chromium.googlesource.com/chromium/blink/+/8f33b63aabcce7dd21dd15288d45c4eb37c02001
+        http://crbug.com/139343006
+        https://chromium.googlesource.com/chromium/blink/+/1872b54b908fac525f1ad9d6f15174b11e27c8af
+        http://crbug.com/143983002
+        https://chromium.googlesource.com/chromium/blink/+/e6494b3359e2077bd8772d86ab1fb709acf4c398
+        http://crbug.com/144893002
+ 
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/track/ParsingUtilities.h: Added.
+        (skipExactly):
+        (skipUntil):
+        (skipWhile):
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::markFutureAndPastNodes):
+        (WebCore::VTTCue::settingName):
+        (WebCore::scanPercentage):
+        (WebCore::VTTCue::setCueSettings):
+        * html/track/VTTCue.h:
+        * html/track/VTTRegion.cpp:
+        (WebCore::VTTRegion::setRegionSettings):
+        (WebCore::VTTRegion::scanSettingName):
+        (WebCore::parsedEntireRun):
+        (WebCore::VTTRegion::parseSettingValue):
+        * html/track/VTTRegion.h:
+        * html/track/VTTScanner.cpp: Added.
+        (WebCore::VTTScanner::VTTScanner):
+        (WebCore::VTTScanner::scan):
+        (WebCore::VTTScanner::scanRun):
+        (WebCore::VTTScanner::skipRun):
+        (WebCore::VTTScanner::extractString):
+        (WebCore::VTTScanner::restOfInputAsString):
+        (WebCore::VTTScanner::scanDigits):
+        (WebCore::VTTScanner::scanFloat):
+        * html/track/VTTScanner.h: Added.
+        (WebCore::VTTScanner::Run::Run):
+        (WebCore::VTTScanner::Run::start):
+        (WebCore::VTTScanner::Run::end):
+        (WebCore::VTTScanner::Run::isEmpty):
+        (WebCore::VTTScanner::isAt):
+        (WebCore::VTTScanner::isAtEnd):
+        (WebCore::VTTScanner::match):
+        (WebCore::VTTScanner::position):
+        (WebCore::VTTScanner::end):
+        (WebCore::VTTScanner::LCharPredicateAdapter):
+        (WebCore::VTTScanner::Run::length):
+        (WebCore::VTTScanner::scan):
+        (WebCore::VTTScanner::skipWhile):
+        (WebCore::VTTScanner::skipUntil):
+        (WebCore::VTTScanner::collectWhile):
+        (WebCore::VTTScanner::collectUntil):
+        (WebCore::VTTScanner::seekTo):
+        (WebCore::VTTScanner::currentChar):
+        (WebCore::VTTScanner::advance):
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::parseFloatPercentageValue):
+        (WebCore::WebVTTParser::parseFloatPercentageValuePair):
+        (WebCore::WebVTTParser::collectTimingsAndSettings):
+        (WebCore::WebVTTParser::collectTimeStamp):
+        (WebCore::WebVTTTreeBuilder::constructTreeFromToken):
+        * html/track/WebVTTParser.h:
+
 2014-03-21  Benjamin Poulain  <bpoulain@apple.com>
 
         Pseudo type cleanup part 2: split pseudo elements parsing

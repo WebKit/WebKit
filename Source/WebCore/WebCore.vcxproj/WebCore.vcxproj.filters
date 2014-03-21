@@ -4200,6 +4200,9 @@
     <ClCompile Include="..\html\track\VTTCue.cpp">
       <Filter>html\track</Filter>
     </ClCompile>
+    <ClCompile Include="..\html\track\VTTScanner.cpp">
+      <Filter>html\track</Filter>
+    </ClCompile>
     <ClCompile Include="..\html\track\WebVTTParser.cpp">
       <Filter>html\track</Filter>
     </ClCompile>
@@ -11245,6 +11248,9 @@
     <ClInclude Include="..\html\track\LoadableTextTrack.h">
       <Filter>html\track</Filter>
     </ClInclude>
+    <ClInclude Include="..\html\track\ParsingUtilities.h">
+      <Filter>html\track</Filter>
+    </ClInclude>
     <ClInclude Include="..\html\track\TextTrack.h">
       <Filter>html\track</Filter>
     </ClInclude>
@@ -11264,6 +11270,9 @@
       <Filter>html\track</Filter>
     </ClInclude>
     <ClInclude Include="..\html\track\VTTCue.h">
+      <Filter>html\track</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\track\VTTScanner.h">
       <Filter>html\track</Filter>
     </ClInclude>
     <ClInclude Include="..\html\track\WebVTTParser.h">

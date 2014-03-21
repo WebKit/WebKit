@@ -45,6 +45,7 @@ class DocumentFragment;
 class HTMLSpanElement;
 class ScriptExecutionContext;
 class VTTCue;
+class VTTScanner;
 
 // ----------------------------
 
@@ -189,7 +190,7 @@ private:
         RegionId
 #endif
     };
-    CueSetting settingName(const String&);
+    CueSetting settingName(VTTScanner&);
 
     String m_content;
     String m_settings;

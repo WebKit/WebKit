@@ -3695,6 +3695,7 @@ webcore_sources += \
 	Source/WebCore/html/track/InbandWebVTTTextTrack.h \
 	Source/WebCore/html/track/LoadableTextTrack.cpp \
 	Source/WebCore/html/track/LoadableTextTrack.h \
+	Source/WebCore/html/track/ParsingUtilities.h \
 	Source/WebCore/html/track/TextTrack.cpp \
 	Source/WebCore/html/track/TextTrack.h \
 	Source/WebCore/html/track/TextTrackCue.cpp \
@@ -3719,6 +3720,8 @@ webcore_sources += \
 	Source/WebCore/html/track/VideoTrackList.h \
 	Source/WebCore/html/track/VTTCue.cpp \
 	Source/WebCore/html/track/VTTCue.h \
+	Source/WebCore/html/track/VTTScanner.cpp \
+	Source/WebCore/html/track/VTTScanner.h \
 	Source/WebCore/html/track/WebVTTElement.cpp \
 	Source/WebCore/html/track/WebVTTElement.h \
 	Source/WebCore/html/track/WebVTTParser.cpp \
