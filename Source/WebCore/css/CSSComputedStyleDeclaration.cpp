@@ -826,12 +826,12 @@ static PassRef<CSSValue> computedTransform(RenderObject* renderer, const RenderS
     if (!renderer || !renderer->hasTransform() || !style->hasTransform())
         return cssValuePool().createIdentifierValue(CSSValueNone);
 
-    IntRect box;
+    FloatRect pixelSnappedRect;
     if (renderer->isBox())
-        box = pixelSnappedIntRect(toRenderBox(renderer)->borderBoxRect());
+        pixelSnappedRect = pixelSnappedForPainting(toRenderBox(renderer)->borderBoxRect(), renderer->document().deviceScaleFactor());
 
     TransformationMatrix transform;
-    style->applyTransform(transform, box.size(), RenderStyle::ExcludeTransformOrigin);
+    style->applyTransform(transform, pixelSnappedRect, RenderStyle::ExcludeTransformOrigin);
     // Note that this does not flatten to an affine transform if ENABLE(3D_RENDERING) is off, by design.
 
     // FIXME: Need to print out individual functions (https://bugs.webkit.org/show_bug.cgi?id=23924)

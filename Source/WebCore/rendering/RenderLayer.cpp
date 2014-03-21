@@ -878,7 +878,7 @@ void RenderLayer::updateTransform()
         RenderBox* box = renderBox();
         ASSERT(box);
         m_transform->makeIdentity();
-        box->style().applyTransform(*m_transform, box->pixelSnappedBorderBoxRect().size(), RenderStyle::IncludeTransformOrigin);
+        box->style().applyTransform(*m_transform, pixelSnappedForPainting(box->borderBoxRect(), box->document().deviceScaleFactor()), RenderStyle::IncludeTransformOrigin);
         makeMatrixRenderable(*m_transform, canRender3DTransforms());
     }
 
@@ -891,19 +891,21 @@ TransformationMatrix RenderLayer::currentTransform(RenderStyle::ApplyTransformOr
     if (!m_transform)
         return TransformationMatrix();
 
+    RenderBox* box = renderBox();
+    ASSERT(box);
+    FloatRect pixelSnappedBorderRect = pixelSnappedForPainting(box->borderBoxRect(), box->document().deviceScaleFactor());
     if (renderer().style().isRunningAcceleratedAnimation()) {
         TransformationMatrix currTransform;
         RefPtr<RenderStyle> style = renderer().animation().getAnimatedStyleForRenderer(&renderer());
-        style->applyTransform(currTransform, renderBox()->pixelSnappedBorderBoxRect().size(), applyOrigin);
+        style->applyTransform(currTransform, pixelSnappedBorderRect, applyOrigin);
         makeMatrixRenderable(currTransform, canRender3DTransforms());
         return currTransform;
     }
 
     // m_transform includes transform-origin, so we need to recompute the transform here.
     if (applyOrigin == RenderStyle::ExcludeTransformOrigin) {
-        RenderBox* box = renderBox();
         TransformationMatrix currTransform;
-        box->style().applyTransform(currTransform, box->pixelSnappedBorderBoxRect().size(), RenderStyle::ExcludeTransformOrigin);
+        box->style().applyTransform(currTransform, pixelSnappedBorderRect, RenderStyle::ExcludeTransformOrigin);
         makeMatrixRenderable(currTransform, canRender3DTransforms());
         return currTransform;
     }
@@ -4202,13 +4204,13 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext* context, const 
     convertToLayerCoords(paintingInfo.rootLayer, offsetFromParent);
     offsetFromParent.moveBy(translationOffset);
     TransformationMatrix transform(renderableTransform(paintingInfo.paintBehavior));
-    FloatPoint devicePixelSnappeddOffsetFromParent = roundedForPainting(offsetFromParent, deviceScaleFactor);
+    FloatPoint devicePixelFlooredOffsetFromParent = flooredForPainting(offsetFromParent, deviceScaleFactor);
     // Translate the graphics context to the snapping position to avoid off-device-pixel positing.
-    transform.translateRight(devicePixelSnappeddOffsetFromParent.x(), devicePixelSnappeddOffsetFromParent.y());
+    transform.translateRight(devicePixelFlooredOffsetFromParent.x(), devicePixelFlooredOffsetFromParent.y());
     // We handle accumulated subpixels through nested layers here. Since the context gets translated to device pixels,
     // all we need to do is add the delta to the accumulated pixels coming from ancestor layers. With deep nesting of subpixel positioned
     // boxes, this could grow to a relatively large number, but the translateRight() balances it.
-    FloatSize delta = offsetFromParent - devicePixelSnappeddOffsetFromParent;
+    FloatSize delta = offsetFromParent - devicePixelFlooredOffsetFromParent;
     LayoutSize adjustedSubPixelAccumulation = paintingInfo.subPixelAccumulation + LayoutSize(delta);
     // Apply the transform.
     GraphicsContextStateSaver stateSaver(*context);

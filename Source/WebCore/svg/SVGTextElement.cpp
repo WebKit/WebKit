@@ -54,7 +54,7 @@ AffineTransform SVGTextElement::animatedLocalTransform() const
         TransformationMatrix t;
         // For now, the transform-origin is not taken into account
         // Also, any percentage values will not be taken into account
-        style->applyTransform(t, IntSize(0, 0), RenderStyle::ExcludeTransformOrigin);
+        style->applyTransform(t, FloatRect(0, 0, 0, 0), RenderStyle::ExcludeTransformOrigin);
         // Flatten any 3D transform
         matrix = t.toAffineTransform();
     } else

@@ -958,25 +958,6 @@ inline bool requireTransformOrigin(const Vector<RefPtr<TransformOperation>>& tra
     return false;
 }
 
-void RenderStyle::applyTransform(TransformationMatrix& transform, const LayoutSize& borderBoxSize, ApplyTransformOrigin applyOrigin) const
-{
-    // FIXME: when subpixel layout is supported (bug 71143) the body of this function could be replaced by
-    // applyTransform(transform, FloatRect(FloatPoint(), borderBoxSize), applyOrigin);
-    
-    const Vector<RefPtr<TransformOperation>>& transformOperations = rareNonInheritedData->m_transform->m_operations.operations();
-    bool applyTransformOrigin = requireTransformOrigin(transformOperations, applyOrigin);
-
-    if (applyTransformOrigin)
-        transform.translate3d(floatValueForLength(transformOriginX(), borderBoxSize.width()), floatValueForLength(transformOriginY(), borderBoxSize.height()), transformOriginZ());
-
-    unsigned size = transformOperations.size();
-    for (unsigned i = 0; i < size; ++i)
-        transformOperations[i]->apply(transform, borderBoxSize);
-
-    if (applyTransformOrigin)
-        transform.translate3d(-floatValueForLength(transformOriginX(), borderBoxSize.width()), -floatValueForLength(transformOriginY(), borderBoxSize.height()), -transformOriginZ()); 
-}
-
 void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRect& boundingBox, ApplyTransformOrigin applyOrigin) const
 {
     const Vector<RefPtr<TransformOperation>>& transformOperations = rareNonInheritedData->m_transform->m_operations.operations();

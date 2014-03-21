@@ -370,7 +370,8 @@ void RenderLayerBacking::updateTransform(const RenderStyle* style)
     // baked into it, and we don't want that.
     TransformationMatrix t;
     if (m_owningLayer.hasTransform()) {
-        style->applyTransform(t, toRenderBox(renderer()).pixelSnappedBorderBoxRect().size(), RenderStyle::ExcludeTransformOrigin);
+        RenderBox& renderBox = toRenderBox(renderer());
+        style->applyTransform(t, pixelSnappedForPainting(renderBox.borderBoxRect(), renderBox.document().deviceScaleFactor()), RenderStyle::ExcludeTransformOrigin);
         makeMatrixRenderable(t, compositor().canRender3DTransforms());
     }
     
