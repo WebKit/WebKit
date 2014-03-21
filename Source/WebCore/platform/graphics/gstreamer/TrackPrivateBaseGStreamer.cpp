@@ -53,10 +53,24 @@ static void trackPrivateTagsChangedCallback(GObject*, GParamSpec*, TrackPrivateB
     track->tagsChanged();
 }
 
+static gboolean trackPrivateActiveChangeTimeoutCallback(TrackPrivateBaseGStreamer* track)
+{
+    track->notifyTrackOfActiveChanged();
+    return FALSE;
+}
+
+static gboolean trackPrivateTagsChangeTimeoutCallback(TrackPrivateBaseGStreamer* track)
+{
+    track->notifyTrackOfTagsChanged();
+    return FALSE;
+}
+
 TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstPad> pad)
     : m_index(index)
     , m_pad(pad)
     , m_owner(owner)
+    , m_activeTimerHandler(0)
+    , m_tagTimerHandler(0)
 {
     ASSERT(m_pad);
 
@@ -83,8 +97,13 @@ void TrackPrivateBaseGStreamer::disconnect()
     g_signal_handlers_disconnect_by_func(m_pad.get(),
         reinterpret_cast<gpointer>(trackPrivateTagsChangedCallback), this);
 
-    m_activeTimerHandler.cancel();
-    m_tagTimerHandler.cancel();
+    if (m_activeTimerHandler)
+        g_source_remove(m_activeTimerHandler);
+    m_activeTimerHandler = 0;
+
+    if (m_tagTimerHandler)
+        g_source_remove(m_tagTimerHandler);
+    m_tagTimerHandler = 0;
 
     m_pad.clear();
     m_tags.clear();
@@ -92,12 +111,17 @@ void TrackPrivateBaseGStreamer::disconnect()
 
 void TrackPrivateBaseGStreamer::activeChanged()
 {
-    m_activeTimerHandler.schedule("[WebKit] TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged", std::bind(&TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged, this));
+    if (m_activeTimerHandler)
+        g_source_remove(m_activeTimerHandler);
+    m_activeTimerHandler = g_timeout_add(0,
+        reinterpret_cast<GSourceFunc>(trackPrivateActiveChangeTimeoutCallback), this);
+    g_source_set_name_by_id(m_activeTimerHandler, "[WebKit] trackPrivateActiveChangeTimeoutCallback");
 }
 
 void TrackPrivateBaseGStreamer::tagsChanged()
 {
-    m_tagTimerHandler.cancel();
+    if (m_tagTimerHandler)
+        g_source_remove(m_tagTimerHandler);
 
     GRefPtr<GstTagList> tags;
     g_object_get(m_pad.get(), "tags", &tags.outPtr(), NULL);
@@ -106,11 +130,14 @@ void TrackPrivateBaseGStreamer::tagsChanged()
         m_tags.swap(tags);
     }
 
-    m_tagTimerHandler.schedule("[WebKit] TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged", std::bind(&TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged, this));
+    m_tagTimerHandler = g_timeout_add(0,
+        reinterpret_cast<GSourceFunc>(trackPrivateTagsChangeTimeoutCallback), this);
+    g_source_set_name_by_id(m_tagTimerHandler, "[WebKit] trackPrivateTagsChangeTimeoutCallback");
 }
 
 void TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged()
 {
+    m_activeTimerHandler = 0;
     if (!m_pad)
         return;
 
@@ -148,6 +175,7 @@ bool TrackPrivateBaseGStreamer::getTag(GstTagList* tags, const gchar* tagName, S
 
 void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
 {
+    m_tagTimerHandler = 0;
     if (!m_pad)
         return;
 

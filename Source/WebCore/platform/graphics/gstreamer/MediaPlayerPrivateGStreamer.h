@@ -32,7 +32,6 @@
 #include <gst/gst.h>
 #include <gst/pbutils/install-plugins.h>
 #include <wtf/Forward.h>
-#include <wtf/gobject/GMainLoopSource.h>
 
 #if ENABLE(MEDIA_SOURCE)
 #include "MediaSourceGStreamer.h"
@@ -190,11 +189,11 @@ private:
     bool m_volumeAndMuteInitialized;
     bool m_hasVideo;
     bool m_hasAudio;
-    GMainLoopSource m_audioTimerHandler;
-    GMainLoopSource m_textTimerHandler;
-    GMainLoopSource m_videoTimerHandler;
-    GMainLoopSource m_videoCapsTimerHandler;
-    GMainLoopSource m_readyTimerHandler;
+    guint m_audioTimerHandler;
+    guint m_textTimerHandler;
+    guint m_videoTimerHandler;
+    guint m_videoCapsTimerHandler;
+    guint m_readyTimerHandler;
     mutable long m_totalBytes;
     URL m_url;
     bool m_preservesPitch;

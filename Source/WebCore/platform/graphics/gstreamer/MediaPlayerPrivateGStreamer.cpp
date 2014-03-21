@@ -58,7 +58,7 @@
 
 // Max interval in seconds to stay in the READY state on manual
 // state change requests.
-static const unsigned gReadyStateTimerInterval = 60;
+static const guint gReadyStateTimerInterval = 60;
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
@@ -92,10 +92,31 @@ static void mediaPlayerPrivateAudioChangedCallback(GObject*, MediaPlayerPrivateG
     player->audioChanged();
 }
 
+static gboolean mediaPlayerPrivateAudioChangeTimeoutCallback(MediaPlayerPrivateGStreamer* player)
+{
+    // This is the callback of the timeout source created in ::audioChanged.
+    player->notifyPlayerOfAudio();
+    return FALSE;
+}
+
 static void setAudioStreamPropertiesCallback(GstChildProxy*, GObject* object, gchar*,
     MediaPlayerPrivateGStreamer* player)
 {
     player->setAudioStreamProperties(object);
+}
+
+static gboolean mediaPlayerPrivateVideoChangeTimeoutCallback(MediaPlayerPrivateGStreamer* player)
+{
+    // This is the callback of the timeout source created in ::videoChanged.
+    player->notifyPlayerOfVideo();
+    return FALSE;
+}
+
+static gboolean mediaPlayerPrivateVideoCapsChangeTimeoutCallback(MediaPlayerPrivateGStreamer* player)
+{
+    // This is the callback of the timeout source created in ::videoCapsChanged.
+    player->notifyPlayerOfVideoCaps();
+    return FALSE;
 }
 
 #if ENABLE(VIDEO_TRACK)
@@ -104,12 +125,27 @@ static void mediaPlayerPrivateTextChangedCallback(GObject*, MediaPlayerPrivateGS
     player->textChanged();
 }
 
+static gboolean mediaPlayerPrivateTextChangeTimeoutCallback(MediaPlayerPrivateGStreamer* player)
+{
+    // This is the callback of the timeout source created in ::textChanged.
+    player->notifyPlayerOfText();
+    return FALSE;
+}
+
 static GstFlowReturn mediaPlayerPrivateNewTextSampleCallback(GObject*, MediaPlayerPrivateGStreamer* player)
 {
     player->newTextSample();
     return GST_FLOW_OK;
 }
 #endif
+
+static gboolean mediaPlayerPrivateReadyStateTimeoutCallback(MediaPlayerPrivateGStreamer* player)
+{
+    // This is the callback of the timeout source created in ::changePipelineState.
+    // Reset pipeline if we are sitting on READY state when timeout is reached
+    player->changePipelineState(GST_STATE_NULL);
+    return FALSE;
+}
 
 static void mediaPlayerPrivatePluginInstallerResultFunction(GstInstallPluginsReturn result, gpointer userData)
 {
@@ -213,6 +249,11 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_volumeAndMuteInitialized(false)
     , m_hasVideo(false)
     , m_hasAudio(false)
+    , m_audioTimerHandler(0)
+    , m_textTimerHandler(0)
+    , m_videoTimerHandler(0)
+    , m_videoCapsTimerHandler(0)
+    , m_readyTimerHandler(0)
     , m_totalBytes(-1)
     , m_preservesPitch(false)
     , m_requestedState(GST_STATE_VOID_PENDING)
@@ -244,7 +285,8 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
         g_signal_handlers_disconnect_by_func(G_OBJECT(m_autoAudioSink.get()),
             reinterpret_cast<gpointer>(setAudioStreamPropertiesCallback), this);
 
-    m_readyTimerHandler.cancel();
+    if (m_readyTimerHandler)
+        g_source_remove(m_readyTimerHandler);
 
     if (m_playBin) {
         GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_playBin.get())));
@@ -266,6 +308,18 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
 
     GRefPtr<GstPad> videoSinkPad = adoptGRef(gst_element_get_static_pad(m_webkitVideoSink.get(), "sink"));
     g_signal_handlers_disconnect_by_func(videoSinkPad.get(), reinterpret_cast<gpointer>(mediaPlayerPrivateVideoSinkCapsChangedCallback), this);
+
+    if (m_videoTimerHandler)
+        g_source_remove(m_videoTimerHandler);
+
+    if (m_audioTimerHandler)
+        g_source_remove(m_audioTimerHandler);
+
+    if (m_textTimerHandler)
+        g_source_remove(m_textTimerHandler);
+
+    if (m_videoCapsTimerHandler)
+        g_source_remove(m_videoCapsTimerHandler);
 }
 
 void MediaPlayerPrivateGStreamer::load(const String& url)
@@ -389,11 +443,12 @@ bool MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
     // if we stay for too long on READY.
     // Also lets remove the timer if we request a state change for any state other than READY.
     // See also https://bugs.webkit.org/show_bug.cgi?id=117354
-    if (newState == GST_STATE_READY && !m_readyTimerHandler.isScheduled()) {
-        m_readyTimerHandler.scheduleAfterDelay("[WebKit] mediaPlayerPrivateReadyStateTimeoutCallback", [this] { changePipelineState(GST_STATE_NULL); },
-            std::chrono::seconds(gReadyStateTimerInterval));
-    } else if (newState != GST_STATE_READY && m_readyTimerHandler.isScheduled()) {
-        m_readyTimerHandler.cancel();
+    if (newState == GST_STATE_READY && !m_readyTimerHandler) {
+        m_readyTimerHandler = g_timeout_add_seconds(gReadyStateTimerInterval, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateReadyStateTimeoutCallback), this);
+        g_source_set_name_by_id(m_readyTimerHandler, "[WebKit] mediaPlayerPrivateReadyStateTimeoutCallback");
+    } else if (newState != GST_STATE_READY && m_readyTimerHandler) {
+        g_source_remove(m_readyTimerHandler);
+        m_readyTimerHandler = 0;
     }
 
     return true;
@@ -614,16 +669,24 @@ bool MediaPlayerPrivateGStreamer::seeking() const
 
 void MediaPlayerPrivateGStreamer::videoChanged()
 {
-    m_videoTimerHandler.schedule("[WebKit] MediaPlayerPrivateGStreamer::videoChanged", std::bind(&MediaPlayerPrivateGStreamer::notifyPlayerOfVideo, this));
+    if (m_videoTimerHandler)
+        g_source_remove(m_videoTimerHandler);
+    m_videoTimerHandler = g_idle_add_full(G_PRIORITY_DEFAULT, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateVideoChangeTimeoutCallback), this, 0);
+    g_source_set_name_by_id(m_videoTimerHandler, "[WebKit] mediaPlayerPrivateVideoChangeTimeoutCallback");
 }
 
 void MediaPlayerPrivateGStreamer::videoCapsChanged()
 {
-    m_videoCapsTimerHandler.schedule("[WebKit] MediaPlayerPrivateGStreamer::videoCapsChanged", std::bind(&MediaPlayerPrivateGStreamer::notifyPlayerOfVideoCaps, this));
+    if (m_videoCapsTimerHandler)
+        g_source_remove(m_videoCapsTimerHandler);
+    m_videoCapsTimerHandler = g_timeout_add(0, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateVideoCapsChangeTimeoutCallback), this);
+    g_source_set_name_by_id(m_videoCapsTimerHandler, "[WebKit] mediaPlayerPrivateVideoCapsChangeTimeoutCallback");
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
 {
+    m_videoTimerHandler = 0;
+
     gint numTracks = 0;
     if (m_playBin)
         g_object_get(m_playBin.get(), "n-video", &numTracks, NULL);
@@ -661,17 +724,23 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfVideoCaps()
 {
+    m_videoCapsTimerHandler = 0;
     m_videoSize = IntSize();
     m_player->mediaPlayerClient()->mediaPlayerEngineUpdated(m_player);
 }
 
 void MediaPlayerPrivateGStreamer::audioChanged()
 {
-    m_audioTimerHandler.schedule("[WebKit] MediaPlayerPrivateGStreamer::audioChanged", std::bind(&MediaPlayerPrivateGStreamer::notifyPlayerOfAudio, this));
+    if (m_audioTimerHandler)
+        g_source_remove(m_audioTimerHandler);
+    m_audioTimerHandler = g_idle_add_full(G_PRIORITY_DEFAULT, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateAudioChangeTimeoutCallback), this, 0);
+    g_source_set_name_by_id(m_audioTimerHandler, "[WebKit] mediaPlayerPrivateAudioChangeTimeoutCallback");
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
 {
+    m_audioTimerHandler = 0;
+
     gint numTracks = 0;
     if (m_playBin)
         g_object_get(m_playBin.get(), "n-audio", &numTracks, NULL);
@@ -710,11 +779,16 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
 #if ENABLE(VIDEO_TRACK)
 void MediaPlayerPrivateGStreamer::textChanged()
 {
-    m_textTimerHandler.schedule("[WebKit] MediaPlayerPrivateGStreamer::textChanged", std::bind(&MediaPlayerPrivateGStreamer::notifyPlayerOfText, this));
+    if (m_textTimerHandler)
+        g_source_remove(m_textTimerHandler);
+    m_textTimerHandler = g_timeout_add(0, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateTextChangeTimeoutCallback), this);
+    g_source_set_name_by_id(m_textTimerHandler, "[WebKit] mediaPlayerPrivateTextChangeTimeoutCallback");
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfText()
 {
+    m_textTimerHandler = 0;
+
     gint numTracks = 0;
     if (m_playBin)
         g_object_get(m_playBin.get(), "n-text", &numTracks, NULL);
@@ -1566,7 +1640,10 @@ void MediaPlayerPrivateGStreamer::loadingFailed(MediaPlayer::NetworkState error)
     }
 
     // Loading failed, remove ready timer.
-    m_readyTimerHandler.cancel();
+    if (m_readyTimerHandler) {
+        g_source_remove(m_readyTimerHandler);
+        m_readyTimerHandler = 0;
+    }
 }
 
 static HashSet<String> mimeTypeCache()

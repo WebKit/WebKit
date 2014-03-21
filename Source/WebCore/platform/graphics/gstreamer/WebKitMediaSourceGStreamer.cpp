@@ -30,7 +30,6 @@
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
 #include <gst/pbutils/missing-plugins.h>
-#include <wtf/gobject/GMainLoopSource.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
@@ -44,11 +43,11 @@ typedef struct _Source {
     guint64 size;
     gboolean paused;
 
-    GMainLoopSource start;
-    GMainLoopSource stop;
-    GMainLoopSource needData;
-    GMainLoopSource enoughData;
-    GMainLoopSource seek;
+    guint startId;
+    guint stopId;
+    guint needDataId;
+    guint enoughDataId;
+    guint seekId;
 
     guint64 requestedOffset;
 } Source;
@@ -173,7 +172,6 @@ static void webkit_media_src_init(WebKitMediaSrc* src)
 {
     WebKitMediaSrcPrivate* priv = WEBKIT_MEDIA_SRC_GET_PRIVATE(src);
     src->priv = priv;
-    new (priv) WebKitMediaSrcPrivate();
 
     priv->sourceVideo.appsrc = gst_element_factory_make("appsrc", "videoappsrc");
     gst_app_src_set_callbacks(GST_APP_SRC(priv->sourceVideo.appsrc), &appsrcCallbacksVideo, src, 0);
@@ -190,7 +188,6 @@ static void webKitMediaSrcFinalize(GObject* object)
     WebKitMediaSrcPrivate* priv = src->priv;
 
     g_free(priv->uri);
-    priv->~WebKitMediaSrcPrivate();
 
     GST_CALL_PARENT(G_OBJECT_CLASS, finalize, (object));
 }
@@ -226,23 +223,35 @@ static void webKitMediaSrcGetProperty(GObject* object, guint propId, GValue* val
 }
 
 // must be called on main thread and with object unlocked
-static void webKitMediaVideoSrcStop(WebKitMediaSrc* src)
+static gboolean webKitMediaVideoSrcStop(WebKitMediaSrc* src)
 {
     WebKitMediaSrcPrivate* priv = src->priv;
     gboolean seeking;
 
     GST_OBJECT_LOCK(src);
 
-    seeking = priv->sourceVideo.seek.isActive();
+    seeking = priv->sourceVideo.seekId;
 
-    priv->sourceVideo.start.cancel();
+    if (priv->sourceVideo.startId) {
+        g_source_remove(priv->sourceVideo.startId);
+        priv->sourceVideo.startId = 0;
+    }
 
     priv->player = 0;
     priv->playbin = 0;
 
-    priv->sourceVideo.needData.cancel();
-    priv->sourceVideo.enoughData.cancel();
-    priv->sourceVideo.seek.cancel();
+    if (priv->sourceVideo.needDataId)
+        g_source_remove(priv->sourceVideo.needDataId);
+    priv->sourceVideo.needDataId = 0;
+
+    if (priv->sourceVideo.enoughDataId)
+        g_source_remove(priv->sourceVideo.enoughDataId);
+    priv->sourceVideo.enoughDataId = 0;
+
+    if (priv->sourceVideo.seekId)
+        g_source_remove(priv->sourceVideo.seekId);
+
+    priv->sourceVideo.seekId = 0;
 
     priv->sourceVideo.paused = FALSE;
     priv->sourceVideo.offset = 0;
@@ -250,6 +259,8 @@ static void webKitMediaVideoSrcStop(WebKitMediaSrc* src)
 
     priv->duration = 0;
     priv->nbSource = 0;
+
+    priv->sourceVideo.stopId = 0;
 
     GST_OBJECT_UNLOCK(src);
 
@@ -260,26 +271,40 @@ static void webKitMediaVideoSrcStop(WebKitMediaSrc* src)
     }
 
     GST_DEBUG_OBJECT(src, "Stopped request");
+
+    return FALSE;
 }
 
-static void webKitMediaAudioSrcStop(WebKitMediaSrc* src)
+static gboolean webKitMediaAudioSrcStop(WebKitMediaSrc* src)
 {
     WebKitMediaSrcPrivate* priv = src->priv;
     gboolean seeking;
 
     GST_OBJECT_LOCK(src);
 
-    seeking = priv->sourceAudio.seek.isActive();
+    seeking = priv->sourceAudio.seekId;
 
-    priv->sourceAudio.start.cancel();
+    if (priv->sourceAudio.startId) {
+        g_source_remove(priv->sourceAudio.startId);
+        priv->sourceAudio.startId = 0;
+    }
 
     priv->player = 0;
 
     priv->playbin = 0;
 
-    priv->sourceAudio.needData.cancel();
-    priv->sourceAudio.enoughData.cancel();
-    priv->sourceAudio.seek.cancel();
+    if (priv->sourceAudio.needDataId)
+        g_source_remove(priv->sourceAudio.needDataId);
+    priv->sourceAudio.needDataId = 0;
+
+    if (priv->sourceAudio.enoughDataId)
+        g_source_remove(priv->sourceAudio.enoughDataId);
+    priv->sourceAudio.enoughDataId = 0;
+
+    if (priv->sourceAudio.seekId)
+        g_source_remove(priv->sourceAudio.seekId);
+
+    priv->sourceAudio.seekId = 0;
 
     priv->sourceAudio.paused = FALSE;
 
@@ -290,6 +315,8 @@ static void webKitMediaAudioSrcStop(WebKitMediaSrc* src)
     priv->duration = 0;
     priv->nbSource = 0;
 
+    priv->sourceAudio.stopId = 0;
+
     GST_OBJECT_UNLOCK(src);
 
     if (priv->sourceAudio.appsrc) {
@@ -299,10 +326,12 @@ static void webKitMediaAudioSrcStop(WebKitMediaSrc* src)
     }
 
     GST_DEBUG_OBJECT(src, "Stopped request");
+
+    return FALSE;
 }
 
 // must be called on main thread and with object unlocked
-static void webKitMediaVideoSrcStart(WebKitMediaSrc* src)
+static gboolean webKitMediaVideoSrcStart(WebKitMediaSrc* src)
 {
     WebKitMediaSrcPrivate* priv = src->priv;
 
@@ -311,15 +340,19 @@ static void webKitMediaVideoSrcStart(WebKitMediaSrc* src)
         GST_ERROR_OBJECT(src, "No URI provided");
         GST_OBJECT_UNLOCK(src);
         webKitMediaVideoSrcStop(src);
-        return;
+        return FALSE;
     }
+
+    priv->sourceVideo.startId = 0;
 
     GST_OBJECT_UNLOCK(src);
     GST_DEBUG_OBJECT(src, "Started request");
+
+    return FALSE;
 }
 
 // must be called on main thread and with object unlocked
-static void webKitMediaAudioSrcStart(WebKitMediaSrc* src)
+static gboolean webKitMediaAudioSrcStart(WebKitMediaSrc* src)
 {
     WebKitMediaSrcPrivate* priv = src->priv;
 
@@ -328,11 +361,15 @@ static void webKitMediaAudioSrcStart(WebKitMediaSrc* src)
         GST_ERROR_OBJECT(src, "No URI provided");
         GST_OBJECT_UNLOCK(src);
         webKitMediaAudioSrcStop(src);
-        return;
+        return FALSE;
     }
+
+    priv->sourceAudio.startId = 0;
 
     GST_OBJECT_UNLOCK(src);
     GST_DEBUG_OBJECT(src, "Started request");
+
+    return FALSE;
 }
 
 static GstStateChangeReturn webKitMediaSrcChangeState(GstElement* element, GstStateChange transition)
@@ -364,29 +401,19 @@ static GstStateChangeReturn webKitMediaSrcChangeState(GstElement* element, GstSt
     case GST_STATE_CHANGE_READY_TO_PAUSED:
         GST_DEBUG_OBJECT(src, "READY->PAUSED");
         GST_OBJECT_LOCK(src);
-
-        gst_object_ref(src);
-        priv->sourceVideo.start.schedule("[WebKit] webKitMediaVideoSrcStart", std::bind(webKitMediaVideoSrcStart, src), G_PRIORITY_DEFAULT,
-            [src] { gst_object_unref(src); });
-
-        gst_object_ref(src);
-        priv->sourceAudio.start.schedule("[WebKit] webKitMediaAudioSrcStart", std::bind(webKitMediaAudioSrcStart, src), G_PRIORITY_DEFAULT,
-            [src] { gst_object_unref(src); });
-
+        priv->sourceVideo.startId = g_timeout_add_full(G_PRIORITY_DEFAULT, 0, (GSourceFunc) webKitMediaVideoSrcStart, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
+        g_source_set_name_by_id(priv->sourceVideo.startId, "[WebKit] webKitMediaVideoSrcStart");
+        priv->sourceAudio.startId = g_timeout_add_full(G_PRIORITY_DEFAULT, 0, (GSourceFunc) webKitMediaAudioSrcStart, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
+        g_source_set_name_by_id(priv->sourceAudio.startId, "[WebKit] webKitMediaAudioSrcStart");
         GST_OBJECT_UNLOCK(src);
         break;
     case GST_STATE_CHANGE_PAUSED_TO_READY:
         GST_DEBUG_OBJECT(src, "PAUSED->READY");
         GST_OBJECT_LOCK(src);
-
-        gst_object_ref(src);
-        priv->sourceVideo.stop.schedule("[WebKit] webKitMediaVideoSrcStop", std::bind(webKitMediaVideoSrcStop, src), G_PRIORITY_DEFAULT,
-            [src] { gst_object_unref(src); });
-
-        gst_object_ref(src);
-        priv->sourceAudio.stop.schedule("[WebKit] webKitMediaAudioSrcStop", std::bind(webKitMediaAudioSrcStop, src), G_PRIORITY_DEFAULT,
-            [src] { gst_object_unref(src); });
-
+        priv->sourceVideo.stopId = g_timeout_add_full(G_PRIORITY_DEFAULT, 0, (GSourceFunc) webKitMediaVideoSrcStop, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
+        g_source_set_name_by_id(priv->sourceVideo.stopId, "[WebKit] webKitMediaVideoSrcStop");
+        priv->sourceAudio.stopId = g_timeout_add_full(G_PRIORITY_DEFAULT, 0, (GSourceFunc) webKitMediaAudioSrcStop, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
+        g_source_set_name_by_id(priv->sourceAudio.stopId, "[WebKit] webKitMediaAudioSrcStop");
         GST_OBJECT_UNLOCK(src);
         break;
     default:
@@ -492,22 +519,40 @@ static void webKitMediaSrcUriHandlerInit(gpointer gIface, gpointer)
 }
 
 // appsrc callbacks
-static void webKitMediaVideoSrcNeedDataMainCb(WebKitMediaSrc* src)
+static gboolean webKitMediaVideoSrcNeedDataMainCb(WebKitMediaSrc* src)
 {
     WebKitMediaSrcPrivate* priv = src->priv;
 
     GST_OBJECT_LOCK(src);
+    // already stopped
+    if (!priv->sourceVideo.needDataId) {
+        GST_OBJECT_UNLOCK(src);
+        return FALSE;
+    }
+
     priv->sourceVideo.paused = FALSE;
+    priv->sourceVideo.needDataId = 0;
     GST_OBJECT_UNLOCK(src);
+
+    return FALSE;
 }
 
-static void webKitMediaAudioSrcNeedDataMainCb(WebKitMediaSrc* src)
+static gboolean webKitMediaAudioSrcNeedDataMainCb(WebKitMediaSrc* src)
 {
     WebKitMediaSrcPrivate* priv = src->priv;
 
     GST_OBJECT_LOCK(src);
+    // already stopped
+    if (!priv->sourceAudio.needDataId) {
+        GST_OBJECT_UNLOCK(src);
+        return FALSE;
+    }
+
     priv->sourceAudio.paused = FALSE;
+    priv->sourceAudio.needDataId = 0;
     GST_OBJECT_UNLOCK(src);
+
+    return FALSE;
 }
 
 static void webKitMediaVideoSrcNeedDataCb(GstAppSrc*, guint length, gpointer userData)
@@ -518,14 +563,13 @@ static void webKitMediaVideoSrcNeedDataCb(GstAppSrc*, guint length, gpointer use
     GST_DEBUG_OBJECT(src, "Need more data: %u", length);
 
     GST_OBJECT_LOCK(src);
-    if (priv->sourceVideo.needData.isScheduled() || !priv->sourceVideo.paused) {
+    if (priv->sourceVideo.needDataId || !priv->sourceVideo.paused) {
         GST_OBJECT_UNLOCK(src);
         return;
     }
 
-    gst_object_ref(src);
-    priv->sourceVideo.needData.schedule("[WebKit] webKitMediaVideoSrcNeedDataMainCb", std::bind(webKitMediaVideoSrcNeedDataMainCb, src), G_PRIORITY_DEFAULT,
-        [src] { gst_object_unref(src); });
+    priv->sourceVideo.needDataId = g_timeout_add_full(G_PRIORITY_DEFAULT, 0, (GSourceFunc) webKitMediaVideoSrcNeedDataMainCb, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
+    g_source_set_name_by_id(priv->sourceVideo.needDataId, "[WebKit] webKitMediaVideoSrcNeedDataMainCb");
     GST_OBJECT_UNLOCK(src);
 }
 
@@ -537,33 +581,50 @@ static void webKitMediaAudioSrcNeedDataCb(GstAppSrc*, guint length, gpointer use
     GST_DEBUG_OBJECT(src, "Need more data: %u", length);
 
     GST_OBJECT_LOCK(src);
-    if (priv->sourceAudio.needData.isScheduled() || !priv->sourceAudio.paused) {
+    if (priv->sourceAudio.needDataId || !priv->sourceAudio.paused) {
         GST_OBJECT_UNLOCK(src);
         return;
     }
 
-    gst_object_ref(src);
-    priv->sourceAudio.needData.schedule("[WebKit] webKitMediaAudioSrcNeedDataMainCb", std::bind(webKitMediaAudioSrcNeedDataMainCb, src), G_PRIORITY_DEFAULT,
-        [src] { gst_object_unref(src); });
+    priv->sourceAudio.needDataId = g_timeout_add_full(G_PRIORITY_DEFAULT, 0, (GSourceFunc) webKitMediaAudioSrcNeedDataMainCb, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
+    g_source_set_name_by_id(priv->sourceAudio.needDataId, "[WebKit] webKitMediaAudioSrcNeedDataMainCb");
     GST_OBJECT_UNLOCK(src);
 }
 
-static void webKitMediaVideoSrcEnoughDataMainCb(WebKitMediaSrc* src)
+static gboolean webKitMediaVideoSrcEnoughDataMainCb(WebKitMediaSrc* src)
 {
     WebKitMediaSrcPrivate* priv = src->priv;
 
     GST_OBJECT_LOCK(src);
+    // already stopped
+    if (!priv->sourceVideo.enoughDataId) {
+        GST_OBJECT_UNLOCK(src);
+        return FALSE;
+    }
+
     priv->sourceVideo.paused = TRUE;
+    priv->sourceVideo.enoughDataId = 0;
     GST_OBJECT_UNLOCK(src);
+
+    return FALSE;
 }
 
-static void webKitMediaAudioSrcEnoughDataMainCb(WebKitMediaSrc* src)
+static gboolean webKitMediaAudioSrcEnoughDataMainCb(WebKitMediaSrc* src)
 {
     WebKitMediaSrcPrivate* priv = src->priv;
 
     GST_OBJECT_LOCK(src);
+    // already stopped
+    if (!priv->sourceAudio.enoughDataId) {
+        GST_OBJECT_UNLOCK(src);
+        return FALSE;
+    }
+
     priv->sourceAudio.paused = TRUE;
+    priv->sourceAudio.enoughDataId = 0;
     GST_OBJECT_UNLOCK(src);
+
+    return FALSE;
 }
 
 static void webKitMediaVideoSrcEnoughDataCb(GstAppSrc*, gpointer userData)
@@ -574,15 +635,13 @@ static void webKitMediaVideoSrcEnoughDataCb(GstAppSrc*, gpointer userData)
     GST_DEBUG_OBJECT(src, "Have enough data");
 
     GST_OBJECT_LOCK(src);
-    if (priv->sourceVideo.enoughData.isScheduled() || priv->sourceVideo.paused) {
+    if (priv->sourceVideo.enoughDataId || priv->sourceVideo.paused) {
         GST_OBJECT_UNLOCK(src);
         return;
     }
 
-    gst_object_ref(src);
-    priv->sourceVideo.enoughData.schedule("[WebKit] webKitMediaVideoSrcEnoughDataMainCb", std::bind(webKitMediaVideoSrcEnoughDataMainCb, src), G_PRIORITY_DEFAULT,
-        [src] { gst_object_unref(src); });
-
+    priv->sourceVideo.enoughDataId = g_timeout_add_full(G_PRIORITY_DEFAULT, 0, (GSourceFunc) webKitMediaVideoSrcEnoughDataMainCb, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
+    g_source_set_name_by_id(priv->sourceVideo.enoughDataId, "[WebKit] webKitMediaVideoSrcEnoughDataMainCb");
     GST_OBJECT_UNLOCK(src);
 }
 
@@ -594,27 +653,28 @@ static void webKitMediaAudioSrcEnoughDataCb(GstAppSrc*, gpointer userData)
     GST_DEBUG_OBJECT(src, "Have enough data");
 
     GST_OBJECT_LOCK(src);
-    if (priv->sourceAudio.enoughData.isScheduled() || priv->sourceAudio.paused) {
+    if (priv->sourceAudio.enoughDataId || priv->sourceAudio.paused) {
         GST_OBJECT_UNLOCK(src);
         return;
     }
 
-    gst_object_ref(src);
-    priv->sourceAudio.enoughData.schedule("[WebKit] webKitMediaAudioSrcEnoughDataMainCb", std::bind(webKitMediaAudioSrcEnoughDataMainCb, src), G_PRIORITY_DEFAULT,
-        [src] { gst_object_unref(src); });
-
+    priv->sourceAudio.enoughDataId = g_timeout_add_full(G_PRIORITY_DEFAULT, 0, (GSourceFunc) webKitMediaAudioSrcEnoughDataMainCb, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
+    g_source_set_name_by_id(priv->sourceAudio.enoughDataId, "[WebKit] webKitMediaAudioSrcEnoughDataMainCb");
     GST_OBJECT_UNLOCK(src);
 }
 
-static void webKitMediaVideoSrcSeekMainCb(WebKitMediaSrc*)
+static gboolean webKitMediaVideoSrcSeekMainCb(WebKitMediaSrc* src)
 {
     notImplemented();
+    src->priv->sourceVideo.seekId = 0;
+    return FALSE;
 }
 
-
-static void webKitMediaAudioSrcSeekMainCb(WebKitMediaSrc*)
+static gboolean webKitMediaAudioSrcSeekMainCb(WebKitMediaSrc* src)
 {
     notImplemented();
+    src->priv->sourceAudio.seekId = 0;
+    return FALSE;
 }
 
 static gboolean webKitMediaVideoSrcSeekDataCb(GstAppSrc*, guint64 offset, gpointer userData)
@@ -641,10 +701,10 @@ static gboolean webKitMediaVideoSrcSeekDataCb(GstAppSrc*, guint64 offset, gpoint
     GST_DEBUG_OBJECT(src, "Doing range-request seek");
     priv->sourceVideo.requestedOffset = offset;
 
-    gst_object_ref(src);
-    priv->sourceVideo.seek.schedule("[WebKit] webKitMediaVideoSrcSeekMainCb", std::bind(webKitMediaVideoSrcSeekMainCb, src), G_PRIORITY_DEFAULT,
-        [src] { gst_object_unref(src); });
-
+    if (priv->sourceVideo.seekId)
+        g_source_remove(priv->sourceVideo.seekId);
+    priv->sourceVideo.seekId = g_timeout_add_full(G_PRIORITY_DEFAULT, 0, (GSourceFunc) webKitMediaVideoSrcSeekMainCb, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
+    g_source_set_name_by_id(priv->sourceVideo.seekId, "[WebKit] webKitMediaVideoSrcSeekMainCb");
     GST_OBJECT_UNLOCK(src);
 
     return TRUE;
@@ -674,10 +734,10 @@ static gboolean webKitMediaAudioSrcSeekDataCb(GstAppSrc*, guint64 offset, gpoint
     GST_DEBUG_OBJECT(src, "Doing range-request seek");
     priv->sourceAudio.requestedOffset = offset;
 
-    gst_object_ref(src);
-    priv->sourceAudio.seek.schedule("[WebKit] webKitMediaAudioSrcSeekMainCb", std::bind(webKitMediaAudioSrcSeekMainCb, src), G_PRIORITY_DEFAULT,
-        [src] { gst_object_unref(src); });
-
+    if (priv->sourceAudio.seekId)
+        g_source_remove(priv->sourceAudio.seekId);
+    priv->sourceAudio.seekId = g_timeout_add_full(G_PRIORITY_DEFAULT, 0, (GSourceFunc) webKitMediaAudioSrcSeekMainCb, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
+    g_source_set_name_by_id(priv->sourceAudio.seekId, "[WebKit] webKitMediaAudioSrcSeekMainCb");
     GST_OBJECT_UNLOCK(src);
 
     return TRUE;
@@ -762,14 +822,14 @@ void MediaSourceClientGstreamer::didFinishLoading(double)
     GST_DEBUG_OBJECT(m_src, "Have EOS");
 
     GST_OBJECT_LOCK(m_src);
-    if (!priv->sourceVideo.seek.isActive()) {
+    if (!priv->sourceVideo.seekId) {
         GST_OBJECT_UNLOCK(m_src);
         gst_app_src_end_of_stream(GST_APP_SRC(priv->sourceVideo.appsrc));
     } else
         GST_OBJECT_UNLOCK(m_src);
 
     GST_OBJECT_LOCK(m_src);
-    if (!priv->sourceAudio.seek.isActive()) {
+    if (!priv->sourceAudio.seekId) {
         GST_OBJECT_UNLOCK(m_src);
         gst_app_src_end_of_stream(GST_APP_SRC(priv->sourceAudio.appsrc));
     } else

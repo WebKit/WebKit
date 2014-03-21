@@ -27,13 +27,13 @@
 
 #include <gio/gio.h>
 #include <gst/app/gstappsink.h>
-#include <gst/audio/audio.h>
 #include <gst/gst.h>
 #include <gst/pbutils/pbutils.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/gobject/GMainLoopSource.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
+
+#include <gst/audio/audio.h>
 
 namespace WebCore {
 
@@ -106,6 +106,13 @@ static void onGStreamerDeinterleaveReadyCallback(GstElement*, AudioFileReader* r
 static void onGStreamerDecodebinPadAddedCallback(GstElement*, GstPad* pad, AudioFileReader* reader)
 {
     reader->plugDeinterleave(pad);
+}
+
+gboolean enteredMainLoopCallback(gpointer userData)
+{
+    AudioFileReader* reader = reinterpret_cast<AudioFileReader*>(userData);
+    reader->decodeAudioForBusCreation();
+    return FALSE;
 }
 
 AudioFileReader::AudioFileReader(const char* filePath)
@@ -334,8 +341,9 @@ PassRefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
     m_loop = adoptGRef(g_main_loop_new(context.get(), FALSE));
 
     // Start the pipeline processing just after the loop is started.
-    GMainLoopSource source;
-    source.schedule("[WebKit] AudioFileReader::decodeAudioForBusCreation", std::bind(&AudioFileReader::decodeAudioForBusCreation, this), G_PRIORITY_DEFAULT, nullptr, context.get());
+    GRefPtr<GSource> timeoutSource = adoptGRef(g_timeout_source_new(0));
+    g_source_attach(timeoutSource.get(), context.get());
+    g_source_set_callback(timeoutSource.get(), reinterpret_cast<GSourceFunc>(enteredMainLoopCallback), this, 0);
 
     g_main_loop_run(m_loop.get());
     g_main_context_pop_thread_default(context.get());

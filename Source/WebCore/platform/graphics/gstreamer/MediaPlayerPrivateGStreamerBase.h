@@ -30,7 +30,6 @@
 #include <glib.h>
 
 #include <wtf/Forward.h>
-#include <wtf/gobject/GMainLoopSource.h>
 
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
 #include "TextureMapperPlatformLayer.h"
@@ -120,8 +119,8 @@ protected:
     IntSize m_size;
     GMutex* m_bufferMutex;
     GstBuffer* m_buffer;
-    GMainLoopSource m_volumeTimerHandler;
-    GMainLoopSource m_muteTimerHandler;
+    unsigned long m_volumeTimerHandler;
+    unsigned long m_muteTimerHandler;
     unsigned long m_repaintHandler;
     unsigned long m_volumeSignalHandler;
     unsigned long m_muteSignalHandler;

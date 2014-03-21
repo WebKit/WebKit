@@ -40,7 +40,6 @@
 #include <gst/gst.h>
 #include <gst/pbutils/missing-plugins.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/gobject/GMainLoopSource.h>
 #include <wtf/gobject/GMutexLocker.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
@@ -127,11 +126,11 @@ struct _WebKitWebSrcPrivate {
 
     guint64 requestedOffset;
 
-    GMainLoopSource startSource;
-    GMainLoopSource stopSource;
-    GMainLoopSource needDataSource;
-    GMainLoopSource enoughDataSource;
-    GMainLoopSource seekSource;
+    guint startID;
+    guint stopID;
+    guint needDataID;
+    guint enoughDataID;
+    guint seekID;
 
     GRefPtr<GstBuffer> buffer;
 
@@ -254,7 +253,6 @@ static void webkit_web_src_init(WebKitWebSrc* src)
     WebKitWebSrcPrivate* priv = WEBKIT_WEB_SRC_GET_PRIVATE(src);
 
     src->priv = priv;
-    new (priv) WebKitWebSrcPrivate();
 
     priv->appsrc = GST_APP_SRC(gst_element_factory_make("appsrc", 0));
     if (!priv->appsrc) {
@@ -316,7 +314,6 @@ static void webKitWebSrcFinalize(GObject* object)
     WebKitWebSrcPrivate* priv = src->priv;
 
     g_free(priv->uri);
-    priv->~WebKitWebSrcPrivate();
 
     GST_CALL_PARENT(G_OBJECT_CLASS, finalize, (object));
 }
@@ -367,13 +364,24 @@ static void removeTimeoutSources(WebKitWebSrc* src)
 {
     WebKitWebSrcPrivate* priv = src->priv;
 
-    priv->startSource.cancel();
-    priv->needDataSource.cancel();
-    priv->enoughDataSource.cancel();
-    priv->seekSource.cancel();
+    if (priv->startID)
+        g_source_remove(priv->startID);
+    priv->startID = 0;
+
+    if (priv->needDataID)
+        g_source_remove(priv->needDataID);
+    priv->needDataID = 0;
+
+    if (priv->enoughDataID)
+        g_source_remove(priv->enoughDataID);
+    priv->enoughDataID = 0;
+
+    if (priv->seekID)
+        g_source_remove(priv->seekID);
+    priv->seekID = 0;
 }
 
-static void webKitWebSrcStop(WebKitWebSrc* src)
+static gboolean webKitWebSrcStop(WebKitWebSrc* src)
 {
     WebKitWebSrcPrivate* priv = src->priv;
 
@@ -381,9 +389,10 @@ static void webKitWebSrcStop(WebKitWebSrc* src)
 
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
 
-    bool seeking = priv->seekSource.isActive();
+    bool seeking = priv->seekID;
 
     removeTimeoutSources(src);
+    priv->stopID = 0;
 
     if (priv->client) {
         delete priv->client;
@@ -427,9 +436,11 @@ static void webKitWebSrcStop(WebKitWebSrc* src)
     }
 
     GST_DEBUG_OBJECT(src, "Stopped request");
+
+    return FALSE;
 }
 
-static void webKitWebSrcStart(WebKitWebSrc* src)
+static gboolean webKitWebSrcStart(WebKitWebSrc* src)
 {
     WebKitWebSrcPrivate* priv = src->priv;
 
@@ -437,11 +448,13 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
 
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
 
+    priv->startID = 0;
+
     if (!priv->uri) {
         GST_ERROR_OBJECT(src, "No URI provided");
         locker.unlock();
         webKitWebSrcStop(src);
-        return;
+        return FALSE;
     }
 
     ASSERT(!priv->client);
@@ -497,9 +510,10 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
         }
         locker.unlock();
         webKitWebSrcStop(src);
-        return;
+        return FALSE;
     }
     GST_DEBUG_OBJECT(src, "Started request");
+    return FALSE;
 }
 
 static GstStateChangeReturn webKitWebSrcChangeState(GstElement* element, GstStateChange transition)
@@ -531,17 +545,13 @@ static GstStateChangeReturn webKitWebSrcChangeState(GstElement* element, GstStat
     switch (transition) {
     case GST_STATE_CHANGE_READY_TO_PAUSED:
         GST_DEBUG_OBJECT(src, "READY->PAUSED");
-        gst_object_ref(src);
-        priv->startSource.schedule("[WebKit] webKitWebSrcStart", std::bind(webKitWebSrcStart, src), G_PRIORITY_DEFAULT,
-            [src] { gst_object_unref(src); });
+        priv->startID = g_idle_add_full(G_PRIORITY_DEFAULT, (GSourceFunc) webKitWebSrcStart, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
         break;
     case GST_STATE_CHANGE_PAUSED_TO_READY:
         GST_DEBUG_OBJECT(src, "PAUSED->READY");
         // cancel pending sources
         removeTimeoutSources(src);
-        gst_object_ref(src);
-        priv->stopSource.schedule("[WebKit] webKitWebSrcStop", std::bind(webKitWebSrcStop, src), G_PRIORITY_DEFAULT,
-            [src] { gst_object_unref(src); });
+        priv->stopID = g_idle_add_full(G_PRIORITY_DEFAULT, (GSourceFunc) webKitWebSrcStop, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
         break;
     default:
         break;
@@ -656,18 +666,24 @@ static void webKitWebSrcUriHandlerInit(gpointer gIface, gpointer)
 
 // appsrc callbacks
 
-static void webKitWebSrcNeedDataMainCb(WebKitWebSrc* src)
+static gboolean webKitWebSrcNeedDataMainCb(WebKitWebSrc* src)
 {
     WebKitWebSrcPrivate* priv = src->priv;
 
     ASSERT(isMainThread());
 
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
+    // already stopped
+    if (!priv->needDataID)
+        return FALSE;
+
     priv->paused = FALSE;
+    priv->needDataID = 0;
     locker.unlock();
 
     if (priv->client)
         priv->client->setDefersLoading(false);
+    return FALSE;
 }
 
 static void webKitWebSrcNeedDataCb(GstAppSrc*, guint length, gpointer userData)
@@ -678,26 +694,31 @@ static void webKitWebSrcNeedDataCb(GstAppSrc*, guint length, gpointer userData)
     GST_DEBUG_OBJECT(src, "Need more data: %u", length);
 
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
-    if (priv->needDataSource.isScheduled() || !priv->paused)
+    if (priv->needDataID || !priv->paused) {
         return;
+    }
 
-    gst_object_ref(src);
-    priv->needDataSource.schedule("[WebKit] webKitWebSrcNeedDataMainCb", std::bind(webKitWebSrcNeedDataMainCb, src), G_PRIORITY_DEFAULT,
-        [src] { gst_object_unref(src); });
+    priv->needDataID = g_idle_add_full(G_PRIORITY_DEFAULT, (GSourceFunc) webKitWebSrcNeedDataMainCb, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
 }
 
-static void webKitWebSrcEnoughDataMainCb(WebKitWebSrc* src)
+static gboolean webKitWebSrcEnoughDataMainCb(WebKitWebSrc* src)
 {
     WebKitWebSrcPrivate* priv = src->priv;
 
     ASSERT(isMainThread());
 
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
+    // already stopped
+    if (!priv->enoughDataID)
+        return FALSE;
+
     priv->paused = TRUE;
+    priv->enoughDataID = 0;
     locker.unlock();
 
     if (priv->client)
         priv->client->setDefersLoading(true);
+    return FALSE;
 }
 
 static void webKitWebSrcEnoughDataCb(GstAppSrc*, gpointer userData)
@@ -708,20 +729,29 @@ static void webKitWebSrcEnoughDataCb(GstAppSrc*, gpointer userData)
     GST_DEBUG_OBJECT(src, "Have enough data");
 
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
-    if (priv->enoughDataSource.isScheduled() || priv->paused)
+    if (priv->enoughDataID || priv->paused) {
         return;
+    }
 
-    gst_object_ref(src);
-    priv->enoughDataSource.schedule("[WebKit] webKitWebSrcEnoughDataMainCb", std::bind(webKitWebSrcEnoughDataMainCb, src), G_PRIORITY_DEFAULT,
-        [src] { gst_object_unref(src); });
+    priv->enoughDataID = g_idle_add_full(G_PRIORITY_DEFAULT, (GSourceFunc) webKitWebSrcEnoughDataMainCb, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
 }
 
-static void webKitWebSrcSeekMainCb(WebKitWebSrc* src)
+static gboolean webKitWebSrcSeekMainCb(WebKitWebSrc* src)
 {
+    WebKitWebSrcPrivate* priv = src->priv;
+
     ASSERT(isMainThread());
+
+    GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
+    // already stopped
+    if (!priv->seekID)
+        return FALSE;
+    locker.unlock();
 
     webKitWebSrcStop(src);
     webKitWebSrcStart(src);
+
+    return FALSE;
 }
 
 static gboolean webKitWebSrcSeekDataCb(GstAppSrc*, guint64 offset, gpointer userData)
@@ -740,9 +770,9 @@ static gboolean webKitWebSrcSeekDataCb(GstAppSrc*, guint64 offset, gpointer user
     GST_DEBUG_OBJECT(src, "Doing range-request seek");
     priv->requestedOffset = offset;
 
-    gst_object_ref(src);
-    priv->seekSource.schedule("[WebKit] webKitWebSrcSeekMainCb", std::bind(webKitWebSrcSeekMainCb, src), G_PRIORITY_DEFAULT,
-        [src] { gst_object_unref(src); });
+    if (priv->seekID)
+        g_source_remove(priv->seekID);
+    priv->seekID = g_idle_add_full(G_PRIORITY_DEFAULT, (GSourceFunc) webKitWebSrcSeekMainCb, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
     return TRUE;
 }
 
@@ -798,7 +828,7 @@ void StreamingClient::handleResponseReceived(const ResourceResponse& response)
 
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
 
-    if (priv->seekSource.isActive()) {
+    if (priv->seekID) {
         GST_DEBUG_OBJECT(src, "Seek in progress, ignoring response");
         return;
     }
@@ -902,7 +932,7 @@ void StreamingClient::handleDataReceived(const char* data, int length)
     if (priv->buffer)
         unmapGstBuffer(priv->buffer.get());
 
-    if (priv->seekSource.isActive()) {
+    if (priv->seekID) {
         GST_DEBUG_OBJECT(src, "Seek in progress, ignoring data");
         priv->buffer.clear();
         return;
@@ -963,7 +993,7 @@ void StreamingClient::handleNotifyFinished()
     GST_DEBUG_OBJECT(src, "Have EOS");
 
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
-    if (!priv->seekSource.isActive()) {
+    if (!priv->seekID) {
         locker.unlock();
         gst_app_src_end_of_stream(priv->appsrc);
     }

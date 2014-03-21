@@ -36,7 +36,6 @@
 #include <gst/gst.h>
 #include <gst/video/gstvideometa.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/gobject/GMainLoopSource.h>
 #include <wtf/gobject/GMutexLocker.h>
 
 using namespace WebCore;
@@ -75,7 +74,7 @@ static guint webkitVideoSinkSignals[LAST_SIGNAL] = { 0, };
 
 struct _WebKitVideoSinkPrivate {
     GstBuffer* buffer;
-    GMainLoopSource timeoutSource;
+    guint timeoutId;
     GMutex* bufferMutex;
     GCond* dataCondition;
 
@@ -101,7 +100,6 @@ G_DEFINE_TYPE_WITH_CODE(WebKitVideoSink, webkit_video_sink, GST_TYPE_VIDEO_SINK,
 static void webkit_video_sink_init(WebKitVideoSink* sink)
 {
     sink->priv = G_TYPE_INSTANCE_GET_PRIVATE(sink, WEBKIT_TYPE_VIDEO_SINK, WebKitVideoSinkPrivate);
-    new (sink->priv) WebKitVideoSinkPrivate();
 #if GLIB_CHECK_VERSION(2, 31, 0)
     sink->priv->dataCondition = new GCond;
     g_cond_init(sink->priv->dataCondition);
@@ -115,22 +113,26 @@ static void webkit_video_sink_init(WebKitVideoSink* sink)
     gst_video_info_init(&sink->priv->info);
 }
 
-static void webkitVideoSinkTimeoutCallback(WebKitVideoSink* sink)
+static gboolean webkitVideoSinkTimeoutCallback(gpointer data)
 {
+    WebKitVideoSink* sink = reinterpret_cast<WebKitVideoSink*>(data);
     WebKitVideoSinkPrivate* priv = sink->priv;
 
     GMutexLocker lock(priv->bufferMutex);
     GstBuffer* buffer = priv->buffer;
     priv->buffer = 0;
+    priv->timeoutId = 0;
 
     if (!buffer || priv->unlocked || UNLIKELY(!GST_IS_BUFFER(buffer))) {
         g_cond_signal(priv->dataCondition);
-        return;
+        return FALSE;
     }
 
     g_signal_emit(sink, webkitVideoSinkSignals[REPAINT_REQUESTED], 0, buffer);
     gst_buffer_unref(buffer);
     g_cond_signal(priv->dataCondition);
+
+    return FALSE;
 }
 
 static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buffer)
@@ -214,9 +216,9 @@ static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buf
     // This should likely use a lower priority, but glib currently starves
     // lower priority sources.
     // See: https://bugzilla.gnome.org/show_bug.cgi?id=610830.
-    gst_object_ref(sink);
-    priv->timeoutSource.schedule("[WebKit] webkitVideoSinkTimeoutCallback", std::bind(webkitVideoSinkTimeoutCallback, sink), G_PRIORITY_DEFAULT,
-        [sink] { gst_object_unref(sink); });
+    priv->timeoutId = g_timeout_add_full(G_PRIORITY_DEFAULT, 0, webkitVideoSinkTimeoutCallback,
+                                          gst_object_ref(sink), reinterpret_cast<GDestroyNotify>(gst_object_unref));
+    g_source_set_name_by_id(priv->timeoutId, "[WebKit] webkitVideoSinkTimeoutCallback");
 
     g_cond_wait(priv->dataCondition, priv->bufferMutex);
     return GST_FLOW_OK;
@@ -248,12 +250,6 @@ static void webkitVideoSinkDispose(GObject* object)
     }
 
     G_OBJECT_CLASS(parent_class)->dispose(object);
-}
-
-static void webkitVideoSinkFinalize(GObject* object)
-{
-    WEBKIT_VIDEO_SINK(object)->priv->~WebKitVideoSinkPrivate();
-    G_OBJECT_CLASS(parent_class)->finalize(object);
 }
 
 static void webkitVideoSinkGetProperty(GObject* object, guint propertyId, GValue* value, GParamSpec* parameterSpec)
@@ -380,7 +376,6 @@ static void webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
     g_type_class_add_private(klass, sizeof(WebKitVideoSinkPrivate));
 
     gobjectClass->dispose = webkitVideoSinkDispose;
-    gobjectClass->finalize = webkitVideoSinkFinalize;
     gobjectClass->get_property = webkitVideoSinkGetProperty;
 
     baseSinkClass->unlock = webkitVideoSinkUnlock;

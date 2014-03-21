@@ -72,10 +72,24 @@ static void mediaPlayerPrivateVolumeChangedCallback(GObject*, GParamSpec*, Media
     player->volumeChanged();
 }
 
+static gboolean mediaPlayerPrivateVolumeChangeTimeoutCallback(MediaPlayerPrivateGStreamerBase* player)
+{
+    // This is the callback of the timeout source created in ::volumeChanged.
+    player->notifyPlayerOfVolumeChange();
+    return FALSE;
+}
+
 static void mediaPlayerPrivateMuteChangedCallback(GObject*, GParamSpec*, MediaPlayerPrivateGStreamerBase* player)
 {
     // This is called when m_volumeElement receives the notify::mute signal.
     player->muteChanged();
+}
+
+static gboolean mediaPlayerPrivateMuteChangeTimeoutCallback(MediaPlayerPrivateGStreamerBase* player)
+{
+    // This is the callback of the timeout source created in ::muteChanged.
+    player->notifyPlayerOfMute();
+    return FALSE;
 }
 
 static void mediaPlayerPrivateRepaintCallback(WebKitVideoSink*, GstBuffer *buffer, MediaPlayerPrivateGStreamerBase* playerPrivate)
@@ -89,6 +103,8 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
     , m_readyState(MediaPlayer::HaveNothing)
     , m_networkState(MediaPlayer::Empty)
     , m_buffer(0)
+    , m_volumeTimerHandler(0)
+    , m_muteTimerHandler(0)
     , m_repaintHandler(0)
     , m_volumeSignalHandler(0)
     , m_muteSignalHandler(0)
@@ -117,6 +133,12 @@ MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
     m_buffer = 0;
 
     m_player = 0;
+
+    if (m_muteTimerHandler)
+        g_source_remove(m_muteTimerHandler);
+
+    if (m_volumeTimerHandler)
+        g_source_remove(m_volumeTimerHandler);
 
     if (m_volumeSignalHandler) {
         g_signal_handler_disconnect(m_volumeElement.get(), m_volumeSignalHandler);
@@ -209,6 +231,8 @@ float MediaPlayerPrivateGStreamerBase::volume() const
 
 void MediaPlayerPrivateGStreamerBase::notifyPlayerOfVolumeChange()
 {
+    m_volumeTimerHandler = 0;
+
     if (!m_player || !m_volumeElement)
         return;
     double volume;
@@ -222,7 +246,10 @@ void MediaPlayerPrivateGStreamerBase::notifyPlayerOfVolumeChange()
 
 void MediaPlayerPrivateGStreamerBase::volumeChanged()
 {
-    m_volumeTimerHandler.schedule("[WebKit] MediaPlayerPrivateGStreamerBase::volumeChanged", std::bind(&MediaPlayerPrivateGStreamerBase::notifyPlayerOfVolumeChange, this));
+    if (m_volumeTimerHandler)
+        g_source_remove(m_volumeTimerHandler);
+    m_volumeTimerHandler = g_idle_add_full(G_PRIORITY_DEFAULT, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateVolumeChangeTimeoutCallback), this, 0);
+    g_source_set_name_by_id(m_volumeTimerHandler, "[WebKit] mediaPlayerPrivateVolumeChangeTimeoutCallback");
 }
 
 MediaPlayer::NetworkState MediaPlayerPrivateGStreamerBase::networkState() const
@@ -260,6 +287,8 @@ bool MediaPlayerPrivateGStreamerBase::muted() const
 
 void MediaPlayerPrivateGStreamerBase::notifyPlayerOfMute()
 {
+    m_muteTimerHandler = 0;
+
     if (!m_player || !m_volumeElement)
         return;
 
@@ -270,8 +299,12 @@ void MediaPlayerPrivateGStreamerBase::notifyPlayerOfMute()
 
 void MediaPlayerPrivateGStreamerBase::muteChanged()
 {
-    m_muteTimerHandler.schedule("[WebKit] MediaPlayerPrivateGStreamerBase::muteChanged", std::bind(&MediaPlayerPrivateGStreamerBase::notifyPlayerOfMute, this));
+    if (m_muteTimerHandler)
+        g_source_remove(m_muteTimerHandler);
+    m_muteTimerHandler = g_idle_add_full(G_PRIORITY_DEFAULT, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateMuteChangeTimeoutCallback), this, 0);
+    g_source_set_name_by_id(m_muteTimerHandler, "[WebKit] mediaPlayerPrivateMuteChangeTimeoutCallback");
 }
+
 
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
 PassRefPtr<BitmapTexture> MediaPlayerPrivateGStreamerBase::updateTexture(TextureMapper* textureMapper)

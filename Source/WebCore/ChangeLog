@@ -1,3 +1,17 @@
+2014-03-21  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r166052.
+        https://bugs.webkit.org/show_bug.cgi?id=130571
+
+        It broke EFL build (Requested by KaL on #webkit).
+
+        Reverted changeset:
+
+        "[GTK] Use GMainLoopSource for idle and timeout sources in
+        WebCore"
+        https://bugs.webkit.org/show_bug.cgi?id=130078
+        http://trac.webkit.org/changeset/166052
+
 2014-03-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add *explicit* keyword to avoid implicit type conversion
