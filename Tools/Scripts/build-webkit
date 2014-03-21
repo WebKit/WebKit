@@ -270,6 +270,8 @@ if (isCMakeBuild()) {
     # By default we build using all of the available CPUs.
     if (!isWinCE()) {
         $makeArgs .= ($makeArgs ? " " : "") . "-j" . numberOfCPUs() if $makeArgs !~ /-j\s*\d+/;
+        my $maxCPULoad = maxCPULoad() if $makeArgs !~ /-l\s*\d+\.?\d*/;
+        $makeArgs .= " -l" . maxCPULoad() if defined $maxCPULoad;
     }
 
     # We remove CMakeCache to avoid the bots to reuse cached flags when

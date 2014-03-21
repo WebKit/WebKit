@@ -78,6 +78,7 @@ our @EXPORT_OK;
 
 my $architecture;
 my $numberOfCPUs;
+my $maxCPULoad;
 my $baseProductDir;
 my @baseProductDirOption;
 my $configuration;
@@ -353,6 +354,14 @@ sub determineNumberOfCPUs
         $numberOfCPUs = `ls /proc/registry/HKEY_LOCAL_MACHINE/HARDWARE/DESCRIPTION/System/CentralProcessor | wc -w`;
     } elsif (isDarwin() || isBSD()) {
         chomp($numberOfCPUs = `sysctl -n hw.ncpu`);
+    }
+}
+
+sub determineMaxCPULoad
+{
+    return if defined $maxCPULoad;
+    if (defined($ENV{MAX_CPU_LOAD})) {
+        $maxCPULoad = $ENV{MAX_CPU_LOAD};
     }
 }
 
@@ -692,6 +701,12 @@ sub numberOfCPUs()
 {
     determineNumberOfCPUs();
     return $numberOfCPUs;
+}
+
+sub maxCPULoad()
+{
+    determineMaxCPULoad();
+    return $maxCPULoad;
 }
 
 sub setArchitecture
