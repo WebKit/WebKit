@@ -34,7 +34,7 @@ namespace TestWebKitAPI {
 
 TEST(RetainPtr, AdoptCF)
 {
-    RetainPtr<CFStringRef> foo = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, "foo", kCFStringEncodingUTF8));
+    RetainPtr<CFArrayRef> foo = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr));
 
     EXPECT_EQ(1, CFGetRetainCount(foo.get()));
 }

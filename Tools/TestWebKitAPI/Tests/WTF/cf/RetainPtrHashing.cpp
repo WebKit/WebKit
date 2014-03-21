@@ -36,15 +36,15 @@ namespace TestWebKitAPI {
 
 TEST(RetainPtrHashing, HashSet)
 {
-    HashSet<RetainPtr<CFStringRef> > set;
+    HashSet<RetainPtr<CFArrayRef>> set;
 
-    RetainPtr<CFStringRef> foo = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, "foo", kCFStringEncodingUTF8));
+    RetainPtr<CFArrayRef> foo = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr));
 
     EXPECT_FALSE(set.contains(foo));
     set.add(foo);
     EXPECT_TRUE(set.contains(foo));
 
-    RetainPtr<CFStringRef> foo2 = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, "foo", kCFStringEncodingUTF8));
+    RetainPtr<CFArrayRef> foo2 = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr));
     EXPECT_FALSE(set.contains(foo2));
     set.add(foo2);
     EXPECT_TRUE(set.contains(foo2));
@@ -55,15 +55,15 @@ TEST(RetainPtrHashing, HashSet)
 
 TEST(RetainPtrHashing, HashMapKey)
 {
-    HashMap<RetainPtr<CFStringRef>, int> map;
+    HashMap<RetainPtr<CFArrayRef>, int> map;
 
-    RetainPtr<CFStringRef> foo = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, "foo", kCFStringEncodingUTF8));
+    RetainPtr<CFArrayRef> foo = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr));
 
     EXPECT_FALSE(map.contains(foo));
     map.add(foo, 1);
     EXPECT_EQ(1, map.get(foo));
 
-    RetainPtr<CFStringRef> foo2 = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, "foo", kCFStringEncodingUTF8));
+    RetainPtr<CFArrayRef> foo2 = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr));
     EXPECT_FALSE(map.contains(foo2));
     map.add(foo2, 2);
     EXPECT_EQ(2, map.get(foo2));
@@ -74,15 +74,15 @@ TEST(RetainPtrHashing, HashMapKey)
 
 TEST(RetainPtrHashing, HashMapValue)
 {
-    HashMap<int, RetainPtr<CFStringRef> > map;
+    HashMap<int, RetainPtr<CFArrayRef>> map;
 
-    RetainPtr<CFStringRef> foo = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, "foo", kCFStringEncodingUTF8));
+    RetainPtr<CFArrayRef> foo = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr));
 
     EXPECT_FALSE(map.contains(1));
     map.add(1, foo);
     EXPECT_EQ(foo, map.get(1));
 
-    RetainPtr<CFStringRef> foo2 = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, "foo", kCFStringEncodingUTF8));
+    RetainPtr<CFArrayRef> foo2 = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr));
     EXPECT_FALSE(map.contains(2));
     map.add(2, foo2);
     EXPECT_EQ(foo2, map.get(2));

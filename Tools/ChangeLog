@@ -1,3 +1,15 @@
+2014-03-21  Andreas Kling  <akling@apple.com>
+
+        RetainPtr API test should use CFArray instead of CFString for testing.
+        <rdar://problem/16384899>
+
+        Unreviewed bot fix.
+
+        * TestWebKitAPI/Tests/WTF/cf/RetainPtr.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/cf/RetainPtrHashing.cpp:
+        (TestWebKitAPI::TEST):
+
 2014-03-20  Hyowon Kim  <hw1008.kim@samsung.com>
 
         Move to using std::unique_ptr for EFL objects.
