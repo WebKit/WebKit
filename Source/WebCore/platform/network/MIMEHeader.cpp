@@ -96,9 +96,8 @@ PassRefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader* buffer)
                 LOG_ERROR("No boundary found in multipart MIME header.");
                 return 0;
             }
-            mimeHeader->m_endOfPartBoundary.insert("--", 0);
-            mimeHeader->m_endOfDocumentBoundary = mimeHeader->m_endOfPartBoundary;
-            mimeHeader->m_endOfDocumentBoundary.append("--");
+            mimeHeader->m_endOfPartBoundary = "--" + mimeHeader->m_endOfPartBoundary;
+            mimeHeader->m_endOfDocumentBoundary = mimeHeader->m_endOfPartBoundary + "--";
         }
     }
 

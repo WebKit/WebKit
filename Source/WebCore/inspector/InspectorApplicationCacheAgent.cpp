@@ -40,6 +40,7 @@
 #include "Page.h"
 #include "ResourceResponse.h"
 #include <inspector/InspectorValues.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace Inspector;
 
@@ -173,26 +174,27 @@ PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::ApplicationCach
 
 PassRefPtr<Inspector::TypeBuilder::ApplicationCache::ApplicationCacheResource> InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo& resourceInfo)
 {
-    String types;
+    StringBuilder types;
+
     if (resourceInfo.m_isMaster)
-        types.append("Master ");
+        types.appendLiteral("Master ");
 
     if (resourceInfo.m_isManifest)
-        types.append("Manifest ");
+        types.appendLiteral("Manifest ");
 
     if (resourceInfo.m_isFallback)
-        types.append("Fallback ");
+        types.appendLiteral("Fallback ");
 
     if (resourceInfo.m_isForeign)
-        types.append("Foreign ");
+        types.appendLiteral("Foreign ");
 
     if (resourceInfo.m_isExplicit)
-        types.append("Explicit ");
+        types.appendLiteral("Explicit ");
 
     RefPtr<Inspector::TypeBuilder::ApplicationCache::ApplicationCacheResource> value = Inspector::TypeBuilder::ApplicationCache::ApplicationCacheResource::create()
         .setUrl(resourceInfo.m_resource.string())
         .setSize(static_cast<int>(resourceInfo.m_size))
-        .setType(types);
+        .setType(types.toString());
     return value;
 }
 

@@ -56,6 +56,7 @@
 #include <runtime/Uint8Array.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <yarr/RegularExpression.h>
 
 #if PLATFORM(IOS)
@@ -1309,7 +1310,7 @@ String GraphicsContext3D::getUnmangledInfoLog(Platform3DObject shaders[2], GC3Ds
 
     JSC::Yarr::RegularExpression regExp("webgl_[0123456789abcdefABCDEF]+", TextCaseSensitive);
 
-    String processedLog;
+    StringBuilder processedLog;
     
     int startFrom = 0;
     int matchedLength = 0;
@@ -1329,8 +1330,8 @@ String GraphicsContext3D::getUnmangledInfoLog(Platform3DObject shaders[2], GC3Ds
 
     processedLog.append(log.substring(startFrom, log.length() - startFrom));
 
-    LOG(WebGL, "-->: %s", processedLog.utf8().data());
-    return processedLog;
+    LOG(WebGL, "-->: %s", processedLog.toString().utf8().data());
+    return processedLog.toString();
 }
 
 String GraphicsContext3D::getProgramInfoLog(Platform3DObject program)

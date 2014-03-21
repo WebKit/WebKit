@@ -76,10 +76,10 @@ static void appendMailtoPostFormDataToURL(URL& url, const FormData& data, const 
     body = String(bodyData.data(), bodyData.size()).replaceWithLiteral('+', "%20");
 
     String query = url.query();
-    if (!query.isEmpty())
-        query.append('&');
-    query.append(body);
-    url.setQuery(query);
+    if (query.isEmpty())
+        url.setQuery(body);
+    else
+        url.setQuery(query + '&' + body);
 }
 
 void FormSubmission::Attributes::parseAction(const String& action)

@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "KeyedCoding.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -260,17 +261,18 @@ String IDBKeyData::loggingString() const
         return "<invalid>";
     case IDBKey::ArrayType:
         {
-            String result = "<array> - { ";
+            StringBuilder result;
+            result.appendLiteral("<array> - { ");
             for (size_t i = 0; i < arrayValue.size(); ++i) {
                 result.append(arrayValue[i].loggingString());
                 if (i < arrayValue.size() - 1)
                     result.append(", ");
             }
             result.append(" }");
-            return result;
+            return result.toString();
         }
     case IDBKey::StringType:
-        return String("<string> - ") + stringValue;
+        return "<string> - " + stringValue;
     case IDBKey::DateType:
         return String::format("Date type - %f", numberValue);
     case IDBKey::NumberType:

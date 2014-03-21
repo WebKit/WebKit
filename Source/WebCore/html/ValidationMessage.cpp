@@ -87,10 +87,10 @@ void ValidationMessage::updateValidationMessage(const String& message)
         // HTML5 specification doesn't ask UA to show the title attribute value
         // with the validationMessage. However, this behavior is same as Opera
         // and the specification describes such behavior as an example.
-        const AtomicString& title = m_element->fastGetAttribute(titleAttr);
-        if (!updatedMessage.isEmpty() && !title.isEmpty()) {
-            updatedMessage.append('\n');
-            updatedMessage.append(title);
+        if (!updatedMessage.isEmpty()) {
+            const AtomicString& title = m_element->fastGetAttribute(titleAttr);
+            if (!title.isEmpty())
+                updatedMessage = updatedMessage + '\n' + title;
         }
     }
 

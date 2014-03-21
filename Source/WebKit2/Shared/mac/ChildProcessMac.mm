@@ -104,15 +104,13 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     }
 
     Vector<String> osVersionParts;
-    String osSystemMarketingVersion = String(systemMarketingVersion());
+    String osSystemMarketingVersion = systemMarketingVersion();
     osSystemMarketingVersion.split('.', false, osVersionParts);
     if (osVersionParts.size() < 2) {
         WTFLogAlways("%s: Couldn't find OS Version\n", getprogname());
         exit(EX_NOPERM);
     }
-    String osVersion = osVersionParts[0];
-    osVersion.append('.');
-    osVersion.append(osVersionParts[1]);
+    String osVersion = osVersionParts[0] + '.' + osVersionParts[1];
     sandboxParameters.addParameter("_OS_VERSION", osVersion.utf8().data());
 
 #if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080

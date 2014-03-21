@@ -1,5 +1,65 @@
 2014-03-21  Darin Adler  <darin@apple.com>
 
+        Improve idiom used for string building in a few places
+        https://bugs.webkit.org/show_bug.cgi?id=130561
+
+        Reviewed by Andreas Kling.
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::loggingString): Use a StringBuilder, and get rid of
+        an an unnecessary additional string allocation.
+
+        * Modules/websockets/ThreadableWebSocketChannel.cpp:
+        (WebCore::ThreadableWebSocketChannel::create): Use StringBuilder.
+
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::createTDForFilename): Do a more efficient
+        string concatenation.
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::updateValidationMessage): Ditto.
+
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource):
+        Use a StringBuilder.
+
+        * inspector/InspectorStyleSheet.cpp: 
+        (WebCore::InspectorStyle::shorthandValue): Use a StringBuilder.
+
+        * inspector/InspectorStyleTextEditor.cpp:
+        (WebCore::InspectorStyleTextEditor::insertProperty): Use a more efficient idiom
+        for string concatenation.
+        (WebCore::InspectorStyleTextEditor::internalReplaceProperty): Ditto.
+        * loader/FormSubmission.cpp:
+        (WebCore::appendMailtoPostFormDataToURL): Ditto.
+
+        * page/Frame.cpp:
+        (WebCore::createRegExpForLabels): Use a StringBuilder.
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processCueAttributes): Use a more efficient
+        idiom for string concatenation.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::getUnmangledInfoLog): Use a StringBuilder.
+
+        * platform/network/MIMEHeader.cpp:
+        (WebCore::MIMEHeader::parseHeader): Use a more efficient idiom for string
+        concatenation.
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::addHTTPHeaderField): Ditto.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerTreeAsText): Ditto.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::secureText): Create a new string with the substring
+        function rather than with the append function.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::setRequestHeaderInternal): Use a more efficient idiom
+        for string concatenation.
+
+2014-03-21  Darin Adler  <darin@apple.com>
+
         Add a combined decodeAndFlush to TextResourceDecoder
         https://bugs.webkit.org/show_bug.cgi?id=130560
 

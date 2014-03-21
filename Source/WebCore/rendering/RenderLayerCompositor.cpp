@@ -1593,11 +1593,8 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
 
     // The true root layer is not included in the dump, so if we want to report
     // its repaint rects, they must be included here.
-    if (flags & LayerTreeFlagsIncludeRepaintRects) {
-        String layerTreeTextWithRootRepaintRects = m_renderView.frameView().trackedRepaintRectsAsText();
-        layerTreeTextWithRootRepaintRects.append(layerTreeText);
-        return layerTreeTextWithRootRepaintRects;
-    }
+    if (flags & LayerTreeFlagsIncludeRepaintRects)
+        return m_renderView.frameView().trackedRepaintRectsAsText() + layerTreeText;
 
     return layerTreeText;
 }

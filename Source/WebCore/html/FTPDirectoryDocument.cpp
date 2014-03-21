@@ -136,9 +136,9 @@ PassRefPtr<Element> FTPDirectoryDocumentParser::createTDForFilename(const String
 {
     String fullURL = document()->baseURL().string();
     if (fullURL.endsWith('/'))
-        fullURL.append(filename);
+        fullURL = fullURL + filename;
     else
-        fullURL.append(makeString('/', filename));
+        fullURL = fullURL + '/' + filename;
 
     RefPtr<Element> anchorElement = document()->createElement(aTag, false);
     anchorElement->setAttribute(HTMLNames::hrefAttr, fullURL);

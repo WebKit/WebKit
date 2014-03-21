@@ -200,7 +200,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                     continue;
 
                 tagStart.append("<b>");
-                tagEnd.insert("</b>", 0);
+                tagEnd = "</b>" + tagEnd;
                 continue;
             }
 
@@ -209,7 +209,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                     continue;
 
                 tagStart.append("<i>");
-                tagEnd.insert("</i>", 0);
+                tagEnd = "</i>" + tagEnd;
                 continue;
             }
 
@@ -218,7 +218,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                     continue;
 
                 tagStart.append("<u>");
-                tagEnd.insert("</u>", 0);
+                tagEnd = "</u>" + tagEnd;
                 continue;
             }
 

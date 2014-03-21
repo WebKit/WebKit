@@ -635,22 +635,23 @@ bool InspectorStyle::setText(const String& text, ExceptionCode& ec)
 String InspectorStyle::shorthandValue(const String& shorthandProperty) const
 {
     String value = m_style->getPropertyValue(shorthandProperty);
-    if (value.isEmpty()) {
-        for (unsigned i = 0; i < m_style->length(); ++i) {
-            String individualProperty = m_style->item(i);
-            if (m_style->getPropertyShorthand(individualProperty) != shorthandProperty)
-                continue;
-            if (m_style->isPropertyImplicit(individualProperty))
-                continue;
-            String individualValue = m_style->getPropertyValue(individualProperty);
-            if (individualValue == "initial")
-                continue;
-            if (value.length())
-                value.append(" ");
-            value.append(individualValue);
-        }
+    if (!value.isEmpty())
+        return value;
+    StringBuilder builder;
+    for (unsigned i = 0; i < m_style->length(); ++i) {
+        String individualProperty = m_style->item(i);
+        if (m_style->getPropertyShorthand(individualProperty) != shorthandProperty)
+            continue;
+        if (m_style->isPropertyImplicit(individualProperty))
+            continue;
+        String individualValue = m_style->getPropertyValue(individualProperty);
+        if (individualValue == "initial")
+            continue;
+        if (!builder.isEmpty())
+            builder.append(' ');
+        builder.append(individualValue);
     }
-    return value;
+    return builder.toString();
 }
 
 String InspectorStyle::shorthandPriority(const String& shorthandProperty) const

@@ -88,7 +88,7 @@ void InspectorStyleTextEditor::insertProperty(unsigned index, const String& prop
             if (curPos && m_styleText[curPos] != ';') {
                 // Prepend a ";" to the property text if appending to a style declaration where
                 // the last property has no trailing ";".
-                textToSet.insert(";", 0);
+                textToSet = makeString(';', textToSet);
                 formattingPrependOffset = 1;
             }
         }
@@ -258,7 +258,7 @@ void InspectorStyleTextEditor::internalReplaceProperty(const InspectorStylePrope
         }
 
         if (fullPrefixLength > replaceRangeStart || m_styleText.substring(replaceRangeStart - fullPrefixLength, fullPrefixLength) != fullPrefix)
-            finalNewText.insert(fullPrefix, 0);
+            finalNewText = fullPrefix + finalNewText;
     }
 
     int replacedLength = replaceRangeEnd - replaceRangeStart;

@@ -41,6 +41,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/SchemeRegistry.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(INSPECTOR_SERVER)
 #include "WebInspectorServer.h"
@@ -462,27 +463,29 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
 
     WKPageSetPagePolicyClient(toAPI(inspectorPage), &policyClient.base);
 
-    String url = inspectorPageURL();
+    StringBuilder url;
 
-    url.append("?dockSide=");
+    url.append(inspectorPageURL());
+
+    url.appendLiteral("?dockSide=");
 
     if (m_isAttached) {
         switch (m_attachmentSide) {
         case AttachmentSideBottom:
-            url.append("bottom");
+            url.appendLiteral("bottom");
             m_page->process().send(Messages::WebInspector::AttachedBottom(), m_page->pageID());
             break;
         case AttachmentSideRight:
-            url.append("right");
+            url.appendLiteral("right");
             m_page->process().send(Messages::WebInspector::AttachedRight(), m_page->pageID());
             break;
         }
     } else
-        url.append("undocked");
+        url.appendLiteral("undocked");
 
     m_page->process().assumeReadAccessToBaseURL(inspectorBaseURL());
 
-    inspectorPage->loadRequest(URL(URL(), url));
+    inspectorPage->loadRequest(URL(URL(), url.toString()));
 
     m_createdInspectorPage = true;
 }
