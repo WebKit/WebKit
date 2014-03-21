@@ -1,3 +1,19 @@
+2014-03-21  Darin Adler  <darin@apple.com>
+
+        Remove use of deprecatedCharacters in WebKit API tests
+        https://bugs.webkit.org/show_bug.cgi?id=130602
+
+        Reviewed by Antti Koivisto.
+
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp:
+        (TestWebKitAPI::expectBuilderContent): Use characters8/16 instead of deprecatedCharacters.
+        (TestWebKitAPI::expectEmpty): Use characters8.
+        (TestWebKitAPI::TEST): Use characters8 instead of deprecatedCharacters in most cases.
+
+        * TestWebKitAPI/Tests/WTF/StringImpl.cpp:
+        Removed the test that is entirely about 16-bit conversion since that's basically a test of
+        the deprecatedCharacters function itself, which we are about to delete.
+
 2014-03-21  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         [webkitpy] Fix has_valid_reviewer()

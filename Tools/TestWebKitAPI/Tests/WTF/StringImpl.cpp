@@ -55,17 +55,6 @@ TEST(WTF, StringImplCreationFromLiteral)
     ASSERT_TRUE(programmaticStringNoLength->is8Bit());
 }
 
-TEST(WTF, StringImplFromLiteralLoop16BitConversion)
-{
-    RefPtr<StringImpl> controlString = StringImpl::create("Template Literal");
-    for (size_t i = 0; i < 10; ++i) {
-        RefPtr<StringImpl> string = StringImpl::createFromLiteral("Template Literal");
-
-        ASSERT_EQ(0, memcmp(controlString->deprecatedCharacters(), string->deprecatedCharacters(), controlString->length() * sizeof(UChar)));
-        ASSERT_TRUE(string->has16BitShadow());
-    }
-}
-
 TEST(WTF, StringImplReplaceWithLiteral)
 {
     RefPtr<StringImpl> testStringImpl = StringImpl::createFromLiteral("1224");
