@@ -1,3 +1,13 @@
+2014-03-21  Andreas Kling  <akling@apple.com>
+
+        HTMLFrameOwnerElement should obey the SubframeLoadingDisabler when creating subframes
+        <rdar://problem/15675780>
+
+        Merge Blink r156744 by Adam Klein.
+
+        * fast/frames/set-iframe-src-in-pagehide-crash-expected.txt: Added.
+        * fast/frames/set-iframe-src-in-pagehide-crash.html: Added.
+
 2014-03-20  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add frontend controller and models for replay sessions

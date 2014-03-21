@@ -1,3 +1,15 @@
+2014-03-21  Andreas Kling  <akling@apple.com>
+
+        HTMLFrameOwnerElement should obey the SubframeLoadingDisabler when creating subframes
+        <rdar://problem/15675780>
+
+        Merge Blink r156744 by Adam Klein.
+
+        Test: fast/frames/set-iframe-src-in-pagehide-crash.html
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadSubframe):
+
 2014-03-21  Darin Adler  <darin@apple.com>
 
         Improve idiom used for string building in a few places
