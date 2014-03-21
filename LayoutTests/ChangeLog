@@ -1,3 +1,13 @@
+2014-03-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test fix after r166080.
+
+        The cue-timing separator will trigger the creation of a new cue. So this test needs to remove
+        use of the separator in the cue, so we can read the cue text.
+
+        * media/track/captions-webvtt/tc029-timings-whitespace.vtt:
+        * media/track/track-webvtt-tc029-timings-whitespace.html:
+
 2014-03-21  Oliver Hunt  <oliver@apple.com>
 
         Fix semantics of JS execution when assigning an object to document.location
