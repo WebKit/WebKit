@@ -1,3 +1,17 @@
+2014-03-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add *explicit* keyword to avoid implicit type conversion
+        https://bugs.webkit.org/show_bug.cgi?id=130568
+
+        Reviewed by Antti Koivisto.
+
+        Constructors of RemoteFontFaceSource, SVGDocumentExtensions, XMLDocumentParserScope,
+        and WorkerScriptDebugServer need to use *explicit* keyword because they have an argument.
+        Besides removed a meaningless argument name.
+
+        * svg/SVGDocumentExtensions.h:
+        * xml/parser/XMLDocumentParserScope.h:
+
 2014-03-20  Sergio Villar Senin  <svillar@igalia.com>
 
         Modules: replace DEPRECATED_DEFINE_STATIC_LOCAL by static NeverDestroyed<T>

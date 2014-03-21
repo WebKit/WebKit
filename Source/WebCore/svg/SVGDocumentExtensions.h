@@ -43,7 +43,7 @@ class SVGDocumentExtensions {
     WTF_MAKE_NONCOPYABLE(SVGDocumentExtensions); WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef HashSet<Element*> PendingElements;
-    SVGDocumentExtensions(Document*);
+    explicit SVGDocumentExtensions(Document*);
     ~SVGDocumentExtensions();
     
     void addTimeContainer(SVGSVGElement*);

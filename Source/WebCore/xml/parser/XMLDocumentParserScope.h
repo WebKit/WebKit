@@ -39,7 +39,7 @@ namespace WebCore {
     class XMLDocumentParserScope {
         WTF_MAKE_NONCOPYABLE(XMLDocumentParserScope);
     public:
-        XMLDocumentParserScope(CachedResourceLoader* cachedResourceLoader);
+        explicit XMLDocumentParserScope(CachedResourceLoader*);
         ~XMLDocumentParserScope();
 
         static CachedResourceLoader* currentCachedResourceLoader;
