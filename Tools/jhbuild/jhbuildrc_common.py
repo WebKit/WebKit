@@ -82,3 +82,7 @@ def init(jhbuildrc_globals, platform):
     prefix = jhbuildrc_globals['prefix']
     addpath('CMAKE_PREFIX_PATH', prefix)
     addpath('CMAKE_LIBRARY_PATH', os.path.join(prefix, _library_dir))
+
+    if 'JHBUILD_MIRROR' in os.environ:
+        jhbuildrc_globals['dvcs_mirror_dir'] = os.environ['JHBUILD_MIRROR']
+        jhbuildrc_globals['tarballdir'] = os.environ['JHBUILD_MIRROR']

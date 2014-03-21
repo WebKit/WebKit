@@ -1,3 +1,13 @@
+2014-03-21  Jozsef Berta  <jberta.u-szeged@partner.samsung.com>
+
+        Add cache support for jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=130588
+
+        Reviewed by Csaba Osztrogonác.
+
+        * jhbuild/jhbuildrc_common.py:
+        (init): Jhbuild can now save the dependencies locally, if the JHBUILD_MIRROR environment variable is set.
+
 2014-03-21  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [CMake] Add support for MAX_CPU_LOAD translated to -l in ninja and make
