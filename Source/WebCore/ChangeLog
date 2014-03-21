@@ -1,3 +1,18 @@
+2014-03-20  Sergio Villar Senin  <svillar@igalia.com>
+
+        Modules: replace DEPRECATED_DEFINE_STATIC_LOCAL by static NeverDestroyed<T>
+        https://bugs.webkit.org/show_bug.cgi?id=130407
+
+        Reviewed by Darin Adler.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::installedCDMFactories):
+        * Modules/mediasource/MediaSourceRegistry.cpp:
+        (WebCore::MediaSourceRegistry::registry):
+        * Modules/mediasource/MediaSourceRegistry.h:
+        * Modules/mediastream/MediaStreamRegistry.cpp:
+        (WebCore::MediaStreamRegistry::registry):
+
 2014-03-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use GMainLoopSource for idle and timeout sources in WebCore

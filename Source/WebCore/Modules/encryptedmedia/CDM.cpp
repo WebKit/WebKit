@@ -33,6 +33,7 @@
 #include "CDMSession.h"
 #include "MediaKeyError.h"
 #include "MediaKeys.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -54,13 +55,13 @@ public:
 
 static Vector<CDMFactory*>& installedCDMFactories()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<CDMFactory*>, cdms, ());
+    static NeverDestroyed<Vector<CDMFactory*>> cdms;
     static bool queriedCDMs = false;
     if (!queriedCDMs) {
         queriedCDMs = true;
 
         // FIXME: initialize specific UA CDMs. http://webkit.org/b/109318, http://webkit.org/b/109320
-        cdms.append(new CDMFactory(CDMPrivateMediaPlayer::create, CDMPrivateMediaPlayer::supportsKeySystem, CDMPrivateMediaPlayer::supportsKeySystemAndMimeType));
+        cdms.get().append(new CDMFactory(CDMPrivateMediaPlayer::create, CDMPrivateMediaPlayer::supportsKeySystem, CDMPrivateMediaPlayer::supportsKeySystemAndMimeType));
     }
 
     return cdms;

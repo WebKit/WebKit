@@ -35,6 +35,7 @@
 
 #include "URLRegistry.h"
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/StringHash.h>
 
@@ -44,6 +45,7 @@ class URL;
 class MediaSource;
 
 class MediaSourceRegistry final : public URLRegistry {
+    friend class NeverDestroyed<MediaSourceRegistry>;
 public:
     // Returns a single instance of MediaSourceRegistry.
     static MediaSourceRegistry& registry();
