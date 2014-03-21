@@ -52,22 +52,8 @@ static GstPadProbeReturn textTrackPrivateEventCallback(GstPad*, GstPadProbeInfo*
     return GST_PAD_PROBE_OK;
 }
 
-static gboolean textTrackPrivateSampleTimeoutCallback(InbandTextTrackPrivateGStreamer* track)
-{
-    track->notifyTrackOfSample();
-    return FALSE;
-}
-
-static gboolean textTrackPrivateStreamTimeoutCallback(InbandTextTrackPrivateGStreamer* track)
-{
-    track->notifyTrackOfStreamChanged();
-    return FALSE;
-}
-
 InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(gint index, GRefPtr<GstPad> pad)
     : InbandTextTrackPrivate(WebVTT), TrackPrivateBaseGStreamer(this, index, pad)
-    , m_sampleTimerHandler(0)
-    , m_streamTimerHandler(0)
 {
     m_eventProbe = gst_pad_add_probe(m_pad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM,
         reinterpret_cast<GstPadProbeCallback>(textTrackPrivateEventCallback), this, 0);
@@ -82,36 +68,28 @@ void InbandTextTrackPrivateGStreamer::disconnect()
 
     gst_pad_remove_probe(m_pad.get(), m_eventProbe);
 
-    if (m_streamTimerHandler)
-        g_source_remove(m_streamTimerHandler);
+    m_streamTimerHandler.cancel();
 
     TrackPrivateBaseGStreamer::disconnect();
 }
 
 void InbandTextTrackPrivateGStreamer::handleSample(GRefPtr<GstSample> sample)
 {
-    if (m_sampleTimerHandler)
-        g_source_remove(m_sampleTimerHandler);
+    m_sampleTimerHandler.cancel();
     {
         MutexLocker lock(m_sampleMutex);
         m_pendingSamples.append(sample);
     }
-    m_sampleTimerHandler = g_timeout_add(0,
-        reinterpret_cast<GSourceFunc>(textTrackPrivateSampleTimeoutCallback), this);
+    m_sampleTimerHandler.schedule("[WebKit] InbandTextTrackPrivateGStreamer::notifyTrackOfSample", std::bind(&InbandTextTrackPrivateGStreamer::notifyTrackOfSample, this));
 }
 
 void InbandTextTrackPrivateGStreamer::streamChanged()
 {
-    if (m_streamTimerHandler)
-        g_source_remove(m_streamTimerHandler);
-    m_streamTimerHandler = g_timeout_add(0,
-        reinterpret_cast<GSourceFunc>(textTrackPrivateStreamTimeoutCallback), this);
+    m_streamTimerHandler.schedule("[WebKit] InbandTextTrackPrivateGStreamer::notifyTrackOfStreamChanged", std::bind(&InbandTextTrackPrivateGStreamer::notifyTrackOfStreamChanged, this));
 }
 
 void InbandTextTrackPrivateGStreamer::notifyTrackOfSample()
 {
-    m_sampleTimerHandler = 0;
-
     Vector<GRefPtr<GstSample> > samples;
     {
         MutexLocker lock(m_sampleMutex);
@@ -142,8 +120,6 @@ void InbandTextTrackPrivateGStreamer::notifyTrackOfSample()
 
 void InbandTextTrackPrivateGStreamer::notifyTrackOfStreamChanged()
 {
-    m_streamTimerHandler = 0;
-
     GRefPtr<GstEvent> event = adoptGRef(gst_pad_get_sticky_event(m_pad.get(),
         GST_EVENT_STREAM_START, 0));
     if (!event)

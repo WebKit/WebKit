@@ -28,47 +28,32 @@
 #include "config.h"
 #include "SharedTimer.h"
 
-#include <wtf/Assertions.h>
-#include <wtf/CurrentTime.h>
 #include <gdk/gdk.h>
-#include <glib.h>
+#include <wtf/gobject/GMainLoopSource.h>
 
 namespace WebCore {
 
-static guint sharedTimer;
+static GMainLoopSource gSharedTimer;
 static void (*sharedTimerFiredFunction)();
 
 void setSharedTimerFiredFunction(void (*f)())
 {
     sharedTimerFiredFunction = f;
-}
-
-static gboolean sharedTimerTimeoutCallback(gpointer)
-{
-    if (sharedTimerFiredFunction)
-        sharedTimerFiredFunction();
-    return FALSE;
+    if (!sharedTimerFiredFunction)
+        gSharedTimer.cancel();
 }
 
 void setSharedTimerFireInterval(double interval)
 {
     ASSERT(sharedTimerFiredFunction);
 
-    guint intervalInMS = static_cast<guint>(interval * 1000);
-
-    stopSharedTimer();
-    sharedTimer = g_timeout_add_full(GDK_PRIORITY_REDRAW, intervalInMS, sharedTimerTimeoutCallback, 0, 0);
-    g_source_set_name_by_id(sharedTimer, "[WebKit] sharedTimerTimeoutCallback");
+    gSharedTimer.scheduleAfterDelay("[WebKit] sharedTimerTimeoutCallback", sharedTimerFiredFunction,
+        std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<double>(interval)), GDK_PRIORITY_REDRAW);
 }
 
 void stopSharedTimer()
 {
-    if (sharedTimer == 0)
-        return;
-
-    gboolean removedSource = g_source_remove(sharedTimer);
-    ASSERT_UNUSED(removedSource, removedSource);
-    sharedTimer = 0;
+    gSharedTimer.cancel();
 }
 
 }
