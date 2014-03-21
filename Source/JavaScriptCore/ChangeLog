@@ -1,3 +1,31 @@
+2014-03-20  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL ValueToInt32 mishandles the constant case, and by the way, there is a constant case that the FTL sees
+        https://bugs.webkit.org/show_bug.cgi?id=130546
+        <rdar://problem/16383308>
+
+        Reviewed by Mark Hahnenberg.
+        
+        Make AI do a better job of folding this.
+        
+        Also made the FTL backend be more tolerant of data representations. In this case it
+        didn't know that "constant" was a valid representation. There is a finite set of
+        possible representations, but broadly, we don't write code that presumes anything
+        about the representation of an input; that's what methods like lowJSValue() are for.
+        ValueToInt32 was previously not relying on those methods at all because it had some
+        hacks. Now, those hacks are just a fast-path optimization but ultimately we fall down
+        to lowJSValue().
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileValueToInt32):
+        (JSC::FTL::LowerDFGToLLVM::numberOrNotCellToInt32):
+        * tests/stress/value-to-int32-undefined-constant.js: Added.
+        (foo):
+        * tests/stress/value-to-int32-undefined.js: Added.
+        (foo):
+
 2014-03-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add some assertions back

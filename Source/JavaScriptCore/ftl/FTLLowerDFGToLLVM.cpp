@@ -651,59 +651,7 @@ private:
             
             value = m_jsValueValues.get(m_node->child1().node());
             if (isValid(value)) {
-                LBasicBlock intCase = FTL_NEW_BLOCK(m_out, ("ValueToInt32 int case"));
-                LBasicBlock notIntCase = FTL_NEW_BLOCK(m_out, ("ValueToInt32 not int case"));
-                LBasicBlock doubleCase = 0;
-                LBasicBlock notNumberCase = 0;
-                if (m_node->child1().useKind() == NotCellUse) {
-                    doubleCase = FTL_NEW_BLOCK(m_out, ("ValueToInt32 double case"));
-                    notNumberCase = FTL_NEW_BLOCK(m_out, ("ValueToInt32 not number case"));
-                }
-                LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ValueToInt32 continuation"));
-                
-                Vector<ValueFromBlock> results;
-                
-                m_out.branch(
-                    isNotInt32(value.value()), unsure(notIntCase), unsure(intCase));
-                
-                LBasicBlock lastNext = m_out.appendTo(intCase, notIntCase);
-                results.append(m_out.anchor(unboxInt32(value.value())));
-                m_out.jump(continuation);
-                
-                if (m_node->child1().useKind() == NumberUse) {
-                    m_out.appendTo(notIntCase, continuation);
-                    FTL_TYPE_CHECK(
-                        jsValueValue(value.value()), m_node->child1(), SpecFullNumber,
-                        isCellOrMisc(value.value()));
-                    results.append(m_out.anchor(doubleToInt32(unboxDouble(value.value()))));
-                    m_out.jump(continuation);
-                } else {
-                    m_out.appendTo(notIntCase, doubleCase);
-                    m_out.branch(
-                        isCellOrMisc(value.value()),
-                        unsure(notNumberCase), unsure(doubleCase));
-                    
-                    m_out.appendTo(doubleCase, notNumberCase);
-                    results.append(m_out.anchor(doubleToInt32(unboxDouble(value.value()))));
-                    m_out.jump(continuation);
-                    
-                    m_out.appendTo(notNumberCase, continuation);
-                    
-                    FTL_TYPE_CHECK(
-                        jsValueValue(value.value()), m_node->child1(), ~SpecCell,
-                        isCell(value.value()));
-                    
-                    LValue specialResult = m_out.select(
-                        m_out.equal(
-                            value.value(),
-                            m_out.constInt64(JSValue::encode(jsBoolean(true)))),
-                        m_out.int32One, m_out.int32Zero);
-                    results.append(m_out.anchor(specialResult));
-                    m_out.jump(continuation);
-                }
-                
-                m_out.appendTo(continuation, lastNext);
-                setInt32(m_out.phi(m_out.int32, results));
+                setInt32(numberOrNotCellToInt32(m_node->child1(), value.value()));
                 break;
             }
             
@@ -713,7 +661,12 @@ private:
                 break;
             }
             
-            terminate(Uncountable);
+            // We'll basically just get here for constants. But it's good to have this
+            // catch-all since we often add new representations into the mix.
+            setInt32(
+                numberOrNotCellToInt32(
+                    m_node->child1(),
+                    lowJSValue(m_node->child1(), ManualOperandSpeculation)));
             break;
         }
             
@@ -3935,6 +3888,54 @@ private:
         }
         
         return m_out.booleanFalse;
+    }
+    
+    LValue numberOrNotCellToInt32(Edge edge, LValue value)
+    {
+        LBasicBlock intCase = FTL_NEW_BLOCK(m_out, ("ValueToInt32 int case"));
+        LBasicBlock notIntCase = FTL_NEW_BLOCK(m_out, ("ValueToInt32 not int case"));
+        LBasicBlock doubleCase = 0;
+        LBasicBlock notNumberCase = 0;
+        if (edge.useKind() == NotCellUse) {
+            doubleCase = FTL_NEW_BLOCK(m_out, ("ValueToInt32 double case"));
+            notNumberCase = FTL_NEW_BLOCK(m_out, ("ValueToInt32 not number case"));
+        }
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ValueToInt32 continuation"));
+        
+        Vector<ValueFromBlock> results;
+        
+        m_out.branch(isNotInt32(value), unsure(notIntCase), unsure(intCase));
+        
+        LBasicBlock lastNext = m_out.appendTo(intCase, notIntCase);
+        results.append(m_out.anchor(unboxInt32(value)));
+        m_out.jump(continuation);
+        
+        if (edge.useKind() == NumberUse) {
+            m_out.appendTo(notIntCase, continuation);
+            FTL_TYPE_CHECK(jsValueValue(value), edge, SpecFullNumber, isCellOrMisc(value));
+            results.append(m_out.anchor(doubleToInt32(unboxDouble(value))));
+            m_out.jump(continuation);
+        } else {
+            m_out.appendTo(notIntCase, doubleCase);
+            m_out.branch(isCellOrMisc(value), unsure(notNumberCase), unsure(doubleCase));
+            
+            m_out.appendTo(doubleCase, notNumberCase);
+            results.append(m_out.anchor(doubleToInt32(unboxDouble(value))));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(notNumberCase, continuation);
+            
+            FTL_TYPE_CHECK(jsValueValue(value), edge, ~SpecCell, isCell(value));
+            
+            LValue specialResult = m_out.select(
+                m_out.equal(value, m_out.constInt64(JSValue::encode(jsBoolean(true)))),
+                m_out.int32One, m_out.int32Zero);
+            results.append(m_out.anchor(specialResult));
+            m_out.jump(continuation);
+        }
+        
+        m_out.appendTo(continuation, lastNext);
+        return m_out.phi(m_out.int32, results);
     }
     
     LValue loadProperty(LValue storage, unsigned identifierNumber, PropertyOffset offset)

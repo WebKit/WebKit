@@ -297,6 +297,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, JSValue(child.asBoolean()));
                 break;
             }
+            if (child.isUndefinedOrNull()) {
+                setConstant(node, jsNumber(0));
+                break;
+            }
         }
         
         forNode(node).setType(SpecInt32);
