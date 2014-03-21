@@ -4097,6 +4097,9 @@ void WebPage::cancelComposition()
 void WebPage::didChangeSelection()
 {
     send(Messages::WebPageProxy::EditorStateChanged(editorState()));
+#if PLATFORM(IOS)
+    m_drawingArea->scheduleCompositingLayerFlush();
+#endif
 }
 
 void WebPage::setMinimumLayoutSize(const IntSize& minimumLayoutSize)

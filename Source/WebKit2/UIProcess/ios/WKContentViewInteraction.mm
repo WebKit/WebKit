@@ -1918,6 +1918,14 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
 - (void)_selectionChanged
 {
+    _selectionNeedsUpdate = YES;
+}
+
+- (void)_updateChangedSelection
+{
+    if (!_selectionNeedsUpdate)
+        return;
+
     // FIXME: We need to figure out what to do if the selection is changed by Javascript.
     if (_textSelectionAssistant) {
         _markedText = (_page->editorState().hasComposition) ? _page->editorState().markedText : String();
@@ -1925,6 +1933,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
             [_textSelectionAssistant selectionChanged];
     } else
         [_webSelectionAssistant selectionChanged];
+    _selectionNeedsUpdate = NO;
 }
 
 #pragma mark - Implementation of UIWebTouchEventsGestureRecognizerDelegate.

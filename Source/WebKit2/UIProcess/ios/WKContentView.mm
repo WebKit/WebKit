@@ -294,6 +294,7 @@ using namespace WebKit;
     [_rootContentView setFrame:CGRectMake(0, 0, contentsSize.width, contentsSize.height)];
 
     [_webView _didCommitLayerTree:layerTreeTransaction];
+    [self _updateChangedSelection];
 }
 
 - (void)_setAcceleratedCompositingRootView:(UIView *)rootView
