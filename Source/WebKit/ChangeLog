@@ -1,3 +1,15 @@
+2014-03-21  Pratik Solanki  <psolanki@apple.com>
+
+        Check for inappropriate macros in private headers
+        https://bugs.webkit.org/show_bug.cgi?id=130564
+
+        Reviewed by Filip Pizlo.
+
+        Check PrivateHeaders for inappropriate macros as well so that we avoid build breakages like
+        the one due to the original commit for bug 130142.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2014-03-20  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [EFL][GTK] Get CMake to find Freetype2 properly
