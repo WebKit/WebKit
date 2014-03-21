@@ -37,10 +37,15 @@ static bool isWindowFeaturesSeparator(UChar c)
 }
 
 WindowFeatures::WindowFeatures(const String& features)
-    : xSet(false)
+    : x(0)
+    , xSet(false)
+    , y(0)
     , ySet(false)
+    , width(0)
     , widthSet(false)
+    , height(0)
     , heightSet(false)
+    , resizable(true)
     , fullscreen(false)
     , dialog(false)
 {
@@ -53,13 +58,12 @@ WindowFeatures::WindowFeatures(const String& features)
      We always allow a window to be resized, which is consistent with Firefox.
      */
 
-    if (features.length() == 0) {
+    if (features.isEmpty()) {
         menuBarVisible = true;
         statusBarVisible = true;
         toolBarVisible = true;
         locationBarVisible = true;
         scrollbarsVisible = true;
-        resizable = true;
         return;
     }
 
@@ -68,7 +72,6 @@ WindowFeatures::WindowFeatures(const String& features)
     toolBarVisible = false;
     locationBarVisible = false;
     scrollbarsVisible = false;
-    resizable = true;
 
     // Tread lightly in this code -- it was specifically designed to mimic Win IE's parsing behavior.
     int keyBegin, keyEnd;

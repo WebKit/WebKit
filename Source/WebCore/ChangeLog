@@ -1,3 +1,23 @@
+2014-03-21  David Kilzer  <ddkilzer@apple.com>
+
+        WindowFeatures.{x|y|width|height} are not initialized
+        <http://webkit.org/b/130547>
+        <rdar://problem/16383151>
+
+        Reviewed by Darin Adler.
+
+        Based on a Blink patch in CRBug 342591 by zhaoqin.
+
+        * page/WindowFeatures.cpp:
+        (WebCore::WindowFeatures::WindowFeatures):
+        - Initialize x, y, width, height in String constructor.
+        - Move 'resizeable' variable to short-hand initialization since
+          it is true in both cases.
+        - Use String::isEmpty() instead of checking its length.
+        * page/WindowFeatures.h:
+        (WebCore::WindowFeatures::WindowFeatures): Initialize x, y,
+        width, height in no-argument constructor.
+
 2014-03-21  Sergio Villar Senin  <svillar@igalia.com>
 
         Replace DEPRECATED_DEFINE_STATIC_LOCAL by static NeverDestroyed<T> in bridge/
