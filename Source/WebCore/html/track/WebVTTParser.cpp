@@ -211,6 +211,10 @@ void WebVTTParser::parse()
                 m_state = Id;
                 break;
             }
+            // Step 15 - Break out of header loop if the line could be a timestamp line.
+            if (line.contains("-->"))
+                m_state = recoverCue(line);
+
             // Step 16 - Line is not the empty string and does not contain "-->".
             break;
 
@@ -355,9 +359,18 @@ WebVTTParser::ParseState WebVTTParser::collectTimingsAndSettings(const String& l
 
 WebVTTParser::ParseState WebVTTParser::collectCueText(const String& line)
 {
+    // Step 34.
     if (line.isEmpty()) {
         createNewCue();
         return Id;
+    }
+    // Step 35.
+    if (line.contains("-->")) {
+        // Step 39-40.
+        createNewCue();
+
+        // Step 41 - New iteration of the cue loop.
+        return recoverCue(line);
     }
     if (!m_currentContent.isEmpty())
         m_currentContent.append("\n");
@@ -366,11 +379,22 @@ WebVTTParser::ParseState WebVTTParser::collectCueText(const String& line)
     return CueText;
 }
 
+WebVTTParser::ParseState WebVTTParser::recoverCue(const String& line)
+{
+    // Step 17 and 21.
+    resetCueValues();
+
+    // Step 22.
+    return collectTimingsAndSettings(line);
+}
+
 WebVTTParser::ParseState WebVTTParser::ignoreBadCue(const String& line)
 {
-    if (!line.isEmpty())
-        return BadCue;
-    return Id;
+    if (line.isEmpty())
+        return Id;
+    if (line.contains("-->"))
+        return recoverCue(line);
+    return BadCue;
 }
 
 // A helper class for the construction of a "cue fragment" from the cue text.

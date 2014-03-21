@@ -1,3 +1,32 @@
+2014-03-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Handle recovery on "timestamp-looking" lines in the WebVTT parser
+        https://bugs.webkit.org/show_bug.cgi?id=130610
+
+        Reviewed by Eric Carlson.
+
+        Merged from Blink (patch by fs@opera.com):
+        https://chromium.googlesource.com/chromium/blink/+/b669a380efbffe25f3b154b026b57b9822ce08e2
+        http://crbug.com/75273002
+
+        * media/track/captions-webvtt/tc006-cue-id-error.vtt:
+        * media/track/captions-webvtt/tc007-cue-no-id-error.vtt:
+        * media/track/captions-webvtt/tc011-cues-no-separation.vtt:
+        * media/track/captions-webvtt/tc031-cue-recovery-cuetext.vtt: Added.
+        * media/track/captions-webvtt/tc031-cue-recovery-header.vtt: Added.
+        * media/track/captions-webvtt/tc031-cue-recovery-note.vtt: Added.
+        * media/track/captions-webvtt/tc032-degenerate-cues.vtt: Added.
+        * media/track/track-webvtt-tc006-cue-identifiers-expected.txt:
+        * media/track/track-webvtt-tc006-cue-identifiers.html:
+        * media/track/track-webvtt-tc007-cue-no-id-expected.txt:
+        * media/track/track-webvtt-tc007-cue-no-id.html:
+        * media/track/track-webvtt-tc011-blank-lines-expected.txt:
+        * media/track/track-webvtt-tc011-blank-lines.html:
+        * media/track/track-webvtt-tc031-cue-recovery-expected.txt: Added.
+        * media/track/track-webvtt-tc031-cue-recovery.html: Added.
+        * media/track/track-webvtt-tc032-degenerate-cues-expected.txt: Added.
+        * media/track/track-webvtt-tc032-degenerate-cues.html: Added.
+
 2014-03-21  David Hyatt  <hyatt@apple.com>
 
         Crash in RenderBlock::addChildIgnoringAnonymousColumnBlocks.

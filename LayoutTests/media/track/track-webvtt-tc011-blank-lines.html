@@ -54,9 +54,26 @@
                 findMediaElement();
                 var expected = 
                 {
-                    length : 1,
+                    length : 3,
                     tests:
-                    [],
+                    [
+                        {
+                            property : "id",
+                            values : ["1", "", ""],
+                        },
+                        {
+                            property : "startTime",
+                            values : [0.0, 31.0, 61.0],
+                        },
+                        {
+                            property : "endTime",
+                            values : [30.5, 60.5, 361200.5],
+                        },
+                        {
+                            property : "text",
+                            values : ["Bear is Coming!!!!!\n2", "I said Bear is coming!!!!", "I said Bear is coming now!!!!"],
+                        },
+                    ],
                 };
                 testCues(1, expected);
 
@@ -65,7 +82,8 @@
         </script>
     </head>
     <body onload="enableAllTextTracks()">
-    <p>Tests that cues are not affected by multiple newlines \n, \r, and \r\n and that cue not properly separated are treated as one big cue.</p>
+    <p>Tests that cues are not affected by multiple newlines \n, \r, and \r\n and that cues that are not separated by whitespace are handled properly.</p>
+	<p>Note that cues not separated by whitespace will merge portions of the following cue (e.g., the '2' from the unseparated cue in the second track becomes part of the prior cue.)</p>
         <video>
             <track src="captions-webvtt/tc011-cues.vtt" onload="trackLoaded()">
             <track src="captions-webvtt/tc011-cues-no-separation.vtt" onload="trackLoaded()">

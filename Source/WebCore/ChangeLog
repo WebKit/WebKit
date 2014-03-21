@@ -1,3 +1,24 @@
+2014-03-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Handle recovery on "timestamp-looking" lines in the WebVTT parser
+        https://bugs.webkit.org/show_bug.cgi?id=130610
+
+        Reviewed by Eric Carlson.
+
+        Merged from Blink (patch by fs@opera.com):
+        https://chromium.googlesource.com/chromium/blink/+/b669a380efbffe25f3b154b026b57b9822ce08e2
+        http://crbug.com/75273002
+
+        Tests: media/track/track-webvtt-tc031-cue-recovery.html
+               media/track/track-webvtt-tc032-degenerate-cues.html
+
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::parse):
+        (WebCore::WebVTTParser::collectCueText):
+        (WebCore::WebVTTParser::recoverCue):
+        (WebCore::WebVTTParser::ignoreBadCue):
+        * html/track/WebVTTParser.h:
+
 2014-03-21  Andreas Kling  <akling@apple.com>
 
         Remove unused RenderView::repaintRectangleInViewAndCompositedLayers().

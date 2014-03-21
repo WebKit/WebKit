@@ -1,5 +1,5 @@
 WEBVTT
-Cue identifiers cannot contain the string "-->".
+Cue identifiers may contain the string "-->", but are treated as blanks
 
 -->random_id
 00:00:00.000 --> 00:00:30.500

@@ -1,4 +1,4 @@
-Tests that any text other than "-->" is recognized as optional cue identifier.
+Tests that any text (including "-->") is recognized as optional cue identifier.
 
 
 
@@ -22,6 +22,15 @@ EXPECTED (cues[3].endTime == '180.5') OK
 EXPECTED (cues[3].text == 'Duplicate identifier') OK
 
 *** Testing text track 1
-EXPECTED (cues.length == '0') OK
+EXPECTED (cues.length == '3') OK
+EXPECTED (cues[0].id == '') OK
+EXPECTED (cues[0].startTime == '0') OK
+EXPECTED (cues[0].endTime == '30.5') OK
+EXPECTED (cues[1].id == '') OK
+EXPECTED (cues[1].startTime == '31') OK
+EXPECTED (cues[1].endTime == '60.5') OK
+EXPECTED (cues[2].id == '') OK
+EXPECTED (cues[2].startTime == '61') OK
+EXPECTED (cues[2].endTime == '1200.5') OK
 END OF TEST
 

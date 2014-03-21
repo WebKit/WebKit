@@ -165,6 +165,7 @@ private:
     ParseState collectCueId(const String&);
     ParseState collectTimingsAndSettings(const String&);
     ParseState collectCueText(const String&);
+    ParseState recoverCue(const String&);
     ParseState ignoreBadCue(const String&);
 
     void createNewCue();

@@ -55,9 +55,22 @@
                 findMediaElement();
                 var expected = 
                 {
-                    length : 0,
+                    length : 3,
                     tests:
-                    [],
+                    [
+	                    {
+	                        property : "id",
+	                        values : ["", "", ""],
+	                    },
+	                    {
+	                        property : "startTime",
+	                        values : [0.0, 31.0, 61.0],
+	                    },
+	                    {
+	                        property : "endTime",
+	                        values : [30.5, 60.5, 1200.5],
+	                    },
+                    ],
                 };
                 testCues(1, expected);
 
@@ -66,7 +79,7 @@
         </script>
     </head>
     <body onload="enableAllTextTracks()">
-        <p>Tests that any text other than "-->" is recognized as optional cue identifier.</p>
+        <p>Tests that any text (including "-->") is recognized as optional cue identifier.</p>
         <video>
             <track src="captions-webvtt/tc006-cue-id.vtt" onload="trackLoaded()">
             <track src="captions-webvtt/tc006-cue-id-error.vtt" onload="trackLoaded()">

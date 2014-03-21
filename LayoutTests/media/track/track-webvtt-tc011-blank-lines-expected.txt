@@ -1,4 +1,6 @@
-Tests that cues are not affected by multiple newlines \n, \r, and \r\n and that cue not properly separated are treated as one big cue.
+Tests that cues are not affected by multiple newlines \n, \r, and \r\n and that cues that are not separated by whitespace are handled properly.
+
+Note that cues not separated by whitespace will merge portions of the following cue (e.g., the '2' from the unseparated cue in the second track becomes part of the prior cue.)
 
 
 
@@ -18,6 +20,18 @@ EXPECTED (cues[2].endTime == '361200.5') OK
 EXPECTED (cues[2].text == 'I said Bear is coming now!!!!') OK
 
 *** Testing text track 1
-EXPECTED (cues.length == '1') OK
+EXPECTED (cues.length == '3') OK
+EXPECTED (cues[0].id == '1') OK
+EXPECTED (cues[0].startTime == '0') OK
+EXPECTED (cues[0].endTime == '30.5') OK
+EXPECTED (cues[0].text == 'Bear is Coming!!!!! 2') OK
+EXPECTED (cues[1].id == '') OK
+EXPECTED (cues[1].startTime == '31') OK
+EXPECTED (cues[1].endTime == '60.5') OK
+EXPECTED (cues[1].text == 'I said Bear is coming!!!!') OK
+EXPECTED (cues[2].id == '') OK
+EXPECTED (cues[2].startTime == '61') OK
+EXPECTED (cues[2].endTime == '361200.5') OK
+EXPECTED (cues[2].text == 'I said Bear is coming now!!!!') OK
 END OF TEST
 

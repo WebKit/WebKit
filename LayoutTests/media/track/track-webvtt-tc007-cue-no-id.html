@@ -55,9 +55,26 @@
                 findMediaElement();
                 var expected = 
                 {
-                    length : 0,
+                    length : 3,
                     tests:
-                    [],
+                    [
+                        {
+                            property : "id",
+                            values : ["", "", ""],
+                        },
+                        {
+                            property : "startTime",
+                            values : [0.0, 31.0, 61.0],
+                        },
+                        {
+                            property : "endTime",
+                            values : [30.5, 60.5, 1200.5],
+                        },
+                        {
+                            property : "text",
+                            values : ["Bear is Coming!!!!!", "I said Bear is coming!!!!", "I said Bear is coming now!!!!"],
+                        },
+                    ],
                 };
                 testCues(1, expected);
 
@@ -66,7 +83,7 @@
         </script>
     </head>
     <body onload="enableAllTextTracks()">
-        <p>Tests empty cue identifiers (they are optional), but makes sure "-->" found leads to discarded cue.</p>
+        <p>Tests empty cue identifiers (they are optional), including cues with "-->", which are treated as empty.</p>
         <video>
             <track src="captions-webvtt/tc007-cue-no-id.vtt" onload="trackLoaded()">
             <track src="captions-webvtt/tc007-cue-no-id-error.vtt" onload="trackLoaded()">
