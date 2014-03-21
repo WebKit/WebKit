@@ -39,7 +39,6 @@
 #include <WebCore/NotImplemented.h>
 #include <WebKit2/WKPage.h>
 #include <WebKit2/WKPageGroup.h>
-#include <WebKit2/WKPreferencesPrivate.h>
 #include <WebKit2/WKString.h>
 #include <WebKit2/WKViewEfl.h>
 #include <wtf/text/CString.h>

@@ -1,3 +1,11 @@
+2014-03-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r165983 for non Cocoa platforms.
+
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+
 2014-03-20  Beth Dakin  <bdakin@apple.com>
 
         Implement contentInset for Mac WebKit2
