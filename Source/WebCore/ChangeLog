@@ -1,3 +1,16 @@
+2014-03-21  Brian Burg  <bburg@apple.com>
+
+        Web Replay: replay controller is improperly setting user input bridge state
+        https://bugs.webkit.org/show_bug.cgi?id=130606
+
+        Reviewed by Timothy Hatcher.
+
+        The user input bridge was being set based on the old session state,
+        rather than the new session state.
+
+        * replay/ReplayController.cpp:
+        (WebCore::ReplayController::setSessionState):
+
 2014-03-21  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: Expose Accessibility Tree children of the selected node

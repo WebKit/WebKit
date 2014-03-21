@@ -74,19 +74,19 @@ void ReplayController::setSessionState(SessionState state)
         ASSERT(state == SessionState::Inactive);
 
         m_sessionState = state;
-        m_page.userInputBridge().setState(UserInputBridge::State::Capturing);
+        m_page.userInputBridge().setState(UserInputBridge::State::Open);
         break;
 
     case SessionState::Inactive:
         m_sessionState = state;
-        m_page.userInputBridge().setState(UserInputBridge::State::Open);
+        m_page.userInputBridge().setState(state == SessionState::Capturing ? UserInputBridge::State::Capturing : UserInputBridge::State::Replaying);
         break;
 
     case SessionState::Replaying:
         ASSERT(state == SessionState::Inactive);
 
         m_sessionState = state;
-        m_page.userInputBridge().setState(UserInputBridge::State::Replaying);
+        m_page.userInputBridge().setState(UserInputBridge::State::Open);
         break;
     }
 }
