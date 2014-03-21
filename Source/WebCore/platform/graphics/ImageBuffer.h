@@ -37,6 +37,8 @@
 #include "IntSize.h"
 #include "ImageBufferData.h"
 #include "PlatformLayer.h"
+#include <runtime/JSCInlines.h>
+#include <runtime/TypedArrayInlines.h>
 #include <runtime/Uint8ClampedArray.h>
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
