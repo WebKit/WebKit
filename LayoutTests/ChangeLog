@@ -1,3 +1,20 @@
+2014-03-21  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        Refactor css3/filters/huge-region test
+        https://bugs.webkit.org/show_bug.cgi?id=129553
+
+        Reviewed by Dirk Schulze.
+
+        This patch refactors the huge-region to become a big enough
+        element to *not* be rendered. Plus, adds another test using a huge
+        blur filter kernel size that will trigger clamping the value to
+        maximum accepted value (500px).
+
+        * TestExpectations:
+        * css3/filters/huge-blur-value-expected.txt: Added.
+        * css3/filters/huge-blur-value.html: Copied from LayoutTests/css3/filters/huge-region.html.
+        * css3/filters/huge-region.html:
+
 2014-03-21  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: Expose Accessibility Tree children of the selected node

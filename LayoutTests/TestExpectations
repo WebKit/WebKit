@@ -8,9 +8,6 @@ webkit.org/b/42194 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
 # pending functional patch and per-port verification
 webkit.org/b/109954 css3/line-break [ Skip ]
 
-# pending refactor of this test
-webkit.org/b/129553 css3/filters/huge-region.html [ Skip ]
-
 # pending implementation completion and feature enabling
 webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
 
