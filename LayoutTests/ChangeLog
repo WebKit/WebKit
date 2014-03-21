@@ -1,3 +1,10 @@
+2014-03-21  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed. Rebaseline expectations after r165651.
+
+        * platform/gtk-wk2/js/dom/global-constructors-attributes-expected.txt: Replaced Path by Path2D.
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt: Ditto.
+
 2014-03-21  Zalan Bujtas  <zalan@apple.com>
 
         Generated hidpi- images (actual) on ML WK2 Debug are blurry/color shifted.

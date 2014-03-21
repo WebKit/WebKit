@@ -963,11 +963,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'PageTransitionEvent').hasOwnProper
 PASS Object.getOwnPropertyDescriptor(global, 'PageTransitionEvent').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'PageTransitionEvent').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'PageTransitionEvent').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'Path').value is Path
-PASS Object.getOwnPropertyDescriptor(global, 'Path').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'Path').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'Path').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'Path').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'Path2D').value is Path2D
+PASS Object.getOwnPropertyDescriptor(global, 'Path2D').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'Path2D').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'Path2D').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'Path2D').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Performance').value is Performance
 PASS Object.getOwnPropertyDescriptor(global, 'Performance').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Performance').hasOwnProperty('set') is false
