@@ -27,10 +27,12 @@
 #include "WKContextPrivate.h"
 
 #include "APIClient.h"
+#include "APIDownloadClient.h"
 #include "APIHistoryClient.h"
 #include "APINavigationData.h"
 #include "APIURLRequest.h"
 #include "WKAPICast.h"
+#include "WKRetainPtr.h"
 #include "WebContext.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -56,6 +58,9 @@
 #endif
 
 namespace API {
+template<> struct ClientTraits<WKContextDownloadClientBase> {
+    typedef std::tuple<WKContextDownloadClientV0> Versions;
+};
 template<> struct ClientTraits<WKContextHistoryClientBase> {
     typedef std::tuple<WKContextHistoryClientV0> Versions;
 };
@@ -155,7 +160,105 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
 
 void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownloadClientBase* wkClient)
 {
-    toImpl(contextRef)->initializeDownloadClient(wkClient);
+    class DownloadClient final : public API::Client<WKContextDownloadClientBase>, public API::DownloadClient {
+    public:
+        explicit DownloadClient(const WKContextDownloadClientBase* client)
+        {
+            initialize(client);
+        }
+    private:
+        virtual void didStart(WebContext* webContext, DownloadProxy* downloadProxy) override
+        {
+            if (!m_client.didStart)
+            return;
+
+            m_client.didStart(toAPI(webContext), toAPI(downloadProxy), m_client.base.clientInfo);
+        }
+
+        virtual void didReceiveAuthenticationChallenge(WebContext* webContext, DownloadProxy* downloadProxy, AuthenticationChallengeProxy* authenticationChallengeProxy) override
+        {
+            if (!m_client.didReceiveAuthenticationChallenge)
+            return;
+
+            m_client.didReceiveAuthenticationChallenge(toAPI(webContext), toAPI(downloadProxy), toAPI(authenticationChallengeProxy), m_client.base.clientInfo);
+        }
+
+        virtual void didReceiveResponse(WebContext* webContext, DownloadProxy* downloadProxy, const ResourceResponse& response) override
+        {
+            if (!m_client.didReceiveResponse)
+            return;
+
+            m_client.didReceiveResponse(toAPI(webContext), toAPI(downloadProxy), toAPI(API::URLResponse::create(response).get()), m_client.base.clientInfo);
+        }
+
+        virtual void didReceiveData(WebContext* webContext, DownloadProxy* downloadProxy, uint64_t length) override
+        {
+            if (!m_client.didReceiveData)
+            return;
+
+            m_client.didReceiveData(toAPI(webContext), toAPI(downloadProxy), length, m_client.base.clientInfo);
+        }
+
+        virtual bool shouldDecodeSourceDataOfMIMEType(WebContext* webContext, DownloadProxy* downloadProxy, const String& mimeType) override
+        {
+            if (!m_client.shouldDecodeSourceDataOfMIMEType)
+            return true;
+
+            return m_client.shouldDecodeSourceDataOfMIMEType(toAPI(webContext), toAPI(downloadProxy), toAPI(mimeType.impl()), m_client.base.clientInfo);
+        }
+
+        virtual String decideDestinationWithSuggestedFilename(WebContext* webContext, DownloadProxy* downloadProxy, const String& filename, bool& allowOverwrite) override
+        {
+            if (!m_client.decideDestinationWithSuggestedFilename)
+            return String();
+
+            WKRetainPtr<WKStringRef> destination(AdoptWK, m_client.decideDestinationWithSuggestedFilename(toAPI(webContext), toAPI(downloadProxy), toAPI(filename.impl()), &allowOverwrite, m_client.base.clientInfo));
+            return toWTFString(destination.get());
+        }
+
+        virtual void didCreateDestination(WebContext* webContext, DownloadProxy* downloadProxy, const String& path) override
+        {
+            if (!m_client.didCreateDestination)
+            return;
+
+            m_client.didCreateDestination(toAPI(webContext), toAPI(downloadProxy), toAPI(path.impl()), m_client.base.clientInfo);
+        }
+
+        virtual void didFinish(WebContext* webContext, DownloadProxy* downloadProxy) override
+        {
+            if (!m_client.didFinish)
+            return;
+
+            m_client.didFinish(toAPI(webContext), toAPI(downloadProxy), m_client.base.clientInfo);
+        }
+
+        virtual void didFail(WebContext* webContext, DownloadProxy* downloadProxy, const ResourceError& error) override
+        {
+            if (!m_client.didFail)
+            return;
+
+            m_client.didFail(toAPI(webContext), toAPI(downloadProxy), toAPI(error), m_client.base.clientInfo);
+        }
+        
+        virtual void didCancel(WebContext* webContext, DownloadProxy* downloadProxy) override
+        {
+            if (!m_client.didCancel)
+            return;
+            
+            m_client.didCancel(toAPI(webContext), toAPI(downloadProxy), m_client.base.clientInfo);
+        }
+        
+        virtual void processDidCrash(WebContext* webContext, DownloadProxy* downloadProxy) override
+        {
+            if (!m_client.processDidCrash)
+            return;
+            
+            m_client.processDidCrash(toAPI(webContext), toAPI(downloadProxy), m_client.base.clientInfo);
+        }
+
+    };
+
+    toImpl(contextRef)->setDownloadClient(std::make_unique<DownloadClient>(wkClient));
 }
 
 void WKContextSetConnectionClient(WKContextRef contextRef, const WKContextConnectionClientBase* wkClient)

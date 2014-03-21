@@ -315,7 +315,6 @@ set(WebKit2_SOURCES
     UIProcess/WebCookieManagerProxyClient.cpp
     UIProcess/WebDatabaseManagerProxy.cpp
     UIProcess/WebDatabaseManagerProxyClient.cpp
-    UIProcess/WebDownloadClient.cpp
     UIProcess/WebEditCommandProxy.cpp
     UIProcess/WebFindClient.cpp
     UIProcess/WebFormClient.cpp

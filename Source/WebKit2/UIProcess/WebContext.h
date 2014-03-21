@@ -41,7 +41,6 @@
 #include "WebContextClient.h"
 #include "WebContextConnectionClient.h"
 #include "WebContextInjectedBundleClient.h"
-#include "WebDownloadClient.h"
 #include "WebProcessProxy.h"
 #include <WebCore/LinkHash.h>
 #include <WebCore/SessionID.h>
@@ -68,6 +67,7 @@ OBJC_CLASS NSString;
 #endif
 
 namespace API {
+class DownloadClient;
 class HistoryClient;
 }
 
@@ -134,7 +134,7 @@ public:
     void initializeInjectedBundleClient(const WKContextInjectedBundleClientBase*);
     void initializeConnectionClient(const WKContextConnectionClientBase*);
     void setHistoryClient(std::unique_ptr<API::HistoryClient>);
-    void initializeDownloadClient(const WKContextDownloadClientBase*);
+    void setDownloadClient(std::unique_ptr<API::DownloadClient>);
 
     void setProcessModel(ProcessModel); // Can only be called when there are no processes running.
     ProcessModel processModel() const { return m_processModel; }
@@ -219,7 +219,7 @@ public:
     
     // Downloads.
     DownloadProxy* createDownloadProxy();
-    WebDownloadClient& downloadClient() { return m_downloadClient; }
+    API::DownloadClient& downloadClient() { return *m_downloadClient; }
 
     API::HistoryClient& historyClient() { return *m_historyClient; }
     WebContextClient& client() { return m_client; }
@@ -446,7 +446,7 @@ private:
 
     WebContextClient m_client;
     WebContextConnectionClient m_connectionClient;
-    WebDownloadClient m_downloadClient;
+    std::unique_ptr<API::DownloadClient> m_downloadClient;
     std::unique_ptr<API::HistoryClient> m_historyClient;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

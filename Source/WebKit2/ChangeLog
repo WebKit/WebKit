@@ -1,3 +1,37 @@
+2014-03-21  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        [Webkit2] Add APIDownloadClient for download support.
+        https://bugs.webkit.org/show_bug.cgi?id=130484
+
+        Add API::DownloadClient to WebContext and get rid of WebDownloadClient.
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/APIDownloadClient.h: Added.
+        (API::DownloadClient::~DownloadClient):
+        (API::DownloadClient::didStart):
+        (API::DownloadClient::didReceiveAuthenticationChallenge):
+        (API::DownloadClient::didReceiveResponse):
+        (API::DownloadClient::didReceiveData):
+        (API::DownloadClient::shouldDecodeSourceDataOfMIMEType):
+        (API::DownloadClient::decideDestinationWithSuggestedFilename):
+        (API::DownloadClient::didCreateDestination):
+        (API::DownloadClient::didFinish):
+        (API::DownloadClient::didFail):
+        (API::DownloadClient::didCancel):
+        (API::DownloadClient::processDidCrash):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetDownloadClient): Move the original WebDownloadClient methods to a local class
+            DownloadClient and set up the downloadClient for WebContext.
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::setDownloadClient):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::downloadClient):
+        * UIProcess/WebDownloadClient.cpp: Removed.
+        * UIProcess/WebDownloadClient.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-03-21  Alexey Proskuryakov  <ap@apple.com>
 
         ASSERTION FAILED: event == [NSApp currentEvent] hitting Command-+

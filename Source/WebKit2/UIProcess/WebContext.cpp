@@ -27,6 +27,7 @@
 #include "WebContext.h"
 
 #include "APIArray.h"
+#include "APIDownloadClient.h"
 #include "APIHistoryClient.h"
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
@@ -136,6 +137,7 @@ WebContext::WebContext(const String& injectedBundlePath)
     , m_processWithPageCache(0)
     , m_defaultPageGroup(WebPageGroup::createNonNull())
     , m_injectedBundlePath(injectedBundlePath)
+    , m_downloadClient(std::make_unique<API::DownloadClient>())
     , m_historyClient(std::make_unique<API::HistoryClient>())
     , m_visitedLinkProvider(VisitedLinkProvider::create())
     , m_visitedLinksPopulated(false)
@@ -282,9 +284,12 @@ void WebContext::setHistoryClient(std::unique_ptr<API::HistoryClient> historyCli
     sendToAllProcesses(Messages::WebProcess::SetShouldTrackVisitedLinks(m_historyClient->shouldTrackVisitedLinks()));
 }
 
-void WebContext::initializeDownloadClient(const WKContextDownloadClientBase* client)
+void WebContext::setDownloadClient(std::unique_ptr<API::DownloadClient> downloadClient)
 {
-    m_downloadClient.initialize(client);
+    if (!downloadClient)
+        m_downloadClient = std::make_unique<API::DownloadClient>();
+    else
+        m_downloadClient = std::move(downloadClient);
 }
 
 void WebContext::setProcessModel(ProcessModel processModel)

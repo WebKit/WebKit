@@ -27,6 +27,7 @@
 #include "DownloadProxy.h"
 
 #include "APIData.h"
+#include "APIDownloadClient.h"
 #include "AuthenticationChallengeProxy.h"
 #include "DataReference.h"
 #include "DownloadProxyMap.h"

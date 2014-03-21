@@ -920,8 +920,6 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebDatabaseManagerProxyClient.h \
 	Source/WebKit2/UIProcess/WebDatabaseManagerProxy.cpp \
 	Source/WebKit2/UIProcess/WebDatabaseManagerProxy.h \
-	Source/WebKit2/UIProcess/WebDownloadClient.cpp \
-	Source/WebKit2/UIProcess/WebDownloadClient.h \
 	Source/WebKit2/UIProcess/WebEditCommandProxy.cpp \
 	Source/WebKit2/UIProcess/WebEditCommandProxy.h \
 	Source/WebKit2/UIProcess/WebFindClient.cpp \
