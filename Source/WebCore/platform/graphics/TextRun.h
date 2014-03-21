@@ -26,7 +26,7 @@
 
 #include "TextDirection.h"
 #include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -37,6 +37,7 @@ class GraphicsContext;
 class GlyphBuffer;
 class GlyphToPathTranslator;
 class SimpleFontData;
+
 struct GlyphData;
 struct WidthIterator;
 
@@ -125,6 +126,29 @@ public:
         }
     }
 
+    TextRun(StringView s, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
+        : m_charactersLength(s.length())
+        , m_len(s.length())
+        , m_xpos(xpos)
+        , m_horizontalGlyphStretch(1)
+        , m_expansion(expansion)
+        , m_expansionBehavior(expansionBehavior)
+        , m_is8Bit(s.is8Bit())
+        , m_allowTabs(false)
+        , m_direction(direction)
+        , m_directionalOverride(directionalOverride)
+        , m_characterScanForCodePath(characterScanForCodePath)
+        , m_applyRunRounding((roundingHacks & RunRounding) && s_allowsRoundingHacks)
+        , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
+        , m_disableSpacing(false)
+        , m_tabSize(0)
+    {
+        if (s.is8Bit())
+            m_data.characters8 = s.characters8();
+        else
+            m_data.characters16 = s.characters16();
+    }
+
     TextRun subRun(unsigned startOffset, unsigned length) const
     {
         ASSERT_WITH_SECURITY_IMPLICATION(startOffset < m_len);
@@ -158,6 +182,7 @@ public:
 
     void setText(const LChar* c, unsigned len) { m_data.characters8 = c; m_len = len; m_is8Bit = true;}
     void setText(const UChar* c, unsigned len) { m_data.characters16 = c; m_len = len; m_is8Bit = false;}
+    void setText(StringView);
     void setCharactersLength(unsigned charactersLength) { m_charactersLength = charactersLength; }
 
     float horizontalGlyphStretch() const { return m_horizontalGlyphStretch; }
@@ -240,6 +265,16 @@ inline void TextRun::setTabSize(bool allow, unsigned size)
 {
     m_allowTabs = allow;
     m_tabSize = size;
+}
+
+inline void TextRun::setText(StringView string)
+{
+    m_len = string.length();
+    m_is8Bit = string.is8Bit();
+    if (string.is8Bit())
+        m_data.characters8 = string.characters8();
+    else
+        m_data.characters16 = string.characters16();
 }
 
 }

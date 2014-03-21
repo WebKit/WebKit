@@ -36,7 +36,9 @@
 #include <windows.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/StringView.h>
 #include <wtf/win/GDIObject.h>
+
 #if USE(CG)
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
@@ -276,7 +278,7 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
 
         LOGFONT logFont;
         logFont.lfCharSet = DEFAULT_CHARSET;
-        memcpy(logFont.lfFaceName, linkedFonts->at(linkedFontIndex).deprecatedCharacters(), linkedFonts->at(linkedFontIndex).length() * sizeof(WCHAR));
+        StringView(linkedFonts->at(linkedFontIndex)).getCharactersWithUpconvert(logFont.lfFaceName);
         logFont.lfFaceName[linkedFonts->at(linkedFontIndex).length()] = 0;
         EnumFontFamiliesEx(hdc, &logFont, linkedFontEnumProc, reinterpret_cast<LPARAM>(&hfont), 0);
         linkedFontIndex++;
@@ -446,9 +448,9 @@ static GDIObject<HFONT> createGDIFont(const AtomicString& family, LONG desiredWe
 
     LOGFONT logFont;
     logFont.lfCharSet = DEFAULT_CHARSET;
-    unsigned familyLength = min(family.length(), static_cast<unsigned>(LF_FACESIZE - 1));
-    memcpy(logFont.lfFaceName, family.string().deprecatedCharacters(), familyLength * sizeof(UChar));
-    logFont.lfFaceName[familyLength] = 0;
+    StringView truncatedFamily = StringView(family).substring(0, static_cast<unsigned>(LF_FACESIZE - 1));
+    truncatedFamily.getCharactersWithUpconvert(logFont.lfFaceName);
+    logFont.lfFaceName[truncatedFamily.length()] = 0;
     logFont.lfPitchAndFamily = 0;
 
     MatchImprovingProcData matchData(desiredWeight, desiredItalic);
@@ -528,9 +530,9 @@ void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigne
 
     LOGFONT logFont;
     logFont.lfCharSet = DEFAULT_CHARSET;
-    unsigned familyLength = min(familyName.length(), static_cast<unsigned>(LF_FACESIZE - 1));
-    memcpy(logFont.lfFaceName, familyName.string().deprecatedCharacters(), familyLength * sizeof(UChar));
-    logFont.lfFaceName[familyLength] = 0;
+    StringView truncatedFamily = StringView(familyName).substring(0, static_cast<unsigned>(LF_FACESIZE - 1));
+    truncatedFamily.getCharactersWithUpconvert(logFont.lfFaceName);
+    logFont.lfFaceName[truncatedFamily.length()] = 0;
     logFont.lfPitchAndFamily = 0;
 
     TraitsInFamilyProcData procData(familyName);
@@ -587,4 +589,3 @@ PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescrip
 }
 
 }
-

@@ -35,7 +35,6 @@
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/WTFString.h>
 
 #if !OS(WINCE)
 #include <shlwapi.h>
@@ -194,7 +193,7 @@ HGLOBAL createGlobalData(const String& str)
     if (!vm)
         return 0;
     UChar* buffer = static_cast<UChar*>(GlobalLock(vm));
-    memcpy(buffer, str.deprecatedCharacters(), str.length() * sizeof(UChar));
+    StringView(str).getCharactersWithUpconvert(buffer);
     buffer[str.length()] = 0;
     GlobalUnlock(vm);
     return vm;

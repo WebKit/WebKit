@@ -36,7 +36,7 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringBuilder.h>
 
 #include <windows.h>
 #include <shlobj.h>
@@ -156,39 +156,43 @@ bool deleteEmptyDirectory(const String& path)
 
 String pathByAppendingComponent(const String& path, const String& component)
 {
-    Vector<UChar> buffer(MAX_PATH);
-
 #if OS(WINCE)
-    buffer.append(path.deprecatedCharacters(), path.length());
+    StringBuilder builder;
+
+    builder.append(path);
 
     UChar lastPathCharacter = path[path.length() - 1];
     if (lastPathCharacter != L'\\' && lastPathCharacter != L'/' && component[0] != L'\\' && component[0] != L'/')
-        buffer.append(PlatformFilePathSeparator);
+        builder.append(PlatformFilePathSeparator);
 
-    buffer.append(component.deprecatedCharacters(), component.length());
-    buffer.shrinkToFit();
+    builder.append(component);
+
+    return builder.toString();
 #else
+    Vector<UChar> buffer(MAX_PATH);
+
     if (path.length() + 1 > buffer.size())
         return String();
 
-    memcpy(buffer.data(), path.deprecatedCharacters(), path.length() * sizeof(UChar));
+    StringView(path).getCharactersWithUpconvert(buffer.data());
     buffer[path.length()] = '\0';
 
-    String componentCopy = component;
-    if (!PathAppendW(buffer.data(), componentCopy.charactersWithNullTermination().data()))
+    if (!PathAppendW(buffer.data(), component.charactersWithNullTermination().data()))
         return String();
 
-    buffer.resize(wcslen(buffer.data()));
-#endif
+    buffer.shrink(wcslen(buffer.data()));
 
     return String::adopt(buffer);
+#endif
 }
 
 #if !USE(CF)
 
 CString fileSystemRepresentation(const String& path)
 {
-    const UChar* characters = path.deprecatedCharacters();
+    auto upconvertedCharacters = path.upconvertedCharacters();
+
+    const UChar* characters = upconvertedCharacters;
     int size = WideCharToMultiByte(CP_ACP, 0, characters, path.length(), 0, 0, 0, 0) - 1;
 
     char* buffer;

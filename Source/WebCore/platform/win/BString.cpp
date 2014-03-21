@@ -29,7 +29,7 @@
 #include "URL.h"
 #include <windows.h>
 #include <wtf/text/AtomicString.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringView.h>
 
 #if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
@@ -65,7 +65,7 @@ BString::BString(const String& s)
     if (s.isNull())
         m_bstr = 0;
     else
-        m_bstr = SysAllocStringLen(s.deprecatedCharacters(), s.length());
+        m_bstr = SysAllocStringLen(StringView(s).upconvertedCharacters(), s.length());
 }
 
 BString::BString(const URL& url)
@@ -73,7 +73,7 @@ BString::BString(const URL& url)
     if (url.isNull())
         m_bstr = 0;
     else
-        m_bstr = SysAllocStringLen(url.string().deprecatedCharacters(), url.string().length());
+        m_bstr = SysAllocStringLen(StringView(url.string()).upconvertedCharacters(), url.string().length());
 }
 
 BString::BString(const AtomicString& s)
@@ -81,7 +81,7 @@ BString::BString(const AtomicString& s)
     if (s.isNull())
         m_bstr = 0;
     else
-        m_bstr = SysAllocStringLen(s.string().deprecatedCharacters(), s.length());
+        m_bstr = SysAllocStringLen(StringView(s.string()).upconvertedCharacters(), s.length());
 }
 
 #if USE(CF)

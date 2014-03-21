@@ -351,7 +351,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
             itemFont.update(m_popupClient->fontSelector());
         }
 
-        popupWidth = std::max(popupWidth, static_cast<int>(ceilf(itemFont.width(TextRun(text.deprecatedCharacters(), text.length())))));
+        popupWidth = std::max(popupWidth, static_cast<int>(ceilf(itemFont.width(TextRun(text)))));
     }
 
     if (naturalHeight > maxPopupHeight)
