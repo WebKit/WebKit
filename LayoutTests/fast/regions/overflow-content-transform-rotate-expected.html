@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+    <head>
+        <style>
+            html {
+                -webkit-font-smoothing: none;
+            }
+
+            #text {
+                -webkit-transform: rotate(90deg);
+            }
+        
+            .region {
+                position: absolute;
+                left: 50px;
+                top: 100px;
+                border: 3px solid black;
+                height: 100px;
+                width: 150px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <p>Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=110198">110198</a>: [CSS Regions] incorrect clipping when the content has CSS Transforms like rotation</p>
+        <p>The text below should overflow the black-border container.</p>
+        
+        <div class="region">
+            <div id="text">idLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmoddotempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, minimquis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo eaconsequat. eaconsequat</div>
+        </div>
+    </body>
+</html>
