@@ -1,0 +1,51 @@
+<!DOCTYPE HTML><!-- HTML 5 -->
+<html lang="en">
+<head>
+  <title>WWDC Demo</title>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="./css/screen.css" type="text/css">
+</head>
+<body>
+
+<p>Some <a href="#">focusable content</a> before the application widgets.</p>
+
+
+<div class="toolbar">
+
+  <ul class="buttons" role="toolbar">
+    <li><a href="#" role="button" id="btn_get"><span>Get New Mail</span></a></li>
+    <li><a href="#" role="button" id="btn_com"><span>Compose New Message</span></a></li>
+    <li><a href="#" role="button" id="btn_del"><span>Delete</span></a></li>
+  </ul>
+  
+  <!-- js transforms this control into managed-focus radiogroup -->
+  <ul class="segmentedcontrol">
+    <li id="radio_list"><span>List View</span></li>
+    <li id="radio_ico1"><span>Small Icon View</span></li>
+    <li id="radio_ico2"><span>Large Icon View</span></li>
+  </ul>
+
+</div>
+
+<!-- js transforms this control into managed-focus listbox -->
+<ul class="itemlist">
+  <li><span></span>Item One</li>
+  <li><span></span>Item Two</li>
+  <li><span></span>Item Three</li>
+  <li><span></span>Item Four</li>
+  <li><span></span>Item Five</li>
+  <li><span></span>Item Six</li>
+  <li><span></span>Item Seven</li>
+  <li><span></span>Item Eight</li>
+  <li><span></span>Item Nine</li>
+  <li><span></span>Item Ten</li>
+</ul>
+
+<p>More <a href="#">focusable content</a> after the application widgets.</p>
+
+
+<script type="text/javascript" src="./js/prototype.js"></script>
+<script type="text/javascript" src="./js/aria.js"></script>
+<script type="text/javascript" src="./js/init.js"></script>
+</body>
+</html>

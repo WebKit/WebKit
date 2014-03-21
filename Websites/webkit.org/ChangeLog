@@ -1,3 +1,25 @@
+2014-03-20  James Craig  <jcraig@apple.com>
+
+        Sample code for potential ARIA blog post.
+        https://bugs.webkit.org/show_bug.cgi?id=130548
+
+        Rubber-stamped by Chris Fleizach.
+
+        * blog-files/aria1.0: Added.
+        * blog-files/aria1.0/africa_large.svg: Added.
+        * blog-files/aria1.0/combobox_with_live_region_status.html: Added.
+        * blog-files/aria1.0/roaming_tabindex: Added.
+        * blog-files/aria1.0/roaming_tabindex/css: Added.
+        * blog-files/aria1.0/roaming_tabindex/css/img: Added.
+        * blog-files/aria1.0/roaming_tabindex/css/img/buttons.png: Added.
+        * blog-files/aria1.0/roaming_tabindex/css/img/icons.png: Added.
+        * blog-files/aria1.0/roaming_tabindex/css/screen.css: Added.
+        * blog-files/aria1.0/roaming_tabindex/final.html: Added.
+        * blog-files/aria1.0/roaming_tabindex/js: Added.
+        * blog-files/aria1.0/roaming_tabindex/js/aria.js: Added.
+        * blog-files/aria1.0/roaming_tabindex/js/init.js: Added.
+        * blog-files/aria1.0/roaming_tabindex/js/prototype.js: Added.
+
 2014-03-14  Maciej Stachowiak  <mjs@apple.com>
 
         Replace "Apple Computer, Inc." with "Apple Inc." in copyright headers
