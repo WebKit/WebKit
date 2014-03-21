@@ -1,3 +1,30 @@
+2014-03-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Constants folded by DFG::ByteCodeParser should not be dead.
+        https://bugs.webkit.org/show_bug.cgi?id=130576
+
+        Reviewed by Mark Hahnenberg.
+        
+        This fixes bugs in the ByteCodeParser's constant folder by removing that constant folder. This
+        reduces the number of folders in JSC from fourish to just threeish (parser, DFG AI, and one
+        or more folders in LLVM). Doing so has no performance impact since the other constant folders
+        already subsume this one.
+        
+        Also added a test case for the specific bug that instigated this.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getJSConstantForValue):
+        (JSC::DFG::ByteCodeParser::getJSConstant):
+        (JSC::DFG::ByteCodeParser::inferredConstant):
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGNode.h:
+        * dfg/DFGNodeFlags.h:
+        * tests/stress/constand-folding-osr-exit.js: Added.
+        (foo):
+        (test):
+        (.var):
+
 2014-03-21  Mark Lam  <mark.lam@apple.com>
 
         StackLayoutPhase should find the union'ed calleeVariable before accessing its machineLocal.

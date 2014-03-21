@@ -376,17 +376,6 @@ struct Node {
         return op() == WeakJSConstant;
     }
     
-    bool isStronglyProvedConstantIn(InlineCallFrame* inlineCallFrame)
-    {
-        return !!(flags() & NodeIsStaticConstant)
-            && origin.semantic.inlineCallFrame == inlineCallFrame;
-    }
-    
-    bool isStronglyProvedConstantIn(const CodeOrigin& codeOrigin)
-    {
-        return isStronglyProvedConstantIn(codeOrigin.inlineCallFrame);
-    }
-    
     bool isPhantomArguments()
     {
         return op() == PhantomArguments;
