@@ -1,3 +1,16 @@
+2014-03-21  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] remote command callbacks must happen on the WebThread
+        https://bugs.webkit.org/show_bug.cgi?id=130618
+
+        Reviewed by Jer Noble.
+
+        * platform/ios/RemoteCommandListenerIOS.h:
+        (WebCore::RemoteCommandListenerIOS::createWeakPtr):
+        * platform/ios/RemoteCommandListenerIOS.mm:
+        (WebCore::RemoteCommandListenerIOS::RemoteCommandListenerIOS): Dispatch commands to the
+            main thread before making listener callbacks.
+
 2014-03-21  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Make <img> positioning subpixel aware.

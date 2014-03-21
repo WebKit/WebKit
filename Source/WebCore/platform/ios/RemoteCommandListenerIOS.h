@@ -31,6 +31,7 @@
 #if PLATFORM(IOS)
 
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
 
 #ifndef __OBJC__
 typedef void *id;
@@ -44,6 +45,9 @@ public:
     virtual ~RemoteCommandListenerIOS();
 
 protected:
+    WeakPtr<RemoteCommandListenerIOS> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    
+    WeakPtrFactory<RemoteCommandListenerIOS> m_weakPtrFactory;
     RetainPtr<id> m_playTarget;
     RetainPtr<id> m_pauseTarget;
     RetainPtr<id> m_togglePlayPauseTarget;

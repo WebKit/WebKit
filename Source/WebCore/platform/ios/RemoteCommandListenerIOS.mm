@@ -46,31 +46,68 @@ std::unique_ptr<RemoteCommandListener> RemoteCommandListener::create(RemoteComma
 
 RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& client)
     : RemoteCommandListener(client)
+    , m_weakPtrFactory(this)
 {
     MPRemoteCommandCenter *center = [getMPRemoteCommandCenterClass() sharedCommandCenter];
-
+    auto weakThis = createWeakPtr();
+    
     m_pauseTarget = [[center pauseCommand] addTargetWithHandler:^(MPRemoteCommandEvent *) {
-        m_client.didReceiveRemoteControlCommand(MediaSession::PauseCommand);
+        callOnMainThread([weakThis] {
+            if (!weakThis)
+                return;
+            weakThis->m_client.didReceiveRemoteControlCommand(MediaSession::PauseCommand);
+        });
+
         return MPRemoteCommandHandlerStatusSuccess;
     }];
+
     m_playTarget = [[center playCommand] addTargetWithHandler:^(MPRemoteCommandEvent *) {
-        m_client.didReceiveRemoteControlCommand(MediaSession::PlayCommand);
+        callOnMainThread([weakThis] {
+            if (!weakThis)
+                return;
+            weakThis->m_client.didReceiveRemoteControlCommand(MediaSession::PlayCommand);
+        });
+
         return MPRemoteCommandHandlerStatusSuccess;
     }];
+
     m_togglePlayPauseTarget = [[center togglePlayPauseCommand] addTargetWithHandler:^(MPRemoteCommandEvent *) {
-        m_client.didReceiveRemoteControlCommand(MediaSession::TogglePlayPauseCommand);
+        callOnMainThread([weakThis] {
+            if (!weakThis)
+                return;
+            weakThis->m_client.didReceiveRemoteControlCommand(MediaSession::TogglePlayPauseCommand);
+        });
+
         return MPRemoteCommandHandlerStatusSuccess;
     }];
+
     m_seekBackwardTarget = [[center seekBackwardCommand] addTargetWithHandler:^(MPRemoteCommandEvent *event) {
         ASSERT([event isKindOfClass:getMPSeekCommandEventClass()]);
+
         MPSeekCommandEvent* seekEvent = static_cast<MPSeekCommandEvent *>(event);
-        m_client.didReceiveRemoteControlCommand([seekEvent type] == MPSeekCommandEventTypeBeginSeeking ? MediaSession::BeginSeekingBackwardCommand : MediaSession::EndSeekingBackwardCommand);
+        MediaSession::RemoteControlCommandType command = [seekEvent type] == MPSeekCommandEventTypeBeginSeeking ? MediaSession::BeginSeekingBackwardCommand : MediaSession::EndSeekingBackwardCommand;
+
+        callOnMainThread([weakThis, command] {
+            if (!weakThis)
+                return;
+            weakThis->m_client.didReceiveRemoteControlCommand(command);
+        });
+
         return MPRemoteCommandHandlerStatusSuccess;
     }];
+    
     m_seekForwardTarget = [[center seekForwardCommand] addTargetWithHandler:^(MPRemoteCommandEvent *event) {
         ASSERT([event isKindOfClass:getMPSeekCommandEventClass()]);
         MPSeekCommandEvent* seekEvent = static_cast<MPSeekCommandEvent *>(event);
-        m_client.didReceiveRemoteControlCommand([seekEvent type] == MPSeekCommandEventTypeBeginSeeking ? MediaSession::BeginSeekingForwardCommand : MediaSession::EndSeekingForwardCommand);
+
+        MediaSession::RemoteControlCommandType command = [seekEvent type] == MPSeekCommandEventTypeBeginSeeking ? MediaSession::BeginSeekingForwardCommand : MediaSession::EndSeekingForwardCommand;
+
+        callOnMainThread([weakThis, command] {
+            if (!weakThis)
+                return;
+            weakThis->m_client.didReceiveRemoteControlCommand(command);
+        });
+
         return MPRemoteCommandHandlerStatusSuccess;
     }];
 }
