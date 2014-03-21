@@ -154,7 +154,7 @@ WebInspector.ButtonNavigationItem.prototype = {
         var classNames = this._classNames.join(".");
 
         if (this._suppressEmboss)
-            var styleText = parentSelector + " ." + classNames + " > .glyph { background-size: " +  this._imageWidth + "px " + this._imageHeight + "px; }\n";
+            var styleText = parentSelector + " ." + classNames + " > .glyph { width: " +  this._imageWidth + "px; height: " + this._imageHeight + "px; }\n";
         else {
             // Default state.
             var styleText = parentSelector + " ." + classNames + " > .glyph { background-image: -webkit-canvas(" + this._canvasIdentifier() + "); background-size: " +  this._imageWidth + "px " + this._imageHeight + "px; }\n";

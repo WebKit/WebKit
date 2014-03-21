@@ -75,7 +75,7 @@ WebInspector.ActivateButtonNavigationItem.prototype = {
         var classNames = this._classNames.join(".");
 
         if (this._suppressEmboss)
-            var styleText = parentSelector + " ." + classNames + " > .glyph { background-size: " +  this._imageWidth + "px " + this._imageHeight + "px; }\n";
+            var styleText = parentSelector + " ." + classNames + " > .glyph { width: " +  this._imageWidth + "px; height: " + this._imageHeight + "px; }\n";
         else {
             var activatedClassName = "." + WebInspector.ActivateButtonNavigationItem.ActivatedStyleClassName;
 

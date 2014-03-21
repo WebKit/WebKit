@@ -64,6 +64,31 @@ WebInspector.TimelineSidebarPanel = function()
     this._recordStatusElement.className = WebInspector.TimelineSidebarPanel.RecordStatusStyleClass;
     statusBarElement.appendChild(this._recordStatusElement);
 
+    if (window.ReplayAgent) {
+        // If replay support is enabled, hide the default status bar element and show a navigation bar instead.
+        statusBarElement.classList.add(WebInspector.TimelineSidebarPanel.HiddenStyleClassName);
+
+        this._navigationBar = new WebInspector.NavigationBar;
+        this.element.appendChild(this._navigationBar.element);
+
+        var toolTip = WebInspector.UIString("Begin Capturing");
+        var altToolTip = WebInspector.UIString("End Capturing");
+        this._replayCaptureButtonItem = new WebInspector.ActivateButtonNavigationItem("replay-capture", toolTip, altToolTip, "Images/Circle.svg", 16, 16);
+        this._replayCaptureButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._replayCaptureButtonClicked, this);
+        this._replayCaptureButtonItem.enabled = true;
+        this._navigationBar.addNavigationItem(this._replayCaptureButtonItem);
+
+        toolTip = WebInspector.UIString("Start Playback");
+        altToolTip = WebInspector.UIString("Pause Playback");
+        this._replayPauseResumeButtonItem = new WebInspector.ToggleButtonNavigationItem("replay-pause-resume", toolTip, altToolTip, "Images/Resume.svg", "Images/Pause.svg", 16, 16, true);
+        this._replayPauseResumeButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._replayPauseResumeButtonClicked, this);
+        this._replayPauseResumeButtonItem.enabled = false;
+        this._navigationBar.addNavigationItem(this._replayPauseResumeButtonItem);
+
+        WebInspector.replayManager.addEventListener(WebInspector.ReplayManager.Event.CaptureStarted, this._captureStarted, this);
+        WebInspector.replayManager.addEventListener(WebInspector.ReplayManager.Event.CaptureStopped, this._captureStopped, this);
+    }
+
     function createTimelineTreeElement(label, iconClass, identifier)
     {
         var treeElement = new WebInspector.GeneralTreeElement([iconClass, WebInspector.TimelineSidebarPanel.LargeIconStyleClass], label, null, identifier);
@@ -94,6 +119,7 @@ WebInspector.TimelineSidebarPanel = function()
     WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.RecordingStopped, this._recordingStopped, this);
 };
 
+WebInspector.TimelineSidebarPanel.HiddenStyleClassName = "hidden";
 WebInspector.TimelineSidebarPanel.StatusBarStyleClass = "status-bar";
 WebInspector.TimelineSidebarPanel.RecordGlyphStyleClass = "record-glyph";
 WebInspector.TimelineSidebarPanel.RecordGlyphRecordingStyleClass = "recording";
@@ -347,5 +373,53 @@ WebInspector.TimelineSidebarPanel.prototype = {
             WebInspector.timelineManager.stopRecording();
         else
             WebInspector.timelineManager.startRecording();
+    },
+
+    // These methods are only used when ReplayAgent is available.
+
+    _replayCaptureButtonClicked: function()
+    {
+        if (!this._replayCaptureButtonItem.activated) {
+            WebInspector.replayManager.startCapturing();
+            WebInspector.timelineManager.startRecording();
+
+            // De-bounce further presses until the backend has begun capturing.
+            this._replayCaptureButtonItem.activated = true;
+            this._replayCaptureButtonItem.enabled = false;
+        } else {
+            WebInspector.replayManager.stopCapturing();
+            WebInspector.timelineManager.stopRecording();
+
+            this._replayCaptureButtonItem.enabled = false;
+        }
+    },
+
+    _replayPauseResumeButtonClicked: function()
+    {
+        if (this._replayPauseResumeButtonItem.toggled)
+            WebInspector.replayManager.pausePlayback();
+        else
+            WebInspector.replayManager.replayToCompletion();
+    },
+
+    _captureStarted: function()
+    {
+        this._replayCaptureButtonItem.enabled = true;
+    },
+
+    _captureStopped: function()
+    {
+        this._replayCaptureButtonItem.activated = false;
+        this._replayPauseResumeButtonItem.enabled = true;
+    },
+
+    _playbackStarted: function()
+    {
+        this._replayPauseResumeButtonItem.toggled = true;
+    },
+
+    _playbackPaused: function()
+    {
+        this._replayPauseResumeButtonItem.toggled = false;
     }
 };

@@ -1,5 +1,42 @@
 2014-03-20  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: add temporary buttons to capture/play/pause replay recordings
+        https://bugs.webkit.org/show_bug.cgi?id=129692
+
+        Reviewed by Timothy Hatcher.
+
+        If the Replay agent is available, replace the existing ad-hoc navigation bar
+        in the Timelines sidebar panel with a record and pause/play button. This UI
+        is temporary.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/ReplayManager.js: Turn two segment state assertions into
+        FIXMEs because the assertions are too strong until the public API uses async chains.
+        (WebInspector.ReplayManager.prototype.replayToMarkIndex):
+        (WebInspector.ReplayManager.prototype.replayToCompletion):
+        * UserInterface/Images/Circle.svg: Added.
+        * UserInterface/Views/ActivateButtonNavigationItem.js:
+        (WebInspector.ActivateButtonNavigationItem.prototype.generateStyleText):
+        * UserInterface/Views/ButtonNavigationItem.css: Adjust styles so the default style
+        has opacity:1 and the glyph color is darker.
+        (.navigation-bar .item.button.suppress-emboss > .glyph):
+        (.navigation-bar .item.button.suppress-emboss.disabled > .glyph):
+        * UserInterface/Views/ButtonNavigationItem.js:
+        (WebInspector.ButtonNavigationItem.prototype.generateStyleText): Explicitly
+        generate the width and height properties so that separate button instances do
+        not influence the size of each other.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype._recordGlyphClicked):
+        (WebInspector.TimelineSidebarPanel.prototype._replayCaptureButtonClicked):
+        (WebInspector.TimelineSidebarPanel.prototype._replayPauseResumeButtonClicked):
+        (WebInspector.TimelineSidebarPanel.prototype._captureStarted):
+        (WebInspector.TimelineSidebarPanel.prototype._captureStopped):
+        (WebInspector.TimelineSidebarPanel.prototype._playbackStarted):
+        (WebInspector.TimelineSidebarPanel.prototype._playbackPaused):
+
+2014-03-20  Brian Burg  <bburg@apple.com>
+
         Web Inspector: add frontend controller and models for replay sessions
         https://bugs.webkit.org/show_bug.cgi?id=130145
 

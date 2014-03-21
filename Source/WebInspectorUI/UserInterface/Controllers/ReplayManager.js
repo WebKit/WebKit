@@ -361,7 +361,7 @@ WebInspector.ReplayManager.prototype = {
         console.assert(replayPosition instanceof WebInspector.ReplayPosition);
 
         console.assert(this.sessionState !== WebInspector.ReplayManager.SessionState.Capturing);
-        console.assert(this.segmentState === WebInspector.ReplayManager.SegmentState.Loaded);
+        // FIXME: Once the public API is asynchronous, we should assert that segmentState is Loaded.
 
         this.dispatchEventToListeners(WebInspector.ReplayManager.Event.PlaybackWillStart);
         ReplayAgent.replayToPosition(replayPosition, this.playbackSpeed === WebInspector.ReplayManager.PlaybackSpeed.FastForward);
@@ -370,7 +370,7 @@ WebInspector.ReplayManager.prototype = {
     replayToCompletion: function()
     {
         console.assert(this.sessionState !== WebInspector.ReplayManager.SessionState.Capturing);
-        console.assert(this.segmentState === WebInspector.ReplayManager.SegmentState.Loaded);
+        // FIXME: Once the public API is asynchronous, we should assert that segmentState is Loaded.
 
         this.dispatchEventToListeners(WebInspector.ReplayManager.Event.PlaybackWillStart);
         ReplayAgent.replayToCompletion(this.playbackSpeed === WebInspector.ReplayManager.PlaybackSpeed.FastForward);

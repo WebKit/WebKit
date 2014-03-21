@@ -60,8 +60,7 @@ body.window-inactive .navigation-bar .item.button.disabled:not(.suppress-emboss)
 }
 
 .navigation-bar .item.button.suppress-emboss > .glyph {
-    background-color: rgb(153, 153, 153);
-    opacity: 0.7;
+    background-color: rgb(95, 95, 95);
 }
 
 .navigation-bar .item.button.suppress-emboss:active > .glyph {
@@ -69,5 +68,5 @@ body.window-inactive .navigation-bar .item.button.disabled:not(.suppress-emboss)
 }
 
 .navigation-bar .item.button.suppress-emboss.disabled > .glyph {
-    opacity: 0.3 !important;
+    opacity: 0.7 !important;
 }
