@@ -90,62 +90,176 @@ void FEGaussianBlur::setEdgeMode(EdgeModeType edgeMode)
     m_edgeMode = edgeMode;
 }
 
-inline void boxBlur(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* dstPixelArray,
-    unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight, bool alphaImage, EdgeModeType edgeMode)
+// This function only operates on Alpha channel.
+inline void boxBlurAlphaOnly(const Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* dstPixelArray,
+    unsigned dx, int& dxLeft, int& dxRight, int& stride, int& strideLine, int& effectWidth, int& effectHeight, const int& maxKernelSize)
 {
+    unsigned char* srcData = srcPixelArray->data();
+    unsigned char* dstData = dstPixelArray->data();
+    // Memory alignment is: RGBA, zero-index based.
+    const int channel = 3;
+
     for (int y = 0; y < effectHeight; ++y) {
         int line = y * strideLine;
-        for (int channel = 3; channel >= 0; --channel) {
-            int sum = 0;
-            // The code for edgeMode='none' is the common case and highly optimized.
-            // Furthermore, this code path affects more than just the input area.
-            if (edgeMode == EDGEMODE_NONE) {
-                // Fill the kernel
-                int maxKernelSize = std::min(dxRight, effectWidth);
-                for (int i = 0; i < maxKernelSize; ++i)
-                    sum += srcPixelArray->item(line + i * stride + channel);
+        int sum = 0;
 
-                // Blurring
-                for (int x = 0; x < effectWidth; ++x) {
-                    int pixelByteOffset = line + x * stride + channel;
-                    dstPixelArray->set(pixelByteOffset, static_cast<unsigned char>(sum / dx));
-                    // Shift kernel.
-                    if (x >= dxLeft)
-                        sum -= srcPixelArray->item(pixelByteOffset - dxLeft * stride);
-                    if (x + dxRight < effectWidth)
-                        sum += srcPixelArray->item(pixelByteOffset + dxRight * stride);
+        // Fill the kernel.
+        for (int i = 0; i < maxKernelSize; ++i) {
+            unsigned offset = line + i * stride;
+            unsigned char* srcPtr = srcData + offset;
+            sum += srcPtr[channel];
+        }
+
+        // Blurring.
+        for (int x = 0; x < effectWidth; ++x) {
+            unsigned pixelByteOffset = line + x * stride + channel;
+            unsigned char* dstPtr = dstData + pixelByteOffset;
+            *dstPtr = static_cast<unsigned char>(sum / dx);
+
+            // Shift kernel.
+            if (x >= dxLeft) {
+                unsigned leftOffset = pixelByteOffset - dxLeft * stride;
+                unsigned char* srcPtr = srcData + leftOffset;
+                sum -= *srcPtr;
+            }
+
+            if (x + dxRight < effectWidth) {
+                unsigned rightOffset = pixelByteOffset + dxRight * stride;
+                unsigned char* srcPtr = srcData + rightOffset;
+                sum += *srcPtr;
+            }
+        }
+    }
+}
+
+inline void boxBlur(const Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* dstPixelArray,
+    unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight, bool alphaImage, EdgeModeType edgeMode)
+{
+    const int maxKernelSize = std::min(dxRight, effectWidth);
+    if (alphaImage) {
+        return boxBlurAlphaOnly(srcPixelArray, dstPixelArray, dx, dxLeft, dxRight, stride, strideLine,
+            effectWidth, effectHeight, maxKernelSize);
+    }
+
+    unsigned char* srcData = srcPixelArray->data();
+    unsigned char* dstData = dstPixelArray->data();
+
+    // Concerning the array width/length: it is Element size + Margin + Border. The number of pixels will be
+    // P = width * height * channels.
+    for (int y = 0; y < effectHeight; ++y) {
+        int line = y * strideLine;
+        int sumR = 0, sumG = 0, sumB = 0, sumA = 0;
+
+        if (edgeMode == EDGEMODE_NONE) {
+            // Fill the kernel.
+            for (int i = 0; i < maxKernelSize; ++i) {
+                unsigned offset = line + i * stride;
+                unsigned char* srcPtr = srcData + offset;
+                sumR += *srcPtr++;
+                sumG += *srcPtr++;
+                sumB += *srcPtr++;
+                sumA += *srcPtr;
+            }
+
+            // Blurring.
+            for (int x = 0; x < effectWidth; ++x) {
+                unsigned pixelByteOffset = line + x * stride;
+                unsigned char* dstPtr = dstData + pixelByteOffset;
+
+                *dstPtr++ = static_cast<unsigned char>(sumR / dx);
+                *dstPtr++ = static_cast<unsigned char>(sumG / dx);
+                *dstPtr++ = static_cast<unsigned char>(sumB / dx);
+                *dstPtr = static_cast<unsigned char>(sumA / dx);
+
+                // Shift kernel.
+                if (x >= dxLeft) {
+                    unsigned leftOffset = pixelByteOffset - dxLeft * stride;
+                    unsigned char* srcPtr = srcData + leftOffset;
+                    sumR -= srcPtr[0];
+                    sumG -= srcPtr[1];
+                    sumB -= srcPtr[2];
+                    sumA -= srcPtr[3];
                 }
-            } else {
-                // FIXME: Add support for 'wrap' here.
-                // Get edge values for edgeMode 'duplicate'.
-                int edgeValueLeft = srcPixelArray->item(line + channel);
-                int edgeValueRight = srcPixelArray->item(line + (effectWidth - 1) * stride + channel);
-                // Fill the kernel
-                for (int i = dxLeft * -1; i < dxRight; ++i) {
-                    if (i < 0)
-                        sum += edgeValueLeft;
-                    else if (i >= effectWidth)
-                        sum += edgeValueRight;
-                    else
-                        sum += srcPixelArray->item(line + i * stride + channel);
-                }
-                // Blurring
-                for (int x = 0; x < effectWidth; ++x) {
-                    int pixelByteOffset = line + x * stride + channel;
-                    dstPixelArray->set(pixelByteOffset, static_cast<unsigned char>(sum / dx));
-                    // Shift kernel.
-                    if (x < dxLeft)
-                        sum -= edgeValueLeft;
-                    else
-                        sum -= srcPixelArray->item(pixelByteOffset - dxLeft * stride);
-                    if (x + dxRight >= effectWidth)
-                        sum += edgeValueRight;
-                    else
-                        sum += srcPixelArray->item(pixelByteOffset + dxRight * stride);
+
+                if (x + dxRight < effectWidth) {
+                    unsigned rightOffset = pixelByteOffset + dxRight * stride;
+                    unsigned char* srcPtr = srcData + rightOffset;
+                    sumR += srcPtr[0];
+                    sumG += srcPtr[1];
+                    sumB += srcPtr[2];
+                    sumA += srcPtr[3];
                 }
             }
-            if (alphaImage) // Source image is black, it just has different alpha values
-                break;
+
+        } else {
+            // FIXME: Add support for 'wrap' here.
+            // Get edge values for edgeMode 'duplicate'.
+            unsigned char* edgeValueLeft = srcData + line;
+            unsigned char* edgeValueRight  = srcData + (line + (effectWidth - 1) * stride);
+
+            // Fill the kernel.
+            for (int i = dxLeft * -1; i < dxRight; ++i) {
+                // Is this right for negative values of 'i'?
+                unsigned offset = line + i * stride;
+                unsigned char* srcPtr = srcData + offset;
+
+                if (i < 0) {
+                    sumR += edgeValueLeft[0];
+                    sumG += edgeValueLeft[1];
+                    sumB += edgeValueLeft[2];
+                    sumA += edgeValueLeft[3];
+                } else if (i >= effectWidth) {
+                    sumR += edgeValueRight[0];
+                    sumG += edgeValueRight[1];
+                    sumB += edgeValueRight[2];
+                    sumA += edgeValueRight[3];
+                } else {
+                    sumR += *srcPtr++;
+                    sumG += *srcPtr++;
+                    sumB += *srcPtr++;
+                    sumA += *srcPtr;
+                }
+            }
+
+            // Blurring.
+            for (int x = 0; x < effectWidth; ++x) {
+                unsigned pixelByteOffset = line + x * stride;
+                unsigned char* dstPtr = dstData + pixelByteOffset;
+
+                *dstPtr++ = static_cast<unsigned char>(sumR / dx);
+                *dstPtr++ = static_cast<unsigned char>(sumG / dx);
+                *dstPtr++ = static_cast<unsigned char>(sumB / dx);
+                *dstPtr = static_cast<unsigned char>(sumA / dx);
+
+                // Shift kernel.
+                if (x < dxLeft) {
+                    sumR -= edgeValueLeft[0];
+                    sumG -= edgeValueLeft[1];
+                    sumB -= edgeValueLeft[2];
+                    sumA -= edgeValueLeft[3];
+                } else {
+                    unsigned leftOffset = pixelByteOffset - dxLeft * stride;
+                    unsigned char* srcPtr = srcData + leftOffset;
+                    sumR -= srcPtr[0];
+                    sumG -= srcPtr[1];
+                    sumB -= srcPtr[2];
+                    sumA -= srcPtr[3];
+                }
+
+                if (x + dxRight >= effectWidth) {
+                    sumR += edgeValueRight[0];
+                    sumG += edgeValueRight[1];
+                    sumB += edgeValueRight[2];
+                    sumA += edgeValueRight[3];
+                } else {
+                    unsigned rightOffset = pixelByteOffset + dxRight * stride;
+                    unsigned char* srcPtr = srcData + rightOffset;
+                    sumR += srcPtr[0];
+                    sumG += srcPtr[1];
+                    sumB += srcPtr[2];
+                    sumA += srcPtr[3];
+                }
+            }
         }
     }
 }

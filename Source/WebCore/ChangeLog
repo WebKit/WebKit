@@ -1,3 +1,29 @@
+2014-03-21  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        Optimize FEGaussian blur
+        https://bugs.webkit.org/show_bug.cgi?id=50881
+
+        Reviewed by Dirk Schulze.
+
+        Currently boxBlur() will calculate the filter for each channel in
+        a loop and also uses Uint8ClampedArray::set() to write the
+        resulting pixels into destination array.
+
+        Using Uint8ClampedArray::set() requires lots of unnecessary type
+        conversions, not to mention other function calls. This patch
+        updates the original written by Simon Fraser to apply cleanly to current
+        trunk.
+
+        It also implements code to handle EdgeModes and finally avoids use
+        of ::set() in the newly added boxBlurAlphaOnly()
+        function. Assignment of calculated pixel values rely on pointers.
+
+        No new tests, no change on behavior.
+
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::boxBlurAlphaOnly): Specialized version for alpha only cases.
+        (WebCore::boxBlur):
+
 2014-03-21  Simon Fraser  <simon.fraser@apple.com>
 
         unobscuredContentRect() should have the same signature on iOS and other platforms,
