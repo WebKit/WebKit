@@ -33,7 +33,6 @@
 #ifndef ewk_database_manager_h
 #define ewk_database_manager_h
 
-#include "ewk_error.h"
 #include <Eina.h>
 
 #ifdef __cplusplus
@@ -47,11 +46,25 @@ typedef struct EwkDatabaseManager Ewk_Database_Manager;
  * @typedef Ewk_Database_Origins_Async_Get_Cb Ewk_Database_Origins_Async_Get_Cb
  * @brief Callback type for use with ewk_database_manager_origins_async_get()
  *
- * @param origins @c Eina_List containing @c Ewk_Security_Origin elements or @c NULL in case of error,
- *                        the Eina_List and its items should be freed after use. Use ewk_object_unref()
- *                        to free the items
+ * @param origins @c Eina_List containing @c Ewk_Security_Origin elements.
+ *
+ * @note The @a origins should be freed like below code after use.
+ *
+ * @code
+ *
+ * static void
+ * _origins_get_cb(Eina_List* origins, data)
+ * {
+ *    // ...
+ *
+ *    void *origin;
+ *    EINA_LIST_FREE(origins, origin)
+ *      ewk_object_unref((Ewk_Object*)origin);
+ * }
+ *
+ * @endcode
  */
-typedef void (*Ewk_Database_Origins_Async_Get_Cb)(Eina_List *origins, Ewk_Error *error, void *user_data);
+typedef void (*Ewk_Database_Origins_Async_Get_Cb)(Eina_List *origins, void *user_data);
 
 /**
  * Gets list of origins using web database asynchronously.

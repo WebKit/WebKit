@@ -31,7 +31,6 @@
 #ifndef ewk_cookie_manager_h
 #define ewk_cookie_manager_h
 
-#include "ewk_error.h"
 #include <Eina.h>
 
 #ifdef __cplusplus
@@ -77,7 +76,7 @@ typedef enum Ewk_Cookie_Persistent_Storage Ewk_Cookie_Persistent_Storage;
  * @typedef Ewk_Cookie_Manager_Policy_Async_Get_Cb Ewk_Cookie_Manager_Policy_Async_Get_Cb
  * @brief Callback type for use with ewk_cookie_manager_accept_policy_async_get
  */
-typedef void (*Ewk_Cookie_Manager_Policy_Async_Get_Cb)(Ewk_Cookie_Accept_Policy policy, Ewk_Error *error, void *event_info);
+typedef void (*Ewk_Cookie_Manager_Policy_Async_Get_Cb)(Ewk_Cookie_Accept_Policy policy, void *event_info);
 
 /**
  * @typedef Ewk_Cookie_Manager_Hostnames_Async_Get_Cb Ewk_Cookie_Manager_Hostnames_Async_Get_Cb
@@ -87,7 +86,7 @@ typedef void (*Ewk_Cookie_Manager_Policy_Async_Get_Cb)(Ewk_Cookie_Accept_Policy 
  * save yourself some cpu cycles and use eina_stringshare_ref() instead of eina_stringshare_add()
  * or strdup().
  */
-typedef void (*Ewk_Cookie_Manager_Hostnames_Async_Get_Cb)(Eina_List *hostnames, Ewk_Error *error, void *event_info);
+typedef void (*Ewk_Cookie_Manager_Hostnames_Async_Get_Cb)(Eina_List *hostnames, void *event_info);
 
 /**
  * @typedef Ewk_Cookie_Manager_Changes_Watch_Cb Ewk_Cookie_Manager_Changes_Watch_Cb
@@ -127,7 +126,7 @@ EAPI void ewk_cookie_manager_accept_policy_set(Ewk_Cookie_Manager *manager, Ewk_
  * By default, only cookies set by the main document loaded are accepted.
  *
  * @param manager The cookie manager to query.
- * @param callback The function to call when the policy is received or an error occured.
+ * @param callback The function to call when the policy is received.
  * @param data User data (may be @c NULL).
  */
 EAPI void ewk_cookie_manager_accept_policy_async_get(const Ewk_Cookie_Manager *manager, Ewk_Cookie_Manager_Policy_Async_Get_Cb callback, void *data);

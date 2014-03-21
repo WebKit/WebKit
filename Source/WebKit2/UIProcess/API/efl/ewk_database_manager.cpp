@@ -29,7 +29,6 @@
 #include "WKAPICast.h"
 #include "WKArray.h"
 #include "ewk_database_manager_private.h"
-#include "ewk_error_private.h"
 #include "ewk_security_origin_private.h"
 
 using namespace WebKit;
@@ -75,12 +74,11 @@ struct EwkDatabaseOriginsAsyncData {
     { }
 };
 
-static void getDatabaseOriginsCallback(WKArrayRef origins, WKErrorRef wkError, void* context)
+static void getDatabaseOriginsCallback(WKArrayRef origins, WKErrorRef, void* context)
 {
     OwnPtr<EwkDatabaseOriginsAsyncData> webDatabaseContext = adoptPtr(static_cast<EwkDatabaseOriginsAsyncData*>(context));
     Eina_List* originList = webDatabaseContext->manager->createOriginList(origins);
-    OwnPtr<EwkError> ewkError = EwkError::create(wkError);
-    webDatabaseContext->callback(originList, ewkError.get(), webDatabaseContext->userData);
+    webDatabaseContext->callback(originList, webDatabaseContext->userData);
 }
 
 Eina_Bool ewk_database_manager_origins_async_get(const Ewk_Database_Manager* ewkDatabaseManager, Ewk_Database_Origins_Async_Get_Cb callback, void* userData)

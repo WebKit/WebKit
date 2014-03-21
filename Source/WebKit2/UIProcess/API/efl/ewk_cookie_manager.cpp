@@ -29,9 +29,9 @@
 #include "WKAPICast.h"
 #include "WKArray.h"
 #include "WKCookieManagerSoup.h"
+#include "WKEinaSharedString.h"
 #include "WKString.h"
 #include "ewk_cookie_manager_private.h"
-#include "ewk_error_private.h"
 #include "ewk_private.h"
 #include <wtf/Assertions.h>
 #include <wtf/OwnPtr.h>
@@ -175,12 +175,11 @@ struct EwkCookiePolicyAsyncData {
     { }
 };
 
-static void getAcceptPolicyCallback(WKHTTPCookieAcceptPolicy policy, WKErrorRef wkError, void* data)
+static void getAcceptPolicyCallback(WKHTTPCookieAcceptPolicy policy, WKErrorRef, void* data)
 {
     auto callbackData = std::unique_ptr<EwkCookiePolicyAsyncData>(static_cast<EwkCookiePolicyAsyncData*>(data));
-    OwnPtr<EwkError> ewkError = EwkError::create(wkError);
 
-    callbackData->callback(static_cast<Ewk_Cookie_Accept_Policy>(policy), ewkError.get(), callbackData->userData);
+    callbackData->callback(static_cast<Ewk_Cookie_Accept_Policy>(policy), callbackData->userData);
 }
 
 void ewk_cookie_manager_accept_policy_async_get(const Ewk_Cookie_Manager* manager, Ewk_Cookie_Manager_Policy_Async_Get_Cb callback, void* data)
@@ -202,11 +201,10 @@ struct EwkCookieHostnamesAsyncData {
     { }
 };
 
-static void getHostnamesWithCookiesCallback(WKArrayRef wkHostnames, WKErrorRef wkError, void* context)
+static void getHostnamesWithCookiesCallback(WKArrayRef wkHostnames, WKErrorRef, void* context)
 {
     Eina_List* hostnames = 0;
     auto callbackData = std::unique_ptr<EwkCookieHostnamesAsyncData>(static_cast<EwkCookieHostnamesAsyncData*>(context));
-    OwnPtr<EwkError> ewkError = EwkError::create(wkError);
 
     const size_t hostnameCount = WKArrayGetSize(wkHostnames);
     for (size_t i = 0; i < hostnameCount; ++i) {
@@ -216,7 +214,7 @@ static void getHostnamesWithCookiesCallback(WKArrayRef wkHostnames, WKErrorRef w
         hostnames = eina_list_append(hostnames, WKEinaSharedString(wkHostname).leakString());
     }
 
-    callbackData->callback(hostnames, ewkError.get(), callbackData->userData);
+    callbackData->callback(hostnames, callbackData->userData);
 
     void* item;
     EINA_LIST_FREE(hostnames, item)

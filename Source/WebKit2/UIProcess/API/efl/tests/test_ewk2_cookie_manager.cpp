@@ -63,18 +63,15 @@ public:
         soup_message_body_complete(message->response_body);
     }
 
-    static void getAcceptPolicyCallback(Ewk_Cookie_Accept_Policy policy, Ewk_Error* error, void* event_info)
+    static void getAcceptPolicyCallback(Ewk_Cookie_Accept_Policy policy, void* event_info)
     {
-        ASSERT_FALSE(error);
         Ewk_Cookie_Accept_Policy* ret = static_cast<Ewk_Cookie_Accept_Policy*>(event_info);
         *ret = policy;
         ecore_main_loop_quit();
     }
 
-    static void getHostnamesWithCookiesCallback(Eina_List* hostnames, Ewk_Error* error, void* event_info)
+    static void getHostnamesWithCookiesCallback(Eina_List* hostnames, void* event_info)
     {
-        ASSERT_FALSE(error);
-
         Eina_List** ret = static_cast<Eina_List**>(event_info);
         Eina_List* l;
         void* data;

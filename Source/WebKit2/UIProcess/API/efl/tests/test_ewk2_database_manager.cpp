@@ -47,10 +47,8 @@ public:
         { }
     };
 
-    static void databaseOriginsCallback(Eina_List* origins, Ewk_Error* error, void* userData)
+    static void databaseOriginsCallback(Eina_List* origins, void* userData)
     {
-        ASSERT_FALSE(error);
-
         OriginData* originData = static_cast<OriginData*>(userData);
         originData->didReceiveOriginsCallback = true;
 

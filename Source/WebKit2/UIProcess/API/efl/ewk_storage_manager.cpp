@@ -28,7 +28,6 @@
 
 #include "WKAPICast.h"
 #include "WKArray.h"
-#include "ewk_error_private.h"
 #include "ewk_security_origin_private.h"
 #include "ewk_storage_manager_private.h"
 
@@ -75,15 +74,14 @@ struct EwkStorageOriginsAsyncData {
     { }
 };
 
-static void getStorageOriginsCallback(WKArrayRef origins, WKErrorRef wkError, void* context)
+static void getStorageOriginsCallback(WKArrayRef origins, WKErrorRef, void* context)
 {
     Eina_List* originList = 0;
     auto webStorageContext = std::unique_ptr<EwkStorageOriginsAsyncData>(static_cast<EwkStorageOriginsAsyncData*>(context));
 
     originList = webStorageContext->manager->createOriginList(origins);
 
-    OwnPtr<EwkError> ewkError = EwkError::create(wkError);
-    webStorageContext->callback(originList, ewkError.get(), webStorageContext->userData);
+    webStorageContext->callback(originList, webStorageContext->userData);
 }
 
 Eina_Bool ewk_storage_manager_origins_async_get(const Ewk_Storage_Manager* ewkStorageManager, Ewk_Storage_Origins_Async_Get_Cb callback, void* userData)
