@@ -170,7 +170,7 @@ add_definitions(-DMOZ_X11)
 
 find_package(Cairo 1.10.2 REQUIRED)
 find_package(Fontconfig 2.8.0 REQUIRED)
-find_package(Freetype 2.4.2 REQUIRED)
+find_package(Freetype2 2.4.2 REQUIRED)
 find_package(GTK2 2.24.10 REQUIRED)
 find_package(GDK2 2.24.10 REQUIRED)
 find_package(HarfBuzz 0.9.2 REQUIRED)
