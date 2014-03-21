@@ -35,6 +35,12 @@
 #include <wtf/RunLoop.h>
 #include <xpc/xpc.h>
 
+#if __has_include(<xpc/private.h>)
+#include <xpc/private.h>
+#endif
+
+extern "C" void xpc_connection_get_audit_token(xpc_connection_t, audit_token_t*);
+
 namespace IPC {
 
 static const size_t inlineMessageMaxSize = 4096;
@@ -509,6 +515,15 @@ void Connection::setShouldCloseConnectionOnMachExceptions()
 IPC::Connection::Identifier Connection::identifier() const
 {
     return Identifier(m_isServer ? m_receivePort : m_sendPort, m_xpcConnection);
+}
+    
+bool Connection::getAuditToken(audit_token_t& auditToken)
+{
+    if (!m_xpcConnection)
+        return false;
+    
+    xpc_connection_get_audit_token(m_xpcConnection, &auditToken);
+    return true;
 }
     
 } // namespace IPC

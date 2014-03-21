@@ -29,3 +29,6 @@ INFOPLIST_FILE = NetworkProcess/EntryPoint/mac/LegacyProcess/Info.plist;
 EXCLUDED_SHIM_FILE_NAME = $(EXCLUDED_SHIM_FILE_NAME_$(PLATFORM_NAME));
 EXCLUDED_SHIM_FILE_NAME_iphoneos = SecItemShim.dylib;
 EXCLUDED_SHIM_FILE_NAME_iphonesimulator = $(EXCLUDED_SHIM_FILE_NAME_iphoneos);
+
+CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*] = Configurations/Network-iOS.entitlements
+CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*] = Configurations/Network-iOS.entitlements

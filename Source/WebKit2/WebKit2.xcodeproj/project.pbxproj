@@ -2743,6 +2743,9 @@
 		762B7484120BBA2D00819339 /* WKPreferencesRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesRefPrivate.h; sourceTree = "<group>"; };
 		7801C095142290C400FAF9AF /* WebHitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebHitTestResult.cpp; sourceTree = "<group>"; };
 		7801C096142290C400FAF9AF /* WebHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHitTestResult.h; sourceTree = "<group>"; };
+		7C0BB9A718DCDE890006C086 /* iOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = iOS.xcconfig; sourceTree = "<group>"; };
+		7C0BB9A818DCDE890006C086 /* WebContent-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "WebContent-iOS.entitlements"; sourceTree = "<group>"; };
+		7C0BB9A918DCDF5A0006C086 /* Network-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Network-iOS.entitlements"; sourceTree = "<group>"; };
 		7C135AA6173B0BCA00586AE2 /* WKPluginInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPluginInformation.cpp; sourceTree = "<group>"; };
 		7C135AA7173B0BCA00586AE2 /* WKPluginInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPluginInformation.h; sourceTree = "<group>"; };
 		7C135AAA173B0CFF00586AE2 /* PluginInformationMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginInformationMac.mm; sourceTree = "<group>"; };
@@ -3806,6 +3809,8 @@
 				51A60B29180CCD9000F3BF50 /* DatabaseService.xcconfig */,
 				1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */,
 				1A4F976C100E7B6600637A18 /* FeatureDefines.xcconfig */,
+				7C0BB9A718DCDE890006C086 /* iOS.xcconfig */,
+				7C0BB9A918DCDF5A0006C086 /* Network-iOS.entitlements */,
 				510CC8461613C7C600D03ED3 /* NetworkProcess.xcconfig */,
 				BC8283AA16B4BEAD00A278FE /* NetworkService.Development.xcconfig */,
 				BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */,
@@ -3818,6 +3823,7 @@
 				A1EDD2DC1884B9B500BBFE98 /* SecItemShim.xcconfig */,
 				5183B3931379F85C00E8754E /* Shim.xcconfig */,
 				1A4F976E100E7B6600637A18 /* Version.xcconfig */,
+				7C0BB9A818DCDE890006C086 /* WebContent-iOS.entitlements */,
 				5DAD7294116FF70B00EE5396 /* WebContentProcess.xcconfig */,
 				BCACC40F16B0B8A800B6E092 /* WebContentService.Development.xcconfig */,
 				BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */,

@@ -1,3 +1,28 @@
+2014-03-21  Sam Weinig  <sam@webkit.org>
+
+        [WebKit2] Implement NetworkingContext::sourceApplicationAuditData() for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=130528
+
+        Reviewed by Tim Horton.
+
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ConnectionMac.cpp:
+        (IPC::Connection::getAuditToken):
+        Expose the audit data if available. 
+
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::sourceApplicationAuditData):
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::sourceApplicationAuditData):
+        Pass the audit data corresponding to the UIProcess.
+
+        * Configurations/Network-iOS.entitlements: Copied from Configurations/WebContent-iOS.entitlements.
+        * Configurations/NetworkProcess.xcconfig:
+        * Configurations/NetworkService.Development.xcconfig:
+        * Configurations/NetworkService.xcconfig:
+        * Configurations/WebContent-iOS.entitlements:
+        Add entitlement allowing the audit data to be used.
+
 2014-03-21  Tim Horton  <timothy_horton@apple.com>
 
         Always retrieve the screen scale factor from WKSI
