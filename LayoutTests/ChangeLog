@@ -1,3 +1,32 @@
+2014-03-19  Frédéric Wang  <fred.wang@free.fr>
+
+        Update some references for MathML pixels tests
+        https://bugs.webkit.org/show_bug.cgi?id=130455.
+
+        Reviewed by Chris Fleizach.
+
+        * TestExpectations: Remove failures for MathML pixel tests.
+        * mathml/presentation/mo.xhtml: Removed.
+        * mathml/presentation/roots.xhtml: Remove the test that is already covered by bug95015.html.
+        * mathml/presentation/row.xhtml: Removed.
+        * platform/efl/TestExpectations: Remove failure for mo-stretch.html
+        * platform/efl/mathml/presentation/mo-stretch-expected.png: Update reference.
+        * platform/efl/mathml/presentation/mo-stretch-expected.txt: Update reference.
+        * platform/efl/mathml/presentation/roots-expected.png: Update reference.
+        * platform/efl/mathml/presentation/roots-expected.txt: Update reference.
+        * platform/gtk/mathml/presentation/mo-expected.png: Removed.
+        * platform/gtk/mathml/presentation/mo-expected.txt: Removed.
+        * platform/gtk/mathml/presentation/roots-expected.png: Update reference.
+        * platform/gtk/mathml/presentation/roots-expected.txt: Update reference.
+        * platform/gtk/mathml/presentation/row-expected.png: Removed.
+        * platform/gtk/mathml/presentation/row-expected.txt: Removed.
+        * platform/mac/mathml/presentation/mo-expected.png: Removed.
+        * platform/mac/mathml/presentation/mo-expected.txt: Removed.
+        * platform/mac/mathml/presentation/roots-expected.txt: Update reference.
+        * platform/mac/mathml/presentation/row-expected.txt: Removed.
+        * platform/mac/mathml/presentation/row-expected.txt: Removed.
+        * platform/win/TestExpectations: Remove failure for mo-stretch.html and mspace-children.html
+
 2014-03-21  Andreas Kling  <akling@apple.com>
 
         HTMLFrameOwnerElement should obey the SubframeLoadingDisabler when creating subframes
