@@ -1,3 +1,21 @@
+2014-03-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Generalize WebInspector check in maybeInitializeSandboxExtensionHandle().
+        https://bugs.webkit.org/show_bug.cgi?id=130079
+        <rdar://problem/16286683>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebPageProxy.cpp: (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle):
+        Perform an early return for all paths that don't need a sandbox extension due to
+        access being assumed, not only for WebInspector pages.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::hasAssumedReadAccessToURL):
+        (WebKit::WebProcessProxy::checkURLReceivedFromWebProcess):
+        * UIProcess/WebProcessProxy.h:
+        Factored out m_localPathsWithAssumedReadAccess iteration to a public function.
+
 2014-03-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix after r165983 for non Cocoa platforms.
