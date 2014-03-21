@@ -49,13 +49,6 @@ void serializeCharacterAsCodePoint(UChar32 c, StringBuilder& appendTo)
     appendTo.append(' ');
 }
 
-void serializeIdentifier(const String& identifier, String& appendTo)
-{
-    StringBuilder addend;
-    serializeIdentifier(identifier, addend);
-    appendTo.append(addend.toString());
-}
-
 void serializeIdentifier(const String& identifier, StringBuilder& appendTo)
 {
     bool isFirst = true;
@@ -83,13 +76,6 @@ void serializeIdentifier(const String& identifier, StringBuilder& appendTo)
             isSecond = false;
         }
     }
-}
-
-void serializeString(const String& string, String& appendTo)
-{
-    StringBuilder addend;
-    serializeString(string, addend);
-    appendTo.append(addend.toString());
 }
 
 void serializeString(const String& string, StringBuilder& appendTo)
