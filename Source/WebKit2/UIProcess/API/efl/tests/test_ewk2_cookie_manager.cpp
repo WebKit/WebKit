@@ -135,9 +135,10 @@ TEST_F(EWK2CookieManagerTest, ewk_cookie_manager_accept_policy)
     Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(ewk_view_context_get(webView()));
     ASSERT_TRUE(cookieManager);
 
+    ASSERT_TRUE(loadUrlSync(httpServer->getURLForPath("/index.html").data()));
+
     // Default policy is EWK_COOKIE_ACCEPT_POLICY_NO_THIRD_PARTY.
     ASSERT_EQ(EWK_COOKIE_ACCEPT_POLICY_NO_THIRD_PARTY, getAcceptPolicy(cookieManager));
-    ASSERT_TRUE(loadUrlSync(httpServer->getURLForPath("/index.html").data()));
 
     Eina_List* hostnames = getHostnamesWithCookies(cookieManager);
     ASSERT_EQ(1, eina_list_count(hostnames));
@@ -172,6 +173,9 @@ TEST_F(EWK2CookieManagerTest, ewk_cookie_manager_changes_watch)
 
     Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(ewk_view_context_get(webView()));
     ASSERT_TRUE(cookieManager);
+
+    // Load default test page to guarantee that WebProcess or NetworkProcess is launched.
+    ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
 
     ewk_cookie_manager_accept_policy_set(cookieManager, EWK_COOKIE_ACCEPT_POLICY_ALWAYS);
     ASSERT_EQ(EWK_COOKIE_ACCEPT_POLICY_ALWAYS, getAcceptPolicy(cookieManager));
@@ -235,6 +239,9 @@ TEST_F(EWK2CookieManagerTest, ewk_cookie_manager_cookies_delete)
     Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(ewk_view_context_get(webView()));
     ASSERT_TRUE(cookieManager);
 
+    // Load default test page to guarantee that WebProcess or NetworkProcess is launched.
+    ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
+
     ewk_cookie_manager_accept_policy_set(cookieManager, EWK_COOKIE_ACCEPT_POLICY_ALWAYS);
     ASSERT_EQ(EWK_COOKIE_ACCEPT_POLICY_ALWAYS, getAcceptPolicy(cookieManager));
 
@@ -278,6 +285,9 @@ TEST_F(EWK2CookieManagerTest, DISABLED_ewk_cookie_manager_permanent_storage)
 
     Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(ewk_view_context_get(webView()));
     ASSERT_TRUE(cookieManager);
+
+    // Load default test page to guarantee that WebProcess or NetworkProcess is launched.
+    ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
 
     ewk_cookie_manager_accept_policy_set(cookieManager, EWK_COOKIE_ACCEPT_POLICY_ALWAYS);
     ASSERT_EQ(EWK_COOKIE_ACCEPT_POLICY_ALWAYS, getAcceptPolicy(cookieManager));
