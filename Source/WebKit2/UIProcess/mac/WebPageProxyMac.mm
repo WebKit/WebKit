@@ -270,6 +270,7 @@ bool WebPageProxy::executeKeypressCommands(const Vector<WebCore::KeypressCommand
 
     bool result = false;
     process().sendSync(Messages::WebPage::ExecuteKeypressCommands(commands), Messages::WebPage::ExecuteKeypressCommands::Reply(result, m_editorState), m_pageID);
+    m_temporarilyClosedComposition = false;
     return result;
 }
 

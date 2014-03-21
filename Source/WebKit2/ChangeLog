@@ -1,3 +1,15 @@
+2014-03-21  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r165356): Predictive Chinese input is broken
+        https://bugs.webkit.org/show_bug.cgi?id=130619
+
+        Reviewed by Enrica Casucci.
+
+        * UIProcess/mac/WebPageProxyMac.mm: (WebKit::WebPageProxy::executeKeypressCommands):
+        Like after insertText, we are no longer in an intermediate state after executeKeypressCommands.
+        Make sure that we don't call -discardMarkedText the next time we get a non-intermediate
+        state with closed composition.
+
 2014-03-21  Sam Weinig  <sam@webkit.org>
 
         [WebKit2] Implement NetworkingContext::sourceApplicationAuditData() for WebKit2
