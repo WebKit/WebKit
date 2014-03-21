@@ -12,6 +12,18 @@
 <script class="ex" style="display:block;"></script>
 
 <div class="ex"><div></div></div>
+
+<div role="group" class="ex">
+    <!-- FIXME: childNodeIds.length should be 3 (foo, bar, baz). WebCore only reports 1 (foo). http://webkit.org/b/130563 -->
+    <div>foo</div>
+    <span>
+        bar
+        <span role="button">baz</span>
+    </span>
+    <div></div>
+    <div></div>
+</div>
+
 <div class="ex" role="presentation"><div></div></div>
 <div class="ex"></div>
 <div class="ex" aria-hidden="true"></div>
@@ -25,13 +37,16 @@
 <button class="ex"></button>
 <input class="ex" type="button">
 
-<!-- FIXME: Inputs missing axParentNodeId http://webkit.org/b/130181 -->
+<!-- FIXME: Inputs missing parentNodeId http://webkit.org/b/130181 -->
 <input class="ex">
 <input class="ex" required>
+
+<!-- Note: These correctly report childNodeIds.length of 1 b/c of their shadow DOM tree. See http://webkit.org/b/130302 -->
 <input class="ex" aria-required="true" value="required">
 <input class="ex" aria-invalid="spelling" value="invalid spelling">
 <input class="ex" aria-invalid="foo" value="fake value will eval to true">
 <input class="ex" readonly value="readonly">
+
 <div class="ex" role="textbox" tabindex="0" aria-readonly="true">readonly</div>
 <input class="ex" disabled value="disabled">
 <div class="ex" role="textbox" tabindex="0" aria-disabled="true">disabled</div>
@@ -53,7 +68,7 @@
 <input class="ex" aria-hidden="true">
 <input class="ex" style="display:none;">
 
-<!-- FIXME: Images missing axParentNodeId http://webkit.org/b/130181 -->
+<!-- FIXME: Images missing parentNodeId http://webkit.org/b/130181 -->
 <img class="ex" src="./404.gif"><!-- img:not([alt]) ignored if it does not load.  -->
 <img class="ex" src="data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7">
 <img class="ex" src="data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7" alt="">
@@ -65,18 +80,19 @@
     <option class="ex" selected>FIXME: Selected is false. Expected true. http://webkit.org/b/129835</option>
     <option class="ex">not selected</option>
 </select>
-<div role="listbox">
+<div role="listbox" class="ex">
     <div class="ex" role="option" aria-selected="true">selected</div>
     <div class="ex" role="option" aria-selected="false">not selected</div>
 </div>
-<div role="tablist">
+<div role="tablist" class="ex">
     <div class="ex" role="tab" aria-selected="true">selected</div>
     <div class="ex" role="tab" aria-selected="false">not selected</div>
 </div>
 
-<ul role="tree">
+<ul role="tree" class="ex">
     <li class="ex" role="treeitem" aria-expanded="true">expanded</li>
     <li class="ex" role="treeitem" aria-expanded="false">collapsed</li>
+    <li class="ex" role="treeitem" aria-expanded="undefined">expanded</li>
 </ul>
 
 </div>
@@ -121,7 +137,7 @@ function test() {
     function onGotOuterHTML(response) {
         InspectorTest.checkForError(response);
         var outerHTML = response.result.outerHTML;
-        outerHTML = outerHTML.replace(" class=\"ex\"", ""); // remove any duplicated, unnecessary class attributes
+        outerHTML = outerHTML.replace(/ class="ex"/g, ""); // remove any duplicated, unnecessary class attributes
         outerHTML = outerHTML.replace(/;base64,.*?"/, "...\""); // suppress full data URIs in output
         InspectorTest.log("\n" + outerHTML);
         InspectorTest.sendCommand("DOM.getAccessibilityPropertiesForNode", {"nodeId": examples[examples.length-1]}, onGotAXProps);
@@ -131,9 +147,17 @@ function test() {
         InspectorTest.checkForError(response);
         for (var key in response.result.properties) {
             var value = response.result.properties[key];
-            if (key === "nodeId" || key === "axParentNodeId")
+            switch (key){
+            case "nodeId":
+            case "parentNodeId":
                 continue;
-            InspectorTest.log("    " + key + ": " + value);
+            case "childNodeIds":
+                if (value.length)
+                    InspectorTest.log("    " + key + ".length: " + value.length);
+                break;
+            default:
+                InspectorTest.log("    " + key + ": " + value);
+            }
         }
         examples.pop();
         loop();

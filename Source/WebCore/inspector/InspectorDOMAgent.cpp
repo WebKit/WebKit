@@ -1425,6 +1425,7 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
         WebCore::AXObjectCache::enableAccessibility();
 
     TypeBuilder::DOM::AccessibilityProperties::Checked::Enum checked = TypeBuilder::DOM::AccessibilityProperties::Checked::False;
+    RefPtr<Inspector::TypeBuilder::Array<int>> childNodeIds;
     bool exists = false;
     bool expanded = false;
     bool disabled = false;
@@ -1434,7 +1435,7 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
     TypeBuilder::DOM::AccessibilityProperties::Invalid::Enum invalid = TypeBuilder::DOM::AccessibilityProperties::Invalid::False;
     bool hidden = false;
     String label; // FIXME: Waiting on http://webkit.org/b/121134
-    Node* axParentNode = node;
+    Node* parentNode = node;
     bool pressed = false;
     bool readonly = false;
     bool required = false;
@@ -1449,9 +1450,6 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
     if (AXObjectCache* axObjectCache = node->document().axObjectCache()) {
         if (AccessibilityObject* axObject = axObjectCache->getOrCreate(node)) {
 
-            if (AccessibilityObject* parentObject = axObject->parentObjectUnignored())
-                axParentNode = parentObject->node();
-            
             supportsChecked = axObject->supportsChecked();
             if (supportsChecked) {
                 int checkValue = axObject->checkboxOrRadioValue(); // Element using aria-checked.
@@ -1463,6 +1461,15 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
                     checked = TypeBuilder::DOM::AccessibilityProperties::Checked::True;
             }
             
+            const auto& children = axObject->children();
+            if (children.size()) {
+                childNodeIds = Inspector::TypeBuilder::Array<int>::create();
+                for (const auto& childObject : children) {
+                    if (Node* childNode = childObject->node())
+                        childNodeIds->addItem(pushNodePathToFrontend(childNode));
+                }
+            }
+
             disabled = !axObject->isEnabled(); 
             exists = true;
             
@@ -1490,6 +1497,9 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             if (axObject->isARIAHidden() || axObject->isDOMHidden())
                 hidden = true;
             
+            if (AccessibilityObject* parentObject = axObject->parentObjectUnignored())
+                parentNode = parentObject->node();
+
             supportsPressed = axObject->ariaPressedIsPresent();
             if (supportsPressed)
                 pressed = axObject->isPressed();
@@ -1513,10 +1523,10 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
         .setNodeId(pushNodePathToFrontend(node));
 
     if (exists) {
-        if (axParentNode && axParentNode != node)
-            value->setAxParentNodeId(pushNodePathToFrontend(axParentNode));
         if (supportsChecked)
             value->setChecked(checked);
+        if (childNodeIds)
+            value->setChildNodeIds(childNodeIds);
         if (disabled)
             value->setDisabled(disabled);
         if (supportsExpanded)
@@ -1531,6 +1541,8 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             value->setInvalid(invalid);
         if (hidden)
             value->setHidden(hidden);
+        if (parentNode && parentNode != node)
+            value->setParentNodeId(pushNodePathToFrontend(parentNode));
         if (supportsPressed)
             value->setPressed(pressed);
         if (readonly)

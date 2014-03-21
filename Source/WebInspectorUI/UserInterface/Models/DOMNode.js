@@ -456,8 +456,8 @@ WebInspector.DOMNode.prototype = {
         {
             if (!error && callback && accessibilityProperties) {
                 callback({
-                    axParentNodeId: accessibilityProperties.axParentNodeId,
                     checked: accessibilityProperties.checked,
+                    childNodeIds: accessibilityProperties.childNodeIds,
                     disabled: accessibilityProperties.disabled,
                     exists: accessibilityProperties.exists,
                     expanded: accessibilityProperties.expanded,
@@ -467,6 +467,7 @@ WebInspector.DOMNode.prototype = {
                     invalid: accessibilityProperties.invalid,
                     hidden: accessibilityProperties.hidden,
                     label: accessibilityProperties.label,
+                    parentNodeId: accessibilityProperties.parentNodeId,
                     pressed: accessibilityProperties.pressed,
                     readonly: accessibilityProperties.readonly,
                     required: accessibilityProperties.required,

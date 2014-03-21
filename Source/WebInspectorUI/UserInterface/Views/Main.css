@@ -255,3 +255,18 @@ body.docked.right #navigation-sidebar.collapsed > .resizer {
     text-decoration: underline;
     cursor: pointer;
 }
+
+.node-link-list, .node-link-list li {
+    display: block;
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
+}
+
+.node-link-list li {
+    margin: 0 0 0.4em;
+}
+
+.node-link-list li:last-child {
+    margin: 0;
+}

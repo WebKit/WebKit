@@ -59,6 +59,7 @@ WebInspector.DOMNodeDetailsSidebarPanel = function() {
     if (this._accessibilitySupported()) {
         this._accessibilityEmptyRow = new WebInspector.DetailsSectionRow(WebInspector.UIString("No Accessibility Information"));
         this._accessibilityNodeCheckedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Checked"));
+        this._accessibilityNodeChildrenRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Children"));
         this._accessibilityNodeDisabledRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Disabled"));
         this._accessibilityNodeExpandedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Expanded"));
         this._accessibilityNodeFocusedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Focused"));
@@ -280,14 +281,6 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
 
             if (accessibilityProperties && accessibilityProperties.exists) {
 
-                var axParentNodeLink = null;
-                if (accessibilityProperties.axParentNodeId !== undefined) {
-                    var axParentNode = WebInspector.domTreeManager.nodeForId(accessibilityProperties.axParentNodeId);
-                    axParentNodeLink = WebInspector.linkifyNodeReference(axParentNode);
-                    axParentNodeLink.title += WebInspector.roleSelectorForNode(axParentNode);
-                    axParentNodeLink.textContent = axParentNode.computedRole() || axParentNodeLink.title;
-                }
-
                 var checked = "";
                 if (accessibilityProperties.checked !== undefined) {
                     if (accessibilityProperties.checked === DOMAgent.AccessibilityPropertiesChecked.True)
@@ -296,6 +289,30 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                         checked = WebInspector.UIString("Mixed");
                     else // DOMAgent.AccessibilityPropertiesChecked.False
                         checked = WebInspector.UIString("No");
+                }
+
+                // Accessibility tree children are not a 1:1 mapping with DOM tree children.
+                var childNodeLinks = [];
+                var childNodeLinkList = null;
+                if (accessibilityProperties.childNodeIds !== undefined) {
+                    var childNodes = accessibilityProperties.childNodeIds;
+                    for (var childNodeId of childNodes) {
+                        var childNode = WebInspector.domTreeManager.nodeForId(childNodeId);
+                        if (childNode) {
+                            var childNodeLink = WebInspector.linkifyAccessibilityNodeReference(childNode);
+                            if (childNodeLink)
+                                childNodeLinks.push(childNodeLink);
+                        }
+                    }
+                    if (childNodeLinks.length) {
+                        childNodeLinkList = document.createElement("ul");
+                        childNodeLinkList.className = "node-link-list";
+                        for (var childNodeLink of childNodeLinks) {
+                            var listitem = document.createElement("li");
+                            listitem.appendChild(childNodeLink);
+                            childNodeLinkList.appendChild(listitem);
+                        }
+                    }
                 }
 
                 var disabled = booleanValueToLocalizedStringIfTrue("disabled");
@@ -324,6 +341,13 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                 if (label && label !== domNode.getAttribute("aria-label"))
                     label = WebInspector.UIString("%s (computed)").format(label);
 
+                // Accessibility tree parent is not a 1:1 mapping with the DOM tree parent.
+                var parentNodeLink = null;
+                if (accessibilityProperties.parentNodeId !== undefined) {
+                    var parentNode = WebInspector.domTreeManager.nodeForId(accessibilityProperties.parentNodeId);
+                    parentNodeLink = WebInspector.linkifyAccessibilityNodeReference(parentNode);
+                }
+
                 var pressed = booleanValueToLocalizedStringIfPropertyDefined("pressed");
                 var readonly = booleanValueToLocalizedStringIfTrue("readonly");
                 var required = booleanValueToLocalizedStringIfPropertyDefined("required");
@@ -342,13 +366,14 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
 
                 // Assign all the properties to their respective views.
                 this._accessibilityNodeCheckedRow.value = checked;
+                this._accessibilityNodeChildrenRow.value = childNodeLinkList || "";
                 this._accessibilityNodeDisabledRow.value = disabled;
                 this._accessibilityNodeExpandedRow.value = expanded;
                 this._accessibilityNodeFocusedRow.value = focused;
                 this._accessibilityNodeIgnoredRow.value = ignored;
                 this._accessibilityNodeInvalidRow.value = invalid;
                 this._accessibilityNodeLabelRow.value = label;
-                this._accessibilityNodeParentRow.value = axParentNodeLink || "";
+                this._accessibilityNodeParentRow.value = parentNodeLink || "";
                 this._accessibilityNodePressedRow.value = pressed;
                 this._accessibilityNodeReadonlyRow.value = readonly;
                 this._accessibilityNodeRequiredRow.value = required;
@@ -358,11 +383,12 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                 // Display order, not alphabetical as above.
                 this._accessibilityGroup.rows = [
                     // Global properties for all elements.
-                    this._accessibilityNodeFocusedRow,
                     this._accessibilityNodeIgnoredRow,
                     this._accessibilityNodeRoleRow,
                     this._accessibilityNodeLabelRow,
                     this._accessibilityNodeParentRow,
+                    this._accessibilityNodeChildrenRow,
+                    this._accessibilityNodeFocusedRow,
 
                     // Properties exposed for all input-type elements.
                     this._accessibilityNodeDisabledRow,

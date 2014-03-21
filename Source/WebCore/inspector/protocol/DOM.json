@@ -60,8 +60,8 @@
             "description": "A structure holding accessibility properties.",
             "type": "object",
             "properties": [
-                { "name": "axParentNodeId", "$ref": "NodeId", "optional": true, "description": "<code>DOMNode</code> id of the accessibility tree parent object if available." },
                 { "name": "checked", "type": "string", "optional": true, "enum": ["true", "false", "mixed"], "description": "Checked state of certain form controls." },
+                { "name": "childNodeIds", "type": "array", "items": { "$ref": "NodeId" }, "optional": true, "description": "Array of <code>DOMNode</code> ids of the accessibility tree children if available." },
                 { "name": "disabled", "type": "boolean", "optional": true, "description": "Disabled state of form controls." },
                 { "name": "exists", "type": "boolean", "description": "Indicates whether there is an existing AX object for the DOM node. If this is false, all the other properties will be default values." },
                 { "name": "expanded", "type": "boolean", "optional": true, "description": "Expanded state." },
@@ -72,6 +72,7 @@
                 { "name": "hidden", "type": "boolean", "optional": true, "description": "Hidden state. True if node or an ancestor is hidden via CSS or explicit @aria-hidden, to clarify why the element is ignored." },
                 { "name": "label", "type": "string", "description": "Computed label value for the node, sometimes calculated by referencing other nodes." },
                 { "name": "nodeId", "$ref": "NodeId", "description": "Target <code>DOMNode</code> id." },
+                { "name": "parentNodeId", "$ref": "NodeId", "optional": true, "description": "<code>DOMNode</code> id of the accessibility tree parent object if available." },
                 { "name": "pressed", "type": "boolean", "optional": true, "description": "Pressed state for toggle buttons." },
                 { "name": "readonly", "type": "boolean", "optional": true, "description": "Readonly state of text controls." },
                 { "name": "required", "type": "boolean", "optional": true, "description": "Required state of form controls." },

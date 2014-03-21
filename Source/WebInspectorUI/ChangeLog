@@ -1,3 +1,19 @@
+2014-03-21  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: Expose Accessibility Tree children of the selected node
+        https://bugs.webkit.org/show_bug.cgi?id=130264
+
+        Reviewed by Timothy Hatcher.
+
+        Expose the accessibility tree children (different from DOM children) of the
+        current node in the accessibility node inspector.
+
+        * Localizations/en.lproj/localizedStrings.js: New "Children" string.
+        * UserInterface/Base/DOMUtilities.js: Added linkifyAccessibilityNodeReference.
+        * UserInterface/Models/DOMNode.js: Support for accessibility children.
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js: Support for accessibility children.
+        * UserInterface/Views/Main.css: New styles for .node-link-list.
+
 2014-03-20  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add temporary buttons to capture/play/pause replay recordings

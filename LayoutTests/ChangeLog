@@ -1,3 +1,15 @@
+2014-03-21  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: Expose Accessibility Tree children of the selected node
+        https://bugs.webkit.org/show_bug.cgi?id=130264
+
+        Reviewed by Timothy Hatcher.
+
+        Updating for support of accessibility tree children.
+
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode.html:
+
 2014-03-21  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed WebKitGtk+ rebaseline.
