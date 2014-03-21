@@ -154,6 +154,23 @@ static void didLayout(WKBundlePageRef page, WKLayoutMilestones milestones, WKTyp
         [loadDelegate webProcessPlugInBrowserContextController:pluginContextController renderingProgressDidChange:renderingProgressEvents(milestones)];
 }
 
+static void didFirstVisuallyNonEmptyLayoutForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo)
+{
+    WKWebProcessPlugInBrowserContextController *pluginContextController = (WKWebProcessPlugInBrowserContextController *)clientInfo;
+    auto loadDelegate = pluginContextController->_loadDelegate.get();
+
+    if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:didFirstVisuallyNonEmptyLayoutForFrame:)])
+        [loadDelegate webProcessPlugInBrowserContextController:pluginContextController didFirstVisuallyNonEmptyLayoutForFrame:wrapper(*toImpl(frame))];
+}
+
+static void didHandleOnloadEventsForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void* clientInfo)
+{
+    WKWebProcessPlugInBrowserContextController *pluginContextController = (WKWebProcessPlugInBrowserContextController *)clientInfo;
+    auto loadDelegate = pluginContextController->_loadDelegate.get();
+
+    if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:didHandleOnloadEventsForFrame:)])
+        [loadDelegate webProcessPlugInBrowserContextController:pluginContextController didHandleOnloadEventsForFrame:wrapper(*toImpl(frame))];
+}
 static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *contextController, WebPage& page)
 {
     WKBundlePageLoaderClientV7 client;
@@ -169,6 +186,8 @@ static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *co
     client.didFinishLoadForFrame = didFinishLoadForFrame;
     client.globalObjectIsAvailableForFrame = globalObjectIsAvailableForFrame;
     client.didRemoveFrameFromHierarchy = didRemoveFrameFromHierarchy;
+    client.didHandleOnloadEventsForFrame = didHandleOnloadEventsForFrame;
+    client.didFirstVisuallyNonEmptyLayoutForFrame = didFirstVisuallyNonEmptyLayoutForFrame;
 
     client.didLayoutForFrame = didLayoutForFrame;
     client.didLayout = didLayout;
@@ -176,7 +195,7 @@ static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *co
     page.initializeInjectedBundleLoaderClient(&client.base);
 }
 
-static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t, WKURLRequestRef request, WKURLResponseRef redirectResponse, const void* clientInfo)
+static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef frame, uint64_t, WKURLRequestRef request, WKURLResponseRef redirectResponse, const void* clientInfo)
 {
     WKWebProcessPlugInBrowserContextController *pluginContextController = (WKWebProcessPlugInBrowserContextController *)clientInfo;
     auto loadDelegate = pluginContextController->_loadDelegate.get();
@@ -194,6 +213,44 @@ static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef page, WKBundleFra
     return request;
 }
 
+static void didInitiateLoadForResource(WKBundlePageRef, WKBundleFrameRef frame, uint64_t resourceIdentifier, WKURLRequestRef request, bool, const void* clientInfo)
+{
+    WKWebProcessPlugInBrowserContextController *pluginContextController = (WKWebProcessPlugInBrowserContextController *)clientInfo;
+    auto loadDelegate = pluginContextController->_loadDelegate.get();
+
+    if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:frame:didInitiateLoadForResource:request:)]) {
+        [loadDelegate webProcessPlugInBrowserContextController:pluginContextController
+                                                         frame:wrapper(*toImpl(frame))
+                                    didInitiateLoadForResource:resourceIdentifier
+                                                       request:toImpl(request)->resourceRequest().nsURLRequest(DoNotUpdateHTTPBody)];
+    }
+}
+
+static void didFinishLoadForResource(WKBundlePageRef, WKBundleFrameRef frame, uint64_t resourceIdentifier, const void* clientInfo)
+{
+    WKWebProcessPlugInBrowserContextController *pluginContextController = (WKWebProcessPlugInBrowserContextController *)clientInfo;
+    auto loadDelegate = pluginContextController->_loadDelegate.get();
+
+    if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:frame:didFinishLoadForResource:)]) {
+        [loadDelegate webProcessPlugInBrowserContextController:pluginContextController
+                                                         frame:wrapper(*toImpl(frame))
+                                      didFinishLoadForResource:resourceIdentifier];
+    }
+}
+
+static void didFailLoadForResource(WKBundlePageRef, WKBundleFrameRef frame, uint64_t resourceIdentifier, WKErrorRef error, const void* clientInfo)
+{
+    WKWebProcessPlugInBrowserContextController *pluginContextController = (WKWebProcessPlugInBrowserContextController *)clientInfo;
+    auto loadDelegate = pluginContextController->_loadDelegate.get();
+
+    if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:frame:didFailLoadForResource:error:)]) {
+        [loadDelegate webProcessPlugInBrowserContextController:pluginContextController
+                                                         frame:wrapper(*toImpl(frame))
+                                        didFailLoadForResource:resourceIdentifier
+                                                         error:wrapper(*toImpl(error))];
+    }
+}
+
 static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *contextController, WebPage& page)
 {
     WKBundlePageResourceLoadClientV1 client;
@@ -202,6 +259,9 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
     client.base.version = 1;
     client.base.clientInfo = contextController;
     client.willSendRequestForFrame = willSendRequestForFrame;
+    client.didInitiateLoadForResource = didInitiateLoadForResource;
+    client.didFinishLoadForResource = didFinishLoadForResource;
+    client.didFailLoadForResource = didFailLoadForResource;
 
     page.initializeInjectedBundleResourceLoadClient(&client.base);
 }
