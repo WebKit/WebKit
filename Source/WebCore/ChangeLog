@@ -1,3 +1,16 @@
+2014-03-21  Zalan Bujtas  <zalan@apple.com>
+
+        Remove redundant friending from class Image.
+        https://bugs.webkit.org/show_bug.cgi?id=130628
+
+        Reviewed by Simon Fraser.
+
+        Those friend classes are subclasses. No need to make them friend of their parent class.
+
+        No change in functionality.
+
+        * platform/graphics/Image.h:
+
 2014-03-21  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Reduce the tiling coverage to the current rect and 1 tile size ahead
