@@ -1666,6 +1666,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
 
     m_page->mainFrame().view()->setScrollOffset(scrollPosition);
     m_page->mainFrame().view()->setUnobscuredContentRect(roundedUnobscuredRect);
+    m_page->mainFrame().view()->setScrollVelocity(visibleContentRectUpdateInfo.m_horizontalVelocity, visibleContentRectUpdateInfo.m_verticalVelocity, visibleContentRectUpdateInfo.m_timestamp);
 
     if (visibleContentRectUpdateInfo.inStableState())
         m_page->mainFrame().view()->setCustomFixedPositionLayoutRect(enclosingIntRect(visibleContentRectUpdateInfo.customFixedPositionRect()));

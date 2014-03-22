@@ -48,6 +48,7 @@
 #import "WebKitSystemInterfaceIOS.h"
 #import <WebCore/FrameView.h>
 #import <UIKit/UIWindow_Private.h>
+#import <wtf/CurrentTime.h>
 #import <wtf/RetainPtr.h>
 
 #if __has_include(<QuartzCore/QuartzCorePrivate.h>)
@@ -61,6 +62,74 @@
 using namespace WebCore;
 using namespace WebKit;
 
+namespace WebKit {
+class HistoricalVelocityData {
+public:
+    HistoricalVelocityData()
+        : m_historySize(0)
+        , m_latestDataIndex(0)
+        , m_lastAppendTimestamp(0)
+    {
+    }
+
+    CGSize velocityForNewData(CGPoint newPosition, double timestamp)
+    {
+        // Due to all the source of rect update, the input is very noisy. To smooth the output, we accumulate all changes
+        // within 1 frame as a single update. No speed computation is ever done on data within the same frame.
+        const double filteringThreshold = 1 / 60.;
+
+        CGSize velocity = CGSizeZero;
+        if (m_historySize > 0) {
+            unsigned oldestDataIndex;
+            unsigned distanceToLastHistoricalData = m_historySize - 1;
+            if (distanceToLastHistoricalData <= m_latestDataIndex)
+                oldestDataIndex = m_latestDataIndex - distanceToLastHistoricalData;
+            else
+                oldestDataIndex = m_historySize - (distanceToLastHistoricalData - m_latestDataIndex);
+
+            double timeDelta = timestamp - m_history[oldestDataIndex].timestamp;
+            if (timeDelta > filteringThreshold)
+                velocity =  CGSizeMake((newPosition.x - m_history[oldestDataIndex].position.x) / timeDelta, (newPosition.y - m_history[oldestDataIndex].position.y) / timeDelta);
+        }
+
+        double timeSinceLastAppend = timestamp - m_lastAppendTimestamp;
+        if (timeSinceLastAppend > filteringThreshold)
+            append(newPosition, timestamp);
+        else
+            m_history[m_latestDataIndex] = { timestamp, newPosition };
+        return velocity;
+    }
+
+    void clear() { m_historySize = 0; }
+
+private:
+    void append(CGPoint newPosition, double timestamp)
+    {
+        m_latestDataIndex = (m_latestDataIndex + 1) % maxHistoryDepth;
+        m_history[m_latestDataIndex] = { timestamp, newPosition };
+
+        unsigned size = m_historySize + 1;
+        if (size <= maxHistoryDepth)
+            m_historySize = size;
+
+        m_lastAppendTimestamp = timestamp;
+    }
+
+
+    static const unsigned maxHistoryDepth = 3;
+
+    unsigned m_historySize;
+    unsigned m_latestDataIndex;
+    double m_lastAppendTimestamp;
+
+    // FIXME: add scale information.
+    struct Data {
+        double timestamp;
+        CGPoint position;
+    } m_history[maxHistoryDepth];
+};
+} // namespace WebKit
+
 @implementation WKContentView {
     std::unique_ptr<PageClientImpl> _pageClient;
     RetainPtr<WKBrowsingContextController> _browsingContextController;
@@ -68,6 +137,8 @@ using namespace WebKit;
     RetainPtr<UIView> _rootContentView;
 
     WKWebView *_webView;
+
+    HistoricalVelocityData _historicalKinematicData;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView
@@ -166,6 +237,13 @@ using namespace WebKit;
 
 - (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect scale:(CGFloat)zoomScale inStableState:(BOOL)isStableState
 {
+    double timestamp = monotonicallyIncreasingTime();
+    CGSize velocity = CGSizeZero;
+    if (!isStableState)
+        velocity = _historicalKinematicData.velocityForNewData(visibleRect.origin, timestamp);
+    else
+        _historicalKinematicData.clear();
+
     double scaleNoiseThreshold = 0.0005;
     CGFloat filteredScale = zoomScale;
     if (!isStableState && fabs(filteredScale - _page->displayedContentScale()) < scaleNoiseThreshold) {
@@ -175,7 +253,7 @@ using namespace WebKit;
     }
 
     CGRect customFixedPositionRect = [self fixedPositionRectFromExposedRect:unobscuredRect scale:zoomScale];
-    _page->updateVisibleContentRects(VisibleContentRectUpdateInfo(_page->nextVisibleContentRectUpdateID(), visibleRect, unobscuredRect, customFixedPositionRect, filteredScale, isStableState));
+    _page->updateVisibleContentRects(VisibleContentRectUpdateInfo(_page->nextVisibleContentRectUpdateID(), visibleRect, unobscuredRect, customFixedPositionRect, filteredScale, isStableState, timestamp, velocity.width, velocity.height));
     
     RemoteScrollingCoordinatorProxy* scrollingCoordinator = _page->scrollingCoordinatorProxy();
     scrollingCoordinator->viewportChangedViaDelegatedScrolling(scrollingCoordinator->rootScrollingNodeID(), unobscuredRect, zoomScale);

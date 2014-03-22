@@ -38,6 +38,7 @@
 #import "WAKWindow.h"
 #import "WKViewPrivate.h"
 #import "WebCoreFrameView.h"
+#import <wtf/CurrentTime.h>
 
 using namespace std;
 
@@ -116,6 +117,45 @@ void ScrollView::setUnobscuredContentRect(const IntRect& rect)
 {
     ASSERT(!platformWidget());
     m_unobscuredContentRect = rect;
+}
+
+void ScrollView::setScrollVelocity(double horizontalVelocity, double verticalVelocity, double timestamp)
+{
+    m_horizontalVelocity = horizontalVelocity;
+    m_verticalVelocity = verticalVelocity;
+    m_lastVelocityUpdateTime = timestamp;
+}
+
+FloatRect ScrollView::computeCoverageRect(double horizontalMargin, double verticalMargin) const
+{
+    FloatRect exposedContentRect = this->exposedContentRect();
+
+    double currentTime = monotonicallyIncreasingTime();
+    double timeDelta = currentTime - m_lastVelocityUpdateTime;
+
+    FloatRect futureRect = exposedContentRect;
+    futureRect.setLocation(FloatPoint(futureRect.location().x() + timeDelta * m_horizontalVelocity, futureRect.location().y() + timeDelta * m_verticalVelocity));
+
+    if (m_horizontalVelocity) {
+        futureRect.setWidth(futureRect.width() + horizontalMargin);
+        if (m_horizontalVelocity < 0)
+            futureRect.setX(std::max(futureRect.x() - horizontalMargin, 0.));
+    }
+
+    if (m_verticalVelocity) {
+        futureRect.setHeight(futureRect.height() + verticalMargin);
+        if (m_verticalVelocity < 0)
+            futureRect.setY(std::max(futureRect.y() - verticalMargin, 0.));
+    }
+
+    if (!m_horizontalVelocity && !m_verticalVelocity) {
+        futureRect.setWidth(futureRect.width() + horizontalMargin);
+        futureRect.setHeight(futureRect.height() + verticalMargin);
+        futureRect.setX(std::max(futureRect.x() - horizontalMargin / 2, 0.));
+        futureRect.setY(std::max(futureRect.y() - verticalMargin / 2, 0.));
+    }
+
+    return futureRect;
 }
 
 IntRect ScrollView::exposedContentRect() const

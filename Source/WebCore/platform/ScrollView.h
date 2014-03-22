@@ -186,6 +186,9 @@ public:
     void setExposedContentRect(const IntRect&);
     void setUnobscuredContentRect(const IntRect&);
 
+    void setScrollVelocity(double horizontalVelocity, double verticalVelocity, double timestamp);
+    FloatRect computeCoverageRect(double horizontalMargin, double verticalMargin) const;
+
     void setActualScrollPosition(const IntPoint&);
     TileCache* tileCache();
 #endif
@@ -414,6 +417,10 @@ private:
 #if PLATFORM(IOS)
     IntRect m_exposedContentRect;
     IntRect m_unobscuredContentRect;
+
+    double m_horizontalVelocity;
+    double m_verticalVelocity;
+    double m_lastVelocityUpdateTime;
 #else
     IntRect m_fixedVisibleContentRect;
 #endif

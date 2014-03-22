@@ -1,3 +1,20 @@
+2014-03-21  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Reduce the tiling coverage to the current rect and 1 tile size ahead
+        https://bugs.webkit.org/show_bug.cgi?id=130555
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+        * platform/ScrollView.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::computeTileCoverageRect):
+        * platform/ios/ScrollViewIOS.mm:
+        (WebCore::ScrollView::setScrollVelocityInformation):
+        (WebCore::ScrollView::computeCoverageRect):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+
 2014-03-21  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] clean up fullscreen player controller when exiting fullscreen
