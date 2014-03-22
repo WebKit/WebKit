@@ -89,6 +89,9 @@ PassRef<CSSPrimitiveValue> CSSValuePool::createColorValue(unsigned rgbValue)
 
 PassRef<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimitiveValue::UnitTypes type)
 {
+    if (std::isinf(value))
+        return createIdentifierValue(CSSValueID::CSSValueInvalid);
+
     if (value < 0 || value > maximumCacheableIntegerValue)
         return CSSPrimitiveValue::create(value, type);
 

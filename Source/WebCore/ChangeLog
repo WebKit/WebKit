@@ -1,3 +1,18 @@
+2014-03-22  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
+
+        ASSERTION FAILED: std::isfinite(num) in WebCore::CSSPrimitiveValue::CSSPrimitiveValue
+        https://bugs.webkit.org/show_bug.cgi?id=127361
+
+        Huge numbers represented by the 'INF' value can not be used
+        in CSS rules, so they make the assert fail. We have to make
+        sure that the parsed property value is finite, otherwise
+        the property will be dropped.
+
+        Test: fast/css/infinite-floating-value.html
+
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::createValue):
+
 2014-03-21  Zalan Bujtas  <zalan@apple.com>
 
         Remove redundant friending from class Image.

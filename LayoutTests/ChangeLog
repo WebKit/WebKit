@@ -1,3 +1,17 @@
+2014-03-22  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
+
+        ASSERTION FAILED: std::isfinite(num) in WebCore::CSSPrimitiveValue::CSSPrimitiveValue
+        https://bugs.webkit.org/show_bug.cgi?id=127361
+
+        Added test shows that CSS rules containing huge numbers
+        (which are transformed into 'INF' values after parsing)
+        are dropped.
+
+        Reviewed by Darin Adler.
+
+        * fast/css/infinite-floating-value-expected.txt: Added.
+        * fast/css/infinite-floating-value.html: Added.
+
 2014-03-21  Mark Lam  <mark.lam@apple.com>
 
         Crash when BytecodeGenerator::emitJump calls Label::bind on null pointer.
