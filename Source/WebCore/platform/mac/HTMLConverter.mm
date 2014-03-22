@@ -401,15 +401,15 @@ const unichar WebNextLineCharacter = 0x0085;
 
 class HTMLConverterCaches {
 public:
-    String propertyValueForNode(Node&, const String& propertyName);
-    bool floatPropertyValueForNode(Node&, const String& propertyName, float&);
-    Color colorPropertyValueForNode(Node&, const String& propertyName);
+    String propertyValueForNode(Node&, CSSPropertyID );
+    bool floatPropertyValueForNode(Node&, CSSPropertyID, float&);
+    Color colorPropertyValueForNode(Node&, CSSPropertyID);
 
     bool isBlockElement(Element&);
     bool elementHasOwnBackgroundColor(Element&);
 
-    PassRefPtr<CSSValue> computedStylePropertyForElement(Element&, const String&);
-    PassRefPtr<CSSValue> inlineStylePropertyForElement(Element&, const String&);
+    PassRefPtr<CSSValue> computedStylePropertyForElement(Element&, CSSPropertyID);
+    PassRefPtr<CSSValue> inlineStylePropertyForElement(Element&, CSSPropertyID);
 
 private:
     HashMap<Element*, std::unique_ptr<ComputedStyleExtractor>> m_computedStyles;
@@ -430,9 +430,10 @@ private:
 
 @interface WebHTMLConverter(WebHTMLConverterInternal)
 
-- (NSString *)_stringForNode:(DOMNode *)node property:(NSString *)key;
-- (PlatformColor *)_colorForNode:(DOMNode *)node property:(NSString *)key;
-- (BOOL)_getFloat:(CGFloat *)val forNode:(DOMNode *)node property:(NSString *)key;
+- (NSString *)_stringForNode:(DOMNode *)node property:(CSSPropertyID)propertyId;
+- (PlatformColor *)_colorForNode:(DOMNode *)node property:(CSSPropertyID)propertyId;
+- (BOOL)_getFloat:(CGFloat *)val forNode:(DOMNode *)node property:(CSSPropertyID)propertyId;
+
 - (void)_traverseNode:(DOMNode *)node depth:(NSInteger)depth embedded:(BOOL)embedded;
 - (void)_traverseFooterNode:(DOMNode *)node depth:(NSInteger)depth;
 
@@ -569,28 +570,26 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
     return array;
 }
 
-PassRefPtr<CSSValue> HTMLConverterCaches::computedStylePropertyForElement(Element& element, const String& propertyName)
+PassRefPtr<CSSValue> HTMLConverterCaches::computedStylePropertyForElement(Element& element, CSSPropertyID propertyId)
 {
-    CSSPropertyID propetyId = cssPropertyID(propertyName);
-    if (propetyId == CSSPropertyInvalid)
+    if (propertyId == CSSPropertyInvalid)
         return nullptr;
 
     auto result = m_computedStyles.add(&element, nullptr);
     if (result.isNewEntry)
         result.iterator->value = std::make_unique<ComputedStyleExtractor>(&element, true);
     ComputedStyleExtractor& computedStyle = *result.iterator->value;
-    return computedStyle.propertyValue(propetyId);
+    return computedStyle.propertyValue(propertyId);
 }
 
-PassRefPtr<CSSValue> HTMLConverterCaches::inlineStylePropertyForElement(Element& element, const String& propertyName)
+PassRefPtr<CSSValue> HTMLConverterCaches::inlineStylePropertyForElement(Element& element, CSSPropertyID propertyId)
 {
-    CSSPropertyID propetyId = cssPropertyID(propertyName);
-    if (propetyId == CSSPropertyInvalid || !element.isStyledElement())
+    if (propertyId == CSSPropertyInvalid || !element.isStyledElement())
         return nullptr;
     const StyleProperties* properties = toStyledElement(element).inlineStyle();
     if (!properties)
         return nullptr;
-    return properties->getPropertyCSSValue(propetyId);
+    return properties->getPropertyCSSValue(propertyId);
 }
 
 static bool stringFromCSSValue(CSSValue& value, String& result)
@@ -612,23 +611,23 @@ static bool stringFromCSSValue(CSSValue& value, String& result)
     return false;
 }
 
-String HTMLConverterCaches::propertyValueForNode(Node& node, const String& propertyName)
+String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID propertyId)
 {
     if (!node.isElementNode()) {
         if (Node* parent = node.parentNode())
-            return propertyValueForNode(*parent, propertyName);
+            return propertyValueForNode(*parent, propertyId);
         return String();
     }
 
     bool inherit = false;
     Element& element = toElement(node);
-    if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyName)) {
+    if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyId)) {
         String result;
         if (stringFromCSSValue(*value, result))
             return result;
     }
 
-    if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyName)) {
+    if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
         String result;
         if (value->isInheritedValue())
             inherit = true;
@@ -636,7 +635,7 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, const String& prope
             return result;
     }
 
-    switch (cssPropertyID(propertyName)) {
+    switch (propertyId) {
     case CSSPropertyDisplay:
         if (element.hasTagName(headTag) || element.hasTagName(scriptTag) || element.hasTagName(appletTag) || element.hasTagName(noframesTag))
             return "none";
@@ -724,18 +723,18 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, const String& prope
 
     if (inherit) {
         if (Node* parent = node.parentNode())
-            return propertyValueForNode(*parent, propertyName);
+            return propertyValueForNode(*parent, propertyId);
     }
     
     return String();
 }
 
-- (NSString *)_stringForNode:(DOMNode *)node property:(NSString *)key
+- (NSString *)_stringForNode:(DOMNode *)node property:(CSSPropertyID)propertyId
 {
     Node* coreNode = core(node);
     if (!coreNode)
         return nil;
-    String result = _caches->propertyValueForNode(*coreNode, String(key));
+    String result = _caches->propertyValueForNode(*coreNode, propertyId);
     if (!result.length())
         return nil;
     return result;
@@ -768,29 +767,29 @@ static inline bool floatValueFromPrimitiveValue(CSSPrimitiveValue& primitiveValu
     }
 }
 
-bool HTMLConverterCaches::floatPropertyValueForNode(Node& node, const String& propertyName, float& result)
+bool HTMLConverterCaches::floatPropertyValueForNode(Node& node, CSSPropertyID propertyId, float& result)
 {
     if (!node.isElementNode()) {
         if (ContainerNode* parent = node.parentNode())
-            return floatPropertyValueForNode(*parent, propertyName, result);
+            return floatPropertyValueForNode(*parent, propertyId, result);
         return false;
     }
 
     Element& element = toElement(node);
-    if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyName)) {
+    if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyId)) {
         if (value->isPrimitiveValue() && floatValueFromPrimitiveValue(toCSSPrimitiveValue(*value), result))
             return true;
     }
 
     bool inherit = false;
-    if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyName)) {
+    if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
         if (value->isPrimitiveValue() && floatValueFromPrimitiveValue(toCSSPrimitiveValue(*value), result))
             return true;
         if (value->isInheritedValue())
             inherit = true;
     }
 
-    switch (cssPropertyID(propertyName)) {
+    switch (propertyId) {
     case CSSPropertyTextIndent:
     case CSSPropertyLetterSpacing:
     case CSSPropertyWordSpacing:
@@ -805,19 +804,19 @@ bool HTMLConverterCaches::floatPropertyValueForNode(Node& node, const String& pr
 
     if (inherit) {
         if (ContainerNode* parent = node.parentNode())
-            return floatPropertyValueForNode(*parent, propertyName, result);
+            return floatPropertyValueForNode(*parent, propertyId, result);
     }
 
     return false;
 }
 
-- (BOOL)_getFloat:(CGFloat *)val forNode:(DOMNode *)node property:(NSString *)key
+- (BOOL)_getFloat:(CGFloat *)val forNode:(DOMNode *)node property:(CSSPropertyID)propertyId
 {
     Node* coreNode = core(node);
     if (!coreNode)
         return NO;
     float result;
-    if (!_caches->floatPropertyValueForNode(*coreNode, String(key), result))
+    if (!_caches->floatPropertyValueForNode(*coreNode, propertyId, result))
         return NO;
     if (val)
         *val = result;
@@ -911,10 +910,10 @@ static inline NSShadow *_shadowForShadowStyle(NSString *shadowStyle)
 
 bool HTMLConverterCaches::isBlockElement(Element& element)
 {
-    String displayValue = propertyValueForNode(element, "display");
+    String displayValue = propertyValueForNode(element, CSSPropertyDisplay);
     if (displayValue == "block" || displayValue == "list-item" || displayValue.startsWith("table"))
         return true;
-    String floatValue = propertyValueForNode(element, "float");
+    String floatValue = propertyValueForNode(element, CSSPropertyFloat);
     if (floatValue == "left" || floatValue == "right")
         return true;
     return false;
@@ -926,7 +925,7 @@ bool HTMLConverterCaches::elementHasOwnBackgroundColor(Element& element)
         return false;
     // In the text system, text blocks (table elements) and documents (body elements)
     // have their own background colors, which should not be inherited.
-    return element.hasTagName(htmlTag) || element.hasTagName(bodyTag) || propertyValueForNode(element, "display").startsWith("table");
+    return element.hasTagName(htmlTag) || element.hasTagName(bodyTag) || propertyValueForNode(element, CSSPropertyDisplay).startsWith("table");
 }
 
 - (BOOL)_elementIsBlockLevel:(DOMElement *)element
@@ -961,29 +960,29 @@ static Color normalizedColor(Color color, bool ignoreBlack)
     return color;
 }
 
-Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, const String& propertyName)
+Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, CSSPropertyID propertyId)
 {
     if (!node.isElementNode()) {
         if (Node* parent = node.parentNode())
-            return colorPropertyValueForNode(*parent, propertyName);
+            return colorPropertyValueForNode(*parent, propertyId);
         return Color();
     }
 
     Element& element = toElement(node);
-    if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyName)) {
+    if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyId)) {
         if (value->isPrimitiveValue() && toCSSPrimitiveValue(*value).isRGBColor())
-            return normalizedColor(Color(toCSSPrimitiveValue(*value).getRGBA32Value()), propertyName == "color");
+            return normalizedColor(Color(toCSSPrimitiveValue(*value).getRGBA32Value()), propertyId == CSSPropertyColor);
     }
 
     bool inherit = false;
-    if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyName)) {
+    if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
         if (value->isPrimitiveValue() && toCSSPrimitiveValue(*value).isRGBColor())
-            return normalizedColor(Color(toCSSPrimitiveValue(*value).getRGBA32Value()), propertyName == "color");
+            return normalizedColor(Color(toCSSPrimitiveValue(*value).getRGBA32Value()), propertyId == CSSPropertyColor);
         if (value->isInheritedValue())
             inherit = true;
     }
 
-    switch (cssPropertyID(propertyName)) {
+    switch (propertyId) {
     case CSSPropertyColor:
         inherit = true;
         break;
@@ -1001,18 +1000,18 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, const String& p
 
     if (inherit) {
         if (Node* parent = node.parentNode())
-            return colorPropertyValueForNode(*parent, propertyName);
+            return colorPropertyValueForNode(*parent, propertyId);
     }
 
     return Color();
 }
 
-- (PlatformColor *)_colorForNode:(DOMNode *)node property:(NSString *)key
+- (PlatformColor *)_colorForNode:(DOMNode *)node property:(CSSPropertyID)propertyId
 {
     Node* coreNode = core(node);
     if (!coreNode)
         return nil;
-    Color result = _caches->colorPropertyValueForNode(*coreNode, String(key));
+    Color result = _caches->colorPropertyValueForNode(*coreNode, propertyId);
     if (!result.isValid())
         return nil;
     PlatformColor *platformResult = _platformColor(result);
@@ -1030,23 +1029,22 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, const String& p
 #if !PLATFORM(IOS)
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 #endif
-    NSString *fontEffect = [self _stringForNode:element property:@"font-effect"];
-    NSString *textDecoration = [self _stringForNode:element property:@"text-decoration"];
-    NSString *verticalAlign = [self _stringForNode:element property:@"vertical-align"];
-    NSString *textShadow = [self _stringForNode:element property:@"text-shadow"];
-    NSString *fontLigatures = [self _stringForNode:element property:@"font-variant-ligatures"];
-    NSString *fontKerning = [self _stringForNode:element property:@"font-kerning"];
-    NSString *letterSpacing = [self _stringForNode:element property:@"letter-spacing"];
+    NSString *textDecoration = [self _stringForNode:element property:CSSPropertyTextDecoration];
+    NSString *verticalAlign = [self _stringForNode:element property:CSSPropertyVerticalAlign];
+    NSString *textShadow = [self _stringForNode:element property:CSSPropertyTextShadow];
+    NSString *fontLigatures = [self _stringForNode:element property:CSSPropertyWebkitFontVariantLigatures];
+    NSString *fontKerning = [self _stringForNode:element property:CSSPropertyWebkitFontKerning];
+    NSString *letterSpacing = [self _stringForNode:element property:CSSPropertyLetterSpacing];
     CGFloat fontSize = 0;
     CGFloat baselineOffset = 0;
     CGFloat strokeWidth = 0.0;
     PlatformFont *font = nil;
     PlatformFont *actualFont = (PlatformFont *)[element _font];
-    PlatformColor *foregroundColor = [self _colorForNode:element property:@"color"];
-    PlatformColor *backgroundColor = [self _colorForNode:element property:@"background-color"];
-    PlatformColor *strokeColor = [self _colorForNode:element property:@"-webkit-text-stroke-color"];
+    PlatformColor *foregroundColor = [self _colorForNode:element property:CSSPropertyColor];
+    PlatformColor *backgroundColor = [self _colorForNode:element property:CSSPropertyBackgroundColor];
+    PlatformColor *strokeColor = [self _colorForNode:element property:CSSPropertyWebkitTextStrokeColor];
 
-    if (![self _getFloat:&fontSize forNode:element property:@"font-size"] || fontSize <= 0.0)
+    if (![self _getFloat:&fontSize forNode:element property:CSSPropertyFontSize] || fontSize <= 0.0)
         fontSize = _defaultFontSize;
     fontSize *= _textSizeMultiplier;
     if (fontSize < _minimumFontSize) fontSize = _minimumFontSize;
@@ -1066,11 +1064,11 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, const String& p
         font = [fontManager convertFont:actualFont toSize:fontSize];
 #endif
     if (!font) {
-        NSString *fontName = [[self _stringForNode:element property:@"font-family"] capitalizedString];
-        NSString *fontStyle = [self _stringForNode:element property:@"font-style"];
-        NSString *fontWeight = [self _stringForNode:element property:@"font-weight"];
+        NSString *fontName = [[self _stringForNode:element property:CSSPropertyFontFamily] capitalizedString];
+        NSString *fontStyle = [self _stringForNode:element property:CSSPropertyFontStyle];
+        NSString *fontWeight = [self _stringForNode:element property:CSSPropertyFontWeight];
 #if !PLATFORM(IOS)
-        NSString *fontVariant = [self _stringForNode:element property:@"font-variant"];
+        NSString *fontVariant = [self _stringForNode:element property:CSSPropertyFontVariant];
 #endif
         if (!fontName)
             fontName = _standardFontFamily;
@@ -1116,20 +1114,14 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, const String& p
     if (backgroundColor && ![self _elementHasOwnBackgroundColor:element])
         [attrs setObject:backgroundColor forKey:NSBackgroundColorAttributeName];
 
-    if ([self _getFloat:&strokeWidth forNode:element property:@"-webkit-text-stroke-width"]) {
+    if ([self _getFloat:&strokeWidth forNode:element property:CSSPropertyWebkitTextStrokeWidth]) {
         float textStrokeWidth = strokeWidth / ([font pointSize] * 0.01);
         [attrs setObject:[NSNumber numberWithDouble:textStrokeWidth] forKey:NSStrokeWidthAttributeName];
     }
     if(strokeColor)
         [attrs setObject:strokeColor forKey:NSStrokeColorAttributeName];
-    if (fontEffect) {
-        if ([fontEffect rangeOfString:@"outline"].location != NSNotFound)
-            [attrs setObject:[NSNumber numberWithDouble:3.0] forKey:NSStrokeWidthAttributeName];
-        if ([fontEffect rangeOfString:@"emboss"].location != NSNotFound)
-            [attrs setObject:[[[PlatformNSShadow alloc] init] autorelease] forKey:NSShadowAttributeName];
-    }
     if (fontKerning || letterSpacing) {
-        if ([fontEffect rangeOfString:@"none"].location != NSNotFound)
+        if ([fontKerning rangeOfString:@"none"].location != NSNotFound)
             [attrs setObject:@0.0 forKey:NSKernAttributeName];
         else {
             double kernVal = letterSpacing ? [letterSpacing doubleValue] : 0.0;
@@ -1140,11 +1132,11 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, const String& p
         }
     }
     if (fontLigatures) {
-        if ([fontEffect rangeOfString:@"normal"].location != NSNotFound)
+        if ([fontLigatures rangeOfString:@"normal"].location != NSNotFound)
             ;   // default: whatever the system decides to do
-        else if ([fontEffect rangeOfString:@"common-ligatures"].location != NSNotFound)
+        else if ([fontLigatures rangeOfString:@"common-ligatures"].location != NSNotFound)
             [attrs setObject:@1 forKey:NSLigatureAttributeName];   // explicitly enabled
-        else if ([fontEffect rangeOfString:@"no-common-ligatures"].location != NSNotFound)
+        else if ([fontLigatures rangeOfString:@"no-common-ligatures"].location != NSNotFound)
             [attrs setObject:@0 forKey:NSLigatureAttributeName];  // explicitly disabled
     }
 
@@ -1160,7 +1152,7 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, const String& p
         if ([verticalAlign rangeOfString:@"sub"].location != NSNotFound)
             [attrs setObject:[NSNumber numberWithInteger:-1] forKey:NSSuperscriptAttributeName];
     }
-    if ([self _getFloat:&baselineOffset forNode:element property:@"vertical-align"])
+    if ([self _getFloat:&baselineOffset forNode:element property:CSSPropertyVerticalAlign])
         [attrs setObject:[NSNumber numberWithDouble:baselineOffset] forKey:NSBaselineOffsetAttributeName];
     if (textShadow && [textShadow length] > 4) {
         NSShadow *shadow = _shadowForShadowStyle(textShadow);
@@ -1174,9 +1166,9 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, const String& p
         NSMutableParagraphStyle *paragraphStyle = [[[self class] defaultParagraphStyle] mutableCopy];
         NSString *blockTag = [blockElement tagName];
         BOOL isParagraph = ([@"P" isEqualToString:blockTag] || [@"LI" isEqualToString:blockTag] || ([blockTag hasPrefix:@"H"] && 2 == [blockTag length]));
-        NSString *textAlign = [self _stringForNode:blockElement property:@"text-align"];
-        NSString *direction = [self _stringForNode:blockElement property:@"direction"];
-        NSString *hyphenation = [self _stringForNode:blockElement property:@"-webkit-hyphens"];
+        NSString *textAlign = [self _stringForNode:blockElement property:CSSPropertyTextAlign];
+        NSString *direction = [self _stringForNode:blockElement property:CSSPropertyDirection];
+        NSString *hyphenation = [self _stringForNode:blockElement property:CSSPropertyWebkitHyphens];
         CGFloat leftMargin = 0;
         CGFloat rightMargin = 0;
         CGFloat bottomMargin = 0;
@@ -1211,16 +1203,16 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, const String& p
                 [paragraphStyle setHeaderLevel:headerLevel];
         }
         if (isParagraph) {
-            if ([self _getFloat:&leftMargin forNode:blockElement property:@"margin-left"] && leftMargin > 0.0)
+            if ([self _getFloat:&leftMargin forNode:blockElement property:CSSPropertyMarginLeft] && leftMargin > 0.0)
                 [paragraphStyle setHeadIndent:leftMargin];
-            if ([self _getFloat:&textIndent forNode:blockElement property:@"text-indent"])
+            if ([self _getFloat:&textIndent forNode:blockElement property:CSSPropertyTextIndent])
                 [paragraphStyle setFirstLineHeadIndent:[paragraphStyle headIndent] + textIndent];
-            if ([self _getFloat:&rightMargin forNode:blockElement property:@"margin-right"] && rightMargin > 0.0)
+            if ([self _getFloat:&rightMargin forNode:blockElement property:CSSPropertyMarginRight] && rightMargin > 0.0)
                 [paragraphStyle setTailIndent:-rightMargin];
-            if ([self _getFloat:&bottomMargin forNode:blockElement property:@"margin-bottom"] && bottomMargin > 0.0)
+            if ([self _getFloat:&bottomMargin forNode:blockElement property:CSSPropertyMarginBottom] && bottomMargin > 0.0)
                 [paragraphStyle setParagraphSpacing:bottomMargin];
         }
-        if (_webViewTextSizeMultiplier > 0.0 && [self _getFloat:&lineHeight forNode:element property:@"line-height"] && lineHeight > 0.0)
+        if (_webViewTextSizeMultiplier > 0.0 && [self _getFloat:&lineHeight forNode:element property:CSSPropertyLineHeight] && lineHeight > 0.0)
             [paragraphStyle setMinimumLineHeight:lineHeight / _webViewTextSizeMultiplier];
         if ([_textLists count] > 0)
             [paragraphStyle setTextLists:_textLists];
@@ -1374,9 +1366,8 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, const String& p
         NSUInteger textLength = [_attrStr length];
         RetainPtr<NSTextAttachment> attachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper]);
 #if PLATFORM(IOS)
-        NSString *vAlign = [self _stringForNode:element property:@"vertical-align"];
-        NSString *hAlign = [self _stringForNode:element property:@"horizontal-align"];
-        attachment.get().bounds = CGRectMake(([hAlign floatValue] / 100.) * element.clientWidth, ([vAlign floatValue] / 100.) * element.clientHeight, element.clientWidth, element.clientHeight);
+        NSString *vAlign = [self _stringForNode:element property:CSSPropertyVerticalAlign];
+        attachment.get().bounds = CGRectMake(0, ([vAlign floatValue] / 100.) * element.clientHeight, element.clientWidth, element.clientHeight);
 #endif
         RetainPtr<NSString> string = adoptNS([[NSString alloc] initWithFormat:(needsParagraph ? @"%C\n" : @"%C"), static_cast<unichar>(NSAttachmentCharacter)]);
         NSRange rangeToReplace = NSMakeRange(textLength, 0);
@@ -1462,57 +1453,57 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, const String& p
     NSString *width = isTableCellElement ? [(DOMHTMLTableCellElement *)element width] : [element getAttribute:@"width"];
 
     if ((width && [width length]) || !isTable) {
-        if ([self _getFloat:&val forNode:element property:@"width"])
+        if ([self _getFloat:&val forNode:element property:CSSPropertyWidth])
             [block setValue:val type:NSTextBlockAbsoluteValueType forDimension:NSTextBlockWidth];
     }
     
-    if ([self _getFloat:&val forNode:element property:@"min-width"])
+    if ([self _getFloat:&val forNode:element property:CSSPropertyMinWidth])
         [block setValue:val type:NSTextBlockAbsoluteValueType forDimension:NSTextBlockMinimumWidth];
-    if ([self _getFloat:&val forNode:element property:@"max-width"])
+    if ([self _getFloat:&val forNode:element property:CSSPropertyMaxWidth])
         [block setValue:val type:NSTextBlockAbsoluteValueType forDimension:NSTextBlockMaximumWidth];
-    if ([self _getFloat:&val forNode:element property:@"min-height"])
+    if ([self _getFloat:&val forNode:element property:CSSPropertyMinHeight])
         [block setValue:val type:NSTextBlockAbsoluteValueType forDimension:NSTextBlockMinimumHeight];
-    if ([self _getFloat:&val forNode:element property:@"max-height"])
+    if ([self _getFloat:&val forNode:element property:CSSPropertyMaxHeight])
         [block setValue:val type:NSTextBlockAbsoluteValueType forDimension:NSTextBlockMaximumHeight];
 
-    if ([self _getFloat:&val forNode:element property:@"padding-left"])
+    if ([self _getFloat:&val forNode:element property:CSSPropertyPaddingLeft])
         [block setWidth:val + extraPadding type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockPadding edge:NSMinXEdge];
     else [block setWidth:extraPadding type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockPadding edge:NSMinXEdge];
-    if ([self _getFloat:&val forNode:element property:@"padding-top"])
+    if ([self _getFloat:&val forNode:element property:CSSPropertyPaddingTop])
         [block setWidth:val + extraPadding type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockPadding edge:NSMinYEdge]; else [block setWidth:extraPadding type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockPadding edge:NSMinYEdge];
-    if ([self _getFloat:&val forNode:element property:@"padding-right"])
+    if ([self _getFloat:&val forNode:element property:CSSPropertyPaddingRight])
         [block setWidth:val + extraPadding type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockPadding edge:NSMaxXEdge]; else [block setWidth:extraPadding type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockPadding edge:NSMaxXEdge];
-    if ([self _getFloat:&val forNode:element property:@"padding-bottom"])
+    if ([self _getFloat:&val forNode:element property:CSSPropertyPaddingBottom])
         [block setWidth:val + extraPadding type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockPadding edge:NSMaxYEdge]; else [block setWidth:extraPadding type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockPadding edge:NSMaxYEdge];
     
-    if ([self _getFloat:&val forNode:element property:@"border-left-width"])
+    if ([self _getFloat:&val forNode:element property:CSSPropertyBorderLeftWidth])
         [block setWidth:val type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockBorder edge:NSMinXEdge];
-    if ([self _getFloat:&val forNode:element property:@"border-top-width"])
+    if ([self _getFloat:&val forNode:element property:CSSPropertyBorderTopWidth])
         [block setWidth:val type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockBorder edge:NSMinYEdge];
-    if ([self _getFloat:&val forNode:element property:@"border-right-width"])
+    if ([self _getFloat:&val forNode:element property:CSSPropertyBorderRightWidth])
         [block setWidth:val type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockBorder edge:NSMaxXEdge];
-    if ([self _getFloat:&val forNode:element property:@"border-bottom-width"])
+    if ([self _getFloat:&val forNode:element property:CSSPropertyBorderBottomWidth])
         [block setWidth:val type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockBorder edge:NSMaxYEdge];
 
-    if ([self _getFloat:&val forNode:element property:@"margin-left"])
+    if ([self _getFloat:&val forNode:element property:CSSPropertyMarginLeft])
         [block setWidth:val + extraMargin type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockMargin edge:NSMinXEdge]; else [block setWidth:extraMargin type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockMargin edge:NSMinXEdge];
-    if ([self _getFloat:&val forNode:element property:@"margin-top"])
+    if ([self _getFloat:&val forNode:element property:CSSPropertyMarginTop])
         [block setWidth:val + extraMargin type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockMargin edge:NSMinYEdge]; else [block setWidth:extraMargin type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockMargin edge:NSMinYEdge];
-    if ([self _getFloat:&val forNode:element property:@"margin-right"])
+    if ([self _getFloat:&val forNode:element property:CSSPropertyMarginRight])
         [block setWidth:val + extraMargin type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockMargin edge:NSMaxXEdge]; else [block setWidth:extraMargin type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockMargin edge:NSMaxXEdge];
-    if ([self _getFloat:&val forNode:element property:@"margin-bottom"])
+    if ([self _getFloat:&val forNode:element property:CSSPropertyMarginBottom])
         [block setWidth:val + extraMargin type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockMargin edge:NSMaxYEdge]; else [block setWidth:extraMargin type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockMargin edge:NSMaxYEdge];
 
-    if ((color = [self _colorForNode:element property:@"background-color"]))
+    if ((color = [self _colorForNode:element property:CSSPropertyBackgroundColor]))
         [block setBackgroundColor:color];
     if (!color && backgroundColor) [block setBackgroundColor:backgroundColor];
-    if ((color = [self _colorForNode:element property:@"border-left-color"]))
+    if ((color = [self _colorForNode:element property:CSSPropertyBorderLeftColor]))
         [block setBorderColor:color forEdge:NSMinXEdge];
-    if ((color = [self _colorForNode:element property:@"border-top-color"]))
+    if ((color = [self _colorForNode:element property:CSSPropertyBorderTopColor]))
         [block setBorderColor:color forEdge:NSMinYEdge];
-    if ((color = [self _colorForNode:element property:@"border-right-color"]))
+    if ((color = [self _colorForNode:element property:CSSPropertyBorderRightColor]))
         [block setBorderColor:color forEdge:NSMaxXEdge];
-    if ((color = [self _colorForNode:element property:@"border-bottom-color"]))
+    if ((color = [self _colorForNode:element property:CSSPropertyBorderBottomColor]))
         [block setBorderColor:color forEdge:NSMaxYEdge];
 }
 
@@ -1687,9 +1678,9 @@ static NSInteger _colCompare(id block1, id block2, void *)
     [table setCollapsesBorders:NO];
     [table setHidesEmptyCells:NO];
     if (tableElement) {
-        NSString *borderCollapse = [self _stringForNode:tableElement property:@"border-collapse"];
-        NSString *emptyCells = [self _stringForNode:tableElement property:@"empty-cells"];
-        NSString *tableLayout = [self _stringForNode:tableElement property:@"table-layout"];
+        NSString *borderCollapse = [self _stringForNode:tableElement property:CSSPropertyBorderCollapse];
+        NSString *emptyCells = [self _stringForNode:tableElement property:CSSPropertyEmptyCells];
+        NSString *tableLayout = [self _stringForNode:tableElement property:CSSPropertyTableLayout];
         if ([tableElement respondsToSelector:@selector(cellSpacing)]) {
             NSString *cellSpacing = [(DOMHTMLTableElement *)tableElement cellSpacing];
             if (cellSpacing && [cellSpacing length] > 0 && ![cellSpacing hasSuffix:@"%"]) cellSpacingVal = [cellSpacing floatValue];
@@ -1745,7 +1736,7 @@ static NSInteger _colCompare(id block1, id block2, void *)
     }
     RetainPtr<NSTextTableBlock> block = adoptNS([[PlatformNSTextTableBlock alloc] initWithTable:table startingRow:rowNumber rowSpan:rowSpan startingColumn:columnNumber columnSpan:colSpan]);
     if (tableCellElement) {
-        NSString *verticalAlign = [self _stringForNode:tableCellElement property:@"vertical-align"];
+        NSString *verticalAlign = [self _stringForNode:tableCellElement property:CSSPropertyVerticalAlign];
         [self _fillInBlock:block.get() forElement:tableCellElement backgroundColor:color extraMargin:cellSpacingVal / 2 extraPadding:0 isTable:NO];
         if ([@"middle" isEqualToString:verticalAlign])
             [block setVerticalAlignment:NSTextBlockMiddleAlignment];
@@ -1768,16 +1759,16 @@ static NSInteger _colCompare(id block1, id block2, void *)
     if (isBlockLevel)
         [_writingDirectionArray removeAllObjects];
     else {
-        NSString *bidi = [self _stringForNode:element property:@"unicode-bidi"];
+        NSString *bidi = [self _stringForNode:element property:CSSPropertyUnicodeBidi];
         if (bidi && [bidi isEqualToString:@"embed"]) {
             NSUInteger val = NSTextWritingDirectionEmbedding;
-            NSString *direction = [self _stringForNode:element property:@"direction"];
+            NSString *direction = [self _stringForNode:element property:CSSPropertyDirection];
             if ([direction isEqualToString:@"rtl"])
                 val |= NSWritingDirectionRightToLeft;
             [_writingDirectionArray addObject:[NSNumber numberWithUnsignedInteger:val]];
         } else if (bidi && [bidi isEqualToString:@"bidi-override"]) {
             NSUInteger val = NSTextWritingDirectionOverride;
-            NSString *direction = [self _stringForNode:element property:@"direction"];
+            NSString *direction = [self _stringForNode:element property:CSSPropertyDirection];
             if ([direction isEqualToString:@"rtl"])
                 val |= NSWritingDirectionRightToLeft;
             [_writingDirectionArray addObject:[NSNumber numberWithUnsignedInteger:val]];
@@ -1788,7 +1779,7 @@ static NSInteger _colCompare(id block1, id block2, void *)
         if ([@"table-row-group" isEqualToString:displayVal]) {
             // If we are starting in medias res, the first thing we see may be the tbody, so go up to the table
             tableElement = [self _blockLevelElementForNode:[element parentNode]];
-            if (![@"table" isEqualToString:[self _stringForNode:tableElement property:@"display"]])
+            if (![@"table" isEqualToString:[self _stringForNode:tableElement property:CSSPropertyDisplay]])
                 tableElement = element;
         }
         while ([_textTables count] > [_textBlocks count])
@@ -1798,7 +1789,7 @@ static NSInteger _colCompare(id block1, id block2, void *)
         [_textTableFooters setObject:element forKey:[NSValue valueWithNonretainedObject:[_textTables lastObject]]];
         retval = NO;
     } else if ([@"table-row" isEqualToString:displayVal] && [_textTables count] > 0) {
-        PlatformColor *color = [self _colorForNode:element property:@"background-color"];
+        PlatformColor *color = [self _colorForNode:element property:CSSPropertyBackgroundColor];
         if (!color) color = [PlatformColorClass clearColor];
         [_textTableRowBackgroundColors addObject:color];
     } else if ([@"table-cell" isEqualToString:displayVal]) {
@@ -1870,14 +1861,14 @@ static NSInteger _colCompare(id block1, id block2, void *)
         }
     } else if ([@"UL" isEqualToString:tag]) {
         RetainPtr<NSTextList> list;
-        NSString *listStyleType = [self _stringForNode:element property:@"list-style-type"];
+        NSString *listStyleType = [self _stringForNode:element property:CSSPropertyListStyleType];
         if (!listStyleType || [listStyleType length] == 0)
             listStyleType = @"disc";
         list = adoptNS([[PlatformNSTextList alloc] initWithMarkerFormat:[NSString stringWithFormat:@"{%@}", listStyleType] options:0]);
         [_textLists addObject:list.get()];
     } else if ([@"OL" isEqualToString:tag]) {
         RetainPtr<NSTextList> list;
-        NSString *listStyleType = [self _stringForNode:element property:@"list-style-type"];
+        NSString *listStyleType = [self _stringForNode:element property:CSSPropertyListStyleType];
         if (!listStyleType || [listStyleType length] == 0) listStyleType = @"decimal";
         list = adoptNS([[PlatformNSTextList alloc] initWithMarkerFormat:[NSString stringWithFormat:@"{%@}.", listStyleType] options:0]);
         if ([element respondsToSelector:@selector(start)]) {
@@ -2012,7 +2003,7 @@ static NSInteger _colCompare(id block1, id block2, void *)
             [self _newParagraphForElement:element tag:tag allowEmpty:(range.length == 0) suppressTrailingSpace:YES];
         }
     } else if ([_writingDirectionArray count] > 0) {
-        NSString *bidi = [self _stringForNode:element property:@"unicode-bidi"];
+        NSString *bidi = [self _stringForNode:element property:CSSPropertyUnicodeBidi];
         if (bidi && ([bidi isEqualToString:@"embed"] || [bidi isEqualToString:@"bidi-override"])) {
             [_writingDirectionArray removeLastObject];
         }
@@ -2136,8 +2127,8 @@ static NSInteger _colCompare(id block1, id block2, void *)
     BOOL suppressLeadingSpace = ((_flags.isSoft && lastChar == ' ') || lastChar == '\n' || lastChar == '\r' || lastChar == '\t' || lastChar == NSParagraphSeparatorCharacter || lastChar == NSLineSeparatorCharacter || lastChar == NSFormFeedCharacter || lastChar == WebNextLineCharacter);
     NSRange rangeToReplace = NSMakeRange(textLength, 0);
     CFMutableStringRef mutstr = NULL;
-    whitespaceVal = [self _stringForNode:text property:@"white-space"];
-    transformVal = [self _stringForNode:text property:@"text-transform"];
+    whitespaceVal = [self _stringForNode:text property:CSSPropertyWhiteSpace];
+    transformVal = [self _stringForNode:text property:CSSPropertyTextTransform];
     
     if (_domRange) {
         if (text == [_domRange startContainer]) {
@@ -2270,7 +2261,7 @@ static NSInteger _colCompare(id block1, id block2, void *)
         }
     } else if (nodeType == DOM_ELEMENT_NODE) {
         DOMElement *element = (DOMElement *)node;
-        NSString *tag = [element tagName], *displayVal = [self _stringForNode:element property:@"display"];
+        NSString *tag = [element tagName], *displayVal = [self _stringForNode:element property:CSSPropertyDisplay];
         if ([self _enterElement:element tag:tag display:displayVal embedded:embedded]) {
             NSUInteger startIndex = [_attrStr length];
             if ([self _processElement:element tag:tag display:displayVal depth:depth]) {
