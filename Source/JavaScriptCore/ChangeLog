@@ -1,5 +1,12 @@
 2014-03-22  Andreas Kling  <akling@apple.com>
 
+        Fix debug build.
+
+        * bytecode/CodeBlock.cpp:
+        * runtime/Executable.cpp:
+
+2014-03-22  Andreas Kling  <akling@apple.com>
+
         Cut down on JSC profiler includes in WebCore & co.
         <https://webkit.org/b/130637>
 

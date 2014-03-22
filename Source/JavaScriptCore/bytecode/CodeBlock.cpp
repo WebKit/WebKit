@@ -52,6 +52,7 @@
 #include "JSCInlines.h"
 #include "PolymorphicGetByIdList.h"
 #include "PolymorphicPutByIdList.h"
+#include "ProfilerDatabase.h"
 #include "ReduceWhitespace.h"
 #include "Repatch.h"
 #include "RepatchBuffer.h"

@@ -34,6 +34,7 @@
 #include "LLIntEntrypoint.h"
 #include "JSCInlines.h"
 #include "Parser.h"
+#include "ProfilerDatabase.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
