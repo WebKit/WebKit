@@ -1,3 +1,17 @@
+2014-03-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Assertions in WebPage::rangeFromEditingRange when requested range location is NSNotFound
+        https://bugs.webkit.org/show_bug.cgi?id=130633
+        <rdar://problem/16397583>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView firstRectForCharacterRange:completionHandler:]):
+        (-[WKView firstRectForCharacterRange:actualRange:]):
+        Return NSZeroRect, like NSTextView does for any locations that are out of bounds.
+        There is no need for a round trip to WebProcess in this case.
+
 2014-03-21  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Reduce the tiling coverage to the current rect and 1 tile size ahead

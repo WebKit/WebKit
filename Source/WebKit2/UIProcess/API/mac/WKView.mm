@@ -1519,11 +1519,17 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if ((theRange.location + theRange.length < theRange.location) && (theRange.location + theRange.length != 0))
         theRange.length = 0;
 
+    if (theRange.location == NSNotFound) {
+        LOG(TextInput, "    -> NSZeroRect");
+        completionHandlerPtr(NSZeroRect, theRange);
+        return;
+    }
+
     _data->_page->firstRectForCharacterRangeAsync(theRange, RectForCharacterRangeCallback::create([self, completionHandler](bool error, const IntRect& rect, const EditingRange& actualRange) {
         void (^completionHandlerBlock)(NSRect, NSRange) = (void (^)(NSRect, NSRange))completionHandler.get();
         if (error) {
             LOG(TextInput, "    ...firstRectForCharacterRange failed.");
-            completionHandlerBlock(NSMakeRect(0, 0, 0, 0), NSMakeRange(NSNotFound, 0));
+            completionHandlerBlock(NSZeroRect, NSMakeRange(NSNotFound, 0));
             return;
         }
 
@@ -2052,7 +2058,14 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     // (type something; try ranges (1, -1) and (2, -1).
     if ((theRange.location + theRange.length < theRange.location) && (theRange.location + theRange.length != 0))
         theRange.length = 0;
-    
+
+    if (theRange.location == NSNotFound) {
+        if (actualRange)
+            *actualRange = theRange;
+        LOG(TextInput, "firstRectForCharacterRange:(NSNotFound, %u) -> NSZeroRect", theRange.length);
+        return NSZeroRect;
+    }
+
     NSRect resultRect = _data->_page->firstRectForCharacterRange(theRange);
     resultRect = [self convertRect:resultRect toView:nil];
     resultRect = [self.window convertRectToScreen:resultRect];
