@@ -71,6 +71,7 @@
 #include "Nodes.h"
 #include "Parser.h"
 #include "ParserArena.h"
+#include "ProfilerDatabase.h"
 #include "PropertyMapHashTable.h"
 #include "RegExpCache.h"
 #include "RegExpObject.h"

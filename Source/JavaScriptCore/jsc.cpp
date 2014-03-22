@@ -37,6 +37,7 @@
 #include "JSLock.h"
 #include "JSProxy.h"
 #include "JSString.h"
+#include "ProfilerDatabase.h"
 #include "SamplingTool.h"
 #include "StackVisitor.h"
 #include "StructureRareDataInlines.h"

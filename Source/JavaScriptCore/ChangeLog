@@ -1,3 +1,19 @@
+2014-03-22  Andreas Kling  <akling@apple.com>
+
+        Cut down on JSC profiler includes in WebCore & co.
+        <https://webkit.org/b/130637>
+
+        Most of WebKit was pulling in JSC's profiler headers via VM.h.
+
+        Reviewed by Darin Adler.
+
+        * dfg/DFGDisassembler.cpp:
+        * dfg/DFGDisassembler.h:
+        * dfg/DFGJITFinalizer.cpp:
+        * jsc.cpp:
+        * runtime/VM.cpp:
+        * runtime/VM.h:
+
 2014-03-22  Landry Breuil <landry@openbsd.org>
 
         Use pthread_stackseg_np() to find the stack bounds on OpenBSD.

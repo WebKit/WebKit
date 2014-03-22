@@ -32,6 +32,7 @@
 #include "DFGGraph.h"
 #include "DFGJITCode.h"
 #include "JSCInlines.h"
+#include "ProfilerDatabase.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace DFG {

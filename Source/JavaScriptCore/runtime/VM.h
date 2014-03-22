@@ -40,7 +40,6 @@
 #include "LLIntData.h"
 #include "MacroAssemblerCodeRef.h"
 #include "NumericStrings.h"
-#include "ProfilerDatabase.h"
 #include "PrivateName.h"
 #include "PrototypeMap.h"
 #include "SmallStrings.h"
@@ -114,6 +113,9 @@ namespace JSC {
 #endif // ENABLE(FTL_JIT)
     namespace CommonSlowPaths {
     struct ArityCheckData;
+    }
+    namespace Profiler {
+    class Database;
     }
 
     struct HashTable;
