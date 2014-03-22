@@ -30,6 +30,7 @@
 #include "HTMLToken.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -335,7 +336,7 @@ public:
         m_currentAttribute->value.append(character);
     }
 
-    void appendToAttributeValue(size_t i, const String& value)
+    void appendToAttributeValue(size_t i, StringView value)
     {
         ASSERT(!value.isEmpty());
         ASSERT(m_type == StartTag || m_type == EndTag);

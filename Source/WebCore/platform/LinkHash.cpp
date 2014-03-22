@@ -26,7 +26,7 @@
 #include "LinkHash.h"
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -258,17 +258,17 @@ static ALWAYS_INLINE void visitedURLInline(const URL& base, const CharacterType*
     }
 
     if (!length)
-        buffer.append(base.string().getCharactersWithUpconvert<CharacterType>(), base.string().length());
+        append(buffer, base.string());
     else {
         switch (characters[0]) {
             case '/':
-                buffer.append(base.string().getCharactersWithUpconvert<CharacterType>(), base.pathStart());
+                append(buffer, StringView(base.string()).substring(0, base.pathStart()));
                 break;
             case '#':
-                buffer.append(base.string().getCharactersWithUpconvert<CharacterType>(), base.pathEnd());
+                append(buffer, StringView(base.string()).substring(0, base.pathEnd()));
                 break;
             default:
-                buffer.append(base.string().getCharactersWithUpconvert<CharacterType>(), base.pathAfterLastSlash());
+                append(buffer, StringView(base.string()).substring(0, base.pathAfterLastSlash()));
                 break;
         }
     }
@@ -298,7 +298,9 @@ LinkHash visitedLinkHash(const URL& base, const AtomicString& attributeURL)
     }
 
     Vector<UChar, 512> url;
-    visitedURLInline(base, attributeURL.string().deprecatedCharacters(), attributeURL.length(), url);
+    auto upconvertedCharacters = StringView(attributeURL.string()).upconvertedCharacters();
+    const UChar* characters = upconvertedCharacters;
+    visitedURLInline(base, characters, attributeURL.length(), url);
     if (url.isEmpty())
         return 0;
 

@@ -34,6 +34,7 @@
 #include "TextRun.h"
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringView.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -299,7 +300,7 @@ String StringTruncator::rightTruncate(const String& string, float maxWidth, cons
 
 float StringTruncator::width(const String& string, const Font& font, EnableRoundingHacksOrNot enableRoundingHacks)
 {
-    return stringWidth(font, string.deprecatedCharacters(), string.length(), !enableRoundingHacks);
+    return stringWidth(font, StringView(string).upconvertedCharacters(), string.length(), !enableRoundingHacks);
 }
 
 String StringTruncator::centerTruncate(const String& string, float maxWidth, const Font& font, EnableRoundingHacksOrNot enableRoundingHacks, float& resultWidth, bool shouldInsertEllipsis, float customTruncationElementWidth)

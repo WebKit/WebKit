@@ -1,3 +1,13 @@
+2014-03-22  Darin Adler  <darin@apple.com>
+
+        Remove String::deprecatedCharacters
+        https://bugs.webkit.org/show_bug.cgi?id=126854
+
+        Reviewed by Sam Weinig.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Removed getData16SlowCase.
+
 2014-03-21  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Compile fixes with video not enabled.

@@ -255,7 +255,8 @@ void EventSource::didReceiveData(const char* data, int length)
     ASSERT(m_state == OPEN);
     ASSERT(m_requestInFlight);
 
-    append(m_receiveBuf, m_decoder->decode(data, length));
+    // FIXME: Need to call flush at some point.
+    append(m_receiveBuf, StringView(m_decoder->decode(data, length)));
     parseEventStream();
 }
 

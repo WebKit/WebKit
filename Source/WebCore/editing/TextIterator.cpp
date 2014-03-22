@@ -1469,15 +1469,6 @@ void CharacterIterator::advance(int count)
     m_runOffset = 0;
 }
 
-static void append(Vector<UChar>& buffer, StringView string)
-{
-    unsigned oldSize = buffer.size();
-    unsigned length = string.length();
-    buffer.grow(oldSize + length);
-    for (unsigned i = 0; i < length; ++i)
-        buffer[oldSize + i] = string[i];
-}
-
 static PassRefPtr<Range> characterSubrange(CharacterIterator& it, int offset, int length)
 {
     it.advance(offset);
@@ -2065,7 +2056,7 @@ inline void SearchBuffer::prependContext(StringView text)
     }
 
     size_t usableLength = std::min(m_buffer.capacity() - m_prefixLength, text.length() - wordBoundaryContextStart);
-    WebCore::append(m_buffer, text.substring(text.length() - usableLength, usableLength));
+    WTF::append(m_buffer, text.substring(text.length() - usableLength, usableLength));
     m_prefixLength += usableLength;
 
     if (wordBoundaryContextStart || m_prefixLength == m_buffer.capacity())

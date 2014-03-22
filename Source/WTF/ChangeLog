@@ -1,3 +1,54 @@
+2014-03-22  Darin Adler  <darin@apple.com>
+
+        Remove String::deprecatedCharacters
+        https://bugs.webkit.org/show_bug.cgi?id=126854
+
+        Reviewed by Sam Weinig.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::reifyString): Removed code to update 16-bit shadow.
+
+        * wtf/text/StringBuilder.h: Removed deprecatedCharacters.
+        (WTF::StringBuilder::StringBuilder): Removed m_valid16BitShadowLength.
+        (WTF::StringBuilder::clear): Removed code to clear m_valid16BitShadowLength.
+        (WTF::StringBuilder::swap): Removed code to swap m_valid16BitShadowLength.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl): Removed code to free m_copyData16.
+        (WTF::StringImpl::upper): Use StringView::upconvertedCharacters for slow case.
+        (WTF::StringImpl::lower): Ditto.
+        (WTF::StringImpl::find): Use characters8/16 rather than deprecatedCharacters.
+        Added an 8-bit code path to one of the overloads. Might want to revisit later
+        to decide whether to use templates instead of copy/paste, or even use StringView
+        to cut down on duplicate code paths.
+        (WTF::StringImpl::findIgnoringCase): Ditto.
+        (WTF::StringImpl::sizeInBytes): Remove code to handle has16BitShadow case.
+        (WTF::equalIgnoringNullity): Added. To be called by the Vector template in the header.
+
+        * wtf/text/StringImpl.h: Removed deprecatedCharacters, has16BitShadow,
+        upconvertCharacters, getData16SlowCase, s_hashFlagHas16BitShadow, and m_copyData16.
+        (WTF::equalIgnoringNullity): Changed the template function into an inline that calls
+        a non-inline helper function. The non-inline function handles both 8-bit and 16-bit
+        strings.
+
+        * wtf/text/StringView.h:
+        (WTF::StringView::StringView): Added an overload so we can make one of these directly
+        from a StringImpl without first wrapping it in a string. Added an adapter so we can
+        use StringView as part of string concatenation. Added an append function so we can
+        append to a Vector<UChar>.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::append): Use StringView::getCharactersWithUpconvert. Also changed
+        single-character append so it won't always turn an 8-bit string into a 16-bit one.
+        (WTF::String::insert): Removed one insert overload and changed the other to use
+        StringView::getCharactersWithUpconvert.
+        (WTF::String::truncate): Changed to use StringImpl::substring.
+        (WTF::String::percentage): Added characters8/16 paths instead of using
+        deprecatedCharacters.
+
+        * wtf/text/WTFString.h: Removed deprecatedCharacters, getCharactersWithUpconvert,
+        insert(UChar*, unsigned, unsigned), and the append overload for Vector<UChar>.
+
 2014-03-20  Darin Adler  <darin@apple.com>
 
         Fix a header guard mistake (harmless but clearly wrong)

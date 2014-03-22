@@ -59,11 +59,6 @@ void StringBuilder::reifyString() const
         m_string = m_buffer.get();
     else
         m_string = StringImpl::createSubstringSharingImpl(m_buffer, 0, m_length);
-
-    if (m_buffer->has16BitShadow() && m_valid16BitShadowLength < m_length)
-        m_buffer->upconvertCharacters(m_valid16BitShadowLength, m_length);
-
-    m_valid16BitShadowLength = m_length;
 }
 
 void StringBuilder::resize(unsigned newSize)

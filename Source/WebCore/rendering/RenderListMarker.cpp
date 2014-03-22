@@ -1335,13 +1335,15 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         // Text is not arbitrary. We can judge whether it's RTL from the first character,
         // and we only need to handle the direction U_RIGHT_TO_LEFT for now.
         bool textNeedsReversing = u_charDirection(m_text[0]) == U_RIGHT_TO_LEFT;
-        StringBuilder reversedText;
+        String reversedText;
         if (textNeedsReversing) {
-            int length = m_text.length();
-            reversedText.reserveCapacity(length);
-            for (int i = length - 1; i >= 0; --i)
-                reversedText.append(m_text[i]);
-            textRun.setText(reversedText.deprecatedCharacters(), length);
+            unsigned length = m_text.length();
+            StringBuilder buffer;
+            buffer.reserveCapacity(length);
+            for (unsigned i = 0; i < length; ++i)
+                buffer.append(m_text[length - i]);
+            reversedText = buffer.toString();
+            textRun.setText(StringView(reversedText));
         }
 
         const UChar suffix = listMarkerSuffix(type, m_listItem.value());

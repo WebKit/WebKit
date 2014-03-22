@@ -286,12 +286,12 @@ static void appendASCII(const String& base, const char* rel, size_t len, CharBuf
 // Returns the index of the first index in string |s| of any of the characters
 // in |toFind|. |toFind| should be a null-terminated string, all characters up
 // to the null will be searched. Returns int if not found.
-static int findFirstOf(const UChar* s, int sLen, int startPos, const char* toFind)
+static int findFirstOf(StringView string, unsigned startPosition, const char* target)
 {
-    for (int i = startPos; i < sLen; i++) {
-        const char* cur = toFind;
-        while (*cur) {
-            if (s[i] == *(cur++))
+    unsigned length = string.length();
+    for (unsigned i = startPosition; i < length; ++i) {
+        for (unsigned j = 0; target[j]; ++j) {
+            if (string[i] == target[j])
                 return i;
         }
     }
@@ -1493,28 +1493,48 @@ String encodeWithURLEscapeSequences(const String& notEncodedString)
     return String(buffer.data(), p - buffer.data());
 }
 
+static bool containsOnlyASCII(StringView string)
+{
+    if (string.is8Bit())
+        return charactersAreAllASCII(string.characters8(), string.length());
+    return charactersAreAllASCII(string.characters16(), string.length());
+}
+
+static bool protocolIs(StringView stringURL, const char* protocol)
+{
+    assertProtocolIsGood(protocol);
+    unsigned length = stringURL.length();
+    for (unsigned i = 0; i < length; ++i) {
+        if (!protocol[i])
+            return stringURL[i] == ':';
+        if (!isLetterMatchIgnoringCase(stringURL[i], protocol[i]))
+            return false;
+    }
+    return false;
+}
+
 // Appends the punycoded hostname identified by the given string and length to
 // the output buffer. The result will not be null terminated.
-static void appendEncodedHostname(UCharBuffer& buffer, const UChar* str, unsigned strLen)
+static void appendEncodedHostname(UCharBuffer& buffer, StringView string)
 {
     // Needs to be big enough to hold an IDN-encoded name.
     // For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.
     const unsigned hostnameBufferLength = 2048;
 
-    if (strLen > hostnameBufferLength || charactersAreAllASCII(str, strLen)) {
-        buffer.append(str, strLen);
+    if (string.length() > hostnameBufferLength || containsOnlyASCII(string)) {
+        append(buffer, string);
         return;
     }
 
     UChar hostnameBuffer[hostnameBufferLength];
     UErrorCode error = U_ZERO_ERROR;
-    int32_t numCharactersConverted = uidna_IDNToASCII(str, strLen, hostnameBuffer,
+    int32_t numCharactersConverted = uidna_IDNToASCII(string.upconvertedCharacters(), string.length(), hostnameBuffer,
         hostnameBufferLength, UIDNA_ALLOW_UNASSIGNED, 0, &error);
     if (error == U_ZERO_ERROR)
         buffer.append(hostnameBuffer, numCharactersConverted);
 }
 
-static void findHostnamesInMailToURL(const UChar* str, int strLen, Vector<std::pair<int, int>>& nameRanges)
+static void findHostnamesInMailToURL(StringView string, Vector<std::pair<int, int>>& nameRanges)
 {
     // In a mailto: URL, host names come after a '@' character and end with a '>' or ',' or '?' or end of string character.
     // Skip quoted strings so that characters in them don't confuse us.
@@ -1525,10 +1545,10 @@ static void findHostnamesInMailToURL(const UChar* str, int strLen, Vector<std::p
     int p = 0;
     while (1) {
         // Find start of host name or of quoted string.
-        int hostnameOrStringStart = findFirstOf(str, strLen, p, "\"@?");
+        int hostnameOrStringStart = findFirstOf(string, p, "\"@?");
         if (hostnameOrStringStart == -1)
             return;
-        UChar c = str[hostnameOrStringStart];
+        UChar c = string[hostnameOrStringStart];
         p = hostnameOrStringStart + 1;
 
         if (c == '?')
@@ -1537,10 +1557,10 @@ static void findHostnamesInMailToURL(const UChar* str, int strLen, Vector<std::p
         if (c == '@') {
             // Find end of host name.
             int hostnameStart = p;
-            int hostnameEnd = findFirstOf(str, strLen, p, ">,?");
+            int hostnameEnd = findFirstOf(string, p, ">,?");
             bool done;
             if (hostnameEnd == -1) {
-                hostnameEnd = strLen;
+                hostnameEnd = string.length();
                 done = true;
             } else {
                 p = hostnameEnd;
@@ -1555,11 +1575,11 @@ static void findHostnamesInMailToURL(const UChar* str, int strLen, Vector<std::p
             // Skip quoted string.
             ASSERT(c == '"');
             while (1) {
-                int escapedCharacterOrStringEnd = findFirstOf(str, strLen, p, "\"\\");
+                int escapedCharacterOrStringEnd = findFirstOf(string, p, "\"\\");
                 if (escapedCharacterOrStringEnd == -1)
                     return;
 
-                c = str[escapedCharacterOrStringEnd];
+                c = string[escapedCharacterOrStringEnd];
                 p = escapedCharacterOrStringEnd + 1;
 
                 // If we are the end of the string, then break from the string loop back to the host name loop.
@@ -1568,7 +1588,7 @@ static void findHostnamesInMailToURL(const UChar* str, int strLen, Vector<std::p
 
                 // Skip escaped character.
                 ASSERT(c == '\\');
-                if (p == strLen)
+                if (p == static_cast<int>(string.length()))
                     return;
 
                 ++p;
@@ -1577,23 +1597,22 @@ static void findHostnamesInMailToURL(const UChar* str, int strLen, Vector<std::p
     }
 }
 
-static bool findHostnameInHierarchicalURL(const UChar* str, int strLen, int& startOffset, int& endOffset)
+static bool findHostnameInHierarchicalURL(StringView string, int& startOffset, int& endOffset)
 {
     // Find the host name in a hierarchical URL.
     // It comes after a "://" sequence, with scheme characters preceding, and
     // this should be the first colon in the string.
     // It ends with the end of the string or a ":" or a path segment ending character.
     // If there is a "@" character, the host part is just the part after the "@".
-    int separator = findFirstOf(str, strLen, 0, ":");
-    if (separator == -1 || separator + 2 >= strLen ||
-        str[separator + 1] != '/' || str[separator + 2] != '/')
+    int separator = findFirstOf(string, 0, ":");
+    if (separator == -1 || separator + 2 >= static_cast<int>(string.length()) || string[separator + 1] != '/' || string[separator + 2] != '/')
         return false;
 
     // Check that all characters before the :// are valid scheme characters.
-    if (!isSchemeFirstChar(str[0]))
+    if (!isSchemeFirstChar(string[0]))
         return false;
     for (int i = 1; i < separator; ++i) {
-        if (!isSchemeChar(str[i]))
+        if (!isSchemeChar(string[i]))
             return false;
     }
 
@@ -1601,9 +1620,9 @@ static bool findHostnameInHierarchicalURL(const UChar* str, int strLen, int& sta
     int authorityStart = separator + 3;
 
     // Find terminating character.
-    int hostnameEnd = strLen;
-    for (int i = authorityStart; i < strLen; ++i) {
-        UChar c = str[i];
+    int hostnameEnd = string.length();
+    for (int i = authorityStart; i < hostnameEnd; ++i) {
+        UChar c = string[i];
         if (c == ':' || (isPathSegmentEndChar(c) && c != 0)) {
             hostnameEnd = i;
             break;
@@ -1611,7 +1630,7 @@ static bool findHostnameInHierarchicalURL(const UChar* str, int strLen, int& sta
     }
 
     // Find "@" for the start of the host name.
-    int userInfoTerminator = findFirstOf(str, strLen, authorityStart, "@");
+    int userInfoTerminator = findFirstOf(string, authorityStart, "@");
     int hostnameStart;
     if (userInfoTerminator == -1 || userInfoTerminator > hostnameEnd)
         hostnameStart = authorityStart;
@@ -1625,33 +1644,33 @@ static bool findHostnameInHierarchicalURL(const UChar* str, int strLen, int& sta
 
 // Converts all hostnames found in the given input to punycode, preserving the
 // rest of the URL unchanged. The output will NOT be null-terminated.
-static void encodeHostnames(const String& str, UCharBuffer& output)
+static void encodeHostnames(StringView string, UCharBuffer& buffer)
 {
-    output.clear();
+    buffer.clear();
 
-    if (protocolIs(str, "mailto")) {
+    if (protocolIs(string, "mailto")) {
         Vector<std::pair<int, int>> hostnameRanges;
-        findHostnamesInMailToURL(str.deprecatedCharacters(), str.length(), hostnameRanges);
+        findHostnamesInMailToURL(string, hostnameRanges);
         int n = hostnameRanges.size();
         int p = 0;
         for (int i = 0; i < n; ++i) {
             const std::pair<int, int>& r = hostnameRanges[i];
-            output.append(&str.deprecatedCharacters()[p], r.first - p);
-            appendEncodedHostname(output, &str.deprecatedCharacters()[r.first], r.second - r.first);
+            append(buffer, string.substring(p, r.first - p));
+            appendEncodedHostname(buffer, string.substring(r.first, r.second - r.first));
             p = r.second;
         }
         // This will copy either everything after the last hostname, or the
         // whole thing if there is no hostname.
-        output.append(&str.deprecatedCharacters()[p], str.length() - p);
+        append(buffer, string.substring(p));
     } else {
         int hostStart, hostEnd;
-        if (findHostnameInHierarchicalURL(str.deprecatedCharacters(), str.length(), hostStart, hostEnd)) {
-            output.append(str.deprecatedCharacters(), hostStart); // Before hostname.
-            appendEncodedHostname(output, &str.deprecatedCharacters()[hostStart], hostEnd - hostStart);
-            output.append(&str.deprecatedCharacters()[hostEnd], str.length() - hostEnd); // After hostname.
+        if (findHostnameInHierarchicalURL(string, hostStart, hostEnd)) {
+            append(buffer, string.substring(0, hostStart)); // Before hostname.
+            appendEncodedHostname(buffer, string.substring(hostStart, hostEnd - hostStart));
+            append(buffer, string.substring(hostEnd)); // After hostname.
         } else {
             // No hostname to encode, return the input.
-            output.append(str.deprecatedCharacters(), str.length());
+            append(buffer, string);
         }
     }
 }
@@ -1666,7 +1685,7 @@ static void encodeRelativeString(const String& rel, const TextEncoding& encoding
     int pathEnd = -1;
     if (encoding != pathEncoding && encoding.isValid() && !protocolIs(rel, "mailto") && !protocolIs(rel, "data") && !protocolIsJavaScript(rel)) {
         // Find the first instance of either # or ?, keep pathEnd at -1 otherwise.
-        pathEnd = findFirstOf(s.data(), s.size(), 0, "#?");
+        pathEnd = findFirstOf(StringView(s.data(), s.size()), 0, "#?");
     }
 
     if (pathEnd == -1) {

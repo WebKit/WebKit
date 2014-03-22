@@ -674,9 +674,11 @@ void XMLDocumentParser::doWrite(const String& parseString)
         // keep this alive until this function is done.
         Ref<XMLDocumentParser> protect(*this);
 
-        switchToUTF16(context->context());
         XMLDocumentParserScope scope(document()->cachedResourceLoader());
-        xmlParseChunk(context->context(), reinterpret_cast<const char*>(parseString.deprecatedCharacters()), sizeof(UChar) * parseString.length(), 0);
+
+        // FIXME: Can we parse 8-bit strings directly as Latin-1 instead of upconverting to UTF-16?
+        switchToUTF16(context->context());
+        xmlParseChunk(context->context(), reinterpret_cast<const char*>(StringView(parseString).upconvertedCharacters().get()), sizeof(UChar) * parseString.length(), 0);
 
         // JavaScript (which may be run under the xmlParseChunk callstack) may
         // cause the parser to be stopped or detached.
@@ -1526,6 +1528,8 @@ static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLoc
 
 HashMap<String, String> parseAttributes(const String& string, bool& attrsOK)
 {
+    String parseString = "<?xml version=\"1.0\"?><attrs " + string + " />";
+
     AttributeParseState state;
     state.gotAttributes = false;
 
@@ -1533,9 +1537,12 @@ HashMap<String, String> parseAttributes(const String& string, bool& attrsOK)
     memset(&sax, 0, sizeof(sax));
     sax.startElementNs = attributesStartElementNsHandler;
     sax.initialized = XML_SAX2_MAGIC;
+
     RefPtr<XMLParserContext> parser = XMLParserContext::createStringParser(&sax, &state);
-    String parseString = "<?xml version=\"1.0\"?><attrs " + string + " />";
-    xmlParseChunk(parser->context(), reinterpret_cast<const char*>(parseString.deprecatedCharacters()), parseString.length() * sizeof(UChar), 1);
+
+    // FIXME: Can we parse 8-bit strings directly as Latin-1 instead of upconverting to UTF-16?
+    xmlParseChunk(parser->context(), reinterpret_cast<const char*>(StringView(parseString).upconvertedCharacters().get()), parseString.length() * sizeof(UChar), 1);
+
     attrsOK = state.gotAttributes;
     return state.attributes;
 }

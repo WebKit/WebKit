@@ -67,17 +67,17 @@ void SVGTextMetricsBuilder::advanceSimpleText()
     m_totalWidth = m_simpleWidthIterator->runWidthSoFar();
 
 #if ENABLE(SVG_FONTS)
-    m_currentMetrics = SVGTextMetrics(m_text, m_textPosition, metricsLength, currentWidth, m_simpleWidthIterator->lastGlyphName());
+    m_currentMetrics = SVGTextMetrics(*m_text, m_textPosition, metricsLength, currentWidth, m_simpleWidthIterator->lastGlyphName());
 #else
-    m_currentMetrics = SVGTextMetrics(m_text, m_textPosition, metricsLength, currentWidth, emptyString());
+    m_currentMetrics = SVGTextMetrics(*m_text, m_textPosition, metricsLength, currentWidth, emptyString());
 #endif
 }
 
 void SVGTextMetricsBuilder::advanceComplexText()
 {
     unsigned metricsLength = currentCharacterStartsSurrogatePair() ? 2 : 1;
-    m_currentMetrics = SVGTextMetrics::measureCharacterRange(m_text, m_textPosition, metricsLength);
-    m_complexStartToCurrentMetrics = SVGTextMetrics::measureCharacterRange(m_text, 0, m_textPosition + metricsLength);
+    m_currentMetrics = SVGTextMetrics::measureCharacterRange(*m_text, m_textPosition, metricsLength);
+    m_complexStartToCurrentMetrics = SVGTextMetrics::measureCharacterRange(*m_text, 0, m_textPosition + metricsLength);
     ASSERT(m_currentMetrics.length() == metricsLength);
 
     // Frequent case for Arabic text: when measuring a single character the arabic isolated form is taken
@@ -100,7 +100,7 @@ void SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer(RenderSVGInlin
     m_totalWidth = 0;
 
     const Font& scaledFont = text->scaledFont();
-    m_run = SVGTextMetrics::constructTextRun(text, text->deprecatedCharacters(), 0, text->textLength());
+    m_run = SVGTextMetrics::constructTextRun(*text);
     m_isComplexText = scaledFont.codePath(m_run) == Font::Complex;
 
     if (m_isComplexText)
@@ -120,7 +120,7 @@ struct MeasureTextData {
     }
 
     SVGCharacterDataMap* allCharactersMap;
-    const UChar* lastCharacter;
+    UChar lastCharacter;
     bool processRenderer;
     unsigned valueListPosition;
     unsigned skippedCharacters;
@@ -144,8 +144,8 @@ void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText* text, Measu
     int surrogatePairCharacters = 0;
 
     while (advance()) {
-        const UChar* currentCharacter = m_run.data16(m_textPosition);
-        if (*currentCharacter == ' ' && !preserveWhiteSpace && (!data->lastCharacter || *data->lastCharacter == ' ')) {
+        UChar currentCharacter = m_run[m_textPosition];
+        if (currentCharacter == ' ' && !preserveWhiteSpace && (!data->lastCharacter || data->lastCharacter == ' ')) {
             if (data->processRenderer)
                 textMetricsValues->append(SVGTextMetrics(SVGTextMetrics::SkippedSpaceMetrics));
             if (data->allCharactersMap)

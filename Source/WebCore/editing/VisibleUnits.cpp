@@ -290,18 +290,16 @@ static TextBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePos
     // FIXME: Handle the case when we don't have an inline text box.
     const InlineBox* previousBox = logicallyPreviousBox(visiblePosition, textBox, previousBoxInDifferentBlock, leafBoxes);
 
-    int len = 0;
     string.clear();
+
     if (previousBox && previousBox->isInlineTextBox()) {
         const InlineTextBox* previousTextBox = toInlineTextBox(previousBox);
         previousBoxLength = previousTextBox->len();
-        string.append(previousTextBox->renderer().text()->deprecatedCharacters() + previousTextBox->start(), previousBoxLength);
-        len += previousBoxLength;
+        append(string, StringView(previousTextBox->renderer().text()).substring(previousTextBox->start(), previousBoxLength));
     }
-    string.append(textBox->renderer().text()->deprecatedCharacters() + textBox->start(), textBox->len());
-    len += textBox->len();
+    append(string, StringView(textBox->renderer().text()).substring(textBox->start(), textBox->len()));
 
-    return wordBreakIterator(StringView(string.data(), len));
+    return wordBreakIterator(StringView(string.data(), string.size()));
 }
 
 static TextBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePosition& visiblePosition, const InlineTextBox* textBox,
@@ -312,17 +310,14 @@ static TextBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePos
     // FIXME: Handle the case when we don't have an inline text box.
     const InlineBox* nextBox = logicallyNextBox(visiblePosition, textBox, nextBoxInDifferentBlock, leafBoxes);
 
-    int len = 0;
     string.clear();
-    string.append(textBox->renderer().text()->deprecatedCharacters() + textBox->start(), textBox->len());
-    len += textBox->len();
+    append(string, StringView(textBox->renderer().text()).substring(textBox->start(), textBox->len()));
     if (nextBox && nextBox->isInlineTextBox()) {
         const InlineTextBox* nextTextBox = toInlineTextBox(nextBox);
-        string.append(nextTextBox->renderer().text()->deprecatedCharacters() + nextTextBox->start(), nextTextBox->len());
-        len += nextTextBox->len();
+        append(string, StringView(nextTextBox->renderer().text()).substring(nextTextBox->start(), nextTextBox->len()));
     }
 
-    return wordBreakIterator(StringView(string.data(), len));
+    return wordBreakIterator(StringView(string.data(), string.size()));
 }
 
 static bool isLogicalStartOfWord(TextBreakIterator* iter, int position, bool hardLineBreak)
@@ -463,15 +458,6 @@ static void prependRepeatedCharacter(Vector<UChar, 1024>& buffer, UChar characte
     memmove(buffer.data() + count, buffer.data(), oldSize * sizeof(UChar));
     for (unsigned i = 0; i < count; ++i)
         buffer[i] = character;
-}
-
-static void append(Vector<UChar, 1024>& buffer, StringView string)
-{
-    unsigned oldSize = buffer.size();
-    unsigned length = string.length();
-    buffer.grow(oldSize + length);
-    for (unsigned i = 0; i < length; ++i)
-        buffer[oldSize + i] = string[i];
 }
 
 static void appendRepeatedCharacter(Vector<UChar, 1024>& buffer, UChar character, unsigned count)

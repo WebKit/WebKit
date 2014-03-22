@@ -1,3 +1,118 @@
+2014-03-22  Darin Adler  <darin@apple.com>
+
+        Remove String::deprecatedCharacters
+        https://bugs.webkit.org/show_bug.cgi?id=126854
+
+        Reviewed by Sam Weinig.
+
+        * bindings/scripts/StaticString.pm:
+        (GenerateStrings): Remove the code to generate the null m_copyData16 pointer.
+
+        * editing/TextIterator.cpp:
+        (WebCore::SearchBuffer::prependContext): Changed to use the new append function in
+        StringView.h and removed the one defined locally here.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::wordBreakIteratorForMinOffsetBoundary): Use the new append function
+        in StringView.h instead of using deprecatedCharacters.
+        (WebCore::wordBreakIteratorForMaxOffsetBoundary): Ditto.
+        Removed an append function defined locally here and use the one in StringView.h.
+
+        * editing/htmlediting.cpp:
+        (WebCore::stringWithRebalancedWhitespace): Use StringView::getCharactersWithUpconvert.
+
+        * html/parser/HTMLToken.h:
+        (WebCore::HTMLToken::appendToAttributeValue): Changed to take a StringView instead
+        of a const String&.
+
+        * loader/appcache/ManifestParser.cpp:
+        (WebCore::parseManifest): Use StringView and StringView::upconvertedCharacters.
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::didReceiveData): Use the new append overload from StringView.h.
+        Also added a comment about incorrect use of the decode function.
+
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::interpretationsForCurrentRoot): Use the new StringView append function.
+        Also use simpler new-style for loops.
+
+        * platform/LinkHash.cpp:
+        (WebCore::visitedURLInline): Use the new append function and StringView::substring.
+        (WebCore::visitedLinkHash): Use upconvertedCharacters for the non-8-bit case.
+
+        * platform/URL.cpp:
+        (WebCore::findFirstOf): Chagned to take a StringView.
+        (WebCore::containsOnlyASCII): Added. Works on StringView. Could move to a WTF header in
+        the future if it's needed elsewhere.
+        (WebCore::protocolIs): Added. Works on StringView. Could put in URL.h if needed elsewhere,
+        or consider replacing the one that takes const String& with just this one.
+        (WebCore::appendEncodedHostname): Changed to take a StringView and use
+        StringView::upconvertedCharacters.
+        (WebCore::findHostnamesInMailToURL): Changed to take a StringView.
+        (WebCore::findHostnameInHierarchicalURL): Ditto.
+        (WebCore::encodeHostnames): Ditto.
+        (WebCore::encodeRelativeString): Ditto.
+
+        * platform/graphics/StringTruncator.cpp:
+        (WebCore::StringTruncator::width): Use StringView::upconvertedCharacters.
+
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::setFontFeatures): Use indexing directly on the string instead
+        of on a UChar*.
+        (WebCore::HarfBuzzShaper::shapeHarfBuzzRuns): Use StringView::upconvertedCharacters.
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::encode): Use a Vector<UChar> rather than a String to copy and
+        replace the backslashes with yen signs. Also optimize case where there are no backslashes.
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint): Use TextRun::setText(StringView).
+
+        * rendering/RenderText.cpp:
+        (WebCore::maxWordFragmentWidth): Pass a String to RenderBlock::constructTextRun instead of
+        calling StringBuilder::deprecatedCharacters.
+
+        * rendering/RenderText.h: Removed deprecatedCharacters function.
+
+        * rendering/line/BreakingContextInlineHeaders.h: Added now-needed header include.
+
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::constructTextRun): Use StringView version of TextRun constructor.
+
+        * rendering/svg/SVGTextMetrics.cpp:
+        (WebCore::SVGTextMetrics::SVGTextMetrics): Take references instead of pointers.
+        (WebCore::SVGTextMetrics::constructTextRun): Take references instead of pointers, and don't
+        take a character pointer any more. Instead, extract the text and use the StringView version of
+        the TextRun constructor.
+        (WebCore::SVGTextMetrics::measureCharacterRange): Take references instead of pointers and
+        update for above changes.
+        * rendering/svg/SVGTextMetrics.h: Updated for changes above. Also tweaked style a bit.
+
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::advanceSimpleText): Updated for SVGTextMetrics changes.
+        (WebCore::SVGTextMetricsBuilder::advanceComplexText): Ditto.
+        (WebCore::SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer): Ditto.
+        (WebCore::SVGTextMetricsBuilder::measureTextRenderer): Change code to store a character
+        for lastCharacter rather than storing a pointer to a character. Stop using TextRun::data16.
+
+        * rendering/svg/SVGTextQuery.cpp:
+        (WebCore::SVGTextQuery::subStringLengthCallback): Updated for SVGTextMetrics changes.
+        (WebCore::SVGTextQuery::startPositionOfCharacterCallback): Ditto.
+        (WebCore::SVGTextQuery::endPositionOfCharacterCallback): Ditto.
+        (WebCore::calculateGlyphBoundaries): Ditto.
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::atomicSubstring): Added.
+        (WebCore::XPath::FunId::evaluate): Tweaked a bit to use a new style for loop.
+        Use the atomicSubstring function to avoid making a temporary String just to make an AtomicString.
+        That function also uses characters8/16 rather than depreccatedCharacters.
+
+        * xml/XPathNodeSet.h: Added begin and end so this collection can be iterated with new style for loop.
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::doWrite): Use StringView::upconvertedCharacters.
+        (WebCore::parseAttributes): Ditto.
+
 2014-03-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r166118.

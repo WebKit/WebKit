@@ -201,7 +201,6 @@ EXPORTS
         symbolWithPointer(?fromUTF8WithLatin1Fallback@String@WTF@@SA?AV12@PBEI@Z, ?fromUTF8WithLatin1Fallback@String@WTF@@SA?AV12@PEBE_K@Z)
         symbolWithPointer(?garbageCollectDocumentResources@CachedResourceLoader@WebCore@@QAEXXZ, ?garbageCollectDocumentResources@CachedResourceLoader@WebCore@@QEAAXXZ)
         symbolWithPointer(?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z, ?getCachedDOMStructure@WebCore@@YAPEAVStructure@JSC@@PEAVJSDOMGlobalObject@1@PEBUClassInfo@3@@Z)
-        symbolWithPointer(?getData16SlowCase@StringImpl@WTF@@ABEPB_WXZ, ?getData16SlowCase@StringImpl@WTF@@AEBAPEB_WXZ)
         symbolWithPointer(?getElementById@TreeScope@WebCore@@QBEPAVElement@2@ABVString@WTF@@@Z, ?getElementById@TreeScope@WebCore@@QEBAPEAVElement@2@AEBVString@WTF@@@Z)
         symbolWithPointer(?getLocationAndLengthFromRange@TextIterator@WebCore@@SA_NPAVNode@2@PBVRange@2@AAI2@Z, ?getLocationAndLengthFromRange@TextIterator@WebCore@@SA_NPEAVNode@2@PEBVRange@2@AEA_K2@Z)
         symbolWithPointer(?hitTest@RenderView@WebCore@@QAE_NABVHitTestRequest@2@AAVHitTestResult@2@@Z, ?hitTest@RenderView@WebCore@@QEAA_NAEBVHitTestRequest@2@AEAVHitTestResult@2@@Z)

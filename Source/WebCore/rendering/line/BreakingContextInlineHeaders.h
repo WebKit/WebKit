@@ -37,6 +37,7 @@
 #include "RenderSVGInlineText.h"
 #include "TrailingObjects.h"
 #include "break_lines.h"
+#include <wtf/text/StringView.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)

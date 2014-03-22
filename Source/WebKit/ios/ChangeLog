@@ -1,3 +1,39 @@
+2014-03-22  Darin Adler  <darin@apple.com>
+
+        Remove String::deprecatedCharacters
+        https://bugs.webkit.org/show_bug.cgi?id=126854
+
+        Reviewed by Sam Weinig.
+
+        * Misc/WebNSStringDrawing.h: Added a FIXME about deleting this file; we can probably do it soon.
+        * Misc/WebNSStringDrawing.mm:
+        (+[NSString _web_setWordRoundingEnabled:]):
+        (+[NSString _web_wordRoundingEnabled]):
+        (+[NSString _web_setWordRoundingAllowed:]):
+        (+[NSString _web_wordRoundingAllowed]):
+        (+[NSString _web_setAscentRoundingEnabled:]):
+        (+[NSString _web_ascentRoundingEnabled]):
+        (-[NSString _web_drawAtPoint:withFont:]):
+        (-[NSString _web_sizeWithFont:]):
+        (-[NSString _web_sizeWithFont:forWidth:ellipsis:]):
+        (-[NSString _web_sizeWithFont:forWidth:ellipsis:letterSpacing:]):
+        (-[NSString _web_sizeWithFont:forWidth:ellipsis:letterSpacing:resultRange:]):
+        (-[NSString _web_drawAtPoint:forWidth:withFont:ellipsis:]):
+        (-[NSString _web_drawAtPoint:forWidth:withFont:ellipsis:letterSpacing:]):
+        (-[NSString _web_drawAtPoint:forWidth:withFont:ellipsis:letterSpacing:includeEmoji:]):
+        (-[NSString _web_drawInRect:withFont:ellipsis:alignment:lineSpacing:includeEmoji:truncationRect:measureOnly:]):
+        (-[NSString _web_drawInRect:withFont:ellipsis:alignment:lineSpacing:includeEmoji:truncationRect:]):
+        (-[NSString _web_drawInRect:withFont:ellipsis:alignment:lineSpacing:]):
+        (-[NSString _web_drawInRect:withFont:ellipsis:alignment:]):
+        (-[NSString _web_sizeInRect:withFont:ellipsis:lineSpacing:]):
+        (-[NSString _web_sizeInRect:withFont:ellipsis:]):
+        (-[NSString _web_stringForWidth:withFont:ellipsis:letterSpacing:includeEmoji:]):
+        (-[NSString _web_sizeForWidth:withAttributes:]):
+        (-[NSString _web_drawAtPoint:forWidth:withAttributes:]):
+        (-[NSString _web_sizeInRect:withAttributes:]):
+        (-[NSString _web_drawInRect:withAttributes:]):
+        Emptied out all these functions since callers aren't really using them any more.
+
 2014-03-21  Tim Horton  <timothy_horton@apple.com>
 
         Always retrieve the screen scale factor from WKSI

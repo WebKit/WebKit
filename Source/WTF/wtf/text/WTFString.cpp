@@ -89,13 +89,11 @@ String::String(ASCIILiteral characters)
 
 void String::append(const String& str)
 {
+    // FIXME: This is extremely inefficient. So much so that we might want to take this out of String's API.
+
     if (str.isEmpty())
        return;
 
-    // FIXME: This is extremely inefficient. So much so that we might want to take this
-    // out of String's API. We can make it better by optimizing the case where exactly
-    // one String is pointing at this StringImpl, but even then it's going to require a
-    // call to fastMalloc every single time.
     if (str.m_impl) {
         if (m_impl) {
             if (m_impl->is8Bit() && str.m_impl->is8Bit()) {
@@ -112,41 +110,54 @@ void String::append(const String& str)
             if (str.length() > std::numeric_limits<unsigned>::max() - m_impl->length())
                 CRASH();
             RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(m_impl->length() + str.length(), data);
-            memcpy(data, m_impl->deprecatedCharacters(), m_impl->length() * sizeof(UChar));
-            memcpy(data + m_impl->length(), str.deprecatedCharacters(), str.length() * sizeof(UChar));
+            StringView(*m_impl).getCharactersWithUpconvert(data);
+            StringView(str).getCharactersWithUpconvert(data + m_impl->length());
             m_impl = newImpl.release();
         } else
             m_impl = str.m_impl;
     }
 }
 
-template <typename CharacterType>
-inline void String::appendInternal(CharacterType c)
+void String::append(LChar character)
 {
-    // FIXME: This is extremely inefficient. So much so that we might want to take this
-    // out of String's API. We can make it better by optimizing the case where exactly
-    // one String is pointing at this StringImpl, but even then it's going to require a
-    // call to fastMalloc every single time.
-    if (m_impl) {
-        UChar* data;
-        if (m_impl->length() >= std::numeric_limits<unsigned>::max())
-            CRASH();
-        RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(m_impl->length() + 1, data);
-        memcpy(data, m_impl->deprecatedCharacters(), m_impl->length() * sizeof(UChar));
-        data[m_impl->length()] = c;
-        m_impl = newImpl.release();
-    } else
-        m_impl = StringImpl::create(&c, 1);
+    // FIXME: This is extremely inefficient. So much so that we might want to take this out of String's API.
+
+    if (!m_impl) {
+        m_impl = StringImpl::create(&character, 1);
+        return;
+    }
+    if (!is8Bit()) {
+        append(static_cast<UChar>(character));
+        return;
+    }
+    if (m_impl->length() >= std::numeric_limits<unsigned>::max())
+        CRASH();
+    LChar* data;
+    RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(m_impl->length() + 1, data);
+    memcpy(data, m_impl->characters8(), m_impl->length());
+    data[m_impl->length()] = character;
+    m_impl = newImpl.release();
 }
 
-void String::append(LChar c)
+void String::append(UChar character)
 {
-    appendInternal(c);
-}
+    // FIXME: This is extremely inefficient. So much so that we might want to take this out of String's API.
 
-void String::append(UChar c)
-{
-    appendInternal(c);
+    if (character <= 0xFF && is8Bit()) {
+        append(static_cast<LChar>(character));
+        return;
+    }
+    if (!m_impl) {
+        m_impl = StringImpl::create(&character, 1);
+        return;
+    }
+    if (m_impl->length() >= std::numeric_limits<unsigned>::max())
+        CRASH();
+    UChar* data;
+    RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(m_impl->length() + 1, data);
+    StringView(*m_impl).getCharactersWithUpconvert(data);
+    data[m_impl->length()] = character;
+    m_impl = newImpl.release();
 }
 
 int codePointCompare(const String& a, const String& b)
@@ -154,20 +165,49 @@ int codePointCompare(const String& a, const String& b)
     return codePointCompare(a.impl(), b.impl());
 }
 
-void String::insert(const String& str, unsigned pos)
+void String::insert(const String& string, unsigned position)
 {
-    if (str.isEmpty()) {
-        if (str.isNull())
+    // FIXME: This is extremely inefficient. So much so that we might want to take this out of String's API.
+
+    unsigned lengthToInsert = string.length();
+
+    if (!lengthToInsert) {
+        if (string.isNull())
             return;
         if (isNull())
-            m_impl = str.impl();
+            m_impl = string.impl();
         return;
     }
-    insert(str.deprecatedCharacters(), str.length(), pos);
+
+    if (position >= length()) {
+        append(string);
+        return;
+    }
+
+    if (lengthToInsert > std::numeric_limits<unsigned>::max() - length())
+        CRASH();
+
+    RefPtr<StringImpl> newString;
+    if (is8Bit() && string.is8Bit()) {
+        LChar* data;
+        newString = StringImpl::createUninitialized(length() + lengthToInsert, data);
+        StringView(*m_impl).substring(0, position).getCharactersWithUpconvert(data);
+        StringView(string).getCharactersWithUpconvert(data + position);
+        StringView(*m_impl).substring(position).getCharactersWithUpconvert(data + position + lengthToInsert);
+    } else {
+        UChar* data;
+        newString = StringImpl::createUninitialized(length() + lengthToInsert, data);
+        StringView(*m_impl).substring(0, position).getCharactersWithUpconvert(data);
+        StringView(string).getCharactersWithUpconvert(data + position);
+        StringView(*m_impl).substring(position).getCharactersWithUpconvert(data + position + lengthToInsert);
+    }
+    m_impl = newString.release();
 }
 
 void String::append(const LChar* charactersToAppend, unsigned lengthToAppend)
 {
+    // FIXME: This is extremely inefficient. So much so that we might want to take this out of String's API.
+
     if (!m_impl) {
         if (!charactersToAppend)
             return;
@@ -204,6 +244,8 @@ void String::append(const LChar* charactersToAppend, unsigned lengthToAppend)
 
 void String::append(const UChar* charactersToAppend, unsigned lengthToAppend)
 {
+    // FIXME: This is extremely inefficient. So much so that we might want to take this out of String's API.
+
     if (!m_impl) {
         if (!charactersToAppend)
             return;
@@ -230,29 +272,6 @@ void String::append(const UChar* charactersToAppend, unsigned lengthToAppend)
 }
 
 
-void String::insert(const UChar* charactersToInsert, unsigned lengthToInsert, unsigned position)
-{
-    if (position >= length()) {
-        append(charactersToInsert, lengthToInsert);
-        return;
-    }
-
-    ASSERT(m_impl);
-
-    if (!lengthToInsert)
-        return;
-
-    ASSERT(charactersToInsert);
-    UChar* data;
-    if (lengthToInsert > std::numeric_limits<unsigned>::max() - length())
-        CRASH();
-    RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(length() + lengthToInsert, data);
-    memcpy(data, deprecatedCharacters(), position * sizeof(UChar));
-    memcpy(data + position, charactersToInsert, lengthToInsert * sizeof(UChar));
-    memcpy(data + position + lengthToInsert, deprecatedCharacters() + position, (length() - position) * sizeof(UChar));
-    m_impl = newImpl.release();
-}
-
 UChar32 String::characterStartingAt(unsigned i) const
 {
     if (!m_impl || i >= m_impl->length())
@@ -262,12 +281,8 @@ UChar32 String::characterStartingAt(unsigned i) const
 
 void String::truncate(unsigned position)
 {
-    if (position >= length())
-        return;
-    UChar* data;
-    RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(position, data);
-    memcpy(data, deprecatedCharacters(), position * sizeof(UChar));
-    m_impl = newImpl.release();
+    if (m_impl)
+        m_impl = m_impl->substring(0, position);
 }
 
 template <typename CharacterType>
@@ -398,7 +413,10 @@ bool String::percentage(int& result) const
     if ((*m_impl)[m_impl->length() - 1] != '%')
        return false;
 
-    result = charactersToIntStrict(m_impl->deprecatedCharacters(), m_impl->length() - 1);
+    if (m_impl->is8Bit())
+        result = charactersToIntStrict(m_impl->characters8(), m_impl->length() - 1);
+    else
+        result = charactersToIntStrict(m_impl->characters16(), m_impl->length() - 1);
     return true;
 }
 

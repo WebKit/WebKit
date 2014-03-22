@@ -776,29 +776,24 @@ NSArray *Frame::interpretationsForCurrentRoot() const
             if (precedingTextStartPosition != createLegacyEditingPosition(node, marker->startOffset())) {
                 RefPtr<Range> precedingTextRange = Range::create(*document(), precedingTextStartPosition, createLegacyEditingPosition(node, marker->startOffset()));
                 String precedingText = plainText(precedingTextRange.get());
-                if (unsigned length = precedingText.length()) {
-                    const UChar* characters = precedingText.deprecatedCharacters();
-                    for (size_t i = 0; i < interpretationsCount; ++i)
-                        interpretations.at(i).append(characters, length);
+                if (!precedingText.isEmpty()) {
+                    for (auto& interpretation : interpretations)
+                        append(interpretation, precedingText);
                 }
             }
 
             RefPtr<Range> rangeForMarker = Range::create(*document(), createLegacyEditingPosition(node, marker->startOffset()), createLegacyEditingPosition(node, marker->endOffset()));
             String visibleTextForMarker = plainText(rangeForMarker.get());
             size_t interpretationsCountForCurrentMarker = marker->alternatives().size() + 1;
-            unsigned visibleTextForMarkerLength = visibleTextForMarker.length();
-            const UChar* visibleTextForMarkerCharacters = visibleTextForMarker.deprecatedCharacters();
             for (size_t i = 0; i < interpretationsCount; ++i) {
                 // Determine text for the ith interpretation. It will either be the visible text, or one of its
                 // alternatives stored in the marker.
 
                 size_t indexOfInterpretationForCurrentMarker = (i / combinationsSoFar) % interpretationsCountForCurrentMarker;
                 if (!indexOfInterpretationForCurrentMarker)
-                    interpretations.at(i).append(visibleTextForMarkerCharacters, visibleTextForMarkerLength);
-                else {
-                    const String& alternative = marker->alternatives().at(i % marker->alternatives().size());
-                    interpretations.at(i).append(alternative.deprecatedCharacters(), alternative.length());
-                }
+                    append(interpretations[i], visibleTextForMarker);
+                else
+                    append(interpretations[i], marker->alternatives().at(i % marker->alternatives().size()));
             }
 
             combinationsSoFar *= interpretationsCountForCurrentMarker;
@@ -810,15 +805,14 @@ NSArray *Frame::interpretationsForCurrentRoot() const
     // Finally, add any text after the last marker.
     RefPtr<Range> afterLastMarkerRange = Range::create(*document(), precedingTextStartPosition, createLegacyEditingPosition(root, rootChildCount));
     String textAfterLastMarker = plainText(afterLastMarkerRange.get());
-    const UChar* textAfterLastMarkerCharacters = textAfterLastMarker.deprecatedCharacters();
-    if (unsigned length = textAfterLastMarker.length()) {
-        for (size_t i = 0; i < interpretationsCount; ++i)
-            interpretations.at(i).append(textAfterLastMarkerCharacters, length);
+    if (!textAfterLastMarker.isEmpty()) {
+        for (auto& interpretation : interpretations)
+            append(interpretation, textAfterLastMarker);
     }
 
     NSMutableArray *result = [NSMutableArray array];
-    for (size_t i = 0; i < interpretationsCount; ++i)
-        [result addObject:static_cast<NSString *>(String(interpretations.at(i)))];
+    for (auto& interpretation : interpretations)
+        [result addObject:static_cast<NSString *>(interpretation)];
 
     return result;
 }

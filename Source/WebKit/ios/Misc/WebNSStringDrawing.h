@@ -26,6 +26,8 @@
 #ifndef WebNSStringDrawing_h
 #define WebNSStringDrawing_h
 
+// FIXME: Delete this header after testing to be sure it doesn't break any apps or frameworks.
+
 #if TARGET_OS_IPHONE
 
 #import <CoreGraphics/CoreGraphics.h>

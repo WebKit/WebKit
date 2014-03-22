@@ -32,6 +32,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/WTFThreadData.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringView.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/UTF8.h>
 
@@ -44,7 +45,7 @@ namespace WTF {
 
 using namespace Unicode;
 
-COMPILE_ASSERT(sizeof(StringImpl) == 2 * sizeof(int) + 3 * sizeof(void*), StringImpl_should_stay_small);
+COMPILE_ASSERT(sizeof(StringImpl) == 2 * sizeof(int) + 2 * sizeof(void*), StringImpl_should_stay_small);
 
 #ifdef STRING_STATS
 StringStats StringImpl::m_stringStats;
@@ -117,11 +118,6 @@ StringImpl::~StringImpl()
         AtomicString::remove(this);
 
     BufferOwnership ownership = bufferOwnership();
-
-    if (has16BitShadow()) {
-        ASSERT(m_copyData16);
-        fastFree(m_copyData16);
-    }
 
     if (ownership == BufferInternal)
         return;
@@ -294,41 +290,6 @@ PassRef<StringImpl> StringImpl::create(const LChar* string)
         CRASH();
     return create(string, length);
 }
-
-const UChar* StringImpl::getData16SlowCase() const
-{
-    if (has16BitShadow())
-        return m_copyData16;
-
-    if (bufferOwnership() == BufferSubstring) {
-        // If this is a substring, return a pointer into the parent string.
-        // TODO: Consider severing this string from the parent string
-        unsigned offset = m_data8 - substringBuffer()->characters8();
-        return substringBuffer()->deprecatedCharacters() + offset;
-    }
-
-    STRING_STATS_ADD_UPCONVERTED_STRING(m_length);
-    
-    unsigned len = length();
-
-    m_copyData16 = static_cast<UChar*>(fastMalloc(len * sizeof(UChar)));
-
-    m_hashAndFlags |= s_hashFlagHas16BitShadow;
-
-    upconvertCharacters(0, len);
-
-    return m_copyData16;
-}
-
-void StringImpl::upconvertCharacters(unsigned start, unsigned end) const
-{
-    ASSERT(is8Bit());
-    ASSERT(has16BitShadow());
-
-    for (size_t i = start; i < end; ++i)
-        m_copyData16[i] = m_data8[i];
-}
-    
 
 bool StringImpl::containsOnlyWhitespace()
 {
@@ -534,7 +495,8 @@ PassRef<StringImpl> StringImpl::upper()
     }
 
 upconvert:
-    const UChar* source16 = deprecatedCharacters();
+    auto upconvertedCharacters = StringView(*this).upconvertedCharacters();
+    const UChar* source16 = upconvertedCharacters;
 
     UChar* data16;
     RefPtr<StringImpl> newImpl = createUninitialized(m_length, data16);
@@ -592,7 +554,8 @@ PassRef<StringImpl> StringImpl::lower(const AtomicString& localeIdentifier)
     // Below, we pass in the hardcoded locale "tr". Passing that is more efficient than
     // allocating memory just to turn localeIdentifier into a C string, and we assume
     // there is no difference between the uppercasing for "tr" and "az" locales.
-    const UChar* source16 = deprecatedCharacters();
+    auto upconvertedCharacters = StringView(*this).upconvertedCharacters();
+    const UChar* source16 = upconvertedCharacters;
     UChar* data16;
     RefPtr<StringImpl> newString = createUninitialized(length, data16);
     UErrorCode status = U_ZERO_ERROR;
@@ -622,7 +585,8 @@ PassRef<StringImpl> StringImpl::upper(const AtomicString& localeIdentifier)
     // Below, we pass in the hardcoded locale "tr". Passing that is more efficient than
     // allocating memory just to turn localeIdentifier into a C string, and we assume
     // there is no difference between the uppercasing for "tr" and "az" locales.
-    const UChar* source16 = deprecatedCharacters();
+    auto upconvertedCharacters = StringView(*this).upconvertedCharacters();
+    const UChar* source16 = upconvertedCharacters;
     UChar* data16;
     RefPtr<StringImpl> newString = createUninitialized(length, data16);
     UErrorCode status = U_ZERO_ERROR;
@@ -981,8 +945,11 @@ size_t StringImpl::find(const LChar* matchString, unsigned index)
         return std::min(index, length());
 
     // Optimization 1: fast case for strings of length 1.
-    if (matchLength == 1)
-        return WTF::find(deprecatedCharacters(), length(), *matchString, index);
+    if (matchLength == 1) {
+        if (is8Bit())
+            return WTF::find(characters8(), length(), matchString[0], index);
+        return WTF::find(characters16(), length(), *matchString, index);
+    }
 
     // Check index & matchLength are in range.
     if (index > length())
@@ -993,10 +960,32 @@ size_t StringImpl::find(const LChar* matchString, unsigned index)
     // delta is the number of additional times to test; delta == 0 means test only once.
     unsigned delta = searchLength - matchLength;
 
-    const UChar* searchCharacters = deprecatedCharacters() + index;
-
     // Optimization 2: keep a running hash of the strings,
     // only call equal if the hashes match.
+
+    if (is8Bit()) {
+        const LChar* searchCharacters = characters8() + index;
+
+        unsigned searchHash = 0;
+        unsigned matchHash = 0;
+        for (unsigned i = 0; i < matchLength; ++i) {
+            searchHash += searchCharacters[i];
+            matchHash += matchString[i];
+        }
+
+        unsigned i = 0;
+        while (searchHash != matchHash || !equal(searchCharacters + i, matchString, matchLength)) {
+            if (i == delta)
+                return notFound;
+            searchHash += searchCharacters[i + matchLength];
+            searchHash -= searchCharacters[i];
+            ++i;
+        }
+        return index + i;
+    }
+
+    const UChar* searchCharacters = characters16() + index;
+
     unsigned searchHash = 0;
     unsigned matchHash = 0;
     for (unsigned i = 0; i < matchLength; ++i) {
@@ -1005,7 +994,6 @@ size_t StringImpl::find(const LChar* matchString, unsigned index)
     }
 
     unsigned i = 0;
-    // keep looping until we match
     while (searchHash != matchHash || !equal(searchCharacters + i, matchString, matchLength)) {
         if (i == delta)
             return notFound;
@@ -1037,10 +1025,21 @@ size_t StringImpl::findIgnoringCase(const LChar* matchString, unsigned index)
     // delta is the number of additional times to test; delta == 0 means test only once.
     unsigned delta = searchLength - matchLength;
 
-    const UChar* searchCharacters = deprecatedCharacters() + index;
+    if (is8Bit()) {
+        const LChar* searchCharacters = characters8() + index;
+
+        unsigned i = 0;
+        while (!equalIgnoringCase(searchCharacters + i, matchString, matchLength)) {
+            if (i == delta)
+                return notFound;
+            ++i;
+        }
+        return index + i;
+    }
+
+    const UChar* searchCharacters = characters16() + index;
 
     unsigned i = 0;
-    // keep looping until we match
     while (!equalIgnoringCase(searchCharacters + i, matchString, matchLength)) {
         if (i == delta)
             return notFound;
@@ -1999,11 +1998,7 @@ size_t StringImpl::sizeInBytes() const
 {
     // FIXME: support substrings
     size_t size = length();
-    if (is8Bit()) {
-        if (has16BitShadow()) {
-            size += 2 * size;
-        }
-    } else
+    if (!is8Bit())
         size *= 2;
     return size + sizeof(*this);
 }
@@ -2017,8 +2012,7 @@ static inline void putUTF8Triple(char*& buffer, UChar ch)
     *buffer++ = static_cast<char>((ch & 0x3F) | 0x80);
 }
 
-bool StringImpl::utf8Impl(
-    const UChar* characters, unsigned length, char*& buffer, size_t bufferSize, ConversionMode mode)
+bool StringImpl::utf8Impl(const UChar* characters, unsigned length, char*& buffer, size_t bufferSize, ConversionMode mode)
 {
     if (mode == StrictConversionReplacingUnpairedSurrogatesWithFFFD) {
         const UChar* charactersEnd = characters + length;
@@ -2069,8 +2063,7 @@ bool StringImpl::utf8Impl(
     return true;
 }
 
-CString StringImpl::utf8ForCharacters(
-    const UChar* characters, unsigned length, ConversionMode mode)
+CString StringImpl::utf8ForCharacters(const UChar* characters, unsigned length, ConversionMode mode)
 {
     if (!length)
         return CString("", 0);
@@ -2145,5 +2138,21 @@ const UChar StringImpl::latin1CaseFoldTable[256] = {
     0x00f0, 0x00f1, 0x00f2, 0x00f3, 0x00f4, 0x00f5, 0x00f6, 0x00f7, 0x00f8, 0x00f9, 0x00fa, 0x00fb, 0x00fc, 0x00fd, 0x00fe, 0x00ff, 
 };
 
+bool equalIgnoringNullity(const UChar* a, size_t aLength, StringImpl* b)
+{
+    if (!b)
+        return !aLength;
+    if (aLength != b->length())
+        return false;
+    if (b->is8Bit()) {
+        const LChar* bCharacters = b->characters8();
+        for (unsigned i = 0; i < aLength; ++i) {
+            if (a[i] != bCharacters[i])
+                return false;
+        }
+        return true;
+    }
+    return !memcmp(a, b->characters16(), b->length() * sizeof(UChar));
+}
 
 } // namespace WTF

@@ -26,7 +26,7 @@
 #ifndef StringView_h
 #define StringView_h
 
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringConcatenate.h>
 
 namespace WTF {
 
@@ -53,17 +53,26 @@ public:
         initialize(characters, length);
     }
 
-    StringView(const String& string)
-        : m_characters(nullptr)
-        , m_length(0)
+    StringView(const StringImpl& string)
     {
-        if (!string.impl())
-            return;
-        
         if (string.is8Bit())
             initialize(string.characters8(), string.length());
         else
             initialize(string.characters16(), string.length());
+    }
+
+    StringView(const String& string)
+    {
+        if (!string.impl()) {
+            m_characters = nullptr;
+            m_length = 0;
+            return;
+        }
+        if (string.is8Bit()) {
+            initialize(string.characters8(), string.length());
+            return;
+        }
+        initialize(string.characters16(), string.length());
     }
 
     static StringView empty()
@@ -222,8 +231,32 @@ inline StringView::UpconvertedCharacters::UpconvertedCharacters(const StringView
     m_characters = m_upconvertedCharacters.data();
 }
 
+template<> class StringTypeAdapter<StringView> {
+public:
+    StringTypeAdapter<StringView>(StringView string)
+        : m_string(string)
+    {
+    }
+
+    unsigned length() { return m_string.length(); }
+    bool is8Bit() { return m_string.is8Bit(); }
+    void writeTo(LChar* destination) { m_string.getCharactersWithUpconvert(destination); }
+    void writeTo(UChar* destination) { m_string.getCharactersWithUpconvert(destination); }
+
+private:
+    StringView m_string;
+};
+
+template<typename CharacterType, size_t inlineCapacity> void append(Vector<CharacterType, inlineCapacity>& buffer, StringView string)
+{
+    unsigned oldSize = buffer.size();
+    buffer.grow(oldSize + string.length());
+    string.getCharactersWithUpconvert(buffer.data() + oldSize);
+}
+
 } // namespace WTF
 
+using WTF::append;
 using WTF::StringView;
 
 #endif // StringView_h

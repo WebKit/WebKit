@@ -34,13 +34,13 @@
 #include "Font.h"
 #include "HarfBuzzFace.h"
 #include "SurrogatePairAwareTextIterator.h"
-#include "TextRun.h"
 #include "hb-icu.h"
 #include <unicode/normlzr.h>
 #include <unicode/uchar.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -370,7 +370,7 @@ void HarfBuzzShaper::setFontFeatures()
     unsigned numFeatures = settings->size();
     for (unsigned i = 0; i < numFeatures; ++i) {
         hb_feature_t feature;
-        const UChar* tag = settings->at(i).tag().string().deprecatedCharacters();
+        auto& tag = settings->at(i).tag();
         feature.tag = HB_TAG(tag[0], tag[1], tag[2], tag[3]);
         feature.value = settings->at(i).value();
         feature.start = 0;
@@ -495,7 +495,8 @@ bool HarfBuzzShaper::shapeHarfBuzzRuns(bool shouldSetDirection)
         if (m_font->isSmallCaps() && u_islower(m_normalizedBuffer[currentRun->startIndex()])) {
             String upperText = String(m_normalizedBuffer.get() + currentRun->startIndex(), currentRun->numCharacters()).upper();
             currentFontData = m_font->glyphDataForCharacter(upperText[0], false, SmallCapsVariant).fontData;
-            hb_buffer_add_utf16(harfBuzzBuffer.get(), reinterpret_cast<const uint16_t*>(upperText.deprecatedCharacters()), currentRun->numCharacters(), 0, currentRun->numCharacters());
+            const UChar* characters = StringView(upperText).upconvertedCharacters();
+            hb_buffer_add_utf16(harfBuzzBuffer.get(), reinterpret_cast<const uint16_t*>(characters), currentRun->numCharacters(), 0, currentRun->numCharacters());
         } else
             hb_buffer_add_utf16(harfBuzzBuffer.get(), reinterpret_cast<const uint16_t*>(m_normalizedBuffer.get() + currentRun->startIndex()), currentRun->numCharacters(), 0, currentRun->numCharacters());
 

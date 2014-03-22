@@ -354,8 +354,8 @@ int lastOffsetForEditing(const Node* node)
 
 String stringWithRebalancedWhitespace(const String& string, bool startIsStartOfParagraph, bool endIsEndOfParagraph)
 {
-    Vector<UChar> rebalancedString;
-    append(rebalancedString, string);
+    Vector<UChar> rebalancedString(string.length());
+    StringView(string).getCharactersWithUpconvert(rebalancedString.data());
 
     bool previousCharacterWasSpace = false;
     for (size_t i = 0; i < rebalancedString.size(); i++) {
@@ -371,7 +371,6 @@ String stringWithRebalancedWhitespace(const String& string, bool startIsStartOfP
             rebalancedString[i] = ' ';
             previousCharacterWasSpace = true;
         }
-            
     }
 
     return String::adopt(rebalancedString);

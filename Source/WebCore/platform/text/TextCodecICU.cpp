@@ -491,18 +491,26 @@ CString TextCodecICU::encode(const UChar* characters, size_t length, Unencodable
     // FIXME: We should see if there is "force ASCII range" mode in ICU;
     // until then, we change the backslash into a yen sign.
     // Encoding will change the yen sign back into a backslash.
-    String copy;
-    const UChar* source;
-    const UChar* sourceLimit;
+    Vector<UChar> copy;
+    const UChar* source = characters;
     if (shouldShowBackslashAsCurrencySymbolIn(m_encodingName)) {
-        copy.append(characters, length);
-        copy.replace('\\', 0xA5);
-        source = copy.deprecatedCharacters();
-        sourceLimit = source + copy.length();
-    } else {
-        source = characters;
-        sourceLimit = source + length;
+        for (size_t i = 0; i < length; ++i) {
+            if (characters[i] == '\\') {
+                copy.reserveInitialCapacity(length);
+                for (size_t j = 0; j < i; ++j)
+                    copy.uncheckedAppend(characters[i]);
+                for (size_t j = i; j < length; ++j) {
+                    UChar character = characters[i];
+                    if (character == '\\')
+                        character = yenSign;
+                    copy.uncheckedAppend(character);
+                }
+                source = copy.data();
+                break;
+            }
+        }
     }
+    const UChar* sourceLimit = source + length;
 
     UErrorCode err = U_ZERO_ERROR;
 

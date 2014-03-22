@@ -157,13 +157,6 @@ public:
         return m_impl->length();
     }
 
-    const UChar* deprecatedCharacters() const
-    {
-        if (!m_impl)
-            return 0;
-        return m_impl->deprecatedCharacters();
-    }
-
     const LChar* characters8() const
     {
         if (!m_impl)
@@ -183,10 +176,6 @@ public:
     // Return characters8() or characters16() depending on CharacterType.
     template <typename CharacterType>
     inline const CharacterType* characters() const;
-
-    // Like characters() and upconvert if CharacterType is UChar on a 8bit string.
-    template <typename CharacterType>
-    inline const CharacterType* getCharactersWithUpconvert() const;
 
     bool is8Bit() const { return m_impl->is8Bit(); }
 
@@ -296,7 +285,6 @@ public:
     WTF_EXPORT_STRING_API void append(const LChar*, unsigned length);
     WTF_EXPORT_STRING_API void append(const UChar*, unsigned length);
     WTF_EXPORT_STRING_API void insert(const String&, unsigned pos);
-    void insert(const UChar*, unsigned length, unsigned pos);
 
     String& replace(UChar a, UChar b) { if (m_impl) m_impl = m_impl->replace(a, b); return *this; }
     String& replace(UChar a, const String& b) { if (m_impl) m_impl = m_impl->replace(a, b.impl()); return *this; }
@@ -532,19 +520,6 @@ inline const UChar* String::characters<UChar>() const
     return characters16();
 }
 
-template<>
-inline const LChar* String::getCharactersWithUpconvert<LChar>() const
-{
-    ASSERT(is8Bit());
-    return characters8();
-}
-
-template<>
-inline const UChar* String::getCharactersWithUpconvert<UChar>() const
-{
-    return deprecatedCharacters();
-}
-
 inline bool String::containsOnlyLatin1() const
 {
     if (isEmpty())
@@ -584,12 +559,6 @@ WTF_EXPORT_STRING_API int codePointCompare(const String&, const String&);
 inline bool codePointCompareLessThan(const String& a, const String& b)
 {
     return codePointCompare(a.impl(), b.impl()) < 0;
-}
-
-template<size_t inlineCapacity>
-inline void append(Vector<UChar, inlineCapacity>& vector, const String& string)
-{
-    vector.append(string.deprecatedCharacters(), string.length());
 }
 
 template<typename CharacterType>
@@ -664,7 +633,6 @@ using WTF::CString;
 using WTF::KeepTrailingZeros;
 using WTF::String;
 using WTF::emptyString;
-using WTF::append;
 using WTF::appendNumber;
 using WTF::charactersAreAllASCII;
 using WTF::charactersToIntStrict;
