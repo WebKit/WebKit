@@ -1,3 +1,17 @@
+2014-03-22  Michael Saboff  <msaboff@apple.com>
+
+        toThis() on a JSWorkerGlobalScope should return a JSProxy and not undefined
+        https://bugs.webkit.org/show_bug.cgi?id=130554
+
+        Reviewed by Geoffrey Garen.
+
+        Fixed toThis() on WorkerGlobalScope to return a JSProxy instead of the JSGlobalObject.
+        New regressions tests.
+
+        * fast/workers/resources/worker-strict.js: Added.
+        * fast/workers/worker-strict-expected.txt: Added.
+        * fast/workers/worker-strict.html: Added.
+
 2014-03-22  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
 
         ASSERTION FAILED: std::isfinite(num) in WebCore::CSSPrimitiveValue::CSSPrimitiveValue

@@ -1,3 +1,32 @@
+2014-03-22  Michael Saboff  <msaboff@apple.com>
+
+        toThis() on a JSWorkerGlobalScope should return a JSProxy and not undefined
+        https://bugs.webkit.org/show_bug.cgi?id=130554
+
+        Reviewed by Geoffrey Garen.
+
+        Fixed toThis() on WorkerGlobalScope to return a JSProxy instead of the JSGlobalObject.
+        Added cast from JSProxy->target() if the jsCast<>() to the native object fails
+        in toJSDedicatedWorkerGlobalScope() and toJSSharedWorkerGlobalScope().
+        The original cast is needed for access to the local side of the worker, while the JSProxy
+        cast is used on the remote side of a worker.
+
+        Test: fast/workers/worker-strict.html
+
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::toJSDedicatedWorkerGlobalScope):
+        (WebCore::toJSSharedWorkerGlobalScope):
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate): Changed to pass in the JSProxy and not
+        the WorkerGlobalScope object as the this object to script evaluation.
+
+        * workers/DedicatedWorkerGlobalScope.idl:
+        * workers/SharedWorkerGlobalScope.idl:
+        * workers/WorkerGlobalScope.idl:
+        Added the new CustomProxyToJSObject attribute so we'll call to<{nativeClass}>() for
+        getting the object to use for global evaluation.
+
 2014-03-22  Simon Fraser  <simon.fraser@apple.com>
 
         Some #include hygiene in Node/Element etc

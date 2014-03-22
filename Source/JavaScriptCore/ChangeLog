@@ -1,3 +1,29 @@
+2014-03-22  Michael Saboff  <msaboff@apple.com>
+
+        toThis() on a JSWorkerGlobalScope should return a JSProxy and not undefined
+        https://bugs.webkit.org/show_bug.cgi?id=130554
+
+        Reviewed by Geoffrey Garen.
+
+        Fixed toThis() on WorkerGlobalScope to return a JSProxy instead of the JSGlobalObject.
+        Did some cleanup as well.  Moved the setting of the thisObject in a JSGlobalObject to
+        happen in finishCreation() so that it will also happen for other derived classes including
+        JSWorkerGlobalScopeBase.
+
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreateInGroup):
+        * jsc.cpp:
+        (GlobalObject::create):
+        * API/tests/testapi.c:
+        (globalObject_initialize): Eliminated ASSERT that the global object we are creating matches
+        the result from JSContextGetGlobalObject() as that will return the proxy.       
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Removed thisValue parameter and the call to setGlobalThis() since
+        we now call setGlobalThis in finishCreation().
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::finishCreation):
+        (JSC::JSGlobalObject::setGlobalThis): Made this a private method.
+
 2014-03-22  Andreas Kling  <akling@apple.com>
 
         Fix debug build.
