@@ -812,7 +812,7 @@ NSArray *Frame::interpretationsForCurrentRoot() const
 
     NSMutableArray *result = [NSMutableArray array];
     for (auto& interpretation : interpretations)
-        [result addObject:static_cast<NSString *>(interpretation)];
+        [result addObject:adoptNS([[NSString alloc] initWithCharacters:interpretation.data() length:interpretation.size()]).get()];
 
     return result;
 }

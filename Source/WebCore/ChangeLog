@@ -1,3 +1,12 @@
+2014-03-22  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the iOS build.
+
+        Reviewed by Darin Adler.
+
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::interpretationsForCurrentRoot):
+
 2014-03-22  Darin Adler  <darin@apple.com>
 
         Remove String::deprecatedCharacters
