@@ -1,3 +1,9 @@
+2014-03-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix FTL build.
+
+        * ftl/FTLJITFinalizer.cpp:
+
 2014-03-22  Michael Saboff  <msaboff@apple.com>
 
         toThis() on a JSWorkerGlobalScope should return a JSProxy and not undefined
