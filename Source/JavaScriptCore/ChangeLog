@@ -1,3 +1,10 @@
+2014-03-22  Landry Breuil <landry@openbsd.org>
+
+        Use pthread_stackseg_np() to find the stack bounds on OpenBSD.
+        https://bugs.webkit.org/show_bug.cgi?id=129965
+
+        Reviewed By Anders Carlsson.
+
 2014-03-21  Mark Lam  <mark.lam@apple.com>
 
         Crash when BytecodeGenerator::emitJump calls Label::bind on null pointer.

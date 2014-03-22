@@ -353,8 +353,10 @@ static size_t getPlatformThreadRegisters(const PlatformThread& platformThread, P
 #elif USE(PTHREADS)
     pthread_attr_init(&regs);
 #if HAVE(PTHREAD_NP_H) || OS(NETBSD)
+#if !OS(OPENBSD)
     // e.g. on FreeBSD 5.4, neundorf@kde.org
     pthread_attr_get_np(platformThread, &regs);
+#endif
 #else
     // FIXME: this function is non-portable; other POSIX systems may have different np alternatives
     pthread_getattr_np(platformThread, &regs);
@@ -417,7 +419,14 @@ static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
 #elif USE(PTHREADS)
     void* stackBase = 0;
     size_t stackSize = 0;
+#if OS(OPENBSD)
+    stack_t ss;
+    int rc = pthread_stackseg_np(pthread_self(), &ss);
+    stackBase = (void*)((size_t) ss.ss_sp - ss.ss_size);
+    stackSize = ss.ss_size;
+#else
     int rc = pthread_attr_getstack(&regs, &stackBase, &stackSize);
+#endif
     (void)rc; // FIXME: Deal with error code somehow? Seems fatal.
     ASSERT(stackBase);
     return static_cast<char*>(stackBase) + stackSize;
