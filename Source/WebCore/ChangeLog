@@ -1,3 +1,14 @@
+2014-03-22  Simon Fraser  <simon.fraser@apple.com>
+
+        FloatRect.h on iOS should not suck in a system header
+        https://bugs.webkit.org/show_bug.cgi?id=130641
+
+        Reviewed by Geoff Garen.
+
+        Don't pull in <CoreGraphics/CGGeometry.h> from FloatRect.h.
+
+        * platform/graphics/FloatRect.h:
+
 2014-03-22  Dan Bernstein  <mitz@apple.com>
 
         Fixed the iOS build.

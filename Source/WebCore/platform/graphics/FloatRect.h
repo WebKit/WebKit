@@ -30,10 +30,6 @@
 #include "FloatPoint.h"
 #include <wtf/Vector.h>
 
-#if PLATFORM(IOS)
-#include <CoreGraphics/CGGeometry.h>
-#endif
-
 #if USE(CG)
 typedef struct CGRect CGRect;
 #endif
