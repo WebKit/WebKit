@@ -3492,9 +3492,6 @@ void FrameView::willPaintContents(GraphicsContext* context, const IntRect& dirty
     if (paintingState.isTopLevelPainter)
         sCurrentPaintTimeStamp = monotonicallyIncreasingTime();
 
-    if (!context->paintingDisabled() && !document->printing())
-        flushCompositingStateForThisFrame(&frame());
-
     paintingState.paintBehavior = m_paintBehavior;
     
     if (FrameView* parentView = parentFrameView()) {

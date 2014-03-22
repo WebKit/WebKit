@@ -3868,6 +3868,15 @@ static inline IMP getMethod(id o, SEL s)
     return NO;
 }
 
+- (BOOL)_flushCompositingChanges
+{
+    Frame* frame = [self _mainCoreFrame];
+    if (frame && frame->view())
+        return frame->view()->flushCompositingStateIncludingSubframes();
+
+    return YES;
+}
+
 - (void)_setBaseCTM:(CGAffineTransform)transform forContext:(CGContextRef)context
 {
     WKSetBaseCTM(context, transform);
@@ -8326,15 +8335,6 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
 - (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization
 {
     _private->needsOneShotDrawingSynchronization = needsSynchronization;
-}
-
-- (BOOL)_flushCompositingChanges
-{
-    Frame* frame = [self _mainCoreFrame];
-    if (frame && frame->view())
-        return frame->view()->flushCompositingStateIncludingSubframes();
-
-    return YES;
 }
 
 /*

@@ -156,7 +156,7 @@
     accessibilityController->resetToConsistentState();
 }
 
-- (void)webView:(WebView *)c locationChangeDone:(NSError *)error forDataSource:(WebDataSource *)dataSource
+- (void)webView:(WebView *)webView locationChangeDone:(NSError *)error forDataSource:(WebDataSource *)dataSource
 {
     if ([dataSource webFrame] == topLoadingFrame) {
         topLoadingFrame = nil;
@@ -281,11 +281,6 @@ static NSString *testPathFromURL(NSURL* url)
         printf ("%s\n", [string UTF8String]);
     }
 
-    // FIXME: This call to displayIfNeeded can be removed when <rdar://problem/5092361> is fixed.
-    // After that is fixed, we will reenable painting after WebCore is done loading the document, 
-    // and this call will no longer be needed.
-    if ([[sender mainFrame] isEqual:frame])
-        [sender displayIfNeeded];
     [self webView:sender locationChangeDone:nil forDataSource:[frame dataSource]];
     [gNavigationController webView:sender didFinishLoadForFrame:frame];
 }

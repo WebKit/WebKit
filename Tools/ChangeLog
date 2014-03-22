@@ -1,3 +1,29 @@
+2014-03-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't flush compositing layers within FrameView::willPaintContents()
+        https://bugs.webkit.org/show_bug.cgi?id=130627
+        <rdar://problem/16368869>
+
+        Reviewed by Sam Weinig.
+        
+        Fix DRT to correctly render tests with layers now that FrameView::paintContents
+        does not flush.
+        
+        Move the -[WebView displayIfNeeded] from -[FrameLoadDelegate webView:didFinishLoadForFrame:]
+        into an explicit function called before dumping. 
+        
+        Then explicitly call _flushCompositingChanges to ensure that GraphicsLayer changes
+        are flushed to CA. They will be pushed to the window by snapshotting.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Fix weird path to IOKit.framework.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (updateDisplay):
+        (dump):
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:locationChangeDone:forDataSource:]): Fix parameter name.
+        (-[FrameLoadDelegate webView:didFinishLoadForFrame:]): Remove display call.
+
 2014-03-21  David Kilzer  <ddkilzer@apple.com>
 
         fix-blink-patch: tool to fix up renamed directory paths in Blink

@@ -1523,6 +1523,18 @@ bool shouldSetWaitToDumpWatchdog()
     return !waitToDumpWatchdog && useTimeoutWatchdog;
 }
 
+static void updateDisplay()
+{
+    WebView *webView = [mainFrame webView];
+
+    if ([webView _isUsingAcceleratedCompositing])
+        [webView display];
+    else
+        [webView displayIfNeeded];
+
+    [webView _flushCompositingChanges];
+}
+
 void dump()
 {
 #if PLATFORM(IOS)
@@ -1533,7 +1545,9 @@ void dump()
     }
     WebThreadLock();
 #endif
-    
+
+    updateDisplay();
+
     invalidateAnyPreviousWaitToDumpWatchdog();
     ASSERT(!gTestRunner->hasPendingWebNotificationClick());
 
