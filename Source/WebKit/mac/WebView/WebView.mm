@@ -8401,8 +8401,6 @@ bool LayerFlushController::flushLayers()
 
     [m_webView _viewWillDrawInternal];
 
-    [m_webView _viewWillDrawInternal];
-
     if ([m_webView _flushCompositingChanges]) {
 #if !PLATFORM(IOS)
         // AppKit may have disabled screen updates, thinking an upcoming window flush will re-enable them.
