@@ -36,7 +36,7 @@
 #include "RegisteredEventListener.h"
 #include <memory>
 #include <wtf/Forward.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

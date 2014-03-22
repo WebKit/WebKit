@@ -26,9 +26,12 @@
 #ifndef WebCoreTypedArrayController_h
 #define WebCoreTypedArrayController_h
 
-#include <heap/Weak.h>
 #include <runtime/JSGlobalObject.h>
 #include <runtime/TypedArrayController.h>
+
+namespace JSC {
+class WeakHandleOwner;
+}
 
 namespace WebCore {
 

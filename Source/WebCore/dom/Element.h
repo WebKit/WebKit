@@ -31,6 +31,7 @@
 #include "HTMLNames.h"
 #include "RegionOversetState.h"
 #include "ScrollTypes.h"
+#include "SimulatedClickOptions.h"
 #include "StyleResolveTree.h"
 
 namespace WebCore {

@@ -62,7 +62,6 @@ class RenderNamedFlowThread;
 class RenderTheme;
 class TransformState;
 class VisiblePosition;
-class RenderSVGResourceContainer;
 #if PLATFORM(IOS)
 class SelectionRect;
 #endif

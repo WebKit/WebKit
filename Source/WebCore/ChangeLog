@@ -1,5 +1,23 @@
 2014-03-22  Simon Fraser  <simon.fraser@apple.com>
 
+        Some #include hygiene in Node/Element etc
+        https://bugs.webkit.org/show_bug.cgi?id=130642
+
+        Reviewed by Geoffrey Garen.
+
+        Clean up various #includes.
+
+        * accessibility/AccessibilityObject.h:
+        * bindings/js/WebCoreTypedArrayController.h:
+        * dom/Element.h:
+        * dom/EventListenerMap.h:
+        * dom/EventTarget.h:
+        * dom/Node.h:
+        * rendering/RenderObject.h:
+        * rendering/svg/RenderSVGRoot.h:
+
+2014-03-22  Simon Fraser  <simon.fraser@apple.com>
+
         FloatRect.h on iOS should not suck in a system header
         https://bugs.webkit.org/show_bug.cgi?id=130641
 

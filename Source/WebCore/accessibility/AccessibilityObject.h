@@ -86,7 +86,6 @@ class Page;
 class RenderObject;
 class RenderListItem;
 class ScrollableArea;
-class VisibleSelection;
 class Widget;
 
 typedef unsigned AXID;

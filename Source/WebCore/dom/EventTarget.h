@@ -38,10 +38,13 @@
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/text/AtomicStringHash.h>
+
+namespace WTF {
+class AtomicString;
+}
 
 namespace WebCore {
-
+    
     class AudioNode;
     class AudioContext;
     class AudioTrackList;

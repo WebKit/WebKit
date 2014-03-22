@@ -32,16 +32,18 @@
 #include "MutationObserver.h"
 #include "RenderStyleConstants.h"
 #include "ScriptWrappable.h"
-#include "SimulatedClickOptions.h"
 #include "TreeScope.h"
 #include "TreeShared.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/text/AtomicString.h>
 
 namespace JSC {
-    class VM;
-    class SlotVisitor;
+class VM;
+class SlotVisitor;
+}
+
+namespace WTF {
+class AtomicString;
 }
 
 // This needs to be here because Document.h also depends on it.
