@@ -6642,7 +6642,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[document _documentRange]];
     if (!attributedString) {
         Document* coreDocument = core(document);
-        attributedString = editingAttributedStringFromRange(*Range::create(*coreDocument, coreDocument, 0, coreDocument, coreDocument->childNodeCount()).get());
+        attributedString = editingAttributedStringFromRange(*Range::create(*coreDocument, coreDocument, 0, coreDocument, coreDocument->childNodeCount()));
     }
     return attributedString;
 }
