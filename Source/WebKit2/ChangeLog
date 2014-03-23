@@ -13,6 +13,27 @@
         Also forward declare PrintStream.h and only bring in the header
         in implementation files.
 
+        * Shared/UpdateInfo.h:
+        * UIProcess/BackingStore.h:
+        * UIProcess/CoordinatedGraphics/PageViewportController.h:
+        * UIProcess/FindIndicator.cpp:
+        * UIProcess/mac/WKPrintingView.h:
+
+2014-03-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up #includes by geometry classes
+        https://bugs.webkit.org/show_bug.cgi?id=130645
+
+        Reviewed by Andreas Kling.
+
+        Pulling in <wtf/Vector.h> and <wtf/PrintStream.h> in the simple geometry
+        classes brings in a lot of additional headers. Fix by adding a new
+        GeometryUtilities file so that the basic files don't need Vector,
+        and including GeometryUtilities.h where necessary.
+        
+        Also forward declare PrintStream.h and only bring in the header
+        in implementation files.
+
         * UIProcess/BackingStore.h:
         * UIProcess/FindIndicator.cpp:
         * UIProcess/mac/WKPrintingView.h:
