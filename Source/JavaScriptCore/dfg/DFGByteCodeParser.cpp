@@ -1063,6 +1063,7 @@ private:
         // code block had gathered.
         LazyOperandValueProfileParser m_lazyOperands;
         
+        CallLinkInfoMap m_callLinkInfos;
         StubInfoMap m_stubInfos;
         
         // Did we see any returns? We need to handle the (uncommon but necessary)
@@ -1180,7 +1181,8 @@ void ByteCodeParser::handleCall(
             m_graph.valueOfJSConstant(callTarget)).setIsProved(true);
     } else {
         callLinkStatus = CallLinkStatus::computeFor(
-            m_inlineStackTop->m_profiledBlock, currentCodeOrigin(), m_callContextMap);
+            m_inlineStackTop->m_profiledBlock, currentCodeOrigin(),
+            m_inlineStackTop->m_callLinkInfos, m_callContextMap);
     }
     
     if (!callLinkStatus.canOptimize()) {
@@ -3333,8 +3335,10 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         // We do this while holding the lock because we want to encourage StructureStubInfo's
         // to be potentially added to operations and because the profiled block could be in the
         // middle of LLInt->JIT tier-up in which case we would be adding the info's right now.
-        if (m_profiledBlock->hasBaselineJITProfiling())
+        if (m_profiledBlock->hasBaselineJITProfiling()) {
             m_profiledBlock->getStubInfoMap(locker, m_stubInfos);
+            m_profiledBlock->getCallLinkInfoMap(locker, m_callLinkInfos);
+        }
     }
     
     m_argumentPositions.resize(argumentCountIncludingThis);

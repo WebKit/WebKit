@@ -147,7 +147,9 @@ public:
     void visitAggregate(SlotVisitor&);
 
     void dumpBytecode(PrintStream& = WTF::dataFile());
-    void dumpBytecode(PrintStream&, unsigned bytecodeOffset, const StubInfoMap& = StubInfoMap());
+    void dumpBytecode(
+        PrintStream&, unsigned bytecodeOffset,
+        const StubInfoMap& = StubInfoMap(), const CallLinkInfoMap& = CallLinkInfoMap());
     void printStructures(PrintStream&, const Instruction*);
     void printStructure(PrintStream&, const char* name, const Instruction*, int operand);
 
@@ -178,11 +180,18 @@ public:
 
     void getStubInfoMap(const ConcurrentJITLocker&, StubInfoMap& result);
     void getStubInfoMap(StubInfoMap& result);
-
+    
+    void getCallLinkInfoMap(const ConcurrentJITLocker&, CallLinkInfoMap& result);
+    void getCallLinkInfoMap(CallLinkInfoMap& result);
+    
+    // This is a slow function call used primarily for compiling OSR exits in the case
+    // that there had been inlining. Chances are if you want to use this, you're really
+    // looking for a CallLinkInfoMap to amortize the cost of calling this.
+    CallLinkInfo* getCallLinkInfoForBytecodeIndex(unsigned bytecodeIndex);
 #if ENABLE(JIT)
     StructureStubInfo* addStubInfo();
-    Bag<StructureStubInfo>::iterator begin() { return m_stubInfos.begin(); }
-    Bag<StructureStubInfo>::iterator end() { return m_stubInfos.end(); }
+    Bag<StructureStubInfo>::iterator stubInfoBegin() { return m_stubInfos.begin(); }
+    Bag<StructureStubInfo>::iterator stubInfoEnd() { return m_stubInfos.end(); }
 
     void resetStub(StructureStubInfo&);
     
@@ -191,16 +200,9 @@ public:
         return *(binarySearch<ByValInfo, unsigned>(m_byValInfos, m_byValInfos.size(), bytecodeIndex, getByValInfoBytecodeIndex));
     }
 
-    CallLinkInfo& getCallLinkInfo(ReturnAddressPtr returnAddress)
-    {
-        return *(binarySearch<CallLinkInfo, void*>(m_callLinkInfos, m_callLinkInfos.size(), returnAddress.value(), getCallLinkInfoReturnLocation));
-    }
-
-    CallLinkInfo& getCallLinkInfo(unsigned bytecodeIndex)
-    {
-        ASSERT(!JITCode::isOptimizingJIT(jitType()));
-        return *(binarySearch<CallLinkInfo, unsigned>(m_callLinkInfos, m_callLinkInfos.size(), bytecodeIndex, getCallLinkInfoBytecodeIndex));
-    }
+    CallLinkInfo* addCallLinkInfo();
+    Bag<CallLinkInfo>::iterator callLinkInfosBegin() { return m_callLinkInfos.begin(); }
+    Bag<CallLinkInfo>::iterator callLinkInfosEnd() { return m_callLinkInfos.end(); }
 #endif // ENABLE(JIT)
 
     void unlinkIncomingCalls();
@@ -399,10 +401,6 @@ public:
     void setNumberOfByValInfos(size_t size) { m_byValInfos.resizeToFit(size); }
     size_t numberOfByValInfos() const { return m_byValInfos.size(); }
     ByValInfo& byValInfo(size_t index) { return m_byValInfos[index]; }
-
-    void setNumberOfCallLinkInfos(size_t size) { m_callLinkInfos.resizeToFit(size); }
-    size_t numberOfCallLinkInfos() const { return m_callLinkInfos.size(); }
-    CallLinkInfo& callLinkInfo(int index) { return m_callLinkInfos[index]; }
 #endif
 
     unsigned numberOfArgumentValueProfiles()
@@ -968,7 +966,9 @@ private:
             m_constantRegisters[i].set(*m_vm, ownerExecutable(), constants[i].get());
     }
 
-    void dumpBytecode(PrintStream&, ExecState*, const Instruction* begin, const Instruction*&, const StubInfoMap& = StubInfoMap());
+    void dumpBytecode(
+        PrintStream&, ExecState*, const Instruction* begin, const Instruction*&,
+        const StubInfoMap& = StubInfoMap(), const CallLinkInfoMap& = CallLinkInfoMap());
 
     CString registerName(int r) const;
     void printUnaryOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
@@ -977,7 +977,7 @@ private:
     void printGetByIdOp(PrintStream&, ExecState*, int location, const Instruction*&);
     void printGetByIdCacheStatus(PrintStream&, ExecState*, int location, const StubInfoMap&);
     enum CacheDumpMode { DumpCaches, DontDumpCaches };
-    void printCallOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op, CacheDumpMode, bool& hasPrintedProfiling);
+    void printCallOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op, CacheDumpMode, bool& hasPrintedProfiling, const CallLinkInfoMap&);
     void printPutByIdOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
     void printLocationAndOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
     void printLocationOpAndRegisterOperand(PrintStream&, ExecState*, int location, const Instruction*& it, const char* op, int operand);
@@ -1064,7 +1064,7 @@ private:
 #if ENABLE(JIT)
     Bag<StructureStubInfo> m_stubInfos;
     Vector<ByValInfo> m_byValInfos;
-    Vector<CallLinkInfo> m_callLinkInfos;
+    Bag<CallLinkInfo> m_callLinkInfos;
     SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo>> m_incomingCalls;
 #endif
     OwnPtr<CompactJITCodeMap> m_jitCodeMap;

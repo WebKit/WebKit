@@ -721,14 +721,9 @@ void SpeculativeJIT::emitCall(Node* node)
     
     slowPath.link(&m_jit);
     
-    if (m_jit.graph().m_plan.willTryToTierUp) {
-        m_jit.add32(
-            TrustedImm32(1),
-            MacroAssembler::AbsoluteAddress(
-                m_jit.jitCode()->slowPathCalls.begin() + m_jit.currentJSCallIndex()));
-    }
-    
     m_jit.move(calleeGPR, GPRInfo::regT0); // Callee needs to be in regT0
+    CallLinkInfo* callLinkInfo = m_jit.codeBlock()->addCallLinkInfo();
+    m_jit.move(MacroAssembler::TrustedImmPtr(callLinkInfo), GPRInfo::regT2); // Link info needs to be in regT2
     JITCompiler::Call slowCall = m_jit.nearCall();
     
     done.link(&m_jit);
@@ -737,7 +732,11 @@ void SpeculativeJIT::emitCall(Node* node)
     
     jsValueResult(resultGPR, m_currentNode, DataFormatJS, UseChildrenCalledExplicitly);
     
-    m_jit.addJSCall(fastCall, slowCall, targetToCheck, callType, calleeGPR, m_currentNode->origin.semantic);
+    callLinkInfo->callType = callType;
+    callLinkInfo->codeOrigin = m_currentNode->origin.semantic;
+    callLinkInfo->calleeGPR = calleeGPR;
+    
+    m_jit.addJSCall(fastCall, slowCall, targetToCheck, callLinkInfo);
 }
 
 // Clang should allow unreachable [[clang::fallthrough]] in template functions if any template expansion uses it

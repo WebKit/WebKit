@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -157,6 +157,7 @@ void JIT::compileCallEvalSlowCase(Instruction* instruction, Vector<SlowCaseEntry
     linkSlowCase(iter);
 
     load64(Address(stackPointerRegister, sizeof(Register) * JSStack::Callee - sizeof(CallerFrameAndPC)), regT0);
+    move(TrustedImmPtr(&CallLinkInfo::dummy()), regT2);
     emitNakedCall(m_vm->getCTIStub(virtualCallThunkGenerator).code());
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
@@ -219,16 +220,19 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     Jump slowCase = branchPtrWithPatch(NotEqual, regT0, addressOfLinkedFunctionCheck, TrustedImmPtr(0));
     addSlowCase(slowCase);
 
-    ASSERT(m_callStructureStubCompilationInfo.size() == callLinkInfoIndex);
-    m_callStructureStubCompilationInfo.append(StructureStubCompilationInfo());
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].callType = CallLinkInfo::callTypeFor(opcodeID);
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].bytecodeIndex = m_bytecodeOffset;
+    ASSERT(m_callCompilationInfo.size() == callLinkInfoIndex);
+    CallLinkInfo* info = m_codeBlock->addCallLinkInfo();
+    info->callType = CallLinkInfo::callTypeFor(opcodeID);
+    info->codeOrigin = CodeOrigin(m_bytecodeOffset);
+    info->calleeGPR = regT0;
+    m_callCompilationInfo.append(CallCompilationInfo());
+    m_callCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
+    m_callCompilationInfo[callLinkInfoIndex].callLinkInfo = info;
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scope)), regT2);
     store64(regT2, Address(MacroAssembler::stackPointerRegister, JSStack::ScopeChain * sizeof(Register) - sizeof(CallerFrameAndPC)));
 
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedCall();
+    m_callCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedCall();
 
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
@@ -251,7 +255,8 @@ void JIT::compileOpCallSlowCase(OpcodeID opcodeID, Instruction* instruction, Vec
         opcodeID == op_construct ? CodeForConstruct : CodeForCall,
         RegisterPreservationNotRequired);
     
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(m_vm->getCTIStub(generator).code());
+    move(TrustedImmPtr(m_callCompilationInfo[callLinkInfoIndex].callLinkInfo), regT2);
+    m_callCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(m_vm->getCTIStub(generator).code());
 
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();

@@ -1532,39 +1532,9 @@ void SpeculativeJIT::checkArgumentTypes()
     m_isCheckingArgumentTypes = false;
 }
 
-void SpeculativeJIT::prepareJITCodeForTierUp()
-{
-    unsigned numberOfCalls = 0;
-    
-    for (BlockIndex blockIndex = m_jit.graph().numBlocks(); blockIndex--;) {
-        BasicBlock* block = m_jit.graph().block(blockIndex);
-        if (!block)
-            continue;
-        
-        for (unsigned nodeIndex = block->size(); nodeIndex--;) {
-            Node* node = block->at(nodeIndex);
-            
-            switch (node->op()) {
-            case Call:
-            case Construct:
-                numberOfCalls++;
-                break;
-                
-            default:
-                break;
-            }
-        }
-    }
-    
-    m_jit.jitCode()->slowPathCalls.fill(0, numberOfCalls);
-}
-
 bool SpeculativeJIT::compile()
 {
     checkArgumentTypes();
-    
-    if (m_jit.graph().m_plan.willTryToTierUp)
-        prepareJITCodeForTierUp();
     
     ASSERT(!m_currentNode);
     for (BlockIndex blockIndex = 0; blockIndex < m_jit.graph().numBlocks(); ++blockIndex) {

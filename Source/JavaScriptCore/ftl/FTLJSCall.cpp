@@ -34,7 +34,8 @@ namespace JSC { namespace FTL {
 
 JSCall::JSCall()
     : m_stackmapID(UINT_MAX)
-    , m_node(0)
+    , m_node(nullptr)
+    , m_callLinkInfo(nullptr)
     , m_instructionOffset(UINT_MAX)
 {
 }
@@ -42,12 +43,15 @@ JSCall::JSCall()
 JSCall::JSCall(unsigned stackmapID, DFG::Node* node)
     : m_stackmapID(stackmapID)
     , m_node(node)
+    , m_callLinkInfo(nullptr)
     , m_instructionOffset(0)
 {
 }
 
 void JSCall::emit(CCallHelpers& jit)
 {
+    m_callLinkInfo = jit.codeBlock()->addCallLinkInfo();
+    
     CCallHelpers::Jump slowPath = jit.branchPtrWithPatch(
         CCallHelpers::NotEqual, GPRInfo::regT0, m_targetToCheck,
         CCallHelpers::TrustedImmPtr(0));
@@ -65,12 +69,14 @@ void JSCall::emit(CCallHelpers& jit)
     CCallHelpers::Jump done = jit.jump();
     
     slowPath.link(&jit);
+    
+    jit.move(CCallHelpers::TrustedImmPtr(m_callLinkInfo), GPRInfo::regT2);
     m_slowCall = jit.nearCall();
     
     done.link(&jit);
 }
 
-void JSCall::link(VM& vm, LinkBuffer& linkBuffer, CallLinkInfo& callInfo)
+void JSCall::link(VM& vm, LinkBuffer& linkBuffer)
 {
     ThunkGenerator generator = linkThunkGeneratorFor(
         m_node->op() == DFG::Construct ? CodeForConstruct : CodeForCall,
@@ -79,13 +85,13 @@ void JSCall::link(VM& vm, LinkBuffer& linkBuffer, CallLinkInfo& callInfo)
     linkBuffer.link(
         m_slowCall, FunctionPtr(vm.getCTIStub(generator).code().executableAddress()));
     
-    callInfo.isFTL = true;
-    callInfo.callType = m_node->op() == DFG::Construct ? CallLinkInfo::Construct : CallLinkInfo::Call;
-    callInfo.codeOrigin = m_node->origin.semantic;
-    callInfo.callReturnLocation = linkBuffer.locationOfNearCall(m_slowCall);
-    callInfo.hotPathBegin = linkBuffer.locationOf(m_targetToCheck);
-    callInfo.hotPathOther = linkBuffer.locationOfNearCall(m_fastCall);
-    callInfo.calleeGPR = GPRInfo::regT0;
+    m_callLinkInfo->isFTL = true;
+    m_callLinkInfo->callType = m_node->op() == DFG::Construct ? CallLinkInfo::Construct : CallLinkInfo::Call;
+    m_callLinkInfo->codeOrigin = m_node->origin.semantic;
+    m_callLinkInfo->callReturnLocation = linkBuffer.locationOfNearCall(m_slowCall);
+    m_callLinkInfo->hotPathBegin = linkBuffer.locationOf(m_targetToCheck);
+    m_callLinkInfo->hotPathOther = linkBuffer.locationOfNearCall(m_fastCall);
+    m_callLinkInfo->calleeGPR = GPRInfo::regT0;
 }
 
 } } // namespace JSC::FTL

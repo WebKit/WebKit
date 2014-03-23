@@ -1452,9 +1452,10 @@ void linkClosureCall(
 #if USE(JSVALUE32_64)
     stubJit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), GPRInfo::regT1);
 #endif
-    stubJit.move(CCallHelpers::TrustedImmPtr(callLinkInfo.callReturnLocation.executableAddress()), GPRInfo::regT2);
+    stubJit.move(CCallHelpers::TrustedImmPtr(&callLinkInfo), GPRInfo::regT2);
+    stubJit.move(CCallHelpers::TrustedImmPtr(callLinkInfo.callReturnLocation.executableAddress()), GPRInfo::regT4);
     
-    stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT2);
+    stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
     AssemblyHelpers::Jump slow = stubJit.jump();
     
     LinkBuffer patchBuffer(*vm, &stubJit, callerCodeBlock);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -167,12 +167,11 @@ namespace JSC {
         MacroAssembler::Call returnAddress;
     };
 
-    struct StructureStubCompilationInfo {
+    struct CallCompilationInfo {
         MacroAssembler::DataLabelPtr hotPathBegin;
         MacroAssembler::Call hotPathOther;
         MacroAssembler::Call callReturnLocation;
-        CallLinkInfo::CallType callType;
-        unsigned bytecodeIndex;
+        CallLinkInfo* callLinkInfo;
     };
 
     // Near calls can only be patched to other JIT code, regular calls can be patched to JIT code or relinked to stub functions.
@@ -795,7 +794,7 @@ namespace JSC {
         Vector<JITGetByIdGenerator> m_getByIds;
         Vector<JITPutByIdGenerator> m_putByIds;
         Vector<ByValCompilationInfo> m_byValCompilationInfo;
-        Vector<StructureStubCompilationInfo> m_callStructureStubCompilationInfo;
+        Vector<CallCompilationInfo> m_callCompilationInfo;
         Vector<JumpTable> m_jmpTable;
 
         unsigned m_bytecodeOffset;

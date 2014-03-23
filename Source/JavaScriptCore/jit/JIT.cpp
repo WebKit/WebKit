@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -294,7 +294,7 @@ void JIT::privateCompileMainPass()
         }
     }
 
-    RELEASE_ASSERT(m_callLinkInfoIndex == m_callStructureStubCompilationInfo.size());
+    RELEASE_ASSERT(m_callLinkInfoIndex == m_callCompilationInfo.size());
 
 #ifndef NDEBUG
     // Reset this, in order to guard its use with ASSERTs.
@@ -425,7 +425,7 @@ void JIT::privateCompileSlowCases()
 
     RELEASE_ASSERT(m_getByIdIndex == m_getByIds.size());
     RELEASE_ASSERT(m_putByIdIndex == m_putByIds.size());
-    RELEASE_ASSERT(m_callLinkInfoIndex == m_callStructureStubCompilationInfo.size());
+    RELEASE_ASSERT(m_callLinkInfoIndex == m_callCompilationInfo.size());
     RELEASE_ASSERT(numberOfValueProfiles == m_codeBlock->numberOfValueProfiles());
 
 #ifndef NDEBUG
@@ -643,15 +643,12 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
             differenceBetweenCodePtr(badTypeJump, doneTarget),
             differenceBetweenCodePtr(returnAddress, slowPathTarget));
     }
-    m_codeBlock->setNumberOfCallLinkInfos(m_callStructureStubCompilationInfo.size());
-    for (unsigned i = 0; i < m_codeBlock->numberOfCallLinkInfos(); ++i) {
-        CallLinkInfo& info = m_codeBlock->callLinkInfo(i);
-        info.callType = m_callStructureStubCompilationInfo[i].callType;
-        info.codeOrigin = CodeOrigin(m_callStructureStubCompilationInfo[i].bytecodeIndex);
-        info.callReturnLocation = patchBuffer.locationOfNearCall(m_callStructureStubCompilationInfo[i].callReturnLocation);
-        info.hotPathBegin = patchBuffer.locationOf(m_callStructureStubCompilationInfo[i].hotPathBegin);
-        info.hotPathOther = patchBuffer.locationOfNearCall(m_callStructureStubCompilationInfo[i].hotPathOther);
-        info.calleeGPR = regT0;
+    for (unsigned i = 0; i < m_callCompilationInfo.size(); ++i) {
+        CallCompilationInfo& compilationInfo = m_callCompilationInfo[i];
+        CallLinkInfo& info = *compilationInfo.callLinkInfo;
+        info.callReturnLocation = patchBuffer.locationOfNearCall(compilationInfo.callReturnLocation);
+        info.hotPathBegin = patchBuffer.locationOf(compilationInfo.hotPathBegin);
+        info.hotPathOther = patchBuffer.locationOfNearCall(compilationInfo.hotPathOther);
     }
 
     CompactJITCodeMap::Encoder jitCodeMapEncoder;

@@ -1,5 +1,99 @@
 2014-03-22  Filip Pizlo  <fpizlo@apple.com>
 
+        Call linking slow paths should be passed a CallLinkInfo* directly so that you can create a call IC without adding it to any CodeBlocks
+        https://bugs.webkit.org/show_bug.cgi?id=130644
+
+        Reviewed by Andreas Kling.
+        
+        This is conceptually a really simple change but it involves the following:
+        
+        - The inline part of the call IC stuffs a pointer to the CallLinkInfo into regT2.
+        
+        - CodeBlock uses a Bag of CallLinkInfos instead of a Vector.
+        
+        - Remove the significance of a CallLinkInfo's index. This means that DFG::JITCode no
+          longer has a vector of slow path counts that shadows the CallLinkInfo vector.
+        
+        - Make CallLinkInfo have its own slowPathCount, which counts actual slow path executions
+          and not all relinking.
+        
+        This makes planting JS->JS calls inside other inline caches or stubs a lot easier, since
+        the CallLinkInfo and the call IC slow paths no longer rely on the call being associated
+        with a op_call/op_construct instruction and a machine code return PC within such an
+        instruction.
+
+        * bytecode/CallLinkInfo.h:
+        (JSC::getCallLinkInfoCodeOrigin):
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        (JSC::CallLinkStatus::computeDFGStatuses):
+        * bytecode/CallLinkStatus.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printCallOp):
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::getCallLinkInfoMap):
+        (JSC::CodeBlock::getCallLinkInfoForBytecodeIndex):
+        (JSC::CodeBlock::addCallLinkInfo):
+        (JSC::CodeBlock::unlinkCalls):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::stubInfoBegin):
+        (JSC::CodeBlock::stubInfoEnd):
+        (JSC::CodeBlock::callLinkInfosBegin):
+        (JSC::CodeBlock::callLinkInfosEnd):
+        (JSC::CodeBlock::byValInfo):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addJSCall):
+        (JSC::DFG::JITCompiler::JSCallRecord::JSCallRecord):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::fixFunctionBasedOnStackMaps):
+        * ftl/FTLInlineCacheSize.cpp:
+        (JSC::FTL::sizeOfCall):
+        * ftl/FTLJSCall.cpp:
+        (JSC::FTL::JSCall::JSCall):
+        (JSC::FTL::JSCall::emit):
+        (JSC::FTL::JSCall::link):
+        * ftl/FTLJSCall.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        (JSC::operationLinkFor):
+        (JSC::operationVirtualFor):
+        (JSC::operationLinkClosureCallFor):
+        * jit/Repatch.cpp:
+        (JSC::linkClosureCall):
+        * jit/ThunkGenerators.cpp:
+        (JSC::slowPathFor):
+        (JSC::virtualForThunkGenerator):
+        * tests/stress/eval-that-is-not-eval.js: Added.
+
+2014-03-22  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix mispelled test name.
 
         * tests/stress/constand-folding-osr-exit.js: Removed.

@@ -117,7 +117,6 @@ public:
     Vector<DFG::OSREntryData> osrEntry;
     SegmentedVector<DFG::OSRExit, 8> osrExit;
     Vector<DFG::SpeculationRecovery> speculationRecovery;
-    Vector<unsigned> slowPathCalls;
     DFG::VariableEventStream variableEventStream;
     DFG::MinifiedGraph minifiedDFG;
 #if ENABLE(FTL_JIT)

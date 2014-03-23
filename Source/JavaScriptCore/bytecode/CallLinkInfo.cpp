@@ -30,6 +30,7 @@
 #include "DFGThunks.h"
 #include "JSCInlines.h"
 #include "RepatchBuffer.h"
+#include <wtf/NeverDestroyed.h>
 
 #if ENABLE(JIT)
 namespace JSC {
@@ -54,6 +55,12 @@ void CallLinkInfo::unlink(VM& vm, RepatchBuffer& repatchBuffer)
     // It will be on a list if the callee has a code block.
     if (isOnList())
         remove();
+}
+
+CallLinkInfo& CallLinkInfo::dummy()
+{
+    static NeverDestroyed<CallLinkInfo> dummy;
+    return dummy;
 }
 
 } // namespace JSC

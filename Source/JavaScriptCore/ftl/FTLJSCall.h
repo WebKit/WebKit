@@ -47,7 +47,7 @@ public:
     JSCall(unsigned stackmapID, DFG::Node*);
     
     void emit(CCallHelpers&);
-    void link(VM&, LinkBuffer&, CallLinkInfo&);
+    void link(VM&, LinkBuffer&);
     
     unsigned stackmapID() const { return m_stackmapID; }
     
@@ -62,6 +62,7 @@ private:
     CCallHelpers::DataLabelPtr m_targetToCheck;
     CCallHelpers::Call m_fastCall;
     CCallHelpers::Call m_slowCall;
+    CallLinkInfo* m_callLinkInfo;
 
 public:
     uint32_t m_instructionOffset;

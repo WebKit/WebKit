@@ -98,9 +98,11 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
         CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(codeOrigin);
         CodeBlock* baselineCodeBlockForCaller = jit.baselineCodeBlockFor(inlineCallFrame->caller);
         unsigned callBytecodeIndex = inlineCallFrame->caller.bytecodeIndex;
-        CallLinkInfo& callLinkInfo = baselineCodeBlockForCaller->getCallLinkInfo(callBytecodeIndex);
+        CallLinkInfo* callLinkInfo =
+            baselineCodeBlockForCaller->getCallLinkInfoForBytecodeIndex(callBytecodeIndex);
+        RELEASE_ASSERT(callLinkInfo);
         
-        void* jumpTarget = callLinkInfo.callReturnLocation.executableAddress();
+        void* jumpTarget = callLinkInfo->callReturnLocation.executableAddress();
 
         GPRReg callerFrameGPR;
         if (inlineCallFrame->caller.inlineCallFrame) {

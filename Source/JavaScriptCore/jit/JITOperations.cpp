@@ -674,7 +674,8 @@ static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializ
 }
 
 inline char* linkFor(
-    ExecState* execCallee, CodeSpecializationKind kind, RegisterPreservationMode registers)
+    ExecState* execCallee, CallLinkInfo* callLinkInfo, CodeSpecializationKind kind,
+    RegisterPreservationMode registers)
 {
     ExecState* exec = execCallee->callerFrame();
     VM* vm = &exec->vm();
@@ -692,7 +693,6 @@ inline char* linkFor(
 
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = 0;
-    CallLinkInfo& callLinkInfo = exec->codeBlock()->getCallLinkInfo(execCallee->returnPC());
     if (executable->isHostFunction())
         codePtr = executable->entrypointFor(*vm, kind, MustCheckArity, registers);
     else {
@@ -705,37 +705,37 @@ inline char* linkFor(
         }
         codeBlock = functionExecutable->codeBlockFor(kind);
         ArityCheckMode arity;
-        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.callType == CallLinkInfo::CallVarargs)
+        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo->callType == CallLinkInfo::CallVarargs)
             arity = MustCheckArity;
         else
             arity = ArityCheckNotRequired;
         codePtr = functionExecutable->entrypointFor(*vm, kind, arity, registers);
     }
-    if (!callLinkInfo.seenOnce())
-        callLinkInfo.setSeen();
+    if (!callLinkInfo->seenOnce())
+        callLinkInfo->setSeen();
     else
-        linkFor(execCallee, callLinkInfo, codeBlock, callee, codePtr, kind, registers);
+        linkFor(execCallee, *callLinkInfo, codeBlock, callee, codePtr, kind, registers);
     return reinterpret_cast<char*>(codePtr.executableAddress());
 }
 
-char* JIT_OPERATION operationLinkCall(ExecState* execCallee)
+char* JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLinkInfo* callLinkInfo)
 {
-    return linkFor(execCallee, CodeForCall, RegisterPreservationNotRequired);
+    return linkFor(execCallee, callLinkInfo, CodeForCall, RegisterPreservationNotRequired);
 }
 
-char* JIT_OPERATION operationLinkConstruct(ExecState* execCallee)
+char* JIT_OPERATION operationLinkConstruct(ExecState* execCallee, CallLinkInfo* callLinkInfo)
 {
-    return linkFor(execCallee, CodeForConstruct, RegisterPreservationNotRequired);
+    return linkFor(execCallee, callLinkInfo, CodeForConstruct, RegisterPreservationNotRequired);
 }
 
-char* JIT_OPERATION operationLinkCallThatPreservesRegs(ExecState* execCallee)
+char* JIT_OPERATION operationLinkCallThatPreservesRegs(ExecState* execCallee, CallLinkInfo* callLinkInfo)
 {
-    return linkFor(execCallee, CodeForCall, MustPreserveRegisters);
+    return linkFor(execCallee, callLinkInfo, CodeForCall, MustPreserveRegisters);
 }
 
-char* JIT_OPERATION operationLinkConstructThatPreservesRegs(ExecState* execCallee)
+char* JIT_OPERATION operationLinkConstructThatPreservesRegs(ExecState* execCallee, CallLinkInfo* callLinkInfo)
 {
-    return linkFor(execCallee, CodeForConstruct, MustPreserveRegisters);
+    return linkFor(execCallee, callLinkInfo, CodeForConstruct, MustPreserveRegisters);
 }
 
 inline char* virtualForWithFunction(
@@ -813,46 +813,44 @@ static bool attemptToOptimizeClosureCall(
     return true;
 }
 
-char* JIT_OPERATION operationLinkClosureCall(ExecState* execCallee)
+char* JIT_OPERATION operationLinkClosureCall(ExecState* execCallee, CallLinkInfo* callLinkInfo)
 {
     JSCell* calleeAsFunctionCell;
     char* result = virtualForWithFunction(execCallee, CodeForCall, RegisterPreservationNotRequired, calleeAsFunctionCell);
-    CallLinkInfo& callLinkInfo = execCallee->callerFrame()->codeBlock()->getCallLinkInfo(execCallee->returnPC());
 
-    if (!attemptToOptimizeClosureCall(execCallee, RegisterPreservationNotRequired, calleeAsFunctionCell, callLinkInfo))
-        linkSlowFor(execCallee, callLinkInfo, CodeForCall, RegisterPreservationNotRequired);
+    if (!attemptToOptimizeClosureCall(execCallee, RegisterPreservationNotRequired, calleeAsFunctionCell, *callLinkInfo))
+        linkSlowFor(execCallee, *callLinkInfo, CodeForCall, RegisterPreservationNotRequired);
     
     return result;
 }
 
-char* JIT_OPERATION operationVirtualCall(ExecState* execCallee)
+char* JIT_OPERATION operationVirtualCall(ExecState* execCallee, CallLinkInfo*)
 {    
     return virtualFor(execCallee, CodeForCall, RegisterPreservationNotRequired);
 }
 
-char* JIT_OPERATION operationVirtualConstruct(ExecState* execCallee)
+char* JIT_OPERATION operationVirtualConstruct(ExecState* execCallee, CallLinkInfo*)
 {
     return virtualFor(execCallee, CodeForConstruct, RegisterPreservationNotRequired);
 }
 
-char* JIT_OPERATION operationLinkClosureCallThatPreservesRegs(ExecState* execCallee)
+char* JIT_OPERATION operationLinkClosureCallThatPreservesRegs(ExecState* execCallee, CallLinkInfo* callLinkInfo)
 {
     JSCell* calleeAsFunctionCell;
     char* result = virtualForWithFunction(execCallee, CodeForCall, MustPreserveRegisters, calleeAsFunctionCell);
-    CallLinkInfo& callLinkInfo = execCallee->callerFrame()->codeBlock()->getCallLinkInfo(execCallee->returnPC());
 
-    if (!attemptToOptimizeClosureCall(execCallee, MustPreserveRegisters, calleeAsFunctionCell, callLinkInfo))
-        linkSlowFor(execCallee, callLinkInfo, CodeForCall, MustPreserveRegisters);
+    if (!attemptToOptimizeClosureCall(execCallee, MustPreserveRegisters, calleeAsFunctionCell, *callLinkInfo))
+        linkSlowFor(execCallee, *callLinkInfo, CodeForCall, MustPreserveRegisters);
     
     return result;
 }
 
-char* JIT_OPERATION operationVirtualCallThatPreservesRegs(ExecState* execCallee)
+char* JIT_OPERATION operationVirtualCallThatPreservesRegs(ExecState* execCallee, CallLinkInfo*)
 {    
     return virtualFor(execCallee, CodeForCall, MustPreserveRegisters);
 }
 
-char* JIT_OPERATION operationVirtualConstructThatPreservesRegs(ExecState* execCallee)
+char* JIT_OPERATION operationVirtualConstructThatPreservesRegs(ExecState* execCallee, CallLinkInfo*)
 {
     return virtualFor(execCallee, CodeForConstruct, MustPreserveRegisters);
 }

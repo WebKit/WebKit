@@ -120,8 +120,6 @@ public:
 
     bool compile();
     
-    void prepareJITCodeForTierUp();
-    
     void createOSREntries();
     void linkOSREntries(LinkBuffer&);
 

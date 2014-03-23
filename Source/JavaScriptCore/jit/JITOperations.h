@@ -60,6 +60,7 @@ extern "C" {
     Aap: ArrayAllocationProfile*
     C: JSCell*
     Cb: CodeBlock*
+    Cli: CallLinkInfo*
     D: double
     E: ExecState*
     F: CallFrame*
@@ -168,6 +169,7 @@ typedef void JIT_OPERATION (*V_JITOperation_EZ)(ExecState*, int32_t);
 typedef void JIT_OPERATION (*V_JITOperation_EVm)(ExecState*, VM*);
 typedef char* JIT_OPERATION (*P_JITOperation_E)(ExecState*);
 typedef char* JIT_OPERATION (*P_JITOperation_EC)(ExecState*, JSCell*);
+typedef char* JIT_OPERATION (*P_JITOperation_ECli)(ExecState*, CallLinkInfo*);
 typedef char* JIT_OPERATION (*P_JITOperation_EJS)(ExecState*, EncodedJSValue, size_t);
 typedef char* JIT_OPERATION (*P_JITOperation_EO)(ExecState*, JSObject*);
 typedef char* JIT_OPERATION (*P_JITOperation_EOS)(ExecState*, JSObject*, size_t);
@@ -218,16 +220,16 @@ void JIT_OPERATION operationDirectPutByVal(ExecState*, EncodedJSValue, EncodedJS
 void JIT_OPERATION operationPutByValGeneric(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationDirectPutByValGeneric(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationCallEval(ExecState*, ExecState*) WTF_INTERNAL;
-char* JIT_OPERATION operationLinkCall(ExecState*) WTF_INTERNAL;
-char* JIT_OPERATION operationLinkClosureCall(ExecState*) WTF_INTERNAL;
-char* JIT_OPERATION operationVirtualCall(ExecState*) WTF_INTERNAL;
-char* JIT_OPERATION operationVirtualConstruct(ExecState*) WTF_INTERNAL;
-char* JIT_OPERATION operationLinkConstruct(ExecState*) WTF_INTERNAL;
-char* JIT_OPERATION operationLinkCallThatPreservesRegs(ExecState*) WTF_INTERNAL;
-char* JIT_OPERATION operationLinkClosureCallThatPreservesRegs(ExecState*) WTF_INTERNAL;
-char* JIT_OPERATION operationVirtualCallThatPreservesRegs(ExecState*) WTF_INTERNAL;
-char* JIT_OPERATION operationVirtualConstructThatPreservesRegs(ExecState*) WTF_INTERNAL;
-char* JIT_OPERATION operationLinkConstructThatPreservesRegs(ExecState*) WTF_INTERNAL;
+char* JIT_OPERATION operationLinkCall(ExecState*, CallLinkInfo*) WTF_INTERNAL;
+char* JIT_OPERATION operationLinkClosureCall(ExecState*, CallLinkInfo*) WTF_INTERNAL;
+char* JIT_OPERATION operationVirtualCall(ExecState*, CallLinkInfo*) WTF_INTERNAL;
+char* JIT_OPERATION operationVirtualConstruct(ExecState*, CallLinkInfo*) WTF_INTERNAL;
+char* JIT_OPERATION operationLinkConstruct(ExecState*, CallLinkInfo*) WTF_INTERNAL;
+char* JIT_OPERATION operationLinkCallThatPreservesRegs(ExecState*, CallLinkInfo*) WTF_INTERNAL;
+char* JIT_OPERATION operationLinkClosureCallThatPreservesRegs(ExecState*, CallLinkInfo*) WTF_INTERNAL;
+char* JIT_OPERATION operationVirtualCallThatPreservesRegs(ExecState*, CallLinkInfo*) WTF_INTERNAL;
+char* JIT_OPERATION operationVirtualConstructThatPreservesRegs(ExecState*, CallLinkInfo*) WTF_INTERNAL;
+char* JIT_OPERATION operationLinkConstructThatPreservesRegs(ExecState*, CallLinkInfo*) WTF_INTERNAL;
 
 size_t JIT_OPERATION operationCompareLess(ExecState*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 size_t JIT_OPERATION operationCompareLessEq(ExecState*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
@@ -297,7 +299,7 @@ void JIT_OPERATION operationInitGlobalConst(ExecState*, Instruction*);
 
 } // extern "C"
 
-inline P_JITOperation_E operationLinkFor(
+inline P_JITOperation_ECli operationLinkFor(
     CodeSpecializationKind kind, RegisterPreservationMode registers)
 {
     switch (kind) {
@@ -322,7 +324,7 @@ inline P_JITOperation_E operationLinkFor(
     return 0;
 }
 
-inline P_JITOperation_E operationVirtualFor(
+inline P_JITOperation_ECli operationVirtualFor(
     CodeSpecializationKind kind, RegisterPreservationMode registers)
 {
     switch (kind) {
@@ -347,7 +349,7 @@ inline P_JITOperation_E operationVirtualFor(
     return 0;
 }
 
-inline P_JITOperation_E operationLinkClosureCallFor(RegisterPreservationMode registers)
+inline P_JITOperation_ECli operationLinkClosureCallFor(RegisterPreservationMode registers)
 {
     switch (registers) {
     case RegisterPreservationNotRequired:

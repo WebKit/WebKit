@@ -26,6 +26,7 @@
 #ifndef CallLinkStatus_h
 #define CallLinkStatus_h
 
+#include "CallLinkInfo.h"
 #include "CodeOrigin.h"
 #include "CodeSpecializationKind.h"
 #include "ConcurrentJITLock.h"
@@ -75,7 +76,8 @@ public:
         return *this;
     }
     
-    static CallLinkStatus computeFor(CodeBlock*, unsigned bytecodeIndex);
+    static CallLinkStatus computeFor(
+        CodeBlock*, unsigned bytecodeIndex, const CallLinkInfoMap&);
 
 #if ENABLE(JIT)
     // Computes the status assuming that we never took slow path and never previously
@@ -91,7 +93,8 @@ public:
     static void computeDFGStatuses(CodeBlock* dfgCodeBlock, ContextMap&);
     
     // Helper that first consults the ContextMap and then does computeFor().
-    static CallLinkStatus computeFor(CodeBlock*, CodeOrigin, const ContextMap&);
+    static CallLinkStatus computeFor(
+        CodeBlock*, CodeOrigin, const CallLinkInfoMap&, const ContextMap&);
     
     bool isSet() const { return m_callTarget || m_executable || m_couldTakeSlowPath; }
     

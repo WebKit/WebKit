@@ -79,13 +79,13 @@ MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(VM* vm)
 }
 
 static void slowPathFor(
-    CCallHelpers& jit, VM* vm, P_JITOperation_E slowPathFunction)
+    CCallHelpers& jit, VM* vm, P_JITOperation_ECli slowPathFunction)
 {
     jit.emitFunctionPrologue();
     jit.storePtr(GPRInfo::callFrameRegister, &vm->topCallFrame);
     if (maxFrameExtentForSlowPathCall)
         jit.addPtr(CCallHelpers::TrustedImm32(-maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
-    jit.setupArgumentsExecState();
+    jit.setupArgumentsWithExecState(GPRInfo::regT2);
     jit.move(CCallHelpers::TrustedImmPtr(bitwise_cast<void*>(slowPathFunction)), GPRInfo::nonArgGPR0);
     emitPointerValidation(jit, GPRInfo::nonArgGPR0);
     jit.call(GPRInfo::nonArgGPR0);
@@ -174,39 +174,45 @@ static MacroAssemblerCodeRef virtualForThunkGenerator(
     CCallHelpers jit(vm);
     
     CCallHelpers::JumpList slowCase;
+    
+    // This is a slow path execution, and regT2 contains the CallLinkInfo. Count the
+    // slow path execution for the profiler.
+    jit.add32(
+        CCallHelpers::TrustedImm32(1),
+        CCallHelpers::Address(GPRInfo::regT2, OBJECT_OFFSETOF(CallLinkInfo, slowPathCount)));
 
     // FIXME: we should have a story for eliminating these checks. In many cases,
     // the DFG knows that the value is definitely a cell, or definitely a function.
     
 #if USE(JSVALUE64)
-    jit.move(CCallHelpers::TrustedImm64(TagMask), GPRInfo::regT2);
+    jit.move(CCallHelpers::TrustedImm64(TagMask), GPRInfo::regT4);
     
     slowCase.append(
         jit.branchTest64(
-            CCallHelpers::NonZero, GPRInfo::regT0, GPRInfo::regT2));
+            CCallHelpers::NonZero, GPRInfo::regT0, GPRInfo::regT4));
 #else
     slowCase.append(
         jit.branch32(
             CCallHelpers::NotEqual, GPRInfo::regT1,
             CCallHelpers::TrustedImm32(JSValue::CellTag)));
 #endif
-    AssemblyHelpers::emitLoadStructure(jit, GPRInfo::regT0, GPRInfo::regT2, GPRInfo::regT1);
+    AssemblyHelpers::emitLoadStructure(jit, GPRInfo::regT0, GPRInfo::regT4, GPRInfo::regT1);
     slowCase.append(
         jit.branchPtr(
             CCallHelpers::NotEqual,
-            CCallHelpers::Address(GPRInfo::regT2, Structure::classInfoOffset()),
+            CCallHelpers::Address(GPRInfo::regT4, Structure::classInfoOffset()),
             CCallHelpers::TrustedImmPtr(JSFunction::info())));
     
     // Now we know we have a JSFunction.
     
     jit.loadPtr(
         CCallHelpers::Address(GPRInfo::regT0, JSFunction::offsetOfExecutable()),
-        GPRInfo::regT2);
+        GPRInfo::regT4);
     jit.loadPtr(
         CCallHelpers::Address(
-            GPRInfo::regT2, ExecutableBase::offsetOfJITCodeWithArityCheckFor(kind, registers)),
-        GPRInfo::regT2);
-    slowCase.append(jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT2));
+            GPRInfo::regT4, ExecutableBase::offsetOfJITCodeWithArityCheckFor(kind, registers)),
+        GPRInfo::regT4);
+    slowCase.append(jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT4));
     
     // Now we know that we have a CodeBlock, and we're committed to making a fast
     // call.
@@ -223,8 +229,8 @@ static MacroAssemblerCodeRef virtualForThunkGenerator(
 #endif
     
     // Make a tail call. This will return back to JIT code.
-    emitPointerValidation(jit, GPRInfo::regT2);
-    jit.jump(GPRInfo::regT2);
+    emitPointerValidation(jit, GPRInfo::regT4);
+    jit.jump(GPRInfo::regT4);
 
     slowCase.link(&jit);
     

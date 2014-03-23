@@ -722,6 +722,8 @@ void SpeculativeJIT::emitCall(Node* node)
         m_jit.move(calleePayloadGPR, GPRInfo::regT0);
         m_jit.move(calleeTagGPR, GPRInfo::regT1);
     }
+    CallLinkInfo* info = m_jit.codeBlock()->addCallLinkInfo();
+    m_jit.move(MacroAssembler::TrustedImmPtr(info), GPRInfo::regT2);
     JITCompiler::Call slowCall = m_jit.nearCall();
 
     done.link(&m_jit);
@@ -730,7 +732,10 @@ void SpeculativeJIT::emitCall(Node* node)
 
     jsValueResult(resultTagGPR, resultPayloadGPR, node, DataFormatJS, UseChildrenCalledExplicitly);
 
-    m_jit.addJSCall(fastCall, slowCall, targetToCheck, callType, calleePayloadGPR, node->origin.semantic);
+    info->callType = callType;
+    info->codeOrigin = node->origin.semantic;
+    info->calleeGPR = calleePayloadGPR;
+    m_jit.addJSCall(fastCall, slowCall, targetToCheck, info);
 }
 
 template<bool strict>

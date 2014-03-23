@@ -233,6 +233,7 @@ void JIT::compileCallEvalSlowCase(Instruction* instruction, Vector<SlowCaseEntry
 
     loadPtr(Address(stackPointerRegister, sizeof(Register) * JSStack::Callee - sizeof(CallerFrameAndPC)), regT0);
     loadPtr(Address(stackPointerRegister, sizeof(Register) * JSStack::Callee - sizeof(CallerFrameAndPC)), regT1);
+    move(TrustedImmPtr(&CallLinkInfo::dummy()), regT2);
 
     emitLoad(JSStack::Callee, regT1, regT0);
     emitNakedCall(m_vm->getCTIStub(virtualCallThunkGenerator).code());
@@ -299,18 +300,21 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     addSlowCase(slowCase);
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
 
-    ASSERT(m_callStructureStubCompilationInfo.size() == callLinkInfoIndex);
-    m_callStructureStubCompilationInfo.append(StructureStubCompilationInfo());
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].callType = CallLinkInfo::callTypeFor(opcodeID);
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].bytecodeIndex = m_bytecodeOffset;
+    ASSERT(m_callCompilationInfo.size() == callLinkInfoIndex);
+    CallLinkInfo* info = m_codeBlock->addCallLinkInfo();
+    info->callType = CallLinkInfo::callTypeFor(opcodeID);
+    info->codeOrigin = CodeOrigin(m_bytecodeOffset);
+    info->calleeGPR = regT0;
+    m_callCompilationInfo.append(CallCompilationInfo());
+    m_callCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
+    m_callCompilationInfo[callLinkInfoIndex].callLinkInfo = info;
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scope)), regT2);
     store32(regT2, Address(MacroAssembler::stackPointerRegister, JSStack::ScopeChain * sizeof(Register) + PayloadOffset - sizeof(CallerFrameAndPC)));
     store32(TrustedImm32(JSValue::CellTag), Address(stackPointerRegister, JSStack::ScopeChain * sizeof(Register) + TagOffset - sizeof(CallerFrameAndPC)));
 
     checkStackPointerAlignment();
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedCall();
+    m_callCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedCall();
 
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
@@ -333,7 +337,8 @@ void JIT::compileOpCallSlowCase(OpcodeID opcodeID, Instruction* instruction, Vec
         opcodeID == op_construct ? CodeForConstruct : CodeForCall,
         RegisterPreservationNotRequired);
     
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(m_vm->getCTIStub(generator).code());
+    move(TrustedImmPtr(m_callCompilationInfo[callLinkInfoIndex].callLinkInfo), regT2);
+    m_callCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(m_vm->getCTIStub(generator).code());
 
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();

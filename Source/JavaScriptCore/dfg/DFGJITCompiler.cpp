@@ -233,20 +233,16 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         info.patch.deltaCallToSlowCase = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_ins[i].m_slowPathGenerator->label()));
     }
     
-    RELEASE_ASSERT(!m_graph.m_plan.willTryToTierUp || m_jitCode->slowPathCalls.size() >= m_jsCalls.size());
-    m_codeBlock->setNumberOfCallLinkInfos(m_jsCalls.size());
     for (unsigned i = 0; i < m_jsCalls.size(); ++i) {
-        CallLinkInfo& info = m_codeBlock->callLinkInfo(i);
-        info.callType = m_jsCalls[i].m_callType;
-        info.codeOrigin = m_jsCalls[i].m_codeOrigin;
+        JSCallRecord& record = m_jsCalls[i];
+        CallLinkInfo& info = *record.m_info;
         ThunkGenerator generator = linkThunkGeneratorFor(
             info.callType == CallLinkInfo::Construct ? CodeForConstruct : CodeForCall,
             RegisterPreservationNotRequired);
-        linkBuffer.link(m_jsCalls[i].m_slowCall, FunctionPtr(m_vm->getCTIStub(generator).code().executableAddress()));
-        info.callReturnLocation = linkBuffer.locationOfNearCall(m_jsCalls[i].m_slowCall);
-        info.hotPathBegin = linkBuffer.locationOf(m_jsCalls[i].m_targetToCheck);
-        info.hotPathOther = linkBuffer.locationOfNearCall(m_jsCalls[i].m_fastCall);
-        info.calleeGPR = static_cast<unsigned>(m_jsCalls[i].m_callee);
+        linkBuffer.link(record.m_slowCall, FunctionPtr(m_vm->getCTIStub(generator).code().executableAddress()));
+        info.callReturnLocation = linkBuffer.locationOfNearCall(record.m_slowCall);
+        info.hotPathBegin = linkBuffer.locationOf(record.m_targetToCheck);
+        info.hotPathOther = linkBuffer.locationOfNearCall(record.m_fastCall);
     }
     
     MacroAssemblerCodeRef osrExitThunk = vm()->getCTIStub(osrExitGenerationThunkGenerator);
