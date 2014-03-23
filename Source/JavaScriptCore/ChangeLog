@@ -1,3 +1,10 @@
+2014-03-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix mispelled test name.
+
+        * tests/stress/constand-folding-osr-exit.js: Removed.
+        * tests/stress/constant-folding-osr-exit.js: Copied from Source/JavaScriptCore/tests/stress/constand-folding-osr-exit.js.
+
 2014-03-22  Andreas Kling  <akling@apple.com>
 
         CREATE_DOM_WRAPPER doesn't need the ExecState.
