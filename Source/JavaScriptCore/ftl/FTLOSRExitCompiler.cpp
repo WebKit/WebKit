@@ -77,8 +77,9 @@ static void compileStub(
 
     saveAllRegisters(jit, registerScratch);
     
-    // Bring the stack back into a sane form.
+    // Bring the stack back into a sane form and assert that it's sane.
     jit.popToRestore(GPRInfo::regT0);
+    jit.checkStackPointerAlignment();
     
     if (vm->m_perBytecodeProfiler && codeBlock->jitCode()->dfgCommon()->compilation) {
         Profiler::Database& database = *vm->m_perBytecodeProfiler;
@@ -259,12 +260,16 @@ static void compileStub(
     arityIntact.link(&jit);
 
     // First set up SP so that our data doesn't get clobbered by signals.
+    unsigned conservativeStackDelta =
+        registerPreservationOffset() +
+        exit.m_values.numberOfLocals() * sizeof(Register) +
+        maxFrameExtentForSlowPathCall;
+    conservativeStackDelta = WTF::roundUpToMultipleOf(
+        stackAlignmentBytes(), conservativeStackDelta);
     jit.addPtr(
-        MacroAssembler::TrustedImm32(
-            WTF::roundUpToMultipleOf(
-                stackAlignmentRegisters(),
-                -registerPreservationOffset() - exit.m_values.numberOfLocals() * sizeof(Register) - maxFrameExtentForSlowPathCall)),
+        MacroAssembler::TrustedImm32(-conservativeStackDelta),
         MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
+    jit.checkStackPointerAlignment();
     
     jit.subPtr(
         MacroAssembler::TrustedImm32(registerPreservationOffset()),

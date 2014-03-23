@@ -1,3 +1,29 @@
+2014-03-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Gotta grow the locals vectors if we are about to do SetLocals beyond the bytecode's numCalleeRegisters
+        https://bugs.webkit.org/show_bug.cgi?id=130650
+        <rdar://problem/16122966>
+
+        Reviewed by Michael Saboff.
+        
+        Previously, it was only in the case of inlining that we would do SetLocal's beyond the
+        previously established numLocals limit. But then we added generalized op_call_varargs
+        handling, which results in us emitting SetLocals that didn't previously exist in the
+        bytecode.
+        
+        This factors out the inliner's ensureLocals loop and calls it from op_call_varargs.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ensureLocals):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub): Make this do alignment correctly.
+        * runtime/Options.h:
+        * tests/stress/call-varargs-from-inlined-code.js: Added.
+        * tests/stress/call-varargs-from-inlined-code-with-odd-number-of-arguments.js: Added.
+
 2014-03-22  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, adjust sizes for ARM64.

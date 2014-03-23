@@ -156,6 +156,15 @@ private:
 
     // Just parse from m_currentIndex to the end of the current CodeBlock.
     void parseCodeBlock();
+    
+    void ensureLocals(unsigned newNumLocals)
+    {
+        if (newNumLocals <= m_numLocals)
+            return;
+        m_numLocals = newNumLocals;
+        for (size_t i = 0; i < m_graph.numBlocks(); ++i)
+            m_graph.block(i)->ensureLocals(newNumLocals);
+    }
 
     // Helper for min and max.
     bool handleMinMax(int resultOperand, NodeType op, int registerOffset, int argumentCountIncludingThis);
@@ -1365,13 +1374,9 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
     
     int inlineCallFrameStart = m_inlineStackTop->remapOperand(VirtualRegister(registerOffset)).offset() + JSStack::CallFrameHeaderSize;
     
-    // Make sure that we have enough locals.
-    unsigned newNumLocals = VirtualRegister(inlineCallFrameStart).toLocal() + 1 + JSStack::CallFrameHeaderSize + codeBlock->m_numCalleeRegisters;
-    if (newNumLocals > m_numLocals) {
-        m_numLocals = newNumLocals;
-        for (size_t i = 0; i < m_graph.numBlocks(); ++i)
-            m_graph.block(i)->ensureLocals(newNumLocals);
-    }
+    ensureLocals(
+        VirtualRegister(inlineCallFrameStart).toLocal() + 1 +
+        JSStack::CallFrameHeaderSize + codeBlock->m_numCalleeRegisters);
     
     size_t argumentPositionStart = m_graph.m_argumentPositions.size();
 
@@ -2126,6 +2131,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         Instruction* currentInstruction = instructionsBegin + m_currentIndex;
         m_currentInstruction = currentInstruction; // Some methods want to use this, and we'd rather not thread it through calls.
         OpcodeID opcodeID = interpreter->getOpcodeID(currentInstruction->u.opcode);
+        
+        if (Options::verboseDFGByteCodeParsing())
+            dataLog("    parsing ", currentCodeOrigin(), "\n");
         
         if (m_graph.compilation()) {
             addToGraph(CountExecution, OpInfo(m_graph.compilation()->executionCounterFor(
@@ -2912,6 +2920,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             registerOffset = -WTF::roundUpToMultipleOf(
                 stackAlignmentRegisters(),
                 -registerOffset);
+
+            ensureLocals(
+                m_inlineStackTop->remapOperand(
+                    VirtualRegister(registerOffset)).toLocal());
             
             // The bytecode wouldn't have set up the arguments. But we'll do it and make it
             // look like the bytecode had done it.
@@ -3584,6 +3596,9 @@ bool ByteCodeParser::parse()
 {
     // Set during construction.
     ASSERT(!m_currentIndex);
+    
+    if (Options::verboseDFGByteCodeParsing())
+        dataLog("Parsing ", *m_codeBlock, "\n");
     
     m_dfgCodeBlock = m_graph.m_plan.profiledDFGCodeBlock.get();
     if (isFTL(m_graph.m_plan.mode) && m_dfgCodeBlock) {

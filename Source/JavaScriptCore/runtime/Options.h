@@ -117,6 +117,7 @@ typedef OptionRange optionRange;
     v(optionRange, bytecodeRangeToDFGCompile, 0) \
     v(bool, dumpBytecodeAtDFGTime, false) \
     v(bool, dumpGraphAtEachPhase, false) \
+    v(bool, verboseDFGByteCodeParsing, false) \
     v(bool, verboseCompilation, false) \
     v(bool, verboseFTLCompilation, false) \
     v(bool, logCompilationChanges, false) \
