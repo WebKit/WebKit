@@ -1756,7 +1756,7 @@ void Document::recalcStyle(Style::Change change)
 
     m_inStyleRecalc = true;
     {
-        PostAttachCallbackDisabler disabler(*this);
+        Style::PostResolutionCallbackDisabler disabler(*this);
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
         if (m_pendingStyleRecalcShouldForce)

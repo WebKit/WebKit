@@ -37,13 +37,10 @@
 #include "JSLazyEventListener.h"
 #include "JSNode.h"
 #include "LabelsNodeList.h"
-#include "LoaderStrategy.h"
-#include "MemoryCache.h"
 #include "MutationEvent.h"
 #include "NameNodeList.h"
 #include "NodeRareData.h"
 #include "NodeRenderStyle.h"
-#include "PlatformStrategies.h"
 #include "RadioNodeList.h"
 #include "RenderBox.h"
 #include "RenderTheme.h"
@@ -62,15 +59,6 @@ namespace WebCore {
 
 static void dispatchChildInsertionEvents(Node&);
 static void dispatchChildRemovalEvents(Node&);
-
-typedef std::pair<RefPtr<Node>, unsigned> CallbackParameters;
-typedef std::pair<NodeCallback, CallbackParameters> CallbackInfo;
-typedef Vector<CallbackInfo> NodeCallbackQueue;
-
-static NodeCallbackQueue* s_postAttachCallbackQueue;
-
-static size_t s_attachDepth;
-static bool s_shouldReEnableMemoryCacheCallsAfterAttach;
 
 ChildNodesLazySnapshot* ChildNodesLazySnapshot::latestSnapshot = 0;
 
@@ -756,67 +744,6 @@ void ContainerNode::parserAppendChild(PassRefPtr<Node> newChild)
     ChildNodeInsertionNotifier(*this).notify(*newChild);
 
     newChild->setNeedsStyleRecalc(ReconstructRenderTree);
-}
-
-void ContainerNode::suspendPostAttachCallbacks(Document& document)
-{
-    if (!s_attachDepth) {
-        ASSERT(!s_shouldReEnableMemoryCacheCallsAfterAttach);
-        if (Page* page = document.page()) {
-            // FIXME: How can this call be specific to one Page, while the
-            // s_attachDepth is a global? Doesn't make sense.
-            if (page->areMemoryCacheClientCallsEnabled()) {
-                page->setMemoryCacheClientCallsEnabled(false);
-                s_shouldReEnableMemoryCacheCallsAfterAttach = true;
-            }
-        }
-        platformStrategies()->loaderStrategy()->resourceLoadScheduler()->suspendPendingRequests();
-    }
-    ++s_attachDepth;
-}
-
-void ContainerNode::resumePostAttachCallbacks(Document& document)
-{
-    if (s_attachDepth == 1) {
-        Ref<Document> protect(document);
-
-        if (s_postAttachCallbackQueue)
-            dispatchPostAttachCallbacks();
-        if (s_shouldReEnableMemoryCacheCallsAfterAttach) {
-            s_shouldReEnableMemoryCacheCallsAfterAttach = false;
-            if (Page* page = document.page())
-                page->setMemoryCacheClientCallsEnabled(true);
-        }
-        platformStrategies()->loaderStrategy()->resourceLoadScheduler()->resumePendingRequests();
-    }
-    --s_attachDepth;
-}
-
-void ContainerNode::queuePostAttachCallback(NodeCallback callback, Node& node, unsigned callbackData)
-{
-    if (!s_postAttachCallbackQueue)
-        s_postAttachCallbackQueue = new NodeCallbackQueue;
-    
-    s_postAttachCallbackQueue->append(CallbackInfo(callback, CallbackParameters(&node, callbackData)));
-}
-
-bool ContainerNode::postAttachCallbacksAreSuspended()
-{
-    return s_attachDepth;
-}
-
-void ContainerNode::dispatchPostAttachCallbacks()
-{
-    // We recalculate size() each time through the loop because a callback
-    // can add more callbacks to the end of the queue.
-    for (size_t i = 0; i < s_postAttachCallbackQueue->size(); ++i) {
-        const CallbackInfo& info = (*s_postAttachCallbackQueue)[i];
-        NodeCallback callback = info.first;
-        CallbackParameters params = info.second;
-
-        callback(*params.first, params.second);
-    }
-    s_postAttachCallbackQueue->clear();
 }
 
 void ContainerNode::childrenChanged(const ChildChange& change)

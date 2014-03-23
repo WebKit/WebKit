@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2011, 2012, 2014 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -111,6 +111,7 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
     // this delay is unnecessary, but it is simpler to make both classes share
     // the same codepath in this class.
     , m_needsWidgetUpdate(!createdByParser)
+    , m_needsImageReload(false)
     , m_shouldPreferPlugInsForImages(preferPlugInsForImagesOption == ShouldPreferPlugInsForImages)
     , m_needsDocumentActivationCallbacks(false)
     , m_simulatedMouseClickTimer(this, &HTMLPlugInImageElement::simulatedMouseClickTimerFired, simulatedMouseClickTimerDelay)
@@ -227,11 +228,12 @@ RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(PassRef<R
 
 #if PLATFORM(IOS)
     if (ShadowRoot* shadowRoot = this->shadowRoot()) {
-        Element* shadowElement = toElement(shadowRoot->firstChild());
-        if (shadowElement && shadowElement->shadowPseudoId() == "-apple-youtube-shadow-iframe")
+        Node* shadowNode = shadowRoot->firstChild();
+        if (shadowNode && shadowNode->isElementNode() && toElement(*shadowNode).shadowPseudoId() == "-apple-youtube-shadow-iframe")
             return createRenderer<RenderBlockFlow>(*this, std::move(style));
     }
 #endif
+
     return HTMLPlugInElement::createElementRenderer(std::move(style));
 }
 
@@ -244,42 +246,66 @@ bool HTMLPlugInImageElement::willRecalcStyle(Style::Change)
     return true;
 }
 
+void HTMLPlugInImageElement::didRecalcStyle(Style::Change styleChange)
+{
+    scheduleUpdateForAfterStyleResolution();
+
+    HTMLPlugInElement::didRecalcStyle(styleChange);
+}
+
 void HTMLPlugInImageElement::didAttachRenderers()
 {
-    if (!isImageType()) {
-        queuePostAttachCallback(&HTMLPlugInImageElement::updateWidgetCallback, *this);
-        return;
-    }
-    if (!renderer() || useFallbackContent())
-        return;
+    scheduleUpdateForAfterStyleResolution();
 
-    // Image load might complete synchronously and cause us to re-enter attach.
-    queuePostAttachCallback(&HTMLPlugInImageElement::startLoadingImageCallback, *this);
+    HTMLPlugInElement::didAttachRenderers();
 }
 
 void HTMLPlugInImageElement::willDetachRenderers()
 {
     // FIXME: Because of the insanity that is HTMLPlugInImageElement::willRecalcStyle,
     // we can end up detaching during an attach() call, before we even have a
-    // renderer.  In that case, don't mark the widget for update.
+    // renderer. In that case, don't mark the widget for update.
     if (renderer() && !useFallbackContent()) {
         // Update the widget the next time we attach (detaching destroys the plugin).
         setNeedsWidgetUpdate(true);
     }
+
     HTMLPlugInElement::willDetachRenderers();
 }
 
-void HTMLPlugInImageElement::updateWidgetIfNecessary()
+void HTMLPlugInImageElement::scheduleUpdateForAfterStyleResolution()
 {
-    document().updateStyleIfNeeded();
+    if (m_needsImageReload || (renderer() && !useFallbackContent())) {
+        RefPtr<HTMLPlugInImageElement> element = this;
+        Style::queuePostResolutionCallback([element]{
+            element->updateAfterStyleResolution();
+        });
+    }
+}
 
-    if (!needsWidgetUpdate() || useFallbackContent() || isImageType())
-        return;
+void HTMLPlugInImageElement::updateAfterStyleResolution()
+{
+    // Do this after style resolution, since the image or widget load might complete synchronously
+    // and cause us to re-enter otherwise. Also, we can't really answer the question "do I have a renderer"
+    // accurately until after style resolution.
 
-    if (!renderEmbeddedObject() || renderEmbeddedObject()->isPluginUnavailable())
-        return;
+    if (renderer() && !useFallbackContent()) {
+        if (isImageType()) {
+            if (!m_imageLoader)
+                m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
+            if (m_needsImageReload)
+                m_imageLoader->updateFromElementIgnoringPreviousError();
+            else
+                m_imageLoader->updateFromElement();
+        } else {
+            if (m_needsWidgetUpdate && renderEmbeddedObject() && !renderEmbeddedObject()->isPluginUnavailable())
+                updateWidget(CreateOnlyNonNetscapePlugins);
+        }
+    }
 
-    updateWidget(CreateOnlyNonNetscapePlugins);
+    // Either we reloaded the image just now, or we had some reason not to.
+    // Either way, clear the flag now, since we don't need to remember to try again.
+    setNeedsImageReload(false);
 }
 
 void HTMLPlugInImageElement::finishParsingChildren()
@@ -293,16 +319,25 @@ void HTMLPlugInImageElement::finishParsingChildren()
         setNeedsStyleRecalc();
 }
 
+void HTMLPlugInImageElement::removedFrom(ContainerNode& root)
+{
+    // Important to do this when removed from a document to remove the possibility
+    // we might delay the document's load event indefinitely.
+    setNeedsImageReload(false);
+
+    HTMLPlugInElement::removedFrom(root);
+}
+
 void HTMLPlugInImageElement::didMoveToNewDocument(Document* oldDocument)
 {
     if (m_needsDocumentActivationCallbacks) {
-        if (oldDocument)
-            oldDocument->unregisterForPageCacheSuspensionCallbacks(this);
+        oldDocument->unregisterForPageCacheSuspensionCallbacks(this);
         document().registerForPageCacheSuspensionCallbacks(this);
     }
 
     if (m_imageLoader)
         m_imageLoader->elementDidMoveToNewDocument();
+
     HTMLPlugInElement::didMoveToNewDocument(oldDocument);
 }
 
@@ -319,23 +354,6 @@ void HTMLPlugInImageElement::documentDidResumeFromPageCache()
     setNeedsStyleRecalc(ReconstructRenderTree);
 
     HTMLPlugInElement::documentDidResumeFromPageCache();
-}
-
-void HTMLPlugInImageElement::updateWidgetCallback(Node& node, unsigned)
-{
-    toHTMLPlugInImageElement(node).updateWidgetIfNecessary();
-}
-
-void HTMLPlugInImageElement::startLoadingImage()
-{
-    if (!m_imageLoader)
-        m_imageLoader = adoptPtr(new HTMLImageLoader(*this));
-    m_imageLoader->updateFromElement();
-}
-
-void HTMLPlugInImageElement::startLoadingImageCallback(Node& node, unsigned)
-{
-    toHTMLPlugInImageElement(node).startLoadingImage();
 }
 
 void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
@@ -437,18 +455,18 @@ void HTMLPlugInImageElement::createShadowIFrameSubtree(const String& src)
     ShadowRoot& root = this->ensureUserAgentShadowRoot();
     root.appendChild(shadowElement, ASSERT_NO_EXCEPTION);
 
-    RefPtr<HTMLIFrameElement> iframeElement = HTMLIFrameElement::create(HTMLNames::iframeTag, document());
-    if (hasAttribute(HTMLNames::widthAttr))
-        iframeElement->setAttribute(HTMLNames::widthAttr, AtomicString("100%", AtomicString::ConstructFromLiteral));
-    if (hasAttribute(HTMLNames::heightAttr)) {
-        iframeElement->setAttribute(HTMLNames::styleAttr, AtomicString("max-height: 100%", AtomicString::ConstructFromLiteral));
-        iframeElement->setAttribute(HTMLNames::heightAttr, getAttribute(HTMLNames::heightAttr));
+    RefPtr<HTMLIFrameElement> iframeElement = HTMLIFrameElement::create(iframeTag, document());
+    if (hasAttribute(widthAttr))
+        iframeElement->setAttribute(widthAttr, AtomicString("100%", AtomicString::ConstructFromLiteral));
+    if (hasAttribute(heightAttr)) {
+        iframeElement->setAttribute(styleAttr, AtomicString("max-height: 100%", AtomicString::ConstructFromLiteral));
+        iframeElement->setAttribute(heightAttr, getAttribute(heightAttr));
     }
-    iframeElement->setAttribute(HTMLNames::srcAttr, src);
-    iframeElement->setAttribute(HTMLNames::frameborderAttr, AtomicString("0", AtomicString::ConstructFromLiteral));
+    iframeElement->setAttribute(srcAttr, src);
+    iframeElement->setAttribute(frameborderAttr, AtomicString("0", AtomicString::ConstructFromLiteral));
 
     // Disable frame flattening for this iframe.
-    iframeElement->setAttribute(HTMLNames::scrollingAttr, AtomicString("no", AtomicString::ConstructFromLiteral));
+    iframeElement->setAttribute(scrollingAttr, AtomicString("no", AtomicString::ConstructFromLiteral));
     shadowElement->appendChild(iframeElement, ASSERT_NO_EXCEPTION);
 }
 #endif
@@ -610,6 +628,11 @@ void HTMLPlugInImageElement::checkSizeChangeForSnapshotting()
         toPluginViewBase(widget)->beginSnapshottingRunningPlugin();
 }
 
+static inline bool is100Percent(Length length)
+{
+    return length.isPercent() && length.percent() == 100;
+}
+
 void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const URL& url)
 {
     LOG(Plugins, "%p Plug-in URL: %s", this, m_url.utf8().data());
@@ -694,27 +717,27 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const URL& url)
         return;
     }
 
-    RenderBox* renderEmbeddedObject = toRenderBox(renderer());
-    Length styleWidth = renderEmbeddedObject->style().width();
-    Length styleHeight = renderEmbeddedObject->style().height();
-    LayoutRect contentBoxRect = renderEmbeddedObject->contentBoxRect();
-    int contentWidth = contentBoxRect.width();
-    int contentHeight = contentBoxRect.height();
-    int contentArea = contentWidth * contentHeight;
-    IntSize visibleViewSize = document().frame()->view()->visibleSize();
-    int visibleArea = visibleViewSize.width() * visibleViewSize.height();
+    auto& renderer = toRenderEmbeddedObject(*this->renderer());
+    LayoutRect contentRect = renderer.contentBoxRect();
+    int contentWidth = contentRect.width();
+    int contentHeight = contentRect.height();
 
-    if (inMainFrame && styleWidth.isPercent() && (styleWidth.percent() == 100)
-        && styleHeight.isPercent() && (styleHeight.percent() == 100)
-        && (static_cast<float>(contentArea) / visibleArea > sizingFullPageAreaRatioThreshold)) {
-        LOG(Plugins, "%p Plug-in is top level full page, set to play", this);
-        m_snapshotDecision = NeverSnapshot;
-        return;
+    if (inMainFrame) {
+        auto& style = renderer.style();
+        bool isFullPage = is100Percent(style.width()) && is100Percent(style.height());
+        IntSize visibleViewSize = document().frame()->view()->visibleSize();
+        float contentArea = contentWidth * contentHeight;
+        float visibleArea = visibleViewSize.width() * visibleViewSize.height();
+        if (isFullPage && contentArea > visibleArea * sizingFullPageAreaRatioThreshold) {
+            LOG(Plugins, "%p Plug-in is top level full page, set to play", this);
+            m_snapshotDecision = NeverSnapshot;
+            return;
+        }
     }
 
     if (contentWidth <= sizingTinyDimensionThreshold || contentHeight <= sizingTinyDimensionThreshold) {
         LOG(Plugins, "%p Plug-in is very small %dx%d, set to play", this, contentWidth, contentHeight);
-        m_sizeWhenSnapshotted = IntSize(contentBoxRect.width().toInt(), contentBoxRect.height().toInt());
+        m_sizeWhenSnapshotted = IntSize(contentWidth, contentHeight);
         m_snapshotDecision = MaySnapshotWhenResized;
         return;
     }
@@ -726,7 +749,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const URL& url)
         return;
     }
 
-    LOG(Plugins, "%p Plug-in from (%s, %s) is not auto-start, sized at %dx%d, set to wait for snapshot", this, document().page()->mainFrame().document()->baseURL().host().utf8().data(), url.host().utf8().data(), contentWidth, contentHeight);
+    LOG(Plugins, "%p Plug-in from (%s, %s) is not auto-start, sized at %dx%d, set to wait for snapshot", this, document().topDocument().baseURL().host().utf8().data(), url.host().utf8().data(), contentWidth, contentHeight);
     m_snapshotDecision = Snapshotted;
     setDisplayState(WaitingForSnapshot);
 }
@@ -772,6 +795,23 @@ bool HTMLPlugInImageElement::requestObject(const String& url, const String& mime
     
     SubframeLoader& loader = document().frame()->loader().subframeLoader();
     return loader.requestObject(*this, url, getNameAttribute(), mimeType, paramNames, paramValues);
+}
+
+void HTMLPlugInImageElement::setNeedsImageReload(bool needsImageReload)
+{
+    if (m_needsImageReload == needsImageReload)
+        return;
+
+    m_needsImageReload = needsImageReload;
+
+    if (!needsImageReload)
+        document().decrementLoadEventDelayCount();
+    else {
+        // Called when a URL is set, triggering a new load.
+        // The actual load won't start until we recalculate style, which will tell us whether to load.
+        document().incrementLoadEventDelayCount();
+        setNeedsStyleRecalc(SyntheticStyleChange);
+    }
 }
 
 } // namespace WebCore

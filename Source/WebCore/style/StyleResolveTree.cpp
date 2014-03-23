@@ -29,20 +29,21 @@
 #include "AXObjectCache.h"
 #include "AnimationController.h"
 #include "CSSFontSelector.h"
-#include "Element.h"
 #include "ElementIterator.h"
 #include "ElementRareData.h"
 #include "FlowThreadController.h"
 #include "InsertionPoint.h"
+#include "LoaderStrategy.h"
 #include "NodeRenderStyle.h"
 #include "NodeRenderingTraversal.h"
 #include "NodeTraversal.h"
-#include "RenderElement.h"
+#include "PlatformStrategies.h"
 #include "RenderFullScreen.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderText.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "ResourceLoadScheduler.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleResolveForDocument.h"
@@ -504,7 +505,7 @@ static void clearBeforeOrAfterPseudoElement(Element& current, PseudoId pseudoId)
     current.clearAfterPseudoElement();
 }
 
-static bool needsPseudeElement(Element& current, PseudoId pseudoId)
+static bool needsPseudoElement(Element& current, PseudoId pseudoId)
 {
     if (!current.document().styleSheetCollection().usesBeforeAfterRules())
         return false;
@@ -519,7 +520,7 @@ static bool needsPseudeElement(Element& current, PseudoId pseudoId)
 
 static void attachBeforeOrAfterPseudoElementIfNeeded(Element& current, PseudoId pseudoId)
 {
-    if (!needsPseudeElement(current, pseudoId))
+    if (!needsPseudoElement(current, pseudoId))
         return;
     RefPtr<PseudoElement> pseudoElement = PseudoElement::create(current, pseudoId);
     setBeforeOrAfterPseudoElement(current, pseudoElement, pseudoId);
@@ -528,7 +529,7 @@ static void attachBeforeOrAfterPseudoElementIfNeeded(Element& current, PseudoId 
 
 static void attachRenderTree(Element& current, ContainerNode& renderingParentNode, PassRefPtr<RenderStyle> resolvedStyle)
 {
-    PostAttachCallbackDisabler callbackDisabler(current.document());
+    PostResolutionCallbackDisabler callbackDisabler(current.document());
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
     if (current.hasCustomStyleResolveCallbacks())
@@ -741,7 +742,7 @@ static void resolveShadowTree(ShadowRoot& shadowRoot, Style::Change change)
 static void updateBeforeOrAfterPseudoElement(Element& current, Change change, PseudoId pseudoId)
 {
     if (PseudoElement* existingPseudoElement = beforeOrAfterPseudoElement(current, pseudoId)) {
-        if (needsPseudeElement(current, pseudoId))
+        if (needsPseudoElement(current, pseudoId))
             resolveTree(*existingPseudoElement, current, current.needsStyleRecalc() ? Force : change);
         else
             clearBeforeOrAfterPseudoElement(current, pseudoId);
@@ -902,6 +903,67 @@ void resolveTree(Document& document, Change change)
 void detachRenderTree(Element& element)
 {
     detachRenderTree(element, NormalDetach);
+}
+
+static Vector<std::function<void ()>>& postResolutionCallbackQueue()
+{
+    static NeverDestroyed<Vector<std::function<void ()>>> vector;
+    return vector;
+}
+
+void queuePostResolutionCallback(std::function<void ()> callback)
+{
+    postResolutionCallbackQueue().append(callback);
+}
+
+static void suspendMemoryCacheClientCalls(Document& document)
+{
+    Page* page = document.page();
+    if (!page || !page->areMemoryCacheClientCallsEnabled())
+        return;
+
+    page->setMemoryCacheClientCallsEnabled(false);
+
+    RefPtr<Document> protectedDocument = &document;
+    postResolutionCallbackQueue().append([protectedDocument]{
+        // FIXME: If the document becomes unassociated with the page during style resolution
+        // then this won't work and the memory cache client calls will be permanently disabled.
+        if (Page* page = protectedDocument->page())
+            page->setMemoryCacheClientCallsEnabled(true);
+    });
+}
+
+static unsigned resolutionNestingDepth;
+
+PostResolutionCallbackDisabler::PostResolutionCallbackDisabler(Document& document)
+{
+    ++resolutionNestingDepth;
+
+    if (resolutionNestingDepth == 1)
+        platformStrategies()->loaderStrategy()->resourceLoadScheduler()->suspendPendingRequests();
+
+    // FIXME: It's strange to build this into the disabler.
+    suspendMemoryCacheClientCalls(document);
+}
+
+PostResolutionCallbackDisabler::~PostResolutionCallbackDisabler()
+{
+    if (resolutionNestingDepth == 1) {
+        // Get size each time through the loop because a callback can add more callbacks to the end of the queue.
+        auto& queue = postResolutionCallbackQueue();
+        for (size_t i = 0; i < queue.size(); ++i)
+            queue[i]();
+        queue.clear();
+
+        platformStrategies()->loaderStrategy()->resourceLoadScheduler()->resumePendingRequests();
+    }
+
+    --resolutionNestingDepth;
+}
+
+bool postResolutionCallbacksAreSuspended()
+{
+    return resolutionNestingDepth;
 }
 
 }

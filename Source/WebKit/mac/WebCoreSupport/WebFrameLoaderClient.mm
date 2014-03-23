@@ -2106,8 +2106,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
 
                     if (element->hasTagName(HTMLNames::embedTag) || element->hasTagName(HTMLNames::objectTag)) {
                         // Create a shadow subtree for the plugin element, the iframe player is injected in the shadow tree.
-                        HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(element);
-                        pluginElement->createShadowIFrameSubtree(embedSrc);
+                        toHTMLPlugInImageElement(*element).createShadowIFrameSubtree(embedSrc);
                         return nullptr;
                     }
 

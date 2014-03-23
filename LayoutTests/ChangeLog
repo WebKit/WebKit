@@ -1,3 +1,21 @@
+2014-03-23  Darin Adler  <darin@apple.com>
+
+        Remove code in HTMLObjectElement attribute parsing that forces style resolution and layout
+        https://bugs.webkit.org/show_bug.cgi?id=130653
+
+        Reviewed by Antti Koivisto.
+
+        * plugins/plugin-remove-readystatechange-expected.txt: Added a blank line; not what this
+        test is testing, but the different timing of loads results in this blank line.
+        * plugins/plugin-remove-readystatechange.html: Updated test to use waitUntilDone/notifyDone
+        rather than racing. Added a computation of offsetLeft to trigger layout and adding a long
+        comment explaining why this is needed and potentially insufficient in the long run.
+
+        * svg/custom/object-no-size-attributes-expected.txt: Removed expectation of an empty text
+        renderer from the render tree.
+        * svg/custom/object-no-size-attributes.xhtml: Restructured the source so there is no text
+        to render. Without this, we were seeing two text renderers due to the loading timing change.
+
 2014-03-23  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: add other ARIA one-to-many relationships: owns, flowto, controls.

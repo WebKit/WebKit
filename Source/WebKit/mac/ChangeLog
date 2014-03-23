@@ -1,3 +1,13 @@
+2014-03-23  Darin Adler  <darin@apple.com>
+
+        Remove code in HTMLObjectElement attribute parsing that forces style resolution and layout
+        https://bugs.webkit.org/show_bug.cgi?id=130653
+
+        Reviewed by Antti Koivisto.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm: Call toHTMLPlugInImageElement instead of
+        doing a static_cast.
+
 2014-03-21  Simon Fraser  <simon.fraser@apple.com>
 
         Don't flush compositing layers within FrameView::willPaintContents()
