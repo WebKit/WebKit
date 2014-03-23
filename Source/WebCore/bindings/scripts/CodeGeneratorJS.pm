@@ -3012,7 +3012,7 @@ extern "C" { extern void* ${vtableNameGnu}[]; }
 #endif
 END
 
-        push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* impl)\n");
+        push(@implContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, $implType* impl)\n");
         push(@implContent, "{\n");
         push(@implContent, <<END);
     if (!impl)
@@ -3057,13 +3057,13 @@ END
 #endif
 END
         push(@implContent, <<END) if $interface->extendedAttributes->{"ReportExtraMemoryCost"};
-    exec->heap()->reportExtraMemoryCost(impl->memoryCost());
+    globalObject->vm().heap.reportExtraMemoryCost(impl->memoryCost());
 END
 
         if ($svgPropertyType) {
-            push(@implContent, "    return createNewWrapper<$className, $implType>(exec, globalObject, impl);\n");
+            push(@implContent, "    return createNewWrapper<$className, $implType>(globalObject, impl);\n");
         } else {
-            push(@implContent, "    return createNewWrapper<$className>(exec, globalObject, impl);\n");
+            push(@implContent, "    return createNewWrapper<$className>(globalObject, impl);\n");
         }
 
         push(@implContent, "}\n\n");

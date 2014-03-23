@@ -214,7 +214,7 @@ extern "C" { extern void (*const __identifier("??_7TestCustomNamedGetter@WebCore
 extern "C" { extern void* _ZTVN7WebCore21TestCustomNamedGetterE[]; }
 #endif
 #endif
-JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestCustomNamedGetter* impl)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestCustomNamedGetter* impl)
 {
     if (!impl)
         return jsNull();
@@ -239,7 +239,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestCus
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSTestCustomNamedGetter>(exec, globalObject, impl);
+    return createNewWrapper<JSTestCustomNamedGetter>(globalObject, impl);
 }
 
 TestCustomNamedGetter* toTestCustomNamedGetter(JSC::JSValue value)

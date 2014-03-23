@@ -749,7 +749,7 @@ extern "C" { extern void (*const __identifier("??_7TestTypedefs@WebCore@@6B@")[]
 extern "C" { extern void* _ZTVN7WebCore12TestTypedefsE[]; }
 #endif
 #endif
-JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestTypedefs* impl)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestTypedefs* impl)
 {
     if (!impl)
         return jsNull();
@@ -774,7 +774,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestTyp
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSTestTypedefs>(exec, globalObject, impl);
+    return createNewWrapper<JSTestTypedefs>(globalObject, impl);
 }
 
 TestTypedefs* toTestTypedefs(JSC::JSValue value)

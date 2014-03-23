@@ -328,7 +328,7 @@ extern "C" { extern void (*const __identifier("??_7TestEventTarget@WebCore@@6B@"
 extern "C" { extern void* _ZTVN7WebCore15TestEventTargetE[]; }
 #endif
 #endif
-JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestEventTarget* impl)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventTarget* impl)
 {
     if (!impl)
         return jsNull();
@@ -353,7 +353,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestEve
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSTestEventTarget>(exec, globalObject, impl);
+    return createNewWrapper<JSTestEventTarget>(globalObject, impl);
 }
 
 TestEventTarget* toTestEventTarget(JSC::JSValue value)

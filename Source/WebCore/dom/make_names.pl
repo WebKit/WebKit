@@ -1113,11 +1113,11 @@ sub printWrapperFunctions
 
         if ($enabledTags{$tagName}{wrapperOnlyIfMediaIsAvailable}) {
             print F <<END
-static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
+static JSDOMWrapper* create${JSInterfaceName}Wrapper(JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
 {
     if (element->isHTMLUnknownElement())
-        return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{namespace}Element, element.get());
-    return CREATE_DOM_WRAPPER(exec, globalObject, ${JSInterfaceName}, element.get());
+        return CREATE_DOM_WRAPPER(globalObject, $parameters{namespace}Element, element.get());
+    return CREATE_DOM_WRAPPER(globalObject, ${JSInterfaceName}, element.get());
 }
 
 END
@@ -1125,22 +1125,22 @@ END
         } elsif ($enabledTags{$tagName}{runtimeConditional}) {
             my $runtimeConditional = $enabledTags{$tagName}{runtimeConditional};
             print F <<END
-static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
+static JSDOMWrapper* create${JSInterfaceName}Wrapper(JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().${runtimeConditional}Enabled()) {
         ASSERT(!element || element->is$parameters{fallbackInterfaceName}());
-        return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{fallbackJSInterfaceName}, element.get());
+        return CREATE_DOM_WRAPPER(globalObject, $parameters{fallbackJSInterfaceName}, element.get());
     }
 
-    return CREATE_DOM_WRAPPER(exec, globalObject, ${JSInterfaceName}, element.get());
+    return CREATE_DOM_WRAPPER(globalObject, ${JSInterfaceName}, element.get());
 }
 END
     ;
         } else {
             print F <<END
-static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
+static JSDOMWrapper* create${JSInterfaceName}Wrapper(JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
 {
-    return CREATE_DOM_WRAPPER(exec, globalObject, ${JSInterfaceName}, element.get());
+    return CREATE_DOM_WRAPPER(globalObject, ${JSInterfaceName}, element.get());
 }
 
 END
@@ -1191,7 +1191,7 @@ namespace WebCore {
 
 using namespace $parameters{namespace}Names;
 
-typedef JSDOMWrapper* (*Create$parameters{namespace}ElementWrapperFunction)(ExecState*, JSDOMGlobalObject*, PassRefPtr<$parameters{namespace}Element>);
+typedef JSDOMWrapper* (*Create$parameters{namespace}ElementWrapperFunction)(JSDOMGlobalObject*, PassRefPtr<$parameters{namespace}Element>);
 
 END
 ;
@@ -1239,14 +1239,14 @@ END
         map.add(table[i].name.localName().impl(), table[i].function);
 }
 
-JSDOMWrapper* createJS$parameters{namespace}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
+JSDOMWrapper* createJS$parameters{namespace}Wrapper(JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
 {
     static NeverDestroyed<HashMap<AtomicStringImpl*, Create$parameters{namespace}ElementWrapperFunction>> functions;
     if (functions.get().isEmpty())
         populate$parameters{namespace}WrapperMap(functions);
     if (auto function = functions.get().get(element->localName().impl()))
-        return function(exec, globalObject, element);
-    return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{fallbackJSInterfaceName}, element.get());
+        return function(globalObject, element);
+    return CREATE_DOM_WRAPPER(globalObject, $parameters{fallbackJSInterfaceName}, element.get());
 }
 
 }
@@ -1275,17 +1275,13 @@ sub printWrapperFactoryHeaderFile
     print F <<END
 #include <wtf/Forward.h>
 
-namespace JSC {
-    class ExecState;
-}                                            
-                                             
 namespace WebCore {
 
     class JSDOMWrapper;
     class JSDOMGlobalObject;
     class $parameters{namespace}Element;
 
-    JSDOMWrapper* createJS$parameters{namespace}Wrapper(JSC::ExecState*, JSDOMGlobalObject*, PassRefPtr<$parameters{namespace}Element>);
+    JSDOMWrapper* createJS$parameters{namespace}Wrapper(JSDOMGlobalObject*, PassRefPtr<$parameters{namespace}Element>);
 
 }
  

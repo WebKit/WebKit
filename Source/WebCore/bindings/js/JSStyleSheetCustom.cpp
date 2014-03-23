@@ -45,7 +45,7 @@ void JSStyleSheet::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.addOpaqueRoot(root(&thisObject->impl()));
 }
 
-JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, StyleSheet* styleSheet)
+JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, StyleSheet* styleSheet)
 {
     if (!styleSheet)
         return jsNull();
@@ -55,9 +55,9 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, StyleSheet* style
         return wrapper;
 
     if (styleSheet->isCSSStyleSheet())
-        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSStyleSheet, styleSheet);
+        wrapper = CREATE_DOM_WRAPPER(globalObject, CSSStyleSheet, styleSheet);
     else
-        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, StyleSheet, styleSheet);
+        wrapper = CREATE_DOM_WRAPPER(globalObject, StyleSheet, styleSheet);
 
     return wrapper;
 }

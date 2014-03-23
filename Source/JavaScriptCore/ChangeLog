@@ -1,3 +1,18 @@
+2014-03-22  Andreas Kling  <akling@apple.com>
+
+        CREATE_DOM_WRAPPER doesn't need the ExecState.
+        <https://webkit.org/b/130648>
+
+        Add a fast path from JSGlobalObject to the VM so we don't have
+        to dance via the Heap.
+
+        Reviewed by Darin Adler.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::vm):
+
 2014-03-22  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix FTL build.

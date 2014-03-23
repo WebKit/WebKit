@@ -32,12 +32,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Text* text)
+JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Text* text)
 {
     if (!text)
         return jsNull();
     
-    return CREATE_DOM_WRAPPER(exec, globalObject, Text, text);
+    return CREATE_DOM_WRAPPER(globalObject, Text, text);
 }
 
 } // namespace WebCore

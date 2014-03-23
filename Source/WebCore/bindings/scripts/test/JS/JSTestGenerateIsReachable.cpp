@@ -172,7 +172,7 @@ extern "C" { extern void (*const __identifier("??_7TestGenerateIsReachable@WebCo
 extern "C" { extern void* _ZTVN7WebCore23TestGenerateIsReachableE[]; }
 #endif
 #endif
-JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestGenerateIsReachable* impl)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestGenerateIsReachable* impl)
 {
     if (!impl)
         return jsNull();
@@ -197,7 +197,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestGen
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSTestGenerateIsReachable>(exec, globalObject, impl);
+    return createNewWrapper<JSTestGenerateIsReachable>(globalObject, impl);
 }
 
 TestGenerateIsReachable* toTestGenerateIsReachable(JSC::JSValue value)

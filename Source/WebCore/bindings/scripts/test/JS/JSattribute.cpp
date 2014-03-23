@@ -188,7 +188,7 @@ extern "C" { extern void (*const __identifier("??_7attribute@WebCore@@6B@")[])()
 extern "C" { extern void* _ZTVN7WebCore9attributeE[]; }
 #endif
 #endif
-JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, attribute* impl)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, attribute* impl)
 {
     if (!impl)
         return jsNull();
@@ -213,7 +213,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, attribu
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    return createNewWrapper<JSattribute>(exec, globalObject, impl);
+    return createNewWrapper<JSattribute>(globalObject, impl);
 }
 
 attribute* toattribute(JSC::JSValue value)

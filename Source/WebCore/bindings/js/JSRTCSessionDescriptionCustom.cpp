@@ -61,7 +61,7 @@ EncodedJSValue JSC_HOST_CALL JSRTCSessionDescriptionConstructor::constructJSRTCS
         return throwVMError(exec, createTypeError(exec, "Error creating RTCSessionDescription"));
     }
 
-    return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), RTCSessionDescription, sessionDescription.get()));
+    return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), RTCSessionDescription, sessionDescription.get()));
 }
 
 } // namespace WebCore

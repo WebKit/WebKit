@@ -61,7 +61,7 @@ EncodedJSValue JSC_HOST_CALL JSRTCIceCandidateConstructor::constructJSRTCIceCand
         return throwVMError(exec, createTypeError(exec, "Error creating RTCIceCandidate"));
     }
 
-    return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), RTCIceCandidate, iceCandidate.get()));
+    return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), RTCIceCandidate, iceCandidate.get()));
 }
 
 } // namespace WebCore

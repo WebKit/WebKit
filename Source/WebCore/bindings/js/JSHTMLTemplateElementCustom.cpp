@@ -53,7 +53,7 @@ JSValue JSHTMLTemplateElement::content(ExecState* exec) const
     if (wrapper)
         return wrapper;
 
-    wrapper = CREATE_DOM_WRAPPER(exec, globalObject(), DocumentFragment, content);
+    wrapper = CREATE_DOM_WRAPPER(globalObject(), DocumentFragment, content);
     PrivateName propertyName;
     const_cast<JSHTMLTemplateElement*>(this)->putDirect(globalObject()->vm(), propertyName, wrapper);
     return wrapper;

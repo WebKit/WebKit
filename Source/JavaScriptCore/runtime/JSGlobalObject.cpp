@@ -159,6 +159,7 @@ const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = { &all
 
 JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectMethodTable* globalObjectMethodTable)
     : Base(vm, structure, 0)
+    , m_vm(vm)
 #if ENABLE(WEB_REPLAY)
     , m_inputCursor(EmptyInputCursor::create())
 #endif

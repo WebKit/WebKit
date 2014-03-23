@@ -52,7 +52,7 @@ TrackBase* toTrack(JSValue value)
     return 0;
 }
 
-JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TrackBase* track)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TrackBase* track)
 {
     if (!track)
         return jsNull();
@@ -68,13 +68,13 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TrackBa
         break;
         
     case TrackBase::AudioTrack:
-        return CREATE_DOM_WRAPPER(exec, globalObject, AudioTrack, track);
+        return CREATE_DOM_WRAPPER(globalObject, AudioTrack, track);
 
     case TrackBase::VideoTrack:
-        return CREATE_DOM_WRAPPER(exec, globalObject, VideoTrack, track);
+        return CREATE_DOM_WRAPPER(globalObject, VideoTrack, track);
 
     case TrackBase::TextTrack:
-        return CREATE_DOM_WRAPPER(exec, globalObject, TextTrack, track);
+        return CREATE_DOM_WRAPPER(globalObject, TextTrack, track);
     }
     
     return jsNull();

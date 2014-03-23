@@ -65,7 +65,7 @@ EncodedJSValue JSC_HOST_CALL JSRTCPeerConnectionConstructor::constructJSRTCPeerC
         return throwVMError(exec, createTypeError(exec, "Error creating RTCPeerConnection"));
     }
 
-    return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), RTCPeerConnection, peerConnection.get()));
+    return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), RTCPeerConnection, peerConnection.get()));
 }
 
 } // namespace WebCore

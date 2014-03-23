@@ -1,3 +1,81 @@
+2014-03-22  Andreas Kling  <akling@apple.com>
+
+        CREATE_DOM_WRAPPER doesn't need the ExecState.
+        <https://webkit.org/b/130648>
+
+        Remove the ExecState parameter from CREATE_DOM_WRAPPER and get all
+        that we need from the global object instead.
+
+        toJS() and toJSNewlyCreated() still take an ExecState, that needs
+        to be dealt with separately since some of them have scary looking
+        currentWorld() checks.
+
+        Reviewed by Darin Adler.
+
+        * bindings/js/JSAudioContextCustom.cpp:
+        (WebCore::JSAudioContextConstructor::constructJSAudioContext):
+        * bindings/js/JSBlobCustom.cpp:
+        (WebCore::toJS):
+        (WebCore::JSBlobConstructor::constructJSBlob):
+        * bindings/js/JSCDATASectionCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCanvasRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::createWrapper):
+        (WebCore::wrap):
+        (WebCore::createNewWrapper):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSHTMLTemplateElementCustom.cpp:
+        (WebCore::JSHTMLTemplateElement::content):
+        * bindings/js/JSIDBAnyCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSMediaStreamCapabilitiesCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapperInline):
+        * bindings/js/JSPerformanceEntryCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSRTCIceCandidateCustom.cpp:
+        (WebCore::JSRTCIceCandidateConstructor::constructJSRTCIceCandidate):
+        * bindings/js/JSRTCPeerConnectionCustom.cpp:
+        (WebCore::JSRTCPeerConnectionConstructor::constructJSRTCPeerConnection):
+        * bindings/js/JSRTCSessionDescriptionCustom.cpp:
+        (WebCore::JSRTCSessionDescriptionConstructor::constructJSRTCSessionDescription):
+        * bindings/js/JSSVGPathSegCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSTextCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSTextTrackCueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSTouchCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSTouchListCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSTrackCustom.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * dom/make_names.pl:
+        (printWrapperFunctions):
+        (printWrapperFactoryCppFile):
+        (printWrapperFactoryHeaderFile):
+
 2014-03-22  Michael Saboff  <msaboff@apple.com>
 
         toThis() on a JSWorkerGlobalScope should return a JSProxy and not undefined

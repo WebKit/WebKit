@@ -977,7 +977,7 @@ void JSTestInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
     jsTestInterface->releaseImpl();
 }
 
-JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestInterface* impl)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterface* impl)
 {
     if (!impl)
         return jsNull();
@@ -990,7 +990,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestInt
     // attribute to TestInterface.
     COMPILE_ASSERT(!__is_polymorphic(TestInterface), TestInterface_is_polymorphic_but_idl_claims_not_to_be);
 #endif
-    return createNewWrapper<JSTestInterface>(exec, globalObject, impl);
+    return createNewWrapper<JSTestInterface>(globalObject, impl);
 }
 
 TestInterface* toTestInterface(JSC::JSValue value)

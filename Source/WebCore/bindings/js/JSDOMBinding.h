@@ -198,23 +198,23 @@ template <typename DOMClass, typename WrapperClass> inline void uncacheWrapper(D
     weakRemove(world.m_wrappers, (void*)domObject, wrapper);
 }
 
-#define CREATE_DOM_WRAPPER(exec, globalObject, className, object) createWrapper<JS##className>(exec, globalObject, static_cast<className*>(object))
-template<class WrapperClass, class DOMClass> inline JSDOMWrapper* createWrapper(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* node)
+#define CREATE_DOM_WRAPPER(globalObject, className, object) createWrapper<JS##className>(globalObject, static_cast<className*>(object))
+template<class WrapperClass, class DOMClass> inline JSDOMWrapper* createWrapper(JSDOMGlobalObject* globalObject, DOMClass* node)
 {
     ASSERT(node);
-    ASSERT(!getCachedWrapper(globalObject->world(), node));
-    WrapperClass* wrapper = WrapperClass::create(getDOMStructure<WrapperClass>(exec->vm(), globalObject), globalObject, node);
+    ASSERT(!getCachedWrapper(globalObject.world(), node));
+    WrapperClass* wrapper = WrapperClass::create(getDOMStructure<WrapperClass>(globalObject->vm(), globalObject), globalObject, node);
     cacheWrapper(globalObject->world(), node, wrapper);
     return wrapper;
 }
 
-template<class WrapperClass, class DOMClass> inline JSC::JSValue wrap(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* domObject)
+template<class WrapperClass, class DOMClass> inline JSC::JSValue wrap(JSDOMGlobalObject* globalObject, DOMClass* domObject)
 {
     if (!domObject)
         return JSC::jsNull();
     if (JSC::JSObject* wrapper = getCachedWrapper(globalObject->world(), domObject))
         return wrapper;
-    return createWrapper<WrapperClass>(exec, globalObject, domObject);
+    return createWrapper<WrapperClass>(globalObject, domObject);
 }
 
 template<class WrapperClass, class DOMClass> inline JSC::JSValue getExistingWrapper(JSDOMGlobalObject* globalObject, DOMClass* domObject)
@@ -223,11 +223,11 @@ template<class WrapperClass, class DOMClass> inline JSC::JSValue getExistingWrap
     return getCachedWrapper(globalObject->world(), domObject);
 }
 
-template<class WrapperClass, class DOMClass> inline JSC::JSValue createNewWrapper(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* domObject)
+template<class WrapperClass, class DOMClass> inline JSC::JSValue createNewWrapper(JSDOMGlobalObject* globalObject, DOMClass* domObject)
 {
     ASSERT(domObject);
     ASSERT(!getCachedWrapper(globalObject->world(), domObject));
-    return createWrapper<WrapperClass>(exec, globalObject, domObject);
+    return createWrapper<WrapperClass>(globalObject, domObject);
 }
 
 inline JSC::JSValue argumentOrNull(JSC::ExecState* exec, unsigned index)

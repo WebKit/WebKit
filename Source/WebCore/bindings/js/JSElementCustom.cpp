@@ -48,7 +48,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Element* element)
+JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Element* element)
 {
     if (!element)
         return jsNull();
@@ -57,11 +57,11 @@ JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Eleme
 
     JSDOMWrapper* wrapper;        
     if (element->isHTMLElement())
-        wrapper = createJSHTMLWrapper(exec, globalObject, toHTMLElement(element));
+        wrapper = createJSHTMLWrapper(globalObject, toHTMLElement(element));
     else if (element->isSVGElement())
-        wrapper = createJSSVGWrapper(exec, globalObject, toSVGElement(element));
+        wrapper = createJSSVGWrapper(globalObject, toSVGElement(element));
     else
-        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Element, element);
+        wrapper = CREATE_DOM_WRAPPER(globalObject, Element, element);
 
     return wrapper;    
 }

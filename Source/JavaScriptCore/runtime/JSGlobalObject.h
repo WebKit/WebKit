@@ -239,6 +239,8 @@ protected:
 
     Debugger* m_debugger;
 
+    VM& m_vm;
+
 #if ENABLE(WEB_REPLAY)
     RefPtr<InputCursor> m_inputCursor;
 #endif
@@ -536,7 +538,7 @@ public:
 
     void resetPrototype(VM&, JSValue prototype);
 
-    VM& vm() const { return *Heap::heap(this)->vm(); }
+    VM& vm() const { return m_vm; }
     JSObject* globalThis() const;
 
     static Structure* createStructure(VM& vm, JSValue prototype)

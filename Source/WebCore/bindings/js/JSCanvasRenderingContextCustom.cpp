@@ -50,17 +50,17 @@ void JSCanvasRenderingContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.addOpaqueRoot(root(thisObject->impl().canvas()));
 }
 
-JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, CanvasRenderingContext* object)
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, CanvasRenderingContext* object)
 {
     if (!object)
         return jsNull();
 
 #if ENABLE(WEBGL)
     if (object->is3d())
-        return wrap<JSWebGLRenderingContext>(exec, globalObject, static_cast<WebGLRenderingContext*>(object));
+        return wrap<JSWebGLRenderingContext>(globalObject, static_cast<WebGLRenderingContext*>(object));
 #endif
     ASSERT_WITH_SECURITY_IMPLICATION(object->is2d());
-    return wrap<JSCanvasRenderingContext2D>(exec, globalObject, static_cast<CanvasRenderingContext2D*>(object));
+    return wrap<JSCanvasRenderingContext2D>(globalObject, static_cast<CanvasRenderingContext2D*>(object));
 }
 
 } // namespace WebCore
