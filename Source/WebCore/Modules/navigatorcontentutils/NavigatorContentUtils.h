@@ -41,7 +41,7 @@ class Navigator;
 
 typedef int ExceptionCode;
 
-class NavigatorContentUtils : public RefCountedSupplement<Page, NavigatorContentUtils> {
+class NavigatorContentUtils final : public RefCountedSupplement<Page, NavigatorContentUtils> {
 public:
     virtual ~NavigatorContentUtils();
 

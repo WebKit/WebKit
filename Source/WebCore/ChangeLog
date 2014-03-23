@@ -1,3 +1,16 @@
+2014-03-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add *final* keyword to NavigatorContentUtils class
+        https://bugs.webkit.org/show_bug.cgi?id=130636
+
+        Reviewed by Darin Adler.
+
+        NavigatorContentUtils won't be used as a base class. So, added final keyword.
+
+        No new tests, no behavior changes.
+
+        * Modules/navigatorcontentutils/NavigatorContentUtils.h:
+
 2014-03-22  Andreas Kling  <akling@apple.com>
 
         CREATE_DOM_WRAPPER doesn't need the ExecState.
