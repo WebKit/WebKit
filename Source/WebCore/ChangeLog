@@ -1,3 +1,39 @@
+2014-03-22  Sam Weinig  <sam@webkit.org>
+
+        Switch HTMLConverter to use CSSPropertyIDs to refer to CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=130639
+
+        Reviewed by Darin Adler.
+
+        This is a ~15% speedup on PerformanceTests/Interactive/CopyAll.html.
+
+        - Removes gratuitous lookup of CSS properties that are known at compile time.
+        - Removes attempted use of non-supported CSS properties (font-effect and horizontal-align) 
+          that will alway yield the same results.
+        - Fix some obvious typos where the author thought they were testing for fontKerning or fontLigatures
+          but instead used the non-existent font-effect.
+
+        * platform/mac/HTMLConverter.mm:
+        (HTMLConverterCaches::computedStylePropertyForElement):
+        (HTMLConverterCaches::inlineStylePropertyForElement):
+        (HTMLConverterCaches::propertyValueForNode):
+        (-[WebHTMLConverter _stringForNode:property:]):
+        (HTMLConverterCaches::floatPropertyValueForNode):
+        (-[WebHTMLConverter _getFloat:forNode:property:]):
+        (HTMLConverterCaches::isBlockElement):
+        (HTMLConverterCaches::elementHasOwnBackgroundColor):
+        (HTMLConverterCaches::colorPropertyValueForNode):
+        (-[WebHTMLConverter _colorForNode:property:]):
+        (-[WebHTMLConverter _computedAttributesForElement:]):
+        (-[WebHTMLConverter _addAttachmentForElement:URL:needsParagraph:usePlaceholder:]):
+        (-[WebHTMLConverter _fillInBlock:forElement:backgroundColor:extraMargin:extraPadding:isTable:]):
+        (-[WebHTMLConverter _addTableForElement:]):
+        (-[WebHTMLConverter _addTableCellForElement:]):
+        (-[WebHTMLConverter _processElement:tag:display:depth:]):
+        (-[WebHTMLConverter _exitElement:tag:display:depth:startIndex:]):
+        (-[WebHTMLConverter _processText:]):
+        (-[WebHTMLConverter _traverseNode:depth:embedded:]):
+
 2014-03-22  Andreas Kling  <akling@apple.com>
 
         Fix debug build.
