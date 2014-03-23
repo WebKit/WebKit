@@ -430,6 +430,10 @@ private:
 
 @interface WebHTMLConverter(WebHTMLConverterInternal)
 
+- (id)init;
+- (id)initWithDOMRange:(DOMRange *)domRange;
+- (NSAttributedString *)attributedString;
+
 - (NSString *)_stringForNode:(DOMNode *)node property:(CSSPropertyID)propertyId;
 - (PlatformColor *)_colorForNode:(DOMNode *)node property:(CSSPropertyID)propertyId;
 - (BOOL)_getFloat:(CGFloat *)val forNode:(DOMNode *)node property:(CSSPropertyID)propertyId;
@@ -2441,11 +2445,18 @@ static NSInteger _colCompare(id block1, id block2, void *)
     return self;
 }
 
-// This function supports more HTML features than the editing variant below, such as tables.
 - (NSAttributedString *)attributedString
 {
     [self _loadFromDOMRange];
     return (!_errorCode) ? [[_attrStr retain] autorelease] : nil;
+}
+
+
+// This function supports more HTML features than the editing variant below, such as tables.
++ (NSAttributedString *)attributedStringFromRange:(Range*)range
+{
+    RetainPtr<WebHTMLConverter> converter = adoptNS([[WebHTMLConverter alloc] initWithDOMRange:kit(range)]);
+    return [converter attributedString];
 }
 
 #if !PLATFORM(IOS)

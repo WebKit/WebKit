@@ -1,3 +1,21 @@
+2014-03-23  Sam Weinig  <sam@webkit.org>
+
+        Simplify the HTMLConverter interface (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=130654
+
+        Reviewed by Dan Bernstein.
+
+        Convert WebHTMLConverter's interface to only use class methods as the first
+        step of simplifying the interface. 
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::attributedStringForRange):
+        * editing/mac/EditorMac.mm:
+        (WebCore::attributedStringForRange):
+        * platform/mac/HTMLConverter.h:
+        * platform/mac/HTMLConverter.mm:
+        (+[WebHTMLConverter attributedStringFromRange:]):
+
 2014-03-23  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: add other ARIA one-to-many relationships: owns, flowto, controls.

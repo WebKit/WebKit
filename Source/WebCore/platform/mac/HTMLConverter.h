@@ -79,10 +79,8 @@ class HTMLConverterCaches;
     } _flags;
 }
 
-- (id)init;
-- (id)initWithDOMRange:(DOMRange *)domRange;
 
-- (NSAttributedString *)attributedString;
++ (NSAttributedString *)attributedStringFromRange:(WebCore::Range*)range;
 #if !PLATFORM(IOS)
 + (NSAttributedString *)editingAttributedStringFromRange:(WebCore::Range*)range;
 #endif

@@ -300,7 +300,7 @@ void Editor::removeUnchangeableStyles()
 // FIXME: the following fuctions should be shared between Mac and iOS.
 static NSAttributedString *attributedStringForRange(Range& range)
 {
-    return [adoptNS([[WebHTMLConverter alloc] initWithDOMRange:kit(&range)]) attributedString];
+    return [WebHTMLConverter attributedStringFromRange:&range];
 }
 
 static PassRefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *string)
