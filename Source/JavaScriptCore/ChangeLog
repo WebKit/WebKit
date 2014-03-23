@@ -1,5 +1,12 @@
 2014-03-22  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, adjust sizes for ARM64.
+
+        * ftl/FTLInlineCacheSize.cpp:
+        (JSC::FTL::sizeOfCall):
+
+2014-03-22  Filip Pizlo  <fpizlo@apple.com>
+
         Protect the silent spiller/filler's desire to fill Int32Constants by making sure that we don't mark something as having a Int32 register format if it's a non-Int32 constant
         https://bugs.webkit.org/show_bug.cgi?id=130649
         <rdar://problem/16399949>
