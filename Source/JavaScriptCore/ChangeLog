@@ -1,5 +1,21 @@
 2014-03-22  Filip Pizlo  <fpizlo@apple.com>
 
+        Protect the silent spiller/filler's desire to fill Int32Constants by making sure that we don't mark something as having a Int32 register format if it's a non-Int32 constant
+        https://bugs.webkit.org/show_bug.cgi?id=130649
+        <rdar://problem/16399949>
+
+        Reviewed by Andreas Kling.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        * tests/stress/fuzz-bug-16399949.js: Added.
+        (tryItOut.f):
+        (tryItOut):
+
+2014-03-22  Filip Pizlo  <fpizlo@apple.com>
+
         Call linking slow paths should be passed a CallLinkInfo* directly so that you can create a call IC without adding it to any CodeBlocks
         https://bugs.webkit.org/show_bug.cgi?id=130644
 

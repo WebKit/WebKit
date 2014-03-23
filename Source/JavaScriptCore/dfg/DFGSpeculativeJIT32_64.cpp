@@ -748,9 +748,15 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
+    if (edge->hasConstant() && !isInt32Constant(edge.node())) {
+        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
+        returnFormat = DataFormatInt32;
+        return allocate();
+    }
+    
     switch (info.registerFormat()) {
     case DataFormatNone: {
-        if ((edge->hasConstant() && !isInt32Constant(edge.node())) || info.spillFormat() == DataFormatDouble) {
+        if (info.spillFormat() == DataFormatDouble) {
             terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
             returnFormat = DataFormatInt32;
             return allocate();

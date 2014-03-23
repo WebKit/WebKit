@@ -757,9 +757,19 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
+    if (edge->hasConstant() && !isInt32Constant(edge.node())) {
+        // Protect the silent spill/fill logic by failing early. If we "speculate" on
+        // the constant then the silent filler may think that we have an int32 and a
+        // constant, so it will try to fill this as an int32 constant. Bad things will
+        // happen.
+        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
+        returnFormat = DataFormatInt32;
+        return allocate();
+    }
+    
     switch (info.registerFormat()) {
     case DataFormatNone: {
-        if ((edge->hasConstant() && !isInt32Constant(edge.node())) || info.spillFormat() == DataFormatDouble) {
+        if (info.spillFormat() == DataFormatDouble) {
             terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
             returnFormat = DataFormatInt32;
             return allocate();
