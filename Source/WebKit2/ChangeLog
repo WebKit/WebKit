@@ -1,3 +1,20 @@
+2014-03-23  Sam Weinig  <sam@webkit.org>
+
+        Simplify the HTMLConverter interface (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=130654
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::performDictionaryLookupForRange):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::getAttributedSubstringFromRange):
+        (WebKit::WebPage::attributedSubstringForCharacterRangeAsync):
+        (WebKit::WebPage::performDictionaryLookupAtLocation):
+        (WebKit::WebPage::performDictionaryLookupForSelection):
+        (WebKit::WebPage::performDictionaryLookupForRange):
+
 2014-03-23  David Kilzer  <ddkilzer@apple.com>
 
         WebKit::resistanceForDelta() truncates 'scaleDistance' to integer value using abs()

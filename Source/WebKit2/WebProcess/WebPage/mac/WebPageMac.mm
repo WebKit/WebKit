@@ -347,10 +347,10 @@ void WebPage::getAttributedSubstringFromRange(const EditingRange& editingRange, 
     if (!range)
         return;
 
-    result.string = [WebHTMLConverter editingAttributedStringFromRange:range.get()];
+    result.string = editingAttributedStringFromRange(*range);
     NSAttributedString* attributedString = result.string.get();
     
-    // [WebHTMLConverter editingAttributedStringFromRange:] insists on inserting a trailing 
+    // WebCore::editingAttributedStringFromRange() insists on inserting a trailing
     // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
     // To work around this we truncate the resultant string to the correct length.
     if ([attributedString length] > editingRange.length) {
@@ -441,10 +441,10 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
         return;
     }
 
-    result.string = [WebHTMLConverter editingAttributedStringFromRange:range.get()];
+    result.string = editingAttributedStringFromRange(*range);
     NSAttributedString* attributedString = result.string.get();
     
-    // [WebHTMLConverter editingAttributedStringFromRange:] insists on inserting a trailing 
+    // WebCore::editingAttributedStringFromRange() insists on inserting a trailing
     // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
     // To work around this we truncate the resultant string to the correct length.
     if ([attributedString length] > editingRange.length) {
@@ -552,7 +552,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     if (!finalRange)
         return;
 
-    performDictionaryLookupForRange(frame, finalRange.get(), options);
+    performDictionaryLookupForRange(frame, *finalRange, options);
 }
 
 void WebPage::performDictionaryLookupForSelection(Frame* frame, const VisibleSelection& selection)
@@ -579,19 +579,19 @@ void WebPage::performDictionaryLookupForSelection(Frame* frame, const VisibleSel
     // Since we already have the range we want, we just need to grab the returned options.
     WKExtractWordDefinitionTokenRangeFromContextualString(fullPlainTextString, rangeToPass, &options);
 
-    performDictionaryLookupForRange(frame, selectedRange.get(), options);
+    performDictionaryLookupForRange(frame, *selectedRange, options);
 }
 
-void WebPage::performDictionaryLookupForRange(Frame* frame, Range* range, NSDictionary *options)
+void WebPage::performDictionaryLookupForRange(Frame* frame, Range& range, NSDictionary *options)
 {
-    if (range->text().stripWhiteSpace().isEmpty())
+    if (range.text().stripWhiteSpace().isEmpty())
         return;
     
-    RenderObject* renderer = range->startContainer()->renderer();
+    RenderObject* renderer = range.startContainer()->renderer();
     const RenderStyle& style = renderer->style();
 
     Vector<FloatQuad> quads;
-    range->textQuads(quads);
+    range.textQuads(quads);
     if (quads.isEmpty())
         return;
 
@@ -601,7 +601,7 @@ void WebPage::performDictionaryLookupForRange(Frame* frame, Range* range, NSDict
     dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + (style.fontMetrics().ascent() * pageScaleFactor()));
     dictionaryPopupInfo.options = (CFDictionaryRef)options;
 
-    NSAttributedString *nsAttributedString = [WebHTMLConverter editingAttributedStringFromRange:range];
+    NSAttributedString *nsAttributedString = editingAttributedStringFromRange(range);
 
     RetainPtr<NSMutableAttributedString> scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
 

@@ -41,7 +41,6 @@
 #import "FrameLoaderClient.h"
 #import "HitTestResult.h"
 #import "HTMLAnchorElement.h"
-#import "HTMLConverter.h"
 #import "htmlediting.h"
 #import "HTMLNames.h"
 #import "Image.h"

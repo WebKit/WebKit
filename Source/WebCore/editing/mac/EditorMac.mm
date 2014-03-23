@@ -303,12 +303,7 @@ PassRefPtr<Range> Editor::adjustedSelectionRange()
         range->setStart(enclosingAnchor, 0, IGNORE_EXCEPTION);
     return range;
 }
-
-static NSAttributedString *attributedStringForRange(Range& range)
-{
-    return [WebHTMLConverter attributedStringFromRange:&range];
-}
-
+    
 static PassRefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *string)
 {
     NSUInteger length = [string length];
@@ -335,10 +330,10 @@ PassRefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteb
         return selectionInWebArchiveFormat();
 
     if (pasteboardType == String(NSRTFDPboardType))
-       return dataInRTFDFormat(attributedStringForRange(*adjustedSelectionRange()));
+       return dataInRTFDFormat(attributedStringFromRange(*adjustedSelectionRange()));
 
     if (pasteboardType == String(NSRTFPboardType)) {
-        NSAttributedString* attributedString = attributedStringForRange(*adjustedSelectionRange());
+        NSAttributedString* attributedString = attributedStringFromRange(*adjustedSelectionRange());
         // FIXME: Why is this attachment character stripping needed here, but not needed in writeSelectionToPasteboard?
         if ([attributedString containsAttachments])
             attributedString = attributedStringByStrippingAttachmentCharacters(attributedString);
@@ -350,7 +345,7 @@ PassRefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteb
 
 void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 {
-    NSAttributedString *attributedString = attributedStringForRange(*selectedRange());
+    NSAttributedString *attributedString = attributedStringFromRange(*selectedRange());
 
     PasteboardWebContent content;
     content.canSmartCopyOrDelete = canSmartCopyOrDelete();

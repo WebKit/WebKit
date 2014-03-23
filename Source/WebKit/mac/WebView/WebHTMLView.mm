@@ -6170,9 +6170,9 @@ static BOOL writingDirectionKeyBindingsEnabled()
         return nil;
     }
 
-    NSAttributedString *result = [WebHTMLConverter editingAttributedStringFromRange:range.get()];
+    NSAttributedString *result = editingAttributedStringFromRange(*range);
     
-    // [WebHTMLConverter editingAttributedStringFromRange:]  insists on inserting a trailing 
+    // WebCore::editingAttributedStringFromRange() insists on inserting a trailing
     // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
     // To work around this we truncate the resultant string to the correct length.
     if ([result length] > nsRange.length) {
@@ -6642,7 +6642,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[document _documentRange]];
     if (!attributedString) {
         Document* coreDocument = core(document);
-        attributedString = [WebHTMLConverter editingAttributedStringFromRange:Range::create(*coreDocument, coreDocument, 0, coreDocument, coreDocument->childNodeCount()).get()];
+        attributedString = editingAttributedStringFromRange(*Range::create(*coreDocument, coreDocument, 0, coreDocument, coreDocument->childNodeCount()).get());
     }
     return attributedString;
 }
@@ -6661,7 +6661,10 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         Frame* coreFrame = core([self _frame]);
         if (coreFrame) {
             RefPtr<Range> range = coreFrame->selection().selection().toNormalizedRange();
-            attributedString = [WebHTMLConverter editingAttributedStringFromRange:range.get()];
+            if (range)
+                attributedString = editingAttributedStringFromRange(*range);
+            else
+                attributedString = [[[NSAttributedString alloc] init] autorelease];
         }
     }
     return attributedString;

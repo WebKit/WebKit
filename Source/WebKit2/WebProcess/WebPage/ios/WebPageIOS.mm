@@ -171,7 +171,7 @@ void WebPage::performDictionaryLookupForSelection(Frame*, const VisibleSelection
     notImplemented();
 }
 
-void WebPage::performDictionaryLookupForRange(Frame*, Range*, NSDictionary *)
+void WebPage::performDictionaryLookupForRange(Frame*, Range&, NSDictionary *)
 {
     notImplemented();
 }

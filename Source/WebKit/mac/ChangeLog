@@ -1,3 +1,17 @@
+2014-03-23  Sam Weinig  <sam@webkit.org>
+
+        Simplify the HTMLConverter interface (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=130654
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation attributedStringFrom:startOffset:to:endOffset:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView attributedSubstringFromRange:]):
+        (-[WebHTMLView attributedString]):
+        (-[WebHTMLView selectedAttributedString]):
+
 2014-03-23  Darin Adler  <darin@apple.com>
 
         Remove code in HTMLObjectElement attribute parsing that forces style resolution and layout

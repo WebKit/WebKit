@@ -297,12 +297,6 @@ void Editor::removeUnchangeableStyles()
     applyStyleToSelection(defaultStyle.get(), EditActionChangeAttributes);
 }
 
-// FIXME: the following fuctions should be shared between Mac and iOS.
-static NSAttributedString *attributedStringForRange(Range& range)
-{
-    return [WebHTMLConverter attributedStringFromRange:&range];
-}
-
 static PassRefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *string)
 {
     NSUInteger length = [string length];
@@ -330,7 +324,7 @@ PassRefPtr<SharedBuffer> Editor::selectionInWebArchiveFormat()
 
 void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 {
-    NSAttributedString *attributedString = attributedStringForRange(*selectedRange());
+    NSAttributedString *attributedString = attributedStringFromRange(selectedRange());
 
     PasteboardWebContent content;
     content.canSmartCopyOrDelete = canSmartCopyOrDelete();
