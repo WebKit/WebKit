@@ -76,20 +76,23 @@
 <img class="ex" src="data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7" alt="x" aria-hidden="true">
 <img class="ex" src="data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7" alt="x" style="display:none;">
 
-<select multiple>
+<select multiple id="flowedTo2">
     <option class="ex" selected>FIXME: Selected is false. Expected true. http://webkit.org/b/129835</option>
     <option class="ex">not selected</option>
 </select>
-<div role="listbox" class="ex">
+
+<input class="ex" role="combobox" aria-owns="ownedlistbox invalidIdRef" aria-controls="ownedlistbox invalidIdRef">
+<div role="listbox" class="ex" id="ownedlistbox">
     <div class="ex" role="option" aria-selected="true">selected</div>
     <div class="ex" role="option" aria-selected="false">not selected</div>
 </div>
-<div role="tablist" class="ex">
+
+<div role="tablist" class="ex" aria-flowto="flowedTo1 invalidIdRef flowedTo2">
     <div class="ex" role="tab" aria-selected="true">selected</div>
     <div class="ex" role="tab" aria-selected="false">not selected</div>
 </div>
 
-<ul role="tree" class="ex">
+<ul role="tree" class="ex" id="flowedTo1">
     <li class="ex" role="treeitem" aria-expanded="true">expanded</li>
     <li class="ex" role="treeitem" aria-expanded="false">collapsed</li>
     <li class="ex" role="treeitem" aria-expanded="undefined">expanded</li>
@@ -152,6 +155,9 @@ function test() {
             case "parentNodeId":
                 continue;
             case "childNodeIds":
+            case "controlledNodeIds":
+            case "flowedNodeIds":
+            case "ownedNodeIds":
                 if (value.length)
                     InspectorTest.log("    " + key + ".length: " + value.length);
                 break;

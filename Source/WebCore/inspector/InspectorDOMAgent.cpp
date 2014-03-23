@@ -1426,15 +1426,18 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
 
     TypeBuilder::DOM::AccessibilityProperties::Checked::Enum checked = TypeBuilder::DOM::AccessibilityProperties::Checked::False;
     RefPtr<Inspector::TypeBuilder::Array<int>> childNodeIds;
+    RefPtr<Inspector::TypeBuilder::Array<int>> controlledNodeIds;
     bool exists = false;
     bool expanded = false;
     bool disabled = false;
+    RefPtr<Inspector::TypeBuilder::Array<int>> flowedNodeIds;
     bool focused = false;
     bool ignored = true;
     bool ignoredByDefault = false;
     TypeBuilder::DOM::AccessibilityProperties::Invalid::Enum invalid = TypeBuilder::DOM::AccessibilityProperties::Invalid::False;
     bool hidden = false;
     String label; // FIXME: Waiting on http://webkit.org/b/121134
+    RefPtr<Inspector::TypeBuilder::Array<int>> ownedNodeIds;
     Node* parentNode = node;
     bool pressed = false;
     bool readonly = false;
@@ -1470,12 +1473,32 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
                 }
             }
 
+            if (axObject->supportsARIAControls()) {
+                Vector<Element*> controlledElements;
+                axObject->elementsFromAttribute(controlledElements, aria_controlsAttr);
+                if (controlledElements.size()) {
+                    controlledNodeIds = Inspector::TypeBuilder::Array<int>::create();
+                    for (Element* controlledElement : controlledElements)
+                        controlledNodeIds->addItem(pushNodePathToFrontend(controlledElement));
+                }
+            }
+
             disabled = !axObject->isEnabled(); 
             exists = true;
             
             supportsExpanded = axObject->supportsARIAExpanded();
             if (supportsExpanded)
                 expanded = axObject->isExpanded();
+
+            if (axObject->supportsARIAFlowTo()) {
+                Vector<Element*> flowedElements;
+                axObject->elementsFromAttribute(flowedElements, aria_flowtoAttr);
+                if (flowedElements.size()) {
+                    flowedNodeIds = Inspector::TypeBuilder::Array<int>::create();
+                    for (Element* flowedElement : flowedElements)
+                        flowedNodeIds->addItem(pushNodePathToFrontend(flowedElement));
+                }
+            }
             
             supportsFocused = toElement(node)->isFocusable();
             if (supportsFocused)
@@ -1497,6 +1520,16 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             if (axObject->isARIAHidden() || axObject->isDOMHidden())
                 hidden = true;
             
+            if (axObject->supportsARIAOwns()) {
+                Vector<Element*> ownedElements;
+                axObject->elementsFromAttribute(ownedElements, aria_ownsAttr);
+                if (ownedElements.size()) {
+                    ownedNodeIds = Inspector::TypeBuilder::Array<int>::create();
+                    for (Element* ownedElement : ownedElements)
+                        ownedNodeIds->addItem(pushNodePathToFrontend(ownedElement));
+                }
+            }
+
             if (AccessibilityObject* parentObject = axObject->parentObjectUnignored())
                 parentNode = parentObject->node();
 
@@ -1527,10 +1560,14 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             value->setChecked(checked);
         if (childNodeIds)
             value->setChildNodeIds(childNodeIds);
+        if (controlledNodeIds)
+            value->setControlledNodeIds(controlledNodeIds);
         if (disabled)
             value->setDisabled(disabled);
         if (supportsExpanded)
             value->setExpanded(expanded);
+        if (flowedNodeIds)
+            value->setFlowedNodeIds(flowedNodeIds);
         if (supportsFocused)
             value->setFocused(focused);
         if (ignored)
@@ -1541,6 +1578,8 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             value->setInvalid(invalid);
         if (hidden)
             value->setHidden(hidden);
+        if (ownedNodeIds)
+            value->setOwnedNodeIds(ownedNodeIds);
         if (parentNode && parentNode != node)
             value->setParentNodeId(pushNodePathToFrontend(parentNode));
         if (supportsPressed)

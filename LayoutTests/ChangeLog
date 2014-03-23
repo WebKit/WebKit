@@ -1,3 +1,15 @@
+2014-03-23  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: add other ARIA one-to-many relationships: owns, flowto, controls.
+        https://bugs.webkit.org/show_bug.cgi?id=130635
+
+        Reviewed by Timothy Hatcher.
+
+        Support for @aria-owns, @aria-controls, and @aria-flowto.
+
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode.html:
+
 2014-03-22  Chang Shu  <cshu@webkit.org>
 
         Replace deprecatedIsCollapsibleWhitespace with RenderStyle::isCollapsibleWhiteSpace in TextIterator.

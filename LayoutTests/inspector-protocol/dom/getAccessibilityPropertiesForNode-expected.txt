@@ -1,6 +1,6 @@
 Checking Web Inspector protocol for the Accessibility Node Inspector.
 
-Total elements to be tested: 56.
+Total elements to be tested: 57.
 
 <li role="treeitem" aria-expanded="undefined">expanded</li>
     exists: true
@@ -22,7 +22,7 @@ Total elements to be tested: 56.
     childNodeIds.length: 1
     expanded: true
 
-<ul role="tree">
+<ul role="tree" id="flowedTo1">
     <li role="treeitem" aria-expanded="true">expanded</li>
     <li role="treeitem" aria-expanded="false">collapsed</li>
     <li role="treeitem" aria-expanded="undefined">expanded</li>
@@ -43,7 +43,7 @@ Total elements to be tested: 56.
     role: tab
     selected: true
 
-<div role="tablist">
+<div role="tablist" aria-flowto="flowedTo1 invalidIdRef flowedTo2">
     <div role="tab" aria-selected="true">selected</div>
     <div role="tab" aria-selected="false">not selected</div>
 </div>
@@ -51,6 +51,7 @@ Total elements to be tested: 56.
     label: 
     role: tablist
     childNodeIds.length: 2
+    flowedNodeIds.length: 2
 
 <div role="option" aria-selected="false">not selected</div>
     exists: true
@@ -63,7 +64,7 @@ Total elements to be tested: 56.
     role: option
     selected: true
 
-<div role="listbox">
+<div role="listbox" id="ownedlistbox">
     <div role="option" aria-selected="true">selected</div>
     <div role="option" aria-selected="false">not selected</div>
 </div>
@@ -71,6 +72,15 @@ Total elements to be tested: 56.
     label: 
     role: listbox
     childNodeIds.length: 2
+    required: false
+
+<input role="combobox" aria-owns="ownedlistbox invalidIdRef" aria-controls="ownedlistbox invalidIdRef">
+    exists: true
+    label: 
+    role: combobox
+    controlledNodeIds.length: 1
+    focused: false
+    ownedNodeIds.length: 1
     required: false
 
 <option>not selected</option>

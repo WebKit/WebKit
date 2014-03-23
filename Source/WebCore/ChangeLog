@@ -1,3 +1,18 @@
+2014-03-23  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: add other ARIA one-to-many relationships: owns, flowto, controls.
+        https://bugs.webkit.org/show_bug.cgi?id=130635
+
+        Reviewed by Timothy Hatcher.
+
+        Support for @aria-owns, @aria-controls, and @aria-flowto.
+
+        Test: inspector-protocol/dom/getAccessibilityPropertiesForNode.html
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+        * inspector/protocol/DOM.json:
+
 2014-03-23  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up #includes by geometry classes
