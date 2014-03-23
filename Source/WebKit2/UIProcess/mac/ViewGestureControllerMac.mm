@@ -109,7 +109,7 @@ static double resistanceForDelta(double deltaScale, double currentScale)
 
     // Outside of the extremes, resist further scaling.
     double limit = currentScale < minMagnification ? minMagnification : maxMagnification;
-    double scaleDistance = abs(limit - currentScale);
+    double scaleDistance = fabs(limit - currentScale);
     double scalePercent = std::min(std::max(scaleDistance / limit, 0.), 1.);
     double resistance = zoomOutResistance + scalePercent * (0.01 - zoomOutResistance);
 

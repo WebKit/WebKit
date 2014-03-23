@@ -1,3 +1,23 @@
+2014-03-23  David Kilzer  <ddkilzer@apple.com>
+
+        WebKit::resistanceForDelta() truncates 'scaleDistance' to integer value using abs()
+        <http://webkit.org/b/130651>
+
+        Reviewed by Darin Adler.
+
+        Fixes the following build failure with trunk clang:
+
+            WebKit2/UIProcess/mac/ViewGestureControllerMac.mm:112:28: error: using integer absolute value function 'abs' when argument is of floating point type [-Werror,-Wabsolute-value]
+                double scaleDistance = abs(limit - currentScale);
+                                       ^
+            WebKit2/UIProcess/mac/ViewGestureControllerMac.mm:112:28: note: use function 'fabs' instead
+                double scaleDistance = abs(limit - currentScale);
+                                       ^~~
+                                       fabs
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::resistanceForDelta): Use fabs() instead of abs().
+
 2014-03-23  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up #includes by geometry classes
