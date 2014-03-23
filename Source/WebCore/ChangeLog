@@ -1,3 +1,16 @@
+2014-03-22  Chang Shu  <cshu@webkit.org>
+
+        Replace deprecatedIsCollapsibleWhitespace with RenderStyle::isCollapsibleWhiteSpace in TextIterator.
+        https://bugs.webkit.org/show_bug.cgi?id=130612.
+
+        Reviewed by Darin Adler.
+
+        Some layout tests are affected by this change but the new behavior should be correct.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextNode):
+        (WebCore::TextIterator::handleTextBox):
+
 2014-03-22  Sam Weinig  <sam@webkit.org>
 
         Switch HTMLConverter to use CSSPropertyIDs to refer to CSS properties

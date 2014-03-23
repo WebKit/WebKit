@@ -1,3 +1,22 @@
+2014-03-22  Chang Shu  <cshu@webkit.org>
+
+        Replace deprecatedIsCollapsibleWhitespace with RenderStyle::isCollapsibleWhiteSpace in TextIterator.
+        https://bugs.webkit.org/show_bug.cgi?id=130612.
+
+        Reviewed by Darin Adler.
+
+        * accessibility/table-scope-expected.txt:
+        * editing/deleting/delete-block-table-expected.txt:
+        * editing/pasteboard/paste-into-anchor-text-expected.txt:
+        * fast/dom/Element/offsetTop-table-cell-expected.txt:
+        * fast/html/object-border-expected.txt:
+        * fast/table/cell-in-row-before-misnested-text-crash-css-expected.txt:
+        * fast/table/cell-in-row-before-misnested-text-crash-expected.txt:
+        * fast/tokenizer/script_extra_close-expected.txt:
+        * fast/xsl/mozilla-tests-expected.txt:
+        * platform/mac/accessibility/aria-grid-with-strange-hierarchy-expected.txt:
+        * platform/mac/accessibility/table-multi-bodies-expected.txt:
+
 2014-03-22  Michael Saboff  <msaboff@apple.com>
 
         toThis() on a JSWorkerGlobalScope should return a JSProxy and not undefined

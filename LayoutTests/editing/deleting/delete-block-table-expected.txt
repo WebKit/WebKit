@@ -1,8 +1,8 @@
 This test checks that deleting into a table works properly. When deleting three times with the cursor after the character "a" in the "after" text after the table, the "a" should be deleted, as should the "o" of "buffalo" in the last table cell.
 
 Before
-Foo	 baz
-bar	 buffalfter
+Foo	baz
+bar	buffalfter
 execDeleteCommand: <div>Before</div> <table style="border:3px solid #aaa;"> <tbody><tr> <td> Foo </td> <td> baz </td> </tr> <tr> <td> bar </td> <td> buffalo </td> </tr> </tbody></table> <span id="start">fter</span>
 execDeleteCommand: <div>Before</div> <table style="border:3px solid #aaa;"> <tbody><tr> <td> Foo </td> <td> baz </td> </tr> <tr> <td> bar </td> <td> buffalofter</td></tr></tbody></table>
 execDeleteCommand: <div>Before</div> <table style="border:3px solid #aaa;"> <tbody><tr> <td> Foo </td> <td> baz </td> </tr> <tr> <td> bar </td> <td> buffalfter</td></tr></tbody></table>

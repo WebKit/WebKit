@@ -11,5 +11,5 @@ Table 4 div 1 top offset:50
 Test result: PASS
 x	
 This
-is more text.	 And a lot more text that should have the smallest offsetTop.
+is more text.	And a lot more text that should have the smallest offsetTop.
 

@@ -556,15 +556,15 @@ bool TextIterator::handleTextNode()
         unsigned end = (m_node == m_endContainer) ? static_cast<unsigned>(m_endOffset) : rendererText.length();
         unsigned runEnd = m_offset;
         unsigned runStart = m_offset;
-        while (runEnd < end && (deprecatedIsCollapsibleWhitespace(rendererText[runEnd]) || rendererText[runEnd] == '\t'))
+        while (runEnd < end && (renderer.style().isCollapsibleWhiteSpace(rendererText[runEnd]) || rendererText[runEnd] == '\t'))
             ++runEnd;
-        bool addSpaceForPrevious = m_lastTextNodeEndedWithCollapsedSpace && m_lastCharacter && !deprecatedIsCollapsibleWhitespace(m_lastCharacter);
+        bool addSpaceForPrevious = m_lastTextNodeEndedWithCollapsedSpace && m_lastCharacter && !renderer.style().isCollapsibleWhiteSpace(m_lastCharacter);
         if (runEnd > runStart || addSpaceForPrevious) {
             if (runEnd == rendererText.length()) {
                 m_lastTextNodeEndedWithCollapsedSpace = true;
                 return true;
             }
-            bool addSpaceForCurrent = runStart || (m_lastCharacter && !deprecatedIsCollapsibleWhitespace(m_lastCharacter));
+            bool addSpaceForCurrent = runStart || (m_lastCharacter && !renderer.style().isCollapsibleWhiteSpace(m_lastCharacter));
             if (addSpaceForCurrent || addSpaceForPrevious) {
                 emitCharacter(' ', textNode, nullptr, runStart, runEnd);
                 m_offset = runEnd;
@@ -572,7 +572,7 @@ bool TextIterator::handleTextNode()
             }
             runStart = runEnd;
         }
-        while (runEnd < end && !deprecatedIsCollapsibleWhitespace(rendererText[runEnd]))
+        while (runEnd < end && !renderer.style().isCollapsibleWhiteSpace(rendererText[runEnd]))
             ++runEnd;
         if (runStart < end)
             emitText(textNode, renderer, runStart, runEnd);
@@ -628,7 +628,7 @@ void TextIterator::handleTextBox()
         // Check for collapsed space at the start of this run.
         InlineTextBox* firstTextBox = renderer.containsReversedText() ? (m_sortedTextBoxes.isEmpty() ? nullptr : m_sortedTextBoxes[0]) : renderer.firstTextBox();
         bool needSpace = m_lastTextNodeEndedWithCollapsedSpace || (m_textBox == firstTextBox && textBoxStart == runStart && runStart);
-        if (needSpace && !deprecatedIsCollapsibleWhitespace(m_lastCharacter) && m_lastCharacter) {
+        if (needSpace && !renderer.style().isCollapsibleWhiteSpace(m_lastCharacter) && m_lastCharacter) {
             if (m_lastTextNode == &textNode && runStart && rendererText[runStart - 1] == ' ') {
                 unsigned spaceRunStart = runStart - 1;
                 while (spaceRunStart && rendererText[spaceRunStart - 1] == ' ')

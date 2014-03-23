@@ -1,4 +1,4 @@
- 	Name	Time	Popularity	 Price
+ 	Name	Time	Popularity	Price
 1	Test	Test	Test
 This tests that an ARIA grid with a hierarchy that ignores render elements in between will still expose the correct elements.
 
