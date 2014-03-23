@@ -1,3 +1,10 @@
+2014-03-22  Andreas Kling  <akling@apple.com>
+
+        Fix debug build.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::createWrapper):
+
 2014-03-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add *final* keyword to NavigatorContentUtils class

@@ -202,7 +202,7 @@ template <typename DOMClass, typename WrapperClass> inline void uncacheWrapper(D
 template<class WrapperClass, class DOMClass> inline JSDOMWrapper* createWrapper(JSDOMGlobalObject* globalObject, DOMClass* node)
 {
     ASSERT(node);
-    ASSERT(!getCachedWrapper(globalObject.world(), node));
+    ASSERT(!getCachedWrapper(globalObject->world(), node));
     WrapperClass* wrapper = WrapperClass::create(getDOMStructure<WrapperClass>(globalObject->vm(), globalObject), globalObject, node);
     cacheWrapper(globalObject->world(), node, wrapper);
     return wrapper;
