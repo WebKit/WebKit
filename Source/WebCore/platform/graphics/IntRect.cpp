@@ -146,17 +146,6 @@ IntSize IntRect::differenceToPoint(const IntPoint& point) const
     return IntSize(xdistance, ydistance);
 }
 
-IntRect unionRect(const Vector<IntRect>& rects)
-{
-    IntRect result;
-
-    size_t count = rects.size();
-    for (size_t i = 0; i < count; ++i)
-        result.unite(rects[i]);
-
-    return result;
-}
-
 void IntRect::dump(PrintStream& out) const
 {
     out.print(location(), " ", size());

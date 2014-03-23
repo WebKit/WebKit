@@ -38,6 +38,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
+#include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "ImageData.h"

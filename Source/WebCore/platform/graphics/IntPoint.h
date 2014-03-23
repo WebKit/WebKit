@@ -127,7 +127,7 @@ public:
     operator Evas_Point() const;
 #endif
 
-    void dump(PrintStream& out) const;
+    void dump(WTF::PrintStream& out) const;
 
 private:
     int m_x, m_y;

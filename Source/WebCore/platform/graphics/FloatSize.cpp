@@ -31,6 +31,7 @@
 #include "IntSize.h"
 #include <limits>
 #include <math.h>
+#include <wtf/PrintStream.h>
 
 namespace WebCore {
 

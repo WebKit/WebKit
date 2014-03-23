@@ -34,6 +34,7 @@
 #include "FontCache.h"
 #include "Frame.h"
 #include "FrameSelection.h"
+#include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "HTMLAreaElement.h"
 #include "HTMLImageElement.h"

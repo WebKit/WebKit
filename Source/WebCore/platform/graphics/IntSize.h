@@ -27,7 +27,6 @@
 #define IntSize_h
 
 #include <algorithm>
-#include <wtf/PrintStream.h>
 
 #if USE(CG)
 typedef struct CGSize CGSize;
@@ -50,6 +49,10 @@ typedef struct _NSSize NSSize;
 #if PLATFORM(WIN)
 typedef struct tagSIZE SIZE;
 #endif
+
+namespace WTF {
+class PrintStream;
+}
 
 namespace WebCore {
 
@@ -139,7 +142,7 @@ public:
     operator SIZE() const;
 #endif
 
-    void dump(PrintStream& out) const;
+    void dump(WTF::PrintStream& out) const;
 
 private:
     int m_width, m_height;

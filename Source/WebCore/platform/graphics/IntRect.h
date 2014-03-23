@@ -28,7 +28,6 @@
 
 #include "IntPoint.h"
 #include "LayoutUnit.h"
-#include <wtf/Vector.h>
 
 #if USE(CG)
 typedef struct CGRect CGRect;
@@ -197,7 +196,7 @@ public:
     operator NSRect() const;
 #endif
 
-    void dump(PrintStream& out) const;
+    void dump(WTF::PrintStream& out) const;
 
     static IntRect infiniteRect();
     bool isInfinite() const;
@@ -220,8 +219,6 @@ inline IntRect unionRect(const IntRect& a, const IntRect& b)
     c.unite(b);
     return c;
 }
-
-IntRect unionRect(const Vector<IntRect>&);
 
 inline bool operator==(const IntRect& a, const IntRect& b)
 {

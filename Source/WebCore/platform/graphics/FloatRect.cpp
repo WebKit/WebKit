@@ -147,17 +147,6 @@ void FloatRect::scale(float sx, float sy)
     m_size.setHeight(height() * sy);
 }
 
-FloatRect unionRect(const Vector<FloatRect>& rects)
-{
-    FloatRect result;
-
-    size_t count = rects.size();
-    for (size_t i = 0; i < count; ++i)
-        result.unite(rects[i]);
-
-    return result;
-}
-
 void FloatRect::fitToPoints(const FloatPoint& p0, const FloatPoint& p1)
 {
     float left = std::min(p0.x(), p1.x());
@@ -238,18 +227,6 @@ IntRect enclosedIntRect(const FloatRect& rect)
 IntRect roundedIntRect(const FloatRect& rect)
 {
     return IntRect(roundedIntPoint(rect.location()), roundedIntSize(rect.size()));
-}
-
-FloatRect mapRect(const FloatRect& r, const FloatRect& srcRect, const FloatRect& destRect)
-{
-    if (srcRect.width() == 0 || srcRect.height() == 0)
-        return FloatRect();
-
-    float widthScale = destRect.width() / srcRect.width();
-    float heightScale = destRect.height() / srcRect.height();
-    return FloatRect(destRect.x() + (r.x() - srcRect.x()) * widthScale,
-                     destRect.y() + (r.y() - srcRect.y()) * heightScale,
-                     r.width() * widthScale, r.height() * heightScale);
 }
 
 void FloatRect::dump(PrintStream& out) const

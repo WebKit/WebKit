@@ -27,6 +27,7 @@
 #include "FindIndicator.h"
 
 #include "ShareableBitmap.h"
+#include <WebCore/GeometryUtilities.h>
 #include <WebCore/Gradient.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/IntRect.h>

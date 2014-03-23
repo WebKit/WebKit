@@ -5768,6 +5768,8 @@ platform_sources += \
 	Source/WebCore/platform/graphics/FontWidthVariant.h \
 	Source/WebCore/platform/graphics/GeneratedImage.cpp \
 	Source/WebCore/platform/graphics/GeneratedImage.h \
+	Source/WebCore/platform/graphics/GeometryUtilities.cpp \
+	Source/WebCore/platform/graphics/GeometryUtilities.h \
 	Source/WebCore/platform/graphics/Glyph.h \
 	Source/WebCore/platform/graphics/GlyphBuffer.h \
 	Source/WebCore/platform/graphics/GlyphMetricsMap.h \

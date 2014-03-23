@@ -24,6 +24,8 @@
 #include "AreaAllocator.h"
 #include "CoordinatedSurface.h"
 #include "IntSize.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 #if USE(COORDINATED_GRAPHICS)
 

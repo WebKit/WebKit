@@ -26,6 +26,7 @@
 #include "IntPointHash.h"
 #include "IntRect.h"
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

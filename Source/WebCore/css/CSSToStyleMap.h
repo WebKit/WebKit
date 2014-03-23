@@ -24,6 +24,8 @@
 
 #include "CSSPropertyNames.h"
 #include "LengthBox.h"
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 

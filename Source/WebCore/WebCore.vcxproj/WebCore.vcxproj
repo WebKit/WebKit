@@ -7807,6 +7807,7 @@
     <ClCompile Include="..\platform\graphics\FontFastPath.cpp" />
     <ClCompile Include="..\platform\graphics\FontFeatureSettings.cpp" />
     <ClCompile Include="..\platform\graphics\FontPlatformData.cpp" />
+    <ClCompile Include="..\platform\graphics\GeometryUtilities.cpp" />
     <ClCompile Include="..\platform\graphics\GeneratedImage.cpp" />
     <ClCompile Include="..\platform\graphics\GlyphPageTreeNode.cpp" />
     <ClCompile Include="..\platform\graphics\Gradient.cpp" />
@@ -19254,6 +19255,7 @@
     <ClInclude Include="..\platform\graphics\FontSmoothingMode.h" />
     <ClInclude Include="..\platform\graphics\FontTraitsMask.h" />
     <ClInclude Include="..\platform\graphics\GeneratedImage.h" />
+    <ClInclude Include="..\platform\graphics\GeometryUtilities.h" />
     <ClInclude Include="..\platform\graphics\Glyph.h" />
     <ClInclude Include="..\platform\graphics\GlyphBuffer.h" />
     <ClInclude Include="..\platform\graphics\GlyphMetricsMap.h" />

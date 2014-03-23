@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,54 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BackingStore_h
-#define BackingStore_h
+#ifndef GeometryUtilities_h
+#define GeometryUtilities_h
 
-#include <WebCore/IntRect.h>
-#include <wtf/Noncopyable.h>
+#include "FloatRect.h"
+#include "IntRect.h"
+#include <wtf/Vector.h>
 
-#if USE(CAIRO)
-#include <RefPtrCairo.h>
-#include <WebCore/WidgetBackingStore.h>
-#include <wtf/OwnPtr.h>
-#endif
+namespace WebCore {
 
-namespace WebKit {
+float findSlope(const FloatPoint& p1, const FloatPoint& p2, float& c);
 
-class ShareableBitmap;
-class UpdateInfo;
-class WebPageProxy;
+// Find point where lines through the two pairs of points intersect. Returns false if the lines don't intersect.
+bool findIntersection(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& d1, const FloatPoint& d2, FloatPoint& intersection);
 
-class BackingStore {
-    WTF_MAKE_NONCOPYABLE(BackingStore);
+IntRect unionRect(const Vector<IntRect>&);
+FloatRect unionRect(const Vector<FloatRect>&);
 
-public:
-    BackingStore(const WebCore::IntSize&, float deviceScaleFactor, WebPageProxy*);
-    ~BackingStore();
+// Map rect r from srcRect to an equivalent rect in destRect.
+FloatRect mapRect(const FloatRect&, const FloatRect& srcRect, const FloatRect& destRect);
 
-    const WebCore::IntSize& size() const { return m_size; }
-    float deviceScaleFactor() const { return m_deviceScaleFactor; }
+}
 
-#if USE(CAIRO)
-    typedef cairo_t* PlatformGraphicsContext;
-#endif
-
-    void paint(PlatformGraphicsContext, const WebCore::IntRect&);
-    void incorporateUpdate(const UpdateInfo&);
-
-private:
-    void incorporateUpdate(ShareableBitmap*, const UpdateInfo&);
-    void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
-
-    WebCore::IntSize m_size;
-    float m_deviceScaleFactor;
-    WebPageProxy* m_webPageProxy;
-
-#if USE(CAIRO)
-    OwnPtr<WebCore::WidgetBackingStore> m_backingStore;
-#endif
-};
-
-} // namespace WebKit
-
-#endif // BackingStore_h
+#endif // GeometryUtilities_h

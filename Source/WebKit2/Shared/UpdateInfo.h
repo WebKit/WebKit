@@ -29,6 +29,7 @@
 #include "ShareableBitmap.h"
 #include <WebCore/IntRect.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
 
 namespace IPC {
     class ArgumentDecoder;

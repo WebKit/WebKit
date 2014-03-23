@@ -144,7 +144,7 @@ public:
     FloatPoint matrixTransform(const TransformationMatrix&) const;
     FloatPoint matrixTransform(const AffineTransform&) const;
 
-    void dump(PrintStream& out) const;
+    void dump(WTF::PrintStream& out) const;
 
 private:
     float m_x, m_y;
@@ -234,11 +234,6 @@ inline FloatSize toFloatSize(const FloatPoint& a)
 {
     return FloatSize(a.x(), a.y());
 }
-
-float findSlope(const FloatPoint& p1, const FloatPoint& p2, float& c);
-
-// Find point where lines through the two pairs of points intersect. Returns false if the lines don't intersect.
-bool findIntersection(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& d1, const FloatPoint& d2, FloatPoint& intersection);
 
 }
 

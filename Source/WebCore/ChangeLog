@@ -1,3 +1,49 @@
+2014-03-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up #includes by geometry classes
+        https://bugs.webkit.org/show_bug.cgi?id=130645
+
+        Reviewed by Andreas Kling.
+
+        Pulling in <wtf/Vector.h> and <wtf/PrintStream.h> in the simple geometry
+        classes brings in a lot of additional headers. Fix by adding a new
+        GeometryUtilities file so that the basic files don't need Vector,
+        and including GeometryUtilities.h where necessary.
+        
+        Also forward declare PrintStream.h and only bring in the header
+        in implementation files.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSToStyleMap.h:
+        * html/HTMLCanvasElement.cpp:
+        * platform/cairo/WidgetBackingStoreCairo.h:
+        * platform/graphics/FloatPoint.cpp:
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatRect.cpp:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/FloatSize.cpp:
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/GeometryUtilities.cpp: Added.
+        (WebCore::findSlope):
+        (WebCore::findIntersection):
+        (WebCore::unionRect):
+        (WebCore::mapRect):
+        * platform/graphics/GeometryUtilities.h: Copied from Source/WebCore/platform/graphics/TextTrackRepresentation.h.
+        * platform/graphics/IntPoint.h:
+        * platform/graphics/IntRect.cpp:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/IntSize.h:
+        * platform/graphics/TextTrackRepresentation.h:
+        * platform/graphics/Tile.h:
+        * platform/gtk/WidgetBackingStoreGtkX11.h:
+        * rendering/RenderBoxModelObject.cpp:
+        * rendering/RenderImage.cpp:
+        * rendering/RenderObject.cpp:
+
 2014-03-22  Chang Shu  <cshu@webkit.org>
 
         Replace deprecatedIsCollapsibleWhitespace with RenderStyle::isCollapsibleWhiteSpace in TextIterator.

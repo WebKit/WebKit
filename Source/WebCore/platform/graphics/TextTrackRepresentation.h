@@ -31,6 +31,7 @@
 #include "IntRect.h"
 #include "PlatformLayer.h"
 #include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

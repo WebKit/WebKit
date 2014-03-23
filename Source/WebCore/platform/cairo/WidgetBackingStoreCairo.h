@@ -20,6 +20,7 @@
 #define WidgetBackingStoreCairo_h
 
 #include "WidgetBackingStore.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

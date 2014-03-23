@@ -28,6 +28,7 @@
 #import <WebCore/IntRectHash.h>
 #import <condition_variable>
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 
 @class WKPrintingViewData;
 @class PDFDocument;

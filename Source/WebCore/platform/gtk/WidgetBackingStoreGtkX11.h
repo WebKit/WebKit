@@ -20,6 +20,7 @@
 #define WidgetBackingStoreGtkX11_h
 
 #include "WidgetBackingStore.h"
+#include <wtf/RefPtr.h>
 
 #include <X11/Xlib.h>
 

@@ -1882,6 +1882,7 @@ set(WebCore_SOURCES
     platform/graphics/FontGenericFamilies.cpp
     platform/graphics/FontGlyphs.cpp
     platform/graphics/GeneratedImage.cpp
+    platform/graphics/GeometryUtilities.cpp
     platform/graphics/GlyphPageTreeNode.cpp
     platform/graphics/Gradient.cpp
     platform/graphics/GradientImage.cpp

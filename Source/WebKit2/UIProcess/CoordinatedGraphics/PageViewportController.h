@@ -26,6 +26,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/ViewportArguments.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 class IntPoint;
