@@ -577,6 +577,8 @@ webkit.org/b/128251 media/video-preload.html [ Pass Failure ]
 webkit.org/b/128252 media/track/track-kind.html [ Pass Failure ]
 webkit.org/b/128528 media/media-ended.html [ Pass Failure ]
 
+webkit.org/b/130586 webgl/conformance/uniforms/gl-uniform-arrays.html [ Failure Pass ]
+
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLMediaElement/crossOrigin.html [ Skip ]
