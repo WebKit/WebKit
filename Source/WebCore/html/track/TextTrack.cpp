@@ -210,11 +210,10 @@ void TextTrack::setKind(const AtomicString& newKind)
 
 void TextTrack::setMode(const AtomicString& mode)
 {
+    ASSERT(mode == disabledKeyword() || mode == hiddenKeyword() || mode == showingKeyword());
+
     // On setting, if the new value isn't equal to what the attribute would currently
     // return, the new value must be processed as follows ...
-    if (mode != disabledKeyword() && mode != hiddenKeyword() && mode != showingKeyword())
-        return;
-
     if (m_mode == mode)
         return;
 

@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+enum TextTrackMode { "disabled",  "hidden",  "showing" };
+enum TextTrackKind { "subtitles",  "captions",  "descriptions",  "chapters", "metadata" };
+
 [
     Conditional=VIDEO_TRACK,
     EventTarget,
@@ -31,18 +34,19 @@
     SkipVTableValidation,
 ] interface TextTrack {
     readonly attribute DOMString id;
-    [CustomSetter] attribute DOMString kind;
+    [CustomSetter] attribute TextTrackKind kind;
     readonly attribute DOMString label;
     [CustomSetter] attribute DOMString language;
 
-    attribute DOMString mode;
+    attribute TextTrackMode mode;
 
     readonly attribute TextTrackCueList cues;
     readonly attribute TextTrackCueList activeCues;
-             attribute EventListener oncuechange;
 
     [RaisesException] void addCue(TextTrackCue cue);
     [RaisesException] void removeCue(TextTrackCue cue);
+
+             attribute EventListener oncuechange;
 
 #if defined(ENABLE_WEBVTT_REGIONS) && ENABLE_WEBVTT_REGIONS
     readonly attribute VTTRegionList regions;

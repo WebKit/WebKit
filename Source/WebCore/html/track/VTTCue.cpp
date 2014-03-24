@@ -218,12 +218,12 @@ VTTCue::VTTCue(ScriptExecutionContext& context, double start, double end, const 
     , m_cueSize(100)
     , m_writingDirection(Horizontal)
     , m_cueAlignment(Middle)
-    , m_webVTTNodeTree(0)
-    , m_snapToLines(true)
+    , m_webVTTNodeTree(nullptr)
     , m_cueBackgroundBox(HTMLSpanElement::create(spanTag, toDocument(context)))
-    , m_displayTreeShouldChange(true)
     , m_displayDirection(CSSValueLtr)
     , m_displaySize(0)
+    , m_snapToLines(true)
+    , m_displayTreeShouldChange(true)
     , m_notifyRegion(true)
 {
 }

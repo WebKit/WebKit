@@ -1,3 +1,24 @@
+2014-03-24  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge Minor WebVTT Cleanups from Blink
+        https://bugs.webkit.org/show_bug.cgi?id=130681
+
+        Reviewed by Eric Carlson.
+
+        Merged from Blink (patch by philipj@opera.com):
+        https://chromium.googlesource.com/chromium/blink/+/693eb5e2933dca0eab5bbd604e9f3406fe9fd1ab
+        http://crbug.com/52593009
+        https://chromium.googlesource.com/chromium/blink/+/40b3602feab34e9be829fd742b6ad6ded322a09f
+        http://crbug.com/104243003
+
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::setMode):
+        * html/track/TextTrack.idl:
+        * html/track/TextTrackCue.h:
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::VTTCue):
+        * html/track/VTTCue.h:
+
 2014-03-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r166169.
