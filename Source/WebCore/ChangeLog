@@ -1,3 +1,36 @@
+2014-03-24  Antti Koivisto  <antti@apple.com>
+
+        Invalidate sibling text node style when needed instead of attaching synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=130590
+
+        Reviewed by Andreas Kling.
+        
+        Make things simpler.
+
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded):
+        
+            Just invalidate instead of calling attach directly.
+            Rename to match.
+
+        (WebCore::Style::textRendererIsNeeded):
+        (WebCore::Style::createTextRendererIfNeeded):
+        
+            Move all testing to textRendererIsNeeded.
+
+        (WebCore::Style::updateTextRendererAfterContentChange):
+        
+            Call resolveTextNode instead of re-implementing the same thing.
+
+        (WebCore::Style::resolveLocal):
+        (WebCore::Style::resolveTextNode):
+        
+            Avoid unnecessary reattaching.
+            Rename for consistency.
+
+        (WebCore::Style::resolveShadowTree):
+        (WebCore::Style::resolveTree):
+        
 2014-03-24  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
 
         Fix !ENABLE(VIDEO) build

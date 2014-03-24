@@ -64,6 +64,7 @@ enum DetachType { NormalDetach, ReattachDetach };
 static void attachRenderTree(Element&, ContainerNode& renderingParentNode, PassRefPtr<RenderStyle>);
 static void attachTextRenderer(Text&, ContainerNode& renderingParentNode);
 static void detachRenderTree(Element&, DetachType);
+static void resolveTextNode(Text&, ContainerNode& renderingParentNode);
 static void resolveTree(Element&, ContainerNode& renderingParentNode, Change);
 
 Change determineChange(const RenderStyle* s1, const RenderStyle* s2)
@@ -294,15 +295,14 @@ static RenderObject* previousSiblingRenderer(const Text& textNode)
     return nullptr;
 }
 
-static void reattachTextRenderersForWhitespaceOnlySiblingsAfterAttachIfNeeded(Node& current, ContainerNode& renderingParentNode)
+static void invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(Node& current)
 {
     if (isInsertionPoint(current))
         return;
     // This function finds sibling text renderers where the results of textRendererIsNeeded may have changed as a result of
     // the current node gaining or losing the renderer. This can only affect white space text nodes.
     for (Node* sibling = current.nextSibling(); sibling; sibling = sibling->nextSibling()) {
-        // Siblings haven't been attached yet. They will be handled normally when they are.
-        if (sibling->styleChangeType() == ReconstructRenderTree)
+        if (sibling->needsStyleRecalc())
             return;
         if (sibling->isElementNode()) {
             // Text renderers beyond rendered elements can't be affected.
@@ -312,33 +312,35 @@ static void reattachTextRenderersForWhitespaceOnlySiblingsAfterAttachIfNeeded(No
         }
         if (!sibling->isTextNode())
             continue;
-        Text& textSibling = *toText(sibling);
-        if (!textSibling.length() || !textSibling.containsOnlyWhitespace())
-            return;
-        Text& whitespaceTextSibling = textSibling;
-        bool hadRenderer = whitespaceTextSibling.renderer();
-        detachTextRenderer(whitespaceTextSibling);
-        attachTextRenderer(whitespaceTextSibling, renderingParentNode);
-        // No changes, futher renderers can't be affected.
-        if (hadRenderer == !!whitespaceTextSibling.renderer())
-            return;
+        Text& textSibling = toText(*sibling);
+        if (!textSibling.containsOnlyWhitespace())
+            continue;
+        textSibling.setNeedsStyleRecalc();
     }
 }
 
-static bool textRendererIsNeeded(const Text& textNode, const RenderObject& parentRenderer, const RenderStyle& style)
+static bool textRendererIsNeeded(const Text& textNode, ContainerNode& renderingParentNode)
 {
+    if (!renderingParentNode.renderer())
+        return false;
+    RenderElement& parentRenderer = *renderingParentNode.renderer();
+    if (!parentRenderer.canHaveChildren())
+        return false;
+    if (!renderingParentNode.childShouldCreateRenderer(textNode))
+        return false;
+
     if (textNode.isEditingText())
         return true;
     if (!textNode.length())
         return false;
-    if (style.display() == NONE)
+    if (parentRenderer.style().display() == NONE)
         return false;
     if (!textNode.containsOnlyWhitespace())
         return true;
     // This text node has nothing but white space. We may still need a renderer in some cases.
     if (parentRenderer.isTable() || parentRenderer.isTableRow() || parentRenderer.isTableSection() || parentRenderer.isRenderTableCol() || parentRenderer.isFrameSet())
         return false;
-    if (style.preserveNewline()) // pre/pre-wrap/pre-line always make renderers.
+    if (parentRenderer.style().preserveNewline()) // pre/pre-wrap/pre-line always make renderers.
         return true;
 
     RenderObject* previousRenderer = previousSiblingRenderer(textNode);
@@ -353,7 +355,7 @@ static bool textRendererIsNeeded(const Text& textNode, const RenderObject& paren
         if (parentRenderer.isRenderBlock() && !parentRenderer.childrenInline() && (!previousRenderer || !previousRenderer->isInline()))
             return false;
         
-        RenderObject* first = toRenderElement(parentRenderer).firstChild();
+        RenderObject* first = parentRenderer.firstChild();
         while (first && first->isFloatingOrOutOfFlowPositioned())
             first = first->nextSibling();
         RenderObject* nextRenderer = nextSiblingRenderer(textNode, *textNode.parentNode());
@@ -369,31 +371,25 @@ static void createTextRendererIfNeeded(Text& textNode, ContainerNode& renderingP
 {
     ASSERT(!textNode.renderer());
 
-    RenderElement* parentRenderer = renderingParentNode.renderer();
-    if (!parentRenderer || !parentRenderer->canHaveChildren())
+    if (!textRendererIsNeeded(textNode, renderingParentNode))
         return;
-    if (!renderingParentNode.childShouldCreateRenderer(textNode))
-        return;
-
-    const auto& style = parentRenderer->style();
-
-    if (!textRendererIsNeeded(textNode, *parentRenderer, style))
-        return;
+    RenderElement& parentRenderer = *renderingParentNode.renderer();
+    const auto& style = parentRenderer.style();
 
     auto newRenderer = textNode.createTextRenderer(style);
     ASSERT(newRenderer);
 
-    if (!parentRenderer->isChildAllowed(*newRenderer, style))
+    if (!parentRenderer.isChildAllowed(*newRenderer, style))
         return;
 
     // Make sure the RenderObject already knows it is going to be added to a RenderFlowThread before we set the style
     // for the first time. Otherwise code using inRenderFlowThread() in the styleWillChange and styleDidChange will fail.
-    newRenderer->setFlowThreadState(parentRenderer->flowThreadState());
+    newRenderer->setFlowThreadState(parentRenderer.flowThreadState());
 
     RenderObject* nextRenderer = nextSiblingRenderer(textNode, renderingParentNode);
     textNode.setRenderer(newRenderer.get());
     // Parent takes care of the animations, no need to call setAnimatableStyle.
-    parentRenderer->addChild(newRenderer.leakPtr(), nextRenderer);
+    parentRenderer.addChild(newRenderer.leakPtr(), nextRenderer);
 }
 
 void attachTextRenderer(Text& textNode, ContainerNode& renderingParent)
@@ -412,22 +408,15 @@ void detachTextRenderer(Text& textNode)
 
 void updateTextRendererAfterContentChange(Text& textNode, unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
 {
-    RenderText* textRenderer = textNode.renderer();
     ContainerNode* renderingParentNode = NodeRenderingTraversal::parent(&textNode);
     if (!renderingParentNode)
         return;
-    if (!textRenderer) {
-        attachTextRenderer(textNode, *renderingParentNode);
-        reattachTextRenderersForWhitespaceOnlySiblingsAfterAttachIfNeeded(textNode, *renderingParentNode);
-        return;
-    }
-    if (!textRendererIsNeeded(textNode, *renderingParentNode->renderer(), textRenderer->style())) {
-        detachTextRenderer(textNode);
-        attachTextRenderer(textNode, *renderingParentNode);
-        reattachTextRenderersForWhitespaceOnlySiblingsAfterAttachIfNeeded(textNode, *renderingParentNode);
-        return;
-    }
-    textRenderer->setTextWithOffset(textNode.dataImpl(), offsetOfReplacedData, lengthOfReplacedData);
+
+    bool hadRenderer = textNode.renderer();
+    resolveTextNode(textNode, *renderingParentNode);
+
+    if (hadRenderer && textNode.renderer())
+        textNode.renderer()->setTextWithOffset(textNode.dataImpl(), offsetOfReplacedData, lengthOfReplacedData);
 }
 
 static void attachChildren(ContainerNode& current, ContainerNode& renderingParentNode)
@@ -678,7 +667,7 @@ static Change resolveLocal(Element& current, ContainerNode& renderingParentNode,
         if (current.renderer() || current.inNamedFlow())
             detachRenderTree(current, ReattachDetach);
         attachRenderTree(current, renderingParentNode, newStyle.release());
-        reattachTextRenderersForWhitespaceOnlySiblingsAfterAttachIfNeeded(current, renderingParentNode);
+        invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(current);
 
         return Detach;
     }
@@ -709,26 +698,30 @@ static Change resolveLocal(Element& current, ContainerNode& renderingParentNode,
     return localChange;
 }
 
-static void updateTextStyle(Text& text, ContainerNode& renderingParentNode)
+void resolveTextNode(Text& text, ContainerNode& renderingParentNode)
 {
-    RenderText* renderer = text.renderer();
-
-    if (!text.needsStyleRecalc())
-        return;
-    if (renderer)
-        renderer->setText(text.dataImpl());
-    else {
-        attachTextRenderer(text, renderingParentNode);
-        reattachTextRenderersForWhitespaceOnlySiblingsAfterAttachIfNeeded(text, renderingParentNode);
-    }
     text.clearNeedsStyleRecalc();
+
+    bool hasRenderer = text.renderer();
+    bool needsRenderer = textRendererIsNeeded(text, renderingParentNode);
+    if (hasRenderer) {
+        if (needsRenderer)
+            return;
+        detachTextRenderer(text);
+        invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(text);
+        return;
+    }
+    if (!needsRenderer)
+        return;
+    attachTextRenderer(text, renderingParentNode);
+    invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(text);
 }
 
 static void resolveShadowTree(ShadowRoot& shadowRoot, Style::Change change)
 {
     for (Node* child = shadowRoot.firstChild(); child; child = child->nextSibling()) {
-        if (child->isTextNode()) {
-            updateTextStyle(*toText(child), *shadowRoot.hostElement());
+        if (child->isTextNode() && child->needsStyleRecalc()) {
+            resolveTextNode(*toText(child), *shadowRoot.hostElement());
             continue;
         }
         if (child->isElementNode())
@@ -844,8 +837,8 @@ void resolveTree(Element& current, ContainerNode& renderingParentNode, Change ch
         bool forceCheckOfNextElementSibling = false;
         bool forceCheckOfAnyElementSibling = false;
         for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
-            if (child->isTextNode()) {
-                updateTextStyle(*toText(child), current);
+            if (child->isTextNode() && child->needsStyleRecalc()) {
+                resolveTextNode(*toText(child), current);
                 continue;
             }
             if (!child->isElementNode())
