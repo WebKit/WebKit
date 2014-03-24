@@ -55,7 +55,7 @@ JSValue JSNavigator::webkitGetUserMedia(ExecState* exec)
     }
 
     if (!exec->argument(1).isFunction()) {
-        throwVMError(exec, createTypeError(exec, "Argument 2 ('successCallback') to Navigator.webkitGetUserMedia must be a function"));
+        throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Argument 2 ('successCallback')", " to Navigator.webkitGetUserMedia must be a function"));
         return jsUndefined();
     }
 
@@ -63,7 +63,7 @@ JSValue JSNavigator::webkitGetUserMedia(ExecState* exec)
     RefPtr<NavigatorUserMediaErrorCallback> errorCallback;
     if (!exec->argument(2).isUndefinedOrNull()) {
         if (!exec->uncheckedArgument(2).isFunction()) {
-            throwVMError(exec, createTypeError(exec, "Argument 3 ('errorCallback') to Navigator.webkitGetUserMedia must be a function"));
+            throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Argument 3 ('errorCallback')", " to Navigator.webkitGetUserMedia must be a function"));
             return jsUndefined();
         }
         errorCallback = JSNavigatorUserMediaErrorCallback::create(asObject(exec->uncheckedArgument(2)), castedThis->globalObject());

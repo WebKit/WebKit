@@ -1,3 +1,13 @@
+2014-03-24  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Optimizing string construction for type error in JSNavigatorCustom.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=130683
+
+        Reviewed by Eric Carlson.
+
+        * bindings/js/JSNavigatorCustom.cpp:
+        (WebCore::JSNavigator::webkitGetUserMedia):
+
 2014-03-24  Beth Dakin  <bdakin@apple.com>
 
         Legacy-style scrollbars constantly redraw after scrolling
