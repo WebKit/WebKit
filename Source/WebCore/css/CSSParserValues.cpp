@@ -185,6 +185,7 @@ CSSParserSelector* CSSParserSelector::parsePseudoElementSelector(CSSParserString
     return selector.release();
 }
 
+#if ENABLE(VIDEO_TRACK)
 CSSParserSelector* CSSParserSelector::parsePseudoCueFunctionSelector(const CSSParserString& functionIdentifier, Vector<std::unique_ptr<CSSParserSelector>>* parsedSelectorVector)
 {
     ASSERT_UNUSED(functionIdentifier, String(functionIdentifier) == "cue(");
@@ -200,6 +201,7 @@ CSSParserSelector* CSSParserSelector::parsePseudoCueFunctionSelector(const CSSPa
     selector->adoptSelectorVector(*selectorVector);
     return selector.release();
 }
+#endif
 
 CSSParserSelector::CSSParserSelector()
     : m_selector(std::make_unique<CSSSelector>())

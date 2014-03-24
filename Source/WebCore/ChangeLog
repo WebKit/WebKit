@@ -1,3 +1,15 @@
+2014-03-24  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
+
+        ENABLE(VIDEO_TRACK) guard for CSSParserSelector::parsePseudoCueFunctionSelector
+        https://bugs.webkit.org/show_bug.cgi?id=130666
+
+        Reviewed by Andreas Kling.
+
+        No new tests. No new functionality.
+
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::parsePseudoCueFunctionSelector): Deleted.
+
 2014-03-24  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Update named <grid-line> syntax to the last version of the specs
