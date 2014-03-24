@@ -28,27 +28,19 @@
 #include "ewk_settings.h"
 
 #include "EwkView.h"
+#include "WKAPICast.h"
+#include "WKPreferencesRef.h"
+#include "WKString.h"
+#include "WebPreferences.h"
 #include "ewk_settings_private.h"
-#include <WebKit2/WebPageGroup.h>
-#include <WebKit2/WebPageProxy.h>
 
 using namespace WebKit;
-
-const WebKit::WebPreferences& EwkSettings::preferences() const
-{
-    return m_view->page()->pageGroup().preferences();
-}
-
-WebKit::WebPreferences& EwkSettings::preferences()
-{
-    return m_view->page()->pageGroup().preferences();
-}
 
 Eina_Bool ewk_settings_fullscreen_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
 {
 #if ENABLE(FULLSCREEN_API)
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
-    settings->preferences().setFullScreenEnabled(enable);
+    WKPreferencesSetFullScreenEnabled(settings->preferences(), enable);
     return true;
 #else
     UNUSED_PARAM(settings);
@@ -61,7 +53,7 @@ Eina_Bool ewk_settings_fullscreen_enabled_get(const Ewk_Settings* settings)
 {
 #if ENABLE(FULLSCREEN_API)
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
-    return settings->preferences().fullScreenEnabled();
+    return WKPreferencesGetFullScreenEnabled(settings->preferences());
 #else
     UNUSED_PARAM(settings);
     return false;
@@ -72,7 +64,7 @@ Eina_Bool ewk_settings_javascript_enabled_set(Ewk_Settings* settings, Eina_Bool 
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    settings->preferences().setJavaScriptEnabled(enable);
+    WKPreferencesSetJavaScriptEnabled(settings->preferences(), enable);
 
     return true;
 }
@@ -81,14 +73,14 @@ Eina_Bool ewk_settings_javascript_enabled_get(const Ewk_Settings* settings)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    return settings->preferences().javaScriptEnabled();
+    return WKPreferencesGetJavaScriptEnabled(settings->preferences());
 }
 
 Eina_Bool ewk_settings_loads_images_automatically_set(Ewk_Settings* settings, Eina_Bool automatic)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    settings->preferences().setLoadsImagesAutomatically(automatic);
+    WKPreferencesSetLoadsImagesAutomatically(settings->preferences(), automatic);
 
     return true;
 }
@@ -97,14 +89,14 @@ Eina_Bool ewk_settings_loads_images_automatically_get(const Ewk_Settings* settin
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    return settings->preferences().loadsImagesAutomatically();
+    return WKPreferencesGetLoadsImagesAutomatically(settings->preferences());
 }
 
 Eina_Bool ewk_settings_developer_extras_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    settings->preferences().setDeveloperExtrasEnabled(enable);
+    WKPreferencesSetDeveloperExtrasEnabled(settings->preferences(), enable);
 
     return true;
 }
@@ -113,14 +105,14 @@ Eina_Bool ewk_settings_developer_extras_enabled_get(const Ewk_Settings* settings
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    return settings->preferences().developerExtrasEnabled();
+    return WKPreferencesGetDeveloperExtrasEnabled(settings->preferences());
 }
 
 Eina_Bool ewk_settings_file_access_from_file_urls_allowed_set(Ewk_Settings* settings, Eina_Bool enable)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    settings->preferences().setAllowFileAccessFromFileURLs(enable);
+    WKPreferencesSetFileAccessFromFileURLsAllowed(settings->preference(), enable);
 
     return true;
 }
@@ -129,14 +121,14 @@ Eina_Bool ewk_settings_file_access_from_file_urls_allowed_get(const Ewk_Settings
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    return settings->preferences().allowFileAccessFromFileURLs();
+    return WKPreferencesGetFileAccessFromFileURLsAllowed(settings->preference());
 }
 
 Eina_Bool ewk_settings_frame_flattening_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    settings->preferences().setFrameFlatteningEnabled(enable);
+    WKPreferencesSetFrameFlatteningEnabled(settings->preferences(), enable);
 
     return true;
 }
@@ -145,14 +137,14 @@ Eina_Bool ewk_settings_frame_flattening_enabled_get(const Ewk_Settings* settings
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    return settings->preferences().frameFlatteningEnabled();
+    return WKPreferencesGetFrameFlatteningEnabled(settings->preferences());
 }
 
 Eina_Bool ewk_settings_dns_prefetching_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    settings->preferences().setDNSPrefetchingEnabled(enable);
+    WKPreferencesSetDNSPrefetchingEnabled(settings->preferences(), enable);
 
     return true;
 }
@@ -161,14 +153,14 @@ Eina_Bool ewk_settings_dns_prefetching_enabled_get(const Ewk_Settings* settings)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    return settings->preferences().dnsPrefetchingEnabled();
+    return WKPreferencesGetDNSPrefetchingEnabled(settings->preferences());
 }
 
 Eina_Bool ewk_settings_encoding_detector_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    settings->preferences().setUsesEncodingDetector(enable);
+    WKPreferencesSetEncodingDetectorEnabled(settings->preferences(), enable);
 
     return true;
 }
@@ -177,7 +169,7 @@ Eina_Bool ewk_settings_encoding_detector_enabled_get(const Ewk_Settings* setting
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    return settings->preferences().usesEncodingDetector();
+    return WKPreferencesGetEncodingDetectorEnabled(settings->preferences());
 }
 
 Eina_Bool ewk_settings_default_text_encoding_name_set(Ewk_Settings* settings, const char* encoding)
@@ -200,7 +192,7 @@ Eina_Bool ewk_settings_preferred_minimum_contents_width_set(Ewk_Settings *settin
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    settings->preferences().setLayoutFallbackWidth(width);
+    toImpl(settings->preferences())->setLayoutFallbackWidth(width);
 
     return true;
 }
@@ -209,13 +201,14 @@ unsigned ewk_settings_preferred_minimum_contents_width_get(const Ewk_Settings *s
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    return settings->preferences().layoutFallbackWidth();
+    return toImpl(settings->preferences())->layoutFallbackWidth();
 }
 
 Eina_Bool ewk_settings_offline_web_application_cache_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
-    settings->preferences().setOfflineWebApplicationCacheEnabled(enable);
+
+    WKPreferencesSetOfflineWebApplicationCacheEnabled(settings->preferences(), enable);
 
     return true;
 }
@@ -224,13 +217,14 @@ Eina_Bool ewk_settings_offline_web_application_cache_enabled_get(const Ewk_Setti
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    return settings->preferences().offlineWebApplicationCacheEnabled();
+    return WKPreferencesGetOfflineWebApplicationCacheEnabled(settings->preferences());
 }
 
 Eina_Bool ewk_settings_scripts_can_open_windows_set(Ewk_Settings* settings, Eina_Bool enable)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
-    settings->preferences().setJavaScriptCanOpenWindowsAutomatically(enable);
+
+    WKPreferencesSetJavaScriptCanOpenWindowsAutomatically(settings->preferences(), enable);
 
     return true;
 }
@@ -239,14 +233,14 @@ Eina_Bool ewk_settings_scripts_can_open_windows_get(const Ewk_Settings* settings
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    return settings->preferences().javaScriptCanOpenWindowsAutomatically();
+    return WKPreferencesGetJavaScriptCanOpenWindowsAutomatically(settings->preferences());
 }
 
 Eina_Bool ewk_settings_local_storage_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    settings->preferences().setLocalStorageEnabled(enable);
+    WKPreferencesSetLocalStorageEnabled(settings->preferences(), enable);
 
     return true;
 }
@@ -255,14 +249,14 @@ Eina_Bool ewk_settings_local_storage_enabled_get(const Ewk_Settings* settings)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    return settings->preferences().localStorageEnabled();
+    return WKPreferencesGetLocalStorageEnabled(settings->preferences());
 }
 
 Eina_Bool ewk_settings_plugins_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    settings->preferences().setPluginsEnabled(enable);
+    WKPreferencesSetPluginsEnabled(settings->preferences(), enable);
 
     return true;
 }
@@ -271,14 +265,14 @@ Eina_Bool ewk_settings_plugins_enabled_get(const Ewk_Settings* settings)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    return settings->preferences().pluginsEnabled();
+    return WKPreferencesGetPluginsEnabled(settings->preferences());
 }
 
 Eina_Bool ewk_settings_default_font_size_set(Ewk_Settings* settings, int size)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    settings->preferences().setDefaultFontSize(size);
+    WKPreferencesSetDefaultFontSize(settings->preferences(), size);
 
     return true;
 }
@@ -287,14 +281,14 @@ int ewk_settings_default_font_size_get(const Ewk_Settings* settings)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, 0);
 
-    return settings->preferences().defaultFontSize();
+    return WKPreferencesGetDefaultFontSize(settings->preferences());
 }
 
 Eina_Bool ewk_settings_private_browsing_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    settings->preferences().setPrivateBrowsingEnabled(enable);
+    WKPreferencesSetPrivateBrowsingEnabled(settings->preferences(), enable);
 
     return true;
 }
@@ -303,7 +297,7 @@ Eina_Bool ewk_settings_private_browsing_enabled_get(const Ewk_Settings* settings
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    return settings->preferences().privateBrowsingEnabled();
+    return WKPreferencesGetPrivateBrowsingEnabled(settings->preferences());
 }
 
 Eina_Bool ewk_settings_text_autosizing_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
@@ -311,7 +305,7 @@ Eina_Bool ewk_settings_text_autosizing_enabled_set(Ewk_Settings* settings, Eina_
 #if ENABLE(TEXT_AUTOSIZING)
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    settings->preferences().setTextAutosizingEnabled(enable);
+    WKPreferencesSetTextAutosizingEnabled(settings->preferences(), enable);
 
     return true;
 #else
@@ -326,7 +320,7 @@ Eina_Bool ewk_settings_text_autosizing_enabled_get(const Ewk_Settings* settings)
 #if ENABLE(TEXT_AUTOSIZING)
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    return settings->preferences().textAutosizingEnabled();
+    return WKPreferencesGetTextAutosizingEnabled(settings->preferences());
 #else
     UNUSED_PARAM(settings);
     return false;
@@ -337,7 +331,7 @@ Eina_Bool ewk_settings_spatial_navigation_enabled_set(Ewk_Settings* settings, Ei
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    settings->preferences().setSpatialNavigationEnabled(enable);
+    WKPreferencesSetSpatialNavigationEnabled(settings->preferences(), enable);
 
     return true;
 }
@@ -346,7 +340,7 @@ Eina_Bool ewk_settings_spatial_navigation_enabled_get(const Ewk_Settings* settin
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    return settings->preferences().spatialNavigationEnabled();
+    return WKPreferencesGetSpatialNavigationEnabled(settings->preferences());
 }
 
 void EwkSettings::setDefaultTextEncodingName(const char* name)
@@ -354,7 +348,7 @@ void EwkSettings::setDefaultTextEncodingName(const char* name)
     if (m_defaultTextEncodingName == name)
         return;
 
-    preferences().setDefaultTextEncodingName(String::fromUTF8(name));
+    WKPreferencesSetDefaultTextEncodingName(preferences(), WKStringCreateWithUTF8CString(name));
     m_defaultTextEncodingName = name;
 }
 
