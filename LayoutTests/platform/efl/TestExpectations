@@ -1847,3 +1847,6 @@ webkit.org/b/130353 mathml/wbr-in-mroot-crash.html [ Crash ]
 webkit.org/b/130187 accessibility/aria-hidden-false-works-in-subtrees.html [ Missing ]
 
 webkit.org/b/130189 fast/regions/assert-hit-test-image.html [ Failure ]
+
+# ENABLE(WEBVTT_REGIONS) is disabled
+webkit.org/b/109570 media/track/regions-webvtt [ Skip ]

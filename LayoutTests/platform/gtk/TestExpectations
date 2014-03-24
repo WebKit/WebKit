@@ -380,6 +380,10 @@ Bug(GTK) editing/shadow [ Skip ]
 Bug(GTK) accessibility/corresponding-control-deleted-crash.html [ Skip ]
 Bug(GTK) editing/text-iterator/basic-iteration-shadowdom.html [ Skip ]
 #
+
+# ENABLE(WEBVTT_REGIONS) is disabled
+webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

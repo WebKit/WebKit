@@ -2805,3 +2805,6 @@ media [ Skip ]
 
 platform/win/plugins/iframe-inside-overflow.html [ Failure ]
 fast/repaint/background-shorthand-with-gradient-and-height-changes.html [ Failure ]
+
+# ENABLE(WEBVTT_REGIONS) is disabled
+webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
