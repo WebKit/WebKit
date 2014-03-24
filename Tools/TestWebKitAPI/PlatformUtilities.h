@@ -26,6 +26,7 @@
 #ifndef PlatformUtilities_h
 #define PlatformUtilities_h
 
+#include <WebKit2/WKNativeEvent.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <string>
 

@@ -64,7 +64,7 @@ WEBCORE_PRIVATE_HEADERS_DIR = $(WEBKIT_UMBRELLA_FRAMEWORKS_DIR)/WebCore.framewor
 
 EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(PLATFORM_NAME));
 EXCLUDED_SOURCE_FILE_NAMES_macosx = *IOS.h *IOS.cpp *IOS.mm;
-EXCLUDED_SOURCE_FILE_NAMES_iphoneos = *Mac.h *Mac.cpp *Mac.mm *InjectedBundle* *PlatformUtilities* Tests/WebKit2/* Tests/WebKit2ObjC/* *_Bundle* JavaScriptTest.* */mac/* CustomProtocolsSyncXHRTest.mm Tests/WebKit2Cocoa/Navigation.mm;
+EXCLUDED_SOURCE_FILE_NAMES_iphoneos = *Mac.h *Mac.cpp *Mac.mm *InjectedBundle* *PlatformUtilities* Tests/WebKit2/* Tests/WebKit2ObjC/* *_Bundle* JavaScriptTest.* */mac/* CustomProtocolsSyncXHRTest.mm Tests/WebKit2Cocoa/Navigation.mm Tests/WebKit2Cocoa/Download.mm;
 EXCLUDED_SOURCE_FILE_NAMES_iphonesimulator = $(EXCLUDED_SOURCE_FILE_NAMES_iphoneos);
 
 TOOLCHAINS = $(TOOLCHAINS_$(PLATFORM_NAME));

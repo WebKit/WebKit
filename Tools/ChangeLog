@@ -1,3 +1,10 @@
+2014-03-24  Andy Estes  <aestes@apple.com>
+
+        Fix the iOS build of TestWebKitAPI.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * TestWebKitAPI/PlatformUtilities.h:
+
 2014-03-24  László Langó  <llango.u-szeged@partner.samsung.com>
 
         Fix prepare-ChangeLog after r166156.
