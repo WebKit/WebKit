@@ -1,3 +1,16 @@
+2014-03-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix CLOOP build.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printCallOp):
+        (JSC::CodeBlock::getCallLinkInfoForBytecodeIndex):
+        (JSC::CodeBlock::resetStubDuringGCInternal): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::callLinkInfosEnd): Deleted.
+
 2014-03-24  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [ARM64] GNU assembler doesn't work with LLInt arm64 backend.

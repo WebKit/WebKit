@@ -122,6 +122,7 @@ CallLinkStatus CallLinkStatus::computeFor(
     
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
+    UNUSED_PARAM(map);
 #if ENABLE(DFG_JIT)
     if (profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache))
         || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCacheWatchpoint))

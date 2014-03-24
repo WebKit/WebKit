@@ -184,10 +184,6 @@ public:
     void getCallLinkInfoMap(const ConcurrentJITLocker&, CallLinkInfoMap& result);
     void getCallLinkInfoMap(CallLinkInfoMap& result);
     
-    // This is a slow function call used primarily for compiling OSR exits in the case
-    // that there had been inlining. Chances are if you want to use this, you're really
-    // looking for a CallLinkInfoMap to amortize the cost of calling this.
-    CallLinkInfo* getCallLinkInfoForBytecodeIndex(unsigned bytecodeIndex);
 #if ENABLE(JIT)
     StructureStubInfo* addStubInfo();
     Bag<StructureStubInfo>::iterator stubInfoBegin() { return m_stubInfos.begin(); }
@@ -203,6 +199,11 @@ public:
     CallLinkInfo* addCallLinkInfo();
     Bag<CallLinkInfo>::iterator callLinkInfosBegin() { return m_callLinkInfos.begin(); }
     Bag<CallLinkInfo>::iterator callLinkInfosEnd() { return m_callLinkInfos.end(); }
+
+    // This is a slow function call used primarily for compiling OSR exits in the case
+    // that there had been inlining. Chances are if you want to use this, you're really
+    // looking for a CallLinkInfoMap to amortize the cost of calling this.
+    CallLinkInfo* getCallLinkInfoForBytecodeIndex(unsigned bytecodeIndex);
 #endif // ENABLE(JIT)
 
     void unlinkIncomingCalls();

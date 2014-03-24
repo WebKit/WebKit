@@ -433,6 +433,8 @@ void CodeBlock::printCallOp(PrintStream& out, ExecState* exec, int location, con
                 out.printf(" jit(%p, exec %p)", target, target->executable());
         }
         out.print(" status(", CallLinkStatus::computeFor(this, location, map), ")");
+#else
+        UNUSED_PARAM(map);
 #endif
     }
     ++it;
@@ -2310,19 +2312,6 @@ void CodeBlock::getCallLinkInfoMap(CallLinkInfoMap& result)
     getCallLinkInfoMap(locker, result);
 }
 
-CallLinkInfo* CodeBlock::getCallLinkInfoForBytecodeIndex(unsigned index)
-{
-#if ENABLE(JIT)
-    for (auto iter = m_callLinkInfos.begin(); !!iter; ++iter) {
-        if ((*iter)->codeOrigin == CodeOrigin(index))
-            return *iter;
-    }
-#else
-    UNUSED_PARAM(index);
-#endif
-    return nullptr;
-}
-
 #if ENABLE(JIT)
 StructureStubInfo* CodeBlock::addStubInfo()
 {
@@ -2375,6 +2364,15 @@ void CodeBlock::resetStubDuringGCInternal(RepatchBuffer& repatchBuffer, Structur
 {
     resetStubInternal(repatchBuffer, stubInfo);
     stubInfo.resetByGC = true;
+}
+
+CallLinkInfo* CodeBlock::getCallLinkInfoForBytecodeIndex(unsigned index)
+{
+    for (auto iter = m_callLinkInfos.begin(); !!iter; ++iter) {
+        if ((*iter)->codeOrigin == CodeOrigin(index))
+            return *iter;
+    }
+    return nullptr;
 }
 #endif
 
