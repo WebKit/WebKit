@@ -628,8 +628,6 @@ static String createMarkupInternal(Document& document, const Range& range, const
             if (nodes)
                 nodes->append(ancestor);
             
-            lastClosed = ancestor;
-            
             if (ancestor == specialCommonAncestor)
                 break;
         }

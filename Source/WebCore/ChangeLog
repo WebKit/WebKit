@@ -1,3 +1,18 @@
+2014-03-23  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Remove Dead Stores from editing directory
+        https://bugs.webkit.org/show_bug.cgi?id=130634
+
+        Reviewed by Darin Adler.
+
+        Remove Dead Stores from editing directory which assigning a value to a variable
+        and never reading that value.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::mergeStartWithPreviousIfIdentical):
+        * editing/markup.cpp:
+        (WebCore::createMarkupInternal):
+
 2014-03-23  Hyowon Kim  <hw1008.kim@samsung.com>
 
         Move all EFL typedefs into EflTypedefs.h.
