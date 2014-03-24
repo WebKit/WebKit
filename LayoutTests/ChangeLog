@@ -1,3 +1,17 @@
+2014-03-24  Daniel Bates  <dabates@apple.com>
+
+        XSS Auditor doesn't block <script> injected before an existing <script>
+        https://bugs.webkit.org/show_bug.cgi?id=130475
+
+        Merged from Blink (patch by Tom Sepez):
+        https://src.chromium.org/viewvc/blink?view=rev&revision=169697
+
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl:
+        * http/tests/security/xssAuditor/script-tag-expression-follows-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-expression-follows.html: Added.
+        * http/tests/security/xssAuditor/script-tag-near-start-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-near-start.html: Added.
+
 2014-03-24  Brent Fulgham  <bfulgham@apple.com>
 
         Activate WebVTT Tests Once Merging is Complete

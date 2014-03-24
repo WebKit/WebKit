@@ -41,6 +41,7 @@
 #include "Settings.h"
 #include "TextResourceDecoder.h"
 #include "XLinkNames.h"
+#include <wtf/ASCIICType.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -87,17 +88,28 @@ static bool isJSNewline(UChar c)
 
 static bool startsHTMLCommentAt(const String& string, size_t start)
 {
-    return (start + 3 < string.length() && string[start] == '<' && string[start+1] == '!' && string[start+2] == '-' && string[start+3] == '-');
+    return (start + 3 < string.length() && string[start] == '<' && string[start + 1] == '!' && string[start + 2] == '-' && string[start + 3] == '-');
 }
 
 static bool startsSingleLineCommentAt(const String& string, size_t start)
 {
-    return (start + 1 < string.length() && string[start] == '/' && string[start+1] == '/');
+    return (start + 1 < string.length() && string[start] == '/' && string[start + 1] == '/');
 }
 
 static bool startsMultiLineCommentAt(const String& string, size_t start)
 {
-    return (start + 1 < string.length() && string[start] == '/' && string[start+1] == '*');
+    return (start + 1 < string.length() && string[start] == '/' && string[start + 1] == '*');
+}
+
+static bool startsOpeningScriptTagAt(const String& string, size_t start)
+{
+    return start + 6 < string.length() && string[start] == '<'
+        && WTF::toASCIILowerUnchecked(string[start + 1]) == 's'
+        && WTF::toASCIILowerUnchecked(string[start + 2]) == 'c'
+        && WTF::toASCIILowerUnchecked(string[start + 3]) == 'r'
+        && WTF::toASCIILowerUnchecked(string[start + 4]) == 'i'
+        && WTF::toASCIILowerUnchecked(string[start + 5]) == 'p'
+        && WTF::toASCIILowerUnchecked(string[start + 6]) == 't';
 }
 
 // If other files need this, we should move this to HTMLParserIdioms.h
@@ -621,6 +633,7 @@ String XSSAuditor::decodedSnippetForJavaScript(const FilterTokenRequest& request
     size_t startPosition = 0;
     size_t endPosition = string.length();
     size_t foundPosition = notFound;
+    size_t lastNonSpacePosition = notFound;
 
     // Skip over initial comments to find start of code.
     while (startPosition < endPosition) {
@@ -649,13 +662,10 @@ String XSSAuditor::decodedSnippetForJavaScript(const FilterTokenRequest& request
 
     String result;
     while (startPosition < endPosition && !result.length()) {
-        // Stop at next comment (using the same rules as above for SVG/XML vs HTML), when we 
-        // encounter a comma, or when we  exceed the maximum length target. The comma rule
-        // covers a common parameter concatenation case performed by some webservers.
-        // After hitting the length target, we can only stop at a point where we know we are
-        // not in the middle of a %-escape sequence. For the sake of simplicity, approximate
-        // not stopping inside a (possibly multiply encoded) %-esacpe sequence by breaking on
-        // whitespace only. We should have enough text in these cases to avoid false positives.
+        // Stop at next comment (using the same rules as above for SVG/XML vs HTML), when we encounter a comma,
+        // when we hit an opening <script> tag, or when we exceed the maximum length target. The comma rule
+        // covers a common parameter concatenation case performed by some web servers.
+        lastNonSpacePosition = notFound;
         for (foundPosition = startPosition; foundPosition < endPosition; foundPosition++) {
             if (!request.shouldAllowCDATA) {
                 if (startsSingleLineCommentAt(string, foundPosition) || startsMultiLineCommentAt(string, foundPosition)) {
@@ -667,9 +677,25 @@ String XSSAuditor::decodedSnippetForJavaScript(const FilterTokenRequest& request
                     break;
                 }
             }
-            if (string[foundPosition] == ',' || (foundPosition > startPosition + kMaximumFragmentLengthTarget && isHTMLSpace(string[foundPosition]))) {
+            if (string[foundPosition] == ',')
+                break;
+
+            if (lastNonSpacePosition != notFound && startsOpeningScriptTagAt(string, foundPosition)) {
+                foundPosition = lastNonSpacePosition;
                 break;
             }
+
+            if (foundPosition > startPosition + kMaximumFragmentLengthTarget) {
+                // After hitting the length target, we can only stop at a point where we know we are
+                // not in the middle of a %-escape sequence. For the sake of simplicity, approximate
+                // not stopping inside a (possibly multiply encoded) %-escape sequence by breaking on
+                // whitespace only. We should have enough text in these cases to avoid false positives.
+                if (isHTMLSpace(string[foundPosition]))
+                    break;
+            }
+
+            if (!isHTMLSpace(string[foundPosition]))
+                lastNonSpacePosition = foundPosition;
         }
 
         result = fullyDecodeString(string.substring(startPosition, foundPosition - startPosition), m_encoding);

@@ -92,7 +92,10 @@ if ($cgi->param('inHead')) {
 if ($cgi->param('replaceState')) {
     print "<script>history.replaceState({}, '', '#must-not-appear');</script>\n";
 }
-print $cgi->param('q');
+print $cgi->param('q'); # XSS reflected here.
+if ($cgi->param('script-expression-follows')) {
+    print "\n <script>42;</script>\n";
+}
 if ($cgi->param('clutter')) {
     print $cgi->param('clutter');
 }
