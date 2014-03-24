@@ -1,3 +1,16 @@
+2014-03-24  Andreas Kling  <akling@apple.com>
+
+        Stop pulling in all the macro assemblers from VM.h
+        <https://webkit.org/b/130691>
+
+        Remove #include of "GPRInfo.h". This breaks WebCore's dependency
+        on macro assemblers headers and removes 8 includes from every
+        .cpp file in the JS bindings.
+
+        Reviewed by Geoff Garen.
+
+        * runtime/VM.h:
+
 2014-03-24  Gavin Barraclough  <barraclough@apple.com>
 
         Add support for thread QoS
