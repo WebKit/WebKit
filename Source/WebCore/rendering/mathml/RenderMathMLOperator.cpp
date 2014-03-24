@@ -1547,14 +1547,10 @@ void RenderMathMLOperator::fillWithExtensionGlyph(PaintInfo& info, const LayoutP
 
 void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
-    // We skip painting for invisible operators too to avoid some "missing character" glyph to appear if appropriate math fonts are not available.
-    if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE || isInvisibleOperator())
-        return;
+    RenderMathMLToken::paint(info, paintOffset);
 
-    if (m_stretchyData.mode() == DrawNormal) {
-        RenderMathMLToken::paint(info, paintOffset);
+    if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE || m_stretchyData.mode() == DrawNormal)
         return;
-    }
 
     // FIXME: This painting should work in RTL mode too (https://bugs.webkit.org/show_bug.cgi?id=123018).
 
@@ -1593,7 +1589,8 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
 
 void RenderMathMLOperator::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
 {
-    if (m_stretchyData.mode() != DrawNormal)
+    // We skip painting for invisible operators too to avoid some "missing character" glyph to appear if appropriate math fonts are not available.
+    if (m_stretchyData.mode() != DrawNormal || isInvisibleOperator())
         return;
     RenderMathMLToken::paintChildren(paintInfo, paintOffset, paintInfoForChild, usePrintRect);
 }

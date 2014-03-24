@@ -1,5 +1,16 @@
 2014-03-24  Frédéric Wang  <fred.wang@free.fr>
 
+        [regression] background colors do not apply to <mo> elements.
+        https://bugs.webkit.org/show_bug.cgi?id=130470.
+
+        Test: mathml/presentation/tokenElements-background-color.html
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::paint): always call the parent painting to draw the background.
+        (WebCore::RenderMathMLOperator::paintChildren): move the special case for invisible operator here.
+
+2014-03-24  Frédéric Wang  <fred.wang@free.fr>
+
         Operator stretching: expose a math data API
         https://bugs.webkit.org/show_bug.cgi?id=130572
 

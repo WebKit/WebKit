@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Token elements Background Color</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+    <style type="text/css">
+      math {
+        color: #faa;
+      }
+      mo, mtext, mn, mi {
+        background: #faa;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- We verify that token elements have a background color.
+         We use the same color for the foreground and background so the text should not be visible. However, the pink background should be painted. -->
+
+    <p>
+      <math>
+        <mtext>mtext</mtext>
+        <mo>mo</mo>
+        <mo>+</mo>
+        <mi>mi</mi>
+        <mi>m</mi>
+        <mn>mn</mn>
+      </math>
+    </p>
+
+    <!-- We also do the test for a stretchy operator. -->
+    <p>
+      <math><mrow><mrow><mo minsize="4em">|</mo></mrow></mrow></math>
+    </p>
+
+  </body>
+</html>

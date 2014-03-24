@@ -1,3 +1,11 @@
+2014-03-24  Frédéric Wang  <fred.wang@free.fr>
+
+        [regression] background colors do not apply to <mo> elements.
+        https://bugs.webkit.org/show_bug.cgi?id=130470.
+
+        * mathml/presentation/tokenElements-background-color.html: Added.
+        * mathml/presentation/tokenElements-background-color-expected.html: Added.
+
 2014-03-24  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening
