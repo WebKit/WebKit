@@ -1,3 +1,12 @@
+2014-03-24  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Add test expectations for failing tests. Skip crashing http tests.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2014-03-24  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Update named <grid-line> syntax to the last version of the specs

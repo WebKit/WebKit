@@ -721,6 +721,9 @@ webkit.org/b/84338 fast/forms/plaintext-mode-2.html [ Pass ]
 # Controls are not zoomed.
 webkit.org/b/102367 fast/forms/zoomed-controls.html [ Pass ]
 
+# Test marked in TestExpectations as failing on non-retina displays, passing on EFL port
+webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1840,3 +1843,7 @@ webkit.org/b/102097 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprec
 webkit.org/b/102097 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html [ Failure ]
 
 webkit.org/b/130353 mathml/wbr-in-mroot-crash.html [ Crash ]
+
+webkit.org/b/130187 accessibility/aria-hidden-false-works-in-subtrees.html [ Missing ]
+
+webkit.org/b/130189 fast/regions/assert-hit-test-image.html [ Failure ]
