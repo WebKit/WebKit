@@ -70,7 +70,7 @@ static void setUpDownloadClient(CFURLDownloadClient& client, Download& download)
     };
 
     client.willSendRequest = [](CFURLDownloadRef, CFURLRequestRef request, CFURLResponseRef, const void*) -> CFURLRequestRef {
-        return CFRetain(request);
+        return static_cast<CFURLRequestRef>(CFRetain(request));
     };
 
     client.didReceiveResponse = [](CFURLDownloadRef, CFURLResponseRef response, const void* clientInfo) {
