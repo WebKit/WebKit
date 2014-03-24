@@ -95,7 +95,7 @@ static void setUpDownloadClient(CFURLDownloadClient& client, Download& download)
 
     client.decideDestinationWithSuggestedObjectName = [](CFURLDownloadRef downloadRef, CFStringRef objectName, const void* clientInfo) {
         dispatchOnMainThread(^{
-            BOOL allowOverwrite;
+            bool allowOverwrite;
             String destination = toDownload(clientInfo)->decideDestinationWithSuggestedFilename(objectName, allowOverwrite);
             if (!destination.isNull())
                 CFURLDownloadSetDestination(downloadRef, reinterpret_cast<CFURLRef>([NSURL fileURLWithPath:destination]), allowOverwrite);

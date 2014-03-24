@@ -1,3 +1,10 @@
+2014-03-24  Andy Estes  <aestes@apple.com>
+
+        Yet another iOS build fix, for the 32-bit build this time.
+
+        * Shared/Downloads/ios/DownloadIOS.mm:
+        (WebKit::setUpDownloadClient):
+
 2014-03-24  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r165872): Double-applying device scale to snapshots
