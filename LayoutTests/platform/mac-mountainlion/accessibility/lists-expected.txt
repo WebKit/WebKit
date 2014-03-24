@@ -110,35 +110,7 @@ AXRoleDescription: group
 AXChildren: <array of size 0>
 AXHelp: 
 AXParent: <AXGroup>
-AXSize: NSSize: {784, 54}
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXLanguage: 
-AXDOMIdentifier: 
-AXDOMClassList: <array of size 0>
-AXTitleUIElement: (null)
-AXElementBusy: 0
-
-------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 0>
-AXHelp: 
-AXParent: <AXGroup>
-AXSize: NSSize: {784, 18}
+AXSize: NSSize: {784, 72}
 AXTitle: 
 AXDescription: 
 AXValue: 
