@@ -5,9 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]}); did not throw exception.
 PASS iceConnectionState is completed
-PASS pc.addIceCandidate(null, null, null); threw exception TypeError: Type error.
-PASS pc.addIceCandidate(iceCandidate, null, null); threw exception TypeError: Type error.
-PASS pc.addIceCandidate(iceCandidate, addIceCandidateSuccess, null); threw exception TypeError: Type error.
+PASS pc.addIceCandidate(null, null, null); threw exception TypeError: Argument 2 ('successCallback') to RTCPeerConnection.addIceCandidate must be a function.
+PASS pc.addIceCandidate(iceCandidate, null, null); threw exception TypeError: Argument 2 ('successCallback') to RTCPeerConnection.addIceCandidate must be a function.
+PASS pc.addIceCandidate(iceCandidate, addIceCandidateSuccess, null); threw exception TypeError: Argument 3 ('failureCallback') to RTCPeerConnection.addIceCandidate must be a function.
 PASS pc.addIceCandidate(iceCandidate, addIceCandidateSuccess, addIceCandidateFailure); did not throw exception.
 PASS addIceCandidateSuccess was called.
 PASS iceConnectionState is closed.

@@ -35,12 +35,12 @@ checking track.capabilities()
 checking track.states()
 PASS states.sourceId is capabilities.sourceId[0]
 PASS states.sourceType is "camera"
-  states.volume = undefined
   states.width = 1920
-  states.aspectRatio = 1.78
   states.height = 1080
-  states.facingMode = user
   states.frameRate = 30
+  states.aspectRatio = 1.78
+  states.facingMode = user
+  states.volume = undefined
   states.sourceType = camera
   states.sourceId = 239c24b0-2b15-11e3-8224-0800200c9a66
 
@@ -56,12 +56,12 @@ checking track.capabilities()
 checking track.states()
 PASS states.sourceId is capabilities.sourceId[0]
 PASS states.sourceType is "microphone"
-  states.volume = 50
   states.width = undefined
-  states.aspectRatio = undefined
   states.height = undefined
-  states.facingMode = undefined
   states.frameRate = undefined
+  states.aspectRatio = undefined
+  states.facingMode = undefined
+  states.volume = 50
   states.sourceType = microphone
   states.sourceId = 239c24b1-2b15-11e3-8224-0800200c9a66
 
@@ -95,12 +95,12 @@ checking track.capabilities()
 checking track.states()
 PASS states.sourceId is capabilities.sourceId[0]
 PASS states.sourceType is "camera"
-  states.volume = undefined
   states.width = 1920
-  states.aspectRatio = 1.78
   states.height = 1080
-  states.facingMode = user
   states.frameRate = 30
+  states.aspectRatio = 1.78
+  states.facingMode = user
+  states.volume = undefined
   states.sourceType = camera
   states.sourceId = 239c24b0-2b15-11e3-8224-0800200c9a66
 PASS videoTrack.id is not videoTrack2.id

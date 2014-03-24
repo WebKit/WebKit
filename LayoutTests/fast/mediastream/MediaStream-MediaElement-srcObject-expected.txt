@@ -3,7 +3,7 @@ Tests MediaStream assignment to MediaElement using 'srcObject' MediaElement attr
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS navigator.webkitGetUserMedia({audio:true, video:false}, gotStream1, error); did not throw exception.
+PASS navigator.webkitGetUserMedia({audio:true, video:false}, gotStream, error); did not throw exception.
 PASS stream.getAudioTracks().length is 1
 PASS stream.getVideoTracks().length is 0
 PASS audio.srcObject = stream; did not throw exception.
