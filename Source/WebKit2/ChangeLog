@@ -1,3 +1,24 @@
+2014-03-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Micro-optimize view state updates on the UIProcess side
+        https://bugs.webkit.org/show_bug.cgi?id=130631
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (contentZoomScale):
+        [UIScrollView zoomScale] is not fast enough for -[WKWebView _updateVisibleContentRects]. Since we know what the zoom view is,
+        make a fast version hardcoding that.
+
+        (-[WKWebView _updateScrollViewBackground]):
+        (-[WKWebView _zoomToPoint:WebCore::atScale:]):
+        (-[WKWebView _scrollToRect:WebCore::origin:WebCore::minimumScrollDistance:]):
+        (-[WKWebView _zoomToRect:WebCore::withOrigin:WebCore::fitEntireRect:minimumScale:maximumScale:minimumScrollDistance:]):
+        (-[WKWebView _updateVisibleContentRects]):
+        * UIProcess/ios/WKContentView.mm:
+        (fixedPositionRectFromExposedRect):
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:scale:inStableState:]):
+
 2014-03-24  Dean Jackson  <dino@apple.com>
 
         Remove WebGL asset entitlement

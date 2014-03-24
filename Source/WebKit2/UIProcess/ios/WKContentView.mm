@@ -235,6 +235,11 @@ private:
     return [self isEditable];
 }
 
+static inline FloatRect fixedPositionRectFromExposedRect(CGRect unobscuredRect, CGSize documentSize, CGFloat scale)
+{
+    return FrameView::rectForViewportConstrainedObjects(enclosingLayoutRect(unobscuredRect), roundedLayoutSize(FloatSize(documentSize)), scale, false, StickToViewportBounds);
+}
+
 - (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect scale:(CGFloat)zoomScale inStableState:(BOOL)isStableState
 {
     double timestamp = monotonicallyIncreasingTime();
@@ -252,7 +257,7 @@ private:
         filteredScale = _page->displayedContentScale();
     }
 
-    CGRect customFixedPositionRect = [self fixedPositionRectFromExposedRect:unobscuredRect scale:zoomScale];
+    FloatRect customFixedPositionRect = fixedPositionRectFromExposedRect(unobscuredRect, [self bounds].size, zoomScale);
     _page->updateVisibleContentRects(VisibleContentRectUpdateInfo(_page->nextVisibleContentRectUpdateID(), visibleRect, unobscuredRect, customFixedPositionRect, filteredScale, isStableState, timestamp, velocity.width, velocity.height));
     
     RemoteScrollingCoordinatorProxy* scrollingCoordinator = _page->scrollingCoordinatorProxy();
@@ -265,11 +270,6 @@ private:
 - (void)setMinimumSize:(CGSize)size
 {
     _page->drawingArea()->setSize(IntSize(size), IntSize(), IntSize());
-}
-
-- (CGRect)fixedPositionRectFromExposedRect:(CGRect)unobscuredRect scale:(CGFloat)scale
-{
-    return (FloatRect)FrameView::rectForViewportConstrainedObjects(enclosingLayoutRect(unobscuredRect), roundedLayoutSize(FloatSize([self bounds].size)), scale, false, StickToViewportBounds);
 }
 
 - (void)setMinimumLayoutSize:(CGSize)size

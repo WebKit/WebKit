@@ -385,13 +385,28 @@
     return [UIColor colorWithRed:(color.red() / 255.0) green:(color.green() / 255.0) blue:(color.blue() / 255.0) alpha:(color.alpha() / 255.0)];
 }
 
+static CGFloat contentZoomScale(WKWebView* webView)
+{
+    UIView *zoomView;
+    if (webView->_customContentView)
+        zoomView = webView->_customContentView.get();
+    else
+        zoomView = webView->_contentView.get();
+
+    CGFloat scale = [[zoomView layer] affineTransform].a;
+    ASSERT(scale == [webView->_scrollView zoomScale]);
+    return scale;
+}
+
 - (void)_updateScrollViewBackground
 {
     UIColor *pageExtendedBackgroundColor = [self pageExtendedBackgroundColor];
 
-    if ([_scrollView zoomScale] < [_scrollView minimumZoomScale]) {
+    CGFloat zoomScale = contentZoomScale(self);
+    CGFloat minimumZoomScale = [_scrollView minimumZoomScale];
+    if (zoomScale < minimumZoomScale) {
         CGFloat slope = 12;
-        CGFloat opacity = std::max(1 - slope * ([_scrollView minimumZoomScale] - [_scrollView zoomScale]), static_cast<CGFloat>(0));
+        CGFloat opacity = std::max(1 - slope * (minimumZoomScale - zoomScale), static_cast<CGFloat>(0));
         pageExtendedBackgroundColor = [pageExtendedBackgroundColor colorWithAlphaComponent:opacity];
     }
 
@@ -438,9 +453,10 @@
     double minimumZoomDuration = 0.1;
     double zoomDurationFactor = 0.3;
 
-    CFTimeInterval duration = std::min(fabs(log([_scrollView zoomScale]) - log(scale)) * zoomDurationFactor + minimumZoomDuration, maximumZoomDuration);
+    CGFloat zoomScale = contentZoomScale(self);
+    CFTimeInterval duration = std::min(fabs(log(zoomScale) - log(scale)) * zoomDurationFactor + minimumZoomDuration, maximumZoomDuration);
 
-    if (scale != [_scrollView zoomScale])
+    if (scale != zoomScale)
         [_contentView willStartUserTriggeredZoom];
 
     [_scrollView _zoomToCenter:point scale:scale duration:duration];
@@ -500,7 +516,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     }
 
     WebCore::FloatSize scrollViewOffsetDelta = newUnobscuredContentOffset - unobscuredContentOffset;
-    scrollViewOffsetDelta.scale([_scrollView zoomScale]);
+    scrollViewOffsetDelta.scale(contentZoomScale(self));
 
     float scrollDistance = scrollViewOffsetDelta.diagonalLength();
     if (scrollDistance < minimumScrollDistance)
@@ -519,7 +535,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 {
     const float maximumScaleFactorDeltaForPanScroll = 0.02;
 
-    double currentScale = [_scrollView zoomScale];
+    double currentScale = contentZoomScale(self);
 
     WebCore::FloatSize unobscuredContentSize([self _contentRectForUserInteraction].size);
     double horizontalScale = unobscuredContentSize.width() * currentScale / targetRect.width();
@@ -654,7 +670,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, _obscuredInsets);
     CGRect unobscuredRectInContentCoordinates = [self convertRect:unobscuredRect toView:_contentView.get()];
 
-    CGFloat scaleFactor = [_scrollView zoomScale];
+    CGFloat scaleFactor = contentZoomScale(self);
 
     BOOL isStableState = !(_isChangingObscuredInsetsInteractively || [_scrollView isDragging] || [_scrollView isDecelerating] || [_scrollView isZooming] || [_scrollView isZoomBouncing] || [_scrollView _isAnimatingZoom]);
     [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates unobscuredRect:unobscuredRectInContentCoordinates scale:scaleFactor inStableState:isStableState];
