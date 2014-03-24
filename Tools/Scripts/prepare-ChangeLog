@@ -35,7 +35,6 @@
 
 #
 # TODO:
-#   List functions that have been removed too.
 #   Decide what a good logical order is for the changed files
 #     other than a normal text "sort" (top level first?)
 #     (group directories?) (.h before .c?)
@@ -73,12 +72,14 @@ sub determinePropertyChanges($$$);
 sub diffCommand($$$$);
 sub diffFromToString($$$);
 sub diffHeaderFormat();
-sub extractLineRange($);
+sub extractLineRangeAfterChange($);
+sub extractLineRangeBeforeChange($);
 sub fetchBugDescriptionFromURL($$);
 sub findChangeLogs($);
 sub findOriginalFileFromSvn($);
 sub generateFileList(\%$$$);
 sub generateFunctionLists($$$$$);
+sub generateFunctionListsByRanges($$$$);
 sub generateNewChangeLogs($$$$$$$$$$$);
 sub getLatestChangeLogs($);
 sub get_function_line_ranges($$);
@@ -97,6 +98,7 @@ sub main();
 sub method_decl_to_selector($);
 sub normalizeLineEndings($$);
 sub openChangeLogs($);
+sub originalFile($$$$);
 sub pluralizeAndList($$@);
 sub printDiff($$$$);
 sub processPaths(\@);
@@ -230,11 +232,28 @@ sub main()
     return 0;
 }
 
+sub originalFile($$$$)
+{
+    my ($file, $gitCommit, $gitIndex, $mergeBase) = @_;
+
+    my $command;
+    if (isSVN()) {
+        my $escapedPathsString = escapeSubversionPath($file);
+        $command = SVN . " cat $escapedPathsString";
+    } elsif (isGit()) {
+        $command = GIT . " show " . diffFromToString($gitCommit, $gitIndex, $mergeBase);
+        $command .= ":$file" unless $gitCommit or $mergeBase;
+    }
+
+    return $command;
+}
+
 sub generateFunctionLists($$$$$)
 {
     my ($changedFiles, $functionLists, $gitCommit, $gitIndex, $mergeBase) = @_;
 
-    my %changed_line_ranges;
+    my %line_ranges_after_changed;
+    my %line_ranges_before_changed;
     if (@$changedFiles) {
         # For each file, build a list of modified lines.
         # Use line numbers from the "after" side of each diff.
@@ -244,9 +263,15 @@ sub generateFunctionLists($$$$$)
         while (<DIFF>) {
             $file = makeFilePathRelative($1) if $_ =~ diffHeaderFormat();
             if (defined $file) {
-                my ($start, $end) = extractLineRange($_);
-                if ($start >= 0 && $end >= 0) {
-                    push @{$changed_line_ranges{$file}}, [ $start, $end ];
+                my ($before_start, $before_end) = extractLineRangeBeforeChange($_);
+                if ($before_start >= 0 && $before_end >= 0) {
+                    push @{$line_ranges_before_changed{$file}}, [ $before_start, $before_end ];
+                } elsif (/DO_NOT_COMMIT/) {
+                    print STDERR "WARNING: file $file contains the string DO_NOT_COMMIT, line $.\n";
+                }
+                my ($after_start, $after_end) = extractLineRangeAfterChange($_);
+                if ($after_start >= 0 && $after_end >= 0) {
+                    push @{$line_ranges_after_changed{$file}}, [ $after_start, $after_end ];
                 } elsif (/DO_NOT_COMMIT/) {
                     print STDERR "WARNING: file $file contains the string DO_NOT_COMMIT, line $.\n";
                 }
@@ -256,56 +281,80 @@ sub generateFunctionLists($$$$$)
     }
 
     # For each source file, convert line range to function list.
-    if (%changed_line_ranges) {
+    if (%line_ranges_after_changed and %line_ranges_before_changed) {
         print STDERR "  Extracting affected function names from source files.\n";
-        foreach my $file (keys %changed_line_ranges) {
+        foreach my $file (keys %line_ranges_after_changed) {
             # Find all the functions in the file.
             open SOURCE, $file or next;
             my @function_ranges = get_function_line_ranges(\*SOURCE, $file);
             close SOURCE;
 
-            # Find all the modified functions.
-            my @functions;
+            my @change_ranges = (@{$line_ranges_after_changed{$file}}, []);
             my %saw_function;
-            my @change_ranges = (@{$changed_line_ranges{$file}}, []);
-            my @change_range = (0, 0);
-            FUNCTION: foreach my $function_range_ref (@function_ranges) {
-                my @function_range = @$function_range_ref;
+            my @functions = generateFunctionListsByRanges($file, \@change_ranges, \@function_ranges, \%saw_function);
 
-                # FIXME: This is a hack. If the function name is empty, skip it.
-                # The cpp, python, javascript, perl, css and java parsers
-                # are not perfectly implemented and sometimes function names cannot be retrieved
-                # correctly. As you can see in get_function_line_ranges_XXXX(), those parsers
-                # are not intended to implement real parsers but intended to just retrieve function names
-                # for most practical syntaxes.
-                next unless $function_range[2];
-
-                # Advance to successive change ranges.
-                for (;; @change_range = @{shift @change_ranges}) {
-                    last FUNCTION unless @change_range;
-
-                    # If past this function, move on to the next one.
-                    next FUNCTION if $change_range[0] > $function_range[1];
-
-                    # If an overlap with this function range, record the function name.
-                    if ($change_range[1] >= $function_range[0]
-                        and $change_range[0] <= $function_range[1]) {
-                        if (!$saw_function{$function_range[2]}) {
-                            $saw_function{$function_range[2]} = 1;
-                            push @functions, $function_range[2];
-                        }
-                        next FUNCTION;
-                    }
-                }
-            }
-
-            # Format the list of functions now.
+            # Format the list of functions.
             if (@functions) {
                 $functionLists->{$file} = "" if !defined $functionLists->{$file};
                 $functionLists->{$file} .= "\n        (" . join("):\n        (", @functions) . "):";
             }
+
+            # Find the deleted functions in the original file.
+            open SOURCE, "-|", originalFile($file, $gitCommit, $gitIndex, $mergeBase) or next;
+                my @deleted_function_ranges = get_function_line_ranges(\*SOURCE, $file);
+            close SOURCE;
+
+            @change_ranges = (@{$line_ranges_before_changed{$file}}, []);
+            @functions = generateFunctionListsByRanges($file, \@change_ranges, \@deleted_function_ranges, \%saw_function);
+
+            # Format the list of deleted functions.
+            if (@functions) {
+                $functionLists->{$file} = "" if !defined $functionLists->{$file};
+                $functionLists->{$file} .= "\n        (" . join("): Deleted.\n        (", @functions) . "): Deleted.";
+            }
         }
     }
+}
+
+sub generateFunctionListsByRanges($$$$)
+{
+    my ($file, $changed_line_ranges, $function_ranges, $saw_function) = @_;
+
+    # Find all the modified functions.
+    my @functions;
+    my @change_ranges = @{$changed_line_ranges};
+    my @change_range = (0, 0);
+    FUNCTION: foreach my $function_range_ref (@{$function_ranges}) {
+        my @function_range = @{$function_range_ref};
+
+        # FIXME: This is a hack. If the function name is empty, skip it.
+        # The cpp, python, javascript, perl, css and java parsers
+        # are not perfectly implemented and sometimes function names cannot be retrieved
+        # correctly. As you can see in get_function_line_ranges_XXXX(), those parsers
+        # are not intended to implement real parsers but intended to just retrieve function names
+        # for most practical syntaxes.
+        next unless $function_range[2];
+
+        # Advance to successive change ranges.
+        for (;; @change_range = @{shift @change_ranges}) {
+            last FUNCTION unless @change_range;
+
+            # If past this function, move on to the next one.
+            next FUNCTION if $change_range[0] > $function_range[1];
+
+            # If an overlap with this function range, record the function name.
+            if ($change_range[1] >= $function_range[0]
+                and $change_range[0] <= $function_range[1]) {
+                if (!$saw_function->{$function_range[2]}) {
+                    $saw_function->{$function_range[2]} = 1;
+                    push @functions, $function_range[2];
+                }
+                next FUNCTION;
+            }
+        }
+    }
+
+    return @functions;
 }
 
 sub changeLogDate($)
@@ -1897,7 +1946,7 @@ sub propertyChangeDescription($)
     return $description;
 }
 
-sub extractLineRange($)
+sub extractLineRangeAfterChange($)
 {
     my ($string) = @_;
 
@@ -1909,6 +1958,23 @@ sub extractLineRange($)
     } elsif (isGit() && $string =~ /^@@ -\d+(,\d+)? \+(\d+)(,(\d+))? @@/) {
         $start = $2;
         $end = defined($4) ? $4 + $2 - 1 : $2;
+    }
+
+    return ($start, $end);
+}
+
+sub extractLineRangeBeforeChange($)
+{
+    my ($string) = @_;
+
+    my ($start, $end) = (-1, -1);
+
+    if (isSVN() && $string =~ /^(\d+)(,(\d+))?[acd]\d+(,\d+)?/) {
+        $start = $1;
+        $end = $3 || $1;
+    } elsif (isGit() && $string =~ /^@@ -(\d+)(,(\d+))? \+\d+(,\d+)? @@/) {
+        $start = $1;
+        $end = defined($3) ? $3 + $1 - 1 : $1;
     }
 
     return ($start, $end);

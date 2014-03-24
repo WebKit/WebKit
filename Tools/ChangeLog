@@ -1,3 +1,23 @@
+2014-03-24  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        prepare-ChangeLog should list functions that have been removed too.
+        https://bugs.webkit.org/show_bug.cgi?id=130508
+
+        Reviewed by Darin Adler.
+
+        The prepare-ChangeLog does not list the deleted functions in the Changelog.
+        We have to read the functions and the line ranges of them from the source
+        before the change, then search for overlaps between them and the changed
+        line ranges from diff.
+
+        * Scripts/prepare-ChangeLog:
+        (originalFile): Get original source command.
+        (generateFunctionLists): Collect deleted functions too.
+        (generateFunctionListsByRanges): Duplicated code is moved to a separate subroutine.
+        (extractLineRangeBeforeChange): Extract line ranges from the original source to get
+        deleted functions ranges too.
+        (extractLineRange): Renamed to extractLineRangeAfterChange.
+
 2014-03-23  Hyowon Kim  <hw1008.kim@samsung.com>
 
         Move all EFL typedefs into EflTypedefs.h.
