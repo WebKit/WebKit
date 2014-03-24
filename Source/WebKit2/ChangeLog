@@ -1,3 +1,9 @@
+2014-03-24  Mark Rowe  <mrowe@apple.com>
+
+        Build fix after r166186.
+
+        * UIProcess/Cocoa/DownloadClient.mm:
+
 2014-03-24  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] Make updates on ViewUpdateDispatcher less heavy
