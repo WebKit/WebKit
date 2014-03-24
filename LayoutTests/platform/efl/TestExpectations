@@ -579,6 +579,9 @@ webkit.org/b/128528 media/media-ended.html [ Pass Failure ]
 
 webkit.org/b/130586 webgl/conformance/uniforms/gl-uniform-arrays.html [ Failure Pass ]
 
+# Tests that sometimes fail on the bot
+webkit.org/b/130581 perf/clone-with-focus.html  [ Pass Failure ]
+
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLMediaElement/crossOrigin.html [ Skip ]

@@ -1,5 +1,14 @@
 2014-03-24  Andrzej Badowski  <a.badowski@samsung.com>
 
+        [EFL] Add expectations for flaky perf layout test.
+        https://bugs.webkit.org/show_bug.cgi?id=130584
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations:
+
+2014-03-24  Andrzej Badowski  <a.badowski@samsung.com>
+
         [EFL] Add expectations for flaky webgl layout test.
         https://bugs.webkit.org/show_bug.cgi?id=130587
 
