@@ -181,6 +181,7 @@ namespace WebCore {
 #endif
 #if PLATFORM(COCOA)
     String AXARIAContentGroupText(const String& ariaType);
+    String AXHorizontalRuleDescriptionText();
 #endif
 
     String missingPluginText();

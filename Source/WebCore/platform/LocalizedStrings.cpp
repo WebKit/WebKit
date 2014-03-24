@@ -700,6 +700,12 @@ String AXARIAContentGroupText(const String& ariaType)
         return WEB_UI_STRING("math", "An ARIA accessibility group that contains mathematical symbols.");
     return String();
 }
+
+String AXHorizontalRuleDescriptionText()
+{
+    return WEB_UI_STRING("separator", "accessibility role description for a horizontal rule [<hr>]");
+}
+    
 #endif // PLATFORM(COCOA)
 
 String missingPluginText()

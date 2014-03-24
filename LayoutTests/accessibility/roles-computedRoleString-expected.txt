@@ -19,6 +19,7 @@ PASS: h3 -> heading.
 PASS: h4 -> heading. 
 PASS: h5 -> heading. 
 PASS: h5 -> heading. 
+PASS: hr -> separator. 
 PASS: img[alt='X'] -> img. 
 PASS: input[type='button'] -> button. 
 PASS: input[type='checkbox'] -> checkbox. 

@@ -44,6 +44,7 @@
 #import "HTMLNames.h"
 #import "IntRect.h"
 #import "IntSize.h"
+#import "LocalizedStrings.h"
 #import "Page.h"
 #import "Range.h"
 #import "RenderView.h"
@@ -620,6 +621,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case ListBoxOptionRole:
         case TabRole:
         case DocumentMathRole:
+        case HorizontalRuleRole:
             return true;
         case StaticTextRole:
         {
@@ -750,9 +752,11 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     NSString *axTitle = [self accessibilityTitle];
     NSString *axDescription = [self accessibilityDescription];
     NSString *landmarkDescription = [self ariaLandmarkRoleDescription];
-
+    
     NSMutableString *result = [NSMutableString string];
-
+    if (m_object->roleValue() == HorizontalRuleRole)
+        appendStringToResult(result, AXHorizontalRuleDescriptionText());
+        
     appendStringToResult(result, axTitle);
     appendStringToResult(result, axDescription);
     if ([self stringValueShouldBeUsedInLabel]) {

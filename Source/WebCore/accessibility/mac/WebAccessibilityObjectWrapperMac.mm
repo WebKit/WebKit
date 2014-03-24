@@ -116,6 +116,10 @@ using namespace HTMLNames;
 #define NSAccessibilityDescriptionListSubrole @"AXDescriptionList"
 #endif
 
+#ifndef NSAccessibilityContentSeparatorSubrole
+#define NSAccessibilityContentSeparatorSubrole @"AXContentSeparator"
+#endif
+
 // Miscellaneous
 #ifndef NSAccessibilityBlockQuoteLevelAttribute
 #define NSAccessibilityBlockQuoteLevelAttribute @"AXBlockQuoteLevel"
@@ -1916,7 +1920,8 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { LegendRole, NSAccessibilityGroupRole },
         { MathElementRole, NSAccessibilityGroupRole },
         { AudioRole, NSAccessibilityGroupRole },
-        { VideoRole, NSAccessibilityGroupRole }
+        { VideoRole, NSAccessibilityGroupRole },
+        { HorizontalRuleRole, NSAccessibilitySplitterRole }
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
@@ -1961,6 +1966,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return [attachView accessibilityAttributeValue:NSAccessibilitySubroleAttribute];
         }
     }
+    
+    if (m_object->roleValue() == HorizontalRuleRole)
+        return NSAccessibilityContentSeparatorSubrole;
     
     if (m_object->isSpinButtonPart()) {
         if (toAccessibilitySpinButtonPart(m_object)->isIncrementor())
@@ -2154,6 +2162,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         if (listObject->isDescriptionList())
             return AXDescriptionListText();
     }
+    
+    if (m_object->roleValue() == HorizontalRuleRole)
+        return AXHorizontalRuleDescriptionText();
     
     // AppKit also returns AXTab for the role description for a tab item.
     if (m_object->isTabItem())

@@ -640,7 +640,10 @@ bool AccessibilityNodeObject::isEnabled() const
         if (equalIgnoringCase(disabledStatus, "false"))
             break;
     }
-
+    
+    if (roleValue() == HorizontalRuleRole)
+        return false;
+    
     Node* node = this->node();
     if (!node || !node->isElementNode())
         return true;

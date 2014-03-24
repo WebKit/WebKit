@@ -170,9 +170,9 @@ PASS: h6
       AXRoleDescription: heading
       
 PASS: hr
-      AXRole: 
-      AXSubrole: 
-      AXRoleDescription: 
+      AXRole: AXSplitter
+      AXSubrole: AXContentSeparator
+      AXRoleDescription: separator
       
 PASS: i
       AXRole: 

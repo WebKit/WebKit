@@ -1,0 +1,30 @@
+This tests that the 'hr' element is accessible on the Mac.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+hr1 role: AXRole: AXSplitter
+hr1 subrole: AXSubrole: AXContentSeparator
+hr1 roleDescription: AXRoleDescription: separator
+hr1 description: AXDescription: 
+hr1 is value settable: false
+hr1 is enabled: false
+
+hr2 role: AXRole: AXSplitter
+hr2 subrole: AXSubrole: AXContentSeparator
+hr2 roleDescription: AXRoleDescription: separator
+hr2 description: AXDescription: 
+hr2 is value settable: false
+hr2 is enabled: false
+
+hr3 role: AXRole: AXSplitter
+hr3 subrole: AXSubrole: AXContentSeparator
+hr3 roleDescription: AXRoleDescription: separator
+hr3 description: AXDescription: RULER
+hr3 is value settable: false
+hr3 is enabled: false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -931,6 +931,9 @@
 /* Verb stating the action that will occur when a radio button is clicked, as used by accessibility */
 "select" = "select";
 
+/* accessibility role description for a horizontal rule [<hr>] */
+"separator" = "separator";
+
 /* HTTP result code string */
 "server error" = "server error";
 

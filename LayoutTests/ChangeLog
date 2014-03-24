@@ -1,3 +1,20 @@
+2014-03-24  Chris Fleizach  <cfleizach@apple.com>
+
+        <hr> should expose AXRole/AXSubrole, etc
+        https://bugs.webkit.org/show_bug.cgi?id=109015
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/lists.html:
+            - An errant <hr> element was in this test which changed results
+        * accessibility/roles-computedRoleString-expected.txt:
+        * accessibility/roles-exposed.html:
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Added.
+        * platform/mac/accessibility/hr-element-expected.txt: Added.
+        * platform/mac/accessibility/hr-element.html: Added.
+        * platform/mac/accessibility/lists-expected.txt:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+
 2014-03-24  Antti Koivisto  <antti@apple.com>
 
         Invalidate sibling text node style when needed instead of attaching synchronously

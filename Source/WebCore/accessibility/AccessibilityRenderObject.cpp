@@ -1252,7 +1252,10 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     
     if (ariaRoleAttribute() != UnknownRole)
         return false;
-
+    
+    if (roleValue() == HorizontalRuleRole)
+        return false;
+    
     // don't ignore labels, because they serve as TitleUIElements
     Node* node = m_renderer->node();
     if (node && isHTMLLabelElement(node))
