@@ -99,6 +99,7 @@ public:
 #endif // ENABLE(CSS_FILTERS)
 #if ENABLE(CSS_GRID_LAYOUT)
     bool isGridTemplateAreasValue() const { return m_classType == GridTemplateAreasClass; }
+    bool isGridLineNamesValue() const { return m_classType == GridLineNamesClass; }
 #endif
     bool isSVGColor() const { return m_classType == SVGColorClass || m_classType == SVGPaintClass; }
     bool isSVGPaint() const { return m_classType == SVGPaintClass; }
@@ -174,6 +175,9 @@ protected:
         WebKitCSSFilterClass,
 #endif
         WebKitCSSTransformClass,
+#if ENABLE(CSS_GRID_LAYOUT)
+        GridLineNamesClass,
+#endif
         // Do not append non-list class types here.
     };
 

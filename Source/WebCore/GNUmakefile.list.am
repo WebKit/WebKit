@@ -2575,6 +2575,8 @@ webcore_sources += \
 	Source/WebCore/css/CSSFunctionValue.h \
 	Source/WebCore/css/CSSGradientValue.cpp \
 	Source/WebCore/css/CSSGradientValue.h \
+	Source/WebCore/css/CSSGridLineNamesValue.h \
+	Source/WebCore/css/CSSGridLineNamesValue.cpp \
 	Source/WebCore/css/CSSGridTemplateAreasValue.cpp \
 	Source/WebCore/css/CSSGridTemplateAreasValue.h \
 	Source/WebCore/css/CSSGroupingRule.cpp \

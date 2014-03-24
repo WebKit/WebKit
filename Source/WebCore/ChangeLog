@@ -1,3 +1,48 @@
+2014-03-24  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Update named <grid-line> syntax to the last version of the specs
+        https://bugs.webkit.org/show_bug.cgi?id=129041
+
+        Reviewed by Sergio Villar Senin.
+
+        From Blink r162555 by <svillar@igalia.com>
+
+        Names for grid lines are now specified as a list of whitespace separated
+        idents enclosed in parentheses instead of as a list of strings.
+
+        Updated tests to match the new <grid-line> syntax.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj: Added info of the new file for the CSSGridLineNamesValue class.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::addValuesForNamedGridLinesAtIndex): The named <grid-line> value is now a list.
+        * css/CSSGrammar.y.in: New syntax for named <grid-line>.
+        * css/CSSGridLineNamesValue.cpp: Added.
+        (WebCore::CSSGridLineNamesValue::customCSSText): String representation of the named <grid-line> as a list of Strings.
+        (WebCore::CSSGridLineNamesValue::CSSGridLineNamesValue): Constructor.
+        (WebCore::CSSGridLineNamesValue::cloneForCSSOM): Ref counted cloning function.
+        * css/CSSGridLineNamesValue.h: Added.
+        (WebCore::CSSGridLineNamesValue::create): Ref counted constructor.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridLineNames): It replaces the old parseGrdTrackNames.
+        (WebCore::CSSParser::parseGridTrackList): Using the new named <grid-line> syntax.
+        (WebCore::CSSParser::parseGridTrackRepeatFunction): Using the new named <grid-line> syntax.
+        * css/CSSParser.h:
+        * css/CSSParserValues.cpp:
+        (WebCore::destroy): Handling the case of CSSValue being CSSValueList intances.
+        (WebCore::CSSParserValue::createCSSValue): Handling the case of CSSValue being CSSValueList intances.
+        * css/CSSParserValues.h:
+        (WebCore::CSSParserValue::setFromValueList): Adds the named <grid-line> list to the CSSParserValueList instance.
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals): Handling the case of the new CSSGridLineNamesValue class.
+        (WebCore::CSSValue::cssText): Handling the case of the new CSSGridLineNamesValue class.
+        (WebCore::CSSValue::destroy): Handling the case of the new CSSGridLineNamesValue class.
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isGridLineNamesValue): Type cast check for the new CSSGridLineNamesValue class.
+        * css/StyleResolver.cpp:
+        (WebCore::createGridTrackList): Using the new named <grid-line> syntax.
+
 2014-03-23  Sam Weinig  <sam@webkit.org>
 
         Convert WebHTMLConverter to C++

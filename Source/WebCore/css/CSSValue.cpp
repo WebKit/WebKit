@@ -57,6 +57,7 @@
 #include "WebKitCSSTransformValue.h"
 
 #if ENABLE(CSS_GRID_LAYOUT)
+#include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
 #endif
 
@@ -193,6 +194,8 @@ bool CSSValue::equals(const CSSValue& other) const
         case InitialClass:
             return compareCSSValues<CSSInitialValue>(*this, other);
 #if ENABLE(CSS_GRID_LAYOUT)
+        case GridLineNamesClass:
+            return compareCSSValues<CSSGridLineNamesValue>(*this, other);
         case GridTemplateAreasClass:
             return compareCSSValues<CSSGridTemplateAreasValue>(*this, other);
 #endif
@@ -281,6 +284,8 @@ String CSSValue::cssText() const
     case InitialClass:
         return toCSSInitialValue(this)->customCSSText();
 #if ENABLE(CSS_GRID_LAYOUT)
+    case GridLineNamesClass:
+        return toCSSGridLineNamesValue(this)->customCSSText();
     case GridTemplateAreasClass:
         return toCSSGridTemplateAreasValue(this)->customCSSText();
 #endif
@@ -374,6 +379,9 @@ void CSSValue::destroy()
         delete toCSSInitialValue(this);
         return;
 #if ENABLE(CSS_GRID_LAYOUT)
+    case GridLineNamesClass:
+        delete toCSSGridLineNamesValue(this);
+        return;
     case GridTemplateAreasClass:
         delete toCSSGridTemplateAreasValue(this);
         return;

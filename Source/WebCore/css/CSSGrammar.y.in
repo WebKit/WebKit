@@ -68,9 +68,22 @@ static inline bool isCSSTokenAString(int yytype)
 
 #endif
 
+static inline CSSParserValue makeIdentValue(CSSParserString string)
+{
+    CSSParserValue v;
+    v.id = cssValueKeywordID(string);
+    v.unit = CSSPrimitiveValue::CSS_IDENT;
+    v.string = string;
+    return v;
+}
+
 %}
 
+#if ENABLE_CSS_GRID_LAYOUT
+%expect 30
+#else
 %expect 29
+#endif
 
 %nonassoc LOWEST_PREC
 
@@ -224,7 +237,7 @@ static inline bool isCSSTokenAString(int yytype)
 %type <keyframeRuleList> keyframes_rule
 %destructor { delete $$; } keyframes_rule
 
-// These two parser values never need to be destroyed because they are never functions.
+// These two parser values never need to be destroyed because they are never functions or value lists.
 %type <value> key unary_term
 
 // These parser values need to be destroyed because they might be functions.
@@ -264,6 +277,14 @@ static inline bool isCSSTokenAString(int yytype)
 
 %union { CSSParser::Location location; }
 %type <location> error_location
+
+#if ENABLE_CSS_GRID_LAYOUT
+%type <valueList> ident_list
+%destructor { delete $$; } ident_list
+
+%type <value> track_names_list
+%destructor { destroy($$); } track_names_list
+#endif
 
 #if ENABLE_CSS3_CONDITIONAL_RULES
 
@@ -1343,6 +1364,35 @@ property: IDENT maybe_space { $$ = cssPropertyID($1); } ;
 
 priority: IMPORTANT_SYM maybe_space { $$ = true; } | /* empty */ { $$ = false; } ;
 
+#if ENABLE_CSS_GRID_LAYOUT
+
+ident_list:
+    IDENT maybe_space {
+        $$ = new CSSParserValueList;
+        $$->addValue(makeIdentValue($1));
+    }
+    | ident_list IDENT maybe_space {
+        $$ = $1;
+        $$->addValue(makeIdentValue($2));
+    }
+    ;
+
+track_names_list:
+    '(' maybe_space closing_parenthesis {
+        $$.setFromValueList(std::make_unique<CSSParserValueList>());
+    }
+    | '(' maybe_space ident_list closing_parenthesis {
+        $$.setFromValueList(std::unique_ptr<CSSParserValueList>($3));
+    }
+    | '(' maybe_space expr_recovery closing_parenthesis {
+        $$.id = CSSValueInvalid;
+        $$.unit = 0;
+        YYERROR;
+    }
+  ;
+
+#endif
+
 expr: valid_expr | valid_expr expr_recovery { $$ = nullptr; delete $1; } ;
 
 valid_expr:
@@ -1375,11 +1425,7 @@ term:
   unary_term maybe_space
   | unary_operator unary_term maybe_space { $$ = $2; $$.fValue *= $1; }
   | STRING maybe_space { $$.id = CSSValueInvalid; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_STRING; }
-  | IDENT maybe_space {
-      $$.id = cssValueKeywordID($1);
-      $$.unit = CSSPrimitiveValue::CSS_IDENT;
-      $$.string = $1;
-  }
+  | IDENT maybe_space { $$ = makeIdentValue($1); }
   /* We might need to actually parse the number from a dimension, but we can't just put something that uses $$.string into unary_term. */
   | DIMEN maybe_space { $$.id = CSSValueInvalid; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_DIMENSION; }
   | unary_operator DIMEN maybe_space { $$.id = CSSValueInvalid; $$.string = $2; $$.unit = CSSPrimitiveValue::CSS_DIMENSION; }
@@ -1394,6 +1440,9 @@ term:
   | '%' maybe_space { /* Handle width: %; */
       $$.id = CSSValueInvalid; $$.unit = 0;
   }
+#if ENABLE_CSS_GRID_LAYOUT
+  | track_names_list maybe_space
+#endif
   ;
 
 unary_term:

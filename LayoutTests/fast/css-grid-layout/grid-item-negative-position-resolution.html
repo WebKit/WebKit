@@ -7,8 +7,8 @@ if (window.testRunner)
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .grid {
-    -webkit-grid-template-columns: 'first' 50px 'middle' 100px 'last';
-    -webkit-grid-template-rows: 'first' 50px 'middle' 100px 'last';
+    -webkit-grid-template-columns: (first) 50px (middle) 100px (last);
+    -webkit-grid-template-rows: (first) 50px (middle) 100px (last);
     /* To detect how much we extend the grid. */
     -webkit-grid-auto-columns: 200px;
     -webkit-grid-auto-rows: 200px;
@@ -98,8 +98,8 @@ if (window.testRunner)
 }
 
 .namedGridLineEndPositionStartNegativeInRowDirection {
-    grid-column: -5 / -2 "middle";
-    grid-row: 1;
+    -webkit-grid-column: -5 / -2 "middle";
+    -webkit-grid-row: 1;
 }
 </style>
 <script src="../../resources/check-layout.js"></script>

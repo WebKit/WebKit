@@ -62,15 +62,15 @@ function testInherit()
 {
     var parentElement = document.createElement("div");
     document.body.appendChild(parentElement);
-    parentElement.style.webkitGridTemplateColumns = "50px 1fr 'last'";
-    parentElement.style.webkitGridTemplateRows = "101% 'middle' 45px";
-    testGridTemplatesValues(parentElement, "50px 1fr last", "101% middle 45px");
+    parentElement.style.webkitGridTemplateColumns = "50px 1fr (last)";
+    parentElement.style.webkitGridTemplateRows = "101% (middle) 45px";
+    testGridTemplatesValues(parentElement, "50px 1fr (last)", "101% (middle) 45px");
 
     element = document.createElement("div");
     parentElement.appendChild(element);
     element.style.webkitGridTemplateColumns = "inherit";
     element.style.webkitGridTemplateRows = "inherit";
-    testGridTemplatesValues(element, "50px 1fr last", "101% middle 45px");
+    testGridTemplatesValues(element, "50px 1fr (last)", "101% (middle) 45px");
 
     document.body.removeChild(parentElement);
 }
@@ -82,9 +82,9 @@ function testInitial()
 {
     element = document.createElement("div");
     document.body.appendChild(element);
-    element.style.webkitGridTemplateColumns = "150% 'middle' 55px";
-    element.style.webkitGridTemplateRows = "1fr 'line' 2fr 'line'";
-    testGridTemplatesValues(element, "150% middle 55px", "1fr line 2fr line");
+    element.style.webkitGridTemplateColumns = "150% (middle) 55px";
+    element.style.webkitGridTemplateRows = "1fr (line) 2fr (line)";
+    testGridTemplatesValues(element, "150% (middle) 55px", "1fr (line) 2fr (line)");
 
     element.style.webkitGridTemplateColumns = "initial";
     element.style.webkitGridTemplateRows = "initial";

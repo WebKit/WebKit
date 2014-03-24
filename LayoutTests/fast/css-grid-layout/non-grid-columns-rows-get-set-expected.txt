@@ -140,12 +140,12 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows'
 PASS element.style.webkitGridTemplateRows is "none"
 
 Test setting grid-template-columns and grid-template-rows to 'inherit' through JS
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is '50px last'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is 'first 101%'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is '50px (last)'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is '(first) 101%'
 
 Test setting grid-template-columns and grid-template-rows to 'initial' through JS
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is '150% last'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is 'first 1fr'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is '150% (last)'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is '(first) 1fr'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is 'none'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is 'none'
 PASS successfullyParsed is true

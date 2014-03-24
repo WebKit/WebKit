@@ -102,16 +102,16 @@ function testInherit()
     var parentElement = document.createElement("div");
     document.body.appendChild(parentElement);
     parentElement.style.font = "10px Ahem"; // Used to resolve em font consistently.
-    parentElement.style.webkitGridTemplateColumns = "50px 'last'";
-    parentElement.style.webkitGridTemplateRows = "'first' 2em";
+    parentElement.style.webkitGridTemplateColumns = "50px (last)";
+    parentElement.style.webkitGridTemplateRows = "(first) 2em";
 
     element = document.createElement("div");
     parentElement.appendChild(element);
     element.style.display = "-webkit-grid";
     element.style.webkitGridTemplateColumns = "inherit";
     element.style.webkitGridTemplateRows = "inherit";
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "'50px last'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows')", "'first 20px'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "'50px (last)'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows')", "'(first) 20px'");
 
     document.body.removeChild(parentElement);
 }
@@ -126,10 +126,10 @@ function testInitial()
     element.style.display = "-webkit-grid";
     element.style.width = "300px";
     element.style.height = "150px";
-    element.style.webkitGridTemplateColumns = "150% 'last'";
-    element.style.webkitGridTemplateRows = "'first' 1fr";
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "'450px last'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows')", "'first 150px'");
+    element.style.webkitGridTemplateColumns = "150% (last)";
+    element.style.webkitGridTemplateRows = "(first) 1fr";
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "'450px (last)'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows')", "'(first) 150px'");
 
     element.style.display = "-webkit-grid";
     element.style.webkitGridTemplateColumns = "initial";

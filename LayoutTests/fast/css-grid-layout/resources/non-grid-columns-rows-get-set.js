@@ -84,15 +84,15 @@ function testInherit()
 {
     var parentElement = document.createElement("div");
     document.body.appendChild(parentElement);
-    parentElement.style.webkitGridTemplateColumns = "50px 'last'";
-    parentElement.style.webkitGridTemplateRows = "'first' 101%";
+    parentElement.style.webkitGridTemplateColumns = "50px (last)";
+    parentElement.style.webkitGridTemplateRows = "(first) 101%";
 
     element = document.createElement("div");
     parentElement.appendChild(element);
     element.style.webkitGridTemplateColumns = "inherit";
     element.style.webkitGridTemplateRows = "inherit";
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "'50px last'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows')", "'first 101%'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "'50px (last)'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows')", "'(first) 101%'");
 
     document.body.removeChild(parentElement);
 }
@@ -104,10 +104,10 @@ function testInitial()
 {
     element = document.createElement("div");
     document.body.appendChild(element);
-    element.style.webkitGridTemplateColumns = "150% 'last'";
-    element.style.webkitGridTemplateRows = "'first' 1fr";
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "'150% last'");
-    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows')", "'first 1fr'");
+    element.style.webkitGridTemplateColumns = "150% (last)";
+    element.style.webkitGridTemplateRows = "(first) 1fr";
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "'150% (last)'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows')", "'(first) 1fr'");
 
     element.style.webkitGridTemplateColumns = "initial";
     element.style.webkitGridTemplateRows = "initial";

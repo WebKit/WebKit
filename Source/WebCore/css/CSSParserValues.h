@@ -113,13 +113,17 @@ struct CSSParserValue {
         int iValue;
         CSSParserString string;
         CSSParserFunction* function;
+        CSSParserValueList* valueList;
     };
     enum {
-        Operator = 0x100000,
-        Function = 0x100001,
-        Q_EMS    = 0x100002
+        Operator  = 0x100000,
+        Function  = 0x100001,
+        ValueList = 0x100002,
+        Q_EMS     = 0x100003,
     };
     int unit;
+
+    void setFromValueList(std::unique_ptr<CSSParserValueList>);
 
     PassRefPtr<CSSValue> createCSSValue();
 };
@@ -215,6 +219,12 @@ inline bool CSSParserSelector::hasShadowDescendant() const
     return m_selector->relation() == CSSSelector::ShadowDescendant;
 }
 
+inline void CSSParserValue::setFromValueList(std::unique_ptr<CSSParserValueList> valueList)
+{
+    id = CSSValueInvalid;
+    this->valueList = valueList.release();
+    unit = ValueList;
+}
 }
 
 #endif

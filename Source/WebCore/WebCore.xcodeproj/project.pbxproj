@@ -5535,6 +5535,8 @@
 		CD641EB41818F5ED00EE4C41 /* SourceBufferPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CD641EB21818F5ED00EE4C41 /* SourceBufferPrivate.h */; };
 		CD641EBF1819B36000EE4C41 /* MediaTimeMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD641EBD1819B35900EE4C41 /* MediaTimeMac.cpp */; };
 		CD641EC01819B36000EE4C41 /* MediaTimeMac.h in Headers */ = {isa = PBXBuildFile; fileRef = CD641EBE1819B35900EE4C41 /* MediaTimeMac.h */; };
+		CD7DBB2818CA19A400C11066 /* CSSGridLineNamesValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD7DBB2618CA11FF00C11066 /* CSSGridLineNamesValue.cpp */; };
+		CD7DBB2918CA19C600C11066 /* CSSGridLineNamesValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CD7DBB2718CA11FF00C11066 /* CSSGridLineNamesValue.h */; };
 		CD7E05221651C28200C1201F /* WebCoreAVFResourceLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD7E05211651A84100C1201F /* WebCoreAVFResourceLoader.mm */; };
 		CD82030A1395AB6A00F956C6 /* WebVideoFullscreenController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8203061395AB6A00F956C6 /* WebVideoFullscreenController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD82030B1395AB6A00F956C6 /* WebVideoFullscreenController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD8203071395AB6A00F956C6 /* WebVideoFullscreenController.mm */; settings = {COMPILER_FLAGS = "-Wno-undef -Wno-deprecated-declarations"; }; };
@@ -12837,6 +12839,8 @@
 		CD641EBD1819B35900EE4C41 /* MediaTimeMac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTimeMac.cpp; sourceTree = "<group>"; };
 		CD641EBE1819B35900EE4C41 /* MediaTimeMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaTimeMac.h; sourceTree = "<group>"; };
 		CD641EC7181ED60100EE4C41 /* MediaSample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSample.h; sourceTree = "<group>"; };
+		CD7DBB2618CA11FF00C11066 /* CSSGridLineNamesValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGridLineNamesValue.cpp; sourceTree = "<group>"; };
+		CD7DBB2718CA11FF00C11066 /* CSSGridLineNamesValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSGridLineNamesValue.h; sourceTree = "<group>"; };
 		CD7E05201651A84100C1201F /* WebCoreAVFResourceLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebCoreAVFResourceLoader.h; path = objc/WebCoreAVFResourceLoader.h; sourceTree = "<group>"; };
 		CD7E05211651A84100C1201F /* WebCoreAVFResourceLoader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WebCoreAVFResourceLoader.mm; path = objc/WebCoreAVFResourceLoader.mm; sourceTree = "<group>"; };
 		CD8203061395AB6A00F956C6 /* WebVideoFullscreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenController.h; sourceTree = "<group>"; };
@@ -21515,6 +21519,8 @@
 		F523D18402DE42E8018635CA /* css */ = {
 			isa = PBXGroup;
 			children = (
+				CD7DBB2618CA11FF00C11066 /* CSSGridLineNamesValue.cpp */,
+				CD7DBB2718CA11FF00C11066 /* CSSGridLineNamesValue.h */,
 				FBD6AF8415EF21D4008B7110 /* BasicShapeFunctions.cpp */,
 				FBD6AF8515EF21D4008B7110 /* BasicShapeFunctions.h */,
 				A80E6CDA0A1989CA007FB8C5 /* Counter.h */,
@@ -23915,6 +23921,7 @@
 				9B24DE8E15194B9500C59C27 /* HTMLBDIElement.h in Headers */,
 				A871DE2C0A152AC800B12A68 /* HTMLBodyElement.h in Headers */,
 				A8CFF7AA0A156978000A4234 /* HTMLBRElement.h in Headers */,
+				CD7DBB2918CA19C600C11066 /* CSSGridLineNamesValue.h in Headers */,
 				A81369D2097374F600D74463 /* HTMLButtonElement.h in Headers */,
 				93F199E508245E59001E9ABC /* HTMLCanvasElement.h in Headers */,
 				996231F318D18AC300C03FDA /* InspectorWebBackendCommands.js in Headers */,
@@ -27168,6 +27175,7 @@
 				26F40D4A14904A6300CA67C4 /* EventLoopIOS.mm in Sources */,
 				1CA19E050DC255950065A994 /* EventLoopMac.mm in Sources */,
 				939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */,
+				CD7DBB2818CA19A400C11066 /* CSSGridLineNamesValue.cpp in Sources */,
 				E0FEF372B27C53EAC1C1FBEE /* EventSource.cpp in Sources */,
 				E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */,
 				BC60D8F20D2A11E000B9918F /* ExceptionBase.cpp in Sources */,

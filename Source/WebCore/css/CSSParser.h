@@ -163,7 +163,7 @@ public:
     PassRefPtr<CSSValue> parseGridTrackSize(CSSParserValueList& inputList);
     PassRefPtr<CSSPrimitiveValue> parseGridBreadth(CSSParserValue*);
     PassRefPtr<CSSValue> parseGridTemplateAreas();
-    void parseGridTrackNames(CSSParserValueList& inputList, CSSValueList& values);
+    void parseGridLineNames(CSSParserValueList&, CSSValueList&);
 #endif
 
     bool parseDashboardRegions(CSSPropertyID, bool important);

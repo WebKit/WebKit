@@ -35,6 +35,8 @@ void destroy(const CSSParserValue& value)
 {
     if (value.unit == CSSParserValue::Function)
         delete value.function;
+    else if (value.unit == CSSParserValue::ValueList)
+        delete value.valueList;
 }
 
 CSSParserValueList::~CSSParserValueList()
@@ -77,6 +79,8 @@ PassRefPtr<CSSValue> CSSParserValue::createCSSValue()
     }
     if (unit == CSSParserValue::Function)
         return CSSFunctionValue::create(function);
+    if (unit == CSSParserValue::ValueList)
+        return CSSValueList::createFromParserValueList(*valueList);
     if (unit >= CSSParserValue::Q_EMS)
         return CSSPrimitiveValue::createAllowingMarginQuirk(fValue, CSSPrimitiveValue::CSS_EMS);
 

@@ -1037,6 +1037,7 @@ set(WebCore_SOURCES
     css/CSSFunctionValue.cpp
     css/CSSGradientValue.cpp
     css/CSSGridTemplateAreasValue.cpp
+    css/CSSGridLineNamesValue.cpp
     css/CSSGroupingRule.cpp
     css/CSSImageGeneratorValue.cpp
     css/CSSImageSetValue.cpp

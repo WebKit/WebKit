@@ -34,7 +34,6 @@
 #include "CSSFontFeatureValue.h"
 #include "CSSFontValue.h"
 #include "CSSFunctionValue.h"
-#include "CSSGridTemplateAreasValue.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
@@ -57,7 +56,6 @@
 #include "PseudoElement.h"
 #include "Rect.h"
 #include "RenderBox.h"
-#include "RenderGrid.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "SVGElement.h"
@@ -68,6 +66,12 @@
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/text/StringBuilder.h>
+
+#if ENABLE(CSS_GRID_LAYOUT)
+#include "CSSGridLineNamesValue.h"
+#include "CSSGridTemplateAreasValue.h"
+#include "RenderGrid.h"
+#endif
 
 #if ENABLE(CSS_SHAPES)
 #include "ShapeValue.h"
@@ -996,8 +1000,10 @@ static void addValuesForNamedGridLinesAtIndex(const OrderedNamedGridLinesMap& or
     if (namedGridLines.isEmpty())
         return;
 
+    RefPtr<CSSGridLineNamesValue> lineNames = CSSGridLineNamesValue::create();
     for (size_t i = 0; i < namedGridLines.size(); ++i)
-        list.append(cssValuePool().createValue(namedGridLines[i], CSSPrimitiveValue::CSS_STRING));
+        lineNames->append(cssValuePool().createValue(namedGridLines[i], CSSPrimitiveValue::CSS_STRING));
+    list.append(lineNames.release());
 }
 
 static PassRef<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, RenderObject* renderer, const RenderStyle* style, RenderView* renderView)
