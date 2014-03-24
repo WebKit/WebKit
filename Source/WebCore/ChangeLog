@@ -1,3 +1,17 @@
+2014-03-24  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r166169.
+        https://bugs.webkit.org/show_bug.cgi?id=130682
+
+        This patch broke tests on Apple Mavericks (Requested by fredw
+        on #webkit).
+
+        Reverted changeset:
+
+        "Operator stretching: expose a math data API"
+        https://bugs.webkit.org/show_bug.cgi?id=130572
+        http://trac.webkit.org/changeset/166169
+
 2014-03-24  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
 
         ENABLE(CSS_GRID_LAYOUT) guard for CSSGridLineNamesValue

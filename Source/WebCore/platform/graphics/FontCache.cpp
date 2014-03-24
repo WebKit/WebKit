@@ -34,7 +34,6 @@
 #include "FontGlyphs.h"
 #include "FontPlatformData.h"
 #include "FontSelector.h"
-#include "OpenTypeMathData.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
@@ -267,7 +266,8 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
     return it->value.get();
 }
 
-struct FontFileCacheKeyHash {
+#if ENABLE(OPENTYPE_VERTICAL)
+struct FontVerticalDataCacheKeyHash {
     static unsigned hash(const FontCache::FontFileKey& fontFileKey)
     {
         return PtrHash<const FontCache::FontFileKey*>::hash(&fontFileKey);
@@ -281,7 +281,7 @@ struct FontFileCacheKeyHash {
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
-struct FontFileCacheKeyTraits : WTF::GenericHashTraits<FontCache::FontFileKey> {
+struct FontVerticalDataCacheKeyTraits : WTF::GenericHashTraits<FontCache::FontFileKey> {
     static const bool emptyValueIsZero = true;
     static const bool needsDestruction = true;
     static const FontCache::FontFileKey& emptyValue()
@@ -299,32 +299,9 @@ struct FontFileCacheKeyTraits : WTF::GenericHashTraits<FontCache::FontFileKey> {
     }
 };
 
-typedef HashMap<FontCache::FontFileKey, RefPtr<OpenTypeMathData>, FontFileCacheKeyHash, FontFileCacheKeyTraits> FontMathDataCache;
+typedef HashMap<FontCache::FontFileKey, RefPtr<OpenTypeVerticalData>, FontVerticalDataCacheKeyHash, FontVerticalDataCacheKeyTraits> FontVerticalDataCache;
 
-static FontMathDataCache& fontMathDataCacheInstance()
-{
-    static NeverDestroyed<FontMathDataCache> fontMathDataCache;
-    return fontMathDataCache;
-}
-
-PassRefPtr<OpenTypeMathData> FontCache::getMathData(const FontFileKey& key, const FontPlatformData& fontData)
-{
-    FontMathDataCache& fontMathDataCache = fontMathDataCacheInstance();
-    FontMathDataCache::iterator result = fontMathDataCache.find(key);
-    if (result != fontMathDataCache.end())
-        return result.get()->value;
-
-    RefPtr<OpenTypeMathData> mathData = OpenTypeMathData::create(fontData);
-    if (!mathData->hasMathData())
-        mathData.clear();
-    fontMathDataCache.set(key, mathData);
-    return mathData;
-}
-
-#if ENABLE(OPENTYPE_VERTICAL)
-typedef HashMap<FontCache::FontFileKey, RefPtr<OpenTypeVerticalData>, FontFileCacheKeyHash, FontFileCacheKeyTraits> FontVerticalDataCache;
-
-static FontVerticalDataCache& fontVerticalDataCacheInstance()
+FontVerticalDataCache& fontVerticalDataCacheInstance()
 {
     static NeverDestroyed<FontVerticalDataCache> fontVerticalDataCache;
     return fontVerticalDataCache;
