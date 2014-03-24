@@ -129,7 +129,7 @@ class RegisterID
         when 'sp'
             'sp'
         when 'lr'
-            'lr'
+            'x30'
         else
             raise "Bad register name #{@name} at #{codeOriginString}"
         end
@@ -587,9 +587,9 @@ class Instruction
                 $asm.puts "stp #{ops[0].arm64Operand(:ptr)}, #{ops[1].arm64Operand(:ptr)}, [sp, #-16]!"
             }
         when "popLRAndFP"
-            $asm.puts "ldp fp, lr, [sp], #16"
+            $asm.puts "ldp x29, x30, [sp], #16"
         when "pushLRAndFP"
-            $asm.puts "stp fp, lr, [sp, #-16]!"
+            $asm.puts "stp x29, x30, [sp, #-16]!"
         when "popCalleeSaves"
             $asm.puts "ldp x28, x27, [sp], #16"
             $asm.puts "ldp x26, x25, [sp], #16"
@@ -609,13 +609,13 @@ class Instruction
                 emitARM64("mov", operands, :ptr)
             end
         when "sxi2p"
-            emitARM64("sxtw", operands, :ptr)
+            emitARM64("sxtw", operands, [:int, :ptr])
         when "sxi2q"
-            emitARM64("sxtw", operands, :ptr)
+            emitARM64("sxtw", operands, [:int, :ptr])
         when "zxi2p"
-            emitARM64("uxtw", operands, :ptr)
+            emitARM64("uxtw", operands, [:int, :ptr])
         when "zxi2q"
-            emitARM64("uxtw", operands, :ptr)
+            emitARM64("uxtw", operands, [:int, :ptr])
         when "nop"
             $asm.puts "nop"
         when "bieq", "bbeq"
