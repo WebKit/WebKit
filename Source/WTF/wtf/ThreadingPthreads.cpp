@@ -175,7 +175,7 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
     pthread_t threadHandle;
     pthread_attr_t attr;
     pthread_attr_init(&attr);
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if OS(MAC_OS_X) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     pthread_attr_set_qos_class_np(&attr, QOS_CLASS_USER_INTERACTIVE, 0);
 #endif
     int error = pthread_create(&threadHandle, &attr, wtfThreadEntryPoint, invocation.get());
@@ -236,7 +236,7 @@ void changeThreadPriority(ThreadIdentifier threadID, int delta)
 
 void setCurrentThreadQOSUtility()
 {
-#if (TARGET_OS_MAC && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
+#if OS(MAC_OS_X) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     pthread_set_qos_class_np(pthread_self(), QOS_CLASS_UTILITY, 0);
 #endif
 }
