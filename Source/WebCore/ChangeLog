@@ -1,3 +1,15 @@
+2014-03-24  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
+
+        ENABLE(CSS_GRID_LAYOUT) guard for CSSGridLineNamesValue
+        https://bugs.webkit.org/show_bug.cgi?id=130669
+
+        Reviewed by Sergio Villar Senin.
+
+        No new tests. No new functionality.
+
+        * css/CSSGridLineNamesValue.cpp:
+        * css/CSSGridLineNamesValue.h:
+
 2014-03-24  Chris Fleizach  <cfleizach@apple.com>
 
         <hr> should expose AXRole/AXSubrole, etc

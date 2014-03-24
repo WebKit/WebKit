@@ -31,6 +31,7 @@
 #ifndef CSSGridLineNamesValue_h
 #define CSSGridLineNamesValue_h
 
+#if ENABLE(CSS_GRID_LAYOUT)
 #include "CSSValueList.h"
 #include <wtf/PassRefPtr.h>
 
@@ -55,4 +56,5 @@ CSS_VALUE_TYPE_CASTS(CSSGridLineNamesValue, isGridLineNamesValue());
 
 }
 
+#endif
 #endif
