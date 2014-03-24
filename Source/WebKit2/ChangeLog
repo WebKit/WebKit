@@ -1,3 +1,13 @@
+2014-03-24  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        [EFL][WK2] Buildfix after r166159.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (ewk_settings_file_access_from_file_urls_allowed_set):
+        (ewk_settings_file_access_from_file_urls_allowed_get):
+
 2014-03-24  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Use C API inside ewk_settings

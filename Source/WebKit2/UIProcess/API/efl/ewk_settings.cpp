@@ -112,7 +112,7 @@ Eina_Bool ewk_settings_file_access_from_file_urls_allowed_set(Ewk_Settings* sett
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    WKPreferencesSetFileAccessFromFileURLsAllowed(settings->preference(), enable);
+    WKPreferencesSetFileAccessFromFileURLsAllowed(settings->preferences(), enable);
 
     return true;
 }
@@ -121,7 +121,7 @@ Eina_Bool ewk_settings_file_access_from_file_urls_allowed_get(const Ewk_Settings
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
-    return WKPreferencesGetFileAccessFromFileURLsAllowed(settings->preference());
+    return WKPreferencesGetFileAccessFromFileURLsAllowed(settings->preferences());
 }
 
 Eina_Bool ewk_settings_frame_flattening_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
