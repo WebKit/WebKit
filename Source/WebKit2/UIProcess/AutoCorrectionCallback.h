@@ -119,6 +119,46 @@ private:
     CallbackFunction m_callback;
 };
 
+class DictationContextCallback : public CallbackBase {
+public:
+    typedef std::function<void (bool, const String&, const String&, const String&)> CallbackFunction;
+
+    static PassRefPtr<DictationContextCallback> create(CallbackFunction callback)
+    {
+        return adoptRef(new DictationContextCallback(callback));
+    }
+
+    virtual ~DictationContextCallback()
+    {
+        ASSERT(!m_callback);
+    }
+
+    void performCallbackWithReturnValue(const String& returnValue1, const String& returnValue2, const String& returnValue3)
+    {
+        ASSERT(m_callback);
+
+        m_callback(false, returnValue1, returnValue2, returnValue3);
+        m_callback = nullptr;
+    }
+
+    void invalidate()
+    {
+        ASSERT(m_callback);
+
+        m_callback(true, String(), String(), String());
+        m_callback = nullptr;
+    }
+    
+private:
+    DictationContextCallback(CallbackFunction callback)
+        : m_callback(callback)
+    {
+        ASSERT(m_callback);
+    }
+    
+    CallbackFunction m_callback;
+};
+
 } // namespace WebKit
 
 #endif // AutoCorrectionCallback_h

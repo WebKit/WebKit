@@ -452,6 +452,8 @@ public:
     void extendSelection(uint32_t granularity);
     void elementDidFocus(WebCore::Node*);
     void elementDidBlur(WebCore::Node*);
+    void requestDictationContext(uint64_t callbackID);
+    void replaceDictatedText(const String& oldText, const String& newText);
     void requestAutocorrectionData(const String& textForAutocorrection, uint64_t callbackID);
     void applyAutocorrection(const String& correction, const String& originalText, uint64_t callbackID);
     void syncApplyAutocorrection(const String& correction, const String& originalText, bool& correctionApplied);

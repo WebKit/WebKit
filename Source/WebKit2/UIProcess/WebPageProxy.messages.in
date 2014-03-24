@@ -162,6 +162,7 @@ messages -> WebPageProxy {
     TouchesCallback(WebCore::IntPoint point, uint32_t touches, uint64_t callbackID)
     AutocorrectionDataCallback(Vector<WebCore::FloatRect> textRects, String fontName, double fontSize, uint64_t traits, uint64_t callbackID)
     AutocorrectionContextCallback(String beforeText, String markedText, String selectedText, String afterText, uint64_t location, uint64_t length, uint64_t callbackID)
+    DictationContextCallback(String selectedText, String beforeText, String afterText, uint64_t callbackID)
     InterpretKeyEvent(WebKit::EditorState state, bool isCharEvent) -> (bool handled)
     DidReceivePositionInformation(WebKit::InteractionInformationAtPosition information)
     SaveImageToLibrary(WebKit::SharedMemory::Handle handle, uint64_t size)

@@ -1262,6 +1262,21 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
     return (_page->editorState().hasComposition) ? _page->editorState().lastMarkedRect : _autocorrectionData.textLastRect;
 }
 
+- (void)replaceDictatedText:(NSString*)oldText withText:(NSString *)newText
+{
+    _page->replaceDictatedText(oldText, newText);
+}
+
+- (void)requestDictationContext:(void (^)(NSString *selectedText, NSString *beforeText, NSString *afterText))completionHandler
+{
+    UIWKDictationContextHandler dictationHandler = [completionHandler copy];
+
+    _page->requestDictationContext(DictationContextCallback::create([dictationHandler](bool /*error*/, const String& selectedText, const String& beforeText, const String& afterText) {
+        dictationHandler(selectedText, beforeText, afterText);
+        [dictationHandler release];
+    }));
+}
+
 // The completion handler should pass the rect of the correction text after replacing the input text, or nil if the replacement could not be performed.
 - (void)applyAutocorrection:(NSString *)correction toString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForCorrection))completionHandler
 {

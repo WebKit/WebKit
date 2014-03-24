@@ -53,6 +53,8 @@ messages -> WebPage LegacyReceiver {
     UpdateBlockSelectionWithTouch(WebCore::IntPoint point, uint32_t touch, uint32_t handlePosition)
     SelectWithTwoTouches(WebCore::IntPoint from, WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, uint64_t callbackID)
     ExtendSelection(uint32_t granularity)
+    RequestDictationContext(uint64_t callbackID)
+    ReplaceDictatedText(String oldText, String newText)
     RequestAutocorrectionData(String textForAutocorrection, uint64_t callbackID)
     ApplyAutocorrection(String correction, String originalText, uint64_t callbackID)
     SyncApplyAutocorrection(String correction, String originalText) -> (bool autocorrectionApplied)

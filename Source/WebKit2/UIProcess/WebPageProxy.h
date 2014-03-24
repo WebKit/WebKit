@@ -586,6 +586,8 @@ public:
     bool applyAutocorrection(const String& correction, const String& originalText);
     void requestAutocorrectionContext(PassRefPtr<AutocorrectionContextCallback>);
     void getAutocorrectionContext(String& contextBefore, String& markedText, String& selectedText, String& contextAfter, uint64_t& location, uint64_t& length);
+    void requestDictationContext(PassRefPtr<DictationContextCallback>);
+    void replaceDictatedText(const String& oldText, const String& newText);
     void didReceivePositionInformation(const InteractionInformationAtPosition&);
     void getPositionInformation(const WebCore::IntPoint&, InteractionInformationAtPosition&);
     void requestPositionInformation(const WebCore::IntPoint&);
@@ -1280,6 +1282,7 @@ private:
     void touchesCallback(const WebCore::IntPoint&, uint32_t, uint64_t);
     void autocorrectionDataCallback(const Vector<WebCore::FloatRect>&, const String&, float, uint64_t, uint64_t);
     void autocorrectionContextCallback(const String&, const String&, const String&, const String&, uint64_t, uint64_t, uint64_t);
+    void dictationContextCallback(const String&, const String&, const String&, uint64_t);
     void interpretKeyEvent(const EditorState&, bool isCharEvent, bool& handled);
 #endif
 #if PLATFORM(GTK)
@@ -1423,6 +1426,7 @@ private:
     HashMap<uint64_t, RefPtr<TouchesCallback>> m_touchesCallbacks;
     HashMap<uint64_t, RefPtr<AutocorrectionDataCallback>> m_autocorrectionCallbacks;
     HashMap<uint64_t, RefPtr<AutocorrectionContextCallback>> m_autocorrectionContextCallbacks;
+    HashMap<uint64_t, RefPtr<DictationContextCallback>> m_dictationContextCallbacks;
 #endif
 #if PLATFORM(GTK)
     HashMap<uint64_t, RefPtr<PrintFinishedCallback>> m_printFinishedCallbacks;

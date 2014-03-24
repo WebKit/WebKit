@@ -1189,6 +1189,72 @@ void WebPage::convertSelectionRectsToRootView(FrameView* view, Vector<SelectionR
     }
 }
 
+void WebPage::requestDictationContext(uint64_t callbackID)
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    VisiblePosition startPosition = frame.selection().selection().start();
+    VisiblePosition endPosition = frame.selection().selection().end();
+    const unsigned dictationContextWordCount = 5;
+
+    String selectedText;
+    if (frame.selection().isRange())
+        selectedText = plainText(frame.selection().selection().toNormalizedRange().get());
+
+    String contextBefore;
+    if (startPosition != startOfEditableContent(startPosition)) {
+        VisiblePosition currentPosition = startPosition;
+        VisiblePosition lastPosition = startPosition;
+        for (unsigned i = 0; i < dictationContextWordCount; ++i) {
+            currentPosition = startOfWord(positionOfNextBoundaryOfGranularity(lastPosition, WordGranularity, DirectionBackward));
+            if (currentPosition.isNull())
+                break;
+            lastPosition = currentPosition;
+        }
+        if (lastPosition.isNotNull() && lastPosition != startPosition)
+            contextBefore = plainText(Range::create(*frame.document(), lastPosition, startPosition).get());
+    }
+
+    String contextAfter;
+    if (endPosition != endOfEditableContent(endPosition)) {
+        VisiblePosition currentPosition = endPosition;
+        VisiblePosition lastPosition = endPosition;
+        for (unsigned i = 0; i < dictationContextWordCount; ++i) {
+            currentPosition = endOfWord(positionOfNextBoundaryOfGranularity(lastPosition, WordGranularity, DirectionForward));
+            if (currentPosition.isNull())
+                break;
+            lastPosition = currentPosition;
+        }
+        if (lastPosition.isNotNull() && lastPosition != endPosition)
+            contextAfter = plainText(Range::create(*frame.document(), endPosition, lastPosition).get());
+    }
+
+    send(Messages::WebPageProxy::DictationContextCallback(selectedText, contextBefore, contextAfter, callbackID));
+}
+
+void WebPage::replaceDictatedText(const String& oldText, const String& newText)
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    if (frame.selection().isNone())
+        return;
+    
+    if (frame.selection().isRange()) {
+        frame.editor().deleteSelectionWithSmartDelete(false);
+        return;
+    }
+    VisiblePosition position = frame.selection().selection().start();
+    for (size_t i = 0; i < oldText.length(); ++i)
+        position = position.previous();
+    if (position.isNull())
+        position = startOfDocument(static_cast<Node*>(frame.document()->documentElement()));
+    RefPtr<Range> range = Range::create(*frame.document(), position, frame.selection().selection().start());
+
+    if (plainText(range.get()) != oldText)
+        return;
+
+    frame.selection().setSelectedRange(range.get(), UPSTREAM, true);
+    frame.editor().insertText(newText, 0);
+}
+
 void WebPage::requestAutocorrectionData(const String& textForAutocorrection, uint64_t callbackID)
 {
     RefPtr<Range> range;

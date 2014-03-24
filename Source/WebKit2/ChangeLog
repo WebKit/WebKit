@@ -1,3 +1,40 @@
+2014-03-24  Enrica Casucci  <enrica@apple.com>
+
+        [iOS WebKit2] Dictation support.
+        https://bugs.webkit.org/show_bug.cgi?id=130622
+        <rdar://problem/15337316>
+
+        Reviewed by Benjamin Poulain.
+
+        Adding support for dictation on iOS. There are two main types of interactions
+        with the dictation system:
+        - initial request for context, which consists in retrieving the selected text
+        and 5 words before the selection and 5 words after, if available.
+        - insertion of recognized chunks of text, providing the text
+        to replace.
+    
+        * UIProcess/AutoCorrectionCallback.h:
+        (WebKit::DictationContextCallback::create):
+        (WebKit::DictationContextCallback::~DictationContextCallback):
+        (WebKit::DictationContextCallback::performCallbackWithReturnValue):
+        (WebKit::DictationContextCallback::invalidate):
+        (WebKit::DictationContextCallback::DictationContextCallback):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView replaceDictatedText:withText:]):
+        (-[WKContentView requestDictationContext:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::dictationContextCallback):
+        (WebKit::WebPageProxy::replaceDictatedText):
+        (WebKit::WebPageProxy::requestDictationContext):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDictationContext):
+        (WebKit::WebPage::replaceDictatedText):
+
 2014-03-24  Andy Estes  <aestes@apple.com>
 
         Yet another iOS build fix, for the 32-bit build this time.
