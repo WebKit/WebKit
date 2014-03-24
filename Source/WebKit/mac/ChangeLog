@@ -1,3 +1,11 @@
+2014-03-24  Jon Lee  <jonlee@apple.com>
+
+        Build fixes.
+
+        Unreviewed.
+
+        * WebInspector/WebNodeHighlightView.mm: Missing include to GeometryUtilities.
+
 2014-03-23  Sam Weinig  <sam@webkit.org>
 
         Remove some unnecessary .get()s that Darin noticed.

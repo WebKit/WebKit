@@ -1,3 +1,12 @@
+2014-03-24  Jon Lee  <jonlee@apple.com>
+
+        Build fixes.
+
+        Unreviewed.
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::writeSelectionToPasteboard): Convert to reference.
+
 2014-03-24  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
 
         ENABLE(VIDEO_TRACK) guard for CSSParserSelector::parsePseudoCueFunctionSelector

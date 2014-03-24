@@ -324,7 +324,7 @@ PassRefPtr<SharedBuffer> Editor::selectionInWebArchiveFormat()
 
 void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 {
-    NSAttributedString *attributedString = attributedStringFromRange(selectedRange());
+    NSAttributedString *attributedString = attributedStringFromRange(*selectedRange());
 
     PasteboardWebContent content;
     content.canSmartCopyOrDelete = canSmartCopyOrDelete();
