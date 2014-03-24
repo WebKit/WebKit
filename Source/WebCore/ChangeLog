@@ -1,3 +1,10 @@
+2014-03-24  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * WebCore.exp.in:
+        Move a CFNetwork only symbol inside the USE(CFNETWORK) section.
+
 2014-03-24  Chris Fleizach  <cfleizach@apple.com>
 
         Regression: AX: Don't expose role or notifications for invalid menus
