@@ -1,3 +1,13 @@
+2014-03-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        filter-build-webkit: reduce unfiltered output
+        https://bugs.webkit.org/show_bug.cgi?id=130485
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/filter-build-webkit:
+        (shouldIgnoreLine):
+
 2014-03-24  László Langó  <llango.u-szeged@partner.samsung.com>
 
         prepare-ChangeLog should list functions that have been removed too.
