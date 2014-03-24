@@ -1,3 +1,24 @@
+2014-03-23  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [WK2] Refine WebKit2 BatteryStatus code
+        https://bugs.webkit.org/show_bug.cgi?id=130573
+
+        Reviewed by Anders Carlsson.
+
+        Refinements
+         - Return PassRef instead of PassRefPtr in create methods
+         - Use auto instead of iterator
+
+        * UIProcess/WebBatteryManagerProxy.cpp:
+        (WebKit::WebBatteryManagerProxy::create):
+        * UIProcess/WebBatteryManagerProxy.h:
+        * UIProcess/efl/BatteryProvider.cpp:
+        (BatteryProvider::create):
+        * UIProcess/efl/BatteryProvider.h:
+        * WebProcess/Battery/WebBatteryManager.cpp:
+        (WebKit::WebBatteryManager::didChangeBatteryStatus):
+        (WebKit::WebBatteryManager::updateBatteryStatus):
+
 2014-03-23  Sam Weinig  <sam@webkit.org>
 
         Simplify the HTMLConverter interface (Part 2)

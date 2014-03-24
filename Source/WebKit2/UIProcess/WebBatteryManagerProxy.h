@@ -43,7 +43,7 @@ class WebBatteryManagerProxy : public API::ObjectImpl<API::Object::Type::Battery
 public:
     static const char* supplementName();
 
-    static PassRefPtr<WebBatteryManagerProxy> create(WebContext*);
+    static PassRef<WebBatteryManagerProxy> create(WebContext*);
     virtual ~WebBatteryManagerProxy();
 
     void initializeProvider(const WKBatteryProviderBase*);

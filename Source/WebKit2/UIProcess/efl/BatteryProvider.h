@@ -40,7 +40,7 @@ namespace WebKit {
 class BatteryProvider : public RefCounted<BatteryProvider>, public WebCore::BatteryProviderEflClient {
 public:
     virtual ~BatteryProvider();
-    static PassRefPtr<BatteryProvider> create(WKContextRef);
+    static PassRef<BatteryProvider> create(WKContextRef);
 
     void startUpdating();
     void stopUpdating();
