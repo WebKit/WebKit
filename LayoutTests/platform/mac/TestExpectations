@@ -1338,3 +1338,5 @@ webkit.org/b/130353 mathml/wbr-in-mroot-crash.html [ Crash ]
 
 # This test frequently fails on the bots 
 webkit.org/b/130490 media/video-remote-control-playpause.html [ Pass Failure ]
+
+webkit.org/b/130693 mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
