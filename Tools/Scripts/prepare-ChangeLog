@@ -264,7 +264,7 @@ sub generateFunctionLists($$$$$)
             $file = makeFilePathRelative($1) if $_ =~ diffHeaderFormat();
             if (defined $file) {
                 my ($before_start, $before_end) = extractLineRangeBeforeChange($_);
-                if ($before_start >= 0 && $before_end >= 0) {
+                if ($before_start >= 0 && $before_end >= $before_start) {
                     push @{$line_ranges_before_changed{$file}}, [ $before_start, $before_end ];
                 } elsif (/DO_NOT_COMMIT/) {
                     print STDERR "WARNING: file $file contains the string DO_NOT_COMMIT, line $.\n";
@@ -281,16 +281,16 @@ sub generateFunctionLists($$$$$)
     }
 
     # For each source file, convert line range to function list.
-    if (%line_ranges_after_changed and %line_ranges_before_changed) {
-        print STDERR "  Extracting affected function names from source files.\n";
-        foreach my $file (keys %line_ranges_after_changed) {
-            # Find all the functions in the file.
+    print STDERR "  Extracting affected function names from source files.\n";
+    foreach my $file (keys %line_ranges_after_changed) {
+        my %saw_function;
+        # Find all the functions in the file.
+        if ($line_ranges_after_changed{$file}) {
             open SOURCE, $file or next;
             my @function_ranges = get_function_line_ranges(\*SOURCE, $file);
             close SOURCE;
 
             my @change_ranges = (@{$line_ranges_after_changed{$file}}, []);
-            my %saw_function;
             my @functions = generateFunctionListsByRanges($file, \@change_ranges, \@function_ranges, \%saw_function);
 
             # Format the list of functions.
@@ -298,14 +298,15 @@ sub generateFunctionLists($$$$$)
                 $functionLists->{$file} = "" if !defined $functionLists->{$file};
                 $functionLists->{$file} .= "\n        (" . join("):\n        (", @functions) . "):";
             }
-
-            # Find the deleted functions in the original file.
+        }
+        # Find the deleted functions in the original file.
+        if($line_ranges_before_changed{$file}) {
             open SOURCE, "-|", originalFile($file, $gitCommit, $gitIndex, $mergeBase) or next;
                 my @deleted_function_ranges = get_function_line_ranges(\*SOURCE, $file);
             close SOURCE;
 
-            @change_ranges = (@{$line_ranges_before_changed{$file}}, []);
-            @functions = generateFunctionListsByRanges($file, \@change_ranges, \@deleted_function_ranges, \%saw_function);
+            my @change_ranges = (@{$line_ranges_before_changed{$file}}, []);
+            my @functions = generateFunctionListsByRanges($file, \@change_ranges, \@deleted_function_ranges, \%saw_function);
 
             # Format the list of deleted functions.
             if (@functions) {
@@ -1969,9 +1970,11 @@ sub extractLineRangeBeforeChange($)
 
     my ($start, $end) = (-1, -1);
 
-    if (isSVN() && $string =~ /^(\d+)(,(\d+))?[acd]\d+(,\d+)?/) {
+    if (isSVN() && $string =~ /^(\d+)(,(\d+))?([acd])\d+(,\d+)?/) {
         $start = $1;
-        $end = $3 || $1;
+        if($4 gt "a") {
+            $end = $3 || $1;
+        }
     } elsif (isGit() && $string =~ /^@@ -(\d+)(,(\d+))? \+\d+(,\d+)? @@/) {
         $start = $1;
         $end = defined($3) ? $3 + $1 - 1 : $1;
