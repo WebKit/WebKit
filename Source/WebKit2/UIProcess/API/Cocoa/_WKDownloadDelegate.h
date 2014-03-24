@@ -23,27 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKProcessPool.h>
+#import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-@class _WKProcessPoolConfiguration;
-@protocol _WKDownloadDelegate;
+#import <Foundation/Foundation.h>
 
-@interface WKProcessPool (WKPrivate)
+@class _WKDownload;
 
-- (instancetype)_initWithConfiguration:(_WKProcessPoolConfiguration *)configuration WK_DESIGNATED_INITIALIZER;
-
-@property (nonatomic, readonly) _WKProcessPoolConfiguration *_configuration;
-
-- (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host;
-- (void)_setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy;
-
-- (id)_objectForBundleParameter:(NSString *)parameter;
-- (void)_setObject:(id <NSCopying, NSSecureCoding>)object forBundleParameter:(NSString *)parameter;
-
-@property (nonatomic, weak, setter=_setDownloadDelegate:) id <_WKDownloadDelegate> _downloadDelegate;
-
+@protocol _WKDownloadDelegate <NSObject>
+@optional
+- (void)_downloadDidStart:(_WKDownload *)download;
+- (void)_download:(_WKDownload *)download didReceiveResponse:(NSURLResponse *)response;
+- (void)_download:(_WKDownload *)download didReceiveData:(uint64_t)length;
+- (NSString *)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename allowOverwrite:(BOOL *)allowOverwrite;
+- (void)_downloadDidFinish:(_WKDownload *)download;
 @end
 
 #endif

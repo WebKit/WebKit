@@ -23,27 +23,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKProcessPool.h>
+#ifndef DownloadClient_h
+#define DownloadClient_h
+
+#import "WKFoundation.h"
 
 #if WK_API_ENABLED
 
-@class _WKProcessPoolConfiguration;
+#import "APIDownloadClient.h"
+#import "WeakObjCPtr.h"
+
 @protocol _WKDownloadDelegate;
 
-@interface WKProcessPool (WKPrivate)
+namespace WebCore {
+class ResourceResponse;
+}
 
-- (instancetype)_initWithConfiguration:(_WKProcessPoolConfiguration *)configuration WK_DESIGNATED_INITIALIZER;
+namespace WebKit {
+    
+class DownloadClient final : public API::DownloadClient {
+public:
+    explicit DownloadClient(id <_WKDownloadDelegate>);
+    
+private:
+    // From API::DownloadClient
+    virtual void didStart(WebContext*, DownloadProxy*);
+    virtual void didReceiveResponse(WebContext*, DownloadProxy*, const WebCore::ResourceResponse&);
+    virtual void didReceiveData(WebContext*, DownloadProxy*, uint64_t length);
+    virtual String decideDestinationWithSuggestedFilename(WebContext*, DownloadProxy*, const String& filename, bool& allowOverwriteParam);
+    virtual void didFinish(WebContext*, DownloadProxy*);
 
-@property (nonatomic, readonly) _WKProcessPoolConfiguration *_configuration;
+    WeakObjCPtr<id <_WKDownloadDelegate>> m_delegate;
 
-- (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host;
-- (void)_setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy;
+    struct {
+        bool downloadDidStart : 1;            
+        bool downloadDidReceiveResponse : 1;
+        bool downloadDidReceiveData : 1;
+        bool downloadDecideDestinationWithSuggestedFilenameAllowOverwrite : 1;
+        bool downloadDidFinish : 1;
+    } m_delegateMethods;
+};
 
-- (id)_objectForBundleParameter:(NSString *)parameter;
-- (void)_setObject:(id <NSCopying, NSSecureCoding>)object forBundleParameter:(NSString *)parameter;
-
-@property (nonatomic, weak, setter=_setDownloadDelegate:) id <_WKDownloadDelegate> _downloadDelegate;
-
-@end
+} // namespace WebKit
 
 #endif
+
+#endif // DownloadClient_h

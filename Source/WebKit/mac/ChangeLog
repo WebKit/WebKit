@@ -1,3 +1,15 @@
+2014-03-24  Andy Estes  <aestes@apple.com>
+
+        [iOS] Download support by CFURLDownloadRef under USE(CFNETWORK).
+        https://bugs.webkit.org/show_bug.cgi?id=129322
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::convertMainResourceLoadToDownload): Use the
+        RetainPtr returned by releaseConnectionForDownload() rather than
+        manually releasing.
+
 2014-03-24  Jon Lee  <jonlee@apple.com>
 
         Build fixes.

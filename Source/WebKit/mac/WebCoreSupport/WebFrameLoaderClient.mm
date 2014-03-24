@@ -330,22 +330,10 @@ void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader* doc
 
 #if USE(CFNETWORK)
     ASSERT([WebDownload respondsToSelector:@selector(_downloadWithLoadingCFURLConnection:request:response:delegate:proxy:)]);
-    CFURLConnectionRef connection = handle->connection();
-    [WebDownload _downloadWithLoadingCFURLConnection:connection
-                                                                     request:request.cfURLRequest(UpdateHTTPBody)
-                                                                    response:response.cfURLResponse()
-                                                                    delegate:[webView downloadDelegate]
-                                                                       proxy:nil];
-
-    // Release the connection since the NSURLDownload (actually CFURLDownload) will retain the connection and use it.
-    handle->releaseConnectionForDownload();
-    CFRelease(connection);
+    auto connection = handle->releaseConnectionForDownload();
+    [WebDownload _downloadWithLoadingCFURLConnection:connection.get() request:request.cfURLRequest(UpdateHTTPBody) response:response.cfURLResponse() delegate:[webView downloadDelegate] proxy:nil];
 #else
-    [WebDownload _downloadWithLoadingConnection:handle->connection()
-                                                                request:request.nsURLRequest(UpdateHTTPBody)
-                                                               response:response.nsURLResponse()
-                                                               delegate:[webView downloadDelegate]
-                                                                  proxy:nil];
+    [WebDownload _downloadWithLoadingConnection:handle->connection() request:request.nsURLRequest(UpdateHTTPBody) response:response.nsURLResponse() delegate:[webView downloadDelegate] proxy:nil];
 #endif
 }
 

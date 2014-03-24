@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED
 
+#import "_WKDownloadInternal.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextControllerInternal.h"
@@ -111,6 +112,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::Dictionary:
         wrapper = [WKNSDictionary alloc];
+        break;
+
+    case Type::Download:
+        wrapper = [_WKDownload alloc];
         break;
 
     case Type::Error:

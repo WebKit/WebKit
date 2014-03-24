@@ -29,31 +29,28 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-class ResourceResponse;
 class ResourceError;
+class ResourceResponse;
 }
 
 namespace WebKit {
 class AuthenticationChallengeProxy;
-class WebContext;
 class DownloadProxy;
+class WebContext;
 }
 
 namespace API {
 
 class DownloadClient {
 public:
-    virtual ~DownloadClient()   { }
+    virtual ~DownloadClient() { }
 
     virtual void didStart(WebKit::WebContext*, WebKit::DownloadProxy*) { }
     virtual void didReceiveAuthenticationChallenge(WebKit::WebContext*, WebKit::DownloadProxy*, WebKit::AuthenticationChallengeProxy*) { }
     virtual void didReceiveResponse(WebKit::WebContext*, WebKit::DownloadProxy*, const WebCore::ResourceResponse&) { }
     virtual void didReceiveData(WebKit::WebContext*, WebKit::DownloadProxy*, uint64_t length) { }
     virtual bool shouldDecodeSourceDataOfMIMEType(WebKit::WebContext*, WebKit::DownloadProxy*, const WTF::String& mimeType) { return true; }
-    virtual WTF::String decideDestinationWithSuggestedFilename(WebKit::WebContext*, WebKit::DownloadProxy*, const WTF::String& filename, bool& allowOverwrite)
-    {
-        return WTF::String();
-    }
+    virtual WTF::String decideDestinationWithSuggestedFilename(WebKit::WebContext*, WebKit::DownloadProxy*, const WTF::String& filename, bool& allowOverwrite) { return {}; }
     virtual void didCreateDestination(WebKit::WebContext*, WebKit::DownloadProxy*, const WTF::String& path) { }
     virtual void didFinish(WebKit::WebContext*, WebKit::DownloadProxy*) { }
     virtual void didFail(WebKit::WebContext*, WebKit::DownloadProxy*, const WebCore::ResourceError&) { }

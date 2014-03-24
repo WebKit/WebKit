@@ -460,10 +460,10 @@ CFURLConnectionRef ResourceHandle::connection() const
     return d->m_connection.get();
 }
 
-CFURLConnectionRef ResourceHandle::releaseConnectionForDownload()
+RetainPtr<CFURLConnectionRef> ResourceHandle::releaseConnectionForDownload()
 {
     LOG(Network, "CFNet - Job %p releasing connection %p for download", this, d->m_connection.get());
-    return d->m_connection.leakRef();
+    return std::move(d->m_connection);
 }
 
 CFStringRef ResourceHandle::synchronousLoadRunLoopMode()

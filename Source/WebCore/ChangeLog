@@ -1,3 +1,15 @@
+2014-03-24  Andy Estes  <aestes@apple.com>
+
+        [iOS] Download support by CFURLDownloadRef under USE(CFNETWORK).
+        https://bugs.webkit.org/show_bug.cgi?id=129322
+
+        Reviewed by Anders Carlsson.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::releaseConnectionForDownload): Changed to
+        return a RetainPtr that adopts the connection's retain count.
+
 2014-03-24  Enrica Casucci  <enrica@apple.com>
 
         Update Hindi fallback font.

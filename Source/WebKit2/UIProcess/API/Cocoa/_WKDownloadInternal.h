@@ -23,27 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKProcessPool.h>
+#import "_WKDownload.h"
 
 #if WK_API_ENABLED
 
-@class _WKProcessPoolConfiguration;
+#import "WKObject.h"
+
 @protocol _WKDownloadDelegate;
 
-@interface WKProcessPool (WKPrivate)
+namespace API {
+class DownloadClient;
+}
 
-- (instancetype)_initWithConfiguration:(_WKProcessPoolConfiguration *)configuration WK_DESIGNATED_INITIALIZER;
+namespace WebKit {
+std::unique_ptr<API::DownloadClient> createAPIDownloadClient(id <_WKDownloadDelegate>);
+}
 
-@property (nonatomic, readonly) _WKProcessPoolConfiguration *_configuration;
-
-- (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host;
-- (void)_setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy;
-
-- (id)_objectForBundleParameter:(NSString *)parameter;
-- (void)_setObject:(id <NSCopying, NSSecureCoding>)object forBundleParameter:(NSString *)parameter;
-
-@property (nonatomic, weak, setter=_setDownloadDelegate:) id <_WKDownloadDelegate> _downloadDelegate;
-
+@interface _WKDownload () <WKObject>
 @end
 
-#endif
+#endif // WK_API_ENABLED

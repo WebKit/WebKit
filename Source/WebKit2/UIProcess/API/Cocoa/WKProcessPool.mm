@@ -28,11 +28,14 @@
 
 #if WK_API_ENABLED
 
+#import "_WKDownloadDelegate.h"
 #import "CacheModel.h"
+#import "DownloadClient.h"
 #import "HistoryClient.h"
 #import "ProcessModel.h"
 #import "WKObject.h"
 #import "WKProcessPoolConfigurationPrivate.h"
+#import "WeakObjCPtr.h"
 #import "WebCertificateInfo.h"
 #import "WebContext.h"
 #import "WebCookieManagerProxy.h"
@@ -58,7 +61,9 @@ enum : NSUInteger {
 @end
 #endif
 
-@implementation WKProcessPool
+@implementation WKProcessPool {
+    WebKit::WeakObjCPtr<id <_WKDownloadDelegate>> _downloadDelegate;
+}
 
 - (instancetype)init
 {
@@ -171,6 +176,17 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
 
     [_context->ensureBundleParameters() setObject:copy.get() forKey:parameter];
     _context->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameter(parameter, IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length])));
+}
+
+- (id <_WKDownloadDelegate>)_downloadDelegate
+{
+    return _downloadDelegate.getAutoreleased();
+}
+
+- (void)_setDownloadDelegate:(id <_WKDownloadDelegate>)downloadDelegate
+{
+    _downloadDelegate = downloadDelegate;
+    _context->setDownloadClient(std::make_unique<WebKit::DownloadClient>(downloadDelegate));
 }
 
 @end
