@@ -1,3 +1,15 @@
+2014-03-24  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Remove a commented line of code introduced by r166104.
+
+        Reviewed by Babak Shafiei.
+
+        A line was commented out when it should have been deleted. This patch
+        corrects that oversight.
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::location):
+
 2014-03-22  Matthew Hanson  <matthew_hanson@apple.com>
 
         Finish merge of r160065. The changes from Source/WebCore/rendering/RenderView.cpp were incorrectly

@@ -52,7 +52,6 @@ namespace WebCore {
 JSValue JSDocument::location(ExecState* exec) const
 {
     RefPtr<Frame> frame = impl()->frame();
-    //RefPtr<Frame> frame = static_cast<Document*>(impl())->frame();
 
     if (!frame)
         return jsNull();
