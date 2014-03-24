@@ -32,6 +32,7 @@
 #include "JSCInlines.h"
 #include "WeakBlock.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/Threading.h>
 
 namespace JSC {
 
@@ -117,6 +118,7 @@ void BlockAllocator::waitForDuration(std::chrono::milliseconds duration)
 
 void BlockAllocator::blockFreeingThreadStartFunc(void* blockAllocator)
 {
+    setCurrentThreadQOSUtility();
     static_cast<BlockAllocator*>(blockAllocator)->blockFreeingThreadMain();
 }
 

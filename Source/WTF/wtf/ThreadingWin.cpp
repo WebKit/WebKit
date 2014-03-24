@@ -257,6 +257,10 @@ void changeThreadPriority(ThreadIdentifier threadID, int delta)
     SetThreadPriority(threadHandle, THREAD_PRIORITY_NORMAL + delta);
 }
 
+void setCurrentThreadQOSUtility()
+{
+}
+
 int waitForThreadCompletion(ThreadIdentifier threadID)
 {
     ASSERT(threadID);

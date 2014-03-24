@@ -89,6 +89,7 @@ ThreadIdentifier createThreadInternal(ThreadFunction, void*, const char* threadN
 void initializeCurrentThreadInternal(const char* threadName);
 
 WTF_EXPORT_PRIVATE ThreadIdentifier currentThread();
+WTF_EXPORT_PRIVATE void setCurrentThreadQOSUtility();
 WTF_EXPORT_PRIVATE void changeThreadPriority(ThreadIdentifier, int);
 WTF_EXPORT_PRIVATE int waitForThreadCompletion(ThreadIdentifier);
 WTF_EXPORT_PRIVATE void detachThread(ThreadIdentifier);
@@ -99,6 +100,7 @@ using WTF::ThreadIdentifier;
 using WTF::createThread;
 using WTF::currentThread;
 using WTF::changeThreadPriority;
+using WTF::setCurrentThreadQOSUtility;
 using WTF::detachThread;
 using WTF::waitForThreadCompletion;
 

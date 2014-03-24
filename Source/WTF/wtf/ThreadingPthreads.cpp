@@ -173,7 +173,15 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
 {
     auto invocation = std::make_unique<ThreadFunctionInvocation>(entryPoint, data);
     pthread_t threadHandle;
-    if (pthread_create(&threadHandle, 0, wtfThreadEntryPoint, invocation.get())) {
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    pthread_attr_set_qos_class_np(&attr, QOS_CLASS_USER_INTERACTIVE, 0);
+#endif
+    int error = pthread_create(&threadHandle, &attr, wtfThreadEntryPoint, invocation.get());
+    pthread_attr_destroy(&attr);
+
+    if (error) {
         LOG_ERROR("Failed to create pthread at entry point %p with data %p", wtfThreadEntryPoint, invocation.get());
         return 0;
     }
@@ -225,7 +233,14 @@ void changeThreadPriority(ThreadIdentifier threadID, int delta)
 
     pthread_setschedparam(pthreadHandle, policy, &param);
 }
-    
+
+void setCurrentThreadQOSUtility()
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    pthread_set_qos_class_np(pthread_self(), QOS_CLASS_UTILITY, 0);
+#endif
+}
+
 int waitForThreadCompletion(ThreadIdentifier threadID)
 {
     pthread_t pthreadHandle;

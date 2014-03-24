@@ -79,6 +79,7 @@
 
 #include "Assertions.h"
 #include "CurrentTime.h"
+#include "Threading.h"
 
 #include <limits>
 #if OS(WINDOWS)
@@ -2058,6 +2059,8 @@ void TCMalloc_PageHeap::initializeScavenger()
 
 void* TCMalloc_PageHeap::runScavengerThread(void* context)
 {
+    setCurrentThreadQOSUtility();
+
     static_cast<TCMalloc_PageHeap*>(context)->scavengerThread();
 #if (COMPILER(MSVC) || COMPILER(SUNCC))
     // Without this, Visual Studio and Sun Studio will complain that this method does not return a value.
