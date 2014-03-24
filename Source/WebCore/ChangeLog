@@ -1,5 +1,11 @@
 2014-03-24  Anders Carlsson  <andersca@apple.com>
 
+        Re-fix the build.
+
+        * WebCore.exp.in:
+
+2014-03-24  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * WebCore.exp.in:
