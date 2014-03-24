@@ -356,7 +356,7 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
         static NeverDestroyed<AtomicString> hebrewBold("ArialHebrew-Bold", AtomicString::ConstructFromLiteral);
         simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? hebrewBold : hebrewPlain, false, DoNotRetain);
     } else if (useIndicFont) {
-        static NeverDestroyed<AtomicString> devanagariFont("DevanagariSangamMN", AtomicString::ConstructFromLiteral);
+        static NeverDestroyed<AtomicString> devanagariFont("KohinoorDevanagari-Book", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> bengaliFont("BanglaSangamMN", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> gurmukhiFont("GurmukhiMN", AtomicString::ConstructFromLiteral); // Might be replaced in a future release with a Sangam version.
         static NeverDestroyed<AtomicString> gujaratiFont("GujaratiSangamMN", AtomicString::ConstructFromLiteral);
@@ -367,7 +367,7 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
         static NeverDestroyed<AtomicString> malayalamFont("MalayalamSangamMN", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> sinhalaFont("SinhalaSangamMN", AtomicString::ConstructFromLiteral);
 
-        static NeverDestroyed<AtomicString> devanagariFontBold("DevanagariSangamMN-Bold", AtomicString::ConstructFromLiteral);
+        static NeverDestroyed<AtomicString> devanagariFontBold("KohinoorDevanagari-Medium", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> bengaliFontBold("BanglaSangamMN-Bold", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> gurmukhiFontBold("GurmukhiMN-Bold", AtomicString::ConstructFromLiteral); // Might be replaced in a future release with a Sangam version.
         static NeverDestroyed<AtomicString> gujaratiFontBold("GujaratiSangamMN-Bold", AtomicString::ConstructFromLiteral);

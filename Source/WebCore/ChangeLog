@@ -1,3 +1,16 @@
+2014-03-24  Enrica Casucci  <enrica@apple.com>
+
+        Update Hindi fallback font.
+        https://bugs.webkit.org/show_bug.cgi?id=130690
+        <rdar://problem/16391601>
+
+        Reviewed by Sam Weinig.
+
+        Using the new available font for Hindi in the fallback list.
+
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::FontCache::systemFallbackForCharacters):
+
 2014-03-24  Brent Fulgham  <bfulgham@apple.com>
 
         Merge Minor WebVTT Cleanups from Blink
