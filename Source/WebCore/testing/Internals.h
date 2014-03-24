@@ -331,12 +331,14 @@ public:
     void initializeMockMediaSource();
 #endif
 
+#if ENABLE(VIDEO)
     void beginMediaSessionInterruption();
     void endMediaSessionInterruption(const String&);
     void applicationWillEnterForeground() const;
     void applicationWillEnterBackground() const;
     void setMediaSessionRestrictions(const String& mediaType, const String& restrictions, ExceptionCode&);
     void postRemoteControlCommand(const String&, ExceptionCode&);
+#endif
 
 private:
     explicit Internals(Document*);

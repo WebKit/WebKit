@@ -2245,6 +2245,7 @@ void Internals::initializeMockMediaSource()
 }
 #endif
 
+#if ENABLE(VIDEO)
 void Internals::beginMediaSessionInterruption()
 {
     MediaSessionManager::sharedManager().beginInterruption();
@@ -2330,5 +2331,6 @@ void Internals::postRemoteControlCommand(const String& commandString, ExceptionC
     
     MediaSessionManager::sharedManager().didReceiveRemoteControlCommand(command);
 }
-    
+#endif // ENABLE(VIDEO)
+
 }

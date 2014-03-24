@@ -280,10 +280,10 @@
     
     [Conditional=MEDIA_SOURCE] void initializeMockMediaSource();
 
-    void beginMediaSessionInterruption();
-    void endMediaSessionInterruption(DOMString flags);
-    void applicationWillEnterForeground();
-    void applicationWillEnterBackground();
-    [RaisesException] void setMediaSessionRestrictions(DOMString mediaType, DOMString restrictions);
-    [RaisesException] void postRemoteControlCommand(DOMString command);
+    [Conditional=VIDEO] void beginMediaSessionInterruption();
+    [Conditional=VIDEO] void endMediaSessionInterruption(DOMString flags);
+    [Conditional=VIDEO] void applicationWillEnterForeground();
+    [Conditional=VIDEO] void applicationWillEnterBackground();
+    [Conditional=VIDEO, RaisesException] void setMediaSessionRestrictions(DOMString mediaType, DOMString restrictions);
+    [Conditional=VIDEO, RaisesException] void postRemoteControlCommand(DOMString command);
 };
