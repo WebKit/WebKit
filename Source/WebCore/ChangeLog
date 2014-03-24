@@ -1,3 +1,18 @@
+2014-03-24  Beth Dakin  <bdakin@apple.com>
+
+        Legacy-style scrollbars constantly redraw after scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=130699
+
+        Reviewed by Simon Fraser.
+
+        The constant re-draw was happening because we were never calling [ScrollbarPainter 
+        setUsePresentationValue:NO]. This is a silly bug where were should have been 
+        looking at PlatformWheelEvent::momentumPhase() instead of 
+        PlatformWheelEvent::phase()
+
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::handleWheelEvent):
+
 2014-03-24  Daniel Bates  <dabates@apple.com>
 
         XSS Auditor doesn't block <script> injected before an existing <script>

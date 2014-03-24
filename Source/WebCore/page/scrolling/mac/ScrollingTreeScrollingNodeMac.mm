@@ -136,7 +136,7 @@ void ScrollingTreeScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& w
     if (!canHaveScrollbars())
         return;
 
-    if (wheelEvent.phase() == PlatformWheelEventPhaseEnded || wheelEvent.phase() == PlatformWheelEventPhaseCancelled) {
+    if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded || wheelEvent.momentumPhase() == PlatformWheelEventPhaseCancelled) {
         // If the wheel event is ending or cancelled, then we can tell the ScrollbarPainter API that we won't
         // be updating the position from our scrolling thread anymore for the time being.
         if (m_verticalScrollbarPainter)
