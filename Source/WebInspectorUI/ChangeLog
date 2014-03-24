@@ -1,3 +1,21 @@
+2014-03-24  Timothy Hatcher  <timothy@apple.com>
+
+        Lazy load source code referred to from the source map, instead of when
+        the source code is revealed in the Resources sidebar.
+
+        https://bugs.webkit.org/show_bug.cgi?id=130625
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/SourceMapResource.js:
+        (WebInspector.SourceMapResource): Set up the type info here so it can be used to
+        dispaly the right icon in the sidebar.
+        (WebInspector.SourceMapResource.prototype.canRequestContentFromBackend): Use _contentRequested.
+        (WebInspector.SourceMapResource.prototype.requestContentFromBackend.sourceMapResourceLoaded):
+        Reset finished and remove the type change dance we had before.
+        * UserInterface/Views/SourceMapResourceTreeElement.js:
+        (WebInspector.SourceMapResourceTreeElement.prototype.onattach): Removed. Don't request content here.
+
 2014-03-23  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: add other ARIA one-to-many relationships: owns, flowto, controls.

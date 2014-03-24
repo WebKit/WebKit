@@ -31,6 +31,21 @@ WebInspector.SourceMapResource = function(url, sourceMap)
     console.assert(sourceMap);
 
     this._sourceMap = sourceMap;
+    this._contentRequested = false;
+
+    var inheritedMIMEType = this._sourceMap.originalSourceCode instanceof WebInspector.Resource ? this._sourceMap.originalSourceCode.syntheticMIMEType : null;
+
+    var fileExtension = WebInspector.fileExtensionForURL(url);
+    var fileExtensionMIMEType = WebInspector.mimeTypeForFileExtension(fileExtension, true);
+
+    // FIXME: This is a layering violation. It should use a helper function on the
+    // Resource base-class to set _mimeType and _type.
+    this._mimeType = fileExtensionMIMEType || inheritedMIMEType || "text/javascript";
+    this._type = WebInspector.Resource.Type.fromMIMEType(this._mimeType);
+
+    // Mark the resource as loaded so it does not show a spinner in the sidebar.
+    // We will really load the resource the first time content is requested.
+    this.markAsFinished();
 };
 
 WebInspector.SourceMapResource.prototype = {
@@ -62,18 +77,22 @@ WebInspector.SourceMapResource.prototype = {
 
     canRequestContentFromBackend: function()
     {
-        return !this.finished;
+        return !this._contentRequested;
     },
 
     requestContentFromBackend: function(callback)
     {
+        this._contentRequested = true;
+
+        // Revert the markAsFinished that was done in the constructor.
+        this.revertMarkAsFinished();
+
         var inlineContent = this._sourceMap.sourceContent(this.url);
         if (inlineContent) {
             // Force inline content to be asynchronous to match the expected load pattern.
             setTimeout(function() {
                 // FIXME: We don't know the MIME-type for inline content. Guess by analyzing the content?
-                // Guess by using the type of the original resource?
-                sourceMapResourceLoaded.call(this, null, inlineContent, "text/javascript", 200);
+                sourceMapResourceLoaded.call(this, null, inlineContent, this.mimeType, 200);
             }.bind(this));
 
             return true;
@@ -89,28 +108,8 @@ WebInspector.SourceMapResource.prototype = {
                 return;
             }
 
-            var fileExtension = WebInspector.fileExtensionForURL(this.url);
-            var fileExtensionMIMEType = WebInspector.mimeTypeForFileExtension(fileExtension, true) || "text/javascript";
-
             // FIXME: Add support for picking the best MIME-type. Right now the file extension is the best bet.
-            mimeType = fileExtensionMIMEType;
-
-            var oldType = this._type;
-            var oldMIMEType = this._mimeType;
-
-            // FIXME: This is a layering violation. It should use a helper function on the Resource base-class.
-            this._mimeType = mimeType;
-            this._type = WebInspector.Resource.Type.fromMIMEType(this._mimeType);
-
-            if (oldMIMEType !== mimeType) {
-                // Delete the MIME-type components so the MIME-type is re-parsed the next time it is requested.
-                delete this._mimeTypeComponents;
-
-                this.dispatchEventToListeners(WebInspector.Resource.Event.MIMETypeDidChange, {oldMIMEType: oldMIMEType});
-            }
-
-            if (oldType !== this._type)
-                this.dispatchEventToListeners(WebInspector.Resource.Event.TypeDidChange, {oldType: oldType});
+            // The constructor set MIME-type based on the file extension and we ignore mimeType here.
 
             this.markAsFinished();
 

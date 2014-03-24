@@ -41,16 +41,6 @@ WebInspector.SourceMapResourceTreeElement.prototype = {
 
     // Protected
 
-    onattach: function()
-    {
-        WebInspector.ResourceTreeElement.prototype.onattach.call(this);
-
-        // SourceMap resources must be loaded by the frontend, and only
-        // then do they get their type information. So force a load as
-        // soon as they are attached to the sidebar.
-        this.resource.requestContent(function() {});
-    },
-
     _updateTitles: function()
     {
         var oldMainTitle = this.mainTitle;
