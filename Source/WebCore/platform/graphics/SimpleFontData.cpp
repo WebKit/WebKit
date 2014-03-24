@@ -32,6 +32,7 @@
 
 #include "Font.h"
 #include "FontCache.h"
+#include "OpenTypeMathData.h"
 #include <wtf/MathExtras.h>
 
 #if ENABLE(OPENTYPE_VERTICAL)
@@ -52,6 +53,7 @@ SimpleFontData::SimpleFontData(const FontPlatformData& platformData, bool isCust
     , m_isLoading(isLoading)
     , m_isTextOrientationFallback(isTextOrientationFallback)
     , m_isBrokenIdeographFallback(false)
+    , m_mathData(nullptr)
 #if ENABLE(OPENTYPE_VERTICAL)
     , m_verticalData(0)
 #endif
@@ -60,6 +62,7 @@ SimpleFontData::SimpleFontData(const FontPlatformData& platformData, bool isCust
     platformInit();
     platformGlyphInit();
     platformCharWidthInit();
+    m_mathData = fontCache()->getMathData(String::number(platformData.hash()), platformData);
 #if ENABLE(OPENTYPE_VERTICAL)
     if (platformData.orientation() == Vertical && !isTextOrientationFallback) {
         m_verticalData = platformData.verticalData();
@@ -76,6 +79,7 @@ SimpleFontData::SimpleFontData(std::unique_ptr<AdditionalFontData> fontData, flo
     , m_isLoading(false)
     , m_isTextOrientationFallback(false)
     , m_isBrokenIdeographFallback(false)
+    , m_mathData(nullptr)
 #if ENABLE(OPENTYPE_VERTICAL)
     , m_verticalData(0)
 #endif

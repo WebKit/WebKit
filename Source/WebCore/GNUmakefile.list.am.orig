@@ -5361,8 +5361,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp \
 	Source/WebCore/platform/graphics/opengl/TemporaryOpenGLSetting.cpp \
 	Source/WebCore/platform/graphics/opengl/TemporaryOpenGLSetting.h \
-	Source/WebCore/platform/graphics/opentype/OpenTypeMathData.cpp \
-	Source/WebCore/platform/graphics/opentype/OpenTypeMathData.h \
 	Source/WebCore/platform/graphics/transforms/PerspectiveTransformOperation.cpp \
 	Source/WebCore/platform/graphics/transforms/PerspectiveTransformOperation.h \
 	Source/WebCore/platform/graphics/transforms/TranslateTransformOperation.cpp \

@@ -54,6 +54,7 @@ class Font;
 class FontPlatformData;
 class FontData;
 class FontSelector;
+class OpenTypeMathData;
 class OpenTypeVerticalData;
 class SimpleFontData;
 
@@ -151,8 +152,9 @@ public:
     PassRefPtr<SimpleFontData> fontDataFromDescriptionAndLogFont(const FontDescription&, ShouldRetain, const LOGFONT&, AtomicString& outFontFamilyName);
 #endif
 
-#if ENABLE(OPENTYPE_VERTICAL)
     typedef AtomicString FontFileKey;
+    PassRefPtr<OpenTypeMathData> getMathData(const FontFileKey&, const FontPlatformData&);
+#if ENABLE(OPENTYPE_VERTICAL)
     PassRefPtr<OpenTypeVerticalData> getVerticalData(const FontFileKey&, const FontPlatformData&);
 #endif
 
