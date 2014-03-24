@@ -1531,14 +1531,17 @@ void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t op
     send(Messages::WebPageProxy::ImageCallback(handle, callbackID));
 }
 
-PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, double scaleFactor, SnapshotOptions options)
+PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, double additionalScaleFactor, SnapshotOptions options)
 {
     IntRect snapshotRect = rect;
     if (options & SnapshotOptionsRespectDrawingAreaTransform)
         snapshotRect = m_drawingArea->rootLayerTransform().inverse().mapRect(snapshotRect);
 
     IntSize bitmapSize = snapshotRect.size();
-    bitmapSize.scale(scaleFactor * corePage()->deviceScaleFactor());
+    double scaleFactor = additionalScaleFactor;
+    if (!(options & SnapshotOptionsExcludeDeviceScaleFactor))
+        scaleFactor *= corePage()->deviceScaleFactor();
+    bitmapSize.scale(scaleFactor);
 
     return snapshotAtSize(rect, bitmapSize, options);
 }
@@ -1569,8 +1572,11 @@ PassRefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize&
 
     graphicsContext->fillRect(IntRect(IntPoint(), bitmapSize), frameView->baseBackgroundColor(), ColorSpaceDeviceRGB);
 
-    if (!(options & SnapshotOptionsExcludeDeviceScaleFactor))
-        graphicsContext->applyDeviceScaleFactor(corePage()->deviceScaleFactor());
+    if (!(options & SnapshotOptionsExcludeDeviceScaleFactor)) {
+        double deviceScaleFactor = corePage()->deviceScaleFactor();
+        graphicsContext->applyDeviceScaleFactor(deviceScaleFactor);
+        scaleFactor /= deviceScaleFactor;
+    }
 
     graphicsContext->scale(FloatSize(scaleFactor, scaleFactor));
     graphicsContext->translate(-snapshotRect.x(), -snapshotRect.y());
