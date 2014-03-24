@@ -22,12 +22,6 @@
 
 #include <wtf/RefPtr.h>
 
-#if USE(EO)
-typedef struct _Eo_Opaque Evas_Object;
-#else
-typedef struct _Evas_Object Evas_Object;
-#endif
-
 namespace WTF {
 
 template<> void refIfNotNull(Evas_Object* ptr);

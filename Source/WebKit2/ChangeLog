@@ -1,3 +1,13 @@
+2014-03-23  Hyowon Kim  <hw1008.kim@samsung.com>
+
+        Move all EFL typedefs into EflTypedefs.h.
+        https://bugs.webkit.org/show_bug.cgi?id=130511
+
+        Reviewed by Gyuyoung Kim.
+
+        * Shared/API/c/efl/WKArrayEfl.h: Remove EFL typedefs.
+        * UIProcess/API/efl/EwkView.h: Ditto.
+
 2014-03-23  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [WK2] Refine WebKit2 BatteryStatus code

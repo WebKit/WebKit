@@ -49,8 +49,6 @@ typedef struct tagPOINT POINT;
 typedef struct tagPOINTS POINTS;
 #elif PLATFORM(GTK)
 typedef struct _GdkPoint GdkPoint;
-#elif PLATFORM(EFL)
-typedef struct _Evas_Point Evas_Point;
 #endif
 
 namespace WebCore {

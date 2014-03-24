@@ -43,11 +43,6 @@ typedef const struct __SCDynamicStore * SCDynamicStoreRef;
 
 #include <windows.h>
 
-#elif PLATFORM(EFL)
-
-typedef struct _Ecore_Fd_Handler Ecore_Fd_Handler;
-typedef unsigned char Eina_Bool;
-
 #elif PLATFORM(IOS)
 
 #include <wtf/RetainPtr.h>

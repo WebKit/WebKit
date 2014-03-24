@@ -42,12 +42,6 @@
 #include <wtf/Forward.h>
 #include <wtf/text/StringView.h>
 
-#if USE(EO)
-typedef struct _Eo_Opaque Evas_Object;
-#else
-typedef struct _Evas_Object Evas_Object;
-#endif
-
 struct Ewk_Should_Insert_Node_Event {
     WebCore::Node* node;
     WebCore::Range* range;

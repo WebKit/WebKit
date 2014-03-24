@@ -58,10 +58,6 @@ typedef struct _GFileIOStream GFileIOStream;
 typedef struct _GModule GModule;
 #endif
 
-#if PLATFORM(EFL)
-typedef struct _Eina_Module Eina_Module;
-#endif
-
 namespace WebCore {
 
 // PlatformModule

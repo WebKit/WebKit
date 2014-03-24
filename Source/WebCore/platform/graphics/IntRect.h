@@ -53,8 +53,6 @@ typedef struct tagRECT RECT;
 #ifdef GTK_API_VERSION_2
 typedef struct _GdkRectangle GdkRectangle;
 #endif
-#elif PLATFORM(EFL)
-typedef struct _Eina_Rectangle Eina_Rectangle;
 #endif
 
 #if USE(CAIRO)

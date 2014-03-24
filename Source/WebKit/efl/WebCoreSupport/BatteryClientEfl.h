@@ -29,12 +29,6 @@
 #include "BatteryStatus.h"
 #include <wtf/PassRefPtr.h>
 
-#if USE(EO)
-typedef struct _Eo_Opaque Evas_Object;
-#else
-typedef struct _Evas_Object Evas_Object;
-#endif
-
 namespace WebCore {
 class BatteryController;
 }

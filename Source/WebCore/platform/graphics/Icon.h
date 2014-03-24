@@ -37,8 +37,6 @@ OBJC_CLASS NSImage;
 typedef struct HICON__* HICON;
 #elif PLATFORM(GTK)
 typedef struct _GdkPixbuf GdkPixbuf;
-#elif PLATFORM(EFL)
-typedef struct _Evas_Object Evas_Object;
 #endif
 
 namespace WebCore {

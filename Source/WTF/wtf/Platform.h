@@ -912,6 +912,10 @@
 #include <wtf/gobject/GTypedefs.h>
 #endif
 
+#if PLATFORM(EFL)
+#include <wtf/efl/EflTypedefs.h>
+#endif
+
 /* FIXME: This define won't be needed once #27551 is fully landed. However, 
    since most ports try to support sub-project independence, adding new headers
    to WTF causes many ports to break, and so this way we can address the build

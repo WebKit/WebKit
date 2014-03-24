@@ -90,9 +90,6 @@ class EwkPopupMenu;
 class EwkSettings;
 class EwkWindowFeatures;
 
-typedef struct _Evas_GL_Context Evas_GL_Context;
-typedef struct _Evas_GL_Surface Evas_GL_Surface;
-
 typedef struct Ewk_View_Smart_Data Ewk_View_Smart_Data;
 typedef struct Ewk_View_Smart_Class Ewk_View_Smart_Class;
 

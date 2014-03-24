@@ -40,11 +40,6 @@ typedef RetainPtr<CFRunLoopTimerRef> PlatformTimerRef;
 #elif PLATFORM(GTK)
 typedef unsigned int PlatformTimerRef;
 #elif PLATFORM(EFL)
-#if USE(EO)
-typedef struct _Eo_Opaque Ecore_Timer;
-#else
-typedef struct _Ecore_Timer Ecore_Timer;
-#endif
 typedef Ecore_Timer* PlatformTimerRef;
 #endif
 

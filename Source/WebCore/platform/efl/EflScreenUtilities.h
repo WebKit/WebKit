@@ -21,13 +21,6 @@
 
 #include <wtf/text/WTFString.h>
 
-#if USE(EO)
-typedef struct _Eo_Opaque Evas;
-#else
-typedef struct _Evas Evas;
-typedef struct _Ecore_Evas Ecore_Evas;
-#endif
-
 namespace WebCore {
 
 void applyFallbackCursor(Ecore_Evas*, const char*);

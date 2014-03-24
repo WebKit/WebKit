@@ -1,3 +1,19 @@
+2014-03-23  Hyowon Kim  <hw1008.kim@samsung.com>
+
+        Move all EFL typedefs into EflTypedefs.h.
+        https://bugs.webkit.org/show_bug.cgi?id=130511
+
+        Reviewed by Gyuyoung Kim.
+
+        * platform/FileSystem.h: Remove EFL typedefs.
+        * platform/Widget.h: Ditto.
+        * platform/efl/EflScreenUtilities.h: Ditto.
+        * platform/graphics/Icon.h: Ditto.
+        * platform/graphics/Image.h: Ditto.
+        * platform/graphics/IntPoint.h: Ditto.
+        * platform/graphics/IntRect.h: Ditto.
+        * platform/network/NetworkStateNotifier.h: Ditto.
+
 2014-03-23  Sam Weinig  <sam@webkit.org>
 
         Move HTMLConverter from platform/mac to editing/cocoa.
