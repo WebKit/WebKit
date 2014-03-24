@@ -1,4 +1,18 @@
 =================
+WebKitGTK+  2.4.0
+=================
+
+What's new in WebKitGTK+ 2.4.0?
+
+  - Fix infinite loop in WebProcess due to a race condition that can
+    happen when the socket event source is cancelled.
+  - Fix more runtime critical warnings about main loop sources not found
+    when trying to remove them.
+  - Lower the timeout used when waiting for the ShoulTerminate reply
+    in the WebProcess to release unused processes earlier.
+  - Fix the build for non X11 platforms.
+
+=================
 WebKitGTK+ 2.3.92
 =================
 
