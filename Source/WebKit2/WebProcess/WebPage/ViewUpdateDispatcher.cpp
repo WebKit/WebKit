@@ -56,24 +56,27 @@ void ViewUpdateDispatcher::initializeConnection(IPC::Connection* connection)
 
 void ViewUpdateDispatcher::visibleContentRectUpdate(uint64_t pageID, const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo)
 {
+    bool updateListWasEmpty;
     {
-        MutexLocker locker(m_dataMutex);
+        SpinLockHolder locker(&m_dataMutex);
+        updateListWasEmpty = m_latestUpdate.isEmpty();
         m_latestUpdate.set(pageID, visibleContentRectUpdateInfo);
     }
-    RunLoop::main().dispatch(bind(&ViewUpdateDispatcher::dispatchVisibleContentRectUpdate, this));
+    if (updateListWasEmpty)
+        RunLoop::main().dispatch(bind(&ViewUpdateDispatcher::dispatchVisibleContentRectUpdate, this));
 }
 
 void ViewUpdateDispatcher::dispatchVisibleContentRectUpdate()
 {
     HashMap<uint64_t, VisibleContentRectUpdateInfo> localCopy;
     {
-        MutexLocker locker(m_dataMutex);
+        SpinLockHolder locker(&m_dataMutex);
         localCopy.swap(m_latestUpdate);
     }
 
-    for (auto& iterator : localCopy) {
-        if (WebPage* webPage = WebProcess::shared().webPage(iterator.key))
-            webPage->updateVisibleContentRects(iterator.value);
+    for (auto& slot : localCopy) {
+        if (WebPage* webPage = WebProcess::shared().webPage(slot.key))
+            webPage->updateVisibleContentRects(slot.value);
     }
 }
 

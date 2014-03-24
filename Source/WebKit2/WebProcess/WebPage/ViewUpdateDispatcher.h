@@ -31,6 +31,7 @@
 #include "VisibleContentRectUpdateInfo.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRef.h>
+#include <wtf/TCSpinLock.h>
 
 namespace WebKit {
 
@@ -51,7 +52,7 @@ private:
     void dispatchVisibleContentRectUpdate();
 
     RefPtr<WorkQueue> m_queue;
-    Mutex m_dataMutex;
+    SpinLock m_dataMutex;
     HashMap<uint64_t, VisibleContentRectUpdateInfo> m_latestUpdate;
 };
 

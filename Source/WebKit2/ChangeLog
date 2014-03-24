@@ -1,5 +1,17 @@
 2014-03-24  Benjamin Poulain  <bpoulain@apple.com>
 
+        [WK2] Make updates on ViewUpdateDispatcher less heavy
+        https://bugs.webkit.org/show_bug.cgi?id=130626
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/ViewUpdateDispatcher.cpp:
+        (WebKit::ViewUpdateDispatcher::visibleContentRectUpdate):
+        (WebKit::ViewUpdateDispatcher::dispatchVisibleContentRectUpdate):
+        * WebProcess/WebPage/ViewUpdateDispatcher.h:
+
+2014-03-24  Benjamin Poulain  <bpoulain@apple.com>
+
         [iOS][WK2] Micro-optimize view state updates on the UIProcess side
         https://bugs.webkit.org/show_bug.cgi?id=130631
 
