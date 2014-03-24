@@ -1,3 +1,15 @@
+2014-03-24  Sangyong Park  <sy302.park@gmail.com>
+
+        [EFL] Inspector page is not loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=130661
+
+        Reviewed by Gyuyoung Kim.
+
+        Inspector page is not loaded, because some javascript files are not installed.
+        (InspectorJSBackendCommands.js, InspectorWebBackendCommands.js)
+
+        * Source/PlatformEfl.cmake:
+
 2014-03-20  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [EFL][GTK] Get CMake to find Freetype2 properly
