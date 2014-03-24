@@ -1,3 +1,64 @@
+2014-03-23  Sam Weinig  <sam@webkit.org>
+
+        Convert WebHTMLConverter to C++
+        https://bugs.webkit.org/show_bug.cgi?id=130655
+
+        Reviewed by Andreas Kling.
+
+        - Mechanically converts the Objective-C class WebHTMLConverter, to the C++ HTMLConverter (lots of cleanup to follow).
+        - Removes unused members
+            - _standardFontFamily (never assigned to)
+            - _textSizeMultiplier (always exactly 1)
+            - _webViewTextSizeMultiplier (always exactly 0)
+            - _defaultFontSize (always exactly 12, changed to be constant)
+            - _minimumFontSize (always exactly 1, changed to be constant)
+            - _colorsForNodes (never assigned to)
+            - _indexingLimit (always exactly 0)
+            - _thumbnailLimit (always exactly 0)
+            - _flags.isIndexing (always false)
+            - _flags.isTesting (always false)
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::convert):
+        (HTMLConverter::HTMLConverter):
+        (HTMLConverter::~HTMLConverter):
+        (defaultParagraphStyle):
+        (_childrenForNode):
+        (HTMLConverter::_stringForNode):
+        (HTMLConverter::_getFloat):
+        (_webKitBundle):
+        (HTMLConverter::_elementIsBlockLevel):
+        (HTMLConverter::_elementHasOwnBackgroundColor):
+        (HTMLConverter::_blockLevelElementForNode):
+        (HTMLConverter::_colorForNode):
+        (HTMLConverter::_computedAttributesForElement):
+        (HTMLConverter::_attributesForElement):
+        (HTMLConverter::_newParagraphForElement):
+        (HTMLConverter::_newLineForElement):
+        (HTMLConverter::_newTabForElement):
+        (_WebMessageDocumentClass):
+        (HTMLConverter::_addAttachmentForElement):
+        (HTMLConverter::_addQuoteForElement):
+        (HTMLConverter::_addValue):
+        (HTMLConverter::_fillInBlock):
+        (HTMLConverter::_processMetaElementWithName):
+        (HTMLConverter::_processHeadElement):
+        (HTMLConverter::_enterElement):
+        (HTMLConverter::_addTableForElement):
+        (HTMLConverter::_addTableCellForElement):
+        (HTMLConverter::_processElement):
+        (HTMLConverter::_addMarkersToList):
+        (HTMLConverter::_exitElement):
+        (HTMLConverter::_processText):
+        (HTMLConverter::_traverseNode):
+        (HTMLConverter::_traverseFooterNode):
+        (HTMLConverter::_adjustTrailingNewline):
+        (HTMLConverter::_loadFromDOMRange):
+        (fileWrapperForURL):
+        (fileWrapperForElement):
+        (WebCore::attributedStringFromRange):
+        (WebCore::editingAttributedStringFromRange):
+
 2014-03-23  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Remove Dead Stores from editing directory
