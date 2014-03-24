@@ -1,3 +1,15 @@
+2014-03-24  Antti Koivisto  <antti@apple.com>
+
+        Invalidate sibling text node style when needed instead of attaching synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=130590
+
+        Reviewed by Andreas Kling.
+        
+        Minor non-observable whitespace changes.
+
+        * fast/forms/select-listbox-focus-displaynone-expected.txt:
+        * fast/repaint/text-in-relative-positioned-inline-expected.txt:
+
 2014-03-24  Frédéric Wang  <fred.wang@free.fr>
 
         [regression] background colors do not apply to <mo> elements.
