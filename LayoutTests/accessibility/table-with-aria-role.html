@@ -1,28 +1,33 @@
 <html>
+<script src="../resources/js-test-pre.js"></script>
 <script>
     if (window.testRunner)
         testRunner.dumpAsText();
 </script>
 <body id="body">
 
-    <table border=1 role="button">
+<div id="content">
+    <table border=1 role="button" id='table1'>
        <tr><td>test</td><td>test</td><td>test</td></tr>
        <tr><td>test</td><td>test</td><td>test</td></tr>
     </table>
 
-    <table border=1 role="menu">
+    <table border=1 role="group" id='table2'>
        <tr><td>test</td><td>test</td><td>test</td></tr>
        <tr><td>test</td><td>test</td><td>test</td></tr>
     </table>
+</div>
 
     <div id="result"></div>
     
     <script>
         if (window.accessibilityController) {
-            var body = document.getElementById("body");
-            body.focus();
-            result.innerText += accessibilityController.focusedElement.attributesOfChildren();
+            debug("Table1 should not have a table role because it's a button: " + accessibilityController.accessibleElementById('table1').role);
+            debug("Table2 should not have a table role because it's a group: " + accessibilityController.accessibleElementById('table2').role);
+
+            document.getElementById("content").style.display = "none";
         }
     </script>
+<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

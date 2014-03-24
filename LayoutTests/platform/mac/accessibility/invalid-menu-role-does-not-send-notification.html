@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+<div id="menu1" role="menu" hidden>
+<a href="#">item</a>
+</div>
+</div>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the AXMenuOpened notification does not get fired for a menu that is invalid (does not have a menu item child).");
+
+    function showMenu(menu) {
+        document.getElementById("menu1").removeAttribute("hidden");
+        debug("The item should not have a menu role: " + accessibilityController.accessibleElementById('menu1').role);
+    }
+
+    var notification = 0;
+    var element = 0;
+    function ariaCallback(element, notification) {
+        if (notification == "AXMenuOpened") {
+           debug("FAIL Received menu opened notification: " + notification);
+        }
+    }
+
+    function endTest() {
+       document.getElementById("content").style.display = 'none';
+       accessibilityController.removeNotificationListener();
+       finishJSTest();
+    }
+
+    window.jsTestIsAsync = true;
+    if (window.accessibilityController) {
+        var addedNotification = accessibilityController.addNotificationListener(ariaCallback);
+
+        // Make sure AX is enabled by accessing root element.
+        accessibilityController.rootElement;
+
+        setTimeout("showMenu();", 1);
+        // We should not actually get this notification, so end the test after a short time when we 'might' have gotten the notification.
+        setTimeout("endTest();", 100);
+    }
+    successfullyParsed = true;
+
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -2995,6 +2995,24 @@ void AccessibilityRenderObject::addHiddenChildren()
     }
 }
     
+void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
+{
+    // If a menu does not have valid menuitem children, it should not be exposed as a menu.
+    if (roleValue() == MenuRole) {
+        // Elements marked as menus must have at least one menu item child.
+        size_t menuItemCount = 0;
+        for (const auto& child : children()) {
+            if (child->isMenuItem()) {
+                menuItemCount++;
+                break;
+            }
+        }
+
+        if (!menuItemCount)
+            m_role = GroupRole;
+    }
+}
+    
 void AccessibilityRenderObject::addChildren()
 {
     // If the need to add more children in addition to existing children arises, 
@@ -3019,6 +3037,8 @@ void AccessibilityRenderObject::addChildren()
 #if PLATFORM(COCOA)
     updateAttachmentViewParents();
 #endif
+    
+    updateRoleAfterChildrenCreation();
 }
 
 bool AccessibilityRenderObject::canHaveChildren() const

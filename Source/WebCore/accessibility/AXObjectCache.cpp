@@ -684,6 +684,15 @@ void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>&)
 #endif
 
         AXNotification notification = note.second;
+        
+        // Ensure that this menu really is a menu. We do this check here so that we don't have to create
+        // the axChildren when the menu is marked as opening.
+        if (notification == AXMenuOpened) {
+            obj->updateChildrenIfNecessary();
+            if (obj->roleValue() != MenuRole)
+                continue;
+        }
+        
         postPlatformNotification(obj, notification);
 
         if (notification == AXChildrenChanged && obj->parentObjectIfExists() && obj->lastKnownIsIgnoredValue() != obj->accessibilityIsIgnored())

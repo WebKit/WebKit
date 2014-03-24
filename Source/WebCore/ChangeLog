@@ -1,3 +1,26 @@
+2014-03-24  Chris Fleizach  <cfleizach@apple.com>
+
+        Regression: AX: Don't expose role or notifications for invalid menus
+        https://bugs.webkit.org/show_bug.cgi?id=129814
+
+        Reviewed by Mario Sanchez Prada.
+
+        If a role=menu has no menuitem children, it should not be a menu.
+        This was a bit tricky to implement since we need to update the role after the children are created,
+        but it means we have to be a bit more aggressive about when to updateChildren, so that the role
+        is known to be valid.
+
+        Test: platform/mac/accessibility/invalid-menu-role-does-not-send-notification.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::notificationPostTimerFired):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::updateRoleAfterChildrenCreation):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase updateObjectBackingStore]):
+
 2014-03-24  Andy Estes  <aestes@apple.com>
 
         [iOS] Download support by CFURLDownloadRef under USE(CFNETWORK).

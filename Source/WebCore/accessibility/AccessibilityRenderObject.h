@@ -269,7 +269,8 @@ private:
 #endif
     virtual String expandedTextValue() const;
     virtual bool supportsExpandedTextValue() const;
-
+    void updateRoleAfterChildrenCreation();
+    
     void ariaSelectedRows(AccessibilityChildrenVector&);
     
     bool elementAttributeValue(const QualifiedName&) const;
