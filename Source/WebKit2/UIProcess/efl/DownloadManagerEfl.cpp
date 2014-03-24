@@ -88,7 +88,7 @@ void DownloadManagerEfl::didFail(WKContextRef, WKDownloadRef wkDownload, WKError
     EwkDownloadJob* download = downloadManager->ewkDownloadJob(wkDownload);
     ASSERT(download);
 
-    OwnPtr<EwkError> ewkError = EwkError::create(error);
+    auto ewkError = std::make_unique<EwkError>(error);
     download->setState(EWK_DOWNLOAD_JOB_STATE_FAILED);
     Ewk_Download_Job_Error downloadError = { download, ewkError.get() };
     download->view()->smartCallback<DownloadJobFailed>().call(&downloadError);

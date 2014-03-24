@@ -43,7 +43,6 @@
 #include <WebCore/Timer.h>
 #include <WebKit2/WKBase.h>
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -290,7 +289,7 @@ private:
     WebCore::Timer<EwkView> m_displayTimer;
     RefPtr<EwkContextMenu> m_contextMenu;
     std::unique_ptr<EwkPopupMenu> m_popupMenu;
-    OwnPtr<WebKit::InputMethodContextEfl> m_inputMethodContext;
+    std::unique_ptr<WebKit::InputMethodContextEfl> m_inputMethodContext;
 #if ENABLE(INPUT_TYPE_COLOR)
     std::unique_ptr<EwkColorPicker> m_colorPicker;
 #endif

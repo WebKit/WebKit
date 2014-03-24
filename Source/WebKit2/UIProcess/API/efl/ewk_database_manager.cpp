@@ -76,7 +76,7 @@ struct EwkDatabaseOriginsAsyncData {
 
 static void getDatabaseOriginsCallback(WKArrayRef origins, WKErrorRef, void* context)
 {
-    OwnPtr<EwkDatabaseOriginsAsyncData> webDatabaseContext = adoptPtr(static_cast<EwkDatabaseOriginsAsyncData*>(context));
+    auto webDatabaseContext = std::unique_ptr<EwkDatabaseOriginsAsyncData>(static_cast<EwkDatabaseOriginsAsyncData*>(context));
     Eina_List* originList = webDatabaseContext->manager->createOriginList(origins);
     webDatabaseContext->callback(originList, webDatabaseContext->userData);
 }

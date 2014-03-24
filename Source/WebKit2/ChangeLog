@@ -1,3 +1,25 @@
+2014-03-24  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Convert some more OwnPtr/PassOwnPtr to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=130662
+
+        Reviewed by Gyuyoung Kim.
+
+        Replace uses of PassOwnPtr/OwnPtr with std::unique_ptr in remained WebKit2/Efl specific code.
+
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/efl/ewk_cookie_manager.cpp:
+        * UIProcess/API/efl/ewk_database_manager.cpp:
+        (getDatabaseOriginsCallback):
+        * UIProcess/API/efl/ewk_error_private.h:
+        * UIProcess/efl/DownloadManagerEfl.cpp:
+        (WebKit::DownloadManagerEfl::didFail):
+        * UIProcess/efl/InputMethodContextEfl.h:
+        (WebKit::InputMethodContextEfl::create):
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didFailLoadWithErrorForFrame):
+        (WebKit::PageLoadClientEfl::didFailProvisionalLoadWithErrorForFrame):
+
 2014-03-23  Hyowon Kim  <hw1008.kim@samsung.com>
 
         Move all EFL typedefs into EflTypedefs.h.

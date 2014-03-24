@@ -29,17 +29,10 @@
 #include "WKEinaSharedString.h"
 #include <WKRetainPtr.h>
 #include <WebKit2/WKBase.h>
-#include <wtf/PassOwnPtr.h>
 
 class EwkError {
 public:
-    static PassOwnPtr<EwkError> create(WKErrorRef errorRef)
-    {
-        if (!errorRef)
-            return nullptr;
-
-        return adoptPtr(new EwkError(errorRef));
-    }
+    explicit EwkError(WKErrorRef errorRef);
 
     const char* url() const;
     const char* description() const;
@@ -48,8 +41,6 @@ public:
     bool isCancellation() const;
 
 private:
-    explicit EwkError(WKErrorRef errorRef);
-
     WKRetainPtr<WKErrorRef> m_wkError;
     WKEinaSharedString m_url;
     WKEinaSharedString m_description;

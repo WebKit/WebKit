@@ -34,7 +34,6 @@
 #include "ewk_cookie_manager_private.h"
 #include "ewk_private.h"
 #include <wtf/Assertions.h>
-#include <wtf/OwnPtr.h>
 
 using namespace WebKit;
 
