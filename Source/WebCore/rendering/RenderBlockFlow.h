@@ -587,7 +587,7 @@ public:
     void materializeRareBlockFlowData();
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
-    int immediateLineCount();
+    int lineCountForTextAutosizing();
     void adjustComputedFontSizes(float size, float visibleWidth);
     void resetComputedFontSize()
     {

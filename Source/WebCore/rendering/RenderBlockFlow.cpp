@@ -34,6 +34,7 @@
 #include "RenderFlowThread.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
+#include "RenderListItem.h"
 #include "RenderMultiColumnFlowThread.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderNamedFlowFragment.h"
@@ -2976,6 +2977,10 @@ int RenderBlockFlow::lineCount(const RootInlineBox* stopRootInlineBox, bool* fou
     int count = 0;
 
     if (childrenInline()) {
+        if (m_simpleLineLayout) {
+            ASSERT(!stopRootInlineBox);
+            return m_simpleLineLayout->lineCount();
+        }
         for (auto box = firstRootBox(); box; box = box->nextRootBox()) {
             count++;
             if (box == stopRootInlineBox) {
@@ -3403,22 +3408,16 @@ inline static bool resizeTextPermitted(RenderObject* render)
     return true;
 }
 
-int RenderBlockFlow::immediateLineCount()
+int RenderBlockFlow::lineCountForTextAutosizing()
 {
-    // Copied and modified from RenderBlock::lineCount.
+    if (style().visibility() != VISIBLE)
+        return 0;
+    if (childrenInline())
+        return lineCount();
     // Only descend into list items.
     int count = 0;
-    if (style().visibility() == VISIBLE) {
-        if (childrenInline()) {
-            for (RootInlineBox* box = firstRootBox(); box; box = box->nextRootBox())
-                count++;
-        } else {
-            for (RenderObject* obj = firstChild(); obj; obj = obj->nextSibling()) {
-                if (obj->isListItem())
-                    count += toRenderBlockFlow(obj)->lineCount();
-            }
-        }
-    }
+    for (auto& listItem : childrenOfType<RenderListItem>(*this))
+        count += listItem.lineCount();
     return count;
 }
 
@@ -3451,7 +3450,7 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
     
     unsigned lineCount;
     if (m_lineCountForTextAutosizing == NOT_SET) {
-        int count = immediateLineCount();
+        int count = lineCountForTextAutosizing();
         if (!count)
             lineCount = NO_LINE;
         else if (count == 1)

@@ -486,6 +486,18 @@ String Frame::matchLabelsAgainstElement(const Vector<String>& labels, Element* e
     return matchLabelsAgainstString(labels, element->getAttribute(idAttr));
 }
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+float Frame::textAutosizingWidth() const
+{
+    return m_textAutosizingWidth;
+}
+
+void Frame::setTextAutosizingWidth(float width)
+{
+    m_textAutosizingWidth = width;
+}
+#endif
+
 #if PLATFORM(IOS)
 void Frame::scrollOverflowLayer(RenderLayer* layer, const IntRect& visibleRect, const IntRect& exposeRect)
 {

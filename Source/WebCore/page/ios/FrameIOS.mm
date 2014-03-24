@@ -872,17 +872,5 @@ void Frame::resetAllGeolocationPermission()
         child->resetAllGeolocationPermission();
 }
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
-float Frame::textAutosizingWidth() const
-{
-    return m_textAutosizingWidth;
-}
-
-void Frame::setTextAutosizingWidth(float width)
-{
-    m_textAutosizingWidth = width;
-}
-#endif
-
 } // namespace WebCore
 #endif // PLATFORM(IOS)

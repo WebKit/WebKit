@@ -1,3 +1,35 @@
+2014-03-24  Antti Koivisto  <antti@apple.com>
+
+        Text autosizing does not determine line count correctly for simple line layout
+        https://bugs.webkit.org/show_bug.cgi?id=130673
+
+        Reviewed by Daniel Bates.
+        
+        We don't count lines correctly in simple line layout case.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::textAutosizingWidth):
+        (WebCore::Frame::setTextAutosizingWidth):
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::textAutosizingWidth): Deleted.
+        (WebCore::Frame::setTextAutosizingWidth): Deleted.
+        
+            Move to Frame.cpp to make enabling on non-iOS build easier.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::lineCount):
+        
+            Handle simple line layout case.
+
+        (WebCore::RenderBlockFlow::lineCountForTextAutosizing):
+            
+            Call lineCount() if children are inline.
+            Rename for clarity.
+
+        (WebCore::RenderBlockFlow::adjustComputedFontSizes):
+        (WebCore::RenderBlockFlow::immediateLineCount): Deleted.
+        * rendering/RenderBlockFlow.h:
+
 2014-03-24  Frédéric Wang  <fred.wang@free.fr>
 
         [regression] background colors do not apply to <mo> elements.
