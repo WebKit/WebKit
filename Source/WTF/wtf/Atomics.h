@@ -112,6 +112,20 @@ inline bool weakCompareAndSwap(volatile unsigned* location, unsigned expected, u
         : "r"(expected), "r"(newValue)
         : "memory");
     result = !result;
+#elif CPU(ARM64) && COMPILER(GCC)
+    unsigned tmp;
+    unsigned result;
+    asm volatile(
+        "mov %w1, #1\n\t"
+        "ldxr %w2, [%0]\n\t"
+        "cmp %w3, %w2\n\t"
+        "b.ne 0f\n\t"
+        "stxr %w1, %w4, [%0]\n\t"
+        "0:"
+        : "+r"(location), "=&r"(result), "=&r"(tmp)
+        : "r"(expected), "r"(newValue)
+        : "memory");
+    result = !result;
 #elif CPU(ARM64)
     unsigned tmp;
     unsigned result;
@@ -152,6 +166,20 @@ inline bool weakCompareAndSwap(void*volatile* location, void* expected, void* ne
         : "memory"
         );
     return result;
+#elif CPU(ARM64) && COMPILER(GCC)
+    bool result;
+    void* tmp;
+    asm volatile(
+        "mov %w1, #1\n\t"
+        "ldxr %x2, [%0]\n\t"
+        "cmp %x3, %x2\n\t"
+        "b.ne 0f\n\t"
+        "stxr %w1, %x4, [%0]\n\t"
+        "0:"
+        : "+r"(location), "=&r"(result), "=&r"(tmp)
+        : "r"(expected), "r"(newValue)
+        : "memory");
+    return !result;
 #elif CPU(ARM64)
     bool result;
     void* tmp;
