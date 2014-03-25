@@ -53,7 +53,7 @@ namespace WebCore {
     BOOL _isEndingFullscreen;
     BOOL _forceDisableAnimation;
 
-    OwnPtr<WebCore::DisplaySleepDisabler> _displaySleepDisabler;
+    std::unique_ptr<WebCore::DisplaySleepDisabler> _displaySleepDisabler;
 }
 
 - (id <WebVideoFullscreenControllerDelegate>)delegate;

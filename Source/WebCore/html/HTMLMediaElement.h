@@ -686,9 +686,7 @@ private:
     bool isAutoplaying() const { return m_autoplaying; }
 
     void updateSleepDisabling();
-#if PLATFORM(COCOA)
     bool shouldDisableSleep() const;
-#endif
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) override;
