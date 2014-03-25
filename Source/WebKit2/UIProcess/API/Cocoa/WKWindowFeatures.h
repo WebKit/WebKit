@@ -31,6 +31,12 @@
 WK_API_CLASS
 @interface WKWindowFeatures : NSObject
 
+@property (nonatomic, readonly) NSNumber *menuBarVisibility;
+@property (nonatomic, readonly) NSNumber *statusBarVisibility;
+@property (nonatomic, readonly) NSNumber *toolbarVisibility;
+
+@property (nonatomic, readonly) NSNumber *allowsResizing;
+
 @property (nonatomic, readonly) NSNumber *x;
 @property (nonatomic, readonly) NSNumber *y;
 @property (nonatomic, readonly) NSNumber *width;

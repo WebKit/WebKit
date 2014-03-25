@@ -1,5 +1,20 @@
 2014-03-25  Anders Carlsson  <andersca@apple.com>
 
+        Add more properties to WKWindowFeatures
+        https://bugs.webkit.org/show_bug.cgi?id=130738
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWindowFeatures.h:
+        * UIProcess/API/Cocoa/WKWindowFeatures.mm:
+        (-[WKWindowFeatures _initWithWindowFeatures:WebCore::]):
+        (-[WKWindowFeatures menuBarVisibility]):
+        (-[WKWindowFeatures statusBarVisibility]):
+        (-[WKWindowFeatures toolbarsVisibility]):
+        (-[WKWindowFeatures allowsResizing]):
+
+2014-03-25  Anders Carlsson  <andersca@apple.com>
+
         Fix iOS build.
 
         * UIProcess/API/Cocoa/WKWebView.h:

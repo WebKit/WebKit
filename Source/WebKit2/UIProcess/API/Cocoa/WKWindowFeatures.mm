@@ -32,6 +32,12 @@
 #import <wtf/RetainPtr.h>
 
 @implementation WKWindowFeatures {
+    RetainPtr<NSNumber> _menuBarVisibility;
+    RetainPtr<NSNumber> _statusBarVisibility;
+    RetainPtr<NSNumber> _toolbarsVisibility;
+
+    RetainPtr<NSNumber> _allowsResizing;
+
     RetainPtr<NSNumber> _x;
     RetainPtr<NSNumber> _y;
     RetainPtr<NSNumber> _width;
@@ -43,6 +49,12 @@
     if (!(self = [super init]))
         return nil;
 
+    // FIXME: These should be set to nil if the features didn't exist in the string.
+    _menuBarVisibility = @(windowFeatures.menuBarVisible);
+    _statusBarVisibility = @(windowFeatures.statusBarVisible);
+    _toolbarVisibility = @(windowFeatures.toolBarVisible);
+    _allowsResizing = @(windowFeatures.resizable);
+
     if (windowFeatures.xSet)
         _x = @(windowFeatures.x);
     if (windowFeatures.ySet)
@@ -53,6 +65,26 @@
         _height = @(windowFeatures.height);
 
     return self;
+}
+
+- (NSNumber *)menuBarVisibility
+{
+    return _menuBarVisibility.get();
+}
+
+- (NSNumber *)statusBarVisibility
+{
+    return _statusBarVisibility.get();
+}
+
+- (NSNumber *)toolbarsVisibility
+{
+    return _toolbarsVisibility.get();
+}
+
+- (NSNumber *)allowsResizing
+{
+    return _allowsResizing.get();
 }
 
 - (NSNumber *)x
