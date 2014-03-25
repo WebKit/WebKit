@@ -1,3 +1,12 @@
+2014-03-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Enable WebVTT Regions on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=130680
+
+        Reviewed by Eric Carlson.
+
+        * platform/win/TestExpectations: Turn on WebVTT tests.
+
 2014-03-24  Oliver Hunt  <oliver@apple.com>
 
         Strict mode destructuring assignment crashes the parser.

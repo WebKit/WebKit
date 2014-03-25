@@ -1,3 +1,14 @@
+2014-03-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Enable WebVTT Regions on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=130680
+
+        Reviewed by Eric Carlson.
+
+        * DerivedSources.cpp: Add new build components.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+
 2014-03-24  Simon Fraser  <simon.fraser@apple.com>
 
         Remove some unnecessary includes from PlatformCALayerClient.h

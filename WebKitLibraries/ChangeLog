@@ -1,3 +1,13 @@
+2014-03-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Enable WebVTT Regions on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=130680
+
+        Reviewed by Eric Carlson.
+
+        * win/tools/vsprops/FeatureDefines.props: Turn on WEBVTT_REGIONS
+        * win/tools/vsprops/FeatureDefinesCairo.props: Ditto.
+
 2014-03-19  Jer Noble  <jer.noble@apple.com>
 
         [Mac][EME] Query whether decoder support exists before creating a new MediaKeys object.

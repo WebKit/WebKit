@@ -472,6 +472,10 @@
 #include "JSVTTCue.cpp"
 #include "JSVideoTrack.cpp"
 #include "JSVideoTrackList.cpp"
+#if ENABLE(WEBVTT_REGIONS)
+#include "JSVTTRegion.cpp"
+#include "JSVTTRegionList.cpp"
+#endif
 #endif
 #include "JSTimeRanges.cpp"
 #include "JSTouch.cpp"
