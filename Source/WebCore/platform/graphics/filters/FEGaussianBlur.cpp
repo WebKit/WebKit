@@ -43,7 +43,7 @@ static inline float gaussianKernelFactor()
     return 3 / 4.f * sqrtf(2 * piFloat);
 }
 
-static const unsigned gMaxKernelSize = 500;
+static const int gMaxKernelSize = 500;
 
 namespace WebCore {
 
@@ -385,38 +385,37 @@ inline void FEGaussianBlur::platformApply(Uint8ClampedArray* srcPixelArray, Uint
     platformApplyGeneric(srcPixelArray, tmpPixelArray, kernelSizeX, kernelSizeY, paintSize);
 }
 
-void FEGaussianBlur::calculateUnscaledKernelSize(unsigned& kernelSizeX, unsigned& kernelSizeY, float stdX, float stdY)
+IntSize FEGaussianBlur::calculateUnscaledKernelSize(FloatPoint std)
 {
-    ASSERT(stdX >= 0 && stdY >= 0);
+    ASSERT(std.x() >= 0 && std.y() >= 0);
+    IntSize kernelSize(0, 0);
 
-    kernelSizeX = 0;
-    if (stdX)
-        kernelSizeX = std::max<unsigned>(2, static_cast<unsigned>(floorf(stdX * gaussianKernelFactor() + 0.5f)));
-    kernelSizeY = 0;
-    if (stdY)
-        kernelSizeY = std::max<unsigned>(2, static_cast<unsigned>(floorf(stdY * gaussianKernelFactor() + 0.5f)));
-    
-    // Limit the kernel size to 1000. A bigger radius won't make a big difference for the result image but
+    // Limit the kernel size to 500. A bigger radius won't make a big difference for the result image but
     // inflates the absolute paint rect to much. This is compatible with Firefox' behavior.
-    if (kernelSizeX > gMaxKernelSize)
-        kernelSizeX = gMaxKernelSize;
-    if (kernelSizeY > gMaxKernelSize)
-        kernelSizeY = gMaxKernelSize;
+    if (std.x()) {
+        int size = std::max<unsigned>(2, static_cast<unsigned>(floorf(std.x() * gaussianKernelFactor() + 0.5f)));
+        kernelSize.setWidth(std::min(size, gMaxKernelSize));
+    }
+
+    if (std.y()) {
+        int size = std::max<unsigned>(2, static_cast<unsigned>(floorf(std.y() * gaussianKernelFactor() + 0.5f)));
+        kernelSize.setHeight(std::min(size, gMaxKernelSize));
+    }
+
+    return kernelSize;
 }
 
-void FEGaussianBlur::calculateKernelSize(Filter* filter, unsigned& kernelSizeX, unsigned& kernelSizeY, float stdX, float stdY)
+IntSize FEGaussianBlur::calculateKernelSize(Filter* filter, float stdX, float stdY)
 {
     stdX = filter->applyHorizontalScale(stdX);
     stdY = filter->applyVerticalScale(stdY);
 
-    calculateUnscaledKernelSize(kernelSizeX, kernelSizeY, stdX, stdY);
+    return calculateUnscaledKernelSize(FloatPoint(stdX, stdY));
 }
 
 void FEGaussianBlur::determineAbsolutePaintRect()
 {
-    unsigned kernelSizeX = 0;
-    unsigned kernelSizeY = 0;
-    calculateKernelSize(filter(), kernelSizeX, kernelSizeY, m_stdX, m_stdY);
+    IntSize kernelSize = calculateKernelSize(filter(), m_stdX, m_stdY);
 
     FloatRect absolutePaintRect = inputEffect(0)->absolutePaintRect();
     // Edge modes other than 'none' do not inflate the affected paint rect.
@@ -426,8 +425,8 @@ void FEGaussianBlur::determineAbsolutePaintRect()
     }
 
     // We take the half kernel size and multiply it with three, because we run box blur three times.
-    absolutePaintRect.inflateX(3 * kernelSizeX * 0.5f);
-    absolutePaintRect.inflateY(3 * kernelSizeY * 0.5f);
+    absolutePaintRect.inflateX(3 * kernelSize.width() * 0.5f);
+    absolutePaintRect.inflateY(3 * kernelSize.height() * 0.5f);
 
     if (clipsToBounds())
         absolutePaintRect.intersect(maxEffectRect());
@@ -453,15 +452,13 @@ void FEGaussianBlur::platformApplySoftware()
     if (!m_stdX && !m_stdY)
         return;
 
-    unsigned kernelSizeX = 0;
-    unsigned kernelSizeY = 0;
-    calculateKernelSize(filter(), kernelSizeX, kernelSizeY, m_stdX, m_stdY);
+    IntSize kernelSize = calculateKernelSize(filter(), m_stdX, m_stdY);
 
     IntSize paintSize = absolutePaintRect().size();
     RefPtr<Uint8ClampedArray> tmpImageData = Uint8ClampedArray::createUninitialized(paintSize.width() * paintSize.height() * 4);
     Uint8ClampedArray* tmpPixelArray = tmpImageData.get();
 
-    platformApply(srcPixelArray, tmpPixelArray, kernelSizeX, kernelSizeY, paintSize);
+    platformApply(srcPixelArray, tmpPixelArray, kernelSize.width(), kernelSize.height(), paintSize);
 }
 
 void FEGaussianBlur::dump()

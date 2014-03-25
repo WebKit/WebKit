@@ -1,3 +1,28 @@
+2014-03-24  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        [core] FEGaussianBlur: use IntSize to simplify member function interface
+        https://bugs.webkit.org/show_bug.cgi?id=130695
+
+        Reviewed by Dean Jackson.
+
+        By returning an IntSize to store the calculated kernel size values
+        it is possible to have less function parameters. This patch also
+        streamlines a bit the code in calculateUnscaledKernelSize.
+
+        No new tests, no change in behavior.
+
+        * platform/graphics/filters/FEDropShadow.cpp:
+        (WebCore::FEDropShadow::determineAbsolutePaintRect):
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::calculateUnscaledKernelSize):
+        (WebCore::FEGaussianBlur::calculateKernelSize):
+        (WebCore::FEGaussianBlur::determineAbsolutePaintRect):
+        (WebCore::FEGaussianBlur::platformApplySoftware):
+        * platform/graphics/filters/FEGaussianBlur.h:
+        (if): Deleted.
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::outsetSizeForBlur):
+
 2014-03-24  Brian Burg  <bburg@apple.com>
 
         Web Replay: capture and replay keyboard events
