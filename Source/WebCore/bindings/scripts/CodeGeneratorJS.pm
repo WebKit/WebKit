@@ -2127,8 +2127,12 @@ sub GenerateImplementation
             push(@implContent, "{\n");
 
             if (!$attribute->isStatic || $attribute->signature->type =~ /Constructor$/) {
-                if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
-                    push(@implContent, "    ${className}* castedThis = to${className}(JSValue::decode(thisValue));\n");
+                if ($interfaceName eq "DOMWindow") {
+                    push(@implContent, "    ${className}* castedThis = jsDynamicCast<$className*>(JSValue::decode(thisValue));\n");
+                    push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
+                    push(@implContent, "        if (JSDOMWindowShell* shell = jsDynamicCast<JSDOMWindowShell*>(JSValue::decode(thisValue)))\n");
+                    push(@implContent, "            castedThis = shell->window();\n");
+                    push(@implContent, "    }\n");
                     push(@implContent, "    UNUSED_PARAM(slotBase);\n");
                 } else {
                     push(@implContent, "    ${className}* castedThis = jsDynamicCast<$className*>(JSValue::decode(thisValue));\n");
@@ -2346,8 +2350,12 @@ sub GenerateImplementation
             push(@implContent, "{\n");
             push(@implContent, "    UNUSED_PARAM(baseValue);\n");
             push(@implContent, "    UNUSED_PARAM(thisValue);\n");
-            if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
-                push(@implContent, "    ${className}* domObject = to${className}(JSValue::decode(thisValue));\n");
+            if ($interfaceName eq "DOMWindow") {
+                push(@implContent, "    ${className}* domObject = jsDynamicCast<$className*>(JSValue::decode(thisValue));\n");
+                push(@implContent, "    if (!domObject) {\n");
+                push(@implContent, "        if (JSDOMWindowShell* shell = jsDynamicCast<JSDOMWindowShell*>(JSValue::decode(thisValue)))\n");
+                push(@implContent, "            domObject = shell->window();\n");
+                push(@implContent, "    }\n");
             } else {
                 push(@implContent, "    ${className}* domObject = jsDynamicCast<${className}*>(JSValue::decode(thisValue));\n") if ConstructorShouldBeOnInstance($interface);
                 push(@implContent, "    ${className}Prototype* domObject = jsDynamicCast<${className}Prototype*>(baseValue);\n") if !ConstructorShouldBeOnInstance($interface);
@@ -2371,10 +2379,12 @@ sub GenerateImplementation
             push(@implContent, "void ${constructorFunctionName}(ExecState* exec, JSObject*, EncodedJSValue thisValue, EncodedJSValue encodedValue)\n");
             push(@implContent, "{\n");
             push(@implContent, "    JSValue value = JSValue::decode(encodedValue);");
-            if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
-                push(@implContent, "    ${className}* castedThis = to${className}(JSValue::decode(thisValue));\n");
-            } else {
-                push(@implContent, "    ${className}* castedThis = jsDynamicCast<${className}*>(JSValue::decode(thisValue));\n");
+            push(@implContent, "    ${className}* castedThis = jsDynamicCast<${className}*>(JSValue::decode(thisValue));\n");
+            if ($interfaceName eq "DOMWindow") {
+                push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
+                push(@implContent, "        if (JSDOMWindowShell* shell = jsDynamicCast<JSDOMWindowShell*>(JSValue::decode(thisValue)))\n");
+                push(@implContent, "            castedThis = shell->window();\n");
+                push(@implContent, "    }\n");
             }
             push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
             push(@implContent, "        throwVMTypeError(exec);\n");
@@ -2478,10 +2488,12 @@ sub GenerateImplementation
                 push(@implContent, "    JSValue value = JSValue::decode(encodedValue);\n");
                 push(@implContent, "    UNUSED_PARAM(exec);\n");
                 if (!$attribute->isStatic) {
-                    if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
-                        push(@implContent, "    ${className}* castedThis = to${className}(JSValue::decode(thisValue));\n");
-                    } else {
-                        push(@implContent, "    ${className}* castedThis = jsDynamicCast<${className}*>(JSValue::decode(thisValue));\n");
+                    push(@implContent, "    ${className}* castedThis = jsDynamicCast<${className}*>(JSValue::decode(thisValue));\n");
+                    if ($interfaceName eq "DOMWindow") {
+                        push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
+                        push(@implContent, "        if (JSDOMWindowShell* shell = jsDynamicCast<JSDOMWindowShell*>(JSValue::decode(thisValue)))\n");
+                        push(@implContent, "            castedThis = shell->window();\n");
+                        push(@implContent, "    }\n");
                     }
                     push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
                     push(@implContent, "        throwVMTypeError(exec, makeDOMBindingsTypeErrorString(\"The \", \"$interfaceName\", \".\", \"$name\", \" setter can only be used on instances of \", \"$interfaceName\"));\n");
@@ -2706,8 +2718,8 @@ sub GenerateImplementation
                     GenerateImplementationFunctionCall($function, $functionString, "    ", $svgPropertyType, $interfaceName);
                 }
             } else {
-                if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
-                    push(@implContent, "    $className* castedThis = to${className}(exec->hostThisValue().toThis(exec, NotStrictMode));\n");
+                if ($interfaceName eq "DOMWindow") {
+                    push(@implContent, "    $className* castedThis = toJSDOMWindow(exec->hostThisValue().toThis(exec, NotStrictMode));\n");
                     push(@implContent, "    if (UNLIKELY(!castedThis))\n");
                     push(@implContent, "        return throwVMTypeError(exec);\n");
                 } elsif ($interface->extendedAttributes->{"WorkerGlobalScope"}) {

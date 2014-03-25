@@ -30,7 +30,6 @@
     CustomDeleteProperty,
     CustomGetOwnPropertySlot,
     CustomEnumerateProperty,
-    CustomProxyToJSObject,
     JSCustomMarkFunction,
     JSCustomToNativeObject,
     CustomPutFunction,
