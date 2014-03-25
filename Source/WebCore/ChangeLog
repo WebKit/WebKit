@@ -1,3 +1,27 @@
+2014-03-25  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] Volume slider shows below the panel with videos in certain cases
+        https://bugs.webkit.org/show_bug.cgi?id=130608
+
+        Reviewed by Jer Noble.
+
+        We need to delay the moment we check if the volume slider shows up
+        or down. If the video was not visible, the offsets were 0 and it
+        was forced to be shown below the panel.
+
+        Test: media/video-initially-hidden-volume-slider-up.html
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.createControls): Moved volumebox pseudo from
+        the subclass. The test checks for it and it would fail in Mac.
+        * Modules/mediacontrols/mediaControlsGtk.js:
+        (ControllerGtk.prototype.createControls): Moved volumebox pseudo
+        to the superclass.
+        (ControllerGtk.prototype.handleMuteButtonMouseOver): Check if
+        volume slider should show up or down.
+        (ControllerGtk.prototype.updateReadyState): Removed check for
+        volume slider direction.
+
 2014-03-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Enable WebVTT Regions on Windows.

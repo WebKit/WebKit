@@ -1,3 +1,13 @@
+2014-03-25  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] Volume slider shows below the panel with videos in certain cases
+        https://bugs.webkit.org/show_bug.cgi?id=130608
+
+        Reviewed by Jer Noble.
+
+        * media/video-initially-hidden-volume-slider-up-expected.txt: Added.
+        * media/video-initially-hidden-volume-slider-up.html: Added.
+
 2014-03-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Enable WebVTT Regions on Windows.

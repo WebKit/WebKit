@@ -26,7 +26,6 @@ ControllerGtk.prototype = {
         this.controls.currentTime.classList.add(this.ClassNames.hidden);
         this.controls.remainingTime.classList.add(this.ClassNames.hidden);
 
-        this.controls.volumeBox.setAttribute('pseudo', '-webkit-media-controls-volume-slider-container');
         this.controls.volumeBox.classList.add(this.ClassNames.hiding);
 
         this.listenFor(this.controls.muteBox, 'mouseout', this.handleVolumeBoxMouseOut);
@@ -98,6 +97,13 @@ ControllerGtk.prototype = {
 
     handleMuteButtonMouseOver: function(event)
     {
+        if (this.video.offsetTop + this.controls.enclosure.offsetTop < 105) {
+            this.controls.volumeBox.classList.add(this.ClassNames.down);
+            this.controls.panel.classList.add(this.ClassNames.down);
+        } else {
+            this.controls.volumeBox.classList.remove(this.ClassNames.down);
+            this.controls.panel.classList.remove(this.ClassNames.down);
+        }
         this.controls.volumeBox.classList.remove(this.ClassNames.hiding);
     },
 
@@ -117,13 +123,6 @@ ControllerGtk.prototype = {
             this.controls.fullscreenButton.classList.remove(this.ClassNames.hidden);
         else
             this.controls.fullscreenButton.classList.add(this.ClassNames.hidden);
-        if (this.video.offsetTop + this.controls.enclosure.offsetTop < 105) {
-            this.controls.volumeBox.classList.add(this.ClassNames.down);
-            this.controls.panel.classList.add(this.ClassNames.down);
-        } else {
-            this.controls.volumeBox.classList.remove(this.ClassNames.down);
-            this.controls.panel.classList.remove(this.ClassNames.down);
-        }
         this.updateVolume();
     },
 

@@ -367,6 +367,7 @@ Controller.prototype = {
         this.listenFor(maxButton, 'click', this.handleMaxButtonClicked);
 
         var volumeBox = this.controls.volumeBox = document.createElement('div');
+        volumeBox.setAttribute('pseudo', '-webkit-media-controls-volume-slider-container');
         volumeBox.classList.add(this.ClassNames.volumeBox);
 
         var volume = this.controls.volume = document.createElement('input');

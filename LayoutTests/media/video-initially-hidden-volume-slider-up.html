@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <title>Test that volume slider is rendered up. </title>
+
+    <head>
+
+    <script src=video-test.js></script>
+    <script src=media-file.js></script>
+    <script src=media-controls.js></script>
+
+    <script>
+        var video;
+
+        var muteButtonCoordinates;
+        var volumeSliderCoordinates;
+
+        function test()
+        {
+            video.style.display = "block";
+
+            // Test that the volume slider is rendered correctly if video is brought to foreground
+
+            if (window.eventSender) {
+                // Move mouse on top of the mute button
+
+                try {
+                    muteButtonCoordinates = mediaControlsButtonCoordinates(video, "mute-button");
+                } catch (exception) {
+                    consoleWrite("ERROR: unable to get controls coordinates.");
+
+                    failTest();
+                    return;
+                }
+
+                eventSender.mouseMoveTo(muteButtonCoordinates[0], muteButtonCoordinates[1]);
+            }
+
+            // Ensure layout is done after mouse move
+            document.body.offsetTop;
+            try {
+                volumeSliderCoordinates = mediaControlsButtonCoordinates(video, "volume-slider-container");
+            } catch (exception) {
+                consoleWrite("ERROR: unable to get controls coordinates.");
+
+                failTest();
+                return;
+            }
+
+            // The volume slider should not be positioned below the panel
+            testExpected("volumeSliderCoordinates[0] <= muteButtonCoordinates[0] && volumeSliderCoordinates[1] <= muteButtonCoordinates[1]", true);
+
+            endTest();
+        }
+
+        function initialize()
+        {
+            internals.suspendAnimations();
+            video = document.getElementsByTagName("video")[0];
+            video.src = findMediaFile("video", "content/test");
+        }
+    </script>
+    </head>
+
+    <body onload="initialize();">
+      <video controls oncanplay="test();" style="display: none;"></video>
+    </body>
+</html>
