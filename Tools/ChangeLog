@@ -1,3 +1,11 @@
+2014-03-25  Andy Estes  <aestes@apple.com>
+
+        Add some debug logging to an API test that's failing on Mountain Lion.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Download.mm:
+        (-[DownloadDelegate _download:didReceiveResponse:]):
+        (-[DownloadDelegate _downloadDidFinish:]):
+
 2014-03-25  Anders Carlsson  <andersca@apple.com>
 
         Add goBack: and goForward: IBActions and move stopLoading: to a new WKIBActions category on WKWebView
