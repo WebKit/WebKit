@@ -26,7 +26,6 @@
 
 [
     GlobalContext=WorkerGlobalScope,
-    CustomProxyToJSObject,
     JSCustomMarkFunction,
     JSCustomGetOwnPropertySlotAndDescriptor,
     EventTarget,

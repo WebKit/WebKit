@@ -891,8 +891,10 @@ static void globalObject_initialize(JSContextRef context, JSObjectRef object)
     // Ensure that an execution context is passed in
     ASSERT(context);
 
+    // Ensure that the global object is set to the object that we were passed
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
     ASSERT(globalObject);
+    ASSERT(object == globalObject);
 
     // Ensure that the standard global properties have been set on the global object
     JSStringRef array = JSStringCreateWithUTF8CString("Array");

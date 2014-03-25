@@ -132,7 +132,7 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, Deprec
     JSLockHolder lock(exec);
 
     JSValue evaluationException;
-    JSC::evaluate(exec, sourceCode.jsSourceCode(), m_workerGlobalScopeWrapper->globalThis(), &evaluationException);
+    JSC::evaluate(exec, sourceCode.jsSourceCode(), m_workerGlobalScopeWrapper.get(), &evaluationException);
 
     if ((evaluationException && isTerminatedExecutionException(evaluationException)) ||  m_workerGlobalScopeWrapper->vm().watchdog.didFire()) {
         forbidExecution();

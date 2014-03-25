@@ -197,10 +197,11 @@ void JSGlobalObject::setGlobalThis(VM& vm, JSObject* globalThis)
     m_globalThis.set(vm, this, globalThis);
 }
 
-void JSGlobalObject::init()
+void JSGlobalObject::init(JSObject* thisValue)
 {
     ASSERT(vm().currentThreadIsHoldingAPILock());
 
+    setGlobalThis(vm(), thisValue);
     JSGlobalObject::globalExec()->init(0, 0, this, CallFrame::noCaller(), 0, 0);
 
     m_debugger = 0;

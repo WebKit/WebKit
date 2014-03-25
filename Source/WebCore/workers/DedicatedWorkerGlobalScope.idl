@@ -30,7 +30,6 @@
 
 [
     GlobalContext=DedicatedWorkerGlobalScope,
-    CustomProxyToJSObject,
     JSGenerateToNativeObject,
     JSNoStaticTables,
 ] interface DedicatedWorkerGlobalScope : WorkerGlobalScope {
