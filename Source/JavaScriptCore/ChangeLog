@@ -1,3 +1,19 @@
+2014-03-25  Oliver Hunt  <oliver@apple.com>
+
+        AST incorrectly conflates readable and writable locations
+        https://bugs.webkit.org/show_bug.cgi?id=130734
+
+        Reviewed by Filip Pizlo.
+
+        We need to distinguish between "locations" that are valid for reading
+        and writing, vs those that may only be written.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::emitBytecode):
+        (JSC::ForOfNode::emitBytecode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isAssignmentLocation):
+
 2014-03-24  Oliver Hunt  <oliver@apple.com>
 
         ASSERTION FAILED in Parser: dst != localReg

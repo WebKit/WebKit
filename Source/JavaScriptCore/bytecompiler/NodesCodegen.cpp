@@ -1805,7 +1805,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
 
-    if (!m_lexpr->isLocation()) {
+    if (!m_lexpr->isAssignmentLocation()) {
         emitThrowReferenceError(generator, "Left side of for-in statement is not a reference.");
         return;
     }
@@ -1901,7 +1901,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 // ------------------------------ ForOfNode ------------------------------------
 void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    if (!m_lexpr->isLocation()) {
+    if (!m_lexpr->isAssignmentLocation()) {
         emitThrowReferenceError(generator, "Left side of for-of statement is not a reference.");
         return;
     }

@@ -152,6 +152,7 @@ namespace JSC {
         virtual bool isPure(BytecodeGenerator&) const { return false; }        
         virtual bool isConstant() const { return false; }
         virtual bool isLocation() const { return false; }
+        virtual bool isAssignmentLocation() const { return isLocation(); }
         virtual bool isResolveNode() const { return false; }
         virtual bool isBracketAccessorNode() const { return false; }
         virtual bool isDotAccessorNode() const { return false; }
@@ -1676,7 +1677,7 @@ namespace JSC {
         using ParserArenaDeletable::operator new;
 
     private:
-        virtual bool isLocation() const override { return true; }
+        virtual bool isAssignmentLocation() const override { return true; }
         virtual bool isDeconstructionNode() const override { return true; }
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 

@@ -1,3 +1,15 @@
+2014-03-25  Oliver Hunt  <oliver@apple.com>
+
+        AST incorrectly conflates readable and writable locations
+        https://bugs.webkit.org/show_bug.cgi?id=130734
+
+        Reviewed by Filip Pizlo.
+
+        More tests
+
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+
 2014-03-24  Oliver Hunt  <oliver@apple.com>
 
         ASSERTION FAILED in Parser: dst != localReg
