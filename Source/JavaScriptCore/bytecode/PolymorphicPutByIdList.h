@@ -152,7 +152,7 @@ public:
 
     PutPropertySlot::PutValueFunc customSetter() const { ASSERT(isCustom()); return m_customSetter; }
 
-    bool visitWeak() const;
+    bool visitWeak(RepatchBuffer&) const;
     
 private:
     friend class CodeBlock;
@@ -190,7 +190,7 @@ public:
     
     PutKind kind() const { return m_kind; }
     
-    bool visitWeak() const;
+    bool visitWeak(RepatchBuffer&) const;
     
 private:
     friend class CodeBlock;

@@ -88,7 +88,7 @@ struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
     CodeOrigin codeOrigin;
 
     bool isLinked() { return stub || callee; }
-    void unlink(VM&, RepatchBuffer&);
+    void unlink(RepatchBuffer&);
 
     bool seenOnce()
     {
@@ -99,6 +99,8 @@ struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
     {
         hasSeenShouldRepatch = true;
     }
+    
+    void visitWeak(RepatchBuffer&);
     
     static CallLinkInfo& dummy();
 };

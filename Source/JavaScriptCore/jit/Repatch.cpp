@@ -355,8 +355,8 @@ static void generateGetByIdStub(
         patchBuffer.link(handlerCall, lookupExceptionHandler);
     }
     
-    stubRoutine = FINALIZE_CODE_FOR_STUB(
-        exec->codeBlock(), patchBuffer,
+    stubRoutine = FINALIZE_CODE_FOR_GC_AWARE_STUB(
+        exec->codeBlock(), patchBuffer, true, nullptr,
         ("Get access stub for %s, return point %p",
             toCString(*exec->codeBlock()).data(), successLabel.executableAddress()));
 }
@@ -966,9 +966,11 @@ static void emitCustomSetterStub(ExecState* exec, const PutPropertySlot& slot,
     patchBuffer.link(setterCall, FunctionPtr(slot.customSetter()));
     patchBuffer.link(handlerCall, lookupExceptionHandler);
 
-    stubRoutine = createJITStubRoutine(
-        FINALIZE_CODE_FOR(exec->codeBlock(), patchBuffer, ("PutById custom setter stub for %s, return point %p",
-        toCString(*exec->codeBlock()).data(), stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone).executableAddress())), *vm, exec->codeBlock()->ownerExecutable(), structure);
+    stubRoutine = FINALIZE_CODE_FOR_GC_AWARE_STUB(
+        exec->codeBlock(), patchBuffer, true, nullptr,
+        ("PutById custom setter stub for %s, return point %p",
+            toCString(*exec->codeBlock()).data(),
+            stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone).executableAddress()));
 }
 
 

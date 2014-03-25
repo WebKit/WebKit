@@ -2241,39 +2241,14 @@ void CodeBlock::finalizeUnconditionally()
     // Handle inline caches.
     if (!!jitCode()) {
         RepatchBuffer repatchBuffer(this);
-        for (auto iter = callLinkInfosBegin(); !!iter; ++iter) {
-            CallLinkInfo& info = **iter;
-            if (info.isLinked()) {
-                if (ClosureCallStubRoutine* stub = info.stub.get()) {
-                    if (!Heap::isMarked(stub->structure())
-                        || !Heap::isMarked(stub->executable())) {
-                        if (Options::verboseOSR()) {
-                            dataLog(
-                                "Clearing closure call from ", *this, " to ",
-                                stub->executable()->hashFor(info.specializationKind()),
-                                ", stub routine ", RawPointer(stub), ".\n");
-                        }
-                        info.unlink(*m_vm, repatchBuffer);
-                    }
-                } else if (!Heap::isMarked(info.callee.get())) {
-                    if (Options::verboseOSR()) {
-                        dataLog(
-                            "Clearing call from ", *this, " to ",
-                            RawPointer(info.callee.get()), " (",
-                            info.callee.get()->executable()->hashFor(info.specializationKind()),
-                            ").\n");
-                    }
-                    info.unlink(*m_vm, repatchBuffer);
-                }
-            }
-            if (!!info.lastSeenCallee
-                && !Heap::isMarked(info.lastSeenCallee.get()))
-                info.lastSeenCallee.clear();
-        }
+        
+        for (auto iter = callLinkInfosBegin(); !!iter; ++iter)
+            (*iter)->visitWeak(repatchBuffer);
+
         for (Bag<StructureStubInfo>::iterator iter = m_stubInfos.begin(); !!iter; ++iter) {
             StructureStubInfo& stubInfo = **iter;
             
-            if (stubInfo.visitWeakReferences())
+            if (stubInfo.visitWeakReferences(repatchBuffer))
                 continue;
             
             resetStubDuringGCInternal(repatchBuffer, stubInfo);
@@ -2639,7 +2614,7 @@ void CodeBlock::unlinkCalls()
         CallLinkInfo& info = **iter;
         if (!info.isLinked())
             continue;
-        info.unlink(*m_vm, repatchBuffer);
+        info.unlink(repatchBuffer);
     }
 }
 
@@ -2661,7 +2636,7 @@ void CodeBlock::unlinkIncomingCalls()
         return;
     RepatchBuffer repatchBuffer(this);
     while (m_incomingCalls.begin() != m_incomingCalls.end())
-        m_incomingCalls.begin()->unlink(*m_vm, repatchBuffer);
+        m_incomingCalls.begin()->unlink(repatchBuffer);
 #endif // ENABLE(JIT)
 }
 

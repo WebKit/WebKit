@@ -83,11 +83,13 @@ GetByIdAccess GetByIdAccess::fromStructureStubInfo(StructureStubInfo& stubInfo)
     return result;
 }
 
-bool GetByIdAccess::visitWeak() const
+bool GetByIdAccess::visitWeak(RepatchBuffer& repatchBuffer) const
 {
     if (m_structure && !Heap::isMarked(m_structure.get()))
         return false;
     if (m_chain && !Heap::isMarked(m_chain.get()))
+        return false;
+    if (!m_stubRoutine->visitWeak(repatchBuffer))
         return false;
     return true;
 }
@@ -156,10 +158,10 @@ bool PolymorphicGetByIdList::didSelfPatching() const
     return false;
 }
 
-bool PolymorphicGetByIdList::visitWeak() const
+bool PolymorphicGetByIdList::visitWeak(RepatchBuffer& repatchBuffer) const
 {
     for (unsigned i = size(); i--;) {
-        if (!at(i).visitWeak())
+        if (!at(i).visitWeak(repatchBuffer))
             return false;
     }
     return true;

@@ -37,11 +37,10 @@
 namespace JSC {
 
 GCAwareJITStubRoutine::GCAwareJITStubRoutine(
-    const MacroAssemblerCodeRef& code, VM& vm, bool isClosureCall)
+    const MacroAssemblerCodeRef& code, VM& vm)
     : JITStubRoutine(code)
     , m_mayBeExecuting(false)
     , m_isJettisoned(false)
-    , m_isClosureCall(isClosureCall)
 {
     vm.heap.m_jitStubRoutines.add(this);
 }
@@ -98,25 +97,17 @@ void MarkingGCAwareJITStubRoutineWithOneObject::markRequiredObjectsInternal(Slot
 PassRefPtr<JITStubRoutine> createJITStubRoutine(
     const MacroAssemblerCodeRef& code,
     VM& vm,
-    const JSCell*,
-    bool makesCalls)
-{
-    if (!makesCalls)
-        return adoptRef(new JITStubRoutine(code));
-
-    return static_pointer_cast<JITStubRoutine>(
-        adoptRef(new GCAwareJITStubRoutine(code, vm)));
-}
-
-PassRefPtr<JITStubRoutine> createJITStubRoutine(
-    const MacroAssemblerCodeRef& code,
-    VM& vm,
     const JSCell* owner,
     bool makesCalls,
     JSCell* object)
 {
     if (!makesCalls)
         return adoptRef(new JITStubRoutine(code));
+    
+    if (!object) {
+        return static_pointer_cast<JITStubRoutine>(
+            adoptRef(new GCAwareJITStubRoutine(code, vm)));
+    }
     
     return static_pointer_cast<JITStubRoutine>(
         adoptRef(new MarkingGCAwareJITStubRoutineWithOneObject(code, vm, owner, object)));

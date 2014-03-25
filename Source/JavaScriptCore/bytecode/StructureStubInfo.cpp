@@ -61,7 +61,7 @@ void StructureStubInfo::deref()
     }
 }
 
-bool StructureStubInfo::visitWeakReferences()
+bool StructureStubInfo::visitWeakReferences(RepatchBuffer& repatchBuffer)
 {
     switch (accessType) {
     case access_get_by_id_self:
@@ -74,7 +74,7 @@ bool StructureStubInfo::visitWeakReferences()
             return false;
         break;
     case access_get_by_id_list: {
-        if (!u.getByIdList.list->visitWeak())
+        if (!u.getByIdList.list->visitWeak(repatchBuffer))
             return false;
         break;
     }
@@ -90,7 +90,7 @@ bool StructureStubInfo::visitWeakReferences()
             return false;
         break;
     case access_put_by_id_list:
-        if (!u.putByIdList.list->visitWeak())
+        if (!u.putByIdList.list->visitWeak(repatchBuffer))
             return false;
         break;
     case access_in_list: {

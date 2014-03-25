@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,7 @@ class JITStubRoutineSet;
 // list which does not get reclaimed all at once).
 class GCAwareJITStubRoutine : public JITStubRoutine {
 public:
-    GCAwareJITStubRoutine(const MacroAssemblerCodeRef&, VM&, bool isClosureCall = false);
+    GCAwareJITStubRoutine(const MacroAssemblerCodeRef&, VM&);
     virtual ~GCAwareJITStubRoutine();
     
     void markRequiredObjects(SlotVisitor& visitor)
@@ -61,8 +61,6 @@ public:
     }
     
     void deleteFromGC();
-    
-    bool isClosureCall() const { return m_isClosureCall; }
     
 protected:
     virtual void observeZeroRefCount() override;
@@ -74,7 +72,6 @@ private:
 
     bool m_mayBeExecuting;
     bool m_isJettisoned;
-    bool m_isClosureCall;
 };
 
 // Use this if you want to mark one additional object during GC if your stub
@@ -112,10 +109,13 @@ private:
 // way.
 
 PassRefPtr<JITStubRoutine> createJITStubRoutine(
-    const MacroAssemblerCodeRef&, VM&, const JSCell* owner, bool makesCalls);
-PassRefPtr<JITStubRoutine> createJITStubRoutine(
     const MacroAssemblerCodeRef&, VM&, const JSCell* owner, bool makesCalls,
-    JSCell*);
+    JSCell* = 0);
+
+// Helper for the creation of simple stub routines that need no help from the GC. Note
+// that codeBlock gets "executed" more than once.
+#define FINALIZE_CODE_FOR_GC_AWARE_STUB(codeBlock, patchBuffer, makesCalls, cell, dataLogFArguments) \
+    (createJITStubRoutine(FINALIZE_CODE_FOR((codeBlock), (patchBuffer), dataLogFArguments), *(codeBlock)->vm(), (codeBlock)->ownerExecutable(), (makesCalls), (cell)))
 
 } // namespace JSC
 

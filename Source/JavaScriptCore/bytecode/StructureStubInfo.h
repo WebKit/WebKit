@@ -167,7 +167,15 @@ struct StructureStubInfo {
 
     void deref();
 
-    bool visitWeakReferences();
+    // Check if the stub has weak references that are dead. If there are dead ones that imply
+    // that the stub should be entirely reset, this should return false. If there are dead ones
+    // that can be handled internally by the stub and don't require a full reset, then this
+    // should reset them and return true. If there are no dead weak references, return true.
+    // If this method returns true it means that it has left the stub in a state where all
+    // outgoing GC pointers are known to point to currently marked objects; this method is
+    // allowed to accomplish this by either clearing those pointers somehow or by proving that
+    // they have already been marked. It is not allowed to mark new objects.
+    bool visitWeakReferences(RepatchBuffer&);
         
     bool seenOnce()
     {

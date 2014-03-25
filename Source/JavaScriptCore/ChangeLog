@@ -1,3 +1,43 @@
+2014-03-24  Filip Pizlo  <fpizlo@apple.com>
+
+        More scaffolding for a stub routine to have a stub recursively embedded inside it
+        https://bugs.webkit.org/show_bug.cgi?id=130770
+
+        Reviewed by Oliver Hunt.
+
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::unlink): VM& argument is superfluous.
+        (JSC::CallLinkInfo::visitWeak): Factor this out, it used to be in CodeBlock::finalizeUnconditionally().
+        * bytecode/CallLinkInfo.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeUnconditionally): Factor out some functionality into CallLinkInfo::visitWeak(), and make sure we pass RepatchBuffer& in more places.
+        (JSC::CodeBlock::unlinkCalls):
+        (JSC::CodeBlock::unlinkIncomingCalls):
+        * bytecode/PolymorphicGetByIdList.cpp: Pass RepatchBuffer& through and call JITStubRoutine::visitWeak().
+        (JSC::GetByIdAccess::visitWeak):
+        (JSC::PolymorphicGetByIdList::visitWeak):
+        * bytecode/PolymorphicGetByIdList.h:
+        * bytecode/PolymorphicPutByIdList.cpp: Pass RepatchBuffer& through and call JITStubRoutine::visitWeak().
+        (JSC::PutByIdAccess::visitWeak):
+        (JSC::PolymorphicPutByIdList::visitWeak):
+        * bytecode/PolymorphicPutByIdList.h:
+        * bytecode/StructureStubInfo.cpp: Pass RepatchBuffer& through.
+        (JSC::StructureStubInfo::visitWeakReferences):
+        * bytecode/StructureStubInfo.h:
+        * jit/ClosureCallStubRoutine.cpp: isClosureCall is unused.
+        (JSC::ClosureCallStubRoutine::ClosureCallStubRoutine):
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::GCAwareJITStubRoutine::GCAwareJITStubRoutine):
+        (JSC::createJITStubRoutine):
+        * jit/GCAwareJITStubRoutine.h: Make it easier to construct one of these.
+        (JSC::GCAwareJITStubRoutine::isClosureCall): Deleted.
+        * jit/JITStubRoutine.cpp:
+        (JSC::JITStubRoutine::visitWeak): This will allow future JITStubRoutine subclasses to have stubs recursively embedded inside them.
+        * jit/JITStubRoutine.h:
+        * jit/Repatch.cpp:
+        (JSC::generateGetByIdStub): Fix a possible GC bug where we weren't making the stub routine GC aware.
+        (JSC::emitCustomSetterStub): Clean up some code.
+
 2014-03-24  Geoffrey Garen  <ggaren@apple.com>
 
         Safari crashes in JavaScriptCore: JSC::JSObject::growOutOfLineStorage

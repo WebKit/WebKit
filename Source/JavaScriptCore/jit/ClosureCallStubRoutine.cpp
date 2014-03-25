@@ -40,7 +40,7 @@ namespace JSC {
 ClosureCallStubRoutine::ClosureCallStubRoutine(
     const MacroAssemblerCodeRef& code, VM& vm, const JSCell* owner,
     Structure* structure, ExecutableBase* executable, const CodeOrigin& codeOrigin)
-    : GCAwareJITStubRoutine(code, vm, true)
+    : GCAwareJITStubRoutine(code, vm)
     , m_structure(vm, owner, structure)
     , m_executable(vm, owner, executable)
     , m_codeOrigin(codeOrigin)

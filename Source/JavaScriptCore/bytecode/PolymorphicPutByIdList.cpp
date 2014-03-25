@@ -62,7 +62,7 @@ PutByIdAccess PutByIdAccess::fromStructureStubInfo(StructureStubInfo& stubInfo)
     return result;
 }
 
-bool PutByIdAccess::visitWeak() const
+bool PutByIdAccess::visitWeak(RepatchBuffer& repatchBuffer) const
 {
     switch (m_type) {
     case Replace:
@@ -87,6 +87,8 @@ bool PutByIdAccess::visitWeak() const
         RELEASE_ASSERT_NOT_REACHED();
         return false;
     }
+    if (!m_stubRoutine->visitWeak(repatchBuffer))
+        return false;
     return true;
 }
 
@@ -139,10 +141,10 @@ void PolymorphicPutByIdList::addAccess(const PutByIdAccess& putByIdAccess)
     m_list.last() = putByIdAccess;
 }
 
-bool PolymorphicPutByIdList::visitWeak() const
+bool PolymorphicPutByIdList::visitWeak(RepatchBuffer& repatchBuffer) const
 {
     for (unsigned i = 0; i < size(); ++i) {
-        if (!at(i).visitWeak())
+        if (!at(i).visitWeak(repatchBuffer))
             return false;
     }
     return true;

@@ -35,7 +35,7 @@
 #if ENABLE(JIT)
 namespace JSC {
 
-void CallLinkInfo::unlink(VM& vm, RepatchBuffer& repatchBuffer)
+void CallLinkInfo::unlink(RepatchBuffer& repatchBuffer)
 {
     ASSERT(isLinked());
     
@@ -45,7 +45,7 @@ void CallLinkInfo::unlink(VM& vm, RepatchBuffer& repatchBuffer)
     repatchBuffer.revertJumpReplacementToBranchPtrWithPatch(RepatchBuffer::startOfBranchPtrWithPatchOnRegister(hotPathBegin), static_cast<MacroAssembler::RegisterID>(calleeGPR), 0);
     repatchBuffer.relink(
         callReturnLocation,
-        vm.getCTIStub(linkThunkGeneratorFor(
+        repatchBuffer.codeBlock()->vm()->getCTIStub(linkThunkGeneratorFor(
             callType == Construct ? CodeForConstruct : CodeForCall,
             isFTL ? MustPreserveRegisters : RegisterPreservationNotRequired)).code());
     hasSeenShouldRepatch = false;
@@ -55,6 +55,35 @@ void CallLinkInfo::unlink(VM& vm, RepatchBuffer& repatchBuffer)
     // It will be on a list if the callee has a code block.
     if (isOnList())
         remove();
+}
+
+void CallLinkInfo::visitWeak(RepatchBuffer& repatchBuffer)
+{
+    if (isLinked()) {
+        if (stub) {
+            if (!Heap::isMarked(stub->structure())
+                || !Heap::isMarked(stub->executable())) {
+                if (Options::verboseOSR()) {
+                    dataLog(
+                        "Clearing closure call from ", *repatchBuffer.codeBlock(), " to ",
+                        stub->executable()->hashFor(specializationKind()),
+                        ", stub routine ", RawPointer(stub.get()), ".\n");
+                }
+                unlink(repatchBuffer);
+            }
+        } else if (!Heap::isMarked(callee.get())) {
+            if (Options::verboseOSR()) {
+                dataLog(
+                    "Clearing call from ", *repatchBuffer.codeBlock(), " to ",
+                    RawPointer(callee.get()), " (",
+                    callee.get()->executable()->hashFor(specializationKind()),
+                    ").\n");
+            }
+            unlink(repatchBuffer);
+        }
+    }
+    if (!!lastSeenCallee && !Heap::isMarked(lastSeenCallee.get()))
+        lastSeenCallee.clear();
 }
 
 CallLinkInfo& CallLinkInfo::dummy()
