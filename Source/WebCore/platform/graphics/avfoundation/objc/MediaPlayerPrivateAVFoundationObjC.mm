@@ -48,6 +48,7 @@
 #import "PlatformTimeRanges.h"
 #import "SecurityOrigin.h"
 #import "SoftLinking.h"
+#import "TextTrackRepresentation.h"
 #import "UUID.h"
 #import "VideoTrackPrivateAVFObjC.h"
 #import "WebCoreAVFResourceLoader.h"
@@ -511,7 +512,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
 #if PLATFORM(IOS)
         if (m_videoFullscreenLayer) {
             [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
-            [m_videoFullscreenLayer addSublayer:m_videoLayer.get()];
+            [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
         }
 #endif
         player()->mediaPlayerClient()->mediaPlayerRenderingModeChanged(player());
@@ -799,20 +800,33 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* 
 
     m_videoFullscreenLayer = videoFullscreenLayer;
 
-    if (!m_videoFullscreenLayer || !m_videoLayer)
-        return;
+    CGRect frame = CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height());
 
-    [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
-    [m_videoFullscreenLayer addSublayer:m_videoLayer.get()];
+    if (m_videoFullscreenLayer && m_videoLayer) {
+        [m_videoLayer setFrame:frame];
+        [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
+    }
+
+    if (m_videoFullscreenLayer && m_textTrackRepresentationLayer) {
+        CGRect textFrame = m_videoLayer ? [m_videoLayer videoRect] : frame;
+        [m_textTrackRepresentationLayer setFrame:textFrame];
+        [m_videoFullscreenLayer addSublayer:m_textTrackRepresentationLayer.get()];
+    }
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame(FloatRect frame)
 {
     m_videoFullscreenFrame = frame;
-    if (!m_videoFullscreenLayer || !m_videoLayer)
+    if (!m_videoFullscreenLayer)
         return;
-    
-    [m_videoLayer setFrame:CGRectMake(0, 0, frame.width(), frame.height())];
+
+    if (m_videoLayer)
+        [m_videoLayer setFrame:CGRectMake(0, 0, frame.width(), frame.height())];
+
+    if (m_textTrackRepresentationLayer) {
+        CGRect textFrame = m_videoLayer ? [m_videoLayer videoRect] : static_cast<CGRect>(frame);
+        [m_textTrackRepresentationLayer setFrame:textFrame];
+    }
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenGravity(MediaPlayer::VideoGravity gravity)
@@ -1465,6 +1479,39 @@ void MediaPlayerPrivateAVFoundationObjC::updateAudioTracks()
 void MediaPlayerPrivateAVFoundationObjC::updateVideoTracks()
 {
     determineChangedTracksFromNewTracksAndOldItems(m_cachedTracks.get(), AVMediaTypeVideo, m_videoTracks, &VideoTrackPrivateAVFObjC::create, player(), &MediaPlayer::removeVideoTrack, &MediaPlayer::addVideoTrack);
+}
+
+bool MediaPlayerPrivateAVFoundationObjC::requiresTextTrackRepresentation() const
+{
+#if PLATFORM(IOS)
+    if (m_videoFullscreenLayer)
+        return true;
+#endif
+    return false;
+}
+
+void MediaPlayerPrivateAVFoundationObjC::setTextTrackRepresentation(TextTrackRepresentation* representation)
+{
+#if PLATFORM(IOS)
+    PlatformLayer* representationLayer = representation ? representation->platformLayer() : nil;
+    if (representationLayer == m_textTrackRepresentationLayer)
+        return;
+
+    if (m_textTrackRepresentationLayer)
+        [m_textTrackRepresentationLayer removeFromSuperlayer];
+
+    m_textTrackRepresentationLayer = representationLayer;
+
+    if (m_videoFullscreenLayer && m_textTrackRepresentationLayer) {
+        CGRect textFrame = m_videoLayer ? [m_videoLayer videoRect] : CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height());
+
+        [m_textTrackRepresentationLayer setFrame:textFrame];
+        [m_videoFullscreenLayer addSublayer:m_textTrackRepresentationLayer.get()];
+    }
+
+#else
+    UNUSED_PARAM(representation);
+#endif
 }
 #endif // ENABLE(VIDEO_TRACK)
 

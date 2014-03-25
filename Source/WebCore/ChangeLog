@@ -1,3 +1,23 @@
+2014-03-21  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Enable caption support in full screen.
+        https://bugs.webkit.org/show_bug.cgi?id=130603
+
+        Reviewed by Eric Carlson.
+
+        Add TextTrackRepresentation support to MediaPlayerPrivateAVFoundationObjC.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer): Add the m_textTrackRepresenationLayer if present.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::requiresTextTrackRepresentation): True, if a m_videoFullscreenLayer is present.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setTextTrackRepresentation): Remove the old, and add the new m_textTrackRepresenationLayer.
+
+        Make the text track container a stacking context for painting purposes.
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (video::-webkit-media-text-track-container):
+
 2014-03-25  Brian Burg  <bburg@apple.com>
 
         Web Replay: resource unique identifiers should be unique-per-frame, not globally

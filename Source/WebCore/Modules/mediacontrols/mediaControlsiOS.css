@@ -295,6 +295,7 @@ video::-webkit-media-text-track-container {
     width: 100%;
     overflow: hidden;
     padding-bottom: 5px;
+    z-index: 0;
 
     text-align: center;
     color: rgba(255, 255, 255, 1);

@@ -190,7 +190,12 @@ private:
     virtual void updateVideoLayerGravity() override;
 
     virtual bool hasSingleSecurityOrigin() const;
-    
+
+#if ENABLE(VIDEO_TRACK)
+    virtual bool requiresTextTrackRepresentation() const override;
+    virtual void setTextTrackRepresentation(TextTrackRepresentation*) override;
+#endif
+
     void createImageGenerator();
     void destroyImageGenerator();
     RetainPtr<CGImageRef> createImageForTimeInRect(float, const IntRect&);
@@ -254,6 +259,7 @@ private:
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     FloatRect m_videoFullscreenFrame;
     MediaPlayer::VideoGravity m_videoFullscreenGravity;
+    RetainPtr<PlatformLayer> m_textTrackRepresentationLayer;
 #endif
     RetainPtr<WebCoreAVFMovieObserver> m_objcObserver;
     RetainPtr<id> m_timeObserver;
