@@ -1,5 +1,23 @@
 2014-03-25  Anders Carlsson  <andersca@apple.com>
 
+        Pass the source frame to the CreateNewPage message
+        https://bugs.webkit.org/show_bug.cgi?id=130752
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::createNewPage):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createNewPage):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow):
+
+2014-03-25  Anders Carlsson  <andersca@apple.com>
+
         Add a WebFrame::fromCoreFrame static member function and use it where possible
         https://bugs.webkit.org/show_bug.cgi?id=130744
 

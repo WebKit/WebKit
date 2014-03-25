@@ -203,13 +203,13 @@ Page* WebChromeClient::createWindow(Frame* frame, const FrameLoadRequest& reques
 #if ENABLE(FULLSCREEN_API)
     if (frame->document() && frame->document()->webkitCurrentFullScreenElement())
         frame->document()->webkitCancelFullScreen();
-#else
-    UNUSED_PARAM(frame);
 #endif
+
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
 
     uint64_t newPageID = 0;
     WebPageCreationParameters parameters;
-    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(request.resourceRequest(), windowFeatures, modifiers, mouseButton), Messages::WebPageProxy::CreateNewPage::Reply(newPageID, parameters), m_page->pageID()))
+    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(webFrame->frameID(), request.resourceRequest(), windowFeatures, modifiers, mouseButton), Messages::WebPageProxy::CreateNewPage::Reply(newPageID, parameters), m_page->pageID()))
         return 0;
 
     if (!newPageID)

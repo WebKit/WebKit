@@ -62,7 +62,7 @@ class UIClient {
 public:
     virtual ~UIClient() { }
 
-    virtual PassRefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, WebKit::WebEvent::Modifiers, WebKit::WebMouseEvent::Button) { return nullptr; }
+    virtual PassRefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, WebKit::WebEvent::Modifiers, WebKit::WebMouseEvent::Button) { return nullptr; }
     virtual void showPage(WebKit::WebPageProxy*) { }
     virtual void close(WebKit::WebPageProxy*) { }
 

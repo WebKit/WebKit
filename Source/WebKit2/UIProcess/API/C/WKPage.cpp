@@ -1085,7 +1085,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         }
 
     private:
-        virtual PassRefPtr<WebPageProxy> createNewPage(WebPageProxy* page, const ResourceRequest& resourceRequest, const WindowFeatures& windowFeatures, WebEvent::Modifiers modifiers, WebMouseEvent::Button button) override
+        virtual PassRefPtr<WebPageProxy> createNewPage(WebPageProxy* page, WebFrameProxy*, const ResourceRequest& resourceRequest, const WindowFeatures& windowFeatures, WebEvent::Modifiers modifiers, WebMouseEvent::Button button) override
         {
             if (!m_client.base.version && !m_client.createNewPage_deprecatedForUseWithV0)
                 return 0;
