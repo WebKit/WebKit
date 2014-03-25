@@ -131,6 +131,8 @@ WK_API_CLASS
 
 @end
 
+#if !TARGET_OS_IPHONE
+
 @interface WKWebView (WKIBActions) <NSUserInterfaceValidations>
 
 - (IBAction)goBack:(id)sender;
@@ -139,5 +141,7 @@ WK_API_CLASS
 - (IBAction)stopLoading:(id)sender;
 
 @end
+
+#endif
 
 #endif

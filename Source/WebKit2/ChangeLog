@@ -1,5 +1,13 @@
 2014-03-25  Anders Carlsson  <andersca@apple.com>
 
+        Fix iOS build.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        Make WKIBActions OS X only for now.
+
+2014-03-25  Anders Carlsson  <andersca@apple.com>
+
         Begin stubbing out a WKWindowFeatures class
         https://bugs.webkit.org/show_bug.cgi?id=130733
 

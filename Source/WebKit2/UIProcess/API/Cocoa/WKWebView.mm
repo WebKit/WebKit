@@ -1176,6 +1176,8 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
 
 @end
 
+#if !TARGET_OS_IPHONE
+
 @implementation WKWebView (WKIBActions)
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
@@ -1212,5 +1214,7 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
 }
 
 @end
+
+#endif
 
 #endif // WK_API_ENABLED
