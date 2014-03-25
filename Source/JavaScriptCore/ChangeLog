@@ -1,3 +1,17 @@
+2014-03-24  Oliver Hunt  <oliver@apple.com>
+
+        ASSERTION FAILED in Parser: dst != localReg
+        https://bugs.webkit.org/show_bug.cgi?id=130710
+
+        Reviewed by Filip Pizlo.
+
+        Just make sure we don't try to write to a captured constant,
+        following the change to track captured variables separately.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PostfixNode::emitResolve):
+        (JSC::PrefixNode::emitResolve):
+
 2014-03-25  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove the autotools build

@@ -241,6 +241,19 @@ invalid("var a = :)");
 valid  ("var a = a in b in c instanceof d");
 invalid("var a = b ? c, b");
 invalid("const a = b : c");
+valid("const a = 7; eval(''); a++");
+valid("const a = 7; eval(''); a--");
+valid("const a = 7; with({}) a++");
+valid("const a = 7; with({}) a--");
+valid("const a = 7; eval(''); a+=1");
+valid("const a = 7; eval(''); a-=1");
+valid("const a = 7; with({}) a+=1");
+valid("const a = 7; with({}) a-=1");
+valid("const a = 7; eval(''); a=1");
+valid("const a = 7; eval(''); a=1");
+valid("const a = 7; with({}) a=1");
+valid("const a = 7; with({}) a=1");
+
 
 debug  ("for statement");
 

@@ -740,8 +740,7 @@ RegisterID* PostfixNode::emitResolve(BytecodeGenerator& generator, RegisterID* d
         if (local.isReadOnly()) {
             generator.emitReadOnlyExceptionIfNeeded();
             localReg = generator.emitMove(generator.tempDestination(dst), localReg);
-        }
-        if (local.isCaptured()) {
+        } else if (local.isCaptured()) {
             RefPtr<RegisterID> tempDst = generator.finalDestination(dst);
             ASSERT(dst != localReg);
             RefPtr<RegisterID> tempDstSrc = generator.newTemporary();
@@ -916,8 +915,7 @@ RegisterID* PrefixNode::emitResolve(BytecodeGenerator& generator, RegisterID* ds
         if (local.isReadOnly()) {
             generator.emitReadOnlyExceptionIfNeeded();
             localReg = generator.emitMove(generator.tempDestination(dst), localReg);
-        }
-        if (local.isCaptured()) {
+        } else if (local.isCaptured()) {
             RefPtr<RegisterID> tempDst = generator.tempDestination(dst);
             generator.emitMove(tempDst.get(), localReg);
             emitIncOrDec(generator, tempDst.get(), m_operator);
