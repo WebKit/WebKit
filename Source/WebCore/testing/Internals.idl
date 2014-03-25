@@ -286,4 +286,7 @@
     [Conditional=VIDEO] void applicationWillEnterBackground();
     [Conditional=VIDEO, RaisesException] void setMediaSessionRestrictions(DOMString mediaType, DOMString restrictions);
     [Conditional=VIDEO, RaisesException] void postRemoteControlCommand(DOMString command);
+    
+    [Conditional=VIDEO] void simulateSystemSleep();
+    [Conditional=VIDEO] void simulateSystemWake();
 };

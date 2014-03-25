@@ -29,6 +29,7 @@
 #include "MediaSession.h"
 #include "RemoteCommandListener.h"
 #include "Settings.h"
+#include "SystemSleepListener.h"
 #include <map>
 #include <wtf/Vector.h>
 
@@ -51,7 +52,7 @@ protected:
     MediaSessionManagerClient() { }
 };
 
-class MediaSessionManager : RemoteCommandListenerClient {
+class MediaSessionManager : RemoteCommandListenerClient, SystemSleepListener::Client {
 public:
     static MediaSessionManager& sharedManager();
     virtual ~MediaSessionManager() { }
@@ -105,13 +106,19 @@ protected:
     MediaSession* currentSession();
     
 private:
+    friend class Internals;
+
     void updateSessionState();
+
+    virtual void systemWillSleep();
+    virtual void systemDidWake();
 
     SessionRestrictions m_restrictions[MediaSession::WebAudio + 1];
 
     Vector<MediaSession*> m_sessions;
     Vector<MediaSessionManagerClient*> m_clients;
     std::unique_ptr<RemoteCommandListener> m_remoteCommandListener;
+    std::unique_ptr<SystemSleepListener> m_systemSleepListener;
     bool m_interrupted;
 };
 

@@ -1,3 +1,53 @@
+2014-03-25  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Pause the media element during system sleep.
+        https://bugs.webkit.org/show_bug.cgi?id=130718
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-system-sleep.html
+
+        Relying on the platform media system to pause and restart playback during
+        system sleep can cause problems on some platforms, especially where hardware
+        decoders are concerned. Rather than implicitly pausing the media during
+        system sleep, explicitly pause the media before sleeping and resume (if
+        appropriate) upon waking.
+
+        Add a new class to be used for system sleep notifications:
+        * platform/SystemSleepListener.cpp: Added.
+        (WebCore::SystemSleepListener::create):
+        (WebCore::SystemSleepListener::SystemSleepListener):
+        * platform/SystemSleepListener.h: Added.
+        (WebCore::SystemSleepListener::Client::~Client):
+        (WebCore::SystemSleepListener::~SystemSleepListener):
+        (WebCore::SystemSleepListener::client):
+
+        Add a Mac-specific implementation:
+        * platform/mac/SystemSleepListenerMac.h: Added.
+        * platform/mac/SystemSleepListenerMac.mm: Added.
+        (WebCore::SystemSleepListener::create):
+        (WebCore::SystemSleepListenerMac::SystemSleepListenerMac):
+        (WebCore::SystemSleepListenerMac::~SystemSleepListenerMac):
+
+        Listen for system sleep notifications in MediaSessionManager:
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::MediaSessionManager):
+        (WebCore::MediaSessionManager::systemWillSleep):
+        (WebCore::MediaSessionManager::systemDidWake):
+        * platform/audio/MediaSessionManager.h:
+
+        Drive-by fix; notify the MediaSession that playback will begin
+        due to autoplay, but do not begin autoplaying if the session
+        is already interrupted:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+
+        Add new files to project:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+
 2014-03-25  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] The background of children of scrollable elements flowed into regions is not properly scrolled

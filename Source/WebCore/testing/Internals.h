@@ -340,6 +340,9 @@ public:
     void postRemoteControlCommand(const String&, ExceptionCode&);
 #endif
 
+    void simulateSystemSleep() const;
+    void simulateSystemWake() const;
+
 private:
     explicit Internals(Document*);
     Document* contextDocument() const;

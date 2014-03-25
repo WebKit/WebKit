@@ -5514,6 +5514,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/ScrollAnimator.h \
 	Source/WebCore/platform/ScrollAnimatorNone.cpp \
 	Source/WebCore/platform/ScrollAnimatorNone.h \
+	Source/WebCore/platform/SystemSleepListener.cpp \
+	Source/WebCore/platform/SystemSleepListener.h \
 	Source/WebCore/platform/ThreadGlobalData.cpp \
 	Source/WebCore/platform/ThreadGlobalData.h \
 	Source/WebCore/platform/UserActivity.cpp \

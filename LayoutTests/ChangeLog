@@ -1,3 +1,13 @@
+2014-03-25  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Pause the media element during system sleep.
+        https://bugs.webkit.org/show_bug.cgi?id=130718
+
+        Reviewed by Eric Carlson.
+
+        * media/video-system-sleep-expected.txt: Added.
+        * media/video-system-sleep.html: Added.
+
 2014-03-25  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] The background of children of scrollable elements flowed into regions is not properly scrolled

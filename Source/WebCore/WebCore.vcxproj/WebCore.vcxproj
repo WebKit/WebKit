@@ -7622,6 +7622,7 @@
     <ClCompile Include="..\platform\ScrollView.cpp" />
     <ClCompile Include="..\platform\SharedBuffer.cpp" />
     <ClCompile Include="..\platform\SharedBufferChunkReader.cpp" />
+    <ClCompile Include="..\platform\SystemSleepListener.cpp" />
     <ClCompile Include="..\platform\ThreadGlobalData.cpp" />
     <ClCompile Include="..\platform\ThreadTimers.cpp" />
     <ClCompile Include="..\platform\Timer.cpp" />
@@ -19253,6 +19254,7 @@
     <ClInclude Include="..\platform\Sound.h" />
     <ClInclude Include="..\platform\SSLKeyGenerator.h" />
     <ClInclude Include="..\platform\SuddenTermination.h" />
+    <ClInclude Include="..\platform\SystemSleepListener.h" />
     <ClInclude Include="..\platform\ThemeTypes.h" />
     <ClInclude Include="..\platform\ThreadGlobalData.h" />
     <ClInclude Include="..\platform\ThreadTimers.h" />

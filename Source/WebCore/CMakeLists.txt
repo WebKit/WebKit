@@ -1808,6 +1808,7 @@ set(WebCore_SOURCES
     platform/PlatformEvent.cpp
     platform/PlatformStrategies.cpp
     platform/RemoteCommandListener.cpp
+    platform/SystemSleepListener.cpp
     platform/RuntimeApplicationChecks.cpp
     platform/SchemeRegistry.cpp
     platform/ScrollAnimator.cpp

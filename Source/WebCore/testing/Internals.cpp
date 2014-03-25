@@ -2333,4 +2333,14 @@ void Internals::postRemoteControlCommand(const String& commandString, ExceptionC
 }
 #endif // ENABLE(VIDEO)
 
+void Internals::simulateSystemSleep() const
+{
+    MediaSessionManager::sharedManager().systemWillSleep();
+}
+
+void Internals::simulateSystemWake() const
+{
+    MediaSessionManager::sharedManager().systemDidWake();
+}
+
 }
