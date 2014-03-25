@@ -48,7 +48,7 @@ public:
 
     virtual unsigned length() const;
     virtual bool contains(TrackBase*) const;
-    virtual void remove(TrackBase*);
+    virtual void remove(TrackBase*, bool scheduleEvent = true);
 
     // EventTarget
     virtual EventTargetInterface eventTargetInterface() const = 0;

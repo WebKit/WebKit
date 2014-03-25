@@ -195,7 +195,7 @@ void TextTrackList::append(PassRefPtr<TextTrack> prpTrack)
     scheduleAddTrackEvent(track.release());
 }
 
-void TextTrackList::remove(TrackBase* track)
+void TextTrackList::remove(TrackBase* track, bool scheduleEvent)
 {
     TextTrack* textTrack = toTextTrack(track);
     Vector<RefPtr<TrackBase>>* tracks = 0;
@@ -219,7 +219,9 @@ void TextTrackList::remove(TrackBase* track)
 
     RefPtr<TrackBase> trackRef = (*tracks)[index];
     tracks->remove(index);
-    scheduleRemoveTrackEvent(trackRef.release());
+
+    if (scheduleEvent)
+        scheduleRemoveTrackEvent(trackRef.release());
 }
 
 bool TextTrackList::contains(TrackBase* track) const

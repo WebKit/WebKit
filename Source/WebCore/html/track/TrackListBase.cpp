@@ -58,7 +58,7 @@ unsigned TrackListBase::length() const
     return m_inbandTracks.size();
 }
 
-void TrackListBase::remove(TrackBase* track)
+void TrackListBase::remove(TrackBase* track, bool scheduleEvent)
 {
     size_t index = m_inbandTracks.find(track);
     ASSERT(index != notFound);
@@ -70,7 +70,8 @@ void TrackListBase::remove(TrackBase* track)
 
     m_inbandTracks.remove(index);
 
-    scheduleRemoveTrackEvent(trackRef.release());
+    if (scheduleEvent)
+        scheduleRemoveTrackEvent(trackRef.release());
 }
 
 bool TrackListBase::contains(TrackBase* track) const

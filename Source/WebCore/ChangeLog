@@ -1,3 +1,34 @@
+2014-03-24  Brent Fulgham  <bfulgham@apple.com>
+
+        Prevent 'removetrack' events from firing when all inband text tracks are removed.
+        https://bugs.webkit.org/show_bug.cgi?id=130704
+
+        Reviewed by Eric Carlson.
+
+        Test: media/track/track-remove-track.html
+
+        Based on the Blink change (patch by acolwell@chromium.org):
+        https://codereview.chromium.org/177243018/
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::prepareForLoad): Reorder steps to match W3C specification.
+        (WebCore::HTMLMediaElement::noneSupported): Forget tracks as required by specification.
+        (WebCore::HTMLMediaElement::mediaLoadingFailed): Forget tracks as required by specification.
+        (WebCore::HTMLMediaElement::removeTextTrack): Only request the 'removetracks' event if
+        requested by caller.
+        (WebCore::HTMLMediaElement::removeAllInbandTracks): Renamed to 'forgetResourceSpecificTracks'
+        (WebCore::HTMLMediaElement::noneSupported): Specify that we want the 'removetracks' event
+        fired for this use case.
+        (WebCore::HTMLMediaElement::prepareForLoad): Switch to new 'forgetResourceSpecificTracks' name.
+        * html/HTMLMediaElement.h:
+        * html/track/TextTrackList.cpp:
+        (TextTrackList::remove): Only fire the 'removetrack' event if the caller requests it.
+        * html/track/TextTrackList.h: Add default argument to fire the 'removetrack' event
+        when removing a track.
+        * html/track/TrackListBase.cpp:
+        (TrackListBase::remove): Only fire the 'removetrack' event if the caller requests it.
+        * html/track/TrackListBase.h: Add default argument to fire the 'removetrack' event.
+
 2014-03-25  David Kilzer  <ddkilzer@apple.com>
 
         Hold a reference to firstSuccessfulSubmitButton in HTMLFormElement::submit

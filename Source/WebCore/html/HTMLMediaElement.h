@@ -290,9 +290,9 @@ public:
     void addTextTrack(PassRefPtr<TextTrack>);
     void addVideoTrack(PassRefPtr<VideoTrack>);
     void removeAudioTrack(AudioTrack*);
-    void removeTextTrack(TextTrack*);
+    void removeTextTrack(TextTrack*, bool scheduleEvent = true);
     void removeVideoTrack(VideoTrack*);
-    void removeAllInbandTracks();
+    void forgetResourceSpecificTracks();
     void closeCaptionTracksChanged();
     void notifyMediaPlayerOfTextTrackChanges();
 

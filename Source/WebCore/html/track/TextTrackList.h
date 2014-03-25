@@ -52,7 +52,7 @@ public:
     TextTrack* lastItem() const { return item(length() - 1); }
 
     void append(PassRefPtr<TextTrack>);
-    virtual void remove(TrackBase*) override;
+    virtual void remove(TrackBase*, bool scheduleEvent = true) override;
 
     // EventTarget
     virtual EventTargetInterface eventTargetInterface() const override;

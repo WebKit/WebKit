@@ -1,0 +1,4 @@
+
+PASS Tests that the 'removetrack' event is fired when an out-of-band TextTrack is removed. 
+PASS Tests that the 'removetrack' event is NOT fired for inband TextTrack on a failed load. 
+
