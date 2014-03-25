@@ -1,3 +1,56 @@
+2014-03-25  Anders Carlsson  <andersca@apple.com>
+
+        Add a WebFrame::fromCoreFrame static member function and use it where possible
+        https://bugs.webkit.org/show_bug.cgi?id=130744
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp:
+        (WebKit::GeolocationPermissionRequestManager::startRequestForGeolocation):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::documentFrame):
+        (WebKit::InjectedBundleNodeHandle::htmlFrameElementContentFrame):
+        (WebKit::InjectedBundleNodeHandle::htmlIFrameElementContentFrame):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp:
+        (WebKit::InjectedBundleDOMWindowExtension::frame):
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        (WebKit::InjectedBundleHitTestResult::frame):
+        (WebKit::InjectedBundleHitTestResult::targetFrame):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::webPage):
+        (WebKit::PluginView::performFrameLoadURLRequest):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::focusedElementChanged):
+        (WebKit::WebChromeClient::focusedFrameChanged):
+        (WebKit::WebChromeClient::runBeforeUnloadConfirmPanel):
+        (WebKit::WebChromeClient::runJavaScriptAlert):
+        (WebKit::WebChromeClient::runJavaScriptConfirm):
+        (WebKit::WebChromeClient::runJavaScriptPrompt):
+        (WebKit::WebChromeClient::print):
+        (WebKit::WebChromeClient::exceededDatabaseQuota):
+        (WebKit::WebChromeClient::runOpenPanel):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::textFieldDidBeginEditing):
+        (WebKit::WebEditorClient::textFieldDidEndEditing):
+        (WebKit::WebEditorClient::textDidChangeInTextField):
+        (WebKit::WebEditorClient::textDidChangeInTextArea):
+        (WebKit::WebEditorClient::doTextFieldCommandFromEvent):
+        (WebKit::WebEditorClient::textWillBeDeletedInTextField):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebKit::WebFrameLoaderClient::dispatchWillSendSubmitEvent):
+        (WebKit::WebFrameLoaderClient::dispatchWillSubmitForm):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::fromCoreFrame):
+        (WebKit::WebFrame::contentsAsString):
+        (WebKit::WebFrame::parentFrame):
+        (WebKit::WebFrame::childFrames):
+        (WebKit::WebFrame::frameForContext):
+        (WebKit::WebFrame::webArchiveData):
+        * WebProcess/WebPage/WebFrame.h:
+
 2014-03-25  Jeffrey Pfau  <jpfau@apple.com>
 
         [WK2] Schemes registered as cache partitioned are not properly registered in new web processes

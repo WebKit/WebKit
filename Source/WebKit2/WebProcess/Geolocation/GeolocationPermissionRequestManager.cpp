@@ -61,8 +61,7 @@ void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation
 
     Frame* frame = geolocation->frame();
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader().client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
     SecurityOrigin* origin = frame->document()->securityOrigin();

@@ -28,7 +28,7 @@
 
 #include "EditorState.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebFrameLoaderClient.h"
+#include "WebFrame.h"
 #include "WebPage.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
@@ -296,8 +296,7 @@ void WebEditorClient::textFieldDidBeginEditing(Element* element)
     if (!isHTMLInputElement(element))
         return;
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(element->document().frame()->loader().client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
     ASSERT(webFrame);
 
     m_page->injectedBundleFormClient().textFieldDidBeginEditing(m_page, toHTMLInputElement(element), webFrame);
@@ -308,8 +307,7 @@ void WebEditorClient::textFieldDidEndEditing(Element* element)
     if (!isHTMLInputElement(element))
         return;
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(element->document().frame()->loader().client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
     ASSERT(webFrame);
 
     m_page->injectedBundleFormClient().textFieldDidEndEditing(m_page, toHTMLInputElement(element), webFrame);
@@ -323,8 +321,7 @@ void WebEditorClient::textDidChangeInTextField(Element* element)
     if (!UserTypingGestureIndicator::processingUserTypingGesture() || UserTypingGestureIndicator::focusedElementAtGestureStart() != element)
         return;
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(element->document().frame()->loader().client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
     ASSERT(webFrame);
 
     m_page->injectedBundleFormClient().textDidChangeInTextField(m_page, toHTMLInputElement(element), webFrame);
@@ -335,8 +332,7 @@ void WebEditorClient::textDidChangeInTextArea(Element* element)
     if (!isHTMLTextAreaElement(element))
         return;
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(element->document().frame()->loader().client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
     ASSERT(webFrame);
 
     m_page->injectedBundleFormClient().textDidChangeInTextArea(m_page, toHTMLTextAreaElement(element), webFrame);
@@ -373,8 +369,7 @@ bool WebEditorClient::doTextFieldCommandFromEvent(Element* element, KeyboardEven
     if (!getActionTypeForKeyEvent(event, actionType))
         return false;
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(element->document().frame()->loader().client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
     ASSERT(webFrame);
 
     return m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, toHTMLInputElement(element), actionType, webFrame);
@@ -385,8 +380,7 @@ void WebEditorClient::textWillBeDeletedInTextField(Element* element)
     if (!isHTMLInputElement(element))
         return;
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(element->document().frame()->loader().client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
     ASSERT(webFrame);
 
     m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, toHTMLInputElement(element), WKInputFieldActionTypeInsertDelete, webFrame);

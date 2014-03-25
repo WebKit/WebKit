@@ -157,45 +157,33 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 
     if (preference == "WebKitTabToLinksPreferenceKey") {
         WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::tabsToLinksKey(), enabled);
-        for (HashSet<Page*>::iterator i = pages.begin(); i != pages.end(); ++i) {
-            WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient((*i)->mainFrame().loader().client());
-            ASSERT(webFrameLoaderClient);
-            webFrameLoaderClient->webFrame()->page()->setTabToLinksEnabled(enabled);
-        }
+        for (auto* page : pages)
+            WebPage::fromCorePage(page)->setTabToLinksEnabled(enabled);
     }
 
     if (preference == "WebKit2AsynchronousPluginInitializationEnabled") {
         WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::asynchronousPluginInitializationEnabledKey(), enabled);
-        for (HashSet<Page*>::iterator i = pages.begin(); i != pages.end(); ++i) {
-            WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient((*i)->mainFrame().loader().client());
-            ASSERT(webFrameLoaderClient);
-            webFrameLoaderClient->webFrame()->page()->setAsynchronousPluginInitializationEnabled(enabled);
-        }
+        for (auto* page : pages)
+            WebPage::fromCorePage(page)->setAsynchronousPluginInitializationEnabled(enabled);
     }
 
     if (preference == "WebKit2AsynchronousPluginInitializationEnabledForAllPlugins") {
         WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::asynchronousPluginInitializationEnabledForAllPluginsKey(), enabled);
-        for (HashSet<Page*>::iterator i = pages.begin(); i != pages.end(); ++i) {
-            WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient((*i)->mainFrame().loader().client());
-            ASSERT(webFrameLoaderClient);
-            webFrameLoaderClient->webFrame()->page()->setAsynchronousPluginInitializationEnabledForAllPlugins(enabled);
-        }
+        for (auto* page : pages)
+            WebPage::fromCorePage(page)->setAsynchronousPluginInitializationEnabledForAllPlugins(enabled);
     }
 
     if (preference == "WebKit2ArtificialPluginInitializationDelayEnabled") {
         WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::artificialPluginInitializationDelayEnabledKey(), enabled);
-        for (HashSet<Page*>::iterator i = pages.begin(); i != pages.end(); ++i) {
-            WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient((*i)->mainFrame().loader().client());
-            ASSERT(webFrameLoaderClient);
-            webFrameLoaderClient->webFrame()->page()->setArtificialPluginInitializationDelayEnabled(enabled);
-        }
+        for (auto* page : pages)
+            WebPage::fromCorePage(page)->setArtificialPluginInitializationDelayEnabled(enabled);
     }
 
 #if ENABLE(IMAGE_CONTROLS)
     if (preference == "WebKitImageControlsEnabled") {
         WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::imageControlsEnabledKey(), enabled);
-        for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
-            (*iter)->settings().setImageControlsEnabled(enabled);
+        for (auto* page : pages)
+            page->settings().setImageControlsEnabled(enabled);
         return;
     }
 #endif

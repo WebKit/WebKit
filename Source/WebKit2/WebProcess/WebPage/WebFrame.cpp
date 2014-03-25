@@ -178,6 +178,15 @@ WebPage* WebFrame::page() const
     return 0;
 }
 
+WebFrame* WebFrame::fromCoreFrame(Frame& frame)
+{
+    auto* webFrameLoaderClient = toWebFrameLoaderClient(frame.loader().client());
+    if (!webFrameLoaderClient)
+        return nullptr;
+
+    return webFrameLoaderClient->webFrame();
+}
+
 void WebFrame::invalidate()
 {
     WebProcess::shared().removeWebFrame(m_frameID);
@@ -306,8 +315,7 @@ String WebFrame::contentsAsString() const
             if (!builder.isEmpty())
                 builder.append(' ');
 
-            WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(child->loader().client());
-            WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+            WebFrame* webFrame = WebFrame::fromCoreFrame(*child);
             ASSERT(webFrame);
 
             builder.append(webFrame->contentsAsString());
@@ -409,8 +417,7 @@ WebFrame* WebFrame::parentFrame() const
     if (!m_coreFrame || !m_coreFrame->ownerElement())
         return 0;
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(m_coreFrame->ownerElement()->document().frame()->loader().client());
-    return webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    return WebFrame::fromCoreFrame(*m_coreFrame->ownerElement()->document().frame());
 }
 
 PassRefPtr<API::Array> WebFrame::childFrames()
@@ -426,8 +433,7 @@ PassRefPtr<API::Array> WebFrame::childFrames()
     vector.reserveInitialCapacity(size);
 
     for (Frame* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
-        WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(child->loader().client());
-        WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+        WebFrame* webFrame = WebFrame::fromCoreFrame(*child);
         ASSERT(webFrame);
         vector.uncheckedAppend(webFrame);
     }
@@ -629,10 +635,8 @@ WebFrame* WebFrame::frameForContext(JSContextRef context)
     if (strcmp(globalObjectObj->classInfo()->className, "JSDOMWindowShell") != 0)
         return 0;
 
-    Frame* coreFrame = static_cast<JSDOMWindowShell*>(globalObjectObj)->window()->impl().frame();
-
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(coreFrame->loader().client());
-    return webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    Frame* frame = static_cast<JSDOMWindowShell*>(globalObjectObj)->window()->impl().frame();
+    return WebFrame::fromCoreFrame(*frame);
 }
 
 JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleNodeHandle* nodeHandle, InjectedBundleScriptWorld* world)
@@ -741,8 +745,7 @@ RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void
         if (!callback)
             return true;
 
-        WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame.loader().client());
-        WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+        WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
         ASSERT(webFrame);
 
         return callback(toAPI(this), toAPI(webFrame), context);

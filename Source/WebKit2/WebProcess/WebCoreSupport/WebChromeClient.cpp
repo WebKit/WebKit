@@ -183,16 +183,14 @@ void WebChromeClient::focusedElementChanged(Element* element)
     if (!inputElement->isText())
         return;
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(element->document().frame()->loader().client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
     ASSERT(webFrame);
     m_page->injectedBundleFormClient().didFocusTextField(m_page, inputElement, webFrame);
 }
 
 void WebChromeClient::focusedFrameChanged(Frame* frame)
 {
-    WebFrameLoaderClient* webFrameLoaderClient = frame ? toWebFrameLoaderClient(frame->loader().client()) : 0;
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    WebFrame* webFrame = frame ? WebFrame::fromCoreFrame(*frame) : nullptr;
 
     WebProcess::shared().parentProcessConnection()->send(Messages::WebPageProxy::FocusedFrameChanged(webFrame ? webFrame->frameID() : 0), m_page->pageID());
 }
@@ -321,9 +319,7 @@ bool WebChromeClient::canRunBeforeUnloadConfirmPanel()
 
 bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, Frame* frame)
 {
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader().client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
-    ASSERT(webFrame);
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
 
     bool shouldClose = false;
     if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::RunBeforeUnloadConfirmPanel(message, webFrame->frameID()), Messages::WebPageProxy::RunBeforeUnloadConfirmPanel::Reply(shouldClose), m_page->pageID()))
@@ -353,8 +349,7 @@ void WebChromeClient::closeWindowSoon()
 
 void WebChromeClient::runJavaScriptAlert(Frame* frame, const String& alertText)
 {
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader().client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
     // Notify the bundle client.
@@ -367,8 +362,7 @@ void WebChromeClient::runJavaScriptAlert(Frame* frame, const String& alertText)
 
 bool WebChromeClient::runJavaScriptConfirm(Frame* frame, const String& message)
 {
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader().client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
     // Notify the bundle client.
@@ -385,8 +379,7 @@ bool WebChromeClient::runJavaScriptConfirm(Frame* frame, const String& message)
 
 bool WebChromeClient::runJavaScriptPrompt(Frame* frame, const String& message, const String& defaultValue, String& result)
 {
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader().client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
     // Notify the bundle client.
@@ -597,8 +590,7 @@ void WebChromeClient::setToolTip(const String& toolTip, TextDirection)
 
 void WebChromeClient::print(Frame* frame)
 {
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader().client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
 #if PLATFORM(GTK) && defined(HAVE_GTK_UNIX_PRINTING)
@@ -617,8 +609,7 @@ void WebChromeClient::print(Frame* frame)
 #if ENABLE(SQL_DATABASE)
 void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName, DatabaseDetails details)
 {
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader().client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
     
     SecurityOrigin* origin = frame->document()->securityOrigin();
@@ -690,8 +681,7 @@ void WebChromeClient::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFile
 
     m_page->setActiveOpenPanelResultListener(WebOpenPanelResultListener::create(m_page, fileChooser.get()));
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader().client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
     m_page->send(Messages::WebPageProxy::RunOpenPanel(webFrame->frameID(), fileChooser->settings()));

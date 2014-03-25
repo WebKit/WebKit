@@ -55,24 +55,22 @@ WebFrame* InjectedBundleHitTestResult::frame() const
 {
     Node* node = m_hitTestResult.innerNonSharedNode();
     if (!node)
-        return 0;
+        return nullptr;
 
     Frame* frame = node->document().frame();
     if (!frame)
-        return 0;
+        return nullptr;
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader().client());
-    return webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    return WebFrame::fromCoreFrame(*frame);
 }
 
 WebFrame* InjectedBundleHitTestResult::targetFrame() const
 {
     Frame* frame = m_hitTestResult.targetFrame();
     if (!frame)
-        return 0;
+        return nullptr;
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader().client());
-    return webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    return WebFrame::fromCoreFrame(*frame);
 }
 
 String InjectedBundleHitTestResult::absoluteImageURL() const

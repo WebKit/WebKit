@@ -68,6 +68,8 @@ public:
     void invalidate();
 
     WebPage* page() const;
+
+    static WebFrame* fromCoreFrame(WebCore::Frame&);
     WebCore::Frame* coreFrame() const { return m_coreFrame; }
 
     uint64_t frameID() const { return m_frameID; }
