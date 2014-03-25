@@ -5639,17 +5639,19 @@ void HTMLMediaElement::applyMediaFragmentURI()
 
 void HTMLMediaElement::updateSleepDisabling()
 {
-#if PLATFORM(COCOA)
     if (!shouldDisableSleep() && m_sleepDisabler)
         m_sleepDisabler = nullptr;
     else if (shouldDisableSleep() && !m_sleepDisabler)
         m_sleepDisabler = DisplaySleepDisabler::create("com.apple.WebCore: HTMLMediaElement playback");
-#endif
 }
 
 #if PLATFORM(COCOA)
 bool HTMLMediaElement::shouldDisableSleep() const
 {
+#if !PLATFORM(COCOA)
+    return false;
+#endif
+
 #if ENABLE(PAGE_VISIBILITY_API)
     if (m_isDisplaySleepDisablingSuspended)
         return false;

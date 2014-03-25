@@ -1,3 +1,36 @@
+2014-03-25  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Playing video does not disable display sleep.
+        https://bugs.webkit.org/show_bug.cgi?id=130729
+
+        Reviewed by Eric Carlson.
+
+        DisplaySleepDisabler was broken by r161589, which replaced the iOS implementation with
+        an empty one. Make a platform independent version with a Cocoa-platform subclass. Update
+        the APIs to non-deprecated ones.
+
+        * platform/DisplaySleepDisabler.cpp: Added.
+        (WebCore::DisplaySleepDisabler::create):
+        * platform/DisplaySleepDisabler.h: Added.
+        (WebCore::DisplaySleepDisabler::~DisplaySleepDisabler):
+        (WebCore::DisplaySleepDisabler::DisplaySleepDisabler):
+        * platform/cocoa/DisplaySleepDisablerCocoa.cpp: Renamed from Source/WebCore/platform/mac/DisplaySleepDisabler.cpp.
+        (WebCore::DisplaySleepDisabler::create):
+        (WebCore::DisplaySleepDisablerCocoa::DisplaySleepDisablerCocoa):
+        (WebCore::DisplaySleepDisablerCocoa::~DisplaySleepDisablerCocoa):
+        * platform/cocoa/DisplaySleepDisablerCocoa.h: Renamed from Source/WebCore/platform/mac/DisplaySleepDisabler.h.
+
+        Update m_sleepDisabler to be a std::unique_ptr, and unprotect the definition of methods which use it.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateSleepDisabling):
+        (WebCore::HTMLMediaElement::shouldDisableSleep):
+        * html/HTMLMediaElement.h:
+
+        Add the new and renamed files to the project:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2014-03-25  Dirk Schulze  <krit@webkit.org>
 
         Implement ImageData constructors and WebWorkers exposure

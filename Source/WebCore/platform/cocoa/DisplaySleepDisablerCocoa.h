@@ -23,45 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef DisplaySleepDisablerCocoa_h
+#define DisplaySleepDisablerCocoa_h
+
+#if PLATFORM(COCOA)
+
 #include "DisplaySleepDisabler.h"
 
-#if !PLATFORM(IOS)
-
-#include <IOKit/pwr_mgt/IOPMLib.h>
-#include <wtf/RetainPtr.h>
-
 namespace WebCore {
 
-#if PLATFORM(IOS)
-static const double systemActivityInterval = 1;
-#endif
+class DisplaySleepDisablerCocoa : public DisplaySleepDisabler {
+public:
+    virtual ~DisplaySleepDisablerCocoa();
 
-DisplaySleepDisabler::DisplaySleepDisabler(const char* reason)
-    : m_disableDisplaySleepAssertion(0)
-{
-#if !PLATFORM(IOS)
-    RetainPtr<CFStringRef> reasonCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
-    IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, reasonCF.get(), &m_disableDisplaySleepAssertion);
-#else
-    UNUSED_PARAM(reason);
-    IOPMAssertionCreate(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, &m_disableDisplaySleepAssertion);
-    m_systemActivityTimer.startRepeating(systemActivityInterval);
-#endif
-}
+private:
+    DisplaySleepDisablerCocoa(const char*);
 
-DisplaySleepDisabler::~DisplaySleepDisabler()
-{
-    IOPMAssertionRelease(m_disableDisplaySleepAssertion);
-}
+    uint32_t m_disableDisplaySleepAssertion;
+};
 
 }
 
-#else
+#endif // PLATFORM(COCOA)
 
-namespace WebCore {
-DisplaySleepDisabler::DisplaySleepDisabler(const char *) { }
-DisplaySleepDisabler::~DisplaySleepDisabler() { }
-}
-
-#endif // !PLATFORM(IOS)
+#endif // DisplaySleepDisablerCocoa_h

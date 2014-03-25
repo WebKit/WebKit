@@ -2036,8 +2036,8 @@
 		5D21A80313ECE5DF00BB7064 /* WebVTTParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D21A80113ECE5DF00BB7064 /* WebVTTParser.h */; };
 		5D874F130D161D3200796C3B /* NetscapePlugInStreamLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DD0AF589AD00D48324 /* NetscapePlugInStreamLoader.cpp */; };
 		5D87BB8311E3ED8600702B6F /* ExportFileGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87BB8211E3ED8600702B6F /* ExportFileGenerator.cpp */; };
-		5D8C4DBF1428222C0026CE72 /* DisplaySleepDisabler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8C4DBD1428222C0026CE72 /* DisplaySleepDisabler.cpp */; };
-		5D8C4DC01428222C0026CE72 /* DisplaySleepDisabler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D8C4DBE1428222C0026CE72 /* DisplaySleepDisabler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5D8C4DBF1428222C0026CE72 /* DisplaySleepDisablerCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8C4DBD1428222C0026CE72 /* DisplaySleepDisablerCocoa.cpp */; };
+		5D8C4DC01428222C0026CE72 /* DisplaySleepDisablerCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D8C4DBE1428222C0026CE72 /* DisplaySleepDisablerCocoa.h */; };
 		5D925B670F64D4DD00B847F0 /* ScrollBehavior.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D925B650F64D4DD00B847F0 /* ScrollBehavior.cpp */; };
 		5D925B680F64D4DD00B847F0 /* ScrollBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D925B660F64D4DD00B847F0 /* ScrollBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5DA5E0FC102B953800088CF9 /* JSWebSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DA5E0FA102B953800088CF9 /* JSWebSocket.cpp */; };
@@ -5521,6 +5521,8 @@
 		CD3E252318046BCD00E27F56 /* CSSGridTemplateAreasValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD3E252118046BCD00E27F56 /* CSSGridTemplateAreasValue.cpp */; };
 		CD3E252418046BCD00E27F56 /* CSSGridTemplateAreasValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3E252218046BCD00E27F56 /* CSSGridTemplateAreasValue.h */; };
 		CD4AC52A1496AE9A0087C4EF /* Composite.wav in Copy Audio Resources */ = {isa = PBXBuildFile; fileRef = CD4AC5281496AE2F0087C4EF /* Composite.wav */; };
+		CD52481A18E200ED0008A07D /* DisplaySleepDisabler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD52481818E200ED0008A07D /* DisplaySleepDisabler.cpp */; };
+		CD52481B18E200ED0008A07D /* DisplaySleepDisabler.h in Headers */ = {isa = PBXBuildFile; fileRef = CD52481918E200ED0008A07D /* DisplaySleepDisabler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD5393D3175E018600C07123 /* JSMemoryInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5393D1175E018600C07123 /* JSMemoryInfo.cpp */; };
 		CD5393D4175E018600C07123 /* JSMemoryInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5393D2175E018600C07123 /* JSMemoryInfo.h */; };
 		CD54A762180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD54A760180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.cpp */; };
@@ -9024,8 +9026,8 @@
 		5D4B8C5211E52C8B00BBB62F /* WebCore.exp.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCore.exp.in; sourceTree = "<group>"; };
 		5D87BB4F11E3EAEB00702B6F /* WebCoreExportFileGenerator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WebCoreExportFileGenerator; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D87BB8211E3ED8600702B6F /* ExportFileGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExportFileGenerator.cpp; path = DerivedSources/WebCore/ExportFileGenerator.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
-		5D8C4DBD1428222C0026CE72 /* DisplaySleepDisabler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplaySleepDisabler.cpp; sourceTree = "<group>"; };
-		5D8C4DBE1428222C0026CE72 /* DisplaySleepDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplaySleepDisabler.h; sourceTree = "<group>"; };
+		5D8C4DBD1428222C0026CE72 /* DisplaySleepDisablerCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplaySleepDisablerCocoa.cpp; sourceTree = "<group>"; };
+		5D8C4DBE1428222C0026CE72 /* DisplaySleepDisablerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplaySleepDisablerCocoa.h; sourceTree = "<group>"; };
 		5D925B650F64D4DD00B847F0 /* ScrollBehavior.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollBehavior.cpp; sourceTree = "<group>"; };
 		5D925B660F64D4DD00B847F0 /* ScrollBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBehavior.h; sourceTree = "<group>"; };
 		5DA5E0FA102B953800088CF9 /* JSWebSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebSocket.cpp; sourceTree = "<group>"; };
@@ -12823,6 +12825,8 @@
 		CD3E252218046BCD00E27F56 /* CSSGridTemplateAreasValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSGridTemplateAreasValue.h; sourceTree = "<group>"; };
 		CD4AC5281496AE2F0087C4EF /* Composite.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = Composite.wav; path = platform/audio/resources/Composite.wav; sourceTree = SOURCE_ROOT; };
 		CD4E0AFA11F7BC27009D3811 /* fullscreen.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = fullscreen.css; sourceTree = "<group>"; };
+		CD52481818E200ED0008A07D /* DisplaySleepDisabler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplaySleepDisabler.cpp; sourceTree = "<group>"; };
+		CD52481918E200ED0008A07D /* DisplaySleepDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplaySleepDisabler.h; sourceTree = "<group>"; };
 		CD5393CB175DCCE600C07123 /* MemoryInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInfo.h; sourceTree = "<group>"; };
 		CD5393CC175DCCE600C07123 /* MemoryInfo.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MemoryInfo.idl; sourceTree = "<group>"; };
 		CD5393D1175E018600C07123 /* JSMemoryInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMemoryInfo.cpp; sourceTree = "<group>"; };
@@ -16071,8 +16075,6 @@
 				06027CB20B1CC03D00884B2D /* ContextMenuItemMac.mm */,
 				93B6A0E90B0BCA8400F5027A /* ContextMenuMac.mm */,
 				F58784F002DE375901EA4122 /* CursorMac.mm */,
-				5D8C4DBD1428222C0026CE72 /* DisplaySleepDisabler.cpp */,
-				5D8C4DBE1428222C0026CE72 /* DisplaySleepDisabler.h */,
 				A795463D0B5C4C80007B438F /* DragDataMac.mm */,
 				A7CFB3D40B7ED1180070C32D /* DragImageMac.mm */,
 				E1BA66F01742BD8600C20251 /* DynamicLinkerInterposing.h */,
@@ -18157,6 +18159,8 @@
 		A5C974CE11485FDA0066F2AB /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				5D8C4DBD1428222C0026CE72 /* DisplaySleepDisablerCocoa.cpp */,
+				5D8C4DBE1428222C0026CE72 /* DisplaySleepDisablerCocoa.h */,
 				A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */,
 				A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */,
 				7CC564B918BAC720001B9652 /* TelephoneNumberDetectorCocoa.cpp */,
@@ -20909,6 +20913,8 @@
 				A5732B09136A161D005C8D7C /* DateComponents.h */,
 				45FEA5CD156DDE8C00654101 /* Decimal.cpp */,
 				45FEA5CE156DDE8C00654101 /* Decimal.h */,
+				CD52481818E200ED0008A07D /* DisplaySleepDisabler.cpp */,
+				CD52481918E200ED0008A07D /* DisplaySleepDisabler.h */,
 				A79546420B5C4CB4007B438F /* DragData.cpp */,
 				A7B6E69D0B291A9600D0529F /* DragData.h */,
 				A7CFB3CF0B7ED10A0070C32D /* DragImage.cpp */,
@@ -23312,7 +23318,7 @@
 				A5C566AB127A3AAD00E8A3FF /* DiskImageCacheClientIOS.h in Headers */,
 				A5F9EF711266750D00FCCF52 /* DiskImageCacheIOS.h in Headers */,
 				49AF2D6914435D050016A784 /* DisplayRefreshMonitor.h in Headers */,
-				5D8C4DC01428222C0026CE72 /* DisplaySleepDisabler.h in Headers */,
+				5D8C4DC01428222C0026CE72 /* DisplaySleepDisablerCocoa.h in Headers */,
 				FD31609112B026F700C1A359 /* Distance.h in Headers */,
 				84730D771248F0B300D3A9C9 /* DistantLightSource.h in Headers */,
 				B2F34FE60E82F81400F627CD /* DNS.h in Headers */,
@@ -26170,6 +26176,7 @@
 				18F831B80FD48C7800D8C56B /* WorkerLoaderProxy.h in Headers */,
 				2E43464D0F546A8200B0F1BA /* WorkerLocation.h in Headers */,
 				2E4346500F546A8200B0F1BA /* WorkerMessagingProxy.h in Headers */,
+				CD52481B18E200ED0008A07D /* DisplaySleepDisabler.h in Headers */,
 				E1271A0B0EEEC77A00F61213 /* WorkerNavigator.h in Headers */,
 				1ABC7109170E5E1B00F9A9D6 /* WorkerNavigatorStorageQuota.h in Headers */,
 				2E4346510F546A8200B0F1BA /* WorkerObjectProxy.h in Headers */,
@@ -26926,7 +26933,7 @@
 				49FC7A501444AF5F00A5D864 /* DisplayRefreshMonitor.cpp in Sources */,
 				0F97A658155DA81E00FADD4C /* DisplayRefreshMonitorIOS.mm in Sources */,
 				49AF2D6C14435D210016A784 /* DisplayRefreshMonitorMac.cpp in Sources */,
-				5D8C4DBF1428222C0026CE72 /* DisplaySleepDisabler.cpp in Sources */,
+				5D8C4DBF1428222C0026CE72 /* DisplaySleepDisablerCocoa.cpp in Sources */,
 				FD31609012B026F700C1A359 /* Distance.cpp in Sources */,
 				A1E1154413015C3D0054AC8C /* DistantLightSource.cpp in Sources */,
 				B2F34FE90E82F82700F627CD /* DNSCFNet.cpp in Sources */,
@@ -27438,6 +27445,7 @@
 				97E4028F13A696ED00913D67 /* IconController.cpp in Sources */,
 				5126E6BB0A2E3B12005C29FA /* IconDatabase.cpp in Sources */,
 				516953971329A3C800B92D04 /* IconDatabaseBase.cpp in Sources */,
+				CD52481A18E200ED0008A07D /* DisplaySleepDisabler.cpp in Sources */,
 				FED13D400CEA939400D89466 /* IconIOS.mm in Sources */,
 				513F14530AB634C400094DDF /* IconLoader.cpp in Sources */,
 				B275358E0B053A66002CE64F /* IconMac.mm in Sources */,

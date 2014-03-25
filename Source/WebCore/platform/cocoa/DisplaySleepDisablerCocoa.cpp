@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DisplaySleepDisabler_h
-#define DisplaySleepDisabler_h
+#include "config.h"
+#include "DisplaySleepDisablerCocoa.h"
 
-#include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
+#if PLATFORM(COCOA)
+
+#include <IOKit/pwr_mgt/IOPMLib.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
-class DisplaySleepDisabler {
-    WTF_MAKE_NONCOPYABLE(DisplaySleepDisabler);
-public:
-    static PassOwnPtr<DisplaySleepDisabler> create(const char* reason) { return adoptPtr(new DisplaySleepDisabler(reason)); }
-    ~DisplaySleepDisabler();
-    
-private:
-    DisplaySleepDisabler(const char* reason);
-    
-#if !PLATFORM(IOS)
-    uint32_t m_disableDisplaySleepAssertion;
-#endif // !PLATFORM(IOS)
-};
+std::unique_ptr<DisplaySleepDisabler> DisplaySleepDisabler::create(const char* reason)
+{
+    return std::unique_ptr<DisplaySleepDisabler>(new DisplaySleepDisabler(reason));
+}
+
+DisplaySleepDisablerCocoa::DisplaySleepDisablerCocoa(const char* reason)
+    : DisplaySleepDisabler(reason)
+    , m_disableDisplaySleepAssertion(0)
+{
+    RetainPtr<CFStringRef> reasonCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
+    IOPMAssertionCreateWithDescription(kIOPMAssertionTypePreventUserIdleDisplaySleep, reasonCF.get(), nullptr, nullptr, nullptr, 0, nullptr, &m_disableDisplaySleepAssertion);
+}
+
+DisplaySleepDisablerCocoa::~DisplaySleepDisablerCocoa()
+{
+    IOPMAssertionRelease(m_disableDisplaySleepAssertion);
+}
 
 }
 
-#endif // DisplaySleepDisabler_h
+#endif // PLATFORM(COCOA)

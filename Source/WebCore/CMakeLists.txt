@@ -1788,6 +1788,7 @@ set(WebCore_SOURCES
     platform/DatabaseStrategy.cpp
     platform/DateComponents.cpp
     platform/Decimal.cpp
+    platform/DisplaySleepDisabler.cpp
     platform/DragData.cpp
     platform/DragImage.cpp
     platform/FileChooser.cpp

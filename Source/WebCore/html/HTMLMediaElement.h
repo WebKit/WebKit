@@ -62,6 +62,7 @@ namespace WebCore {
 class AudioSourceProvider;
 class MediaElementAudioSourceNode;
 #endif
+class DisplaySleepDisabler;
 class Event;
 class HTMLSourceElement;
 class HTMLTrackElement;
@@ -74,9 +75,6 @@ class PageActivityAssertionToken;
 class TimeRanges;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 class Widget;
-#endif
-#if PLATFORM(COCOA)
-class DisplaySleepDisabler;
 #endif
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 class MediaKeys;
@@ -864,9 +862,7 @@ private:
     friend class MediaController;
     RefPtr<MediaController> m_mediaController;
 
-#if PLATFORM(COCOA)
-    OwnPtr<DisplaySleepDisabler> m_sleepDisabler;
-#endif
+    std::unique_ptr<DisplaySleepDisabler> m_sleepDisabler;
 
     friend class TrackDisplayUpdateScope;
 

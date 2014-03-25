@@ -5326,6 +5326,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/CrossThreadCopier.h \
 	Source/WebCore/platform/DatabaseStrategy.cpp \
 	Source/WebCore/platform/DatabaseStrategy.h \
+	Source/WebCore/platform/DisplaySleepDisabler.cpp \
+	Source/WebCore/platform/DisplaySleepDisabler.h \
 	Source/WebCore/platform/DragData.cpp \
 	Source/WebCore/platform/DragData.h \
 	Source/WebCore/platform/DragImage.cpp \
