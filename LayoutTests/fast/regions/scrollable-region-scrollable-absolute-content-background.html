@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html style="font: 16px/1.25 monospace;">
+    <head>
+        <script type="text/javascript">
+            onload = function()
+            {
+                document.getElementById("container").scrollTop = 40;
+            }
+        </script>
+
+        <style>
+            #container {
+                border: thick solid green;
+                height: 150px;
+                overflow: scroll;
+                margin: 15px;
+                padding: 5px;
+                -webkit-flow-into: flow;
+            }
+
+            #region {
+                width: 400px;
+                height: 200px;
+                -webkit-flow-from: flow;
+                border: 2px solid blue;
+                margin: 10px;
+                padding: 35px;
+            }
+
+            .blueBackground {
+                background: lightblue;
+            }
+
+            .greenBackground {
+                background: lightgreen;
+                position: absolute; 
+                left: 150px; 
+                top: 70px;
+            }
+
+            #bottomDiv {
+                position: relative;
+                top: 50px;
+                width: 100px;
+                height: 100px;
+                background: green;
+            }
+        </style>
+    </head>
+
+    <body>
+        <a style="font-size: 14px" href="https://bugs.webkit.org/show_bug.cgi?id=130574">[CSS Regions] The background of children of scrollable<br/>elements flowed into regions is not properly scrolled</a>
+        <p>This test passes if the backgrounds of the paragraphs inside the <span style="color:green"><b>green box</b></span> is properly painted when scrolling the box.</p>
+
+        <div id="region"></div>
+
+        <div id="container">
+            <p class="greenBackground">This text is absolutely positioned and should have a lightgreen background.</p>
+                
+            <p class="blueBackground">This text should have a lightblue background which properly paints when scrolling the parent.</p>
+            <div id="bottomDiv"></div>
+        </div>
+    </body>
+</html>

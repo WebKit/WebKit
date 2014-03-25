@@ -1,3 +1,19 @@
+2014-03-25  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] The background of children of scrollable elements flowed into regions is not properly scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=130574
+
+        Reviewed by David Hyatt.
+
+        When computing the clip rect for painting the box decorations, the scrolled content offset
+        must be computed by going up the containing block tree, up to the region.
+
+        Tests: fast/regions/scrollable-region-scrollable-absolute-content-background.html
+               fast/regions/scrollable-region-scrollable-content-background.html
+
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::decorationsClipRectForBoxInNamedFlowFragment):
+
 2014-03-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] Inspector View Indication Support

@@ -1,3 +1,17 @@
+2014-03-25  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] The background of children of scrollable elements flowed into regions is not properly scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=130574
+
+        Reviewed by David Hyatt.
+
+        Added tests for properly painting background of children of scrollable elements flowed into regions.
+
+        * fast/regions/scrollable-region-scrollable-absolute-content-background-expected.html: Added.
+        * fast/regions/scrollable-region-scrollable-absolute-content-background.html: Added.
+        * fast/regions/scrollable-region-scrollable-content-background-expected.html: Added.
+        * fast/regions/scrollable-region-scrollable-content-background.html: Added.
+
 2014-03-25  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed, rolling out r166126.

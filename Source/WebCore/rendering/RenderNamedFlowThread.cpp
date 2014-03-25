@@ -297,9 +297,22 @@ LayoutRect RenderNamedFlowThread::decorationsClipRectForBoxInNamedFlowFragment(c
     
     // Now flip it again.
     flipForWritingModeLocalCoordinates(visualOverflowRect);
-    
-    // Take the scrolled offset of the region into consideration.
-    IntSize scrolledContentOffset = fragment.fragmentContainer().scrolledContentOffset();
+
+    // Take the scrolled offset of this object's parents into consideration.
+    IntSize scrolledContentOffset;
+    RenderBlock* containingBlock = box.containingBlock();
+    while (containingBlock) {
+        if (containingBlock->isRenderNamedFlowThread()) {
+            // We've reached the flow thread, take the scrolled offset of the region into consideration.
+            ASSERT(containingBlock == this);
+            scrolledContentOffset += fragment.fragmentContainer().scrolledContentOffset();
+            break;
+        }
+        
+        scrolledContentOffset += containingBlock->scrolledContentOffset();
+        containingBlock = containingBlock->containingBlock();
+    }
+
     if (!scrolledContentOffset.isZero()) {
         if (style().isFlippedBlocksWritingMode())
             scrolledContentOffset = -scrolledContentOffset;
