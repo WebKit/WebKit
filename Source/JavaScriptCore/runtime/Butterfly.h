@@ -157,9 +157,7 @@ public:
     // methods is not exhaustive and is not intended to encapsulate all possible allocation
     // modes of butterflies - there are code paths that allocate butterflies by calling
     // directly into Heap::tryAllocateStorage.
-    Butterfly* growPropertyStorage(VM&, JSCell* intendedOwner, size_t preCapacity, size_t oldPropertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes, size_t newPropertyCapacity);
-    Butterfly* growPropertyStorage(VM&, JSCell* intendedOwner, Structure* oldStructure, size_t oldPropertyCapacity, size_t newPropertyCapacity);
-    Butterfly* growPropertyStorage(VM&, JSCell* intendedOwner, Structure* oldStructure, size_t newPropertyCapacity);
+    static Butterfly* createOrGrowPropertyStorage(Butterfly*, VM&, JSCell* intendedOwner, Structure*, size_t oldPropertyCapacity, size_t newPropertyCapacity);
     Butterfly* growArrayRight(VM&, JSCell* intendedOwner, Structure* oldStructure, size_t propertyCapacity, bool hadIndexingHeader, size_t oldIndexingPayloadSizeInBytes, size_t newIndexingPayloadSizeInBytes); // Assumes that preCapacity is zero, and asserts as much.
     Butterfly* growArrayRight(VM&, JSCell* intendedOwner, Structure*, size_t newIndexingPayloadSizeInBytes);
     Butterfly* resizeArray(VM&, JSCell* intendedOwner, size_t propertyCapacity, bool oldHasIndexingHeader, size_t oldIndexingPayloadSizeInBytes, size_t newPreCapacity, bool newHasIndexingHeader, size_t newIndexingPayloadSizeInBytes);

@@ -1,3 +1,29 @@
+2014-03-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Safari crashes in JavaScriptCore: JSC::JSObject::growOutOfLineStorage
+        when WebKit is compiled with fcatch-undefined-behavior
+        https://bugs.webkit.org/show_bug.cgi?id=130652
+
+        Reviewed by Mark Hahnenberg.
+
+        Use a static member function because the butterfly we pass in might be
+        NULL, and passing NULL to a member function is undefined behavior.
+
+        Stylistically, I think this new way reads a little more clearly, since it
+        matches createOrGrowArrayRight, and it helps to convey that m_butterfly
+        might not exist yet.
+
+        * runtime/Butterfly.h:
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::createOrGrowPropertyStorage): Renamed from growPropertyStorage
+        because we might create. Split out the create path to avoid using NULL
+        in a member function expression.
+
+        Removed some unused versions of this function.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::growOutOfLineStorage): Updated for interface change.
+
 2014-03-24  Oliver Hunt  <oliver@apple.com>
 
         Strict mode destructuring assignment crashes the parser.
