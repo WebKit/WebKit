@@ -248,7 +248,7 @@ public:
     virtual HostWindow* mediaPlayerHostWindow() { return 0; }
     virtual IntRect mediaPlayerWindowClipRect() { return IntRect(); }
     virtual CachedResourceLoader* mediaPlayerCachedResourceLoader() { return 0; }
-    virtual bool doesHaveAttribute(const AtomicString&) const { return false; }
+    virtual bool doesHaveAttribute(const AtomicString&, AtomicString* = 0) const { return false; }
 
 #if ENABLE(VIDEO_TRACK)
     virtual void mediaPlayerDidAddAudioTrack(PassRefPtr<AudioTrackPrivate>) { }
@@ -300,7 +300,7 @@ public:
     bool supportsSave() const;
     bool supportsScanning() const;
     bool requiresImmediateCompositing() const;
-    bool doesHaveAttribute(const AtomicString&) const;
+    bool doesHaveAttribute(const AtomicString&, AtomicString* value = nullptr) const;
     PlatformMedia platformMedia() const;
     PlatformLayer* platformLayer() const;
 #if PLATFORM(IOS)

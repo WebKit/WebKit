@@ -129,7 +129,7 @@ public:
     virtual bool supportsSave() const;
     virtual bool supportsScanning() const override;
     
-    virtual bool doesHaveAttribute(const AtomicString&) const override;
+    virtual bool doesHaveAttribute(const AtomicString&, AtomicString* value = nullptr) const override;
 
     PlatformMedia platformMedia() const;
     PlatformLayer* platformLayer() const;

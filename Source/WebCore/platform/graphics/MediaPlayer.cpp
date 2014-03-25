@@ -1412,12 +1412,12 @@ void MediaPlayerFactorySupport::callRegisterMediaEngine(MediaEngineRegister regi
     registerMediaEngine(addMediaEngine);
 }
 
-bool MediaPlayer::doesHaveAttribute(const AtomicString& attribute) const
+bool MediaPlayer::doesHaveAttribute(const AtomicString& attribute, AtomicString* value) const
 {
     if (!m_mediaPlayerClient)
         return false;
     
-    return m_mediaPlayerClient->doesHaveAttribute(attribute);
+    return m_mediaPlayerClient->doesHaveAttribute(attribute, value);
 }
 
 }

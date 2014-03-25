@@ -1,3 +1,22 @@
+2014-03-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Pass additional options to AVFoundation during playback.
+        https://bugs.webkit.org/show_bug.cgi?id=130624
+
+        Reviewed by Eric Carlson.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::doesHaveAttribute): Return attribute value if the user
+        passes a pointer to fill in.
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::doesHaveAttribute):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::doesHaveAttribute):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem): Pass additional
+        option if supplied by user.
+
 2014-03-25  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed, rolling out r166070.

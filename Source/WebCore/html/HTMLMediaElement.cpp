@@ -6042,16 +6042,21 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(MediaSession::RemoteContro
     }
 }
 
-bool HTMLMediaElement::doesHaveAttribute(const AtomicString& attribute) const
+bool HTMLMediaElement::doesHaveAttribute(const AtomicString& attribute, AtomicString* value) const
 {
     QualifiedName attributeName(nullAtom, attribute, nullAtom);
-    if (!fastHasAttribute(attributeName))
+
+    AtomicString elementValue = fastGetAttribute(attributeName);
+    if (elementValue.isNull())
         return false;
     
     if (Settings* settings = document().settings()) {
-        if (attributeName == HTMLNames::x_itunes_inherit_uri_query_componentAttr)
-            return settings->enableInheritURIQueryComponent();
+        if (attributeName == HTMLNames::x_itunes_inherit_uri_query_componentAttr && !settings->enableInheritURIQueryComponent())
+            return false;
     }
+
+    if (value)
+        *value = elementValue;
     
     return true;
 }

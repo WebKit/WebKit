@@ -90,6 +90,13 @@
 @end
 #endif
 
+#if PLATFORM(IOS)
+@class AVPlayerItem;
+@interface AVPlayerItem (WebKitExtensions)
+@property (nonatomic, copy) NSString* dataYouTubeID;
+@end
+#endif
+
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
 SOFT_LINK_FRAMEWORK_OPTIONAL(CoreImage)
@@ -701,6 +708,12 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
 
     if (m_avPlayer)
         [m_avPlayer.get() replaceCurrentItemWithPlayerItem:m_avPlayerItem.get()];
+
+#if PLATFORM(IOS)
+    AtomicString value;
+    if (player()->doesHaveAttribute("data-youtube-id", &value)) {
+        [m_avPlayerItem.get() setDataYouTubeID: value];
+ #endif
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     const NSTimeInterval legibleOutputAdvanceInterval = 2;
