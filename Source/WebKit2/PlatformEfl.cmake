@@ -236,6 +236,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/API/cpp/efl"
     "${WEBKIT2_DIR}/UIProcess/API/efl"
     "${WEBKIT2_DIR}/UIProcess/CoordinatedGraphics"
+    "${WEBKIT2_DIR}/UIProcess/Network/CustomProtocols/soup"
     "${WEBKIT2_DIR}/UIProcess/efl"
     "${WEBKIT2_DIR}/UIProcess/soup"
     "${WEBKIT2_DIR}/WebProcess/efl"
@@ -293,6 +294,10 @@ list(APPEND WebKit2_LIBRARIES
 
 list(APPEND WebProcess_SOURCES
     efl/MainEfl.cpp
+)
+
+list(APPEND NetworkProcess_SOURCES
+        unix/NetworkMainUnix.cpp
 )
 
 list(APPEND WebProcess_LIBRARIES

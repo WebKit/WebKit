@@ -1,3 +1,15 @@
+2014-03-25  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL][WK2] Add NETWORK_PROCESS build option
+        https://bugs.webkit.org/show_bug.cgi?id=130131
+
+        Reviewed by Gyuyoung Kim.
+
+        Add option to build EFL port with NETWORK_PROCESS set on. By default NETWORK_PROCESS is
+        set off.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2014-03-24  Brian Burg  <bburg@apple.com>
 
         Web Replay: capture and replay keyboard events
