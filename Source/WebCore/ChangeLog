@@ -1,3 +1,20 @@
+2014-03-25  David Kilzer  <ddkilzer@apple.com>
+
+        Hold a reference to firstSuccessfulSubmitButton in HTMLFormElement::submit
+        <http://webkit.org/b/130713>
+        <rdar://problem/15661876>
+
+        Reviewed by Darin Adler.
+
+        Merged from Blink (patch by Ian Beer):
+        http://crbug.com/303657
+        https://src.chromium.org/viewvc/blink?view=rev&revision=158938
+
+        Test: fast/forms/form-submission-crash-successful-submit-button.html
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submit):
+
 2014-03-25  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [ARM64] GNU assembler fails in TransformationMatrix::multiply

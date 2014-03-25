@@ -1,3 +1,18 @@
+2014-03-25  David Kilzer  <ddkilzer@apple.com>
+
+        Hold a reference to firstSuccessfulSubmitButton in HTMLFormElement::submit
+        <http://webkit.org/b/130713>
+        <rdar://problem/15661876>
+
+        Reviewed by Darin Adler.
+
+        Merged from Blink (patch by Ian Beer):
+        http://crbug.com/303657
+        https://src.chromium.org/viewvc/blink?view=rev&revision=158938
+
+        * fast/forms/form-submission-crash-successful-submit-button-expected.txt: Added.
+        * fast/forms/form-submission-crash-successful-submit-button.html: Added.
+
 2014-03-20  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Vertical rectangles not considered as valid grid areas
