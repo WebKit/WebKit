@@ -194,14 +194,11 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
 {
-    SEL action = [item action];
+    SEL action = item.action;
 
-    if (action == @selector(goBack:))
-        return _webView && [_webView canGoBack];
-    
-    if (action == @selector(goForward:))
-        return _webView && [_webView canGoForward];
-    
+    if (action == @selector(goBack:) || action == @selector(goForward:))
+        return [_webView validateUserInterfaceItem:item];
+
     return YES;
 }
 

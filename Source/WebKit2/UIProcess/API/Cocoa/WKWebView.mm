@@ -256,11 +256,6 @@
     return nil;
 }
 
-- (IBAction)stopLoading:(id)sender
-{
-    _page->stopLoading();
-}
-
 - (NSString *)title
 {
     return _page->pageLoadState().title();
@@ -298,16 +293,20 @@
     return !!_page->backForwardList().forwardItem();
 }
 
-// FIXME: This should return a WKNavigation object.
-- (void)goBack
+- (WKNavigation *)goBack
 {
     _page->goBack();
+
+    // FIXME: Return a navigation object.
+    return nil;
 }
 
-// FIXME: This should return a WKNavigation object.
-- (void)goForward
+- (WKNavigation *)goForward
 {
     _page->goForward();
+
+    // FIXME: Return a navigation object.
+    return nil;
 }
 
 #pragma mark iOS-specific methods
@@ -1174,6 +1173,43 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
 }
 
 #endif
+
+@end
+
+@implementation WKWebView (WKIBActions)
+
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
+{
+    SEL action = item.action;
+
+    if (action == @selector(goBack:))
+        return !!_page->backForwardList().backItem();
+
+    if (action == @selector(goForward:))
+        return !!_page->backForwardList().forwardItem();
+
+    if (action == @selector(stopLoading:)) {
+        // FIXME: Return no if we're stopped.
+        return YES;
+    }
+
+    return NO;
+}
+
+- (IBAction)goBack:(id)sender
+{
+    [self goBack];
+}
+
+- (IBAction)goForward:(id)sender
+{
+    [self goForward];
+}
+
+- (IBAction)stopLoading:(id)sender
+{
+    _page->stopLoading();
+}
 
 @end
 

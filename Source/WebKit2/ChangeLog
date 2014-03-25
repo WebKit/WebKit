@@ -1,3 +1,19 @@
+2014-03-25  Anders Carlsson  <andersca@apple.com>
+
+        Add goBack: and goForward: IBActions and move stopLoading: to a new WKIBActions category on WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=130732
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView goBack]):
+        (-[WKWebView goForward]):
+        (-[WKWebView validateUserInterfaceItem:]):
+        (-[WKWebView goBack:]):
+        (-[WKWebView goForward:]):
+        (-[WKWebView stopLoading:]):
+
 2014-03-25  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove the autotools build
