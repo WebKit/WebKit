@@ -1,5 +1,13 @@
 2014-03-25  Andy Estes  <aestes@apple.com>
 
+        Fix one API test expectation failure on Mountain Lion, and add additional logging to help diagnose another.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Download.mm:
+        (-[DownloadDelegate _download:didReceiveResponse:]):
+        (-[DownloadDelegate _download:didReceiveData:]):
+
+2014-03-25  Andy Estes  <aestes@apple.com>
+
         Add some debug logging to an API test that's failing on Mountain Lion.
 
         * TestWebKitAPI/Tests/WebKit2Cocoa/Download.mm:

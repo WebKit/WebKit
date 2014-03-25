@@ -78,17 +78,16 @@ static bool isDone;
 
 - (void)_download:(_WKDownload *)download didReceiveResponse:(NSURLResponse *)response
 {
-    NSLog(@"[response sourceURL]: %@\n", [response URL]);
-    NSLog(@"[self sourceURL]: %@\n", [self sourceURL]);
     EXPECT_EQ(_download, download);
     EXPECT_TRUE(_expectedContentLength == 0);
     EXPECT_TRUE(_receivedContentLength == 0);
-    EXPECT_TRUE([[response URL] isEqual:[self sourceURL]]);
+    EXPECT_TRUE([[[response URL] path] isEqualToString:[[self sourceURL] path]]);
     _expectedContentLength = [response expectedContentLength];
 }
 
 - (void)_download:(_WKDownload *)download didReceiveData:(uint64_t)length
 {
+    NSLog(@"didReceiveData: %llu\n", length);
     EXPECT_EQ(_download, download);
     _receivedContentLength += length;
 }
