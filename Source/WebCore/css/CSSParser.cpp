@@ -5222,7 +5222,7 @@ PassRefPtr<CSSValue> CSSParser::parseGridTemplateAreas()
 
                 // The following checks test that the grid area is a single filled-in rectangle.
                 // 1. The new row is adjacent to the previously parsed row.
-                if (rowCount != gridCoordinate.rows.initialPositionIndex + 1)
+                if (rowCount != gridCoordinate.rows.finalPositionIndex + 1)
                     return 0;
 
                 // 2. The new area starts at the same position as the previously parsed area.

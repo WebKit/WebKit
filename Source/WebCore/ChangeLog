@@ -1,3 +1,21 @@
+2014-03-20  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Vertical rectangles not considered as valid grid areas
+        https://bugs.webkit.org/show_bug.cgi?id=130513
+
+        Reviewed by Andreas Kling.
+
+        Grid areas sized as vertical rectangles were incorrectly
+        considered as invalid by the parser. That's because the condition
+        checking that each new row was adjacent to the previous one was
+        using the first row of the currently parsed grid area instead of
+        the last one.
+
+        Test: fast/css-grid-layout/grid-template-areas-get-set.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTemplateAreas):
+
 2014-03-25  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] Volume slider shows below the panel with videos in certain cases

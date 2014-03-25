@@ -33,6 +33,18 @@ if (window.testRunner)
     -webkit-grid-template-areas: "header ."
                                  "footer .";
 }
+
+#gridWithHorizontalRectangle {
+    -webkit-grid-template-areas: "a a a"
+                                 "a a a";
+}
+
+#gridWithVerticalRectangle {
+    -webkit-grid-template-areas: "a a"
+                                 "a a"
+                                 "a a";
+}
+
 </style>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
@@ -44,6 +56,8 @@ if (window.testRunner)
 <div class="grid" id="gridWithSpanningColumnsTemplate"></div>
 <div class="grid" id="gridWithSpanningRowsDotTemplate"></div>
 <div class="grid" id="gridWithDotColumn"></div>
+<div class="grid" id="gridWithHorizontalRectangle"></div>
+<div class="grid" id="gridWithVerticalRectangle"></div>
 <script>
     description("This test checks that grid-template-areas is properly parsed.");
 
@@ -64,6 +78,8 @@ if (window.testRunner)
     testGridTemplateAreas("gridWithSpanningColumnsTemplate", '"span span"');
     testGridTemplateAreas("gridWithSpanningRowsDotTemplate", '"span" "."');
     testGridTemplateAreas("gridWithDotColumn", '"header ." "footer ."');
+    testGridTemplateAreas("gridWithHorizontalRectangle", '"a a a" "a a a"');
+    testGridTemplateAreas("gridWithVerticalRectangle", '"a a" "a a" "a a"');
 
     debug("Test grid-template-areas: initial");
     var element = document.createElement("div");

@@ -11,6 +11,8 @@ PASS getComputedStyle(gridWithTwoRowsTemplate).getPropertyValue('-webkit-grid-te
 PASS getComputedStyle(gridWithSpanningColumnsTemplate).getPropertyValue('-webkit-grid-template-areas') is "\"span span\""
 PASS getComputedStyle(gridWithSpanningRowsDotTemplate).getPropertyValue('-webkit-grid-template-areas') is "\"span\" \".\""
 PASS getComputedStyle(gridWithDotColumn).getPropertyValue('-webkit-grid-template-areas') is "\"header .\" \"footer .\""
+PASS getComputedStyle(gridWithHorizontalRectangle).getPropertyValue('-webkit-grid-template-areas') is "\"a a a\" \"a a a\""
+PASS getComputedStyle(gridWithVerticalRectangle).getPropertyValue('-webkit-grid-template-areas') is "\"a a\" \"a a\" \"a a\""
 Test grid-template-areas: initial
 PASS getComputedStyle(element).getPropertyValue('-webkit-grid-template-areas') is "\"foobar\""
 Test grid-template-areas: inherit
