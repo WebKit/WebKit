@@ -146,8 +146,7 @@ _PATH_RULES_SPECIFIER = [
       "Source/WebCore/css/CSSParser.cpp"],
      ["-readability/naming"]),
 
-    ([# The GTK+ port uses the autotoolsconfig.h header in some C sources
-      # to serve the same purpose of config.h.
+    ([# The GTK+ port uses the cmakeconfig.h header directly in some C sources.
       "Tools/GtkLauncher/main.c"],
      ["-build/include_order"]),
 

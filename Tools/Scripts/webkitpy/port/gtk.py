@@ -53,31 +53,17 @@ class GtkPort(Port):
             if not self.get_option("wrapper"):
                 raise ValueError('use --wrapper=\"valgrind\" for memory leak detection on GTK')
 
-    def _is_cmake_build(self):
-        # Look for the autotools config.log file, which means that we
-        # assume a CMake build (--gtk) when lacking evidence of either.
-        return not os.path.exists(self._build_path('config.log'))
-
     def _built_executables_path(self, *path):
-        if self._is_cmake_build():
-            return self._build_path(*(('bin',) + path))
-        else:
-            return self._build_path(*(('Programs',) + path))
+        return self._build_path(*(('bin',) + path))
 
     def _built_libraries_path(self, *path):
-        if self._is_cmake_build():
-            return self._build_path(*(('lib',) + path))
-        else:
-            return self._build_path(*(('.libs',) + path))
+        return self._build_path(*(('lib',) + path))
 
     def warn_if_bug_missing_in_test_expectations(self):
         return not self.get_option('webkit_test_runner')
 
     def _port_flag_for_scripts(self):
-        if self._is_cmake_build():
-            return "--gtk"
-        else:
-            return "--gtkautotools"
+        return "--gtk"
 
     @memoized
     def _driver_class(self):
@@ -114,12 +100,8 @@ class GtkPort(Port):
         environment = super(GtkPort, self).setup_environ_for_server(server_name)
         environment['GSETTINGS_BACKEND'] = 'memory'
         environment['LIBOVERLAY_SCROLLBAR'] = '0'
-        if self._is_cmake_build():
-            environment['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('lib', 'libTestRunnerInjectedBundle.so')
-            environment['TEST_RUNNER_TEST_PLUGIN_PATH'] = self._build_path('lib')
-        else:
-            environment['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('Libraries', 'libTestRunnerInjectedBundle.la')
-            environment['TEST_RUNNER_TEST_PLUGIN_PATH'] = self._build_path('TestNetscapePlugin', '.libs')
+        environment['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('lib', 'libTestRunnerInjectedBundle.so')
+        environment['TEST_RUNNER_TEST_PLUGIN_PATH'] = self._build_path('lib')
         environment['AUDIO_RESOURCES_PATH'] = self.path_from_webkit_base('Source', 'WebCore', 'platform', 'audio', 'resources')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_OUTPUTDIR')
         if self.get_option("leaks"):
@@ -216,10 +198,7 @@ class GtkPort(Port):
 
     def build_webkit_command(self, build_style=None):
         command = super(GtkPort, self).build_webkit_command(build_style)
-        if self._is_cmake_build():
-            command.extend(["--gtk", "--update-gtk"])
-        else:
-            command.extend(["--gtkautotools", "--update-gtk"])
+        command.extend(["--gtk", "--update-gtk"])
 
         if self.get_option('webkit_test_runner'):
             command.append("--no-webkit1")

@@ -1,3 +1,14 @@
+2014-03-25  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove the autotools build
+        https://bugs.webkit.org/show_bug.cgi?id=130717
+
+        Reviewed by Anders Carlsson.
+
+        * GNUmakefile.am: Removed.
+        * WebKit2Prefix.h: Removed references to the autotools configure file.
+        * config.h: Ditto.
+
 2014-03-25  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL][WK2] Add NETWORK_PROCESS build option

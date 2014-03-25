@@ -92,8 +92,7 @@ my $iPhoneSimulatorVersion;
 my $nmPath;
 my $osXVersion;
 my $generateDsym;
-my $isGtkAutotools;
-my $isGtkCMake;
+my $isGtk;
 my $isWinCE;
 my $isWinCairo;
 my $isWin64;
@@ -287,14 +286,7 @@ sub determineArchitecture
     determineBaseProductDir();
     determineXcodeSDK();
 
-    if (isGtkAutotools()) {
-        determineConfigurationProductDir();
-        my $host_triple = `grep -E '^host = ' $configurationProductDir/GNUmakefile 2> /dev/null`;
-        if ($host_triple =~ m/^host = ([^-]+)-/) {
-            # We have a configured build tree; use it.
-            $architecture = $1;
-        }
-    } elsif (isAppleMacWebKit()) {
+    if (isAppleMacWebKit()) {
         if (open ARCHITECTURE, "$baseProductDir/Architecture") {
             $architecture = <ARCHITECTURE>;
             close ARCHITECTURE;
@@ -312,7 +304,7 @@ sub determineArchitecture
                 $architecture = 'armv7';
             }
         }
-    } elsif (isEfl() || isGtkCMake()) {
+    } elsif (isEfl() || isGtk()) {
         my $host_processor = "";
         $host_processor = `cmake --system-information | grep CMAKE_SYSTEM_PROCESSOR`;
         if ($host_processor =~ m/^CMAKE_SYSTEM_PROCESSOR \"([^"]+)\"/) {
@@ -385,8 +377,7 @@ sub argumentsForConfiguration()
     push(@args, '--release') if ($configuration =~ "^Release");
     push(@args, '--32-bit') if ($architecture ne "x86_64" and !isWin64());
     push(@args, '--64-bit') if (isWin64());
-    push(@args, '--gtkautotools') if isGtkAutotools();
-    push(@args, '--gtk') if isGtkCMake();
+    push(@args, '--gtk') if isGtk();
     push(@args, '--efl') if isEfl();
     push(@args, '--wincairo') if isWinCairo();
     push(@args, '--wince') if isWinCE();
@@ -551,8 +542,7 @@ sub productDir
 sub jscProductDir
 {
     my $productDir = productDir();
-    $productDir .= "/bin" if (isEfl() || isGtkCMake());
-    $productDir .= "/Programs" if isGtkAutotools();
+    $productDir .= "/bin" if (isEfl() || isGtk());
 
     return $productDir;
 }
@@ -802,11 +792,7 @@ sub builtDylibPathForName
         # WebKitGTK+ for GTK2, WebKitGTK+ for GTK3, and WebKit2 respectively.
         my @libraries = ("libwebkitgtk-1.0", "libwebkitgtk-3.0", "libwebkit2gtk-3.0");
         my $extension = isDarwin() ? ".dylib" : ".so";
-
-        my $builtLibraryPath = "$configurationProductDir/.libs/";
-        if (isGtkCMake()) {
-            $builtLibraryPath = "$configurationProductDir/lib/";
-        }
+        my $builtLibraryPath = "$configurationProductDir/lib/";
 
         foreach $libraryName (@libraries) {
             my $libraryPath = "$builtLibraryPath" . $libraryName . $extension;
@@ -959,33 +945,16 @@ sub isEfl()
     return $isEfl;
 }
 
-sub determineIsGtkCMake()
+sub determineIsGtk()
 {
-    return if defined($isGtkCMake);
-    $isGtkCMake = checkForArgumentAndRemoveFromARGV("--gtk");
-}
-
-sub isGtkCMake()
-{
-    determineIsGtkCMake();
-    return $isGtkCMake;
-}
-
-sub isGtkAutotools()
-{
-    determineIsGtkAutotools();
-    return $isGtkAutotools;
+    return if defined($isGtk);
+    $isGtk = checkForArgumentAndRemoveFromARGV("--gtk");
 }
 
 sub isGtk()
 {
-    return isGtkCMake() || isGtkAutotools();
-}
-
-sub determineIsGtkAutotools()
-{
-    return if defined($isGtkAutotools);
-    $isGtkAutotools = checkForArgumentAndRemoveFromARGV("--gtkautotools");
+    determineIsGtk();
+    return $isGtk;
 }
 
 sub isWinCE()
@@ -1691,78 +1660,6 @@ sub buildVisualStudioProject
     return system @command;
 }
 
-sub autotoolsFlag($$)
-{
-    my ($flag, $feature) = @_;
-    my $prefix = $flag ? "--enable" : "--disable";
-
-    return $prefix . '-' . $feature;
-}
-
-sub runAutogenForAutotoolsProjectIfNecessary($@)
-{
-    my ($dir, $prefix, $sourceDir, $project, $joinedOverridableFeatures, @buildArgs) = @_;
-
-    # Always enable introspection when building WebKitGTK+.
-    unshift(@buildArgs, "--enable-introspection");
-
-    # Also, always enable developer mode for developer/test builds.
-    unshift(@buildArgs, "--enable-developer-mode");
-
-    # Optimize for running WebKit inside the build tree
-    unshift(@buildArgs, "--disable-fast-install");
-
-    my $joinedBuildArgs = join(" ", @buildArgs);
-
-    if (-e "GNUmakefile") {
-        # Just assume that build-jsc will never be used to reconfigure JSC. Later
-        # we can go back and make this more complicated if the demand is there.
-        if ($project ne "WebKit") {
-            return;
-        }
-
-        # Run autogen.sh again if either the features overrided by build-webkit or build arguments have changed.
-        if (!isCachedArgumentfileOutOfDate("WebKitFeatureOverrides.txt", $joinedOverridableFeatures)
-            && !isCachedArgumentfileOutOfDate("previous-autogen-arguments.txt", $joinedBuildArgs)) {
-            return;
-        }
-    }
-
-    print "Calling autogen.sh in " . $dir . "\n\n";
-    print "Installation prefix directory: $prefix\n" if(defined($prefix));
-
-    # Only for WebKit, write the autogen.sh arguments to a file so that we can detect
-    # when they change and automatically re-run it.
-    if ($project eq 'WebKit') {
-        open(OVERRIDABLE_FEATURES, ">WebKitFeatureOverrides.txt");
-        print OVERRIDABLE_FEATURES $joinedOverridableFeatures;
-        close(OVERRIDABLE_FEATURES);
-
-        open(AUTOTOOLS_ARGUMENTS, ">previous-autogen-arguments.txt");
-        print AUTOTOOLS_ARGUMENTS $joinedBuildArgs;
-        close(AUTOTOOLS_ARGUMENTS);
-    }
-
-    # Make the path relative since it will appear in all -I compiler flags.
-    # Long argument lists cause bizarre slowdowns in libtool.
-    my $relSourceDir = File::Spec->abs2rel($sourceDir) || ".";
-
-    # Compiler options to keep floating point values consistent
-    # between 32-bit and 64-bit architectures. The options are also
-    # used on Chromium build.
-    determineArchitecture();
-    if ($architecture ne "x86_64" && !isARM() && !isCrossCompilation()) {
-        $ENV{'CXXFLAGS'} = "-march=pentium4 -msse2 -mfpmath=sse " . ($ENV{'CXXFLAGS'} || "");
-    }
-
-    # Prefix the command with jhbuild run.
-    unshift(@buildArgs, "$relSourceDir/autogen.sh");
-    unshift(@buildArgs, jhbuildWrapperPrefixIfNeeded());
-    if (system(@buildArgs) ne 0) {
-        die "Calling autogen.sh failed!\n";
-    }
-}
-
 sub getJhbuildPath()
 {
     my @jhbuildPath = File::Spec->splitdir(baseProductDir());
@@ -1790,125 +1687,6 @@ sub isCachedArgumentfileOutOfDate($@)
         print "Previous contents were: $previousContents\n\n";
         print "New contents are: $currentContents\n";
         return 1;
-    }
-
-    return 0;
-}
-
-sub buildAutotoolsProject($@)
-{
-    my ($project, $clean, $prefix, $makeArgs, $noWebKit1, $noWebKit2, @features) = @_;
-
-    my $make =  $ENV{'MAKE'} //= 'make';
-    my $dir = productDir();
-    my $config = passedConfiguration() || configuration();
-
-    # Use rm to clean the build directory since distclean may miss files
-    if ($clean && -d $dir) {
-        system "rm", "-rf", "$dir";
-    }
-
-    if (! -d $dir) {
-        File::Path::mkpath($dir) or die "Failed to create build directory " . $dir
-    }
-    chdir $dir or die "Failed to cd into " . $dir . "\n";
-
-    if ($clean) {
-        return 0;
-    }
-
-    my @buildArgs = @ARGV;
-    if ($noWebKit1) {
-        unshift(@buildArgs, "--disable-webkit1");
-    }
-    if ($noWebKit2) {
-        unshift(@buildArgs, "--disable-webkit2");
-    }
-
-    # Configurable features listed here should be kept in sync with the
-    # features for which there exists a configuration option in configure.ac.
-    my %configurableFeatures = (
-        "battery-status" => 1,
-        "gamepad" => 1,
-        "geolocation" => 1,
-        "svg" => 1,
-        "svg-fonts" => 1,
-        "video" => 1,
-        "webgl" => 1,
-        "web-audio" => 1,
-    );
-
-    # These features are ones which build-webkit cannot control, typically because
-    # they can only be active when we have the proper dependencies.
-    my %unsetFeatures = (
-        "accelerated-2d-canvas" => 1,
-    );
-
-    my @overridableFeatures = ();
-    foreach (@features) {
-        if ($configurableFeatures{$_->{option}}) {
-            push @buildArgs, autotoolsFlag(${$_->{value}}, $_->{option});;
-        } elsif (!$unsetFeatures{$_->{option}}) {
-            push @overridableFeatures, $_->{define} . "=" . (${$_->{value}} ? "1" : "0");
-        }
-    }
-
-    $makeArgs = $makeArgs || "";
-    $makeArgs = $makeArgs . " " . $ENV{"WebKitMakeArguments"} if $ENV{"WebKitMakeArguments"};
-
-    # Automatically determine the number of CPUs for make only
-    # if make arguments haven't already been specified.
-    if ($makeArgs eq "") {
-        $makeArgs = "-j" . numberOfCPUs();
-    }
-
-    # WebKit is the default target, so we don't need to specify anything.
-    if ($project eq "JavaScriptCore") {
-        $makeArgs .= " jsc";
-    } elsif ($project eq "WTF") {
-        $makeArgs .= " libWTF.la";
-    }
-
-    $prefix = $ENV{"WebKitInstallationPrefix"} if !defined($prefix);
-    push @buildArgs, "--prefix=" . $prefix if defined($prefix);
-
-    # Check if configuration is Debug.
-    my $debug = $config =~ m/debug/i;
-    if ($debug) {
-        push @buildArgs, "--enable-debug";
-    } else {
-        push @buildArgs, "--disable-debug";
-    }
-
-    if (checkForArgumentAndRemoveFromArrayRef("--update-gtk", \@buildArgs)) {
-        # Force autogen to run, to catch the possibly updated libraries.
-        system("rm -f previous-autogen-arguments.txt");
-
-        system("perl", "$sourceDir/Tools/Scripts/update-webkitgtk-libs") == 0 or die $!;
-    }
-
-    # If GNUmakefile exists, don't run autogen.sh unless its arguments
-    # have changed. The makefile should be smart enough to track autotools
-    # dependencies and re-run autogen.sh when build files change.
-    my $joinedOverridableFeatures = join(" ", @overridableFeatures);
-    runAutogenForAutotoolsProjectIfNecessary($dir, $prefix, $sourceDir, $project, $joinedOverridableFeatures, @buildArgs);
-
-    my $runWithJhbuild = join(" ", jhbuildWrapperPrefixIfNeeded());
-    if (system("$runWithJhbuild $make $makeArgs") ne 0) {
-        die "\nFailed to build WebKit using '$make'!\n";
-    }
-
-    chdir ".." or die;
-
-    if (!checkForArgumentAndRemoveFromARGV("--disable-gtk-doc")) {
-        if ($project eq 'WebKit' && !isCrossCompilation() && !($noWebKit1 && $noWebKit2)) {
-            my @docGenerationOptions = ("$sourceDir/Tools/gtk/generate-gtkdoc", "--skip-html");
-            unshift(@docGenerationOptions, jhbuildWrapperPrefixIfNeeded());
-
-            if (system(@docGenerationOptions)) {
-                die "\n gtkdoc did not build without warnings\n";
-            }
-        }
     }
 
     return 0;
@@ -2128,13 +1906,13 @@ sub cmakeBasedPortName()
 {
     return "Efl" if isEfl();
     return "WinCE" if isWinCE();
-    return "GTK" if isGtkCMake();
+    return "GTK" if isGtk();
     return "";
 }
 
 sub isCMakeBuild()
 {
-    return isEfl() || isWinCE() || isGtkCMake();
+    return isEfl() || isWinCE() || isGtk();
 }
 
 sub promptUser
@@ -2144,17 +1922,6 @@ sub promptUser
     print "$prompt $defaultValue: ";
     chomp(my $input = <STDIN>);
     return $input ? $input : $default;
-}
-
-sub buildGtkProject
-{
-    my ($project, $clean, $prefix, $makeArgs, $noWebKit1, $noWebKit2, @features) = @_;
-
-    if ($project ne "WebKit" and $project ne "JavaScriptCore" and $project ne "WTF") {
-        die "Unsupported project: $project. Supported projects: WebKit, JavaScriptCore, WTF\n";
-    }
-
-    return buildAutotoolsProject($project, $clean, $prefix, $makeArgs, $noWebKit1, $noWebKit2, @features);
 }
 
 sub appleApplicationSupportPath
@@ -2340,13 +2107,6 @@ sub runWebKitTestRunner
 {
     if (isAppleMacWebKit()) {
         return runMacWebKitApp(File::Spec->catfile(productDir(), "WebKitTestRunner"));
-    } elsif (isGtk()) {
-        my $productDir = productDir();
-        my $injectedBundlePath = "$productDir/Libraries/.libs/libTestRunnerInjectedBundle";
-        print "Starting WebKitTestRunner with TEST_RUNNER_INJECTED_BUNDLE_FILENAME set to point to $injectedBundlePath.\n";
-        $ENV{TEST_RUNNER_INJECTED_BUNDLE_FILENAME} = $injectedBundlePath;
-        my @args = ("$productDir/Programs/WebKitTestRunner", @ARGV);
-        return system {$args[0] } @args;
     }
 
     return 1;

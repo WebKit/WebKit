@@ -1,3 +1,13 @@
+2014-03-25  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove the autotools build
+        https://bugs.webkit.org/show_bug.cgi?id=130717
+
+        Reviewed by Anders Carlsson.
+
+        * GNUmakefile.am: Removed.
+        * config.h: Remove references to the autotools configure file.
+
 2014-03-24  Filip Pizlo  <fpizlo@apple.com>
 
         More scaffolding for a stub routine to have a stub recursively embedded inside it

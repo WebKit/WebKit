@@ -23,15 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(HAVE_CONFIG_H) && HAVE_CONFIG_H
-#ifdef BUILDING_WITH_CMAKE
 #include "cmakeconfig.h"
-#else
-#include "autotoolsconfig.h"
-#endif
-#endif
 #include "BrowserSearchBar.h"
-
 
 static const char *searchEntryFailedStyle = "GtkEntry#searchEntry {background-color: #ff6666;}";
 

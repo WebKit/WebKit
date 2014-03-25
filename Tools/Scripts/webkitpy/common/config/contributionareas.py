@@ -72,7 +72,6 @@ contribution_areas = [
     _Area('Android port', ['android']),
     _Area('Animation', ['animation', 'animator']),
     _Area('Apple\'s Windows port', ['win', 'windows']),  # FIXME: need to exclude chromium...
-    _Area('Autotools Build', ['autotools']),
     _Area('Basic types and data structures (WTF)', ['wtf']),
 # FIXME: 'Bidirectional text'
 # FIXME: 'Build/test infrastructure (stuff under Tools/Scripts)'

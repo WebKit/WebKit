@@ -22,33 +22,6 @@ tags
 *~
 .*.sw[a-p]
 
-# Though the GTK build builds in a subdirectory, autogen.sh still deposits
-# a few files into the source tree.
-/aclocal.m4
-/autom4te.cache
-/Source/autotools/compile
-/Source/autotools/config.guess
-/Source/autotools/config.sub
-/Source/autotools/depcomp
-/Source/autotools/gtk-doc.m4
-/Source/autotools/install-sh
-/Source/autotools/libtool.m4
-/Source/autotools/ltmain.sh
-/Source/autotools/ltoptions.m4
-/Source/autotools/ltsugar.m4
-/Source/autotools/ltversion.m4
-/Source/autotools/lt~obsolete.m4
-/Source/autotools/missing
-/Source/WebCore/GNUmakefile.features.am
-/Source/WebKit/gtk/docs/GNUmakefile.in
-/Source/WebKit/gtk/po/*.pot
-/autotoolsconfig.h.in
-/configure
-/GNUmakefile.in
-/gtk-doc.make
-/INSTALL
-/README
-
 # Ignore files installed by WebKitSupportLibrary/WebKitAuxiliaryLibrary
 /WebKitSupportLibrary.zip
 /WebKitLibraries/win/Software License Agreement for WebKit Support Libraries.rtf

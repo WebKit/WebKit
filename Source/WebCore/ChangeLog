@@ -1,3 +1,14 @@
+2014-03-25  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove the autotools build
+        https://bugs.webkit.org/show_bug.cgi?id=130717
+
+        Reviewed by Anders Carlsson.
+
+        * GNUmakefile.am: Removed.
+        * bindings/gobject/GNUmakefile.am: Removed.
+        * config.h: Removed references to autotools configure file.
+
 2014-03-24  Brent Fulgham  <bfulgham@apple.com>
 
         Prevent 'removetrack' events from firing when all inband text tracks are removed.

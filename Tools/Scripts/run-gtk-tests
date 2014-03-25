@@ -196,7 +196,7 @@ class TestRunner:
         self._test_env = os.environ
         self._test_env['GSETTINGS_BACKEND'] = 'memory'
         self._test_env["TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH"] = common.top_level_path("Tools", "TestWebKitAPI", "Tests", "WebKit2")
-        self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.tests_library_build_path()
+        self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.library_build_path()
         self._test_env["WEBKIT_EXEC_PATH"] = self._programs_path
 
         if not self._run_xvfb():

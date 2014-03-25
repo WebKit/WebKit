@@ -287,17 +287,9 @@ for my $dir (@projects) {
     chdir $dir or die;
     $result = 0;
 
-    # For Gtk the WebKit project builds all others
-    if (isGtkAutotools() && $dir ne "Source/WebKit") {
-        chdirWebKit();
-        next;
-    }
-
     my $project = basename($dir);
     my $baseProductDir = baseProductDir();
-    if (isGtkAutotools()) {
-        $result = buildGtkProject($project, $clean, $prefixPath, $makeArgs, $noWebKit1, $noWebKit2, @features);
-    } elsif (isAppleMacWebKit()) {
+    if (isAppleMacWebKit()) {
         my @local_options = @options;
         push @local_options, XcodeCoverageSupportOptions() if $coverageSupport;
         my $projectPath = $project =~ /gtest/ ? "xcode/gtest" : $project;

@@ -19,12 +19,8 @@
  *
  */
 
-#if defined(HAVE_CONFIG_H) && HAVE_CONFIG_H
-#ifdef BUILDING_WITH_CMAKE
+#if defined(HAVE_CONFIG_H) && HAVE_CONFIG_H && defined(BUILDING_WITH_CMAKE)
 #include "cmakeconfig.h"
-#else
-#include "autotoolsconfig.h"
-#endif
 #endif
 
 #include <wtf/Platform.h>

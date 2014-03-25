@@ -1,3 +1,12 @@
+2014-03-25  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove the autotools build
+        https://bugs.webkit.org/show_bug.cgi?id=130717
+
+        Reviewed by Anders Carlsson.
+
+        * GNUmakefile.am: Removed.
+
 2014-01-20  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [CMAKE] Remove Nix from CMake scripts

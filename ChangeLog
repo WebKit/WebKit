@@ -1,3 +1,30 @@
+2014-03-25  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove the autotools build
+        https://bugs.webkit.org/show_bug.cgi?id=130717
+
+        Reviewed by Anders Carlsson.
+
+        * .gitignore: Remove references to autotools files.
+        * GNUmakefile.am: Removed.
+        * Source/autotools/CheckSystemAndBasicDependencies.m4: Removed.
+        * Source/autotools/CustomMacros.m4: Removed.
+        * Source/autotools/FindDependencies.m4: Removed.
+        * Source/autotools/PrintBuildConfiguration.m4: Removed.
+        * Source/autotools/ReadCommandLineArguments.m4: Removed.
+        * Source/autotools/SetupAutoconfHeader.m4: Removed.
+        * Source/autotools/SetupAutomake.m4: Removed.
+        * Source/autotools/SetupCompilerFlags.m4: Removed.
+        * Source/autotools/SetupLibtool.m4: Removed.
+        * Source/autotools/SetupWebKitFeatures.m4: Removed.
+        * Source/autotools/Versions.m4: Removed.
+        * Source/autotools/acinclude.m4: Removed.
+        * Source/autotools/dolt.m4: Removed.
+        * Source/autotools/gsettings.m4: Removed.
+        * Source/cmake/OptionsGTK.cmake:
+        * autogen.sh: Removed.
+        * configure.ac: Removed.
+
 2014-03-25  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [EFL] Add ARM64 build support

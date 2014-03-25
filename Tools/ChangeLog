@@ -1,3 +1,36 @@
+2014-03-25  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove the autotools build
+        https://bugs.webkit.org/show_bug.cgi?id=130717
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/config.h: Remove references to the autotools configure file.
+        * GNUmakefile.am: Removed.
+        * GtkLauncher/GNUmakefile.am: Removed.
+        * GtkLauncher/main.c: Remove references to the autotools configure file.
+        * MiniBrowser/gtk/BrowserDownloadsBar.c: Ditto.
+        * MiniBrowser/gtk/BrowserSearchBar.c: Ditto.
+        * MiniBrowser/gtk/BrowserWindow.c: Ditto.
+        * MiniBrowser/gtk/GNUmakefile.am: Removed.
+        * MiniBrowser/gtk/main.c: Remove references to the autotools configure file.
+        * Scripts/build-webkit: No longer handle autotools.
+        * Scripts/run-gtk-tests: Ditto.
+        (TestRunner._setup_testing_environment):
+        * Scripts/run-launcher: Ditto.
+        * Scripts/webkitdirs.pm: Ditto.
+        * Scripts/webkitpy/common/config/contributionareas.py: Remove autotools as a contribution area.
+        * Scripts/webkitpy/common/config/contributors.json: Ditto.
+        * Scripts/webkitpy/port/gtk.py: No longer handle autotools.
+        * Scripts/webkitpy/style/checker.py:
+        * TestWebKitAPI/GNUmakefile.am: Removed.
+        * TestWebKitAPI/config.h: Remove references to the autotools configure file.
+        * WebKitTestRunner/GNUmakefile.am: Removed.
+        * WebKitTestRunner/WebKitTestRunnerPrefix.h: Ditto.
+        * gtk/GNUmakefile.am: Removed.
+        * gtk/common.py: Remove checks for the autotools build.
+        * gtk/symbols.filter: Renamed from Source/autotools/symbols.filter.
+
 2014-03-25  László Langó  <llango.u-szeged@partner.samsung.com>
 
         prepare-ChangeLog throws false positive warnings for modified files.
