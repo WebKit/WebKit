@@ -188,15 +188,16 @@ class ChangeLogEntry(object):
 
     @classmethod
     def _parse_bug_description(cls, text):
-        # If line 4 is a bug url, line 3 is the bug description.
-        # It's too hard to guess in other cases, so we return None.
+        # Line 3 is the bug description in most cases.
         lines = text.splitlines()
-        if len(lines) < 4:
+        if len(lines) < 3:
             return None
-        for bug_url in (config_urls.bug_url_short, config_urls.bug_url_long):
-            if re.match("^\s*" + bug_url + "$", lines[3]):
-                return lines[2].strip()
-        return None
+        found_reviewed = re.search(ChangeLogEntry.reviewed_by_regexp, lines[2], re.IGNORECASE)
+        found_reviewed_byless = re.search(ChangeLogEntry.reviewed_byless_regexp, lines[2], re.IGNORECASE)
+        found_url = parse_bug_id_from_changelog(lines[2])
+        if found_reviewed or found_reviewed_byless or found_url:
+            return None
+        return lines[2].strip()
 
     def _parse_entry(self):
         match = re.match(self.date_line_regexp, self._contents, re.MULTILINE)

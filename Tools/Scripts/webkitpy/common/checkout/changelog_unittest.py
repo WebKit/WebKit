@@ -241,15 +241,18 @@ class ChangeLogTest(unittest.TestCase):
         self.assertEqual(parsed_entries[0].date(), "2009-08-17")
         self.assertEqual(parsed_entries[0].reviewer_text(), "David Levin")
         self.assertEqual(parsed_entries[0].is_touched_files_text_clean(), False)
+        self.assertIsNone(parsed_entries[0].bug_description())
         self.assertEqual(parsed_entries[1].date_line(), "2009-08-16  David Kilzer  <ddkilzer@apple.com>")
         self.assertEqual(parsed_entries[1].date(), "2009-08-16")
         self.assertEqual(parsed_entries[1].author_email(), "ddkilzer@apple.com")
+        self.assertEqual(parsed_entries[1].bug_description(), "Backed out r47343 which was mistakenly committed")
         self.assertEqual(parsed_entries[1].touched_files_text(), "        * Scripts/bugzilla-tool:\n        * Scripts/modules/scm.py:\n")
         self.assertEqual(parsed_entries[1].is_touched_files_text_clean(), True)
         self.assertEqual(parsed_entries[2].reviewer_text(), "Mark Rowe")
         self.assertEqual(parsed_entries[2].touched_files(), ["DumpRenderTree/mac/DumpRenderTreeWindow.mm"])
         self.assertEqual(parsed_entries[2].touched_functions(), {"DumpRenderTree/mac/DumpRenderTreeWindow.mm": ["-[DumpRenderTreeWindow close]"]})
         self.assertEqual(parsed_entries[2].is_touched_files_text_clean(), False)
+        self.assertIsNone(parsed_entries[2].bug_description())
         self.assertEqual(parsed_entries[3].author_name(), "Benjamin Poulain")
         self.assertEqual(parsed_entries[3].touched_files(), ["platform/cf/KURLCFNet.cpp", "platform/mac/KURLMac.mm",
             "WebCoreSupport/ChromeClientEfl.cpp", "ewk/ewk_private.h", "ewk/ewk_view.cpp"])
@@ -260,9 +263,13 @@ class ChangeLogTest(unittest.TestCase):
         self.assertEqual(parsed_entries[4].reviewer_text(), "David Hyatt")
         self.assertIsNone(parsed_entries[4].bug_description())
         self.assertEqual(parsed_entries[5].reviewer_text(), "Adam Roben")
+        self.assertIsNone(parsed_entries[5].bug_description())
         self.assertEqual(parsed_entries[6].reviewer_text(), "Tony Chang")
+        self.assertIsNone(parsed_entries[6].bug_description())
         self.assertIsNone(parsed_entries[7].reviewer_text())
+        self.assertEqual(parsed_entries[7].bug_description(), "Unreviewed warning fix.")
         self.assertEqual(parsed_entries[8].reviewer_text(), 'Darin Adler')
+        self.assertEqual(parsed_entries[8].bug_description(), 'Resolve regular and visited link style in a single pass')
 
     def test_parse_log_entries_from_annotated_file(self):
         # Note that there are trailing spaces on some of the lines intentionally.

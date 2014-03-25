@@ -192,7 +192,7 @@ class CheckoutTest(unittest.TestCase):
         checkout.changelog_entries_for_revision = lambda revision, changed_files=None: [ChangeLogEntry(_changelog1entry1)]
         commitinfo = checkout.commit_info_for_revision(4)
         self.assertEqual(commitinfo.bug_id(), 36629)
-        self.assertEqual(commitinfo.bug_description(), None)
+        self.assertEqual(commitinfo.bug_description(), "Unreviewed build fix to un-break webkit-patch land.")
         self.assertEqual(commitinfo.author_name(), u"Tor Arne Vestb\u00f8")
         self.assertEqual(commitinfo.author_email(), "vestbo@webkit.org")
         self.assertIsNone(commitinfo.reviewer_text())
@@ -208,7 +208,7 @@ class CheckoutTest(unittest.TestCase):
             ],
             'reviewer_text': None,
             'author_name': u'Tor Arne Vestb\xf8',
-            'bug_description': None,
+            'bug_description': 'Unreviewed build fix to un-break webkit-patch land.',
         })
 
         checkout.changelog_entries_for_revision = lambda revision, changed_files=None: []

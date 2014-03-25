@@ -1,3 +1,17 @@
+2014-03-25  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        [webkitpy] Improve _parse_bug_description to recognize more descriptions
+        https://bugs.webkit.org/show_bug.cgi?id=130137
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (ChangeLogEntry._parse_bug_description):
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        (test_parse_log_entries_from_changelog):
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        (CheckoutTest.test_commit_info_for_revision):
+
 2014-03-24  Andy Estes  <aestes@apple.com>
 
         Fix the iOS build of TestWebKitAPI.
