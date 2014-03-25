@@ -340,8 +340,8 @@ static void generateGetByIdStub(
             // - Any byte between FP (exclusive) and SP (inclusive) could be live in the calling
             //   code.
             //
-            // Therefore, we temporary grow the stack for the purpose of the call and then
-            // degrow it after.
+            // Therefore, we temporarily grow the stack for the purpose of the call and then
+            // shrink it after.
             
             callLinkInfo = std::make_unique<CallLinkInfo>();
             callLinkInfo->callType = CallLinkInfo::Call;
@@ -363,15 +363,14 @@ static void generateGetByIdStub(
             unsigned numberOfRegsForCall =
                 JSStack::CallFrameHeaderSize + numberOfParameters;
             
-            unsigned alignedNumberOfNeededRegs =
-                WTF::roundUpToMultipleOf(stackAlignmentRegisters(), numberOfRegsForCall);
+            unsigned numberOfBytesForCall =
+                numberOfRegsForCall * sizeof(Register) - sizeof(CallerFrameAndPC);
             
-            unsigned alignedNumberOfNeededBytes =
-                alignedNumberOfNeededRegs * sizeof(Register);
+            unsigned alignedNumberOfBytesForCall =
+                WTF::roundUpToMultipleOf(stackAlignmentBytes(), numberOfBytesForCall);
             
             stubJit.subPtr(
-                MacroAssembler::TrustedImm32(
-                    alignedNumberOfNeededBytes - sizeof(CallerFrameAndPC)),
+                MacroAssembler::TrustedImm32(alignedNumberOfBytesForCall),
                 MacroAssembler::stackPointerRegister);
             
             MacroAssembler::Address calleeFrame = MacroAssembler::Address(
@@ -404,8 +403,7 @@ static void generateGetByIdStub(
             fastPathCall = stubJit.nearCall();
             
             stubJit.addPtr(
-                MacroAssembler::TrustedImm32(
-                    alignedNumberOfNeededBytes - sizeof(CallerFrameAndPC)),
+                MacroAssembler::TrustedImm32(alignedNumberOfBytesForCall),
                 MacroAssembler::stackPointerRegister);
             
             done.append(stubJit.jump());
@@ -419,8 +417,7 @@ static void generateGetByIdStub(
             slowPathCall = stubJit.nearCall();
             
             stubJit.addPtr(
-                MacroAssembler::TrustedImm32(
-                    alignedNumberOfNeededBytes - sizeof(CallerFrameAndPC)),
+                MacroAssembler::TrustedImm32(alignedNumberOfBytesForCall),
                 MacroAssembler::stackPointerRegister);
             
             done.append(stubJit.jump());
