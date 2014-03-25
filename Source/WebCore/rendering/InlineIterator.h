@@ -41,6 +41,7 @@ public:
         , m_renderer(0)
         , m_nextBreakablePosition(-1)
         , m_pos(0)
+        , m_refersToEndOfPreviousNode(false)
     {
     }
 
@@ -49,6 +50,7 @@ public:
         , m_renderer(o)
         , m_nextBreakablePosition(-1)
         , m_pos(p)
+        , m_refersToEndOfPreviousNode(false)
     {
     }
 
@@ -61,21 +63,24 @@ public:
 
     void moveTo(RenderObject* object, unsigned offset, int nextBreak = -1)
     {
-        m_renderer = object;
-        m_pos = offset;
-        m_nextBreakablePosition = nextBreak;
+        setRenderer(object);
+        setOffset(offset);
+        setNextBreakablePosition(nextBreak);
     }
 
     RenderObject* renderer() const { return m_renderer; }
     void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
     unsigned offset() const { return m_pos; }
-    void setOffset(unsigned position) { m_pos = position; }
+    void setOffset(unsigned position);
     RenderElement* root() const { return m_root; }
     int nextBreakablePosition() const { return m_nextBreakablePosition; }
     void setNextBreakablePosition(int position) { m_nextBreakablePosition = position; }
+    bool refersToEndOfPreviousNode() const { return m_refersToEndOfPreviousNode; }
+    void setRefersToEndOfPreviousNode();
 
     void fastIncrementInTextNode();
     void increment(InlineBidiResolver* = 0);
+    void fastDecrement();
     bool atEnd() const;
 
     inline bool atTextParagraphSeparator()
@@ -100,6 +105,13 @@ private:
 
     int m_nextBreakablePosition;
     unsigned m_pos;
+
+    // There are a couple places where we want to decrement an InlineIterator.
+    // Usually this take the form of decrementing m_pos; however, m_pos might be 0.
+    // However, we shouldn't ever need to decrement an InlineIterator more than
+    // once, so rather than implementing a decrement() function which traverses
+    // nodes, we can simply keep track of this state and handle it.
+    bool m_refersToEndOfPreviousNode;
 };
 
 inline bool operator==(const InlineIterator& it1, const InlineIterator& it2)
@@ -321,6 +333,19 @@ inline void InlineIterator::fastIncrementInTextNode()
     m_pos++;
 }
 
+inline void InlineIterator::setOffset(unsigned position)
+{
+    ASSERT(position <= UINT_MAX - 10); // Sanity check
+    m_pos = position;
+}
+
+inline void InlineIterator::setRefersToEndOfPreviousNode()
+{
+    ASSERT(!m_pos);
+    ASSERT(!m_refersToEndOfPreviousNode);
+    m_refersToEndOfPreviousNode = true;
+}
+
 // FIXME: This is used by RenderBlock for simplified layout, and has nothing to do with bidi
 // it shouldn't use functions called bidiFirst and bidiNext.
 class InlineWalker {
@@ -363,6 +388,15 @@ inline void InlineIterator::increment(InlineBidiResolver* resolver)
     }
     // bidiNext can return 0, so use moveTo instead of moveToStartOf
     moveTo(bidiNextSkippingEmptyInlines(*m_root, m_renderer, resolver), 0);
+}
+
+inline void InlineIterator::fastDecrement()
+{
+    ASSERT(!refersToEndOfPreviousNode());
+    if (m_pos)
+        setOffset(m_pos - 1);
+    else
+        setRefersToEndOfPreviousNode();
 }
 
 inline bool InlineIterator::atEnd() const

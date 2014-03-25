@@ -904,7 +904,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
             // Spaces after right-aligned text and before a line-break get collapsed away completely so that the trailing
             // space doesn't seem to push the text out from the right-hand edge.
             // FIXME: Do this regardless of the container's alignment - will require rebaselining a lot of test results.
-            if (m_nextObject && m_nextObject->isBR() && (m_blockStyle.textAlign() == RIGHT || m_blockStyle.textAlign() == WEBKIT_RIGHT)) {
+            if (m_nextObject && m_startOfIgnoredSpaces.offset() && m_nextObject->isBR() && (m_blockStyle.textAlign() == RIGHT || m_blockStyle.textAlign() == WEBKIT_RIGHT)) {
                 m_startOfIgnoredSpaces.setOffset(m_startOfIgnoredSpaces.offset() - 1);
                 // If there's just a single trailing space start ignoring it now so it collapses away.
                 if (m_current.offset() == renderText->textLength() - 1)
@@ -1065,7 +1065,7 @@ inline void checkMidpoints(LineMidpointState& lineMidpointState, InlineIterator&
             // We hit the line break before the start point. Shave off the start point.
             lineMidpointState.decreaseNumMidpoints();
             if (endpoint.renderer()->style().collapseWhiteSpace() && endpoint.renderer()->isText())
-                endpoint.setOffset(endpoint.offset() - 1);
+                endpoint.fastDecrement();
         }
     }
 }

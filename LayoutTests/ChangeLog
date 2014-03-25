@@ -1,3 +1,24 @@
+2014-03-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        InlineIterator position (unsigned int) variable can wrap around
+        https://bugs.webkit.org/show_bug.cgi?id=130540
+
+        Reviewed by Simon Fraser.
+
+        This test triggers an ASSERT that occurs when we are ignoring spaces (to collapse them
+        into a single whitespace mark) but then encounter a line break. Because we don't ignore
+        the first space (but do ignore subsequent spaces), when we hit a newline in an RTL context
+        we want to ignore that first space as well (so as not to push the text away from the right
+        edge). We do this by decrementing the InlineIterator pointing to this first space, so all
+        the spaces get ignored. However, if that space is the first character in a Text node, the
+        decrement will try to go past the beginning of the node, and trigger an ASSERT.
+
+        This design is not great. At some point we should rework it to more elegantly handle
+        collapsing whitespace in both RTL and LTR writing modes.
+
+        * fast/text/whitespace-only-text-in-rtl-expected.txt: Added.
+        * fast/text/whitespace-only-text-in-rtl.html: Added.
+
 2014-03-25  Oliver Hunt  <oliver@apple.com>
 
         AST incorrectly conflates readable and writable locations

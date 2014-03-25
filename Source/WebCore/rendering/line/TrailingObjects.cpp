@@ -42,7 +42,7 @@ void TrailingObjects::updateMidpointsForTrailingBoxes(LineMidpointState& lineMid
         for ( ; trailingSpaceMidpoint > 0 && lineMidpointState.midpoints()[trailingSpaceMidpoint].renderer() != m_whitespace; --trailingSpaceMidpoint) { }
         ASSERT(trailingSpaceMidpoint >= 0);
         if (collapseFirstSpace == CollapseFirstSpace)
-            lineMidpointState.midpoints()[trailingSpaceMidpoint].setOffset(lineMidpointState.midpoints()[trailingSpaceMidpoint].offset() -1);
+            lineMidpointState.midpoints()[trailingSpaceMidpoint].fastDecrement();
 
         // Now make sure every single trailingPositionedBox following the trailingSpaceMidpoint properly stops and starts
         // ignoring spaces.

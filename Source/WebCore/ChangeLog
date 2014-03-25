@@ -1,3 +1,38 @@
+2014-03-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        InlineIterator position (unsigned int) variable can wrap around
+        https://bugs.webkit.org/show_bug.cgi?id=130540
+
+        Reviewed by Simon Fraser.
+
+        We trigger an ASSERT that occurs when we are ignoring spaces (to collapse them
+        into a single whitespace mark) but then encounter a line break. Because we don't ignore
+        the first space (but do ignore subsequent spaces), when we hit a newline in an RTL context
+        we want to ignore that first space as well (so as not to push the text away from the right
+        edge). We do this by decrementing the InlineIterator pointing to this first space, so all
+        the spaces get ignored. However, if that space is the first character in a Text node, the
+        decrement will try to go past the beginning of the node, and trigger an ASSERT.
+
+        This design is not great. At some point we should rework it to more elegantly handle
+        collapsing whitespace in both RTL and LTR writing modes.
+
+        This patch adds an ASSERT earlier in this codepath to catch potential problems earlier.
+        It also pulls our sentinel value out into a separate boolean to make it more clear what is
+        going on.
+
+        Test: fast/text/whitespace-only-text-in-rtl.html
+
+        * rendering/InlineIterator.h:
+        (WebCore::InlineIterator::moveTo): Use the set***() calls
+        (WebCore::InlineIterator::setOffset): ASSERT early that our math hasn't wrapped
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::appendRunsForObject): Use new boolean value
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::BreakingContext::handleText): Guard against wraps
+        (WebCore::checkMidpoints): Use new boolean value
+        * rendering/line/TrailingObjects.cpp:
+        (WebCore::TrailingObjects::updateMidpointsForTrailingBoxes): Use new boolean value
+
 2014-03-25  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove the autotools build

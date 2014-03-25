@@ -105,11 +105,12 @@ void RenderBlockFlow::appendRunsForObject(BidiRunList<BidiRun>& runs, int start,
         if (static_cast<int>(nextMidpoint.offset() + 1) <= end) {
             lineMidpointState.setBetweenMidpoints(true);
             lineMidpointState.incrementCurrentMidpoint();
-            if (nextMidpoint.offset() != UINT_MAX) { // UINT_MAX means stop at the object and don't include any of it.
-                if (static_cast<int>(nextMidpoint.offset() + 1) > start)
-                    runs.addRun(createRun(start, nextMidpoint.offset() + 1, obj, resolver));
-                return appendRunsForObject(runs, nextMidpoint.offset() + 1, end, obj, resolver);
-            }
+            // The end of the line is before the object we're inspecting. Skip everything and return
+            if (nextMidpoint.refersToEndOfPreviousNode())
+                return;
+            if (static_cast<int>(nextMidpoint.offset() + 1) > start)
+                runs.addRun(createRun(start, nextMidpoint.offset() + 1, obj, resolver));
+            appendRunsForObject(runs, nextMidpoint.offset() + 1, end, obj, resolver);
         } else
            runs.addRun(createRun(start, end, obj, resolver));
     }
