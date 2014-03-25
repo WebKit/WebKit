@@ -42,6 +42,7 @@ PassRef<ViewUpdateDispatcher> ViewUpdateDispatcher::create()
 
 ViewUpdateDispatcher::ViewUpdateDispatcher()
     : m_queue(WorkQueue::create("com.apple.WebKit.ViewUpdateDispatcher"))
+    , m_dataMutex(SPINLOCK_INITIALIZER)
 {
 }
 

@@ -1,3 +1,13 @@
+2014-03-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2] SpinLock are not initialized by default, ViewUpdateDispatcher is missing an initializer
+        https://bugs.webkit.org/show_bug.cgi?id=130705
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/ViewUpdateDispatcher.cpp:
+        (WebKit::ViewUpdateDispatcher::ViewUpdateDispatcher):
+
 2014-03-24  Enrica Casucci  <enrica@apple.com>
 
         [iOS WebKit2] Dictation support.
