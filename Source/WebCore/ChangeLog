@@ -1,3 +1,15 @@
+2014-03-25  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [ARM64] GNU assembler fails in TransformationMatrix::multiply
+        https://bugs.webkit.org/show_bug.cgi?id=130454
+
+        Reviewed by Zoltan Herczeg.
+
+        Change the NEON intstructions to the proper style.
+
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::multiply):
+
 2014-03-20  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Vertical rectangles not considered as valid grid areas
