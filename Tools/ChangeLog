@@ -1,3 +1,16 @@
+2014-03-25  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        prepare-ChangeLog throws false positive warnings for modified files.
+        https://bugs.webkit.org/show_bug.cgi?id=130687
+
+        Reviewed by Darin Adler.
+
+        * Scripts/prepare-ChangeLog:
+        (originalFile): Ignore git commit paremeter.
+        We don't need this to get the unmodified file.
+        (extractLineRangeBeforeChange):
+        Simplify the if statement. Follow-up after r166189.
+
 2014-03-25  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [EFL] Add ARM64 build support

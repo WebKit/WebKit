@@ -241,8 +241,9 @@ sub originalFile($$$$)
         my $escapedPathsString = escapeSubversionPath($file);
         $command = SVN . " cat $escapedPathsString";
     } elsif (isGit()) {
-        $command = GIT . " show " . diffFromToString($gitCommit, $gitIndex, $mergeBase);
-        $command .= ":$file" unless $gitCommit or $mergeBase;
+        $command = GIT . " show ";
+        $command .= "$mergeBase" if $mergeBase;
+        $command .= ":$file";
     }
 
     return $command;
@@ -1972,9 +1973,7 @@ sub extractLineRangeBeforeChange($)
 
     if (isSVN() && $string =~ /^(\d+)(,(\d+))?([acd])\d+(,\d+)?/) {
         $start = $1;
-        if($4 gt "a") {
-            $end = $3 || $1;
-        }
+        $end = $3 || $1 if $4 ne "a";
     } elsif (isGit() && $string =~ /^@@ -(\d+)(,(\d+))? \+\d+(,\d+)? @@/) {
         $start = $1;
         $end = defined($3) ? $3 + $1 - 1 : $1;
