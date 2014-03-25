@@ -333,7 +333,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 
 #if ENABLE(CACHE_PARTITIONING)
     for (auto& scheme : parameters.urlSchemesRegisteredAsCachePartitioned)
-        registerURLSchemeAsCORSEnabled(scheme);
+        registerURLSchemeAsCachePartitioned(scheme);
 #endif
 
     setDefaultRequestTimeoutInterval(parameters.defaultRequestTimeoutInterval);

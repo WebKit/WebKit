@@ -1,3 +1,13 @@
+2014-03-25  Jeffrey Pfau  <jpfau@apple.com>
+
+        [WK2] Schemes registered as cache partitioned are not properly registered in new web processes
+        https://bugs.webkit.org/show_bug.cgi?id=130739
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2014-03-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] Inspector View Indication Support
