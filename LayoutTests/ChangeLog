@@ -1,3 +1,22 @@
+2014-03-25  Dirk Schulze  <krit@webkit.org>
+
+        Implement ImageData constructors and WebWorkers exposure
+        https://bugs.webkit.org/show_bug.cgi?id=130668
+
+        Reviewed by Dean Jackson.
+
+        Tests for ImageData constructors. Remove a false tests for constructors
+        from Philip's test suite.
+
+        * fast/canvas/canvas-imageData-expected.txt: Added.
+        * fast/canvas/canvas-imageData.html: Added.
+        * fast/canvas/script-tests/canvas-imageData.js: Added.
+        (testTransparentBlack):
+        * LayoutTests/canvas/philip/tests/2d.imageData.object.ctor.html: Removed.
+        * LayoutTests/canvas/philip/tests/2d.imageData.object.ctor-expected.txt: Removed.
+        * LayoutTests/js/dom/global-constructors-attributes-dedicated-worker-expected.txt
+        * LayoutTests/js/dom/global-constructors-attributes-shared-worker-expected.txt
+
 2014-03-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         InlineIterator position (unsigned int) variable can wrap around

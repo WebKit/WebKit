@@ -27,7 +27,14 @@
  */
 
 [
+    GlobalContext=DOMWindow&WorkerGlobalScope,
     CustomToJSObject,
+    // FIXME: Without [Default=Undefined] CodeGeneratorJS can't generate JSImageData. But with
+    // the extended attribute we accept a value of 0 for sh and don't throw.
+    // https://bugs.webkit.org/show_bug.cgi?id=130667
+    Constructor(Uint8ClampedArray data, unsigned long sw, [Default=Undefined] optional unsigned long sh),
+    Constructor(unsigned long sw, unsigned long sh),
+    ConstructorRaisesException,
     ImplementationLacksVTable
 ] interface ImageData {
     readonly attribute long width;

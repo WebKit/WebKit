@@ -1,0 +1,46 @@
+Test constructors of ImageData.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test invalid ImageData constructor arguments.
+PASS new ImageData() threw exception TypeError: Not enough arguments.
+PASS new ImageData(1) threw exception TypeError: Not enough arguments.
+PASS new ImageData(new Uint8ClampedArray([1,2,3,4])); threw exception TypeError: Not enough arguments.
+PASS new ImageData(0, 0) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS new ImageData(20, 0) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS new ImageData(0, 20) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS new ImageData(-20, 20) threw exception TypeError: Type error.
+PASS new ImageData(20, -20) threw exception TypeError: Type error.
+PASS new ImageData(null, 20) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS new ImageData(32768, 32768) threw exception TypeError: Type error.
+PASS new ImageData(null, 20, 20) threw exception TypeError: Type error.
+PASS new ImageData(imageData, 20, 20) threw exception TypeError: Type error.
+PASS new ImageData(imageData, 0) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS new ImageData(imageData, 20, 0) threw exception TypeError: Type error.
+PASS new ImageData(imageData, 0, 20) threw exception TypeError: Type error.
+PASS new ImageData(imageData, 10, 5) threw exception TypeError: Type error.
+PASS new ImageData(imageData.data, 10, 5) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS new ImageData(imageData.data, -10, 5) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS new ImageData(imageData.data, 10, -10) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS new ImageData(new Uint8ClampedArray([1,2,3,4,5,6,7,8]),536870913,2); threw exception Error: InvalidStateError: DOM Exception 11.
+PASS new ImageData({},2,2); threw exception TypeError: Type error.
+PASS new ImageData(undefined,2,2); threw exception TypeError: Type error.
+PASS new ImageData("none",2,2); threw exception TypeError: Type error.
+PASS new ImageData(0,2,2); threw exception TypeError: Type error.
+PASS new ImageData(imageData.data, 32768, 32768) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS new ImageData(imageData.data, Infinity, Infinity) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS new ImageData(imageData.data, NaN, NaN) threw exception Error: IndexSizeError: DOM Exception 1.
+
+Test valid ImageData constructors.
+Test that we got the pixel array from imageData.
+PASS imageData.data[1] is 128
+
+Test that we got a reference rather than a copy.
+PASS imageData.data[1] is 100
+
+PASS testTransparentBlack(imageData2.data) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

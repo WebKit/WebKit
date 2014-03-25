@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +30,30 @@
 #include "config.h"
 #include "ImageData.h"
 
+#include "ExceptionCode.h"
+
 namespace WebCore {
+
+PassRefPtr<ImageData> ImageData::create(unsigned sw, unsigned sh, ExceptionCode& ec)
+{
+    if (!sw || !sh) {
+        ec = INDEX_SIZE_ERR;
+        return nullptr;
+    }
+
+    Checked<int, RecordOverflow> dataSize = 4;
+    dataSize *= sw;
+    dataSize *= sh;
+    if (dataSize.hasOverflowed()) {
+        ec = TypeError;
+        return nullptr;
+    }
+
+    IntSize size(sw, sh);
+    RefPtr<ImageData> data = adoptRef(new ImageData(size));
+    data->data()->zeroFill();
+    return data.release();
+}
 
 PassRefPtr<ImageData> ImageData::create(const IntSize& size)
 {
@@ -55,6 +79,34 @@ PassRefPtr<ImageData> ImageData::create(const IntSize& size, PassRefPtr<Uint8Cla
         return 0;
 
     return adoptRef(new ImageData(size, byteArray));
+}
+
+PassRefPtr<ImageData> ImageData::create(PassRefPtr<Uint8ClampedArray> byteArray, unsigned sw, unsigned sh, ExceptionCode& ec)
+{
+    unsigned length = byteArray->length();
+    if (!length || length % 4 != 0) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    if (!sw) {
+        ec = INDEX_SIZE_ERR;
+        return nullptr;
+    }
+
+    length /= 4;
+    if (length % sw != 0) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    unsigned height = length / sw;
+    if (sh && sh != height) {
+        ec = INDEX_SIZE_ERR;
+        return nullptr;
+    }
+
+    return create(IntSize(sw, height), byteArray);
 }
 
 ImageData::ImageData(const IntSize& size)

@@ -84,6 +84,11 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'IDBVersionChangeEvent').h
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'IDBVersionChangeEvent').hasOwnProperty('set') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'IDBVersionChangeEvent').enumerable is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'IDBVersionChangeEvent').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ImageData').value is ImageData
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ImageData').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ImageData').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ImageData').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ImageData').configurable is true
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'MessageChannel').value is MessageChannel
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'MessageChannel').hasOwnProperty('get') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'MessageChannel').hasOwnProperty('set') is false

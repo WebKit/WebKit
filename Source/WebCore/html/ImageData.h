@@ -36,10 +36,14 @@
 
 namespace WebCore {
 
+typedef int ExceptionCode;
+
 class ImageData : public RefCounted<ImageData> {
 public:
+    static PassRefPtr<ImageData> create(unsigned sw, unsigned sh, ExceptionCode&);
     static PassRefPtr<ImageData> create(const IntSize&);
     static PassRefPtr<ImageData> create(const IntSize&, PassRefPtr<Uint8ClampedArray>);
+    static PassRefPtr<ImageData> create(PassRefPtr<Uint8ClampedArray>, unsigned sw, unsigned sh, ExceptionCode&);
 
     IntSize size() const { return m_size; }
     int width() const { return m_size.width(); }
