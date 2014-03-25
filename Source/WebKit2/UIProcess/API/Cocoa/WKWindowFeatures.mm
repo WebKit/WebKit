@@ -52,7 +52,7 @@
     // FIXME: These should be set to nil if the features didn't exist in the string.
     _menuBarVisibility = @(windowFeatures.menuBarVisible);
     _statusBarVisibility = @(windowFeatures.statusBarVisible);
-    _toolbarVisibility = @(windowFeatures.toolBarVisible);
+    _toolbarsVisibility = @(windowFeatures.toolBarVisible || windowFeatures.locationBarVisible);
     _allowsResizing = @(windowFeatures.resizable);
 
     if (windowFeatures.xSet)

@@ -1,5 +1,16 @@
 2014-03-25  Anders Carlsson  <andersca@apple.com>
 
+        Change toolbarVisibility back to toolbarsVisibility
+        https://bugs.webkit.org/show_bug.cgi?id=130749
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWindowFeatures.h:
+        * UIProcess/API/Cocoa/WKWindowFeatures.mm:
+        (-[WKWindowFeatures _initWithWindowFeatures:WebCore::]):
+
+2014-03-25  Anders Carlsson  <andersca@apple.com>
+
         Pass the source frame to the CreateNewPage message
         https://bugs.webkit.org/show_bug.cgi?id=130752
 

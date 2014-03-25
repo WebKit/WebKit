@@ -33,7 +33,7 @@ WK_API_CLASS
 
 @property (nonatomic, readonly) NSNumber *menuBarVisibility;
 @property (nonatomic, readonly) NSNumber *statusBarVisibility;
-@property (nonatomic, readonly) NSNumber *toolbarVisibility;
+@property (nonatomic, readonly) NSNumber *toolbarsVisibility;
 
 @property (nonatomic, readonly) NSNumber *allowsResizing;
 
