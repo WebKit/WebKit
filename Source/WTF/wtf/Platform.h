@@ -152,7 +152,7 @@
 #endif
 
 /* CPU(ARM64) - Apple */
-#if defined(__arm64__) && defined(__APPLE__)
+#if (defined(__arm64__) && defined(__APPLE__)) || defined(__aarch64__)
 #define WTF_CPU_ARM64 1
 #endif
 

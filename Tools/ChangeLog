@@ -1,3 +1,13 @@
+2014-03-25  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [EFL] Add ARM64 build support
+        https://bugs.webkit.org/show_bug.cgi?id=130506
+
+        Rubber stamped by Gyuyoung Kim.
+
+        * Scripts/webkitdirs.pm:
+        (isARM): Detect aarch64 as ARM.
+
 2014-03-25  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         [webkitpy] Improve _parse_bug_description to recognize more descriptions

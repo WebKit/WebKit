@@ -1107,7 +1107,7 @@ sub isBSD()
 
 sub isARM()
 {
-    return $Config{archname} =~ /^arm[v\-]/;
+    return ($Config{archname} =~ /^arm[v\-]/) || ($Config{archname} =~ /^aarch64[v\-]/);
 }
 
 sub isCrossCompilation()

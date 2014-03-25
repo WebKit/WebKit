@@ -1,3 +1,12 @@
+2014-03-25  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [EFL] Add ARM64 build support
+        https://bugs.webkit.org/show_bug.cgi?id=130506
+
+        Rubber stamped by Gyuyoung Kim.
+
+        * wtf/Platform.h: Set WTF_CPU_ARM64 when __aarch64__ is defined.
+
 2014-03-24  Andy Estes  <aestes@apple.com>
 
         Fix the iOS build.

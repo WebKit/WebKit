@@ -1,3 +1,12 @@
+2014-03-25  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [EFL] Add ARM64 build support
+        https://bugs.webkit.org/show_bug.cgi?id=130506
+
+        Rubber stamped by Gyuyoung Kim.
+
+        * leveldb/port/atomic_pointer.h: Set ARCH_CPU_ARM_FAMILY when __aarch64__ is defined.
+
 2014-03-14  Landry Breuil  <landry@openbsd.org>
 
         Fix leveldb build on OpenBSD/NetBSD by using the FreeBSD codepaths.
