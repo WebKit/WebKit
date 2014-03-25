@@ -26,19 +26,12 @@
 #ifndef PlatformCALayerClient_h
 #define PlatformCALayerClient_h
 
-#include "GraphicsContext.h"
 #include "GraphicsLayer.h"
-#include "PlatformCAAnimation.h"
-#include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class FloatRect;
+class GraphicsContext;
 class PlatformCALayer;
 
 class PlatformCALayerClient {

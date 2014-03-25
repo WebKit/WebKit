@@ -1,3 +1,14 @@
+2014-03-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove some unnecessary includes from PlatformCALayerClient.h
+        https://bugs.webkit.org/show_bug.cgi?id=130703
+
+        Reviewed by Andreas Kling.
+        
+        No need for all these #includes.
+
+        * platform/graphics/ca/PlatformCALayerClient.h:
+
 2014-03-24  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         [core] FEGaussianBlur: use IntSize to simplify member function interface
