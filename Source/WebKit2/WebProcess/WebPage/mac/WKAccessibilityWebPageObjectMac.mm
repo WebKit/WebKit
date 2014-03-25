@@ -193,27 +193,14 @@ using namespace WebKit;
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (id)accessibilityHitTest:(NSPoint)point
 {
-    // Hit-test point comes in as bottom-screen coordinates. Needs to be normalized to the frame of the web page.
-    NSPoint remotePosition = [[self accessibilityAttributeValue:NSAccessibilityPositionAttribute] pointValue];
-    NSSize remoteSize = [[self accessibilityAttributeValue:NSAccessibilitySizeAttribute] sizeValue];
+    if (!m_page)
+        return nil;
     
-    // Get the y position of the WKView (we have to screen-flip and go from bottom left to top left).
-    CGFloat screenHeight = [(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame].size.height;
-    remotePosition.y = (screenHeight - remotePosition.y) - remoteSize.height;
-    
-    point.y = screenHeight - point.y;
-    
-    // Re-center point into the web page's frame.
-    point.y -= remotePosition.y;
-    point.x -= remotePosition.x;
-    
-    WebCore::FrameView* frameView = m_page ? m_page->mainFrameView() : 0;
-    if (frameView) {
-        point.y += frameView->scrollPosition().y();
-        point.x += frameView->scrollPosition().x();
-    }
-    
-    return [[self accessibilityRootObjectWrapper] accessibilityHitTest:point];
+    IntPoint convertedPoint = m_page->screenToRootView(IntPoint(point));
+    if (WebCore::FrameView* frameView = m_page->mainFrameView())
+        convertedPoint.moveBy(frameView->scrollPosition());
+        
+    return [[self accessibilityRootObjectWrapper] accessibilityHitTest:convertedPoint];
 }
 #pragma clang diagnostic pop
 

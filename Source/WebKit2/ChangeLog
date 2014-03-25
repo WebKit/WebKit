@@ -1,3 +1,16 @@
+2014-03-24  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: hit-testing doesn't always work correctly with WK2
+        https://bugs.webkit.org/show_bug.cgi?id=130706
+
+        Reviewed by Simon Fraser.
+
+        Accessibility code was trying to do screenToRootView itself, and in 
+        some cases with embedded WK2 views that did not work.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject accessibilityHitTest:]):
+
 2014-03-24  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] SpinLock are not initialized by default, ViewUpdateDispatcher is missing an initializer
