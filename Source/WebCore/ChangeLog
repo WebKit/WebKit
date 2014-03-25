@@ -1,5 +1,12 @@
 2014-03-25  Jer Noble  <jer.noble@apple.com>
 
+        Even further unreviewed build fix after r166247. Unprotect the implementation of HTMLMediaElement::shouldDisableSleep().
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+
+2014-03-25  Jer Noble  <jer.noble@apple.com>
+
         Further unreviewed build fix after r166247. Add DisplaySleepDisabler to the windows project file and
         move the definition of DisplaySleepDisabler's constructor and destructor into the cpp file.
 

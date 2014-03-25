@@ -5642,7 +5642,6 @@ void HTMLMediaElement::updateSleepDisabling()
         m_sleepDisabler = DisplaySleepDisabler::create("com.apple.WebCore: HTMLMediaElement playback");
 }
 
-#if PLATFORM(COCOA)
 bool HTMLMediaElement::shouldDisableSleep() const
 {
 #if !PLATFORM(COCOA)
@@ -5656,7 +5655,6 @@ bool HTMLMediaElement::shouldDisableSleep() const
 
     return m_player && !m_player->paused() && hasVideo() && hasAudio() && !loop();
 }
-#endif
 
 String HTMLMediaElement::mediaPlayerReferrer() const
 {
