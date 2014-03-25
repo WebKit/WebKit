@@ -1,5 +1,22 @@
 2014-03-25  Anders Carlsson  <andersca@apple.com>
 
+        Begin stubbing out a WKWindowFeatures class
+        https://bugs.webkit.org/show_bug.cgi?id=130733
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWindowFeatures.h: Added.
+        * UIProcess/API/Cocoa/WKWindowFeatures.mm: Added.
+        (-[WKWindowFeatures _initWithWindowFeatures:WebCore::]):
+        (-[WKWindowFeatures x]):
+        (-[WKWindowFeatures y]):
+        (-[WKWindowFeatures width]):
+        (-[WKWindowFeatures height]):
+        * UIProcess/API/Cocoa/WKWindowFeaturesInternal.h: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-03-25  Anders Carlsson  <andersca@apple.com>
+
         Add goBack: and goForward: IBActions and move stopLoading: to a new WKIBActions category on WKWebView
         https://bugs.webkit.org/show_bug.cgi?id=130732
 
