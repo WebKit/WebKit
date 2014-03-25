@@ -7190,6 +7190,7 @@
     <ClCompile Include="..\platform\DatabaseStrategy.cpp" />
     <ClCompile Include="..\platform\DateComponents.cpp" />
     <ClCompile Include="..\platform\Decimal.cpp" />
+    <ClCompile Include="..\platform\DisplaySleepDisabler.cpp" />
     <ClCompile Include="..\platform\DragData.cpp" />
     <ClCompile Include="..\platform\DragImage.cpp" />
     <ClCompile Include="..\platform\FileChooser.cpp" />
@@ -19089,6 +19090,7 @@
     <ClInclude Include="..\platform\DatabaseStrategy.h" />
     <ClInclude Include="..\platform\DateComponents.h" />
     <ClInclude Include="..\platform\Decimal.h" />
+    <ClInclude Include="..\platform\DisplaySleepDisabler.h" />
     <ClInclude Include="..\platform\DragData.h" />
     <ClInclude Include="..\platform\DragImage.h" />
     <ClInclude Include="..\platform\EventLoop.h" />

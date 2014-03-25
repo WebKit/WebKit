@@ -35,4 +35,12 @@ std::unique_ptr<DisplaySleepDisabler> DisplaySleepDisabler::create(const char* r
 }
 #endif // !PLATFORM(COCOA)
 
+DisplaySleepDisabler::DisplaySleepDisabler(const char*)
+{
+}
+
+DisplaySleepDisabler::~DisplaySleepDisabler()
+{
+}
+
 }

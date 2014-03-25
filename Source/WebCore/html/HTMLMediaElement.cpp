@@ -38,6 +38,7 @@
 #include "ContentSecurityPolicy.h"
 #include "ContentType.h"
 #include "DiagnosticLoggingKeys.h"
+#include "DisplaySleepDisabler.h"
 #include "DocumentLoader.h"
 #include "ElementIterator.h"
 #include "EventNames.h"
@@ -110,10 +111,6 @@
 
 #if ENABLE(IOS_AIRPLAY)
 #include "WebKitPlaybackTargetAvailabilityEvent.h"
-#endif
-
-#if PLATFORM(COCOA)
-#include "DisplaySleepDisabler.h"
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
