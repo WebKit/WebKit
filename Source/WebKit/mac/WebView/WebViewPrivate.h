@@ -319,11 +319,11 @@ typedef enum {
 - (void)setAllowsRemoteInspection:(BOOL)allow;
 
 /*!
-    @method setIndicatingForRemoteInspector
+    @method setShowingInspectorIndication
     @param enabled Show the indication when true, hide when false.
     @abstract indicate this WebView on screen for a remote inspector.
 */
-- (void)setIndicatingForRemoteInspector:(BOOL)enabled;
+- (void)setShowingInspectorIndication:(BOOL)enabled;
 
 #if TARGET_OS_IPHONE
 /*!

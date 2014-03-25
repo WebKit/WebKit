@@ -1,3 +1,15 @@
+2014-03-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] Inspector View Indication Support
+        https://bugs.webkit.org/show_bug.cgi?id=130709
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorClient::showInspectorIndication):
+        (WebInspectorClient::hideInspectorIndication):
+        Renamed methods.
+
 2014-03-22  Darin Adler  <darin@apple.com>
 
         Remove String::deprecatedCharacters

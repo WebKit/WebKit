@@ -1,3 +1,46 @@
+2014-03-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] Inspector View Indication Support
+        https://bugs.webkit.org/show_bug.cgi?id=130709
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKInspectorIndicationView initWithFrame:]):
+        (-[WKContentView isShowingInspectorIndication]):
+        (-[WKContentView setShowingInspectorIndication:]):
+        (-[WKContentView _didCommitLayerTree:WebKit::]):
+        When indicating include a simple tinted UIView over the content.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _showInspectorIndication]):
+        (-[WKWebView _hideInspectorIndication]):
+        Have the content view show or hide an indication.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::showInspectorIndication):
+        (WebKit::PageClientImpl::hideInspectorIndication):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::showInspectorIndication):
+        (WebKit::WebPageProxy::hideInspectorIndication):
+        Pass WebProcess indication message up to the WKWebView.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::indicate):
+        (WebKit::WebInspectorClient::hideIndication):
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::indicate):
+        (WebKit::WebPage::hideIndication):
+        Pass WebCore / remote inspector indication message up to UIProcess.
+
 2014-03-25  Anders Carlsson  <andersca@apple.com>
 
         Add more properties to WKWindowFeatures

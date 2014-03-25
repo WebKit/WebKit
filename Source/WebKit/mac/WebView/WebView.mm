@@ -1893,12 +1893,12 @@ static bool fastDocumentTeardownEnabled()
     _private->page->setRemoteInspectionAllowed(allow);
 }
 
-- (void)setIndicatingForRemoteInspector:(BOOL)enabled
+- (void)setShowingInspectorIndication:(BOOL)showing
 {
 #if PLATFORM(IOS)
     ASSERT(WebThreadIsLocked());
 
-    if (enabled) {
+    if (showing) {
         if (!_private->indicateLayer) {
             _private->indicateLayer = [[WebIndicateLayer alloc] initWithWebView:self];
             [_private->indicateLayer setNeedsLayout];
@@ -1910,7 +1910,7 @@ static bool fastDocumentTeardownEnabled()
         _private->indicateLayer = nil;
     }
 #else
-    // FIXME: Needs implementation or put an implementation in WebCore::InspectorOverlay.
+    // Implemented in WebCore::InspectorOverlay.
 #endif
 }
 

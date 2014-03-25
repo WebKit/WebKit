@@ -319,6 +319,11 @@ messages -> WebPageProxy {
     StartAssistingNode(WebKit::AssistedNodeInformation information)
     StopAssistingNode()
     NotifyRevealedSelection()
+
+#if ENABLE(INSPECTOR)
+    ShowInspectorIndication()
+    HideInspectorIndication()
+#endif
 #endif
 
     # Search popup menus

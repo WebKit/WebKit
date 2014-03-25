@@ -1,3 +1,19 @@
+2014-03-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] Inspector View Indication Support
+        https://bugs.webkit.org/show_bug.cgi?id=130709
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::didSetSearchingForNode): Deleted.
+        (WebInspectorClient::releaseFrontend): Deleted.
+        * WebView/WebView.mm:
+        (-[WebView setShowingInspectorIndication:]):
+        * WebView/WebViewPrivate.h:
+        Renamed methods.
+
 2014-03-24  Brent Fulgham  <bfulgham@apple.com>
 
         Activate WebVTT Tests Once Merging is Complete

@@ -374,9 +374,9 @@ void InspectorController::setIndicating(bool indicating)
     m_overlay->setIndicating(indicating);
 #else
     if (indicating)
-        m_inspectorClient->indicate();
+        m_inspectorClient->showInspectorIndication();
     else
-        m_inspectorClient->hideIndication();
+        m_inspectorClient->hideInspectorIndication();
 #endif
 }
 

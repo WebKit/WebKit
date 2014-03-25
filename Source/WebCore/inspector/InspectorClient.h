@@ -56,8 +56,8 @@ public:
     virtual void highlight() = 0;
     virtual void hideHighlight() = 0;
 
-    virtual void indicate() { }
-    virtual void hideIndication() { }
+    virtual void showInspectorIndication() { }
+    virtual void hideInspectorIndication() { }
 
     virtual bool canClearBrowserCache() { return false; }
     virtual void clearBrowserCache() { }

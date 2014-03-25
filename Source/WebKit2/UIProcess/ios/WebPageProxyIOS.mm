@@ -477,6 +477,18 @@ void WebPageProxy::stopAssistingNode()
     m_pageClient.stopAssistingNode();
 }
 
+#if ENABLE(INSPECTOR)
+void WebPageProxy::showInspectorIndication()
+{
+    m_pageClient.showInspectorIndication();
+}
+
+void WebPageProxy::hideInspectorIndication()
+{
+    m_pageClient.hideInspectorIndication();
+}
+#endif
+
 void WebPageProxy::focusNextAssistedNode(bool isForward)
 {
     process().send(Messages::WebPage::FocusNextAssistedNode(isForward), m_pageID);

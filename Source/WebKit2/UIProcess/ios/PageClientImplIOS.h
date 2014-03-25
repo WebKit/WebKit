@@ -114,6 +114,11 @@ private:
     virtual void saveImageToLibrary(PassRefPtr<WebCore::SharedBuffer>);
     virtual void didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold);
 
+#if ENABLE(INSPECTOR)
+    virtual void showInspectorIndication() override;
+    virtual void hideInspectorIndication() override;
+#endif
+
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)
     virual WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() override;

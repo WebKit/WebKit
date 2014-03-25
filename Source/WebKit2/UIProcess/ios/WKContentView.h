@@ -53,6 +53,7 @@ struct WebPageConfiguration;
 
 @property (nonatomic, readonly) WebKit::WebPageProxy* page;
 @property (nonatomic, readonly) BOOL isAssistingNode;
+@property (nonatomic, getter=isShowingInspectorIndication) BOOL showingInspectorIndication;
 
 - (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView;
 

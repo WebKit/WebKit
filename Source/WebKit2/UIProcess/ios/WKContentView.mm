@@ -130,11 +130,28 @@ private:
 };
 } // namespace WebKit
 
+@interface WKInspectorIndicationView : UIView
+@end
+
+@implementation WKInspectorIndicationView
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+    self.userInteractionEnabled = NO;
+    self.backgroundColor = [UIColor colorWithRed:(111.0 / 255.0) green:(168.0 / 255.0) blue:(220.0 / 255.0) alpha:0.66f];
+    return self;
+}
+
+@end
+
 @implementation WKContentView {
     std::unique_ptr<PageClientImpl> _pageClient;
     RetainPtr<WKBrowsingContextController> _browsingContextController;
 
     RetainPtr<UIView> _rootContentView;
+    RetainPtr<WKInspectorIndicationView> _inspectorIndicationView;
 
     WKWebView *_webView;
 
@@ -233,6 +250,26 @@ private:
 - (BOOL)isAssistingNode
 {
     return [self isEditable];
+}
+
+- (BOOL)isShowingInspectorIndication
+{
+    return !!_inspectorIndicationView;
+}
+
+- (void)setShowingInspectorIndication:(BOOL)show
+{
+    if (show) {
+        if (!_inspectorIndicationView) {
+            _inspectorIndicationView = adoptNS([[WKInspectorIndicationView alloc] initWithFrame:[self bounds]]);
+            [self insertSubview:_inspectorIndicationView.get() aboveSubview:_rootContentView.get()];
+        }
+    } else {
+        if (_inspectorIndicationView) {
+            [_inspectorIndicationView removeFromSuperview];
+            _inspectorIndicationView = nil;
+        }
+    }
 }
 
 static inline FloatRect fixedPositionRectFromExposedRect(CGRect unobscuredRect, CGSize documentSize, CGFloat scale)
@@ -370,6 +407,7 @@ static inline FloatRect fixedPositionRectFromExposedRect(CGRect unobscuredRect, 
 
     [self setBounds:{CGPointZero, contentsSize}];
     [_rootContentView setFrame:CGRectMake(0, 0, contentsSize.width, contentsSize.height)];
+    [_inspectorIndicationView setFrame:[self bounds]];
 
     [_webView _didCommitLayerTree:layerTreeTransaction];
     [self _updateChangedSelection];

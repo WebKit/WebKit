@@ -370,6 +370,18 @@ void WebPage::setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSel
     select->optionSelectedByUser(index, true, allowMultipleSelection);
 }
 
+#if ENABLE(INSPECTOR)
+void WebPage::showInspectorIndication()
+{
+    send(Messages::WebPageProxy::ShowInspectorIndication());
+}
+
+void WebPage::hideInspectorIndication()
+{
+    send(Messages::WebPageProxy::HideInspectorIndication());
+}
+#endif
+
 static FloatQuad innerFrameQuad(Frame* frame, Node* assistedNode)
 {
     frame->document()->updateLayoutIgnorePendingStylesheets();

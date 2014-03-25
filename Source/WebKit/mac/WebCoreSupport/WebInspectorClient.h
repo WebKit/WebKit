@@ -73,8 +73,10 @@ public:
     virtual void highlight() override;
     virtual void hideHighlight() override;
 
-    virtual void indicate() override;
-    virtual void hideIndication() override;
+#if PLATFORM(IOS)
+    virtual void showInspectorIndication() override;
+    virtual void hideInspectorIndication() override;
+#endif
 
     virtual void didSetSearchingForNode(bool) override;
 

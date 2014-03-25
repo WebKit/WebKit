@@ -363,6 +363,18 @@ void PageClientImpl::didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t f
     [m_contentView _didUpdateBlockSelectionWithTouch:(WKSelectionTouch)touch withFlags:(WKSelectionFlags)flags growThreshold:growThreshold shrinkThreshold:shrinkThreshold];
 }
 
+#if ENABLE(INSPECTOR)
+void PageClientImpl::showInspectorIndication()
+{
+    [m_webView _showInspectorIndication];
+}
+
+void PageClientImpl::hideInspectorIndication()
+{
+    [m_webView _hideInspectorIndication];
+}
+#endif
+
 #if ENABLE(FULLSCREEN_API)
 
 WebFullScreenManagerProxyClient& PageClientImpl::fullScreenManagerProxyClient()

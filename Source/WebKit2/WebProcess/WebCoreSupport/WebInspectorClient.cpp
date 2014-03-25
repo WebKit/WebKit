@@ -97,6 +97,18 @@ void WebInspectorClient::hideHighlight()
         m_page->uninstallPageOverlay(m_highlightOverlay, true);
 }
 
+#if PLATFORM(IOS)
+void WebInspectorClient::showInspectorIndication()
+{
+    m_page->showInspectorIndication();
+}
+
+void WebInspectorClient::hideInspectorIndication()
+{
+    m_page->hideInspectorIndication();
+}
+#endif
+
 bool WebInspectorClient::sendMessageToFrontend(const String& message)
 {
     WebInspector* inspector = m_page->inspector();

@@ -1325,6 +1325,12 @@ private:
 
     void startAssistingNode(const AssistedNodeInformation&);
     void stopAssistingNode();
+
+#if ENABLE(INSPECTOR)
+    void showInspectorIndication();
+    void hideInspectorIndication();
+#endif
+
     void notifyRevealedSelection();
 #endif // PLATFORM(IOS)
 

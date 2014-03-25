@@ -468,6 +468,11 @@ public:
     void setAssistedNodeValue(const String&);
     void setAssistedNodeValueAsNumber(double);
     void setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection);
+
+#if ENABLE(INSPECTOR)
+    void showInspectorIndication();
+    void hideInspectorIndication();
+#endif
 #endif
 
     NotificationPermissionRequestManager* notificationPermissionRequestManager();

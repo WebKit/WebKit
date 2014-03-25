@@ -69,7 +69,6 @@
 @interface UIPeripheralHost(UIKitInternal)
 - (CGFloat)getVerticalOverlapForView:(UIView *)view usingKeyboardInfo:(NSDictionary *)info;
 @end
-
 #endif
 
 #if PLATFORM(MAC)
@@ -1108,6 +1107,16 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     ASSERT(_isChangingObscuredInsetsInteractively);
     _isChangingObscuredInsetsInteractively = NO;
     [self _updateVisibleContentRects];
+}
+
+- (void)_showInspectorIndication
+{
+    [_contentView setShowingInspectorIndication:YES];
+}
+
+- (void)_hideInspectorIndication
+{
+    [_contentView setShowingInspectorIndication:NO];
 }
 
 - (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler

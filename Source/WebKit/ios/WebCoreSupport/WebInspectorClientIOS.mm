@@ -87,14 +87,14 @@ void WebInspectorClient::hideHighlight()
     [m_highlighter.get() hideHighlight];
 }
 
-void WebInspectorClient::indicate()
+void WebInspectorClient::showInspectorIndication()
 {
-    [m_webView setIndicatingForRemoteInspector:YES];
+    [m_webView setShowingInspectorIndication:YES];
 }
 
-void WebInspectorClient::hideIndication()
+void WebInspectorClient::hideInspectorIndication()
 {
-    [m_webView setIndicatingForRemoteInspector:NO];
+    [m_webView setShowingInspectorIndication:NO];
 }
 
 void WebInspectorClient::didSetSearchingForNode(bool enabled)
