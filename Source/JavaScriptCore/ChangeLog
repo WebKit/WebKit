@@ -1,3 +1,53 @@
+2014-03-24  Oliver Hunt  <oliver@apple.com>
+
+        Strict mode destructuring assignment crashes the parser.
+        https://bugs.webkit.org/show_bug.cgi?id=130538
+
+        Reviewed by Michael Saboff.
+
+        The SyntaxChecker mode always return 1 for success, except
+        for a small subset of functions where we needed exact information.
+        This ends up just being a poor design decision as it means
+        the parser can get confused between a function return 1, and
+        the Resolve constant which was also 1. So we now use a unique
+        type for every creation method.
+
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createSourceElements):
+        (JSC::SyntaxChecker::createFunctionBody):
+        (JSC::SyntaxChecker::createArguments):
+        (JSC::SyntaxChecker::createSpreadExpression):
+        (JSC::SyntaxChecker::createArgumentsList):
+        (JSC::SyntaxChecker::createPropertyList):
+        (JSC::SyntaxChecker::createElementList):
+        (JSC::SyntaxChecker::createFormalParameterList):
+        (JSC::SyntaxChecker::createClause):
+        (JSC::SyntaxChecker::createClauseList):
+        (JSC::SyntaxChecker::createFuncDeclStatement):
+        (JSC::SyntaxChecker::createBlockStatement):
+        (JSC::SyntaxChecker::createExprStatement):
+        (JSC::SyntaxChecker::createIfStatement):
+        (JSC::SyntaxChecker::createForLoop):
+        (JSC::SyntaxChecker::createForInLoop):
+        (JSC::SyntaxChecker::createForOfLoop):
+        (JSC::SyntaxChecker::createEmptyStatement):
+        (JSC::SyntaxChecker::createVarStatement):
+        (JSC::SyntaxChecker::createReturnStatement):
+        (JSC::SyntaxChecker::createBreakStatement):
+        (JSC::SyntaxChecker::createContinueStatement):
+        (JSC::SyntaxChecker::createTryStatement):
+        (JSC::SyntaxChecker::createSwitchStatement):
+        (JSC::SyntaxChecker::createWhileStatement):
+        (JSC::SyntaxChecker::createWithStatement):
+        (JSC::SyntaxChecker::createDoWhileStatement):
+        (JSC::SyntaxChecker::createLabelStatement):
+        (JSC::SyntaxChecker::createThrowStatement):
+        (JSC::SyntaxChecker::createDebugger):
+        (JSC::SyntaxChecker::createConstStatement):
+        (JSC::SyntaxChecker::appendConstDecl):
+        (JSC::SyntaxChecker::combineCommaNodes):
+        (JSC::SyntaxChecker::operatorStackPop):
+
 2014-03-24  Brent Fulgham  <bfulgham@apple.com>
 
         Activate WebVTT Tests Once Merging is Complete

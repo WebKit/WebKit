@@ -1,3 +1,15 @@
+2014-03-24  Oliver Hunt  <oliver@apple.com>
+
+        Strict mode destructuring assignment crashes the parser.
+        https://bugs.webkit.org/show_bug.cgi?id=130538
+
+        Reviewed by Michael Saboff.
+
+        Add tests
+
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+
 2014-03-24  Daniel Bates  <dabates@apple.com>
 
         XSS Auditor doesn't block <script> injected before an existing <script>
