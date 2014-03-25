@@ -75,6 +75,19 @@ enum Ewk_Cache_Model {
 typedef enum Ewk_Cache_Model Ewk_Cache_Model;
 
 /**
+ * \enum    Ewk_Process_Model
+ *
+ * @brief   Contains option for process model
+ */
+enum Ewk_Process_Model {
+    EWK_PROCESS_MODEL_SHARED_SECONDARY,
+    EWK_PROCESS_MODEL_MULTIPLE_SECONDARY
+};
+
+/// Creates a type name for the Ewk_Process_Model.
+typedef enum Ewk_Process_Model Ewk_Process_Model;
+
+/**
  * @typedef Ewk_Url_Scheme_Request_Cb Ewk_Url_Scheme_Request_Cb
  * @brief Callback type for use with ewk_context_url_scheme_register().
  */
@@ -361,6 +374,30 @@ EAPI void ewk_context_message_post_to_injected_bundle(Ewk_Context *context, cons
  * @param user_data user data
  */
 EAPI void ewk_context_message_from_injected_bundle_callback_set(Ewk_Context *context, Ewk_Context_Message_From_Injected_Bundle_Cb callback, void *user_data);
+
+/**
+ * Sets a process model for @a context.
+ *
+ * Sets a process model for web views, which will be used to decide how
+ * processes should be handled. Default value is
+ * EWK_PROCESS_MODEL_SHARED_SECONDARY which means that there is only one
+ * web process. When EWK_PROCESS_MODEL_MULTIPLE_SECONDARY is set a
+ * network process is introduced and every web view starts new web process.
+ * This function should be used before first web process is spawned.
+ *
+ * @param context context object to set process model
+ * @param process_model a #Ewk_Process_Model
+ */
+EAPI Eina_Bool ewk_context_process_model_set(Ewk_Context *context, Ewk_Process_Model process_model);
+
+/**
+ * Gets the process model for @a context.
+ *
+ * @param context context object to query
+ *
+ * @return the process model for the @a context
+ */
+EAPI Ewk_Process_Model ewk_context_process_model_get(const Ewk_Context *context);
 
 #ifdef __cplusplus
 }

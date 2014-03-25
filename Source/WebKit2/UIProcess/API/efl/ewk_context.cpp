@@ -237,6 +237,48 @@ Ewk_Cache_Model EwkContext::cacheModel() const
     return static_cast<Ewk_Cache_Model>(WKContextGetCacheModel(m_context.get()));
 }
 
+inline WKProcessModel toWKProcessModel(Ewk_Process_Model processModel)
+{
+    switch (processModel) {
+    case EWK_PROCESS_MODEL_SHARED_SECONDARY:
+        return kWKProcessModelSharedSecondaryProcess;
+    case EWK_PROCESS_MODEL_MULTIPLE_SECONDARY:
+        return kWKProcessModelMultipleSecondaryProcesses;
+    }
+    ASSERT_NOT_REACHED();
+
+    return kWKProcessModelSharedSecondaryProcess;
+}
+
+void EwkContext::setProcessModel(Ewk_Process_Model processModel)
+{
+    WKProcessModel newWKProcessModel = toWKProcessModel(processModel);
+
+    if (WKContextGetProcessModel(m_context.get()) == newWKProcessModel)
+        return;
+
+    WKContextSetUsesNetworkProcess(m_context.get(), newWKProcessModel == kWKProcessModelMultipleSecondaryProcesses);
+    WKContextSetProcessModel(m_context.get(), newWKProcessModel);
+}
+
+inline Ewk_Process_Model toEwkProcessModel(WKProcessModel processModel)
+{
+    switch (processModel) {
+    case kWKProcessModelSharedSecondaryProcess:
+        return EWK_PROCESS_MODEL_SHARED_SECONDARY;
+    case kWKProcessModelMultipleSecondaryProcesses:
+        return EWK_PROCESS_MODEL_MULTIPLE_SECONDARY;
+    }
+    ASSERT_NOT_REACHED();
+
+    return EWK_PROCESS_MODEL_SHARED_SECONDARY;
+}
+
+Ewk_Process_Model EwkContext::processModel() const
+{
+    return toEwkProcessModel(WKContextGetProcessModel(m_context.get()));
+}
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void EwkContext::setAdditionalPluginPath(const String& path)
 {
@@ -468,4 +510,31 @@ void ewk_context_message_from_injected_bundle_callback_set(Ewk_Context* ewkConte
     EWK_OBJ_GET_IMPL_OR_RETURN(EwkContext, ewkContext, impl);
 
     impl->setMessageFromInjectedBundleCallback(callback, userData);
+}
+
+Eina_Bool ewk_context_process_model_set(Ewk_Context* ewkContext, Ewk_Process_Model processModel)
+{
+#if ENABLE(NETWORK_PROCESS)
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkContext, ewkContext, impl, false);
+
+    impl->setProcessModel(processModel);
+
+    return true;
+#else
+    UNUSED_PARAM(ewkContext);
+    UNUSED_PARAM(processModel);
+    return false;
+#endif
+}
+
+Ewk_Process_Model ewk_context_process_model_get(const Ewk_Context* ewkContext)
+{
+#if ENABLE(NETWORK_PROCESS)
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, ewkContext, impl, EWK_PROCESS_MODEL_SHARED_SECONDARY);
+
+    return impl->processModel();
+#else
+    UNUSED_PARAM(ewkContext);
+    return EWK_PROCESS_MODEL_SHARED_SECONDARY;
+#endif
 }

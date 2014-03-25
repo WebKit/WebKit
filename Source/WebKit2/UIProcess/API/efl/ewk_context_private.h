@@ -75,6 +75,10 @@ public:
 
     Ewk_Cache_Model cacheModel() const;
 
+    void setProcessModel(Ewk_Process_Model);
+
+    Ewk_Process_Model processModel() const;
+
     WKContextRef wkContext() const { return m_context.get(); }
 
     WebKit::DownloadManagerEfl* downloadManager() const;

@@ -1,3 +1,27 @@
+2014-03-24 Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL][WK2] Add an API to set process model
+        https://bugs.webkit.org/show_bug.cgi?id=130133
+
+        Reviewed by Gyuyoung Kim.
+
+        Implement an API to set and get process model in ewk_context.
+        By default process model enum value is set to EWK_PROCESS_MODEL_SHARED_SECONDARY
+        which keeps current behaviour. Setting EWK_PROCESS_MODEL_MULTIPLE_SECONDARY
+        will make each web view use separate web process, also enables network process.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (toWKProcessModel):
+        (EwkContext::setProcessModel):
+        (toEwkProcessModel):
+        (EwkContext::processModel):
+        (ewk_context_process_model_set):
+        (ewk_context_process_model_get):
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_context_private.h:
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        (TEST_F):
+
 2014-03-24  Chris Fleizach  <cfleizach@apple.com>
 
         AX: hit-testing doesn't always work correctly with WK2

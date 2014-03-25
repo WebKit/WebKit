@@ -118,6 +118,13 @@ TEST_F(EWK2ContextTest, ewk_context_cache_model)
     ASSERT_EQ(EWK_CACHE_MODEL_DOCUMENT_VIEWER, ewk_context_cache_model_get(context));
 }
 
+TEST_F(EWK2ContextTest, ewk_context_process_model)
+{
+    Ewk_Context* context = ewk_view_context_get(webView());
+
+    ASSERT_EQ(EWK_PROCESS_MODEL_SHARED_SECONDARY, ewk_context_process_model_get(context));
+}
+
 TEST_F(EWK2ContextTest, ewk_context_new)
 {
     Ewk_Context* context = ewk_context_new();
