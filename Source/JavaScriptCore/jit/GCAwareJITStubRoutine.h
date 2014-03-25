@@ -110,7 +110,7 @@ private:
 
 PassRefPtr<JITStubRoutine> createJITStubRoutine(
     const MacroAssemblerCodeRef&, VM&, const JSCell* owner, bool makesCalls,
-    JSCell* = 0);
+    JSCell* = nullptr);
 
 // Helper for the creation of simple stub routines that need no help from the GC. Note
 // that codeBlock gets "executed" more than once.

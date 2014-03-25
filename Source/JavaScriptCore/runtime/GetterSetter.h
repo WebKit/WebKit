@@ -64,6 +64,16 @@ namespace JSC {
             return Structure::create(vm, globalObject, prototype, TypeInfo(GetterSetterType, OverridesVisitChildren), info());
         }
         
+        static ptrdiff_t offsetOfGetter()
+        {
+            return OBJECT_OFFSETOF(GetterSetter, m_getter);
+        }
+        
+        static ptrdiff_t offsetOfSetter()
+        {
+            return OBJECT_OFFSETOF(GetterSetter, m_setter);
+        }
+        
         DECLARE_INFO;
 
     private:

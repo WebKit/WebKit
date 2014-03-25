@@ -275,6 +275,7 @@ set(JavaScriptCore_SOURCES
     interpreter/StackVisitor.cpp
     interpreter/VMInspector.cpp
 
+    jit/AccessorCallJITStubRoutine.cpp
     jit/AssemblyHelpers.cpp
     jit/ArityCheckFailReturnThunks.cpp
     jit/ClosureCallStubRoutine.cpp

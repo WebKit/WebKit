@@ -79,7 +79,7 @@ public:
         return m_stubRoutine.get();
     }
     
-    bool doesCalls() const { return type() == Getter; }
+    bool doesCalls() const { return type() == Getter || type() == CustomGetter; }
     
     bool visitWeak(RepatchBuffer&) const;
 

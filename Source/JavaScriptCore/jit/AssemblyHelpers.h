@@ -66,6 +66,17 @@ public:
         stackPointerAligned.link(this);
 #endif
     }
+    
+    template<typename T>
+    void storeCell(T cell, Address address)
+    {
+#if USE(JSVALUE64)
+        store64(cell, address);
+#else
+        store32(cell, address.withOffset(PayloadOffset));
+        store32(TrustedImm32(JSValue::CellTag), address.withOffset(TagOffset));
+#endif
+    }
 
 #if CPU(X86_64) || CPU(X86)
     static size_t prologueStackPointerDelta()

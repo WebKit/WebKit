@@ -1,3 +1,18 @@
+2014-03-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Repatch should plant calls to getters directly rather than through a C helper
+        https://bugs.webkit.org/show_bug.cgi?id=129589
+
+        Reviewed by Mark Hahnenberg.
+
+        * js/regress/getter-expected.txt: Added.
+        * js/regress/getter.html: Added.
+        * js/regress/script-tests/getter.js: Added.
+        * js/regress/script-tests/string-char-code-at.js: Added.
+        (foo):
+        * js/regress/string-char-code-at-expected.txt: Added.
+        * js/regress/string-char-code-at.html: Added.
+
 2014-03-25  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Pause the media element during system sleep.

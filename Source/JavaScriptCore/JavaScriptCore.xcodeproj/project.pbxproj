@@ -329,6 +329,8 @@
 		0F73D7AE165A142D00ACAB71 /* ClosureCallStubRoutine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F73D7AB165A142A00ACAB71 /* ClosureCallStubRoutine.cpp */; };
 		0F73D7AF165A143000ACAB71 /* ClosureCallStubRoutine.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F73D7AC165A142A00ACAB71 /* ClosureCallStubRoutine.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F743BAA16B88249009F9277 /* ARM64Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652A3A201651C66100A80AFE /* ARM64Disassembler.cpp */; };
+		0F7576D218E1FEE9002EF4CD /* AccessorCallJITStubRoutine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7576D018E1FEE9002EF4CD /* AccessorCallJITStubRoutine.cpp */; };
+		0F7576D318E1FEE9002EF4CD /* AccessorCallJITStubRoutine.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7576D118E1FEE9002EF4CD /* AccessorCallJITStubRoutine.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F766D2815A8CC1E008F363E /* JITStubRoutine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F766D2615A8CC1B008F363E /* JITStubRoutine.cpp */; };
 		0F766D2B15A8CC38008F363E /* JITStubRoutineSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F766D2915A8CC34008F363E /* JITStubRoutineSet.cpp */; };
 		0F766D2C15A8CC3A008F363E /* JITStubRoutineSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F766D2A15A8CC34008F363E /* JITStubRoutineSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -786,10 +788,10 @@
 		2A68295B1875F80500B6C3E2 /* CopyWriteBarrier.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A68295A1875F80500B6C3E2 /* CopyWriteBarrier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2A6F462617E959CE00C45C98 /* HeapOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A6F462517E959CE00C45C98 /* HeapOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2A7A58EF1808A4C40020BDF7 /* DeferGC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A7A58EE1808A4C40020BDF7 /* DeferGC.cpp */; };
-       2A83638518D7D0EE0000EBCC /* EdenGCActivityCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A83638318D7D0EE0000EBCC /* EdenGCActivityCallback.cpp */; };
-       2A83638618D7D0EE0000EBCC /* EdenGCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
-       2A83638918D7D0FE0000EBCC /* FullGCActivityCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A83638718D7D0FE0000EBCC /* FullGCActivityCallback.cpp */; };
-       2A83638A18D7D0FE0000EBCC /* FullGCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2A83638518D7D0EE0000EBCC /* EdenGCActivityCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A83638318D7D0EE0000EBCC /* EdenGCActivityCallback.cpp */; };
+		2A83638618D7D0EE0000EBCC /* EdenGCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2A83638918D7D0FE0000EBCC /* FullGCActivityCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A83638718D7D0FE0000EBCC /* FullGCActivityCallback.cpp */; };
+		2A83638A18D7D0FE0000EBCC /* FullGCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AAAA31218BD49D100394CC8 /* StructureIDBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AAAA31018BD49D100394CC8 /* StructureIDBlob.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AACE63C18CA5A0300ED0191 /* GCActivityCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AACE63A18CA5A0300ED0191 /* GCActivityCallback.cpp */; };
 		2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AACE63B18CA5A0300ED0191 /* GCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1850,6 +1852,8 @@
 		0F714CA216EA92ED00F3EBEB /* DFGBackwardsPropagationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBackwardsPropagationPhase.h; path = dfg/DFGBackwardsPropagationPhase.h; sourceTree = "<group>"; };
 		0F73D7AB165A142A00ACAB71 /* ClosureCallStubRoutine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClosureCallStubRoutine.cpp; sourceTree = "<group>"; };
 		0F73D7AC165A142A00ACAB71 /* ClosureCallStubRoutine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClosureCallStubRoutine.h; sourceTree = "<group>"; };
+		0F7576D018E1FEE9002EF4CD /* AccessorCallJITStubRoutine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessorCallJITStubRoutine.cpp; sourceTree = "<group>"; };
+		0F7576D118E1FEE9002EF4CD /* AccessorCallJITStubRoutine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessorCallJITStubRoutine.h; sourceTree = "<group>"; };
 		0F766D1C15A5028D008F363E /* JITStubRoutine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubRoutine.h; sourceTree = "<group>"; };
 		0F766D2615A8CC1B008F363E /* JITStubRoutine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITStubRoutine.cpp; sourceTree = "<group>"; };
 		0F766D2915A8CC34008F363E /* JITStubRoutineSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITStubRoutineSet.cpp; sourceTree = "<group>"; };
@@ -2273,10 +2277,10 @@
 		2A68295A1875F80500B6C3E2 /* CopyWriteBarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopyWriteBarrier.h; sourceTree = "<group>"; };
 		2A6F462517E959CE00C45C98 /* HeapOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapOperation.h; sourceTree = "<group>"; };
 		2A7A58EE1808A4C40020BDF7 /* DeferGC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeferGC.cpp; sourceTree = "<group>"; };
-       2A83638318D7D0EE0000EBCC /* EdenGCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EdenGCActivityCallback.cpp; sourceTree = "<group>"; };
-       2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EdenGCActivityCallback.h; sourceTree = "<group>"; };
-       2A83638718D7D0FE0000EBCC /* FullGCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FullGCActivityCallback.cpp; sourceTree = "<group>"; };
-       2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullGCActivityCallback.h; sourceTree = "<group>"; };
+		2A83638318D7D0EE0000EBCC /* EdenGCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EdenGCActivityCallback.cpp; sourceTree = "<group>"; };
+		2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EdenGCActivityCallback.h; sourceTree = "<group>"; };
+		2A83638718D7D0FE0000EBCC /* FullGCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FullGCActivityCallback.cpp; sourceTree = "<group>"; };
+		2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullGCActivityCallback.h; sourceTree = "<group>"; };
 		2AAAA31018BD49D100394CC8 /* StructureIDBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureIDBlob.h; sourceTree = "<group>"; };
 		2AACE63A18CA5A0300ED0191 /* GCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCActivityCallback.cpp; sourceTree = "<group>"; };
 		2AACE63B18CA5A0300ED0191 /* GCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCActivityCallback.h; sourceTree = "<group>"; };
@@ -3432,6 +3436,8 @@
 		1429D92C0ED22D7000B89619 /* jit */ = {
 			isa = PBXGroup;
 			children = (
+				0F7576D018E1FEE9002EF4CD /* AccessorCallJITStubRoutine.cpp */,
+				0F7576D118E1FEE9002EF4CD /* AccessorCallJITStubRoutine.h */,
 				0F6B1CC718641DF800845D97 /* ArityCheckFailReturnThunks.cpp */,
 				0F6B1CC818641DF800845D97 /* ArityCheckFailReturnThunks.h */,
 				0F24E53B17EA9F5900ABB217 /* AssemblyHelpers.cpp */,
@@ -3611,10 +3617,10 @@
 				2A4EC90A1860D6C20094F782 /* WriteBarrierBuffer.h */,
 				0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */,
 				0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */,
-               2A83638318D7D0EE0000EBCC /* EdenGCActivityCallback.cpp */,
-               2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */,
-               2A83638718D7D0FE0000EBCC /* FullGCActivityCallback.cpp */,
-               2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */,
+				2A83638318D7D0EE0000EBCC /* EdenGCActivityCallback.cpp */,
+				2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */,
+				2A83638718D7D0FE0000EBCC /* FullGCActivityCallback.cpp */,
+				2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */,
 			);
 			path = heap;
 			sourceTree = "<group>";
@@ -4935,8 +4941,8 @@
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
 				A584032018BFFBE1005A0811 /* InspectorAgent.h in Headers */,
 				2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */,
-               2A83638618D7D0EE0000EBCC /* EdenGCActivityCallback.h in Headers */,
-               2A83638A18D7D0FE0000EBCC /* FullGCActivityCallback.h in Headers */,
+				2A83638618D7D0EE0000EBCC /* EdenGCActivityCallback.h in Headers */,
+				2A83638A18D7D0FE0000EBCC /* FullGCActivityCallback.h in Headers */,
 				2AAAA31218BD49D100394CC8 /* StructureIDBlob.h in Headers */,
 				A54E8EB118BFFBBE00556D28 /* GCSegmentedArrayInlines.h in Headers */,
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
@@ -5380,6 +5386,7 @@
 				BC18C41E0E16F5CD00B34460 /* JSContextRef.h in Headers */,
 				148CD1D8108CF902008163C6 /* JSContextRefPrivate.h in Headers */,
 				A72028B81797601E0098028C /* JSCTestRunnerUtils.h in Headers */,
+				0F7576D318E1FEE9002EF4CD /* AccessorCallJITStubRoutine.h in Headers */,
 				0F2B66EC17B6B5AB00A7AE3F /* JSDataView.h in Headers */,
 				0F2B66EE17B6B5AB00A7AE3F /* JSDataViewPrototype.h in Headers */,
 				978801411471AD920041B016 /* JSDateMath.h in Headers */,
@@ -6241,7 +6248,7 @@
 				147F39C2107EC37600427A48 /* Completion.cpp in Sources */,
 				146B16D812EB5B59001BEC1B /* ConservativeRoots.cpp in Sources */,
 				A5FD0079189B051000633231 /* ConsoleMessage.cpp in Sources */,
-               2A83638518D7D0EE0000EBCC /* EdenGCActivityCallback.cpp in Sources */,
+				2A83638518D7D0EE0000EBCC /* EdenGCActivityCallback.cpp in Sources */,
 				1428082E107EC0570013E7B2 /* ConstructData.cpp in Sources */,
 				A57D23F11891B5B40031C7FA /* ContentSearchUtilities.cpp in Sources */,
 				C240305514B404E60079EB64 /* CopiedSpace.cpp in Sources */,
@@ -6542,7 +6549,7 @@
 				0F919D10157F3329004A4E7D /* JSSegmentedVariableObject.cpp in Sources */,
 				A7299D9D17D12837005F5FF9 /* JSSet.cpp in Sources */,
 				A790DD6F182F499700588807 /* JSSetIterator.cpp in Sources */,
-               2A83638918D7D0FE0000EBCC /* FullGCActivityCallback.cpp in Sources */,
+				2A83638918D7D0FE0000EBCC /* FullGCActivityCallback.cpp in Sources */,
 				1428083A107EC0750013E7B2 /* JSStack.cpp in Sources */,
 				147F39D5107EC37600427A48 /* JSString.cpp in Sources */,
 				2600B5A6152BAAA70091EE5F /* JSStringJoiner.cpp in Sources */,
@@ -6710,6 +6717,7 @@
 				0FF42732158EBD58004CB9FF /* UDis86Disassembler.cpp in Sources */,
 				A76F279415F13C9600517D67 /* UnlinkedCodeBlock.cpp in Sources */,
 				B59F89391891F29F00D5CCDC /* UnlinkedInstructionStream.cpp in Sources */,
+				0F7576D218E1FEE9002EF4CD /* AccessorCallJITStubRoutine.cpp in Sources */,
 				0F24E55817F74EDB00ABB217 /* ValueRecovery.cpp in Sources */,
 				E18E3A590DF9278C00D90B34 /* VM.cpp in Sources */,
 				FE5932A7183C5A2600A1ECCC /* VMEntryScope.cpp in Sources */,

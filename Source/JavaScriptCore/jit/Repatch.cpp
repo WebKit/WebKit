@@ -28,11 +28,13 @@
 
 #if ENABLE(JIT)
 
+#include "AccessorCallJITStubRoutine.h"
 #include "CCallHelpers.h"
 #include "DFGOperations.h"
 #include "DFGSpeculativeJIT.h"
 #include "FTLThunks.h"
 #include "GCAwareJITStubRoutine.h"
+#include "GetterSetter.h"
 #include "JIT.h"
 #include "JITInlines.h"
 #include "LinkBuffer.h"
@@ -301,19 +303,138 @@ static void generateGetByIdStub(
 #if USE(JSVALUE64)
         stubJit.load64(MacroAssembler::Address(storageGPR, offsetRelativeToBase(offset)), loadedValueGPR);
 #else
-        stubJit.load32(MacroAssembler::Address(storageGPR, offsetRelativeToBase(offset) + TagOffset), resultTagGPR);
+        if (slot.isCacheableValue())
+            stubJit.load32(MacroAssembler::Address(storageGPR, offsetRelativeToBase(offset) + TagOffset), resultTagGPR);
         stubJit.load32(MacroAssembler::Address(storageGPR, offsetRelativeToBase(offset) + PayloadOffset), loadedValueGPR);
 #endif
     }
 
+    // Stuff for custom getters.
     MacroAssembler::Call operationCall;
     MacroAssembler::Call handlerCall;
     FunctionPtr operationFunction;
+
+    // Stuff for JS getters.
+    MacroAssembler::DataLabelPtr addressOfLinkFunctionCheck;
+    MacroAssembler::Call fastPathCall;
+    MacroAssembler::Call slowPathCall;
+    std::unique_ptr<CallLinkInfo> callLinkInfo;
+
     MacroAssembler::Jump success, fail;
     if (isAccessor) {
+        // Need to make sure that whenever this call is made in the future, we remember the
+        // place that we made it from. It just so happens to be the place that we are at
+        // right now!
+        stubJit.store32(MacroAssembler::TrustedImm32(exec->locationAsRawBits()),
+            CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
+
         if (slot.isCacheableGetter()) {
-            stubJit.setupArgumentsWithExecState(baseGPR, loadedValueGPR);
-            operationFunction = operationCallGetter;
+            // Create a JS call using a JS call inline cache. Assume that:
+            //
+            // - SP is aligned and represents the extent of the calling compiler's stack usage.
+            //
+            // - FP is set correctly (i.e. it points to the caller's call frame header).
+            //
+            // - SP - FP is an aligned difference.
+            //
+            // - Any byte between FP (exclusive) and SP (inclusive) could be live in the calling
+            //   code.
+            //
+            // Therefore, we temporary grow the stack for the purpose of the call and then
+            // degrow it after.
+            
+            callLinkInfo = std::make_unique<CallLinkInfo>();
+            callLinkInfo->callType = CallLinkInfo::Call;
+            callLinkInfo->codeOrigin = stubInfo.codeOrigin;
+            callLinkInfo->calleeGPR = loadedValueGPR;
+            
+            MacroAssembler::JumpList done;
+            
+            // There is a 'this' argument but nothing else.
+            unsigned numberOfParameters = 1;
+            
+            // Get the getter; if there ain't one then the result is jsUndefined().
+            stubJit.loadPtr(
+                MacroAssembler::Address(loadedValueGPR, GetterSetter::offsetOfGetter()),
+                loadedValueGPR);
+            MacroAssembler::Jump returnUndefined = stubJit.branchTestPtr(
+                MacroAssembler::Zero, loadedValueGPR);
+            
+            unsigned numberOfRegsForCall =
+                JSStack::CallFrameHeaderSize + numberOfParameters;
+            
+            unsigned alignedNumberOfNeededRegs =
+                WTF::roundUpToMultipleOf(stackAlignmentRegisters(), numberOfRegsForCall);
+            
+            unsigned alignedNumberOfNeededBytes =
+                alignedNumberOfNeededRegs * sizeof(Register);
+            
+            stubJit.subPtr(
+                MacroAssembler::TrustedImm32(
+                    alignedNumberOfNeededBytes - sizeof(CallerFrameAndPC)),
+                MacroAssembler::stackPointerRegister);
+            
+            MacroAssembler::Address calleeFrame = MacroAssembler::Address(
+                MacroAssembler::stackPointerRegister,
+                -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
+            
+            stubJit.store32(
+                MacroAssembler::TrustedImm32(numberOfParameters),
+                calleeFrame.withOffset(
+                    JSStack::ArgumentCount * sizeof(Register) + PayloadOffset));
+            
+            stubJit.storeCell(
+                loadedValueGPR, calleeFrame.withOffset(JSStack::Callee * sizeof(Register)));
+            stubJit.storeCell(
+                baseGPR,
+                calleeFrame.withOffset(
+                    virtualRegisterForArgument(0).offset() * sizeof(Register)));
+            
+            MacroAssembler::Jump slowCase = stubJit.branchPtrWithPatch(
+                MacroAssembler::NotEqual, loadedValueGPR, addressOfLinkFunctionCheck,
+                MacroAssembler::TrustedImmPtr(0));
+            
+            // loadedValueGPR is already burned. We can reuse it. From here on we assume that
+            // any volatile register will be clobbered anyway.
+            stubJit.loadPtr(
+                MacroAssembler::Address(loadedValueGPR, JSFunction::offsetOfScopeChain()),
+                loadedValueGPR);
+            stubJit.storeCell(
+                loadedValueGPR, calleeFrame.withOffset(JSStack::ScopeChain * sizeof(Register)));
+            fastPathCall = stubJit.nearCall();
+            
+            stubJit.addPtr(
+                MacroAssembler::TrustedImm32(
+                    alignedNumberOfNeededBytes - sizeof(CallerFrameAndPC)),
+                MacroAssembler::stackPointerRegister);
+            
+            done.append(stubJit.jump());
+            slowCase.link(&stubJit);
+            
+            stubJit.move(loadedValueGPR, GPRInfo::regT0);
+#if USE(JSVALUE32_64)
+            stubJit.move(MacroAssembler::TrustedImm32(JSValue::CellTag), GPRInfo::regT1);
+#endif
+            stubJit.move(MacroAssembler::TrustedImmPtr(callLinkInfo.get()), GPRInfo::regT2);
+            slowPathCall = stubJit.nearCall();
+            
+            stubJit.addPtr(
+                MacroAssembler::TrustedImm32(
+                    alignedNumberOfNeededBytes - sizeof(CallerFrameAndPC)),
+                MacroAssembler::stackPointerRegister);
+            
+            done.append(stubJit.jump());
+            returnUndefined.link(&stubJit);
+            
+#if USE(JSVALUE64)
+            stubJit.move(
+                MacroAssembler::TrustedImm64(JSValue::encode(jsUndefined())), resultGPR);
+#else
+            stubJit.move(MacroAssembler::TrustedImm32(JSValue::UndefinedTag), resultTagGPR);
+            stubJit.move(MacroAssembler::TrustedImm32(0), resultGPR);
+#endif
+            
+            done.link(&stubJit);
         } else {
             // EncodedJSValue (*GetValueFunc)(ExecState*, JSObject* slotBase, EncodedJSValue thisValue, PropertyName);
 #if USE(JSVALUE64)
@@ -321,44 +442,53 @@ static void generateGetByIdStub(
 #else
             stubJit.setupArgumentsWithExecState(baseForAccessGPR, baseGPR, MacroAssembler::TrustedImm32(JSValue::CellTag), MacroAssembler::TrustedImmPtr(propertyName.impl()));
 #endif
+            stubJit.storePtr(GPRInfo::callFrameRegister, &vm->topCallFrame);
+
             operationFunction = FunctionPtr(slot.customGetter());
-        }
 
-        // Need to make sure that whenever this call is made in the future, we remember the
-        // place that we made it from. It just so happens to be the place that we are at
-        // right now!
-        stubJit.store32(MacroAssembler::TrustedImm32(exec->locationAsRawBits()),
-            CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
-        stubJit.storePtr(GPRInfo::callFrameRegister, &vm->topCallFrame);
-
-        operationCall = stubJit.call();
+            operationCall = stubJit.call();
 #if USE(JSVALUE64)
-        stubJit.move(GPRInfo::returnValueGPR, resultGPR);
+            stubJit.move(GPRInfo::returnValueGPR, resultGPR);
 #else
-        stubJit.setupResults(resultGPR, resultTagGPR);
+            stubJit.setupResults(resultGPR, resultTagGPR);
 #endif
-        MacroAssembler::Jump noException = stubJit.emitExceptionCheck(CCallHelpers::InvertedExceptionCheck);
-
-        stubJit.setupArguments(CCallHelpers::TrustedImmPtr(vm), GPRInfo::callFrameRegister);
-        handlerCall = stubJit.call();
-        stubJit.jumpToExceptionHandler();
-        
-        noException.link(&stubJit);
+            MacroAssembler::Jump noException = stubJit.emitExceptionCheck(CCallHelpers::InvertedExceptionCheck);
+            
+            stubJit.setupArguments(CCallHelpers::TrustedImmPtr(vm), GPRInfo::callFrameRegister);
+            handlerCall = stubJit.call();
+            stubJit.jumpToExceptionHandler();
+            
+            noException.link(&stubJit);
+        }
     }
     emitRestoreScratch(stubJit, needToRestoreScratch, scratchGPR, success, fail, failureCases);
     
     LinkBuffer patchBuffer(*vm, &stubJit, exec->codeBlock());
     
     linkRestoreScratch(patchBuffer, needToRestoreScratch, success, fail, failureCases, successLabel, slowCaseLabel);
-    if (isAccessor) {
+    if (slot.isCacheableCustom()) {
         patchBuffer.link(operationCall, operationFunction);
         patchBuffer.link(handlerCall, lookupExceptionHandler);
+    } else if (slot.isCacheableGetter()) {
+        callLinkInfo->hotPathOther = patchBuffer.locationOfNearCall(fastPathCall);
+        callLinkInfo->hotPathBegin = patchBuffer.locationOf(addressOfLinkFunctionCheck);
+        callLinkInfo->callReturnLocation = patchBuffer.locationOfNearCall(slowPathCall);
+
+        ThunkGenerator generator = linkThunkGeneratorFor(
+            CodeForCall, RegisterPreservationNotRequired);
+        patchBuffer.link(
+            slowPathCall, CodeLocationLabel(vm->getCTIStub(generator).code()));
     }
     
-    stubRoutine = FINALIZE_CODE_FOR_GC_AWARE_STUB(
-        exec->codeBlock(), patchBuffer, true, nullptr,
+    MacroAssemblerCodeRef code = FINALIZE_CODE_FOR(
+        exec->codeBlock(), patchBuffer,
         ("Get access stub for %s, return point %p",
             toCString(*exec->codeBlock()).data(), successLabel.executableAddress()));
+    
+    if (slot.isCacheableGetter())
+        stubRoutine = adoptRef(new AccessorCallJITStubRoutine(code, *vm, std::move(callLinkInfo)));
+    else
+        stubRoutine = createJITStubRoutine(code, *vm, codeBlock->ownerExecutable(), true);
 }
 
 static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
@@ -587,10 +717,17 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone),
         CodeLocationLabel(list->currentSlowPathTarget(stubInfo)), stubRoutine);
     
+    GetByIdAccess::AccessType accessType;
+    if (slot.isCacheableValue())
+        accessType = GetByIdAccess::SimpleStub;
+    else if (slot.isCacheableGetter())
+        accessType = GetByIdAccess::Getter;
+    else
+        accessType = GetByIdAccess::CustomGetter;
+    
     list->addAccess(GetByIdAccess(
-        *vm, codeBlock->ownerExecutable(),
-        slot.isCacheableValue() ? GetByIdAccess::SimpleStub : GetByIdAccess::Getter,
-        stubRoutine, structure, prototypeChain, count));
+        *vm, codeBlock->ownerExecutable(), accessType, stubRoutine, structure,
+        prototypeChain, count));
     
     patchJumpToGetByIdStub(codeBlock, stubInfo, stubRoutine.get());
     
