@@ -53,6 +53,11 @@ void InitialNavigation::dispatch(ReplayController& controller)
     controller.page().mainFrame().navigationScheduler().scheduleLocationChange(m_securityOrigin.get(), m_url, m_referrer, true, true);
 }
 
+void HandleKeyPress::dispatch(ReplayController& controller)
+{
+    controller.page().userInputBridge().handleKeyEvent(platformEvent(), InputSource::Synthetic);
+}
+
 // User interaction inputs.
 void HandleMouseMove::dispatch(ReplayController& controller)
 {

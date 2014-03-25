@@ -1,3 +1,12 @@
+2014-03-24  Brian Burg  <bburg@apple.com>
+
+        Web Replay: capture and replay keyboard events
+        https://bugs.webkit.org/show_bug.cgi?id=130314
+
+        Reviewed by Joseph Pecoraro.
+
+        * ManualTests/inspector/replay-keyboard-events.html: Added.
+
 2014-03-24  Sangyong Park  <sy302.park@gmail.com>
 
         [EFL] Inspector page is not loaded.

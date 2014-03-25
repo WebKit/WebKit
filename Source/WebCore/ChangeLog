@@ -1,3 +1,35 @@
+2014-03-24  Brian Burg  <bburg@apple.com>
+
+        Web Replay: capture and replay keyboard events
+        https://bugs.webkit.org/show_bug.cgi?id=130314
+
+        Reviewed by Joseph Pecoraro.
+
+        Upstream support for capturing and replaying non-IME keyboard input.
+        This works similarly to mouse events. It introduces optional fields and
+        macros to encode/decode them.
+
+        Test: ManualTests/inspector/replay-keyboard-events.html
+
+        * replay/ReplayInputDispatchMethods.cpp:
+        (WebCore::HandleKeyPress::dispatch):
+        * replay/SerializationMethods.cpp:
+        (JSC::EncodingTraits<NondeterministicInputBase>::encodeValue):
+        (JSC::EncodingTraits<NondeterministicInputBase>::decodeValue): Switch existing
+        encode/decode calls to use the shortening macros.
+        (JSC::EncodingTraits<KeypressCommand>::encodeValue): Added.
+        (JSC::EncodingTraits<KeypressCommand>::decodeValue): Added.
+        (JSC::PlatformKeyboardEventAppKit::PlatformKeyboardEventAppKit): Subclass
+        PlatformKeyboardEvent so that we can set AppKit-specific members not
+        initialized through the main constructors.
+        (JSC::EncodingTraits<PlatformKeyboardEvent>::encodeValue): Added.
+        (JSC::EncodingTraits<PlatformKeyboardEvent>::decodeValue): Added.
+        * replay/SerializationMethods.h:
+        * replay/UserInputBridge.cpp:
+        (WebCore::UserInputBridge::UserInputBridge): initialize m_state inside a guard.
+        (WebCore::UserInputBridge::handleKeyEvent): fill in the implementation.
+        * replay/WebInputs.json:
+
 2014-03-24  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Optimizing string construction for type error in JSNavigatorCustom.cpp

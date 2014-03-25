@@ -31,14 +31,18 @@
 #if ENABLE(WEB_REPLAY)
 
 #include "AllReplayInputs.h"
+#include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
 #include "ReplayInputTypes.h"
 #include "SecurityOrigin.h"
 #include "URL.h"
+#include <wtf/text/Base64.h>
 
+using WebCore::KeypressCommand;
 using WebCore::IntPoint;
 using WebCore::MouseButton;
 using WebCore::PlatformEvent;
+using WebCore::PlatformKeyboardEvent;
 using WebCore::PlatformMouseEvent;
 using WebCore::SecurityOrigin;
 using WebCore::URL;
@@ -58,13 +62,22 @@ WEB_REPLAY_INPUT_NAMES_FOR_EACH(IMPORT_FROM_WEBCORE_NAMESPACE)
     if (!_encodedValue.get<_type>(ASCIILiteral(#_key), _key)) \
         return false
 
+#define ENCODE_OPTIONAL_SCALAR_TYPE_WITH_KEY(_encodedValue, _type, _key, _value, condition) \
+    if (condition) \
+        _encodedValue.put<_type>(ASCIILiteral(#_key), _value)
+
+#define DECODE_OPTIONAL_SCALAR_TYPE_WITH_KEY(_encodedValue, _type, _key) \
+    _type _key; \
+    bool _key ## WasDecoded = _encodedValue.get<_type>(ASCIILiteral(#_key), _key)
+
 namespace JSC {
 
 EncodedValue EncodingTraits<NondeterministicInputBase>::encodeValue(const NondeterministicInputBase& input)
 {
     EncodedValue encodedValue = EncodedValue::createObject();
     const AtomicString& type = input.type();
-    encodedValue.put<String>(ASCIILiteral("type"), type.string());
+
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, String, type, type.string());
 
 #define ENCODE_IF_TYPE_TAG_MATCHES(name) \
     if (type == inputTypes().name) { \
@@ -88,9 +101,7 @@ EncodedValue EncodingTraits<NondeterministicInputBase>::encodeValue(const Nondet
 
 bool EncodingTraits<NondeterministicInputBase>::decodeValue(EncodedValue& encodedValue, std::unique_ptr<NondeterministicInputBase>& input)
 {
-    String type;
-    if (!encodedValue.get<String>(ASCIILiteral("type"), type))
-        return false;
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, String, type);
 
 #define DECODE_IF_TYPE_TAG_MATCHES(name) \
     if (type == inputTypes().name) { \
@@ -116,6 +127,88 @@ bool EncodingTraits<NondeterministicInputBase>::decodeValue(EncodedValue& encode
     }
 
     return false;
+}
+
+#if USE(APPKIT)
+EncodedValue EncodingTraits<KeypressCommand>::encodeValue(const KeypressCommand& command)
+{
+    EncodedValue encodedValue = EncodedValue::createObject();
+
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, String, commandName, command.commandName);
+    ENCODE_OPTIONAL_SCALAR_TYPE_WITH_KEY(encodedValue, String, text, command.text, !command.text.isEmpty());
+
+    return encodedValue;
+}
+
+bool EncodingTraits<KeypressCommand>::decodeValue(EncodedValue& encodedValue, KeypressCommand& decodedValue)
+{
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, String, commandName);
+    DECODE_OPTIONAL_SCALAR_TYPE_WITH_KEY(encodedValue, String, text);
+
+    decodedValue = textWasDecoded ? KeypressCommand(commandName, text) : KeypressCommand(commandName);
+    return true;
+}
+
+class PlatformKeyboardEventAppKit : public WebCore::PlatformKeyboardEvent {
+public:
+    PlatformKeyboardEventAppKit(const PlatformKeyboardEvent& event, bool handledByInputMethod, Vector<KeypressCommand>& commands)
+        : PlatformKeyboardEvent(event)
+    {
+        m_handledByInputMethod = handledByInputMethod;
+        m_commands = commands;
+    }
+};
+#endif // USE(APPKIT)
+
+EncodedValue EncodingTraits<PlatformKeyboardEvent>::encodeValue(const PlatformKeyboardEvent& input)
+{
+    EncodedValue encodedValue = EncodedValue::createObject();
+
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, double, timestamp, input.timestamp());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, PlatformEvent::Type, type, input.type());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, PlatformEvent::Modifiers, modifiers, static_cast<PlatformEvent::Modifiers>(input.modifiers()));
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, String, text, input.text());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, String, unmodifiedText, input.unmodifiedText());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, String, keyIdentifier, input.keyIdentifier());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, windowsVirtualKeyCode, input.windowsVirtualKeyCode());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, nativeVirtualKeyCode, input.nativeVirtualKeyCode());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, macCharCode, input.macCharCode());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, autoRepeat, input.isAutoRepeat());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, keypad, input.isKeypad());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, systemKey, input.isSystemKey());
+#if USE(APPKIT)
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, handledByInputMethod, input.handledByInputMethod());
+    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, Vector<KeypressCommand>, commands, input.commands());
+#endif
+    return encodedValue;
+}
+
+bool EncodingTraits<PlatformKeyboardEvent>::decodeValue(EncodedValue& encodedValue, std::unique_ptr<PlatformKeyboardEvent>& input)
+{
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, double, timestamp);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, PlatformEvent::Type, type);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, PlatformEvent::Modifiers, modifiers);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, String, text);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, String, unmodifiedText);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, String, keyIdentifier);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, windowsVirtualKeyCode);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, nativeVirtualKeyCode);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, macCharCode);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, autoRepeat);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, keypad);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, systemKey);
+#if USE(APPKIT)
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, handledByInputMethod);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedValue, Vector<KeypressCommand>, commands);
+#endif
+
+    PlatformKeyboardEvent platformEvent = PlatformKeyboardEvent(type, text, unmodifiedText, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, autoRepeat, keypad, systemKey, modifiers, timestamp);
+#if USE(APPKIT)
+    input = std::make_unique<PlatformKeyboardEventAppKit>(platformEvent, handledByInputMethod, commands);
+#else
+    input = std::make_unique<PlatformKeyboardEvent>(platformEvent);
+#endif
+    return true;
 }
 
 EncodedValue EncodingTraits<PlatformMouseEvent>::encodeValue(const PlatformMouseEvent& input)

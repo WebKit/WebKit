@@ -55,6 +55,9 @@ namespace WebCore {
 
 UserInputBridge::UserInputBridge(Page& page)
     : m_page(page)
+#if ENABLE(WEB_REPLAY)
+    , m_state(UserInputBridge::State::Open)
+#endif
 {
 }
 
@@ -136,8 +139,19 @@ bool UserInputBridge::handleMouseMoveOnScrollbarEvent(const PlatformMouseEvent& 
     return m_page.mainFrame().eventHandler().passMouseMovedEventToScrollbars(mouseEvent);
 }
 
-bool UserInputBridge::handleKeyEvent(const PlatformKeyboardEvent& keyEvent, InputSource)
+bool UserInputBridge::handleKeyEvent(const PlatformKeyboardEvent& keyEvent, InputSource inputSource)
 {
+#if ENABLE(WEB_REPLAY)
+    EARLY_RETURN_IF_SHOULD_IGNORE_INPUT;
+
+    if (activeCursor().isCapturing()) {
+        std::unique_ptr<PlatformKeyboardEvent> ownedEvent = std::make_unique<PlatformKeyboardEvent>(keyEvent);
+        activeCursor().appendInput<HandleKeyPress>(std::move(ownedEvent));
+    }
+#else
+    UNUSED_PARAM(inputSource);
+#endif
+
     return m_page.focusController().focusedOrMainFrame().eventHandler().keyEvent(keyEvent);
 }
 

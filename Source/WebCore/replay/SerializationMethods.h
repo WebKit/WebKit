@@ -32,24 +32,46 @@
 
 #include <replay/EncodedValue.h>
 #include <replay/NondeterministicInput.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 class Document;
 class Frame;
 class Page;
+class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class SecurityOrigin;
 class URL;
+
+#if USE(APPKIT)
+struct KeypressCommand;
+#endif
 } // namespace WebCore
 
 // Template specializations must be defined in the same namespace as the template declaration.
 namespace JSC {
+
+#if USE(APPKIT)
+template<> struct EncodingTraits<WebCore::KeypressCommand> {
+    typedef WebCore::KeypressCommand DecodedType;
+
+    static EncodedValue encodeValue(const WebCore::KeypressCommand& value);
+    static bool decodeValue(EncodedValue&, WebCore::KeypressCommand& value);
+};
+#endif // USE(APPKIT)
 
 template<> struct EncodingTraits<NondeterministicInputBase> {
     typedef NondeterministicInputBase DecodedType;
 
     static EncodedValue encodeValue(const NondeterministicInputBase& value);
     static bool decodeValue(EncodedValue&, std::unique_ptr<NondeterministicInputBase>& value);
+};
+
+template<> struct EncodingTraits<WebCore::PlatformKeyboardEvent> {
+    typedef WebCore::PlatformKeyboardEvent DecodedType;
+
+    static EncodedValue encodeValue(const WebCore::PlatformKeyboardEvent& value);
+    static bool decodeValue(EncodedValue&, std::unique_ptr<WebCore::PlatformKeyboardEvent>& value);
 };
 
 template<> struct EncodingTraits<WebCore::PlatformMouseEvent> {

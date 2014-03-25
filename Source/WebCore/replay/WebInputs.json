@@ -55,6 +55,10 @@
                 "header": "page/Page.h"
             },
             {
+                "name": "PlatformKeyboardEvent", "mode": "OWNED",
+                "header": "platform/PlatformKeyboardEvent.h"
+            },
+            {
                 "name": "PlatformMouseEvent", "mode": "OWNED",
                 "header": "platform/PlatformMouseEvent.h"
             },
@@ -131,6 +135,14 @@
             "queue": "EVENT_LOOP",
             "members": [
                 { "name": "platformEvent", "type": "PlatformMouseEvent" }
+            ]
+        },
+        {
+            "name": "HandleKeyPress",
+            "description": "The embedder signalled a key press event.",
+            "queue": "EVENT_LOOP",
+            "members": [
+                { "name": "platformEvent", "type": "PlatformKeyboardEvent" }
             ]
         },
         {
