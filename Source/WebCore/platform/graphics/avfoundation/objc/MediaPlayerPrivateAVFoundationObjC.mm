@@ -711,7 +711,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
 
 #if PLATFORM(IOS)
     AtomicString value;
-    if (player()->doesHaveAttribute("data-youtube-id", &value)) {
+    if (player()->doesHaveAttribute("data-youtube-id", &value))
         [m_avPlayerItem.get() setDataYouTubeID: value];
  #endif
 

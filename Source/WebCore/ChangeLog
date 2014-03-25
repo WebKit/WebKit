@@ -1,3 +1,10 @@
+2014-03-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix. Typo on checkin.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem): Left an unmatched open bracket.
+
 2014-03-25  Jer Noble  <jer.noble@apple.com>
 
         Even further unreviewed build fix after r166247. Unprotect the implementation of HTMLMediaElement::shouldDisableSleep().
