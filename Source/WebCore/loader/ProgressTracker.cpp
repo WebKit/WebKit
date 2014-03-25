@@ -73,8 +73,6 @@ public:
     long long estimatedLength;
 };
 
-unsigned long ProgressTracker::s_uniqueIdentifier = 0;
-
 ProgressTracker::ProgressTracker(ProgressTrackerClient& client)
     : m_client(client)
     , m_totalPageAndResourceBytesToLoad(0)
@@ -84,6 +82,7 @@ ProgressTracker::ProgressTracker(ProgressTrackerClient& client)
     , m_progressNotificationTimeInterval(std::chrono::milliseconds(100))
     , m_finalProgressChangedSent(false)
     , m_progressValue(0)
+    , m_nextUniqueIdentifier(1)
     , m_numProgressTrackedFrames(0)
     , m_progressHeartbeatTimer(this, &ProgressTracker::progressHeartbeatTimerFired)
     , m_heartbeatsWithNoProgress(0)
@@ -114,6 +113,7 @@ void ProgressTracker::reset()
     m_finalProgressChangedSent = false;
     m_numProgressTrackedFrames = 0;
     m_originatingProgressFrame = 0;
+    // Don't reset m_nextUniqueIdentifier. More loads could start after reset() is called.
 
     m_heartbeatsWithNoProgress = 0;
     m_totalBytesReceivedBeforePreviousHeartbeat = 0;
@@ -294,7 +294,7 @@ void ProgressTracker::completeProgress(unsigned long identifier)
 
 unsigned long ProgressTracker::createUniqueIdentifier()
 {
-    return ++s_uniqueIdentifier;
+    return m_nextUniqueIdentifier++;
 }
 
 bool ProgressTracker::isMainLoadProgressing() const

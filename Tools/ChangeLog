@@ -1,3 +1,24 @@
+2014-03-25  Brian Burg  <bburg@apple.com>
+
+        Web Replay: resource unique identifiers should be unique-per-frame, not globally
+        https://bugs.webkit.org/show_bug.cgi?id=130623
+
+        Reviewed by Timothy Hatcher.
+
+        The resource loader callback dumping routines assumed that resource identifiers
+        were globally unique. Its map of resource identifiers to URLs must also track the
+        frame associated with the resource.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::dumpResourceURL): Additionally take a WKBundleFrameRef argument, and use the
+        opaque pointer as part of the key for assignedUrlsCache. The frame pointer is
+        stable as long as the frame is valid.
+        (WTR::InjectedBundlePage::didInitiateLoadForResource):
+        (WTR::InjectedBundlePage::willSendRequestForFrame):
+        (WTR::InjectedBundlePage::didReceiveResponseForResource):
+        (WTR::InjectedBundlePage::didFinishLoadForResource):
+        (WTR::InjectedBundlePage::didFailLoadForResource):
+
 2014-03-25  Andy Estes  <aestes@apple.com>
 
         Fix one API test expectation failure on Mountain Lion, and add additional logging to help diagnose another.

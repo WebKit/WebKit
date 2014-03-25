@@ -46,7 +46,7 @@ public:
     explicit ProgressTracker(ProgressTrackerClient&);
     ~ProgressTracker();
 
-    static unsigned long createUniqueIdentifier();
+    unsigned long createUniqueIdentifier();
 
     double estimatedProgress() const;
 
@@ -68,8 +68,6 @@ private:
 
     void progressHeartbeatTimerFired(Timer<ProgressTracker>&);
     
-    static unsigned long s_uniqueIdentifier;
-    
     ProgressTrackerClient& m_client;
     long long m_totalPageAndResourceBytesToLoad;
     long long m_totalBytesReceived;
@@ -80,6 +78,7 @@ private:
     bool m_finalProgressChangedSent;    
     double m_progressValue;
     RefPtr<Frame> m_originatingProgressFrame;
+    unsigned long m_nextUniqueIdentifier;
     
     int m_numProgressTrackedFrames;
     HashMap<unsigned long, std::unique_ptr<ProgressItem>> m_progressItems;

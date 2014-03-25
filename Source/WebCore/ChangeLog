@@ -1,3 +1,26 @@
+2014-03-25  Brian Burg  <bburg@apple.com>
+
+        Web Replay: resource unique identifiers should be unique-per-frame, not globally
+        https://bugs.webkit.org/show_bug.cgi?id=130632
+
+        Reviewed by Timothy Hatcher.
+
+        For replay purposes, we want to deterministically assign resource load identifiers
+        to resource loaders, provided that the resource loaders are created in the same
+        order.
+
+        To do this, we convert unique identifiers from being globally-unique to being
+        frame-unique. When a new frame is being loaded, unique identifiers for
+        subresources of that frame begin counting from 1.
+
+        No new tests. Identifier invariants are exercised by existing assertions and tests.
+
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::ProgressTracker):
+        (WebCore::ProgressTracker::reset):
+        (WebCore::ProgressTracker::createUniqueIdentifier):
+        * loader/ProgressTracker.h:
+
 2014-03-25  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Pause the media element during system sleep.
