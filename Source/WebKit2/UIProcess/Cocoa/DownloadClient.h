@@ -36,6 +36,7 @@
 @protocol _WKDownloadDelegate;
 
 namespace WebCore {
+class ResourceError;
 class ResourceResponse;
 }
 
@@ -52,6 +53,8 @@ private:
     virtual void didReceiveData(WebContext*, DownloadProxy*, uint64_t length);
     virtual String decideDestinationWithSuggestedFilename(WebContext*, DownloadProxy*, const String& filename, bool& allowOverwriteParam);
     virtual void didFinish(WebContext*, DownloadProxy*);
+    virtual void didFail(WebContext*, DownloadProxy*, const WebCore::ResourceError&);
+    virtual void didCancel(WebContext*, DownloadProxy*);
 
     WeakObjCPtr<id <_WKDownloadDelegate>> m_delegate;
 
@@ -61,6 +64,8 @@ private:
         bool downloadDidReceiveData : 1;
         bool downloadDecideDestinationWithSuggestedFilenameAllowOverwrite : 1;
         bool downloadDidFinish : 1;
+        bool downloadDidFail : 1;
+        bool downloadDidCancel : 1;
     } m_delegateMethods;
 };
 

@@ -38,6 +38,8 @@
 - (void)_download:(_WKDownload *)download didReceiveData:(uint64_t)length;
 - (NSString *)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename allowOverwrite:(BOOL *)allowOverwrite;
 - (void)_downloadDidFinish:(_WKDownload *)download;
+- (void)_download:(_WKDownload *)download didFailWithError:(NSError *)error;
+- (void)_downloadDidCancel:(_WKDownload *)download;
 @end
 
 #endif

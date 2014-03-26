@@ -1,3 +1,26 @@
+2014-03-26  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Expose DownloadClient::didFail() and DownloadClient::didCancel()
+        https://bugs.webkit.org/show_bug.cgi?id=130805
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Download.mm:
+        (-[DownloadDelegate _download:didReceiveResponse:]):
+        (-[DownloadDelegate _downloadDidFinish:]):
+        (runTest):
+        (TEST):
+        (-[FailingDownloadDelegate _downloadDidFinish:]):
+        (-[FailingDownloadDelegate _download:didFailWithError:]):
+        (-[FailingDownloadDelegate _downloadDidCancel:]):
+        (-[CancelledDownloadDelegate _downloadDidStart:]):
+        (-[CancelledDownloadDelegate _downloadDidFinish:]):
+        (-[CancelledDownloadDelegate _download:didFailWithError:]):
+        (-[CancelledDownloadDelegate _downloadDidCancel:]):
+        (-[DownloadDelegate initWithSourceURL:]): Deleted.
+        (-[DownloadDelegate sourceURL]): Deleted.
+        (runTestWithNavigationDelegate): Deleted.
+
 2014-03-26  Anders Carlsson  <andersca@apple.com>
 
         Change MiniBrowser to hold on to window controllers instead of windows

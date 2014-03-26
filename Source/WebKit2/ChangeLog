@@ -1,3 +1,17 @@
+2014-03-26  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Expose DownloadClient::didFail() and DownloadClient::didCancel()
+        https://bugs.webkit.org/show_bug.cgi?id=130805
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/_WKDownloadDelegate.h:
+        * UIProcess/Cocoa/DownloadClient.h:
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::DownloadClient):
+        (WebKit::DownloadClient::didFail):
+        (WebKit::DownloadClient::didCancel):
+
 2014-03-26  Cody Krieger  <cjk@apple.com>
 
         -[WKWebProcessPlugInNodeHandle HTMLInputElementIsUserEdited] and -HTMLTextAreaElementIsUserEdited do not return the correct values.

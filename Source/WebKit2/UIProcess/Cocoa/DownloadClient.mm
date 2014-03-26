@@ -31,6 +31,7 @@
 #import "_WKDownloadDelegate.h"
 #import "_WKDownloadInternal.h"
 #import "DownloadProxy.h"
+#import <WebCore/ResourceError.h>
 #import <WebCore/ResourceResponse.h>
 
 namespace WebKit {
@@ -49,6 +50,8 @@ DownloadClient::DownloadClient(id <_WKDownloadDelegate> delegate)
     m_delegateMethods.downloadDidReceiveData = [delegate respondsToSelector:@selector(_download:didReceiveData:)];
     m_delegateMethods.downloadDecideDestinationWithSuggestedFilenameAllowOverwrite = [delegate respondsToSelector:@selector(_download:decideDestinationWithSuggestedFilename:allowOverwrite:)];
     m_delegateMethods.downloadDidFinish = [delegate respondsToSelector:@selector(_downloadDidFinish:)];
+    m_delegateMethods.downloadDidFail = [delegate respondsToSelector:@selector(_download:didFailWithError:)];
+    m_delegateMethods.downloadDidCancel = [delegate respondsToSelector:@selector(_downloadDidCancel:)];
 }
 
 void DownloadClient::didStart(WebContext*, DownloadProxy* downloadProxy)
@@ -84,6 +87,18 @@ void DownloadClient::didFinish(WebContext*, DownloadProxy* downloadProxy)
 {
     if (m_delegateMethods.downloadDidFinish)
         [m_delegate.get() _downloadDidFinish:wrapper(*downloadProxy)];
+}
+
+void DownloadClient::didFail(WebContext*, DownloadProxy* downloadProxy, const WebCore::ResourceError& error)
+{
+    if (m_delegateMethods.downloadDidFail)
+        [m_delegate.get() _download:wrapper(*downloadProxy) didFailWithError:error.nsError()];
+}
+
+void DownloadClient::didCancel(WebContext*, DownloadProxy* downloadProxy)
+{
+    if (m_delegateMethods.downloadDidCancel)
+        [m_delegate.get() _downloadDidCancel:wrapper(*downloadProxy)];
 }
 
 } // namespace WebKit

@@ -40,33 +40,16 @@
 #import <wtf/text/WTFString.h>
 
 static bool isDone;
+static NSURL *sourceURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
 @interface DownloadDelegate : NSObject <_WKDownloadDelegate>
-- (id)initWithSourceURL:(NSURL *)sourceURL;
-@property (nonatomic, readonly) NSURL *sourceURL;
 @end
 
 @implementation DownloadDelegate {
     RetainPtr<_WKDownload> _download;
-    RetainPtr<NSURL> _sourceURL;
     String _destinationPath;
     long long _expectedContentLength;
     uint64_t _receivedContentLength;
-}
-
-- (id)initWithSourceURL:(NSURL *)sourceURL
-{
-    if (!(self = [super init]))
-        return nil;
-    _sourceURL = sourceURL;
-    _expectedContentLength = 0;
-    _receivedContentLength = 0;
-    return self;
-}
-
-- (NSURL *)sourceURL
-{
-    return _sourceURL.get();
 }
 
 - (void)_downloadDidStart:(_WKDownload *)download
@@ -81,7 +64,7 @@ static bool isDone;
     EXPECT_EQ(_download, download);
     EXPECT_TRUE(_expectedContentLength == 0);
     EXPECT_TRUE(_receivedContentLength == 0);
-    EXPECT_TRUE([[[response URL] path] isEqualToString:[[self sourceURL] path]]);
+    EXPECT_TRUE([[[response URL] path] isEqualToString:[sourceURL path]]);
     _expectedContentLength = [response expectedContentLength];
 }
 
@@ -112,7 +95,7 @@ static bool isDone;
 #endif
     EXPECT_EQ(_download, download);
     EXPECT_TRUE(_expectedContentLength == NSURLResponseUnknownLength || static_cast<uint64_t>(_expectedContentLength) == _receivedContentLength);
-    EXPECT_TRUE([[NSFileManager defaultManager] contentsEqualAtPath:_destinationPath andPath:[_sourceURL path]]);
+    EXPECT_TRUE([[NSFileManager defaultManager] contentsEqualAtPath:_destinationPath andPath:[sourceURL path]]);
     WebCore::deleteFile(_destinationPath);
     isDone = true;
 }
@@ -133,15 +116,14 @@ TEST(_WKDownload, DownloadDelegate)
     EXPECT_NULL([processPool _downloadDelegate]);
 }
 
-static void runTestWithNavigationDelegate(id <WKNavigationDelegate> navigationDelegate)
+static void runTest(id <WKNavigationDelegate> navigationDelegate, id <_WKDownloadDelegate> downloadDelegate, NSURL *url)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView setNavigationDelegate:navigationDelegate];
+    [[[webView configuration] processPool] _setDownloadDelegate:downloadDelegate];
 
-    RetainPtr<DownloadDelegate> downloadDelegate = adoptNS([[DownloadDelegate alloc] initWithSourceURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]);
-    [[[webView configuration] processPool] _setDownloadDelegate:downloadDelegate.get()];
-
-    [webView loadRequest:[NSURLRequest requestWithURL:[downloadDelegate sourceURL]]];
+    isDone = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
     TestWebKitAPI::Util::run(&isDone);
 }
 
@@ -157,7 +139,7 @@ static void runTestWithNavigationDelegate(id <WKNavigationDelegate> navigationDe
 
 TEST(_WKDownload, DownloadRequest)
 {
-    runTestWithNavigationDelegate(adoptNS([[DownloadNavigationDelegate alloc] init]).get());
+    runTest(adoptNS([[DownloadNavigationDelegate alloc] init]).get(), adoptNS([[DownloadDelegate alloc] init]).get(), sourceURL);
 }
 
 @interface ConvertResponseToDownloadNavigationDelegate : NSObject <WKNavigationDelegate>
@@ -172,7 +154,70 @@ TEST(_WKDownload, DownloadRequest)
 
 TEST(_WKDownload, ConvertResponseToDownload)
 {
-    runTestWithNavigationDelegate(adoptNS([[ConvertResponseToDownloadNavigationDelegate alloc] init]).get());
+    runTest(adoptNS([[ConvertResponseToDownloadNavigationDelegate alloc] init]).get(), adoptNS([[DownloadDelegate alloc] init]).get(), sourceURL);
+}
+
+@interface FailingDownloadDelegate : NSObject <_WKDownloadDelegate>
+@end
+
+@implementation FailingDownloadDelegate
+
+- (void)_downloadDidFinish:(_WKDownload *)download
+{
+    EXPECT_TRUE(false);
+    isDone = true;
+}
+
+- (void)_download:(_WKDownload *)download didFailWithError:(NSError *)error
+{
+    isDone = true;
+}
+
+- (void)_downloadDidCancel:(_WKDownload *)download
+{
+    EXPECT_TRUE(false);
+    isDone = true;
+}
+
+@end
+
+TEST(_WKDownload, DownloadMissingResource)
+{
+    runTest(adoptNS([[DownloadNavigationDelegate alloc] init]).get(), adoptNS([[FailingDownloadDelegate alloc] init]).get(), [NSURL URLWithString:@"non-existant-scheme://"]);
+}
+
+@interface CancelledDownloadDelegate : NSObject <_WKDownloadDelegate>
+@end
+
+@implementation CancelledDownloadDelegate
+
+- (void)_downloadDidStart:(_WKDownload *)download
+{
+    [download cancel];
+}
+
+- (void)_downloadDidFinish:(_WKDownload *)download
+{
+    EXPECT_TRUE(false);
+    isDone = true;
+}
+
+- (void)_download:(_WKDownload *)download didFailWithError:(NSError *)error
+{
+    EXPECT_TRUE(false);
+    isDone = true;
+}
+
+- (void)_downloadDidCancel:(_WKDownload *)download
+{
+    isDone = true;
+}
+
+@end
+
+TEST(_WKDownload, CancelDownload)
+{
+    runTest(adoptNS([[DownloadNavigationDelegate alloc] init]).get(), adoptNS([[CancelledDownloadDelegate alloc] init]).get(), sourceURL);
 }
 
 #endif
