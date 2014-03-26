@@ -1,3 +1,18 @@
+2014-03-25  Pratik Solanki  <psolanki@apple.com>
+
+        Remove PLATFORM(IOS) from NetworkProcessMac.mm
+        https://bugs.webkit.org/show_bug.cgi?id=130751
+
+        Reviewed by Alexey Proskuryakov.
+
+        Code in NetworkProcessMac.mm is guarded by PLATFORM(MAC) and so is not compiled on iOS.
+        Having PLATFORM(IOS) code in this file is unnecessary and confusing.
+
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::initializeProcessName):
+        (WebKit::overrideSystemProxies):
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+
 2014-03-25  Anders Carlsson  <andersca@apple.com>
 
         Add a UI delegate callback for handling window.open

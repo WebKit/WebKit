@@ -51,7 +51,7 @@ typedef struct _CFURLCache* CFURLCacheRef;
 extern "C" CFURLCacheRef CFURLCacheCopySharedURLCache();
 extern "C" void _CFURLCachePurgeMemoryCache(CFURLCacheRef);
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 extern "C" void _CFURLCacheSetMinSizeForVMCachedResource(CFURLCacheRef, CFIndex);
 #endif
 
@@ -71,15 +71,10 @@ void NetworkProcess::initializeProcess(const ChildProcessInitializationParameter
 
 void NetworkProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
 {
-#if PLATFORM(IOS)
-    UNUSED_PARAM(parameters);
-#else
     NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Networking", "visible name of the network process. The argument is the application name."), (NSString *)parameters.uiProcessName];
     WKSetVisibleApplicationName((CFStringRef)applicationName);
-#endif
 }
 
-#if !PLATFORM(IOS)
 static void overrideSystemProxies(const String& httpProxy, const String& httpsProxy)
 {
     NSMutableDictionary *proxySettings = [NSMutableDictionary dictionary];
@@ -112,7 +107,6 @@ static void overrideSystemProxies(const String& httpProxy, const String& httpsPr
     if ([proxySettings count] > 0)
         WKCFNetworkSetOverrideSystemProxySettings((CFDictionaryRef)proxySettings);
 }
-#endif
 
 void NetworkProcess::platformLowMemoryHandler(bool)
 {
@@ -135,12 +129,10 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
     SecItemShim::shared().initialize(this);
 #endif
 
-#if !PLATFORM(IOS)
     if (!parameters.httpProxy.isNull() || !parameters.httpsProxy.isNull())
         overrideSystemProxies(parameters.httpProxy, parameters.httpsProxy);
-#endif
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     RetainPtr<CFURLCacheRef> cache = adoptCF(CFURLCacheCopySharedURLCache());
     if (!cache)
         return;
