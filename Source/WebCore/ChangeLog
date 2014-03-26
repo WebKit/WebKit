@@ -1,3 +1,10 @@
+2014-03-25  Pratik Solanki  <psolanki@apple.com>
+
+        iOS build fix. Add missing semicolon.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::_addAttachmentForElement):
+
 2014-03-25  Sam Weinig  <sam@webkit.org>
 
         Speculative iOS build fix.
