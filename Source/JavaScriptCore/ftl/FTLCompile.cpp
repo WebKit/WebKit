@@ -300,7 +300,8 @@ static void fixFunctionBasedOnStackMaps(
             for (unsigned i = 0; i < iter->value.size(); ++i) {
                 StackMaps::Record& record = iter->value[i];
             
-                // FIXME: LLVM should tell us which registers are live.
+                // FIXME: Use the liveness information that LLVM gives us.
+                // https://bugs.webkit.org/show_bug.cgi?id=130791
                 RegisterSet usedRegisters = RegisterSet::allRegisters();
                 
                 GPRReg result = record.locations[0].directGPR();
@@ -338,7 +339,8 @@ static void fixFunctionBasedOnStackMaps(
             for (unsigned i = 0; i < iter->value.size(); ++i) {
                 StackMaps::Record& record = iter->value[i];
                 
-                // FIXME: LLVM should tell us which registers are live.
+                // FIXME: Use the liveness information that LLVM gives us.
+                // https://bugs.webkit.org/show_bug.cgi?id=130791
                 RegisterSet usedRegisters = RegisterSet::allRegisters();
                 
                 GPRReg base = record.locations[0].directGPR();

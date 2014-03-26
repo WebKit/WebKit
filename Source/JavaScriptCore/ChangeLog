@@ -1,3 +1,33 @@
+2014-03-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Reasoning about DWARF register numbers should be moved out of FTL::Location
+        https://bugs.webkit.org/show_bug.cgi?id=130792
+
+        Reviewed by Oliver Hunt.
+        
+        Moving this code makes it possible for things other than FTL::Location to reason about
+        DWARF register encoding. This refactoring also appears to reduce some code duplication
+        and makes FTLLocation.cpp cleaner.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::fixFunctionBasedOnStackMaps):
+        * ftl/FTLDWARFRegister.cpp: Added.
+        (JSC::FTL::DWARFRegister::reg):
+        (JSC::FTL::DWARFRegister::dump):
+        * ftl/FTLDWARFRegister.h: Added.
+        (JSC::FTL::DWARFRegister::DWARFRegister):
+        (JSC::FTL::DWARFRegister::dwarfRegNum):
+        * ftl/FTLLocation.cpp:
+        (JSC::FTL::Location::dump):
+        (JSC::FTL::Location::isGPR):
+        (JSC::FTL::Location::gpr):
+        (JSC::FTL::Location::isFPR):
+        (JSC::FTL::Location::fpr):
+        * ftl/FTLLocation.h:
+        (JSC::FTL::Location::hasDwarfReg):
+        (JSC::FTL::Location::dwarfReg):
+
 2014-03-26  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix.

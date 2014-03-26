@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "FPRInfo.h"
+#include "FTLDWARFRegister.h"
 #include "FTLStackMaps.h"
 #include "GPRInfo.h"
 #include <wtf/HashMap.h>
@@ -94,6 +95,9 @@ public:
         ASSERT(hasDwarfRegNum());
         return u.variable.dwarfRegNum;
     }
+    
+    bool hasDwarfReg() const { return hasDwarfRegNum(); }
+    DWARFRegister dwarfReg() const { return DWARFRegister(dwarfRegNum()); }
     
     bool hasOffset() const { return kind() == Indirect; }
     int32_t offset() const

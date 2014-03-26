@@ -380,6 +380,8 @@
 		0F9749711687ADE400A4FF6A /* JSCellInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F97496F1687ADE200A4FF6A /* JSCellInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F98206016BFE38100240D02 /* PreciseJumpTargets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F98205D16BFE37F00240D02 /* PreciseJumpTargets.cpp */; };
 		0F98206116BFE38300240D02 /* PreciseJumpTargets.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F98205E16BFE37F00240D02 /* PreciseJumpTargets.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F9C5E5E18E35F5E00D431C3 /* FTLDWARFRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9C5E5C18E35F5E00D431C3 /* FTLDWARFRegister.cpp */; };
+		0F9C5E5F18E35F5E00D431C3 /* FTLDWARFRegister.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9C5E5D18E35F5E00D431C3 /* FTLDWARFRegister.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9D3370165DBB90005AD387 /* Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D336E165DBB8D005AD387 /* Disassembler.cpp */; };
 		0F9D339617FFC4E60073C2BC /* DFGFlushedAt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D339417FFC4E60073C2BC /* DFGFlushedAt.cpp */; };
 		0F9D339717FFC4E60073C2BC /* DFGFlushedAt.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9D339517FFC4E60073C2BC /* DFGFlushedAt.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1904,6 +1906,8 @@
 		0F97496F1687ADE200A4FF6A /* JSCellInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCellInlines.h; sourceTree = "<group>"; };
 		0F98205D16BFE37F00240D02 /* PreciseJumpTargets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreciseJumpTargets.cpp; sourceTree = "<group>"; };
 		0F98205E16BFE37F00240D02 /* PreciseJumpTargets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreciseJumpTargets.h; sourceTree = "<group>"; };
+		0F9C5E5C18E35F5E00D431C3 /* FTLDWARFRegister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLDWARFRegister.cpp; path = ftl/FTLDWARFRegister.cpp; sourceTree = "<group>"; };
+		0F9C5E5D18E35F5E00D431C3 /* FTLDWARFRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLDWARFRegister.h; path = ftl/FTLDWARFRegister.h; sourceTree = "<group>"; };
 		0F9D336E165DBB8D005AD387 /* Disassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Disassembler.cpp; path = disassembler/Disassembler.cpp; sourceTree = "<group>"; };
 		0F9D339417FFC4E60073C2BC /* DFGFlushedAt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGFlushedAt.cpp; path = dfg/DFGFlushedAt.cpp; sourceTree = "<group>"; };
 		0F9D339517FFC4E60073C2BC /* DFGFlushedAt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGFlushedAt.h; path = dfg/DFGFlushedAt.h; sourceTree = "<group>"; };
@@ -3277,6 +3281,8 @@
 				0FE95F7818B5694700B531FB /* FTLDataSection.h */,
 				2AC922B918A16182003CE0FB /* FTLDWARFDebugLineInfo.cpp */,
 				2AC922BA18A16182003CE0FB /* FTLDWARFDebugLineInfo.h */,
+				0F9C5E5C18E35F5E00D431C3 /* FTLDWARFRegister.cpp */,
+				0F9C5E5D18E35F5E00D431C3 /* FTLDWARFRegister.h */,
 				0F235BBD17178E1C00690C7F /* FTLExitArgument.cpp */,
 				0F235BBE17178E1C00690C7F /* FTLExitArgument.h */,
 				0F235BBF17178E1C00690C7F /* FTLExitArgumentForOperand.cpp */,
@@ -5714,6 +5720,7 @@
 				0F963B3813FC6FE90002D9B2 /* ValueProfile.h in Headers */,
 				0F426A481460CBB300131F8F /* ValueRecovery.h in Headers */,
 				0F9181C718415CA50057B669 /* VariableWatchpointSet.h in Headers */,
+				0F9C5E5F18E35F5E00D431C3 /* FTLDWARFRegister.h in Headers */,
 				0F426A491460CBB700131F8F /* VirtualRegister.h in Headers */,
 				BC18C4200E16F5CD00B34460 /* VM.h in Headers */,
 				FE5932A8183C5A2600A1ECCC /* VMEntryScope.h in Headers */,
@@ -6246,6 +6253,7 @@
 				0F8F943C1667631300D61971 /* CodeSpecializationKind.cpp in Sources */,
 				0F8F94421667633500D61971 /* CodeType.cpp in Sources */,
 				147F39C1107EC37600427A48 /* CommonIdentifiers.cpp in Sources */,
+				0F9C5E5E18E35F5E00D431C3 /* FTLDWARFRegister.cpp in Sources */,
 				A709F2F217A0AC2A00512E98 /* CommonSlowPaths.cpp in Sources */,
 				6553A33117A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp in Sources */,
 				A7E5A3A71797432D00E893C0 /* CompilationResult.cpp in Sources */,

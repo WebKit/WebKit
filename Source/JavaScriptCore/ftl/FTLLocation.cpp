@@ -64,8 +64,8 @@ Location Location::forStackmaps(const StackMaps* stackmaps, const StackMaps::Loc
 void Location::dump(PrintStream& out) const
 {
     out.print("(", kind());
-    if (hasDwarfRegNum())
-        out.print(", reg", dwarfRegNum());
+    if (hasDwarfReg())
+        out.print(", ", dwarfReg());
     if (hasOffset())
         out.print(", ", offset());
     if (hasAddend())
@@ -80,81 +80,25 @@ bool Location::involvesGPR() const
     return isGPR() || kind() == Indirect;
 }
 
-#if CPU(X86_64) // CPU cases for Location methods
-// This decodes Dwarf flavour 0 for x86-64.
 bool Location::isGPR() const
 {
-    return kind() == Register && dwarfRegNum() < 16;
+    return kind() == Register && dwarfReg().reg().isGPR();
 }
 
 GPRReg Location::gpr() const
 {
-    // Stupidly, Dwarf doesn't number the registers in the same way as the architecture;
-    // for example, the architecture encodes CX as 1 and DX as 2 while Dwarf does the
-    // opposite. Hence we need the switch.
-    
-    RELEASE_ASSERT(involvesGPR());
-    
-    switch (dwarfRegNum()) {
-    case 0:
-        return X86Registers::eax;
-    case 1:
-        return X86Registers::edx;
-    case 2:
-        return X86Registers::ecx;
-    case 3:
-        return X86Registers::ebx;
-    case 4:
-        return X86Registers::esi;
-    case 5:
-        return X86Registers::edi;
-    case 6:
-        return X86Registers::ebp;
-    case 7:
-        return X86Registers::esp;
-    default:
-        RELEASE_ASSERT(dwarfRegNum() < 16);
-        // Registers r8..r15 are numbered sensibly.
-        return static_cast<GPRReg>(dwarfRegNum());
-    }
+    return dwarfReg().reg().gpr();
 }
 
 bool Location::isFPR() const
 {
-    return kind() == Register && dwarfRegNum() >= 17 && dwarfRegNum() <= 32;
+    return kind() == Register && dwarfReg().reg().isFPR();
 }
 
 FPRReg Location::fpr() const
 {
-    RELEASE_ASSERT(isFPR());
-    return static_cast<FPRReg>(dwarfRegNum() - 17);
+    return dwarfReg().reg().fpr();
 }
-#elif CPU(ARM64)
-// This decodes Dwarf flavour 0 for ARM64.
-bool Location::isGPR() const
-{
-    return kind() == Register && dwarfRegNum() >= 0 && dwarfRegNum() <= 31;
-}
-
-GPRReg Location::gpr() const
-{
-    RELEASE_ASSERT(involvesGPR());
-    return static_cast<GPRReg>(dwarfRegNum());
-}
-
-bool Location::isFPR() const
-{
-    return kind() == Register && dwarfRegNum() >= 64 && dwarfRegNum() <= 95;
-}
-
-FPRReg Location::fpr() const
-{
-    RELEASE_ASSERT(isFPR());
-    return static_cast<FPRReg>(dwarfRegNum() - 64);
-}
-#else // CPU cases for Location methods
-#error "CPU architecture not supported."
-#endif // CPU cases for Location methods
 
 void Location::restoreInto(MacroAssembler& jit, char* savedRegisters, GPRReg result, unsigned numFramesToPop) const
 {
@@ -194,6 +138,7 @@ void Location::restoreInto(MacroAssembler& jit, char* savedRegisters, GPRReg res
     switch (kind()) {
     case Register:
         // LLVM used some register that we don't know about!
+        dataLog("Unrecognized location: ", *this, "\n");
         RELEASE_ASSERT_NOT_REACHED();
         return;
         
