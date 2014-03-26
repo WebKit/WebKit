@@ -5560,7 +5560,7 @@
 		CD9DE18117AAD6A400EA386D /* DOMURLMediaSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD9DE17E17AAD64E00EA386D /* DOMURLMediaSource.cpp */; };
 		CD9DE18217AAD6A400EA386D /* DOMURLMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9DE17F17AAD64E00EA386D /* DOMURLMediaSource.h */; };
 		CDA07FBD18E0A16A004699FA /* SystemSleepListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA07FBB18E0A16A004699FA /* SystemSleepListener.cpp */; };
-		CDA07FBE18E0A16A004699FA /* SystemSleepListener.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA07FBC18E0A16A004699FA /* SystemSleepListener.h */; };
+		CDA07FBE18E0A16A004699FA /* SystemSleepListener.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA07FBC18E0A16A004699FA /* SystemSleepListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA07FC118E0A22B004699FA /* SystemSleepListenerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA07FBF18E0A22B004699FA /* SystemSleepListenerMac.mm */; };
 		CDA07FC218E0A22B004699FA /* SystemSleepListenerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA07FC018E0A22B004699FA /* SystemSleepListenerMac.h */; };
 		CDA79824170A258300D45C55 /* AudioSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA79823170A258300D45C55 /* AudioSession.cpp */; };
