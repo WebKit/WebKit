@@ -249,7 +249,25 @@ private:
         return getDirect(m_inlineStackTop->remapOperand(operand));
     }
     
-    enum SetMode { NormalSet, ImmediateSet };
+    enum SetMode {
+        // A normal set which follows a two-phase commit that spans code origins. During
+        // the current code origin it issues a MovHint, and at the start of the next
+        // code origin there will be a SetLocal. If the local needs flushing, the second
+        // SetLocal will be preceded with a Flush.
+        NormalSet,
+        
+        // A set where the SetLocal happens immediately and there is still a Flush. This
+        // is relevant when assigning to a local in tricky situations for the delayed
+        // SetLocal logic but where we know that we have not performed any side effects
+        // within this code origin. This is a safe replacement for NormalSet anytime we
+        // know that we have not yet performed side effects in this code origin.
+        ImmediateSetWithFlush,
+        
+        // A set where the SetLocal happens immediately and we do not Flush it even if
+        // this is a local that is marked as needing it. This is relevant when
+        // initializing locals at the top of a function.
+        ImmediateNakedSet
+    };
     Node* setDirect(VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
     {
         addToGraph(MovHint, OpInfo(operand.offset()), value);
@@ -340,7 +358,7 @@ private:
         unsigned local = operand.toLocal();
         bool isCaptured = m_codeBlock->isCaptured(operand, inlineCallFrame());
         
-        if (setMode == NormalSet) {
+        if (setMode != ImmediateNakedSet) {
             ArgumentPosition* argumentPosition = findArgumentPositionForLocal(operand);
             if (isCaptured || argumentPosition)
                 flushDirect(operand, argumentPosition);
@@ -399,7 +417,7 @@ private:
         // Always flush arguments, except for 'this'. If 'this' is created by us,
         // then make sure that it's never unboxed.
         if (argument) {
-            if (setMode == NormalSet)
+            if (setMode != ImmediateNakedSet)
                 flushDirect(operand);
         } else if (m_codeBlock->specializationKind() == CodeForConstruct)
             variableAccessData->mergeShouldNeverUnbox(true);
@@ -1399,9 +1417,9 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
         == callLinkStatus.isClosureCall());
     if (callLinkStatus.isClosureCall()) {
         VariableAccessData* calleeVariable =
-            set(VirtualRegister(JSStack::Callee), callTargetNode, ImmediateSet)->variableAccessData();
+            set(VirtualRegister(JSStack::Callee), callTargetNode, ImmediateNakedSet)->variableAccessData();
         VariableAccessData* scopeVariable =
-            set(VirtualRegister(JSStack::ScopeChain), addToGraph(GetScope, callTargetNode), ImmediateSet)->variableAccessData();
+            set(VirtualRegister(JSStack::ScopeChain), addToGraph(GetScope, callTargetNode), ImmediateNakedSet)->variableAccessData();
         
         calleeVariable->mergeShouldNeverUnbox(true);
         scopeVariable->mergeShouldNeverUnbox(true);
@@ -2147,9 +2165,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_enter:
             // Initialize all locals to undefined.
             for (int i = 0; i < m_inlineStackTop->m_codeBlock->m_numVars; ++i)
-                set(virtualRegisterForLocal(i), constantUndefined(), ImmediateSet);
+                set(virtualRegisterForLocal(i), constantUndefined(), ImmediateNakedSet);
             if (m_inlineStackTop->m_codeBlock->specializationKind() == CodeForConstruct)
-                set(virtualRegisterForArgument(0), constantUndefined(), ImmediateSet);
+                set(virtualRegisterForArgument(0), constantUndefined(), ImmediateNakedSet);
             NEXT_OPCODE(op_enter);
             
         case op_touch_entry:
@@ -2845,7 +2863,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             flushForReturn();
             if (inlineCallFrame()) {
                 ASSERT(m_inlineStackTop->m_returnValue.isValid());
-                setDirect(m_inlineStackTop->m_returnValue, get(VirtualRegister(currentInstruction[1].u.operand)), ImmediateSet);
+                setDirect(m_inlineStackTop->m_returnValue, get(VirtualRegister(currentInstruction[1].u.operand)), ImmediateSetWithFlush);
                 m_inlineStackTop->m_didReturn = true;
                 if (m_inlineStackTop->m_unlinkedBlocks.isEmpty()) {
                     // If we're returning from the first block, then we're done parsing.
@@ -2928,9 +2946,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             // The bytecode wouldn't have set up the arguments. But we'll do it and make it
             // look like the bytecode had done it.
             int nextRegister = registerOffset + JSStack::CallFrameHeaderSize;
-            set(VirtualRegister(nextRegister++), get(VirtualRegister(thisReg)), ImmediateSet);
+            set(VirtualRegister(nextRegister++), get(VirtualRegister(thisReg)), ImmediateNakedSet);
             for (unsigned argument = 1; argument < argCount; ++argument)
-                set(VirtualRegister(nextRegister++), get(virtualRegisterForArgument(argument)), ImmediateSet);
+                set(VirtualRegister(nextRegister++), get(virtualRegisterForArgument(argument)), ImmediateNakedSet);
             
             handleCall(
                 result, Call, CodeForCall, OPCODE_LENGTH(op_call_varargs),
