@@ -1,3 +1,38 @@
+2014-03-26  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Remove artifacts of local changes that made it into a versioning commit.
+
+        Unreviewed.
+
+        * js/resources: Removed.
+        * js/resources/JSON-parse.js: Removed.
+        * js/resources/JSON-stringify.js: Removed.
+        * js/resources/bom-in-file-retains-correct-offset.js: Removed.
+        * js/resources/codegen-temporaries-multiple-global-blocks-1.js: Removed.
+        * js/resources/codegen-temporaries-multiple-global-blocks-2.js: Removed.
+        * js/resources/const.js: Removed.
+        * js/resources/document-all-between-frames-subframe.html: Removed.
+        * js/resources/empty-worker.js: Removed.
+        * js/resources/fs-test-post.js: Removed.
+        * js/resources/garbage-collect-after-string-appends.js-disabled: Removed.
+        * js/resources/getOwnPropertyDescriptor.js: Removed.
+        * js/resources/image-preload-helper.js: Removed.
+        * js/resources/instanceof-operator-dummy-worker.js: Removed.
+        * js/resources/js-constructors-use-correct-global.js: Removed.
+        * js/resources/js-test-post-async.js: Removed.
+        * js/resources/js-test-post.js: Removed.
+        * js/resources/js-test-pre.js: Removed.
+        * js/resources/js-test-style.css: Removed.
+        * js/resources/json2-es5-compat.js: Removed.
+        * js/resources/lexical-lookup-in-function-constructor-child.html: Removed.
+        * js/resources/parse-error-external-script-in-eval.js: Removed.
+        * js/resources/parse-error-external-script-in-new-Function.js: Removed.
+        * js/resources/script-line-number.js: Removed.
+        * js/resources/select-options-remove.js: Removed.
+        * js/resources/standalone-post.js: Removed.
+        * js/resources/standalone-pre.js: Removed.
+        * js/resources/string-concatenate-outofmemory.js: Removed.
+
 2014-03-21  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r166090.

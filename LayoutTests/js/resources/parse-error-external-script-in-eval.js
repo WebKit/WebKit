@@ -1,3 +1,0 @@
-
-eval("\n\nsyntax error");
-
