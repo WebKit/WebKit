@@ -138,6 +138,9 @@ public:
     virtual WebCore::GraphicsLayer::CustomAppearance customAppearance() const override;
     virtual void updateCustomAppearance(WebCore::GraphicsLayer::CustomAppearance) override;
 
+    virtual WebCore::GraphicsLayer::CustomBehavior customBehavior() const override;
+    virtual void updateCustomBehavior(WebCore::GraphicsLayer::CustomBehavior) override;
+
     virtual WebCore::TiledBacking* tiledBacking() override { return nullptr; }
 
     virtual PassRefPtr<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const override;

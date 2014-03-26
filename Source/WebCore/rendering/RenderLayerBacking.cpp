@@ -1431,7 +1431,9 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
         m_scrollingLayer = createGraphicsLayer("Scrolling container");
         m_scrollingLayer->setDrawsContent(false);
         m_scrollingLayer->setMasksToBounds(true);
-
+#if PLATFORM(IOS)
+        m_scrollingLayer->setCustomBehavior(GraphicsLayer::CustomScrollingBehavior);
+#endif
         // Inner layer which renders the content that scrolls.
         m_scrollingContentsLayer = createGraphicsLayer("Scrolled Contents");
         m_scrollingContentsLayer->setDrawsContent(true);

@@ -197,6 +197,9 @@ public:
     virtual GraphicsLayer::CustomAppearance customAppearance() const = 0;
     virtual void updateCustomAppearance(GraphicsLayer::CustomAppearance) = 0;
 
+    virtual GraphicsLayer::CustomBehavior customBehavior() const = 0;
+    virtual void updateCustomBehavior(GraphicsLayer::CustomBehavior) = 0;
+
     virtual TiledBacking* tiledBacking() = 0;
 
 #if PLATFORM(WIN)

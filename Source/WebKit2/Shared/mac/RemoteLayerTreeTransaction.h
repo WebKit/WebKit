@@ -75,7 +75,8 @@ public:
         BackingStoreChanged = 1 << 24,
         FiltersChanged = 1 << 25,
         EdgeAntialiasingMaskChanged = 1 << 26,
-        CustomAppearanceChanged = 1 << 27
+        CustomAppearanceChanged = 1 << 27,
+        CustomBehaviorChanged = 1 << 28
     };
     typedef unsigned LayerChange;
 
@@ -127,6 +128,7 @@ public:
         WebCore::Color borderColor;
         unsigned edgeAntialiasingMask;
         WebCore::GraphicsLayer::CustomAppearance customAppearance;
+        WebCore::GraphicsLayer::CustomBehavior customBehavior;
         WebCore::PlatformCALayer::FilterType minificationFilter;
         WebCore::PlatformCALayer::FilterType magnificationFilter;
         bool hidden;

@@ -563,6 +563,17 @@ void PlatformCALayerRemote::updateCustomAppearance(GraphicsLayer::CustomAppearan
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::CustomAppearanceChanged);
 }
 
+GraphicsLayer::CustomBehavior PlatformCALayerRemote::customBehavior() const
+{
+    return m_properties.customBehavior;
+}
+
+void PlatformCALayerRemote::updateCustomBehavior(GraphicsLayer::CustomBehavior customBehavior)
+{
+    m_properties.customBehavior = customBehavior;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::CustomBehaviorChanged);
+}
+
 PassRefPtr<PlatformCALayer> PlatformCALayerRemote::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
 {
     return PlatformCALayerRemote::create(layerType, client, m_context);

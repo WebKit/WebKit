@@ -165,6 +165,7 @@ static NSString *toCAFilterType(PlatformCALayer::FilterType type)
 PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformCALayerClient* owner)
     : PlatformCALayer(layerType, owner)
     , m_customAppearance(GraphicsLayer::NoCustomAppearance)
+    , m_customBehavior(GraphicsLayer::NoCustomBehavior)
 {
     Class layerClass = Nil;
     switch (layerType) {
@@ -205,6 +206,7 @@ PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformCALayerClien
 PlatformCALayerMac::PlatformCALayerMac(PlatformLayer* layer, PlatformCALayerClient* owner)
     : PlatformCALayer([layer isKindOfClass:getAVPlayerLayerClass()] ? LayerTypeAVPlayerLayer : LayerTypeCustom, owner)
     , m_customAppearance(GraphicsLayer::NoCustomAppearance)
+    , m_customBehavior(GraphicsLayer::NoCustomBehavior)
 {
     m_layer = layer;
     commonInit();

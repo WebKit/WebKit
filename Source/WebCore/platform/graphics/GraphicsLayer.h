@@ -443,6 +443,10 @@ public:
     virtual void setCustomAppearance(CustomAppearance customAppearance) { m_customAppearance = customAppearance; }
     CustomAppearance customAppearance() const { return m_customAppearance; }
 
+    enum CustomBehavior { NoCustomBehavior, CustomScrollingBehavior };
+    virtual void setCustomBehavior(CustomBehavior customBehavior) { m_customBehavior = customBehavior; }
+    CustomBehavior customBehavior() const { return m_customBehavior; }
+
     // z-position is the z-equivalent of position(). It's only used for debugging purposes.
     virtual float zPosition() const { return m_zPosition; }
     virtual void setZPosition(float);
@@ -611,6 +615,7 @@ protected:
 
     int m_repaintCount;
     CustomAppearance m_customAppearance;
+    CustomBehavior m_customBehavior;
 };
 
 #define GRAPHICSLAYER_TYPE_CASTS(ToValueTypeName, predicate) \

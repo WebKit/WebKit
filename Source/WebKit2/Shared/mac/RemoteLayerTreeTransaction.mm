@@ -87,6 +87,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
     , borderColor(Color::black)
     , edgeAntialiasingMask(kCALayerLeftEdge | kCALayerRightEdge | kCALayerBottomEdge | kCALayerTopEdge)
     , customAppearance(GraphicsLayer::NoCustomAppearance)
+    , customBehavior(GraphicsLayer::NoCustomBehavior)
     , minificationFilter(PlatformCALayer::FilterType::Linear)
     , magnificationFilter(PlatformCALayer::FilterType::Linear)
     , hidden(false)
@@ -116,6 +117,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , borderColor(other.borderColor)
     , edgeAntialiasingMask(other.edgeAntialiasingMask)
     , customAppearance(other.customAppearance)
+    , customBehavior(other.customBehavior)
     , minificationFilter(other.minificationFilter)
     , magnificationFilter(other.magnificationFilter)
     , hidden(other.hidden)
@@ -224,6 +226,9 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& e
 
     if (changedProperties & CustomAppearanceChanged)
         encoder.encodeEnum(customAppearance);
+
+    if (changedProperties & CustomBehaviorChanged)
+        encoder.encodeEnum(customBehavior);
 }
 
 bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& decoder, LayerProperties& result)
@@ -384,6 +389,11 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
 
     if (result.changedProperties & CustomAppearanceChanged) {
         if (!decoder.decodeEnum(result.customAppearance))
+            return false;
+    }
+
+    if (result.changedProperties & CustomBehaviorChanged) {
+        if (!decoder.decodeEnum(result.customBehavior))
             return false;
     }
 
@@ -804,6 +814,9 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const RemoteLayerTr
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::CustomAppearanceChanged)
             dumpProperty<GraphicsLayer::CustomAppearance>(ts, "customAppearance", layerProperties.customAppearance);
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::CustomBehaviorChanged)
+            dumpProperty<GraphicsLayer::CustomBehavior>(ts, "customBehavior", layerProperties.customBehavior);
 
         ts << ")";
 

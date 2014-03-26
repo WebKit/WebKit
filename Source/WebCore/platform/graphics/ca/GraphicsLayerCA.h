@@ -138,6 +138,7 @@ public:
     virtual void setDebugBorder(const Color&, float borderWidth);
 
     virtual void setCustomAppearance(CustomAppearance);
+    virtual void setCustomBehavior(CustomBehavior);
 
     virtual void layerDidDisplay(PlatformLayer*);
 
@@ -389,7 +390,8 @@ private:
     void updateTiles();
     void updateContentsScale(float pageScaleFactor);
     void updateCustomAppearance();
-    
+    void updateCustomBehavior();
+
     enum StructuralLayerPurpose {
         NoStructuralLayer = 0,
         StructuralLayerForPreserves3D,
@@ -447,9 +449,10 @@ private:
         TilesAdded = 1 < 29,
         DebugIndicatorsChanged = 1 << 30,
         CustomAppearanceChanged = 1 << 31,
-        BlendModeChanged        = 1 << 32
+        CustomBehaviorChanged = 1 << 32,
+        BlendModeChanged = 1 << 33
     };
-    typedef unsigned LayerChangeFlags;
+    typedef uint64_t LayerChangeFlags;
     enum ScheduleFlushOrNot { ScheduleFlush, DontScheduleFlush };
     void noteLayerPropertyChanged(LayerChangeFlags, ScheduleFlushOrNot = ScheduleFlush);
     void noteSublayersChanged(ScheduleFlushOrNot = ScheduleFlush);

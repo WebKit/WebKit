@@ -136,6 +136,9 @@ public:
     virtual GraphicsLayer::CustomAppearance customAppearance() const override { return m_customAppearance; }
     virtual void updateCustomAppearance(GraphicsLayer::CustomAppearance) override;
 
+    virtual GraphicsLayer::CustomBehavior customBehavior() const override { return m_customBehavior; }
+    virtual void updateCustomBehavior(GraphicsLayer::CustomBehavior) override { }
+
     virtual TiledBacking* tiledBacking() override;
 
     virtual PassRefPtr<PlatformCALayer> clone(PlatformCALayerClient* owner) const override;
@@ -157,6 +160,7 @@ private:
     RetainPtr<NSObject> m_delegate;
     OwnPtr<PlatformCALayerList> m_customSublayers;
     GraphicsLayer::CustomAppearance m_customAppearance;
+    GraphicsLayer::CustomBehavior m_customBehavior;
 };
 
 PLATFORM_CALAYER_TYPE_CASTS(PlatformCALayerMac, isPlatformCALayerMac())

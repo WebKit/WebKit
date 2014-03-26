@@ -1,3 +1,32 @@
+2014-03-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a custom behavior flag to GraphicsLayer, piped down to PlatformCALayer, for scrolling layers
+        https://bugs.webkit.org/show_bug.cgi?id=130778
+
+        Reviewed by Tim Horton.
+
+        Make it possible to put a "custom behavior" flag on a layer so that,
+        with UI-side compositing, we know to create a specific type of
+        layer or view for that GraphicsLayer.
+
+        * WebCore.exp.in:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setCustomBehavior):
+        (WebCore::GraphicsLayer::customBehavior):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateCustomBehavior):
+        (WebCore::GraphicsLayerCA::setCustomBehavior):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::PlatformCALayerMac):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateScrollingLayers):
+
 2014-03-26  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test correction.
