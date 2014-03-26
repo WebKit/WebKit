@@ -302,6 +302,17 @@ void RemoteLayerTreeDrawingArea::layerFlushTimerFired(WebCore::Timer<RemoteLayer
     flushLayers();
 }
 
+static void flushBackingStoreChangesInTransaction(RemoteLayerTreeTransaction& transaction)
+{
+    for (auto& layerProperties : transaction.changedLayers().values()) {
+        if (!layerProperties->changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged)
+            return;
+
+        if (RemoteLayerBackingStore* backingStore = layerProperties->backingStore.get())
+            backingStore->flush();
+    }
+}
+
 void RemoteLayerTreeDrawingArea::flushLayers()
 {
     if (!m_rootLayer)
@@ -317,8 +328,6 @@ void RemoteLayerTreeDrawingArea::flushLayers()
 
     m_remoteLayerTreeContext->flushOutOfTreeLayers();
 
-    ASSERT(m_rootLayer);
-
     // FIXME: minize these transactions if nothing changed.
     RemoteLayerTreeTransaction layerTransaction;
     m_remoteLayerTreeContext->buildTransaction(layerTransaction, *m_rootLayer);
@@ -329,6 +338,9 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     if (m_webPage->scrollingCoordinator())
         toRemoteScrollingCoordinator(m_webPage->scrollingCoordinator())->buildTransaction(scrollingTransaction);
 #endif
+
+    // FIXME: Move flushing backing store and sending CommitLayerTree onto a background thread.
+    flushBackingStoreChangesInTransaction(layerTransaction);
 
     m_webPage->send(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree(layerTransaction, scrollingTransaction));
 }

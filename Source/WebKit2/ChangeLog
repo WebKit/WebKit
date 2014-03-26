@@ -1,3 +1,47 @@
+2014-03-26  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS WebKit2] Flush all surfaces after painting into all of them, instead of after painting into each one
+        https://bugs.webkit.org/show_bug.cgi?id=130768
+        <rdar://problem/16421471>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        Add flush(), which synchronously flushes painting operations on the underlying backing store.
+        Factor clearBackingStore() out of ensureBackingStore/display, which releases our reference to underlying backing store.
+        Add two members for storing the back surface and front buffer context until flush() is called.
+                - We need to keep the back surface alive because the CGImageRef created from it is referenced by
+                the front surface's drawing queue, and won't be freed until said queue is flushed. If we release
+                the back surface (and its associated CGContextRef) *before* the CGImageRef is freed, we will
+                do an expensive readback of the surface.
+                - When not using accelerated drawing, we need to keep the front buffer's CGContextRef around
+                until the flush occurs so that we can avoid re-creating it in order to perform the flush. This
+                happens automatically in the accelerated drawing case via WebCore::IOSurface.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (RemoteLayerBackingStore::ensureBackingStore):
+        (RemoteLayerBackingStore::clearBackingStore):
+        (RemoteLayerBackingStore::display):
+        Factor clearBackingStore() out of ensureBackingStore() and display().
+        Update a comment about the above performance gotcha.
+        Store the current back surface/front buffer context.
+
+        (RemoteLayerBackingStore::drawInContext):
+        Don't flush the context immediately after painting.
+
+        (RemoteLayerBackingStore::applyBackingStoreToLayer):
+        Move things around to reduce duplicated code.
+
+        (RemoteLayerBackingStore::flush):
+        Flush the current front surface/buffer's context.
+        Clear the new pending-flush members.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::flushBackingStoreChangesInTransaction):
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        Crawl through all of the valid changed backing stores in the transaction and flush them.
+        Remove a completely useless assertion.
+
 2014-03-25  Simon Fraser  <simon.fraser@apple.com>
 
         Add a new type of scrolling tree node for overflow scrolling

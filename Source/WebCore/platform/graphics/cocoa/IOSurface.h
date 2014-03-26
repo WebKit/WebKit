@@ -52,6 +52,7 @@ public:
     IOSurfaceRef surface() const { return m_surface.get(); }
     GraphicsContext& ensureGraphicsContext();
     CGContextRef ensurePlatformContext();
+    CGContextRef platformContext() { return m_cgContext.get(); }
 
     enum class SurfaceState {
         Valid,

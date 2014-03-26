@@ -68,9 +68,16 @@ void RemoteLayerBackingStore::ensureBackingStore(PlatformCALayerRemote* layer, I
     m_acceleratesDrawing = acceleratesDrawing;
     m_isOpaque = isOpaque;
 
+    clearBackingStore();
+}
+
+void RemoteLayerBackingStore::clearBackingStore()
+{
 #if USE(IOSURFACE)
     m_frontSurface = nullptr;
+    m_backSurfacePendingFlush = nullptr;
 #endif
+    m_bufferContextPendingFlush = nullptr;
     m_frontBuffer = nullptr;
 }
 
@@ -152,6 +159,8 @@ RetainPtr<CGImageRef> RemoteLayerBackingStore::createImageForFrontBuffer() const
 
 bool RemoteLayerBackingStore::display()
 {
+    ASSERT(!m_bufferContextPendingFlush);
+
     if (!m_layer)
         return false;
 
@@ -159,12 +168,7 @@ bool RemoteLayerBackingStore::display()
     // to note that our backing store has been cleared.
     if (!m_layer->owner() || !m_layer->owner()->platformCALayerDrawsContent()) {
         bool previouslyDrewContents = hasFrontBuffer();
-
-        m_frontBuffer = nullptr;
-#if USE(IOSURFACE)
-        m_frontSurface = nullptr;
-#endif
-
+        clearBackingStore();
         return previouslyDrewContents;
     }
 
@@ -184,6 +188,7 @@ bool RemoteLayerBackingStore::display()
     IntSize expandedScaledSize = expandedIntSize(scaledSize);
 
 #if USE(IOSURFACE)
+    ASSERT(!m_backSurfacePendingFlush);
     if (m_acceleratesDrawing) {
         RefPtr<IOSurface> backSurface = IOSurface::create(expandedScaledSize, ColorSpaceDeviceRGB);
         GraphicsContext& context = backSurface->ensureGraphicsContext();
@@ -196,10 +201,11 @@ bool RemoteLayerBackingStore::display()
             frontImage = m_frontSurface->createImage();
         drawInContext(context, frontImage.get());
 
-        // If our frontImage is derived from an IOSurface, we need to
-        // destroy the image before the CGContext it's derived from,
-        // so that the context doesn't make a CPU copy of the surface data.
-        frontImage = nullptr;
+        // If our frontImage is derived from an IOSurface, we need to destroy the image before the
+        // CGContext it's derived from, so that the context doesn't make a CPU copy of the surface data.
+        // Since the flush will happen later, this means we need to hold on to the IOSurface
+        // (and thus its context) until after the flush completes.
+        m_backSurfacePendingFlush = m_frontSurface;
         m_frontSurface = backSurface;
 
         return true;
@@ -211,6 +217,7 @@ bool RemoteLayerBackingStore::display()
     RetainPtr<CGImageRef> frontImage = createImageForFrontBuffer();
     m_frontBuffer = ShareableBitmap::createShareable(expandedScaledSize, m_isOpaque ? ShareableBitmap::NoFlags : ShareableBitmap::SupportsAlpha);
     std::unique_ptr<GraphicsContext> context = m_frontBuffer->createGraphicsContext();
+    m_bufferContextPendingFlush = context->platformContext();
     drawInContext(*context, frontImage.get());
     
     return true;
@@ -288,8 +295,6 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
 
     m_dirtyRegion = Region();
     m_paintingRects.clear();
-
-    CGContextFlush(context.platformContext());
 }
 
 void RemoteLayerBackingStore::enumerateRectsBeingDrawn(CGContextRef context, void (^block)(CGRect))
@@ -309,15 +314,34 @@ void RemoteLayerBackingStore::enumerateRectsBeingDrawn(CGContextRef context, voi
 
 void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer)
 {
+    layer.contentsOpaque = m_isOpaque;
+
 #if USE(IOSURFACE)
-    if (acceleratesDrawing())
+    if (acceleratesDrawing()) {
         layer.contents = (id)m_frontSurface->surface();
-    else
-        layer.contents = (id)createImageForFrontBuffer().get();
-#else
-    ASSERT(!acceleratesDrawing());
-    layer.contents = (id)createImageForFrontBuffer().get();
+        return;
+    }
 #endif
 
-    layer.contentsOpaque = m_isOpaque;
+    ASSERT(!acceleratesDrawing());
+    layer.contents = (id)createImageForFrontBuffer().get();
+}
+
+void RemoteLayerBackingStore::flush()
+{
+#if USE(IOSURFACE)
+    if (acceleratesDrawing()) {
+        CGContextRef platformContext = m_frontSurface->platformContext();
+        ASSERT(platformContext);
+        ASSERT(m_backSurfacePendingFlush);
+        CGContextFlush(platformContext);
+        m_backSurfacePendingFlush = nullptr;
+        return;
+    }
+#endif
+
+    ASSERT(!acceleratesDrawing());
+    ASSERT(m_bufferContextPendingFlush);
+    CGContextFlush(m_bufferContextPendingFlush.get());
+    m_bufferContextPendingFlush = nullptr;
 }

@@ -1,3 +1,14 @@
+2014-03-26  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS WebKit2] Flush all surfaces after painting into all of them, instead of after painting into each one
+        https://bugs.webkit.org/show_bug.cgi?id=130768
+        <rdar://problem/16421471>
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/cocoa/IOSurface.h:
+        Add a non-ensuring platformContext() getter.
+
 2014-03-26  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: crash when inspecting "bar" text node in getAccessibilityPropertiesForNode layout test
