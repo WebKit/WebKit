@@ -40,6 +40,7 @@
 #include "CallFrameInlines.h"
 #include "ExceptionHelpers.h"
 #include "GCIncomingRefCountedInlines.h"
+#include "HeapInlines.h"
 #include "IdentifierInlines.h"
 #include "Interpreter.h"
 #include "JSArrayBufferViewInlines.h"

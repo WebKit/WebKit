@@ -594,6 +594,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/GCThread.h \
 	Source/JavaScriptCore/heap/Heap.cpp \
 	Source/JavaScriptCore/heap/Heap.h \
+	Source/JavaScriptCore/heap/HeapInlines.h \
 	Source/JavaScriptCore/heap/HeapIterationScope.h \
 	Source/JavaScriptCore/heap/HeapOperation.h \
 	Source/JavaScriptCore/heap/HeapStatistics.cpp \

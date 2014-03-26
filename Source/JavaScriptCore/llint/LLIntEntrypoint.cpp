@@ -29,6 +29,7 @@
 #if ENABLE(LLINT)
 
 #include "CodeBlock.h"
+#include "HeapInlines.h"
 #include "JITCode.h"
 #include "JSObject.h"
 #include "LLIntThunks.h"

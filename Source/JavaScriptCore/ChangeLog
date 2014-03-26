@@ -1,3 +1,72 @@
+2014-03-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add HeapInlines
+        https://bugs.webkit.org/show_bug.cgi?id=130759
+
+        Reviewed by Filip Pizlo.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp:
+        (JSC::MarkedBlockSnapshotFunctor::MarkedBlockSnapshotFunctor):
+        (JSC::MarkedBlockSnapshotFunctor::operator()):
+        * heap/Heap.h: Also reindented while we're here.
+        (JSC::Heap::writeBarrierBuffer):
+        (JSC::Heap::vm):
+        (JSC::Heap::objectSpace):
+        (JSC::Heap::machineThreads):
+        (JSC::Heap::operationInProgress):
+        (JSC::Heap::allocatorForObjectWithoutDestructor):
+        (JSC::Heap::allocatorForObjectWithNormalDestructor):
+        (JSC::Heap::allocatorForObjectWithImmortalStructureDestructor):
+        (JSC::Heap::storageAllocator):
+        (JSC::Heap::notifyIsSafeToCollect):
+        (JSC::Heap::isSafeToCollect):
+        (JSC::Heap::handleSet):
+        (JSC::Heap::handleStack):
+        (JSC::Heap::lastFullGCLength):
+        (JSC::Heap::lastEdenGCLength):
+        (JSC::Heap::increaseLastFullGCLength):
+        (JSC::Heap::sizeBeforeLastEdenCollection):
+        (JSC::Heap::sizeAfterLastEdenCollection):
+        (JSC::Heap::sizeBeforeLastFullCollection):
+        (JSC::Heap::sizeAfterLastFullCollection):
+        (JSC::Heap::jitStubRoutines):
+        (JSC::Heap::isDeferred):
+        (JSC::Heap::structureIDTable):
+        (JSC::Heap::removeCodeBlock):
+        * heap/HeapInlines.h: Added.
+        (JSC::Heap::shouldCollect):
+        (JSC::Heap::isBusy):
+        (JSC::Heap::isCollecting):
+        (JSC::Heap::heap):
+        (JSC::Heap::isLive):
+        (JSC::Heap::isInRememberedSet):
+        (JSC::Heap::isMarked):
+        (JSC::Heap::testAndSetMarked):
+        (JSC::Heap::setMarked):
+        (JSC::Heap::isWriteBarrierEnabled):
+        (JSC::Heap::writeBarrier):
+        (JSC::Heap::reportExtraMemoryCost):
+        (JSC::Heap::forEachProtectedCell):
+        (JSC::Heap::forEachCodeBlock):
+        (JSC::Heap::allocateWithNormalDestructor):
+        (JSC::Heap::allocateWithImmortalStructureDestructor):
+        (JSC::Heap::allocateWithoutDestructor):
+        (JSC::Heap::tryAllocateStorage):
+        (JSC::Heap::tryReallocateStorage):
+        (JSC::Heap::ascribeOwner):
+        (JSC::Heap::blockAllocator):
+        (JSC::Heap::releaseSoon):
+        (JSC::Heap::incrementDeferralDepth):
+        (JSC::Heap::decrementDeferralDepth):
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        (JSC::Heap::decrementDeferralDepthAndGCIfNeeded):
+        (JSC::Heap::markListSet):
+        * runtime/JSCInlines.h:
+
 2014-03-25  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::ByteCodeParser::SetMode should distinguish between setting immediately without a flush and setting immediately with a flush

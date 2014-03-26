@@ -1016,6 +1016,19 @@ void Heap::sweepArrayBuffers()
     m_arrayBuffers.sweep();
 }
 
+struct MarkedBlockSnapshotFunctor : public MarkedBlock::VoidFunctor {
+    MarkedBlockSnapshotFunctor(Vector<MarkedBlock*>& blocks) 
+        : m_index(0) 
+        , m_blocks(blocks)
+    {
+    }
+
+    void operator()(MarkedBlock* block) { m_blocks[m_index++] = block; }
+
+    size_t m_index;
+    Vector<MarkedBlock*>& m_blocks;
+};
+
 void Heap::snapshotMarkedSpace()
 {
     GCPHASE(SnapshotMarkedSpace);

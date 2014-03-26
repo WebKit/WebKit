@@ -33,6 +33,7 @@
 #include "CopyWriteBarrier.h"
 #include "DeferGC.h"
 #include "Heap.h"
+#include "HeapInlines.h"
 #include "IndexingHeaderInlines.h"
 #include "JSCell.h"
 #include "PropertySlot.h"
