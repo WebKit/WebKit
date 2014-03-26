@@ -37,6 +37,7 @@
 #include <WebCore/HTMLVideoElement.h>
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/Settings.h>
+#include <WebCore/TimeRanges.h>
 #include <WebCore/WebCoreThreadRun.h>
 
 using namespace WebCore;
@@ -118,6 +119,20 @@ void WebVideoFullscreenManager::setRate(bool isPlaying, float playbackRate)
 void WebVideoFullscreenManager::setVideoDimensions(bool hasVideo, float width, float height)
 {
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetVideoDimensions(hasVideo, width, height), m_page->pageID());
+}
+    
+void WebVideoFullscreenManager::setSeekableRanges(const WebCore::TimeRanges& timeRanges)
+{
+    Vector<std::pair<double, double>> rangesVector;
+    
+    for (unsigned i = 0; i < timeRanges.length(); i++) {
+        ExceptionCode exceptionCode;
+        double start = timeRanges.start(i, exceptionCode);
+        double end = timeRanges.end(i, exceptionCode);
+        rangesVector.append(std::pair<double,double>(start, end));
+    }
+
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetSeekableRangesVector(std::move(rangesVector)), m_page->pageID());
 }
 
 void WebVideoFullscreenManager::didEnterFullscreen()

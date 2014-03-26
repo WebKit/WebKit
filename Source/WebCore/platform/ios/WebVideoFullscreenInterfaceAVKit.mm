@@ -32,6 +32,7 @@
 
 #import "Logging.h"
 #import "WebVideoFullscreenModel.h"
+#import <AVFoundation/AVTime.h>
 #import <AVKit/AVKit.h>
 #import <AVKit/AVPlayerController.h>
 #import <AVKit/AVPlayerViewController_Private.h>
@@ -41,6 +42,7 @@
 #import <CoreMedia/CMTime.h>
 #import <UIKit/UIKit.h>
 #import <WebCore/SoftLinking.h>
+#import <WebCore/TimeRanges.h>
 #import <WebCore/WebCoreThreadRun.h>
 #import <wtf/RetainPtr.h>
 
@@ -64,11 +66,14 @@ SOFT_LINK_CLASS(UIKit, UIColor)
 SOFT_LINK_FRAMEWORK(CoreMedia)
 SOFT_LINK(CoreMedia, CMTimeMakeWithSeconds, CMTime, (Float64 seconds, int32_t preferredTimeScale), (seconds, preferredTimeScale))
 SOFT_LINK(CoreMedia, CMTimeGetSeconds, Float64, (CMTime time), (time))
+SOFT_LINK(CoreMedia, CMTimeMake, CMTime, (int64_t value, int32_t timescale), (value, timescale))
+SOFT_LINK(CoreMedia, CMTimeRangeContainsTime, Boolean, (CMTimeRange range, CMTime time), (range, time))
+SOFT_LINK(CoreMedia, CMTimeRangeMake, CMTimeRange, (CMTime start, CMTime duration), (start, duration))
+SOFT_LINK(CoreMedia, CMTimeSubtract, CMTime, (CMTime minuend, CMTime subtrahend), (minuend, subtrahend))
 
 @interface WebAVPlayerController : NSObject <AVPlayerViewControllerDelegate>
 
 @property(retain) AVPlayerController* playerControllerProxy;
-@property(retain) CALayer<AVVideoLayer> *playerLayer;
 @property(assign) WebVideoFullscreenModel* delegate;
 
 @property BOOL canPlay;
@@ -87,6 +92,7 @@ SOFT_LINK(CoreMedia, CMTimeGetSeconds, Float64, (CMTime time), (time))
 @property(retain) NSArray *loadedTimeRanges;
 @property AVPlayerControllerStatus status;
 @property(retain) AVValueTiming *timing;
+@property(retain) NSArray *seekableTimeRanges;
 
 - (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldDismissWithReason:(AVPlayerViewControllerDismissalReason)reason;
 @end
@@ -106,8 +112,8 @@ SOFT_LINK(CoreMedia, CMTimeGetSeconds, Float64, (CMTime time), (time))
 - (void)dealloc
 {
     [_playerControllerProxy release];
-    [_playerLayer release];
     [_loadedTimeRanges release];
+    [_seekableTimeRanges release];
     [_timing release];
     [super dealloc];
 }
@@ -172,6 +178,52 @@ SOFT_LINK(CoreMedia, CMTimeGetSeconds, Float64, (CMTime time), (time))
 {
     ASSERT(self.delegate);
     self.delegate->seekToTime(time);
+}
+
+- (BOOL)hasLiveStreamingContent
+{
+    if ([self status] == AVPlayerControllerStatusReadyToPlay)
+        return [self contentDuration] == std::numeric_limits<float>::infinity();
+    return NO;
+}
+
++ (NSSet *)keyPathsForValuesAffectingHasLiveStreamingContent
+{
+    return [NSSet setWithObjects:@"contentDuration", @"status", nil];
+}
+
+- (void)skipBackwardThirtySeconds:(id)sender
+{
+    UNUSED_PARAM(sender);
+    BOOL isTimeWithinSeekableTimeRanges = NO;
+    CMTime currentTime = CMTimeMakeWithSeconds([[self timing] currentValue], 1000);
+    CMTime thirtySecondsBeforeCurrentTime = CMTimeSubtract(currentTime, CMTimeMake(30, 1));
+    
+    for (NSValue *seekableTimeRangeValue in [self seekableTimeRanges]) {
+        if (CMTimeRangeContainsTime([seekableTimeRangeValue CMTimeRangeValue], thirtySecondsBeforeCurrentTime)) {
+            isTimeWithinSeekableTimeRanges = YES;
+            break;
+        }
+    }
+    
+    if (isTimeWithinSeekableTimeRanges)
+        [self seekToTime:CMTimeGetSeconds(thirtySecondsBeforeCurrentTime)];
+}
+
+- (void)gotoEndOfSeekableRanges:(id)sender
+{
+    UNUSED_PARAM(sender);
+    NSTimeInterval timeAtEndOfSeekableTimeRanges = NAN;
+    
+    for (NSValue *seekableTimeRangeValue in [self seekableTimeRanges]) {
+        CMTimeRange seekableTimeRange = [seekableTimeRangeValue CMTimeRangeValue];
+        NSTimeInterval endOfSeekableTimeRange = CMTimeGetSeconds(CMTimeRangeGetEnd(seekableTimeRange));
+        if (isnan(timeAtEndOfSeekableTimeRanges) || endOfSeekableTimeRange > timeAtEndOfSeekableTimeRanges)
+            timeAtEndOfSeekableTimeRanges = endOfSeekableTimeRange;
+    }
+    
+    if (!isnan(timeAtEndOfSeekableTimeRanges))
+        [self seekToTime:timeAtEndOfSeekableTimeRanges];
 }
 
 @end
@@ -309,6 +361,22 @@ void WebVideoFullscreenInterfaceAVKit::setVideoDimensions(bool hasVideo, float w
 {
     playerController().hasEnabledVideo = hasVideo;
     playerController().contentDimensions = CGSizeMake(width, height);
+}
+
+void WebVideoFullscreenInterfaceAVKit::setSeekableRanges(const TimeRanges& timeRanges)
+{
+    NSMutableArray* seekableRanges = [NSMutableArray array];
+    ExceptionCode exceptionCode;
+
+    for (unsigned i = 0; i < timeRanges.length(); i++) {
+        double start = timeRanges.start(i, exceptionCode);
+        double end = timeRanges.end(i, exceptionCode);
+        
+        CMTimeRange range = CMTimeRangeMake(CMTimeMakeWithSeconds(start, 1000), CMTimeMakeWithSeconds(end-start, 1000));
+        [seekableRanges addObject:[NSValue valueWithCMTimeRange:range]];
+    }
+    
+    playerController().seekableTimeRanges = seekableRanges;
 }
 
 void WebVideoFullscreenInterfaceAVKit::enterFullscreen(PlatformLayer& videoLayer)

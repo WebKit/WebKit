@@ -34,6 +34,7 @@
 #include "WebVideoFullscreenManagerProxyMessages.h"
 #include <QuartzCore/CoreAnimation.h>
 #include <WebKitSystemInterface.h>
+#include <WebCore/TimeRanges.h>
 
 using namespace WebCore;
 
@@ -62,6 +63,20 @@ void WebVideoFullscreenManagerProxy::enterFullscreenWithID(uint32_t videoLayerID
     ASSERT(videoLayerID);
     m_layerHost = WKMakeRenderLayer(videoLayerID);
     enterFullscreen(*m_layerHost.get());
+}
+    
+void WebVideoFullscreenManagerProxy::setSeekableRangesVector(Vector<std::pair<double, double>>& ranges)
+{
+    RefPtr<TimeRanges> timeRanges = TimeRanges::create();
+    for (const auto& range : ranges)
+    {
+        ASSERT(isfinite(range.first));
+        ASSERT(isfinite(range.second));
+        ASSERT(range.second >= range.first);
+        timeRanges->add(range.first, range.second);
+    }
+
+    setSeekableRanges(*timeRanges);
 }
 
 void WebVideoFullscreenManagerProxy::requestExitFullscreen()

@@ -24,6 +24,7 @@
 messages -> WebVideoFullscreenManagerProxy {
     SetCurrentTime(double currentTime, double hostTime)
     SetVideoDimensions(bool hasVideo, unsigned width, unsigned height)
+    SetSeekableRangesVector(Vector<std::pair<double, double>> ranges);
     SetDuration(double duration)
     SetRate(bool isPlaying, double rate)
     EnterFullscreenWithID(uint32_t videoLayerID)

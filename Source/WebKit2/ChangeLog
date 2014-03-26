@@ -1,3 +1,29 @@
+2014-03-26  Jeremy Jones  <jeremyj@apple.com>
+
+        Implement hasLiveStreamingContent property in WebAVPlayerController
+        https://bugs.webkit.org/show_bug.cgi?id=128684
+
+        Reviewed by Simon Fraser.
+
+        Plumb through the seekable ranges to the fullscreen interface.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+        Add declaration for setSeekableRangesVector()
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.messages.in:
+        Add interface SetSeekableRangesVector()
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setSeekableRangesVector):
+        Add setSeekableRangesVector that translates the vector into a TimeRanges and calls setSeekableRanges()
+
+        * WebProcess/ios/WebVideoFullscreenManager.h:
+        Add setSeekableRanges()
+
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::setSeekableRanges):
+        setSeekableRanges() converts TimeRanges to Vector and calls SetSeekableRangesVector()
+
 2014-03-26  Simon Fraser  <simon.fraser@apple.com>
 
         Add a custom behavior flag to GraphicsLayer, piped down to PlatformCALayer, for scrolling layers

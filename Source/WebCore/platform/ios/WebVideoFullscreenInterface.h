@@ -29,10 +29,10 @@
 
 #if PLATFORM(IOS)
 
-#import <WebCore/PlatformLayer.h>
-
 namespace WebCore {
     
+class TimeRanges;
+
 class WebVideoFullscreenInterface {
 public:
     virtual ~WebVideoFullscreenInterface() { };
@@ -40,6 +40,7 @@ public:
     virtual void setCurrentTime(double currentTime, double anchorTime) = 0;
     virtual void setRate(bool isPlaying, float playbackRate) = 0;
     virtual void setVideoDimensions(bool hasVideo, float width, float height) = 0;
+    virtual void setSeekableRanges(const TimeRanges&) = 0;
 };
 
 }

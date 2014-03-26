@@ -53,6 +53,7 @@ private:
 
     // Translate to FullscreenInterface
     virtual void enterFullscreenWithID(uint32_t);
+    virtual void setSeekableRangesVector(Vector<std::pair<double, double>>&);
 
     // Fullscreen Observer
     virtual void requestExitFullscreen() override;

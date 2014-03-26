@@ -1,3 +1,48 @@
+2014-03-26  Jeremy Jones  <jeremyj@apple.com>
+
+        Implement hasLiveStreamingContent property in WebAVPlayerController
+        https://bugs.webkit.org/show_bug.cgi?id=128684
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+        Add export for WebVideoFullscreenInterfaceAVKit::setSeekableRanges().
+
+        * platform/ios/WebVideoFullscreenInterface.h:
+        Add setSeekableRanges()
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        Add setSeekableRanges()
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        Remove vestigial playerLayer property. Add seekableTimeRanges property.
+
+        (-[WebAVPlayerController dealloc]):
+        Release _seekableTimeRanges.
+        Remove references to _playerLayer.
+
+        (-[WebAVPlayerController hasLiveStreamingContent]):
+        Implement based on duration. Live stream has an infinite duration.
+
+        (+[WebAVPlayerController keyPathsForValuesAffectingHasLiveStreamingContent]):
+        Describe dependent keys for computed property hasLiveStreamingContent.
+
+        (-[WebAVPlayerController skipBackwardThirtySeconds:]):
+        Seek back 30 seconds if that time is in the seekable ranges.
+
+        (-[WebAVPlayerController gotoEndOfSeekableRanges:]):
+        Jump to live by going to the of the seekable ranges.
+
+        (WebVideoFullscreenInterfaceAVKit::setSeekableRanges):
+        Convert TimeRange to CMTimeRange.
+
+        * platform/ios/WebVideoFullscreenModelMediaElement.mm:
+        (WebVideoFullscreenModelMediaElement::setMediaElement):
+        Set initial seekable ranges.
+
+        (WebVideoFullscreenModelMediaElement::handleEvent):
+        Update seekable ranges when time changes.
+
 2014-03-26  Brent Fulgham  <bfulgham@apple.com>
 
         Fix OS X build.
