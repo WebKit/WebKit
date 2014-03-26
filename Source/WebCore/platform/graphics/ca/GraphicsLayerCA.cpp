@@ -1165,7 +1165,7 @@ void GraphicsLayerCA::updateRootRelativeScale(TransformationMatrix* transformFro
         transformFromRoot->multiply(unanimatedTransform);
         rootRelativeScaleFactor = maxScaleFromTransform(*transformFromRoot);
     }
-    
+
     if (rootRelativeScaleFactor != m_rootRelativeScaleFactor) {
         m_rootRelativeScaleFactor = rootRelativeScaleFactor;
         m_uncommittedChanges |= ContentsScaleChanged | ContentsOpaqueChanged;
@@ -2703,6 +2703,9 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
         // If any matrix is singular, CA won't animate it correctly. So fall back to software animation
         if (!fromTransform.isInvertible() || !toTransform.isInvertible())
             return false;
+
+        basicAnim->setFromValue(fromTransform);
+        basicAnim->setToValue(toTransform);
     } else {
         if (isTransformTypeNumber(transformOpType)) {
             float fromValue;
@@ -2945,6 +2948,9 @@ GraphicsLayerCA::LayerMap* GraphicsLayerCA::animatedLayerClones(AnimatedProperty
 void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
 {
     float contentsScale = clampedContentsScaleForScale(m_rootRelativeScaleFactor * pageScaleFactor * deviceScaleFactor());
+    if (contentsScale == m_layer->contentsScale())
+        return;
+
     m_layer->setContentsScale(contentsScale);
     if (drawsContent())
         m_layer->setNeedsDisplay();

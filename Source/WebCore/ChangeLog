@@ -1,5 +1,27 @@
 2014-03-26  Simon Fraser  <simon.fraser@apple.com>
 
+        REGRESSION (r155977): matrix animations no longer animate
+        https://bugs.webkit.org/show_bug.cgi?id=130789
+        <rdar://problem/15650946>
+
+        Reviewed by Dean Jackson.
+        
+        r155977 erroneously removed two lines that set the end points for
+        matrix animations (used when transform lists don't match), so
+        put them back.
+        
+        Also don't repaint when updateContentsScale()
+        is called and doesn't change the contents scale.
+
+        Test: compositing/animation/matrix-animation.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateRootRelativeScale):
+        (WebCore::GraphicsLayerCA::setTransformAnimationEndpoints):
+        (WebCore::GraphicsLayerCA::updateContentsScale):
+
+2014-03-26  Simon Fraser  <simon.fraser@apple.com>
+
         Add a custom behavior flag to GraphicsLayer, piped down to PlatformCALayer, for scrolling layers
         https://bugs.webkit.org/show_bug.cgi?id=130778
 

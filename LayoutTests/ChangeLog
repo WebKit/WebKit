@@ -1,3 +1,16 @@
+2014-03-26  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r155977): matrix animations no longer animate
+        https://bugs.webkit.org/show_bug.cgi?id=130789
+        <rdar://problem/15650946>
+
+        Reviewed by Dean Jackson.
+        
+        Add test for fill-fowards animation with mismatched transform lists.
+
+        * compositing/animation/matrix-animation-expected.html: Added.
+        * compositing/animation/matrix-animation.html: Added.
+
 2014-03-26  Antti Koivisto  <antti@apple.com>
 
         Render tree construction is O(N^2) in number of siblings
