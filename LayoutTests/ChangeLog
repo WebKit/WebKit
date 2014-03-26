@@ -1,3 +1,17 @@
+2014-03-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Skipping underlines disregard points completely inside the underline rect
+        https://bugs.webkit.org/show_bug.cgi?id=130800
+
+        Reviewed by Dean Jackson.
+
+        This test draws a glyph entire inside the underline. It should render the same
+        as it would without any underline at all.
+
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/resources/Litherum.svg: Added
+        an underscore glyph that would lie entirely within an underline
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/glyph-inside-underline.html:
+
 2014-03-26  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r155977): matrix animations no longer animate

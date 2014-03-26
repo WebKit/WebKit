@@ -388,6 +388,12 @@ static bool findIntersectionPoint(float y, CGPoint p1, CGPoint p2, CGFloat& x)
     return (p1.y < y && p2.y > y) || (p1.y > y && p2.y < y);
 }
 
+static void updateX(GlyphIterationState& state, CGFloat x)
+{
+    state.minX = std::min(state.minX, x);
+    state.maxX = std::max(state.maxX, x);
+}
+
 // This function is called by CGPathApply and is therefore invoked for each
 // contour in a glyph. This function models each contours as a straight line
 // and calculates the intersections between each pseudo-contour and
@@ -425,14 +431,13 @@ static void findPathIntersections(void* stateAsVoidPointer, const CGPathElement*
     if (!doIntersection)
         return;
     CGFloat x;
-    if (findIntersectionPoint(state.y1, state.currentPoint, point, x)) {
-        state.minX = std::min(state.minX, x);
-        state.maxX = std::max(state.maxX, x);
-    }
-    if (findIntersectionPoint(state.y2, state.currentPoint, point, x)) {
-        state.minX = std::min(state.minX, x);
-        state.maxX = std::max(state.maxX, x);
-    }
+    if (findIntersectionPoint(state.y1, state.currentPoint, point, x))
+        updateX(state, x);
+    if (findIntersectionPoint(state.y2, state.currentPoint, point, x))
+        updateX(state, x);
+    if ((state.currentPoint.y >= state.y1 && state.currentPoint.y <= state.y2)
+        || (state.currentPoint.y <= state.y1 && state.currentPoint.y >= state.y2))
+        updateX(state, state.currentPoint.x);
     state.currentPoint = point;
 }
 

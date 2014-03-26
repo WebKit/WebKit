@@ -1,3 +1,22 @@
+2014-03-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Skipping underlines disregard points completely inside the underline rect
+        https://bugs.webkit.org/show_bug.cgi?id=130800
+
+        Reviewed by Dean Jackson.
+
+        When determining bounds for underline skipping, endpoints of glyph contours
+        that lie entirely within the rect of the underline are ignored. This patch
+        makes these points affect the skipping regions the same way that intersections
+        do.
+
+        Test: fast/css3-text/css3-text-decoration/text-decoration-skip/glyph-inside-underline.html
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::updateX): Refactored common code into a function
+        (WebCore::findPathIntersections): Test for endpoints which lie entirely within
+        the underline bounds
+
 2014-03-26  Pratik Solanki  <psolanki@apple.com>
 
         Unreviewed. iOS build fix after r166312. Soft link CMTimeRangeGetEnd.
