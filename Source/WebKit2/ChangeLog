@@ -1,3 +1,14 @@
+2014-03-26  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Expose DownloadProxy::cancel()
+        https://bugs.webkit.org/show_bug.cgi?id=130799
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/_WKDownload.h:
+        * UIProcess/API/Cocoa/_WKDownload.mm:
+        (-[_WKDownload cancel]):
+
 2014-03-26  Timothy Hatcher  <timothy@apple.com>
 
         Propagate the hiddenFromInspector flag on ResourceRequest in

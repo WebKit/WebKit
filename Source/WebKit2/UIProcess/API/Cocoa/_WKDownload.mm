@@ -41,6 +41,11 @@
     [super dealloc];
 }
 
+- (void)cancel
+{
+    _download->cancel();
+}
+
 - (NSURLRequest *)request
 {
     return _download->request().nsURLRequest(WebCore::DoNotUpdateHTTPBody);

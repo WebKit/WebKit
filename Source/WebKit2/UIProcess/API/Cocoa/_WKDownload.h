@@ -32,6 +32,8 @@
 WK_API_CLASS
 @interface _WKDownload : NSObject
 
+- (void)cancel;
+
 @property (nonatomic, readonly) NSURLRequest *request;
 
 @end
