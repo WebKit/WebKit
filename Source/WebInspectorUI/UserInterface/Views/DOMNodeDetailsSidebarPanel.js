@@ -58,6 +58,7 @@ WebInspector.DOMNodeDetailsSidebarPanel = function() {
 
     if (this._accessibilitySupported()) {
         this._accessibilityEmptyRow = new WebInspector.DetailsSectionRow(WebInspector.UIString("No Accessibility Information"));
+        this._accessibilityNodeActiveDescendantRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Shared Focus"));
         this._accessibilityNodeCheckedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Checked"));
         this._accessibilityNodeChildrenRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Children"));
         this._accessibilityNodeControlsRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Controls"));
@@ -275,6 +276,16 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
             return "";
         }
 
+        function linkForNodeId(nodeId) {
+            var link = null;
+            if (nodeId !== undefined && typeof nodeId === "number") {
+                var node = WebInspector.domTreeManager.nodeForId(nodeId);
+                if (node)
+                    link = WebInspector.linkifyAccessibilityNodeReference(node);
+            }
+            return link;
+        }
+
         function linkListForNodeIds(nodeIds) {
             var hasLinks = false;
             var linkList = null;
@@ -305,6 +316,8 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
             properties = accessibilityProperties;
 
             if (accessibilityProperties && accessibilityProperties.exists) {
+
+                var activeDescendantLink = linkForNodeId(accessibilityProperties.activeDescendantNodeId);
 
                 var checked = "";
                 if (accessibilityProperties.checked !== undefined) {
@@ -350,11 +363,7 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                 var ownedNodeLinkList = linkListForNodeIds(accessibilityProperties.ownedNodeIds);
 
                 // Accessibility tree parent is not a 1:1 mapping with the DOM tree parent.
-                var parentNodeLink = null;
-                if (accessibilityProperties.parentNodeId !== undefined) {
-                    var parentNode = WebInspector.domTreeManager.nodeForId(accessibilityProperties.parentNodeId);
-                    parentNodeLink = WebInspector.linkifyAccessibilityNodeReference(parentNode);
-                }
+                var parentNodeLink = linkForNodeId(accessibilityProperties.parentNodeId);
 
                 var pressed = booleanValueToLocalizedStringIfPropertyDefined("pressed");
                 var readonly = booleanValueToLocalizedStringIfTrue("readonly");
@@ -373,6 +382,7 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                 var selected = booleanValueToLocalizedStringIfTrue("selected");
 
                 // Assign all the properties to their respective views.
+                this._accessibilityNodeActiveDescendantRow.value = activeDescendantLink || "";
                 this._accessibilityNodeCheckedRow.value = checked;
                 this._accessibilityNodeChildrenRow.value = childNodeLinkList || "";
                 this._accessibilityNodeControlsRow.value = controlledNodeLinkList || "";
@@ -399,6 +409,7 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                     this._accessibilityNodeLabelRow,
                     this._accessibilityNodeParentRow,
                     this._accessibilityNodeChildrenRow,
+                    this._accessibilityNodeActiveDescendantRow,
                     this._accessibilityNodeOwnsRow,
                     this._accessibilityNodeControlsRow,
                     this._accessibilityNodeFlowsRow,

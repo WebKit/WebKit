@@ -456,6 +456,7 @@ WebInspector.DOMNode.prototype = {
         {
             if (!error && callback && accessibilityProperties) {
                 callback({
+                    activeDescendantNodeId: accessibilityProperties.activeDescendantNodeId,
                     checked: accessibilityProperties.checked,
                     childNodeIds: accessibilityProperties.childNodeIds,
                     controlledNodeIds: accessibilityProperties.controlledNodeIds,

@@ -60,6 +60,7 @@
             "description": "A structure holding accessibility properties.",
             "type": "object",
             "properties": [
+                { "name": "activeDescendantNodeId", "$ref": "NodeId", "optional": true, "description": "<code>DOMNode</code> id of the accessibility object referenced by aria-activedescendant." },
                 { "name": "checked", "type": "string", "optional": true, "enum": ["true", "false", "mixed"], "description": "Checked state of certain form controls." },
                 { "name": "childNodeIds", "type": "array", "items": { "$ref": "NodeId" }, "optional": true, "description": "Array of <code>DOMNode</code> ids of the accessibility tree children if available." },
                 { "name": "controlledNodeIds", "type": "array", "items": { "$ref": "NodeId" }, "optional": true, "description": "Array of <code>DOMNode</code> ids of any nodes referenced via @aria-controls." },

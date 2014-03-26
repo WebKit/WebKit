@@ -92,9 +92,9 @@
     <div class="ex" role="tab" aria-selected="false">not selected</div>
 </div>
 
-<ul role="tree" class="ex" id="flowedTo1">
+<ul role="tree" class="ex" id="flowedTo1" aria-activedescendant="activedescendant">
     <li class="ex" role="treeitem" aria-expanded="true">expanded</li>
-    <li class="ex" role="treeitem" aria-expanded="false">collapsed</li>
+    <li class="ex" role="treeitem" aria-expanded="false" id="activedescendant">collapsed</li>
     <li class="ex" role="treeitem" aria-expanded="undefined">expanded</li>
 </ul>
 
@@ -152,13 +152,17 @@ function test() {
             var value = response.result.properties[key];
             switch (key){
             case "nodeId":
-            case "parentNodeId":
                 continue;
+            case "activeDescendantNodeId":
+            case "parentNodeId":
+                if (typeof value === "number")
+                    InspectorTest.log("    " + key + ": exists");
+                break;
             case "childNodeIds":
             case "controlledNodeIds":
             case "flowedNodeIds":
             case "ownedNodeIds":
-                if (value.length)
+                if (typeof value === "object" && value.length)
                     InspectorTest.log("    " + key + ".length: " + value.length);
                 break;
             default:

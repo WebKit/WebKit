@@ -1,3 +1,18 @@
+2014-03-25  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: add support for aria-activedescendant and reconcile UI/testing with parentNode
+        https://bugs.webkit.org/show_bug.cgi?id=130712
+
+        Reviewed by Timothy Hatcher.
+
+        Test: inspector-protocol/dom/getAccessibilityPropertiesForNode.html
+
+        Support for @aria-activedescendant; code reuse changes w/ parentNode and activeDescendantNode.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+        * inspector/protocol/DOM.json:
+
 2014-03-25  Sanghyup Lee  <sh53.lee@samsung.com>
 
         When the mouse is upped after dragged out of shadowDOM, it should lose :active.

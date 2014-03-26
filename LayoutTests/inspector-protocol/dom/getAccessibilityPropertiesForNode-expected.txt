@@ -7,13 +7,15 @@ Total elements to be tested: 57.
     label: 
     role: treeitem
     childNodeIds.length: 1
+    parentNodeId: exists
 
-<li role="treeitem" aria-expanded="false">collapsed</li>
+<li role="treeitem" aria-expanded="false" id="activedescendant">collapsed</li>
     exists: true
     label: 
     role: treeitem
     childNodeIds.length: 1
     expanded: false
+    parentNodeId: exists
 
 <li role="treeitem" aria-expanded="true">expanded</li>
     exists: true
@@ -21,26 +23,31 @@ Total elements to be tested: 57.
     role: treeitem
     childNodeIds.length: 1
     expanded: true
+    parentNodeId: exists
 
-<ul role="tree" id="flowedTo1">
+<ul role="tree" id="flowedTo1" aria-activedescendant="activedescendant">
     <li role="treeitem" aria-expanded="true">expanded</li>
-    <li role="treeitem" aria-expanded="false">collapsed</li>
+    <li role="treeitem" aria-expanded="false" id="activedescendant">collapsed</li>
     <li role="treeitem" aria-expanded="undefined">expanded</li>
 </ul>
     exists: true
     label: 
     role: tree
+    activeDescendantNodeId: exists
     childNodeIds.length: 3
+    parentNodeId: exists
 
 <div role="tab" aria-selected="false">not selected</div>
     exists: true
     label: 
     role: tab
+    parentNodeId: exists
 
 <div role="tab" aria-selected="true">selected</div>
     exists: true
     label: 
     role: tab
+    parentNodeId: exists
     selected: true
 
 <div role="tablist" aria-flowto="flowedTo1 invalidIdRef flowedTo2">
@@ -52,16 +59,19 @@ Total elements to be tested: 57.
     role: tablist
     childNodeIds.length: 2
     flowedNodeIds.length: 2
+    parentNodeId: exists
 
 <div role="option" aria-selected="false">not selected</div>
     exists: true
     label: 
     role: option
+    parentNodeId: exists
 
 <div role="option" aria-selected="true">selected</div>
     exists: true
     label: 
     role: option
+    parentNodeId: exists
     selected: true
 
 <div role="listbox" id="ownedlistbox">
@@ -72,6 +82,7 @@ Total elements to be tested: 57.
     label: 
     role: listbox
     childNodeIds.length: 2
+    parentNodeId: exists
     required: false
 
 <input role="combobox" aria-owns="ownedlistbox invalidIdRef" aria-controls="ownedlistbox invalidIdRef">
@@ -148,6 +159,7 @@ Total elements to be tested: 57.
     label: 
     role: radio
     checked: false
+    parentNodeId: exists
     required: false
 
 <div role="radio" aria-checked="mixed">unchecked [sic] mixed state will not be exposed on radios per ARIA spec.</div>
@@ -155,6 +167,7 @@ Total elements to be tested: 57.
     label: 
     role: radio
     checked: false
+    parentNodeId: exists
     required: false
 
 <div role="radio" aria-checked="true">checked</div>
@@ -162,6 +175,7 @@ Total elements to be tested: 57.
     label: 
     role: radio
     checked: true
+    parentNodeId: exists
     required: false
 
 <div role="radio">unchecked (checked undefined evals to false on radio)</div>
@@ -169,6 +183,7 @@ Total elements to be tested: 57.
     label: 
     role: radio
     checked: false
+    parentNodeId: exists
     required: false
 
 <input type="radio" checked="">
@@ -192,6 +207,7 @@ Total elements to be tested: 57.
     label: 
     role: checkbox
     checked: false
+    parentNodeId: exists
     required: false
 
 <div role="checkbox" aria-checked="mixed">mixed</div>
@@ -199,6 +215,7 @@ Total elements to be tested: 57.
     label: 
     role: checkbox
     checked: mixed
+    parentNodeId: exists
     required: false
 
 <div role="checkbox" aria-checked="true">checked</div>
@@ -206,6 +223,7 @@ Total elements to be tested: 57.
     label: 
     role: checkbox
     checked: true
+    parentNodeId: exists
     required: false
 
 <div role="checkbox">unchecked (checked undefined evals to false on checkbox)</div>
@@ -213,6 +231,7 @@ Total elements to be tested: 57.
     label: 
     role: checkbox
     checked: false
+    parentNodeId: exists
     required: false
 
 <input type="checkbox" checked="">
@@ -237,6 +256,7 @@ Total elements to be tested: 57.
     role: 
     disabled: true
     focused: false
+    parentNodeId: exists
     readonly: true
     required: false
 
@@ -253,6 +273,7 @@ Total elements to be tested: 57.
     label: 
     role: 
     focused: false
+    parentNodeId: exists
     readonly: true
     required: false
 
@@ -322,6 +343,7 @@ Total elements to be tested: 57.
     label: 
     role: 
     focused: false
+    parentNodeId: exists
     pressed: false
     required: false
 
@@ -330,6 +352,7 @@ Total elements to be tested: 57.
     label: 
     role: 
     focused: false
+    parentNodeId: exists
     pressed: false
     required: false
 
@@ -339,12 +362,14 @@ Total elements to be tested: 57.
     role: button
     disabled: true
     focused: false
+    parentNodeId: exists
 
 <div role="button" tabindex="0"></div>
     exists: true
     label: 
     role: button
     focused: false
+    parentNodeId: exists
 
 <span aria-hidden="true"></span>
     exists: true
@@ -353,6 +378,7 @@ Total elements to be tested: 57.
     ignored: true
     ignoredByDefault: true
     hidden: true
+    parentNodeId: exists
 
 <span></span>
     exists: true
@@ -360,6 +386,7 @@ Total elements to be tested: 57.
     role: 
     ignored: true
     ignoredByDefault: true
+    parentNodeId: exists
 
 <div aria-hidden="true"></div>
     exists: true
@@ -368,18 +395,21 @@ Total elements to be tested: 57.
     ignored: true
     ignoredByDefault: true
     hidden: true
+    parentNodeId: exists
 
 <div></div>
     exists: true
     label: 
     role: 
     ignored: true
+    parentNodeId: exists
 
 <div role="presentation"><div></div></div>
     exists: true
     label: 
     role: presentation
     ignored: true
+    parentNodeId: exists
 
 <div role="group">
     <!-- FIXME: childNodeIds.length should be 3 (foo, bar, baz). WebCore only reports 1 (foo). http://webkit.org/b/130563 -->
@@ -395,18 +425,21 @@ Total elements to be tested: 57.
     label: 
     role: group
     childNodeIds.length: 1
+    parentNodeId: exists
 
 <div><div></div></div>
     exists: true
     label: 
     role: 
     ignored: true
+    parentNodeId: exists
 
 <script style="display:block;"></script>
     exists: true
     label: 
     role: group
     ignored: true
+    parentNodeId: exists
 
 <script></script>
     exists: false

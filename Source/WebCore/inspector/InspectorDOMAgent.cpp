@@ -1424,6 +1424,7 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
     if (!WebCore::AXObjectCache::accessibilityEnabled())
         WebCore::AXObjectCache::enableAccessibility();
 
+    Node* activeDescendantNode = nullptr;
     TypeBuilder::DOM::AccessibilityProperties::Checked::Enum checked = TypeBuilder::DOM::AccessibilityProperties::Checked::False;
     RefPtr<Inspector::TypeBuilder::Array<int>> childNodeIds;
     RefPtr<Inspector::TypeBuilder::Array<int>> controlledNodeIds;
@@ -1438,7 +1439,7 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
     bool hidden = false;
     String label; // FIXME: Waiting on http://webkit.org/b/121134
     RefPtr<Inspector::TypeBuilder::Array<int>> ownedNodeIds;
-    Node* parentNode = node;
+    Node* parentNode = nullptr;
     bool pressed = false;
     bool readonly = false;
     bool required = false;
@@ -1452,6 +1453,9 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
 
     if (AXObjectCache* axObjectCache = node->document().axObjectCache()) {
         if (AccessibilityObject* axObject = axObjectCache->getOrCreate(node)) {
+
+            if (AccessibilityObject* activeDescendant = axObject->activeDescendant())
+                activeDescendantNode = activeDescendant->node();
 
             supportsChecked = axObject->supportsChecked();
             if (supportsChecked) {
@@ -1556,6 +1560,8 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
         .setNodeId(pushNodePathToFrontend(node));
 
     if (exists) {
+        if (activeDescendantNode)
+            value->setActiveDescendantNodeId(pushNodePathToFrontend(activeDescendantNode));
         if (supportsChecked)
             value->setChecked(checked);
         if (childNodeIds)
@@ -1580,7 +1586,7 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             value->setHidden(hidden);
         if (ownedNodeIds)
             value->setOwnedNodeIds(ownedNodeIds);
-        if (parentNode && parentNode != node)
+        if (parentNode)
             value->setParentNodeId(pushNodePathToFrontend(parentNode));
         if (supportsPressed)
             value->setPressed(pressed);
