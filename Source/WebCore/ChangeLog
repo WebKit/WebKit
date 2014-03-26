@@ -1,3 +1,18 @@
+2014-03-26  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: crash when inspecting "bar" text node in getAccessibilityPropertiesForNode layout test
+        https://bugs.webkit.org/show_bug.cgi?id=130290
+
+        Reviewed by Timothy Hatcher.
+
+        Test: inspector-protocol/dom/getAccessibilityPropertiesForNode.html
+
+        Fixing regression from r165590. http://webkit.org/b/129779
+        Verify isElementNode to avoid calling toElement on document or text nodes.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+
 2014-03-25  Sergio Villar Senin  <svillar@igalia.com>
 
         Replace DEPRECATED_DEFINE_STATIC_LOCAL by static NeverDestroyed<T> in editing/

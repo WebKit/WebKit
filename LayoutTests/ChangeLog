@@ -1,3 +1,15 @@
+2014-03-26  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: crash when inspecting "bar" text node in getAccessibilityPropertiesForNode layout test
+        https://bugs.webkit.org/show_bug.cgi?id=130290
+
+        Reviewed by Timothy Hatcher.
+
+        Updating test to include properties for document node.
+
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode.html:
+
 2014-03-26  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Prevent issues with checkLayout() in grid items

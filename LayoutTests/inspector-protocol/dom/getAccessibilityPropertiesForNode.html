@@ -113,28 +113,35 @@ function cleanup() {
 function test() {
 
     var examples = [];
+    var documentNodeId = null;
+
+    function onGotDocument(response) {
+        InspectorTest.checkForError(response);
+        documentNodeId = response.result.root.nodeId;
+        InspectorTest.sendCommand("DOM.getAccessibilityPropertiesForNode", {"nodeId": documentNodeId}, onGotAccessibilityPropertiesForDocumentNode);
+    }
+
+    function onGotAccessibilityPropertiesForDocumentNode(response) {
+        InspectorTest.checkForError(response);
+        InspectorTest.log("#document");
+        logAccessibilityProperties(response.result.properties);
+        InspectorTest.log("\n");
+        InspectorTest.sendCommand("DOM.querySelectorAll", {"nodeId": documentNodeId, "selector": ".ex"}, onGotQuerySelectorAll);
+    }
+
+    function onGotQuerySelectorAll(response) {
+        InspectorTest.checkForError(response);
+        examples = response.result.nodeIds;
+        InspectorTest.log("Total elements to be tested: " + examples.length + ".");
+        loop();
+    }
 
     function loop() {
         if (examples.length) {
             InspectorTest.sendCommand("DOM.getOuterHTML", {"nodeId": examples[examples.length-1]}, onGotOuterHTML);
         } else {
-            InspectorTest.log("\n");
-            InspectorTest.sendCommand("Runtime.evaluate", {"expression": "cleanup()"}, function(){
-                InspectorTest.completeTest();
-            });
+            finishTest();
         }
-    };
-
-    function onGotDocument(response) {
-        InspectorTest.checkForError(response);
-        InspectorTest.sendCommand("DOM.querySelectorAll", {"nodeId": response.result.root.nodeId, "selector": ".ex"}, onQuerySelectorAll);
-    }
-
-    function onQuerySelectorAll(response) {
-        InspectorTest.checkForError(response);
-        examples = response.result.nodeIds;
-        InspectorTest.log("Total elements to be tested: " + examples.length + ".");
-        loop();
     }
 
     function onGotOuterHTML(response) {
@@ -143,13 +150,19 @@ function test() {
         outerHTML = outerHTML.replace(/ class="ex"/g, ""); // remove any duplicated, unnecessary class attributes
         outerHTML = outerHTML.replace(/;base64,.*?"/, "...\""); // suppress full data URIs in output
         InspectorTest.log("\n" + outerHTML);
-        InspectorTest.sendCommand("DOM.getAccessibilityPropertiesForNode", {"nodeId": examples[examples.length-1]}, onGotAXProps);
+        InspectorTest.sendCommand("DOM.getAccessibilityPropertiesForNode", {"nodeId": examples[examples.length-1]}, onGotAccessibilityProperties);
     }
 
-    function onGotAXProps(response) {
+    function onGotAccessibilityProperties(response) {
         InspectorTest.checkForError(response);
-        for (var key in response.result.properties) {
-            var value = response.result.properties[key];
+        logAccessibilityProperties(response.result.properties);
+        examples.pop();
+        loop();
+    }
+
+    function logAccessibilityProperties(properties) {
+        for (var key in properties) {
+            var value = properties[key];
             switch (key){
             case "nodeId":
                 continue;
@@ -169,9 +182,15 @@ function test() {
                 InspectorTest.log("    " + key + ": " + value);
             }
         }
-        examples.pop();
-        loop();
     }
+
+    function finishTest() {
+        InspectorTest.sendCommand("Runtime.evaluate", {"expression": "cleanup()"}, function(){
+            InspectorTest.completeTest();
+        });
+    }
+
+
 
     InspectorTest.sendCommand("DOM.getDocument", {}, onGotDocument);
 

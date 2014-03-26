@@ -1504,9 +1504,11 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
                 }
             }
             
-            supportsFocused = toElement(node)->isFocusable();
-            if (supportsFocused)
-                focused = axObject->isFocused();
+            if (node->isElementNode()) {
+                supportsFocused = toElement(node)->isFocusable();
+                if (supportsFocused)
+                    focused = axObject->isFocused();
+            }
 
             ignored = axObject->accessibilityIsIgnored();
             ignoredByDefault = axObject->accessibilityIsIgnoredByDefault();

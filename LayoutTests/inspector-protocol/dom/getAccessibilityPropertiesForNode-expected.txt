@@ -1,5 +1,12 @@
 Checking Web Inspector protocol for the Accessibility Node Inspector.
 
+#document
+    exists: true
+    label: 
+    role: 
+    childNodeIds.length: 19
+
+
 Total elements to be tested: 57.
 
 <li role="treeitem" aria-expanded="undefined">expanded</li>
@@ -445,6 +452,4 @@ Total elements to be tested: 57.
     exists: false
     label: 
     role: 
-
-
 
