@@ -1,3 +1,63 @@
+2014-03-26  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Remove no-longer-used shape-inside geometry code
+        https://bugs.webkit.org/show_bug.cgi?id=130740
+
+        Reviewed by David Hyatt.
+
+        This patch removes shape-padding support, since it can be used only with shape-inside.
+        Shape-inside support has been removed in r166301.
+
+        No new tests needed, existing tests have been removed by r166301.
+
+        * rendering/shapes/BoxShape.cpp:
+        (WebCore::BoxShape::shapePaddingLogicalBoundingBox): Deleted.
+        (WebCore::BoxShape::shapePaddingBounds): Deleted.
+        (WebCore::BoxShape::getIncludedIntervals): Deleted.
+        (WebCore::BoxShape::firstIncludedIntervalLogicalTop): Deleted.
+        * rendering/shapes/BoxShape.h:
+        * rendering/shapes/PolygonShape.cpp:
+        (WebCore::leftSide): Deleted.
+        (WebCore::isReflexVertex): Deleted.
+        (WebCore::computeShapePaddingBounds): Deleted.
+        (WebCore::PolygonShape::shapePaddingBounds): Deleted.
+        (WebCore::PolygonShape::getIncludedIntervals): Deleted.
+        (WebCore::firstFitRectInPolygon): Deleted.
+        (WebCore::aboveOrToTheLeft): Deleted.
+        (WebCore::PolygonShape::firstIncludedIntervalLogicalTop): Deleted.
+        * rendering/shapes/PolygonShape.h:
+        (WebCore::PolygonShape::PolygonShape):
+        * rendering/shapes/RasterShape.cpp:
+        (WebCore::RasterShapeIntervals::firstIncludedIntervalY): Deleted.
+        (WebCore::RasterShapeIntervals::getIncludedIntervals): Deleted.
+        (WebCore::RasterShape::paddingIntervals): Deleted.
+        (WebCore::RasterShape::getIncludedIntervals): Deleted.
+        (WebCore::RasterShape::firstIncludedIntervalLogicalTop): Deleted.
+        * rendering/shapes/RasterShape.h:
+        * rendering/shapes/RectangleShape.cpp:
+        (WebCore::ellipseYIntercept): Deleted.
+        (WebCore::RectangleShape::shapePaddingBounds): Deleted.
+        (WebCore::RectangleShape::getIncludedIntervals): Deleted.
+        (WebCore::cornerInterceptForWidth): Deleted.
+        (WebCore::RectangleShape::firstIncludedIntervalLogicalTop): Deleted.
+        * rendering/shapes/RectangleShape.h:
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createShape):
+        (WebCore::Shape::createRasterShape):
+        (WebCore::Shape::createBoxShape):
+        * rendering/shapes/Shape.h:
+        (WebCore::Shape::lineOverlapsShapePaddingBounds): Deleted.
+        (WebCore::Shape::shapePadding): Deleted.
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::ShapeInfo<RenderType>::computedShape):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2014-03-26  Jeremy Jones  <jeremyj@apple.com>
 
         Implement hasLiveStreamingContent property in WebAVPlayerController

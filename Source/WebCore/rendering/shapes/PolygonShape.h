@@ -85,26 +85,20 @@ public:
     PolygonShape(PassOwnPtr<Vector<FloatPoint>> vertices, WindRule fillRule)
         : m_polygon(vertices, fillRule)
         , m_marginBounds(nullptr)
-        , m_paddingBounds(nullptr)
     {
     }
 
     virtual LayoutRect shapeMarginLogicalBoundingBox() const override { return static_cast<LayoutRect>(shapeMarginBounds().boundingBox()); }
-    virtual LayoutRect shapePaddingLogicalBoundingBox() const override { return static_cast<LayoutRect>(shapePaddingBounds().boundingBox()); }
     virtual bool isEmpty() const override { return m_polygon.isEmpty(); }
     virtual void getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const override;
-    virtual void getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const override;
-    virtual bool firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, LayoutUnit&) const override;
 
     virtual void buildDisplayPaths(DisplayPaths&) const override;
 
 private:
     const FloatPolygon& shapeMarginBounds() const;
-    const FloatPolygon& shapePaddingBounds() const;
 
     FloatPolygon m_polygon;
     mutable OwnPtr<FloatPolygon> m_marginBounds;
-    mutable OwnPtr<FloatPolygon> m_paddingBounds;
 };
 
 } // namespace WebCore

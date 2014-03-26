@@ -48,16 +48,6 @@ struct EdgeIntersection {
     EdgeIntersectionType type;
 };
 
-static inline float leftSide(const FloatPoint& vertex1, const FloatPoint& vertex2, const FloatPoint& point)
-{
-    return ((point.x() - vertex1.x()) * (vertex2.y() - vertex1.y())) - ((vertex2.x() - vertex1.x()) * (point.y() - vertex1.y()));
-}
-
-static inline bool isReflexVertex(const FloatPoint& prevVertex, const FloatPoint& vertex, const FloatPoint& nextVertex)
-{
-    return leftSide(prevVertex, nextVertex, vertex) < 0;
-}
-
 static bool computeXIntersection(const FloatPolygonEdge* edgePointer, float y, EdgeIntersection& result)
 {
     const FloatPolygonEdge& edge = *edgePointer;
@@ -136,27 +126,6 @@ static inline void snapVerticesToLayoutUnitGrid(Vector<FloatPoint>& vertices)
         vertices[i].set(LayoutUnit(vertices[i].x()).toFloat(), LayoutUnit(vertices[i].y()).toFloat());
 }
 
-static inline PassOwnPtr<FloatPolygon> computeShapePaddingBounds(const FloatPolygon& polygon, float padding, WindRule fillRule)
-{
-    OwnPtr<Vector<FloatPoint>> paddedVertices = adoptPtr(new Vector<FloatPoint>());
-    FloatPoint intersection;
-
-    for (unsigned i = 0; i < polygon.numberOfEdges(); ++i) {
-        const FloatPolygonEdge& thisEdge = polygon.edgeAt(i);
-        const FloatPolygonEdge& prevEdge = thisEdge.previousEdge();
-        OffsetPolygonEdge thisOffsetEdge(thisEdge, inwardEdgeNormal(thisEdge) * padding);
-        OffsetPolygonEdge prevOffsetEdge(prevEdge, inwardEdgeNormal(prevEdge) * padding);
-
-        if (prevOffsetEdge.intersection(thisOffsetEdge, intersection))
-            paddedVertices->append(intersection);
-        else if (isReflexVertex(prevEdge.vertex1(), thisEdge.vertex1(), thisEdge.vertex2()))
-            appendArc(*paddedVertices, thisEdge.vertex1(), padding, prevOffsetEdge.vertex2(), thisOffsetEdge.vertex1(), true);
-    }
-
-    snapVerticesToLayoutUnitGrid(*paddedVertices);
-    return adoptPtr(new FloatPolygon(paddedVertices.release(), fillRule));
-}
-
 static inline PassOwnPtr<FloatPolygon> computeShapeMarginBounds(const FloatPolygon& polygon, float margin, WindRule fillRule)
 {
     OwnPtr<Vector<FloatPoint>> marginVertices = adoptPtr(new Vector<FloatPoint>());
@@ -178,17 +147,6 @@ static inline PassOwnPtr<FloatPolygon> computeShapeMarginBounds(const FloatPolyg
     return adoptPtr(new FloatPolygon(marginVertices.release(), fillRule));
 }
 
-const FloatPolygon& PolygonShape::shapePaddingBounds() const
-{
-    ASSERT(shapePadding() >= 0);
-    if (!shapePadding() || m_polygon.isEmpty())
-        return m_polygon;
-
-    if (!m_paddingBounds)
-        m_paddingBounds = computeShapePaddingBounds(m_polygon, shapePadding(), m_polygon.fillRule());
-
-    return *m_paddingBounds;
-}
 
 const FloatPolygon& PolygonShape::shapeMarginBounds() const
 {
@@ -385,142 +343,6 @@ void PolygonShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logica
         FloatShapeInterval interval = excludedIntervals[i];
         result.append(LineSegment(interval.x1(), interval.x2()));
     }
-}
-
-void PolygonShape::getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
-{
-    const FloatPolygon& polygon = shapePaddingBounds();
-    if (polygon.isEmpty())
-        return;
-
-    float y1 = logicalTop;
-    float y2 = logicalTop + logicalHeight;
-
-    FloatShapeIntervals y1XIntervals, y2XIntervals;
-    computeXIntersections(polygon, y1, true, y1XIntervals);
-    computeXIntersections(polygon, y2, false, y2XIntervals);
-
-    FloatShapeIntervals commonIntervals;
-    FloatShapeInterval::intersectShapeIntervals(y1XIntervals, y2XIntervals, commonIntervals);
-
-    FloatShapeIntervals edgeIntervals;
-    computeOverlappingEdgeXProjections(polygon, y1, y2, edgeIntervals);
-
-    FloatShapeIntervals includedIntervals;
-    FloatShapeInterval::subtractShapeIntervals(commonIntervals, edgeIntervals, includedIntervals);
-
-    for (unsigned i = 0; i < includedIntervals.size(); ++i) {
-        const FloatShapeInterval& interval = includedIntervals[i];
-        result.append(LineSegment(interval.x1(), interval.x2()));
-    }
-}
-
-static inline bool firstFitRectInPolygon(const FloatPolygon& polygon, const FloatRect& rect, unsigned offsetEdgeIndex1, unsigned offsetEdgeIndex2)
-{
-    Vector<const FloatPolygonEdge*> edges;
-    if (!polygon.overlappingEdges(rect.y(), rect.maxY(), edges))
-        return true;
-
-    for (unsigned i = 0; i < edges.size(); ++i) {
-        const FloatPolygonEdge* edge = edges[i];
-        if (edge->edgeIndex() != offsetEdgeIndex1 && edge->edgeIndex() != offsetEdgeIndex2 && edge->overlapsRect(rect))
-            return false;
-    }
-
-    return true;
-}
-
-static inline bool aboveOrToTheLeft(const FloatRect& r1, const FloatRect& r2)
-{
-    if (r1.y() < r2.y())
-        return true;
-    if (r1.y() == r2.y())
-        return r1.x() < r2.x();
-    return false;
-}
-
-bool PolygonShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, LayoutUnit& result) const
-{
-    float minIntervalTop = minLogicalIntervalTop;
-    float minIntervalHeight = minLogicalIntervalSize.height();
-    float minIntervalWidth = minLogicalIntervalSize.width();
-
-    const FloatPolygon& polygon = shapePaddingBounds();
-    const FloatRect boundingBox = polygon.boundingBox();
-    if (minIntervalWidth > boundingBox.width())
-        return false;
-
-    float minY = std::max(boundingBox.y(), minIntervalTop);
-    float maxY = minY + minIntervalHeight;
-
-    if (maxY > boundingBox.maxY())
-        return false;
-
-    Vector<const FloatPolygonEdge*> edges;
-    polygon.overlappingEdges(minIntervalTop, boundingBox.maxY(), edges);
-
-    float dx = minIntervalWidth / 2;
-    float dy = minIntervalHeight / 2;
-    Vector<OffsetPolygonEdge> offsetEdges;
-
-    for (unsigned i = 0; i < edges.size(); ++i) {
-        const FloatPolygonEdge& edge = *(edges[i]);
-        const FloatPoint& vertex0 = edge.previousEdge().vertex1();
-        const FloatPoint& vertex1 = edge.vertex1();
-        const FloatPoint& vertex2 = edge.vertex2();
-        Vector<OffsetPolygonEdge> offsetEdgeBuffer;
-
-        if (vertex2.y() > vertex1.y() ? vertex2.x() >= vertex1.x() : vertex1.x() >= vertex2.x()) {
-            offsetEdgeBuffer.append(OffsetPolygonEdge(edge, FloatSize(dx, -dy)));
-            offsetEdgeBuffer.append(OffsetPolygonEdge(edge, FloatSize(-dx, dy)));
-        } else {
-            offsetEdgeBuffer.append(OffsetPolygonEdge(edge, FloatSize(dx, dy)));
-            offsetEdgeBuffer.append(OffsetPolygonEdge(edge, FloatSize(-dx, -dy)));
-        }
-
-        if (isReflexVertex(vertex0, vertex1, vertex2)) {
-            if (vertex2.x() <= vertex1.x() && vertex0.x() <= vertex1.x())
-                offsetEdgeBuffer.append(OffsetPolygonEdge(vertex1, FloatSize(dx, -dy), FloatSize(dx, dy)));
-            else if (vertex2.x() >= vertex1.x() && vertex0.x() >= vertex1.x())
-                offsetEdgeBuffer.append(OffsetPolygonEdge(vertex1, FloatSize(-dx, -dy), FloatSize(-dx, dy)));
-            if (vertex2.y() <= vertex1.y() && vertex0.y() <= vertex1.y())
-                offsetEdgeBuffer.append(OffsetPolygonEdge(vertex1, FloatSize(-dx, dy), FloatSize(dx, dy)));
-            else if (vertex2.y() >= vertex1.y() && vertex0.y() >= vertex1.y())
-                offsetEdgeBuffer.append(OffsetPolygonEdge(vertex1, FloatSize(-dx, -dy), FloatSize(dx, -dy)));
-        }
-
-        for (unsigned j = 0; j < offsetEdgeBuffer.size(); ++j)
-            if (offsetEdgeBuffer[j].maxY() >= minY)
-                offsetEdges.append(offsetEdgeBuffer[j]);
-    }
-
-    offsetEdges.append(OffsetPolygonEdge(polygon, minIntervalTop, FloatSize(0, dy)));
-
-    FloatPoint offsetEdgesIntersection;
-    FloatRect firstFitRect;
-    bool firstFitFound = false;
-
-    for (unsigned i = 0; i < offsetEdges.size() - 1; ++i) {
-        for (unsigned j = i + 1; j < offsetEdges.size(); ++j) {
-            if (offsetEdges[i].intersection(offsetEdges[j], offsetEdgesIntersection)) {
-                FloatPoint potentialFirstFitLocation(offsetEdgesIntersection.x() - dx, offsetEdgesIntersection.y() - dy);
-                FloatRect potentialFirstFitRect(potentialFirstFitLocation, minLogicalIntervalSize);
-                if ((offsetEdges[i].basis() == OffsetPolygonEdge::LineTop
-                    || offsetEdges[j].basis() == OffsetPolygonEdge::LineTop
-                    || potentialFirstFitLocation.y() >= minIntervalTop)
-                    && (!firstFitFound || aboveOrToTheLeft(potentialFirstFitRect, firstFitRect))
-                    && polygon.contains(offsetEdgesIntersection)
-                    && firstFitRectInPolygon(polygon, potentialFirstFitRect, offsetEdges[i].edgeIndex(), offsetEdges[j].edgeIndex())) {
-                    firstFitFound = true;
-                    firstFitRect = potentialFirstFitRect;
-                }
-            }
-        }
-    }
-
-    if (firstFitFound)
-        result = ceiledLayoutUnit(firstFitRect.y());
-    return firstFitFound;
 }
 
 static void addPolygon(Path& path, const FloatPolygon& polygon)

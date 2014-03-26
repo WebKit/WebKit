@@ -58,7 +58,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
 #if ENABLE(CSS_SHAPES)
     , m_shapeOutside(RenderStyle::initialShapeOutside())
     , m_shapeMargin(RenderStyle::initialShapeMargin())
-    , m_shapePadding(RenderStyle::initialShapePadding())
     , m_shapeImageThreshold(RenderStyle::initialShapeImageThreshold())
 #endif
     , m_clipPath(RenderStyle::initialClipPath())
@@ -131,7 +130,6 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
 #if ENABLE(CSS_SHAPES)
     , m_shapeOutside(o.m_shapeOutside)
     , m_shapeMargin(o.m_shapeMargin)
-    , m_shapePadding(o.m_shapePadding)
     , m_shapeImageThreshold(o.m_shapeImageThreshold)
 #endif
     , m_clipPath(o.m_clipPath)
@@ -222,7 +220,6 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
 #if ENABLE(CSS_SHAPES)
         && m_shapeOutside == o.m_shapeOutside
         && m_shapeMargin == o.m_shapeMargin
-        && m_shapePadding == o.m_shapePadding
         && m_shapeImageThreshold == o.m_shapeImageThreshold
 #endif
         && m_clipPath == o.m_clipPath

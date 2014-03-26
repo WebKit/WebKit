@@ -1509,10 +1509,6 @@ public:
 
     static ShapeValue* initialShapeOutside() { return 0; }
 
-    const Length& shapePadding() const { return rareNonInheritedData->m_shapePadding; }
-    void setShapePadding(Length shapePadding) { SET_VAR(rareNonInheritedData, m_shapePadding, std::move(shapePadding)); }
-    static Length initialShapePadding() { return Length(0, Fixed); }
-
     const Length& shapeMargin() const { return rareNonInheritedData->m_shapeMargin; }
     void setShapeMargin(Length shapeMargin) { SET_VAR(rareNonInheritedData, m_shapeMargin, std::move(shapeMargin)); }
     static Length initialShapeMargin() { return Length(0, Fixed); }

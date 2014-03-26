@@ -414,8 +414,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
             return true;
 
 #if ENABLE(CSS_SHAPES)
-        if (rareNonInheritedData->m_shapeMargin != other->rareNonInheritedData->m_shapeMargin
-            || rareNonInheritedData->m_shapePadding != other->rareNonInheritedData->m_shapePadding)
+        if (rareNonInheritedData->m_shapeMargin != other->rareNonInheritedData->m_shapeMargin)
             return true;
 #endif
 

@@ -67,26 +67,22 @@ public:
         Path marginShape;
     };
 
-    static PassOwnPtr<Shape> createShape(const BasicShape*, const LayoutSize& logicalBoxSize, WritingMode, Length margin, Length padding);
-    static PassOwnPtr<Shape> createRasterShape(Image*, float threshold, const LayoutRect& imageRect, const LayoutRect& marginRect, WritingMode, Length margin, Length padding);
-    static PassOwnPtr<Shape> createBoxShape(const RoundedRect&, WritingMode, Length margin, Length padding);
+    static PassOwnPtr<Shape> createShape(const BasicShape*, const LayoutSize& logicalBoxSize, WritingMode, Length margin);
+    static PassOwnPtr<Shape> createRasterShape(Image*, float threshold, const LayoutRect& imageRect, const LayoutRect& marginRect, WritingMode, Length margin);
+    static PassOwnPtr<Shape> createBoxShape(const RoundedRect&, WritingMode, Length margin);
 
     virtual ~Shape() { }
 
     virtual LayoutRect shapeMarginLogicalBoundingBox() const = 0;
-    virtual LayoutRect shapePaddingLogicalBoundingBox() const = 0;
     virtual bool isEmpty() const = 0;
-    virtual void getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const = 0;
     virtual void getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const = 0;
-    virtual bool firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, LayoutUnit& result) const = 0;
+
     bool lineOverlapsShapeMarginBounds(LayoutUnit lineTop, LayoutUnit lineHeight) const { return lineOverlapsBoundingBox(lineTop, lineHeight, shapeMarginLogicalBoundingBox()); }
-    bool lineOverlapsShapePaddingBounds(LayoutUnit lineTop, LayoutUnit lineHeight) const { return lineOverlapsBoundingBox(lineTop, lineHeight, shapePaddingLogicalBoundingBox()); }
 
     virtual void buildDisplayPaths(DisplayPaths&) const = 0;
 
 protected:
     float shapeMargin() const { return m_margin; }
-    float shapePadding() const { return m_padding; }
 
 private:
     bool lineOverlapsBoundingBox(LayoutUnit lineTop, LayoutUnit lineHeight, const LayoutRect& rect) const
@@ -98,7 +94,6 @@ private:
 
     WritingMode m_writingMode;
     float m_margin;
-    float m_padding;
 };
 
 } // namespace WebCore

@@ -42,14 +42,6 @@ LayoutRect BoxShape::shapeMarginLogicalBoundingBox() const
     return static_cast<LayoutRect>(marginBounds);
 }
 
-LayoutRect BoxShape::shapePaddingLogicalBoundingBox() const
-{
-    FloatRect paddingBounds(m_bounds.rect());
-    if (shapePadding() > 0)
-        paddingBounds.inflate(-shapePadding());
-    return static_cast<LayoutRect>(paddingBounds);
-}
-
 FloatRoundedRect BoxShape::shapeMarginBounds() const
 {
     FloatRoundedRect marginBounds(m_bounds);
@@ -58,16 +50,6 @@ FloatRoundedRect BoxShape::shapeMarginBounds() const
         marginBounds.expandRadii(shapeMargin());
     }
     return marginBounds;
-}
-
-FloatRoundedRect BoxShape::shapePaddingBounds() const
-{
-    FloatRoundedRect paddingBounds(m_bounds);
-    if (shapePadding() > 0) {
-        paddingBounds.inflate(-shapePadding());
-        paddingBounds.expandRadii(-shapePadding());
-    }
-    return paddingBounds;
 }
 
 void BoxShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
@@ -110,50 +92,6 @@ void BoxShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHei
 
     ASSERT(x2 >= x1);
     result.append(LineSegment(x1, x2));
-}
-
-void BoxShape::getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
-{
-    const FloatRoundedRect& paddingBounds = shapePaddingBounds();
-    if (paddingBounds.isEmpty())
-        return;
-
-    const FloatRect& rect = paddingBounds.rect();
-    float y1 = logicalTop;
-    float y2 = logicalTop + logicalHeight;
-
-    if (y1 < rect.y() || y2 > rect.maxY())
-        return;
-
-    if (!paddingBounds.isRounded()) {
-        result.append(LineSegment(rect.x(), rect.maxX()));
-        return;
-    }
-
-    float x1 = rect.x();
-    float x2 = rect.maxX();
-    float minXIntercept;
-    float maxXIntercept;
-
-    if (paddingBounds.xInterceptsAtY(y1, minXIntercept, maxXIntercept)) {
-        x1 = std::max<float>(x1, minXIntercept);
-        x2 = std::min<float>(x2, maxXIntercept);
-    }
-
-    if (paddingBounds.xInterceptsAtY(y2, minXIntercept, maxXIntercept)) {
-        x1 = std::max<float>(x1, minXIntercept);
-        x2 = std::min<float>(x2, maxXIntercept);
-    }
-
-    result.append(LineSegment(x1, x2));
-}
-
-bool BoxShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const FloatSize&, LayoutUnit& result) const
-{
-    // FIXME: this method is only a stub, https://bugs.webkit.org/show_bug.cgi?id=124606.
-
-    result = minLogicalIntervalTop;
-    return true;
 }
 
 void BoxShape::buildDisplayPaths(DisplayPaths& paths) const

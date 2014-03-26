@@ -94,7 +94,7 @@ static inline FloatSize physicalSizeToLogical(const FloatSize& size, WritingMode
     return size.transposedSize();
 }
 
-PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutSize& logicalBoxSize, WritingMode writingMode, Length margin, Length padding)
+PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutSize& logicalBoxSize, WritingMode writingMode, Length margin)
 {
     ASSERT(basicShape);
 
@@ -174,12 +174,11 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
 
     shape->m_writingMode = writingMode;
     shape->m_margin = floatValueForLength(margin, 0);
-    shape->m_padding = floatValueForLength(padding, 0);
 
     return shape.release();
 }
 
-PassOwnPtr<Shape> Shape::createRasterShape(Image* image, float threshold, const LayoutRect& imageR, const LayoutRect& marginR, WritingMode writingMode, Length margin, Length padding)
+PassOwnPtr<Shape> Shape::createRasterShape(Image* image, float threshold, const LayoutRect& imageR, const LayoutRect& marginR, WritingMode writingMode, Length margin)
 {
     IntRect imageRect = pixelSnappedIntRect(imageR);
     IntRect marginRect = pixelSnappedIntRect(marginR);
@@ -218,11 +217,10 @@ PassOwnPtr<Shape> Shape::createRasterShape(Image* image, float threshold, const 
     OwnPtr<RasterShape> rasterShape = adoptPtr(new RasterShape(intervals.release(), marginRect.size()));
     rasterShape->m_writingMode = writingMode;
     rasterShape->m_margin = floatValueForLength(margin, 0);
-    rasterShape->m_padding = floatValueForLength(padding, 0);
     return rasterShape.release();
 }
 
-PassOwnPtr<Shape> Shape::createBoxShape(const RoundedRect& roundedRect, WritingMode writingMode, Length margin, Length padding)
+PassOwnPtr<Shape> Shape::createBoxShape(const RoundedRect& roundedRect, WritingMode writingMode, Length margin)
 {
     ASSERT(roundedRect.rect().width() >= 0 && roundedRect.rect().height() >= 0);
 
@@ -231,7 +229,6 @@ PassOwnPtr<Shape> Shape::createBoxShape(const RoundedRect& roundedRect, WritingM
     OwnPtr<Shape> shape = adoptPtr(new BoxShape(bounds));
     shape->m_writingMode = writingMode;
     shape->m_margin = floatValueForLength(margin, 0);
-    shape->m_padding = floatValueForLength(padding, 0);
 
     return shape.release();
 }

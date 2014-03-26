@@ -145,58 +145,6 @@ bool RasterShapeIntervals::getIntervalX1Values(int y1, int y2, int minIntervalWi
     return true;
 }
 
-bool RasterShapeIntervals::firstIncludedIntervalY(int minY, const IntSize& minSize, LayoutUnit& result) const
-{
-    minY = std::max<int>(bounds().y(), minY);
-
-    ASSERT(minY >= 0 && minY < size());
-
-    if (minSize.isEmpty() || minSize.width() > bounds().width())
-        return false;
-
-    for (int lineY = minY; lineY <= bounds().maxY() - minSize.height(); lineY++) {
-        Vector<int> intervalX1Values;
-        if (!getIntervalX1Values(lineY, lineY + minSize.height(), minSize.width(), intervalX1Values))
-            continue;
-
-        std::sort(intervalX1Values.begin(), intervalX1Values.end());
-
-        IntRect firstFitRect(IntPoint(0, 0), minSize);
-        for (unsigned i = 0; i < intervalX1Values.size(); i++) {
-            int lineX = intervalX1Values[i];
-            if (i > 0 && lineX == intervalX1Values[i - 1])
-                continue;
-            firstFitRect.setLocation(IntPoint(lineX, lineY));
-            if (contains(firstFitRect)) {
-                result = lineY;
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-void RasterShapeIntervals::getIncludedIntervals(int y1, int y2, IntShapeIntervals& result) const
-{
-    ASSERT(y2 >= y1);
-
-    if (y1 < bounds().y() || y2 > bounds().maxY())
-        return;
-
-    for (int y = y1; y < y2;  y++) {
-        if (intervalsAt(y).isEmpty())
-            return;
-    }
-
-    result = intervalsAt(y1);
-    for (int y = y1 + 1; y < y2 && !result.isEmpty();  y++) {
-        IntShapeIntervals intervals;
-        IntShapeInterval::intersectShapeIntervals(result, intervalsAt(y), intervals);
-        result.swap(intervals);
-    }
-}
-
 void RasterShapeIntervals::getExcludedIntervals(int y1, int y2, IntShapeIntervals& result) const
 {
     ASSERT(y2 >= y1);
@@ -279,16 +227,6 @@ const RasterShapeIntervals& RasterShape::marginIntervals() const
     return *m_marginIntervals;
 }
 
-const RasterShapeIntervals& RasterShape::paddingIntervals() const
-{
-    ASSERT(shapePadding() >= 0);
-    if (!shapePadding())
-        return *m_intervals;
-
-    // FIXME: Add support for non-zero padding, see https://bugs.webkit.org/show_bug.cgi?id=116348.
-    return *m_intervals;
-}
-
 static inline void appendLineSegments(const IntShapeIntervals& intervals, SegmentList& result)
 {
     for (unsigned i = 0; i < intervals.size(); i++)
@@ -304,26 +242,6 @@ void RasterShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logical
     IntShapeIntervals excludedIntervals;
     intervals.getExcludedIntervals(logicalTop, logicalTop + logicalHeight, excludedIntervals);
     appendLineSegments(excludedIntervals, result);
-}
-
-void RasterShape::getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
-{
-    const RasterShapeIntervals& intervals = paddingIntervals();
-    if (intervals.isEmpty())
-        return;
-
-    IntShapeIntervals includedIntervals;
-    intervals.getIncludedIntervals(logicalTop, logicalTop + logicalHeight, includedIntervals);
-    appendLineSegments(includedIntervals, result);
-}
-
-bool RasterShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, LayoutUnit& result) const
-{
-    const RasterShapeIntervals& intervals = paddingIntervals();
-    if (intervals.isEmpty())
-        return false;
-
-    return intervals.firstIncludedIntervalY(minLogicalIntervalTop.floor(), flooredIntSize(minLogicalIntervalSize), result);
 }
 
 } // namespace WebCore
