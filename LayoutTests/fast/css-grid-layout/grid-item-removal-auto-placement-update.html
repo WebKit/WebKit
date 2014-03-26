@@ -29,13 +29,13 @@ function testRemoval(gridElementID, autoFlowElementID, size)
 
 function testRemovals()
 {
-    checkLayout("#autoFlowColumnElement");
+    checkLayout("#gridAutoFlowColumn");
     testRemoval("gridAutoFlowColumn", "autoFlowColumnElement", { 'width': '100', 'height': '100' });
     testRemoval("gridAutoFlowColumn", "autoFlowColumnElement", { 'width': '100', 'height': '50' });
     testRemoval("gridAutoFlowColumn", "autoFlowColumnElement", { 'width': '50', 'height': '100' });
     testRemoval("gridAutoFlowColumn", "autoFlowColumnElement", { 'width': '50', 'height': '50' });
 
-    checkLayout("#autoFlowRowElement");
+    checkLayout("#gridAutoFlowRow");
     testRemoval("gridAutoFlowRow", "autoFlowRowElement", { 'width': '100', 'height': '100' });
     testRemoval("gridAutoFlowRow", "autoFlowRowElement", { 'width': '100', 'height': '50' });
     testRemoval("gridAutoFlowRow", "autoFlowRowElement", { 'width': '50', 'height': '50' });

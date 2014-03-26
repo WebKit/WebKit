@@ -1,3 +1,24 @@
+2014-03-26  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Prevent issues with checkLayout() in grid items
+        https://bugs.webkit.org/show_bug.cgi?id=130770
+
+        Reviewed by Sergio Villar Senin.
+
+        When we use checkLayout() on a grid item, the results (PASS or FAIL
+        messages) are added as new auto-placed items in the grid. Which might
+        cause some unexpected behavior in the tests.
+
+        This patch modifies the related layout tests to use a different
+        container (usually the parent node of the grid) for the test results.
+        Avoiding any kind of interference with the grid code.
+
+        * fast/css-grid-layout/grid-item-addition-auto-placement-update.html:
+          Use parent node of grid when checking grid items. Check layout of the
+          whole grid instead of grid item.
+        * fast/css-grid-layout/grid-item-removal-auto-placement-update.html:
+          Check layout of the whole grid instead of grid item.
+
 2014-03-25  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Duplicate 'seeked' events.

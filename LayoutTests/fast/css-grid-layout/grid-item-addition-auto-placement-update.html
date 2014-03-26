@@ -25,18 +25,18 @@ function testAddition(gridElementID, position, autoFlowElementID, size)
     var autoFlowElement = document.getElementById(autoFlowElementID);
     autoFlowElement.setAttribute("data-expected-width", size.width);
     autoFlowElement.setAttribute("data-expected-height", size.height);
-    checkLayout("#" + autoFlowElementID);
+    checkLayout("#" + autoFlowElementID, gridElement.parentNode);
 }
 
 function testAdditions()
 {
-    checkLayout("#autoFlowColumnElement");
+    checkLayout("#gridAutoFlowColumn");
     testAddition("gridAutoFlowColumn", { 'row': '1', 'column': '1' }, "autoFlowColumnElement", { 'width': '50', 'height': '100' });
     testAddition("gridAutoFlowColumn", { 'row': '1', 'column': '2' }, "autoFlowColumnElement", { 'width': '50', 'height': '100' });
     testAddition("gridAutoFlowColumn", { 'row': '2', 'column': '2' }, "autoFlowColumnElement", { 'width': '50', 'height': '100' });
     testAddition("gridAutoFlowColumn", { 'row': '2', 'column': '1' }, "autoFlowColumnElement", { 'width': '170', 'height': '50' });
 
-    checkLayout("#autoFlowRowElement");
+    checkLayout("#gridAutoFlowRow");
     testAddition("gridAutoFlowRow", { 'row': '1', 'column': '1' }, "autoFlowRowElement", { 'width': '100', 'height': '50' });
     testAddition("gridAutoFlowRow", { 'row': '2', 'column': '1' }, "autoFlowRowElement", { 'width': '100', 'height': '50' });
     testAddition("gridAutoFlowRow", { 'row': '2', 'column': '2' }, "autoFlowRowElement", { 'width': '100', 'height': '50' });
