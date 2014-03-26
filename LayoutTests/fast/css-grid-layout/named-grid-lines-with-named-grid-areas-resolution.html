@@ -14,14 +14,20 @@ if (window.testRunner)
                                    ". . d";
   }
 
+  .gridAreasSpecial {
+      -webkit-grid-template-areas: ". a-start a-start"
+                                   "c a-end a-end"
+                                   ". . d";
+  }
+
   .gridNoLineNames {
       -webkit-grid-template-columns: 50px 100px 200px;
       -webkit-grid-template-rows: 50px 100px 200px;
   }
 
   .gridUniqueNames {
-      -webkit-grid-template-columns: (a) 50px (b b-start) 100px (c) 200px (d);
-      -webkit-grid-template-rows: (e) 50px (f) 100px (g g-start) 200px (h);
+      -webkit-grid-template-columns: (a) 50px (b b-start) 100px (c -start) 200px (d);
+      -webkit-grid-template-rows: (e) 50px (f -end) 100px (g g-start) 200px (h);
   }
 
   .gridWithNamedLineBeforeGridArea {
@@ -192,6 +198,49 @@ if (window.testRunner)
     <div class="sizedToGridArea" style="-webkit-grid-column: d; -webkit-grid-row: c" data-offset-x="0" data-offset-y="50" data-expected-width="350" data-expected-height="100"></div>
     <div class="sizedToGridArea" style="-webkit-grid-column: d-start / d-end; -webkit-grid-row: c-start / c-end" data-offset-x="0" data-offset-y="50" data-expected-width="350" data-expected-height="100"></div>
     <div class="sizedToGridArea" style="-webkit-grid-column: c; -webkit-grid-row: d" data-offset-x="0" data-offset-y="150" data-expected-width="50" data-expected-height="200"></div>
+  </div>
+</div>
+
+<!-- Check behavior with areas named *-start or *-end -->
+<div style="position: relative">
+  <div class="grid gridAreasSpecial gridNoLineNames">
+    <div class="sizedToGridArea" style="-webkit-grid-column: a;" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50"></div>
+    <div class="sizedToGridArea" style="-webkit-grid-row: a;" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50"></div>
+    <div class="sizedToGridArea" style="-webkit-grid-column: a; -webkit-grid-row: a;" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50"></div>
+  </div>
+</div>
+
+<div style="position: relative">
+  <div class="grid gridAreasSpecial gridNoLineNames">
+    <div class="sizedToGridArea" style="-webkit-grid-column: a-start;" data-offset-x="50" data-offset-y="0" data-expected-width="300" data-expected-height="50"></div>
+    <div class="sizedToGridArea" style="-webkit-grid-row: a-end;" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100"></div>
+    <div class="sizedToGridArea" style="-webkit-grid-column: a-start; -webkit-grid-row: a-end;" data-offset-x="50" data-offset-y="50" data-expected-width="300" data-expected-height="100"></div>
+  </div>
+</div>
+
+<div style="position: relative">
+  <div class="grid gridAreasSpecial gridWithNamedLineBeforeGridArea">
+    <div class="sizedToGridArea" style="-webkit-grid-column: a-start;" data-offset-x="50" data-offset-y="0" data-expected-width="300" data-expected-height="50"></div>
+    <div class="sizedToGridArea" style="-webkit-grid-row: a-end;" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100"></div>
+    <div class="sizedToGridArea" style="-webkit-grid-column: a-start; -webkit-grid-row: a-end;" data-offset-x="50" data-offset-y="50" data-expected-width="300" data-expected-height="100"></div>
+  </div>
+</div>
+
+<div style="position: relative">
+  <div class="grid gridAreasSpecial gridWithNamedLineAfterGridArea">
+    <div class="sizedToGridArea" style="-webkit-grid-column: a-start;" data-offset-x="50" data-offset-y="0" data-expected-width="300" data-expected-height="50"></div>
+    <div class="sizedToGridArea" style="-webkit-grid-row: d;" data-offset-x="0" data-offset-y="150" data-expected-width="50" data-expected-height="200"></div>
+    <div class="sizedToGridArea" style="-webkit-grid-column: a-start; -webkit-grid-row: d;" data-offset-x="50" data-offset-y="150" data-expected-width="300" data-expected-height="200"></div>
+  </div>
+</div>
+
+<!-- Check behavior with lines named *-start or *-end -->
+<div style="position: relative">
+  <div class="grid gridAreasSpecial gridUniqueNames">
+    <div class="sizedToGridArea" style="-webkit-grid-column: -start;" data-offset-x="150" data-offset-y="0" data-expected-width="200" data-expected-height="50"></div>
+    <div class="sizedToGridArea" style="-webkit-grid-row: -end;" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="100"></div>
+    <div class="sizedToGridArea" style="-webkit-grid-column-end: -start; -webkit-grid-row-start: -end;" data-offset-x="50" data-offset-y="50" data-expected-width="100" data-expected-height="100"></div>
+
   </div>
 </div>
 

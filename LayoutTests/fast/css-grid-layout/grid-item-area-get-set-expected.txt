@@ -30,7 +30,7 @@ PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-end') is 
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-end') is "9"
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-start') is "firstArea"
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-start') is "span 1"
-PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-end') is "auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-end') is "nonexistent"
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-end') is "1 foobar"
 
 Test getting and setting grid-area set through JS

@@ -112,7 +112,7 @@ if (window.testRunner)
     testColumnRowCSSParsing("gridItemWithNegativePositiveIntegerElement", "10 / -10", "-8 / 5");
     testColumnRowCSSParsing("gridItemWithBeforeSpanElement", "span 2 / 4", "3 / span 5");
     testColumnRowCSSParsing("gridItemWithAfterSpanElement", "span 2 / 4", "3 / span 5");
-    testColumnRowCSSParsing("gridItemWith2OnlySpanElement", "auto / auto", "auto / auto");
+    testColumnRowCSSParsing("gridItemWith2OnlySpanElement", "span 1 / span 1", "span 1 / span 1");
     testColumnRowCSSParsing("gridItemWith2AutoElement", "auto / auto" , "auto / auto");
     testColumnRowCSSParsing("gridItemWithBothShortLongHandElement", "10 / 11", "4 / 5");
     testColumnRowCSSParsing("gridItemWithNoSpaceElement", "auto / 1", "5 / auto");
@@ -148,9 +148,11 @@ if (window.testRunner)
     testColumnRowJSParsing("'first' / 'last'", "'nav' / 'last' span", "1 first / 1 last", "1 nav / span 1 last");
     testColumnRowJSParsing("3 'first' / 2 'last'", "5 'nav' / 'last' 7 span", "3 first / 2 last", "5 nav / span 7 last");
     testColumnRowJSParsing("3 'first' span / -3 'last'", "'last' 2 span / -1 'nav'", "span 3 first / -3 last", "span 2 last / -1 nav");
-    testColumnRowJSParsing("5 / none", "8 / foobar", "5 / auto", "8 / auto");
-    testColumnRowJSParsing("nonExistent / none", "nonExistent / foobar", "auto / auto", "auto / auto");
-    testColumnRowJSParsing("span 'first' 3 / none", "'last' span / foobar", "span 3 first / auto", "span 1 last / auto");
+    testColumnRowJSParsing("5 / none", "8 / foobar");
+    testColumnRowJSParsing("nonExistent / none", "nonExistent / foobar");
+    testColumnRowJSParsing("span 'first' 3 / none", "'last' span / foobar", "span 3 first / none", "span 1 last / foobar");
+    testColumnRowJSParsing("5 span / span 2", "span 'first' / 'last' span", "span 5 / span 2", "span 1 first / span 1 last");
+    testColumnRowJSParsing("span 5 'first' / span 'last' 2", "3 'first' span / 'last' 7 span", "span 5 first / span 2 last", "span 3 first / span 7 last");
 
     debug("");
     debug("Test setting grid-column and grid-row back to 'auto' through JS");
@@ -217,12 +219,6 @@ if (window.testRunner)
     testColumnRowInvalidJSParsing("0 span / 0", "span 0 / 0");
     testColumnRowInvalidJSParsing("0 / span 0", "0 / 0 span");
     testColumnRowInvalidJSParsing("span -3 'first' / 3 'last'", "'last' -2 span / 1 'nav'");
-
-    // Spans for both initial / end values are not allowed.
-    testColumnRowInvalidJSParsing("5 span / span 2", "span 4 / 3 span");
-    testColumnRowInvalidJSParsing("'first' span / span 'last'", "span 4 'first' / 3 span 'last'");
-    testColumnRowInvalidJSParsing("'first' 3 span / span 'last'", "span 'first' / 2 span 'last'");
-    testColumnRowInvalidJSParsing("'first' -1 span / span 'last'", "span -2 'first' / span 'last'");
 
     // We don't allow span to be between the <integer> and the <string>.
     testColumnRowInvalidJSParsing("'first' span 1 / 'last'", "2 span 'first' / 'last'");

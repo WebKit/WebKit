@@ -37,7 +37,7 @@ if (window.testRunner)
 }
 
 #fourValueMixedGridArea {
-    -webkit-grid-area: firstArea / span / nonExistent / "foobar";
+    -webkit-grid-area: firstArea / span / nonexistent / "foobar";
 }
 </style>
 <script src="../../resources/js-test-pre.js"></script>
@@ -106,7 +106,7 @@ if (window.testRunner)
     testGridAreaCSSParsing("twoValueIdentGridArea", "firstArea", "secondArea", "firstArea", "secondArea");
     testGridAreaCSSParsing("threeValueGridArea", "span 1", "10", "-1");
     testGridAreaCSSParsing("fourValueGridArea", "-5", "span 5", "span 8", "9");
-    testGridAreaCSSParsing("fourValueMixedGridArea", "firstArea", "span 1", "auto", "1 foobar");
+    testGridAreaCSSParsing("fourValueMixedGridArea", "firstArea", "span 1", "nonexistent", "1 foobar");
 
     debug("");
     debug("Test getting and setting grid-area set through JS");

@@ -88,6 +88,12 @@ public:
         m_namedGridLine = namedGridLine;
     }
 
+    void setAutoPosition()
+    {
+        m_type = AutoPosition;
+        m_integerPosition = 0;
+    }
+
     // 'span' values cannot be negative, yet we reuse the <integer> position which can
     // be. This means that we have to convert the span position to an integer, losing
     // some precision here. It shouldn't be an issue in practice though.

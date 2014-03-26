@@ -1,3 +1,30 @@
+2014-03-26  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] getComputedStyle() must return the specified value for positioning properties
+        https://bugs.webkit.org/show_bug.cgi?id=130010
+
+        Reviewed by Darin Adler.
+
+        Updated the return value of getComputedStyle(), it must be always
+        the specified value.
+
+        Added also a new test that verifies the resolution of names in
+        grid positioning properties, both grid area names and grid line
+        names (including any combination of the two).
+
+        * fast/css-grid-layout/grid-item-area-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-area-get-set.html:
+        * fast/css-grid-layout/grid-item-column-row-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-column-row-get-set.html:
+        * fast/css-grid-layout/grid-item-end-after-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-end-after-get-set.html:
+        * fast/css-grid-layout/grid-item-spanning-resolution-expected.txt:
+        * fast/css-grid-layout/grid-item-spanning-resolution.html:
+        * fast/css-grid-layout/grid-item-start-before-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-start-before-get-set.html:
+        * fast/css-grid-layout/named-grid-lines-with-named-grid-areas-get-set-expected.txt: Added.
+        * fast/css-grid-layout/named-grid-lines-with-named-grid-areas-get-set.html: Added.
+
 2014-03-26  Darin Adler  <darin@apple.com>
 
         Update LayoutTests to depend on load events rather than on starting loads synchronously

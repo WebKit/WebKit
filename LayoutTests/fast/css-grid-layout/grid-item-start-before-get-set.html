@@ -90,8 +90,8 @@ if (window.testRunner)
     testColumnStartRowStartJSParsing("span 3", "span 20");
     testColumnStartRowStartJSParsing("auto", "auto");
     testColumnStartRowStartJSParsing("thirdArea", "secondArea");
-    testColumnStartRowStartJSParsing("nonExistentArea", "secondArea", "auto", "secondArea");
-    testColumnStartRowStartJSParsing("secondArea", "nonExistentArea", "secondArea", "auto");
+    testColumnStartRowStartJSParsing("nonExistentArea", "secondArea");
+    testColumnStartRowStartJSParsing("secondArea", "nonExistentArea");
 
     debug("");
     debug("Test setting grid-start and grid-before to 'inherit' through JS");

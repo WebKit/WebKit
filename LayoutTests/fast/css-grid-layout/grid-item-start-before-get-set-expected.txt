@@ -88,8 +88,8 @@ PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-end') 
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row') is "secondArea / auto"
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-start') is "secondArea"
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-end') is "auto"
-PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column') is "auto / auto"
-PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-start') is "auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column') is "nonExistentArea / auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-start') is "nonExistentArea"
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-end') is "auto"
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row') is "secondArea / auto"
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-start') is "secondArea"
@@ -97,8 +97,8 @@ PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-end') is 
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column') is "secondArea / auto"
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-start') is "secondArea"
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-end') is "auto"
-PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row') is "auto / auto"
-PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-start') is "auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row') is "nonExistentArea / auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-start') is "nonExistentArea"
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-end') is "auto"
 
 Test setting grid-start and grid-before to 'inherit' through JS

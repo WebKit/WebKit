@@ -1,3 +1,46 @@
+2014-03-26  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] getComputedStyle() must return the specified value for positioning properties
+        https://bugs.webkit.org/show_bug.cgi?id=130010
+
+        Reviewed by Darin Adler.
+
+        According to the specs
+        http://dev.w3.org/csswg/css-grid/#property-index and also to
+        http://lists.w3.org/Archives/Public/www-style/2014Mar/0162.html
+        the function getComputedStyle() must return the specified values
+        for positioning properties, i.e, grid-{columns|rows}-{start|end}.
+
+        We were in some cases, adjusting the style in the StyleResolver
+        (for example with two opposing spans) something that is now done
+        in the RenderGrid because we cannot alter the original style.
+
+        The code moved to the renderer became more self explanatory and it
+        now supports named grid areas with names ending in "-start" and
+        "-end".
+
+        Test: fast/css-grid-layout/named-grid-lines-with-named-grid-areas-get-set.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        (WebCore::gridLineDefinedBeforeGridArea): Deleted.
+        (WebCore::StyleResolver::adjustNamedGridItemPosition): Deleted.
+        (WebCore::StyleResolver::adjustGridItemPosition): Deleted.
+        * css/StyleResolver.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::isColumnSide):
+        (WebCore::RenderGrid::explicitGridSizeForSide):
+        (WebCore::gridLineDefinedBeforeGridArea):
+        (WebCore::setNamedLinePositionIfDefinedBeforeArea):
+        (WebCore::RenderGrid::adjustNamedGridItemPosition):
+        (WebCore::RenderGrid::adjustGridPositionsFromStyle):
+        (WebCore::RenderGrid::resolveGridPositionsFromStyle):
+        (WebCore::RenderGrid::resolveNamedGridLinePositionFromStyle):
+        (WebCore::RenderGrid::resolveNamedGridLinePositionAgainstOppositePosition):
+        * rendering/RenderGrid.h:
+        * rendering/style/GridPosition.h:
+        (WebCore::GridPosition::setAutoPosition): New helper function.
+
 2014-03-26  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the iOS build.

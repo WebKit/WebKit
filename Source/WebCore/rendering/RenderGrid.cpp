@@ -474,9 +474,14 @@ size_t RenderGrid::explicitGridRowCount() const
     return style().gridRows().size();
 }
 
+static inline bool isColumnSide(GridPositionSide side)
+{
+    return side == ColumnStartSide || side == ColumnEndSide;
+}
+
 size_t RenderGrid::explicitGridSizeForSide(GridPositionSide side) const
 {
-    return (side == ColumnStartSide || side == ColumnEndSide) ? explicitGridColumnCount() : explicitGridRowCount();
+    return isColumnSide(side) ? explicitGridColumnCount() : explicitGridRowCount();
 }
 
 LayoutUnit RenderGrid::logicalContentHeightForChild(RenderBox* child, Vector<GridTrack>& columnTracks)
@@ -864,15 +869,95 @@ GridSpan RenderGrid::resolveGridPositionsFromAutoPlacementPosition(const RenderB
     return GridSpan(initialPosition, initialPosition);
 }
 
+static inline bool gridLineDefinedBeforeGridArea(size_t namedGridLineFirstDefinition, const GridCoordinate& gridAreaCoordinates, GridPositionSide side)
+{
+    switch (side) {
+    case ColumnStartSide:
+        return namedGridLineFirstDefinition < gridAreaCoordinates.columns.initialPositionIndex;
+    case ColumnEndSide:
+        return namedGridLineFirstDefinition < gridAreaCoordinates.columns.finalPositionIndex;
+    case RowStartSide:
+        return namedGridLineFirstDefinition < gridAreaCoordinates.rows.initialPositionIndex;
+    case RowEndSide:
+        return namedGridLineFirstDefinition < gridAreaCoordinates.rows.finalPositionIndex;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+static void setNamedLinePositionIfDefinedBeforeArea(GridPosition& position, const NamedGridLinesMap& namedLinesMap, const String& lineName, const GridCoordinate& gridAreaCoordinate, GridPositionSide side)
+{
+    auto linesIterator = namedLinesMap.find(lineName);
+    if (linesIterator == namedLinesMap.end())
+        return;
+
+    size_t namedGridLineFirstDefinition = GridPosition::adjustGridPositionForSide(linesIterator->value[0], side);
+    if (gridLineDefinedBeforeGridArea(namedGridLineFirstDefinition, gridAreaCoordinate, side))
+        position.setExplicitPosition(1, lineName);
+}
+
+void RenderGrid::adjustNamedGridItemPosition(GridPosition& position, GridPositionSide side) const
+{
+    // The StyleBuilder always treats <custom-ident> as a named grid area. We must decide here if they are going to be
+    // resolved to either a grid area or a grid line.
+    ASSERT(position.isNamedGridArea());
+    const NamedGridAreaMap& gridAreaMap = style().namedGridArea();
+    const NamedGridLinesMap& namedLinesMap = isColumnSide(side) ? style().namedGridColumnLines() : style().namedGridRowLines();
+
+    String namedGridAreaOrGridLine = position.namedGridLine();
+    bool isStartSide = side == ColumnStartSide || side == RowStartSide;
+
+    auto areaIterator = gridAreaMap.find(namedGridAreaOrGridLine);
+    if (areaIterator != gridAreaMap.end()) {
+        String gridLineName = namedGridAreaOrGridLine + (isStartSide ? "-start" : "-end");
+        setNamedLinePositionIfDefinedBeforeArea(position, namedLinesMap, gridLineName, areaIterator->value, side);
+        return;
+    }
+
+    bool hasStartSuffix = namedGridAreaOrGridLine.endsWith("-start");
+    bool hasEndSuffix = namedGridAreaOrGridLine.endsWith("-end");
+    if ((hasStartSuffix && isStartSide) || (hasEndSuffix && !isStartSide)) {
+        size_t suffixLength = hasStartSuffix ? strlen("-start") : strlen("-end");
+        String gridAreaName = namedGridAreaOrGridLine.substring(0, namedGridAreaOrGridLine.length() - suffixLength);
+
+        auto areaIterator = gridAreaMap.find(gridAreaName);
+        if (areaIterator != gridAreaMap.end()) {
+            position.setNamedGridArea(gridAreaName);
+            setNamedLinePositionIfDefinedBeforeArea(position, namedLinesMap, namedGridAreaOrGridLine, areaIterator->value, side);
+            return;
+        }
+    }
+
+    if (namedLinesMap.contains(namedGridAreaOrGridLine))
+        position.setExplicitPosition(1, namedGridAreaOrGridLine);
+    else
+        position.setAutoPosition();
+}
+
+void RenderGrid::adjustGridPositionsFromStyle(GridPosition& initialPosition, GridPosition& finalPosition, GridPositionSide initialPositionSide, GridPositionSide finalPositionSide) const
+{
+    ASSERT(isColumnSide(initialPositionSide) == isColumnSide(finalPositionSide));
+
+    // We must handle the placement error handling code here instead of in the StyleAdjuster because we don't want to
+    // overwrite the specified values.
+    if (initialPosition.isSpan() && finalPosition.isSpan())
+        finalPosition.setAutoPosition();
+
+    if (initialPosition.isNamedGridArea())
+        adjustNamedGridItemPosition(initialPosition, initialPositionSide);
+
+    if (finalPosition.isNamedGridArea())
+        adjustNamedGridItemPosition(finalPosition, finalPositionSide);
+}
+
 PassOwnPtr<GridSpan> RenderGrid::resolveGridPositionsFromStyle(const RenderBox* gridItem, GridTrackSizingDirection direction) const
 {
-    const GridPosition& initialPosition = (direction == ForColumns) ? gridItem->style().gridItemColumnStart() : gridItem->style().gridItemRowStart();
+    GridPosition initialPosition = (direction == ForColumns) ? gridItem->style().gridItemColumnStart() : gridItem->style().gridItemRowStart();
     const GridPositionSide initialPositionSide = (direction == ForColumns) ? ColumnStartSide : RowStartSide;
-    const GridPosition& finalPosition = (direction == ForColumns) ? gridItem->style().gridItemColumnEnd() : gridItem->style().gridItemRowEnd();
+    GridPosition finalPosition = (direction == ForColumns) ? gridItem->style().gridItemColumnEnd() : gridItem->style().gridItemRowEnd();
     const GridPositionSide finalPositionSide = (direction == ForColumns) ? ColumnEndSide : RowEndSide;
 
-    // We should NEVER see both spans as they should have been handled during style resolve.
-    ASSERT(!initialPosition.isSpan() || !finalPosition.isSpan());
+    adjustGridPositionsFromStyle(initialPosition, finalPosition, initialPositionSide, finalPositionSide);
 
     if (initialPosition.shouldBeResolvedAgainstOppositePosition() && finalPosition.shouldBeResolvedAgainstOppositePosition()) {
         if (style().gridAutoFlow() == AutoFlowNone)
@@ -908,7 +993,7 @@ size_t RenderGrid::resolveNamedGridLinePositionFromStyle(const GridPosition& pos
 {
     ASSERT(!position.namedGridLine().isNull());
 
-    const NamedGridLinesMap& gridLinesNames = (side == ColumnStartSide || side == ColumnEndSide) ? style().namedGridColumnLines() : style().namedGridRowLines();
+    const NamedGridLinesMap& gridLinesNames = isColumnSide(side) ? style().namedGridColumnLines() : style().namedGridRowLines();
     NamedGridLinesMap::const_iterator it = gridLinesNames.find(position.namedGridLine());
     if (it == gridLinesNames.end()) {
         if (position.isPositive())
@@ -1007,7 +1092,7 @@ PassOwnPtr<GridSpan> RenderGrid::resolveNamedGridLinePositionAgainstOppositePosi
     // Negative positions are not allowed per the specification and should have been handled during parsing.
     ASSERT(position.spanPosition() > 0);
 
-    const NamedGridLinesMap& gridLinesNames = (side == ColumnStartSide || side == ColumnEndSide) ? style().namedGridColumnLines() : style().namedGridRowLines();
+    const NamedGridLinesMap& gridLinesNames = isColumnSide(side) ? style().namedGridColumnLines() : style().namedGridRowLines();
     NamedGridLinesMap::const_iterator it = gridLinesNames.find(position.namedGridLine());
 
     // If there is no named grid line of that name, we resolve the position to 'auto' (which is equivalent to 'span 1' in this case).
