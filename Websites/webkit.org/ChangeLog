@@ -1,3 +1,18 @@
+2014-03-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add illustrations for a potential blog post
+
+        First version, let see how that works out.
+
+        * blog-files/css-jit-introduction: Added.
+        * blog-files/css-jit-introduction/clicktostart.js: Added.
+        * blog-files/css-jit-introduction/css-jit-illustration.html: Added.
+        * blog-files/css-jit-introduction/html5-single-page-microbenchmark.html: Added.
+        * blog-files/css-jit-introduction/old-selectorchecker-illustration.html: Added.
+        * blog-files/css-jit-introduction/timing-illustration-eight-run.svg: Added.
+        * blog-files/css-jit-introduction/timing-illustration-five-run.svg: Added.
+        * blog-files/css-jit-introduction/timing-illustration-one-run.svg: Added.
+
 2014-03-20  James Craig  <jcraig@apple.com>
 
         Sample code for potential ARIA blog post.
