@@ -78,12 +78,12 @@ using namespace WebKit;
     _nodeHandle->setHTMLInputElementAutofilled(isAutoFilled);
 }
 
-- (BOOL)HTMLInputELementIsUserEdited
+- (BOOL)HTMLInputElementIsUserEdited
 {
     return _nodeHandle->htmlInputElementLastChangeWasUserEdit();
 }
 
-- (BOOL)HTMLTextAreaELementIsUserEdited
+- (BOOL)HTMLTextAreaElementIsUserEdited
 {
     return _nodeHandle->htmlTextAreaElementLastChangeWasUserEdit();
 }

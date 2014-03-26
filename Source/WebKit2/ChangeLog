@@ -1,3 +1,22 @@
+2014-03-26  Cody Krieger  <cjk@apple.com>
+
+        -[WKWebProcessPlugInNodeHandle HTMLInputElementIsUserEdited] and -HTMLTextAreaElementIsUserEdited do not return the correct values.
+
+        https://bugs.webkit.org/show_bug.cgi?id=130804
+
+        Reviewed by Dan Bernstein.
+
+        The existing implementations of these methods are mis-cased
+        ("HTMLInputELementIsUserEdited" and "HTMLTextAreaELementIsUserEdited" —
+        note the "EL" in both cases). This results in us getting
+        auto-synthesized getters for the HTMLInputElementIsUserEdited and
+        HTMLTextAreaElementIsUserEdited properties, which will return NO
+        unconditionally.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        Fix the capitalization of -HTMLInputElementIsUserEdited and
+        -HTMLTextAreaElementIsUserEdited.
+
 2014-03-26  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Expose DownloadProxy::cancel()
