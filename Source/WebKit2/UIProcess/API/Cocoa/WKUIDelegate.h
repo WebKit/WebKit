@@ -29,10 +29,16 @@
 #if WK_API_ENABLED
 
 @class WKFrameInfo;
+@class WKWebViewConfiguration;
+@class WKWindowFeatures;
 
 @protocol WKUIDelegate <NSObject>
 
 @optional
+
+// FIXME: Maybe we should pass a WKNavigationAction instead of request and frame.
+// The C SPI has the key modifiers and mouse button as well.
+- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration request:(NSURLRequest *)request windowFeatures:(WKWindowFeatures *)windowFeatures initiatedByFrame:(WKFrameInfo *)frame;
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)())completionHandler;
 

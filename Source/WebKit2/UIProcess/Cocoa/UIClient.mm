@@ -29,6 +29,9 @@
 #if WK_API_ENABLED
 
 #import "WKFrameInfoInternal.h"
+#import "WKWebViewConfigurationInternal.h"
+#import "WKWebViewInternal.h"
+#import "WKWindowFeaturesInternal.h"
 #import "WKUIDelegatePrivate.h"
 
 namespace WebKit {
@@ -51,6 +54,7 @@ void UIClient::setDelegate(id <WKUIDelegate> delegate)
 {
     m_delegate = delegate;
 
+    m_delegateMethods.webViewCreateWebViewWithConfigurationRequestWindowFeaturesInitiatedByFrame = [delegate respondsToSelector:@selector(webView:createWebViewWithConfiguration:request:windowFeatures:initiatedByFrame:)];
     m_delegateMethods.webViewRunJavaScriptAlertPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:)];
@@ -72,6 +76,29 @@ NSArray *UIClient::actionsForElement(_WKActivatedElementInfo *elementInfo, NSArr
     return [(id <WKUIDelegatePrivate>)delegate _webView:m_webView actionsForElement:elementInfo defaultActions:defaultActions];
 #endif
     return defaultActions;
+}
+
+PassRefPtr<WebKit::WebPageProxy> UIClient::createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy* initiatingFrame, const WebCore::ResourceRequest& request, const WebCore::WindowFeatures& windowFeatures, WebKit::WebEvent::Modifiers, WebKit::WebMouseEvent::Button)
+{
+    if (!m_delegateMethods.webViewCreateWebViewWithConfigurationRequestWindowFeaturesInitiatedByFrame)
+        return nullptr;
+
+    auto delegate = m_delegate.get();
+    if (!delegate)
+        return nullptr;
+
+    auto configuration = adoptNS([m_webView->_configuration copy]);
+    [configuration _setRelatedWebView:m_webView];
+
+    WKWebView *webView = [delegate webView:m_webView createWebViewWithConfiguration:configuration.get() request:request.nsURLRequest(WebCore::DoNotUpdateHTTPBody) windowFeatures:adoptNS([[WKWindowFeatures alloc] _initWithWindowFeatures:windowFeatures]).get() initiatedByFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*initiatingFrame]).get()];
+
+    if (!webView)
+        return nullptr;
+
+    if ([webView->_configuration _relatedWebView] != m_webView)
+        [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
+
+    return webView->_page.get();
 }
 
 void UIClient::runJavaScriptAlert(WebKit::WebPageProxy*, const WTF::String& message, WebKit::WebFrameProxy* webFrameProxy, std::function<void ()> completionHandler)

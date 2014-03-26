@@ -77,7 +77,6 @@
 #endif
 
 @implementation WKWebView {
-    RetainPtr<WKWebViewConfiguration> _configuration;
     std::unique_ptr<WebKit::NavigationState> _navigationState;
 
     RetainPtr<WKRemoteObjectRegistry> _remoteObjectRegistry;

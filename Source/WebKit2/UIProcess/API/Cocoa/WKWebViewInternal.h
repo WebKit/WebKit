@@ -28,6 +28,7 @@
 #if WK_API_ENABLED
 
 #import <wtf/RefPtr.h>
+#import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
 #import "WKContentView.h"
@@ -50,6 +51,8 @@ class WebPageProxy;
 @interface WKWebView () WK_WEB_VIEW_PROTOCOLS {
 
 @package
+    RetainPtr<WKWebViewConfiguration> _configuration;
+
     RefPtr<WebKit::WebPageProxy> _page;
 }
 

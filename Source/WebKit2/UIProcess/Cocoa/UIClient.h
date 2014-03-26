@@ -52,6 +52,7 @@ public:
 
 private:
     // API::UIClient
+    virtual PassRefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, WebKit::WebEvent::Modifiers, WebKit::WebMouseEvent::Button) override;
     virtual void runJavaScriptAlert(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, std::function<void ()> completionHandler) override;
     virtual void runJavaScriptConfirm(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, std::function<void (bool)> completionHandler) override;
     virtual void runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy*, std::function<void (const WTF::String&)> completionHandler) override;
@@ -60,6 +61,7 @@ private:
     WeakObjCPtr<id <WKUIDelegate> > m_delegate;
 
     struct {
+        bool webViewCreateWebViewWithConfigurationRequestWindowFeaturesInitiatedByFrame : 1;
         bool webViewRunJavaScriptAlertPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler : 1;
