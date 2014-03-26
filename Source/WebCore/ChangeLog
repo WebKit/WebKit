@@ -1,3 +1,9 @@
+2014-03-26  Brent Fulgham  <bfulgham@apple.com>
+
+        Fix OS X build.
+
+        * WebCore.exp.in: Add missing export symbol.
+
 2014-03-26  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the Windows build. Add a no-op impl for Mac non-UI-side.
