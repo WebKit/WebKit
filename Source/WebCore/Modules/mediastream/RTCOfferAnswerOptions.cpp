@@ -32,11 +32,6 @@
 
 namespace WebCore {
 
-static bool validateRequestIdentity(const String& value)
-{
-    return value == "yes" || value == "no" || value == "ifconfigured";
-}
-
 PassRefPtr<RTCOfferAnswerOptions> RTCOfferAnswerOptions::create(const Dictionary& options, ExceptionCode& ec)
 {
     RefPtr<RTCOfferAnswerOptions> offerAnswerOptions = adoptRef(new RTCOfferAnswerOptions());
@@ -53,13 +48,14 @@ PassRefPtr<RTCOfferAnswerOptions> RTCOfferAnswerOptions::create(const Dictionary
 
 bool RTCOfferAnswerOptions::initialize(const Dictionary& options)
 {
+    if (!m_private)
+        m_private = RTCOfferAnswerOptionsPrivate::create();
+
     String requestIdentity;
     if (!options.isUndefinedOrNull() && (!options.get("requestIdentity", requestIdentity) || requestIdentity.isEmpty()))
         return false;
 
-    if (validateRequestIdentity(requestIdentity))
-        m_requestIdentity = requestIdentity;
-
+    m_private->setRequestIdentity(requestIdentity);
     return true;
 }
 
@@ -78,6 +74,9 @@ PassRefPtr<RTCOfferOptions> RTCOfferOptions::create(const Dictionary& options, E
 
 bool RTCOfferOptions::initialize(const Dictionary& options)
 {
+    RefPtr<RTCOfferOptionsPrivate> optionsPrivate = RTCOfferOptionsPrivate::create();
+    m_private = optionsPrivate;
+
     if (options.isUndefinedOrNull())
         return true;
 
@@ -89,25 +88,29 @@ bool RTCOfferOptions::initialize(const Dictionary& options)
     if (!options.get("offerToReceiveVideo", offerToReceiveVideoStr))
         return false;
 
-    m_offerToReceiveVideo = offerToReceiveVideoStr.toInt64Strict(&numberConversionSuccess);
+    int64_t intConversionResult = offerToReceiveVideoStr.toInt64Strict(&numberConversionSuccess);
     if (!numberConversionSuccess)
         return false;
+
+    optionsPrivate->setOfferToReceiveVideo(intConversionResult);
 
     String offerToReceiveAudioStr;
     if (!options.get("offerToReceiveAudio", offerToReceiveAudioStr))
         return false;
 
-    m_offerToReceiveAudio = offerToReceiveAudioStr.toInt64Strict(&numberConversionSuccess);
+    intConversionResult = offerToReceiveAudioStr.toInt64Strict(&numberConversionSuccess);
     if (!numberConversionSuccess)
         return false;
 
+    optionsPrivate->setOfferToReceiveAudio(intConversionResult);
+
     bool voiceActivityDetection;
     if (options.get("voiceActivityDetection", voiceActivityDetection))
-        m_voiceActivityDetection = voiceActivityDetection;
+        optionsPrivate->setVoiceActivityDetection(voiceActivityDetection);
 
     bool iceRestart;
     if (options.get("iceRestart", iceRestart))
-        m_iceRestart = iceRestart;
+        optionsPrivate->setIceRestart(iceRestart);
 
     return true;
 }

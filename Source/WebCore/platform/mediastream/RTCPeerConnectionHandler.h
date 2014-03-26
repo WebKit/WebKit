@@ -44,8 +44,8 @@ class RTCConfigurationPrivate;
 class RTCDTMFSenderHandler;
 class RTCDataChannelHandler;
 class RTCIceCandidateDescriptor;
-class RTCOfferOptions;
-class RTCOfferAnswerOptions;
+class RTCOfferOptionsPrivate;
+class RTCOfferAnswerOptionsPrivate;
 class RTCPeerConnectionHandler;
 class RTCPeerConnectionHandlerClient;
 class RTCSessionDescriptionDescriptor;
@@ -83,8 +83,8 @@ public:
 
     virtual bool initialize(PassRefPtr<RTCConfigurationPrivate>) = 0;
 
-    virtual void createOffer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<RTCOfferOptions>) = 0;
-    virtual void createAnswer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<RTCOfferAnswerOptions>) = 0;
+    virtual void createOffer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<RTCOfferOptionsPrivate>) = 0;
+    virtual void createAnswer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<RTCOfferAnswerOptionsPrivate>) = 0;
     virtual void setLocalDescription(PassRefPtr<RTCVoidRequest>, PassRefPtr<RTCSessionDescriptionDescriptor>) = 0;
     virtual void setRemoteDescription(PassRefPtr<RTCVoidRequest>, PassRefPtr<RTCSessionDescriptionDescriptor>) = 0;
     virtual PassRefPtr<RTCSessionDescriptionDescriptor> localDescription() = 0;

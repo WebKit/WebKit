@@ -58,13 +58,13 @@ bool RTCPeerConnectionHandlerMock::initialize(PassRefPtr<RTCConfigurationPrivate
     return true;
 }
 
-void RTCPeerConnectionHandlerMock::createOffer(PassRefPtr<RTCSessionDescriptionRequest> request, PassRefPtr<RTCOfferOptions>)
+void RTCPeerConnectionHandlerMock::createOffer(PassRefPtr<RTCSessionDescriptionRequest> request, PassRefPtr<RTCOfferOptionsPrivate>)
 {
     RefPtr<SessionRequestNotifier> notifier = adoptRef(new SessionRequestNotifier(request, RTCSessionDescriptionDescriptor::create("offer", "local")));
     m_timerEvents.append(adoptRef(new TimerEvent(this, notifier)));
 }
 
-void RTCPeerConnectionHandlerMock::createAnswer(PassRefPtr<RTCSessionDescriptionRequest> request, PassRefPtr<RTCOfferAnswerOptions>)
+void RTCPeerConnectionHandlerMock::createAnswer(PassRefPtr<RTCSessionDescriptionRequest> request, PassRefPtr<RTCOfferAnswerOptionsPrivate>)
 {
     RefPtr<SessionRequestNotifier> notifier = adoptRef(new SessionRequestNotifier(request, RTCSessionDescriptionDescriptor::create("answer", "local")));
     m_timerEvents.append(adoptRef(new TimerEvent(this, notifier)));

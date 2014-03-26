@@ -229,7 +229,7 @@ void RTCPeerConnection::createOffer(PassRefPtr<RTCSessionDescriptionCallback> su
     }
 
     RefPtr<RTCSessionDescriptionRequestImpl> request = RTCSessionDescriptionRequestImpl::create(scriptExecutionContext(), successCallback, errorCallback);
-    m_peerHandler->createOffer(request.release(), options.release());
+    m_peerHandler->createOffer(request.release(), options->privateOfferOptions());
 }
 
 void RTCPeerConnection::createAnswer(PassRefPtr<RTCSessionDescriptionCallback> successCallback, PassRefPtr<RTCPeerConnectionErrorCallback> errorCallback, const Dictionary& answerOptions, ExceptionCode& ec)
@@ -254,7 +254,7 @@ void RTCPeerConnection::createAnswer(PassRefPtr<RTCSessionDescriptionCallback> s
     }
 
     RefPtr<RTCSessionDescriptionRequestImpl> request = RTCSessionDescriptionRequestImpl::create(scriptExecutionContext(), successCallback, errorCallback);
-    m_peerHandler->createAnswer(request.release(), options.release());
+    m_peerHandler->createAnswer(request.release(), options->privateOfferAnswerOptions());
 }
 
 bool RTCPeerConnection::checkStateForLocalDescription(RTCSessionDescription* localDescription)

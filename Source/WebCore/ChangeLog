@@ -1,3 +1,36 @@
+2014-03-26  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Add platform implementation for RTCOfferAnswerOptions and RTCOfferOptions
+        https://bugs.webkit.org/show_bug.cgi?id=130689
+
+        Reviewed by Eric Carlson.
+
+        RTCOfferAnswerOptions and RTCOfferOptions objects were being passed to platform class, causing a layer
+        violation.
+
+        * Modules/mediastream/RTCOfferAnswerOptions.cpp:
+        (WebCore::RTCOfferAnswerOptions::initialize):
+        (WebCore::RTCOfferOptions::initialize):
+        * Modules/mediastream/RTCOfferAnswerOptions.h:
+        (WebCore::RTCOfferAnswerOptions::requestIdentity):
+        (WebCore::RTCOfferAnswerOptions::privateOfferAnswerOptions):
+        (WebCore::RTCOfferAnswerOptions::RTCOfferAnswerOptions):
+        (WebCore::RTCOfferOptions::offerToReceiveVideo):
+        (WebCore::RTCOfferOptions::offerToReceiveAudio):
+        (WebCore::RTCOfferOptions::voiceActivityDetection):
+        (WebCore::RTCOfferOptions::iceRestart):
+        (WebCore::RTCOfferOptions::privateOfferOptions):
+        (WebCore::RTCOfferOptions::RTCOfferOptions):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::createOffer):
+        (WebCore::RTCPeerConnection::createAnswer):
+        * platform/mediastream/RTCOfferAnswerOptionsPrivate.h: Added.
+        * platform/mediastream/RTCPeerConnectionHandler.h:
+        * platform/mock/RTCPeerConnectionHandlerMock.cpp:
+        (WebCore::RTCPeerConnectionHandlerMock::createOffer):
+        (WebCore::RTCPeerConnectionHandlerMock::createAnswer):
+        * platform/mock/RTCPeerConnectionHandlerMock.h:
+
 2014-03-26  Zalan Bujtas  <zalan@apple.com>
 
         Device scale factor should always be greater than 0.

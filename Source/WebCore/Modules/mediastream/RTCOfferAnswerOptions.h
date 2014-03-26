@@ -30,6 +30,7 @@
 
 #include "Dictionary.h"
 #include "ExceptionCode.h"
+#include "RTCOfferAnswerOptionsPrivate.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -41,46 +42,33 @@ class RTCOfferAnswerOptions : public RefCounted<RTCOfferAnswerOptions> {
 public:
     static PassRefPtr<RTCOfferAnswerOptions> create(const Dictionary&, ExceptionCode&);
 
-    const String& requestIdentity() const { return m_requestIdentity; }
+    const String& requestIdentity() const { return m_private->requestIdentity(); }
+    RTCOfferAnswerOptionsPrivate* privateOfferAnswerOptions() const { return m_private.get(); }
 
     virtual ~RTCOfferAnswerOptions() { }
 
 protected:
     virtual bool initialize(const Dictionary&);
-    RTCOfferAnswerOptions()
-        : m_requestIdentity("ifconfigured")
-    {
-    }
+    RTCOfferAnswerOptions() { }
 
-private:
-    String m_requestIdentity;
+    RefPtr<RTCOfferAnswerOptionsPrivate> m_private;
 };
 
 class RTCOfferOptions : public RTCOfferAnswerOptions {
 public:
     static PassRefPtr<RTCOfferOptions> create(const Dictionary&, ExceptionCode&);
 
-    int64_t offerToReceiveVideo() const { return m_offerToReceiveVideo; }
-    int64_t offerToReceiveAudio() const { return m_offerToReceiveAudio; }
-    bool voiceActivityDetection() const { return m_voiceActivityDetection; }
-    bool iceRestart() const { return m_iceRestart; }
+    int64_t offerToReceiveVideo() const { return privateOfferOptions()->offerToReceiveVideo(); }
+    int64_t offerToReceiveAudio() const { return privateOfferOptions()->offerToReceiveAudio(); }
+    bool voiceActivityDetection() const { return privateOfferOptions()->voiceActivityDetection(); }
+    bool iceRestart() const { return privateOfferOptions()->iceRestart(); }
+    RTCOfferOptionsPrivate* privateOfferOptions() const { return static_cast<RTCOfferOptionsPrivate*>(m_private.get()); }
 
     virtual ~RTCOfferOptions() { }
 
 private:
     virtual bool initialize(const Dictionary&) override;
-    RTCOfferOptions()
-        : m_offerToReceiveVideo(0)
-        , m_offerToReceiveAudio(0)
-        , m_voiceActivityDetection(true)
-        , m_iceRestart(false)
-    {
-    }
-
-    int64_t m_offerToReceiveVideo;
-    int64_t m_offerToReceiveAudio;
-    bool m_voiceActivityDetection;
-    bool m_iceRestart;
+    RTCOfferOptions() { }
 };
 
 } // namespace WebCore

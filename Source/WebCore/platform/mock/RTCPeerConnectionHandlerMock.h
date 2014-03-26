@@ -43,8 +43,8 @@ public:
 
     virtual bool initialize(PassRefPtr<RTCConfigurationPrivate>) override;
 
-    virtual void createOffer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<RTCOfferOptions>) override;
-    virtual void createAnswer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<RTCOfferAnswerOptions>) override;
+    virtual void createOffer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<RTCOfferOptionsPrivate>) override;
+    virtual void createAnswer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<RTCOfferAnswerOptionsPrivate>) override;
     virtual void setLocalDescription(PassRefPtr<RTCVoidRequest>, PassRefPtr<RTCSessionDescriptionDescriptor>) override;
     virtual void setRemoteDescription(PassRefPtr<RTCVoidRequest>, PassRefPtr<RTCSessionDescriptionDescriptor>) override;
     virtual PassRefPtr<RTCSessionDescriptionDescriptor> localDescription() override;
