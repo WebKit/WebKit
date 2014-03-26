@@ -1,3 +1,23 @@
+2014-03-26  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Utilize new AtkValue interface coming in ATK 2.11.92
+        https://bugs.webkit.org/show_bug.cgi?id=130575
+
+        Reviewed by Mario Sanchez Prada.
+
+        Change ATK version to 2.11.92. Adjust current implementation.
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::intValue):
+        (AccessibilityUIElement::minValue):
+        (AccessibilityUIElement::maxValue):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::intValue):
+        (WTR::AccessibilityUIElement::minValue):
+        (WTR::AccessibilityUIElement::maxValue):
+        * efl/jhbuild.modules:
+        * gtk/jhbuild.modules:
+
 2014-03-12  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] The gnumake package is no longer needed in jhbuild

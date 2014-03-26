@@ -51,6 +51,13 @@ namespace WTR {
 
 namespace {
 
+#if ATK_CHECK_VERSION(2,11,92)
+enum RangeLimit {
+    RangeLimitMinimum,
+    RangeLimitMaximum
+};
+#endif
+
 enum AtkAttributeType {
     ObjectAttributeType,
     TextAttributeType
@@ -262,6 +269,13 @@ void alterCurrentValue(PlatformUIElement element, int factor)
     if (!ATK_IS_VALUE(element.get()))
         return;
 
+#if ATK_CHECK_VERSION(2,11,92)
+    double currentValue;
+    atk_value_get_value_and_text(ATK_VALUE(element.get()), &currentValue, nullptr);
+
+    double increment = atk_value_get_increment(ATK_VALUE(element.get()));
+    atk_value_set_value(ATK_VALUE(element.get()), currentValue + factor * increment);
+#else
     GValue currentValue = G_VALUE_INIT;
     atk_value_get_current_value(ATK_VALUE(element.get()), &currentValue);
 
@@ -277,6 +291,7 @@ void alterCurrentValue(PlatformUIElement element, int factor)
     g_value_unset(&newValue);
     g_value_unset(&increment);
     g_value_unset(&currentValue);
+#endif
 }
 
 gchar* replaceCharactersForResults(gchar* str)
@@ -591,6 +606,28 @@ static JSValueRef convertToJSObjectArray(const Vector<RefPtr<AccessibilityUIElem
         valueElements[i] = JSObjectMake(context, children[i]->wrapperClass(), children[i].get());
 
     return JSObjectMakeArray(context, elementCount, valueElements.get(), nullptr);
+}
+#endif
+
+#if ATK_CHECK_VERSION(2,11,92)
+static double rangeMinMaxValue(AtkValue* atkValue, RangeLimit rangeLimit)
+{
+    AtkRange* range = atk_value_get_range(atkValue);
+    if (!range)
+        return 0;
+
+    double rangeValue = 0;
+    switch (rangeLimit) {
+    case RangeLimitMinimum:
+        rangeValue = atk_range_get_lower_limit(range);
+        break;
+    case RangeLimitMaximum:
+        rangeValue = atk_range_get_upper_limit(range);
+        break;
+    };
+
+    atk_range_free(range);
+    return rangeValue;
 }
 #endif
 
@@ -1196,11 +1233,17 @@ double AccessibilityUIElement::intValue() const
         return 0;
 
     if (ATK_IS_VALUE(m_element.get())) {
+#if ATK_CHECK_VERSION(2,11,92)
+        double value;
+        atk_value_get_value_and_text(ATK_VALUE(m_element.get()), &value, nullptr);
+        return value;
+#else
         GValue value = G_VALUE_INIT;
         atk_value_get_current_value(ATK_VALUE(m_element.get()), &value);
         if (!G_VALUE_HOLDS_FLOAT(&value))
             return 0;
         return g_value_get_float(&value);
+#endif
     }
 
     // Consider headings as an special case when returning the "int value" of
@@ -1221,13 +1264,16 @@ double AccessibilityUIElement::minValue()
 {
     if (!ATK_IS_VALUE(m_element.get()))
         return 0;
-
+#if ATK_CHECK_VERSION(2,11,92)
+    return rangeMinMaxValue(ATK_VALUE(m_element.get()), RangeLimitMinimum);
+#else
     GValue value = G_VALUE_INIT;
     atk_value_get_minimum_value(ATK_VALUE(m_element.get()), &value);
     if (!G_VALUE_HOLDS_FLOAT(&value))
         return 0;
 
     return g_value_get_float(&value);
+#endif
 }
 
 double AccessibilityUIElement::maxValue()
@@ -1235,12 +1281,16 @@ double AccessibilityUIElement::maxValue()
     if (!ATK_IS_VALUE(m_element.get()))
         return 0;
 
+#if ATK_CHECK_VERSION(2,11,92)
+    return rangeMinMaxValue(ATK_VALUE(m_element.get()), RangeLimitMaximum);
+#else
     GValue value = G_VALUE_INIT;
     atk_value_get_maximum_value(ATK_VALUE(m_element.get()), &value);
     if (!G_VALUE_HOLDS_FLOAT(&value))
         return 0;
 
     return g_value_get_float(&value);
+#endif
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::valueDescription()

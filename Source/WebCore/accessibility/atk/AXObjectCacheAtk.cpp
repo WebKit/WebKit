@@ -208,7 +208,13 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
             propertyValues.property_name = "accessible-value";
 
             memset(&propertyValues.new_value,  0, sizeof(GValue));
+#if ATK_CHECK_VERSION(2,11,92)
+            double value;
+            atk_value_get_value_and_text(ATK_VALUE(axObject), &value, nullptr);
+            g_value_set_double(g_value_init(&propertyValues.new_value, G_TYPE_DOUBLE), value);
+#else
             atk_value_get_current_value(ATK_VALUE(axObject), &propertyValues.new_value);
+#endif
 
             g_signal_emit_by_name(ATK_OBJECT(axObject), "property-change::accessible-value", &propertyValues, NULL);
         }
