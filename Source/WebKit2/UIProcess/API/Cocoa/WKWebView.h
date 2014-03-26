@@ -118,6 +118,8 @@ WK_API_CLASS
 - (WKNavigation *)goBack;
 - (WKNavigation *)goForward;
 
+- (IBAction)stopLoading:(id)sender;
+
 @property (nonatomic) BOOL allowsBackForwardNavigationGestures;
 
 #if TARGET_OS_IPHONE
@@ -137,8 +139,6 @@ WK_API_CLASS
 
 - (IBAction)goBack:(id)sender;
 - (IBAction)goForward:(id)sender;
-
-- (IBAction)stopLoading:(id)sender;
 
 @end
 
