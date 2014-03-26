@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <style>
-  div { background: rgb(0, 0, 0); }
-  div:hover { background: rgb(255, 0, 0); }
-  div:hover:active { background: rgb(255, 255, 0); }
-  div:active { background: rgb(0, 255, 0); }
-  div {
+  div, textarea { background: rgb(0, 0, 0); }
+  div:hover, textarea:hover { background: rgb(255, 0, 0); }
+  div:hover:active, textarea:hover:active { background: rgb(255, 255, 0); }
+  div:active, textarea:active { background: rgb(0, 255, 0); }
+  div, textarea {
     width: 100px;
     height: 100px;
     border: 2px solid rgb(0, 0, 255);
@@ -14,6 +14,7 @@
 <body>
   <div id="box"></div>
   <div id="box2"></div>
+  <textarea id="textarea"></textarea>
   <pre id="description"></div>
   <pre id="console"></pre>
 </body>
@@ -59,5 +60,18 @@
     eventSender.mouseUp()
     shouldHaveBackground(box, 'rgb(0, 0, 0)')
     shouldHaveBackground(box2, 'rgb(0, 0, 0)')
+
+    // Move into the textarea.
+    eventSender.mouseMoveTo(50, 250)
+    shouldHaveBackground(textarea, 'rgb(255, 0, 0)')
+
+    eventSender.mouseDown()
+    shouldHaveBackground(textarea, 'rgb(255, 255, 0)')
+
+    eventSender.mouseMoveTo(400, 250)
+    shouldHaveBackground(textarea, 'rgb(0, 255, 0)')
+
+    eventSender.mouseUp()
+    shouldHaveBackground(textarea, 'rgb(0, 0, 0)')
   }
 </script>

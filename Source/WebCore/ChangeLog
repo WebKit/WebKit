@@ -1,3 +1,17 @@
+2014-03-25  Sanghyup Lee  <sh53.lee@samsung.com>
+
+        When the mouse is upped after dragged out of shadowDOM, it should lose :active.
+        https://bugs.webkit.org/show_bug.cgi?id=130660
+
+        Reviewed by Darin Adler.
+
+        This caused a regression after r165037.
+        When we have to clear :active style of shadow DOM, we should clear host's style.
+        This patch replaces parentElement() by parentOrShadowHostElement().
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateHoverActiveState):
+
 2014-03-25  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Always retry a failed MediaDocument as a PluginDocument

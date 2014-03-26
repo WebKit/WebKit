@@ -1,3 +1,13 @@
+2014-03-25  Sanghyup Lee  <sh53.lee@samsung.com>
+
+        When the mouse is upped after dragged out of shadowDOM, it should lose :active.
+        https://bugs.webkit.org/show_bug.cgi?id=130660
+
+        Reviewed by Darin Adler.
+
+        * fast/css/hover-active-drag-expected.txt: Added a test for textarea.
+        * fast/css/hover-active-drag.html: Updated.
+
 2014-03-25  Filip Pizlo  <fpizlo@apple.com>
 
         Repatch should plant calls to getters directly rather than through a C helper

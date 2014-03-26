@@ -5841,7 +5841,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     Element* oldActiveElement = m_activeElement.get();
     if (oldActiveElement && !request.active()) {
         // We are clearing the :active chain because the mouse has been released.
-        for (Element* curr = oldActiveElement; curr; curr = curr->parentElement()) {
+        for (Element* curr = oldActiveElement; curr; curr = curr->parentOrShadowHostElement()) {
             curr->setActive(false);
             m_userActionElements.setInActiveChain(curr, false);
         }
