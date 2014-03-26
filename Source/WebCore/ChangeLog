@@ -1,3 +1,120 @@
+2014-03-26  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Remove shape-inside support
+        https://bugs.webkit.org/show_bug.cgi?id=130698
+
+        Reviewed by David Hyatt.
+
+        CSS Shapes Level 1 (CR) only contains shape-outside. We are focusing our efforts on finalizing
+        the implementation of shape-outside, it's worth to remove shape-inside code at this point for now.
+
+        A list of reasons for the removal:
+          - Shape-inside is only part of Shapes Level 2, which needs to be improved on some topics.
+          - Shape-inside is lack of new shapes support (e.g. inset).
+          - Deprecated shapes (r165472) are removed from the code (e.g. rectangle), which affects shape-inside. 
+          - The current shape-inside code spreads across the layout code.
+          - The current shape-inside implementation is experimental in some areas,
+            and the partially implemented code can have security implications.
+          - Removal of shape-inside opens possibilities for code complexity and performance
+            optimizations for shape-outside. (e.g. simpler geometry code)
+
+        No new tests are needed.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::isSimpleLengthPropertyID):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseShapeProperty):
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::loadPendingImages):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::LayoutState):
+        (WebCore::LayoutState::shapeInsideInfo): Deleted.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::imageChanged):
+        (WebCore::RenderBlock::preparePaginationBeforeBlockLayout):
+        (WebCore::RenderBlock::relayoutShapeDescendantIfMoved): Deleted.
+        (WebCore::RenderBlock::logicalOffsetFromShapeAncestorContainer): Deleted.
+        (WebCore::RenderBlock::updateShapeInsideInfoAfterStyleChange): Deleted.
+        (WebCore::RenderBlock::ensureShapeInsideInfo): Deleted.
+        (WebCore::RenderBlock::shapeInsideInfo): Deleted.
+        (WebCore::RenderBlock::setShapeInsideInfo): Deleted.
+        (WebCore::RenderBlock::markShapeInsideDescendantsForLayout): Deleted.
+        (WebCore::RenderBlock::layoutShapeInsideInfo): Deleted.
+        (WebCore::shapeInfoRequiresRelayout): Deleted.
+        (WebCore::RenderBlock::computeShapeSize): Deleted.
+        (WebCore::RenderBlock::updateShapesBeforeBlockLayout): Deleted.
+        (WebCore::RenderBlock::updateShapesAfterBlockLayout): Deleted.
+        (WebCore::RenderBlock::prepareShapesAndPaginationBeforeBlockLayout): Deleted.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::allowsShapeInsideInfoSharing): Deleted.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutBlock):
+        (WebCore::RenderBlockFlow::layoutBlockChild):
+        (WebCore::RenderBlockFlow::computeLogicalLocationForFloat):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForLine):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        (WebCore::constructBidiRunsForLine): Deleted.
+        (WebCore::pushShapeContentOverflowBelowTheContentBox): Deleted.
+        (WebCore::RenderBlockFlow::updateShapeAndSegmentsForCurrentLine): Deleted.
+        (WebCore::RenderBlockFlow::updateShapeAndSegmentsForCurrentLineInFlowThread): Deleted.
+        (WebCore::adjustLogicalLineTop): Deleted.
+        (WebCore::RenderBlockFlow::adjustLogicalLineTopAndLogicalHeightIfNeeded): Deleted.
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::~RenderElement):
+        (WebCore::RenderElement::initializeStyle):
+        (WebCore::RenderElement::setStyle):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::createStyle):
+        * rendering/RenderView.h:
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::BreakingContext::handleText):
+        (WebCore::BreakingContext::handleEndOfLine):
+        (WebCore::updateSegmentsForShapes): Deleted.
+        * rendering/line/LineBreaker.cpp:
+        (WebCore::LineBreaker::nextLineBreak):
+        * rendering/line/LineWidth.cpp:
+        (WebCore::LineWidth::LineWidth):
+        (WebCore::LineWidth::updateAvailableWidth):
+        (WebCore::LineWidth::wrapNextToShapeOutside):
+        (WebCore::LineWidth::fitBelowFloats):
+        (WebCore::LineWidth::updateLineSegment): Deleted.
+        (WebCore::LineWidth::updateCurrentShapeSegment): Deleted.
+        * rendering/line/LineWidth.h:
+        * rendering/shapes/ShapeInsideInfo.cpp: Removed.
+        * rendering/shapes/ShapeInsideInfo.h: Removed.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2014-03-25  Brent Fulgham  <bfulgham@apple.com>
 
         Avoid duplicate size checks when creating empty image

@@ -562,9 +562,6 @@ static inline bool isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acce
     case CSSPropertyWebkitPaddingStart:
         acceptsNegativeNumbers = false;
         return true;
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-    case CSSPropertyWebkitShapePadding:
-#endif
 #if ENABLE(CSS_SHAPES)
     case CSSPropertyWebkitShapeMargin:
         acceptsNegativeNumbers = false;
@@ -2913,17 +2910,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitClipPath:
         parsedValue = parseClipPath();
         break;
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-    case CSSPropertyWebkitShapeInside:
-#endif
 #if ENABLE(CSS_SHAPES)
     case CSSPropertyWebkitShapeOutside:
         parsedValue = parseShapeProperty(propId);
         break;
     case CSSPropertyWebkitShapeMargin:
-#if ENABLE(CSS_SHAPE_INSIDE)
-    case CSSPropertyWebkitShapePadding:
-#endif
         validPrimitive = (RuntimeEnabledFeatures::sharedFeatures().cssShapesEnabled() && !id && validUnit(value, FLength | FNonNeg));
         break;
     case CSSPropertyWebkitShapeImageThreshold:
@@ -5706,12 +5697,7 @@ PassRefPtr<CSSValue> CSSParser::parseShapeProperty(CSSPropertyID propId)
     RefPtr<CSSPrimitiveValue> keywordValue;
     RefPtr<CSSPrimitiveValue> shapeValue;
 
-    if (valueId == CSSValueNone
-#if ENABLE(CSS_SHAPE_INSIDE)
-        || (valueId == CSSValueOutsideShape
-            && propId == CSSPropertyWebkitShapeInside)
-#endif
-        ) {
+    if (valueId == CSSValueNone) {
         keywordValue = parseValidPrimitive(valueId, value);
         m_valueList->next();
         return keywordValue.release();

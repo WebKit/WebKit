@@ -22,12 +22,12 @@ function getStyleValue(property, value) {
 
 function testStyleValue(value, expected) {
     if (expected === null)
-        shouldBeNull('getStyleValue("-webkit-shape-inside", "' + value + '")');
+        shouldBeNull('getStyleValue("-webkit-shape-outside", "' + value + '")');
     else
-        shouldBeEqualToString('getStyleValue("-webkit-shape-inside", "' + value + '")', expected);
+        shouldBeEqualToString('getStyleValue("-webkit-shape-outside", "' + value + '")', expected);
 }
 function testComputedStyleValue(value, expected) {
-    testShapeComputedProperty("-webkit-shape-inside", value, expected);
+    testShapeComputedProperty("-webkit-shape-outside", value, expected);
 }
 
 function testInvalidValue(property, value) {

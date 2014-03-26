@@ -186,7 +186,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
     LayoutStateMaintainer statePusher(view(), *this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
 
-    prepareShapesAndPaginationBeforeBlockLayout(relayoutChildren);
+    preparePaginationBeforeBlockLayout(relayoutChildren);
 
     LayoutSize previousSize = size();
 
@@ -202,8 +202,6 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         relayoutChildren = true;
 
     layoutPositionedObjects(relayoutChildren || isRoot());
-
-    updateShapesAfterBlockLayout();
 
     computeOverflow(oldClientAfterEdge);
     statePusher.pop();

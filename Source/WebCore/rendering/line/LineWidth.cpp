@@ -33,10 +33,6 @@
 #include "RenderBlockFlow.h"
 #include "RenderRubyRun.h"
 
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-#include "ShapeInsideInfo.h"
-#endif
-
 namespace WebCore {
 
 LineWidth::LineWidth(RenderBlockFlow& block, bool isFirstLine, IndentTextOrNot shouldIndentText)
@@ -49,15 +45,9 @@ LineWidth::LineWidth(RenderBlockFlow& block, bool isFirstLine, IndentTextOrNot s
     , m_left(0)
     , m_right(0)
     , m_availableWidth(0)
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-    , m_segment(0)
-#endif
     , m_isFirstLine(isFirstLine)
     , m_shouldIndentText(shouldIndentText)
 {
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-    updateCurrentShapeSegment();
-#endif
     updateAvailableWidth();
 }
 
@@ -82,13 +72,6 @@ void LineWidth::updateAvailableWidth(LayoutUnit replacedHeight)
     LayoutUnit logicalHeight = m_block.minLineHeightForReplacedRenderer(m_isFirstLine, replacedHeight);
     m_left = m_block.logicalLeftOffsetForLine(height, shouldIndentText(), logicalHeight);
     m_right = m_block.logicalRightOffsetForLine(height, shouldIndentText(), logicalHeight);
-
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-    if (m_segment) {
-        m_left = std::max<float>(m_segment->logicalLeft, m_left);
-        m_right = std::min<float>(m_segment->logicalRight, m_right);
-    }
-#endif
 
     computeAvailableWidthFromLeftAndRight();
 }
@@ -216,21 +199,6 @@ void LineWidth::wrapNextToShapeOutside(bool isFirstLine)
     }
     updateLineDimension(newLineTop, newLineWidth, newLineLeft, newLineRight);
 }
-
-#if ENABLE(CSS_SHAPE_INSIDE)
-void LineWidth::updateLineSegment(const LayoutUnit& lineTop)
-{
-    ShapeInsideInfo* shapeInsideInfo = m_block.layoutShapeInsideInfo();
-    if (!shapeInsideInfo)
-        return;
-
-    LayoutUnit logicalOffsetFromShapeContainer = m_block.logicalOffsetFromShapeAncestorContainer(&shapeInsideInfo->owner()).height();
-    LayoutUnit lineHeight = m_block.lineHeight(false, m_block.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
-    shapeInsideInfo->updateSegmentsForLine(lineTop + logicalOffsetFromShapeContainer, lineHeight);
-    updateCurrentShapeSegment();
-    updateAvailableWidth();
-}
-#endif
 #endif
 
 void LineWidth::fitBelowFloats(bool isFirstLine)
@@ -262,12 +230,8 @@ void LineWidth::fitBelowFloats(bool isFirstLine)
         newLineWidth = availableWidthAtOffset(m_block, floatLogicalBottom, shouldIndentText(), newLineLeft, newLineRight);
         lastFloatLogicalBottom = floatLogicalBottom;
 
-        if (newLineWidth >= m_uncommittedWidth) {
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-            updateLineSegment(lastFloatLogicalBottom);
-#endif
+        if (newLineWidth >= m_uncommittedWidth)
             break;
-        }
     }
 
     updateLineDimension(lastFloatLogicalBottom, newLineWidth, newLineLeft, newLineRight);
@@ -278,14 +242,6 @@ void LineWidth::setTrailingWhitespaceWidth(float collapsedWhitespace, float bord
     m_trailingCollapsedWhitespaceWidth = collapsedWhitespace;
     m_trailingWhitespaceWidth = collapsedWhitespace + borderPaddingMargin;
 }
-
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-void LineWidth::updateCurrentShapeSegment()
-{
-    if (ShapeInsideInfo* shapeInsideInfo = m_block.layoutShapeInsideInfo())
-        m_segment = shapeInsideInfo->currentSegment();
-}
-#endif
 
 void LineWidth::computeAvailableWidthFromLeftAndRight()
 {

@@ -40,10 +40,6 @@
 #include <wtf/text/StringView.h>
 #include <wtf/unicode/CharacterNames.h>
 
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-#include "ShapeInsideInfo.h"
-#endif
-
 namespace WebCore {
 
 // We don't let our line box tree for a single line get any deeper than this.
@@ -461,46 +457,6 @@ inline float firstPositiveWidth(const WordMeasurements& wordMeasurements)
     return 0;
 }
 
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-// FIXME: We can move this function & logic into LineWidth::fitBelowFloats
-inline void updateSegmentsForShapes(RenderBlockFlow& block, const FloatingObject* lastFloatFromPreviousLine, const WordMeasurements& wordMeasurements, LineWidth& width, bool isFirstLine)
-{
-    ASSERT(lastFloatFromPreviousLine);
-
-    ShapeInsideInfo* shapeInsideInfo = block.layoutShapeInsideInfo();
-    if (!lastFloatFromPreviousLine->isPlaced() || !shapeInsideInfo)
-        return;
-
-    bool isHorizontalWritingMode = block.isHorizontalWritingMode();
-    LayoutUnit logicalOffsetFromShapeContainer = block.logicalOffsetFromShapeAncestorContainer(&shapeInsideInfo->owner()).height();
-
-    LayoutUnit lineLogicalTop = block.logicalHeight() + logicalOffsetFromShapeContainer;
-    LayoutUnit lineLogicalHeight = block.lineHeight(isFirstLine, isHorizontalWritingMode ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
-    LayoutUnit lineLogicalBottom = lineLogicalTop + lineLogicalHeight;
-
-    LayoutUnit floatLogicalTop = block.logicalTopForFloat(lastFloatFromPreviousLine);
-    LayoutUnit floatLogicalBottom = block.logicalBottomForFloat(lastFloatFromPreviousLine);
-
-    bool lineOverlapsWithFloat = (floatLogicalTop < lineLogicalBottom) && (lineLogicalTop < floatLogicalBottom);
-    if (!lineOverlapsWithFloat)
-        return;
-
-    float minSegmentWidth = firstPositiveWidth(wordMeasurements);
-
-    LayoutUnit floatLogicalWidth = block.logicalWidthForFloat(lastFloatFromPreviousLine);
-    LayoutUnit availableLogicalWidth = block.logicalWidth() - block.logicalRightForFloat(lastFloatFromPreviousLine);
-    if (availableLogicalWidth < minSegmentWidth)
-        block.setLogicalHeight(floatLogicalBottom);
-
-    if (block.logicalHeight() < floatLogicalTop) {
-        shapeInsideInfo->adjustLogicalLineTop(minSegmentWidth + floatLogicalWidth);
-        block.setLogicalHeight(shapeInsideInfo->logicalLineTop() - logicalOffsetFromShapeContainer);
-    }
-
-    width.updateLineSegment(block.logicalHeight());
-}
-#endif
-
 inline bool iteratorIsBeyondEndOfRenderCombineText(const InlineIterator& iter, RenderCombineText& renderer)
 {
     return iter.renderer() == &renderer && iter.offset() >= renderer.textLength();
@@ -772,10 +728,6 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                 m_appliedStartWidth = true;
             }
 
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-            if (m_lastFloatFromPreviousLine)
-                updateSegmentsForShapes(m_block, m_lastFloatFromPreviousLine, wordMeasurements, m_width, m_lineInfo.isFirstLine());
-#endif
             applyWordSpacing = wordSpacing && m_currentCharacterIsSpace;
 
             if (!m_width.committedWidth() && m_autoWrap && !m_width.fitsOnLine())
@@ -1072,35 +1024,27 @@ inline void checkMidpoints(LineMidpointState& lineMidpointState, InlineIterator&
 
 inline InlineIterator BreakingContext::handleEndOfLine()
 {
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-    ShapeInsideInfo* shapeInfo = m_block.layoutShapeInsideInfo();
-    bool segmentAllowsOverflow = !shapeInfo || !shapeInfo->hasSegments();
-#else
-    bool segmentAllowsOverflow = true;
-#endif
-    if (segmentAllowsOverflow) {
-        if (m_lineBreak == m_resolver.position()) {
-            if (!m_lineBreak.renderer() || !m_lineBreak.renderer()->isBR()) {
-                // we just add as much as possible
-                if (m_blockStyle.whiteSpace() == PRE && !m_current.offset()) {
-                    m_lineBreak.moveTo(m_lastObject, m_lastObject->isText() ? m_lastObject->length() : 0);
-                } else if (m_lineBreak.renderer()) {
-                    // Don't ever break in the middle of a word if we can help it.
-                    // There's no room at all. We just have to be on this line,
-                    // even though we'll spill out.
-                    m_lineBreak.moveTo(m_current.renderer(), m_current.offset());
-                }
+    if (m_lineBreak == m_resolver.position()) {
+        if (!m_lineBreak.renderer() || !m_lineBreak.renderer()->isBR()) {
+            // we just add as much as possible
+            if (m_blockStyle.whiteSpace() == PRE && !m_current.offset()) {
+                m_lineBreak.moveTo(m_lastObject, m_lastObject->isText() ? m_lastObject->length() : 0);
+            } else if (m_lineBreak.renderer()) {
+                // Don't ever break in the middle of a word if we can help it.
+                // There's no room at all. We just have to be on this line,
+                // even though we'll spill out.
+                m_lineBreak.moveTo(m_current.renderer(), m_current.offset());
             }
-            // make sure we consume at least one char/object.
-            if (m_lineBreak == m_resolver.position())
-                m_lineBreak.increment();
-        } else if (!m_current.offset() && !m_width.committedWidth() && m_width.uncommittedWidth() && !m_hadUncommittedWidthBeforeCurrent) {
-            // Do not push the current object to the next line, when this line has some content, but it is still considered empty.
-            // Empty inline elements like <span></span> can produce such lines and now we just ignore these break opportunities
-            // at the start of a line, if no width has been committed yet.
-            // Behave as if it was actually empty and consume at least one object.
-            m_lineBreak.increment();
         }
+        // make sure we consume at least one char/object.
+        if (m_lineBreak == m_resolver.position())
+            m_lineBreak.increment();
+    } else if (!m_current.offset() && !m_width.committedWidth() && m_width.uncommittedWidth() && !m_hadUncommittedWidthBeforeCurrent) {
+        // Do not push the current object to the next line, when this line has some content, but it is still considered empty.
+        // Empty inline elements like <span></span> can produce such lines and now we just ignore these break opportunities
+        // at the start of a line, if no width has been committed yet.
+        // Behave as if it was actually empty and consume at least one object.
+        m_lineBreak.increment();
     }
 
     // Sanity check our midpoints.

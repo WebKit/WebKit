@@ -1,3 +1,12 @@
+2014-03-26  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Remove shape-inside support
+        https://bugs.webkit.org/show_bug.cgi?id=130698
+
+        Reviewed by David Hyatt.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-03-26  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         Rename hasFastArrayStorage to be more appropriate

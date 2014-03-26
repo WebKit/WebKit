@@ -1416,7 +1416,6 @@ webkit.org/b/118665 fast/regions/floats-basic-in-variable-width-regions.html [ I
 webkit.org/b/118665 fast/regions/overflow-nested-regions.html [ ImageOnlyFailure Pass ]
 webkit.org/b/118665 fast/regions/overflow-not-moving-below-floats-in-variable-width-regions.html [ ImageOnlyFailure Pass ]
 webkit.org/b/118665 fast/regions/overflow-region-transform.html [ ImageOnlyFailure Pass ]
-webkit.org/b/118665 fast/regions/shape-inside/shape-inside-on-multiple-regions-with-negative-shape-top.html [ ImageOnlyFailure Pass ]
 webkit.org/b/118665 fast/regions/top-overflow-out-of-second-region.html [ ImageOnlyFailure Pass Missing ]
 webkit.org/b/118665 fast/regions/webkit-flow-float-unable-to-push.html [ ImageOnlyFailure Pass ]
 

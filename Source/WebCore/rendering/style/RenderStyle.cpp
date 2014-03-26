@@ -461,11 +461,6 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
         if (rareNonInheritedData->m_dashboardRegions != other->rareNonInheritedData->m_dashboardRegions)
             return true;
 #endif
-
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-        if (rareNonInheritedData->m_shapeInside != other->rareNonInheritedData->m_shapeInside)
-            return true;
-#endif
     }
 
     if (rareInheritedData.get() != other->rareInheritedData.get()) {

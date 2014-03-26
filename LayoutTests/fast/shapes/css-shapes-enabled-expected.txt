@@ -5,12 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS testInlineStyle("-webkit-shape-margin", "10px") is "10px"
 PASS testComputedStyle("-webkit-shape-margin", "10px") is "10px"
-PASS testInlineStyle("-webkit-shape-padding", "10px") is "10px"
-PASS testComputedStyle("-webkit-shape-padding", "10px") is "10px"
 PASS testInlineStyle("-webkit-shape-outside", "circle(10px at 10px 10px)") is "circle(10px at 10px 10px)"
 PASS testComputedStyle("-webkit-shape-outside", "circle(10px at 10px 10px)") is "circle(10px at 10px 10px)"
-PASS testInlineStyle("-webkit-shape-inside", "circle(10px at 10px 10px)") is "circle(10px at 10px 10px)"
-PASS testComputedStyle("-webkit-shape-inside", "circle(10px at 10px 10px)") is "circle(10px at 10px 10px)"
 PASS successfullyParsed is true
 
 TEST COMPLETE

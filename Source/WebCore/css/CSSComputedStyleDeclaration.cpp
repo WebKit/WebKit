@@ -346,9 +346,6 @@ static const CSSPropertyID computedProperties[] = {
     // we should move it outside the PLATFORM(IOS)-guard. See <https://bugs.webkit.org/show_bug.cgi?id=126296>.
     CSSPropertyWebkitCompositionFillColor,
 #endif
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-    CSSPropertyWebkitShapeInside,
-#endif
 #if ENABLE(CSS_SHAPES)
     CSSPropertyWebkitShapeOutside,
 #endif
@@ -394,9 +391,6 @@ static const CSSPropertyID computedProperties[] = {
 #if ENABLE(CSS_SHAPES)
     CSSPropertyWebkitShapeMargin,
     CSSPropertyWebkitShapeImageThreshold,
-#if ENABLE(CSS_SHAPE_INSIDE)
-    CSSPropertyWebkitShapePadding,
-#endif
 #endif
     CSSPropertyBufferedRendering,
     CSSPropertyClipPath,
@@ -2822,12 +2816,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return cssValuePool().createValue(style->shapeMargin());
         case CSSPropertyWebkitShapeImageThreshold:
             return cssValuePool().createValue(style->shapeImageThreshold(), CSSPrimitiveValue::CSS_NUMBER);
-#if ENABLE(CSS_SHAPE_INSIDE)
-        case CSSPropertyWebkitShapePadding:
-            return cssValuePool().createValue(style->shapePadding());
-        case CSSPropertyWebkitShapeInside:
-            return shapePropertyValue(style.get(), style->shapeInside());
-#endif
         case CSSPropertyWebkitShapeOutside:
             return shapePropertyValue(style.get(), style->shapeOutside());
 #endif

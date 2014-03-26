@@ -140,9 +140,6 @@ public:
 
     LengthSize m_pageSize;
 
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-    RefPtr<ShapeValue> m_shapeInside;
-#endif
 #if ENABLE(CSS_SHAPES)
     RefPtr<ShapeValue> m_shapeOutside;
     Length m_shapeMargin;

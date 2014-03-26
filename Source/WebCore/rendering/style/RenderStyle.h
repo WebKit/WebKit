@@ -1498,24 +1498,6 @@ public:
     SVGLength kerning() const { return svgStyle().kerning(); }
     void setKerning(SVGLength k) { accessSVGStyle().setKerning(k); }
 
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-    void setShapeInside(PassRefPtr<ShapeValue> value)
-    {
-        if (rareNonInheritedData->m_shapeInside == value)
-            return;
-        rareNonInheritedData.access()->m_shapeInside = value;
-    }
-    ShapeValue* shapeInside() const { return rareNonInheritedData->m_shapeInside.get(); }
-    ShapeValue* resolvedShapeInside() const
-    {
-        ShapeValue* shapeInside = this->shapeInside();
-        if (shapeInside && shapeInside->type() == ShapeValue::Outside)
-            return shapeOutside();
-        return shapeInside;
-    }
-
-    static ShapeValue* initialShapeInside() { return 0; }
-#endif
 #if ENABLE(CSS_SHAPES)
     void setShapeOutside(PassRefPtr<ShapeValue> value)
     {

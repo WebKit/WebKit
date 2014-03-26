@@ -116,14 +116,8 @@ bool canUseFor(const RenderBlockFlow& flow)
     if (flow.parent()->isTextControl() && toRenderTextControl(*flow.parent()).textFormControlElement().placeholderElement())
         return false;
     // These tests only works during layout. Outside layout this function may give false positives.
-    if (flow.view().layoutState()) {
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-        if (flow.view().layoutState()->shapeInsideInfo())
-            return false;
-#endif
-        if (flow.view().layoutState()->m_columnInfo)
-            return false;
-    }
+    if (flow.view().layoutState() && flow.view().layoutState()->m_columnInfo)
+        return false;
     const RenderStyle& style = flow.style();
     if (style.textDecorationsInEffect() != TextDecorationNone)
         return false;
@@ -158,10 +152,6 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (style.textShadow())
         return false;
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-    if (style.resolvedShapeInside())
-        return true;
-#endif
     if (style.textOverflow() || (flow.isAnonymousBlock() && flow.parent()->style().textOverflow()))
         return false;
     if (style.hasPseudoStyle(FIRST_LINE) || style.hasPseudoStyle(FIRST_LETTER))

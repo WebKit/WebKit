@@ -67,9 +67,6 @@ public:
     void fitBelowFloats(bool isFirstLine = false);
     void setTrailingWhitespaceWidth(float collapsedWhitespace, float borderPaddingMargin = 0);
     bool shouldIndentText() const { return m_shouldIndentText == IndentText; }
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-    void updateLineSegment(const LayoutUnit&);
-#endif
 
 private:
     void computeAvailableWidthFromLeftAndRight();
@@ -77,9 +74,6 @@ private:
     void updateLineDimension(LayoutUnit newLineTop, LayoutUnit newLineWidth, float newLineLeft, float newLineRight);
 #if ENABLE(CSS_SHAPES)
     void wrapNextToShapeOutside(bool isFirstLine);
-#if ENABLE(CSS_SHAPE_INSIDE)
-    void updateCurrentShapeSegment();
-#endif
 #endif
 
     RenderBlockFlow& m_block;
@@ -91,9 +85,6 @@ private:
     float m_left;
     float m_right;
     float m_availableWidth;
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-    const LineSegment* m_segment;
-#endif
     bool m_isFirstLine;
     IndentTextOrNot m_shouldIndentText;
 };

@@ -1,4 +1,4 @@
-// Valid values for both shape-inside and shape-outside. Two values are specified when the shape property value 
+// Valid values for shape-outside. Two values are specified when the shape property value
 // differs from the specified value. Three values are specified when the computed shape property value differs
 // from the specified value.
 // eg: "specified value/CSS Text value/computed style value"
@@ -88,7 +88,7 @@ var validShapeValues = [
     ["margin-box polygon(nonzero, 0px 0px, 10px 10px, 10px 0px)", "margin-box polygon(0px 0px, 10px 10px, 10px 0px)", "polygon(0px 0px, 10px 10px, 10px 0px) margin-box"]
 ];
 
-// Invalid values for both shape-inside and shape-outside. When an invalid shape value is specified, the 
+// Invalid values for shape-outside. When an invalid shape value is specified, the
 // shape property's computed value is the same as its default.
 var invalidShapeValues = [
     "calc()",

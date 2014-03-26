@@ -6380,11 +6380,9 @@
 		FD359190138DB22000E1EBEC /* AudioParamTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = FD35918E138DB22000E1EBEC /* AudioParamTimeline.h */; };
 		FD45A94F175D3F3E00C21EC8 /* Shape.h in Headers */ = {isa = PBXBuildFile; fileRef = FD08A87F175D3926002CD360 /* Shape.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FD45A950175D3F3E00C21EC8 /* ShapeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FD08A881175D3926002CD360 /* ShapeInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FD45A951175D3F3E00C21EC8 /* ShapeInsideInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FD08A883175D3926002CD360 /* ShapeInsideInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FD45A952175D3F3E00C21EC8 /* ShapeOutsideInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FD08A887175D3926002CD360 /* ShapeOutsideInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FD45A953175D3FB800C21EC8 /* Shape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD08A87E175D3926002CD360 /* Shape.cpp */; };
 		FD45A954175D3FB800C21EC8 /* ShapeInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD08A880175D3926002CD360 /* ShapeInfo.cpp */; };
-		FD45A955175D3FB800C21EC8 /* ShapeInsideInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD08A882175D3926002CD360 /* ShapeInsideInfo.cpp */; };
 		FD45A956175D3FB800C21EC8 /* ShapeOutsideInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD08A886175D3926002CD360 /* ShapeOutsideInfo.cpp */; };
 		FD45A957175D414C00C21EC8 /* PolygonShape.h in Headers */ = {isa = PBXBuildFile; fileRef = FD08A87B175D3926002CD360 /* PolygonShape.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FD45A958175D414C00C21EC8 /* RectangleShape.h in Headers */ = {isa = PBXBuildFile; fileRef = FD08A87D175D3926002CD360 /* RectangleShape.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13687,8 +13685,6 @@
 		FD08A87F175D3926002CD360 /* Shape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shape.h; sourceTree = "<group>"; };
 		FD08A880175D3926002CD360 /* ShapeInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShapeInfo.cpp; sourceTree = "<group>"; };
 		FD08A881175D3926002CD360 /* ShapeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShapeInfo.h; sourceTree = "<group>"; };
-		FD08A882175D3926002CD360 /* ShapeInsideInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShapeInsideInfo.cpp; sourceTree = "<group>"; };
-		FD08A883175D3926002CD360 /* ShapeInsideInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShapeInsideInfo.h; sourceTree = "<group>"; };
 		FD08A885175D3926002CD360 /* ShapeInterval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShapeInterval.h; sourceTree = "<group>"; };
 		FD08A886175D3926002CD360 /* ShapeOutsideInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShapeOutsideInfo.cpp; sourceTree = "<group>"; };
 		FD08A887175D3926002CD360 /* ShapeOutsideInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShapeOutsideInfo.h; sourceTree = "<group>"; };
@@ -22517,8 +22513,6 @@
 				FD08A87F175D3926002CD360 /* Shape.h */,
 				FD08A880175D3926002CD360 /* ShapeInfo.cpp */,
 				FD08A881175D3926002CD360 /* ShapeInfo.h */,
-				FD08A882175D3926002CD360 /* ShapeInsideInfo.cpp */,
-				FD08A883175D3926002CD360 /* ShapeInsideInfo.h */,
 				FD08A885175D3926002CD360 /* ShapeInterval.h */,
 				FD08A886175D3926002CD360 /* ShapeOutsideInfo.cpp */,
 				FD08A887175D3926002CD360 /* ShapeOutsideInfo.h */,
@@ -25463,7 +25457,6 @@
 				A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */,
 				FD45A94F175D3F3E00C21EC8 /* Shape.h in Headers */,
 				FD45A950175D3F3E00C21EC8 /* ShapeInfo.h in Headers */,
-				FD45A951175D3F3E00C21EC8 /* ShapeInsideInfo.h in Headers */,
 				FD45A95B175D41EE00C21EC8 /* ShapeInterval.h in Headers */,
 				FD45A952175D3F3E00C21EC8 /* ShapeOutsideInfo.h in Headers */,
 				FD1AF1501656F15100C6D4F7 /* ShapeValue.h in Headers */,
@@ -28827,7 +28820,6 @@
 				A6D169621346B49B000EB770 /* ShadowRoot.cpp in Sources */,
 				FD45A953175D3FB800C21EC8 /* Shape.cpp in Sources */,
 				FD45A954175D3FB800C21EC8 /* ShapeInfo.cpp in Sources */,
-				FD45A955175D3FB800C21EC8 /* ShapeInsideInfo.cpp in Sources */,
 				FD45A956175D3FB800C21EC8 /* ShapeOutsideInfo.cpp in Sources */,
 				1A4A954D0B4EDCCB002D8C3C /* SharedBuffer.cpp in Sources */,
 				512DD8E30D91E2B4000F89EE /* SharedBufferCF.cpp in Sources */,

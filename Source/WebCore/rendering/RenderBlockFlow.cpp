@@ -44,10 +44,6 @@
 #include "VerticalPositionCache.h"
 #include "VisiblePosition.h"
 
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-#include "ShapeInsideInfo.h"
-#endif
-
 namespace WebCore {
 
 bool RenderBlock::s_canPropagateFloatIntoSibling = false;
@@ -363,7 +359,7 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
     const RenderStyle& styleToUse = style();
     LayoutStateMaintainer statePusher(view(), *this, locationOffset(), hasColumns() || hasTransform() || hasReflection() || styleToUse.isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged, columnInfo());
 
-    prepareShapesAndPaginationBeforeBlockLayout(relayoutChildren);
+    preparePaginationBeforeBlockLayout(relayoutChildren);
     if (!relayoutChildren)
         relayoutChildren = namedFlowFragmentNeedsUpdate();
 
@@ -434,8 +430,6 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
         relayoutChildren = true;
 
     layoutPositionedObjects(relayoutChildren || isRoot());
-
-    updateShapesAfterBlockLayout(heightChanged);
 
     // Add overflow from children (unless we're multi-column, since in that case all our child overflow is clipped anyway).
     computeOverflow(oldClientAfterEdge);
@@ -681,11 +675,6 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
     // Now place the child in the correct left position
     determineLogicalLeftPositionForChild(child, ApplyLayoutDelta);
 
-    LayoutSize childOffset = child.location() - oldRect.location();
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-    relayoutShapeDescendantIfMoved(child.isRenderBlock() ? toRenderBlock(&child) : nullptr, childOffset);
-#endif
-
     // Update our height now that the child has been placed in the correct position.
     setLogicalHeight(logicalHeight() + logicalHeightForChild(child));
     if (mustSeparateMarginAfterForChild(child)) {
@@ -697,6 +686,7 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
     if (childBlockFlow && childBlockFlow->containsFloats())
         maxFloatLogicalBottom = std::max(maxFloatLogicalBottom, addOverhangingFloats(*childBlockFlow, !childNeededLayout));
 
+    LayoutSize childOffset = child.location() - oldRect.location();
     if (childOffset.width() || childOffset.height()) {
         view().addLayoutDelta(childOffset);
 
@@ -2154,31 +2144,7 @@ LayoutPoint RenderBlockFlow::computeLogicalLocationForFloat(const FloatingObject
 {
     RenderBox& childBox = floatingObject->renderer();
     LayoutUnit logicalLeftOffset = logicalLeftOffsetForContent(logicalTopOffset); // Constant part of left offset.
-    LayoutUnit logicalRightOffset; // Constant part of right offset.
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-    // FIXME Bug 102948: This only works for shape outside directly set on this block.
-    ShapeInsideInfo* shapeInsideInfo = this->layoutShapeInsideInfo();
-    // FIXME: Implement behavior for right floats.
-    if (shapeInsideInfo) {
-        LayoutSize floatLogicalSize = logicalSizeForFloat(floatingObject);
-        // floatingObject's logicalSize doesn't contain the actual height at this point, so we need to calculate it
-        floatLogicalSize.setHeight(logicalHeightForChild(childBox) + marginBeforeForChild(childBox) + marginAfterForChild(childBox));
-
-        // FIXME: If the float doesn't fit in the shape we should push it under the content box
-        logicalTopOffset = shapeInsideInfo->computeFirstFitPositionForFloat(floatLogicalSize);
-        if (logicalHeight() > logicalTopOffset)
-            logicalTopOffset = logicalHeight();
-
-        SegmentList segments = shapeInsideInfo->computeSegmentsForLine(logicalTopOffset, floatLogicalSize.height());
-        // FIXME Bug 102949: Add support for shapes with multiple segments.
-        if (segments.size() == 1) {
-            // The segment offsets are relative to the content box.
-            logicalRightOffset = logicalLeftOffset + segments[0].logicalRight;
-            logicalLeftOffset += segments[0].logicalLeft;
-        }
-    } else
-#endif
-        logicalRightOffset = logicalRightOffsetForContent(logicalTopOffset);
+    LayoutUnit logicalRightOffset = logicalRightOffsetForContent(logicalTopOffset); // Constant part of right offset.
 
     LayoutUnit floatLogicalWidth = std::min(logicalWidthForFloat(floatingObject), logicalRightOffset - logicalLeftOffset); // The width we look for.
 

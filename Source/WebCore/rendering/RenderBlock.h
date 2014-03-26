@@ -37,10 +37,6 @@ class LineLayoutState;
 class LogicalSelectionOffsetCaches;
 class RenderInline;
 class RenderText;
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-class ShapeInsideInfo;
-class ShapeValue;
-#endif
 
 struct BidiRun;
 struct PaintInfo;
@@ -351,17 +347,6 @@ public:
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
 #endif
 
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-    ShapeInsideInfo& ensureShapeInsideInfo();
-    ShapeInsideInfo* shapeInsideInfo() const;
-    void setShapeInsideInfo(std::unique_ptr<ShapeInsideInfo>);
-    
-    void markShapeInsideDescendantsForLayout();
-    ShapeInsideInfo* layoutShapeInsideInfo() const;
-    bool allowsShapeInsideInfoSharing() const { return !isInline() && !isFloating(); }
-    LayoutSize logicalOffsetFromShapeAncestorContainer(const RenderBlock* container) const;
-#endif
-
     virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&) override;
 
     virtual bool canHaveChildren() const override { return true; }
@@ -444,8 +429,6 @@ protected:
     virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) override;
     virtual void addFocusRingRectsForInlineChildren(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer);
 
-    bool updateShapesBeforeBlockLayout();
-    void updateShapesAfterBlockLayout(bool heightChanged = false);
     void computeRegionRangeForBoxChild(const RenderBox&) const;
 
     void estimateRegionRangeForBoxChild(const RenderBox&) const;
@@ -453,7 +436,7 @@ protected:
 
     void updateBlockChildDirtyBitsBeforeLayout(bool relayoutChildren, RenderBox&);
 
-    void prepareShapesAndPaginationBeforeBlockLayout(bool&);
+    void preparePaginationBeforeBlockLayout(bool&);
 
 private:
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
@@ -462,12 +445,6 @@ private:
     virtual LayoutUnit logicalLeftFloatOffsetForLine(LayoutUnit, LayoutUnit fixedOffset, LayoutUnit) const { return fixedOffset; }
     LayoutUnit adjustLogicalRightOffsetForLine(LayoutUnit offsetFromFloats, bool applyTextIndent) const;
     LayoutUnit adjustLogicalLeftOffsetForLine(LayoutUnit offsetFromFloats, bool applyTextIndent) const;
-
-#if ENABLE(CSS_SHAPES) && ENABLE(CSS_SHAPE_INSIDE)
-    void computeShapeSize();
-    void updateShapeInsideInfoAfterStyleChange(const ShapeValue*, const ShapeValue* oldShape);
-    void relayoutShapeDescendantIfMoved(RenderBlock* child, LayoutSize offset);
-#endif
 
     virtual const char* renderName() const override;
 
