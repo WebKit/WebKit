@@ -1,3 +1,14 @@
+2014-03-26  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Expose DownloadProxy::request()
+        https://bugs.webkit.org/show_bug.cgi?id=130796
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/_WKDownload.h:
+        * UIProcess/API/Cocoa/_WKDownload.mm:
+        (-[_WKDownload request]):
+
 2014-03-26  Anders Carlsson  <andersca@apple.com>
 
         Pass a real FrameLoadRequest to Chrome::createWindow

@@ -41,6 +41,11 @@
     [super dealloc];
 }
 
+- (NSURLRequest *)request
+{
+    return _download->request().nsURLRequest(WebCore::DoNotUpdateHTTPBody);
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject

@@ -32,6 +32,8 @@
 WK_API_CLASS
 @interface _WKDownload : NSObject
 
+@property (nonatomic, readonly) NSURLRequest *request;
+
 @end
 
 #endif // WK_API_ENABLED
