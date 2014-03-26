@@ -1,3 +1,31 @@
+2014-03-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Arguments simplification phase should be fine with marking the arguments local itself as an arguments alias
+        https://bugs.webkit.org/show_bug.cgi?id=130764
+        <rdar://problem/16304788>
+
+        Reviewed by Sam Weinig.
+        
+        Being an arguments alias just means that your OSR exit recovery should attempt arguments
+        creation. This is true of arguments locals. We had special cases that tried to make it not
+        true of arguments locals. The only consequence of those special cases was to cause crashes
+        in case of arguments that are also captured variables (i.e. we have SlowArguments). This
+        change just removes those special cases.
+        
+        This change means that the FTL will now see SetLocals with a FlushedArguments format.
+        Previously you wouldn't see them because previously only non-captured variable would be
+        arguments aliases, and non-captured variables get completely SSAified - i.e. no SetLocals
+        left. Adding handling for FlushedArguments is a benign and simple change since its
+        behavior is identical to FlushedJSValue for that code's purposes.
+
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileSetLocal):
+        * tests/stress/captured-arguments-variable.js: Added.
+        (foo):
+        (noInline):
+
 2014-03-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add HeapInlines

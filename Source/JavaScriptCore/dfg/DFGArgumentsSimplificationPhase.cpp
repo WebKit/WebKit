@@ -397,10 +397,6 @@ public:
                     
                     VariableAccessData* variableAccessData = node->variableAccessData();
                     
-                    if (m_graph.argumentsRegisterFor(node->origin.semantic) == variableAccessData->local()
-                        || unmodifiedArgumentsRegister(m_graph.argumentsRegisterFor(node->origin.semantic)) == variableAccessData->local())
-                        break;
-
                     if (variableAccessData->mergeIsArgumentsAlias(true)) {
                         changed = true;
                         

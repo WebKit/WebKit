@@ -806,7 +806,8 @@ private:
     {
         VariableAccessData* variable = m_node->variableAccessData();
         switch (variable->flushFormat()) {
-        case FlushedJSValue: {
+        case FlushedJSValue:
+        case FlushedArguments: {
             LValue value = lowJSValue(m_node->child1());
             m_out.store64(value, addressFor(variable->machineLocal()));
             break;
