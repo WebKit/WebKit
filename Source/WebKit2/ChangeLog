@@ -1,3 +1,13 @@
+2014-03-26  Anders Carlsson  <andersca@apple.com>
+
+        Pass a real FrameLoadRequest to Chrome::createWindow
+        https://bugs.webkit.org/show_bug.cgi?id=130795
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchCreatePage):
+
 2014-03-26  Jeremy Jones  <jeremyj@apple.com>
 
         Implement hasLiveStreamingContent property in WebAVPlayerController
