@@ -1,3 +1,22 @@
+2014-03-26  Darin Adler  <darin@apple.com>
+
+        Update LayoutTests to depend on load events rather than on starting loads synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=130776
+
+        Reviewed by Antti Koivisto.
+
+        These tests were depending on loads starting synchronously. Instead, they should simply
+        depend on proper load event behavior.
+
+        * dom/html/level1/core/selfhtml.js:
+        (startTest): Call waitUntilDone immediately, not when the test starts.
+        * dom/html/level2/core/selfhtml.js:
+        (startTest): Ditto.
+        * dom/html/level2/events/selfhtml.js:
+        (startTest): Ditto.
+        * dom/html/level2/html/selfhtml.js:
+        (startTest): Ditto.
+
 2014-03-26  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: crash when inspecting "bar" text node in getAccessibilityPropertiesForNode layout test

@@ -670,8 +670,6 @@ function getResourceURI(name, scheme, contentType) {
 
 
 
-function startTest() {
-
 //
 //  WebKit modification: 18-August-2005
 //
@@ -685,6 +683,8 @@ if (window.testRunner) {
 //
 //  End WebKit modification
 //
+
+function startTest() {
 
 	//
 	//   invoke test setup
