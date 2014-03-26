@@ -1,3 +1,25 @@
+2014-03-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Replace HTMLConverter::_stringForNode by propertyValueForNode
+        https://bugs.webkit.org/show_bug.cgi?id=130711
+
+        Reviewed by Sam Weinig.
+
+        Replaced all calls to HTMLConverter::_stringForNode by that to propertyValueForNode.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::_computedAttributesForElement):
+        (HTMLConverter::_addAttachmentForElement):
+        (HTMLConverter::_enterElement):
+        (HTMLConverter::_addTableForElement):
+        (HTMLConverter::_addTableCellForElement):
+        (HTMLConverter::_processElement):
+        (HTMLConverter::_exitElement):
+        (HTMLConverter::_processText):
+        (HTMLConverter::_traverseNode):
+        (HTMLConverter::_traverseFooterNode):
+        (HTMLConverter::_stringForNode): Deleted.
+
 2014-03-25  Pratik Solanki  <psolanki@apple.com>
 
         Attempt to fix iOS build after r166261.

@@ -32,9 +32,11 @@
 #import "CSSComputedStyleDeclaration.h"
 #import "CSSParser.h"
 #import "CSSPrimitiveValue.h"
+#import "CharacterData.h"
 #import "Document.h"
 #import "DocumentLoader.h"
 #import "DOMCSSPrimitiveValueInternal.h"
+#import "DOMCharacterDataInternal.h"
 #import "DOMDocumentInternal.h"
 #import "DOMElementInternal.h"
 #import "DOMHTMLTableCellElement.h"
@@ -481,8 +483,7 @@ private:
     } _flags;
     
     void _loadFromDOMRange();
-    
-    NSString *_stringForNode(DOMNode *, CSSPropertyID);
+
     PlatformColor *_colorForNode(DOMNode *, CSSPropertyID);
     BOOL _getFloat(CGFloat *val, DOMNode *, CSSPropertyID);
 
@@ -505,12 +506,12 @@ private:
     void _fillInBlock(NSTextBlock *block, DOMElement *element, PlatformColor *backgroundColor, CGFloat extraMargin, CGFloat extraPadding, BOOL isTable);
     void _processMetaElementWithName(NSString *name, NSString *content);
     void _processHeadElement(DOMElement *element);
-    BOOL _enterElement(DOMElement *element, NSString *tag, NSString *displayVal, BOOL embedded);
+    BOOL _enterElement(DOMElement *element, BOOL embedded);
     void _addTableForElement(DOMElement *tableElement);
     void _addTableCellForElement(DOMElement *tableCellElement);
-    BOOL _processElement(DOMElement *element, NSString *tag, NSString *displayVal, NSInteger depth);
+    BOOL _processElement(DOMElement *element, NSInteger depth);
     void _addMarkersToList(NSTextList *list, NSRange range);
-    void _exitElement(DOMElement *element, NSString *tag, NSString *displayVal, NSInteger depth, NSUInteger startIndex);
+    void _exitElement(DOMElement *element, NSInteger depth, NSUInteger startIndex);
     void _processText(DOMCharacterData *text);
     void _adjustTrailingNewline();
 };
@@ -858,17 +859,6 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID prope
     return String();
 }
 
-NSString *HTMLConverter::_stringForNode(DOMNode *node, CSSPropertyID propertyId)
-{
-    Node* coreNode = core(node);
-    if (!coreNode)
-        return nil;
-    String result = _caches->propertyValueForNode(*coreNode, propertyId);
-    if (!result.length())
-        return nil;
-    return result;
-}
-
 static inline bool floatValueFromPrimitiveValue(CSSPrimitiveValue& primitiveValue, float& result)
 {
     // FIXME: Use CSSPrimitiveValue::computeValue.
@@ -1155,34 +1145,30 @@ PlatformColor *HTMLConverter::_colorForNode(DOMNode *node, CSSPropertyID propert
 
 NSDictionary *HTMLConverter::_computedAttributesForElement(DOMElement *element)
 {
-    DOMElement *blockElement = _blockLevelElementForNode(element);
     NSMutableDictionary *attrs = [NSMutableDictionary dictionary];
+    if (!element)
+        return attrs;
+    
+    Element& coreElement = *core(element);
 #if !PLATFORM(IOS)
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 #endif
-    NSString *textDecoration = _stringForNode(element, CSSPropertyTextDecoration);
-    NSString *verticalAlign = _stringForNode(element, CSSPropertyVerticalAlign);
-    NSString *textShadow = _stringForNode(element, CSSPropertyTextShadow);
-    NSString *fontLigatures = _stringForNode(element, CSSPropertyWebkitFontVariantLigatures);
-    NSString *fontKerning = _stringForNode(element, CSSPropertyWebkitFontKerning);
-    NSString *letterSpacing = _stringForNode(element, CSSPropertyLetterSpacing);
-    CGFloat fontSize = 0;
-    CGFloat baselineOffset = 0;
-    CGFloat strokeWidth = 0.0;
+
     PlatformFont *font = nil;
     PlatformFont *actualFont = (PlatformFont *)[element _font];
     PlatformColor *foregroundColor = _colorForNode(element, CSSPropertyColor);
     PlatformColor *backgroundColor = _colorForNode(element, CSSPropertyBackgroundColor);
     PlatformColor *strokeColor = _colorForNode(element, CSSPropertyWebkitTextStrokeColor);
 
-    if (!_getFloat(&fontSize, element, CSSPropertyFontSize) || fontSize <= 0.0)
+    float fontSize = 0;
+    if (!_caches->floatPropertyValueForNode(coreElement, CSSPropertyFontSize, fontSize) || fontSize <= 0.0)
         fontSize = defaultFontSize;
     if (fontSize < minimumFontSize)
         fontSize = minimumFontSize;
     if (fabs(floor(2.0 * fontSize + 0.5) / 2.0 - fontSize) < 0.05)
-        fontSize = (CGFloat)floor(2.0 * fontSize + 0.5) / 2;
+        fontSize = floor(2.0 * fontSize + 0.5) / 2;
     else if (fabs(floor(10.0 * fontSize + 0.5) / 10.0 - fontSize) < 0.005)
-        fontSize = (CGFloat)floor(10.0 * fontSize + 0.5) / 10;
+        fontSize = floor(10.0 * fontSize + 0.5) / 10;
 
     if (fontSize <= 0.0)
         fontSize = defaultFontSize;
@@ -1195,17 +1181,14 @@ NSDictionary *HTMLConverter::_computedAttributesForElement(DOMElement *element)
         font = [fontManager convertFont:actualFont toSize:fontSize];
 #endif
     if (!font) {
-        NSString *fontName = [_stringForNode(element, CSSPropertyFontFamily) capitalizedString];
-        NSString *fontStyle = _stringForNode(element, CSSPropertyFontStyle);
-        NSString *fontWeight = _stringForNode(element, CSSPropertyFontWeight);
-#if !PLATFORM(IOS)
-        NSString *fontVariant = _stringForNode(element, CSSPropertyFontVariant);
-#endif
-        if (fontName)
-            font = _fontForNameAndSize(fontName, fontSize, _fontCache);
+        String fontName = _caches->propertyValueForNode(coreElement, CSSPropertyFontFamily);
+        if (fontName.length())
+            font = _fontForNameAndSize(fontName.upper(), fontSize, _fontCache);
         if (!font)
             font = [PlatformFontClass fontWithName:@"Times" size:fontSize];
-        if ([@"italic" isEqualToString:fontStyle] || [@"oblique" isEqualToString:fontStyle]) {
+
+        String fontStyle = _caches->propertyValueForNode(coreElement, CSSPropertyFontStyle);
+        if (fontStyle == "italic" || fontStyle == "oblique") {
             PlatformFont *originalFont = font;
 #if PLATFORM(IOS)
             font = [PlatformFontClass fontWithFamilyName:[font familyName] traits:UIFontTraitItalic size:[font pointSize]];
@@ -1215,7 +1198,9 @@ NSDictionary *HTMLConverter::_computedAttributesForElement(DOMElement *element)
             if (!font)
                 font = originalFont;
         }
-        if ([fontWeight hasPrefix:@"bold"] || [fontWeight integerValue] >= 700) {
+
+        String fontWeight = _caches->propertyValueForNode(coreElement, CSSPropertyFontStyle);
+        if (fontWeight.startsWith("bold") || fontWeight.toInt() >= 700) {
             // ??? handle weight properly using NSFontManager
             PlatformFont *originalFont = font;
 #if PLATFORM(IOS)
@@ -1227,7 +1212,7 @@ NSDictionary *HTMLConverter::_computedAttributesForElement(DOMElement *element)
                 font = originalFont;
         }
 #if !PLATFORM(IOS) // IJB: No small caps support on iOS
-        if ([@"small-caps" isEqualToString:fontVariant]) {
+        if (_caches->propertyValueForNode(coreElement, CSSPropertyFontVariant) == "small-caps") {
             // ??? synthesize small-caps if [font isEqual:originalFont]
             NSFont *originalFont = font;
             font = [fontManager convertFont:font toHaveTrait:NSSmallCapsFontMask];
@@ -1243,102 +1228,131 @@ NSDictionary *HTMLConverter::_computedAttributesForElement(DOMElement *element)
     if (backgroundColor && !_elementHasOwnBackgroundColor(element))
         [attrs setObject:backgroundColor forKey:NSBackgroundColorAttributeName];
 
-    if (_getFloat(&strokeWidth, element, CSSPropertyWebkitTextStrokeWidth)) {
+    float strokeWidth = 0.0;
+    if (_caches->floatPropertyValueForNode(coreElement, CSSPropertyWebkitTextStrokeWidth, strokeWidth)) {
         float textStrokeWidth = strokeWidth / ([font pointSize] * 0.01);
         [attrs setObject:[NSNumber numberWithDouble:textStrokeWidth] forKey:NSStrokeWidthAttributeName];
     }
     if (strokeColor)
         [attrs setObject:strokeColor forKey:NSStrokeColorAttributeName];
-    if (fontKerning || letterSpacing) {
-        if ([fontKerning rangeOfString:@"none"].location != NSNotFound)
+
+    String fontKerning = _caches->propertyValueForNode(coreElement, CSSPropertyWebkitFontKerning);
+    String letterSpacing = _caches->propertyValueForNode(coreElement, CSSPropertyLetterSpacing);
+    if (fontKerning.length() || letterSpacing.length()) {
+        if (fontKerning == "none")
             [attrs setObject:@0.0 forKey:NSKernAttributeName];
         else {
-            double kernVal = letterSpacing ? [letterSpacing doubleValue] : 0.0;
+            double kernVal = letterSpacing.length() ? letterSpacing.toDouble() : 0.0;
             if (UIFloatIsZero(kernVal))
                 [attrs setObject:@0.0 forKey:NSKernAttributeName]; // auto and normal, the other possible values, are both "kerning enabled"
             else
                 [attrs setObject:[NSNumber numberWithDouble:kernVal] forKey:NSKernAttributeName];
         }
     }
-    if (fontLigatures) {
-        if ([fontLigatures rangeOfString:@"normal"].location != NSNotFound)
+
+    String fontLigatures = _caches->propertyValueForNode(coreElement, CSSPropertyWebkitFontVariantLigatures);
+    if (fontLigatures.length()) {
+        if (fontLigatures.contains("normal"))
             ;   // default: whatever the system decides to do
-        else if ([fontLigatures rangeOfString:@"common-ligatures"].location != NSNotFound)
+        else if (fontLigatures.contains("common-ligatures"))
             [attrs setObject:@1 forKey:NSLigatureAttributeName];   // explicitly enabled
-        else if ([fontLigatures rangeOfString:@"no-common-ligatures"].location != NSNotFound)
+        else if (fontLigatures.contains("no-common-ligatures"))
             [attrs setObject:@0 forKey:NSLigatureAttributeName];  // explicitly disabled
     }
 
-    if (textDecoration && [textDecoration length] > 4) {
-        if ([textDecoration rangeOfString:@"underline"].location != NSNotFound)
+    String textDecoration = _caches->propertyValueForNode(coreElement, CSSPropertyTextDecoration);
+    if (textDecoration.length()) {
+        if (textDecoration.contains("underline"))
             [attrs setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
-        if ([textDecoration rangeOfString:@"line-through"].location != NSNotFound)
+        if (textDecoration.contains("line-through"))
             [attrs setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
     }
-    if (verticalAlign) {
-        if ([verticalAlign rangeOfString:@"super"].location != NSNotFound)
+
+    String verticalAlign = _caches->propertyValueForNode(coreElement, CSSPropertyVerticalAlign);
+    if (verticalAlign.length()) {
+        if (verticalAlign == "super")
             [attrs setObject:[NSNumber numberWithInteger:1] forKey:NSSuperscriptAttributeName];
-        if ([verticalAlign rangeOfString:@"sub"].location != NSNotFound)
+        else if (verticalAlign == "sub")
             [attrs setObject:[NSNumber numberWithInteger:-1] forKey:NSSuperscriptAttributeName];
     }
-    if (_getFloat(&baselineOffset, element, CSSPropertyVerticalAlign))
+
+    float baselineOffset = 0.0;
+    if (_caches->floatPropertyValueForNode(coreElement, CSSPropertyVerticalAlign, baselineOffset))
         [attrs setObject:[NSNumber numberWithDouble:baselineOffset] forKey:NSBaselineOffsetAttributeName];
-    if (textShadow && [textShadow length] > 4) {
+
+    String textShadow = _caches->propertyValueForNode(coreElement, CSSPropertyTextShadow);
+    if (textShadow.length() > 4) {
         NSShadow *shadow = _shadowForShadowStyle(textShadow);
         if (shadow)
             [attrs setObject:shadow forKey:NSShadowAttributeName];
     }
+
+    DOMElement *blockElement = _blockLevelElementForNode(element);
     if (element != blockElement && [_writingDirectionArray count] > 0)
         [attrs setObject:[NSArray arrayWithArray:_writingDirectionArray] forKey:NSWritingDirectionAttributeName];
-    
+
     if (blockElement) {
+        Element& coreBlockElement = *core(blockElement);
         NSMutableParagraphStyle *paragraphStyle = [defaultParagraphStyle() mutableCopy];
-        NSString *blockTag = [blockElement tagName];
-        BOOL isParagraph = ([@"P" isEqualToString:blockTag] || [@"LI" isEqualToString:blockTag] || ([blockTag hasPrefix:@"H"] && 2 == [blockTag length]));
-        NSString *textAlign = _stringForNode(blockElement, CSSPropertyTextAlign);
-        NSString *direction = _stringForNode(blockElement, CSSPropertyDirection);
-        NSString *hyphenation = _stringForNode(blockElement, CSSPropertyWebkitHyphens);
-        CGFloat leftMargin = 0;
-        CGFloat rightMargin = 0;
-        CGFloat bottomMargin = 0;
-        CGFloat textIndent = 0;
-        if (textAlign) {
+        unsigned heading = 0;
+        if (coreBlockElement.hasTagName(h1Tag))
+            heading = 1;
+        else if (coreBlockElement.hasTagName(h2Tag))
+            heading = 2;
+        else if (coreBlockElement.hasTagName(h3Tag))
+            heading = 3;
+        else if (coreBlockElement.hasTagName(h4Tag))
+            heading = 4;
+        else if (coreBlockElement.hasTagName(h5Tag))
+            heading = 5;
+        else if (coreBlockElement.hasTagName(h6Tag))
+            heading = 6;
+        bool isParagraph = coreBlockElement.hasTagName(pTag) || coreBlockElement.hasTagName(liTag) || heading;
+
+        String textAlign = _caches->propertyValueForNode(coreBlockElement, CSSPropertyTextAlign);
+        if (textAlign.length()) {
             // WebKit can return -khtml-left, -khtml-right, -khtml-center
-            if ([textAlign hasSuffix:@"left"])
+            if (textAlign.endsWith("left"))
                 [paragraphStyle setAlignment:NSTextAlignmentLeft];
-            else if ([textAlign hasSuffix:@"right"])
+            else if (textAlign.endsWith("right"))
                 [paragraphStyle setAlignment:NSTextAlignmentRight];
-            else if ([textAlign hasSuffix:@"center"])
+            else if (textAlign.endsWith("center"))
                 [paragraphStyle setAlignment:NSTextAlignmentCenter];
-            else if ([textAlign hasSuffix:@"justify"])
+            else if (textAlign.endsWith("justify"))
                 [paragraphStyle setAlignment:NSTextAlignmentJustified];
         }
-        if (direction) {
-            if ([direction isEqualToString:@"ltr"])
+
+        String direction = _caches->propertyValueForNode(coreBlockElement, CSSPropertyDirection);
+        if (direction.length()) {
+            if (direction == "ltr")
                 [paragraphStyle setBaseWritingDirection:NSWritingDirectionLeftToRight];
-            else if ([direction isEqualToString:@"rtl"])
+            else if (direction == "rtl")
                 [paragraphStyle setBaseWritingDirection:NSWritingDirectionRightToLeft];
         }
-        if(hyphenation) {
-            if ([hyphenation isEqualToString:@"auto"])
+
+        String hyphenation = _caches->propertyValueForNode(coreBlockElement, CSSPropertyWebkitHyphens);
+        if (hyphenation.length()) {
+            if (hyphenation == "auto")
                 [paragraphStyle setHyphenationFactor:1.0];
             else
                 [paragraphStyle setHyphenationFactor:0.0];
         }
-        if ([blockTag hasPrefix:@"H"] && 2 == [blockTag length]) {
-            NSInteger headerLevel = [blockTag characterAtIndex:1] - '0';
-            if (1 <= headerLevel && headerLevel <= 6)
-                [paragraphStyle setHeaderLevel:headerLevel];
-        }
+        if (heading)
+            [paragraphStyle setHeaderLevel:heading];
         if (isParagraph) {
-            if (_getFloat(&leftMargin, blockElement, CSSPropertyMarginLeft) && leftMargin > 0.0)
-                [paragraphStyle setHeadIndent:leftMargin];
-            if (_getFloat(&textIndent, blockElement, CSSPropertyTextIndent))
+            // FIXME: Why are we ignoring margin-top?
+            float marginLeft = 0.0;
+            if (_caches->floatPropertyValueForNode(coreBlockElement, CSSPropertyMarginLeft, marginLeft) && marginLeft > 0.0)
+                [paragraphStyle setHeadIndent:marginLeft];
+            float textIndent = 0.0;
+            if (_caches->floatPropertyValueForNode(coreBlockElement, CSSPropertyTextIndent, textIndent) && textIndent > 0.0)
                 [paragraphStyle setFirstLineHeadIndent:[paragraphStyle headIndent] + textIndent];
-            if (_getFloat(&rightMargin, blockElement, CSSPropertyMarginRight) && rightMargin > 0.0)
-                [paragraphStyle setTailIndent:-rightMargin];
-            if (_getFloat(&bottomMargin, blockElement, CSSPropertyMarginBottom) && bottomMargin > 0.0)
-                [paragraphStyle setParagraphSpacing:bottomMargin];
+            float marginRight = 0.0;
+            if (_caches->floatPropertyValueForNode(coreBlockElement, CSSPropertyMarginRight, marginRight) && marginRight > 0.0)
+                [paragraphStyle setTailIndent:-marginRight];
+            float marginBottom = 0.0;
+            if (_caches->floatPropertyValueForNode(coreBlockElement, CSSPropertyMarginRight, marginBottom) && marginBottom > 0.0)
+                [paragraphStyle setParagraphSpacing:marginBottom];
         }
         if ([_textLists count] > 0)
             [paragraphStyle setTextLists:_textLists];
@@ -1489,8 +1503,10 @@ BOOL HTMLConverter::_addAttachmentForElement(DOMElement *element, NSURL *url, BO
         NSUInteger textLength = [_attrStr length];
         RetainPtr<NSTextAttachment> attachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper]);
 #if PLATFORM(IOS)
-        NSString *vAlign = _stringForNode(element, CSSPropertyVerticalAlign);
-        attachment.get().bounds = CGRectMake(0, ([vAlign floatValue] / 100.) * element.clientHeight, element.clientWidth, element.clientHeight);
+        float verticalAlign = 0.0;
+        if (element)
+            _caches->floatPropertyValueForNode(core(element), CSSPropertyVerticalAlign, verticalAlign)
+        attachment.get().bounds = CGRectMake(0, (verticalAlign / 100) * element.clientHeight, element.clientWidth, element.clientHeight);
 #endif
         RetainPtr<NSString> string = adoptNS([[NSString alloc] initWithFormat:(needsParagraph ? @"%C\n" : @"%C"), static_cast<unichar>(NSAttachmentCharacter)]);
         NSRange rangeToReplace = NSMakeRange(textLength, 0);
@@ -1778,14 +1794,18 @@ void HTMLConverter::_processHeadElement(DOMElement *element)
     }
 }
 
-BOOL HTMLConverter::_enterElement(DOMElement *element, NSString *tag, NSString *displayVal, BOOL embedded)
+BOOL HTMLConverter::_enterElement(DOMElement *element, BOOL embedded)
 {
-    if ([@"HEAD" isEqualToString:tag] && !embedded)
+    ASSERT(element);
+    Element& coreElement = *core(element);
+    String displayValue = _caches->propertyValueForNode(coreElement, CSSPropertyDisplay);
+
+    if (coreElement.hasTagName(headTag) && !embedded)
         _processHeadElement(element);
-    else if (!displayVal || !([@"none" isEqualToString:displayVal] || [@"table-column" isEqualToString:displayVal] || [@"table-column-group" isEqualToString:displayVal])) {
-        if (_elementIsBlockLevel(element) && ![@"BR" isEqualToString:tag] && !([@"table-cell" isEqualToString:displayVal] && [_textTables count] == 0)
-            && !([_textLists count] > 0 && [@"block" isEqualToString:displayVal] && ![@"LI" isEqualToString:tag] && ![@"UL" isEqualToString:tag] && ![@"OL" isEqualToString:tag]))
-            _newParagraphForElement(element, tag, NO, YES);
+    else if (!displayValue.length() || !(displayValue == "none" || displayValue == "table-column" || displayValue == "table-column-group")) {
+        if (_elementIsBlockLevel(element) && !coreElement.hasTagName(brTag) && !(displayValue == "table-cell" && [_textTables count] == 0)
+            && !([_textLists count] > 0 && displayValue == "block" && !coreElement.hasTagName(liTag) && !coreElement.hasTagName(ulTag) && !coreElement.hasTagName(olTag)))
+            _newParagraphForElement(element, [element tagName], NO, YES);
         return YES;
     }
     return NO;
@@ -1801,9 +1821,6 @@ void HTMLConverter::_addTableForElement(DOMElement *tableElement)
     [table setCollapsesBorders:NO];
     [table setHidesEmptyCells:NO];
     if (tableElement) {
-        NSString *borderCollapse = _stringForNode(tableElement, CSSPropertyBorderCollapse);
-        NSString *emptyCells = _stringForNode(tableElement, CSSPropertyEmptyCells);
-        NSString *tableLayout = _stringForNode(tableElement, CSSPropertyTableLayout);
         if ([tableElement respondsToSelector:@selector(cellSpacing)]) {
             NSString *cellSpacing = [(DOMHTMLTableElement *)tableElement cellSpacing];
             if (cellSpacing && [cellSpacing length] > 0 && ![cellSpacing hasSuffix:@"%"])
@@ -1815,13 +1832,16 @@ void HTMLConverter::_addTableForElement(DOMElement *tableElement)
                 cellPaddingVal = [cellPadding floatValue];
         }
         _fillInBlock(table.get(), tableElement, nil, 0, 0, YES);
-        if ([@"collapse" isEqualToString:borderCollapse]) {
+
+        ASSERT(tableElement);
+        Element& coreTableElement = *core(tableElement);
+        if (_caches->propertyValueForNode(coreTableElement, CSSPropertyBorderCollapse) == "collapse") {
             [table setCollapsesBorders:YES];
             cellSpacingVal = 0;
         }
-        if ([@"hide" isEqualToString:emptyCells])
+        if (_caches->propertyValueForNode(coreTableElement, CSSPropertyEmptyCells) == "hide")
             [table setHidesEmptyCells:YES];
-        if ([@"fixed" isEqualToString:tableLayout])
+        if (_caches->propertyValueForNode(coreTableElement, CSSPropertyTableLayout) == "fixed")
             [table setLayoutAlgorithm:NSTextTableFixedLayoutAlgorithm];
     }
     [_textTables addObject:table.get()];
@@ -1863,15 +1883,15 @@ void HTMLConverter::_addTableCellForElement(DOMElement *tableCellElement)
     }
     RetainPtr<NSTextTableBlock> block = adoptNS([[PlatformNSTextTableBlock alloc] initWithTable:table startingRow:rowNumber rowSpan:rowSpan startingColumn:columnNumber columnSpan:colSpan]);
     if (tableCellElement) {
-        NSString *verticalAlign = _stringForNode(tableCellElement, CSSPropertyVerticalAlign);
+        String verticalAlign = _caches->propertyValueForNode(*core(tableCellElement), CSSPropertyVerticalAlign);
         _fillInBlock(block.get(), tableCellElement, color, cellSpacingVal / 2, 0, NO);
-        if ([@"middle" isEqualToString:verticalAlign])
+        if (verticalAlign == "middle")
             [block setVerticalAlignment:NSTextBlockMiddleAlignment];
-        else if ([@"bottom" isEqualToString:verticalAlign])
+        else if (verticalAlign == "bottom")
             [block setVerticalAlignment:NSTextBlockBottomAlignment];
-        else if ([@"baseline" isEqualToString:verticalAlign])
+        else if (verticalAlign == "baseline")
             [block setVerticalAlignment:NSTextBlockBaselineAlignment];
-        else if ([@"top" isEqualToString:verticalAlign])
+        else if (verticalAlign == "top")
             [block setVerticalAlignment:NSTextBlockTopAlignment];
     }
     [_textBlocks addObject:block.get()];
@@ -1879,51 +1899,53 @@ void HTMLConverter::_addTableCellForElement(DOMElement *tableCellElement)
     [rowArray sortUsingFunction:_colCompare context:NULL];
 }
 
-BOOL HTMLConverter::_processElement(DOMElement *element, NSString *tag, NSString *displayVal, NSInteger depth)
+BOOL HTMLConverter::_processElement(DOMElement *element, NSInteger depth)
 {
+    if (!element)
+        return NO;
     BOOL retval = YES;
     BOOL isBlockLevel = _elementIsBlockLevel(element);
+    Element& coreElement = *core(element);
+    String displayValue = _caches->propertyValueForNode(coreElement, CSSPropertyDisplay);
     if (isBlockLevel)
         [_writingDirectionArray removeAllObjects];
     else {
-        NSString *bidi = _stringForNode(element, CSSPropertyUnicodeBidi);
-        if (bidi && [bidi isEqualToString:@"embed"]) {
+        String bidi = _caches->propertyValueForNode(coreElement, CSSPropertyUnicodeBidi);
+        if (bidi == "embed") {
             NSUInteger val = NSTextWritingDirectionEmbedding;
-            NSString *direction = _stringForNode(element, CSSPropertyDirection);
-            if ([direction isEqualToString:@"rtl"])
+            if (_caches->propertyValueForNode(coreElement, CSSPropertyDirection) == "rtl")
                 val |= NSWritingDirectionRightToLeft;
             [_writingDirectionArray addObject:[NSNumber numberWithUnsignedInteger:val]];
-        } else if (bidi && [bidi isEqualToString:@"bidi-override"]) {
+        } else if (bidi == "bidi-override") {
             NSUInteger val = NSTextWritingDirectionOverride;
-            NSString *direction = _stringForNode(element, CSSPropertyDirection);
-            if ([direction isEqualToString:@"rtl"])
+            if (_caches->propertyValueForNode(coreElement, CSSPropertyDirection) == "rtl")
                 val |= NSWritingDirectionRightToLeft;
             [_writingDirectionArray addObject:[NSNumber numberWithUnsignedInteger:val]];
         }
     }
-    if ([@"table" isEqualToString:displayVal] || ([_textTables count] == 0 && [@"table-row-group" isEqualToString:displayVal])) {
+    if (displayValue == "table" || ([_textTables count] == 0 && displayValue == "table-row-group")) {
         DOMElement *tableElement = element;
-        if ([@"table-row-group" isEqualToString:displayVal]) {
+        if (displayValue == "table-row-group") {
             // If we are starting in medias res, the first thing we see may be the tbody, so go up to the table
             tableElement = _blockLevelElementForNode([element parentNode]);
-            if (![@"table" isEqualToString:_stringForNode(tableElement, CSSPropertyDisplay)])
+            if (!tableElement || _caches->propertyValueForNode(*core(tableElement), CSSPropertyDisplay) != "table")
                 tableElement = element;
         }
         while ([_textTables count] > [_textBlocks count])
             _addTableCellForElement(nil);
         _addTableForElement(tableElement);
-    } else if ([@"table-footer-group" isEqualToString:displayVal] && [_textTables count] > 0) {
+    } else if (displayValue == "table-footer-group" && [_textTables count] > 0) {
         [_textTableFooters setObject:element forKey:[NSValue valueWithNonretainedObject:[_textTables lastObject]]];
         retval = NO;
-    } else if ([@"table-row" isEqualToString:displayVal] && [_textTables count] > 0) {
+    } else if (displayValue == "table-row" && [_textTables count] > 0) {
         PlatformColor *color = _colorForNode(element, CSSPropertyBackgroundColor);
         if (!color) color = [PlatformColorClass clearColor];
         [_textTableRowBackgroundColors addObject:color];
-    } else if ([@"table-cell" isEqualToString:displayVal]) {
+    } else if (displayValue == "table-cell") {
         while ([_textTables count] < [_textBlocks count] + 1)
             _addTableForElement(nil);
         _addTableCellForElement(element);
-    } else if ([@"IMG" isEqualToString:tag]) {
+    } else if (coreElement.hasTagName(imgTag)) {
         NSString *urlString = [element getAttribute:@"src"];
         if (urlString && [urlString length] > 0) {
             NSURL *url = core([element ownerDocument])->completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
@@ -1937,7 +1959,7 @@ BOOL HTMLConverter::_processElement(DOMElement *element, NSString *tag, NSString
                 _addAttachmentForElement(element, url, isBlockLevel, usePlaceholderImage);
         }
         retval = NO;
-    } else if ([@"OBJECT" isEqualToString:tag]) {
+    } else if (coreElement.hasTagName(objectTag)) {
         NSString *baseString = [element getAttribute:@"codebase"];
         NSString *urlString = [element getAttribute:@"data"];
         NSString *declareString = [element getAttribute:@"declare"];
@@ -1958,14 +1980,14 @@ BOOL HTMLConverter::_processElement(DOMElement *element, NSString *tag, NSString
             if (url)
                 retval = !_addAttachmentForElement(element, url, isBlockLevel, NO);
         }
-    } else if ([@"FRAME" isEqualToString:tag]) {
+    } else if (coreElement.hasTagName(frameTag)) {
         if ([element respondsToSelector:@selector(contentDocument)]) {
             DOMDocument *contentDocument = [(DOMHTMLFrameElement *)element contentDocument];
             if (contentDocument)
                 _traverseNode(contentDocument, depth + 1, YES);
         }
         retval = NO;
-    } else if ([@"IFRAME" isEqualToString:tag]) {
+    } else if (coreElement.hasTagName(iframeTag)) {
         if ([element respondsToSelector:@selector(contentDocument)]) {
             DOMDocument *contentDocument = [(DOMHTMLIFrameElement *)element contentDocument];
             if (contentDocument) {
@@ -1973,7 +1995,7 @@ BOOL HTMLConverter::_processElement(DOMElement *element, NSString *tag, NSString
                 retval = NO;
             }
         }
-    } else if ([@"BR" isEqualToString:tag]) {
+    } else if (coreElement.hasTagName(brTag)) {
         DOMElement *blockElement = _blockLevelElementForNode([element parentNode]);
         NSString *breakClass = [element getAttribute:@"class"], *blockTag = [blockElement tagName];
         BOOL isExtraBreak = [@"Apple-interchange-newline" isEqualToString:breakClass], blockElementIsParagraph = ([@"P" isEqualToString:blockTag] || [@"LI" isEqualToString:blockTag] || ([blockTag hasPrefix:@"H"] && 2 == [blockTag length]));
@@ -1983,35 +2005,35 @@ BOOL HTMLConverter::_processElement(DOMElement *element, NSString *tag, NSString
             if (blockElement && blockElementIsParagraph)
                 _newLineForElement(element);
             else
-                _newParagraphForElement(element, tag, YES, NO);
+                _newParagraphForElement(element, [element tagName], YES, NO);
         }
-    } else if ([@"UL" isEqualToString:tag]) {
+    } else if (coreElement.hasTagName(ulTag)) {
         RetainPtr<NSTextList> list;
-        NSString *listStyleType = _stringForNode(element, CSSPropertyListStyleType);
-        if (!listStyleType || [listStyleType length] == 0)
+        String listStyleType = _caches->propertyValueForNode(coreElement, CSSPropertyListStyleType);
+        if (!listStyleType.length())
             listStyleType = @"disc";
-        list = adoptNS([[PlatformNSTextList alloc] initWithMarkerFormat:[NSString stringWithFormat:@"{%@}", listStyleType] options:0]);
+        list = adoptNS([[PlatformNSTextList alloc] initWithMarkerFormat:String("{" + listStyleType + "}") options:0]);
         [_textLists addObject:list.get()];
-    } else if ([@"OL" isEqualToString:tag]) {
+    } else if (coreElement.hasTagName(olTag)) {
         RetainPtr<NSTextList> list;
-        NSString *listStyleType = _stringForNode(element, CSSPropertyListStyleType);
-        if (!listStyleType || [listStyleType length] == 0)
-            listStyleType = @"decimal";
-        list = adoptNS([[PlatformNSTextList alloc] initWithMarkerFormat:[NSString stringWithFormat:@"{%@}.", listStyleType] options:0]);
+        String listStyleType = _caches->propertyValueForNode(coreElement, CSSPropertyListStyleType);
+        if (!listStyleType.length())
+            listStyleType = "decimal";
+        list = adoptNS([[PlatformNSTextList alloc] initWithMarkerFormat:String("{" + listStyleType + "}") options:0]);
         if ([element respondsToSelector:@selector(start)]) {
             NSInteger startingItemNumber = [(DOMHTMLOListElement *)element start];
             [list setStartingItemNumber:startingItemNumber];
         }
         [_textLists addObject:list.get()];
-    } else if ([@"Q" isEqualToString:tag]) {
+    } else if (coreElement.hasTagName(qTag)) {
         _addQuoteForElement(element, YES, _quoteLevel++);
-    } else if ([@"INPUT" isEqualToString:tag]) {
+    } else if (coreElement.hasTagName(inputTag)) {
         if ([element respondsToSelector:@selector(type)] && [element respondsToSelector:@selector(value)] && [@"text" compare:[(DOMHTMLInputElement *)element type] options:NSCaseInsensitiveSearch] == NSOrderedSame) {
             NSString *value = [(DOMHTMLInputElement *)element value];
             if (value && [value length] > 0)
                 _addValue(value, element);
         }
-    } else if ([@"TEXTAREA" isEqualToString:tag]) {
+    } else if (coreElement.hasTagName(textareaTag)) {
         if ([element respondsToSelector:@selector(value)]) {
             NSString *value = [(DOMHTMLTextAreaElement *)element value];
             if (value && [value length] > 0)
@@ -2109,10 +2131,13 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
     }
 }
 
-void HTMLConverter::_exitElement(DOMElement *element, NSString *tag, NSString *displayVal, NSInteger depth, NSUInteger startIndex)
+void HTMLConverter::_exitElement(DOMElement *element, NSInteger depth, NSUInteger startIndex)
 {
+    ASSERT(element);
+    Element& coreElement = *core(element);
+    String displayValue = _caches->propertyValueForNode(coreElement, CSSPropertyDisplay);
     NSRange range = NSMakeRange(startIndex, [_attrStr length] - startIndex);
-    if (range.length > 0 && [@"A" isEqualToString:tag]) {
+    if (range.length > 0 && coreElement.hasTagName(aTag)) {
         NSString *urlString = [element getAttribute:@"href"];
         NSString *strippedString = [urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         if (urlString && [urlString length] > 0 && strippedString && [strippedString length] > 0 && ![strippedString hasPrefix:@"#"]) {
@@ -2126,21 +2151,20 @@ void HTMLConverter::_exitElement(DOMElement *element, NSString *tag, NSString *d
     }
     if (!_flags.reachedEnd && _elementIsBlockLevel(element)) {
         [_writingDirectionArray removeAllObjects];
-        if ([@"table-cell" isEqualToString:displayVal] && [_textBlocks count] == 0) {
+        if (displayValue == "table-cell" && [_textBlocks count] == 0) {
             _newTabForElement(element);
-        } else if ([_textLists count] > 0 && [@"block" isEqualToString:displayVal] && ![@"LI" isEqualToString:tag] && ![@"UL" isEqualToString:tag] && ![@"OL" isEqualToString:tag]) {
+        } else if ([_textLists count] > 0 && displayValue == "block" && !coreElement.hasTagName(liTag) && !coreElement.hasTagName(ulTag) && !coreElement.hasTagName(olTag)) {
             _newLineForElement(element);
         } else {
-            _newParagraphForElement(element, tag, (range.length == 0), YES);
+            _newParagraphForElement(element, [element tagName], (range.length == 0), YES);
         }
     } else if ([_writingDirectionArray count] > 0) {
-        NSString *bidi = _stringForNode(element, CSSPropertyUnicodeBidi);
-        if (bidi && ([bidi isEqualToString:@"embed"] || [bidi isEqualToString:@"bidi-override"])) {
+        String bidi = _caches->propertyValueForNode(coreElement, CSSPropertyUnicodeBidi);
+        if (bidi == "embed" || bidi == "bidi-override")
             [_writingDirectionArray removeLastObject];
-        }
     }
     range = NSMakeRange(startIndex, [_attrStr length] - startIndex);
-    if ([@"table" isEqualToString:displayVal] && [_textTables count] > 0) {
+    if (displayValue == "table" && [_textTables count] > 0) {
         NSValue *key = [NSValue valueWithNonretainedObject:[_textTables lastObject]];
         DOMNode *footer = [_textTableFooters objectForKey:key];
         while ([_textTables count] < [_textBlocks count] + 1)
@@ -2154,7 +2178,7 @@ void HTMLConverter::_exitElement(DOMElement *element, NSString *tag, NSString *d
         [_textTablePaddings removeLastObject];
         [_textTableRows removeLastObject];
         [_textTableRowArrays removeLastObject];
-    } else if ([@"table-row" isEqualToString:displayVal] && [_textTables count] > 0) {
+    } else if (displayValue == "table-row" && [_textTables count] > 0) {
         NSTextTable *table = [_textTables lastObject];
         NSTextTableBlock *block;
         NSMutableArray *rowArray = [_textTableRowArrays lastObject], *previousRowArray;
@@ -2187,7 +2211,7 @@ void HTMLConverter::_exitElement(DOMElement *element, NSString *tag, NSString *d
         [_textTableRowArrays addObject:rowArray];
         if ([_textTableRowBackgroundColors count] > 0)
             [_textTableRowBackgroundColors removeLastObject];
-    } else if ([@"table-cell" isEqualToString:displayVal] && [_textBlocks count] > 0) {
+    } else if (displayValue == "table-cell" && [_textBlocks count] > 0) {
         while ([_textTables count] > [_textBlocks count]) {
             [_textTables removeLastObject];
             [_textTableSpacings removeLastObject];
@@ -2196,13 +2220,13 @@ void HTMLConverter::_exitElement(DOMElement *element, NSString *tag, NSString *d
             [_textTableRowArrays removeLastObject];
         }
         [_textBlocks removeLastObject];
-    } else if (([@"UL" isEqualToString:tag] || [@"OL" isEqualToString:tag]) && [_textLists count] > 0) {
+    } else if ((coreElement.hasTagName(ulTag) || coreElement.hasTagName(olTag)) && [_textLists count] > 0) {
         NSTextList *list = [_textLists lastObject];
         _addMarkersToList(list, range);
         [_textLists removeLastObject];
-    } else if ([@"Q" isEqualToString:tag]) {
+    } else if (coreElement.hasTagName(qTag)) {
         _addQuoteForElement(element, NO, --_quoteLevel);
-    } else if ([@"SPAN" isEqualToString:tag]) {
+    } else if (coreElement.hasTagName(spanTag)) {
         NSString *className = [element getAttribute:@"class"];
         NSMutableString *mutableString;
         NSUInteger i, count = 0;
@@ -2245,10 +2269,10 @@ void HTMLConverter::_exitElement(DOMElement *element, NSString *tag, NSString *d
 
 void HTMLConverter::_processText(DOMCharacterData *text)
 {
+    ASSERT(text);
+    CharacterData& characterData = *core(text);
     NSString *instr = [text data];
     NSString *outstr = instr;
-    NSString *whitespaceVal;
-    NSString *transformVal;
     NSUInteger textLength = [_attrStr length];
     NSUInteger startOffset = 0;
     NSUInteger endOffset = [instr length];
@@ -2258,9 +2282,7 @@ void HTMLConverter::_processText(DOMCharacterData *text)
     BOOL suppressLeadingSpace = ((_flags.isSoft && lastChar == ' ') || lastChar == '\n' || lastChar == '\r' || lastChar == '\t' || lastChar == NSParagraphSeparatorCharacter || lastChar == NSLineSeparatorCharacter || lastChar == NSFormFeedCharacter || lastChar == WebNextLineCharacter);
     NSRange rangeToReplace = NSMakeRange(textLength, 0);
     CFMutableStringRef mutstr = NULL;
-    whitespaceVal = _stringForNode(text, CSSPropertyWhiteSpace);
-    transformVal = _stringForNode(text, CSSPropertyTextTransform);
-    
+
     if (_domRange) {
         if (text == [_domRange startContainer]) {
             startOffset = (NSUInteger)[_domRange startOffset];
@@ -2276,7 +2298,8 @@ void HTMLConverter::_processText(DOMCharacterData *text)
             outstr = instr;
         }
     }
-    if ([whitespaceVal hasPrefix:@"pre"]) {
+
+    if (_caches->propertyValueForNode(characterData, CSSPropertyWhiteSpace).startsWith("pre")) {
         if (textLength > 0 && [instr length] > 0 && _flags.isSoft) {
             unichar c = [instr characterAtIndex:0];
             if (c == '\n' || c == '\r' || c == NSParagraphSeparatorCharacter || c == NSLineSeparatorCharacter || c == NSFormFeedCharacter || c == WebNextLineCharacter)
@@ -2313,12 +2336,16 @@ void HTMLConverter::_processText(DOMCharacterData *text)
         outstr = (NSString *)mutstr;
     }
     if ([outstr length] > 0) {
-        if ([@"capitalize" isEqualToString:transformVal])
-            outstr = [outstr capitalizedString];
-        else if ([@"uppercase" isEqualToString:transformVal])
-            outstr = [outstr uppercaseString];
-        else if ([@"lowercase" isEqualToString:transformVal])
-            outstr = [outstr lowercaseString];
+        String textTransform = _caches->propertyValueForNode(characterData, CSSPropertyTextTransform);
+        if (textTransform.length()) {
+            if (textTransform == "capitalize")
+                outstr = [outstr capitalizedString];
+            else if (textTransform == "uppercase")
+                outstr = [outstr uppercaseString];
+            else if (textTransform == "lowercase")
+                outstr = [outstr lowercaseString];
+        }
+
         [_attrStr replaceCharactersInRange:rangeToReplace withString:outstr];
         rangeToReplace.length = [outstr length];
         RetainPtr<NSDictionary> attrs;
@@ -2388,11 +2415,9 @@ void HTMLConverter::_traverseNode(DOMNode *node, NSInteger depth, BOOL embedded)
         }
     } else if (nodeType == DOM_ELEMENT_NODE) {
         DOMElement *element = (DOMElement *)node;
-        NSString *tag = [element tagName];
-        NSString *displayVal = _stringForNode(element, CSSPropertyDisplay);
-        if (_enterElement(element, tag, displayVal, embedded)) {
+        if (_enterElement(element, embedded)) {
             NSUInteger startIndex = [_attrStr length];
-            if (_processElement(element, tag, displayVal, depth)) {
+            if (_processElement(element, depth)) {
                 for (NSUInteger i = 0; i < count; i++) {
                     if (isStart && i == startOffset)
                         _domRangeStartIndex = [_attrStr length];
@@ -2403,7 +2428,7 @@ void HTMLConverter::_traverseNode(DOMNode *node, NSInteger depth, BOOL embedded)
                     if (_flags.reachedEnd)
                         break;
                 }
-                _exitElement(element, tag, displayVal, depth, startIndex);
+                _exitElement(element, depth, startIndex);
             }
         }
     } else if (nodeType == DOM_TEXT_NODE || nodeType == DOM_CDATA_SECTION_NODE) {
@@ -2418,7 +2443,6 @@ void HTMLConverter::_traverseFooterNode(DOMNode *node, NSInteger depth)
 {
     DOMElement *element = (DOMElement *)node;
     NSArray *childNodes = _childrenForNode(node);
-    NSString *tag = @"TBODY", *displayVal = @"table-row-group";
     NSUInteger count = [childNodes count];
     NSUInteger startOffset = 0;
     NSUInteger endOffset = count;
@@ -2440,9 +2464,9 @@ void HTMLConverter::_traverseFooterNode(DOMNode *node, NSInteger depth)
             isEnd = YES;
         }
     }
-    if (_enterElement(element, tag, displayVal, YES)) {
+    if (_enterElement(element, YES)) {
         NSUInteger startIndex = [_attrStr length];
-        if (_processElement(element, tag, displayVal, depth)) {
+        if (_processElement(element, depth)) {
             for (NSUInteger i = 0; i < count; i++) {
                 if (isStart && i == startOffset)
                     _domRangeStartIndex = [_attrStr length];
@@ -2453,7 +2477,7 @@ void HTMLConverter::_traverseFooterNode(DOMNode *node, NSInteger depth)
                 if (_flags.reachedEnd)
                     break;
             }
-            _exitElement(element, tag, displayVal, depth, startIndex);
+            _exitElement(element, depth, startIndex);
         }
     }
     if (isEnd)
