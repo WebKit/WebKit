@@ -1,3 +1,9 @@
+2014-03-26  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix.
+
+        * runtime/JSCell.h: VS2013 confused about argument type.
+
 2014-03-26  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Remove shape-inside support

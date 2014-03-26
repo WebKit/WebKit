@@ -476,6 +476,7 @@ EXPORTS
         symbolWithPointer(?visibleContentRect@ScrollableArea@WebCore@@QBE?AVIntRect@2@W4VisibleContentRectBehavior@12@@Z, ?visibleContentRect@ScrollableArea@WebCore@@QEBA?AVIntRect@2@W4VisibleContentRectBehavior@12@@Z)
         symbolWithPointer(?gAccessibilityEnhancedUserInterfaceEnabled@AXObjectCache@WebCore@@0_NA, ?gAccessibilityEnhancedUserInterfaceEnabled@AXObjectCache@WebCore@@0_NA)
         symbolWithPointer(?disableAccessibility@AXObjectCache@WebCore@@SAXXZ, ?disableAccessibility@AXObjectCache@WebCore@@SAXXZ)
+        symbolWithPointer(?setEnhancedUserInterfaceAccessibility@AXObjectCache@WebCore@@SAX_N@Z, ?setEnhancedUserInterfaceAccessibility@AXObjectCache@WebCore@@SAX_N@Z)
         symbolWithPointer(?sessionID@Page@WebCore@@QBE?AVSessionID@2@XZ, ?sessionID@Page@WebCore@@QEBA?AVSessionID@2@XZ)
         symbolWithPointer(?resourceForURL@MemoryCache@WebCore@@QAEPAVCachedResource@2@ABVURL@2@VSessionID@2@@Z, ?resourceForURL@MemoryCache@WebCore@@QEAAPEAVCachedResource@2@AEBVURL@2@VSessionID@2@@Z)
         symbolWithPointer(?makeDOMBindingsTypeErrorStringInternal@WebCore@@YA?AVString@WTF@@PBDZZ, ?makeDOMBindingsTypeErrorStringInternal@WebCore@@YA?AVString@WTF@@PEBDZZ)

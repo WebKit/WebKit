@@ -131,7 +131,7 @@ public:
     static void disableAccessibility();
 
     // Enhanced user interface accessibility can be toggled by the assistive technology.
-    static void setEnhancedUserInterfaceAccessibility(bool flag) { gAccessibilityEnhancedUserInterfaceEnabled = flag; }
+    static void setEnhancedUserInterfaceAccessibility(bool flag);
     
     static bool accessibilityEnabled() { return gAccessibilityEnabled; }
     static bool accessibilityEnhancedUserInterfaceEnabled() { return gAccessibilityEnhancedUserInterfaceEnabled; }

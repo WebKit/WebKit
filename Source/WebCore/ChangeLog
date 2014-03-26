@@ -1,3 +1,16 @@
+2014-03-26  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test correction.
+
+        Because of the way DRT on Windows links to WebCore, having the implementaion of the update
+        method in the header caused a runtime failure due to duplicate symbols being bound to the
+        compilation unit.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility): Moved from header.
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility): Deleted.
+
 2014-03-26  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r162679): Poster image visible under the video

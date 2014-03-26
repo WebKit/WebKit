@@ -1,3 +1,10 @@
+2014-03-26  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build/test correction.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Export the AXObjectCache::setEnhancedUserInterfaceEnabled
+        set function.
+
 2014-03-22  Darin Adler  <darin@apple.com>
 
         Remove String::deprecatedCharacters

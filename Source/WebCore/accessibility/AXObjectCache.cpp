@@ -118,6 +118,11 @@ void AXObjectCache::disableAccessibility()
     gAccessibilityEnabled = false;
 }
 
+void AXObjectCache::setEnhancedUserInterfaceAccessibility(bool flag)
+{
+    gAccessibilityEnhancedUserInterfaceEnabled = flag;
+}
+
 AXObjectCache::AXObjectCache(Document& document)
     : m_document(document)
     , m_notificationPostTimer(this, &AXObjectCache::notificationPostTimerFired)
