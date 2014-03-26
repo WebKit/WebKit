@@ -137,7 +137,7 @@ public:
     virtual void updateCustomAppearance(GraphicsLayer::CustomAppearance) override;
 
     virtual GraphicsLayer::CustomBehavior customBehavior() const override { return m_customBehavior; }
-    virtual void updateCustomBehavior(GraphicsLayer::CustomBehavior) override { }
+    virtual void updateCustomBehavior(GraphicsLayer::CustomBehavior customBehavior) override { m_customBehavior = customBehavior; }
 
     virtual TiledBacking* tiledBacking() override;
 

@@ -1,5 +1,14 @@
 2014-03-26  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the Windows build. Add a no-op impl for Mac non-UI-side.
+
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::PlatformCALayerWin):
+        * platform/graphics/ca/win/PlatformCALayerWin.h:
+
+2014-03-26  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (r155977): matrix animations no longer animate
         https://bugs.webkit.org/show_bug.cgi?id=130789
         <rdar://problem/15650946>
