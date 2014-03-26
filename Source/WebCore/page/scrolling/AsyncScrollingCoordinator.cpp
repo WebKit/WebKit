@@ -284,7 +284,7 @@ void AsyncScrollingCoordinator::syncChildPositions(const LayoutRect& viewportRec
 void AsyncScrollingCoordinator::ensureRootStateNodeForFrameView(FrameView* frameView)
 {
     ASSERT(frameView->scrollLayerID());
-    attachToStateTree(ScrollingNode, frameView->scrollLayerID(), 0);
+    attachToStateTree(FrameScrollingNode, frameView->scrollLayerID(), 0);
 }
 
 void AsyncScrollingCoordinator::updateScrollingNode(ScrollingNodeID nodeID, GraphicsLayer* layer, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer)

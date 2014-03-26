@@ -104,7 +104,7 @@ void ScrollingTree::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID,
     if (!node)
         return;
 
-    if (node->nodeType() != ScrollingNode)
+    if (node->nodeType() != FrameScrollingNode && node->nodeType() != OverflowScrollingNode)
         return;
 
     toScrollingTreeScrollingNode(node)->updateForViewport(viewportRect, scale);
@@ -161,7 +161,7 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode)
             // This is the root node. Nuke the node map.
             m_nodeMap.clear();
 
-            m_rootNode = static_pointer_cast<ScrollingTreeScrollingNode>(createNode(ScrollingNode, nodeID));
+            m_rootNode = static_pointer_cast<ScrollingTreeScrollingNode>(createNode(FrameScrollingNode, nodeID));
             m_nodeMap.set(nodeID, m_rootNode.get());
             m_rootNode->updateBeforeChildren(*stateNode);
             node = m_rootNode.get();

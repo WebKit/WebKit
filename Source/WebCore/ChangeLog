@@ -1,3 +1,63 @@
+2014-03-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a new type of scrolling tree node for overflow scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=130763
+
+        Reviewed by Tim Horton.
+
+        Prepare for overflow scrolling via the scrolling tree by adding
+        a new scrolling node type for overflow:scroll nodes. Mostly
+        this is a new ScrollingNodeType that gets mapped to the same
+        scrolling state nodes and scrolling nodes, but iOS creates
+        state and scrolling nodes specific to overflow:scroll.
+        
+        Change the type checking on nodes to use virtual functions instead
+        of just checking the node type, to allow the macros to work with
+        the new scrolling node type.
+
+        * WebCore.exp.in:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::ensureRootStateNodeForFrameView):
+        * page/scrolling/ScrollingCoordinator.h:
+        * page/scrolling/ScrollingStateFixedNode.h:
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::ScrollingStateNode::isFixedNode):
+        (WebCore::ScrollingStateNode::isStickyNode):
+        (WebCore::ScrollingStateNode::isScrollingNode):
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::create):
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        * page/scrolling/ScrollingStateStickyNode.h:
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::attachNode):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::viewportChangedViaDelegatedScrolling):
+        (WebCore::ScrollingTree::updateTreeFromStateNode):
+        * page/scrolling/ScrollingTreeNode.h:
+        (WebCore::ScrollingTreeNode::isFixedNode):
+        (WebCore::ScrollingTreeNode::isStickyNode):
+        (WebCore::ScrollingTreeNode::isScrollingNode):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::ScrollingTreeScrollingNode):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/ios/ScrollingCoordinatorIOS.mm:
+        (WebCore::ScrollingCoordinatorIOS::createScrollingTreeNode):
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.h:
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeScrollingNodeIOS::create):
+        (WebCore::ScrollingTreeScrollingNodeIOS::ScrollingTreeScrollingNodeIOS):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::createScrollingTreeNode):
+        * page/scrolling/mac/ScrollingTreeFixedNode.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::create):
+        (WebCore::ScrollingTreeScrollingNodeMac::ScrollingTreeScrollingNodeMac):
+        * page/scrolling/mac/ScrollingTreeStickyNode.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+
 2014-03-26  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Utilize new AtkValue interface coming in ATK 2.11.92

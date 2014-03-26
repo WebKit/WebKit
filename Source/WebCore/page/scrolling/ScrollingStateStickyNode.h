@@ -63,7 +63,7 @@ private:
     StickyPositionViewportConstraints m_constraints;
 };
 
-SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateStickyNode, nodeType() == StickyNode);
+SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateStickyNode, isStickyNode());
 
 } // namespace WebCore
 

@@ -34,13 +34,13 @@
 
 namespace WebCore {
 
-PassOwnPtr<ScrollingStateScrollingNode> ScrollingStateScrollingNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
+PassOwnPtr<ScrollingStateScrollingNode> ScrollingStateScrollingNode::create(ScrollingStateTree& stateTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
-    return adoptPtr(new ScrollingStateScrollingNode(stateTree, nodeID));
+    return adoptPtr(new ScrollingStateScrollingNode(stateTree, nodeType, nodeID));
 }
 
-ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
-    : ScrollingStateNode(ScrollingNode, stateTree, nodeID)
+ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree& stateTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+    : ScrollingStateNode(nodeType, stateTree, nodeID)
 #if PLATFORM(MAC)
     , m_verticalScrollbarPainter(0)
     , m_horizontalScrollbarPainter(0)

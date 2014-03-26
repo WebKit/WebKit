@@ -152,6 +152,10 @@ public:
     
     ScrollingNodeType nodeType() const { return m_nodeType; }
 
+    bool isFixedNode() const { return m_nodeType == FixedNode; }
+    bool isStickyNode() const { return m_nodeType == StickyNode; }
+    bool isScrollingNode() const { return m_nodeType == FrameScrollingNode || m_nodeType == OverflowScrollingNode; }
+
     virtual PassOwnPtr<ScrollingStateNode> clone(ScrollingStateTree& adoptiveTree) = 0;
     PassOwnPtr<ScrollingStateNode> cloneAndReset(ScrollingStateTree& adoptiveTree);
     void cloneAndResetChildren(ScrollingStateNode&, ScrollingStateTree& adoptiveTree);

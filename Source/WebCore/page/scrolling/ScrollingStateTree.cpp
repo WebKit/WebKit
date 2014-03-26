@@ -86,7 +86,7 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
         // If we're resetting the root node, we should clear the HashMap and destroy the current children.
         clear();
 
-        setRootStateNode(ScrollingStateScrollingNode::create(*this, newNodeID));
+        setRootStateNode(ScrollingStateScrollingNode::create(*this, FrameScrollingNode, newNodeID));
         newNode = rootStateNode();
         m_hasNewRootStateNode = true;
     } else {
@@ -107,8 +107,9 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
             parent->appendChild(stickyNode.release());
             break;
         }
-        case ScrollingNode: {
-            OwnPtr<ScrollingStateScrollingNode> scrollingNode = ScrollingStateScrollingNode::create(*this, newNodeID);
+        case FrameScrollingNode:
+        case OverflowScrollingNode: {
+            OwnPtr<ScrollingStateScrollingNode> scrollingNode = ScrollingStateScrollingNode::create(*this, nodeType, newNodeID);
             newNode = scrollingNode.get();
             parent->appendChild(scrollingNode.release());
             break;

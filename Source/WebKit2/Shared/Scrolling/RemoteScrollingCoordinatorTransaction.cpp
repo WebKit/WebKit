@@ -245,7 +245,8 @@ namespace WebKit {
 static void encodeNodeAndDescendants(IPC::ArgumentEncoder& encoder, const ScrollingStateNode& stateNode)
 {
     switch (stateNode.nodeType()) {
-    case ScrollingNode:
+    case FrameScrollingNode:
+    case OverflowScrollingNode:
         encoder << toScrollingStateScrollingNode(stateNode);
         break;
     case FixedNode:
@@ -318,7 +319,8 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::ArgumentDecoder& decoder
         ASSERT(!parentNodeID || newNode->parent());
         
         switch (nodeType) {
-        case ScrollingNode:
+        case FrameScrollingNode:
+        case OverflowScrollingNode:
             if (!decoder.decode(*toScrollingStateScrollingNode(newNode)))
                 return false;
             break;

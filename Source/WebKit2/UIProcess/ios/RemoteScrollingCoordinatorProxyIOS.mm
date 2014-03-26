@@ -47,7 +47,8 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
 {
     for (auto& currNode : stateTree.nodeMap().values()) {
         switch (currNode->nodeType()) {
-        case ScrollingNode: {
+        case FrameScrollingNode:
+        case OverflowScrollingNode: {
             ScrollingStateScrollingNode* scrollingStateNode = toScrollingStateScrollingNode(currNode);
             
             if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))

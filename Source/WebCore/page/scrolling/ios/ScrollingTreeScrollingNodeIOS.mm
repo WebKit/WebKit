@@ -40,13 +40,13 @@
 
 namespace WebCore {
 
-PassOwnPtr<ScrollingTreeScrollingNode> ScrollingTreeScrollingNodeIOS::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
+PassOwnPtr<ScrollingTreeScrollingNode> ScrollingTreeScrollingNodeIOS::create(ScrollingTree& scrollingTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
-    return adoptPtr(new ScrollingTreeScrollingNodeIOS(scrollingTree, nodeID));
+    return adoptPtr(new ScrollingTreeScrollingNodeIOS(scrollingTree, nodeType, nodeID));
 }
 
-ScrollingTreeScrollingNodeIOS::ScrollingTreeScrollingNodeIOS(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
-    : ScrollingTreeScrollingNode(scrollingTree, nodeID)
+ScrollingTreeScrollingNodeIOS::ScrollingTreeScrollingNodeIOS(ScrollingTree& scrollingTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+    : ScrollingTreeScrollingNode(scrollingTree, nodeType, nodeID)
 {
 }
 

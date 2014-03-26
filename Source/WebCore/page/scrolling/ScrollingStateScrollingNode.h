@@ -43,7 +43,7 @@ class Scrollbar;
 
 class ScrollingStateScrollingNode final : public ScrollingStateNode {
 public:
-    static PassOwnPtr<ScrollingStateScrollingNode> create(ScrollingStateTree&, ScrollingNodeID);
+    static PassOwnPtr<ScrollingStateScrollingNode> create(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
 
     virtual PassOwnPtr<ScrollingStateNode> clone(ScrollingStateTree&);
 
@@ -135,7 +135,7 @@ public:
     virtual void dumpProperties(TextStream&, int indent) const override;
 
 private:
-    ScrollingStateScrollingNode(ScrollingStateTree&, ScrollingNodeID);
+    ScrollingStateScrollingNode(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
     ScrollingStateScrollingNode(const ScrollingStateScrollingNode&, ScrollingStateTree&);
 
     LayerRepresentation m_scrolledContentsLayer;
@@ -165,7 +165,7 @@ private:
     bool m_requestedScrollPositionRepresentsProgrammaticScroll;
 };
 
-SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateScrollingNode, nodeType() == ScrollingNode);
+SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateScrollingNode, isScrollingNode());
 
 } // namespace WebCore
 

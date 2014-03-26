@@ -1,3 +1,36 @@
+2014-03-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a new type of scrolling tree node for overflow scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=130763
+
+        Reviewed by Tim Horton.
+
+        Prepare for overflow scrolling via the scrolling tree by adding
+        a new scrolling node type for overflow:scroll nodes. Mostly
+        this is a new ScrollingNodeType that gets mapped to the same
+        scrolling state nodes and scrolling nodes, but iOS creates
+        state and scrolling nodes specific to overflow:scroll.
+        
+        Change the type checking on nodes to use virtual functions instead
+        of just checking the node type, to allow the macros to work with
+        the new scrolling node type.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::encodeNodeAndDescendants):
+        (WebKit::RemoteScrollingCoordinatorTransaction::decode):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::createNode):
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h: Copied from Source/WebCore/page/scrolling/mac/ScrollingTreeFixedNode.h.
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm: Copied from Source/WebCore/page/scrolling/mac/ScrollingTreeFixedNode.h.
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::create):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::ScrollingTreeOverflowScrollingNodeIOS):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::~ScrollingTreeOverflowScrollingNodeIOS):
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-03-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Removing the remaining Automake cruft.

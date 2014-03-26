@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingTreeStickyNode_h
-#define ScrollingTreeStickyNode_h
+#import "config.h"
+#import "ScrollingTreeOverflowScrollingNodeIOS.h"
 
+#if PLATFORM(IOS)
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "ScrollingConstraints.h"
-#include "ScrollingTreeNode.h"
-#include <wtf/RetainPtr.h>
+using namespace WebCore;
 
-OBJC_CLASS CALayer;
+namespace WebKit {
 
-namespace WebCore {
+PassOwnPtr<ScrollingTreeOverflowScrollingNodeIOS> ScrollingTreeOverflowScrollingNodeIOS::create(WebCore::ScrollingTree& scrollingTree, WebCore::ScrollingNodeID nodeID)
+{
+    return adoptPtr(new ScrollingTreeOverflowScrollingNodeIOS(scrollingTree, nodeID));
+}
 
-class StickyPositionViewportConstraints;
+ScrollingTreeOverflowScrollingNodeIOS::ScrollingTreeOverflowScrollingNodeIOS(WebCore::ScrollingTree& scrollingTree, WebCore::ScrollingNodeID nodeID)
+    : ScrollingTreeScrollingNodeIOS(scrollingTree, OverflowScrollingNode, nodeID)
+{
+}
 
-class ScrollingTreeStickyNode : public ScrollingTreeNode {
-public:
-    static PassOwnPtr<ScrollingTreeStickyNode> create(ScrollingTree&, ScrollingNodeID);
-
-    virtual ~ScrollingTreeStickyNode();
-
-private:
-    ScrollingTreeStickyNode(ScrollingTree&, ScrollingNodeID);
-
-    virtual void updateBeforeChildren(const ScrollingStateNode&) override;
-    virtual void parentScrollPositionDidChange(const FloatRect& viewportRect, const FloatSize& cumulativeDelta) override;
-
-    StickyPositionViewportConstraints m_constraints;
-    RetainPtr<CALayer> m_layer;
-};
-
-SCROLLING_NODE_TYPE_CASTS(ScrollingTreeStickyNode, isStickyNode());
+ScrollingTreeOverflowScrollingNodeIOS::~ScrollingTreeOverflowScrollingNodeIOS()
+{
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)
-
-#endif // ScrollingTreeStickyNode_h
+#endif // PLATFORM(IOS)

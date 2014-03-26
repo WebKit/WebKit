@@ -37,12 +37,13 @@ namespace WebCore {
 
 class ScrollingTreeScrollingNodeIOS : public ScrollingTreeScrollingNode {
 public:
-    static PassOwnPtr<ScrollingTreeScrollingNode> create(ScrollingTree&, ScrollingNodeID);
+    static PassOwnPtr<ScrollingTreeScrollingNode> create(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
     virtual ~ScrollingTreeScrollingNodeIOS();
 
-private:
-    ScrollingTreeScrollingNodeIOS(ScrollingTree&, ScrollingNodeID);
+protected:
+    ScrollingTreeScrollingNodeIOS(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 
+private:
     // ScrollingTreeNode member functions.
     virtual void updateBeforeChildren(const ScrollingStateNode&) override;
     virtual void updateAfterChildren(const ScrollingStateNode&) override;

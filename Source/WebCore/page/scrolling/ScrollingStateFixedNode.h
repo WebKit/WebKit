@@ -63,7 +63,7 @@ private:
     FixedPositionViewportConstraints m_constraints;
 };
 
-SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateFixedNode, nodeType() == FixedNode);
+SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateFixedNode, isFixedNode());
 
 } // namespace WebCore
 

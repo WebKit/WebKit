@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingTreeStickyNode_h
-#define ScrollingTreeStickyNode_h
+#ifndef ScrollingTreeOverflowScrollingNodeIOS_h
+#define ScrollingTreeOverflowScrollingNodeIOS_h
 
+#if PLATFORM(IOS)
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "ScrollingConstraints.h"
-#include "ScrollingTreeNode.h"
-#include <wtf/RetainPtr.h>
+#include <WebCore/ScrollingCoordinator.h>
+#include <WebCore/ScrollingTreeScrollingNodeIOS.h>
 
-OBJC_CLASS CALayer;
+namespace WebKit {
 
-namespace WebCore {
-
-class StickyPositionViewportConstraints;
-
-class ScrollingTreeStickyNode : public ScrollingTreeNode {
+class ScrollingTreeOverflowScrollingNodeIOS : public WebCore::ScrollingTreeScrollingNodeIOS {
 public:
-    static PassOwnPtr<ScrollingTreeStickyNode> create(ScrollingTree&, ScrollingNodeID);
-
-    virtual ~ScrollingTreeStickyNode();
+    static PassOwnPtr<ScrollingTreeOverflowScrollingNodeIOS> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
+    virtual ~ScrollingTreeOverflowScrollingNodeIOS();
 
 private:
-    ScrollingTreeStickyNode(ScrollingTree&, ScrollingNodeID);
-
-    virtual void updateBeforeChildren(const ScrollingStateNode&) override;
-    virtual void parentScrollPositionDidChange(const FloatRect& viewportRect, const FloatSize& cumulativeDelta) override;
-
-    StickyPositionViewportConstraints m_constraints;
-    RetainPtr<CALayer> m_layer;
+    ScrollingTreeOverflowScrollingNodeIOS(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
 };
 
-SCROLLING_NODE_TYPE_CASTS(ScrollingTreeStickyNode, isStickyNode());
-
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(ASYNC_SCROLLING)
+#endif // PLATFORM(IOS)
 
-#endif // ScrollingTreeStickyNode_h
+#endif // ScrollingTreeOverflowScrollingNodeIOS_h

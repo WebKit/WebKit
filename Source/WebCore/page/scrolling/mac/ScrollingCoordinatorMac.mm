@@ -147,8 +147,11 @@ PassOwnPtr<ScrollingTreeNode> ScrollingCoordinatorMac::createScrollingTreeNode(S
     ASSERT(scrollingTree());
 
     switch (nodeType) {
-    case ScrollingNode:
-        return ScrollingTreeScrollingNodeMac::create(*scrollingTree(), nodeID);
+    case FrameScrollingNode:
+        return ScrollingTreeScrollingNodeMac::create(*scrollingTree(), nodeType, nodeID);
+    case OverflowScrollingNode:
+        ASSERT_NOT_REACHED();
+        return nullptr;
     case FixedNode:
         return ScrollingTreeFixedNode::create(*scrollingTree(), nodeID);
     case StickyNode:

@@ -109,8 +109,9 @@ PassOwnPtr<ScrollingTreeNode> ScrollingCoordinatorIOS::createScrollingTreeNode(S
     ASSERT(scrollingTree());
 
     switch (nodeType) {
-    case ScrollingNode:
-        return ScrollingTreeScrollingNodeIOS::create(*scrollingTree(), nodeID);
+    case FrameScrollingNode:
+    case OverflowScrollingNode:
+        return ScrollingTreeScrollingNodeIOS::create(*scrollingTree(), nodeType, nodeID);
     case FixedNode:
         return ScrollingTreeFixedNode::create(*scrollingTree(), nodeID);
     case StickyNode:

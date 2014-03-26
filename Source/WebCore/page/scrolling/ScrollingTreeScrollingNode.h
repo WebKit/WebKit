@@ -58,7 +58,7 @@ public:
     bool shouldUpdateScrollLayerPositionSynchronously() const { return m_synchronousScrollingReasons; }
 
 protected:
-    ScrollingTreeScrollingNode(ScrollingTree&, ScrollingNodeID);
+    ScrollingTreeScrollingNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 
     const FloatPoint& scrollPosition() const { return m_scrollPosition; }
     const FloatSize& viewportSize() const { return m_viewportSize; }
@@ -104,7 +104,7 @@ private:
     ScrollBehaviorForFixedElements m_behaviorForFixed;
 };
 
-SCROLLING_NODE_TYPE_CASTS(ScrollingTreeScrollingNode, nodeType() == ScrollingNode);
+SCROLLING_NODE_TYPE_CASTS(ScrollingTreeScrollingNode, isScrollingNode());
 
 } // namespace WebCore
 
