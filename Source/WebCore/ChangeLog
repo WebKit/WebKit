@@ -1,3 +1,26 @@
+2014-03-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        Replace DEPRECATED_DEFINE_STATIC_LOCAL by static NeverDestroyed<T> in editing/
+        https://bugs.webkit.org/show_bug.cgi?id=130722
+
+        Reviewed by Antti Koivisto.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::markerTypesForAutocorrection):
+        (WebCore::markerTypesForReplacement):
+        (WebCore::markerTypesForAppliedDictationAlternative):
+        * editing/EditingStyle.cpp:
+        (WebCore::htmlElementEquivalents):
+        (WebCore::htmlAttributeEquivalents):
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::isElementForFormatBlock):
+        * editing/RemoveFormatCommand.cpp:
+        (WebCore::isElementForRemoveFormatCommand):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::isProhibitedParagraphChild):
+        * editing/atk/FrameSelectionAtk.cpp:
+        (WebCore::maybeEmitTextFocusChange):
+
 2014-03-25  Simon Fraser  <simon.fraser@apple.com>
 
         Add a new type of scrolling tree node for overflow scrolling

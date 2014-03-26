@@ -33,6 +33,7 @@
 #include "HTMLNames.h"
 #include "Range.h"
 #include "VisibleUnits.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -117,32 +118,32 @@ Element* FormatBlockCommand::elementForFormatBlockCommand(Range* range)
 
 bool isElementForFormatBlock(const QualifiedName& tagName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, blockTags, ());
-    if (blockTags.isEmpty()) {
-        blockTags.add(addressTag);
-        blockTags.add(articleTag);
-        blockTags.add(asideTag);
-        blockTags.add(blockquoteTag);
-        blockTags.add(ddTag);
-        blockTags.add(divTag);
-        blockTags.add(dlTag);
-        blockTags.add(dtTag);
-        blockTags.add(footerTag);
-        blockTags.add(h1Tag);
-        blockTags.add(h2Tag);
-        blockTags.add(h3Tag);
-        blockTags.add(h4Tag);
-        blockTags.add(h5Tag);
-        blockTags.add(h6Tag);
-        blockTags.add(headerTag);
-        blockTags.add(hgroupTag);
-        blockTags.add(mainTag);
-        blockTags.add(navTag);
-        blockTags.add(pTag);
-        blockTags.add(preTag);
-        blockTags.add(sectionTag);
+    static NeverDestroyed<HashSet<QualifiedName>> blockTags;
+    if (blockTags.get().isEmpty()) {
+        blockTags.get().add(addressTag);
+        blockTags.get().add(articleTag);
+        blockTags.get().add(asideTag);
+        blockTags.get().add(blockquoteTag);
+        blockTags.get().add(ddTag);
+        blockTags.get().add(divTag);
+        blockTags.get().add(dlTag);
+        blockTags.get().add(dtTag);
+        blockTags.get().add(footerTag);
+        blockTags.get().add(h1Tag);
+        blockTags.get().add(h2Tag);
+        blockTags.get().add(h3Tag);
+        blockTags.get().add(h4Tag);
+        blockTags.get().add(h5Tag);
+        blockTags.get().add(h6Tag);
+        blockTags.get().add(headerTag);
+        blockTags.get().add(hgroupTag);
+        blockTags.get().add(mainTag);
+        blockTags.get().add(navTag);
+        blockTags.get().add(pTag);
+        blockTags.get().add(preTag);
+        blockTags.get().add(sectionTag);
     }
-    return blockTags.contains(tagName);
+    return blockTags.get().contains(tagName);
 }
 
 Node* enclosingBlockToSplitTreeTo(Node* startNode)

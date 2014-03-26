@@ -33,6 +33,7 @@
 #include <gtk/gtk.h>
 #endif
 
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -53,7 +54,7 @@ static void maybeEmitTextFocusChange(PassRefPtr<AccessibilityObject> prpObject)
     // This static variable is needed to keep track of the old object
     // as per previous calls to this function, in order to properly
     // decide whether to emit some signals or not.
-    DEPRECATED_DEFINE_STATIC_LOCAL(RefPtr<AccessibilityObject>, oldObject, ());
+    static NeverDestroyed<RefPtr<AccessibilityObject>> oldObject;
 
     RefPtr<AccessibilityObject> object = prpObject;
 
@@ -61,11 +62,11 @@ static void maybeEmitTextFocusChange(PassRefPtr<AccessibilityObject> prpObject)
     // current object so further comparisons make sense. Otherwise,
     // just reset oldObject to 0 so it won't be taken into account in
     // the immediately following call to this function.
-    if (object && oldObject && oldObject->document() != object->document())
-        oldObject = 0;
+    if (object && oldObject.get() && oldObject.get()->document() != object->document())
+        oldObject.get() = nullptr;
 
     AtkObject* axObject = object ? object->wrapper() : 0;
-    AtkObject* oldAxObject = oldObject ? oldObject->wrapper() : 0;
+    AtkObject* oldAxObject = oldObject.get() ? oldObject.get()->wrapper() : nullptr;
 
     if (axObject != oldAxObject) {
         if (oldAxObject && ATK_IS_TEXT(oldAxObject)) {
@@ -79,7 +80,7 @@ static void maybeEmitTextFocusChange(PassRefPtr<AccessibilityObject> prpObject)
     }
 
     // Update pointer to last focused object.
-    oldObject = object;
+    oldObject.get() = object;
 }
 
 

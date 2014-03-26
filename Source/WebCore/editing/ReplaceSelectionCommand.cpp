@@ -55,6 +55,7 @@
 #include "VisibleUnits.h"
 #include "htmlediting.h"
 #include "markup.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -563,58 +564,58 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
 static bool isProhibitedParagraphChild(const AtomicString& name)
 {
     // https://dvcs.w3.org/hg/editing/raw-file/57abe6d3cb60/editing.html#prohibited-paragraph-child
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<AtomicString>, elements, ());
-    if (elements.isEmpty()) {
-        elements.add(addressTag.localName());
-        elements.add(articleTag.localName());
-        elements.add(asideTag.localName());
-        elements.add(blockquoteTag.localName());
-        elements.add(captionTag.localName());
-        elements.add(centerTag.localName());
-        elements.add(colTag.localName());
-        elements.add(colgroupTag.localName());
-        elements.add(ddTag.localName());
-        elements.add(detailsTag.localName());
-        elements.add(dirTag.localName());
-        elements.add(divTag.localName());
-        elements.add(dlTag.localName());
-        elements.add(dtTag.localName());
-        elements.add(fieldsetTag.localName());
-        elements.add(figcaptionTag.localName());
-        elements.add(figureTag.localName());
-        elements.add(footerTag.localName());
-        elements.add(formTag.localName());
-        elements.add(h1Tag.localName());
-        elements.add(h2Tag.localName());
-        elements.add(h3Tag.localName());
-        elements.add(h4Tag.localName());
-        elements.add(h5Tag.localName());
-        elements.add(h6Tag.localName());
-        elements.add(headerTag.localName());
-        elements.add(hgroupTag.localName());
-        elements.add(hrTag.localName());
-        elements.add(liTag.localName());
-        elements.add(listingTag.localName());
-        elements.add(mainTag.localName()); // Missing in the specification.
-        elements.add(menuTag.localName());
-        elements.add(navTag.localName());
-        elements.add(olTag.localName());
-        elements.add(pTag.localName());
-        elements.add(plaintextTag.localName());
-        elements.add(preTag.localName());
-        elements.add(sectionTag.localName());
-        elements.add(summaryTag.localName());
-        elements.add(tableTag.localName());
-        elements.add(tbodyTag.localName());
-        elements.add(tdTag.localName());
-        elements.add(tfootTag.localName());
-        elements.add(thTag.localName());
-        elements.add(theadTag.localName());
-        elements.add(trTag.localName());
-        elements.add(ulTag.localName());
-        elements.add(xmpTag.localName());
+    static NeverDestroyed<HashSet<AtomicString>> elements;
+    if (elements.get().isEmpty()) {
+        elements.get().add(addressTag.localName());
+        elements.get().add(articleTag.localName());
+        elements.get().add(asideTag.localName());
+        elements.get().add(blockquoteTag.localName());
+        elements.get().add(captionTag.localName());
+        elements.get().add(centerTag.localName());
+        elements.get().add(colTag.localName());
+        elements.get().add(colgroupTag.localName());
+        elements.get().add(ddTag.localName());
+        elements.get().add(detailsTag.localName());
+        elements.get().add(dirTag.localName());
+        elements.get().add(divTag.localName());
+        elements.get().add(dlTag.localName());
+        elements.get().add(dtTag.localName());
+        elements.get().add(fieldsetTag.localName());
+        elements.get().add(figcaptionTag.localName());
+        elements.get().add(figureTag.localName());
+        elements.get().add(footerTag.localName());
+        elements.get().add(formTag.localName());
+        elements.get().add(h1Tag.localName());
+        elements.get().add(h2Tag.localName());
+        elements.get().add(h3Tag.localName());
+        elements.get().add(h4Tag.localName());
+        elements.get().add(h5Tag.localName());
+        elements.get().add(h6Tag.localName());
+        elements.get().add(headerTag.localName());
+        elements.get().add(hgroupTag.localName());
+        elements.get().add(hrTag.localName());
+        elements.get().add(liTag.localName());
+        elements.get().add(listingTag.localName());
+        elements.get().add(mainTag.localName()); // Missing in the specification.
+        elements.get().add(menuTag.localName());
+        elements.get().add(navTag.localName());
+        elements.get().add(olTag.localName());
+        elements.get().add(pTag.localName());
+        elements.get().add(plaintextTag.localName());
+        elements.get().add(preTag.localName());
+        elements.get().add(sectionTag.localName());
+        elements.get().add(summaryTag.localName());
+        elements.get().add(tableTag.localName());
+        elements.get().add(tbodyTag.localName());
+        elements.get().add(tdTag.localName());
+        elements.get().add(tfootTag.localName());
+        elements.get().add(thTag.localName());
+        elements.get().add(theadTag.localName());
+        elements.get().add(trTag.localName());
+        elements.get().add(ulTag.localName());
+        elements.get().add(xmpTag.localName());
     }
-    return elements.contains(name);
+    return elements.get().contains(name);
 }
 
 void ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuilder(const InsertedNodes& insertedNodes)

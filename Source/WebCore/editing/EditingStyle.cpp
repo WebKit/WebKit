@@ -740,19 +740,19 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, Edi
 
 static const Vector<std::unique_ptr<HTMLElementEquivalent>>& htmlElementEquivalents()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<std::unique_ptr<HTMLElementEquivalent>>, HTMLElementEquivalents, ());
+    static NeverDestroyed<Vector<std::unique_ptr<HTMLElementEquivalent>>> HTMLElementEquivalents;
 
-    if (!HTMLElementEquivalents.size()) {
-        HTMLElementEquivalents.append(std::make_unique<HTMLElementEquivalent>(CSSPropertyFontWeight, CSSValueBold, HTMLNames::bTag));
-        HTMLElementEquivalents.append(std::make_unique<HTMLElementEquivalent>(CSSPropertyFontWeight, CSSValueBold, HTMLNames::strongTag));
-        HTMLElementEquivalents.append(std::make_unique<HTMLElementEquivalent>(CSSPropertyVerticalAlign, CSSValueSub, HTMLNames::subTag));
-        HTMLElementEquivalents.append(std::make_unique<HTMLElementEquivalent>(CSSPropertyVerticalAlign, CSSValueSuper, HTMLNames::supTag));
-        HTMLElementEquivalents.append(std::make_unique<HTMLElementEquivalent>(CSSPropertyFontStyle, CSSValueItalic, HTMLNames::iTag));
-        HTMLElementEquivalents.append(std::make_unique<HTMLElementEquivalent>(CSSPropertyFontStyle, CSSValueItalic, HTMLNames::emTag));
+    if (!HTMLElementEquivalents.get().size()) {
+        HTMLElementEquivalents.get().append(std::make_unique<HTMLElementEquivalent>(CSSPropertyFontWeight, CSSValueBold, HTMLNames::bTag));
+        HTMLElementEquivalents.get().append(std::make_unique<HTMLElementEquivalent>(CSSPropertyFontWeight, CSSValueBold, HTMLNames::strongTag));
+        HTMLElementEquivalents.get().append(std::make_unique<HTMLElementEquivalent>(CSSPropertyVerticalAlign, CSSValueSub, HTMLNames::subTag));
+        HTMLElementEquivalents.get().append(std::make_unique<HTMLElementEquivalent>(CSSPropertyVerticalAlign, CSSValueSuper, HTMLNames::supTag));
+        HTMLElementEquivalents.get().append(std::make_unique<HTMLElementEquivalent>(CSSPropertyFontStyle, CSSValueItalic, HTMLNames::iTag));
+        HTMLElementEquivalents.get().append(std::make_unique<HTMLElementEquivalent>(CSSPropertyFontStyle, CSSValueItalic, HTMLNames::emTag));
 
-        HTMLElementEquivalents.append(std::make_unique<HTMLTextDecorationEquivalent>(CSSValueUnderline, HTMLNames::uTag));
-        HTMLElementEquivalents.append(std::make_unique<HTMLTextDecorationEquivalent>(CSSValueLineThrough, HTMLNames::sTag));
-        HTMLElementEquivalents.append(std::make_unique<HTMLTextDecorationEquivalent>(CSSValueLineThrough, HTMLNames::strikeTag));
+        HTMLElementEquivalents.get().append(std::make_unique<HTMLTextDecorationEquivalent>(CSSValueUnderline, HTMLNames::uTag));
+        HTMLElementEquivalents.get().append(std::make_unique<HTMLTextDecorationEquivalent>(CSSValueLineThrough, HTMLNames::sTag));
+        HTMLElementEquivalents.get().append(std::make_unique<HTMLTextDecorationEquivalent>(CSSValueLineThrough, HTMLNames::strikeTag));
     }
 
     return HTMLElementEquivalents;
@@ -779,17 +779,17 @@ bool EditingStyle::conflictsWithImplicitStyleOfElement(HTMLElement* element, Edi
 
 static const Vector<std::unique_ptr<HTMLAttributeEquivalent>>& htmlAttributeEquivalents()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<std::unique_ptr<HTMLAttributeEquivalent>>, HTMLAttributeEquivalents, ());
+    static NeverDestroyed<Vector<std::unique_ptr<HTMLAttributeEquivalent>>> HTMLAttributeEquivalents;
 
-    if (!HTMLAttributeEquivalents.size()) {
+    if (!HTMLAttributeEquivalents.get().size()) {
         // elementIsStyledSpanOrHTMLEquivalent depends on the fact each HTMLAttriuteEquivalent matches exactly one attribute
         // of exactly one element except dirAttr.
-        HTMLAttributeEquivalents.append(std::make_unique<HTMLAttributeEquivalent>(CSSPropertyColor, HTMLNames::fontTag, HTMLNames::colorAttr));
-        HTMLAttributeEquivalents.append(std::make_unique<HTMLAttributeEquivalent>(CSSPropertyFontFamily, HTMLNames::fontTag, HTMLNames::faceAttr));
-        HTMLAttributeEquivalents.append(std::make_unique<HTMLFontSizeEquivalent>());
+        HTMLAttributeEquivalents.get().append(std::make_unique<HTMLAttributeEquivalent>(CSSPropertyColor, HTMLNames::fontTag, HTMLNames::colorAttr));
+        HTMLAttributeEquivalents.get().append(std::make_unique<HTMLAttributeEquivalent>(CSSPropertyFontFamily, HTMLNames::fontTag, HTMLNames::faceAttr));
+        HTMLAttributeEquivalents.get().append(std::make_unique<HTMLFontSizeEquivalent>());
 
-        HTMLAttributeEquivalents.append(std::make_unique<HTMLAttributeEquivalent>(CSSPropertyDirection, HTMLNames::dirAttr));
-        HTMLAttributeEquivalents.append(std::make_unique<HTMLAttributeEquivalent>(CSSPropertyUnicodeBidi, HTMLNames::dirAttr));
+        HTMLAttributeEquivalents.get().append(std::make_unique<HTMLAttributeEquivalent>(CSSPropertyDirection, HTMLNames::dirAttr));
+        HTMLAttributeEquivalents.get().append(std::make_unique<HTMLAttributeEquivalent>(CSSPropertyUnicodeBidi, HTMLNames::dirAttr));
     }
 
     return HTMLAttributeEquivalents;

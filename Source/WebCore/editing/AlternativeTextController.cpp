@@ -45,6 +45,7 @@
 #include "VisibleUnits.h"
 #include "htmlediting.h"
 #include "markup.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -85,31 +86,31 @@ private:
 
 static const Vector<DocumentMarker::MarkerType>& markerTypesForAutocorrection()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<DocumentMarker::MarkerType>, markerTypesForAutoCorrection, ());
-    if (markerTypesForAutoCorrection.isEmpty()) {
-        markerTypesForAutoCorrection.append(DocumentMarker::Replacement);
-        markerTypesForAutoCorrection.append(DocumentMarker::CorrectionIndicator);
-        markerTypesForAutoCorrection.append(DocumentMarker::SpellCheckingExemption);
-        markerTypesForAutoCorrection.append(DocumentMarker::Autocorrected);
+    static NeverDestroyed<Vector<DocumentMarker::MarkerType>> markerTypesForAutoCorrection;
+    if (markerTypesForAutoCorrection.get().isEmpty()) {
+        markerTypesForAutoCorrection.get().append(DocumentMarker::Replacement);
+        markerTypesForAutoCorrection.get().append(DocumentMarker::CorrectionIndicator);
+        markerTypesForAutoCorrection.get().append(DocumentMarker::SpellCheckingExemption);
+        markerTypesForAutoCorrection.get().append(DocumentMarker::Autocorrected);
     }
     return markerTypesForAutoCorrection;
 }
 
 static const Vector<DocumentMarker::MarkerType>& markerTypesForReplacement()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<DocumentMarker::MarkerType>, markerTypesForReplacement, ());
-    if (markerTypesForReplacement.isEmpty()) {
-        markerTypesForReplacement.append(DocumentMarker::Replacement);
-        markerTypesForReplacement.append(DocumentMarker::SpellCheckingExemption);
+    static NeverDestroyed<Vector<DocumentMarker::MarkerType>> markerTypesForReplacement;
+    if (markerTypesForReplacement.get().isEmpty()) {
+        markerTypesForReplacement.get().append(DocumentMarker::Replacement);
+        markerTypesForReplacement.get().append(DocumentMarker::SpellCheckingExemption);
     }
     return markerTypesForReplacement;
 }
 
 static const Vector<DocumentMarker::MarkerType>& markerTypesForAppliedDictationAlternative()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<DocumentMarker::MarkerType>, markerTypesForAppliedDictationAlternative, ());
-    if (markerTypesForAppliedDictationAlternative.isEmpty())
-        markerTypesForAppliedDictationAlternative.append(DocumentMarker::SpellCheckingExemption);
+    static NeverDestroyed<Vector<DocumentMarker::MarkerType>> markerTypesForAppliedDictationAlternative;
+    if (markerTypesForAppliedDictationAlternative.get().isEmpty())
+        markerTypesForAppliedDictationAlternative.get().append(DocumentMarker::SpellCheckingExemption);
     return markerTypesForAppliedDictationAlternative;
 }
 

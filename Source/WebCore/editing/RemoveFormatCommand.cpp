@@ -33,6 +33,7 @@
 #include "FrameSelection.h"
 #include "HTMLNames.h"
 #include "StyleProperties.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -45,34 +46,34 @@ RemoveFormatCommand::RemoveFormatCommand(Document& document)
 
 static bool isElementForRemoveFormatCommand(const Element* element)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, elements, ());
-    if (elements.isEmpty()) {
-        elements.add(acronymTag);
-        elements.add(bTag);
-        elements.add(bdoTag);
-        elements.add(bigTag);
-        elements.add(citeTag);
-        elements.add(codeTag);
-        elements.add(dfnTag);
-        elements.add(emTag);
-        elements.add(fontTag);
-        elements.add(iTag);
-        elements.add(insTag);
-        elements.add(kbdTag);
-        elements.add(nobrTag);
-        elements.add(qTag);
-        elements.add(sTag);
-        elements.add(sampTag);
-        elements.add(smallTag);
-        elements.add(strikeTag);
-        elements.add(strongTag);
-        elements.add(subTag);
-        elements.add(supTag);
-        elements.add(ttTag);
-        elements.add(uTag);
-        elements.add(varTag);
+    static NeverDestroyed<HashSet<QualifiedName>> elements;
+    if (elements.get().isEmpty()) {
+        elements.get().add(acronymTag);
+        elements.get().add(bTag);
+        elements.get().add(bdoTag);
+        elements.get().add(bigTag);
+        elements.get().add(citeTag);
+        elements.get().add(codeTag);
+        elements.get().add(dfnTag);
+        elements.get().add(emTag);
+        elements.get().add(fontTag);
+        elements.get().add(iTag);
+        elements.get().add(insTag);
+        elements.get().add(kbdTag);
+        elements.get().add(nobrTag);
+        elements.get().add(qTag);
+        elements.get().add(sTag);
+        elements.get().add(sampTag);
+        elements.get().add(smallTag);
+        elements.get().add(strikeTag);
+        elements.get().add(strongTag);
+        elements.get().add(subTag);
+        elements.get().add(supTag);
+        elements.get().add(ttTag);
+        elements.get().add(uTag);
+        elements.get().add(varTag);
     }
-    return elements.contains(element->tagQName());
+    return elements.get().contains(element->tagQName());
 }
 
 void RemoveFormatCommand::doApply()
