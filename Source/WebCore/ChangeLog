@@ -1,3 +1,14 @@
+2014-03-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Always retry a failed MediaDocument as a PluginDocument
+        https://bugs.webkit.org/show_bug.cgi?id=130742
+
+        Reviewed by Jer Noble.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaLoadingFailedFatally): If the element is in a media document,
+            tell it that loading failed so it can retry as a plug-in.
+
 2014-03-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace HTMLConverter::_stringForNode by propertyValueForNode

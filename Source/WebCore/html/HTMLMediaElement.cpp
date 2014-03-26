@@ -1876,6 +1876,11 @@ void HTMLMediaElement::mediaLoadingFailedFatally(MediaPlayer::NetworkState error
 
     // 6 - Abort the overall resource selection algorithm.
     m_currentSourceNode = 0;
+
+#if PLATFORM(COCOA)
+    if (document().isMediaDocument())
+        toMediaDocument(document()).mediaElementSawUnsupportedTracks();
+#endif
 }
 
 void HTMLMediaElement::cancelPendingEventsAndCallbacks()
