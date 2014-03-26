@@ -141,11 +141,13 @@
         var updateMenuDisplay = function () {
             filter();
             list.hidden = hideAll ? true : false;
+            field.setAttribute('aria-expanded', hideAll ? 'false': 'true');
             updateStatus();
         };
 
         var hideMenu = function () {
             list.hidden = true;
+            field.setAttribute('aria-expanded', 'false');
             updateStatus();
         };
 
@@ -271,7 +273,7 @@
     }());
 
     window.addEventListener('load', function () {
-        initComboBoxes()
+        initComboBoxes();
     });
     </script>
 </head>
@@ -281,7 +283,7 @@
     <form class="pc">
         <!-- Note that this field is labelled by itself, which in this case, is an explicit pointer to use the placeholder attribute value. -->
         <input type="text" tabindex="0" id="state" aria-labelledby="state" role="combobox" aria-autocomplete="list" aria-owns="statelist" placeholder="US State or Territory" autocomplete="off" autocorrect="off" autocapitalize="off">
-        <div role="status" aria-live="polite">
+        <div role="status" aria-live="polite" aria-expanded="false">
             <!-- This is the list status live region: e.g. "4 items." -->
             <!-- The attribute value, aria-live="polite" is the default for role="status". -->
             <!-- It's just included here for demo clarity. -->
