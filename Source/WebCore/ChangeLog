@@ -1,5 +1,9 @@
 2014-03-26  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Remove extraneous ! from merge of r166304.
+
+2014-03-26  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r166304.
 
     2014-03-26  Jer Noble  <jer.noble@apple.com>
