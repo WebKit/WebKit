@@ -1,3 +1,10 @@
+2014-03-25  Sam Weinig  <sam@webkit.org>
+
+        Speculative iOS build fix.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::_addAttachmentForElement):
+
 2014-03-25  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Duplicate 'seeked' events.
