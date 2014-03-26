@@ -1,3 +1,24 @@
+2014-03-26  Timothy Hatcher  <timothy@apple.com>
+
+        Modernize the loops in InspectorPageAgent.cpp.
+
+        Also moves the check for hiddenFromInspector to a lower level.
+        This hides hidden resources from more places.
+
+        https://bugs.webkit.org/show_bug.cgi?id=130803
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::buildArrayForCookies):
+        (WebCore::cachedResourcesForFrame):
+        (WebCore::allResourcesURLsForFrame):
+        (WebCore::InspectorPageAgent::getCookies):
+        (WebCore::InspectorPageAgent::searchInResources):
+        (WebCore::InspectorPageAgent::didClearWindowObjectInWorld):
+        (WebCore::InspectorPageAgent::loaderDetachedFromFrame):
+        (WebCore::InspectorPageAgent::buildObjectForFrameTree):
+
 2014-03-26  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Add platform implementation for RTCOfferAnswerOptions and RTCOfferOptions
