@@ -24,7 +24,7 @@
  */
 
 @interface BrowserAppDelegate : NSObject <NSApplicationDelegate> {
-    NSMutableSet *_browserWindows;
+    NSMutableSet *_browserWindowControllers;
 }
 
 - (void)browserWindowWillClose:(NSWindow *)window;

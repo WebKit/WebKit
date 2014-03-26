@@ -43,7 +43,7 @@ enum {
 {
     self = [super init];
     if (self) {
-        _browserWindows = [[NSMutableSet alloc] init];
+        _browserWindowControllers = [[NSMutableSet alloc] init];
     }
 
     return self;
@@ -63,14 +63,14 @@ enum {
         return;
 
     [[controller window] makeKeyAndOrderFront:sender];
-    [_browserWindows addObject:[controller window]];
+    [_browserWindowControllers addObject:controller];
     
     [controller loadURLString:defaultURL];
 }
 
 - (void)browserWindowWillClose:(NSWindow *)window
 {
-    [_browserWindows removeObject:window];
+    [_browserWindowControllers removeObject:window.windowController];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -84,12 +84,8 @@ enum {
 
 - (void)applicationWillTerminate:(NSNotification *)notification
 {
-    for (NSWindow* window in _browserWindows) {
-        id delegate = [window delegate];
-        assert([delegate isKindOfClass:[BrowserWindowController class]]);
-        BrowserWindowController *controller = (BrowserWindowController *)delegate;
+    for (BrowserWindowController* controller in _browserWindowControllers)
         [controller applicationTerminating];
-    }
 }
 
 - (BrowserWindowController *)frontmostBrowserWindowController
@@ -101,11 +97,11 @@ enum {
             continue;
 
         BrowserWindowController *controller = (BrowserWindowController *)delegate;
-        assert([_browserWindows containsObject:[controller window]]);
+        assert([_browserWindowControllers containsObject:controller]);
         return controller;
     }
 
-    return 0;
+    return nil;
 }
 
 - (IBAction)openDocument:(id)sender
