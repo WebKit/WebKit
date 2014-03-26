@@ -1,3 +1,9 @@
+2014-03-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Removing the remaining Automake cruft.
+
+        * GNUmakefile.list.am: Removed.
+
 2014-03-25  Filip Pizlo  <fpizlo@apple.com>
 
         Arguments simplification phase should be fine with marking the arguments local itself as an arguments alias
