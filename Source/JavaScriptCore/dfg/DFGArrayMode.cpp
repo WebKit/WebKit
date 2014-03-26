@@ -344,14 +344,14 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, AbstractValue& value) c
             if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(ArrayWithArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage)))
                 return true;
             return value.m_currentKnownStructure.hasSingleton()
-                && hasArrayStorage(value.m_currentKnownStructure.singleton()->indexingType())
+                && hasAnyArrayStorage(value.m_currentKnownStructure.singleton()->indexingType())
                 && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
         
         default:
             if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage)))
                 return true;
             return value.m_currentKnownStructure.hasSingleton()
-                && hasArrayStorage(value.m_currentKnownStructure.singleton()->indexingType());
+                && hasAnyArrayStorage(value.m_currentKnownStructure.singleton()->indexingType());
         }
         
     case Array::Arguments:

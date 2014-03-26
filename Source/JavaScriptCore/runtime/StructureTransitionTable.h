@@ -79,7 +79,7 @@ inline IndexingType newIndexingType(IndexingType oldType, NonPropertyTransition 
         ASSERT(!hasIndexedProperties(oldType) || hasUndecided(oldType) || hasInt32(oldType) || hasDouble(oldType) || hasContiguous(oldType) || hasContiguous(oldType));
         return (oldType & ~IndexingShapeMask) | SlowPutArrayStorageShape;
     case SwitchToSlowPutArrayStorage:
-        ASSERT(hasFastArrayStorage(oldType));
+        ASSERT(hasArrayStorage(oldType));
         return (oldType & ~IndexingShapeMask) | SlowPutArrayStorageShape;
     case AddIndexedAccessors:
         return oldType | MayHaveIndexedAccessors;

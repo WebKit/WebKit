@@ -1445,7 +1445,7 @@ void JSArray::sortVector(ExecState* exec, JSValue compareFunction, CallType call
             currentIndexingData()[i].clear();
     }
     
-    if (hasArrayStorage(indexingType()))
+    if (hasAnyArrayStorage(indexingType()))
         arrayStorage()->m_numValuesInVector = newUsedVectorLength;
 }
 
@@ -1665,7 +1665,7 @@ void JSArray::compactForSorting(unsigned& numDefined, unsigned& newRelevantLengt
         
     newRelevantLength = numDefined + numUndefined;
     
-    if (hasArrayStorage(arrayIndexingType))
+    if (hasAnyArrayStorage(arrayIndexingType))
         RELEASE_ASSERT(!arrayStorage()->m_sparseMap);
     
     switch (arrayIndexingType) {
@@ -1689,7 +1689,7 @@ void JSArray::compactForSorting(unsigned& numDefined, unsigned& newRelevantLengt
             indexingData<arrayIndexingType>()[i].clear();
     }
 
-    if (hasArrayStorage(arrayIndexingType))
+    if (hasAnyArrayStorage(arrayIndexingType))
         arrayStorage()->m_numValuesInVector = newRelevantLength;
 }
 

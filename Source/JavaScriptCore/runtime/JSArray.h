@@ -208,7 +208,7 @@ Butterfly* createArrayButterflyInDictionaryIndexingMode(
 inline JSArray* JSArray::create(VM& vm, Structure* structure, unsigned initialLength)
 {
     Butterfly* butterfly;
-    if (LIKELY(!hasArrayStorage(structure->indexingType()))) {
+    if (LIKELY(!hasAnyArrayStorage(structure->indexingType()))) {
         ASSERT(
             hasUndecided(structure->indexingType())
             || hasInt32(structure->indexingType())
@@ -239,7 +239,7 @@ inline JSArray* JSArray::tryCreateUninitialized(VM& vm, Structure* structure, un
         return 0;
         
     Butterfly* butterfly;
-    if (LIKELY(!hasArrayStorage(structure->indexingType()))) {
+    if (LIKELY(!hasAnyArrayStorage(structure->indexingType()))) {
         ASSERT(
             hasUndecided(structure->indexingType())
             || hasInt32(structure->indexingType())

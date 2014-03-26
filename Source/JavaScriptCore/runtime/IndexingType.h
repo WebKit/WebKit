@@ -121,14 +121,12 @@ static inline bool hasContiguous(IndexingType indexingType)
     return (indexingType & IndexingShapeMask) == ContiguousShape;
 }
 
-// FIXME: This is an awkward name. This should really be called hasArrayStorage()
-// and then next method down should be called hasAnyArrayStorage().
-static inline bool hasFastArrayStorage(IndexingType indexingType)
+static inline bool hasArrayStorage(IndexingType indexingType)
 {
     return (indexingType & IndexingShapeMask) == ArrayStorageShape;
 }
 
-static inline bool hasArrayStorage(IndexingType indexingType)
+static inline bool hasAnyArrayStorage(IndexingType indexingType)
 {
     return static_cast<uint8_t>((indexingType & IndexingShapeMask) - ArrayStorageShape) <= static_cast<uint8_t>(SlowPutArrayStorageShape - ArrayStorageShape);
 }

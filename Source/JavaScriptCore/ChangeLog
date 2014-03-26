@@ -1,3 +1,46 @@
+2014-03-26  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        Rename hasFastArrayStorage to be more appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=130773
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::alreadyChecked):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNewArray):
+        (JSC::FTL::LowerDFGToLLVM::compileNewArrayBuffer):
+        (JSC::FTL::LowerDFGToLLVM::compileNewArrayWithSize):
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::unshift):
+        (JSC::Butterfly::shift):
+        * runtime/IndexingHeaderInlines.h:
+        (JSC::IndexingHeader::preCapacity):
+        * runtime/IndexingType.h:
+        (JSC::hasArrayStorage):
+        (JSC::hasAnyArrayStorage):
+        (JSC::hasFastArrayStorage): Deleted.
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::sortVector):
+        (JSC::JSArray::compactForSorting):
+        * runtime/JSArray.h:
+        (JSC::JSArray::create):
+        (JSC::JSArray::tryCreateUninitialized):
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage):
+        * runtime/JSObject.h:
+        (JSC::JSObject::ensureArrayStorage):
+        (JSC::JSObject::arrayStorage):
+        * runtime/StructureTransitionTable.h:
+        (JSC::newIndexingType):
+
 2014-03-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Removing the remaining Automake cruft.

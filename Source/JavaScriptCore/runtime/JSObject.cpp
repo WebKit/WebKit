@@ -2073,7 +2073,7 @@ bool JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage(ExecState* exec,
     VM& vm = exec->vm();
     
     // i should be a valid array index that is outside of the current vector.
-    ASSERT(hasArrayStorage(indexingType()));
+    ASSERT(hasAnyArrayStorage(indexingType()));
     ASSERT(arrayStorage() == storage);
     ASSERT(i >= storage->vectorLength() || attributes);
     ASSERT(i <= MAX_ARRAY_INDEX);

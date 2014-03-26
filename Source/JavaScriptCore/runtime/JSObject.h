@@ -697,9 +697,9 @@ public:
     // already.
     ArrayStorage* ensureArrayStorage(VM& vm)
     {
-        if (LIKELY(hasArrayStorage(indexingType())))
+        if (LIKELY(hasAnyArrayStorage(indexingType())))
             return m_butterfly->arrayStorage();
-            
+
         return ensureArrayStorageSlow(vm);
     }
         
@@ -745,7 +745,7 @@ protected:
     // storage. This will assert otherwise.
     ArrayStorage* arrayStorage()
     {
-        ASSERT(hasArrayStorage(indexingType()));
+        ASSERT(hasAnyArrayStorage(indexingType()));
         return m_butterfly->arrayStorage();
     }
         

@@ -111,7 +111,7 @@ private:
         case NewArray:
         case NewArrayWithSize:
         case NewArrayBuffer:
-            if (!globalObject()->isHavingABadTime() && !hasArrayStorage(m_node->indexingType()))
+            if (!globalObject()->isHavingABadTime() && !hasAnyArrayStorage(m_node->indexingType()))
                 addLazily(globalObject()->havingABadTimeWatchpoint());
             break;
             
