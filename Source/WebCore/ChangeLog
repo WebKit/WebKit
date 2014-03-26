@@ -1,3 +1,16 @@
+2014-03-26  Zalan Bujtas  <zalan@apple.com>
+
+        Device scale factor should always be greater than 0.
+        https://bugs.webkit.org/show_bug.cgi?id=130798
+
+        Reviewed by David Kilzer.
+
+        Rendering context requires a device scale factor > 0 so that we can map CSS pixels
+        to device pixels properly. Neither 0 nor a negative device pixel ratio are considered to be valid.
+
+        * page/Page.cpp:
+        (WebCore::Page::setDeviceScaleFactor):
+
 2014-03-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Skipping underlines disregard points completely inside the underline rect

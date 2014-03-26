@@ -734,6 +734,10 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin)
 
 void Page::setDeviceScaleFactor(float scaleFactor)
 {
+    ASSERT(scaleFactor > 0);
+    if (scaleFactor <= 0)
+        return;
+    
     if (m_deviceScaleFactor == scaleFactor)
         return;
 
