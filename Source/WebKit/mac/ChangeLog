@@ -1,3 +1,16 @@
+2014-03-26  Timothy Hatcher  <timothy@apple.com>
+
+        Propagate the hiddenFromInspector flag on ResourceRequest in
+        places when a new request a made or passed between processes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=130741
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchWillSendRequest): Copy hiddenFromInspector to
+        the new request.
+
 2014-03-26  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Remove shape-inside support

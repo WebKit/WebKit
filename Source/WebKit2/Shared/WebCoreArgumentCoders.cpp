@@ -522,6 +522,10 @@ void ArgumentCoder<ResourceRequest>::encode(ArgumentEncoder& encoder, const Reso
     encoder << resourceRequest.cachePartition();
 #endif
 
+#if ENABLE(INSPECTOR)
+    encoder << resourceRequest.hiddenFromInspector();
+#endif
+
     encodePlatformData(encoder, resourceRequest);
 }
 
@@ -568,6 +572,13 @@ bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder& decoder, ResourceRe
     if (!decoder.decode(cachePartition))
         return false;
     resourceRequest.setCachePartition(cachePartition);
+#endif
+
+#if ENABLE(INSPECTOR)
+    bool isHiddenFromInspector;
+    if (!decoder.decode(isHiddenFromInspector))
+        return false;
+    resourceRequest.setHiddenFromInspector(isHiddenFromInspector);
 #endif
 
     return decodePlatformData(decoder, resourceRequest);

@@ -1,3 +1,27 @@
+2014-03-26  Timothy Hatcher  <timothy@apple.com>
+
+        Propagate the hiddenFromInspector flag on ResourceRequest in
+        places when a new request a made or passed between processes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=130741
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebCore.exp.in: Updated symbols for updateFromDelegatePreservingOldProperties.
+        * platform/network/cf/ResourceRequest.h:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::updateFromDelegatePreservingOldProperties): Added.
+        (WebCore::ResourceRequest::updateFromDelegatePreservingOldHTTPBody): Deleted.
+        * platform/network/curl/ResourceRequest.h:
+        (WebCore::ResourceRequest::updateFromDelegatePreservingOldProperties): Added.
+        (WebCore::ResourceRequest::updateFromDelegatePreservingOldHTTPBody): Deleted.
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::updateFromDelegatePreservingOldProperties): Added.
+        (WebCore::ResourceRequest::updateFromDelegatePreservingOldHTTPBody): Deleted.
+        * platform/network/soup/ResourceRequest.h:
+        (WebCore::ResourceRequest::updateFromDelegatePreservingOldProperties): Added.
+        (WebCore::ResourceRequest::updateFromDelegatePreservingOldHTTPBody): Deleted.
+
 2014-03-26  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Remove no-longer-used shape-inside geometry code

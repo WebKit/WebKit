@@ -102,7 +102,7 @@ namespace WebCore {
         }
 #endif
 
-        void updateFromDelegatePreservingOldHTTPBody(const ResourceRequest&);
+        void updateFromDelegatePreservingOldProperties(const ResourceRequest&);
 
 #if PLATFORM(MAC)
         void applyWebArchiveHackForMail();

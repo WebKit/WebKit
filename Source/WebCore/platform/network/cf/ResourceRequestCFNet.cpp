@@ -233,12 +233,19 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
 #endif
 }
 
-void ResourceRequest::updateFromDelegatePreservingOldHTTPBody(const ResourceRequest& delegateProvidedRequest)
+void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRequest& delegateProvidedRequest)
 {
     RefPtr<FormData> oldHTTPBody = httpBody();
+#if ENABLE(INSPECTOR)
+    bool isHiddenFromInspector = hiddenFromInspector();
+#endif
 
     *this = delegateProvidedRequest;
+
     setHTTPBody(oldHTTPBody.release());
+#if ENABLE(INSPECTOR)
+    setHiddenFromInspector(isHiddenFromInspector);
+#endif
 }
 
 void ResourceRequest::doUpdateResourceRequest()

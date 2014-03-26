@@ -86,7 +86,7 @@ namespace WebCore {
             updateFromSoupRequest(soupRequest);
         }
 
-        void updateFromDelegatePreservingOldHTTPBody(const ResourceRequest& delegateProvidedRequest) { *this = delegateProvidedRequest; }
+        void updateFromDelegatePreservingOldProperties(const ResourceRequest& delegateProvidedRequest) { *this = delegateProvidedRequest; }
 
         bool acceptEncoding() const { return m_acceptEncoding; }
         void setAcceptEncoding(bool acceptEncoding) { m_acceptEncoding = acceptEncoding; }

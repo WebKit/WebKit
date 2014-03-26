@@ -61,7 +61,7 @@ namespace WebCore {
         {
         }
 
-        void updateFromDelegatePreservingOldHTTPBody(const ResourceRequest& delegateProvidedRequest) { *this = delegateProvidedRequest; }
+        void updateFromDelegatePreservingOldProperties(const ResourceRequest& delegateProvidedRequest) { *this = delegateProvidedRequest; }
 
         // Needed for compatibility.
         CFURLRequestRef cfURLRequest(HTTPBodyUpdatePolicy) const { return 0; }
