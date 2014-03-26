@@ -1,3 +1,12 @@
+2014-03-26  Tomas Popela  <tpopela@redhat.com>
+
+        run-launcher is Perl script so use elsif and not elif
+        https://bugs.webkit.org/show_bug.cgi?id=130771
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/run-launcher:
+
 2014-03-26  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Utilize new AtkValue interface coming in ATK 2.11.92

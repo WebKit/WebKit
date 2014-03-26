@@ -48,9 +48,9 @@ checkFrameworks();
 if (isGtk() || isEfl()) {
     if (isWK2()) {
         $launcherPath = catdir($productDir, "bin", "MiniBrowser");
-    } elif (isEfl()) {
+    } elsif (isEfl()) {
         $launcherPath = catdir($productDir, "bin", "EWebLauncher");
-    } elif (isGtk()) {
+    } elsif (isGtk()) {
         $launcherPath = catdir($productDir, "bin", "GtkLauncher");
     }
 }
