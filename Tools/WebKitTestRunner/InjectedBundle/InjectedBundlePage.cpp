@@ -254,13 +254,12 @@ static inline WTF::String pathSuitableForTestResult(WKURLRef fileUrl)
     return toWTFString(adoptWK(WKURLCopyLastPathComponent(fileUrl))); // We lose some information here, but it's better than exposing a full path, which is always machine specific.
 }
 
-static HashMap<std::pair<WKBundleFrameRef, uint64_t>, String> assignedUrlsCache;
+static HashMap<uint64_t, String> assignedUrlsCache;
 
-static inline void dumpResourceURL(WKBundleFrameRef frame, uint64_t identifier, StringBuilder& stringBuilder)
+static inline void dumpResourceURL(uint64_t identifier, StringBuilder& stringBuilder)
 {
-    std::pair<WKBundleFrameRef, uint64_t> key = std::make_pair(frame, identifier);
-    if (assignedUrlsCache.contains(key))
-        stringBuilder.append(assignedUrlsCache.get(key));
+    if (assignedUrlsCache.contains(identifier))
+        stringBuilder.append(assignedUrlsCache.get(identifier));
     else
         stringBuilder.appendLiteral("<unknown>");
 }
@@ -1028,15 +1027,13 @@ void InjectedBundlePage::didDetectXSSForFrame(WKBundleFrameRef frame)
         InjectedBundle::shared().outputText("didDetectXSS\n");
 }
 
-void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, bool)
+void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef request, bool)
 {
     if (!InjectedBundle::shared().isTestRunning())
         return;
 
     WKRetainPtr<WKURLRef> url = adoptWK(WKURLRequestCopyURL(request));
-    auto result = assignedUrlsCache.add(std::make_pair(frame, identifier), pathSuitableForTestResult(url.get()));
-    // It is a bug in WebCore if multiple resources had the same frame/identifier pair.
-    ASSERT_UNUSED(result, result.isNewEntry);
+    assignedUrlsCache.add(identifier, pathSuitableForTestResult(url.get()));
 }
 
 // Resource Load Client Callbacks
@@ -1056,7 +1053,7 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
     if (InjectedBundle::shared().isTestRunning()
         && InjectedBundle::shared().testRunner()->shouldDumpResourceLoadCallbacks()) {
         StringBuilder stringBuilder;
-        dumpResourceURL(frame, identifier, stringBuilder);
+        dumpResourceURL(identifier, stringBuilder);
         stringBuilder.appendLiteral(" - willSendRequest ");
         dumpRequestDescriptionSuitableForTestResult(request, stringBuilder);
         stringBuilder.appendLiteral(" redirectResponse ");
@@ -1107,14 +1104,14 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
     return request;
 }
 
-void InjectedBundlePage::didReceiveResponseForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLResponseRef response)
+void InjectedBundlePage::didReceiveResponseForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLResponseRef response)
 {
     if (!InjectedBundle::shared().isTestRunning())
         return;
 
     if (InjectedBundle::shared().testRunner()->shouldDumpResourceLoadCallbacks()) {
         StringBuilder stringBuilder;
-        dumpResourceURL(frame, identifier, stringBuilder);
+        dumpResourceURL(identifier, stringBuilder);
         stringBuilder.appendLiteral(" - didReceiveResponse ");
         dumpResponseDescriptionSuitableForTestResult(response, stringBuilder);
         stringBuilder.append('\n');
@@ -1141,7 +1138,7 @@ void InjectedBundlePage::didReceiveContentLengthForResource(WKBundlePageRef, WKB
 {
 }
 
-void InjectedBundlePage::didFinishLoadForResource(WKBundlePageRef, WKBundleFrameRef frame, uint64_t identifier)
+void InjectedBundlePage::didFinishLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier)
 {
     if (!InjectedBundle::shared().isTestRunning())
         return;
@@ -1150,12 +1147,12 @@ void InjectedBundlePage::didFinishLoadForResource(WKBundlePageRef, WKBundleFrame
         return;
 
     StringBuilder stringBuilder;
-    dumpResourceURL(frame, identifier, stringBuilder);
+    dumpResourceURL(identifier, stringBuilder);
     stringBuilder.appendLiteral(" - didFinishLoading\n");
     InjectedBundle::shared().outputText(stringBuilder.toString());
 }
 
-void InjectedBundlePage::didFailLoadForResource(WKBundlePageRef, WKBundleFrameRef frame, uint64_t identifier, WKErrorRef error)
+void InjectedBundlePage::didFailLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKErrorRef error)
 {
     if (!InjectedBundle::shared().isTestRunning())
         return;
@@ -1164,7 +1161,7 @@ void InjectedBundlePage::didFailLoadForResource(WKBundlePageRef, WKBundleFrameRe
         return;
 
     StringBuilder stringBuilder;
-    dumpResourceURL(frame, identifier, stringBuilder);
+    dumpResourceURL(identifier, stringBuilder);
     stringBuilder.appendLiteral(" - didFailLoadingWithError: ");
 
     dumpErrorDescriptionSuitableForTestResult(error, stringBuilder);

@@ -1,3 +1,18 @@
+2014-03-26  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r166264.
+        https://bugs.webkit.org/show_bug.cgi?id=130785
+
+        Broke some window.opener tests for WK2 Mavericks (Requested by
+        brrian__ on #webkit).
+
+        Reverted changeset:
+
+        "Web Replay: resource unique identifiers should be unique-per-
+        frame, not globally"
+        https://bugs.webkit.org/show_bug.cgi?id=130632
+        http://trac.webkit.org/changeset/166264
+
 2014-03-26  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Remove shape-inside support
