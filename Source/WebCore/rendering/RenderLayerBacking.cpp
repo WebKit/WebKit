@@ -1675,7 +1675,7 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
 {
     RenderObject* renderObject = renderer();
 
-    if (!renderObject->isRenderImage() || m_owningLayer->hasBoxDecorationsOrBackground() || renderObject->hasClip())
+    if (!renderObject->isRenderImage() || !renderObject->isMedia() || m_owningLayer->hasBoxDecorationsOrBackground() || renderObject->hasClip())
         return false;
 
     RenderImage* imageRenderer = toRenderImage(renderObject);
