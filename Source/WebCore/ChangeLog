@@ -1,3 +1,19 @@
+2014-03-25  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Duplicate 'seeked' events.
+        https://bugs.webkit.org/show_bug.cgi?id=130754
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-duplicate-seeked.html
+
+        During certain seek operations, HTMLMediaElement::finishSeek() can be called re-entrantly due to
+        the ready state changing as a result of MediaSource::monitorSourceBuffers(). Move this call to the
+        end of finishSeek() after m_seeking has been cleared.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+
 2014-03-25  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: add support for aria-activedescendant and reconcile UI/testing with parentNode

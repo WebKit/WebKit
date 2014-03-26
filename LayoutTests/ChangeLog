@@ -1,3 +1,13 @@
+2014-03-25  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Duplicate 'seeked' events.
+        https://bugs.webkit.org/show_bug.cgi?id=130754
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-duplicate-seeked-expected.txt: Added.
+        * media/media-source/media-source-duplicate-seeked.html: Added.
+
 2014-03-25  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: add support for aria-activedescendant and reconcile UI/testing with parentNode

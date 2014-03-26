@@ -2481,11 +2481,6 @@ void HTMLMediaElement::finishSeek()
 {
     LOG(Media, "HTMLMediaElement::finishSeek");
 
-#if ENABLE(MEDIA_SOURCE)
-    if (m_mediaSource)
-        m_mediaSource->monitorSourceBuffers();
-#endif
-
     // 4.8.10.9 Seeking
     // 14 - Set the seeking IDL attribute to false.
     m_seeking = false;
@@ -2498,6 +2493,11 @@ void HTMLMediaElement::finishSeek()
 
     // 17 - Queue a task to fire a simple event named seeked at the element.
     scheduleEvent(eventNames().seekedEvent);
+
+#if ENABLE(MEDIA_SOURCE)
+    if (m_mediaSource)
+        m_mediaSource->monitorSourceBuffers();
+#endif
 }
 
 HTMLMediaElement::ReadyState HTMLMediaElement::readyState() const
