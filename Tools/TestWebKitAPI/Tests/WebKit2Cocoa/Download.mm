@@ -87,7 +87,6 @@ static bool isDone;
 
 - (void)_download:(_WKDownload *)download didReceiveData:(uint64_t)length
 {
-    NSLog(@"didReceiveData: %llu\n", length);
     EXPECT_EQ(_download, download);
     _receivedContentLength += length;
 }
@@ -107,8 +106,10 @@ static bool isDone;
 
 - (void)_downloadDidFinish:(_WKDownload *)download
 {
-    NSLog(@"_expectedContentLength: %lld\n", _expectedContentLength);
-    NSLog(@"_receivedContentLength: %llu\n", _receivedContentLength);
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1080
+    // Work around <rdar://problem/7611450> NSURLDownload calls didReceiveDataOfLength: delegate method too many times
+    _receivedContentLength /= 2;
+#endif
     EXPECT_EQ(_download, download);
     EXPECT_TRUE(_expectedContentLength == NSURLResponseUnknownLength || static_cast<uint64_t>(_expectedContentLength) == _receivedContentLength);
     EXPECT_TRUE([[NSFileManager defaultManager] contentsEqualAtPath:_destinationPath andPath:[_sourceURL path]]);
