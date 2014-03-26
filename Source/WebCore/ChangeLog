@@ -1,3 +1,17 @@
+2014-03-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Avoid duplicate size checks when creating empty image
+        https://bugs.webkit.org/show_bug.cgi?id=130730
+
+        Reviewed by Dean Jackson.
+
+        Merged from Blink (patch by ch.dumez@samsung.com):
+        https://chromium.googlesource.com/chromium/blink/+/4861a71bc1f284fc97417f405ab7d08dc6947b88
+        http://crbug.com/190633011
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::createEmptyImageData): Don't perform overflow calculation twice.
+
 2014-03-26  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] getComputedStyle() must return the specified value for positioning properties
