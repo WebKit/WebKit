@@ -1,3 +1,9 @@
+2014-03-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the iOS build.
+
+        * WebCore.exp.in:
+
 2014-03-26  Tim Horton  <timothy_horton@apple.com>
 
         [iOS WebKit2] Flush all surfaces after painting into all of them, instead of after painting into each one
