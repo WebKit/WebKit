@@ -145,8 +145,8 @@ void StackMaps::Record::dump(PrintStream& out) const
 {
     out.print(
         "(#", patchpointID, ", offset = ", instructionOffset, ", flags = ", flags,
-        ", locations = [", listDump(locations), "]), liveOuts = [",
-        listDump(liveOuts), "]");
+        ", locations = [", listDump(locations), "], liveOuts = [",
+        listDump(liveOuts), "])");
 }
 
 bool StackMaps::parse(DataView* view)

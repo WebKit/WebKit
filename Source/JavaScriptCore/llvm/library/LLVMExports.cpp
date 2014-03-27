@@ -30,6 +30,29 @@
 #include "LLVMAPI.h"
 #include "LLVMTrapCallback.h"
 
+// Include some extra LLVM C++ headers. This is the only place where including LLVM C++
+// headers is OK, since this module lives inside of the LLVM dylib we make and so can see
+// otherwise private things. But to include those headers, we need to do some weird things
+// first. Anyway, we should keep LLVM C++ includes to a minimum if possible.
+
+#define __STDC_LIMIT_MACROS
+#define __STDC_CONSTANT_MACROS
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#endif // COMPILER(CLANG)
+
+#include <llvm/Support/CommandLine.h>
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif // COMPILER(CLANG)
+
+#undef __STDC_LIMIT_MACROS
+#undef __STDC_CONSTANT_MACROS
+
 extern "C" WTF_EXPORT_PRIVATE JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(void (*)(const char*, ...));
 
 static void llvmCrash(const char* reason)
@@ -66,6 +89,12 @@ extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(void (*callback)(const char*
 #else
     UNREACHABLE_FOR_PLATFORM();
 #endif
+    
+    const char* args[] = {
+        "-enable-stackmap-liveness=true",
+        "-enable-patchpoint-liveness=true"
+    };
+    llvm::cl::ParseCommandLineOptions(sizeof(args) / sizeof(const char*), args);
     
     JSC::LLVMAPI* result = new JSC::LLVMAPI;
     

@@ -1,5 +1,17 @@
 2014-03-26  Filip Pizlo  <fpizlo@apple.com>
 
+        Enable LLVM stackmap liveOuts computation
+        https://bugs.webkit.org/show_bug.cgi?id=130821
+
+        Reviewed by Andy Estes and Sam Weinig.
+
+        * ftl/FTLStackMaps.cpp:
+        (JSC::FTL::StackMaps::Record::dump):
+        * llvm/library/LLVMExports.cpp:
+        (initializeAndGetJSCLLVMAPI):
+
+2014-03-26  Filip Pizlo  <fpizlo@apple.com>
+
         Parse stackmaps liveOuts
         https://bugs.webkit.org/show_bug.cgi?id=130801
 
