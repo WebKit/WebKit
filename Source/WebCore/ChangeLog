@@ -1,3 +1,28 @@
+2014-03-26  Sam Weinig  <sam@webkit.org>
+
+        Convert more of HTMLConverter to C++
+        https://bugs.webkit.org/show_bug.cgi?id=130811
+
+        Reviewed by Anders Carlsson.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::HTMLConverter):
+        (HTMLConverter::~HTMLConverter):
+        (HTMLConverter::_blockLevelElementForNode):
+        (HTMLConverter::_colorForElement):
+        (HTMLConverter::_computedAttributesForElement):
+        (HTMLConverter::_attributesForElement):
+        (HTMLConverter::_fillInBlock):
+        (HTMLConverter::_enterElement):
+        (HTMLConverter::_addTableForElement):
+        (HTMLConverter::_addTableCellForElement):
+        (HTMLConverter::_processElement):
+        (HTMLConverter::_exitElement):
+        (HTMLConverter::_getFloat): Deleted.
+        (HTMLConverter::_elementIsBlockLevel): Deleted.
+        (HTMLConverter::_elementHasOwnBackgroundColor): Deleted.
+        (HTMLConverter::_colorForNode): Deleted.
+
 2014-03-26  Simon Fraser  <simon.fraser@apple.com>
 
         Hook up -webkit-overflow-scrolling:touch for iOS WK2
