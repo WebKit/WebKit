@@ -31,32 +31,41 @@
 namespace WebCore {
 
 // NodeList that limits to a particular tag.
-class TagNodeList : public LiveNodeList {
+class TagNodeList final : public CachedLiveNodeList<TagNodeList> {
 public:
     static PassRefPtr<TagNodeList> create(ContainerNode& rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
     {
         ASSERT(namespaceURI != starAtom);
-        return adoptRef(new TagNodeList(rootNode, Type::TagNodeListType, namespaceURI, localName));
+        return adoptRef(new TagNodeList(rootNode, namespaceURI, localName));
     }
 
     static PassRefPtr<TagNodeList> create(ContainerNode& rootNode, Type type, const AtomicString& localName)
     {
         ASSERT_UNUSED(type, type == Type::TagNodeListType);
-        return adoptRef(new TagNodeList(rootNode, Type::TagNodeListType, starAtom, localName));
+        return adoptRef(new TagNodeList(rootNode, starAtom, localName));
     }
 
     virtual ~TagNodeList();
 
-protected:
-    TagNodeList(ContainerNode& rootNode, Type, const AtomicString& namespaceURI, const AtomicString& localName);
-
     virtual bool nodeMatches(Element*) const override;
+
+protected:
+    TagNodeList(ContainerNode& rootNode, const AtomicString& namespaceURI, const AtomicString& localName);
 
     AtomicString m_namespaceURI;
     AtomicString m_localName;
 };
 
-class HTMLTagNodeList : public TagNodeList {
+inline bool TagNodeList::nodeMatches(Element* element) const
+{
+    // Implements http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#concept-getelementsbytagnamens
+    if (m_localName != starAtom && m_localName != element->localName())
+        return false;
+
+    return m_namespaceURI == starAtom || m_namespaceURI == element->namespaceURI();
+}
+
+class HTMLTagNodeList final : public CachedLiveNodeList<HTMLTagNodeList> {
 public:
     static PassRefPtr<HTMLTagNodeList> create(ContainerNode& rootNode, Type type, const AtomicString& localName)
     {
@@ -64,26 +73,24 @@ public:
         return adoptRef(new HTMLTagNodeList(rootNode, localName));
     }
 
-    bool nodeMatchesInlined(Element*) const;
+    virtual ~HTMLTagNodeList();
+
+    virtual bool nodeMatches(Element*) const override;
 
 private:
     HTMLTagNodeList(ContainerNode& rootNode, const AtomicString& localName);
 
-    virtual bool nodeMatches(Element*) const override;
-
+    AtomicString m_localName;
     AtomicString m_loweredLocalName;
 };
 
-inline bool HTMLTagNodeList::nodeMatchesInlined(Element* testNode) const
+inline bool HTMLTagNodeList::nodeMatches(Element* element) const
 {
     // Implements http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#concept-getelementsbytagname
-    if (m_localName != starAtom) {
-        const AtomicString& localName = testNode->isHTMLElement() ? m_loweredLocalName : m_localName;
-        if (localName != testNode->localName())
-            return false;
-    }
-    ASSERT(m_namespaceURI == starAtom);
-    return true;
+    if (m_localName == starAtom)
+        return true;
+    const AtomicString& localName = element->isHTMLElement() ? m_loweredLocalName : m_localName;
+    return localName == element->localName();
 }
 
 } // namespace WebCore

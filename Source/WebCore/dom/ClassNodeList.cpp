@@ -36,7 +36,7 @@
 namespace WebCore {
 
 ClassNodeList::ClassNodeList(ContainerNode& rootNode, const String& classNames)
-    : LiveNodeList(rootNode, Type::ClassNodeListType, InvalidateOnClassAttrChange)
+    : CachedLiveNodeList(rootNode, Type::ClassNodeListType, InvalidateOnClassAttrChange)
     , m_classNames(classNames, document().inQuirksMode())
     , m_originalClassNames(classNames)
 {
@@ -45,11 +45,6 @@ ClassNodeList::ClassNodeList(ContainerNode& rootNode, const String& classNames)
 ClassNodeList::~ClassNodeList()
 {
     ownerNode().nodeLists()->removeCacheWithName(this, m_originalClassNames);
-} 
-
-bool ClassNodeList::nodeMatches(Element* testNode) const
-{
-    return nodeMatchesInlined(testNode);
 }
 
 } // namespace WebCore

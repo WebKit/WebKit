@@ -31,154 +31,21 @@
 
 namespace WebCore {
 
-ContainerNode& LiveNodeList::rootNode() const
+LiveNodeList::LiveNodeList(ContainerNode& ownerNode, Type type, NodeListInvalidationType invalidationType, NodeListRootType rootType)
+    : m_ownerNode(ownerNode)
+    , m_rootType(rootType)
+    , m_invalidationType(invalidationType)
+    , m_type(static_cast<unsigned>(type))
 {
-    if (isRootedAtDocument() && ownerNode().inDocument())
-        return ownerNode().document();
-
-    return ownerNode();
+    ASSERT(m_rootType == static_cast<unsigned>(rootType));
+    ASSERT(m_invalidationType == static_cast<unsigned>(invalidationType));
+    ASSERT(m_type == static_cast<unsigned>(type));
 }
 
-template <class NodeListType>
-inline bool isMatchingElement(const NodeListType*, Element*);
-
-template <> inline bool isMatchingElement(const LiveNodeList* nodeList, Element* element)
+LiveNodeList::~LiveNodeList()
 {
-    return nodeList->nodeMatches(element);
 }
 
-template <> inline bool isMatchingElement(const HTMLTagNodeList* nodeList, Element* element)
-{
-    return nodeList->nodeMatchesInlined(element);
-}
-
-template <> inline bool isMatchingElement(const ClassNodeList* nodeList, Element* element)
-{
-    return nodeList->nodeMatchesInlined(element);
-}
-
-template <class NodeListType>
-inline Element* firstMatchingElement(const NodeListType* nodeList, ContainerNode& root)
-{
-    Element* element = ElementTraversal::firstWithin(&root);
-    while (element && !isMatchingElement(nodeList, element))
-        element = ElementTraversal::next(element, &root);
-    return element;
-}
-
-template <class NodeListType>
-inline Element* lastMatchingElement(const NodeListType* nodeList, ContainerNode& root)
-{
-    Element* element = ElementTraversal::lastWithin(&root);
-    while (element && !isMatchingElement(nodeList, element))
-        element = ElementTraversal::previous(element, &root);
-    return element;
-}
-
-template <class NodeListType>
-inline Element* nextMatchingElement(const NodeListType* nodeList, Element* current, ContainerNode& root)
-{
-    do {
-        current = ElementTraversal::next(current, &root);
-    } while (current && !isMatchingElement(nodeList, current));
-    return current;
-}
-
-template <class NodeListType>
-inline Element* previousMatchingElement(const NodeListType* nodeList, Element* current, ContainerNode& root)
-{
-    do {
-        current = ElementTraversal::previous(current, &root);
-    } while (current && !isMatchingElement(nodeList, current));
-    return current;
-}
-
-template <class NodeListType>
-inline Element* traverseMatchingElementsForward(const NodeListType* nodeList, Element& current, unsigned count, unsigned& traversedCount, ContainerNode& root)
-{
-    Element* element = &current;
-    for (traversedCount = 0; traversedCount < count; ++traversedCount) {
-        element = nextMatchingElement(nodeList, element, root);
-        if (!element)
-            return nullptr;
-    }
-    return element;
-}
-
-template <class NodeListType>
-inline Element* traverseMatchingElementsBackward(const NodeListType* nodeList, Element& current, unsigned count, ContainerNode& root)
-{
-    Element* element = &current;
-    for (; count; --count) {
-        element = previousMatchingElement(nodeList, element, root);
-        if (!element)
-            return nullptr;
-    }
-    return element;
-}
-
-Element* LiveNodeList::collectionFirst() const
-{
-    auto& root = rootNode();
-    if (type() == Type::HTMLTagNodeListType)
-        return firstMatchingElement(static_cast<const HTMLTagNodeList*>(this), root);
-    if (type() == Type::ClassNodeListType)
-        return firstMatchingElement(static_cast<const ClassNodeList*>(this), root);
-    return firstMatchingElement(static_cast<const LiveNodeList*>(this), root);
-}
-
-Element* LiveNodeList::collectionLast() const
-{
-    auto& root = rootNode();
-    if (type() == Type::HTMLTagNodeListType)
-        return lastMatchingElement(static_cast<const HTMLTagNodeList*>(this), root);
-    if (type() == Type::ClassNodeListType)
-        return lastMatchingElement(static_cast<const ClassNodeList*>(this), root);
-    return lastMatchingElement(static_cast<const LiveNodeList*>(this), root);
-}
-
-Element* LiveNodeList::collectionTraverseForward(Element& current, unsigned count, unsigned& traversedCount) const
-{
-    auto& root = rootNode();
-    if (type() == Type::HTMLTagNodeListType)
-        return traverseMatchingElementsForward(static_cast<const HTMLTagNodeList*>(this), current, count, traversedCount, root);
-    if (type() == Type::ClassNodeListType)
-        return traverseMatchingElementsForward(static_cast<const ClassNodeList*>(this), current, count, traversedCount, root);
-    return traverseMatchingElementsForward(static_cast<const LiveNodeList*>(this), current, count, traversedCount, root);
-}
-
-Element* LiveNodeList::collectionTraverseBackward(Element& current, unsigned count) const
-{
-    auto& root = rootNode();
-    if (type() == Type::HTMLTagNodeListType)
-        return traverseMatchingElementsBackward(static_cast<const HTMLTagNodeList*>(this), current, count, root);
-    if (type() == Type::ClassNodeListType)
-        return traverseMatchingElementsBackward(static_cast<const ClassNodeList*>(this), current, count, root);
-    return traverseMatchingElementsBackward(static_cast<const LiveNodeList*>(this), current, count, root);
-}
-
-unsigned LiveNodeList::length() const
-{
-    return m_indexCache.nodeCount(*this);
-}
-
-Node* LiveNodeList::item(unsigned offset) const
-{
-    return m_indexCache.nodeAt(*this, offset);
-}
-
-size_t LiveNodeList::memoryCost() const
-{
-    return m_indexCache.memoryCost();
-}
-
-void LiveNodeList::invalidateCache(Document& document) const
-{
-    if (!m_indexCache.hasValidCache())
-        return;
-    document.unregisterNodeList(const_cast<LiveNodeList&>(*this));
-    m_indexCache.invalidate();
-}
 
 Node* LiveNodeList::namedItem(const AtomicString& elementId) const
 {
@@ -190,7 +57,7 @@ Node* LiveNodeList::namedItem(const AtomicString& elementId) const
         if (element && nodeMatches(element) && element->isDescendantOf(&rootNode))
             return element;
         if (!element)
-            return 0;
+            return nullptr;
         // In the case of multiple nodes with the same name, just fall through.
     }
 
@@ -205,7 +72,7 @@ Node* LiveNodeList::namedItem(const AtomicString& elementId) const
             return node;
     }
 
-    return 0;
+    return nullptr;
 }
 
 } // namespace WebCore

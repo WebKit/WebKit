@@ -30,7 +30,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 NameNodeList::NameNodeList(ContainerNode& rootNode, const AtomicString& name)
-    : LiveNodeList(rootNode, Type::NameNodeListType, InvalidateOnNameAttrChange)
+    : CachedLiveNodeList(rootNode, Type::NameNodeListType, InvalidateOnNameAttrChange)
     , m_name(name)
 {
 }

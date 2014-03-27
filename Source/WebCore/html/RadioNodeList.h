@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class RadioNodeList : public LiveNodeList {
+class RadioNodeList final : public CachedLiveNodeList<RadioNodeList> {
 public:
     static PassRefPtr<RadioNodeList> create(ContainerNode& rootNode, Type type, const AtomicString& name)
     {
@@ -45,7 +45,6 @@ public:
     String value() const;
     void setValue(const String&);
 
-protected:
     virtual bool nodeMatches(Element*) const override;
 
 private:

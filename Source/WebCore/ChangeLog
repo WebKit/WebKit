@@ -1,3 +1,96 @@
+2014-03-27  Antti Koivisto  <antti@apple.com>
+
+        Remove some unnecessary branches from LiveNodeList traversal
+        https://bugs.webkit.org/show_bug.cgi?id=130854
+
+        Reviewed by Andreas Kling.
+
+        Compile different traversal code paths for all NodeList subclasses.
+
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::ClassNodeList):
+        (WebCore::ClassNodeList::~ClassNodeList):
+        (WebCore::ClassNodeList::nodeMatches): Deleted.
+        * dom/ClassNodeList.h:
+        (WebCore::ClassNodeList::nodeMatches):
+        (WebCore::ClassNodeList::nodeMatchesInlined): Deleted.
+        
+            Remove separate nodeMatchesInlined functions. 
+            We now rely on exact types and marking classes final.
+
+        * dom/LiveNodeList.cpp:
+        (WebCore::LiveNodeList::LiveNodeList):
+        (WebCore::LiveNodeList::~LiveNodeList):
+        (WebCore::LiveNodeList::namedItem):
+        (WebCore::LiveNodeList::rootNode): Deleted.
+        (WebCore::isMatchingElement): Deleted.
+        (WebCore::firstMatchingElement): Deleted.
+        (WebCore::lastMatchingElement): Deleted.
+        (WebCore::nextMatchingElement): Deleted.
+        (WebCore::previousMatchingElement): Deleted.
+        (WebCore::traverseMatchingElementsForward): Deleted.
+        (WebCore::traverseMatchingElementsBackward): Deleted.
+        (WebCore::LiveNodeList::collectionFirst): Deleted.
+        (WebCore::LiveNodeList::collectionLast): Deleted.
+        (WebCore::LiveNodeList::collectionTraverseForward): Deleted.
+        (WebCore::LiveNodeList::collectionTraverseBackward): Deleted.
+        (WebCore::LiveNodeList::length): Deleted.
+        (WebCore::LiveNodeList::item): Deleted.
+        (WebCore::LiveNodeList::memoryCost): Deleted.
+        (WebCore::LiveNodeList::invalidateCache): Deleted.
+        * dom/LiveNodeList.h:
+        (WebCore::LiveNodeList::invalidateCacheForAttribute):
+        (WebCore::CachedLiveNodeList::collectionCanTraverseBackward):
+        (WebCore::LiveNodeList::rootNode):
+        (WebCore::CachedLiveNodeList<NodeListType>::CachedLiveNodeList):
+        
+            Add CachedLiveNodeList<NodeListType> utility type that interfaces with CollectionIndexCache.
+            It is the base class for all concrete LiveNodeLists.
+
+        (WebCore::CachedLiveNodeList<NodeListType>::~CachedLiveNodeList):
+        (WebCore::CachedLiveNodeList<NodeListType>::collectionFirst):
+        (WebCore::CachedLiveNodeList<NodeListType>::collectionLast):
+        (WebCore::nextMatchingElement):
+        (WebCore::CachedLiveNodeList<NodeListType>::collectionTraverseForward):
+        (WebCore::previousMatchingElement):
+        (WebCore::CachedLiveNodeList<NodeListType>::collectionTraverseBackward):
+        (WebCore::CachedLiveNodeList<NodeListType>::willValidateIndexCache):
+        (WebCore::CachedLiveNodeList<NodeListType>::invalidateCache):
+        (WebCore::CachedLiveNodeList<NodeListType>::length):
+        (WebCore::CachedLiveNodeList<NodeListType>::item):
+        (WebCore::CachedLiveNodeList<NodeListType>::memoryCost):
+        
+            Templated code moves to header.
+
+        (WebCore::LiveNodeList::LiveNodeList): Deleted.
+        (WebCore::LiveNodeList::~LiveNodeList): Deleted.
+        (WebCore::LiveNodeList::invalidateCache): Deleted.
+        (WebCore::LiveNodeList::collectionCanTraverseBackward): Deleted.
+        (WebCore::LiveNodeList::willValidateIndexCache): Deleted.
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::NameNodeList):
+        * dom/NameNodeList.h:
+        * dom/Node.cpp:
+        (WebCore::Document::invalidateNodeListAndCollectionCaches):
+        (WebCore::NodeListsNodeData::invalidateCaches):
+        * dom/TagNodeList.cpp:
+        (WebCore::TagNodeList::TagNodeList):
+        (WebCore::HTMLTagNodeList::HTMLTagNodeList):
+        (WebCore::HTMLTagNodeList::~HTMLTagNodeList):
+        (WebCore::TagNodeList::nodeMatches): Deleted.
+        (WebCore::HTMLTagNodeList::nodeMatches): Deleted.
+        * dom/TagNodeList.h:
+        (WebCore::TagNodeList::nodeMatches):
+        (WebCore::HTMLTagNodeList::nodeMatches):
+        (WebCore::TagNodeList::create): Deleted.
+        (WebCore::HTMLTagNodeList::nodeMatchesInlined): Deleted.
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::LabelsNodeList):
+        * html/LabelsNodeList.h:
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::RadioNodeList):
+        * html/RadioNodeList.h:
+
 2014-03-27  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         Remove comment from Filter.h

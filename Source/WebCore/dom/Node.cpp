@@ -726,7 +726,7 @@ void Document::invalidateNodeListAndCollectionCaches(const QualifiedName* attrNa
 #endif
     HashSet<LiveNodeList*> lists = std::move(m_listsInvalidatedAtDocument);
     for (auto* list : lists)
-        list->invalidateCache(attrName);
+        list->invalidateCacheForAttribute(attrName);
     HashSet<HTMLCollection*> collections = std::move(m_collectionsInvalidatedAtDocument);
     for (auto* collection : collections)
         collection->invalidateCache(attrName);
@@ -1685,10 +1685,10 @@ void Node::showTreeForThisAcrossFrame() const
 void NodeListsNodeData::invalidateCaches(const QualifiedName* attrName)
 {
     for (auto& atomicName : m_atomicNameCaches)
-        atomicName.value->invalidateCache(attrName);
+        atomicName.value->invalidateCacheForAttribute(attrName);
 
     for (auto& name : m_nameCaches)
-        name.value->invalidateCache(attrName);
+        name.value->invalidateCacheForAttribute(attrName);
 
     for (auto& collection : m_cachedCollections)
         collection.value->invalidateCache(attrName);
@@ -1697,7 +1697,7 @@ void NodeListsNodeData::invalidateCaches(const QualifiedName* attrName)
         return;
 
     for (auto& tagNodeList : m_tagNodeListCacheNS)
-        tagNodeList.value->invalidateCache(nullptr);
+        tagNodeList.value->invalidateCacheForAttribute(nullptr);
 }
 
 void Node::getSubresourceURLs(ListHashSet<URL>& urls) const

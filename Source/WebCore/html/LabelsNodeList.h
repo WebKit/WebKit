@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class LabelsNodeList final : public LiveNodeList {
+class LabelsNodeList final : public CachedLiveNodeList<LabelsNodeList> {
 public:
     static PassRef<LabelsNodeList> create(LabelableElement& forNode, Type type, const AtomicString&)
     {
@@ -39,10 +39,10 @@ public:
     }
     ~LabelsNodeList();
 
-protected:
-    explicit LabelsNodeList(LabelableElement& forNode);
-
     virtual bool nodeMatches(Element*) const override;
+
+private:
+    explicit LabelsNodeList(LabelableElement& forNode);
 };
 
 } // namespace WebCore
