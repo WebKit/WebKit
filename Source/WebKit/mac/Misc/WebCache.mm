@@ -32,10 +32,10 @@
 #import "WebViewInternal.h"
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/CrossOriginPreflightResultCache.h>
-#import <WebCore/MainRunLoop.h>
 #import <WebCore/MemoryCache.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
+#import <wtf/RunLoop.h>
 
 #if PLATFORM(IOS)
 #import "MemoryMeasure.h"
@@ -58,7 +58,7 @@
 #if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-    WebCore::initializeMainRunLoop();
+    RunLoop::initializeMainRunLoop();
 #endif
     InitWebCoreSystemInterface();   
 }

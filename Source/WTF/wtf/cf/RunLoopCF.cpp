@@ -44,7 +44,7 @@ RunLoop::RunLoop()
 {
     CFRunLoopSourceContext context = { 0, this, 0, 0, 0, 0, 0, 0, 0, performWork };
     m_runLoopSource = adoptCF(CFRunLoopSourceCreate(kCFAllocatorDefault, 0, &context));
-    CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), kCFRunLoopDefaultMode);
+    CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), kCFRunLoopCommonModes);
 }
 
 RunLoop::~RunLoop()
@@ -55,14 +55,6 @@ RunLoop::~RunLoop()
 void RunLoop::runForDuration(double duration)
 {
     CFRunLoopRunInMode(kCFRunLoopDefaultMode, duration, true);
-}
-
-void RunLoop::addModeForWakeUpAndTimers(CFStringRef mode)
-{
-    CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), mode);
-    if (!m_additionalTimerModes)
-        m_additionalTimerModes = adoptCF(CFSetCreateMutable(0, 0, &kCFCopyStringSetCallBacks));
-    CFSetAddValue(m_additionalTimerModes.get(), mode);
 }
 
 void RunLoop::wakeUp()
@@ -117,12 +109,7 @@ void RunLoop::TimerBase::start(double nextFireInterval, bool repeat)
     CFRunLoopTimerContext context = { 0, this, 0, 0, 0 };
     CFTimeInterval repeatInterval = repeat ? nextFireInterval : 0;
     m_timer = adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + nextFireInterval, repeatInterval, 0, 0, timerFired, &context));
-    CFRunLoopAddTimer(m_runLoop.m_runLoop.get(), m_timer.get(), kCFRunLoopDefaultMode);
-    if (m_runLoop.m_additionalTimerModes) {
-        CFSetApplyFunction(m_runLoop.m_additionalTimerModes.get(), [](const void* mode, void* context) {
-            CFRunLoopAddTimer(static_cast<RunLoop::TimerBase*>(context)->m_runLoop.m_runLoop.get(), static_cast<RunLoop::TimerBase*>(context)->m_timer.get(), static_cast<CFStringRef>(mode));
-        }, this);
-    }
+    CFRunLoopAddTimer(m_runLoop.m_runLoop.get(), m_timer.get(), kCFRunLoopCommonModes);
 }
 
 void RunLoop::TimerBase::stop()

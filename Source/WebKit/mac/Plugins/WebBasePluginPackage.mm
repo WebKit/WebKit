@@ -29,7 +29,6 @@
 #import <WebKit/WebBasePluginPackage.h>
 
 #import <algorithm>
-#import <WebCore/MainRunLoop.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
@@ -38,6 +37,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
 #import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 #import <wtf/text/CString.h>
 
@@ -69,7 +69,7 @@ using namespace WebCore;
 #if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-    WebCore::initializeMainRunLoop();
+    RunLoop::initializeMainRunLoop();
 #endif
     WebCoreObjCFinalizeOnMainThread(self);
 }

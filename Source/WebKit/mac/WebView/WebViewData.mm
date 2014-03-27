@@ -33,12 +33,12 @@
 #import "WebPreferenceKeysPrivate.h"
 #import "WebViewGroup.h"
 #import <WebCore/AlternativeTextUIController.h>
-#import <WebCore/HistoryItem.h>
-#import <WebCore/MainRunLoop.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <WebCore/HistoryItem.h>
 #import <objc/objc-auto.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
+#import <wtf/RunLoop.h>
 
 #if PLATFORM(IOS)
 #import "WebGeolocationProviderIOS.h"
@@ -78,7 +78,7 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
 #if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-    WebCore::initializeMainRunLoop();
+    RunLoop::initializeMainRunLoop();
 #endif
     WebCoreObjCFinalizeOnMainThread(self);
 }

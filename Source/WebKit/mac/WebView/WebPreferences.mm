@@ -42,12 +42,12 @@
 #import "WebSystemInterface.h"
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/AudioSession.h>
-#import <WebCore/MainRunLoop.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/ResourceHandle.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
 
 enum {
     NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3
@@ -392,7 +392,7 @@ public:
 #if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-    WebCore::initializeMainRunLoop();
+    RunLoop::initializeMainRunLoop();
 #endif
 #if PLATFORM(IOS)
     static unsigned defaultMaximumImageSize = 20 * 1024 * 1024;

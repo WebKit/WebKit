@@ -36,10 +36,10 @@
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/LegacyWebArchive.h>
-#import <WebCore/MainRunLoop.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/MainThread.h>
+#import <wtf/RunLoop.h>
 
 using namespace WebCore;
 
@@ -70,7 +70,7 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
 #if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-    WebCore::initializeMainRunLoop();
+    RunLoop::initializeMainRunLoop();
 #endif
     WebCoreObjCFinalizeOnMainThread(self);
 }

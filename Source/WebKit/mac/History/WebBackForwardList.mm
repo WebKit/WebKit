@@ -40,7 +40,6 @@
 #import "WebViewPrivate.h"
 #import <WebCore/BackForwardList.h>
 #import <WebCore/HistoryItem.h>
-#import <WebCore/MainRunLoop.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageCache.h>
 #import <WebCore/Settings.h>
@@ -50,6 +49,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
 #import <wtf/StdLibExtras.h>
 
 using namespace WebCore;
@@ -106,7 +106,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 #if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-    WebCore::initializeMainRunLoop();
+    RunLoop::initializeMainRunLoop();
 #endif
     WebCoreObjCFinalizeOnMainThread(self);
 }

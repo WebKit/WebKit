@@ -148,7 +148,6 @@
 #import <WebCore/Logging.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MainFrame.h>
-#import <WebCore/MainRunLoop.h>
 #import <WebCore/MemoryPressureHandler.h>
 #import <WebCore/NodeList.h>
 #import <WebCore/Notification.h>
@@ -196,6 +195,7 @@
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/RefCountedLeakCounter.h>
 #import <wtf/RefPtr.h>
+#import <wtf/RunLoop.h>
 #import <wtf/StdLibExtras.h>
 
 #if !PLATFORM(IOS)
@@ -4697,7 +4697,7 @@ static Vector<String> toStringVector(NSArray* patterns)
 #if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-    WebCore::initializeMainRunLoop();
+    RunLoop::initializeMainRunLoop();
 #endif
 
 #if !PLATFORM(IOS)
