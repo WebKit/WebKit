@@ -67,8 +67,8 @@ void FEOffset::setDy(float dy)
 void FEOffset::determineAbsolutePaintRect()
 {
     FloatRect paintRect = inputEffect(0)->absolutePaintRect();
-    Filter* filter = this->filter();
-    paintRect.move(filter->applyHorizontalScale(m_dx), filter->applyVerticalScale(m_dy));
+    Filter& filter = this->filter();
+    paintRect.move(filter.applyHorizontalScale(m_dx), filter.applyVerticalScale(m_dy));
     if (clipsToBounds())
         paintRect.intersect(maxEffectRect());
     else
@@ -87,8 +87,8 @@ void FEOffset::platformApplySoftware()
     setIsAlphaImage(in->isAlphaImage());
 
     FloatRect drawingRegion = drawingRegionOfInputImage(in->absolutePaintRect());
-    Filter* filter = this->filter();
-    drawingRegion.move(filter->applyHorizontalScale(m_dx), filter->applyVerticalScale(m_dy));
+    Filter& filter = this->filter();
+    drawingRegion.move(filter.applyHorizontalScale(m_dx), filter.applyVerticalScale(m_dy));
     resultImage->context()->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegion);
 }
 

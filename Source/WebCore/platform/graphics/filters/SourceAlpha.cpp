@@ -44,17 +44,17 @@ const AtomicString& SourceAlpha::effectName()
 
 void SourceAlpha::determineAbsolutePaintRect()
 {
-    Filter* filter = this->filter();
-    FloatRect paintRect = filter->sourceImageRect();
-    paintRect.scale(filter->filterResolution().width(), filter->filterResolution().height());
+    Filter& filter = this->filter();
+    FloatRect paintRect = filter.sourceImageRect();
+    paintRect.scale(filter.filterResolution().width(), filter.filterResolution().height());
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
 void SourceAlpha::platformApplySoftware()
 {
     ImageBuffer* resultImage = createImageBufferResult();
-    Filter* filter = this->filter();
-    if (!resultImage || !filter->sourceImage())
+    Filter& filter = this->filter();
+    if (!resultImage || !filter.sourceImage())
         return;
 
     setIsAlphaImage(true);
@@ -62,7 +62,7 @@ void SourceAlpha::platformApplySoftware()
     FloatRect imageRect(FloatPoint(), absolutePaintRect().size());
     GraphicsContext* filterContext = resultImage->context();
     filterContext->fillRect(imageRect, Color::black, ColorSpaceDeviceRGB);
-    filterContext->drawImageBuffer(filter->sourceImage(), ColorSpaceDeviceRGB, IntPoint(), CompositeDestinationIn);
+    filterContext->drawImageBuffer(filter.sourceImage(), ColorSpaceDeviceRGB, IntPoint(), CompositeDestinationIn);
 }
 
 void SourceAlpha::dump()

@@ -1,3 +1,57 @@
+2014-03-26  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        FEGaussianBlur: unify and const-ify calculateKernelSize
+        https://bugs.webkit.org/show_bug.cgi?id=130779
+
+        Some methods can benefit of using const refs as also make sense to
+        unify the interface (i.e. parameters) in calculateKernelSize/Unscaled.
+
+        FilterEffect::filter() will now return a reference, which helps since
+        its descendants were accessing methods into the pointer without testing
+        for it.
+
+        Reviewed by Simon Fraser.
+
+        No new tests, no changes on behavior.
+
+        * platform/graphics/filters/FEDisplacementMap.cpp:
+        (WebCore::FEDisplacementMap::platformApplySoftware):
+        * platform/graphics/filters/FEDropShadow.cpp:
+        (WebCore::FEDropShadow::determineAbsolutePaintRect):
+        (WebCore::FEDropShadow::platformApplySoftware):
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::calculateUnscaledKernelSize):
+        (WebCore::FEGaussianBlur::calculateKernelSize):
+        (WebCore::FEGaussianBlur::determineAbsolutePaintRect):
+        (WebCore::FEGaussianBlur::platformApplySoftware):
+        * platform/graphics/filters/FEGaussianBlur.h:
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::FEMorphology::determineAbsolutePaintRect):
+        (WebCore::FEMorphology::platformApplySoftware):
+        * platform/graphics/filters/FEOffset.cpp:
+        (WebCore::FEOffset::determineAbsolutePaintRect):
+        (WebCore::FEOffset::platformApplySoftware):
+        * platform/graphics/filters/FETile.cpp:
+        (WebCore::FETile::platformApplySoftware):
+        * platform/graphics/filters/FETurbulence.cpp:
+        (WebCore::FETurbulence::fillRegion):
+        * platform/graphics/filters/Filter.h:
+        (WebCore::Filter::applyHorizontalScale):
+        (WebCore::Filter::applyVerticalScale):
+        * platform/graphics/filters/FilterEffect.h:
+        (WebCore::FilterEffect::filter):
+        * platform/graphics/filters/SourceAlpha.cpp:
+        (WebCore::SourceAlpha::determineAbsolutePaintRect):
+        (WebCore::SourceAlpha::platformApplySoftware):
+        * platform/graphics/filters/SourceGraphic.cpp:
+        (WebCore::SourceGraphic::determineAbsolutePaintRect):
+        (WebCore::SourceGraphic::platformApplySoftware):
+        * rendering/svg/RenderSVGResourceFilterPrimitive.cpp:
+        (WebCore::RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion):
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::determineAbsolutePaintRect):
+        (WebCore::FEImage::platformApplySoftware):
+
 2014-03-26  Simon Fraser  <simon.fraser@apple.com>
 
         Make sure childContainmentLayer is parented

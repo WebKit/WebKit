@@ -46,8 +46,8 @@ public:
     virtual void dump();
 
     virtual void determineAbsolutePaintRect();
-    static IntSize calculateKernelSize(Filter*, float stdX, float stdY);
-    static IntSize calculateUnscaledKernelSize(FloatPoint std);
+    static IntSize calculateKernelSize(const Filter&, const FloatPoint& stdDeviation);
+    static IntSize calculateUnscaledKernelSize(const FloatPoint& stdDeviation);
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 

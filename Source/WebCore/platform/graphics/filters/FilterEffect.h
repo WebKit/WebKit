@@ -149,7 +149,7 @@ public:
     FloatRect effectBoundaries() const { return m_effectBoundaries; }
     void setEffectBoundaries(const FloatRect& effectBoundaries) { m_effectBoundaries = effectBoundaries; }
 
-    Filter* filter() { return m_filter; }
+    Filter& filter() { ASSERT(m_filter); return *m_filter; }
 
     bool clipsToBounds() const { return m_clipsToBounds; }
     void setClipsToBounds(bool value) { m_clipsToBounds = value; }

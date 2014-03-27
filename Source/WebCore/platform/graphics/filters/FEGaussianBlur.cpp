@@ -385,37 +385,35 @@ inline void FEGaussianBlur::platformApply(Uint8ClampedArray* srcPixelArray, Uint
     platformApplyGeneric(srcPixelArray, tmpPixelArray, kernelSizeX, kernelSizeY, paintSize);
 }
 
-IntSize FEGaussianBlur::calculateUnscaledKernelSize(FloatPoint std)
+IntSize FEGaussianBlur::calculateUnscaledKernelSize(const FloatPoint& stdDeviation)
 {
-    ASSERT(std.x() >= 0 && std.y() >= 0);
-    IntSize kernelSize(0, 0);
+    ASSERT(stdDeviation.x() >= 0 && stdDeviation.y() >= 0);
+    IntSize kernelSize;
 
     // Limit the kernel size to 500. A bigger radius won't make a big difference for the result image but
     // inflates the absolute paint rect to much. This is compatible with Firefox' behavior.
-    if (std.x()) {
-        int size = std::max<unsigned>(2, static_cast<unsigned>(floorf(std.x() * gaussianKernelFactor() + 0.5f)));
+    if (stdDeviation.x()) {
+        int size = std::max<unsigned>(2, static_cast<unsigned>(floorf(stdDeviation.x() * gaussianKernelFactor() + 0.5f)));
         kernelSize.setWidth(std::min(size, gMaxKernelSize));
     }
 
-    if (std.y()) {
-        int size = std::max<unsigned>(2, static_cast<unsigned>(floorf(std.y() * gaussianKernelFactor() + 0.5f)));
+    if (stdDeviation.y()) {
+        int size = std::max<unsigned>(2, static_cast<unsigned>(floorf(stdDeviation.y() * gaussianKernelFactor() + 0.5f)));
         kernelSize.setHeight(std::min(size, gMaxKernelSize));
     }
 
     return kernelSize;
 }
 
-IntSize FEGaussianBlur::calculateKernelSize(Filter* filter, float stdX, float stdY)
+IntSize FEGaussianBlur::calculateKernelSize(const Filter& filter, const FloatPoint& stdDeviation)
 {
-    stdX = filter->applyHorizontalScale(stdX);
-    stdY = filter->applyVerticalScale(stdY);
-
-    return calculateUnscaledKernelSize(FloatPoint(stdX, stdY));
+    FloatPoint stdFilterScaled(filter.applyHorizontalScale(stdDeviation.x()), filter.applyVerticalScale(stdDeviation.y()));
+    return calculateUnscaledKernelSize(stdFilterScaled);
 }
 
 void FEGaussianBlur::determineAbsolutePaintRect()
 {
-    IntSize kernelSize = calculateKernelSize(filter(), m_stdX, m_stdY);
+    IntSize kernelSize = calculateKernelSize(filter(), FloatPoint(m_stdX, m_stdY));
 
     FloatRect absolutePaintRect = inputEffect(0)->absolutePaintRect();
     // Edge modes other than 'none' do not inflate the affected paint rect.
@@ -452,7 +450,7 @@ void FEGaussianBlur::platformApplySoftware()
     if (!m_stdX && !m_stdY)
         return;
 
-    IntSize kernelSize = calculateKernelSize(filter(), m_stdX, m_stdY);
+    IntSize kernelSize = calculateKernelSize(filter(), FloatPoint(m_stdX, m_stdY));
 
     IntSize paintSize = absolutePaintRect().size();
     RefPtr<Uint8ClampedArray> tmpImageData = Uint8ClampedArray::createUninitialized(paintSize.width() * paintSize.height() * 4);

@@ -82,9 +82,9 @@ float FEMorphology::radiusY() const
 void FEMorphology::determineAbsolutePaintRect()
 {
     FloatRect paintRect = inputEffect(0)->absolutePaintRect();
-    Filter* filter = this->filter();
-    paintRect.inflateX(filter->applyHorizontalScale(m_radiusX));
-    paintRect.inflateY(filter->applyVerticalScale(m_radiusY));
+    Filter& filter = this->filter();
+    paintRect.inflateX(filter.applyHorizontalScale(m_radiusX));
+    paintRect.inflateY(filter.applyVerticalScale(m_radiusY));
     if (clipsToBounds())
         paintRect.intersect(maxEffectRect());
     else
@@ -206,9 +206,9 @@ void FEMorphology::platformApplySoftware()
         return;
     }
 
-    Filter* filter = this->filter();
-    int radiusX = static_cast<int>(floorf(filter->applyHorizontalScale(m_radiusX)));
-    int radiusY = static_cast<int>(floorf(filter->applyVerticalScale(m_radiusY)));
+    Filter& filter = this->filter();
+    int radiusX = static_cast<int>(floorf(filter.applyHorizontalScale(m_radiusX)));
+    int radiusY = static_cast<int>(floorf(filter.applyVerticalScale(m_radiusY)));
 
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
     RefPtr<Uint8ClampedArray> srcPixelArray = in->asPremultipliedImage(effectDrawingRect);

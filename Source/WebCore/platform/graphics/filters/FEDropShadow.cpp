@@ -51,15 +51,14 @@ PassRefPtr<FEDropShadow> FEDropShadow::create(Filter* filter, float stdX, float 
 
 void FEDropShadow::determineAbsolutePaintRect()
 {
-    Filter* filter = this->filter();
-    ASSERT(filter);
+    Filter& filter = this->filter();
 
     FloatRect absolutePaintRect = inputEffect(0)->absolutePaintRect();
     FloatRect absoluteOffsetPaintRect(absolutePaintRect);
-    absoluteOffsetPaintRect.move(filter->applyHorizontalScale(m_dx), filter->applyVerticalScale(m_dy));
+    absoluteOffsetPaintRect.move(filter.applyHorizontalScale(m_dx), filter.applyVerticalScale(m_dy));
     absolutePaintRect.unite(absoluteOffsetPaintRect);
 
-    IntSize kernelSize = FEGaussianBlur::calculateKernelSize(filter, m_stdX, m_stdY);
+    IntSize kernelSize = FEGaussianBlur::calculateKernelSize(filter, FloatPoint(m_stdX, m_stdY));
 
     // We take the half kernel size and multiply it with three, because we run box blur three times.
     absolutePaintRect.inflateX(3 * kernelSize.width() * 0.5f);
@@ -81,9 +80,9 @@ void FEDropShadow::platformApplySoftware()
     if (!resultImage)
         return;
 
-    Filter* filter = this->filter();
-    FloatSize blurRadius(filter->applyHorizontalScale(m_stdX), filter->applyVerticalScale(m_stdY));
-    FloatSize offset(filter->applyHorizontalScale(m_dx), filter->applyVerticalScale(m_dy));
+    Filter& filter = this->filter();
+    FloatSize blurRadius(filter.applyHorizontalScale(m_stdX), filter.applyVerticalScale(m_stdY));
+    FloatSize offset(filter.applyHorizontalScale(m_dx), filter.applyVerticalScale(m_dy));
 
     FloatRect drawingRegion = drawingRegionOfInputImage(in->absolutePaintRect());
     FloatRect drawingRegionWithOffset(drawingRegion);

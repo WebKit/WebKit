@@ -67,7 +67,7 @@ PassRefPtr<FEImage> FEImage::createWithIRIReference(Filter* filter, Document& do
 
 void FEImage::determineAbsolutePaintRect()
 {
-    SVGFilter* svgFilter = toSVGFilter(filter());
+    SVGFilter* svgFilter = toSVGFilter(&(filter()));
 
     FloatRect paintRect = svgFilter->absoluteTransform().mapRect(filterPrimitiveSubregion());
     FloatRect srcRect;
@@ -104,7 +104,7 @@ void FEImage::platformApplySoftware()
     if (!resultImage)
         return;
 
-    SVGFilter* svgFilter = toSVGFilter(filter());
+    SVGFilter* svgFilter = toSVGFilter(&(filter()));
     FloatRect destRect = svgFilter->absoluteTransform().mapRect(filterPrimitiveSubregion());
 
     FloatRect srcRect;

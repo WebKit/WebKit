@@ -72,7 +72,7 @@ void RenderSVGResourceFilterPrimitive::styleDidChange(StyleDifference diff, cons
 
 FloatRect RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(FilterEffect* effect)
 {
-    SVGFilter* filter = toSVGFilter(effect->filter());
+    SVGFilter* filter = toSVGFilter(&(effect->filter()));
     ASSERT(filter);
 
     // FETile, FETurbulence, FEFlood don't have input effects, take the filter region as unite rect.

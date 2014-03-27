@@ -60,13 +60,13 @@ void FETile::platformApplySoftware()
     FloatPoint inMaxEffectLocation = tileRect.location();
     FloatPoint maxEffectLocation = maxEffectRect().location();
     if (in->filterEffectType() == FilterEffectTypeSourceInput) {
-        Filter* filter = this->filter();
-        tileRect = filter->filterRegion();
-        tileRect.scale(filter->filterResolution().width(), filter->filterResolution().height());
+        Filter& filter = this->filter();
+        tileRect = filter.filterRegion();
+        tileRect.scale(filter.filterResolution().width(), filter.filterResolution().height());
     }
 
     std::unique_ptr<ImageBuffer> tileImage;
-    if (!SVGRenderingContext::createImageBufferForPattern(tileRect, tileRect, tileImage, ColorSpaceDeviceRGB, filter()->renderingMode()))
+    if (!SVGRenderingContext::createImageBufferForPattern(tileRect, tileRect, tileImage, ColorSpaceDeviceRGB, filter().renderingMode()))
         return;
 
     GraphicsContext* tileImageContext = tileImage->context();
