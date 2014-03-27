@@ -185,9 +185,13 @@ const Options::EntryInfo Options::s_optionsInfo[Options::numberOfOptions] = {
 static void recomputeDependentOptions()
 {
 #if !ENABLE(JIT)
+    Options::useLLInt() = true;
     Options::useJIT() = false;
     Options::useDFGJIT() = false;
     Options::useFTLJIT() = false;
+#endif
+#if !ENABLE(LLINT)
+    Options::useLLInt() = false;
 #endif
 #if !ENABLE(YARR_JIT)
     Options::useRegExpJIT() = false;

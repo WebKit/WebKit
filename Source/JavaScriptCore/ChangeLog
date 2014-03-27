@@ -1,3 +1,20 @@
+2014-03-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Clean up questionable style in ScriptExecutable::prepareForExecutionImpl
+        https://bugs.webkit.org/show_bug.cgi?id=130845
+
+        Reviewed by Filip Pizlo.
+
+        There was a hack added to make sure C Loop LLInt worked which included overriding the 
+        global Options::useLLInt setting, which makes no sense to do here. We should put the 
+        update of the global setting in Options::recomputeDependentOptions along with the other 
+        execution engine flags.
+
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::prepareForExecutionImpl):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
 2014-03-26  Filip Pizlo  <fpizlo@apple.com>
 
         Enable LLVM stackmap liveOuts computation
