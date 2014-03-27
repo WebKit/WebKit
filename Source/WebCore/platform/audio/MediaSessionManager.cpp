@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 
 #include "Logging.h"
+#include "NotImplemented.h"
 #include "MediaSession.h"
 
 namespace WebCore {
@@ -274,6 +275,11 @@ void MediaSessionManager::applicationWillEnterForeground() const
         if (m_restrictions[session->mediaType()] & BackgroundPlaybackNotPermitted)
             session->endInterruption(MediaSession::MayResumePlaying);
     }
+}
+
+void MediaSessionManager::wirelessRoutesAvailableChanged()
+{
+    notImplemented();
 }
 
 #if !PLATFORM(COCOA)

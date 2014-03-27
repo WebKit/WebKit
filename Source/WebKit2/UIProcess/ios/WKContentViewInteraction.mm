@@ -1951,6 +1951,13 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     _selectionNeedsUpdate = NO;
 }
 
+- (void)_showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(const IntRect&)elementRect
+{
+    if (!_airPlayRoutePicker)
+        _airPlayRoutePicker = adoptNS([[WKAirPlayRoutePicker alloc] initWithView:self]);
+    [_airPlayRoutePicker show:hasVideo fromRect:elementRect];
+}
+
 #pragma mark - Implementation of UIWebTouchEventsGestureRecognizerDelegate.
 
 - (BOOL)shouldIgnoreWebTouch

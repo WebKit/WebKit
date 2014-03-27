@@ -1,3 +1,40 @@
+2014-03-27  Enrica Casucci  <enrica@apple.com>
+
+        Add support for AirPlay picker in WK2 for iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=130855
+        <rdar://problem/15349859>
+
+        Reviewed by Eric Carlson, Joseph Pecoraro and Benjamin Poulain.
+
+        Adds support in HTMLMediaSession to display the airplay picker
+        and to monitor presence of available wireless targets.
+
+        * html/HTMLMediaSession.cpp:
+        (WebCore::HTMLMediaSession::showPlaybackTargetPicker):
+        (WebCore::HTMLMediaSession::hasWirelessPlaybackTargets):
+        (WebCore::HTMLMediaSession::setHasPlaybackTargetAvailabilityListeners):
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::wirelessRoutesAvailableChanged):
+        * platform/audio/MediaSessionManager.h:
+        (WebCore::MediaSessionManager::hasWirelessTargetsAvailable):
+        (WebCore::MediaSessionManager::startMonitoringAirPlayRoutes):
+        (WebCore::MediaSessionManager::stopMonitoringAirPlayRoutes):
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::hasWirelessTargetsAvailable):
+        (WebCore::MediaSessionManageriOS::startMonitoringAirPlayRoutes):
+        (WebCore::MediaSessionManageriOS::stopMonitoringAirPlayRoutes):
+        (-[WebMediaSessionHelper initWithCallback:]):
+        (-[WebMediaSessionHelper hasWirelessTargetsAvailable]):
+        (-[WebMediaSessionHelper startMonitoringAirPlayRoutes]):
+        (-[WebMediaSessionHelper stopMonitoringAirPlayRoutes]):
+        (-[WebMediaSessionHelper wirelessRoutesAvailableDidChange:]):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::wirelessVideoPlaybackDisabled):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled):
+
 2014-03-27  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes][css clip-path] rounded corner calculation for box shapes is wrong

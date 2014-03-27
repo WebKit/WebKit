@@ -23,50 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaSessionManageriOS_h
-#define MediaSessionManageriOS_h
-
 #if PLATFORM(IOS)
 
-#include "MediaSessionManager.h"
-#include <wtf/RetainPtr.h>
+#import <UIKit/UIPopoverController.h>
 
-OBJC_CLASS WebMediaSessionHelper;
+@class WKContentView;
 
-#if defined(__OBJC__) && __OBJC__
-extern NSString* WebUIApplicationWillResignActiveNotification;
-extern NSString* WebUIApplicationWillEnterForegroundNotification;
-extern NSString* WebUIApplicationDidBecomeActiveNotification;
-#endif
-
-namespace WebCore {
-
-class MediaSessionManageriOS : public MediaSessionManager {
-public:
-    virtual ~MediaSessionManageriOS();
-
-private:
-    friend class MediaSessionManager;
-
-    virtual void sessionWillBeginPlayback(MediaSession&) override;
-    virtual void sessionWillEndPlayback(MediaSession&) override;
-    
-    void updateNowPlayingInfo();
-    
-    virtual void resetRestrictions() override;
-
-#if ENABLE(IOS_AIRPLAY)
-    virtual bool hasWirelessTargetsAvailable() override;
-    virtual void startMonitoringAirPlayRoutes() override;
-    virtual void stopMonitoringAirPlayRoutes() override;
-#endif
-
-    MediaSessionManageriOS();
-    RetainPtr<WebMediaSessionHelper> m_objcObserver;
-};
-
-} // namespace WebCore
-
-#endif // MediaSessionManageriOS_h
+@interface WKAirPlayRoutePicker : UIView <UIPopoverControllerDelegate>
+- (instancetype)initWithView:(WKContentView *)view;
+- (void)show:(BOOL)hasVideo fromRect:(CGRect)elementRect;
+@end
 
 #endif // PLATFORM(IOS)
+

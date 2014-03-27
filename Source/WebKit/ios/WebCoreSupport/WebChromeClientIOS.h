@@ -83,6 +83,7 @@ public:
 
     virtual void webAppOrientationsUpdated() override;
     virtual void focusedElementChanged(WebCore::Element*) override;
+    virtual void showPlaybackTargetPicker(bool hasVideo) override;
 
 private:
     int m_formNotificationSuppressions;

@@ -281,6 +281,15 @@ void WebPage::advanceToNextMisspelling(bool)
     notImplemented();
 }
 
+IntRect WebPage::rectForElementAtInteractionLocation()
+{
+    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_lastInteractionLocation, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent);
+    Node* hitNode = result.innerNode();
+    if (!hitNode || !hitNode->renderer())
+        return IntRect();
+    return result.innerNodeFrame()->view()->contentsToRootView(hitNode->renderer()->absoluteBoundingBoxRect(true));
+}
+
 void WebPage::handleTap(const IntPoint& point)
 {
     Frame& mainframe = m_page->mainFrame();
@@ -295,6 +304,7 @@ void WebPage::handleTap(const IntPoint& point)
     if (WKObservedContentChange() != WKContentNoChange)
         return;
 
+    m_lastInteractionLocation = roundedAdjustedPoint;
     mainframe.eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MousePressed, 1, false, false, false, false, 0));
     mainframe.eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MouseReleased, 1, false, false, false, false, 0));
 }

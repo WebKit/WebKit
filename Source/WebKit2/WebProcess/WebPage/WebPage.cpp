@@ -1963,8 +1963,10 @@ static bool handleTouchEvent(const WebTouchEvent& touchEvent, Page* page)
 
 void WebPage::touchEvent(const WebTouchEvent& touchEvent)
 {
+#if PLATFORM(IOS)
+    m_lastInteractionLocation = touchEvent.position();
+#endif
     bool handled = false;
-
     if (canHandleUserEvents()) {
         CurrentEvent currentEvent(touchEvent);
 
@@ -1975,6 +1977,9 @@ void WebPage::touchEvent(const WebTouchEvent& touchEvent)
 
 void WebPage::touchEventSyncForTesting(const WebTouchEvent& touchEvent, bool& handled)
 {
+#if PLATFORM(IOS)
+    m_lastInteractionLocation = touchEvent.position();
+#endif
     CurrentEvent currentEvent(touchEvent);
     handled = handleTouchEvent(touchEvent, m_page.get());
 }

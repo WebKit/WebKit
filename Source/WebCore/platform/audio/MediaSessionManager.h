@@ -65,6 +65,7 @@ public:
 
     void applicationWillEnterForeground() const;
     void applicationWillEnterBackground() const;
+    void wirelessRoutesAvailableChanged();
 
     enum SessionRestrictionFlags {
         NoRestrictions = 0,
@@ -87,7 +88,9 @@ public:
     bool sessionRestrictsInlineVideoPlayback(const MediaSession&) const;
 
 #if ENABLE(IOS_AIRPLAY)
-    virtual void showPlaybackTargetPicker() { }
+    virtual bool hasWirelessTargetsAvailable() { return false; }
+    virtual void startMonitoringAirPlayRoutes() { }
+    virtual void stopMonitoringAirPlayRoutes() { }
 #endif
 
     virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override;

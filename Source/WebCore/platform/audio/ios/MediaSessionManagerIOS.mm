@@ -36,8 +36,10 @@
 #import "WebCoreSystemInterface.h"
 #import "WebCoreThreadRun.h"
 #import <AVFoundation/AVAudioSession.h>
+#import <MediaPlayer/MPAVRoutingController.h>
 #import <MediaPlayer/MPMediaItem.h>
 #import <MediaPlayer/MPNowPlayingInfoCenter.h>
+#import <MediaPlayer/MPVolumeView.h>
 #import <UIKit/UIApplication.h>
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
@@ -65,16 +67,21 @@ SOFT_LINK_POINTER(UIKit, UIApplicationDidBecomeActiveNotification, NSString *)
 #define UIApplicationDidBecomeActiveNotification getUIApplicationDidBecomeActiveNotification()
 
 SOFT_LINK_FRAMEWORK(MediaPlayer)
+SOFT_LINK_CLASS(MediaPlayer, MPAVRoutingController)
 SOFT_LINK_CLASS(MediaPlayer, MPNowPlayingInfoCenter)
+SOFT_LINK_CLASS(MediaPlayer, MPVolumeView)
 SOFT_LINK_POINTER(MediaPlayer, MPMediaItemPropertyTitle, NSString *)
 SOFT_LINK_POINTER(MediaPlayer, MPMediaItemPropertyPlaybackDuration, NSString *)
 SOFT_LINK_POINTER(MediaPlayer, MPNowPlayingInfoPropertyElapsedPlaybackTime, NSString *)
 SOFT_LINK_POINTER(MediaPlayer, MPNowPlayingInfoPropertyPlaybackRate, NSString *)
+SOFT_LINK_POINTER(MediaPlayer, MPVolumeViewWirelessRoutesAvailableDidChangeNotification, NSString *)
+
 
 #define MPMediaItemPropertyTitle getMPMediaItemPropertyTitle()
 #define MPMediaItemPropertyPlaybackDuration getMPMediaItemPropertyPlaybackDuration()
 #define MPNowPlayingInfoPropertyElapsedPlaybackTime getMPNowPlayingInfoPropertyElapsedPlaybackTime()
 #define MPNowPlayingInfoPropertyPlaybackRate getMPNowPlayingInfoPropertyPlaybackRate()
+#define MPVolumeViewWirelessRoutesAvailableDidChangeNotification getMPVolumeViewWirelessRoutesAvailableDidChangeNotification()
 
 NSString* WebUIApplicationWillResignActiveNotification = @"WebUIApplicationWillResignActiveNotification";
 NSString* WebUIApplicationWillEnterForegroundNotification = @"WebUIApplicationWillEnterForegroundNotification";
@@ -84,6 +91,8 @@ using namespace WebCore;
 
 @interface WebMediaSessionHelper : NSObject {
     MediaSessionManageriOS* _callback;
+    RetainPtr<MPVolumeView> _volumeView;
+    RetainPtr<MPAVRoutingController> _airPlayPresenceRoutingController;
 }
 
 - (id)initWithCallback:(MediaSessionManageriOS*)callback;
@@ -91,6 +100,9 @@ using namespace WebCore;
 - (void)interruption:(NSNotification *)notification;
 - (void)applicationWillEnterForeground:(NSNotification *)notification;
 - (void)applicationWillResignActive:(NSNotification *)notification;
+- (BOOL)hasWirelessTargetsAvailable;
+- (void)startMonitoringAirPlayRoutes;
+- (void)stopMonitoringAirPlayRoutes;
 @end
 
 namespace WebCore {
@@ -131,9 +143,20 @@ void MediaSessionManageriOS::resetRestrictions()
 }
 
 #if ENABLE(IOS_AIRPLAY)
-void MediaSessionManageriOS::showPlaybackTargetPicker()
+
+bool MediaSessionManageriOS::hasWirelessTargetsAvailable()
 {
-    notImplemented();
+    return [m_objcObserver hasWirelessTargetsAvailable];
+}
+
+void MediaSessionManageriOS::startMonitoringAirPlayRoutes()
+{
+    [m_objcObserver startMonitoringAirPlayRoutes];
+}
+
+void MediaSessionManageriOS::stopMonitoringAirPlayRoutes()
+{
+    [m_objcObserver stopMonitoringAirPlayRoutes];
 }
 #endif
     
@@ -187,6 +210,7 @@ void MediaSessionManageriOS::updateNowPlayingInfo()
         return nil;
     
     _callback = callback;
+    _volumeView = adoptNS([[getMPVolumeViewClass() alloc] init]);
 
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(interruption:) name:AVAudioSessionInterruptionNotification object:[AVAudioSession sharedInstance]];
@@ -197,7 +221,8 @@ void MediaSessionManageriOS::updateNowPlayingInfo()
     [center addObserver:self selector:@selector(applicationDidBecomeActive:) name:WebUIApplicationDidBecomeActiveNotification object:nil];
     [center addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
     [center addObserver:self selector:@selector(applicationWillResignActive:) name:WebUIApplicationWillResignActiveNotification object:nil];
-    
+    [center addObserver:self selector:@selector(wirelessRoutesAvailableDidChange:) name:MPVolumeViewWirelessRoutesAvailableDidChangeNotification object:_volumeView.get()];
+
     // Now playing won't work unless we turn on the delivery of remote control events.
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
     
@@ -213,6 +238,25 @@ void MediaSessionManageriOS::updateNowPlayingInfo()
 - (void)clearCallback
 {
     _callback = nil;
+}
+
+- (BOOL)hasWirelessTargetsAvailable
+{
+    return [_volumeView areWirelessRoutesAvailable];
+}
+
+- (void)startMonitoringAirPlayRoutes
+{
+    if (_airPlayPresenceRoutingController)
+        return;
+
+    _airPlayPresenceRoutingController = adoptNS([[getMPAVRoutingControllerClass() alloc] initWithName:@"WebCore - HTML media element checking for AirPlay route presence"]);
+    [_airPlayPresenceRoutingController setDiscoveryMode:MPRouteDiscoveryModePresence];
+}
+
+- (void)stopMonitoringAirPlayRoutes
+{
+    _airPlayPresenceRoutingController = nil;
 }
 
 - (void)interruption:(NSNotification *)notification
@@ -283,6 +327,20 @@ void MediaSessionManageriOS::updateNowPlayingInfo()
     });
 }
 
+- (void)wirelessRoutesAvailableDidChange:(NSNotification *)notification
+{
+    UNUSED_PARAM(notification);
+
+    if (!_callback)
+        return;
+
+    WebThreadRun(^{
+        if (!_callback)
+            return;
+
+        _callback->wirelessRoutesAvailableChanged();
+    });
+}
 @end
 
 #endif // PLATFORM(IOS)

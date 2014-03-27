@@ -1454,6 +1454,8 @@
 		C5E1AFED16B21017006CC1F2 /* WebArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = BC329D9A16ACCE9900316DE2 /* WebArchive.h */; };
 		C5E1AFEE16B21025006CC1F2 /* WebArchiveResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC329D9E16ACD47800316DE2 /* WebArchiveResource.cpp */; };
 		C5E1AFEF16B21029006CC1F2 /* WebArchiveResource.h in Headers */ = {isa = PBXBuildFile; fileRef = BC329D9F16ACD47800316DE2 /* WebArchiveResource.h */; };
+		C5FA1ED318E1062200B3F402 /* WKAirPlayRoutePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = C5FA1ED118E1062200B3F402 /* WKAirPlayRoutePicker.h */; };
+		C5FA1ED418E1062200B3F402 /* WKAirPlayRoutePicker.mm in Sources */ = {isa = PBXBuildFile; fileRef = C5FA1ED218E1062200B3F402 /* WKAirPlayRoutePicker.mm */; };
 		CD5C66A0134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5C669E134B9D36004FE2A8 /* InjectedBundlePageFullScreenClient.cpp */; };
 		CD5C66A1134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5C669F134B9D37004FE2A8 /* InjectedBundlePageFullScreenClient.h */; };
 		CD67D30E15C08F9A00843ADF /* InjectedBundlePageDiagnosticLoggingClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD67D30815C07BE000843ADF /* InjectedBundlePageDiagnosticLoggingClient.cpp */; };
@@ -3324,6 +3326,8 @@
 		C58CDF2C1887609F00871536 /* InteractionInformationAtPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InteractionInformationAtPosition.h; sourceTree = "<group>"; };
 		C59C4A5618B81174007BDCB6 /* AssistedNodeInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AssistedNodeInformation.cpp; sourceTree = "<group>"; };
 		C59C4A5718B81174007BDCB6 /* AssistedNodeInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssistedNodeInformation.h; sourceTree = "<group>"; };
+		C5FA1ED118E1062200B3F402 /* WKAirPlayRoutePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKAirPlayRoutePicker.h; path = ios/forms/WKAirPlayRoutePicker.h; sourceTree = "<group>"; };
+		C5FA1ED218E1062200B3F402 /* WKAirPlayRoutePicker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKAirPlayRoutePicker.mm; path = ios/forms/WKAirPlayRoutePicker.mm; sourceTree = "<group>"; };
 		CD5C669E134B9D36004FE2A8 /* InjectedBundlePageFullScreenClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageFullScreenClient.cpp; sourceTree = "<group>"; };
 		CD5C669F134B9D37004FE2A8 /* InjectedBundlePageFullScreenClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageFullScreenClient.h; sourceTree = "<group>"; };
 		CD67D30815C07BE000843ADF /* InjectedBundlePageDiagnosticLoggingClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageDiagnosticLoggingClient.cpp; sourceTree = "<group>"; };
@@ -6427,6 +6431,8 @@
 		C54256AE18BEC16100DE4179 /* forms */ = {
 			isa = PBXGroup;
 			children = (
+				C5FA1ED118E1062200B3F402 /* WKAirPlayRoutePicker.h */,
+				C5FA1ED218E1062200B3F402 /* WKAirPlayRoutePicker.mm */,
 				C54256AF18BEC18B00DE4179 /* WKFormInputControl.h */,
 				C54256B018BEC18B00DE4179 /* WKFormInputControl.mm */,
 				C54256B118BEC18B00DE4179 /* WKFormPeripheral.h */,
@@ -6616,6 +6622,7 @@
 				2989A414167D184B004F96D2 /* CustomProtocolManager.h in Headers */,
 				371B32DE184D67490013E2B2 /* WKNSURLProtectionSpace.h in Headers */,
 				2984F589164BA095004BC0C6 /* CustomProtocolManagerMessages.h in Headers */,
+				C5FA1ED318E1062200B3F402 /* WKAirPlayRoutePicker.h in Headers */,
 				1A7E376E18E3CA57003D0FFF /* _WKScriptWorld.h in Headers */,
 				29AD3093164B4C5D0072DEA9 /* CustomProtocolManagerProxy.h in Headers */,
 				2984F57D164B915F004BC0C6 /* CustomProtocolManagerProxyMessages.h in Headers */,
@@ -8470,6 +8477,7 @@
 				C58CDF2D1887609F00871536 /* InteractionInformationAtPosition.cpp in Sources */,
 				51B3005112529D0E000B5CA0 /* WebPageProxyCF.cpp in Sources */,
 				1F7506AD1859161C00EC0FF7 /* WKWebProcessPlugInFrame.mm in Sources */,
+				C5FA1ED418E1062200B3F402 /* WKAirPlayRoutePicker.mm in Sources */,
 				BC857E8712B71EBB00EDEB2E /* WebPageProxyMac.mm in Sources */,
 				2DA944A11884E4F000ED86DB /* WebIOSEventFactory.mm in Sources */,
 				BCBD3914125BB1A800D2C29F /* WebPageProxyMessageReceiver.cpp in Sources */,

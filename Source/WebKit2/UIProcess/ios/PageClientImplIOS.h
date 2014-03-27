@@ -113,6 +113,7 @@ private:
     virtual void positionInformationDidChange(const InteractionInformationAtPosition&);
     virtual void saveImageToLibrary(PassRefPtr<WebCore::SharedBuffer>);
     virtual void didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold);
+    virtual void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect) override;
 
 #if ENABLE(INSPECTOR)
     virtual void showInspectorIndication() override;

@@ -30,6 +30,7 @@
 #import <WebCore/Editor.h>
 #import <WebCore/Element.h>
 #import <WebCore/DocumentMarkerController.h>
+#import <WebCore/EventHandler.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameSelection.h>

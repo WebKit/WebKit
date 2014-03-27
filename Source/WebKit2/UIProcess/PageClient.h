@@ -249,6 +249,7 @@ public:
     virtual void positionInformationDidChange(const InteractionInformationAtPosition&) = 0;
     virtual void saveImageToLibrary(PassRefPtr<WebCore::SharedBuffer>) = 0;
     virtual void didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold) = 0;
+    virtual void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect) = 0;
 
 #if ENABLE(INSPECTOR)
     virtual void showInspectorIndication() = 0;

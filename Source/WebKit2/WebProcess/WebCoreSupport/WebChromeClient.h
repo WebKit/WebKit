@@ -175,6 +175,7 @@ private:
     virtual void removeScrollingLayer(WebCore::Node*, PlatformLayer* scrollingLayer, PlatformLayer* contentsLayer) override;
 
     virtual void webAppOrientationsUpdated() override;
+    virtual void showPlaybackTargetPicker(bool hasVideo) override;
 #endif
 
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>) override;

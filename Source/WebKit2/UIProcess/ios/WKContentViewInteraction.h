@@ -29,6 +29,7 @@
 
 #import "AssistedNodeInformation.h"
 #import "InteractionInformationAtPosition.h"
+#import "WKAirPlayRoutePicker.h"
 #import "WKFormPeripheral.h"
 #import "WKGestureTypes.h"
 #import <UIKit/UITextInput_Private.h>
@@ -95,6 +96,7 @@ struct WKAutoCorrectionData {
     RetainPtr<_UIHighlightView> _highlightView;
     RetainPtr<NSString> _markedText;
     RetainPtr<WKActionSheetAssistant> _actionSheetAssistant;
+    RetainPtr<WKAirPlayRoutePicker> _airPlayRoutePicker;
 
     std::unique_ptr<WebKit::SmartMagnificationController> _smartMagnificationController;
 
@@ -141,6 +143,7 @@ struct WKAutoCorrectionData {
 - (void)_willStartUserTriggeredScrollingOrZooming;
 - (void)_didEndScrollingOrZooming;
 - (void)_didUpdateBlockSelectionWithTouch:(WebKit::WKSelectionTouch)touch withFlags:(WebKit::WKSelectionFlags)flags growThreshold:(CGFloat)growThreshold shrinkThreshold:(CGFloat)shrinkThreshold;
+- (void)_showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(const WebCore::IntRect&)elementRect;
 - (void)accessoryDone;
 - (Vector<WebKit::WKOptionItem>&) assistedNodeSelectOptions;
 @end

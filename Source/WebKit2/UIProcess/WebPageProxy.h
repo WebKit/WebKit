@@ -1286,6 +1286,7 @@ private:
     void autocorrectionContextCallback(const String&, const String&, const String&, const String&, uint64_t, uint64_t, uint64_t);
     void dictationContextCallback(const String&, const String&, const String&, uint64_t);
     void interpretKeyEvent(const EditorState&, bool isCharEvent, bool& handled);
+    void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect);
 #endif
 #if PLATFORM(GTK)
     void printFinishedCallback(const WebCore::ResourceError&, uint64_t);

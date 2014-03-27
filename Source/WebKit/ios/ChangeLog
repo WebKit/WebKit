@@ -1,3 +1,17 @@
+2014-03-27  Enrica Casucci  <enrica@apple.com>
+
+        Add support for AirPlay picker in WK2 for iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=130855
+        <rdar://problem/15349859>
+
+        Reviewed by Eric Carlson, Joseph Pecoraro and Benjamin Poulain.
+
+        Adds stub for new WebKit chrome client method.
+
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::showAirPlayRoutePicker):
+
 2014-03-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] Inspector View Indication Support

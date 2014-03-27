@@ -363,6 +363,11 @@ void PageClientImpl::didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t f
     [m_contentView _didUpdateBlockSelectionWithTouch:(WKSelectionTouch)touch withFlags:(WKSelectionFlags)flags growThreshold:growThreshold shrinkThreshold:shrinkThreshold];
 }
 
+void PageClientImpl::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect)
+{
+    [m_contentView _showPlaybackTargetPicker:hasVideo fromRect:elementRect];
+}
+
 #if ENABLE(INSPECTOR)
 void PageClientImpl::showInspectorIndication()
 {

@@ -1,3 +1,50 @@
+2014-03-27  Enrica Casucci  <enrica@apple.com>
+
+        Add support for AirPlay picker in WK2 for iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=130855
+        <rdar://problem/15349859>
+
+        Reviewed by Joseph Pecoraro and Benjamin Poulain.
+
+        Adds support to display the airplay picker for iPhone and iPad
+        in WK2.
+        The picker on iPad is displayed next to the airplay button.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::showAirPlayRoutePicker):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showAirPlayRoutePicker:fromRect:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::showAirPlayRoutePicker):
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.h: Added.
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm: Added.
+        (-[WKAirPlayRoutePicker initWithView:]):
+        (-[WKAirPlayRoutePicker dealloc]):
+        (-[WKAirPlayRoutePicker popoverControllerDidDismissPopover:]):
+        (-[WKAirPlayRoutePicker _presentAirPlayPopoverAnimated:fromRect:]):
+        (-[WKAirPlayRoutePicker _windowWillRotate:]):
+        (-[WKAirPlayRoutePicker _windowDidRotate:]):
+        (-[WKAirPlayRoutePicker _dismissAirPlayRoutePickerIPad]):
+        (-[WKAirPlayRoutePicker showAirPlayPickerIPad:fromRect:]):
+        (-[WKAirPlayRoutePicker showAirPlayPickerIPhone:]):
+        (-[WKAirPlayRoutePicker show:fromRect:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::showAirPlayRoutePicker):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::touchEvent):
+        (WebKit::WebPage::touchEventSyncForTesting):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::rectForElementAtInteractionLocation):
+        (WebKit::WebPage::handleTap):
+
 2014-03-27  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2][iOS] <rdar://problem/16414684> WKWebView should draw a white background before the page loads

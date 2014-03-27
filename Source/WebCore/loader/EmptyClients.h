@@ -207,6 +207,7 @@ public:
     virtual void removeScrollingLayer(Node*, PlatformLayer*, PlatformLayer*) override { }
 
     virtual void webAppOrientationsUpdated() override { };
+    virtual void showPlaybackTargetPicker(bool) override { };
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(IOS)

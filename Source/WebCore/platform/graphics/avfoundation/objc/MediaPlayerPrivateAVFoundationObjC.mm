@@ -2134,7 +2134,7 @@ bool MediaPlayerPrivateAVFoundationObjC::wirelessVideoPlaybackDisabled() const
     if (!m_avPlayer)
         return !m_allowsWirelessVideoPlayback;
     
-    m_allowsWirelessVideoPlayback = ![m_avPlayer.get() allowsExternalPlayback];
+    m_allowsWirelessVideoPlayback = [m_avPlayer.get() allowsExternalPlayback];
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::wirelessVideoPlaybackDisabled(%p) - returning %s", this, boolString(!m_allowsWirelessVideoPlayback));
 
     return !m_allowsWirelessVideoPlayback;
@@ -2147,7 +2147,7 @@ void MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled(bool d
     if (!m_avPlayer)
         return;
     
-    [m_avPlayer.get() setAllowsExternalPlayback:disabled];
+    [m_avPlayer.get() setAllowsExternalPlayback:!disabled];
 }
 #endif
 

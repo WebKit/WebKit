@@ -29,6 +29,9 @@
 
 #include "HTMLMediaSession.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "Frame.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "Logging.h"
@@ -205,7 +208,9 @@ void HTMLMediaSession::showPlaybackTargetPicker(const HTMLMediaElement& element)
     }
 #endif
 
-    MediaSessionManager::sharedManager().showPlaybackTargetPicker();
+#if PLATFORM(IOS)
+    element.document().frame()->page()->chrome().client().showPlaybackTargetPicker(element.hasVideo());
+#endif
 }
 
 bool HTMLMediaSession::hasWirelessPlaybackTargets(const HTMLMediaElement& element) const
@@ -222,9 +227,7 @@ bool HTMLMediaSession::hasWirelessPlaybackTargets(const HTMLMediaElement& elemen
     UNUSED_PARAM(element);
 #endif
 
-    // FIXME: this only lets us know if the current element is playing to an external target, we want to
-    // know if there are *any* external targets.
-    bool hasTargets = currentPlaybackTargetIsWireless(element);
+    bool hasTargets = MediaSessionManager::sharedManager().hasWirelessTargetsAvailable();
     LOG(Media, "HTMLMediaSession::hasWirelessPlaybackTargets - returning %s", hasTargets ? "TRUE" : "FALSE");
 
     return hasTargets;
@@ -290,11 +293,13 @@ void HTMLMediaSession::setHasPlaybackTargetAvailabilityListeners(const HTMLMedia
         return;
     }
 #else
-    UNUSED_PARAM(hasListeners);
     UNUSED_PARAM(element);
 #endif
 
-    notImplemented();
+    if (hasListeners)
+        MediaSessionManager::sharedManager().startMonitoringAirPlayRoutes();
+    else
+        MediaSessionManager::sharedManager().stopMonitoringAirPlayRoutes();
 }
 #endif
 

@@ -468,6 +468,7 @@ public:
     void setAssistedNodeValue(const String&);
     void setAssistedNodeValueAsNumber(double);
     void setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection);
+    WebCore::IntRect rectForElementAtInteractionLocation();
 
 #if ENABLE(INSPECTOR)
     void showInspectorIndication();
@@ -1130,6 +1131,7 @@ private:
     RefPtr<WebCore::Range> m_currentWordRange;
     RefPtr<WebCore::Node> m_interactionNode;
     bool m_shouldReturnWordAtSelection;
+    WebCore::IntPoint m_lastInteractionLocation;
 
     WebCore::ViewportConfiguration m_viewportConfiguration;
     uint64_t m_lastVisibleContentRectUpdateID;

@@ -257,6 +257,7 @@ public:
     virtual void removeScrollingLayer(Node*, PlatformLayer* scrollingLayer, PlatformLayer* contentsLayer) = 0;
 
     virtual void webAppOrientationsUpdated() = 0;
+    virtual void showPlaybackTargetPicker(bool hasVideo) = 0;
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)

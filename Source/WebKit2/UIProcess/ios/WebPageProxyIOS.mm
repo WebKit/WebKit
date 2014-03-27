@@ -534,6 +534,11 @@ void WebPageProxy::setAcceleratedCompositingRootLayer(LayerOrView* rootLayer)
     m_pageClient.setAcceleratedCompositingRootLayer(rootLayer);
 }
 
+void WebPageProxy::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect)
+{
+    m_pageClient.showPlaybackTargetPicker(hasVideo, elementRect);
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)
