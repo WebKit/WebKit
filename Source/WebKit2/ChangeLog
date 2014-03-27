@@ -1,3 +1,28 @@
+2014-03-26  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] <rdar://problem/16265272> REGRESSION (WebKit2): Some pages appear blank until you scroll
+        https://bugs.webkit.org/show_bug.cgi?id=130819
+
+        Reviewed by Tim Horton.
+
+        When loading a new page, we never define the unobscured rect and exposed rect on the new frame.
+        As a result, there is nothing to render.
+
+        It uses to work thanks to dumb luck and a bug in Safari updating the visibleContentRects from
+        the UIProcess. Now that the bug is gone, "dumb luck" is not reliable enough to get the content rects :)
+
+        What this patch does is save if we have ever received new rects from the UI. If we have not, create them
+        based on the minimum layout size. This works because we know Safari shows the minimum layout size by default
+        and will tell us if it changes the obscured rects.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::viewportConfigurationChanged):
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2014-03-26  Anders Carlsson  <andersca@apple.com>
 
         Add a _WKScriptWorld class

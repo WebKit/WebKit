@@ -1133,6 +1133,7 @@ private:
 
     WebCore::ViewportConfiguration m_viewportConfiguration;
     uint64_t m_lastVisibleContentRectUpdateID;
+    bool m_hasReceivedVisibleContentRectsAfterDidCommitLoad;
     bool m_scaleWasSetByUIProcess;
     bool m_userHasChangedPageScaleFactor;
     WebCore::FloatSize m_viewportScreenSize;

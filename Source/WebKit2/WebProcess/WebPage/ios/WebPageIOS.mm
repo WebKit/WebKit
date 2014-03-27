@@ -1703,7 +1703,21 @@ void WebPage::viewportConfigurationChanged()
     else
         scale = m_viewportConfiguration.initialScale();
 
-    scalePage(scale, m_page->mainFrame().view()->scrollPosition());
+    FrameView& frameView = *m_page->mainFrame().view();
+    IntPoint scrollPosition = frameView.scrollPosition();
+    if (!m_hasReceivedVisibleContentRectsAfterDidCommitLoad) {
+        IntSize minimumLayoutSizeInDocumentCoordinate = m_viewportConfiguration.minimumLayoutSize();
+        minimumLayoutSizeInDocumentCoordinate.scale(scale);
+
+        IntRect unobscuredContentRect(scrollPosition, minimumLayoutSizeInDocumentCoordinate);
+        frameView.setUnobscuredContentRect(unobscuredContentRect);
+        frameView.setScrollVelocity(0, 0, 0, monotonicallyIncreasingTime());
+
+        // FIXME: We could send down the obscured margins to find a better exposed rect and unobscured rect.
+        // It is not a big deal at the moment because the tile coverage will always extend past the obscured bottom inset.
+        m_drawingArea->setExposedContentRect(unobscuredContentRect);
+    }
+    scalePage(scale, scrollPosition);
 }
 
 void WebPage::applicationWillResignActive()
@@ -1723,6 +1737,7 @@ void WebPage::applicationDidBecomeActive()
 
 void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo)
 {
+    m_hasReceivedVisibleContentRectsAfterDidCommitLoad = true;
     m_lastVisibleContentRectUpdateID = visibleContentRectUpdateInfo.updateID();
 
     FloatRect exposedRect = visibleContentRectUpdateInfo.exposedRect();

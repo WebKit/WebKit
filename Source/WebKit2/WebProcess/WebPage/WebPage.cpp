@@ -285,6 +285,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if PLATFORM(IOS)
     , m_shouldReturnWordAtSelection(false)
     , m_lastVisibleContentRectUpdateID(0)
+    , m_hasReceivedVisibleContentRectsAfterDidCommitLoad(false)
     , m_scaleWasSetByUIProcess(false)
     , m_userHasChangedPageScaleFactor(false)
     , m_viewportScreenSize(parameters.viewportScreenSize)
@@ -4229,6 +4230,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
         }
     }
 #if PLATFORM(IOS)
+    m_hasReceivedVisibleContentRectsAfterDidCommitLoad = false;
     m_userHasChangedPageScaleFactor = false;
 
     Document* document = frame->coreFrame()->document();
