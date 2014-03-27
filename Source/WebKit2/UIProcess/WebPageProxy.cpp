@@ -1054,6 +1054,19 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsRepl
     updateBackingStoreDiscardableState();
 }
 
+void WebPageProxy::layerHostingModeDidChange()
+{
+    if (!isValid())
+        return;
+
+    LayerHostingMode layerHostingMode = m_pageClient.viewLayerHostingMode();
+    if (m_layerHostingMode == layerHostingMode)
+        return;
+
+    m_layerHostingMode = layerHostingMode;
+    m_process->send(Messages::WebPage::SetLayerHostingMode(static_cast<unsigned>(layerHostingMode)), m_pageID);
+}
+
 void WebPageProxy::waitForDidUpdateViewState()
 {
     // If we have previously timed out with no response from the WebProcess, don't block the UIProcess again until it starts responding.

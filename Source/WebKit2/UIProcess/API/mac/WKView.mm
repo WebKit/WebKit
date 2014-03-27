@@ -2373,6 +2373,8 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
                                                      name:NSWindowDidChangeBackingPropertiesNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeScreen:)
                                                      name:NSWindowDidChangeScreenNotification object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeLayerHosting:)
+                                                     name:@"_NSWindowDidChangeContentsHostedInLayerSurfaceNotification" object:window];
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeOcclusionState:)
                                                      name:NSWindowDidChangeOcclusionStateNotification object:window];
@@ -2397,6 +2399,7 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"_NSWindowDidBecomeVisible" object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeBackingPropertiesNotification object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeScreenNotification object:window];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"_NSWindowDidChangeContentsHostedInLayerSurfaceNotification" object:window];
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeOcclusionStateNotification object:window];
 #endif
@@ -2470,6 +2473,11 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 - (void)_windowDidChangeScreen:(NSNotification *)notification
 {
     [self doWindowDidChangeScreen];
+}
+
+- (void)_windowDidChangeLayerHosting:(NSNotification *)notification
+{
+    _data->_page->layerHostingModeDidChange();
 }
 
 - (void)_windowDidResignKey:(NSNotification *)notification

@@ -1,3 +1,19 @@
+2014-03-27  Sam Weinig  <sam@webkit.org>
+
+        Support dynamic layer hosting context changes
+        <rdar://problem/16278019>
+        https://bugs.webkit.org/show_bug.cgi?id=130863
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView addWindowObserversForWindow:]):
+        (-[WKView removeWindowObservers]):
+        (-[WKView _windowDidChangeLayerHosting:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::layerHostingModeDidChange):
+        * UIProcess/WebPageProxy.h:
+
 2014-03-27  Simon Fraser  <simon.fraser@apple.com>
 
         Don't leak the WKBrowsingContextController
