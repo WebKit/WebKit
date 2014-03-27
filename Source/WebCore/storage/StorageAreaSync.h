@@ -95,8 +95,8 @@ private:
     bool m_syncCloseDatabase;
 
     mutable Mutex m_importLock;
-    mutable ThreadCondition m_importCondition;
-    mutable bool m_importComplete;
+    ThreadCondition m_importCondition;
+    bool m_importComplete;
     void markImported();
     void migrateItemTableIfNeeded();
 };

@@ -194,7 +194,7 @@ private:
 
     virtual bool isSMILElement() const override final { return true; }
 
-    mutable SVGElement* m_targetElement;
+    SVGElement* m_targetElement;
 
     Vector<Condition> m_conditions;
     bool m_conditionsConnected;
