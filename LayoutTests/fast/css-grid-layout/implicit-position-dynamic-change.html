@@ -25,7 +25,6 @@ function testPosition(gridElementID, position, size)
 
 function updateImplicitGridColumn()
 {
-    var gridItem = document.getElementById("constrainedGrid").firstChild;
     testPosition("constrainedGrid", { 'column': '1', 'row': '1' }, { 'width': '50', 'height': '70' });
     testPosition("constrainedGrid", { 'column': '1', 'row': '2' }, { 'width': '50', 'height': '30' });
     testPosition("constrainedGrid", { 'column': '1', 'row': '3' }, { 'width': '50', 'height': '50' });
@@ -52,7 +51,6 @@ function updateImplicitGridColumn()
 
     testPosition("constrainedGrid", { 'column': '10', 'row': '15' }, { 'width': '40', 'height': '30' });
 
-    var gridItem = document.getElementById("constrainedGridUndefinedHeight").firstChild;
     testPosition("constrainedGridUndefinedHeight", { 'column': '1', 'row': '1' }, { 'width': '50', 'height': '70' });
     testPosition("constrainedGridUndefinedHeight", { 'column': '1', 'row': '2' }, { 'width': '50', 'height': '70' });
     testPosition("constrainedGridUndefinedHeight", { 'column': '1', 'row': '3' }, { 'width': '50', 'height': '50' });
@@ -79,7 +77,6 @@ function updateImplicitGridColumn()
 
     testPosition("constrainedGridUndefinedHeight", { 'column': '10', 'row': '15' }, { 'width': '40', 'height': '30' });
 
-    gridItem = document.getElementById("unconstrainedGrid").firstChild;
     testPosition("unconstrainedGrid", { 'column': '1', 'row': '1' }, { 'width': '50', 'height': '70' });
     testPosition("unconstrainedGrid", { 'column': '2', 'row': '1' }, { 'width': '60', 'height': '70' });
     testPosition("unconstrainedGrid", { 'column': '3', 'row': '1' }, { 'width': '130', 'height': '70' });

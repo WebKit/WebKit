@@ -1,3 +1,14 @@
+2014-03-27  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Remove unused variable in fast/css-grid-layout/implicit-position-dynamic-change.html
+        https://bugs.webkit.org/show_bug.cgi?id=130833
+
+        Reviewed by Sergio Villar Senin.
+
+        * fast/css-grid-layout/implicit-position-dynamic-change.html: Inside
+        method updateImplicitGridColumn() we define a variable gridItem that
+        is not used. This patch removes it.
+
 2014-03-27  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Crash when cloning a region child with a content node child
