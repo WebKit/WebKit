@@ -236,7 +236,7 @@ private:
 - (WKBrowsingContextController *)browsingContextController
 {
     if (!_browsingContextController)
-        _browsingContextController = [[WKBrowsingContextController alloc] _initWithPageRef:toAPI(_page.get())];
+        _browsingContextController = adoptNS([[WKBrowsingContextController alloc] _initWithPageRef:toAPI(_page.get())]);
 
     return _browsingContextController.get();
 }
