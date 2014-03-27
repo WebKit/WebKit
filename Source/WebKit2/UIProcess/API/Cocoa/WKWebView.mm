@@ -307,6 +307,22 @@
     return nil;
 }
 
+- (WKNavigation *)reload
+{
+    _page->reload(false);
+
+    // FIXME: Return a navigation object.
+    return nil;
+}
+
+- (WKNavigation *)reloadFromOrigin
+{
+    _page->reload(true);
+
+    // FIXME: Return a navigation object.
+    return nil;
+}
+
 - (void)stopLoading
 {
     _page->stopLoading();
@@ -1213,6 +1229,11 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
         return YES;
     }
 
+    if (action == @selector(reload:) || action == @selector(reloadFromOrigin:)) {
+        // FIXME: Return no if we're loading.
+        return YES;
+    }
+
     return NO;
 }
 
@@ -1224,6 +1245,16 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
 - (IBAction)goForward:(id)sender
 {
     [self goForward];
+}
+
+- (IBAction)reload:(id)sender
+{
+    [self reload];
+}
+
+- (IBAction)reloadFromOrigin:(id)sender
+{
+    [self reloadFromOrigin];
 }
 
 @end

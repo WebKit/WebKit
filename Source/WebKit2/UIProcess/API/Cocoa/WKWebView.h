@@ -118,6 +118,9 @@ WK_API_CLASS
 - (WKNavigation *)goBack;
 - (WKNavigation *)goForward;
 
+- (WKNavigation *)reload;
+- (WKNavigation *)reloadFromOrigin;
+
 - (void)stopLoading;
 
 // FIXME: Move this to WKIBActions.
@@ -142,6 +145,9 @@ WK_API_CLASS
 
 - (IBAction)goBack:(id)sender;
 - (IBAction)goForward:(id)sender;
+
+- (IBAction)reload:(id)sender;
+- (IBAction)reloadFromOrigin:(id)sender;
 
 @end
 
