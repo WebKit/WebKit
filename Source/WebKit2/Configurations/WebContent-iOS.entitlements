@@ -8,6 +8,8 @@
 	<true/>
 	<key>com.apple.private.webinspector.allow-remote-inspection</key>
 	<true/>
+	<key>com.apple.private.webinspector.proxy-application</key>
+	<true/>
 	<key>dynamic-codesigning</key>
 	<true/>
 </dict>

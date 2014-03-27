@@ -1,3 +1,12 @@
+2014-03-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Give WebProcess a proxy application entitlement
+        https://bugs.webkit.org/show_bug.cgi?id=130806
+
+        Reviewed by Timothy Hatcher.
+
+        * Configurations/WebContent-iOS.entitlements:
+
 2014-03-27  Anders Carlsson  <andersca@apple.com>
 
         Add reload and reloadFromOrigin as API
