@@ -1,3 +1,14 @@
+2014-03-26  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS WebKit2] Crashes on swipe
+        <rdar://problem/16440867>
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        Get the IOSurfaceRef from the WebCore::IOSurface.
+
 2014-03-26  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the build: include UIKit headers inside the iOS #ifdef.

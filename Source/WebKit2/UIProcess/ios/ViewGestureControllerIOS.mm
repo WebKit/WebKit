@@ -158,7 +158,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     if (snapshot) {
 #if USE(IOSURFACE)
         if (snapshot->setIsPurgeable(false) == IOSurface::SurfaceState::Valid) {
-            [m_snapshotView layer].contents = (id)snapshot.get();
+            [m_snapshotView layer].contents = (id)snapshot->surface();
             m_currentSwipeSnapshotSurface = snapshot;
         }
 #else
