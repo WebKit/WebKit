@@ -186,7 +186,7 @@ public:
     void setExposedContentRect(const IntRect&);
     void setUnobscuredContentRect(const IntRect&);
 
-    void setScrollVelocity(double horizontalVelocity, double verticalVelocity, double timestamp);
+    void setScrollVelocity(double horizontalVelocity, double verticalVelocity, double scaleChangeRate, double timestamp);
     FloatRect computeCoverageRect(double horizontalMargin, double verticalMargin) const;
 
     void setActualScrollPosition(const IntPoint&);
@@ -420,6 +420,7 @@ private:
 
     double m_horizontalVelocity;
     double m_verticalVelocity;
+    double m_scaleChangeRate;
     double m_lastVelocityUpdateTime;
 #else
     IntRect m_fixedVisibleContentRect;

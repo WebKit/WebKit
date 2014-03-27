@@ -1711,7 +1711,7 @@ void WebPage::viewportConfigurationChanged()
 
         IntRect unobscuredContentRect(scrollPosition, minimumLayoutSizeInDocumentCoordinate);
         frameView.setUnobscuredContentRect(unobscuredContentRect);
-        frameView.setScrollVelocity(0, 0, monotonicallyIncreasingTime());
+        frameView.setScrollVelocity(0, 0, 0, monotonicallyIncreasingTime());
 
         // FIXME: We could send down the obscured margins to find a better exposed rect and unobscured rect.
         // It is not a big deal at the moment because the tile coverage will always extend past the obscured bottom inset.
@@ -1735,18 +1735,45 @@ void WebPage::applicationDidBecomeActive()
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationDidBecomeActiveNotification object:nil];
 }
 
+static inline FloatRect adjustExposedRectForBoundedScale(const FloatRect& exposedRect, double exposedRectScale, double boundedScale)
+{
+    if (exposedRectScale < boundedScale)
+        return exposedRect;
+
+    double overscaledWidth = exposedRect.width();
+    double missingHorizonalMargin = exposedRect.width() * exposedRectScale / boundedScale - overscaledWidth;
+
+    double overscaledHeight = exposedRect.height();
+    double missingVerticalMargin = exposedRect.height() * exposedRectScale / boundedScale - overscaledHeight;
+
+    return FloatRect(exposedRect.x() - missingHorizonalMargin / 2, exposedRect.y() - missingVerticalMargin / 2, exposedRect.width() + missingHorizonalMargin, exposedRect.height() + missingVerticalMargin);
+}
+
+static inline void adjustVelocityDataForBoundedScale(double& horizontalVelocity, double& verticalVelocity, double& scaleChangeRate, double exposedRectScale, double boundedScale)
+{
+    if (scaleChangeRate) {
+        horizontalVelocity = 0;
+        verticalVelocity = 0;
+    }
+
+    if (exposedRectScale != boundedScale)
+        scaleChangeRate = 0;
+}
+
 void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo)
 {
     m_hasReceivedVisibleContentRectsAfterDidCommitLoad = true;
     m_lastVisibleContentRectUpdateID = visibleContentRectUpdateInfo.updateID();
 
+    double boundedScale = std::min(m_viewportConfiguration.maximumScale(), std::max(m_viewportConfiguration.minimumScale(), visibleContentRectUpdateInfo.scale()));
+
     FloatRect exposedRect = visibleContentRectUpdateInfo.exposedRect();
-    m_drawingArea->setExposedContentRect(enclosingIntRect(exposedRect));
+    FloatRect adjustedExposedRect = adjustExposedRectForBoundedScale(exposedRect, visibleContentRectUpdateInfo.scale(), boundedScale);
+    m_drawingArea->setExposedContentRect(enclosingIntRect(adjustedExposedRect));
 
     IntRect roundedUnobscuredRect = roundedIntRect(visibleContentRectUpdateInfo.unobscuredRect());
     IntPoint scrollPosition = roundedUnobscuredRect.location();
 
-    double boundedScale = std::min(m_viewportConfiguration.maximumScale(), std::max(m_viewportConfiguration.minimumScale(), visibleContentRectUpdateInfo.scale()));
     float floatBoundedScale = boundedScale;
     if (floatBoundedScale != m_page->pageScaleFactor()) {
         m_scaleWasSetByUIProcess = true;
@@ -1759,7 +1786,13 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
 
     m_page->mainFrame().view()->setScrollOffset(scrollPosition);
     m_page->mainFrame().view()->setUnobscuredContentRect(roundedUnobscuredRect);
-    m_page->mainFrame().view()->setScrollVelocity(visibleContentRectUpdateInfo.m_horizontalVelocity, visibleContentRectUpdateInfo.m_verticalVelocity, visibleContentRectUpdateInfo.m_timestamp);
+
+    double horizontalVelocity = visibleContentRectUpdateInfo.horizontalVelocity();
+    double verticalVelocity = visibleContentRectUpdateInfo.verticalVelocity();
+    double scaleChangeRate = visibleContentRectUpdateInfo.scaleChangeRate();
+    adjustVelocityDataForBoundedScale(horizontalVelocity, verticalVelocity, scaleChangeRate, visibleContentRectUpdateInfo.scale(), boundedScale);
+
+    m_page->mainFrame().view()->setScrollVelocity(horizontalVelocity, verticalVelocity, scaleChangeRate, visibleContentRectUpdateInfo.timestamp());
 
     if (visibleContentRectUpdateInfo.inStableState())
         m_page->mainFrame().view()->setCustomFixedPositionLayoutRect(enclosingIntRect(visibleContentRectUpdateInfo.customFixedPositionRect()));

@@ -119,10 +119,11 @@ void ScrollView::setUnobscuredContentRect(const IntRect& rect)
     m_unobscuredContentRect = rect;
 }
 
-void ScrollView::setScrollVelocity(double horizontalVelocity, double verticalVelocity, double timestamp)
+void ScrollView::setScrollVelocity(double horizontalVelocity, double verticalVelocity, double scaleChangeRate, double timestamp)
 {
     m_horizontalVelocity = horizontalVelocity;
     m_verticalVelocity = verticalVelocity;
+    m_scaleChangeRate = scaleChangeRate;
     m_lastVelocityUpdateTime = timestamp;
 }
 
@@ -148,7 +149,7 @@ FloatRect ScrollView::computeCoverageRect(double horizontalMargin, double vertic
             futureRect.setY(std::max(futureRect.y() - verticalMargin, 0.));
     }
 
-    if (!m_horizontalVelocity && !m_verticalVelocity) {
+    if (m_scaleChangeRate <= 0 && !m_horizontalVelocity && !m_verticalVelocity) {
         futureRect.setWidth(futureRect.width() + horizontalMargin);
         futureRect.setHeight(futureRect.height() + verticalMargin);
         futureRect.setX(std::max(futureRect.x() - horizontalMargin / 2, 0.));

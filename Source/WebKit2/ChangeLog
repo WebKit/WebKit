@@ -1,3 +1,45 @@
+2014-03-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Compute a good exposed rect when scaling WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=130761
+
+        Reviewed by Simon Fraser.
+
+        Add a simple heuristic to improve tiling while zooming. In theory we could take the zoom
+        center and scaleRate to split the speed between scrolling and pinching. In practice,
+        zoom is transitory and is not as predictable as scrolling, so this patch just does a very
+        simple heuristic:
+        -When zooming in, do not expand coverage.
+        -When zooming out, add half a tile size on every side.
+
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        (WebKit::VisibleContentRectUpdateInfo::encode):
+        (WebKit::VisibleContentRectUpdateInfo::decode):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::VisibleContentRectUpdateInfo::timestamp):
+        (WebKit::VisibleContentRectUpdateInfo::horizontalVelocity):
+        (WebKit::VisibleContentRectUpdateInfo::verticalVelocity):
+        (WebKit::VisibleContentRectUpdateInfo::scaleChangeRate):
+        * UIProcess/ios/WKContentView.mm:
+        (WebKit::HistoricalVelocityData::VelocityData::VelocityData):
+        (WebKit::HistoricalVelocityData::velocityForNewData):
+        (WebKit::HistoricalVelocityData::append):
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:scale:inStableState:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+
+        (WebKit::adjustExposedRectForBoundedScale):
+        When zooming past the maximum size, adjust the exposed rect to continue tiling the area
+        at maximum size. Otherwise, we tile a tiny area, and have to retile larger when the animation
+        pull back the view to maximum scale.
+
+        (WebKit::adjustVelocityDataForBoundedScale):
+        Since we do not split the velocity from scrolling from the scaling, just clear the velocity when zooming.
+        Also clear the scaleChangeRate when the scale is out of bounds. There is no reason to add tiles for
+        temporary state.
+
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2014-03-27  Anders Carlsson  <andersca@apple.com>
 
         Add _ prefix to WKRemoteObjectRegistery and WKRemoteObjectInterface

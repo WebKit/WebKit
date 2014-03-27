@@ -1,3 +1,18 @@
+2014-03-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Compute a good exposed rect when scaling WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=130761
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+        * platform/ScrollView.h:
+        * platform/ios/ScrollViewIOS.mm:
+        (WebCore::ScrollView::setScrollVelocity):
+        (WebCore::ScrollView::computeCoverageRect):
+        While scaling in, do not add margins tiles. When scaling out, add 1 margin tile size
+        all around.
+
 2014-03-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r166360.
