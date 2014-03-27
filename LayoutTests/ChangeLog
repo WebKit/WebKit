@@ -1,3 +1,18 @@
+2014-03-27  Brent Fulgham  <bfulgham@apple.com>
+
+        Fix a crash caused by track insertion after load()
+        https://bugs.webkit.org/show_bug.cgi?id=130777
+
+        Reviewed by Eric Carlson.
+
+        Test: media/track/track-insert-after-load-crash.html
+
+        Based on the Blink change (patch by acolwell@chromium.org):
+        https://codereview.chromium.org/211373009/
+
+        * media/track/track-insert-after-load-crash-expected.txt: Added.
+        * media/track/track-insert-after-load-crash.html: Added.
+
 2014-03-27  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Remove unused variable in fast/css-grid-layout/implicit-position-dynamic-change.html
