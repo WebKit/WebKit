@@ -1,3 +1,17 @@
+2014-03-27  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        Remove comment from Filter.h
+        https://bugs.webkit.org/show_bug.cgi?id=130848
+
+        Reviewed by Simon Fraser.
+
+        Exploring the use of consts on applyScale() methods didn't yield
+        good results.
+
+        No new tests, no change on behavior.
+
+        * platform/graphics/filters/Filter.h:
+
 2014-03-27  Frédéric Wang  <fred.wang@free.fr>
 
         Operator stretching: expose a math data API

@@ -46,7 +46,6 @@ public:
 
     virtual bool isSVGFilter() const { return false; }
 
-    // TODO: verify descendants that overload this method and turn them to const.
     virtual float applyHorizontalScale(float value) const { return value * m_filterResolution.width(); }
     virtual float applyVerticalScale(float value) const { return value * m_filterResolution.height(); }
     
