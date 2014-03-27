@@ -25,12 +25,13 @@
 
 #import "config.h"
 #import "ScrollingTreeOverflowScrollingNodeIOS.h"
-#import <WebCore/BlockExceptions.h>
-#import <WebCore/ScrollingStateScrollingNode.h>
-#import <UIKit/UIScrollView.h>
 
 #if PLATFORM(IOS)
 #if ENABLE(ASYNC_SCROLLING)
+
+#import <WebCore/BlockExceptions.h>
+#import <WebCore/ScrollingStateScrollingNode.h>
+#import <UIKit/UIScrollView.h>
 
 using namespace WebCore;
 
