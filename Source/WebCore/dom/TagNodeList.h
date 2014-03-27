@@ -39,9 +39,8 @@ public:
         return adoptRef(new TagNodeList(rootNode, namespaceURI, localName));
     }
 
-    static PassRefPtr<TagNodeList> create(ContainerNode& rootNode, Type type, const AtomicString& localName)
+    static PassRefPtr<TagNodeList> create(ContainerNode& rootNode, const AtomicString& localName)
     {
-        ASSERT_UNUSED(type, type == Type::TagNodeListType);
         return adoptRef(new TagNodeList(rootNode, starAtom, localName));
     }
 
@@ -67,9 +66,8 @@ inline bool TagNodeList::nodeMatches(Element* element) const
 
 class HTMLTagNodeList final : public CachedLiveNodeList<HTMLTagNodeList> {
 public:
-    static PassRefPtr<HTMLTagNodeList> create(ContainerNode& rootNode, Type type, const AtomicString& localName)
+    static PassRefPtr<HTMLTagNodeList> create(ContainerNode& rootNode, const AtomicString& localName)
     {
-        ASSERT_UNUSED(type, type == Type::HTMLTagNodeListType);
         return adoptRef(new HTMLTagNodeList(rootNode, localName));
     }
 

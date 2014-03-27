@@ -46,16 +46,7 @@ static bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType, cons
 
 class LiveNodeList : public NodeList {
 public:
-    enum class Type {
-        ClassNodeListType,
-        NameNodeListType,
-        TagNodeListType,
-        HTMLTagNodeListType,
-        RadioNodeListType,
-        LabelsNodeListType,
-    };
-
-    LiveNodeList(ContainerNode& ownerNode, Type, NodeListInvalidationType, NodeListRootType);
+    LiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType, NodeListRootType);
     virtual Node* namedItem(const AtomicString&) const override final;
     virtual bool nodeMatches(Element*) const = 0;
 
@@ -63,7 +54,6 @@ public:
 
     ALWAYS_INLINE bool isRootedAtDocument() const { return m_rootType == NodeListIsRootedAtDocument; }
     ALWAYS_INLINE NodeListInvalidationType invalidationType() const { return static_cast<NodeListInvalidationType>(m_invalidationType); }
-    ALWAYS_INLINE Type type() const { return static_cast<Type>(m_type); }
     ContainerNode& ownerNode() const { return const_cast<ContainerNode&>(m_ownerNode.get()); }
     ALWAYS_INLINE void invalidateCacheForAttribute(const QualifiedName* attrName) const
     {
@@ -87,7 +77,6 @@ private:
 
     const unsigned m_rootType : 1;
     const unsigned m_invalidationType : 4;
-    const unsigned m_type : 3;
 };
 
 template <class NodeListType>
@@ -110,7 +99,7 @@ public:
     virtual size_t memoryCost() const override;
 
 protected:
-    CachedLiveNodeList(ContainerNode& rootNode, Type, NodeListInvalidationType, NodeListRootType = NodeListIsRootedAtNode);
+    CachedLiveNodeList(ContainerNode& rootNode, NodeListInvalidationType, NodeListRootType = NodeListIsRootedAtNode);
 
 private:
     mutable CollectionIndexCache<NodeListType, Element> m_indexCache;
@@ -149,8 +138,8 @@ inline ContainerNode& LiveNodeList::rootNode() const
 }
 
 template <class NodeListType>
-CachedLiveNodeList<NodeListType>::CachedLiveNodeList(ContainerNode& ownerNode, Type type, NodeListInvalidationType invalidationType, NodeListRootType rootType)
-    : LiveNodeList(ownerNode, type, invalidationType, rootType)
+CachedLiveNodeList<NodeListType>::CachedLiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType invalidationType, NodeListRootType rootType)
+    : LiveNodeList(ownerNode, invalidationType, rootType)
 {
 }
 

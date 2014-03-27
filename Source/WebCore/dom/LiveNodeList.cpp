@@ -31,15 +31,13 @@
 
 namespace WebCore {
 
-LiveNodeList::LiveNodeList(ContainerNode& ownerNode, Type type, NodeListInvalidationType invalidationType, NodeListRootType rootType)
+LiveNodeList::LiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType invalidationType, NodeListRootType rootType)
     : m_ownerNode(ownerNode)
     , m_rootType(rootType)
     , m_invalidationType(invalidationType)
-    , m_type(static_cast<unsigned>(type))
 {
     ASSERT(m_rootType == static_cast<unsigned>(rootType));
     ASSERT(m_invalidationType == static_cast<unsigned>(invalidationType));
-    ASSERT(m_type == static_cast<unsigned>(type));
 }
 
 LiveNodeList::~LiveNodeList()

@@ -1,3 +1,58 @@
+2014-03-27  Antti Koivisto  <antti@apple.com>
+
+        Remove LiveNodeList::Type
+        https://bugs.webkit.org/show_bug.cgi?id=130866
+
+        Reviewed by Andreas Kling.
+
+        We don't need dynamic type information anymore.
+
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::ClassNodeList):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getElementsByTagName):
+        (WebCore::ContainerNode::getElementsByName):
+        (WebCore::ContainerNode::getElementsByClassName):
+        (WebCore::ContainerNode::radioNodeList):
+        * dom/LiveNodeList.cpp:
+        (WebCore::LiveNodeList::LiveNodeList):
+        * dom/LiveNodeList.h:
+        (WebCore::LiveNodeList::invalidationType):
+        (WebCore::CachedLiveNodeList<NodeListType>::CachedLiveNodeList):
+        (WebCore::LiveNodeList::type): Deleted.
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::NameNodeList):
+        (WebCore::NameNodeList::nodeMatches): Deleted.
+        * dom/NameNodeList.h:
+        (WebCore::NameNodeList::nodeMatches):
+        * dom/NodeRareData.h:
+        (WebCore::NodeListTypeIdentifier<ClassNodeList>::value):
+        (WebCore::NodeListTypeIdentifier<NameNodeList>::value):
+        (WebCore::NodeListTypeIdentifier<TagNodeList>::value):
+        (WebCore::NodeListTypeIdentifier<HTMLTagNodeList>::value):
+        (WebCore::NodeListTypeIdentifier<RadioNodeList>::value):
+        (WebCore::NodeListTypeIdentifier<LabelsNodeList>::value):
+        
+            Get unique id from type for key generation purposes only.
+
+        (WebCore::NodeListsNodeData::addCacheWithAtomicName):
+        (WebCore::NodeListsNodeData::addCacheWithName):
+        (WebCore::NodeListsNodeData::removeCacheWithAtomicName):
+        (WebCore::NodeListsNodeData::removeCacheWithName):
+        (WebCore::NodeListsNodeData::namedNodeListKey):
+        * dom/TagNodeList.cpp:
+        (WebCore::TagNodeList::TagNodeList):
+        (WebCore::HTMLTagNodeList::HTMLTagNodeList):
+        * dom/TagNodeList.h:
+        * html/LabelableElement.cpp:
+        (WebCore::LabelableElement::labels):
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::LabelsNodeList):
+        * html/LabelsNodeList.h:
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::RadioNodeList):
+        * html/RadioNodeList.h:
+
 2014-03-27  Simon Fraser  <simon.fraser@apple.com>
 
         Fix crash when RenderView is cleared inside of frame flattening layout

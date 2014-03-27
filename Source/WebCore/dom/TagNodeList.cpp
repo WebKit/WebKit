@@ -29,7 +29,7 @@
 namespace WebCore {
 
 TagNodeList::TagNodeList(ContainerNode& rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
-    : CachedLiveNodeList(rootNode, Type::TagNodeListType, DoNotInvalidateOnAttributeChanges)
+    : CachedLiveNodeList(rootNode, DoNotInvalidateOnAttributeChanges)
     , m_namespaceURI(namespaceURI)
     , m_localName(localName)
 {
@@ -45,7 +45,7 @@ TagNodeList::~TagNodeList()
 }
 
 HTMLTagNodeList::HTMLTagNodeList(ContainerNode& rootNode, const AtomicString& localName)
-    : CachedLiveNodeList(rootNode, Type::HTMLTagNodeListType, DoNotInvalidateOnAttributeChanges)
+    : CachedLiveNodeList(rootNode, DoNotInvalidateOnAttributeChanges)
     , m_localName(localName)
     , m_loweredLocalName(localName.lower())
 {
