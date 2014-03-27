@@ -1,3 +1,26 @@
+2014-03-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Parse stackmaps liveOuts
+        https://bugs.webkit.org/show_bug.cgi?id=130801
+
+        Reviewed by Geoffrey Garen.
+        
+        This just adds the code to parse them but doesn't do anything with them, yet.
+
+        * ftl/FTLLocation.cpp:
+        (JSC::FTL::Location::forStackmaps):
+        * ftl/FTLLocation.h:
+        (JSC::FTL::Location::forRegister):
+        (JSC::FTL::Location::forIndirect):
+        * ftl/FTLStackMaps.cpp:
+        (JSC::FTL::StackMaps::Location::parse):
+        (JSC::FTL::StackMaps::Location::dump):
+        (JSC::FTL::StackMaps::LiveOut::parse):
+        (JSC::FTL::StackMaps::LiveOut::dump):
+        (JSC::FTL::StackMaps::Record::parse):
+        (JSC::FTL::StackMaps::Record::dump):
+        * ftl/FTLStackMaps.h:
+
 2014-03-26  Mark Lam  <mark.lam@apple.com>
 
         Build fix after r166307.

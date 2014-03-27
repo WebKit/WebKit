@@ -77,13 +77,13 @@ void StackMaps::Location::parse(StackMaps::ParseContext& context)
 {
     kind = static_cast<Kind>(context.view->read<uint8_t>(context.offset, true));
     size = context.view->read<uint8_t>(context.offset, true);
-    dwarfRegNum = context.view->read<uint16_t>(context.offset, true);
+    dwarfReg = DWARFRegister(context.view->read<uint16_t>(context.offset, true));
     this->offset = context.view->read<int32_t>(context.offset, true);
 }
 
 void StackMaps::Location::dump(PrintStream& out) const
 {
-    out.print("(", kind, ", reg", dwarfRegNum, ", off:", offset, ", size:", size, ")");
+    out.print("(", kind, ", ", dwarfReg, ", off:", offset, ", size:", size, ")");
 }
 
 GPRReg StackMaps::Location::directGPR() const
@@ -95,6 +95,18 @@ void StackMaps::Location::restoreInto(
     MacroAssembler& jit, StackMaps& stackmaps, char* savedRegisters, GPRReg result) const
 {
     FTL::Location::forStackmaps(&stackmaps, *this).restoreInto(jit, savedRegisters, result);
+}
+
+void StackMaps::LiveOut::parse(StackMaps::ParseContext& context)
+{
+    dwarfReg = DWARFRegister(context.view->read<uint16_t>(context.offset, true)); // regnum
+    context.view->read<uint8_t>(context.offset, true); // reserved
+    size = context.view->read<uint8_t>(context.offset, true); // size in bytes
+}
+
+void StackMaps::LiveOut::dump(PrintStream& out) const
+{
+    out.print("(", dwarfReg, ", ", size, ")");
 }
 
 bool StackMaps::Record::parse(StackMaps::ParseContext& context)
@@ -114,12 +126,11 @@ bool StackMaps::Record::parse(StackMaps::ParseContext& context)
     
     if (context.version >= 1)
         context.view->read<uint16_t>(context.offset, true); // padding
+
     unsigned numLiveOuts = context.view->read<uint16_t>(context.offset, true);
-    while (numLiveOuts--) {
-        context.view->read<uint16_t>(context.offset, true); // regnum
-        context.view->read<uint8_t>(context.offset, true); // reserved
-        context.view->read<uint8_t>(context.offset, true); // size in bytes
-    }
+    while (numLiveOuts--)
+        liveOuts.append(readObject<LiveOut>(context));
+
     if (context.version >= 1) {
         if (context.offset & 7) {
             ASSERT(!(context.offset & 3));
@@ -134,7 +145,8 @@ void StackMaps::Record::dump(PrintStream& out) const
 {
     out.print(
         "(#", patchpointID, ", offset = ", instructionOffset, ", flags = ", flags,
-        ", [", listDump(locations), "])");
+        ", locations = [", listDump(locations), "]), liveOuts = [",
+        listDump(liveOuts), "]");
 }
 
 bool StackMaps::parse(DataView* view)

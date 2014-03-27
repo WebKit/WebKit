@@ -29,6 +29,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "DataView.h"
+#include "FTLDWARFRegister.h"
 #include "GPRInfo.h"
 #include <wtf/HashMap.h>
 
@@ -70,8 +71,8 @@ struct StackMaps {
             ConstantIndex
         };
         
-        uint16_t dwarfRegNum; // Represented as a 12-bit int in the section.
-        int8_t size;
+        DWARFRegister dwarfReg;
+        uint8_t size;
         Kind kind;
         int32_t offset;
         
@@ -82,12 +83,26 @@ struct StackMaps {
         void restoreInto(MacroAssembler&, StackMaps&, char* savedRegisters, GPRReg result) const;
     };
     
+    // FIXME: Investigate how much memory this takes and possibly prune it from the
+    // format we keep around in FTL::JITCode. I suspect that it would be most awesome to
+    // have a CompactStackMaps struct that lossily stores only that subset of StackMaps
+    // and Record that we actually need for OSR exit.
+    // https://bugs.webkit.org/show_bug.cgi?id=130802
+    struct LiveOut {
+        DWARFRegister dwarfReg;
+        uint8_t size;
+        
+        void parse(ParseContext&);
+        void dump(PrintStream& out) const;
+    };
+    
     struct Record {
         uint32_t patchpointID;
         uint32_t instructionOffset;
         uint16_t flags;
         
         Vector<Location> locations;
+        Vector<LiveOut> liveOuts;
         
         bool parse(ParseContext&);
         void dump(PrintStream&) const;

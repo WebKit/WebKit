@@ -45,10 +45,10 @@ Location Location::forStackmaps(const StackMaps* stackmaps, const StackMaps::Loc
         
     case StackMaps::Location::Register:
     case StackMaps::Location::Direct:
-        return forRegister(location.dwarfRegNum, location.offset);
+        return forRegister(location.dwarfReg, location.offset);
         
     case StackMaps::Location::Indirect:
-        return forIndirect(location.dwarfRegNum, location.offset);
+        return forIndirect(location.dwarfReg, location.offset);
         
     case StackMaps::Location::Constant:
         return forConstant(location.offset);
