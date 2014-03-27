@@ -152,7 +152,14 @@ public:
     virtual void detachFromStateTree(ScrollingNodeID) { }
     virtual void clearStateTree() { }
     virtual void updateViewportConstrainedNode(ScrollingNodeID, const ViewportConstraints&, GraphicsLayer*) { }
-    virtual void updateScrollingNode(ScrollingNodeID, GraphicsLayer* /*scrollLayer*/, GraphicsLayer* /*scrolledContentsLayer*/, GraphicsLayer* /*counterScrollingLayer*/) { }
+
+    struct ScrollingGeometry {
+        IntSize contentSize;
+        FloatPoint scrollPosition;
+        IntPoint scrollOrigin;
+    };
+
+    virtual void updateScrollingNode(ScrollingNodeID, GraphicsLayer* /*scrollLayer*/, GraphicsLayer* /*scrolledContentsLayer*/, GraphicsLayer* /*counterScrollingLayer*/, const ScrollingGeometry&) { }
     virtual void syncChildPositions(const LayoutRect&) { }
     virtual String scrollingStateTreeAsText() const;
     virtual bool isRubberBandInProgress() const { return false; }

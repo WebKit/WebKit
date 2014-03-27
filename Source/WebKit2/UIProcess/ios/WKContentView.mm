@@ -179,7 +179,6 @@ private:
 
     _rootContentView = adoptNS([[UIView alloc] init]);
     [_rootContentView layer].masksToBounds = NO;
-    [_rootContentView setUserInteractionEnabled:NO];
 
     [self addSubview:_rootContentView.get()];
 

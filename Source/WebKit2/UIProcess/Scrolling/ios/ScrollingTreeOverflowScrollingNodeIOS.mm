@@ -25,6 +25,9 @@
 
 #import "config.h"
 #import "ScrollingTreeOverflowScrollingNodeIOS.h"
+#import <WebCore/BlockExceptions.h>
+#import <WebCore/ScrollingStateScrollingNode.h>
+#import <UIKit/UIScrollView.h>
 
 #if PLATFORM(IOS)
 #if ENABLE(ASYNC_SCROLLING)
@@ -45,6 +48,23 @@ ScrollingTreeOverflowScrollingNodeIOS::ScrollingTreeOverflowScrollingNodeIOS(Web
 
 ScrollingTreeOverflowScrollingNodeIOS::~ScrollingTreeOverflowScrollingNodeIOS()
 {
+}
+
+void ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren(const ScrollingStateNode& stateNode)
+{
+    ScrollingTreeScrollingNodeIOS::updateAfterChildren(stateNode);
+
+    const auto& scrollingStateNode = toScrollingStateScrollingNode(stateNode);
+
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize)) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate];
+        ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
+
+        scrollView.contentSize = scrollingStateNode.totalContentsSize();
+
+        END_BLOCK_OBJC_EXCEPTIONS
+    }
 }
 
 } // namespace WebCore

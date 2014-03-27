@@ -41,6 +41,9 @@ public:
 
 private:
     ScrollingTreeOverflowScrollingNodeIOS(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
+
+    virtual void updateAfterChildren(const WebCore::ScrollingStateNode&) override;
+
 };
 
 } // namespace WebKit

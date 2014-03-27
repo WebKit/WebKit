@@ -287,7 +287,7 @@ void AsyncScrollingCoordinator::ensureRootStateNodeForFrameView(FrameView* frame
     attachToStateTree(FrameScrollingNode, frameView->scrollLayerID(), 0);
 }
 
-void AsyncScrollingCoordinator::updateScrollingNode(ScrollingNodeID nodeID, GraphicsLayer* layer, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer)
+void AsyncScrollingCoordinator::updateScrollingNode(ScrollingNodeID nodeID, GraphicsLayer* layer, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer, const ScrollingGeometry& scrollingGeometry)
 {
     ScrollingStateScrollingNode* node = toScrollingStateScrollingNode(m_scrollingStateTree->stateNodeForID(nodeID));
     ASSERT(node);
@@ -297,6 +297,10 @@ void AsyncScrollingCoordinator::updateScrollingNode(ScrollingNodeID nodeID, Grap
     node->setLayer(layer);
     node->setScrolledContentsLayer(scrolledContentsLayer);
     node->setCounterScrollingLayer(counterScrollingLayer);
+
+    node->setScrollOrigin(scrollingGeometry.scrollOrigin);
+    node->setScrollPosition(scrollingGeometry.scrollPosition);
+    node->setTotalContentsSize(scrollingGeometry.contentSize);
 }
 
 void AsyncScrollingCoordinator::updateViewportConstrainedNode(ScrollingNodeID nodeID, const ViewportConstraints& constraints, GraphicsLayer* graphicsLayer)

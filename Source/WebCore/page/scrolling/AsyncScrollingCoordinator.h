@@ -87,7 +87,7 @@ private:
     virtual void clearStateTree() override;
 
     virtual void updateViewportConstrainedNode(ScrollingNodeID, const ViewportConstraints&, GraphicsLayer*) override;
-    virtual void updateScrollingNode(ScrollingNodeID, GraphicsLayer*, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer) override;
+    virtual void updateScrollingNode(ScrollingNodeID, GraphicsLayer*, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer, const ScrollingGeometry&) override;
     virtual String scrollingStateTreeAsText() const override;
     virtual bool isRubberBandInProgress() const override;
     virtual void setScrollPinningBehavior(ScrollPinningBehavior) override;

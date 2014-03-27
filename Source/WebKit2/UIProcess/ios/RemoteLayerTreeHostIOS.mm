@@ -32,7 +32,7 @@
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <WebKitSystemInterface.h>
 
-#import <UIKit/UIView.h>
+#import <UIKit/UIScrollView.h>
 #import <QuartzCore/QuartzCore.h>
 
 using namespace WebCore;
@@ -76,7 +76,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
+LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties, const RemoteLayerTreeTransaction::LayerProperties* layerProperties)
 {
     RetainPtr<LayerOrView>& layerOrView = m_layers.add(properties.layerID, nullptr).iterator->value;
 
@@ -90,10 +90,13 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
     case PlatformCALayer::LayerTypeTiledBackingLayer:
     case PlatformCALayer::LayerTypePageTiledBackingLayer:
     case PlatformCALayer::LayerTypeTiledBackingTileLayer:
-        layerOrView = adoptNS([[UIView alloc] initWithFrame:CGRectZero]);
+        if (layerProperties && layerProperties->customBehavior == GraphicsLayer::CustomScrollingBehavior)
+            layerOrView = adoptNS([[UIScrollView alloc] init]);
+        else
+            layerOrView = adoptNS([[UIView alloc] init]);
         break;
     case PlatformCALayer::LayerTypeTransformLayer:
-        layerOrView = adoptNS([[WKTransformView alloc] initWithFrame:CGRectZero]);
+        layerOrView = adoptNS([[WKTransformView alloc] init]);
         break;
     case PlatformCALayer::LayerTypeCustom:
         if (!m_isDebugLayerTreeHost)

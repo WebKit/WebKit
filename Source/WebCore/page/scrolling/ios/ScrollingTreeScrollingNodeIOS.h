@@ -43,12 +43,14 @@ public:
 protected:
     ScrollingTreeScrollingNodeIOS(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 
-private:
     // ScrollingTreeNode member functions.
     virtual void updateBeforeChildren(const ScrollingStateNode&) override;
     virtual void updateAfterChildren(const ScrollingStateNode&) override;
     virtual void handleWheelEvent(const PlatformWheelEvent&) override { }
 
+    CALayer *scrollLayer() const { return m_scrollLayer.get(); }
+
+private:
     FloatPoint scrollPosition() const;
     virtual void setScrollPosition(const FloatPoint&) override;
     virtual void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) override;

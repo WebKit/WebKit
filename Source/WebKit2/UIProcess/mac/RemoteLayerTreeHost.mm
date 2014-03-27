@@ -53,8 +53,10 @@ RemoteLayerTreeHost::~RemoteLayerTreeHost()
 
 bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& transaction, float indicatorScaleFactor)
 {
-    for (const auto& createdLayer : transaction.createdLayers())
-        createLayer(createdLayer);
+    for (const auto& createdLayer : transaction.createdLayers()) {
+        const RemoteLayerTreeTransaction::LayerProperties* properties = transaction.changedLayers().get(createdLayer.layerID);
+        createLayer(createdLayer, properties);
+    }
 
     bool rootLayerChanged = false;
     LayerOrView *rootLayer = getLayer(transaction.rootLayerID());
@@ -105,7 +107,7 @@ LayerOrView *RemoteLayerTreeHost::getLayer(GraphicsLayer::PlatformLayerID layerI
 }
 
 #if !PLATFORM(IOS)
-LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
+LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties, const RemoteLayerTreeTransaction::LayerProperties*)
 {
     RetainPtr<CALayer>& layer = m_layers.add(properties.layerID, nullptr).iterator->value;
 

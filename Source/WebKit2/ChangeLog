@@ -1,3 +1,27 @@
+2014-03-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Hook up -webkit-overflow-scrolling:touch for iOS WK2
+        https://bugs.webkit.org/show_bug.cgi?id=130809
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren):
+        Set the content size of the UIScrollVIew based on the geometry.
+        * UIProcess/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::createLayer): Make a UIScrollView if the
+        layer properties tell us that we have the scrolling behavior.
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView initWithFrame:context:WebKit::configuration:WebKit::webView:]):
+        We need to allow user interaction in the _rootContentView so that events get to
+        nested UIScrollViews (this could be optimized in future).
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+        (WebKit::RemoteLayerTreeHost::createLayer): Need to pass RemoteLayerTreeTransaction::LayerProperties
+        in so we can get at the custom behavior.
+
 2014-03-26  Anders Carlsson  <andersca@apple.com>
 
         Add -[WKWebView stopLoading]

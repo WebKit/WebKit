@@ -51,7 +51,7 @@ public:
     bool isDebugLayerTreeHost() const { return m_isDebugLayerTreeHost; }
 
 private:
-    LayerOrView *createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&);
+    LayerOrView *createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeTransaction::LayerProperties*);
 
     LayerOrView *m_rootLayer;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<LayerOrView>> m_layers;
