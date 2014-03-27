@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+RoundedRect computeRoundedRectForBoxShape(CSSBoxType, const RenderBox&);
+
 class BoxShape : public Shape {
 public:
     BoxShape(const FloatRoundedRect& bounds)

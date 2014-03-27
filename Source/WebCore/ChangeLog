@@ -1,3 +1,62 @@
+2014-03-27  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes][css clip-path] rounded corner calculation for box shapes is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=127982
+
+        Reviewed by Simon Fraser.
+
+        Calculate rounded corners for box shapes as defined in the CSS Shapes
+        spec.
+
+        Tests: css3/masking/clip-path-border-radius-border-box-000.html
+               css3/masking/clip-path-border-radius-content-box-000.html
+               css3/masking/clip-path-border-radius-content-box-001.html
+               css3/masking/clip-path-border-radius-padding-box-000.html
+               css3/masking/clip-path-border-radius-padding-box-001.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-border-radius-border-box-000.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-border-radius-border-box-001.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-border-radius-border-box-002.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-border-radius-content-box-000.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-border-radius-content-box-001.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-border-radius-content-box-002.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-border-radius-content-box-003.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-border-radius-margin-box-000.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-border-radius-margin-box-001.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-border-radius-margin-box-002.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-border-radius-margin-box-003.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-border-radius-margin-box-004.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-border-radius-padding-box-000.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-border-radius-padding-box-001.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-border-radius-padding-box-002.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-border-radius-padding-box-003.html
+
+        * platform/graphics/RoundedRect.h:
+        (WebCore::RoundedRect::Radii::transposedRadii): Transpose radii for
+            vertical writing modes.
+        (WebCore::RoundedRect::moveBy): Add method for use with clip path.
+        (WebCore::RoundedRect::transposedRect): Transpose rect for vertical
+            writing modes.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::marginBoxRect): Return the margin box rect for
+            the RenderBox.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setupClipPath): Call the new function for the
+            rounded corner calculation.
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::ShapeInfo<RenderType>::computedShape): Call the new function
+            for the rounded corner calculation.
+        * rendering/shapes/BoxShape.cpp:
+        (WebCore::adjustRadiusForMarginBoxShape): Helper function for
+            computeRoundedRectForLayoutBoxShape.
+        (WebCore::computeMarginBoxShapeRadius): Ditto.
+        (WebCore::computeMarginBoxShapeRadii): Ditto.
+        (WebCore::computeRoundedRectForBoxShape): Utility function to do the
+            rounded corner calculation.
+        * rendering/shapes/BoxShape.h: Add new function.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::getRoundedInnerBorderFor): Add default argument
+            values.
+
 2014-03-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r166364.

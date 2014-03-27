@@ -69,6 +69,8 @@ public:
         void shrink(const LayoutUnit& topWidth, const LayoutUnit& bottomWidth, const LayoutUnit& leftWidth, const LayoutUnit& rightWidth) { expand(-topWidth, -bottomWidth, -leftWidth, -rightWidth); }
         void shrink(const LayoutUnit& size) { shrink(size, size, size, size); }
 
+        Radii transposedRadii() const { return Radii(m_topLeft.transposedSize(), m_topRight.transposedSize(), m_bottomLeft.transposedSize(), m_bottomRight.transposedSize()); }
+
     private:
         LayoutSize m_topLeft;
         LayoutSize m_topRight;
@@ -89,6 +91,7 @@ public:
     void setRadii(const Radii& radii) { m_radii = radii; }
 
     void move(const LayoutSize& size) { m_rect.move(size); }
+    void moveBy(const LayoutPoint& offset) { m_rect.moveBy(offset); }
     void inflate(const LayoutUnit& size) { m_rect.inflate(size);  }
     void inflateWithRadii(const LayoutUnit& size);
     void expandRadii(const LayoutUnit& size) { m_radii.expand(size); }
@@ -105,6 +108,8 @@ public:
     bool intersectsQuad(const FloatQuad&) const;
 
     FloatRoundedRect pixelSnappedRoundedRectForPainting(float deviceScaleFactor) const;
+
+    RoundedRect transposedRect() const { return RoundedRect(m_rect.transposedRect(), m_radii.transposedRadii()); }
 
 private:
     LayoutRect m_rect;

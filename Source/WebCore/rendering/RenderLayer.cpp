@@ -45,6 +45,7 @@
 #include "RenderLayer.h"
 
 #include "AnimationController.h"
+#include "BoxShape.h"
 #include "ColumnInfo.h"
 #include "CSSPropertyNames.h"
 #include "Chrome.h"
@@ -3903,10 +3904,8 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
     if (style.clipPath()->type() == ClipPathOperation::Box) {
         BoxClipPathOperation& clippingPath = toBoxClipPathOperation(*(style.clipPath()));
 
-        LayoutRect referenceBox = computeReferenceBox(renderer(), clippingPath, offsetFromRoot, rootRelativeBounds);
-        // FIXME This does not properly compute the rounded corners as specified in all conditions.
-        // https://bugs.webkit.org/show_bug.cgi?id=127982
-        const RoundedRect& shapeRect = renderer().style().getRoundedBorderFor(referenceBox, &(renderer().view()));
+        RoundedRect shapeRect = computeRoundedRectForBoxShape(clippingPath.referenceBox(), toRenderBox(renderer()));
+        shapeRect.moveBy(offsetFromRoot);
 
         context->save();
         context->clipPath(clippingPath.pathForReferenceRect(shapeRect), RULE_NONZERO);

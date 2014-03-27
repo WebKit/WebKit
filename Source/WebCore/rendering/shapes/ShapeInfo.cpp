@@ -32,6 +32,7 @@
 
 #if ENABLE(CSS_SHAPES)
 
+#include "BoxShape.h"
 #include "LengthFunctions.h"
 #include "RenderBlock.h"
 #include "RenderBox.h"
@@ -141,9 +142,9 @@ const Shape& ShapeInfo<RenderType>::computedShape() const
         break;
     }
     case ShapeValue::Box: {
-        // FIXME This does not properly compute the rounded corners as specified in all conditions.
-        // https://bugs.webkit.org/show_bug.cgi?id=127982
-        const RoundedRect& shapeRect = m_renderer.style().getRoundedBorderFor(LayoutRect(LayoutPoint(), m_referenceBoxLogicalSize), &(m_renderer.view()));
+        RoundedRect shapeRect = computeRoundedRectForBoxShape(referenceBox(), m_renderer);
+        if (!this->styleForWritingMode().isHorizontalWritingMode())
+            shapeRect = shapeRect.transposedRect();
         m_shape = Shape::createBoxShape(shapeRect, writingMode, margin);
         break;
     }

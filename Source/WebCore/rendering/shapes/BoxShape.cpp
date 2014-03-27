@@ -30,9 +30,69 @@
 #include "config.h"
 #include "BoxShape.h"
 
+#include "RenderBox.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
+
+static inline LayoutUnit adjustRadiusForMarginBoxShape(LayoutUnit radius, LayoutUnit margin)
+{
+    // This algorithm is defined in the CSS Shapes specifcation
+    if (!margin)
+        return radius;
+
+    LayoutUnit ratio = radius / margin;
+    if (ratio < 1)
+        return radius + (margin * (1 + pow(ratio - 1, 3)));
+
+    return radius + margin;
+}
+
+static inline LayoutSize computeMarginBoxShapeRadius(const LayoutSize& radius, const LayoutSize& adjacentMargins)
+{
+    return LayoutSize(adjustRadiusForMarginBoxShape(radius.width(), adjacentMargins.width()),
+        adjustRadiusForMarginBoxShape(radius.height(), adjacentMargins.height()));
+}
+
+static inline RoundedRect::Radii computeMarginBoxShapeRadii(const RoundedRect::Radii& radii, const RenderBox& renderer)
+{
+    return RoundedRect::Radii(computeMarginBoxShapeRadius(radii.topLeft(), LayoutSize(renderer.marginLeft(), renderer.marginTop())),
+        computeMarginBoxShapeRadius(radii.topRight(), LayoutSize(renderer.marginRight(), renderer.marginTop())),
+        computeMarginBoxShapeRadius(radii.bottomLeft(), LayoutSize(renderer.marginLeft(), renderer.marginBottom())),
+        computeMarginBoxShapeRadius(radii.bottomRight(), LayoutSize(renderer.marginRight(), renderer.marginBottom())));
+}
+
+RoundedRect computeRoundedRectForBoxShape(CSSBoxType box, const RenderBox& renderer)
+{
+    const RenderStyle& style = renderer.style();
+    switch (box) {
+    case MarginBox: {
+        if (!style.hasBorderRadius())
+            return RoundedRect(renderer.marginBoxRect(), RoundedRect::Radii());
+
+        LayoutRect marginBox = renderer.marginBoxRect();
+        RoundedRect::Radii radii = computeMarginBoxShapeRadii(style.getRoundedBorderFor(renderer.borderBoxRect(), &(renderer.view())).radii(), renderer);
+        radii.scale(calcBorderRadiiConstraintScaleFor(marginBox, radii));
+        return RoundedRect(marginBox, radii);
+    }
+    case PaddingBox:
+        return style.getRoundedInnerBorderFor(renderer.borderBoxRect());
+    case ContentBox:
+        return style.getRoundedInnerBorderFor(renderer.borderBoxRect(),
+            renderer.paddingTop() + renderer.borderTop(), renderer.paddingBottom() + renderer.borderBottom(),
+            renderer.paddingLeft() + renderer.borderLeft(), renderer.paddingRight() + renderer.borderRight());
+    // fill, stroke, view-box compute to border-box for HTML elements.
+    case BorderBox:
+    case Fill:
+    case Stroke:
+    case ViewBox:
+    case BoxMissing:
+        return style.getRoundedBorderFor(renderer.borderBoxRect(), &(renderer.view()));
+    }
+
+    ASSERT_NOT_REACHED();
+    return style.getRoundedBorderFor(renderer.borderBoxRect(), &(renderer.view()));
+}
 
 LayoutRect BoxShape::shapeMarginLogicalBoundingBox() const
 {
