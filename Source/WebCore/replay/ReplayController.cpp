@@ -44,6 +44,7 @@
 #include "ReplaySessionSegment.h"
 #include "ReplayingInputCursor.h"
 #include "ScriptController.h"
+#include "Settings.h"
 #include "UserInputBridge.h"
 #include "WebReplayInputs.h"
 #include <replay/EmptyInputCursor.h>
@@ -63,6 +64,19 @@ ReplayController::ReplayController(Page& page)
     , m_sessionState(SessionState::Inactive)
     , m_dispatchSpeed(DispatchSpeed::FastForward)
 {
+}
+
+void ReplayController::setForceDeterministicSettings(bool shouldForce)
+{
+    ASSERT(shouldForce ^ (m_sessionState == SessionState::Inactive));
+
+    if (shouldForce) {
+        m_savedSettings.usesPageCache = m_page.settings().usesPageCache();
+
+        m_page.settings().setUsesPageCache(false);
+    } else {
+        m_page.settings().setUsesPageCache(m_savedSettings.usesPageCache);
+    }
 }
 
 void ReplayController::setSessionState(SessionState state)
@@ -199,6 +213,7 @@ void ReplayController::startCapturing()
     ASSERT(m_segmentState == SegmentState::Unloaded);
 
     setSessionState(SessionState::Capturing);
+    setForceDeterministicSettings(true);
 
     LOG(WebReplay, "%-20s Starting capture.\n", "ReplayController");
     InspectorInstrumentation::captureStarted(&m_page);
@@ -216,6 +231,7 @@ void ReplayController::stopCapturing()
     completeSegment();
 
     setSessionState(SessionState::Inactive);
+    setForceDeterministicSettings(false);
 
     LOG(WebReplay, "%-20s Stopping capture.\n", "ReplayController");
     InspectorInstrumentation::captureStopped(&m_page);
@@ -263,6 +279,7 @@ void ReplayController::cancelPlayback()
     ASSERT(m_segmentState == SegmentState::Loaded);
     unloadSegment();
     m_sessionState = SessionState::Inactive;
+    setForceDeterministicSettings(false);
     InspectorInstrumentation::playbackFinished(&m_page);
 }
 
@@ -274,8 +291,10 @@ void ReplayController::replayToPosition(const ReplayPosition& position, Dispatch
 
     m_dispatchSpeed = speed;
 
-    if (m_sessionState != SessionState::Replaying)
+    if (m_sessionState != SessionState::Replaying) {
         setSessionState(SessionState::Replaying);
+        setForceDeterministicSettings(true);
+    }
 
     if (m_segmentState == SegmentState::Unloaded)
         loadSegmentAtIndex(position.segmentOffset);

@@ -1,3 +1,22 @@
+2014-03-26  Brian Burg  <bburg@apple.com>
+
+        Web Replay: disable page cache during capture/replay
+        https://bugs.webkit.org/show_bug.cgi?id=130672
+
+        Reviewed by Timothy Hatcher.
+
+        Save, set, and restore page cache settings at the correct times.
+
+        No new tests. If this code fails, then the tests for network replay will fail.
+
+        * replay/ReplayController.cpp:
+        (WebCore::ReplayController::setForceDeterministicSettings): Added.
+        (WebCore::ReplayController::startCapturing):
+        (WebCore::ReplayController::stopCapturing):
+        (WebCore::ReplayController::cancelPlayback):
+        (WebCore::ReplayController::replayToPosition):
+        * replay/ReplayController.h:
+
 2014-03-26  Sam Weinig  <sam@webkit.org>
 
         Convert more of HTMLConverter to C++
