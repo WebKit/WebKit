@@ -258,7 +258,7 @@ inline void SlotVisitor::reportExtraMemoryUsage(JSCell* owner, size_t size)
 {
 #if ENABLE(GGC)
     // We don't want to double-count the extra memory that was reported in previous collections.
-    if (heap()->operationInProgress() == EdenCollection && MarkedBlock::blockFor(owner)->isRemembered(owner))
+    if (heap()->operationInProgress() == EdenCollection && Heap::isRemembered(owner))
         return;
 #else
     UNUSED_PARAM(owner);

@@ -40,8 +40,7 @@ inline bool CopiedBlock::shouldReportLiveBytes(SpinLockHolder&, JSCell* owner)
     // If we always added live bytes we would double count for elements in the remembered
     // set across collections. 
     // If we didn't always add live bytes to new blocks, we'd get too few.
-    bool ownerIsRemembered = MarkedBlock::blockFor(owner)->isRemembered(owner);
-    return !ownerIsRemembered || !m_isOld;
+    return !Heap::isRemembered(owner) || !m_isOld;
 }
 
 inline void CopiedBlock::reportLiveBytes(SpinLockHolder&, JSCell* owner, CopyToken token, unsigned bytes)

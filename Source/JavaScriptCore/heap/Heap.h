@@ -99,7 +99,6 @@ public:
     static bool isRemembered(const void*);
 
     JS_EXPORT_PRIVATE void addToRememberedSet(const JSCell*);
-    bool isInRememberedSet(const JSCell*) const;
     static bool isWriteBarrierEnabled();
     JS_EXPORT_PRIVATE void writeBarrier(const JSCell*);
     void writeBarrier(const JSCell*, JSValue);

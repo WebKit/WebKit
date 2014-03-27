@@ -1,3 +1,22 @@
+2014-03-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Check the remembered set bit faster
+        https://bugs.webkit.org/show_bug.cgi?id=130860
+
+        Reviewed by Oliver Hunt.
+
+        Currently we look up the remembered set bit in the MarkedBlock in C++ code, but 
+        that bit is also stored in the object. We should look it up there whenever possible.
+
+        * heap/CopiedBlockInlines.h:
+        (JSC::CopiedBlock::shouldReportLiveBytes):
+        * heap/Heap.cpp:
+        (JSC::Heap::addToRememberedSet):
+        * heap/Heap.h:
+        * heap/HeapInlines.h: Removed.
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::reportExtraMemoryUsage):
+
 2014-03-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Provide SPI to disallow remote inspection of a JSContext

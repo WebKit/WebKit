@@ -67,11 +67,13 @@ inline bool Heap::isLive(const void* cell)
     return MarkedBlock::blockFor(cell)->isLiveCell(cell);
 }
 
-inline bool Heap::isInRememberedSet(const JSCell* cell) const
+inline bool Heap::isRemembered(const void* ptr)
 {
+    const JSCell* cell = static_cast<const JSCell*>(ptr);
     ASSERT(cell);
     ASSERT(!Options::enableConcurrentJIT() || !isCompilationThread());
-    return MarkedBlock::blockFor(cell)->isRemembered(cell);
+    ASSERT(MarkedBlock::blockFor(cell)->isRemembered(cell) == cell->isRemembered());
+    return cell->isRemembered();
 }
 
 inline bool Heap::isMarked(const void* cell)

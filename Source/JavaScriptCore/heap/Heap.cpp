@@ -850,7 +850,7 @@ void Heap::addToRememberedSet(const JSCell* cell)
 {
     ASSERT(cell);
     ASSERT(!Options::enableConcurrentJIT() || !isCompilationThread());
-    if (isInRememberedSet(cell))
+    if (isRemembered(cell))
         return;
     MarkedBlock::blockFor(cell)->setRemembered(cell);
     const_cast<JSCell*>(cell)->setRemembered(true);
