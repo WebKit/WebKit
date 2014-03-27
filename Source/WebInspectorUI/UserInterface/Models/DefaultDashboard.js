@@ -266,5 +266,6 @@ WebInspector.DefaultDashboard.prototype = {
         this._logs = 0;
         this._issues = 0;
         this._errors = 0;
+        this._dataDidChange();
     }
 };
