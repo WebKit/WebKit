@@ -1,3 +1,30 @@
+2014-03-27  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Crash when cloning a region child with a content node child
+        https://bugs.webkit.org/show_bug.cgi?id=129811
+
+        Reviewed by David Hyatt.
+
+        Collecting the children of a region in another named flow will be supported
+        again in the future and it will be revisited when we will implement the content
+        keyword: http://dev.w3.org/csswg/css-regions-1/#the-flow-into-property.
+        Remove the support for now as it introduces unnecessary complexity in the code
+        and potential wrong behavior.
+
+        Test: fast/regions/region-content-node-child-clone-crash.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::shouldMoveToFlowThread):
+        (WebCore::Element::clearStyleDerivedDataBeforeDetachingRenderer):
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::ElementRareData):
+        * rendering/FlowThreadController.cpp:
+        * rendering/FlowThreadController.h:
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::moveToFlowThreadIfNeeded):
+        (WebCore::Style::createRendererIfNeeded):
+
 2014-03-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Remove unneeded mutable keyword in some member variables 

@@ -67,7 +67,6 @@ public:
 
     void registerNamedFlowContentElement(Element&, RenderNamedFlowThread&);
     void unregisterNamedFlowContentElement(Element&);
-    bool isContentElementRegisteredWithAnyNamedFlow(const Element&) const;
 
     bool hasFlowThreadsWithAutoLogicalHeightRegions() const { return m_flowThreadsWithAutoLogicalHeightRegions; }
     void incrementFlowThreadsWithAutoLogicalHeightRegions() { ++m_flowThreadsWithAutoLogicalHeightRegions; }

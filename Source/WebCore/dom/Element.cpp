@@ -2148,19 +2148,6 @@ bool Element::isInCanvasSubtree() const
     return hasRareData() && elementRareData()->isInCanvasSubtree();
 }
 
-void Element::setIsInsideRegion(bool value)
-{
-    if (value == isInsideRegion())
-        return;
-
-    ensureElementRareData().setIsInsideRegion(value);
-}
-
-bool Element::isInsideRegion() const
-{
-    return hasRareData() ? elementRareData()->isInsideRegion() : false;
-}
-
 void Element::setRegionOversetState(RegionOversetState state)
 {
     ensureElementRareData().setRegionOversetState(state);
@@ -2497,7 +2484,7 @@ bool Element::shouldMoveToFlowThread(const RenderStyle& styleToUse) const
     if (styleToUse.flowThread().isEmpty())
         return false;
 
-    return !document().renderView()->flowThreadController().isContentElementRegisteredWithAnyNamedFlow(*this);
+    return true;
 }
 
 const AtomicString& Element::webkitRegionOverset() const
@@ -2833,7 +2820,6 @@ void Element::clearStyleDerivedDataBeforeDetachingRenderer()
     data->setIsInCanvasSubtree(false);
     data->resetComputedStyle();
     data->resetDynamicRestyleObservations();
-    data->setIsInsideRegion(false);
 }
 
 void Element::clearHoverAndActiveStatusBeforeDetachingRenderer()

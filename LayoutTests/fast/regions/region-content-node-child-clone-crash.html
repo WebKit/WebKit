@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .region {
+                -webkit-flow-from: flow;
+            }
+            .content {
+                -webkit-flow-into: redirectFlow;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test that cloning and removing a region child that has a content node child does not crash or assert.</p>
+        <p>On success you should see PASS below.<p>
+        <p>PASS</p>
+        <div class="region">
+            <div id="cloneTarget">
+                <div class="content"></div>
+            </div>
+        </div>
+        <script>
+            if (window.testRunner)
+                window.testRunner.dumpAsText();
+            function test() {
+                var elem = document.getElementById("cloneTarget");
+                parent = elem.parentNode;
+                var new_elem = document.createElement("div");
+                new_elem.innerHTML = elem.innerHTML;
+                for (i in elem.attributes) {
+                    if (elem.attributes[i].specified) {
+                        new_elem.setAttribute(elem.attributes[i].name, elem.attributes[i].value);
+                    }
+                }
+                parent.insertBefore(new_elem, elem);
+                parent.removeChild(elem);
+            }
+            setTimeout(test, 0);
+        </script>
+    </body>
+</html>

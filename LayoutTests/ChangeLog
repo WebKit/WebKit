@@ -1,3 +1,21 @@
+2014-03-27  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Crash when cloning a region child with a content node child
+        https://bugs.webkit.org/show_bug.cgi?id=129811
+
+        Reviewed by David Hyatt.
+
+        Collecting the children of a region in another named flow will be supported
+        again in the future and it will be revisited when we will implement the content
+        keyword: http://dev.w3.org/csswg/css-regions-1/#the-flow-into-property.
+        For now, skip the tests for that use case.
+
+        * TestExpectations:
+        * fast/regions/overflow-region-inline-expected.html: Expected file should not be region based.
+        * fast/regions/region-content-node-child-clone-crash-expected.txt: Added.
+        * fast/regions/region-content-node-child-clone-crash.html: Added.
+        * fast/regions/unsplittable-nested-region-expected.html: Expected file should not be region based.
+
 2014-03-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Skipping underlines disregard points completely inside the underline rect

@@ -272,11 +272,6 @@ void FlowThreadController::updateFlowThreadsLayerToRegionMappingsIfNeeded()
     }
 }
 
-bool FlowThreadController::isContentElementRegisteredWithAnyNamedFlow(const Element& contentElement) const
-{
-    return m_mapNamedFlowContentElement.contains(&contentElement);
-}
-
 void FlowThreadController::updateNamedFlowsLayerListsIfNeeded()
 {
     for (auto iter = m_renderNamedFlowThreadList->begin(), end = m_renderNamedFlowThreadList->end(); iter != end; ++iter) {

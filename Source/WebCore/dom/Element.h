@@ -384,9 +384,6 @@ public:
     void setIsInCanvasSubtree(bool);
     bool isInCanvasSubtree() const;
 
-    void setIsInsideRegion(bool);
-    bool isInsideRegion() const;
-
     void setRegionOversetState(RegionOversetState);
     RegionOversetState regionOversetState() const;
 
