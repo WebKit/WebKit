@@ -23,14 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKFoundation.h>
+#import "_WKFrameHandle.h"
 
 #if WK_API_ENABLED
 
-#import <Foundation/Foundation.h>
+#import "APIFrameHandle.h"
+#import "WKObject.h"
 
-WK_API_CLASS
-@interface WKFrameHandle : NSObject <NSCopying, NSSecureCoding>
+namespace WebKit {
+
+inline _WKFrameHandle *wrapper(API::FrameHandle& frameHandle)
+{
+    ASSERT([frameHandle.wrapper() isKindOfClass:[_WKFrameHandle self]]);
+    return (_WKFrameHandle *)frameHandle.wrapper();
+}
+
+}
+
+@interface _WKFrameHandle () <WKObject>
+
+@property (nonatomic, readonly) uint64_t _frameID;
 
 @end
 

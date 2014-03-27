@@ -24,13 +24,13 @@
  */
 
 #import "config.h"
-#import "WKFrameHandleInternal.h"
+#import "_WKFrameHandleInternal.h"
 
 #if WK_API_ENABLED
 
 using namespace WebKit;
 
-@implementation WKFrameHandle {
+@implementation _WKFrameHandle {
     API::ObjectStorage<API::FrameHandle> _frameHandle;
 }
 
@@ -46,10 +46,10 @@ using namespace WebKit;
     if (object == self)
         return YES;
 
-    if (![object isKindOfClass:[WKFrameHandle self]])
+    if (![object isKindOfClass:[_WKFrameHandle self]])
         return NO;
 
-    return _frameHandle->frameID() == ((WKFrameHandle *)object)->_frameHandle->frameID();
+    return _frameHandle->frameID() == ((_WKFrameHandle *)object)->_frameHandle->frameID();
 }
 
 - (NSUInteger)hash

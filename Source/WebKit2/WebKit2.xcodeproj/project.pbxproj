@@ -630,10 +630,10 @@
 		373CEAD5185417AE008C363D /* WKNSData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 373CEAD3185417AE008C363D /* WKNSData.mm */; };
 		373CEAD6185417AE008C363D /* WKNSData.h in Headers */ = {isa = PBXBuildFile; fileRef = 373CEAD4185417AE008C363D /* WKNSData.h */; };
 		373CEAD81859553F008C363D /* WKPagePolicyClientInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 373CEAD71859553F008C363D /* WKPagePolicyClientInternal.h */; };
-		373D122218A473010066D9CC /* WKFrameHandle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 373D122018A473010066D9CC /* WKFrameHandle.mm */; };
-		373D122318A473010066D9CC /* WKFrameHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D122118A473010066D9CC /* WKFrameHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		373D122218A473010066D9CC /* _WKFrameHandle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 373D122018A473010066D9CC /* _WKFrameHandle.mm */; };
+		373D122318A473010066D9CC /* _WKFrameHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D122118A473010066D9CC /* _WKFrameHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		373D122518A473B30066D9CC /* WKBrowsingContextHandleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D122418A473B30066D9CC /* WKBrowsingContextHandleInternal.h */; };
-		373D122718A473F60066D9CC /* WKFrameHandleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D122618A473F60066D9CC /* WKFrameHandleInternal.h */; };
+		373D122718A473F60066D9CC /* _WKFrameHandleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D122618A473F60066D9CC /* _WKFrameHandleInternal.h */; };
 		373D122D18A4B6EB0066D9CC /* WKWebProcessPlugInFramePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D122C18A4B6A80066D9CC /* WKWebProcessPlugInFramePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3743925818BC4C60001C8675 /* WKUIDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3743925718BC4C60001C8675 /* WKUIDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		374436881820E7240049579F /* WKObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 374436871820E7240049579F /* WKObject.mm */; };
@@ -2425,10 +2425,10 @@
 		373CEAD3185417AE008C363D /* WKNSData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSData.mm; sourceTree = "<group>"; };
 		373CEAD4185417AE008C363D /* WKNSData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSData.h; sourceTree = "<group>"; };
 		373CEAD71859553F008C363D /* WKPagePolicyClientInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPagePolicyClientInternal.h; sourceTree = "<group>"; };
-		373D122018A473010066D9CC /* WKFrameHandle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKFrameHandle.mm; sourceTree = "<group>"; };
-		373D122118A473010066D9CC /* WKFrameHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFrameHandle.h; sourceTree = "<group>"; };
+		373D122018A473010066D9CC /* _WKFrameHandle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKFrameHandle.mm; sourceTree = "<group>"; };
+		373D122118A473010066D9CC /* _WKFrameHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFrameHandle.h; sourceTree = "<group>"; };
 		373D122418A473B30066D9CC /* WKBrowsingContextHandleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextHandleInternal.h; sourceTree = "<group>"; };
-		373D122618A473F60066D9CC /* WKFrameHandleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFrameHandleInternal.h; sourceTree = "<group>"; };
+		373D122618A473F60066D9CC /* _WKFrameHandleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFrameHandleInternal.h; sourceTree = "<group>"; };
 		373D122C18A4B6A80066D9CC /* WKWebProcessPlugInFramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInFramePrivate.h; sourceTree = "<group>"; };
 		3743925718BC4C60001C8675 /* WKUIDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUIDelegatePrivate.h; sourceTree = "<group>"; };
 		374436871820E7240049579F /* WKObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKObject.mm; sourceTree = "<group>"; };
@@ -4675,9 +4675,6 @@
 				1AE00D4A182D6EB000087DD7 /* WKBrowsingContextHandle.mm */,
 				1AE00D4E182D6F5000087DD7 /* WKBrowsingContextHandleInternal.h */,
 				37DFA6FF1810BB92001F4A9F /* WKFoundation.h */,
-				373D122118A473010066D9CC /* WKFrameHandle.h */,
-				373D122018A473010066D9CC /* WKFrameHandle.mm */,
-				373D122618A473F60066D9CC /* WKFrameHandleInternal.h */,
 				373D122418A473B30066D9CC /* WKBrowsingContextHandleInternal.h */,
 				1A9E32991822E1CC00F5D04C /* WKRemoteObject.h */,
 				1A9E32981822E1CC00F5D04C /* WKRemoteObject.mm */,
@@ -4691,6 +4688,9 @@
 				1A9E32A01823018900F5D04C /* WKRemoteObjectRegistryInternal.h */,
 				1F604BA61889FA7400EE0395 /* WKRenderingProgressEvents.h */,
 				1F604BA71889FA7400EE0395 /* WKRenderingProgressEventsInternal.h */,
+				373D122118A473010066D9CC /* _WKFrameHandle.h */,
+				373D122018A473010066D9CC /* _WKFrameHandle.mm */,
+				373D122618A473F60066D9CC /* _WKFrameHandleInternal.h */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -6962,7 +6962,7 @@
 				1A81B38118BD66AD0007FDAC /* _WKVisitedLinkProvider.h in Headers */,
 				51032F1E180F791700961BB7 /* DatabaseToWebProcessConnectionMessages.h in Headers */,
 				51A9E1061315CCFC009E7031 /* WebKeyValueStorageManager.h in Headers */,
-				373D122718A473F60066D9CC /* WKFrameHandleInternal.h in Headers */,
+				373D122718A473F60066D9CC /* _WKFrameHandleInternal.h in Headers */,
 				1AE00D611831792100087DD7 /* FrameLoadState.h in Headers */,
 				BCB63478116BF10600603215 /* WebKit2_C.h in Headers */,
 				1A81B38518BD673A0007FDAC /* _WKVisitedLinkProviderInternal.h in Headers */,
@@ -7178,7 +7178,7 @@
 				BC1DFE8F12B31CA8005DF730 /* WKOpenPanelResultListener.h in Headers */,
 				BCD597D7112B56DC00EC8C23 /* WKPage.h in Headers */,
 				2D6CD119189058A500E5A4A0 /* ViewSnapshotStore.h in Headers */,
-				373D122318A473010066D9CC /* WKFrameHandle.h in Headers */,
+				373D122318A473010066D9CC /* _WKFrameHandle.h in Headers */,
 				BC7B633712A45ABA00D174A4 /* WKPageGroup.h in Headers */,
 				BC2D021912AC426C00E732A3 /* WKPageLoadTypes.h in Headers */,
 				93BDEB01171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h in Headers */,
@@ -8513,7 +8513,7 @@
 				BC204EEE11C83EC8008F3375 /* WKBundle.cpp in Sources */,
 				7C6E70FB18B2DC7A00F24E2E /* WebProcessCocoa.mm in Sources */,
 				935EEB9E127761AC003322B8 /* WKBundleBackForwardList.cpp in Sources */,
-				373D122218A473010066D9CC /* WKFrameHandle.mm in Sources */,
+				373D122218A473010066D9CC /* _WKFrameHandle.mm in Sources */,
 				935EEBA0127761AC003322B8 /* WKBundleBackForwardListItem.cpp in Sources */,
 				51FA2D7715212E2600C1BA0B /* WKBundleDOMWindowExtension.cpp in Sources */,
 				BCD25F1811D6BDE100169B0E /* WKBundleFrame.cpp in Sources */,

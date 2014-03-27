@@ -28,7 +28,6 @@
 
 #if WK_API_ENABLED
 
-#import "WKFrameHandleInternal.h"
 #import "WKNSArray.h"
 #import "WKNSURLExtras.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
@@ -36,6 +35,7 @@
 #import "WKWebProcessPlugInNodeHandleInternal.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
 #import "WebProcess.h"
+#import "_WKFrameHandleInternal.h"
 #import <JavaScriptCore/JSValue.h>
 #import <WebCore/IntPoint.h>
 
@@ -45,7 +45,7 @@ using namespace WebKit;
     API::ObjectStorage<WebFrame> _frame;
 }
 
-+ (instancetype)lookUpFrameFromHandle:(WKFrameHandle *)handle
++ (instancetype)lookUpFrameFromHandle:(_WKFrameHandle *)handle
 {
     WebFrame* webFrame = WebProcess::shared().webFrame(handle._frameID);
     if (!webFrame)
@@ -97,7 +97,7 @@ using namespace WebKit;
     return !!_frame->containsAnyFormElements();
 }
 
-- (WKFrameHandle *)handle
+- (_WKFrameHandle *)handle
 {
     return [wrapper(*API::FrameHandle::create(_frame->frameID()).leakRef()) autorelease];
 }

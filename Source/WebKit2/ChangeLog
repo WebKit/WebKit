@@ -1,3 +1,32 @@
+2014-03-27  Anders Carlsson  <andersca@apple.com>
+
+        Rename WKFrameHandle to _WKFrameHandle
+        https://bugs.webkit.org/show_bug.cgi?id=130847
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/Cocoa/_WKFrameHandle.h: Renamed from Source/WebKit2/Shared/API/Cocoa/WKFrameHandle.h.
+        * Shared/API/Cocoa/_WKFrameHandle.mm: Renamed from Source/WebKit2/Shared/API/Cocoa/WKFrameHandle.mm.
+        (-[_WKFrameHandle dealloc]):
+        (-[_WKFrameHandle isEqual:]):
+        (-[_WKFrameHandle hash]):
+        (-[_WKFrameHandle _frameID]):
+        (-[_WKFrameHandle copyWithZone:]):
+        (+[_WKFrameHandle supportsSecureCoding]):
+        (-[_WKFrameHandle initWithCoder:]):
+        (-[_WKFrameHandle encodeWithCoder:]):
+        (-[_WKFrameHandle API::]):
+        * Shared/API/Cocoa/_WKFrameHandleInternal.h: Renamed from Source/WebKit2/Shared/API/Cocoa/WKFrameHandleInternal.h.
+        (WebKit::wrapper):
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (+[WKWebProcessPlugInFrame lookUpFrameFromHandle:]):
+        (-[WKWebProcessPlugInFrame handle]):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFramePrivate.h:
+
 2014-03-27  Alexey Proskuryakov  <ap@apple.com>
 
         Connection::dispatchOneMessage() can be re-entered while handling Cmd-key menu

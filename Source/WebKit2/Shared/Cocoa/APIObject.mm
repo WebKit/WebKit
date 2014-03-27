@@ -34,7 +34,7 @@
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextGroupInternal.h"
 #import "WKConnectionInternal.h"
-#import "WKFrameHandleInternal.h"
+#import "_WKFrameHandleInternal.h"
 #import "WKNSArray.h"
 #import "WKNSData.h"
 #import "WKNSDictionary.h"
@@ -123,7 +123,7 @@ void* Object::newObject(size_t size, Type type)
         break;
 
     case Type::FrameHandle:
-        wrapper = [WKFrameHandle alloc];
+        wrapper = [_WKFrameHandle alloc];
         break;
 
     case Type::NavigationData:

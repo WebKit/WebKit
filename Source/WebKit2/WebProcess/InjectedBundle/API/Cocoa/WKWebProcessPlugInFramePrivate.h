@@ -31,7 +31,7 @@
 
 @interface WKWebProcessPlugInFrame (WKPrivate)
 
-+ (instancetype)lookUpFrameFromHandle:(WKFrameHandle *)handle;
++ (instancetype)lookUpFrameFromHandle:(_WKFrameHandle *)handle;
 
 @property (nonatomic, readonly) WKWebProcessPlugInBrowserContextController *_browserContextController;
 
