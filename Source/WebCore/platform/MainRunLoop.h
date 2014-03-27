@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebKit2Initialize.h"
+#ifndef MainRunLoop_h
+#define MainRunLoop_h
 
-#include "Logging.h"
-#include <WebCore/Logging.h>
-#include <WebCore/MainRunLoop.h>
-#include <runtime/InitializeThreading.h>
-#include <wtf/MainThread.h>
+namespace WebCore {
 
-#if PLATFORM(COCOA)
-#include "WebSystemInterface.h"
-#endif
-#if PLATFORM(IOS)
-#import <WebCore/WebCoreThreadSystemInterface.h>
-#endif
+void initializeMainRunLoop();
 
-namespace WebKit {
+} // namespace WebCore
 
-void InitializeWebKit2()
-{
-#if PLATFORM(COCOA)
-    InitWebCoreSystemInterface();
-#endif
-#if PLATFORM(IOS)
-    InitWebCoreThreadSystemInterface();
-#endif
-
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
-    WebCore::initializeMainRunLoop();
-
-#if !LOG_DISABLED
-    WebCore::initializeLoggingChannelsIfNecessary();
-    WebKit::initializeLogChannelsIfNecessary();
-#endif // !LOG_DISABLED
-}
-
-} // namespace WebKit
+#endif // MainRunLoop_h

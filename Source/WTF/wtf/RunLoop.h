@@ -67,6 +67,7 @@ public:
 
 #if PLATFORM(COCOA)
     WTF_EXPORT_PRIVATE void runForDuration(double duration);
+    WTF_EXPORT_PRIVATE void addModeForWakeUpAndTimers(CFStringRef);
 #endif
     
     class TimerBase {
@@ -145,6 +146,7 @@ private:
     static void performWork(void*);
     RetainPtr<CFRunLoopRef> m_runLoop;
     RetainPtr<CFRunLoopSourceRef> m_runLoopSource;
+    RetainPtr<CFMutableSetRef> m_additionalTimerModes;
     int m_nestingLevel;
 #elif PLATFORM(EFL)
     Mutex m_pipeLock;

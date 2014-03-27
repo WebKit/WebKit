@@ -109,6 +109,7 @@
 #import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MainFrame.h>
+#import <WebCore/MainRunLoop.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/Page.h>
 #import <WebCore/PluginViewBase.h>
@@ -128,7 +129,6 @@
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/PassRefPtr.h>
-#import <wtf/RunLoop.h>
 #import <wtf/text/WTFString.h>
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -2399,7 +2399,7 @@ bool WebFrameLoaderClient::shouldLoadMediaElementURL(const URL& url) const
 #if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-    RunLoop::initializeMainRunLoop();
+    WebCore::initializeMainRunLoop();
 #endif
     WebCoreObjCFinalizeOnMainThread(self);
 }

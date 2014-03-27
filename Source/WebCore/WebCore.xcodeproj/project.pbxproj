@@ -5891,6 +5891,9 @@
 		E1ADEDD50E76BD60004A1A5E /* DOMMessagePortInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ADEDD40E76BD60004A1A5E /* DOMMessagePortInternal.h */; };
 		E1ADEDDA0E76BD93004A1A5E /* JSMessagePort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ADEDD80E76BD93004A1A5E /* JSMessagePort.h */; };
 		E1ADEDDB0E76BD93004A1A5E /* JSMessagePort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1ADEDD90E76BD93004A1A5E /* JSMessagePort.cpp */; };
+		E1B0552318E3EA5900AED9D3 /* MainRunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B0552218E3EA5900AED9D3 /* MainRunLoop.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E1B0552518E3EAB100AED9D3 /* MainRunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1B0552418E3EAB100AED9D3 /* MainRunLoop.cpp */; };
+		E1B0552718E3EB6200AED9D3 /* MainRunLoop.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1B0552618E3EB6200AED9D3 /* MainRunLoop.mm */; };
 		E1B25106152A0BAF0069B779 /* StylePropertyShorthand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1B25104152A0BAF0069B779 /* StylePropertyShorthand.cpp */; };
 		E1B25107152A0BB00069B779 /* StylePropertyShorthand.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B25105152A0BAF0069B779 /* StylePropertyShorthand.h */; };
 		E1B4CD2510B322E200BFFD7E /* CredentialStorageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1B4CD2410B322E200BFFD7E /* CredentialStorageMac.mm */; };
@@ -13267,6 +13270,9 @@
 		E1ADEDD40E76BD60004A1A5E /* DOMMessagePortInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMMessagePortInternal.h; sourceTree = "<group>"; };
 		E1ADEDD80E76BD93004A1A5E /* JSMessagePort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMessagePort.h; sourceTree = "<group>"; };
 		E1ADEDD90E76BD93004A1A5E /* JSMessagePort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessagePort.cpp; sourceTree = "<group>"; };
+		E1B0552218E3EA5900AED9D3 /* MainRunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainRunLoop.h; sourceTree = "<group>"; };
+		E1B0552418E3EAB100AED9D3 /* MainRunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainRunLoop.cpp; sourceTree = "<group>"; };
+		E1B0552618E3EB6200AED9D3 /* MainRunLoop.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainRunLoop.mm; sourceTree = "<group>"; };
 		E1B25104152A0BAF0069B779 /* StylePropertyShorthand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StylePropertyShorthand.cpp; sourceTree = "<group>"; };
 		E1B25105152A0BAF0069B779 /* StylePropertyShorthand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StylePropertyShorthand.h; sourceTree = "<group>"; };
 		E1B4CD2410B322E200BFFD7E /* CredentialStorageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CredentialStorageMac.mm; sourceTree = "<group>"; };
@@ -16092,6 +16098,7 @@
 				BC25B528131C6D3900180E10 /* LocalizedStringsMac.cpp */,
 				1402645D0AFDC19B005919E2 /* LoggingMac.mm */,
 				CD641EBD1819B35900EE4C41 /* MediaTimeMac.cpp */,
+				E1B0552618E3EB6200AED9D3 /* MainRunLoop.mm */,
 				CD641EBE1819B35900EE4C41 /* MediaTimeMac.h */,
 				657EDA0A1385CBD8004E0645 /* MemoryPressureHandlerMac.mm */,
 				BC772C5D0C4EB3440083285F /* MIMETypeRegistryMac.mm */,
@@ -20957,6 +20964,8 @@
 				935207BD09BD410A00F2038D /* LocalizedStrings.h */,
 				A8239DFE09B3CF8A00B60641 /* Logging.cpp */,
 				A8239DFF09B3CF8A00B60641 /* Logging.h */,
+				E1B0552418E3EAB100AED9D3 /* MainRunLoop.cpp */,
+				E1B0552218E3EA5900AED9D3 /* MainRunLoop.h */,
 				E187056216E54A0D00585E97 /* MainThreadTask.h */,
 				CDF2B003181F059C00F2B424 /* MediaDescription.h */,
 				CD641EC7181ED60100EE4C41 /* MediaSample.h */,
@@ -22858,6 +22867,7 @@
 				29A8122E0FBB9C1D00510293 /* AccessibilityARIAGridCell.h in Headers */,
 				29A812330FBB9C1D00510293 /* AccessibilityARIAGridRow.h in Headers */,
 				29A8123B0FBB9C1D00510293 /* AccessibilityImageMapLink.h in Headers */,
+				E1B0552318E3EA5900AED9D3 /* MainRunLoop.h in Headers */,
 				29A8122C0FBB9C1D00510293 /* AccessibilityList.h in Headers */,
 				29A812430FBB9C1D00510293 /* AccessibilityListBox.h in Headers */,
 				29A812420FBB9C1D00510293 /* AccessibilityListBoxOption.h in Headers */,
@@ -28788,6 +28798,7 @@
 				93C38C04164473DD00091EB2 /* ScrollingTreeFixedNode.mm in Sources */,
 				0FC4E40F187F82E10045882C /* ScrollingTreeIOS.cpp in Sources */,
 				1AAADDE314DC8C8F00AF64B3 /* ScrollingTreeNode.cpp in Sources */,
+				E1B0552518E3EAB100AED9D3 /* MainRunLoop.cpp in Sources */,
 				9391A99C1629D70000297330 /* ScrollingTreeScrollingNode.cpp in Sources */,
 				0FC4E412187F82E10045882C /* ScrollingTreeScrollingNodeIOS.mm in Sources */,
 				93C4A4161629DF5A00C3EB6E /* ScrollingTreeScrollingNodeMac.mm in Sources */,
@@ -28933,6 +28944,7 @@
 				E139866315478474001E3F65 /* StyleResolver.cpp in Sources */,
 				E4DEAA1717A93DC3000E0430 /* StyleResolveTree.cpp in Sources */,
 				E4BBED4C14FCDBA1003F0B98 /* StyleRule.cpp in Sources */,
+				E1B0552718E3EB6200AED9D3 /* MainRunLoop.mm in Sources */,
 				E4946EAE156E64DD00D3297F /* StyleRuleImport.cpp in Sources */,
 				A8EA800D0A19516E00A8EF5F /* StyleSheet.cpp in Sources */,
 				E4F9EEF2156D9FFA00D23E7E /* StyleSheetContents.cpp in Sources */,

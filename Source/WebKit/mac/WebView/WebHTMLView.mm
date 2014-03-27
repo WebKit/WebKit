@@ -101,6 +101,7 @@
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MainFrame.h>
+#import <WebCore/MainRunLoop.h>
 #import <WebCore/Page.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderView.h>
@@ -124,7 +125,6 @@
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/ObjcRuntimeExtras.h>
-#import <wtf/RunLoop.h>
 
 #if !PLATFORM(IOS)
 #import <AppKit/NSAccessibility.h>
@@ -643,7 +643,7 @@ static NSCellStateValue kit(TriState state)
 #if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-    RunLoop::initializeMainRunLoop();
+    WebCore::initializeMainRunLoop();
 #endif
     WebCoreObjCFinalizeOnMainThread(self);
     
@@ -2474,7 +2474,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
                              returnTypes:[[self class] _insertablePasteboardTypes]];
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-    RunLoop::initializeMainRunLoop();
+    WebCore::initializeMainRunLoop();
 #endif
     WebCoreObjCFinalizeOnMainThread(self);
 }

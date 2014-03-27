@@ -59,6 +59,7 @@
 #import <WebCore/HTMLTextAreaElement.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LegacyWebArchive.h>
+#import <WebCore/MainRunLoop.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/Settings.h>
@@ -70,7 +71,6 @@
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/PassRefPtr.h>
-#import <wtf/RunLoop.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS)
@@ -117,7 +117,7 @@ static WebViewInsertAction kit(EditorInsertAction coreAction)
 #if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-    RunLoop::initializeMainRunLoop();
+    WebCore::initializeMainRunLoop();
 #endif
     WebCoreObjCFinalizeOnMainThread(self);
 }

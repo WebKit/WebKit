@@ -45,14 +45,14 @@
 #import "WebTypesInternal.h"
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Image.h>
-#import <WebCore/URL.h>
+#import <WebCore/MainRunLoop.h>
 #import <WebCore/PageCache.h>
 #import <WebCore/ThreadCheck.h>
+#import <WebCore/URL.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
-#import <wtf/RunLoop.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/text/WTFString.h>
 
@@ -128,7 +128,7 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
 #if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-    RunLoop::initializeMainRunLoop();
+    WebCore::initializeMainRunLoop();
 #endif
     WebCoreObjCFinalizeOnMainThread(self);
 }

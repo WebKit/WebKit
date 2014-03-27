@@ -38,13 +38,13 @@
 #import <wtf/PassRefPtr.h>
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/LegacyWebArchive.h>
+#import <WebCore/MainRunLoop.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/TextEncoding.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <wtf/MainThread.h>
-#import <wtf/RunLoop.h>
 
 using namespace WebCore;
 
@@ -69,7 +69,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 #if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-    RunLoop::initializeMainRunLoop();
+    WebCore::initializeMainRunLoop();
 #endif
     WebCoreObjCFinalizeOnMainThread(self);
 }

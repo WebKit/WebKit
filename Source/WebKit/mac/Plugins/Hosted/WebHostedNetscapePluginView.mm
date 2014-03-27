@@ -43,6 +43,7 @@
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLPlugInElement.h>
+#import <WebCore/MainRunLoop.h>
 #import <WebCore/RenderEmbeddedObject.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -51,7 +52,6 @@
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
 #import <wtf/ObjcRuntimeExtras.h>
-#import <wtf/RunLoop.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -74,7 +74,7 @@ extern "C" {
 #if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-    RunLoop::initializeMainRunLoop();
+    WebCore::initializeMainRunLoop();
 #endif
     WebCoreObjCFinalizeOnMainThread(self);
     WKSendUserChangeNotifications();

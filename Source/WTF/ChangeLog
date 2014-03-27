@@ -1,3 +1,24 @@
+2014-03-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Connection::dispatchOneMessage() can be re-entered while handling Cmd-key menu
+        equivalents, ASSERT(!_data->_keyDownEventBeingResent)
+        https://bugs.webkit.org/show_bug.cgi?id=130767
+        <rdar://problem/16307487>
+
+        Reviewed by Darin Adler.
+
+        Changed RunLoop to wake up and fire timers only in default run loop mode by default,
+        and added an ability to add more modes (can't use AppKit symbols in WTF).
+
+        In addition to this bug, the change also blocks modal alerts from appearing under
+        menus during menu tracking.
+
+        * wtf/RunLoop.h:
+        * wtf/cf/RunLoopCF.cpp:
+        (WTF::RunLoop::RunLoop):
+        (WTF::RunLoop::addModeForWakeUpAndTimers):
+        (WTF::RunLoop::TimerBase::start):
+
 2014-03-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Removing the remaining Automake cruft.

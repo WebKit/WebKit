@@ -39,12 +39,12 @@
 #import <WebCore/Frame.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Image.h>
+#import <WebCore/MainRunLoop.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/DOMCore.h>
 #import <WebKit/DOMExtensions.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
-#import <wtf/RunLoop.h>
 
 using namespace WebCore;
 
@@ -68,7 +68,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 #if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-    RunLoop::initializeMainRunLoop();
+    WebCore::initializeMainRunLoop();
 #endif
     WebCoreObjCFinalizeOnMainThread(self);
 }

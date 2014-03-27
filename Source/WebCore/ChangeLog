@@ -1,3 +1,24 @@
+2014-03-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Connection::dispatchOneMessage() can be re-entered while handling Cmd-key menu
+        equivalents, ASSERT(!_data->_keyDownEventBeingResent)
+        https://bugs.webkit.org/show_bug.cgi?id=130767
+        <rdar://problem/16307487>
+
+        Added a wrapper for RunLoop::initializeMainThread that also adds modal run loop
+        mode to it on Mac.
+
+        * CMakeLists.txt:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/MainRunLoop.cpp: Added.
+        (WebCore::initializeMainRunLoop):
+        * platform/MainRunLoop.h: Added.
+        * platform/mac/MainRunLoop.mm: Added.
+        (WebCore::initializeMainRunLoop):
+
 2014-03-27  Krzysztof Czech  <k.czech@samsung.com>
 
         AX: Returns const reference to static string.

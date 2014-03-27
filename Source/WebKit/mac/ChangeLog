@@ -1,3 +1,38 @@
+2014-03-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Connection::dispatchOneMessage() can be re-entered while handling Cmd-key menu
+        equivalents, ASSERT(!_data->_keyDownEventBeingResent)
+        https://bugs.webkit.org/show_bug.cgi?id=130767
+        <rdar://problem/16307487>
+
+        Reviewed by Darin Adler.
+
+        Switched to a WebCore wrapper for RunLoop::initializeMainRunLoop that adds
+        NSModalPanelRunLoopMode to RunLoop event source and timer modes.
+
+        * Carbon/CarbonWindowAdapter.mm: (+[CarbonWindowAdapter initialize]):
+        * History/WebBackForwardList.mm: (+[WebBackForwardList initialize]):
+        * History/WebHistoryItem.mm: (+[WebHistoryItem initialize]):
+        * Misc/WebCache.mm: (+[WebCache initialize]):
+        * Misc/WebElementDictionary.mm: (+[WebElementDictionary initialize]):
+        * Misc/WebIconDatabase.mm: (+[WebIconDatabase initialize]):
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm: (+[WebHostedNetscapePluginView initialize]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        * Plugins/WebBasePluginPackage.mm:
+        * Plugins/WebNetscapePluginView.mm: (+[WebNetscapePluginView initialize]):
+        * WebCoreSupport/WebEditorClient.mm: (+[WebUndoStep initialize]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebView/WebArchive.mm: (+[WebArchivePrivate initialize]):
+        * WebView/WebDataSource.mm: (+[WebDataSource initialize]):
+        * WebView/WebHTMLView.mm:
+        (+[WebHTMLViewPrivate initialize]):
+        (+[WebHTMLView initialize]):
+        * WebView/WebPreferences.mm: (+[WebPreferences initialize]):
+        * WebView/WebResource.mm: (+[WebResourcePrivate initialize]):
+        * WebView/WebTextIterator.mm: (+[WebTextIteratorPrivate initialize]):
+        * WebView/WebView.mm: (+[WebView initialize]):
+        * WebView/WebViewData.mm: (+[WebViewPrivate initialize]):
+
 2014-03-26  Timothy Hatcher  <timothy@apple.com>
 
         Propagate the hiddenFromInspector flag on ResourceRequest in

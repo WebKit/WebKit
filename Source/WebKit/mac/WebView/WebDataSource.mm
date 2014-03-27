@@ -53,6 +53,7 @@
 #import <WebCore/URL.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/MainRunLoop.h>
 #import <WebCore/ResourceBuffer.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/SharedBuffer.h>
@@ -65,7 +66,6 @@
 #import <wtf/MainThread.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/RunLoop.h>
 
 #if PLATFORM(IOS)
 #import "WebPDFViewIOS.h"
@@ -161,7 +161,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 #if !PLATFORM(IOS)
         JSC::initializeThreading();
         WTF::initializeMainThreadToProcessMainThread();
-        RunLoop::initializeMainRunLoop();
+        WebCore::initializeMainRunLoop();
 #endif
         WebCoreObjCFinalizeOnMainThread(self);
     }
