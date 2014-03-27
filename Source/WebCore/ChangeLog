@@ -1,3 +1,21 @@
+2014-03-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTMLConverter::_processText is slow because it walks up ancestor elements
+        https://bugs.webkit.org/show_bug.cgi?id=130820
+
+        Reviewed by Sam Weinig.
+
+        Avoid walking up the tree from each text node by caching the aggregated attributed strings for each element.
+        Also compute the attributed strings top-down to avoid calling mutableCopy in every iteration. 
+
+        This reduces the runtime of Interactive/CopyAll.html from 15s to 13s (15%).
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::_attributesForElement):
+        (HTMLConverter::attributesForElement):
+        (HTMLConverter::aggregatedAttributesForAncestors):
+        (HTMLConverter::_processText):
+
 2014-03-26  Sam Weinig  <sam@webkit.org>
 
         Fix iOS build.

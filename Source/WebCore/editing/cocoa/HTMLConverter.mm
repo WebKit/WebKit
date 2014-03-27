@@ -454,7 +454,8 @@ public:
     
 private:
     HashMap<RefPtr<Element>, RetainPtr<NSDictionary>> m_attributesForElements;
-    
+    HashMap<RefPtr<Element>, RetainPtr<NSMutableDictionary>> m_aggregatedAttributesForElements;
+
     NSMutableAttributedString *_attrStr;
     NSMutableDictionary *_documentAttrs;
     NSURL *_baseURL;
@@ -497,6 +498,8 @@ private:
     
     NSDictionary *_computedAttributesForElement(Element&);
     NSDictionary *_attributesForElement(DOMElement *);
+    NSDictionary* attributesForElement(Element& element);
+    NSDictionary* aggregatedAttributesForAncestors(CharacterData&);
     
     Element* _blockLevelElementForNode(Node*);
     
@@ -1352,12 +1355,42 @@ NSDictionary *HTMLConverter::_attributesForElement(DOMElement *element)
 {
     if (!element)
         return [NSDictionary dictionary];
-    
-    Element& coreElement = *core(element);
-    
-    auto& attributes = m_attributesForElements.add(&coreElement, nullptr).iterator->value;
+    return attributesForElement(*core(element));
+}
+
+NSDictionary* HTMLConverter::attributesForElement(Element& element)
+{
+    auto& attributes = m_attributesForElements.add(&element, nullptr).iterator->value;
     if (!attributes)
-        attributes = _computedAttributesForElement(coreElement);
+        attributes = _computedAttributesForElement(element);
+    return attributes.get();
+}
+
+NSDictionary* HTMLConverter::aggregatedAttributesForAncestors(CharacterData& node)
+{
+    Node* ancestor = node.parentNode();
+    while (ancestor && !ancestor->isElementNode())
+        ancestor = ancestor->parentNode();
+    if (!ancestor)
+        return nullptr;
+
+    auto& attributes = m_aggregatedAttributesForElements.add(toElement(ancestor), nullptr).iterator->value;
+    if (!attributes) {
+        Vector<Element*, 16> ancestorElements;
+        ancestorElements.append(toElement(ancestor));
+        for (; ancestor; ancestor = ancestor->parentNode()) {
+            if (ancestor->isElementNode())
+                ancestorElements.append(toElement(ancestor));
+        }
+
+        attributes = [NSMutableDictionary dictionary];
+        // Fill attrs dictionary with attributes from the highest to the lowest, not overwriting ones deeper in the tree
+        for (unsigned index = ancestorElements.size(); index;) {
+            index--;
+            [attributes addEntriesFromDictionary:attributesForElement(*ancestorElements[index])];
+        }
+    }
+
     return attributes.get();
 }
 
@@ -2332,22 +2365,8 @@ void HTMLConverter::_processText(CharacterData& characterData)
 
         [_attrStr replaceCharactersInRange:rangeToReplace withString:outputString];
         rangeToReplace.length = outputString.length();
-        RetainPtr<NSDictionary> attrs;
-        Node* ancestor = characterData.parentNode();
-        while (ancestor) {
-            // Fill attrs dictionary with attributes from parent nodes, not overwriting ones deeper in the tree
-            if(ancestor->isElementNode()) {
-                RetainPtr<NSMutableDictionary> newAttrs = adoptNS([_attributesForElement(kit(toElement(ancestor))) mutableCopy]);
-                if (attrs) {
-                    // Already-set attributes (from lower in the tree) overwrite the higher ones.
-                    [newAttrs addEntriesFromDictionary:attrs.get()];
-                }
-                attrs = newAttrs;
-            }
-            ancestor = ancestor->parentNode();
-        }
-        if (rangeToReplace.length > 0)
-            [_attrStr setAttributes:attrs.get() range:rangeToReplace];
+        if (rangeToReplace.length)
+            [_attrStr setAttributes:aggregatedAttributesForAncestors(characterData) range:rangeToReplace];
         _flags.isSoft = wasSpace;
     }
     if (mutstr)
