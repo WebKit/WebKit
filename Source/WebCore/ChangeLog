@@ -1,3 +1,18 @@
+2014-03-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Make sure childContainmentLayer is parented
+        https://bugs.webkit.org/show_bug.cgi?id=130808
+
+        Reviewed by Tim Horton.
+
+        m_childContainmentLayer was never parented if the page
+        created no other compositing layers, which left a dangling
+        GraphicsLayer which in turn confused UI-side compositing a little.
+        Fix by always parenting this layer.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+
 2014-03-26  Brian Burg  <bburg@apple.com>
 
         Web Replay: disable page cache during capture/replay

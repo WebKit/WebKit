@@ -299,8 +299,10 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     m_graphicsLayer = createGraphicsLayer(layerName);
     m_creatingPrimaryGraphicsLayer = false;
 
-    if (m_usingTiledCacheLayer)
+    if (m_usingTiledCacheLayer) {
         m_childContainmentLayer = createGraphicsLayer("TiledBacking Flattening Layer");
+        m_graphicsLayer->addChild(m_childContainmentLayer.get());
+    }
 
     if (m_isMainFrameRenderViewLayer) {
 #if !PLATFORM(IOS)
