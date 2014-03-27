@@ -1,3 +1,22 @@
+2014-03-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix crash when RenderView is cleared inside of frame flattening layout
+        https://bugs.webkit.org/show_bug.cgi?id=130864
+
+        Reviewed by Dan Bernstein.
+        
+        Navigating on http://wallstcheatsheet.com pages on iOS in WebKit1 would
+        sometimes crash when, inside the inChildFrameLayoutWithFrameFlattening clause,
+        our frame's RenderView would be null after doing a layout from the root frame,
+        possibly also when WebCore was being re-entered from another thread.
+        
+        Add a null check to fix this.
+        
+        Crash was timing-dependent and hard to test.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+
 2014-03-27  Antti Koivisto  <antti@apple.com>
 
         Remove some unnecessary branches from LiveNodeList traversal

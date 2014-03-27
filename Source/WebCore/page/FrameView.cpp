@@ -1080,7 +1080,7 @@ void FrameView::layout(bool allowSubtree)
     if (inChildFrameLayoutWithFrameFlattening) {
         startLayoutAtMainFrameViewIfNeeded(allowSubtree);
         RenderElement* root = m_layoutRoot ? m_layoutRoot : frame().document()->renderView();
-        if (!root->needsLayout())
+        if (!root || !root->needsLayout())
             return;
     }
 
