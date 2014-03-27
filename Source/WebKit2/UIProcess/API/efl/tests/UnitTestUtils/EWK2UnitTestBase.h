@@ -45,6 +45,7 @@ protected:
     virtual void TearDown();
 
     static constexpr double defaultTimeoutSeconds = 10.0;
+    bool m_multipleProcesses;
 
     bool loadUrlSync(const char* url, double timeoutSeconds = defaultTimeoutSeconds);
     bool waitUntilLoadFinished(double timeoutSeconds = defaultTimeoutSeconds);

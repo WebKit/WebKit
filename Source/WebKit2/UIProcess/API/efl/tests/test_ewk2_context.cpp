@@ -26,7 +26,10 @@
 
 #include "config.h"
 
+#include "EwkView.h"
 #include "UnitTestUtils/EWK2UnitTestBase.h"
+#include "ewk_context_private.h"
+#include "ewk_view_private.h"
 
 using namespace EWK2UnitTest;
 
@@ -45,6 +48,14 @@ public:
         const char* path = ewk_url_scheme_request_path_get(request);
         ASSERT_STREQ("MyPath", path);
         ASSERT_TRUE(ewk_url_scheme_request_finish(request, htmlReply, strlen(htmlReply), "text/html"));
+    }
+};
+
+class EWK2ContextTestMultipleProcesses : public EWK2UnitTestBase {
+protected:
+    EWK2ContextTestMultipleProcesses()
+    {
+        m_multipleProcesses = true;
     }
 };
 
@@ -118,11 +129,88 @@ TEST_F(EWK2ContextTest, ewk_context_cache_model)
     ASSERT_EQ(EWK_CACHE_MODEL_DOCUMENT_VIEWER, ewk_context_cache_model_get(context));
 }
 
-TEST_F(EWK2ContextTest, ewk_context_process_model)
+TEST_F(EWK2ContextTest, ewk_context_web_process_model)
 {
     Ewk_Context* context = ewk_view_context_get(webView());
 
     ASSERT_EQ(EWK_PROCESS_MODEL_SHARED_SECONDARY, ewk_context_process_model_get(context));
+
+    Ewk_Page_Group* pageGroup = ewk_view_page_group_get(webView());
+    Evas* evas = ecore_evas_get(backingStore());
+    Evas_Smart* smart = evas_smart_class_new(&(ewkViewClass()->sc));
+
+    Evas_Object* webView1 = ewk_view_smart_add(evas, smart, context, pageGroup);
+    Evas_Object* webView2 = ewk_view_smart_add(evas, smart, context, pageGroup);
+
+    PlatformProcessIdentifier webView1WebProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processIdentifier();
+    PlatformProcessIdentifier webView2WebProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processIdentifier();
+
+    ASSERT_EQ(webView1WebProcessID, webView2WebProcessID);
+}
+
+TEST_F(EWK2ContextTestMultipleProcesses, ewk_context_web_process_model)
+{
+    Ewk_Context* context = ewk_view_context_get(webView());
+
+    ASSERT_EQ(EWK_PROCESS_MODEL_MULTIPLE_SECONDARY, ewk_context_process_model_get(context));
+
+    Ewk_Page_Group* pageGroup = ewk_view_page_group_get(webView());
+    Evas* evas = ecore_evas_get(backingStore());
+    Evas_Smart* smart = evas_smart_class_new(&(ewkViewClass()->sc));
+
+    Evas_Object* webView1 = ewk_view_smart_add(evas, smart, context, pageGroup);
+    Evas_Object* webView2 = ewk_view_smart_add(evas, smart, context, pageGroup);
+
+    PlatformProcessIdentifier webView1WebProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processIdentifier();
+    PlatformProcessIdentifier webView2WebProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processIdentifier();
+
+    ASSERT_NE(webView1WebProcessID, webView2WebProcessID);
+}
+
+TEST_F(EWK2ContextTest, ewk_context_network_process_model)
+{
+    Ewk_Context* context = ewk_view_context_get(webView());
+
+    ASSERT_EQ(EWK_PROCESS_MODEL_SHARED_SECONDARY, ewk_context_process_model_get(context));
+
+    Ewk_Page_Group* pageGroup = ewk_view_page_group_get(webView());
+    Evas* evas = ecore_evas_get(backingStore());
+    Evas_Smart* smart = evas_smart_class_new(&(ewkViewClass()->sc));
+
+    Evas_Object* webView1 = ewk_view_smart_add(evas, smart, context, pageGroup);
+    Evas_Object* webView2 = ewk_view_smart_add(evas, smart, context, pageGroup);
+
+    PlatformProcessIdentifier webView1WebProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processIdentifier();
+    PlatformProcessIdentifier webView2WebProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processIdentifier();
+
+    ASSERT_EQ(webView1WebProcessID, webView2WebProcessID);
+
+    ASSERT_TRUE(toImpl(EWKViewGetWKView(webView1))->page()->process().context().networkProcess() == nullptr);
+    ASSERT_TRUE(toImpl(EWKViewGetWKView(webView2))->page()->process().context().networkProcess() == nullptr);
+}
+
+
+TEST_F(EWK2ContextTestMultipleProcesses, ewk_context_network_process_model)
+{
+    Ewk_Context* context = ewk_view_context_get(webView());
+
+    ASSERT_EQ(EWK_PROCESS_MODEL_MULTIPLE_SECONDARY, ewk_context_process_model_get(context));
+
+    Ewk_Page_Group* pageGroup = ewk_view_page_group_get(webView());
+    Evas* evas = ecore_evas_get(backingStore());
+    Evas_Smart* smart = evas_smart_class_new(&(ewkViewClass()->sc));
+
+    Evas_Object* webView1 = ewk_view_smart_add(evas, smart, context, pageGroup);
+    Evas_Object* webView2 = ewk_view_smart_add(evas, smart, context, pageGroup);
+
+    PlatformProcessIdentifier webView1WebProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processIdentifier();
+    PlatformProcessIdentifier webView2WebProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processIdentifier();
+    PlatformProcessIdentifier webView1NetworkProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().context().networkProcess()->processIdentifier();
+    PlatformProcessIdentifier webView2NetworkProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().context().networkProcess()->processIdentifier();
+
+    ASSERT_NE(webView1WebProcessID, webView2WebProcessID);
+    ASSERT_NE(webView1WebProcessID, webView1NetworkProcessID);
+    ASSERT_NE(webView1WebProcessID, webView2NetworkProcessID);
 }
 
 TEST_F(EWK2ContextTest, ewk_context_new)
