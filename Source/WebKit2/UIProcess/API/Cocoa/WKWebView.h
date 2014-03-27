@@ -118,6 +118,9 @@ WK_API_CLASS
 - (WKNavigation *)goBack;
 - (WKNavigation *)goForward;
 
+- (void)stopLoading;
+
+// FIXME: Move this to WKIBActions.
 - (IBAction)stopLoading:(id)sender;
 
 @property (nonatomic) BOOL allowsBackForwardNavigationGestures;

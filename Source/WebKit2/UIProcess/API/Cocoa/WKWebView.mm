@@ -307,6 +307,11 @@
     return nil;
 }
 
+- (void)stopLoading
+{
+    _page->stopLoading();
+}
+
 - (IBAction)stopLoading:(id)sender
 {
     _page->stopLoading();
