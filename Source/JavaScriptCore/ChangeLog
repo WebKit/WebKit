@@ -1,3 +1,13 @@
+2014-03-26  Mark Lam  <mark.lam@apple.com>
+
+        Build fix after r166307.
+
+        Not reviewed.
+
+        * runtime/JSCell.h:
+        - The inline function isAPIValueWrapper() should not be exported.  This
+          was causing a linkage error when building for 32-bit x86 on Mac.
+
 2014-03-26  Filip Pizlo  <fpizlo@apple.com>
 
         Reasoning about DWARF register numbers should be moved out of FTL::Location

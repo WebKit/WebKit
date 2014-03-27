@@ -92,7 +92,7 @@ public:
     bool isGetterSetter() const;
     bool isProxy() const;
     bool inherits(const ClassInfo*) const;
-    JS_EXPORT_PRIVATE bool isAPIValueWrapper() const;
+    bool isAPIValueWrapper() const;
 
     JSType type() const;
     IndexingType indexingType() const;
