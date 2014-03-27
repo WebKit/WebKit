@@ -1,3 +1,12 @@
+2014-03-27  Jae Hyun Park  <jaepark@webkit.org>
+
+        Remove LayerTreeContextCairo.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=130807
+
+        Reviewed by Martin Robinson.
+
+        * Shared/cairo/LayerTreeContextCairo.cpp: Removed.
+
 2014-03-27  Maciej Florek  <m.florek@samsung.com>
 
         [EFL][WK2] Add tests of the set process model API
