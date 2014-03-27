@@ -1,3 +1,16 @@
+2014-03-26  Tim Horton  <timothy_horton@apple.com>
+
+        Assertion failure in RemoteLayerBackingStore::flush
+        https://bugs.webkit.org/show_bug.cgi?id=130810
+        <rdar://problem/16439276>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (RemoteLayerBackingStore::flush):
+        We don't always have backing store to flush, if platformCALayerDrawsContent() is false.
+        We also can't assert that we have a back surface, because the very first paint will not.
+
 2014-03-26  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Expose DownloadClient::didFail() and DownloadClient::didCancel()

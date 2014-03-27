@@ -331,17 +331,20 @@ void RemoteLayerBackingStore::flush()
 {
 #if USE(IOSURFACE)
     if (acceleratesDrawing()) {
-        CGContextRef platformContext = m_frontSurface->platformContext();
-        ASSERT(platformContext);
-        ASSERT(m_backSurfacePendingFlush);
-        CGContextFlush(platformContext);
-        m_backSurfacePendingFlush = nullptr;
+        if (m_frontSurface) {
+            CGContextRef platformContext = m_frontSurface->platformContext();
+            ASSERT(platformContext);
+            CGContextFlush(platformContext);
+            m_backSurfacePendingFlush = nullptr;
+        }
         return;
     }
 #endif
 
     ASSERT(!acceleratesDrawing());
-    ASSERT(m_bufferContextPendingFlush);
-    CGContextFlush(m_bufferContextPendingFlush.get());
-    m_bufferContextPendingFlush = nullptr;
+
+    if (m_bufferContextPendingFlush) {
+        CGContextFlush(m_bufferContextPendingFlush.get());
+        m_bufferContextPendingFlush = nullptr;
+    }
 }
