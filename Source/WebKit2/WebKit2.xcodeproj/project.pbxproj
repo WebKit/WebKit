@@ -971,6 +971,7 @@
 		7CF47FFB17275C57008ACB91 /* PageBanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CF47FF917275C57008ACB91 /* PageBanner.h */; };
 		7CF47FFE17276AE3008ACB91 /* WKBundlePageBannerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7CF47FFC17276AE3008ACB91 /* WKBundlePageBannerMac.mm */; };
 		7CF47FFF17276AE3008ACB91 /* WKBundlePageBannerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CF47FFD17276AE3008ACB91 /* WKBundlePageBannerMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7EC4F0FB18E4ACBB008056AF /* NetworkProcessCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7EC4F0F918E4A945008056AF /* NetworkProcessCocoa.mm */; };
 		84477853176FCC0800CDC7BB /* InjectedBundleHitTestResultMediaType.h in Headers */ = {isa = PBXBuildFile; fileRef = 84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */; };
 		868160D0187645570021E79D /* WindowServerConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 868160CF187645370021E79D /* WindowServerConnection.mm */; };
 		8CFECE941490F140002AAA32 /* EditorState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CFECE931490F140002AAA32 /* EditorState.cpp */; };
@@ -2808,6 +2809,7 @@
 		7CF47FF917275C57008ACB91 /* PageBanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageBanner.h; sourceTree = "<group>"; };
 		7CF47FFC17276AE3008ACB91 /* WKBundlePageBannerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKBundlePageBannerMac.mm; sourceTree = "<group>"; };
 		7CF47FFD17276AE3008ACB91 /* WKBundlePageBannerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePageBannerMac.h; sourceTree = "<group>"; };
+		7EC4F0F918E4A945008056AF /* NetworkProcessCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkProcessCocoa.mm; path = NetworkProcess/cocoa/NetworkProcessCocoa.mm; sourceTree = "<group>"; };
 		84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestResultMediaType.h; sourceTree = "<group>"; };
 		868160CD18763D4B0021E79D /* WindowServerConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowServerConnection.h; sourceTree = "<group>"; };
 		868160CF187645370021E79D /* WindowServerConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WindowServerConnection.mm; sourceTree = "<group>"; };
@@ -4749,6 +4751,7 @@
 		510CC7DA16138E0100D03ED3 /* NetworkProcess */ = {
 			isa = PBXGroup;
 			children = (
+				7EC4F0F818E4A922008056AF /* cocoa */,
 				2DA944BB188511DD00ED86DB /* ios */,
 				BC82837C16B45DA500A278FE /* EntryPoint */,
 				E1798C7616E6815500240139 /* FileAPI */,
@@ -5136,6 +5139,14 @@
 			);
 			name = PlugInSandboxProfiles;
 			path = Resources/PlugInSandboxProfiles;
+			sourceTree = "<group>";
+		};
+		7EC4F0F818E4A922008056AF /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				7EC4F0F918E4A945008056AF /* NetworkProcessCocoa.mm */,
+			);
+			name = cocoa;
 			sourceTree = "<group>";
 		};
 		9394AE411702B25B00344232 /* mac */ = {
@@ -8458,6 +8469,7 @@
 				BC857FB612B830E600EDEB2E /* WebOpenPanelParameters.cpp in Sources */,
 				BC857F8612B82D0B00EDEB2E /* WebOpenPanelResultListener.cpp in Sources */,
 				1AFDD3191891CA1200153970 /* WKPreferences.mm in Sources */,
+				7EC4F0FB18E4ACBB008056AF /* NetworkProcessCocoa.mm in Sources */,
 				511D8201185BC217001AED56 /* SQLiteIDBTransaction.cpp in Sources */,
 				2DA944BD188511E700ED86DB /* NetworkProcessIOS.mm in Sources */,
 				BC857F7E12B82CEE00EDEB2E /* WebOpenPanelResultListenerProxy.cpp in Sources */,

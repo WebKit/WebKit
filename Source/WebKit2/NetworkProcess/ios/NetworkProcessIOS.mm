@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS) && ENABLE(NETWORK_PROCESS)
 
+#import "NetworkProcessCreationParameters.h"
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
@@ -42,9 +43,7 @@ namespace WebKit {
 
 void NetworkProcess::initializeProcess(const ChildProcessInitializationParameters&)
 {
-#if PLATFORM(IOS)
     InitWebCoreThreadSystemInterface();
-#endif // PLATFORM(IOS)
 }
 
 void NetworkProcess::initializeProcessName(const ChildProcessInitializationParameters&)
@@ -53,11 +52,6 @@ void NetworkProcess::initializeProcessName(const ChildProcessInitializationParam
 }
 
 void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&)
-{
-    notImplemented();
-}
-
-void NetworkProcess::platformSetCacheModel(CacheModel)
 {
     notImplemented();
 }
@@ -71,14 +65,9 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t)
 {
 }
 
-void NetworkProcess::platformLowMemoryHandler(bool)
+void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
-    notImplemented();
-}
-
-void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters&)
-{
-    notImplemented();
+    platformInitializeNetworkProcessCocoa(parameters);
 }
 
 void NetworkProcess::platformTerminate()

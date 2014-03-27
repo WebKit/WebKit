@@ -1,3 +1,29 @@
+2014-03-27  Pratik Solanki  <psolanki@apple.com>
+
+        [iOS WebKit2] Share network process code between iOS and Mac
+        https://bugs.webkit.org/show_bug.cgi?id=130861
+
+        Reviewed by Sam Weinig.
+
+        Implement network process functions for iOS by moving common code from NetworkProcessMac.mm
+        to a new shared file NetworkProcessCocoa.mm and sharing between iOS and Mac.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm: Added.
+        (WebKit::NetworkProcess::platformLowMemoryHandler):
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        Common initialization code for iOS and Mac.
+        (WebKit::memorySize):
+        (WebKit::volumeFreeSize):
+        (WebKit::NetworkProcess::platformSetCacheModel):
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::initializeProcess):
+        Remove unnecessary #if PLATFORM(IOS).
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-03-27  Enrica Casucci  <enrica@apple.com>
 
         Add support for AirPlay picker in WK2 for iOS.
