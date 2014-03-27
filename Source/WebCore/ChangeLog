@@ -1,3 +1,19 @@
+2014-03-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix failing scrolling tests by reverting to previous behavior where
+        the scrolling geometry for the main frame scrolling node was only
+        updated from frameViewLayoutUpdated() and no-where else.
+
+        * WebCore.exp.in:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateScrollingNode):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::updateScrollingNode):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+        (WebCore::RenderLayerCompositor::detachScrollCoordinatedLayer): Deleted.
+
 2014-03-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTMLConverter::_processText is slow because it walks up ancestor elements

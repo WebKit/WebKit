@@ -3520,22 +3520,18 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Scr
         GraphicsLayer* scrolledContentsLayer = backing->scrollingContentsLayer();
         GraphicsLayer* counterScrollingLayer = nullptr;
 
-        ScrollingCoordinator::ScrollingGeometry scrollingGeometry;
         if (isRootLayer) {
             scrollingLayer = m_scrollLayer.get();
             scrolledContentsLayer = nullptr;
             counterScrollingLayer = fixedRootBackgroundLayer();
-
-            scrollingGeometry.scrollOrigin = m_renderView.frameView().scrollOrigin();
-            scrollingGeometry.scrollPosition = m_renderView.frameView().scrollPosition();
-            scrollingGeometry.contentSize = m_renderView.frameView().totalContentsSize();
+            scrollingCoordinator->updateScrollingNode(nodeID, scrollingLayer, scrolledContentsLayer, counterScrollingLayer);
         } else {
+            ScrollingCoordinator::ScrollingGeometry scrollingGeometry;
             scrollingGeometry.scrollOrigin = layer.scrollOrigin();
             scrollingGeometry.scrollPosition = layer.scrollPosition();
             scrollingGeometry.contentSize = layer.contentsSize();
+            scrollingCoordinator->updateScrollingNode(nodeID, scrollingLayer, scrolledContentsLayer, counterScrollingLayer, &scrollingGeometry);
         }
-
-        scrollingCoordinator->updateScrollingNode(nodeID, scrollingLayer, scrolledContentsLayer, counterScrollingLayer, scrollingGeometry);
     }
 }
 
