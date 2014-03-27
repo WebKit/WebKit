@@ -75,14 +75,10 @@ public:
 #endif
         return !!m_frontBuffer;
     }
-
-    void flush();
-
 private:
     void drawInContext(WebCore::GraphicsContext&, CGImageRef frontImage);
 
     RetainPtr<CGImageRef> createImageForFrontBuffer() const;
-    void clearBackingStore();
 
     PlatformCALayerRemote* m_layer;
 
@@ -93,10 +89,8 @@ private:
     WebCore::Region m_dirtyRegion;
 
     RefPtr<ShareableBitmap> m_frontBuffer;
-    RetainPtr<CGContextRef> m_bufferContextPendingFlush;
 #if USE(IOSURFACE)
     RefPtr<WebCore::IOSurface> m_frontSurface;
-    RefPtr<WebCore::IOSurface> m_backSurfacePendingFlush;
 #endif
 
     bool m_acceleratesDrawing;
