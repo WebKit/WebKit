@@ -23,28 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKRemoteObjectRegistry.h"
+#import "_WKRemoteObjectInterface.h"
 
 #if WK_API_ENABLED
 
-namespace IPC {
-class MessageSender;
-}
+#import <wtf/Forward.h>
+#import <wtf/RetainPtr.h>
 
-namespace WebKit {
-class RemoteObjectRegistry;
-class UserData;
-}
+@interface _WKRemoteObjectInterface ()
 
-@interface WKRemoteObjectRegistry ()
-
-@property (nonatomic, readonly) WebKit::RemoteObjectRegistry& remoteObjectRegistry;
-
-- (id)_initWithMessageSender:(IPC::MessageSender&)messageSender;
-- (void)_invalidate;
-
-- (void)_sendInvocation:(NSInvocation *)invocation interface:(WKRemoteObjectInterface *)interface;
-- (BOOL)_invokeMethod:(const WebKit::UserData&)invocation;
+- (NSMethodSignature *)_methodSignatureForSelector:(SEL)selector;
+- (const Vector<RetainPtr<NSSet>>&)_allowedArgumentClassesForSelector:(SEL)selector;
 
 @end
 

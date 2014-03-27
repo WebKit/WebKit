@@ -49,7 +49,6 @@
 #import "WKNSURLProtectionSpace.h"
 #import "WKPagePolicyClientInternal.h"
 #import "WKProcessGroupPrivate.h"
-#import "WKRemoteObjectRegistryInternal.h"
 #import "WKRenderingProgressEventsInternal.h"
 #import "WKRetainPtr.h"
 #import "WKURLRequestNS.h"
@@ -58,6 +57,7 @@
 #import "WebCertificateInfo.h"
 #import "WebContext.h"
 #import "WebPageProxy.h"
+#import "_WKRemoteObjectRegistryInternal.h"
 #import <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
@@ -147,7 +147,7 @@ static NSString * const frameErrorKey = @"WKBrowsingContextFrameErrorKey";
     WeakObjCPtr<id <WKBrowsingContextLoadDelegate>> _loadDelegate;
     WeakObjCPtr<id <WKBrowsingContextPolicyDelegate>> _policyDelegate;
     
-    RetainPtr<WKRemoteObjectRegistry> _remoteObjectRegistry;
+    RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
 }
 
 static HashMap<WebPageProxy*, WKBrowsingContextController *>& browsingContextControllerMap()
@@ -908,10 +908,10 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     return [[[WKBrowsingContextHandle alloc] _initWithPageID:_page->pageID()] autorelease];
 }
 
-- (WKRemoteObjectRegistry *)remoteObjectRegistry
+- (_WKRemoteObjectRegistry *)_remoteObjectRegistry
 {
     if (!_remoteObjectRegistry) {
-        _remoteObjectRegistry = [[WKRemoteObjectRegistry alloc] _initWithMessageSender:*_page];
+        _remoteObjectRegistry = [[_WKRemoteObjectRegistry alloc] _initWithMessageSender:*_page];
         _page->process().context().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID(), [_remoteObjectRegistry remoteObjectRegistry]);
     }
 

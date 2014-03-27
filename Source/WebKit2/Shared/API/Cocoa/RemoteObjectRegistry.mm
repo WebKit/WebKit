@@ -29,11 +29,11 @@
 #import "MessageSender.h"
 #import "RemoteObjectRegistryMessages.h"
 #import "UserData.h"
-#import "WKRemoteObjectRegistryInternal.h"
+#import "_WKRemoteObjectRegistryInternal.h"
 
 namespace WebKit {
 
-RemoteObjectRegistry::RemoteObjectRegistry(WKRemoteObjectRegistry *remoteObjectRegistry, IPC::MessageSender& messageSender)
+RemoteObjectRegistry::RemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObjectRegistry, IPC::MessageSender& messageSender)
     : m_remoteObjectRegistry(remoteObjectRegistry)
     , m_messageSender(messageSender)
 {

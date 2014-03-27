@@ -44,7 +44,6 @@
 #import "WKNavigationInternal.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
-#import "WKRemoteObjectRegistryInternal.h"
 #import "WKUIDelegate.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewContentProvider.h"
@@ -54,6 +53,7 @@
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKVisitedLinkProviderInternal.h"
 #import <wtf/RetainPtr.h>
 
@@ -79,7 +79,7 @@
 @implementation WKWebView {
     std::unique_ptr<WebKit::NavigationState> _navigationState;
 
-    RetainPtr<WKRemoteObjectRegistry> _remoteObjectRegistry;
+    RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
     _WKRenderingProgressEvents _observedRenderingProgressEvents;
 
 #if PLATFORM(IOS)
@@ -811,10 +811,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 @implementation WKWebView (WKPrivate)
 
-- (WKRemoteObjectRegistry *)_remoteObjectRegistry
+- (_WKRemoteObjectRegistry *)_remoteObjectRegistry
 {
     if (!_remoteObjectRegistry) {
-        _remoteObjectRegistry = adoptNS([[WKRemoteObjectRegistry alloc] _initWithMessageSender:*_page]);
+        _remoteObjectRegistry = adoptNS([[_WKRemoteObjectRegistry alloc] _initWithMessageSender:*_page]);
         _page->process().context().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID(), [_remoteObjectRegistry remoteObjectRegistry]);
     }
 

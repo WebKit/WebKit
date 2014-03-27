@@ -33,7 +33,7 @@
 #import "APINumber.h"
 #import "APIString.h"
 #import "MutableDictionary.h"
-#import "WKRemoteObjectInterfaceInternal.h"
+#import "_WKRemoteObjectInterfaceInternal.h"
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/TemporaryChange.h>
@@ -290,7 +290,7 @@ static NSString *escapeKey(NSString *key)
 @end
 
 @implementation WKRemoteObjectDecoder {
-    RetainPtr<WKRemoteObjectInterface> _interface;
+    RetainPtr<_WKRemoteObjectInterface> _interface;
 
     const ImmutableDictionary* _rootDictionary;
     const ImmutableDictionary* _currentDictionary;
@@ -301,7 +301,7 @@ static NSString *escapeKey(NSString *key)
     NSSet *_allowedClasses;
 }
 
-- (id)initWithInterface:(WKRemoteObjectInterface *)interface rootObjectDictionary:(const WebKit::ImmutableDictionary*)rootObjectDictionary
+- (id)initWithInterface:(_WKRemoteObjectInterface *)interface rootObjectDictionary:(const WebKit::ImmutableDictionary*)rootObjectDictionary
 {
     if (!(self = [super init]))
         return nil;

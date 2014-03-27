@@ -28,7 +28,7 @@
 
 #include "MessageReceiver.h"
 
-OBJC_CLASS WKRemoteObjectRegistry;
+OBJC_CLASS _WKRemoteObjectRegistry;
 
 namespace IPC {
 class MessageSender;
@@ -40,7 +40,7 @@ class UserData;
 
 class RemoteObjectRegistry final : public IPC::MessageReceiver {
 public:
-    RemoteObjectRegistry(WKRemoteObjectRegistry *, IPC::MessageSender&);
+    RemoteObjectRegistry(_WKRemoteObjectRegistry *, IPC::MessageSender&);
     ~RemoteObjectRegistry();
 
     void sendInvocation(const UserData&);
@@ -52,7 +52,7 @@ private:
     // Message handlers
     void invokeMethod(const UserData&);
 
-    WKRemoteObjectRegistry *m_remoteObjectRegistry;
+    _WKRemoteObjectRegistry *m_remoteObjectRegistry;
     IPC::MessageSender& m_messageSender;
 };
 

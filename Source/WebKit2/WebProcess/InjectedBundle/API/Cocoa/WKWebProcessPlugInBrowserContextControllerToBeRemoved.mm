@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKFoundation.h"
+#import "config.h"
+#import "WKWebProcessPlugInBrowserContextControllerPrivate.h"
 
 #if WK_API_ENABLED
 
-namespace WebKit {
-class ImmutableDictionary;
+@implementation WKWebProcessPlugInBrowserContextController (WKToBeRemoved)
+
+- (WKRemoteObjectRegistry *)remoteObjectRegistry
+{
+    return (WKRemoteObjectRegistry *)self._remoteObjectRegistry;
 }
 
-@class _WKRemoteObjectInterface;
-
-@interface WKRemoteObjectEncoder : NSCoder
-
-- (WebKit::ImmutableDictionary*)rootObjectDictionary;
-
 @end
 
-@interface WKRemoteObjectDecoder : NSCoder
-
-- (id)initWithInterface:(_WKRemoteObjectInterface *)interface rootObjectDictionary:(const WebKit::ImmutableDictionary*)rootObjectDictionary;
-
-@end
-
-#endif // WK_API_ENABLED
+#endif

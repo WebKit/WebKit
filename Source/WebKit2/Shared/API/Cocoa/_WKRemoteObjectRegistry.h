@@ -23,25 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKFoundation.h"
+#import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-namespace WebKit {
-class ImmutableDictionary;
-}
+#import <Foundation/Foundation.h>
 
 @class _WKRemoteObjectInterface;
 
-@interface WKRemoteObjectEncoder : NSCoder
+WK_API_CLASS
+@interface _WKRemoteObjectRegistry : NSObject
 
-- (WebKit::ImmutableDictionary*)rootObjectDictionary;
+- (void)registerExportedObject:(id)object interface:(_WKRemoteObjectInterface *)interface;
+- (void)unregisterExportedObject:(id)object interface:(_WKRemoteObjectInterface *)interface;
 
-@end
-
-@interface WKRemoteObjectDecoder : NSCoder
-
-- (id)initWithInterface:(_WKRemoteObjectInterface *)interface rootObjectDictionary:(const WebKit::ImmutableDictionary*)rootObjectDictionary;
+- (id)remoteObjectProxyWithInterface:(_WKRemoteObjectInterface *)interface;
 
 @end
 

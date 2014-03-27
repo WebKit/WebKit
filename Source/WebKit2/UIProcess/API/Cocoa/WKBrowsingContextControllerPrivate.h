@@ -38,7 +38,7 @@ typedef NS_ENUM(NSUInteger, WKBrowsingContextPaginationMode) {
 };
 
 @class WKBrowsingContextHandle;
-@class WKRemoteObjectRegistry;
+@class _WKRemoteObjectRegistry;
 
 @interface WKBrowsingContextController (Private)
 
@@ -60,7 +60,7 @@ typedef NS_ENUM(NSUInteger, WKBrowsingContextPaginationMode) {
 
 @property (nonatomic, readonly) WKBrowsingContextHandle *handle;
 
-@property (nonatomic, readonly) WKRemoteObjectRegistry *remoteObjectRegistry;
+@property (nonatomic, readonly) _WKRemoteObjectRegistry *_remoteObjectRegistry;
 
 @property (nonatomic, readonly) pid_t processIdentifier;
 

@@ -23,17 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKRemoteObjectInterface.h"
+#import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-#import <wtf/Forward.h>
-#import <wtf/RetainPtr.h>
+#import <Foundation/Foundation.h>
 
-@interface WKRemoteObjectInterface ()
+WK_API_CLASS
+@interface _WKRemoteObjectInterface : NSObject
 
-- (NSMethodSignature *)_methodSignatureForSelector:(SEL)selector;
-- (const Vector<RetainPtr<NSSet>>&)_allowedArgumentClassesForSelector:(SEL)selector;
++ (instancetype)remoteObjectInterfaceWithProtocol:(Protocol *)protocol;
+
+- (id)initWithProtocol:(Protocol *)protocol identifier:(NSString *)identifier;
+
+@property (readonly) Protocol *protocol;
+@property (readonly) NSString *identifier;
+
+- (NSSet *)classesForSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex;
+- (void)setClasses:(NSSet *)classes forSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex;
 
 @end
 

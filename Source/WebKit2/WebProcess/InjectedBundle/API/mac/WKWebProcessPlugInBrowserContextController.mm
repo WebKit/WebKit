@@ -36,7 +36,6 @@
 #import "WKBundlePagePrivate.h"
 #import "WKDOMInternals.h"
 #import "WKNSError.h"
-#import "WKRemoteObjectRegistryInternal.h"
 #import "WKRenderingProgressEventsInternal.h"
 #import "WKRetainPtr.h"
 #import "WKURLRequestNS.h"
@@ -50,6 +49,7 @@
 #import "WeakObjCPtr.h"
 #import "WebPage.h"
 #import "WebProcess.h"
+#import "_WKRemoteObjectRegistryInternal.h"
 #import <WebCore/Document.h>
 #import <WebCore/Frame.h>
 
@@ -61,7 +61,7 @@ using namespace WebKit;
     WeakObjCPtr<id <WKWebProcessPlugInLoadDelegate>> _loadDelegate;
     WeakObjCPtr<id <WKWebProcessPlugInFormDelegatePrivate>> _formDelegate;
     
-    RetainPtr<WKRemoteObjectRegistry> _remoteObjectRegistry;
+    RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
 }
 
 static void didStartProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userDataRef, const void *clientInfo)
@@ -353,7 +353,7 @@ static void setUpFormClient(WKWebProcessPlugInBrowserContextController *contextC
 
 @end
 
-@implementation WKWebProcessPlugInBrowserContextController (Private)
+@implementation WKWebProcessPlugInBrowserContextController (WKPrivate)
 
 - (WKBundlePageRef)_bundlePageRef
 {
@@ -374,10 +374,10 @@ static void setUpFormClient(WKWebProcessPlugInBrowserContextController *contextC
     return wrapper(*webPage);
 }
 
-- (WKRemoteObjectRegistry *)remoteObjectRegistry
+- (_WKRemoteObjectRegistry *)_remoteObjectRegistry
 {
     if (!_remoteObjectRegistry) {
-        _remoteObjectRegistry = [[WKRemoteObjectRegistry alloc] _initWithMessageSender:*_page];
+        _remoteObjectRegistry = [[_WKRemoteObjectRegistry alloc] _initWithMessageSender:*_page];
         WebProcess::shared().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID(), [_remoteObjectRegistry remoteObjectRegistry]);
     }
 

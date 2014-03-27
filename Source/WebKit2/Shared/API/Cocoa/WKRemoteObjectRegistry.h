@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKFoundation.h>
+#import <WebKit2/_WKRemoteObjectRegistry.h>
 
 #if WK_API_ENABLED
 
-#import <Foundation/Foundation.h>
-
-@class WKRemoteObjectInterface;
-
 WK_API_CLASS
-@interface WKRemoteObjectRegistry : NSObject
-
-- (void)registerExportedObject:(id)object interface:(WKRemoteObjectInterface *)interface;
-- (void)unregisterExportedObject:(id)object interface:(WKRemoteObjectInterface *)interface;
-
-- (id)remoteObjectProxyWithInterface:(WKRemoteObjectInterface *)interface;
+@interface WKRemoteObjectRegistry : _WKRemoteObjectRegistry
 
 @end
 
-#endif // WK_API_ENABLED
+#endif

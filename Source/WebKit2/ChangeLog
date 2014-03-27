@@ -1,3 +1,88 @@
+2014-03-27  Anders Carlsson  <andersca@apple.com>
+
+        Add _ prefix to WKRemoteObjectRegistery and WKRemoteObjectInterface
+        https://bugs.webkit.org/show_bug.cgi?id=130868
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/Cocoa/RemoteObjectRegistry.h:
+        * Shared/API/Cocoa/RemoteObjectRegistry.mm:
+        (WebKit::RemoteObjectRegistry::RemoteObjectRegistry):
+        * Shared/API/Cocoa/WKRemoteObject.h:
+        * Shared/API/Cocoa/WKRemoteObject.mm:
+        (-[WKRemoteObject _initWithObjectRegistry:interface:]):
+        * Shared/API/Cocoa/WKRemoteObjectCoder.h:
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (-[WKRemoteObjectDecoder initWithInterface:rootObjectDictionary:WebKit::]):
+        * Shared/API/Cocoa/WKRemoteObjectInterface.h:
+        * Shared/API/Cocoa/WKRemoteObjectInterface.mm:
+        (isContainerClass): Deleted.
+        (propertyListClasses): Deleted.
+        (allowedArgumentClassesForMethod): Deleted.
+        (initializeAllowedArgumentClasses): Deleted.
+        (-[WKRemoteObjectInterface initWithProtocol:identifier:]): Deleted.
+        (+[WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:]): Deleted.
+        (-[WKRemoteObjectInterface description]): Deleted.
+        (classesForSelectorArgument): Deleted.
+        (-[WKRemoteObjectInterface classesForSelector:argumentIndex:]): Deleted.
+        (-[WKRemoteObjectInterface setClasses:forSelector:argumentIndex:]): Deleted.
+        (methodArgumentTypeEncodingForSelector): Deleted.
+        (-[WKRemoteObjectInterface _methodSignatureForSelector:]): Deleted.
+        (-[WKRemoteObjectInterface _allowedArgumentClassesForSelector:]): Deleted.
+        * Shared/API/Cocoa/WKRemoteObjectRegistry.h:
+        * Shared/API/Cocoa/WKRemoteObjectRegistry.mm:
+        (-[WKRemoteObjectRegistry registerExportedObject:interface:]): Deleted.
+        (-[WKRemoteObjectRegistry unregisterExportedObject:interface:]): Deleted.
+        (-[WKRemoteObjectRegistry remoteObjectProxyWithInterface:]): Deleted.
+        (-[WKRemoteObjectRegistry _initWithMessageSender:IPC::]): Deleted.
+        (-[WKRemoteObjectRegistry _invalidate]): Deleted.
+        (-[WKRemoteObjectRegistry _sendInvocation:interface:]): Deleted.
+        (-[WKRemoteObjectRegistry WebKit::]): Deleted.
+        (-[WKRemoteObjectRegistry _invokeMethod:]): Deleted.
+        (-[WKRemoteObjectRegistry _invokeMessageWithInterfaceIdentifier:encodedInvocation:]): Deleted.
+        * Shared/API/Cocoa/_WKRemoteObjectInterface.h: Copied from Source/WebKit2/Shared/API/Cocoa/WKRemoteObjectInterface.h.
+        * Shared/API/Cocoa/_WKRemoteObjectInterface.mm: Copied from Source/WebKit2/Shared/API/Cocoa/WKRemoteObjectInterface.mm.
+        (isContainerClass):
+        (propertyListClasses):
+        (allowedArgumentClassesForMethod):
+        (initializeAllowedArgumentClasses):
+        (-[_WKRemoteObjectInterface initWithProtocol:identifier:]):
+        (+[_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:]):
+        (-[_WKRemoteObjectInterface description]):
+        (classesForSelectorArgument):
+        (-[_WKRemoteObjectInterface classesForSelector:argumentIndex:]):
+        (-[_WKRemoteObjectInterface setClasses:forSelector:argumentIndex:]):
+        (methodArgumentTypeEncodingForSelector):
+        (-[_WKRemoteObjectInterface _methodSignatureForSelector:]):
+        (-[_WKRemoteObjectInterface _allowedArgumentClassesForSelector:]):
+        * Shared/API/Cocoa/_WKRemoteObjectInterfaceInternal.h: Renamed from Source/WebKit2/Shared/API/Cocoa/WKRemoteObjectInterfaceInternal.h.
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.h: Copied from Source/WebKit2/Shared/API/Cocoa/WKRemoteObjectRegistry.h.
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm: Copied from Source/WebKit2/Shared/API/Cocoa/WKRemoteObjectRegistry.mm.
+        (-[_WKRemoteObjectRegistry registerExportedObject:interface:]):
+        (-[_WKRemoteObjectRegistry unregisterExportedObject:interface:]):
+        (-[_WKRemoteObjectRegistry remoteObjectProxyWithInterface:]):
+        (-[_WKRemoteObjectRegistry _initWithMessageSender:IPC::]):
+        (-[_WKRemoteObjectRegistry _invalidate]):
+        (-[_WKRemoteObjectRegistry _sendInvocation:interface:]):
+        (-[_WKRemoteObjectRegistry WebKit::]):
+        (-[_WKRemoteObjectRegistry _invokeMethod:]):
+        (-[_WKRemoteObjectRegistry _invokeMessageWithInterfaceIdentifier:encodedInvocation:]):
+        * Shared/API/Cocoa/_WKRemoteObjectRegistryInternal.h: Renamed from Source/WebKit2/Shared/API/Cocoa/WKRemoteObjectRegistryInternal.h.
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController _remoteObjectRegistry]):
+        (-[WKBrowsingContextController remoteObjectRegistry]): Deleted.
+        * UIProcess/API/Cocoa/WKBrowsingContextControllerPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _remoteObjectRegistry]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInBrowserContextControllerToBeRemoved.mm: Copied from Source/WebKit2/Shared/API/Cocoa/WKRemoteObject.h.
+        (-[WKWebProcessPlugInBrowserContextController remoteObjectRegistry]):
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _remoteObjectRegistry]):
+        (-[WKWebProcessPlugInBrowserContextController remoteObjectRegistry]): Deleted.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerPrivate.h:
+
 2014-03-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r166360.

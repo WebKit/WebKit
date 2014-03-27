@@ -27,12 +27,12 @@
 
 #if WK_API_ENABLED
 
-@class WKRemoteObjectInterface;
-@class WKRemoteObjectRegistry;
+@class _WKRemoteObjectInterface;
+@class _WKRemoteObjectRegistry;
 
 @interface WKRemoteObject : NSObject
 
-- (instancetype)_initWithObjectRegistry:(WKRemoteObjectRegistry *)objectRegistry interface:(WKRemoteObjectInterface *)interface;
+- (instancetype)_initWithObjectRegistry:(_WKRemoteObjectRegistry *)objectRegistry interface:(_WKRemoteObjectInterface *)interface;
 
 @end
 

@@ -30,21 +30,30 @@
 #import <WebKit2/WKBase.h>
 
 @class WKBrowsingContextHandle;
-@class WKRemoteObjectRegistry;
+@class _WKRemoteObjectRegistry;
 @protocol WKWebProcessPlugInFormDelegatePrivate;
 
-@interface WKWebProcessPlugInBrowserContextController (Private)
+@interface WKWebProcessPlugInBrowserContextController (WKPrivate)
 
 @property (nonatomic, readonly) WKBundlePageRef _bundlePageRef;
 
 @property (nonatomic, readonly) WKBrowsingContextHandle *handle;
 
-@property (nonatomic, readonly) WKRemoteObjectRegistry *remoteObjectRegistry;
+@property (nonatomic, readonly) _WKRemoteObjectRegistry *_remoteObjectRegistry;
 
 @property (weak, setter=_setFormDelegate:) id <WKWebProcessPlugInFormDelegatePrivate> _formDelegate;
 
 + (instancetype)lookUpBrowsingContextFromHandle:(WKBrowsingContextHandle *)handle;
 
 @end
+
+@class WKRemoteObjectRegistry;
+
+@interface WKWebProcessPlugInBrowserContextController (WKToBeRemoved)
+
+@property (nonatomic, readonly) WKRemoteObjectRegistry *remoteObjectRegistry;
+@end;
+
+
 
 #endif // WK_API_ENABLED

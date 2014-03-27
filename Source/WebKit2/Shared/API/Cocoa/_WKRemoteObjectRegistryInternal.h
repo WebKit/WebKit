@@ -23,25 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKFoundation.h"
+#import "_WKRemoteObjectRegistry.h"
 
 #if WK_API_ENABLED
 
-namespace WebKit {
-class ImmutableDictionary;
+namespace IPC {
+class MessageSender;
 }
 
-@class _WKRemoteObjectInterface;
+namespace WebKit {
+class RemoteObjectRegistry;
+class UserData;
+}
 
-@interface WKRemoteObjectEncoder : NSCoder
+@interface _WKRemoteObjectRegistry ()
 
-- (WebKit::ImmutableDictionary*)rootObjectDictionary;
+@property (nonatomic, readonly) WebKit::RemoteObjectRegistry& remoteObjectRegistry;
 
-@end
+- (id)_initWithMessageSender:(IPC::MessageSender&)messageSender;
+- (void)_invalidate;
 
-@interface WKRemoteObjectDecoder : NSCoder
-
-- (id)initWithInterface:(_WKRemoteObjectInterface *)interface rootObjectDictionary:(const WebKit::ImmutableDictionary*)rootObjectDictionary;
+- (void)_sendInvocation:(NSInvocation *)invocation interface:(_WKRemoteObjectInterface *)interface;
+- (BOOL)_invokeMethod:(const WebKit::UserData&)invocation;
 
 @end
 

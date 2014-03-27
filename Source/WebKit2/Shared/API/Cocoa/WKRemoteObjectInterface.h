@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKFoundation.h>
+#import <WebKit2/_WKRemoteObjectInterface.h>
 
 #if WK_API_ENABLED
 
-#import <Foundation/Foundation.h>
-
 WK_API_CLASS
-@interface WKRemoteObjectInterface : NSObject
-
-+ (instancetype)remoteObjectInterfaceWithProtocol:(Protocol *)protocol;
-
-- (id)initWithProtocol:(Protocol *)protocol identifier:(NSString *)identifier;
-
-@property (readonly) Protocol *protocol;
-@property (readonly) NSString *identifier;
-
-- (NSSet *)classesForSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex;
-- (void)setClasses:(NSSet *)classes forSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex;
+@interface WKRemoteObjectInterface : _WKRemoteObjectInterface
 
 @end
 
-#endif // WK_API_ENABLED
+#endif

@@ -28,17 +28,17 @@
 
 #if WK_API_ENABLED
 
-#import "WKRemoteObjectInterface.h"
-#import "WKRemoteObjectRegistryInternal.h"
+#import "_WKRemoteObjectInterface.h"
+#import "_WKRemoteObjectRegistryInternal.h"
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
 
 @implementation WKRemoteObject {
-    RetainPtr<WKRemoteObjectRegistry> _objectRegistry;
-    RetainPtr<WKRemoteObjectInterface> _interface;
+    RetainPtr<_WKRemoteObjectRegistry> _objectRegistry;
+    RetainPtr<_WKRemoteObjectInterface> _interface;
 }
 
-- (instancetype)_initWithObjectRegistry:(WKRemoteObjectRegistry *)objectRegistry interface:(WKRemoteObjectInterface *)interface
+- (instancetype)_initWithObjectRegistry:(_WKRemoteObjectRegistry *)objectRegistry interface:(_WKRemoteObjectInterface *)interface
 {
     if (!(self = [super init]))
         return nil;
