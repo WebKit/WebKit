@@ -1,3 +1,14 @@
+2014-03-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Switch the LLVMForJSC target to using the LLVM in /usr/local rather than /usr/local/LLVMForJavaScriptCore on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=130867
+        <rdar://problem/16432456> 
+
+        Reviewed by Mark Hahnenberg.
+
+        * Scripts/build-webkit:
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2014-03-26  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Expose DownloadClient::didFail() and DownloadClient::didCancel()
