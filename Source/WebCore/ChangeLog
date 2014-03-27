@@ -1,3 +1,39 @@
+2014-03-27  Frédéric Wang  <fred.wang@free.fr>
+
+        Operator stretching: expose a math data API
+        https://bugs.webkit.org/show_bug.cgi?id=130572
+
+        Reviewed by Chris Fleizach.
+
+        We expose a new SimpleFontData API to give access to the data from the
+        OpenType MATH table using a font cache. The class OpenTypeMathData will
+        be implemented in bug 130324. On Darwin platform, we also implement the
+        missing FontPlatformData::openTypeTable function which will be necessary
+        to load the OpenType MATH table. The changes are intended to be used
+        for MathML operator stretching (bug 130322) so tests are not added yet.
+
+        * CMakeLists.txt: add new OpenTypeMathData files.
+        * WebCore.vcxproj/WebCore.vcxproj: ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: ditto.
+        * WebCore.xcodeproj/project.pbxproj: ditto.
+        * platform/graphics/FontCache.cpp: We add a FontCache::getMathData function to implement a cache for the math data.
+        We make the math and vertical data share the same key for the cache.
+        (WebCore::fontMathDataCacheInstance):
+        (WebCore::FontCache::getMathData):
+        (WebCore::fontVerticalDataCacheInstance):
+        * platform/graphics/FontCache.h: We declare FontCache::getMathData and FontFileKey on all platforms.
+        * platform/graphics/FontPlatformData.cpp:
+        (WebCore::FontPlatformData::openTypeTable): We implement openTypeTable() on Darwin platform.
+        * platform/graphics/FontPlatformData.h: We expose openTypeTable() on Darwin platform.
+        * platform/graphics/SimpleFontData.cpp: We initialize m_mathData from the font cache.
+        (WebCore::SimpleFontData::SimpleFontData):
+        * platform/graphics/SimpleFontData.h: We expose a mathData() function to access the MATH data.
+        * platform/graphics/opentype/OpenTypeMathData.cpp: Added. This is a new class that will be used to parse the data from the OpenType MATH table.
+        (WebCore::OpenTypeMathData::OpenTypeMathData):
+        * platform/graphics/opentype/OpenTypeMathData.h: Added.
+        (WebCore::OpenTypeMathData::create):
+        (WebCore::OpenTypeMathData::hasMathData):
+
 2014-03-27  Brent Fulgham  <bfulgham@apple.com>
 
         Fix a crash caused by track insertion after load()
