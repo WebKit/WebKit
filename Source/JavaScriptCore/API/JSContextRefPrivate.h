@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef JSContextRefPrivate_h
@@ -93,6 +93,23 @@ JS_EXPORT void JSContextGroupSetExecutionTimeLimit(JSContextGroupRef, double lim
 @param group The JavaScript context group that the time limit is cleared on.
 */
 JS_EXPORT void JSContextGroupClearExecutionTimeLimit(JSContextGroupRef) CF_AVAILABLE(10_6, 7_0);
+
+/*!
+@function
+@abstract Gets a whether or not remote inspection is enabled on the context.
+@param ctx The JSGlobalContext whose setting you want to get.
+@result The value of the setting, true if remote inspection is enabled, otherwise false.
+@discussion Remote inspection is true by default.
+*/
+JS_EXPORT bool JSGlobalContextGetRemoteInspectionEnabled(JSGlobalContextRef ctx) CF_AVAILABLE(10_10, 8_0);
+
+/*!
+@function
+@abstract Sets the remote inspection setting for a context.
+@param ctx The JSGlobalContext that you want to change.
+@param enabled The new remote inspection enabled setting for the context.
+*/
+JS_EXPORT void JSGlobalContextSetRemoteInspectionEnabled(JSGlobalContextRef ctx, bool enabled) CF_AVAILABLE(10_10, 8_0);    
 
 #ifdef __cplusplus
 }

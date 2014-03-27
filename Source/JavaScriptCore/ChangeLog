@@ -1,3 +1,25 @@
+2014-03-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Provide SPI to disallow remote inspection of a JSContext
+        https://bugs.webkit.org/show_bug.cgi?id=130853
+
+        Reviewed by Timothy Hatcher.
+
+        * API/JSContextPrivate.h: Added.
+        * API/JSContext.mm:
+        (-[JSContext _remoteInspectionEnabled]):
+        (-[JSContext _setRemoteInspectionEnabled:]):
+        ObjC SPI to enable/disable remote inspection.
+
+        * API/JSContextRefPrivate.h:
+        * API/JSContextRef.cpp:
+        (JSGlobalContextGetRemoteInspectionEnabled):
+        (JSGlobalContextSetRemoteInspectionEnabled):
+        C SPI to enable/disable remote inspection.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Add new private header, and export as a private header.
+
 2014-03-27  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Clean up questionable style in ScriptExecutable::prepareForExecutionImpl

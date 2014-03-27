@@ -26,14 +26,16 @@
 #include "config.h"
 
 #import "APICast.h"
+#import "JSCInlines.h"
 #import "JSContextInternal.h"
+#import "JSContextPrivate.h"
+#import "JSContextRefPrivate.h"
 #import "JSGlobalObject.h"
 #import "JSValueInternal.h"
 #import "JSVirtualMachineInternal.h"
 #import "JSWrapperMap.h"
 #import "JavaScriptCore.h"
 #import "ObjcRuntimeExtras.h"
-#import "JSCInlines.h"
 #import "StrongInlines.h"
 #import <wtf/HashSet.h>
 
@@ -199,6 +201,16 @@
     JSGlobalContextSetName(m_context, nameJS);
     if (nameJS)
         JSStringRelease(nameJS);
+}
+
+- (BOOL)_remoteInspectionEnabled
+{
+    return JSGlobalContextGetRemoteInspectionEnabled(m_context);
+}
+
+- (void)_setRemoteInspectionEnabled:(BOOL)enabled
+{
+    JSGlobalContextSetRemoteInspectionEnabled(m_context, enabled);
 }
 
 @end

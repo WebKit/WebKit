@@ -1058,6 +1058,7 @@
 		A5840E29187CA5E600843B10 /* inline-and-minify-stylesheets-and-scripts.py in Headers */ = {isa = PBXBuildFile; fileRef = A5840E28187CA5B800843B10 /* inline-and-minify-stylesheets-and-scripts.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5840E2A187CA75900843B10 /* xxd.pl in Headers */ = {isa = PBXBuildFile; fileRef = A513E5C5185F92F0007E95AD /* xxd.pl */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5840E2B187CA75B00843B10 /* jsmin.py in Headers */ = {isa = PBXBuildFile; fileRef = A513E5C4185F92DC007E95AD /* jsmin.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		A58C024218E4A41A00032BC5 /* JSContextPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A58C024118E4A41A00032BC5 /* JSContextPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A58E35911860DECF001F24FE /* InjectedScriptHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A58E35901860DEC7001F24FE /* InjectedScriptHost.cpp */; };
 		A593CF7C1840360300BFCE27 /* InspectorBackendDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A593CF7A1840360300BFCE27 /* InspectorBackendDispatcher.cpp */; };
 		A593CF7D1840360300BFCE27 /* InspectorBackendDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = A593CF7B1840360300BFCE27 /* InspectorBackendDispatcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2608,6 +2609,7 @@
 		A5840E1F187B7B8600843B10 /* InjectedScriptModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptModule.h; sourceTree = "<group>"; };
 		A5840E26187C980700843B10 /* cssmin.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = cssmin.py; sourceTree = "<group>"; };
 		A5840E28187CA5B800843B10 /* inline-and-minify-stylesheets-and-scripts.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "inline-and-minify-stylesheets-and-scripts.py"; sourceTree = "<group>"; };
+		A58C024118E4A41A00032BC5 /* JSContextPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSContextPrivate.h; sourceTree = "<group>"; };
 		A58E35901860DEC7001F24FE /* InjectedScriptHost.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScriptHost.cpp; sourceTree = "<group>"; };
 		A593CF7A1840360300BFCE27 /* InspectorBackendDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBackendDispatcher.cpp; sourceTree = "<group>"; };
 		A593CF7B1840360300BFCE27 /* InspectorBackendDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBackendDispatcher.h; sourceTree = "<group>"; };
@@ -3659,6 +3661,7 @@
 				1440FCE10A51E46B0005F061 /* JSClassRef.h */,
 				86E3C607167BAB87006D760A /* JSContext.h */,
 				86E3C608167BAB87006D760A /* JSContext.mm */,
+				A58C024118E4A41A00032BC5 /* JSContextPrivate.h */,
 				86E3C609167BAB87006D760A /* JSContextInternal.h */,
 				14BD5A290A3E91F600BAF59C /* JSContextRef.cpp */,
 				14BD5A2A0A3E91F600BAF59C /* JSContextRef.h */,
@@ -5644,6 +5647,7 @@
 				A503FA21188EFF6800110F14 /* ScriptBreakpoint.h in Headers */,
 				A5FD006E189B00AA00633231 /* ScriptCallFrame.h in Headers */,
 				A5FD0070189B00AA00633231 /* ScriptCallStack.h in Headers */,
+				A58C024218E4A41A00032BC5 /* JSContextPrivate.h in Headers */,
 				A5FD007E189B0B4C00633231 /* ScriptCallStackFactory.h in Headers */,
 				A503FA22188EFF6800110F14 /* ScriptDebugListener.h in Headers */,
 				A503FA26188EFFFD00110F14 /* ScriptDebugServer.h in Headers */,
