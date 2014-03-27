@@ -1711,7 +1711,7 @@ void WebPage::viewportConfigurationChanged()
 
         IntRect unobscuredContentRect(scrollPosition, minimumLayoutSizeInDocumentCoordinate);
         frameView.setUnobscuredContentRect(unobscuredContentRect);
-        frameView.setScrollVelocity(0, 0, 0, monotonicallyIncreasingTime());
+        frameView.setScrollVelocity(0, 0, monotonicallyIncreasingTime());
 
         // FIXME: We could send down the obscured margins to find a better exposed rect and unobscured rect.
         // It is not a big deal at the moment because the tile coverage will always extend past the obscured bottom inset.
