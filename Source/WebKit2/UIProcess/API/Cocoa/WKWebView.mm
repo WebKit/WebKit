@@ -162,6 +162,7 @@
     _scrollView = adoptNS([[WKScrollView alloc] initWithFrame:bounds]);
     [_scrollView setInternalDelegate:self];
     [_scrollView setBouncesZoom:YES];
+    [_scrollView setBackgroundColor:[UIColor whiteColor]];
 
     [self addSubview:_scrollView.get()];
 

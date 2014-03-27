@@ -1,5 +1,15 @@
 2014-03-27  Benjamin Poulain  <bpoulain@apple.com>
 
+        [WK2][iOS] <rdar://problem/16414684> WKWebView should draw a white background before the page loads
+        https://bugs.webkit.org/show_bug.cgi?id=130873
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+
+2014-03-27  Benjamin Poulain  <bpoulain@apple.com>
+
         [iOS][WK2] Compute a good exposed rect when scaling WKContentView
         https://bugs.webkit.org/show_bug.cgi?id=130761
 
