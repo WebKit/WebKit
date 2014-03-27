@@ -473,7 +473,7 @@ void updateTextRendererAfterContentChange(Text& textNode, unsigned offsetOfRepla
 static void attachChildren(ContainerNode& current, ContainerNode& renderingParentNode, RenderTreePosition& renderTreePosition)
 {
     for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
-        ASSERT((!child->renderer() || child->inNamedFlow()) || current.shadowRoot());
+        ASSERT((!child->renderer() || child->isNamedFlowContentNode()) || current.shadowRoot());
         if (child->renderer()) {
             renderTreePosition.invalidateNextSibling(*child->renderer());
             continue;
@@ -723,7 +723,7 @@ static Change resolveLocal(Element& current, ContainerNode& renderingParentNode,
         localChange = determineChange(currentStyle.get(), newStyle.get());
     }
     if (localChange == Detach) {
-        if (current.renderer() || current.inNamedFlow())
+        if (current.renderer() || current.isNamedFlowContentNode())
             detachRenderTree(current, ReattachDetach);
         attachRenderTree(current, renderingParentNode, renderTreePosition, newStyle.release());
         invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(current);

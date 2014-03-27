@@ -95,7 +95,7 @@ void ContainerNode::removeDetachedChildren()
 static inline void destroyRenderTreeIfNeeded(Node& child)
 {
     // FIXME: Get rid of the named flow test.
-    if (!child.renderer() && !child.inNamedFlow())
+    if (!child.renderer() && !child.isNamedFlowContentNode())
         return;
     if (child.isElementNode())
         Style::detachRenderTree(toElement(child));
