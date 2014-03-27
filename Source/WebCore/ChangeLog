@@ -1,3 +1,10 @@
+2014-03-26  Sam Weinig  <sam@webkit.org>
+
+        Fix iOS build.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (_font):
+
 2014-03-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make _processText and _traverseNode in HTMLConverter more efficient

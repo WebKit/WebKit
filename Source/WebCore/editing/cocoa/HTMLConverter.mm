@@ -1125,7 +1125,7 @@ static PlatformFont *_font(Element& element)
     auto renderer = element.renderer();
     if (!renderer)
         return nil;
-    return renderer->style().font().primaryFont()->getCTFont();
+    return (PlatformFont *)renderer->style().font().primaryFont()->getCTFont();
 }
 #endif
 
