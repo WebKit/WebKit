@@ -49,6 +49,7 @@
 #import "Frame.h"
 #import "FrameLoader.h"
 #import "HTMLElement.h"
+#import "HTMLFrameElementBase.h"
 #import "HTMLNames.h"
 #import "HTMLParserIdioms.h"
 #import "LoaderNSURLExtras.h"
@@ -60,6 +61,7 @@
 #import "TextIterator.h"
 #import <objc/runtime.h>
 #import <wtf/ASCIICType.h>
+#import <wtf/text/StringBuilder.h>
 
 #if PLATFORM(IOS)
 
@@ -416,8 +418,12 @@ public:
     PassRefPtr<CSSValue> computedStylePropertyForElement(Element&, CSSPropertyID);
     PassRefPtr<CSSValue> inlineStylePropertyForElement(Element&, CSSPropertyID);
 
+    Node* cacheAncestorsOfStartToBeConverted(const Range&);
+    bool isAncestorsOfStartToBeConverted(Node* node) const { return m_ancestorsUnderCommonAncestor.contains(node); }
+
 private:
     HashMap<Element*, std::unique_ptr<ComputedStyleExtractor>> m_computedStyles;
+    HashSet<Node*> m_ancestorsUnderCommonAncestor;
 };
 
 @interface NSTextList (WebCoreNSTextListDetails)
@@ -454,7 +460,6 @@ private:
     NSURL *_baseURL;
     DOMDocument *_document;
     DOMRange *_domRange;
-    NSMutableArray *_domStartAncestors;
     WebCore::DocumentLoader *_dataSource;
     NSMutableArray *_textLists;
     NSMutableArray *_textBlocks;
@@ -487,7 +492,7 @@ private:
 
     PlatformColor *_colorForElement(Element&, CSSPropertyID);
     
-    void _traverseNode(DOMNode *node, NSInteger depth, BOOL embedded);
+    void _traverseNode(Node* node, unsigned depth, bool embedded);
     void _traverseFooterNode(DOMNode *node, NSInteger depth);
     
     NSDictionary *_computedAttributesForElement(Element&);
@@ -510,7 +515,7 @@ private:
     BOOL _processElement(DOMElement *element, NSInteger depth);
     void _addMarkersToList(NSTextList *list, NSRange range);
     void _exitElement(DOMElement *element, NSInteger depth, NSUInteger startIndex);
-    void _processText(DOMCharacterData *text);
+    void _processText(CharacterData&);
     void _adjustTrailingNewline();
 };
 
@@ -521,7 +526,6 @@ HTMLConverter::HTMLConverter(DOMRange* domRange)
     _documentAttrs = [[NSMutableDictionary alloc] init];
     _baseURL = nil;
     _document = nil;
-    _domStartAncestors = nil;
     _dataSource = nullptr;
     _textLists = [[NSMutableArray alloc] init];
     _textBlocks = [[NSMutableArray alloc] init];
@@ -552,7 +556,6 @@ HTMLConverter::~HTMLConverter()
     [_attrStr release];
     [_documentAttrs release];
     [_domRange release];
-    [_domStartAncestors release];
     [_textLists release];
     [_textBlocks release];
     [_textTables release];
@@ -1980,20 +1983,10 @@ BOOL HTMLConverter::_processElement(DOMElement *element, NSInteger depth)
             if (url)
                 retval = !_addAttachmentForElement(element, url, isBlockLevel, NO);
         }
-    } else if (coreElement.hasTagName(frameTag)) {
-        if ([element respondsToSelector:@selector(contentDocument)]) {
-            DOMDocument *contentDocument = [(DOMHTMLFrameElement *)element contentDocument];
-            if (contentDocument)
-                _traverseNode(contentDocument, depth + 1, YES);
-        }
-        retval = NO;
-    } else if (coreElement.hasTagName(iframeTag)) {
-        if ([element respondsToSelector:@selector(contentDocument)]) {
-            DOMDocument *contentDocument = [(DOMHTMLIFrameElement *)element contentDocument];
-            if (contentDocument) {
-                _traverseNode(contentDocument, depth + 1, YES);
-                retval = NO;
-            }
+    } else if (coreElement.hasTagName(frameTag) || coreElement.hasTagName(iframeTag)) {
+        if (Document* contentDocument = toHTMLFrameElementBase(coreElement).contentDocument()) {
+            _traverseNode(contentDocument, depth + 1, true /* embedded */);
+            retval = NO;
         }
     } else if (coreElement.hasTagName(brTag)) {
         Element* blockElement = _blockLevelElementForNode(coreElement.parentNode());
@@ -2269,100 +2262,89 @@ void HTMLConverter::_exitElement(DOMElement *element, NSInteger depth, NSUIntege
     }
 }
 
-void HTMLConverter::_processText(DOMCharacterData *text)
+void HTMLConverter::_processText(CharacterData& characterData)
 {
-    ASSERT(text);
-    CharacterData& characterData = *core(text);
-    NSString *instr = [text data];
-    NSString *outstr = instr;
     NSUInteger textLength = [_attrStr length];
-    NSUInteger startOffset = 0;
-    NSUInteger endOffset = [instr length];
     unichar lastChar = (textLength > 0) ? [[_attrStr string] characterAtIndex:textLength - 1] : '\n';
-    BOOL wasSpace = NO;
-    BOOL wasLeading = YES;
     BOOL suppressLeadingSpace = ((_flags.isSoft && lastChar == ' ') || lastChar == '\n' || lastChar == '\r' || lastChar == '\t' || lastChar == NSParagraphSeparatorCharacter || lastChar == NSLineSeparatorCharacter || lastChar == NSFormFeedCharacter || lastChar == WebNextLineCharacter);
     NSRange rangeToReplace = NSMakeRange(textLength, 0);
     CFMutableStringRef mutstr = NULL;
 
+    String originalString = characterData.data();
+    unsigned startOffset = 0;
+    unsigned endOffset = originalString.length();
     if (_domRange) {
-        if (text == [_domRange startContainer]) {
+        if (&characterData == core([_domRange startContainer])) {
             startOffset = (NSUInteger)[_domRange startOffset];
             _domRangeStartIndex = [_attrStr length];
             _flags.reachedStart = YES;
         }
-        if (text == [_domRange endContainer]) {
+        if (&characterData == core([_domRange endContainer])) {
             endOffset = (NSUInteger)[_domRange endOffset];
             _flags.reachedEnd = YES;
         }
-        if ((startOffset > 0 || endOffset < [instr length]) && endOffset >= startOffset) {
-            instr = [instr substringWithRange:NSMakeRange(startOffset, endOffset - startOffset)];
-            outstr = instr;
-        }
+        if ((startOffset > 0 || endOffset < originalString.length()) && endOffset >= startOffset)
+            originalString = originalString.substring(startOffset, endOffset - startOffset);
     }
+    String outputString = originalString;
 
+    // FIXME: Use RenderText's content instead.
+    bool wasSpace = false;
     if (_caches->propertyValueForNode(characterData, CSSPropertyWhiteSpace).startsWith("pre")) {
-        if (textLength > 0 && [instr length] > 0 && _flags.isSoft) {
-            unichar c = [instr characterAtIndex:0];
+        if (textLength && originalString.length() && _flags.isSoft) {
+            unichar c = originalString.at(0);
             if (c == '\n' || c == '\r' || c == NSParagraphSeparatorCharacter || c == NSLineSeparatorCharacter || c == NSFormFeedCharacter || c == WebNextLineCharacter)
                 rangeToReplace = NSMakeRange(textLength - 1, 1);
         }
     } else {
-        CFStringInlineBuffer inlineBuffer;
-        const unsigned int TextBufferSize = 255;
-
-        unichar buffer[TextBufferSize + 1];
-        NSUInteger i, count = [instr length], idx = 0;
-
-        mutstr = CFStringCreateMutable(NULL, 0);
-        CFStringInitInlineBuffer((CFStringRef)instr, &inlineBuffer, CFRangeMake(0, count));
-        for (i = 0; i < count; i++) {
-            unichar c = CFStringGetCharacterFromInlineBuffer(&inlineBuffer, i);
-            if (c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == 0xc || c == 0x200b) {
+        unsigned count = originalString.length();
+        bool wasLeading = true;
+        StringBuilder builder;
+        for (unsigned i = 0; i < count; i++) {
+            UChar c = originalString.at(i);
+            bool isWhitespace = c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == 0xc || c == 0x200b;
+            if (isWhitespace)
                 wasSpace = (!wasLeading || !suppressLeadingSpace);
-            } else {
+            else {
                 if (wasSpace)
-                    buffer[idx++] = ' ';
-                buffer[idx++] = c;
-                if (idx >= TextBufferSize) {
-                    CFStringAppendCharacters(mutstr, buffer, idx);
-                    idx = 0;
-                }
-                wasSpace = wasLeading = NO;
+                    builder.append(' ');
+                builder.append(c);
+                wasSpace = false;
+                wasLeading = false;
             }
         }
         if (wasSpace)
-            buffer[idx++] = ' ';
-        if (idx > 0)
-            CFStringAppendCharacters(mutstr, buffer, idx);
-        outstr = (NSString *)mutstr;
+            builder.append(' ');
+        outputString = builder.toString();
     }
-    if ([outstr length] > 0) {
+
+    if (outputString.length()) {
         String textTransform = _caches->propertyValueForNode(characterData, CSSPropertyTextTransform);
         if (textTransform.length()) {
-            if (textTransform == "capitalize")
-                outstr = [outstr capitalizedString];
-            else if (textTransform == "uppercase")
-                outstr = [outstr uppercaseString];
+            if (textTransform == "capitalize") {// FIXME: This is extremely inefficient.
+                NSString *temporaryString = outputString;
+                outputString = [temporaryString capitalizedString];
+            } else if (textTransform == "uppercase")
+                outputString = outputString.upper();
             else if (textTransform == "lowercase")
-                outstr = [outstr lowercaseString];
+                outputString = outputString.lower();
         }
 
-        [_attrStr replaceCharactersInRange:rangeToReplace withString:outstr];
-        rangeToReplace.length = [outstr length];
+        [_attrStr replaceCharactersInRange:rangeToReplace withString:outputString];
+        rangeToReplace.length = outputString.length();
         RetainPtr<NSDictionary> attrs;
-        DOMElement *element = (DOMElement *)text;
-        while (element) {
+        Node* ancestor = characterData.parentNode();
+        while (ancestor) {
             // Fill attrs dictionary with attributes from parent nodes, not overwriting ones deeper in the tree
-            if([element nodeType] == DOM_ELEMENT_NODE) {
-                RetainPtr<NSMutableDictionary> newAttrs = adoptNS([_attributesForElement(element) mutableCopy]);
+            if(ancestor->isElementNode()) {
+                RetainPtr<NSMutableDictionary> newAttrs = adoptNS([_attributesForElement(kit(toElement(ancestor))) mutableCopy]);
                 if (attrs) {
                     // Already-set attributes (from lower in the tree) overwrite the higher ones.
                     [newAttrs addEntriesFromDictionary:attrs.get()];
                 }
                 attrs = newAttrs;
             }
-            element = (DOMElement *)[element parentNode];
+            ancestor = ancestor->parentNode();
         }
         if (rangeToReplace.length > 0)
             [_attrStr setAttributes:attrs.get() range:rangeToReplace];
@@ -2372,71 +2354,65 @@ void HTMLConverter::_processText(DOMCharacterData *text)
         CFRelease(mutstr);
 }
 
-void HTMLConverter::_traverseNode(DOMNode *node, NSInteger depth, BOOL embedded)
+void HTMLConverter::_traverseNode(Node* node, unsigned depth, bool embedded)
 {
-    unsigned short nodeType;
-    NSArray *childNodes;
-    NSUInteger count;
-    NSUInteger startOffset;
-    NSUInteger endOffset;
-    BOOL isStart = NO;
-    BOOL isEnd = NO;
-
-    if (_flags.reachedEnd)
+    if (!node || _flags.reachedEnd)
         return;
-    if (_domRange && !_flags.reachedStart && _domStartAncestors && ![_domStartAncestors containsObject:node])
+    if (_domRange && !_flags.reachedStart && !_caches->isAncestorsOfStartToBeConverted(node))
         return;
-    
-    nodeType = [node nodeType];
-    childNodes = _childrenForNode(node);
-    count = [childNodes count];
-    startOffset = 0;
-    endOffset = count;
 
+    unsigned startOffset = 0;
+    unsigned endOffset = UINT_MAX;
+    bool isStart = false;
+    bool isEnd = false;
     if (_domRange) {
-        if (node == [_domRange startContainer]) {
+        if (node == core([_domRange startContainer])) {
             startOffset = (NSUInteger)[_domRange startOffset];
-            isStart = YES;
+            isStart = true;
             _flags.reachedStart = YES;
         }
-        if (node == [_domRange endContainer]) {
+        if (node == core([_domRange endContainer])) {
             endOffset = (NSUInteger)[_domRange endOffset];
-            isEnd = YES;
+            isEnd = true;
         }
     }
     
-    if (nodeType == DOM_DOCUMENT_NODE || nodeType == DOM_DOCUMENT_FRAGMENT_NODE) {
-        for (NSUInteger i = 0; i < count; i++) {
+    if (node->isDocumentNode() || node->isDocumentFragment()) {
+        Node* child = node->firstChild();
+        for (NSUInteger i = 0; child; i++) {
             if (isStart && i == startOffset)
                 _domRangeStartIndex = [_attrStr length];
             if ((!isStart || startOffset <= i) && (!isEnd || endOffset > i))
-                _traverseNode([childNodes objectAtIndex:i], depth + 1, embedded);
+                _traverseNode(child, depth + 1, embedded);
             if (isEnd && i + 1 >= endOffset)
                 _flags.reachedEnd = YES;
-            if (_flags.reachedEnd) break;
+            if (_flags.reachedEnd)
+                break;
+            child = child->nextSibling();
         }
-    } else if (nodeType == DOM_ELEMENT_NODE) {
-        DOMElement *element = (DOMElement *)node;
+    } else if (node->isElementNode()) {
+        DOMElement* element = kit(toElement(node));
         if (_enterElement(element, embedded)) {
             NSUInteger startIndex = [_attrStr length];
             if (_processElement(element, depth)) {
-                for (NSUInteger i = 0; i < count; i++) {
+                Node* child = node->firstChild();
+                for (NSUInteger i = 0; child; i++) {
                     if (isStart && i == startOffset)
                         _domRangeStartIndex = [_attrStr length];
                     if ((!isStart || startOffset <= i) && (!isEnd || endOffset > i))
-                        _traverseNode([childNodes objectAtIndex:i], depth + 1, embedded);
+                        _traverseNode(child, depth + 1, embedded);
                     if (isEnd && i + 1 >= endOffset)
                         _flags.reachedEnd = YES;
                     if (_flags.reachedEnd)
                         break;
+                    child = child->nextSibling();
                 }
                 _exitElement(element, depth, startIndex);
             }
         }
-    } else if (nodeType == DOM_TEXT_NODE || nodeType == DOM_CDATA_SECTION_NODE) {
-        _processText((DOMCharacterData *)node);
-    }
-    
+    } else if (node->isCharacterDataNode())
+        _processText(*toCharacterData(node));
+
     if (isEnd)
         _flags.reachedEnd = YES;
 }
@@ -2444,40 +2420,41 @@ void HTMLConverter::_traverseNode(DOMNode *node, NSInteger depth, BOOL embedded)
 void HTMLConverter::_traverseFooterNode(DOMNode *node, NSInteger depth)
 {
     DOMElement *element = (DOMElement *)node;
-    NSArray *childNodes = _childrenForNode(node);
-    NSUInteger count = [childNodes count];
-    NSUInteger startOffset = 0;
-    NSUInteger endOffset = count;
-    BOOL isStart = NO;
-    BOOL isEnd = NO;
 
     if (_flags.reachedEnd)
         return;
-    if (_domRange && !_flags.reachedStart && _domStartAncestors && ![_domStartAncestors containsObject:node])
+    if (_domRange && !_flags.reachedStart && !_caches->isAncestorsOfStartToBeConverted(core(node)))
         return;
+
+    unsigned startOffset = 0;
+    unsigned endOffset = UINT_MAX;
+    bool isStart = false;
+    bool isEnd = false;
     if (_domRange) {
         if (node == [_domRange startContainer]) {
             startOffset = (NSUInteger)[_domRange startOffset];
-            isStart = YES;
+            isStart = true;
             _flags.reachedStart = YES;
         }
         if (node == [_domRange endContainer]) {
             endOffset = (NSUInteger)[_domRange endOffset];
-            isEnd = YES;
+            isEnd = true;
         }
     }
     if (_enterElement(element, YES)) {
         NSUInteger startIndex = [_attrStr length];
         if (_processElement(element, depth)) {
-            for (NSUInteger i = 0; i < count; i++) {
+            Node* child = core(element)->firstChild();
+            for (NSUInteger i = 0; child; i++) {
                 if (isStart && i == startOffset)
                     _domRangeStartIndex = [_attrStr length];
                 if ((!isStart || startOffset <= i) && (!isEnd || endOffset > i))
-                    _traverseNode([childNodes objectAtIndex:i], depth + 1, YES);
+                    _traverseNode(child, depth + 1, true /* embedded */);
                 if (isEnd && i + 1 >= endOffset)
                     _flags.reachedEnd = YES;
                 if (_flags.reachedEnd)
                     break;
+                child = child->nextSibling();
             }
             _exitElement(element, depth, startIndex);
         }
@@ -2495,27 +2472,35 @@ void HTMLConverter::_adjustTrailingNewline()
         [_attrStr replaceCharactersInRange:NSMakeRange(textLength, 0) withString:@"\n"];
 }
 
+Node* HTMLConverterCaches::cacheAncestorsOfStartToBeConverted(const Range& range)
+{
+    Node* commonAncestor = range.commonAncestorContainer(ASSERT_NO_EXCEPTION);
+    Node* ancestor = range.startContainer();
+
+    while (ancestor) {
+        m_ancestorsUnderCommonAncestor.add(ancestor);
+        if (ancestor == commonAncestor)
+            break;
+        ancestor = ancestor->parentNode();
+    }
+
+    return commonAncestor;
+}
+
 void HTMLConverter::_loadFromDOMRange()
 {
+    ASSERT(_domRange);
     if (-1 == _errorCode) {
-        DOMNode *commonAncestorContainer = [_domRange commonAncestorContainer];
-        DOMNode *ancestorContainer = [_domRange startContainer];
-        
-        _domStartAncestors = [[NSMutableArray alloc] init];
-        while (ancestorContainer) {
-            [_domStartAncestors addObject:ancestorContainer];
-            if (ancestorContainer == commonAncestorContainer)
-                break;
-            ancestorContainer = [ancestorContainer parentNode];
-        }
-        
-        _document = [commonAncestorContainer ownerDocument];
+        Node* commonAncestorContainer = _caches->cacheAncestorsOfStartToBeConverted(*core(_domRange));
+        ASSERT(commonAncestorContainer);
+
+        _document = kit(commonAncestorContainer->ownerDocument());
         _dataSource = (DocumentLoader *)core(_document)->frame()->loader().documentLoader();
         
         if (_document && _dataSource) {
             _domRangeStartIndex = 0;
             _errorCode = 0;
-            _traverseNode(commonAncestorContainer, 0, NO);
+            _traverseNode(commonAncestorContainer, 0, false /* embedded */);
             if (_domRangeStartIndex > 0 && _domRangeStartIndex <= [_attrStr length])
                 [_attrStr deleteCharactersInRange:NSMakeRange(0, _domRangeStartIndex)];
         }
