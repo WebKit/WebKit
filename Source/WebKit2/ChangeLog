@@ -1,3 +1,16 @@
+2014-03-26  Anders Carlsson  <andersca@apple.com>
+
+        Rename a delegate method to -webView:didFinishNavigation:
+        https://bugs.webkit.org/show_bug.cgi?id=130814
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::LoaderClient::didFinishLoadForFrame):
+
 2014-03-26  Tim Horton  <timothy_horton@apple.com>
 
         [iOS WebKit2] Crashes on swipe

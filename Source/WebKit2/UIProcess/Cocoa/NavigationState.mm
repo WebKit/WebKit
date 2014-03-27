@@ -112,13 +112,16 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewDidReceiveServerRedirectForProvisionalNavigation = [delegate respondsToSelector:@selector(webView:didReceiveServerRedirectForProvisionalNavigation:)];
     m_navigationDelegateMethods.webViewDidFailProvisionalNavigationWithError = [delegate respondsToSelector:@selector(webView:didFailProvisionalNavigation:withError:)];
     m_navigationDelegateMethods.webViewDidCommitNavigation = [delegate respondsToSelector:@selector(webView:didCommitNavigation:)];
-    m_navigationDelegateMethods.webViewDidFinishLoadingNavigation = [delegate respondsToSelector:@selector(webView:didFinishLoadingNavigation:)];
+    m_navigationDelegateMethods.webViewDidFinishNavigation = [delegate respondsToSelector:@selector(webView:didFinishNavigation:)];
     m_navigationDelegateMethods.webViewDidFailNavigationWithError = [delegate respondsToSelector:@selector(webView:didFailNavigation:withError:)];
 
     m_navigationDelegateMethods.webViewRenderingProgressDidChange = [delegate respondsToSelector:@selector(_webView:renderingProgressDidChange:)];
     m_navigationDelegateMethods.webViewCanAuthenticateAgainstProtectionSpace = [delegate respondsToSelector:@selector(_webView:canAuthenticateAgainstProtectionSpace:)];
     m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallenge = [delegate respondsToSelector:@selector(_webView:didReceiveAuthenticationChallenge:)];
     m_navigationDelegateMethods.webViewWebProcessDidCrash = [delegate respondsToSelector:@selector(_webViewWebProcessDidCrash:)];
+
+    // FIXME: Remove this once no clients depend on it being called.
+    m_navigationDelegateMethods.webViewDidFinishLoadingNavigation = [delegate respondsToSelector:@selector(webView:didFinishLoadingNavigation:)];
 }
 
 RetainPtr<id <WKHistoryDelegatePrivate> > NavigationState::historyDelegate()
@@ -410,7 +413,7 @@ void NavigationState::LoaderClient::didFinishLoadForFrame(WebPageProxy*, WebFram
     if (!webFrameProxy->isMainFrame())
         return;
 
-    if (!m_navigationState.m_navigationDelegateMethods.webViewDidFinishLoadingNavigation)
+    if (!m_navigationState.m_navigationDelegateMethods.webViewDidFinishNavigation && !m_navigationState.m_navigationDelegateMethods.webViewDidFinishLoadingNavigation)
         return;
 
     auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
@@ -422,7 +425,13 @@ void NavigationState::LoaderClient::didFinishLoadForFrame(WebPageProxy*, WebFram
     if (navigationID)
         navigation = m_navigationState.m_navigations.get(navigationID).get();
 
-    [navigationDelegate webView:m_navigationState.m_webView didFinishLoadingNavigation:navigation];
+    // FIXME: Remove this once no clients depend on it being called.
+    if (m_navigationState.m_navigationDelegateMethods.webViewDidFinishLoadingNavigation) {
+        [static_cast<id>(navigationDelegate) webView:m_navigationState.m_webView didFinishLoadingNavigation:navigation];
+        return;
+    }
+
+    [navigationDelegate webView:m_navigationState.m_webView didFinishNavigation:navigation];
 }
 
 void NavigationState::LoaderClient::didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy* webFrameProxy, uint64_t navigationID, const WebCore::ResourceError& error, API::Object* userData)
