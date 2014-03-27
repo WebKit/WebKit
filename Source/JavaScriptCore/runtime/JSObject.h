@@ -1325,35 +1325,35 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
 
         DeferGC deferGC(vm.heap);
         Butterfly* newButterfly = butterfly();
-        if (this->structure()->putWillGrowOutOfLineStorage())
-            newButterfly = growOutOfLineStorage(vm, this->structure()->outOfLineCapacity(), this->structure()->suggestedNewOutOfLineStorageCapacity());
-        offset = this->structure()->addPropertyWithoutTransition(vm, propertyName, attributes, specificFunction);
-        setStructureAndButterfly(vm, this->structure(), newButterfly);
+        if (structure->putWillGrowOutOfLineStorage())
+            newButterfly = growOutOfLineStorage(vm, structure->outOfLineCapacity(), structure->suggestedNewOutOfLineStorageCapacity());
+        offset = structure->addPropertyWithoutTransition(vm, propertyName, attributes, specificFunction);
+        setStructureAndButterfly(vm, structure, newButterfly);
 
         validateOffset(offset);
-        ASSERT(this->structure()->isValidOffset(offset));
+        ASSERT(structure->isValidOffset(offset));
         putDirect(vm, offset, value);
         // See comment on setNewProperty call below.
         if (!specificFunction)
             slot.setNewProperty(this, offset);
         if (attributes & ReadOnly)
-            this->structure()->setContainsReadOnlyProperties();
+            structure->setContainsReadOnlyProperties();
         return true;
     }
 
     PropertyOffset offset;
-    size_t currentCapacity = this->structure()->outOfLineCapacity();
-    if (Structure* structure = Structure::addPropertyTransitionToExistingStructure(this->structure(), propertyName, attributes, specificFunction, offset)) {
+    size_t currentCapacity = structure->outOfLineCapacity();
+    if (Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(structure, propertyName, attributes, specificFunction, offset)) {
         DeferGC deferGC(vm.heap);
         Butterfly* newButterfly = butterfly();
-        if (currentCapacity != structure->outOfLineCapacity()) {
-            ASSERT(structure != this->structure());
-            newButterfly = growOutOfLineStorage(vm, currentCapacity, structure->outOfLineCapacity());
+        if (currentCapacity != newStructure->outOfLineCapacity()) {
+            ASSERT(newStructure != structure);
+            newButterfly = growOutOfLineStorage(vm, currentCapacity, newStructure->outOfLineCapacity());
         }
 
         validateOffset(offset);
-        ASSERT(structure->isValidOffset(offset));
-        setStructureAndButterfly(vm, structure, newButterfly);
+        ASSERT(newStructure->isValidOffset(offset));
+        setStructureAndButterfly(vm, newStructure, newButterfly);
         putDirect(vm, offset, value);
         // This is a new property; transitions with specific values are not currently cachable,
         // so leave the slot in an uncachable state.

@@ -1,3 +1,16 @@
+2014-03-27  Andreas Kling  <akling@apple.com>
+
+        Avoid fetching JSObject::structure() repeatedly in putDirectInternal.
+        <https://webkit.org/b/130857>
+
+        Use the cached Structure* instead of re-fetching it over and over since
+        that's a non-trivial operation these days.
+
+        Reviewed by Mark Hahnenberg.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectInternal):
+
 2014-03-27  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Check the remembered set bit faster
