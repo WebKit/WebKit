@@ -7949,7 +7949,6 @@
     <ClCompile Include="..\platform\graphics\win\IntRectWin.cpp" />
     <ClCompile Include="..\platform\graphics\win\IntSizeWin.cpp" />
     <ClCompile Include="..\platform\graphics\win\MediaPlayerPrivateFullscreenWindow.cpp" />
-    <ClCompile Include="..\platform\graphics\opentype\OpenTypeMathData.cpp" />
     <ClCompile Include="..\platform\graphics\opentype\OpenTypeUtilities.cpp" />
     <ClCompile Include="..\platform\graphics\opentype\OpenTypeVerticalData.cpp" />
     <ClCompile Include="..\platform\graphics\win\SimpleFontDataCairoWin.cpp">
@@ -19373,7 +19372,6 @@
     <ClInclude Include="..\platform\graphics\win\FullScreenControllerClient.h" />
     <ClInclude Include="..\platform\graphics\win\LocalWindowsContext.h" />
     <CustomBuildStep Include="..\platform\graphics\win\MediaPlayerPrivateFullscreenWindow.h" />
-    <ClInclude Include="..\platform\graphics\opentype\OpenTypeMathData.h" />
     <ClInclude Include="..\platform\graphics\opentype\OpenTypeTypes.h" />
     <ClInclude Include="..\platform\graphics\opentype\OpenTypeUtilities.h" />
     <ClInclude Include="..\platform\graphics\opentype\OpenTypeVerticalData.h" />

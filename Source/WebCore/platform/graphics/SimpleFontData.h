@@ -32,7 +32,6 @@
 #include "GlyphBuffer.h"
 #include "GlyphMetricsMap.h"
 #include "GlyphPageTreeNode.h"
-#include "OpenTypeMathData.h"
 #if ENABLE(OPENTYPE_VERTICAL)
 #include "OpenTypeVerticalData.h"
 #endif
@@ -93,7 +92,6 @@ public:
     static const SimpleFontData* systemFallback() { return reinterpret_cast<const SimpleFontData*>(-1); }
 
     const FontPlatformData& platformData() const { return m_platformData; }
-    const OpenTypeMathData* mathData() const { return m_mathData ? m_mathData.get() : nullptr; }
 #if ENABLE(OPENTYPE_VERTICAL)
     const OpenTypeVerticalData* verticalData() const { return m_verticalData.get(); }
 #endif
@@ -261,7 +259,6 @@ private:
 
     bool m_isTextOrientationFallback;
     bool m_isBrokenIdeographFallback;
-    RefPtr<OpenTypeMathData> m_mathData;
 #if ENABLE(OPENTYPE_VERTICAL)
     RefPtr<OpenTypeVerticalData> m_verticalData;
 #endif

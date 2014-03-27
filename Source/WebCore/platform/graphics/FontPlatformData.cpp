@@ -27,11 +27,6 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
-#if OS(DARWIN) && USE(CG)
-#include "SharedBuffer.h"
-#include <CoreGraphics/CGFont.h>
-#endif
-
 namespace WebCore {
 
 FontPlatformData::FontPlatformData(WTF::HashTableDeletedValueType)
@@ -173,15 +168,5 @@ const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& othe
 
     return platformDataAssign(other);
 }
-
-#if OS(DARWIN) && USE(CG)
-PassRefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
-{
-    if (CFDataRef data = CGFontCopyTableForTag(cgFont(), table))
-        return SharedBuffer::wrapCFData(data);
-    
-    return nullptr;
-}
-#endif
 
 }
