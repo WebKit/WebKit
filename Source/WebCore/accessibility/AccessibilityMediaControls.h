@@ -52,7 +52,7 @@ public:
 protected:
     explicit AccessibilityMediaControl(RenderObject*);
     MediaControlElementType controlType() const;
-    String controlTypeName() const;
+    const String& controlTypeName() const;
     virtual bool computeAccessibilityIsIgnored() const override;
 
 private:
@@ -91,7 +91,7 @@ public:
 private:
     explicit AccessibilityMediaControlsContainer(RenderObject*);
     bool controllingVideoElement() const;
-    const String elementTypeName() const;
+    const String& elementTypeName() const;
     virtual bool computeAccessibilityIsIgnored() const override;
 };
 

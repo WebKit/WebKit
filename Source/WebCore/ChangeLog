@@ -1,3 +1,19 @@
+2014-03-27  Krzysztof Czech  <k.czech@samsung.com>
+
+        AX: Returns const reference to static string.
+        https://bugs.webkit.org/show_bug.cgi?id=130835
+
+        Reviewed by Mario Sanchez Prada.
+
+        Avoiding some unnecessary copies by returning const reference to static string.
+
+        No new tests. No behaviour change.
+
+        * accessibility/AccessibilityMediaControls.cpp:
+        (WebCore::AccessibilityMediaControl::controlTypeName):
+        (WebCore::AccessibilityMediaControlsContainer::elementTypeName):
+        * accessibility/AccessibilityMediaControls.h:
+
 2014-03-27  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Rename inNamedFlow flag to isNamedFlowContentNode flag

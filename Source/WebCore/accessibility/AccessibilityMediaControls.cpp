@@ -81,7 +81,7 @@ MediaControlElementType AccessibilityMediaControl::controlType() const
     return mediaControlElementType(renderer()->node());
 }
 
-String AccessibilityMediaControl::controlTypeName() const
+const String& AccessibilityMediaControl::controlTypeName() const
 {
     static NeverDestroyed<const String> mediaEnterFullscreenButtonName(ASCIILiteral("EnterFullscreenButton"));
     static NeverDestroyed<const String> mediaExitFullscreenButtonName(ASCIILiteral("ExitFullscreenButton"));
@@ -135,7 +135,7 @@ String AccessibilityMediaControl::controlTypeName() const
         break;
     }
 
-    return String();
+    return nullAtom;
 }
 
 void AccessibilityMediaControl::accessibilityText(Vector<AccessibilityText>& textOrder)
@@ -243,7 +243,7 @@ bool AccessibilityMediaControlsContainer::controllingVideoElement() const
     return !element || element->isVideo();
 }
 
-const String AccessibilityMediaControlsContainer::elementTypeName() const
+const String& AccessibilityMediaControlsContainer::elementTypeName() const
 {
     static NeverDestroyed<const String> videoElement(ASCIILiteral("VideoElement"));
     static NeverDestroyed<const String> audioElement(ASCIILiteral("AudioElement"));
