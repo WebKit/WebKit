@@ -187,24 +187,29 @@ void PageScriptDebugServer::runEventLoopWhilePaused()
     // On iOS, running an EventLoop causes us to run a nested WebRunLoop.
     // Since the WebThread is autoreleased at the end of run loop iterations
     // we need to gracefully handle releasing and reacquiring the lock.
-    ASSERT(WebThreadIsLockedOrDisabled());
-    {
-        if (WebThreadIsEnabled())
-            JSC::JSLock::DropAllLocks dropAllLocks(WebCore::JSDOMWindowBase::commonVM());
+    if (WebThreadIsEnabled()) {
+        ASSERT(WebThreadIsLockedOrDisabled());
+        JSC::JSLock::DropAllLocks dropAllLocks(WebCore::JSDOMWindowBase::commonVM());
         WebRunLoopEnableNested();
+
+        runEventLoopWhilePausedInternal();
+
+        WebRunLoopDisableNested();
+        ASSERT(WebThreadIsLockedOrDisabled());
+        return;
+    }
 #endif
 
+    runEventLoopWhilePausedInternal();
+}
+
+void PageScriptDebugServer::runEventLoopWhilePausedInternal()
+{
     TimerBase::fireTimersInNestedEventLoop();
 
     EventLoop loop;
     while (!m_doneProcessingDebuggerEvents && !loop.ended())
         loop.cycle();
-
-#if PLATFORM(IOS)
-        WebRunLoopDisableNested();
-    }
-    ASSERT(WebThreadIsLockedOrDisabled());
-#endif
 }
 
 bool PageScriptDebugServer::isContentScript(ExecState* exec) const

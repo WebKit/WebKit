@@ -66,6 +66,7 @@ private:
     virtual bool isContentScript(JSC::ExecState*) const override;
     virtual void reportException(JSC::ExecState*, JSC::JSValue) const override;
 
+    void runEventLoopWhilePausedInternal();
 
     void didAddFirstListener(Page*);
     void didRemoveLastListener(Page*, bool skipRecompile);

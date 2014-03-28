@@ -1,3 +1,19 @@
+2014-03-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Really drop all locks in nested run loop on iOS if WebThread is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=130912
+
+        Reviewed by Geoffrey Garen.
+
+        Previously we were calling DropAllLocks inside of a single line if statement,
+        so the JSLock was getting reaquired very quickly. We really want to DropAllLocks
+        for the duration of running the nested run loop on iOS if there is a WebThread.
+
+        * bindings/js/PageScriptDebugServer.h:
+        * bindings/js/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::runEventLoopWhilePaused):
+        (WebCore::PageScriptDebugServer::runEventLoopWhilePausedInternal):
+
 2014-03-28  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Enable Media Track testing features on Windows
