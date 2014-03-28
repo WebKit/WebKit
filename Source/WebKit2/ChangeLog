@@ -1,3 +1,16 @@
+2014-03-27  Pratik Solanki  <psolanki@apple.com>
+
+        [iOS WebKit2] Tweak cache sizes for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=130871
+
+        Reviewed by Sam Weinig.
+
+        Bring over the tweaks we had made to memory cache size for WebKit1 on iOS to WebKit2. These
+        were made per findings in <rdar://8611638>.
+
+        * Shared/CacheModel.cpp:
+        (WebKit::calculateCacheSizes):
+
 2014-03-27  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [WK2][EFL] Fix wrong parameter name in ewk_view_user_agent_set()
