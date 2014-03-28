@@ -1,3 +1,27 @@
+2014-03-27  Oliver Hunt  <oliver@apple.com>
+
+        Support spread operand in |new| expressions
+        https://bugs.webkit.org/show_bug.cgi?id=130877
+
+        Reviewed by Michael Saboff.
+
+        Correctness and performance tests for spread operands
+
+        * js/parser-syntax-check-expected.txt:
+        * js/regress/call-spread-expected.txt: Added.
+        * js/regress/call-spread.html: Added.
+        * js/regress/new-spread-expected.txt: Added.
+        * js/regress/new-spread.html: Added.
+        * js/regress/script-tests/call-spread.js: Added.
+        (testFunction):
+        (test2):
+        (test3):
+        * js/regress/script-tests/new-spread.js: Added.
+        (testFunction):
+        (test2):
+        (test3):
+        * js/script-tests/parser-syntax-check.js:
+
 2014-03-27  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes][css clip-path] rounded corner calculation for box shapes is wrong

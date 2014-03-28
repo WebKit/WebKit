@@ -705,7 +705,7 @@ inline char* linkFor(
         }
         codeBlock = functionExecutable->codeBlockFor(kind);
         ArityCheckMode arity;
-        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo->callType == CallLinkInfo::CallVarargs)
+        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo->callType == CallLinkInfo::CallVarargs || callLinkInfo->callType == CallLinkInfo::ConstructVarargs)
             arity = MustCheckArity;
         else
             arity = ArityCheckNotRequired;
@@ -802,7 +802,7 @@ static bool attemptToOptimizeClosureCall(
         codeBlock = 0;
     else {
         codeBlock = jsCast<FunctionExecutable*>(callee->executable())->codeBlockForCall();
-        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.callType == CallLinkInfo::CallVarargs)
+        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.callType == CallLinkInfo::CallVarargs || callLinkInfo.callType == CallLinkInfo::ConstructVarargs)
             return false;
     }
     

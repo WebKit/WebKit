@@ -176,6 +176,7 @@ void computeUsesForBytecodeOffset(
         functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
         return;
     }
+    case op_construct_varargs:
     case op_call_varargs: {
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
@@ -307,6 +308,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_new_captured_func:
     case op_new_func_exp:
     case op_call_varargs:
+    case op_construct_varargs:
     case op_get_from_scope:
     case op_call:
     case op_call_eval:

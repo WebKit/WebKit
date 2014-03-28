@@ -1192,7 +1192,28 @@ LLINT_SLOW_PATH_DECL(slow_path_call_varargs)
     
     return setUpCall(execCallee, pc, CodeForCall, calleeAsValue);
 }
-
+    
+LLINT_SLOW_PATH_DECL(slow_path_construct_varargs)
+{
+    LLINT_BEGIN_NO_SET_PC();
+    // This needs to:
+    // - Figure out what to call and compile it if necessary.
+    // - Return a tuple of machine code address to call and the new call frame.
+    
+    JSValue calleeAsValue = LLINT_OP_C(2).jsValue();
+    
+    ExecState* execCallee = vm.newCallFrameReturnValue;
+    
+    loadVarargs(exec, execCallee, LLINT_OP_C(3).jsValue(), LLINT_OP_C(4).jsValue(), pc[6].u.operand);
+    LLINT_CALL_CHECK_EXCEPTION(exec);
+    
+    execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;
+    execCallee->setCallerFrame(exec);
+    exec->setCurrentVPC(pc);
+    
+    return setUpCall(execCallee, pc, CodeForConstruct, calleeAsValue);
+}
+    
 LLINT_SLOW_PATH_DECL(slow_path_call_eval)
 {
     LLINT_BEGIN_NO_SET_PC();

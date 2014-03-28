@@ -1788,6 +1788,16 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
 
 RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
 {
+    return emitCallVarargs(op_call_varargs, dst, func, thisRegister, arguments, firstFreeRegister, firstVarArgOffset, profileHookRegister, divot, divotStart, divotEnd);
+}
+
+RegisterID* BytecodeGenerator::emitConstructVarargs(RegisterID* dst, RegisterID* func, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+{
+    return emitCallVarargs(op_construct_varargs, dst, func, 0, arguments, firstFreeRegister, firstVarArgOffset, profileHookRegister, divot, divotStart, divotEnd);
+}
+    
+RegisterID* BytecodeGenerator::emitCallVarargs(OpcodeID opcode, RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+{
     if (m_shouldEmitProfileHooks) {
         emitMove(profileHookRegister, func);
         emitOpcode(op_profile_will_call);
@@ -1798,11 +1808,11 @@ RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func
 
     // Emit call.
     UnlinkedArrayProfile arrayProfile = newArrayProfile();
-    UnlinkedValueProfile profile = emitProfiledOpcode(op_call_varargs);
+    UnlinkedValueProfile profile = emitProfiledOpcode(opcode);
     ASSERT(dst != ignoredResult());
     instructions().append(dst->index());
     instructions().append(func->index());
-    instructions().append(thisRegister->index());
+    instructions().append(thisRegister ? thisRegister->index() : 0);
     instructions().append(arguments->index());
     instructions().append(firstFreeRegister->index());
     instructions().append(firstVarArgOffset);
@@ -1857,6 +1867,19 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
     // Generate code for arguments.
     unsigned argument = 0;
     if (ArgumentsNode* argumentsNode = callArguments.argumentsNode()) {
+        
+        ArgumentListNode* n = callArguments.argumentsNode()->m_listNode;
+        if (n && n->m_expr->isSpreadExpression()) {
+            RELEASE_ASSERT(!n->m_next);
+            auto expression = static_cast<SpreadExpressionNode*>(n->m_expr)->expression();
+            RefPtr<RegisterID> argumentRegister;
+            if (expression->isResolveNode() && willResolveToArguments(static_cast<ResolveNode*>(expression)->identifier()) && !symbolTable().slowArguments())
+                argumentRegister = uncheckedRegisterForArguments();
+            else
+                argumentRegister = expression->emitBytecode(*this, callArguments.argumentRegister(0));
+            return emitConstructVarargs(dst, func, argumentRegister.get(), newTemporary(), 0, callArguments.profileHookRegister(), divot, divotStart, divotEnd);
+        }
+        
         for (ArgumentListNode* n = argumentsNode->m_listNode; n; n = n->m_next)
             emitNode(callArguments.argumentRegister(argument++), n);
     }

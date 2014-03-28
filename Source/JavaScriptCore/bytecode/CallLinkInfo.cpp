@@ -46,7 +46,7 @@ void CallLinkInfo::unlink(RepatchBuffer& repatchBuffer)
     repatchBuffer.relink(
         callReturnLocation,
         repatchBuffer.codeBlock()->vm()->getCTIStub(linkThunkGeneratorFor(
-            callType == Construct ? CodeForConstruct : CodeForCall,
+            (callType == Construct || callType == ConstructVarargs)? CodeForConstruct : CodeForCall,
             isFTL ? MustPreserveRegisters : RegisterPreservationNotRequired)).code());
     hasSeenShouldRepatch = false;
     callee.clear();

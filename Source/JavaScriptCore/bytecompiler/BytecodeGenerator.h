@@ -551,7 +551,10 @@ namespace JSC {
         }
 
         RegisterID* emitInitLazyRegister(RegisterID*);
-
+        
+        RegisterID* emitConstructVarargs(RegisterID* dst, RegisterID* func, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
+        RegisterID* emitCallVarargs(OpcodeID, RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
+        
     public:
         JSString* addStringConstant(const Identifier&);
 

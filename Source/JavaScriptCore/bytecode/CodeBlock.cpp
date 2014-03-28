@@ -627,7 +627,8 @@ void CodeBlock::dumpBytecode(
 {
     int location = it - begin;
     bool hasPrintedProfiling = false;
-    switch (exec->interpreter()->getOpcodeID(it->u.opcode)) {
+    OpcodeID opcode = exec->interpreter()->getOpcodeID(it->u.opcode);
+    switch (opcode) {
         case op_enter: {
             printLocationAndOp(out, exec, location, it, "enter");
             break;
@@ -1188,6 +1189,8 @@ void CodeBlock::dumpBytecode(
             printCallOp(out, exec, location, it, "call_eval", DontDumpCaches, hasPrintedProfiling, callLinkInfos);
             break;
         }
+            
+        case op_construct_varargs:
         case op_call_varargs: {
             int result = (++it)->u.operand;
             int callee = (++it)->u.operand;
@@ -1196,11 +1199,12 @@ void CodeBlock::dumpBytecode(
             int firstFreeRegister = (++it)->u.operand;
             int varArgOffset = (++it)->u.operand;
             ++it;
-            printLocationAndOp(out, exec, location, it, "call_varargs");
+            printLocationAndOp(out, exec, location, it, opcode == op_call_varargs ? "call_varargs" : "construct_varargs");
             out.printf("%s, %s, %s, %s, %d, %d", registerName(result).data(), registerName(callee).data(), registerName(thisValue).data(), registerName(arguments).data(), firstFreeRegister, varArgOffset);
             dumpValueProfiling(out, it, hasPrintedProfiling);
             break;
         }
+            
         case op_tear_off_activation: {
             int r0 = (++it)->u.operand;
             printLocationOpAndRegisterOperand(out, exec, location, it, "tear_off_activation", r0);
@@ -1640,6 +1644,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         }
         switch (pc[0].u.opcode) {
         case op_call_varargs:
+        case op_construct_varargs:
         case op_get_by_val:
         case op_get_argument_by_val: {
             int arrayProfileIndex = pc[opLength - 2].u.operand;

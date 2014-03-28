@@ -103,6 +103,7 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_construct);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_size_frame_for_varargs);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call_varargs);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_construct_varargs);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call_eval);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_tear_off_activation);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_tear_off_arguments);

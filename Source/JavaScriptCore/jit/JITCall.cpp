@@ -186,7 +186,8 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     */
     COMPILE_ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_construct), call_and_construct_opcodes_must_be_same_length);
     COMPILE_ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_call_varargs), call_and_call_varargs_opcodes_must_be_same_length);
-    if (opcodeID == op_call_varargs)
+    COMPILE_ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_construct_varargs), call_and_construct_varargs_opcodes_must_be_same_length);
+    if (opcodeID == op_call_varargs || opcodeID == op_construct_varargs)
         compileLoadVarargs(instruction);
     else {
         int argCount = instruction[3].u.operand;
@@ -252,7 +253,7 @@ void JIT::compileOpCallSlowCase(OpcodeID opcodeID, Instruction* instruction, Vec
     linkSlowCase(iter);
 
     ThunkGenerator generator = linkThunkGeneratorFor(
-        opcodeID == op_construct ? CodeForConstruct : CodeForCall,
+        (opcodeID == op_construct || opcodeID == op_construct_varargs) ? CodeForConstruct : CodeForCall,
         RegisterPreservationNotRequired);
     
     move(TrustedImmPtr(m_callCompilationInfo[callLinkInfoIndex].callLinkInfo), regT2);
@@ -326,6 +327,11 @@ void JIT::emit_op_call_varargs(Instruction* currentInstruction)
 {
     compileOpCall(op_call_varargs, currentInstruction, m_callLinkInfoIndex++);
 }
+    
+void JIT::emit_op_construct_varargs(Instruction* currentInstruction)
+{
+    compileOpCall(op_construct_varargs, currentInstruction, m_callLinkInfoIndex++);
+}
 
 void JIT::emit_op_construct(Instruction* currentInstruction)
 {
@@ -346,7 +352,12 @@ void JIT::emitSlow_op_call_varargs(Instruction* currentInstruction, Vector<SlowC
 {
     compileOpCallSlowCase(op_call_varargs, currentInstruction, iter, m_callLinkInfoIndex++);
 }
-
+    
+void JIT::emitSlow_op_construct_varargs(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    compileOpCallSlowCase(op_construct_varargs, currentInstruction, iter, m_callLinkInfoIndex++);
+}
+    
 void JIT::emitSlow_op_construct(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     compileOpCallSlowCase(op_construct, currentInstruction, iter, m_callLinkInfoIndex++);

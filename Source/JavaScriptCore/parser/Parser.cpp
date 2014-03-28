@@ -2144,7 +2144,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             if (newCount) {
                 newCount--;
                 JSTextPosition expressionEnd = lastTokenEndPosition();
-                TreeArguments arguments = parseArguments(context, DontAllowSpread);
+                TreeArguments arguments = parseArguments(context, AllowSpread);
                 failIfFalse(arguments, "Cannot parse call arguments");
                 base = context.createNewExpr(location, base, arguments, expressionStart, expressionEnd, lastTokenEndPosition());
             } else {

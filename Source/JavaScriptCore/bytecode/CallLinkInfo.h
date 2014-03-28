@@ -42,13 +42,15 @@ namespace JSC {
 class RepatchBuffer;
 
 struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
-    enum CallType { None, Call, CallVarargs, Construct };
+    enum CallType { None, Call, CallVarargs, Construct, ConstructVarargs };
     static CallType callTypeFor(OpcodeID opcodeID)
     {
         if (opcodeID == op_call || opcodeID == op_call_eval)
             return Call;
         if (opcodeID == op_construct)
             return Construct;
+        if (opcodeID == op_construct_varargs)
+            return ConstructVarargs;
         ASSERT(opcodeID == op_call_varargs);
         return CallVarargs;
     }
@@ -70,7 +72,7 @@ struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
     
     CodeSpecializationKind specializationKind() const
     {
-        return specializationFromIsConstruct(callType == Construct);
+        return specializationFromIsConstruct(callType == Construct || callType == ConstructVarargs);
     }
 
     CodeLocationNearCall callReturnLocation;

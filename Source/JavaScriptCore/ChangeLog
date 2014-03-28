@@ -1,3 +1,54 @@
+2014-03-27  Oliver Hunt  <oliver@apple.com>
+
+        Support spread operand in |new| expressions
+        https://bugs.webkit.org/show_bug.cgi?id=130877
+
+        Reviewed by Michael Saboff.
+
+        Add support for the spread operator being applied in
+        |new| expressions.  This required adding support for
+        a new opcode, op_construct_varargs.  This is a relatively
+        simple refactoring of the call_varargs implementation.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::unlink):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::callTypeFor):
+        (JSC::CallLinkInfo::specializationKind):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCallVarargs):
+        (JSC::BytecodeGenerator::emitConstructVarargs):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * bytecompiler/BytecodeGenerator.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::JIT::emit_op_construct_varargs):
+        (JSC::JIT::emitSlow_op_construct_varargs):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emitSlow_op_construct_varargs):
+        (JSC::JIT::emit_op_construct_varargs):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseMemberExpression):
+
 2014-03-27  Filip Pizlo  <fpizlo@apple.com>
 
         Revert http://trac.webkit.org/changeset/166386 because it broke builds.

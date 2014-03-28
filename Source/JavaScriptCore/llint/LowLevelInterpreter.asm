@@ -991,6 +991,24 @@ _llint_op_call_varargs:
     end
     slowPathForCall(_llint_slow_path_call_varargs)
 
+_llint_op_construct_varargs:
+    traceExecution()
+    callSlowPath(_llint_slow_path_size_frame_for_varargs)
+    branchIfException(_llint_throw_from_slow_path_trampoline)
+    # calleeFrame in t1
+    if JSVALUE64
+        move t1, sp
+    else
+        # The calleeFrame is not stack aligned, move down by CallerFrameAndPCSize to align
+        if ARMv7
+            subp t1, CallerFrameAndPCSize, t2
+            move t2, sp
+        else
+            subp t1, CallerFrameAndPCSize, sp
+        end
+    end
+    slowPathForCall(_llint_slow_path_construct_varargs)
+
 
 _llint_op_call_eval:
     traceExecution()
