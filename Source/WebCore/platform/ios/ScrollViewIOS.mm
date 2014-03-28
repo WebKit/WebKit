@@ -140,21 +140,31 @@ FloatRect ScrollView::computeCoverageRect(double horizontalMargin, double vertic
     if (m_horizontalVelocity) {
         futureRect.setWidth(futureRect.width() + horizontalMargin);
         if (m_horizontalVelocity < 0)
-            futureRect.setX(std::max(futureRect.x() - horizontalMargin, 0.));
+            futureRect.setX(futureRect.x() - horizontalMargin);
     }
 
     if (m_verticalVelocity) {
         futureRect.setHeight(futureRect.height() + verticalMargin);
         if (m_verticalVelocity < 0)
-            futureRect.setY(std::max(futureRect.y() - verticalMargin, 0.));
+            futureRect.setY(futureRect.y() - verticalMargin);
     }
 
     if (m_scaleChangeRate <= 0 && !m_horizontalVelocity && !m_verticalVelocity) {
         futureRect.setWidth(futureRect.width() + horizontalMargin);
         futureRect.setHeight(futureRect.height() + verticalMargin);
-        futureRect.setX(std::max(futureRect.x() - horizontalMargin / 2, 0.));
-        futureRect.setY(std::max(futureRect.y() - verticalMargin / 2, 0.));
+        futureRect.setX(futureRect.x() - horizontalMargin / 2);
+        futureRect.setY(futureRect.y() - verticalMargin / 2);
     }
+
+    IntSize contentSize = contentsSize();
+    if (futureRect.maxX() > contentSize.width())
+        futureRect.setX(contentSize.width() - futureRect.width());
+    if (futureRect.maxY() > contentSize.height())
+        futureRect.setY(contentSize.height() - futureRect.height());
+    if (futureRect.x() < 0)
+        futureRect.setX(0);
+    if (futureRect.y() < 0)
+        futureRect.setY(0);
 
     return futureRect;
 }

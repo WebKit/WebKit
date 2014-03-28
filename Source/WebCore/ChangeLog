@@ -1,3 +1,16 @@
+2014-03-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Adjust the tile coverage on the scrollview's edges
+        https://bugs.webkit.org/show_bug.cgi?id=130884
+
+        Reviewed by Dan Bernstein.
+
+        * platform/ios/ScrollViewIOS.mm:
+        (WebCore::ScrollView::computeCoverageRect):
+        Pull back the future rect inside the contentRect if it goes outside.
+        There is no point in retiling for rubberbanding and the extra tiles should be always be
+        on the opposite side to the edges.
+
 2014-03-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unused LocaleMac::create method
