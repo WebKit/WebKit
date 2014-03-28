@@ -143,12 +143,12 @@ void String::append(UChar character)
 {
     // FIXME: This is extremely inefficient. So much so that we might want to take this out of String's API.
 
-    if (character <= 0xFF && is8Bit()) {
-        append(static_cast<LChar>(character));
-        return;
-    }
     if (!m_impl) {
         m_impl = StringImpl::create(&character, 1);
+        return;
+    }
+    if (character <= 0xFF && is8Bit()) {
+        append(static_cast<LChar>(character));
         return;
     }
     if (m_impl->length() >= std::numeric_limits<unsigned>::max())
