@@ -943,6 +943,17 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
     return position;
 }
 
+- (CGRect)elementRectAtPoint:(CGPoint)point
+{
+    Frame *frame = [self coreFrame];
+    IntPoint adjustedPoint = frame->view()->windowToContents(roundedIntPoint(point));
+    HitTestResult result = frame->eventHandler().hitTestResultAtPoint(adjustedPoint, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent);
+    Node* hitNode = result.innerNode();
+    if (!hitNode || !hitNode->renderer())
+        return IntRect();
+    return result.innerNodeFrame()->view()->contentsToWindow(hitNode->renderer()->absoluteBoundingBoxRect(true));
+}
+
 @end
 
 #endif  // PLATFORM(IOS)

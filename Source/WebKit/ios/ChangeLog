@@ -1,5 +1,26 @@
 2014-03-27  Enrica Casucci  <enrica@apple.com>
 
+        Add support for AirPlay picker for iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=130876
+        <rdar://problem/15349859>
+
+        Reviewed by Benjamin Poulain.
+
+        Adds support for the AirPlay picker for WebKit.
+        The actual picker is implemented in UIKit.
+
+        * DefaultDelegates/WebDefaultUIKitDelegate.m:
+        (-[WebDefaultUIKitDelegate interactionLocation]):
+        (-[WebDefaultUIKitDelegate showPlaybackTargetPicker:fromRect:]):
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::showPlaybackTargetPicker):
+        * WebCoreSupport/WebFrameIOS.h:
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame elementRectAtPoint:]):
+        * WebView/WebUIKitDelegate.h:
+
+2014-03-27  Enrica Casucci  <enrica@apple.com>
+
         Add support for AirPlay picker in WK2 for iOS.
         https://bugs.webkit.org/show_bug.cgi?id=130855
         <rdar://problem/15349859>

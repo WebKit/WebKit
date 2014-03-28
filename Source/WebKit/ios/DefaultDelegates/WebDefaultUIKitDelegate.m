@@ -236,6 +236,15 @@ static WebDefaultUIKitDelegate *sharedDelegate = nil;
     return nil; 
 } 
 
+- (CGPoint)interactionLocation
+{
+    return CGPointZero;
+}
+
+- (void)showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(CGRect)elementRect
+{
+}
+
 - (BOOL)hasRichlyEditableSelection
 {
     return NO;

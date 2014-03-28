@@ -316,6 +316,9 @@ void WebChromeClientIOS::focusedElementChanged(Element* element)
 
 void WebChromeClientIOS::showPlaybackTargetPicker(bool hasVideo)
 {
+    CGPoint point = [[webView() _UIKitDelegateForwarder] interactionLocation];
+    CGRect elementRect = [[webView() mainFrame] elementRectAtPoint:point];
+    [[webView() _UIKitDelegateForwarder] showPlaybackTargetPicker:hasVideo fromRect:elementRect];
 }
 
 #endif // PLATFORM(IOS)

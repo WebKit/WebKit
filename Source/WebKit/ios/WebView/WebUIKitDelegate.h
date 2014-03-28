@@ -108,6 +108,8 @@
 - (BOOL)hasRichlyEditableSelection;
 - (BOOL)performsTwoStepPaste:(DOMDocumentFragment*)fragment;
 - (NSInteger)getPasteboardChangeCount;
+- (CGPoint)interactionLocation;
+- (void)showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(CGRect)elementRect;
 
 - (BOOL)isUnperturbedDictationResultMarker:(id)metadataForMarker;
 - (void)webView:(WebView *)webView addMessageToConsole:(NSDictionary *)message withSource:(NSString *)source;

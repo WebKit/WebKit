@@ -93,6 +93,7 @@ typedef enum {
 - (WebVisiblePosition *)previousUnperturbedDictationResultBoundaryFromPosition:(WebVisiblePosition *)position;
 - (WebVisiblePosition *)nextUnperturbedDictationResultBoundaryFromPosition:(WebVisiblePosition *)position;
 
+- (CGRect)elementRectAtPoint:(CGPoint)point;
 @end
 
 #endif // TARGET_OS_IPHONE
