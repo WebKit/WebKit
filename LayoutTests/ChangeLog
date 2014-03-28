@@ -1,3 +1,12 @@
+2014-03-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed gardening. Make WebVTT tests less flaky by ensuring captions are set to display
+        in each test, rather than relying on earlier tests turning captions on. This caused tests to
+        fail if run out of order.
+
+        * media/track/regions-webvtt/vtt-region-display.html: Turn captions on.
+        * media/track/regions-webvtt/vtt-region-dom-layout.html: Ditto.
+
 2014-03-28  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Implement support for SourceBuffer.remove()
