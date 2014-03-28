@@ -27,7 +27,7 @@ PASS: window.CSSValue.CSS_CUSTOM should be 3 and is.
 PASS: nodeFilter.FILTER_ACCEPT should be 1 and is.
 PASS: nodeFilter.FILTER_REJECT should be 2 and is.
 PASS: nodeFilter.FILTER_SKIP should be 3 and is.
-PASS: nodeFilter.SHOW_ALL should be -1 and is.
+PASS: nodeFilter.SHOW_ALL should be 4294967295 and is.
 PASS: nodeFilter.SHOW_ELEMENT should be 1 and is.
 PASS: nodeFilter.SHOW_ATTRIBUTE should be 2 and is.
 PASS: nodeFilter.SHOW_TEXT should be 4 and is.
@@ -43,7 +43,7 @@ PASS: nodeFilter.SHOW_NOTATION should be 2048 and is.
 PASS: window.NodeFilter.FILTER_ACCEPT should be 1 and is.
 PASS: window.NodeFilter.FILTER_REJECT should be 2 and is.
 PASS: window.NodeFilter.FILTER_SKIP should be 3 and is.
-PASS: window.NodeFilter.SHOW_ALL should be -1 and is.
+PASS: window.NodeFilter.SHOW_ALL should be 4294967295 and is.
 PASS: window.NodeFilter.SHOW_ELEMENT should be 1 and is.
 PASS: window.NodeFilter.SHOW_ATTRIBUTE should be 2 and is.
 PASS: window.NodeFilter.SHOW_TEXT should be 4 and is.

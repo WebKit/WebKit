@@ -4689,44 +4689,44 @@ void JSTestObj::visitChildren(JSCell* cell, SlotVisitor& visitor)
 EncodedJSValue jsTestObjCONDITIONAL_CONST(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return JSValue::encode(jsNumber(static_cast<int>(0)));
+    return JSValue::encode(jsNumber(0));
 }
 
 #endif
 EncodedJSValue jsTestObjCONST_VALUE_0(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return JSValue::encode(jsNumber(static_cast<int>(0)));
+    return JSValue::encode(jsNumber(0));
 }
 
 EncodedJSValue jsTestObjCONST_VALUE_1(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return JSValue::encode(jsNumber(static_cast<int>(1)));
+    return JSValue::encode(jsNumber(1));
 }
 
 EncodedJSValue jsTestObjCONST_VALUE_2(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return JSValue::encode(jsNumber(static_cast<int>(2)));
+    return JSValue::encode(jsNumber(2));
 }
 
 EncodedJSValue jsTestObjCONST_VALUE_4(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return JSValue::encode(jsNumber(static_cast<int>(4)));
+    return JSValue::encode(jsNumber(4));
 }
 
 EncodedJSValue jsTestObjCONST_VALUE_8(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return JSValue::encode(jsNumber(static_cast<int>(8)));
+    return JSValue::encode(jsNumber(8));
 }
 
 EncodedJSValue jsTestObjCONST_VALUE_9(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return JSValue::encode(jsNumber(static_cast<int>(-1)));
+    return JSValue::encode(jsNumber(-1));
 }
 
 EncodedJSValue jsTestObjCONST_VALUE_10(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
@@ -4737,37 +4737,37 @@ EncodedJSValue jsTestObjCONST_VALUE_10(ExecState* exec, JSObject*, EncodedJSValu
 EncodedJSValue jsTestObjCONST_VALUE_11(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return JSValue::encode(jsNumber(static_cast<int>(0xffffffff)));
+    return JSValue::encode(jsNumber(0xffffffff));
 }
 
 EncodedJSValue jsTestObjCONST_VALUE_12(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return JSValue::encode(jsNumber(static_cast<int>(0x01)));
+    return JSValue::encode(jsNumber(0x01));
 }
 
 EncodedJSValue jsTestObjCONST_VALUE_13(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return JSValue::encode(jsNumber(static_cast<int>(0X20)));
+    return JSValue::encode(jsNumber(0X20));
 }
 
 EncodedJSValue jsTestObjCONST_VALUE_14(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return JSValue::encode(jsNumber(static_cast<int>(0x1abc)));
+    return JSValue::encode(jsNumber(0x1abc));
 }
 
 EncodedJSValue jsTestObjCONST_JAVASCRIPT(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return JSValue::encode(jsNumber(static_cast<int>(15)));
+    return JSValue::encode(jsNumber(15));
 }
 
 EncodedJSValue jsTestObjReadonly(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return JSValue::encode(jsNumber(static_cast<int>(0)));
+    return JSValue::encode(jsNumber(0));
 }
 
 bool JSTestObjOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

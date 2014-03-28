@@ -1,3 +1,46 @@
+2014-03-26  Antonio Gomes  <a1.gomes@sisa.samsung.com>
+
+        [Bindings] constants are always typed to 'int'
+        https://bugs.webkit.org/show_bug.cgi?id=130775
+
+        Reviewed by Darin Adler.
+
+        Patch fixes a bug where all constant getter generated
+        methods were returning 'integer' values due to static_cast.
+
+        Compilers should be smarth enough to properly infer which
+        jsNumber class construtor to call given a literal value.
+
+        Patch also fixes a bug where values whose representation
+        is bigger an integer maximum were overflowing. For instance,
+        NodeFilter.SHOW_ALL (0xFFFFFFFF).
+
+        Tests:
+        Binding tests updated.
+        Rebaselined fast/dom/constants.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::jsTestInterfaceIMPLEMENTSCONSTANT1):
+        (WebCore::jsTestInterfaceIMPLEMENTSCONSTANT2):
+        (WebCore::jsTestInterfaceSUPPLEMENTALCONSTANT1):
+        (WebCore::jsTestInterfaceSUPPLEMENTALCONSTANT2):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjCONDITIONAL_CONST):
+        (WebCore::jsTestObjCONST_VALUE_0):
+        (WebCore::jsTestObjCONST_VALUE_1):
+        (WebCore::jsTestObjCONST_VALUE_2):
+        (WebCore::jsTestObjCONST_VALUE_4):
+        (WebCore::jsTestObjCONST_VALUE_8):
+        (WebCore::jsTestObjCONST_VALUE_9):
+        (WebCore::jsTestObjCONST_VALUE_11):
+        (WebCore::jsTestObjCONST_VALUE_12):
+        (WebCore::jsTestObjCONST_VALUE_13):
+        (WebCore::jsTestObjCONST_VALUE_14):
+        (WebCore::jsTestObjCONST_JAVASCRIPT):
+        (WebCore::jsTestObjReadonly):
+
 2014-03-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         A TrailingObject's endpoint might get decremented twice

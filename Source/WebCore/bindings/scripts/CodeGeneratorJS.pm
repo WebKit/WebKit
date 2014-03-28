@@ -2821,14 +2821,13 @@ sub GenerateImplementation
                 push(@implContent, "#if ${conditionalString}\n");
             }
 
-            # FIXME: this casts into int to match our previous behavior which turned 0xFFFFFFFF in -1 for NodeFilter.SHOW_ALL
             push(@implContent, "EncodedJSValue ${getter}(ExecState* exec, JSObject*, EncodedJSValue, PropertyName)\n");
             push(@implContent, "{\n");
             if ($constant->type eq "DOMString") {
                 push(@implContent, "    return JSValue::encode(jsStringOrNull(exec, String(" . $constant->value . ")));\n");
             } else {
                 push(@implContent, "    UNUSED_PARAM(exec);\n");
-                push(@implContent, "    return JSValue::encode(jsNumber(static_cast<int>(" . $constant->value . ")));\n");
+                push(@implContent, "    return JSValue::encode(jsNumber(" . $constant->value . "));\n");
             }
             push(@implContent, "}\n\n");
             push(@implContent, "#endif\n") if $conditional;

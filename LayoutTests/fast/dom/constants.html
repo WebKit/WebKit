@@ -80,7 +80,7 @@ function test() {
     shouldBe("nodeFilter.FILTER_ACCEPT", 1);
     shouldBe("nodeFilter.FILTER_REJECT", 2);
     shouldBe("nodeFilter.FILTER_SKIP", 3);
-    shouldBe("nodeFilter.SHOW_ALL", -1);
+    shouldBe("nodeFilter.SHOW_ALL", 0xFFFFFFFF);
     shouldBe("nodeFilter.SHOW_ELEMENT", 0x00000001);
     shouldBe("nodeFilter.SHOW_ATTRIBUTE", 0x00000002);
     shouldBe("nodeFilter.SHOW_TEXT", 0x00000004);
@@ -97,7 +97,7 @@ function test() {
     shouldBe("window.NodeFilter.FILTER_ACCEPT", 1);
     shouldBe("window.NodeFilter.FILTER_REJECT", 2);
     shouldBe("window.NodeFilter.FILTER_SKIP", 3);
-    shouldBe("window.NodeFilter.SHOW_ALL", -1);
+    shouldBe("window.NodeFilter.SHOW_ALL", 0xFFFFFFFF);
     shouldBe("window.NodeFilter.SHOW_ELEMENT", 0x00000001);
     shouldBe("window.NodeFilter.SHOW_ATTRIBUTE", 0x00000002);
     shouldBe("window.NodeFilter.SHOW_TEXT", 0x00000004);
