@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2007 David Smith (catfish.man@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,6 +47,7 @@ public:
     virtual ~ClassNodeList();
 
     virtual bool nodeMatches(Element*) const override;
+    virtual bool isRootedAtDocument() const override { return false; }
 
 private:
     ClassNodeList(ContainerNode& rootNode, const String& classNames);

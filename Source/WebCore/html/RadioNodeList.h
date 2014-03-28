@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012 Motorola Mobility, Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,12 +46,14 @@ public:
     void setValue(const String&);
 
     virtual bool nodeMatches(Element*) const override;
+    virtual bool isRootedAtDocument() const override { return m_isRootedAtDocument; }
 
 private:
     RadioNodeList(ContainerNode&, const AtomicString& name);
     bool checkElementMatchesRadioNodeListFilter(Element*) const;
 
     AtomicString m_name;
+    bool m_isRootedAtDocument;
 };
 
 } // namepsace

@@ -3452,24 +3452,28 @@ void Document::setCSSTarget(Element* n)
         n->didAffectSelector(AffectedSelectorTarget);
 }
 
-void Document::registerNodeList(LiveNodeList& list)
+void Document::registerNodeListForInvalidation(LiveNodeList& list)
 {
     m_nodeListAndCollectionCounts[list.invalidationType()]++;
-    if (list.isRootedAtDocument())
-        m_listsInvalidatedAtDocument.add(&list);
+    if (!list.isRootedAtDocument())
+        return;
+    ASSERT(!list.isRegisteredForInvalidationAtDocument());
+    list.setRegisteredForInvalidationAtDocument(true);
+    m_listsInvalidatedAtDocument.add(&list);
 }
 
-void Document::unregisterNodeList(LiveNodeList& list)
+void Document::unregisterNodeListForInvalidation(LiveNodeList& list)
 {
     m_nodeListAndCollectionCounts[list.invalidationType()]--;
-    if (list.isRootedAtDocument()) {
-        if (!m_listsInvalidatedAtDocument.size()) {
-            ASSERT(m_inInvalidateNodeListAndCollectionCaches);
-            return;
-        }
-        ASSERT(m_listsInvalidatedAtDocument.contains(&list));
-        m_listsInvalidatedAtDocument.remove(&list);
+    if (!list.isRegisteredForInvalidationAtDocument())
+        return;
+    if (!m_listsInvalidatedAtDocument.size()) {
+        ASSERT(m_inInvalidateNodeListAndCollectionCaches);
+        return;
     }
+    ASSERT(m_listsInvalidatedAtDocument.contains(&list));
+    m_listsInvalidatedAtDocument.remove(&list);
+    list.setRegisteredForInvalidationAtDocument(false);
 }
 
 void Document::registerCollection(HTMLCollection& collection)

@@ -1,3 +1,66 @@
+2014-03-28  Antti Koivisto  <antti@apple.com>
+
+        Remove NodeListRootType flag
+        https://bugs.webkit.org/show_bug.cgi?id=130896
+
+        Reviewed by Anders Carlsson.
+
+        This can be handled statically (except for the RadioNodeList case) removing
+        a branch from NodeList traversal.
+
+        * dom/ClassNodeList.h:
+        * dom/Document.cpp:
+        (WebCore::Document::registerNodeListForInvalidation):
+        (WebCore::Document::unregisterNodeListForInvalidation):
+        (WebCore::Document::registerNodeList): Deleted.
+        (WebCore::Document::unregisterNodeList): Deleted.
+        
+            Mark document invalidation registered lists with a bit.
+            Renamed for clarity.
+
+        * dom/Document.h:
+        * dom/LiveNodeList.cpp:
+        (WebCore::LiveNodeList::LiveNodeList):
+        (WebCore::LiveNodeList::rootNode):
+        
+            Base class version that invokes virtual isRootedAtDocument. It is needed to support 
+            LiveNodeList::namedItem.
+
+        * dom/LiveNodeList.h:
+        (WebCore::LiveNodeList::isRegisteredForInvalidationAtDocument):
+        (WebCore::LiveNodeList::setRegisteredForInvalidationAtDocument):
+        (WebCore::LiveNodeList::document):
+        (WebCore::CachedLiveNodeList<NodeListType>::CachedLiveNodeList):
+        (WebCore::CachedLiveNodeList<NodeListType>::~CachedLiveNodeList):
+        (WebCore::CachedLiveNodeList<NodeListType>::rootNode):
+        
+            Call isRootedAtDocument on the final leaf type. Except for RadioNodeList this
+            resolves statically.
+
+        (WebCore::CachedLiveNodeList<NodeListType>::willValidateIndexCache):
+        (WebCore::CachedLiveNodeList<NodeListType>::invalidateCache):
+        (WebCore::LiveNodeList::isRootedAtDocument): Deleted.
+        (WebCore::LiveNodeList::rootType): Deleted.
+        (WebCore::LiveNodeList::rootNode): Deleted.
+        * dom/NameNodeList.h:
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::adoptDocument):
+        * dom/TagNodeList.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::rootTypeFromCollectionType):
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollection::isRootedAtDocument):
+        (WebCore::HTMLCollection::rootType):
+        
+            HTMLCollections still needs the flag.
+
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::LabelsNodeList):
+        * html/LabelsNodeList.h:
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::RadioNodeList):
+        * html/RadioNodeList.h:
+
 2014-03-28  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Geoclue2 providers won't work after reloading

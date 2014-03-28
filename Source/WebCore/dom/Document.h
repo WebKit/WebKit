@@ -761,8 +761,8 @@ public:
     void styleRecalcTimerFired(Timer<Document>&);
     void optimizedStyleSheetUpdateTimerFired(Timer<Document>&);
 
-    void registerNodeList(LiveNodeList&);
-    void unregisterNodeList(LiveNodeList&);
+    void registerNodeListForInvalidation(LiveNodeList&);
+    void unregisterNodeListForInvalidation(LiveNodeList&);
     void registerCollection(HTMLCollection&);
     void unregisterCollection(HTMLCollection&);
     void collectionCachedIdNameMap(const HTMLCollection&);

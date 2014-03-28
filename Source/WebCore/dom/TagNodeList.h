@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2008, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -47,6 +47,7 @@ public:
     virtual ~TagNodeList();
 
     virtual bool nodeMatches(Element*) const override;
+    virtual bool isRootedAtDocument() const override { return false; }
 
 protected:
     TagNodeList(ContainerNode& rootNode, const AtomicString& namespaceURI, const AtomicString& localName);
@@ -74,6 +75,7 @@ public:
     virtual ~HTMLTagNodeList();
 
     virtual bool nodeMatches(Element*) const override;
+    virtual bool isRootedAtDocument() const override { return false; }
 
 private:
     HTMLTagNodeList(ContainerNode& rootNode, const AtomicString& localName);

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012 Motorola Mobility, Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,8 +39,9 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RadioNodeList::RadioNodeList(ContainerNode& rootNode, const AtomicString& name)
-    : CachedLiveNodeList(rootNode, InvalidateForFormControls, isHTMLFormElement(rootNode) ? NodeListIsRootedAtDocument : NodeListIsRootedAtNode)
+    : CachedLiveNodeList(rootNode, InvalidateForFormControls)
     , m_name(name)
+    , m_isRootedAtDocument(isHTMLFormElement(ownerNode()))
 {
 }
 

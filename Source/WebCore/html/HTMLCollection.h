@@ -100,7 +100,11 @@ public:
     void namedItems(const AtomicString& name, Vector<Ref<Element>>&) const;
     size_t memoryCost() const { return m_indexCache.memoryCost() + (m_namedElementCache ? m_namedElementCache->memoryCost() : 0); }
 
-    bool isRootedAtDocument() const { return m_rootType == NodeListIsRootedAtDocument; }
+    enum RootType {
+        IsRootedAtNode,
+        IsRootedAtDocument
+    };
+    bool isRootedAtDocument() const { return m_rootType == IsRootedAtDocument; }
     NodeListInvalidationType invalidationType() const { return static_cast<NodeListInvalidationType>(m_invalidationType); }
     CollectionType type() const { return static_cast<CollectionType>(m_collectionType); }
     ContainerNode& ownerNode() const { return const_cast<ContainerNode&>(m_ownerNode.get()); }
@@ -133,7 +137,7 @@ protected:
     ContainerNode& rootNode() const;
     bool usesCustomForwardOnlyTraversal() const { return m_usesCustomForwardOnlyTraversal; }
 
-    NodeListRootType rootType() const { return static_cast<NodeListRootType>(m_rootType); }
+    RootType rootType() const { return static_cast<RootType>(m_rootType); }
 
     CollectionNamedElementCache& createNameItemCache() const
     {

@@ -65,7 +65,7 @@ static bool shouldOnlyIncludeDirectChildren(CollectionType type)
     return false;
 }
 
-static NodeListRootType rootTypeFromCollectionType(CollectionType type)
+static HTMLCollection::RootType rootTypeFromCollectionType(CollectionType type)
 {
     switch (type) {
     case DocImages:
@@ -79,7 +79,7 @@ static NodeListRootType rootTypeFromCollectionType(CollectionType type)
     case WindowNamedItems:
     case DocumentNamedItems:
     case FormControls:
-        return NodeListIsRootedAtDocument;
+        return HTMLCollection::IsRootedAtDocument;
     case NodeChildren:
     case TableTBodies:
     case TSectionRows:
@@ -89,10 +89,10 @@ static NodeListRootType rootTypeFromCollectionType(CollectionType type)
     case SelectedOptions:
     case DataListOptions:
     case MapAreas:
-        return NodeListIsRootedAtNode;
+        return HTMLCollection::IsRootedAtNode;
     }
     ASSERT_NOT_REACHED();
-    return NodeListIsRootedAtNode;
+    return HTMLCollection::IsRootedAtNode;
 }
 
 static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(CollectionType type)

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006, 2007, 2008, 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006-2008, 2010, 2013-2014 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,12 +31,11 @@
 
 namespace WebCore {
 
-LiveNodeList::LiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType invalidationType, NodeListRootType rootType)
+LiveNodeList::LiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType invalidationType)
     : m_ownerNode(ownerNode)
-    , m_rootType(rootType)
     , m_invalidationType(invalidationType)
+    , m_isRegisteredForInvalidationAtDocument(false)
 {
-    ASSERT(m_rootType == static_cast<unsigned>(rootType));
     ASSERT(m_invalidationType == static_cast<unsigned>(invalidationType));
 }
 
@@ -44,6 +43,13 @@ LiveNodeList::~LiveNodeList()
 {
 }
 
+ContainerNode& LiveNodeList::rootNode() const
+{
+    if (isRootedAtDocument() && ownerNode().inDocument())
+        return ownerNode().document();
+
+    return ownerNode();
+}
 
 Node* LiveNodeList::namedItem(const AtomicString& elementId) const
 {

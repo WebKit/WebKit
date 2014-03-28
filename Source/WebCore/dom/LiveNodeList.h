@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006, 2007, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006-2007, 2013-2014 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,22 +37,18 @@ namespace WebCore {
 
 class Element;
 
-enum NodeListRootType {
-    NodeListIsRootedAtNode,
-    NodeListIsRootedAtDocument
-};
-
 static bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType, const QualifiedName&);
 
 class LiveNodeList : public NodeList {
 public:
-    LiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType, NodeListRootType);
-    virtual Node* namedItem(const AtomicString&) const override final;
-    virtual bool nodeMatches(Element*) const = 0;
-
+    LiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType);
     virtual ~LiveNodeList();
 
-    ALWAYS_INLINE bool isRootedAtDocument() const { return m_rootType == NodeListIsRootedAtDocument; }
+    virtual Node* namedItem(const AtomicString&) const override final;
+
+    virtual bool nodeMatches(Element*) const = 0;
+    virtual bool isRootedAtDocument() const = 0;
+
     ALWAYS_INLINE NodeListInvalidationType invalidationType() const { return static_cast<NodeListInvalidationType>(m_invalidationType); }
     ContainerNode& ownerNode() const { return const_cast<ContainerNode&>(m_ownerNode.get()); }
     ALWAYS_INLINE void invalidateCacheForAttribute(const QualifiedName* attrName) const
@@ -62,21 +58,23 @@ public:
     }
     virtual void invalidateCache(Document&) const = 0;
 
+    bool isRegisteredForInvalidationAtDocument() const { return m_isRegisteredForInvalidationAtDocument; }
+    void setRegisteredForInvalidationAtDocument(bool f) { m_isRegisteredForInvalidationAtDocument = f; }
+
 protected:
     Document& document() const { return m_ownerNode->document(); }
-    ContainerNode& rootNode() const;
-
-    ALWAYS_INLINE NodeListRootType rootType() const { return static_cast<NodeListRootType>(m_rootType); }
 
 private:
-    virtual bool isLiveNodeList() const override { return true; }
+    virtual bool isLiveNodeList() const override final { return true; }
+
+    ContainerNode& rootNode() const;
 
     Element* iterateForPreviousElement(Element* current) const;
 
     Ref<ContainerNode> m_ownerNode;
 
-    const unsigned m_rootType : 1;
-    const unsigned m_invalidationType : 4;
+    const unsigned m_invalidationType;
+    bool m_isRegisteredForInvalidationAtDocument;
 };
 
 template <class NodeListType>
@@ -99,9 +97,11 @@ public:
     virtual size_t memoryCost() const override;
 
 protected:
-    CachedLiveNodeList(ContainerNode& rootNode, NodeListInvalidationType, NodeListRootType = NodeListIsRootedAtNode);
+    CachedLiveNodeList(ContainerNode& rootNode, NodeListInvalidationType);
 
 private:
+    ContainerNode& rootNode() const;
+
     mutable CollectionIndexCache<NodeListType, Element> m_indexCache;
 };
 
@@ -129,17 +129,9 @@ ALWAYS_INLINE bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationTyp
     return false;
 }
 
-inline ContainerNode& LiveNodeList::rootNode() const
-{
-    if (isRootedAtDocument() && ownerNode().inDocument())
-        return ownerNode().document();
-
-    return ownerNode();
-}
-
 template <class NodeListType>
-CachedLiveNodeList<NodeListType>::CachedLiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType invalidationType, NodeListRootType rootType)
-    : LiveNodeList(ownerNode, invalidationType, rootType)
+CachedLiveNodeList<NodeListType>::CachedLiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType invalidationType)
+    : LiveNodeList(ownerNode, invalidationType)
 {
 }
 
@@ -147,7 +139,16 @@ template <class NodeListType>
 CachedLiveNodeList<NodeListType>::~CachedLiveNodeList()
 {
     if (m_indexCache.hasValidCache())
-        document().unregisterNodeList(*this);
+        document().unregisterNodeListForInvalidation(*this);
+}
+
+template <class NodeListType>
+inline ContainerNode& CachedLiveNodeList<NodeListType>::rootNode() const
+{
+    if (static_cast<const NodeListType&>(*this).isRootedAtDocument() && ownerNode().inDocument())
+        return ownerNode().document();
+
+    return ownerNode();
 }
 
 template <class NodeListType>
@@ -216,7 +217,7 @@ Element* CachedLiveNodeList<NodeListType>::collectionTraverseBackward(Element& c
 template <class NodeListType>
 void CachedLiveNodeList<NodeListType>::willValidateIndexCache() const
 {
-    document().registerNodeList(const_cast<NodeListType&>(static_cast<const NodeListType&>(*this)));
+    document().registerNodeListForInvalidation(const_cast<NodeListType&>(static_cast<const NodeListType&>(*this)));
 }
 
 template <class NodeListType>
@@ -224,7 +225,7 @@ void CachedLiveNodeList<NodeListType>::invalidateCache(Document& document) const
 {
     if (!m_indexCache.hasValidCache())
         return;
-    document.unregisterNodeList(const_cast<NodeListType&>(static_cast<const NodeListType&>(*this)));
+    document.unregisterNodeListForInvalidation(const_cast<NodeListType&>(static_cast<const NodeListType&>(*this)));
     m_indexCache.invalidate();
 }
 
