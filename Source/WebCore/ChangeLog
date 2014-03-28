@@ -1,3 +1,17 @@
+2014-03-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Clean up unneeded "mutable" keyword
+        https://bugs.webkit.org/show_bug.cgi?id=130832
+
+        Reviewed by Andreas Kling.
+
+        As r166350, this patch cleans up unneeded "mutable" keywords.
+        Additionally, m_validatedSelectionCache is removed because it is not used anywhere else.
+
+        * css/CSSFontFaceRule.h:
+        * css/CSSStyleRule.h:
+        * editing/FrameSelection.h:
+
 2014-03-27  Enrica Casucci  <enrica@apple.com>
 
         Add support for AirPlay picker in WK2 for iOS.

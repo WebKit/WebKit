@@ -46,7 +46,7 @@ private:
     CSSFontFaceRule(StyleRuleFontFace*, CSSStyleSheet* parent);
 
     RefPtr<StyleRuleFontFace> m_fontFaceRule;
-    mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
+    RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
 };
 
 } // namespace WebCore

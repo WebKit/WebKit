@@ -54,7 +54,7 @@ private:
     String generateSelectorText() const;
 
     RefPtr<StyleRule> m_styleRule;    
-    mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
+    RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
 };
 
 } // namespace WebCore

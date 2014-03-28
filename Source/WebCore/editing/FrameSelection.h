@@ -317,7 +317,6 @@ private:
     LayoutUnit m_xPosForVerticalArrowNavigation;
 
     VisibleSelection m_selection;
-    mutable VisibleSelection m_validatedSelectionCache;
     VisiblePosition m_originalBase; // Used to store base before the adjustment at bidi boundary
     TextGranularity m_granularity;
 
