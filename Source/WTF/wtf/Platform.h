@@ -1050,4 +1050,8 @@
 #define HAVE_NS_ACTIVITY 1
 #endif
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#define WTF_USE_ASYNC_NSTEXTINPUTCLIENT 1
+#endif
+
 #endif /* WTF_Platform_h */

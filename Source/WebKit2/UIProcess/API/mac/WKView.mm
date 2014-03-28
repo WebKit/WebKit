@@ -1348,6 +1348,10 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         return;
     }
 
+    // FIXME: Remove the special case for NSFlagsChanged once <rdar://16393434> is fixed.
+    if ([event type] == NSFlagsChanged)
+        return;
+
     LOG(TextInput, "-> handleEventByInputMethod:%p %@", event, event);
     [[self inputContext] handleEventByInputMethod:event completionHandler:^(BOOL handled) {
         
