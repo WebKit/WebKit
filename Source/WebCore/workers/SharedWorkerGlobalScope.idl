@@ -30,6 +30,7 @@
 
 [
     GlobalContext=SharedWorkerGlobalScope,
+    CustomProxyToJSObject,
     Conditional=SHARED_WORKERS,
     JSGenerateToNativeObject,
     JSNoStaticTables,

@@ -27,6 +27,7 @@
 #include "JSArray.h"
 #include "JSArrayBufferPrototype.h"
 #include "JSClassRef.h"
+#include "JSProxy.h"
 #include "JSSegmentedVariableObject.h"
 #include "JSWeakObjectMapRefInternal.h"
 #include "NumberPrototype.h"
@@ -296,7 +297,8 @@ protected:
         Base::finishCreation(vm);
         structure()->setGlobalObject(vm, this);
         m_experimentsEnabled = m_globalObjectMethodTable->javaScriptExperimentsEnabled(this);
-        init(this);
+        init();
+        setGlobalThis(vm, JSProxy::create(vm, JSProxy::createStructure(vm, this, prototype()), this));
     }
 
     void finishCreation(VM& vm, JSObject* thisValue)
@@ -304,7 +306,8 @@ protected:
         Base::finishCreation(vm);
         structure()->setGlobalObject(vm, this);
         m_experimentsEnabled = m_globalObjectMethodTable->javaScriptExperimentsEnabled(this);
-        init(thisValue);
+        init();
+        setGlobalThis(vm, thisValue);
     }
 
     struct NewGlobalVar {
@@ -537,7 +540,6 @@ public:
 
     VM& vm() const { return m_vm; }
     JSObject* globalThis() const;
-    JS_EXPORT_PRIVATE void setGlobalThis(VM&, JSObject* globalThis);
 
     static Structure* createStructure(VM& vm, JSValue prototype)
     {
@@ -590,9 +592,11 @@ protected:
 
 private:
     friend class LLIntOffsetsExtractor;
-        
+
+    JS_EXPORT_PRIVATE void setGlobalThis(VM&, JSObject* globalThis);
+
     // FIXME: Fold reset into init.
-    JS_EXPORT_PRIVATE void init(JSObject* thisValue);
+    JS_EXPORT_PRIVATE void init();
     void reset(JSValue prototype);
 
     void createThrowTypeError(VM&);

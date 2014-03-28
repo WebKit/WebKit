@@ -130,6 +130,8 @@ JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(JSValue value)
     const ClassInfo* classInfo = asObject(value)->classInfo();
     if (classInfo == JSDedicatedWorkerGlobalScope::info())
         return jsCast<JSDedicatedWorkerGlobalScope*>(asObject(value));
+    if (classInfo == JSProxy::info())
+        return jsDynamicCast<JSDedicatedWorkerGlobalScope*>(jsCast<JSProxy*>(asObject(value))->target());
     return 0;
 }
 
@@ -141,6 +143,8 @@ JSSharedWorkerGlobalScope* toJSSharedWorkerGlobalScope(JSValue value)
     const ClassInfo* classInfo = asObject(value)->classInfo();
     if (classInfo == JSSharedWorkerGlobalScope::info())
         return jsCast<JSSharedWorkerGlobalScope*>(asObject(value));
+    if (classInfo == JSProxy::info())
+        return jsDynamicCast<JSSharedWorkerGlobalScope*>(jsCast<JSProxy*>(asObject(value))->target());
     return 0;
 }
 #endif

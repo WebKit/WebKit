@@ -1,3 +1,14 @@
+2014-03-28  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed, rolling r166248 back in.
+
+        Turns out r166070 didn't cause a 2% performance loss in page load times
+
+        Reverted changeset:
+
+        Unreviewed, rolling out r166126.
+        Rollout r166126 in prepartion to roll out prerequisite r166070
+
 2014-03-28  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL][GTK] Remove expectations after r166194
