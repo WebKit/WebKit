@@ -436,7 +436,11 @@ sub printStatus($$$)
 sub printTracLink($$)
 {
     my ($startRevision, $endRevision) = @_;
-    printf("http://trac.webkit.org/log/trunk/?rev=%s&stop_rev=%s\n", $endRevision, $startRevision + 1);
+    if ($startRevision + 1 == $endRevision) {
+        printf("http://trac.webkit.org/changeset/%s\n", $endRevision);
+    } else {
+        printf("http://trac.webkit.org/log/trunk/?rev=%s&stop_rev=%s\n", $endRevision, $startRevision + 1);
+    }
 }
 
 sub promptForTest($)

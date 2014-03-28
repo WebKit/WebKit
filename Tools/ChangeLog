@@ -1,3 +1,14 @@
+2014-03-28  David Kilzer  <ddkilzer@apple.com>
+
+        bisect-builds should print Trac 'changeset' URL if only one build is detected
+        <http://webkit.org/b/130903>
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/bisect-builds:
+        (printTracLink): Print a direct link to the Trac 'changeset'
+        URL if there is only one revision in the range.
+
 2014-03-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Bump glib version from 2.36 to 2.38 
