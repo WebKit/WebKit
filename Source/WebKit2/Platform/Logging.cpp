@@ -59,13 +59,6 @@ void initializeLogChannelsIfNecessary()
     WTFInitializeLogChannelStatesFromString(logChannels, logChannelCount, logLevelString().utf8().data());
 }
 
-#if PLATFORM(GTK) || PLATFORM(EFL)
-WTFLogChannel* logChannelByName(const String& name)
-{
-    return WTFLogChannelByName(logChannels, logChannelCount, name.utf8().data());
-}
-#endif
-
 } // namespace WebKit
 
 #endif // !LOG_DISABLED

@@ -1,3 +1,14 @@
+2014-03-28  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        [WK2] Removed unused method logChannelByName.
+        https://bugs.webkit.org/show_bug.cgi?id=130897
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/Logging.cpp:
+        (WebKit::logChannelByName): Deleted.
+        * Platform/Logging.h:
+
 2014-03-28  Alexey Proskuryakov  <ap@apple.com>
 
         Eliminate a sync cancelComposition call in WebPageProxy::editorStateChanged

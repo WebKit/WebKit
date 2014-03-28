@@ -62,10 +62,6 @@ WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
 void initializeLogChannelsIfNecessary(void);
 String logLevelString();
 
-#if PLATFORM(GTK) || PLATFORM(EFL)
-WTFLogChannel* logChannelByName(const String&);
-#endif
-
 } // namespace WebKit
 
 #endif // !LOG_DISABLED
