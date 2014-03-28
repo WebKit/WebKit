@@ -1,3 +1,17 @@
+2014-03-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Clear SVGInlineTextBox fragments when the text changes.
+        https://bugs.webkit.org/show_bug.cgi?id=130879
+
+        Reviewed by Darin Adler.
+
+        Ported from Blink: https://src.chromium.org/viewvc/blink?revision=150456&view=revision
+
+        When failing, this test will render garbage characters or crash.
+
+        * svg/custom/unicode-in-tspan-multi-svg-crash-expected.txt: Added.
+        * svg/custom/unicode-in-tspan-multi-svg-crash.html: Added.
+
 2014-03-28  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed, rolling r166248 back in.

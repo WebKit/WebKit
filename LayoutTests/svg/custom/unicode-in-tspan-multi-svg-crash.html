@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <script>
+    if (window.testRunner)
+      testRunner.dumpAsText(false);
+
+    onload = function() {
+      tSpanElement = document.getElementById('tSpanInFirstRoot');
+      tSpanElement.appendChild(document.createTextNode(unescape('%ufe9e%ue28f%ue47e')));
+
+      document.body.offsetTop;
+      document.body.style.zoom=0.9;
+
+      document.designMode='on';
+      filterInFirstRoot = document.getElementById('filterInFirstRoot');
+      useElement = document.getElementById('useElement');
+      window.getSelection().setBaseAndExtent(filterInFirstRoot, useElement, 5);
+      document.execCommand('ForwardDelete');
+      document.designMode='off';
+    }
+  </script>
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg">
+      <text>
+        <filter id="filterInFirstRoot"/>
+        <tspan id="tSpanInFirstRoot"/>
+      </text>
+      <path filter="url(#filterInSecondRoot)"/>
+    </svg>
+
+    <svg xmlns="http://www.w3.org/2000/svg">
+      <use id="useElement"/>
+      <filter id="filterInSecondRoot"/>
+    </svg>
+
+    <p>Test Passes if there is no crash in Debug or Asan builds. There should be no characters preceding "Test".</p>
+  </body>
+</html>
