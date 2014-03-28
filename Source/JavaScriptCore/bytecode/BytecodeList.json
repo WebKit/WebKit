@@ -157,7 +157,8 @@
             { "name" : "llint_cloop_did_return_from_js_4" },
             { "name" : "llint_cloop_did_return_from_js_5" },
             { "name" : "llint_cloop_did_return_from_js_6" },
-            { "name" : "llint_cloop_did_return_from_js_7" }
+            { "name" : "llint_cloop_did_return_from_js_7" },
+            { "name" : "llint_cloop_did_return_from_js_8" }
         ]
     }
 ]

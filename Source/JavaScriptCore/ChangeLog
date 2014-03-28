@@ -1,3 +1,9 @@
+2014-03-28  Oliver Hunt  <oliver@apple.com>
+
+        Fix cloop build.
+
+        * bytecode/BytecodeList.json:
+
 2014-03-28  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed, rolling r166248 back in.
