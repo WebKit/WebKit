@@ -1,3 +1,37 @@
+2014-03-27  Brent Fulgham  <bfulgham@apple.com>
+
+        Specify Shadow DOM Pseudo IDs in Media Element Constructors
+        https://bugs.webkit.org/show_bug.cgi?id=130882
+
+        Reviewed by Eric Carlson.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::MediaControlPanelElement): Call setPseudoId in constructor.
+        (WebCore::MediaControlPanelEnclosureElement::MediaControlPanelEnclosureElement): Ditto.
+        (WebCore::MediaControlTimelineContainerElement::MediaControlTimelineContainerElement): Ditto.
+        (WebCore::MediaControlVolumeSliderContainerElement::MediaControlVolumeSliderContainerElement): Ditto.
+        (WebCore::MediaControlStatusDisplayElement::MediaControlStatusDisplayElement): Ditto.
+        (WebCore::MediaControlPanelMuteButtonElement::MediaControlPanelMuteButtonElement): Ditto.
+        (WebCore::MediaControlVolumeSliderMuteButtonElement::MediaControlVolumeSliderMuteButtonElement): Ditto.
+        (WebCore::MediaControlPlayButtonElement::MediaControlPlayButtonElement): Ditto.
+        (WebCore::MediaControlOverlayPlayButtonElement::MediaControlOverlayPlayButtonElement): Ditto.
+        (WebCore::MediaControlSeekForwardButtonElement::MediaControlSeekForwardButtonElement): Ditto.
+        (WebCore::MediaControlSeekBackButtonElement::MediaControlSeekBackButtonElement): Ditto.
+        (WebCore::MediaControlRewindButtonElement::MediaControlRewindButtonElement): Ditto.
+        (WebCore::MediaControlReturnToRealtimeButtonElement::MediaControlReturnToRealtimeButtonElement): Ditto.
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::MediaControlToggleClosedCaptionsButtonElement): Ditto.
+        (WebCore::MediaControlClosedCaptionsContainerElement::MediaControlClosedCaptionsContainerElement): Ditto.
+        (WebCore::MediaControlClosedCaptionsTrackListElement::MediaControlClosedCaptionsTrackListElement): Ditto.
+        (WebCore::MediaControlTimelineElement::MediaControlTimelineElement): Ditto.
+        (WebCore::MediaControlPanelVolumeSliderElement::MediaControlPanelVolumeSliderElement): Ditto.
+        (WebCore::MediaControlFullscreenVolumeSliderElement::MediaControlFullscreenVolumeSliderElement): Ditto.
+        (WebCore::MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement): Ditto.
+        (WebCore::MediaControlFullscreenVolumeMinButtonElement::MediaControlFullscreenVolumeMinButtonElement): Ditto.
+        (WebCore::MediaControlFullscreenVolumeMaxButtonElement::MediaControlFullscreenVolumeMaxButtonElement): Ditto.
+        (WebCore::MediaControlTimeRemainingDisplayElement::MediaControlTimeRemainingDisplayElement): Ditto.
+        (WebCore::MediaControlCurrentTimeDisplayElement::MediaControlCurrentTimeDisplayElement): Ditto.
+        (WebCore::MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement): Ditto.
+
 2014-03-27  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Adjust the tile coverage on the scrollview's edges

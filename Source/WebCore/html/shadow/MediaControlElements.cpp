@@ -78,6 +78,7 @@ MediaControlPanelElement::MediaControlPanelElement(Document& document)
     , m_opaque(true)
     , m_transitionTimer(this, &MediaControlPanelElement::transitionTimerFired)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlPanelElement> MediaControlPanelElement::create(Document& document)
@@ -265,6 +266,7 @@ MediaControlPanelEnclosureElement::MediaControlPanelEnclosureElement(Document& d
     // Mapping onto same MediaControlElementType as panel element, since it has similar properties.
     : MediaControlDivElement(document, MediaControlsPanel)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlPanelEnclosureElement> MediaControlPanelEnclosureElement::create(Document& document)
@@ -302,6 +304,7 @@ const AtomicString& MediaControlOverlayEnclosureElement::shadowPseudoId() const
 MediaControlTimelineContainerElement::MediaControlTimelineContainerElement(Document& document)
     : MediaControlDivElement(document, MediaTimelineContainer)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlTimelineContainerElement> MediaControlTimelineContainerElement::create(Document& document)
@@ -346,6 +349,7 @@ RenderPtr<RenderElement> MediaControlTimelineContainerElement::createElementRend
 MediaControlVolumeSliderContainerElement::MediaControlVolumeSliderContainerElement(Document& document)
     : MediaControlDivElement(document, MediaVolumeSliderContainer)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlVolumeSliderContainerElement> MediaControlVolumeSliderContainerElement::create(Document& document)
@@ -389,6 +393,7 @@ MediaControlStatusDisplayElement::MediaControlStatusDisplayElement(Document& doc
     : MediaControlDivElement(document, MediaStatusDisplay)
     , m_stateBeingDisplayed(Nothing)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlStatusDisplayElement> MediaControlStatusDisplayElement::create(Document& document)
@@ -444,6 +449,7 @@ MediaControlPanelMuteButtonElement::MediaControlPanelMuteButtonElement(Document&
     : MediaControlMuteButtonElement(document, MediaMuteButton)
     , m_controls(controls)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlPanelMuteButtonElement> MediaControlPanelMuteButtonElement::create(Document& document, MediaControls* controls)
@@ -475,6 +481,7 @@ const AtomicString& MediaControlPanelMuteButtonElement::shadowPseudoId() const
 MediaControlVolumeSliderMuteButtonElement::MediaControlVolumeSliderMuteButtonElement(Document& document)
     : MediaControlMuteButtonElement(document, MediaMuteButton)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlVolumeSliderMuteButtonElement> MediaControlVolumeSliderMuteButtonElement::create(Document& document)
@@ -496,6 +503,7 @@ const AtomicString& MediaControlVolumeSliderMuteButtonElement::shadowPseudoId() 
 MediaControlPlayButtonElement::MediaControlPlayButtonElement(Document& document)
     : MediaControlInputElement(document, MediaPlayButton)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlPlayButtonElement> MediaControlPlayButtonElement::create(Document& document)
@@ -535,6 +543,7 @@ const AtomicString& MediaControlPlayButtonElement::shadowPseudoId() const
 MediaControlOverlayPlayButtonElement::MediaControlOverlayPlayButtonElement(Document& document)
     : MediaControlInputElement(document, MediaOverlayPlayButton)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlOverlayPlayButtonElement> MediaControlOverlayPlayButtonElement::create(Document& document)
@@ -575,6 +584,7 @@ const AtomicString& MediaControlOverlayPlayButtonElement::shadowPseudoId() const
 MediaControlSeekForwardButtonElement::MediaControlSeekForwardButtonElement(Document& document)
     : MediaControlSeekButtonElement(document, MediaSeekForwardButton)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlSeekForwardButtonElement> MediaControlSeekForwardButtonElement::create(Document& document)
@@ -596,6 +606,7 @@ const AtomicString& MediaControlSeekForwardButtonElement::shadowPseudoId() const
 MediaControlSeekBackButtonElement::MediaControlSeekBackButtonElement(Document& document)
     : MediaControlSeekButtonElement(document, MediaSeekBackButton)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlSeekBackButtonElement> MediaControlSeekBackButtonElement::create(Document& document)
@@ -617,6 +628,7 @@ const AtomicString& MediaControlSeekBackButtonElement::shadowPseudoId() const
 MediaControlRewindButtonElement::MediaControlRewindButtonElement(Document& document)
     : MediaControlInputElement(document, MediaRewindButton)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlRewindButtonElement> MediaControlRewindButtonElement::create(Document& document)
@@ -647,6 +659,7 @@ const AtomicString& MediaControlRewindButtonElement::shadowPseudoId() const
 MediaControlReturnToRealtimeButtonElement::MediaControlReturnToRealtimeButtonElement(Document& document)
     : MediaControlInputElement(document, MediaReturnToRealtimeButton)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlReturnToRealtimeButtonElement> MediaControlReturnToRealtimeButtonElement::create(Document& document)
@@ -684,6 +697,7 @@ MediaControlToggleClosedCaptionsButtonElement::MediaControlToggleClosedCaptionsB
 #if !PLATFORM(COCOA) && !PLATFORM(WIN) || !PLATFORM(GTK)
     UNUSED_PARAM(controls);
 #endif
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlToggleClosedCaptionsButtonElement> MediaControlToggleClosedCaptionsButtonElement::create(Document& document, MediaControls* controls)
@@ -735,6 +749,7 @@ const AtomicString& MediaControlToggleClosedCaptionsButtonElement::shadowPseudoI
 MediaControlClosedCaptionsContainerElement::MediaControlClosedCaptionsContainerElement(Document& document)
     : MediaControlDivElement(document, MediaClosedCaptionsContainer)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlClosedCaptionsContainerElement> MediaControlClosedCaptionsContainerElement::create(Document& document)
@@ -762,6 +777,7 @@ MediaControlClosedCaptionsTrackListElement::MediaControlClosedCaptionsTrackListE
 #if !ENABLE(VIDEO_TRACK)
     UNUSED_PARAM(controls);
 #endif
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlClosedCaptionsTrackListElement> MediaControlClosedCaptionsTrackListElement::create(Document& document, MediaControls* controls)
@@ -927,6 +943,7 @@ MediaControlTimelineElement::MediaControlTimelineElement(Document& document, Med
     : MediaControlInputElement(document, MediaSlider)
     , m_controls(controls)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlTimelineElement> MediaControlTimelineElement::create(Document& document, MediaControls* controls)
@@ -1001,6 +1018,7 @@ const AtomicString& MediaControlTimelineElement::shadowPseudoId() const
 MediaControlPanelVolumeSliderElement::MediaControlPanelVolumeSliderElement(Document& document)
     : MediaControlVolumeSliderElement(document)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlPanelVolumeSliderElement> MediaControlPanelVolumeSliderElement::create(Document& document)
@@ -1024,6 +1042,7 @@ const AtomicString& MediaControlPanelVolumeSliderElement::shadowPseudoId() const
 MediaControlFullscreenVolumeSliderElement::MediaControlFullscreenVolumeSliderElement(Document& document)
     : MediaControlVolumeSliderElement(document)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlFullscreenVolumeSliderElement> MediaControlFullscreenVolumeSliderElement::create(Document& document)
@@ -1047,6 +1066,7 @@ const AtomicString& MediaControlFullscreenVolumeSliderElement::shadowPseudoId() 
 MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement(Document& document)
     : MediaControlInputElement(document, MediaEnterFullscreenButton)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlFullscreenButtonElement> MediaControlFullscreenButtonElement::create(Document& document)
@@ -1096,6 +1116,7 @@ void MediaControlFullscreenButtonElement::setIsFullscreen(bool isFullscreen)
 MediaControlFullscreenVolumeMinButtonElement::MediaControlFullscreenVolumeMinButtonElement(Document& document)
     : MediaControlInputElement(document, MediaUnMuteButton)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlFullscreenVolumeMinButtonElement> MediaControlFullscreenVolumeMinButtonElement::create(Document& document)
@@ -1127,6 +1148,7 @@ const AtomicString& MediaControlFullscreenVolumeMinButtonElement::shadowPseudoId
 MediaControlFullscreenVolumeMaxButtonElement::MediaControlFullscreenVolumeMaxButtonElement(Document& document)
 : MediaControlInputElement(document, MediaMuteButton)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlFullscreenVolumeMaxButtonElement> MediaControlFullscreenVolumeMaxButtonElement::create(Document& document)
@@ -1158,6 +1180,7 @@ const AtomicString& MediaControlFullscreenVolumeMaxButtonElement::shadowPseudoId
 MediaControlTimeRemainingDisplayElement::MediaControlTimeRemainingDisplayElement(Document& document)
     : MediaControlTimeDisplayElement(document, MediaTimeRemainingDisplay)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlTimeRemainingDisplayElement> MediaControlTimeRemainingDisplayElement::create(Document& document)
@@ -1181,6 +1204,7 @@ const AtomicString& MediaControlTimeRemainingDisplayElement::shadowPseudoId() co
 MediaControlCurrentTimeDisplayElement::MediaControlCurrentTimeDisplayElement(Document& document)
     : MediaControlTimeDisplayElement(document, MediaCurrentTimeDisplay)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlCurrentTimeDisplayElement> MediaControlCurrentTimeDisplayElement::create(Document& document)
@@ -1209,6 +1233,7 @@ MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement(Doc
     , m_fontSize(0)
     , m_fontSizeIsImportant(false)
 {
+    setPseudo(shadowPseudoId());
 }
 
 PassRefPtr<MediaControlTextTrackContainerElement> MediaControlTextTrackContainerElement::create(Document& document)
