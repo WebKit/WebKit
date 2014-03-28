@@ -1,3 +1,14 @@
+2014-03-28  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Too many redirects visiting www.globalforestwatch.org
+        https://bugs.webkit.org/show_bug.cgi?id=129681
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::standardUserAgent): Append Safari version to UserAgent
+        string.
+
 2014-03-28  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed, rolling r166249 back in.

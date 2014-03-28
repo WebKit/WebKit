@@ -70,7 +70,7 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     // wrong can cause sites to load the wrong JavaScript, CSS, or custom fonts. In some cases
     // sites won't load resources at all.
     DEPRECATED_DEFINE_STATIC_LOCAL(const CString, uaVersion, (String::format("%i.%i", USER_AGENT_GTK_MAJOR_VERSION, USER_AGENT_GTK_MINOR_VERSION).utf8()));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, staticUA, (String::format("Mozilla/5.0 (Macintosh; %s) AppleWebKit/%s (KHTML, like Gecko) Safari/%s",
+    DEPRECATED_DEFINE_STATIC_LOCAL(const String, staticUA, (String::format("Mozilla/5.0 (Macintosh; %s) AppleWebKit/%s (KHTML, like Gecko) Safari/%s Version/6.0",
         platformVersionForUAString().utf8().data(), uaVersion.data(), uaVersion.data())));
 
     if (applicationName.isEmpty())

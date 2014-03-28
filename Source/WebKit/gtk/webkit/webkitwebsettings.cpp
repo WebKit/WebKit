@@ -1613,7 +1613,7 @@ static bool isGoogleDomain(String host)
 static String userAgentForURL(const URL& url)
 {
     // For Google domains, drop the browser's custom User Agent string, and use the
-    // standard Chrome one, so they don't give us a broken experience.
+    // standard one, so they don't give us a broken experience.
     if (isGoogleDomain(url.host()))
         return standardUserAgent();
 

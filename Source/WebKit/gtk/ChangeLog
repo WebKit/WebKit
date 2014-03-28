@@ -1,3 +1,13 @@
+2014-03-28  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Too many redirects visiting www.globalforestwatch.org
+        https://bugs.webkit.org/show_bug.cgi?id=129681
+
+        Reviewed by Martin Robinson.
+
+        * webkit/webkitwebsettings.cpp:
+        (userAgentForURL): Change outdated comment.
+
 2014-03-25  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove the autotools build
