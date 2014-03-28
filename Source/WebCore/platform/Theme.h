@@ -27,6 +27,7 @@
 #define Theme_h
 
 #include "Color.h"
+#include "ControlStates.h"
 #include "Font.h"
 #include "IntRect.h"
 #include "LengthBox.h"
@@ -65,7 +66,7 @@ public:
     virtual bool controlDrawsFocusOutline(ControlPart) const { return true; }
 
     // Methods for obtaining platform-specific colors.
-    virtual Color selectionColor(ControlPart, ControlState, SelectionPart) const { return Color(); }
+    virtual Color selectionColor(ControlPart, const ControlStates*, SelectionPart) const { return Color(); }
     virtual Color textSearchHighlightColor() const { return Color(); }
     
     // CSS system colors and fonts
@@ -97,13 +98,13 @@ public:
     virtual bool controlRequiresPreWhiteSpace(ControlPart) const { return false; }
 
     // Method for painting a control. The rect is in zoomed coordinates.
-    virtual void paint(ControlPart, ControlStates, GraphicsContext*, const IntRect& /*zoomedRect*/, float /*zoomFactor*/, ScrollView*) const { }
+    virtual void paint(ControlPart, ControlStates*, GraphicsContext*, const IntRect& /*zoomedRect*/, float /*zoomFactor*/, ScrollView*) { }
 
     // Some controls may spill out of their containers (e.g., the check on an OS X checkbox).  When these controls repaint,
     // the theme needs to communicate this inflated rect to the engine so that it can invalidate the whole control.
     // The rect passed in is in zoomed coordinates, so the inflation should take that into account and make sure the inflation
     // amount is also scaled by the zoomFactor.
-    virtual void inflateControlPaintRect(ControlPart, ControlStates, IntRect& /*zoomedRect*/, float /*zoomFactor*/) const { }
+    virtual void inflateControlPaintRect(ControlPart, const ControlStates*, IntRect& /*zoomedRect*/, float /*zoomFactor*/) const { }
     
     // This method is called once, from RenderTheme::adjustDefaultStyleSheet(), to let each platform adjust
     // the default CSS rules in html.css.

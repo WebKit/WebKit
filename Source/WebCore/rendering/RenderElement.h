@@ -27,6 +27,8 @@
 
 namespace WebCore {
 
+class ControlStates;
+
 class RenderElement : public RenderObject {
 public:
     virtual ~RenderElement();
@@ -181,6 +183,11 @@ protected:
 
     void setRenderInlineAlwaysCreatesLineBoxes(bool b) { m_renderInlineAlwaysCreatesLineBoxes = b; }
     bool renderInlineAlwaysCreatesLineBoxes() const { return m_renderInlineAlwaysCreatesLineBoxes; }
+
+    static bool hasControlStatesForRenderer(const RenderObject*);
+    static ControlStates* controlStatesForRenderer(const RenderObject*);
+    static void removeControlStatesForRenderer(const RenderObject*);
+    static void addControlStatesForRenderer(const RenderObject*, ControlStates*);
 
 private:
     void node() const = delete;

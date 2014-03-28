@@ -23,6 +23,7 @@
 #ifndef RenderTheme_h
 #define RenderTheme_h
 
+#include "ControlStates.h"
 #if USE(NEW_THEME)
 #include "Theme.h"
 #else
@@ -78,7 +79,7 @@ public:
     // This method is called to paint the widget as a background of the RenderObject.  A widget's foreground, e.g., the
     // text of a button, is always rendered by the engine itself.  The boolean return value indicates
     // whether the CSS border/background should also be painted.
-    bool paint(RenderObject*, const PaintInfo&, const IntRect&);
+    bool paint(RenderObject*, ControlStates*, const PaintInfo&, const IntRect&);
     bool paintBorderOnly(RenderObject*, const PaintInfo&, const IntRect&);
     bool paintDecorations(RenderObject*, const PaintInfo&, const IntRect&);
 
@@ -126,7 +127,7 @@ public:
 
     // This method is called whenever a relevant state changes on a particular themed object, e.g., the mouse becomes pressed
     // or a control becomes disabled.
-    virtual bool stateChanged(RenderObject*, ControlState) const;
+    virtual bool stateChanged(RenderObject*, ControlStates::States) const;
 
     // This method is called whenever the theme changes on the system in order to flush cached resources from the
     // old theme.
@@ -369,8 +370,8 @@ protected:
 #endif
 
 public:
-    // Methods for state querying
-    ControlStates controlStatesForRenderer(const RenderObject* o) const;
+    void updateControlStatesForRenderer(const RenderObject*, ControlStates*) const;
+    ControlStates::States extractControlStatesForRenderer(const RenderObject*) const;
     bool isActive(const RenderObject*) const;
     bool isChecked(const RenderObject*) const;
     bool isIndeterminate(const RenderObject*) const;

@@ -212,7 +212,8 @@ RenderThemeMac::~RenderThemeMac()
 
 NSView* RenderThemeMac::documentViewFor(RenderObject* o) const
 {
-    return ThemeMac::ensuredView(&o->view().frameView(), controlStatesForRenderer(o));
+    ControlStates states(extractControlStatesForRenderer(o));
+    return ThemeMac::ensuredView(&o->view().frameView(), &states);
 }
 
 #if ENABLE(VIDEO)

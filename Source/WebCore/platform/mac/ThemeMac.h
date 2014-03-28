@@ -51,11 +51,11 @@ public:
 
     virtual bool controlRequiresPreWhiteSpace(ControlPart part) const { return part == PushButtonPart; }
 
-    virtual void paint(ControlPart, ControlStates, GraphicsContext*, const IntRect&, float zoomFactor, ScrollView*) const;
-    virtual void inflateControlPaintRect(ControlPart, ControlStates, IntRect&, float zoomFactor) const;
+    virtual void paint(ControlPart, ControlStates*, GraphicsContext*, const IntRect&, float zoomFactor, ScrollView*) override;
+    virtual void inflateControlPaintRect(ControlPart, const ControlStates*, IntRect&, float zoomFactor) const;
 
     // FIXME: Once RenderThemeMac is converted over to use Theme then this can be internal to ThemeMac.
-    static NSView* ensuredView(ScrollView*, ControlStates);
+    static NSView* ensuredView(ScrollView*, const ControlStates*);
     static void setFocusRingClipRect(const FloatRect&);
 };
 

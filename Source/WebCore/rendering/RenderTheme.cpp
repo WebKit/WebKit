@@ -23,6 +23,7 @@
 #include "RenderTheme.h"
 
 #include "CSSValueKeywords.h"
+#include "ControlStates.h"
 #include "Document.h"
 #include "FileList.h"
 #include "FileSystem.h"
@@ -262,7 +263,7 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
     }
 }
 
-bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderTheme::paint(RenderObject* o, ControlStates* controlStates, const PaintInfo& paintInfo, const IntRect& r)
 {
     // If painting is disabled, but we aren't updating control tints, then just bail.
     // If we are updating control tints, just schedule a repaint if the theme supports tinting
@@ -286,7 +287,8 @@ bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRe
     case DefaultButtonPart:
     case ButtonPart:
     case InnerSpinButtonPart:
-        m_theme->paint(part, controlStatesForRenderer(o), const_cast<GraphicsContext*>(paintInfo.context), r, o->style().effectiveZoom(), &o->view().frameView());
+        updateControlStatesForRenderer(o, controlStates);
+        m_theme->paint(part, controlStates, const_cast<GraphicsContext*>(paintInfo.context), r, o->style().effectiveZoom(), &o->view().frameView());
         return false;
     default:
         break;
@@ -713,7 +715,8 @@ bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& bo
 void RenderTheme::adjustRepaintRect(const RenderObject* o, IntRect& r)
 {
 #if USE(NEW_THEME)
-    m_theme->inflateControlPaintRect(o->style().appearance(), controlStatesForRenderer(o), r, o->style().effectiveZoom());
+    ControlStates states(extractControlStatesForRenderer(o));
+    m_theme->inflateControlPaintRect(o->style().appearance(), &states, r, o->style().effectiveZoom());
 #else
     UNUSED_PARAM(o);
     UNUSED_PARAM(r);
@@ -725,14 +728,14 @@ bool RenderTheme::supportsFocusRing(const RenderStyle* style) const
     return (style->hasAppearance() && style->appearance() != TextFieldPart && style->appearance() != TextAreaPart && style->appearance() != MenulistButtonPart && style->appearance() != ListboxPart);
 }
 
-bool RenderTheme::stateChanged(RenderObject* o, ControlState state) const
+bool RenderTheme::stateChanged(RenderObject* o, ControlStates::States state) const
 {
     // Default implementation assumes the controls don't respond to changes in :hover state
-    if (state == HoverState && !supportsHover(&o->style()))
+    if (state == ControlStates::HoverState && !supportsHover(&o->style()))
         return false;
 
     // Assume pressed state is only responded to if the control is enabled.
-    if (state == PressedState && !isEnabled(o))
+    if (state == ControlStates::PressedState && !isEnabled(o))
         return false;
 
     // Repaint the control.
@@ -740,34 +743,40 @@ bool RenderTheme::stateChanged(RenderObject* o, ControlState state) const
     return true;
 }
 
-ControlStates RenderTheme::controlStatesForRenderer(const RenderObject* o) const
+void RenderTheme::updateControlStatesForRenderer(const RenderObject* o, ControlStates* controlStates) const
 {
-    ControlStates result = 0;
+    ControlStates newStates = extractControlStatesForRenderer(o);
+    controlStates->setStates(newStates.states());
+}
+
+ControlStates::States RenderTheme::extractControlStatesForRenderer(const RenderObject* o) const
+{
+    ControlStates::States states = 0;
     if (isHovered(o)) {
-        result |= HoverState;
+        states |= ControlStates::HoverState;
         if (isSpinUpButtonPartHovered(o))
-            result |= SpinUpState;
+            states |= ControlStates::SpinUpState;
     }
     if (isPressed(o)) {
-        result |= PressedState;
+        states |= ControlStates::PressedState;
         if (isSpinUpButtonPartPressed(o))
-            result |= SpinUpState;
+            states |= ControlStates::SpinUpState;
     }
     if (isFocused(o) && o->style().outlineStyleIsAuto())
-        result |= FocusState;
+        states |= ControlStates::FocusState;
     if (isEnabled(o))
-        result |= EnabledState;
+        states |= ControlStates::EnabledState;
     if (isChecked(o))
-        result |= CheckedState;
+        states |= ControlStates::CheckedState;
     if (isReadOnlyControl(o))
-        result |= ReadOnlyState;
+        states |= ControlStates::ReadOnlyState;
     if (isDefault(o))
-        result |= DefaultState;
+        states |= ControlStates::DefaultState;
     if (!isActive(o))
-        result |= WindowInactiveState;
+        states |= ControlStates::WindowInactiveState;
     if (isIndeterminate(o))
-        result |= IndeterminateState;
-    return result;
+        states |= ControlStates::IndeterminateState;
+    return states;
 }
 
 bool RenderTheme::isActive(const RenderObject* o) const

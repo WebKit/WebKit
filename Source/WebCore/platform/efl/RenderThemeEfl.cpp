@@ -296,7 +296,7 @@ void RenderThemeEfl::clearThemePartCache()
 
 }
 
-void RenderThemeEfl::applyEdjeStateFromForm(Evas_Object* object, ControlStates states, bool haveBackground)
+void RenderThemeEfl::applyEdjeStateFromForm(Evas_Object* object, const ControlStates* states, bool haveBackground)
 {
     const char *signals[] = { // keep in sync with WebCore/platform/ThemeTypes.h
         "hovered",
@@ -314,7 +314,7 @@ void RenderThemeEfl::applyEdjeStateFromForm(Evas_Object* object, ControlStates s
     edje_object_signal_emit(object, "reset", "");
 
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(signals); ++i) {
-        if (states & (1 << i))
+        if (states->states() & (1 << i))
             edje_object_signal_emit(object, signals[i], "");
     }
 
@@ -383,7 +383,8 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
         return false;
 
     bool haveBackgroundColor = isControlStyled(&object->style(), object->style().border(), *object->style().backgroundLayers(), Color::white);
-    applyEdjeStateFromForm(entry->edje(), controlStatesForRenderer(object), haveBackgroundColor);
+    ControlStates states(extractControlStatesForRenderer(object));
+    applyEdjeStateFromForm(entry->edje(), &states, haveBackgroundColor);
 
     applyEdjeRTLState(entry->edje(), object, type, rect);
 

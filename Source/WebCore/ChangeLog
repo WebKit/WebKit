@@ -1,3 +1,99 @@
+2014-03-27  Dean Jackson  <dino@apple.com>
+
+        Support form controls that may need incremental redraw
+        https://bugs.webkit.org/show_bug.cgi?id=130736
+
+        Reviewed by Beth Dakin.
+
+        There are some form controls that change appearance
+        over time. Expand the ControlStates so that it can
+        hold a little more information, including a reference
+        to the native form control. This way the Theme implementation
+        can repaint the existing native control if necessary. At
+        least ThemeMac was reusing a single control for painting
+        all instances before this change.
+
+        Since ControlStates is now a class, pass it around by
+        reference.
+
+        The other major change is keeping a timer to trigger a
+        repaint in RenderBox, which happens if Theme/RenderTheme
+        update the ControlState to request one.
+
+        * WebCore.xcodeproj/project.pbxproj: Add ControlStates.h.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * dom/Element.cpp:
+        (WebCore::Element::setActive): States now within ControlStates.
+        (WebCore::Element::setHovered): Ditto.
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::focusedOrActiveStateChanged): Ditto.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::disabledStateChanged): Ditto.
+        (WebCore::HTMLFormControlElement::readOnlyAttributeChanged): Ditto.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setChecked): Ditto.
+        (WebCore::HTMLInputElement::setIndeterminate): Ditto.
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::parseAttribute): Ditto.
+        * platform/ControlStates.h: New file. Copied the old ControlStates enum,
+        and added accessors to hold whether or not the state is dirty, and
+        a reference to a platform control if necessary.
+        * platform/Theme.h:
+        (WebCore::Theme::selectionColor): Pass ControlStates pointer.
+        (WebCore::Theme::paint): Ditto.
+        (WebCore::Theme::inflateControlPaintRect): Ditto.
+        * platform/ThemeTypes.h: Remove ControlStates enum.
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::applyEdjeStateFromForm): Pass ControlStates pointer.
+        (WebCore::RenderThemeEfl::paintThemePart): Ditto.
+        * platform/efl/RenderThemeEfl.h: Ditto.
+        * platform/mac/ThemeMac.h: Ditto.
+        * platform/mac/ThemeMac.mm:
+        (-[WebCoreThemeView addSubview:]): New method to make sure we don't add CALayer backed
+        views to the NSView we're using for rendering.
+        (WebCore::updateStates): Use the private animated setters if necessary.
+        (WebCore::convertControlStatesToThemeDrawState): Namespacing.
+        (WebCore::configureCheckbox): Pass ControlStates pointer.
+        (WebCore::createCheckboxCell): New helper since we're creating non-static cells.
+        (WebCore::sharedCheckboxCell): The old static provider, renamed.
+        (WebCore::paintCheckbox): Check if this paint was triggered by a state change
+        or an animation. Update the ControlStates if we need to be repainted.
+        (WebCore::radio): Parameter is now ControlStates*.
+        (WebCore::paintRadio): Ditto.
+        (WebCore::setUpButtonCell): Ditto.
+        (WebCore::button): Ditto.
+        (WebCore::paintButton): Ditto.
+        (WebCore::paintStepper): Ditto.
+        (WebCore::ThemeMac::ensuredView): Ditto.
+        (WebCore::ThemeMac::inflateControlPaintRect): Ditto.
+        (WebCore::ThemeMac::paint): Ditto.
+        (WebCore::checkbox): Deleted.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::RenderBox): Initialize timer.
+        (WebCore::RenderBox::~RenderBox): Stop any pending timers and delete the ControlState if necessary.
+        (WebCore::RenderBox::paintBoxDecorations): Create a ControlStates if needed. Paint, and start the repaint
+        timer if the ControlStates say we should.
+        (WebCore::RenderBox::repaintTimerFired): Call repaint when the timer fires.
+        * rendering/RenderBox.h: Add a timer for repainting.
+        * rendering/RenderElement.cpp:
+        (WebCore::controlStatesRendererMap): A static HashMap that associates renderers with ControlStates.
+        (WebCore::RenderElement::hasControlStatesForRenderer):
+        (WebCore::RenderElement::controlStatesForRenderer):
+        (WebCore::RenderElement::removeControlStatesForRenderer):
+        (WebCore::RenderElement::addControlStatesForRenderer):
+        * rendering/RenderElement.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint): Use a pointer to ControlStates.
+        (WebCore::RenderTheme::adjustRepaintRect): Ditto.
+        (WebCore::RenderTheme::stateChanged): Ditto.
+        (WebCore::RenderTheme::updateControlStatesForRenderer): New method that just updates the states part of ControlStates.
+        (WebCore::RenderTheme::extractControlStatesForRenderer): New method that calculates the state.
+        (WebCore::RenderTheme::controlStatesForRenderer): Deleted.
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::documentViewFor): Use a ControlStates pointer.
+
 2014-03-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Clear SVGInlineTextBox fragments when the text changes.

@@ -26,6 +26,7 @@
 #include "HTMLFormControlElement.h"
 
 #include "Attribute.h"
+#include "ControlStates.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -154,7 +155,7 @@ void HTMLFormControlElement::disabledStateChanged()
     setNeedsWillValidateCheck();
     didAffectSelector(AffectedSelectorDisabled | AffectedSelectorEnabled);
     if (renderer() && renderer()->style().hasAppearance())
-        renderer()->theme().stateChanged(renderer(), EnabledState);
+        renderer()->theme().stateChanged(renderer(), ControlStates::EnabledState);
 }
 
 void HTMLFormControlElement::readOnlyAttributeChanged()
@@ -162,7 +163,7 @@ void HTMLFormControlElement::readOnlyAttributeChanged()
     setNeedsWillValidateCheck();
     setNeedsStyleRecalc();
     if (renderer() && renderer()->style().hasAppearance())
-        renderer()->theme().stateChanged(renderer(), ReadOnlyState);
+        renderer()->theme().stateChanged(renderer(), ControlStates::ReadOnlyState);
 }
 
 void HTMLFormControlElement::requiredAttributeChanged()

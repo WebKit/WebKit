@@ -102,6 +102,7 @@ RenderBox::RenderBox(Element& element, PassRef<RenderStyle> style, unsigned base
     , m_minPreferredLogicalWidth(-1)
     , m_maxPreferredLogicalWidth(-1)
     , m_inlineBoxWrapper(0)
+    , m_repaintTimer(this, &RenderBox::repaintTimerFired)
 {
     setIsBox();
 }
@@ -111,12 +112,16 @@ RenderBox::RenderBox(Document& document, PassRef<RenderStyle> style, unsigned ba
     , m_minPreferredLogicalWidth(-1)
     , m_maxPreferredLogicalWidth(-1)
     , m_inlineBoxWrapper(0)
+    , m_repaintTimer(this, &RenderBox::repaintTimerFired)
 {
     setIsBox();
 }
 
 RenderBox::~RenderBox()
 {
+    m_repaintTimer.stop();
+    if (hasControlStatesForRenderer(this))
+        removeControlStatesForRenderer(this);
 }
 
 RenderRegion* RenderBox::clampToStartAndEndRegions(RenderRegion* region) const
@@ -1221,7 +1226,22 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     // If we have a native theme appearance, paint that before painting our background.
     // The theme will tell us whether or not we should also paint the CSS background.
     IntRect snappedPaintRect(pixelSnappedIntRect(paintRect));
-    bool themePainted = style().hasAppearance() && !theme().paint(this, paintInfo, snappedPaintRect);
+
+    ControlStates* controlStates = nullptr;
+    if (style().hasAppearance()) {
+        if (hasControlStatesForRenderer(this))
+            controlStates = controlStatesForRenderer(this);
+        else {
+            controlStates = new ControlStates();
+            addControlStatesForRenderer(this, controlStates);
+        }
+    }
+
+    bool themePainted = style().hasAppearance() && !theme().paint(this, controlStates, paintInfo, snappedPaintRect);
+
+    if (controlStates && controlStates->needsRepaint())
+        m_repaintTimer.startOneShot(0);
+
     if (!themePainted) {
         if (bleedAvoidance == BackgroundBleedBackgroundOverBorder)
             paintBorder(paintInfo, paintRect, style(), bleedAvoidance);
@@ -4727,6 +4747,12 @@ LayoutUnit RenderBox::offsetFromLogicalTopOfFirstPage() const
 
     RenderBlock* containerBlock = containingBlock();
     return containerBlock->offsetFromLogicalTopOfFirstPage() + logicalTop();
+}
+
+void RenderBox::repaintTimerFired(Timer<RenderBox>&)
+{
+    if (!document().inPageCache())
+        this->repaint();
 }
 
 } // namespace WebCore

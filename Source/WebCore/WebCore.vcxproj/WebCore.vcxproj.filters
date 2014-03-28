@@ -7969,6 +7969,9 @@
     <ClInclude Include="..\platform\ContextMenuItem.h">
       <Filter>platform</Filter>
     </ClInclude>
+    <ClInclude Include="..\platform\ControlStates.h">
+      <Filter>platform</Filter>
+    </ClInclude>
     <ClInclude Include="..\platform\CookiesStrategy.h">
       <Filter>platform</Filter>
     </ClInclude>

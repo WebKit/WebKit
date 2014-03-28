@@ -487,7 +487,7 @@ void Element::setActive(bool flag, bool pause)
     if (reactsToPress)
         setNeedsStyleRecalc();
 
-    if (renderer()->style().hasAppearance() && renderer()->theme().stateChanged(renderer(), PressedState))
+    if (renderer()->style().hasAppearance() && renderer()->theme().stateChanged(renderer(), ControlStates::PressedState))
         reactsToPress = true;
 
     // The rest of this function implements a feature that only works if the
@@ -553,7 +553,7 @@ void Element::setHovered(bool flag)
         setNeedsStyleRecalc();
 
     if (renderer()->style().hasAppearance())
-        renderer()->theme().stateChanged(renderer(), HoverState);
+        renderer()->theme().stateChanged(renderer(), ControlStates::HoverState);
 }
 
 void Element::scrollIntoView(bool alignToTop) 

@@ -19084,6 +19084,7 @@
     <ClInclude Include="..\platform\ContentType.h" />
     <ClInclude Include="..\platform\ContextMenu.h" />
     <ClInclude Include="..\platform\ContextMenuItem.h" />
+    <ClInclude Include="..\platform\ControlStates.h" />
     <ClInclude Include="..\platform\CookiesStrategy.h" />
     <ClInclude Include="..\platform\CrossThreadCopier.h" />
     <ClInclude Include="..\platform\Cursor.h" />

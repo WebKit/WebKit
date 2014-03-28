@@ -28,6 +28,7 @@
 #include "AXObjectCache.h"
 #include "AnimationController.h"
 #include "ContentData.h"
+#include "ControlStates.h"
 #include "CursorList.h"
 #include "EventHandler.h"
 #include "Frame.h"
@@ -66,7 +67,13 @@ namespace WebCore {
 
 bool RenderElement::s_affectsParentBlock = false;
 bool RenderElement::s_noLongerAffectsParentBlock = false;
-
+    
+static HashMap<const RenderObject*, ControlStates*>& controlStatesRendererMap()
+{
+    static NeverDestroyed<HashMap<const RenderObject*, ControlStates*>> map;
+    return map;
+}
+    
 RenderElement::RenderElement(Element& element, PassRef<RenderStyle> style, unsigned baseTypeFlags)
     : RenderObject(element)
     , m_baseTypeFlags(baseTypeFlags)
@@ -1336,6 +1343,30 @@ RenderNamedFlowThread* RenderElement::renderNamedFlowThreadWrapper()
     while (renderer && renderer->isAnonymousBlock() && !renderer->isRenderNamedFlowThread())
         renderer = renderer->parent();
     return renderer && renderer->isRenderNamedFlowThread() ? toRenderNamedFlowThread(renderer) : nullptr;
+}
+
+bool RenderElement::hasControlStatesForRenderer(const RenderObject* o)
+{
+    return controlStatesRendererMap().contains(o);
+}
+
+ControlStates* RenderElement::controlStatesForRenderer(const RenderObject* o)
+{
+    return controlStatesRendererMap().get(o);
+}
+
+void RenderElement::removeControlStatesForRenderer(const RenderObject* o)
+{
+    ControlStates* states = controlStatesRendererMap().get(o);
+    if (states) {
+        controlStatesRendererMap().remove(o);
+        delete states;
+    }
+}
+
+void RenderElement::addControlStatesForRenderer(const RenderObject* o, ControlStates* states)
+{
+    controlStatesRendererMap().add(o, states);
 }
 
 }

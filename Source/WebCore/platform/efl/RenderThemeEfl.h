@@ -229,7 +229,7 @@ private:
 
     void applyPartDescriptionsFrom(const String& themePath);
 
-    void applyEdjeStateFromForm(Evas_Object*, ControlStates, bool);
+    void applyEdjeStateFromForm(Evas_Object*, const ControlStates*, bool);
     void applyEdjeRTLState(Evas_Object*, RenderObject*, FormType, const IntRect&);
     bool paintThemePart(RenderObject*, FormType, const PaintInfo&, const IntRect&);
 
