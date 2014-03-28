@@ -1,3 +1,18 @@
+2014-03-28  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Add performance tests for Shapes with Regions
+        https://bugs.webkit.org/show_bug.cgi?id=129624
+
+        Reviewed by Ryosuke Niwa.
+
+        This tests introduces a real-life like page, which contains different types of shapes within
+        shape-outsides. The content flows through regions, which use media queries. The performance test
+        loads the actual Shapes-Regions test case into iframes with different page sizes (thus the layout
+        triggers the media queries as well), and measures its load time.
+
+        * Layout/RegionsShapes.html: Added.
+        * Layout/Shapes/resources/RegionsShapesContent.html: Added.
+
 2014-03-20  Zoltan Horvath  <zoltan@webkit.org>
 
         Add option for hiding Confidence Interval Delta on the performance tests results page
