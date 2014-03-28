@@ -1,3 +1,16 @@
+2014-03-28  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL][GTK] Remove expectations after r166194
+        https://bugs.webkit.org/show_bug.cgi?id=130842
+
+        Reviewed by Mario Sanchez Prada.
+
+        r166194 introduces one common expectation for all ports.
+
+        * platform/efl-wk1/accessibility/table-with-aria-role-expected.txt: Removed.
+        * platform/efl-wk2/accessibility/table-with-aria-role-expected.txt: Removed.
+        * platform/gtk/accessibility/table-with-aria-role-expected.txt: Removed.
+
 2014-03-27  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: expose selectedChildNodeIds of list boxes, tree controls, etc., and reconcile UI with childNodeIds
