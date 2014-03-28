@@ -92,9 +92,15 @@
     <div class="ex" role="tab" aria-selected="false">not selected</div>
 </div>
 
+<div role="listbox" class="ex" aria-multiselectable="true">
+    <div role="option" aria-selected="true">selected</div>
+    <div role="option" aria-selected="false">not selected</div>
+    <div role="option" aria-selected="true">selected</div>
+</div>
+
 <ul role="tree" class="ex" id="flowedTo1" aria-activedescendant="activedescendant">
     <li class="ex" role="treeitem" aria-expanded="true">expanded</li>
-    <li class="ex" role="treeitem" aria-expanded="false" id="activedescendant">collapsed</li>
+    <li class="ex" role="treeitem" aria-expanded="false" id="activedescendant" aria-selected="true">collapsed</li>
     <li class="ex" role="treeitem" aria-expanded="undefined">expanded</li>
 </ul>
 
@@ -175,6 +181,7 @@ function test() {
             case "controlledNodeIds":
             case "flowedNodeIds":
             case "ownedNodeIds":
+            case "selectedChildNodeIds":
                 if (typeof value === "object" && value.length)
                     InspectorTest.log("    " + key + ".length: " + value.length);
                 break;

@@ -1445,6 +1445,7 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
     bool required = false;
     String role;
     bool selected = false;
+    RefPtr<Inspector::TypeBuilder::Array<int>> selectedChildNodeIds;
     bool supportsChecked = false;
     bool supportsExpanded = false;
     bool supportsPressed = false;
@@ -1552,6 +1553,16 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             
             role = axObject->computedRoleString();
             selected = axObject->isSelected();
+
+            AccessibilityObject::AccessibilityChildrenVector selectedChildren;
+            axObject->selectedChildren(selectedChildren);
+            if (selectedChildren.size()) {
+                selectedChildNodeIds = Inspector::TypeBuilder::Array<int>::create();
+                for (auto& selectedChildObject : selectedChildren) {
+                    if (Node* selectedChildNode = selectedChildObject->node())
+                        selectedChildNodeIds->addItem(pushNodePathToFrontend(selectedChildNode));
+                }
+            }
         }
     }
     
@@ -1598,6 +1609,8 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             value->setRequired(required);
         if (selected)
             value->setSelected(selected);
+        if (selectedChildNodeIds)
+            value->setSelectedChildNodeIds(selectedChildNodeIds);
     }
 
     return value.release();

@@ -1,3 +1,15 @@
+2014-03-27  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: expose selectedChildNodeIds of list boxes, tree controls, etc., and reconcile UI with childNodeIds
+        https://bugs.webkit.org/show_bug.cgi?id=130827
+
+        Reviewed by Timothy Hatcher.
+
+        Tests selectedChildNodeIds in inspector-protocol: DOM.getAccessibilityPropertiesForNode.
+
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode.html:
+
 2014-03-27  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/42704> WebKitTestRunner needs to print history delegate information

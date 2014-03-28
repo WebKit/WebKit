@@ -76,6 +76,7 @@ WebInspector.DOMNodeDetailsSidebarPanel = function() {
         this._accessibilityNodeRequiredRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Required"));
         this._accessibilityNodeRoleRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Role"));
         this._accessibilityNodeSelectedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Selected"));
+        this._accessibilityNodeSelectedChildrenRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Selected Items"));
     
         this._accessibilityGroup = new WebInspector.DetailsSectionGroup([this._accessibilityEmptyRow]);
         var accessibilitySection = new WebInspector.DetailsSection("dom-node-accessibility", WebInspector.UIString("Accessibility"), [this._accessibilityGroup]);    
@@ -380,6 +381,7 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                 }
 
                 var selected = booleanValueToLocalizedStringIfTrue("selected");
+                var selectedChildNodeLinkList = linkListForNodeIds(accessibilityProperties.selectedChildNodeIds);
 
                 // Assign all the properties to their respective views.
                 this._accessibilityNodeActiveDescendantRow.value = activeDescendantLink || "";
@@ -401,6 +403,11 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                 this._accessibilityNodeRoleRow.value = role;
                 this._accessibilityNodeSelectedRow.value = selected;
 
+                this._accessibilityNodeSelectedChildrenRow.label = WebInspector.UIString("Selected Items");
+                this._accessibilityNodeSelectedChildrenRow.value = selectedChildNodeLinkList || "";
+                if (selectedChildNodeLinkList && accessibilityProperties.selectedChildNodeIds.length === 1)
+                    this._accessibilityNodeSelectedChildrenRow.label = WebInspector.UIString("Selected Item");                
+
                 // Display order, not alphabetical as above.
                 this._accessibilityGroup.rows = [
                     // Global properties for all elements.
@@ -408,8 +415,9 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                     this._accessibilityNodeRoleRow,
                     this._accessibilityNodeLabelRow,
                     this._accessibilityNodeParentRow,
-                    this._accessibilityNodeChildrenRow,
                     this._accessibilityNodeActiveDescendantRow,
+                    this._accessibilityNodeSelectedChildrenRow,
+                    this._accessibilityNodeChildrenRow,
                     this._accessibilityNodeOwnsRow,
                     this._accessibilityNodeControlsRow,
                     this._accessibilityNodeFlowsRow,

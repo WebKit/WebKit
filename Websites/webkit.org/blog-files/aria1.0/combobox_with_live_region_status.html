@@ -160,6 +160,7 @@
         var clearSelectedOption = function (){
             if (selectedOption) {
                 field.removeAttribute('aria-activedescendant');
+                list.removeAttribute('data-selection');
                 selectedOption.removeAttribute('aria-selected');
             }
             selectedOption = null;
@@ -172,6 +173,7 @@
             }
             if (selectedOption) selectedOption.removeAttribute('aria-selected');
             selectedOption = el;
+            list.setAttribute('data-selection', el.id);
             el.setAttribute('aria-selected', 'true');
             field.setAttribute('aria-activedescendant', el.id);
         };

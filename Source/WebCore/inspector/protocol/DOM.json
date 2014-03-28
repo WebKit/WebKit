@@ -81,7 +81,8 @@
                 { "name": "readonly", "type": "boolean", "optional": true, "description": "Readonly state of text controls." },
                 { "name": "required", "type": "boolean", "optional": true, "description": "Required state of form controls." },
                 { "name": "role", "type": "string", "description": "Computed value for first recognized role token, default role per element, or overridden role." },
-                { "name": "selected", "type": "boolean", "optional": true, "description": "Selected state of certain form controls." }
+                { "name": "selected", "type": "boolean", "optional": true, "description": "Selected state of certain form controls." },
+                { "name": "selectedChildNodeIds", "type": "array", "items": { "$ref": "NodeId" }, "optional": true, "description": "Array of <code>DOMNode</code> ids of any children marked as selected." }
             ]
         },
         {

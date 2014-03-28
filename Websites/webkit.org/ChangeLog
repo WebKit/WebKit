@@ -1,3 +1,15 @@
+2014-03-27  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: expose selectedChildNodeIds of list boxes, tree controls, etc., and reconcile UI with childNodeIds
+        https://bugs.webkit.org/show_bug.cgi?id=130827
+
+        Reviewed by Timothy Hatcher.
+
+        Updated demo files with attr refresh to show off selected children changing. 
+        Long term fix will be http://webkit.org/b/130883
+
+        * blog-files/aria1.0/combobox_with_live_region_status.html:
+
 2014-03-25  James Craig  <jcraig@apple.com>
 
         Blog-files: combobox demo needs aria-expanded support

@@ -476,7 +476,8 @@ WebInspector.DOMNode.prototype = {
                     readonly: accessibilityProperties.readonly,
                     required: accessibilityProperties.required,
                     role: accessibilityProperties.role,
-                    selected: accessibilityProperties.selected
+                    selected: accessibilityProperties.selected,
+                    selectedChildNodeIds: accessibilityProperties.selectedChildNodeIds
                 });
             }
         }

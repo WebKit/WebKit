@@ -1,3 +1,16 @@
+2014-03-27  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: expose selectedChildNodeIds of list boxes, tree controls, etc., and reconcile UI with childNodeIds
+        https://bugs.webkit.org/show_bug.cgi?id=130827
+
+        Reviewed by Timothy Hatcher.
+
+        UI updates for "Selected Item(s)" and "Child(ren)" rows in accessibility node inspector.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Models/DOMNode.js:
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+
 2014-03-27  Antoine Quint  <graouts@webkit.org>
 
         Web Inspector: clearing the console log doesn't update the activity viewer

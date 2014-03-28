@@ -1,3 +1,18 @@
+2014-03-27  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: expose selectedChildNodeIds of list boxes, tree controls, etc., and reconcile UI with childNodeIds
+        https://bugs.webkit.org/show_bug.cgi?id=130827
+
+        Reviewed by Timothy Hatcher.
+
+        Test: inspector-protocol/dom/getAccessibilityPropertiesForNode.html
+
+        Support for selectedChildNodeIds in inspector-protocol: DOM.getAccessibilityPropertiesForNode.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+        * inspector/protocol/DOM.json:
+
 2014-03-27  Brent Fulgham  <bfulgham@apple.com>
 
         Specify Shadow DOM Pseudo IDs in Media Element Constructors

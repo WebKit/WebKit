@@ -4,10 +4,10 @@ Checking Web Inspector protocol for the Accessibility Node Inspector.
     exists: true
     label: 
     role: 
-    childNodeIds.length: 19
+    childNodeIds.length: 20
 
 
-Total elements to be tested: 57.
+Total elements to be tested: 58.
 
 <li role="treeitem" aria-expanded="undefined">expanded</li>
     exists: true
@@ -16,13 +16,14 @@ Total elements to be tested: 57.
     childNodeIds.length: 1
     parentNodeId: exists
 
-<li role="treeitem" aria-expanded="false" id="activedescendant">collapsed</li>
+<li role="treeitem" aria-expanded="false" id="activedescendant" aria-selected="true">collapsed</li>
     exists: true
     label: 
     role: treeitem
     childNodeIds.length: 1
     expanded: false
     parentNodeId: exists
+    selected: true
 
 <li role="treeitem" aria-expanded="true">expanded</li>
     exists: true
@@ -34,7 +35,7 @@ Total elements to be tested: 57.
 
 <ul role="tree" id="flowedTo1" aria-activedescendant="activedescendant">
     <li role="treeitem" aria-expanded="true">expanded</li>
-    <li role="treeitem" aria-expanded="false" id="activedescendant">collapsed</li>
+    <li role="treeitem" aria-expanded="false" id="activedescendant" aria-selected="true">collapsed</li>
     <li role="treeitem" aria-expanded="undefined">expanded</li>
 </ul>
     exists: true
@@ -43,6 +44,20 @@ Total elements to be tested: 57.
     activeDescendantNodeId: exists
     childNodeIds.length: 3
     parentNodeId: exists
+    selectedChildNodeIds.length: 1
+
+<div role="listbox" aria-multiselectable="true">
+    <div role="option" aria-selected="true">selected</div>
+    <div role="option" aria-selected="false">not selected</div>
+    <div role="option" aria-selected="true">selected</div>
+</div>
+    exists: true
+    label: 
+    role: listbox
+    childNodeIds.length: 3
+    parentNodeId: exists
+    required: false
+    selectedChildNodeIds.length: 2
 
 <div role="tab" aria-selected="false">not selected</div>
     exists: true
@@ -91,6 +106,7 @@ Total elements to be tested: 57.
     childNodeIds.length: 2
     parentNodeId: exists
     required: false
+    selectedChildNodeIds.length: 1
 
 <input role="combobox" aria-owns="ownedlistbox invalidIdRef" aria-controls="ownedlistbox invalidIdRef">
     exists: true
