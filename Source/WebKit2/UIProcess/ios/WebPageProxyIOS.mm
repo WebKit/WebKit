@@ -99,11 +99,6 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect&, const FloatPoint
     notImplemented();
 }
 
-void WebPageProxy::cancelComposition()
-{
-    notImplemented();
-}
-
 String WebPageProxy::stringSelectionForPasteboard()
 {
     notImplemented();

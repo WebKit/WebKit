@@ -400,14 +400,14 @@ void WebPage::executeKeypressCommands(const Vector<WebCore::KeypressCommand>& co
     newState = editorState();
 }
 
-#endif // !USE(ASYNC_NSTEXTINPUTCLIENT)
-
 void WebPage::cancelComposition(EditorState& newState)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     frame.editor().cancelComposition();
     newState = editorState();
 }
+
+#endif // !USE(ASYNC_NSTEXTINPUTCLIENT)
 
 void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& replacementEditingRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations)
 {

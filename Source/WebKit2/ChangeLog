@@ -1,5 +1,20 @@
 2014-03-28  Alexey Proskuryakov  <ap@apple.com>
 
+        Move sync CancelComposition message under an ifdef
+        https://bugs.webkit.org/show_bug.cgi?id=130908
+
+        Reviewed by Enrica Casucci.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::cancelComposition): Deleted.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+
+2014-03-28  Alexey Proskuryakov  <ap@apple.com>
+
         [iOS] Don't cancel composition on selection change
         https://bugs.webkit.org/show_bug.cgi?id=130909
 

@@ -650,8 +650,6 @@ public:
     void setCompositionAsync(const String& text, Vector<WebCore::CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementRange);
     void confirmCompositionAsync();
 
-    void cancelComposition();
-
 #if PLATFORM(MAC)
     void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::TextAlternativeWithRange>& dictationAlternatives);
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, PassRefPtr<AttributedStringForCharacterRangeCallback>);
@@ -667,6 +665,7 @@ public:
     uint64_t characterIndexForPoint(const WebCore::IntPoint);
     WebCore::IntRect firstRectForCharacterRange(const EditingRange&);
     bool executeKeypressCommands(const Vector<WebCore::KeypressCommand>&);
+    void cancelComposition();
 #endif
 
     WKView* wkView() const;

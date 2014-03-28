@@ -278,8 +278,6 @@ bool WebPageProxy::executeKeypressCommands(const Vector<WebCore::KeypressCommand
     return result;
 }
 
-#endif // !USE(ASYNC_NSTEXTINPUTCLIENT)
-
 void WebPageProxy::cancelComposition()
 {
     if (!isValid())
@@ -287,6 +285,8 @@ void WebPageProxy::cancelComposition()
 
     process().sendSync(Messages::WebPage::CancelComposition(), Messages::WebPage::CancelComposition::Reply(m_editorState), m_pageID);
 }
+
+#endif // !USE(ASYNC_NSTEXTINPUTCLIENT)
 
 void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<TextAlternativeWithRange>& dictationAlternativesWithRange)
 {

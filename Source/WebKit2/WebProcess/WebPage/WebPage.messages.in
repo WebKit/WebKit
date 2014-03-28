@@ -307,7 +307,6 @@ messages -> WebPage LegacyReceiver {
     ConfirmCompositionAsync()
 #endif
 #if PLATFORM(MAC)
-    CancelComposition() -> (WebKit::EditorState newState)
     InsertDictatedTextAsync(String text, WebKit::EditingRange replacementRange, Vector<WebCore::DictationAlternative> dictationAlternatives)
     AttributedSubstringForCharacterRangeAsync(WebKit::EditingRange range, uint64_t callbackID);
 #endif
@@ -322,6 +321,7 @@ messages -> WebPage LegacyReceiver {
     CharacterIndexForPoint(WebCore::IntPoint point) -> (uint64_t result)
     FirstRectForCharacterRange(WebKit::EditingRange range) -> (WebCore::IntRect resultRect)
     ExecuteKeypressCommands(Vector<WebCore::KeypressCommand> savedCommands) -> (bool handled, WebKit::EditorState newState)
+    CancelComposition() -> (WebKit::EditorState newState)
 #endif
 
     SetMinimumLayoutSize(WebCore::IntSize minimumLayoutSize)

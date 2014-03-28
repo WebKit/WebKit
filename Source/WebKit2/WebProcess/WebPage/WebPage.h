@@ -552,7 +552,6 @@ public:
     void confirmCompositionAsync();
 
 #if PLATFORM(MAC)
-    void cancelComposition(EditorState& newState);
     void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations);
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, uint64_t callbackID);
 #if !USE(ASYNC_NSTEXTINPUTCLIENT)
@@ -566,6 +565,7 @@ public:
     void characterIndexForPoint(const WebCore::IntPoint point, uint64_t& result);
     void firstRectForCharacterRange(const EditingRange&, WebCore::IntRect& resultRect);
     void executeKeypressCommands(const Vector<WebCore::KeypressCommand>&, bool& handled, EditorState& newState);
+    void cancelComposition(EditorState& newState);
 #endif
 #endif
 
