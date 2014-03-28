@@ -1,3 +1,14 @@
+2014-03-28  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed, rolling r166249 back in.
+
+        Turns out r166070 didn't cause a 2% performance loss in page load times
+
+        Reverted changeset:
+
+        Unreviewed, rolling out r166070.
+        Rollout r166070 due to 2% performance loss in page load times
+
 2014-03-28  James Craig  <jcraig@apple.com>
 
         Web Inspector: Copy/paste error. EventListener block in DOM.json uses description from Node.

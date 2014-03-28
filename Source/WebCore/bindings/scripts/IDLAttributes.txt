@@ -43,6 +43,7 @@ CustomIndexedSetter
 CustomIsReachable
 CustomNamedGetter
 CustomNamedSetter
+CustomProxyToJSObject
 CustomPutFunction
 CustomReturn
 CustomSetter
