@@ -1520,31 +1520,7 @@ void MediaPlayerPrivateAVFoundationObjC::sizeChanged()
     if (!m_avAsset)
         return;
 
-    // Some assets don't report track properties until they are completely ready to play, but we
-    // want to report a size as early as possible so use presentationSize when an asset has no tracks.
-    if (m_avPlayerItem && ![m_cachedTracks count]) {
-        setNaturalSize(roundedIntSize(m_cachedPresentationSize));
-        return;
-    }
-
-    // AVAsset's 'naturalSize' property only considers the movie's first video track, so we need to compute
-    // the union of all visual track rects.
-    CGRect trackUnionRect = CGRectZero;
-    for (AVPlayerItemTrack *track in m_cachedTracks.get()) {
-        AVAssetTrack* assetTrack = [track assetTrack];
-        CGSize trackSize = [assetTrack naturalSize];
-        CGRect trackRect = CGRectMake(0, 0, trackSize.width, trackSize.height);
-        trackUnionRect = CGRectUnion(trackUnionRect, CGRectApplyAffineTransform(trackRect, [assetTrack preferredTransform]));
-    }
-
-    // The movie is always displayed at 0,0 so move the track rect to the origin before using width and height.
-    trackUnionRect = CGRectOffset(trackUnionRect, trackUnionRect.origin.x, trackUnionRect.origin.y);
-    
-    // Also look at the asset's preferred transform so we account for a movie matrix.
-    CGSize naturalSize = CGSizeApplyAffineTransform(trackUnionRect.size, [m_avAsset.get() preferredTransform]);
-
-    // Cache the natural size (setNaturalSize will notify the player if it has changed).
-    setNaturalSize(IntSize(naturalSize));
+    setNaturalSize(roundedIntSize(m_cachedPresentationSize));
 }
 
 #if PLATFORM(IOS)

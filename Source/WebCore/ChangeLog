@@ -1,3 +1,18 @@
+2014-03-28  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] HLS streams will report an incorrect natural size.
+        https://bugs.webkit.org/show_bug.cgi?id=130859
+
+        Reviewed by Eric Carlson.
+
+        Some HLS streams will report incorrect naturalSizes due to the asset's preferredTransform
+        property not being  available at the same time as the track's natural size. Given that
+        AVFoundation only allows one video track to be selected at a time, simply use the asset's
+        presentation size, cached in m_cachedPresentation size in all cases.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::sizeChanged):
+
 2014-03-28  Antti Koivisto  <antti@apple.com>
 
         Remove NodeListRootType flag
