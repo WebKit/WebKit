@@ -203,6 +203,7 @@ messages -> WebPageProxy {
 
     # Editor notifications
     EditorStateChanged(WebKit::EditorState editorState)
+    CompositionWasCanceled(WebKit::EditorState editorState)
 
     # Find messages
     DidCountStringMatches(String string, uint32_t matchCount)

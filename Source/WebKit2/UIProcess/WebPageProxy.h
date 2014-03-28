@@ -1186,6 +1186,7 @@ private:
 #endif
 
     void editorStateChanged(const EditorState&);
+    void compositionWasCanceled(const EditorState&);
 
     // Back/Forward list management
     void backForwardAddItem(uint64_t itemID);
@@ -1470,7 +1471,9 @@ private:
     FrameLoadState::State m_loadStateAtProcessExit;
 
     EditorState m_editorState;
+#if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
     bool m_temporarilyClosedComposition; // Editor state changed from hasComposition to !hasComposition, but that was only with shouldIgnoreCompositionSelectionChange yet.
+#endif
 
     double m_textZoomFactor;
     double m_pageZoomFactor;

@@ -1,3 +1,31 @@
+2014-03-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Eliminate a sync cancelComposition call in WebPageProxy::editorStateChanged
+        https://bugs.webkit.org/show_bug.cgi?id=130727
+
+        Reviewed by Enrica Casucci.
+
+        Added a separate CompositionWasCanceled IPC call, with which WebProcess can tell
+        UIProcess that it should notify an input method of canceled composition. There are
+        a lot of incorrect edge cases where we don't call it correctly, but this was true
+        in the old implementation too (for different edge cases).
+
+        This change only affects iOS and async NSTextInputClient code path on Mac. I don't
+        want to change sync NSTextInputClient code path unless absolutely necessary.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::editorStateChanged):
+        (WebKit::WebPageProxy::compositionWasCanceled):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::insertText):
+        (WebKit::WebPageProxy::executeKeypressCommands):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didChangeSelection):
+
 2014-03-28  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Running minibrowser with url crashes in debug build
