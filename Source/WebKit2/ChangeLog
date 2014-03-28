@@ -1,3 +1,12 @@
+2014-03-27  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [WK2][EFL] Fix wrong parameter name in ewk_view_user_agent_set()
+        https://bugs.webkit.org/show_bug.cgi?id=130888
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/API/efl/ewk_view.h:
+
 2014-03-27  Alexey Proskuryakov  <ap@apple.com>
 
         Confirm composition in resignFirstResponder, don't cancel it
