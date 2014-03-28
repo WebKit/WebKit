@@ -35,6 +35,7 @@
 #import "WKBundlePage.h"
 #import "WKBundlePagePrivate.h"
 #import "WKDOMInternals.h"
+#import "WKNSDictionary.h"
 #import "WKNSError.h"
 #import "WKRenderingProgressEventsInternal.h"
 #import "WKRetainPtr.h"
@@ -275,6 +276,15 @@ static void didFocusTextField(WKBundlePageRef page, WKBundleNodeHandleRef htmlIn
         [formDelegate _webProcessPlugInBrowserContextController:controller didFocusTextField:wrapper(*toImpl(htmlInputElementHandleRef)) inFrame:wrapper(*toImpl(frameRef))];
 }
 
+static void willSubmitForm(WKBundlePageRef page, WKBundleNodeHandleRef htmlFormElementHandle, WKBundleFrameRef frame, WKBundleFrameRef sourceFrame, WKDictionaryRef values, WKTypeRef* userData, const void* clientInfo)
+{
+    WKWebProcessPlugInBrowserContextController *controller = (WKWebProcessPlugInBrowserContextController *)clientInfo;
+    auto formDelegate = controller->_formDelegate.get();
+
+    if ([formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:willSubmitForm:toFrame:fromFrame:withValues:)])
+        [formDelegate _webProcessPlugInBrowserContextController:controller willSubmitForm:wrapper(*toImpl(htmlFormElementHandle)) toFrame:wrapper(*toImpl(frame)) fromFrame:wrapper(*toImpl(sourceFrame)) withValues:wrapper(*toImpl(values))];
+}
+
 static void setUpFormClient(WKWebProcessPlugInBrowserContextController *contextController, WebPage& page)
 {
     WKBundlePageFormClientV2 client;
@@ -283,6 +293,7 @@ static void setUpFormClient(WKWebProcessPlugInBrowserContextController *contextC
     client.base.version = 2;
     client.base.clientInfo = contextController;
     client.didFocusTextField = didFocusTextField;
+    client.willSubmitForm = willSubmitForm;
 
     page.initializeInjectedBundleFormClient(&client.base);
 }

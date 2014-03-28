@@ -36,6 +36,7 @@
 @optional
 
 - (void)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller didFocusTextField:(WKWebProcessPlugInNodeHandle *)textField inFrame:(WKWebProcessPlugInFrame *)frame;
+- (void)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller willSubmitForm:(WKWebProcessPlugInNodeHandle *)form toFrame:(WKWebProcessPlugInFrame *)frame fromFrame:(WKWebProcessPlugInFrame *)sourceFrame withValues:(NSDictionary *)values;
 
 @end
 

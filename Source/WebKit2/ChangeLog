@@ -1,3 +1,19 @@
+2014-03-28  Cody Krieger  <cjk@apple.com>
+
+        Add willSubmitForm callback support to WKWebProcessPlugInFormDelegatePrivate.
+
+        https://bugs.webkit.org/show_bug.cgi?id=130875
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFormDelegatePrivate.h:
+        Add -_webProcessPlugInBrowserContextController:willSubmitForm:toFrame:fromFrame:withValues:
+        to the WKWebProcessPlugInFormDelegatePrivate protocol.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        Wire up the willSubmitForm() callback to the new
+        WKWebProcessPlugInFormDelegatePrivate method.
+
 2014-03-28  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Enable async text input implementation
