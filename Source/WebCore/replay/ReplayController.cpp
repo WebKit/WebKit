@@ -71,10 +71,13 @@ void ReplayController::setForceDeterministicSettings(bool shouldForce)
     ASSERT(shouldForce ^ (m_sessionState == SessionState::Inactive));
 
     if (shouldForce) {
+        m_savedSettings.usesMemoryCache = m_page.settings().usesMemoryCache();
         m_savedSettings.usesPageCache = m_page.settings().usesPageCache();
 
+        m_page.settings().setUsesMemoryCache(false);
         m_page.settings().setUsesPageCache(false);
     } else {
+        m_page.settings().setUsesMemoryCache(m_savedSettings.usesMemoryCache);
         m_page.settings().setUsesPageCache(m_savedSettings.usesPageCache);
     }
 }

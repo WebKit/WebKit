@@ -1,3 +1,13 @@
+2014-03-28  Brian Burg  <bburg@apple.com>
+
+        Web Replay: add page-level setting to bypass the MemoryCache
+        https://bugs.webkit.org/show_bug.cgi?id=130728
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/APISession.cpp:
+        (API::generateID): update the base ID for generating unique sessions.
+
 2014-03-28  Cody Krieger  <cjk@apple.com>
 
         Add willSubmitForm callback support to WKWebProcessPlugInFormDelegatePrivate.

@@ -59,4 +59,5 @@
     void setPluginReplacementEnabled(boolean enabled);
     [RaisesException] void setBackgroundShouldExtendBeyondPage(boolean hasExtendedBackground);
     [RaisesException] void setShouldConvertPositionStyleOnCopy(boolean convert);
+    [RaisesException] void setUsesMemoryCache(boolean usesMemoryCache);
 };

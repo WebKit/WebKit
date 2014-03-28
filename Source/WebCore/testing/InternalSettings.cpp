@@ -91,6 +91,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_autoscrollForDragAndDropEnabled(settings.autoscrollForDragAndDropEnabled())
     , m_pluginReplacementEnabled(RuntimeEnabledFeatures::sharedFeatures().pluginReplacementEnabled())
     , m_shouldConvertPositionStyleOnCopy(settings.shouldConvertPositionStyleOnCopy())
+    , m_usesMemoryCache(settings.usesMemoryCache())
 {
 }
 
@@ -149,6 +150,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setUseLegacyBackgroundSizeShorthandBehavior(m_useLegacyBackgroundSizeShorthandBehavior);
     settings.setAutoscrollForDragAndDropEnabled(m_autoscrollForDragAndDropEnabled);
     settings.setShouldConvertPositionStyleOnCopy(m_shouldConvertPositionStyleOnCopy);
+    settings.setUsesMemoryCache(m_usesMemoryCache);
     RuntimeEnabledFeatures::sharedFeatures().setPluginReplacementEnabled(m_pluginReplacementEnabled);
 }
 
@@ -491,6 +493,12 @@ void InternalSettings::setShouldConvertPositionStyleOnCopy(bool convert, Excepti
 {
     InternalSettingsGuardForSettings();
     settings()->setShouldConvertPositionStyleOnCopy(convert);
+}
+
+void InternalSettings::setUsesMemoryCache(bool usesMemoryCache, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setUsesMemoryCache(usesMemoryCache);
 }
 
 }

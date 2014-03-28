@@ -34,7 +34,7 @@ static uint64_t generateID(bool isEphemeral)
 {
     ASSERT(RunLoop::isMain());
 
-    static uint64_t uniqueSessionID = WebCore::SessionID::legacyPrivateSessionID().sessionID();
+    static uint64_t uniqueSessionID = WebCore::SessionID::bypassCacheSessionID().sessionID();
     ASSERT_UNUSED(isEphemeral, isEphemeral);
     return ++uniqueSessionID;
 }

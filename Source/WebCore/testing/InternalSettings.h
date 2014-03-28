@@ -88,6 +88,7 @@ public:
         bool m_autoscrollForDragAndDropEnabled;
         bool m_pluginReplacementEnabled;
         bool m_shouldConvertPositionStyleOnCopy;
+        bool m_usesMemoryCache;
     };
 
     static PassRefPtr<InternalSettings> create(Page* page)
@@ -132,7 +133,7 @@ public:
     void setPluginReplacementEnabled(bool);
     void setBackgroundShouldExtendBeyondPage(bool hasExtendedBackground, ExceptionCode&);
     void setShouldConvertPositionStyleOnCopy(bool convert, ExceptionCode&);
-
+    void setUsesMemoryCache(bool usesMemoryCache, ExceptionCode&);
 
 private:
     explicit InternalSettings(Page*);

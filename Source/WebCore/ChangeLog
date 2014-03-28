@@ -1,3 +1,46 @@
+2014-03-28  Brian Burg  <bburg@apple.com>
+
+        Web Replay: add page-level setting to bypass the MemoryCache
+        https://bugs.webkit.org/show_bug.cgi?id=130728
+
+        Reviewed by Timothy Hatcher.
+
+        When replaying a specific Page we don't want to store its cached resources in the
+        MemoryCache. This patch adds a page setting to prevent the page's resources from
+        being saved in the MemoryCache.
+
+        If Settings::usesMemoryCache() is false, page resources are given the special
+        SessionID bypassCacheSessionID(). The cached resource loader and memory cache
+        act as if the memory cache is disabled if the resource has this special session id.
+
+        Hook up ReplayController to override the memory cache setting during capture/replay.
+
+        Test: http/tests/cache/bypass-memory-cache-after-reload.html
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::revalidateResource):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::add):
+        * page/Page.cpp:
+        (WebCore::Page::sessionID):
+        * page/SessionID.h:
+        (WebCore::SessionID::bypassCacheSessionID):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setUsesMemoryCache):
+        (WebCore::Settings::usesMemoryCache):
+        * replay/ReplayController.cpp:
+        (WebCore::ReplayController::setForceDeterministicSettings):
+        * replay/ReplayController.h:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setUsesMemoryCache):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2014-03-28  Radu Stavila  <stavila@adobe.com>
 
         In some situations, partial layouts of floating elements produce incorrect results.

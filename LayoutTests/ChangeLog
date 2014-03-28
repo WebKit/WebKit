@@ -1,3 +1,17 @@
+2014-03-28  Brian Burg  <bburg@apple.com>
+
+        Web Replay: add page-level setting to bypass the MemoryCache
+        https://bugs.webkit.org/show_bug.cgi?id=130728
+
+        Reviewed by Timothy Hatcher.
+
+        Mac WebKit2 needs different expectations because of resource load timing characteristics
+        introduced by the interaction of Settings::usesMemoryCache and NetworkProcess.
+
+        * http/tests/cache/bypass-memory-cache-after-reload-expected.txt: Added.
+        * http/tests/cache/bypass-memory-cache-after-reload.html: Added.
+        * platform/mac-wk2/http/tests/cache/bypass-memory-cache-after-reload-expected.txt: Added.
+
 2014-03-28  Radu Stavila  <stavila@adobe.com>
 
         In some situations, partial layouts of floating elements produce incorrect results.

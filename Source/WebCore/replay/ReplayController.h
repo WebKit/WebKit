@@ -154,10 +154,12 @@ private:
     void setForceDeterministicSettings(bool);
 
     struct SavedSettings {
+        bool usesMemoryCache;
         bool usesPageCache;
 
         SavedSettings()
-            : usesPageCache(false)
+            : usesMemoryCache(true)
+            , usesPageCache(false)
         { }
     };
 
