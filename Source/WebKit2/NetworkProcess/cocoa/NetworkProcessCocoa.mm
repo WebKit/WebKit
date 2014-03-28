@@ -56,10 +56,15 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 
     if (!m_diskCacheDirectory.isNull()) {
         SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
+#if PLATFORM(IOS)
+        NSString *diskCachePath = nil;
+#else
+        NSString *diskCachePath = parameters.diskCacheDirectory;
+#endif
         [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
             initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
             diskCapacity:parameters.nsURLCacheDiskCapacity
-            diskPath:parameters.diskCacheDirectory]).get()];
+            diskPath:diskCachePath]).get()];
     }
 
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090

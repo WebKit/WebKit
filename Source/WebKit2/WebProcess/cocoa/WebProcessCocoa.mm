@@ -165,10 +165,15 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     // NSURLCache, which it can disable to save memory.
     if (!usesNetworkProcess()) {
         if (!parameters.diskCacheDirectory.isNull()) {
+#if PLATFORM(IOS)
+            NSString *diskCachePath = nil;
+#else
+            NSString *diskCachePath = parameters.diskCacheDirectory;
+#endif
             [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
                 initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
                 diskCapacity:parameters.nsURLCacheDiskCapacity
-                diskPath:parameters.diskCacheDirectory]).get()];
+                diskPath:diskCachePath]).get()];
         }
     }
 
