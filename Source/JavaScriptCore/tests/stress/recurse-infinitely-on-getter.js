@@ -1,3 +1,7 @@
+//@ skip
+// FIXME: figure out why it times out.
+// https://bugs.webkit.org/show_bug.cgi?id=130880
+
 for (var i = 0; i < 100; ++i) {
     var o = {};
     o.__defineGetter__("f", function() {
