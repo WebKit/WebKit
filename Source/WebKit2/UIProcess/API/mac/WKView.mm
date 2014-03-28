@@ -370,8 +370,12 @@ struct WKViewInterpretKeyEventsParameters {
 {
     _data->_inResignFirstResponder = true;
 
+#if USE(ASYNC_NSTEXTINPUTCLIENT)
+    _data->_page->confirmCompositionAsync();
+#else
     if (_data->_page->editorState().hasComposition && !_data->_page->editorState().shouldIgnoreCompositionSelectionChange)
         _data->_page->cancelComposition();
+#endif
 
     [self _notifyInputContextAboutDiscardedComposition];
 

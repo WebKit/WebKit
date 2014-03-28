@@ -1,3 +1,12 @@
+2014-03-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Confirm composition in resignFirstResponder, don't cancel it
+        https://bugs.webkit.org/show_bug.cgi?id=130852
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/mac/WKView.mm: (-[WKView resignFirstResponder]):
+
 2014-03-27  Pratik Solanki  <psolanki@apple.com>
 
         [iOS WebKit2] Don't pass disk cache directory path on iOS
