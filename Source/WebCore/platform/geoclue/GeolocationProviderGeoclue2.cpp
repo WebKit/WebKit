@@ -73,18 +73,16 @@ void GeolocationProviderGeoclue::startUpdating()
         return;
     }
 
-    if (!m_clientProxy) {
-        geoclue_manager_call_get_client(m_managerProxy.get(), nullptr, reinterpret_cast<GAsyncReadyCallback>(getGeoclueClientCallback), this);
-        return;
-    }
-
-    startGeoclueClient();
+    geoclue_manager_call_get_client(m_managerProxy.get(), nullptr, reinterpret_cast<GAsyncReadyCallback>(getGeoclueClientCallback), this);
 }
 
 void GeolocationProviderGeoclue::stopUpdating()
 {
-    if (m_clientProxy)
+    if (m_clientProxy) {
         geoclue_client_call_stop(m_clientProxy.get(), nullptr, nullptr, nullptr);
+        g_signal_handlers_disconnect_by_func(m_clientProxy.get(), reinterpret_cast<gpointer>(locationUpdatedCallback), this);
+        m_clientProxy = nullptr;
+    }
     m_isUpdating = false;
 }
 

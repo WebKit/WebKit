@@ -1,3 +1,19 @@
+2014-03-28  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Geoclue2 providers won't work after reloading
+        https://bugs.webkit.org/show_bug.cgi?id=130898
+
+        Reviewed by Martin Robinson.
+
+        Don't reuse the Geoclue2 client proxy between different calls to
+        startPosition(), and create a new client proxy each time instead.
+
+        * platform/geoclue/GeolocationProviderGeoclue2.cpp:
+        (GeolocationProviderGeoclue::startUpdating): Don't reuse the
+        client proxy, by always calling geoclue_manager_call_get_client().
+        (GeolocationProviderGeoclue::stopUpdating): Disconnect from the
+        'location-updated' signal and dispose the client proxy.
+
 2014-03-28  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Too many redirects visiting www.globalforestwatch.org
