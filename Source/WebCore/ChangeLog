@@ -1,3 +1,21 @@
+2014-03-28  Andreas Kling  <akling@apple.com>
+
+        Inline JSDOMWrapper subclasses' finishCreation().
+        <https://webkit.org/b/130890>
+
+        finishCreation() is really a no-op for JSDOMWrapper subclasses in
+        release builds. None of the ancestor classes do anything but assert
+        in their implementations.
+
+        Generate the function inline, reducing binary size, and removing
+        an unnecessary call from the JSFoo::create() helpers.
+
+        Reviewed by Sam Weinig.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+
 2014-03-28  Jer Noble  <jer.noble@apple.com>
 
         [Mac] HLS streams will report an incorrect natural size.
