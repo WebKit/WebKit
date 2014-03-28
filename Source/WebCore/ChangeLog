@@ -1,3 +1,10 @@
+2014-03-28  Beth Dakin  <bdakin@apple.com>
+
+        Build fix.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint):
+
 2014-03-28  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Implement support for SourceBuffer.remove()

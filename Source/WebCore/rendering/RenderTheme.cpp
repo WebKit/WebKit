@@ -293,6 +293,8 @@ bool RenderTheme::paint(RenderObject* o, ControlStates* controlStates, const Pai
     default:
         break;
     }
+#else
+    UNUSED_PARAM(controlStates);
 #endif
 
     // Call the appropriate paint method based off the appearance value.
