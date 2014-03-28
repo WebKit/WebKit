@@ -1,3 +1,15 @@
+2014-03-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Bump glib version from 2.36 to 2.38 
+        https://bugs.webkit.org/show_bug.cgi?id=130886
+
+        Reviewed by Csaba Osztrogonác.
+
+        There is a build break on EFL port when using glib 2.36 ver. To fix it,
+        we need to bump glib version up to 2.38 as gtk port.
+
+        * efl/jhbuild.modules:
+
 2014-03-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         <https://webkit.org/b/42704> WebKitTestRunner needs to print history delegate information

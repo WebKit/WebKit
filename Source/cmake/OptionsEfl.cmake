@@ -20,7 +20,7 @@ find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
 find_package(ZLIB REQUIRED)
 
-find_package(GLIB 2.36.0 REQUIRED COMPONENTS gio gobject gthread)
+find_package(GLIB 2.38.0 REQUIRED COMPONENTS gio gobject gthread)
 find_package(LibSoup 2.42.0 REQUIRED)
 
 set(WTF_USE_SOUP 1)

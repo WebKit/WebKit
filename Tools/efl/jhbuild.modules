@@ -103,9 +103,9 @@
     <dependencies>
       <dep package="libffi"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/glib/2.36/glib-2.36.0.tar.xz" version="2.36.0"
+    <branch module="/pub/GNOME/sources/glib/2.38/glib-2.38.0.tar.xz" version="2.38.0"
             repo="ftp.gnome.org"
-            hash="sha256:455a8abe8692c5174bcc7ffa15b96a7521a2f2f9fb47594405927c35cb9bb227"/>
+            hash="sha256:7513a7de5e814ccb48206340a8773ea523d6a7bf04dc74565de69b899bc2ff32"/>
   </autotools>
 
   <autotools id="glib-networking">
