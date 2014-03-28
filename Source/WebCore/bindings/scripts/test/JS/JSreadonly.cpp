@@ -96,12 +96,6 @@ JSreadonly::JSreadonly(Structure* structure, JSDOMGlobalObject* globalObject, Pa
 {
 }
 
-void JSreadonly::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-}
-
 JSObject* JSreadonly::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSreadonlyPrototype::create(vm, globalObject, JSreadonlyPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));

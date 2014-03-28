@@ -66,7 +66,13 @@ private:
     attribute* m_impl;
 protected:
     JSattribute(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<attribute>);
-    void finishCreation(JSC::VM&);
+
+    void finishCreation(JSC::VM& vm)
+    {
+        Base::finishCreation(vm);
+        ASSERT(inherits(info()));
+    }
+
     static const unsigned StructureFlags = JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 

@@ -79,7 +79,13 @@ private:
     TestObj* m_impl;
 protected:
     JSTestObj(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestObj>);
-    void finishCreation(JSC::VM&);
+
+    void finishCreation(JSC::VM& vm)
+    {
+        Base::finishCreation(vm);
+        ASSERT(inherits(info()));
+    }
+
     static const unsigned StructureFlags = JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertySlot | JSC::OverridesVisitChildren | Base::StructureFlags;
 };
 

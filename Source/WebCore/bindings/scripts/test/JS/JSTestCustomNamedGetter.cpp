@@ -114,12 +114,6 @@ JSTestCustomNamedGetter::JSTestCustomNamedGetter(Structure* structure, JSDOMGlob
 {
 }
 
-void JSTestCustomNamedGetter::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-}
-
 JSObject* JSTestCustomNamedGetter::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSTestCustomNamedGetterPrototype::create(vm, globalObject, JSTestCustomNamedGetterPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));

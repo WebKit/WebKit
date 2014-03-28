@@ -388,12 +388,6 @@ JSTestInterface::JSTestInterface(Structure* structure, JSDOMGlobalObject* global
 {
 }
 
-void JSTestInterface::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-}
-
 JSObject* JSTestInterface::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSTestInterfacePrototype::create(vm, globalObject, JSTestInterfacePrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));

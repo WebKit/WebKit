@@ -56,7 +56,13 @@ public:
     }
 protected:
     JSTestNode(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestNode>);
-    void finishCreation(JSC::VM&);
+
+    void finishCreation(JSC::VM& vm)
+    {
+        Base::finishCreation(vm);
+        ASSERT(inherits(info()));
+    }
+
     static const unsigned StructureFlags = JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertySlot | JSC::OverridesVisitChildren | Base::StructureFlags;
 };
 

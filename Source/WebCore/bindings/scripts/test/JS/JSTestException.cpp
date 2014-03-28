@@ -113,12 +113,6 @@ JSTestException::JSTestException(Structure* structure, JSDOMGlobalObject* global
 {
 }
 
-void JSTestException::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-}
-
 JSObject* JSTestException::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSTestExceptionPrototype::create(vm, globalObject, JSTestExceptionPrototype::createStructure(vm, globalObject, globalObject->errorPrototype()));

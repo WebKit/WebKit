@@ -66,7 +66,13 @@ private:
     TestOverloadedConstructors* m_impl;
 protected:
     JSTestOverloadedConstructors(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestOverloadedConstructors>);
-    void finishCreation(JSC::VM&);
+
+    void finishCreation(JSC::VM& vm)
+    {
+        Base::finishCreation(vm);
+        ASSERT(inherits(info()));
+    }
+
     static const unsigned StructureFlags = JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 

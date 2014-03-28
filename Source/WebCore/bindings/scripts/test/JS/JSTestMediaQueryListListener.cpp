@@ -103,12 +103,6 @@ JSTestMediaQueryListListener::JSTestMediaQueryListListener(Structure* structure,
 {
 }
 
-void JSTestMediaQueryListListener::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-}
-
 JSObject* JSTestMediaQueryListListener::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSTestMediaQueryListListenerPrototype::create(vm, globalObject, JSTestMediaQueryListListenerPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));

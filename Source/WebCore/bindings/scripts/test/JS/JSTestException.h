@@ -66,7 +66,13 @@ private:
     TestException* m_impl;
 protected:
     JSTestException(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestException>);
-    void finishCreation(JSC::VM&);
+
+    void finishCreation(JSC::VM& vm)
+    {
+        Base::finishCreation(vm);
+        ASSERT(inherits(info()));
+    }
+
     static const unsigned StructureFlags = JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 

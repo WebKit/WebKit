@@ -171,12 +171,6 @@ JSTestOverloadedConstructors::JSTestOverloadedConstructors(Structure* structure,
 {
 }
 
-void JSTestOverloadedConstructors::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-}
-
 JSObject* JSTestOverloadedConstructors::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSTestOverloadedConstructorsPrototype::create(vm, globalObject, JSTestOverloadedConstructorsPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));

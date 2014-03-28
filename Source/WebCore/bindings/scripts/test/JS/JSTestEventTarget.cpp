@@ -129,12 +129,6 @@ JSTestEventTarget::JSTestEventTarget(Structure* structure, JSDOMGlobalObject* gl
 {
 }
 
-void JSTestEventTarget::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-}
-
 JSObject* JSTestEventTarget::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSTestEventTargetPrototype::create(vm, globalObject, JSTestEventTargetPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));

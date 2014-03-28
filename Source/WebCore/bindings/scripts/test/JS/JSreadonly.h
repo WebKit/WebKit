@@ -66,7 +66,13 @@ private:
     readonly* m_impl;
 protected:
     JSreadonly(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<readonly>);
-    void finishCreation(JSC::VM&);
+
+    void finishCreation(JSC::VM& vm)
+    {
+        Base::finishCreation(vm);
+        ASSERT(inherits(info()));
+    }
+
     static const unsigned StructureFlags = JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 

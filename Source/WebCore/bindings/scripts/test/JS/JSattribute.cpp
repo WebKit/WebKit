@@ -102,12 +102,6 @@ JSattribute::JSattribute(Structure* structure, JSDOMGlobalObject* globalObject, 
 {
 }
 
-void JSattribute::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-}
-
 JSObject* JSattribute::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
     return JSattributePrototype::create(vm, globalObject, JSattributePrototype::createStructure(vm, globalObject, globalObject->errorPrototype()));
