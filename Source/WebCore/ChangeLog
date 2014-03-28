@@ -1,3 +1,19 @@
+2014-03-28  Radu Stavila  <stavila@adobe.com>
+
+        In some situations, partial layouts of floating elements produce incorrect results.
+        https://bugs.webkit.org/show_bug.cgi?id=122668
+
+        Reviewed by David Hyatt.
+
+        When performing partial layout of float elements and checking if other float
+        elements are encountered, incorrect results were obtained by not checking
+        the size of the existing floats vector.
+
+        Test: fast/block/float/floats-in-clean-line-crash.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::checkFloatsInCleanLine):
+
 2014-03-28  Beth Dakin  <bdakin@apple.com>
 
         Build fix.
