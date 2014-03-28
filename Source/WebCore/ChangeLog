@@ -1,3 +1,15 @@
+2014-03-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove unused LocaleMac::create method
+        https://bugs.webkit.org/show_bug.cgi?id=130870
+
+        Reviewed by Andreas Kling.
+
+        * platform/text/mac/LocaleMac.h:
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore::LocaleMac::create): Deleted.
+        (WebCore::LocaleMac::shortDateFormatter): Deleted.
+
 2014-03-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Clean up unneeded "mutable" keyword

@@ -47,7 +47,6 @@ class DateComponents;
 
 class LocaleMac : public Locale {
 public:
-    static PassOwnPtr<LocaleMac> create(const String&);
     static PassOwnPtr<LocaleMac> create(NSLocale*);
     ~LocaleMac();
 

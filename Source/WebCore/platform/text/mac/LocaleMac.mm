@@ -104,12 +104,6 @@ LocaleMac::~LocaleMac()
 {
 }
 
-PassOwnPtr<LocaleMac> LocaleMac::create(const String& localeIdentifier)
-{
-    RetainPtr<NSLocale> locale = [[NSLocale alloc] initWithLocaleIdentifier:localeIdentifier];
-    return adoptPtr(new LocaleMac(locale.get()));
-}
-
 PassOwnPtr<LocaleMac> LocaleMac::create(NSLocale* locale)
 {
     return adoptPtr(new LocaleMac(locale));
