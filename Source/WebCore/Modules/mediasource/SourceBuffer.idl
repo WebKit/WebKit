@@ -51,6 +51,7 @@
 
     // Abort the current segment append sequence.
     [RaisesException] void abort();
+    [RaisesException] void remove(double start, double end);
     
     // Track support
     [Conditional=VIDEO_TRACK] readonly attribute AudioTrackList audioTracks;

@@ -103,6 +103,9 @@ SourceBuffer::SourceBuffer(PassRef<SourceBufferPrivate> sourceBufferPrivate, Med
     , m_timeOfBufferingMonitor(monotonicallyIncreasingTime())
     , m_bufferedSinceLastMonitor(0)
     , m_averageBufferRate(0)
+    , m_pendingRemoveStart(MediaTime::invalidTime())
+    , m_pendingRemoveEnd(MediaTime::invalidTime())
+    , m_removeTimer(this, &SourceBuffer::removeTimerFired)
 {
     ASSERT(m_private);
     ASSERT(m_source);
@@ -146,15 +149,11 @@ void SourceBuffer::setTimestampOffset(double offset, ExceptionCode& ec)
 {
     // Section 3.1 timestampOffset attribute setter steps.
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#attributes-1
-    // 1. If this object has been removed from the sourceBuffers attribute of the parent media source then throw an
+    // 1. Let new timestamp offset equal the new value being assigned to this attribute.
+    // 2. If this object has been removed from the sourceBuffers attribute of the parent media source, then throw an
     //    INVALID_STATE_ERR exception and abort these steps.
-    if (isRemoved()) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-
     // 3. If the updating attribute equals true, then throw an INVALID_STATE_ERR exception and abort these steps.
-    if (m_updating) {
+    if (isRemoved() || m_updating) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -170,7 +169,8 @@ void SourceBuffer::setTimestampOffset(double offset, ExceptionCode& ec)
         return;
     }
 
-    // 6. Update the attribute to the new value.
+    // FIXME: Add step 6 text when mode attribute is implemented.
+    // 7. Update the attribute to the new value.
     m_timestampOffset = MediaTime::createWithDouble(offset);
 }
 
@@ -222,6 +222,40 @@ void SourceBuffer::abort(ExceptionCode& ec)
     // FIXME(229408) Add steps 5-6 update appendWindowStart & appendWindowEnd.
 }
 
+void SourceBuffer::remove(double start, double end, ExceptionCode& ec)
+{
+    // Section 3.2 remove() method steps.
+    // 1. If start is negative or greater than duration, then throw an InvalidAccessError exception and abort these steps.
+    // 2. If end is less than or equal to start, then throw an InvalidAccessError exception and abort these steps.
+    if (start < 0 || (m_source && (std::isnan(m_source->duration()) || start > m_source->duration())) || end <= start) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    // 3. If this object has been removed from the sourceBuffers attribute of the parent media source then throw an
+    //    InvalidStateError exception and abort these steps.
+    // 4. If the updating attribute equals true, then throw an InvalidStateError exception and abort these steps.
+    if (isRemoved() || m_updating) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    // 5. If the readyState attribute of the parent media source is in the "ended" state then run the following steps:
+    // 5.1. Set the readyState attribute of the parent media source to "open"
+    // 5.2. Queue a task to fire a simple event named sourceopen at the parent media source .
+    m_source->openIfInEndedState();
+
+    // 6. Set the updating attribute to true.
+    m_updating = true;
+
+    // 7. Queue a task to fire a simple event named updatestart at this SourceBuffer object.
+    scheduleEvent(eventNames().updatestartEvent);
+
+    // 8. Return control to the caller and run the rest of the steps asynchronously.
+    m_pendingRemoveStart = MediaTime::createWithDouble(start);
+    m_pendingRemoveEnd = MediaTime::createWithDouble(end);
+    m_removeTimer.startOneShot(0);
+}
 
 void SourceBuffer::abortIfUpdating()
 {
@@ -234,6 +268,10 @@ void SourceBuffer::abortIfUpdating()
     // 3.1. Abort the buffer append and stream append loop algorithms if they are running.
     m_appendBufferTimer.stop();
     m_pendingAppendData.clear();
+
+    m_removeTimer.stop();
+    m_pendingRemoveStart = MediaTime::invalidTime();
+    m_pendingRemoveEnd = MediaTime::invalidTime();
 
     // 3.2. Set the updating attribute to false.
     m_updating = false;
@@ -249,6 +287,8 @@ void SourceBuffer::removedFromMediaSource()
 {
     if (isRemoved())
         return;
+
+    abortIfUpdating();
 
     m_private->removedFromMediaSource();
     m_source = 0;
@@ -346,6 +386,7 @@ bool SourceBuffer::hasPendingActivity() const
 void SourceBuffer::stop()
 {
     m_appendBufferTimer.stop();
+    m_removeTimer.stop();
 }
 
 bool SourceBuffer::isRemoved() const
@@ -468,6 +509,79 @@ void SourceBuffer::appendBufferTimerFired(Timer<SourceBuffer>&)
     m_source->monitorSourceBuffers();
     for (auto iter = m_trackBufferMap.begin(), end = m_trackBufferMap.end(); iter != end; ++iter)
         provideMediaData(iter->value, iter->key);
+}
+
+void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& end)
+{
+    // 3.5.9 Coded Frame Removal Algorithm
+    // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#sourcebuffer-coded-frame-removal
+
+    // 1. Let start be the starting presentation timestamp for the removal range.
+    MediaTime durationMediaTime = MediaTime::createWithDouble(m_source->duration());
+    MediaTime currentMediaTime = MediaTime::createWithDouble(m_source->currentTime());
+
+    // 2. Let end be the end presentation timestamp for the removal range.
+    // 3. For each track buffer in this source buffer, run the following steps:
+    for (auto iter : m_trackBufferMap) {
+        TrackBuffer& trackBuffer = iter.value;
+        // 3.1. Let remove end timestamp be the current value of duration
+        SampleMap::iterator removeEnd = trackBuffer.samples.presentationEnd();
+
+        // 3.2 If this track buffer has a random access point timestamp that is greater than or equal to end, then update
+        // remove end timestamp to that random access point timestamp.
+        SampleMap::iterator nextRandomAccessPoint = trackBuffer.samples.findSyncSampleAfterPresentationTime(end);
+        if (nextRandomAccessPoint->first >= end)
+            removeEnd = trackBuffer.samples.findSampleContainingPresentationTime(nextRandomAccessPoint->first);
+
+        // 3.3 Remove all media data, from this track buffer, that contain starting timestamps greater than or equal to
+        // start and less than the remove end timestamp.
+        SampleMap::iterator removeStart = trackBuffer.samples.findSampleAfterPresentationTime(start);
+        SampleMap::MapType erasedSamples(removeStart, removeEnd);
+        RefPtr<TimeRanges> erasedRanges = TimeRanges::create();
+        MediaTime microsecond(1, 1000000);
+        for (auto erasedIt : erasedSamples) {
+            trackBuffer.samples.removeSample(erasedIt.second.get());
+            double startTime = erasedIt.first.toDouble();
+            double endTime = ((erasedIt.first + erasedIt.second->duration()) + microsecond).toDouble();
+            erasedRanges->add(startTime, endTime);
+        }
+
+        erasedRanges->invert();
+        m_buffered->intersectWith(*erasedRanges);
+
+        // 3.4 If this object is in activeSourceBuffers, the current playback position is greater than or equal to start
+        // and less than the remove end timestamp, and HTMLMediaElement.readyState is greater than HAVE_METADATA, then set
+        // the HTMLMediaElement.readyState attribute to HAVE_METADATA and stall playback.
+        if (m_active && currentMediaTime >= start && currentMediaTime < end && m_private->readyState() > MediaPlayer::HaveMetadata)
+            m_private->setReadyState(MediaPlayer::HaveMetadata);
+    }
+
+    // 4. If buffer full flag equals true and this object is ready to accept more bytes, then set the buffer full flag to false.
+    // No-op
+}
+
+void SourceBuffer::removeTimerFired(Timer<SourceBuffer>*)
+{
+    ASSERT(m_updating);
+    ASSERT(m_pendingRemoveStart.isValid());
+    ASSERT(m_pendingRemoveStart < m_pendingRemoveEnd);
+
+    // Section 3.2 remove() method steps
+    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#widl-SourceBuffer-remove-void-double-start-double-end
+
+    // 9. Run the coded frame removal algorithm with start and end as the start and end of the removal range.
+    removeCodedFrames(m_pendingRemoveStart, m_pendingRemoveEnd);
+
+    // 10. Set the updating attribute to false.
+    m_updating = false;
+    m_pendingRemoveStart = MediaTime::invalidTime();
+    m_pendingRemoveEnd = MediaTime::invalidTime();
+
+    // 11. Queue a task to fire a simple event named update at this SourceBuffer object.
+    scheduleEvent(eventNames().updateEvent);
+
+    // 12. Queue a task to fire a simple event named updateend at this SourceBuffer object.
+    scheduleEvent(eventNames().updateendEvent);
 }
 
 const AtomicString& SourceBuffer::decodeError()

@@ -1,3 +1,13 @@
+2014-03-28  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Implement support for SourceBuffer.remove()
+        https://bugs.webkit.org/show_bug.cgi?id=121562
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-remove-expected.txt: Added.
+        * media/media-source/media-source-remove.html: Added.
+
 2014-03-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Clear SVGInlineTextBox fragments when the text changes.

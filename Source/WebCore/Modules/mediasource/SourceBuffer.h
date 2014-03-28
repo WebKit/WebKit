@@ -72,6 +72,7 @@ public:
     void appendBuffer(PassRefPtr<ArrayBuffer> data, ExceptionCode&);
     void appendBuffer(PassRefPtr<ArrayBufferView> data, ExceptionCode&);
     void abort(ExceptionCode&);
+    void remove(double start, double end, ExceptionCode&);
 
     void abortIfUpdating();
     void removedFromMediaSource();
@@ -152,6 +153,9 @@ private:
 
     void monitorBufferingRate();
 
+    void removeTimerFired(Timer<SourceBuffer>*);
+    void removeCodedFrames(const MediaTime& start, const MediaTime& end);
+
     RefPtr<SourceBufferPrivate> m_private;
     MediaSource* m_source;
     GenericEventQueue m_asyncEventQueue;
@@ -183,6 +187,10 @@ private:
     double m_timeOfBufferingMonitor;
     double m_bufferedSinceLastMonitor;
     double m_averageBufferRate;
+
+    MediaTime m_pendingRemoveStart;
+    MediaTime m_pendingRemoveEnd;
+    Timer<SourceBuffer> m_removeTimer;
 };
 
 } // namespace WebCore

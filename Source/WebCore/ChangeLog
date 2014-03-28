@@ -1,3 +1,26 @@
+2014-03-28  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Implement support for SourceBuffer.remove()
+        https://bugs.webkit.org/show_bug.cgi?id=121562
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-remove.html
+
+        Add support for SourceBuffer.remove().
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::SourceBuffer): Initialize new member variables.
+        (WebCore::SourceBuffer::setTimestampOffset): Update comments to match spec.
+        (WebCore::SourceBuffer::remove): Added; start removeTimer.
+        (WebCore::SourceBuffer::abortIfUpdating): Cancel removeTimer.
+        (WebCore::SourceBuffer::removedFromMediaSource): Call abortIfUpdating().
+        (WebCore::SourceBuffer::stop): Cancel removeTimer.
+        (WebCore::SourceBuffer::removeCodedFrames): Added.
+        (WebCore::SourceBuffer::removeTimerFired): Added.
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediasource/SourceBuffer.idl:
+
 2014-03-27  Dean Jackson  <dino@apple.com>
 
         Support form controls that may need incremental redraw
