@@ -53,7 +53,7 @@
                 { "name": "sourceName", "type": "string", "optional": true, "description": "Source script URL." },
                 { "name": "handler", "$ref": "Runtime.RemoteObject", "optional": true, "description": "Event handler function value." }
             ],
-            "description": "DOM interaction is implemented in terms of mirror objects that represent the actual DOM nodes. DOMNode is a base node mirror type."
+            "description": "A structure holding event listener properties."
         },
         {
             "id": "AccessibilityProperties",
