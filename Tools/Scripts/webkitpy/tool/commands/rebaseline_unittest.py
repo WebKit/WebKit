@@ -91,8 +91,7 @@ class TestRebaselineTest(_BaseTestCase):
         self.assertMultiLineEqual(command._baseline_directory("Apple MountainLion Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-wk2")
         self.assertMultiLineEqual(command._baseline_directory("Apple Mavericks Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-wk1")
         self.assertMultiLineEqual(command._baseline_directory("Apple Mavericks Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-wk2")
-        self.assertMultiLineEqual(command._baseline_directory("GTK Linux 64-bit Debug WK1"), "/mock-checkout/LayoutTests/platform/gtk-wk1")
-        self.assertMultiLineEqual(command._baseline_directory("GTK Linux 64-bit Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/gtk-wk1")
+        self.assertMultiLineEqual(command._baseline_directory("GTK Linux 64-bit Debug"), "/mock-checkout/LayoutTests/platform/gtk-wk2")
         self.assertMultiLineEqual(command._baseline_directory("GTK Linux 64-bit Release"), "/mock-checkout/LayoutTests/platform/gtk-wk2")
         self.assertMultiLineEqual(command._baseline_directory("EFL Linux 64-bit Release WK2"), "/mock-checkout/LayoutTests/platform/efl-wk2")
 
@@ -319,7 +318,7 @@ class TestRebaselineExpectations(_BaseTestCase):
         # FIXME: change this to use the test- ports.
         calls = self.tool.executive.calls
         self.assertEqual(len(calls), 1)
-        self.assertEqual(len(calls[0]), 24)
+        self.assertEqual(len(calls[0]), 22)
 
     def test_rebaseline_expectations_noop(self):
         self._zero_out_test_expectations()

@@ -35,7 +35,6 @@
                     { "name": "gtk-linux-slave-1", "platform": "gtk"},
                     { "name": "gtk-linux-slave-2", "platform": "gtk"},
                     { "name": "gtk-linux-slave-3", "platform": "gtk"},
-                    { "name": "gtk-linux-slave-4", "platform": "gtk"},
                     { "name": "gtk-linux-slave-5", "platform": "gtk"},
 
                     { "name": "wincairo-1", "platform": "wincairo" },
@@ -152,20 +151,15 @@
                       "slavenames": ["gtk-linux-slave-1"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release", "type": "BuildAndTestWebKit2", "builddir": "gtk-linux-64-release",
+                      "name": "GTK Linux 64-bit Release", "type": "BuildAndTestWebKit2Only", "builddir": "gtk-linux-64-release",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["gtk-linux-64-release-tests-wk1"],
                       "slavenames": ["gtk-linux-slave-2"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Debug WK1", "type": "BuildAndTestWebKit1Only", "builddir": "gtk-linux-64-debug-wk1",
+                      "name": "GTK Linux 64-bit Debug", "type": "BuildAndTestWebKit2Only", "builddir": "gtk-linux-64-debug",
                       "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-slave-3"]
-                    },
-                    {
-                      "name": "GTK Linux 64-bit Release WK1 (Tests)", "type": "Test", "builddir": "gtk-linux-64-release-tests-wk1",
-                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["gtk-linux-slave-4"]
                     },
                     {
                       "name": "GTK Linux ARM Release", "type": "BuildAndNonLayoutTest", "builddir": "gtk-linux-arm-release",
@@ -207,7 +201,7 @@
                   ],
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
-                      "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release", "GTK Linux 64-bit Debug WK1", "GTK Linux ARM Release",
+                      "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release", "GTK Linux 64-bit Debug", "GTK Linux ARM Release",
                                        "EFL Linux 64-bit Release WK1", "EFL Linux 64-bit Release WK2", "EFL Linux 32-bit Release (Build)",
                                        "EFL Linux ARMv7 Thumb2 Release (Build)", "EFL Linux ARMv7 Traditional Release (Build)", "WinCairo Release"]
                     },
@@ -258,9 +252,6 @@
                     },
                     { "type": "Triggerable", "name": "win-debug-tests",
                       "builderNames": ["Apple Win 7 Debug (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "gtk-linux-64-release-tests-wk1",
-                      "builderNames": ["GTK Linux 64-bit Release WK1 (Tests)"]
                     }
                   ]
 }

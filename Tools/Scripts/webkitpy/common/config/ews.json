@@ -1,10 +1,4 @@
 {
-    "GTK EWS": {
-        "port": "gtk",
-        "watchers": [
-            "xan.lopez@gmail.com"
-        ]
-    },
     "GTK WK2 EWS": {
         "port": "gtk-wk2",
         "watchers": [

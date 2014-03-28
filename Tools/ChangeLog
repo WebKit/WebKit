@@ -1,3 +1,19 @@
+2014-03-28  Martin Robinson  <mrobinson@igalia.com>
+
+        Remove WebKit1 GTK+ bots
+        https://bugs.webkit.org/show_bug.cgi?id=130904
+
+        Reviewed by Anders Carlsson.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Remove references to GTK+ WebKit1 test bot and ensure
+        all bots are testing WebKit2 only.
+        * Scripts/webkitpy/common/config/ews.json: Remove references to GTK+ WK1 EWS.
+        * Scripts/webkitpy/common/config/ports.py: Remove references to GTK+ WK1 bots.
+        * Scripts/webkitpy/common/config/ports_unittest.py: Ditto.
+        * Scripts/webkitpy/port/builders.py: Ditto.
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py: Ditto.
+        * TestResultServer/static-dashboards/builders.jsonp: Ditto.
+
 2014-03-28  Timothy Hatcher  <timothy@apple.com>
 
         Remove Brian Burg's apple.com email address.

@@ -67,10 +67,9 @@ _exact_matches = {
     # FIXME: Remove rebaseline_override_dir once there is an Apple buildbot that corresponds to platform/win.
     "Apple Win 7 Release (Tests)": {"port_name": "win-7sp0", "is_debug": False, "rebaseline_override_dir": "win"},
 
-    "GTK Linux 32-bit Release": {"port_name": "gtk", "is_debug": False},
-    "GTK Linux 64-bit Debug WK1": {"port_name": "gtk", "is_debug": True},
+    "GTK Linux 32-bit Release": {"port_name": "gtk-wk2", "is_debug": False},
+    "GTK Linux 64-bit Debug": {"port_name": "gtk-wk2", "is_debug": True},
     "GTK Linux 64-bit Release": {"port_name": "gtk-wk2", "is_debug": False},
-    "GTK Linux 64-bit Release WK1 (Tests)": {"port_name": "gtk", "is_debug": False},
 
     "EFL Linux 64-bit Release": {"port_name": "efl", "is_debug": False},
     "EFL Linux 64-bit Release WK2": {"port_name": "efl-wk2", "is_debug": False},
