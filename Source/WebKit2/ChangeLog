@@ -1,3 +1,18 @@
+2014-03-28  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Running minibrowser with url crashes in debug build
+        https://bugs.webkit.org/show_bug.cgi?id=130492
+
+        Reviewed by Martin Robinson.
+
+        Use the ResourceRequest(const URL& url) constructor, instead of the
+        one taking a String, to call WebPageProxy::loadRequest(), so we
+        ensure that the passed URI is correctly constructed.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_load_uri): Create an URL out of a SoupURI and
+        use that to create a ResourceRequest to pass to loadRequest().
+
 2014-03-27  Pratik Solanki  <psolanki@apple.com>
 
         [iOS WebKit2] Tweak cache sizes for iOS

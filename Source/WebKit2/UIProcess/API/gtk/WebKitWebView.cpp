@@ -2004,7 +2004,8 @@ void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(uri);
 
-    getPage(webView)->loadRequest(String::fromUTF8(uri));
+    GUniquePtr<SoupURI> soupURI(soup_uri_new(uri));
+    getPage(webView)->loadRequest(URL(soupURI.get()));
 }
 
 /**
