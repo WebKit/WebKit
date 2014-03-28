@@ -1,3 +1,18 @@
+2014-03-27  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r166376.
+        https://bugs.webkit.org/show_bug.cgi?id=130887
+
+        This was a misguided optimization. (Requested by kling on
+        #webkit).
+
+        Reverted changeset:
+
+        "Avoid fetching JSObject::structure() repeatedly in
+        putDirectInternal."
+        https://bugs.webkit.org/show_bug.cgi?id=130857
+        http://trac.webkit.org/changeset/166376
+
 2014-03-27  Oliver Hunt  <oliver@apple.com>
 
         Support spread operand in |new| expressions
