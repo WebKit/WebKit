@@ -121,6 +121,7 @@ TestController::TestController(int argc, const char* argv[])
     , m_forceComplexText(false)
     , m_shouldUseAcceleratedDrawing(false)
     , m_shouldUseRemoteLayerTree(false)
+    , m_shouldLogHistoryClientCallbacks(false)
 {
 
 #if PLATFORM(IOS)
@@ -368,6 +369,16 @@ void TestController::initialize(int argc, const char* argv[])
         0 // getInjectedBundleInitializationUserData
     };
     WKContextSetInjectedBundleClient(m_context.get(), &injectedBundleClient.base);
+
+    WKContextHistoryClientV0 historyClient = {
+        { 0, this },
+        didNavigateWithNavigationData,
+        didPerformClientRedirect,
+        didPerformServerRedirect,
+        didUpdateHistoryTitle,
+        0, // populateVisitedLinks
+    };
+    WKContextSetHistoryClient(m_context.get(), &historyClient.base);
 
     WKNotificationManagerRef notificationManager = WKContextGetNotificationManager(m_context.get());
     WKNotificationProviderV0 notificationKit = m_webNotificationProvider.provider();
@@ -634,6 +645,8 @@ bool TestController::resetStateToConsistentValues()
     m_authenticationPassword = String();
 
     m_shouldBlockAllPlugins = false;
+
+    m_shouldLogHistoryClientCallbacks = false;
 
     // Reset main page back to about:blank
     m_doneResetting = false;
@@ -1291,6 +1304,88 @@ void TestController::decidePolicyForResponse(WKFrameRef frame, WKURLResponseRef 
     }
 
     WKFramePolicyListenerIgnore(listener);
+}
+
+void TestController::didNavigateWithNavigationData(WKContextRef, WKPageRef, WKNavigationDataRef navigationData, WKFrameRef frame, const void* clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->didNavigateWithNavigationData(navigationData, frame);
+}
+
+void TestController::didNavigateWithNavigationData(WKNavigationDataRef navigationData, WKFrameRef)
+{
+    if (m_state != RunningTest)
+        return;
+
+    if (!m_shouldLogHistoryClientCallbacks)
+        return;
+
+    // URL
+    WKRetainPtr<WKURLRef> urlWK = adoptWK(WKNavigationDataCopyURL(navigationData));
+    WKRetainPtr<WKStringRef> urlStringWK = adoptWK(WKURLCopyString(urlWK.get()));
+    // Title
+    WKRetainPtr<WKStringRef> titleWK = adoptWK(WKNavigationDataCopyTitle(navigationData));
+    // HTTP method
+    WKRetainPtr<WKURLRequestRef> requestWK = adoptWK(WKNavigationDataCopyOriginalRequest(navigationData));
+    WKRetainPtr<WKStringRef> methodWK = adoptWK(WKURLRequestCopyHTTPMethod(requestWK.get()));
+
+    // FIXME: Determine whether the navigation was successful / a client redirect rather than hard-coding the message here.
+    m_currentInvocation->outputText(String::format("WebView navigated to url \"%s\" with title \"%s\" with HTTP equivalent method \"%s\".  The navigation was successful and was not a client redirect.\n",
+        toSTD(urlStringWK).c_str(), toSTD(titleWK).c_str(), toSTD(methodWK).c_str()));
+}
+
+void TestController::didPerformClientRedirect(WKContextRef, WKPageRef, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void* clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->didPerformClientRedirect(sourceURL, destinationURL, frame);
+}
+
+void TestController::didPerformClientRedirect(WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef)
+{
+    if (m_state != RunningTest)
+        return;
+
+    if (!m_shouldLogHistoryClientCallbacks)
+        return;
+
+    WKRetainPtr<WKStringRef> sourceStringWK = adoptWK(WKURLCopyString(sourceURL));
+    WKRetainPtr<WKStringRef> destinationStringWK = adoptWK(WKURLCopyString(destinationURL));
+
+    m_currentInvocation->outputText(String::format("WebView performed a client redirect from \"%s\" to \"%s\".\n", toSTD(sourceStringWK).c_str(), toSTD(destinationStringWK).c_str()));
+}
+
+void TestController::didPerformServerRedirect(WKContextRef, WKPageRef, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void* clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->didPerformServerRedirect(sourceURL, destinationURL, frame);
+}
+
+void TestController::didPerformServerRedirect(WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef)
+{
+    if (m_state != RunningTest)
+        return;
+
+    if (!m_shouldLogHistoryClientCallbacks)
+        return;
+
+    WKRetainPtr<WKStringRef> sourceStringWK = adoptWK(WKURLCopyString(sourceURL));
+    WKRetainPtr<WKStringRef> destinationStringWK = adoptWK(WKURLCopyString(destinationURL));
+
+    m_currentInvocation->outputText(String::format("WebView performed a server redirect from \"%s\" to \"%s\".\n", toSTD(sourceStringWK).c_str(), toSTD(destinationStringWK).c_str()));
+}
+
+void TestController::didUpdateHistoryTitle(WKContextRef, WKPageRef, WKStringRef title, WKURLRef URL, WKFrameRef frame, const void* clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->didUpdateHistoryTitle(title, URL, frame);
+}
+
+void TestController::didUpdateHistoryTitle(WKStringRef title, WKURLRef URL, WKFrameRef)
+{
+    if (m_state != RunningTest)
+        return;
+
+    if (!m_shouldLogHistoryClientCallbacks)
+        return;
+
+    WKRetainPtr<WKStringRef> urlStringWK(AdoptWK, WKURLCopyString(URL));
+    m_currentInvocation->outputText(String::format("WebView updated the title for history URL \"%s\" to \"%s\".\n", toSTD(urlStringWK).c_str(), toSTD(title).c_str()));
 }
 
 } // namespace WTR

@@ -175,12 +175,11 @@ http/tests/security/setDomainRelaxationForbiddenForURLScheme.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42777>
 fast/loader/non-deferred-substitute-load.html
 
-# WebKitTestRunner needs to print history delegate information
-# <https://bugs.webkit.org/show_bug.cgi?id=42704>
-http/tests/globalhistory/history-delegate-basic-302-redirect.html
-http/tests/globalhistory/history-delegate-basic-refresh-redirect.html
-http/tests/globalhistory/history-delegate-basic-title.html
+# WebKitTestRunner needs testRunner.removeAllVisitedLinks
 http/tests/globalhistory/history-delegate-basic-visited-links.html
+
+# WebKit2 passes the wrong source URL for client redirects
+http/tests/globalhistory/history-delegate-basic-refresh-redirect.html
 
 # transitions/default-timing-function.html failing on WebKit2 since it was added
 # <https://bugs.webkit.org/show_bug.cgi?id=56531>

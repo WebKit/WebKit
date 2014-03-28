@@ -146,6 +146,11 @@ static bool shouldUseThreadedScrolling(const char* pathOrURL)
 }
 #endif
 
+static bool shouldLogHistoryClientCallbacks(const char* pathOrURL)
+{
+    return strstr(pathOrURL, "globalhistory/");
+}
+
 static void updateThreadedScrollingForCurrentTest(const char* pathOrURL)
 {
 #if PLATFORM(COCOA)
@@ -199,6 +204,8 @@ void TestInvocation::invoke()
     updateThreadedScrollingForCurrentTest(m_pathOrURL.c_str());
 
     m_textOutput.clear();
+
+    TestController::shared().setShouldLogHistoryClientCallbacks(shouldLogHistoryClientCallbacks(m_pathOrURL.c_str()));
 
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("BeginTest"));
     WKRetainPtr<WKMutableDictionaryRef> beginTestMessageBody = adoptWK(WKMutableDictionaryCreate());

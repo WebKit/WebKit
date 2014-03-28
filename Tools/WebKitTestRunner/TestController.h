@@ -104,6 +104,8 @@ public:
 
     void setBlockAllPlugins(bool shouldBlock) { m_shouldBlockAllPlugins = shouldBlock; }
 
+    void setShouldLogHistoryClientCallbacks(bool shouldLog) { m_shouldLogHistoryClientCallbacks = shouldLog; }
+
 private:
     void initialize(int argc, const char* argv[]);
     void createWebViewWithOptions(WKDictionaryRef);
@@ -158,6 +160,19 @@ private:
 
     static void decidePolicyForResponse(WKPageRef, WKFrameRef, WKURLResponseRef, WKURLRequestRef, bool canShowMIMEType, WKFramePolicyListenerRef, WKTypeRef, const void*);
     void decidePolicyForResponse(WKFrameRef, WKURLResponseRef, WKFramePolicyListenerRef);
+
+    // WKContextHistoryClient
+    static void didNavigateWithNavigationData(WKContextRef, WKPageRef, WKNavigationDataRef, WKFrameRef, const void*);
+    void didNavigateWithNavigationData(WKNavigationDataRef, WKFrameRef);
+
+    static void didPerformClientRedirect(WKContextRef, WKPageRef, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef, const void*);
+    void didPerformClientRedirect(WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef);
+
+    static void didPerformServerRedirect(WKContextRef, WKPageRef, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef, const void*);
+    void didPerformServerRedirect(WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef);
+
+    static void didUpdateHistoryTitle(WKContextRef, WKPageRef, WKStringRef title, WKURLRef, WKFrameRef, const void*);
+    void didUpdateHistoryTitle(WKStringRef title, WKURLRef, WKFrameRef);
 
     static WKPageRef createOtherPage(WKPageRef oldPage, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*);
 
@@ -222,6 +237,8 @@ private:
     bool m_forceComplexText;
     bool m_shouldUseAcceleratedDrawing;
     bool m_shouldUseRemoteLayerTree;
+
+    bool m_shouldLogHistoryClientCallbacks;
 
     OwnPtr<EventSenderProxy> m_eventSenderProxy;
 

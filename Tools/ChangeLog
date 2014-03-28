@@ -1,3 +1,28 @@
+2014-03-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        <https://webkit.org/b/42704> WebKitTestRunner needs to print history delegate information
+
+        Provide an implementation of WKContextHistoryClient that logs when called for tests in
+        the globalhistory directory.
+
+        Reviewed by Sam Weinig.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::initialize): Set the history client.
+        (WTR::TestController::resetStateToConsistentValues): Disable logging of history client callbacks.
+        (WTR::TestController::didNavigateWithNavigationData): Log information about the navigation. Some portions
+        of the output are hard-coded to match WebKit1's results for now since they're fixed in our existing tests
+        and we don't yet have API to access the data in question.
+        (WTR::TestController::didPerformClientRedirect):
+        (WTR::TestController::didPerformServerRedirect):
+        (WTR::TestController::didUpdateHistoryTitle):
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::setShouldLogHistoryClientCallbacks):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::shouldLogHistoryClientCallbacks): Log history client callbacks for tests in a globalhistory directory.
+        (WTR::TestInvocation::invoke):
+
 2014-03-27  Filip Pizlo  <fpizlo@apple.com>
 
         Revert http://trac.webkit.org/changeset/166386 because it broke builds.
