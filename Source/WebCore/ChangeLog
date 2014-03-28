@@ -1,3 +1,19 @@
+2014-03-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        A TrailingObject's endpoint might get decremented twice
+        https://bugs.webkit.org/show_bug.cgi?id=130874
+
+        Reviewed by Darin Adler.
+
+        There are two places where we might shave off a trailing space from the end
+        of a line. We don't want to hit both codepaths for a single line.
+
+        Fixes fast/block/update-midpoints-for-trailing-boxes-crash.html after r166245.
+
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::checkMidpoints):
+        (WebCore::BreakingContext::handleEndOfLine):
+
 2014-03-28  Andreas Kling  <akling@apple.com>
 
         Inline JSDOMWrapper subclasses' finishCreation().

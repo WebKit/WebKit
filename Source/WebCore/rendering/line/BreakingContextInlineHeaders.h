@@ -1001,7 +1001,7 @@ inline void BreakingContext::commitAndUpdateLineBreakIfNeeded()
     }
 }
 
-inline void checkMidpoints(LineMidpointState& lineMidpointState, InlineIterator& lBreak)
+inline TrailingObjects::CollapseFirstSpaceOrNot checkMidpoints(LineMidpointState& lineMidpointState, InlineIterator& lBreak)
 {
     // Check to see if our last midpoint is a start point beyond the line break. If so,
     // shave it off the list, and shave off a trailing space if the previous end point doesn't
@@ -1016,10 +1016,13 @@ inline void checkMidpoints(LineMidpointState& lineMidpointState, InlineIterator&
         if (currpoint == lBreak) {
             // We hit the line break before the start point. Shave off the start point.
             lineMidpointState.decreaseNumMidpoints();
-            if (endpoint.renderer()->style().collapseWhiteSpace() && endpoint.renderer()->isText())
+            if (endpoint.renderer()->style().collapseWhiteSpace() && endpoint.renderer()->isText()) {
                 endpoint.fastDecrement();
+                return TrailingObjects::DoNotCollapseFirstSpace;
+            }
         }
     }
+    return TrailingObjects::CollapseFirstSpace;
 }
 
 inline InlineIterator BreakingContext::handleEndOfLine()
@@ -1048,9 +1051,9 @@ inline InlineIterator BreakingContext::handleEndOfLine()
     }
 
     // Sanity check our midpoints.
-    checkMidpoints(m_lineMidpointState, m_lineBreak);
+    TrailingObjects::CollapseFirstSpaceOrNot collapsed = checkMidpoints(m_lineMidpointState, m_lineBreak);
 
-    m_trailingObjects.updateMidpointsForTrailingBoxes(m_lineMidpointState, m_lineBreak, TrailingObjects::CollapseFirstSpace);
+    m_trailingObjects.updateMidpointsForTrailingBoxes(m_lineMidpointState, m_lineBreak, collapsed);
 
     // We might have made lineBreak an iterator that points past the end
     // of the object. Do this adjustment to make it point to the start
