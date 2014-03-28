@@ -1,5 +1,12 @@
 2014-03-27  Filip Pizlo  <fpizlo@apple.com>
 
+        Revert http://trac.webkit.org/changeset/166386 because it broke builds.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/LLVMForJSC.xcconfig:
+
+2014-03-27  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, skip this test for now.
 
         * tests/stress/recurse-infinitely-on-getter.js:

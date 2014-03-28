@@ -30,12 +30,7 @@ OTHER_LDFLAGS_HIDE_SYMBOLS = -Wl,-exported_symbol -Wl,_initializeAndGetJSCLLVMAP
 LLVM_LIBS_iphoneos = -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter -lLLVMTableGen -lLLVMInstrumentation -lLLVMIRReader -lLLVMBitReader -lLLVMAsmParser -lLLVMARM64Disassembler -lLLVMARM64CodeGen -lLLVMARM64AsmParser -lLLVMARM64Desc -lLLVMARM64Info -lLLVMARM64AsmPrinter -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMMCParser -lLLVMDebugInfo -lLLVMOption -lLLVMInterpreter -lLLVMJIT -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMMCDisassembler -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport -lprotobuf;
 LLVM_LIBS_macosx = -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMIRReader -lLLVMAsmParser -lLLVMMCDisassembler -lLLVMMCParser -lLLVMInstrumentation -lLLVMBitReader -lLLVMInterpreter -lLLVMipo -lLLVMVectorize -lLLVMLinker -lLLVMBitWriter -lLLVMMCJIT -lLLVMJIT -lLLVMCodeGen -lLLVMObjCARCOpts -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMTarget -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport;
 
-LLVM_LIBRARY_PATHS = $(LLVM_LIBRARY_PATHS_$(PLATFORM_NAME))
-LLVM_LIBRARY_PATHS_macosx = "${BUILT_PRODUCTS_DIR}/usr/local/LLVMForJavaScriptCore/lib" /usr/local/LLVMForJavaScriptCore/lib;
-LLVM_LIBRARY_PATHS_iphoneos = "${BUILT_PRODUCTS_DIR}/usr/local/lib" /usr/local/lib;
-LLVM_LIBRARY_PATHS_iphonesimulator = ;
-
-LIBRARY_SEARCH_PATHS = ${BUILT_PRODUCTS_DIR} $(LLVM_LIBRARY_PATHS) $(LIBRARY_SEARCH_PATHS)
+LIBRARY_SEARCH_PATHS = ${BUILT_PRODUCTS_DIR} "${BUILT_PRODUCTS_DIR}/usr/local/LLVMForJavaScriptCore/lib" /usr/local/LLVMForJavaScriptCore/lib $(LIBRARY_SEARCH_PATHS)
 
 OTHER_LDFLAGS_LLVM = $(OTHER_LDFLAGS_LLVM_$(ENABLE_FTL_JIT));
 OTHER_LDFLAGS_LLVM_ = ;
