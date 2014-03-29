@@ -1,3 +1,15 @@
+2014-03-28  Darin Adler  <darin@apple.com>
+
+        Fix recently-introduced off-by-one error in centerTruncateToBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=130889
+        <rdar://problem/16408694>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/graphics/StringTruncator.cpp:
+        (WebCore::centerTruncateToBuffer): Simplified expression that computes truncatedLength.
+        Removed incorrect "+ 1" from computation of where to write characters.
+
 2014-03-28  Benjamin Poulain  <bpoulain@apple.com>
 
         Update the code related to SelectorPseudoTypeMap to reflect its new purpose

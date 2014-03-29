@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,6 +70,8 @@ static unsigned centerTruncateToBuffer(const String& string, unsigned length, un
 
 #if PLATFORM(IOS)
     // FIXME: We should guard this code behind an editing behavior. Then we can remove the PLATFORM(IOS)-guard.
+    // Or just turn it on for all platforms. It seems like good behavior everywhere. Might be better to generalize
+    // it to handle all whitespace, not just "space".
 
     // Strip single character before ellipsis character, when that character is preceded by a space
     if (omitStart > 1 && string[omitStart - 1] != space && omitStart > 2 && string[omitStart - 2] == space)
@@ -87,13 +89,13 @@ static unsigned centerTruncateToBuffer(const String& string, unsigned length, un
         ++omitEnd;
 #endif
 
-    unsigned truncatedLength = shouldInsertEllipsis ? omitStart + 1 + (length - omitEnd) : length - (omitEnd - omitStart);
+    unsigned truncatedLength = omitStart + shouldInsertEllipsis + (length - omitEnd);
     ASSERT(truncatedLength <= length);
 
     StringView(string).substring(0, omitStart).getCharactersWithUpconvert(buffer);
     if (shouldInsertEllipsis)
         buffer[omitStart++] = horizontalEllipsis;
-    StringView(string).substring(omitEnd, length - omitEnd).getCharactersWithUpconvert(&buffer[omitStart + 1]);
+    StringView(string).substring(omitEnd, length - omitEnd).getCharactersWithUpconvert(&buffer[omitStart]);
     return truncatedLength;
 }
 
@@ -104,6 +106,8 @@ static unsigned rightTruncateToBuffer(const String& string, unsigned length, uns
 
 #if PLATFORM(IOS)
     // FIXME: We should guard this code behind an editing behavior. Then we can remove the PLATFORM(IOS)-guard.
+    // Or just turn it on for all platforms. It seems like good behavior everywhere. Might be better to generalize
+    // it to handle all whitespace, not just "space".
 
     // Strip single character before ellipsis character, when that character is preceded by a space
     if (keepCount > 1 && string[keepCount - 1] != space && keepCount > 2 && string[keepCount - 2] == space)
@@ -148,10 +152,14 @@ static unsigned rightClipToWordBuffer(const String& string, unsigned length, uns
 
 #if PLATFORM(IOS)
     // FIXME: We should guard this code behind an editing behavior. Then we can remove the PLATFORM(IOS)-guard.
+    // Or just turn it on for all platforms. It seems like good behavior everywhere. Might be better to generalize
+    // it to handle all whitespace, not just "space".
+
     // Motivated by <rdar://problem/7439327> truncation should not include a trailing space
-    while ((keepLength > 0) && (string[keepLength - 1] == space))
+    while (keepLength && string[keepLength - 1] == space)
         --keepLength;
 #endif
+
     return keepLength;
 }
 
@@ -249,11 +257,10 @@ static String truncateString(const String& string, float maxWidth, const Font& f
             / (widthForSmallestKnownToNotFit - widthForLargestKnownToFit);
         keepCount = static_cast<unsigned>(maxWidth * ratio);
         
-        if (keepCount <= keepCountForLargestKnownToFit) {
+        if (keepCount <= keepCountForLargestKnownToFit)
             keepCount = keepCountForLargestKnownToFit + 1;
-        } else if (keepCount >= keepCountForSmallestKnownToNotFit) {
+        else if (keepCount >= keepCountForSmallestKnownToNotFit)
             keepCount = keepCountForSmallestKnownToNotFit - 1;
-        }
         
         ASSERT_WITH_SECURITY_IMPLICATION(keepCount < length);
         ASSERT(keepCount > 0);

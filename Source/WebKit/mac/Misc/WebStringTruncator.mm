@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,35 +33,19 @@
 #import <WebCore/FontCache.h>
 #import <WebCore/FontPlatformData.h>
 #import <WebCore/StringTruncator.h>
-#import <wtf/StdLibExtras.h>
-#import <wtf/text/WTFString.h>
+#import <runtime/InitializeThreading.h>
+#import <wtf/MainThread.h>
+#import <wtf/NeverDestroyed.h>
 
-using namespace WebCore;
-
-static NSFont *defaultMenuFont()
+static WebCore::Font& fontFromNSFont(NSFont *font)
 {
-    static NSFont *defaultMenuFont = nil;
-    if (!defaultMenuFont) {
-        defaultMenuFont = [NSFont menuFontOfSize:0];
-        CFRetain(defaultMenuFont);
-    }
-    return defaultMenuFont;
-}
-
-static Font& fontFromNSFont(NSFont *font)
-{
-    static NSFont *currentFont;
-    DEPRECATED_DEFINE_STATIC_LOCAL(Font, currentRenderer, ());
-
-    if ([font isEqual:currentFont])
-        return currentRenderer;
-    if (currentFont)
-        CFRelease(currentFont);
-    currentFont = font;
-    CFRetain(currentFont);
-    FontPlatformData f(font, [font pointSize]);
-    currentRenderer = Font(f, ![[NSGraphicsContext currentContext] isDrawingToScreen]);
-    return currentRenderer;
+    static NeverDestroyed<RetainPtr<NSFont>> currentNSFont;
+    static NeverDestroyed<WebCore::Font> currentFont;
+    if ([font isEqual:currentNSFont.get().get()])
+        return currentFont;
+    currentNSFont.get() = font;
+    currentFont.get() = WebCore::Font(WebCore::FontPlatformData(font, [font pointSize]), ![[NSGraphicsContext currentContext] isDrawingToScreen]);
+    return currentFont;
 }
 
 @implementation WebStringTruncator
@@ -69,30 +53,33 @@ static Font& fontFromNSFont(NSFont *font)
 + (void)initialize
 {
     InitWebCoreSystemInterface();
+    JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
 }
 
 + (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth
 {
-    FontCachePurgePreventer fontCachePurgePreventer;
-    return StringTruncator::centerTruncate(string, maxWidth, fontFromNSFont(defaultMenuFont()));
+    static NeverDestroyed<RetainPtr<NSFont>> menuFont = [NSFont menuFontOfSize:0];
+    WebCore::FontCachePurgePreventer fontCachePurgePreventer;
+    return WebCore::StringTruncator::centerTruncate(string, maxWidth, fontFromNSFont(menuFont.get().get()));
 }
 
 + (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font
 {
-    FontCachePurgePreventer fontCachePurgePreventer;
-    return StringTruncator::centerTruncate(string, maxWidth, fontFromNSFont(font));
+    WebCore::FontCachePurgePreventer fontCachePurgePreventer;
+    return WebCore::StringTruncator::centerTruncate(string, maxWidth, fontFromNSFont(font));
 }
 
 + (NSString *)rightTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font
 {
-    FontCachePurgePreventer fontCachePurgePreventer;
-    return StringTruncator::rightTruncate(string, maxWidth, fontFromNSFont(font));
+    WebCore::FontCachePurgePreventer fontCachePurgePreventer;
+    return WebCore::StringTruncator::rightTruncate(string, maxWidth, fontFromNSFont(font));
 }
 
 + (float)widthOfString:(NSString *)string font:(NSFont *)font
 {
-    FontCachePurgePreventer fontCachePurgePreventer;
-    return StringTruncator::width(string, fontFromNSFont(font));
+    WebCore::FontCachePurgePreventer fontCachePurgePreventer;
+    return WebCore::StringTruncator::width(string, fontFromNSFont(font));
 }
 
 @end

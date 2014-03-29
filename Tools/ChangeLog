@@ -1,3 +1,15 @@
+2014-03-28  Darin Adler  <darin@apple.com>
+
+        Fix recently-introduced off-by-one error in centerTruncateToBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=130889
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added StringTruncator.mm.
+        * TestWebKitAPI/Tests/mac/StringTruncator.mm: Added. One test for each of the
+        WebStringTruncator methods; should be good for a start. These are dependent on the
+        metrics of Helvetica 12, but I am hoping that will be consistent across OS X machines.
+
 2014-03-28  Martin Hock  <mhock@apple.com>
 
         Unreviewed. Add myself as a committer.
