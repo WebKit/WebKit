@@ -30,6 +30,7 @@
 
 #include "ChildProcess.h"
 #include <WebCore/CountedUserActivity.h>
+#include <WebCore/AudioHardwareListener.h>
 #include <wtf/Forward.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
@@ -40,7 +41,8 @@ class NetscapePluginModule;
 class WebProcessConnection;
 struct PluginProcessCreationParameters;
         
-class PluginProcess : public ChildProcess {
+class PluginProcess : public ChildProcess, private WebCore::AudioHardwareListener::Client
+{
     WTF_MAKE_NONCOPYABLE(PluginProcess);
     friend class NeverDestroyed<PluginProcess>;
 public:
@@ -95,6 +97,10 @@ private:
     void createWebProcessConnection();
     void getSitesWithData(uint64_t callbackID);
     void clearSiteData(const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
+    
+    // AudioHardwareListenerClient
+    virtual void audioHardwareDidBecomeActive() override;
+    virtual void audioHardwareDidBecomeInactive() override;
 
     void platformInitializePluginProcess(const PluginProcessCreationParameters&);
     
@@ -125,6 +131,8 @@ private:
     static void lowMemoryHandler(bool critical);
     CountedUserActivity m_connectionActivity;
     CountedUserActivity m_visiblePluginsActivity;
+    
+    RefPtr<WebCore::AudioHardwareListener> m_audioHardwareListener;
 };
 
 } // namespace WebKit

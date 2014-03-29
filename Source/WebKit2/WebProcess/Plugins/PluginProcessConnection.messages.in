@@ -25,6 +25,10 @@
 messages -> PluginProcessConnection LegacyReceiver {
     # Set a global JavaScript exception.
     SetException(String exceptionString) -> ()
+    
+    # Plugin process audio hardware state changed
+    AudioHardwareDidBecomeActive()
+    AudioHardwareDidBecomeInactive()
 }
 
 #endif

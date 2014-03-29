@@ -26,6 +26,7 @@
 #ifndef Plugin_h
 #define Plugin_h
 
+#include <WebCore/AudioHardwareListener.h>
 #include <WebCore/FindOptions.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/URL.h>
@@ -276,6 +277,8 @@ public:
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) = 0;
 
     virtual String getSelectionString() const = 0;
+    
+    virtual WebCore::AudioHardwareActivityType audioHardwareActivity() const { return WebCore::AudioHardwareActivityType::Unknown; }
 
 protected:
     Plugin();

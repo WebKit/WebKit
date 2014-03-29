@@ -1,5 +1,17 @@
 2014-03-28  Stephanie Lewis  <slewis@apple.com>
 
+        Rename pluginDidEvaluate to better represent when it’s called.
+        Part of <rdar://problem/16061257> PluginProcess should AppNap when no plugins on active tab.
+
+        Reviewed by Anders Carlsson.
+
+        No new test because it’s just a name change.
+
+        * page/PageThrottler.h:
+        (WebCore::PageThrottler::pluginDidEvaluateWhileAudioIsPlaying):
+
+2014-03-28  Stephanie Lewis  <slewis@apple.com>
+
         Notification handler for telling if audio hardware is active.
         https://bugs.webkit.org/show_bug.cgi?id=130743
 

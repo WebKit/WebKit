@@ -39,6 +39,7 @@
 #include "PluginProcessConnectionMessages.h"
 #include "PluginProxyMessages.h"
 #include "WebProcessConnectionMessages.h"
+#include <WebCore/AudioHardwareListener.h>
 #include <unistd.h>
 #include <wtf/RunLoop.h>
 
@@ -346,6 +347,16 @@ void WebProcessConnection::pluginDidBecomeHidden(unsigned pluginInstanceID)
     
     if (oldState != m_visiblePluginInstanceIDs.isEmpty())
         PluginProcess::shared().pluginsForWebProcessDidBecomeHidden();
+}
+    
+void WebProcessConnection::audioHardwareDidBecomeActive()
+{
+    m_connection->send(Messages::PluginProcessConnection::AudioHardwareDidBecomeActive(), 0);
+}
+
+void WebProcessConnection::audioHardwareDidBecomeInactive()
+{
+    m_connection->send(Messages::PluginProcessConnection::AudioHardwareDidBecomeInactive(), 0);
 }
     
 } // namespace WebKit

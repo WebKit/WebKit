@@ -47,7 +47,7 @@ public:
     void setViewState(ViewState::Flags);
 
     void didReceiveUserInput() { m_hysteresis.impulse(); }
-    void pluginDidEvaluate() { m_hysteresis.impulse(); }
+    void pluginDidEvaluateWhileAudioIsPlaying() { m_hysteresis.impulse(); }
     std::unique_ptr<PageActivityAssertionToken> mediaActivityToken();
     std::unique_ptr<PageActivityAssertionToken> pageLoadActivityToken();
 

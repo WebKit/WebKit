@@ -1,5 +1,48 @@
 2014-03-28  Stephanie Lewis  <slewis@apple.com>
 
+        Stop waking up the web process in the background because of plugin activity.
+        Part of <rdar://problem/16061257> PluginProcess should AppNap when no plugins on active tab.
+
+        Reviewed by Anders Carlsson.
+
+        Plugin activity in the background can constantly wake up web processes.  This is only
+        necessary when audio is playing to support web apps like Pandora and youtube playing 
+        in the background.  Use a new api in CoreAudio to see if there is audio playing in
+        the PluginProcess.
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::PluginProcess): Add a AudioHardwareListener
+        (WebKit::PluginProcess::createWebProcessConnection): tell web process current state
+        (WebKit::PluginProcess::audioHardwareDidBecomeActive): respond to audio hardware notifications
+        (WebKit::PluginProcess::audioHardwareDidBecomeInactive):
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/WebProcessConnection.cpp: tell WebProcess when audio state in PluginProcess
+             changes.
+        (WebKit::WebProcessConnection::audioHardwareDidBecomeActive):
+        (WebKit::WebProcessConnection::audioHardwareDidBecomeInactive):
+        * PluginProcess/WebProcessConnection.h:
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+             Only invoke pageThrottler activity when playing audio
+        (WebKit::NPRuntimeObjectMap::evaluate):
+        * WebProcess/Plugins/Plugin.h: add function to get audio state
+        (WebKit::Plugin::audioIsPlayingInPluginProcess):
+        * WebProcess/Plugins/PluginProcessConnection.cpp: store audio state
+        (WebKit::PluginProcessConnection::PluginProcessConnection):
+        (WebKit::PluginProcessConnection::didReceiveMessage):
+        (WebKit::PluginProcessConnection::audioHardwareDidBecomeActive):
+        (WebKit::PluginProcessConnection::audioHardwareDidBecomeInactive):
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        (WebKit::PluginProcessConnection::audioIsPlaying):
+        * WebProcess/Plugins/PluginProcessConnection.messages.in:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::audioIsPlayingInPluginProcess):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::audioIsPlayingInPluginProcess):
+        * WebProcess/Plugins/PluginView.h:
+
+2014-03-28  Stephanie Lewis  <slewis@apple.com>
+
         Have the plugin process track visibility of it’s plugin and sleep when none
         are visible.
         Part of <rdar://problem/16061257> PluginProcess should AppNap when no plugins on active tab.

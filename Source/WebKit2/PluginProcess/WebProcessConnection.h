@@ -57,6 +57,9 @@ public:
     void pluginDidBecomeVisible(unsigned pluginInstanceID);
     void pluginDidBecomeHidden(unsigned pluginInstanceID);
 
+    void audioHardwareDidBecomeActive();
+    void audioHardwareDidBecomeInactive();
+
 private:
     WebProcessConnection(IPC::Connection::Identifier);
 

@@ -544,7 +544,12 @@ bool PluginView::sendComplexTextInput(uint64_t pluginComplexTextInputIdentifier,
     m_plugin->sendComplexTextInput(textInput);
     return true;
 }
-
+    
+WebCore::AudioHardwareActivityType PluginView::audioHardwareActivity() const
+{
+    return m_plugin->audioHardwareActivity();
+}
+    
 NSObject *PluginView::accessibilityObject() const
 {
     if (!m_isInitialized || !m_plugin)

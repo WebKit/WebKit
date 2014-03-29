@@ -138,6 +138,8 @@ private:
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override { return false; }
 
     virtual String getSelectionString() const override { return String(); }
+    
+    virtual WebCore::AudioHardwareActivityType audioHardwareActivity() const override;
 
     float contentsScaleFactor();
     bool needsBackingStore() const;

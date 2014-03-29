@@ -709,6 +709,11 @@ PassRefPtr<WebCore::SharedBuffer> PluginProxy::liveResourceData() const
 {
     return 0;
 }
+    
+WebCore::AudioHardwareActivityType PluginProxy::audioHardwareActivity() const
+{
+    return m_connection->audioHardwareActivity();
+}
 
 } // namespace WebKit
 
