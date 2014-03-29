@@ -1,0 +1,112 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+</head>
+<body onLoad="runTest()">
+
+<p>Checking Web Inspector protocol (specifically live region properties) for the Accessibility Node Inspector.</p>
+
+<div id="examples">
+
+	<div class="ex" role="group" aria-live="off" aria-busy="true" aria-atomic="true">off</div>
+    <div class="ex" role="group" aria-live="polite" aria-busy="true" aria-atomic="true">polite</div>
+    <div class="ex" role="group" aria-live="assertive" aria-busy="true" aria-atomic="true">assertive</div>
+    <div class="ex" role="group" aria-live="off" aria-busy="true" aria-atomic="false">off</div>
+    <div class="ex" role="group" aria-live="polite" aria-busy="true" aria-atomic="false">polite</div>
+    <div class="ex" role="group" aria-live="assertive" aria-busy="true" aria-atomic="false">assertive</div>
+    
+    <div class="ex" role="alert">assertive (default) <!-- FIXME: atomic should be true http://webkit.org/b/130907 --></div>
+	<div class="ex" role="alert" aria-live="off">off</div>
+	<div class="ex" role="alert" aria-live="polite">polite <!-- FIXME: atomic should be true http://webkit.org/b/130907 --></div>
+	<div class="ex" role="log">polite (default)</div>
+	<div class="ex" role="log" aria-live="assertive">assertive</div>
+	<div class="ex" role="log" aria-live="off">off</div>
+	<div class="ex" role="marquee">off (default)</div>
+	<div class="ex" role="status">polite (default) <!-- FIXME: atomic should be true http://webkit.org/b/130907 --></div>
+	<div class="ex" role="status" aria-live="assertive">assertive <!-- FIXME: atomic should be true http://webkit.org/b/130907 --></div>
+	<div class="ex" role="status" aria-live="off">off</div>
+	<div class="ex" role="timer">off (default)</div>
+
+</div>
+
+<script type="text/javascript">
+
+function $(id) {
+    return document.getElementById(id);
+}
+
+function cleanup() {
+    // Hide the test element container to avoid irrelevant output diffs on subsequent updates.
+    $("examples").style.display = "none";
+}
+
+function test() {
+
+    var examples = [];
+    var documentNodeId = null;
+    var bodyNodeId = null;
+
+    function onGotDocument(response) {
+        InspectorTest.checkForError(response);
+        documentNodeId = response.result.root.nodeId;
+        InspectorTest.sendCommand("DOM.querySelectorAll", {"nodeId": documentNodeId, "selector": ".ex"}, onGotQuerySelectorAll);
+    }
+
+    function onGotQuerySelectorAll(response) {
+        InspectorTest.checkForError(response);
+        examples = response.result.nodeIds;
+        InspectorTest.log("Total elements to be tested: " + examples.length + ".");
+        loop();
+    }
+
+    function loop() {
+        if (examples.length) {
+            InspectorTest.sendCommand("DOM.getOuterHTML", {"nodeId": examples[examples.length-1]}, onGotOuterHTML);
+        } else {
+            finishTest();
+        }
+    }
+
+    function onGotOuterHTML(response) {
+        InspectorTest.checkForError(response);
+        var outerHTML = response.result.outerHTML;
+        outerHTML = outerHTML.replace(/ class="ex"/g, ""); // remove any duplicated, unnecessary class attributes
+        InspectorTest.log("\n" + outerHTML);
+        InspectorTest.sendCommand("DOM.getAccessibilityPropertiesForNode", {"nodeId": examples[examples.length-1]}, onGotAccessibilityProperties);
+    }
+
+    function onGotAccessibilityProperties(response) {
+        InspectorTest.checkForError(response);
+        logAccessibilityProperties(response.result.properties);
+        examples.pop();
+        loop();
+    }
+
+    function logAccessibilityProperties(properties) {
+        for (var key in properties) {
+            var value = properties[key];
+            switch (key){
+            case "busy":
+            case "exists":
+            case "liveRegionAtomic":
+            case "liveRegionStatus":
+                InspectorTest.log("    " + key + ": " + value);
+                break;
+            default:
+                continue;
+            }
+        }
+    }
+
+    function finishTest() {
+        InspectorTest.sendCommand("Runtime.evaluate", {"expression": "cleanup()"}, function(){
+            InspectorTest.completeTest();
+        });
+    }
+
+    InspectorTest.sendCommand("DOM.getDocument", {}, onGotDocument);
+
+}
+</script>
+</body>
+</html>

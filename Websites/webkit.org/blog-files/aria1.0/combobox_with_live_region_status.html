@@ -284,11 +284,9 @@
     <p>Some <a href="#">focusable content</a> before the combobox.</p>
     <form class="pc">
         <!-- Note that this field is labelled by itself, which in this case, is an explicit pointer to use the placeholder attribute value. -->
-        <input type="text" tabindex="0" id="state" aria-labelledby="state" role="combobox" aria-autocomplete="list" aria-owns="statelist" placeholder="US State or Territory" autocomplete="off" autocorrect="off" autocapitalize="off">
-        <div role="status" aria-live="polite" aria-expanded="false">
+        <input type="text" tabindex="0" id="state" aria-labelledby="state" role="combobox" aria-autocomplete="list" aria-owns="statelist" aria-expanded="false" placeholder="US State or Territory" autocomplete="off" autocorrect="off" autocapitalize="off">
+        <div role="status">
             <!-- This is the list status live region: e.g. "4 items." -->
-            <!-- The attribute value, aria-live="polite" is the default for role="status". -->
-            <!-- It's just included here for demo clarity. -->
         </div>
         <ul role="listbox" id="statelist" hidden>
             <li id="AL" role="option">Alabama</li>

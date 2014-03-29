@@ -457,6 +457,7 @@ WebInspector.DOMNode.prototype = {
             if (!error && callback && accessibilityProperties) {
                 callback({
                     activeDescendantNodeId: accessibilityProperties.activeDescendantNodeId,
+                    busy: accessibilityProperties.busy,
                     checked: accessibilityProperties.checked,
                     childNodeIds: accessibilityProperties.childNodeIds,
                     controlledNodeIds: accessibilityProperties.controlledNodeIds,
@@ -470,6 +471,8 @@ WebInspector.DOMNode.prototype = {
                     invalid: accessibilityProperties.invalid,
                     hidden: accessibilityProperties.hidden,
                     label: accessibilityProperties.label,
+                    liveRegionAtomic: accessibilityProperties.liveRegionAtomic,
+                    liveRegionStatus: accessibilityProperties.liveRegionStatus,
                     mouseEventNodeId: accessibilityProperties.mouseEventNodeId,
                     nodeId: accessibilityProperties.nodeId,
                     ownedNodeIds: accessibilityProperties.ownedNodeIds,

@@ -1426,6 +1426,7 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
         WebCore::AXObjectCache::enableAccessibility();
 
     Node* activeDescendantNode = nullptr;
+    bool busy = false;
     TypeBuilder::DOM::AccessibilityProperties::Checked::Enum checked = TypeBuilder::DOM::AccessibilityProperties::Checked::False;
     RefPtr<Inspector::TypeBuilder::Array<int>> childNodeIds;
     RefPtr<Inspector::TypeBuilder::Array<int>> controlledNodeIds;
@@ -1439,6 +1440,8 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
     TypeBuilder::DOM::AccessibilityProperties::Invalid::Enum invalid = TypeBuilder::DOM::AccessibilityProperties::Invalid::False;
     bool hidden = false;
     String label; // FIXME: Waiting on http://webkit.org/b/121134
+    bool liveRegionAtomic = false;
+    TypeBuilder::DOM::AccessibilityProperties::LiveRegionStatus::Enum liveRegionStatus = TypeBuilder::DOM::AccessibilityProperties::LiveRegionStatus::Off;
     Node* mouseEventNode = nullptr;
     RefPtr<Inspector::TypeBuilder::Array<int>> ownedNodeIds;
     Node* parentNode = nullptr;
@@ -1450,6 +1453,7 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
     RefPtr<Inspector::TypeBuilder::Array<int>> selectedChildNodeIds;
     bool supportsChecked = false;
     bool supportsExpanded = false;
+    bool supportsLiveRegion = false;
     bool supportsPressed = false;
     bool supportsRequired = false;
     bool supportsFocused = false;
@@ -1459,6 +1463,8 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
 
             if (AccessibilityObject* activeDescendant = axObject->activeDescendant())
                 activeDescendantNode = activeDescendant->node();
+
+            busy = axObject->ariaLiveRegionBusy();
 
             supportsChecked = axObject->supportsChecked();
             if (supportsChecked) {
@@ -1529,6 +1535,16 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             if (axObject->isARIAHidden() || axObject->isDOMHidden())
                 hidden = true;
             
+            if (axObject->supportsARIALiveRegion()) {
+                supportsLiveRegion = true;
+                liveRegionAtomic = axObject->ariaLiveRegionAtomic();
+                String ariaLive = axObject->ariaLiveRegionStatus();
+                if (ariaLive == "assertive")
+                    liveRegionStatus = TypeBuilder::DOM::AccessibilityProperties::LiveRegionStatus::Assertive;
+                else if (ariaLive == "polite")
+                    liveRegionStatus = TypeBuilder::DOM::AccessibilityProperties::LiveRegionStatus::Polite;
+            }
+
             if (axObject->isAccessibilityNodeObject())
                 mouseEventNode = toAccessibilityNodeObject(axObject)->mouseButtonListener(MouseButtonListenerResultFilter::IncludeBodyElement);
 
@@ -1580,6 +1596,8 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
     if (exists) {
         if (activeDescendantNode)
             value->setActiveDescendantNodeId(pushNodePathToFrontend(activeDescendantNode));
+        if (busy)
+            value->setBusy(busy);
         if (supportsChecked)
             value->setChecked(checked);
         if (childNodeIds)
@@ -1602,6 +1620,10 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             value->setInvalid(invalid);
         if (hidden)
             value->setHidden(hidden);
+        if (supportsLiveRegion) {
+            value->setLiveRegionAtomic(liveRegionAtomic);
+            value->setLiveRegionStatus(liveRegionStatus);
+        }
         if (mouseEventNode)
             value->setMouseEventNodeId(pushNodePathToFrontend(mouseEventNode));
         if (ownedNodeIds)

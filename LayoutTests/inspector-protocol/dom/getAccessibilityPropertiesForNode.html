@@ -30,6 +30,16 @@
 <span class="ex"></span>
 <span class="ex" aria-hidden="true"></span>
 
+<div role="listbox" class="ex" aria-busy="true">
+    <!-- Despite having no required option children, this is valid because it is marked as busy. -->
+    <!-- For example, waiting for a script to load its contents. -->
+</div>
+
+<!-- Full coverage of live regions in getAccessibilityPropertiesForNode_liveRegion.html. -->
+<div class="ex" role="group" aria-live="off">off</div>
+<div class="ex" role="group" aria-live="polite">polite</div>
+<div class="ex" role="group" aria-live="assertive" aria-atomic="true">assertive (and atomic)</div>
+
 <div class="ex" role="button" tabindex="0"></div>
 <div class="ex" role="button" tabindex="0" aria-disabled="true">disabled</div>
 <div class="ex" role="button" tabindex="0" aria-pressed="true">FIXME: Pressed is false. Expected true. http://webkit.org/b/129830</div>

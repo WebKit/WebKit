@@ -270,3 +270,7 @@ body.docked.right #navigation-sidebar.collapsed > .resizer {
 .node-link-list li:last-child {
     margin: 0;
 }
+
+.value-with-clarification .clarification {
+    color: #666;
+}

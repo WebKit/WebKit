@@ -61,6 +61,7 @@
             "type": "object",
             "properties": [
                 { "name": "activeDescendantNodeId", "$ref": "NodeId", "optional": true, "description": "<code>DOMNode</code> id of the accessibility object referenced by aria-activedescendant." },
+                { "name": "busy", "type": "boolean", "optional": true, "description": "Value of @aria-busy on current or ancestor node." },
                 { "name": "checked", "type": "string", "optional": true, "enum": ["true", "false", "mixed"], "description": "Checked state of certain form controls." },
                 { "name": "childNodeIds", "type": "array", "items": { "$ref": "NodeId" }, "optional": true, "description": "Array of <code>DOMNode</code> ids of the accessibility tree children if available." },
                 { "name": "controlledNodeIds", "type": "array", "items": { "$ref": "NodeId" }, "optional": true, "description": "Array of <code>DOMNode</code> ids of any nodes referenced via @aria-controls." },
@@ -74,6 +75,8 @@
                 { "name": "invalid", "type": "string", "optional": true, "enum": ["true", "false", "grammar", "spelling"], "description": "Invalid status of form controls." },
                 { "name": "hidden", "type": "boolean", "optional": true, "description": "Hidden state. True if node or an ancestor is hidden via CSS or explicit @aria-hidden, to clarify why the element is ignored." },
                 { "name": "label", "type": "string", "description": "Computed label value for the node, sometimes calculated by referencing other nodes." },
+                { "name": "liveRegionAtomic", "type": "boolean", "optional": true, "description": "Value of @aria-atomic." },
+                { "name": "liveRegionStatus", "type": "string", "optional": true, "enum": ["assertive", "polite", "off"], "description": "Value of element's @aria-live attribute." },
                 { "name": "mouseEventNodeId", "$ref": "NodeId", "optional": true, "description": "<code>DOMNode</code> id of node or closest ancestor node that has a mousedown, mouseup, or click event handler." },
                 { "name": "nodeId", "$ref": "NodeId", "description": "Target <code>DOMNode</code> id." },
                 { "name": "ownedNodeIds", "type": "array", "items": { "$ref": "NodeId" }, "optional": true, "description": "Array of <code>DOMNode</code> ids of any nodes referenced via @aria-owns." },

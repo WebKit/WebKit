@@ -4,10 +4,10 @@ Checking Web Inspector protocol for the Accessibility Node Inspector.
     exists: true
     label: 
     role: 
-    childNodeIds.length: 21
+    childNodeIds.length: 25
 
 
-Total elements to be tested: 59.
+Total elements to be tested: 63.
 
 <div onclick="void(0);">click</div>
     exists: true
@@ -401,6 +401,42 @@ Total elements to be tested: 59.
     role: button
     focused: false
     parentNodeId: exists
+
+<div role="group" aria-live="assertive" aria-atomic="true">assertive (and atomic)</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    liveRegionAtomic: true
+    liveRegionStatus: assertive
+    parentNodeId: exists
+
+<div role="group" aria-live="polite">polite</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    liveRegionAtomic: false
+    liveRegionStatus: polite
+    parentNodeId: exists
+
+<div role="group" aria-live="off">off</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="listbox" aria-busy="true">
+    <!-- Despite having no required option children, this is valid because it is marked as busy. -->
+    <!-- For example, waiting for a script to load its contents. -->
+</div>
+    exists: true
+    label: 
+    role: listbox
+    busy: true
+    parentNodeId: exists
+    required: false
 
 <span aria-hidden="true"></span>
     exists: true
