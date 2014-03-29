@@ -79,7 +79,7 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
     GraphicsContextStateSaver stateSaver(context, textPaintStyle.strokeWidth > 0);
 
     updateGraphicsContext(context, textPaintStyle);
-    LayoutPoint adjustedPaintOffset = roundedIntPoint(paintOffset);
+    LayoutPoint adjustedPaintOffset = LayoutPoint(roundedForPainting(paintOffset, flow.document().deviceScaleFactor()));
 
     LayoutRect paintRect = paintInfo.rect;
     paintRect.moveBy(-adjustedPaintOffset);

@@ -1,5 +1,20 @@
 2014-03-29  Zalan Bujtas  <zalan@apple.com>
 
+        Subpixel rendering: Simple line layout should not round to integral position while painting.
+        https://bugs.webkit.org/show_bug.cgi?id=130934
+
+        Reviewed by Simon Fraser.
+
+        Remove rounding to integral position. When RenderLayer is injected and hides subpixel positions,
+        integral rounding produces different paint position.
+
+        Test: fast/flexbox/hidpi-simple-line-layout-with-flexbox-and-transition.html
+
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+
+2014-03-29  Zalan Bujtas  <zalan@apple.com>
+
         Subpixel rendering: Make GraphicsContext::drawImageBuffer* functions float based.
         https://bugs.webkit.org/show_bug.cgi?id=130932
 
