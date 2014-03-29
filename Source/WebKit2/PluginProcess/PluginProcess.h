@@ -66,6 +66,9 @@ public:
 
     CountedUserActivity& connectionActivity() { return m_connectionActivity; }
 
+    void pluginsForWebProcessDidBecomeHidden();
+    void pluginsForWebProcessDidBecomeVisible();
+
 private:
     PluginProcess();
     ~PluginProcess();
@@ -121,6 +124,7 @@ private:
 
     static void lowMemoryHandler(bool critical);
     CountedUserActivity m_connectionActivity;
+    CountedUserActivity m_visiblePluginsActivity;
 };
 
 } // namespace WebKit

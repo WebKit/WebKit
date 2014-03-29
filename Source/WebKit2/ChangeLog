@@ -1,3 +1,38 @@
+2014-03-28  Stephanie Lewis  <slewis@apple.com>
+
+        Have the plugin process track visibility of it’s plugin and sleep when none
+        are visible.
+        Part of <rdar://problem/16061257> PluginProcess should AppNap when no plugins on active tab.
+        https://bugs.webkit.org/show_bug.cgi?id=130694
+
+        Reviewed by Anders Carlsson.
+
+        Currently AppSleep is enabled on the PluginProcess based on web page visibility.
+        Add visibility tracking to plugins and move the decision to AppSleep into the the
+        PluginProcess
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::PluginProcess): Add a new activity for visible plugins
+        (WebKit::PluginProcess::pluginsForWebProcessDidBecomeVisible): take an activity
+             assertion if any web processes have a visible plugin.
+        (WebKit::PluginProcess::pluginsForWebProcessDidBecomeHidden): 
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/WebProcessConnection.cpp: 
+        (WebKit::WebProcessConnection::removePluginControllerProxy): remove plugin from 
+            visible plugins when destroying it
+        (WebKit::WebProcessConnection::pluginDidBecomeVisible):
+        (WebKit::WebProcessConnection::pluginDidBecomeHidden): track which plugins are
+            visible for each web process
+        * PluginProcess/WebProcessConnection.h:
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        (WebKit::PluginControllerProxy::windowVisibilityChanged): notify WebProcessConnection
+            when visibility changed.
+        * UIProcess/WebContext.h:
+        * UIProcess/mac/WebContextMac.mm:  instead of tracking plugin app sleep state on the web pref.
+            and visibility state, just use the web pref.
+        (WebKit::WebContext::updateProcessSuppressionState):
+        (WebKit::WebContext::processSuppressionPreferenceIsEnabledForAllContexts):
+
 2014-03-28  Brian Burg  <bburg@apple.com>
 
         Web Replay: add page-level setting to bypass the MemoryCache

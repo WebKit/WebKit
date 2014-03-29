@@ -31,6 +31,7 @@
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WebKitSystemInterface.h"
+#import "WebPageGroup.h"
 #import "WebProcessCreationParameters.h"
 #import "WebProcessMessages.h"
 #import "WindowServerConnection.h"
@@ -116,7 +117,7 @@ void WebContext::updateProcessSuppressionState() const
         m_networkProcess->setProcessSuppressionEnabled(processSuppressionEnabled());
 #endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    PluginProcessManager::shared().setProcessSuppressionEnabled(processSuppressionIsEnabledForAllContexts());
+    PluginProcessManager::shared().setProcessSuppressionEnabled(processSuppressionPreferenceIsEnabledForAllContexts());
 #endif
 }
 
@@ -430,6 +431,15 @@ bool WebContext::processSuppressionIsEnabledForAllContexts()
     return true;
 }
 
+bool WebContext::processSuppressionPreferenceIsEnabledForAllContexts()
+{
+    for (const auto* context : WebContext::allContexts()) {
+        if (!context->m_defaultPageGroup->preferences().store().getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey()))
+            return false;
+    }
+    return true;
+}
+    
 void WebContext::registerNotificationObservers()
 {
 #if !PLATFORM(IOS)

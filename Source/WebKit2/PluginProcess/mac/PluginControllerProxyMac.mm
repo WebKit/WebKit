@@ -107,6 +107,10 @@ void PluginControllerProxy::windowAndViewFramesChanged(const IntRect& windowFram
 void PluginControllerProxy::windowVisibilityChanged(bool isVisible)
 {
     m_plugin->windowVisibilityChanged(isVisible);
+    if (isVisible)
+        m_connection->pluginDidBecomeVisible(m_pluginInstanceID);
+    else
+        m_connection->pluginDidBecomeHidden(m_pluginInstanceID);
 }
 
 void PluginControllerProxy::sendComplexTextInput(const String& textInput)

@@ -300,6 +300,7 @@ public:
 #if PLATFORM(COCOA)
     bool processSuppressionEnabled() const;
     static bool processSuppressionIsEnabledForAllContexts();
+    static bool processSuppressionPreferenceIsEnabledForAllContexts();
 #endif
 
     void windowServerConnectionStateChanged();
