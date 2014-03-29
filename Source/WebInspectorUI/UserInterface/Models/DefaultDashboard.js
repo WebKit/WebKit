@@ -249,13 +249,13 @@ WebInspector.DefaultDashboard.prototype = {
     _incrementConsoleMessageType: function(type, increment)
     {
         switch (type) {
-        case "log":
+        case WebInspector.ConsoleMessage.MessageLevel.Log:
             this.logs += increment;
             break;
-        case "warning":
+        case WebInspector.ConsoleMessage.MessageLevel.Warning:
             this.issues += increment;
             break;
-        case "error":
+        case WebInspector.ConsoleMessage.MessageLevel.Error:
             this.errors += increment;
             break;
         }

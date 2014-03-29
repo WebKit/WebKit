@@ -129,7 +129,7 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncLog(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncWarn(ExecState* exec)
 {
-    return consoleLogWithLevel(exec, MessageLevel::Error);
+    return consoleLogWithLevel(exec, MessageLevel::Warning);
 }
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncClear(ExecState* exec)

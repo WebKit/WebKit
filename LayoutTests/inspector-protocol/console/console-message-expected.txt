@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 7: log
+CONSOLE MESSAGE: line 8: info
+CONSOLE MESSAGE: line 9: warn
+CONSOLE MESSAGE: line 10: error
+CONSOLE MESSAGE: line 11: debug
+Tests that console log messages make it to the frontend and have expected source, type, and levels.
+{"source":"console-api","level":"log","text":"log","location":"console-message.html:7:16","parameters":[{"type":"string"}]}
+{"source":"console-api","level":"log","text":"info","location":"console-message.html:8:17","parameters":[{"type":"string"}]}
+{"source":"console-api","level":"warning","text":"warn","location":"console-message.html:9:17","parameters":[{"type":"string"}]}
+{"source":"console-api","level":"error","text":"error","location":"console-message.html:10:18","parameters":[{"type":"string"}]}
+{"source":"console-api","level":"debug","text":"debug","location":"console-message.html:11:18","parameters":[{"type":"string"}]}
+

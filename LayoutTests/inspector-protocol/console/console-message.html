@@ -1,0 +1,40 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+function generateSimpleConsoleMessages()
+{
+    console.log("log");
+    console.info("info"); // Alias of log.
+    console.warn("warn");
+    console.error("error");
+    console.debug("debug");
+}
+
+function test()
+{
+    InspectorTest.importScript("../../../../inspector-protocol/resources/console-helper.js");
+
+    InspectorTest.sendCommand("Console.enable", {});
+    InspectorTest.sendCommand("Runtime.evaluate", {expression: "generateSimpleConsoleMessages()"});
+
+    var consoleMessageCount = 0;
+    const expectedConsoleMessages = 5;
+
+    InspectorTest.eventHandler["Console.messageAdded"] = function(messageObject)
+    {
+        var simplifiedMessage = ConsoleHelper.simplifiedConsoleMessage(messageObject);
+        InspectorTest.log(JSON.stringify(simplifiedMessage));
+
+        if (++consoleMessageCount === expectedConsoleMessages)
+            InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests that console log messages make it to the frontend and have expected source, type, and levels.<br>
+</p>
+</body>
+</html>
