@@ -144,9 +144,6 @@ void WebProcessConnection::didReceiveMessage(IPC::Connection* connection, IPC::M
 
 void WebProcessConnection::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
 {
-    // Force all timers to run at full speed when processing a synchronous message
-    ActivityAssertion activityAssertion(PluginProcess::shared().connectionActivity());
-
     ConnectionStack::CurrentConnectionPusher currentConnection(ConnectionStack::shared(), connection);
 
     uint64_t destinationID = decoder.destinationID();

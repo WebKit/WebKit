@@ -1,5 +1,20 @@
 2014-03-28  Stephanie Lewis  <slewis@apple.com>
 
+        Don't prevent AppSleep from sync messages.
+        https://bugs.webkit.org/show_bug.cgi?id=130747.
+
+        Reviewed by Anders Carlsson.
+
+        We think sync messages only need to happen full throttle when the plugin is visible,
+        the user is interacting with the plugin, or audio is playing.  Since we already
+        take assertions for all these cases the assertion in sync messages doesn’t provide
+        any value.  Since it can keep the PluginProcess awake in other instances remove it.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::didReceiveSyncMessage):
+
+2014-03-28  Stephanie Lewis  <slewis@apple.com>
+
         Stop waking up the web process in the background because of plugin activity.
         Part of <rdar://problem/16061257> PluginProcess should AppNap when no plugins on active tab.
 
