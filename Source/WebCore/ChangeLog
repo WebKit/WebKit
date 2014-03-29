@@ -1,3 +1,18 @@
+2014-03-28  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] The 'auto' height must be adapted to the item's margin.
+        https://bugs.webkit.org/show_bug.cgi?id=130920
+
+        Reviewed by Darin Adler.
+
+        Adding the grid-item's marginLogicalHeight to the used breadth when computing
+        content based grid-track sizes.
+
+        Test: fast/css-grid-layout/grid-item-margin-auto-columns-rows.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::logicalContentHeightForChild):
+
 2014-03-28  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: support for live regions

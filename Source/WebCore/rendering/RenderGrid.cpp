@@ -494,7 +494,7 @@ LayoutUnit RenderGrid::logicalContentHeightForChild(RenderBox* child, Vector<Gri
     // what we are interested in here. Thus we need to set the override logical height to -1 (no possible resolution).
     child->setOverrideContainingBlockContentLogicalHeight(-1);
     child->layoutIfNeeded();
-    return child->logicalHeight();
+    return child->logicalHeight() + child->marginLogicalHeight();
 }
 
 LayoutUnit RenderGrid::minContentForChild(RenderBox* child, GridTrackSizingDirection direction, Vector<GridTrack>& columnTracks)

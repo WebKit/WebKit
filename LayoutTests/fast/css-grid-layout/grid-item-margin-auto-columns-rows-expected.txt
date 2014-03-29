@@ -1,0 +1,17 @@
+This test checks that the grid's rows and columns 'auto' sizes are updated accordingly to its grid-item's before and start margins.
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
