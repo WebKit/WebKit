@@ -529,10 +529,14 @@ TextDirection FrameSelection::directionOfSelection()
     InlineBox* startBox = 0;
     InlineBox* endBox = 0;
     int unusedOffset;
-    if (m_selection.start().isNotNull())
-        m_selection.visibleStart().getInlineBoxAndOffset(startBox, unusedOffset);
-    if (m_selection.end().isNotNull())
-        m_selection.visibleEnd().getInlineBoxAndOffset(endBox, unusedOffset);
+    // Cache the VisiblePositions because visibleStart() and visibleEnd()
+    // can cause layout, which has the potential to invalidate lineboxes.
+    VisiblePosition startPosition = m_selection.visibleStart();
+    VisiblePosition endPosition = m_selection.visibleEnd();
+    if (startPosition.isNotNull())
+        startPosition.getInlineBoxAndOffset(startBox, unusedOffset);
+    if (endPosition.isNotNull())
+        endPosition.getInlineBoxAndOffset(endBox, unusedOffset);
     if (startBox && endBox && startBox->direction() == endBox->direction())
         return startBox->direction();
 

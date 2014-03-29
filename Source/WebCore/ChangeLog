@@ -1,3 +1,29 @@
+2014-03-29  David Kilzer  <ddkilzer@apple.com>
+
+        Preserve selection end positions in directionOfSelection
+        <http://webkit.org/b/104813>
+        <rdar://problem/13666417>
+
+        Reviewed by Brent Fulgham.
+
+        Merged from Blink (patch by kenrb@chromium.org):
+        https://src.chromium.org/viewvc/blink?revision=150621&view=revision
+        http://crbug.com/164263
+
+            VisibleSelection::visibleStart() and VisibleSelection::visibleEnd()
+            can both cause layouts, which has the potential to invalidate any
+            rendertree-based objects. This was causing a problem in
+            FrameSelection::directionOfSelection(), where a reference to a
+            lineBox was being held across a call to visibleEnd().
+
+            This patch ensures that the any layout is completed before linebox
+            references are retrieved.
+
+        Test: editing/selection/layout-during-move-selection-crash.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::directionOfSelection):
+
 2014-03-29  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Simple line layout should not round to integral position while painting.
