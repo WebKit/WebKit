@@ -632,35 +632,23 @@ void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, c
         image->drawTiled(this, dest, srcRect, tileScaleFactor, hRule, vRule, styleColorSpace, op);
 }
 
-void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const IntPoint& p, CompositeOperator op, BlendMode blendMode)
+void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const FloatPoint& p, CompositeOperator op, BlendMode blendMode)
 {
     if (!image)
         return;
-    drawImageBuffer(image, styleColorSpace, FloatRect(IntRect(p, image->logicalSize())), FloatRect(FloatPoint(), FloatSize(image->logicalSize())), op, blendMode);
+    drawImageBuffer(image, styleColorSpace, FloatRect(p, image->logicalSize()), FloatRect(FloatPoint(), image->logicalSize()), op, blendMode);
 }
 
-void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const IntRect& r, CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
+void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const FloatRect& dest, CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
 {
     if (!image)
         return;
-    drawImageBuffer(image, styleColorSpace, FloatRect(r), FloatRect(FloatPoint(), FloatSize(image->logicalSize())), op, blendMode, useLowQualityScale);
+    drawImageBuffer(image, styleColorSpace, dest, FloatRect(FloatPoint(), FloatSize(image->logicalSize())), op, blendMode, useLowQualityScale);
 }
 
-void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const IntPoint& dest, const IntRect& srcRect, CompositeOperator op, BlendMode blendMode)
+void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const FloatPoint& dest, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode)
 {
-    drawImageBuffer(image, styleColorSpace, FloatRect(IntRect(dest, srcRect.size())), FloatRect(srcRect), op, blendMode);
-}
-
-void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const IntRect& dest, const IntRect& srcRect, CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
-{
-    drawImageBuffer(image, styleColorSpace, FloatRect(dest), FloatRect(srcRect), op, blendMode, useLowQualityScale);
-}
-
-void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const FloatRect& dest)
-{
-    if (!image)
-        return;
-    drawImageBuffer(image, styleColorSpace, dest, FloatRect(IntRect(IntPoint(), image->logicalSize())));
+    drawImageBuffer(image, styleColorSpace, FloatRect(dest, srcRect.size()), srcRect, op, blendMode);
 }
 
 void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)

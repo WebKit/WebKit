@@ -94,9 +94,9 @@ IntRect FilterEffect::requestedRegionOfInputImageData(const IntRect& effectRect)
     return IntRect(location, m_absolutePaintRect.size());
 }
 
-IntRect FilterEffect::drawingRegionOfInputImage(const IntRect& srcRect) const
+FloatRect FilterEffect::drawingRegionOfInputImage(const IntRect& srcRect) const
 {
-    return IntRect(IntPoint(srcRect.x() - m_absolutePaintRect.x(),
+    return FloatRect(FloatPoint(srcRect.x() - m_absolutePaintRect.x(),
                             srcRect.y() - m_absolutePaintRect.y()), srcRect.size());
 }
 

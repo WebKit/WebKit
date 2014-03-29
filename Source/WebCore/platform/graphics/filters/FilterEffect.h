@@ -91,7 +91,7 @@ public:
             || m_premultipliedImageResult;
     }
 
-    IntRect drawingRegionOfInputImage(const IntRect&) const;
+    FloatRect drawingRegionOfInputImage(const IntRect&) const;
     IntRect requestedRegionOfInputImageData(const IntRect&) const;
 
     // Solid black image with different alpha values.

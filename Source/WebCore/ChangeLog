@@ -1,3 +1,24 @@
+2014-03-29  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make GraphicsContext::drawImageBuffer* functions float based.
+        https://bugs.webkit.org/show_bug.cgi?id=130932
+
+        Reviewed by Simon Fraser.
+        
+        This is in preparation to support device pixel based filter painting.
+        Filter calculation is still integral based.
+
+        No change in behavior.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImageBuffer):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/filters/FilterEffect.cpp: This will eventually be fully float based.
+        Right now, this IntRect->FloatRect change is only to ensure that we can call 
+        the float based drawImageBuffer(). 
+        (WebCore::FilterEffect::drawingRegionOfInputImage):
+        * platform/graphics/filters/FilterEffect.h:
+
 2014-03-27  Sam Weinig  <sam@webkit.org>
 
         Convert yet more of HTMLConverter to C++
