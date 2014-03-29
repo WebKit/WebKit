@@ -1,3 +1,38 @@
+2014-03-27  Sam Weinig  <sam@webkit.org>
+
+        Convert yet more of HTMLConverter to C++
+        https://bugs.webkit.org/show_bug.cgi?id=130850
+
+        Reviewed by Anders Carlsson.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverterCaches::isAncestorsOfStartToBeConverted):
+        (HTMLConverter::HTMLConverter):
+        (HTMLConverter::~HTMLConverter):
+        (HTMLConverter::convert):
+        (HTMLConverter::computedAttributesForElement):
+        (HTMLConverter::attributesForElement):
+        (HTMLConverter::_newParagraphForElement):
+        (HTMLConverter::_newLineForElement):
+        (HTMLConverter::_newTabForElement):
+        (HTMLConverter::_addAttachmentForElement):
+        (HTMLConverter::_addQuoteForElement):
+        (HTMLConverter::_addValue):
+        (HTMLConverter::_processHeadElement):
+        (HTMLConverter::_enterElement):
+        (HTMLConverter::_addTableCellForElement):
+        (HTMLConverter::_processElement):
+        (HTMLConverter::_addMarkersToList):
+        (HTMLConverter::_exitElement):
+        (HTMLConverter::_processText):
+        (HTMLConverter::_traverseNode):
+        (HTMLConverter::_traverseFooterNode):
+        (WebCore::attributedStringFromRange):
+        (_childrenForNode): Deleted.
+        (HTMLConverter::_computedAttributesForElement): Deleted.
+        (HTMLConverter::_attributesForElement): Deleted.
+        (HTMLConverter::_loadFromDOMRange): Deleted.
+
 2014-03-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix after r166441 and r166443.

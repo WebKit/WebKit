@@ -27,31 +27,28 @@
 #import "HTMLConverter.h"
 
 #import "ArchiveResource.h"
-#import "CachedImage.h"
-#import "ColorMac.h"
 #import "CSSComputedStyleDeclaration.h"
 #import "CSSParser.h"
 #import "CSSPrimitiveValue.h"
+#import "CachedImage.h"
 #import "CharacterData.h"
+#import "ColorMac.h"
 #import "Document.h"
 #import "DocumentLoader.h"
-#import "DOMCSSPrimitiveValueInternal.h"
-#import "DOMCharacterDataInternal.h"
-#import "DOMDocumentInternal.h"
-#import "DOMElementInternal.h"
-#import "DOMHTMLTableCellElement.h"
-#import "DOMNodeInternal.h"
-#import "DOMPrivate.h"
-#import "DOMRGBColorInternal.h"
-#import "DOMRangeInternal.h"
 #import "Element.h"
+#import "ElementTraversal.h"
 #import "Font.h"
 #import "Frame.h"
 #import "FrameLoader.h"
 #import "HTMLElement.h"
 #import "HTMLFrameElementBase.h"
+#import "HTMLInputElement.h"
+#import "HTMLMetaElement.h"
 #import "HTMLNames.h"
+#import "HTMLOListElement.h"
 #import "HTMLParserIdioms.h"
+#import "HTMLTableCellElement.h"
+#import "HTMLTextAreaElement.h"
 #import "LoaderNSURLExtras.h"
 #import "RGBColor.h"
 #import "RenderImage.h"
@@ -419,7 +416,7 @@ public:
     PassRefPtr<CSSValue> inlineStylePropertyForElement(Element&, CSSPropertyID);
 
     Node* cacheAncestorsOfStartToBeConverted(const Range&);
-    bool isAncestorsOfStartToBeConverted(Node* node) const { return m_ancestorsUnderCommonAncestor.contains(node); }
+    bool isAncestorsOfStartToBeConverted(Node& node) const { return m_ancestorsUnderCommonAncestor.contains(&node); }
 
 private:
     HashMap<Element*, std::unique_ptr<ComputedStyleExtractor>> m_computedStyles;
@@ -441,31 +438,25 @@ private:
 
 class HTMLConverter {
 public:
-    HTMLConverter(DOMRange*);
+    HTMLConverter(Range&);
     ~HTMLConverter();
     
-    NSAttributedString* convert()
-    {
-        _loadFromDOMRange();
-        if (_errorCode)
-            return nil;
-        return [[_attrStr retain] autorelease];
-    }
+    NSAttributedString* convert();
     
 private:
+    Ref<Range> m_range;
+    DocumentLoader* m_dataSource;
+    
     HashMap<RefPtr<Element>, RetainPtr<NSDictionary>> m_attributesForElements;
+    HashMap<RetainPtr<NSTextTable>, RefPtr<Element>> m_textTableFooters;
     HashMap<RefPtr<Element>, RetainPtr<NSMutableDictionary>> m_aggregatedAttributesForElements;
 
     NSMutableAttributedString *_attrStr;
     NSMutableDictionary *_documentAttrs;
     NSURL *_baseURL;
-    DOMDocument *_document;
-    DOMRange *_domRange;
-    WebCore::DocumentLoader *_dataSource;
     NSMutableArray *_textLists;
     NSMutableArray *_textBlocks;
     NSMutableArray *_textTables;
-    NSMutableDictionary *_textTableFooters;
     NSMutableArray *_textTableSpacings;
     NSMutableArray *_textTablePaddings;
     NSMutableArray *_textTableRows;
@@ -476,7 +467,6 @@ private:
     
     CGFloat _defaultTabInterval;
     NSUInteger _domRangeStartIndex;
-    NSInteger _errorCode;
     NSInteger _quoteLevel;
 
     std::unique_ptr<HTMLConverterCaches> _caches;
@@ -489,51 +479,49 @@ private:
         unsigned int pad:26;
     } _flags;
     
-    void _loadFromDOMRange();
-
     PlatformColor *_colorForElement(Element&, CSSPropertyID);
     
-    void _traverseNode(Node* node, unsigned depth, bool embedded);
-    void _traverseFooterNode(DOMNode *node, NSInteger depth);
+    void _traverseNode(Node&, unsigned depth, bool embedded);
+    void _traverseFooterNode(Element&, unsigned depth);
     
-    NSDictionary *_computedAttributesForElement(Element&);
-    NSDictionary *_attributesForElement(DOMElement *);
-    NSDictionary* attributesForElement(Element& element);
-    NSDictionary* aggregatedAttributesForAncestors(CharacterData&);
+    NSDictionary *computedAttributesForElement(Element&);
+    NSDictionary *attributesForElement(Element&);
+    NSDictionary *aggregatedAttributesForAncestors(CharacterData&);
     
     Element* _blockLevelElementForNode(Node*);
     
-    void _newParagraphForElement(DOMElement *element, NSString *tag, BOOL flag, BOOL suppressTrailingSpace);
-    void _newLineForElement(DOMElement *element);
-    void _newTabForElement(DOMElement *element);
-    BOOL _addAttachmentForElement(DOMElement *element, NSURL *url, BOOL needsParagraph, BOOL usePlaceholder);
-    void _addQuoteForElement(DOMElement *element, BOOL opening, NSInteger level);
-    void _addValue(NSString *value, DOMElement *element);
+    void _newParagraphForElement(Element&, NSString *tag, BOOL flag, BOOL suppressTrailingSpace);
+    void _newLineForElement(Element&);
+    void _newTabForElement(Element&);
+    BOOL _addAttachmentForElement(Element&, NSURL *url, BOOL needsParagraph, BOOL usePlaceholder);
+    void _addQuoteForElement(Element&, BOOL opening, NSInteger level);
+    void _addValue(NSString *value, Element&);
     void _fillInBlock(NSTextBlock *block, Element&, PlatformColor *backgroundColor, CGFloat extraMargin, CGFloat extraPadding, BOOL isTable);
+    
+    BOOL _enterElement(Element&, BOOL embedded);
+    BOOL _processElement(Element&, NSInteger depth);
+    void _exitElement(Element&, NSInteger depth, NSUInteger startIndex);
+    
+    void _processHeadElement(Element&);
     void _processMetaElementWithName(NSString *name, NSString *content);
-    void _processHeadElement(DOMElement *element);
-    BOOL _enterElement(DOMElement *element, BOOL embedded);
-    void _addTableForElement(Element *tableElement);
-    void _addTableCellForElement(DOMElement *tableCellElement);
-    BOOL _processElement(DOMElement *element, NSInteger depth);
+    
+    void _addTableForElement(Element* tableElement);
+    void _addTableCellForElement(Element* tableCellElement);
     void _addMarkersToList(NSTextList *list, NSRange range);
-    void _exitElement(DOMElement *element, NSInteger depth, NSUInteger startIndex);
     void _processText(CharacterData&);
     void _adjustTrailingNewline();
 };
 
-HTMLConverter::HTMLConverter(DOMRange* domRange)
+HTMLConverter::HTMLConverter(Range& range)
+    : m_range(range)
+    , m_dataSource(nullptr)
 {
-    _domRange = [domRange retain];
     _attrStr = [[NSMutableAttributedString alloc] init];
     _documentAttrs = [[NSMutableDictionary alloc] init];
     _baseURL = nil;
-    _document = nil;
-    _dataSource = nullptr;
     _textLists = [[NSMutableArray alloc] init];
     _textBlocks = [[NSMutableArray alloc] init];
     _textTables = [[NSMutableArray alloc] init];
-    _textTableFooters = [[NSMutableDictionary alloc] init];
     _textTableSpacings = [[NSMutableArray alloc] init];
     _textTablePaddings = [[NSMutableArray alloc] init];
     _textTableRows = [[NSMutableArray alloc] init];
@@ -544,7 +532,6 @@ HTMLConverter::HTMLConverter(DOMRange* domRange)
 
     _defaultTabInterval = 36;
     _domRangeStartIndex = 0;
-    _errorCode = -1;
     _quoteLevel = 0;
     
     _flags.isSoft = false;
@@ -558,11 +545,9 @@ HTMLConverter::~HTMLConverter()
 {
     [_attrStr release];
     [_documentAttrs release];
-    [_domRange release];
     [_textLists release];
     [_textBlocks release];
     [_textTables release];
-    [_textTableFooters release];
     [_textTableSpacings release];
     [_textTablePaddings release];
     [_textTableRows release];
@@ -570,6 +555,23 @@ HTMLConverter::~HTMLConverter()
     [_textTableRowBackgroundColors release];
     [_fontCache release];
     [_writingDirectionArray release];
+}
+
+NSAttributedString *HTMLConverter::convert()
+{
+    Node* commonAncestorContainer = _caches->cacheAncestorsOfStartToBeConverted(m_range.get());
+    ASSERT(commonAncestorContainer);
+
+    m_dataSource = commonAncestorContainer->document().frame()->loader().documentLoader();
+    if (!m_dataSource)
+        return nil;
+    
+    _domRangeStartIndex = 0;
+    _traverseNode(*commonAncestorContainer, 0, false /* embedded */);
+    if (_domRangeStartIndex > 0 && _domRangeStartIndex <= [_attrStr length])
+        [_attrStr deleteCharactersInRange:NSMakeRange(0, _domRangeStartIndex)];
+    
+    return [[_attrStr retain] autorelease];
 }
 
 #if !PLATFORM(IOS)
@@ -688,18 +690,6 @@ static NSParagraphStyle *defaultParagraphStyle()
         [defaultParagraphStyle setTabStops:[NSArray array]];
     }
     return defaultParagraphStyle;
-}
-
-
-static NSArray *_childrenForNode(DOMNode *node)
-{
-    NSMutableArray *array = [NSMutableArray array];
-    DOMNode *child = [node firstChild];
-    while (child) {
-        [array addObject:child];
-        child = [child nextSibling];
-    }
-    return array;
 }
 
 PassRefPtr<CSSValue> HTMLConverterCaches::computedStylePropertyForElement(Element& element, CSSPropertyID propertyId)
@@ -1134,7 +1124,7 @@ static PlatformFont *_font(Element& element)
 
 #define UIFloatIsZero(number) (fabs(number - 0) < FLT_EPSILON)
 
-NSDictionary *HTMLConverter::_computedAttributesForElement(Element& element)
+NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
 {
     NSMutableDictionary *attrs = [NSMutableDictionary dictionary];
 #if !PLATFORM(IOS)
@@ -1351,18 +1341,12 @@ NSDictionary *HTMLConverter::_computedAttributesForElement(Element& element)
     return attrs;
 }
 
-NSDictionary *HTMLConverter::_attributesForElement(DOMElement *element)
-{
-    if (!element)
-        return [NSDictionary dictionary];
-    return attributesForElement(*core(element));
-}
 
 NSDictionary* HTMLConverter::attributesForElement(Element& element)
 {
     auto& attributes = m_attributesForElements.add(&element, nullptr).iterator->value;
     if (!attributes)
-        attributes = _computedAttributesForElement(element);
+        attributes = computedAttributesForElement(element);
     return attributes.get();
 }
 
@@ -1394,7 +1378,7 @@ NSDictionary* HTMLConverter::aggregatedAttributesForAncestors(CharacterData& nod
     return attributes.get();
 }
 
-void HTMLConverter::_newParagraphForElement(DOMElement *element, NSString *tag, BOOL flag, BOOL suppressTrailingSpace)
+void HTMLConverter::_newParagraphForElement(Element& element, NSString *tag, BOOL flag, BOOL suppressTrailingSpace)
 {
     NSUInteger textLength = [_attrStr length];
     unichar lastChar = (textLength > 0) ? [[_attrStr string] characterAtIndex:textLength - 1] : '\n';
@@ -1407,14 +1391,14 @@ void HTMLConverter::_newParagraphForElement(DOMElement *element, NSString *tag, 
         if (rangeToReplace.location < _domRangeStartIndex)
             _domRangeStartIndex += [string length] - rangeToReplace.length;
         rangeToReplace.length = [string length];
-        NSDictionary *attrs = _attributesForElement(element);
+        NSDictionary *attrs = attributesForElement(element);
         if (rangeToReplace.length > 0)
             [_attrStr setAttributes:attrs range:rangeToReplace];
         _flags.isSoft = YES;
     }
 }
 
-void HTMLConverter::_newLineForElement(DOMElement *element)
+void HTMLConverter::_newLineForElement(Element& element)
 {
     unichar c = NSLineSeparatorCharacter;
     RetainPtr<NSString> string = adoptNS([[NSString alloc] initWithCharacters:&c length:1]);
@@ -1424,13 +1408,13 @@ void HTMLConverter::_newLineForElement(DOMElement *element)
     rangeToReplace.length = [string length];
     if (rangeToReplace.location < _domRangeStartIndex)
         _domRangeStartIndex += rangeToReplace.length;
-    NSDictionary *attrs = _attributesForElement(element);
+    NSDictionary *attrs = attributesForElement(element);
     if (rangeToReplace.length > 0)
         [_attrStr setAttributes:attrs range:rangeToReplace];
     _flags.isSoft = YES;
 }
 
-void HTMLConverter::_newTabForElement(DOMElement *element)
+void HTMLConverter::_newTabForElement(Element& element)
 {
     NSString *string = @"\t";
     NSUInteger textLength = [_attrStr length];
@@ -1440,7 +1424,7 @@ void HTMLConverter::_newTabForElement(DOMElement *element)
     rangeToReplace.length = [string length];
     if (rangeToReplace.location < _domRangeStartIndex)
         _domRangeStartIndex += rangeToReplace.length;
-    NSDictionary *attrs = _attributesForElement(element);
+    NSDictionary *attrs = attributesForElement(element);
     if (rangeToReplace.length > 0)
         [_attrStr setAttributes:attrs range:rangeToReplace];
     _flags.isSoft = YES;
@@ -1460,11 +1444,12 @@ static Class _WebMessageDocumentClass()
     return _WebMessageDocumentClass;
 }
 
-BOOL HTMLConverter::_addAttachmentForElement(DOMElement *element, NSURL *url, BOOL needsParagraph, BOOL usePlaceholder)
+BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL needsParagraph, BOOL usePlaceholder)
 {
-    BOOL retval = NO, notFound = NO;
+    BOOL retval = NO;
+    BOOL notFound = NO;
     NSFileWrapper *fileWrapper = nil;
-    Frame* frame = core([element ownerDocument])->frame();
+    Frame* frame = element.document().frame();
     DocumentLoader *dataSource = frame->loader().frameHasLoaded() ? frame->loader().documentLoader() : 0;
     BOOL ignoreOrientation = YES;
 
@@ -1495,7 +1480,7 @@ BOOL HTMLConverter::_addAttachmentForElement(DOMElement *element, NSURL *url, BO
             fileWrapper = nil;
     }
     if (!fileWrapper && !notFound) {
-        fileWrapper = fileWrapperForURL(_dataSource, url);
+        fileWrapper = fileWrapperForURL(m_dataSource, url);
         if (usePlaceholder && fileWrapper && [[[[fileWrapper preferredFilename] pathExtension] lowercaseString] hasPrefix:@"htm"])
             notFound = YES;
         if (notFound)
@@ -1550,7 +1535,7 @@ BOOL HTMLConverter::_addAttachmentForElement(DOMElement *element, NSURL *url, BO
         rangeToReplace.length = [string length];
         if (rangeToReplace.location < _domRangeStartIndex)
             _domRangeStartIndex += rangeToReplace.length;
-        attrs = _attributesForElement(element);
+        attrs = attributesForElement(element);
         if (rangeToReplace.length > 0) {
             [_attrStr setAttributes:attrs range:rangeToReplace];
             rangeToReplace.length = 1;
@@ -1562,7 +1547,7 @@ BOOL HTMLConverter::_addAttachmentForElement(DOMElement *element, NSURL *url, BO
     return retval;
 }
 
-void HTMLConverter::_addQuoteForElement(DOMElement *element, BOOL opening, NSInteger level)
+void HTMLConverter::_addQuoteForElement(Element& element, BOOL opening, NSInteger level)
 {
     unichar c = ((level % 2) == 0) ? (opening ? 0x201c : 0x201d) : (opening ? 0x2018 : 0x2019);
     RetainPtr<NSString> string = adoptNS([[NSString alloc] initWithCharacters:&c length:1]);
@@ -1572,13 +1557,13 @@ void HTMLConverter::_addQuoteForElement(DOMElement *element, BOOL opening, NSInt
     rangeToReplace.length = [string length];
     if (rangeToReplace.location < _domRangeStartIndex)
         _domRangeStartIndex += rangeToReplace.length;
-    RetainPtr<NSDictionary> attrs = _attributesForElement(element);
+    RetainPtr<NSDictionary> attrs = attributesForElement(element);
     if (rangeToReplace.length > 0)
         [_attrStr setAttributes:attrs.get() range:rangeToReplace];
     _flags.isSoft = NO;
 }
 
-void HTMLConverter::_addValue(NSString *value, DOMElement *element)
+void HTMLConverter::_addValue(NSString *value, Element& element)
 {
     NSUInteger textLength = [_attrStr length];
     NSUInteger valueLength = [value length];
@@ -1588,7 +1573,7 @@ void HTMLConverter::_addValue(NSString *value, DOMElement *element)
         rangeToReplace.length = valueLength;
         if (rangeToReplace.location < _domRangeStartIndex)
             _domRangeStartIndex += rangeToReplace.length;
-        RetainPtr<NSDictionary> attrs = _attributesForElement(element);
+        RetainPtr<NSDictionary> attrs = attributesForElement(element);
         if (rangeToReplace.length > 0)
             [_attrStr setAttributes:attrs.get() range:rangeToReplace];
         _flags.isSoft = NO;
@@ -1806,39 +1791,28 @@ void HTMLConverter::_processMetaElementWithName(NSString *name, NSString *conten
         [_documentAttrs setObject:content forKey:key];
 }
 
-void HTMLConverter::_processHeadElement(DOMElement *element)
+void HTMLConverter::_processHeadElement(Element& element)
 {
-    // ??? should gather data from other sources e.g. Word, but for that we would need to be able to get comments from DOM
-    NSArray *childNodes = _childrenForNode(element);
-    NSUInteger count = [childNodes count];
-    for (NSUInteger i = 0; i < count; i++) {
-        DOMNode *node = [childNodes objectAtIndex:i];
-        unsigned short nodeType = [node nodeType];
-        if (DOM_ELEMENT_NODE == nodeType) {
-            DOMElement *element = (DOMElement *)node;
-            NSString *tag = [element tagName];
-            if ([@"META" isEqualToString:tag] && [element respondsToSelector:@selector(name)] && [element respondsToSelector:@selector(content)]) {
-                NSString *name = [(DOMHTMLMetaElement *)element name];
-                NSString *content = [(DOMHTMLMetaElement *)element content];
-                if (name && content)
-                    _processMetaElementWithName(name, content);
-            }
-        }
+    // FIXME: Should gather data from other sources e.g. Word, but for that we would need to be able to get comments from DOM
+    
+    for (HTMLMetaElement* child = Traversal<HTMLMetaElement>::firstChild(&element); child; child = Traversal<HTMLMetaElement>::nextSibling(child)) {
+        NSString *name = child->name();
+        NSString *content = child->content();
+        if (name && content)
+            _processMetaElementWithName(name, content);
     }
 }
 
-BOOL HTMLConverter::_enterElement(DOMElement *element, BOOL embedded)
+BOOL HTMLConverter::_enterElement(Element& element, BOOL embedded)
 {
-    ASSERT(element);
-    Element& coreElement = *core(element);
-    String displayValue = _caches->propertyValueForNode(coreElement, CSSPropertyDisplay);
+    String displayValue = _caches->propertyValueForNode(element, CSSPropertyDisplay);
 
-    if (coreElement.hasTagName(headTag) && !embedded)
+    if (element.hasTagName(headTag) && !embedded)
         _processHeadElement(element);
     else if (!displayValue.length() || !(displayValue == "none" || displayValue == "table-column" || displayValue == "table-column-group")) {
-        if (_caches->isBlockElement(coreElement) && !coreElement.hasTagName(brTag) && !(displayValue == "table-cell" && [_textTables count] == 0)
-            && !([_textLists count] > 0 && displayValue == "block" && !coreElement.hasTagName(liTag) && !coreElement.hasTagName(ulTag) && !coreElement.hasTagName(olTag)))
-            _newParagraphForElement(element, [element tagName], NO, YES);
+        if (_caches->isBlockElement(element) && !element.hasTagName(brTag) && !(displayValue == "table-cell" && [_textTables count] == 0)
+            && !([_textLists count] > 0 && displayValue == "block" && !element.hasTagName(liTag) && !element.hasTagName(ulTag) && !element.hasTagName(olTag)))
+            _newParagraphForElement(element, element.tagName(), NO, YES);
         return YES;
     }
     return NO;
@@ -1884,7 +1858,7 @@ void HTMLConverter::_addTableForElement(Element *tableElement)
     [_textTableRowArrays addObject:[NSMutableArray array]];
 }
 
-void HTMLConverter::_addTableCellForElement(DOMElement *tableCellElement)
+void HTMLConverter::_addTableCellForElement(Element* element)
 {
     NSTextTable *table = [_textTables lastObject];
     NSInteger rowNumber = [[_textTableRows lastObject] integerValue];
@@ -1902,25 +1876,26 @@ void HTMLConverter::_addTableCellForElement(DOMElement *tableCellElement)
         if (columnNumber >= [previousBlock startingColumn] && columnNumber < [previousBlock startingColumn] + [previousBlock columnSpan])
             columnNumber = [previousBlock startingColumn] + [previousBlock columnSpan];
     }
-    if (tableCellElement) {
-        if ([tableCellElement respondsToSelector:@selector(rowSpan)]) {
-            rowSpan = [(DOMHTMLTableCellElement *)tableCellElement rowSpan];
+    
+    RetainPtr<NSTextTableBlock> block;
+    
+    if (element) {
+        if (isHTMLTableCellElement(*element)) {
+            HTMLTableCellElement& tableCellElement = toHTMLTableCellElement(*element);
+            
+            rowSpan = tableCellElement.rowSpan();
             if (rowSpan < 1)
                 rowSpan = 1;
-        }
-        if ([tableCellElement respondsToSelector:@selector(colSpan)]) {
-            colSpan = [(DOMHTMLTableCellElement *)tableCellElement colSpan];
+            colSpan = tableCellElement.colSpan();
             if (colSpan < 1)
                 colSpan = 1;
         }
-    }
-    RetainPtr<NSTextTableBlock> block = adoptNS([[PlatformNSTextTableBlock alloc] initWithTable:table startingRow:rowNumber rowSpan:rowSpan startingColumn:columnNumber columnSpan:colSpan]);
-    if (tableCellElement) {
-        Element& coreTableCellElement = *core(tableCellElement);
         
-        String verticalAlign = _caches->propertyValueForNode(coreTableCellElement, CSSPropertyVerticalAlign);
+        block = adoptNS([[PlatformNSTextTableBlock alloc] initWithTable:table startingRow:rowNumber rowSpan:rowSpan startingColumn:columnNumber columnSpan:colSpan]);
         
-        _fillInBlock(block.get(), coreTableCellElement, color, cellSpacingVal / 2, 0, NO);
+        String verticalAlign = _caches->propertyValueForNode(*element, CSSPropertyVerticalAlign);
+        
+        _fillInBlock(block.get(), *element, color, cellSpacingVal / 2, 0, NO);
         if (verticalAlign == "middle")
             [block setVerticalAlignment:NSTextBlockMiddleAlignment];
         else if (verticalAlign == "bottom")
@@ -1929,63 +1904,65 @@ void HTMLConverter::_addTableCellForElement(DOMElement *tableCellElement)
             [block setVerticalAlignment:NSTextBlockBaselineAlignment];
         else if (verticalAlign == "top")
             [block setVerticalAlignment:NSTextBlockTopAlignment];
+    } else {
+        block = adoptNS([[PlatformNSTextTableBlock alloc] initWithTable:table startingRow:rowNumber rowSpan:rowSpan startingColumn:columnNumber columnSpan:colSpan]);
     }
+    
     [_textBlocks addObject:block.get()];
     [rowArray addObject:block.get()];
     [rowArray sortUsingFunction:_colCompare context:NULL];
 }
 
-BOOL HTMLConverter::_processElement(DOMElement *element, NSInteger depth)
+BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
 {
-    if (!element)
-        return NO;
     BOOL retval = YES;
-    Element& coreElement = *core(element);
-    BOOL isBlockLevel = _caches->isBlockElement(coreElement);
-    String displayValue = _caches->propertyValueForNode(coreElement, CSSPropertyDisplay);
+    BOOL isBlockLevel = _caches->isBlockElement(element);
+    String displayValue = _caches->propertyValueForNode(element, CSSPropertyDisplay);
     if (isBlockLevel)
         [_writingDirectionArray removeAllObjects];
     else {
-        String bidi = _caches->propertyValueForNode(coreElement, CSSPropertyUnicodeBidi);
+        String bidi = _caches->propertyValueForNode(element, CSSPropertyUnicodeBidi);
         if (bidi == "embed") {
             NSUInteger val = NSTextWritingDirectionEmbedding;
-            if (_caches->propertyValueForNode(coreElement, CSSPropertyDirection) == "rtl")
+            if (_caches->propertyValueForNode(element, CSSPropertyDirection) == "rtl")
                 val |= NSWritingDirectionRightToLeft;
             [_writingDirectionArray addObject:[NSNumber numberWithUnsignedInteger:val]];
         } else if (bidi == "bidi-override") {
             NSUInteger val = NSTextWritingDirectionOverride;
-            if (_caches->propertyValueForNode(coreElement, CSSPropertyDirection) == "rtl")
+            if (_caches->propertyValueForNode(element, CSSPropertyDirection) == "rtl")
                 val |= NSWritingDirectionRightToLeft;
             [_writingDirectionArray addObject:[NSNumber numberWithUnsignedInteger:val]];
         }
     }
     if (displayValue == "table" || ([_textTables count] == 0 && displayValue == "table-row-group")) {
-        Element* tableElement = &coreElement;
+        Element* tableElement = &element;
         if (displayValue == "table-row-group") {
             // If we are starting in medias res, the first thing we see may be the tbody, so go up to the table
-            tableElement = _blockLevelElementForNode(coreElement.parentNode());
+            tableElement = _blockLevelElementForNode(element.parentNode());
             if (!tableElement || _caches->propertyValueForNode(*tableElement, CSSPropertyDisplay) != "table")
-                tableElement = &coreElement;
+                tableElement = &element;
         }
         while ([_textTables count] > [_textBlocks count])
             _addTableCellForElement(nil);
         _addTableForElement(tableElement);
     } else if (displayValue == "table-footer-group" && [_textTables count] > 0) {
-        [_textTableFooters setObject:element forKey:[NSValue valueWithNonretainedObject:[_textTables lastObject]]];
+        m_textTableFooters.add([_textTables lastObject], &element);
         retval = NO;
     } else if (displayValue == "table-row" && [_textTables count] > 0) {
-        PlatformColor *color = _colorForElement(coreElement, CSSPropertyBackgroundColor);
-        if (!color) color = [PlatformColorClass clearColor];
+        PlatformColor *color = _colorForElement(element, CSSPropertyBackgroundColor);
+        if (!color)
+            color = [PlatformColorClass clearColor];
         [_textTableRowBackgroundColors addObject:color];
     } else if (displayValue == "table-cell") {
         while ([_textTables count] < [_textBlocks count] + 1)
             _addTableForElement(nil);
-        _addTableCellForElement(element);
-    } else if (coreElement.hasTagName(imgTag)) {
-        NSString *urlString = [element getAttribute:@"src"];
+        _addTableCellForElement(&element);
+    } else if (element.hasTagName(imgTag)) {
+        NSString *urlString = element.getAttribute(srcAttr);
         if (urlString && [urlString length] > 0) {
-            NSURL *url = core([element ownerDocument])->completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
-            if (!url) url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:_baseURL];
+            NSURL *url = element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
+            if (!url)
+                url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:_baseURL];
 #if PLATFORM(IOS)
             BOOL usePlaceholderImage = NO;
 #else
@@ -1995,35 +1972,35 @@ BOOL HTMLConverter::_processElement(DOMElement *element, NSInteger depth)
                 _addAttachmentForElement(element, url, isBlockLevel, usePlaceholderImage);
         }
         retval = NO;
-    } else if (coreElement.hasTagName(objectTag)) {
-        NSString *baseString = [element getAttribute:@"codebase"];
-        NSString *urlString = [element getAttribute:@"data"];
-        NSString *declareString = [element getAttribute:@"declare"];
+    } else if (element.hasTagName(objectTag)) {
+        NSString *baseString = element.getAttribute(codebaseAttr);
+        NSString *urlString = element.getAttribute(dataAttr);
+        NSString *declareString = element.getAttribute(declareAttr);
         if (urlString && [urlString length] > 0 && ![@"true" isEqualToString:declareString]) {
             NSURL *baseURL = nil;
             NSURL *url = nil;
             if (baseString && [baseString length] > 0) {
-                baseURL = core([element ownerDocument])->completeURL(stripLeadingAndTrailingHTMLSpaces(baseString));
+                baseURL = element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(baseString));
                 if (!baseURL)
                     baseURL = [NSURL _web_URLWithString:[baseString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:_baseURL];
             }
             if (baseURL)
                 url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:baseURL];
             if (!url)
-                url = core([element ownerDocument])->completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
+                url = element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
             if (!url)
                 url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:_baseURL];
             if (url)
                 retval = !_addAttachmentForElement(element, url, isBlockLevel, NO);
         }
-    } else if (coreElement.hasTagName(frameTag) || coreElement.hasTagName(iframeTag)) {
-        if (Document* contentDocument = toHTMLFrameElementBase(coreElement).contentDocument()) {
-            _traverseNode(contentDocument, depth + 1, true /* embedded */);
+    } else if (element.hasTagName(frameTag) || element.hasTagName(iframeTag)) {
+        if (Document* contentDocument = toHTMLFrameElementBase(element).contentDocument()) {
+            _traverseNode(*contentDocument, depth + 1, true /* embedded */);
             retval = NO;
         }
-    } else if (coreElement.hasTagName(brTag)) {
-        Element* blockElement = _blockLevelElementForNode(coreElement.parentNode());
-        NSString *breakClass = [element getAttribute:@"class"];
+    } else if (element.hasTagName(brTag)) {
+        Element* blockElement = _blockLevelElementForNode(element.parentNode());
+        NSString *breakClass = element.getAttribute(classAttr);
         NSString *blockTag = blockElement ? (NSString *)blockElement->tagName() : nil;
         BOOL isExtraBreak = [@"Apple-interchange-newline" isEqualToString:breakClass];
         BOOL blockElementIsParagraph = ([@"P" isEqualToString:blockTag] || [@"LI" isEqualToString:blockTag] || ([blockTag hasPrefix:@"H"] && 2 == [blockTag length]));
@@ -2033,37 +2010,41 @@ BOOL HTMLConverter::_processElement(DOMElement *element, NSInteger depth)
             if (blockElement && blockElementIsParagraph)
                 _newLineForElement(element);
             else
-                _newParagraphForElement(element, [element tagName], YES, NO);
+                _newParagraphForElement(element, element.tagName(), YES, NO);
         }
-    } else if (coreElement.hasTagName(ulTag)) {
+    } else if (element.hasTagName(ulTag)) {
         RetainPtr<NSTextList> list;
-        String listStyleType = _caches->propertyValueForNode(coreElement, CSSPropertyListStyleType);
+        String listStyleType = _caches->propertyValueForNode(element, CSSPropertyListStyleType);
         if (!listStyleType.length())
             listStyleType = @"disc";
         list = adoptNS([[PlatformNSTextList alloc] initWithMarkerFormat:String("{" + listStyleType + "}") options:0]);
         [_textLists addObject:list.get()];
-    } else if (coreElement.hasTagName(olTag)) {
+    } else if (element.hasTagName(olTag)) {
         RetainPtr<NSTextList> list;
-        String listStyleType = _caches->propertyValueForNode(coreElement, CSSPropertyListStyleType);
+        String listStyleType = _caches->propertyValueForNode(element, CSSPropertyListStyleType);
         if (!listStyleType.length())
             listStyleType = "decimal";
         list = adoptNS([[PlatformNSTextList alloc] initWithMarkerFormat:String("{" + listStyleType + "}") options:0]);
-        if ([element respondsToSelector:@selector(start)]) {
-            NSInteger startingItemNumber = [(DOMHTMLOListElement *)element start];
+        if (isHTMLOListElement(element)) {
+            NSInteger startingItemNumber = toHTMLOListElement(element).start();;
             [list setStartingItemNumber:startingItemNumber];
         }
         [_textLists addObject:list.get()];
-    } else if (coreElement.hasTagName(qTag)) {
+    } else if (element.hasTagName(qTag)) {
         _addQuoteForElement(element, YES, _quoteLevel++);
-    } else if (coreElement.hasTagName(inputTag)) {
-        if ([element respondsToSelector:@selector(type)] && [element respondsToSelector:@selector(value)] && [@"text" compare:[(DOMHTMLInputElement *)element type] options:NSCaseInsensitiveSearch] == NSOrderedSame) {
-            NSString *value = [(DOMHTMLInputElement *)element value];
-            if (value && [value length] > 0)
-                _addValue(value, element);
+    } else if (element.hasTagName(inputTag)) {
+        if (isHTMLInputElement(element)) {
+            HTMLInputElement& inputElement = toHTMLInputElement(element);
+            if (inputElement.type() == "text") {
+                NSString *value = inputElement.value();
+                if (value && [value length] > 0)
+                    _addValue(value, element);
+            }
         }
-    } else if (coreElement.hasTagName(textareaTag)) {
-        if ([element respondsToSelector:@selector(value)]) {
-            NSString *value = [(DOMHTMLTextAreaElement *)element value];
+    } else if (element.hasTagName(textareaTag)) {
+        if (isHTMLTextAreaElement(element)) {
+            HTMLTextAreaElement& textAreaElement = toHTMLTextAreaElement(element);
+            NSString *value = textAreaElement.value();
             if (value && [value length] > 0)
                 _addValue(value, element);
         }
@@ -2118,7 +2099,8 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
                     [_attrStr setAttributes:attrsToInsert range:NSMakeRange(paragraphRange.location, insertLength)];
                     range.length += insertLength;
                     paragraphRange.length += insertLength;
-                    if (paragraphRange.location < _domRangeStartIndex) _domRangeStartIndex += insertLength;
+                    if (paragraphRange.location < _domRangeStartIndex)
+                        _domRangeStartIndex += insertLength;
                     
                     newStyle = [paragraphStyle mutableCopy];
                     listLocation = (listIndex + 1) * 36;
@@ -2159,47 +2141,45 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
     }
 }
 
-void HTMLConverter::_exitElement(DOMElement *element, NSInteger depth, NSUInteger startIndex)
+void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger startIndex)
 {
-    ASSERT(element);
-    Element& coreElement = *core(element);
-    String displayValue = _caches->propertyValueForNode(coreElement, CSSPropertyDisplay);
+    String displayValue = _caches->propertyValueForNode(element, CSSPropertyDisplay);
     NSRange range = NSMakeRange(startIndex, [_attrStr length] - startIndex);
-    if (range.length > 0 && coreElement.hasTagName(aTag)) {
-        NSString *urlString = [element getAttribute:@"href"];
+    if (range.length > 0 && element.hasTagName(aTag)) {
+        NSString *urlString = element.getAttribute(hrefAttr);
         NSString *strippedString = [urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         if (urlString && [urlString length] > 0 && strippedString && [strippedString length] > 0 && ![strippedString hasPrefix:@"#"]) {
-            NSURL *url = core([element ownerDocument])->completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
+            NSURL *url = element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
             if (!url)
-                url = core([element ownerDocument])->completeURL(stripLeadingAndTrailingHTMLSpaces(strippedString));
+                url = element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(strippedString));
             if (!url)
                 url = [NSURL _web_URLWithString:strippedString relativeToURL:_baseURL];
             [_attrStr addAttribute:NSLinkAttributeName value:url ? (id)url : (id)urlString range:range];
         }
     }
-    if (!_flags.reachedEnd && _caches->isBlockElement(coreElement)) {
+    if (!_flags.reachedEnd && _caches->isBlockElement(element)) {
         [_writingDirectionArray removeAllObjects];
         if (displayValue == "table-cell" && [_textBlocks count] == 0) {
             _newTabForElement(element);
-        } else if ([_textLists count] > 0 && displayValue == "block" && !coreElement.hasTagName(liTag) && !coreElement.hasTagName(ulTag) && !coreElement.hasTagName(olTag)) {
+        } else if ([_textLists count] > 0 && displayValue == "block" && !element.hasTagName(liTag) && !element.hasTagName(ulTag) && !element.hasTagName(olTag)) {
             _newLineForElement(element);
         } else {
-            _newParagraphForElement(element, [element tagName], (range.length == 0), YES);
+            _newParagraphForElement(element, element.tagName(), (range.length == 0), YES);
         }
     } else if ([_writingDirectionArray count] > 0) {
-        String bidi = _caches->propertyValueForNode(coreElement, CSSPropertyUnicodeBidi);
+        String bidi = _caches->propertyValueForNode(element, CSSPropertyUnicodeBidi);
         if (bidi == "embed" || bidi == "bidi-override")
             [_writingDirectionArray removeLastObject];
     }
     range = NSMakeRange(startIndex, [_attrStr length] - startIndex);
     if (displayValue == "table" && [_textTables count] > 0) {
-        NSValue *key = [NSValue valueWithNonretainedObject:[_textTables lastObject]];
-        DOMNode *footer = [_textTableFooters objectForKey:key];
+        NSTextTable *key = [_textTables lastObject];
+        Element* footer = m_textTableFooters.get(key);
         while ([_textTables count] < [_textBlocks count] + 1)
             [_textBlocks removeLastObject];
         if (footer) {
-            _traverseFooterNode(footer, depth + 1);
-            [_textTableFooters removeObjectForKey:key];
+            _traverseFooterNode(*footer, depth + 1);
+            m_textTableFooters.remove(key);
         }
         [_textTables removeLastObject];
         [_textTableSpacings removeLastObject];
@@ -2248,14 +2228,14 @@ void HTMLConverter::_exitElement(DOMElement *element, NSInteger depth, NSUIntege
             [_textTableRowArrays removeLastObject];
         }
         [_textBlocks removeLastObject];
-    } else if ((coreElement.hasTagName(ulTag) || coreElement.hasTagName(olTag)) && [_textLists count] > 0) {
+    } else if ((element.hasTagName(ulTag) || element.hasTagName(olTag)) && [_textLists count] > 0) {
         NSTextList *list = [_textLists lastObject];
         _addMarkersToList(list, range);
         [_textLists removeLastObject];
-    } else if (coreElement.hasTagName(qTag)) {
+    } else if (element.hasTagName(qTag)) {
         _addQuoteForElement(element, NO, --_quoteLevel);
-    } else if (coreElement.hasTagName(spanTag)) {
-        NSString *className = [element getAttribute:@"class"];
+    } else if (element.hasTagName(spanTag)) {
+        NSString *className = element.getAttribute(classAttr);
         NSMutableString *mutableString;
         NSUInteger i, count = 0;
         unichar c;
@@ -2306,19 +2286,17 @@ void HTMLConverter::_processText(CharacterData& characterData)
     String originalString = characterData.data();
     unsigned startOffset = 0;
     unsigned endOffset = originalString.length();
-    if (_domRange) {
-        if (&characterData == core([_domRange startContainer])) {
-            startOffset = (NSUInteger)[_domRange startOffset];
-            _domRangeStartIndex = [_attrStr length];
-            _flags.reachedStart = YES;
-        }
-        if (&characterData == core([_domRange endContainer])) {
-            endOffset = (NSUInteger)[_domRange endOffset];
-            _flags.reachedEnd = YES;
-        }
-        if ((startOffset > 0 || endOffset < originalString.length()) && endOffset >= startOffset)
-            originalString = originalString.substring(startOffset, endOffset - startOffset);
+    if (&characterData == m_range->startContainer()) {
+        startOffset = m_range->startOffset();
+        _domRangeStartIndex = [_attrStr length];
+        _flags.reachedStart = YES;
     }
+    if (&characterData == m_range->endContainer()) {
+        endOffset = m_range->endOffset();
+        _flags.reachedEnd = YES;
+    }
+    if ((startOffset > 0 || endOffset < originalString.length()) && endOffset >= startOffset)
+        originalString = originalString.substring(startOffset, endOffset - startOffset);
     String outputString = originalString;
 
     // FIXME: Use RenderText's content instead.
@@ -2373,53 +2351,51 @@ void HTMLConverter::_processText(CharacterData& characterData)
         CFRelease(mutstr);
 }
 
-void HTMLConverter::_traverseNode(Node* node, unsigned depth, bool embedded)
+void HTMLConverter::_traverseNode(Node& node, unsigned depth, bool embedded)
 {
-    if (!node || _flags.reachedEnd)
+    if (_flags.reachedEnd)
         return;
-    if (_domRange && !_flags.reachedStart && !_caches->isAncestorsOfStartToBeConverted(node))
+    if (!_flags.reachedStart && !_caches->isAncestorsOfStartToBeConverted(node))
         return;
 
     unsigned startOffset = 0;
     unsigned endOffset = UINT_MAX;
     bool isStart = false;
     bool isEnd = false;
-    if (_domRange) {
-        if (node == core([_domRange startContainer])) {
-            startOffset = (NSUInteger)[_domRange startOffset];
-            isStart = true;
-            _flags.reachedStart = YES;
-        }
-        if (node == core([_domRange endContainer])) {
-            endOffset = (NSUInteger)[_domRange endOffset];
-            isEnd = true;
-        }
+    if (&node == m_range->startContainer()) {
+        startOffset = m_range->startOffset();
+        isStart = true;
+        _flags.reachedStart = YES;
+    }
+    if (&node == m_range->endContainer()) {
+        endOffset = m_range->endOffset();
+        isEnd = true;
     }
     
-    if (node->isDocumentNode() || node->isDocumentFragment()) {
-        Node* child = node->firstChild();
+    if (node.isDocumentNode() || node.isDocumentFragment()) {
+        Node* child = node.firstChild();
         for (NSUInteger i = 0; child; i++) {
             if (isStart && i == startOffset)
                 _domRangeStartIndex = [_attrStr length];
             if ((!isStart || startOffset <= i) && (!isEnd || endOffset > i))
-                _traverseNode(child, depth + 1, embedded);
+                _traverseNode(*child, depth + 1, embedded);
             if (isEnd && i + 1 >= endOffset)
                 _flags.reachedEnd = YES;
             if (_flags.reachedEnd)
                 break;
             child = child->nextSibling();
         }
-    } else if (node->isElementNode()) {
-        DOMElement* element = kit(toElement(node));
+    } else if (node.isElementNode()) {
+        Element& element = toElement(node);
         if (_enterElement(element, embedded)) {
             NSUInteger startIndex = [_attrStr length];
             if (_processElement(element, depth)) {
-                Node* child = node->firstChild();
+                Node* child = node.firstChild();
                 for (NSUInteger i = 0; child; i++) {
                     if (isStart && i == startOffset)
                         _domRangeStartIndex = [_attrStr length];
                     if ((!isStart || startOffset <= i) && (!isEnd || endOffset > i))
-                        _traverseNode(child, depth + 1, embedded);
+                        _traverseNode(*child, depth + 1, embedded);
                     if (isEnd && i + 1 >= endOffset)
                         _flags.reachedEnd = YES;
                     if (_flags.reachedEnd)
@@ -2429,46 +2405,43 @@ void HTMLConverter::_traverseNode(Node* node, unsigned depth, bool embedded)
                 _exitElement(element, depth, startIndex);
             }
         }
-    } else if (node->isCharacterDataNode())
-        _processText(*toCharacterData(node));
+    } else if (node.isCharacterDataNode())
+        _processText(toCharacterData(node));
 
     if (isEnd)
         _flags.reachedEnd = YES;
 }
 
-void HTMLConverter::_traverseFooterNode(DOMNode *node, NSInteger depth)
+void HTMLConverter::_traverseFooterNode(Element& element, unsigned depth)
 {
-    DOMElement *element = (DOMElement *)node;
-
     if (_flags.reachedEnd)
         return;
-    if (_domRange && !_flags.reachedStart && !_caches->isAncestorsOfStartToBeConverted(core(node)))
+    if (!_flags.reachedStart && !_caches->isAncestorsOfStartToBeConverted(element))
         return;
 
     unsigned startOffset = 0;
     unsigned endOffset = UINT_MAX;
     bool isStart = false;
     bool isEnd = false;
-    if (_domRange) {
-        if (node == [_domRange startContainer]) {
-            startOffset = (NSUInteger)[_domRange startOffset];
-            isStart = true;
-            _flags.reachedStart = YES;
-        }
-        if (node == [_domRange endContainer]) {
-            endOffset = (NSUInteger)[_domRange endOffset];
-            isEnd = true;
-        }
+    if (&element == m_range->startContainer()) {
+        startOffset = m_range->startOffset();
+        isStart = true;
+        _flags.reachedStart = YES;
     }
+    if (&element == m_range->endContainer()) {
+        endOffset = m_range->endOffset();
+        isEnd = true;
+    }
+    
     if (_enterElement(element, YES)) {
         NSUInteger startIndex = [_attrStr length];
         if (_processElement(element, depth)) {
-            Node* child = core(element)->firstChild();
+            Node* child = element.firstChild();
             for (NSUInteger i = 0; child; i++) {
                 if (isStart && i == startOffset)
                     _domRangeStartIndex = [_attrStr length];
                 if ((!isStart || startOffset <= i) && (!isEnd || endOffset > i))
-                    _traverseNode(child, depth + 1, true /* embedded */);
+                    _traverseNode(*child, depth + 1, true /* embedded */);
                 if (isEnd && i + 1 >= endOffset)
                     _flags.reachedEnd = YES;
                 if (_flags.reachedEnd)
@@ -2504,26 +2477,6 @@ Node* HTMLConverterCaches::cacheAncestorsOfStartToBeConverted(const Range& range
     }
 
     return commonAncestor;
-}
-
-void HTMLConverter::_loadFromDOMRange()
-{
-    ASSERT(_domRange);
-    if (-1 == _errorCode) {
-        Node* commonAncestorContainer = _caches->cacheAncestorsOfStartToBeConverted(*core(_domRange));
-        ASSERT(commonAncestorContainer);
-
-        _document = kit(commonAncestorContainer->ownerDocument());
-        _dataSource = (DocumentLoader *)core(_document)->frame()->loader().documentLoader();
-        
-        if (_document && _dataSource) {
-            _domRangeStartIndex = 0;
-            _errorCode = 0;
-            _traverseNode(commonAncestorContainer, 0, false /* embedded */);
-            if (_domRangeStartIndex > 0 && _domRangeStartIndex <= [_attrStr length])
-                [_attrStr deleteCharactersInRange:NSMakeRange(0, _domRangeStartIndex)];
-        }
-    }
 }
 
 #if !PLATFORM(IOS)
@@ -2586,7 +2539,7 @@ namespace WebCore {
 // This function supports more HTML features than the editing variant below, such as tables.
 NSAttributedString *attributedStringFromRange(Range& range)
 {
-    HTMLConverter converter(kit(&range));
+    HTMLConverter converter(range);
     return converter.convert();
 }
     
