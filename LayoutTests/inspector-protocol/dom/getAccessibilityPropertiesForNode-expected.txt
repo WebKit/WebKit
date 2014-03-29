@@ -4,10 +4,18 @@ Checking Web Inspector protocol for the Accessibility Node Inspector.
     exists: true
     label: 
     role: 
-    childNodeIds.length: 20
+    childNodeIds.length: 21
 
 
-Total elements to be tested: 58.
+Total elements to be tested: 59.
+
+<div onclick="void(0);">click</div>
+    exists: true
+    label: 
+    role: 
+    childNodeIds.length: 1
+    mouseEventNodeId: exists
+    parentNodeId: exists
 
 <li role="treeitem" aria-expanded="undefined">expanded</li>
     exists: true

@@ -68,6 +68,7 @@ WebInspector.DOMNodeDetailsSidebarPanel = function() {
         this._accessibilityNodeFocusedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Focused"));
         this._accessibilityNodeIgnoredRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Ignored"));
         this._accessibilityNodeInvalidRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Invalid"));
+        this._accessibilityNodeMouseEventRow = new WebInspector.DetailsSectionSimpleRow("");
         this._accessibilityNodeLabelRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Label"));
         this._accessibilityNodeOwnsRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Owns"));
         this._accessibilityNodeParentRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Parent"));
@@ -356,6 +357,16 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                 else if (accessibilityProperties.invalid === DOMAgent.AccessibilityPropertiesInvalid.Spelling)
                     invalid = WebInspector.UIString("Spelling");
 
+                var mouseEventNodeId = accessibilityProperties.mouseEventNodeId;
+                var mouseEventTextValue = "";
+                var mouseEventNodeLink = null;
+                if (mouseEventNodeId) {
+                    if (mouseEventNodeId === accessibilityProperties.nodeId)
+                        mouseEventTextValue = WebInspector.UIString("Yes");
+                    else
+                        mouseEventNodeLink = linkForNodeId(mouseEventNodeId);
+                }
+
                 // FIXME: label will always come back as empty. Blocked by http://webkit.org/b/121134
                 var label = accessibilityProperties.label;
                 if (label && label !== domNode.getAttribute("aria-label"))
@@ -394,6 +405,11 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                 this._accessibilityNodeFocusedRow.value = focused;
                 this._accessibilityNodeIgnoredRow.value = ignored;
                 this._accessibilityNodeInvalidRow.value = invalid;
+                
+                // Row label changes based on whether the value is a delegate node link.
+                this._accessibilityNodeMouseEventRow.label = mouseEventNodeLink ? WebInspector.UIString("Click Listener") : WebInspector.UIString("Clickable");
+                this._accessibilityNodeMouseEventRow.value = mouseEventNodeLink || mouseEventTextValue;
+
                 this._accessibilityNodeLabelRow.value = label;
                 this._accessibilityNodeOwnsRow.value = ownedNodeLinkList || "";
                 this._accessibilityNodeParentRow.value = parentNodeLink || "";
@@ -421,6 +437,7 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                     this._accessibilityNodeOwnsRow,
                     this._accessibilityNodeControlsRow,
                     this._accessibilityNodeFlowsRow,
+                    this._accessibilityNodeMouseEventRow,
                     this._accessibilityNodeFocusedRow,
 
                     // Properties exposed for all input-type elements.

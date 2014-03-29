@@ -1,3 +1,17 @@
+2014-03-28  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: expose what elements get generic "clickable" status
+        https://bugs.webkit.org/show_bug.cgi?id=130721
+
+        Reviewed by Timothy Hatcher.
+
+        Expose ancestor element link to "Click Listener" or generic "Clickable: Yes" if current node has mouse handler.
+
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt: 
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode.html: Simple coverage of mouseEventNodeId.
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode_mouseEventNodeId-expected.txt: Added.
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode_mouseEventNodeId.html: Added. Full coverage.
+
 2014-03-28  Brian Burg  <bburg@apple.com>
 
         Web Replay: add page-level setting to bypass the MemoryCache

@@ -54,7 +54,12 @@ class RenderTextControl;
 class RenderView;
 class VisibleSelection;
 class Widget;
-    
+
+enum MouseButtonListenerResultFilter {
+    ExcludeBodyElement = 1,
+    IncludeBodyElement,
+};
+
 class AccessibilityNodeObject : public AccessibilityObject {
 protected:
     explicit AccessibilityNodeObject(Node*);
@@ -131,7 +136,7 @@ public:
     virtual bool hasAttributesRequiredForInclusion() const override final;
 
     virtual Element* actionElement() const override;
-    Element* mouseButtonListener() const;
+    Element* mouseButtonListener(MouseButtonListenerResultFilter = ExcludeBodyElement) const;
     virtual Element* anchorElement() const override;
     AccessibilityObject* menuForMenuButton() const;
    

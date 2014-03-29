@@ -470,6 +470,8 @@ WebInspector.DOMNode.prototype = {
                     invalid: accessibilityProperties.invalid,
                     hidden: accessibilityProperties.hidden,
                     label: accessibilityProperties.label,
+                    mouseEventNodeId: accessibilityProperties.mouseEventNodeId,
+                    nodeId: accessibilityProperties.nodeId,
                     ownedNodeIds: accessibilityProperties.ownedNodeIds,
                     parentNodeId: accessibilityProperties.parentNodeId,
                     pressed: accessibilityProperties.pressed,

@@ -1,3 +1,25 @@
+2014-03-28  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: expose what elements get generic "clickable" status
+        https://bugs.webkit.org/show_bug.cgi?id=130721
+
+        Reviewed by Timothy Hatcher.
+
+        Test: inspector-protocol/dom/getAccessibilityPropertiesForNode.html:
+        Test: inspector-protocol/dom/getAccessibilityPropertiesForNode_mouseEventNodeId.html
+
+        Expose ancestor element link to "Click Listener" or generic "Clickable: Yes" if current node has mouse handler.
+
+        Update AccessibilityNodeObject::mouseButtonListener() to optionally return body element if 
+            requested so that Web Inspector can display body event delegate handlers.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::mouseButtonListener):
+        * accessibility/AccessibilityNodeObject.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+        * inspector/protocol/DOM.json:
+
 2014-03-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Really drop all locks in nested run loop on iOS if WebThread is enabled

@@ -1041,7 +1041,7 @@ Element* AccessibilityNodeObject::actionElement() const
     return elt;
 }
 
-Element* AccessibilityNodeObject::mouseButtonListener() const
+Element* AccessibilityNodeObject::mouseButtonListener(MouseButtonListenerResultFilter filter) const
 {
     Node* node = this->node();
     if (!node)
@@ -1050,9 +1050,9 @@ Element* AccessibilityNodeObject::mouseButtonListener() const
     // check if our parent is a mouse button listener
     // FIXME: Do the continuation search like anchorElement does
     for (auto& element : elementLineage(node->isElementNode() ? toElement(node) : node->parentElement())) {
-        // If we've reached the body and this is not a control element, do not expose press action for this element.
-        // It can cause false positives, where every piece of text is labeled as accepting press actions. 
-        if (element.hasTagName(bodyTag) && isStaticText())
+        // If we've reached the body and this is not a control element, do not expose press action for this element unless filter is IncludeBodyElement.
+        // It can cause false positives, where every piece of text is labeled as accepting press actions.
+        if (element.hasTagName(bodyTag) && isStaticText() && filter == ExcludeBodyElement)
             break;
         
         if (element.hasEventListeners(eventNames().clickEvent) || element.hasEventListeners(eventNames().mousedownEvent) || element.hasEventListeners(eventNames().mouseupEvent))

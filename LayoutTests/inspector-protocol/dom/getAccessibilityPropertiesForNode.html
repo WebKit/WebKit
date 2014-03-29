@@ -104,6 +104,9 @@
     <li class="ex" role="treeitem" aria-expanded="undefined">expanded</li>
 </ul>
 
+<!-- Full test of mouseEventNodeId in getAccessibilityPropertiesForNode_mouseEventNodeId.html. -->
+<div class="ex" onclick="void(0);">click</div>
+
 </div>
 
 <script type="text/javascript">
@@ -173,6 +176,7 @@ function test() {
             case "nodeId":
                 continue;
             case "activeDescendantNodeId":
+            case "mouseEventNodeId":
             case "parentNodeId":
                 if (typeof value === "number")
                     InspectorTest.log("    " + key + ": exists");

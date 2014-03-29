@@ -35,6 +35,7 @@
 #include "InspectorDOMAgent.h"
 
 #include "AXObjectCache.h"
+#include "AccessibilityNodeObject.h"
 #include "Attr.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyNames.h"
@@ -1438,6 +1439,7 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
     TypeBuilder::DOM::AccessibilityProperties::Invalid::Enum invalid = TypeBuilder::DOM::AccessibilityProperties::Invalid::False;
     bool hidden = false;
     String label; // FIXME: Waiting on http://webkit.org/b/121134
+    Node* mouseEventNode = nullptr;
     RefPtr<Inspector::TypeBuilder::Array<int>> ownedNodeIds;
     Node* parentNode = nullptr;
     bool pressed = false;
@@ -1527,6 +1529,9 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             if (axObject->isARIAHidden() || axObject->isDOMHidden())
                 hidden = true;
             
+            if (axObject->isAccessibilityNodeObject())
+                mouseEventNode = toAccessibilityNodeObject(axObject)->mouseButtonListener(MouseButtonListenerResultFilter::IncludeBodyElement);
+
             if (axObject->supportsARIAOwns()) {
                 Vector<Element*> ownedElements;
                 axObject->elementsFromAttribute(ownedElements, aria_ownsAttr);
@@ -1597,6 +1602,8 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             value->setInvalid(invalid);
         if (hidden)
             value->setHidden(hidden);
+        if (mouseEventNode)
+            value->setMouseEventNodeId(pushNodePathToFrontend(mouseEventNode));
         if (ownedNodeIds)
             value->setOwnedNodeIds(ownedNodeIds);
         if (parentNode)

@@ -1,0 +1,149 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+</head>
+<body onLoad="runTest()" onclick="void(0);">
+
+<p>Checking Web Inspector protocol (specifically mouseEventNodeId) for the Accessibility Node Inspector.</p>
+
+<div id="examples">
+
+    <div class="ex">Click handler on body delegate.</div>
+
+    <!-- Inline event handlers for mouseEventNodeId test. -->
+    <div class="ex" onclick="void(0);">click</div>
+    <div class="ex" role="button" onclick="void(0);">click</div>
+    <div class="ex" tabindex="0" onclick="void(0);">click</div>
+    <span class="ex" onclick="void(0);">click</span>
+    <div onclick="void(0);"><div class="ex">DOM1 inline click on parent div.</div></div>
+    <div role="button" onclick="void(0);"><div class="ex">DOM1 inline click on parent div with role="button".</div></div>
+    <div tabindex="0" onclick="void(0);"><div class="ex">DOM1 inline click on parent div with tabindex="0".</div></div>
+    <span onclick="void(0);"><span role="img" class="ex">DOM1 inline click on parent span.</span></span>
+
+    <!-- DOM Level 1 events assigned below for mouseEventNodeId test. -->
+    <div class="ex" id="dom1click">click</div>
+    <div class="ex" id="dom1mousedown">mousedown</div>
+    <div class="ex" id="dom1mouseup">mouseup</div>
+    <div id="dom1clickparent"><div class="ex">DOM1 click on parent div.</div></div>
+    <div id="dom1mousedownparent"><div class="ex">DOM1 mousedown on parent div.</div></div>
+    <div id="dom1mouseupparent"><div class="ex">DOM1 mouseup on parent div</div></div>
+
+    <!-- DOM Level 2 events assigned below for mouseEventNodeId test. -->
+    <div class="ex" id="dom2click">click</div>
+    <div class="ex" id="dom2mousedown">mousedown</div>
+    <div class="ex" id="dom2mouseup">mouseup</div>
+    <div id="dom2clickparent"><div class="ex">DOM2 click on parent div.</div></div>
+    <div id="dom2mousedownparent"><div class="ex">DOM2 mousedown on parent div.</div></div>
+    <div id="dom2mouseupparent"><div class="ex">DOM2 mouseup on parent div.</div></div>
+
+</div>
+
+<script type="text/javascript">
+
+function $(id) {
+    return document.getElementById(id);
+}
+
+function voidHandler() {
+    void(0);
+}
+
+// DOM Level 1 events.
+$("dom1click").onclick = voidHandler;
+$("dom1mousedown").onmousedown = voidHandler;
+$("dom1mouseup").onmouseup = voidHandler;
+$("dom1clickparent").onclick = voidHandler;
+$("dom1mousedownparent").onmousedown = voidHandler;
+$("dom1mouseupparent").onmouseup = voidHandler;
+
+// DOM Level 2 events.
+$("dom2click").addEventListener("click", voidHandler);
+$("dom2mousedown").addEventListener("mousedown", voidHandler);
+$("dom2mouseup").addEventListener("mouseup", voidHandler);
+$("dom2clickparent").addEventListener("click", voidHandler);
+$("dom2mousedownparent").addEventListener("mousedown", voidHandler);
+$("dom2mouseupparent").addEventListener("mouseup", voidHandler);
+
+function cleanup() {
+    // Hide the test element container to avoid irrelevant output diffs on subsequent updates.
+    $("examples").style.display = "none";
+}
+
+function test() {
+
+    var examples = [];
+    var documentNodeId = null;
+    var bodyNodeId = null;
+
+    function onGotDocument(response) {
+        InspectorTest.checkForError(response);
+        documentNodeId = response.result.root.nodeId;
+        InspectorTest.sendCommand("DOM.querySelector", {"nodeId": documentNodeId, "selector": "body"}, onGotBody);
+    }
+
+    function onGotBody(response) {
+        InspectorTest.checkForError(response);
+        bodyNodeId = response.result.nodeId;
+        InspectorTest.sendCommand("DOM.getAccessibilityPropertiesForNode", {"nodeId": bodyNodeId}, onGotAccessibilityPropertiesForBodyNode);
+    }
+
+    function onGotAccessibilityPropertiesForBodyNode(response) {
+        InspectorTest.checkForError(response);
+        InspectorTest.sendCommand("DOM.querySelectorAll", {"nodeId": documentNodeId, "selector": ".ex"}, onGotQuerySelectorAll);
+    }
+
+    function onGotQuerySelectorAll(response) {
+        InspectorTest.checkForError(response);
+        examples = response.result.nodeIds;
+        InspectorTest.log("Total elements to be tested: " + examples.length + ".");
+        loop();
+    }
+
+    function loop() {
+        if (examples.length) {
+            InspectorTest.sendCommand("DOM.getOuterHTML", {"nodeId": examples[examples.length-1]}, onGotOuterHTML);
+        } else {
+            finishTest();
+        }
+    }
+
+    function onGotOuterHTML(response) {
+        InspectorTest.checkForError(response);
+        var outerHTML = response.result.outerHTML;
+        outerHTML = outerHTML.replace(/ class="ex"/g, ""); // remove any duplicated, unnecessary class attributes
+        InspectorTest.log("\n" + outerHTML);
+        InspectorTest.sendCommand("DOM.getAccessibilityPropertiesForNode", {"nodeId": examples[examples.length-1]}, onGotAccessibilityProperties);
+    }
+
+    function onGotAccessibilityProperties(response) {
+        InspectorTest.checkForError(response);
+        logAccessibilityProperties(response.result.properties);
+        examples.pop();
+        loop();
+    }
+
+    function logAccessibilityProperties(properties) {
+        var mouseEventNodeId = properties.mouseEventNodeId;
+        if (typeof mouseEventNodeId === "number")
+            var msg = "    mouseEventNodeId: ";
+            if (mouseEventNodeId === bodyNodeId)
+                msg += "body element";
+            else if (mouseEventNodeId === properties.nodeId)
+                msg += "self";
+            else
+                msg += "ancestor element";
+            InspectorTest.log(msg);
+    }
+
+    function finishTest() {
+        InspectorTest.sendCommand("Runtime.evaluate", {"expression": "cleanup()"}, function(){
+            InspectorTest.completeTest();
+        });
+    }
+
+    InspectorTest.sendCommand("DOM.getDocument", {}, onGotDocument);
+
+}
+</script>
+</body>
+</html>
