@@ -57,7 +57,7 @@ def enumerablePseudoType(stringPseudoType):
 def expand_ifdef_condition(condition):
     return condition.replace('(', '_').replace(')', '')
 
-output_file = open('SelectorPseudoTypeMap.gperf', 'w')
+output_file = open('SelectorPseudoClassAndCompatibilityElementMap.gperf', 'w')
 
 output_file.write("""
 %{
@@ -100,15 +100,15 @@ output_file.write("""
 
 namespace WebCore {
 
-struct SelectorPseudoTypeEntry {
+struct SelectorPseudoClassOrCompatibilityPseudoElementEntry {
     const char* name;
-    CSSSelector::PseudoType type;
+    PseudoClassOrCompatibilityPseudoElement pseudoTypes;
 };
 
 %}
 %struct-type
-%define initializer-suffix ,CSSSelector::PseudoUnknown
-%define class-name SelectorPseudoTypeMapHash
+%define initializer-suffix ,{CSSSelector::PseudoUnknown,CSSSelector::PseudoUnknown}
+%define class-name SelectorPseudoClassAndCompatibilityElementMapHash
 %omit-struct-type
 %language=C++
 %readonly-tables
@@ -117,7 +117,7 @@ struct SelectorPseudoTypeEntry {
 %compare-strncmp
 %enum
 
-struct SelectorPseudoTypeEntry;
+struct SelectorPseudoClassOrCompatibilityPseudoElementEntry;
 
 %%
 """)
@@ -129,61 +129,71 @@ longest_keyword = 0
 ignore_until_endif = False
 input_file = open(sys.argv[1], 'r')
 for line in input_file:
-    keyword = line.strip()
-    if not keyword:
+    line = line.strip()
+    if not line:
         continue
 
-    if keyword.startswith('#if '):
-        condition = keyword[4:].strip()
+    if line.startswith('#if '):
+        condition = line[4:].strip()
         if expand_ifdef_condition(condition) not in webcore_defines:
             ignore_until_endif = True
         continue
 
-    if keyword.startswith('#endif'):
+    if line.startswith('#endif'):
         ignore_until_endif = False
         continue
 
     if ignore_until_endif:
         continue
 
-    output_file.write('"%s", %s\n' % (keyword, enumerablePseudoType(keyword)))
+    keyword_definition = line.split(',')
+    if len(keyword_definition) == 1:
+        keyword = keyword_definition[0].strip()
+        output_file.write('"%s", {%s, CSSSelector::PseudoUnknown}\n' % (keyword, enumerablePseudoType(keyword)))
+    else:
+        output_file.write('"%s", {CSSSelector::%s, CSSSelector::%s}\n' % (keyword_definition[0].strip(), keyword_definition[1].strip(), keyword_definition[2].strip()))
+
     longest_keyword = max(longest_keyword, len(keyword))
 
 output_file.write("""%%
 
-static inline CSSSelector::PseudoType parsePseudoTypeString(const LChar* characters, unsigned length)
+static inline const SelectorPseudoClassOrCompatibilityPseudoElementEntry* parsePseudoClassAndCompatibilityElementString(const LChar* characters, unsigned length)
 {
-    if (const SelectorPseudoTypeEntry* entry = SelectorPseudoTypeMapHash::in_word_set(reinterpret_cast<const char*>(characters), length))
-        return entry->type;
-    return CSSSelector::PseudoUnknown;
+    return SelectorPseudoClassAndCompatibilityElementMapHash::in_word_set(reinterpret_cast<const char*>(characters), length);
 }""")
 
 output_file.write("""
 
-static inline CSSSelector::PseudoType parsePseudoTypeString(const UChar* characters, unsigned length)
+static inline const SelectorPseudoClassOrCompatibilityPseudoElementEntry* parsePseudoClassAndCompatibilityElementString(const UChar* characters, unsigned length)
 {
     const unsigned maxKeywordLength = %s;
     LChar buffer[maxKeywordLength];
     if (length > maxKeywordLength)
-        return CSSSelector::PseudoUnknown;
+        return nullptr;
 
     for (unsigned i = 0; i < length; ++i) {
         UChar character = characters[i];
         if (character & ~0xff)
-            return CSSSelector::PseudoUnknown;
+            return nullptr;
 
         buffer[i] = static_cast<LChar>(character);
     }
-    return parsePseudoTypeString(buffer, length);
+    return parsePseudoClassAndCompatibilityElementString(buffer, length);
 }
 """ % longest_keyword)
 
 output_file.write("""
-CSSSelector::PseudoType parsePseudoTypeString(const StringImpl& pseudoTypeString)
+PseudoClassOrCompatibilityPseudoElement parsePseudoClassAndCompatibilityElementString(const CSSParserString& pseudoTypeString)
 {
+    const SelectorPseudoClassOrCompatibilityPseudoElementEntry* entry;
     if (pseudoTypeString.is8Bit())
-        return parsePseudoTypeString(pseudoTypeString.characters8(), pseudoTypeString.length());
-    return parsePseudoTypeString(pseudoTypeString.characters16(), pseudoTypeString.length());
+        entry = parsePseudoClassAndCompatibilityElementString(pseudoTypeString.characters8(), pseudoTypeString.length());
+    else
+        entry = parsePseudoClassAndCompatibilityElementString(pseudoTypeString.characters16(), pseudoTypeString.length());
+
+    if (entry)
+        return entry->pseudoTypes;
+    return { CSSSelector::PseudoUnknown, CSSSelector::PseudoUnknown };
 }
 
 } // namespace WebCore
@@ -199,7 +209,7 @@ gperf_command = 'gperf'
 if 'GPERF' in os.environ:
     gperf_command = os.environ['GPERF']
 
-gperf_return = os.system("%s --key-positions='*' -m 10 -s 2 SelectorPseudoTypeMap.gperf --output-file=SelectorPseudoTypeMap.cpp" % gperf_command)
+gperf_return = os.system("%s --key-positions='*' -m 10 -s 2 SelectorPseudoClassAndCompatibilityElementMap.gperf --output-file=SelectorPseudoClassAndCompatibilityElementMap.cpp" % gperf_command)
 if gperf_return != 0:
-    print("Error when generating SelectorPseudoTypeMap.cpp from SelectorPseudoTypeMap.gperf :(")
+    print("Error when generating SelectorPseudoClassAndCompatibilityElementMap.cpp from SelectorPseudoClassAndCompatibilityElementMap.gperf :(")
     sys.exit(gperf_return)

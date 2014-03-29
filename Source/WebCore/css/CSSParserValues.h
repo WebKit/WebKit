@@ -178,6 +178,7 @@ public:
     static CSSParserSelector* parsePagePseudoSelector(const CSSParserString& pseudoTypeString);
     static CSSParserSelector* parsePseudoElementSelector(CSSParserString& pseudoTypeString);
     static CSSParserSelector* parsePseudoCueFunctionSelector(const CSSParserString& functionIdentifier, Vector<std::unique_ptr<CSSParserSelector>>* selectorVector);
+    static CSSParserSelector* parsePseudoClassAndCompatibilityElementSelector(CSSParserString& pseudoTypeString);
 
     CSSParserSelector();
     explicit CSSParserSelector(const QualifiedName&);
@@ -195,7 +196,7 @@ public:
 
     void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector);
 
-    void setPseudoTypeValue(const CSSParserString& pseudoTypeString);
+    void setPseudoClassValue(const CSSParserString& pseudoClassString);
     CSSSelector::PseudoType pseudoType() const { return m_selector->pseudoType(); }
     bool isCustomPseudoElement() const { return m_selector->isCustomPseudoElement(); }
 

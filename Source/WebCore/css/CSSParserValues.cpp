@@ -203,6 +203,26 @@ CSSParserSelector* CSSParserSelector::parsePseudoCueFunctionSelector(const CSSPa
 }
 #endif
 
+CSSParserSelector* CSSParserSelector::parsePseudoClassAndCompatibilityElementSelector(CSSParserString& pseudoTypeString)
+{
+    PseudoClassOrCompatibilityPseudoElement pseudoType = parsePseudoClassAndCompatibilityElementString(pseudoTypeString);
+    if (pseudoType.pseudoClass != CSSSelector::PseudoUnknown) {
+        auto selector = std::make_unique<CSSParserSelector>();
+        selector->m_selector->m_match = CSSSelector::PseudoClass;
+        selector->m_selector->m_pseudoType = pseudoType.pseudoClass;
+        return selector.release();
+    }
+    if (pseudoType.compatibilityPseudoElement != CSSSelector::PseudoUnknown) {
+        auto selector = std::make_unique<CSSParserSelector>();
+        selector->m_selector->m_match = CSSSelector::PseudoElement;
+        selector->m_selector->m_pseudoType = pseudoType.compatibilityPseudoElement;
+        AtomicString name = pseudoTypeString;
+        selector->m_selector->setValue(name);
+        return selector.release();
+    }
+    return nullptr;
+}
+
 CSSParserSelector::CSSParserSelector()
     : m_selector(std::make_unique<CSSSelector>())
 {
@@ -235,112 +255,12 @@ void CSSParserSelector::adoptSelectorVector(Vector<std::unique_ptr<CSSParserSele
     m_selector->setSelectorList(std::move(selectorList));
 }
 
-void CSSParserSelector::setPseudoTypeValue(const CSSParserString& pseudoTypeString)
+void CSSParserSelector::setPseudoClassValue(const CSSParserString& pseudoClassString)
 {
-    AtomicString name = pseudoTypeString;
-    m_selector->setValue(name);
+    ASSERT(m_selector->m_match == CSSSelector::PseudoClass);
 
-    CSSSelector::PseudoType pseudoType = parsePseudoTypeString(*name.impl());
-    bool isCompatibilityElementType = false; // single colon compatbility mode
-
-    switch (pseudoType) {
-    case CSSSelector::PseudoAfter:
-    case CSSSelector::PseudoBefore:
-    case CSSSelector::PseudoFirstLetter:
-    case CSSSelector::PseudoFirstLine:
-        isCompatibilityElementType = true;
-        break;
-    case CSSSelector::PseudoUnknown:
-    case CSSSelector::PseudoEmpty:
-    case CSSSelector::PseudoFirstChild:
-    case CSSSelector::PseudoFirstOfType:
-    case CSSSelector::PseudoLastChild:
-    case CSSSelector::PseudoLastOfType:
-    case CSSSelector::PseudoOnlyChild:
-    case CSSSelector::PseudoOnlyOfType:
-    case CSSSelector::PseudoNthChild:
-    case CSSSelector::PseudoNthOfType:
-    case CSSSelector::PseudoNthLastChild:
-    case CSSSelector::PseudoNthLastOfType:
-    case CSSSelector::PseudoLink:
-    case CSSSelector::PseudoVisited:
-    case CSSSelector::PseudoAny:
-    case CSSSelector::PseudoAnyLink:
-    case CSSSelector::PseudoAutofill:
-    case CSSSelector::PseudoHover:
-    case CSSSelector::PseudoDrag:
-    case CSSSelector::PseudoFocus:
-    case CSSSelector::PseudoActive:
-    case CSSSelector::PseudoChecked:
-    case CSSSelector::PseudoEnabled:
-    case CSSSelector::PseudoFullPageMedia:
-    case CSSSelector::PseudoDefault:
-    case CSSSelector::PseudoDisabled:
-    case CSSSelector::PseudoOptional:
-    case CSSSelector::PseudoRequired:
-    case CSSSelector::PseudoReadOnly:
-    case CSSSelector::PseudoReadWrite:
-    case CSSSelector::PseudoScope:
-    case CSSSelector::PseudoValid:
-    case CSSSelector::PseudoInvalid:
-    case CSSSelector::PseudoIndeterminate:
-    case CSSSelector::PseudoTarget:
-    case CSSSelector::PseudoLang:
-    case CSSSelector::PseudoNot:
-    case CSSSelector::PseudoRoot:
-    case CSSSelector::PseudoScrollbarBack:
-    case CSSSelector::PseudoScrollbarForward:
-    case CSSSelector::PseudoWindowInactive:
-    case CSSSelector::PseudoCornerPresent:
-    case CSSSelector::PseudoDecrement:
-    case CSSSelector::PseudoIncrement:
-    case CSSSelector::PseudoHorizontal:
-    case CSSSelector::PseudoVertical:
-    case CSSSelector::PseudoStart:
-    case CSSSelector::PseudoEnd:
-    case CSSSelector::PseudoDoubleButton:
-    case CSSSelector::PseudoSingleButton:
-    case CSSSelector::PseudoNoButton:
-#if ENABLE(FULLSCREEN_API)
-    case CSSSelector::PseudoFullScreen:
-    case CSSSelector::PseudoFullScreenDocument:
-    case CSSSelector::PseudoFullScreenAncestor:
-    case CSSSelector::PseudoAnimatingFullScreenTransition:
-#endif
-    case CSSSelector::PseudoInRange:
-    case CSSSelector::PseudoOutOfRange:
-#if ENABLE(VIDEO_TRACK)
-    case CSSSelector::PseudoFuture:
-    case CSSSelector::PseudoPast:
-#endif
-        break;
-#if ENABLE(VIDEO_TRACK)
-    case CSSSelector::PseudoCue:
-#endif
-    case CSSSelector::PseudoResizer:
-    case CSSSelector::PseudoScrollbar:
-    case CSSSelector::PseudoScrollbarCorner:
-    case CSSSelector::PseudoScrollbarButton:
-    case CSSSelector::PseudoScrollbarThumb:
-    case CSSSelector::PseudoScrollbarTrack:
-    case CSSSelector::PseudoScrollbarTrackPiece:
-    case CSSSelector::PseudoSelection:
-    case CSSSelector::PseudoUserAgentCustomElement:
-    case CSSSelector::PseudoWebKitCustomElement:
-
-    case CSSSelector::PseudoFirst:
-    case CSSSelector::PseudoLeft:
-    case CSSSelector::PseudoRight:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    unsigned matchType = m_selector->m_match;
-    if (isCompatibilityElementType)
-        matchType = CSSSelector::PseudoElement;
-
-    m_selector->m_match = matchType;
-    m_selector->m_pseudoType = pseudoType;
+    PseudoClassOrCompatibilityPseudoElement pseudoType = parsePseudoClassAndCompatibilityElementString(pseudoClassString);
+    m_selector->m_pseudoType = pseudoType.pseudoClass;
 }
 
 bool CSSParserSelector::isSimple() const

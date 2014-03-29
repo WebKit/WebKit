@@ -1,3 +1,32 @@
+2014-03-28  Benjamin Poulain  <bpoulain@apple.com>
+
+        Update the code related to SelectorPseudoTypeMap to reflect its new purpose
+        https://bugs.webkit.org/show_bug.cgi?id=130620
+
+        Reviewed by Andreas Kling.
+
+        Since r166094, SelectorPseudoTypeMap only contains PseudoClass instances and the 4 compatibility PseudoElement.
+
+        This patch rename SelectorPseudoTypeMap to SelectorPseudoClassAndCompatibilityElementMap and update the parsing
+        to split PseudoClass and PseudoElement.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSGrammar.y.in:
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::parsePseudoClassAndCompatibilityElementSelector):
+        (WebCore::CSSParserSelector::setPseudoClassValue):
+        * css/CSSParserValues.h:
+        * css/CSSSelector.cpp:
+        (WebCore::appendPseudoClassFunctionTail):
+        (WebCore::CSSSelector::selectorText):
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in: Renamed from Source/WebCore/css/SelectorPseudoTypeMap.in.
+        * css/SelectorPseudoTypeMap.h:
+        * css/makeSelectorPseudoClassAndCompatibilityElementMap.py: Renamed from Source/WebCore/css/makeSelectorPseudoTypeMap.py.
+        (enumerablePseudoType):
+        (expand_ifdef_condition):
+
 2014-03-28  Stephanie Lewis  <slewis@apple.com>
 
         Unreviewed build fix.

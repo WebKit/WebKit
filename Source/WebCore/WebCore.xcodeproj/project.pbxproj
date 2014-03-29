@@ -1477,7 +1477,7 @@
 		43A625F813B3304000AC94B8 /* SVGAnimatedColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 43A625F613B3304000AC94B8 /* SVGAnimatedColor.h */; };
 		43A625F913B3304000AC94B8 /* SVGAnimatedColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43A625F713B3304000AC94B8 /* SVGAnimatedColor.cpp */; };
 		43A6266713B3D11000AC94B8 /* SVGAnimatedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43A6266613B3D11000AC94B8 /* SVGAnimatedString.cpp */; };
-		43B85ED418CBEC5200E31AF4 /* SelectorPseudoTypeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B85ED218CBEC5200E31AF4 /* SelectorPseudoTypeMap.cpp */; };
+		43B85ED418CBEC5200E31AF4 /* SelectorPseudoClassAndCompatibilityElementMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B85ED218CBEC5200E31AF4 /* SelectorPseudoClassAndCompatibilityElementMap.cpp */; };
 		43B9336913B261B1004584BF /* SVGAnimatedPointList.h in Headers */ = {isa = PBXBuildFile; fileRef = 43B9336713B261B1004584BF /* SVGAnimatedPointList.h */; };
 		43B9336A13B261B1004584BF /* SVGAnimatedPointList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43B9336813B261B1004584BF /* SVGAnimatedPointList.cpp */; };
 		43C092BC12D9E4EE00A989C3 /* RenderSVGForeignObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 43C092BA12D9E4EE00A989C3 /* RenderSVGForeignObject.h */; };
@@ -8419,10 +8419,10 @@
 		43A625F613B3304000AC94B8 /* SVGAnimatedColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedColor.h; sourceTree = "<group>"; };
 		43A625F713B3304000AC94B8 /* SVGAnimatedColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedColor.cpp; sourceTree = "<group>"; };
 		43A6266613B3D11000AC94B8 /* SVGAnimatedString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedString.cpp; sourceTree = "<group>"; };
-		43B85ED018CBEACE00E31AF4 /* makeSelectorPseudoTypeMap.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = makeSelectorPseudoTypeMap.py; sourceTree = "<group>"; };
-		43B85ED218CBEC5200E31AF4 /* SelectorPseudoTypeMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectorPseudoTypeMap.cpp; sourceTree = "<group>"; };
-		43B85ED318CBEC5200E31AF4 /* SelectorPseudoTypeMap.gperf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SelectorPseudoTypeMap.gperf; sourceTree = "<group>"; };
-		43B85ED618CBEC9700E31AF4 /* SelectorPseudoTypeMap.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SelectorPseudoTypeMap.in; sourceTree = "<group>"; };
+		43B85ED018CBEACE00E31AF4 /* makeSelectorPseudoClassAndCompatibilityElementMap.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = makeSelectorPseudoClassAndCompatibilityElementMap.py; sourceTree = "<group>"; };
+		43B85ED218CBEC5200E31AF4 /* SelectorPseudoClassAndCompatibilityElementMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectorPseudoClassAndCompatibilityElementMap.cpp; sourceTree = "<group>"; };
+		43B85ED318CBEC5200E31AF4 /* SelectorPseudoClassAndCompatibilityElementMap.gperf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; path = SelectorPseudoClassAndCompatibilityElementMap.gperf; sourceTree = "<group>"; };
+		43B85ED618CBEC9700E31AF4 /* SelectorPseudoClassAndCompatibilityElementMap.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SelectorPseudoClassAndCompatibilityElementMap.in; sourceTree = "<group>"; };
 		43B9336713B261B1004584BF /* SVGAnimatedPointList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedPointList.h; sourceTree = "<group>"; };
 		43B9336813B261B1004584BF /* SVGAnimatedPointList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedPointList.cpp; sourceTree = "<group>"; };
 		43C092B912D9E4EE00A989C3 /* RenderSVGForeignObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGForeignObject.cpp; sourceTree = "<group>"; };
@@ -15943,10 +15943,10 @@
 				44A28AAE12DFB8BF00AE923B /* MathMLNames.h */,
 				71E2183817359FB8006E6E4D /* PlugInsResources.h */,
 				71E2183917359FB8006E6E4D /* PlugInsResourcesData.cpp */,
+				43B85ED218CBEC5200E31AF4 /* SelectorPseudoClassAndCompatibilityElementMap.cpp */,
+				43B85ED318CBEC5200E31AF4 /* SelectorPseudoClassAndCompatibilityElementMap.gperf */,
 				26AA0F9D18D2A18B00419381 /* SelectorPseudoElementTypeMap.cpp */,
 				26AA0F9F18D2A1C100419381 /* SelectorPseudoElementTypeMap.gperf */,
-				43B85ED218CBEC5200E31AF4 /* SelectorPseudoTypeMap.cpp */,
-				43B85ED318CBEC5200E31AF4 /* SelectorPseudoTypeMap.gperf */,
 				53EF766A16530A61004CBE49 /* SettingsMacros.h */,
 				656581E609D1508D000E61D7 /* SVGElementFactory.cpp */,
 				656581E709D1508D000E61D7 /* SVGElementFactory.h */,
@@ -21702,7 +21702,7 @@
 				E55F4979151B888000BB67DB /* LengthFunctions.cpp */,
 				E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */,
 				26AA0F9918D2973D00419381 /* makeSelectorPseudoElementsMap.py */,
-				43B85ED018CBEACE00E31AF4 /* makeSelectorPseudoTypeMap.py */,
+				43B85ED018CBEACE00E31AF4 /* makeSelectorPseudoClassAndCompatibilityElementMap.py */,
 				93CA4C9A09DF93FA00DF8677 /* make-css-file-arrays.pl */,
 				93CA4C9B09DF93FA00DF8677 /* makeprop.pl */,
 				93CA4C9D09DF93FA00DF8677 /* makevalues.pl */,
@@ -21750,7 +21750,7 @@
 				415071551685067300C3C7B3 /* SelectorFilter.cpp */,
 				415071561685067300C3C7B3 /* SelectorFilter.h */,
 				26AA0F9A18D2973D00419381 /* SelectorPseudoElementTypeMap.in */,
-				43B85ED618CBEC9700E31AF4 /* SelectorPseudoTypeMap.in */,
+				43B85ED618CBEC9700E31AF4 /* SelectorPseudoClassAndCompatibilityElementMap.in */,
 				43107BE118CC19DE00CC18E8 /* SelectorPseudoTypeMap.h */,
 				E47A97CE163059FC005DCD99 /* StyleInvalidationAnalysis.cpp */,
 				E47A97CF163059FC005DCD99 /* StyleInvalidationAnalysis.h */,
@@ -27216,7 +27216,7 @@
 				6E67D2A61280E8A4008758F7 /* Extensions3DOpenGL.cpp in Sources */,
 				44DAB5B115A623580097C1E4 /* Extensions3DOpenGLCommon.cpp in Sources */,
 				7728694E14F8882500F484DC /* EXTTextureFilterAnisotropic.cpp in Sources */,
-				43B85ED418CBEC5200E31AF4 /* SelectorPseudoTypeMap.cpp in Sources */,
+				43B85ED418CBEC5200E31AF4 /* SelectorPseudoClassAndCompatibilityElementMap.cpp in Sources */,
 				A75E8B880E1DE2D6007F2481 /* FEBlend.cpp in Sources */,
 				A75E8B8A0E1DE2D6007F2481 /* FEColorMatrix.cpp in Sources */,
 				A75E8B8C0E1DE2D6007F2481 /* FEComponentTransfer.cpp in Sources */,

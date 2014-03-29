@@ -3131,12 +3131,12 @@ ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${DERIVED_SOURCES_WEBCORE_DIR}/CSSGramma
 
 # Generate CSS Selector pseudo type name to value maps.
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/SelectorPseudoTypeMap.gperf ${DERIVED_SOURCES_WEBCORE_DIR}/SelectorPseudoTypeMap.cpp
-    MAIN_DEPENDENCY ${WEBCORE_DIR}/css/makeSelectorPseudoTypeMap.py
+    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/SelectorPseudoClassAndCompatibilityElementMap.gperf ${DERIVED_SOURCES_WEBCORE_DIR}/SelectorPseudoClassAndCompatibilityElementMap.cpp
+    MAIN_DEPENDENCY ${WEBCORE_DIR}/css/makeSelectorPseudoClassAndCompatibilityElementMap.py
     WORKING_DIRECTORY ${DERIVED_SOURCES_WEBCORE_DIR}
-    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/css/makeSelectorPseudoTypeMap.py ${WEBCORE_DIR}/css/SelectorPseudoTypeMap.in "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}"
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/css/makeSelectorPseudoClassAndCompatibilityElementMap.py ${WEBCORE_DIR}/css/SelectorPseudoClassAndCompatibilityElementMap.in "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}"
     VERBATIM)
-list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/SelectorPseudoTypeMap.cpp)
+list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/SelectorPseudoClassAndCompatibilityElementMap.cpp)
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/SelectorPseudoElementTypeMap.gperf ${DERIVED_SOURCES_WEBCORE_DIR}/SelectorPseudoElementTypeMap.cpp
     MAIN_DEPENDENCY ${WEBCORE_DIR}/css/makeSelectorPseudoElementsMap.py

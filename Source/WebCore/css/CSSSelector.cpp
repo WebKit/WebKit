@@ -294,14 +294,9 @@ bool CSSSelector::operator==(const CSSSelector& other) const
     return true;
 }
 
-static void appendPseudoTypeTailIfNecessary(StringBuilder& str, const CSSSelector* selector)
+static void appendPseudoClassFunctionTail(StringBuilder& str, const CSSSelector* selector)
 {
     switch (selector->pseudoType()) {
-    case CSSSelector::PseudoNot:
-        if (const CSSSelectorList* selectorList = selector->selectorList())
-            str.append(selectorList->first()->selectorText());
-        str.append(')');
-        break;
     case CSSSelector::PseudoLang:
     case CSSSelector::PseudoNthChild:
     case CSSSelector::PseudoNthLastChild:
@@ -310,19 +305,10 @@ static void appendPseudoTypeTailIfNecessary(StringBuilder& str, const CSSSelecto
         str.append(selector->argument());
         str.append(')');
         break;
-    case CSSSelector::PseudoAny: {
-        const CSSSelector* firstSubSelector = selector->selectorList()->first();
-        for (const CSSSelector* subSelector = firstSubSelector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
-            if (subSelector != firstSubSelector)
-                str.append(',');
-            str.append(subSelector->selectorText());
-        }
-        str.append(')');
-        break;
-    }
     default:
         break;
     }
+
 }
 
 String CSSSelector::selectorText(const String& rightSide) const
@@ -347,22 +333,202 @@ String CSSSelector::selectorText(const String& rightSide) const
         } else if (cs->m_match == CSSSelector::Class) {
             str.append('.');
             serializeIdentifier(cs->value(), str);
-        } else if (cs->m_match == CSSSelector::PseudoClass || cs->m_match == CSSSelector::PagePseudoClass) {
+        } else if (cs->m_match == CSSSelector::PseudoClass) {
             switch (cs->pseudoType()) {
-            case PseudoFirst:
-                str.appendLiteral(":first");
+#if ENABLE(FULLSCREEN_API)
+            case CSSSelector::PseudoAnimatingFullScreenTransition:
+                str.appendLiteral(":-webkit-animating-full-screen-transition");
                 break;
-            case PseudoLeft:
-                str.appendLiteral(":left");
+#endif
+            case CSSSelector::PseudoAny: {
+                str.appendLiteral(":-webkit-any(");
+                const CSSSelector* firstSubSelector = cs->selectorList()->first();
+                for (const CSSSelector* subSelector = firstSubSelector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+                    if (subSelector != firstSubSelector)
+                        str.append(',');
+                    str.append(subSelector->selectorText());
+                }
+                str.append(')');
                 break;
-            case PseudoRight:
-                str.appendLiteral(":right");
+            }
+            case CSSSelector::PseudoAnyLink:
+                str.appendLiteral(":-webkit-any-link");
+                break;
+            case CSSSelector::PseudoAutofill:
+                str.appendLiteral(":-webkit-autofill");
+                break;
+            case CSSSelector::PseudoDrag:
+                str.appendLiteral(":-webkit-drag");
+                break;
+            case CSSSelector::PseudoFullPageMedia:
+                str.appendLiteral(":-webkit-full-page-media");
+                break;
+#if ENABLE(FULLSCREEN_API)
+            case CSSSelector::PseudoFullScreen:
+                str.appendLiteral(":-webkit-full-screen");
+                break;
+            case CSSSelector::PseudoFullScreenAncestor:
+                str.appendLiteral(":-webkit-full-screen-ancestor");
+                break;
+            case CSSSelector::PseudoFullScreenDocument:
+                str.appendLiteral(":-webkit-full-screen-document");
+                break;
+#endif
+            case CSSSelector::PseudoActive:
+                str.appendLiteral(":active");
+                break;
+            case CSSSelector::PseudoChecked:
+                str.appendLiteral(":checked");
+                break;
+            case CSSSelector::PseudoCornerPresent:
+                str.appendLiteral(":corner-present");
+                break;
+            case CSSSelector::PseudoDecrement:
+                str.appendLiteral(":decrement");
+                break;
+            case CSSSelector::PseudoDefault:
+                str.appendLiteral(":default");
+                break;
+            case CSSSelector::PseudoDisabled:
+                str.appendLiteral(":disabled");
+                break;
+            case CSSSelector::PseudoDoubleButton:
+                str.appendLiteral(":double-button");
+                break;
+            case CSSSelector::PseudoEmpty:
+                str.appendLiteral(":empty");
+                break;
+            case CSSSelector::PseudoEnabled:
+                str.appendLiteral(":enabled");
+                break;
+            case CSSSelector::PseudoEnd:
+                str.appendLiteral(":end");
+                break;
+            case CSSSelector::PseudoFirstChild:
+                str.appendLiteral(":first-child");
+                break;
+            case CSSSelector::PseudoFirstOfType:
+                str.appendLiteral(":first-of-type");
+                break;
+            case CSSSelector::PseudoFocus:
+                str.appendLiteral(":focus");
+                break;
+#if ENABLE(VIDEO_TRACK)
+            case CSSSelector::PseudoFuture:
+                str.appendLiteral(":future");
+                break;
+#endif
+            case CSSSelector::PseudoHorizontal:
+                str.appendLiteral(":horizontal");
+                break;
+            case CSSSelector::PseudoHover:
+                str.appendLiteral(":hover");
+                break;
+            case CSSSelector::PseudoInRange:
+                str.appendLiteral(":in-range");
+                break;
+            case CSSSelector::PseudoIncrement:
+                str.appendLiteral(":increment");
+                break;
+            case CSSSelector::PseudoIndeterminate:
+                str.appendLiteral(":indeterminate");
+                break;
+            case CSSSelector::PseudoInvalid:
+                str.appendLiteral(":invalid");
+                break;
+            case CSSSelector::PseudoLang:
+                str.appendLiteral(":lang(");
+                appendPseudoClassFunctionTail(str, cs);
+                break;
+            case CSSSelector::PseudoLastChild:
+                str.appendLiteral(":last-child");
+                break;
+            case CSSSelector::PseudoLastOfType:
+                str.appendLiteral(":last-of-type");
+                break;
+            case CSSSelector::PseudoLink:
+                str.appendLiteral(":link");
+                break;
+            case CSSSelector::PseudoNoButton:
+                str.appendLiteral(":no-button");
+                break;
+            case CSSSelector::PseudoNot:
+                str.appendLiteral(":not(");
+                if (const CSSSelectorList* selectorList = cs->selectorList())
+                    str.append(selectorList->first()->selectorText());
+                str.append(')');
+                break;
+            case CSSSelector::PseudoNthChild:
+                str.appendLiteral(":nth-child(");
+                appendPseudoClassFunctionTail(str, cs);
+                break;
+            case CSSSelector::PseudoNthLastChild:
+                str.appendLiteral(":nth-last-child(");
+                appendPseudoClassFunctionTail(str, cs);
+                break;
+            case CSSSelector::PseudoNthLastOfType:
+                str.appendLiteral(":nth-last-of-type(");
+                appendPseudoClassFunctionTail(str, cs);
+                break;
+            case CSSSelector::PseudoNthOfType:
+                str.appendLiteral(":nth-of-type(");
+                appendPseudoClassFunctionTail(str, cs);
+                break;
+            case CSSSelector::PseudoOnlyChild:
+                str.appendLiteral(":only-child");
+                break;
+            case CSSSelector::PseudoOnlyOfType:
+                str.appendLiteral(":only-of-type");
+                break;
+            case CSSSelector::PseudoOptional:
+                str.appendLiteral(":optional");
+                break;
+            case CSSSelector::PseudoOutOfRange:
+                str.appendLiteral(":out-of-range");
+                break;
+#if ENABLE(VIDEO_TRACK)
+            case CSSSelector::PseudoPast:
+                str.appendLiteral(":past");
+                break;
+#endif
+            case CSSSelector::PseudoReadOnly:
+                str.appendLiteral(":read-only");
+                break;
+            case CSSSelector::PseudoReadWrite:
+                str.appendLiteral(":read-write");
+                break;
+            case CSSSelector::PseudoRequired:
+                str.appendLiteral(":required");
+                break;
+            case CSSSelector::PseudoRoot:
+                str.appendLiteral(":root");
+                break;
+            case CSSSelector::PseudoScope:
+                str.appendLiteral(":scope");
+                break;
+            case CSSSelector::PseudoSingleButton:
+                str.appendLiteral(":single-button");
+                break;
+            case CSSSelector::PseudoStart:
+                str.appendLiteral(":start");
+                break;
+            case CSSSelector::PseudoTarget:
+                str.appendLiteral(":target");
+                break;
+            case CSSSelector::PseudoValid:
+                str.appendLiteral(":valid");
+                break;
+            case CSSSelector::PseudoVertical:
+                str.appendLiteral(":vertical");
+                break;
+            case CSSSelector::PseudoVisited:
+                str.appendLiteral(":visited");
+                break;
+            case CSSSelector::PseudoWindowInactive:
+                str.appendLiteral(":window-inactive");
                 break;
             default:
-                str.append(':');
-                str.append(cs->value());
-                appendPseudoTypeTailIfNecessary(str, cs);
-                break;
+                ASSERT_NOT_REACHED();
             }
         } else if (cs->m_match == CSSSelector::PseudoElement) {
             str.appendLiteral("::");
@@ -405,7 +571,22 @@ String CSSSelector::selectorText(const String& rightSide) const
                 serializeString(cs->value(), str);
                 str.append(']');
             }
+        } else if (cs->m_match == CSSSelector::PagePseudoClass) {
+            switch (cs->pseudoType()) {
+            case PseudoFirst:
+                str.appendLiteral(":first");
+                break;
+            case PseudoLeft:
+                str.appendLiteral(":left");
+                break;
+            case PseudoRight:
+                str.appendLiteral(":right");
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+            }
         }
+
         if (cs->relation() != CSSSelector::SubSelector || !cs->tagHistory())
             break;
         cs = cs->tagHistory();
