@@ -1,3 +1,29 @@
+2014-03-28  Mark Lam  <mark.lam@apple.com>
+
+        mandreel throws a checksum error on 32-bit x86.
+        <https://webkit.org/b/125706>
+
+        Reviewed by Filip Pizlo.
+
+        The 32-bit DFG can emit code that loads double constants from its
+        CodeBlock's m_constantRegisters vector.  The emitted instruction will
+        embed the address of the constant from the vector's backing store.
+        Subsequently, while inserting new constants, the DFG may resize the
+        vector, thereby reallocating the backing store.  This renders the
+        previously embedded constant addresses stale.
+
+        The fix is to use a dedicated doubles constant pool stored in the DFG
+        CommonData instead.  This constant pool won't be reallocated, and
+        hence will not manifest this issue.
+
+        * dfg/DFGCommonData.h:
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::addressOfDoubleConstant):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addressOfDoubleConstant): Deleted.
+
 2014-03-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: console.warn is showing as error instead of warning

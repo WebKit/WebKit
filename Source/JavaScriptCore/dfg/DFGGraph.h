@@ -846,6 +846,11 @@ public:
     unsigned m_parameterSlots;
     int m_machineCaptureStart;
     std::unique_ptr<SlowArgument[]> m_slowArguments;
+
+#if USE(JSVALUE32_64)
+    HashMap<double, double*> m_doubleConstantsMap;
+    std::unique_ptr<Bag<double>> m_doubleConstants;
+#endif
     
     OptimizationFixpointState m_fixpointState;
     GraphForm m_form;

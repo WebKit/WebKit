@@ -35,6 +35,7 @@
 #include "ProfiledCodeBlockJettisoningWatchpoint.h"
 #include "ProfilerCompilation.h"
 #include "SymbolTable.h"
+#include <wtf/Bag.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
@@ -105,6 +106,10 @@ public:
     
     int machineCaptureStart;
     std::unique_ptr<SlowArgument[]> slowArguments;
+
+#if USE(JSVALUE32_64)
+    std::unique_ptr<Bag<double>> doubleConstants;
+#endif
     
     unsigned frameRegisterCount;
     unsigned requiredRegisterCountForExit;

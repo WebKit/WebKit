@@ -198,12 +198,7 @@ public:
     }
 
 #if USE(JSVALUE32_64)
-    void* addressOfDoubleConstant(Node* node)
-    {
-        ASSERT(m_graph.isNumberConstant(node));
-        unsigned constantIndex = node->constantNumber();
-        return &(codeBlock()->constantRegister(FirstConstantRegisterIndex + constantIndex));
-    }
+    void* addressOfDoubleConstant(Node*);
 #endif
 
     void addGetById(const JITGetByIdGenerator& gen, SlowPathGenerator* slowPath)
