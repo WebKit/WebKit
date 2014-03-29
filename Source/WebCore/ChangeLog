@@ -1,3 +1,12 @@
+2014-03-28  Stephanie Lewis  <slewis@apple.com>
+
+        Unreviewed build fix.
+
+        * platform/audio/AudioHardwareListener.cpp:
+        (WebCore::AudioHardwareListener::create):
+        (WebCore::AudioHardwareListener::audioHardwareListenerIsSupported): Deleted.
+        * platform/audio/AudioHardwareListener.h:
+
 2014-03-28  Lukasz Bialek  <l.bialek@samsung.com>
 
         Refactor cut and copy functions as suggested in FIXME line

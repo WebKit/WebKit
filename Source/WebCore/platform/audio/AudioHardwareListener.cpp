@@ -33,12 +33,6 @@ PassRefPtr<AudioHardwareListener> AudioHardwareListener::create(Client& client)
 {
     return adoptRef(new AudioHardwareListener(client));
 }
-    
-bool AudioHardwareListener::audioHardwareListenerIsSupported()
-{
-    return false;
-};
-
 #endif
 
 AudioHardwareListener::AudioHardwareListener(Client& client)

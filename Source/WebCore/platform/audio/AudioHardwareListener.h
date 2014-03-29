@@ -46,7 +46,6 @@ public:
         virtual void audioHardwareDidBecomeInactive() = 0;
     };
 
-    
     static PassRefPtr<AudioHardwareListener> create(Client&);
     virtual ~AudioHardwareListener() { }
     
