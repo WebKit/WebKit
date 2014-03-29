@@ -188,6 +188,8 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     setEnhancedAccessibility(parameters.accessibilityEnhancedUserInterfaceEnabled);
 
 #if USE(APPKIT)
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSApplicationCrashOnExceptions" : @YES }];
+
     // rdar://9118639 accessibilityFocusedUIElement in NSApplication defaults to use the keyWindow. Since there's
     // no window in WK2, NSApplication needs to use the focused page's focused element.
     Method methodToPatch = class_getInstanceMethod([NSApplication class], @selector(accessibilityFocusedUIElement));
