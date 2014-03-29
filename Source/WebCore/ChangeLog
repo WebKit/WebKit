@@ -1,3 +1,9 @@
+2014-03-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r166441 and r166443.
+
+        * CMakeLists.txt: Add platform/audio/AudioHardwareListener.cpp.
+
 2014-03-28  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] The 'auto' height must be adapted to the item's margin.

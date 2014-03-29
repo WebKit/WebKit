@@ -1,3 +1,14 @@
+2014-03-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r166441 and r166443.
+
+        Missing PLATFORM(COCOA) guards added.
+
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::evaluate):
+        * WebProcess/Plugins/PluginProxy.cpp:
+        * WebProcess/Plugins/PluginProxy.h:
+
 2014-03-28  Stephanie Lewis  <slewis@apple.com>
 
         Don't prevent AppSleep from sync messages.

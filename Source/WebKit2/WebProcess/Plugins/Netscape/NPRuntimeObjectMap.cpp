@@ -190,12 +190,14 @@ bool NPRuntimeObjectMap::evaluate(NPObject* npObject, const String& scriptString
     if (!globalObject)
         return false;
 
+#if PLATFORM(COCOA)
     if (m_pluginView && !m_pluginView->isBeingDestroyed()) {
         if (Page* page = m_pluginView->frame()->page()) {
             if (m_pluginView->audioHardwareActivity() != WebCore::AudioHardwareActivityType::IsInactive)
                 page->pageThrottler().pluginDidEvaluateWhileAudioIsPlaying();
         }
     }
+#endif
 
     ExecState* exec = globalObject->globalExec();
     

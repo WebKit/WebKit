@@ -1833,6 +1833,7 @@ set(WebCore_SOURCES
     platform/audio/AudioChannel.cpp
     platform/audio/AudioDSPKernelProcessor.cpp
     platform/audio/AudioFIFO.cpp
+    platform/audio/AudioHardwareListener.cpp
     platform/audio/AudioPullFIFO.cpp
     platform/audio/AudioResampler.cpp
     platform/audio/AudioResamplerKernel.cpp

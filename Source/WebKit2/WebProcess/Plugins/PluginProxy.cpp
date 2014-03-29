@@ -709,11 +709,13 @@ PassRefPtr<WebCore::SharedBuffer> PluginProxy::liveResourceData() const
 {
     return 0;
 }
-    
+
+#if PLATFORM(COCOA)
 WebCore::AudioHardwareActivityType PluginProxy::audioHardwareActivity() const
 {
     return m_connection->audioHardwareActivity();
 }
+#endif
 
 } // namespace WebKit
 
