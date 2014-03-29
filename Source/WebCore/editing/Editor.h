@@ -464,6 +464,9 @@ private:
 
     void changeSelectionAfterCommand(const VisibleSelection& newSelection, FrameSelection::SetSelectionOptions);
 
+    enum EditorActionSpecifier { CutAction, CopyAction };
+    void performCutOrCopy(EditorActionSpecifier);
+
     void editorUIUpdateTimerFired(Timer<Editor>&);
 
     Node* findEventTargetFromSelection() const;

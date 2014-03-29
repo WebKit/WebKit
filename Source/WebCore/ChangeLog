@@ -1,3 +1,21 @@
+2014-03-28  Lukasz Bialek  <l.bialek@samsung.com>
+
+        Refactor cut and copy functions as suggested in FIXME line
+        https://bugs.webkit.org/show_bug.cgi?id=129867
+
+        Reviewed by Darin Adler.
+
+        Cut and Copy functions in Editor.cpp use lots of common code.
+        Those functions are merged into one to share code, several
+        additional conditions are added to preserve Cut and Copy
+        functionality.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::cut):
+        (WebCore::Editor::copy):
+        (WebCore::Editor::performCutOrCopy):
+        * editing/Editor.h:
+
 2014-03-28  Stephanie Lewis  <slewis@apple.com>
 
         Rename pluginDidEvaluate to better represent when it’s called.

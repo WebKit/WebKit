@@ -1284,24 +1284,7 @@ void Editor::cut()
         return;
     }
 
-    // FIXME: This should share more code with the copy function; there is a lot of overlap.
-    RefPtr<Range> selection = selectedRange();
-    willWriteSelectionToPasteboard(selection);
-    if (shouldDeleteRange(selection.get())) {
-        updateMarkersForWordsAffectedByEditing(true);
-        if (enclosingTextFormControl(m_frame.selection().selection().start()))
-            Pasteboard::createForCopyAndPaste()->writePlainText(selectedTextForClipboard(), canSmartCopyOrDelete() ? Pasteboard::CanSmartReplace : Pasteboard::CannotSmartReplace);
-        else {
-#if PLATFORM(COCOA) || PLATFORM(EFL)
-            writeSelectionToPasteboard(*Pasteboard::createForCopyAndPaste());
-#else
-            // FIXME: Convert all other platforms to match Mac and delete this.
-            Pasteboard::createForCopyAndPaste()->writeSelection(*selection, canSmartCopyOrDelete(), m_frame, IncludeImageAltTextForClipboard);
-#endif
-        }
-        didWriteSelectionToPasteboard();
-        deleteSelectionWithSmartDelete(canSmartCopyOrDelete());
-    }
+    performCutOrCopy(CutAction);
 }
 
 void Editor::copy()
@@ -1313,12 +1296,28 @@ void Editor::copy()
         return;
     }
 
-    willWriteSelectionToPasteboard(selectedRange());
-    if (enclosingTextFormControl(m_frame.selection().selection().start())) {
-        Pasteboard::createForCopyAndPaste()->writePlainText(selectedTextForClipboard(),
-            canSmartCopyOrDelete() ? Pasteboard::CanSmartReplace : Pasteboard::CannotSmartReplace);
-    } else {
-        if (HTMLImageElement* imageElement = imageElementFromImageDocument(document())) {
+    performCutOrCopy(CopyAction);
+}
+
+void Editor::performCutOrCopy(EditorActionSpecifier action)
+{
+    RefPtr<Range> selection = selectedRange();
+    willWriteSelectionToPasteboard(selection);
+    if (action == CutAction) {
+        if (!shouldDeleteRange(selection.get()))
+            return;
+
+        updateMarkersForWordsAffectedByEditing(true);
+    }
+
+    if (enclosingTextFormControl(m_frame.selection().selection().start()))
+        Pasteboard::createForCopyAndPaste()->writePlainText(selectedTextForClipboard(), canSmartCopyOrDelete() ? Pasteboard::CanSmartReplace : Pasteboard::CannotSmartReplace);
+    else {
+        HTMLImageElement* imageElement = nullptr;
+        if (action == CopyAction)
+            imageElement = imageElementFromImageDocument(document());
+
+        if (imageElement) {
 #if PLATFORM(COCOA) || PLATFORM(EFL)
             writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(), *imageElement, document().url(), document().title());
 #else
@@ -1329,12 +1328,14 @@ void Editor::copy()
             writeSelectionToPasteboard(*Pasteboard::createForCopyAndPaste());
 #else
             // FIXME: Convert all other platforms to match Mac and delete this.
-            Pasteboard::createForCopyAndPaste()->writeSelection(*selectedRange(), canSmartCopyOrDelete(), m_frame, IncludeImageAltTextForClipboard);
+            Pasteboard::createForCopyAndPaste()->writeSelection(*selection, canSmartCopyOrDelete(), m_frame, IncludeImageAltTextForClipboard);
 #endif
         }
     }
 
     didWriteSelectionToPasteboard();
+    if (action == CutAction)
+        deleteSelectionWithSmartDelete(canSmartCopyOrDelete());
 }
 
 void Editor::paste()
