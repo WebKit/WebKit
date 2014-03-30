@@ -29,17 +29,8 @@
 
 #import "WKObject.h"
 
-@protocol _WKDownloadDelegate;
-
-namespace API {
-class DownloadClient;
-}
-
-namespace WebKit {
-std::unique_ptr<API::DownloadClient> createAPIDownloadClient(id <_WKDownloadDelegate>);
-}
-
 @interface _WKDownload () <WKObject>
+@property (nonatomic, weak) WKWebView *originatingWebView;
 @end
 
 #endif // WK_API_ENABLED

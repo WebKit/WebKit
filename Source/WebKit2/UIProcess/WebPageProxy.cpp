@@ -1530,10 +1530,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
         // Create a download proxy.
         DownloadProxy* download = m_process->context().createDownloadProxy();
         downloadID = download->downloadID();
-#if PLATFORM(EFL) || PLATFORM(GTK)
-        // Our design does not suppport downloads without a WebPage.
         handleDownloadRequest(download);
-#endif
     }
 
     // If we received a policy decision while in decidePolicyForResponse the decision will
@@ -2988,12 +2985,10 @@ void WebPageProxy::setMayStartMediaWhenInWindow(bool mayStartMedia)
     process().send(Messages::WebPage::SetMayStartMediaWhenInWindow(mayStartMedia), m_pageID);
 }
 
-#if PLATFORM(EFL) || PLATFORM(GTK)
 void WebPageProxy::handleDownloadRequest(DownloadProxy* download)
 {
     m_pageClient.handleDownloadRequest(download);
 }
-#endif // PLATFORM(EFL) || PLATFORM(GTK)
 
 #if PLATFORM(EFL)
 void WebPageProxy::didChangeContentSize(const IntSize& size)

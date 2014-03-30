@@ -1,3 +1,37 @@
+2014-03-30  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add an originatingWebView property to _WKDownload
+        https://bugs.webkit.org/show_bug.cgi?id=130945
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]): Passed self to WKView's initializer.
+        * UIProcess/API/Cocoa/_WKDownload.h: Declared originatingWebView as a weak, readonly property.
+        * UIProcess/API/Cocoa/_WKDownload.mm:
+        (-[_WKDownload originatingWebView]):
+        (-[_WKDownload setOriginatingWebView:]):
+        * UIProcess/API/Cocoa/_WKDownloadInternal.h: Re-declared originatingWebView as readwrite so that
+        PageClientImpl can call setOriginatingWebView:. Removed some dead code.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:context:configuration:webView:]): Updated to accept a webView parameter.
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]): Passed nil for the webView parameter.
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::decideDestinationWithSuggestedFilename): Ensured allowOverwrite is initialized.
+        * UIProcess/PageClient.h: Included handleDownloadRequest() on all platforms.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision): Ditto.
+        (WebKit::WebPageProxy::handleDownloadRequest): Ditto.
+        * UIProcess/WebPageProxy.h: Ditto.
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::handleDownloadRequest): Called -[_WKDownload setOriginatingWebView:].
+        * UIProcess/mac/PageClientImpl.h: Added a m_webView member variable.
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::PageClientImpl): Asserted that m_webView is nil if WK API isn't enabled.
+        (WebKit::PageClientImpl::handleDownloadRequest): Called -[_WKDownload setOriginatingWebView:].
+
 2014-03-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r166434.

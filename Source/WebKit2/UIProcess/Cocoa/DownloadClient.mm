@@ -77,7 +77,7 @@ String DownloadClient::decideDestinationWithSuggestedFilename(WebContext*, Downl
     if (!m_delegateMethods.downloadDecideDestinationWithSuggestedFilenameAllowOverwrite)
         return String();
     
-    BOOL allowOverwrite;
+    BOOL allowOverwrite = NO;
     NSString *destination = [m_delegate.get() _download:wrapper(*downloadProxy) decideDestinationWithSuggestedFilename:filename allowOverwrite:&allowOverwrite];
     allowOverwriteParam = allowOverwrite;
     return destination;

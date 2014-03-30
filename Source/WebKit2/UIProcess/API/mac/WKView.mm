@@ -3387,7 +3387,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return _data->_page->suppressVisibilityUpdates();
 }
 
-- (instancetype)initWithFrame:(NSRect)frame context:(WebContext&)context configuration:(WebPageConfiguration)webPageConfiguration
+- (instancetype)initWithFrame:(NSRect)frame context:(WebContext&)context configuration:(WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView
 {
     self = [super initWithFrame:frame];
     if (!self)
@@ -3412,7 +3412,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [trackingArea release];
 
     _data = [[WKViewData alloc] init];
-    _data->_pageClient = std::make_unique<PageClientImpl>(self);
+    _data->_pageClient = std::make_unique<PageClientImpl>(self, webView);
     _data->_page = context.createWebPage(*_data->_pageClient, std::move(webPageConfiguration));
     _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
     _data->_page->initializeWebPage();
@@ -3505,7 +3505,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     webPageConfiguration.pageGroup = toImpl(pageGroupRef);
     webPageConfiguration.relatedPage = toImpl(relatedPage);
 
-    return [self initWithFrame:frame context:*toImpl(contextRef) configuration:webPageConfiguration];
+    return [self initWithFrame:frame context:*toImpl(contextRef) configuration:webPageConfiguration webView:nil];
 }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080

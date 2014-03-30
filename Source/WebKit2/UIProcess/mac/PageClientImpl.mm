@@ -28,10 +28,12 @@
 
 #if PLATFORM(MAC)
 
+#import "_WKDownloadInternal.h"
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "DataReference.h"
 #import "DictionaryPopupInfo.h"
+#import "DownloadProxy.h"
 #import "FindIndicator.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebWheelEvent.h"
@@ -126,13 +128,17 @@ using namespace WebKit;
 
 namespace WebKit {
 
-PageClientImpl::PageClientImpl(WKView* wkView)
+PageClientImpl::PageClientImpl(WKView* wkView, WKWebView *webView)
     : m_wkView(wkView)
+    , m_webView(webView)
     , m_undoTarget(adoptNS([[WKEditorUndoTargetObjC alloc] init]))
 #if USE(DICTATION_ALTERNATIVES)
     , m_alternativeTextUIController(adoptPtr(new AlternativeTextUIController))
 #endif
 {
+#if !WK_API_ENABLED
+    ASSERT_UNUSED(m_webView, !m_webView);
+#endif
 }
 
 PageClientImpl::~PageClientImpl()
@@ -291,6 +297,15 @@ void PageClientImpl::didCommitLoadForMainFrame(const String& mimeType, bool useC
 
 void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference& dataReference)
 {
+}
+
+void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
+{
+    ASSERT_ARG(download, download);
+#if WK_API_ENABLED
+    ASSERT([download->wrapper() isKindOfClass:[_WKDownload class]]);
+    [static_cast<_WKDownload *>(download->wrapper()) setOriginatingWebView:m_webView];
+#endif
 }
 
 void PageClientImpl::setCursor(const WebCore::Cursor& cursor)

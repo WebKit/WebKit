@@ -43,7 +43,7 @@ class PageClientImpl : public PageClient
 #endif
     {
 public:
-    explicit PageClientImpl(WKContentView *, WKWebView *);
+    PageClientImpl(WKContentView *, WKWebView *);
     virtual ~PageClientImpl();
     
 private:
@@ -65,6 +65,7 @@ private:
     virtual void toolTipChanged(const String&, const String&) override;
     virtual bool decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, WebSecurityOrigin&, GeolocationPermissionRequestProxy&) override;
     virtual void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
+    virtual void handleDownloadRequest(DownloadProxy*) override;
     virtual void setCursor(const WebCore::Cursor&) override;
     virtual void setCursorHiddenUntilMouseMoves(bool) override;
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;

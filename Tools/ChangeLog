@@ -1,3 +1,16 @@
+2014-03-30  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add an originatingWebView property to _WKDownload
+        https://bugs.webkit.org/show_bug.cgi?id=130945
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Download.mm:
+        (-[DownloadDelegate _downloadDidStart:]):
+        (-[OriginatingWebViewDownloadDelegate initWithWebView:]):
+        (-[OriginatingWebViewDownloadDelegate _downloadDidStart:]):
+        (TEST):
+
 2014-03-28  Filip Pizlo  <fpizlo@apple.com>
 
         Land the stackmap register liveness glue with the uses of the liveness disabled

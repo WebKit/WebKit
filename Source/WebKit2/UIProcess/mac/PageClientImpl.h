@@ -35,6 +35,7 @@
 
 @class WKEditorUndoTargetObjC;
 @class WKView;
+@class WKWebView;
 
 namespace WebCore {
 class AlternativeTextUIController;
@@ -49,7 +50,7 @@ class PageClientImpl final : public PageClient
 #endif
     {
 public:
-    explicit PageClientImpl(WKView *);
+    PageClientImpl(WKView *, WKWebView *);
     virtual ~PageClientImpl();
     
     void viewWillMoveToAnotherWindow();
@@ -81,6 +82,7 @@ private:
     virtual void toolTipChanged(const String& oldToolTip, const String& newToolTip);
     virtual void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
     virtual void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) override;
+    virtual void handleDownloadRequest(DownloadProxy*) override;
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setCursorHiddenUntilMouseMoves(bool);
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&);
@@ -166,6 +168,7 @@ private:
     NSView *activeView() const;
 
     WKView *m_wkView;
+    WKWebView *m_webView;
     RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;
 #if USE(AUTOCORRECTION_PANEL)
     CorrectionPanel m_correctionPanel;

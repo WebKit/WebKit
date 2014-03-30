@@ -28,7 +28,9 @@
 
 #if PLATFORM(IOS)
 
+#import "_WKDownloadInternal.h"
 #import "DataReference.h"
+#import "DownloadProxy.h"
 #import "NativeWebKeyboardEvent.h"
 #import "InteractionInformationAtPosition.h"
 #import "WKContentView.h"
@@ -152,6 +154,13 @@ void PageClientImpl::didCommitLoadForMainFrame(const String& mimeType, bool useC
 {
     [m_webView _setHasCustomContentView:useCustomContentProvider loadedMIMEType:mimeType];
     [m_contentView _didCommitLoadForMainFrame];
+}
+
+void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
+{
+    ASSERT_ARG(download, download);
+    ASSERT([download->wrapper() isKindOfClass:[_WKDownload class]]);
+    [static_cast<_WKDownload *>(download->wrapper()) setOriginatingWebView:m_webView];
 }
 
 void PageClientImpl::setCursor(const Cursor&)

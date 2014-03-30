@@ -184,7 +184,7 @@
 #endif
 
 #if PLATFORM(MAC)
-    _wkView = [[WKView alloc] initWithFrame:bounds context:context configuration:std::move(webPageConfiguration)];
+    _wkView = [[WKView alloc] initWithFrame:bounds context:context configuration:std::move(webPageConfiguration) webView:self];
     [self addSubview:_wkView.get()];
     _page = WebKit::toImpl([_wkView pageRef]);
 #endif

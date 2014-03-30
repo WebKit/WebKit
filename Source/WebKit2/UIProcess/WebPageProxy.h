@@ -920,9 +920,7 @@ public:
     void findZoomableAreaForPoint(const WebCore::IntPoint&, const WebCore::IntSize&);
 #endif
 
-#if PLATFORM(EFL) || PLATFORM(GTK)
     void handleDownloadRequest(DownloadProxy*);
-#endif
 
     void advanceToNextMisspelling(bool startBeforeSelection);
     void changeSpellingToWord(const String& word);

@@ -54,13 +54,14 @@ struct WebPageConfiguration;
 }
 
 @class WKFullScreenWindowController;
+@class WKWebView;
 #if WK_API_ENABLED
 @class _WKThumbnailView;
 #endif
 
 @interface WKView ()
 #if WK_API_ENABLED
-- (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration;
+- (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView;
 #endif
 
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;

@@ -29,12 +29,15 @@
 
 #import <Foundation/Foundation.h>
 
+@class WKWebView;
+
 WK_API_CLASS
 @interface _WKDownload : NSObject
 
 - (void)cancel;
 
 @property (nonatomic, readonly) NSURLRequest *request;
+@property (nonatomic, readonly, weak) WKWebView *originatingWebView;
 
 @end
 

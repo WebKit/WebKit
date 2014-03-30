@@ -31,6 +31,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebCore/FileSystem.h>
+#import <WebKit2/_WKDownload.h>
 #import <WebKit2/_WKDownloadDelegate.h>
 #import <WebKit2/WKNavigationDelegate.h>
 #import <WebKit2/WKProcessPoolPrivate.h>
@@ -56,6 +57,7 @@ static NSURL *sourceURL = [[NSBundle mainBundle] URLForResource:@"simple" withEx
 {
     EXPECT_NULL(_download);
     EXPECT_NOT_NULL(download);
+    EXPECT_TRUE([[[download request] URL] isEqual:sourceURL]);
     _download = download;
 }
 
@@ -218,6 +220,52 @@ TEST(_WKDownload, DownloadMissingResource)
 TEST(_WKDownload, CancelDownload)
 {
     runTest(adoptNS([[DownloadNavigationDelegate alloc] init]).get(), adoptNS([[CancelledDownloadDelegate alloc] init]).get(), sourceURL);
+}
+
+@interface OriginatingWebViewDownloadDelegate : NSObject <_WKDownloadDelegate>
+- (instancetype)initWithWebView:(WKWebView *)webView;
+@end
+
+@implementation OriginatingWebViewDownloadDelegate {
+    RetainPtr<WKWebView> _webView;
+}
+
+- (instancetype)initWithWebView:(WKWebView *)webView
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _webView = webView;
+    return self;
+}
+
+- (void)_downloadDidStart:(_WKDownload *)download
+{
+    @autoreleasepool {
+        EXPECT_EQ([download originatingWebView], _webView);
+    }
+
+    _webView = nullptr;
+    EXPECT_NULL([download originatingWebView]);
+    isDone = true;
+}
+
+@end
+
+TEST(_WKDownload, OriginatingWebView)
+{
+    RetainPtr<DownloadNavigationDelegate> navigationDelegate = adoptNS([[DownloadNavigationDelegate alloc] init]);                 
+    RetainPtr<OriginatingWebViewDownloadDelegate> downloadDelegate;
+    {
+        RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+        [webView setNavigationDelegate:navigationDelegate.get()];
+        downloadDelegate = adoptNS([[OriginatingWebViewDownloadDelegate alloc] initWithWebView:webView.get()]);
+        [[[webView configuration] processPool] _setDownloadDelegate:downloadDelegate.get()];
+        [webView loadRequest:[NSURLRequest requestWithURL:sourceURL]];
+    }
+
+    isDone = false;
+    TestWebKitAPI::Util::run(&isDone);
 }
 
 #endif

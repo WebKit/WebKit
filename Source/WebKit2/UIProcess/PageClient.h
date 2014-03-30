@@ -146,9 +146,7 @@ public:
     virtual void updateTextInputState() = 0;
 #endif // PLATFORM(EFL) || PLATOFRM(GTK)
 
-#if PLATFORM(EFL) || PLATFORM(GTK)
     virtual void handleDownloadRequest(DownloadProxy*) = 0;
-#endif // PLATFORM(EFL) || PLATFORM(GTK)
 
 #if PLATFORM(EFL)
     virtual void didChangeContentSize(const WebCore::IntSize&) = 0;
