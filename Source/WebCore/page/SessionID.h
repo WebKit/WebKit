@@ -43,7 +43,6 @@ public:
     static SessionID emptySessionID() { return SessionID(0); }
     static SessionID defaultSessionID() { return SessionID(1); }
     static SessionID legacyPrivateSessionID() { return SessionID(2); }
-    static SessionID bypassCacheSessionID() { return SessionID(3); }
 private:
     uint64_t m_sessionID;
 };

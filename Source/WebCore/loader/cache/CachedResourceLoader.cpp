@@ -484,10 +484,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         m_validatedURLs.add(request.resourceRequest().url());
 
     ASSERT(resource->url() == url.string());
-
-    if (sessionID() != SessionID::bypassCacheSessionID())
-        m_documentResources.set(resource->url(), resource);
-
+    m_documentResources.set(resource->url(), resource);
     return resource;
 }
 
@@ -499,7 +496,6 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(co
     ASSERT(resource->canUseCacheValidator());
     ASSERT(!resource->resourceToRevalidate());
     ASSERT(resource->sessionID() == sessionID());
-    ASSERT(sessionID() != SessionID::bypassCacheSessionID());
 
     // Copy the URL out of the resource to be revalidated in case it gets deleted by the remove() call below.
     String url = resource->url();

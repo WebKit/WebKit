@@ -1520,9 +1520,6 @@ SessionID Page::sessionID() const
     if (settings().privateBrowsingEnabled())
         return SessionID::legacyPrivateSessionID();
 
-    if (!settings().usesMemoryCache())
-        return SessionID::bypassCacheSessionID();
-
     return SessionID::defaultSessionID();
 }
 

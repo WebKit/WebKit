@@ -110,9 +110,6 @@ bool MemoryCache::add(CachedResource* resource)
     if (disabled())
         return false;
 
-    if (resource->sessionID() == SessionID::bypassCacheSessionID())
-        return false;
-
     ASSERT(WTF::isMainThread());
 
     CachedResourceMap& resources = getSessionMap(resource->sessionID());

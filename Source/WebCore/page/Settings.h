@@ -181,10 +181,7 @@ public:
 
     void setUsesPageCache(bool);
     bool usesPageCache() const { return m_usesPageCache; }
-
-    void setUsesMemoryCache(bool usesMemoryCache) { m_usesMemoryCache = usesMemoryCache; }
-    bool usesMemoryCache() const { return m_usesMemoryCache; }
-
+        
     void setFontRenderingMode(FontRenderingMode mode);
     FontRenderingMode fontRenderingMode() const;
 
@@ -310,7 +307,6 @@ private:
     bool m_isScriptEnabled : 1;
     bool m_needsAdobeFrameReloadingQuirk : 1;
     bool m_usesPageCache : 1;
-    bool m_usesMemoryCache : 1;
     unsigned m_fontRenderingMode : 1;
     bool m_showTiledScrollingIndicator : 1;
     bool m_tiledBackingStoreEnabled : 1;
