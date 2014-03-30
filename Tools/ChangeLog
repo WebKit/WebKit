@@ -1,3 +1,10 @@
+2014-03-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Update WebKit1.StringTruncator for Mountain Lion.
+
+        * TestWebKitAPI/Tests/mac/StringTruncator.mm: Looks like one subtest was failing
+        due to different font metrics on 10.8.
+
 2014-03-28  Darin Adler  <darin@apple.com>
 
         Fix recently-introduced off-by-one error in centerTruncateToBuffer
