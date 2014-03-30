@@ -39,7 +39,11 @@ namespace JSC {
 
 class RegisterSet {
 public:
-    RegisterSet() { }
+    template<typename... Regs>
+    explicit RegisterSet(Regs... regs)
+    {
+        setMany(regs...);
+    }
     
     static RegisterSet stackRegisters();
     static RegisterSet reservedHardwareRegisters();
@@ -55,7 +59,7 @@ public:
         ASSERT(!!reg);
         m_vector.set(reg.index(), value);
     }
-
+    
     void set(JSValueRegs regs)
     {
         if (regs.tagGPR() != InvalidGPRReg)
@@ -105,6 +109,16 @@ public:
     unsigned hash() const { return m_vector.hash(); }
     
 private:
+    void setAny(Reg reg) { set(reg); }
+    void setAny(const RegisterSet& set) { merge(set); }
+    void setMany() { }
+    template<typename RegType, typename... Regs>
+    void setMany(RegType reg, Regs... regs)
+    {
+        setAny(reg);
+        setMany(regs...);
+    }
+
     BitVector m_vector;
 };
 

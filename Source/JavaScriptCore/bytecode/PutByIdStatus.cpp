@@ -238,7 +238,10 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, CodeBlock* dfg
             result = computeForStubInfo(locker, dfgBlock, dfgMap.get(codeOrigin), uid);
         }
         
-        if (result.isSet())
+        // We use TakesSlowPath in some cases where the stub was unset. That's weird and
+        // it would be better not to do that. But it means that we have to defend
+        // ourselves here.
+        if (result.isSimple())
             return result;
     }
 #else

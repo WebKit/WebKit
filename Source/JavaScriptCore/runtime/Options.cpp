@@ -206,7 +206,7 @@ static void recomputeDependentOptions()
 #if !ENABLE(FTL_JIT)
     Options::useFTLJIT() = false;
 #endif
-    
+
     if (Options::showDisassembly()
         || Options::showDFGDisassembly()
         || Options::showFTLDisassembly()

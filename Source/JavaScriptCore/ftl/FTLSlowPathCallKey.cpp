@@ -32,7 +32,7 @@ namespace JSC { namespace FTL {
 
 void SlowPathCallKey::dump(PrintStream& out) const
 {
-    out.print("<usedRegisters = ", m_usedRegisters, ", offset = ", m_offset, ", callTarget = ", RawPointer(m_callTarget), ">");
+    out.print("<usedRegisters = ", m_usedRegisters, ", offset = ", m_offset, ", callTarget = ", RawPointer(m_callTarget), ", argumentRegisters = ", m_argumentRegisters, ">");
 }
 
 } } // namespace JSC::FTL

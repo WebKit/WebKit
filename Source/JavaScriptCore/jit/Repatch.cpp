@@ -490,6 +490,9 @@ static void generateGetByIdStub(
 
 static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
+    if (Options::forceICFailure())
+        return false;
+    
     // FIXME: Write a test that proves we need to check for recursion here just
     // like the interpreter does, then add a check for recursion.
 
@@ -1110,6 +1113,9 @@ static void emitCustomSetterStub(ExecState* exec, const PutPropertySlot& slot,
 
 static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier& ident, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
 {
+    if (Options::forceICFailure())
+        return false;
+    
     CodeBlock* codeBlock = exec->codeBlock();
     VM* vm = &exec->vm();
 
@@ -1139,6 +1145,8 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
             
             // Skip optimizing the case where we need realloc, and the structure has
             // indexing storage.
+            // FIXME: We shouldn't skip this!  Implement it!
+            // https://bugs.webkit.org/show_bug.cgi?id=130914
             if (oldStructure->couldHaveIndexingHeader())
                 return false;
             
@@ -1340,6 +1348,9 @@ static bool tryRepatchIn(
     ExecState* exec, JSCell* base, const Identifier& ident, bool wasFound,
     const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
+    if (Options::forceICFailure())
+        return false;
+    
     if (!base->structure()->propertyAccessesAreCacheable())
         return false;
     

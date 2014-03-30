@@ -149,6 +149,44 @@ void StackMaps::Record::dump(PrintStream& out) const
         listDump(liveOuts), "])");
 }
 
+RegisterSet StackMaps::Record::locationSet() const
+{
+    RegisterSet result;
+    for (unsigned i = locations.size(); i--;) {
+        Reg reg = locations[i].dwarfReg.reg();
+        if (!reg)
+            continue;
+        result.set(reg);
+    }
+    return result;
+}
+
+RegisterSet StackMaps::Record::liveOutsSet() const
+{
+    RegisterSet result;
+    for (unsigned i = liveOuts.size(); i--;) {
+        LiveOut liveOut = liveOuts[i];
+        Reg reg = liveOut.dwarfReg.reg();
+        // FIXME: Either assert that size is not greater than sizeof(pointer), or actually
+        // save the high bits of registers.
+        // https://bugs.webkit.org/show_bug.cgi?id=130885
+        if (!reg) {
+            dataLog("Invalid liveOuts entry in: ", *this, "\n");
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        result.set(reg);
+    }
+    return result;
+}
+
+RegisterSet StackMaps::Record::usedRegisterSet() const
+{
+    RegisterSet result;
+    result.merge(locationSet());
+    result.merge(liveOutsSet());
+    return result;
+}
+
 bool StackMaps::parse(DataView* view)
 {
     ParseContext context;

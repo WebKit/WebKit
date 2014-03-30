@@ -106,6 +106,34 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
     return FINALIZE_CODE(patchBuffer, ("FTL OSR exit generation thunk"));
 }
 
+static void registerClobberCheck(AssemblyHelpers& jit, RegisterSet dontClobber)
+{
+    if (!Options::clobberAllRegsInFTLICSlowPath())
+        return;
+    
+    RegisterSet clobber = RegisterSet::allRegisters();
+    clobber.exclude(RegisterSet::reservedHardwareRegisters());
+    clobber.exclude(RegisterSet::stackRegisters());
+    clobber.exclude(RegisterSet::calleeSaveRegisters());
+    clobber.exclude(dontClobber);
+    
+    GPRReg someGPR;
+    for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
+        if (!clobber.get(reg) || !reg.isGPR())
+            continue;
+        
+        jit.move(AssemblyHelpers::TrustedImm32(0x1337beef), reg.gpr());
+        someGPR = reg.gpr();
+    }
+    
+    for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
+        if (!clobber.get(reg) || !reg.isFPR())
+            continue;
+        
+        jit.move64ToDouble(someGPR, reg.fpr());
+    }
+}
+
 MacroAssemblerCodeRef slowPathCallThunkGenerator(VM& vm, const SlowPathCallKey& key)
 {
     AssemblyHelpers jit(&vm, 0);
@@ -134,13 +162,13 @@ MacroAssemblerCodeRef slowPathCallThunkGenerator(VM& vm, const SlowPathCallKey& 
         currentOffset += sizeof(double);
     }
     
-    // FIXME: CStack - Need to do soemething like jit.emitFunctionPrologue();
     jit.preserveReturnAddressAfterCall(GPRInfo::nonArgGPR0);
     jit.storePtr(GPRInfo::nonArgGPR0, AssemblyHelpers::Address(MacroAssembler::stackPointerRegister, key.offset()));
     
+    registerClobberCheck(jit, key.argumentRegisters());
+    
     AssemblyHelpers::Call call = jit.call();
 
-    // FIXME: CStack - Need to do something like jit.emitFunctionEpilogue();
     jit.loadPtr(AssemblyHelpers::Address(MacroAssembler::stackPointerRegister, key.offset()), GPRInfo::nonPreservedNonReturnGPR);
     jit.restoreReturnAddressBeforeReturn(GPRInfo::nonPreservedNonReturnGPR);
     

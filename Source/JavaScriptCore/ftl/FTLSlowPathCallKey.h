@@ -50,20 +50,24 @@ public:
     {
     }
     
-    SlowPathCallKey(const RegisterSet& set, void* callTarget, ptrdiff_t offset)
+    SlowPathCallKey(
+        const RegisterSet& set, void* callTarget, const RegisterSet& argumentRegisters,
+        ptrdiff_t offset)
         : m_usedRegisters(set)
         , m_callTarget(callTarget)
+        , m_argumentRegisters(argumentRegisters)
         , m_offset(offset)
     {
     }
     
     const RegisterSet& usedRegisters() const { return m_usedRegisters; }
     void* callTarget() const { return m_callTarget; }
+    const RegisterSet& argumentRegisters() const { return m_argumentRegisters; }
     ptrdiff_t offset() const { return m_offset; }
     
     SlowPathCallKey withCallTarget(void* callTarget)
     {
-        return SlowPathCallKey(usedRegisters(), callTarget, offset());
+        return SlowPathCallKey(usedRegisters(), callTarget, argumentRegisters(), offset());
     }
     
     void dump(PrintStream&) const;
@@ -102,6 +106,7 @@ public:
 private:
     RegisterSet m_usedRegisters;
     void* m_callTarget;
+    RegisterSet m_argumentRegisters;
     ptrdiff_t m_offset;
 };
 

@@ -102,6 +102,7 @@ typedef OptionRange optionRange;
     v(bool, crashIfCantAllocateJITMemory, false) \
     \
     v(bool, forceDFGCodeBlockLiveness, false) \
+    v(bool, forceICFailure, false) \
     \
     v(bool, dumpGeneratedBytecodes, false) \
     v(bool, dumpBytecodeLivenessResults, false) \
@@ -157,6 +158,8 @@ typedef OptionRange optionRange;
     v(unsigned, llvmMaxStackSize, 128 * KB) \
     v(bool, llvmDisallowAVX, true) \
     v(bool, ftlCrashes, false) /* fool-proof way of checking that you ended up in the FTL. ;-) */\
+    v(bool, clobberAllRegsInFTLICSlowPath, !ASSERT_DISABLED) \
+    v(bool, assumeAllRegsInFTLICAreLive, true) \
     \
     v(bool, enableConcurrentJIT, true) \
     v(unsigned, numberOfDFGCompilerThreads, computeNumberOfWorkerThreads(2, 2) - 1) \

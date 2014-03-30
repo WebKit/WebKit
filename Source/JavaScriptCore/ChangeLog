@@ -1,3 +1,50 @@
+2014-03-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Land the stackmap register liveness glue with the uses of the liveness disabled
+        https://bugs.webkit.org/show_bug.cgi?id=130924
+
+        Reviewed by Oliver Hunt.
+        
+        Add the liveness and fix other bugs I found.
+
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::usedRegistersFor):
+        (JSC::FTL::fixFunctionBasedOnStackMaps):
+        * ftl/FTLSlowPathCall.cpp:
+        * ftl/FTLSlowPathCallKey.cpp:
+        (JSC::FTL::SlowPathCallKey::dump):
+        * ftl/FTLSlowPathCallKey.h:
+        (JSC::FTL::SlowPathCallKey::SlowPathCallKey):
+        (JSC::FTL::SlowPathCallKey::argumentRegisters):
+        (JSC::FTL::SlowPathCallKey::withCallTarget):
+        * ftl/FTLStackMaps.cpp:
+        (JSC::FTL::StackMaps::Record::locationSet):
+        (JSC::FTL::StackMaps::Record::liveOutsSet):
+        (JSC::FTL::StackMaps::Record::usedRegisterSet):
+        * ftl/FTLStackMaps.h:
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::registerClobberCheck):
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::stackRegisters):
+        (JSC::RegisterSet::reservedHardwareRegisters):
+        (JSC::RegisterSet::runtimeRegisters):
+        (JSC::RegisterSet::specialRegisters):
+        (JSC::RegisterSet::dump):
+        * jit/RegisterSet.h:
+        (JSC::RegisterSet::RegisterSet):
+        (JSC::RegisterSet::setAny):
+        (JSC::RegisterSet::setMany):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::tryCachePutByID):
+        (JSC::tryRepatchIn):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+
 2014-03-28  Mark Lam  <mark.lam@apple.com>
 
         mandreel throws a checksum error on 32-bit x86.

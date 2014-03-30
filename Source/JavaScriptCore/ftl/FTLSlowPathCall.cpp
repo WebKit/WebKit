@@ -67,7 +67,8 @@ public:
             (std::max(m_numArgs, NUMBER_OF_ARGUMENT_REGISTERS) - NUMBER_OF_ARGUMENT_REGISTERS) * wordSize;
         
         for (unsigned i = std::min(NUMBER_OF_ARGUMENT_REGISTERS, numArgs); i--;)
-            m_callingConventionRegisters.set(GPRInfo::toArgumentRegister(i));
+            m_argumentRegisters.set(GPRInfo::toArgumentRegister(i));
+        m_callingConventionRegisters.merge(m_argumentRegisters);
         if (returnRegister != InvalidGPRReg)
             m_callingConventionRegisters.set(GPRInfo::returnValueGPR);
         m_callingConventionRegisters.filter(m_usedRegisters);
@@ -84,9 +85,7 @@ public:
             stackBytesNeededForReturnAddress +
             (m_usedRegisters.numberOfSetRegisters() - numberOfCallingConventionRegisters) * wordSize;
         
-        size_t stackAlignment = 16;
-        
-        m_stackBytesNeeded = (m_stackBytesNeeded + stackAlignment - 1) & ~(stackAlignment - 1);
+        m_stackBytesNeeded = (m_stackBytesNeeded + stackAlignmentBytes() - 1) & ~(stackAlignmentBytes() - 1);
         
         m_jit.subPtr(CCallHelpers::TrustedImm32(m_stackBytesNeeded), CCallHelpers::stackPointerRegister);
         
@@ -133,7 +132,7 @@ public:
     
     SlowPathCallKey keyWithTarget(void* callTarget) const
     {
-        return SlowPathCallKey(usedRegisters(), callTarget, offset());
+        return SlowPathCallKey(usedRegisters(), callTarget, m_argumentRegisters, offset());
     }
     
     MacroAssembler::Call makeCall(void* callTarget, MacroAssembler::JumpList* exceptionTarget)
@@ -149,6 +148,7 @@ public:
 private:
     State& m_state;
     RegisterSet m_usedRegisters;
+    RegisterSet m_argumentRegisters;
     RegisterSet m_callingConventionRegisters;
     CCallHelpers& m_jit;
     unsigned m_numArgs;

@@ -163,6 +163,13 @@ void generateICFastPath(
     }
 }
 
+static RegisterSet usedRegistersFor(const StackMaps::Record& record)
+{
+    if (Options::assumeAllRegsInFTLICAreLive())
+        return RegisterSet::allRegisters();
+    return record.usedRegisterSet();
+}
+
 static void fixFunctionBasedOnStackMaps(
     State& state, CodeBlock* codeBlock, JITCode* jitCode, GeneratedFunction generatedFunction,
     StackMaps::RecordMap& recordMap, bool didSeeUnwindInfo)
@@ -300,9 +307,7 @@ static void fixFunctionBasedOnStackMaps(
             for (unsigned i = 0; i < iter->value.size(); ++i) {
                 StackMaps::Record& record = iter->value[i];
             
-                // FIXME: Use the liveness information that LLVM gives us.
-                // https://bugs.webkit.org/show_bug.cgi?id=130791
-                RegisterSet usedRegisters = RegisterSet::allRegisters();
+                RegisterSet usedRegisters = usedRegistersFor(record);
                 
                 GPRReg result = record.locations[0].directGPR();
                 GPRReg base = record.locations[1].directGPR();
@@ -339,9 +344,7 @@ static void fixFunctionBasedOnStackMaps(
             for (unsigned i = 0; i < iter->value.size(); ++i) {
                 StackMaps::Record& record = iter->value[i];
                 
-                // FIXME: Use the liveness information that LLVM gives us.
-                // https://bugs.webkit.org/show_bug.cgi?id=130791
-                RegisterSet usedRegisters = RegisterSet::allRegisters();
+                RegisterSet usedRegisters = usedRegistersFor(record);
                 
                 GPRReg base = record.locations[0].directGPR();
                 GPRReg value = record.locations[1].directGPR();

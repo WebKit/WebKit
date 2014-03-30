@@ -250,6 +250,10 @@ def prefixCommand(prefix)
     "awk " + Shellwords.shellescape("{ printf #{(prefix + ': ').inspect}; print }")
 end
 
+def redirectAndPrefixCommand(prefix)
+    prefixCommand(prefix) + " 2>&1"
+end
+
 def pipeAndPrefixCommand(outputFilename, prefix)
     "tee " + Shellwords.shellescape(outputFilename.to_s) + " | " + prefixCommand(prefix)
 end
@@ -276,7 +280,7 @@ def simpleErrorHandler
         | outp, plan |
         outp.puts "if test -e #{plan.failFile}"
         outp.puts "then"
-        outp.puts "    (echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + prefixCommand(plan.name) + "1>&2"
+        outp.puts "    (echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
         outp.puts "else"
         outp.puts "    " + plan.successCommand
@@ -293,7 +297,7 @@ def diffErrorHandler(expectedFilename)
         
         outp.puts "if test -e #{plan.failFile}"
         outp.puts "then"
-        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + prefixCommand(plan.name) + "1>&2"
+        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
         outp.puts "elif test -e ../#{Shellwords.shellescape(expectedFilename)}"
         outp.puts "then"
@@ -302,11 +306,11 @@ def diffErrorHandler(expectedFilename)
         outp.puts "    then"
         outp.puts "    " + plan.successCommand
         outp.puts "    else"
-        outp.puts "        (echo \"DIFF FAILURE!\" && cat #{diffFilename}) | " + prefixCommand(plan.name) + "1>&2"
+        outp.puts "        (echo \"DIFF FAILURE!\" && cat #{diffFilename}) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "        " + plan.failCommand
         outp.puts "    fi"
         outp.puts "else"
-        outp.puts "    (echo \"NO EXPECTATION!\" && cat #{outputFilename}) | " + prefixCommand(plan.name) + "1>&2"
+        outp.puts "    (echo \"NO EXPECTATION!\" && cat #{outputFilename}) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
         outp.puts "fi"
     }
@@ -321,11 +325,11 @@ def mozillaErrorHandler
 
         outp.puts "if test -e #{plan.failFile}"
         outp.puts "then"
-        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + prefixCommand(plan.name) + "1>&2"
+        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
         outp.puts "elif grep -i -q failed! #{outputFilename}"
         outp.puts "then"
-        outp.puts "    (echo Detected failures: && cat #{outputFilename}) | " + prefixCommand(plan.name) + "1>&2"
+        outp.puts "    (echo Detected failures: && cat #{outputFilename}) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
         outp.puts "else"
         outp.puts "    " + plan.successCommand
@@ -347,7 +351,7 @@ def mozillaFailErrorHandler
         outp.puts "then"
         outp.puts "    " + plan.successCommand
         outp.puts "else"
-        outp.puts "    (echo NOTICE: You made this test pass, but it was expected to fail) | " + prefixCommand(plan.name) + "1>&2"
+        outp.puts "    (echo NOTICE: You made this test pass, but it was expected to fail) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
         outp.puts "fi"
     }
@@ -366,17 +370,17 @@ def mozillaExit3ErrorHandler
         outp.puts "    then"
         outp.puts "        if grep -i -q failed! #{outputFilename}"
         outp.puts "        then"
-        outp.puts "            (echo Detected failures: && cat #{outputFilename}) | " + prefixCommand(plan.name) + "1>&2"
+        outp.puts "            (echo Detected failures: && cat #{outputFilename}) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "            " + plan.failCommand
         outp.puts "        else"
         outp.puts "            " + plan.successCommand
         outp.puts "        fi"
         outp.puts "    else"
-        outp.puts "        (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + prefixCommand(plan.name) + "1>&2"
+        outp.puts "        (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "        " + plan.failCommand
         outp.puts "    fi"
         outp.puts "else"
-        outp.puts "    (cat #{outputFilename} && echo ERROR: Test expected to fail, but returned successfully) | " + prefixCommand(plan.name) + "1>&2"
+        outp.puts "    (cat #{outputFilename} && echo ERROR: Test expected to fail, but returned successfully) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
         outp.puts "fi"
     }
@@ -610,6 +614,11 @@ def defaultQuickRun
     runFTLNoCJIT
 end
 
+def defaultFTLSpotCheck
+    defaultQuickRun
+    runFTLNoSimpleOpt
+end
+
 # This is expected to not do eager runs because eager runs can have a lot of recompilations
 # for reasons that don't arise in the real world. It's used for tests that assert convergence
 # by counting recompilations.
@@ -639,7 +648,7 @@ def runLayoutTest(kind, *options)
     prepareExtraRelativeFiles(["../#{testName}-expected.txt"], $benchmarkDirectory)
     prepareExtraAbsoluteFiles(LAYOUTTESTS_PATH, ["resources/standalone-pre.js", "resources/standalone-post.js"])
 
-    args = [pathToVM.to_s] + options +
+    args = [pathToVM.to_s] + NO_FTL_OPTIONS + options +
         [(Pathname.new("resources") + "standalone-pre.js").to_s,
          $benchmark.to_s,
          (Pathname.new("resources") + "standalone-post.js").to_s]
@@ -721,7 +730,7 @@ def runMozillaTest(kind, mode, extraFiles, *options)
         kind = "mozilla"
     end
     prepareExtraRelativeFiles(extraFiles.map{|v| (Pathname("..") + v).to_s}, $collection)
-    args = [pathToVM.to_s] + options + extraFiles.map{|v| v.to_s} + [$benchmark.to_s]
+    args = [pathToVM.to_s] + NO_FTL_OPTIONS + options + extraFiles.map{|v| v.to_s} + [$benchmark.to_s]
     case mode
     when :normal
         errorHandler = mozillaErrorHandler

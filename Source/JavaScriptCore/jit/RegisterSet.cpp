@@ -31,43 +31,39 @@
 #include "GPRInfo.h"
 #include "MacroAssembler.h"
 #include "JSCInlines.h"
+#include <wtf/CommaPrinter.h>
 
 namespace JSC {
 
 RegisterSet RegisterSet::stackRegisters()
 {
-    RegisterSet result;
-    result.set(MacroAssembler::stackPointerRegister);
-    result.set(MacroAssembler::framePointerRegister);
-    return result;
+    return RegisterSet(
+        MacroAssembler::stackPointerRegister,
+        MacroAssembler::framePointerRegister);
 }
 
 RegisterSet RegisterSet::reservedHardwareRegisters()
 {
-    RegisterSet result;
 #if CPU(ARM64)
-    result.set(ARM64Registers::lr);
+    return RegisterSet(ARM64Registers::lr);
+#else
+    return RegisterSet();
 #endif
-    return result;
 }
 
 RegisterSet RegisterSet::runtimeRegisters()
 {
-    RegisterSet result;
 #if USE(JSVALUE64)
-    result.set(GPRInfo::tagTypeNumberRegister);
-    result.set(GPRInfo::tagMaskRegister);
+    return RegisterSet(GPRInfo::tagTypeNumberRegister, GPRInfo::tagMaskRegister);
+#else
+    return RegisterSet();
 #endif
-    return result;
 }
 
 RegisterSet RegisterSet::specialRegisters()
 {
-    RegisterSet result;
-    result.merge(stackRegisters());
-    result.merge(reservedHardwareRegisters());
-    result.merge(runtimeRegisters());
-    return result;
+    return RegisterSet(
+        stackRegisters(), reservedHardwareRegisters(), runtimeRegisters());
 }
 
 RegisterSet RegisterSet::calleeSaveRegisters()
@@ -155,7 +151,13 @@ size_t RegisterSet::numberOfSetFPRs() const
 
 void RegisterSet::dump(PrintStream& out) const
 {
-    m_vector.dump(out);
+    CommaPrinter comma;
+    out.print("[");
+    for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
+        if (get(reg))
+            out.print(comma, reg);
+    }
+    out.print("]");
 }
 
 } // namespace JSC

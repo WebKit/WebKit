@@ -31,6 +31,7 @@
 #include "DataView.h"
 #include "FTLDWARFRegister.h"
 #include "GPRInfo.h"
+#include "RegisterSet.h"
 #include <wtf/HashMap.h>
 
 namespace JSC {
@@ -106,6 +107,10 @@ struct StackMaps {
         
         bool parse(ParseContext&);
         void dump(PrintStream&) const;
+        
+        RegisterSet liveOutsSet() const;
+        RegisterSet locationSet() const;
+        RegisterSet usedRegisterSet() const;
     };
 
     unsigned version;
