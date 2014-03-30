@@ -118,10 +118,11 @@ public:
     virtual void invalidateCache(Document&) const;
 
     // For CollectionIndexCache
-    Element* collectionFirst() const;
+    Element* collectionBegin() const;
     Element* collectionLast() const;
-    Element* collectionTraverseForward(Element&, unsigned count, unsigned& traversedCount) const;
-    Element* collectionTraverseBackward(Element&, unsigned count) const;
+    Element* collectionEnd() const { return nullptr; }
+    void collectionTraverseForward(Element*&, unsigned count, unsigned& traversedCount) const;
+    void collectionTraverseBackward(Element*&, unsigned count) const;
     bool collectionCanTraverseBackward() const { return !m_usesCustomForwardOnlyTraversal; }
     void willValidateIndexCache() const { document().registerCollection(const_cast<HTMLCollection&>(*this)); }
 
@@ -164,7 +165,7 @@ private:
 
     Ref<ContainerNode> m_ownerNode;
 
-    mutable CollectionIndexCache<HTMLCollection, Element> m_indexCache;
+    mutable CollectionIndexCache<HTMLCollection, Element*> m_indexCache;
     mutable std::unique_ptr<CollectionNamedElementCache> m_namedElementCache;
 
     const unsigned m_collectionType : 5;

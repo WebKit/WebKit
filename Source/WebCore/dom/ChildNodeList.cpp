@@ -35,6 +35,7 @@ EmptyNodeList::~EmptyNodeList()
 
 ChildNodeList::ChildNodeList(ContainerNode& parent)
     : m_parent(parent)
+    , m_indexCache(*this)
 {
 }
 
@@ -53,7 +54,7 @@ Node* ChildNodeList::item(unsigned index) const
     return m_indexCache.nodeAt(*this, index);
 }
 
-Node* ChildNodeList::collectionFirst() const
+Node* ChildNodeList::collectionBegin() const
 {
     return m_parent->firstChild();
 }
@@ -63,25 +64,21 @@ Node* ChildNodeList::collectionLast() const
     return m_parent->lastChild();
 }
 
-Node* ChildNodeList::collectionTraverseForward(Node& current, unsigned count, unsigned& traversedCount) const
+void ChildNodeList::collectionTraverseForward(Node*& current, unsigned count, unsigned& traversedCount) const
 {
     ASSERT(count);
-    Node* child = &current;
     for (traversedCount = 0; traversedCount < count; ++traversedCount) {
-        child = child->nextSibling();
-        if (!child)
-            return nullptr;
+        current = current->nextSibling();
+        if (!current)
+            return;
     }
-    return child;
 }
 
-Node* ChildNodeList::collectionTraverseBackward(Node& current, unsigned count) const
+void ChildNodeList::collectionTraverseBackward(Node*& current, unsigned count) const
 {
     ASSERT(count);
-    Node* child = &current;
-    for (; count && child ; --count)
-        child = child->previousSibling();
-    return child;
+    for (; count && current ; --count)
+        current = current->previousSibling();
 }
 
 Node* ChildNodeList::namedItem(const AtomicString& name) const
@@ -103,7 +100,7 @@ Node* ChildNodeList::namedItem(const AtomicString& name) const
 
 void ChildNodeList::invalidateCache()
 {
-    m_indexCache.invalidate();
+    m_indexCache.invalidate(*this);
 }
 
 } // namespace WebCore

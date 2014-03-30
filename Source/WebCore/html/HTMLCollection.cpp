@@ -133,6 +133,7 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
 
 HTMLCollection::HTMLCollection(ContainerNode& ownerNode, CollectionType type, ElementTraversalType traversalType)
     : m_ownerNode(ownerNode)
+    , m_indexCache(*this)
     , m_collectionType(type)
     , m_invalidationType(invalidationTypeExcludingIdAndNameAttributes(type))
     , m_rootType(rootTypeFromCollectionType(type))
@@ -151,7 +152,7 @@ PassRefPtr<HTMLCollection> HTMLCollection::create(ContainerNode& base, Collectio
 
 HTMLCollection::~HTMLCollection()
 {
-    if (m_indexCache.hasValidCache())
+    if (m_indexCache.hasValidCache(*this))
         document().unregisterCollection(*this);
     if (hasNamedElementCache())
         document().collectionWillClearIdNameMap(*this);
@@ -330,7 +331,7 @@ inline Element* HTMLCollection::traverseForward(Element& current, unsigned count
     return element;
 }
 
-Element* HTMLCollection::collectionFirst() const
+Element* HTMLCollection::collectionBegin() const
 {
     return firstElement(rootNode());
 }
@@ -343,31 +344,29 @@ Element* HTMLCollection::collectionLast() const
     return iterateForPreviousElement(last);
 }
 
-Element* HTMLCollection::collectionTraverseForward(Element& current, unsigned count, unsigned& traversedCount) const
+void HTMLCollection::collectionTraverseForward(Element*& current, unsigned count, unsigned& traversedCount) const
 {
-    return traverseForward(current, count, traversedCount, rootNode());
+    current = traverseForward(*current, count, traversedCount, rootNode());
 }
 
-Element* HTMLCollection::collectionTraverseBackward(Element& current, unsigned count) const
+void HTMLCollection::collectionTraverseBackward(Element*& current, unsigned count) const
 {
     // FIXME: This should be optimized similarly to the forward case.
     auto& root = rootNode();
-    Element* element = &current;
     if (m_shouldOnlyIncludeDirectChildren) {
-        for (; count && element ; --count)
-            element = iterateForPreviousElement(ElementTraversal::previousSibling(element));
-        return element;
+        for (; count && current ; --count)
+            current = iterateForPreviousElement(ElementTraversal::previousSibling(current));
+        return;
     }
-    for (; count && element ; --count)
-        element = iterateForPreviousElement(ElementTraversal::previous(element, &root));
-    return element;
+    for (; count && current ; --count)
+        current = iterateForPreviousElement(ElementTraversal::previous(current, &root));
 }
 
 void HTMLCollection::invalidateCache(Document& document) const
 {
-    if (m_indexCache.hasValidCache()) {
+    if (m_indexCache.hasValidCache(*this)) {
         document.unregisterCollection(const_cast<HTMLCollection&>(*this));
-        m_indexCache.invalidate();
+        m_indexCache.invalidate(*this);
     }
     if (hasNamedElementCache())
         invalidateNamedElementCache(document);

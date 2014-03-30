@@ -39,6 +39,7 @@ public:
     explicit ElementDescendantIterator(Element* current);
 
     ElementDescendantIterator& operator++();
+    ElementDescendantIterator& operator--();
 
     Element& operator*();
     Element* operator->();
@@ -82,6 +83,7 @@ public:
     ElementDescendantIteratorAdapter(ContainerNode& root);
     ElementDescendantIterator begin();
     ElementDescendantIterator end();
+    ElementDescendantIterator last();
 
 private:
     ContainerNode& m_root;
@@ -92,6 +94,7 @@ public:
     ElementDescendantConstIteratorAdapter(const ContainerNode& root);
     ElementDescendantConstIterator begin() const;
     ElementDescendantConstIterator end() const;
+    ElementDescendantConstIterator last() const;
 
 private:
     const ContainerNode& m_root;
@@ -134,6 +137,40 @@ ALWAYS_INLINE ElementDescendantIterator& ElementDescendantIterator::operator++()
     }
 
     m_current = m_ancestorSiblingStack.takeLast();
+
+#if !ASSERT_DISABLED
+    // Drop the assertion when the iterator reaches the end.
+    if (!m_current)
+        m_assertions.dropEventDispatchAssertion();
+#endif
+
+    return *this;
+}
+
+ALWAYS_INLINE ElementDescendantIterator& ElementDescendantIterator::operator--()
+{
+    ASSERT(m_current);
+    ASSERT(!m_assertions.domTreeHasMutated());
+
+    Element* previousSibling = ElementTraversal::previousSibling(m_current);
+
+    if (!previousSibling) {
+        m_current = m_current->parentElement();
+        // The stack optimizes for forward traversal only, this just maintains consistency.
+        if (m_current->nextSibling() == m_ancestorSiblingStack.last())
+            m_ancestorSiblingStack.removeLast();
+        return *this;
+    }
+
+    Element* deepestSibling = previousSibling;
+    while (Element* lastChild = ElementTraversal::lastChild(deepestSibling))
+        deepestSibling = lastChild;
+    ASSERT(deepestSibling);
+
+    if (deepestSibling != previousSibling)
+        m_ancestorSiblingStack.append(m_current);
+
+    m_current = deepestSibling;
 
 #if !ASSERT_DISABLED
     // Drop the assertion when the iterator reaches the end.
@@ -255,6 +292,11 @@ inline ElementDescendantIterator ElementDescendantIteratorAdapter::end()
     return ElementDescendantIterator();
 }
 
+inline ElementDescendantIterator ElementDescendantIteratorAdapter::last()
+{
+    return ElementDescendantIterator(ElementTraversal::lastWithin(&m_root));
+}
+
 // ElementDescendantConstIteratorAdapter
 
 inline ElementDescendantConstIteratorAdapter::ElementDescendantConstIteratorAdapter(const ContainerNode& root)
@@ -272,6 +314,11 @@ inline ElementDescendantConstIterator ElementDescendantConstIteratorAdapter::end
     return ElementDescendantConstIterator();
 }
 
+inline ElementDescendantConstIterator ElementDescendantConstIteratorAdapter::last() const
+{
+    return ElementDescendantConstIterator(ElementTraversal::lastWithin(&m_root));
+}
+
 // Standalone functions
 
 inline ElementDescendantIteratorAdapter elementDescendants(ContainerNode& root)
@@ -286,4 +333,12 @@ inline ElementDescendantConstIteratorAdapter elementDescendants(const ContainerN
 
 }
 
+namespace std {
+template <> struct iterator_traits<WebCore::ElementDescendantIterator> {
+    typedef WebCore::Element value_type;
+};
+template <> struct iterator_traits<WebCore::ElementDescendantConstIterator> {
+    typedef const WebCore::Element value_type;
+};
+}
 #endif
