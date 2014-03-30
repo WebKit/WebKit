@@ -1350,7 +1350,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
 
         // Only the root <svg> element in an SVG document fragment tree honors css position
         if (!(e->hasTagName(SVGNames::svgTag) && e->parentNode() && !e->parentNode()->isSVGElement()))
-            style.setPosition(RenderStyle::initialPosition());
+            style.setPosition(RenderStyle::NonInheritedFlags::initialPosition());
 
         // RenderSVGRoot handles zooming for the whole SVG subtree, so foreignObject content should
         // not be scaled again.

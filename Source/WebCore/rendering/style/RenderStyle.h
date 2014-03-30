@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -134,6 +134,260 @@ class RenderStyle: public RefCounted<RenderStyle> {
     friend class RenderSVGResource; // FIXME: Needs to alter the visited state by hand. Should clean the SVG code up and move it into RenderStyle perhaps.
     friend class RenderTreeAsText; // FIXME: Only needed so the render tree can keep lying and dump the wrong colors.  Rebaselining would allow this to be yanked.
     friend class StyleResolver; // Sets members directly.
+
+public:
+    struct NonInheritedFlags {
+        NonInheritedFlags()
+        {
+            // The default values should all be zero.
+            ASSERT(!initialOverflowX());
+            ASSERT(!initialOverflowY());
+            ASSERT(!initialClear());
+            ASSERT(!initialDisplay());
+            ASSERT(!initialUnicodeBidi());
+            ASSERT(!initialPosition());
+            ASSERT(!initialVerticalAlign());
+            ASSERT(!initialFloating());
+            ASSERT(!initialTableLayout());
+
+            m_flags = 0;
+        }
+
+        bool operator==(const NonInheritedFlags& other) const
+        {
+            return m_flags == other.m_flags;
+        }
+
+        bool operator!=(const NonInheritedFlags& other) const { return !(*this == other); }
+
+        void copyNonInheritedFrom(const NonInheritedFlags& other)
+        {
+            // Only a subset is copied because NonInheritedFlags contains a bunch of stuff other than real style data.
+            uint64_t nonInheritedMask = overflowMask << overflowXOffset
+                | overflowMask << overflowYOffset
+                | clearMask << clearOffset
+                | displayMask << effectiveDisplayOffset
+                | positionMask << positionOffset
+                | displayMask << originalDisplayOffset
+                | unicodeBidiMask << unicodeBidiOffset
+                | verticalAlignMask << verticalAlignOffset
+                | floatingMask << floatingOffset
+                | pageBreakMask << pageBreakInsideOffset
+                | pageBreakMask << pageBreakBeforeOffset
+                | pageBreakMask << pageBreakAfterOffset
+                | oneBitMask << explicitInheritanceOffset
+                | tableLayoutBitMask << tableLayoutOffset;
+
+            m_flags = (m_flags & ~nonInheritedMask) | (other.m_flags & nonInheritedMask);
+        }
+
+        EOverflow overflowX() const { return static_cast<EOverflow>(getValue(overflowMask, overflowXOffset)); }
+        void setOverflowX(EOverflow overflowX) { updateValue(overflowX, overflowMask, overflowXOffset); }
+
+        EOverflow overflowY() const { return static_cast<EOverflow>(getValue(overflowMask, overflowYOffset)); }
+        void setOverflowY(EOverflow overflowY) { updateValue(overflowY, overflowMask, overflowYOffset); }
+
+        EClear clear() const { return static_cast<EClear>(getValue(clearMask, clearOffset)); }
+        void setClear(EClear clear) { updateValue(clear, clearMask, clearOffset); }
+
+        EDisplay effectiveDisplay() const { return static_cast<EDisplay>(getValue(displayMask, effectiveDisplayOffset)); }
+        void setEffectiveDisplay(EDisplay effectiveDisplay) { updateValue(effectiveDisplay, displayMask, effectiveDisplayOffset); }
+
+        EPosition position() const { return static_cast<EPosition>(getValue(positionMask, positionOffset)); }
+        void setPosition(EPosition position) { updateValue(position, positionMask, positionOffset); }
+
+        EDisplay originalDisplay() const { return static_cast<EDisplay>(getValue(displayMask, originalDisplayOffset)); }
+        void setOriginalDisplay(EDisplay originalDisplay) { updateValue(originalDisplay, displayMask, originalDisplayOffset); }
+
+        EUnicodeBidi unicodeBidi() const { return static_cast<EUnicodeBidi>(getValue(unicodeBidiMask, unicodeBidiOffset)); }
+        void setUnicodeBidi(EUnicodeBidi unicodeBidi) { updateValue(unicodeBidi, unicodeBidiMask, unicodeBidiOffset); }
+
+        EVerticalAlign verticalAlign() const { return static_cast<EVerticalAlign>(getValue(verticalAlignMask, verticalAlignOffset)); }
+        void setVerticalAlign(EVerticalAlign verticalAlign) { updateValue(verticalAlign, verticalAlignMask, verticalAlignOffset); }
+
+        bool hasExplicitlyInheritedProperties() const { return getBoolean(explicitInheritanceOffset); }
+        void setHasExplicitlyInheritedProperties(bool value) { updateBoolean(value, explicitInheritanceOffset); }
+
+        bool isFloating() const { return floating() != NoFloat; }
+        EFloat floating() const { return static_cast<EFloat>(getValue(floatingMask, floatingOffset)); }
+        void setFloating(EFloat floating) { updateValue(floating, floatingMask, floatingOffset); }
+
+        // For valid values of page-break-inside see http://www.w3.org/TR/CSS21/page.html#page-break-props
+        EPageBreak pageBreakInside() const { return static_cast<EPageBreak>(getValue(pageBreakMask, pageBreakInsideOffset)); }
+        void setPageBreakInside(EPageBreak pageBreakInside) { ASSERT(pageBreakInside == PBAUTO || pageBreakInside == PBAVOID); updateValue(pageBreakInside, pageBreakMask, pageBreakInsideOffset); }
+
+        EPageBreak pageBreakBefore() const { return static_cast<EPageBreak>(getValue(pageBreakMask, pageBreakBeforeOffset)); }
+        void setPageBreakBefore(EPageBreak pageBreakBefore) { updateValue(pageBreakBefore, pageBreakMask, pageBreakBeforeOffset); }
+
+        EPageBreak pageBreakAfter() const { return static_cast<EPageBreak>(getValue(pageBreakMask, pageBreakAfterOffset)); }
+        void setPageBreakAfter(EPageBreak pageBreakAfter) { updateValue(pageBreakAfter, pageBreakMask, pageBreakAfterOffset); }
+
+        bool hasAnyPublicPseudoStyles() const { return PUBLIC_PSEUDOID_MASK & getValue(pseudoBitsMask, pseudoBitsOffset); }
+        bool hasPseudoStyle(PseudoId pseudo) const
+        {
+            ASSERT(pseudo > NOPSEUDO);
+            ASSERT(pseudo < FIRST_INTERNAL_PSEUDOID);
+            return (oneBitMask << (pseudoBitsOffset - 1 + pseudo)) & m_flags;
+        }
+        void setHasPseudoStyle(PseudoId pseudo)
+        {
+            ASSERT(pseudo > NOPSEUDO);
+            ASSERT(pseudo < FIRST_INTERNAL_PSEUDOID);
+            m_flags |= oneBitMask << (pseudoBitsOffset - 1 + pseudo);
+        }
+
+        ETableLayout tableLayout() const { return static_cast<ETableLayout>(getValue(tableLayoutBitMask, tableLayoutOffset)); }
+        void setTableLayout(ETableLayout tableLayout) { updateValue(tableLayout, tableLayoutBitMask, tableLayoutOffset); }
+
+        PseudoId styleType() const { return static_cast<PseudoId>(getValue(styleTypeMask, styleTypeOffset)); }
+        void setStyleType(PseudoId styleType) { updateValue(styleType, styleTypeMask, styleTypeOffset); }
+
+        bool isUnique() const { return getBoolean(isUniqueOffset); }
+        void setIsUnique() { updateBoolean(true, isUniqueOffset); }
+
+        bool emptyState() const { return getBoolean(emptyStateOffset);  }
+        void setEmptyState(bool value) { updateBoolean(value, emptyStateOffset); }
+
+        bool firstChildState() const { return getBoolean(firstChildStateOffset);  }
+        void setFirstChildState(bool value) { updateBoolean(value, firstChildStateOffset); }
+
+        bool lastChildState() const { return getBoolean(lastChildStateOffset);  }
+        void setLastChildState(bool value) { updateBoolean(value, lastChildStateOffset); }
+
+        bool affectedByHover() const { return getBoolean(affectedByHoverOffset); }
+        void setAffectedByHover(bool value) { updateBoolean(value, affectedByHoverOffset); }
+
+        bool affectedByActive() const { return getBoolean(affectedByActiveOffset); }
+        void setAffectedByActive(bool value) { updateBoolean(value, affectedByActiveOffset); }
+
+        bool affectedByDrag() const { return getBoolean(affectedByDragOffset); }
+        void setAffectedByDrag(bool value) { updateBoolean(value, affectedByDragOffset); }
+
+        bool isLink() const { return getBoolean(isLinkOffset); }
+        void setIsLink(bool value) { updateBoolean(value, isLinkOffset); }
+
+        static EOverflow initialOverflowX() { return OVISIBLE; }
+        static EOverflow initialOverflowY() { return OVISIBLE; }
+        static EClear initialClear() { return CNONE; }
+        static EDisplay initialDisplay() { return INLINE; }
+        static EUnicodeBidi initialUnicodeBidi() { return UBNormal; }
+        static EPosition initialPosition() { return StaticPosition; }
+        static EVerticalAlign initialVerticalAlign() { return BASELINE; }
+        static EFloat initialFloating() { return NoFloat; }
+        static EPageBreak initialPageBreak() { return PBAUTO; }
+        static ETableLayout initialTableLayout() { return TAUTO; }
+
+        static ptrdiff_t flagsMemoryOffset() { return OBJECT_OFFSETOF(NonInheritedFlags, m_flags); }
+        static uint8_t flagIsUnique() { return isUniqueOffset; }
+        static uint8_t flagEmptyState() { return emptyStateOffset; }
+        static uint8_t flagFirstChildState() { return firstChildStateOffset; }
+        static uint8_t flagLastChildState() { return lastChildStateOffset; }
+        static uint8_t flagAffectedByHover() { return affectedByHoverOffset; }
+        static uint8_t flagAffectedByActive() { return affectedByActiveOffset; }
+        static uint8_t flagAffectedByDrag() { return affectedByDragOffset; }
+    private:
+        void updateBoolean(bool isSet, unsigned offset)
+        {
+            if (isSet)
+                m_flags |= (oneBitMask << offset);
+            else
+                m_flags &= ~(oneBitMask << offset);
+        }
+
+        bool getBoolean(unsigned offset) const
+        {
+            return m_flags & (oneBitMask << offset);
+        }
+
+        void updateValue(uint8_t newValue, uint64_t positionIndependentMask, unsigned offset)
+        {
+            ASSERT(!(newValue & ~positionIndependentMask));
+            uint64_t positionDependentMask = positionIndependentMask << offset;
+            m_flags = (m_flags & ~positionDependentMask) | (static_cast<uint64_t>(newValue) << offset);
+        }
+
+        unsigned getValue(uint64_t positionIndependentMask, unsigned offset) const
+        {
+            return (m_flags >> offset) & positionIndependentMask;
+        }
+
+        // To type the bit mask properly on 64bits.
+        static const uint64_t oneBitMask = 0x1;
+
+        // Byte 1.
+        static const unsigned overflowBitCount = 3;
+        static const uint64_t overflowMask = (oneBitMask << overflowBitCount) - 1;
+        static const unsigned overflowXOffset = 0;
+        static const unsigned overflowYOffset = overflowXOffset + overflowBitCount;
+        static const unsigned clearBitCount = 2;
+        static const uint64_t clearMask = (oneBitMask << clearBitCount) - 1;
+        static const unsigned clearOffset = overflowYOffset + overflowBitCount;
+
+        // Byte 2.
+        static const unsigned displayBitCount = 5;
+        static const uint64_t displayMask = (oneBitMask << displayBitCount) - 1;
+        static const unsigned effectiveDisplayOffset = clearOffset + clearBitCount;
+        static const unsigned positionBitCount = 3;
+        static const uint64_t positionMask = (oneBitMask << positionBitCount) - 1;
+        static const unsigned positionOffset = effectiveDisplayOffset + displayBitCount;
+
+        // Byte 3.
+        static const unsigned originalDisplayOffset = positionOffset + positionBitCount;
+        static const unsigned unicodeBidiBitCount = 3;
+        static const uint64_t unicodeBidiMask = (oneBitMask << unicodeBidiBitCount) - 1;
+        static const unsigned unicodeBidiOffset = originalDisplayOffset + displayBitCount;
+
+        // Byte 4.
+        static const unsigned floatingBitCount = 2;
+        static const uint64_t floatingMask = (oneBitMask << floatingBitCount) - 1;
+        static const unsigned floatingOffset = unicodeBidiOffset + unicodeBidiBitCount;
+        static const unsigned pageBreakBitCount = 2;
+        static const uint64_t pageBreakMask = (oneBitMask << pageBreakBitCount) - 1;
+        static const unsigned pageBreakInsideOffset = floatingOffset + floatingBitCount;
+        static const unsigned pageBreakBeforeOffset = pageBreakInsideOffset + pageBreakBitCount;
+        static const unsigned pageBreakAfterOffset = pageBreakBeforeOffset + pageBreakBitCount;
+
+        // Byte 5.
+        static const unsigned explicitInheritanceBitCount = 1;
+        static const unsigned explicitInheritanceOffset = pageBreakAfterOffset + pageBreakBitCount;
+        static const unsigned tableLayoutBitCount = 1;
+        static const uint64_t tableLayoutBitMask = oneBitMask;
+        static const unsigned tableLayoutOffset = explicitInheritanceOffset + explicitInheritanceBitCount;
+        static const unsigned verticalAlignBitCount = 4;
+        static const unsigned verticalAlignPadding = 2;
+        static const unsigned verticalAlignAndPaddingBitCount = verticalAlignBitCount + verticalAlignPadding;
+        static const uint64_t verticalAlignMask = (oneBitMask << verticalAlignBitCount) - 1;
+        static const unsigned verticalAlignOffset = tableLayoutOffset + tableLayoutBitCount;
+
+        // Byte 6.
+        static const unsigned pseudoBitsBitCount = 7;
+        static const unsigned pseudoBitsPadding = 1;
+        static const unsigned pseudoBitsAndPaddingBitCount = pseudoBitsBitCount + pseudoBitsPadding;
+        static const uint64_t pseudoBitsMask = (oneBitMask << pseudoBitsAndPaddingBitCount) - 1;
+        static const unsigned pseudoBitsOffset = verticalAlignOffset + verticalAlignAndPaddingBitCount;
+
+        // Byte 7.
+        static const unsigned styleTypeBitCount = 6;
+        static const unsigned styleTypePadding = 2;
+        static const unsigned styleTypeAndPaddingBitCount = styleTypeBitCount + styleTypePadding;
+        static const uint64_t styleTypeMask = (oneBitMask << styleTypeAndPaddingBitCount) - 1;
+        static const unsigned styleTypeOffset = pseudoBitsOffset + pseudoBitsAndPaddingBitCount;
+
+        // Byte 8.
+        static const unsigned isUniqueOffset = styleTypeOffset + styleTypeAndPaddingBitCount;
+        static const unsigned emptyStateOffset = isUniqueOffset + 1;
+        static const unsigned firstChildStateOffset = emptyStateOffset + 1;
+        static const unsigned lastChildStateOffset = firstChildStateOffset + 1;
+        static const unsigned affectedByHoverOffset = lastChildStateOffset + 1;
+        static const unsigned affectedByActiveOffset = affectedByHoverOffset + 1;
+        static const unsigned affectedByDragOffset = affectedByActiveOffset + 1;
+        static const unsigned isLinkOffset = affectedByDragOffset + 1;
+
+        // Only 59 bits are assigned. There are 5 bits available currently used as padding to improve code generation.
+        // If you add more style bits here, you will also need to update RenderStyle::copyNonInheritedFrom().
+        uint64_t m_flags;
+    };
+
 protected:
 
     // non-inherited attributes
@@ -214,129 +468,9 @@ protected:
     } inherited_flags;
 
 // don't inherit
-    struct NonInheritedFlags {
-        bool operator==(const NonInheritedFlags& other) const
-        {
-            return _effectiveDisplay == other._effectiveDisplay
-                && _originalDisplay == other._originalDisplay
-                && _overflowX == other._overflowX
-                && _overflowY == other._overflowY
-                && _vertical_align == other._vertical_align
-                && _clear == other._clear
-                && _position == other._position
-                && _floating == other._floating
-                && _table_layout == other._table_layout
-                && _page_break_before == other._page_break_before
-                && _page_break_after == other._page_break_after
-                && _page_break_inside == other._page_break_inside
-                && _styleType == other._styleType
-                && _affectedByHover == other._affectedByHover
-                && _affectedByActive == other._affectedByActive
-                && _affectedByDrag == other._affectedByDrag
-                && _pseudoBits == other._pseudoBits
-                && _unicodeBidi == other._unicodeBidi
-                && explicitInheritance == other.explicitInheritance
-                && unique == other.unique
-                && emptyState == other.emptyState
-                && firstChildState == other.firstChildState
-                && lastChildState == other.lastChildState
-                && _isLink == other._isLink;
-        }
-
-        bool operator!=(const NonInheritedFlags& other) const { return !(*this == other); }
-
-        unsigned _effectiveDisplay : 5; // EDisplay
-        unsigned _originalDisplay : 5; // EDisplay
-        unsigned _overflowX : 3; // EOverflow
-        unsigned _overflowY : 3; // EOverflow
-        unsigned _vertical_align : 4; // EVerticalAlign
-        unsigned _clear : 2; // EClear
-        unsigned _position : 3; // EPosition
-        unsigned _floating : 2; // EFloat
-        unsigned _table_layout : 1; // ETableLayout
-
-        unsigned _unicodeBidi : 3; // EUnicodeBidi
-        // 31 bits
-        unsigned _page_break_before : 2; // EPageBreak
-        unsigned _page_break_after : 2; // EPageBreak
-        unsigned _page_break_inside : 2; // EPageBreak
-
-        unsigned _styleType : 6; // PseudoId
-        unsigned _pseudoBits : 7;
-        unsigned explicitInheritance : 1; // Explicitly inherits a non-inherited property
-        unsigned unique : 1; // Style can not be shared.
-        unsigned emptyState : 1;
-        unsigned firstChildState : 1;
-        unsigned lastChildState : 1;
-
-        bool affectedByHover() const { return _affectedByHover; }
-        void setAffectedByHover(bool value) { _affectedByHover = value; }
-        bool affectedByActive() const { return _affectedByActive; }
-        void setAffectedByActive(bool value) { _affectedByActive = value; }
-        bool affectedByDrag() const { return _affectedByDrag; }
-        void setAffectedByDrag(bool value) { _affectedByDrag = value; }
-        bool isLink() const { return _isLink; }
-        void setIsLink(bool value) { _isLink = value; }
-    private:
-        unsigned _affectedByHover : 1;
-        unsigned _affectedByActive : 1;
-        unsigned _affectedByDrag : 1;
-        unsigned _isLink : 1;
-        // If you add more style bits here, you will also need to update RenderStyle::copyNonInheritedFrom()
-        // 59 bits
-    } noninherited_flags;
+    NonInheritedFlags noninherited_flags;
 
 // !END SYNC!
-
-protected:
-    void setBitDefaults()
-    {
-        inherited_flags._empty_cells = initialEmptyCells();
-        inherited_flags._caption_side = initialCaptionSide();
-        inherited_flags._list_style_type = initialListStyleType();
-        inherited_flags._list_style_position = initialListStylePosition();
-        inherited_flags._visibility = initialVisibility();
-        inherited_flags._text_align = initialTextAlign();
-        inherited_flags._text_transform = initialTextTransform();
-        inherited_flags._text_decorations = initialTextDecoration();
-        inherited_flags._cursor_style = initialCursor();
-#if ENABLE(CURSOR_VISIBILITY)
-        inherited_flags.m_cursorVisibility = initialCursorVisibility();
-#endif
-        inherited_flags._direction = initialDirection();
-        inherited_flags._white_space = initialWhiteSpace();
-        inherited_flags._border_collapse = initialBorderCollapse();
-        inherited_flags.m_rtlOrdering = initialRTLOrdering();
-        inherited_flags._box_direction = initialBoxDirection();
-        inherited_flags.m_printColorAdjust = initialPrintColorAdjust();
-        inherited_flags._pointerEvents = initialPointerEvents();
-        inherited_flags._insideLink = NotInsideLink;
-        inherited_flags.m_writingMode = initialWritingMode();
-
-        noninherited_flags._effectiveDisplay = noninherited_flags._originalDisplay = initialDisplay();
-        noninherited_flags._overflowX = initialOverflowX();
-        noninherited_flags._overflowY = initialOverflowY();
-        noninherited_flags._vertical_align = initialVerticalAlign();
-        noninherited_flags._clear = initialClear();
-        noninherited_flags._position = initialPosition();
-        noninherited_flags._floating = initialFloating();
-        noninherited_flags._table_layout = initialTableLayout();
-        noninherited_flags._unicodeBidi = initialUnicodeBidi();
-        noninherited_flags._page_break_before = initialPageBreak();
-        noninherited_flags._page_break_after = initialPageBreak();
-        noninherited_flags._page_break_inside = initialPageBreak();
-        noninherited_flags._styleType = NOPSEUDO;
-        noninherited_flags._pseudoBits = 0;
-        noninherited_flags.explicitInheritance = false;
-        noninherited_flags.unique = false;
-        noninherited_flags.emptyState = false;
-        noninherited_flags.firstChildState = false;
-        noninherited_flags.lastChildState = false;
-        noninherited_flags.setAffectedByHover(false);
-        noninherited_flags.setAffectedByActive(false);
-        noninherited_flags.setAffectedByDrag(false);
-        noninherited_flags.setIsLink(false);
-    }
 
 private:
     // used to create the default style.
@@ -360,8 +494,8 @@ public:
     void inheritFrom(const RenderStyle* inheritParent, IsAtShadowBoundary = NotAtShadowBoundary);
     void copyNonInheritedFrom(const RenderStyle*);
 
-    PseudoId styleType() const { return static_cast<PseudoId>(noninherited_flags._styleType); }
-    void setStyleType(PseudoId styleType) { noninherited_flags._styleType = styleType; }
+    PseudoId styleType() const { return noninherited_flags.styleType(); }
+    void setStyleType(PseudoId styleType) { noninherited_flags.setStyleType(styleType); }
 
     RenderStyle* getCachedPseudoStyle(PseudoId) const;
     RenderStyle* addCachedPseudoStyle(PassRefPtr<RenderStyle>);
@@ -381,7 +515,7 @@ public:
     
     bool operator==(const RenderStyle& other) const;
     bool operator!=(const RenderStyle& other) const { return !(*this == other); }
-    bool isFloating() const { return noninherited_flags._floating != NoFloat; }
+    bool isFloating() const { return noninherited_flags.isFloating(); }
     bool hasMargin() const { return surround->margin.nonZero(); }
     bool hasBorder() const { return surround->border.hasBorder(); }
     bool hasPadding() const { return surround->padding.nonZero(); }
@@ -436,8 +570,8 @@ public:
 
     // attribute getter methods
 
-    EDisplay display() const { return static_cast<EDisplay>(noninherited_flags._effectiveDisplay); }
-    EDisplay originalDisplay() const { return static_cast<EDisplay>(noninherited_flags._originalDisplay); }
+    EDisplay display() const { return noninherited_flags.effectiveDisplay(); }
+    EDisplay originalDisplay() const { return noninherited_flags.originalDisplay(); }
 
     const Length& left() const { return surround->offset.left(); }
     const Length& right() const { return surround->offset.right(); }
@@ -457,11 +591,11 @@ public:
     bool hasStaticInlinePosition(bool horizontal) const { return horizontal ? hasAutoLeftAndRight() : hasAutoTopAndBottom(); }
     bool hasStaticBlockPosition(bool horizontal) const { return horizontal ? hasAutoTopAndBottom() : hasAutoLeftAndRight(); }
 
-    EPosition position() const { return static_cast<EPosition>(noninherited_flags._position); }
+    EPosition position() const { return noninherited_flags.position(); }
     bool hasOutOfFlowPosition() const { return position() == AbsolutePosition || position() == FixedPosition; }
     bool hasInFlowPosition() const { return position() == RelativePosition || position() == StickyPosition; }
     bool hasViewportConstrainedPosition() const { return position() == FixedPosition || position() == StickyPosition; }
-    EFloat floating() const { return static_cast<EFloat>(noninherited_flags._floating); }
+    EFloat floating() const { return noninherited_flags.floating(); }
 
     const Length& width() const { return m_box->width(); }
     const Length& height() const { return m_box->height(); }
@@ -529,11 +663,11 @@ public:
     EBorderStyle outlineStyle() const { return m_background->outline().style(); }
     OutlineIsAuto outlineStyleIsAuto() const { return static_cast<OutlineIsAuto>(m_background->outline().isAuto()); }
     
-    EOverflow overflowX() const { return static_cast<EOverflow>(noninherited_flags._overflowX); }
-    EOverflow overflowY() const { return static_cast<EOverflow>(noninherited_flags._overflowY); }
+    EOverflow overflowX() const { return noninherited_flags.overflowX(); }
+    EOverflow overflowY() const { return noninherited_flags.overflowY(); }
 
     EVisibility visibility() const { return static_cast<EVisibility>(inherited_flags._visibility); }
-    EVerticalAlign verticalAlign() const { return static_cast<EVerticalAlign>(noninherited_flags._vertical_align); }
+    EVerticalAlign verticalAlign() const { return noninherited_flags.verticalAlign(); }
     const Length& verticalAlignLength() const { return m_box->verticalAlign(); }
 
     const Length& clipLeft() const { return visual->clip.left(); }
@@ -543,10 +677,10 @@ public:
     const LengthBox& clip() const { return visual->clip; }
     bool hasClip() const { return visual->hasClip; }
 
-    EUnicodeBidi unicodeBidi() const { return static_cast<EUnicodeBidi>(noninherited_flags._unicodeBidi); }
+    EUnicodeBidi unicodeBidi() const { return noninherited_flags.unicodeBidi(); }
 
-    EClear clear() const { return static_cast<EClear>(noninherited_flags._clear); }
-    ETableLayout tableLayout() const { return static_cast<ETableLayout>(noninherited_flags._table_layout); }
+    EClear clear() const { return noninherited_flags.clear(); }
+    ETableLayout tableLayout() const { return noninherited_flags.tableLayout(); }
 
     const Font& font() const;
     const FontMetrics& fontMetrics() const;
@@ -721,9 +855,9 @@ public:
     short orphans() const { return rareInheritedData->orphans; }
     bool hasAutoWidows() const { return rareInheritedData->m_hasAutoWidows; }
     bool hasAutoOrphans() const { return rareInheritedData->m_hasAutoOrphans; }
-    EPageBreak pageBreakInside() const { return static_cast<EPageBreak>(noninherited_flags._page_break_inside); }
-    EPageBreak pageBreakBefore() const { return static_cast<EPageBreak>(noninherited_flags._page_break_before); }
-    EPageBreak pageBreakAfter() const { return static_cast<EPageBreak>(noninherited_flags._page_break_after); }
+    EPageBreak pageBreakInside() const { return noninherited_flags.pageBreakInside(); }
+    EPageBreak pageBreakBefore() const { return noninherited_flags.pageBreakBefore(); }
+    EPageBreak pageBreakAfter() const { return noninherited_flags.pageBreakAfter(); }
 
     // CSS3 Getter Methods
 
@@ -994,10 +1128,10 @@ public:
         
 // attribute setter methods
 
-    void setDisplay(EDisplay v) { noninherited_flags._effectiveDisplay = v; }
-    void setOriginalDisplay(EDisplay v) { noninherited_flags._originalDisplay = v; }
-    void setPosition(EPosition v) { noninherited_flags._position = v; }
-    void setFloating(EFloat v) { noninherited_flags._floating = v; }
+    void setDisplay(EDisplay v) { noninherited_flags.setEffectiveDisplay(v); }
+    void setOriginalDisplay(EDisplay v) { noninherited_flags.setOriginalDisplay(v); }
+    void setPosition(EPosition v) { noninherited_flags.setPosition(v); }
+    void setFloating(EFloat v) { noninherited_flags.setFloating(v); }
 
     void setLeft(Length v) { SET_VAR(surround, offset.m_left, std::move(v)); }
     void setRight(Length v) { SET_VAR(surround, offset.m_right, std::move(v)); }
@@ -1115,10 +1249,10 @@ public:
     void setOutlineStyle(EBorderStyle v) { SET_VAR(m_background, m_outline.m_style, v); }
     void setOutlineColor(const Color& v) { SET_BORDERVALUE_COLOR(m_background, m_outline, v); }
 
-    void setOverflowX(EOverflow v) { noninherited_flags._overflowX = v; }
-    void setOverflowY(EOverflow v) { noninherited_flags._overflowY = v; }
+    void setOverflowX(EOverflow v) { noninherited_flags.setOverflowX(v); }
+    void setOverflowY(EOverflow v) { noninherited_flags.setOverflowY(v); }
     void setVisibility(EVisibility v) { inherited_flags._visibility = v; }
-    void setVerticalAlign(EVerticalAlign v) { noninherited_flags._vertical_align = v; }
+    void setVerticalAlign(EVerticalAlign v) { noninherited_flags.setVerticalAlign(v); }
     void setVerticalAlignLength(Length length) { setVerticalAlign(LENGTH); SET_VAR(m_box, m_verticalAlign, std::move(length)); }
 
     void setHasClip(bool b = true) { SET_VAR(visual, hasClip, b); }
@@ -1129,10 +1263,10 @@ public:
     void setClip(Length top, Length right, Length bottom, Length left);
     void setClip(LengthBox box) { SET_VAR(visual, clip, std::move(box)); }
 
-    void setUnicodeBidi(EUnicodeBidi b) { noninherited_flags._unicodeBidi = b; }
+    void setUnicodeBidi(EUnicodeBidi b) { noninherited_flags.setUnicodeBidi(b); }
 
-    void setClear(EClear v) { noninherited_flags._clear = v; }
-    void setTableLayout(ETableLayout v) { noninherited_flags._table_layout = v; }
+    void setClear(EClear v) { noninherited_flags.setClear(v); }
+    void setTableLayout(ETableLayout v) { noninherited_flags.setTableLayout(v); }
 
     bool setFontDescription(const FontDescription&);
     // Only used for blending font sizes when animating, for MathML anonymous blocks, and for text autosizing.
@@ -1276,9 +1410,9 @@ public:
     void setOrphans(short o) { SET_VAR(rareInheritedData, m_hasAutoOrphans, false); SET_VAR(rareInheritedData, orphans, o); }
 
     // For valid values of page-break-inside see http://www.w3.org/TR/CSS21/page.html#page-break-props
-    void setPageBreakInside(EPageBreak b) { ASSERT(b == PBAUTO || b == PBAVOID); noninherited_flags._page_break_inside = b; }
-    void setPageBreakBefore(EPageBreak b) { noninherited_flags._page_break_before = b; }
-    void setPageBreakAfter(EPageBreak b) { noninherited_flags._page_break_after = b; }
+    void setPageBreakInside(EPageBreak b) { noninherited_flags.setPageBreakInside(b); }
+    void setPageBreakBefore(EPageBreak b) { noninherited_flags.setPageBreakBefore(b); }
+    void setPageBreakAfter(EPageBreak b) { noninherited_flags.setPageBreakAfter(b); }
 
     // CSS3 Setters
     void setOutlineOffset(int v) { SET_VAR(m_background, m_outline.m_offset, v); }
@@ -1582,20 +1716,20 @@ public:
     }
 
     // A unique style is one that has matches something that makes it impossible to share.
-    bool unique() const { return noninherited_flags.unique; }
-    void setUnique() { noninherited_flags.unique = true; }
+    bool unique() const { return noninherited_flags.isUnique(); }
+    void setUnique() { noninherited_flags.setIsUnique(); }
 
-    bool emptyState() const { return noninherited_flags.emptyState; }
-    void setEmptyState(bool b) { setUnique(); noninherited_flags.emptyState = b; }
-    bool firstChildState() const { return noninherited_flags.firstChildState; }
-    void setFirstChildState() { setUnique(); noninherited_flags.firstChildState = true; }
-    bool lastChildState() const { return noninherited_flags.lastChildState; }
-    void setLastChildState() { setUnique(); noninherited_flags.lastChildState = true; }
+    bool emptyState() const { return noninherited_flags.emptyState(); }
+    void setEmptyState(bool b) { setUnique(); noninherited_flags.setEmptyState(b); }
+    bool firstChildState() const { return noninherited_flags.firstChildState(); }
+    void setFirstChildState() { setUnique(); noninherited_flags.setFirstChildState(true); }
+    bool lastChildState() const { return noninherited_flags.lastChildState(); }
+    void setLastChildState() { setUnique(); noninherited_flags.setLastChildState(true); }
 
     Color visitedDependentColor(int colorProperty) const;
 
-    void setHasExplicitlyInheritedProperties() { noninherited_flags.explicitInheritance = true; }
-    bool hasExplicitlyInheritedProperties() const { return noninherited_flags.explicitInheritance; }
+    void setHasExplicitlyInheritedProperties() { noninherited_flags.setHasExplicitlyInheritedProperties(true); }
+    bool hasExplicitlyInheritedProperties() const { return noninherited_flags.hasExplicitlyInheritedProperties(); }
     
     // Initial values for all the properties
     static EBorderCollapse initialBorderCollapse() { return BSEPARATE; }
@@ -1604,7 +1738,6 @@ public:
     static NinePieceImage initialNinePieceImage() { return NinePieceImage(); }
     static LengthSize initialBorderRadius() { return LengthSize(Length(0, Fixed), Length(0, Fixed)); }
     static ECaptionSide initialCaptionSide() { return CAPTOP; }
-    static EClear initialClear() { return CNONE; }
     static ColorSpace initialColorSpace() { return ColorSpaceDeviceRGB; }
     static ColumnAxis initialColumnAxis() { return AutoColumnAxis; }
     static ColumnProgression initialColumnProgression() { return NormalColumnProgression; }
@@ -1613,17 +1746,9 @@ public:
     static TextCombine initialTextCombine() { return TextCombineNone; }
     static TextOrientation initialTextOrientation() { return TextOrientationVerticalRight; }
     static ObjectFit initialObjectFit() { return ObjectFitFill; }
-    static EDisplay initialDisplay() { return INLINE; }
     static EEmptyCell initialEmptyCells() { return SHOW; }
-    static EFloat initialFloating() { return NoFloat; }
     static EListStylePosition initialListStylePosition() { return OUTSIDE; }
     static EListStyleType initialListStyleType() { return Disc; }
-    static EOverflow initialOverflowX() { return OVISIBLE; }
-    static EOverflow initialOverflowY() { return OVISIBLE; }
-    static EPageBreak initialPageBreak() { return PBAUTO; }
-    static EPosition initialPosition() { return StaticPosition; }
-    static ETableLayout initialTableLayout() { return TAUTO; }
-    static EUnicodeBidi initialUnicodeBidi() { return UBNormal; }
     static ETextTransform initialTextTransform() { return TTNONE; }
     static EVisibility initialVisibility() { return VISIBLE; }
     static EWhiteSpace initialWhiteSpace() { return NORMAL; }
@@ -1651,7 +1776,6 @@ public:
     static TextIndentLine initialTextIndentLine() { return TextIndentFirstLine; }
     static TextIndentType initialTextIndentType() { return TextIndentNormal; }
 #endif
-    static EVerticalAlign initialVerticalAlign() { return BASELINE; }
     static short initialWidows() { return 2; }
     static short initialOrphans() { return 2; }
     static Length initialLineHeight() { return Length(-100.0, Percent); }
@@ -1839,7 +1963,7 @@ private:
     void setVisitedLinkTextFillColor(const Color& v) { SET_VAR(rareInheritedData, visitedLinkTextFillColor, v); }
     void setVisitedLinkTextStrokeColor(const Color& v) { SET_VAR(rareInheritedData, visitedLinkTextStrokeColor, v); }
 
-    void inheritUnicodeBidiFrom(const RenderStyle* parent) { noninherited_flags._unicodeBidi = parent->noninherited_flags._unicodeBidi; }
+    void inheritUnicodeBidiFrom(const RenderStyle* parent) { noninherited_flags.setUnicodeBidi(parent->noninherited_flags.unicodeBidi()); }
     void getShadowExtent(const ShadowData*, LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left) const;
     LayoutBoxExtent getShadowInsetExtent(const ShadowData*) const;
     void getShadowHorizontalExtent(const ShadowData*, LayoutUnit& left, LayoutUnit& right) const;
@@ -1901,6 +2025,8 @@ private:
     Color lightingColor() const { return svgStyle().lightingColor(); }
 
     void appendContent(std::unique_ptr<ContentData>);
+
+    static ptrdiff_t noninheritedFlagsMemoryOffset() { return OBJECT_OFFSETOF(RenderStyle, noninherited_flags); }
 };
 
 inline int adjustForAbsoluteZoom(int value, const RenderStyle& style)
@@ -1959,21 +2085,17 @@ inline bool RenderStyle::setTextOrientation(TextOrientation textOrientation)
 
 inline bool RenderStyle::hasAnyPublicPseudoStyles() const
 {
-    return PUBLIC_PSEUDOID_MASK & noninherited_flags._pseudoBits;
+    return noninherited_flags.hasAnyPublicPseudoStyles();
 }
 
 inline bool RenderStyle::hasPseudoStyle(PseudoId pseudo) const
 {
-    ASSERT(pseudo > NOPSEUDO);
-    ASSERT(pseudo < FIRST_INTERNAL_PSEUDOID);
-    return (1 << (pseudo - 1)) & noninherited_flags._pseudoBits;
+    return noninherited_flags.hasPseudoStyle(pseudo);
 }
 
 inline void RenderStyle::setHasPseudoStyle(PseudoId pseudo)
 {
-    ASSERT(pseudo > NOPSEUDO);
-    ASSERT(pseudo < FIRST_INTERNAL_PSEUDOID);
-    noninherited_flags._pseudoBits |= 1 << (pseudo - 1);
+    noninherited_flags.setHasPseudoStyle(pseudo);
 }
 
 } // namespace WebCore

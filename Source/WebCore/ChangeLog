@@ -1,3 +1,37 @@
+2014-03-30  Benjamin Poulain  <benjamin@webkit.org>
+
+        Make RenderStyle's non inherited flags more JSC friendly
+        https://bugs.webkit.org/show_bug.cgi?id=130939
+
+        Reviewed by Andreas Kling.
+
+        Make RenderStyle::NonInheritedFlags accessible to the JIT:
+        -Make the struct public to give access to the offset.
+        -Move away from a bit field to static offsets we can use
+         with the MacroAssembler.
+        -Reorder the field to simplify bit access of the flags we need.
+
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyVerticalAlign::createHandler):
+        (WebCore::ApplyPropertyDisplay::applyInitialValue):
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::RenderStyle::copyNonInheritedFrom):
+        (WebCore::RenderStyle::hashForTextAutosizing):
+        (WebCore::RenderStyle::equalForTextAutosizing):
+        (WebCore::RenderStyle::changeRequiresLayout):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::hasAnyPublicPseudoStyles):
+        (WebCore::RenderStyle::hasPseudoStyle):
+        (WebCore::RenderStyle::setHasPseudoStyle):
+        * rendering/style/StyleMultiColData.cpp:
+        (WebCore::StyleMultiColData::StyleMultiColData):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+
 2014-03-30  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Fix build of HTMLConverter.mm after r166454

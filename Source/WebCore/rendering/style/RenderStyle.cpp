@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -126,7 +126,27 @@ ALWAYS_INLINE RenderStyle::RenderStyle(bool)
     , inherited(StyleInheritedData::create())
     , m_svgStyle(SVGRenderStyle::create())
 {
-    setBitDefaults();
+    inherited_flags._empty_cells = initialEmptyCells();
+    inherited_flags._caption_side = initialCaptionSide();
+    inherited_flags._list_style_type = initialListStyleType();
+    inherited_flags._list_style_position = initialListStylePosition();
+    inherited_flags._visibility = initialVisibility();
+    inherited_flags._text_align = initialTextAlign();
+    inherited_flags._text_transform = initialTextTransform();
+    inherited_flags._text_decorations = initialTextDecoration();
+    inherited_flags._cursor_style = initialCursor();
+#if ENABLE(CURSOR_VISIBILITY)
+    inherited_flags.m_cursorVisibility = initialCursorVisibility();
+#endif
+    inherited_flags._direction = initialDirection();
+    inherited_flags._white_space = initialWhiteSpace();
+    inherited_flags._border_collapse = initialBorderCollapse();
+    inherited_flags.m_rtlOrdering = initialRTLOrdering();
+    inherited_flags._box_direction = initialBoxDirection();
+    inherited_flags.m_printColorAdjust = initialPrintColorAdjust();
+    inherited_flags._pointerEvents = initialPointerEvents();
+    inherited_flags._insideLink = NotInsideLink;
+    inherited_flags.m_writingMode = initialWritingMode();
 
     static_assert((sizeof(InheritedFlags) <= 8), "InheritedFlags does not grow");
     static_assert((sizeof(NonInheritedFlags) <= 8), "NonInheritedFlags does not grow");
@@ -170,21 +190,7 @@ void RenderStyle::copyNonInheritedFrom(const RenderStyle* other)
     m_background = other->m_background;
     surround = other->surround;
     rareNonInheritedData = other->rareNonInheritedData;
-    // The flags are copied one-by-one because noninherited_flags contains a bunch of stuff other than real style data.
-    noninherited_flags._effectiveDisplay = other->noninherited_flags._effectiveDisplay;
-    noninherited_flags._originalDisplay = other->noninherited_flags._originalDisplay;
-    noninherited_flags._overflowX = other->noninherited_flags._overflowX;
-    noninherited_flags._overflowY = other->noninherited_flags._overflowY;
-    noninherited_flags._vertical_align = other->noninherited_flags._vertical_align;
-    noninherited_flags._clear = other->noninherited_flags._clear;
-    noninherited_flags._position = other->noninherited_flags._position;
-    noninherited_flags._floating = other->noninherited_flags._floating;
-    noninherited_flags._table_layout = other->noninherited_flags._table_layout;
-    noninherited_flags._unicodeBidi = other->noninherited_flags._unicodeBidi;
-    noninherited_flags._page_break_before = other->noninherited_flags._page_break_before;
-    noninherited_flags._page_break_after = other->noninherited_flags._page_break_after;
-    noninherited_flags._page_break_inside = other->noninherited_flags._page_break_inside;
-    noninherited_flags.explicitInheritance = other->noninherited_flags.explicitInheritance;
+    noninherited_flags.copyNonInheritedFrom(other->noninherited_flags);
 
     if (m_svgStyle != other->m_svgStyle)
         m_svgStyle.access()->copyNonInheritedFrom(other->m_svgStyle.get());
@@ -310,8 +316,8 @@ uint32_t RenderStyle::hashForTextAutosizing() const
     hash ^= inherited->vertical_border_spacing;
     hash ^= inherited_flags._box_direction;
     hash ^= inherited_flags.m_rtlOrdering;
-    hash ^= noninherited_flags._position;
-    hash ^= noninherited_flags._floating;
+    hash ^= noninherited_flags.position();
+    hash ^= noninherited_flags.floating();
     hash ^= rareNonInheritedData->textOverflow;
     hash ^= rareInheritedData->textSecurity;
     return hash;
@@ -334,8 +340,8 @@ bool RenderStyle::equalForTextAutosizing(const RenderStyle* other) const
         && inherited->vertical_border_spacing == other->inherited->vertical_border_spacing
         && inherited_flags._box_direction == other->inherited_flags._box_direction
         && inherited_flags.m_rtlOrdering == other->inherited_flags.m_rtlOrdering
-        && noninherited_flags._position == other->noninherited_flags._position
-        && noninherited_flags._floating == other->noninherited_flags._floating
+        && noninherited_flags.position() == other->noninherited_flags.position()
+        && noninherited_flags.floating() == other->noninherited_flags.floating()
         && rareNonInheritedData->textOverflow == other->rareNonInheritedData->textOverflow;
 }
 #endif // ENABLE(IOS_TEXT_AUTOSIZING)
@@ -386,7 +392,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
         || m_box->maxHeight() != other->m_box->maxHeight())
         return true;
 
-    if (m_box->verticalAlign() != other->m_box->verticalAlign() || noninherited_flags._vertical_align != other->noninherited_flags._vertical_align)
+    if (m_box->verticalAlign() != other->m_box->verticalAlign() || noninherited_flags.verticalAlign() != other->noninherited_flags.verticalAlign())
         return true;
 
     if (m_box->boxSizing() != other->m_box->boxSizing())
@@ -527,17 +533,17 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
         || inherited->vertical_border_spacing != other->inherited->vertical_border_spacing
         || inherited_flags._box_direction != other->inherited_flags._box_direction
         || inherited_flags.m_rtlOrdering != other->inherited_flags.m_rtlOrdering
-        || noninherited_flags._position != other->noninherited_flags._position
-        || noninherited_flags._floating != other->noninherited_flags._floating
-        || noninherited_flags._originalDisplay != other->noninherited_flags._originalDisplay)
+        || noninherited_flags.position() != other->noninherited_flags.position()
+        || noninherited_flags.floating() != other->noninherited_flags.floating()
+        || noninherited_flags.originalDisplay() != other->noninherited_flags.originalDisplay())
         return true;
 
 
-    if (((int)noninherited_flags._effectiveDisplay) >= TABLE) {
+    if ((noninherited_flags.effectiveDisplay()) >= TABLE) {
         if (inherited_flags._border_collapse != other->inherited_flags._border_collapse
             || inherited_flags._empty_cells != other->inherited_flags._empty_cells
             || inherited_flags._caption_side != other->inherited_flags._caption_side
-            || noninherited_flags._table_layout != other->noninherited_flags._table_layout)
+            || noninherited_flags.tableLayout() != other->noninherited_flags.tableLayout())
             return true;
 
         // In the collapsing border model, 'hidden' suppresses other borders, while 'none'
@@ -554,7 +560,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
             return true;
     }
 
-    if (noninherited_flags._effectiveDisplay == LIST_ITEM) {
+    if (noninherited_flags.effectiveDisplay() == LIST_ITEM) {
         if (inherited_flags._list_style_type != other->inherited_flags._list_style_type
             || inherited_flags._list_style_position != other->inherited_flags._list_style_position)
             return true;
@@ -564,8 +570,8 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
         || inherited_flags._text_transform != other->inherited_flags._text_transform
         || inherited_flags._direction != other->inherited_flags._direction
         || inherited_flags._white_space != other->inherited_flags._white_space
-        || noninherited_flags._clear != other->noninherited_flags._clear
-        || noninherited_flags._unicodeBidi != other->noninherited_flags._unicodeBidi)
+        || noninherited_flags.clear() != other->noninherited_flags.clear()
+        || noninherited_flags.unicodeBidi() != other->noninherited_flags.unicodeBidi())
         return true;
 
     // Check block flow direction.
@@ -577,8 +583,8 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
         return true;
 
     // Overflow returns a layout hint.
-    if (noninherited_flags._overflowX != other->noninherited_flags._overflowX
-        || noninherited_flags._overflowY != other->noninherited_flags._overflowY)
+    if (noninherited_flags.overflowX() != other->noninherited_flags.overflowX()
+        || noninherited_flags.overflowY() != other->noninherited_flags.overflowY())
         return true;
 
     // If our border widths change, then we need to layout.  Other changes to borders
