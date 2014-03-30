@@ -1504,9 +1504,8 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
         RetainPtr<NSTextAttachment> attachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper]);
 #if PLATFORM(IOS)
         float verticalAlign = 0.0;
-        if (element)
-            _caches->floatPropertyValueForNode(*core(element), CSSPropertyVerticalAlign, verticalAlign);
-        attachment.get().bounds = CGRectMake(0, (verticalAlign / 100) * element.clientHeight, element.clientWidth, element.clientHeight);
+        _caches->floatPropertyValueForNode(element, CSSPropertyVerticalAlign, verticalAlign);
+        attachment.get().bounds = CGRectMake(0, (verticalAlign / 100) * element.clientHeight(), element.clientWidth(), element.clientHeight());
 #endif
         RetainPtr<NSString> string = adoptNS([[NSString alloc] initWithFormat:(needsParagraph ? @"%C\n" : @"%C"), static_cast<unichar>(NSAttachmentCharacter)]);
         NSRange rangeToReplace = NSMakeRange(textLength, 0);
