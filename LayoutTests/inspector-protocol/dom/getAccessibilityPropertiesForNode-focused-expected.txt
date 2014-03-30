@@ -1,0 +1,137 @@
+Checking Web Inspector protocol for the Accessibility Node Inspector (focused property).
+
+Total elements to be tested: 17.
+
+<div role="textbox" tabindex="-1"></div>
+    exists: true
+    label: 
+    role: 
+    focused: true
+    parentNodeId: 1
+    readonly: true
+    required: false
+
+<div role="radio" tabindex="-1"></div>
+    exists: true
+    label: 
+    role: radio
+    checked: false
+    focused: true
+    parentNodeId: 1
+    required: false
+
+<div role="checkbox" tabindex="-1">checked</div>
+    exists: true
+    label: 
+    role: checkbox
+    checked: false
+    focused: true
+    parentNodeId: 1
+    required: false
+
+<div role="button" tabindex="-1"></div>
+    exists: true
+    label: 
+    role: button
+    focused: true
+    parentNodeId: 1
+
+<div role="textbox" tabindex="0"></div>
+    exists: true
+    label: 
+    role: 
+    focused: true
+    parentNodeId: 1
+    readonly: true
+    required: false
+
+<div role="radio" tabindex="0"></div>
+    exists: true
+    label: 
+    role: radio
+    checked: false
+    focused: true
+    parentNodeId: 1
+    required: false
+
+<div role="checkbox" tabindex="0">checked</div>
+    exists: true
+    label: 
+    role: checkbox
+    checked: false
+    focused: true
+    parentNodeId: 1
+    required: false
+
+<div role="button" tabindex="0"></div>
+    exists: true
+    label: 
+    role: button
+    focused: true
+    parentNodeId: 1
+
+<p contenteditable="true"></p>
+    exists: true
+    label: 
+    role: 
+    focused: true
+    parentNodeId: 1
+
+<textarea></textarea>
+    exists: true
+    label: 
+    role: textbox
+    focused: true
+    required: false
+
+<input type="textarea">
+    exists: true
+    label: 
+    role: 
+    focused: true
+    required: false
+
+<input type="text">
+    exists: true
+    label: 
+    role: 
+    focused: true
+    required: false
+
+<input type="radio">
+    exists: true
+    label: 
+    role: radio
+    checked: false
+    focused: true
+    required: false
+
+<input type="checkbox">
+    exists: true
+    label: 
+    role: checkbox
+    checked: false
+    focused: true
+    required: false
+
+<input type="button">
+    exists: true
+    label: 
+    role: button
+    focused: true
+
+<button></button>
+    exists: true
+    label: 
+    role: button
+    focused: true
+
+<a href="http://www.webkit.org">link</a>
+    exists: true
+    label: 
+    role: link
+    childNodeIds: 11
+    focused: true
+
+
+

@@ -1,0 +1,98 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+</head>
+<body onLoad="runTest()">
+
+<p>Checking Web Inspector protocol for the Accessibility Node Inspector (focused property).</p>
+
+<div id="examples">
+
+    <a class="ex" href="http://www.webkit.org">link</a>
+
+    <button class="ex"></button>
+    <input class="ex" type="button">
+    <input class="ex" type="checkbox">
+    <input class="ex" type="radio">
+    <input class="ex" type="text">
+    <input class="ex" type="textarea">
+    <textarea class="ex"></textarea>
+
+    <p class="ex" contenteditable="true"></p>
+
+    <div class="ex" role="button" tabindex="0"></div>
+    <div class="ex" role="checkbox" tabindex="0">checked</div>
+    <div class="ex" role="radio" tabindex="0"></div>
+    <div class="ex" role="textbox" tabindex="0"></div>
+
+    <div class="ex" role="button" tabindex="-1"></div>
+    <div class="ex" role="checkbox" tabindex="-1">checked</div>
+    <div class="ex" role="radio" tabindex="-1"></div>
+    <div class="ex" role="textbox" tabindex="-1"></div>
+
+</div>
+
+<script type="text/javascript">
+
+function $(selector) {
+    return document.querySelectorAll(selector);
+}
+function cleanup() {
+    // Hide the test element container to avoid irrelevant output diffs on subsequent updates.
+    document.getElementById("examples").style.display = "none";
+}
+
+function test() {
+
+    var examples = [];
+
+    function onGotDocument(response) {
+        InspectorTest.checkForError(response);
+        InspectorTest.sendCommand("DOM.querySelectorAll", {"nodeId": response.result.root.nodeId, "selector": ".ex"}, onQuerySelectorAll);
+    }
+
+    function onQuerySelectorAll(response) {
+        InspectorTest.checkForError(response);
+        examples = response.result.nodeIds;
+        InspectorTest.log("Total elements to be tested: " + examples.length + ".");
+        loop();
+    }
+
+    function loop() {
+        if (examples.length) {
+            InspectorTest.sendCommand("DOM.focus", {"nodeId": examples[examples.length-1]}, onFocus);
+        } else {
+            InspectorTest.log("\n");
+            InspectorTest.sendCommand("Runtime.evaluate", {"expression": "cleanup()"}, function(){
+                InspectorTest.completeTest();
+            });
+        }
+    };
+
+    function onFocus(response) {
+      InspectorTest.checkForError(response);
+      InspectorTest.sendCommand("DOM.getOuterHTML", {"nodeId": examples[examples.length-1]}, onGotOuterHTML);
+    }
+
+    function onGotOuterHTML(response) {
+        InspectorTest.checkForError(response);
+        InspectorTest.log("\n" + response.result.outerHTML.replace(" class=\"ex\"", ""));
+        InspectorTest.sendCommand("DOM.getAccessibilityPropertiesForNode", {"nodeId": examples[examples.length-1]}, onGotAXProps);
+    }
+
+    function onGotAXProps(response) {
+        InspectorTest.checkForError(response);
+        for (prop in response.result.properties) {
+            if (prop !== "nodeId")
+                InspectorTest.log("    " + prop + ": " + response.result.properties[prop]);
+        }
+        examples.pop();
+        loop();
+    }
+
+    InspectorTest.sendCommand("DOM.getDocument", {}, onGotDocument);
+
+}
+</script>
+</body>
+</html>
