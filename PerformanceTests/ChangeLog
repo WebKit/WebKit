@@ -1,3 +1,26 @@
+2014-03-29  Mark Lam  <mark.lam@apple.com>
+
+        LongSpider 3d-morph result check is inappropriate.
+        <https://webkit.org/b/130928>
+
+        Reviewed by Filip Pizlo.
+
+        The LongSpider 3d-morph component expected result check is incorrect.
+        The existing test checks if the leading digit of a sum starts with "-1".
+        However, it turned out that the expected sum is in the order of
+        -1.8735013540549517e-16 (i.e. very close to 0).  With small errors in
+        the terms of the sum adding up, it is very easy for the resultant sum 
+        to fluctuate.  There is no guarantee that the resultant sum's most
+        significant digit will start with -1 either.
+
+        The fix is to do a tolerance check on all the terms of the sum as well
+        as the total sum value instead.  The tolerance should be more lenient
+        for the sum which accumulates error from the individual terms, then for
+        individual terms.
+
+        * LongSpider/3d-morph.js:
+        (expect):
+
 2014-03-28  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Add performance tests for Shapes with Regions
