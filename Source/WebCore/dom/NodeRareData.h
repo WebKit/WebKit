@@ -66,14 +66,14 @@ public:
             m_childNodeList->invalidateCache();
     }
 
-    PassRefPtr<ChildNodeList> ensureChildNodeList(ContainerNode& node)
+    PassRef<ChildNodeList> ensureChildNodeList(ContainerNode& node)
     {
         ASSERT(!m_emptyChildNodeList);
         if (m_childNodeList)
-            return m_childNodeList;
-        RefPtr<ChildNodeList> list = ChildNodeList::create(node);
-        m_childNodeList = list.get();
-        return list.release();
+            return *m_childNodeList;
+        auto list = ChildNodeList::create(node);
+        m_childNodeList = &list.get();
+        return list;
     }
 
     void removeChildNodeList(ChildNodeList* list)
@@ -84,14 +84,14 @@ public:
         m_childNodeList = nullptr;
     }
 
-    PassRefPtr<EmptyNodeList> ensureEmptyChildNodeList(Node& node)
+    PassRef<EmptyNodeList> ensureEmptyChildNodeList(Node& node)
     {
         ASSERT(!m_childNodeList);
         if (m_emptyChildNodeList)
-            return m_emptyChildNodeList;
-        RefPtr<EmptyNodeList> list = EmptyNodeList::create(node);
-        m_emptyChildNodeList = list.get();
-        return list.release();
+            return *m_emptyChildNodeList;
+        auto list = EmptyNodeList::create(node);
+        m_emptyChildNodeList = &list.get();
+        return list;
     }
 
     void removeEmptyChildNodeList(EmptyNodeList* list)
@@ -118,63 +118,63 @@ public:
     typedef HashMap<QualifiedName, TagNodeList*> TagNodeListCacheNS;
 
     template<typename T, typename ContainerType>
-    PassRefPtr<T> addCacheWithAtomicName(ContainerType& container, const AtomicString& name)
+    PassRef<T> addCacheWithAtomicName(ContainerType& container, const AtomicString& name)
     {
         NodeListAtomicNameCacheMap::AddResult result = m_atomicNameCaches.add(namedNodeListKey<T>(name), nullptr);
         if (!result.isNewEntry)
-            return static_cast<T*>(result.iterator->value);
+            return static_cast<T&>(*result.iterator->value);
 
-        RefPtr<T> list = T::create(container, name);
-        result.iterator->value = list.get();
-        return list.release();
+        auto list = T::create(container, name);
+        result.iterator->value = &list.get();
+        return list;
     }
 
     template<typename T>
-    PassRefPtr<T> addCacheWithName(ContainerNode& node, const String& name)
+    PassRef<T> addCacheWithName(ContainerNode& node, const String& name)
     {
         NodeListNameCacheMap::AddResult result = m_nameCaches.add(namedNodeListKey<T>(name), nullptr);
         if (!result.isNewEntry)
-            return static_cast<T*>(result.iterator->value);
+            return static_cast<T&>(*result.iterator->value);
 
-        RefPtr<T> list = T::create(node, name);
-        result.iterator->value = list.get();
-        return list.release();
+        auto list = T::create(node, name);
+        result.iterator->value = &list.get();
+        return list;
     }
 
-    PassRefPtr<TagNodeList> addCacheWithQualifiedName(ContainerNode& node, const AtomicString& namespaceURI, const AtomicString& localName)
+    PassRef<TagNodeList> addCacheWithQualifiedName(ContainerNode& node, const AtomicString& namespaceURI, const AtomicString& localName)
     {
         QualifiedName name(nullAtom, localName, namespaceURI);
         TagNodeListCacheNS::AddResult result = m_tagNodeListCacheNS.add(name, nullptr);
         if (!result.isNewEntry)
-            return result.iterator->value;
+            return *result.iterator->value;
 
-        RefPtr<TagNodeList> list = TagNodeList::create(node, namespaceURI, localName);
-        result.iterator->value = list.get();
-        return list.release();
+        auto list = TagNodeList::create(node, namespaceURI, localName);
+        result.iterator->value = &list.get();
+        return list;
     }
 
     template<typename T, typename ContainerType>
-    PassRefPtr<T> addCachedCollection(ContainerType& container, CollectionType collectionType, const AtomicString& name)
+    PassRef<T> addCachedCollection(ContainerType& container, CollectionType collectionType, const AtomicString& name)
     {
         CollectionCacheMap::AddResult result = m_cachedCollections.add(namedCollectionKey(collectionType, name), nullptr);
         if (!result.isNewEntry)
-            return static_cast<T*>(result.iterator->value);
+            return static_cast<T&>(*result.iterator->value);
 
-        RefPtr<T> list = T::create(container, collectionType, name);
-        result.iterator->value = list.get();
-        return list.release();
+        auto list = T::create(container, collectionType, name);
+        result.iterator->value = &list.get();
+        return list;
     }
 
     template<typename T, typename ContainerType>
-    PassRefPtr<T> addCachedCollection(ContainerType& container, CollectionType collectionType)
+    PassRef<T> addCachedCollection(ContainerType& container, CollectionType collectionType)
     {
         CollectionCacheMap::AddResult result = m_cachedCollections.add(namedCollectionKey(collectionType, starAtom), nullptr);
         if (!result.isNewEntry)
-            return static_cast<T*>(result.iterator->value);
+            return static_cast<T&>(*result.iterator->value);
 
-        RefPtr<T> list = T::create(container, collectionType);
-        result.iterator->value = list.get();
-        return list.release();
+        auto list = T::create(container, collectionType);
+        result.iterator->value = &list.get();
+        return list;
     }
 
     template<typename T>

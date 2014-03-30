@@ -43,9 +43,9 @@ HTMLFormControlsCollection::HTMLFormControlsCollection(ContainerNode& ownerNode)
     ASSERT(isHTMLFormElement(ownerNode) || isHTMLFieldSetElement(ownerNode));
 }
 
-PassRefPtr<HTMLFormControlsCollection> HTMLFormControlsCollection::create(ContainerNode& ownerNode, CollectionType)
+PassRef<HTMLFormControlsCollection> HTMLFormControlsCollection::create(ContainerNode& ownerNode, CollectionType)
 {
-    return adoptRef(new HTMLFormControlsCollection(ownerNode));
+    return adoptRef(*new HTMLFormControlsCollection(ownerNode));
 }
 
 HTMLFormControlsCollection::~HTMLFormControlsCollection()

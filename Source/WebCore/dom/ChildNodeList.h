@@ -35,9 +35,9 @@ class ContainerNode;
 
 class EmptyNodeList final : public NodeList {
 public:
-    static PassRefPtr<EmptyNodeList> create(Node& owner)
+    static PassRef<EmptyNodeList> create(Node& owner)
     {
-        return adoptRef(new EmptyNodeList(owner));
+        return adoptRef(*new EmptyNodeList(owner));
     }
     virtual ~EmptyNodeList();
 
@@ -58,9 +58,9 @@ private:
 
 class ChildNodeList final : public NodeList {
 public:
-    static PassRefPtr<ChildNodeList> create(ContainerNode& parent)
+    static PassRef<ChildNodeList> create(ContainerNode& parent)
     {
-        return adoptRef(new ChildNodeList(parent));
+        return adoptRef(*new ChildNodeList(parent));
     }
 
     virtual ~ChildNodeList();

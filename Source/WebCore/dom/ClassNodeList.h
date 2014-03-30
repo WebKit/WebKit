@@ -39,9 +39,9 @@ namespace WebCore {
 
 class ClassNodeList final : public CachedLiveNodeList<ClassNodeList> {
 public:
-    static PassRefPtr<ClassNodeList> create(ContainerNode& rootNode, const String& classNames)
+    static PassRef<ClassNodeList> create(ContainerNode& rootNode, const String& classNames)
     {
-        return adoptRef(new ClassNodeList(rootNode, classNames));
+        return adoptRef(*new ClassNodeList(rootNode, classNames));
     }
 
     virtual ~ClassNodeList();

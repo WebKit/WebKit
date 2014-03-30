@@ -145,9 +145,9 @@ HTMLCollection::HTMLCollection(ContainerNode& ownerNode, CollectionType type, El
     ASSERT(m_collectionType == static_cast<unsigned>(type));
 }
 
-PassRefPtr<HTMLCollection> HTMLCollection::create(ContainerNode& base, CollectionType type)
+PassRef<HTMLCollection> HTMLCollection::create(ContainerNode& base, CollectionType type)
 {
-    return adoptRef(new HTMLCollection(base, type));
+    return adoptRef(*new HTMLCollection(base, type));
 }
 
 HTMLCollection::~HTMLCollection()

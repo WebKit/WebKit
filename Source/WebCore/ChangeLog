@@ -1,3 +1,33 @@
+2014-03-30  Andreas Kling  <akling@apple.com>
+
+        Make NodeList and HTMLCollection caching helpers use PassRef.
+        <https://webkit.org/b/130943>
+
+        Tweak the helpers in NodeListsNodeData to return PassRef instead of
+        PassRefPtr. This knocks 2 branches off of some pretty hot code on
+        Dromaeo/dom-query.
+
+        Reviewed by Antti Koivisto.
+
+        * dom/ChildNodeList.h:
+        * dom/ClassNodeList.h:
+        * dom/NameNodeList.h:
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::ensureChildNodeList):
+        (WebCore::NodeListsNodeData::ensureEmptyChildNodeList):
+        (WebCore::NodeListsNodeData::addCacheWithAtomicName):
+        (WebCore::NodeListsNodeData::addCacheWithName):
+        (WebCore::NodeListsNodeData::addCacheWithQualifiedName):
+        (WebCore::NodeListsNodeData::addCachedCollection):
+        * dom/TagNodeList.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::create):
+        * html/HTMLCollection.h:
+        * html/HTMLFormControlsCollection.cpp:
+        (WebCore::HTMLFormControlsCollection::create):
+        * html/HTMLFormControlsCollection.h:
+        * html/RadioNodeList.h:
+
 2014-03-29  Antti Koivisto  <antti@apple.com>
 
         LiveNodeLists should use ElementDescendantIterator
