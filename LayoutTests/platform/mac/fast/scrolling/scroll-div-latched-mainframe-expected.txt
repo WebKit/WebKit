@@ -54,6 +54,6 @@ PASS successfullyParsed is true
 TEST COMPLETE
 Mouse moved to (28, 125)
 Page before: 0, div before: 0
-Page after:  320, div after: 0
+Page after:  58, div after: 0
 PASS Scrollable div did not receive wheel events.
 

@@ -13,7 +13,7 @@ TEST COMPLETE
 div display height = 111
 Mouse moved to (30, 238)
 Page before: 0, select before: 70
-Page after:  0, select after: 182
+Page after:  0, select after: 140
 PASS Page did not receive wheel events.
 (GraphicsLayer
   (bounds 2008.00 2326.00)

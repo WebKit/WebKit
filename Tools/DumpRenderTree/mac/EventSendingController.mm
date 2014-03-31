@@ -738,6 +738,7 @@ const uint32_t kCGScrollWheelEventMomentumPhase = 123;
     // CGEvent locations are in global display coordinates.
     CGPoint lastGlobalMousePosition = CGPointMake(lastMousePosition.x, [[NSScreen mainScreen] frame].size.height - lastMousePosition.y);
     CGEventSetLocation(cgScrollEvent, lastGlobalMousePosition);
+    CGEventSetIntegerValueField(cgScrollEvent, kCGScrollWheelEventIsContinuous, 1);
     CGEventSetIntegerValueField(cgScrollEvent, kCGScrollWheelEventScrollPhase, phase);
     CGEventSetIntegerValueField(cgScrollEvent, kCGScrollWheelEventMomentumPhase, momentum);
     

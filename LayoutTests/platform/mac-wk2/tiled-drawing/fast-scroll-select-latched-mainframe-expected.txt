@@ -12,17 +12,17 @@ PASS successfullyParsed is true
 TEST COMPLETE
 Mouse moved to (30, 127)
 Page before: 0, select before: 0
-Page after:  280, select after: 0
+Page after:  70, select after: 0
 PASS Select did not receive wheel events.
 (GraphicsLayer
   (bounds 2008.00 2311.00)
-  (visible rect 0.00, 280.00 785.00 x 585.00)
+  (visible rect 0.00, 70.00 785.00 x 585.00)
   (contentsScale 1.00)
   (children 1
     (GraphicsLayer
       (bounds 2008.00 2311.00)
       (contentsOpaque 1)
-      (visible rect 0.00, 280.00 785.00 x 585.00)
+      (visible rect 0.00, 70.00 785.00 x 585.00)
       (contentsScale 1.00)
       (tile cache coverage 0, 0 2008 x 2048)
       (tile size 512 x 512)

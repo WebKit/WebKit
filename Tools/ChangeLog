@@ -1,3 +1,18 @@
+2014-03-31  Brent Fulgham  <bfulgham@apple.com>
+
+        Reduced Latched Scroll Test Flakiness
+        https://bugs.webkit.org/show_bug.cgi?id=130983
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setDefaultsToConsistentValuesForTesting): Test user should have 'high resolution' scrolling.
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController mouseScrollByX:andY:withWheel:andMomentumPhases:]): Generate mouse wheel events
+        with high resolution flags turned on.
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases): Ditto.
+
 2014-03-31  Jozsef Berta  <jberta.u-szeged@partner.samsung.com>
 
         run-webkit-tests should have a --no-timeout option

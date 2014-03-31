@@ -473,6 +473,7 @@ void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int
     CGPoint lastGlobalMousePosition = CGPointMake(m_position.x, [[NSScreen mainScreen] frame].size.height - m_position.y);
     CGEventSetLocation(cgScrollEvent.get(), lastGlobalMousePosition);
 
+    CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventIsContinuous, 1);
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventScrollPhase, phase);
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventMomentumPhase, momentum);
 
