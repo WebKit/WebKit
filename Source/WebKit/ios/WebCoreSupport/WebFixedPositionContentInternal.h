@@ -25,7 +25,6 @@
 
 #import <Foundation/Foundation.h>
 #import <wtf/HashMap.h>
-#import <wtf/OwnPtr.h>
 
 @class CALayer;
 
@@ -36,6 +35,6 @@ class ViewportConstraints;
 @interface WebFixedPositionContent(WebKitInternal)
 // Called from inside WebKit.
 
-- (void)setViewportConstrainedLayers:(WTF::HashMap<CALayer *, OwnPtr<WebCore::ViewportConstraints> >&)layerMap stickyContainerMap:(WTF::HashMap<CALayer*, CALayer*>&)stickyContainers;
+- (void)setViewportConstrainedLayers:(WTF::HashMap<CALayer *, std::unique_ptr<WebCore::ViewportConstraints>>&)layerMap stickyContainerMap:(WTF::HashMap<CALayer*, CALayer*>&)stickyContainers;
 
 @end

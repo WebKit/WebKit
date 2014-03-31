@@ -1,3 +1,10 @@
+2014-03-31  Anders Carlsson  <andersca@apple.com>
+
+        Fix iOS build.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::updateViewportConstrainedLayers):
+
 2014-03-31  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] Support lease-renewal.

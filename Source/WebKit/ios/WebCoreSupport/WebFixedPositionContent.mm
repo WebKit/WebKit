@@ -59,10 +59,10 @@ struct ViewportConstrainedLayerData {
         : m_enclosingAcceleratedScrollLayer(nil)
     { }
     CALayer* m_enclosingAcceleratedScrollLayer; // May be nil.
-    OwnPtr<ViewportConstraints> m_viewportConstraints;
+    std::unique_ptr<ViewportConstraints> m_viewportConstraints;
 };
 
-typedef HashMap<RetainPtr<CALayer>, OwnPtr<ViewportConstrainedLayerData> > LayerInfoMap;
+typedef HashMap<RetainPtr<CALayer>, std::unique_ptr<ViewportConstrainedLayerData>> LayerInfoMap;
 
 struct WebFixedPositionContentData {
 public:
@@ -171,21 +171,20 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
     });
 }
 
-- (void)setViewportConstrainedLayers:(WTF::HashMap<CALayer *, OwnPtr<WebCore::ViewportConstraints> >&)layerMap stickyContainerMap:(WTF::HashMap<CALayer*, CALayer*>&)stickyContainers
+- (void)setViewportConstrainedLayers:(WTF::HashMap<CALayer *, std::unique_ptr<WebCore::ViewportConstraints>>&)layerMap stickyContainerMap:(WTF::HashMap<CALayer*, CALayer*>&)stickyContainers
 {
     MutexLocker lock(WebFixedPositionContentDataLock());
 
     _private->m_viewportConstrainedLayers.clear();
 
-    HashMap<CALayer *, OwnPtr<ViewportConstraints> >::iterator end = layerMap.end();
-    for (HashMap<CALayer *, OwnPtr<ViewportConstraints> >::iterator it = layerMap.begin(); it != end; ++it) {
-        CALayer* layer = it->key;
-        OwnPtr<ViewportConstrainedLayerData> layerData = adoptPtr(new ViewportConstrainedLayerData);
+    for (auto& layerAndConstraints : layerMap) {
+        CALayer* layer = layerAndConstraints.key;
+        auto layerData = std::make_unique<ViewportConstrainedLayerData>();
 
         layerData->m_enclosingAcceleratedScrollLayer = stickyContainers.get(layer);
-        layerData->m_viewportConstraints = it->value.release();
+        layerData->m_viewportConstraints = std::move(layerAndConstraints.value);
 
-        _private->m_viewportConstrainedLayers.set(layer, layerData.release());
+        _private->m_viewportConstrainedLayers.set(layer, std::move(layerData));
     }
 }
 

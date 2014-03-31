@@ -1,3 +1,12 @@
+2014-03-31  Anders Carlsson  <andersca@apple.com>
+
+        Fix iOS build.
+
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        * WebCoreSupport/WebFixedPositionContent.mm:
+        * WebCoreSupport/WebFixedPositionContentInternal.h:
+
 2014-03-30  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the iOS build.

@@ -70,7 +70,7 @@ public:
 
     virtual void didFlushCompositingLayers() override;
 
-    virtual void updateViewportConstrainedLayers(HashMap<PlatformLayer*, OwnPtr<WebCore::ViewportConstraints> >&, HashMap<PlatformLayer*, PlatformLayer*>&) override;
+    virtual void updateViewportConstrainedLayers(HashMap<PlatformLayer*, std::unique_ptr<WebCore::ViewportConstraints>>&, HashMap<PlatformLayer*, PlatformLayer*>&) override;
 
     virtual bool fetchCustomFixedPositionLayoutRect(WebCore::IntRect&) override;
     virtual void addOrUpdateScrollingLayer(WebCore::Node*, PlatformLayer*, PlatformLayer*, const WebCore::IntSize&, bool allowHorizontalScrollbar, bool allowVerticalScrollbar) override;
