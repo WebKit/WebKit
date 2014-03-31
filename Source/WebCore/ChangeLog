@@ -1,3 +1,17 @@
+2014-03-31  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] Support lease-renewal.
+        https://bugs.webkit.org/show_bug.cgi?id=130919
+
+        Reviewed by Eric Carlson.
+
+        Trigger a new key request when receiving an update message containting "renew".
+
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+        (WebCore::CDMSessionMediaSourceAVFObjC::generateKeyRequest): Drive-by fix; generate a UTF-8
+            based array.
+        (WebCore::CDMSessionMediaSourceAVFObjC::update):
+
 2014-03-31  Alexey Proskuryakov  <ap@apple.com>
 
         Remove special handling of soft hyphens in search code

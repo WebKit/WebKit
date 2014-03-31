@@ -38,6 +38,7 @@
 #import "UUID.h"
 #import <CoreMedia/CMBase.h>
 #import <objc/objc-runtime.h>
+#import <wtf/NeverDestroyed.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVStreamDataParser);
@@ -73,11 +74,10 @@ PassRefPtr<Uint8Array> CDMSessionMediaSourceAVFObjC::generateKeyRequest(const St
     m_initData = initData;
 
     String certificateString(ASCIILiteral("certificate"));
-    RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(certificateString.length(), 2);
-    RefPtr<JSC::Uint16Array> array = JSC::Uint16Array::create(buffer, 0, certificateString.length());
+    RefPtr<Uint8Array> array = Uint8Array::create(certificateString.length());
     for (unsigned i = 0, length = certificateString.length(); i < length; ++i)
         array->set(i, certificateString[i]);
-    return Uint8Array::create(buffer, 0, buffer->byteLength());
+    return array;
 }
 
 void CDMSessionMediaSourceAVFObjC::releaseKeys()
@@ -108,6 +108,14 @@ bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& n
         nextMessage = Uint8Array::create([request length]);
         [request getBytes:nextMessage->data() length:nextMessage->length()];
         return false;
+    }
+
+    static NeverDestroyed<String> renewMessage("renew");
+    String keyAsString(key->data(), key->length());
+
+    if (keyAsString == renewMessage) {
+        [m_parent->parser() renewExpiringContentKeyResponseDataForTrackID:m_parent->protectedTrackID()];
+        return true;
     }
 
     LOG(Media, "CDMSessionMediaSourceAVFObjC::update(%p) - key data", this);
