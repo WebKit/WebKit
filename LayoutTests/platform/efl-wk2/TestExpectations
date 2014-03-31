@@ -41,8 +41,8 @@
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
-webkit.org/b/92726 fast/dom/register-protocol-handler.html [ Crash ]
-webkit.org/b/92726 fast/dom/unregister-protocol-handler.html [ Crash ]
+webkit.org/b/92726 fast/dom/NavigatorContentUtils/register-protocol-handler.html [ Crash ]
+webkit.org/b/92726 fast/dom/NavigatorContentUtils/unregister-protocol-handler.html [ Crash ]
 
 # Crashes on plugin test, also blocked by 108077
 webkit.org/b/98747 plugins/document-open.html [ Crash Failure ]
@@ -288,7 +288,7 @@ svg/custom/image-with-prefix-in-webarchive.svg [ Skip ]
 http/tests/webarchive [ Skip ]
 
 # isProtocolHandlerRegistered() isn't supported by WK2 yet.
-webkit.org/b/92749 fast/dom/is-protocol-handler-registered.html [ Skip ]
+webkit.org/b/92749 fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html [ Skip ]
 
 # WebKitTestRunner needs an implementation for testRunner.titleTextDirection
 webkit.org/b/93470 fast/dom/title-directionality-removeChild.html [ Failure ]

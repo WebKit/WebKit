@@ -220,7 +220,7 @@ webkit.org/b/117039 media/track/audio-track.html [ Skip ]
 webkit.org/b/117039 media/track/video-track.html [ Skip ]
 
 # isProtocolHandlerRegistered() isn't supported yet.
-webkit.org/b/92749 fast/dom/is-protocol-handler-registered.html [ Skip ]
+webkit.org/b/92749 fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html [ Skip ]
 
 # Tests for MediaSource API. Feature is not totally functional.
 webkit.org/b/99065 http/tests/media/media-source [ Skip ]
