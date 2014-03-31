@@ -1,3 +1,18 @@
+2014-03-31  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [CMake][GTK] Do not expand variables twice in if() checks.
+        https://bugs.webkit.org/show_bug.cgi?id=130964
+
+        Reviewed by Martin Robinson.
+
+        In CMake, `if (${foo})' causes $foo to be evaluated first and its value
+        to be checked by the if clause. This is not what we want, and
+        configuration fails when, say, GLX support wasn't found as the if
+        clause is actually evaluated as `if (TRUE AND (OR TRUE))'.
+
+        * Source/cmake/OptionsGTK.cmake: Pass if (FOO) instead of if (${FOO})
+        where necessary.
+
 2014-03-31  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove scripts code only applicable to autotools
