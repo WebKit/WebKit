@@ -1,3 +1,12 @@
+2014-03-31  Benjamin Poulain  <bpoulain@apple.com>
+
+        Attempt to fix the 32bits debug builds
+
+        The additional debug flags in RefCounted cause the structure to have different alignment
+        with the 64bits flags.
+
+        * rendering/style/RenderStyle.cpp:
+
 2014-03-29  Simon Fraser  <simon.fraser@apple.com>
 
         Clarify some scrolling tree terminology
