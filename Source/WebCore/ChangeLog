@@ -1,3 +1,18 @@
+2014-03-31  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT: clean up the functions ending when generating a checker with context
+        https://bugs.webkit.org/show_bug.cgi?id=130959
+
+        Reviewed by Andreas Kling.
+
+        This code got refactored over time and now both branches do the exact same action
+        on the stack.
+        This patch removes the stack split and move the stack cleanup in the common ending
+        just before restoring the callee saved registers.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+
 2014-03-31  Beth Dakin  <bdakin@apple.com>
 
         ThemeMac should use std::array instead of IntSize* for control sizes

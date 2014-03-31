@@ -706,24 +706,15 @@ void SelectorCodeGenerator::generateSelectorChecker()
         // Success.
         m_assembler.move(Assembler::TrustedImm32(1), returnRegister);
 
-        StackAllocator successStack = m_stackAllocator;
-        StackAllocator failureStack = m_stackAllocator;
-
-        LocalRegister checkingContextRegister(m_registerAllocator);
-        successStack.popAndDiscardUpTo(m_checkingContextStackReference);
-
         // Failure.
         if (!failureCases.empty()) {
             Assembler::Jump skipFailureCase = m_assembler.jump();
-
             failureCases.link(&m_assembler);
-            failureStack.popAndDiscardUpTo(m_checkingContextStackReference);
             m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
-
             skipFailureCase.link(&m_assembler);
         }
 
-        m_stackAllocator.merge(std::move(successStack), std::move(failureStack));
+        m_stackAllocator.popAndDiscardUpTo(m_checkingContextStackReference);
         m_registerAllocator.restoreCalleeSavedRegisters(m_stackAllocator);
         m_assembler.ret();
     }
