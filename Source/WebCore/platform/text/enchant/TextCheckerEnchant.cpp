@@ -53,14 +53,14 @@ TextCheckerEnchant::~TextCheckerEnchant()
 
 void TextCheckerEnchant::ignoreWord(const String& word)
 {
-    for (Vector<EnchantDict*>::const_iterator iter = m_enchantDictionaries.begin(); iter != m_enchantDictionaries.end(); ++iter)
-        enchant_dict_add_to_session(*iter, word.utf8().data(), -1);
+    for (auto& dictionary : m_enchantDictionaries)
+        enchant_dict_add_to_session(dictionary, word.utf8().data(), -1);
 }
 
 void TextCheckerEnchant::learnWord(const String& word)
 {
-    for (Vector<EnchantDict*>::const_iterator iter = m_enchantDictionaries.begin(); iter != m_enchantDictionaries.end(); ++iter)
-        enchant_dict_add(*iter, word.utf8().data(), -1);
+    for (auto& dictionary : m_enchantDictionaries)
+        enchant_dict_add(dictionary, word.utf8().data(), -1);
 }
 
 void TextCheckerEnchant::checkSpellingOfWord(const CString& word, int start, int end, int& misspellingLocation, int& misspellingLength)
@@ -69,8 +69,8 @@ void TextCheckerEnchant::checkSpellingOfWord(const CString& word, int start, int
     char* startPtr = g_utf8_offset_to_pointer(string, start);
     int numberOfBytes = static_cast<int>(g_utf8_offset_to_pointer(string, end) - startPtr);
 
-    for (Vector<EnchantDict*>::const_iterator dictIter = m_enchantDictionaries.begin(); dictIter != m_enchantDictionaries.end(); ++dictIter) {
-        if (!enchant_dict_check(*dictIter, startPtr, numberOfBytes)) {
+    for (auto& dictionary : m_enchantDictionaries) {
+        if (!enchant_dict_check(dictionary, startPtr, numberOfBytes)) {
             // Stop checking, this word is ok in at least one dict.
             misspellingLocation = -1;
             misspellingLength = 0;
@@ -114,11 +114,11 @@ Vector<String> TextCheckerEnchant::getGuessesForWord(const String& word)
     if (!hasDictionary())
         return guesses;
 
-    for (Vector<EnchantDict*>::const_iterator iter = m_enchantDictionaries.begin(); iter != m_enchantDictionaries.end(); ++iter) {
+    for (auto& dictionary : m_enchantDictionaries) {
         size_t numberOfSuggestions;
         size_t i;
 
-        char** suggestions = enchant_dict_suggest(*iter, word.utf8().data(), -1, &numberOfSuggestions);
+        char** suggestions = enchant_dict_suggest(dictionary, word.utf8().data(), -1, &numberOfSuggestions);
         if (numberOfSuggestions <= 0)
             continue;
 
@@ -128,7 +128,7 @@ Vector<String> TextCheckerEnchant::getGuessesForWord(const String& word)
         for (i = 0; i < numberOfSuggestions; i++)
             guesses.append(String::fromUTF8(suggestions[i]));
 
-        enchant_dict_free_suggestions(*iter, suggestions);
+        enchant_dict_free_suggestions(dictionary, suggestions);
     }
 
     return guesses;
@@ -139,8 +139,8 @@ void TextCheckerEnchant::updateSpellCheckingLanguages(const Vector<String>& lang
     Vector<EnchantDict*> spellDictionaries;
 
     if (!languages.isEmpty()) {
-        for (Vector<String>::const_iterator iter = languages.begin(); iter != languages.end(); ++iter) {
-            CString currentLanguage = iter->utf8();
+        for (auto& language : languages) {
+            CString currentLanguage = language.utf8();
             if (enchant_broker_dict_exists(m_broker, currentLanguage.data())) {
                 EnchantDict* dict = enchant_broker_request_dict(m_broker, currentLanguage.data());
                 spellDictionaries.append(dict);
@@ -175,11 +175,11 @@ Vector<String> TextCheckerEnchant::loadedSpellCheckingLanguages() const
 
     // Get a Vector<CString> with the list of languages in use.
     Vector<CString> currentDictionaries;
-    for (Vector<EnchantDict*>::const_iterator iter = m_enchantDictionaries.begin(); iter != m_enchantDictionaries.end(); ++iter)
-        enchant_dict_describe(*iter, enchantDictDescribeCallback, &currentDictionaries);
+    for (auto& dictionary : m_enchantDictionaries)
+        enchant_dict_describe(dictionary, enchantDictDescribeCallback, &currentDictionaries);
 
-    for (Vector<CString>::const_iterator iter = currentDictionaries.begin(); iter != currentDictionaries.end(); ++iter)
-        languages.append(String::fromUTF8(iter->data()));
+    for (auto& dictionary : currentDictionaries)
+        languages.append(String::fromUTF8(dictionary.data()));
 
     return languages;
 }
@@ -190,16 +190,16 @@ Vector<String> TextCheckerEnchant::availableSpellCheckingLanguages() const
     enchant_broker_list_dicts(m_broker, enchantDictDescribeCallback, &allDictionaries);
 
     Vector<String> languages;
-    for (Vector<CString>::const_iterator iter = allDictionaries.begin(); iter != allDictionaries.end(); ++iter)
-        languages.append(String::fromUTF8(iter->data()));
+    for (auto& dictionary : allDictionaries)
+        languages.append(String::fromUTF8(dictionary.data()));
 
     return languages;
 }
 
 void TextCheckerEnchant::freeEnchantBrokerDictionaries()
 {
-    for (Vector<EnchantDict*>::const_iterator iter = m_enchantDictionaries.begin(); iter != m_enchantDictionaries.end(); ++iter)
-        enchant_broker_free_dict(m_broker, *iter);
+    for (auto& dictionary : m_enchantDictionaries)
+        enchant_broker_free_dict(m_broker, dictionary);
 }
 
 } // namespace WebCore

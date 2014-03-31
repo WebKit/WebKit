@@ -1,3 +1,20 @@
+2014-03-30  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Adopt range-based for loops to TextCheckerEnchant
+        https://bugs.webkit.org/show_bug.cgi?id=130714
+
+        Reviewed by Darin Adler.
+
+        * platform/text/enchant/TextCheckerEnchant.cpp:
+        (WebCore::TextCheckerEnchant::ignoreWord):
+        (WebCore::TextCheckerEnchant::learnWord):
+        (WebCore::TextCheckerEnchant::checkSpellingOfWord):
+        (WebCore::TextCheckerEnchant::getGuessesForWord):
+        (WebCore::TextCheckerEnchant::updateSpellCheckingLanguages):
+        (WebCore::TextCheckerEnchant::loadedSpellCheckingLanguages):
+        (WebCore::TextCheckerEnchant::availableSpellCheckingLanguages):
+        (WebCore::TextCheckerEnchant::freeEnchantBrokerDictionaries):
+
 2014-03-30  Benjamin Poulain  <benjamin@webkit.org>
 
         Second attempt to fix 32bits build after r166465
