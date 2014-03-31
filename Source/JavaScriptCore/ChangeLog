@@ -1,5 +1,17 @@
 2014-03-31  Filip Pizlo  <fpizlo@apple.com>
 
+        More validation for FTL inline caches
+        https://bugs.webkit.org/show_bug.cgi?id=130948
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        * runtime/Options.h:
+
+2014-03-31  Filip Pizlo  <fpizlo@apple.com>
+
         LLVM IR for store barriers should be nicely arranged and they don't need exception checks
         https://bugs.webkit.org/show_bug.cgi?id=130950
 

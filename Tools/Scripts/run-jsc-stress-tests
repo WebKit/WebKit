@@ -587,8 +587,16 @@ def runNoCJITNoASO
     run("no-cjit-no-aso", "--enableConcurrentJIT=false", "--enableArchitectureSpecificOptimizations=false")
 end
 
-def runFTLNoSimpleOpt
-    run("ftl-no-simple-opt", "--enableConcurrentJIT=false", "--llvmSimpleOpt=false", *FTL_OPTIONS) if $enableFTL
+def runFTLNoCJITNoSimpleOpt
+    run("ftl-no-cjit-no-simple-opt", "--enableConcurrentJIT=false", "--llvmSimpleOpt=false", *FTL_OPTIONS) if $enableFTL
+end
+
+def runNoCJITNoAccessInlining
+    run("no-cjit-no-access-inlining", "--enableConcurrentJIT=false", "--enableAccessInlining=false")
+end
+
+def runFTLNoCJITNoAccessInlining
+    run("ftl-no-cjit-no-access-inlining", "--enableConcurrentJIT=false", "--enableAccessInlining=false", *FTL_OPTIONS) if $enableFTL
 end
 
 def defaultRun
@@ -601,10 +609,8 @@ def defaultRun
     runDefaultFTL
     runFTLNoCJITValidate
     runFTLNoCJITNoInlineValidate
-    runFTLNoCJITOSRValidation
     runFTLEager
     runFTLEagerNoCJITValidate
-    runFTLEagerNoCJITOSRValidation
 end
 
 def defaultQuickRun
@@ -614,9 +620,12 @@ def defaultQuickRun
     runFTLNoCJIT
 end
 
-def defaultFTLSpotCheck
+def defaultSpotCheck
     defaultQuickRun
-    runFTLNoSimpleOpt
+    runFTLNoCJITNoSimpleOpt
+    runFTLNoCJITOSRValidation
+    runNoCJITNoAccessInlining
+    runFTLNoCJITNoAccessInlining
 end
 
 # This is expected to not do eager runs because eager runs can have a lot of recompilations

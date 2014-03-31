@@ -160,6 +160,7 @@ typedef OptionRange optionRange;
     v(bool, ftlCrashes, false) /* fool-proof way of checking that you ended up in the FTL. ;-) */\
     v(bool, clobberAllRegsInFTLICSlowPath, !ASSERT_DISABLED) \
     v(bool, assumeAllRegsInFTLICAreLive, true) \
+    v(bool, enableAccessInlining, true) \
     \
     v(bool, enableConcurrentJIT, true) \
     v(unsigned, numberOfDFGCompilerThreads, computeNumberOfWorkerThreads(2, 2) - 1) \
