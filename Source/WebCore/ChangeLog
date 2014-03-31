@@ -1,3 +1,10 @@
+2014-03-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix iOS build.
+
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeScrollingNodeIOS::updateLayersAfterDelegatedScroll):
+
 2014-03-31  Pratik Solanki  <psolanki@apple.com>
 
         Unreviewed. iOS build fix after r166532. Add missing comma.

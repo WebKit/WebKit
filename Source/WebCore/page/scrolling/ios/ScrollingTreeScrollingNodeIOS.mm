@@ -153,7 +153,7 @@ void ScrollingTreeScrollingNodeIOS::updateLayersAfterViewportChange(const FloatR
 
 void ScrollingTreeScrollingNodeIOS::updateLayersAfterDelegatedScroll(const FloatPoint& scrollPosition)
 {
-    updateChildNodesAfterScroll(scrollPosition());
+    updateChildNodesAfterScroll(scrollPosition);
 }
 
 void ScrollingTreeScrollingNodeIOS::updateChildNodesAfterScroll(const FloatPoint& scrollPosition)
