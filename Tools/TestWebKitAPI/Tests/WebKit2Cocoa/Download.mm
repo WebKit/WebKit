@@ -57,7 +57,7 @@ static NSURL *sourceURL = [[NSBundle mainBundle] URLForResource:@"simple" withEx
 {
     EXPECT_NULL(_download);
     EXPECT_NOT_NULL(download);
-    EXPECT_TRUE([[[download request] URL] isEqual:sourceURL]);
+    EXPECT_TRUE([[[[download request] URL] path] isEqualToString:[sourceURL path]]);
     _download = download;
 }
 

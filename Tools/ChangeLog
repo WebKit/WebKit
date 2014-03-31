@@ -1,5 +1,12 @@
 2014-03-30  Andy Estes  <aestes@apple.com>
 
+        Fix two failing layout tests on Mountain Lion after r166466.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Download.mm:
+        (-[DownloadDelegate _downloadDidStart:]):
+
+2014-03-30  Andy Estes  <aestes@apple.com>
+
         [Cocoa] Add an originatingWebView property to _WKDownload
         https://bugs.webkit.org/show_bug.cgi?id=130945
 
