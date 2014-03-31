@@ -419,7 +419,7 @@ EAPI Ewk_Process_Model ewk_context_process_model_get(const Ewk_Context *context)
  *
  * @return The TLS errors policy for the context
  */
-Ewk_TLS_Error_Policy ewk_context_tls_error_policy_get(const Ewk_Context *context);
+EAPI Ewk_TLS_Error_Policy ewk_context_tls_error_policy_get(const Ewk_Context *context);
 
 /**
  * Sets TLS error policy for @a context.

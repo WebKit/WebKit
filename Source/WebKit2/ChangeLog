@@ -1,3 +1,11 @@
+2014-03-31  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Buildfix after r166497.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * UIProcess/API/efl/ewk_context.h: Missing EAPI added.
+
 2014-03-31  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Use PROJECT_VERSION_* instead of WEBKIT_*_VERSION
