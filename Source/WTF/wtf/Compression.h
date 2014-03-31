@@ -26,7 +26,7 @@
 #ifndef Compression_h
 #define Compression_h
 
-#include <wtf/PassOwnPtr.h>
+#include <memory>
 #include <wtf/Vector.h>
 
 namespace WTF {
@@ -35,7 +35,7 @@ class GenericCompressedData {
     WTF_MAKE_NONCOPYABLE(GenericCompressedData)
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WTF_EXPORT_PRIVATE static PassOwnPtr<GenericCompressedData> create(const uint8_t*, size_t);
+    WTF_EXPORT_PRIVATE static std::unique_ptr<GenericCompressedData> create(const uint8_t*, size_t);
     uint32_t compressedSize() const { return m_compressedSize; }
     uint32_t originalSize() const { return m_originalSize; }
 
@@ -57,10 +57,10 @@ private:
 
 template <typename T> class CompressedVector : public GenericCompressedData {
 public:
-    static PassOwnPtr<CompressedVector> create(const Vector<T>& source)
+    static std::unique_ptr<CompressedVector> create(const Vector<T>& source)
     {
-        OwnPtr<GenericCompressedData> result = GenericCompressedData::create(reinterpret_cast<const uint8_t*>(source.data()), sizeof(T) * source.size());
-        return adoptPtr(static_cast<CompressedVector<T>*>(result.leakPtr()));
+        std::unique_ptr<GenericCompressedData> result = GenericCompressedData::create(reinterpret_cast<const uint8_t*>(source.data()), sizeof(T) * source.size());
+        return std::unique_ptr<CompressedVector<T>>(static_cast<CompressedVector<T>*>(result.release()));
     }
 
     void decompress(Vector<T>& destination)
@@ -134,10 +134,10 @@ private:
         if (!m_compressedData)
             return;
         m_compressedData->decompress(m_decompressedData);
-        m_compressedData.clear();
+        m_compressedData = nullptr;
     }
     mutable Vector<T> m_decompressedData;
-    mutable OwnPtr<CompressedVector<T>> m_compressedData;
+    mutable std::unique_ptr<CompressedVector<T>> m_compressedData;
 };
 
 }

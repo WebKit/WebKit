@@ -52,7 +52,7 @@ static void zFree(void*, void* data)
     fastFree(data);
 }
 
-PassOwnPtr<GenericCompressedData> GenericCompressedData::create(const uint8_t* data, size_t dataLength)
+std::unique_ptr<GenericCompressedData> GenericCompressedData::create(const uint8_t* data, size_t dataLength)
 {
     enum { MinimumSize = sizeof(GenericCompressedData) * 8 };
 
@@ -122,8 +122,7 @@ PassOwnPtr<GenericCompressedData> GenericCompressedData::create(const uint8_t* d
 
     totalCompressed += currentCapacity;
     totalInput += dataLength;
-    GenericCompressedData* result = new (compressedData) GenericCompressedData(dataLength, stream.total_out);
-    return adoptPtr(result);
+    return std::unique_ptr<GenericCompressedData>(new (compressedData) GenericCompressedData(dataLength, stream.total_out));
 }
 
 bool GenericCompressedData::decompress(uint8_t* destination, size_t bufferSize, size_t* decompressedByteCount)
@@ -165,7 +164,7 @@ bool GenericCompressedData::decompress(uint8_t* destination, size_t bufferSize, 
 #else
 
 namespace WTF {
-PassOwnPtr<GenericCompressedData> GenericCompressedData::create(const uint8_t*, size_t)
+std::unique_ptr<GenericCompressedData> GenericCompressedData::create(const uint8_t*, size_t)
 {
     return nullptr;
 }
