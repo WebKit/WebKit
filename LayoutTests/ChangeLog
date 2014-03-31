@@ -1,3 +1,16 @@
+2014-03-31  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r166536.
+        https://bugs.webkit.org/show_bug.cgi?id=130993
+
+        This is not the correct fix. (Requested by bfulgham on
+        #webkit).
+
+        Reverted changeset:
+
+        "Unreviewed test fix after r166530."
+        http://trac.webkit.org/changeset/166536
+
 2014-03-31  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix after r166530.
