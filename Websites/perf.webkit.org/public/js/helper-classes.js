@@ -68,26 +68,28 @@ function TestBuild(repositories, builders, platform, rawRun) {
     this.revision = function(repositoryName) { return revisions[repositoryName][0]; }
     this.formattedRevisions = function (previousBuild) {
         var result = {};
-        for (var repositoryName in revisions) {
+        for (var repositoryName in repositories) {
+            if (!revisions[repositoryName])
+                continue;
             var previousRevision = previousBuild ? previousBuild.revision(repositoryName) : undefined;
             var currentRevision = this.revision(repositoryName);
             if (previousRevision === currentRevision)
                 previousRevision = undefined;
 
             var revisionPrefix = '';
-            if (currentRevision.length < 10) { // SVN-like revision.
+            var revisionDelimitor = '-';
+            if (parseInt(currentRevision) == currentRevision) { // e.g. r12345.
                 revisionPrefix = 'r';
                 if (previousRevision)
                     previousRevision = (parseInt(previousRevision) + 1);
-            }
+            } else if (currentRevision.indexOf(' ') >= 0) // e.g. 10.9 13C64.
+                revisionDelimitor = ' - ';
 
-            var labelForThisRepository = revisionCount ? repositoryName : '';
-            if (previousRevision) {
-                if (labelForThisRepository)
-                    labelForThisRepository += ' ';
-                labelForThisRepository += revisionPrefix + previousRevision + '-' + revisionPrefix + currentRevision;
-            } else
-                labelForThisRepository += ' @ ' + revisionPrefix + currentRevision;
+            var labelForThisRepository;
+            if (previousRevision)
+                labelForThisRepository = revisionPrefix + previousRevision + revisionDelimitor + revisionPrefix + currentRevision;
+            else
+                labelForThisRepository = '@ ' + revisionPrefix + currentRevision;
 
             var url;
             var repository = repositories[repositoryName];
@@ -124,14 +126,14 @@ function PerfTestRuns(metric, platform) {
     var baselines = {};
     var unit = {'Combined': '', // Assume smaller is better for now.
         'FrameRate': 'fps',
-        'Runs': 'runs/s',
+        'Runs': '/s',
         'Time': 'ms',
-        'Malloc': 'bytes',
-        'JSHeap': 'bytes',
-        'Allocations': 'bytes',
-        'EndAllocations': 'bytes',
-        'MaxAllocations': 'bytes',
-        'MeanAllocations': 'bytes'}[metric.name];
+        'Malloc': 'B',
+        'JSHeap': 'B',
+        'Allocations': 'B',
+        'EndAllocations': 'B',
+        'MaxAllocations': 'B',
+        'MeanAllocations': 'B'}[metric.name];
 
     // We can't do this in PerfTestResult because all results for each metric need to share the same unit and the same scaling factor.
     function computeScalingFactorIfNeeded() {
@@ -141,10 +143,11 @@ function PerfTestRuns(metric, platform) {
             return;
 
         var mean = results[0].unscaledMean(); // FIXME: We should look at all values.
-        var kilo = unit == 'bytes' ? 1024 : 1000;
+        var kilo = unit == 'B' ? 1024 : 1000;
         if (mean > 2 * kilo * kilo && unit != 'ms') {
             cachedScalingFactor = 1 / kilo / kilo;
-            cachedUnit = 'M ' + unit;
+            var unitFirstChar = unit.charAt(0);
+            cachedUnit = 'M' + (unitFirstChar.toUpperCase() == unitFirstChar ? '' : ' ') + unit;
         } else if (mean > 2 * kilo) {
             cachedScalingFactor = 1 / kilo;
             cachedUnit = unit == 'ms' ? 's' : ('K ' + unit);

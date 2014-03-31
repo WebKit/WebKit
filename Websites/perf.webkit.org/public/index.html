@@ -40,10 +40,6 @@ td, th {
     font-weight: normal;
 }
 
-#dashboard td {
-    
-}
-
 .chart {
     position: relative;
     border: solid 1px #ccc;
@@ -73,8 +69,7 @@ td, th {
 }
 
 #dashboard header {
-    padding: 10px;
-    width: 200px;
+    padding: 0px 10px;
 }
 
 .chart h2, .chart h3 {
@@ -82,7 +77,6 @@ td, th {
     padding: 0;
     font-size: 1em;
     font-weight: normal;
-    width: 200px;
     word-break: break-all;
 }
 
@@ -96,6 +90,10 @@ td, th {
 
 #dashboard .chart h3 {
     display: none;
+}
+
+#dashboard .chart .status {
+    margin: 0px 10px;
 }
 
 .chart .status {
@@ -115,6 +113,10 @@ td, th {
     height: 15px;
 }
 
+#dashboard .chart {
+    width: 410px;
+}
+
 #dashboard .plot {
     width: 400px;
     height: 100px;
@@ -123,7 +125,7 @@ td, th {
 }
 
 #charts .plot {
-    height: 300px;
+    height: 320px;
     margin-left: 250px;
 }
 
@@ -137,17 +139,41 @@ td, th {
     height: 70px;
 }
 
-.summaryTable {
+.chart .summaryTable {
     font-size: small;
     color: #666;
     border: 0;
 }
 
-#dashboard .summaryTable {
+.chart .meta {
+    position: relative;
+}
+
+.chart .meta table,
+.chart .meta td,
+.tooltip table,
+.tooltip td {
+    margin: 0;
+    padding: 0;
+}
+
+.chart .meta th,
+.tooltip th {
+    margin: 0;
+    padding: 0 0.2em 0 0;
+    text-align: right;
+    font-weight: normal;
+}
+
+.chart .meta td:not(:first-child):before,
+.tooltip td:not(:first-child):before {
+    content: ": ";
+}
+
+#dashboard .chart .summaryTable {
     position: absolute;
     right: 10px;
-    top: 10px;
-    width: 180px;
+    top: 0px;
 }
 
 #dashboard .arrow {
@@ -218,7 +244,7 @@ td, th {
     color: #eee;
     font-size: small;
     line-height: 130%;
-    width: 30ex;
+    white-space: nowrap;
 }
 
 .tooltip:after {
@@ -320,10 +346,6 @@ td, th {
         } else if (relativeDifferenceWithTarget)
             statusText = Math.abs(relativeDifferenceWithTarget * 100).toFixed(2) + '% until target';
 
-        if (statusText)
-            statusText += '<br>';
-        statusText += buildLabelWithLinks(lastResult.build());
-
         return {class: status, text: statusText};
     }
 
@@ -344,7 +366,7 @@ td, th {
     }
 
     function createSummaryRowMarkup(name, runs) {
-        return '<tr><td>' + name + '</td><td>' + runs.lastResult().label() + '</td></tr>';
+        return '<tr><th>' + name + '</th><td>' + runs.lastResult().label() + '</td></tr>';
     }
 
     function buildLabelWithLinks(build, previousBuild) {
@@ -353,11 +375,16 @@ td, th {
         }
 
         var formattedRevisions = build.formattedRevisions(previousBuild);
-        var markup = ['Committed: ' + build.formattedTime(),
-            'Build: ' + linkifyIfNotNull(build.buildNumber(), build.buildUrl()) + ' (' + build.formattedBuildTime() + ')'];
+        var buildInfo = {
+            'Commit': build.formattedTime(),
+            'Build': linkifyIfNotNull(build.buildNumber(), build.buildUrl()) + '(' + build.formattedBuildTime() + ')'
+        };
         for (var repositoryName in formattedRevisions)
-            markup.push(linkifyIfNotNull(formattedRevisions[repositoryName].label, formattedRevisions[repositoryName].url));
-        return markup.join('<br>');
+            buildInfo[repositoryName] = linkifyIfNotNull(formattedRevisions[repositoryName].label, formattedRevisions[repositoryName].url);
+        var markup = '';
+        for (var key in buildInfo)
+            markup += '<tr><th>' + key + '</th><td>' + buildInfo[key] + '</td>';
+        return '<tr>' + markup + '</tr>';
     }
 
     function Chart(container, isDashboard, platform, metric, bugTrackers, onClose) {
@@ -365,9 +392,8 @@ td, th {
         if (metric.test.url)
             linkifiedFullName = '<a href="' + metric.test.url + '">' + linkifiedFullName + '</a>';
         var section = $('<section class="chart"><div class="pane"><header><h2>' + linkifiedFullName + '</h2>'
-            + '<h3 class="platform">' + platform.name + '</h3>'
-            + '<span class="status"></span></header>'
-            + '<table class="summaryTable"><tbody></tbody></table>'
+            + '<h3 class="platform">' + platform.name + '</h3></header>'
+            + '<div class="meta"><table class="status"><tbody></tbody></table><table class="summaryTable"><tbody></tbody></table></div>'
             + '<div class="overviewPlot"></div></div>'
             + '<div class="plot"></div>'
             + '<div class="unit"></div>'
@@ -440,8 +466,10 @@ td, th {
             summaryRows = createSummaryRowMarkup('Current', results) + summaryRows;
 
             var status = computeStatus(results.smallerIsBetter(), results.lastResult(), baseline, target);
+            if (status.text)
+                summaryRows = '<tr><td colspan="2">' + status.text + '</td></tr>' + summaryRows;
             section.addClass(status.class);
-            section.find('.status').html(status.text);
+            section.find('.status tbody').html(buildLabelWithLinks(results.lastResult().build()));
             section.find('.summaryTable tbody').html(summaryRows);
             section.find('.unit').html(results.unit());
             if (results.smallerIsBetter()) {
@@ -571,8 +599,8 @@ td, th {
                 }
                 newBugUrls = 'File:' + newBugUrls;
             }
-            tooltip.show(x, y, result.label(resultToCompare) + '<br>'
-                + buildLabelWithLinks(result.build(), resultToCompare ? resultToCompare.build() : null) + '<br>'
+            tooltip.show(x, y, result.label(resultToCompare) + '<table>'
+                + buildLabelWithLinks(result.build(), resultToCompare ? resultToCompare.build() : null) + '</table>'
                 + newBugUrls);
         }
 

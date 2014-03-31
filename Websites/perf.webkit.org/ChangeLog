@@ -1,5 +1,35 @@
 2014-03-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        WebKitPerfMonitor: Sometimes text inside panes overlap
+        https://bugs.webkit.org/show_bug.cgi?id=130956
+
+        Reviewed by Gyuyoung Kim.
+
+        Revamped the pane UI. Now build info uses table element instead of plane text with BRs. The computed status of
+        the latest result against baseline/target such as "3% until target" is now shown above the current value. This
+        reduces the total height of the pane and fits more information per screen capita on the dashboard.
+
+        * public/index.html: Updated and added a bunch of CSS rules for the new look.
+        (.computeStatus): Don't append the build info here. The build info is constructed as a separate table now.
+        (.createSummaryRowMarkup): Use th instead of td for "Current", "Baseline", and "Target" in the summary table.
+        (.buildLabelWithLinks): Construct table rows instead of br separated lines of text. This streamlines the look
+        of the build info shown in a chart pane and a tooltip.
+        (Chart): Made .status a table.
+        (Chart.populate): Prepend status.text, which contains text such as "3% until target", into the summary rows
+        right above "Current" value, and populate .status with buildLabelWithLinks manually instead of status.text
+        now that status.text no longer contains it.
+        (Chart..showTooltipWithResults):  Wrap buildLabelWithLinks with a table element.
+
+        * public/js/helper-classes.js:
+        (TestBuild.formattedRevisions): Don't include repository names in labels since repository names are now added
+        by buildLabelWithLinks inside th elements. Also place spaces around '-' between two different OS X versions.
+        e.g. "OS X 10.8 - OS X 10.9" instead of "OS X 10.8-OS X 10.9".
+        (PerfTestRuns): Use "/s" for "runs/s" and "B" for "bytes" to make text shorter in .status and .summaryTable.
+        (PerfTestRuns..computeScalingFactorIfNeeded): Avoid placing a space between 'M' and a unit starting with a
+        capital letter; e.g. "MB" instead of "M B".
+
+2014-03-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         WebKitPerfMonitor: Header and number-of-days slider takes up too much space
         https://bugs.webkit.org/show_bug.cgi?id=130957
 
