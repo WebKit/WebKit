@@ -85,6 +85,10 @@ public:
 
     WebKit::ContextHistoryClientEfl* historyClient();
 
+    Ewk_TLS_Error_Policy ignoreTLSErrors() const;
+
+    void setIgnoreTLSErrors(Ewk_TLS_Error_Policy TLSErrorPolicy) const;
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void setAdditionalPluginPath(const String&);
 #endif

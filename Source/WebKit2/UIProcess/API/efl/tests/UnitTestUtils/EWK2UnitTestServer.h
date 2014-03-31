@@ -26,7 +26,7 @@
 
 class EWK2UnitTestServer {
 public:
-    EWK2UnitTestServer();
+    explicit EWK2UnitTestServer(GTlsCertificate* tlsCert = nullptr);
     virtual ~EWK2UnitTestServer();
 
     CString getURLForPath(const char* path) const;

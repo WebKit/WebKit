@@ -413,6 +413,20 @@ void EwkContext::processReceivedMessageFromInjectedBundle(WKStringRef messageNam
         m_callbackForMessageFromInjectedBundle.callback(name.data(), body.data(), nullptr, m_callbackForMessageFromInjectedBundle.userData);
 }
 
+Ewk_TLS_Error_Policy EwkContext::ignoreTLSErrors() const
+{
+    return toImpl(m_context.get())->ignoreTLSErrors() ? EWK_TLS_ERROR_POLICY_IGNORE : EWK_TLS_ERROR_POLICY_FAIL;
+}
+
+void EwkContext::setIgnoreTLSErrors(Ewk_TLS_Error_Policy TLSErrorPolicy) const
+{
+    bool isNewPolicy = TLSErrorPolicy == EWK_TLS_ERROR_POLICY_IGNORE;
+    if (toImpl(m_context.get())->ignoreTLSErrors() == isNewPolicy)
+        return;
+
+    toImpl(m_context.get())->setIgnoreTLSErrors(isNewPolicy);
+}
+
 Ewk_Context* ewk_context_default_get()
 {
     return EwkContext::defaultContext();
@@ -537,4 +551,17 @@ Ewk_Process_Model ewk_context_process_model_get(const Ewk_Context* ewkContext)
     UNUSED_PARAM(ewkContext);
     return EWK_PROCESS_MODEL_SHARED_SECONDARY;
 #endif
+}
+
+Ewk_TLS_Error_Policy ewk_context_tls_error_policy_get(const Ewk_Context* context)
+{
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, context, impl, EWK_TLS_ERROR_POLICY_FAIL);
+
+    return impl->ignoreTLSErrors();
+}
+
+void ewk_context_tls_error_policy_set(Ewk_Context* context, Ewk_TLS_Error_Policy tls_error_policy)
+{
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, context, impl);
+    impl->setIgnoreTLSErrors(tls_error_policy);
 }

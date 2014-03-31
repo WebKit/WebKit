@@ -21,13 +21,22 @@
 #include "config.h"
 #include "EWK2UnitTestServer.h"
 
-EWK2UnitTestServer::EWK2UnitTestServer()
+EWK2UnitTestServer::EWK2UnitTestServer(GTlsCertificate* tlsCert)
 {
     SoupAddress* address = soup_address_new("127.0.0.1", SOUP_ADDRESS_ANY_PORT);
     soup_address_resolve_sync(address, 0);
 
-    m_soupServer = soup_server_new(SOUP_SERVER_INTERFACE, address, static_cast<char*>(0));
-    m_baseURL = soup_uri_new("http://127.0.0.1/");
+    if (tlsCert) {
+        m_soupServer = soup_server_new(
+            SOUP_SERVER_TLS_CERTIFICATE, tlsCert,
+            SOUP_SERVER_INTERFACE, address, static_cast<char*>(0));
+
+        m_baseURL = soup_uri_new("https://127.0.0.1/");
+    } else {
+        m_soupServer = soup_server_new(SOUP_SERVER_INTERFACE, address, static_cast<char*>(0));
+        m_baseURL = soup_uri_new("http://127.0.0.1/");
+    }
+
     soup_uri_set_port(m_baseURL, soup_server_get_port(m_soupServer));
     g_object_unref(address);
 }

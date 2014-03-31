@@ -1,3 +1,30 @@
+2014-03-31  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        [EFL][WK2] Add ewk APIs to control TLS error policy on WebContext.
+        https://bugs.webkit.org/show_bug.cgi?id=129740
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformEfl.cmake:
+        Added the new SSL test.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::ignoreTLSErrors):
+        (EwkContext::setIgnoreTLSErrors):
+        (ewk_context_ignore_tls_errors_get):
+        (ewk_context_ignore_tls_errors_set):
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_context_private.h:
+        Added the API functions.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestServer.cpp:
+        (EWK2UnitTestServer::EWK2UnitTestServer):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestServer.h:
+        Extended the unit test server to handle TLS.
+
+        * UIProcess/API/efl/tests/test_ewk2_ssl.cpp:
+        Added tests to check the TLS policy API.
+
 2014-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK2 plugin process binary name after r166492.

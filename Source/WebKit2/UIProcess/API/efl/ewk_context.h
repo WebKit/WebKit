@@ -88,6 +88,19 @@ enum Ewk_Process_Model {
 typedef enum Ewk_Process_Model Ewk_Process_Model;
 
 /**
+ * \enum    Ewk_TLS_Error_Policy
+ *
+ * @brief   Contains option for TLS error policy
+ */
+enum Ewk_TLS_Error_Policy {
+    EWK_TLS_ERROR_POLICY_FAIL, // Fail on TLS errors.
+    EWK_TLS_ERROR_POLICY_IGNORE // Ignore TLS errors.
+};
+
+// Creates a type name for the Ewk_TLS_Error_Policy.
+typedef enum Ewk_TLS_Error_Policy Ewk_TLS_Error_Policy;
+
+/**
  * @typedef Ewk_Url_Scheme_Request_Cb Ewk_Url_Scheme_Request_Cb
  * @brief Callback type for use with ewk_context_url_scheme_register().
  */
@@ -398,6 +411,25 @@ EAPI Eina_Bool ewk_context_process_model_set(Ewk_Context *context, Ewk_Process_M
  * @return the process model for the @a context
  */
 EAPI Ewk_Process_Model ewk_context_process_model_get(const Ewk_Context *context);
+
+/**
+ * Gets TLS error policy for @a context.
+ *
+ * @param context context object to get TLS error policy
+ *
+ * @return The TLS errors policy for the context
+ */
+Ewk_TLS_Error_Policy ewk_context_tls_error_policy_get(const Ewk_Context *context);
+
+/**
+ * Sets TLS error policy for @a context.
+ *
+ * Sets how TLS certificate errors should be handled. The available policies are listed in #Ewk_TLS_Error_Policy enumeration.
+ *
+ * @param context context object to set TLS error policy
+ * @param tls_error_policy a #Ewk_TLS_Error_Policy
+ */
+EAPI void ewk_context_tls_error_policy_set(Ewk_Context *context, Ewk_TLS_Error_Policy tls_error_policy);
 
 #ifdef __cplusplus
 }
