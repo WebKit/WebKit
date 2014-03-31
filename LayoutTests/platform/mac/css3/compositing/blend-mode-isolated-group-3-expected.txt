@@ -1,51 +1,51 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x208 layerType: background only
-layer at (28,28) size 60x60
+layer at (28,28) size 60x60 isolatesBlending
   RenderBlock (floating) zI: -1 {DIV} at (20,20) size 60x60 [bgcolor=#EE82EE]
-layer at (48,48) size 60x60
+layer at (48,48) size 60x60 blendMode: multiply
   RenderBlock {DIV} at (20,20) size 60x60 [bgcolor=#008000]
 layer at (68,68) size 60x60
   RenderBlock (positioned) {DIV} at (40,40) size 60x60 [bgcolor=#FFA500]
 layer at (128,28) size 60x60
   RenderBlock (floating) zI: -1 {DIV} at (120,20) size 60x60 [bgcolor=#EE82EE]
-layer at (148,48) size 60x60
+layer at (148,48) size 60x60 blendMode: multiply
   RenderBlock {DIV} at (20,20) size 60x60 [bgcolor=#008000]
 layer at (168,68) size 60x60
   RenderBlock (positioned) {DIV} at (40,40) size 60x60 [bgcolor=#FFA500]
 layer at (228,28) size 60x60
   RenderBlock (floating) zI: -1 {DIV} at (220,20) size 60x60 [bgcolor=#EE82EE]
-layer at (248,48) size 60x60
+layer at (248,48) size 60x60 blendMode: multiply
   RenderBlock {DIV} at (20,20) size 60x60 [bgcolor=#008000]
 layer at (268,68) size 60x60
   RenderBlock (positioned) {DIV} at (20,20) size 60x60 [bgcolor=#FFA500]
 layer at (328,28) size 60x60
   RenderBlock (floating) zI: -1 {DIV} at (320,20) size 60x60 [bgcolor=#EE82EE]
-layer at (348,48) size 60x60
+layer at (348,48) size 60x60 blendMode: multiply
   RenderBlock {DIV} at (20,20) size 60x60 [bgcolor=#008000]
 layer at (368,68) size 60x60
   RenderBlock (positioned) {DIV} at (20,20) size 60x60 [bgcolor=#FFA500]
-layer at (428,28) size 60x60
+layer at (428,28) size 60x60 isolatesBlending
   RenderBlock (floating) zI: -1 {DIV} at (420,20) size 60x60 [bgcolor=#EE82EE]
-layer at (448,48) size 60x60
+layer at (448,48) size 60x60 blendMode: multiply
   RenderBlock {DIV} at (20,20) size 60x60 [bgcolor=#008000]
 layer at (468,68) size 60x60
   RenderBlock (positioned) {DIV} at (40,40) size 60x60 [bgcolor=#FFA500]
 layer at (528,28) size 60x60
   RenderBlock (floating) zI: -1 {DIV} at (520,20) size 60x60 [bgcolor=#EE82EE]
-layer at (548,48) size 60x60
+layer at (548,48) size 60x60 blendMode: multiply
   RenderBlock {DIV} at (20,20) size 60x60 [bgcolor=#008000]
 layer at (568,68) size 60x60
   RenderBlock (positioned) {DIV} at (40,40) size 60x60 [bgcolor=#FFA500]
 layer at (628,28) size 60x60
   RenderBlock (floating) zI: -1 {DIV} at (620,20) size 60x60 [bgcolor=#EE82EE]
-layer at (648,48) size 60x60
+layer at (648,48) size 60x60 blendMode: multiply
   RenderBlock {DIV} at (20,20) size 60x60 [bgcolor=#008000]
 layer at (668,68) size 60x60
   RenderBlock (positioned) {DIV} at (20,20) size 60x60 [bgcolor=#FFA500]
 layer at (28,128) size 60x60
   RenderBlock (floating) zI: -1 {DIV} at (20,120) size 60x60 [bgcolor=#EE82EE]
-layer at (48,148) size 60x60
+layer at (48,148) size 60x60 blendMode: multiply
   RenderBlock {DIV} at (20,20) size 60x60 [bgcolor=#008000]
 layer at (68,168) size 60x60
   RenderBlock (positioned) {DIV} at (20,20) size 60x60 [bgcolor=#FFA500]

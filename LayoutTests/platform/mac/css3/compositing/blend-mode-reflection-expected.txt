@@ -7,7 +7,7 @@ layer at (0,0) size 800x286
         RenderBlock (floating) {LI} at (45,5) size 130x260
       RenderBlock {UL} at (0,0) size 784x0
         RenderBlock (floating) {LI} at (185,5) size 130x260
-layer at (53,21) size 130x130
+layer at (53,21) size 130x130 blendMode: multiply
   RenderImage {IMG} at (0,0) size 130x130
-layer at (193,21) size 130x130
+layer at (193,21) size 130x130 blendMode: multiply
   RenderImage {IMG} at (0,0) size 130x130

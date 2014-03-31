@@ -786,6 +786,10 @@ public:
 #endif
     }
 
+#if ENABLE(CSS_COMPOSITING)
+    BlendMode blendMode() const { return m_blendMode; }
+#endif
+
     bool isolatesBlending() const
     {
 #if ENABLE(CSS_COMPOSITING)

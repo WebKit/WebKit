@@ -22,33 +22,33 @@ layer at (0,0) size 800x576
         RenderBlock (floating) {LI} at (45,425) size 130x130
 layer at (53,21) size 130x130
   RenderImage {IMG} at (0,0) size 130x130
-layer at (193,21) size 130x130
+layer at (193,21) size 130x130 blendMode: overlay
   RenderImage {IMG} at (0,0) size 130x130
-layer at (333,21) size 130x130
+layer at (333,21) size 130x130 blendMode: screen
   RenderImage {IMG} at (0,0) size 130x130
-layer at (473,21) size 130x130
+layer at (473,21) size 130x130 blendMode: overlay
   RenderImage {IMG} at (0,0) size 130x130
-layer at (613,21) size 130x130
+layer at (613,21) size 130x130 blendMode: darken
   RenderImage {IMG} at (0,0) size 130x130
-layer at (53,161) size 130x130
+layer at (53,161) size 130x130 blendMode: lighten
   RenderImage {IMG} at (0,0) size 130x130
-layer at (193,161) size 130x130
+layer at (193,161) size 130x130 blendMode: color-dodge
   RenderImage {IMG} at (0,0) size 130x130
-layer at (333,161) size 130x130
+layer at (333,161) size 130x130 blendMode: color-burn
   RenderImage {IMG} at (0,0) size 130x130
-layer at (473,161) size 130x130
+layer at (473,161) size 130x130 blendMode: hard-light
   RenderImage {IMG} at (0,0) size 130x130
-layer at (613,161) size 130x130
+layer at (613,161) size 130x130 blendMode: soft-light
   RenderImage {IMG} at (0,0) size 130x130
-layer at (53,301) size 130x130
+layer at (53,301) size 130x130 blendMode: difference
   RenderImage {IMG} at (0,0) size 130x130
-layer at (193,301) size 130x130
+layer at (193,301) size 130x130 blendMode: exclusion
   RenderImage {IMG} at (0,0) size 130x130
-layer at (333,301) size 130x130
+layer at (333,301) size 130x130 blendMode: hue
   RenderImage {IMG} at (0,0) size 130x130
-layer at (473,301) size 130x130
+layer at (473,301) size 130x130 blendMode: saturation
   RenderImage {IMG} at (0,0) size 130x130
-layer at (613,301) size 130x130
+layer at (613,301) size 130x130 blendMode: color
   RenderImage {IMG} at (0,0) size 130x130
-layer at (53,441) size 130x130
+layer at (53,441) size 130x130 blendMode: luminosity
   RenderImage {IMG} at (0,0) size 130x130

@@ -1,3 +1,21 @@
+2014-03-31  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] showLayerTree should dump layer's blend mode and isolation properties
+        https://bugs.webkit.org/show_bug.cgi?id=130922
+
+        Reviewed by Simon Fraser.
+
+        Tests are adapted after adding blending information to RenderTreeAsText.
+
+        * platform/mac/css3/compositing/blend-mode-background-expected.txt:
+        * platform/mac/css3/compositing/blend-mode-isolated-group-1-expected.txt:
+        * platform/mac/css3/compositing/blend-mode-isolated-group-2-expected.txt:
+        * platform/mac/css3/compositing/blend-mode-isolated-group-3-expected.txt:
+        * platform/mac/css3/compositing/blend-mode-layers-expected.txt:
+        * platform/mac/css3/compositing/blend-mode-reflection-expected.txt:
+        * platform/mac/css3/compositing/blend-mode-simple-composited-expected.txt:
+        * platform/mac/css3/compositing/blend-mode-simple-expected.txt:
+
 2014-03-31  Samuel White  <samuel_white@apple.com>
 
         AX: Need ability to get line range for text marker.

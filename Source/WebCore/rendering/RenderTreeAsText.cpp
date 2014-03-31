@@ -637,6 +637,13 @@ static void write(TextStream& ts, RenderLayer& l,
         if (l.isComposited())
             ts << " (composited, bounds=" << l.backing()->compositedBounds() << ", drawsContent=" << l.backing()->graphicsLayer()->drawsContent() << ", paints into ancestor=" << l.backing()->paintsIntoCompositedAncestor() << ")";
     }
+
+#if ENABLE(CSS_COMPOSITING)
+    if (l.isolatesBlending())
+        ts << " isolatesBlending";
+    if (l.hasBlendMode())
+        ts << " blendMode: " << compositeOperatorName(CompositeSourceOver, l.blendMode());
+#endif
     
     ts << "\n";
 
