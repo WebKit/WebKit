@@ -1,3 +1,9 @@
+2014-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK2 plugin process binary name after r166492.
+
+        * PlatformGTK.cmake: Fix typo.
+
 2014-03-31  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         Remove hostThisRegister() and hostThisValue()

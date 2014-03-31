@@ -520,7 +520,7 @@ set(WEBKIT2_EXTRA_DEPENDENCIES
 )
 
 if (ENABLE_PLUGIN_PROCESS)
-    set(PluginProcessGTK2_EXECUTABLE_NAME WebKitPluginProcessGTK2)
+    set(PluginProcessGTK2_EXECUTABLE_NAME WebKitPluginProcess2)
     list(APPEND PluginProcessGTK2_INCLUDE_DIRECTORIES
         "${WEBKIT2_DIR}/PluginProcess/unix"
     )
@@ -626,18 +626,18 @@ if (ENABLE_PLUGIN_PROCESS)
         ${DERIVED_SOURCES_WEBKIT2_DIR}/NPObjectMessageReceiverMessageReceiver.cpp
     )
 
-    add_executable(WebKitPluginProcessGTK2 ${PluginProcessGTK2_SOURCES})
-    add_webkit2_prefix_header(WebKitPluginProcessGTK2)
+    add_executable(WebKitPluginProcess2 ${PluginProcessGTK2_SOURCES})
+    add_webkit2_prefix_header(WebKitPluginProcess2)
 
     # We need ENABLE_PLUGIN_PROCESS for all targets in this directory, but
     # we only want GTK_API_VERSION_2 for the plugin process target.
     set_property(
-        TARGET WebKitPluginProcessGTK2
+        TARGET WebKitPluginProcess2
         APPEND
         PROPERTY COMPILE_DEFINITIONS GTK_API_VERSION_2=1
     )
     set_property(
-        TARGET WebKitPluginProcessGTK2
+        TARGET WebKitPluginProcess2
         APPEND
         PROPERTY INCLUDE_DIRECTORIES
             ${WebKit2CommonIncludeDirectories}
@@ -645,16 +645,16 @@ if (ENABLE_PLUGIN_PROCESS)
             ${GDK2_INCLUDE_DIRS}
     )
 
-    set(WebKitPluginProcessGTK2_LIBRARIES
+    set(WebKitPluginProcess2_LIBRARIES
         ${SharedWebKit2Libraries}
         WebCorePlatformGTK2
     )
-    ADD_WHOLE_ARCHIVE_TO_LIBRARIES(WebKitPluginProcessGTK2_LIBRARIES)
-    target_link_libraries(WebKitPluginProcessGTK2 ${WebKitPluginProcessGTK2_LIBRARIES})
+    ADD_WHOLE_ARCHIVE_TO_LIBRARIES(WebKitPluginProcess2_LIBRARIES)
+    target_link_libraries(WebKitPluginProcess2 ${WebKitPluginProcess2_LIBRARIES})
 
-    add_dependencies(WebKitPluginProcessGTK2 WebKit2)
+    add_dependencies(WebKitPluginProcess2 WebKit2)
 
-    install(TARGETS WebKitPluginProcessGTK2 DESTINATION "${LIBEXEC_INSTALL_DIR}")
+    install(TARGETS WebKitPluginProcess2 DESTINATION "${LIBEXEC_INSTALL_DIR}")
 
     # GTK3 PluginProcess
     list(APPEND PluginProcess_SOURCES
