@@ -1,3 +1,22 @@
+2014-03-31  Beth Dakin  <bdakin@apple.com>
+
+        ThemeMac should use std::array instead of IntSize* for control sizes
+        https://bugs.webkit.org/show_bug.cgi?id=130985
+
+        Reviewed by Darin Adler.
+
+        Replace uses of const IntSize* with const std::array<IntSize, 3>
+        * platform/mac/ThemeMac.mm:
+        (WebCore::sizeFromNSControlSize):
+        (WebCore::sizeFromFont):
+        (WebCore::controlSizeFromPixelSize):
+        (WebCore::setControlSize):
+        (WebCore::checkboxSizes):
+        (WebCore::radioSizes):
+        (WebCore::buttonSizes):
+        (WebCore::setUpButtonCell):
+        (WebCore::stepperSizes):
+
 2014-03-31  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Simplify RasterShape implementation

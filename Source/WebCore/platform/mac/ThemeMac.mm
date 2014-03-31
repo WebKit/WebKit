@@ -155,7 +155,7 @@ static NSControlSize controlSizeForFont(const Font& font)
     return NSMiniControlSize;
 }
 
-static LengthSize sizeFromNSControlSize(NSControlSize nsControlSize, const LengthSize& zoomedSize, float zoomFactor, const IntSize* sizes)
+static LengthSize sizeFromNSControlSize(NSControlSize nsControlSize, const LengthSize& zoomedSize, float zoomFactor, const std::array<IntSize, 3>& sizes)
 {
     IntSize controlSize = sizes[nsControlSize];
     if (zoomFactor != 1.0f)
@@ -168,12 +168,12 @@ static LengthSize sizeFromNSControlSize(NSControlSize nsControlSize, const Lengt
     return result;
 }
 
-static LengthSize sizeFromFont(const Font& font, const LengthSize& zoomedSize, float zoomFactor, const IntSize* sizes)
+static LengthSize sizeFromFont(const Font& font, const LengthSize& zoomedSize, float zoomFactor, const std::array<IntSize, 3>& sizes)
 {
     return sizeFromNSControlSize(controlSizeForFont(font), zoomedSize, zoomFactor, sizes);
 }
 
-static ControlSize controlSizeFromPixelSize(const IntSize* sizes, const IntSize& minZoomedSize, float zoomFactor)
+static ControlSize controlSizeFromPixelSize(const std::array<IntSize, 3>& sizes, const IntSize& minZoomedSize, float zoomFactor)
 {
     if (minZoomedSize.width() >= static_cast<int>(sizes[NSRegularControlSize].width() * zoomFactor) &&
         minZoomedSize.height() >= static_cast<int>(sizes[NSRegularControlSize].height() * zoomFactor))
@@ -184,7 +184,7 @@ static ControlSize controlSizeFromPixelSize(const IntSize* sizes, const IntSize&
     return NSMiniControlSize;
 }
 
-static void setControlSize(NSCell* cell, const IntSize* sizes, const IntSize& minZoomedSize, float zoomFactor)
+static void setControlSize(NSCell* cell, const std::array<IntSize, 3>& sizes, const IntSize& minZoomedSize, float zoomFactor)
 {
     ControlSize size = controlSizeFromPixelSize(sizes, minZoomedSize, zoomFactor);
     if (size != [cell controlSize]) // Only update if we have to, since AppKit does work even if the size is the same.
@@ -266,9 +266,9 @@ static IntRect inflateRect(const IntRect& zoomedRect, const IntSize& zoomedSize,
 
 // Checkboxes and radio buttons
 
-static const IntSize* checkboxSizes()
+static const std::array<IntSize, 3>& checkboxSizes()
 {
-    static const IntSize sizes[3] = { IntSize(14, 14), IntSize(12, 12), IntSize(10, 10) };
+    static const std::array<IntSize, 3> sizes = { { IntSize(14, 14), IntSize(12, 12), IntSize(10, 10) } };
     return sizes;
 }
 
@@ -295,9 +295,9 @@ static LengthSize checkboxSize(const Font& font, const LengthSize& zoomedSize, f
     
 // Radio Buttons
 
-static const IntSize* radioSizes()
+static const std::array<IntSize, 3>& radioSizes()
 {
-    static const IntSize sizes[3] = { IntSize(14, 15), IntSize(12, 13), IntSize(10, 10) };
+    static const std::array<IntSize, 3> sizes = { { IntSize(14, 15), IntSize(12, 13), IntSize(10, 10) } };
     return sizes;
 }
 
@@ -442,9 +442,9 @@ static void paintToggleButton(ControlPart buttonType, ControlStates* controlStat
 // Buttons
 
 // Buttons really only constrain height. They respect width.
-static const IntSize* buttonSizes()
+static const std::array<IntSize, 3>& buttonSizes()
 {
-    static const IntSize sizes[3] = { IntSize(0, 21), IntSize(0, 18), IntSize(0, 15) };
+    static const std::array<IntSize, 3> sizes = { { IntSize(0, 21), IntSize(0, 18), IntSize(0, 15) } };
     return sizes;
 }
 
@@ -474,7 +474,7 @@ static NSButtonCell *leakButtonCell(ButtonCellType type)
 static void setUpButtonCell(NSButtonCell *cell, ControlPart part, const ControlStates* states, const IntRect& zoomedRect, float zoomFactor)
 {
     // Set the control size based off the rectangle we're painting into.
-    const IntSize* sizes = buttonSizes();
+    const std::array<IntSize, 3>& sizes = buttonSizes();
     if (part == SquareButtonPart || zoomedRect.height() > buttonSizes()[NSRegularControlSize].height() * zoomFactor) {
         // Use the square button
         if ([cell bezelStyle] != NSShadowlessSquareBezelStyle)
@@ -560,9 +560,9 @@ static void paintButton(ControlPart part, ControlStates* controlStates, Graphics
 
 // Stepper
 
-static const IntSize* stepperSizes()
+static const std::array<IntSize, 3>& stepperSizes()
 {
-    static const IntSize sizes[3] = { IntSize(19, 27), IntSize(15, 22), IntSize(13, 15) };
+    static const std::array<IntSize, 3> sizes = { { IntSize(19, 27), IntSize(15, 22), IntSize(13, 15) } };
     return sizes;
 }
 
