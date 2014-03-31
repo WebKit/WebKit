@@ -43,7 +43,7 @@ WK_API_CLASS
 @interface WKNavigationAction : NSObject
 
 @property (nonatomic, readonly) WKFrameInfo *sourceFrame;
-@property (nonatomic, readonly) WKFrameInfo *destinationFrame;
+@property (nonatomic, readonly) WKFrameInfo *targetFrame;
 
 @property (nonatomic, readonly) WKNavigationType navigationType;
 @property (nonatomic, readonly) NSURLRequest *request;

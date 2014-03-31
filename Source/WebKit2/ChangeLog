@@ -1,3 +1,21 @@
+2014-03-31  Anders Carlsson  <andersca@apple.com>
+
+        Rename -[WKNavigationAction destinationFrame] to -[WKNavigationAction targetFrame]
+        https://bugs.webkit.org/show_bug.cgi?id=130994
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKNavigationAction.h:
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction description]):
+        (-[WKNavigationAction targetFrame]):
+        (-[WKNavigationAction setTargetFrame:]):
+        (-[WKNavigationAction destinationFrame]): Deleted.
+        (-[WKNavigationAction setDestinationFrame:]): Deleted.
+        * UIProcess/API/Cocoa/WKNavigationActionInternal.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::PolicyClient::decidePolicyForNavigationAction):
+
 2014-03-31  Tim Horton  <timothy_horton@apple.com>
 
         [iOS WebKit2] Flush all surfaces after painting into all of them, instead of after painting into each one

@@ -32,15 +32,15 @@
 
 @implementation WKNavigationAction {
     RetainPtr<WKFrameInfo> _sourceFrame;
-    RetainPtr<WKFrameInfo> _destinationFrame;
+    RetainPtr<WKFrameInfo> _targetFrame;
     RetainPtr<NSURLRequest> _request;
     RetainPtr<NSURL> _originalURL;
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@: %p; navigationType = %ld; request = %@; sourceFrame = %@; destinationFrame = %@>", NSStringFromClass(self.class), self,
-        (long)_navigationType, _request.get(), _sourceFrame.get(), _destinationFrame.get()];
+    return [NSString stringWithFormat:@"<%@: %p; navigationType = %ld; request = %@; sourceFrame = %@; targetFrame = %@>", NSStringFromClass(self.class), self,
+        (long)_navigationType, _request.get(), _sourceFrame.get(), _targetFrame.get()];
 }
 
 - (WKFrameInfo *)sourceFrame
@@ -53,14 +53,14 @@
     _sourceFrame = sourceFrame;
 }
 
-- (WKFrameInfo *)destinationFrame
+- (WKFrameInfo *)targetFrame
 {
-    return _destinationFrame.get();
+    return _targetFrame.get();
 }
 
-- (void)setDestinationFrame:(WKFrameInfo *)destinationFrame
+- (void)setTargetFrame:(WKFrameInfo *)targetFrame
 {
-    _destinationFrame = destinationFrame;
+    _targetFrame = targetFrame;
 }
 
 - (NSURLRequest *)request
