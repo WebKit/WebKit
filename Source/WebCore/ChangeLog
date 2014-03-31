@@ -1,3 +1,34 @@
+2014-03-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Clarify some scrolling tree terminology
+        https://bugs.webkit.org/show_bug.cgi?id=130929
+
+        Reviewed by Tim Horton.
+
+        Attempt to reduce some ambiguity in scrolling tree terminology.
+        When async scrolling occurs, there are two tasks we have to perform:
+        1. Layers need to be updated to reflect the scroll
+        2. WebCore state has to be updated.
+        The "updateForViewport" name didn't clearly reflect which of these
+        tasks was being performed, so rename it to updateLayersAfterViewportChange()
+        to reflect the fact that it only does the first.
+        
+        Remove the Mac implementation of updateLayersAfterViewportChange(), since
+        it was confsued about this, and was never called anyway.
+
+        * WebCore.exp.in:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::viewportChangedViaDelegatedScrolling):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.h:
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeScrollingNodeIOS::updateLayersAfterViewportChange):
+        (WebCore::ScrollingTreeScrollingNodeIOS::updateForViewport): Deleted.
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::updateLayersAfterViewportChange):
+        (WebCore::ScrollingTreeScrollingNodeMac::updateForViewport): Deleted.
+
 2014-03-31  Tim Horton  <timothy_horton@apple.com>
 
         [iOS WebKit2] Disable tile cohort retention for now

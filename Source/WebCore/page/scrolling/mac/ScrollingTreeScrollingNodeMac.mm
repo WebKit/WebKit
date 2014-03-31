@@ -400,21 +400,9 @@ void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const FloatPoint& pos
         m_children->at(i)->parentScrollPositionDidChange(viewportRect, FloatSize());
 }
 
-void ScrollingTreeScrollingNodeMac::updateForViewport(const FloatRect& viewportRect, double scale)
+void ScrollingTreeScrollingNodeMac::updateLayersAfterViewportChange(const FloatRect&, double)
 {
-    // FIXME: correctly handle updates for zooming.
-    UNUSED_PARAM(scale);
-    FloatPoint scrollPosition = viewportRect.location();
-    updateMainFramePinState(scrollPosition);
-
-    if (shouldUpdateScrollLayerPositionSynchronously()) {
-        m_probableMainThreadScrollPosition = scrollPosition;
-        scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition, SetScrollingLayerPosition);
-        return;
-    }
-
-    setScrollLayerPosition(scrollPosition);
-    scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition);
+    ASSERT_NOT_REACHED();
 }
 
 FloatPoint ScrollingTreeScrollingNodeMac::minimumScrollPosition() const

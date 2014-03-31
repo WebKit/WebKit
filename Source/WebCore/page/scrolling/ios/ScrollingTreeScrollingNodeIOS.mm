@@ -170,7 +170,7 @@ void ScrollingTreeScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& pos
         m_children->at(i)->parentScrollPositionDidChange(viewportConstrainedObjectsRect, FloatSize());
 }
 
-void ScrollingTreeScrollingNodeIOS::updateForViewport(const FloatRect& viewportRect, double scale)
+void ScrollingTreeScrollingNodeIOS::updateLayersAfterViewportChange(const FloatRect& viewportRect, double scale)
 {
     [m_counterScrollingLayer setPosition:viewportRect.location()];
 

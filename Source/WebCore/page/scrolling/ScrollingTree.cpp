@@ -107,7 +107,7 @@ void ScrollingTree::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID,
     if (node->nodeType() != FrameScrollingNode && node->nodeType() != OverflowScrollingNode)
         return;
 
-    toScrollingTreeScrollingNode(node)->updateForViewport(viewportRect, scale);
+    toScrollingTreeScrollingNode(node)->updateLayersAfterViewportChange(viewportRect, scale);
 }
 
 void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrollingStateTree)
