@@ -35,7 +35,7 @@ G_BEGIN_DECLS
  * application compile time, rather than from the library linked
  * against at application run time.
  */
-#define WEBKIT_MAJOR_VERSION (@WEBKIT_MAJOR_VERSION@)
+#define WEBKIT_MAJOR_VERSION (@PROJECT_VERSION_MAJOR@)
 
 /**
  * WEBKIT_MINOR_VERSION:
@@ -44,7 +44,7 @@ G_BEGIN_DECLS
  * application compile time, rather than from the library linked
  * against at application run time.
  */
-#define WEBKIT_MINOR_VERSION (@WEBKIT_MINOR_VERSION@)
+#define WEBKIT_MINOR_VERSION (@PROJECT_VERSION_MINOR@)
 
 /**
  * WEBKIT_MICRO_VERSION:
@@ -53,7 +53,7 @@ G_BEGIN_DECLS
  * application compile time, rather than from the library linked
  * against at application run time.
  */
-#define WEBKIT_MICRO_VERSION (@WEBKIT_MICRO_VERSION@)
+#define WEBKIT_MICRO_VERSION (@PROJECT_VERSION_PATCH@)
 
 /**
  * WEBKIT_CHECK_VERSION:

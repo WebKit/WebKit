@@ -1,3 +1,12 @@
+2014-03-31  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Use PROJECT_VERSION_* instead of WEBKIT_*_VERSION
+        https://bugs.webkit.org/show_bug.cgi?id=130936
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitVersion.h.in: Use PROJECT_VERSION_* macros instead of the Autotools ones.
+
 2014-03-31  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         [EFL][WK2] Add ewk APIs to control TLS error policy on WebContext.

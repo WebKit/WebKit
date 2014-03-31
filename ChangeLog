@@ -1,3 +1,12 @@
+2014-03-31  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Use PROJECT_VERSION_* instead of WEBKIT_*_VERSION
+        https://bugs.webkit.org/show_bug.cgi?id=130936
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsGTK.cmake: No longer emulate the Autotools macro names.
+
 2014-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add support for GTK3 plugins
