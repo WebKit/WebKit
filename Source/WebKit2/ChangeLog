@@ -1,3 +1,43 @@
+2014-03-31  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Hook up scroll events for accelerated overflow:scroll
+        https://bugs.webkit.org/show_bug.cgi?id=130976
+
+        Reviewed by Tim Horton.
+        
+        When an accelerated overflow:scroll is scrolled in the UI process,
+        tell the WebProcess that the scroll happened to update RenderLayer
+        state and fire events.
+        
+        Add a WKOverflowScrollViewDelegate which is set as the delegate of
+        UIScrollViews, owned by ScrollingTreeOverflowScrollingNodeIOS, and propagates
+        -scrollViewDidScroll: messages to ScrollingTree::scrollPositionChangedViaDelegatedScrolling(),
+        which updates child layers and then, via RemoteScrollingTree::scrollingTreeNodeDidScroll,
+        tells the RemoteScrollingCoordinator which sends a message to the WebProcess.
+        
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll): Name change
+        to try to reduce confusion.
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollPositionChanged): Deleted.
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::scrollingTreeNodeDidScroll):
+        * UIProcess/Scrolling/RemoteScrollingTree.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (-[WKOverflowScrollViewDelegate initWithScrollingTreeNode:WebKit::]):
+        (-[WKOverflowScrollViewDelegate scrollViewDidScroll:]):
+        (-[WKOverflowScrollViewDelegate scrollViewWillBeginDragging:]):
+        (-[WKOverflowScrollViewDelegate scrollViewDidEndDragging:willDecelerate:]):
+        (-[WKOverflowScrollViewDelegate scrollViewDidEndScrollingAnimation:]):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::~ScrollingTreeOverflowScrollingNodeIOS):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateBeforeChildren):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::scrollViewDidScroll):
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::scrollPositionChangedForNode): No need for
+        rounding.
+
 2014-03-29  Simon Fraser  <simon.fraser@apple.com>
 
         Fix scrolling on OS X with UI-side compositing

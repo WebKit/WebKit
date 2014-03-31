@@ -50,12 +50,12 @@ protected:
 
     CALayer *scrollLayer() const { return m_scrollLayer.get(); }
 
-private:
     FloatPoint scrollPosition() const;
     virtual void setScrollPosition(const FloatPoint&) override;
     virtual void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) override;
 
     virtual void updateLayersAfterViewportChange(const FloatRect& viewportRect, double scale);
+    virtual void updateLayersAfterDelegatedScroll(const FloatPoint&) override;
 
     void setScrollLayerPosition(const FloatPoint&);
 
@@ -64,6 +64,9 @@ private:
 
     void scrollBy(const IntSize&);
     void scrollByWithoutContentEdgeConstraints(const IntSize&);
+
+private:
+    void updateChildNodesAfterScroll(const FloatPoint&);
 
     RetainPtr<CALayer> m_scrollLayer;
     RetainPtr<CALayer> m_scrolledContentsLayer;

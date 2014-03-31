@@ -31,9 +31,47 @@
 
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/ScrollingStateScrollingNode.h>
+#import <WebCore/ScrollingTree.h>
 #import <UIKit/UIScrollView.h>
 
 using namespace WebCore;
+
+@interface WKOverflowScrollViewDelegate : NSObject <UIScrollViewDelegate> {
+    WebKit::ScrollingTreeOverflowScrollingNodeIOS* _scrollingTreeNode;
+}
+- (instancetype)initWithScrollingTreeNode:(WebKit::ScrollingTreeOverflowScrollingNodeIOS*)node;
+
+@end
+
+
+@implementation WKOverflowScrollViewDelegate
+
+- (instancetype)initWithScrollingTreeNode:(WebKit::ScrollingTreeOverflowScrollingNodeIOS*)node
+{
+    if ((self = [super init])) {
+        _scrollingTreeNode = node;
+    }
+    return self;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    _scrollingTreeNode->scrollViewDidScroll(scrollView.contentOffset);
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+}
+
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+}
+
+@end
 
 namespace WebKit {
 
@@ -49,6 +87,26 @@ ScrollingTreeOverflowScrollingNodeIOS::ScrollingTreeOverflowScrollingNodeIOS(Web
 
 ScrollingTreeOverflowScrollingNodeIOS::~ScrollingTreeOverflowScrollingNodeIOS()
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    if (UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate]) {
+        ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
+        scrollView.delegate = nil;
+    }
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+void ScrollingTreeOverflowScrollingNodeIOS::updateBeforeChildren(const WebCore::ScrollingStateNode& stateNode)
+{
+    if (stateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollLayer)) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        if (UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate]) {
+            ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
+            scrollView.delegate = nil;
+        }
+        END_BLOCK_OBJC_EXCEPTIONS
+    }
+
+    ScrollingTreeScrollingNodeIOS::updateBeforeChildren(stateNode);
 }
 
 void ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren(const ScrollingStateNode& stateNode)
@@ -56,6 +114,18 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren(const ScrollingS
     ScrollingTreeScrollingNodeIOS::updateAfterChildren(stateNode);
 
     const auto& scrollingStateNode = toScrollingStateScrollingNode(stateNode);
+
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollLayer)) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate];
+        ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
+
+        if (!m_scrollViewDelegate)
+            m_scrollViewDelegate = adoptNS([[WKOverflowScrollViewDelegate alloc] initWithScrollingTreeNode:this]);
+
+        scrollView.delegate = m_scrollViewDelegate.get();
+        END_BLOCK_OBJC_EXCEPTIONS
+    }
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize)) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -66,6 +136,11 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren(const ScrollingS
 
         END_BLOCK_OBJC_EXCEPTIONS
     }
+}
+
+void ScrollingTreeOverflowScrollingNodeIOS::scrollViewDidScroll(const FloatPoint& scrollPosition)
+{
+    scrollingTree().scrollPositionChangedViaDelegatedScrolling(scrollingNodeID(), scrollPosition);
 }
 
 } // namespace WebCore

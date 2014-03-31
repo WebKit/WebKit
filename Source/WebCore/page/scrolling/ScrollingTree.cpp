@@ -104,10 +104,26 @@ void ScrollingTree::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID,
     if (!node)
         return;
 
-    if (node->nodeType() != FrameScrollingNode && node->nodeType() != OverflowScrollingNode)
+    if (!node->isScrollingNode())
         return;
 
     toScrollingTreeScrollingNode(node)->updateLayersAfterViewportChange(viewportRect, scale);
+}
+
+void ScrollingTree::scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const WebCore::FloatPoint& scrollPosition)
+{
+    ScrollingTreeNode* node = nodeForID(nodeID);
+    if (!node)
+        return;
+
+    if (node->nodeType() != OverflowScrollingNode)
+        return;
+
+    // Update descendant nodes
+    toScrollingTreeScrollingNode(node)->updateLayersAfterDelegatedScroll(scrollPosition);
+
+    // Update GraphicsLayers and scroll state.
+    scrollingTreeNodeDidScroll(nodeID, scrollPosition);
 }
 
 void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrollingStateTree)

@@ -817,6 +817,15 @@ uint64_t FrameView::scrollLayerID() const
     return backing->scrollingNodeID();
 }
 
+ScrollableArea* FrameView::scrollableAreaForScrollLayerID(uint64_t nodeID) const
+{
+    RenderView* renderView = this->renderView();
+    if (!renderView)
+        return nullptr;
+
+    return renderView->compositor().scrollableAreaForScrollLayerID(nodeID);
+}
+
 #if ENABLE(RUBBER_BANDING)
 GraphicsLayer* FrameView::layerForOverhangAreas() const
 {

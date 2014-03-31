@@ -32,6 +32,8 @@
 #include <WebCore/ScrollingCoordinator.h>
 #include <WebCore/ScrollingTreeScrollingNodeIOS.h>
 
+OBJC_CLASS WKOverflowScrollViewDelegate;
+
 namespace WebKit {
 
 class ScrollingTreeOverflowScrollingNodeIOS : public WebCore::ScrollingTreeScrollingNodeIOS {
@@ -39,11 +41,15 @@ public:
     static PassOwnPtr<ScrollingTreeOverflowScrollingNodeIOS> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
     virtual ~ScrollingTreeOverflowScrollingNodeIOS();
 
+    void scrollViewDidScroll(const WebCore::FloatPoint&);
+
 private:
     ScrollingTreeOverflowScrollingNodeIOS(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
 
+    virtual void updateBeforeChildren(const WebCore::ScrollingStateNode&) override;
     virtual void updateAfterChildren(const WebCore::ScrollingStateNode&) override;
 
+    RetainPtr<WKOverflowScrollViewDelegate> m_scrollViewDelegate;
 };
 
 } // namespace WebKit

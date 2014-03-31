@@ -46,13 +46,14 @@ public:
 
     const RemoteScrollingCoordinatorProxy& scrollingCoordinatorProxy() const { return m_scrollingCoordinatorProxy; }
 
+    virtual void scrollingTreeNodeDidScroll(WebCore::ScrollingNodeID, const WebCore::FloatPoint& scrollPosition, WebCore::SetOrSyncScrollingLayerPosition = WebCore::SyncScrollingLayerPosition) override;
+
 private:
     explicit RemoteScrollingTree(RemoteScrollingCoordinatorProxy&);
 
 #if PLATFORM(MAC)
     virtual void handleWheelEventPhase(WebCore::PlatformWheelEventPhase) override;
 #endif
-    virtual void scrollingTreeNodeDidScroll(WebCore::ScrollingNodeID, const WebCore::FloatPoint& scrollPosition, WebCore::SetOrSyncScrollingLayerPosition = WebCore::SyncScrollingLayerPosition) override;
 
     virtual PassOwnPtr<WebCore::ScrollingTreeNode> createNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
     

@@ -63,8 +63,6 @@ public:
     virtual EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) = 0;
     bool shouldHandleWheelEventSynchronously(const PlatformWheelEvent&);
     
-    virtual void viewportChangedViaDelegatedScrolling(ScrollingNodeID, const WebCore::FloatRect& viewportRect, double scale);
-
     void setMainFrameIsRubberBanding(bool);
     bool isRubberBandInProgress();
 
@@ -73,7 +71,18 @@ public:
 
     void setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight, bool pinnedToTheTop, bool pinnedToTheBottom);
 
+    // Called after a scrolling tree node has handled a scroll and updated its layers.
+    // Updates FrameView/RenderLayer scrolling state and GraphicsLayers.
     virtual void scrollingTreeNodeDidScroll(ScrollingNodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) = 0;
+
+    // Delegated scrolling/zooming has caused the viewport to change, so update viewport-constrained layers
+    // (but don't cause scroll events to be fired).
+    virtual void viewportChangedViaDelegatedScrolling(ScrollingNodeID, const WebCore::FloatRect& viewportRect, double scale);
+
+    // Delegated scrolling has scrolled a node. Update layer positions on descendant tree nodes,
+    // and call scrollingTreeNodeDidScroll().
+    virtual void scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID, const WebCore::FloatPoint& scrollPosition);
+
     FloatPoint mainFrameScrollPosition();
 
     bool isPointInNonFastScrollableRegion(IntPoint);

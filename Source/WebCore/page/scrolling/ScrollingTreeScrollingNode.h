@@ -54,7 +54,8 @@ public:
     virtual void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) = 0;
 
     virtual void updateLayersAfterViewportChange(const FloatRect& viewportRect, double scale) = 0;
-    
+    virtual void updateLayersAfterDelegatedScroll(const FloatPoint&) { }
+
     SynchronousScrollingReasons synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
     bool shouldUpdateScrollLayerPositionSynchronously() const { return m_synchronousScrollingReasons; }
 

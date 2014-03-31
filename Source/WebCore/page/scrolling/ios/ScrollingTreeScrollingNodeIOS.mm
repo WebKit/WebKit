@@ -129,16 +129,38 @@ void ScrollingTreeScrollingNodeIOS::setScrollPositionWithoutContentEdgeConstrain
     scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition);
 }
 
-void ScrollingTreeScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& position)
+void ScrollingTreeScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& scrollPosition)
 {
     ASSERT(!shouldUpdateScrollLayerPositionSynchronously());
-    [m_scrollLayer setPosition:CGPointMake(-position.x() + scrollOrigin().x(), -position.y() + scrollOrigin().y())];
+    [m_scrollLayer setPosition:CGPointMake(-scrollPosition.x() + scrollOrigin().x(), -scrollPosition.y() + scrollOrigin().y())];
 
+    updateChildNodesAfterScroll(scrollPosition);
+}
+
+void ScrollingTreeScrollingNodeIOS::updateLayersAfterViewportChange(const FloatRect& viewportRect, double scale)
+{
+    [m_counterScrollingLayer setPosition:viewportRect.location()];
+
+    if (!m_children)
+        return;
+
+    FloatRect viewportConstrainedObjectsRect = FrameView::rectForViewportConstrainedObjects(enclosingLayoutRect(viewportRect), totalContentsSize(), scale, false, scrollBehaviorForFixedElements());
+
+    size_t size = m_children->size();
+    for (size_t i = 0; i < size; ++i)
+        m_children->at(i)->parentScrollPositionDidChange(viewportConstrainedObjectsRect, FloatSize());
+}
+
+void ScrollingTreeScrollingNodeIOS::updateLayersAfterDelegatedScroll(const FloatPoint& scrollPosition)
+{
+    updateChildNodesAfterScroll(scrollPosition());
+}
+
+void ScrollingTreeScrollingNodeIOS::updateChildNodesAfterScroll(const FloatPoint& scrollPosition)
+{
     ScrollBehaviorForFixedElements behaviorForFixed = scrollBehaviorForFixedElements();
-    FloatPoint scrollOffset = position - toIntSize(scrollOrigin());
+    FloatPoint scrollOffset = scrollPosition - toIntSize(scrollOrigin());
     FloatRect viewportRect(FloatPoint(), viewportSize());
-    
-    // FIXME: scrollOffsetForFixedPosition() needs to do float math.
     FloatSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(enclosingLayoutRect(viewportRect), totalContentsSize(), flooredIntPoint(scrollOffset), scrollOrigin(), frameScaleFactor(), false, behaviorForFixed, headerHeight(), footerHeight());
 
     [m_counterScrollingLayer setPosition:FloatPoint(scrollOffsetForFixedChildren)];
@@ -165,20 +187,6 @@ void ScrollingTreeScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& pos
     
     FloatRect viewportConstrainedObjectsRect = FrameView::rectForViewportConstrainedObjects(enclosingLayoutRect(viewportRect), totalContentsSize(), frameScaleFactor(), false, behaviorForFixed);
     
-    size_t size = m_children->size();
-    for (size_t i = 0; i < size; ++i)
-        m_children->at(i)->parentScrollPositionDidChange(viewportConstrainedObjectsRect, FloatSize());
-}
-
-void ScrollingTreeScrollingNodeIOS::updateLayersAfterViewportChange(const FloatRect& viewportRect, double scale)
-{
-    [m_counterScrollingLayer setPosition:viewportRect.location()];
-
-    if (!m_children)
-        return;
-
-    FloatRect viewportConstrainedObjectsRect = FrameView::rectForViewportConstrainedObjects(enclosingLayoutRect(viewportRect), totalContentsSize(), scale, false, scrollBehaviorForFixedElements());
-
     size_t size = m_children->size();
     for (size_t i = 0; i < size; ++i)
         m_children->at(i)->parentScrollPositionDidChange(viewportConstrainedObjectsRect, FloatSize());

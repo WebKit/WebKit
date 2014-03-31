@@ -266,6 +266,8 @@ public:
     GraphicsLayer* updateLayerForFooter(bool wantsLayer);
 #endif
 
+    ScrollableArea* scrollableAreaForScrollLayerID(ScrollingNodeID) const;
+
     void updateScrollCoordinatedStatus(RenderLayer&);
     void removeFromScrollCoordinatedLayers(RenderLayer&);
 
@@ -519,6 +521,8 @@ private:
 #endif
 
     Color m_rootExtendedBackgroundColor;
+
+    HashMap<ScrollingNodeID, RenderLayer*> m_scrollingNodeToLayerMap;
 };
 
 

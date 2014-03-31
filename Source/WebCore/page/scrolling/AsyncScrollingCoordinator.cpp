@@ -194,16 +194,17 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
     if (!frameView)
         return;
 
-    bool oldProgrammaticScroll = frameView->inProgrammaticScroll();
-    frameView->setInProgrammaticScroll(programmaticScroll);
-
-    frameView->setConstrainsScrollingToContentEdge(false);
-    frameView->notifyScrollPositionChanged(roundedIntPoint(scrollPosition));
-    frameView->setConstrainsScrollingToContentEdge(true);
-
-    frameView->setInProgrammaticScroll(oldProgrammaticScroll);
-
+    // Main frame.
     if (scrollingNodeID == frameView->scrollLayerID()) {
+        bool oldProgrammaticScroll = frameView->inProgrammaticScroll();
+        frameView->setInProgrammaticScroll(programmaticScroll);
+
+        frameView->setConstrainsScrollingToContentEdge(false);
+        frameView->notifyScrollPositionChanged(roundedIntPoint(scrollPosition));
+        frameView->setConstrainsScrollingToContentEdge(true);
+
+        frameView->setInProgrammaticScroll(oldProgrammaticScroll);
+
         if (GraphicsLayer* scrollLayer = scrollLayerForFrameView(frameView)) {
             GraphicsLayer* counterScrollingLayer = counterScrollingLayerForFrameView(frameView);
             GraphicsLayer* headerLayer = headerLayerForFrameView(frameView);
@@ -231,8 +232,13 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
                 syncChildPositions(viewportRect);
             }
         }
+
+        return;
     }
-    // FIXME: handle non-main scrolling nodes.
+
+    // Overflow-scroll area.
+    if (ScrollableArea* scrollableArea = frameView->scrollableAreaForScrollLayerID(scrollingNodeID))
+        scrollableArea->scrollToOffsetWithoutAnimation(scrollPosition);
 }
 
 void AsyncScrollingCoordinator::scrollableAreaScrollbarLayerDidChange(ScrollableArea* scrollableArea, ScrollbarOrientation orientation)

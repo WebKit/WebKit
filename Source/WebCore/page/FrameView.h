@@ -156,6 +156,7 @@ public:
     // In the future when any ScrollableArea can have a node in th ScrollingTree, this should
     // become a virtual function on ScrollableArea.
     uint64_t scrollLayerID() const;
+    ScrollableArea* scrollableAreaForScrollLayerID(uint64_t) const;
 
     bool hasCompositedContent() const;
     bool hasCompositedContentIncludingDescendants() const;

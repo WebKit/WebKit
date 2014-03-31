@@ -3515,6 +3515,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Scr
 
         nodeID = scrollingCoordinator->attachToStateTree(isRootLayer ? FrameScrollingNode : OverflowScrollingNode, nodeID, parentNodeID);
         backing->setScrollingNodeID(nodeID);
+        m_scrollingNodeToLayerMap.add(nodeID, &layer);
 
         GraphicsLayer* scrollingLayer = backing->scrollingLayer();
         GraphicsLayer* scrolledContentsLayer = backing->scrollingContentsLayer();
@@ -3537,8 +3538,22 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Scr
 
 void RenderLayerCompositor::detachScrollCoordinatedLayer(RenderLayer& layer)
 {
-    if (RenderLayerBacking* backing = layer.backing())
-        backing->detachFromScrollingCoordinator();
+    RenderLayerBacking* backing = layer.backing();
+    if (!backing)
+        return;
+
+    backing->detachFromScrollingCoordinator();
+
+    if (ScrollingNodeID nodeID = backing->scrollingNodeID())
+        m_scrollingNodeToLayerMap.remove(nodeID);
+}
+
+ScrollableArea* RenderLayerCompositor::scrollableAreaForScrollLayerID(ScrollingNodeID nodeID) const
+{
+    if (!nodeID)
+        return nullptr;
+
+    return m_scrollingNodeToLayerMap.get(nodeID);
 }
 
 #if PLATFORM(IOS)

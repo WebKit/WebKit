@@ -79,7 +79,7 @@ void RemoteScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
 
 void RemoteScrollingTree::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition)
 {
-    m_scrollingCoordinatorProxy.scrollPositionChanged(nodeID, scrollPosition);
+    m_scrollingCoordinatorProxy.scrollingTreeNodeDidScroll(nodeID, scrollPosition);
 }
 
 PassOwnPtr<ScrollingTreeNode> RemoteScrollingTree::createNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)

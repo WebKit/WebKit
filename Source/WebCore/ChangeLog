@@ -1,3 +1,49 @@
+2014-03-31  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Hook up scroll events for accelerated overflow:scroll
+        https://bugs.webkit.org/show_bug.cgi?id=130976
+
+        Reviewed by Tim Horton.
+
+        When an accelerated overflow:scroll is scrolled in the UI process,
+        tell the WebProcess that the scroll happened to update RenderLayer
+        state and fire events.
+        
+        In the WebProcess, RemoteScrollingCoordinator gets a message from the
+        UI process and calls AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll().
+        Fixed that function to handle scrolling nodes other than the root, which
+        required storing a map of ScrollingNodeID->RenderLayer* on RenderLayerCompositor,
+        accessible through FrameView::scrollableAreaForScrollLayerID().
+
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollableAreaForScrollLayerID):
+        * page/FrameView.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll): Handle
+        overflow as well as main frame scrolling nodes.
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::viewportChangedViaDelegatedScrolling): Use isScrollingNode().
+        (WebCore::ScrollingTree::scrollPositionChangedViaDelegatedScrolling): When an overflow
+        scroll node was scrolled externally, we have to update layers in decendant nodes,
+        and then call scrollingTreeNodeDidScroll() which tells the ScrollingCoordinator that
+        we scrolled.
+        * page/scrolling/ScrollingTree.h: Try to reduce confusion between the roles played
+        by these various functions, some of which happen in the UI process with UI-side
+        compositing.
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.h: Need some functions to be
+        callable by subclasses.
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeScrollingNodeIOS::updateLayersAfterDelegatedScroll):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer): Add
+        scrolling layers to the m_scrollingNodeToLayerMap
+        (WebCore::RenderLayerCompositor::detachScrollCoordinatedLayer): Remove
+        layer from the m_scrollingNodeToLayerMap.
+        (WebCore::RenderLayerCompositor::scrollableAreaForScrollLayerID):
+        * rendering/RenderLayerCompositor.h:
+
 2014-03-31  Antti Koivisto  <antti@apple.com>
 
         Rename TileCache to LegacyTileCache
