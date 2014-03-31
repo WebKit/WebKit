@@ -815,11 +815,8 @@ void RenderLayer::updateBlendMode()
     }
 
     BlendMode newBlendMode = renderer().style().blendMode();
-    if (newBlendMode != m_blendMode) {
+    if (newBlendMode != m_blendMode)
         m_blendMode = newBlendMode;
-        if (backing())
-            backing()->setBlendMode(newBlendMode);
-    }
 }
 
 void RenderLayer::updateNonCompositedParentStackingContextHasBlendedChild(bool hasBlendedChild)
@@ -5929,9 +5926,6 @@ RenderLayerBacking* RenderLayer::ensureBacking()
 
 #if ENABLE(CSS_FILTERS)
         updateOrRemoveFilterEffectRenderer();
-#endif
-#if ENABLE(CSS_COMPOSITING)
-        backing()->setBlendMode(m_blendMode);
 #endif
     }
     return m_backing.get();

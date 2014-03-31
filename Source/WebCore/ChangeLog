@@ -1,5 +1,23 @@
 2014-03-31  Ion Rosca  <rosca@adobe.com>
 
+        [CSS Blending] Blend mode property is propagated to multiple GraphicLayers
+        https://bugs.webkit.org/show_bug.cgi?id=130337
+
+        Reviewed by Dean Jackson.
+
+        Resets the blend mode for graphicsLayer when it has an ancestorClippingLayer.
+
+        Test: css3/compositing/blend-mode-ancestor-clipping-layer.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateBlendMode):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateBlendMode):
+        * rendering/RenderLayerBacking.h:
+
+2014-03-31  Ion Rosca  <rosca@adobe.com>
+
         [CSS Blending] showLayerTree should dump layer's blend mode and isolation properties
         https://bugs.webkit.org/show_bug.cgi?id=130922
 

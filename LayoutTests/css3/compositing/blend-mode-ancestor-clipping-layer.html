@@ -1,0 +1,32 @@
+ <!DOCTYPE HTML>
+<!-- Test if the blend mode property is propagated to the ancestorClippingLayer. -->
+
+ <style>
+ 	.parent {
+ 		width: 100px;
+ 		height: 100px;
+ 		background: yellow;
+ 		overflow: hidden;
+ 	}
+
+ 	.child {
+ 		width: 200px;
+ 		height: 200px;
+ 		background: red;
+ 		-webkit-transform:translateZ(0px);
+ 		-webkit-mix-blend-mode: difference;
+ 	}
+ </style>
+
+ <div class="parent">
+     <div class="child"></div>
+ </div>
+ <pre id="layerTree"></pre>
+ 
+ <script>
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+
+    var text = document.getElementById("layerTree");
+    text.innerHTML = window.internals.layerTreeAsText(document);
+</script>

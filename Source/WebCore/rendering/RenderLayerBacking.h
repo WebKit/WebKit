@@ -214,10 +214,6 @@ public:
     // Return an estimate of the backing store area (in pixels) allocated by this object's GraphicsLayers.
     double backingStoreMemoryEstimate() const;
 
-#if ENABLE(CSS_COMPOSITING)
-    void setBlendMode(BlendMode);
-#endif
-
     LayoutSize devicePixelFractionFromRenderer() const { return m_devicePixelFractionFromRenderer; }
 
 private:

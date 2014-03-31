@@ -394,9 +394,10 @@ void RenderLayerBacking::updateFilters(const RenderStyle* style)
 #if ENABLE(CSS_COMPOSITING)
 void RenderLayerBacking::updateBlendMode(const RenderStyle* style)
 {
-    if (m_ancestorClippingLayer)
+    if (m_ancestorClippingLayer) {
         m_ancestorClippingLayer->setBlendMode(style->blendMode());
-    else
+        m_graphicsLayer->setBlendMode(BlendModeNormal);
+    } else
         m_graphicsLayer->setBlendMode(style->blendMode());
 }
 #endif
@@ -2046,13 +2047,6 @@ void RenderLayerBacking::setRequiresOwnBackingStore(bool requiresOwnBacking)
     
     compositor().repaintInCompositedAncestor(m_owningLayer, compositedBounds());
 }
-
-#if ENABLE(CSS_COMPOSITING)
-void RenderLayerBacking::setBlendMode(BlendMode blendMode)
-{
-    m_graphicsLayer->setBlendMode(blendMode);
-}
-#endif
 
 void RenderLayerBacking::setContentsNeedDisplay(GraphicsLayer::ShouldClipToLayer shouldClip)
 {
