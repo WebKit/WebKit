@@ -1,3 +1,11 @@
+2014-03-30  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the iOS build.
+
+        * Misc/WebGeolocationCoreLocationProvider.mm:
+        (-[WebGeolocationCoreLocationProvider start]):
+        (-[WebGeolocationCoreLocationProvider locationManager:didChangeAuthorizationStatus:]):
+
 2014-03-27  Enrica Casucci  <enrica@apple.com>
 
         Add support for AirPlay picker for iOS.

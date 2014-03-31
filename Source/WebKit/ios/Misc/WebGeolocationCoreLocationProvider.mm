@@ -127,7 +127,8 @@ using namespace WebCore;
     case kCLAuthorizationStatusRestricted:
         [_positionListener geolocationDelegateUnableToStart];
         return;
-    case kCLAuthorizationStatusAuthorized:
+    case kCLAuthorizationStatusAuthorizedAlways:
+    case kCLAuthorizationStatusAuthorizedWhenInUse:
         [_locationManager.get() startUpdatingLocation];
         [_positionListener geolocationDelegateStarted];
         return;
@@ -158,7 +159,8 @@ using namespace WebCore;
             _isWaitingForAuthorization = NO;
             [_positionListener geolocationDelegateUnableToStart];
             break;
-        case kCLAuthorizationStatusAuthorized:
+        case kCLAuthorizationStatusAuthorizedAlways:
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
             _isWaitingForAuthorization = NO;
             [_positionListener geolocationDelegateStarted];
             break;
