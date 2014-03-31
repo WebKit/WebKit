@@ -1343,3 +1343,5 @@ webkit.org/b/130693 mathml/presentation/tokenElements-background-color.html [ Im
 
 # Frequently times out on EWS, which is then misreported as crash.
 webkit.org/b/130720 [ MountainLion Release ] media/W3C/audio/canPlayType/canPlayType_application_octet_stream.html [ Pass Failure Crash Timeout ]
+
+webkit.org/b/130953 compositing/columns/composited-rl-paginated-repaint.html [ Pass Failure ]
