@@ -170,6 +170,7 @@ interface AccessibilityUIElement {
     void scrollToMakeVisible();
 
     // Text markers.
+    AccessibilityTextMarkerRange lineTextMarkerRangeForTextMarker(AccessibilityTextMarker textMarker);
     AccessibilityTextMarkerRange textMarkerRangeForElement(AccessibilityUIElement element);    
     AccessibilityTextMarkerRange textMarkerRangeForMarkers(AccessibilityTextMarker startMarker, AccessibilityTextMarker endMarker);
     AccessibilityTextMarker startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange range);

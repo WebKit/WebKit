@@ -990,6 +990,13 @@ VisiblePositionRange AccessibilityObject::visiblePositionRangeForRange(const Pla
     return VisiblePositionRange(startPosition, endPosition);
 }
 
+VisiblePositionRange AccessibilityObject::lineRangeForPosition(const VisiblePosition& visiblePosition) const
+{
+    VisiblePosition startPosition = startOfLine(visiblePosition);
+    VisiblePosition endPosition = endOfLine(visiblePosition);
+    return VisiblePositionRange(startPosition, endPosition);
+}
+
 static bool replacedNodeNeedsCharacter(Node* replacedNode)
 {
     // we should always be given a rendered node and a replaced node, but be safe

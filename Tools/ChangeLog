@@ -1,3 +1,30 @@
+2014-03-31  Samuel White  <samuel_white@apple.com>
+
+        AX: Need ability to get line range for text marker.
+        https://bugs.webkit.org/show_bug.cgi?id=130906
+
+        Reviewed by Chris Fleizach.
+
+        Added a new function in DRT and TestRunner to test that AXLineTextMarkerRangeForTextMarker works as expected.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (lineTextMarkerRangeForTextMarkerCallback):
+        (AccessibilityUIElement::lineTextMarkerRangeForTextMarker):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::lineTextMarkerRangeForTextMarker):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::lineTextMarkerRangeForTextMarker):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::lineTextMarkerRangeForTextMarker):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::lineTextMarkerRangeForTextMarker):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::lineTextMarkerRangeForTextMarker):
+
 2014-03-31  Filip Pizlo  <fpizlo@apple.com>
 
         More validation for FTL inline caches

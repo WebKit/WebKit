@@ -184,6 +184,7 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::horizontalScrollbar()
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::verticalScrollbar() const { return 0; }
 bool AccessibilityUIElement::addNotificationListener(JSValueRef) { return false; }
 bool AccessibilityUIElement::removeNotificationListener() { return false; }
+PassRefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::lineTextMarkerRangeForTextMarker(AccessibilityTextMarker*) { return nullptr; }
 PassRefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForElement(AccessibilityUIElement*) { return 0; }
 int AccessibilityUIElement::textMarkerRangeLength(AccessibilityTextMarkerRange*) { return 0; }
 PassRefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForMarkers(AccessibilityTextMarker*, AccessibilityTextMarker*) { return 0; }

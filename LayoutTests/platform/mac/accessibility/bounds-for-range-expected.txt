@@ -59,6 +59,7 @@ AXUIElementCountForSearchPredicate
 AXUIElementsForSearchPredicate
 AXEndTextMarkerForBounds
 AXStartTextMarkerForBounds
+AXLineTextMarkerRangeForTextMarker
 AXSelectTextWithCriteria
 
 ----------------------

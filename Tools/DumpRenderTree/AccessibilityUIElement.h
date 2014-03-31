@@ -237,6 +237,7 @@ public:
     AccessibilityUIElement verticalScrollbar() const;
 
     // Text markers.
+    AccessibilityTextMarkerRange lineTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
     AccessibilityTextMarkerRange textMarkerRangeForElement(AccessibilityUIElement*);    
     AccessibilityTextMarkerRange textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker);
     AccessibilityTextMarker startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*);

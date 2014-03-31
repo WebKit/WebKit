@@ -776,6 +776,7 @@ public:
     VisiblePositionRange paragraphForPosition(const VisiblePosition&) const;
     VisiblePositionRange styleRangeForPosition(const VisiblePosition&) const;
     VisiblePositionRange visiblePositionRangeForRange(const PlainTextRange&) const;
+    VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const;
 
     String stringForVisiblePositionRange(const VisiblePositionRange&) const;
     virtual IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const { return IntRect(); }

@@ -685,6 +685,11 @@ void AccessibilityUIElement::removeSelection()
 }
 
 // Text markers
+PassRefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::lineTextMarkerRangeForTextMarker(AccessibilityTextMarker* textMarker)
+{
+    return nullptr;
+}
+
 PassRefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForElement(AccessibilityUIElement* element)
 {
     return 0;

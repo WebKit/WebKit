@@ -387,6 +387,10 @@ using namespace HTMLNames;
 #define NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute @"AXStartTextMarkerForBounds"
 #endif
 
+#ifndef NSAccessibilityLineTextMarkerRangeForTextMarkerParameterizedAttribute
+#define NSAccessibilityLineTextMarkerRangeForTextMarkerParameterizedAttribute @"AXLineTextMarkerRangeForTextMarker"
+#endif
+
 // Text selection
 #ifndef NSAccessibilitySelectTextActivity
 #define NSAccessibilitySelectTextActivity @"AXSelectTextActivity"
@@ -3064,6 +3068,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                       NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute,
                       NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute,
                       NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute,
+                      NSAccessibilityLineTextMarkerRangeForTextMarkerParameterizedAttribute,
                       NSAccessibilitySelectTextWithCriteriaParameterizedAttribute,
                       nil];
     }
@@ -3477,6 +3482,12 @@ static RenderObject* rendererForView(NSView* view)
     if ([attribute isEqualToString:NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute]) {
         IntRect webCoreRect = [self screenToContents:enclosingIntRect(rect)];
         return [self textMarkerForVisiblePosition:m_object->visiblePositionForBounds(webCoreRect, FirstVisiblePositionForBounds)];
+    }
+    
+    if ([attribute isEqualToString:NSAccessibilityLineTextMarkerRangeForTextMarkerParameterizedAttribute]) {
+        VisiblePosition visiblePosition = [self visiblePositionForTextMarker:textMarker];
+        VisiblePositionRange visiblePositionRange = m_object->lineRangeForPosition(visiblePosition);
+        return [self textMarkerRangeFromVisiblePositions:visiblePositionRange.start endPosition:visiblePositionRange.end];
     }
     
     if ([attribute isEqualToString:NSAccessibilityTextMarkerIsValidParameterizedAttribute]) {

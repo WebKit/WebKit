@@ -1,3 +1,23 @@
+2014-03-31  Samuel White  <samuel_white@apple.com>
+
+        AX: Need ability to get line range for text marker.
+        https://bugs.webkit.org/show_bug.cgi?id=130906
+
+        Reviewed by Chris Fleizach.
+
+        Added ability to get line range from any marker on that line. This matches the functionality of existing
+        attributes such as AXParagraphTextMarkerRangeForTextMarker and AXSentenceTextMarkerRangeForTextMarker.
+
+        Test: platform/mac/accessibility/line-range-for-text-marker.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::visiblePositionRangeForRange):
+        (WebCore::AccessibilityObject::lineRangeForPosition):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityParameterizedAttributeNames]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2014-03-31  Anders Carlsson  <andersca@apple.com>
 
         Fix iOS build.

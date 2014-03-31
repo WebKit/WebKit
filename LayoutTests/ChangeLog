@@ -1,3 +1,17 @@
+2014-03-31  Samuel White  <samuel_white@apple.com>
+
+        AX: Need ability to get line range for text marker.
+        https://bugs.webkit.org/show_bug.cgi?id=130906
+
+        Reviewed by Chris Fleizach.
+
+        Added test to ensure we can get the correct range of a line from a given marker.
+        Also updated existing bounds-for-range test to include new attribute.
+
+        * platform/mac/accessibility/bounds-for-range-expected.txt:
+        * platform/mac/accessibility/line-range-for-text-marker-expected.txt: Added.
+        * platform/mac/accessibility/line-range-for-text-marker.html: Added.
+
 2014-03-31  Alexey Proskuryakov  <ap@apple.com>
 
         transitions/3d/interrupted-transition.html is flaky
