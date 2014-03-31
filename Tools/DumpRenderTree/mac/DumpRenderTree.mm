@@ -953,7 +953,6 @@ static void setDefaultsToConsistentValuesForTesting()
 #endif
         @"NSOverlayScrollersEnabled": @NO,
         @"AppleShowScrollBars": @"Always",
-        @"NSSmoothScrollWheel": @YES,
         WebDatabaseDirectoryDefaultsKey: [libraryPath stringByAppendingPathComponent:@"Databases"],
         WebStorageDirectoryDefaultsKey: [libraryPath stringByAppendingPathComponent:@"LocalStorage"],
         WebKitLocalCacheDefaultsKey: [libraryPath stringByAppendingPathComponent:@"LocalCache"]
