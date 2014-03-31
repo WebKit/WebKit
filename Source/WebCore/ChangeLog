@@ -1,3 +1,37 @@
+2014-03-30  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] [TextureMapper] Weird brightness with some videos with acceletared compositing
+        https://bugs.webkit.org/show_bug.cgi?id=130665
+
+        Reviewed by Martin Robinson.
+
+        When we uploaded a video texture to the mapper we were not
+        considering that some videos could be decoded into a format
+        without alpha component. Now we check if the video has alpha and
+        if it does not, we remove the alpha flag when retrieving the
+        texture from the pool. For this, the method to get the texture
+        from the pool was modified to receive the flags, that is mapped to
+        have alpha by default in order not to break any other existing
+        code.
+
+        Though we have a problem with AC in WTR and that makes it
+        currently not testable, no new tests are needed because once this
+        is fixed the current test set suffices to detect a possible
+        regression in this.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::updateTexture): Check
+        the video format and decide if the texture shall be pulled with
+        alpha support or not.
+        * platform/graphics/texmap/TextureMapper.cpp:
+        (WebCore::TextureMapper::acquireTextureFromPool): Use the flags
+        when resetting the texture.
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore::BitmapTexture::Flag::None): Added with 0x00.
+        (WebCore::TextureMapper::acquireTextureFromPool): Added flag
+        parameter to set up the texture with the default for including
+        alpha channel.
+
 2014-03-30  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Adopt range-based for loops to TextCheckerEnchant

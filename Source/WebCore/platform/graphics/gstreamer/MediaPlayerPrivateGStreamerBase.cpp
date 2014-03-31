@@ -324,7 +324,9 @@ PassRefPtr<BitmapTexture> MediaPlayerPrivateGStreamerBase::updateTexture(Texture
     if (!getVideoSizeAndFormatFromCaps(caps.get(), size, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride))
         return 0;
 
-    RefPtr<BitmapTexture> texture = textureMapper->acquireTextureFromPool(size);
+    const GstVideoFormatInfo* formatInfo = gst_video_format_get_info(format);
+
+    RefPtr<BitmapTexture> texture = textureMapper->acquireTextureFromPool(size, GST_VIDEO_FORMAT_INFO_HAS_ALPHA(formatInfo) ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
 
 #if GST_CHECK_VERSION(1, 1, 0)
     GstVideoGLTextureUploadMeta* meta;

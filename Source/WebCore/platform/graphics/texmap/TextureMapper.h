@@ -47,6 +47,7 @@ class FilterOperations;
 class BitmapTexture : public RefCounted<BitmapTexture> {
 public:
     enum Flag {
+        NoFlag = 0,
         SupportsAlpha = 0x01
     };
 
@@ -156,7 +157,7 @@ public:
 
     virtual IntSize maxTextureSize() const = 0;
 
-    virtual PassRefPtr<BitmapTexture> acquireTextureFromPool(const IntSize&);
+    virtual PassRefPtr<BitmapTexture> acquireTextureFromPool(const IntSize&, const BitmapTexture::Flags = BitmapTexture::SupportsAlpha);
 
     void setPatternTransform(const TransformationMatrix& p) { m_patternTransform = p; }
     void setWrapMode(WrapMode m) { m_wrapMode = m; }
