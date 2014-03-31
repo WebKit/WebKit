@@ -1,3 +1,17 @@
+2014-03-31  Maurice van der Pot  <griffon26@kfk4ever.com>
+
+        Fix mixed use of booleans in JPEGImageDecoder.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=122412
+
+        Reviewed by Darin Adler.
+
+        Trivial fix for compilation error; no new tests.
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::decode):
+        (WebCore::fill_input_buffer):
+        Use TRUE/FALSE defined by libjpeg for libjpeg booleans
+
 2014-03-23  Zan Dobersek  <zdobersek@igalia.com>
 
         Move Source/WebCore/rendering/ code to std::unique_ptr

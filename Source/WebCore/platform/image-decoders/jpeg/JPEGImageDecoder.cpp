@@ -333,7 +333,7 @@ public:
         switch (m_state) {
         case JPEG_HEADER:
             // Read file parameters with jpeg_read_header().
-            if (jpeg_read_header(&m_info, true) == JPEG_SUSPENDED)
+            if (jpeg_read_header(&m_info, TRUE) == JPEG_SUSPENDED)
                 return false; // I/O suspension.
 
             switch (m_info.jpeg_color_space) {
@@ -419,9 +419,9 @@ public:
             // of progressive JPEG.
             m_info.dct_method = dctMethod();
             m_info.dither_mode = ditherMode();
-            m_info.do_fancy_upsampling = doFancyUpsampling();
-            m_info.enable_2pass_quant = false;
-            m_info.do_block_smoothing = true;
+            m_info.do_fancy_upsampling = doFancyUpsampling() ? TRUE : FALSE;
+            m_info.enable_2pass_quant = FALSE;
+            m_info.do_block_smoothing = TRUE;
 
             // Start decompressor.
             if (!jpeg_start_decompress(&m_info))
@@ -572,7 +572,7 @@ boolean fill_input_buffer(j_decompress_ptr)
     // Our decode step always sets things up properly, so if this method is ever
     // called, then we have hit the end of the buffer.  A return value of false
     // indicates that we have no data to supply yet.
-    return false;
+    return FALSE;
 }
 
 void term_source(j_decompress_ptr jd)
