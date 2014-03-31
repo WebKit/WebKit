@@ -1,3 +1,9 @@
+2014-03-31  Pratik Solanki  <psolanki@apple.com>
+
+        Unreviewed. iOS build fix after r166532. Add missing comma.
+
+        * dom/DocumentMarker.h:
+
 2014-03-31  Brady Eidson  <beidson@apple.com>
 
         Add variant of phone number parsing that use DocumentMarker in the current selection

@@ -72,7 +72,7 @@ public:
         // and it has alternative text.
         DictationAlternatives = 1 << 9,
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
-        TelephoneNumber = 1 << 10
+        TelephoneNumber = 1 << 10,
 #endif
 #if PLATFORM(IOS)
         // FIXME: iOS should share the same Dictation marks as everyone else.
