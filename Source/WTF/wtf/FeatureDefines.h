@@ -776,10 +776,6 @@
 #define ENABLE_WEBGL 0
 #endif
 
-#if !defined(ENABLE_WEB_ANIMATIONS)
-#define ENABLE_WEB_ANIMATIONS 0
-#endif
-
 #if !defined(ENABLE_WEB_ARCHIVE)
 #define ENABLE_WEB_ARCHIVE 0
 #endif
