@@ -54,6 +54,9 @@ public:
     virtual float platformCALayerDeviceScaleFactor() const = 0;
     virtual float platformCALayerContentsScaleMultiplierForNewTiles(PlatformCALayer*) const { return 1; }
 
+    virtual bool platformCALayerShouldAggressivelyRetainTiles(PlatformCALayer*) const { return false; }
+    virtual bool platformCALayerShouldTemporarilyRetainTileCohorts(PlatformCALayer*) const { return true; }
+
     virtual bool isCommittingChanges() const { return false; }
 
 protected:

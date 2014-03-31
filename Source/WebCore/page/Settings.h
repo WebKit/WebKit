@@ -233,9 +233,6 @@ public:
 
     void setScrollingPerformanceLoggingEnabled(bool);
     bool scrollingPerformanceLoggingEnabled() { return m_scrollingPerformanceLoggingEnabled; }
-        
-    void setAggressiveTileRetentionEnabled(bool);
-    bool aggressiveTileRetentionEnabled() { return m_aggressiveTileRetentionEnabled; }
 
     static void setShouldRespectPriorityInCSSAttributeSetters(bool);
     static bool shouldRespectPriorityInCSSAttributeSetters();
@@ -317,7 +314,6 @@ private:
     bool m_touchEventEmulationEnabled : 1;
 #endif
     bool m_scrollingPerformanceLoggingEnabled : 1;
-    bool m_aggressiveTileRetentionEnabled : 1;
 
     double m_timeWithoutMouseMovementBeforeHidingControls;
 

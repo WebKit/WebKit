@@ -1294,6 +1294,20 @@ float GraphicsLayerCA::platformCALayerContentsScaleMultiplierForNewTiles(Platfor
     return client() ? client()->contentsScaleMultiplierForNewTiles(this) : 1;
 }
 
+bool GraphicsLayerCA::platformCALayerShouldAggressivelyRetainTiles(PlatformCALayer*) const
+{
+    if (GraphicsLayerClient* layerClient = client())
+        return layerClient->shouldAggressivelyRetainTiles(this);
+    return false;
+}
+
+bool GraphicsLayerCA::platformCALayerShouldTemporarilyRetainTileCohorts(PlatformCALayer*) const
+{
+    if (GraphicsLayerClient* layerClient = client())
+        return layerClient->shouldTemporarilyRetainTileCohorts(this);
+    return true;
+}
+
 void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState, float pageScaleFactor, const FloatPoint& positionRelativeToBase, const FloatRect& oldVisibleRect, TransformationMatrix* transformFromRoot)
 {
     ++commitState.treeDepth;

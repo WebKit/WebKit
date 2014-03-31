@@ -95,6 +95,9 @@ public:
     virtual bool shouldSkipLayerInDump(const GraphicsLayer*) const { return false; }
     virtual bool shouldDumpPropertyForLayer(const GraphicsLayer*, const char*) const { return true; }
 
+    virtual bool shouldAggressivelyRetainTiles(const GraphicsLayer*) const { return false; }
+    virtual bool shouldTemporarilyRetainTileCohorts(const GraphicsLayer*) const { return true; }
+
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     virtual bool mediaLayerMustBeUpdatedOnMainThread() const { return false; }
 #endif

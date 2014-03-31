@@ -193,6 +193,8 @@ private:
     virtual void platformCALayerSetNeedsToRevalidateTiles() override;
     virtual float platformCALayerDeviceScaleFactor() const override;
     virtual float platformCALayerContentsScaleMultiplierForNewTiles(PlatformCALayer*) const override;
+    virtual bool platformCALayerShouldAggressivelyRetainTiles(PlatformCALayer*) const override;
+    virtual bool platformCALayerShouldTemporarilyRetainTileCohorts(PlatformCALayer*) const override;
 
     virtual bool isCommittingChanges() const override { return m_isCommittingChanges; }
 

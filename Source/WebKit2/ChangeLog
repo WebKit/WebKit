@@ -1,3 +1,23 @@
+2014-03-31  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS WebKit2] Disable tile cohort retention for now
+        https://bugs.webkit.org/show_bug.cgi?id=130926
+        <rdar://problem/16465413>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebPreferencesStore.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Add a preference for temporary tile cohort retention (essentially, provide a setting
+        that means that we will never retain tiles at all once they leave the tile coverage rect).
+        Defaults to true to maintain existing behavior, except for iOS WebKit2, where
+        it defaults to false because we don't have the requisite support for purgeable tiles yet.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+
 2014-03-31  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Buildfix after r166497.

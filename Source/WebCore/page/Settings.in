@@ -220,3 +220,6 @@ imageControlsEnabled initial=false, conditional=IMAGE_CONTROLS
 alwaysUseBaselineOfPrimaryFont initial=false
 
 enableInheritURIQueryComponent initial=false
+
+aggressiveTileRetentionEnabled initial=false
+temporaryTileCohortRetentionEnabled initial=true

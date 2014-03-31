@@ -186,7 +186,6 @@ Settings::Settings(Page* page)
     , m_touchEventEmulationEnabled(false)
 #endif
     , m_scrollingPerformanceLoggingEnabled(false)
-    , m_aggressiveTileRetentionEnabled(false)
     , m_timeWithoutMouseMovementBeforeHidingControls(3)
     , m_setImageLoadingSettingsTimer(this, &Settings::imageLoadingSettingsTimerFired)
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
@@ -627,11 +626,6 @@ void Settings::setScrollingPerformanceLoggingEnabled(bool enabled)
 
     if (m_page->mainFrame().view())
         m_page->mainFrame().view()->setScrollingPerformanceLoggingEnabled(enabled);
-}
-    
-void Settings::setAggressiveTileRetentionEnabled(bool enabled)
-{
-    m_aggressiveTileRetentionEnabled = enabled;
 }
 
 void Settings::setMockScrollbarsEnabled(bool flag)

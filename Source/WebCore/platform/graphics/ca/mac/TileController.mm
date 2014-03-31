@@ -67,7 +67,6 @@ TileController::TileController(PlatformCALayer* rootPlatformLayer)
     , m_marginRight(0)
     , m_isInWindow(false)
     , m_scrollingPerformanceLoggingEnabled(false)
-    , m_aggressivelyRetainsTiles(false)
     , m_unparentsOffscreenTiles(false)
     , m_acceleratesDrawing(false)
     , m_tilesAreOpaque(false)
@@ -543,7 +542,7 @@ void TileController::tileRevalidationTimerFired(Timer<TileController>*)
         return;
     }
 
-    TileValidationPolicyFlags foregroundValidationPolicy = m_aggressivelyRetainsTiles ? 0 : PruneSecondaryTiles;
+    TileValidationPolicyFlags foregroundValidationPolicy = owningGraphicsLayer()->platformCALayerShouldAggressivelyRetainTiles(m_tileCacheLayer) ? 0 : PruneSecondaryTiles;
     TileValidationPolicyFlags backgroundValidationPolicy = foregroundValidationPolicy | UnparentAllTiles;
 
     revalidateTiles(foregroundValidationPolicy, backgroundValidationPolicy);
@@ -698,8 +697,12 @@ void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidat
     if (tilesInCohort)
         startedNewCohort(currCohort);
 
-    if (!m_aggressivelyRetainsTiles)
-        scheduleCohortRemoval();
+    if (!owningGraphicsLayer()->platformCALayerShouldAggressivelyRetainTiles(m_tileCacheLayer)) {
+        if (owningGraphicsLayer()->platformCALayerShouldTemporarilyRetainTileCohorts(m_tileCacheLayer))
+            scheduleCohortRemoval();
+        else if (tilesInCohort)
+            removeTilesInCohort(currCohort);
+    }
 
     // Ensure primary tile coverage tiles.
     m_primaryTileCoverageRect = ensureTilesForRect(tileCoverageRect, CoverageType::PrimaryTiles);
@@ -1114,7 +1117,7 @@ void TileController::drawTileMapContents(CGContextRef context, CGRect layerBound
         TileCohort newestCohort = newestTileCohort();
         TileCohort oldestCohort = oldestTileCohort();
 
-        if (!m_aggressivelyRetainsTiles && tileInfo.cohort != VisibleTileCohort && newestCohort > oldestCohort) {
+        if (!owningGraphicsLayer()->platformCALayerShouldAggressivelyRetainTiles(m_tileCacheLayer) && tileInfo.cohort != VisibleTileCohort && newestCohort > oldestCohort) {
             float cohortProportion = static_cast<float>((newestCohort - tileInfo.cohort)) / (newestCohort - oldestCohort);
             CGContextSetRGBFillColor(context, red, green, blue, 1 - cohortProportion);
         } else

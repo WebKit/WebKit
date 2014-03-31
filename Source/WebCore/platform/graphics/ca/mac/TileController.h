@@ -118,8 +118,6 @@ private:
     virtual IntRect tileGridExtent() const override;
     virtual void setScrollingPerformanceLoggingEnabled(bool flag) override { m_scrollingPerformanceLoggingEnabled = flag; }
     virtual bool scrollingPerformanceLoggingEnabled() const override { return m_scrollingPerformanceLoggingEnabled; }
-    virtual void setAggressivelyRetainsTiles(bool flag) override { m_aggressivelyRetainsTiles = flag; }
-    virtual bool aggressivelyRetainsTiles() const override { return m_aggressivelyRetainsTiles; }
     virtual void setUnparentsOffscreenTiles(bool flag) override { m_unparentsOffscreenTiles = flag; }
     virtual bool unparentsOffscreenTiles() const override { return m_unparentsOffscreenTiles; }
     virtual double retainedTileBackingStoreMemory() const override;
@@ -245,7 +243,6 @@ private:
 
     bool m_isInWindow;
     bool m_scrollingPerformanceLoggingEnabled;
-    bool m_aggressivelyRetainsTiles;
     bool m_unparentsOffscreenTiles;
     bool m_acceleratesDrawing;
     bool m_tilesAreOpaque;

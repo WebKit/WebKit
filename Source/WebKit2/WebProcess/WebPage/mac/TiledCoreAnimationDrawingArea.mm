@@ -260,9 +260,6 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
     }
 #endif
 
-    if (TiledBacking* tiledBacking = mainFrameTiledBacking())
-        tiledBacking->setAggressivelyRetainsTiles(settings.aggressiveTileRetentionEnabled());
-
     for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(), end = m_pageOverlayLayers.end(); it != end; ++it) {
         it->value->setAcceleratesDrawing(settings.acceleratedDrawingEnabled());
         it->value->setShowDebugBorder(settings.showDebugBorders());
@@ -582,9 +579,6 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)
 
     for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(), end = m_pageOverlayLayers.end(); it != end; ++it)
         [m_hostingLayer addSublayer:it->value->platformLayer()];
-
-    if (TiledBacking* tiledBacking = mainFrameTiledBacking())
-        tiledBacking->setAggressivelyRetainsTiles(m_webPage->corePage()->settings().aggressiveTileRetentionEnabled());
 
     updateDebugInfoLayer(m_webPage->corePage()->settings().showTiledScrollingIndicator());
 

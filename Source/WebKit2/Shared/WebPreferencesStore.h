@@ -74,6 +74,7 @@ namespace WebKit {
 #define DEFAULT_PASSWORD_ECHO_ENABLED true
 #define DEFAULT_MEDIA_PLAYBACK_ALLOWS_INLINE false
 #define DEFAULT_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE true
+#define DEFAULT_TEMPORARY_TILE_COHORT_RETENTION_ENABLED false
 #else
 #define DEFAULT_FRAME_FLATTENING_ENABLED false
 #define DEFAULT_SHOULD_PRINT_BACKGROUNDS false
@@ -84,6 +85,7 @@ namespace WebKit {
 #define DEFAULT_PASSWORD_ECHO_ENABLED false
 #define DEFAULT_MEDIA_PLAYBACK_ALLOWS_INLINE true
 #define DEFAULT_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE false
+#define DEFAULT_TEMPORARY_TILE_COHORT_RETENTION_ENABLED true
 #endif
 
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
@@ -187,6 +189,7 @@ namespace WebKit {
     macro(UsesEncodingDetector, usesEncodingDetector, Bool, bool, false) \
     macro(TextAutosizingEnabled, textAutosizingEnabled, Bool, bool, false) \
     macro(AggressiveTileRetentionEnabled, aggressiveTileRetentionEnabled, Bool, bool, false) \
+    macro(TemporaryTileCohortRetentionEnabled, temporaryTileCohortRetentionEnabled, Bool, bool, DEFAULT_TEMPORARY_TILE_COHORT_RETENTION_ENABLED) \
     macro(QTKitEnabled, isQTKitEnabled, Bool, bool, true) \
     macro(LogsPageMessagesToSystemConsoleEnabled, logsPageMessagesToSystemConsoleEnabled, Bool, bool, false) \
     macro(PageVisibilityBasedProcessSuppressionEnabled, pageVisibilityBasedProcessSuppressionEnabled, Bool, bool, true) \

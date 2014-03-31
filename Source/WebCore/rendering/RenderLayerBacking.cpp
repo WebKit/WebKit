@@ -2315,6 +2315,25 @@ bool RenderLayerBacking::shouldDumpPropertyForLayer(const GraphicsLayer* layer, 
     return true;
 }
 
+bool RenderLayerBacking::shouldAggressivelyRetainTiles(const GraphicsLayer*) const
+{
+    // Only the main frame TileController has enough information about in-window state to
+    // correctly implement aggressive tile retention.
+    if (!m_isMainFrameRenderViewLayer)
+        return false;
+
+    if (Page* page = renderer().frame().page())
+        return page->settings().aggressiveTileRetentionEnabled();
+    return false;
+}
+
+bool RenderLayerBacking::shouldTemporarilyRetainTileCohorts(const GraphicsLayer*) const
+{
+    if (Page* page = renderer().frame().page())
+        return page->settings().temporaryTileCohortRetentionEnabled();
+    return true;
+}
+
 #ifndef NDEBUG
 void RenderLayerBacking::verifyNotPainting()
 {

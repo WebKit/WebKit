@@ -1,3 +1,50 @@
+2014-03-31  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS WebKit2] Disable tile cohort retention for now
+        https://bugs.webkit.org/show_bug.cgi?id=130926
+        <rdar://problem/16465413>
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setScrollingPerformanceLoggingEnabled):
+        (WebCore::Settings::setAggressiveTileRetentionEnabled): Deleted.
+        * page/Settings.h:
+        (WebCore::Settings::aggressiveTileRetentionEnabled): Deleted.
+        * page/Settings.in:
+        Use Settings.in for these simple settings.
+
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::shouldAggressivelyRetainTiles):
+        (WebCore::GraphicsLayerClient::shouldTemporarilyRetainTileCohorts):
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::platformCALayerShouldAggressivelyRetainTiles):
+        (WebCore::GraphicsLayerCA::platformCALayerShouldTemporarilyRetainTileCohorts):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayerClient.h:
+        (WebCore::PlatformCALayerClient::platformCALayerShouldAggressivelyRetainTiles):
+        (WebCore::PlatformCALayerClient::platformCALayerShouldTemporarilyRetainTileCohorts):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::shouldAggressivelyRetainTiles):
+        (WebCore::RenderLayerBacking::shouldTemporarilyRetainTileCohorts):
+        * rendering/RenderLayerBacking.h:
+        Plumb the two tile-retention settings through to TileController in a pull manner
+        instead of a push manner, as there were some cases (especially on iOS) where
+        the settings weren't always getting pushed down.
+
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::TileController):
+        (WebCore::TileController::tileRevalidationTimerFired):
+        (WebCore::TileController::revalidateTiles):
+        (WebCore::TileController::drawTileMapContents):
+        Aggressive tile retention wins over temporary retention. If we aren't
+        using temporary (cohort) retention, throw away the cohort as soon as it
+        is created.
+
 2014-03-31  Beth Dakin  <bdakin@apple.com>
 
         Radio buttons and checkboxes should share code
