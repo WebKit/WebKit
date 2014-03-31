@@ -1,3 +1,31 @@
+2014-03-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        Replace DEPRECATED_DEFINE_STATIC_LOCAL by static NeverDestroyed<T> in css
+        https://bugs.webkit.org/show_bug.cgi?id=130409
+
+        Reviewed by Darin Adler.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::logUnimplementedPropertyID):
+        * css/CSSDefaultStyleSheets.cpp:
+        (WebCore::screenEval):
+        (WebCore::printEval):
+        * css/CSSParser.cpp:
+        (WebCore::strictCSSParserContext):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::cssTextCache):
+        * css/CSSProperty.cpp:
+        (WebCore::borderDirections):
+        * css/CSSStyleRule.cpp:
+        (WebCore::selectorTextCache):
+        * css/CSSValuePool.cpp:
+        (WebCore::cssValuePool):
+        * css/CSSValuePool.h:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyPageSize::getPageSizeFromName):
+        (WebCore::DeprecatedStyleBuilder::sharedStyleBuilder):
+        * css/DeprecatedStyleBuilder.h:
+
 2014-03-30  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] [TextureMapper] Weird brightness with some videos with acceletared compositing

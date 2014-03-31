@@ -35,7 +35,7 @@ namespace WebCore {
 
 CSSValuePool& cssValuePool()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(CSSValuePool, pool, ());
+    static NeverDestroyed<CSSValuePool> pool;
     return pool;
 }
 

@@ -86,6 +86,7 @@
 #include <bitset>
 #include <limits.h>
 #include <wtf/HexNumber.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/StringBuffer.h>
@@ -241,7 +242,7 @@ private:
 
 const CSSParserContext& strictCSSParserContext()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(CSSParserContext, strictContext, (CSSStrictMode));
+    static NeverDestroyed<CSSParserContext> strictContext(CSSStrictMode);
     return strictContext;
 }
 

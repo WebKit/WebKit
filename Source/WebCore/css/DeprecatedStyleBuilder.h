@@ -27,6 +27,7 @@
 
 #include "CSSPropertyNames.h"
 #include "StylePropertyShorthand.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -98,6 +99,8 @@ private:
     }
 
     PropertyHandler m_propertyMap[numCSSProperties];
+
+    friend class WTF::NeverDestroyed<DeprecatedStyleBuilder>;
 };
 
 }

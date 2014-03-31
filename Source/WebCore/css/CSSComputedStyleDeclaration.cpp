@@ -65,6 +65,7 @@
 #include "StyleResolver.h"
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(CSS_GRID_LAYOUT)
@@ -1435,8 +1436,8 @@ static PassRefPtr<CSSValue> counterToCSSValue(const RenderStyle* style, CSSPrope
 
 static void logUnimplementedPropertyID(CSSPropertyID propertyID)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<CSSPropertyID>, propertyIDSet, ());
-    if (!propertyIDSet.add(propertyID).isNewEntry)
+    static NeverDestroyed<HashSet<CSSPropertyID>> propertyIDSet;
+    if (!propertyIDSet.get().add(propertyID).isNewEntry)
         return;
 
     LOG_ERROR("WebKit does not yet implement getComputedStyle for '%s'.", getPropertyName(propertyID));

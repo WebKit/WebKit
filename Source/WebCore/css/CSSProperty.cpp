@@ -25,6 +25,7 @@
 #include "RenderStyleConstants.h"
 #include "StylePropertyShorthand.h"
 
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -173,7 +174,7 @@ static CSSPropertyID resolveToPhysicalProperty(WritingMode writingMode, LogicalE
 static const StylePropertyShorthand& borderDirections()
 {
     static const CSSPropertyID properties[4] = { CSSPropertyBorderTop, CSSPropertyBorderRight, CSSPropertyBorderBottom, CSSPropertyBorderLeft };
-    DEPRECATED_DEFINE_STATIC_LOCAL(StylePropertyShorthand, borderDirections, (CSSPropertyBorder, properties, WTF_ARRAY_LENGTH(properties)));
+    static NeverDestroyed<StylePropertyShorthand> borderDirections(CSSPropertyBorder, properties, WTF_ARRAY_LENGTH(properties));
     return borderDirections;
 }
 

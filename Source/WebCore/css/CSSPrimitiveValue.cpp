@@ -41,6 +41,7 @@
 #include "StyleSheetContents.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/DecimalNumber.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringBuilder.h>
@@ -176,7 +177,7 @@ CSSPrimitiveValue::UnitCategory CSSPrimitiveValue::unitCategory(CSSPrimitiveValu
 typedef HashMap<const CSSPrimitiveValue*, String> CSSTextCache;
 static CSSTextCache& cssTextCache()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(CSSTextCache, cache, ());
+    static NeverDestroyed<CSSTextCache> cache;
     return cache;
 }
 

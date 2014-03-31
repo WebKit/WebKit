@@ -32,6 +32,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/AtomicStringHash.h>
 
@@ -85,7 +86,7 @@ private:
     typedef HashMap<String, RefPtr<CSSPrimitiveValue>> FontFamilyValueCache;
     FontFamilyValueCache m_fontFamilyValueCache;
 
-    friend CSSValuePool& cssValuePool();
+    friend class WTF::NeverDestroyed<CSSValuePool>;
 };
 
 CSSValuePool& cssValuePool() PURE_FUNCTION;

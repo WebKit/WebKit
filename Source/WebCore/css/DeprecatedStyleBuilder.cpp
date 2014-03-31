@@ -1583,22 +1583,22 @@ private:
     }
     static bool getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrimitiveValue* pageOrientation, Length& width, Length& height)
     {
-        DEPRECATED_DEFINE_STATIC_LOCAL(Length, a5Width, (mmLength(148)));
-        DEPRECATED_DEFINE_STATIC_LOCAL(Length, a5Height, (mmLength(210)));
-        DEPRECATED_DEFINE_STATIC_LOCAL(Length, a4Width, (mmLength(210)));
-        DEPRECATED_DEFINE_STATIC_LOCAL(Length, a4Height, (mmLength(297)));
-        DEPRECATED_DEFINE_STATIC_LOCAL(Length, a3Width, (mmLength(297)));
-        DEPRECATED_DEFINE_STATIC_LOCAL(Length, a3Height, (mmLength(420)));
-        DEPRECATED_DEFINE_STATIC_LOCAL(Length, b5Width, (mmLength(176)));
-        DEPRECATED_DEFINE_STATIC_LOCAL(Length, b5Height, (mmLength(250)));
-        DEPRECATED_DEFINE_STATIC_LOCAL(Length, b4Width, (mmLength(250)));
-        DEPRECATED_DEFINE_STATIC_LOCAL(Length, b4Height, (mmLength(353)));
-        DEPRECATED_DEFINE_STATIC_LOCAL(Length, letterWidth, (inchLength(8.5)));
-        DEPRECATED_DEFINE_STATIC_LOCAL(Length, letterHeight, (inchLength(11)));
-        DEPRECATED_DEFINE_STATIC_LOCAL(Length, legalWidth, (inchLength(8.5)));
-        DEPRECATED_DEFINE_STATIC_LOCAL(Length, legalHeight, (inchLength(14)));
-        DEPRECATED_DEFINE_STATIC_LOCAL(Length, ledgerWidth, (inchLength(11)));
-        DEPRECATED_DEFINE_STATIC_LOCAL(Length, ledgerHeight, (inchLength(17)));
+        static NeverDestroyed<Length> a5Width(mmLength(148));
+        static NeverDestroyed<Length> a5Height(mmLength(210));
+        static NeverDestroyed<Length> a4Width(mmLength(210));
+        static NeverDestroyed<Length> a4Height(mmLength(297));
+        static NeverDestroyed<Length> a3Width(mmLength(297));
+        static NeverDestroyed<Length> a3Height(mmLength(420));
+        static NeverDestroyed<Length> b5Width(mmLength(176));
+        static NeverDestroyed<Length> b5Height(mmLength(250));
+        static NeverDestroyed<Length> b4Width(mmLength(250));
+        static NeverDestroyed<Length> b4Height(mmLength(353));
+        static NeverDestroyed<Length> letterWidth(inchLength(8.5));
+        static NeverDestroyed<Length> letterHeight(inchLength(11));
+        static NeverDestroyed<Length> legalWidth(inchLength(8.5));
+        static NeverDestroyed<Length> legalHeight(inchLength(14));
+        static NeverDestroyed<Length> ledgerWidth(inchLength(11));
+        static NeverDestroyed<Length> ledgerHeight(inchLength(17));
 
         if (!pageSizeName)
             return false;
@@ -2339,7 +2339,7 @@ public:
 
 const DeprecatedStyleBuilder& DeprecatedStyleBuilder::sharedStyleBuilder()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(DeprecatedStyleBuilder, styleBuilderInstance, ());
+    static NeverDestroyed<DeprecatedStyleBuilder> styleBuilderInstance;
     return styleBuilderInstance;
 }
 

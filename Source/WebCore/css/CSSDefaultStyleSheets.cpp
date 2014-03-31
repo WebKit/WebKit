@@ -39,6 +39,7 @@
 #include "RuleSet.h"
 #include "StyleSheetContents.h"
 #include "UserAgentStyleSheets.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -68,13 +69,13 @@ static inline bool elementCanUseSimpleDefaultStyle(Element* e)
 
 static const MediaQueryEvaluator& screenEval()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const MediaQueryEvaluator, staticScreenEval, ("screen"));
+    static NeverDestroyed<const MediaQueryEvaluator> staticScreenEval("screen");
     return staticScreenEval;
 }
 
 static const MediaQueryEvaluator& printEval()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const MediaQueryEvaluator, staticPrintEval, ("print"));
+    static NeverDestroyed<const MediaQueryEvaluator> staticPrintEval("print");
     return staticPrintEval;
 }
 

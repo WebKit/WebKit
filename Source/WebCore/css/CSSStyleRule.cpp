@@ -30,6 +30,7 @@
 #include "RuleSet.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ namespace WebCore {
 typedef HashMap<const CSSStyleRule*, String> SelectorTextCache;
 static SelectorTextCache& selectorTextCache()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(SelectorTextCache, cache, ());
+    static NeverDestroyed<SelectorTextCache> cache;
     return cache;
 }
 
