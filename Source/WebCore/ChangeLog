@@ -1,5 +1,11 @@
 2014-03-30  Benjamin Poulain  <benjamin@webkit.org>
 
+        Attempt to fix 32bits build after r166465
+
+        * rendering/style/RenderStyle.h:
+
+2014-03-30  Benjamin Poulain  <benjamin@webkit.org>
+
         Make RenderStyle's non inherited flags more JSC friendly
         https://bugs.webkit.org/show_bug.cgi?id=130939
 

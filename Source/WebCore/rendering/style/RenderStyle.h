@@ -286,7 +286,7 @@ public:
         static uint8_t flagAffectedByActive() { return affectedByActiveOffset; }
         static uint8_t flagAffectedByDrag() { return affectedByDragOffset; }
     private:
-        void updateBoolean(bool isSet, unsigned offset)
+        void updateBoolean(bool isSet, uint64_t offset)
         {
             if (isSet)
                 m_flags |= (oneBitMask << offset);
@@ -294,19 +294,19 @@ public:
                 m_flags &= ~(oneBitMask << offset);
         }
 
-        bool getBoolean(unsigned offset) const
+        bool getBoolean(uint64_t offset) const
         {
             return m_flags & (oneBitMask << offset);
         }
 
-        void updateValue(uint8_t newValue, uint64_t positionIndependentMask, unsigned offset)
+        void updateValue(uint8_t newValue, uint64_t positionIndependentMask, uint64_t offset)
         {
             ASSERT(!(newValue & ~positionIndependentMask));
             uint64_t positionDependentMask = positionIndependentMask << offset;
             m_flags = (m_flags & ~positionDependentMask) | (static_cast<uint64_t>(newValue) << offset);
         }
 
-        unsigned getValue(uint64_t positionIndependentMask, unsigned offset) const
+        unsigned getValue(uint64_t positionIndependentMask, uint64_t offset) const
         {
             return (m_flags >> offset) & positionIndependentMask;
         }
