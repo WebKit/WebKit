@@ -264,7 +264,7 @@ static IntRect inflateRect(const IntRect& zoomedRect, const IntSize& zoomedSize,
     return result;
 }
 
-// Checkboxes
+// Checkboxes and radio buttons
 
 static const IntSize* checkboxSizes()
 {
@@ -293,101 +293,6 @@ static LengthSize checkboxSize(const Font& font, const LengthSize& zoomedSize, f
     return sizeFromFont(font, zoomedSize, zoomFactor, checkboxSizes());
 }
     
-static void configureCheckbox(NSCell* cell, const ControlStates* states, const IntRect& zoomedRect, float zoomFactor, bool isStateChange)
-{
-    // Set the control size based off the rectangle we're painting into.
-    setControlSize(cell, checkboxSizes(), zoomedRect.size(), zoomFactor);
-
-    // Update the various states we respond to.
-    updateStates(cell, states, isStateChange);
-}
-    
-static NSButtonCell *createCheckboxCell()
-{
-    NSButtonCell *checkboxCell = [[NSButtonCell alloc] init];
-    [checkboxCell setButtonType:NSSwitchButton];
-    [checkboxCell setTitle:nil];
-    [checkboxCell setAllowsMixedState:YES];
-    [checkboxCell setFocusRingType:NSFocusRingTypeExterior];
-    return checkboxCell;
-}
-
-static NSButtonCell *sharedCheckboxCell(const ControlStates* states, const IntRect& zoomedRect, float zoomFactor)
-{
-    static NSButtonCell *checkboxCell;
-    if (!checkboxCell)
-        checkboxCell = createCheckboxCell();
-
-    configureCheckbox(checkboxCell, states, zoomedRect, zoomFactor, false);
-    return checkboxCell;
-}
-    
-// FIXME: Share more code with radio buttons.
-static void paintCheckbox(ControlStates* controlStates, GraphicsContext* context, const IntRect& zoomedRect, float zoomFactor, ScrollView* scrollView)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-
-    NSButtonCell *checkboxCell = static_cast<NSButtonCell*>(controlStates->platformControl());
-
-    if (controlStates->isDirty()) {
-        if (!checkboxCell)
-            checkboxCell = createCheckboxCell();
-        configureCheckbox(checkboxCell, controlStates, zoomedRect, zoomFactor, true);
-    } else {
-        if (!checkboxCell)
-            checkboxCell = sharedCheckboxCell(controlStates, zoomedRect, zoomFactor);
-        configureCheckbox(checkboxCell, controlStates, zoomedRect, zoomFactor, false);
-    }
-    controlStates->setDirty(false);
-
-    GraphicsContextStateSaver stateSaver(*context);
-
-    NSControlSize controlSize = [checkboxCell controlSize];
-    IntSize zoomedSize = checkboxSizes()[controlSize];
-    zoomedSize.setWidth(zoomedSize.width() * zoomFactor);
-    zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
-    IntRect inflatedRect = inflateRect(zoomedRect, zoomedSize, checkboxMargins(controlSize), zoomFactor);
-    
-    if (zoomFactor != 1.0f) {
-        inflatedRect.setWidth(inflatedRect.width() / zoomFactor);
-        inflatedRect.setHeight(inflatedRect.height() / zoomFactor);
-        context->translate(inflatedRect.x(), inflatedRect.y());
-        context->scale(FloatSize(zoomFactor, zoomFactor));
-        context->translate(-inflatedRect.x(), -inflatedRect.y());
-    }
-
-    LocalCurrentGraphicsContext localContext(context);
-    NSView *view = ThemeMac::ensuredView(scrollView, controlStates);
-    bool drawStatically = true;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
-    drawStatically = ![checkboxCell _stateAnimationRunning];
-#endif
-    if (drawStatically)
-        [checkboxCell drawWithFrame:NSRect(inflatedRect) inView:view];
-    else {
-        // FIXME: This isn't quite correct at the moment due to the way the tick mark extends out of the control.
-        context->translate(inflatedRect.x(), inflatedRect.y());
-        context->scale(FloatSize(1, -1));
-        context->translate(0, -inflatedRect.height());
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
-        [checkboxCell _renderCurrentAnimationFrameInContext:context->platformContext() atLocation:NSMakePoint(0, 0)];
-#endif
-    }
-    if (controlStates->states() & ControlStates::FocusState)
-        [checkboxCell _web_drawFocusRingWithFrame:NSRect(inflatedRect) inView:view];
-    [checkboxCell setControlView:nil];
-    
-    bool needsRepaint = false;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
-    needsRepaint = [checkboxCell _stateAnimationRunning];
-#endif
-    controlStates->setNeedsRepaint(needsRepaint);
-    if (needsRepaint)
-        controlStates->setPlatformControl(checkboxCell);
-
-    END_BLOCK_OBJC_EXCEPTIONS
-}
-
 // Radio Buttons
 
 static const IntSize* radioSizes()
@@ -416,37 +321,83 @@ static LengthSize radioSize(const Font& font, const LengthSize& zoomedSize, floa
     // Use the font size to determine the intrinsic width of the control.
     return sizeFromFont(font, zoomedSize, zoomFactor, radioSizes());
 }
-
-static NSButtonCell *radio(const ControlStates* states, const IntRect& zoomedRect, float zoomFactor)
-{
-    static NSButtonCell *radioCell;
-    if (!radioCell) {
-        radioCell = [[NSButtonCell alloc] init];
-        [radioCell setButtonType:NSRadioButton];
-        [radioCell setTitle:nil];
-        [radioCell setFocusRingType:NSFocusRingTypeExterior];
-    }
     
+static void configureToggleButton(NSCell* cell, ControlPart buttonType, const ControlStates* states, const IntRect& zoomedRect, float zoomFactor, bool isStateChange)
+{
     // Set the control size based off the rectangle we're painting into.
-    setControlSize(radioCell, radioSizes(), zoomedRect.size(), zoomFactor);
+    setControlSize(cell, buttonType == CheckboxPart ? checkboxSizes() : radioSizes(), zoomedRect.size(), zoomFactor);
 
     // Update the various states we respond to.
-    updateStates(radioCell, states);
+    updateStates(cell, states, isStateChange);
+}
     
+static NSButtonCell *createToggleButtonCell(ControlPart buttonType)
+{
+    NSButtonCell *toggleButtonCell = [[NSButtonCell alloc] init];
+    
+    if (buttonType == CheckboxPart) {
+        [toggleButtonCell setButtonType:NSSwitchButton];
+        [toggleButtonCell setAllowsMixedState:YES];
+    } else {
+        ASSERT(buttonType == RadioPart);
+        [toggleButtonCell setButtonType:NSRadioButton];
+    }
+    
+    [toggleButtonCell setTitle:nil];
+    [toggleButtonCell setFocusRingType:NSFocusRingTypeExterior];
+    return toggleButtonCell;
+}
+    
+static NSButtonCell *sharedRadioCell(const ControlStates* states, const IntRect& zoomedRect, float zoomFactor)
+{
+    static NSButtonCell *radioCell;
+    if (!radioCell)
+        radioCell = createToggleButtonCell(RadioPart);
+
+    configureToggleButton(radioCell, RadioPart, states, zoomedRect, zoomFactor, false);
     return radioCell;
 }
-
-static void paintRadio(ControlStates* controlStates, GraphicsContext* context, const IntRect& zoomedRect, float zoomFactor, ScrollView* scrollView)
+    
+static NSButtonCell *sharedCheckboxCell(const ControlStates* states, const IntRect& zoomedRect, float zoomFactor)
 {
-    // Determine the width and height needed for the control and prepare the cell for painting.
-    NSButtonCell *radioCell = radio(controlStates, zoomedRect, zoomFactor);
+    static NSButtonCell *checkboxCell;
+    if (!checkboxCell)
+        checkboxCell = createToggleButtonCell(CheckboxPart);
+
+    configureToggleButton(checkboxCell, CheckboxPart, states, zoomedRect, zoomFactor, false);
+    return checkboxCell;
+}
+    
+static void paintToggleButton(ControlPart buttonType, ControlStates* controlStates, GraphicsContext* context, const IntRect& zoomedRect, float zoomFactor, ScrollView* scrollView)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+
+    NSButtonCell *toggleButtonCell = static_cast<NSButtonCell*>(controlStates->platformControl());
+
+    if (controlStates->isDirty()) {
+        if (!toggleButtonCell)
+            toggleButtonCell = createToggleButtonCell(buttonType);
+        configureToggleButton(toggleButtonCell, buttonType, controlStates, zoomedRect, zoomFactor, true);
+    } else {
+        if (!toggleButtonCell) {
+            if (buttonType == CheckboxPart)
+                toggleButtonCell = sharedCheckboxCell(controlStates, zoomedRect, zoomFactor);
+            else {
+                ASSERT(buttonType == RadioPart);
+                toggleButtonCell = sharedRadioCell(controlStates, zoomedRect, zoomFactor);
+            }
+        }
+        configureToggleButton(toggleButtonCell, buttonType, controlStates, zoomedRect, zoomFactor, false);
+    }
+    controlStates->setDirty(false);
+
     GraphicsContextStateSaver stateSaver(*context);
 
-    NSControlSize controlSize = [radioCell controlSize];
-    IntSize zoomedSize = radioSizes()[controlSize];
+    NSControlSize controlSize = [toggleButtonCell controlSize];
+    IntSize zoomedSize = checkboxSizes()[controlSize];
     zoomedSize.setWidth(zoomedSize.width() * zoomFactor);
     zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
-    IntRect inflatedRect = inflateRect(zoomedRect, zoomedSize, radioMargins(controlSize), zoomFactor);
+    IntRect inflatedRect = inflateRect(zoomedRect, zoomedSize, checkboxMargins(controlSize), zoomFactor);
     
     if (zoomFactor != 1.0f) {
         inflatedRect.setWidth(inflatedRect.width() / zoomFactor);
@@ -457,15 +408,37 @@ static void paintRadio(ControlStates* controlStates, GraphicsContext* context, c
     }
 
     LocalCurrentGraphicsContext localContext(context);
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
     NSView *view = ThemeMac::ensuredView(scrollView, controlStates);
-    [radioCell drawWithFrame:NSRect(inflatedRect) inView:view];
+    bool drawStatically = true;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+    drawStatically = ![toggleButtonCell _stateAnimationRunning];
+#endif
+    if (drawStatically)
+        [toggleButtonCell drawWithFrame:NSRect(inflatedRect) inView:view];
+    else {
+        // FIXME: This isn't quite correct at the moment due to the way the tick mark extends out of the control.
+        context->translate(inflatedRect.x(), inflatedRect.y());
+        context->scale(FloatSize(1, -1));
+        context->translate(0, -inflatedRect.height());
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+        [toggleButtonCell _renderCurrentAnimationFrameInContext:context->platformContext() atLocation:NSMakePoint(0, 0)];
+#endif
+    }
     if (controlStates->states() & ControlStates::FocusState)
-        [radioCell _web_drawFocusRingWithFrame:NSRect(inflatedRect) inView:view];
-    [radioCell setControlView:nil];
+        [toggleButtonCell _web_drawFocusRingWithFrame:NSRect(inflatedRect) inView:view];
+    [toggleButtonCell setControlView:nil];
+    
+    bool needsRepaint = false;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+    needsRepaint = [toggleButtonCell _stateAnimationRunning];
+#endif
+    controlStates->setNeedsRepaint(needsRepaint);
+    if (needsRepaint)
+        controlStates->setPlatformControl(toggleButtonCell);
+
     END_BLOCK_OBJC_EXCEPTIONS
 }
-
+    
 // Buttons
 
 // Buttons really only constrain height. They respect width.
@@ -777,7 +750,7 @@ void ThemeMac::inflateControlPaintRect(ControlPart part, const ControlStates* st
         case RadioPart: {
             // We inflate the rect as needed to account for padding included in the cell to accommodate the radio button
             // shadow".  We don't consider this part of the bounds of the control in WebKit.
-            NSCell *cell = radio(states, zoomedRect, zoomFactor);
+            NSCell *cell = sharedRadioCell(states, zoomedRect, zoomFactor);
             NSControlSize controlSize = [cell controlSize];
             IntSize zoomedSize = radioSizes()[controlSize];
             zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
@@ -819,10 +792,10 @@ void ThemeMac::paint(ControlPart part, ControlStates* states, GraphicsContext* c
 {
     switch (part) {
         case CheckboxPart:
-            paintCheckbox(states, context, zoomedRect, zoomFactor, scrollView);
+            paintToggleButton(part, states, context, zoomedRect, zoomFactor, scrollView);
             break;
         case RadioPart:
-            paintRadio(states, context, zoomedRect, zoomFactor, scrollView);
+            paintToggleButton(part, states, context, zoomedRect, zoomFactor, scrollView);
             break;
         case PushButtonPart:
         case DefaultButtonPart:

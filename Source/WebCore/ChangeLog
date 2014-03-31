@@ -1,3 +1,46 @@
+2014-03-31  Beth Dakin  <bdakin@apple.com>
+
+        Radio buttons and checkboxes should share code
+        https://bugs.webkit.org/show_bug.cgi?id=130915
+
+        Reviewed by Sam Weinig.
+
+        Radio buttons and checkboxes now share a lot of code. The common term for both is 
+        toggle buttons.
+
+        Move these radio-sizing functions up in the file to be next to the checkbox sizing 
+        functions.
+        * platform/mac/ThemeMac.mm:
+        (WebCore::radioSizes):
+        (WebCore::radioMargins):
+        (WebCore::radioSize):
+
+        Configures a radio button or a checkbox.
+        (WebCore::configureToggleButton):
+
+        Creates a radio button or a checkbox.
+        (WebCore::createToggleButtonCell):
+
+        Still have a shared cell for each.
+        (WebCore::sharedRadioCell):
+        (WebCore::sharedCheckboxCell):
+
+        Does the work of the old paintRadio() and paintCheckbox().
+        (WebCore::paintToggleButton):
+
+        Use sharedRadioCell() here.
+        (WebCore::ThemeMac::inflateControlPaintRect):
+
+        Call paintToggleButton() for radio buttons and checkboxes.
+        (WebCore::ThemeMac::paint):
+
+        All gone.
+        (WebCore::configureCheckbox): Deleted.
+        (WebCore::createCheckboxCell): Deleted.
+        (WebCore::paintCheckbox): Deleted.
+        (WebCore::radio): Deleted.
+        (WebCore::paintRadio): Deleted.
+
 2014-03-31  Samuel White  <samuel_white@apple.com>
 
         AX: Need ability to get line range for text marker.
