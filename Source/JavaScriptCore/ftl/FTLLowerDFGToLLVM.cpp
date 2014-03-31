@@ -5616,10 +5616,10 @@ private:
     void emitStoreBarrier(LValue base)
     {
 #if ENABLE(GGC)
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Store barrier continuation"));
         LBasicBlock isMarkedAndNotRemembered = FTL_NEW_BLOCK(m_out, ("Store barrier is marked block"));
-        LBasicBlock bufferHasSpace = FTL_NEW_BLOCK(m_out, ("Store barrier buffer is full"));
+        LBasicBlock bufferHasSpace = FTL_NEW_BLOCK(m_out, ("Store barrier buffer has space"));
         LBasicBlock bufferIsFull = FTL_NEW_BLOCK(m_out, ("Store barrier buffer is full"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Store barrier continuation"));
 
         // Check the mark byte. 
         m_out.branch(
@@ -5642,7 +5642,7 @@ private:
 
         // Buffer is out of space, flush it.
         m_out.appendTo(bufferIsFull, continuation);
-        vmCall(m_out.operation(operationFlushWriteBarrierBuffer), m_callFrame, base);
+        vmCall(m_out.operation(operationFlushWriteBarrierBuffer), m_callFrame, base, NoExceptions);
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);

@@ -1,3 +1,13 @@
+2014-03-31  Filip Pizlo  <fpizlo@apple.com>
+
+        LLVM IR for store barriers should be nicely arranged and they don't need exception checks
+        https://bugs.webkit.org/show_bug.cgi?id=130950
+
+        Reviewed by Mark Hahnenberg.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::emitStoreBarrier):
+
 2014-03-31  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [CMake] Stop checking for WTF_USE_ICU_UNICODE.
