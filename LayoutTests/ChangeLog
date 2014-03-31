@@ -1,5 +1,14 @@
 2014-03-31  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed test fix after r166530.
+
+        After switching to high-resolution continuous scroll output, forgot to update one test case.
+
+        * fast/events/platform-wheelevent-in-scrolling-div-expected.txt:
+        * fast/events/platform-wheelevent-in-scrolling-div.html:
+
+2014-03-31  Brent Fulgham  <bfulgham@apple.com>
+
         Reduced Latched Scroll Test Flakiness
         https://bugs.webkit.org/show_bug.cgi?id=130983
 
