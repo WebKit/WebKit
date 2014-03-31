@@ -419,7 +419,7 @@ inline void StyleResolver::State::initForStyleResolve(Document& document, Elemen
     RenderStyle* docStyle = document.renderStyle();
     m_rootElementStyle = docElement && e != docElement ? docElement->renderStyle() : docStyle;
 
-    m_style = 0;
+    m_style = nullptr;
     m_pendingImageProperties.clear();
     m_fontDirty = false;
 }

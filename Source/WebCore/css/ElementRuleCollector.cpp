@@ -145,6 +145,7 @@ bool MatchingUARulesScope::m_matchingUARules = false;
 void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest, StyleResolver::RuleRange& ruleRange)
 {
     ASSERT(matchRequest.ruleSet);
+    ASSERT_WITH_MESSAGE(!(m_mode == SelectorChecker::ResolvingStyle && !m_style), "When resolving style, the SelectorChecker must have a style to set the pseudo elements and/or to do marking. The SelectorCompiler also rely on that behavior.");
 
     const AtomicString& pseudoId = m_element.shadowPseudoId();
     if (!pseudoId.isEmpty())
