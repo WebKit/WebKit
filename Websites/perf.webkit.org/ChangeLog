@@ -1,3 +1,9 @@
+2014-03-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Some CSS tweaks after r166477 and r166479,
+
+        * public/index.html:
+
 2014-03-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebKitPerfMonitor: Sometimes text inside panes overlap
