@@ -31,6 +31,7 @@
 #include "CachedResourceLoader.h"
 #include "ResourceBuffer.h"
 #include "SubresourceLoader.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -201,17 +202,17 @@ void CachedRawResource::setDataBufferingPolicy(DataBufferingPolicy dataBuffering
 static bool shouldIgnoreHeaderForCacheReuse(AtomicString headerName)
 {
     // FIXME: This list of headers that don't affect cache policy almost certainly isn't complete.
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<AtomicString>, m_headers, ());
-    if (m_headers.isEmpty()) {
-        m_headers.add("Accept");
-        m_headers.add("Cache-Control");
-        m_headers.add("Origin");
-        m_headers.add("Pragma");
-        m_headers.add("Purpose");
-        m_headers.add("Referer");
-        m_headers.add("User-Agent");
+    static NeverDestroyed<HashSet<AtomicString>> m_headers;
+    if (m_headers.get().isEmpty()) {
+        m_headers.get().add("Accept");
+        m_headers.get().add("Cache-Control");
+        m_headers.get().add("Origin");
+        m_headers.get().add("Pragma");
+        m_headers.get().add("Purpose");
+        m_headers.get().add("Referer");
+        m_headers.get().add("User-Agent");
     }
-    return m_headers.contains(headerName);
+    return m_headers.get().contains(headerName);
 }
 
 bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const

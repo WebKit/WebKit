@@ -38,6 +38,7 @@
 #include "RenderImage.h"
 #include "RenderSVGImage.h"
 #include "SecurityOrigin.h"
+#include <wtf/NeverDestroyed.h>
 
 #if ENABLE(VIDEO)
 #include "RenderVideo.h"
@@ -64,19 +65,19 @@ namespace WebCore {
 
 static ImageEventSender& beforeLoadEventSender()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(ImageEventSender, sender, (eventNames().beforeloadEvent));
+    static NeverDestroyed<ImageEventSender> sender(eventNames().beforeloadEvent);
     return sender;
 }
 
 static ImageEventSender& loadEventSender()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(ImageEventSender, sender, (eventNames().loadEvent));
+    static NeverDestroyed<ImageEventSender> sender(eventNames().loadEvent);
     return sender;
 }
 
 static ImageEventSender& errorEventSender()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(ImageEventSender, sender, (eventNames().errorEvent));
+    static NeverDestroyed<ImageEventSender> sender(eventNames().errorEvent);
     return sender;
 }
 

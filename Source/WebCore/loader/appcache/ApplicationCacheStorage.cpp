@@ -38,6 +38,7 @@
 #include "SecurityOrigin.h"
 #include "URL.h"
 #include "UUID.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
@@ -1599,8 +1600,7 @@ ApplicationCacheStorage::ApplicationCacheStorage()
 
 ApplicationCacheStorage& cacheStorage()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(ApplicationCacheStorage, storage, ());
-    
+    static NeverDestroyed<ApplicationCacheStorage> storage;
     return storage;
 }
 

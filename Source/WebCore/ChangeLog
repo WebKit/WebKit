@@ -1,5 +1,28 @@
 2014-03-28  Sergio Villar Senin  <svillar@igalia.com>
 
+        Replace DEPRECATED_DEFINE_STATIC_LOCAL by static NeverDestroyed<T> in loader
+        https://bugs.webkit.org/show_bug.cgi?id=130893
+
+        Reviewed by Darin Adler.
+
+        * loader/ImageLoader.cpp:
+        (WebCore::beforeLoadEventSender):
+        (WebCore::loadEventSender):
+        (WebCore::errorEventSender):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::cacheStorage):
+        * loader/appcache/ApplicationCacheStorage.h:
+        * loader/archive/ArchiveFactory.cpp:
+        (WebCore::archiveMIMETypes):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::brokenImage):
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::shouldIgnoreHeaderForCacheReuse):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::dummyCachedImageClient):
+
+2014-03-28  Sergio Villar Senin  <svillar@igalia.com>
+
         Replace DEPRECATED_DEFINE_STATIC_LOCAL by static NeverDestroyed<T> in css
         https://bugs.webkit.org/show_bug.cgi?id=130409
 

@@ -147,11 +147,11 @@ private:
     typedef HashMap<String, ApplicationCacheGroup*> CacheGroupMap;
     CacheGroupMap m_cachesInMemory; // Excludes obsolete cache groups.
 
-    friend ApplicationCacheStorage& cacheStorage();
+    friend class WTF::NeverDestroyed<ApplicationCacheStorage>;
 };
- 
+
 ApplicationCacheStorage& cacheStorage();
-    
+
 } // namespace WebCore
 
 #endif // ApplicationCacheStorage_h

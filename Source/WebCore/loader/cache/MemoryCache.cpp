@@ -44,6 +44,7 @@
 #include <stdio.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
 
@@ -242,7 +243,7 @@ unsigned MemoryCache::liveCapacity() const
 // remove the usage of CFRetain() in MemoryCache::addImageToCache() so as to make the code platform-independent.
 static CachedImageClient& dummyCachedImageClient()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(CachedImageClient, client, ());
+    static NeverDestroyed<CachedImageClient> client;
     return client;
 }
 
