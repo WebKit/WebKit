@@ -79,6 +79,8 @@ private:
     virtual void setExposedContentRect(const WebCore::FloatRect&) override;
 #endif
 
+    virtual void didUpdate() override;
+
     // WebCore::GraphicsLayerClient
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) override { }
     virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) override { }
@@ -109,6 +111,9 @@ private:
     WebCore::Timer<RemoteLayerTreeDrawingArea> m_layerFlushTimer;
     bool m_isFlushingSuspended;
     bool m_hasDeferredFlush;
+
+    bool m_waitingForBackingStoreSwap;
+    bool m_hadFlushDeferredWhileWaitingForBackingStoreSwap;
 };
 
 DRAWING_AREA_TYPE_CASTS(RemoteLayerTreeDrawingArea, type() == DrawingAreaTypeRemoteLayerTree);

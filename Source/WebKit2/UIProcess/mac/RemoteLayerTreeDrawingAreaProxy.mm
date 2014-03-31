@@ -34,6 +34,9 @@
 #import "WebProcessProxy.h"
 #import <WebCore/WebCoreCALayerExtras.h>
 
+static const CFIndex CoreAnimationCommitRunLoopOrder = 2000000;
+static const CFIndex DidCommitLayersRunLoopOrder = CoreAnimationCommitRunLoopOrder + 1;
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -49,6 +52,11 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy* w
 RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy()
 {
     m_webPageProxy->process().removeMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_webPageProxy->pageID());
+
+    if (m_layerCommitObserver) {
+        CFRunLoopObserverInvalidate(m_layerCommitObserver.get());
+        m_layerCommitObserver = nullptr;
+    }
 }
 
 void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
@@ -129,6 +137,8 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
         updateDebugIndicator(layerTreeTransaction.contentsSize(), rootLayerChanged, scale);
         asLayer(m_debugIndicatorLayerTreeHost->rootLayer()).name = @"Indicator host root";
     }
+
+    scheduleCoreAnimationLayerCommitObserver();
 }
 
 static const float indicatorInset = 10;
@@ -253,8 +263,8 @@ void RemoteLayerTreeDrawingAreaProxy::showDebugIndicator(bool show)
         RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
         [m_tileMapHostLayer setBackgroundColor:color.get()];
 
-        const CGFloat borderCmponents[] = { 0, 0, 0, 1 };
-        RetainPtr<CGColorRef> borderColor = adoptCF(CGColorCreate(colorSpace.get(), borderCmponents));
+        const CGFloat borderComponents[] = { 0, 0, 0, 1 };
+        RetainPtr<CGColorRef> borderColor = adoptCF(CGColorCreate(colorSpace.get(), borderComponents));
         [m_tileMapHostLayer setBorderColor:borderColor.get()];
     }
     
@@ -267,6 +277,43 @@ void RemoteLayerTreeDrawingAreaProxy::showDebugIndicator(bool show)
         RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
         [m_exposedRectIndicatorLayer setBorderColor:color.get()];
     }
+}
+
+static void coreAnimationDidCommitLayersCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)
+{
+    static_cast<RemoteLayerTreeDrawingAreaProxy*>(context)->coreAnimationDidCommitLayers();
+}
+
+void RemoteLayerTreeDrawingAreaProxy::scheduleCoreAnimationLayerCommitObserver()
+{
+    if (m_layerCommitObserver)
+        return;
+
+    CFRunLoopRef runLoop = CFRunLoopGetCurrent();
+
+    // Make sure we wake up the loop or the observer could be delayed until some other source fires.
+    CFRunLoopWakeUp(runLoop);
+
+    CFRunLoopObserverContext context = { 0, this, 0, 0, 0 };
+    m_layerCommitObserver = adoptCF(CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting | kCFRunLoopExit, true, DidCommitLayersRunLoopOrder, coreAnimationDidCommitLayersCallback, &context));
+
+    CFRunLoopAddObserver(runLoop, m_layerCommitObserver.get(), kCFRunLoopCommonModes);
+}
+
+void RemoteLayerTreeDrawingAreaProxy::coreAnimationDidCommitLayers()
+{
+    if (m_layerCommitObserver) {
+        CFRunLoopObserverInvalidate(m_layerCommitObserver.get());
+        m_layerCommitObserver = nullptr;
+    }
+
+    if (!m_webPageProxy->isValid())
+        return;
+
+    // Waiting for CA to commit is insufficient, because the render server can still be
+    // using our backing store. We can improve this by waiting for the render server to commit
+    // if we find API to do so, but for now we will make extra buffers if need be.
+    m_webPageProxy->process().send(Messages::DrawingArea::DidUpdate(), m_webPageProxy->pageID());
 }
 
 } // namespace WebKit

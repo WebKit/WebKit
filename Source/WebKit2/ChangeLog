@@ -1,3 +1,44 @@
+2014-03-31  Tim Horton  <timothy_horton@apple.com>
+
+        Synchronize Web process remote layer tree commits with CoreAnimation commits in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=130984
+
+        Reviewed by Simon Fraser.
+
+        There's no reason for the Web process to paint faster than the UI process
+        can apply to and commit the CoreAnimation layer tree.
+
+        Also, once we get proper double-buffering and purgeable back buffers, we
+        will need the ability to make some assumptions about in-use surfaces.
+
+        Unfortunately, we can't actually tell when the render server commits, 
+        as this is an asynchronous operation in a process we don't control, so
+        for now, this is only an approximation.
+
+        This also means that the assumptions we would like to make won't be
+        strong guarantees yet.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        When we commit, install a run loop observer to fire immediately after CoreAnimation commits.
+
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::showDebugIndicator):
+        Fix a typo ('cmponents').
+
+        (WebKit::coreAnimationDidCommitLayersCallback):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::scheduleCoreAnimationLayerCommitObserver):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::coreAnimationDidCommitLayers):
+        When CA commits, send a message to the Web process letting it know that we
+        swapped to the new backing store.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        (WebKit::RemoteLayerTreeDrawingArea::didUpdate):
+        Defer remote layer tree commits until we get didUpdate() from the UI process.
+
 2014-03-31  Dean Jackson  <dino@apple.com>
 
         Remove WEB_ANIMATIONS

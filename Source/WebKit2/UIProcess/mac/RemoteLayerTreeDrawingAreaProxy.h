@@ -44,6 +44,8 @@ public:
 
     const RemoteLayerTreeHost& remoteLayerTreeHost() const { return m_remoteLayerTreeHost; }
 
+    void coreAnimationDidCommitLayers();
+
 private:
     virtual void sizeDidChange() override;
     virtual void deviceScaleFactorDidChange() override;
@@ -71,6 +73,8 @@ private:
     
     void sendUpdateGeometry();
 
+    void scheduleCoreAnimationLayerCommitObserver();
+
     RemoteLayerTreeHost m_remoteLayerTreeHost;
     bool m_isWaitingForDidUpdateGeometry;
 
@@ -80,6 +84,8 @@ private:
     std::unique_ptr<RemoteLayerTreeHost> m_debugIndicatorLayerTreeHost;
     RetainPtr<CALayer> m_tileMapHostLayer;
     RetainPtr<CALayer> m_exposedRectIndicatorLayer;
+
+    RetainPtr<CFRunLoopObserverRef> m_layerCommitObserver;
 };
 
 DRAWING_AREA_PROXY_TYPE_CASTS(RemoteLayerTreeDrawingAreaProxy, type() == DrawingAreaTypeRemoteLayerTree);
