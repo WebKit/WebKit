@@ -1,3 +1,22 @@
+2014-03-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove special handling of soft hyphens in search code
+        https://bugs.webkit.org/show_bug.cgi?id=130940
+
+        Reviewed by Anders Carlsson.
+
+        ICU knows to ignore soft hyphens, so we don't need to replace them before searching.
+
+        Covered by existing tests.
+
+        * editing/TextIterator.cpp:
+        (WebCore::foldQuoteMark):
+        (WebCore::foldQuoteMarks):
+        (WebCore::SearchBuffer::SearchBuffer):
+        (WebCore::SearchBuffer::append):
+        (WebCore::foldQuoteMarkOrSoftHyphen): Deleted.
+        (WebCore::foldQuoteMarksAndSoftHyphens): Deleted.
+
 2014-03-31  Alex Christensen  <achristensen@webkit.org>
 
         Preparation for using Soup on Windows.
