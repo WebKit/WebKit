@@ -28,7 +28,6 @@
 #include "CounterContent.h"
 #include "StyleImage.h"
 #include "RenderPtr.h"
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 

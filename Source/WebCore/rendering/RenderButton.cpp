@@ -114,12 +114,12 @@ void RenderButton::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 
     if (!m_default && theme().isDefault(this)) {
         if (!m_timer)
-            m_timer = adoptPtr(new Timer<RenderButton>(this, &RenderButton::timerFired));
+            m_timer = std::make_unique<Timer<RenderButton>>(this, &RenderButton::timerFired);
         m_timer->startRepeating(0.03);
         m_default = true;
     } else if (m_default && !theme().isDefault(this)) {
         m_default = false;
-        m_timer.clear();
+        m_timer = nullptr;
     }
 }
 

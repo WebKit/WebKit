@@ -68,8 +68,8 @@
 #include "ThemeTypes.h"
 #include "TransformOperations.h"
 #include "UnicodeBidi.h"
+#include <memory>
 #include <wtf/Forward.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -402,7 +402,7 @@ protected:
     DataRef<StyleInheritedData> inherited;
 
     // list of associated pseudo styles
-    OwnPtr<PseudoStyleCache> m_cachedPseudoStyles;
+    std::unique_ptr<PseudoStyleCache> m_cachedPseudoStyles;
 
     DataRef<SVGRenderStyle> m_svgStyle;
 
@@ -1553,16 +1553,16 @@ public:
 
     void clearAnimations()
     {
-        rareNonInheritedData.access()->m_animations.clear();
+        rareNonInheritedData.access()->m_animations = nullptr;
     }
 
     void clearTransitions()
     {
-        rareNonInheritedData.access()->m_transitions.clear();
+        rareNonInheritedData.access()->m_transitions = nullptr;
     }
 
-    void inheritAnimations(const AnimationList* parent) { rareNonInheritedData.access()->m_animations = parent ? adoptPtr(new AnimationList(*parent)) : nullptr; }
-    void inheritTransitions(const AnimationList* parent) { rareNonInheritedData.access()->m_transitions = parent ? adoptPtr(new AnimationList(*parent)) : nullptr; }
+    void inheritAnimations(const AnimationList* parent) { rareNonInheritedData.access()->m_animations = parent ? std::make_unique<AnimationList>(*parent) : nullptr; }
+    void inheritTransitions(const AnimationList* parent) { rareNonInheritedData.access()->m_transitions = parent ? std::make_unique<AnimationList>(*parent) : nullptr; }
     void adjustAnimations();
     void adjustTransitions();
 

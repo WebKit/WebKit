@@ -77,8 +77,7 @@ RenderSVGShape::~RenderSVGShape()
 
 void RenderSVGShape::updateShapeFromElement()
 {
-    m_path.clear();
-    m_path = adoptPtr(new Path);
+    m_path = std::make_unique<Path>();
     ASSERT(RenderSVGShape::isEmpty());
 
     updatePathFromGraphicsElement(&graphicsElement(), path());

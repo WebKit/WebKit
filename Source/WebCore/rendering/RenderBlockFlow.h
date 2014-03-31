@@ -28,6 +28,7 @@
 #include "RenderLineBoxList.h"
 #include "SimpleLineLayout.h"
 #include "TrailingObjects.h"
+#include <memory>
 
 namespace WebCore {
 
@@ -592,7 +593,7 @@ public:
 #endif
 
 protected:
-    OwnPtr<FloatingObjects> m_floatingObjects;
+    std::unique_ptr<FloatingObjects> m_floatingObjects;
     std::unique_ptr<RenderBlockFlowRareData> m_rareBlockFlowData;
     RenderLineBoxList m_lineBoxes;
     std::unique_ptr<SimpleLineLayout::Layout> m_simpleLineLayout;

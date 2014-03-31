@@ -142,7 +142,7 @@ public:
         if (m_floats)
             m_floats->append(&floatingBox);
         else
-            m_floats = adoptPtr(new Vector<RenderBox*>(1, &floatingBox));
+            m_floats = std::make_unique<Vector<RenderBox*>>(1, &floatingBox);
     }
 
     Vector<RenderBox*>* floatsPtr() { ASSERT(!isDirty()); return m_floats.get(); }
@@ -219,7 +219,7 @@ private:
 
     // Floats hanging off the line are pushed into this vector during layout. It is only
     // good for as long as the line has not been marked dirty.
-    OwnPtr<Vector<RenderBox*>> m_floats;
+    std::unique_ptr<Vector<RenderBox*>> m_floats;
 };
 
 INLINE_BOX_OBJECT_TYPE_CASTS(RootInlineBox, isRootInlineBox())

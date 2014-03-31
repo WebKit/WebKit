@@ -52,7 +52,7 @@ public:
 
     void getExcludedIntervals(int y1, int y2, IntShapeIntervals& result) const;
 
-    PassOwnPtr<RasterShapeIntervals> computeShapeMarginIntervals(int shapeMargin) const;
+    std::unique_ptr<RasterShapeIntervals> computeShapeMarginIntervals(int shapeMargin) const;
 
     void buildBoundsPath(Path&) const;
 
@@ -91,8 +91,8 @@ private:
 class RasterShape : public Shape {
     WTF_MAKE_NONCOPYABLE(RasterShape);
 public:
-    RasterShape(PassOwnPtr<RasterShapeIntervals> intervals, const IntSize& marginRectSize)
-        : m_intervals(intervals)
+    RasterShape(std::unique_ptr<RasterShapeIntervals> intervals, const IntSize& marginRectSize)
+        : m_intervals(std::move(intervals))
         , m_marginRectSize(marginRectSize)
     {
     }
@@ -111,8 +111,8 @@ public:
 private:
     const RasterShapeIntervals& marginIntervals() const;
 
-    OwnPtr<RasterShapeIntervals> m_intervals;
-    mutable OwnPtr<RasterShapeIntervals> m_marginIntervals;
+    std::unique_ptr<RasterShapeIntervals> m_intervals;
+    mutable std::unique_ptr<RasterShapeIntervals> m_marginIntervals;
     IntSize m_marginRectSize;
 };
 

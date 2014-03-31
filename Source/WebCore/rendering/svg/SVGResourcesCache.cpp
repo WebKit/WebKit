@@ -42,12 +42,12 @@ void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const 
     const SVGRenderStyle& svgStyle = style.svgStyle();
 
     // Build a list of all resources associated with the passed RenderObject
-    OwnPtr<SVGResources> newResources = adoptPtr(new SVGResources);
+    auto newResources = std::make_unique<SVGResources>();
     if (!newResources->buildCachedResources(renderer, svgStyle))
         return;
 
     // Put object in cache.
-    SVGResources& resources = *m_cache.add(&renderer, newResources.release()).iterator->value;
+    SVGResources& resources = *m_cache.add(&renderer, std::move(newResources)).iterator->value;
 
     // Run cycle-detection _afterwards_, so self-references can be caught as well.
     SVGResourcesCycleSolver solver(renderer, resources);
@@ -63,7 +63,7 @@ void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const 
 
 void SVGResourcesCache::removeResourcesFromRenderer(RenderElement& renderer)
 {
-    OwnPtr<SVGResources> resources = m_cache.take(&renderer);
+    std::unique_ptr<SVGResources> resources = m_cache.take(&renderer);
     if (!resources)
         return;
 

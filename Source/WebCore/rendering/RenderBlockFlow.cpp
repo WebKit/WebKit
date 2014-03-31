@@ -2024,7 +2024,7 @@ void RenderBlockFlow::clipOutFloatingObjects(RenderBlock& rootBlock, const Paint
 
 void RenderBlockFlow::createFloatingObjects()
 {
-    m_floatingObjects = adoptPtr(new FloatingObjects(*this));
+    m_floatingObjects = std::make_unique<FloatingObjects>(*this);
 }
 
 void RenderBlockFlow::removeFloatingObjects()

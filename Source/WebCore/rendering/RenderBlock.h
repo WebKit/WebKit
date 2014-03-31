@@ -27,7 +27,7 @@
 #include "GapRects.h"
 #include "RenderBox.h"
 #include "TextRun.h"
-#include <wtf/OwnPtr.h>
+#include <memory>
 #include <wtf/ListHashSet.h>
 
 namespace WebCore {
@@ -42,8 +42,8 @@ struct BidiRun;
 struct PaintInfo;
 
 typedef WTF::ListHashSet<RenderBox*, 16> TrackedRendererListHashSet;
-typedef WTF::HashMap<const RenderBlock*, OwnPtr<TrackedRendererListHashSet>> TrackedDescendantsMap;
-typedef WTF::HashMap<const RenderBox*, OwnPtr<HashSet<RenderBlock*>>> TrackedContainerMap;
+typedef WTF::HashMap<const RenderBlock*, std::unique_ptr<TrackedRendererListHashSet>> TrackedDescendantsMap;
+typedef WTF::HashMap<const RenderBox*, std::unique_ptr<HashSet<RenderBlock*>>> TrackedContainerMap;
 
 enum CaretType { CursorCaret, DragCaret };
 enum ContainingBlockState { NewContainingBlock, SameContainingBlock };

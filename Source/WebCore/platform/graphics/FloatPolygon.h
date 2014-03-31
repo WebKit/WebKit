@@ -35,8 +35,7 @@
 #include "PODIntervalTree.h"
 #include "ValueToString.h"
 #include "WindRule.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
+#include <memory>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -45,7 +44,7 @@ class FloatPolygonEdge;
 
 class FloatPolygon {
 public:
-    FloatPolygon(PassOwnPtr<Vector<FloatPoint>> vertices, WindRule fillRule);
+    FloatPolygon(std::unique_ptr<Vector<FloatPoint>> vertices, WindRule fillRule);
 
     const FloatPoint& vertexAt(unsigned index) const { return (*m_vertices)[index]; }
     unsigned numberOfVertices() const { return m_vertices->size(); }
@@ -67,7 +66,7 @@ private:
     bool containsNonZero(const FloatPoint&) const;
     bool containsEvenOdd(const FloatPoint&) const;
 
-    OwnPtr<Vector<FloatPoint>> m_vertices;
+    std::unique_ptr<Vector<FloatPoint>> m_vertices;
     WindRule m_fillRule;
     FloatRect m_boundingBox;
     bool m_empty;

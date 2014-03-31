@@ -27,7 +27,7 @@
 #include "RenderSVGResourceContainer.h"
 #include "SVGPatternElement.h"
 #include "SVGUnitTypes.h"
-
+#include <memory>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -66,7 +66,7 @@ private:
 
     bool m_shouldCollectPatternAttributes : 1;
     PatternAttributes m_attributes;
-    HashMap<RenderObject*, OwnPtr<PatternData>> m_patternMap;
+    HashMap<RenderObject*, std::unique_ptr<PatternData>> m_patternMap;
 };
 
 }

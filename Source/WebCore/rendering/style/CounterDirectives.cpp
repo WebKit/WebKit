@@ -21,7 +21,6 @@
 
 #include "config.h"
 #include "CounterDirectives.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -33,11 +32,11 @@ bool operator==(const CounterDirectives& a, const CounterDirectives& b)
       && a.resetValue() == b.resetValue();
 }
 
-PassOwnPtr<CounterDirectiveMap> clone(const CounterDirectiveMap& counterDirectives)
+std::unique_ptr<CounterDirectiveMap> clone(const CounterDirectiveMap& counterDirectives)
 {
-    OwnPtr<CounterDirectiveMap> result = adoptPtr(new CounterDirectiveMap);
+    auto result = std::make_unique<CounterDirectiveMap>();
     *result = counterDirectives;
-    return result.release();
+    return std::move(result);
 }
 
 } // namespace WebCore

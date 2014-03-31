@@ -23,7 +23,7 @@
 
 #include "RenderFlexibleBox.h"
 #include "Timer.h"
-#include <wtf/OwnPtr.h>
+#include <memory>
 
 namespace WebCore {
 
@@ -79,7 +79,7 @@ private:
     RenderTextFragment* m_buttonText;
     RenderBlock* m_inner;
 
-    OwnPtr<Timer<RenderButton>> m_timer;
+    std::unique_ptr<Timer<RenderButton>> m_timer;
     bool m_default;
 };
 

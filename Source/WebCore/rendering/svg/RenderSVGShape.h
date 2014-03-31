@@ -31,7 +31,7 @@
 #include "RenderSVGModelObject.h"
 #include "SVGGraphicsElement.h"
 #include "SVGMarkerData.h"
-#include <wtf/OwnPtr.h>
+#include <memory>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -124,7 +124,7 @@ private:
     FloatRect m_repaintBoundingBox;
     FloatRect m_repaintBoundingBoxExcludingShadow;
     AffineTransform m_localTransform;
-    OwnPtr<Path> m_path;
+    std::unique_ptr<Path> m_path;
     Vector<MarkerPosition> m_markerPositions;
 
     bool m_needsBoundariesUpdate : 1;

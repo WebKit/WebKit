@@ -44,7 +44,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 typedef HashMap<AtomicString, RefPtr<CounterNode>> CounterMap;
-typedef HashMap<const RenderObject*, OwnPtr<CounterMap>> CounterMaps;
+typedef HashMap<const RenderObject*, std::unique_ptr<CounterMap>> CounterMaps;
 
 static CounterNode* makeCounterNode(RenderObject*, const AtomicString& identifier, bool alwaysCreateCounter);
 
@@ -324,7 +324,7 @@ static CounterNode* makeCounterNode(RenderObject* object, const AtomicString& id
         nodeMap = counterMaps().get(element);
     else {
         nodeMap = new CounterMap;
-        counterMaps().set(element, adoptPtr(nodeMap));
+        counterMaps().set(element, std::unique_ptr<CounterMap>(nodeMap));
         element->setHasCounterNodeMap(true);
     }
     nodeMap->set(identifier, newNode);

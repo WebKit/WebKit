@@ -120,9 +120,9 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
     if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && objectBoundingBox.isEmpty())
         return false;
 
-    OwnPtr<GradientData>& gradientData = m_gradientMap.add(&renderer, nullptr).iterator->value;
+    auto& gradientData = m_gradientMap.add(&renderer, nullptr).iterator->value;
     if (!gradientData)
-        gradientData = adoptPtr(new GradientData);
+        gradientData = std::make_unique<GradientData>();
 
     bool isPaintingText = resourceMode & ApplyToTextMode;
 

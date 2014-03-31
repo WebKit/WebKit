@@ -28,7 +28,6 @@
 #define RenderBoxRegionInfo_h
 
 #include "RenderOverflow.h"
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 

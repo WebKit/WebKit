@@ -27,8 +27,8 @@
 #include "PODFreeListArena.h"
 #include "Region.h"
 #include "RenderBlockFlow.h"
+#include <memory>
 #include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -321,13 +321,13 @@ private:
 
     bool shouldUsePrintingLayout() const;
 
-    OwnPtr<ImageQualityController> m_imageQualityController;
+    std::unique_ptr<ImageQualityController> m_imageQualityController;
     LayoutUnit m_pageLogicalHeight;
     bool m_pageLogicalHeightChanged;
     std::unique_ptr<LayoutState> m_layoutState;
     unsigned m_layoutStateDisableCount;
-    OwnPtr<RenderLayerCompositor> m_compositor;
-    OwnPtr<FlowThreadController> m_flowThreadController;
+    std::unique_ptr<RenderLayerCompositor> m_compositor;
+    std::unique_ptr<FlowThreadController> m_flowThreadController;
     RefPtr<IntervalArena> m_intervalArena;
 
     RenderQuote* m_renderQuoteHead;

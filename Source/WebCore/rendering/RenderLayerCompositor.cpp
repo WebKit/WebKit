@@ -536,7 +536,7 @@ void RenderLayerCompositor::notifyFlushBeforeDisplayRefresh(const GraphicsLayer*
         if (Page* page = this->page())
             displayID = page->chrome().displayID();
 
-        m_layerUpdater = adoptPtr(new GraphicsLayerUpdater(this, displayID));
+        m_layerUpdater = std::make_unique<GraphicsLayerUpdater>(this, displayID);
     }
     
     m_layerUpdater->scheduleUpdate();
@@ -3542,7 +3542,7 @@ void RenderLayerCompositor::detachScrollCoordinatedLayer(RenderLayer& layer)
 }
 
 #if PLATFORM(IOS)
-typedef HashMap<PlatformLayer*, OwnPtr<ViewportConstraints>> LayerMap;
+typedef HashMap<PlatformLayer*, std::unique_ptr<ViewportConstraints>> LayerMap;
 typedef HashMap<PlatformLayer*, PlatformLayer*> StickyContainerMap;
 
 void RenderLayerCompositor::registerAllViewportConstrainedLayers()
@@ -3574,7 +3574,7 @@ void RenderLayerCompositor::registerAllViewportConstrainedLayers()
         else
             continue;
 
-        layerMap.add(layer.backing()->graphicsLayer()->platformLayer(), adoptPtr(constraints.release()));
+        layerMap.add(layer.backing()->graphicsLayer()->platformLayer(), std::move(constraints));
     }
     
     if (ChromeClient* client = this->chromeClient())

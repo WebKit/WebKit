@@ -56,7 +56,7 @@ private:
     float m_totalWidth;
 
     // Simple text only.
-    OwnPtr<WidthIterator> m_simpleWidthIterator;
+    std::unique_ptr<WidthIterator> m_simpleWidthIterator;
 
     // Complex text only.
     SVGTextMetrics m_complexStartToCurrentMetrics;

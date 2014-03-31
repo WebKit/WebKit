@@ -36,7 +36,7 @@
 #include "RoundedRect.h"
 #include "StyleImage.h"
 #include "WritingMode.h"
-#include <wtf/PassOwnPtr.h>
+#include <memory>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -67,9 +67,9 @@ public:
         Path marginShape;
     };
 
-    static PassOwnPtr<Shape> createShape(const BasicShape*, const LayoutSize& logicalBoxSize, WritingMode, Length margin);
-    static PassOwnPtr<Shape> createRasterShape(Image*, float threshold, const LayoutRect& imageRect, const LayoutRect& marginRect, WritingMode, Length margin);
-    static PassOwnPtr<Shape> createBoxShape(const RoundedRect&, WritingMode, Length margin);
+    static std::unique_ptr<Shape> createShape(const BasicShape*, const LayoutSize& logicalBoxSize, WritingMode, Length margin);
+    static std::unique_ptr<Shape> createRasterShape(Image*, float threshold, const LayoutRect& imageRect, const LayoutRect& marginRect, WritingMode, Length margin);
+    static std::unique_ptr<Shape> createBoxShape(const RoundedRect&, WritingMode, Length margin);
 
     virtual ~Shape() { }
 

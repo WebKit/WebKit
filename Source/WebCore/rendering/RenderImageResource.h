@@ -29,7 +29,6 @@
 #include "CachedImage.h"
 #include "CachedResourceHandle.h"
 #include "StyleImage.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

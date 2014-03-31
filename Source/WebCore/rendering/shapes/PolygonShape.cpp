@@ -126,9 +126,9 @@ static inline void snapVerticesToLayoutUnitGrid(Vector<FloatPoint>& vertices)
         vertices[i].set(LayoutUnit(vertices[i].x()).toFloat(), LayoutUnit(vertices[i].y()).toFloat());
 }
 
-static inline PassOwnPtr<FloatPolygon> computeShapeMarginBounds(const FloatPolygon& polygon, float margin, WindRule fillRule)
+static inline std::unique_ptr<FloatPolygon> computeShapeMarginBounds(const FloatPolygon& polygon, float margin, WindRule fillRule)
 {
-    OwnPtr<Vector<FloatPoint>> marginVertices = adoptPtr(new Vector<FloatPoint>());
+    auto marginVertices = std::make_unique<Vector<FloatPoint>>();
     FloatPoint intersection;
 
     for (unsigned i = 0; i < polygon.numberOfEdges(); ++i) {
@@ -144,7 +144,7 @@ static inline PassOwnPtr<FloatPolygon> computeShapeMarginBounds(const FloatPolyg
     }
 
     snapVerticesToLayoutUnitGrid(*marginVertices);
-    return adoptPtr(new FloatPolygon(marginVertices.release(), fillRule));
+    return std::make_unique<FloatPolygon>(std::move(marginVertices), fillRule);
 }
 
 

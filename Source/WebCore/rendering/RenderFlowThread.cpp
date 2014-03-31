@@ -323,11 +323,11 @@ bool RenderFlowThread::updateAllLayerToRegionMappings()
 
     if (needsLayerUpdate) {
         if (!m_layerToRegionMap)
-            m_layerToRegionMap = adoptPtr(new LayerToRegionMap());
+            m_layerToRegionMap = std::make_unique<LayerToRegionMap>();
         m_layerToRegionMap->swap(layerToRegionMap);
 
         if (!m_regionToLayerListMap)
-            m_regionToLayerListMap = adoptPtr(new RegionToLayerListMap());
+            m_regionToLayerListMap = std::make_unique<RegionToLayerListMap>();
         m_regionToLayerListMap->swap(regionToLayerListMap);
     }
 
@@ -645,7 +645,7 @@ void RenderFlowThread::logicalWidthChangedInRegionsForBlock(const RenderBlock* b
         ASSERT(!region->needsLayout() || region->isRenderRegionSet());
 
         // We have no information computed for this region so we need to do it.
-        OwnPtr<RenderBoxRegionInfo> oldInfo = region->takeRenderBoxRegionInfo(block);
+        std::unique_ptr<RenderBoxRegionInfo> oldInfo = region->takeRenderBoxRegionInfo(block);
         if (!oldInfo) {
             relayoutChildren = rangeInvalidated;
             return;

@@ -104,9 +104,9 @@ void SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer(RenderSVGInlin
     m_isComplexText = scaledFont.codePath(m_run) == Font::Complex;
 
     if (m_isComplexText)
-        m_simpleWidthIterator.clear();
+        m_simpleWidthIterator = nullptr;
     else
-        m_simpleWidthIterator = adoptPtr(new WidthIterator(&scaledFont, m_run));
+        m_simpleWidthIterator = std::make_unique<WidthIterator>(&scaledFont, m_run);
 }
 
 struct MeasureTextData {

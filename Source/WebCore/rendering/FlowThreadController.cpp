@@ -40,11 +40,6 @@
 
 namespace WebCore {
 
-PassOwnPtr<FlowThreadController> FlowThreadController::create(RenderView* view)
-{
-    return adoptPtr(new FlowThreadController(view));
-}
-
 FlowThreadController::FlowThreadController(RenderView* view)
     : m_view(view)
     , m_currentRenderFlowThread(0)
@@ -60,7 +55,7 @@ FlowThreadController::~FlowThreadController()
 RenderNamedFlowThread& FlowThreadController::ensureRenderFlowThreadWithName(const AtomicString& name)
 {
     if (!m_renderNamedFlowThreadList)
-        m_renderNamedFlowThreadList = adoptPtr(new RenderNamedFlowThreadList());
+        m_renderNamedFlowThreadList = std::make_unique<RenderNamedFlowThreadList>();
     else {
         for (auto iter = m_renderNamedFlowThreadList->begin(), end = m_renderNamedFlowThreadList->end(); iter != end; ++iter) {
             RenderNamedFlowThread* flowRenderer = *iter;

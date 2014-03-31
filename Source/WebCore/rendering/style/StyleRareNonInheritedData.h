@@ -34,7 +34,7 @@
 #include "LineClampValue.h"
 #include "NinePieceImage.h"
 #include "ShapeValue.h"
-#include <wtf/OwnPtr.h>
+#include <memory>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
@@ -125,15 +125,15 @@ public:
 #endif
 
     std::unique_ptr<ContentData> m_content;
-    OwnPtr<CounterDirectiveMap> m_counterDirectives;
+    std::unique_ptr<CounterDirectiveMap> m_counterDirectives;
     String m_altText;
 
     std::unique_ptr<ShadowData> m_boxShadow; // For box-shadow decorations.
     
     RefPtr<StyleReflection> m_boxReflect;
 
-    OwnPtr<AnimationList> m_animations;
-    OwnPtr<AnimationList> m_transitions;
+    std::unique_ptr<AnimationList> m_animations;
+    std::unique_ptr<AnimationList> m_transitions;
 
     FillLayer m_mask;
     NinePieceImage m_maskBoxImage;

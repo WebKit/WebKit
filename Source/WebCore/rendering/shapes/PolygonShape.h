@@ -82,8 +82,8 @@ private:
 class PolygonShape : public Shape {
     WTF_MAKE_NONCOPYABLE(PolygonShape);
 public:
-    PolygonShape(PassOwnPtr<Vector<FloatPoint>> vertices, WindRule fillRule)
-        : m_polygon(vertices, fillRule)
+    PolygonShape(std::unique_ptr<Vector<FloatPoint>> vertices, WindRule fillRule)
+        : m_polygon(std::move(vertices), fillRule)
         , m_marginBounds(nullptr)
     {
     }
@@ -98,7 +98,7 @@ private:
     const FloatPolygon& shapeMarginBounds() const;
 
     FloatPolygon m_polygon;
-    mutable OwnPtr<FloatPolygon> m_marginBounds;
+    mutable std::unique_ptr<FloatPolygon> m_marginBounds;
 };
 
 } // namespace WebCore

@@ -113,9 +113,9 @@ void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         // According to the CSS2 spec, you only use fixed table layout if an
         // explicit width is specified on the table.  Auto width implies auto table layout.
         if (style().tableLayout() == TFIXED && !style().logicalWidth().isAuto())
-            m_tableLayout = adoptPtr(new FixedTableLayout(this));
+            m_tableLayout = std::make_unique<FixedTableLayout>(this);
         else
-            m_tableLayout = adoptPtr(new AutoTableLayout(this));
+            m_tableLayout = std::make_unique<AutoTableLayout>(this);
     }
 
     // If border was changed, invalidate collapsed borders cache.

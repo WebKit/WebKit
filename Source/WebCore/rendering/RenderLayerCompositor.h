@@ -501,7 +501,7 @@ private:
     std::unique_ptr<GraphicsLayer> m_layerForFooter;
 #endif
 
-    OwnPtr<GraphicsLayerUpdater> m_layerUpdater; // Updates tiled layer visible area periodically while animations are running.
+    std::unique_ptr<GraphicsLayerUpdater> m_layerUpdater; // Updates tiled layer visible area periodically while animations are running.
 
     Timer<RenderLayerCompositor> m_layerFlushTimer;
     bool m_layerFlushThrottlingEnabled;

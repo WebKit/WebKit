@@ -28,9 +28,9 @@
 #include "HitTestRequest.h"
 #include "LayoutRect.h"
 #include "TextDirection.h"
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -158,7 +158,7 @@ private:
     RefPtr<Scrollbar> m_scrollbar;
     bool m_isOverWidget; // Returns true if we are over a widget (and not in the border/padding area of a RenderWidget for example).
 
-    mutable OwnPtr<NodeSet> m_rectBasedTestResult;
+    mutable std::unique_ptr<NodeSet> m_rectBasedTestResult;
 };
 
 String displayString(const String&, const Node*);

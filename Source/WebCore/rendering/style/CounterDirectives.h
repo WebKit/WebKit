@@ -25,6 +25,7 @@
 #ifndef CounterDirectives_h
 #define CounterDirectives_h
 
+#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RefPtr.h>
@@ -104,7 +105,7 @@ inline bool operator!=(const CounterDirectives& a, const CounterDirectives& b) {
 
 typedef HashMap<AtomicString, CounterDirectives> CounterDirectiveMap;
 
-PassOwnPtr<CounterDirectiveMap> clone(const CounterDirectiveMap&);
+std::unique_ptr<CounterDirectiveMap> clone(const CounterDirectiveMap&);
 
 } // namespace WebCore
 

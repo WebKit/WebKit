@@ -43,9 +43,9 @@
 
 namespace WebCore {
 
-HashMap<const RenderLayer*, OwnPtr<RenderLayer::FilterInfo>>& RenderLayer::FilterInfo::map()
+HashMap<const RenderLayer*, std::unique_ptr<RenderLayer::FilterInfo>>& RenderLayer::FilterInfo::map()
 {
-    static NeverDestroyed<HashMap<const RenderLayer*, OwnPtr<FilterInfo>>> map;
+    static NeverDestroyed<HashMap<const RenderLayer*, std::unique_ptr<FilterInfo>>> map;
     return map;
 }
 
@@ -60,9 +60,9 @@ RenderLayer::FilterInfo& RenderLayer::FilterInfo::get(RenderLayer& layer)
 {
     ASSERT(layer.m_hasFilterInfo == map().contains(&layer));
 
-    OwnPtr<FilterInfo>& info = map().add(&layer, nullptr).iterator->value;
+    auto& info = map().add(&layer, nullptr).iterator->value;
     if (!info) {
-        info = adoptPtr(new FilterInfo(layer));
+        info = std::make_unique<FilterInfo>(layer);
         layer.m_hasFilterInfo = true;
     }
     return *info;

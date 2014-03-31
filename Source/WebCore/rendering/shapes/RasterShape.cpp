@@ -163,10 +163,10 @@ void RasterShapeIntervals::getExcludedIntervals(int y1, int y2, IntShapeInterval
     }
 }
 
-PassOwnPtr<RasterShapeIntervals> RasterShapeIntervals::computeShapeMarginIntervals(int shapeMargin) const
+std::unique_ptr<RasterShapeIntervals> RasterShapeIntervals::computeShapeMarginIntervals(int shapeMargin) const
 {
     int marginIntervalsSize = (offset() > shapeMargin) ? size() : size() - offset() * 2 + shapeMargin * 2;
-    OwnPtr<RasterShapeIntervals> result = adoptPtr(new RasterShapeIntervals(marginIntervalsSize, std::max(shapeMargin, offset())));
+    auto result = std::make_unique<RasterShapeIntervals>(marginIntervalsSize, std::max(shapeMargin, offset()));
     MarginIntervalGenerator marginIntervalGenerator(shapeMargin);
 
     for (int y = bounds().y(); y < bounds().maxY(); ++y) {
@@ -193,7 +193,7 @@ PassOwnPtr<RasterShapeIntervals> RasterShapeIntervals::computeShapeMarginInterva
         }
     }
 
-    return result.release();
+    return result;
 }
 
 void RasterShapeIntervals::buildBoundsPath(Path& path) const

@@ -229,7 +229,7 @@ void RenderGeometryMap::push(const RenderObject* renderer, const TransformationM
     
     RenderGeometryMapStep& step = m_mapping[m_insertionPosition];
     if (!t.isIntegerTranslation())
-        step.m_transform = adoptPtr(new TransformationMatrix(t));
+        step.m_transform = std::make_unique<TransformationMatrix>(t);
     else
         step.m_offset = LayoutSize(t.e(), t.f());
 
@@ -246,7 +246,7 @@ void RenderGeometryMap::pushView(const RenderView* view, const LayoutSize& scrol
     RenderGeometryMapStep& step = m_mapping[m_insertionPosition];
     step.m_offset = scrollOffset;
     if (t)
-        step.m_transform = adoptPtr(new TransformationMatrix(*t));
+        step.m_transform = std::make_unique<TransformationMatrix>(*t);
     
     stepInserted(step);
 }

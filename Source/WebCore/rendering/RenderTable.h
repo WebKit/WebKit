@@ -28,6 +28,7 @@
 #include "CSSPropertyNames.h"
 #include "CollapsedBorderValue.h"
 #include "RenderBlock.h"
+#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
@@ -340,7 +341,7 @@ private:
     mutable RenderTableSection* m_foot;
     mutable RenderTableSection* m_firstBody;
 
-    OwnPtr<TableLayout> m_tableLayout;
+    std::unique_ptr<TableLayout> m_tableLayout;
 
     CollapsedBorderValues m_collapsedBorders;
     const CollapsedBorderValue* m_currentBorder;

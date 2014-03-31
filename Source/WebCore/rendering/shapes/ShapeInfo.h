@@ -37,7 +37,7 @@
 #include "RenderStyle.h"
 #include "Shape.h"
 #include "ShapeValue.h"
-#include <wtf/OwnPtr.h>
+#include <memory>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -90,8 +90,8 @@ public:
 
     virtual bool lineOverlapsShapeBounds() const = 0;
 
-    void markShapeAsDirty() { m_shape.clear(); }
-    bool isShapeDirty() { return !m_shape.get(); }
+    void markShapeAsDirty() { m_shape = nullptr; }
+    bool isShapeDirty() { return !m_shape; }
     const RenderType& owner() const { return m_renderer; }
     LayoutSize referenceBoxLogicalSize() const { return m_referenceBoxLogicalSize; }
 
@@ -148,7 +148,7 @@ protected:
     const RenderType& m_renderer;
 
 private:
-    mutable OwnPtr<Shape> m_shape;
+    mutable std::unique_ptr<Shape> m_shape;
     LayoutSize m_referenceBoxLogicalSize;
 };
 

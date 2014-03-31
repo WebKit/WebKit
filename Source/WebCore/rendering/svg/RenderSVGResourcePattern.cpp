@@ -106,7 +106,7 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderObject* object, unsign
         return 0;
 
     // Build pattern.
-    OwnPtr<PatternData> patternData = adoptPtr(new PatternData);
+    auto patternData = std::make_unique<PatternData>();
     patternData->pattern = Pattern::create(copiedImage, true, true);
 
     // Compute pattern space transformation.
@@ -129,7 +129,7 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderObject* object, unsign
     // Various calls above may trigger invalidations in some fringe cases (ImageBuffer allocation
     // failures in the SVG image cache for example). To avoid having our PatternData deleted by
     // removeAllClientsFromCache(), we only make it visible in the cache at the very end.
-    return m_patternMap.set(object, patternData.release()).iterator->value.get();
+    return m_patternMap.set(object, std::move(patternData)).iterator->value.get();
 }
 
 bool RenderSVGResourcePattern::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, unsigned short resourceMode)

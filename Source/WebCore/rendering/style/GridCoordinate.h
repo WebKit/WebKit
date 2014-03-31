@@ -35,7 +35,6 @@
 #if ENABLE(CSS_GRID_LAYOUT)
 
 #include <wtf/HashMap.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -45,11 +44,6 @@ namespace WebCore {
 // span should include both |initialPositionIndex| and |finalPositionIndex| to be correct.
 class GridSpan {
 public:
-    static PassOwnPtr<GridSpan> create(size_t initialPosition, size_t finalPosition)
-    {
-        return adoptPtr(new GridSpan(initialPosition, finalPosition));
-    }
-
     GridSpan(size_t initialPosition, size_t finalPosition)
         : initialPositionIndex(initialPosition)
         , finalPositionIndex(finalPosition)

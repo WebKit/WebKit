@@ -31,7 +31,6 @@
 #include "HTMLNames.h"
 #include "WritingMode.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

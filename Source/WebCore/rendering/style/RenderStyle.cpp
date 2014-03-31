@@ -260,7 +260,7 @@ RenderStyle* RenderStyle::addCachedPseudoStyle(PassRefPtr<RenderStyle> pseudo)
     RenderStyle* result = pseudo.get();
 
     if (!m_cachedPseudoStyles)
-        m_cachedPseudoStyles = adoptPtr(new PseudoStyleCache);
+        m_cachedPseudoStyles = std::make_unique<PseudoStyleCache>();
 
     m_cachedPseudoStyles->append(pseudo);
 
@@ -1113,9 +1113,9 @@ const CounterDirectiveMap* RenderStyle::counterDirectives() const
 
 CounterDirectiveMap& RenderStyle::accessCounterDirectives()
 {
-    OwnPtr<CounterDirectiveMap>& map = rareNonInheritedData.access()->m_counterDirectives;
+    auto& map = rareNonInheritedData.access()->m_counterDirectives;
     if (!map)
-        map = adoptPtr(new CounterDirectiveMap);
+        map = std::make_unique<CounterDirectiveMap>();
     return *map;
 }
 
@@ -1269,14 +1269,14 @@ void RenderStyle::adjustTransitions()
 AnimationList* RenderStyle::accessAnimations()
 {
     if (!rareNonInheritedData.access()->m_animations)
-        rareNonInheritedData.access()->m_animations = adoptPtr(new AnimationList());
+        rareNonInheritedData.access()->m_animations = std::make_unique<AnimationList>();
     return rareNonInheritedData->m_animations.get();
 }
 
 AnimationList* RenderStyle::accessTransitions()
 {
     if (!rareNonInheritedData.access()->m_transitions)
-        rareNonInheritedData.access()->m_transitions = adoptPtr(new AnimationList());
+        rareNonInheritedData.access()->m_transitions = std::make_unique<AnimationList>();
     return rareNonInheritedData->m_transitions.get();
 }
 

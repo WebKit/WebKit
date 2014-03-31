@@ -41,32 +41,30 @@
 #include "RectangleShape.h"
 #include "WindRule.h"
 #include <wtf/MathExtras.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-static PassOwnPtr<Shape> createInsetShape(const FloatRoundedRect& bounds)
+static std::unique_ptr<Shape> createInsetShape(const FloatRoundedRect& bounds)
 {
     ASSERT(bounds.rect().width() >= 0 && bounds.rect().height() >= 0);
-    return adoptPtr(new BoxShape(bounds));
+    return std::make_unique<BoxShape>(bounds);
 }
 
-static PassOwnPtr<Shape> createCircleShape(const FloatPoint& center, float radius)
+static std::unique_ptr<Shape> createCircleShape(const FloatPoint& center, float radius)
 {
     ASSERT(radius >= 0);
-    return adoptPtr(new RectangleShape(FloatRect(center.x() - radius, center.y() - radius, radius*2, radius*2), FloatSize(radius, radius)));
+    return std::make_unique<RectangleShape>(FloatRect(center.x() - radius, center.y() - radius, radius*2, radius*2), FloatSize(radius, radius));
 }
 
-static PassOwnPtr<Shape> createEllipseShape(const FloatPoint& center, const FloatSize& radii)
+static std::unique_ptr<Shape> createEllipseShape(const FloatPoint& center, const FloatSize& radii)
 {
     ASSERT(radii.width() >= 0 && radii.height() >= 0);
-    return adoptPtr(new RectangleShape(FloatRect(center.x() - radii.width(), center.y() - radii.height(), radii.width()*2, radii.height()*2), radii));
+    return std::make_unique<RectangleShape>(FloatRect(center.x() - radii.width(), center.y() - radii.height(), radii.width()*2, radii.height()*2), radii);
 }
 
-static PassOwnPtr<Shape> createPolygonShape(PassOwnPtr<Vector<FloatPoint>> vertices, WindRule fillRule)
+static std::unique_ptr<Shape> createPolygonShape(std::unique_ptr<Vector<FloatPoint>> vertices, WindRule fillRule)
 {
-    return adoptPtr(new PolygonShape(vertices, fillRule));
+    return std::make_unique<PolygonShape>(std::move(vertices), fillRule);
 }
 
 static inline FloatRect physicalRectToLogical(const FloatRect& rect, float logicalBoxHeight, WritingMode writingMode)
@@ -94,14 +92,14 @@ static inline FloatSize physicalSizeToLogical(const FloatSize& size, WritingMode
     return size.transposedSize();
 }
 
-PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutSize& logicalBoxSize, WritingMode writingMode, Length margin)
+std::unique_ptr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutSize& logicalBoxSize, WritingMode writingMode, Length margin)
 {
     ASSERT(basicShape);
 
     bool horizontalWritingMode = isHorizontalWritingMode(writingMode);
     float boxWidth = horizontalWritingMode ? logicalBoxSize.width() : logicalBoxSize.height();
     float boxHeight = horizontalWritingMode ? logicalBoxSize.height() : logicalBoxSize.width();
-    OwnPtr<Shape> shape;
+    std::unique_ptr<Shape> shape;
 
     switch (basicShape->type()) {
 
@@ -133,7 +131,7 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
         const Vector<Length>& values = polygon.values();
         size_t valuesSize = values.size();
         ASSERT(!(valuesSize % 2));
-        OwnPtr<Vector<FloatPoint>> vertices = adoptPtr(new Vector<FloatPoint>(valuesSize / 2));
+        std::unique_ptr<Vector<FloatPoint>> vertices = std::make_unique<Vector<FloatPoint>>(valuesSize / 2);
         for (unsigned i = 0; i < valuesSize; i += 2) {
             FloatPoint vertex(
                 floatValueForLength(values.at(i), boxWidth),
@@ -141,7 +139,7 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
             (*vertices)[i / 2] = physicalPointToLogical(vertex, logicalBoxSize.height(), writingMode);
         }
 
-        shape = createPolygonShape(vertices.release(), polygon.windRule());
+        shape = createPolygonShape(std::move(vertices), polygon.windRule());
         break;
     }
 
@@ -175,14 +173,14 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
     shape->m_writingMode = writingMode;
     shape->m_margin = floatValueForLength(margin, 0);
 
-    return shape.release();
+    return shape;
 }
 
-PassOwnPtr<Shape> Shape::createRasterShape(Image* image, float threshold, const LayoutRect& imageR, const LayoutRect& marginR, WritingMode writingMode, Length margin)
+std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, const LayoutRect& imageR, const LayoutRect& marginR, WritingMode writingMode, Length margin)
 {
     IntRect imageRect = pixelSnappedIntRect(imageR);
     IntRect marginRect = pixelSnappedIntRect(marginR);
-    OwnPtr<RasterShapeIntervals> intervals = adoptPtr(new RasterShapeIntervals(marginRect.height(), -marginRect.y()));
+    auto intervals = std::make_unique<RasterShapeIntervals>(marginRect.height(), -marginRect.y());
     std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(imageRect.size());
 
     if (imageBuffer) {
@@ -214,23 +212,23 @@ PassOwnPtr<Shape> Shape::createRasterShape(Image* image, float threshold, const 
         }
     }
 
-    OwnPtr<RasterShape> rasterShape = adoptPtr(new RasterShape(intervals.release(), marginRect.size()));
+    auto rasterShape = std::make_unique<RasterShape>(std::move(intervals), marginRect.size());
     rasterShape->m_writingMode = writingMode;
     rasterShape->m_margin = floatValueForLength(margin, 0);
-    return rasterShape.release();
+    return std::move(rasterShape);
 }
 
-PassOwnPtr<Shape> Shape::createBoxShape(const RoundedRect& roundedRect, WritingMode writingMode, Length margin)
+std::unique_ptr<Shape> Shape::createBoxShape(const RoundedRect& roundedRect, WritingMode writingMode, Length margin)
 {
     ASSERT(roundedRect.rect().width() >= 0 && roundedRect.rect().height() >= 0);
 
     FloatRect rect(0, 0, roundedRect.rect().width(), roundedRect.rect().height());
     FloatRoundedRect bounds(rect, roundedRect.radii());
-    OwnPtr<Shape> shape = adoptPtr(new BoxShape(bounds));
+    auto shape = std::make_unique<BoxShape>(bounds);
     shape->m_writingMode = writingMode;
     shape->m_margin = floatValueForLength(margin, 0);
 
-    return shape.release();
+    return std::move(shape);
 }
 
 } // namespace WebCore

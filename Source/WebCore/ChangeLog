@@ -1,3 +1,167 @@
+2014-03-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move Source/WebCore/rendering/ code to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=129664
+
+        Reviewed by Anders Carlsson.
+
+        Replace uses of OwnPtr and PassOwnPtr in code under Source/WebCore/rendering/ with std::unique_ptr.
+
+        * platform/graphics/FloatPolygon.cpp:
+        (WebCore::FloatPolygon::FloatPolygon):
+        * platform/graphics/FloatPolygon.h:
+        * rendering/ClipPathOperation.h:
+        * rendering/FlowThreadController.cpp:
+        (WebCore::FlowThreadController::ensureRenderFlowThreadWithName):
+        * rendering/FlowThreadController.h:
+        * rendering/HitTestLocation.h:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::HitTestResult):
+        (WebCore::HitTestResult::operator=):
+        (WebCore::HitTestResult::rectBasedTestResult):
+        (WebCore::HitTestResult::mutableRectBasedTestResult):
+        * rendering/HitTestResult.h:
+        * rendering/HitTestingTransformState.cpp:
+        * rendering/ImageQualityController.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::removeBlockFromDescendantAndContainerMaps):
+        (WebCore::RenderBlock::finishDelayUpdateScrollInfo):
+        (WebCore::RenderBlock::addContinuationWithOutline):
+        (WebCore::RenderBlock::paintContinuationOutlines):
+        (WebCore::RenderBlock::insertIntoTrackedRendererMaps):
+        (WebCore::RenderBlock::removeFromTrackedRendererMaps):
+        (WebCore::RenderBlock::setComputedColumnCountAndWidth):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::createFloatingObjects):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBoxRegionInfo.h:
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::styleDidChange):
+        * rendering/RenderButton.h:
+        * rendering/RenderCounter.cpp:
+        (WebCore::makeCounterNode):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::updateAllLayerToRegionMappings):
+        (WebCore::RenderFlowThread::logicalWidthChangedInRegionsForBlock):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::push):
+        (WebCore::RenderGeometryMap::pushView):
+        * rendering/RenderGeometryMap.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::GridIterator::nextEmptyGridArea):
+        (WebCore::RenderGrid::placeItemsOnGrid):
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator):
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid):
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid):
+        (WebCore::RenderGrid::resolveGridPositionsFromStyle):
+        (WebCore::RenderGrid::resolveGridPositionAgainstOppositePosition):
+        (WebCore::RenderGrid::resolveNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::RenderGrid::resolveRowStartColumnStartNamedGridLinePositionAgainstOppositePosition):
+        (WebCore::RenderGrid::resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition):
+        * rendering/RenderGrid.h:
+        * rendering/RenderImageResource.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateDescendantsAreContiguousInStackingOrder):
+        (WebCore::RenderLayer::updateTransform):
+        (WebCore::RenderLayer::setupFilters):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintChildLayerIntoColumns):
+        (WebCore::RenderLayer::hitTestChildLayerColumns):
+        (WebCore::RenderLayer::updateClipRects):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::clearZOrderLists):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::notifyFlushBeforeDisplayRefresh):
+        (WebCore::RenderLayerCompositor::registerAllViewportConstrainedLayers):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerFilterInfo.cpp:
+        (WebCore::RenderLayer::FilterInfo::map):
+        (WebCore::RenderLayer::FilterInfo::get):
+        * rendering/RenderLayerFilterInfo.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::setRenderBoxRegionInfo):
+        (WebCore::RenderRegion::takeRenderBoxRegionInfo):
+        * rendering/RenderRegion.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::styleDidChange):
+        * rendering/RenderTable.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::selectionBounds):
+        (WebCore::RenderView::setSelection):
+        (WebCore::RenderView::compositor):
+        (WebCore::RenderView::flowThreadController):
+        (WebCore::RenderView::imageQualityController):
+        * rendering/RenderView.h:
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::appendFloat):
+        * rendering/TextAutosizer.h:
+        * rendering/shapes/PolygonShape.cpp:
+        (WebCore::computeShapePaddingBounds):
+        (WebCore::computeShapeMarginBounds):
+        * rendering/shapes/PolygonShape.h:
+        (WebCore::PolygonShape::PolygonShape):
+        * rendering/shapes/RasterShape.cpp:
+        (WebCore::RasterShapeIntervals::computeShapeMarginIntervals):
+        * rendering/shapes/RasterShape.h:
+        (WebCore::RasterShape::RasterShape):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::createInsetShape):
+        (WebCore::createRectangleShape):
+        (WebCore::createCircleShape):
+        (WebCore::createEllipseShape):
+        (WebCore::createPolygonShape):
+        (WebCore::Shape::createShape):
+        (WebCore::Shape::createRasterShape):
+        (WebCore::Shape::createLayoutBoxShape):
+        * rendering/shapes/Shape.h:
+        * rendering/shapes/ShapeInfo.h:
+        (WebCore::ShapeInfo::markShapeAsDirty):
+        (WebCore::ShapeInfo::isShapeDirty):
+        * rendering/shapes/ShapeInsideInfo.h:
+        * rendering/style/ContentData.h:
+        * rendering/style/CounterDirectives.cpp:
+        (WebCore::clone):
+        * rendering/style/CounterDirectives.h:
+        * rendering/style/GridCoordinate.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::addCachedPseudoStyle):
+        (WebCore::RenderStyle::accessCounterDirectives):
+        (WebCore::RenderStyle::accessAnimations):
+        (WebCore::RenderStyle::accessTransitions):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/svg/RenderSVGResourceGradient.h:
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::buildPattern):
+        * rendering/svg/RenderSVGResourcePattern.h:
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::updateShapeFromElement):
+        * rendering/svg/RenderSVGShape.h:
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::SVGResources::setClipper):
+        (WebCore::SVGResources::setFilter):
+        (WebCore::SVGResources::setMarkerStart):
+        (WebCore::SVGResources::setMarkerMid):
+        (WebCore::SVGResources::setMarkerEnd):
+        (WebCore::SVGResources::setMasker):
+        (WebCore::SVGResources::setFill):
+        (WebCore::SVGResources::setStroke):
+        * rendering/svg/SVGResources.h:
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::addResourcesFromRenderer):
+        (WebCore::SVGResourcesCache::removeResourcesFromRenderer):
+        * rendering/svg/SVGResourcesCache.h:
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer):
+        * rendering/svg/SVGTextMetricsBuilder.h:
+
 2014-03-28  Sergio Villar Senin  <svillar@igalia.com>
 
         Replace DEPRECATED_DEFINE_STATIC_LOCAL by static NeverDestroyed<T> in loader
