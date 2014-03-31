@@ -49,6 +49,7 @@
 #include <algorithm>
 #include <wtf/RAMSize.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/ProcessID.h>
 
 using namespace std;
 using namespace JSC;
@@ -77,42 +78,81 @@ static type name arguments;
 
 struct GCTimer {
     GCTimer(const char* name)
-        : m_time(0)
-        , m_min(100000000)
-        , m_max(0)
-        , m_count(0)
-        , m_name(name)
+        : m_name(name)
     {
     }
     ~GCTimer()
     {
-        dataLogF("%s: %.2lfms (avg. %.2lf, min. %.2lf, max. %.2lf)\n", m_name, m_time * 1000, m_time * 1000 / m_count, m_min*1000, m_max*1000);
+        logData(m_allCollectionData, "(All)");
+        logData(m_edenCollectionData, "(Eden)");
+        logData(m_fullCollectionData, "(Full)");
     }
-    double m_time;
-    double m_min;
-    double m_max;
-    size_t m_count;
+
+    struct TimeRecord {
+        TimeRecord()
+            : m_time(0)
+            , m_min(std::numeric_limits<double>::infinity())
+            , m_max(0)
+            , m_count(0)
+        {
+        }
+
+        double m_time;
+        double m_min;
+        double m_max;
+        size_t m_count;
+    };
+
+    void logData(const TimeRecord& data, const char* extra)
+    {
+        dataLogF("[%d] %s %s: %.2lfms (avg. %.2lf, min. %.2lf, max. %.2lf, count %lu)\n", 
+            getCurrentProcessID(),
+            m_name, extra, 
+            data.m_time * 1000, 
+            data.m_time * 1000 / data.m_count, 
+            data.m_min * 1000, 
+            data.m_max * 1000,
+            data.m_count);
+    }
+
+    void updateData(TimeRecord& data, double duration)
+    {
+        if (duration < data.m_min)
+            data.m_min = duration;
+        if (duration > data.m_max)
+            data.m_max = duration;
+        data.m_count++;
+        data.m_time += duration;
+    }
+
+    void didFinishPhase(HeapOperation collectionType, double duration)
+    {
+        TimeRecord& data = collectionType == EdenCollection ? m_edenCollectionData : m_fullCollectionData;
+        updateData(data, duration);
+        updateData(m_allCollectionData, duration);
+    }
+
+    TimeRecord m_allCollectionData;
+    TimeRecord m_fullCollectionData;
+    TimeRecord m_edenCollectionData;
     const char* m_name;
 };
 
 struct GCTimerScope {
-    GCTimerScope(GCTimer* timer)
+    GCTimerScope(GCTimer* timer, HeapOperation collectionType)
         : m_timer(timer)
         , m_start(WTF::monotonicallyIncreasingTime())
+        , m_collectionType(collectionType)
     {
     }
     ~GCTimerScope()
     {
         double delta = WTF::monotonicallyIncreasingTime() - m_start;
-        if (delta < m_timer->m_min)
-            m_timer->m_min = delta;
-        if (delta > m_timer->m_max)
-            m_timer->m_max = delta;
-        m_timer->m_count++;
-        m_timer->m_time += delta;
+        m_timer->didFinishPhase(m_collectionType, delta);
     }
     GCTimer* m_timer;
     double m_start;
+    HeapOperation m_collectionType;
 };
 
 struct GCCounter {
@@ -136,7 +176,7 @@ struct GCCounter {
     }
     ~GCCounter()
     {
-        dataLogF("%s: %zu values (avg. %zu, min. %zu, max. %zu)\n", m_name, m_total, m_total / m_count, m_min, m_max);
+        dataLogF("[%d] %s: %zu values (avg. %zu, min. %zu, max. %zu)\n", getCurrentProcessID(), m_name, m_total, m_total / m_count, m_min, m_max);
     }
     const char* m_name;
     size_t m_count;
@@ -145,14 +185,12 @@ struct GCCounter {
     size_t m_max;
 };
 
-#define GCPHASE(name) DEFINE_GC_LOGGING_GLOBAL(GCTimer, name##Timer, (#name)); GCTimerScope name##TimerScope(&name##Timer)
-#define COND_GCPHASE(cond, name1, name2) DEFINE_GC_LOGGING_GLOBAL(GCTimer, name1##Timer, (#name1)); DEFINE_GC_LOGGING_GLOBAL(GCTimer, name2##Timer, (#name2)); GCTimerScope name1##CondTimerScope(cond ? &name1##Timer : &name2##Timer)
+#define GCPHASE(name) DEFINE_GC_LOGGING_GLOBAL(GCTimer, name##Timer, (#name)); GCTimerScope name##TimerScope(&name##Timer, m_operationInProgress)
 #define GCCOUNTER(name, value) do { DEFINE_GC_LOGGING_GLOBAL(GCCounter, name##Counter, (#name)); name##Counter.count(value); } while (false)
     
 #else
 
 #define GCPHASE(name) do { } while (false)
-#define COND_GCPHASE(cond, name1, name2) do { } while (false)
 #define GCCOUNTER(name, value) do { } while (false)
 #endif
 
@@ -887,7 +925,6 @@ void Heap::collect(HeapOperation collectionType)
     SamplingRegion samplingRegion("Garbage Collection");
     
     RELEASE_ASSERT(!m_deferralDepth);
-    GCPHASE(Collect);
     ASSERT(vm()->currentThreadIsHoldingAPILock());
     RELEASE_ASSERT(vm()->atomicStringTable() == wtfThreadData().atomicStringTable());
     ASSERT(m_isSafeToCollect);
@@ -896,6 +933,7 @@ void Heap::collect(HeapOperation collectionType)
 
     suspendCompilerThreads();
     willStartCollection(collectionType);
+    GCPHASE(Collect);
 
     double gcStartTime = WTF::monotonicallyIncreasingTime();
 
