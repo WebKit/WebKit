@@ -28,6 +28,7 @@
 
 #import "DrawingAreaProxyMessages.h"
 #import "GraphicsLayerCARemote.h"
+#import "PlatformCALayerRemote.h"
 #import "RemoteLayerTreeContext.h"
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #import "RemoteScrollingCoordinator.h"
@@ -309,6 +310,17 @@ void RemoteLayerTreeDrawingArea::layerFlushTimerFired(WebCore::Timer<RemoteLayer
     flushLayers();
 }
 
+static void flushBackingStoreChangesInTransaction(RemoteLayerTreeTransaction& transaction)
+{
+    for (RefPtr<PlatformCALayerRemote> layer : transaction.changedLayers()) {
+        if (!layer->properties().changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged)
+            return;
+
+        if (RemoteLayerBackingStore* backingStore = layer->properties().backingStore.get())
+            backingStore->flush();
+    }
+}
+
 void RemoteLayerTreeDrawingArea::flushLayers()
 {
     if (!m_rootLayer)
@@ -340,8 +352,14 @@ void RemoteLayerTreeDrawingArea::flushLayers()
         toRemoteScrollingCoordinator(m_webPage->scrollingCoordinator())->buildTransaction(scrollingTransaction);
 #endif
 
+    // FIXME: Move flushing backing store and sending CommitLayerTree onto a background thread.
+    flushBackingStoreChangesInTransaction(layerTransaction);
+
     m_waitingForBackingStoreSwap = true;
     m_webPage->send(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree(layerTransaction, scrollingTransaction));
+
+    for (auto& layer : layerTransaction.changedLayers())
+        layer->properties().resetChangedProperties();
 }
 
 void RemoteLayerTreeDrawingArea::didUpdate()

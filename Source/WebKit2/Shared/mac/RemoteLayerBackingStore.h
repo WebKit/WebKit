@@ -43,6 +43,8 @@ namespace WebKit {
 class PlatformCALayerRemote;
 
 class RemoteLayerBackingStore {
+    WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteLayerBackingStore();
 
@@ -76,6 +78,8 @@ public:
         return !!m_frontBuffer;
     }
 
+    void flush();
+
 private:
     void drawInContext(WebCore::GraphicsContext&, CGImageRef backImage);
     void clearBackingStore();
@@ -94,6 +98,8 @@ private:
     RefPtr<WebCore::IOSurface> m_frontSurface;
     RefPtr<WebCore::IOSurface> m_backSurface;
 #endif
+
+    RetainPtr<CGContextRef> m_frontContextPendingFlush;
 
     bool m_acceleratesDrawing;
 

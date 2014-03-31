@@ -151,6 +151,8 @@ public:
 
     virtual uint32_t hostingContextID();
 
+    RemoteLayerTreeTransaction::LayerProperties& properties() { return m_properties; }
+
 protected:
     PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext* context);
     PlatformCALayerRemote(const PlatformCALayerRemote&, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext*);

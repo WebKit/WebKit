@@ -151,6 +151,8 @@ void RemoteLayerBackingStore::setNeedsDisplay()
 
 bool RemoteLayerBackingStore::display()
 {
+    ASSERT(!m_frontContextPendingFlush);
+
     if (!m_layer)
         return false;
 
@@ -202,9 +204,9 @@ bool RemoteLayerBackingStore::display()
 
         return true;
     }
-#else
-    ASSERT(!m_acceleratesDrawing);
 #endif
+
+    ASSERT(!m_acceleratesDrawing);
 
     std::swap(m_frontBuffer, m_backBuffer);
     if (!m_frontBuffer)
@@ -294,7 +296,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
     m_dirtyRegion = Region();
     m_paintingRects.clear();
 
-    CGContextFlush(context.platformContext());
+    m_frontContextPendingFlush = context.platformContext();
 }
 
 void RemoteLayerBackingStore::enumerateRectsBeingDrawn(CGContextRef context, void (^block)(CGRect))
@@ -325,6 +327,14 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer)
 
     ASSERT(!acceleratesDrawing());
     layer.contents = (id)m_frontBuffer->makeCGImageCopy().get();
+}
+
+void RemoteLayerBackingStore::flush()
+{
+    if (m_frontContextPendingFlush) {
+        CGContextFlush(m_frontContextPendingFlush.get());
+        m_frontContextPendingFlush = nullptr;
+    }
 }
 
 } // namespace WebKit

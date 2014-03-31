@@ -128,14 +128,14 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , masksToBounds(other.masksToBounds)
     , opaque(other.opaque)
 {
+    // FIXME: LayerProperties should reference backing store by ID, so that two layers can have the same backing store (for clones).
+    // FIXME: LayerProperties shouldn't be copyable; PlatformCALayerRemote::clone should copy the relevant properties.
+
     if (other.transform)
         transform = std::make_unique<TransformationMatrix>(*other.transform);
 
     if (other.sublayerTransform)
         sublayerTransform = std::make_unique<TransformationMatrix>(*other.sublayerTransform);
-    
-    if (other.backingStore)
-        backingStore = std::make_unique<RemoteLayerBackingStore>(*other.backingStore);
 
     if (other.filters)
         filters = std::make_unique<FilterOperations>(*other.filters);
@@ -382,11 +382,11 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
         if (!decoder.decode(hasFrontBuffer))
             return false;
         if (hasFrontBuffer) {
-            RemoteLayerBackingStore backingStore;
-            if (!decoder.decode(backingStore))
+            std::unique_ptr<RemoteLayerBackingStore> backingStore = std::make_unique<RemoteLayerBackingStore>();
+            if (!decoder.decode(*backingStore))
                 return false;
             
-            result.backingStore = std::make_unique<RemoteLayerBackingStore>(backingStore);
+            result.backingStore = std::move(backingStore);
         }
     }
 
@@ -428,11 +428,11 @@ void RemoteLayerTreeTransaction::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_rootLayerID;
     encoder << m_createdLayers;
 
-    encoder << m_changedLayerProperties.size();
+    encoder << static_cast<uint64_t>(m_changedLayers.size());
 
-    for (const auto& layerProperties : m_changedLayerProperties) {
-        encoder << layerProperties.key;
-        encoder << *layerProperties.value;
+    for (RefPtr<PlatformCALayerRemote> layer : m_changedLayers) {
+        encoder << layer->layerID();
+        encoder << layer->properties();
     }
     
     encoder << m_destroyedLayerIDs;
@@ -461,11 +461,11 @@ bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLay
     if (!decoder.decode(result.m_createdLayers))
         return false;
 
-    int numChangedLayerProperties;
+    uint64_t numChangedLayerProperties;
     if (!decoder.decode(numChangedLayerProperties))
         return false;
 
-    for (int i = 0; i < numChangedLayerProperties; ++i) {
+    for (uint64_t i = 0; i < numChangedLayerProperties; ++i) {
         GraphicsLayer::PlatformLayerID layerID;
         if (!decoder.decode(layerID))
             return false;
@@ -474,7 +474,7 @@ bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLay
         if (!decoder.decode(*layerProperties))
             return false;
 
-        result.changedLayers().set(layerID, std::move(layerProperties));
+        result.changedLayerProperties().set(layerID, std::move(layerProperties));
     }
 
     if (!decoder.decode(result.m_destroyedLayerIDs))
@@ -527,7 +527,7 @@ void RemoteLayerTreeTransaction::setRootLayerID(GraphicsLayer::PlatformLayerID r
 
 void RemoteLayerTreeTransaction::layerPropertiesChanged(PlatformCALayerRemote* remoteLayer, RemoteLayerTreeTransaction::LayerProperties& properties)
 {
-    m_changedLayerProperties.set(remoteLayer->layerID(), std::make_unique<RemoteLayerTreeTransaction::LayerProperties>(properties));
+    m_changedLayers.append(remoteLayer);
 }
 
 void RemoteLayerTreeTransaction::setCreatedLayers(Vector<LayerCreationProperties> createdLayers)
@@ -818,7 +818,7 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const RemoteLayerTr
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged) {
             if (const RemoteLayerBackingStore* backingStore = layerProperties.backingStore.get())
-                dumpProperty<RemoteLayerBackingStore>(ts, "backingStore", *backingStore);
+                dumpProperty<const RemoteLayerBackingStore&>(ts, "backingStore", *backingStore);
             else
                 dumpProperty<String>(ts, "backingStore", "removed");
         }

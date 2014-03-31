@@ -1,3 +1,68 @@
+2014-03-31  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS WebKit2] Flush all surfaces after painting into all of them, instead of after painting into each one
+        https://bugs.webkit.org/show_bug.cgi?id=130768
+        <rdar://problem/16421471>
+
+        Reviewed by Benjamin Poulain.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        Make RemoteLayerBackingStore noncopyable.
+        Add flush(), which synchronously flushes painting operations on the underlying backing store.
+        Add storage for the CGContext that needs to be flushed, and ensure that it is flushed before we paint again.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (RemoteLayerBackingStore::display):
+
+        (RemoteLayerBackingStore::drawInContext):
+        Don't flush the context immediately after painting.
+
+        (RemoteLayerBackingStore::flush):
+        Flush the current front surface/buffer's context.
+        Clear the new pending-flush members.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::flushBackingStoreChangesInTransaction):
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        Crawl through all of the valid changed backing stores in the transaction and flush them.
+        Reset changed properties after encoding the commit.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::resetChangedProperties):
+        (WebKit::RemoteLayerTreeTransaction::changedLayers):
+        (WebKit::RemoteLayerTreeTransaction::changedLayerProperties):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        (WebKit::RemoteLayerTreeTransaction::layerPropertiesChanged):
+        (WebKit::dumpChangedLayers):
+        Instead of storing a copy of the LayerProperties struct for each changed layer
+        while building the transaction in the Web process, store a list of changed layers,
+        and directly encode the commit from those layers' LayerProperties. This provides a few benefits:
+                - We avoid copying LayerProperties for every changed layer, every commit
+                - We can make RemoteLayerBackingStore noncopyable
+                - We can walk the changed layers after building the transaction
+                in order to flush backing store, and actually affect the layers'
+                own RemoteLayerBackingStore instead of a copy.
+        The UI process will still generate a LayerPropertiesMap at decode time.
+        
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+        Don't copy the LayerProperties struct for the debug overlay. Instead,
+        adjust the properties which the debug overlay whacks directly on the layer,
+        after applying the normal LayerProperties.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::recursiveBuildTransaction):
+        Don't reset changed layer properties in the middle of building a transaction. Instead,
+        RemoteLayerTreeDrawingArea::flushLayers() will reset all the flags on all changed layers
+        after the commit is encoded.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        (WebKit::PlatformCALayerRemote::properties):
+
 2014-03-31  Simon Fraser  <simon.fraser@apple.com>
 
         [UI-side compositing] Proxy animations to the UI process

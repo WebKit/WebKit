@@ -72,7 +72,7 @@ PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(const PlatformCA
 {
     RefPtr<PlatformCALayerRemote> layer = adoptRef(new PlatformCALayerRemote(other, owner, context));
 
-    context->layerWasCreated(layer.get(), LayerTypeCustom);
+    context->layerWasCreated(layer.get(), other.layerType());
 
     return layer.release();
 }
@@ -126,12 +126,11 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeTransaction
 
         if (m_layerType == LayerTypeCustom) {
             RemoteLayerTreePropertyApplier::applyProperties(platformLayer(), nullptr, m_properties, RemoteLayerTreePropertyApplier::RelatedLayerMap());
-            m_properties.changedProperties = RemoteLayerTreeTransaction::NoChange;
+            m_properties.resetChangedProperties();
             return;
         }
 
         transaction.layerPropertiesChanged(this, m_properties);
-        m_properties.changedProperties = RemoteLayerTreeTransaction::NoChange;
     }
 
     for (size_t i = 0; i < m_children.size(); ++i) {
