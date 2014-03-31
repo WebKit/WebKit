@@ -308,7 +308,7 @@ public:
 
         unsigned getValue(uint64_t positionIndependentMask, uint64_t offset) const
         {
-            return (m_flags >> offset) & positionIndependentMask;
+            return static_cast<unsigned>((m_flags >> offset) & positionIndependentMask);
         }
 
         // To type the bit mask properly on 64bits.

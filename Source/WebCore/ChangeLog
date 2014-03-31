@@ -1,5 +1,12 @@
 2014-03-30  Benjamin Poulain  <benjamin@webkit.org>
 
+        Second attempt to fix 32bits build after r166465
+
+        * rendering/style/RenderStyle.h:
+        The compiler probably complain about the return value, that makes more sense.
+
+2014-03-30  Benjamin Poulain  <benjamin@webkit.org>
+
         Attempt to fix 32bits build after r166465
 
         * rendering/style/RenderStyle.h:
