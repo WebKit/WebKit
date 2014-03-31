@@ -30,6 +30,7 @@
 
 #include "GRefPtrGStreamer.h"
 #include <wtf/ThreadingPrimitives.h>
+#include <wtf/gobject/GMainLoopSource.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -67,8 +68,8 @@ private:
     bool getTag(GstTagList* tags, const gchar* tagName, String& value);
 
     TrackPrivateBase* m_owner;
-    guint m_activeTimerHandler;
-    guint m_tagTimerHandler;
+    GMainLoopSource m_activeTimerHandler;
+    GMainLoopSource m_tagTimerHandler;
 
     Mutex m_tagMutex;
     GRefPtr<GstTagList> m_tags;

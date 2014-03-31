@@ -25,6 +25,7 @@
 #include "GtkVersioning.h"
 #include "PasteboardHelper.h"
 #include <gtk/gtk.h>
+#include <wtf/gobject/GMainLoopSource.h>
 
 namespace WebCore {
 
@@ -68,18 +69,6 @@ void GtkDragAndDropHelper::handleGetDragData(GdkDragContext* context, GtkSelecti
     PasteboardHelper::defaultPasteboardHelper()->fillSelectionData(selectionData, info, dataObject);
 }
 
-struct HandleDragLaterData {
-    DroppingContext* context;
-    GtkDragAndDropHelper* glue;
-};
-
-static gboolean handleDragLeaveLaterCallback(HandleDragLaterData* data)
-{
-    data->glue->handleDragLeaveLater(data->context);
-    delete data;
-    return FALSE;
-}
-
 void GtkDragAndDropHelper::handleDragLeaveLater(DroppingContext* context)
 {
     auto iterator = m_droppingContexts.find(context->gdkContext);
@@ -109,11 +98,8 @@ void GtkDragAndDropHelper::handleDragLeave(GdkDragContext* gdkContext, DragExite
     // During a drop GTK+ will fire a drag-leave signal right before firing
     // the drag-drop signal. We want the actions for drag-leave to happen after
     // those for drag-drop, so schedule them to happen asynchronously here.
-    HandleDragLaterData* data = new HandleDragLaterData;
-    data->context = context;
-    data->context->exitedCallback = exitedCallback;
-    data->glue = this;
-    g_idle_add_full(G_PRIORITY_DEFAULT, reinterpret_cast<GSourceFunc>(handleDragLeaveLaterCallback), data, 0);
+    context->exitedCallback = exitedCallback;
+    GMainLoopSource::createAndDeleteOnDestroy().schedule("[WebKit] handleDragLeaveLater", std::bind(&GtkDragAndDropHelper::handleDragLeaveLater, this, context));
 }
 
 static void queryNewDropContextData(DroppingContext* dropContext, GtkWidget* widget, guint time)
