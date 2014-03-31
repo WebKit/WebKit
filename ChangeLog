@@ -1,5 +1,14 @@
 2014-03-31  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK] Remove scripts code only applicable to autotools
+        https://bugs.webkit.org/show_bug.cgi?id=130841
+
+        Reviewed by Anders Carlsson.
+
+        * Source/cmake/WebKitPackaging.cmake: No longer need to consider autotools files.
+
+2014-03-31  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] Use PROJECT_VERSION_* instead of WEBKIT_*_VERSION
         https://bugs.webkit.org/show_bug.cgi?id=130936
 

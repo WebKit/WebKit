@@ -228,10 +228,6 @@
             "filename": r"PerformanceTests"
                         r"|Tools/Scripts/webkitpy/performance_tests",
         },
-        "GtkBuildSystem": {
-            "filename": r"configure.ac"
-                        r"|.*GNUmakefile.(am|features.am.in)",
-        },
         "ConsoleUsage": {
             "more": r"[Aa]ddConsoleMessage|reportException|logExceptionToConsole|addMessage|printErrorMessage"
         },
@@ -322,7 +318,6 @@
         "GraphicsLayer": [ "simon.fraser@apple.com", "kondapallykalyan@gmail.com", "sergio.correia@openbossa.org" ],
         "GStreamerGraphics": [ "alexis@webkit.org", "pnormand@igalia.com", "gns@gnome.org", "mrobinson@webkit.org", "cgarcia@igalia.com", "calvaris@igalia.com", "vjaquez@igalia.com", "agomez@igalia.com" ],
         "GStreamerAudio": [ "pnormand@igalia.com", "dchris@gmail.com", "sergio.correia@openbossa.org", "calvaris@igalia.com", "vjaquez@igalia.com", "agomez@igalia.com" ],
-        "GtkBuildSystem": [ "zandobersek@gmail.com", "berto@igalia.com" ],
         "GtkWebKit2PublicAPI": [ "cgarcia@igalia.com", "gns@gnome.org", "mrobinson@webkit.org", "berto@igalia.com" ],
         "Harfbuzz": [ "dominik.rottsches@intel.com" ],
         "HTML": [ "esprehn+autocc@chromium.org", "gyuyoung.kim@webkit.org" ],

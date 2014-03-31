@@ -1,7 +1,6 @@
 # Global rules
 exclude #$
 exclude ChangeLog
-exclude GNUmakefile
 exclude Makefile
 exclude tags$
 exclude ~$
@@ -19,7 +18,7 @@ exclude \.o$
 exclude \.order$
 exclude \.pdf$
 exclude \.plist$
-exlucde \.pro\.user$
+exclude \.pro\.user$
 exclude \.project$
 exclude \.props$
 exclude \.pyc$

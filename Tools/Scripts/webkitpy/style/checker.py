@@ -329,8 +329,6 @@ _SKIPPED_FILES_WITH_WARNING = [
 _SKIPPED_FILES_WITHOUT_WARNING = [
     "LayoutTests" + os.path.sep,
     "Source/ThirdParty/leveldb" + os.path.sep,
-    # Prevents this being recognized as a text file.
-    "Source/WebCore/GNUmakefile.features.am.in",
     ]
 
 # Extensions of files which are allowed to contain carriage returns.

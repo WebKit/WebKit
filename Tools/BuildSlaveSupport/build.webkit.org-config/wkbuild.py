@@ -88,7 +88,7 @@ def _should_file_trigger_build(target_platform, file):
         (r"\.(?:bkl|mk)$", []),
 
         # Patterns that should trigger builds on only some bots.
-        (r"(?:^|/)GNUmakefile\.am$", ["gtk"]),
+        (r"(?:^|/)PlatformGTK\.cmake$", ["gtk"]),
         (r"Mac\.(?:cpp|h|mm)$", ["mac"]),
         (r"\.(?:vcproj|vsprops|sln|vcxproj|props|filters)$", ["win"]),
         (r"\.exp(?:\.in)?$", ["mac"]),

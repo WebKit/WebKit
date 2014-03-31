@@ -45,14 +45,6 @@ if (NOT DEFINED CPACK_SOURCE_IGNORE_FILES)
         "\\\\.mk$"
         "\\\\.make$"
         "Makefile"
-        # - Autotools (GTK)
-        "/autotools/"
-        "/configure\\\\.ac"
-        "/autogen\\\\.sh"
-        "/autom4te\\\\.cache/"
-        "/aclocal\\\\.m4$"
-        "/GNUmakefile"
-        "/GNUmakefile"
         # - XCode (Mac)
         "\\\\.xcodeproj"
         "\\\\.xcconfig"
