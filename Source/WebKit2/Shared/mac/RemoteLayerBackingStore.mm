@@ -68,10 +68,17 @@ void RemoteLayerBackingStore::ensureBackingStore(PlatformCALayerRemote* layer, I
     m_acceleratesDrawing = acceleratesDrawing;
     m_isOpaque = isOpaque;
 
+    clearBackingStore();
+}
+
+void RemoteLayerBackingStore::clearBackingStore()
+{
 #if USE(IOSURFACE)
     m_frontSurface = nullptr;
+    m_backSurface = nullptr;
 #endif
     m_frontBuffer = nullptr;
+    m_backBuffer = nullptr;
 }
 
 void RemoteLayerBackingStore::encode(IPC::ArgumentEncoder& encoder) const
@@ -141,15 +148,6 @@ void RemoteLayerBackingStore::setNeedsDisplay()
     setNeedsDisplay(IntRect(IntPoint(), m_size));
 }
 
-RetainPtr<CGImageRef> RemoteLayerBackingStore::createImageForFrontBuffer() const
-{
-    if (!m_frontBuffer || m_acceleratesDrawing)
-        return nullptr;
-
-    // FIXME: Do we need Copy?
-    return m_frontBuffer->makeCGImageCopy();
-}
-
 bool RemoteLayerBackingStore::display()
 {
     if (!m_layer)
@@ -159,20 +157,16 @@ bool RemoteLayerBackingStore::display()
     // to note that our backing store has been cleared.
     if (!m_layer->owner() || !m_layer->owner()->platformCALayerDrawsContent()) {
         bool previouslyDrewContents = hasFrontBuffer();
-
-        m_frontBuffer = nullptr;
-#if USE(IOSURFACE)
-        m_frontSurface = nullptr;
-#endif
-
+        clearBackingStore();
         return previouslyDrewContents;
     }
 
     if (m_dirtyRegion.isEmpty() || m_size.isEmpty())
         return false;
 
+    IntRect layerBounds(IntPoint(), m_size);
     if (!hasFrontBuffer())
-        m_dirtyRegion.unite(IntRect(IntPoint(), m_size));
+        m_dirtyRegion.unite(layerBounds);
 
     if (m_layer->owner()->platformCALayerShowRepaintCounter(m_layer)) {
         IntRect indicatorRect(0, 0, 52, 27);
@@ -183,24 +177,27 @@ bool RemoteLayerBackingStore::display()
     scaledSize.scale(m_scale);
     IntSize expandedScaledSize = expandedIntSize(scaledSize);
 
+    bool willPaintEntireBackingStore = m_dirtyRegion.bounds().contains(layerBounds);
 #if USE(IOSURFACE)
     if (m_acceleratesDrawing) {
-        RefPtr<IOSurface> backSurface = IOSurface::create(expandedScaledSize, ColorSpaceDeviceRGB);
-        GraphicsContext& context = backSurface->ensureGraphicsContext();
+        std::swap(m_frontSurface, m_backSurface);
+
+        if (!m_frontSurface || m_frontSurface->isInUse()) {
+            // FIXME: Instead of discarding it, put the unusable in-use surface into a pool for future use.
+            m_frontSurface = IOSurface::create(expandedScaledSize, ColorSpaceDeviceRGB);
+        }
+
+        RetainPtr<CGImageRef> backImage;
+        if (m_backSurface && !willPaintEntireBackingStore)
+            backImage = m_backSurface->createImage();
+
+        GraphicsContext& context = m_frontSurface->ensureGraphicsContext();
         context.clearRect(FloatRect(FloatPoint(), expandedScaledSize));
         context.scale(FloatSize(1, -1));
         context.translate(0, -expandedScaledSize.height());
+        drawInContext(context, backImage.get());
 
-        RetainPtr<CGImageRef> frontImage;
-        if (m_frontSurface)
-            frontImage = m_frontSurface->createImage();
-        drawInContext(context, frontImage.get());
-
-        // If our frontImage is derived from an IOSurface, we need to
-        // destroy the image before the CGContext it's derived from,
-        // so that the context doesn't make a CPU copy of the surface data.
-        frontImage = nullptr;
-        m_frontSurface = backSurface;
+        m_frontSurface->clearGraphicsContext();
 
         return true;
     }
@@ -208,15 +205,21 @@ bool RemoteLayerBackingStore::display()
     ASSERT(!m_acceleratesDrawing);
 #endif
 
-    RetainPtr<CGImageRef> frontImage = createImageForFrontBuffer();
-    m_frontBuffer = ShareableBitmap::createShareable(expandedScaledSize, m_isOpaque ? ShareableBitmap::NoFlags : ShareableBitmap::SupportsAlpha);
+    std::swap(m_frontBuffer, m_backBuffer);
+    if (!m_frontBuffer)
+        m_frontBuffer = ShareableBitmap::createShareable(expandedScaledSize, m_isOpaque ? ShareableBitmap::NoFlags : ShareableBitmap::SupportsAlpha);
     std::unique_ptr<GraphicsContext> context = m_frontBuffer->createGraphicsContext();
-    drawInContext(*context, frontImage.get());
+
+    RetainPtr<CGImageRef> backImage;
+    if (m_backBuffer && !willPaintEntireBackingStore)
+        backImage = m_backBuffer->makeCGImage();
+
+    drawInContext(*context, backImage.get());
     
     return true;
 }
 
-void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef frontImage)
+void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef backImage)
 {
     IntRect layerBounds(IntPoint(), m_size);
     IntRect scaledLayerBounds(IntPoint(), expandedIntSize(m_size * m_scale));
@@ -227,6 +230,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
     // than webLayerWastedSpaceThreshold of the total dirty area, we'll repaint each rect separately.
     // Otherwise, repaint the entire bounding box of the dirty region.
     IntRect dirtyBounds = m_dirtyRegion.bounds();
+
     Vector<IntRect> dirtyRects = m_dirtyRegion.rects();
     if (dirtyRects.size() > webLayerMaxRectsToPaint || m_dirtyRegion.totalArea() > webLayerWastedSpaceThreshold * dirtyBounds.width() * dirtyBounds.height()) {
         dirtyRects.clear();
@@ -248,7 +252,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
         cgPaintingRects[i] = enclosingIntRect(scaledPaintingRect);
     }
 
-    if (frontImage) {
+    if (backImage) {
         CGContextSaveGState(cgContext);
         CGContextSetBlendMode(cgContext, kCGBlendModeCopy);
 
@@ -258,7 +262,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
 
         CGContextTranslateCTM(cgContext, 0, scaledLayerBounds.height());
         CGContextScaleCTM(cgContext, 1, -1);
-        CGContextDrawImage(cgContext, scaledLayerBounds, frontImage);
+        CGContextDrawImage(cgContext, scaledLayerBounds, backImage);
         CGContextRestoreGState(cgContext);
     }
 
@@ -309,15 +313,15 @@ void RemoteLayerBackingStore::enumerateRectsBeingDrawn(CGContextRef context, voi
 
 void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer)
 {
+    layer.contentsOpaque = m_isOpaque;
+
 #if USE(IOSURFACE)
-    if (acceleratesDrawing())
+    if (acceleratesDrawing()) {
         layer.contents = (id)m_frontSurface->surface();
-    else
-        layer.contents = (id)createImageForFrontBuffer().get();
-#else
-    ASSERT(!acceleratesDrawing());
-    layer.contents = (id)createImageForFrontBuffer().get();
+        return;
+    }
 #endif
 
-    layer.contentsOpaque = m_isOpaque;
+    ASSERT(!acceleratesDrawing());
+    layer.contents = (id)m_frontBuffer->makeCGImageCopy().get();
 }

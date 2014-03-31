@@ -1,5 +1,44 @@
 2014-03-31  Tim Horton  <timothy_horton@apple.com>
 
+        Double-buffer RemoteLayerBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=130990
+
+        Reviewed by Simon Fraser.
+
+        We'll keep a front and back buffer for each surface; the front is generally currently
+        being displayed in the UI process, and the back is the one we'll paint into.
+
+        Swap the two surfaces each time we paint; since we synchronize with the UI process,
+        the old front surface will generally be out-of-use by the render server by the time
+        we paint again. However, since render server commits are asynchronous and we have 
+        no way to syncronize with them yet, we have to check if the (swapped to front) back buffer is in use,
+        and create a new front buffer if it is.
+
+        Triple-buffering would solve this problem, as would synchronization with the render server,
+        as would a pool of surfaces - we will revisit these solutions in future patches.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (RemoteLayerBackingStore::ensureBackingStore):
+        (RemoteLayerBackingStore::clearBackingStore):
+        Factor clearBackingStore() out of ensureBackingStore() and display().
+
+        (RemoteLayerBackingStore::display):
+        Swap buffers. Since m_backSurface will hold on to the back surface's CGContext,
+        we don't need to worry about tearing down the image first anymore.
+        Don't worry about creating a back image (nor copying it into the front image)
+        if we're going to paint the whole layer.
+
+        (RemoteLayerBackingStore::drawInContext):
+        Fix some names.
+
+        (RemoteLayerBackingStore::applyBackingStoreToLayer):
+        Reduce duplication.
+
+        (RemoteLayerBackingStore::createImageForFrontBuffer): Deleted.
+
+2014-03-31  Tim Horton  <timothy_horton@apple.com>
+
         Synchronize Web process remote layer tree commits with CoreAnimation commits in the UI process
         https://bugs.webkit.org/show_bug.cgi?id=130984
 
