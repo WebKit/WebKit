@@ -185,6 +185,7 @@ EXPORTS
 #endif
         symbolWithPointer(?createShadowRoot@Element@WebCore@@QAE?AV?$PassRefPtr@VShadowRoot@WebCore@@@WTF@@AAH@Z, ?createShadowRoot@Element@WebCore@@QEAA?AV?$PassRefPtr@VShadowRoot@WebCore@@@WTF@@AEAH@Z)
         symbolWithPointer(?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z, ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PEAVExecState@3@PEAVJSDOMGlobalObject@1@PEAVNode@1@@Z)
+        symbolWithPointer(?createWrapper@WebCore@@YA?AVJSValue@JSC@@AAVJSDOMGlobalObject@1@AAVNodeList@1@@Z, ?createWrapper@WebCore@@YA?AVJSValue@JSC@@AEAVJSDOMGlobalObject@1@AEAVNodeList@1@@Z)
         symbolWithPointer(?deprecatedShadowAncestorNode@Node@WebCore@@QBEPAV12@XZ, ?deprecatedShadowAncestorNode@Node@WebCore@@QEBAPEAV12@XZ)
         symbolWithPointer(?deserialize@SerializedScriptValue@WebCore@@QAE?AVJSValue@JSC@@PAVExecState@4@PAVJSGlobalObject@4@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00VCrashOnOverflow@2@@WTF@@W4SerializationErrorMode@2@@Z, ?deserialize@SerializedScriptValue@WebCore@@QEAA?AVJSValue@JSC@@PEAVExecState@4@PEAVJSGlobalObject@4@PEAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00VCrashOnOverflow@2@@WTF@@W4SerializationErrorMode@2@@Z)
         symbolWithPointer(?equal@WTF@@YA_NPBVStringImpl@1@PBE@Z, ?equal@WTF@@YA_NPEBVStringImpl@1@PEBE@Z)

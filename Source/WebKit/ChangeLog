@@ -1,3 +1,9 @@
+2014-03-31  Andreas Kling  <akling@apple.com>
+
+        Blind Windows build fix. Check my mangle-fu.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-03-26  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build/test correction.
