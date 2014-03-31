@@ -30,6 +30,7 @@
 #include "HTMLNames.h"
 #include "LiveNodeList.h"
 #include "ScriptWrappable.h"
+#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>

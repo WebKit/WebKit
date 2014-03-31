@@ -191,7 +191,7 @@ private:
     mutable bool m_hasCreatedImageBuffer;
     mutable bool m_didClearImageBuffer;
     mutable std::unique_ptr<ImageBuffer> m_imageBuffer;
-    mutable OwnPtr<GraphicsContextStateSaver> m_contextStateSaver;
+    mutable std::unique_ptr<GraphicsContextStateSaver> m_contextStateSaver;
     
     mutable RefPtr<Image> m_presentedImage;
     mutable RefPtr<Image> m_copiedImage; // FIXME: This is temporary for platforms that have to copy the image buffer to render (and for CSSCanvasValue).

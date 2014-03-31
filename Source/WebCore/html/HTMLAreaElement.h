@@ -64,7 +64,7 @@ private:
     Path getRegion(const LayoutSize&) const;
     void invalidateCachedRegion();
 
-    OwnPtr<Path> m_region;
+    std::unique_ptr<Path> m_region;
     std::unique_ptr<Length[]> m_coords;
     int m_coordsLen;
     LayoutSize m_lastSize;

@@ -28,7 +28,7 @@
 #include "FormState.h"
 #include "FormSubmission.h"
 #include "HTMLElement.h"
-#include <wtf/OwnPtr.h>
+#include <memory>
 
 #if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
 #include "Autocapitalize.h"
@@ -161,7 +161,7 @@ private:
     typedef HashMap<RefPtr<AtomicStringImpl>, FormNamedItem*> PastNamesMap;
 
     FormSubmission::Attributes m_attributes;
-    OwnPtr<PastNamesMap> m_pastNamesMap;
+    std::unique_ptr<PastNamesMap> m_pastNamesMap;
 
     CheckedRadioButtons m_checkedRadioButtons;
 

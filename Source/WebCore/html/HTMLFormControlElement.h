@@ -165,7 +165,7 @@ private:
     virtual const HTMLFormControlElement& asHTMLElement() const override final { return *this; }
     virtual HTMLFormControlElement* asFormNamedItem() override final { return this; }
 
-    OwnPtr<ValidationMessage> m_validationMessage;
+    std::unique_ptr<ValidationMessage> m_validationMessage;
     bool m_disabled : 1;
     bool m_isReadOnly : 1;
     bool m_isRequired : 1;

@@ -699,7 +699,7 @@ void HTMLFormElement::addToPastNamesMap(FormNamedItem* item, const AtomicString&
     if (pastName.isEmpty())
         return;
     if (!m_pastNamesMap)
-        m_pastNamesMap = adoptPtr(new PastNamesMap);
+        m_pastNamesMap = std::make_unique<PastNamesMap>();
     m_pastNamesMap->set(pastName.impl(), item);
 }
 

@@ -27,7 +27,9 @@
 #define HTMLVideoElement_h
 
 #if ENABLE(VIDEO)
+
 #include "HTMLMediaElement.h"
+#include <memory>
 
 namespace WebCore {
 
@@ -95,7 +97,7 @@ private:
     virtual void didMoveToNewDocument(Document* oldDocument) override;
     virtual void setDisplayMode(DisplayMode) override;
 
-    OwnPtr<HTMLImageLoader> m_imageLoader;
+    std::unique_ptr<HTMLImageLoader> m_imageLoader;
 
     AtomicString m_defaultPosterURL;
 };

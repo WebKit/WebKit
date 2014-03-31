@@ -79,7 +79,7 @@ void HTMLAreaElement::invalidateCachedRegion()
 bool HTMLAreaElement::mapMouseEvent(LayoutPoint location, const LayoutSize& size, HitTestResult& result)
 {
     if (m_lastSize != size) {
-        m_region = adoptPtr(new Path(getRegion(size)));
+        m_region = std::make_unique<Path>(getRegion(size));
         m_lastSize = size;
     }
 

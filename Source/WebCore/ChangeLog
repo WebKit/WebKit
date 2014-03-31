@@ -1,3 +1,57 @@
+2014-03-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move the rest of Source/WebCore/html/ code to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=129669
+
+        Reviewed by Anders Carlsson.
+
+        Replace the remaining uses of OwnPtr, PassOwnPtr under Source/WebCore/html/ with std::unique_ptr.
+
+        * html/FormController.cpp:
+        (WebCore::SavedFormState::SavedFormState):
+        (WebCore::SavedFormState::deserialize):
+        (WebCore::FormController::createSavedFormStateMap):
+        (WebCore::FormController::formElementsState):
+        (WebCore::FormController::takeStateForFormElement):
+        (WebCore::FormController::formStatesFromStateVector):
+        * html/FormController.h:
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::mapMouseEvent):
+        * html/HTMLAreaElement.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::setSurfaceSize):
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCollection.h:
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseAttribute):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::updateVisibleValidationMessage):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::addToPastNamesMap):
+        * html/HTMLFormElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::imageLoader):
+        (WebCore::HTMLInputElement::resetListAttributeTargetObserver):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::hasImageLoader):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseAttribute):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::startLoadingImage):
+        * html/HTMLPlugInImageElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::didAttachRenderers):
+        (WebCore::HTMLVideoElement::parseAttribute):
+        * html/HTMLVideoElement.h:
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::ValidationMessage):
+        (WebCore::ValidationMessage::setMessage):
+        (WebCore::ValidationMessage::setMessageDOMAndStartTimer):
+        (WebCore::ValidationMessage::requestToHideMessage):
+        * html/ValidationMessage.h:
+
 2014-03-31  Maurice van der Pot  <griffon26@kfk4ever.com>
 
         Fix mixed use of booleans in JPEGImageDecoder.cpp

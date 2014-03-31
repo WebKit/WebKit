@@ -96,16 +96,16 @@ public:
 
 private:
     typedef ListHashSet<RefPtr<HTMLFormControlElementWithState>, 64> FormElementListHashSet;
-    typedef HashMap<RefPtr<AtomicStringImpl>, OwnPtr<SavedFormState>> SavedFormStateMap;
+    typedef HashMap<RefPtr<AtomicStringImpl>, std::unique_ptr<SavedFormState>> SavedFormStateMap;
 
-    static OwnPtr<SavedFormStateMap> createSavedFormStateMap(const FormElementListHashSet&);
+    static std::unique_ptr<SavedFormStateMap> createSavedFormStateMap(const FormElementListHashSet&);
     FormControlState takeStateForFormElement(const HTMLFormControlElementWithState&);
     static void formStatesFromStateVector(const Vector<String>&, SavedFormStateMap&);
 
     CheckedRadioButtons m_checkedRadioButtons;
     FormElementListHashSet m_formElementsWithState;
     SavedFormStateMap m_savedFormStateMap;
-    OwnPtr<FormKeyGenerator> m_formKeyGenerator;
+    std::unique_ptr<FormKeyGenerator> m_formKeyGenerator;
 };
 
 } // namespace WebCore

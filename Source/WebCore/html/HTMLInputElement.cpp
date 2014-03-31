@@ -85,12 +85,11 @@ using namespace HTMLNames;
 class ListAttributeTargetObserver : IdTargetObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static OwnPtr<ListAttributeTargetObserver> create(const AtomicString& id, HTMLInputElement*);
+    ListAttributeTargetObserver(const AtomicString& id, HTMLInputElement*);
+
     virtual void idTargetChanged() override;
 
 private:
-    ListAttributeTargetObserver(const AtomicString& id, HTMLInputElement*);
-
     HTMLInputElement* m_element;
 };
 #endif
@@ -142,7 +141,7 @@ PassRefPtr<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagNa
 HTMLImageLoader* HTMLInputElement::imageLoader()
 {
     if (!m_imageLoader)
-        m_imageLoader = adoptPtr(new HTMLImageLoader(*this));
+        m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
     return m_imageLoader.get();
 }
 
@@ -1587,7 +1586,7 @@ HTMLDataListElement* HTMLInputElement::dataList() const
 void HTMLInputElement::resetListAttributeTargetObserver()
 {
     if (inDocument())
-        m_listAttributeTargetObserver = ListAttributeTargetObserver::create(fastGetAttribute(listAttr), this);
+        m_listAttributeTargetObserver = std::make_unique<ListAttributeTargetObserver>(fastGetAttribute(listAttr), this);
     else
         m_listAttributeTargetObserver = nullptr;
 }
@@ -1856,11 +1855,6 @@ void HTMLInputElement::setWidth(unsigned width)
 }
 
 #if ENABLE(DATALIST_ELEMENT)
-OwnPtr<ListAttributeTargetObserver> ListAttributeTargetObserver::create(const AtomicString& id, HTMLInputElement* element)
-{
-    return adoptPtr(new ListAttributeTargetObserver(id, element));
-}
-
 ListAttributeTargetObserver::ListAttributeTargetObserver(const AtomicString& id, HTMLInputElement* element)
     : IdTargetObserver(element->treeScope().idTargetObserverRegistry(), id)
     , m_element(element)
