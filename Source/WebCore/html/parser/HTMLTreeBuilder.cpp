@@ -2305,7 +2305,7 @@ void HTMLTreeBuilder::processCharacter(AtomicHTMLToken* token)
 }
 
 // FIXME: Extract the following iOS-specific code into a separate file.
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS)
 // From the string 4089961010, creates a link of the form <a href="tel:4089961010">4089961010</a> and inserts it.
 void HTMLTreeBuilder::insertPhoneNumberLink(const String& string)
 {
@@ -2389,7 +2389,7 @@ static inline bool shouldParseTelephoneNumbersInNode(const ContainerNode& node)
     } while (currentNode);
     return true;
 }
-#endif
+#endif // ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS)
 
 void HTMLTreeBuilder::processCharacterBuffer(ExternalCharacterTokenBuffer& buffer)
 {
@@ -2566,7 +2566,7 @@ void HTMLTreeBuilder::processCharacterBufferForInBody(ExternalCharacterTokenBuff
 {
     m_tree.reconstructTheActiveFormattingElements();
     String characters = buffer.takeRemaining();
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS)
     if (!isParsingFragment() && m_tree.isTelephoneNumberParsingEnabled() && shouldParseTelephoneNumbersInNode(*m_tree.currentNode()) && TelephoneNumberDetector::isSupported())
         linkifyPhoneNumbers(characters);
     else

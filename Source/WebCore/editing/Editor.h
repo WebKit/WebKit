@@ -473,6 +473,12 @@ private:
 
     bool unifiedTextCheckerEnabled() const;
 
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
+    void scanSelectionForTelephoneNumbers();
+    void scanRangeForTelephoneNumbers(Range&, const StringView&);
+    void clearDataDetectedTelephoneNumbers();
+#endif
+
 #if PLATFORM(COCOA)
     PassRefPtr<SharedBuffer> selectionInWebArchiveFormat();
     PassRefPtr<Range> adjustedSelectionRange();

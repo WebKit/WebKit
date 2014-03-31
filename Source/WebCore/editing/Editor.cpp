@@ -66,6 +66,7 @@
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "Pasteboard.h"
+#include "Range.h"
 #include "RemoveFormatCommand.h"
 #include "RenderBlock.h"
 #include "RenderTextControl.h"
@@ -78,6 +79,7 @@
 #include "SpellChecker.h"
 #include "SpellingCorrectionCommand.h"
 #include "StyleProperties.h"
+#include "TelephoneNumberDetector.h"
 #include "Text.h"
 #include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
@@ -3314,6 +3316,11 @@ void Editor::respondToChangedSelection(const VisibleSelection&, FrameSelection::
 
     if (client())
         client()->respondToChangedSelection(&m_frame);
+
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
+    scanSelectionForTelephoneNumbers();
+#endif
+
     setStartNewKillRingSequence(true);
 
     if (m_editorUIUpdateTimer.isActive())
@@ -3325,6 +3332,70 @@ void Editor::respondToChangedSelection(const VisibleSelection&, FrameSelection::
     m_editorUIUpdateTimerWasTriggeredByDictation = options & FrameSelection::DictationTriggered;
     m_editorUIUpdateTimer.startOneShot(0);
 }
+
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
+void Editor::scanSelectionForTelephoneNumbers()
+{
+    if (!TelephoneNumberDetector::isSupported())
+        return;
+
+    if (!m_frame.document())
+        return;
+
+    clearDataDetectedTelephoneNumbers();
+
+    RefPtr<Range> selectedRange = m_frame.selection().toNormalizedRange();
+    if (!selectedRange || selectedRange->startOffset() == selectedRange->endOffset())
+        return;
+
+    // FIXME: This won't work if a phone number spans multiple chunks of text from the perspective of the TextIterator
+    // (By a style change, image, line break, etc.)
+    // On idea to handle this would be a model like text search that uses a rotating window.
+    for (TextIterator textChunk(selectedRange.get()); !textChunk.atEnd(); textChunk.advance()) {
+        // TextIterator is supposed to never returns a Range that spans multiple Nodes.
+        ASSERT(textChunk.range()->startContainer() == textChunk.range()->endContainer());
+
+        scanRangeForTelephoneNumbers(*textChunk.range(), textChunk.text());
+    }
+}
+
+void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& stringView)
+{
+    // relativeStartPosition and relativeEndPosition are the endpoints of the phone number range,
+    // relative to the scannerPosition
+    unsigned length = stringView.length();
+    unsigned scannerPosition = 0;
+    int relativeStartPosition = 0;
+    int relativeEndPosition = 0;
+
+    auto characters = stringView.upconvertedCharacters();
+
+    while (scannerPosition < length && TelephoneNumberDetector::find(&characters[scannerPosition], length - scannerPosition, &relativeStartPosition, &relativeEndPosition)) {
+        // The convention in the Data Detectors framework is that the end position is the first character NOT in the phone number
+        // (that is, the length of the range is relativeEndPosition - relativeStartPosition). So substract 1 to get the same
+        // convention as the old WebCore phone number parser (so that the rest of the code is still valid if we want to go back
+        // to the old parser).
+        --relativeEndPosition;
+
+        ASSERT(scannerPosition + relativeEndPosition < length);
+
+        // It doesn't make sense to add the document marker to a match that's not in a text node.
+        if (!range.startContainer()->isTextNode())
+            continue;
+
+        range.ownerDocument().markers().addMarkerToNode(range.startContainer(), range.startOffset() + scannerPosition + relativeStartPosition, relativeEndPosition - relativeStartPosition + 1, DocumentMarker::TelephoneNumber);
+
+        scannerPosition += relativeEndPosition + 1;
+    }
+}
+
+void Editor::clearDataDetectedTelephoneNumbers()
+{
+    m_frame.document()->markers().removeMarkers(DocumentMarker::TelephoneNumber);
+
+    // FIXME: Do other UI cleanup here once we have other UI.
+}
+#endif // ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
 
 void Editor::updateEditorUINowIfScheduled()
 {

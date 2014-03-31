@@ -71,10 +71,13 @@ public:
         // This marker indicates that the range of text spanned by the marker is entered by voice dictation,
         // and it has alternative text.
         DictationAlternatives = 1 << 9,
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+        TelephoneNumber = 1 << 10
+#endif
 #if PLATFORM(IOS)
-        // FIXME: iOS has its own dictation marks. iOS should use OpenSource's.
-        DictationPhraseWithAlternatives = 1 << 10,
-        DictationResult = 1 << 11,
+        // FIXME: iOS should share the same Dictation marks as everyone else.
+        DictationPhraseWithAlternatives = 1 << 11,
+        DictationResult = 1 << 12,
 #endif
     };
 
@@ -98,9 +101,13 @@ public:
     public:
         AllMarkers()
 #if !PLATFORM(IOS)
+#if !ENABLE(TELEPHONE_NUMBER_DETECTION)
             : MarkerTypes(Spelling | Grammar | TextMatch | Replacement | CorrectionIndicator | RejectedCorrection | Autocorrected | SpellCheckingExemption | DeletedAutocorrection | DictationAlternatives)
 #else
-            : MarkerTypes(Spelling | Grammar | TextMatch | Replacement | CorrectionIndicator | RejectedCorrection | Autocorrected | SpellCheckingExemption | DeletedAutocorrection | DictationAlternatives | DictationPhraseWithAlternatives | DictationResult)
+            : MarkerTypes(Spelling | Grammar | TextMatch | Replacement | CorrectionIndicator | RejectedCorrection | Autocorrected | SpellCheckingExemption | DeletedAutocorrection | DictationAlternatives | TelephoneNumber)
+#endif // !ENABLE(TELEPHONE_NUMBER_DETECTION)
+#else
+            : MarkerTypes(Spelling | Grammar | TextMatch | Replacement | CorrectionIndicator | RejectedCorrection | Autocorrected | SpellCheckingExemption | DeletedAutocorrection | DictationAlternatives | TelephoneNumber | DictationPhraseWithAlternatives | DictationResult)
 #endif // !PLATFORM(IOS)
         {
         }

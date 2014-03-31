@@ -173,6 +173,11 @@ private:
     void paintSelection(GraphicsContext*, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, Color textColor);
     void paintDocumentMarker(GraphicsContext*, const FloatPoint& boxOrigin, DocumentMarker*, const RenderStyle&, const Font&, bool grammar);
     void paintTextMatchMarker(GraphicsContext*, const FloatPoint& boxOrigin, DocumentMarker*, const RenderStyle&, const Font&);
+
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+    void paintTelephoneNumberMarker(GraphicsContext*, const FloatPoint& boxOrigin, DocumentMarker*, const RenderStyle&, const Font&);
+#endif
+
     void computeRectForReplacementMarker(DocumentMarker*, const RenderStyle&, const Font&);
 
     TextRun::ExpansionBehavior expansionBehavior() const

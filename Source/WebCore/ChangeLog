@@ -1,3 +1,32 @@
+2014-03-31  Brady Eidson  <beidson@apple.com>
+
+        Add variant of phone number parsing that use DocumentMarker in the current selection
+        <rdar://problem/16379566> and https://bugs.webkit.org/show_bug.cgi?id=130917
+
+        Reviewed by Darin Adler.
+
+        * dom/DocumentMarker.h:
+        (WebCore::DocumentMarker::AllMarkers::AllMarkers): Add a new TelephoneNumber document marker type.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::respondToChangedSelection):
+        (WebCore::Editor::scanSelectionForTelephoneNumbers): TextIterate over the selected range looking for numbers.
+        (WebCore::Editor::scanRangeForTelephoneNumbers): Scan the given range for a telephone number,
+          adding the DocumentMarker to any that are found.
+        (WebCore::Editor::clearDataDetectedTelephoneNumbers):
+        * editing/Editor.h:
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processCharacterBufferForInBody): Only linkify on iOS.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintTelephoneNumberMarker): Placeholder UI while the feature is developed.
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+        * rendering/InlineTextBox.h:
+
+        * testing/Internals.cpp:
+        (WebCore::markerTypesFrom):
+
 2014-03-31  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Hook up scroll events for accelerated overflow:scroll
