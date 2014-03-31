@@ -1,3 +1,15 @@
+2014-03-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Addressing reviewing comments for r166491 that I forgot
+        to address before landing.
+
+        * html/FormController.cpp:
+        (WebCore::SavedFormState::deserialize): No need to move the std::unique_ptr
+        object on the way out.
+        (WebCore::FormController::createSavedFormStateMap): FormKeyGenerator can be
+        allocated on the stack.
+        (WebCore::FormController::formStatesFromStateVector): Use auto.
+
 2014-03-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use GMainLoopSource for idle and timeout sources in WebCore

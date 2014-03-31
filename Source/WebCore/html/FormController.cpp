@@ -216,7 +216,7 @@ std::unique_ptr<SavedFormState> SavedFormState::deserialize(const Vector<String>
             return nullptr;
         savedFormState->appendControlState(name, type, state);
     }
-    return std::move(savedFormState);
+    return savedFormState;
 }
 
 void SavedFormState::serializeTo(Vector<String>& stateVector) const
@@ -396,13 +396,13 @@ static String formStateSignature()
 
 std::unique_ptr<FormController::SavedFormStateMap> FormController::createSavedFormStateMap(const FormElementListHashSet& controlList)
 {
-    auto keyGenerator = std::make_unique<FormKeyGenerator>();
+    FormKeyGenerator keyGenerator;
     auto stateMap = std::make_unique<SavedFormStateMap>();
     for (FormElementListHashSet::const_iterator it = controlList.begin(); it != controlList.end(); ++it) {
         HTMLFormControlElementWithState* control = it->get();
         if (!control->shouldSaveAndRestoreFormControlState())
             continue;
-        auto& formState = stateMap->add(keyGenerator->formKey(*control).impl(), nullptr).iterator->value;
+        auto& formState = stateMap->add(keyGenerator.formKey(*control).impl(), nullptr).iterator->value;
         if (!formState)
             formState = std::make_unique<SavedFormState>();
         formState->appendControlState(control->name(), control->type(), control->saveFormControlState());
@@ -456,7 +456,7 @@ void FormController::formStatesFromStateVector(const Vector<String>& stateVector
 
     while (i + 1 < stateVector.size()) {
         AtomicString formKey = stateVector[i++];
-        std::unique_ptr<SavedFormState> state = SavedFormState::deserialize(stateVector, i);
+        auto state = SavedFormState::deserialize(stateVector, i);
         if (!state) {
             i = 0;
             break;
