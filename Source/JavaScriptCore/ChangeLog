@@ -1,3 +1,17 @@
+2014-03-31  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [CMake] Stop checking for WTF_USE_ICU_UNICODE.
+        https://bugs.webkit.org/show_bug.cgi?id=130965
+
+        Reviewed by Martin Robinson.
+
+        This is somewhat of a follow-up to r162782, which got rid of
+        WTF_USE_ICU_UNICODE in CMake but did not remove the check in JSC's
+        CMakeLists.txt. This meant the includes and libraries were not
+        being properly included since then.
+
+        * CMakeLists.txt:
+
 2014-03-31  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         Remove hostThisRegister() and hostThisValue()

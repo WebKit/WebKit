@@ -27,6 +27,7 @@ set(JavaScriptCore_INCLUDE_DIRECTORIES
     "${WTF_DIR}"
     "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
     "${CMAKE_SOURCE_DIR}/Source"
+    ${ICU_INCLUDE_DIRS}
 )
 
 set(JavaScriptCore_SOURCES
@@ -528,16 +529,8 @@ set(JavaScriptCore_LUT_FILES
 
 set(JavaScriptCore_LIBRARIES
     WTF
+    ${ICU_I18N_LIBRARIES}
 )
-
-if (WTF_USE_ICU_UNICODE)
-    list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
-        ${ICU_INCLUDE_DIRS}
-    )
-    list(APPEND JavaScriptCore_LIBRARIES
-        ${ICU_I18N_LIBRARIES}
-    )
-endif ()
 
 if (WTF_USE_UDIS86)
     set(UDIS_GEN_DEP
