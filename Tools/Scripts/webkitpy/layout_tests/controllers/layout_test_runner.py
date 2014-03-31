@@ -305,7 +305,7 @@ class Worker(object):
         start = time.time()
         self._caller.post('started_test', test_input, test_timeout_sec)
 
-        result = self._run_test_with_timeout(test_input, test_timeout_sec, stop_when_done)
+        result = self._run_test_with_or_without_timeout(test_input, test_timeout_sec, stop_when_done)
         result.shard_name = shard_name
         result.worker_name = self._name
         result.total_run_time = time.time() - start
@@ -345,7 +345,7 @@ class Worker(object):
             _log.debug("%s killing driver" % self._name)
             driver.stop()
 
-    def _run_test_with_timeout(self, test_input, timeout, stop_when_done):
+    def _run_test_with_or_without_timeout(self, test_input, timeout, stop_when_done):
         if self._options.run_singly:
             return self._run_test_in_another_thread(test_input, timeout, stop_when_done)
         return self._run_test_in_this_thread(test_input, stop_when_done)
@@ -384,7 +384,7 @@ class Worker(object):
         """
         worker = self
 
-        driver = self._port.create_driver(self._worker_number)
+        driver = self._port.create_driver(self._worker_number, self._options.no_timeout)
 
         class SingleTestThread(threading.Thread):
             def __init__(self):
@@ -428,7 +428,7 @@ class Worker(object):
         if self._driver and self._driver.has_crashed():
             self._kill_driver()
         if not self._driver:
-            self._driver = self._port.create_driver(self._worker_number)
+            self._driver = self._port.create_driver(self._worker_number, self._options.no_timeout)
         return self._run_single_test(self._driver, test_input, stop_when_done)
 
     def _run_single_test(self, driver, test_input, stop_when_done):

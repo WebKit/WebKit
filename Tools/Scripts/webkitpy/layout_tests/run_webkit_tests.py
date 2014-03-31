@@ -281,6 +281,7 @@ def parse_args(args):
             help="Output per-test profile information."),
         optparse.make_option("--profiler", action="store",
             help="Output per-test profile information, using the specified profiler."),
+        optparse.make_option("--no-timeout", action="store_true", default=False, help="Disable test timeouts"),
     ]))
 
     option_group_definitions.append(("Miscellaneous Options", [

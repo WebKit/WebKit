@@ -1,3 +1,19 @@
+2014-03-31  Jozsef Berta  <jberta.u-szeged@partner.samsung.com>
+
+        run-webkit-tests should have a --no-timeout option
+        https://bugs.webkit.org/show_bug.cgi?id=128286
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (Worker._run_test): Renaming _run_test_with_timeout()
+        (Worker._run_test_with_or_without_timeout): Renaming _run_test_with_timeout(), because tests can now run without timeout.
+        (Worker._run_test_in_another_thread): Passing the --no-timeout option to the driver
+        (Worker._run_test_in_this_thread):
+        (Worker._run_test_with_timeout): Deleted.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args): Added the --no-timeout option
+
 2014-03-31  Samuel White  <samuel_white@apple.com>
 
         AX: Need ability to get line range for text marker.
