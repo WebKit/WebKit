@@ -46,7 +46,7 @@ EncodedJSValue JSC_HOST_CALL APICallbackFunction::call(ExecState* exec)
 {
     JSContextRef execRef = toRef(exec);
     JSObjectRef functionRef = toRef(exec->callee());
-    JSObjectRef thisObjRef = toRef(jsCast<JSObject*>(exec->hostThisValue().toThis(exec, NotStrictMode)));
+    JSObjectRef thisObjRef = toRef(jsCast<JSObject*>(exec->thisValue().toThis(exec, NotStrictMode)));
 
     int argumentCount = static_cast<int>(exec->argumentCount());
     Vector<JSValueRef, 16> arguments;

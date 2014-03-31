@@ -73,7 +73,7 @@ bool BooleanPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, Pro
 EncodedJSValue JSC_HOST_CALL booleanProtoFuncToString(ExecState* exec)
 {
     VM* vm = &exec->vm();
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     if (thisValue == jsBoolean(false))
         return JSValue::encode(vm->smallStrings.falseString());
 
@@ -92,7 +92,7 @@ EncodedJSValue JSC_HOST_CALL booleanProtoFuncToString(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL booleanProtoFuncValueOf(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     if (thisValue.isBoolean())
         return JSValue::encode(thisValue);
 

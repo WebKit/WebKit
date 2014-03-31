@@ -67,7 +67,7 @@ bool NamePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, Proper
 
 EncodedJSValue JSC_HOST_CALL privateNameProtoFuncToString(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
         return throwVMTypeError(exec);
 

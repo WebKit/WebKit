@@ -1,3 +1,15 @@
+2014-03-31  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        Remove hostThisRegister() and hostThisValue()
+        https://bugs.webkit.org/show_bug.cgi?id=130895
+
+        Reviewed by Geoffrey Garen.
+
+        Removed hostThisRegister() and hostThisValue() and instead use thisArgumentOffset() and thisValue() respectively.
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+        (WebKit::callMethod):
+
 2014-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add support for GTK3 plugins

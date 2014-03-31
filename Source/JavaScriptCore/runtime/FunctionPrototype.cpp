@@ -102,7 +102,7 @@ static inline void insertSemicolonIfNeeded(String& functionBody, bool bodyInclud
 
 EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     if (thisValue.inherits(JSFunction::info())) {
         JSFunction* function = jsCast<JSFunction*>(thisValue);
         if (function->isHostOrBuiltinFunction())
@@ -127,7 +127,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState* exec)
     JSGlobalObject* globalObject = exec->callee()->globalObject();
 
     // Let Target be the this value.
-    JSValue target = exec->hostThisValue();
+    JSValue target = exec->thisValue();
 
     // If IsCallable(Target) is false, throw a TypeError exception.
     CallData callData;

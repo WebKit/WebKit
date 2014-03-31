@@ -264,10 +264,6 @@ namespace JSC  {
 
         static int offsetFor(size_t argumentCountIncludingThis) { return argumentCountIncludingThis + JSStack::ThisArgument - 1; }
 
-        // FIXME: Remove these.
-        int hostThisRegister() { return thisArgumentOffset(); }
-        JSValue hostThisValue() { return thisValue(); }
-
         static CallFrame* noCaller() { return 0; }
 
         bool isVMEntrySentinel() const

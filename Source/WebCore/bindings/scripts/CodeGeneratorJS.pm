@@ -2706,15 +2706,15 @@ sub GenerateImplementation
                 }
             } else {
                 if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
-                    push(@implContent, "    $className* castedThis = to${className}(exec->hostThisValue().toThis(exec, NotStrictMode));\n");
+                    push(@implContent, "    $className* castedThis = to${className}(exec->thisValue().toThis(exec, NotStrictMode));\n");
                     push(@implContent, "    if (UNLIKELY(!castedThis))\n");
                     push(@implContent, "        return throwVMTypeError(exec);\n");
                 } elsif ($interface->extendedAttributes->{"WorkerGlobalScope"}) {
-                    push(@implContent, "    $className* castedThis = to${className}(exec->hostThisValue().toThis(exec, NotStrictMode));\n");
+                    push(@implContent, "    $className* castedThis = to${className}(exec->thisValue().toThis(exec, NotStrictMode));\n");
                     push(@implContent, "    if (UNLIKELY(!castedThis))\n");
                     push(@implContent, "        return throwVMTypeError(exec);\n");
                 } else {
-                    push(@implContent, "    JSValue thisValue = exec->hostThisValue();\n");
+                    push(@implContent, "    JSValue thisValue = exec->thisValue();\n");
                     push(@implContent, "    $className* castedThis = jsDynamicCast<$className*>(thisValue);\n");
                     my $domFunctionName = $function->signature->name;
                     push(@implContent, "    if (UNLIKELY(!castedThis))\n");

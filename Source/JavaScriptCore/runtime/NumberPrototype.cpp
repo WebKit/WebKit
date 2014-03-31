@@ -367,7 +367,7 @@ static String toStringWithRadix(int32_t number, unsigned radix)
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
 {
     double x;
-    if (!toThisNumber(exec->hostThisValue(), x))
+    if (!toThisNumber(exec->thisValue(), x))
         return throwVMTypeError(exec);
 
     // Get the argument. 
@@ -398,7 +398,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
 {
     double x;
-    if (!toThisNumber(exec->hostThisValue(), x))
+    if (!toThisNumber(exec->thisValue(), x))
         return throwVMTypeError(exec);
 
     // Get the argument. 
@@ -431,7 +431,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
 {
     double x;
-    if (!toThisNumber(exec->hostThisValue(), x))
+    if (!toThisNumber(exec->thisValue(), x))
         return throwVMTypeError(exec);
 
     // Get the argument. 
@@ -469,7 +469,7 @@ static inline int clz(uint32_t number)
 EncodedJSValue JSC_HOST_CALL numberProtoFuncClz(ExecState* exec)
 {
     double x;
-    if (!toThisNumber(exec->hostThisValue(), x))
+    if (!toThisNumber(exec->thisValue(), x))
         return throwVMTypeError(exec);
 
     if (!std::isfinite(x))
@@ -523,7 +523,7 @@ static inline EncodedJSValue integerValueToString(ExecState* exec, int32_t radix
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
 {
     double doubleValue;
-    if (!toThisNumber(exec->hostThisValue(), doubleValue))
+    if (!toThisNumber(exec->thisValue(), doubleValue))
         return throwVMTypeError(exec);
 
     int32_t radix = extractRadixFromArgs(exec);
@@ -549,7 +549,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState* exec)
 {
     double x;
-    if (!toThisNumber(exec->hostThisValue(), x))
+    if (!toThisNumber(exec->thisValue(), x))
         return throwVMTypeError(exec);
 
     return JSValue::encode(jsNumber(x).toString(exec));
@@ -558,7 +558,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState* exec)
 {
     double x;
-    if (!toThisNumber(exec->hostThisValue(), x))
+    if (!toThisNumber(exec->thisValue(), x))
         return throwVMTypeError(exec);
     return JSValue::encode(jsNumber(x));
 }

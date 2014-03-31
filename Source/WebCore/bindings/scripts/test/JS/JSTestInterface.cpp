@@ -791,7 +791,7 @@ JSValue JSTestInterface::getConstructor(VM& vm, JSGlobalObject* globalObject)
 #if ENABLE(Condition22) || ENABLE(Condition23)
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod1(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestInterface", ".", "implementsMethod1", " on instances of ", "TestInterface"));
@@ -806,7 +806,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod1(E
 #if ENABLE(Condition22) || ENABLE(Condition23)
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestInterface", ".", "implementsMethod2", " on instances of ", "TestInterface"));
@@ -835,7 +835,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
 #if ENABLE(Condition22) || ENABLE(Condition23)
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod3(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestInterface", ".", "implementsMethod3", " on instances of ", "TestInterface"));
@@ -857,7 +857,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionImplementsMethod4
 #if ENABLE(Condition11) || ENABLE(Condition12)
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestInterface", ".", "supplementalMethod1", " on instances of ", "TestInterface"));
@@ -872,7 +872,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1
 #if ENABLE(Condition11) || ENABLE(Condition12)
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestInterface", ".", "supplementalMethod2", " on instances of ", "TestInterface"));
@@ -901,7 +901,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
 #if ENABLE(Condition11) || ENABLE(Condition12)
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod3(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestInterface", ".", "supplementalMethod3", " on instances of ", "TestInterface"));

@@ -170,7 +170,7 @@ JSValue JSTestCustomNamedGetter::getConstructor(VM& vm, JSGlobalObject* globalOb
 
 EncodedJSValue JSC_HOST_CALL jsTestCustomNamedGetterPrototypeFunctionAnotherFunction(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestCustomNamedGetter* castedThis = jsDynamicCast<JSTestCustomNamedGetter*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestCustomNamedGetter", ".", "anotherFunction", " on instances of ", "TestCustomNamedGetter"));

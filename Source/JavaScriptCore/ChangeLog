@@ -1,3 +1,176 @@
+2014-03-31  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        Remove hostThisRegister() and hostThisValue()
+        https://bugs.webkit.org/show_bug.cgi?id=130895
+
+        Reviewed by Geoffrey Garen.
+
+        Removed hostThisRegister() and hostThisValue() and instead use thisArgumentOffset() and thisValue() respectively.
+
+        * API/APICallbackFunction.h:
+        (JSC::APICallbackFunction::call):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::call):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        (Inspector::jsInjectedScriptHostPrototypeAttributeEvaluate):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionInternalConstructorName):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionIsHTMLAllCollection):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionType):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionFunctionDetails):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionGetInternalProperties):
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        (Inspector::jsJavaScriptCallFramePrototypeFunctionEvaluate):
+        (Inspector::jsJavaScriptCallFramePrototypeFunctionScopeType):
+        (Inspector::jsJavaScriptCallFrameAttributeCaller):
+        (Inspector::jsJavaScriptCallFrameAttributeSourceID):
+        (Inspector::jsJavaScriptCallFrameAttributeLine):
+        (Inspector::jsJavaScriptCallFrameAttributeColumn):
+        (Inspector::jsJavaScriptCallFrameAttributeFunctionName):
+        (Inspector::jsJavaScriptCallFrameAttributeScopeChain):
+        (Inspector::jsJavaScriptCallFrameAttributeThisObject):
+        (Inspector::jsJavaScriptCallFrameAttributeType):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::hostThisRegister): Deleted.
+        (JSC::ExecState::hostThisValue): Deleted.
+        * runtime/Arguments.cpp:
+        (JSC::argumentsFuncIterator):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::arrayProtoFuncJoin):
+        (JSC::arrayProtoFuncConcat):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSort):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::arrayProtoFuncReduce):
+        (JSC::arrayProtoFuncReduceRight):
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+        (JSC::arrayProtoFuncValues):
+        (JSC::arrayProtoFuncEntries):
+        (JSC::arrayProtoFuncKeys):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::booleanProtoFuncToString):
+        (JSC::booleanProtoFuncValueOf):
+        * runtime/ConsolePrototype.cpp:
+        (JSC::consoleLogWithLevel):
+        (JSC::consoleProtoFuncClear):
+        (JSC::consoleProtoFuncDir):
+        (JSC::consoleProtoFuncDirXML):
+        (JSC::consoleProtoFuncTable):
+        (JSC::consoleProtoFuncTrace):
+        (JSC::consoleProtoFuncAssert):
+        (JSC::consoleProtoFuncCount):
+        (JSC::consoleProtoFuncProfile):
+        (JSC::consoleProtoFuncProfileEnd):
+        (JSC::consoleProtoFuncTime):
+        (JSC::consoleProtoFuncTimeEnd):
+        (JSC::consoleProtoFuncTimeStamp):
+        (JSC::consoleProtoFuncGroup):
+        (JSC::consoleProtoFuncGroupCollapsed):
+        (JSC::consoleProtoFuncGroupEnd):
+        * runtime/DatePrototype.cpp:
+        (JSC::formateDateInstance):
+        (JSC::dateProtoFuncToISOString):
+        (JSC::dateProtoFuncToLocaleString):
+        (JSC::dateProtoFuncToLocaleDateString):
+        (JSC::dateProtoFuncToLocaleTimeString):
+        (JSC::dateProtoFuncGetTime):
+        (JSC::dateProtoFuncGetFullYear):
+        (JSC::dateProtoFuncGetUTCFullYear):
+        (JSC::dateProtoFuncGetMonth):
+        (JSC::dateProtoFuncGetUTCMonth):
+        (JSC::dateProtoFuncGetDate):
+        (JSC::dateProtoFuncGetUTCDate):
+        (JSC::dateProtoFuncGetDay):
+        (JSC::dateProtoFuncGetUTCDay):
+        (JSC::dateProtoFuncGetHours):
+        (JSC::dateProtoFuncGetUTCHours):
+        (JSC::dateProtoFuncGetMinutes):
+        (JSC::dateProtoFuncGetUTCMinutes):
+        (JSC::dateProtoFuncGetSeconds):
+        (JSC::dateProtoFuncGetUTCSeconds):
+        (JSC::dateProtoFuncGetMilliSeconds):
+        (JSC::dateProtoFuncGetUTCMilliseconds):
+        (JSC::dateProtoFuncGetTimezoneOffset):
+        (JSC::dateProtoFuncSetTime):
+        (JSC::setNewValueFromTimeArgs):
+        (JSC::setNewValueFromDateArgs):
+        (JSC::dateProtoFuncSetYear):
+        (JSC::dateProtoFuncGetYear):
+        (JSC::dateProtoFuncToJSON):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::errorProtoFuncToString):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        (JSC::functionProtoFuncBind):
+        * runtime/NamePrototype.cpp:
+        (JSC::privateNameProtoFuncToString):
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToPrecision):
+        (JSC::numberProtoFuncClz):
+        (JSC::numberProtoFuncToString):
+        (JSC::numberProtoFuncToLocaleString):
+        (JSC::numberProtoFuncValueOf):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncValueOf):
+        (JSC::objectProtoFuncHasOwnProperty):
+        (JSC::objectProtoFuncIsPrototypeOf):
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+        (JSC::objectProtoFuncPropertyIsEnumerable):
+        (JSC::objectProtoFuncToLocaleString):
+        (JSC::objectProtoFuncToString):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncTest):
+        (JSC::regExpProtoFuncExec):
+        (JSC::regExpProtoFuncCompile):
+        (JSC::regExpProtoFuncToString):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+        (JSC::stringProtoFuncToString):
+        (JSC::stringProtoFuncCharAt):
+        (JSC::stringProtoFuncCharCodeAt):
+        (JSC::stringProtoFuncConcat):
+        (JSC::stringProtoFuncIndexOf):
+        (JSC::stringProtoFuncLastIndexOf):
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+        (JSC::stringProtoFuncSlice):
+        (JSC::stringProtoFuncSplit):
+        (JSC::stringProtoFuncSubstr):
+        (JSC::stringProtoFuncSubstring):
+        (JSC::stringProtoFuncToLowerCase):
+        (JSC::stringProtoFuncToUpperCase):
+        (JSC::stringProtoFuncLocaleCompare):
+        (JSC::stringProtoFuncBig):
+        (JSC::stringProtoFuncSmall):
+        (JSC::stringProtoFuncBlink):
+        (JSC::stringProtoFuncBold):
+        (JSC::stringProtoFuncFixed):
+        (JSC::stringProtoFuncItalics):
+        (JSC::stringProtoFuncStrike):
+        (JSC::stringProtoFuncSub):
+        (JSC::stringProtoFuncSup):
+        (JSC::stringProtoFuncFontcolor):
+        (JSC::stringProtoFuncFontsize):
+        (JSC::stringProtoFuncAnchor):
+        (JSC::stringProtoFuncLink):
+        (JSC::stringProtoFuncTrim):
+        (JSC::stringProtoFuncTrimLeft):
+        (JSC::stringProtoFuncTrimRight):
+
 2014-03-28  Filip Pizlo  <fpizlo@apple.com>
 
         Land the stackmap register liveness glue with the uses of the liveness disabled

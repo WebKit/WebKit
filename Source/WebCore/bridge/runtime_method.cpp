@@ -82,7 +82,7 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec)
 
     RefPtr<Instance> instance;
 
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     if (thisValue.inherits(RuntimeObject::info())) {
         RuntimeObject* runtimeObject = static_cast<RuntimeObject*>(asObject(thisValue));
         instance = runtimeObject->getInternalInstance();

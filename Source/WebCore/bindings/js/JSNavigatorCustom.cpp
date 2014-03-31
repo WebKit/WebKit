@@ -59,7 +59,7 @@ JSValue JSNavigator::webkitGetUserMedia(ExecState* exec)
         return jsUndefined();
     }
 
-    JSNavigator* castedThis = jsDynamicCast<JSNavigator*>(exec->hostThisValue());
+    JSNavigator* castedThis = jsDynamicCast<JSNavigator*>(exec->thisValue());
     RefPtr<NavigatorUserMediaErrorCallback> errorCallback;
     if (!exec->argument(2).isUndefinedOrNull()) {
         if (!exec->uncheckedArgument(2).isFunction()) {

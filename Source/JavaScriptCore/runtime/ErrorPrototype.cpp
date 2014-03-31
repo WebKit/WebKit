@@ -72,7 +72,7 @@ bool ErrorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, Prope
 EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
 {
     // 1. Let O be the this value.
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
 
     // 2. If Type(O) is not Object, throw a TypeError exception.
     if (!thisValue.isObject())

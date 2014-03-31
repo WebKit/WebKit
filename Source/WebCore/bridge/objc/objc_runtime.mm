@@ -221,7 +221,7 @@ void ObjcFallbackObjectImp::put(JSCell*, ExecState*, PropertyName, JSValue, PutP
 
 static EncodedJSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     if (!thisValue.inherits(ObjCRuntimeObject::info()))
         return throwVMTypeError(exec);
 

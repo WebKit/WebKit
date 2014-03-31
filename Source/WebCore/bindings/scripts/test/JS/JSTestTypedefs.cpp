@@ -505,7 +505,7 @@ JSValue JSTestTypedefs::getConstructor(VM& vm, JSGlobalObject* globalObject)
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFunc(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestTypedefs", ".", "func", " on instances of ", "TestTypedefs"));
@@ -527,7 +527,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFunc(ExecState* exec
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestTypedefs", ".", "setShadow", " on instances of ", "TestTypedefs"));
@@ -568,7 +568,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(ExecState*
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithSequenceArg(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestTypedefs", ".", "methodWithSequenceArg", " on instances of ", "TestTypedefs"));
@@ -585,7 +585,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithSequenceAr
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableArrayArg(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestTypedefs", ".", "nullableArrayArg", " on instances of ", "TestTypedefs"));
@@ -602,7 +602,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableArrayArg(Exe
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestTypedefs", ".", "funcWithClamp", " on instances of ", "TestTypedefs"));
@@ -639,7 +639,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecSt
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionImmutablePointFunction(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestTypedefs", ".", "immutablePointFunction", " on instances of ", "TestTypedefs"));
@@ -651,7 +651,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionImmutablePointFuncti
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestTypedefs", ".", "stringArrayFunction", " on instances of ", "TestTypedefs"));
@@ -671,7 +671,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction(
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction2(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestTypedefs", ".", "stringArrayFunction2", " on instances of ", "TestTypedefs"));
@@ -691,7 +691,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction2
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresInclude(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestTypedefs", ".", "callWithSequenceThatRequiresInclude", " on instances of ", "TestTypedefs"));
@@ -708,7 +708,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionCallWithSequenceThat
 
 EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithException(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestTypedefs", ".", "methodWithException", " on instances of ", "TestTypedefs"));

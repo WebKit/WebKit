@@ -143,7 +143,7 @@ JSValue JSTestMediaQueryListListener::getConstructor(VM& vm, JSGlobalObject* glo
 
 EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestMediaQueryListListener* castedThis = jsDynamicCast<JSTestMediaQueryListListener*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestMediaQueryListListener", ".", "method", " on instances of ", "TestMediaQueryListListener"));

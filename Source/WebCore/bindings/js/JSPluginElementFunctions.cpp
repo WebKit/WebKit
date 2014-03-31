@@ -154,7 +154,7 @@ static EncodedJSValue JSC_HOST_CALL callPlugin(ExecState* exec)
     ASSERT(callType == CallTypeHost);
 
     // Call the object.
-    JSValue result = call(exec, scriptObject, callType, callData, exec->hostThisValue(), argumentList);
+    JSValue result = call(exec, scriptObject, callType, callData, exec->thisValue(), argumentList);
     return JSValue::encode(result);
 }
 

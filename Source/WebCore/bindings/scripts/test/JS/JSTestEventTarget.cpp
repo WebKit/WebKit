@@ -210,7 +210,7 @@ JSValue JSTestEventTarget::getConstructor(VM& vm, JSGlobalObject* globalObject)
 
 EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestEventTarget* castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestEventTarget", ".", "item", " on instances of ", "TestEventTarget"));
@@ -231,7 +231,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* e
 
 EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionAddEventListener(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestEventTarget* castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestEventTarget", ".", "addEventListener", " on instances of ", "TestEventTarget"));
@@ -246,7 +246,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionAddEventListener(
 
 EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionRemoveEventListener(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestEventTarget* castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestEventTarget", ".", "removeEventListener", " on instances of ", "TestEventTarget"));
@@ -261,7 +261,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionRemoveEventListen
 
 EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionDispatchEvent(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     JSTestEventTarget* castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestEventTarget", ".", "dispatchEvent", " on instances of ", "TestEventTarget"));

@@ -251,7 +251,7 @@ JSValue JSFloat64Array::getConstructor(ExecState* exec, JSGlobalObject* globalOb
 
 EncodedJSValue JSC_HOST_CALL jsFloat64ArrayPrototypeFunctionFoo(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     if (!thisValue.inherits(JSFloat64Array::info()))
         return throwVMTypeError(exec);
     JSFloat64Array* castedThis = jsCast<JSFloat64Array*>(asObject(thisValue));
@@ -269,7 +269,7 @@ EncodedJSValue JSC_HOST_CALL jsFloat64ArrayPrototypeFunctionFoo(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL jsFloat64ArrayPrototypeFunctionSet(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
+    JSValue thisValue = exec->thisValue();
     if (!thisValue.inherits(JSFloat64Array::info()))
         return throwVMTypeError(exec);
     JSFloat64Array* castedThis = jsCast<JSFloat64Array*>(asObject(thisValue));

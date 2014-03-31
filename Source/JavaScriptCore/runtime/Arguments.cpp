@@ -377,7 +377,7 @@ void Arguments::tearOff(CallFrame* callFrame, InlineCallFrame* inlineCallFrame)
     
 EncodedJSValue JSC_HOST_CALL argumentsFuncIterator(ExecState* exec)
 {
-    JSObject* thisObj = exec->hostThisValue().toThis(exec, StrictMode).toObject(exec);
+    JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
     Arguments* arguments = jsDynamicCast<Arguments*>(thisObj);
     if (!arguments)
         return JSValue::encode(throwTypeError(exec, "Attempted to use Arguments iterator on non-Arguments object"));

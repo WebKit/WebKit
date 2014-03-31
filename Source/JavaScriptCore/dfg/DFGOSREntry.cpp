@@ -130,7 +130,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
         
         JSValue value;
         if (!argument)
-            value = exec->hostThisValue();
+            value = exec->thisValue();
         else
             value = exec->argument(argument - 1);
         
