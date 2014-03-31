@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if USE(SOUP)
+
 #include "URL.h"
 
 #include <libsoup/soup.h>
@@ -61,3 +64,5 @@ GUniquePtr<SoupURI> URL::createSoupURI() const
 }
 
 } // namespace WebCore
+
+#endif

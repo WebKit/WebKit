@@ -54,7 +54,9 @@
 #include <libsoup/soup.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#if !COMPILER(MSVC)
 #include <unistd.h>
+#endif
 #include <wtf/CurrentTime.h>
 #include <wtf/SHA1.h>
 #include <wtf/gobject/GRefPtr.h>

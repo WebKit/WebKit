@@ -334,6 +334,12 @@
     <Filter Include="platform\network\soup">
       <UniqueIdentifier>{f9947de2-8c4a-4e86-a0db-828f03ada050}</UniqueIdentifier>
     </Filter>
+    <Filter Include="loader\soup">
+      <UniqueIdentifier>{44cc9774-577c-48d5-b098-4f208cf92032}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\soup">
+      <UniqueIdentifier>{b353479a-a6bf-41ad-b655-876165789b99}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DerivedSources.cpp">
@@ -7075,6 +7081,18 @@
     </ClCompile>
     <ClCompile Include="..\platform\network\soup\SynchronousLoaderClientSoup.cpp">
       <Filter>platform\network\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\loader\soup\CachedRawResourceSoup.cpp">
+      <Filter>loader\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\loader\soup\SubresourceLoaderSoup.cpp">
+      <Filter>loader\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\soup\SharedBufferSoup.cpp">
+      <Filter>platform\soup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\soup\URLSoup.cpp">
+      <Filter>platform\soup</Filter>
     </ClCompile>
     <ClCompile Include="..\html\track\VTTRegion.cpp">
       <Filter>html\track</Filter>

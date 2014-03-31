@@ -1,3 +1,24 @@
+2014-03-31  Alex Christensen  <achristensen@webkit.org>
+
+        Preparation for using Soup on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=130615
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        Added Soup source files in WinCairo build.
+        * loader/soup/CachedRawResourceSoup.cpp:
+        * loader/soup/SubresourceLoaderSoup.cpp:
+        * platform/soup/SharedBufferSoup.cpp:
+        * platform/soup/URLSoup.cpp:
+        * platform/network/NetworkStorageSessionStub.cpp:
+        Only build if USE(SOUP) to prevent building when USE(CURL) is true.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        Only include unistd.h in non-Visual Studio builds.
+        This would normally be done with a HAVE_UNISTD_H macro when compiling glib and Soup,
+        but that would need to be left undefined for Visual Studio.
+
 2014-03-31  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Addressing reviewing comments for r166491 that I forgot

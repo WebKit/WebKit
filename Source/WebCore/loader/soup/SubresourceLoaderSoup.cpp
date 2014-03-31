@@ -17,6 +17,9 @@
  */
 
 #include "config.h"
+
+#if USE(SOUP)
+
 #include "SubresourceLoader.h"
 
 #include "CachedResource.h"
@@ -29,3 +32,5 @@ char* SubresourceLoader::getOrCreateReadBuffer(size_t requestedLength, size_t& a
 }
 
 } // namespace WebCore
+
+#endif

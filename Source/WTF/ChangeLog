@@ -1,3 +1,16 @@
+2014-03-31  Alex Christensen  <achristensen@webkit.org>
+
+        Preparation for using Soup on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=130615
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        Add all gobject source files in WinCairo build.
+        * wtf/gobject/GRefPtr.h:
+        Export refGPtr and derefGPtr overloads in WTF.dll to fix linker errors with WebKit.dll when using soup.
+
 2014-03-31  Zan Dobersek  <zdobersek@igalia.com>
 
         Use std::unique_ptr in WTF::CompressedVector, WTF::GenericCompressedData

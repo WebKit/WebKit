@@ -203,24 +203,24 @@ template <typename T> GRefPtr<T> adoptGRef(T* p)
     return GRefPtr<T>(p, GRefPtrAdopt);
 }
 
-template <> GHashTable* refGPtr(GHashTable* ptr);
-template <> void derefGPtr(GHashTable* ptr);
-template <> GMainContext* refGPtr(GMainContext* ptr);
-template <> void derefGPtr(GMainContext* ptr);
-template <> GMainLoop* refGPtr(GMainLoop* ptr);
-template <> void derefGPtr(GMainLoop* ptr);
-template <> GVariant* refGPtr(GVariant* ptr);
-template <> void derefGPtr(GVariant* ptr);
-template <> GSource* refGPtr(GSource* ptr);
-template <> void derefGPtr(GSource* ptr);
-template <> GPtrArray* refGPtr(GPtrArray*);
-template <> void derefGPtr(GPtrArray*);
-template <> GByteArray* refGPtr(GByteArray*);
-template <> void derefGPtr(GByteArray*);
-template <> GBytes* refGPtr(GBytes*);
-template <> void derefGPtr(GBytes*);
-template <> GClosure* refGPtr(GClosure*);
-template <> void derefGPtr(GClosure*);
+template <> WTF_EXPORT_PRIVATE GHashTable* refGPtr(GHashTable* ptr);
+template <> WTF_EXPORT_PRIVATE void derefGPtr(GHashTable* ptr);
+template <> WTF_EXPORT_PRIVATE GMainContext* refGPtr(GMainContext* ptr);
+template <> WTF_EXPORT_PRIVATE void derefGPtr(GMainContext* ptr);
+template <> WTF_EXPORT_PRIVATE GMainLoop* refGPtr(GMainLoop* ptr);
+template <> WTF_EXPORT_PRIVATE void derefGPtr(GMainLoop* ptr);
+template <> WTF_EXPORT_PRIVATE GVariant* refGPtr(GVariant* ptr);
+template <> WTF_EXPORT_PRIVATE void derefGPtr(GVariant* ptr);
+template <> WTF_EXPORT_PRIVATE GSource* refGPtr(GSource* ptr);
+template <> WTF_EXPORT_PRIVATE void derefGPtr(GSource* ptr);
+template <> WTF_EXPORT_PRIVATE GPtrArray* refGPtr(GPtrArray*);
+template <> WTF_EXPORT_PRIVATE void derefGPtr(GPtrArray*);
+template <> WTF_EXPORT_PRIVATE GByteArray* refGPtr(GByteArray*);
+template <> WTF_EXPORT_PRIVATE void derefGPtr(GByteArray*);
+template <> WTF_EXPORT_PRIVATE GBytes* refGPtr(GBytes*);
+template <> WTF_EXPORT_PRIVATE void derefGPtr(GBytes*);
+template <> WTF_EXPORT_PRIVATE GClosure* refGPtr(GClosure*);
+template <> WTF_EXPORT_PRIVATE void derefGPtr(GClosure*);
 
 template <typename T> inline T* refGPtr(T* ptr)
 {

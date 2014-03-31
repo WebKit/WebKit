@@ -17,6 +17,9 @@
  */
 
 #include "config.h"
+
+#if USE(SOUP)
+
 #include "SharedBuffer.h"
 
 #include "PurgeableBuffer.h"
@@ -77,3 +80,5 @@ unsigned SharedBuffer::platformDataSize() const
 }
 
 } // namespace WebCore
+
+#endif

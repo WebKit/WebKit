@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if !USE(SOUP)
+
 #include "NetworkStorageSession.h"
 
 #include "NetworkingContext.h"
@@ -62,3 +65,5 @@ void NetworkStorageSession::switchToNewTestingSession()
 }
 
 }
+
+#endif
