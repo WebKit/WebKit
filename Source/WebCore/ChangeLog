@@ -1,3 +1,14 @@
+2014-03-31  Tim Horton  <timothy_horton@apple.com>
+
+        Allocate IOSurfaces with the same cache mode that CoreAnimation uses
+        https://bugs.webkit.org/show_bug.cgi?id=130982
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/cocoa/IOSurface.mm:
+        (IOSurface::IOSurface):
+        CA uses kIOMapWriteCombineCache for IOSurfaces allocated on iOS.
+
 2014-03-31  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Blend mode property is propagated to multiple GraphicLayers

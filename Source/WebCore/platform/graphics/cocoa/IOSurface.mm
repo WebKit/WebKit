@@ -88,7 +88,10 @@ IOSurface::IOSurface(IntSize size, ColorSpace colorSpace)
         (id)kIOSurfacePixelFormat: @(pixelFormat),
         (id)kIOSurfaceBytesPerElement: @(bytesPerElement),
         (id)kIOSurfaceBytesPerRow: @(bytesPerRow),
-        (id)kIOSurfaceAllocSize: @(m_totalBytes)
+        (id)kIOSurfaceAllocSize: @(m_totalBytes),
+#if PLATFORM(IOS)
+        (id)kIOSurfaceCacheMode: @(kIOMapWriteCombineCache)
+#endif
     };
 
     m_surface = adoptCF(IOSurfaceCreate((CFDictionaryRef)options));
