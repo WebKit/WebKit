@@ -1,3 +1,18 @@
+2014-03-31  Andrei Bucur  <abucur@adobe.com>
+
+        Wrong layout while animating content in regions
+        https://bugs.webkit.org/show_bug.cgi?id=125086
+
+        Reviewed by David Hyatt.
+
+        The region to layer and regions to layer mappings should be cleared when the region chain changes.
+
+        Test: fast/regions/layers/region-removed-during-animation.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::invalidateRegions): Clear the two maps and flag them for recomputation.
+        (WebCore::RenderFlowThread::cachedRegionForCompositedLayer): Assert that the returned region exists.
+
 2014-03-31  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         Remove hostThisRegister() and hostThisValue()

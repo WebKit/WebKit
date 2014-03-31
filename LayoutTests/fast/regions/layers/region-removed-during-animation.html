@@ -1,0 +1,60 @@
+<html>
+<head>
+    <style>
+    .region {
+        -webkit-flow-from: flow;
+        width: 100px;
+    }
+    .content {
+        -webkit-flow-into: flow;
+        width: 100px;
+        height: 100px;
+        background-color: green;
+
+        -webkit-animation-name: spin;
+        -webkit-animation-duration: 0.1s;
+        -webkit-animation-timing-function: linear;
+    }
+    @-webkit-keyframes spin {
+        from { -webkit-transform: rotateX(0deg); }
+        to   { -webkit-transform: rotateX(180deg); }
+    }
+    </style>
+</head>
+<body>
+    <p>Test for the bug <a href="https://bugs.webkit.org/show_bug.cgi?id=125086">125086</a>.</p>
+    <p>You should see a green square scaling down and back. During the animation, it should shift to the left.</p>
+    <div id="region" class="region"></div>
+    <div id="content" class="content"></div>
+    <script type="text/javascript">
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        var r = document.getElementById("region");
+        function remover() {
+            document.body.removeChild(r);
+            setTimeout(adder, 20);
+        }
+
+        function adder() {
+            r.style.position = "relative";
+            r.style.left = "300px";
+            document.body.appendChild(r);
+        }
+
+        function animation_end() {
+            setTimeout(done, 50);
+        }
+
+        function done() {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        var content = document.getElementById("content");
+        content.addEventListener("webkitAnimationEnd", animation_end, false);
+
+        setTimeout(remover, 20);
+    </script>
+</body>
+</html>

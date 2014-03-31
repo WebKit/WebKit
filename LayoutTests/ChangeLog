@@ -1,3 +1,16 @@
+2014-03-31  Andrei Bucur  <abucur@adobe.com>
+
+        Wrong layout while animating content in regions
+        https://bugs.webkit.org/show_bug.cgi?id=125086
+
+        Reviewed by David Hyatt.
+
+        Add a test verifying the layout and painting of animated content inside regions
+        is correct.
+
+        * fast/regions/layers/region-removed-during-animation-expected.html: Added.
+        * fast/regions/layers/region-removed-during-animation.html: Added.
+
 2014-03-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move test cases of navigator content utils in own directory

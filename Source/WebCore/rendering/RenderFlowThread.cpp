@@ -120,6 +120,11 @@ void RenderFlowThread::invalidateRegions()
     m_regionRangeMap.clear();
     m_breakBeforeToRegionMap.clear();
     m_breakAfterToRegionMap.clear();
+    if (m_layerToRegionMap)
+        m_layerToRegionMap->clear();
+    if (m_regionToLayerListMap)
+        m_regionToLayerListMap->clear();
+    m_layersToRegionMappingsDirty = true;
     setNeedsLayout();
 
     m_regionsInvalidated = true;
@@ -273,7 +278,9 @@ RenderNamedFlowFragment* RenderFlowThread::regionForCompositedLayer(RenderLayer&
 RenderNamedFlowFragment* RenderFlowThread::cachedRegionForCompositedLayer(RenderLayer& childLayer) const
 {
     ASSERT(m_layerToRegionMap);
-    return m_layerToRegionMap->get(&childLayer);
+    RenderNamedFlowFragment* namedFlowFragment = m_layerToRegionMap->get(&childLayer);
+    ASSERT(!namedFlowFragment || m_regionList.contains(namedFlowFragment));
+    return namedFlowFragment;
 }
 
 void RenderFlowThread::updateLayerToRegionMappings(RenderLayer& layer, LayerToRegionMap& layerToRegionMap, RegionToLayerListMap& regionToLayerListMap, bool& needsLayerUpdate)
