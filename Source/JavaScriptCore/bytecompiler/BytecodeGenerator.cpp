@@ -1798,6 +1798,7 @@ RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func
     emitExpressionInfo(divot, divotStart, divotEnd);
 
     // Emit call.
+    UnlinkedArrayProfile arrayProfile = newArrayProfile();
     UnlinkedValueProfile profile = emitProfiledOpcode(op_call_varargs);
     ASSERT(dst != ignoredResult());
     instructions().append(dst->index());
@@ -1805,7 +1806,7 @@ RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func
     instructions().append(thisRegister->index());
     instructions().append(arguments->index());
     instructions().append(firstFreeRegister->index());
-    instructions().append(0); // Pad to make it as big as an op_call.
+    instructions().append(arrayProfile);
     instructions().append(profile);
     if (m_shouldEmitProfileHooks) {
         emitOpcode(op_profile_did_call);
