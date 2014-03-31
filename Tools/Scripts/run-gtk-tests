@@ -58,7 +58,7 @@ class TestTimeout(Exception):
     pass
 
 class TestRunner:
-    TEST_DIRS = [ "WebKit2Gtk", "WebKitGtk", "WebKit2", "JavaScriptCore", "WTF", "WebCore",  "WebCoreGtk" ]
+    TEST_DIRS = [ "WebKit2Gtk", "WebKit2", "JavaScriptCore", "WTF", "WebCore",  "WebCoreGtk" ]
 
     SKIPPED = [
         SkippedTest("WebKitGtk/testwebinspector", "/webkit/webinspector/close-and-inspect", "Test is flaky in GTK Linux 32-bit Release bot", 82869),

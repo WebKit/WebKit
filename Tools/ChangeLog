@@ -1,3 +1,13 @@
+2014-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not run WebKit1 unit tests by default
+        https://bugs.webkit.org/show_bug.cgi?id=130968
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2014-03-31  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove scripts code only applicable to autotools
