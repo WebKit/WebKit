@@ -60,8 +60,8 @@ class WAKView;
 namespace WebCore {
 
 class HostWindow;
+class LegacyTileCache;
 class Scrollbar;
-class TileCache;
 
 class ScrollView : public Widget, public ScrollableArea {
 public:
@@ -190,7 +190,7 @@ public:
     FloatRect computeCoverageRect(double horizontalMargin, double verticalMargin) const;
 
     void setActualScrollPosition(const IntPoint&);
-    TileCache* tileCache();
+    LegacyTileCache* legacyTileCache();
 #endif
 
     // visibleContentRect().size() is computed from unscaledUnobscuredVisibleContentSize() divided by the value of visibleContentScaleFactor.

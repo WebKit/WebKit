@@ -236,7 +236,7 @@ IntSize ScrollView::platformVisibleContentSize(bool includeScrollbars) const
     return IntSize();
 }
 
-TileCache* ScrollView::tileCache()
+LegacyTileCache* ScrollView::legacyTileCache()
 {
     // Make tile cache pointer available via the main frame only. Tile cache interaction should be managed by
     // the main frame and this avoids having to add parent checks to all call sites.

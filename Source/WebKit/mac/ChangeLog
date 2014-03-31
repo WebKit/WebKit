@@ -1,3 +1,14 @@
+2014-03-31  Antti Koivisto  <antti@apple.com>
+
+        Rename TileCache to LegacyTileCache
+        https://bugs.webkit.org/show_bug.cgi?id=130986
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebView.mm:
+        (+[WebView drainLayerPool]):
+        (+[WebView _setTileCacheLayerPoolCapacity:]):
+
 2014-03-28  Darin Adler  <darin@apple.com>
 
         Fix recently-introduced off-by-one error in centerTruncateToBuffer

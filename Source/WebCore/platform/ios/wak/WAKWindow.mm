@@ -28,7 +28,7 @@
 
 #if PLATFORM(IOS)
 
-#import "TileCache.h"
+#import "LegacyTileCache.h"
 #import "WAKViewPrivate.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreThreadRun.h"
@@ -73,7 +73,7 @@ static id<OrientationProvider> gOrientationProvider;
     _frame = [_hostLayer frame];
     _screenScale = wkGetScreenScaleFactor();
     
-    _tileCache = new TileCache(self);
+    _tileCache = new LegacyTileCache(self);
 
     _frozenVisibleRect = CGRectNull;
 
@@ -484,7 +484,7 @@ static id<OrientationProvider> gOrientationProvider;
 {
     if (!_tileCache)
         return;
-    _tileCache->setTilingMode((TileCache::TilingMode)mode);
+    _tileCache->setTilingMode((LegacyTileCache::TilingMode)mode);
 }
 
 - (WAKWindowTilingMode)tilingMode
@@ -498,7 +498,7 @@ static id<OrientationProvider> gOrientationProvider;
 {
     if (!_tileCache)
         return;
-    _tileCache->setTilingDirection((TileCache::TilingDirection)tilingDirection);
+    _tileCache->setTilingDirection((LegacyTileCache::TilingDirection)tilingDirection);
 }
 
 - (WAKTilingDirection)tilingDirection
@@ -550,7 +550,7 @@ static id<OrientationProvider> gOrientationProvider;
     return _tileCache->keepsZoomedOutTiles();
 }
 
-- (TileCache*)tileCache
+- (LegacyTileCache*)tileCache
 {
     return _tileCache;
 }

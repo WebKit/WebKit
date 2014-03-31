@@ -23,43 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TileGridTile_h
-#define TileGridTile_h
+#ifndef LegacyTileLayer_h
+#define LegacyTileLayer_h
 
 #if PLATFORM(IOS)
 
-#include "IntRect.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
-
-@class TileLayer;
+#include <QuartzCore/CALayer.h>
 
 namespace WebCore {
-
-class TileGrid;
-
-// Refcount the tiles so they work nicely in vector and we know when to remove the tile layer from the parent.
-class TileGridTile : public RefCounted<TileGridTile> {
-public:
-    static PassRefPtr<TileGridTile> create(TileGrid* grid, const IntRect& rect) { return adoptRef<TileGridTile>(new TileGridTile(grid, rect)); }
-    ~TileGridTile();
-
-    TileLayer* tileLayer() const { return m_tileLayer.get(); }
-    void invalidateRect(const IntRect& rectInSurface);
-    IntRect rect() const { return m_rect; }
-    void setRect(const IntRect& tileRect);
-    void showBorder(bool);
-
-private:
-    TileGridTile(TileGrid*, const IntRect&);
-
-    TileGrid* m_tileGrid;
-    RetainPtr<TileLayer> m_tileLayer;
-    IntRect m_rect;
+class LegacyTileGrid;
 };
 
-} // namespace WebCore
+@interface LegacyTileLayer : CALayer {
+    WebCore::LegacyTileGrid* _tileGrid;
+    unsigned _paintCount;
+}
+@property (nonatomic) unsigned paintCount;
+@property (nonatomic) WebCore::LegacyTileGrid* tileGrid;
++ (LegacyTileLayer *)layerBeingPainted;
+@end
+
+@interface LegacyTileHostLayer : CALayer {
+    WebCore::LegacyTileGrid* _tileGrid;
+}
+- (id)initWithTileGrid:(WebCore::LegacyTileGrid*)tileGrid;
+@end
 
 #endif // PLATFORM(IOS)
-#endif // TileGridTile_h
+#endif // TileLayer_h

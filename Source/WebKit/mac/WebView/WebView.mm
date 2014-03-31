@@ -232,12 +232,12 @@
 #import <WebCore/FontCache.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/IconController.h>
+#import <WebCore/LegacyTileCache.h>
 #import <WebCore/NetworkStateNotifier.h>
 #import <WebCore/RuntimeApplicationChecksIOS.h>
 #import <WebCore/SQLiteDatabaseTracker.h>
 #import <WebCore/SmartReplace.h>
 #import <WebCore/TextRun.h>
-#import <WebCore/TileCache.h>
 #import <WebCore/TileControllerMemoryHandlerIOS.h>
 #import <WebCore/WAKWindow.h>
 #import <WebCore/WebCoreThread.h>
@@ -1330,7 +1330,7 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
 {
     ASSERT(WebThreadIsCurrent());
     WebKit::MemoryMeasure measurer("Memory warning: Draining layer pool.");
-    WebCore::TileCache::drainLayerPool();
+    WebCore::LegacyTileCache::drainLayerPool();
 }
 
 + (void)discardAllCompiledCode
@@ -4549,7 +4549,7 @@ static Vector<String> toStringVector(NSArray* patterns)
 
 + (void)_setTileCacheLayerPoolCapacity:(unsigned)capacity
 {
-    TileCache::setLayerPoolCapacity(capacity);
+    LegacyTileCache::setLayerPoolCapacity(capacity);
 }
 #endif // PLATFORM(IOS)
 

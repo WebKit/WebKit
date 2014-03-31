@@ -5975,8 +5975,8 @@
 		E1FF8F6C180DB5BE00132674 /* CryptoAlgorithmRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF8F6A180DB5BE00132674 /* CryptoAlgorithmRegistry.cpp */; };
 		E1FF8F6D180DB5BE00132674 /* CryptoAlgorithmRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FF8F6B180DB5BE00132674 /* CryptoAlgorithmRegistry.h */; };
 		E401C27517CE53EC00C41A35 /* ElementIteratorAssertions.h in Headers */ = {isa = PBXBuildFile; fileRef = E401C27417CE53EC00C41A35 /* ElementIteratorAssertions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E424A39E1330DF0100CF6DC9 /* TileGridTile.h in Headers */ = {isa = PBXBuildFile; fileRef = E424A39D1330DF0100CF6DC9 /* TileGridTile.h */; };
-		E424A3A01330DF1E00CF6DC9 /* TileGridTile.mm in Sources */ = {isa = PBXBuildFile; fileRef = E424A39F1330DF1E00CF6DC9 /* TileGridTile.mm */; };
+		E424A39E1330DF0100CF6DC9 /* LegacyTileGridTile.h in Headers */ = {isa = PBXBuildFile; fileRef = E424A39D1330DF0100CF6DC9 /* LegacyTileGridTile.h */; };
+		E424A3A01330DF1E00CF6DC9 /* LegacyTileGridTile.mm in Sources */ = {isa = PBXBuildFile; fileRef = E424A39F1330DF1E00CF6DC9 /* LegacyTileGridTile.mm */; };
 		E425A49A18292B840020CFCF /* CollectionIndexCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E425A49918292B840020CFCF /* CollectionIndexCache.h */; };
 		E4295FA412B0614E00D1ACE0 /* ResourceLoadPriority.h in Headers */ = {isa = PBXBuildFile; fileRef = E4295FA312B0614E00D1ACE0 /* ResourceLoadPriority.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E43105B816750F0C00DB2FB8 /* NodeTraversal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E43105B716750F0C00DB2FB8 /* NodeTraversal.cpp */; };
@@ -6057,10 +6057,10 @@
 		E4AFD00E0DAF335500F5F55C /* SMILTimeContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AFD0080DAF335400F5F55C /* SMILTimeContainer.h */; };
 		E4AFD00F0DAF335500F5F55C /* SVGSMILElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4AFD0090DAF335400F5F55C /* SVGSMILElement.cpp */; };
 		E4AFD0100DAF335500F5F55C /* SVGSMILElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AFD00A0DAF335400F5F55C /* SVGSMILElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E4B65A58132FA8E70070E7BE /* TileGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B65A57132FA8E70070E7BE /* TileGrid.h */; };
-		E4B65A5A132FAAF90070E7BE /* TileGrid.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4B65A59132FAAF90070E7BE /* TileGrid.mm */; };
-		E4B65A5C132FACB00070E7BE /* TileLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B65A5B132FACB00070E7BE /* TileLayer.h */; };
-		E4B65A5E132FADB60070E7BE /* TileLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4B65A5D132FADB60070E7BE /* TileLayer.mm */; };
+		E4B65A58132FA8E70070E7BE /* LegacyTileGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B65A57132FA8E70070E7BE /* LegacyTileGrid.h */; };
+		E4B65A5A132FAAF90070E7BE /* LegacyTileGrid.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4B65A59132FAAF90070E7BE /* LegacyTileGrid.mm */; };
+		E4B65A5C132FACB00070E7BE /* LegacyTileLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B65A5B132FACB00070E7BE /* LegacyTileLayer.h */; };
+		E4B65A5E132FADB60070E7BE /* LegacyTileLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4B65A5D132FADB60070E7BE /* LegacyTileLayer.mm */; };
 		E4BBED0E14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4BBED0C14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.cpp */; };
 		E4BBED0F14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = E4BBED0D14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.h */; };
 		E4BBED4C14FCDBA1003F0B98 /* StyleRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4BBED4A14FCDBA1003F0B98 /* StyleRule.cpp */; };
@@ -6069,8 +6069,8 @@
 		E4C1789B0EE6903800824D69 /* CSSSelectorList.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C178960EE6903800824D69 /* CSSSelectorList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4C279580CF9741900E97B98 /* RenderMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4C279560CF9741900E97B98 /* RenderMedia.cpp */; };
 		E4C279590CF9741900E97B98 /* RenderMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C279570CF9741900E97B98 /* RenderMedia.h */; };
-		E4C3B1FA0F0E4161009693F6 /* TileCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C3B1F90F0E4161009693F6 /* TileCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E4C3B1FC0F0E4170009693F6 /* TileCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4C3B1FB0F0E4170009693F6 /* TileCache.mm */; };
+		E4C3B1FA0F0E4161009693F6 /* LegacyTileCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C3B1F90F0E4161009693F6 /* LegacyTileCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E4C3B1FC0F0E4170009693F6 /* LegacyTileCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4C3B1FB0F0E4170009693F6 /* LegacyTileCache.mm */; };
 		E4C91A0E1802343100A17F6D /* TextPaintStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C91A0D1802343100A17F6D /* TextPaintStyle.h */; };
 		E4C91A101802343900A17F6D /* TextPaintStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4C91A0F1802343900A17F6D /* TextPaintStyle.cpp */; };
 		E4C91A16180999F100A17F6D /* RenderTextLineBoxes.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C91A15180999F100A17F6D /* RenderTextLineBoxes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6086,8 +6086,8 @@
 		E4D988B617BFEB210084FB88 /* TextNodeTraversal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4D988B517BFEB210084FB88 /* TextNodeTraversal.cpp */; };
 		E4DEAA1717A93DC3000E0430 /* StyleResolveTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4DEAA1517A93DC3000E0430 /* StyleResolveTree.cpp */; };
 		E4DEAA1817A93DC3000E0430 /* StyleResolveTree.h in Headers */ = {isa = PBXBuildFile; fileRef = E4DEAA1617A93DC3000E0430 /* StyleResolveTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E4E39AFB1330EFA8003AB274 /* TileLayerPool.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E39AFA1330EFA8003AB274 /* TileLayerPool.h */; };
-		E4E39AFD1330EFC6003AB274 /* TileLayerPool.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4E39AFC1330EFC5003AB274 /* TileLayerPool.mm */; };
+		E4E39AFB1330EFA8003AB274 /* LegacyTileLayerPool.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E39AFA1330EFA8003AB274 /* LegacyTileLayerPool.h */; };
+		E4E39AFD1330EFC6003AB274 /* LegacyTileLayerPool.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4E39AFC1330EFC5003AB274 /* LegacyTileLayerPool.mm */; };
 		E4E9B1191810916F003ACCDF /* SimpleLineLayoutResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E9B1181810916F003ACCDF /* SimpleLineLayoutResolver.h */; };
 		E4E9B11B18145692003ACCDF /* SimpleLineLayoutFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4E9B11A18145692003ACCDF /* SimpleLineLayoutFunctions.cpp */; };
 		E4E9B11D1814569C003ACCDF /* SimpleLineLayoutFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E9B11C1814569C003ACCDF /* SimpleLineLayoutFunctions.h */; };
@@ -13365,8 +13365,8 @@
 		E406F3FB1198307D009D59D6 /* ColorData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorData.cpp; sourceTree = "<group>"; };
 		E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertyNames.cpp; sourceTree = "<group>"; };
 		E41EA0391198374900710BC5 /* CSSValueKeywords.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueKeywords.cpp; sourceTree = "<group>"; };
-		E424A39D1330DF0100CF6DC9 /* TileGridTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileGridTile.h; path = ios/TileGridTile.h; sourceTree = "<group>"; };
-		E424A39F1330DF1E00CF6DC9 /* TileGridTile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TileGridTile.mm; path = ios/TileGridTile.mm; sourceTree = "<group>"; };
+		E424A39D1330DF0100CF6DC9 /* LegacyTileGridTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegacyTileGridTile.h; path = ios/LegacyTileGridTile.h; sourceTree = "<group>"; };
+		E424A39F1330DF1E00CF6DC9 /* LegacyTileGridTile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LegacyTileGridTile.mm; path = ios/LegacyTileGridTile.mm; sourceTree = "<group>"; };
 		E425A49918292B840020CFCF /* CollectionIndexCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionIndexCache.h; sourceTree = "<group>"; };
 		E4295FA312B0614E00D1ACE0 /* ResourceLoadPriority.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadPriority.h; sourceTree = "<group>"; };
 		E43105B716750F0C00DB2FB8 /* NodeTraversal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeTraversal.cpp; sourceTree = "<group>"; };
@@ -13456,10 +13456,10 @@
 		E4B423800CBFB73C00AF2ECE /* JSHTMLMediaElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLMediaElement.h; sourceTree = "<group>"; };
 		E4B423850CBFB73C00AF2ECE /* JSProgressEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSProgressEvent.cpp; sourceTree = "<group>"; };
 		E4B423860CBFB73C00AF2ECE /* JSProgressEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSProgressEvent.h; sourceTree = "<group>"; };
-		E4B65A57132FA8E70070E7BE /* TileGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileGrid.h; path = ios/TileGrid.h; sourceTree = "<group>"; };
-		E4B65A59132FAAF90070E7BE /* TileGrid.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TileGrid.mm; path = ios/TileGrid.mm; sourceTree = "<group>"; };
-		E4B65A5B132FACB00070E7BE /* TileLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileLayer.h; path = ios/TileLayer.h; sourceTree = "<group>"; };
-		E4B65A5D132FADB60070E7BE /* TileLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TileLayer.mm; path = ios/TileLayer.mm; sourceTree = "<group>"; };
+		E4B65A57132FA8E70070E7BE /* LegacyTileGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegacyTileGrid.h; path = ios/LegacyTileGrid.h; sourceTree = "<group>"; };
+		E4B65A59132FAAF90070E7BE /* LegacyTileGrid.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LegacyTileGrid.mm; path = ios/LegacyTileGrid.mm; sourceTree = "<group>"; };
+		E4B65A5B132FACB00070E7BE /* LegacyTileLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegacyTileLayer.h; path = ios/LegacyTileLayer.h; sourceTree = "<group>"; };
+		E4B65A5D132FADB60070E7BE /* LegacyTileLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LegacyTileLayer.mm; path = ios/LegacyTileLayer.mm; sourceTree = "<group>"; };
 		E4BBED0C14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertySetCSSStyleDeclaration.cpp; sourceTree = "<group>"; };
 		E4BBED0D14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertySetCSSStyleDeclaration.h; sourceTree = "<group>"; };
 		E4BBED4A14FCDBA1003F0B98 /* StyleRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleRule.cpp; sourceTree = "<group>"; };
@@ -13468,8 +13468,8 @@
 		E4C178960EE6903800824D69 /* CSSSelectorList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSSelectorList.h; sourceTree = "<group>"; };
 		E4C279560CF9741900E97B98 /* RenderMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMedia.cpp; sourceTree = "<group>"; };
 		E4C279570CF9741900E97B98 /* RenderMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMedia.h; sourceTree = "<group>"; };
-		E4C3B1F90F0E4161009693F6 /* TileCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileCache.h; path = ios/TileCache.h; sourceTree = "<group>"; };
-		E4C3B1FB0F0E4170009693F6 /* TileCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TileCache.mm; path = ios/TileCache.mm; sourceTree = "<group>"; };
+		E4C3B1F90F0E4161009693F6 /* LegacyTileCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegacyTileCache.h; path = ios/LegacyTileCache.h; sourceTree = "<group>"; };
+		E4C3B1FB0F0E4170009693F6 /* LegacyTileCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LegacyTileCache.mm; path = ios/LegacyTileCache.mm; sourceTree = "<group>"; };
 		E4C91A0D1802343100A17F6D /* TextPaintStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextPaintStyle.h; sourceTree = "<group>"; };
 		E4C91A0F1802343900A17F6D /* TextPaintStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextPaintStyle.cpp; sourceTree = "<group>"; };
 		E4C91A15180999F100A17F6D /* RenderTextLineBoxes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTextLineBoxes.h; sourceTree = "<group>"; };
@@ -13485,8 +13485,8 @@
 		E4D988B517BFEB210084FB88 /* TextNodeTraversal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextNodeTraversal.cpp; sourceTree = "<group>"; };
 		E4DEAA1517A93DC3000E0430 /* StyleResolveTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleResolveTree.cpp; sourceTree = "<group>"; };
 		E4DEAA1617A93DC3000E0430 /* StyleResolveTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleResolveTree.h; sourceTree = "<group>"; };
-		E4E39AFA1330EFA8003AB274 /* TileLayerPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileLayerPool.h; path = ios/TileLayerPool.h; sourceTree = "<group>"; };
-		E4E39AFC1330EFC5003AB274 /* TileLayerPool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TileLayerPool.mm; path = ios/TileLayerPool.mm; sourceTree = "<group>"; };
+		E4E39AFA1330EFA8003AB274 /* LegacyTileLayerPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegacyTileLayerPool.h; path = ios/LegacyTileLayerPool.h; sourceTree = "<group>"; };
+		E4E39AFC1330EFC5003AB274 /* LegacyTileLayerPool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LegacyTileLayerPool.mm; path = ios/LegacyTileLayerPool.mm; sourceTree = "<group>"; };
 		E4E9B1181810916F003ACCDF /* SimpleLineLayoutResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutResolver.h; sourceTree = "<group>"; };
 		E4E9B11A18145692003ACCDF /* SimpleLineLayoutFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutFunctions.cpp; sourceTree = "<group>"; };
 		E4E9B11C1814569C003ACCDF /* SimpleLineLayoutFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutFunctions.h; sourceTree = "<group>"; };
@@ -18140,18 +18140,18 @@
 				E45390AD0EAFF4B5003695C8 /* SystemMemoryIOS.cpp */,
 				44C9919D0F3D210E00586670 /* ThemeIOS.h */,
 				44C9919E0F3D210E00586670 /* ThemeIOS.mm */,
-				E4C3B1F90F0E4161009693F6 /* TileCache.h */,
-				E4C3B1FB0F0E4170009693F6 /* TileCache.mm */,
+				E4C3B1F90F0E4161009693F6 /* LegacyTileCache.h */,
+				E4C3B1FB0F0E4170009693F6 /* LegacyTileCache.mm */,
 				1F72BF08187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.cpp */,
 				1F72BF09187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.h */,
-				E4B65A57132FA8E70070E7BE /* TileGrid.h */,
-				E4B65A59132FAAF90070E7BE /* TileGrid.mm */,
-				E424A39D1330DF0100CF6DC9 /* TileGridTile.h */,
-				E424A39F1330DF1E00CF6DC9 /* TileGridTile.mm */,
-				E4B65A5B132FACB00070E7BE /* TileLayer.h */,
-				E4B65A5D132FADB60070E7BE /* TileLayer.mm */,
-				E4E39AFA1330EFA8003AB274 /* TileLayerPool.h */,
-				E4E39AFC1330EFC5003AB274 /* TileLayerPool.mm */,
+				E4B65A57132FA8E70070E7BE /* LegacyTileGrid.h */,
+				E4B65A59132FAAF90070E7BE /* LegacyTileGrid.mm */,
+				E424A39D1330DF0100CF6DC9 /* LegacyTileGridTile.h */,
+				E424A39F1330DF1E00CF6DC9 /* LegacyTileGridTile.mm */,
+				E4B65A5B132FACB00070E7BE /* LegacyTileLayer.h */,
+				E4B65A5D132FADB60070E7BE /* LegacyTileLayer.mm */,
+				E4E39AFA1330EFA8003AB274 /* LegacyTileLayerPool.h */,
+				E4E39AFC1330EFC5003AB274 /* LegacyTileLayerPool.mm */,
 				31403797124BEA7F00AF40E4 /* WebCoreMotionManager.h */,
 				31403798124BEA7F00AF40E4 /* WebCoreMotionManager.mm */,
 				44C3CFE71556BE5D00013609 /* WebCoreSystemInterfaceIOS.h */,
@@ -25955,14 +25955,14 @@
 				0F6383DE18615B29003E5DB5 /* ThreadedScrollingTree.h in Headers */,
 				E1FF57A30F01255B00891EBB /* ThreadGlobalData.h in Headers */,
 				185BCF290F3279CE000EA262 /* ThreadTimers.h in Headers */,
-				E4C3B1FA0F0E4161009693F6 /* TileCache.h in Headers */,
+				E4C3B1FA0F0E4161009693F6 /* LegacyTileCache.h in Headers */,
 				1AA7160B149BC4DB0016EC19 /* TileController.h in Headers */,
 				1F72BF0B187FD45C0009BCB3 /* TileControllerMemoryHandlerIOS.h in Headers */,
 				1AF89A421518FDEA00E547B5 /* TiledBacking.h in Headers */,
-				E4B65A58132FA8E70070E7BE /* TileGrid.h in Headers */,
-				E424A39E1330DF0100CF6DC9 /* TileGridTile.h in Headers */,
-				E4B65A5C132FACB00070E7BE /* TileLayer.h in Headers */,
-				E4E39AFB1330EFA8003AB274 /* TileLayerPool.h in Headers */,
+				E4B65A58132FA8E70070E7BE /* LegacyTileGrid.h in Headers */,
+				E424A39E1330DF0100CF6DC9 /* LegacyTileGridTile.h in Headers */,
+				E4B65A5C132FACB00070E7BE /* LegacyTileLayer.h in Headers */,
+				E4E39AFB1330EFA8003AB274 /* LegacyTileLayerPool.h in Headers */,
 				498770F31242C535002226BA /* TilingData.h in Headers */,
 				F55B3DDC1251F12D003EF269 /* TimeInputType.h in Headers */,
 				7553CFE8108F473F00EA281E /* TimelineRecordFactory.h in Headers */,
@@ -29207,13 +29207,13 @@
 				0F6383DD18615B29003E5DB5 /* ThreadedScrollingTree.cpp in Sources */,
 				E1FF57A60F01256B00891EBB /* ThreadGlobalData.cpp in Sources */,
 				185BCF280F3279CE000EA262 /* ThreadTimers.cpp in Sources */,
-				E4C3B1FC0F0E4170009693F6 /* TileCache.mm in Sources */,
+				E4C3B1FC0F0E4170009693F6 /* LegacyTileCache.mm in Sources */,
 				1AA7160A149BC4DB0016EC19 /* TileController.mm in Sources */,
 				1F72BF0A187FD4490009BCB3 /* TileControllerMemoryHandlerIOS.cpp in Sources */,
-				E4B65A5A132FAAF90070E7BE /* TileGrid.mm in Sources */,
-				E424A3A01330DF1E00CF6DC9 /* TileGridTile.mm in Sources */,
-				E4B65A5E132FADB60070E7BE /* TileLayer.mm in Sources */,
-				E4E39AFD1330EFC6003AB274 /* TileLayerPool.mm in Sources */,
+				E4B65A5A132FAAF90070E7BE /* LegacyTileGrid.mm in Sources */,
+				E424A3A01330DF1E00CF6DC9 /* LegacyTileGridTile.mm in Sources */,
+				E4B65A5E132FADB60070E7BE /* LegacyTileLayer.mm in Sources */,
+				E4E39AFD1330EFC6003AB274 /* LegacyTileLayerPool.mm in Sources */,
 				498770F21242C535002226BA /* TilingData.cpp in Sources */,
 				F55B3DDB1251F12D003EF269 /* TimeInputType.cpp in Sources */,
 				7553CFE9108F473F00EA281E /* TimelineRecordFactory.cpp in Sources */,

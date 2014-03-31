@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TileGrid_h
-#define TileGrid_h
+#ifndef LegacyTileGrid_h
+#define LegacyTileGrid_h
 
 #if PLATFORM(IOS)
 
@@ -32,7 +32,7 @@
 #include "IntPointHash.h"
 #include "IntRect.h"
 #include "IntSize.h"
-#include "TileCache.h"
+#include "LegacyTileCache.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -46,18 +46,18 @@
 
 namespace WebCore {
 
-class TileGridTile;
+class LegacyTileGridTile;
 
-class TileGrid {
-    WTF_MAKE_NONCOPYABLE(TileGrid);
+class LegacyTileGrid {
+    WTF_MAKE_NONCOPYABLE(LegacyTileGrid);
 public:
     typedef IntPoint TileIndex;
 
-    static PassOwnPtr<TileGrid> create(TileCache* cache, const IntSize& tileSize) { return adoptPtr(new TileGrid(cache, tileSize)); }
+    static PassOwnPtr<LegacyTileGrid> create(LegacyTileCache* cache, const IntSize& tileSize) { return adoptPtr(new LegacyTileGrid(cache, tileSize)); }
 
-    ~TileGrid();
+    ~LegacyTileGrid();
 
-    TileCache* tileCache() const { return m_tileCache; }
+    LegacyTileCache* tileCache() const { return m_tileCache; }
 
     CALayer *tileHostLayer() const;
     IntRect bounds() const;
@@ -68,7 +68,7 @@ public:
 
     IntRect visibleRect() const;
 
-    void createTiles(TileCache::SynchronousTileCreationMode);
+    void createTiles(LegacyTileCache::SynchronousTileCreationMode);
 
     void dropAllTiles();
     void dropInvalidTiles();
@@ -102,18 +102,18 @@ private:
 
     void addTileForIndex(const TileIndex&);
 
-    PassRefPtr<TileGridTile> tileForIndex(const TileIndex&) const;
+    PassRefPtr<LegacyTileGridTile> tileForIndex(const TileIndex&) const;
     IntRect tileRectForIndex(const TileIndex&) const;
-    PassRefPtr<TileGridTile> tileForPoint(const IntPoint&) const;
+    PassRefPtr<LegacyTileGridTile> tileForPoint(const IntPoint&) const;
     TileIndex tileIndexForPoint(const IntPoint&) const;
 
     IntRect adjustCoverRectForPageBounds(const IntRect&) const;
     bool shouldUseMinimalTileCoverage() const;
 
 private:        
-    TileGrid(TileCache*, const IntSize&);
+    LegacyTileGrid(LegacyTileCache*, const IntSize&);
 
-    TileCache* m_tileCache;
+    LegacyTileCache* m_tileCache;
     RetainPtr<CALayer> m_tileHostLayer;
 
     IntPoint m_origin;
@@ -121,7 +121,7 @@ private:
 
     float m_scale;
 
-    typedef HashMap<TileIndex, RefPtr<TileGridTile>> TileMap;
+    typedef HashMap<TileIndex, RefPtr<LegacyTileGridTile>> TileMap;
     TileMap m_tiles;
 
     IntRect m_validBounds;

@@ -1,3 +1,18 @@
+2014-03-31  Antti Koivisto  <antti@apple.com>
+
+        Rename TileCache to LegacyTileCache
+        https://bugs.webkit.org/show_bug.cgi?id=130986
+
+        Reviewed by Simon Fraser.
+
+        Rename iOS WebKit1 tile cache classes to reflect its status.
+        This also frees some good type names.
+
+        TileCache -> LegacyTileCache
+        TileGrid -> LegacyTileGrid
+        TileGridTile -> LegacyTileGridTile
+        etc.
+
 2014-03-31  Tim Horton  <timothy_horton@apple.com>
 
         Small adjustments to WebCore::IOSurface

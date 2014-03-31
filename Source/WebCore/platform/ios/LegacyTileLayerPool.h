@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TileLayerPool_h
-#define TileLayerPool_h
+#ifndef LegacyTileLayerPool_h
+#define LegacyTileLayerPool_h
 
 #if PLATFORM(IOS)
 
@@ -39,17 +39,17 @@
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
-@class TileLayer;
+@class LegacyTileLayer;
 
 namespace WebCore {
 
-class TileLayerPool {
-    WTF_MAKE_NONCOPYABLE(TileLayerPool);
+class LegacyTileLayerPool {
+    WTF_MAKE_NONCOPYABLE(LegacyTileLayerPool);
 public:
-    static TileLayerPool* sharedPool();
+    static LegacyTileLayerPool* sharedPool();
 
-    void addLayer(const RetainPtr<TileLayer>&);
-    RetainPtr<TileLayer> takeLayerWithSize(const IntSize&);
+    void addLayer(const RetainPtr<LegacyTileLayer>&);
+    RetainPtr<LegacyTileLayer> takeLayerWithSize(const IntSize&);
 
     // The maximum size of all queued layers in bytes.
     unsigned capacity() const { return m_capacity; }
@@ -61,9 +61,9 @@ public:
     static unsigned bytesBackingLayerWithPixelSize(const IntSize&);
 
 private:
-    TileLayerPool();
+    LegacyTileLayerPool();
 
-    typedef Deque<RetainPtr<TileLayer> > LayerList;
+    typedef Deque<RetainPtr<LegacyTileLayer> > LayerList;
 
     bool canReuseLayerWithSize(const IntSize& size) const { return m_capacity && !size.isEmpty(); }
     void schedulePrune();
@@ -81,7 +81,7 @@ private:
     double m_lastAddTime;
     bool m_needsPrune;
 
-    friend NeverDestroyed<TileLayerPool>;
+    friend NeverDestroyed<LegacyTileLayerPool>;
 };
 
 } // namespace WebCore

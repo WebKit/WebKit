@@ -24,17 +24,17 @@
  */
 
 #include "config.h"
-#include "TileCache.h"
+#include "LegacyTileCache.h"
 
 #if PLATFORM(IOS)
 
+#include "LegacyTileGrid.h"
+#include "LegacyTileGridTile.h"
+#include "LegacyTileLayer.h"
+#include "LegacyTileLayerPool.h"
 #include "Logging.h"
 #include "MemoryPressureHandler.h"
 #include "SystemMemory.h"
-#include "TileGrid.h"
-#include "TileGridTile.h"
-#include "TileLayer.h"
-#include "TileLayerPool.h"
 #include "WAKWindow.h"
 #include "WKGraphics.h"
 #include "WebCoreSystemInterface.h"
@@ -51,14 +51,14 @@
 - (void)_scheduleLayerFlushForPendingTileCacheRepaint;
 @end
 
-@interface TileCacheTombstone : NSObject {
+@interface LegacyTileCacheTombstone : NSObject {
     BOOL dead;
 }
 @property(getter=isDead) BOOL dead;
 
 @end
 
-@implementation TileCacheTombstone
+@implementation LegacyTileCacheTombstone
 
 @synthesize dead;
 
@@ -66,12 +66,12 @@
 
 namespace WebCore {
 
-TileCache::TileCache(WAKWindow* window)
+LegacyTileCache::LegacyTileCache(WAKWindow* window)
     : m_window(window)
     , m_keepsZoomedOutTiles(false)
     , m_hasPendingLayoutTiles(false)
     , m_hasPendingUpdateTilingMode(false)
-    , m_tombstone(adoptNS([[TileCacheTombstone alloc] init]))
+    , m_tombstone(adoptNS([[LegacyTileCacheTombstone alloc] init]))
     , m_tilingMode(Normal)
     , m_tilingDirection(TilingDirectionDown)
     , m_tileSize(512, 512)
@@ -81,44 +81,44 @@ TileCache::TileCache(WAKWindow* window)
     , m_acceleratedDrawingEnabled(false)
     , m_isSpeculativeTileCreationEnabled(true)
     , m_didCallWillStartScrollingOrZooming(false)
-    , m_zoomedOutTileGrid(PassOwnPtr<TileGrid>())
-    , m_zoomedInTileGrid(PassOwnPtr<TileGrid>())
-    , m_tileCreationTimer(this, &TileCache::tileCreationTimerFired)
+    , m_zoomedOutTileGrid(PassOwnPtr<LegacyTileGrid>())
+    , m_zoomedInTileGrid(PassOwnPtr<LegacyTileGrid>())
+    , m_tileCreationTimer(this, &LegacyTileCache::tileCreationTimerFired)
     , m_currentScale(1.f)
     , m_pendingScale(0)
     , m_pendingZoomedOutScale(0)
 {
-    m_zoomedOutTileGrid = TileGrid::create(this, m_tileSize);
+    m_zoomedOutTileGrid = LegacyTileGrid::create(this, m_tileSize);
     [hostLayer() insertSublayer:m_zoomedOutTileGrid->tileHostLayer() atIndex:0];
     hostLayerSizeChanged();
 }
 
-TileCache::~TileCache()
+LegacyTileCache::~LegacyTileCache()
 {
     [m_tombstone.get() setDead:true];
 }
 
-CGFloat TileCache::screenScale() const
+CGFloat LegacyTileCache::screenScale() const
 {
     return [m_window screenScale];
 }
 
-CALayer* TileCache::hostLayer() const
+CALayer* LegacyTileCache::hostLayer() const
 {
     return [m_window hostLayer];
 }
 
-FloatRect TileCache::visibleRectInLayer(CALayer *layer) const
+FloatRect LegacyTileCache::visibleRectInLayer(CALayer *layer) const
 {
     return [layer convertRect:[m_window extendedVisibleRect] fromLayer:hostLayer()];
 }
 
-bool TileCache::tilesOpaque() const
+bool LegacyTileCache::tilesOpaque() const
 {
     return m_tilesOpaque;
 }
     
-TileGrid* TileCache::activeTileGrid() const
+LegacyTileGrid* LegacyTileCache::activeTileGrid() const
 {
     if (!m_keepsZoomedOutTiles)
         return m_zoomedOutTileGrid.get();
@@ -129,12 +129,12 @@ TileGrid* TileCache::activeTileGrid() const
     return m_zoomedOutTileGrid.get();
 }
 
-TileGrid* TileCache::inactiveTileGrid() const
+LegacyTileGrid* LegacyTileCache::inactiveTileGrid() const
 {
     return activeTileGrid() == m_zoomedOutTileGrid ? m_zoomedInTileGrid.get() : m_zoomedOutTileGrid.get();
 }
 
-void TileCache::setTilesOpaque(bool opaque)
+void LegacyTileCache::setTilesOpaque(bool opaque)
 {
     if (m_tilesOpaque == opaque)
         return;
@@ -147,36 +147,36 @@ void TileCache::setTilesOpaque(bool opaque)
         m_zoomedInTileGrid->updateTileOpacity();
 }
 
-void TileCache::doLayoutTiles()
+void LegacyTileCache::doLayoutTiles()
 {
     if (isTileCreationSuspended())
         return;
 
     MutexLocker locker(m_tileMutex);
-    TileGrid* activeGrid = activeTileGrid();
+    LegacyTileGrid* activeGrid = activeTileGrid();
     // Even though we aren't actually creating tiles in the inactive grid, we
     // still need to drop invalid tiles in response to a layout.
     // See <rdar://problem/9839867>.
-    if (TileGrid* inactiveGrid = inactiveTileGrid())
+    if (LegacyTileGrid* inactiveGrid = inactiveTileGrid())
         inactiveGrid->dropInvalidTiles();
     if (activeGrid->checkDoSingleTileLayout())
         return;
     createTilesInActiveGrid(CoverVisibleOnly);
 }
 
-void TileCache::hostLayerSizeChanged()
+void LegacyTileCache::hostLayerSizeChanged()
 {
     m_zoomedOutTileGrid->updateHostLayerSize();
     if (m_zoomedInTileGrid)
         m_zoomedInTileGrid->updateHostLayerSize();
 }
 
-void TileCache::setKeepsZoomedOutTiles(bool keep)
+void LegacyTileCache::setKeepsZoomedOutTiles(bool keep)
 {
     m_keepsZoomedOutTiles = keep;
 }
 
-void TileCache::setCurrentScale(float scale)
+void LegacyTileCache::setCurrentScale(float scale)
 {
     ASSERT(scale > 0);
 
@@ -198,7 +198,7 @@ void TileCache::setCurrentScale(float scale)
     }
 }
 
-void TileCache::setZoomedOutScale(float scale)
+void LegacyTileCache::setZoomedOutScale(float scale)
 {
     ASSERT(scale > 0);
 
@@ -212,7 +212,7 @@ void TileCache::setZoomedOutScale(float scale)
     commitScaleChange();
 }
     
-void TileCache::commitScaleChange()
+void LegacyTileCache::commitScaleChange()
 {
     ASSERT(m_pendingZoomedOutScale || m_pendingScale);
     ASSERT(m_tilingMode != Disabled);
@@ -241,7 +241,7 @@ void TileCache::commitScaleChange()
 
     if (m_currentScale != m_zoomedOutTileGrid->scale()) {
         if (!m_zoomedInTileGrid) {
-            m_zoomedInTileGrid = TileGrid::create(this, m_tileSize);
+            m_zoomedInTileGrid = LegacyTileGrid::create(this, m_tileSize);
             [hostLayer() addSublayer:m_zoomedInTileGrid->tileHostLayer()];
             hostLayerSizeChanged();
         }
@@ -256,10 +256,10 @@ void TileCache::commitScaleChange()
     layoutTiles();
 }
 
-void TileCache::bringActiveTileGridToFront()
+void LegacyTileCache::bringActiveTileGridToFront()
 {
-    TileGrid* activeGrid = activeTileGrid();
-    TileGrid* otherGrid = inactiveTileGrid();
+    LegacyTileGrid* activeGrid = activeTileGrid();
+    LegacyTileGrid* otherGrid = inactiveTileGrid();
     if (!otherGrid)
         return;
     CALayer* frontLayer = activeGrid->tileHostLayer();
@@ -267,7 +267,7 @@ void TileCache::bringActiveTileGridToFront()
     [hostLayer() insertSublayer:frontLayer above:otherLayer];
 }
     
-void TileCache::adjustTileGridTransforms()
+void LegacyTileCache::adjustTileGridTransforms()
 {
     CALayer* zoomedOutHostLayer = m_zoomedOutTileGrid->tileHostLayer();
     float transformScale = currentScale() / zoomedOutScale();
@@ -275,13 +275,13 @@ void TileCache::adjustTileGridTransforms()
     m_zoomedOutTileGrid->updateHostLayerSize();
 }
 
-void TileCache::layoutTiles()
+void LegacyTileCache::layoutTiles()
 {
     if (m_hasPendingLayoutTiles)
         return;
     m_hasPendingLayoutTiles = true;
 
-    TileCacheTombstone *tombstone = m_tombstone.get();
+    LegacyTileCacheTombstone *tombstone = m_tombstone.get();
     WebThreadRun(^{
         if ([tombstone isDead])
             return;
@@ -290,7 +290,7 @@ void TileCache::layoutTiles()
     });
 }
 
-void TileCache::layoutTilesNow()
+void LegacyTileCache::layoutTilesNow()
 {
     ASSERT(WebThreadIsLockedOrDisabled());
 
@@ -307,7 +307,7 @@ void TileCache::layoutTilesNow()
         m_tilingMode = Minimal;
 
     MutexLocker locker(m_tileMutex);
-    TileGrid* activeGrid = activeTileGrid();
+    LegacyTileGrid* activeGrid = activeTileGrid();
     if (activeGrid->checkDoSingleTileLayout()) {
         m_tilingMode = savedTilingMode;
         return;
@@ -316,7 +316,7 @@ void TileCache::layoutTilesNow()
     m_tilingMode = savedTilingMode;
 }
 
-void TileCache::layoutTilesNowForRect(const IntRect& rect)
+void LegacyTileCache::layoutTilesNowForRect(const IntRect& rect)
 {
     ASSERT(WebThreadIsLockedOrDisabled());
     MutexLocker locker(m_tileMutex);
@@ -324,15 +324,15 @@ void TileCache::layoutTilesNowForRect(const IntRect& rect)
     activeTileGrid()->addTilesCoveringRect(rect);
 }
 
-void TileCache::removeAllNonVisibleTiles()
+void LegacyTileCache::removeAllNonVisibleTiles()
 {
     MutexLocker locker(m_tileMutex);
     removeAllNonVisibleTilesInternal();
 }
 
-void TileCache::removeAllNonVisibleTilesInternal()
+void LegacyTileCache::removeAllNonVisibleTilesInternal()
 {
-    TileGrid* activeGrid = activeTileGrid();
+    LegacyTileGrid* activeGrid = activeTileGrid();
     if (keepsZoomedOutTiles() && activeGrid == m_zoomedInTileGrid && activeGrid->hasTiles())
         m_zoomedOutTileGrid->dropAllTiles();
 
@@ -346,7 +346,7 @@ void TileCache::removeAllNonVisibleTilesInternal()
     activeGrid->dropTilesOutsideRect(activeGrid->visibleRect());
 }
 
-void TileCache::removeAllTiles()
+void LegacyTileCache::removeAllTiles()
 {
     MutexLocker locker(m_tileMutex);
     m_zoomedOutTileGrid->dropAllTiles();
@@ -354,7 +354,7 @@ void TileCache::removeAllTiles()
         m_zoomedInTileGrid->dropAllTiles();
 }
 
-void TileCache::removeForegroundTiles()
+void LegacyTileCache::removeForegroundTiles()
 {
     MutexLocker locker(m_tileMutex);
     if (!keepsZoomedOutTiles())
@@ -363,19 +363,19 @@ void TileCache::removeForegroundTiles()
         m_zoomedInTileGrid->dropAllTiles();
 }
 
-void TileCache::setContentReplacementImage(RetainPtr<CGImageRef> contentReplacementImage)
+void LegacyTileCache::setContentReplacementImage(RetainPtr<CGImageRef> contentReplacementImage)
 {
     MutexLocker locker(m_contentReplacementImageMutex);
     m_contentReplacementImage = contentReplacementImage;
 }
 
-RetainPtr<CGImageRef> TileCache::contentReplacementImage() const
+RetainPtr<CGImageRef> LegacyTileCache::contentReplacementImage() const
 {
     MutexLocker locker(m_contentReplacementImageMutex);
     return m_contentReplacementImage;
 }
 
-void TileCache::setTileBordersVisible(bool flag)
+void LegacyTileCache::setTileBordersVisible(bool flag)
 {
     if (flag == m_tileBordersVisible)
         return;
@@ -386,13 +386,13 @@ void TileCache::setTileBordersVisible(bool flag)
         m_zoomedInTileGrid->updateTileBorderVisibility();
 }
 
-void TileCache::setTilePaintCountersVisible(bool flag)
+void LegacyTileCache::setTilePaintCountersVisible(bool flag)
 {
     m_tilePaintCountersVisible = flag;
     // The numbers will show up the next time the tiles paint.
 }
 
-void TileCache::finishedCreatingTiles(bool didCreateTiles, bool createMore)
+void LegacyTileCache::finishedCreatingTiles(bool didCreateTiles, bool createMore)
 {
     // We need to ensure that all tiles are showing the same version of the content.
     if (didCreateTiles && !m_savedDisplayRects.isEmpty())
@@ -414,7 +414,7 @@ void TileCache::finishedCreatingTiles(bool didCreateTiles, bool createMore)
         m_tileCreationTimer.startOneShot(0);
 }
 
-void TileCache::tileCreationTimerFired(Timer<TileCache>*)
+void LegacyTileCache::tileCreationTimerFired(Timer<LegacyTileCache>*)
 {
     if (isTileCreationSuspended())
         return;
@@ -422,7 +422,7 @@ void TileCache::tileCreationTimerFired(Timer<TileCache>*)
     createTilesInActiveGrid(CoverSpeculative);
 }
 
-void TileCache::createTilesInActiveGrid(SynchronousTileCreationMode mode)
+void LegacyTileCache::createTilesInActiveGrid(SynchronousTileCreationMode mode)
 {
     if (memoryPressureHandler().hasReceivedMemoryPressure()) {
         LOG(MemoryPressure, "Under memory pressure at: %s", __PRETTY_FUNCTION__);
@@ -431,7 +431,7 @@ void TileCache::createTilesInActiveGrid(SynchronousTileCreationMode mode)
     activeTileGrid()->createTiles(mode);
 }
 
-unsigned TileCache::tileCapacityForGrid(TileGrid* grid)
+unsigned LegacyTileCache::tileCapacityForGrid(LegacyTileGrid* grid)
 {
     static unsigned capacity;
     if (!capacity) {
@@ -465,7 +465,7 @@ unsigned TileCache::tileCapacityForGrid(TileGrid* grid)
     return gridCapacity * 3 / 4;
 }
 
-Color TileCache::colorForGridTileBorder(TileGrid* grid) const
+Color LegacyTileCache::colorForGridTileBorder(LegacyTileGrid* grid) const
 {
     if (grid == m_zoomedOutTileGrid)
         return Color(.3f, .0f, 0.4f, 0.5f);
@@ -500,7 +500,7 @@ static bool shouldRepaintInPieces(const CGRect& dirtyRect, CGSRegionObj dirtyReg
     return wastedSpace > cWastedSpaceThreshold;
 }
 
-void TileCache::drawReplacementImage(TileLayer* layer, CGContextRef context, CGImageRef image)
+void LegacyTileCache::drawReplacementImage(LegacyTileLayer* layer, CGContextRef context, CGImageRef image)
 {
     CGContextSetRGBFillColor(context, 1, 1, 1, 1);
     CGContextFillRect(context, CGContextGetClipBoundingBox(context));
@@ -512,7 +512,7 @@ void TileCache::drawReplacementImage(TileLayer* layer, CGContextRef context, CGI
     CGContextDrawImage(context, imageRect, image);
 }
 
-void TileCache::drawWindowContent(TileLayer* layer, CGContextRef context, CGRect dirtyRect)
+void LegacyTileCache::drawWindowContent(LegacyTileLayer* layer, CGContextRef context, CGRect dirtyRect)
 {
     CGRect frame = [layer frame];
     WKFontAntialiasingStateSaver fontAntialiasingState(context, [m_window useOrientationDependentFontAntialiasing] && [layer isOpaque]);
@@ -544,7 +544,7 @@ void TileCache::drawWindowContent(TileLayer* layer, CGContextRef context, CGRect
     fontAntialiasingState.restore();
 }
 
-void TileCache::drawLayer(TileLayer* layer, CGContextRef context)
+void LegacyTileCache::drawLayer(LegacyTileLayer* layer, CGContextRef context)
 {
     // The web lock unlock observer runs after CA commit observer.
     if (!WebThreadIsLockedOrDisabled()) {
@@ -600,18 +600,18 @@ void TileCache::drawLayer(TileLayer* layer, CGContextRef context)
     [view performSelector:@selector(_dispatchTileDidDraw:) withObject:layer afterDelay:0.0];
 }
 
-void TileCache::setNeedsDisplay()
+void LegacyTileCache::setNeedsDisplay()
 {
     setNeedsDisplayInRect(IntRect(0, 0, std::numeric_limits<int>::max(), std::numeric_limits<int>::max()));
 }
 
-void TileCache::scheduleLayerFlushForPendingRepaint()
+void LegacyTileCache::scheduleLayerFlushForPendingRepaint()
 {
     WAKView* view = [m_window contentView];
     [view _scheduleLayerFlushForPendingTileCacheRepaint];
 }
 
-void TileCache::setNeedsDisplayInRect(const IntRect& dirtyRect)
+void LegacyTileCache::setNeedsDisplayInRect(const IntRect& dirtyRect)
 {
     MutexLocker locker(m_savedDisplayRectMutex);
     bool addedFirstRect = m_savedDisplayRects.isEmpty();
@@ -622,11 +622,11 @@ void TileCache::setNeedsDisplayInRect(const IntRect& dirtyRect)
     scheduleLayerFlushForPendingRepaint();
 }
 
-void TileCache::invalidateTiles(const IntRect& dirtyRect)
+void LegacyTileCache::invalidateTiles(const IntRect& dirtyRect)
 {
     ASSERT(!m_tileMutex.tryLock());
 
-    TileGrid* activeGrid = activeTileGrid();
+    LegacyTileGrid* activeGrid = activeTileGrid();
     if (!keepsZoomedOutTiles()) {
         activeGrid->invalidateTiles(dirtyRect);
         return;
@@ -656,17 +656,17 @@ void TileCache::invalidateTiles(const IntRect& dirtyRect)
     m_zoomedInTileGrid->invalidateTiles(dirtyRect);
 }
     
-bool TileCache::isTileCreationSuspended() const 
+bool LegacyTileCache::isTileCreationSuspended() const 
 {
     return (!keepsZoomedOutTiles() && m_tilingMode == Zooming) || m_tilingMode == Disabled;
 }
 
-bool TileCache::isTileInvalidationSuspended() const 
+bool LegacyTileCache::isTileInvalidationSuspended() const 
 { 
     return m_tilingMode == Zooming || m_tilingMode == Panning || m_tilingMode == ScrollToTop || m_tilingMode == Disabled; 
 }
 
-void TileCache::updateTilingMode()
+void LegacyTileCache::updateTilingMode()
 {
     ASSERT(WebThreadIsCurrent() || !WebThreadIsEnabled());
 
@@ -693,7 +693,7 @@ void TileCache::updateTilingMode()
     }
 }
 
-void TileCache::setTilingMode(TilingMode tilingMode)
+void LegacyTileCache::setTilingMode(TilingMode tilingMode)
 {
     if (tilingMode == m_tilingMode)
         return;
@@ -711,7 +711,7 @@ void TileCache::setTilingMode(TilingMode tilingMode)
         return;
     m_hasPendingUpdateTilingMode = true;
 
-    TileCacheTombstone *tombstone = m_tombstone.get();
+    LegacyTileCacheTombstone *tombstone = m_tombstone.get();
     WebThreadRun(^{
         if ([tombstone isDead])
             return;
@@ -720,27 +720,27 @@ void TileCache::setTilingMode(TilingMode tilingMode)
     });
 }
 
-void TileCache::setTilingDirection(TilingDirection tilingDirection)
+void LegacyTileCache::setTilingDirection(TilingDirection tilingDirection)
 {
     m_tilingDirection = tilingDirection;
 }
 
-TileCache::TilingDirection TileCache::tilingDirection() const
+LegacyTileCache::TilingDirection LegacyTileCache::tilingDirection() const
 {
     return m_tilingDirection;
 }
     
-float TileCache::zoomedOutScale() const
+float LegacyTileCache::zoomedOutScale() const
 {
     return m_zoomedOutTileGrid->scale();
 }
 
-float TileCache::currentScale() const
+float LegacyTileCache::currentScale() const
 {
     return m_currentScale;
 }
 
-void TileCache::doPendingRepaints()
+void LegacyTileCache::doPendingRepaints()
 {
     if (m_savedDisplayRects.isEmpty())
         return;
@@ -750,7 +750,7 @@ void TileCache::doPendingRepaints()
     flushSavedDisplayRects();
 }
 
-void TileCache::flushSavedDisplayRects()
+void LegacyTileCache::flushSavedDisplayRects()
 {
     ASSERT(!m_tileMutex.tryLock());
     ASSERT(!m_savedDisplayRects.isEmpty());
@@ -765,7 +765,7 @@ void TileCache::flushSavedDisplayRects()
         invalidateTiles(rects[n]);
 }
 
-void TileCache::setSpeculativeTileCreationEnabled(bool enabled)
+void LegacyTileCache::setSpeculativeTileCreationEnabled(bool enabled)
 {
     if (m_isSpeculativeTileCreationEnabled == enabled)
         return;
@@ -774,12 +774,12 @@ void TileCache::setSpeculativeTileCreationEnabled(bool enabled)
         m_tileCreationTimer.startOneShot(0);
 }
 
-bool TileCache::hasPendingDraw() const
+bool LegacyTileCache::hasPendingDraw() const
 {
     return !m_savedDisplayRects.isEmpty();
 }
 
-void TileCache::prepareToDraw()
+void LegacyTileCache::prepareToDraw()
 {
     // This will trigger document relayout if needed.
     [[m_window contentView] viewWillDraw];
@@ -790,17 +790,17 @@ void TileCache::prepareToDraw()
     }
 }
 
-void TileCache::setLayerPoolCapacity(unsigned capacity)
+void LegacyTileCache::setLayerPoolCapacity(unsigned capacity)
 {
-    TileLayerPool::sharedPool()->setCapacity(capacity);
+    LegacyTileLayerPool::sharedPool()->setCapacity(capacity);
 }
 
-void TileCache::drainLayerPool()
+void LegacyTileCache::drainLayerPool()
 {
-    TileLayerPool::sharedPool()->drain();
+    LegacyTileLayerPool::sharedPool()->drain();
 }
 
-void TileCache::dumpTiles()
+void LegacyTileCache::dumpTiles()
 {
     NSLog(@"=================");
     NSLog(@"ZOOMED OUT");

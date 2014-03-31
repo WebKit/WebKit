@@ -66,10 +66,10 @@
 #include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(IOS)
+#include "LegacyTileCache.h"
 #include "MainFrame.h"
 #include "Region.h"
 #include "RenderScrollbar.h"
-#include "TileCache.h"
 #endif
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -2681,16 +2681,16 @@ float RenderLayerCompositor::pageScaleFactor() const
 float RenderLayerCompositor::contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const
 {
 #if PLATFORM(IOS)
-    TileCache* tileCache = nullptr;
+    LegacyTileCache* tileCache = nullptr;
     if (Page* page = this->page()) {
         if (FrameView* frameView = page->mainFrame().view())
-            tileCache = frameView->tileCache();
+            tileCache = frameView->legacyTileCache();
     }
 
     if (!tileCache)
         return 1;
 
-    return tileCache->tilingMode() == TileCache::Zooming ? 0.125 : 1;
+    return tileCache->tilingMode() == LegacyTileCache::Zooming ? 0.125 : 1;
 #else
     return 1;
 #endif

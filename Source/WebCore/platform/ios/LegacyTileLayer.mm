@@ -24,16 +24,16 @@
  */
 
 #include "config.h"
-#include "TileLayer.h"
+#include "LegacyTileLayer.h"
 
 #if PLATFORM(IOS)
 
-#include "TileCache.h"
-#include "TileGrid.h"
+#include "LegacyTileCache.h"
+#include "LegacyTileGrid.h"
 #include "WebCoreThread.h"
 
-@implementation TileHostLayer
-- (id)initWithTileGrid:(WebCore::TileGrid*)tileGrid
+@implementation LegacyTileHostLayer
+- (id)initWithTileGrid:(WebCore::LegacyTileGrid*)tileGrid
 {
     self = [super init];
     if (!self)
@@ -59,11 +59,11 @@
 }
 @end
 
-@implementation TileLayer
+@implementation LegacyTileLayer
 @synthesize paintCount = _paintCount;
 @synthesize tileGrid = _tileGrid;
 
-static TileLayer *layerBeingPainted;
+static LegacyTileLayer *layerBeingPainted;
 
 - (void)setNeedsDisplayInRect:(CGRect)rect
 {
@@ -93,7 +93,7 @@ static TileLayer *layerBeingPainted;
     return nil;
 }
 
-+ (TileLayer *)layerBeingPainted
++ (LegacyTileLayer *)layerBeingPainted
 {
     return layerBeingPainted;
 }

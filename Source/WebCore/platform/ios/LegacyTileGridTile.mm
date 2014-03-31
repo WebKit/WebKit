@@ -24,15 +24,15 @@
  */
 
 #include "config.h"
-#include "TileGrid.h"
+#include "LegacyTileGridTile.h"
 
 #if PLATFORM(IOS)
 
 #include "Color.h"
-#include "TileCache.h"
-#include "TileGridTile.h"
-#include "TileLayer.h"
-#include "TileLayerPool.h"
+#include "LegacyTileCache.h"
+#include "LegacyTileGrid.h"
+#include "LegacyTileLayer.h"
+#include "LegacyTileLayerPool.h"
 #include "WAKWindow.h"
 #include <QuartzCore/QuartzCore.h>
 #include <QuartzCore/QuartzCorePrivate.h>
@@ -45,7 +45,7 @@ namespace WebCore {
 static int totalTileCount;
 #endif
 
-TileGridTile::TileGridTile(TileGrid* tileGrid, const IntRect& tileRect)
+LegacyTileGridTile::LegacyTileGridTile(LegacyTileGrid* tileGrid, const IntRect& tileRect)
     : m_tileGrid(tileGrid)
     , m_rect(tileRect)
 {
@@ -53,14 +53,14 @@ TileGridTile::TileGridTile(TileGrid* tileGrid, const IntRect& tileRect)
     IntSize pixelSize(m_rect.size());
     const CGFloat screenScale = m_tileGrid->tileCache()->screenScale();
     pixelSize.scale(screenScale);
-    m_tileLayer = TileLayerPool::sharedPool()->takeLayerWithSize(pixelSize);
+    m_tileLayer = LegacyTileLayerPool::sharedPool()->takeLayerWithSize(pixelSize);
     if (!m_tileLayer) {
 #if LOG_TILING
         NSLog(@"unable to reuse layer with size %d x %d, creating one", pixelSize.width(), pixelSize.height());
 #endif
-        m_tileLayer = adoptNS([[TileLayer alloc] init]);
+        m_tileLayer = adoptNS([[LegacyTileLayer alloc] init]);
     }
-    TileLayer* layer = m_tileLayer.get();
+    LegacyTileLayer* layer = m_tileLayer.get();
     [layer setTileGrid:tileGrid];
     [layer setOpaque:m_tileGrid->tileCache()->tilesOpaque()];
     [layer setEdgeAntialiasingMask:0];
@@ -81,18 +81,18 @@ TileGridTile::TileGridTile(TileGrid* tileGrid, const IntRect& tileRect)
 #endif
 }
 
-TileGridTile::~TileGridTile() 
+LegacyTileGridTile::~LegacyTileGridTile() 
 {
     [tileLayer() setTileGrid:0];
     [tileLayer() removeFromSuperlayer];
-    TileLayerPool::sharedPool()->addLayer(tileLayer());
+    LegacyTileLayerPool::sharedPool()->addLayer(tileLayer());
 #if LOG_TILING
     --totalTileCount;
     NSLog(@"delete Tile (%d,%d) %d %d, count %d", m_rect.x(), m_rect.y(), m_rect.width(), m_rect.height(), totalTileCount);
 #endif
 }
 
-void TileGridTile::invalidateRect(const IntRect& windowDirtyRect)
+void LegacyTileGridTile::invalidateRect(const IntRect& windowDirtyRect)
 {
     IntRect dirtyRect = intersection(windowDirtyRect, m_rect);
     if (dirtyRect.isEmpty())
@@ -104,19 +104,19 @@ void TileGridTile::invalidateRect(const IntRect& windowDirtyRect)
         [tileLayer() setNeedsDisplayInRect:CGRectMake(0, 0, 46, 25)];
 }
 
-void TileGridTile::setRect(const IntRect& tileRect)
+void LegacyTileGridTile::setRect(const IntRect& tileRect)
 {
     if (m_rect == tileRect)
         return;
     m_rect = tileRect;
-    TileLayer* layer = m_tileLayer.get();
+    LegacyTileLayer* layer = m_tileLayer.get();
     [layer setFrame:m_rect];
     [layer setNeedsDisplay];
 }
 
-void TileGridTile::showBorder(bool flag)
+void LegacyTileGridTile::showBorder(bool flag)
 {
-    TileLayer* layer = m_tileLayer.get();
+    LegacyTileLayer* layer = m_tileLayer.get();
     if (flag) {
         [layer setBorderColor:cachedCGColor(m_tileGrid->tileCache()->colorForGridTileBorder(m_tileGrid), ColorSpaceDeviceRGB)];
         [layer setBorderWidth:0.5f];

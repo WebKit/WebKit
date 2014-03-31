@@ -24,14 +24,14 @@
  */
 
 #include "config.h"
-#include "TileLayerPool.h"
+#include "LegacyTileLayerPool.h"
 
 #if PLATFORM(IOS)
 
+#include "LegacyTileLayer.h"
+#include "LegacyTileGrid.h"
 #include "Logging.h"
 #include "MemoryPressureHandler.h"
-#include "TileLayer.h"
-#include "TileGrid.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -39,7 +39,7 @@ namespace WebCore {
 
 static const double capacityDecayTime = 5;
 
-TileLayerPool::TileLayerPool()
+LegacyTileLayerPool::LegacyTileLayerPool()
     : m_totalBytes(0)
     , m_capacity(0)
     , m_lastAddTime(0)
@@ -47,18 +47,18 @@ TileLayerPool::TileLayerPool()
 {
 }
 
-TileLayerPool* TileLayerPool::sharedPool()
+LegacyTileLayerPool* LegacyTileLayerPool::sharedPool()
 {
-    static NeverDestroyed<TileLayerPool> sharedPool;
+    static NeverDestroyed<LegacyTileLayerPool> sharedPool;
     return &sharedPool.get();
 }
 
-unsigned TileLayerPool::bytesBackingLayerWithPixelSize(const IntSize& size)
+unsigned LegacyTileLayerPool::bytesBackingLayerWithPixelSize(const IntSize& size)
 {
     return size.width() * size.height() * 4;
 }
 
-TileLayerPool::LayerList& TileLayerPool::listOfLayersWithSize(const IntSize& size, AccessType accessType)
+LegacyTileLayerPool::LayerList& LegacyTileLayerPool::listOfLayersWithSize(const IntSize& size, AccessType accessType)
 {
     ASSERT(!m_layerPoolMutex.tryLock());
     HashMap<IntSize, LayerList>::iterator it = m_reuseLists.find(size);
@@ -72,7 +72,7 @@ TileLayerPool::LayerList& TileLayerPool::listOfLayersWithSize(const IntSize& siz
     return it->value;
 }
 
-void TileLayerPool::addLayer(const RetainPtr<TileLayer>& layer)
+void LegacyTileLayerPool::addLayer(const RetainPtr<LegacyTileLayer>& layer)
 {
     IntSize layerSize([layer.get() frame].size);
     layerSize.scale([layer.get() contentsScale]);
@@ -92,7 +92,7 @@ void TileLayerPool::addLayer(const RetainPtr<TileLayer>& layer)
     schedulePrune();
 }
 
-RetainPtr<TileLayer> TileLayerPool::takeLayerWithSize(const IntSize& size)
+RetainPtr<LegacyTileLayer> LegacyTileLayerPool::takeLayerWithSize(const IntSize& size)
 {
     if (!canReuseLayerWithSize(size))
         return nil;
@@ -104,7 +104,7 @@ RetainPtr<TileLayer> TileLayerPool::takeLayerWithSize(const IntSize& size)
     return reuseList.takeFirst();
 }
 
-void TileLayerPool::setCapacity(unsigned capacity)
+void LegacyTileLayerPool::setCapacity(unsigned capacity)
 {
     MutexLocker reuseLocker(m_layerPoolMutex);
     if (capacity < m_capacity)
@@ -112,7 +112,7 @@ void TileLayerPool::setCapacity(unsigned capacity)
     m_capacity = capacity;
 }
     
-unsigned TileLayerPool::decayedCapacity() const
+unsigned LegacyTileLayerPool::decayedCapacity() const
 {
     // Decay to one quarter over capacityDecayTime
     double timeSinceLastAdd = currentTime() - m_lastAddTime;
@@ -122,7 +122,7 @@ unsigned TileLayerPool::decayedCapacity() const
     return m_capacity / 4 + m_capacity * 3 / 4 * (1.f - decayProgess);
 }
 
-void TileLayerPool::schedulePrune()
+void LegacyTileLayerPool::schedulePrune()
 {
     ASSERT(!m_layerPoolMutex.tryLock());
     if (m_needsPrune)
@@ -134,7 +134,7 @@ void TileLayerPool::schedulePrune()
     });
 }
 
-void TileLayerPool::prune()
+void LegacyTileLayerPool::prune()
 {
     MutexLocker locker(m_layerPoolMutex);
     ASSERT(m_needsPrune);
@@ -161,7 +161,7 @@ void TileLayerPool::prune()
         schedulePrune();
 }
 
-void TileLayerPool::drain()
+void LegacyTileLayerPool::drain()
 {
     MutexLocker reuseLocker(m_layerPoolMutex);
     m_reuseLists.clear();

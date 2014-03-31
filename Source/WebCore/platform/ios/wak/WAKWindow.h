@@ -40,11 +40,11 @@
 
 #ifdef __cplusplus
 namespace WebCore {
-    class TileCache;
+    class LegacyTileCache;
 }
-typedef WebCore::TileCache TileCache;
+typedef WebCore::LegacyTileCache LegacyTileCache;
 #else
-typedef struct TileCache TileCache;
+typedef struct LegacyTileCache LegacyTileCache;
 #endif
 
 typedef enum {
@@ -69,7 +69,7 @@ extern NSString * const WAKWindowVisibilityDidChangeNotification;
 @interface WAKWindow : WAKResponder
 {
     CALayer* _hostLayer;
-    TileCache* _tileCache;
+    LegacyTileCache* _tileCache;
     CGRect _frozenVisibleRect;
     CALayer *_rootLayer;
 
@@ -160,7 +160,7 @@ extern NSString * const WAKWindowVisibilityDidChangeNotification;
 - (float)currentTileScale;
 - (void)setKeepsZoomedOutTiles:(BOOL)keepsZoomedOutTiles;
 - (BOOL)keepsZoomedOutTiles;
-- (TileCache *)tileCache;
+- (LegacyTileCache *)tileCache;
 
 - (void)dumpTiles;
 

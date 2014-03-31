@@ -95,11 +95,11 @@
 
 #if PLATFORM(IOS)
 #include "DocumentLoader.h"
+#include "LegacyTileCache.h"
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "MemoryPressureHandler.h"
 #include "SystemMemory.h"
-#include "TileCache.h"
 #endif
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -378,8 +378,8 @@ void FrameView::clear()
 #if PLATFORM(IOS)
     // To avoid flashes of white, disable tile updates immediately when view is cleared at the beginning of a page load.
     // Tiling will be re-enabled from UIKit via [WAKWindow setTilingMode:] when we have content to draw.
-    if (TileCache* tileCache = this->tileCache())
-        tileCache->setTilingMode(TileCache::Disabled);
+    if (LegacyTileCache* tileCache = legacyTileCache())
+        tileCache->setTilingMode(LegacyTileCache::Disabled);
 #endif
 }
 
@@ -860,7 +860,7 @@ bool FrameView::flushCompositingStateForThisFrame(Frame* rootFrameForFlush)
         return false;
 
 #if PLATFORM(IOS)
-    if (TileCache* tileCache = this->tileCache())
+    if (LegacyTileCache* tileCache = legacyTileCache())
         tileCache->doPendingRepaints();
 #endif
 
@@ -2243,7 +2243,7 @@ void FrameView::adjustTiledBackingCoverage()
     if (renderView && renderView->layer()->backing())
         renderView->layer()->backing()->adjustTiledBackingCoverage();
 #if PLATFORM(IOS)
-    if (TileCache* tileCache = this->tileCache())
+    if (LegacyTileCache* tileCache = legacyTileCache())
         tileCache->setSpeculativeTileCreationEnabled(m_speculativeTilingEnabled);
 #endif
 }

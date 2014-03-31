@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TileCache_h
-#define TileCache_h
+#ifndef LegacyTileCache_h
+#define LegacyTileCache_h
 
 #if PLATFORM(IOS)
 
@@ -43,25 +43,25 @@
 
 #ifdef __OBJC__
 @class CALayer;
-@class TileCacheTombstone;
-@class TileLayer;
+@class LegacyTileCacheTombstone;
+@class LegacyTileLayer;
 @class WAKWindow;
 #else
 class CALayer;
-class TileCacheTombstone;
-class TileLayer;
+class LegacyTileCacheTombstone;
+class LegacyTileLayer;
 class WAKWindow;
 #endif
 
 namespace WebCore {
 
-class TileGrid;
+class LegacyTileGrid;
 
-class TileCache {
-    WTF_MAKE_NONCOPYABLE(TileCache);
+class LegacyTileCache {
+    WTF_MAKE_NONCOPYABLE(LegacyTileCache);
 public:
-    TileCache(WAKWindow*);
-    ~TileCache();
+    LegacyTileCache(WAKWindow*);
+    ~LegacyTileCache();
 
     CGFloat screenScale() const;
 
@@ -134,13 +134,13 @@ public:
 
     // Internal
     void doLayoutTiles();
-    void drawLayer(TileLayer*, CGContextRef);
+    void drawLayer(LegacyTileLayer*, CGContextRef);
     void prepareToDraw();
     void finishedCreatingTiles(bool didCreateTiles, bool createMore);
     FloatRect visibleRectInLayer(CALayer *) const;
     CALayer* hostLayer() const;
-    unsigned tileCapacityForGrid(TileGrid*);
-    Color colorForGridTileBorder(TileGrid*) const;
+    unsigned tileCapacityForGrid(LegacyTileGrid*);
+    Color colorForGridTileBorder(LegacyTileGrid*) const;
 
     void doPendingRepaints();
 
@@ -150,8 +150,8 @@ public:
     enum SynchronousTileCreationMode { CoverVisibleOnly, CoverSpeculative };
 
 private:
-    TileGrid* activeTileGrid() const;
-    TileGrid* inactiveTileGrid() const;
+    LegacyTileGrid* activeTileGrid() const;
+    LegacyTileGrid* inactiveTileGrid() const;
 
     void updateTilingMode();
     bool isTileInvalidationSuspended() const;
@@ -166,10 +166,10 @@ private:
     void createTilesInActiveGrid(SynchronousTileCreationMode);
     void scheduleLayerFlushForPendingRepaint();
 
-    void tileCreationTimerFired(Timer<TileCache>*);
+    void tileCreationTimerFired(Timer<LegacyTileCache>*);
 
-    void drawReplacementImage(TileLayer*, CGContextRef, CGImageRef);
-    void drawWindowContent(TileLayer*, CGContextRef, CGRect dirtyRect);
+    void drawReplacementImage(LegacyTileLayer*, CGContextRef, CGImageRef);
+    void drawWindowContent(LegacyTileLayer*, CGContextRef, CGRect dirtyRect);
 
     WAKWindow* m_window;
 
@@ -180,7 +180,7 @@ private:
     bool m_hasPendingLayoutTiles;
     bool m_hasPendingUpdateTilingMode;
     // Ensure there are no async calls on a dead tile cache.
-    RetainPtr<TileCacheTombstone> m_tombstone;
+    RetainPtr<LegacyTileCacheTombstone> m_tombstone;
 
     TilingMode m_tilingMode;
     TilingDirection m_tilingDirection;
@@ -194,10 +194,10 @@ private:
     bool m_isSpeculativeTileCreationEnabled;
 
     bool m_didCallWillStartScrollingOrZooming;
-    OwnPtr<TileGrid> m_zoomedOutTileGrid;
-    OwnPtr<TileGrid> m_zoomedInTileGrid;
+    OwnPtr<LegacyTileGrid> m_zoomedOutTileGrid;
+    OwnPtr<LegacyTileGrid> m_zoomedInTileGrid;
 
-    Timer<TileCache> m_tileCreationTimer;
+    Timer<LegacyTileCache> m_tileCreationTimer;
 
     Vector<IntRect> m_savedDisplayRects;
 
