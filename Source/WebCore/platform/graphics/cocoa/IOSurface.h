@@ -47,7 +47,7 @@ public:
 
     // Any images created from a surface need to be released before releasing
     // the surface, or an expensive GPU readback can result.
-    RetainPtr<CGImageRef> createImage() const;
+    RetainPtr<CGImageRef> createImage();
 
     IOSurfaceRef surface() const { return m_surface.get(); }
     GraphicsContext& ensureGraphicsContext();
@@ -71,7 +71,11 @@ public:
     size_t totalBytes() const { return m_totalBytes; }
     ColorSpace colorSpace() const { return m_colorSpace; }
 
-    bool inUse() const;
+    bool isInUse() const;
+
+    // The graphics context cached on the surface counts as a "user", so to get
+    // an accurate result from isInUse(), it needs to be released.
+    void clearGraphicsContext();
 
 private:
     IOSurface(IntSize, ColorSpace);
