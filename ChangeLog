@@ -1,3 +1,12 @@
+2014-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add support for GTK3 plugins
+        https://bugs.webkit.org/show_bug.cgi?id=130599
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2014-03-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Bump glib version from 2.36 to 2.38 

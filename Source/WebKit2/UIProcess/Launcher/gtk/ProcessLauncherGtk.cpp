@@ -81,6 +81,8 @@ void ProcessLauncher::launchProcess()
         break;
     case PluginProcess:
         executablePath = executablePathOfPluginProcess();
+        if (m_launchOptions.extraInitializationData.contains("requires-gtk2"))
+            executablePath.append('2');
         pluginPath = m_launchOptions.extraInitializationData.get("plugin-path");
         realPluginPath = fileSystemRepresentation(pluginPath);
         break;

@@ -55,6 +55,10 @@ void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions
 #endif
 
     launchOptions.extraInitializationData.add("plugin-path", pluginProcessAttributes.moduleInfo.path);
+#if PLATFORM(GTK)
+    if (pluginProcessAttributes.moduleInfo.requiresGtk2)
+        launchOptions.extraInitializationData.add("requires-gtk2", emptyString());
+#endif
 }
 
 void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationParameters&)
@@ -107,6 +111,10 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
     result.name.swap(lines[0]);
     result.description.swap(lines[1]);
     result.mimeDescription.swap(lines[2]);
+#if PLATFORM(GTK)
+    if (lines.size() > 3)
+        result.requiresGtk2 = lines[3] == "requires-gtk2";
+#endif
     return !result.mimeDescription.isEmpty();
 #else // PLATFORM(GTK) || PLATFORM(EFL)
     return false;

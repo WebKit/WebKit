@@ -149,6 +149,10 @@ bool NetscapePluginModule::getPluginInfoForLoadedPlugin(RawPluginMetaData& metaD
 
     metaData.mimeDescription = mimeDescription;
 
+#if PLATFORM(GTK)
+    metaData.requiresGtk2 = module->functionPointer<void (*)()>("gtk_progress_get_type");
+#endif
+
     return true;
 }
 
@@ -163,6 +167,9 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
     plugin.info.name = metaData.name;
     plugin.info.desc = metaData.description;
     parseMIMEDescription(metaData.mimeDescription, plugin.info.mimes);
+#if PLATFORM(GTK)
+    plugin.requiresGtk2 = metaData.requiresGtk2;
+#endif
 
     return true;
 }
@@ -235,6 +242,10 @@ bool NetscapePluginModule::scanPlugin(const String& pluginPath)
     writeLine(metaData.name);
     writeLine(metaData.description);
     writeLine(metaData.mimeDescription);
+#if PLATFORM(GTK)
+    if (metaData.requiresGtk2)
+        writeLine("requires-gtk2");
+#endif
 
     fflush(stdout);
 

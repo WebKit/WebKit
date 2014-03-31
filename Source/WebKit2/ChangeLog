@@ -1,3 +1,45 @@
+2014-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add support for GTK3 plugins
+        https://bugs.webkit.org/show_bug.cgi?id=130599
+
+        Reviewed by Martin Robinson.
+
+        We currently have a gtk2 based plugin process mainly for flash
+        and a few other plugins that use GTK2, but many other plugins
+        don't even use gtk at all. This patch builds a lighter plugin
+        process based on GTK3, used by default for all the plugins expect
+        the ones requiring GTK2. And of course the default plugin process
+        supports GTK3 plugins.
+
+        * CMakeLists.txt: Add common rules to build the default plugin process.
+        * PlatformEfl.cmake: Remove common cmake code that is now in CMakeLists.txt.
+        * PlatformGTK.cmake: Rename WebKitPluginProcess to
+        WebKitPluginProcess2 and add the platform specific rules to build
+        the default plugin process.
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::NetscapePluginModule::getPluginInfoForLoadedPlugin):
+        Check if the loaded plugin module uses GTK2.
+        (WebKit::NetscapePluginModule::getPluginInfo): Set requiresGtk2 accordingly.
+        (WebKit::NetscapePluginModule::scanPlugin): Write "requires-gtk2"
+        line to stdout if the plugin requires GTK2.
+        * Shared/Plugins/PluginModuleInfo.h: Add requiresGtk2 boolean member.
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess): Use the
+        WebKitPluginProcess2 executable when the plugin requires GTK2.
+        * UIProcess/Plugins/PluginProcessProxy.h: Add requiresGtk2 boolean
+        member to RawPluginMetaData struct.
+        * UIProcess/Plugins/gtk/PluginInfoCache.cpp: Bump the cache schema version.
+        (WebKit::PluginInfoCache::getPluginInfo): Read also requires-gtk2
+        key from the cache.
+        (WebKit::PluginInfoCache::updatePluginInfo): Save also
+        requires-gtk2 key in the cache.
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptions): Add an
+        extra initialization data parameter if the plugin requires GTK2.
+        (WebKit::PluginProcessProxy::scanPlugin): Check if "requires-gtk2"
+        was written to stdout.
+
 2014-03-30  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add an originatingWebView property to _WKDownload

@@ -60,6 +60,10 @@ struct RawPluginMetaData {
     String name;
     String description;
     String mimeDescription;
+
+#if PLATFORM(GTK)
+    bool requiresGtk2;
+#endif
 };
 #endif
 

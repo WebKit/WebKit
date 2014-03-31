@@ -520,16 +520,16 @@ set(WEBKIT2_EXTRA_DEPENDENCIES
 )
 
 if (ENABLE_PLUGIN_PROCESS)
-    set(PluginProcess_EXECUTABLE_NAME WebKitPluginProcess)
-    list(APPEND PluginProcess_INCLUDE_DIRECTORIES
+    set(PluginProcessGTK2_EXECUTABLE_NAME WebKitPluginProcessGTK2)
+    list(APPEND PluginProcessGTK2_INCLUDE_DIRECTORIES
         "${WEBKIT2_DIR}/PluginProcess/unix"
     )
 
-    include_directories(${PluginProcess_INCLUDE_DIRECTORIES})
+    include_directories(${PluginProcessGTK2_INCLUDE_DIRECTORIES})
 
     # FIXME: We should figure out a way to avoid compiling files that are common between the plugin
     # process and WebKit2 only once instead of recompiling them for the plugin process.
-    list(APPEND PluginProcess_SOURCES
+    list(APPEND PluginProcessGTK2_SOURCES
         Platform/Logging.cpp
         Platform/Module.cpp
         Platform/WorkQueue.cpp
@@ -618,30 +618,26 @@ if (ENABLE_PLUGIN_PROCESS)
         WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp
 
         unix/PluginMainUnix.cpp
+
+        ${DERIVED_SOURCES_WEBKIT2_DIR}/PluginControllerProxyMessageReceiver.cpp
+        ${DERIVED_SOURCES_WEBKIT2_DIR}/PluginProcessMessageReceiver.cpp
+        ${DERIVED_SOURCES_WEBKIT2_DIR}/WebProcessConnectionMessageReceiver.cpp
+
+        ${DERIVED_SOURCES_WEBKIT2_DIR}/NPObjectMessageReceiverMessageReceiver.cpp
     )
 
-    list(APPEND PluginProcess_MESSAGES_IN_FILES
-        PluginProcess/PluginControllerProxy.messages.in
-        PluginProcess/PluginProcess.messages.in
-        PluginProcess/WebProcessConnection.messages.in
-
-        Shared/Plugins/NPObjectMessageReceiver.messages.in
-    )
-    GENERATE_WEBKIT2_MESSAGE_SOURCES(PluginProcess_SOURCES "${PluginProcess_MESSAGES_IN_FILES}")
-
-    add_executable(WebKitPluginProcess ${PluginProcess_SOURCES})
-    add_webkit2_prefix_header(WebKitPluginProcess)
+    add_executable(WebKitPluginProcessGTK2 ${PluginProcessGTK2_SOURCES})
+    add_webkit2_prefix_header(WebKitPluginProcessGTK2)
 
     # We need ENABLE_PLUGIN_PROCESS for all targets in this directory, but
     # we only want GTK_API_VERSION_2 for the plugin process target.
-    add_definitions(-DENABLE_PLUGIN_PROCESS=1)
     set_property(
-        TARGET WebKitPluginProcess
+        TARGET WebKitPluginProcessGTK2
         APPEND
         PROPERTY COMPILE_DEFINITIONS GTK_API_VERSION_2=1
     )
     set_property(
-        TARGET WebKitPluginProcess
+        TARGET WebKitPluginProcessGTK2
         APPEND
         PROPERTY INCLUDE_DIRECTORIES
             ${WebKit2CommonIncludeDirectories}
@@ -649,16 +645,22 @@ if (ENABLE_PLUGIN_PROCESS)
             ${GDK2_INCLUDE_DIRS}
     )
 
-    set(WebKitPluginProcess_LIBRARIES
+    set(WebKitPluginProcessGTK2_LIBRARIES
         ${SharedWebKit2Libraries}
         WebCorePlatformGTK2
     )
-    ADD_WHOLE_ARCHIVE_TO_LIBRARIES(WebKitPluginProcess_LIBRARIES)
-    target_link_libraries(WebKitPluginProcess ${WebKitPluginProcess_LIBRARIES})
+    ADD_WHOLE_ARCHIVE_TO_LIBRARIES(WebKitPluginProcessGTK2_LIBRARIES)
+    target_link_libraries(WebKitPluginProcessGTK2 ${WebKitPluginProcessGTK2_LIBRARIES})
 
-    add_dependencies(WebKitPluginProcess WebKit2)
+    add_dependencies(WebKitPluginProcessGTK2 WebKit2)
 
-    install(TARGETS WebKitPluginProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
+    install(TARGETS WebKitPluginProcessGTK2 DESTINATION "${LIBEXEC_INSTALL_DIR}")
+
+    # GTK3 PluginProcess
+    list(APPEND PluginProcess_SOURCES
+        unix/PluginMainUnix.cpp
+    )
+
 endif () # ENABLE_PLUGIN_PROCESS
 
 # Commands for building the built-in injected bundle.

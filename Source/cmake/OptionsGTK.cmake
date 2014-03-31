@@ -134,6 +134,7 @@ set(WebKit_OUTPUT_NAME webkitgtk-${WEBKITGTK_API_VERSION})
 set(WebKit2_OUTPUT_NAME webkit2gtk-${WEBKITGTK_API_VERSION})
 set(WebKit2_WebProcess_OUTPUT_NAME WebKitWebProcess)
 set(WebKit2_NetworkProcess_OUTPUT_NAME WebKitNetworkProcess)
+set(WebKit2_PluginProcess_OUTPUT_NAME WebKitPluginProcess)
 
 set(DATA_BUILD_DIR "${CMAKE_BINARY_DIR}/share/${WebKit_OUTPUT_NAME}")
 set(DATA_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/webkitgtk-${WEBKITGTK_API_VERSION}")

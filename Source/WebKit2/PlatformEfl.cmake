@@ -402,8 +402,6 @@ install(FILES
 install(FILES ${EWebKit2_HEADERS} DESTINATION include/${WebKit2_OUTPUT_NAME}-${PROJECT_VERSION_MAJOR})
 
 if (ENABLE_PLUGIN_PROCESS)
-    add_definitions(-DENABLE_PLUGIN_PROCESS=1)
-
     list(APPEND PluginProcess_INCLUDE_DIRECTORIES
         "${WEBKIT2_DIR}/PluginProcess/unix"
     )
@@ -414,19 +412,11 @@ if (ENABLE_PLUGIN_PROCESS)
         ${WEBKIT2_DIR}/unix/PluginMainUnix.cpp
     )
 
-    set(PluginProcess_LIBRARIES
-        WebKit2
-    )
-
     if (ENABLE_ECORE_X)
         list(APPEND PluginProcess_LIBRARIES
             ${ECORE_X_LIBRARIES}
         )
     endif ()
-
-    add_executable(PluginProcess ${PluginProcess_SOURCES})
-    target_link_libraries(PluginProcess ${PluginProcess_LIBRARIES})
-    install(TARGETS PluginProcess DESTINATION "${EXEC_INSTALL_DIR}")
 endif () # ENABLE_PLUGIN_PROCESS
 
 include_directories(${THIRDPARTY_DIR}/gtest/include)

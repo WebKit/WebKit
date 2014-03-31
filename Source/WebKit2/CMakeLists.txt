@@ -661,6 +661,10 @@ set(WebKit2_LIBRARIES
     WebCore
 )
 
+set(PluginProcess_LIBRARIES
+    WebKit2
+)
+
 # librt is needed for shm_open on Linux.
 find_library(LIBRT_LIBRARIES NAMES rt)
 mark_as_advanced(LIBRT_LIBRARIES)
@@ -715,6 +719,19 @@ if (ENABLE_NETWORK_PROCESS)
 
     if (WebKit2_NetworkProcess_OUTPUT_NAME)
         set_target_properties(NetworkProcess PROPERTIES OUTPUT_NAME ${WebKit2_NetworkProcess_OUTPUT_NAME})
+    endif ()
+endif ()
+
+if (ENABLE_PLUGIN_PROCESS)
+    add_definitions(-DENABLE_PLUGIN_PROCESS=1)
+    add_executable(PluginProcess ${PluginProcess_SOURCES})
+    add_webkit2_prefix_header(PluginProcess)
+    target_link_libraries(PluginProcess ${PluginProcess_LIBRARIES})
+    set_target_properties(PluginProcess PROPERTIES FOLDER "WebKit")
+    install(TARGETS PluginProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
+
+    if (WebKit2_PluginProcess_OUTPUT_NAME)
+      set_target_properties(PluginProcess PROPERTIES OUTPUT_NAME ${WebKit2_PluginProcess_OUTPUT_NAME})
     endif ()
 endif ()
 

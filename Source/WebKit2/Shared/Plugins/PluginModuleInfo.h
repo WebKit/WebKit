@@ -56,6 +56,8 @@ struct PluginModuleInfo {
     String versionString;
     String shortVersionString;
     String preferencePanePath;
+#elif PLATFORM(GTK)
+    bool requiresGtk2;
 #endif
 };
 
