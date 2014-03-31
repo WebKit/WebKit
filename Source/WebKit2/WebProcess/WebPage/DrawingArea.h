@@ -91,6 +91,7 @@ public:
 #if PLATFORM(COCOA)
     virtual void setExposedRect(const WebCore::FloatRect&) = 0;
     virtual WebCore::FloatRect exposedRect() const = 0;
+    virtual void acceleratedAnimationDidStart(uint64_t /*layerID*/, double /*startTime*/) { }
 #endif
 #if PLATFORM(IOS)
     virtual void setExposedContentRect(const WebCore::FloatRect&) = 0;

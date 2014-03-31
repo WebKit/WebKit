@@ -26,6 +26,7 @@
 #import "config.h"
 #import "TileController.h"
 
+#import "GraphicsContext.h"
 #import "IntRect.h"
 #import "PlatformCALayer.h"
 #import "Region.h"

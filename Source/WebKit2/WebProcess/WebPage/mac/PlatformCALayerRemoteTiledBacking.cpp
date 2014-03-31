@@ -33,7 +33,8 @@
 #import <wtf/RetainPtr.h>
 
 using namespace WebCore;
-using namespace WebKit;
+
+namespace WebKit {
 
 PlatformCALayerRemoteTiledBacking::PlatformCALayerRemoteTiledBacking(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
     : PlatformCALayerRemote(layerType, owner, context)
@@ -102,3 +103,5 @@ void PlatformCALayerRemoteTiledBacking::setBorderColor(const WebCore::Color& col
 {
     m_tileController->setTileDebugBorderColor(color);
 }
+
+} // namespace WebKit

@@ -55,6 +55,11 @@ public:
     void flushOutOfTreeLayers();
     void buildTransaction(RemoteLayerTreeTransaction&, WebCore::PlatformCALayer& rootLayer);
 
+    // From the UI process
+    void animationDidStart(WebCore::GraphicsLayer::PlatformLayerID, double startTime);
+
+    void willStartAnimationOnLayer(PlatformCALayerRemote*);
+
 private:
     // WebCore::GraphicsLayerFactory
     virtual std::unique_ptr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient*) override;
@@ -66,6 +71,8 @@ private:
 
     Vector<RemoteLayerTreeTransaction::LayerCreationProperties> m_createdLayers;
     Vector<WebCore::GraphicsLayer::PlatformLayerID> m_destroyedLayers;
+    
+    HashMap<WebCore::GraphicsLayer::PlatformLayerID, PlatformCALayerRemote*> m_layersAwaitingAnimationStart;
 };
 
 } // namespace WebKit

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "GraphicsLayerCARemote.h"
+#include "PlatformCAAnimationRemote.h"
 #include "PlatformCALayerRemote.h"
 
 using namespace WebCore;
@@ -52,4 +53,22 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(Platfor
     return PlatformCALayerRemote::create(platformLayer, owner, m_context);
 }
 
+PassRefPtr<PlatformCAAnimation> GraphicsLayerCARemote::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, const String& keyPath)
+{
+    return PlatformCAAnimationRemote::create(type, keyPath);
 }
+
+bool GraphicsLayerCARemote::addAnimation(const KeyframeValueList& valueList, const FloatSize&, const Animation* anim, const String&, double)
+{
+    if (!animationCanBeAccelerated(valueList, anim))
+        return false;
+    
+#if ENABLE(CSS_FILTERS)
+    if (valueList.property() == AnimatedPropertyWebkitFilter)
+        return false;
+#endif
+    
+    return true;
+}
+
+} // namespace WebKit

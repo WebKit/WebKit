@@ -32,6 +32,7 @@
 #import "GraphicsContext.h"
 #import "GraphicsLayerCA.h"
 #import "LengthFunctions.h"
+#import "PlatformCAAnimationMac.h"
 #import "PlatformCAFilters.h"
 #import "PlatformCAFiltersMac.h"
 #import "ScrollbarThemeMac.h"
@@ -395,12 +396,12 @@ void PlatformCALayerMac::addAnimationForKey(const String& key, PlatformCAAnimati
         [webAnimationDelegate setOwner:this];
     }
     
-    CAPropertyAnimation* propertyAnimation = static_cast<CAPropertyAnimation*>(animation->platformAnimation());
+    CAPropertyAnimation* propertyAnimation = static_cast<CAPropertyAnimation*>(toPlatformCAAnimationMac(animation)->platformAnimation());
     if (![propertyAnimation delegate])
         [propertyAnimation setDelegate:static_cast<id>(m_delegate.get())];
      
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer.get() addAnimation:animation->m_animation.get() forKey:key];
+    [m_layer.get() addAnimation:propertyAnimation forKey:key];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -416,7 +417,7 @@ PassRefPtr<PlatformCAAnimation> PlatformCALayerMac::animationForKey(const String
     CAPropertyAnimation* propertyAnimation = static_cast<CAPropertyAnimation*>([m_layer.get() animationForKey:key]);
     if (!propertyAnimation)
         return 0;
-    return PlatformCAAnimation::create(propertyAnimation);
+    return PlatformCAAnimationMac::create(propertyAnimation);
 }
 
 void PlatformCALayerMac::setMask(PlatformCALayer* layer)

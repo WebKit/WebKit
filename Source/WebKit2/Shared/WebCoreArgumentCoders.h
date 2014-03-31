@@ -34,6 +34,7 @@ class AuthenticationChallenge;
 class CertificateInfo;
 class Color;
 class Credential;
+class CubicBezierTimingFunction;
 class Cursor;
 class DatabaseDetails;
 class FilterOperations;
@@ -48,7 +49,7 @@ class IntPoint;
 class IntRect;
 class IntSize;
 class KeyframeValueList;
-class URL;
+class LinearTimingFunction;
 class Notification;
 class ProtectionSpace;
 class Region;
@@ -56,11 +57,13 @@ class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
 class SessionID;
+class StepsTimingFunction;
 class StickyPositionViewportConstraints;
 class TextCheckingRequestData;
 class TransformationMatrix;
 class UserStyleSheet;
 class UserScript;
+class URL;
 struct CompositionUnderline;
 struct Cookie;
 struct DictationAlternative;
@@ -110,6 +113,21 @@ template<> struct ArgumentCoder<WebCore::AffineTransform> {
 template<> struct ArgumentCoder<WebCore::TransformationMatrix> {
     static void encode(ArgumentEncoder&, const WebCore::TransformationMatrix&);
     static bool decode(ArgumentDecoder&, WebCore::TransformationMatrix&);
+};
+
+template<> struct ArgumentCoder<WebCore::LinearTimingFunction> {
+    static void encode(ArgumentEncoder&, const WebCore::LinearTimingFunction&);
+    static bool decode(ArgumentDecoder&, WebCore::LinearTimingFunction&);
+};
+
+template<> struct ArgumentCoder<WebCore::CubicBezierTimingFunction> {
+    static void encode(ArgumentEncoder&, const WebCore::CubicBezierTimingFunction&);
+    static bool decode(ArgumentDecoder&, WebCore::CubicBezierTimingFunction&);
+};
+
+template<> struct ArgumentCoder<WebCore::StepsTimingFunction> {
+    static void encode(ArgumentEncoder&, const WebCore::StepsTimingFunction&);
+    static bool decode(ArgumentDecoder&, WebCore::StepsTimingFunction&);
 };
 
 template<> struct ArgumentCoder<WebCore::CertificateInfo> {

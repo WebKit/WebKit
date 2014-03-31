@@ -26,9 +26,7 @@
 #ifndef PlatformCALayer_h
 #define PlatformCALayer_h
 
-#include "GraphicsContext.h"
 #include "GraphicsLayer.h"
-#include "PlatformCAAnimation.h"
 #include "PlatformCALayerClient.h"
 #include <QuartzCore/CABase.h>
 #include <wtf/CurrentTime.h>
@@ -42,9 +40,14 @@
 
 OBJC_CLASS AVPlayerLayer;
 
+#if PLATFORM(COCOA)
+typedef struct CGContext *CGContextRef;
+#endif
+
 namespace WebCore {
 
 class PlatformCALayer;
+class PlatformCAAnimation;
 
 typedef Vector<RefPtr<PlatformCALayer>> PlatformCALayerList;
 

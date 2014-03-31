@@ -30,6 +30,7 @@
 #include "AbstractCACFLayerTreeHost.h"
 #include "Font.h"
 #include "GraphicsContext.h"
+#include "PlatformCAAnimationWin.h"
 #include "PlatformCALayerWinInternal.h"
 #include <QuartzCore/CoreAnimationCF.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
@@ -284,7 +285,7 @@ void PlatformCALayerWin::addAnimationForKey(const String& key, PlatformCAAnimati
     // Add it to the animation list
     m_animations.add(key, animation);
 
-    CACFLayerAddAnimation(m_layer.get(), key.createCFString().get(), animation->platformAnimation());
+    CACFLayerAddAnimation(m_layer.get(), key.createCFString().get(), toPlatformCAAnimationWin(animation)->platformAnimation());
     setNeedsCommit();
 
     // Tell the host about it so we can fire the start animation event

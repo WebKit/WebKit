@@ -103,6 +103,8 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , everChangedProperties(other.everChangedProperties)
     , name(other.name)
     , children(other.children)
+    , addedAnimations(other.addedAnimations)
+    , keyPathsOfAnimationsToRemove(other.keyPathsOfAnimationsToRemove)
     , position(other.position)
     , anchorPoint(other.anchorPoint)
     , size(other.size)
@@ -148,6 +150,11 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& e
 
     if (changedProperties & ChildrenChanged)
         encoder << children;
+
+    if (changedProperties & AnimationsChanged) {
+        encoder << addedAnimations;
+        encoder << keyPathsOfAnimationsToRemove;
+    }
 
     if (changedProperties & PositionChanged)
         encoder << position;
@@ -249,6 +256,14 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
             if (!layerID)
                 return false;
         }
+    }
+
+    if (result.changedProperties & AnimationsChanged) {
+        if (!decoder.decode(result.addedAnimations))
+            return false;
+
+        if (!decoder.decode(result.keyPathsOfAnimationsToRemove))
+            return false;
     }
 
     if (result.changedProperties & PositionChanged) {
@@ -735,6 +750,8 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const RemoteLayerTr
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged)
             dumpProperty<Vector<GraphicsLayer::PlatformLayerID>>(ts, "children", layerProperties.children);
+
+// FIXME: dump animations
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::PositionChanged)
             dumpProperty<FloatPoint3D>(ts, "position", layerProperties.position);

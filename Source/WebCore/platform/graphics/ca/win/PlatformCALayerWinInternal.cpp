@@ -29,6 +29,7 @@
 
 #include "Font.h"
 #include "FontCache.h"
+#include "GraphicsContext.h"
 #include "PlatformCALayer.h"
 #include "TextRun.h"
 #include <QuartzCore/CACFLayer.h>

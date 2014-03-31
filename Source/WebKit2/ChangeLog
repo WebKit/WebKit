@@ -1,3 +1,102 @@
+2014-03-31  Simon Fraser  <simon.fraser@apple.com>
+
+        [UI-side compositing] Proxy animations to the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=130946
+
+        Reviewed by Tim Horton.
+        
+        Add encoding/decoding of TimingFunctions. Add encoding support
+        for HashSet.
+        
+        Add PlatformCAAnimationRemote and have PlatformCALayerRemote allow
+        animations now. PlatformCALayerRemote's properties are defined in the class,
+        as is the encoding/decoding (much cleaner than having them in the transaction
+        class I think).
+        
+        Add support for the "animationDidStart" callback and sending this back to the
+        web process. This involves a HashMap of layerID->WKAnimationDelegate stored
+        on the RemoteLayerTreeHost, and a message send via the DrawingArea. On the
+        other side, RemoteLayerTreeContext stores a HashMap of layerID->PlatformCALayerRemote*
+        for layers which have just started animations, which is used to get the
+        PlatformCALayer* to call animationDidStart() on.
+        
+        This requires that the RemoteLayerTreeHost* be passed down into property application,
+        and that the RemoteLayerTreeHost have a reference to the drawing area.
+        
+        To every CALayer in the UI process we -setValue:forKey: to track the PlatformLayerID,
+        so we can get back to it in order to dispatch "animationDidStart".
+        
+        Replace some "using namespace WebKit" with "namespace WebKit { }".
+
+        * Platform/IPC/ArgumentCoders.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<LinearTimingFunction>::encode):
+        (IPC::ArgumentCoder<LinearTimingFunction>::decode):
+        (IPC::ArgumentCoder<CubicBezierTimingFunction>::encode):
+        (IPC::ArgumentCoder<CubicBezierTimingFunction>::decode):
+        (IPC::ArgumentCoder<StepsTimingFunction>::encode):
+        (IPC::ArgumentCoder<StepsTimingFunction>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        * Shared/mac/RemoteLayerTreePropertyApplier.h:
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::applyPropertiesToLayer):
+        (WebKit::RemoteLayerTreePropertyApplier::applyProperties):
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::dumpChangedLayers):
+        * UIProcess/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::layerID):
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::showDebugIndicator):
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        (WebKit::RemoteLayerTreeHost::animationDelegates):
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::RemoteLayerTreeHost):
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+        (WebKit::RemoteLayerTreeHost::layerWillBeRemoved):
+        (WebKit::RemoteLayerTreeHost::animationDidStart):
+        (WebKit::RemoteLayerTreeHost::layerID):
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::acceleratedAnimationDidStart):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.cpp:
+        (WebKit::GraphicsLayerCARemote::createPlatformCAAnimation):
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.h:
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.h: Added.
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm: Added.
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::recursiveBuildTransaction):
+        (WebKit::PlatformCALayerRemote::animationStarted):
+        (WebKit::PlatformCALayerRemote::addAnimationForKey):
+        (WebKit::PlatformCALayerRemote::removeAnimationForKey):
+        (WebKit::PlatformCALayerRemote::animationForKey):
+        (PlatformCALayerRemote::recursiveBuildTransaction): Deleted.
+        (PlatformCALayerRemote::addAnimationForKey): Deleted.
+        (PlatformCALayerRemote::removeAnimationForKey): Deleted.
+        (PlatformCALayerRemote::animationForKey): Deleted.
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.cpp:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::layerWillBeDestroyed):
+        (WebKit::RemoteLayerTreeContext::willStartAnimationOnLayer):
+        (WebKit::RemoteLayerTreeContext::animationDidStart):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::acceleratedAnimationDidStart):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::commitTransientZoom):
+
 2014-03-31  Tim Horton  <timothy_horton@apple.com>
 
         Double-buffer RemoteLayerBackingStore

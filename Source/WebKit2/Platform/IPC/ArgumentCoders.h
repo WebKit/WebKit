@@ -31,6 +31,7 @@
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
 namespace IPC {
@@ -189,6 +190,40 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
         }
 
         hashMap.swap(tempHashMap);
+        return true;
+    }
+};
+
+template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct ArgumentCoder<HashSet<KeyArg, HashArg, KeyTraitsArg>> {
+    typedef HashSet<KeyArg, HashArg, KeyTraitsArg> HashSetType;
+
+    static void encode(ArgumentEncoder& encoder, const HashSetType& hashSet)
+    {
+        encoder << static_cast<uint64_t>(hashSet.size());
+        for (typename HashSetType::const_iterator it = hashSet.begin(), end = hashSet.end(); it != end; ++it)
+            encoder << *it;
+    }
+
+    static bool decode(ArgumentDecoder& decoder, HashSetType& hashSet)
+    {
+        uint64_t hashSetSize;
+        if (!decoder.decode(hashSetSize))
+            return false;
+
+        HashSetType tempHashSet;
+        for (uint64_t i = 0; i < hashSetSize; ++i) {
+            KeyArg key;
+            if (!decoder.decode(key))
+                return false;
+
+            if (!tempHashSet.add(key).isNewEntry) {
+                // The hash map already has the specified key, bail.
+                decoder.markInvalid();
+                return false;
+            }
+        }
+
+        hashSet.swap(tempHashSet);
         return true;
     }
 };

@@ -32,17 +32,22 @@
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 
+OBJC_CLASS WKAnimationDelegate;
+
 namespace WebKit {
 
+class RemoteLayerTreeDrawingAreaProxy;
 class WebPageProxy;
 
 class RemoteLayerTreeHost {
 public:
-    explicit RemoteLayerTreeHost();
+    explicit RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy&);
     virtual ~RemoteLayerTreeHost();
 
     LayerOrView *getLayer(WebCore::GraphicsLayer::PlatformLayerID) const;
     LayerOrView *rootLayer() const { return m_rootLayer; }
+
+    static WebCore::GraphicsLayer::PlatformLayerID layerID(LayerOrView*);
 
     // Returns true if the root layer changed.
     bool updateLayerTree(const RemoteLayerTreeTransaction&, float indicatorScaleFactor  = 1);
@@ -50,11 +55,20 @@ public:
     void setIsDebugLayerTreeHost(bool flag) { m_isDebugLayerTreeHost = flag; }
     bool isDebugLayerTreeHost() const { return m_isDebugLayerTreeHost; }
 
+    typedef HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<WKAnimationDelegate>> LayerAnimationDelegateMap;
+    LayerAnimationDelegateMap& animationDelegates() { return m_animationDelegates; }
+
+    void animationDidStart(WebCore::GraphicsLayer::PlatformLayerID, double startTime);
+
 private:
     LayerOrView *createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeTransaction::LayerProperties*);
 
+    void layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLayerID);
+
+    RemoteLayerTreeDrawingAreaProxy& m_drawingArea;
     LayerOrView *m_rootLayer;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<LayerOrView>> m_layers;
+    HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<WKAnimationDelegate>> m_animationDelegates;
     bool m_isDebugLayerTreeHost;
 };
 

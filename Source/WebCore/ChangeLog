@@ -1,3 +1,52 @@
+2014-03-31  Simon Fraser  <simon.fraser@apple.com>
+
+        [UI-side compositing] Proxy animations to the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=130946
+
+        Reviewed by Tim Horton.
+        
+        To proxy CA animations, make PlatformCAAnimation a pure virtual base class
+        and subclass for Mac, Windows, and Remote (just like PlatformCALayer).
+        
+        Add coding support for TimingFunctions.
+        
+        Do some minor #include tidyup.
+        
+        Minor refactor in GraphicsLayerCA to share some animations code.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/animation/TimingFunction.h: Add setters need for encode/decode.
+        (WebCore::CubicBezierTimingFunction::setValues):
+        (WebCore::CubicBezierTimingFunction::setTimingFunctionPreset):
+        (WebCore::StepsTimingFunction::create):
+        (WebCore::StepsTimingFunction::setNumberOfSteps):
+        (WebCore::StepsTimingFunction::setStepAtStart):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createPlatformCAAnimation):
+        (WebCore::GraphicsLayerCA::animationCanBeAccelerated): Minor refactor so we can share
+        code with GraphicsLayerCARemote.
+        (WebCore::GraphicsLayerCA::addAnimation):
+        (WebCore::GraphicsLayerCA::createBasicAnimation):
+        (WebCore::PassRefPtr<PlatformCAAnimation>GraphicsLayerCA::createKeyframeAnimation):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCAAnimation.h:
+        (WebCore::PlatformCAAnimation::~PlatformCAAnimation):
+        (WebCore::PlatformCAAnimation::isPlatformCAAnimationMac):
+        (WebCore::PlatformCAAnimation::isPlatformCAAnimationWin):
+        (WebCore::PlatformCAAnimation::isPlatformCAAnimationRemote):
+        (WebCore::PlatformCAAnimation::PlatformCAAnimation):
+        (WebCore::PlatformCAAnimation::setType):
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.h: Added.
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::addAnimationForKey):
+        (PlatformCALayerMac::animationForKey):
+        * platform/graphics/ca/mac/TileController.mm:
+        * platform/graphics/ca/win/PlatformCAAnimationWin.cpp:
+        * platform/graphics/ca/win/PlatformCAAnimationWin.h: Added.
+
 2014-03-31  Benjamin Poulain  <benjamin@webkit.org>
 
         CSS JIT: compile the first-child pseudo class

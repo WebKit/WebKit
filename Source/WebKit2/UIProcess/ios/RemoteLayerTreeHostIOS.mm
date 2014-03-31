@@ -37,10 +37,6 @@
 
 using namespace WebCore;
 
-@interface UIView(WKViewInternals)
-- (void)_createLayerWithFrame:(CGRect)frame;
-@end
-
 @interface CALayer(WKLayerInternal)
 - (void)setContextId:(uint32_t)contextID;
 @end
@@ -76,6 +72,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static NSString* const WKLayerIDPropertyKey = @"WKLayerID";
+
+WebCore::GraphicsLayer::PlatformLayerID RemoteLayerTreeHost::layerID(LayerOrView* layer)
+{
+    return [[layer valueForKey:WKLayerIDPropertyKey] unsignedLongLongValue];
+}
+
 LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties, const RemoteLayerTreeTransaction::LayerProperties* layerProperties)
 {
     RetainPtr<LayerOrView>& layerOrView = m_layers.add(properties.layerID, nullptr).iterator->value;
@@ -110,6 +113,7 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
 
     // FIXME: Do through the view.
     [[layerOrView layer] web_disableAllActions];
+    [[layerOrView layer] setValue:[NSNumber numberWithUnsignedLongLong:properties.layerID] forKey:WKLayerIDPropertyKey];
 
     return layerOrView.get();
 }

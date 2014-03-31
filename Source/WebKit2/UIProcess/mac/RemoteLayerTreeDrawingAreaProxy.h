@@ -44,6 +44,8 @@ public:
 
     const RemoteLayerTreeHost& remoteLayerTreeHost() const { return m_remoteLayerTreeHost; }
 
+    void acceleratedAnimationDidStart(uint64_t layerID, double startTime);
+
     void coreAnimationDidCommitLayers();
 
 private:

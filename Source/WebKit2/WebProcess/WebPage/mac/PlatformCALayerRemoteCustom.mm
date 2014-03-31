@@ -37,7 +37,8 @@
 #import <wtf/RetainPtr.h>
 
 using namespace WebCore;
-using namespace WebKit;
+
+namespace WebKit {
 
 static NSString * const platformCALayerPointer = @"WKPlatformCALayer";
 PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(PlatformLayer* customLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
@@ -83,3 +84,5 @@ void PlatformCALayerRemoteCustom::setNeedsDisplay(const FloatRect* rect)
     } else
         PlatformCALayerRemote::setNeedsDisplay(rect);
 }
+
+} // namespace WebKit

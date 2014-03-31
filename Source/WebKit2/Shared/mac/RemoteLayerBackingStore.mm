@@ -49,7 +49,8 @@
 @end
 
 using namespace WebCore;
-using namespace WebKit;
+
+namespace WebKit {
 
 RemoteLayerBackingStore::RemoteLayerBackingStore()
     : m_layer(nullptr)
@@ -325,3 +326,5 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer)
     ASSERT(!acceleratesDrawing());
     layer.contents = (id)m_frontBuffer->makeCGImageCopy().get();
 }
+
+} // namespace WebKit

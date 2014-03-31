@@ -75,6 +75,8 @@ private:
     virtual void setExposedRect(const WebCore::FloatRect&) override;
     virtual WebCore::FloatRect exposedRect() const override { return m_scrolledExposedRect; }
 
+    virtual void acceleratedAnimationDidStart(uint64_t layerID, double startTime) override;
+
 #if PLATFORM(IOS)
     virtual void setExposedContentRect(const WebCore::FloatRect&) override;
 #endif

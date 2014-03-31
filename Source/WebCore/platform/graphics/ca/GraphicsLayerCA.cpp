@@ -31,6 +31,7 @@
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GraphicsLayerFactory.h"
+#include "Image.h"
 #include "PlatformCAFilters.h"
 #include "PlatformCALayer.h"
 #include "RotateTransformOperation.h"
@@ -51,11 +52,13 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "PlatformCAAnimationMac.h"
 #include "PlatformCALayerMac.h"
 #include "WebCoreSystemInterface.h"
 #endif
 
 #if PLATFORM(WIN)
+#include "PlatformCAAnimationWin.h"
 #include "PlatformCALayerWin.h"
 #endif
 
@@ -338,6 +341,15 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformLayer
     return PlatformCALayerMac::create(platformLayer, owner);
 #elif PLATFORM(WIN)
     return PlatformCALayerWin::create(platformLayer, owner);
+#endif
+}
+
+PassRefPtr<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, const String& keyPath)
+{
+#if PLATFORM(COCOA)
+    return PlatformCAAnimationMac::create(type, keyPath);
+#elif PLATFORM(WIN)
+    return PlatformCAAnimationWin::create(type, keyPath);
 #endif
 }
 
@@ -787,16 +799,22 @@ bool GraphicsLayerCA::shouldRepaintOnSizeChange() const
     return drawsContent() && !tiledBacking();
 }
 
+bool GraphicsLayerCA::animationCanBeAccelerated(const KeyframeValueList& valueList, const Animation* anim) const
+{
+    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2)
+        return false;
+
+    if (animationHasStepsTimingFunction(valueList, anim))
+        return false;
+
+    return true;
+}
+
 bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const FloatSize& boxSize, const Animation* anim, const String& animationName, double timeOffset)
 {
     ASSERT(!animationName.isEmpty());
 
-    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2)
-        return false;
-
-    // CoreAnimation does not handle the steps() timing function. Fall back
-    // to software animation in that case.
-    if (animationHasStepsTimingFunction(valueList, anim))
+    if (!animationCanBeAccelerated(valueList, anim))
         return false;
 
     bool createdAnimations = false;
@@ -2576,14 +2594,14 @@ bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueLis
 
 PassRefPtr<PlatformCAAnimation> GraphicsLayerCA::createBasicAnimation(const Animation* anim, const String& keyPath, bool additive)
 {
-    RefPtr<PlatformCAAnimation> basicAnim = PlatformCAAnimation::create(PlatformCAAnimation::Basic, keyPath);
+    RefPtr<PlatformCAAnimation> basicAnim = createPlatformCAAnimation(PlatformCAAnimation::Basic, keyPath);
     setupAnimation(basicAnim.get(), anim, additive);
     return basicAnim;
 }
 
 PassRefPtr<PlatformCAAnimation>GraphicsLayerCA::createKeyframeAnimation(const Animation* anim, const String& keyPath, bool additive)
 {
-    RefPtr<PlatformCAAnimation> keyframeAnim = PlatformCAAnimation::create(PlatformCAAnimation::Keyframe, keyPath);
+    RefPtr<PlatformCAAnimation> keyframeAnim = createPlatformCAAnimation(PlatformCAAnimation::Keyframe, keyPath);
     setupAnimation(keyframeAnim.get(), anim, additive);
     return keyframeAnim;
 }

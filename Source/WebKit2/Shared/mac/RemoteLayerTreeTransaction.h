@@ -26,6 +26,7 @@
 #ifndef RemoteLayerTreeTransaction_h
 #define RemoteLayerTreeTransaction_h
 
+#include "PlatformCAAnimationRemote.h"
 #include "RemoteLayerBackingStore.h"
 #include <WebCore/Color.h>
 #include <WebCore/FilterOperations.h>
@@ -34,6 +35,7 @@
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
@@ -74,9 +76,10 @@ public:
         TimeOffsetChanged = 1 << 23,
         BackingStoreChanged = 1 << 24,
         FiltersChanged = 1 << 25,
-        EdgeAntialiasingMaskChanged = 1 << 26,
-        CustomAppearanceChanged = 1 << 27,
-        CustomBehaviorChanged = 1 << 28
+        AnimationsChanged = 1 << 26,
+        EdgeAntialiasingMaskChanged = 1 << 27,
+        CustomAppearanceChanged = 1 << 28,
+        CustomBehaviorChanged = 1 << 29
     };
     typedef unsigned LayerChange;
 
@@ -112,6 +115,10 @@ public:
         std::unique_ptr<WebCore::TransformationMatrix> transform;
         std::unique_ptr<WebCore::TransformationMatrix> sublayerTransform;
         Vector<WebCore::GraphicsLayer::PlatformLayerID> children;
+
+        HashMap<String, PlatformCAAnimationRemote::Properties> addedAnimations;
+        HashSet<String> keyPathsOfAnimationsToRemove;
+
         WebCore::FloatPoint3D position;
         WebCore::FloatPoint3D anchorPoint;
         WebCore::FloatSize size;

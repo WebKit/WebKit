@@ -65,6 +65,8 @@ void RemoteLayerTreeContext::layerWillBeDestroyed(PlatformCALayerRemote* layer)
 {
     ASSERT(!m_destroyedLayers.contains(layer->layerID()));
     m_destroyedLayers.append(layer->layerID());
+    
+    m_layersAwaitingAnimationStart.remove(layer->layerID());
 }
 
 void RemoteLayerTreeContext::outOfTreeLayerWasAdded(GraphicsLayer* layer)
@@ -100,6 +102,18 @@ void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transa
 
     transaction.setCreatedLayers(std::move(m_createdLayers));
     transaction.setDestroyedLayerIDs(std::move(m_destroyedLayers));
+}
+
+void RemoteLayerTreeContext::willStartAnimationOnLayer(PlatformCALayerRemote* layer)
+{
+    m_layersAwaitingAnimationStart.add(layer->layerID(), layer);
+}
+
+void RemoteLayerTreeContext::animationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, double startTime)
+{
+    auto it = m_layersAwaitingAnimationStart.find(layerID);
+    if (it != m_layersAwaitingAnimationStart.end())
+        it->value->animationStarted(startTime);
 }
 
 } // namespace WebKit

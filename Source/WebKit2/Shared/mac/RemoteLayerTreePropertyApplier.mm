@@ -26,7 +26,9 @@
 #import "config.h"
 #import "RemoteLayerTreePropertyApplier.h"
 
+#import "PlatformCAAnimationRemote.h"
 #import "PlatformCALayerRemote.h"
+#import "RemoteLayerTreeHost.h"
 #import <QuartzCore/CALayer.h>
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/PlatformCAFilters.h>
@@ -111,7 +113,7 @@ static void updateCustomAppearance(CALayer *layer, GraphicsLayer::CustomAppearan
 #endif
 }
 
-static void applyPropertiesToLayer(CALayer *layer, const RemoteLayerTreeTransaction::LayerProperties& properties)
+static void applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties)
 {
     if (properties.changedProperties & RemoteLayerTreeTransaction::NameChanged)
         layer.name = properties.name;
@@ -128,7 +130,7 @@ static void applyPropertiesToLayer(CALayer *layer, const RemoteLayerTreeTransact
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::SizeChanged)
         layer.bounds = FloatRect(FloatPoint(), properties.size);
-
+    
     if (properties.changedProperties & RemoteLayerTreeTransaction::BackgroundColorChanged)
         layer.backgroundColor = cgColorFromColor(properties.backgroundColor).get();
 
@@ -192,6 +194,9 @@ static void applyPropertiesToLayer(CALayer *layer, const RemoteLayerTreeTransact
     if (properties.changedProperties & RemoteLayerTreeTransaction::FiltersChanged)
         PlatformCAFilters::setFiltersOnLayer(layer, properties.filters ? *properties.filters : FilterOperations());
 
+    if (properties.changedProperties & RemoteLayerTreeTransaction::AnimationsChanged)
+        PlatformCAAnimationRemote::updateLayerAnimations(layer, layerTreeHost, properties.addedAnimations, properties.keyPathsOfAnimationsToRemove);
+
     if (properties.changedProperties & RemoteLayerTreeTransaction::EdgeAntialiasingMaskChanged)
         layer.edgeAntialiasingMask = properties.edgeAntialiasingMask;
 
@@ -199,10 +204,10 @@ static void applyPropertiesToLayer(CALayer *layer, const RemoteLayerTreeTransact
         updateCustomAppearance(layer, properties.customAppearance);
 }
 
-void RemoteLayerTreePropertyApplier::applyProperties(CALayer *layer, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
+void RemoteLayerTreePropertyApplier::applyProperties(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    applyPropertiesToLayer(layer, properties);
+    applyPropertiesToLayer(layer, layerTreeHost, properties);
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
         RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
@@ -236,10 +241,10 @@ void RemoteLayerTreePropertyApplier::applyProperties(CALayer *layer, const Remot
 }
 
 #if PLATFORM(IOS)
-void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
+void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    applyPropertiesToLayer(view.layer, properties);
+    applyPropertiesToLayer(view.layer, layerTreeHost, properties);
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
         RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);

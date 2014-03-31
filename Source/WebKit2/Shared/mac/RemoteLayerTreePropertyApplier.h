@@ -32,12 +32,14 @@
 
 namespace WebKit {
 
+class RemoteLayerTreeHost;
+
 class RemoteLayerTreePropertyApplier {
 public:
     typedef HashMap<WebCore::GraphicsLayer::PlatformLayerID, LayerOrView *> RelatedLayerMap;
-    static void applyProperties(CALayer *, const RemoteLayerTreeTransaction::LayerProperties&, const RelatedLayerMap&);
+    static void applyProperties(CALayer *, RemoteLayerTreeHost*, const RemoteLayerTreeTransaction::LayerProperties&, const RelatedLayerMap&);
 #if PLATFORM(IOS)
-    static void applyProperties(UIView *, const RemoteLayerTreeTransaction::LayerProperties&, const RelatedLayerMap&);
+    static void applyProperties(UIView *, RemoteLayerTreeHost*, const RemoteLayerTreeTransaction::LayerProperties&, const RelatedLayerMap&);
 #endif
 };
 

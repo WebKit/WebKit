@@ -43,7 +43,7 @@ namespace WebKit {
 
 RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy* webPageProxy)
     : DrawingAreaProxy(DrawingAreaTypeRemoteLayerTree, webPageProxy)
-    , m_remoteLayerTreeHost()
+    , m_remoteLayerTreeHost(*this)
     , m_isWaitingForDidUpdateGeometry(false)
 {
     m_webPageProxy->process().addMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_webPageProxy->pageID(), *this);
@@ -139,6 +139,11 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
     }
 
     scheduleCoreAnimationLayerCommitObserver();
+}
+
+void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(uint64_t layerID, double startTime)
+{
+    m_webPageProxy->process().send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID, startTime), m_webPageProxy->pageID());
 }
 
 static const float indicatorInset = 10;
@@ -246,7 +251,7 @@ void RemoteLayerTreeDrawingAreaProxy::showDebugIndicator(bool show)
         return;
     }
     
-    m_debugIndicatorLayerTreeHost = std::make_unique<RemoteLayerTreeHost>();
+    m_debugIndicatorLayerTreeHost = std::make_unique<RemoteLayerTreeHost>(*this);
     m_debugIndicatorLayerTreeHost->setIsDebugLayerTreeHost(true);
 
     m_tileMapHostLayer = adoptNS([[CALayer alloc] init]);

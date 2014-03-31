@@ -59,6 +59,7 @@
 #include <WebCore/ScrollingCoordinator.h>
 #include <WebCore/SessionID.h>
 #include <WebCore/TextCheckerClient.h>
+#include <WebCore/TimingFunction.h>
 #include <WebCore/TransformationMatrix.h>
 #include <WebCore/URL.h>
 #include <WebCore/UserScript.h>
@@ -90,7 +91,6 @@ bool ArgumentCoder<AffineTransform>::decode(ArgumentDecoder& decoder, AffineTran
     return SimpleArgumentCoder<AffineTransform>::decode(decoder, affineTransform);
 }
 
-
 void ArgumentCoder<TransformationMatrix>::encode(ArgumentEncoder& encoder, const TransformationMatrix& transformationMatrix)
 {
     SimpleArgumentCoder<TransformationMatrix>::encode(encoder, transformationMatrix);
@@ -99,6 +99,83 @@ void ArgumentCoder<TransformationMatrix>::encode(ArgumentEncoder& encoder, const
 bool ArgumentCoder<TransformationMatrix>::decode(ArgumentDecoder& decoder, TransformationMatrix& transformationMatrix)
 {
     return SimpleArgumentCoder<TransformationMatrix>::decode(decoder, transformationMatrix);
+}
+
+void ArgumentCoder<LinearTimingFunction>::encode(ArgumentEncoder& encoder, const LinearTimingFunction& timingFunction)
+{
+    encoder.encodeEnum(timingFunction.type());
+}
+
+bool ArgumentCoder<LinearTimingFunction>::decode(ArgumentDecoder& decoder, LinearTimingFunction& timingFunction)
+{
+    // Type is decoded by the caller. Nothing else to decode.
+    return true;
+}
+
+void ArgumentCoder<CubicBezierTimingFunction>::encode(ArgumentEncoder& encoder, const CubicBezierTimingFunction& timingFunction)
+{
+    encoder.encodeEnum(timingFunction.type());
+    
+    encoder << timingFunction.x1();
+    encoder << timingFunction.y1();
+    encoder << timingFunction.x2();
+    encoder << timingFunction.y2();
+    
+    encoder.encodeEnum(timingFunction.timingFunctionPreset());
+}
+
+bool ArgumentCoder<CubicBezierTimingFunction>::decode(ArgumentDecoder& decoder, CubicBezierTimingFunction& timingFunction)
+{
+    // Type is decoded by the caller.
+    double x1;
+    if (!decoder.decode(x1))
+        return false;
+
+    double y1;
+    if (!decoder.decode(y1))
+        return false;
+
+    double x2;
+    if (!decoder.decode(x2))
+        return false;
+
+    double y2;
+    if (!decoder.decode(y2))
+        return false;
+
+    CubicBezierTimingFunction::TimingFunctionPreset preset;
+    if (!decoder.decodeEnum(preset))
+        return false;
+
+    timingFunction.setValues(x1, y1, x2, y2);
+    timingFunction.setTimingFunctionPreset(preset);
+
+    return true;
+}
+
+void ArgumentCoder<StepsTimingFunction>::encode(ArgumentEncoder& encoder, const StepsTimingFunction& timingFunction)
+{
+    encoder.encodeEnum(timingFunction.type());
+    
+    encoder << timingFunction.numberOfSteps();
+    encoder << timingFunction.stepAtStart();
+}
+
+bool ArgumentCoder<StepsTimingFunction>::decode(ArgumentDecoder& decoder, StepsTimingFunction& timingFunction)
+{
+    // Type is decoded by the caller.
+    int numSteps;
+    if (!decoder.decode(numSteps))
+        return false;
+
+    bool stepAtStart;
+    if (!decoder.decode(stepAtStart))
+        return false;
+
+    timingFunction.setNumberOfSteps(numSteps);
+    timingFunction.setStepAtStart(stepAtStart);
+
+    return true;
 }
 
 void ArgumentCoder<FloatPoint>::encode(ArgumentEncoder& encoder, const FloatPoint& floatPoint)
