@@ -1,3 +1,21 @@
+2014-03-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebKitPerfMonitor: Header and number-of-days slider takes up too much space
+        https://bugs.webkit.org/show_bug.cgi?id=130957
+
+        Reviewed by Gyuyoung Kim.
+
+        Moved the slider into the header. Also reduced the spacing between the header and platform names.
+        This reclaims 50px × width of the screen real estate.
+
+        * public/common.css:
+        (#title): Reduced the space below the header from 20px to 10px.
+        * public/index.html:
+        (#numberOfDaysPicker): Removed the rounded border around the number-of-days slider.
+        (#dashboard > tbody > tr > td): Added a 1.5em padding at the bottom.
+        (#dashboard > thead th): That allows us to remove the padding at the top here. This reduces the wasted screen
+        real estate between the header and the platform names.
+
 2014-03-10  Zoltan Horvath  <zoltan@webkit.org>
 
         Update the install guidelines for perf.webkit.org

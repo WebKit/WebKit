@@ -16,12 +16,7 @@
 <style type="text/css">
 
 #numberOfDaysPicker {
-    display: inline-block;
-    margin: 5px 0px;
-    border: solid 1px #ccc;
     color: #666;
-    border-radius: 5px;
-    padding: 5px 8px;
 }
 
 #numberOfDaysPicker input {
@@ -36,10 +31,10 @@ td, th {
 
 #dashboard > tbody > tr > td {
     vertical-align: top;
+    padding-bottom: 1.5em;
 }
 
 #dashboard > thead th {
-    padding-top: 1.5em;
     text-shadow: #bbb 1px 1px 2px;
     font-size: large;
     font-weight: normal;
@@ -261,20 +256,6 @@ td, th {
     color: #666;
     border-radius: 5px;
     padding: 5px 8px;
-}
-
-#numberOfDaysPicker {
-    display: inline-block;
-    margin: 5px 0px;
-    border: solid 1px #ccc;
-    color: #666;
-    border-radius: 5px;
-    padding: 5px 8px;
-}
-
-#numberOfDaysPicker input {
-    height: 0.9em;
-    margin-right: 1em;
 }
 
 </style>
@@ -1155,12 +1136,11 @@ window.addEventListener('DOMContentLoaded', init, false);
 <header id="title">
 <h1><a href="/">WebKit Perf Monitor</a></h1>
 <ul>
+    <li id="numberOfDaysPicker"><input id="numberOfDays" type="range" min="1" max="5.9" step="0.001" value="2.3"><span class="output"></span></li>
     <li><a href="javascript:setMode('dashboard');">Dashboard</a></li>
     <li><a href="javascript:setMode('charts');">Charts</a></li>
 </ul>
 </header>
-
-<div id="numberOfDaysPicker"><input id="numberOfDays" type="range" min="1" max="5.9" step="0.001" value="2.3"><span class="output"></span></div>
 
 <div id="mainContents"></div>
 </body>
