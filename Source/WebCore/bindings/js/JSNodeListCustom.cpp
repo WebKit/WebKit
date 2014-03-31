@@ -60,4 +60,10 @@ bool JSNodeList::getOwnPropertySlotDelegate(ExecState* exec, PropertyName proper
     return false;
 }
 
+JSC::JSValue createWrapper(JSDOMGlobalObject& globalObject, NodeList& nodeList)
+{
+    globalObject.vm().heap.reportExtraMemoryCost(nodeList.memoryCost());
+    return createNewWrapper<JSNodeList>(&globalObject, &nodeList);
+}
+
 } // namespace WebCore

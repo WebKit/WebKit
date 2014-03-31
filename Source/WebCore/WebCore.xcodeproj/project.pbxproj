@@ -4224,6 +4224,7 @@
 		ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */; };
 		ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */; };
 		AD03AAFA1468455300A39B5B /* CSSValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD03AAF81468453900A39B5B /* CSSValue.cpp */; };
+		AD20B18D18E9D237005A8083 /* JSNodeListCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = AD20B18C18E9D216005A8083 /* JSNodeListCustom.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD4495F3141FC08900541EDF /* EventListenerMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD4495F1141FC08900541EDF /* EventListenerMap.cpp */; };
 		AD4495F4141FC08900541EDF /* EventListenerMap.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4495F2141FC08900541EDF /* EventListenerMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD6E71AC1668899D00320C13 /* DocumentSharedObjectPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD6E71AA1668899D00320C13 /* DocumentSharedObjectPool.cpp */; };
@@ -11327,6 +11328,7 @@
 		ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMenuList.cpp; sourceTree = "<group>"; };
 		ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderMenuList.h; sourceTree = "<group>"; };
 		AD03AAF81468453900A39B5B /* CSSValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValue.cpp; sourceTree = "<group>"; };
+		AD20B18C18E9D216005A8083 /* JSNodeListCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNodeListCustom.h; sourceTree = "<group>"; };
 		AD4495F1141FC08900541EDF /* EventListenerMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventListenerMap.cpp; sourceTree = "<group>"; };
 		AD4495F2141FC08900541EDF /* EventListenerMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventListenerMap.h; sourceTree = "<group>"; };
 		AD6E71AA1668899D00320C13 /* DocumentSharedObjectPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentSharedObjectPool.cpp; sourceTree = "<group>"; };
@@ -20563,6 +20565,7 @@
 				BCB773600C17853D00132BA4 /* JSNodeFilterCustom.cpp */,
 				1A750DD30A90E729000FF215 /* JSNodeIteratorCustom.cpp */,
 				BCD9C2610C17AA67005C90A2 /* JSNodeListCustom.cpp */,
+				AD20B18C18E9D216005A8083 /* JSNodeListCustom.h */,
 				FDBD1DFB167FE27D0051A11E /* JSOscillatorNodeCustom.cpp */,
 				FD8AA63D169514A700D2EA68 /* JSPannerNodeCustom.cpp */,
 				A85F22081430377D007CC884 /* JSPopStateEventCustom.cpp */,
@@ -24035,6 +24038,7 @@
 				A81369D8097374F600D74463 /* HTMLSelectElement.h in Headers */,
 				E44613A80CD6331000FADA75 /* HTMLSourceElement.h in Headers */,
 				977E2DCE12F0E28300C13379 /* HTMLSourceTracker.h in Headers */,
+				AD20B18D18E9D237005A8083 /* JSNodeListCustom.h in Headers */,
 				978AD67514130A8D00C7CAE3 /* HTMLSpanElement.h in Headers */,
 				A871DC230A15205700B12A68 /* HTMLStyleElement.h in Headers */,
 				D3D4E973130C7CFE007BA540 /* HTMLSummaryElement.h in Headers */,

@@ -1,3 +1,19 @@
+2014-03-31  Andreas Kling  <akling@apple.com>
+
+        Always inline toJS() for NodeList.
+        <https://webkit.org/b/130974>
+
+        This is a pretty cheesy optimization, but it's a 3% progression on
+        Dromaeo/dom-query.html on my MBP.
+
+        Reviewed by Benjamin Poulain.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSNodeListCustom.h: Added.
+        (WebCore::toJS):
+        * dom/NodeList.idl:
+
 2014-03-31  Benjamin Poulain  <bpoulain@apple.com>
 
         Attempt to fix the 32bits debug builds

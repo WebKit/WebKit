@@ -20,7 +20,9 @@
 
 [
     CustomIsReachable,
+    CustomToJSObject,
     JSCustomGetOwnPropertySlotAndDescriptor,
+    JSCustomHeader,
     SkipVTableValidation,
     ReportExtraMemoryCost,
 ] interface NodeList {
