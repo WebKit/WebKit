@@ -556,8 +556,13 @@ void WebPageProxy::initializeWebPage()
     ASSERT(m_drawingArea);
 
 #if ENABLE(ASYNC_SCROLLING)
-    if (m_drawingArea->type() == DrawingAreaTypeRemoteLayerTree)
+    if (m_drawingArea->type() == DrawingAreaTypeRemoteLayerTree) {
         m_scrollingCoordinatorProxy = std::make_unique<RemoteScrollingCoordinatorProxy>(*this);
+#if PLATFORM(IOS)
+        // On iOS, main frame scrolls are sent in terms of visible rect updates.
+        m_scrollingCoordinatorProxy->setPropagatesMainFrameScrolls(false);
+#endif
+    }
 #endif
 
 #if ENABLE(INSPECTOR_SERVER)

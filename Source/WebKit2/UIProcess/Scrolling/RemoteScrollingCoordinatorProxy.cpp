@@ -48,6 +48,7 @@ namespace WebKit {
 RemoteScrollingCoordinatorProxy::RemoteScrollingCoordinatorProxy(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
     , m_scrollingTree(RemoteScrollingTree::create(*this))
+    , m_propagatesMainFrameScrolls(true)
 {
 }
 
@@ -153,7 +154,7 @@ void RemoteScrollingCoordinatorProxy::scrollPositionChanged(WebCore::ScrollingNo
 {
     // Scroll updates for the main frame are sent via WebPageProxy::updateVisibleContentRects()
     // so don't send them here.
-    if (scrolledNodeID == rootScrollingNodeID())
+    if (!m_propagatesMainFrameScrolls && scrolledNodeID == rootScrollingNodeID())
         return;
 
     m_webPageProxy.send(Messages::RemoteScrollingCoordinator::ScrollPositionChangedForNode(scrolledNodeID, newScrollPosition));

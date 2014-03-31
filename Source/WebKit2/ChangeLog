@@ -1,3 +1,24 @@
+2014-03-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix scrolling on OS X with UI-side compositing
+        https://bugs.webkit.org/show_bug.cgi?id=130930
+
+        Reviewed by Tim Horton.
+        
+        On iOS, we rely on visible rect updates to propagate scroll offset
+        changes to the WebProcess. RemoteScrollingCoordinatorProxy was thus hardcoded
+        to bail from scrollPositionChanged() when the scrolled node was the root node,
+        but this broke OS X. Fix by adding a behavior flag to RemoteScrollingCoordinatorProxy.
+
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::RemoteScrollingCoordinatorProxy):
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollPositionChanged):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+        (WebKit::RemoteScrollingCoordinatorProxy::setPropagatesMainFrameScrolls):
+        (WebKit::RemoteScrollingCoordinatorProxy::propagatesMainFrameScrolls):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+
 2014-03-31  Tim Horton  <timothy_horton@apple.com>
 
         [iOS WebKit2] Disable tile cohort retention for now
