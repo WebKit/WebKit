@@ -85,6 +85,16 @@ public:
         return ShapeInterval<T>(std::max<T>(x1(), interval.x1()), std::min<T>(x2(), interval.x2()));
     }
 
+    void unite(const ShapeInterval<T>& interval)
+    {
+        if (interval.isEmpty())
+            return;
+        if (isEmpty())
+            set(interval.x1(), interval.x2());
+        else
+            set(std::min<T>(x1(), interval.x1()), std::max<T>(x2(), interval.x2()));
+    }
+
     typedef Vector<ShapeInterval<T>> ShapeIntervals;
     typedef typename ShapeIntervals::const_iterator const_iterator;
     typedef typename ShapeIntervals::iterator iterator;

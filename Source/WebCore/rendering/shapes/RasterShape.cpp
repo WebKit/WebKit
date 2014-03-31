@@ -73,96 +73,6 @@ IntShapeInterval MarginIntervalGenerator::intervalAt(int y) const
     return IntShapeInterval(m_x1 - dx, m_x2 + dx);
 }
 
-void RasterShapeIntervals::appendInterval(int y, int x1, int x2)
-{
-    ASSERT(x2 > x1 && (intervalsAt(y).isEmpty() || x1 > intervalsAt(y).last().x2()));
-    m_bounds.unite(IntRect(x1, y, x2 - x1, 1));
-    intervalsAt(y).append(IntShapeInterval(x1, x2));
-}
-
-void RasterShapeIntervals::uniteMarginInterval(int y, const IntShapeInterval& interval)
-{
-    ASSERT(intervalsAt(y).size() <= 1); // Each m_intervalLists entry has 0 or one interval.
-
-    if (intervalsAt(y).isEmpty())
-        intervalsAt(y).append(interval);
-    else {
-        IntShapeInterval& resultInterval = intervalsAt(y)[0];
-        resultInterval.set(std::min(resultInterval.x1(), interval.x1()), std::max(resultInterval.x2(), interval.x2()));
-    }
-
-    m_bounds.unite(IntRect(interval.x1(), y, interval.width(), 1));
-}
-
-static inline bool shapeIntervalsContain(const IntShapeIntervals& intervals, const IntShapeInterval& interval)
-{
-    for (unsigned i = 0; i < intervals.size(); i++) {
-        if (intervals[i].x1() > interval.x2())
-            return false;
-        if (intervals[i].contains(interval))
-            return true;
-    }
-
-    return false;
-}
-
-bool RasterShapeIntervals::contains(const IntRect& rect) const
-{
-    if (!bounds().contains(rect))
-        return false;
-
-    const IntShapeInterval& rectInterval = IntShapeInterval(rect.x(), rect.maxX());
-    for (int y = rect.y(); y < rect.maxY(); y++) {
-        if (!shapeIntervalsContain(intervalsAt(y), rectInterval))
-            return false;
-    }
-
-    return true;
-}
-
-static inline void appendX1Values(const IntShapeIntervals& intervals, int minIntervalWidth, Vector<int>& result)
-{
-    for (unsigned i = 0; i < intervals.size(); i++)
-        if (intervals[i].width() >= minIntervalWidth)
-            result.append(intervals[i].x1());
-}
-
-bool RasterShapeIntervals::getIntervalX1Values(int y1, int y2, int minIntervalWidth, Vector<int>& result) const
-{
-    ASSERT(y1 >= 0 && y2 > y1);
-
-    for (int y = y1; y < y2;  y++) {
-        if (intervalsAt(y).isEmpty())
-            return false;
-    }
-
-    appendX1Values(intervalsAt(y1), minIntervalWidth, result);
-    for (int y = y1 + 1; y < y2;  y++) {
-        if (intervalsAt(y) != intervalsAt(y - 1))
-            appendX1Values(intervalsAt(y), minIntervalWidth, result);
-    }
-
-    return true;
-}
-
-void RasterShapeIntervals::getExcludedIntervals(int y1, int y2, IntShapeIntervals& result) const
-{
-    ASSERT(y2 >= y1);
-
-    if (y2 < bounds().y() || y1 >= bounds().maxY())
-        return;
-
-    y1 = std::max(y1, bounds().y());
-    y2 = std::min(y2, bounds().maxY());
-
-    result = intervalsAt(y1);
-    for (int y = y1 + 1; y < y2;  y++) {
-        IntShapeIntervals intervals;
-        IntShapeInterval::uniteShapeIntervals(result, intervalsAt(y), intervals);
-        result.swap(intervals);
-    }
-}
-
 std::unique_ptr<RasterShapeIntervals> RasterShapeIntervals::computeShapeMarginIntervals(int shapeMargin) const
 {
     int marginIntervalsSize = (offset() > shapeMargin) ? size() : size() - offset() * 2 + shapeMargin * 2;
@@ -170,7 +80,7 @@ std::unique_ptr<RasterShapeIntervals> RasterShapeIntervals::computeShapeMarginIn
     MarginIntervalGenerator marginIntervalGenerator(shapeMargin);
 
     for (int y = bounds().y(); y < bounds().maxY(); ++y) {
-        const IntShapeInterval& intervalAtY = limitIntervalAt(y);
+        const IntShapeInterval& intervalAtY = intervalAt(y);
         if (intervalAtY.isEmpty())
             continue;
 
@@ -179,33 +89,45 @@ std::unique_ptr<RasterShapeIntervals> RasterShapeIntervals::computeShapeMarginIn
         int marginY1 = std::min(maxY(), y + shapeMargin);
 
         for (int marginY = y - 1; marginY >= marginY0; --marginY) {
-            if (marginY > bounds().y() && limitIntervalAt(marginY).contains(intervalAtY))
+            if (marginY > bounds().y() && intervalAt(marginY).contains(intervalAtY))
                 break;
-            result->uniteMarginInterval(marginY, marginIntervalGenerator.intervalAt(marginY));
+            result->intervalAt(marginY).unite(marginIntervalGenerator.intervalAt(marginY));
         }
 
-        result->uniteMarginInterval(y, marginIntervalGenerator.intervalAt(y));
+        result->intervalAt(y).unite(marginIntervalGenerator.intervalAt(y));
 
         for (int marginY = y + 1; marginY <= marginY1; ++marginY) {
-            if (marginY < bounds().maxY() && limitIntervalAt(marginY).contains(intervalAtY))
+            if (marginY < bounds().maxY() && intervalAt(marginY).contains(intervalAtY))
                 break;
-            result->uniteMarginInterval(marginY, marginIntervalGenerator.intervalAt(marginY));
+            result->intervalAt(marginY).unite(marginIntervalGenerator.intervalAt(marginY));
         }
     }
 
+    result->initializeBounds();
     return result;
+}
+
+void RasterShapeIntervals::initializeBounds()
+{
+    m_bounds = IntRect();
+    for (int y = minY(); y < maxY(); ++y) {
+        const IntShapeInterval& intervalAtY = intervalAt(y);
+        if (intervalAtY.isEmpty())
+            continue;
+        m_bounds.unite(IntRect(intervalAtY.x1(), y, intervalAtY.width(), 1));
+    }
 }
 
 void RasterShapeIntervals::buildBoundsPath(Path& path) const
 {
     for (int y = bounds().y(); y < bounds().maxY(); y++) {
-        if (intervalsAt(y).isEmpty())
+        if (intervalAt(y).isEmpty())
             continue;
 
-        IntShapeInterval extent = limitIntervalAt(y);
+        IntShapeInterval extent = intervalAt(y);
         int endY = y + 1;
         for (; endY < bounds().maxY(); endY++) {
-            if (intervalsAt(endY).isEmpty() || limitIntervalAt(endY) != extent)
+            if (intervalAt(endY).isEmpty() || intervalAt(endY) != extent)
                 break;
         }
         path.addRect(FloatRect(extent.x1(), y, extent.width(), endY - y));
@@ -227,21 +149,26 @@ const RasterShapeIntervals& RasterShape::marginIntervals() const
     return *m_marginIntervals;
 }
 
-static inline void appendLineSegments(const IntShapeIntervals& intervals, SegmentList& result)
-{
-    for (unsigned i = 0; i < intervals.size(); i++)
-        result.append(LineSegment(intervals[i].x1(), intervals[i].x2() + 1));
-}
-
 void RasterShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
 {
     const RasterShapeIntervals& intervals = marginIntervals();
     if (intervals.isEmpty())
         return;
 
-    IntShapeIntervals excludedIntervals;
-    intervals.getExcludedIntervals(logicalTop, logicalTop + logicalHeight, excludedIntervals);
-    appendLineSegments(excludedIntervals, result);
+    int y1 = logicalTop;
+    int y2 = logicalTop + logicalHeight;
+    ASSERT(y2 >= y1);
+    if (y2 < intervals.bounds().y() || y1 >= intervals.bounds().maxY())
+        return;
+
+    y1 = std::max(y1, intervals.bounds().y());
+    y2 = std::min(y2, intervals.bounds().maxY());
+    IntShapeInterval excludedInterval;
+
+    for (int y = y1; y < y2;  y++)
+        excludedInterval.unite(intervals.intervalAt(y));
+
+    result.append(LineSegment(excludedInterval.x1(), excludedInterval.x2() + 1));
 }
 
 } // namespace WebCore

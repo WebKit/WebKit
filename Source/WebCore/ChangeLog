@@ -1,3 +1,31 @@
+2014-03-31  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Simplify RasterShape implementation
+        https://bugs.webkit.org/show_bug.cgi?id=130916
+
+        Reviewed by Dean Jackson.
+
+        Since only floats can specify shape-outside, the RasterShapeIntervals
+        class only needs to track the first and last above threshold pixel column
+        (x1 and x2 in the implementation) for each row. Removed code for dealing with
+        multiple "runs" per row as well as shape-inside internals.
+
+        No new tests, since functionality was only removed.
+
+        * rendering/shapes/RasterShape.cpp:
+        (WebCore::RasterShapeIntervals::computeShapeMarginIntervals):
+        (WebCore::RasterShapeIntervals::initializeBounds):
+        (WebCore::RasterShapeIntervals::buildBoundsPath):
+        (WebCore::RasterShape::getExcludedIntervals):
+        * rendering/shapes/RasterShape.h:
+        (WebCore::RasterShapeIntervals::RasterShapeIntervals):
+        (WebCore::RasterShapeIntervals::intervalAt):
+        (WebCore::RasterShape::RasterShape):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createRasterShape):
+        * rendering/shapes/ShapeInterval.h:
+        (WebCore::ShapeInterval::unite):
+
 2014-03-31  Andreas Kling  <akling@apple.com>
 
         Always inline toJS() for NodeList.

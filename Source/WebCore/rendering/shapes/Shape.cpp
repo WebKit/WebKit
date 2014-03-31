@@ -195,7 +195,7 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
         int minBufferY = std::max(0, marginRect.y() - imageRect.y());
         int maxBufferY = std::min(imageRect.height(), marginRect.maxY() - imageRect.y());
 
-        if (static_cast<unsigned>(imageRect.width() * imageRect.height() * 4) == pixelArrayLength) { // sanity check
+        if (static_cast<unsigned>(imageRect.width() * imageRect.height() * 4) == pixelArrayLength) {
             for (int y = minBufferY; y < maxBufferY; ++y) {
                 int startX = -1;
                 for (int x = 0; x < imageRect.width(); ++x, pixelArrayOffset += 4) {
@@ -204,7 +204,7 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
                     if (startX == -1 && alphaAboveThreshold) {
                         startX = x;
                     } else if (startX != -1 && (!alphaAboveThreshold || x == imageRect.width() - 1)) {
-                        intervals->appendInterval(y + imageRect.y(), startX + imageRect.x(), x + imageRect.x());
+                        intervals->intervalAt(y + imageRect.y()).unite(IntShapeInterval(startX + imageRect.x(), x + imageRect.x()));
                         startX = -1;
                     }
                 }
