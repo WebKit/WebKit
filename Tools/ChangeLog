@@ -1,3 +1,17 @@
+2014-04-01  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Running minibrowser with url crashes in debug build
+        https://bugs.webkit.org/show_bug.cgi?id=130492
+
+        Reviewed by Martin Robinson.
+
+        Update "uri-scheme" test not to use invalid URIs in it, so we
+        don't get a mistmatch when comparing the original URI stored in
+        the test class with the one returned by the WebKitWebView.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp:
+        (testWebContextURIScheme): Update the test.
+
 2014-04-01  Mihai Tica  <mitica@adobe.com>
 
         Unreviewed: Add myself as a commiter to the contributors list.
