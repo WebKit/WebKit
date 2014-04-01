@@ -1,5 +1,16 @@
 2014-03-31  Simon Fraser  <simon.fraser@apple.com>
 
+        Enable WEB_TIMING on Mac and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=128064
+
+        Reviewed by Sam Weinig, Brent Fulgham.
+        
+        Enable WEB_TIMING.
+
+        * Configurations/FeatureDefines.xcconfig:
+
+2014-03-31  Simon Fraser  <simon.fraser@apple.com>
+
         [UI-side compositing] Fix animations, and add logging
         https://bugs.webkit.org/show_bug.cgi?id=131011
 
