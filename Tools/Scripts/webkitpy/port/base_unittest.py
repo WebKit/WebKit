@@ -391,7 +391,10 @@ class PortTest(unittest.TestCase):
 
     def test_build_path(self):
         port = self.make_port(options=optparse.Values({'build_directory': '/my-build-directory/'}))
-        self.assertEqual(port._build_path(), '/my-build-directory/Release')
+        if port.get_option('configuration') == 'Debug':
+            self.assertEqual(port._build_path(), '/my-build-directory/Debug')
+        else:
+            self.assertEqual(port._build_path(), '/my-build-directory/Release')
 
 
 class NaturalCompareTest(unittest.TestCase):

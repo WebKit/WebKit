@@ -1,3 +1,10 @@
+2014-04-01  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test gardening.
+
+        * Scripts/webkitpy/port/base_unittest.py:
+        (PortTest.test_build_path): Handle the Debug case so we don't get webkitpy-test failures on our test bots.
+
 2014-04-01  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Exclusions] Remove exclusions parsing support
