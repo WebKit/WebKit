@@ -1,3 +1,10 @@
+2014-04-01  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix when disabled ACCESSIBILITY
+
+        * accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp:
+        Separated macros not to check ATK version when disabled ACCESSIBILITY
+
 2014-04-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMake][EFL] Enable CSS JIT

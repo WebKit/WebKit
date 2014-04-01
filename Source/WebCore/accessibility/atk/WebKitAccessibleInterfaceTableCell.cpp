@@ -20,8 +20,8 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceTableCell.h"
 
-#if HAVE(ACCESSIBILITY) && ATK_CHECK_VERSION(2,11,90)
-
+#if HAVE(ACCESSIBILITY)
+#if ATK_CHECK_VERSION(2,11,90)
 #include "AccessibilityObject.h"
 #include "AccessibilityTable.h"
 #include "AccessibilityTableCell.h"
@@ -156,4 +156,5 @@ void webkitAccessibleTableCellInterfaceInit(AtkTableCellIface* iface)
     iface->get_table = webkitAccessibleTableCellGetTable;
 }
 
-#endif
+#endif // ATK_CHECK_VERSION(2,11,90)
+#endif // HAVE(ACCESSIBILITY)
