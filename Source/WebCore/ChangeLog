@@ -1,3 +1,27 @@
+2014-04-01  Daniel Bates  <dabates@apple.com>
+
+        RenderQuote must destroy remaining text renderer before first letter renderer
+        https://bugs.webkit.org/show_bug.cgi?id=78023
+        <rdar://problem/10830009>
+
+        Reviewed by Brent Fulgham.
+
+        Merged from Blink (patch by Abhishek Arya):
+        https://src.chromium.org/viewvc/blink?view=rev&revision=151270
+
+        Following the fix for <https://bugs.webkit.org/show_bug.cgi?id=114586>, a
+        RenderQuote may have child render objects for the first letter of its text
+        and everything following the first letter so as to support the CSS first-
+        letter property. The latter renderer is responsible for destroying the former
+        on destruction. It's sufficient to reverse the destruction of the children of
+        RenderQuote to ensure that we destroy the remaining text renderer before we
+        destroy the first letter renderer.
+
+        Test: fast/css-generated-content/quote-first-letter-crash.html
+
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::updateText):
+
 2014-04-01  David Kilzer  <ddkilzer@apple.com>
 
         Do not allow HTTP refresh headers to refresh to javascript: URLs

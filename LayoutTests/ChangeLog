@@ -1,3 +1,17 @@
+2014-04-01  Daniel Bates  <dabates@apple.com>
+
+        RenderQuote must destroy remaining text renderer before first letter renderer
+        https://bugs.webkit.org/show_bug.cgi?id=78023
+        <rdar://problem/10830009>
+
+        Reviewed by Brent Fulgham.
+
+        Merged from Blink (patch by Abhishek Arya):
+        https://src.chromium.org/viewvc/blink?view=rev&revision=151270
+
+        * fast/css-generated-content/quote-first-letter-crash-expected.txt: Added.
+        * fast/css-generated-content/quote-first-letter-crash.html: Added.
+
 2014-04-01  David Kilzer  <ddkilzer@apple.com>
 
         Do not allow HTTP refresh headers to refresh to javascript: URLs
