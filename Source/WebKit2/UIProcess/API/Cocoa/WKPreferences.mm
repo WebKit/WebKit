@@ -62,6 +62,36 @@
     return _preferences->minimumFontSize();
 }
 
+- (BOOL)isJavaScriptEnabled
+{
+    return _preferences->javaScriptEnabled();
+}
+
+- (void)setJavaScriptEnabled:(BOOL)javaScriptEnabled
+{
+    _preferences->setJavaScriptEnabled(javaScriptEnabled);
+}
+
+- (BOOL)javaScriptCanOpenWindowsAutomatically
+{
+    return _preferences->javaScriptCanOpenWindowsAutomatically();
+}
+
+- (void)setJavaScriptCanOpenWindowsAutomatically:(BOOL)javaScriptCanOpenWindowsAutomatically
+{
+    _preferences->setJavaScriptCanOpenWindowsAutomatically(javaScriptCanOpenWindowsAutomatically);
+}
+
+- (BOOL)suppressesIncrementalRendering
+{
+    return _preferences->suppressesIncrementalRendering();
+}
+
+- (void)setSuppressesIncrementalRendering:(BOOL)suppressesIncrementalRendering
+{
+    _preferences->setSuppressesIncrementalRendering(suppressesIncrementalRendering);
+}
+
 - (void)setMinimumFontSize:(CGFloat)minimumFontSize
 {
     _preferences->setMinimumFontSize(minimumFontSize);
@@ -99,6 +129,32 @@
 - (void)setMediaPlaybackAllowsAirPlay:(BOOL)mediaPlaybackAllowsAirPlay
 {
     _preferences->setMediaPlaybackAllowsAirPlay(mediaPlaybackAllowsAirPlay);
+}
+
+#endif
+
+#pragma mark OS X-specific methods
+
+#if PLATFORM(MAC)
+
+- (BOOL)isJavaEnabled
+{
+    return _preferences->javaEnabled();
+}
+
+- (void)setJavaEnabled:(BOOL)javaEnabled
+{
+    _preferences->setJavaEnabled(javaEnabled);
+}
+
+- (BOOL)arePlugInsEnabled
+{
+    return _preferences->pluginsEnabled();
+}
+
+- (void)setPlugInsEnabled:(BOOL)plugInsEnabled
+{
+    _preferences->setPluginsEnabled(plugInsEnabled);
 }
 
 #endif
