@@ -90,13 +90,13 @@ IntSize CSSCrossfadeValue::fixedSize(const RenderElement* renderer)
     if (!cachedFromImage || !cachedToImage)
         return IntSize();
 
-    IntSize fromImageSize = cachedFromImage->imageForRenderer(renderer)->size();
-    IntSize toImageSize = cachedToImage->imageForRenderer(renderer)->size();
+    FloatSize fromImageSize = cachedFromImage->imageForRenderer(renderer)->size();
+    FloatSize toImageSize = cachedToImage->imageForRenderer(renderer)->size();
 
     // Rounding issues can cause transitions between images of equal size to return
     // a different fixed size; avoid performing the interpolation if the images are the same size.
     if (fromImageSize == toImageSize)
-        return fromImageSize;
+        return IntSize(fromImageSize);
 
     return IntSize(fromImageSize.width() * inversePercentage + toImageSize.width() * percentage,
         fromImageSize.height() * inversePercentage + toImageSize.height() * percentage);

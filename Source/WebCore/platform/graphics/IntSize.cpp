@@ -26,6 +26,7 @@
 #include "config.h"
 #include "IntSize.h"
 
+#include "FloatSize.h"
 #include <wtf/PrintStream.h>
 
 namespace WebCore {
@@ -33,6 +34,12 @@ namespace WebCore {
 void IntSize::dump(PrintStream& out) const
 {
     out.printf("(%d x %d)", width(), height());
+}
+
+IntSize::IntSize(const FloatSize& s)
+    : m_width(clampToInteger(s.width()))
+    , m_height(clampToInteger(s.height()))
+{
 }
 
 }

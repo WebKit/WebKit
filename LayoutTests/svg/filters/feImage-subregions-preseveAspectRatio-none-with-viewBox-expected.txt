@@ -5,13 +5,13 @@ layer at (0,0) size 400x500
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGRect {rect} at (0,100) size 50x50 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
       RenderSVGResourceFilter {filter} [id="filter1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-        [feImage image-size="100x100"]
+        [feImage image-size="100.00x100.00"]
       RenderSVGResourceFilter {filter} [id="filter2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-        [feImage image-size="100x100"]
+        [feImage image-size="100.00x100.00"]
       RenderSVGResourceFilter {filter} [id="filter3"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-        [feImage image-size="100x100"]
+        [feImage image-size="100.00x100.00"]
       RenderSVGResourceFilter {filter} [id="filter4"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-        [feImage image-size="100x100"]
+        [feImage image-size="100.00x100.00"]
     RenderSVGContainer {g} at (5,95) size 241x245 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,10.00)}]
       RenderSVGRect {rect} at (5,95) size 241x120 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=400.00] [height=200.00]
         [filter="filter1"] RenderSVGResourceFilter {filter} at (-40,-20) size 480x240

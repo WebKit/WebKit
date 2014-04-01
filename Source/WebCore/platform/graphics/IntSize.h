@@ -56,10 +56,13 @@ class PrintStream;
 
 namespace WebCore {
 
+class FloatSize;
+
 class IntSize {
 public:
     IntSize() : m_width(0), m_height(0) { }
     IntSize(int width, int height) : m_width(width), m_height(height) { }
+    explicit IntSize(const FloatSize&); // don't do this implicitly since it's lossy
     
     int width() const { return m_width; }
     int height() const { return m_height; }

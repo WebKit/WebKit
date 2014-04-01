@@ -5,19 +5,19 @@ layer at (0,0) size 480x360
     RenderSVGContainer {g} at (15,15) size 415x333
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourceFilter {filter} [id="DispMapChecker"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="256x256"]
+          [feImage image-size="256.00x256.00"]
         RenderSVGResourceFilter {filter} [id="RotateMap"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="128x128"]
+          [feImage image-size="128.00x128.00"]
         RenderSVGResourceFilter {filter} [id="SphereMap"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="128x128"]
+          [feImage image-size="128.00x128.00"]
         RenderSVGResourceFilter {filter} [id="RotateMapTest"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
           [feDisplacementMap scale="64.00" xChannelSelector="RED" yChannelSelector="GREEN"]
-            [feImage image-size="256x256"]
-            [feImage image-size="128x128"]
+            [feImage image-size="256.00x256.00"]
+            [feImage image-size="128.00x128.00"]
         RenderSVGResourceFilter {filter} [id="SphereMapTest"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
           [feDisplacementMap scale="64.00" xChannelSelector="RED" yChannelSelector="GREEN"]
-            [feImage image-size="256x256"]
-            [feImage image-size="128x128"]
+            [feImage image-size="256.00x256.00"]
+            [feImage image-size="128.00x128.00"]
       RenderSVGContainer {g} at (15,15) size 415x333
         RenderSVGRect {rect} at (15,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=15.00] [y=15.00] [width=128.00] [height=128.00]
           [filter="DispMapChecker"] RenderSVGResourceFilter {filter} at (15,15) size 128x128

@@ -67,7 +67,7 @@ private:
     virtual void destroyDecodedData(bool /*destroyAll*/ = true) override;
 
     virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override;
-    virtual IntSize size() const override;
+    virtual FloatSize size() const override;
 
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) override;
 

@@ -44,7 +44,7 @@ public:
     void removeClientFromCache(const CachedImageClient*);
 
     void setContainerSizeForRenderer(const CachedImageClient*, const IntSize&, float);
-    IntSize imageSizeForRenderer(const RenderObject*) const;
+    FloatSize imageSizeForRenderer(const RenderObject*) const;
 
     Image* imageForRenderer(const RenderObject*);
 

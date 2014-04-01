@@ -39,6 +39,7 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
+#include "IntRect.h"
 #include "Length.h"
 #include "SharedBuffer.h"
 #include <CoreGraphics/CGContext.h>
@@ -69,9 +70,9 @@ String PDFDocumentImage::filenameExtension() const
     return "pdf";
 }
 
-IntSize PDFDocumentImage::size() const
+FloatSize PDFDocumentImage::size() const
 {
-    IntSize expandedCropBoxSize = expandedIntSize(m_cropBox.size());
+    FloatSize expandedCropBoxSize = FloatSize(expandedIntSize(m_cropBox.size()));
 
     if (m_rotationDegrees == 90 || m_rotationDegrees == 270)
         return expandedCropBoxSize.transposedSize();
@@ -149,7 +150,7 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext* context, const
     bool useLowQualityInterpolation = interpolationQuality == InterpolationNone || interpolationQuality == InterpolationLow;
 
     if (!m_cachedImageBuffer || (!cacheParametersMatch(context, dstRect, srcRect) && !useLowQualityInterpolation)) {
-        m_cachedImageBuffer = context->createCompatibleBuffer(enclosingIntRect(dstRect).size());
+        m_cachedImageBuffer = context->createCompatibleBuffer(FloatRect(enclosingIntRect(dstRect)).size());
         if (!m_cachedImageBuffer)
             return;
         GraphicsContext* bufferContext = m_cachedImageBuffer->context();
@@ -234,7 +235,7 @@ unsigned PDFDocumentImage::pageCount() const
     return CGPDFDocumentGetNumberOfPages(m_document.get());
 }
 
-static void applyRotationForPainting(GraphicsContext* context, IntSize size, int rotationDegrees)
+static void applyRotationForPainting(GraphicsContext* context, FloatSize size, int rotationDegrees)
 {
     if (rotationDegrees == 90)
         context->translate(0, size.height());

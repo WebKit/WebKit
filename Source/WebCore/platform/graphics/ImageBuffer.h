@@ -78,7 +78,7 @@ namespace WebCore {
         WTF_MAKE_NONCOPYABLE(ImageBuffer); WTF_MAKE_FAST_ALLOCATED;
     public:
         // Will return a null pointer on allocation failure.
-        static std::unique_ptr<ImageBuffer> create(const IntSize& size, float resolutionScale = 1, ColorSpace colorSpace = ColorSpaceDeviceRGB, RenderingMode renderingMode = Unaccelerated)
+        static std::unique_ptr<ImageBuffer> create(const FloatSize& size, float resolutionScale = 1, ColorSpace colorSpace = ColorSpaceDeviceRGB, RenderingMode renderingMode = Unaccelerated)
         {
             bool success = false;
             std::unique_ptr<ImageBuffer> buffer(new ImageBuffer(size, resolutionScale, colorSpace, renderingMode, success));
@@ -87,7 +87,7 @@ namespace WebCore {
             return buffer;
         }
 
-        static std::unique_ptr<ImageBuffer> createCompatibleBuffer(const IntSize&, float resolutionScale, ColorSpace, const GraphicsContext*, bool hasAlpha);
+        static std::unique_ptr<ImageBuffer> createCompatibleBuffer(const FloatSize&, float resolutionScale, ColorSpace, const GraphicsContext*, bool hasAlpha);
 
         ~ImageBuffer();
 
@@ -160,7 +160,7 @@ namespace WebCore {
 
         // This constructor will place its success into the given out-variable
         // so that create() knows when it should return failure.
-        ImageBuffer(const IntSize&, float resolutionScale, ColorSpace, RenderingMode, bool& success);
+        ImageBuffer(const FloatSize&, float resolutionScale, ColorSpace, RenderingMode, bool& success);
     };
 
 #if USE(CG)

@@ -28,6 +28,7 @@
 
 #import "GraphicsContextCG.h"
 #import "GraphicsContextPlatformPrivateCG.h"
+#import "IntRect.h"
 #if USE(APPKIT)
 #import <AppKit/AppKit.h>
 #endif

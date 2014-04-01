@@ -372,7 +372,7 @@ EXPORTS
         symbolWithPointer(?currentFrameKnownToBeOpaque@BitmapImage@WebCore@@UAE_NXZ, ?currentFrameKnownToBeOpaque@BitmapImage@WebCore@@UEAA_NXZ)
         symbolWithPointer(?hasSingleSecurityOrigin@BitmapImage@WebCore@@UBE_NXZ, ?hasSingleSecurityOrigin@BitmapImage@WebCore@@UEBA_NXZ)
         symbolWithPointer(?computeIntrinsicDimensions@Image@WebCore@@UAEXAAULength@2@0AAVFloatSize@2@@Z, ?computeIntrinsicDimensions@Image@WebCore@@UEAAXAEAULength@2@0AEAVFloatSize@2@@Z)
-        symbolWithPointer(?size@BitmapImage@WebCore@@UBE?AVIntSize@2@XZ, ?size@BitmapImage@WebCore@@UEBA?AVIntSize@2@XZ)
+        symbolWithPointer(?size@BitmapImage@WebCore@@UBE?AVFloatSize@2@XZ, ?size@BitmapImage@WebCore@@UEBA?AVFloatSize@2@XZ)
         symbolWithPointer(?getHotSpot@BitmapImage@WebCore@@UBE_NAAVIntPoint@2@@Z, ?getHotSpot@BitmapImage@WebCore@@UEBA_NAEAVIntPoint@2@@Z)
         symbolWithPointer(?dataChanged@BitmapImage@WebCore@@UAE_N_N@Z, ?dataChanged@BitmapImage@WebCore@@UEAA_N_N@Z)
         symbolWithPointer(?filenameExtension@BitmapImage@WebCore@@UBE?AVString@WTF@@XZ, ?filenameExtension@BitmapImage@WebCore@@UEBA?AVString@WTF@@XZ)

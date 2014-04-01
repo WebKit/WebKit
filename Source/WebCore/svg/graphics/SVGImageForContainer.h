@@ -44,7 +44,7 @@ public:
 
     virtual bool isSVGImage() const override { return true; }
 
-    virtual IntSize size() const override;
+    virtual FloatSize size() const override;
 
     void setURL(const URL& url) { m_image->setURL(url); }
 

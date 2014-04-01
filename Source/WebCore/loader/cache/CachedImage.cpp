@@ -276,7 +276,7 @@ LayoutSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float
     ASSERT(!isPurgeable());
 
     if (!m_image)
-        return IntSize();
+        return LayoutSize();
 
     LayoutSize imageSize(m_image->size());
 
@@ -284,24 +284,24 @@ LayoutSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float
     if (renderer && m_image->isBitmapImage()) {
         ImageOrientationDescription orientationDescription(renderer->shouldRespectImageOrientation(), renderer->style().imageOrientation());
         if (orientationDescription.respectImageOrientation() == RespectImageOrientation)
-            imageSize = toBitmapImage(m_image.get())->sizeRespectingOrientation(orientationDescription);
+            imageSize = LayoutSize(toBitmapImage(m_image.get())->sizeRespectingOrientation(orientationDescription));
     }
 #else
     if (m_image->isBitmapImage() && (renderer && renderer->shouldRespectImageOrientation() == RespectImageOrientation))
 #if !PLATFORM(IOS)
-        imageSize = toBitmapImage(m_image.get())->sizeRespectingOrientation();
+        imageSize = LayoutSize(toBitmapImage(m_image.get())->sizeRespectingOrientation());
 #else
     {
         // On iOS, the image may have been subsampled to accommodate our size restrictions. However
         // we should tell the renderer what the original size was.
-        imageSize = toBitmapImage(m_image.get())->originalSizeRespectingOrientation();
+        imageSize = LayoutSize(toBitmapImage(m_image.get())->originalSizeRespectingOrientation());
     } else if (m_image->isBitmapImage())
-        imageSize = toBitmapImage(m_image.get())->originalSize();
+        imageSize = LayoutSize(toBitmapImage(m_image.get())->originalSize());
 #endif // !PLATFORM(IOS)
 #endif // ENABLE(CSS_IMAGE_ORIENTATION)
 
     else if (m_image->isSVGImage() && sizeType == UsedSize) {
-        imageSize = m_svgImageCache->imageSizeForRenderer(renderer);
+        imageSize = LayoutSize(m_svgImageCache->imageSizeForRenderer(renderer));
     }
 
     if (multiplier == 1.0f)

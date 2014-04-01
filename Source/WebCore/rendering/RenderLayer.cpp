@@ -3457,7 +3457,7 @@ void RenderLayer::paintScrollCorner(GraphicsContext* context, const IntPoint& pa
 void RenderLayer::drawPlatformResizerImage(GraphicsContext* context, const LayoutRect& resizerCornerRect)
 {
     RefPtr<Image> resizeCornerImage;
-    IntSize cornerResizerSize;
+    FloatSize cornerResizerSize;
     if (renderer().document().deviceScaleFactor() >= 2) {
         DEPRECATED_DEFINE_STATIC_LOCAL(Image*, resizeCornerImageHiRes, (Image::loadPlatformResource("textAreaResizeCorner@2x").leakRef()));
         resizeCornerImage = resizeCornerImageHiRes;

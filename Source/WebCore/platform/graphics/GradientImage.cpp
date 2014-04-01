@@ -48,7 +48,7 @@ void GradientImage::drawPattern(GraphicsContext* destContext, const FloatRect& s
     const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator compositeOp, const FloatRect& destRect, BlendMode blendMode)
 {
     // Allow the generator to provide visually-equivalent tiling parameters for better performance.
-    IntSize adjustedSize = size();
+    FloatSize adjustedSize = size();
     FloatRect adjustedSrcRect = srcRect;
     m_gradient->adjustParametersForTiledDrawing(adjustedSize, adjustedSrcRect);
 

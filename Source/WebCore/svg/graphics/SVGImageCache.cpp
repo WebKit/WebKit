@@ -62,9 +62,9 @@ void SVGImageCache::setContainerSizeForRenderer(const CachedImageClient* client,
     m_imageForContainerMap.set(client, SVGImageForContainer::create(m_svgImage, containerSizeWithoutZoom, containerZoom));
 }
 
-IntSize SVGImageCache::imageSizeForRenderer(const RenderObject* renderer) const
+FloatSize SVGImageCache::imageSizeForRenderer(const RenderObject* renderer) const
 {
-    IntSize imageSize = m_svgImage->size();
+    FloatSize imageSize = m_svgImage->size();
     if (!renderer)
         return imageSize;
 

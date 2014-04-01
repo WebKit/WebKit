@@ -24,6 +24,7 @@
 #import "Icon.h"
 
 #import "GraphicsContext.h"
+#import "IntRect.h"
 #import "LocalCurrentGraphicsContext.h"
 #import <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>

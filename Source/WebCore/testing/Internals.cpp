@@ -2015,7 +2015,7 @@ String Internals::getCurrentCursorInfo(ExceptionCode& ec)
     result.append(",");
     result.appendNumber(cursor.hotSpot().y());
     if (cursor.image()) {
-        IntSize size = cursor.image()->size();
+        FloatSize size = cursor.image()->size();
         result.append(" image=");
         result.appendNumber(size.width());
         result.append("x");

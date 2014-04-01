@@ -51,7 +51,7 @@ public:
     FrameView* frameView() const;
 
     virtual bool isSVGImage() const override { return true; }
-    virtual IntSize size() const override { return m_intrinsicSize; }
+    virtual FloatSize size() const override { return m_intrinsicSize; }
 
     void setURL(const URL& url) { m_url = url; }
 
@@ -76,7 +76,7 @@ private:
 
     virtual String filenameExtension() const override;
 
-    virtual void setContainerSize(const IntSize&) override;
+    virtual void setContainerSize(const FloatSize&) override;
     IntSize containerSize() const;
     virtual bool usesContainerSize() const override { return true; }
     virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override;
@@ -97,7 +97,7 @@ private:
 
     std::unique_ptr<SVGImageChromeClient> m_chromeClient;
     std::unique_ptr<Page> m_page;
-    IntSize m_intrinsicSize;
+    FloatSize m_intrinsicSize;
     URL m_url;
 };
 

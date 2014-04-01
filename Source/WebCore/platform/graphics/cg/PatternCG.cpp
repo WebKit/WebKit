@@ -66,7 +66,7 @@ static void patternReleaseCallback(void* info)
 
 CGPatternRef Pattern::createPlatformPattern(const AffineTransform& userSpaceTransformation) const
 {
-    IntRect tileRect = tileImage()->rect();
+    FloatRect tileRect = tileImage()->rect();
 
     AffineTransform patternTransform = userSpaceTransformation * m_patternSpaceTransformation;
     patternTransform.scaleNonUniform(1, -1);

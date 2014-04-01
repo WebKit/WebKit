@@ -28,11 +28,11 @@
 
 namespace WebCore {
 
-IntSize SVGImageForContainer::size() const
+FloatSize SVGImageForContainer::size() const
 {
     FloatSize scaledContainerSize(m_containerSize);
     scaledContainerSize.scale(m_zoom);
-    return roundedIntSize(scaledContainerSize);
+    return FloatSize(roundedIntSize(scaledContainerSize));
 }
 
 void SVGImageForContainer::draw(GraphicsContext* context, const FloatRect& dstRect,

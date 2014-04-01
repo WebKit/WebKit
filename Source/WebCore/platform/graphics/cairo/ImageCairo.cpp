@@ -49,7 +49,7 @@ void Image::drawPattern(GraphicsContext* context, const FloatRect& tileRect, con
         return;
 
     cairo_t* cr = context->platformContext()->cr();
-    drawPatternToCairoContext(cr, surface.get(), size(), tileRect, patternTransform, phase, toCairoOperator(op), destRect);
+    drawPatternToCairoContext(cr, surface.get(), IntSize(size()), tileRect, patternTransform, phase, toCairoOperator(op), destRect);
 
     if (imageObserver())
         imageObserver()->didDraw(this);

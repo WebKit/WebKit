@@ -81,7 +81,7 @@ bool SVGImage::hasSingleSecurityOrigin() const
     return true;
 }
 
-void SVGImage::setContainerSize(const IntSize& size)
+void SVGImage::setContainerSize(const FloatSize& size)
 {
     if (!m_page || !usesContainerSize())
         return;
@@ -96,7 +96,7 @@ void SVGImage::setContainerSize(const IntSize& size)
     FrameView* view = frameView();
     view->resize(this->containerSize());
 
-    renderer->setContainerSize(size);
+    renderer->setContainerSize(IntSize(size));
 }
 
 IntSize SVGImage::containerSize() const

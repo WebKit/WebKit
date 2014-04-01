@@ -74,7 +74,7 @@ bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
   
     GraphicsContext gc(cgContext);
 
-    IntSize imageSize = BitmapImage::size();
+    FloatSize imageSize = BitmapImage::size();
     if (size)
         drawFrameMatchingSourceSize(&gc, FloatRect(0.0f, 0.0f, bmpInfo.bmWidth, bmpInfo.bmHeight), *size, ColorSpaceDeviceRGB, CompositeCopy);
     else
@@ -101,7 +101,7 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext* ctxt, const Float
     }
 
     // No image of the correct size was found, fallback to drawing the current frame
-    IntSize imageSize = BitmapImage::size();
+    FloatSize imageSize = BitmapImage::size();
     draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), styleColorSpace, compositeOp, BlendModeNormal, ImageOrientationDescription());
 }
 

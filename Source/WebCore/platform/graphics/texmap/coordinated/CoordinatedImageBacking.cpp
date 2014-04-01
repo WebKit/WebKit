@@ -120,13 +120,13 @@ void CoordinatedImageBacking::update()
         }
     }
 
-    m_surface = CoordinatedSurface::create(m_image->size(), !m_image->currentFrameKnownToBeOpaque() ? CoordinatedSurface::SupportsAlpha : CoordinatedSurface::NoFlags);
+    m_surface = CoordinatedSurface::create(IntSize(m_image->size()), !m_image->currentFrameKnownToBeOpaque() ? CoordinatedSurface::SupportsAlpha : CoordinatedSurface::NoFlags);
     if (!m_surface) {
         m_isDirty = false;
         return;
     }
 
-    IntRect rect(IntPoint::zero(), m_image->size());
+    IntRect rect(IntPoint::zero(), IntSize(m_image->size()));
 
     ImageBackingSurfaceClient surfaceClient(m_image.get(), rect);
     m_surface->paintToSurface(rect, &surfaceClient);

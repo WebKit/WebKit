@@ -150,7 +150,7 @@ void FEImage::dump()
 
 TextStream& FEImage::externalRepresentation(TextStream& ts, int indent) const
 {
-    IntSize imageSize;
+    FloatSize imageSize;
     if (m_image)
         imageSize = m_image->size();
     else if (RenderObject* renderer = referencedRenderer())

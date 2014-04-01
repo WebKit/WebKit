@@ -69,7 +69,7 @@ Gradient::~Gradient()
     platformDestroy();
 }
 
-void Gradient::adjustParametersForTiledDrawing(IntSize& size, FloatRect& srcRect)
+void Gradient::adjustParametersForTiledDrawing(FloatSize& size, FloatRect& srcRect)
 {
     if (m_radial)
         return;

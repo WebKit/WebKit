@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-CrossfadeGeneratedImage::CrossfadeGeneratedImage(Image* fromImage, Image* toImage, float percentage, IntSize crossfadeSize, const IntSize& size)
+CrossfadeGeneratedImage::CrossfadeGeneratedImage(Image* fromImage, Image* toImage, float percentage, const FloatSize& crossfadeSize, const FloatSize& size)
     : m_fromImage(fromImage)
     , m_toImage(toImage)
     , m_percentage(percentage)
@@ -41,9 +41,9 @@ CrossfadeGeneratedImage::CrossfadeGeneratedImage(Image* fromImage, Image* toImag
     setContainerSize(size);
 }
 
-static void drawCrossfadeSubimage(GraphicsContext* context, Image* image, CompositeOperator operation, float opacity, IntSize targetSize)
+static void drawCrossfadeSubimage(GraphicsContext* context, Image* image, CompositeOperator operation, float opacity, const FloatSize& targetSize)
 {
-    IntSize imageSize = image->size();
+    FloatSize imageSize = image->size();
 
     // SVGImage resets the opacity when painting, so we have to use transparency layers to accurately paint one at a given opacity.
     bool useTransparencyLayer = image->isSVGImage();
@@ -58,8 +58,7 @@ static void drawCrossfadeSubimage(GraphicsContext* context, Image* image, Compos
         context->setAlpha(opacity);
 
     if (targetSize != imageSize)
-        context->scale(FloatSize(static_cast<float>(targetSize.width()) / imageSize.width(),
-            static_cast<float>(targetSize.height()) / imageSize.height()));
+        context->scale(FloatSize(targetSize.width() / imageSize.width(), targetSize.height() / imageSize.height()));
     context->drawImage(image, ColorSpaceDeviceRGB, IntPoint());
 
     if (useTransparencyLayer)
@@ -74,7 +73,7 @@ void CrossfadeGeneratedImage::drawCrossfade(GraphicsContext* context)
 
     GraphicsContextStateSaver stateSaver(*context);
 
-    context->clip(IntRect(IntPoint(), m_crossfadeSize));
+    context->clip(FloatRect(FloatPoint(), m_crossfadeSize));
     context->beginTransparencyLayer(1);
 
     drawCrossfadeSubimage(context, m_fromImage, CompositeSourceOver, 1 - m_percentage, m_crossfadeSize);

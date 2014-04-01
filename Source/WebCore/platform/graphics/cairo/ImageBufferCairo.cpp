@@ -91,8 +91,8 @@ PassRefPtr<cairo_surface_t> createCairoGLSurface(const IntSize& size, uint32_t& 
 }
 #endif
 
-ImageBuffer::ImageBuffer(const IntSize& size, float /* resolutionScale */, ColorSpace, RenderingMode renderingMode, bool& success)
-    : m_data(size)
+ImageBuffer::ImageBuffer(const FloatSize& size, float /* resolutionScale */, ColorSpace, RenderingMode renderingMode, bool& success)
+    : m_data(IntSize(size))
     , m_size(size)
     , m_logicalSize(size)
 {

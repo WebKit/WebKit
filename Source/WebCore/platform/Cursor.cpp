@@ -27,6 +27,7 @@
 #include "Cursor.h"
 
 #include "Image.h"
+#include "IntRect.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ IntPoint determineHotSpot(Image* image, const IntPoint& specifiedHotSpot)
         return IntPoint();
 
     // Hot spot must be inside cursor rectangle.
-    IntRect imageRect = image->rect();
+    IntRect imageRect = IntRect(image->rect());
     if (imageRect.contains(specifiedHotSpot))
         return specifiedHotSpot;
 

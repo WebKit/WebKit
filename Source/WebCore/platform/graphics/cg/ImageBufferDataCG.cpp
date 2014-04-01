@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ImageBufferData.h"
 
+#include "IntRect.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <wtf/Assertions.h>
 

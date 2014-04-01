@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsContextCG.h"
 #include "ImageData.h"
+#include "IntRect.h"
 #include "MIMETypeRegistry.h"
 #include <math.h>
 #include <CoreGraphics/CoreGraphics.h>
@@ -42,7 +43,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
-
 #if PLATFORM(COCOA)
 #include "WebCoreSystemInterface.h"
 #endif
@@ -124,8 +124,8 @@ static FloatSize scaleSizeToUserSpace(const FloatSize& logicalSize, const IntSiz
     return FloatSize(logicalSize.width() * xMagnification, logicalSize.height() * yMagnification);
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace imageColorSpace, RenderingMode renderingMode, bool& success)
-    : m_data(size) // NOTE: The input here isn't important as ImageBufferDataCG's constructor just ignores it.
+ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpace imageColorSpace, RenderingMode renderingMode, bool& success)
+    : m_data(IntSize(size)) // NOTE: The input here isn't important as ImageBufferDataCG's constructor just ignores it.
     , m_logicalSize(size)
     , m_resolutionScale(resolutionScale)
 {

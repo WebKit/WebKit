@@ -29,6 +29,7 @@
 
 #include "Color.h"
 #include "ColorSpace.h"
+#include "FloatRect.h"
 #include "FloatSize.h"
 #include "GraphicsTypes.h"
 #include "ImageOrientation.h"
@@ -62,7 +63,6 @@ namespace WebCore {
 
 class AffineTransform;
 class FloatPoint;
-class FloatRect;
 class FloatSize;
 class GraphicsContext;
 class SharedBuffer;
@@ -92,16 +92,16 @@ public:
     static Image* nullImage();
     bool isNull() const { return size().isEmpty(); }
 
-    virtual void setContainerSize(const IntSize&) { }
+    virtual void setContainerSize(const FloatSize&) { }
     virtual bool usesContainerSize() const { return false; }
     virtual bool hasRelativeWidth() const { return false; }
     virtual bool hasRelativeHeight() const { return false; }
     virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
-    virtual IntSize size() const = 0;
-    IntRect rect() const { return IntRect(IntPoint(), size()); }
-    int width() const { return size().width(); }
-    int height() const { return size().height(); }
+    virtual FloatSize size() const = 0;
+    FloatRect rect() const { return FloatRect(FloatPoint(), size()); }
+    float width() const { return size().width(); }
+    float height() const { return size().height(); }
     virtual bool getHotSpot(IntPoint&) const { return false; }
 
     bool setData(PassRefPtr<SharedBuffer> data, bool allDataReceived);

@@ -1,3 +1,18 @@
+2014-04-01  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Transition class Image (and its dependencies) from int to float to enable subpixel positioned/sized images.
+        https://bugs.webkit.org/show_bug.cgi?id=130643
+
+        Reviewed by Simon Fraser.
+
+        This is in preparation to support subpixel positioned/sized background images. While 1x bitmap images can't take
+        subpixel sizing on hidpi resolutions, both generated and hidpi images can.
+        This patch does not change Image behavior in general as both position and size are still snapped to integral values.  
+
+        No change in behavior.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-03-31  Andreas Kling  <akling@apple.com>
 
         Blind Windows build fix. Check my mangle-fu.

@@ -3880,8 +3880,8 @@ PassRefPtr<Image> WebGLRenderingContext::drawImageIntoBuffer(Image* image, int w
         return nullptr;
     }
 
-    IntRect srcRect(IntPoint(), image->size());
-    IntRect destRect(IntPoint(), size);
+    FloatRect srcRect(FloatPoint(), image->size());
+    FloatRect destRect(FloatPoint(), size);
     buf->context()->drawImage(image, ColorSpaceDeviceRGB, destRect, srcRect);
     return buf->copyImage(ImageBuffer::fastCopyImageMode());
 }

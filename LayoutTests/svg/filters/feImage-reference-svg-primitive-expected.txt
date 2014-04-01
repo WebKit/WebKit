@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (85,0) size 330x315
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceFilter {filter} [id="image"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-        [feImage image-size="200x200"]
+        [feImage image-size="200.00x200.00"]
       RenderSVGResourceFilter {filter} [id="flood"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
         [feFlood flood-color="#008000" flood-opacity="1.00"]
       RenderSVGEllipse {circle} at (0,0) size 250x150 [fill={[type=SOLID] [color=#0000FF]}] [cx=0.00] [cy=0.00] [r=100.00]

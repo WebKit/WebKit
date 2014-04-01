@@ -165,7 +165,7 @@ IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
     ASSERT_ARG(newImage, newImage);
     ASSERT_ARG(newImage, newImage->imageForRenderer(this));
 
-    IntSize imageSize;
+    FloatSize imageSize;
     if (newImage->willPaintBrokenImage()) {
         std::pair<Image*, float> brokenImageAndImageScaleFactor = newImage->brokenImage(document().deviceScaleFactor());
         imageSize = brokenImageAndImageScaleFactor.first->size();
@@ -424,7 +424,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                 // Call brokenImage() explicitly to ensure we get the broken image icon at the appropriate resolution.
                 std::pair<Image*, float> brokenImageAndImageScaleFactor = imageResource().cachedImage()->brokenImage(document().deviceScaleFactor());
                 image = brokenImageAndImageScaleFactor.first;
-                IntSize imageSize = image->size();
+                FloatSize imageSize = image->size();
                 imageSize.scale(1 / brokenImageAndImageScaleFactor.second);
                 // Center the error image, accounting for border and padding.
                 LayoutUnit centerX = (usableWidth - imageSize.width()) / 2;

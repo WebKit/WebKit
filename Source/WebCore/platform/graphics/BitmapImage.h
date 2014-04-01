@@ -134,7 +134,8 @@ public:
 
     virtual bool hasSingleSecurityOrigin() const override;
 
-    virtual IntSize size() const override;
+    // FloatSize due to override.
+    virtual FloatSize size() const override;
     IntSize sizeRespectingOrientation(ImageOrientationDescription = ImageOrientationDescription()) const;
 #if PLATFORM(IOS)
     virtual IntSize originalSize() const;

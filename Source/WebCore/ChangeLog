@@ -1,3 +1,116 @@
+2014-04-01  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Transition class Image (and its dependencies) from int to float to enable subpixel positioned/sized images.
+        https://bugs.webkit.org/show_bug.cgi?id=130643
+
+        Reviewed by Simon Fraser.
+
+        This is in preparation to support subpixel positioned/sized background images. While 1x bitmap images can't take
+        subpixel sizing on hidpi resolutions, both generated and hidpi images can.
+        This patch does not change Image behavior in general as both position and size are still snapped to integral values.  
+
+        No change in behavior.
+
+        * WebCore.exp.in:
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::fixedSize):
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::fixedSize):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::drawImageIntoBuffer):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::imageSizeForRenderer):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+        * platform/Cursor.cpp:
+        (WebCore::determineHotSpot):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::size):
+        (WebCore::BitmapImage::currentFrameSize):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::CrossfadeGeneratedImage::CrossfadeGeneratedImage):
+        (WebCore::drawCrossfadeSubimage):
+        (WebCore::CrossfadeGeneratedImage::drawCrossfade):
+        * platform/graphics/CrossfadeGeneratedImage.h:
+        * platform/graphics/GeneratedImage.h:
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::adjustParametersForTiledDrawing):
+        * platform/graphics/Gradient.h:
+        * platform/graphics/GradientImage.cpp:
+        (WebCore::GradientImage::drawPattern):
+        * platform/graphics/GradientImage.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::createCompatibleBuffer):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::adjustSourceRectForDownSampling):
+        * platform/graphics/Image.h:
+        (WebCore::Image::setContainerSize):
+        (WebCore::Image::rect):
+        (WebCore::Image::width):
+        (WebCore::Image::height):
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::createCompatibleBuffer):
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::create):
+        * platform/graphics/IntPoint.cpp:
+        (WebCore::IntPoint::IntPoint):
+        * platform/graphics/IntPoint.h:
+        * platform/graphics/IntSize.cpp:
+        (WebCore::IntSize::IntSize):
+        * platform/graphics/IntSize.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::Image::drawPattern):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::size):
+        (WebCore::PDFDocumentImage::updateCachedImageIfNeeded):
+        (WebCore::applyRotationForPainting):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * platform/graphics/cg/PatternCG.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        * platform/graphics/mac/IconMac.mm:
+        * platform/graphics/texmap/TextureMapperTiledBackingStore.cpp:
+        (WebCore::TextureMapperTiledBackingStore::updateContentsFromImageIfNeeded):
+        * platform/graphics/texmap/coordinated/CoordinatedImageBacking.cpp:
+        (WebCore::CoordinatedImageBacking::update):
+        * platform/graphics/win/ImageCGWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+        * platform/graphics/win/ImageCairoWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageFromImage):
+        * platform/win/DragImageCGWin.cpp:
+        (WebCore::createDragImageFromImage):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeImage):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageSizeForError):
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::drawPlatformResizerImage):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::setContainerSize):
+        * svg/graphics/SVGImage.h:
+        * svg/graphics/SVGImageCache.cpp:
+        (WebCore::SVGImageCache::imageSizeForRenderer):
+        * svg/graphics/SVGImageCache.h:
+        * svg/graphics/SVGImageForContainer.cpp:
+        (WebCore::SVGImageForContainer::size):
+        * svg/graphics/SVGImageForContainer.h:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::externalRepresentation):
+        * testing/Internals.cpp:
+        (WebCore::Internals::getCurrentCursorInfo):
+
 2014-04-01  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix when disabled ACCESSIBILITY

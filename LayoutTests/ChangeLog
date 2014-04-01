@@ -1,3 +1,50 @@
+2014-04-01  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Transition class Image (and its dependencies) from int to float to enable subpixel positioned/sized images.
+        https://bugs.webkit.org/show_bug.cgi?id=130643
+
+        Reviewed by Simon Fraser.
+
+        This is in preparation to support subpixel positioned/sized background images. While 1x bitmap images can't take
+        subpixel sizing on hidpi resolutions, both generated and hidpi images can.
+        This patch does not change Image behavior in general as both position and size are still snapped to integral values.  
+
+        No change in behavior.
+
+        * platform/mac/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-image-01-b-expected.txt:
+        * svg/custom/feDisplacementMap-01-expected.txt:
+        * svg/filters/feImage-change-target-id-expected.txt:
+        * svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-objectBoundingBox-expected.txt:
+        * svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse-expected.txt:
+        * svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-objectBoundingBox-expected.txt:
+        * svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse-expected.txt:
+        * svg/filters/feImage-late-indirect-update-expected.txt:
+        * svg/filters/feImage-multiple-targets-id-change-expected.txt:
+        * svg/filters/feImage-position-expected.txt:
+        * svg/filters/feImage-preserveAspectRatio-all-expected.txt:
+        * svg/filters/feImage-preserveAspectratio-expected.txt:
+        * svg/filters/feImage-reference-invalidation-expected.txt:
+        * svg/filters/feImage-reference-svg-primitive-expected.txt:
+        * svg/filters/feImage-remove-target-expected.txt:
+        * svg/filters/feImage-subregions-expected.txt:
+        * svg/filters/feImage-subregions-preseveAspectRatio-none-expected.txt:
+        * svg/filters/feImage-subregions-preseveAspectRatio-none-with-viewBox-expected.txt:
+        * svg/filters/feImage-target-add-to-document-expected.txt:
+        * svg/filters/feImage-target-attribute-change-expected.txt:
+        * svg/filters/feImage-target-attribute-change-with-use-indirection-2-expected.txt:
+        * svg/filters/feImage-target-attribute-change-with-use-indirection-expected.txt:
+        * svg/filters/feImage-target-changes-id-expected.txt:
+        * svg/filters/feImage-target-id-change-expected.txt:
+        * svg/filters/feImage-target-inline-style-change-expected.txt:
+        * svg/filters/feImage-target-property-change-expected.txt:
+        * svg/filters/feImage-target-reappend-to-document-expected.txt:
+        * svg/filters/feImage-target-remove-from-document-expected.txt:
+        * svg/filters/feImage-target-style-change-expected.txt:
+
 2014-03-31  Alexey Proskuryakov  <ap@apple.com>
 
         Crashes in PageConsole::addMessage

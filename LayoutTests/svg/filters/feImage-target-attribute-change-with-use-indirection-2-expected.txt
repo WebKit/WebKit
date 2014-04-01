@@ -7,6 +7,6 @@ layer at (0,0) size 800x600
       RenderSVGContainer {use} at (0,0) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
         RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=-50.00] [y=0.00] [width=100.00] [height=100.00]
       RenderSVGResourceFilter {filter} [id="filter"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-        [feImage image-size="100x100"]
+        [feImage image-size="100.00x100.00"]
     RenderSVGRect {rect} at (0,0) size 111x111 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
       [filter="filter"] RenderSVGResourceFilter {filter} at (-10,-10) size 120x120

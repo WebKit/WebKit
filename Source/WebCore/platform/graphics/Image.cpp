@@ -31,7 +31,6 @@
 #include "BitmapImage.h"
 #include "GraphicsContext.h"
 #include "ImageObserver.h"
-#include "IntRect.h"
 #include "Length.h"
 #include "MIMETypeRegistry.h"
 #include "SharedBuffer.h"
@@ -233,7 +232,7 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
 FloatRect Image::adjustSourceRectForDownSampling(const FloatRect& srcRect, const IntSize& scaledSize) const
 {
-    const IntSize unscaledSize = size();
+    const FloatSize unscaledSize = size();
     if (unscaledSize == scaledSize)
         return srcRect;
 

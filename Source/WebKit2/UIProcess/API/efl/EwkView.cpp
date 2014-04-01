@@ -430,7 +430,7 @@ void EwkView::updateCursor()
         if (!cursorObject)
             return;
 
-        IntSize cursorSize = cursorImage->size();
+        IntSize cursorSize = IntSize(cursorImage->size());
         // Resize cursor.
         evas_object_resize(cursorObject.get(), cursorSize.width(), cursorSize.height());
 

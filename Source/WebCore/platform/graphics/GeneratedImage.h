@@ -26,9 +26,9 @@
 #ifndef GeneratedImage_h
 #define GeneratedImage_h
 
+#include "FloatSize.h"
 #include "Image.h"
 
-#include "IntSize.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -37,13 +37,13 @@ class GeneratedImage : public Image {
 public:
     virtual bool hasSingleSecurityOrigin() const override { return true; }
 
-    virtual void setContainerSize(const IntSize& size) override { m_size = size; }
+    virtual void setContainerSize(const FloatSize& size) override { m_size = size; }
     virtual bool usesContainerSize() const override { return true; }
     virtual bool hasRelativeWidth() const override { return true; }
     virtual bool hasRelativeHeight() const override { return true; }
     virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override;
 
-    virtual IntSize size() const override { return m_size; }
+    virtual FloatSize size() const override { return m_size; }
 
     // Assume that generated content has no decoded data we need to worry about
     virtual void destroyDecodedData(bool /*destroyAll*/ = true) override { }
@@ -59,7 +59,7 @@ protected:
     GeneratedImage() { }
 
 private:
-    IntSize m_size;
+    FloatSize m_size;
 };
 
 }

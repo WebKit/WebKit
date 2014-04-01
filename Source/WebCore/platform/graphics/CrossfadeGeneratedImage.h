@@ -26,10 +26,10 @@
 #ifndef CrossfadeGeneratedImage_h
 #define CrossfadeGeneratedImage_h
 
+#include "FloatSize.h"
 #include "GeneratedImage.h"
 #include "Image.h"
 #include "ImageObserver.h"
-#include "IntSize.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -38,23 +38,23 @@ class CSSCrossfadeValue;
 
 class CrossfadeGeneratedImage final : public GeneratedImage {
 public:
-    static PassRefPtr<CrossfadeGeneratedImage> create(Image* fromImage, Image* toImage, float percentage, IntSize crossfadeSize, const IntSize& size)
+    static PassRefPtr<CrossfadeGeneratedImage> create(Image* fromImage, Image* toImage, float percentage, const FloatSize& crossfadeSize, const FloatSize& size)
     {
         return adoptRef(new CrossfadeGeneratedImage(fromImage, toImage, percentage, crossfadeSize, size));
     }
 
-    virtual void setContainerSize(const IntSize&) override { }
+    virtual void setContainerSize(const FloatSize&) override { }
     virtual bool usesContainerSize() const override { return false; }
     virtual bool hasRelativeWidth() const override { return false; }
     virtual bool hasRelativeHeight() const override { return false; }
 
-    virtual IntSize size() const override { return m_crossfadeSize; }
+    virtual FloatSize size() const override { return m_crossfadeSize; }
 
 protected:
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) override;
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& dstRect, BlendMode) override;
 
-    CrossfadeGeneratedImage(Image* fromImage, Image* toImage, float percentage, IntSize crossfadeSize, const IntSize&);
+    CrossfadeGeneratedImage(Image* fromImage, Image* toImage, float percentage, const FloatSize& crossfadeSize, const FloatSize&);
 
 private:
     void drawCrossfade(GraphicsContext*);
@@ -63,7 +63,7 @@ private:
     Image* m_toImage;
 
     float m_percentage;
-    IntSize m_crossfadeSize;
+    FloatSize m_crossfadeSize;
 };
 
 }

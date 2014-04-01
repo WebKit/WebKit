@@ -880,21 +880,20 @@ static bool scalesMatch(AffineTransform a, AffineTransform b)
     return a.xScale() == b.xScale() && a.yScale() == b.yScale();
 }
 
-std::unique_ptr<ImageBuffer> GraphicsContext::createCompatibleBuffer(const IntSize& size, bool hasAlpha) const
+std::unique_ptr<ImageBuffer> GraphicsContext::createCompatibleBuffer(const FloatSize& size, bool hasAlpha) const
 {
     // Make the buffer larger if the context's transform is scaling it so we need a higher
     // resolution than one pixel per unit. Also set up a corresponding scale factor on the
     // graphics context.
 
     AffineTransform transform = getCTM(DefinitelyIncludeDeviceScale);
-    IntSize scaledSize(static_cast<int>(ceil(size.width() * transform.xScale())), static_cast<int>(ceil(size.height() * transform.yScale())));
+    FloatSize scaledSize(static_cast<int>(ceil(size.width() * transform.xScale())), static_cast<int>(ceil(size.height() * transform.yScale())));
 
     std::unique_ptr<ImageBuffer> buffer = ImageBuffer::createCompatibleBuffer(scaledSize, 1, ColorSpaceDeviceRGB, this, hasAlpha);
     if (!buffer)
         return nullptr;
 
-    buffer->context()->scale(FloatSize(static_cast<float>(scaledSize.width()) / size.width(),
-        static_cast<float>(scaledSize.height()) / size.height()));
+    buffer->context()->scale(FloatSize(scaledSize.width() / size.width(), scaledSize.height() / size.height()));
 
     return buffer;
 }

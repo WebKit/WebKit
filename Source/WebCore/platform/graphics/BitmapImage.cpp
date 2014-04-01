@@ -247,7 +247,7 @@ void BitmapImage::updateSize(ImageOrientationDescription description) const
     didDecodeProperties();
 }
 
-IntSize BitmapImage::size() const
+FloatSize BitmapImage::size() const
 {
     updateSize();
     return m_size;
@@ -276,7 +276,7 @@ IntSize BitmapImage::originalSizeRespectingOrientation() const
 IntSize BitmapImage::currentFrameSize() const
 {
     if (!m_currentFrame || m_hasUniformFrameSize)
-        return size();
+        return IntSize(size());
     IntSize frameSize = m_source.frameSizeAtIndex(m_currentFrame);
     didDecodeProperties();
     return frameSize;

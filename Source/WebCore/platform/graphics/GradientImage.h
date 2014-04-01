@@ -26,18 +26,18 @@
 #ifndef GradientImage_h
 #define GradientImage_h
 
+#include "FloatSize.h"
 #include "GeneratedImage.h"
 #include "Gradient.h"
 #include "Image.h"
 #include "ImageBuffer.h"
-#include "IntSize.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class GradientImage final : public GeneratedImage {
 public:
-    static PassRefPtr<GradientImage> create(PassRefPtr<Gradient> generator, const IntSize& size)
+    static PassRefPtr<GradientImage> create(PassRefPtr<Gradient> generator, const FloatSize& size)
     {
         return adoptRef(new GradientImage(generator, size));
     }
@@ -49,7 +49,7 @@ protected:
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
         const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode) override;
 
-    GradientImage(PassRefPtr<Gradient> generator, const IntSize& size)
+    GradientImage(PassRefPtr<Gradient> generator, const FloatSize& size)
         : m_gradient(generator)
     {
         setContainerSize(size);
@@ -58,7 +58,7 @@ protected:
 private:
     RefPtr<Gradient> m_gradient;
     std::unique_ptr<ImageBuffer> m_cachedImageBuffer;
-    IntSize m_cachedAdjustedSize;
+    FloatSize m_cachedAdjustedSize;
     unsigned m_cachedGeneratorHash;
 };
 

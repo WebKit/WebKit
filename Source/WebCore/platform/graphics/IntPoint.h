@@ -53,11 +53,14 @@ typedef struct _GdkPoint GdkPoint;
 
 namespace WebCore {
 
+class FloatPoint;
+
 class IntPoint {
 public:
     IntPoint() : m_x(0), m_y(0) { }
     IntPoint(int x, int y) : m_x(x), m_y(y) { }
     explicit IntPoint(const IntSize& size) : m_x(size.width()), m_y(size.height()) { }
+    explicit IntPoint(const FloatPoint&); // don't do this implicitly since it's lossy
 
     static IntPoint zero() { return IntPoint(); }
 

@@ -67,7 +67,7 @@ IntSize CSSFilterImageValue::fixedSize(const RenderElement* renderer)
     if (!cachedImage)
         return IntSize();
 
-    return cachedImage->imageForRenderer(renderer)->size();
+    return IntSize(cachedImage->imageForRenderer(renderer)->size());
 }
 
 bool CSSFilterImageValue::isPending() const

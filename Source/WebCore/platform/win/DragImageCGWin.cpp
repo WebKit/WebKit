@@ -124,13 +124,13 @@ DragImageRef createDragImageFromImage(Image* img, ImageOrientationDescription)
         return 0;
 
     CGContextRef drawContext = 0;
-    auto hbmp = allocImage(workingDC.get(), img->size(), &drawContext);
+    auto hbmp = allocImage(workingDC.get(), IntSize(img->size()), &drawContext);
     if (!hbmp || !drawContext)
         return 0;
 
     CGImageRef srcImage = img->getCGImageRef();
     CGRect rect;
-    rect.size = img->size();
+    rect.size = IntSize(img->size());
     rect.origin.x = 0;
     rect.origin.y = -rect.size.height;
     static const CGFloat white [] = {1.0, 1.0, 1.0, 1.0};

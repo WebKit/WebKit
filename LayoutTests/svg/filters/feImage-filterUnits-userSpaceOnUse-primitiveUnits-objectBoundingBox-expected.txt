@@ -5,13 +5,13 @@ layer at (0,0) size 800x800
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGEllipse {circle} at (200,200) size 400x400 [fill={[type=SOLID] [color=#008000]}] [cx=400.00] [cy=400.00] [r=200.00]
       RenderSVGResourceFilter {filter} [id="filter1a-rel"] [filterUnits=userSpaceOnUse] [primitiveUnits=objectBoundingBox]
-        [feImage image-size="400x400"]
+        [feImage image-size="400.00x400.00"]
       RenderSVGResourceFilter {filter} [id="filter1b-rel"] [filterUnits=userSpaceOnUse] [primitiveUnits=objectBoundingBox]
-        [feImage image-size="400x400"]
+        [feImage image-size="400.00x400.00"]
       RenderSVGResourceFilter {filter} [id="filter2a-rel"] [filterUnits=userSpaceOnUse] [primitiveUnits=objectBoundingBox]
-        [feImage image-size="400x400"]
+        [feImage image-size="400.00x400.00"]
       RenderSVGResourceFilter {filter} [id="filter2b-rel"] [filterUnits=userSpaceOnUse] [primitiveUnits=objectBoundingBox]
-        [feImage image-size="400x400"]
+        [feImage image-size="400.00x400.00"]
     RenderSVGContainer {g} at (0,0) size 350x200
       RenderSVGRect {rect} at (49,49) size 102x102 [stroke={[type=SOLID] [color=#FF0000]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
       RenderSVGRect {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
