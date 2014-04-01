@@ -29,7 +29,6 @@
 
 #import <WebKit2/WKBackForwardListItem.h>
 
-
 WK_API_CLASS
 @interface WKBackForwardList : NSObject
 

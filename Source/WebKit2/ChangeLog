@@ -1,3 +1,16 @@
+2014-04-01  Anders Carlsson  <andersca@apple.com>
+
+        Migrate more headers
+        https://bugs.webkit.org/show_bug.cgi?id=131068
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKBackForwardList.h:
+        Remove a newline.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Move files from the "Deprecated" group.
+
 2014-04-01  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Enable runtime feature if feature flag is enabled
