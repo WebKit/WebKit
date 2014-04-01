@@ -42,7 +42,7 @@ using namespace WebKit;
 
 struct _WebKitSettingsPrivate {
     _WebKitSettingsPrivate()
-        : preferences(WebPreferences::create(String()))
+        : preferences(WebPreferences::create(String(), "WebKit2."))
     {
         defaultFontFamily = preferences->standardFontFamily().utf8();
         monospaceFontFamily = preferences->fixedFontFamily().utf8();

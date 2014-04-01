@@ -1,3 +1,10 @@
+2014-03-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fix after r166553.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (_WebKitSettingsPrivate::_WebKitSettingsPrivate): Pass 'WebKit2.' as the second argument to WebPreferences::create().
+
 2014-03-31  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Extract the control of page background out of color_set
