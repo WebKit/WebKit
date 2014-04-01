@@ -1,3 +1,9 @@
+2014-03-31  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix on the EFL port with latest EFL libraries since r166149
+
+        * ImageDiff/PlatformEfl.cmake: Added ECORE_IMF_INCLUDE_DIRS to include dirs
+
 2014-03-31  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test correction after r166530.
