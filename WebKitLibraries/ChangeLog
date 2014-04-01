@@ -1,3 +1,10 @@
+2014-03-31  Alex Christensen  <achristensen@webkit.org>
+
+        [WinCairo] Unreviewed build fix after r166496.
+
+        * win/tools/vsprops/GStreamerCommon.props:
+        Added gio-2.0.lib to list of GStreamer includes.
+
 2014-03-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Enable WebVTT Regions on Windows.

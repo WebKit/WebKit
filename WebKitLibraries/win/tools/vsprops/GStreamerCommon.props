@@ -2,7 +2,7 @@
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>gstpbutils-1.0.lib;gstaudio-1.0.lib;gstbase-1.0.lib;gstvideo-1.0.lib;gobject-2.0.lib;gstapp-1.0.lib;glib-2.0.lib;gstreamer-1.0.lib;gsttag-1.0.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gstpbutils-1.0.lib;gstaudio-1.0.lib;gstbase-1.0.lib;gstvideo-1.0.lib;gobject-2.0.lib;gstapp-1.0.lib;glib-2.0.lib;gstreamer-1.0.lib;gsttag-1.0.lib;gio-2.0.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
 </Project>
