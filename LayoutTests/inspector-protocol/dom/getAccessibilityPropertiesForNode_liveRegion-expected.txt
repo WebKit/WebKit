@@ -8,14 +8,14 @@ Total elements to be tested: 17.
 <div role="status" aria-live="off">off</div>
     exists: true
 
-<div role="status" aria-live="assertive">assertive <!-- FIXME: atomic should be true http://webkit.org/b/130907 --></div>
+<div role="status" aria-live="assertive">assertive</div>
     exists: true
-    liveRegionAtomic: false
+    liveRegionAtomic: true
     liveRegionStatus: assertive
 
-<div role="status">polite (default) <!-- FIXME: atomic should be true http://webkit.org/b/130907 --></div>
+<div role="status">polite (default)</div>
     exists: true
-    liveRegionAtomic: false
+    liveRegionAtomic: true
     liveRegionStatus: polite
 
 <div role="marquee">off (default)</div>
@@ -34,17 +34,17 @@ Total elements to be tested: 17.
     liveRegionAtomic: false
     liveRegionStatus: polite
 
-<div role="alert" aria-live="polite">polite <!-- FIXME: atomic should be true http://webkit.org/b/130907 --></div>
+<div role="alert" aria-live="polite">polite</div>
     exists: true
-    liveRegionAtomic: false
+    liveRegionAtomic: true
     liveRegionStatus: polite
 
 <div role="alert" aria-live="off">off</div>
     exists: true
 
-<div role="alert">assertive (default) <!-- FIXME: atomic should be true http://webkit.org/b/130907 --></div>
+<div role="alert">assertive (default)</div>
     exists: true
-    liveRegionAtomic: false
+    liveRegionAtomic: true
     liveRegionStatus: assertive
 
 <div role="group" aria-live="assertive" aria-busy="true" aria-atomic="false">assertive</div>

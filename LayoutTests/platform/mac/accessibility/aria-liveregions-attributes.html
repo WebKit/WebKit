@@ -21,8 +21,14 @@
 <h3 tabindex=0 aria-atomic="true" id="h3live">h3</h3>
 </div>
 
-<div tabindex=0 id="liveregion2" role="group" aria-live="polite">
-</div>
+<div tabindex=0 id="liveregion2" role="group" aria-live="polite"></div>
+
+<!-- Default live region values per role. -->
+<div tabindex=0 id="liveregion_alert" role="alert"><!-- atomic=true, live=assertive --></div>
+<div tabindex=0 id="liveregion_status" role="status"><!-- atomic=true, live=polite --></div>
+<div tabindex=0 id="liveregion_log" role="log"><!-- atomic=false, live=polite --></div>
+<div tabindex=0 id="liveregion_timer" role="timer"><!-- atomic=false, live=off --></div>
+<div tabindex=0 id="liveregion_marquee" role="marquee"><!-- atomic=false, live=off --></div>
 
 <p id="description"></p>
 <div id="console"></div>
@@ -72,6 +78,26 @@
           document.getElementById("liveregion2").focus();
           shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIARelevant')", "'additions text'");
  
+          document.getElementById("liveregion_alert").focus();
+          shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'assertive'");
+          shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic')", "true");
+
+          document.getElementById("liveregion_status").focus();
+          shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'polite'");
+          shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic')", "true");
+
+          document.getElementById("liveregion_log").focus();
+          shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'polite'");
+          shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic')", "false");
+
+          document.getElementById("liveregion_timer").focus();
+          shouldBe("accessibilityController.focusedElement.isAttributeSupported('AXARIALive')", "false");
+          shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic')", "false");
+
+          document.getElementById("liveregion_marquee").focus();
+          shouldBe("accessibilityController.focusedElement.isAttributeSupported('AXARIALive')", "false");
+          shouldBe("accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic')", "false");
+
     }
 
 </script>

@@ -1,3 +1,18 @@
+2014-04-01  James Craig  <jcraig@apple.com>
+
+        AX: AccessibilityRenderObject::ariaLiveRegionAtomic() should default to true if
+        roleValue is ApplicationAlertRole || ApplicationStatusRole
+        https://bugs.webkit.org/show_bug.cgi?id=130907
+
+        Reviewed by Chris Fleizach.
+
+        Updated AccessibilityRenderObject::ariaLiveRegionAtomic() to match ARIA spec.
+
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode_liveRegion-expected.txt:
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode_liveRegion.html:
+        * platform/mac/accessibility/aria-liveregions-attributes-expected.txt:
+        * platform/mac/accessibility/aria-liveregions-attributes.html:
+
 2014-04-01  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Transition class Image (and its dependencies) from int to float to enable subpixel positioned/sized images.

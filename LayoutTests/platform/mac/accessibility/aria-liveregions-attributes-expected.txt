@@ -32,6 +32,16 @@ PASS accessibilityController.focusedElement.isAttributeSupported('AXARIARelevant
 PASS accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic') is true
 PASS accessibilityController.focusedElement.boolAttributeValue('AXElementBusy') is false
 PASS accessibilityController.focusedElement.stringAttributeValue('AXARIARelevant') is 'additions text'
+PASS accessibilityController.focusedElement.stringAttributeValue('AXARIALive') is 'assertive'
+PASS accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic') is true
+PASS accessibilityController.focusedElement.stringAttributeValue('AXARIALive') is 'polite'
+PASS accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic') is true
+PASS accessibilityController.focusedElement.stringAttributeValue('AXARIALive') is 'polite'
+PASS accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic') is false
+PASS accessibilityController.focusedElement.isAttributeSupported('AXARIALive') is false
+PASS accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic') is false
+PASS accessibilityController.focusedElement.isAttributeSupported('AXARIALive') is false
+PASS accessibilityController.focusedElement.boolAttributeValue('AXARIAAtomic') is false
 PASS successfullyParsed is true
 
 TEST COMPLETE
