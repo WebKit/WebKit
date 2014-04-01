@@ -123,9 +123,6 @@ WK_API_CLASS
 
 - (void)stopLoading;
 
-// FIXME: Move this to WKIBActions.
-- (IBAction)stopLoading:(id)sender;
-
 @property (nonatomic) BOOL allowsBackForwardNavigationGestures;
 
 #if TARGET_OS_IPHONE
@@ -148,6 +145,8 @@ WK_API_CLASS
 
 - (IBAction)reload:(id)sender;
 - (IBAction)reloadFromOrigin:(id)sender;
+
+- (IBAction)stopLoading:(id)sender;
 
 @end
 

@@ -334,11 +334,6 @@
     _page->stopLoading();
 }
 
-- (IBAction)stopLoading:(id)sender
-{
-    _page->stopLoading();
-}
-
 #pragma mark iOS-specific methods
 
 #if PLATFORM(IOS)
@@ -1266,6 +1261,11 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
 - (IBAction)reloadFromOrigin:(id)sender
 {
     [self reloadFromOrigin];
+}
+
+- (IBAction)stopLoading:(id)sender
+{
+    _page->stopLoading();
 }
 
 @end

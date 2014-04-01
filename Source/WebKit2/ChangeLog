@@ -1,5 +1,16 @@
 2014-04-01  Anders Carlsson  <andersca@apple.com>
 
+        Move -[WKWebView stopLoading:] back to WKIBActions
+        https://bugs.webkit.org/show_bug.cgi?id=131072
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView stopLoading:]):
+
+2014-04-01  Anders Carlsson  <andersca@apple.com>
+
         Migrate more headers
         https://bugs.webkit.org/show_bug.cgi?id=131068
 
