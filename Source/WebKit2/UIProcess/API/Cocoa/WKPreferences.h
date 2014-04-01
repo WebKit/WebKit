@@ -41,6 +41,12 @@ WK_API_CLASS
 
 @property (nonatomic) CGFloat minimumFontSize;
 
+#if TARGET_OS_IPHONE
+@property (nonatomic) BOOL allowsInlineMediaPlayback;
+@property (nonatomic) BOOL mediaPlaybackRequiresUserAction;
+@property (nonatomic) BOOL mediaPlaybackAllowsAirPlay;
+#endif
+
 @end
 
 #endif // WK_API_ENABLED

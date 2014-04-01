@@ -1,5 +1,24 @@
 2014-03-31  Anders Carlsson  <andersca@apple.com>
 
+        Add a couple of iOS specific preferences
+        https://bugs.webkit.org/show_bug.cgi?id=130999
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences allowsInlineMediaPlayback]):
+        (-[WKPreferences setAllowsInlineMediaPlayback:]):
+        (-[WKPreferences mediaPlaybackRequiresUserAction]):
+        (-[WKPreferences setMediaPlaybackRequiresUserAction:]):
+        (-[WKPreferences mediaPlaybackAllowsAirPlay]):
+        (-[WKPreferences setMediaPlaybackAllowsAirPlay:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
+2014-03-31  Anders Carlsson  <andersca@apple.com>
+
         Add a new -[WKPreferences initWithUserDefaultsPrefixKey:] initializer
         https://bugs.webkit.org/show_bug.cgi?id=130996
 

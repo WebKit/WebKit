@@ -67,6 +67,42 @@
     _preferences->setMinimumFontSize(minimumFontSize);
 }
 
+#pragma mark iOS-specific methods
+
+#if PLATFORM(IOS)
+
+- (BOOL)allowsInlineMediaPlayback
+{
+    return _preferences->mediaPlaybackAllowsInline();
+}
+
+- (void)setAllowsInlineMediaPlayback:(BOOL)allowsInlineMediaPlayback
+{
+    _preferences->setMediaPlaybackAllowsInline(allowsInlineMediaPlayback);
+}
+
+- (BOOL)mediaPlaybackRequiresUserAction
+{
+    return _preferences->mediaPlaybackRequiresUserGesture();
+}
+
+- (void)setMediaPlaybackRequiresUserAction:(BOOL)mediaPlaybackRequiresUserAction
+{
+    _preferences->setMediaPlaybackRequiresUserGesture(mediaPlaybackRequiresUserAction);
+}
+
+- (BOOL)mediaPlaybackAllowsAirPlay
+{
+    return _preferences->mediaPlaybackAllowsAirPlay();
+}
+
+- (void)setMediaPlaybackAllowsAirPlay:(BOOL)mediaPlaybackAllowsAirPlay
+{
+    _preferences->setMediaPlaybackAllowsAirPlay(mediaPlaybackAllowsAirPlay);
+}
+
+#endif
+
 @end
 
 @implementation WKPreferences (WKPrivate)
