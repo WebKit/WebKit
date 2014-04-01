@@ -47,7 +47,7 @@ public:
     LayerOrView *getLayer(WebCore::GraphicsLayer::PlatformLayerID) const;
     LayerOrView *rootLayer() const { return m_rootLayer; }
 
-    static WebCore::GraphicsLayer::PlatformLayerID layerID(LayerOrView*);
+    static WebCore::GraphicsLayer::PlatformLayerID layerID(CALayer*);
 
     // Returns true if the root layer changed.
     bool updateLayerTree(const RemoteLayerTreeTransaction&, float indicatorScaleFactor  = 1);
@@ -62,6 +62,7 @@ public:
 
 private:
     LayerOrView *createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeTransaction::LayerProperties*);
+    static void setLayerID(CALayer *, WebCore::GraphicsLayer::PlatformLayerID);
 
     void layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLayerID);
 

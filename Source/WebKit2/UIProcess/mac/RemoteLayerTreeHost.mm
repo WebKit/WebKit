@@ -118,14 +118,19 @@ void RemoteLayerTreeHost::animationDidStart(WebCore::GraphicsLayer::PlatformLaye
     m_drawingArea.acceleratedAnimationDidStart(layerID, startTime);
 }
 
-#if !PLATFORM(IOS)
 static NSString* const WKLayerIDPropertyKey = @"WKLayerID";
 
-WebCore::GraphicsLayer::PlatformLayerID RemoteLayerTreeHost::layerID(LayerOrView* layer)
+void RemoteLayerTreeHost::setLayerID(CALayer *layer, WebCore::GraphicsLayer::PlatformLayerID layerID)
+{
+    [layer setValue:[NSNumber numberWithUnsignedLongLong:layerID] forKey:WKLayerIDPropertyKey];
+}
+
+WebCore::GraphicsLayer::PlatformLayerID RemoteLayerTreeHost::layerID(CALayer* layer)
 {
     return [[layer valueForKey:WKLayerIDPropertyKey] unsignedLongLongValue];
 }
 
+#if !PLATFORM(IOS)
 LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties, const RemoteLayerTreeTransaction::LayerProperties*)
 {
     RetainPtr<CALayer>& layer = m_layers.add(properties.layerID, nullptr).iterator->value;
@@ -156,7 +161,7 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
     }
 
     [layer web_disableAllActions];
-    [layer setValue:[NSNumber numberWithUnsignedLongLong:properties.layerID] forKey:WKLayerIDPropertyKey];
+    setLayerID(layer.get(), properties.layerID);
 
     return layer.get();
 }

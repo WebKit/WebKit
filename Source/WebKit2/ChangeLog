@@ -1,3 +1,15 @@
+2014-03-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the iOS build.
+
+        * UIProcess/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::setLayerID):
+        (WebKit::RemoteLayerTreeHost::layerID):
+        (WebKit::RemoteLayerTreeHost::createLayer):
+
 2014-03-31  Anders Carlsson  <andersca@apple.com>
 
         Add a couple of iOS specific preferences
