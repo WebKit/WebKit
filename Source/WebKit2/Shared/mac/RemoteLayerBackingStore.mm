@@ -180,7 +180,7 @@ bool RemoteLayerBackingStore::display()
     scaledSize.scale(m_scale);
     IntSize expandedScaledSize = expandedIntSize(scaledSize);
 
-    bool willPaintEntireBackingStore = m_dirtyRegion.bounds().contains(layerBounds);
+    bool willPaintEntireBackingStore = m_dirtyRegion.contains(layerBounds);
 #if USE(IOSURFACE)
     if (m_acceleratesDrawing) {
         std::swap(m_frontSurface, m_backSurface);
