@@ -31,7 +31,7 @@
 WK_API_CLASS
 @interface _WKScriptWorld : NSObject
 
-+(instancetype)defaultWorld;
++ (instancetype)defaultWorld;
 
 @end
 

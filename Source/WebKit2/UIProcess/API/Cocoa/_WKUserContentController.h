@@ -23,23 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKWebViewConfiguration.h>
+#import <Foundation/Foundation.h>
+#import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-@class WKWebView;
-@class _WKVisitedLinkProvider;
-@class _WKUserContentController;
+@class _WKScriptWorld;
+@protocol _WKScriptMessageHandler;
 
-@interface WKWebViewConfiguration (WKPrivate)
+WK_API_CLASS
+@interface _WKUserContentController : NSObject
 
-@property (nonatomic, weak, setter=_setRelatedWebView:) WKWebView *_relatedWebView;
-@property (nonatomic, copy, setter=_setGroupIdentifier:) NSString *_groupIdentifier;
-
-@property (nonatomic, strong, setter=_setUserContentController:) _WKUserContentController *_userContentController;
-
-@property (nonatomic, strong, setter=_setVisitedLinkProvider:) _WKVisitedLinkProvider *_visitedLinkProvider;
+- (void)addScriptMessageHandler:(id <_WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name world:(_WKScriptWorld *)world;
+- (void)removeScriptMessageHandlerForName:(NSString *)name world:(_WKScriptWorld *)world;
 
 @end
 
 #endif
+
+

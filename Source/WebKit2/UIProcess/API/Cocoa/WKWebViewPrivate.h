@@ -42,7 +42,9 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
 
 @class WKBrowsingContextHandle;
 @class _WKRemoteObjectRegistry;
+
 @protocol WKHistoryDelegatePrivate;
+@protocol _WKScriptMessageHandler;
 
 @interface WKWebView (WKPrivate)
 

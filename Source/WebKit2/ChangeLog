@@ -1,3 +1,30 @@
+2014-04-01  Anders Carlsson  <andersca@apple.com>
+
+        Stub out the web process -> UI process message SPI
+        https://bugs.webkit.org/show_bug.cgi?id=131048
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _userContentController]):
+        (-[WKWebViewConfiguration _setUserContentController:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKScriptMessage.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKScriptWorld.h.
+        * UIProcess/API/Cocoa/_WKScriptMessage.mm: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKScriptWorld.h.
+        (-[_WKScriptMessage body]):
+        (-[_WKScriptMessage originatingWebView]):
+        * UIProcess/API/Cocoa/_WKScriptMessageHandler.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKScriptWorld.h.
+        * UIProcess/API/Cocoa/_WKScriptWorld.h:
+        * UIProcess/API/Cocoa/_WKUserContentController.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKScriptWorld.h.
+        * UIProcess/API/Cocoa/_WKUserContentController.mm: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h.
+        (-[_WKUserContentController addScriptMessageHandler:name:world:]):
+        (-[_WKUserContentController removeScriptMessageHandler:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-04-01  Andreas Kling  <akling@apple.com>
 
         Invalidate CFNetwork connection cache on memory pressure.

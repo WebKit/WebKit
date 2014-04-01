@@ -23,23 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKWebViewConfiguration.h>
+#import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-@class WKWebView;
-@class _WKVisitedLinkProvider;
+#import <Foundation/Foundation.h>
+
+@class _WKScriptMessage;
 @class _WKUserContentController;
 
-@interface WKWebViewConfiguration (WKPrivate)
+@protocol _WKScriptMessageHandler <NSObject>
 
-@property (nonatomic, weak, setter=_setRelatedWebView:) WKWebView *_relatedWebView;
-@property (nonatomic, copy, setter=_setGroupIdentifier:) NSString *_groupIdentifier;
+@required
 
-@property (nonatomic, strong, setter=_setUserContentController:) _WKUserContentController *_userContentController;
-
-@property (nonatomic, strong, setter=_setVisitedLinkProvider:) _WKVisitedLinkProvider *_visitedLinkProvider;
+- (void)_userContentController:(_WKUserContentController *)userContentController didReceiveScriptMessage:(_WKScriptMessage *)message;
 
 @end
 
 #endif
+
+
+

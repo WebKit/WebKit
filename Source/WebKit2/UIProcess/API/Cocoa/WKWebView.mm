@@ -54,6 +54,7 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import "_WKRemoteObjectRegistryInternal.h"
+#import "_WKUserContentController.h"
 #import "_WKVisitedLinkProviderInternal.h"
 #import <wtf/RetainPtr.h>
 
@@ -131,6 +132,9 @@
 
     if (![_configuration preferences])
         [_configuration setPreferences:adoptNS([[WKPreferences alloc] init]).get()];
+
+    if (![_configuration _userContentController])
+        [_configuration _setUserContentController:adoptNS([[_WKUserContentController alloc] init]).get()];
 
     if (![_configuration _visitedLinkProvider])
         [_configuration _setVisitedLinkProvider:adoptNS([[_WKVisitedLinkProvider alloc] init]).get()];
