@@ -175,7 +175,7 @@ static void webkit_dom_test_serialized_script_value_interface_class_init(WebKitD
             "TestSerializedScriptValueInterface:value",
             "read-only WebKitDOMSerializedScriptValue* TestSerializedScriptValueInterface:value",
             WEBKIT_TYPE_DOM_SERIALIZED_SCRIPT_VALUE,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -195,7 +195,7 @@ static void webkit_dom_test_serialized_script_value_interface_class_init(WebKitD
             "TestSerializedScriptValueInterface:cached-value",
             "read-only WebKitDOMSerializedScriptValue* TestSerializedScriptValueInterface:cached-value",
             WEBKIT_TYPE_DOM_SERIALIZED_SCRIPT_VALUE,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,

@@ -191,7 +191,7 @@ static void webkit_dom_test_typedefs_class_init(WebKitDOMTestTypedefsClass* requ
         g_param_spec_uint64(
             "unsigned-long-long-attr",
             "TestTypedefs:unsigned-long-long-attr",
-            "read-only guint64 TestTypedefs:unsigned-long-long-attr",
+            "read-write guint64 TestTypedefs:unsigned-long-long-attr",
             0, G_MAXUINT64, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -203,7 +203,7 @@ static void webkit_dom_test_typedefs_class_init(WebKitDOMTestTypedefsClass* requ
             "TestTypedefs:immutable-serialized-script-value",
             "read-only WebKitDOMSerializedScriptValue* TestTypedefs:immutable-serialized-script-value",
             WEBKIT_TYPE_DOM_SERIALIZED_SCRIPT_VALUE,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -211,7 +211,7 @@ static void webkit_dom_test_typedefs_class_init(WebKitDOMTestTypedefsClass* requ
         g_param_spec_long(
             "attr-with-getter-exception",
             "TestTypedefs:attr-with-getter-exception",
-            "read-only glong TestTypedefs:attr-with-getter-exception",
+            "read-write glong TestTypedefs:attr-with-getter-exception",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -221,7 +221,7 @@ static void webkit_dom_test_typedefs_class_init(WebKitDOMTestTypedefsClass* requ
         g_param_spec_long(
             "attr-with-setter-exception",
             "TestTypedefs:attr-with-setter-exception",
-            "read-only glong TestTypedefs:attr-with-setter-exception",
+            "read-write glong TestTypedefs:attr-with-setter-exception",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -231,7 +231,7 @@ static void webkit_dom_test_typedefs_class_init(WebKitDOMTestTypedefsClass* requ
         g_param_spec_string(
             "string-attr-with-getter-exception",
             "TestTypedefs:string-attr-with-getter-exception",
-            "read-only gchar* TestTypedefs:string-attr-with-getter-exception",
+            "read-write gchar* TestTypedefs:string-attr-with-getter-exception",
             "",
             WEBKIT_PARAM_READWRITE));
 
@@ -241,7 +241,7 @@ static void webkit_dom_test_typedefs_class_init(WebKitDOMTestTypedefsClass* requ
         g_param_spec_string(
             "string-attr-with-setter-exception",
             "TestTypedefs:string-attr-with-setter-exception",
-            "read-only gchar* TestTypedefs:string-attr-with-setter-exception",
+            "read-write gchar* TestTypedefs:string-attr-with-setter-exception",
             "",
             WEBKIT_PARAM_READWRITE));
 

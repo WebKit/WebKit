@@ -1,3 +1,26 @@
+2014-04-01  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Readonly attributes installed as readwrite in GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=130978
+
+        Reviewed by Carlos Garcia Campos.
+
+        Unify how we decide if an attribute is readable or writeable and improve the code.
+        This results in some attributes now being marked as read-only which didn't have
+        corresponding case statements in the set_property switch statements and also correctly
+        installs set_property support for some more POD types.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (IsPropertyReadable): Added this helper to simplify deciding if an attribute is readable.
+        (IsPropertyWriteable): Added this helper to simplify deciding if an attribute is writeable. Also
+        update the list of types to reflect the full list of types we can generate setters for.
+        (GenerateProperty): Use the IsPropertyWriteable helper instead of checking whether the attribute is read-only.
+        Also fix generation of the blurb by using $mutableString instead of $mutableStringconst which isn't used.
+        (GenerateProperties): Use grep and the new helpers to simplify the code.
+        (GetReadableProperties): Deleted.
+        (GetWriteableProperties): Deleted.
+        * bindings/scripts/test/GObject: Update results
+
 2014-03-31  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Extract the control of page background out of color_set
