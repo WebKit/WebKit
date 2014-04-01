@@ -1,3 +1,18 @@
+2014-04-01  Lucas Forschler  <lforschler@apple.com>
+
+        Add a 32bit JSC builder/tester.
+        https://bugs.webkit.org/show_bug.cgi?id=131054
+        
+        Reviewed by Michael Saboff.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (Compile32bitJSC):
+        (Run32bitJSCTests):
+        (Run32bitJSCTests.countFailures):
+        (BuildAndTest32bitJSCFactory):
+        (BuildAndTest32bitJSCFactory.__init__):
+
 2014-04-01  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] No longer build WebKit1 gtkdoc

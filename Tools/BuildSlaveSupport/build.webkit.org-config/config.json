@@ -13,6 +13,7 @@
                     { "name": "apple-mini-210", "platform": "mac-mountainlion"},
                     { "name": "apple-mini-218", "platform": "mac-mountainlion"},
                     
+                    { "name": "apple-mac-114",  "platform": "mac-mavericks"},
                     { "name": "apple-mini-129", "platform": "mac-mavericks"},
                     { "name": "apple-mini-130", "platform": "mac-mavericks"},
                     { "name": "apple-mini-137", "platform": "mac-mavericks"},
@@ -98,6 +99,10 @@
                     { "name": "Apple Mavericks LLINT CLoop (BuildAndTest)", "type": "BuildAndTestLLINTCLoop", "builddir": "mavericks-cloop-debug",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-mini-180"]
+                    },
+                    { "name": "Apple Mavericks 32-bit JSC (BuildAndTest)", "type": "BuildAndTest32bitJSC", "builddir": "mavericks-32bitJSC-debug",
+                      "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["apple-mac-114"]
                     },
                     { "name": "Apple Mavericks Release (Build)", "type": "Build", "builddir": "mavericks-release",
                       "platform": "mac-mavericks", "configuration": "release", "architectures": ["x86_64"],
