@@ -1,5 +1,18 @@
 2014-03-31  Anders Carlsson  <andersca@apple.com>
 
+        Rename policy enums to match the delegate methods
+        https://bugs.webkit.org/show_bug.cgi?id=131002
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        (NS_ENUM):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::PolicyClient::decidePolicyForNavigationAction):
+        (WebKit::NavigationState::PolicyClient::decidePolicyForResponse):
+
+2014-03-31  Anders Carlsson  <andersca@apple.com>
+
         Add more preferences
         https://bugs.webkit.org/show_bug.cgi?id=131001
 

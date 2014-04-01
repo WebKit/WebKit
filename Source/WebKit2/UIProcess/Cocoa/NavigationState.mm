@@ -261,15 +261,15 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
 
     [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:navigationAction.get() decisionHandler:[listener](WKNavigationPolicyDecision policyDecision) {
         switch (policyDecision) {
-        case WKNavigationPolicyDecisionAllow:
+        case WKNavigationActionPolicyAllow:
             listener->use();
             break;
 
-        case WKNavigationPolicyDecisionCancel:
+        case WKNavigationActionPolicyCancel:
             listener->ignore();
             break;
 
-        case WKNavigationPolicyDecisionDownload:
+        case WKNavigationActionPolicyDownload:
             listener->download();
             break;
         }
@@ -302,15 +302,15 @@ void NavigationState::PolicyClient::decidePolicyForResponse(WebPageProxy*, WebFr
 
     [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:navigationResponse.get() decisionHandler:[listener](WKNavigationResponsePolicyDecision policyDecision) {
         switch (policyDecision) {
-        case WKNavigationResponsePolicyDecisionAllow:
+        case WKNavigationResponsePolicyAllow:
             listener->use();
             break;
 
-        case WKNavigationResponsePolicyDecisionCancel:
+        case WKNavigationResponsePolicyCancel:
             listener->ignore();
             break;
 
-        case WKNavigationResponsePolicyDecisionBecomeDownload:
+        case WKNavigationResponsePolicyBecomeDownload:
             listener->download();
             break;
         }

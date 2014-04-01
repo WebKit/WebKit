@@ -33,24 +33,40 @@
 @class WKNavigationResponse;
 @class WKWebView;
 
-typedef NS_ENUM(NSInteger, WKNavigationPolicyDecision) {
-    WKNavigationPolicyDecisionCancel,
-    WKNavigationPolicyDecisionAllow,
-    WKNavigationPolicyDecisionDownload
+typedef NS_ENUM(NSInteger, WKNavigationActionPolicy) {
+    WKNavigationActionPolicyCancel,
+    WKNavigationActionPolicyAllow,
+    WKNavigationActionPolicyDownload,
+
+    // FIXME: Remove this.
+    WKNavigationPolicyDecisionCancel = WKNavigationActionPolicyCancel,
+    WKNavigationPolicyDecisionAllow = WKNavigationActionPolicyAllow,
+    WKNavigationPolicyDecisionDownload = WKNavigationActionPolicyDownload,
 };
 
-typedef NS_ENUM(NSInteger, WKNavigationResponsePolicyDecision) {
-    WKNavigationResponsePolicyDecisionCancel,
-    WKNavigationResponsePolicyDecisionAllow,
-    WKNavigationResponsePolicyDecisionBecomeDownload
+// FIXME: Remove this.
+typedef WKNavigationActionPolicy WKNavigationPolicyDecision;
+
+typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
+    WKNavigationResponsePolicyCancel,
+    WKNavigationResponsePolicyAllow,
+    WKNavigationResponsePolicyBecomeDownload,
+
+    // FIXME: Remove this.
+    WKNavigationResponsePolicyDecisionCancel = WKNavigationResponsePolicyCancel,
+    WKNavigationResponsePolicyDecisionAllow = WKNavigationResponsePolicyAllow,
+    WKNavigationResponsePolicyDecisionBecomeDownload = WKNavigationResponsePolicyBecomeDownload,
 };
+
+// FIXME: Remove this.
+typedef WKNavigationResponsePolicy WKNavigationResponsePolicyDecision;
 
 @protocol WKNavigationDelegate <NSObject>
 
 @optional
 
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationPolicyDecision))decisionHandler;
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicyDecision))decisionHandler;
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler;
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler;
 
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation;
 - (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation;
