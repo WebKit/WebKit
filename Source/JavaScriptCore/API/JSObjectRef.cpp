@@ -451,7 +451,11 @@ bool JSObjectDeleteProperty(JSContextRef ctx, JSObjectRef object, JSStringRef pr
 void* JSObjectGetPrivate(JSObjectRef object)
 {
     JSObject* jsObject = uncheckedToJS(object);
-    
+
+    // Get wrapped object if proxied
+    if (jsObject->inherits(JSProxy::info()))
+        jsObject = jsCast<JSProxy*>(jsObject)->target();
+
     if (jsObject->inherits(JSCallbackObject<JSGlobalObject>::info()))
         return jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->getPrivate();
     if (jsObject->inherits(JSCallbackObject<JSDestructibleObject>::info()))
@@ -467,7 +471,11 @@ void* JSObjectGetPrivate(JSObjectRef object)
 bool JSObjectSetPrivate(JSObjectRef object, void* data)
 {
     JSObject* jsObject = uncheckedToJS(object);
-    
+
+    // Get wrapped object if proxied
+    if (jsObject->inherits(JSProxy::info()))
+        jsObject = jsCast<JSProxy*>(jsObject)->target();
+
     if (jsObject->inherits(JSCallbackObject<JSGlobalObject>::info())) {
         jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->setPrivate(data);
         return true;

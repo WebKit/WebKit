@@ -1225,6 +1225,13 @@ int main(int argc, char* argv[])
     JSObjectRef jsObjectNoProto = JSObjectMake(context, NULL, NULL);
     JSObjectSetPrototype(context, jsObjectNoProto, JSValueMakeNull(context));
 
+    JSObjectSetPrivate(globalObject, (void*)123);
+    if (JSObjectGetPrivate(globalObject) != (void*)123) {
+        printf("FAIL: Didn't return private data when set by JSObjectSetPrivate().\n");
+        failed = 1;
+    } else
+        printf("PASS: returned private data when set by JSObjectSetPrivate().\n");
+
     // FIXME: test funny utf8 characters
     JSStringRef jsEmptyIString = JSStringCreateWithUTF8CString("");
     JSValueRef jsEmptyString = JSValueMakeString(context, jsEmptyIString);

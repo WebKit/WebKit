@@ -1,3 +1,18 @@
+2014-03-31  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r166415): JSObject{Get,Set}Private() don't work with proxies objects
+        https://bugs.webkit.org/show_bug.cgi?id=130992
+
+        Reviewed by Mark Hahnenberg.
+
+        Forward JSObjectGetPrivate() and JSObjectSetPrivate() to the wrapped object.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectGetPrivate):
+        (JSObjectSetPrivate):
+        * API/tests/testapi.c:
+        (main): Added new test case to validate we are properly foarwarding.
+
 2014-03-31  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Improve GC_LOGGING
