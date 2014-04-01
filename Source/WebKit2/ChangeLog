@@ -5,6 +5,13 @@
         * UIProcess/mac/RemoteLayerTreeHost.mm:
         (WebKit::RemoteLayerTreeHost::updateLayerTree):
 
+2014-03-31  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+
 2014-03-31  Anders Carlsson  <andersca@apple.com>
 
         Rename -[WKNavigationAction destinationFrame] to -[WKNavigationAction targetFrame]

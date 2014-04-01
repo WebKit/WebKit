@@ -89,8 +89,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
             if (properties.changedProperties & RemoteLayerTreeTransaction::BorderWidthChanged)
                 asLayer(layer).borderWidth = properties.borderWidth / indicatorScaleFactor;
             asLayer(layer).masksToBounds = false;
-          } else
-        else
+        } else
             RemoteLayerTreePropertyApplier::applyProperties(layer, this, properties, relatedLayers);
     }
 
