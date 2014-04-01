@@ -273,7 +273,7 @@ static gboolean webkitWebViewDecidePolicy(WebKitWebView*, WebKitPolicyDecision* 
     }
 
     WebKitURIResponse* response = webkit_response_policy_decision_get_response(WEBKIT_RESPONSE_POLICY_DECISION(decision));
-    const ResourceResponse resourceResponse = webkitURIResponseGetResourceResponse(response);
+    const ResourceResponse& resourceResponse = webkitURIResponseGetResourceResponse(response);
     if (resourceResponse.isAttachment()) {
         webkit_policy_decision_download(decision);
         return TRUE;

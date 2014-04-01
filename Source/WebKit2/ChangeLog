@@ -1,3 +1,14 @@
+2014-04-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Don't copy the ResourceResponse object in webkitWebViewDecidePolicy
+        https://bugs.webkit.org/show_bug.cgi?id=131015
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewDecidePolicy): Avoid copying the ResourceResponce object returned by webkitURIResponseGetResourceResponse.
+        That function already returns a reference, so the return value should be stored accordingly.
+
 2014-04-01  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [CoordinatedGraphics] Content scale factor should not be applied to draw contents when fixed layout is not used.
