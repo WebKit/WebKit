@@ -29,10 +29,12 @@
 #import "ArgumentCoders.h"
 #import "MessageDecoder.h"
 #import "MessageEncoder.h"
+#import "PlatformCAAnimationRemote.h"
 #import "PlatformCALayerRemote.h"
 #import "WebCoreArgumentCoders.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/TextStream.h>
+#import <WebCore/TimingFunction.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/StringBuilder.h>
 
@@ -557,9 +559,15 @@ public:
     RemoteLayerTreeTextStream& operator<<(FloatPoint3D);
     RemoteLayerTreeTextStream& operator<<(Color);
     RemoteLayerTreeTextStream& operator<<(FloatRect);
-    RemoteLayerTreeTextStream& operator<<(const Vector<WebCore::GraphicsLayer::PlatformLayerID>& layers);
+    RemoteLayerTreeTextStream& operator<<(const Vector<WebCore::GraphicsLayer::PlatformLayerID>&);
     RemoteLayerTreeTextStream& operator<<(const FilterOperations&);
-    RemoteLayerTreeTextStream& operator<<(const RemoteLayerBackingStore& backingStore);
+    RemoteLayerTreeTextStream& operator<<(const PlatformCAAnimationRemote::Properties&);
+    RemoteLayerTreeTextStream& operator<<(const RemoteLayerBackingStore&);
+    RemoteLayerTreeTextStream& operator<<(PlatformCAAnimation::AnimationType);
+    RemoteLayerTreeTextStream& operator<<(PlatformCAAnimation::FillModeType);
+    RemoteLayerTreeTextStream& operator<<(PlatformCAAnimation::ValueFunctionType);
+    RemoteLayerTreeTextStream& operator<<(const TimingFunction&);
+    RemoteLayerTreeTextStream& operator<<(const PlatformCAAnimationRemote::KeyframeValue&);
 
     void increaseIndent() { ++m_indent; }
     void decreaseIndent() { --m_indent; ASSERT(m_indent >= 0); }
@@ -569,6 +577,17 @@ public:
 private:
     int m_indent;
 };
+
+template <class T>
+static void dumpProperty(RemoteLayerTreeTextStream& ts, String name, T value)
+{
+    ts << "\n";
+    ts.increaseIndent();
+    ts.writeIndent();
+    ts << "(" << name << " ";
+    ts << value << ")";
+    ts.decreaseIndent();
+}
 
 RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const TransformationMatrix& transform)
 {
@@ -660,6 +679,165 @@ RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const FilterOpe
     return ts;
 }
 
+RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(PlatformCAAnimation::AnimationType type)
+{
+    RemoteLayerTreeTextStream& ts = *this;
+    switch (type) {
+    case PlatformCAAnimation::Basic: ts << "basic"; break;
+    case PlatformCAAnimation::Keyframe: ts << "keyframe"; break;
+    }
+    return ts;
+}
+
+RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(PlatformCAAnimation::FillModeType type)
+{
+    RemoteLayerTreeTextStream& ts = *this;
+    switch (type) {
+    case PlatformCAAnimation::NoFillMode: ts << "none"; break;
+    case PlatformCAAnimation::Forwards: ts << "forwards"; break;
+    case PlatformCAAnimation::Backwards: ts << "backwards"; break;
+    case PlatformCAAnimation::Both: ts << "both"; break;
+    }
+    return ts;
+}
+
+RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(PlatformCAAnimation::ValueFunctionType type)
+{
+    RemoteLayerTreeTextStream& ts = *this;
+    switch (type) {
+    case PlatformCAAnimation::NoValueFunction: ts << "none"; break;
+    case PlatformCAAnimation::RotateX: ts << "rotateX"; break;
+    case PlatformCAAnimation::RotateY: ts << "rotateY"; break;
+    case PlatformCAAnimation::RotateZ: ts << "rotateX"; break;
+    case PlatformCAAnimation::ScaleX: ts << "scaleX"; break;
+    case PlatformCAAnimation::ScaleY: ts << "scaleY"; break;
+    case PlatformCAAnimation::ScaleZ: ts << "scaleX"; break;
+    case PlatformCAAnimation::Scale: ts << "scale"; break;
+    case PlatformCAAnimation::TranslateX: ts << "translateX"; break;
+    case PlatformCAAnimation::TranslateY: ts << "translateY"; break;
+    case PlatformCAAnimation::TranslateZ: ts << "translateZ"; break;
+    case PlatformCAAnimation::Translate: ts << "translate"; break;
+    }
+    return ts;
+}
+
+RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const PlatformCAAnimationRemote::KeyframeValue& value)
+{
+    RemoteLayerTreeTextStream& ts = *this;
+
+    switch (value.keyframeType()) {
+    case PlatformCAAnimationRemote::KeyframeValue::NumberKeyType:
+        ts << "number=" << value.numberValue();
+        break;
+    case PlatformCAAnimationRemote::KeyframeValue::ColorKeyType:
+        ts << "color=";
+        ts << value.colorValue();
+        break;
+    case PlatformCAAnimationRemote::KeyframeValue::PointKeyType:
+        ts << "point=";
+        ts << value.pointValue();
+        break;
+    case PlatformCAAnimationRemote::KeyframeValue::TransformKeyType:
+        ts << "transform=";
+        ts << value.transformValue();
+        break;
+    }
+    return ts;
+}
+
+RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const TimingFunction& timingFunction)
+{
+    RemoteLayerTreeTextStream& ts = *this;
+    switch (timingFunction.type()) {
+    case TimingFunction::LinearFunction:
+        ts << "linear";
+        break;
+    case TimingFunction::CubicBezierFunction: {
+        const CubicBezierTimingFunction& cubicBezierFunction = static_cast<const CubicBezierTimingFunction&>(timingFunction);
+        ts << "cubic-bezier(" << cubicBezierFunction.x1() << ", " << cubicBezierFunction.y1() << ", " <<  cubicBezierFunction.x2() << ", " << cubicBezierFunction.y2() << ")";
+        break;
+    }
+    case TimingFunction::StepsFunction: {
+        const StepsTimingFunction& stepsFunction = static_cast<const StepsTimingFunction&>(timingFunction);
+        ts << "steps(" << stepsFunction.numberOfSteps() << ", " << (stepsFunction.stepAtStart() ? "start" : "end") << ")";
+        break;
+    }
+    }
+    return ts;
+}
+
+RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const PlatformCAAnimationRemote::Properties& animation)
+{
+    RemoteLayerTreeTextStream& ts = *this;
+
+    ts << "type=";
+    ts << animation.animationType;
+    ts << " keyPath=";
+    ts << animation.keyPath;
+
+    if (animation.beginTime)
+        dumpProperty(ts, "beginTime", animation.beginTime);
+
+    if (animation.duration)
+        dumpProperty(ts, "duration", animation.duration);
+
+    if (animation.timeOffset)
+        dumpProperty(ts, "timeOffset", animation.timeOffset);
+
+    dumpProperty(ts, "repeatCount", animation.repeatCount);
+
+    if (animation.speed != 1)
+        dumpProperty(ts, "speed", animation.speed);
+
+    dumpProperty(ts, "fillMode", animation.fillMode);
+    dumpProperty(ts, "valueFunction", animation.valueFunction);
+
+    if (animation.autoReverses)
+        dumpProperty(ts, "autoReverses", animation.autoReverses);
+
+    if (!animation.removedOnCompletion)
+        dumpProperty(ts, "removedOnCompletion", animation.removedOnCompletion);
+
+    if (animation.additive)
+        dumpProperty(ts, "additive", animation.additive);
+
+    if (animation.reverseTimingFunctions)
+        dumpProperty(ts, "reverseTimingFunctions", animation.reverseTimingFunctions);
+
+    if (animation.hasNonZeroBeginTime)
+        dumpProperty(ts, "hasNonZeroBeginTime", animation.hasNonZeroBeginTime);
+
+    ts << "\n";
+    ts.increaseIndent();
+    ts.writeIndent();
+    ts << "(" << "keyframes";
+    ts.increaseIndent();
+
+    size_t maxFrames = std::max(animation.keyValues.size(), animation.keyTimes.size());
+    maxFrames = std::max(maxFrames, animation.timingFunctions.size());
+
+    for (size_t i = 0; i < maxFrames; ++i) {
+        ts << "\n";
+        ts.writeIndent();
+        ts << "(keyframe " << unsigned(i);
+        if (i < animation.keyTimes.size())
+            dumpProperty(ts, "time", animation.keyTimes[i]);
+
+        if (i < animation.timingFunctions.size() && animation.timingFunctions[i])
+            dumpProperty<const TimingFunction&>(ts, "timing function", *animation.timingFunctions[i]);
+
+        if (i < animation.keyValues.size())
+            dumpProperty(ts, "value", animation.keyValues[i]);
+
+        ts << ")";
+    }
+
+    ts.decreaseIndent();
+    ts.decreaseIndent();
+
+    return ts;
+}
+
 RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(FloatPoint3D point)
 {
     RemoteLayerTreeTextStream& ts = *this;
@@ -712,17 +890,6 @@ void RemoteLayerTreeTextStream::writeIndent()
         *this << "  ";
 }
 
-template <class T>
-static void dumpProperty(RemoteLayerTreeTextStream& ts, String name, T value)
-{
-    ts << "\n";
-    ts.increaseIndent();
-    ts.writeIndent();
-    ts << "(" << name << " ";
-    ts << value << ")";
-    ts.decreaseIndent();
-}
-
 static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const RemoteLayerTreeTransaction::LayerPropertiesMap& changedLayerProperties)
 {
     if (changedLayerProperties.isEmpty())
@@ -750,8 +917,6 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const RemoteLayerTr
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged)
             dumpProperty<Vector<GraphicsLayer::PlatformLayerID>>(ts, "children", layerProperties.children);
-
-// FIXME: dump animations
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::PositionChanged)
             dumpProperty<FloatPoint3D>(ts, "position", layerProperties.position);
@@ -825,6 +990,14 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const RemoteLayerTr
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::FiltersChanged)
             dumpProperty<FilterOperations>(ts, "filters", layerProperties.filters ? *layerProperties.filters : FilterOperations());
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::AnimationsChanged) {
+            for (const auto& keyValuePair : layerProperties.addedAnimations)
+                dumpProperty<PlatformCAAnimationRemote::Properties>(ts, "animation " +  keyValuePair.key, keyValuePair.value);
+
+            for (const auto& name : layerProperties.keyPathsOfAnimationsToRemove)
+                dumpProperty<String>(ts, "removed animation", name);
+        }
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::EdgeAntialiasingMaskChanged)
             dumpProperty<unsigned>(ts, "edgeAntialiasingMask", layerProperties.edgeAntialiasingMask);

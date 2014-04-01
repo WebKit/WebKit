@@ -1,3 +1,22 @@
+2014-03-31  Simon Fraser  <simon.fraser@apple.com>
+
+        [UI-side compositing] Fix animations, and add logging
+        https://bugs.webkit.org/show_bug.cgi?id=131011
+
+        Reviewed by Tim Horton.
+        
+        UI-side animations were broken because GraphicsLayerCARemote::addAnimation()
+        never called the superclass, so fix.
+        
+        Add logging for animations to the layer tree commit output.
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::dumpProperty):
+        (WebKit::RemoteLayerTreeTextStream::operator<<):
+        (WebKit::dumpChangedLayers):
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.cpp:
+        (WebKit::GraphicsLayerCARemote::addAnimation):
+
 2014-04-01  Zalan Bujtas  <zalan@apple.com>
 
         Build fix after r166582.

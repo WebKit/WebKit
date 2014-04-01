@@ -58,17 +58,14 @@ PassRefPtr<PlatformCAAnimation> GraphicsLayerCARemote::createPlatformCAAnimation
     return PlatformCAAnimationRemote::create(type, keyPath);
 }
 
-bool GraphicsLayerCARemote::addAnimation(const KeyframeValueList& valueList, const FloatSize&, const Animation* anim, const String&, double)
+bool GraphicsLayerCARemote::addAnimation(const KeyframeValueList& valueList, const FloatSize& boxSize, const Animation* anim, const String& animationName, double timeOffset)
 {
-    if (!animationCanBeAccelerated(valueList, anim))
-        return false;
-    
 #if ENABLE(CSS_FILTERS)
     if (valueList.property() == AnimatedPropertyWebkitFilter)
         return false;
 #endif
     
-    return true;
+    return GraphicsLayerCA::addAnimation(valueList, boxSize, anim, animationName, timeOffset);
 }
 
 } // namespace WebKit
