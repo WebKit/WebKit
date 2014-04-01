@@ -766,12 +766,6 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     "-webkit-region-overflow": [
         "auto", "break"
     ],
-    "-webkit-wrap-flow": [
-        "auto", "both", "start", "end", "maximum", "clear"
-    ],
-    "-webkit-wrap-through": [
-        "wrap", "none"
-    ],
     "-webkit-backface-visibility": [
         "visible", "hidden"
     ],

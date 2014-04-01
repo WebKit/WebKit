@@ -982,17 +982,7 @@ at
 // auto
 break
 
-// -webkit-wrap-flow
-// auto
-// both
-// left
-// right
-maximum
-// clear
-
-// -webkit-wrap-through
 wrap
-// none
 
 // -webkit-line-align
 edges

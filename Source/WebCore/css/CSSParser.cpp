@@ -1017,20 +1017,6 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueText || valueID == CSSValueAll)
             return true;
         break;
-#if ENABLE(CSS_EXCLUSIONS)
-    case CSSPropertyWebkitWrapFlow:
-        if (!RuntimeEnabledFeatures::sharedFeatures().cssExclusionsEnabled())
-            return false;
-        if (valueID == CSSValueAuto || valueID == CSSValueBoth || valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueMaximum || valueID == CSSValueClear)
-            return true;
-        break;
-    case CSSPropertyWebkitWrapThrough:
-        if (!RuntimeEnabledFeatures::sharedFeatures().cssExclusionsEnabled())
-            return false;
-        if (valueID == CSSValueWrap || valueID == CSSValueNone)
-            return true;
-        break;
-#endif
     case CSSPropertyWebkitWritingMode:
         if (valueID >= CSSValueHorizontalTb && valueID <= CSSValueHorizontalBt)
             return true;
@@ -1163,10 +1149,6 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitUserDrag:
     case CSSPropertyWebkitUserModify:
     case CSSPropertyWebkitUserSelect:
-#if ENABLE(CSS_EXCLUSIONS)
-    case CSSPropertyWebkitWrapFlow:
-    case CSSPropertyWebkitWrapThrough:
-#endif
     case CSSPropertyWebkitWritingMode:
     case CSSPropertyWhiteSpace:
     case CSSPropertyWordBreak:
@@ -3038,10 +3020,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitUserDrag:
     case CSSPropertyWebkitUserModify:
     case CSSPropertyWebkitUserSelect:
-#if ENABLE(CSS_EXCLUSIONS)
-    case CSSPropertyWebkitWrapFlow:
-    case CSSPropertyWebkitWrapThrough:
-#endif
     case CSSPropertyWebkitWritingMode:
     case CSSPropertyWhiteSpace:
     case CSSPropertyWordBreak:

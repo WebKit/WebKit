@@ -535,10 +535,6 @@ enum LineSnap { LineSnapNone, LineSnapBaseline, LineSnapContain };
 
 enum LineAlign { LineAlignNone, LineAlignEdges };
 
-enum WrapFlow { WrapFlowAuto, WrapFlowBoth, WrapFlowStart, WrapFlowEnd, WrapFlowMaximum, WrapFlowClear };
-
-enum WrapThrough { WrapThroughWrap, WrapThroughNone };
-
 enum RubyPosition { RubyPositionBefore, RubyPositionAfter };
 
 #if ENABLE(CSS_GRID_LAYOUT)

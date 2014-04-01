@@ -440,10 +440,6 @@ text-emphasis-style = -webkit-text-emphasis-style
 -webkit-shape-margin
 -webkit-shape-image-threshold
 #endif
-#if defined(ENABLE_CSS_EXCLUSIONS) && ENABLE_CSS_EXCLUSIONS
--webkit-wrap-flow
--webkit-wrap-through
-#endif
 #if defined(ENABLE_CSS_DEVICE_ADAPTATION) && ENABLE_CSS_DEVICE_ADAPTATION
 max-zoom
 min-zoom

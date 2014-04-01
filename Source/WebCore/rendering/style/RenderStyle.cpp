@@ -415,10 +415,6 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
         if (rareNonInheritedData->m_regionFragment != other->rareNonInheritedData->m_regionFragment)
             return true;
 
-        if (rareNonInheritedData->m_wrapFlow != other->rareNonInheritedData->m_wrapFlow
-            || rareNonInheritedData->m_wrapThrough != other->rareNonInheritedData->m_wrapThrough)
-            return true;
-
 #if ENABLE(CSS_SHAPES)
         if (rareNonInheritedData->m_shapeMargin != other->rareNonInheritedData->m_shapeMargin)
             return true;

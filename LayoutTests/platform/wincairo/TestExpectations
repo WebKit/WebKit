@@ -1981,10 +1981,6 @@ fast/xsl/xslt-processor-template.html
 # CSS Regions support not yet enabled. http://webkit.org/b/57312
 fast/regions
 
-# CSS Exclusions support not yet enabled. http://webkit.org/b/57311
-fast/exclusions
-csswg/submitted/shapes
-
 # Causes a SyntaxError (http://webkit.org/b/62595).
 fast/workers/worker-crash-with-invalid-location.html
 

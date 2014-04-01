@@ -1409,9 +1409,6 @@ fast/dom/HTMLTemplateElement/innerHTML-inert.html [ Failure ]
 # JSC does not support setIsolatedWorldSecurityOrigin
 webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html [ Failure ]
 
-# CSS Exclusions support not yet enabled.
-webkit.org/b/57311 fast/exclusions
-
 webkit.org/b/62595 fast/workers/worker-crash-with-invalid-location.html [ Failure ]
 
 # Need to implement getFormValue().

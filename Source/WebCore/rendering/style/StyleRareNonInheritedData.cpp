@@ -84,8 +84,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_borderFit(RenderStyle::initialBorderFit())
     , m_textCombine(RenderStyle::initialTextCombine())
     , m_textDecorationStyle(RenderStyle::initialTextDecorationStyle())
-    , m_wrapFlow(RenderStyle::initialWrapFlow())
-    , m_wrapThrough(RenderStyle::initialWrapThrough())
     , m_runningAcceleratedAnimation(false)
     , m_aspectRatioType(RenderStyle::initialAspectRatioType())
 #if ENABLE(CSS_COMPOSITING)
@@ -163,8 +161,6 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , m_borderFit(o.m_borderFit)
     , m_textCombine(o.m_textCombine)
     , m_textDecorationStyle(o.m_textDecorationStyle)
-    , m_wrapFlow(o.m_wrapFlow)
-    , m_wrapThrough(o.m_wrapThrough)
     , m_runningAcceleratedAnimation(o.m_runningAcceleratedAnimation)
     , m_aspectRatioType(o.m_aspectRatioType)
 #if ENABLE(CSS_COMPOSITING)
@@ -253,8 +249,6 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_borderFit == o.m_borderFit
         && m_textCombine == o.m_textCombine
         && m_textDecorationStyle == o.m_textDecorationStyle
-        && m_wrapFlow == o.m_wrapFlow
-        && m_wrapThrough == o.m_wrapThrough
         && !m_runningAcceleratedAnimation && !o.m_runningAcceleratedAnimation
 #if ENABLE(CSS_COMPOSITING)
         && m_effectiveBlendMode == o.m_effectiveBlendMode

@@ -1,3 +1,24 @@
+2014-04-01  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Exclusions] Remove exclusions parsing support
+        https://bugs.webkit.org/show_bug.cgi?id=131046
+
+        Reviewed by David Hyatt.
+
+        * fast/exclusions/css-exclusions-disabled-expected.txt: Removed.
+        * fast/exclusions/css-exclusions-disabled.html: Removed.
+        * fast/exclusions/css-exclusions-enabled-expected.txt: Removed.
+        * fast/exclusions/css-exclusions-enabled.html: Removed.
+        * fast/exclusions/parsing/parsing-wrap-flow-expected.txt: Removed.
+        * fast/exclusions/parsing/parsing-wrap-flow.html: Removed.
+        * fast/exclusions/parsing/parsing-wrap-through-expected.txt: Removed.
+        * fast/exclusions/parsing/parsing-wrap-through.html: Removed.
+        * fast/exclusions/parsing/script-tests/parsing-test-utils.js: Removed.
+        * fast/exclusions/parsing/script-tests/parsing-wrap-flow.js: Removed.
+        * fast/exclusions/parsing/script-tests/parsing-wrap-through.js: Removed.
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2014-04-01  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Enable runtime feature if feature flag is enabled

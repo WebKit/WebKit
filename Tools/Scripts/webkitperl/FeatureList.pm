@@ -56,7 +56,6 @@ my (
     $css4ImagesSupport,
     $cssBoxDecorationBreakSupport,
     $cssDeviceAdaptation,
-    $cssExclusionsSupport,
     $cssFiltersSupport,
     $cssGridLayoutSupport,
     $cssImageOrientationSupport,
@@ -182,9 +181,6 @@ my @features = (
 
     { option => "css-device-adaptation", desc => "Toggle CSS Device Adaptation support",
       define => "ENABLE_CSS_DEVICE_ADAPTATION", default => isEfl(), value => \$cssDeviceAdaptation },
-
-    { option => "css-exclusions", desc => "Toggle CSS Exclusions support",
-      define => "ENABLE_CSS_EXCLUSIONS", default => 1, value => \$cssExclusionsSupport },
 
     { option => "css-shapes", desc => "Toggle CSS Shapes support",
       define => "ENABLE_CSS_SHAPES", default => 1, value => \$cssShapesSupport },

@@ -3002,10 +3002,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitShapeImageThreshold:
     case CSSPropertyWebkitShapeOutside:
 #endif
-#if ENABLE(CSS_EXCLUSIONS)
-    case CSSPropertyWebkitWrapFlow:
-    case CSSPropertyWebkitWrapThrough:
-#endif
     case CSSPropertyWhiteSpace:
     case CSSPropertyWidows:
     case CSSPropertyWidth:

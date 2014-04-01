@@ -385,10 +385,6 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitRegionBreakInside,
     CSSPropertyWebkitRegionFragment,
 #endif
-#if ENABLE(CSS_EXCLUSIONS)
-    CSSPropertyWebkitWrapFlow,
-    CSSPropertyWebkitWrapThrough,
-#endif
 #if ENABLE(CSS_SHAPES)
     CSSPropertyWebkitShapeMargin,
     CSSPropertyWebkitShapeImageThreshold,
@@ -2805,12 +2801,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return cssValuePool().createValue(style->regionThread(), CSSPrimitiveValue::CSS_STRING);
         case CSSPropertyWebkitRegionFragment:
             return cssValuePool().createValue(style->regionFragment());
-#endif
-#if ENABLE(CSS_EXCLUSIONS)
-        case CSSPropertyWebkitWrapFlow:
-            return cssValuePool().createValue(style->wrapFlow());
-        case CSSPropertyWebkitWrapThrough:
-            return cssValuePool().createValue(style->wrapThrough());
 #endif
 #if ENABLE(CSS_SHAPES)
         case CSSPropertyWebkitShapeMargin:

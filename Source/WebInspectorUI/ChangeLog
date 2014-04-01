@@ -1,3 +1,12 @@
+2014-04-01  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Exclusions] Remove exclusions parsing support
+        https://bugs.webkit.org/show_bug.cgi?id=131046
+
+        Reviewed by David Hyatt.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2014-04-01  Timothy Hatcher  <timothy@apple.com>
 
         Remove the rest of the old Canvas inspection support.
