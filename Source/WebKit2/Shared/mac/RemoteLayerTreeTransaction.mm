@@ -913,100 +913,100 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const RemoteLayerTr
         ts << "(layer " << layerID;
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::NameChanged)
-            dumpProperty<String>(ts, "name", layerProperties.name);
+            dumpProperty(ts, "name", layerProperties.name);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged)
             dumpProperty<Vector<GraphicsLayer::PlatformLayerID>>(ts, "children", layerProperties.children);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::PositionChanged)
-            dumpProperty<FloatPoint3D>(ts, "position", layerProperties.position);
+            dumpProperty(ts, "position", layerProperties.position);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::SizeChanged)
-            dumpProperty<FloatSize>(ts, "size", layerProperties.size);
+            dumpProperty(ts, "size", layerProperties.size);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::AnchorPointChanged)
-            dumpProperty<FloatPoint3D>(ts, "anchorPoint", layerProperties.anchorPoint);
+            dumpProperty(ts, "anchorPoint", layerProperties.anchorPoint);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BackgroundColorChanged)
-            dumpProperty<Color>(ts, "backgroundColor", layerProperties.backgroundColor);
+            dumpProperty(ts, "backgroundColor", layerProperties.backgroundColor);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BorderColorChanged)
-            dumpProperty<Color>(ts, "borderColor", layerProperties.borderColor);
+            dumpProperty(ts, "borderColor", layerProperties.borderColor);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BorderWidthChanged)
-            dumpProperty<float>(ts, "borderWidth", layerProperties.borderWidth);
+            dumpProperty(ts, "borderWidth", layerProperties.borderWidth);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::OpacityChanged)
-            dumpProperty<float>(ts, "opacity", layerProperties.opacity);
+            dumpProperty(ts, "opacity", layerProperties.opacity);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::TransformChanged)
-            dumpProperty<TransformationMatrix>(ts, "transform", layerProperties.transform ? *layerProperties.transform : TransformationMatrix());
+            dumpProperty(ts, "transform", layerProperties.transform ? *layerProperties.transform : TransformationMatrix());
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::SublayerTransformChanged)
-            dumpProperty<TransformationMatrix>(ts, "sublayerTransform", layerProperties.sublayerTransform ? *layerProperties.sublayerTransform : TransformationMatrix());
+            dumpProperty(ts, "sublayerTransform", layerProperties.sublayerTransform ? *layerProperties.sublayerTransform : TransformationMatrix());
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::HiddenChanged)
-            dumpProperty<bool>(ts, "hidden", layerProperties.hidden);
+            dumpProperty(ts, "hidden", layerProperties.hidden);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::GeometryFlippedChanged)
-            dumpProperty<bool>(ts, "geometryFlipped", layerProperties.geometryFlipped);
+            dumpProperty(ts, "geometryFlipped", layerProperties.geometryFlipped);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::DoubleSidedChanged)
-            dumpProperty<bool>(ts, "doubleSided", layerProperties.doubleSided);
+            dumpProperty(ts, "doubleSided", layerProperties.doubleSided);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MasksToBoundsChanged)
-            dumpProperty<bool>(ts, "masksToBounds", layerProperties.masksToBounds);
+            dumpProperty(ts, "masksToBounds", layerProperties.masksToBounds);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::OpaqueChanged)
-            dumpProperty<bool>(ts, "opaque", layerProperties.opaque);
+            dumpProperty(ts, "opaque", layerProperties.opaque);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged)
-            dumpProperty<GraphicsLayer::PlatformLayerID>(ts, "maskLayer", layerProperties.maskLayerID);
+            dumpProperty(ts, "maskLayer", layerProperties.maskLayerID);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ContentsRectChanged)
-            dumpProperty<FloatRect>(ts, "contentsRect", layerProperties.contentsRect);
+            dumpProperty(ts, "contentsRect", layerProperties.contentsRect);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ContentsScaleChanged)
-            dumpProperty<float>(ts, "contentsScale", layerProperties.contentsScale);
+            dumpProperty(ts, "contentsScale", layerProperties.contentsScale);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MinificationFilterChanged)
-            dumpProperty<PlatformCALayer::FilterType>(ts, "minificationFilter", layerProperties.minificationFilter);
+            dumpProperty(ts, "minificationFilter", layerProperties.minificationFilter);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MagnificationFilterChanged)
-            dumpProperty<PlatformCALayer::FilterType>(ts, "magnificationFilter", layerProperties.magnificationFilter);
+            dumpProperty(ts, "magnificationFilter", layerProperties.magnificationFilter);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::SpeedChanged)
-            dumpProperty<float>(ts, "speed", layerProperties.speed);
+            dumpProperty(ts, "speed", layerProperties.speed);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::TimeOffsetChanged)
-            dumpProperty<double>(ts, "timeOffset", layerProperties.timeOffset);
+            dumpProperty(ts, "timeOffset", layerProperties.timeOffset);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged) {
             if (const RemoteLayerBackingStore* backingStore = layerProperties.backingStore.get())
                 dumpProperty<const RemoteLayerBackingStore&>(ts, "backingStore", *backingStore);
             else
-                dumpProperty<String>(ts, "backingStore", "removed");
+                dumpProperty(ts, "backingStore", "removed");
         }
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::FiltersChanged)
-            dumpProperty<FilterOperations>(ts, "filters", layerProperties.filters ? *layerProperties.filters : FilterOperations());
+            dumpProperty(ts, "filters", layerProperties.filters ? *layerProperties.filters : FilterOperations());
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::AnimationsChanged) {
             for (const auto& keyValuePair : layerProperties.addedAnimations)
-                dumpProperty<PlatformCAAnimationRemote::Properties>(ts, "animation " +  keyValuePair.key, keyValuePair.value);
+                dumpProperty(ts, "animation " +  keyValuePair.key, keyValuePair.value);
 
             for (const auto& name : layerProperties.keyPathsOfAnimationsToRemove)
-                dumpProperty<String>(ts, "removed animation", name);
+                dumpProperty(ts, "removed animation", name);
         }
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::EdgeAntialiasingMaskChanged)
-            dumpProperty<unsigned>(ts, "edgeAntialiasingMask", layerProperties.edgeAntialiasingMask);
+            dumpProperty(ts, "edgeAntialiasingMask", layerProperties.edgeAntialiasingMask);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::CustomAppearanceChanged)
-            dumpProperty<GraphicsLayer::CustomAppearance>(ts, "customAppearance", layerProperties.customAppearance);
+            dumpProperty(ts, "customAppearance", layerProperties.customAppearance);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::CustomBehaviorChanged)
-            dumpProperty<GraphicsLayer::CustomBehavior>(ts, "customBehavior", layerProperties.customBehavior);
+            dumpProperty(ts, "customBehavior", layerProperties.customBehavior);
 
         ts << ")";
 

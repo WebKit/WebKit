@@ -1,3 +1,15 @@
+2014-04-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove some explicit template instantiations from logging code
+        https://bugs.webkit.org/show_bug.cgi?id=131065
+
+        Reviewed by Tim Horton.
+        
+        No need to explicitly state template types.
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::dumpChangedLayers):
+
 2014-04-01  Tim Horton  <timothy_horton@apple.com>
 
         [iOS WebKit2] Partial repaint is broken
