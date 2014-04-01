@@ -547,7 +547,7 @@ bool SVGElement::addEventListener(const AtomicString& eventType, PassRefPtr<Even
         return true;
 
     // Add event listener to all shadow tree DOM element instances
-    ASSERT(!element->instanceUpdatesBlocked());
+    ASSERT(!instanceUpdatesBlocked());
     for (auto& instance : instancesForElement()) {
         ASSERT(instance->shadowTreeElement());
         ASSERT(instance->correspondingElement() == this);
@@ -576,7 +576,7 @@ bool SVGElement::removeEventListener(const AtomicString& eventType, EventListene
         return false;
 
     // Remove event listener from all shadow tree DOM element instances
-    ASSERT(!element->instanceUpdatesBlocked());
+    ASSERT(!instanceUpdatesBlocked());
     for (auto& instance : instancesForElement()) {
         ASSERT(instance->correspondingElement() == this);
 
