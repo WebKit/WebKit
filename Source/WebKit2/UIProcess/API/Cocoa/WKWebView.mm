@@ -59,6 +59,7 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
+#import "WKPDFView.h"
 #import "WKScrollView.h"
 #import "WKWebViewContentProviderRegistry.h"
 #import <UIKit/UIPeripheralHost_Private.h>
@@ -1176,6 +1177,11 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
         copiedCompletionHandler(cgImage.get());
         [copiedCompletionHandler release];
     });
+}
+
+- (BOOL)_isDisplayingPDF
+{
+    return [_customContentView isKindOfClass:[WKPDFView class]];
 }
 
 #else

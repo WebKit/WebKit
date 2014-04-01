@@ -1,3 +1,14 @@
+2014-04-01  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add SPI to determine if a WKWebView is displaying a PDF
+        https://bugs.webkit.org/show_bug.cgi?id=131063
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isDisplayingPDF]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2014-04-01  Simon Fraser  <simon.fraser@apple.com>
 
         Remove some explicit template instantiations from logging code
