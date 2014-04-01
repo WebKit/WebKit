@@ -1,3 +1,12 @@
+2014-04-01  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        Fix the !ENABLE(BATTERY_STATUS) build
+        https://bugs.webkit.org/show_bug.cgi?id=130183
+
+        Reviewed by Anders Carlsson.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2014-03-31  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [CMake][GTK] Do not expand variables twice in if() checks.
