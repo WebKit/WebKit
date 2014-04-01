@@ -1,5 +1,16 @@
 2014-04-01  Zan Dobersek  <zdobersek@igalia.com>
 
+        Don't copy the children map in webkitWebViewBaseContainerForall
+        https://bugs.webkit.org/show_bug.cgi?id=131016
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseContainerForall): Avoid copying the GtkWidget-to-IntRect HashMap object
+        by transforming the iteration to a range-based for-loop over that HashMap's keys.
+
+2014-04-01  Zan Dobersek  <zdobersek@igalia.com>
+
         [GTK] Don't copy the ResourceResponse object in webkitWebViewDecidePolicy
         https://bugs.webkit.org/show_bug.cgi?id=131015
 
