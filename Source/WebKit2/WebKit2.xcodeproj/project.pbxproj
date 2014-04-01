@@ -6281,8 +6281,6 @@
 		C0CE729D1247E71D00BC0EC4 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
-				2D819B9F1862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp */,
-				2D819BA01862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h */,
 				2DE6943B18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp */,
 				2DE6943C18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h */,
 				512F58A012A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp */,

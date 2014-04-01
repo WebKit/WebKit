@@ -1,3 +1,11 @@
+2014-03-31  Pratik Solanki  <psolanki@apple.com>
+
+        Remove duplicate entries in Derived Sources.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-03-31  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build.
