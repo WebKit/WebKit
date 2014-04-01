@@ -76,28 +76,18 @@ static WKBackForwardListItem *toWKBackForwardListItem(WebBackForwardListItem* it
     return toWKBackForwardListItem(_list->itemAtIndex(index));
 }
 
-- (NSUInteger)backListCount
+- (NSArray *)backList
 {
-    return _list->backListCount();
-}
-
-- (NSUInteger)forwardListCount
-{
-    return _list->forwardListCount();
-}
-
-- (NSArray *)backListWithLimit:(NSUInteger)limit
-{
-    RefPtr<API::Array> list = _list->backListAsAPIArrayWithLimit(limit);
+    RefPtr<API::Array> list = _list->backList();
     if (!list)
         return nil;
 
     return [wrapper(*list.release().leakRef()) autorelease];
 }
 
-- (NSArray *)forwardListWithLimit:(NSUInteger)limit
+- (NSArray *)forwardList
 {
-    RefPtr<API::Array> list = _list->forwardListAsAPIArrayWithLimit(limit);
+    RefPtr<API::Array> list = _list->forwardList();
     if (!list)
         return nil;
 

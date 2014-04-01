@@ -1,5 +1,25 @@
 2014-04-01  Anders Carlsson  <andersca@apple.com>
 
+        Remove limits from WKBackForwardList getters
+        https://bugs.webkit.org/show_bug.cgi?id=131052
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/Cocoa/WKBackForwardList.h:
+        * UIProcess/API/Cocoa/WKBackForwardList.mm:
+        (-[WKBackForwardList backList]):
+        (-[WKBackForwardList forwardList]):
+        (-[WKBackForwardList backListCount]): Deleted.
+        (-[WKBackForwardList forwardListCount]): Deleted.
+        (-[WKBackForwardList backListWithLimit:]): Deleted.
+        (-[WKBackForwardList forwardListWithLimit:]): Deleted.
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::backList):
+        (WebKit::WebBackForwardList::forwardList):
+        * UIProcess/WebBackForwardList.h:
+
+2014-04-01  Anders Carlsson  <andersca@apple.com>
+
         Stub out the web process -> UI process message SPI
         https://bugs.webkit.org/show_bug.cgi?id=131048
 

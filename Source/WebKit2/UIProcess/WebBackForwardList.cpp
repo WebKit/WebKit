@@ -200,6 +200,16 @@ int WebBackForwardList::forwardListCount() const
     return m_page && m_hasCurrentIndex ? m_entries.size() - (m_currentIndex + 1) : 0;
 }
 
+PassRefPtr<API::Array> WebBackForwardList::backList() const
+{
+    return backListAsAPIArrayWithLimit(backListCount());
+}
+
+PassRefPtr<API::Array> WebBackForwardList::forwardList() const
+{
+    return forwardListAsAPIArrayWithLimit(forwardListCount());
+}
+
 PassRefPtr<API::Array> WebBackForwardList::backListAsAPIArrayWithLimit(unsigned limit) const
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());

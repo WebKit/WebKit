@@ -52,17 +52,14 @@ WK_EXTERN NSString * const WKBackForwardListRemovedItemsKey;
 WK_API_CLASS
 @interface WKBackForwardList : NSObject
 
-@property (readonly) WKBackForwardListItem *currentItem;
-@property (readonly) WKBackForwardListItem *backItem;
-@property (readonly) WKBackForwardListItem *forwardItem;
+@property (nonatomic, readonly) WKBackForwardListItem *currentItem;
+@property (nonatomic, readonly) WKBackForwardListItem *backItem;
+@property (nonatomic, readonly) WKBackForwardListItem *forwardItem;
 
 - (WKBackForwardListItem *)itemAtIndex:(NSInteger)index;
 
-@property (readonly) NSUInteger backListCount;
-@property (readonly) NSUInteger forwardListCount;
-
-- (NSArray *)backListWithLimit:(NSUInteger)limit;
-- (NSArray *)forwardListWithLimit:(NSUInteger)limit;
+@property (nonatomic, readonly) NSArray *backList;
+@property (nonatomic, readonly) NSArray *forwardList;
 
 @end
 
