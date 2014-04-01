@@ -1,3 +1,10 @@
+2014-03-31  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2014-03-31  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the iOS build.

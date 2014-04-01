@@ -2614,7 +2614,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
 
 #if ENABLE(IOS_AIRPLAY)
-    settings.setMediaPlaybackAllowsAirPlay(getBoolValueForKey(WebPreferencesKey::mediaPlaybackAllowsAirPlayKey()));
+    settings.setMediaPlaybackAllowsAirPlay(store.getBoolValueForKey(WebPreferencesKey::mediaPlaybackAllowsAirPlayKey()));
 #endif
 
     settings.setApplicationChromeMode(store.getBoolValueForKey(WebPreferencesKey::applicationChromeModeKey()));
