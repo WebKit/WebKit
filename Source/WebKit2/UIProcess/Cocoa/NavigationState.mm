@@ -517,22 +517,7 @@ void NavigationState::LoaderClient::processDidCrash(WebKit::WebPageProxy*)
 
 void NavigationState::LoaderClient::didChangeBackForwardList(WebKit::WebPageProxy*, WebKit::WebBackForwardListItem* addedItem, Vector<RefPtr<WebKit::WebBackForwardListItem>> removedItems)
 {
-    auto userInfo = adoptNS([[NSMutableDictionary alloc] init]);
-
-    if (addedItem)
-        [userInfo setObject:wrapper(*addedItem) forKey:WKBackForwardListAddedItemKey];
-
-    if (!removedItems.isEmpty()) {
-        Vector<id> removed;
-        removed.reserveInitialCapacity(removedItems.size());
-
-        for (const auto& removedItem : removedItems)
-            removed.uncheckedAppend(wrapper(*removedItem));
-
-        [userInfo setObject:adoptNS([[NSArray alloc] initWithObjects:removed.data() count:removed.size()]).get() forKey:WKBackForwardListRemovedItemsKey];
-    }
-
-    [[NSNotificationCenter defaultCenter] postNotificationName:WKBackForwardListDidChangeNotification object:wrapper(m_navigationState.m_webView->_page->backForwardList()) userInfo:userInfo.get()];
+    [[NSNotificationCenter defaultCenter] postNotificationName:_WKBackForwardListDidChangeNotification object:wrapper(m_navigationState.m_webView->_page->backForwardList())];
 }
 
 void NavigationState::willChangeIsLoading()

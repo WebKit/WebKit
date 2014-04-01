@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKBackForwardListPrivate.h"
+#import <WebKit2/WKBackForwardList.h>
 
 #if WK_API_ENABLED
 
-#import "WKObject.h"
-#import "WebBackForwardList.h"
+WK_EXTERN NSString * const _WKBackForwardListDidChangeNotification;
 
-namespace WebKit {
-inline WKBackForwardList *wrapper(WebBackForwardList& list) { ASSERT([list.wrapper() isKindOfClass:[WKBackForwardList class]]); return (WKBackForwardList *)list.wrapper(); }
-}
-
-@interface WKBackForwardList () <WKObject>
-@end
-
-#endif // WK_API_ENABLED
+#endif

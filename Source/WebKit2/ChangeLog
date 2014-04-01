@@ -1,3 +1,18 @@
+2014-04-01  Anders Carlsson  <andersca@apple.com>
+
+        Demote WKBackForwardListDidChangeNotification to SPI
+        https://bugs.webkit.org/show_bug.cgi?id=131059
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKBackForwardList.h:
+        * UIProcess/API/Cocoa/WKBackForwardList.mm:
+        * UIProcess/API/Cocoa/WKBackForwardListInternal.h:
+        * UIProcess/API/Cocoa/WKBackForwardListPrivate.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKBackForwardListInternal.h.
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::LoaderClient::didChangeBackForwardList):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-04-01  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add SPI to determine if a WKWebView is displaying a PDF
