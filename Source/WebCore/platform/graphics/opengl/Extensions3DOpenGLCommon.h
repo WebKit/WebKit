@@ -62,6 +62,7 @@ public:
     virtual bool isNVIDIA() { return m_isNVIDIA; }
     virtual bool isAMD() { return m_isAMD; }
     virtual bool isIntel() { return m_isIntel; }
+    virtual bool isImagination() { return m_isImagination; }
     virtual String vendor() { return m_vendor; }
 
     virtual bool maySupportMultisampling() { return m_maySupportMultisampling; }
@@ -84,6 +85,7 @@ protected:
     bool m_isNVIDIA;
     bool m_isAMD;
     bool m_isIntel;
+    bool m_isImagination;
     bool m_maySupportMultisampling;
     bool m_requiresBuiltInFunctionEmulation;
 

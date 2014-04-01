@@ -52,6 +52,7 @@ public:
     //   GL_ARB_texture_non_power_of_two / GL_OES_texture_npot
     //   GL_EXT_packed_depth_stencil / GL_OES_packed_depth_stencil
     //   GL_ANGLE_framebuffer_blit / GL_ANGLE_framebuffer_multisample
+    //   GL_IMG_multisampled_render_to_texture
     //   GL_OES_texture_float
     //   GL_OES_texture_float_linear
     //   GL_OES_texture_half_float
@@ -110,6 +111,12 @@ public:
         RENDERBUFFER_SAMPLES = 0x8CAB,
         FRAMEBUFFER_INCOMPLETE_MULTISAMPLE = 0x8D56,
         MAX_SAMPLES = 0x8D57,
+
+        // GL_IMG_multisampled_render_to_texture
+        RENDERBUFFER_SAMPLES_IMG = 0x9133,
+        FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_IMG = 0x9134,
+        MAX_SAMPLES_IMG = 0x9135,
+        TEXTURE_SAMPLES_IMG = 0x9136,
 
         // GL_OES_standard_derivatives names
         FRAGMENT_SHADER_DERIVATIVE_HINT_OES = 0x8B8B,
@@ -235,6 +242,7 @@ public:
     virtual bool isNVIDIA() = 0;
     virtual bool isAMD() = 0;
     virtual bool isIntel() = 0;
+    virtual bool isImagination() = 0;
     virtual String vendor() = 0;
 
     // If this method returns false then the system *definitely* does not support multisampling.

@@ -1,3 +1,23 @@
+2014-03-31  Byungseon Shin  <sun.shin@lge.com>
+
+        [WebGL][OpenGLES] Enable MSAA support for WebGL Canvas
+        https://bugs.webkit.org/show_bug.cgi?id=130955
+
+        Reviewed by Dean Jackson.
+
+        To avoid aliasing issues when we render content to WebGL canvas,
+         we need to implement MSAA support.
+        - Imagination OpenGLES GPU Driver already support MSAA, so we
+         need a separate code path to enable it.
+
+        * platform/graphics/Extensions3D.h:
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::Extensions3DOpenGLCommon):
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.h:
+        (WebCore::Extensions3DOpenGLCommon::isImagination):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+
 2014-03-31  Alexey Proskuryakov  <ap@apple.com>
 
         Crashes in PageConsole::addMessage

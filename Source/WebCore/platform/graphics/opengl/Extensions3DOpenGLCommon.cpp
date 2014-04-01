@@ -57,6 +57,7 @@ Extensions3DOpenGLCommon::Extensions3DOpenGLCommon(GraphicsContext3D* context)
     , m_isNVIDIA(false)
     , m_isAMD(false)
     , m_isIntel(false)
+    , m_isImagination(false)
     , m_maySupportMultisampling(true)
     , m_requiresBuiltInFunctionEmulation(false)
 {
@@ -70,6 +71,8 @@ Extensions3DOpenGLCommon::Extensions3DOpenGLCommon(GraphicsContext3D* context)
         m_isAMD = true;
     if (vendorComponents.contains("intel"))
         m_isIntel = true;
+    if (vendorComponents.contains("imagination"))
+        m_isImagination = true;
 
 #if PLATFORM(MAC)
     if (m_isAMD || m_isIntel)
