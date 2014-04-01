@@ -1939,7 +1939,8 @@ void DOMWindow::printErrorMessage(const String& message)
     if (message.isEmpty())
         return;
 
-    pageConsole()->addMessage(MessageSource::JS, MessageLevel::Error, message);
+    if (PageConsole* console = pageConsole())
+        console->addMessage(MessageSource::JS, MessageLevel::Error, message);
 }
 
 String DOMWindow::crossDomainAccessErrorMessage(const DOMWindow& activeWindow)
