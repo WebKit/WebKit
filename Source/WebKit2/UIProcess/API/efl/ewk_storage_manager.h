@@ -33,6 +33,7 @@
 #ifndef ewk_storage_manager_h
 #define ewk_storage_manager_h
 
+#include "ewk_security_origin.h"
 #include <Eina.h>
 
 #ifdef __cplusplus
@@ -79,6 +80,25 @@ typedef void (*Ewk_Storage_Origins_Async_Get_Cb)(Eina_List *origins, void *user_
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
  */
 EAPI Eina_Bool ewk_storage_manager_origins_async_get(const Ewk_Storage_Manager *manager, Ewk_Storage_Origins_Async_Get_Cb callback, void *user_data);
+
+/**
+ * Deletes all local storage.
+ *
+ * @param manager Ewk_Storage_Manager object
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_storage_manager_entries_clear(Ewk_Storage_Manager *manager);
+
+/**
+ * Deletes local storage for the specified origin.
+ *
+ * @param manager Ewk_Storage_Manager object
+ * @param origin security origin
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_storage_manager_entries_for_origin_del(Ewk_Storage_Manager *manager, Ewk_Security_Origin *origin);
 
 #ifdef __cplusplus
 }

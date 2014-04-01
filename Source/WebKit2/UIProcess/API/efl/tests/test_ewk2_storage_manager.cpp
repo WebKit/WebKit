@@ -29,6 +29,14 @@
 
 using namespace EWK2UnitTest;
 
+static const char storageHTML[] =
+    "<html><head><title>original title</title></head>"
+    "<body>"
+    "<script type='text/javascript'>"
+    " localStorage.setItem('item', 'storage');"
+    "</script>"
+    "</body></html>";
+
 class EWK2StorageManagerTest : public EWK2UnitTestBase {
 public:
     struct OriginData {
@@ -55,15 +63,18 @@ public:
         Eina_List* l;
         void* data;
         EINA_LIST_FOREACH(origins, l, data) {
-            originData->originList = eina_list_append(originData->originList, data);
             Ewk_Security_Origin* origin = static_cast<Ewk_Security_Origin*>(data);
             if (!strcmp(ewk_security_origin_protocol_get(origin), "http")
                 && !strcmp(ewk_security_origin_host_get(origin), "www.storagetest.com")
                 && !ewk_security_origin_port_get(origin)) {
+                    originData->originList = origins;
                     originData->isSynchronized = true;
-                    ecore_main_loop_quit();
+                    return;
             }
         }
+        void* originItem;
+        EINA_LIST_FREE(origins, originItem)
+            ewk_object_unref(static_cast<Ewk_Object*>(originItem));
     }
 
     static bool timerCallback(void* userData)
@@ -84,50 +95,106 @@ public:
     }
 
 protected:
-    bool checkOrigin(Eina_List* origins, Ewk_Security_Origin** origin)
+    bool checkOrigin(Eina_List* origins, Ewk_Security_Origin** origin, const char* protocol, const char* host, uint32_t port)
     {
         Eina_List* l;
         void* data;
         EINA_LIST_FOREACH(origins, l, data) {
             *origin = static_cast<Ewk_Security_Origin*>(data);
-            if (!strcmp(ewk_security_origin_protocol_get(*origin), "http")
-                && !strcmp(ewk_security_origin_host_get(*origin), "www.storagetest.com")
+            if (!strcmp(ewk_security_origin_protocol_get(*origin), protocol)
+                && !strcmp(ewk_security_origin_host_get(*origin), host)
                 && !ewk_security_origin_port_get(*origin))
                 return true;
         }
 
         return false;
     }
+
+    Ewk_Security_Origin* getOrigin(Eina_List* origins, Ewk_Security_Origin** origin, const char* protocol, const char* host, uint32_t port)
+    {
+        Eina_List* l;
+        void* data;
+        EINA_LIST_FOREACH(origins, l, data) {
+            *origin = static_cast<Ewk_Security_Origin*>(data);
+            if (!strcmp(ewk_security_origin_protocol_get(*origin), protocol)
+                && !strcmp(ewk_security_origin_host_get(*origin), host)
+                && !ewk_security_origin_port_get(*origin)) {
+                return *origin;
+            }
+        }
+
+        return nullptr;
+    }
 };
 
 TEST_F(EWK2StorageManagerTest, ewk_storage_manager_origins_async_get)
 {
     Evas_Object* view = webView();
-    const char* storageHTML =
-        "<html><head><title>original title</title></head>"
-        "<body>"
-        "<script type='text/javascript'>"
-        " localStorage.setItem('item', 'storage');"
-        "</script>"
-        "</body></html>";
-
-    ewk_view_html_string_load(view, storageHTML, "http://www.storagetest.com", 0);
 
     OriginData originData;
     originData.manager = ewk_context_storage_manager_get(ewk_view_context_get(view));
+    ewk_storage_manager_entries_clear(originData.manager);
+
+    ewk_view_html_string_load(view, storageHTML, "http://www.storagetest.com", 0);
+    ASSERT_TRUE(waitUntilLoadFinished());
+
     ASSERT_TRUE(ewk_storage_manager_origins_async_get(originData.manager, getStorageOriginsCallback, &originData));
-    Ecore_Timer* storage_timer = ecore_timer_add(1, reinterpret_cast<Ecore_Task_Cb>(timerCallback), &originData);
+    Ecore_Timer* storageTimer = ecore_timer_add(1, reinterpret_cast<Ecore_Task_Cb>(timerCallback), &originData);
 
     ecore_main_loop_begin();
-    if (storage_timer)
-        ecore_timer_del(storage_timer);
+    storageTimer = nullptr;
 
     ASSERT_TRUE(originData.isSynchronized);
-    ASSERT_LE(1, eina_list_count(originData.originList));
+    ASSERT_EQ(1, eina_list_count(originData.originList));
 
+    void* originItem;
+    EINA_LIST_FREE(originData.originList, originItem)
+        ewk_object_unref(static_cast<Ewk_Object*>(originItem));
+}
+
+TEST_F(EWK2StorageManagerTest, ewk_storage_manager_entries_for_origin_delete)
+{
+    Evas_Object* view = webView();
+
+    OriginData originData;
+    originData.manager = ewk_context_storage_manager_get(ewk_view_context_get(view));
+    ewk_storage_manager_entries_clear(originData.manager);
+
+    ewk_view_html_string_load(view, storageHTML, "http://www.storagetest1.com", 0);
+    ASSERT_TRUE(waitUntilLoadFinished());
+    ewk_view_html_string_load(view, storageHTML, "http://www.storagetest2.com", 0);
+    ASSERT_TRUE(waitUntilLoadFinished());
+    ewk_view_html_string_load(view, storageHTML, "http://www.storagetest.com", 0);
+    ASSERT_TRUE(waitUntilLoadFinished());
+
+    ASSERT_TRUE(ewk_storage_manager_origins_async_get(originData.manager, getStorageOriginsCallback, &originData));
+    Ecore_Timer* storageTimer = ecore_timer_add(1, reinterpret_cast<Ecore_Task_Cb>(timerCallback), &originData);
+
+    ecore_main_loop_begin();
+    storageTimer = nullptr;
+
+    ASSERT_TRUE(originData.isSynchronized);
     Ewk_Security_Origin* origin = 0;
-    EXPECT_TRUE(checkOrigin(originData.originList, &origin));
+    ASSERT_TRUE(checkOrigin(originData.originList, &origin, "http", "www.storagetest1.com", 0));
+    ASSERT_EQ(3, eina_list_count(originData.originList));
 
-    EXPECT_EQ(origin, ewk_object_ref(origin));
-    ewk_object_unref(origin);
+    ewk_storage_manager_entries_for_origin_del(originData.manager, getOrigin(originData.originList, &origin, "http", "www.storagetest1.com", 0));
+
+    void* originItem;
+    EINA_LIST_FREE(originData.originList, originItem)
+        ewk_object_unref(static_cast<Ewk_Object*>(originItem));
+
+    ASSERT_TRUE(ewk_storage_manager_origins_async_get(originData.manager, getStorageOriginsCallback, &originData));
+
+    storageTimer = ecore_timer_add(1, reinterpret_cast<Ecore_Task_Cb>(timerCallback), &originData);
+
+    ecore_main_loop_begin();
+    storageTimer = nullptr;
+
+    ASSERT_TRUE(originData.isSynchronized);
+    ASSERT_EQ(2, eina_list_count(originData.originList));
+    ASSERT_FALSE(checkOrigin(originData.originList, &origin, "http", "www.storagetest1.com", 0));
+
+    EINA_LIST_FREE(originData.originList, originItem)
+        ewk_object_unref(static_cast<Ewk_Object*>(originItem));
 }

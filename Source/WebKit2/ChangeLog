@@ -1,3 +1,23 @@
+2014-03-31  Joonghun Park  <jh718.park@samsung.com>
+
+        [EFL][WK2]Implement ewk APIs of web local storage which have deletion functions of the local storage entries
+        https://bugs.webkit.org/show_bug.cgi?id=130577
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/API/efl/ewk_storage_manager.cpp:
+        (ewk_storage_manager_entries_clear):
+        (ewk_storage_manager_entries_for_origin_del):
+        * UIProcess/API/efl/ewk_storage_manager.h:
+        * UIProcess/API/efl/ewk_storage_manager_private.h:
+        (EwkStorageManager::wkStorageManager):
+        * UIProcess/API/efl/tests/test_ewk2_storage_manager.cpp:
+        adding and updating API unittest and fixing memory leak of the existing test case
+        (EWK2StorageManagerTest::getStorageOriginsCallback):
+        (EWK2StorageManagerTest::checkOrigin):
+        (EWK2StorageManagerTest::getOrigin):
+        (TEST_F):
+
 2014-03-31  Anders Carlsson  <andersca@apple.com>
 
         Rename policy enums to match the delegate methods

@@ -39,6 +39,7 @@ public:
 
     Eina_List* createOriginList(WKArrayRef wkList) const;
     void getStorageOrigins(void* context, WKKeyValueStorageManagerGetKeyValueStorageOriginsFunction callback) const;
+    WKRetainPtr<WKKeyValueStorageManagerRef> wkStorageManager() { return m_storageManager; }
 
 private:
     WKRetainPtr<WKKeyValueStorageManagerRef> m_storageManager;

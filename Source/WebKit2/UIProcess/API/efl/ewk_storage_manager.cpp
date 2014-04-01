@@ -28,6 +28,8 @@
 
 #include "WKAPICast.h"
 #include "WKArray.h"
+#include "WKSecurityOrigin.h"
+#include "WKString.h"
 #include "ewk_security_origin_private.h"
 #include "ewk_storage_manager_private.h"
 
@@ -91,6 +93,25 @@ Eina_Bool ewk_storage_manager_origins_async_get(const Ewk_Storage_Manager* ewkSt
 
     EwkStorageOriginsAsyncData* context = new EwkStorageOriginsAsyncData(ewkStorageManager, callback, userData);
     ewkStorageManager->getStorageOrigins(context, getStorageOriginsCallback);
+
+    return true;
+}
+
+Eina_Bool ewk_storage_manager_entries_clear(Ewk_Storage_Manager* ewkStorageManager)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ewkStorageManager, false);
+
+    WKKeyValueStorageManagerDeleteAllEntries(ewkStorageManager->wkStorageManager().get());
+
+    return true;
+}
+
+Eina_Bool ewk_storage_manager_entries_for_origin_del(Ewk_Storage_Manager* ewkStorageManager, Ewk_Security_Origin* origin)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ewkStorageManager, false);
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkSecurityOrigin, origin, impl, false);
+
+    WKKeyValueStorageManagerDeleteEntriesForOrigin(ewkStorageManager->wkStorageManager().get(), impl->wkSecurityOrigin());
 
     return true;
 }
