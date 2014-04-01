@@ -412,41 +412,45 @@ sub IsGDOMClassType {
     return 1;
 }
 
-sub GetReadableProperties {
-    my $properties = shift;
-
-    my @result = ();
-
-    foreach my $property (@{$properties}) {
-        if (!SkipAttribute($property)) {
-            push(@result, $property);
-        }
-    }
-
-    return @result;
+sub IsPropertyReadable {
+    my $property = shift;
+    return !SkipAttribute($property);
 }
 
-sub GetWriteableProperties {
-    my $properties = shift;
-    my @result = ();
+sub IsPropertyWriteable {
+    my $property = shift;
 
-    foreach my $property (@{$properties}) {
-        my $gtype = GetGValueTypeName($property->signature->type);
-        my $hasGtypeSignature = ($gtype eq "boolean" || $gtype eq "float" || $gtype eq "double" ||
-                                 $gtype eq "uint64" || $gtype eq "ulong" || $gtype eq "long" || 
-                                 $gtype eq "uint" || $gtype eq "ushort" || $gtype eq "int8" ||
-                                 $gtype eq "uint8" || $gtype eq "uchar" || $gtype eq "char" ||
-                                 $gtype eq "string");
-        # FIXME: We are not generating setters for 'Replaceable'
-        # attributes now, but we should somehow.
-        my $replaceable = $property->signature->extendedAttributes->{"Replaceable"};
-        my $custom = $property->signature->extendedAttributes->{"CustomSetter"};
-        if (!$property->isReadOnly && $hasGtypeSignature && !$replaceable && !$custom) {
-            push(@result, $property);
-        }
+    if (!IsPropertyReadable($property)) {
+        return 0;
     }
 
-    return @result;
+    if ($property->isReadOnly) {
+        return 0;
+    }
+
+    my $gtype = GetGValueTypeName($property->signature->type);
+    my $hasGtypeSignature = $gtype eq "boolean" || $gtype eq "float" || $gtype eq "double" ||
+                            $gtype eq "int64" || $gtype eq "uint64" ||
+                            $gtype eq "long" || $gtype eq "ulong" ||
+                            $gtype eq "int" || $gtype eq "uint" ||
+                            $gtype eq "short" || $gtype eq "ushort" ||
+                            $gtype eq "int8" || $gtype eq "uint8" ||
+                            $gtype eq "char" || $gtype eq "uchar" ||
+                            $gtype eq "string";
+    if (!$hasGtypeSignature) {
+        return 0;
+    }
+
+    # FIXME: We are not generating setters for 'Replaceable' attributes now, but we should somehow.
+    if ($property->signature->extendedAttributes->{"Replaceable"}) {
+        return 0;
+    }
+
+    if ($property->signature->extendedAttributes->{"CustomSetter"}) {
+        return 0;
+    }
+
+    return 1;
 }
 
 sub GenerateConditionalWarning
@@ -508,15 +512,15 @@ sub GenerateProperty {
 
     my $gtype = GetGValueTypeName($propType);
     my $gparamflag = "WEBKIT_PARAM_READABLE";
-    my $writeable = !$attribute->isReadOnly;
+    my $writeable = IsPropertyWriteable($attribute);
 
     my $mutableString = "read-only";
     my $hasCustomSetter = $attribute->signature->extendedAttributes->{"CustomSetter"};
     if ($writeable && $hasCustomSetter) {
-        $mutableStringconst = "read-only (due to custom functions needed in webkitdom)";
+        $mutableString = "read-only (due to custom functions needed in webkitdom)";
     } elsif ($writeable) {
         $gparamflag = "WEBKIT_PARAM_READWRITE";
-        $mutableStringconst = "read-write";
+        $mutableString = "read-write";
     }
 
     my $convertFunction = "";
@@ -637,8 +641,8 @@ sub GenerateProperties {
 
     # Properties
     my $implContent = "";
-    my @readableProperties = GetReadableProperties($interface->attributes);
-    my @writeableProperties = GetWriteableProperties(\@readableProperties);
+    my @readableProperties = grep { IsPropertyReadable($_) } @{$interface->attributes};
+    my @writeableProperties = grep { IsPropertyWriteable($_) } @{$interface->attributes};
     my $numProperties = scalar @readableProperties;
 
     # Properties

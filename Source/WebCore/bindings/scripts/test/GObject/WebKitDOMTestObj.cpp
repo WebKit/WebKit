@@ -160,12 +160,20 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, 
         coreSelf->setOctetAttr((g_value_get_uint8(value)));
         break;
     }
+    case PROP_SHORT_ATTR: {
+        coreSelf->setShortAttr((g_value_get_int(value)));
+        break;
+    }
     case PROP_UNSIGNED_SHORT_ATTR: {
         coreSelf->setUnsignedShortAttr((g_value_get_uint(value)));
         break;
     }
     case PROP_LONG_ATTR: {
         coreSelf->setLongAttr((g_value_get_long(value)));
+        break;
+    }
+    case PROP_LONG_LONG_ATTR: {
+        coreSelf->setLongLongAttr((g_value_get_int64(value)));
         break;
     }
     case PROP_UNSIGNED_LONG_LONG_ATTR: {
@@ -628,7 +636,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_int8(
             "byte-attr",
             "TestObj:byte-attr",
-            "read-only gint8 TestObj:byte-attr",
+            "read-write gint8 TestObj:byte-attr",
             G_MININT8, G_MAXINT8, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -638,7 +646,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_uint8(
             "octet-attr",
             "TestObj:octet-attr",
-            "read-only guint8 TestObj:octet-attr",
+            "read-write guint8 TestObj:octet-attr",
             0, G_MAXUINT8, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -648,7 +656,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_int(
             "short-attr",
             "TestObj:short-attr",
-            "read-only gshort TestObj:short-attr",
+            "read-write gshort TestObj:short-attr",
             G_MININT, G_MAXINT, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -658,7 +666,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_uint(
             "unsigned-short-attr",
             "TestObj:unsigned-short-attr",
-            "read-only gushort TestObj:unsigned-short-attr",
+            "read-write gushort TestObj:unsigned-short-attr",
             0, G_MAXUINT, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -668,7 +676,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_long(
             "long-attr",
             "TestObj:long-attr",
-            "read-only glong TestObj:long-attr",
+            "read-write glong TestObj:long-attr",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -678,7 +686,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_int64(
             "long-long-attr",
             "TestObj:long-long-attr",
-            "read-only gint64 TestObj:long-long-attr",
+            "read-write gint64 TestObj:long-long-attr",
             G_MININT64, G_MAXINT64, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -688,7 +696,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_uint64(
             "unsigned-long-long-attr",
             "TestObj:unsigned-long-long-attr",
-            "read-only guint64 TestObj:unsigned-long-long-attr",
+            "read-write guint64 TestObj:unsigned-long-long-attr",
             0, G_MAXUINT64, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -698,7 +706,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_string(
             "string-attr",
             "TestObj:string-attr",
-            "read-only gchar* TestObj:string-attr",
+            "read-write gchar* TestObj:string-attr",
             "",
             WEBKIT_PARAM_READWRITE));
 
@@ -710,7 +718,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "TestObj:test-obj-attr",
             "read-only WebKitDOMTestObj* TestObj:test-obj-attr",
             WEBKIT_TYPE_DOM_TEST_OBJ,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -720,7 +728,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "TestObj:xml-obj-attr",
             "read-only WebKitDOMTestObj* TestObj:xml-obj-attr",
             WEBKIT_TYPE_DOM_TEST_OBJ,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -728,7 +736,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_boolean(
             "create",
             "TestObj:create",
-            "read-only gboolean TestObj:create",
+            "read-write gboolean TestObj:create",
             FALSE,
             WEBKIT_PARAM_READWRITE));
 
@@ -738,7 +746,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_string(
             "reflected-string-attr",
             "TestObj:reflected-string-attr",
-            "read-only gchar* TestObj:reflected-string-attr",
+            "read-write gchar* TestObj:reflected-string-attr",
             "",
             WEBKIT_PARAM_READWRITE));
 
@@ -748,7 +756,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_long(
             "reflected-integral-attr",
             "TestObj:reflected-integral-attr",
-            "read-only glong TestObj:reflected-integral-attr",
+            "read-write glong TestObj:reflected-integral-attr",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -758,7 +766,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_ulong(
             "reflected-unsigned-integral-attr",
             "TestObj:reflected-unsigned-integral-attr",
-            "read-only gulong TestObj:reflected-unsigned-integral-attr",
+            "read-write gulong TestObj:reflected-unsigned-integral-attr",
             0, G_MAXULONG, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -768,7 +776,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_boolean(
             "reflected-boolean-attr",
             "TestObj:reflected-boolean-attr",
-            "read-only gboolean TestObj:reflected-boolean-attr",
+            "read-write gboolean TestObj:reflected-boolean-attr",
             FALSE,
             WEBKIT_PARAM_READWRITE));
 
@@ -778,7 +786,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_string(
             "reflected-url-attr",
             "TestObj:reflected-url-attr",
-            "read-only gchar* TestObj:reflected-url-attr",
+            "read-write gchar* TestObj:reflected-url-attr",
             "",
             WEBKIT_PARAM_READWRITE));
 
@@ -788,7 +796,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_string(
             "reflected-string-attr",
             "TestObj:reflected-string-attr",
-            "read-only gchar* TestObj:reflected-string-attr",
+            "read-write gchar* TestObj:reflected-string-attr",
             "",
             WEBKIT_PARAM_READWRITE));
 
@@ -798,7 +806,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_long(
             "reflected-custom-integral-attr",
             "TestObj:reflected-custom-integral-attr",
-            "read-only glong TestObj:reflected-custom-integral-attr",
+            "read-write glong TestObj:reflected-custom-integral-attr",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -808,7 +816,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_boolean(
             "reflected-custom-boolean-attr",
             "TestObj:reflected-custom-boolean-attr",
-            "read-only gboolean TestObj:reflected-custom-boolean-attr",
+            "read-write gboolean TestObj:reflected-custom-boolean-attr",
             FALSE,
             WEBKIT_PARAM_READWRITE));
 
@@ -818,7 +826,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_string(
             "reflected-custom-url-attr",
             "TestObj:reflected-custom-url-attr",
-            "read-only gchar* TestObj:reflected-custom-url-attr",
+            "read-write gchar* TestObj:reflected-custom-url-attr",
             "",
             WEBKIT_PARAM_READWRITE));
 
@@ -828,7 +836,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_long(
             "attr-with-getter-exception",
             "TestObj:attr-with-getter-exception",
-            "read-only glong TestObj:attr-with-getter-exception",
+            "read-write glong TestObj:attr-with-getter-exception",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -838,7 +846,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_long(
             "attr-with-setter-exception",
             "TestObj:attr-with-setter-exception",
-            "read-only glong TestObj:attr-with-setter-exception",
+            "read-write glong TestObj:attr-with-setter-exception",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -848,7 +856,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_string(
             "string-attr-with-getter-exception",
             "TestObj:string-attr-with-getter-exception",
-            "read-only gchar* TestObj:string-attr-with-getter-exception",
+            "read-write gchar* TestObj:string-attr-with-getter-exception",
             "",
             WEBKIT_PARAM_READWRITE));
 
@@ -858,7 +866,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_string(
             "string-attr-with-setter-exception",
             "TestObj:string-attr-with-setter-exception",
-            "read-only gchar* TestObj:string-attr-with-setter-exception",
+            "read-write gchar* TestObj:string-attr-with-setter-exception",
             "",
             WEBKIT_PARAM_READWRITE));
 
@@ -868,7 +876,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_long(
             "with-script-state-attribute",
             "TestObj:with-script-state-attribute",
-            "read-only glong TestObj:with-script-state-attribute",
+            "read-write glong TestObj:with-script-state-attribute",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -880,7 +888,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "TestObj:with-script-execution-context-attribute",
             "read-only WebKitDOMTestObj* TestObj:with-script-execution-context-attribute",
             WEBKIT_TYPE_DOM_TEST_OBJ,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -890,7 +898,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "TestObj:with-script-state-attribute-raises",
             "read-only WebKitDOMTestObj* TestObj:with-script-state-attribute-raises",
             WEBKIT_TYPE_DOM_TEST_OBJ,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -900,7 +908,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "TestObj:with-script-execution-context-attribute-raises",
             "read-only WebKitDOMTestObj* TestObj:with-script-execution-context-attribute-raises",
             WEBKIT_TYPE_DOM_TEST_OBJ,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -910,7 +918,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "TestObj:with-script-execution-context-and-script-state-attribute",
             "read-only WebKitDOMTestObj* TestObj:with-script-execution-context-and-script-state-attribute",
             WEBKIT_TYPE_DOM_TEST_OBJ,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -920,7 +928,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "TestObj:with-script-execution-context-and-script-state-attribute-raises",
             "read-only WebKitDOMTestObj* TestObj:with-script-execution-context-and-script-state-attribute-raises",
             WEBKIT_TYPE_DOM_TEST_OBJ,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -930,7 +938,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "TestObj:with-script-execution-context-and-script-state-with-spaces-attribute",
             "read-only WebKitDOMTestObj* TestObj:with-script-execution-context-and-script-state-with-spaces-attribute",
             WEBKIT_TYPE_DOM_TEST_OBJ,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -940,7 +948,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "TestObj:with-script-arguments-and-call-stack-attribute",
             "read-only WebKitDOMTestObj* TestObj:with-script-arguments-and-call-stack-attribute",
             WEBKIT_TYPE_DOM_TEST_OBJ,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -948,7 +956,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_long(
             "conditional-attr1",
             "TestObj:conditional-attr1",
-            "read-only glong TestObj:conditional-attr1",
+            "read-write glong TestObj:conditional-attr1",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -958,7 +966,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_long(
             "conditional-attr2",
             "TestObj:conditional-attr2",
-            "read-only glong TestObj:conditional-attr2",
+            "read-write glong TestObj:conditional-attr2",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -968,7 +976,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_long(
             "conditional-attr3",
             "TestObj:conditional-attr3",
-            "read-only glong TestObj:conditional-attr3",
+            "read-write glong TestObj:conditional-attr3",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -980,7 +988,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "TestObj:any-attribute",
             "read-only WebKitDOMany* TestObj:any-attribute",
             WEBKIT_TYPE_DOM_ANY,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -1000,7 +1008,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "TestObj:mutable-point",
             "read-only WebKitDOMSVGPoint* TestObj:mutable-point",
             WEBKIT_TYPE_DOM_SVG_POINT,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -1010,7 +1018,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "TestObj:immutable-point",
             "read-only WebKitDOMSVGPoint* TestObj:immutable-point",
             WEBKIT_TYPE_DOM_SVG_POINT,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -1018,7 +1026,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_long(
             "strawberry",
             "TestObj:strawberry",
-            "read-only glong TestObj:strawberry",
+            "read-write glong TestObj:strawberry",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -1028,7 +1036,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_float(
             "strict-float",
             "TestObj:strict-float",
-            "read-only gfloat TestObj:strict-float",
+            "read-write gfloat TestObj:strict-float",
             -G_MAXFLOAT, G_MAXFLOAT, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -1048,7 +1056,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_long(
             "id",
             "TestObj:id",
-            "read-only glong TestObj:id",
+            "read-write glong TestObj:id",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -1118,7 +1126,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_long(
             "nullable-long-settable-attribute",
             "TestObj:nullable-long-settable-attribute",
-            "read-only glong TestObj:nullable-long-settable-attribute",
+            "read-write glong TestObj:nullable-long-settable-attribute",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -1128,7 +1136,7 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
         g_param_spec_long(
             "nullable-string-value",
             "TestObj:nullable-string-value",
-            "read-only glong TestObj:nullable-string-value",
+            "read-write glong TestObj:nullable-string-value",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
 

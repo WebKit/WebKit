@@ -273,7 +273,7 @@ static void webkit_dom_test_interface_class_init(WebKitDOMTestInterfaceClass* re
         g_param_spec_string(
             "implements-str2",
             "TestInterface:implements-str2",
-            "read-only gchar* TestInterface:implements-str2",
+            "read-write gchar* TestInterface:implements-str2",
             "",
             WEBKIT_PARAM_READWRITE));
 
@@ -285,7 +285,7 @@ static void webkit_dom_test_interface_class_init(WebKitDOMTestInterfaceClass* re
             "TestInterface:implements-node",
             "read-only WebKitDOMNode* TestInterface:implements-node",
             WEBKIT_TYPE_DOM_NODE,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -303,7 +303,7 @@ static void webkit_dom_test_interface_class_init(WebKitDOMTestInterfaceClass* re
         g_param_spec_string(
             "supplemental-str2",
             "TestInterface:supplemental-str2",
-            "read-only gchar* TestInterface:supplemental-str2",
+            "read-write gchar* TestInterface:supplemental-str2",
             "",
             WEBKIT_PARAM_READWRITE));
 
@@ -315,7 +315,7 @@ static void webkit_dom_test_interface_class_init(WebKitDOMTestInterfaceClass* re
             "TestInterface:supplemental-node",
             "read-only WebKitDOMNode* TestInterface:supplemental-node",
             WEBKIT_TYPE_DOM_NODE,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READABLE));
 
 }
 
