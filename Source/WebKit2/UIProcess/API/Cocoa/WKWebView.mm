@@ -265,7 +265,7 @@
     return _page->pageLoadState().title();
 }
 
-- (NSURL *)activeURL
+- (NSURL *)URL
 {
     return [NSURL _web_URLWithWTFString:_page->pageLoadState().activeURL()];
 }
@@ -1177,6 +1177,12 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
 - (BOOL)_isDisplayingPDF
 {
     return [_customContentView isKindOfClass:[WKPDFView class]];
+}
+
+// FIXME: Remove this once nobody uses it.
+- (NSURL *)activeURL
+{
+    return self.URL;
 }
 
 #else
