@@ -40,7 +40,6 @@
 #include "InspectorDatabaseResource.cpp"
 #include "InspectorFrontendClientLocal.cpp"
 #include "InspectorFrontendHost.cpp"
-#include "InspectorHeapProfilerAgent.cpp"
 #include "InspectorHistory.cpp"
 #include "InspectorIndexedDBAgent.cpp"
 #include "InspectorInputAgent.cpp"

@@ -761,7 +761,6 @@ set(WebCore_INSPECTOR_DOMAINS
     ${WEBCORE_DIR}/inspector/protocol/DOM.json
     ${WEBCORE_DIR}/inspector/protocol/DOMDebugger.json
     ${WEBCORE_DIR}/inspector/protocol/DOMStorage.json
-    ${WEBCORE_DIR}/inspector/protocol/HeapProfiler.json
     ${WEBCORE_DIR}/inspector/protocol/IndexedDB.json
     ${WEBCORE_DIR}/inspector/protocol/Input.json
     ${WEBCORE_DIR}/inspector/protocol/LayerTree.json
@@ -1576,7 +1575,6 @@ set(WebCore_SOURCES
     inspector/InspectorDatabaseResource.cpp
     inspector/InspectorFrontendClientLocal.cpp
     inspector/InspectorFrontendHost.cpp
-    inspector/InspectorHeapProfilerAgent.cpp
     inspector/InspectorHistory.cpp
     inspector/InspectorIndexedDBAgent.cpp
     inspector/InspectorInputAgent.cpp

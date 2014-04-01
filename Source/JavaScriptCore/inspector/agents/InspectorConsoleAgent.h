@@ -65,7 +65,6 @@ public:
     virtual void clearMessages(ErrorString*) override;
     virtual void setMonitoringXHREnabled(ErrorString*, bool enabled) = 0;
     virtual void addInspectedNode(ErrorString*, int nodeId) = 0;
-    virtual void addInspectedHeapObject(ErrorString*, int inspectedHeapObjectId) = 0;
 
     virtual bool isWorkerAgent() const = 0;
 

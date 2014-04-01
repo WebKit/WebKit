@@ -45,7 +45,6 @@
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorDatabaseAgent.h"
 #include "InspectorFrontendClient.h"
-#include "InspectorHeapProfilerAgent.h"
 #include "InspectorIndexedDBAgent.h"
 #include "InspectorInputAgent.h"
 #include "InspectorInstrumentation.h"
@@ -157,8 +156,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     auto profilerAgentPtr = InspectorProfilerAgent::create(m_instrumentingAgents.get(), consoleAgent, &page, m_injectedScriptManager.get());
     m_profilerAgent = profilerAgentPtr.get();
     m_agents.append(std::move(profilerAgentPtr));
-
-    m_agents.append(std::make_unique<InspectorHeapProfilerAgent>(m_instrumentingAgents.get(), m_injectedScriptManager.get()));
 
     m_agents.append(std::make_unique<InspectorWorkerAgent>(m_instrumentingAgents.get()));
 

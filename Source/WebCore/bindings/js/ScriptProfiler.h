@@ -27,7 +27,6 @@
 #ifndef ScriptProfiler_h
 #define ScriptProfiler_h
 
-#include "ScriptHeapSnapshot.h"
 #include "ScriptProfile.h"
 #include "ScriptState.h"
 #include <wtf/Forward.h>
@@ -64,9 +63,6 @@ public:
     static PassRefPtr<ScriptProfile> stop(JSC::ExecState*, const String& title);
     static PassRefPtr<ScriptProfile> stopForPage(Page*, const String& title);
     static PassRefPtr<ScriptProfile> stopForWorkerGlobalScope(WorkerGlobalScope*, const String& title);
-    static PassRefPtr<ScriptHeapSnapshot> takeHeapSnapshot(const String&, HeapSnapshotProgress*) { return 0; }
-    static bool isSampling() { return false; }
-    static bool hasHeapProfiler() { return false; }
     static HashMap<String, double>* currentProfileNameIdleTimeMap() { return 0; }
 };
 

@@ -92,7 +92,6 @@ InspectorBackend.registerCommand("Console.disable", [], []);
 InspectorBackend.registerCommand("Console.clearMessages", [], []);
 InspectorBackend.registerCommand("Console.setMonitoringXHREnabled", [{"name": "enabled", "type": "boolean", "optional": false}], []);
 InspectorBackend.registerCommand("Console.addInspectedNode", [{"name": "nodeId", "type": "number", "optional": false}], []);
-InspectorBackend.registerCommand("Console.addInspectedHeapObject", [{"name": "heapObjectId", "type": "number", "optional": false}], []);
 
 // Network.
 InspectorBackend.registerNetworkDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Network");
@@ -282,45 +281,18 @@ InspectorBackend.registerCommand("DOMDebugger.removeXHRBreakpoint", [{"name": "u
 
 // Profiler.
 InspectorBackend.registerProfilerDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Profiler");
-InspectorBackend.registerEnum("Profiler.ProfileHeaderTypeId", {CPU: "CPU", CSS: "CSS", HEAP: "HEAP"});
+InspectorBackend.registerEnum("Profiler.ProfileHeaderTypeId", {CPU: "CPU", CSS: "CSS"});
 InspectorBackend.registerEvent("Profiler.addProfileHeader", ["header"]);
-InspectorBackend.registerEvent("Profiler.addHeapSnapshotChunk", ["uid", "chunk"]);
-InspectorBackend.registerEvent("Profiler.finishHeapSnapshot", ["uid"]);
 InspectorBackend.registerEvent("Profiler.setRecordingProfile", ["isProfiling"]);
 InspectorBackend.registerEvent("Profiler.resetProfiles", []);
-InspectorBackend.registerEvent("Profiler.reportHeapSnapshotProgress", ["done", "total"]);
-InspectorBackend.registerCommand("Profiler.isSampling", [], ["result"]);
-InspectorBackend.registerCommand("Profiler.hasHeapProfiler", [], ["result"]);
 InspectorBackend.registerCommand("Profiler.enable", [], []);
 InspectorBackend.registerCommand("Profiler.disable", [], []);
 InspectorBackend.registerCommand("Profiler.start", [], []);
 InspectorBackend.registerCommand("Profiler.stop", [], []);
 InspectorBackend.registerCommand("Profiler.getProfileHeaders", [], ["headers"]);
 InspectorBackend.registerCommand("Profiler.getCPUProfile", [{"name": "uid", "type": "number", "optional": false}], ["profile"]);
-InspectorBackend.registerCommand("Profiler.getHeapSnapshot", [{"name": "uid", "type": "number", "optional": false}], []);
 InspectorBackend.registerCommand("Profiler.removeProfile", [{"name": "type", "type": "string", "optional": false}, {"name": "uid", "type": "number", "optional": false}], []);
 InspectorBackend.registerCommand("Profiler.clearProfiles", [], []);
-InspectorBackend.registerCommand("Profiler.takeHeapSnapshot", [{"name": "reportProgress", "type": "boolean", "optional": true}], []);
-InspectorBackend.registerCommand("Profiler.collectGarbage", [], []);
-InspectorBackend.registerCommand("Profiler.getObjectByHeapObjectId", [{"name": "objectId", "type": "string", "optional": false}, {"name": "objectGroup", "type": "string", "optional": true}], ["result"]);
-InspectorBackend.registerCommand("Profiler.getHeapObjectId", [{"name": "objectId", "type": "string", "optional": false}], ["heapSnapshotObjectId"]);
-
-// HeapProfiler.
-InspectorBackend.registerHeapProfilerDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "HeapProfiler");
-InspectorBackend.registerEvent("HeapProfiler.addProfileHeader", ["header"]);
-InspectorBackend.registerEvent("HeapProfiler.addHeapSnapshotChunk", ["uid", "chunk"]);
-InspectorBackend.registerEvent("HeapProfiler.finishHeapSnapshot", ["uid"]);
-InspectorBackend.registerEvent("HeapProfiler.resetProfiles", []);
-InspectorBackend.registerEvent("HeapProfiler.reportHeapSnapshotProgress", ["done", "total"]);
-InspectorBackend.registerCommand("HeapProfiler.hasHeapProfiler", [], ["result"]);
-InspectorBackend.registerCommand("HeapProfiler.getProfileHeaders", [], ["headers"]);
-InspectorBackend.registerCommand("HeapProfiler.getHeapSnapshot", [{"name": "uid", "type": "number", "optional": false}], []);
-InspectorBackend.registerCommand("HeapProfiler.removeProfile", [{"name": "uid", "type": "number", "optional": false}], []);
-InspectorBackend.registerCommand("HeapProfiler.clearProfiles", [], []);
-InspectorBackend.registerCommand("HeapProfiler.takeHeapSnapshot", [{"name": "reportProgress", "type": "boolean", "optional": true}], []);
-InspectorBackend.registerCommand("HeapProfiler.collectGarbage", [], []);
-InspectorBackend.registerCommand("HeapProfiler.getObjectByHeapObjectId", [{"name": "objectId", "type": "string", "optional": false}, {"name": "objectGroup", "type": "string", "optional": true}], ["result"]);
-InspectorBackend.registerCommand("HeapProfiler.getHeapObjectId", [{"name": "objectId", "type": "string", "optional": false}], ["heapSnapshotObjectId"]);
 
 // Worker.
 InspectorBackend.registerWorkerDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Worker");

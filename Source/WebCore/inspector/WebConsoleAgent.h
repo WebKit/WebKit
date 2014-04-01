@@ -46,7 +46,6 @@ public:
     virtual ~WebConsoleAgent() { }
 
     virtual void setMonitoringXHREnabled(ErrorString*, bool enabled) override final;
-    virtual void addInspectedHeapObject(ErrorString*, int inspectedHeapObjectId) override final;
 
     void frameWindowDiscarded(DOMWindow*);
 

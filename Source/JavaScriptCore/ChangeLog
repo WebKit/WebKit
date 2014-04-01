@@ -1,3 +1,17 @@
+2014-04-01  Timothy Hatcher  <timothy@apple.com>
+
+        Remove HeapProfiler from the Web Inspector protocol.
+
+        https://bugs.webkit.org/show_bug.cgi?id=131070
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/agents/InspectorConsoleAgent.h:
+        * inspector/agents/JSGlobalObjectConsoleAgent.cpp:
+        (Inspector::JSGlobalObjectConsoleAgent::addInspectedHeapObject): Deleted.
+        * inspector/agents/JSGlobalObjectConsoleAgent.h:
+        * inspector/protocol/Console.json:
+
 2014-03-31  Simon Fraser  <simon.fraser@apple.com>
 
         Enable WEB_TIMING on Mac and iOS

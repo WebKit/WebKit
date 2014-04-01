@@ -37,7 +37,6 @@
 #include "CommandLineAPIHost.h"
 #include "InspectorClient.h"
 #include "InspectorForwarding.h"
-#include "InspectorHeapProfilerAgent.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorProfilerAgent.h"
 #include "InspectorTimelineAgent.h"
@@ -97,7 +96,6 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
     m_agents.append(std::move(debuggerAgent));
 
     m_agents.append(InspectorProfilerAgent::create(m_instrumentingAgents.get(), consoleAgent.get(), &workerGlobalScope, m_injectedScriptManager.get()));
-    m_agents.append(std::make_unique<InspectorHeapProfilerAgent>(m_instrumentingAgents.get(), m_injectedScriptManager.get()));
     m_agents.append(std::make_unique<InspectorTimelineAgent>(m_instrumentingAgents.get(), nullptr, InspectorTimelineAgent::WorkerInspector, nullptr));
     m_agents.append(std::move(consoleAgent));
 

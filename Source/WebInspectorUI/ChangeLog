@@ -1,3 +1,16 @@
+2014-04-01  Timothy Hatcher  <timothy@apple.com>
+
+        Remove HeapProfiler from the Web Inspector protocol.
+
+        https://bugs.webkit.org/show_bug.cgi?id=131070
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Protocol/Legacy/6.0/InspectorWebBackendCommands.js: Updated.
+        * UserInterface/Protocol/Legacy/7.0/InspectorWebBackendCommands.js: Ditto.
+        * Versions/Inspector-iOS-6.0.json: Removed heap related stuff.
+        * Versions/Inspector-iOS-7.0.json: Ditto.
+
 2014-04-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove stale localStorage deletion transition code

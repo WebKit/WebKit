@@ -111,28 +111,6 @@ void WebConsoleAgent::didFailLoading(unsigned long requestIdentifier, const Reso
     addMessageToConsole(MessageSource::Network, MessageType::Log, MessageLevel::Error, message.toString(), error.failingURL(), 0, 0, nullptr, requestIdentifier);
 }
 
-class InspectableHeapObject final : public CommandLineAPIHost::InspectableObject {
-public:
-    explicit InspectableHeapObject(int heapObjectId)
-        : m_heapObjectId(heapObjectId)
-    {
-    }
-
-    virtual Deprecated::ScriptValue get(JSC::ExecState*) override
-    {
-        return ScriptProfiler::objectByHeapObjectId(m_heapObjectId);
-    }
-
-private:
-    int m_heapObjectId;
-};
-
-void WebConsoleAgent::addInspectedHeapObject(ErrorString*, int inspectedHeapObjectId)
-{
-    if (CommandLineAPIHost* commandLineAPIHost = static_cast<WebInjectedScriptManager*>(m_injectedScriptManager)->commandLineAPIHost())
-        commandLineAPIHost->addInspectedObject(std::make_unique<InspectableHeapObject>(inspectedHeapObjectId));
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)
