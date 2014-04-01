@@ -1,3 +1,12 @@
+2014-04-01  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+        (-[WK2BrowserWindowController dealloc]):
+        (-[WK2BrowserWindowController observeValueForKeyPath:ofObject:change:context:]):
+
 2014-04-01  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test gardening.

@@ -59,7 +59,7 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
     [progressIndicator bind:NSValueBinding toObject:_webView withKeyPath:@"estimatedProgress" options:nil];
 
     [_webView addObserver:self forKeyPath:@"title" options:0 context:keyValueObservingContext];
-    [_webView addObserver:self forKeyPath:@"activeURL" options:0 context:keyValueObservingContext];
+    [_webView addObserver:self forKeyPath:@"URL" options:0 context:keyValueObservingContext];
 
     _webView.navigationDelegate = self;
     _webView.UIDelegate = self;
@@ -70,7 +70,7 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 - (void)dealloc
 {
     [_webView removeObserver:self forKeyPath:@"title"];
-    [_webView removeObserver:self forKeyPath:@"activeURL"];
+    [_webView removeObserver:self forKeyPath:@"URL"];
     
     [progressIndicator unbind:NSHiddenBinding];
     [progressIndicator unbind:NSValueBinding];
@@ -313,8 +313,8 @@ static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRe
 
     if ([keyPath isEqualToString:@"title"])
         self.window.title = [_webView.title stringByAppendingString:@" [WK2]"];
-    else if ([keyPath isEqualToString:@"activeURL"])
-        [self updateTextFieldFromURL:_webView.activeURL];
+    else if ([keyPath isEqualToString:@"URL"])
+        [self updateTextFieldFromURL:_webView.URL];
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)())completionHandler
