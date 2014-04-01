@@ -195,7 +195,7 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     g_assert(!strncmp(mainResourceData, kBarHTML, mainResourceDataSize));
 
     test->registerURISchemeHandler("echo", kEchoHTMLFormat, -1, "text/html");
-    test->loadURI("echo:hello world");
+    test->loadURI("echo:hello-world");
     test->waitUntilLoadFinished();
     GUniquePtr<char> echoHTML(g_strdup_printf(kEchoHTMLFormat, webkit_uri_scheme_request_get_path(test->m_uriSchemeRequest.get())));
     mainResourceDataSize = 0;
@@ -205,7 +205,7 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
 
     test->registerURISchemeHandler("nomime", kBarHTML, -1, 0);
     test->m_loadEvents.clear();
-    test->loadURI("nomime:foo bar");
+    test->loadURI("nomime:foo-bar");
     test->waitUntilLoadFinished();
     g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
 
