@@ -308,6 +308,7 @@ CTFontRef FontPlatformData::ctFont() const
     if (m_CTFont)
         return m_CTFont.get();
 
+    ASSERT(m_cgFont.get());
 #if !PLATFORM(IOS)
     m_CTFont = toCTFontRef(m_font);
     if (m_CTFont) {
@@ -319,10 +320,8 @@ CTFontRef FontPlatformData::ctFont() const
         else
             fontDescriptor = cascadeToLastResortFontDescriptor();
         m_CTFont = adoptCF(CTFontCreateCopyWithAttributes(m_CTFont.get(), m_size, 0, fontDescriptor));
-    } else {
-        ASSERT(m_cgFont.get());
+    } else
         m_CTFont = adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), m_size, 0, cascadeToLastResortFontDescriptor()));
-    }
 #else
     // Apple Color Emoji size is adjusted (and then re-adjusted by Core Text) and capped.
     CGFloat size = !m_isEmoji ? m_size : m_size <= 15 ? 4 * (m_size + 2) / static_cast<CGFloat>(5) : 16;

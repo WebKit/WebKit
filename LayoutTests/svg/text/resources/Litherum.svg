@@ -1,0 +1,11 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg">
+<metadata></metadata>
+<defs>
+<font id="Litherum" horiz-adv-x="1024">
+<font-face units-per-em="14" ascent="14" descent="-7"/>
+<glyph unicode="|" horiz-adv-x="14" d="M5 -7v21h4v-21z"/>
+</font>
+</defs>
+</svg>

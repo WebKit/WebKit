@@ -63,6 +63,11 @@ const uint8_t Font::s_roundingHackCharacterTable[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
+static bool isDrawnWithSVGFont(const TextRun& run)
+{
+    return run.renderingContext();
+}
+
 static bool useBackslashAsYenSignForFamily(const AtomicString& family)
 {
     if (family.isEmpty())
@@ -336,7 +341,7 @@ float Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPo
 
     CodePath codePathToUse = codePath(run);
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if (codePathToUse != Complex && typesettingFeatures() && (from || to != run.length()) && !run.renderingContext())
+    if (codePathToUse != Complex && typesettingFeatures() && (from || to != run.length()) && !isDrawnWithSVGFont(run))
         codePathToUse = Complex;
 
     if (codePathToUse != Complex)
@@ -355,7 +360,7 @@ void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const
 
     CodePath codePathToUse = codePath(run);
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if (codePathToUse != Complex && typesettingFeatures() && (from || to != run.length()) && !run.renderingContext())
+    if (codePathToUse != Complex && typesettingFeatures() && (from || to != run.length()) && !isDrawnWithSVGFont(run))
         codePathToUse = Complex;
 
     if (codePathToUse != Complex)
@@ -400,8 +405,8 @@ float Font::width(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFo
 float Font::width(const TextRun& run, int& charsConsumed, String& glyphName) const
 {
 #if ENABLE(SVG_FONTS)
-    if (TextRun::RenderingContext* renderingContext = run.renderingContext())
-        return renderingContext->floatWidthUsingSVGFont(*this, run, charsConsumed, glyphName);
+    if (isDrawnWithSVGFont(run))
+        return run.renderingContext()->floatWidthUsingSVGFont(*this, run, charsConsumed, glyphName);
 #endif
 
     charsConsumed = run.length();
@@ -508,7 +513,7 @@ FloatRect Font::selectionRectForText(const TextRun& run, const FloatPoint& point
 
     CodePath codePathToUse = codePath(run);
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if (codePathToUse != Complex && typesettingFeatures() && (from || to != run.length()) && !run.renderingContext())
+    if (codePathToUse != Complex && typesettingFeatures() && (from || to != run.length()) && !isDrawnWithSVGFont(run))
         codePathToUse = Complex;
 
     if (codePathToUse != Complex)
@@ -520,7 +525,7 @@ FloatRect Font::selectionRectForText(const TextRun& run, const FloatPoint& point
 int Font::offsetForPosition(const TextRun& run, float x, bool includePartialGlyphs) const
 {
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if (codePath(run) != Complex && !typesettingFeatures())
+    if (codePath(run) != Complex && (!typesettingFeatures() || isDrawnWithSVGFont(run)))
         return offsetForPositionForSimpleText(run, x, includePartialGlyphs);
 
     return offsetForPositionForComplexText(run, x, includePartialGlyphs);
@@ -587,7 +592,7 @@ Font::CodePath Font::codePath(const TextRun& run) const
         return s_codePath;
 
 #if ENABLE(SVG_FONTS)
-    if (run.renderingContext())
+    if (isDrawnWithSVGFont(run))
         return Simple;
 #endif
 

@@ -1319,9 +1319,6 @@ webkit.org/b/50959 animations/play-state-suspend.html [ Pass Failure ]
 webkit.org/b/122040 animations/combo-transform-translate+scale.html [ Pass Failure ]
 webkit.org/b/128379 animations/suspend-resume-animation.html [ Pass Failure ]
 
-webkit.org/b/119747 [ Debug ] svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.html [ Skip ]
-webkit.org/b/119747 [ Debug ] svg/css/font-face-crash.html [ Skip ]
-
 # Regressions in svg/clip-path
 webkit.org/b/128499 svg/clip-path/clip-path-content-use-005.svg [ ImageOnlyFailure ]
 webkit.org/b/128499 svg/clip-path/clip-path-precision-001.svg [ ImageOnlyFailure ]

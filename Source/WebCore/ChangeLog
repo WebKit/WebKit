@@ -1,3 +1,32 @@
+2014-04-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.html and svg/css/font-face-crash.html frequently assert in ComplexTextController::offsetForPosition
+        https://bugs.webkit.org/show_bug.cgi?id=119747
+
+        Reviewed by Simon Fraser.
+
+        Even though kerning and ligatures currently don't work with the
+        simple text path, messing those up is better than creating null
+        CTRun and CTLine objects.
+
+        Rather than calling the badly-named renderingContext() function on TextRun objects
+        to determine if they are drawn with an SVG font, this patch creates a wrapper function
+        with a better name and uses that instead.
+
+        Test: svg/text/svg-font-hittest.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::isDrawnWithSVGFont): Wrapper around renderingContext()
+        (WebCore::Font::drawText): Use wrapper function
+        (WebCore::Font::drawEmphasisMarks): Use wrapper function
+        (WebCore::Font::width): Use wrapper function
+        (WebCore::Font::selectionRectForText): Use wrapper function
+        (WebCore::Font::offsetForPosition): If we are using an SVG font, use the simple path
+        instead of the complex one
+        (WebCore::Font::codePath): Use wrapper function
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::ctFont):
+
 2014-04-01  Daniel Bates  <dabates@apple.com>
 
         RenderQuote must destroy remaining text renderer before first letter renderer
