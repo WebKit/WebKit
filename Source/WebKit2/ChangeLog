@@ -1,3 +1,24 @@
+2014-04-01  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Rename ewk_application_cache_manager_delete{_all}
+        https://bugs.webkit.org/show_bug.cgi?id=131012
+
+        Reviewed by Gyuyoung Kim.
+
+        While discussing Bug 130577, we resulted that _clear and _xxx_del is better name for the EFL.
+        This patch will rename similar API in ewk_application_cache_manager.
+
+        In addition, fixed some typos in doxygen.
+
+        * UIProcess/API/efl/ewk_application_cache_manager.cpp:
+        (ewk_application_cache_manager_clear): Renamed from ewk_application_cache_manager_delete_all
+        (ewk_application_cache_manager_entries_for_origin_del): Renamed from ewk_application_cache_manager_delete
+        (ewk_application_cache_manager_delete_all): Deleted.
+        (ewk_application_cache_manager_delete): Deleted.
+        * UIProcess/API/efl/ewk_application_cache_manager.h:
+        * UIProcess/API/efl/tests/test_ewk2_application_cache_manager.cpp:
+        (TEST_F):
+
 2014-03-31  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix after r166553.

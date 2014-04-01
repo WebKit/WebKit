@@ -66,32 +66,32 @@ typedef void (*Ewk_Application_Cache_Origins_Async_Get_Cb)(Eina_List *origins, v
 /**
  * Requests for getting web application cache origins.
  *
- * @param context context object
- * @param result_callback callback to get web application cache origins
+ * @param manager Ewk_Application_Cache_Manager object
+ * @param callback callback to get web application cache origins
  * @param user_data user_data will be passsed when result_callback is called
  *
  * @see Ewk_Application_Cache_Origins_Async_Get_Cb
  */
-EAPI void ewk_application_cache_manager_origins_async_get(const Ewk_Application_Cache_Manager *manager, Ewk_Application_Cache_Origins_Async_Get_Cb callback, void *data);
+EAPI void ewk_application_cache_manager_origins_async_get(const Ewk_Application_Cache_Manager *manager, Ewk_Application_Cache_Origins_Async_Get_Cb callback, void *user_data);
 
 /**
- * Requests for deleting all web application caches.
+ * Deletes all web application caches.
  *
- * @param context context object
+ * @param manager Ewk_Application_Cache_Manager object
  *
  * @return @c EINA_TRUE on successful request or @c EINA FALSE on failure
  */
-EAPI Eina_Bool ewk_application_cache_manager_delete_all(Ewk_Application_Cache_Manager *manager);
+EAPI Eina_Bool ewk_application_cache_manager_clear(Ewk_Application_Cache_Manager *manager);
 
 /**
- * Requests for deleting web application cache for origin.
+ * Deletes web application caches for the specified origin.
  *
- * @param context context object
- * @param origin application cache origin
+ * @param manager Ewk_Application_Cache_Manager object
+ * @param origin security origin
  *
  * @return @c EINA_TRUE on successful request or @c EINA_FALSE on failure
  */
-EAPI Eina_Bool ewk_application_cache_manager_delete(Ewk_Application_Cache_Manager *manager, Ewk_Security_Origin *origin);
+EAPI Eina_Bool ewk_application_cache_manager_entries_for_origin_del(Ewk_Application_Cache_Manager *manager, Ewk_Security_Origin *origin);
 
 #ifdef __cplusplus
 }

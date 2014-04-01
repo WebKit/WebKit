@@ -75,7 +75,7 @@ void ewk_application_cache_manager_origins_async_get(const Ewk_Application_Cache
     WKApplicationCacheManagerGetApplicationCacheOrigins(manager->impl(), callbackData, getApplicationCacheOriginsCallback);
 }
 
-Eina_Bool ewk_application_cache_manager_delete_all(Ewk_Application_Cache_Manager* manager)
+Eina_Bool ewk_application_cache_manager_clear(Ewk_Application_Cache_Manager* manager)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(manager, false);
 
@@ -84,7 +84,7 @@ Eina_Bool ewk_application_cache_manager_delete_all(Ewk_Application_Cache_Manager
     return true;
 }
 
-Eina_Bool ewk_application_cache_manager_delete(Ewk_Application_Cache_Manager* manager, Ewk_Security_Origin* origin)
+Eina_Bool ewk_application_cache_manager_entries_for_origin_del(Ewk_Application_Cache_Manager* manager, Ewk_Security_Origin* origin)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(manager, false);
     EWK_OBJ_GET_IMPL_OR_RETURN(EwkSecurityOrigin, origin, impl, false);

@@ -106,7 +106,7 @@ TEST_F(EWK2UnitTestBase, ewk_application_cache_manager)
     data.manager = ewk_context_application_cache_manager_get(ewk_view_context_get(webView()));
 
     // Before testing, remove all caches.
-    ewk_application_cache_manager_delete_all(data.manager);
+    ewk_application_cache_manager_clear(data.manager);
 
     applicationCacheTimer = ecore_timer_add(0.5, timerCallback, &data);
     ecore_main_loop_begin();
@@ -118,7 +118,7 @@ TEST_F(EWK2UnitTestBase, ewk_application_cache_manager)
     ecore_main_loop_begin();
     ASSERT_EQ(1, eina_list_count(data.items));
 
-    ewk_application_cache_manager_delete(data.manager, static_cast<Ewk_Security_Origin*>(eina_list_nth(data.items, 0)));
+    ewk_application_cache_manager_entries_for_origin_del(data.manager, static_cast<Ewk_Security_Origin*>(eina_list_nth(data.items, 0)));
 
     void* origin;
     EINA_LIST_FREE(data.items, origin)
