@@ -1,3 +1,16 @@
+2014-04-01  Anders Carlsson  <andersca@apple.com>
+
+        Pass a WKNavigationAction to the create UIDelegate method
+        https://bugs.webkit.org/show_bug.cgi?id=131053
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        * UIProcess/Cocoa/UIClient.h:
+        * UIProcess/Cocoa/UIClient.mm:
+        (WebKit::UIClient::setDelegate):
+        (WebKit::UIClient::createNewPage):
+
 2014-04-01  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Remove the two finger pan gesture recognizer until it is actually implemented

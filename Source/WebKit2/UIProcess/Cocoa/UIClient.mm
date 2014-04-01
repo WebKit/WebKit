@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import "WKFrameInfoInternal.h"
+#import "WKNavigationActionInternal.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewInternal.h"
 #import "WKWindowFeaturesInternal.h"
@@ -54,7 +55,7 @@ void UIClient::setDelegate(id <WKUIDelegate> delegate)
 {
     m_delegate = delegate;
 
-    m_delegateMethods.webViewCreateWebViewWithConfigurationRequestWindowFeaturesInitiatedByFrame = [delegate respondsToSelector:@selector(webView:createWebViewWithConfiguration:request:windowFeatures:initiatedByFrame:)];
+    m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeatures = [delegate respondsToSelector:@selector(webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:)];
     m_delegateMethods.webViewRunJavaScriptAlertPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:)];
@@ -80,7 +81,7 @@ NSArray *UIClient::actionsForElement(_WKActivatedElementInfo *elementInfo, NSArr
 
 PassRefPtr<WebKit::WebPageProxy> UIClient::createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy* initiatingFrame, const WebCore::ResourceRequest& request, const WebCore::WindowFeatures& windowFeatures, WebKit::WebEvent::Modifiers, WebKit::WebMouseEvent::Button)
 {
-    if (!m_delegateMethods.webViewCreateWebViewWithConfigurationRequestWindowFeaturesInitiatedByFrame)
+    if (!m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeatures)
         return nullptr;
 
     auto delegate = m_delegate.get();
@@ -90,7 +91,14 @@ PassRefPtr<WebKit::WebPageProxy> UIClient::createNewPage(WebKit::WebPageProxy*, 
     auto configuration = adoptNS([m_webView->_configuration copy]);
     [configuration _setRelatedWebView:m_webView];
 
-    WKWebView *webView = [delegate webView:m_webView createWebViewWithConfiguration:configuration.get() request:request.nsURLRequest(WebCore::DoNotUpdateHTTPBody) windowFeatures:adoptNS([[WKWindowFeatures alloc] _initWithWindowFeatures:windowFeatures]).get() initiatedByFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*initiatingFrame]).get()];
+    auto navigationAction = adoptNS([[WKNavigationAction alloc] init]);
+
+    // FIXME: Set a real navigation type.
+    [navigationAction setSourceFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*initiatingFrame]).get()];
+    [navigationAction setNavigationType:WKNavigationTypeOther];
+    [navigationAction setRequest:request.nsURLRequest(WebCore::DoNotUpdateHTTPBody)];
+
+    RetainPtr<WKWebView> webView = [delegate.get() webView:m_webView createWebViewWithConfiguration:configuration.get() forNavigationAction:navigationAction.get() windowFeatures:adoptNS([[WKWindowFeatures alloc] _initWithWindowFeatures:windowFeatures]).get()];
 
     if (!webView)
         return nullptr;

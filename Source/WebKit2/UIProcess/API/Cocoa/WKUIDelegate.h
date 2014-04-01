@@ -36,9 +36,7 @@
 
 @optional
 
-// FIXME: Maybe we should pass a WKNavigationAction instead of request and frame.
-// The C SPI has the key modifiers and mouse button as well.
-- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration request:(NSURLRequest *)request windowFeatures:(WKWindowFeatures *)windowFeatures initiatedByFrame:(WKFrameInfo *)frame;
+- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures;
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)())completionHandler;
 

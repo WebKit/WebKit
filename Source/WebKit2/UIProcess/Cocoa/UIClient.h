@@ -61,7 +61,7 @@ private:
     WeakObjCPtr<id <WKUIDelegate> > m_delegate;
 
     struct {
-        bool webViewCreateWebViewWithConfigurationRequestWindowFeaturesInitiatedByFrame : 1;
+        bool webViewCreateWebViewWithConfigurationForNavigationActionWindowFeatures : 1;
         bool webViewRunJavaScriptAlertPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler : 1;
