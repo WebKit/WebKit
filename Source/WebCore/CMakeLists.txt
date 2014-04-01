@@ -758,7 +758,6 @@ set(WebCore_INSPECTOR_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/inspector/scripts")
 set(WebCore_INSPECTOR_DOMAINS
     ${WEBCORE_DIR}/inspector/protocol/ApplicationCache.json
     ${WEBCORE_DIR}/inspector/protocol/CSS.json
-    ${WEBCORE_DIR}/inspector/protocol/Canvas.json
     ${WEBCORE_DIR}/inspector/protocol/DOM.json
     ${WEBCORE_DIR}/inspector/protocol/DOMDebugger.json
     ${WEBCORE_DIR}/inspector/protocol/DOMStorage.json

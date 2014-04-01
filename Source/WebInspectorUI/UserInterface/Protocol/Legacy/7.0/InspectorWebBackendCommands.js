@@ -336,22 +336,6 @@ InspectorBackend.registerCommand("Worker.connectToWorker", [{"name": "workerId",
 InspectorBackend.registerCommand("Worker.disconnectFromWorker", [{"name": "workerId", "type": "number", "optional": false}], []);
 InspectorBackend.registerCommand("Worker.setAutoconnectToWorkers", [{"name": "value", "type": "boolean", "optional": false}], []);
 
-// Canvas.
-InspectorBackend.registerCanvasDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Canvas");
-InspectorBackend.registerEvent("Canvas.contextCreated", ["frameId"]);
-InspectorBackend.registerEvent("Canvas.traceLogsRemoved", ["frameId", "traceLogId"]);
-InspectorBackend.registerCommand("Canvas.enable", [], []);
-InspectorBackend.registerCommand("Canvas.disable", [], []);
-InspectorBackend.registerCommand("Canvas.dropTraceLog", [{"name": "traceLogId", "type": "string", "optional": false}], []);
-InspectorBackend.registerCommand("Canvas.hasUninstrumentedCanvases", [], ["result"]);
-InspectorBackend.registerCommand("Canvas.captureFrame", [{"name": "frameId", "type": "string", "optional": true}], ["traceLogId"]);
-InspectorBackend.registerCommand("Canvas.startCapturing", [{"name": "frameId", "type": "string", "optional": true}], ["traceLogId"]);
-InspectorBackend.registerCommand("Canvas.stopCapturing", [{"name": "traceLogId", "type": "string", "optional": false}], []);
-InspectorBackend.registerCommand("Canvas.getTraceLog", [{"name": "traceLogId", "type": "string", "optional": false}, {"name": "startOffset", "type": "number", "optional": true}, {"name": "maxLength", "type": "number", "optional": true}], ["traceLog"]);
-InspectorBackend.registerCommand("Canvas.replayTraceLog", [{"name": "traceLogId", "type": "string", "optional": false}, {"name": "stepNo", "type": "number", "optional": false}], ["resourceState"]);
-InspectorBackend.registerCommand("Canvas.getResourceInfo", [{"name": "resourceId", "type": "string", "optional": false}], ["resourceInfo"]);
-InspectorBackend.registerCommand("Canvas.getResourceState", [{"name": "traceLogId", "type": "string", "optional": false}, {"name": "resourceId", "type": "string", "optional": false}], ["resourceState"]);
-
 // Input.
 InspectorBackend.registerInputDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Input");
 InspectorBackend.registerCommand("Input.dispatchKeyEvent", [{"name": "type", "type": "string", "optional": false}, {"name": "modifiers", "type": "number", "optional": true}, {"name": "timestamp", "type": "number", "optional": true}, {"name": "text", "type": "string", "optional": true}, {"name": "unmodifiedText", "type": "string", "optional": true}, {"name": "keyIdentifier", "type": "string", "optional": true}, {"name": "windowsVirtualKeyCode", "type": "number", "optional": true}, {"name": "nativeVirtualKeyCode", "type": "number", "optional": true}, {"name": "macCharCode", "type": "number", "optional": true}, {"name": "autoRepeat", "type": "boolean", "optional": true}, {"name": "isKeypad", "type": "boolean", "optional": true}, {"name": "isSystemKey", "type": "boolean", "optional": true}], []);

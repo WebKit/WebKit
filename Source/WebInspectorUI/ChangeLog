@@ -1,3 +1,14 @@
+2014-04-01  Timothy Hatcher  <timothy@apple.com>
+
+        Remove the rest of the old Canvas inspection support.
+
+        https://bugs.webkit.org/show_bug.cgi?id=131066
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Protocol/Legacy/7.0/InspectorWebBackendCommands.js: Updated.
+        * Versions/Inspector-iOS-7.0.json: Removed Canvas domain.
+
 2014-03-28  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: support for live regions
