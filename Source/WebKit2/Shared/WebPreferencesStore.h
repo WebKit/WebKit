@@ -100,6 +100,12 @@ namespace WebKit {
 #define DEFAULT_CANVAS_USES_ACCELERATED_DRAWING true
 #endif
 
+#if ENABLE(CSS_GRID_LAYOUT)
+#define DEFAULT_CSS_GRID_LAYOUT_ENABLED true
+#else
+#define DEFAULT_CSS_GRID_LAYOUT_ENABLED false
+#endif
+
 #define FOR_EACH_WEBKIT_BOOL_PREFERENCE(macro) \
     macro(JavaScriptEnabled, javaScriptEnabled, Bool, bool, true) \
     macro(JavaScriptMarkupEnabled, javaScriptMarkupEnabled, Bool, bool, true) \
@@ -133,7 +139,7 @@ namespace WebKit {
     macro(Accelerated2dCanvasEnabled, accelerated2dCanvasEnabled, Bool, bool, false) \
     macro(CSSRegionsEnabled, cssRegionsEnabled, Bool, bool, true) \
     macro(CSSCompositingEnabled, cssCompositingEnabled, Bool, bool, true) \
-    macro(CSSGridLayoutEnabled, cssGridLayoutEnabled, Bool, bool, false) \
+    macro(CSSGridLayoutEnabled, cssGridLayoutEnabled, Bool, bool, DEFAULT_CSS_GRID_LAYOUT_ENABLED) \
     macro(RegionBasedColumnsEnabled, regionBasedColumnsEnabled, Bool, bool, false) \
     macro(ForceFTPDirectoryListings, forceFTPDirectoryListings, Bool, bool, false) \
     macro(TabsToLinks, tabsToLinks, Bool, bool, DEFAULT_WEBKIT_TABSTOLINKS_ENABLED) \

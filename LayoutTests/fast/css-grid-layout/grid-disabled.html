@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 0);
+</script>
 <body>
 <div id="grid" style="display: -webkit-grid"></div>
 
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-description("Verifies that display: -webkit-grid does nothing by default.");
+description("Verifies that display: -webkit-grid does nothing if runtime feature is disabled.");
 
 shouldBe("document.getElementById('grid').style.display", "''");
 </script>

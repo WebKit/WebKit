@@ -1,4 +1,4 @@
-Verifies that display: -webkit-grid does nothing by default.
+Verifies that display: -webkit-grid does nothing if runtime feature is disabled.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
