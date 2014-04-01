@@ -48,8 +48,8 @@ ContextMenuContextData::ContextMenuContextData(const ContextMenuContext& context
     Image* image = context.controlledImage();
     if (!image)
         return;
-
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(image->size(), ShareableBitmap::SupportsAlpha);
+    // FIXME: figure out the rounding startegy for ShareableBitmap.
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(IntSize(image->size()), ShareableBitmap::SupportsAlpha);
     bitmap->createGraphicsContext()->drawImage(image, ColorSpaceDeviceRGB, IntPoint());
     bitmap->createHandle(m_controlledImageHandle);
 #endif
