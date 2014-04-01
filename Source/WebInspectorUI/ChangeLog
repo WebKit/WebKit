@@ -1,3 +1,13 @@
+2014-04-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove stale localStorage deletion transition code
+        https://bugs.webkit.org/show_bug.cgi?id=131061
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/ImageUtilities.js:
+        This code has been in for a while. We have transitioned to Web SQL.
+
 2014-04-01  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Exclusions] Remove exclusions parsing support

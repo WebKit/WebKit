@@ -44,23 +44,6 @@ _prefetchCachedImagesAndUpdate();
 // Updates each image when the device pixel ratio changes to redraw at the new resolution.
 window.matchMedia("(-webkit-device-pixel-ratio: 1)").addListener(_devicePixelRatioChanged);
 
-// Delete old cached images from localStorage to free up space.
-// FIXME: Remove this once it has been in the builds for a while.
-try {
-    const processedFlagKey = "com.apple.WebInspector.deleted-generated-images";
-
-    if (!window.localStorage[processedFlagKey]) {
-        for (var key in window.localStorage) {
-            if (/^com\.apple\.WebInspector\.generated-(?:colored|embossed)-image-/.test(key))
-                delete window.localStorage[key];
-        }
-
-        window.localStorage[processedFlagKey] = true;
-    }
-} catch (e) {
-    // Ignore.
-}
-
 function _devicePixelRatioChanged()
 {
     _prefetchCachedImagesAndUpdate();
