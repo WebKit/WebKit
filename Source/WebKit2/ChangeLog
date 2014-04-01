@@ -1,3 +1,19 @@
+2014-04-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Remove the two finger pan gesture recognizer until it is actually implemented
+        https://bugs.webkit.org/show_bug.cgi?id=131009
+
+        Reviewed by Sam Weinig.
+
+        The two finger pan should not block the pinch gesture recognizer.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView _twoFingerPanRecognized:]): Deleted.
+
 2014-04-01  Anders Carlsson  <andersca@apple.com>
 
         Remove limits from WKBackForwardList getters

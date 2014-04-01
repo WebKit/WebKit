@@ -164,12 +164,6 @@ static const float tapAndHoldDelay  = 0.75;
     [_longPressGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_longPressGestureRecognizer.get()];
 
-    _twoFingerPanGestureRecognizer = adoptNS([[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_twoFingerPanRecognized:)]);
-    [_twoFingerPanGestureRecognizer setMinimumNumberOfTouches:2];
-    [_twoFingerPanGestureRecognizer setMaximumNumberOfTouches:2];
-    [_twoFingerPanGestureRecognizer setDelegate:self];
-    [self addGestureRecognizer:_twoFingerPanGestureRecognizer.get()];
-
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_resetShowingTextStyle:) name:UIMenuControllerDidHideMenuNotification object:nil];
     _showingTextStyleOptions = NO;
 
@@ -190,7 +184,6 @@ static const float tapAndHoldDelay  = 0.75;
     [_doubleTapGestureRecognizer setDelegate:nil];
     [_highlightLongPressGestureRecognizer setDelegate:nil];
     [_longPressGestureRecognizer setDelegate:nil];
-    [_twoFingerPanGestureRecognizer setDelegate:nil];
 }
 
 - (const InteractionInformationAtPosition&)positionInformation
@@ -559,10 +552,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         }
     }
 
-    if (gestureRecognizer == _twoFingerPanGestureRecognizer) {
-        notImplemented();
-    }
-
     return YES;
 }
 
@@ -661,11 +650,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 - (void)_twoFingerDoubleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
 {
     _smartMagnificationController->handleResetMagnificationGesture(gestureRecognizer.location);
-}
-
-- (void)_twoFingerPanRecognized:(UIPanGestureRecognizer *)gestureRecognizer
-{
-    // FIXME: Add implementation.
 }
 
 - (void)_attemptClickAtLocation:(CGPoint)location
