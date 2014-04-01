@@ -91,7 +91,7 @@
 #include "TextSizeAdjustment.h"
 #endif
 
-template<typename T, typename U> inline bool compareEqual(const T& t, const U& u) { return t == static_cast<T>(u); }
+template<typename T, typename U> inline bool compareEqual(const T& t, const U& u) { return t == static_cast<const T&>(u); }
 
 #define SET_VAR(group, variable, value) \
     if (!compareEqual(group->variable, value)) \

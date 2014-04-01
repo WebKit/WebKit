@@ -1,5 +1,17 @@
 2014-04-01  Zan Dobersek  <zdobersek@igalia.com>
 
+        Prevent unnecessary copies in compareEqual template
+        https://bugs.webkit.org/show_bug.cgi?id=131014
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/style/RenderStyle.h:
+        (compareEqual): Casting the second parameter to a non-const, non-reference type
+        causes an extra copy of that object. Casting to the const reference type of the
+        first parameter avoids that.
+
+2014-04-01  Zan Dobersek  <zdobersek@igalia.com>
+
         Avoid unnecessary HashSet copies when calling collectInstancesForSVGElement
         https://bugs.webkit.org/show_bug.cgi?id=131020
 
