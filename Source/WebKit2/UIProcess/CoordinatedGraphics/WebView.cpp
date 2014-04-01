@@ -234,7 +234,9 @@ AffineTransform WebView::transformFromScene() const
 AffineTransform WebView::transformToScene() const
 {
     FloatPoint position = -m_contentPosition;
-    float effectiveScale = contentScaleFactor() * m_page->deviceScaleFactor();
+    float effectiveScale = m_page->deviceScaleFactor();
+    if (m_page->useFixedLayout())
+        effectiveScale *= contentScaleFactor();
     position.scale(effectiveScale, effectiveScale);
 
     TransformationMatrix transform = m_userViewportTransform;
@@ -274,7 +276,8 @@ inline WebCore::FloatSize WebView::dipSize() const
 WebCore::FloatSize WebView::visibleContentsSize() const
 {
     FloatSize visibleContentsSize(dipSize());
-    visibleContentsSize.scale(1 / contentScaleFactor());
+    if (m_page->useFixedLayout())
+        visibleContentsSize.scale(1 / contentScaleFactor());
 
     return visibleContentsSize;
 }

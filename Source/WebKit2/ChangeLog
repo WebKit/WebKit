@@ -1,3 +1,23 @@
+2014-04-01  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [CoordinatedGraphics] Content scale factor should not be applied to draw contents when fixed layout is not used.
+        https://bugs.webkit.org/show_bug.cgi?id=130962
+
+        Reviewed by Gyuyoung Kim.
+
+        Delegating scaling is turned off when fixed layout is not used in the
+        coordinated graphics, so page scale factor is applied to the contents
+        directly.
+        In that case, we should not apply page scale factor to coordinated
+        graphics to draw contents and calculate visible content rect.
+
+        Currently, page scale factor is applied twice to the coordinated
+        graphics and contents, so result of scaling is abnormal.
+
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::transformToScene):
+        (WebKit::WebView::visibleContentsSize):
+
 2014-04-01  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Rename ewk_application_cache_manager_delete{_all}
