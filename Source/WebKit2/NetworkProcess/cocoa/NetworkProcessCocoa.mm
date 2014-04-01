@@ -38,6 +38,7 @@
 typedef const struct _CFURLCache* CFURLCacheRef;
 extern "C" CFURLCacheRef CFURLCacheCopySharedURLCache();
 extern "C" void _CFURLCachePurgeMemoryCache(CFURLCacheRef);
+extern "C" void CFURLConnectionInvalidateConnectionCache();
 
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 extern "C" void _CFURLCacheSetMinSizeForVMCachedResource(CFURLCacheRef, CFIndex);
@@ -47,6 +48,7 @@ namespace WebKit {
 
 void NetworkProcess::platformLowMemoryHandler(bool)
 {
+    CFURLConnectionInvalidateConnectionCache();
     _CFURLCachePurgeMemoryCache(adoptCF(CFURLCacheCopySharedURLCache()).get());
 }
 

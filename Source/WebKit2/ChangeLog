@@ -1,3 +1,15 @@
+2014-04-01  Andreas Kling  <akling@apple.com>
+
+        Invalidate CFNetwork connection cache on memory pressure.
+        <https://webkit.org/b/131038>
+
+        Stop holding on to cached HTTP connections if we come under memory pressure.
+
+        Reviewed by Geoff Malloc-Garen.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformLowMemoryHandler):
+
 2014-04-01  Anders Carlsson  <andersca@apple.com>
 
         Tweak WKPreferences API
