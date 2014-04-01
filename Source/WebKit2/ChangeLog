@@ -1,5 +1,18 @@
 2014-04-01  Anders Carlsson  <andersca@apple.com>
 
+        Stub out more WKNavigation properties
+        https://bugs.webkit.org/show_bug.cgi?id=131080
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKNavigation.h:
+        * UIProcess/API/Cocoa/WKNavigation.mm:
+        (-[WKNavigation initialRequest]):
+        (-[WKNavigation response]):
+        (-[WKNavigation error]):
+
+2014-04-01  Anders Carlsson  <andersca@apple.com>
+
         Rename -[WKWebView activeURL] to -[WKWebView URL]
         https://bugs.webkit.org/show_bug.cgi?id=131077
 

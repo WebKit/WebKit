@@ -31,7 +31,10 @@
 WK_API_CLASS
 @interface WKNavigation : NSObject
 
+@property (nonatomic, readonly) NSURLRequest *initialRequest;
 @property (nonatomic, readonly) NSURLRequest *request;
+@property (nonatomic, readonly) NSURLResponse *response;
+@property (nonatomic, readonly) NSError *error;
 
 @end
 

@@ -34,6 +34,12 @@
     RetainPtr<NSURLRequest> _request;
 }
 
+- (NSURLRequest *)initialRequest
+{
+    // FIXME: Implement.
+    return nil;
+}
+
 - (NSURLRequest *)request
 {
     return _request.get();
@@ -42,6 +48,18 @@
 - (void)setRequest:(NSURLRequest *)request
 {
     _request = adoptNS([request copy]);
+}
+
+- (NSURLResponse *)response
+{
+    // FIXME: Implement.
+    return nil;
+}
+
+- (NSError *)error
+{
+    // FIXME: Implement.
+    return nil;
 }
 
 @end
