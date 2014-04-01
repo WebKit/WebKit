@@ -535,17 +535,6 @@ bool SVGElement::haveLoadedRequiredResources()
     return true;
 }
 
-static inline void collectInstancesForSVGElement(SVGElement* element, HashSet<SVGElementInstance*>& instances)
-{
-    ASSERT(element);
-    if (element->containingShadowRoot())
-        return;
-
-    ASSERT(!element->instanceUpdatesBlocked());
-
-    instances = element->instancesForElement();
-}
-
 bool SVGElement::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> prpListener, bool useCapture)
 {
     RefPtr<EventListener> listener = prpListener;
@@ -554,15 +543,16 @@ bool SVGElement::addEventListener(const AtomicString& eventType, PassRefPtr<Even
     if (!Node::addEventListener(eventType, listener, useCapture))
         return false;
 
-    // Add event listener to all shadow tree DOM element instances
-    HashSet<SVGElementInstance*> instances;
-    collectInstancesForSVGElement(this, instances);    
-    const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
-    for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
-        ASSERT((*it)->shadowTreeElement());
-        ASSERT((*it)->correspondingElement() == this);
+    if (containingShadowRoot())
+        return true;
 
-        bool result = (*it)->shadowTreeElement()->Node::addEventListener(eventType, listener, useCapture);
+    // Add event listener to all shadow tree DOM element instances
+    ASSERT(!element->instanceUpdatesBlocked());
+    for (auto& instance : instancesForElement()) {
+        ASSERT(instance->shadowTreeElement());
+        ASSERT(instance->correspondingElement() == this);
+
+        bool result = instance->shadowTreeElement()->Node::addEventListener(eventType, listener, useCapture);
         ASSERT_UNUSED(result, result);
     }
 
@@ -571,9 +561,7 @@ bool SVGElement::addEventListener(const AtomicString& eventType, PassRefPtr<Even
 
 bool SVGElement::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
 {
-    HashSet<SVGElementInstance*> instances;
-    collectInstancesForSVGElement(this, instances);
-    if (instances.isEmpty())
+    if (containingShadowRoot())
         return Node::removeEventListener(eventType, listener, useCapture);
 
     // EventTarget::removeEventListener creates a PassRefPtr around the given EventListener
@@ -588,11 +576,11 @@ bool SVGElement::removeEventListener(const AtomicString& eventType, EventListene
         return false;
 
     // Remove event listener from all shadow tree DOM element instances
-    const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
-    for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
-        ASSERT((*it)->correspondingElement() == this);
+    ASSERT(!element->instanceUpdatesBlocked());
+    for (auto& instance : instancesForElement()) {
+        ASSERT(instance->correspondingElement() == this);
 
-        SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
+        SVGElement* shadowTreeElement = instance->shadowTreeElement();
         ASSERT(shadowTreeElement);
 
         if (shadowTreeElement->Node::removeEventListener(eventType, listener, useCapture))

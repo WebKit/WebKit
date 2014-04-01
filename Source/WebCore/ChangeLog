@@ -1,5 +1,24 @@
 2014-04-01  Zan Dobersek  <zdobersek@igalia.com>
 
+        Avoid unnecessary HashSet copies when calling collectInstancesForSVGElement
+        https://bugs.webkit.org/show_bug.cgi?id=131020
+
+        Reviewed by Andreas Kling.
+
+        Remove collectInstancesForSVGElement() to avoid HashSet copies when assigning a const
+        HashSet reference to a non-const HashSet reference. Instead, range-based for-loops are
+        deployed to iterate directly over the const reference to HashSet that's returned by
+        SVGElement::instancesForElement(). SVGElement::containingShadowRoot() return value
+        is checked to see if the iteration should be performed in the first place, preserving
+        the behavior of collectInstancesForSVGElement().
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::addEventListener):
+        (WebCore::SVGElement::removeEventListener):
+        (WebCore::collectInstancesForSVGElement): Deleted.
+
+2014-04-01  Zan Dobersek  <zdobersek@igalia.com>
+
         Move the attributes HashMap out of the parseAttributes function
         https://bugs.webkit.org/show_bug.cgi?id=131019
 
