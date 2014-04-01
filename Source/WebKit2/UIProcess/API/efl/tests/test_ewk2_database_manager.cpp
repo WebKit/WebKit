@@ -55,15 +55,18 @@ public:
         Eina_List* l;
         void* data;
         EINA_LIST_FOREACH(origins, l, data) {
-            originData->originList = eina_list_append(originData->originList, data);
             Ewk_Security_Origin* origin = static_cast<Ewk_Security_Origin*>(data);
             if (!strcmp(ewk_security_origin_protocol_get(origin), "http")
                 && !strcmp(ewk_security_origin_host_get(origin), "www.databasetest.com")
                 && !ewk_security_origin_port_get(origin)) {
+                    originData->originList = origins;
                     originData->isSynchronized = true;
-                    ecore_main_loop_quit();
+                    return;
             }
         }
+        void* originItem;
+        EINA_LIST_FREE(origins, originItem)
+            ewk_object_unref(static_cast<Ewk_Object*>(originItem));
     }
 
     static Eina_Bool timerCallback(void* userData)
@@ -101,12 +104,15 @@ TEST_F(EWK2DatabaseManagerTest, ewk_database_manager_origins_async_get)
     OriginData originData;
     originData.manager = ewk_context_database_manager_get(ewk_view_context_get(view));
     ASSERT_TRUE(ewk_database_manager_origins_async_get(originData.manager, databaseOriginsCallback, &originData));
-    Ecore_Timer* database_timer = ecore_timer_add(1, timerCallback, &originData);
+    Ecore_Timer* databaseTimer = ecore_timer_add(1, timerCallback, &originData);
 
     ecore_main_loop_begin();
-    if (database_timer)
-        ecore_timer_del(database_timer);
+    databaseTimer = nullptr;
 
     ASSERT_TRUE(originData.isSynchronized);
     ASSERT_LE(1, eina_list_count(originData.originList));
+
+    void* originItem;
+    EINA_LIST_FREE(originData.originList, originItem)
+        ewk_object_unref(static_cast<Ewk_Object*>(originItem));
 }

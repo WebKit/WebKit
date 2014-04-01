@@ -1,3 +1,16 @@
+2014-04-01  Joonghun Park  <jh718.park@samsung.com>
+
+        [EFL][WK2] Fix and update the existing test case for ewk_database_manager_origins_async_get API
+        https://bugs.webkit.org/show_bug.cgi?id=131017
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/API/efl/tests/test_ewk2_database_manager.cpp:
+        Fix memory leaks and errors caused by duplication of Ecore_Timer deletion
+        as well as update a naming style of local variable.
+        (EWK2DatabaseManagerTest::databaseOriginsCallback):
+        (TEST_F):
+
 2014-04-01  Zan Dobersek  <zdobersek@igalia.com>
 
         Don't copy the children map in webkitWebViewBaseContainerForall
