@@ -84,7 +84,7 @@ static WebPageGroupData pageGroupData(const String& identifier, bool visibleToIn
 
 WebPageGroup::WebPageGroup(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient)
     : m_data(pageGroupData(identifier, visibleToInjectedBundle, visibleToHistoryClient))
-    , m_preferences(WebPreferences::create(m_data.identifer))
+    , m_preferences(WebPreferences::create(m_data.identifer, ".WebKit2"))
 {
     webPageGroupMap().set(m_data.pageGroupID, this);
 }

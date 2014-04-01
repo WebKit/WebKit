@@ -43,13 +43,13 @@ WKTypeID WKPreferencesGetTypeID()
 
 WKPreferencesRef WKPreferencesCreate()
 {
-    RefPtr<WebPreferences> preferences = WebPreferences::create(String());
+    RefPtr<WebPreferences> preferences = WebPreferences::create(String(), "WebKit2.");
     return toAPI(preferences.release().leakRef());
 }
 
 WKPreferencesRef WKPreferencesCreateWithIdentifier(WKStringRef identifierRef)
 {
-    RefPtr<WebPreferences> preferences = WebPreferences::create(toWTFString(identifierRef));
+    RefPtr<WebPreferences> preferences = WebPreferences::create(toWTFString(identifierRef), "WebKit2.");
     return toAPI(preferences.release().leakRef());
 }
 

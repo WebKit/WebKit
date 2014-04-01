@@ -1,3 +1,41 @@
+2014-03-31  Anders Carlsson  <andersca@apple.com>
+
+        Add a new -[WKPreferences initWithUserDefaultsPrefixKey:] initializer
+        https://bugs.webkit.org/show_bug.cgi?id=130996
+
+        Reviewed by Simon Fraser.
+
+        Add a "key prefix" to the WebKit::WebPreferences create function, so we can use a different
+        key prefix ("WebKit") for the modern API and not pollute the user defaults namespace with
+        the old key prefix ("WebKit2.").
+        
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesCreate):
+        (WKPreferencesCreateWithIdentifier):
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences init]):
+        (-[WKPreferences initWithUserDefaultsPrefixKey:]):
+        (-[WKPreferences userDefaultsPrefixKey]):
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::WebPageGroup):
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::WebPreferences):
+        * UIProcess/WebPreferences.h:
+        (WebKit::WebPreferences::create):
+        * UIProcess/mac/WebPreferencesMac.mm:
+        (WebKit::makeKey):
+        (WebKit::setStringValueIfInUserDefaults):
+        (WebKit::setBoolValueIfInUserDefaults):
+        (WebKit::setUInt32ValueIfInUserDefaults):
+        (WebKit::setDoubleValueIfInUserDefaults):
+        (WebKit::WebPreferences::platformInitializeStore):
+        (WebKit::WebPreferences::platformUpdateStringValueForKey):
+        (WebKit::WebPreferences::platformUpdateBoolValueForKey):
+        (WebKit::WebPreferences::platformUpdateUInt32ValueForKey):
+        (WebKit::WebPreferences::platformUpdateDoubleValueForKey):
+        (WebKit::WebPreferences::platformUpdateFloatValueForKey):
+
 2014-03-31  Pratik Solanki  <psolanki@apple.com>
 
         Remove duplicate entries in Derived Sources.

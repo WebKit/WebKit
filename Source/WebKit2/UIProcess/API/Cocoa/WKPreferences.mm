@@ -29,17 +29,32 @@
 #if WK_API_ENABLED
 
 #import "WebPreferences.h"
+#import <wtf/RetainPtr.h>
 
 @implementation WKPreferences
+{
+    RetainPtr<NSString> _userDefaultsPrefixKey;
+}
 
 - (instancetype)init
+{
+    return [self initWithUserDefaultsPrefixKey:nil];
+}
+
+- (instancetype)initWithUserDefaultsPrefixKey:(NSString *)userDefaultsPrefixKey
 {
     if (!(self = [super init]))
         return nil;
 
-    _preferences = WebKit::WebPreferences::create(String());
+    _userDefaultsPrefixKey = adoptNS([userDefaultsPrefixKey copy]);
 
+    _preferences = WebKit::WebPreferences::create(_userDefaultsPrefixKey.get(), "WebKit");
     return self;
+}
+
+- (NSString *)userDefaultsPrefixKey
+{
+    return _userDefaultsPrefixKey.get();
 }
 
 - (CGFloat)minimumFontSize

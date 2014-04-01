@@ -43,9 +43,9 @@ class WebPageProxy;
 
 class WebPreferences : public API::ObjectImpl<API::Object::Type::Preferences> {
 public:
-    static PassRefPtr<WebPreferences> create(const String& identifier)
+    static PassRefPtr<WebPreferences> create(const String& identifier, const String& keyPrefix)
     {
-        return adoptRef(new WebPreferences(identifier));
+        return adoptRef(new WebPreferences(identifier, keyPrefix));
     }
 
     virtual ~WebPreferences();
@@ -71,7 +71,7 @@ public:
     static bool anyPagesAreUsingPrivateBrowsing();
 
 private:
-    explicit WebPreferences(const String&);
+    explicit WebPreferences(const String&, const String&);
     WebPreferences(const WebPreferences&);
 
     void platformInitializeStore();
@@ -91,7 +91,8 @@ private:
 
     void updatePrivateBrowsingValue(bool value);
 
-    String m_identifier;
+    const String m_identifier;
+    const String m_keyPrefix;
     WebPreferencesStore m_store;
 
     HashSet<WebPageProxy*> m_pages;

@@ -35,6 +35,10 @@
 WK_API_CLASS
 @interface WKPreferences : NSObject
 
+- (instancetype)initWithUserDefaultsPrefixKey:(NSString *)userDefaultsPrefixKey WK_DESIGNATED_INITIALIZER;
+
+@property (nonatomic, readonly) NSString *userDefaultsPrefixKey;
+
 @property (nonatomic) CGFloat minimumFontSize;
 
 @end

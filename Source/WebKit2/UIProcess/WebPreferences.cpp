@@ -36,14 +36,16 @@ namespace WebKit {
 // Instead of tracking private browsing state as a boolean preference, we should let the client provide storage sessions explicitly.
 static unsigned privateBrowsingPageCount;
 
-WebPreferences::WebPreferences(const String& identifier)
+WebPreferences::WebPreferences(const String& identifier, const String& keyPrefix)
     : m_identifier(identifier)
+    , m_keyPrefix(keyPrefix)
 {
     platformInitializeStore();
 }
 
 WebPreferences::WebPreferences(const WebPreferences& other)
-    : m_store(other.m_store)
+    : m_keyPrefix(other.m_keyPrefix)
+    , m_store(other.m_store)
 {
     platformInitializeStore();
 }
