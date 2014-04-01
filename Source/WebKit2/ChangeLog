@@ -1,3 +1,18 @@
+2014-04-01  Anders Carlsson  <andersca@apple.com>
+
+        Tweak WKPreferences API
+        https://bugs.webkit.org/show_bug.cgi?id=131047
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences init]):
+        (-[WKPreferences initWithUserDefaultsKeyPrefix:]):
+        (-[WKPreferences userDefaultsKeyPrefix]):
+        (-[WKPreferences initWithUserDefaultsPrefixKey:]): Deleted.
+        (-[WKPreferences userDefaultsPrefixKey]): Deleted.
+
 2014-03-31  Simon Fraser  <simon.fraser@apple.com>
 
         Enable WEB_TIMING on Mac and iOS

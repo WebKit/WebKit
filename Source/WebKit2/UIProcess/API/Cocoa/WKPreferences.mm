@@ -33,28 +33,28 @@
 
 @implementation WKPreferences
 {
-    RetainPtr<NSString> _userDefaultsPrefixKey;
+    RetainPtr<NSString> _userDefaultsKeyPrefix;
 }
 
 - (instancetype)init
 {
-    return [self initWithUserDefaultsPrefixKey:nil];
+    return [self initWithUserDefaultsKeyPrefix:nil];
 }
 
-- (instancetype)initWithUserDefaultsPrefixKey:(NSString *)userDefaultsPrefixKey
+- (instancetype)initWithUserDefaultsKeyPrefix:(NSString *)userDefaultsKeyPrefix
 {
     if (!(self = [super init]))
         return nil;
 
-    _userDefaultsPrefixKey = adoptNS([userDefaultsPrefixKey copy]);
+    _userDefaultsKeyPrefix = adoptNS([userDefaultsKeyPrefix copy]);
 
-    _preferences = WebKit::WebPreferences::create(_userDefaultsPrefixKey.get(), "WebKit");
+    _preferences = WebKit::WebPreferences::create(_userDefaultsKeyPrefix.get(), "WebKit");
     return self;
 }
 
-- (NSString *)userDefaultsPrefixKey
+- (NSString *)userDefaultsKeyPrefix
 {
-    return _userDefaultsPrefixKey.get();
+    return _userDefaultsKeyPrefix.get();
 }
 
 - (CGFloat)minimumFontSize
