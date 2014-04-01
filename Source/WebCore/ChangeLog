@@ -1,3 +1,15 @@
+2014-04-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove a couple of useless static strings
+        https://bugs.webkit.org/show_bug.cgi?id=131003
+
+        Reviewed by David Kilzer.
+
+        There is zero value in keeping those strings alive.
+
+        * css/StyleProperties.cpp:
+        (WebCore::isInitialOrInherit):
+
 2014-04-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.html and svg/css/font-face-crash.html frequently assert in ComplexTextController::offsetForPosition
