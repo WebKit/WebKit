@@ -39,16 +39,13 @@ def configure_logging(verbose):
     else:
         handler.setFormatter(logging.Formatter('%(message)s'))
 
-def get_gtkdoc_module_paths(gtk_version):
+def get_gtkdoc_module_paths():
     dependent_packages = {
         'glib-2.0' : ['glib', 'gobject', 'gio'],
         'libsoup-2.4' : ['libsoup-2.4'],
-        'gdk-pixbuf-2.0': ['gdk-pixbuf']
+        'gdk-pixbuf-2.0': ['gdk-pixbuf'],
+        'gtk+-3.0' : ['gtk3', 'gdk3']
     }
-    if gtk_version == 3:
-        dependent_packages.update({'gtk+-3.0' : ['gtk3', 'gdk3']})
-    else:
-        dependent_packages.update({'gtk+-2.0' : ['gtk', 'gdk']})
 
     paths = []
     html_dir = os.path.join('share', 'gtk-doc', 'html')
@@ -105,7 +102,6 @@ def get_generator_for_config(config_file, virtual_root):
     config.read(config_file)
     module_name = config.sections()[0]
     pkgconfig_file = config.get(module_name, 'pkgconfig_file')
-    gtk_version = common.gtk_version_of_pkg_config_file(pkgconfig_file)
 
     if not os.path.isfile(pkgconfig_file):
         return None
@@ -124,7 +120,7 @@ def get_generator_for_config(config_file, virtual_root):
         'source_dirs': source_dirs,
         'headers': headers,
         'cflags': " ".join(config.get(module_name, 'cflags').split()),
-        'cross_reference_deps': get_gtkdoc_module_paths(gtk_version),
+        'cross_reference_deps': get_gtkdoc_module_paths(),
         'ignored_files': files_to_ignore(source_dirs, headers),
     })
 
@@ -193,8 +189,6 @@ if __name__ == "__main__":
 
     webkitdom.write_doc_files()
     generate_documentation_for_config(common.build_path('gtkdoc-webkitdom.cfg'))
+    saw_warnings = generate_documentation_for_config(common.build_path('gtkdoc-webkit2gtk.cfg'))
 
-    saw_webkit1_warnings = generate_documentation_for_config(common.build_path('gtkdoc-webkitgtk.cfg'))
-    saw_webkit2_warnings = generate_documentation_for_config(common.build_path('gtkdoc-webkit2gtk.cfg'))
-
-    sys.exit(saw_webkit1_warnings or saw_webkit2_warnings)
+    sys.exit(saw_warnings)

@@ -117,16 +117,6 @@ def prefix_of_pkg_config_file(package):
     return pkg_config_file_variable(package, 'prefix')
 
 
-def gtk_version_of_pkg_config_file(pkg_config_path):
-    process = subprocess.Popen(['pkg-config', pkg_config_path, '--print-requires'],
-                               stdout=subprocess.PIPE)
-    stdout = process.communicate()[0].decode("utf-8")
-
-    if 'gtk+-3.0' in stdout:
-        return 3
-    return 2
-
-
 def parse_output_lines(fd, parse_line_callback):
     output = ''
     read_set = [fd]

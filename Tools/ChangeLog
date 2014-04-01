@@ -1,3 +1,17 @@
+2014-04-01  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] No longer build WebKit1 gtkdoc
+        https://bugs.webkit.org/show_bug.cgi?id=130970
+
+        Reviewed by Anders Carlsson.
+
+        * gtk/common.py:
+        (gtk_version_of_pkg_config_file): Deleted.
+        * gtk/generate-gtkdoc:
+        (get_gtkdoc_module_paths): We no longer need to worry about GTK+ 2, since it
+        was only applicable for WebKit1.
+        (get_generator_for_config): No longer look for the WebKit1 configuration file.
+
 2014-04-01  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Running minibrowser with url crashes in debug build
