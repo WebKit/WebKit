@@ -1,3 +1,22 @@
+2014-04-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Eliminate HTMLFormElement::m_shouldSubmit
+        https://bugs.webkit.org/show_bug.cgi?id=131055
+
+        Reviewed by Tim Horton.
+
+        m_shouldSubmit was used for two purposes:
+        - as a return value in a function whose return value is ignored by all callers;
+        - to make a decision that's local to a function.
+
+        There is no need for it to be an instance variable.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::HTMLFormElement):
+        (WebCore::HTMLFormElement::prepareForSubmission):
+        (WebCore::HTMLFormElement::submit):
+        * html/HTMLFormElement.h:
+
 2014-04-01  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove a couple of useless static strings

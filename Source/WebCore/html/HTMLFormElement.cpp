@@ -57,7 +57,6 @@ HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document& documen
     , m_associatedElementsAfterIndex(0)
     , m_wasUserSubmitted(false)
     , m_isSubmittingOrPreparingForSubmission(false)
-    , m_shouldSubmit(false)
     , m_isInResetFunction(false)
     , m_wasDemoted(false)
 {
@@ -260,19 +259,19 @@ bool HTMLFormElement::validateInteractively(Event* event)
     return false;
 }
 
-bool HTMLFormElement::prepareForSubmission(Event* event)
+void HTMLFormElement::prepareForSubmission(Event* event)
 {
     Frame* frame = document().frame();
     if (m_isSubmittingOrPreparingForSubmission || !frame)
-        return m_isSubmittingOrPreparingForSubmission;
+        return;
 
     m_isSubmittingOrPreparingForSubmission = true;
-    m_shouldSubmit = false;
+    bool shouldSubmit = false;
 
     // Interactive validation must be done before dispatching the submit event.
     if (!validateInteractively(event)) {
         m_isSubmittingOrPreparingForSubmission = false;
-        return false;
+        return;
     }
 
     StringPairVector controlNamesAndValues;
@@ -281,14 +280,12 @@ bool HTMLFormElement::prepareForSubmission(Event* event)
     frame->loader().client().dispatchWillSendSubmitEvent(formState.release());
 
     if (dispatchEvent(Event::create(eventNames().submitEvent, true, true)))
-        m_shouldSubmit = true;
+        shouldSubmit = true;
 
     m_isSubmittingOrPreparingForSubmission = false;
 
-    if (m_shouldSubmit)
+    if (shouldSubmit)
         submit(event, true, true, NotSubmittedByJavaScript);
-
-    return m_shouldSubmit;
 }
 
 void HTMLFormElement::submit()
@@ -325,10 +322,8 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
     if (!view || !frame)
         return;
 
-    if (m_isSubmittingOrPreparingForSubmission) {
-        m_shouldSubmit = true;
+    if (m_isSubmittingOrPreparingForSubmission)
         return;
-    }
 
     m_isSubmittingOrPreparingForSubmission = true;
     m_wasUserSubmitted = processingUserGesture;
@@ -358,7 +353,6 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
     if (needButtonActivation && firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(false);
 
-    m_shouldSubmit = false;
     m_isSubmittingOrPreparingForSubmission = false;
 }
 
