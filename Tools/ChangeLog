@@ -1,3 +1,14 @@
+2014-04-01  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK] Remove last reference to GTK+ WK1 EWS
+        https://bugs.webkit.org/show_bug.cgi?id=131058
+
+        Reviewed by Martin Robinson.
+
+        In r166427 WK1 GTK+ bots and EWS where removed, but this file was missing.
+
+        * QueueStatusServer/config/queues.py: Remove reference to GTK+ WK1 EWS.
+
 2014-04-01  Lucas Forschler  <lforschler@apple.com>
 
         Add a 32bit JSC builder/tester.
