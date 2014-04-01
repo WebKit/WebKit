@@ -4,7 +4,6 @@
 if (window.testRunner)
     testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
 </script>
-<script src="../../resources/check-layout.js"></script>
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .grid {
@@ -25,14 +24,20 @@ if (window.testRunner)
 .marginBottom {
     margin-bottom: 20px;
 }
+
+.testContainer {
+    position: relative;
+    margin-bottom: 20px;
+}
+
 </style>
 </head>
-<body onload="checkLayout('.grid')">
+<body>
 
 <div>This test checks that the grid's rows and columns 'auto' sizes are updated accordingly to its grid-item's before and start margins.</div>
 
-<div style="position: relative">
-    <div class="grid" data-expected-width="200" data-expected-height="120">
+<div class="testContainer">
+    <div class="grid">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem firstRowSecondColumn"></div>
         <div class="gridItem marginBottom secondRowFirstColumn"></div>
@@ -40,8 +45,8 @@ if (window.testRunner)
     </div>
 </div>
 
-<div style="position: relative">
-    <div class="grid" data-expected-width="200" data-expected-height="100">
+<div class="testContainer">
+    <div class="grid">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem marginBottom firstRowSecondColumn"></div>
         <div class="gridItem secondRowFirstColumn"></div>
@@ -49,8 +54,8 @@ if (window.testRunner)
     </div>
 </div>
 
-<div style="position: relative">
-    <div class="grid verticalRL" data-expected-width="200" data-expected-height="120">
+<div class="testContainer">
+    <div class="grid verticalRL">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem firstRowSecondColumn"></div>
         <div class="gridItem secondRowFirstColumn"></div>
@@ -58,8 +63,8 @@ if (window.testRunner)
     </div>
 </div>
 
-<div style="position: relative">
-    <div class="grid verticalRL" data-expected-width="200" data-expected-height="100">
+<div class="testContainer">
+    <div class="grid verticalRL">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem firstRowSecondColumn"></div>
         <div class="gridItem marginBottom secondRowFirstColumn"></div>
@@ -67,8 +72,8 @@ if (window.testRunner)
     </div>
 </div>
 
-<div style="position: relative">
-    <div class="grid verticalLR" data-expected-width="200" data-expected-height="120">
+<div class="testContainer">
+    <div class="grid verticalLR">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem firstRowSecondColumn"></div>
         <div class="gridItem secondRowFirstColumn"></div>
@@ -76,8 +81,8 @@ if (window.testRunner)
     </div>
 </div>
 
-<div style="position: relative">
-    <div class="grid verticalLR" data-expected-width="200" data-expected-height="100">
+<div class="testContainer">
+    <div class="grid verticalLR">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem firstRowSecondColumn"></div>
         <div class="gridItem marginBottom secondRowFirstColumn"></div>
@@ -85,8 +90,8 @@ if (window.testRunner)
     </div>
 </div>
 
-<div style="position: relative">
-    <div class="grid horizontalBT" data-expected-width="200" data-expected-height="120">
+<div class="testContainer">
+    <div class="grid horizontalBT">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem firstRowSecondColumn"></div>
         <div class="gridItem marginBottom secondRowFirstColumn"></div>
@@ -94,8 +99,8 @@ if (window.testRunner)
     </div>
 </div>
 
-<div style="position: relative">
-    <div class="grid horizontalBT" data-expected-width="200" data-expected-height="100">
+<div class="testContainer">
+    <div class="grid horizontalBT">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem marginBottom firstRowSecondColumn"></div>
         <div class="gridItem secondRowFirstColumn"></div>
@@ -104,8 +109,8 @@ if (window.testRunner)
 </div>
 
 <!-- rtl direction -->
-<div style="position: relative">
-    <div class="grid directionRTL" data-expected-width="200" data-expected-height="120">
+<div class="testContainer">
+    <div class="grid directionRTL">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem firstRowSecondColumn"></div>
         <div class="gridItem marginBottom secondRowFirstColumn"></div>
@@ -113,8 +118,8 @@ if (window.testRunner)
     </div>
 </div>
 
-<div style="position: relative">
-    <div class="grid directionRTL" data-expected-width="200" data-expected-height="100">
+<div class="testContainer">
+    <div class="grid directionRTL">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem marginBottom firstRowSecondColumn"></div>
         <div class="gridItem secondRowFirstColumn"></div>
@@ -122,8 +127,8 @@ if (window.testRunner)
     </div>
 </div>
 
-<div style="position: relative">
-    <div class="grid verticalRL directionRTL" data-expected-width="200" data-expected-height="120">
+<div class="testContainer">
+    <div class="grid verticalRL directionRTL">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem firstRowSecondColumn"></div>
         <div class="gridItem secondRowFirstColumn"></div>
@@ -131,8 +136,8 @@ if (window.testRunner)
     </div>
 </div>
 
-<div style="position: relative">
-    <div class="grid verticalRL directionRTL" data-expected-width="200" data-expected-height="100">
+<div class="testContainer">
+    <div class="grid verticalRL directionRTL">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem firstRowSecondColumn"></div>
         <div class="gridItem marginBottom secondRowFirstColumn"></div>
@@ -140,8 +145,8 @@ if (window.testRunner)
     </div>
 </div>
 
-<div style="position: relative">
-    <div class="grid verticalLR directionRTL" data-expected-width="200" data-expected-height="120">
+<div class="testContainer">
+    <div class="grid verticalLR directionRTL">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem firstRowSecondColumn"></div>
         <div class="gridItem secondRowFirstColumn"></div>
@@ -149,8 +154,8 @@ if (window.testRunner)
     </div>
 </div>
 
-<div style="position: relative">
-    <div class="grid verticalLR directionRTL" data-expected-width="200" data-expected-height="100">
+<div class="testContainer">
+    <div class="grid verticalLR directionRTL">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem firstRowSecondColumn"></div>
         <div class="gridItem marginBottom secondRowFirstColumn"></div>
@@ -158,8 +163,8 @@ if (window.testRunner)
     </div>
 </div>
 
-<div style="position: relative">
-    <div class="grid horizontalBT directionRTL" data-expected-width="200" data-expected-height="120">
+<div class="testContainer">
+    <div class="grid horizontalBT directionRTL">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem firstRowSecondColumn"></div>
         <div class="gridItem marginBottom secondRowFirstColumn"></div>
@@ -167,8 +172,8 @@ if (window.testRunner)
     </div>
 </div>
 
-<div style="position: relative">
-    <div class="grid horizontalBT directionRTL" data-expected-width="200" data-expected-height="100">
+<div class="testContainer">
+    <div class="grid horizontalBT directionRTL">
         <div class="gridItem marginTop firstRowFirstColumn"></div>
         <div class="gridItem marginBottom firstRowSecondColumn"></div>
         <div class="gridItem secondRowFirstColumn"></div>
