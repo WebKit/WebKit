@@ -84,3 +84,22 @@ void WKViewSendMouseMoveEvent(WKViewRef viewRef, Evas_Event_Mouse_Move* event)
 {
     static_cast<WebViewEfl*>(toImpl(viewRef))->sendMouseEvent(event);
 }
+
+void WKViewSetBackgroundColor(WKViewRef viewRef, int red, int green, int blue, int alpha)
+{
+    static_cast<WebViewEfl*>(toImpl(viewRef))->setViewBackgroundColor(WebCore::Color(red, green, blue, alpha));
+}
+
+void WKViewGetBackgroundColor(WKViewRef viewRef, int* red, int* green, int* blue, int* alpha)
+{
+    WebCore::Color backgroundColor = static_cast<WebViewEfl*>(toImpl(viewRef))->viewBackgroundColor();
+
+    if (red)
+        *red = backgroundColor.red();
+    if (green)
+        *green = backgroundColor.green();
+    if (blue)
+        *blue = backgroundColor.blue();
+    if (alpha)
+        *alpha = backgroundColor.alpha();
+}

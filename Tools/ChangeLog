@@ -1,5 +1,18 @@
 2014-03-31  Ryuan Choi  <ryuan.choi@samsung.com>
 
+        [EFL][WK2] Extract the control of page background out of color_set
+        https://bugs.webkit.org/show_bug.cgi?id=127539
+
+        Reviewed by Gyuyoung Kim.
+
+        Added an option(C) to change background color.
+
+        * MiniBrowser/efl/main.c:
+        (window_create):
+        (elm_main):
+
+2014-03-31  Ryuan Choi  <ryuan.choi@samsung.com>
+
         Unreviewed build fix on the EFL port with latest EFL libraries since r166149
 
         * ImageDiff/PlatformEfl.cmake: Added ECORE_IMF_INCLUDE_DIRS to include dirs

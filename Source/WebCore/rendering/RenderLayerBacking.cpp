@@ -304,13 +304,13 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
         m_graphicsLayer->addChild(m_childContainmentLayer.get());
     }
 
+#if !PLATFORM(IOS) && !PLATFORM(EFL)
     if (m_isMainFrameRenderViewLayer) {
-#if !PLATFORM(IOS)
         // Page scale is applied above the RenderView on iOS.
         m_graphicsLayer->setContentsOpaque(true);
         m_graphicsLayer->setAppliesPageScale();
-#endif
     }
+#endif
 
 #if PLATFORM(COCOA) && USE(CA)
     if (!compositor().acceleratedDrawingEnabled() && renderer().isCanvas()) {

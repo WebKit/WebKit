@@ -1,3 +1,25 @@
+2014-03-31  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Extract the control of page background out of color_set
+        https://bugs.webkit.org/show_bug.cgi?id=127539
+
+        Reviewed by Gyuyoung Kim.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.cpp:
+        Added m_viewBackgroundColor to clear when m_setDrawsBackground is false.
+        (WebCore::CoordinatedGraphicsScene::CoordinatedGraphicsScene):
+        (WebCore::CoordinatedGraphicsScene::paintToCurrentGLContext):
+        (WebCore::CoordinatedGraphicsScene::paintToGraphicsContext):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.h:
+        (WebCore::CoordinatedGraphicsScene::setViewBackgroundColor):
+        (WebCore::CoordinatedGraphicsScene::viewBackgroundColor):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+        Added EFL guard not to set opaque as a default for MainFrameRenderViewLayer.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+        Added EFL guard to apply page scale on RenderView like IOS.
+
 2014-03-31  Byungseon Shin  <sun.shin@lge.com>
 
         [WebGL][OpenGLES] Enable MSAA support for WebGL Canvas

@@ -147,6 +147,24 @@ void WebViewEfl::sendMouseEvent(const Evas_Event_Mouse_Move* event)
     m_page->handleMouseEvent(NativeWebMouseEvent(event, transformFromScene(), m_userViewportTransform.toAffineTransform()));
 }
 
+void WebViewEfl::setViewBackgroundColor(const WebCore::Color& color)
+{
+    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
+    if (!scene)
+        return;
+
+    scene->setViewBackgroundColor(color);
+}
+
+WebCore::Color WebViewEfl::viewBackgroundColor()
+{
+    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
+    if (!scene)
+        return Color();
+
+    return scene->viewBackgroundColor();
+}
+
 #if ENABLE(FULLSCREEN_API)
 
 // WebFullScreenManagerProxyClient

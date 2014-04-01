@@ -65,6 +65,9 @@ WK_EXPORT void WKViewSendMouseDownEvent(WKViewRef, Evas_Event_Mouse_Down*);
 WK_EXPORT void WKViewSendMouseUpEvent(WKViewRef, Evas_Event_Mouse_Up*);
 WK_EXPORT void WKViewSendMouseMoveEvent(WKViewRef, Evas_Event_Mouse_Move*);
 
+WK_EXPORT void WKViewSetBackgroundColor(WKViewRef, int red, int green, int blue, int alpha);
+WK_EXPORT void WKViewGetBackgroundColor(WKViewRef, int* red, int* green, int* blue, int* alpha);
+
 #ifdef __cplusplus
 }
 #endif

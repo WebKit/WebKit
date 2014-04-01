@@ -52,6 +52,7 @@
 #include <WebKit2/WKString.h>
 #include <WebKit2/WKURL.h>
 #include <WebKit2/WKView.h>
+#include <WebKit2/WKViewEfl.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(INSPECTOR)
@@ -589,13 +590,6 @@ Eina_Bool ewk_view_fullscreen_exit(Evas_Object* ewkView)
 #endif
 }
 
-void ewk_view_draws_page_background_set(Evas_Object *ewkView, Eina_Bool enabled)
-{
-    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl);
-
-    WKViewSetDrawsBackground(impl->wkView(), enabled);
-}
-
 /// Creates a type name for Ewk_Page_Contents_Context.
 typedef struct Ewk_Page_Contents_Context Ewk_Page_Contents_Context;
 
@@ -720,4 +714,28 @@ Eina_Bool ewk_view_layout_fixed_get(const Evas_Object* ewkView)
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
     return WKPageUseFixedLayout(WKViewGetPage(impl->wkView()));
+}
+
+void ewk_view_bg_color_set(Evas_Object* ewkView, int red, int green, int blue, int alpha)
+{
+    if (EINA_UNLIKELY(alpha < 0 || alpha > 255)) {
+        EINA_LOG_CRIT("Alpha should be between 0 and 255");
+        return;
+    }
+
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl);
+
+    if (red == 255 && green == 255 && blue == 255 && alpha == 255)
+        WKViewSetDrawsBackground(impl->wkView(), true);
+    else
+        WKViewSetDrawsBackground(impl->wkView(), false);
+
+    WKViewSetBackgroundColor(impl->wkView(), red, green, blue, alpha);
+}
+
+void ewk_view_bg_color_get(const Evas_Object* ewkView, int* red, int* green, int* blue, int* alpha)
+{
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl);
+
+    WKViewGetBackgroundColor(impl->wkView(), red, green, blue, alpha);
 }

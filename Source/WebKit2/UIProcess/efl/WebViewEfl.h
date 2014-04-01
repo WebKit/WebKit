@@ -60,6 +60,8 @@ public:
     virtual PassRefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color&, const WebCore::IntRect&) override;
 #endif
 
+    void setViewBackgroundColor(const WebCore::Color&);
+    WebCore::Color viewBackgroundColor();
 private:
     WebViewEfl(WebContext*, WebPageGroup*);
 

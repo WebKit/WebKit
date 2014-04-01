@@ -52,6 +52,7 @@ CoordinatedGraphicsScene::CoordinatedGraphicsScene(CoordinatedGraphicsSceneClien
     , m_isActive(false)
     , m_rootLayerID(InvalidCoordinatedLayerID)
     , m_backgroundColor(Color::white)
+    , m_viewBackgroundColor(Color::white)
     , m_setDrawsBackground(false)
 {
     ASSERT(isMainThread());
@@ -86,6 +87,10 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
             m_backgroundColor.green(), m_backgroundColor.blue(),
             m_backgroundColor.alpha() * opacity);
         m_textureMapper->drawSolidColor(clipRect, TransformationMatrix(), Color(rgba));
+    } else {
+        GraphicsContext3D* context = static_cast<TextureMapperGL*>(m_textureMapper.get())->graphicsContext3D();
+        context->clearColor(m_viewBackgroundColor.red() / 255.0f, m_viewBackgroundColor.green() / 255.0f, m_viewBackgroundColor.blue() / 255.0f, m_viewBackgroundColor.alpha() / 255.0f);
+        context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
     }
 
     if (currentRootLayer->opacity() != opacity || currentRootLayer->transform() != matrix) {
@@ -124,6 +129,8 @@ void CoordinatedGraphicsScene::paintToGraphicsContext(PlatformGraphicsContext* p
     IntRect clipRect = graphicsContext.clipBounds();
     if (m_setDrawsBackground)
         m_textureMapper->drawSolidColor(clipRect, TransformationMatrix(), m_backgroundColor);
+    else
+        m_textureMapper->drawSolidColor(clipRect, TransformationMatrix(), m_viewBackgroundColor);
 
     layer->paint();
     m_fpsCounter.updateFPSAndDisplay(m_textureMapper.get(), clipRect.location());

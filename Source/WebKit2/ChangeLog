@@ -1,3 +1,36 @@
+2014-03-31  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Extract the control of page background out of color_set
+        https://bugs.webkit.org/show_bug.cgi?id=127539
+
+        Reviewed by Gyuyoung Kim.
+
+        EFL have a way to change the color using evas_object_color_set and we used it to change background.
+        But, We should not use it because the alpha value of color_set is used
+        for the transparancy of object itself including background and contents.
+
+        This patch added ewk_view_bg_color_{get|set} to change the background color.
+
+        * UIProcess/API/C/efl/WKViewEfl.cpp:
+        Extracted controls of page background out of color_set.
+        color_set will be only used for the opacity of whole contents.
+        (WKViewSetBackgroundColor): Added to share page background color.
+        (WKViewGetBackgroundColor):
+        * UIProcess/API/C/efl/WKViewEfl.h:
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::handleEvasObjectColorSet):
+        * UIProcess/API/efl/ewk_view.cpp:
+        Removed ewk_view_draws_page_background_set which just control whether to draw background.
+        ewk_view_bg_color_set will conver it.
+        (ewk_view_bg_color_set):
+        (ewk_view_bg_color_get):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp: Added simple test case.
+        * UIProcess/efl/WebViewEfl.cpp:
+        (WebKit::WebViewEfl::setViewBackgroundColor):
+        (WebKit::WebViewEfl::viewBackgroundColor):
+        * UIProcess/efl/WebViewEfl.h:
+
 2014-03-31  Joonghun Park  <jh718.park@samsung.com>
 
         [EFL][WK2]Implement ewk APIs of web local storage which have deletion functions of the local storage entries

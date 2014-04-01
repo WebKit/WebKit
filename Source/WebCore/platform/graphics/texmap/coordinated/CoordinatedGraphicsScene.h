@@ -83,6 +83,9 @@ public:
     void setBackgroundColor(const Color&);
     void setDrawsBackground(bool enable) { m_setDrawsBackground = enable; }
 
+    void setViewBackgroundColor(const Color& color) { m_viewBackgroundColor = color; }
+    Color viewBackgroundColor() const { return m_viewBackgroundColor; }
+
 private:
     void setRootLayerID(CoordinatedLayerID);
     void createLayers(const Vector<CoordinatedLayerID>&);
@@ -182,6 +185,7 @@ private:
     FloatPoint m_scrollPosition;
     FloatPoint m_renderedContentsScrollPosition;
     Color m_backgroundColor;
+    Color m_viewBackgroundColor;
     bool m_setDrawsBackground;
 
     TextureMapperFPSCounter m_fpsCounter;

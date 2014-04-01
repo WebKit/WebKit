@@ -1083,3 +1083,19 @@ TEST_F(EWK2ViewTest, ewk_view_layout_fixed)
     EXPECT_TRUE(ewk_view_layout_fixed_set(webView(), true));
     EXPECT_TRUE(ewk_view_layout_fixed_get(webView()));
 }
+
+TEST_F(EWK2ViewTest, ewk_view_bg_color)
+{
+    const char noBackgroundHTML[] = "<!doctype html><body></body>";
+
+    ewk_view_bg_color_set(webView(), 255, 0, 0, 255);
+    ewk_view_html_string_load(webView(), noBackgroundHTML, 0, 0);
+    ASSERT_TRUE(waitUntilLoadFinished());
+
+    int red, green, blue, alpha;
+    ewk_view_bg_color_get(webView(), &red, &green, &blue, &alpha);
+    ASSERT_EQ(255, red);
+    ASSERT_EQ(0, green);
+    ASSERT_EQ(0, blue);
+    ASSERT_EQ(255, red);
+}
