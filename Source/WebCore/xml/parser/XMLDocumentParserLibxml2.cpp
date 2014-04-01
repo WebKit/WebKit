@@ -1544,7 +1544,7 @@ HashMap<String, String> parseAttributes(const String& string, bool& attrsOK)
     xmlParseChunk(parser->context(), reinterpret_cast<const char*>(StringView(parseString).upconvertedCharacters().get()), parseString.length() * sizeof(UChar), 1);
 
     attrsOK = state.gotAttributes;
-    return state.attributes;
+    return std::move(state.attributes);
 }
 
 }

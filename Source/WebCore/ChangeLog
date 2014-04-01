@@ -1,3 +1,14 @@
+2014-04-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move the attributes HashMap out of the parseAttributes function
+        https://bugs.webkit.org/show_bug.cgi?id=131019
+
+        Reviewed by Andreas Kling.
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::parseAttributes): Avoid copying the HashMap object that's being returned by
+        converting it to an xvalue through using std::move() in the return statement.
+
 2014-04-01  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Transition class Image (and its dependencies) from int to float to enable subpixel positioned/sized images.
