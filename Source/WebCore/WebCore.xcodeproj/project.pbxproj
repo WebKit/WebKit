@@ -15385,8 +15385,6 @@
 			children = (
 				439046C312DA25E800AF80A2 /* RenderMathMLBlock.cpp */,
 				439046C412DA25E800AF80A2 /* RenderMathMLBlock.h */,
-				3662F984047CEDBE5DDDAFAA /* RenderMathMLMenclose.cpp */,
-				A208E222A56A0C7575F2A72E /* RenderMathMLMenclose.h */,
 				439046C512DA25E800AF80A2 /* RenderMathMLFenced.cpp */,
 				439046C612DA25E800AF80A2 /* RenderMathMLFenced.h */,
 				439046C712DA25E800AF80A2 /* RenderMathMLFraction.cpp */,
