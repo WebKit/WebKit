@@ -1,3 +1,48 @@
+2014-04-01  David Kilzer  <ddkilzer@apple.com>
+
+        Do not allow HTTP refresh headers to refresh to javascript: URLs
+        <http://webkit.org/b/119051>
+        <rdar://problem/14536453>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Merged from Blink (patch by tsepez@chromium.org):
+        https://src.chromium.org/viewvc/blink?revision=153912&view=revision
+        http://crbug.com/258151
+
+            This behaviour has been standard in IE since IE7.  This makes us both
+            more compatible and less vulnerable to XSS.
+
+        * http/tests/security/no-javascript-refresh-expected.txt: Added.
+        * http/tests/security/no-javascript-refresh-static-expected.txt: Added.
+        * http/tests/security/no-javascript-refresh-static.html: Added.
+        * http/tests/security/no-javascript-refresh.php: Added.
+        - Original Blink layout tests with typos fixed and 'PASS:' text
+          added.
+
+        * http/tests/security/no-javascript-location.html: Added.
+        * http/tests/security/no-javascript-location-expected.txt: Added.
+        * http/tests/security/resources/no-javascript-location.php: Copied from LayoutTests/http/tests/security/no-javascript-refresh.php.
+        * http/tests/security/no-javascript-location-percent-escaped.html: Added.
+        * http/tests/security/no-javascript-location-percent-escaped-expected.txt: Added.
+        * http/tests/security/resources/no-javascript-location-percent-escaped.php: Added.
+        - Add tests using a javascript: URL in a Location: header.
+
+        * http/tests/security/no-javascript-refresh-percent-escaped.php: Copied from LayoutTests/http/tests/security/no-javascript-refresh.php.
+        * http/tests/security/no-javascript-refresh-percent-escaped-expected.txt: Added.
+        * http/tests/security/no-javascript-refresh-spaces.php: Copied from LayoutTests/http/tests/security/no-javascript-refresh.php.
+        * http/tests/security/no-javascript-refresh-spaces-expected.txt: Added.
+        - Add tests using a percent-escaped javascript: URL and a
+          javascript: URL with leading spaces in a Refresh: header from
+          a web server.
+
+        * http/tests/security/no-javascript-refresh-static-percent-escaped.html: Added.
+        * http/tests/security/no-javascript-refresh-static-percent-escaped-expected.txt: Added.
+        * http/tests/security/no-javascript-refresh-static-spaces.html: Added.
+        * http/tests/security/no-javascript-refresh-static-spaces-expected.txt: Added.
+        - Add tests using a percent-escaped javascript: URL and a
+          javascript: URL with leading spaces in a meta http-equiv tag.
+
 2014-04-01  James Craig  <jcraig@apple.com>
 
         AX: AccessibilityRenderObject::ariaLiveRegionAtomic() should default to true if

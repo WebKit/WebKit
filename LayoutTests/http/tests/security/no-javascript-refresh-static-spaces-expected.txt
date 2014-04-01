@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 3: Refused to refresh http://127.0.0.1:8000/security/no-javascript-refresh-static-spaces.html to a javascript: URL
+PASS: This is the text that appears in place of a refresh.

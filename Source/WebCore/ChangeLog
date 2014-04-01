@@ -1,3 +1,33 @@
+2014-04-01  David Kilzer  <ddkilzer@apple.com>
+
+        Do not allow HTTP refresh headers to refresh to javascript: URLs
+        <http://webkit.org/b/119051>
+        <rdar://problem/14536453>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Merged from Blink (patch by tsepez@chromium.org):
+        https://src.chromium.org/viewvc/blink?revision=153912&view=revision
+        http://crbug.com/258151
+
+            This behaviour has been standard in IE since IE7.  This makes us both
+            more compatible and less vulnerable to XSS.
+
+        Tests: http/tests/security/no-javascript-location-percent-escaped.html
+               http/tests/security/no-javascript-location.html
+               http/tests/security/no-javascript-refresh-percent-escaped.php
+               http/tests/security/no-javascript-refresh-spaces.php
+               http/tests/security/no-javascript-refresh-static-percent-escaped.html
+               http/tests/security/no-javascript-refresh-static-spaces.html
+               http/tests/security/no-javascript-refresh-static.html
+               http/tests/security/no-javascript-refresh.php
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedFirstData):
+        - Do not fire meta http refresh for a javascript: URL protocol.
+
 2014-04-01  Pratik Solanki  <psolanki@apple.com>
 
         Unreviewed build fix. Remove duplicate file entries.
