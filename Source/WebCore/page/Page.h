@@ -203,7 +203,7 @@ public:
     InspectorController& inspectorController() const { return *m_inspectorController; }
 #endif
 #if ENABLE(POINTER_LOCK)
-    PointerLockController* pointerLockController() const { return m_pointerLockController.get(); }
+    PointerLockController& pointerLockController() const { return *m_pointerLockController; }
 #endif
     ValidationMessageClient* validationMessageClient() const { return m_validationMessageClient; }
 
@@ -459,7 +459,7 @@ private:
     const std::unique_ptr<InspectorController> m_inspectorController;
 #endif
 #if ENABLE(POINTER_LOCK)
-    OwnPtr<PointerLockController> m_pointerLockController;
+    const std::unique_ptr<PointerLockController> m_pointerLockController;
 #endif
     RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
 

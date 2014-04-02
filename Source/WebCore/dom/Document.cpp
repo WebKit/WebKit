@@ -2088,7 +2088,7 @@ void Document::prepareForDestruction()
 
 #if ENABLE(POINTER_LOCK)
     if (page())
-        page()->pointerLockController()->documentDetached(this);
+        page()->pointerLockController().documentDetached(this);
 #endif
 
     stopActiveDOMObjects();
@@ -5543,19 +5543,19 @@ void Document::webkitExitPointerLock()
 {
     if (!page())
         return;
-    if (Element* target = page()->pointerLockController()->element()) {
-        if (target->document() != this)
+    if (Element* target = page()->pointerLockController().element()) {
+        if (&target->document() != this)
             return;
     }
-    page()->pointerLockController()->requestPointerUnlock();
+    page()->pointerLockController().requestPointerUnlock();
 }
 
 Element* Document::webkitPointerLockElement() const
 {
-    if (!page() || page()->pointerLockController()->lockPending())
+    if (!page() || page()->pointerLockController().lockPending())
         return nullptr;
-    if (Element* element = page()->pointerLockController()->element()) {
-        if (element->document() == this)
+    if (Element* element = page()->pointerLockController().element()) {
+        if (&element->document() == this)
             return element;
     }
     return nullptr;

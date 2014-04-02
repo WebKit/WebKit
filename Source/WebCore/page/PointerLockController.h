@@ -42,8 +42,7 @@ class PointerLockController {
     WTF_MAKE_NONCOPYABLE(PointerLockController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<PointerLockController> create(Page*);
-
+    explicit PointerLockController(Page&);
     void requestPointerLock(Element* target);
     void requestPointerUnlock();
     void elementRemoved(Element*);
@@ -57,11 +56,10 @@ public:
     void dispatchLockedMouseEvent(const PlatformMouseEvent&, const AtomicString& eventType);
 
 private:
-    explicit PointerLockController(Page*);
     void clearElement();
     void enqueueEvent(const AtomicString& type, Element*);
     void enqueueEvent(const AtomicString& type, Document*);
-    Page* m_page;
+    Page& m_page;
     bool m_lockPending;
     RefPtr<Element> m_element;
     RefPtr<Document> m_documentOfRemovedElementWhileWaitingForUnlock;

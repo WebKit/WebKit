@@ -139,7 +139,7 @@ Page::Page(PageClients& pageClients)
     , m_inspectorController(std::make_unique<InspectorController>(*this, pageClients.inspectorClient))
 #endif
 #if ENABLE(POINTER_LOCK)
-    , m_pointerLockController(PointerLockController::create(this))
+    , m_pointerLockController(std::make_unique<PointerLockController>(*this))
 #endif
     , m_settings(Settings::create(this))
     , m_progress(std::make_unique<ProgressTracker>(*pageClients.progressTrackerClient))
