@@ -236,11 +236,19 @@
 
 - (id <WKUIDelegate>)UIDelegate
 {
+    // FIXME: A closed page should still have a UI delegate - it should just never be called.
+    if (_page->isClosed())
+        return nil;
+
     return [static_cast<WebKit::UIClient&>(_page->uiClient()).delegate().leakRef() autorelease];
 }
 
 - (void)setUIDelegate:(id<WKUIDelegate>)UIDelegate
 {
+    // FIXME: A closed page should still have a UI delegate - it should just never be called.
+    if (_page->isClosed())
+        return;
+
     static_cast<WebKit::UIClient&>(_page->uiClient()).setDelegate(UIDelegate);
 }
 
