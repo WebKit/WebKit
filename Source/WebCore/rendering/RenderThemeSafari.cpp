@@ -45,9 +45,14 @@
 #include "RenderView.h"
 #include "SoftLinking.h"
 #include "StyleResolver.h"
+#include "UserAgentStyleSheets.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <wtf/RetainPtr.h>
- 
+
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+#include "UserAgentScripts.h"
+#endif
+
 using std::min;
 
 // FIXME: The platform-independent code in this class should be factored out and merged with RenderThemeMac. 
@@ -1168,40 +1173,24 @@ bool RenderThemeSafari::paintSearchFieldResultsButton(RenderObject* o, const Pai
     paintThemePart(SafariTheme::SearchFieldResultsButtonPart, paintInfo.context->platformContext(), searchRect, controlSizeFromRect(searchRect, searchFieldSizes()), determineState(o));
     return false;
 }
+
 #if ENABLE(VIDEO)
-bool RenderThemeSafari::paintMediaFullscreenButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+String RenderThemeSafari::mediaControlsStyleSheet()
 {
-    return RenderMediaControls::paintMediaControlsPart(MediaEnterFullscreenButton, o, paintInfo, r);
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    return String(mediaControlsAppleUserAgentStyleSheet, sizeof(mediaControlsAppleUserAgentStyleSheet));
+#else
+    return emptyString();
+#endif
 }
 
-bool RenderThemeSafari::paintMediaMuteButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+String RenderThemeSafari::mediaControlsScript()
 {
-    return RenderMediaControls::paintMediaControlsPart(MediaMuteButton, o, paintInfo, r);
-}
-
-bool RenderThemeSafari::paintMediaPlayButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
-{
-    return RenderMediaControls::paintMediaControlsPart(MediaPlayButton, o, paintInfo, r);
-}
-
-bool RenderThemeSafari::paintMediaSeekBackButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
-{
-    return RenderMediaControls::paintMediaControlsPart(MediaSeekBackButton, o, paintInfo, r);
-}
-
-bool RenderThemeSafari::paintMediaSeekForwardButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
-{
-    return RenderMediaControls::paintMediaControlsPart(MediaSeekForwardButton, o, paintInfo, r);
-}
-
-bool RenderThemeSafari::paintMediaSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
-{
-    return RenderMediaControls::paintMediaControlsPart(MediaSlider, o, paintInfo, r);
-}
-
-bool RenderThemeSafari::paintMediaSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
-{
-    return RenderMediaControls::paintMediaControlsPart(MediaSliderThumb, o, paintInfo, r);
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    return String(mediaControlsAppleJavaScript, sizeof(mediaControlsAppleJavaScript));
+#else
+    return emptyString();
+#endif
 }
 #endif
 

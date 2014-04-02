@@ -1,3 +1,25 @@
+2014-03-31  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Correct media controls for test harness
+        https://bugs.webkit.org/show_bug.cgi?id=131008 
+
+        Reviewed by Eric Carlson.
+
+        * rendering/RenderThemeSafari.cpp: Revise to match RenderThemeWin logic.
+        (WebCore::RenderThemeSafari::systemFont):
+        (WebCore::RenderThemeSafari::paintMenuList):
+        (WebCore::RenderThemeSafari::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeSafari::mediaControlsStyleSheet):
+        (WebCore::RenderThemeSafari::mediaControlsScript):
+        (WebCore::RenderThemeSafari::paintMediaFullscreenButton): Deleted.
+        (WebCore::RenderThemeSafari::paintMediaMuteButton): Deleted.
+        (WebCore::RenderThemeSafari::paintMediaPlayButton): Deleted.
+        (WebCore::RenderThemeSafari::paintMediaSeekBackButton): Deleted.
+        (WebCore::RenderThemeSafari::paintMediaSeekForwardButton): Deleted.
+        (WebCore::RenderThemeSafari::paintMediaSliderTrack): Deleted.
+        (WebCore::RenderThemeSafari::paintMediaSliderThumb): Deleted.
+        * rendering/RenderThemeSafari.h:
+
 2014-04-02  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile error.
