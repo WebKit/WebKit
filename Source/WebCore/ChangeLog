@@ -1,3 +1,15 @@
+2014-04-02  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compile error.
+        https://bugs.webkit.org/show_bug.cgi?id=131110
+
+        Reviewed by Simon Fraser.
+
+        Image::size() now returns a FloatSize instead of an IntSize.
+
+        * platform/win/DragImageCairoWin.cpp:
+        (WebCore::createDragImageFromImage):
+
 2014-04-02  David Kilzer  <ddkilzer@apple.com>
 
         Use outermost containing isolate when constructing bidi runs
