@@ -248,6 +248,11 @@ private:
     mutable HashMap<int, RGBA32> m_systemColorCache;
 
     RetainPtr<WebCoreRenderThemeNotificationObserver> m_notificationObserver;
+
+    String m_mediaControlsScript;
+    String m_mediaControlsStyleSheet;
+    bool m_mediaControlsScriptLoaded;
+    bool m_mediaControlsStyleSheetLoaded;
 };
 
 } // namespace WebCore

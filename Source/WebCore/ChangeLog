@@ -1,3 +1,26 @@
+2014-04-01  Dean Jackson  <dino@apple.com>
+
+        Load Media Controls js/css from bundle
+        https://bugs.webkit.org/show_bug.cgi?id=131086
+
+        Reviewed by Eric Carlson.
+
+        Rather than embed encoded versions of the JS and CSS files
+        into C++ source, just load the files directly from the bundle.
+
+        * DerivedSources.make: Removed now unnecessary rules.
+        * WebCore.xcodeproj/project.pbxproj: Copy mediaControls files to the bundle.
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::RenderThemeIOS):
+        (WebCore::RenderThemeIOS::mediaControlsStyleSheet): Load from the bundle.
+        (WebCore::RenderThemeIOS::mediaControlsScript): Ditto.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::RenderThemeMac):
+        (WebCore::RenderThemeMac::mediaControlsStyleSheet):
+        (WebCore::RenderThemeMac::mediaControlsScript):
+
 2014-04-02  Daniel Bates  <dabates@apple.com>
 
         Move focus management API from HTMLDocument to Document

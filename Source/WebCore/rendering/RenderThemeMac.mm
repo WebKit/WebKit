@@ -165,6 +165,12 @@ const double progressAnimationNumFrames = 256;
 }
 @end
 
+@interface WebCoreRenderThemeBundle : NSObject
+@end
+
+@implementation WebCoreRenderThemeBundle
+@end
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -198,6 +204,8 @@ RenderThemeMac::RenderThemeMac()
     : m_isSliderThumbHorizontalPressed(false)
     , m_isSliderThumbVerticalPressed(false)
     , m_notificationObserver(adoptNS([[WebCoreRenderThemeNotificationObserver alloc] initWithTheme:this]))
+    , m_mediaControlsScriptLoaded(false)
+    , m_mediaControlsStyleSheetLoaded(false)
 {
     [[NSNotificationCenter defaultCenter] addObserver:m_notificationObserver.get()
                                                         selector:@selector(systemColorsDidChange:)
@@ -220,7 +228,11 @@ NSView* RenderThemeMac::documentViewFor(RenderObject* o) const
 String RenderThemeMac::mediaControlsStyleSheet()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    return String(mediaControlsAppleUserAgentStyleSheet, sizeof(mediaControlsAppleUserAgentStyleSheet));
+    if (!m_mediaControlsStyleSheetLoaded) {
+        m_mediaControlsStyleSheet = [NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"mediaControlsApple" ofType:@"css"] encoding:NSUTF8StringEncoding error:nil];
+        m_mediaControlsStyleSheetLoaded = true;
+    }
+    return m_mediaControlsStyleSheet;
 #else
     return emptyString();
 #endif
@@ -229,7 +241,11 @@ String RenderThemeMac::mediaControlsStyleSheet()
 String RenderThemeMac::mediaControlsScript()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    return String(mediaControlsAppleJavaScript, sizeof(mediaControlsAppleJavaScript));
+    if (!m_mediaControlsScriptLoaded) {
+        m_mediaControlsScript = [NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"mediaControlsApple" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil];
+        m_mediaControlsScriptLoaded = true;
+    }
+    return m_mediaControlsScript;
 #else
     return emptyString();
 #endif

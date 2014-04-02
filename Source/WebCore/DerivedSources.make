@@ -882,13 +882,6 @@ ifeq ($(findstring ENABLE_FULLSCREEN_API,$(FEATURE_DEFINES)), ENABLE_FULLSCREEN_
     USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/css/fullscreen.css
 endif
 
-ifeq ($(findstring ENABLE_MEDIA_CONTROLS_SCRIPT,$(FEATURE_DEFINES)), ENABLE_MEDIA_CONTROLS_SCRIPT)
-	USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/Modules/mediacontrols/mediaControlsApple.css
-ifeq ($(WTF_PLATFORM_IOS), 1)
-    USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/Modules/mediacontrols/mediaControlsiOS.css
-endif
-endif
-
 ifeq ($(findstring ENABLE_IMAGE_CONTROLS,$(FEATURE_DEFINES)), ENABLE_IMAGE_CONTROLS)
 	USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/html/shadow/mac/imageControlsMac.css
 endif
@@ -905,13 +898,6 @@ UserAgentStyleSheets.h : css/make-css-file-arrays.pl bindings/scripts/preprocess
 # user agent scripts
 
 USER_AGENT_SCRIPTS = 
-
-ifeq ($(findstring ENABLE_MEDIA_CONTROLS_SCRIPT,$(FEATURE_DEFINES)), ENABLE_MEDIA_CONTROLS_SCRIPT)
-	USER_AGENT_SCRIPTS := $(USER_AGENT_SCRIPTS) $(WebCore)/Modules/mediacontrols/mediaControlsApple.js
-ifeq ($(WTF_PLATFORM_IOS), 1)
-	USER_AGENT_SCRIPTS := $(USER_AGENT_SCRIPTS) $(WebCore)/Modules/mediacontrols/mediaControlsiOS.js
-endif
-endif
 
 ifeq ($(OS),MACOS)
 	USER_AGENT_SCRIPTS := $(USER_AGENT_SCRIPTS) $(WebCore)/Modules/plugins/QuickTimePluginReplacement.js

@@ -1152,6 +1152,10 @@
 		31078CC81880AABB008099DC /* OESTextureHalfFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 31078CC31880A6A6008099DC /* OESTextureHalfFloatLinear.h */; };
 		31078CC91880AAC9008099DC /* JSOESTextureHalfFloatLinear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31078CC51880AAAA008099DC /* JSOESTextureHalfFloatLinear.cpp */; };
 		31078CCA1880AACE008099DC /* JSOESTextureHalfFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 31078CC61880AAAA008099DC /* JSOESTextureHalfFloatLinear.h */; };
+		311C08BD18EB7CAF00B65615 /* mediaControlsApple.css in Resources */ = {isa = PBXBuildFile; fileRef = CDC1DD4117CC2C48008CB55D /* mediaControlsApple.css */; };
+		311C08BE18EB7CAF00B65615 /* mediaControlsApple.js in Resources */ = {isa = PBXBuildFile; fileRef = CDE6560E17CA6E7600526BA7 /* mediaControlsApple.js */; };
+		311C08BF18EB7CAF00B65615 /* mediaControlsiOS.css in Resources */ = {isa = PBXBuildFile; fileRef = CDAAF45D1869094E003C1717 /* mediaControlsiOS.css */; };
+		311C08C018EB7CAF00B65615 /* mediaControlsiOS.js in Resources */ = {isa = PBXBuildFile; fileRef = CD32A189184EB46A0029B1BB /* mediaControlsiOS.js */; };
 		31288E720E3005D6003619AE /* WebKitCSSKeyframeRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31288E6E0E3005D6003619AE /* WebKitCSSKeyframeRule.cpp */; };
 		31288E730E3005D6003619AE /* WebKitCSSKeyframeRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 31288E6F0E3005D6003619AE /* WebKitCSSKeyframeRule.h */; };
 		31288E740E3005D6003619AE /* WebKitCSSKeyframesRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31288E700E3005D6003619AE /* WebKitCSSKeyframesRule.cpp */; };
@@ -26425,6 +26429,10 @@
 				2D9F0E1314FF1CBF00BA0FF7 /* linearSRGB.icc in Resources */,
 				85136C9C0AED665900F90A3D /* linkCursor.png in Resources */,
 				BCAD180A131C7A0D00990406 /* Localizable.strings in Resources */,
+				311C08BD18EB7CAF00B65615 /* mediaControlsApple.css in Resources */,
+				311C08BE18EB7CAF00B65615 /* mediaControlsApple.js in Resources */,
+				311C08BF18EB7CAF00B65615 /* mediaControlsiOS.css in Resources */,
+				311C08C018EB7CAF00B65615 /* mediaControlsiOS.js in Resources */,
 				93153BE214195A5700FCF5BE /* missingImage.png in Resources */,
 				93153BDA14181F7A00FCF5BE /* missingImage@2x.png in Resources */,
 				85136C9D0AED665900F90A3D /* moveCursor.png in Resources */,
