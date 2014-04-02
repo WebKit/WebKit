@@ -192,6 +192,16 @@ inline LayoutSize roundedLayoutSize(const FloatSize& s)
 #endif
 }
 
+inline FloatSize flooredForPainting(const LayoutSize& size, float pixelSnappingFactor)
+{
+#if ENABLE(SUBPIXEL_LAYOUT)
+    return FloatSize(floorToDevicePixel(size.width(), pixelSnappingFactor), floorToDevicePixel(size.height(), pixelSnappingFactor));
+#else
+    UNUSED_PARAM(pixelSnappingFactor);
+    return FloatSize(point);
+#endif
+}
+
 } // namespace WebCore
 
 #endif // LayoutSize_h

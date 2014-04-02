@@ -45,21 +45,21 @@ private:
 
     virtual PassRefPtr<CSSValue> cssValue() const override;
 
-    virtual LayoutSize imageSize(const RenderElement*, float multiplier) const override;
+    virtual FloatSize imageSize(const RenderElement*, float multiplier) const override;
     virtual bool imageHasRelativeWidth() const override { return !m_fixedSize; }
     virtual bool imageHasRelativeHeight() const override { return !m_fixedSize; }
     virtual void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override;
     virtual bool usesImageContainerSize() const override { return !m_fixedSize; }
-    virtual void setContainerSizeForRenderer(const RenderElement*, const IntSize& containerSize, float) override { m_containerSize = containerSize; }
+    virtual void setContainerSizeForRenderer(const RenderElement*, const FloatSize& containerSize, float) override { m_containerSize = containerSize; }
     virtual void addClient(RenderElement*) override;
     virtual void removeClient(RenderElement*) override;
-    virtual PassRefPtr<Image> image(RenderElement*, const IntSize&) const override;
+    virtual PassRefPtr<Image> image(RenderElement*, const FloatSize&) const override;
     virtual bool knownToBeOpaque(const RenderElement*) const override;
 
     StyleGeneratedImage(PassRef<CSSImageGeneratorValue>);
     
     Ref<CSSImageGeneratorValue> m_imageGeneratorValue;
-    IntSize m_containerSize;
+    FloatSize m_containerSize;
     bool m_fixedSize;
 };
 

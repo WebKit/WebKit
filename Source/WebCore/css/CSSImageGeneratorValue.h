@@ -27,7 +27,8 @@
 #define CSSImageGeneratorValue_h
 
 #include "CSSValue.h"
-#include "IntSizeHash.h"
+#include "FloatSize.h"
+#include "FloatSizeHash.h"
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
 
@@ -47,10 +48,10 @@ public:
     void addClient(RenderElement*);
     void removeClient(RenderElement*);
 
-    PassRefPtr<Image> image(RenderElement*, const IntSize&);
+    PassRefPtr<Image> image(RenderElement*, const FloatSize&);
 
     bool isFixedSize() const;
-    IntSize fixedSize(const RenderElement*);
+    FloatSize fixedSize(const RenderElement*);
 
     bool isPending() const;
     bool knownToBeOpaque(const RenderElement*) const;
@@ -60,8 +61,8 @@ public:
 protected:
     CSSImageGeneratorValue(ClassType);
 
-    GeneratedImage* cachedImageForSize(IntSize);
-    void saveCachedImageForSize(IntSize, PassRefPtr<GeneratedImage>);
+    GeneratedImage* cachedImageForSize(FloatSize);
+    void saveCachedImageForSize(FloatSize, PassRefPtr<GeneratedImage>);
     const HashCountedSet<RenderElement*>& clients() const { return m_clients; }
 
     // Helper functions for Crossfade and Filter.
@@ -71,7 +72,7 @@ protected:
 private:
     class CachedGeneratedImage {
     public:
-        CachedGeneratedImage(CSSImageGeneratorValue&, IntSize, PassRefPtr<GeneratedImage>);
+        CachedGeneratedImage(CSSImageGeneratorValue&, FloatSize, PassRefPtr<GeneratedImage>);
         GeneratedImage* image() { return m_image.get(); }
         void puntEvictionTimer() { m_evictionTimer.restart(); }
 
@@ -79,16 +80,16 @@ private:
         void evictionTimerFired(DeferrableOneShotTimer<CachedGeneratedImage>&);
 
         CSSImageGeneratorValue& m_owner;
-        IntSize m_size;
+        FloatSize m_size;
         RefPtr<GeneratedImage> m_image;
         DeferrableOneShotTimer<CachedGeneratedImage> m_evictionTimer;
     };
 
     friend class CachedGeneratedImage;
-    void evictCachedGeneratedImage(IntSize);
+    void evictCachedGeneratedImage(FloatSize);
 
     HashCountedSet<RenderElement*> m_clients;
-    HashMap<IntSize, std::unique_ptr<CachedGeneratedImage>> m_images;
+    HashMap<FloatSize, std::unique_ptr<CachedGeneratedImage>> m_images;
 };
 
 CSS_VALUE_TYPE_CASTS(CSSImageGeneratorValue, isImageGeneratorValue())

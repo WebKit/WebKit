@@ -19343,6 +19343,7 @@
     <ClInclude Include="..\platform\graphics\FloatRect.h" />
     <ClInclude Include="..\platform\graphics\FloatRoundedRect.h" />
     <ClInclude Include="..\platform\graphics\FloatSize.h" />
+    <ClInclude Include="..\platform\graphics\FloatSizeHash.h" />
     <ClInclude Include="..\platform\graphics\Font.h" />
     <ClInclude Include="..\platform\graphics\FontCache.h" />
     <ClInclude Include="..\platform\graphics\FontData.h" />

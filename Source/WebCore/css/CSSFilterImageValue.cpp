@@ -59,15 +59,15 @@ String CSSFilterImageValue::customCSSText() const
     return result.toString();
 }
 
-IntSize CSSFilterImageValue::fixedSize(const RenderElement* renderer)
+FloatSize CSSFilterImageValue::fixedSize(const RenderElement* renderer)
 {
     CachedResourceLoader* cachedResourceLoader = renderer->document().cachedResourceLoader();
     CachedImage* cachedImage = cachedImageForCSSValue(m_imageValue.get(), cachedResourceLoader);
 
     if (!cachedImage)
-        return IntSize();
+        return FloatSize();
 
-    return IntSize(cachedImage->imageForRenderer(renderer)->size());
+    return cachedImage->imageForRenderer(renderer)->size();
 }
 
 bool CSSFilterImageValue::isPending() const
@@ -96,7 +96,7 @@ void CSSFilterImageValue::loadSubimages(CachedResourceLoader* cachedResourceLoad
     m_filterSubimageObserver.setReady(true);
 }
 
-PassRefPtr<Image> CSSFilterImageValue::image(RenderElement* renderer, const IntSize& size)
+PassRefPtr<Image> CSSFilterImageValue::image(RenderElement* renderer, const FloatSize& size)
 {
     if (size.isEmpty())
         return 0;

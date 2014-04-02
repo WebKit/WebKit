@@ -31,6 +31,7 @@ namespace WebCore {
 class CachedImage;
 class CachedImageClient;
 class ImageBuffer;
+class LayoutSize;
 class SVGImage;
 class SVGImageForContainer;
 class RenderObject;
@@ -43,7 +44,7 @@ public:
 
     void removeClientFromCache(const CachedImageClient*);
 
-    void setContainerSizeForRenderer(const CachedImageClient*, const IntSize&, float);
+    void setContainerSizeForRenderer(const CachedImageClient*, const LayoutSize&, float);
     FloatSize imageSizeForRenderer(const RenderObject*) const;
 
     Image* imageForRenderer(const RenderObject*);

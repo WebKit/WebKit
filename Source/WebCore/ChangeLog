@@ -1,3 +1,82 @@
+2014-04-02  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Transition class CSSImageGeneratorValue/class StyleImage (and its dependencies) from 
+        IntSize to FloatSize to enable subpixel sized (generated)images.
+        https://bugs.webkit.org/show_bug.cgi?id=130659
+
+        Reviewed by Simon Fraser and Andreas Kling.
+
+        This is in preparation to support subpixel positioned/sized background images. Generated images
+        needs to be able to sized on device pixels.
+
+        No change in behavior.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSCanvasValue.cpp:
+        (WebCore::CSSCanvasValue::fixedSize):
+        (WebCore::CSSCanvasValue::image):
+        * css/CSSCanvasValue.h:
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::fixedSize):
+        (WebCore::CSSCrossfadeValue::image):
+        * css/CSSCrossfadeValue.h:
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::fixedSize):
+        (WebCore::CSSFilterImageValue::image):
+        * css/CSSFilterImageValue.h:
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::image):
+        (WebCore::positionFromValue):
+        (WebCore::CSSGradientValue::computeEndPoint):
+        (WebCore::endPointsFromAngle):
+        (WebCore::CSSLinearGradientValue::createGradient):
+        (WebCore::CSSRadialGradientValue::createGradient):
+        * css/CSSGradientValue.h:
+        (WebCore::CSSGradientValue::fixedSize):
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::cachedImageForSize):
+        (WebCore::CSSImageGeneratorValue::saveCachedImageForSize):
+        (WebCore::CSSImageGeneratorValue::evictCachedGeneratedImage):
+        (WebCore::CSSImageGeneratorValue::CachedGeneratedImage::CachedGeneratedImage):
+        (WebCore::CSSImageGeneratorValue::image):
+        (WebCore::CSSImageGeneratorValue::fixedSize):
+        * css/CSSImageGeneratorValue.h:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::setContainerSizeForRenderer):
+        * loader/cache/CachedImage.h:
+        * platform/graphics/FloatSizeHash.h: Added.
+        (WTF::FloatHash<WebCore::FloatSize>::hash):
+        (WTF::FloatHash<WebCore::FloatSize>::equal):
+        (WTF::HashTraits<WebCore::FloatSize>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::FloatSize>::isDeletedValue):
+        * platform/graphics/LayoutSize.h:
+        (WebCore::flooredForPainting):
+        * rendering/RenderImageResourceStyleImage.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::computePreferredLogicalWidths):
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::imageSize):
+        (WebCore::StyleCachedImage::setContainerSizeForRenderer):
+        (WebCore::StyleCachedImage::image):
+        * rendering/style/StyleCachedImage.h:
+        * rendering/style/StyleCachedImageSet.cpp:
+        (WebCore::StyleCachedImageSet::imageSize):
+        (WebCore::StyleCachedImageSet::setContainerSizeForRenderer):
+        (WebCore::StyleCachedImageSet::image):
+        * rendering/style/StyleCachedImageSet.h:
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::imageSize):
+        (WebCore::StyleGeneratedImage::computeIntrinsicDimensions):
+        (WebCore::StyleGeneratedImage::image):
+        * rendering/style/StyleGeneratedImage.h:
+        * rendering/style/StyleImage.h:
+        * rendering/style/StylePendingImage.h:
+        * svg/graphics/SVGImageCache.cpp:
+        (WebCore::SVGImageCache::setContainerSizeForRenderer):
+        * svg/graphics/SVGImageCache.h:
+
 2014-04-02  Gergo Balogh  <gbalogh.u-szeged@partner.samsung.com>
 
         Warning fix for RenderLayer.

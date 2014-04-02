@@ -61,7 +61,7 @@ struct CSSGradientColorStop {
 
 class CSSGradientValue : public CSSImageGeneratorValue {
 public:
-    PassRefPtr<Image> image(RenderElement*, const IntSize&);
+    PassRefPtr<Image> image(RenderElement*, const FloatSize&);
 
     void setFirstX(PassRefPtr<CSSPrimitiveValue> val) { m_firstX = val; }
     void setFirstY(PassRefPtr<CSSPrimitiveValue> val) { m_firstY = val; }
@@ -79,7 +79,7 @@ public:
     CSSGradientType gradientType() const { return m_gradientType; }
 
     bool isFixedSize() const { return false; }
-    IntSize fixedSize(const RenderElement*) const { return IntSize(); }
+    FloatSize fixedSize(const RenderElement*) const { return FloatSize(); }
 
     bool isPending() const { return false; }
     bool knownToBeOpaque(const RenderElement*) const;
@@ -112,7 +112,7 @@ protected:
     void addStops(Gradient*, RenderElement*, const RenderStyle& rootStyle, float maxLengthForRepeat = 0);
 
     // Resolve points/radii to front end values.
-    FloatPoint computeEndPoint(CSSPrimitiveValue*, CSSPrimitiveValue*, const RenderStyle&, const RenderStyle& rootStyle, const IntSize&);
+    FloatPoint computeEndPoint(CSSPrimitiveValue*, CSSPrimitiveValue*, const RenderStyle&, const RenderStyle& rootStyle, const FloatSize&);
 
     bool isCacheable() const;
 
@@ -145,7 +145,7 @@ public:
     String customCSSText() const;
 
     // Create the gradient for a given size.
-    PassRefPtr<Gradient> createGradient(RenderElement*, const IntSize&);
+    PassRefPtr<Gradient> createGradient(RenderElement*, const FloatSize&);
 
     PassRef<CSSLinearGradientValue> clone() const
     {
@@ -195,7 +195,7 @@ public:
     void setEndVerticalSize(PassRefPtr<CSSPrimitiveValue> val) { m_endVerticalSize = val; }
 
     // Create the gradient for a given size.
-    PassRefPtr<Gradient> createGradient(RenderElement*, const IntSize&);
+    PassRefPtr<Gradient> createGradient(RenderElement*, const FloatSize&);
 
     bool equals(const CSSRadialGradientValue&) const;
 

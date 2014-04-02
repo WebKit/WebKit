@@ -60,16 +60,16 @@ private:
 
     virtual PassRefPtr<CSSValue> cssValue() const override { return m_value; }
     
-    virtual LayoutSize imageSize(const RenderElement*, float /*multiplier*/) const override { return LayoutSize(); }
+    virtual FloatSize imageSize(const RenderElement*, float /*multiplier*/) const override { return FloatSize(); }
     virtual bool imageHasRelativeWidth() const override { return false; }
     virtual bool imageHasRelativeHeight() const override { return false; }
     virtual void computeIntrinsicDimensions(const RenderElement*, Length& /* intrinsicWidth */ , Length& /* intrinsicHeight */, FloatSize& /* intrinsicRatio */) { }
     virtual bool usesImageContainerSize() const override { return false; }
-    virtual void setContainerSizeForRenderer(const RenderElement*, const IntSize&, float) override { }
+    virtual void setContainerSizeForRenderer(const RenderElement*, const FloatSize&, float) override { }
     virtual void addClient(RenderElement*) override { }
     virtual void removeClient(RenderElement*) override { }
 
-    virtual PassRefPtr<Image> image(RenderElement*, const IntSize&) const override
+    virtual PassRefPtr<Image> image(RenderElement*, const FloatSize&) const override
     {
         ASSERT_NOT_REACHED();
         return nullptr;

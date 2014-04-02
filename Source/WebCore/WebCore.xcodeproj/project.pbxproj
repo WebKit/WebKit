@@ -2001,6 +2001,7 @@
 		57CF497514EE36D700ECFF14 /* InsertionPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 57CF497314EE36D700ECFF14 /* InsertionPoint.h */; };
 		589556ED18D4A44000764B03 /* BorderEdge.h in Headers */ = {isa = PBXBuildFile; fileRef = 589556EC18D4A44000764B03 /* BorderEdge.h */; };
 		58AEE2F418D4BCCF0022E7FE /* BorderEdge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 58AEE2F318D4BCCF0022E7FE /* BorderEdge.cpp */; };
+		58CD35CB18EB4C3900B9F3AC /* FloatSizeHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 58CD35CA18EB4C3900B9F3AC /* FloatSizeHash.h */; };
 		5905ADBF1302F3CE00F116DF /* XMLTreeViewer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5905ADBD1302F3CE00F116DF /* XMLTreeViewer.cpp */; };
 		5905ADC01302F3CE00F116DF /* XMLTreeViewer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */; };
 		590E1B4911E4EF4B0069F784 /* DeviceOrientationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 590E1B4811E4EF4B0069F784 /* DeviceOrientationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8996,6 +8997,7 @@
 		57CF497314EE36D700ECFF14 /* InsertionPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsertionPoint.h; sourceTree = "<group>"; };
 		589556EC18D4A44000764B03 /* BorderEdge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BorderEdge.h; sourceTree = "<group>"; };
 		58AEE2F318D4BCCF0022E7FE /* BorderEdge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BorderEdge.cpp; sourceTree = "<group>"; };
+		58CD35CA18EB4C3900B9F3AC /* FloatSizeHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatSizeHash.h; sourceTree = "<group>"; };
 		5905ADBD1302F3CE00F116DF /* XMLTreeViewer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTreeViewer.cpp; sourceTree = "<group>"; };
 		5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLTreeViewer.h; sourceTree = "<group>"; };
 		590E1B4811E4EF4B0069F784 /* DeviceOrientationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientationData.h; sourceTree = "<group>"; };
@@ -20034,6 +20036,7 @@
 				6E0E569A183BFFE600E0E8D5 /* FloatRoundedRect.h */,
 				B275353E0B053814002CE64F /* FloatSize.cpp */,
 				B275353F0B053814002CE64F /* FloatSize.h */,
+				58CD35CA18EB4C3900B9F3AC /* FloatSizeHash.h */,
 				B2C3DA4F0D006CD600EF6F26 /* Font.cpp */,
 				B2C3DA500D006CD600EF6F26 /* Font.h */,
 				BCB92D4E1293550B00C8387F /* FontBaseline.h */,
@@ -25174,6 +25177,7 @@
 				FD45A958175D414C00C21EC8 /* RectangleShape.h in Headers */,
 				A72EA3BB1585CF55004FAA26 /* RefCountedSupplement.h in Headers */,
 				9831AE4A154225C900FE2644 /* ReferrerPolicy.h in Headers */,
+				58CD35CB18EB4C3900B9F3AC /* FloatSizeHash.h in Headers */,
 				BCAB418213E356E800D8AAF3 /* Region.h in Headers */,
 				6CDDE8D01770BB220016E072 /* RegionOversetState.h in Headers */,
 				26B9998F1803AE7200D01121 /* RegisterAllocator.h in Headers */,

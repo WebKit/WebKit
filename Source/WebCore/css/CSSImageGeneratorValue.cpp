@@ -65,7 +65,7 @@ void CSSImageGeneratorValue::removeClient(RenderElement* renderer)
         deref();
 }
 
-GeneratedImage* CSSImageGeneratorValue::cachedImageForSize(IntSize size)
+GeneratedImage* CSSImageGeneratorValue::cachedImageForSize(FloatSize size)
 {
     if (size.isEmpty())
         return nullptr;
@@ -78,19 +78,19 @@ GeneratedImage* CSSImageGeneratorValue::cachedImageForSize(IntSize size)
     return cachedGeneratedImage->image();
 }
 
-void CSSImageGeneratorValue::saveCachedImageForSize(IntSize size, PassRefPtr<GeneratedImage> image)
+void CSSImageGeneratorValue::saveCachedImageForSize(FloatSize size, PassRefPtr<GeneratedImage> image)
 {
     ASSERT(!m_images.contains(size));
     m_images.add(size, std::make_unique<CachedGeneratedImage>(*this, size, image));
 }
 
-void CSSImageGeneratorValue::evictCachedGeneratedImage(IntSize size)
+void CSSImageGeneratorValue::evictCachedGeneratedImage(FloatSize size)
 {
     ASSERT(m_images.contains(size));
     m_images.remove(size);
 }
 
-CSSImageGeneratorValue::CachedGeneratedImage::CachedGeneratedImage(CSSImageGeneratorValue& owner, IntSize size, PassRefPtr<GeneratedImage> image)
+CSSImageGeneratorValue::CachedGeneratedImage::CachedGeneratedImage(CSSImageGeneratorValue& owner, FloatSize size, PassRefPtr<GeneratedImage> image)
     : m_owner(owner)
     , m_size(size)
     , m_image(image)
@@ -105,7 +105,7 @@ void CSSImageGeneratorValue::CachedGeneratedImage::evictionTimerFired(Deferrable
     m_owner.evictCachedGeneratedImage(m_size);
 }
 
-PassRefPtr<Image> CSSImageGeneratorValue::image(RenderElement* renderer, const IntSize& size)
+PassRefPtr<Image> CSSImageGeneratorValue::image(RenderElement* renderer, const FloatSize& size)
 {
     switch (classType()) {
     case CanvasClass:
@@ -147,7 +147,7 @@ bool CSSImageGeneratorValue::isFixedSize() const
     return false;
 }
 
-IntSize CSSImageGeneratorValue::fixedSize(const RenderElement* renderer)
+FloatSize CSSImageGeneratorValue::fixedSize(const RenderElement* renderer)
 {
     switch (classType()) {
     case CanvasClass:
@@ -165,7 +165,7 @@ IntSize CSSImageGeneratorValue::fixedSize(const RenderElement* renderer)
     default:
         ASSERT_NOT_REACHED();
     }
-    return IntSize();
+    return FloatSize();
 }
 
 bool CSSImageGeneratorValue::isPending() const

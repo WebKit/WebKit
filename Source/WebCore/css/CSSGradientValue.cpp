@@ -28,11 +28,11 @@
 
 #include "CSSCalculationValue.h"
 #include "CSSValueKeywords.h"
+#include "FloatSize.h"
+#include "FloatSizeHash.h"
 #include "Gradient.h"
 #include "GradientImage.h"
 #include "Image.h"
-#include "IntSize.h"
-#include "IntSizeHash.h"
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"
 #include "StyleResolver.h"
@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-PassRefPtr<Image> CSSGradientValue::image(RenderElement* renderer, const IntSize& size)
+PassRefPtr<Image> CSSGradientValue::image(RenderElement* renderer, const FloatSize& size)
 {
     if (size.isEmpty())
         return 0;
@@ -390,7 +390,7 @@ void CSSGradientValue::addStops(Gradient* gradient, RenderElement* renderer, con
     gradient->setStopsSorted(true);
 }
 
-static float positionFromValue(CSSPrimitiveValue* value, const RenderStyle& style, const RenderStyle& rootStyle, const IntSize& size, bool isHorizontal)
+static float positionFromValue(CSSPrimitiveValue* value, const RenderStyle& style, const RenderStyle& rootStyle, const FloatSize& size, bool isHorizontal)
 {
     float zoomFactor = style.effectiveZoom();
 
@@ -424,7 +424,7 @@ static float positionFromValue(CSSPrimitiveValue* value, const RenderStyle& styl
     return value->computeLength<float>(&style, &rootStyle, zoomFactor);
 }
 
-FloatPoint CSSGradientValue::computeEndPoint(CSSPrimitiveValue* horizontal, CSSPrimitiveValue* vertical, const RenderStyle& style, const RenderStyle& rootStyle, const IntSize& size)
+FloatPoint CSSGradientValue::computeEndPoint(CSSPrimitiveValue* horizontal, CSSPrimitiveValue* vertical, const RenderStyle& style, const RenderStyle& rootStyle, const FloatSize& size)
 {
     FloatPoint result;
 
@@ -572,7 +572,7 @@ String CSSLinearGradientValue::customCSSText() const
 }
 
 // Compute the endpoints so that a gradient of the given angle covers a box of the given size.
-static void endPointsFromAngle(float angleDeg, const IntSize& size, FloatPoint& firstPoint, FloatPoint& secondPoint, CSSGradientType type)
+static void endPointsFromAngle(float angleDeg, const FloatSize& size, FloatPoint& firstPoint, FloatPoint& secondPoint, CSSGradientType type)
 {
     // Prefixed gradients use "polar coordinate" angles, rather than "bearing" angles.
     if (type == CSSPrefixedLinearGradient)
@@ -639,7 +639,7 @@ static void endPointsFromAngle(float angleDeg, const IntSize& size, FloatPoint& 
     firstPoint.set(halfWidth - endX, halfHeight + endY);
 }
 
-PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderElement* renderer, const IntSize& size)
+PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderElement* renderer, const FloatSize& size)
 {
     ASSERT(!size.isEmpty());
 
@@ -979,7 +979,7 @@ static inline float horizontalEllipseRadius(const FloatSize& p, float aspectRati
 }
 
 // FIXME: share code with the linear version
-PassRefPtr<Gradient> CSSRadialGradientValue::createGradient(RenderElement* renderer, const IntSize& size)
+PassRefPtr<Gradient> CSSRadialGradientValue::createGradient(RenderElement* renderer, const FloatSize& size)
 {
     ASSERT(!size.isEmpty());
 

@@ -69,9 +69,9 @@ bool StyleCachedImageSet::errorOccurred() const
     return m_bestFitImage->errorOccurred();
 }
 
-LayoutSize StyleCachedImageSet::imageSize(const RenderElement* renderer, float multiplier) const
+FloatSize StyleCachedImageSet::imageSize(const RenderElement* renderer, float multiplier) const
 {
-    LayoutSize scaledImageSize = m_bestFitImage->imageSizeForRenderer(renderer, multiplier);
+    FloatSize scaledImageSize = m_bestFitImage->imageSizeForRenderer(renderer, multiplier);
     scaledImageSize.scale(1 / m_imageScaleFactor);
     return scaledImageSize;
 }
@@ -96,9 +96,9 @@ bool StyleCachedImageSet::usesImageContainerSize() const
     return m_bestFitImage->usesImageContainerSize();
 }
 
-void StyleCachedImageSet::setContainerSizeForRenderer(const RenderElement* renderer, const IntSize& imageContainerSize, float imageContainerZoomFactor)
+void StyleCachedImageSet::setContainerSizeForRenderer(const RenderElement* renderer, const FloatSize& imageContainerSize, float imageContainerZoomFactor)
 {
-    m_bestFitImage->setContainerSizeForRenderer(renderer, imageContainerSize, imageContainerZoomFactor);
+    m_bestFitImage->setContainerSizeForRenderer(renderer, LayoutSize(imageContainerSize), imageContainerZoomFactor);
 }
 
 void StyleCachedImageSet::addClient(RenderElement* renderer)
@@ -111,7 +111,7 @@ void StyleCachedImageSet::removeClient(RenderElement* renderer)
     m_bestFitImage->removeClient(renderer);
 }
 
-PassRefPtr<Image> StyleCachedImageSet::image(RenderElement* renderer, const IntSize&) const
+PassRefPtr<Image> StyleCachedImageSet::image(RenderElement* renderer, const FloatSize&) const
 {
     return m_bestFitImage->imageForRenderer(renderer);
 }

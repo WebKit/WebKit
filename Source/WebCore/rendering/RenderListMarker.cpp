@@ -1521,7 +1521,7 @@ void RenderListMarker::computePreferredLogicalWidths()
     updateContent();
 
     if (isImage()) {
-        LayoutSize imageSize = m_image->imageSize(this, style().effectiveZoom());
+        LayoutSize imageSize = LayoutSize(m_image->imageSize(this, style().effectiveZoom()));
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = style().isHorizontalWritingMode() ? imageSize.width() : imageSize.height();
         setPreferredLogicalWidthsDirty(false);
         updateMargins();

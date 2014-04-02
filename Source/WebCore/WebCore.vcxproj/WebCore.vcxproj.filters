@@ -12773,6 +12773,9 @@
     <ClInclude Include="..\platform\graphics\FloatSize.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\platform\graphics\FloatSizeHash.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
     <ClInclude Include="..\platform\graphics\Font.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>

@@ -78,7 +78,7 @@ String CSSCrossfadeValue::customCSSText() const
     return result.toString();
 }
 
-IntSize CSSCrossfadeValue::fixedSize(const RenderElement* renderer)
+FloatSize CSSCrossfadeValue::fixedSize(const RenderElement* renderer)
 {
     float percentage = m_percentageValue->getFloatValue();
     float inversePercentage = 1 - percentage;
@@ -88,7 +88,7 @@ IntSize CSSCrossfadeValue::fixedSize(const RenderElement* renderer)
     CachedImage* cachedToImage = cachedImageForCSSValue(m_toValue.get(), cachedResourceLoader);
 
     if (!cachedFromImage || !cachedToImage)
-        return IntSize();
+        return FloatSize();
 
     FloatSize fromImageSize = cachedFromImage->imageForRenderer(renderer)->size();
     FloatSize toImageSize = cachedToImage->imageForRenderer(renderer)->size();
@@ -96,9 +96,9 @@ IntSize CSSCrossfadeValue::fixedSize(const RenderElement* renderer)
     // Rounding issues can cause transitions between images of equal size to return
     // a different fixed size; avoid performing the interpolation if the images are the same size.
     if (fromImageSize == toImageSize)
-        return IntSize(fromImageSize);
+        return fromImageSize;
 
-    return IntSize(fromImageSize.width() * inversePercentage + toImageSize.width() * percentage,
+    return FloatSize(fromImageSize.width() * inversePercentage + toImageSize.width() * percentage,
         fromImageSize.height() * inversePercentage + toImageSize.height() * percentage);
 }
 
@@ -138,7 +138,7 @@ void CSSCrossfadeValue::loadSubimages(CachedResourceLoader* cachedResourceLoader
     m_crossfadeSubimageObserver.setReady(true);
 }
 
-PassRefPtr<Image> CSSCrossfadeValue::image(RenderElement* renderer, const IntSize& size)
+PassRefPtr<Image> CSSCrossfadeValue::image(RenderElement* renderer, const FloatSize& size)
 {
     if (size.isEmpty())
         return 0;

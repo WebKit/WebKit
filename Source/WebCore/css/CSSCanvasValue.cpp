@@ -66,11 +66,11 @@ void CSSCanvasValue::canvasDestroyed(HTMLCanvasElement& element)
     m_element = nullptr;
 }
 
-IntSize CSSCanvasValue::fixedSize(const RenderElement* renderer)
+FloatSize CSSCanvasValue::fixedSize(const RenderElement* renderer)
 {
     if (HTMLCanvasElement* elt = element(renderer->document()))
-        return IntSize(elt->width(), elt->height());
-    return IntSize();
+        return FloatSize(elt->width(), elt->height());
+    return FloatSize();
 }
 
 HTMLCanvasElement* CSSCanvasValue::element(Document& document)
@@ -84,7 +84,7 @@ HTMLCanvasElement* CSSCanvasValue::element(Document& document)
     return m_element;
 }
 
-PassRefPtr<Image> CSSCanvasValue::image(RenderElement* renderer, const IntSize& /*size*/)
+PassRefPtr<Image> CSSCanvasValue::image(RenderElement* renderer, const FloatSize& /*size*/)
 {
     ASSERT(clients().contains(renderer));
     HTMLCanvasElement* element = this->element(renderer->document());
