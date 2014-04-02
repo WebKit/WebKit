@@ -1,3 +1,17 @@
+2014-04-02  Tim Horton  <timothy_horton@apple.com>
+
+        RemoteLayerBackingStore doesn't need to clear opaque layers
+        https://bugs.webkit.org/show_bug.cgi?id=131134
+
+        Reviewed by Simon Fraser.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::display):
+        We don't need to clear opaque layers, because we'll paint
+        over the whole area. In addition, we should fill opaque layers
+        with a bright color in debug builds to make it very clear
+        that we've made a mistake (similar to what FrameView does).
+
 2014-04-02  Anders Carlsson  <andersca@apple.com>
 
         Document WKBackForwardList, WKBackForwardListItem and WKWebViewConfiguration

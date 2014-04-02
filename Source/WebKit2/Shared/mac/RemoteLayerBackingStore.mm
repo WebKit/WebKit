@@ -179,6 +179,7 @@ bool RemoteLayerBackingStore::display()
     FloatSize scaledSize = m_size;
     scaledSize.scale(m_scale);
     IntSize expandedScaledSize = expandedIntSize(scaledSize);
+    IntRect expandedScaledLayerBounds(IntPoint(), expandedScaledSize);
 
     bool willPaintEntireBackingStore = m_dirtyRegion.contains(layerBounds);
 #if USE(IOSURFACE)
@@ -195,7 +196,15 @@ bool RemoteLayerBackingStore::display()
             backImage = m_backSurface->createImage();
 
         GraphicsContext& context = m_frontSurface->ensureGraphicsContext();
-        context.clearRect(FloatRect(FloatPoint(), expandedScaledSize));
+
+        if (!m_isOpaque)
+            context.clearRect(expandedScaledLayerBounds);
+
+#ifndef NDEBUG
+        if (m_isOpaque)
+            context.fillRect(expandedScaledLayerBounds, Color(255, 0, 0), ColorSpaceDeviceRGB);
+#endif
+
         context.scale(FloatSize(1, -1));
         context.translate(0, -expandedScaledSize.height());
         drawInContext(context, backImage.get());
