@@ -1,3 +1,23 @@
+2014-04-02  Timothy Hatcher  <timothy@apple.com>
+
+        Remove Input domain from the Web Inspector protocol.
+
+        https://bugs.webkit.org/show_bug.cgi?id=131073
+
+        Reviewed by Joseph Pecoraro.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorInputAgent.cpp: Removed.
+        * inspector/InspectorInputAgent.h: Removed.
+        * inspector/protocol/Input.json: Removed.
+
 2014-04-02  Antti Koivisto  <antti@apple.com>
 
         Split tile grid out from TileController

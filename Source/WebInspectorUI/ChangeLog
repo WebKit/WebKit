@@ -1,3 +1,14 @@
+2014-04-02  Timothy Hatcher  <timothy@apple.com>
+
+        Remove Input domain from the Web Inspector protocol.
+
+        https://bugs.webkit.org/show_bug.cgi?id=131073
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Protocol/Legacy/7.0/InspectorWebBackendCommands.js: Updated.
+        * Versions/Inspector-iOS-7.0.json: Removed Input domain.
+
 2014-04-01  Timothy Hatcher  <timothy@apple.com>
 
         Remove HeapProfiler from the Web Inspector protocol.

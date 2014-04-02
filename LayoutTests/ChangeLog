@@ -1,3 +1,16 @@
+2014-04-02  Timothy Hatcher  <timothy@apple.com>
+
+        Remove Input domain from the Web Inspector protocol.
+
+        https://bugs.webkit.org/show_bug.cgi?id=131073
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector-protocol/input/dispatchKeyEvent-expected.txt: Removed.
+        * inspector-protocol/input/dispatchKeyEvent.html: Removed.
+        * inspector-protocol/input/dispatchMouseEvent-expected.txt: Removed.
+        * inspector-protocol/input/dispatchMouseEvent.html: Removed.
+
 2014-04-02  David Kilzer  <ddkilzer@apple.com>
 
         Use outermost containing isolate when constructing bidi runs

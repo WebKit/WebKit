@@ -42,7 +42,6 @@
 #include "InspectorFrontendHost.cpp"
 #include "InspectorHistory.cpp"
 #include "InspectorIndexedDBAgent.cpp"
-#include "InspectorInputAgent.cpp"
 #include "InspectorInstrumentation.cpp"
 #include "InspectorInstrumentationCookie.cpp"
 #include "InspectorLayerTreeAgent.cpp"
