@@ -56,7 +56,7 @@ using namespace WebKit;
     return _item->title();
 }
 
-- (NSURL *)originalURL
+- (NSURL *)initialURL
 {
     return [NSURL _web_URLWithWTFString:_item->originalURL()];
 }

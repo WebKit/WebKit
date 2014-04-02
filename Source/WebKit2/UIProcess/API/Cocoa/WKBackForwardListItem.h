@@ -34,7 +34,7 @@ WK_API_CLASS
 
 @property (readonly) NSURL *URL;
 @property (readonly) NSString *title;
-@property (readonly) NSURL *originalURL;
+@property (readonly) NSURL *initialURL;
 
 @end
 
