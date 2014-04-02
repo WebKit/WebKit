@@ -1,3 +1,18 @@
+2014-04-02  David Kilzer  <ddkilzer@apple.com>
+
+        Add LayoutTest for crash with bidi isolates
+
+        Merged from Blink (patch by jww@chromium.org):
+        https://src.chromium.org/viewvc/blink?revision=156580&view=revision
+        http://crbug.com/265838
+
+        See Bug 120504: Fix nested unicode-bidi: isolate
+        <https://bugs.webkit.org/show_bug.cgi?id=120504>
+        <http://trac.webkit.org/changeset/155554>
+
+        * fast/text/international/unicode-bidi-isolate-nested-with-removes-expected.txt: Added.
+        * fast/text/international/unicode-bidi-isolate-nested-with-removes.html: Added.
+
 2014-04-02  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Compositing requirements for blending are not computed correctly
