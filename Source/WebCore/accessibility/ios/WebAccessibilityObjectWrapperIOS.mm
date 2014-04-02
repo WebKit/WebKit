@@ -1367,6 +1367,11 @@ static RenderObject* rendererForView(WAKView* view)
     // The UIKit accessibility wrapper will override and post appropriate notification.    
 }
 
+- (void)postLiveRegionCreatedNotification
+{
+    // The UIKit accessibility wrapper will override and post appropriate notification.    
+}
+
 - (void)postLoadCompleteNotification
 {
     // The UIKit accessibility wrapper will override and post appropriate notification.    

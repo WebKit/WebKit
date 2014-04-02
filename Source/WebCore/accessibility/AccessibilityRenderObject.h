@@ -278,7 +278,7 @@ private:
     
     virtual ESpeak speakProperty() const override;
     
-    virtual const AtomicString& ariaLiveRegionStatus() const override;
+    virtual const String ariaLiveRegionStatus() const override;
     virtual const AtomicString& ariaLiveRegionRelevant() const override;
     virtual bool ariaLiveRegionAtomic() const override;
     virtual bool ariaLiveRegionBusy() const override;

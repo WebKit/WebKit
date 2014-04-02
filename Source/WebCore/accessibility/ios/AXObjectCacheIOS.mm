@@ -70,6 +70,9 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         case AXLiveRegionChanged:
             [obj->wrapper() postLiveRegionChangeNotification];
             break;
+        case AXLiveRegionCreated:
+            [obj->wrapper() postLiveRegionCreatedNotification];
+            break;
         case AXChildrenChanged:
             [obj->wrapper() postChildrenChangedNotification];
             break;

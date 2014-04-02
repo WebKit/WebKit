@@ -1,3 +1,38 @@
+2014-04-02  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Improve ARIA live region reliability by sending notifications when live regions are created/shown and hidden/destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=124381
+
+        Reviewed by Mario Sanchez Prada.
+
+        Re-organize some code so that when we detect a new node has been created, we can safely determine its live region status.
+        If it is a live region, we fire off a live region created notification.
+
+        Test: platform/mac/accessibility/live-region-creation-notification.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::handleLiveRegionCreated):
+        (WebCore::AXObjectCache::childrenChanged):
+        (WebCore::AXObjectCache::handleAttributeChanged):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::childrenChanged):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::defaultLiveRegionStatusForRole):
+        (WebCore::AccessibilityObject::liveRegionStatusIsEnabled):
+        (WebCore::AccessibilityObject::supportsARIALiveRegion):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::ariaLiveRegionStatus):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::ariaLiveRegionStatus):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/ios/AXObjectCacheIOS.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper postLiveRegionCreatedNotification]):
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+
 2014-04-02  Martin Robinson  <mrobinson@igalia.com>
 
         REGRESSION(r165704): [GTK] Inspector resources not correctly generated

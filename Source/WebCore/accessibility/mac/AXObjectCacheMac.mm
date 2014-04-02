@@ -39,6 +39,10 @@
 #define NSAccessibilityLiveRegionChangedNotification @"AXLiveRegionChanged"
 #endif
 
+#ifndef NSAccessibilityLiveRegionCreatedNotification 
+#define NSAccessibilityLiveRegionCreatedNotification @"AXLiveRegionCreated"
+#endif
+
 // The simple Cocoa calls in this file don't throw exceptions.
 
 namespace WebCore {
@@ -102,6 +106,9 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
             break;
         case AXValueChanged:
             macNotification = NSAccessibilityValueChangedNotification;
+            break;
+        case AXLiveRegionCreated:
+            macNotification = NSAccessibilityLiveRegionCreatedNotification;
             break;
         case AXLiveRegionChanged:
             macNotification = NSAccessibilityLiveRegionChangedNotification;

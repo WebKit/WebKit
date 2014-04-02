@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+    
+<div id="content">
+<div id="first" role="log"></div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    
+description("This tests that the AXLiveRegionCreated notification gets fired when live regions appear.");
+var notification = 0;
+var element = 0;
+
+function startTest() {
+    
+    var HIDE = true;
+    
+    // add second live region immediately
+    appendLiveRegion('second');
+    
+    // add third live region later
+    window.setTimeout(function() { 
+        appendLiveRegion('third'); 
+        window.setTimeout(function() { 
+            appendLiveRegion('fourth', HIDE); 
+            window.setTimeout(function() { 
+                unhide('fourth'); 
+                window.setTimeout(function() { 
+                    appendDiv('fifth'); 
+                    window.setTimeout(updateAll, 1);
+                }, 1);
+            }, 1);
+        }, 1);
+    }, 1);
+}
+
+var $ = function(id) {
+    return document.getElementById(id);
+}
+
+var updateAll = function() {
+    window.setTimeout(function() { 
+        updateLiveRegion('first'); 
+        window.setTimeout(function() { 
+            updateLiveRegion('second'); 
+            window.setTimeout(function() { 
+                updateLiveRegion('third'); 
+                window.setTimeout(function() { 
+                    updateLiveRegion('fourth'); 
+                    window.setTimeout(function() { endTest(); }, 1);
+                }, 1);
+            }, 1);
+        }, 1);
+    }, 1);
+    
+}
+var updateLiveRegion = function(id) {
+    var lr = $(id);
+    lr.innerHTML = id;
+}
+var appendLiveRegion = function(id, optHide) {
+    var lr = document.createElement('div');
+    lr.id = id;
+    lr.setAttribute('role', 'log');
+    if (optHide) {
+        lr.hidden = true;
+    }
+    $("content").appendChild(lr);
+}
+var appendDiv = function(id) {
+    var lr = document.createElement('div');
+    lr.id = id;
+    lr.setAttribute('role', 'group');
+    $("content").appendChild(lr);
+}
+var unhide = function(id){
+    $(id).hidden = false;
+}
+
+function ariaCallback(element, notification) {
+    if (notification == "AXLiveRegionCreated") {
+       debug("PASS Received live region created notification: " + notification + ": " + element.stringAttributeValue('AXDOMIdentifier'));
+    }
+}
+
+function endTest() {
+   document.getElementById("content").style.display = 'none';
+   finishJSTest();
+}
+
+window.jsTestIsAsync = true;
+if (window.accessibilityController) {
+    var addedNotification = accessibilityController.addNotificationListener(ariaCallback);
+
+    // Make sure AX is enabled by accessing root element.
+    accessibilityController.rootElement;
+
+    startTest();
+}
+successfullyParsed = true;
+
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

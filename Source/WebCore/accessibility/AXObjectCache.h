@@ -104,7 +104,7 @@ public:
 
     void detachWrapper(AccessibilityObject*, AccessibilityDetachmentType);
     void attachWrapper(AccessibilityObject*);
-    void childrenChanged(Node*);
+    void childrenChanged(Node*, Node* newChild = nullptr);
     void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
     void childrenChanged(AccessibilityObject*);
     void checkedStateChanged(Node*);
@@ -169,6 +169,7 @@ public:
         AXSelectedTextChanged,
         AXValueChanged,
         AXScrolledToAnchor,
+        AXLiveRegionCreated,
         AXLiveRegionChanged,
         AXMenuListItemSelected,
         AXMenuListValueChanged,
@@ -243,6 +244,7 @@ private:
     Vector<std::pair<RefPtr<AccessibilityObject>, AXNotification>> m_notificationsToPost;
     void notificationPostTimerFired(Timer<AXObjectCache>&);
     void handleMenuOpened(Node*);
+    void handleLiveRegionCreated(Node*);
     void handleMenuItemSelected(Node*);
     
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement*);
@@ -288,7 +290,7 @@ inline const Element* AXObjectCache::rootAXEditableElement(const Node*) { return
 inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }
 inline void AXObjectCache::checkedStateChanged(Node*) { }
 inline void AXObjectCache::childrenChanged(RenderObject*, RenderObject*) { }
-inline void AXObjectCache::childrenChanged(Node*) { }
+inline void AXObjectCache::childrenChanged(Node*, Node*) { }
 inline void AXObjectCache::childrenChanged(AccessibilityObject*) { }
 inline void AXObjectCache::textChanged(RenderObject*) { }
 inline void AXObjectCache::textChanged(Node*) { }

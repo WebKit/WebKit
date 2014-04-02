@@ -636,8 +636,30 @@ void AXObjectCache::handleMenuOpened(Node* node)
     postNotification(getOrCreate(node), &document(), AXMenuOpened);
 }
     
-void AXObjectCache::childrenChanged(Node* node)
+void AXObjectCache::handleLiveRegionCreated(Node* node)
 {
+    if (!node || !node->renderer() || !node->isElementNode())
+        return;
+    
+    Element* element = toElement(node);
+    String liveRegionStatus = element->fastGetAttribute(aria_liveAttr);
+    if (liveRegionStatus.isEmpty()) {
+        const AtomicString& ariaRole = element->fastGetAttribute(roleAttr);
+        if (!ariaRole.isEmpty())
+            liveRegionStatus = AccessibilityObject::defaultLiveRegionStatusForRole(AccessibilityObject::ariaRoleToWebCoreRole(ariaRole));
+    }
+    
+    if (AccessibilityObject::liveRegionStatusIsEnabled(liveRegionStatus))
+        postNotification(getOrCreate(node), &document(), AXLiveRegionCreated);
+}
+    
+void AXObjectCache::childrenChanged(Node* node, Node* newChild)
+{
+    if (newChild) {
+        handleMenuOpened(newChild);
+        handleLiveRegionCreated(newChild);
+    }
+    
     childrenChanged(get(node));
 }
 
@@ -645,8 +667,11 @@ void AXObjectCache::childrenChanged(RenderObject* renderer, RenderObject* newChi
 {
     if (!renderer)
         return;
-    if (newChild)
+    
+    if (newChild) {
         handleMenuOpened(newChild->node());
+        handleLiveRegionCreated(newChild->node());
+    }
     
     childrenChanged(get(renderer));
 }
@@ -899,7 +924,7 @@ void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Elemen
     else if (attrName == aria_expandedAttr)
         handleAriaExpandedChange(element);
     else if (attrName == aria_hiddenAttr)
-        childrenChanged(element->parentNode());
+        childrenChanged(element->parentNode(), element);
     else if (attrName == aria_invalidAttr)
         postNotification(element, AXObjectCache::AXInvalidStatusChanged);
     else

@@ -837,10 +837,12 @@ public:
     // ARIA live-region features.
     bool supportsARIALiveRegion() const;
     bool isInsideARIALiveRegion() const;
-    virtual const AtomicString& ariaLiveRegionStatus() const { return nullAtom; }
+    virtual const String ariaLiveRegionStatus() const { return String(); }
     virtual const AtomicString& ariaLiveRegionRelevant() const { return nullAtom; }
     virtual bool ariaLiveRegionAtomic() const { return false; }
     virtual bool ariaLiveRegionBusy() const { return false; }
+    static const String defaultLiveRegionStatusForRole(AccessibilityRole);
+    static bool liveRegionStatusIsEnabled(const AtomicString&);
     
     bool supportsARIAAttributes() const;
     

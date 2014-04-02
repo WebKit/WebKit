@@ -60,6 +60,7 @@
 - (void)postLoadCompleteNotification;
 - (void)postChildrenChangedNotification;
 - (void)postInvalidStatusChangedNotification;
+- (void)postLiveRegionCreatedNotification;
 
 @end
 
