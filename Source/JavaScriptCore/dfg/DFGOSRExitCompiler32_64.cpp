@@ -42,6 +42,8 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     if (Options::printEachOSRExit()) {
         SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
         debugInfo->codeBlock = m_jit.codeBlock();
+        debugInfo->kind = exit.m_kind;
+        debugInfo->bytecodeOffset = exit.m_codeOrigin.bytecodeIndex;
         
         m_jit.debugCall(debugOperationPrintSpeculationFailure, debugInfo);
     }

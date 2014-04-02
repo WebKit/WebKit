@@ -1,3 +1,22 @@
+2014-04-02  Mark Lam  <mark.lam@apple.com>
+
+        Added some more dataLog info for OSR exits.
+        <https://webkit.org/b/131120>
+
+        Reviewed by Michael Saboff.
+
+        Adding info about the OSR exit index, the bytecode index of the bytecode
+        that is OSR exiting, and the reason for the OSR exit.  This change is
+        for debugging code which only comes into play when we use the
+        --printEachOSRExit option.
+
+        * dfg/DFGOSRExit.h:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOperations.cpp:
+
 2014-04-02  Martin Robinson  <mrobinson@igalia.com>
 
         REGRESSION(r165704): [GTK] Inspector resources not correctly generated

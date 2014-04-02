@@ -112,6 +112,8 @@ struct OSRExit : public OSRExitBase {
 
 struct SpeculationFailureDebugInfo {
     CodeBlock* codeBlock;
+    ExitKind kind;
+    unsigned bytecodeOffset;
 };
 
 } } // namespace JSC::DFG
