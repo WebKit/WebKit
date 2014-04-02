@@ -104,6 +104,7 @@
 #endif
 
 namespace API {
+class FindClient;
 class LoaderClient;
 class PolicyClient;
 class UIClient;
@@ -476,7 +477,8 @@ public:
 #if ENABLE(CONTEXT_MENUS)
     void initializeContextMenuClient(const WKPageContextMenuClientBase*);
 #endif
-    void initializeFindClient(const WKPageFindClientBase*);
+    API::FindClient& findClient() { return *m_findClient; }
+    void setFindClient(std::unique_ptr<API::FindClient>);
     void initializeFindMatchesClient(const WKPageFindMatchesClientBase*);
     void initializeFormClient(const WKPageFormClientBase*);
     void setLoaderClient(std::unique_ptr<API::LoaderClient>);
@@ -1373,7 +1375,7 @@ private:
 #if PLATFORM(EFL)
     WebUIPopupMenuClient m_uiPopupMenuClient;
 #endif
-    WebFindClient m_findClient;
+    std::unique_ptr<API::FindClient> m_findClient;
     WebFindMatchesClient m_findMatchesClient;
 #if ENABLE(CONTEXT_MENUS)
     WebPageContextMenuClient m_contextMenuClient;

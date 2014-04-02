@@ -47,6 +47,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		005D158F18E4C4EB00734619 /* _WKFindDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 005D158E18E4C4EB00734619 /* _WKFindDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		00B9661618E24CBA00CE1F88 /* APIFindClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9661518E24CBA00CE1F88 /* APIFindClient.h */; };
+		00B9661918E25AE100CE1F88 /* FindClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 00B9661718E25AE100CE1F88 /* FindClient.mm */; };
+		00B9661A18E25AE100CE1F88 /* FindClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9661818E25AE100CE1F88 /* FindClient.h */; };
 		0F0C365818C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F0C365718C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm */; };
 		0F0C365A18C0555800F607D7 /* LayerRepresentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0C365918C0555800F607D7 /* LayerRepresentation.h */; };
 		0F0C365C18C05CA100F607D7 /* RemoteScrollingCoordinatorProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F0C365B18C05CA100F607D7 /* RemoteScrollingCoordinatorProxyIOS.mm */; };
@@ -1788,6 +1792,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		005D158E18E4C4EB00734619 /* _WKFindDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFindDelegate.h; sourceTree = "<group>"; };
+		00B9661518E24CBA00CE1F88 /* APIFindClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFindClient.h; sourceTree = "<group>"; };
+		00B9661718E25AE100CE1F88 /* FindClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindClient.mm; sourceTree = "<group>"; };
+		00B9661818E25AE100CE1F88 /* FindClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindClient.h; sourceTree = "<group>"; };
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		0F0C365718C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RemoteLayerTreeHostIOS.mm; path = ios/RemoteLayerTreeHostIOS.mm; sourceTree = "<group>"; };
@@ -4246,6 +4254,8 @@
 			children = (
 				A1DF631118E0B7C8003A3E2A /* DownloadClient.h */,
 				A1DF631018E0B7C8003A3E2A /* DownloadClient.mm */,
+				00B9661818E25AE100CE1F88 /* FindClient.h */,
+				00B9661718E25AE100CE1F88 /* FindClient.mm */,
 				1A422F8D18B29C6400D8CD96 /* HistoryClient.h */,
 				1A422F8C18B29C6400D8CD96 /* HistoryClient.mm */,
 				0F0C365918C0555800F607D7 /* LayerRepresentation.h */,
@@ -4630,6 +4640,7 @@
 				A1A4FE5718DCE9FA00B5EA8A /* _WKDownload.h */,
 				A1A4FE5818DCE9FA00B5EA8A /* _WKDownload.mm */,
 				A1A4FE6018DD54A400B5EA8A /* _WKDownloadDelegate.h */,
+				005D158E18E4C4EB00734619 /* _WKFindDelegate.h */,
 				A1A4FE5918DCE9FA00B5EA8A /* _WKDownloadInternal.h */,
 				379A873818BBFE0F00588AF2 /* _WKElementAction.h */,
 				379A873718BBFE0F00588AF2 /* _WKElementAction.mm */,
@@ -5494,6 +5505,7 @@
 				2DA944771884E3AB00ED86DB /* ios */,
 				BC111B47112F616900337BAB /* mac */,
 				1F7D36C018DA513F00D9D659 /* APIDownloadClient.h */,
+				00B9661518E24CBA00CE1F88 /* APIFindClient.h */,
 				1A6637D618B2831F00C0BCF3 /* APIHistoryClient.h */,
 				1A2464F21891E45100234C5B /* APILoaderClient.h */,
 				1AFDD3141891B54000153970 /* APIPolicyClient.h */,
@@ -6912,6 +6924,7 @@
 				1A422F8B18B29B5400D8CD96 /* WKHistoryDelegatePrivate.h in Headers */,
 				370F34A71829CFF3009027C8 /* WKBrowsingContextHistoryDelegate.h in Headers */,
 				1AF05D8714688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h in Headers */,
+				00B9661A18E25AE100CE1F88 /* FindClient.h in Headers */,
 				1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */,
 				BCB0B0E012305AB100B1341E /* UserMessageCoders.h in Headers */,
 				1A0F29E4120B44420053D1B9 /* VisitedLinkProvider.h in Headers */,
@@ -6955,6 +6968,7 @@
 				BC032D7710F4378D0058C15A /* WebContextMenuClient.h in Headers */,
 				75E749EC180DBB9800088BA6 /* WebOriginDataManagerProxyMessages.h in Headers */,
 				512935D81288D19400A4B695 /* WebContextMenuItem.h in Headers */,
+				00B9661618E24CBA00CE1F88 /* APIFindClient.h in Headers */,
 				510FBB9B1288C95E00AFFDF4 /* WebContextMenuItemData.h in Headers */,
 				51ACBB82127A8BAD00D203B9 /* WebContextMenuProxy.h in Headers */,
 				1AB8A1F418400B8F00E9AE69 /* WKPageFindClient.h in Headers */,
@@ -7253,6 +7267,7 @@
 				7CD5EBB91746A15B000C1C45 /* WKObjCTypeWrapperRef.h in Headers */,
 				378E1A40181EDA010031007A /* WKObject.h in Headers */,
 				BC857FE612B843D800EDEB2E /* WKOpenPanelParameters.h in Headers */,
+				005D158F18E4C4EB00734619 /* _WKFindDelegate.h in Headers */,
 				BC1DFE8F12B31CA8005DF730 /* WKOpenPanelResultListener.h in Headers */,
 				BCD597D7112B56DC00EC8C23 /* WKPage.h in Headers */,
 				2D6CD119189058A500E5A4A0 /* ViewSnapshotStore.h in Headers */,
@@ -8192,6 +8207,7 @@
 				DF58C6361371ACA000F9A37C /* NativeWebWheelEventMac.mm in Sources */,
 				1A6FBA2B11E6862700DB1371 /* NetscapeBrowserFuncs.cpp in Sources */,
 				1A6FBD2911E69BC200DB1371 /* NetscapePlugin.cpp in Sources */,
+				00B9661918E25AE100CE1F88 /* FindClient.mm in Sources */,
 				1AE5B7FB11E7AED200BA6767 /* NetscapePluginMac.mm in Sources */,
 				1A4A9C5512B816CF008FE984 /* NetscapePluginModule.cpp in Sources */,
 				1A4A9C9A12B821CD008FE984 /* NetscapePluginModuleMac.mm in Sources */,

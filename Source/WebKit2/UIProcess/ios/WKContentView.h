@@ -35,6 +35,7 @@
 
 namespace WebKit {
 class DrawingAreaProxy;
+class FindIndicator;
 class GeolocationPermissionRequestProxy;
 class RemoteLayerTreeTransaction;
 class WebContext;
@@ -83,5 +84,7 @@ struct WebPageConfiguration;
 - (BOOL)_scrollToRect:(CGRect)targetRect withOrigin:(CGPoint)origin minimumScrollDistance:(CGFloat)minimumScrollDistance;
 - (BOOL)_zoomToRect:(CGRect)targetRect withOrigin:(CGPoint)origin fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale minimumScrollDistance:(CGFloat)minimumScrollDistance;
 - (void)_zoomOutWithOrigin:(CGPoint)origin;
+
+- (void)_setFindIndicator:(PassRefPtr<WebKit::FindIndicator>)findIndicator fadeOut:(BOOL)fadeOut animate:(BOOL)animate;
 
 @end

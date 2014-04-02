@@ -47,6 +47,7 @@
 #import "WebSystemInterface.h"
 #import "WebKitSystemInterfaceIOS.h"
 #import <WebCore/FrameView.h>
+#import <WebCore/NotImplemented.h>
 #import <UIKit/UIWindow_Private.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/RetainPtr.h>
@@ -482,6 +483,11 @@ static inline FloatRect fixedPositionRectFromExposedRect(CGRect unobscuredRect, 
 - (void)_applicationDidBecomeActive:(NSNotification*)notification
 {
     _page->applicationDidBecomeActive();
+}
+
+- (void)_setFindIndicator:(PassRefPtr<WebKit::FindIndicator>)findIndicator fadeOut:(BOOL)fadeOut animate:(BOOL)animate
+{
+    notImplemented();
 }
 
 @end

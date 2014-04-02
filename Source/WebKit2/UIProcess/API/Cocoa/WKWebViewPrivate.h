@@ -40,10 +40,22 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
     _WKPaginationModeBottomToTop,
 };
 
+typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
+    _WKFindOptionsCaseInsensitive = 1 << 0,
+    _WKFindOptionsAtWordStarts = 1 << 1,
+    _WKFindOptionsTreatMedialCapitalAsWordStart = 1 << 2,
+    _WKFindOptionsBackwards = 1 << 3,
+    _WKFindOptionsWrapAround = 1 << 4,
+    _WKFindOptionsShowOverlay = 1 << 5,
+    _WKFindOptionsShowFindIndicator = 1 << 6,
+    _WKFindOptionsShowHighlight = 1 << 7,
+};
+
 @class WKBrowsingContextHandle;
 @class _WKRemoteObjectRegistry;
 
 @protocol WKHistoryDelegatePrivate;
+@protocol _WKFindDelegate;
 @protocol _WKScriptMessageHandler;
 
 @interface WKWebView (WKPrivate)
@@ -97,6 +109,8 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
 
 - (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler;
 
+- (UIView *)_viewForFindUI;
+
 // FIXME: Remove this once nobody uses it.
 @property (nonatomic, readonly) NSURL *activeURL;
 
@@ -120,6 +134,11 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
 @property (nonatomic, readonly) BOOL _supportsTextZoom;
 @property (nonatomic, setter=_setTextZoomFactor:) double _textZoomFactor;
 @property (nonatomic, setter=_setPageZoomFactor:) double _pageZoomFactor;
+
+@property (nonatomic, weak, setter=_setFindDelegate:) id <_WKFindDelegate> _findDelegate;
+- (void)_findString:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount;
+- (void)_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount;
+- (void)_hideFindUI;
 
 @end
 

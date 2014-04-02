@@ -31,6 +31,7 @@
 #import "_WKDownloadInternal.h"
 #import "DataReference.h"
 #import "DownloadProxy.h"
+#import "FindIndicator.h"
 #import "NativeWebKeyboardEvent.h"
 #import "InteractionInformationAtPosition.h"
 #import "WKContentView.h"
@@ -303,9 +304,9 @@ PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPagePr
     return 0;
 }
 
-void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator>, bool, bool)
+void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator> findIndicator, bool fadeOut, bool animate)
 {
-    notImplemented();
+    [m_contentView _setFindIndicator:findIndicator fadeOut:fadeOut animate:animate];
 }
 
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)

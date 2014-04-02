@@ -28,6 +28,7 @@
 #include "WebPageProxy.h"
 
 #include "APIArray.h"
+#include "APIFindClient.h"
 #include "APILoaderClient.h"
 #include "APIPolicyClient.h"
 #include "APIUIClient.h"
@@ -257,6 +258,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_loaderClient(std::make_unique<API::LoaderClient>())
     , m_policyClient(std::make_unique<API::PolicyClient>())
     , m_uiClient(std::make_unique<API::UIClient>())
+    , m_findClient(std::make_unique<API::FindClient>())
     , m_process(process)
     , m_pageGroup(*configuration.pageGroup)
     , m_preferences(*configuration.preferences)
@@ -473,9 +475,14 @@ void WebPageProxy::setUIClient(std::unique_ptr<API::UIClient> uiClient)
     setCanRunModal(m_uiClient->canRunModal());
 }
 
-void WebPageProxy::initializeFindClient(const WKPageFindClientBase* client)
+void WebPageProxy::setFindClient(std::unique_ptr<API::FindClient> findClient)
 {
-    m_findClient.initialize(client);
+    if (!findClient) {
+        m_findClient = std::make_unique<API::FindClient>();
+        return;
+    }
+    
+    m_findClient = std::move(findClient);
 }
 
 void WebPageProxy::initializeFindMatchesClient(const WKPageFindMatchesClientBase* client)
@@ -606,7 +613,7 @@ void WebPageProxy::close()
 #if PLATFORM(EFL)
     m_uiPopupMenuClient.initialize(0);
 #endif
-    m_findClient.initialize(0);
+    m_findClient = std::make_unique<API::FindClient>();
     m_findMatchesClient.initialize(0);
 #if ENABLE(CONTEXT_MENUS)
     m_contextMenuClient.initialize(0);
@@ -3191,7 +3198,7 @@ void WebPageProxy::clearAllEditCommands()
 
 void WebPageProxy::didCountStringMatches(const String& string, uint32_t matchCount)
 {
-    m_findClient.didCountStringMatches(this, string, matchCount);
+    m_findClient->didCountStringMatches(this, string, matchCount);
 }
 
 void WebPageProxy::didGetImageForFindMatch(const ShareableBitmap::Handle& contentImageHandle, uint32_t matchIndex)
@@ -3207,7 +3214,7 @@ void WebPageProxy::setFindIndicator(const FloatRect& selectionRectInWindowCoordi
 
 void WebPageProxy::didFindString(const String& string, uint32_t matchCount)
 {
-    m_findClient.didFindString(this, string, matchCount);
+    m_findClient->didFindString(this, string, matchCount);
 }
 
 void WebPageProxy::didFindStringMatches(const String& string, Vector<Vector<WebCore::IntRect>> matchRects, int32_t firstIndexAfterSelection)
@@ -3230,7 +3237,7 @@ void WebPageProxy::didFindStringMatches(const String& string, Vector<Vector<WebC
 
 void WebPageProxy::didFailToFindString(const String& string)
 {
-    m_findClient.didFailToFindString(this, string);
+    m_findClient->didFailToFindString(this, string);
 }
 
 bool WebPageProxy::sendMessage(std::unique_ptr<IPC::MessageEncoder> encoder, unsigned messageSendFlags)

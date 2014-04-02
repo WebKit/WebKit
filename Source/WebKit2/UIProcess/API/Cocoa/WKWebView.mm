@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED
 
+#import "FindClient.h"
 #import "NavigationState.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteObjectRegistry.h"
@@ -53,6 +54,7 @@
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import "_WKFindDelegate.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKUserContentController.h"
 #import "_WKVisitedLinkProviderInternal.h"
@@ -197,9 +199,8 @@
     _navigationState = std::make_unique<WebKit::NavigationState>(self);
     _page->setPolicyClient(_navigationState->createPolicyClient());
     _page->setLoaderClient(_navigationState->createLoaderClient());
-
     _page->setUIClient(std::make_unique<WebKit::UIClient>(self));
-
+    _page->setFindClient(std::make_unique<WebKit::FindClient>(self));
     return self;
 }
 
@@ -1082,6 +1083,55 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     _page->setPageZoomFactor(zoomFactor);
 }
 
+- (id <_WKFindDelegate>)_findDelegate
+{
+    return [static_cast<WebKit::FindClient&>(_page->findClient()).delegate().leakRef() autorelease];
+}
+
+- (void)_setFindDelegate:(id<_WKFindDelegate>)findDelegate
+{
+    static_cast<WebKit::FindClient&>(_page->findClient()).setDelegate(findDelegate);
+}
+
+static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
+{
+    unsigned findOptions = 0;
+
+    if (wkFindOptions & _WKFindOptionsCaseInsensitive)
+        findOptions |= WebKit::FindOptionsCaseInsensitive;
+    if (wkFindOptions & _WKFindOptionsAtWordStarts)
+        findOptions |= WebKit::FindOptionsAtWordStarts;
+    if (wkFindOptions & _WKFindOptionsTreatMedialCapitalAsWordStart)
+        findOptions |= WebKit::FindOptionsTreatMedialCapitalAsWordStart;
+    if (wkFindOptions & _WKFindOptionsBackwards)
+        findOptions |= WebKit::FindOptionsBackwards;
+    if (wkFindOptions & _WKFindOptionsWrapAround)
+        findOptions |= WebKit::FindOptionsWrapAround;
+    if (wkFindOptions & _WKFindOptionsShowOverlay)
+        findOptions |= WebKit::FindOptionsShowOverlay;
+    if (wkFindOptions & _WKFindOptionsShowFindIndicator)
+        findOptions |= WebKit::FindOptionsShowFindIndicator;
+    if (wkFindOptions & _WKFindOptionsShowHighlight)
+        findOptions |= WebKit::FindOptionsShowHighlight;
+
+    return static_cast<WebKit::FindOptions>(findOptions);
+}
+
+- (void)_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
+{
+    _page->countStringMatches(string, toFindOptions(options), maxCount);
+}
+
+- (void)_findString:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
+{
+    _page->findString(string, toFindOptions(options), maxCount);
+}
+
+- (void)_hideFindUI
+{
+    _page->hideFindUI();
+}
+
 #pragma mark iOS-specific methods
 
 #if PLATFORM(IOS)
@@ -1174,6 +1224,11 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
         copiedCompletionHandler(cgImage.get());
         [copiedCompletionHandler release];
     });
+}
+
+- (UIView *)_viewForFindUI
+{
+    return [self viewForZoomingInScrollView:[self scrollView]];
 }
 
 - (BOOL)_isDisplayingPDF

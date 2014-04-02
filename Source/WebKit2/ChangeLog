@@ -1,3 +1,64 @@
+2014-04-02  Alice Barraclough  <alice.liu@apple.com>
+
+        Adding Objective-C SPI for Find in Page.
+        https://bugs.webkit.org/show_bug.cgi?id=131000 Need an Objective-C API or SPI for Find in Page
+
+        Reviewed by Dan Bernstein.
+
+        Find-on-page SPI added to WKWebView, which funnels the messages through the WebPageProxy.
+        Returning messages are designated by _WKFindDelegate protocol.
+        Also provide FindDelegate access on WKWebView.
+        WebPageProxy gets a new-style API::FindClient.
+        Also had to replicate WKFindOptions as _WKFindOptions in Cocoa SPI. This is unfortunate, but it 
+        does follow the pattern of other options & enums related to classes that are SPI-for-now.
+        
+        PageClientImplIOS handles setFindIndicator function by forwarding to its WKContentView, 
+        but WKContentView _setFindIndicator remains unimplemented for now.
+        
+        * UIProcess/API/APIFindClient.h: Added.
+        (API::FindClient::~FindClient):
+        (API::FindClient::didCountStringMatches):
+        (API::FindClient::didFindString):
+        (API::FindClient::didFailToFindString):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageFindClient):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        (-[WKWebView _findDelegate]):
+        (-[WKWebView _setFindDelegate:]):
+        (toFindOptions):
+        (-[WKWebView _countStringMatches:options:maxCount:]):
+        (-[WKWebView _findString:options:maxCount:]):
+        (-[WKWebView _hideFindUI]):
+        (-[WKWebView _hostForFindUI]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        (NS_OPTIONS):
+        * UIProcess/API/Cocoa/_WKFindDelegate.h: Added.
+        * UIProcess/Cocoa/FindClient.h: Added.
+        * UIProcess/Cocoa/FindClient.mm: Added.
+        (WebKit::FindClient::FindClient):
+        (WebKit::FindClient::delegate):
+        (WebKit::FindClient::setDelegate):
+        (WebKit::FindClient::didCountStringMatches):
+        (WebKit::FindClient::didFindString):
+        (WebKit::FindClient::didFailToFindString):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setFindClient):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::didCountStringMatches):
+        (WebKit::WebPageProxy::didFindString):
+        (WebKit::WebPageProxy::didFailToFindString):
+        (WebKit::WebPageProxy::initializeFindClient): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::findClient):
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::setFindIndicator):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _setFindIndicator:WebKit::fadeOut:animate:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-04-02  Anders Carlsson  <andersca@apple.com>
 
         Rename -[WKBackForwardListItem originalURL] to -[WKBackForwardListItem initialURL]

@@ -29,6 +29,7 @@
 
 #include "APIArray.h"
 #include "APIData.h"
+#include "APIFindClient.h"
 #include "APILoaderClient.h"
 #include "APIPolicyClient.h"
 #include "APIUIClient.h"
@@ -676,7 +677,40 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
 
 void WKPageSetPageFindClient(WKPageRef pageRef, const WKPageFindClientBase* wkClient)
 {
-    toImpl(pageRef)->initializeFindClient(wkClient);
+    class FindClient : public API::Client<WKPageFindClientBase>, public API::FindClient {
+    public:
+        explicit FindClient(const WKPageFindClientBase* client)
+        {
+            initialize(client);
+        }
+
+    private:
+        virtual void didFindString(WebPageProxy* page, const String& string, uint32_t matchCount) override
+        {
+            if (!m_client.didFindString)
+                return;
+            
+            m_client.didFindString(toAPI(page), toAPI(string.impl()), matchCount, m_client.base.clientInfo);
+        }
+
+        virtual void didFailToFindString(WebPageProxy* page, const String& string) override
+        {
+            if (!m_client.didFailToFindString)
+                return;
+            
+            m_client.didFailToFindString(toAPI(page), toAPI(string.impl()), m_client.base.clientInfo);
+        }
+
+        virtual void didCountStringMatches(WebPageProxy* page, const String& string, uint32_t matchCount) override
+        {
+            if (m_client.didCountStringMatches)
+                return;
+            
+            m_client.didCountStringMatches(toAPI(page), toAPI(string.impl()), matchCount, m_client.base.clientInfo);
+        }
+    };
+
+    toImpl(pageRef)->setFindClient(std::make_unique<FindClient>(wkClient));
 }
 
 void WKPageSetPageFindMatchesClient(WKPageRef pageRef, const WKPageFindMatchesClientBase* wkClient)
