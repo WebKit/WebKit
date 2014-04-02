@@ -36,22 +36,34 @@ public:
     virtual ~HTMLObjectElement();
 
     bool isDocNamedItem() const { return m_docNamedItem; }
+
+    const String& classId() const { return m_classId; }
+
     bool containsJavaApplet() const;
 
-    bool hasFallbackContent() const;
     virtual bool useFallbackContent() const override { return m_useFallbackContent; }
     void renderFallbackContent();
 
-    // Implementation of constraint validation API.
+    // Implementations of FormAssociatedElement
+    HTMLFormElement* form() const { return FormAssociatedElement::form(); }
+
+    virtual bool isFormControlElement() const override { return false; }
+
+    virtual bool isEnumeratable() const override { return true; }
+    virtual bool appendFormData(FormDataList&, bool) override;
+
+    // Implementations of constraint validation API.
     // Note that the object elements are always barred from constraint validation.
-    static bool checkValidity() { return true; }
-    virtual void setCustomValidity(const String&) override { }
     virtual String validationMessage() const override { return String(); }
+    bool checkValidity() { return true; }
+    virtual void setCustomValidity(const String&) override { }
 
-    using HTMLPlugInImageElement::ref;
-    using HTMLPlugInImageElement::deref;
+    using Node::ref;
+    using Node::deref;
 
-    using FormAssociatedElement::form;
+    virtual bool canContainRangeEndPoint() const override { return useFallbackContent(); }
+
+    bool hasFallbackContent() const;
 
 private:
     HTMLObjectElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
@@ -92,13 +104,7 @@ private:
     virtual HTMLObjectElement& asHTMLElement() override final { return *this; }
     virtual const HTMLObjectElement& asHTMLElement() const override final { return *this; }
 
-    virtual bool isFormControlElement() const override { return false; }
-
-    virtual bool isEnumeratable() const override { return true; }
-    virtual bool appendFormData(FormDataList&, bool) override;
-
-    virtual bool canContainRangeEndPoint() const override { return useFallbackContent(); }
-
+    String m_classId;
     bool m_docNamedItem : 1;
     bool m_useFallbackContent : 1;
 };

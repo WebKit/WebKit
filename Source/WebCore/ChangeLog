@@ -1,3 +1,75 @@
+2014-04-02  Stephanie Lewis  <slewis@apple.com>
+
+        Roll out http://trac.webkit.org/changeset/166144
+        <rdar://problem/16481284> PLT stops loading on news.google.com
+
+        Unreviewed rollout.
+
+        Rollout 166144 since it prevents the PLT from completing.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::suspendPostAttachCallbacks):
+        (WebCore::ContainerNode::resumePostAttachCallbacks):
+        (WebCore::ContainerNode::queuePostAttachCallback):
+        (WebCore::ContainerNode::postAttachCallbacksAreSuspended):
+        (WebCore::ContainerNode::dispatchPostAttachCallbacks):
+        * dom/ContainerNode.h:
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        * dom/Element.h:
+        (WebCore::PostAttachCallbackDisabler::PostAttachCallbackDisabler):
+        (WebCore::PostAttachCallbackDisabler::~PostAttachCallbackDisabler):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseAttribute):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::focusPostAttach):
+        (WebCore::HTMLFormControlElement::didAttachRenderers):
+        (WebCore::updateFromElementCallback):
+        (WebCore::HTMLFormControlElement::didRecalcStyle):
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::needsStyleRecalcCallback):
+        (WebCore::HTMLFrameOwnerElement::scheduleSetNeedsStyleRecalc):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseAttribute):
+        (WebCore::HTMLObjectElement::shouldAllowQuickTimeClassIdQuirk):
+        (WebCore::HTMLObjectElement::hasValidClassId):
+        (WebCore::HTMLObjectElement::renderFallbackContent):
+        * html/HTMLObjectElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::HTMLPlugInImageElement):
+        (WebCore::HTMLPlugInImageElement::createElementRenderer):
+        (WebCore::HTMLPlugInImageElement::didAttachRenderers):
+        (WebCore::HTMLPlugInImageElement::willDetachRenderers):
+        (WebCore::HTMLPlugInImageElement::updateWidgetIfNecessary):
+        (WebCore::HTMLPlugInImageElement::didMoveToNewDocument):
+        (WebCore::HTMLPlugInImageElement::updateWidgetCallback):
+        (WebCore::HTMLPlugInImageElement::startLoadingImage):
+        (WebCore::HTMLPlugInImageElement::startLoadingImageCallback):
+        (WebCore::HTMLPlugInImageElement::createShadowIFrameSubtree):
+        (WebCore::HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn):
+        (WebCore::HTMLPlugInImageElement::didRecalcStyle): Deleted.
+        (WebCore::HTMLPlugInImageElement::scheduleUpdateForAfterStyleResolution): Deleted.
+        (WebCore::HTMLPlugInImageElement::updateAfterStyleResolution): Deleted.
+        (WebCore::HTMLPlugInImageElement::removedFrom): Deleted.
+        (WebCore::is100Percent): Deleted.
+        (WebCore::HTMLPlugInImageElement::setNeedsImageReload): Deleted.
+        * html/HTMLPlugInImageElement.h:
+        (WebCore::HTMLPlugInImageElement::imageLoader): Deleted.
+        (WebCore::HTMLPlugInImageElement::updateImageLoaderWithNewURLSoon): Deleted.
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::needsPseudeElement):
+        (WebCore::Style::attachBeforeOrAfterPseudoElementIfNeeded):
+        (WebCore::Style::attachRenderTree):
+        (WebCore::Style::updateBeforeOrAfterPseudoElement):
+        (WebCore::Style::needsPseudoElement): Deleted.
+        (WebCore::Style::postResolutionCallbackQueue): Deleted.
+        (WebCore::Style::queuePostResolutionCallback): Deleted.
+        (WebCore::Style::suspendMemoryCacheClientCalls): Deleted.
+        (WebCore::Style::PostResolutionCallbackDisabler::PostResolutionCallbackDisabler): Deleted.
+        (WebCore::Style::PostResolutionCallbackDisabler::~PostResolutionCallbackDisabler): Deleted.
+        (WebCore::Style::postResolutionCallbacksAreSuspended): Deleted.
+        * style/StyleResolveTree.h:
+
 2014-04-02  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Page should use std::unique_ptr for PointerLockController

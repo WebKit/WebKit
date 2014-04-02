@@ -208,6 +208,12 @@ static bool shouldAutofocus(HTMLFormControlElement* element)
     return false;
 }
 
+static void focusPostAttach(Node& element, unsigned)
+{ 
+    toElement(element).focus();
+    element.deref();
+}
+
 void HTMLFormControlElement::didAttachRenderers()
 {
     // The call to updateFromElement() needs to go after the call through
@@ -218,11 +224,8 @@ void HTMLFormControlElement::didAttachRenderers()
 
     if (shouldAutofocus(this)) {
         setAutofocused();
-
-        RefPtr<HTMLFormControlElement> element = this;
-        Style::queuePostResolutionCallback([element] {
-            element->focus();
-        });
+        ref();
+        queuePostAttachCallback(focusPostAttach, *this);
     }
 }
 
@@ -285,17 +288,18 @@ bool HTMLFormControlElement::isRequired() const
     return m_isRequired;
 }
 
+static void updateFromElementCallback(Node& node, unsigned)
+{
+    if (auto renderer = toHTMLFormControlElement(node).renderer())
+        renderer->updateFromElement();
+}
+
 void HTMLFormControlElement::didRecalcStyle(Style::Change)
 {
     // updateFromElement() can cause the selection to change, and in turn
     // trigger synchronous layout, so it must not be called during style recalc.
-    if (renderer()) {
-        RefPtr<HTMLFormControlElement> element = this;
-        Style::queuePostResolutionCallback([element]{
-            if (auto* renderer = element->renderer())
-                renderer->updateFromElement();
-        });
-    }
+    if (renderer())
+        queuePostAttachCallback(updateFromElementCallback, *this);
 }
 
 bool HTMLFormControlElement::supportsFocus() const

@@ -1,3 +1,14 @@
+2014-04-02  Stephanie Lewis  <slewis@apple.com>
+
+        Roll out http://trac.webkit.org/changeset/166144
+        <rdar://problem/16481284> PLT stops loading on news.google.com
+        
+        Unreviewed rollout.
+
+        Rollout 166144 since it prevents the PLT from completing.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+
 2014-04-02  Daniel Bates  <dabates@apple.com>
 
         Remove Settings::maximumDecodedImageSize()

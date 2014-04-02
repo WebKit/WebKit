@@ -107,15 +107,28 @@ void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomicSt
     if (name == formAttr)
         formAttributeChanged();
     else if (name == typeAttr) {
-        m_serviceType = value.string().left(value.find(';')).lower();
-        setNeedsWidgetUpdate(true);
+        m_serviceType = value.lower();
+        size_t pos = m_serviceType.find(";");
+        if (pos != notFound)
+            m_serviceType = m_serviceType.left(pos);
+        if (renderer())
+            setNeedsWidgetUpdate(true);
     } else if (name == dataAttr) {
         m_url = stripLeadingAndTrailingHTMLSpaces(value);
-        setNeedsWidgetUpdate(true);
-        updateImageLoaderWithNewURLSoon();
-    } else if (name == classidAttr)
-        setNeedsWidgetUpdate(true);
-    else if (name == onbeforeloadAttr)
+        document().updateStyleIfNeeded();
+        if (renderer()) {
+            setNeedsWidgetUpdate(true);
+            if (isImageType()) {
+                if (!m_imageLoader)
+                    m_imageLoader = adoptPtr(new HTMLImageLoader(*this));
+                m_imageLoader->updateFromElementIgnoringPreviousError();
+            }
+        }
+    } else if (name == classidAttr) {
+        m_classId = value;
+        if (renderer())
+            setNeedsWidgetUpdate(true);
+    } else if (name == onbeforeloadAttr)
         setAttributeEventListener(eventNames().beforeloadEvent, name, value);
     else
         HTMLPlugInImageElement::parseAttribute(name, value);
@@ -238,24 +251,26 @@ bool HTMLObjectElement::shouldAllowQuickTimeClassIdQuirk()
     // 'generator' meta tag is present. Only apply this quirk if there is no
     // fallback content, which ensures the quirk will disable itself if Wiki
     // Server is updated to generate an alternate embed tag as fallback content.
-
     if (!document().page()
         || !document().page()->settings().needsSiteSpecificQuirks()
         || hasFallbackContent()
-        || !equalIgnoringCase(fastGetAttribute(classidAttr), "clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"))
+        || !equalIgnoringCase(classId(), "clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"))
         return false;
 
-    for (auto& metaElement : descendantsOfType<HTMLMetaElement>(document())) {
+    RefPtr<NodeList> metaElements = document().getElementsByTagName(HTMLNames::metaTag.localName());
+    unsigned length = metaElements->length();
+    for (unsigned i = 0; i < length; ++i) {
+        HTMLMetaElement& metaElement = toHTMLMetaElement(*metaElements->item(i));
         if (equalIgnoringCase(metaElement.name(), "generator") && metaElement.content().startsWith("Mac OS X Server Web Services Server", false))
             return true;
     }
-
+    
     return false;
 }
     
 bool HTMLObjectElement::hasValidClassId()
 {
-    if (MIMETypeRegistry::isJavaAppletMIMEType(serviceType()) && fastGetAttribute(classidAttr).startsWith("java:", false))
+    if (MIMETypeRegistry::isJavaAppletMIMEType(serviceType()) && classId().startsWith("java:", false))
         return true;
     
     if (shouldAllowQuickTimeClassIdQuirk())
@@ -263,7 +278,7 @@ bool HTMLObjectElement::hasValidClassId()
 
     // HTML5 says that fallback content should be rendered if a non-empty
     // classid is specified for which the UA can't find a suitable plug-in.
-    return fastGetAttribute(classidAttr).isEmpty();
+    return classId().isEmpty();
 }
 
 // FIXME: This should be unified with HTMLEmbedElement::updateWidget and
@@ -360,22 +375,20 @@ void HTMLObjectElement::renderFallbackContent()
     setNeedsStyleRecalc(ReconstructRenderTree);
 
     // Before we give up and use fallback content, check to see if this is a MIME type issue.
-    auto* loader = imageLoader();
-    if (loader && loader->image() && loader->image()->status() != CachedResource::LoadError) {
-        m_serviceType = loader->image()->response().mimeType();
+    if (m_imageLoader && m_imageLoader->image() && m_imageLoader->image()->status() != CachedResource::LoadError) {
+        m_serviceType = m_imageLoader->image()->response().mimeType();
         if (!isImageType()) {
             // If we don't think we have an image type anymore, then clear the image from the loader.
-            loader->setImage(nullptr);
+            m_imageLoader->setImage(0);
             return;
         }
     }
 
     m_useFallbackContent = true;
 
-    // This was added to keep Acid 2 non-flaky. A style recalc is required to make fallback resources load.
-    // Without forcing, this may happen after all the other resources have been loaded and the document is already
-    // considered complete. FIXME: Could address this with incrementLoadEventDelayCount instead, as we do with
-    // image loading in HTMLPlugInImageElement, or disentangle loading from style entirely.
+    // This is here mainly to keep acid2 non-flaky. A style recalc is required to make fallback resources to load. Without forcing
+    // this may happen after all the other resources have been loaded and the document is already considered complete.
+    // FIXME: Disentangle fallback content handling from style recalcs.
     document().updateStyleIfNeeded();
 }
 

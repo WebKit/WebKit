@@ -1,3 +1,17 @@
+2014-04-02  Stephanie Lewis  <slewis@apple.com>
+
+        Roll out http://trac.webkit.org/changeset/166144
+        <rdar://problem/16481284> PLT stops loading on news.google.com
+        
+        Unreviewed rollout.
+
+        Rollout 166144 since it prevents the PLT from completing.
+
+        * plugins/plugin-remove-readystatechange-expected.txt:
+        * plugins/plugin-remove-readystatechange.html:
+        * svg/custom/object-no-size-attributes-expected.txt:
+        * svg/custom/object-no-size-attributes.xhtml:
+
 2014-04-02  Zoltan Horvath  <zoltan@webkit.org>
 
         [WebInspector] inspector-protocol/model/highlight-shape-outside.html is failing

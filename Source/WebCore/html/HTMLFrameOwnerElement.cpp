@@ -121,14 +121,16 @@ SVGDocument* HTMLFrameOwnerElement::getSVGDocument(ExceptionCode& ec) const
     return 0;
 }
 
+static void needsStyleRecalcCallback(Node& node, unsigned data)
+{
+    node.setNeedsStyleRecalc(static_cast<StyleChangeType>(data));
+}
+
 void HTMLFrameOwnerElement::scheduleSetNeedsStyleRecalc(StyleChangeType changeType)
 {
-    if (Style::postResolutionCallbacksAreSuspended()) {
-        RefPtr<HTMLFrameOwnerElement> element = this;
-        Style::queuePostResolutionCallback([element, changeType]{
-            element->setNeedsStyleRecalc(changeType);
-        });
-    } else
+    if (postAttachCallbacksAreSuspended())
+        queuePostAttachCallback(needsStyleRecalcCallback, *this, static_cast<unsigned>(changeType));
+    else
         setNeedsStyleRecalc(changeType);
 }
 

@@ -97,18 +97,20 @@ void HTMLEmbedElement::collectStyleForPresentationAttribute(const QualifiedName&
 void HTMLEmbedElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == typeAttr) {
-        m_serviceType = value.string().left(value.find(";")).lower();
-        // FIXME: The only difference between this and HTMLObjectElement's corresponding
-        // code is that HTMLObjectElement does setNeedsWidgetUpdate(true). Consider moving
-        // this up to the HTMLPlugInImageElement to be shared.
-    } else if (name == codeAttr) {
+        m_serviceType = value.string().lower();
+        size_t pos = m_serviceType.find(";");
+        if (pos != notFound)
+            m_serviceType = m_serviceType.left(pos);
+    } else if (name == codeAttr)
         m_url = stripLeadingAndTrailingHTMLSpaces(value);
-        // FIXME: Why no call to updateImageLoaderWithNewURLSoon?
-        // FIXME: If both code and src attributes are specified, last one parsed/changed wins. That can't be right!
-    } else if (name == srcAttr) {
+    else if (name == srcAttr) {
         m_url = stripLeadingAndTrailingHTMLSpaces(value);
-        updateImageLoaderWithNewURLSoon();
-        // FIXME: If both code and src attributes are specified, last one parsed/changed wins. That can't be right!
+        document().updateStyleIfNeeded();
+        if (renderer() && isImageType()) {
+            if (!m_imageLoader)
+                m_imageLoader = adoptPtr(new HTMLImageLoader(*this));
+            m_imageLoader->updateFromElementIgnoringPreviousError();
+        }
     } else
         HTMLPlugInImageElement::parseAttribute(name, value);
 }
