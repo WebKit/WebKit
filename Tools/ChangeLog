@@ -1,3 +1,16 @@
+2014-04-02  Martin Robinson  <mrobinson@igalia.com>
+
+        REGRESSION(r165704): [GTK] Inspector resources not correctly generated
+        https://bugs.webkit.org/show_bug.cgi?id=130343
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * gtk/generate-inspector-gresource-manifest.py: Instead of hard-coding the file list, accept a list
+        of directories on the command line and look for all appropriate files in those directories for the
+        GResource archive. Also make archive paths relative to those directories.
+        (find_all_files_in_directory): This helper looks for all the appropriate files in a given directory.
+        (find_all_files_in_directory.select_file): Whether or not to add the file to the archive.
+
 2014-04-02  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         [webkitpy] Avoid multiple "Preparing rollout for bug" log messages

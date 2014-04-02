@@ -1,3 +1,13 @@
+2014-04-02  Martin Robinson  <mrobinson@igalia.com>
+
+        REGRESSION(r165704): [GTK] Inspector resources not correctly generated
+        https://bugs.webkit.org/show_bug.cgi?id=130343
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * CMakeLists.txt: We generate the inspector JavaScript file into a directory like the one
+        in which it should be distributed. This allows us to more easily package it for GTK+.
+
 2014-04-01  Timothy Hatcher  <timothy@apple.com>
 
         Remove HeapProfiler from the Web Inspector protocol.

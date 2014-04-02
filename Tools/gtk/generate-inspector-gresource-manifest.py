@@ -15,38 +15,48 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-import common
+import argparse
 import glob
 import os
 import sys
 
-resources_path = common.top_level_path() + "/Source/WebInspectorUI/"
-inspector_files = \
-    glob.glob(resources_path + 'UserInterface/*.html') + \
-    glob.glob(resources_path + 'UserInterface/Base/*.js') + \
-    glob.glob(resources_path + 'UserInterface/Controllers/*.css') + \
-    glob.glob(resources_path + 'UserInterface/Controllers/*.js') + \
-    glob.glob(resources_path + 'UserInterface/Models/*.js') + \
-    glob.glob(resources_path + 'UserInterface/Protocol/*.js') + \
-    glob.glob(resources_path + 'UserInterface/Views/*.css') + \
-    glob.glob(resources_path + 'UserInterface/Views/*.js') + \
-    glob.glob(resources_path + 'UserInterface/Images/*.png') + \
-    glob.glob(resources_path + 'UserInterface/Images/*.svg') + \
-    glob.glob(resources_path + 'UserInterface/External/CodeMirror/*') + \
-    glob.glob(resources_path + 'Localizations/en.lproj/localizedStrings.js')
+ALLOWED_EXTENSIONS = ['.html', '.js', '.css', '.png', '.svg']
 
-gresources_file_content = \
-"""<?xml version=1.0 encoding=UTF-8?>
-<gresources>
-    <gresource prefix="/org/webkitgtk/inspector">
-"""
 
-for file in inspector_files:
-    gresources_file_content += "        <file>" + file.replace(resources_path, '') + "</file>\n"
+def find_all_files_in_directory(directory):
+    directory = os.path.abspath(directory) + os.path.sep
+    to_return = []
 
-gresources_file_content += \
-"""    </gresource>
+    def select_file(name):
+        return os.path.splitext(name)[1] in ALLOWED_EXTENSIONS
+
+    for root, dirs, files in os.walk(directory):
+        files = filter(select_file, files)
+        for file_name in files:
+            file_name = os.path.abspath(os.path.join(root, file_name))
+            to_return.append(file_name.replace(directory, ''))
+
+    return to_return
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Generate a GResources file for the inspector.')
+    parser.add_argument('--output', nargs='?', type=argparse.FileType('w'), default=sys.stdout,
+                        help='the output file')
+
+    arguments, extra_args = parser.parse_known_args(sys.argv)
+
+    arguments.output.write(\
+    """<?xml version=1.0 encoding=UTF-8?>
+    <gresources>
+        <gresource prefix="/org/webkitgtk/inspector">
+""")
+
+    for directory in extra_args[1:]:
+        for file in find_all_files_in_directory(directory):
+            arguments.output.write("            <file>%s</file>\n" % file)
+
+    arguments.output.write(\
+    """    </gresource>
 </gresources>
-"""
+""")
 
-open(sys.argv[1], 'w').write(gresources_file_content)

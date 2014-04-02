@@ -1,3 +1,14 @@
+2014-04-02  Martin Robinson  <mrobinson@igalia.com>
+
+        REGRESSION(r165704): [GTK] Inspector resources not correctly generated
+        https://bugs.webkit.org/show_bug.cgi?id=130343
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * CMakeLists.txt: Add a variable which points to the directory to store WebInspectorUI
+        derived sources.
+        * Source/cmake/WebKitFS.cmake: Generate WebInspectorUI derived sources directories.
+
 2014-04-01  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [CMake] Drop port check from FindEGL.cmake.
