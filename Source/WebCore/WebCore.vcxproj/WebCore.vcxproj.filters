@@ -1482,6 +1482,9 @@
     <ClCompile Include="..\platform\graphics\win\MediaPlayerPrivateFullscreenWindow.cpp">
       <Filter>platform\graphics\win</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\graphics\opentype\OpenTypeMathData.cpp">
+      <Filter>platform\graphics\win</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\graphics\opentype\OpenTypeUtilities.cpp">
       <Filter>platform\graphics\win</Filter>
     </ClCompile>
@@ -8447,6 +8450,9 @@
       <Filter>platform\graphics\win</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\win\LocalWindowsContext.h">
+      <Filter>platform\graphics\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\opentype\OpenTypeMathData.h">
       <Filter>platform\graphics\win</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\opentype\OpenTypeTypes.h">

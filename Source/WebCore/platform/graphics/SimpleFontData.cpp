@@ -32,6 +32,7 @@
 
 #include "Font.h"
 #include "FontCache.h"
+#include "OpenTypeMathData.h"
 #include <wtf/MathExtras.h>
 
 #if ENABLE(OPENTYPE_VERTICAL)
@@ -52,6 +53,7 @@ SimpleFontData::SimpleFontData(const FontPlatformData& platformData, bool isCust
     , m_isLoading(isLoading)
     , m_isTextOrientationFallback(isTextOrientationFallback)
     , m_isBrokenIdeographFallback(false)
+    , m_mathData(nullptr)
 #if ENABLE(OPENTYPE_VERTICAL)
     , m_verticalData(0)
 #endif
@@ -76,6 +78,7 @@ SimpleFontData::SimpleFontData(std::unique_ptr<AdditionalFontData> fontData, flo
     , m_isLoading(false)
     , m_isTextOrientationFallback(false)
     , m_isBrokenIdeographFallback(false)
+    , m_mathData(nullptr)
 #if ENABLE(OPENTYPE_VERTICAL)
     , m_verticalData(0)
 #endif
@@ -255,6 +258,16 @@ String SimpleFontData::description() const
     return platformData().description();
 }
 #endif
+
+const OpenTypeMathData* SimpleFontData::mathData() const
+{
+    if (!m_mathData) {
+        m_mathData = OpenTypeMathData::create(m_platformData);
+        if (!m_mathData->hasMathData())
+            m_mathData.clear();
+    }
+    return m_mathData.get();
+}
 
 PassOwnPtr<SimpleFontData::DerivedFontData> SimpleFontData::DerivedFontData::create(bool forCustomFont)
 {
