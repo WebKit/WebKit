@@ -1,3 +1,20 @@
+2014-04-02  Zoltan Horvath  <zoltan@webkit.org>
+
+        [WebInspector] inspector-protocol/model/highlight-shape-outside.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=124660
+
+        Reviewed by Timothy Hatcher.
+
+        I updated the tests syntax to CR, CSS Shapes specification. It's also needed to be updated
+        to the latest WebInspector testing methods. I added some addidional test cases for the highlighting,
+        and also fixed some expected test case in the script, and updated the expected file.
+
+        * TestExpectations:
+        * inspector/dom/highlight-shape-outside-expected.txt:
+        * inspector/dom/highlight-shape-outside.html:
+        * inspector/dom/shapes-test.js:
+        (InspectorTestProxy.registerInitializer.):
+
 2014-04-02  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Improve ARIA live region reliability by sending notifications when live regions are created/shown and hidden/destroyed

@@ -49,7 +49,6 @@ webkit.org/b/53990 fast/forms/search-event-delay.html [ Pass Failure ]
 fast/mediastream/MediaStream-construct-with-ended-tracks.html [ Skip ]
 fast/mediastream/MediaStream-clone.html [ Skip ]
 
-webkit.org/b/124660 inspector/dom/highlight-shape-outside.html [ Failure ]
 webkit.org/b/126519 inspector/dom/highlight-shape-outside-margin.html [ Failure ]
 
 webkit.org/b/126142 css3/calc/transitions-dependent.html [ Pass Failure ]

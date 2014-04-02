@@ -9,14 +9,13 @@ body {
     width: 200px;
     height: 200px;
     margin-right: -200px;
+    box-sizing: border-box;
 }
 .padded {
-    width: 100px;
-    height: 100px;
     padding: 25px 75px 75px 25px;
 }
-.border-box {
-    box-sizing: border-box;
+.vertical-lr, .vertical-rl {
+    float: left;
 }
 .vertical-lr {
     -webkit-writing-mode: vertical-lr;
@@ -24,17 +23,20 @@ body {
 .vertical-rl {
     -webkit-writing-mode: vertical-rl;
 }
-.rectangle {
-    -webkit-shape-outside: rectangle(50px, 50px, 100px, 50px) content-box;
+.inset {
+    -webkit-shape-outside: inset(50px 50px 100px 50px) content-box;
 }
-.rectangle.border-box {
-    -webkit-shape-outside: rectangle(50px, 50px, 100px, 50px) border-box;
+.inset.padded {
+    -webkit-shape-outside: inset(5px 5px 10px 5px) content-box;
+}
+.inset.padded.border-box {
+    -webkit-shape-outside: inset(50px 50px 100px 50px) border-box;
 }
 .polygon {
-    -webkit-shape-outside: polygon(50px 50px, 100px 50px, 100px 100px, 50px 100px) content-box;
+    -webkit-shape-outside: polygon(50px 50px, 150px 50px, 150px 100px, 50px 100px) content-box;
 }
 .polygon.border-box {
-    -webkit-shape-outside: polygon(50px 50px, 100px 50px, 100px 100px, 50px 100px) border-box;
+    -webkit-shape-outside: polygon(50px 50px, 150px 50px, 150px 100px, 50px 100px) border-box;
 }
 .content-box {
     -webkit-shape-outside: content-box;
@@ -56,35 +58,47 @@ body {
 function test() {
     var testcases = [
     {
-        'selector' : '.rectangle',
+        'selector' : '.inset',
+        'path' : ['M', 50, 50, 'L', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'Z']
+    },
+    {
+        'selector' : '.inset.padded',
+        'path' : ['M', 30, 30, 'L', 120, 30, 'L', 120, 115, 'L', 30, 115, 'L', 30, 30, 'Z']
+    },
+    {
+        'selector' : '.inset.padded.border-box',
         'path' : ['M', 50, 50, 'L', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'Z']
     },
     {
         'selector' : '.polygon',
-        'path' : ['M', 50, 50, 'L', 100, 50, 'L', 100, 100, 'L', 50, 100, 'Z']
+        'path' : ['M', 50, 50, 'L', 150, 50, 'L', 150, 100, 'L', 50, 100, 'Z']
     },
     {
-        'selector' : '.rectangle.padded',
-        'path' : ['M', 75, 75, 'L', 175, 75, 'L', 175, 125, 'L', 75, 125, 'L', 75, 75, 'Z']
-    },
-    {
-        'selector' : '.rectangle.padded.border-box',
+        'selector' : '.polygon.padded.border-box',
         'path' : ['M', 50, 50, 'L', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'Z']
     },
     {
-        'selector' : '.vertical-lr > .rectangle',
+        'selector' : '.vertical-lr > .inset',
         'path' : ['M', 50, 50, 'L', 50, 100, 'L', 150, 100, 'L', 150, 50, 'L', 50, 50, 'Z']
     },
     {
-        'selector' : '.vertical-rl > .rectangle',
+        'selector' : '.vertical-lr > .inset.padded',
+        'path' : ['M', 30, 30, 'L', 30, 115, 'L', 120, 115, 'L', 120, 30, 'L', 30, 30, 'Z']
+    },
+    {
+        'selector' : '.vertical-lr > .inset.padded.border-box',
+        'path' : ['M', 50, 50, 'L', 50, 100, 'L', 150, 100, 'L', 150, 50, 'L', 50, 50, 'Z']
+    },
+    {
+        'selector' : '.vertical-rl > .inset',
         'path' : ['M', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'L', 150, 50, 'Z']
     },
     {
-        'selector' : '.vertical-rl > .rectangle.padded',
-        'path' : ['M', 175, 75, 'L', 175, 125, 'L', 75, 125, 'L', 75, 75, 'L', 175, 75, 'Z']
+        'selector' : '.vertical-rl > .inset.padded',
+        'path' : ['M', 120, 30, 'L', 120, 115, 'L', 30, 115, 'L', 30, 30, 'L', 120, 30, 'Z']
     },
     {
-        'selector' : '.vertical-rl > .rectangle.padded.border-box',
+        'selector' : '.vertical-rl > .inset.padded.border-box',
         'path' : ['M', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'L', 150, 50, 'Z']
     },
     {
@@ -108,9 +122,9 @@ function test() {
     function runNextTest(tests) {
         var testcase = tests[0];
 
-        InspectorTest.Shapes.getShapeOutsideInfo(testcase.selector, function(payload) {
-            InspectorTest.Shapes.assertPathsAreRoughlyEqual(payload.shape, testcase.shape, "Shape information was not roughly equal.");
-            InspectorTest.Shapes.assertPathsAreRoughlyEqual(payload.marginShape, testcase.marginShape, "Margin shape information was not roughly equal.");
+        InspectorTest.Shapes.getShapeOutsideInfoForSelector(testcase.selector, function(payload) {
+            if (!InspectorTest.Shapes.assertPathsAreRoughlyEqual(payload.shape, testcase.path, "Selector: \'" + testcase.selector + "\' Shape information was not roughly equal."))
+                 InspectorTest.log("PASS: " + testcase.selector);
 
             if (tests.length > 1)
                 runNextTest(tests.splice(1));
@@ -124,17 +138,20 @@ function test() {
 </script>
 </head>
 <body onload="runTest()">
-    <div class='shape rectangle'></div>
+    <div class='shape inset'></div>
+    <div class='shape padded inset'></div>
+    <div class='shape padded inset border-box'></div>
     <div class='shape polygon'></div>
-    <div class='shape padded rectangle'></div>
-    <div class='shape padded rectangle border-box'></div>
+    <div class='shape padded polygon border-box'></div>
     <div class='vertical-lr'>
-        <div class='shape rectangle'></div>
+        <div class='shape inset'></div>
+        <div class='shape padded inset'></div>
+        <div class='shape padded inset border-box'></div>
     </div>
     <div class='vertical-rl'>
-        <div class='shape rectangle'></div>
-        <div class='shape padded rectangle'></div>
-        <div class='shape padded rectangle border-box'></div>
+        <div class='shape inset'></div>
+        <div class='shape padded inset'></div>
+        <div class='shape padded inset border-box'></div>
     </div>
     <div class='shape padded content-box'></div>
     <div class='shape padded raster-svg'></div>

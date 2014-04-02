@@ -1,13 +1,16 @@
-PASS: Actual [M 50 50 L 150 50 L 150 100 L 50 100 L 50 50 Z] Expected [M 50 50 L 150 50 L 150 100 L 50 100 L 50 50 Z]
-PASS: Actual [M 50 50 L 100 50 L 100 100 L 50 100 Z] Expected [M 50 50 L 100 50 L 100 100 L 50 100 Z]
-PASS: Actual [M 75 75 L 175 75 L 175 125 L 75 125 L 75 75 Z] Expected [M 75 75 L 175 75 L 175 125 L 75 125 L 75 75 Z]
-PASS: Actual [M 50 50 L 150 50 L 150 100 L 50 100 L 50 50 Z] Expected [M 50 50 L 150 50 L 150 100 L 50 100 L 50 50 Z]
-PASS: Actual [M 50 50 L 50 100 L 150 100 L 150 50 L 50 50 Z] Expected [M 50 50 L 50 100 L 150 100 L 150 50 L 50 50 Z]
-PASS: Actual [M 150 50 L 150 100 L 50 100 L 50 50 L 150 50 Z] Expected [M 150 50 L 150 100 L 50 100 L 50 50 L 150 50 Z]
-PASS: Actual [M 175 75 L 175 125 L 75 125 L 75 75 L 175 75 Z] Expected [M 175 75 L 175 125 L 75 125 L 75 75 L 175 75 Z]
-PASS: Actual [M 150 50 L 150 100 L 50 100 L 50 50 L 150 50 Z] Expected [M 150 50 L 150 100 L 50 100 L 50 50 L 150 50 Z]
-PASS: Actual [M 25 25 L 125 25 L 125 125 L 25 125 L 25 25 Z] Expected [M 25 25 L 125 25 L 125 125 L 25 125 L 25 25 Z]
-PASS: Actual [M 50 50 L 100 50 L 100 100 L 50 100 Z] Expected [M 50 50 L 100 50 L 100 100 L 50 100 Z]
-PASS: Actual [M 35 35 L 115 35 L 115 65 L 35 65 Z M 35 85 L 115 85 L 115 115 L 35 115 Z] Expected [M 35 35 L 115 35 L 115 65 L 35 65 Z M 35 85 L 115 85 L 115 115 L 35 115 Z]
-PASS: Actual [M 50 50 L 100 50 L 100 100 L 50 100 Z] Expected [M 50 50 L 100 50 L 100 100 L 50 100 Z]
+PASS: .inset
+PASS: .inset.padded
+PASS: .inset.padded.border-box
+PASS: .polygon
+PASS: .polygon.padded.border-box
+PASS: .vertical-lr > .inset
+PASS: .vertical-lr > .inset.padded
+PASS: .vertical-lr > .inset.padded.border-box
+PASS: .vertical-rl > .inset
+PASS: .vertical-rl > .inset.padded
+PASS: .vertical-rl > .inset.padded.border-box
+PASS: .content-box.padded
+PASS: .raster-svg.padded
+PASS: .raster-svg-complex.padded
+PASS: .raster-png.padded
 

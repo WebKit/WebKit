@@ -7,7 +7,6 @@ InspectorTest.Shapes = {
 
         function requestDocumentCallback(node) {
             InspectorTest.assert(node instanceof WebInspector.DOMNode, "Unexpected argument to requestDocument callback.")
-
             DOMAgent.querySelector.invoke({nodeId: node.id, selector: selector}, querySelectorCallback);
         }
 
@@ -84,7 +83,7 @@ InspectorTest.Shapes = {
 
         var expectedPathString = makeStringForPath(expected);
         var actualPathString = makeStringForPath(actual);
-        var assertionMessage = message + " \nexpected: " + expectedPathString + "\n actual: " + actualPathString;
+        var assertionMessage = message + " \nEXPECTED: " + expectedPathString + "\n  ACTUAL: " + actualPathString;
         InspectorTest.assert(pathsAreRoughlyEqual(actual, expected), assertionMessage);
     }
 }
