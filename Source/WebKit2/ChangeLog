@@ -1,3 +1,14 @@
+2014-04-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        <rdar://problem/16294704> Remove _pageExtendedBackgroundColor entirely
+        https://bugs.webkit.org/show_bug.cgi?id=131075
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _pageExtendedBackgroundColor]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2014-04-01  Anders Carlsson  <andersca@apple.com>
 
         Stub out more WKNavigation properties

@@ -87,9 +87,6 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
 
 @property (nonatomic, setter=_setBackgroundExtendsBeyondPage:) BOOL _backgroundExtendsBeyondPage;
 
-// This is deprecated and should be removed entirely: <rdar://problem/16294704>.
-@property (readonly) UIColor *_pageExtendedBackgroundColor;
-
 @property (nonatomic, readonly, getter=_isDisplayingPDF) BOOL _displayingPDF;
 
 - (void)_beginInteractiveObscuredInsetsChange;

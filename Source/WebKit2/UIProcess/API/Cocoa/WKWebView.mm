@@ -1106,12 +1106,6 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     [self _updateVisibleContentRects];
 }
 
-- (UIColor *)_pageExtendedBackgroundColor
-{
-    // This is deprecated.
-    return nil;
-}
-
 - (void)_setBackgroundExtendsBeyondPage:(BOOL)backgroundExtends
 {
     _page->setBackgroundExtendsBeyondPage(backgroundExtends);
