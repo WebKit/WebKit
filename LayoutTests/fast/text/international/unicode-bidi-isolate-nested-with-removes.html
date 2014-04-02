@@ -1,19 +1,15 @@
+<!doctype html>
 <!-- This tests for regression of https://crbug.com/265838 where adjacent, nested isolates caused a use-after-free if the elements were later removed. -->
 <script>
-function remove(node)
-{
-    node.parentNode.removeChild(node);
-}
-
 window.onload = function()
 {
     document.body.offsetTop;
-    remove(b.lastChild);
+    b.lastChild.parentNode.removeChild(b.lastChild);
     document.body.offsetTop;
-    remove(a.firstChild);
+    a.firstChild.parentNode.removeChild(a.firstChild);
     document.body.offsetTop;
 
-    document.body.appendChild(document.createTextNode("PASS did not crash"));
+    document.write("PASS did not crash");
 }
 </script>
 

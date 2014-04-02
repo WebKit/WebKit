@@ -1,3 +1,25 @@
+2014-04-02  David Kilzer  <ddkilzer@apple.com>
+
+        Use outermost containing isolate when constructing bidi runs
+        <http://webkit.org/b/131107>
+        <rdar://problem/15690021>
+
+        Reviewed by Darin Adler.
+
+        Merged from Blink (patch by jww@chromium.org):
+        https://src.chromium.org/viewvc/blink?revision=157268&view=revision
+        http://crbug.com/279277
+
+            Update containingIsolate to go back all the way to top
+            isolate from current root, rather than stopping at the first
+            isolate it finds. This works because the current root is
+            always updated with each isolate run.
+
+        * fast/text/international/unicode-bidi-isolate-nested-with-removes-expected.txt: Updated.
+        * fast/text/international/unicode-bidi-isolate-nested-with-removes-not-adjacent-expected.txt: Added.
+        * fast/text/international/unicode-bidi-isolate-nested-with-removes-not-adjacent.html: Added.
+        * fast/text/international/unicode-bidi-isolate-nested-with-removes.html: Updated.
+
 2014-04-02  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Improve ARIA live region reliability by sending notifications when live regions are created/shown and hidden/destroyed
