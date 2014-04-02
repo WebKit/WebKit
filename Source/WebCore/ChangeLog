@@ -1,3 +1,24 @@
+2014-04-01  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Simplify the RenderFlowThread state pusher
+        https://bugs.webkit.org/show_bug.cgi?id=131035
+
+        Reviewed by David Hyatt.
+
+        The RenderFlowThread state pusher is desynchronized from the RenderView layout state pusher
+        by one renderer. This patch fixes the anomaly by correctly ordering the push and pop operations
+        between the two systems.
+
+        Tests: no functional change, no new tests.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::pushFlowThreadLayoutState):
+        (WebCore::RenderFlowThread::popFlowThreadLayoutState):
+        (WebCore::RenderFlowThread::offsetFromLogicalTopOfFirstRegion):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::pushLayoutState):
+        * rendering/RenderView.h:
+
 2014-04-01  Beth Dakin  <bdakin@apple.com>
 
         willReveal edge events should be hooked up for overflow:scroll

@@ -1019,8 +1019,8 @@ void RenderView::pushLayoutState(RenderObject& root)
     ASSERT(m_layoutStateDisableCount == 0);
     ASSERT(m_layoutState == 0);
 
-    pushLayoutStateForCurrentFlowThread(root);
     m_layoutState = std::make_unique<LayoutState>(root);
+    pushLayoutStateForCurrentFlowThread(root);
 }
 
 bool RenderView::shouldDisableLayoutStateForSubtree(RenderObject* renderer) const

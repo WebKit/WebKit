@@ -1144,6 +1144,8 @@ const RenderBox* RenderFlowThread::currentActiveRenderBox() const
 
 void RenderFlowThread::pushFlowThreadLayoutState(const RenderObject& object)
 {
+    m_activeObjectsStack.add(&object);
+
     if (const RenderBox* currentBoxDescendant = currentActiveRenderBox()) {
         LayoutState* layoutState = currentBoxDescendant->view().layoutState();
         if (layoutState && layoutState->isPaginated()) {
@@ -1152,19 +1154,17 @@ void RenderFlowThread::pushFlowThreadLayoutState(const RenderObject& object)
             setOffsetFromLogicalTopOfFirstRegion(currentBoxDescendant, currentBoxDescendant->isHorizontalWritingMode() ? offsetDelta.height() : offsetDelta.width());
         }
     }
-
-    m_activeObjectsStack.add(&object);
 }
 
 void RenderFlowThread::popFlowThreadLayoutState()
 {
-    m_activeObjectsStack.removeLast();
-
     if (const RenderBox* currentBoxDescendant = currentActiveRenderBox()) {
         LayoutState* layoutState = currentBoxDescendant->view().layoutState();
         if (layoutState && layoutState->isPaginated())
             clearOffsetFromLogicalTopOfFirstRegion(currentBoxDescendant);
     }
+
+    m_activeObjectsStack.removeLast();
 }
 
 LayoutUnit RenderFlowThread::offsetFromLogicalTopOfFirstRegion(const RenderBlock* currentBlock) const
@@ -1173,16 +1173,6 @@ LayoutUnit RenderFlowThread::offsetFromLogicalTopOfFirstRegion(const RenderBlock
     // being currently laid out.
     if (hasCachedOffsetFromLogicalTopOfFirstRegion(currentBlock))
         return cachedOffsetFromLogicalTopOfFirstRegion(currentBlock);
-
-    // If it's the current box being laid out, use the layout state.
-    const RenderBox* currentBoxDescendant = currentActiveRenderBox();
-    if (currentBlock == currentBoxDescendant) {
-        LayoutState* layoutState = view().layoutState();
-        ASSERT(layoutState->m_renderer == currentBlock);
-        ASSERT(layoutState && layoutState->isPaginated());
-        LayoutSize offsetDelta = layoutState->m_layoutOffset - layoutState->m_pageOffset;
-        return currentBoxDescendant->isHorizontalWritingMode() ? offsetDelta.height() : offsetDelta.width();
-    }
 
     // As a last resort, take the slow path.
     LayoutRect blockRect(0, 0, currentBlock->width(), currentBlock->height());
