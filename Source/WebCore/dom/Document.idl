@@ -210,6 +210,9 @@
     // HTML 5
     NodeList getElementsByClassName([Default=Undefined] optional DOMString tagname);
 
+    readonly attribute Element activeElement;
+    boolean hasFocus();
+
     readonly attribute DOMString compatMode;
 
     // NodeSelector - Selector API

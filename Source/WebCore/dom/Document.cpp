@@ -55,6 +55,7 @@
 #include "EntityReference.h"
 #include "EventFactory.h"
 #include "EventHandler.h"
+#include "FocusController.h"
 #include "FontLoader.h"
 #include "FormController.h"
 #include "FrameLoader.h"
@@ -6151,6 +6152,26 @@ bool Document::updateStyleIfNeededForNode(const Node& node)
         return false;
     updateStyleIfNeeded();
     return true;
+}
+
+Element* Document::activeElement()
+{
+    updateStyleIfNeeded();
+    if (Element* element = treeScope().focusedElement())
+        return element;
+    return body();
+}
+
+bool Document::hasFocus() const
+{
+    Page* page = this->page();
+    if (!page || !page->focusController().isActive())
+        return false;
+    if (Frame* focusedFrame = page->focusController().focusedFrame()) {
+        if (focusedFrame->tree().isDescendantOf(frame()))
+            return true;
+    }
+    return false;
 }
 
 } // namespace WebCore

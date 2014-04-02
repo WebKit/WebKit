@@ -1,5 +1,26 @@
 2014-04-02  Daniel Bates  <dabates@apple.com>
 
+        Move focus management API from HTMLDocument to Document
+        https://bugs.webkit.org/show_bug.cgi?id=131079
+        <rdar://problem/16220103>
+
+        Reviewed by Timothy Hatcher.
+
+        Derived from a Blink patch by Christophe Dumez:
+        https://src.chromium.org/viewvc/blink?view=rev&revision=165515
+
+        Made the test in <https://src.chromium.org/viewvc/blink?view=rev&revision=165515> a valid XHTML
+        document. Additionally taught LayoutTests/resources/{js-test, js-test-pre}.js to create actual
+        HTML elements so that these scripts can be used to write DRT tests in XML documents.
+
+        * fast/dom/Document/xml-document-focus-expected.txt: Added.
+        * fast/dom/Document/xml-document-focus.xml: Added.
+        * resources/js-test-pre.js: Added function createHTMLElement() and modified code to use it
+        instead of document.createElement() so as to work around <https://bugs.webkit.org/show_bug.cgi?id=131074>.
+        * resources/js-test.js: Ditto.
+
+2014-04-02  Daniel Bates  <dabates@apple.com>
+
         Remove Settings::maximumDecodedImageSize()
         https://bugs.webkit.org/show_bug.cgi?id=131057
         <rdar://problem/15626368>

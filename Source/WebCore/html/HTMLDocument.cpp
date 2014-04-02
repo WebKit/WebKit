@@ -137,28 +137,6 @@ void HTMLDocument::setDesignMode(const String& value)
     Document::setDesignMode(mode);
 }
 
-Element* HTMLDocument::activeElement()
-{
-    document().updateStyleIfNeeded();
-    if (Element* element = treeScope().focusedElement())
-        return element;
-    return body();
-}
-
-bool HTMLDocument::hasFocus()
-{
-    Page* page = this->page();
-    if (!page)
-        return false;
-    if (!page->focusController().isActive())
-        return false;
-    if (Frame* focusedFrame = page->focusController().focusedFrame()) {
-        if (focusedFrame->tree().isDescendantOf(frame()))
-            return true;
-    }
-    return false;
-}
-
 const AtomicString& HTMLDocument::bgColor() const
 {
     HTMLElement* bodyElement = body();

@@ -14,13 +14,24 @@ var unexpectedErrorMessage; // set by onerror when expectingError is not true
 
 (function() {
 
+    function createHTMLElement(tagName)
+    {
+        // FIXME: In an XML document, document.createElement() creates an element with a null namespace URI.
+        // So, we need use document.createElementNS() to explicitly create an element with the specified
+        // tag name in the HTML namespace. We can remove this function and use document.createElement()
+        // directly once we fix <https://bugs.webkit.org/show_bug.cgi?id=131074>.
+        if (document.createElementNS)
+            return document.createElementNS("http://www.w3.org/1999/xhtml", tagName);
+        return document.createElement(tagName);
+    }
+
     function getOrCreate(id, tagName)
     {
         var element = document.getElementById(id);
         if (element)
             return element;
 
-        element = document.createElement(tagName);
+        element = createHTMLElement(tagName);
         element.id = id;
         var refNode;
         var parent = document.body || document.documentElement;
@@ -36,7 +47,7 @@ var unexpectedErrorMessage; // set by onerror when expectingError is not true
     description = function description(msg, quiet)
     {
         // For MSIE 6 compatibility
-        var span = document.createElement("span");
+        var span = createHTMLElement("span");
         if (quiet)
             span.innerHTML = '<p>' + msg + '</p><p>On success, you will see no "<span class="fail">FAIL</span>" messages, followed by "<span class="pass">TEST COMPLETE</span>".</p>';
         else
@@ -51,7 +62,7 @@ var unexpectedErrorMessage; // set by onerror when expectingError is not true
 
     debug = function debug(msg)
     {
-        var span = document.createElement("span");
+        var span = createHTMLElement("span");
         getOrCreate("console", "div").appendChild(span); // insert it first so XHTML knows the namespace
         span.innerHTML = msg + '<br />';
     };
@@ -72,7 +83,7 @@ var unexpectedErrorMessage; // set by onerror when expectingError is not true
 
     function insertStyleSheet()
     {
-        var styleElement = document.createElement("style");
+        var styleElement = createHTMLElement("style");
         styleElement.textContent = css;
         (document.head || document.documentElement).appendChild(styleElement);
     }

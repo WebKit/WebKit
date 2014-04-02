@@ -107,6 +107,7 @@
 @property (readonly, copy) NSString *preferredStylesheetSet WEBKIT_AVAILABLE_MAC(10_5);
 @property (copy) NSString *selectedStylesheetSet WEBKIT_AVAILABLE_MAC(10_5);
 @property (readonly, copy) NSString *lastModified WEBKIT_AVAILABLE_MAC(10_6);
+@property (readonly, strong) DOMElement *activeElement WEBKIT_AVAILABLE_MAC(10_6);
 - (DOMElement *)createElement:(NSString *)tagName;
 - (DOMDocumentFragment *)createDocumentFragment;
 - (DOMText *)createTextNode:(NSString *)data;
@@ -161,6 +162,7 @@
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
 - (void)webkitCancelFullScreen WEBKIT_AVAILABLE_MAC(10_6);
 #endif
+- (BOOL)hasFocus WEBKIT_AVAILABLE_MAC(10_6);
 @end
 
 @interface DOMDocumentFragment : DOMNode 10_4
@@ -458,12 +460,10 @@
 @property (copy) NSString *alinkColor WEBKIT_AVAILABLE_MAC(10_5);
 @property (copy) NSString *linkColor WEBKIT_AVAILABLE_MAC(10_5);
 @property (copy) NSString *vlinkColor WEBKIT_AVAILABLE_MAC(10_5);
-@property (readonly, strong) DOMElement *activeElement WEBKIT_AVAILABLE_MAC(10_6);
 @property (readonly, copy) NSString *compatMode WEBKIT_AVAILABLE_MAC(10_6);
 - (void)captureEvents WEBKIT_AVAILABLE_MAC(10_5);
 - (void)releaseEvents WEBKIT_AVAILABLE_MAC(10_5);
 - (void)clear WEBKIT_AVAILABLE_MAC(10_6);
-- (BOOL)hasFocus WEBKIT_AVAILABLE_MAC(10_6);
 - (void)open;
 - (void)close;
 - (void)write:(NSString *)text;

@@ -405,6 +405,9 @@ public:
         return m_documentElement.get();
     }
 
+    Element* activeElement();
+    bool hasFocus() const;
+
     bool hasManifest() const;
     
     virtual PassRefPtr<Element> createElement(const AtomicString& tagName, ExceptionCode&);

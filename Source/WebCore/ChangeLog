@@ -1,3 +1,33 @@
+2014-04-02  Daniel Bates  <dabates@apple.com>
+
+        Move focus management API from HTMLDocument to Document
+        https://bugs.webkit.org/show_bug.cgi?id=131079
+        <rdar://problem/16220103>
+
+        Reviewed by Timothy Hatcher.
+
+        Merged from Blink (patch by Christophe Dumez):
+        https://src.chromium.org/viewvc/blink?view=rev&revision=165515
+
+        Move hasFocus() and attribute activeElement from interface HTMLDocument
+        to DOMDocument as per section Focus management APIs of the HTML5 standard:
+        <http://www.whatwg.org/specs/web-apps/current-work/#focus-management-apis> (1 April 2014).
+
+        Test: fast/dom/Document/xml-document-focus.xml
+
+        * bindings/objc/PublicDOMInterfaces.h: Moved hasFocus() and property activeElement from
+        interface DOMHTMLDocument to DOMDocument.
+        * dom/Document.cpp:
+        (WebCore::Document::activeElement): Added.
+        (WebCore::Document::hasFocus): Added.
+        * dom/Document.h:
+        * dom/Document.idl:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::activeElement): Deleted.
+        (WebCore::HTMLDocument::hasFocus): Deleted.
+        * html/HTMLDocument.h:
+        * html/HTMLDocument.idl:
+
 2014-04-02  Benjamin Poulain  <benjamin@webkit.org>
 
         Refactor the function call generator to take the arguments by value

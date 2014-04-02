@@ -49,9 +49,6 @@
              [TreatNullAs=NullString] attribute DOMString designMode;
     readonly attribute DOMString compatMode;
 
-    readonly attribute Element activeElement;
-    boolean hasFocus();
-
     // Deprecated attributes
              [TreatNullAs=NullString] attribute DOMString bgColor;
              [TreatNullAs=NullString] attribute DOMString fgColor;
