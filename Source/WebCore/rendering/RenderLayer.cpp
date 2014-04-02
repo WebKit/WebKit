@@ -1158,7 +1158,7 @@ void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* o
                     m_hasVisibleContent = true;
                     break;
                 }
-                RenderObject* child;
+                RenderObject* child = nullptr;
                 if (!r->hasLayer() && (child = r->firstChildSlow()))
                     r = child;
                 else if (r->nextSibling())
