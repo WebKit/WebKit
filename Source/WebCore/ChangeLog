@@ -1,3 +1,14 @@
+2014-04-01  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Build break when disabled VIDEO since r166261
+        https://bugs.webkit.org/show_bug.cgi?id=131087
+
+        Reviewed by Gyuyoung Kim.
+
+        * testing/Internals.cpp: Added ENABLE(VIDEO) guards
+        (WebCore::Internals::simulateSystemSleep):
+        (WebCore::Internals::simulateSystemWake):
+
 2014-04-01  Timothy Hatcher  <timothy@apple.com>
 
         Remove HeapProfiler from the Web Inspector protocol.
