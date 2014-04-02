@@ -55,6 +55,7 @@ static Eina_Bool fullscreen_enabled = EINA_FALSE;
 static Eina_Bool spell_checking_enabled = EINA_FALSE;
 static Eina_Bool touch_events_enabled = EINA_FALSE;
 static Eina_Bool fixed_layout_enabled = EINA_FALSE;
+static Eina_Bool separated_process_enabled = EINA_FALSE;
 static int window_width = 800;
 static int window_height = 600;
 /* Default value of device_pixel_ratio is '0' so that we don't set custom device
@@ -176,6 +177,8 @@ static const Ecore_Getopt options = {
             ('L', "fixed-layout", "Enable/disable fixed layout.", EINA_FALSE),
         ECORE_GETOPT_STORE_DEF_STR
             ('p', "policy-cookies", "Cookies policy:\n  always - always accept,\n  never - never accept,\n  no-third-party - don't accept third-party cookies.", "no-third-party"),
+        ECORE_GETOPT_STORE_DEF_BOOL
+            ('S', "separate-process", "Create new window in separated web process.", EINA_TRUE),
         ECORE_GETOPT_VERSION
             ('V', "version"),
         ECORE_GETOPT_COPYRIGHT
@@ -1957,6 +1960,7 @@ elm_main(int argc, char *argv[])
         ECORE_GETOPT_VALUE_BOOL(touch_events_enabled),
         ECORE_GETOPT_VALUE_BOOL(fixed_layout_enabled),
         ECORE_GETOPT_VALUE_STR(cookies_policy_string),
+        ECORE_GETOPT_VALUE_BOOL(separated_process_enabled),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
@@ -1986,8 +1990,12 @@ elm_main(int argc, char *argv[])
     }
 #endif
 
-    // Enable favicon database.
     Ewk_Context *context = ewk_context_default_get();
+
+    if (separated_process_enabled)
+        ewk_context_process_model_set(context, EWK_PROCESS_MODEL_MULTIPLE_SECONDARY);
+
+    // Enable favicon database.
     ewk_context_favicon_database_directory_set(context, NULL);
 
     if (cookies_policy_string)
