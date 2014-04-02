@@ -1,3 +1,9 @@
+2014-04-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix for full Debug rebuild.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Export JSC symbol needed by testing infrastructure.
+
 2014-04-01  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Transition class Image (and its dependencies) from int to float to enable subpixel positioned/sized images.
