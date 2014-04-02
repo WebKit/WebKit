@@ -28,11 +28,10 @@
 
 #if WK_API_ENABLED
 
-/*! A WKProcessPool defines a distinct type-or category-of Web Content process.
- A @link WKWebView @/link specifies the WKProcessPool of the Web
- Content process backing it through its @link WKWebViewConfiguration @/link.
- @helperclass @link WKProcessPoolConfiguration @/link
- Used to configure @link WKProcessPool @/link instances.
+/*! A pool of Web Content processes.
+ A @link WKWebView @/link specifies from which pool the Web Content process backing it comes through its @link WKWebViewConfiguration @/link.
+ Each WKWebView will get its own Web Content process until an implementation-defined process limit is reached; after that,
+ web views with the same process pool end up sharing Web Content processes.
  */
 WK_API_CLASS
 @interface WKProcessPool : NSObject

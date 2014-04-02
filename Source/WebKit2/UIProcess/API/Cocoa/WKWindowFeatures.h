@@ -28,18 +28,41 @@
 
 #if WK_API_ENABLED
 
+/*! WKWindowFeatures specifies optional attributes for the containing window when a new WKWebView is requested.
+ */
 WK_API_CLASS
 @interface WKWindowFeatures : NSObject
 
+/*! @abstract BOOL. Whether the menu bar should be visible. nil if menu bar visibility was not specified.
+ */
 @property (nonatomic, readonly) NSNumber *menuBarVisibility;
+
+/*! @abstract BOOL. Whether the status bar should be visible. nil if status bar visibility was not specified.
+ */
 @property (nonatomic, readonly) NSNumber *statusBarVisibility;
+
+/*! @abstract BOOL. Whether toolbars should be visible. nil if toolbar visibility was not specified.
+ */
 @property (nonatomic, readonly) NSNumber *toolbarsVisibility;
 
+/*! @abstract BOOL. Whether the containing window should be resizable. nil if resizability was not specified.
+ */
 @property (nonatomic, readonly) NSNumber *allowsResizing;
 
+/*! @abstract The x coordinate of the containing window. nil if the x coordinate was not specified.
+ */
 @property (nonatomic, readonly) NSNumber *x;
+
+/*! @abstract The y coordinate of the containing window. nil if the y coordinate was not specified.
+ */
 @property (nonatomic, readonly) NSNumber *y;
+
+/*! @abstract The width coordinate of the containing window. nil if the width was not specified.
+ */
 @property (nonatomic, readonly) NSNumber *width;
+
+/*! @abstract The height coordinate of the containing window. nil if the height was not specified.
+ */
 @property (nonatomic, readonly) NSNumber *height;
 
 @end

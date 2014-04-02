@@ -1,3 +1,14 @@
+2014-04-02  Anders Carlsson  <andersca@apple.com>
+
+        Document WKUIDelegate and WKWindowFeatures
+        https://bugs.webkit.org/show_bug.cgi?id=131124
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKProcessPool.h:
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        * UIProcess/API/Cocoa/WKWindowFeatures.h:
+
 2014-04-02  Dean Jackson  <dino@apple.com>
 
         [iOS] Expose geolocation provider on the process pool
