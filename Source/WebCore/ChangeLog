@@ -1,3 +1,10 @@
+2014-04-02  Antti Koivisto  <antti@apple.com>
+
+        Try to fix test failures.
+
+        * platform/graphics/ca/mac/TileGrid.mm:
+        (WebCore::TileGrid::TileGrid):  Initialize a field.
+
 2014-04-02  Timothy Hatcher  <timothy@apple.com>
 
         Remove Input domain from the Web Inspector protocol.

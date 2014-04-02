@@ -45,6 +45,7 @@ enum TileValidationPolicyFlag {
 TileGrid::TileGrid(TileController& controller)
     : m_controller(controller)
     , m_containerLayer(*controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr))
+    , m_scale(1)
     , m_cohortRemovalTimer(this, &TileGrid::cohortRemovalTimerFired)
 {
 #ifndef NDEBUG
