@@ -230,9 +230,7 @@ void PlatformCALayerMac::commonInit()
         WebTiledBackingLayer* tiledBackingLayer = static_cast<WebTiledBackingLayer*>(m_layer.get());
         TileController* tileController = [tiledBackingLayer createTileController:this];
 
-        m_customSublayers = adoptPtr(new PlatformCALayerList(1));
-        PlatformCALayer* tileCacheTileContainerLayer = tileController->tileContainerLayer();
-        (*m_customSublayers)[0] = tileCacheTileContainerLayer;
+        m_customSublayers = std::make_unique<PlatformCALayerList>(tileController->containerLayers());
     }
 
     END_BLOCK_OBJC_EXCEPTIONS

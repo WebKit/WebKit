@@ -158,7 +158,7 @@ private:
     bool requiresCustomAppearanceUpdateOnBoundsChange() const;
 
     RetainPtr<NSObject> m_delegate;
-    OwnPtr<PlatformCALayerList> m_customSublayers;
+    std::unique_ptr<PlatformCALayerList> m_customSublayers;
     GraphicsLayer::CustomAppearance m_customAppearance;
     GraphicsLayer::CustomBehavior m_customBehavior;
 };

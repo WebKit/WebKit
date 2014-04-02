@@ -54,7 +54,7 @@ private:
     virtual void setBorderColor(const WebCore::Color&) override;
 
     OwnPtr<WebCore::TileController> m_tileController;
-    OwnPtr<WebCore::PlatformCALayerList> m_customSublayers;
+    std::unique_ptr<WebCore::PlatformCALayerList> m_customSublayers;
 };
 
 } // namespace WebKit

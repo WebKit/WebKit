@@ -30,6 +30,7 @@
 #import "IntRect.h"
 #import "PlatformCALayer.h"
 #import "Region.h"
+#import "TileGrid.h"
 #if !PLATFORM(IOS)
 #import "LayerPool.h"
 #endif
@@ -55,11 +56,10 @@ PassOwnPtr<TileController> TileController::create(PlatformCALayer* rootPlatformL
 
 TileController::TileController(PlatformCALayer* rootPlatformLayer)
     : m_tileCacheLayer(rootPlatformLayer)
+    , m_tileGrid(std::make_unique<TileGrid>(*this))
     , m_tileSize(defaultTileWidth, defaultTileHeight)
     , m_exposedRect(FloatRect::infiniteRect())
     , m_tileRevalidationTimer(this, &TileController::tileRevalidationTimerFired)
-    , m_cohortRemovalTimer(this, &TileController::cohortRemovalTimerFired)
-    , m_scale(1)
     , m_deviceScaleFactor(1)
     , m_tileCoverage(CoverageForVisibleArea)
     , m_marginTop(0)
@@ -75,10 +75,6 @@ TileController::TileController(PlatformCALayer* rootPlatformLayer)
     , m_tileDebugBorderWidth(0)
     , m_indicatorMode(AsyncScrollingIndication)
 {
-    m_tileContainerLayer = m_tileCacheLayer->createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr);
-#ifndef NDEBUG
-    m_tileContainerLayer->setName("TileController Container Layer");
-#endif
 }
 
 TileController::~TileController()
@@ -88,9 +84,6 @@ TileController::~TileController()
 #if PLATFORM(IOS)
     tileControllerMemoryHandler().removeTileController(this);
 #endif
-
-    for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
-        it->value.layer->setOwner(nullptr);
 
     if (m_tiledScrollingIndicatorLayer)
         m_tiledScrollingIndicatorLayer->setOwner(nullptr);
@@ -104,71 +97,12 @@ void TileController::tileCacheLayerBoundsChanged()
 
 void TileController::setNeedsDisplay()
 {
-    for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        TileInfo& tileInfo = it->value;
-        IntRect tileRect = rectForTileIndex(it->key);
-
-        if (tileRect.intersects(m_primaryTileCoverageRect) && tileInfo.layer->superlayer())
-            tileInfo.layer->setNeedsDisplay();
-        else
-            tileInfo.hasStaleContent = true;
-    }
+    tileGrid().setNeedsDisplay();
 }
 
 void TileController::setNeedsDisplayInRect(const IntRect& rect)
 {
-    if (m_tiles.isEmpty())
-        return;
-
-    FloatRect scaledRect(rect);
-    scaledRect.scale(m_scale);
-    IntRect repaintRectInTileCoords(enclosingIntRect(scaledRect));
-
-    // For small invalidations, lookup the covered tiles.
-    if (repaintRectInTileCoords.height() < 2 * m_tileSize.height() && repaintRectInTileCoords.width() < 2 * m_tileSize.width()) {
-        TileIndex topLeft;
-        TileIndex bottomRight;
-        getTileIndexRangeForRect(repaintRectInTileCoords, topLeft, bottomRight);
-
-        for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
-            for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
-                TileIndex tileIndex(x, y);
-                
-                TileMap::iterator it = m_tiles.find(tileIndex);
-                if (it != m_tiles.end())
-                    setTileNeedsDisplayInRect(tileIndex, it->value, repaintRectInTileCoords, m_primaryTileCoverageRect);
-            }
-        }
-        return;
-    }
-
-    for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
-        setTileNeedsDisplayInRect(it->key, it->value, repaintRectInTileCoords, m_primaryTileCoverageRect);
-}
-
-void TileController::setTileNeedsDisplayInRect(const TileIndex& tileIndex, TileInfo& tileInfo, const IntRect& repaintRectInTileCoords, const IntRect& coverageRectInTileCoords)
-{
-    PlatformCALayer* tileLayer = tileInfo.layer.get();
-
-    IntRect tileRect = rectForTileIndex(tileIndex);
-    FloatRect tileRepaintRect = tileRect;
-    tileRepaintRect.intersect(repaintRectInTileCoords);
-    if (tileRepaintRect.isEmpty())
-        return;
-
-    tileRepaintRect.moveBy(-tileRect.location());
-    
-    // We could test for intersection with the visible rect. This would reduce painting yet more,
-    // but may make scrolling stale tiles into view more frequent.
-    if (tileRect.intersects(coverageRectInTileCoords) && tileLayer->superlayer()) {
-        tileLayer->setNeedsDisplay(&tileRepaintRect);
-
-        if (owningGraphicsLayer()->platformCALayerShowRepaintCounter(0)) {
-            FloatRect indicatorRect(0, 0, 52, 27);
-            tileLayer->setNeedsDisplay(&indicatorRect);
-        }
-    } else
-        tileInfo.hasStaleContent = true;
+    tileGrid().setNeedsDisplayInRect(rect);
 }
 
 void TileController::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&)
@@ -179,7 +113,7 @@ void TileController::platformCALayerPaintContents(PlatformCALayer* platformCALay
 #endif
 
     if (platformCALayer == m_tiledScrollingIndicatorLayer.get()) {
-        drawTileMapContents(context.platformContext(), m_tiledScrollingIndicatorLayer->bounds());
+        tileGrid().drawTileMapContents(context.platformContext(), m_tiledScrollingIndicatorLayer->bounds());
         return;
     }
 
@@ -188,7 +122,7 @@ void TileController::platformCALayerPaintContents(PlatformCALayer* platformCALay
 
         FloatPoint3D layerOrigin = platformCALayer->position();
         context.translate(-layerOrigin.x(), -layerOrigin.y());
-        context.scale(FloatSize(m_scale, m_scale));
+        context.scale(FloatSize(tileGrid().scale(), tileGrid().scale()));
 
         RepaintRectList dirtyRects = collectRectsToPaint(context.platformContext(), platformCALayer);
         drawLayerContents(context.platformContext(), m_tileCacheLayer, dirtyRects);
@@ -222,58 +156,46 @@ bool TileController::platformCALayerShowRepaintCounter(PlatformCALayer*) const
     return owningGraphicsLayer()->platformCALayerShowRepaintCounter(0);
 }
 
+float TileController::scale() const
+{
+    return tileGrid().scale();
+}
+
 void TileController::setScale(float scale)
 {
     ASSERT(owningGraphicsLayer()->isCommittingChanges());
 
-    float deviceScaleFactor = owningGraphicsLayer()->platformCALayerDeviceScaleFactor();
+    float deviceScaleFactor = platformCALayerDeviceScaleFactor();
 
     // The scale we get is the product of the page scale factor and device scale factor.
     // Divide by the device scale factor so we'll get the page scale factor.
     scale /= deviceScaleFactor;
 
-    if (m_scale == scale && m_deviceScaleFactor == deviceScaleFactor && !m_hasTilesWithTemporaryScaleFactor)
+    if (tileGrid().scale() == scale && m_deviceScaleFactor == deviceScaleFactor && !m_hasTilesWithTemporaryScaleFactor)
         return;
 
     m_hasTilesWithTemporaryScaleFactor = false;
     m_deviceScaleFactor = deviceScaleFactor;
-    m_scale = scale;
 
-    TransformationMatrix transform;
-    transform.scale(1 / m_scale);
-    m_tileContainerLayer->setTransform(transform);
-
-    // FIXME: we may revalidateTiles twice in this commit.
-    revalidateTiles(PruneSecondaryTiles, PruneSecondaryTiles);
-
-    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
-        it->value.layer->setContentsScale(deviceScaleFactor);
+    tileGrid().setScale(scale);
 }
 
 void TileController::setAcceleratesDrawing(bool acceleratesDrawing)
 {
     if (m_acceleratesDrawing == acceleratesDrawing)
         return;
-
     m_acceleratesDrawing = acceleratesDrawing;
 
-    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        const TileInfo& tileInfo = it->value;
-        tileInfo.layer->setAcceleratesDrawing(m_acceleratesDrawing);
-    }
+    tileGrid().updateTilerLayerProperties();
 }
 
 void TileController::setTilesOpaque(bool opaque)
 {
     if (opaque == m_tilesAreOpaque)
         return;
-
     m_tilesAreOpaque = opaque;
 
-    for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        const TileInfo& tileInfo = it->value;
-        tileInfo.layer->setOpaque(opaque);
-    }
+    tileGrid().updateTilerLayerProperties();
 }
 
 void TileController::setVisibleRect(const FloatRect& visibleRect)
@@ -288,24 +210,9 @@ void TileController::setVisibleRect(const FloatRect& visibleRect)
 
 bool TileController::tilesWouldChangeForVisibleRect(const FloatRect& newVisibleRect) const
 {
-    FloatRect visibleRect = newVisibleRect;
-    visibleRect.intersect(scaledExposedRect());
-
-    if (visibleRect.isEmpty() || bounds().isEmpty())
+    if (bounds().isEmpty())
         return false;
-        
-    FloatRect currentTileCoverageRect = computeTileCoverageRect(m_visibleRect, newVisibleRect);
-    FloatRect scaledRect(currentTileCoverageRect);
-    scaledRect.scale(m_scale);
-    IntRect currentCoverageRectInTileCoords(enclosingIntRect(scaledRect));
-
-    TileIndex topLeft;
-    TileIndex bottomRight;
-    getTileIndexRangeForRect(currentCoverageRectInTileCoords, topLeft, bottomRight);
-
-    IntRect coverageRect = rectForTileIndex(topLeft);
-    coverageRect.unite(rectForTileIndex(bottomRight));
-    return coverageRect != m_primaryTileCoverageRect;
+    return tileGrid().tilesWouldChangeForVisibleRect(newVisibleRect, m_visibleRect);
 }
 
 void TileController::setExposedRect(const FloatRect& exposedRect)
@@ -317,24 +224,10 @@ void TileController::setExposedRect(const FloatRect& exposedRect)
     setNeedsRevalidateTiles();
 }
 
-FloatRect TileController::scaledExposedRect() const
-{
-    FloatRect scaledExposedRect = m_exposedRect;
-    scaledExposedRect.scale(1 / m_scale);
-    return scaledExposedRect;
-}
-
 void TileController::prepopulateRect(const FloatRect& rect)
 {
-    FloatRect scaledRect(rect);
-    scaledRect.scale(m_scale);
-    IntRect rectInTileCoords(enclosingIntRect(scaledRect));
-
-    if (m_primaryTileCoverageRect.contains(rectInTileCoords))
-        return;
-    
-    m_secondaryTileCoverageRects.append(rect);
-    setNeedsRevalidateTiles();
+    if (tileGrid().prepopulateRect(rect))
+        setNeedsRevalidateTiles();
 }
 
 void TileController::setIsInWindow(bool isInWindow)
@@ -364,7 +257,8 @@ void TileController::setTileCoverage(TileCoverage coverage)
 void TileController::revalidateTiles()
 {
     ASSERT(owningGraphicsLayer()->isCommittingChanges());
-    revalidateTiles(0, 0);
+    tileGrid().revalidateTiles(0);
+    m_visibleRectAtLastRevalidate = m_visibleRect;
 }
 
 void TileController::forceRepaint()
@@ -376,22 +270,18 @@ void TileController::setTileDebugBorderWidth(float borderWidth)
 {
     if (m_tileDebugBorderWidth == borderWidth)
         return;
-
     m_tileDebugBorderWidth = borderWidth;
-    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        const TileInfo& tileInfo = it->value;
-        tileInfo.layer->setBorderWidth(m_tileDebugBorderWidth);
-    }
+
+    tileGrid().updateTilerLayerProperties();
 }
 
 void TileController::setTileDebugBorderColor(Color borderColor)
 {
     if (m_tileDebugBorderColor == borderColor)
         return;
-
     m_tileDebugBorderColor = borderColor;
-    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
-        it->value.layer->setBorderColor(borderColor);
+
+    tileGrid().updateTilerLayerProperties();
 }
 
 IntRect TileController::bounds() const
@@ -415,80 +305,8 @@ IntRect TileController::boundsAtLastRevalidateWithoutMargin() const
     return boundsWithoutMargin;
 }
 
-void TileController::adjustRectAtTileIndexForMargin(const TileIndex& tileIndex, IntRect& rect) const
+FloatRect TileController::computeTileCoverageRect(const FloatRect& previousVisibleRect, const FloatRect& visibleRect) const
 {
-    if (!hasMargins())
-        return;
-
-    // This is a tile in the top margin.
-    if (m_marginTop && tileIndex.y() < 0) {
-        rect.setY(tileIndex.y() * topMarginHeight());
-        rect.setHeight(topMarginHeight());
-    }
-
-    // This is a tile in the left margin.
-    if (m_marginLeft && tileIndex.x() < 0) {
-        rect.setX(tileIndex.x() * leftMarginWidth());
-        rect.setWidth(leftMarginWidth());
-    }
-
-    TileIndex contentTopLeft;
-    TileIndex contentBottomRight;
-    getTileIndexRangeForRect(boundsWithoutMargin(), contentTopLeft, contentBottomRight);
-
-    // This is a tile in the bottom margin.
-    if (m_marginBottom && tileIndex.y() > contentBottomRight.y())
-        rect.setHeight(bottomMarginHeight());
-
-    // This is a tile in the right margin.
-    if (m_marginRight && tileIndex.x() > contentBottomRight.x())
-        rect.setWidth(rightMarginWidth());
-}
-
-IntRect TileController::rectForTileIndex(const TileIndex& tileIndex) const
-{
-    IntRect rect(tileIndex.x() * m_tileSize.width(), tileIndex.y() * m_tileSize.height(), m_tileSize.width(), m_tileSize.height());
-    IntRect scaledBounds(bounds());
-    scaledBounds.scale(m_scale);
-
-    rect.intersect(scaledBounds);
-
-    // These rect computations assume m_tileSize is the correct size to use. However, a tile in the margin area
-    // might be a different size depending on the size of the margins. So adjustRectAtTileIndexForMargin() will
-    // fix the rect we've computed to match the margin sizes if this tile is in the margins.
-    adjustRectAtTileIndexForMargin(tileIndex, rect);
-
-    return rect;
-}
-
-void TileController::getTileIndexRangeForRect(const IntRect& rect, TileIndex& topLeft, TileIndex& bottomRight) const
-{
-    IntRect clampedRect = bounds();
-    clampedRect.scale(m_scale);
-    clampedRect.intersect(rect);
-
-    if (clampedRect.x() >= 0)
-        topLeft.setX(clampedRect.x() / m_tileSize.width());
-    else
-        topLeft.setX(floorf((float)clampedRect.x() / leftMarginWidth()));
-
-    if (clampedRect.y() >= 0)
-        topLeft.setY(clampedRect.y() / m_tileSize.height());
-    else
-        topLeft.setY(floorf((float)clampedRect.y() / topMarginHeight()));
-
-    int bottomXRatio = ceil((float)clampedRect.maxX() / m_tileSize.width());
-    bottomRight.setX(std::max(bottomXRatio - 1, 0));
-
-    int bottomYRatio = ceil((float)clampedRect.maxY() / m_tileSize.height());
-    bottomRight.setY(std::max(bottomYRatio - 1, 0));
-}
-
-FloatRect TileController::computeTileCoverageRect(const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect) const
-{
-    FloatRect visibleRect = currentVisibleRect;
-    visibleRect.intersect(scaledExposedRect());
-
     // If the page is not in a window (for example if it's in a background tab), we limit the tile coverage rect to the visible rect.
     if (!m_isInWindow)
         return visibleRect;
@@ -536,6 +354,16 @@ void TileController::scheduleTileRevalidation(double interval)
     m_tileRevalidationTimer.startOneShot(interval);
 }
 
+bool TileController::shouldAggressivelyRetainTiles() const
+{
+    return owningGraphicsLayer()->platformCALayerShouldAggressivelyRetainTiles(m_tileCacheLayer);
+}
+
+bool TileController::shouldTemporarilyRetainTileCohorts() const
+{
+    return owningGraphicsLayer()->platformCALayerShouldTemporarilyRetainTileCohorts(m_tileCacheLayer);
+}
+
 void TileController::tileRevalidationTimerFired(Timer<TileController>*)
 {
     if (m_isInWindow) {
@@ -543,22 +371,22 @@ void TileController::tileRevalidationTimerFired(Timer<TileController>*)
         return;
     }
 
-    TileValidationPolicyFlags foregroundValidationPolicy = owningGraphicsLayer()->platformCALayerShouldAggressivelyRetainTiles(m_tileCacheLayer) ? 0 : PruneSecondaryTiles;
-    TileValidationPolicyFlags backgroundValidationPolicy = foregroundValidationPolicy | UnparentAllTiles;
+    TileGrid::TileValidationPolicyFlags validationPolicy = (shouldAggressivelyRetainTiles() ? 0 : PruneSecondaryTiles) | UnparentAllTiles;
 
-    revalidateTiles(foregroundValidationPolicy, backgroundValidationPolicy);
+    tileGrid().revalidateTiles(validationPolicy);
+}
+
+void TileController::didRevalidateTiles()
+{
+    m_visibleRectAtLastRevalidate = visibleRect();
+    m_boundsAtLastRevalidate = bounds();
+
+    updateTileCoverageMap();
 }
 
 unsigned TileController::blankPixelCount() const
 {
-    PlatformLayerList tiles(m_tiles.size());
-
-    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        if (PlatformLayer *layer = it->value.layer->platformLayer())
-            tiles.append(layer);
-    }
-
-    return blankPixelCountForTiles(tiles, m_visibleRect, IntPoint(0,0));
+    return tileGrid().blankPixelCount();
 }
 
 unsigned TileController::blankPixelCountForTiles(const PlatformLayerList& tiles, const FloatRect& visibleRect, const IntPoint& tileTranslation)
@@ -581,324 +409,19 @@ unsigned TileController::blankPixelCountForTiles(const PlatformLayerList& tiles,
     return uncoveredRegion.totalArea();
 }
 
-static inline void queueTileForRemoval(const TileController::TileIndex& tileIndex, const TileController::TileInfo& tileInfo, Vector<TileController::TileIndex>& tilesToRemove, TileController::RepaintCountMap& repaintCounts)
-{
-    tileInfo.layer->removeFromSuperlayer();
-    repaintCounts.remove(tileInfo.layer.get());
-    tilesToRemove.append(tileIndex);
-}
-
-void TileController::removeAllTiles()
-{
-    Vector<TileIndex> tilesToRemove;
-
-    for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
-        queueTileForRemoval(it->key, it->value, tilesToRemove, m_tileRepaintCounts);
-
-    for (size_t i = 0; i < tilesToRemove.size(); ++i) {
-        TileInfo tileInfo = m_tiles.take(tilesToRemove[i]);
-#if !PLATFORM(IOS)
-        LayerPool::sharedPool()->addLayer(tileInfo.layer);
-#endif
-    }
-}
-
-void TileController::removeAllSecondaryTiles()
-{
-    Vector<TileIndex> tilesToRemove;
-
-    for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        const TileInfo& tileInfo = it->value;
-        if (tileInfo.cohort == VisibleTileCohort)
-            continue;
-
-        queueTileForRemoval(it->key, it->value, tilesToRemove, m_tileRepaintCounts);
-    }
-
-    for (size_t i = 0; i < tilesToRemove.size(); ++i) {
-        TileInfo tileInfo = m_tiles.take(tilesToRemove[i]);
-#if !PLATFORM(IOS)
-        LayerPool::sharedPool()->addLayer(tileInfo.layer);
-#endif
-    }
-}
-
-void TileController::removeTilesInCohort(TileCohort cohort)
-{
-    ASSERT(cohort != VisibleTileCohort);
-    Vector<TileIndex> tilesToRemove;
-
-    for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        const TileInfo& tileInfo = it->value;
-        if (tileInfo.cohort != cohort)
-            continue;
-
-        queueTileForRemoval(it->key, it->value, tilesToRemove, m_tileRepaintCounts);
-    }
-
-    for (size_t i = 0; i < tilesToRemove.size(); ++i) {
-        TileInfo tileInfo = m_tiles.take(tilesToRemove[i]);
-#if !PLATFORM(IOS)
-        LayerPool::sharedPool()->addLayer(tileInfo.layer);
-#endif
-    }
-}
-
 void TileController::setNeedsRevalidateTiles()
 {
     owningGraphicsLayer()->platformCALayerSetNeedsToRevalidateTiles();
 }
 
-void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidationPolicy, TileValidationPolicyFlags backgroundValidationPolicy)
-{
-    FloatRect visibleRect = m_visibleRect;
-    IntRect bounds = this->bounds();
-
-    visibleRect.intersect(scaledExposedRect());
-
-    if (visibleRect.isEmpty() || bounds.isEmpty())
-        return;
-    
-    TileValidationPolicyFlags validationPolicy = m_isInWindow ? foregroundValidationPolicy : backgroundValidationPolicy;
-    
-    FloatRect tileCoverageRect = computeTileCoverageRect(m_visibleRectAtLastRevalidate, m_visibleRect);
-    FloatRect scaledRect(tileCoverageRect);
-    scaledRect.scale(m_scale);
-    IntRect coverageRectInTileCoords(enclosingIntRect(scaledRect));
-
-    TileCohort currCohort = nextTileCohort();
-    unsigned tilesInCohort = 0;
-
-    // Move tiles newly outside the coverage rect into the cohort map.
-    for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        TileInfo& tileInfo = it->value;
-        TileIndex tileIndex = it->key;
-
-        PlatformCALayer* tileLayer = tileInfo.layer.get();
-        IntRect tileRect = rectForTileIndex(tileIndex);
-        if (tileRect.intersects(coverageRectInTileCoords)) {
-            tileInfo.cohort = VisibleTileCohort;
-            if (tileInfo.hasStaleContent) {
-                // FIXME: store a dirty region per layer?
-                tileLayer->setNeedsDisplay();
-                tileInfo.hasStaleContent = false;
-            }
-        } else {
-            // Add to the currentCohort if not already in one.
-            if (tileInfo.cohort == VisibleTileCohort) {
-                tileInfo.cohort = currCohort;
-                ++tilesInCohort;
-
-                if (m_unparentsOffscreenTiles)
-                    tileLayer->removeFromSuperlayer();
-            }
-        }
-    }
-
-    if (tilesInCohort)
-        startedNewCohort(currCohort);
-
-    if (!owningGraphicsLayer()->platformCALayerShouldAggressivelyRetainTiles(m_tileCacheLayer)) {
-        if (owningGraphicsLayer()->platformCALayerShouldTemporarilyRetainTileCohorts(m_tileCacheLayer))
-            scheduleCohortRemoval();
-        else if (tilesInCohort)
-            removeTilesInCohort(currCohort);
-    }
-
-    // Ensure primary tile coverage tiles.
-    m_primaryTileCoverageRect = ensureTilesForRect(tileCoverageRect, CoverageType::PrimaryTiles);
-
-    if (validationPolicy & PruneSecondaryTiles) {
-        removeAllSecondaryTiles();
-        m_cohortList.clear();
-    } else {
-        for (size_t i = 0; i < m_secondaryTileCoverageRects.size(); ++i)
-            ensureTilesForRect(m_secondaryTileCoverageRects[i], CoverageType::SecondaryTiles);
-        m_secondaryTileCoverageRects.clear();
-    }
-
-    if (m_unparentsOffscreenTiles && (validationPolicy & UnparentAllTiles)) {
-        for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
-            it->value.layer->removeFromSuperlayer();
-    }
-
-    if (m_boundsAtLastRevalidate != bounds) {
-        // If there are margin tiles and the bounds have grown taller or wider, then the tiles that used to
-        // be bottom or right margin tiles need to be invalidated.
-        if (hasMargins()) {
-            if (bounds.width() > m_boundsAtLastRevalidate.width() || bounds.height() > m_boundsAtLastRevalidate.height()) {
-                IntRect boundsWithoutMargin = this->boundsWithoutMargin();
-                IntRect oldBoundsWithoutMargin = boundsAtLastRevalidateWithoutMargin();
-
-                if (bounds.height() > m_boundsAtLastRevalidate.height()) {
-                    IntRect formerBottomMarginRect = IntRect(oldBoundsWithoutMargin.x(), oldBoundsWithoutMargin.height(),
-                        oldBoundsWithoutMargin.width(), boundsWithoutMargin.height() - oldBoundsWithoutMargin.height());
-                    setNeedsDisplayInRect(formerBottomMarginRect);
-                }
-
-                if (bounds.width() > m_boundsAtLastRevalidate.width()) {
-                    IntRect formerRightMarginRect = IntRect(oldBoundsWithoutMargin.width(), oldBoundsWithoutMargin.y(),
-                        boundsWithoutMargin.width() - oldBoundsWithoutMargin.width(), oldBoundsWithoutMargin.height());
-                    setNeedsDisplayInRect(formerRightMarginRect);
-                }
-            }
-        }
-
-        FloatRect scaledBounds(bounds);
-        scaledBounds.scale(m_scale);
-        IntRect boundsInTileCoords(enclosingIntRect(scaledBounds));
-
-        TileIndex topLeftForBounds;
-        TileIndex bottomRightForBounds;
-        getTileIndexRangeForRect(boundsInTileCoords, topLeftForBounds, bottomRightForBounds);
-
-        Vector<TileIndex> tilesToRemove;
-        for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-            const TileIndex& index = it->key;
-            if (index.y() < topLeftForBounds.y()
-                || index.y() > bottomRightForBounds.y()
-                || index.x() < topLeftForBounds.x()
-                || index.x() > bottomRightForBounds.x())
-                queueTileForRemoval(index, it->value, tilesToRemove, m_tileRepaintCounts);
-        }
-
-        for (size_t i = 0, size = tilesToRemove.size(); i < size; ++i) {
-            TileInfo tileInfo = m_tiles.take(tilesToRemove[i]);
-#if !PLATFORM(IOS)
-            LayerPool::sharedPool()->addLayer(tileInfo.layer);
-#endif
-        }
-    }
-
-    if (m_tiledScrollingIndicatorLayer)
-        updateTileCoverageMap();
-
-    m_visibleRectAtLastRevalidate = visibleRect;
-    m_boundsAtLastRevalidate = bounds;
-}
-
-TileController::TileCohort TileController::nextTileCohort() const
-{
-    if (!m_cohortList.isEmpty())
-        return m_cohortList.last().cohort + 1;
-
-    return 1;
-}
-
-void TileController::startedNewCohort(TileCohort cohort)
-{
-    m_cohortList.append(TileCohortInfo(cohort, monotonicallyIncreasingTime()));
-#if PLATFORM(IOS)
-    if (!m_isInWindow)
-        tileControllerMemoryHandler().tileControllerGainedUnparentedTiles(this);
-#endif
-}
-
-TileController::TileCohort TileController::newestTileCohort() const
-{
-    return m_cohortList.isEmpty() ? 0 : m_cohortList.last().cohort;
-}
-
-TileController::TileCohort TileController::oldestTileCohort() const
-{
-    return m_cohortList.isEmpty() ? 0 : m_cohortList.first().cohort;
-}
-
-void TileController::scheduleCohortRemoval()
-{
-    const double cohortRemovalTimerSeconds = 1;
-
-    // Start the timer, or reschedule the timer from now if it's already active.
-    if (!m_cohortRemovalTimer.isActive())
-        m_cohortRemovalTimer.startRepeating(cohortRemovalTimerSeconds);
-}
-
-void TileController::cohortRemovalTimerFired(Timer<TileController>*)
-{
-    if (m_cohortList.isEmpty()) {
-        m_cohortRemovalTimer.stop();
-        return;
-    }
-
-    double cohortLifeTimeSeconds = 2;
-    double timeThreshold = monotonicallyIncreasingTime() - cohortLifeTimeSeconds;
-
-    while (!m_cohortList.isEmpty() && m_cohortList.first().creationTime < timeThreshold) {
-        TileCohortInfo firstCohort = m_cohortList.takeFirst();
-        removeTilesInCohort(firstCohort.cohort);
-    }
-
-    if (m_tiledScrollingIndicatorLayer)
-        updateTileCoverageMap();
-}
-
-IntRect TileController::ensureTilesForRect(const FloatRect& rect, CoverageType newTileType)
-{
-    if (m_unparentsOffscreenTiles && !m_isInWindow)
-        return IntRect();
-
-    FloatRect scaledRect(rect);
-    scaledRect.scale(m_scale);
-    IntRect rectInTileCoords(enclosingIntRect(scaledRect));
-
-    TileIndex topLeft;
-    TileIndex bottomRight;
-    getTileIndexRangeForRect(rectInTileCoords, topLeft, bottomRight);
-
-    TileCohort currCohort = nextTileCohort();
-    unsigned tilesInCohort = 0;
-
-    IntRect coverageRect;
-
-    for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
-        for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
-            TileIndex tileIndex(x, y);
-
-            IntRect tileRect = rectForTileIndex(tileIndex);
-            TileInfo& tileInfo = m_tiles.add(tileIndex, TileInfo()).iterator->value;
-
-            coverageRect.unite(tileRect);
-
-            bool shouldChangeTileLayerFrame = false;
-
-            if (!tileInfo.layer)
-                tileInfo.layer = createTileLayer(tileRect);
-            else {
-                // We already have a layer for this tile. Ensure that its size is correct.
-                FloatSize tileLayerSize(tileInfo.layer->bounds().size());
-                shouldChangeTileLayerFrame = tileLayerSize != FloatSize(tileRect.size());
-
-                if (shouldChangeTileLayerFrame) {
-                    tileInfo.layer->setBounds(FloatRect(FloatPoint(), tileRect.size()));
-                    tileInfo.layer->setPosition(tileRect.location());
-                    tileInfo.layer->setNeedsDisplay();
-                }
-            }
-
-            if (newTileType == CoverageType::SecondaryTiles && !tileRect.intersects(m_primaryTileCoverageRect)) {
-                tileInfo.cohort = currCohort;
-                ++tilesInCohort;
-            }
-
-            bool shouldParentTileLayer = (!m_unparentsOffscreenTiles || m_isInWindow) && !tileInfo.layer->superlayer();
-
-            if (shouldParentTileLayer)
-                m_tileContainerLayer->appendSublayer(tileInfo.layer.get());
-        }
-    }
-    
-    if (tilesInCohort)
-        startedNewCohort(currCohort);
-
-    return coverageRect;
-}
-
 void TileController::updateTileCoverageMap()
 {
+    if (!m_tiledScrollingIndicatorLayer)
+        return;
     FloatRect containerBounds = bounds();
     FloatRect visibleRect = this->visibleRect();
 
-    visibleRect.intersect(scaledExposedRect());
+    visibleRect.intersect(tileGrid().scaledExposedRect());
     visibleRect.contract(4, 4); // Layer is positioned 2px from top and left edges.
 
     float widthScale = 1;
@@ -908,7 +431,7 @@ void TileController::updateTileCoverageMap()
         scale = std::min(widthScale, visibleRect.height() / containerBounds.height());
     }
     
-    float indicatorScale = scale * m_scale;
+    float indicatorScale = scale * tileGrid().scale();
     FloatRect mapBounds = containerBounds;
     mapBounds.scale(indicatorScale, indicatorScale);
 
@@ -943,36 +466,18 @@ void TileController::updateTileCoverageMap()
 
 IntRect TileController::tileGridExtent() const
 {
-    TileIndex topLeft;
-    TileIndex bottomRight;
-    getTileIndexRangeForRect(m_primaryTileCoverageRect, topLeft, bottomRight);
-
-    // Return index of top, left tile and the number of tiles across and down.
-    return IntRect(topLeft.x(), topLeft.y(), bottomRight.x() - topLeft.x() + 1, bottomRight.y() - topLeft.y() + 1);
+    return tileGrid().extent();
 }
 
 double TileController::retainedTileBackingStoreMemory() const
 {
-    double totalBytes = 0;
-    
-    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        const TileInfo& tileInfo = it->value;
-        if (tileInfo.layer->superlayer()) {
-            FloatRect bounds = tileInfo.layer->bounds();
-            double contentsScale = tileInfo.layer->contentsScale();
-            totalBytes += 4 * bounds.width() * contentsScale * bounds.height() * contentsScale;
-        }
-    }
-
-    return totalBytes;
+    return tileGrid().retainedTileBackingStoreMemory();
 }
 
 // Return the rect in layer coords, not tile coords.
 IntRect TileController::tileCoverageRect() const
 {
-    IntRect coverageRectInLayerCoords(m_primaryTileCoverageRect);
-    coverageRectInLayerCoords.scale(1 / m_scale);
-    return coverageRectInLayerCoords;
+    return tileGrid().tileCoverageRect();
 }
 
 PlatformCALayer* TileController::tiledScrollingIndicatorLayer()
@@ -1005,8 +510,7 @@ void TileController::setScrollingModeIndication(ScrollingModeIndication scrollin
 
     m_indicatorMode = scrollingMode;
 
-    if (m_tiledScrollingIndicatorLayer)
-        updateTileCoverageMap();
+    updateTileCoverageMap();
 }
 
 void TileController::setTileMargins(int marginTop, int marginBottom, int marginLeft, int marginRight)
@@ -1092,62 +596,24 @@ int TileController::platformCALayerIncrementRepaintCount(PlatformCALayer* platfo
     return repaintCount;
 }
 
-void TileController::drawTileMapContents(CGContextRef context, CGRect layerBounds)
+Vector<RefPtr<PlatformCALayer>> TileController::containerLayers()
 {
-    CGContextSetRGBFillColor(context, 0.3, 0.3, 0.3, 1);
-    CGContextFillRect(context, layerBounds);
-
-    CGFloat scaleFactor = layerBounds.size.width / bounds().width();
-
-    CGFloat contextScale = scaleFactor / scale();
-    CGContextScaleCTM(context, contextScale, contextScale);
-    
-    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        const TileInfo& tileInfo = it->value;
-        PlatformCALayer* tileLayer = tileInfo.layer.get();
-
-        CGFloat red = 1;
-        CGFloat green = 1;
-        CGFloat blue = 1;
-        if (tileInfo.hasStaleContent) {
-            red = 0.25;
-            green = 0.125;
-            blue = 0;
-        }
-
-        TileCohort newestCohort = newestTileCohort();
-        TileCohort oldestCohort = oldestTileCohort();
-
-        if (!owningGraphicsLayer()->platformCALayerShouldAggressivelyRetainTiles(m_tileCacheLayer) && tileInfo.cohort != VisibleTileCohort && newestCohort > oldestCohort) {
-            float cohortProportion = static_cast<float>((newestCohort - tileInfo.cohort)) / (newestCohort - oldestCohort);
-            CGContextSetRGBFillColor(context, red, green, blue, 1 - cohortProportion);
-        } else
-            CGContextSetRGBFillColor(context, red, green, blue, 1);
-
-        if (tileLayer->superlayer()) {
-            CGContextSetLineWidth(context, 0.5 / contextScale);
-            CGContextSetRGBStrokeColor(context, 0, 0, 0, 1);
-        } else {
-            CGContextSetLineWidth(context, 1 / contextScale);
-            CGContextSetRGBStrokeColor(context, 0.2, 0.1, 0.9, 1);
-        }
-
-        CGRect frame = CGRectMake(tileLayer->position().x(), tileLayer->position().y(), tileLayer->bounds().size().width(), tileLayer->bounds().size().height());
-        CGContextFillRect(context, frame);
-        CGContextStrokeRect(context, frame);
-    }
+    Vector<RefPtr<PlatformCALayer>> layerList(1);
+    layerList[0] = &tileGrid().containerLayer();
+    return layerList;
 }
     
 #if PLATFORM(IOS)
+unsigned TileController::numberOfUnparentedTiles() const
+{
+    return tileGrid().numberOfUnparentedTiles();
+}
+
 void TileController::removeUnparentedTilesNow()
 {
-    while (!m_cohortList.isEmpty()) {
-        TileCohortInfo firstCohort = m_cohortList.takeFirst();
-        removeTilesInCohort(firstCohort.cohort);
-    }
+    tileGrid().removeUnparentedTilesNow();
 
-    if (m_tiledScrollingIndicatorLayer)
-        updateTileCoverageMap();
+    updateTileCoverageMap();
 }
 #endif
 

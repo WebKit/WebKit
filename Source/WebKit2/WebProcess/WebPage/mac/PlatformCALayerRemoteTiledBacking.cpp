@@ -40,10 +40,7 @@ PlatformCALayerRemoteTiledBacking::PlatformCALayerRemoteTiledBacking(LayerType l
     : PlatformCALayerRemote(layerType, owner, context)
 {
     m_tileController = TileController::create(this);
-
-    m_customSublayers = adoptPtr(new PlatformCALayerList(1));
-    PlatformCALayer* tileCacheTileContainerLayer = m_tileController->tileContainerLayer();
-    (*m_customSublayers)[0] = tileCacheTileContainerLayer;
+    m_customSublayers = std::make_unique<PlatformCALayerList>(m_tileController->containerLayers());
 }
 
 PlatformCALayerRemoteTiledBacking::~PlatformCALayerRemoteTiledBacking()

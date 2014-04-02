@@ -6071,6 +6071,8 @@
 		E4BBED4D14FCDBA1003F0B98 /* StyleRule.h in Headers */ = {isa = PBXBuildFile; fileRef = E4BBED4B14FCDBA1003F0B98 /* StyleRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4C1789A0EE6903800824D69 /* CSSSelectorList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4C178950EE6903800824D69 /* CSSSelectorList.cpp */; };
 		E4C1789B0EE6903800824D69 /* CSSSelectorList.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C178960EE6903800824D69 /* CSSSelectorList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E4C274CA18E988EA00602C76 /* TileGrid.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4C274C918E988EA00602C76 /* TileGrid.mm */; };
+		E4C274CC18E988F500602C76 /* TileGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C274CB18E988F500602C76 /* TileGrid.h */; };
 		E4C279580CF9741900E97B98 /* RenderMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4C279560CF9741900E97B98 /* RenderMedia.cpp */; };
 		E4C279590CF9741900E97B98 /* RenderMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C279570CF9741900E97B98 /* RenderMedia.h */; };
 		E4C3B1FA0F0E4161009693F6 /* LegacyTileCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C3B1F90F0E4161009693F6 /* LegacyTileCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13474,6 +13476,8 @@
 		E4BBED4B14FCDBA1003F0B98 /* StyleRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleRule.h; sourceTree = "<group>"; };
 		E4C178950EE6903800824D69 /* CSSSelectorList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSSelectorList.cpp; sourceTree = "<group>"; };
 		E4C178960EE6903800824D69 /* CSSSelectorList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSSelectorList.h; sourceTree = "<group>"; };
+		E4C274C918E988EA00602C76 /* TileGrid.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TileGrid.mm; path = ca/mac/TileGrid.mm; sourceTree = "<group>"; };
+		E4C274CB18E988F500602C76 /* TileGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileGrid.h; path = ca/mac/TileGrid.h; sourceTree = "<group>"; };
 		E4C279560CF9741900E97B98 /* RenderMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMedia.cpp; sourceTree = "<group>"; };
 		E4C279570CF9741900E97B98 /* RenderMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMedia.h; sourceTree = "<group>"; };
 		E4C3B1F90F0E4161009693F6 /* LegacyTileCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegacyTileCache.h; path = ios/LegacyTileCache.h; sourceTree = "<group>"; };
@@ -15609,6 +15613,8 @@
 				4958782012A57DDF007238AC /* PlatformCALayerMac.mm */,
 				1AA71609149BC4DB0016EC19 /* TileController.h */,
 				1AA71608149BC4DA0016EC19 /* TileController.mm */,
+				E4C274CB18E988F500602C76 /* TileGrid.h */,
+				E4C274C918E988EA00602C76 /* TileGrid.mm */,
 				0F580FA11496939100FB5BD8 /* WebTiledBackingLayer.h */,
 				0F580FA21496939100FB5BD8 /* WebTiledBackingLayer.mm */,
 			);
@@ -24450,6 +24456,7 @@
 				C585A68D11D4FB08004C3E4B /* JSIDBKeyRange.h in Headers */,
 				C585A68F11D4FB08004C3E4B /* JSIDBObjectStore.h in Headers */,
 				C585A69111D4FB08004C3E4B /* JSIDBRequest.h in Headers */,
+				E4C274CC18E988F500602C76 /* TileGrid.h in Headers */,
 				B6566270120B1227006EA85C /* JSIDBTransaction.h in Headers */,
 				269239961505E1AA009E57FC /* JSIDBVersionChangeEvent.h in Headers */,
 				BC6C49F40D7DBA0500FFA558 /* JSImageConstructor.h in Headers */,
@@ -28226,6 +28233,7 @@
 				516BB7940CE91E6800512F79 /* JSTreeWalkerCustom.cpp in Sources */,
 				A86629D009DA2B48009633A5 /* JSUIEvent.cpp in Sources */,
 				AAA4FAD3175D5CB300743873 /* JSUIRequestEvent.cpp in Sources */,
+				E4C274CA18E988EA00602C76 /* TileGrid.mm in Sources */,
 				15C77094100D3CA8005BA267 /* JSValidityState.cpp in Sources */,
 				CDE83DB6183D352A0031EAA3 /* JSVideoPlaybackQuality.cpp in Sources */,
 				07C59B5F17F4B208000FBCBB /* JSVideoStreamTrack.cpp in Sources */,
