@@ -41,23 +41,23 @@ class GMainLoopSource {
 public:
     static GMainLoopSource& createAndDeleteOnDestroy();
 
-    GMainLoopSource();
-    ~GMainLoopSource();
+    WTF_EXPORT_PRIVATE GMainLoopSource();
+    WTF_EXPORT_PRIVATE ~GMainLoopSource();
 
     static const bool Stop = false;
     static const bool Continue = true;
 
-    bool isScheduled() const;
-    bool isActive() const;
+    WTF_EXPORT_PRIVATE bool isScheduled() const;
+    WTF_EXPORT_PRIVATE bool isActive() const;
 
-    void schedule(const char* name, std::function<void ()>, int priority = G_PRIORITY_DEFAULT, std::function<void ()> destroyFunction = nullptr, GMainContext* = nullptr);
-    void schedule(const char* name, std::function<bool ()>, int priority = G_PRIORITY_DEFAULT, std::function<void ()> destroyFunction = nullptr, GMainContext* = nullptr);
-    void schedule(const char* name, std::function<bool (GIOCondition)>, GSocket*, GIOCondition, std::function<void ()> destroyFunction = nullptr, GMainContext* = nullptr);
-    void scheduleAfterDelay(const char* name, std::function<void ()>, std::chrono::milliseconds, int priority = G_PRIORITY_DEFAULT, std::function<void ()> destroyFunction = nullptr, GMainContext* = nullptr);
-    void scheduleAfterDelay(const char* name, std::function<bool ()>, std::chrono::milliseconds, int priority = G_PRIORITY_DEFAULT, std::function<void ()> destroyFunction = nullptr, GMainContext* = nullptr);
-    void scheduleAfterDelay(const char* name, std::function<void ()>, std::chrono::seconds, int priority = G_PRIORITY_DEFAULT, std::function<void ()> destroyFunction = nullptr, GMainContext* = nullptr);
-    void scheduleAfterDelay(const char* name, std::function<bool ()>, std::chrono::seconds, int priority = G_PRIORITY_DEFAULT, std::function<void ()> destroyFunction = nullptr, GMainContext* = nullptr);
-    void cancel();
+    WTF_EXPORT_PRIVATE void schedule(const char* name, std::function<void()>, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr);
+    WTF_EXPORT_PRIVATE void schedule(const char* name, std::function<bool()>, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr);
+    WTF_EXPORT_PRIVATE void schedule(const char* name, std::function<bool(GIOCondition)>, GSocket*, GIOCondition, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr);
+    WTF_EXPORT_PRIVATE void scheduleAfterDelay(const char* name, std::function<void()>, std::chrono::milliseconds, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr);
+    WTF_EXPORT_PRIVATE void scheduleAfterDelay(const char* name, std::function<bool()>, std::chrono::milliseconds, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr);
+    WTF_EXPORT_PRIVATE void scheduleAfterDelay(const char* name, std::function<void()>, std::chrono::seconds, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr);
+    WTF_EXPORT_PRIVATE void scheduleAfterDelay(const char* name, std::function<bool()>, std::chrono::seconds, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr);
+    WTF_EXPORT_PRIVATE void cancel();
 
 private:
     enum DeleteOnDestroyType { DeleteOnDestroy, DoNotDeleteOnDestroy };

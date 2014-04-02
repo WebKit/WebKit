@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if USE(GLIB)
+
 #include "GMainLoopSource.h"
 
 #include <gio/gio.h>
@@ -265,3 +268,4 @@ gboolean GMainLoopSource::socketSourceCallback(GSocket*, GIOCondition condition,
 
 } // namespace WTF
 
+#endif // USE(GLIB)

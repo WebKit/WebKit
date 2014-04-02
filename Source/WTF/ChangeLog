@@ -1,3 +1,16 @@
+2014-04-02  Alex Christensen  <achristensen@webkit.org>
+
+        [WinCairo] Build fix with GMainLoopSource.
+        https://bugs.webkit.org/show_bug.cgi?id=131089
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wtf/gobject/GMainLoopSource.cpp:
+        Only compile if glib is used, which fixes compile errors with video disabled in WinCairo.
+        * wtf/gobject/GMainLoopSource.h:
+        Export the GMainLoopSource functions to WTF.dll to link with where they are called in the GStreamer code.
+        Also removed spaces to appease style bot.
+
 2014-04-01  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
 
         [EFL] REGRESSION(166569): It made DoYouEvenBench/Full.html, CSS/QuerySelector.html and Dromaeo performance tests crash
