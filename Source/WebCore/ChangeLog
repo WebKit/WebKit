@@ -1,3 +1,20 @@
+2014-04-02  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make GraphicsContext::drawTiledImage* functions float based.
+        https://bugs.webkit.org/show_bug.cgi?id=131062
+
+        Reviewed by Simon Fraser.
+
+        This is in preparation to support subpixel positioned/sized background images. Generated images
+        need to be able to sized on device pixels.
+
+        No change in behavior.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        (WebCore::GraphicsContext::drawTiledImage):
+        * platform/graphics/GraphicsContext.h:
+
 2014-04-02  Alex Christensen  <achristensen@webkit.org>
 
         [WinCairo] Build fix after r166496.
