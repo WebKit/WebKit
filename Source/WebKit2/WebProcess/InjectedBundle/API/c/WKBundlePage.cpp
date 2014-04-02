@@ -561,5 +561,5 @@ void WKBundlePageStopExtendingIncrementalRenderingSuppression(WKBundlePageRef pa
 
 bool WKBundlePageIsUsingEphemeralSession(WKBundlePageRef pageRef)
 {
-    return toImpl(pageRef)->isUsingEphemeralSession();
+    return toImpl(pageRef)->usesEphemeralSession();
 }

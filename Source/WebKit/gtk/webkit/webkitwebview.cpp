@@ -3601,7 +3601,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     coreSettings.setTextAreasAreResizable(settingsPrivate->resizableTextAreas);
     coreSettings.setUserStyleSheetLocation(URL(URL(), settingsPrivate->userStylesheetURI.data()));
     coreSettings.setDeveloperExtrasEnabled(settingsPrivate->enableDeveloperExtras);
-    coreSettings.setPrivateBrowsingEnabled(settingsPrivate->enablePrivateBrowsing);
+    core(webView)->enableLegacyPrivateBrowsing(settingsPrivate->enablePrivateBrowsing);
     coreSettings.setCaretBrowsingEnabled(settingsPrivate->enableCaretBrowsing);
     coreSettings.setLocalStorageEnabled(settingsPrivate->enableHTML5LocalStorage);
     coreSettings.setLocalStorageDatabasePath(settingsPrivate->html5LocalStorageDatabasePath.data());
@@ -3733,7 +3733,7 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
     else if (name == g_intern_string("enable-developer-extras"))
         settings.setDeveloperExtrasEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-private-browsing"))
-        settings.setPrivateBrowsingEnabled(g_value_get_boolean(&value));
+        core(webView)->enableLegacyPrivateBrowsing(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-caret-browsing"))
         settings.setCaretBrowsingEnabled(g_value_get_boolean(&value));
 #if ENABLE(SQL_DATABASE)

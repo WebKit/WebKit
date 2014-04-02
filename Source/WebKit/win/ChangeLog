@@ -1,3 +1,17 @@
+2014-04-02  Martin Hock  <mhock@apple.com>
+
+        Unify private browsing with sessions.
+        https://bugs.webkit.org/show_bug.cgi?id=130099
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp: Change WebCore::Settings::privateBrowsingEnabled() to Page::sessionID().isEphemeral().
+        (WebFrameLoaderClient::updateGlobalHistoryItemForPage):
+        * WebCoreSupport/WebFrameNetworkingContext.cpp: Ditto.
+        (WebFrameNetworkingContext::storageSession):
+        * WebView.cpp: Change WebCore::Settings::setPrivateBrowsingEnabled() to Page::enableLegacyPrivateBrowsing().
+        (WebView::notifyPreferencesChanged):
+
 2014-03-22  Darin Adler  <darin@apple.com>
 
         Remove String::deprecatedCharacters

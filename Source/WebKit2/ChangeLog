@@ -1,3 +1,27 @@
+2014-04-02  Martin Hock  <mhock@apple.com>
+
+        Unify private browsing with sessions.
+        https://bugs.webkit.org/show_bug.cgi?id=130099
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp: Change WebPage::isUsingEphemeralSession() to WebPage::usesEphemeralSession().
+        (WKBundlePageIsUsingEphemeralSession):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp: Change Settings::setPrivateBrowsingEnabled() to Page::enableLegacyPrivateBrowsing().
+        (WebKit::InjectedBundle::setPrivateBrowsingEnabled):
+        * WebProcess/Plugins/PluginView.cpp: Change Settings::privateBrowsingEnabled() to Page::usesEphemeralSession().
+        (WebKit::PluginView::isPrivateBrowsingEnabled):
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp: Ditto.
+        (WebKit::WebFrameNetworkingContext::storageSession):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::usesEphemeralSession): Renamed from isUsingEphemeralSession.
+        (WebKit::WebPage::setSessionID): Ensure session before setting.
+        (WebKit::WebPage::updatePreferences): Set session to legacy private session if needed.
+        (WebKit::WebPage::sessionID): Moved to header.
+        (WebKit::WebPage::isUsingEphemeralSession): Renamed to usesEphemeralSession.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::sessionID): Just call down to m_page.
+
 2014-04-02  Alice Barraclough  <alice.liu@apple.com>
 
         Adding Objective-C SPI for Find in Page.

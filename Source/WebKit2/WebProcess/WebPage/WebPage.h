@@ -193,8 +193,9 @@ public:
 
     WebCore::Page* corePage() const { return m_page.get(); }
     uint64_t pageID() const { return m_pageID; }
-    WebCore::SessionID sessionID() const;
-    bool isUsingEphemeralSession() const;
+    WebCore::SessionID sessionID() const { return m_page->sessionID(); }
+    bool usesEphemeralSession() const { return m_page->usesEphemeralSession(); }
+
     void setSessionID(WebCore::SessionID);
 
     void setSize(const WebCore::IntSize&);

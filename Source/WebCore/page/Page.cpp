@@ -192,7 +192,7 @@ Page::Page(PageClients& pageClients)
     , m_lastSpatialNavigationCandidatesCount(0) // NOTE: Only called from Internals for Spatial Navigation testing.
     , m_framesHandlingBeforeUnloadEvent(0)
     , m_visitedLinkStore(std::move(pageClients.visitedLinkStore))
-    , m_sessionID(SessionID::emptySessionID())
+    , m_sessionID(SessionID::defaultSessionID())
 {
     ASSERT(m_editorClient);
 
@@ -1080,19 +1080,12 @@ void Page::storageBlockingStateChanged()
         views[i]->storageBlockingStateChanged();
 }
 
-void Page::privateBrowsingStateChanged()
+void Page::enableLegacyPrivateBrowsing(bool privateBrowsingEnabled)
 {
-    bool privateBrowsingEnabled = m_settings->privateBrowsingEnabled();
+    // Don't allow changing the legacy private browsing state if we have set a session ID.
+    ASSERT(m_sessionID == SessionID::defaultSessionID() || m_sessionID == SessionID::legacyPrivateSessionID());
 
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
-        frame->document()->privateBrowsingStateDidChange();
-
-    // Collect the PluginViews in to a vector to ensure that action the plug-in takes
-    // from below privateBrowsingStateChanged does not affect their lifetime.
-    auto views = pluginViews();
-
-    for (unsigned i = 0; i < views.size(); ++i)
-        views[i]->privateBrowsingStateChanged(privateBrowsingEnabled);
+    setSessionID(privateBrowsingEnabled ? SessionID::legacyPrivateSessionID() : SessionID::defaultSessionID());
 }
 
 #if !ASSERT_DISABLED
@@ -1514,19 +1507,29 @@ VisitedLinkStore& Page::visitedLinkStore()
 
 SessionID Page::sessionID() const
 {
-    if (m_sessionID.isValid())
-        return m_sessionID;
-
-    if (settings().privateBrowsingEnabled())
-        return SessionID::legacyPrivateSessionID();
-
-    return SessionID::defaultSessionID();
+    return m_sessionID;
 }
 
 void Page::setSessionID(SessionID sessionID)
 {
     ASSERT(sessionID.isValid());
+
+    bool privateBrowsingStateChanged = (sessionID.isEphemeral() != m_sessionID.isEphemeral());
+
     m_sessionID = sessionID;
+
+    if (!privateBrowsingStateChanged)
+        return;
+
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
+        frame->document()->privateBrowsingStateDidChange();
+
+    // Collect the PluginViews in to a vector to ensure that action the plug-in takes
+    // from below privateBrowsingStateChanged does not affect their lifetime.
+
+    for (auto& view : pluginViews())
+        view->privateBrowsingStateChanged(sessionID.isEphemeral());
+
 }
 
 Page::PageClients::PageClients()

@@ -258,7 +258,7 @@ void FrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(WebCore::Docum
 
 
     CredentialStorageMode credentialStorageMode;
-    if (core(view)->settings().privateBrowsingEnabled())
+    if (core(view)->usesEphemeralSession())
         credentialStorageMode = DisallowPersistentStorage;
     else
         credentialStorageMode = AllowPersistentStorage;

@@ -55,7 +55,7 @@ WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)
 
 NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 {
-    if (frame() && frame()->settings().privateBrowsingEnabled())
+    if (frame() && frame()->page()->usesEphemeralSession())
         return *SessionTracker::session(SessionID::legacyPrivateSessionID());
 
     return NetworkStorageSession::defaultStorageSession();

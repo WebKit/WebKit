@@ -1354,7 +1354,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
         Page* page = m_parentFrame->page();
         if (!page)
             return NPERR_GENERIC_ERROR;
-        *((NPBool*)value) = page->settings().privateBrowsingEnabled();
+        *((NPBool*)value) = page->usesEphemeralSession();
         return NPERR_NO_ERROR;
     }
 

@@ -171,7 +171,6 @@ Settings::Settings(Page* page)
     , m_isJavaEnabled(false)
     , m_isJavaEnabledForLocalFiles(true)
     , m_loadsImagesAutomatically(false)
-    , m_privateBrowsingEnabled(false)
     , m_areImagesEnabled(true)
     , m_arePluginsEnabled(false)
     , m_isScriptEnabled(false)
@@ -424,15 +423,6 @@ void Settings::setPluginsEnabled(bool arePluginsEnabled)
 
     m_arePluginsEnabled = arePluginsEnabled;
     Page::refreshPlugins(false);
-}
-
-void Settings::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
-{
-    if (m_privateBrowsingEnabled == privateBrowsingEnabled)
-        return;
-
-    m_privateBrowsingEnabled = privateBrowsingEnabled;
-    m_page->privateBrowsingStateChanged();
 }
 
 void Settings::setUserStyleSheetLocation(const URL& userStyleSheetLocation)

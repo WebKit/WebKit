@@ -313,7 +313,6 @@ public:
 
     void dnsPrefetchingStateChanged();
     void storageBlockingStateChanged();
-    void privateBrowsingStateChanged();
 
     void setDebugger(JSC::Debugger*);
     JSC::Debugger* debugger() const { return m_debugger; }
@@ -410,7 +409,8 @@ public:
 
     SessionID sessionID() const;
     void setSessionID(SessionID);
-    bool isSessionIDSet() const { return m_sessionID.isValid(); }
+    void enableLegacyPrivateBrowsing(bool privateBrowsingEnabled);
+    bool usesEphemeralSession() const { return m_sessionID.isEphemeral(); }
 
 private:
     void initGroup();

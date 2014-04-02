@@ -85,7 +85,7 @@ void RenderSearchField::addSearchResult()
     if (value.isEmpty())
         return;
 
-    if (frame().settings().privateBrowsingEnabled())
+    if (frame().page()->usesEphemeralSession())
         return;
 
     int size = static_cast<int>(m_recentSearches.size());

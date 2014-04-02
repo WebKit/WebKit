@@ -2247,7 +2247,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #if !PLATFORM(IOS)
     settings.setExperimentalNotificationsEnabled([preferences experimentalNotificationsEnabled]);
 #endif
-    settings.setPrivateBrowsingEnabled([preferences privateBrowsingEnabled]);
+    _private->page->enableLegacyPrivateBrowsing([preferences privateBrowsingEnabled]);
     settings.setSansSerifFontFamily([preferences sansSerifFontFamily]);
     settings.setSerifFontFamily([preferences serifFontFamily]);
     settings.setStandardFontFamily([preferences standardFontFamily]);

@@ -1,3 +1,16 @@
+2014-04-02  Martin Hock  <mhock@apple.com>
+
+        Unify private browsing with sessions.
+        https://bugs.webkit.org/show_bug.cgi?id=130099
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp: Change WebCore::Settings::privateBrowsingEnabled() to Page:usesEphemeralSession().
+        (WebKit::FrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        * webkit/webkitwebview.cpp: Change Settings::setPrivateBrowsingEnabled() to Page::enablePrivateBrowsing().
+        (webkit_web_view_update_settings):
+        (webkit_web_view_settings_notify):
+
 2014-03-31  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Use PROJECT_VERSION_* instead of WEBKIT_*_VERSION

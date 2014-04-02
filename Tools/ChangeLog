@@ -1,3 +1,23 @@
+2014-04-02  Martin Hock  <mhock@apple.com>
+
+        Unify private browsing with sessions.
+        https://bugs.webkit.org/show_bug.cgi?id=130099
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add an API test for ephemeral sessions similar to PrivateBrowsingPushStateNoHistoryCallback.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/EphemeralSessionPushStateNoHistoryCallback.cpp:
+        (TestWebKitAPI::didNavigateWithNavigationData):
+        (TestWebKitAPI::didSameDocumentNavigationForFrame):
+        (TestWebKitAPI::TEST):
+
+        * TestWebKitAPI/Tests/WebKit2/PrivateBrowsingPushStateNoHistoryCallback.cpp: Also test to make sure private browsing can be disabled.
+        (TestWebKitAPI::didNavigateWithoutNavigationData):
+        (TestWebKitAPI::didNavigateWithNavigationData):
+        (TestWebKitAPI::didSameDocumentNavigationForFrame):
+        (TestWebKitAPI::TEST):
+
 2014-04-02  Martin Robinson  <mrobinson@igalia.com>
 
         REGRESSION(r165704): [GTK] Inspector resources not correctly generated

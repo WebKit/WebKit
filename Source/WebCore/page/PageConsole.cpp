@@ -126,7 +126,7 @@ void PageConsole::addMessage(MessageSource source, MessageLevel level, const Str
     if (source == MessageSource::CSS)
         return;
 
-    if (m_page.settings().privateBrowsingEnabled())
+    if (m_page.usesEphemeralSession())
         return;
 
     m_page.chrome().client().addMessageToConsole(source, level, message, lineNumber, columnNumber, url);
@@ -146,7 +146,7 @@ void PageConsole::messageWithTypeAndLevel(MessageType type, MessageLevel level, 
     bool gotMessage = arguments->getFirstArgumentAsString(message);
     InspectorInstrumentation::addMessageToConsole(&m_page, MessageSource::ConsoleAPI, type, level, message, exec, arguments);
 
-    if (m_page.settings().privateBrowsingEnabled())
+    if (m_page.usesEphemeralSession())
         return;
 
     if (gotMessage) {

@@ -227,7 +227,7 @@ bool DatabaseContext::allowDatabaseAccess() const
 {
     if (m_scriptExecutionContext->isDocument()) {
         Document* document = toDocument(m_scriptExecutionContext);
-        if (!document->page() || (document->page()->settings().privateBrowsingEnabled() && !SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(document->securityOrigin()->protocol())))
+        if (!document->page() || (document->page()->usesEphemeralSession() && !SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(document->securityOrigin()->protocol())))
             return false;
         return true;
     }

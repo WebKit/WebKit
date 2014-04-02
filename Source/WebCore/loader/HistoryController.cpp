@@ -348,7 +348,7 @@ void HistoryController::updateForStandardLoad(HistoryUpdateType updateType)
 
     FrameLoader& frameLoader = m_frame.loader();
 
-    bool needPrivacy = m_frame.settings().privateBrowsingEnabled();
+    bool needPrivacy = m_frame.page()->usesEphemeralSession();
     const URL& historyURL = frameLoader.documentLoader()->urlForHistory();
 
     if (!frameLoader.documentLoader()->isClientRedirect()) {
@@ -385,7 +385,7 @@ void HistoryController::updateForRedirectWithLockedBackForwardList()
         LOG(History, "WebCoreHistory: Updating History for redirect load in frame %s", m_frame.loader().documentLoader()->title().string().utf8().data());
 #endif
     
-    bool needPrivacy = m_frame.settings().privateBrowsingEnabled();
+    bool needPrivacy = m_frame.page()->usesEphemeralSession();
     const URL& historyURL = m_frame.loader().documentLoader()->urlForHistory();
 
     if (m_frame.loader().documentLoader()->isClientRedirect()) {
@@ -433,7 +433,7 @@ void HistoryController::updateForClientRedirect()
         m_currentItem->clearScrollPoint();
     }
 
-    bool needPrivacy = m_frame.settings().privateBrowsingEnabled();
+    bool needPrivacy = m_frame.page()->usesEphemeralSession();
     const URL& historyURL = m_frame.loader().documentLoader()->urlForHistory();
 
     if (!historyURL.isEmpty() && !needPrivacy) {
@@ -523,7 +523,7 @@ void HistoryController::updateForSameDocumentNavigation()
     if (m_frame.document()->url().isEmpty())
         return;
 
-    if (m_frame.settings().privateBrowsingEnabled())
+    if (m_frame.page()->usesEphemeralSession())
         return;
 
     Page* page = m_frame.page();
@@ -847,7 +847,7 @@ void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject,
 
     page->backForward().addItem(topItem.release());
 
-    if (m_frame.settings().privateBrowsingEnabled())
+    if (m_frame.page()->usesEphemeralSession())
         return;
 
     addVisitedLink(*page, URL(ParsedURLString, urlString));
@@ -866,7 +866,7 @@ void HistoryController::replaceState(PassRefPtr<SerializedScriptValue> stateObje
     m_currentItem->setFormData(0);
     m_currentItem->setFormContentType(String());
 
-    if (m_frame.settings().privateBrowsingEnabled())
+    if (m_frame.page()->usesEphemeralSession())
         return;
 
     ASSERT(m_frame.page());

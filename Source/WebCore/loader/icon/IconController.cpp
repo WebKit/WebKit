@@ -204,7 +204,7 @@ void IconController::continueLoadWithDecision(IconLoadDecision iconLoadDecision)
     ASSERT(iconLoadDecision != IconLoadUnknown);
 
     //  FIXME (<rdar://problem/9168605>) - We should support in-memory-only private browsing icons in asynchronous icon database mode.
-    if (iconDatabase().supportsAsynchronousMode() && m_frame.page()->settings().privateBrowsingEnabled())
+    if (iconDatabase().supportsAsynchronousMode() && m_frame.page()->usesEphemeralSession())
         return;
 
     if (iconLoadDecision == IconLoadNo) {

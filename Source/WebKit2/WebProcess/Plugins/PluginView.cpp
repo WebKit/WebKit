@@ -1539,7 +1539,7 @@ bool PluginView::isPrivateBrowsingEnabled()
     if (!frame()->document()->securityOrigin()->canAccessPluginStorage(frame()->document()->topOrigin()))
         return true;
 
-    return frame()->settings().privateBrowsingEnabled();
+    return frame()->page()->usesEphemeralSession();
 }
 
 bool PluginView::asynchronousPluginInitializationEnabled() const

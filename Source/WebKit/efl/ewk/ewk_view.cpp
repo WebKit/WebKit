@@ -66,6 +66,7 @@
 #include "ResourceHandle.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
+#include "SessionID.h"
 #include "Settings.h"
 #include "SoupNetworkSession.h"
 #include "TiledBackingStore.h"
@@ -791,7 +792,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 #endif
     priv->settings.scriptsCanAccessClipboard = pageSettings.javaScriptCanAccessClipboard() && pageSettings.DOMPasteAllowed();
     priv->settings.resizableTextareas = pageSettings.textAreasAreResizable();
-    priv->settings.privateBrowsing = pageSettings.privateBrowsingEnabled();
+    priv->settings.privateBrowsing = priv->page->usesEphemeralSession();
     priv->settings.caretBrowsing = pageSettings.caretBrowsingEnabled();
     priv->settings.spatialNavigation = pageSettings.spatialNavigationEnabled();
     priv->settings.localStorage = pageSettings.localStorageEnabled();
@@ -2218,7 +2219,7 @@ Eina_Bool ewk_view_setting_private_browsing_set(Evas_Object* ewkView, Eina_Bool 
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
     enable = !!enable;
     if (priv->settings.privateBrowsing != enable) {
-        priv->page->settings().setPrivateBrowsingEnabled(enable);
+        priv->page->enableLegacyPrivateBrowsing(enable);
         priv->settings.privateBrowsing = enable;
     }
     return true;

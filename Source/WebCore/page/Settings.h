@@ -146,7 +146,6 @@ public:
     //  - HTTP Cookies
     //  - Plug-ins (that support NPNVprivateModeBool)
     void setPrivateBrowsingEnabled(bool);
-    bool privateBrowsingEnabled() const { return m_privateBrowsingEnabled; }
 
     void setDNSPrefetchingEnabled(bool);
     bool dnsPrefetchingEnabled() const { return m_dnsPrefetchingEnabled; }
@@ -298,7 +297,6 @@ private:
     bool m_isJavaEnabled : 1;
     bool m_isJavaEnabledForLocalFiles : 1;
     bool m_loadsImagesAutomatically : 1;
-    bool m_privateBrowsingEnabled : 1;
     bool m_areImagesEnabled : 1;
     bool m_arePluginsEnabled : 1;
     bool m_isScriptEnabled : 1;

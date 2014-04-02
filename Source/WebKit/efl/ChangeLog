@@ -1,3 +1,14 @@
+2014-04-02  Martin Hock  <mhock@apple.com>
+
+        Unify private browsing with sessions.
+        https://bugs.webkit.org/show_bug.cgi?id=130099
+
+        Reviewed by Alexey Proskuryakov.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new): Change WebCore::Settings::privateBrowsingEnabled() to Page::sessionID().isEphemeral().
+        (ewk_view_setting_private_browsing_set): Change WebCore::Settings::setPrivateBrowsingEnabled() to Page::enableLegacyPrivateBrowsing().
+
 2014-04-02  Hyowon Kim  <hw1008.kim@samsung.com>
 
         [EFL] Composite all layers into one evas_object using TextureMapper.

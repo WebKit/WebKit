@@ -1,3 +1,56 @@
+2014-04-02  Martin Hock  <mhock@apple.com>
+
+        Unify private browsing with sessions.
+        https://bugs.webkit.org/show_bug.cgi?id=130099
+
+        Reviewed by Alexey Proskuryakov.
+
+        Unless otherwise noted, the following consists solely of mechanical changes to replace querying WebCore::Settings::privateBrowsingEnabled() with Page::usesEphemeralSession().
+
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::allowDatabaseAccess):
+        * WebCore.exp.in: Remove Settings::setPrivateBrowsingEnabled, add Page::legacyPrivateBrowsingEnabled.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::updateForStandardLoad):
+        (WebCore::HistoryController::updateForRedirectWithLockedBackForwardList):
+        (WebCore::HistoryController::updateForClientRedirect):
+        (WebCore::HistoryController::updateForSameDocumentNavigation):
+        (WebCore::HistoryController::pushState):
+        (WebCore::HistoryController::replaceState):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::cacheForMainRequest):
+        (WebCore::ApplicationCacheGroup::selectCache):
+        (WebCore::ApplicationCacheGroup::selectCacheWithoutManifestURL):
+        (WebCore::ApplicationCacheGroup::update):
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::isApplicationCacheEnabled):
+        * loader/icon/IconController.cpp:
+        (WebCore::IconController::continueLoadWithDecision):
+        * page/Page.cpp:
+        (WebCore::Page::Page): Initialize with defaultSessionID.
+        (WebCore::Page::legacyPrivateBrowsingEnabled): Legacy setting for private browsing.
+        (WebCore::Page::privateBrowsingStateChanged): Move implementation to setSessionID.
+        (WebCore::Page::sessionID): Simplify to just return m_sessionID.
+        (WebCore::Page::setSessionID): Also perform privateBrowsingStateChanged action.a
+        (WebCore::Page::privateBrowsingStateChanged): Deleted.
+        (WebCore::Page::checkSubframeCountConsistency): Deleted.
+        * page/Page.h:
+        * page/PageConsole.cpp:
+        (WebCore::PageConsole::addMessage):
+        (WebCore::PageConsole::messageWithTypeAndLevel):
+        * page/Settings.cpp: Remove privateBrowsingEnabled setting.
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setPrivateBrowsingEnabled): Page reflects setting using session.
+        * page/Settings.h:
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::getValue):
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::addSearchResult):
+        * storage/Storage.cpp:
+        (WebCore::Storage::isDisabledByPrivateBrowsing):
+
 2014-04-02  Antti Koivisto  <antti@apple.com>
 
         Try to fix test failures.
