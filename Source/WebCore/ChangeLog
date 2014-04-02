@@ -1,3 +1,34 @@
+2014-04-01  Beth Dakin  <bdakin@apple.com>
+
+        willReveal edge events should be hooked up for overflow:scroll
+        https://bugs.webkit.org/show_bug.cgi?id=131071
+        -and corresponding-
+        <rdar://problem/16190392>
+
+        Reviewed by Sam Weinig.
+
+        This patch moves the will reveal logic from FrameView to Document so that it can 
+        be shared for RenderLayers.
+
+        This is mostly just a moved function, but now the function takes an Element* that 
+        represents the target of the event if the target is not the window.
+        * dom/Document.cpp:
+        (WebCore::Document::sendWillRevealEdgeEventsIfNeeded):
+        * dom/Document.h:
+
+        No longer implement sendWillRevealEdgeEventsIfNeeded() on FrameView or 
+        ScrollableArea at all. Call into Document instead.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollPositionChanged):
+        (WebCore::FrameView::sendWillRevealEdgeEventsIfNeeded): Deleted.
+        * page/FrameView.h:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::sendWillRevealEdgeEventsIfNeeded): Deleted.
+
+        Call sendWillRevealEdgeEventsIfNeeded() after sending scroll events. 
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+
 2014-04-01  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Crash in WebCore::RenderLayer::FilterInfo::updateReferenceFilterClients

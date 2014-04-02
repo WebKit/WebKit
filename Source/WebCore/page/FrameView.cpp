@@ -2009,8 +2009,9 @@ void FrameView::scrollPositionChanged(const IntPoint& oldPosition, const IntPoin
 {
     frame().eventHandler().sendScrollEvent();
     frame().eventHandler().dispatchFakeMouseMoveEventSoon();
-
-    sendWillRevealEdgeEventsIfNeeded(oldPosition, newPosition);
+    
+    if (Document* document = frame().document())
+        document->sendWillRevealEdgeEventsIfNeeded(oldPosition, newPosition, visibleContentRect(), contentsSize());
 
     if (RenderView* renderView = this->renderView()) {
         renderView->resumePausedImageAnimationsIfNeeded();
@@ -2795,59 +2796,6 @@ void FrameView::sendResizeEventIfNeeded()
         if (InspectorClient* inspectorClient = page ? page->inspectorController().inspectorClient() : nullptr)
             inspectorClient->didResizeMainFrame(&frame());
     }
-#endif
-}
-
-void FrameView::sendWillRevealEdgeEventsIfNeeded(const IntPoint& oldPosition, const IntPoint& newPosition)
-{
-    // For each edge (top, bottom, left and right), send the will reveal edge event for that direction
-    // if newPosition is at or beyond the notification point, if the scroll direction is heading in the
-    // direction of that edge point, and if oldPosition is before the notification point (which indicates
-    // that this is the first moment that we know we crossed the magic line).
-
-#if ENABLE(WILL_REVEAL_EDGE_EVENTS)
-    Document* document = frame().document();
-    if (!document)
-        return;
-
-    IntRect visibleRect = visibleContentRect();
-
-    int willRevealBottomNotificationPoint = std::max(0, contentsHeight() - 2 *  visibleRect.height());
-    int willRevealTopNotificationPoint = visibleRect.height();
-
-    // Bottom edge.
-    if (newPosition.y() >= willRevealBottomNotificationPoint && newPosition.y() > oldPosition.y()
-        && willRevealBottomNotificationPoint >= oldPosition.y()) {
-        RefPtr<Event> willRevealEvent = Event::create(eventNames().webkitwillrevealbottomEvent, false, false);
-        document->enqueueWindowEvent(willRevealEvent.release());
-    }
-
-    // Top edge.
-    if (newPosition.y() <= willRevealTopNotificationPoint && newPosition.y() < oldPosition.y()
-        && willRevealTopNotificationPoint <= oldPosition.y()) {
-        RefPtr<Event> willRevealEvent = Event::create(eventNames().webkitwillrevealtopEvent, false, false);
-        document->enqueueWindowEvent(willRevealEvent.release());
-    }
-
-    int willRevealRightNotificationPoint = std::max(0, contentsWidth() - 2 * visibleRect.width());
-    int willRevealLeftNotificationPoint = visibleRect.width();
-
-    // Right edge.
-    if (newPosition.x() >= willRevealRightNotificationPoint && newPosition.x() > oldPosition.x()
-        && willRevealRightNotificationPoint >= oldPosition.x()) {
-        RefPtr<Event> willRevealEvent = Event::create(eventNames().webkitwillrevealrightEvent, false, false);
-        document->enqueueWindowEvent(willRevealEvent.release());
-    }
-
-    // Left edge.
-    if (newPosition.x() <= willRevealLeftNotificationPoint && newPosition.x() < oldPosition.x()
-        && willRevealLeftNotificationPoint <= oldPosition.x()) {
-        RefPtr<Event> willRevealEvent = Event::create(eventNames().webkitwillrevealleftEvent, false, false);
-        document->enqueueWindowEvent(willRevealEvent.release());
-    }
-#else
-    UNUSED_PARAM(oldPosition);
-    UNUSED_PARAM(newPosition);
 #endif
 }
 

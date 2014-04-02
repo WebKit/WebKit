@@ -560,8 +560,6 @@ private:
     virtual GraphicsLayer* layerForOverhangAreas() const override;
 #endif
 
-    void sendWillRevealEdgeEventsIfNeeded(const IntPoint& oldPosition, const IntPoint& newPosition);
-
     // Override scrollbar notifications to update the AXObject cache.
     virtual void didAddScrollbar(Scrollbar*, ScrollbarOrientation) override;
     virtual void willRemoveScrollbar(Scrollbar*, ScrollbarOrientation) override;

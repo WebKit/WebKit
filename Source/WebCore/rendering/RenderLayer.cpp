@@ -2307,6 +2307,8 @@ void RenderLayer::scrollTo(int x, int y)
 #endif
         return;
     }
+    
+    IntPoint oldPosition = IntPoint(m_scrollOffset);
     m_scrollOffset = newScrollOffset;
 
     InspectorInstrumentation::willScrollLayer(&renderer().frame());
@@ -2360,9 +2362,11 @@ void RenderLayer::scrollTo(int x, int y)
 #endif
         renderer().repaintUsingContainer(repaintContainer, m_repaintRect);
 
-    // Schedule the scroll DOM event.
-    if (Element* element = renderer().element())
+    // Schedule the scroll and scroll-related DOM events.
+    if (Element* element = renderer().element()) {
         element->document().eventQueue().enqueueOrDispatchScrollEvent(*element);
+        element->document().sendWillRevealEdgeEventsIfNeeded(oldPosition, IntPoint(newScrollOffset), visibleContentRect(), contentsSize(), element);
+    }
 
     InspectorInstrumentation::didScrollLayer(&frame);
     if (scrollsOverflow())

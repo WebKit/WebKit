@@ -1,0 +1,83 @@
+<html>
+<script src="../../resources/js-test-pre.js"></script>
+
+<style>
+#scrolly-div {
+    width:200px;
+    height:200px;
+    border:2px solid black;
+    overflow:scroll;
+}
+
+.big {
+    background-color:purple;
+    width:600px;
+    height:600px;
+}
+</style>
+
+<script type="text/javascript">
+description('This tests that we can listen for webkitwillrevealbottom, webkitwillrevealtop, webkitwillrevealleft, and webkitwillrevealright');
+
+var triggeredWillRevealBottom = false;
+var triggeredWillRevealTop = false;
+var triggeredWillRevealRight = false;
+var triggeredWillRevealLeft = false;
+
+function bottomRevealed()
+{
+    triggeredWillRevealBottom = true;
+    var scrolly = document.getElementById("scrolly-div");
+    scrolly.scrollTop = 0;
+    checkComplete();
+}
+
+function topRevealed()
+{
+    triggeredWillRevealTop = true;
+    var scrolly = document.getElementById("scrolly-div");
+    scrolly.scrollLeft = 600;
+    checkComplete();
+}
+
+function rightRevealed()
+{
+    triggeredWillRevealRight = true;
+    var scrolly = document.getElementById("scrolly-div");
+    scrolly.scrollLeft = 0;
+    checkComplete();
+}
+
+function leftRevealed()
+{
+    triggeredWillRevealLeft = true;
+    checkComplete();
+}
+
+function checkComplete()
+{
+    if (triggeredWillRevealBottom && triggeredWillRevealTop && triggeredWillRevealRight && triggeredWillRevealLeft) {
+        debug('All edges were revealed!');
+        finishJSTest();
+    }
+}
+
+var jsTestIsAsync = true;
+
+function runTest() {
+    var scrolly = document.getElementById("scrolly-div");
+    scrolly.addEventListener('webkitwillrevealbottom', bottomRevealed, false);
+    scrolly.addEventListener('webkitwillrevealtop', topRevealed, false);
+    scrolly.addEventListener('webkitwillrevealright', rightRevealed, false);
+    scrolly.addEventListener('webkitwillrevealleft', leftRevealed, false);
+    scrolly.scrollTop = 600;
+}
+</script>
+
+<body onload="runTest()">
+    <div id="scrolly-div">
+        <div class="big"></div>
+    </div>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
