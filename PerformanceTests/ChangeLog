@@ -1,5 +1,13 @@
 2014-04-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Unreviewed.
+
+        Try to ignore some Xcode shmutz in MallocBench.
+
+        * MallocBench/MallocBench.xcodeproj: Added property svn:ignore.
+
+2014-04-02  Geoffrey Garen  <ggaren@apple.com>
+
         Let's benchmark malloc
         https://bugs.webkit.org/show_bug.cgi?id=131118
 
