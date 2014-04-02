@@ -198,7 +198,7 @@ inline FloatSize flooredForPainting(const LayoutSize& size, float pixelSnappingF
     return FloatSize(floorToDevicePixel(size.width(), pixelSnappingFactor), floorToDevicePixel(size.height(), pixelSnappingFactor));
 #else
     UNUSED_PARAM(pixelSnappingFactor);
-    return FloatSize(point);
+    return FloatSize(size);
 #endif
 }
 

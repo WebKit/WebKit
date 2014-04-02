@@ -1,5 +1,13 @@
 2014-04-02  Zalan Bujtas  <zalan@apple.com>
 
+        Unreviewed build fix after r166642.
+        (WinCairo should really turn subpixel layout on.)
+
+        * platform/graphics/LayoutSize.h:
+        (WebCore::flooredForPainting):
+
+2014-04-02  Zalan Bujtas  <zalan@apple.com>
+
         Subpixel rendering: Make GraphicsContext::drawTiledImage* functions float based.
         https://bugs.webkit.org/show_bug.cgi?id=131062
 
