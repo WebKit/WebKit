@@ -119,8 +119,6 @@ private:
 
     String m_mediaControlsScript;
     String m_mediaControlsStyleSheet;
-    bool m_mediaControlsScriptLoaded;
-    bool m_mediaControlsStyleSheetLoaded;
 };
 
 }

@@ -1,3 +1,23 @@
+2014-04-02  Dean Jackson  <dino@apple.com>
+
+        Load Media Controls js/css from bundle
+        https://bugs.webkit.org/show_bug.cgi?id=131086
+
+        Followup comments from Eric Carlson.
+
+        Remove the booleans that were guarding loading the resources.
+
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::mediaControlsStyleSheet):
+        (WebCore::RenderThemeIOS::mediaControlsScript):
+        (WebCore::RenderThemeIOS::RenderThemeIOS):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::RenderThemeMac):
+        (WebCore::RenderThemeMac::mediaControlsStyleSheet):
+        (WebCore::RenderThemeMac::mediaControlsScript):
+
 2014-04-01  Dean Jackson  <dino@apple.com>
 
         Load Media Controls js/css from bundle

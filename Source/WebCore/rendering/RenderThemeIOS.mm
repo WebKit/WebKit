@@ -282,8 +282,6 @@ static void contentSizeCategoryDidChange(CFNotificationCenterRef, void*, CFStrin
 }
 
 RenderThemeIOS::RenderThemeIOS()
-    : m_mediaControlsScriptLoaded(false)
-    , m_mediaControlsStyleSheetLoaded(false)
 {
     CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, contentSizeCategoryDidChange, UIContentSizeCategoryDidChangeNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
 }
@@ -1205,10 +1203,8 @@ void RenderThemeIOS::systemFont(CSSValueID valueID, FontDescription& fontDescrip
 String RenderThemeIOS::mediaControlsStyleSheet()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    if (!m_mediaControlsStyleSheetLoaded) {
+    if (m_mediaControlsStyleSheet.isEmpty())
         m_mediaControlsStyleSheet = [NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"mediaControlsiOS" ofType:@"css"] encoding:NSUTF8StringEncoding error:nil];
-        m_mediaControlsStyleSheetLoaded = true;
-    }
     return m_mediaControlsStyleSheet;
 #else
     return emptyString();
@@ -1218,12 +1214,11 @@ String RenderThemeIOS::mediaControlsStyleSheet()
 String RenderThemeIOS::mediaControlsScript()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    if (!m_mediaControlsScriptLoaded) {
+    if (m_mediaControlsScript.isEmpty()) {
         StringBuilder scriptBuilder;
         scriptBuilder.append([NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"mediaControlsApple" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
         scriptBuilder.append([NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"mediaControlsiOS" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
         m_mediaControlsScript = scriptBuilder.toString();
-        m_mediaControlsScriptLoaded = true;
     }
     return m_mediaControlsScript;
 #else
