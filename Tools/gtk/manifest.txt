@@ -42,10 +42,10 @@ exclude Source/WebKit/.*
 include Source/WebKit/CMakeLists.txt
 include Source/WebKit/PlatformGTK.cmake
 include Source/WebKit/gtk
-exclude Source/WebKit/gtk/NEWS$
+exclude Source/WebKit2/gtk/NEWS$
 
 # We do want to include the NEWS, but we want it to be in the root of the archive.
-file Source/WebKit/gtk/NEWS NEWS
+file Source/WebKit2/gtk/NEWS NEWS
 
 directory Tools/gtk
 directory Tools/GtkLauncher

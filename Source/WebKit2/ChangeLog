@@ -1,3 +1,12 @@
+2014-04-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move NEWS file to a new location
+        https://bugs.webkit.org/show_bug.cgi?id=130901
+
+        Reviewed by Brent Fulgham.
+
+        * gtk/NEWS: Renamed from Source/WebKit/gtk/NEWS.
+
 2014-04-01  Benjamin Poulain  <bpoulain@apple.com>
 
         <rdar://problem/16294704> Remove _pageExtendedBackgroundColor entirely
