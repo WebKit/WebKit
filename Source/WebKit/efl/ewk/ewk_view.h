@@ -370,7 +370,7 @@ struct _Ewk_View_Smart_Data {
     const Ewk_View_Smart_Class *api; /**< Reference to casted class instance. */
     Evas_Object *self; /**< Reference to owner object. */
     Evas_Object *main_frame; /**< Reference to main frame object. */
-    Evas_Object *backing_store; /**< Reference to backing store. */
+    Evas_Object *image; /**< Reference to evas_object_image for drawing web content */
     Evas_Object *events_rect; /**< The rectangle that receives mouse events. */
     Ewk_View_Private_Data *_priv; /**< Should @b never be accessed, c++ stuff. */
     struct {

@@ -42,25 +42,23 @@ public:
     AcceleratedCompositingContext(Evas_Object* ewkView, Evas_Object* compositingObject);
     ~AcceleratedCompositingContext();
 
-    bool initialize();
-
-    bool resize(const IntSize&);
-    void attachRootGraphicsLayer(GraphicsLayer* rootLayer);
-
+    void setRootGraphicsLayer(GraphicsLayer* rootLayer) { m_rootLayer = rootLayer; }
+    void resize(const IntSize&);
     void flushAndRenderLayers();
-    bool flushPendingLayerChanges();
-    void compositeLayersToContext();
-
-    bool canComposite();
-
-    void syncLayers(Timer<AcceleratedCompositingContext>*);
 
 private:
+    void paintToGraphicsContext();
+    void paintToCurrentGLContext();
+    void compositeLayers();
+
+    bool flushPendingLayerChanges();
+    void syncLayers(Timer<AcceleratedCompositingContext>*);
+
     Evas_Object* m_view;
     Evas_Object* m_compositingObject;
 
     OwnPtr<TextureMapper> m_textureMapper;
-    std::unique_ptr<GraphicsLayer> m_rootGraphicsLayer;
+    GraphicsLayer* m_rootLayer;
     Timer<AcceleratedCompositingContext> m_syncTimer;
 
     EflUniquePtr<Evas_GL> m_evasGL;
@@ -68,6 +66,9 @@ private:
     std::unique_ptr<EvasGLSurface> m_evasGLSurface;
 
     TextureMapperFPSCounter m_fpsCounter;
+
+    IntSize m_viewSize;
+    bool m_isAccelerated;
 };
 
 } // namespace WebCore

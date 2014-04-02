@@ -1,3 +1,57 @@
+2014-04-02  Hyowon Kim  <hw1008.kim@samsung.com>
+
+        [EFL] Composite all layers into one evas_object using TextureMapper.
+        https://bugs.webkit.org/show_bug.cgi?id=130969
+
+        Reviewed by Gyuyoung Kim.
+
+        The EFL port uses two evas_objects to render the entire webpage: backing_store and compositingObject.
+        backing_store is used to paint a non-composited layer with ewk functions,
+        whereas compositingObject is used to paint other layers with TextureMapper.
+        These evas_objects are eventually composited into the window buffer by Evas.
+
+        This patch moves to use only one evas_object by integrating these two evas_objects,
+        and makes that TextureMapper handles all rendering paths like WebKit2.
+
+        * WebCoreSupport/AcceleratedCompositingContextEfl.cpp:
+        (WebCore::AcceleratedCompositingContext::AcceleratedCompositingContext):
+        (WebCore::AcceleratedCompositingContext::~AcceleratedCompositingContext):
+        (WebCore::AcceleratedCompositingContext::resize):
+        (WebCore::AcceleratedCompositingContext::flushAndRenderLayers):
+        (WebCore::AcceleratedCompositingContext::flushPendingLayerChanges):
+        (WebCore::AcceleratedCompositingContext::paintToGraphicsContext):
+        (WebCore::AcceleratedCompositingContext::paintToCurrentGLContext):
+        (WebCore::AcceleratedCompositingContext::compositeLayers):
+        (WebCore::AcceleratedCompositingContext::initialize): Deleted.
+        (WebCore::AcceleratedCompositingContext::canComposite): Deleted.
+        (WebCore::AcceleratedCompositingContext::compositeLayersToContext): Deleted.
+        (WebCore::AcceleratedCompositingContext::attachRootGraphicsLayer): Deleted.
+        * WebCoreSupport/AcceleratedCompositingContextEfl.h:
+        (WebCore::AcceleratedCompositingContext::setRootGraphicsLayer):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (_ewk_view_accelerated_compositing_cb):
+        (_ewk_view_smart_add):
+        (_ewk_view_smart_resize):
+        (_ewk_view_smart_calculate):
+        (_ewk_view_smart_show):
+        (_ewk_view_smart_hide):
+        (_ewk_view_smart_flush):
+        (_ewk_view_smart_zoom_weak_set):
+        (_ewk_view_smart_zoom_weak_smooth_scale_set):
+        (ewk_view_bg_color_set):
+        (ewk_view_scroll):
+        (ewk_view_root_graphics_layer_set):
+        (ewk_view_mark_for_sync):
+        (_ewk_view_scrolls_flush): Deleted.
+        (_ewk_view_scroll_process): Deleted.
+        (_ewk_view_smart_scrolls_process): Deleted.
+        (_ewk_view_smart_repaints_process): Deleted.
+        (ewk_view_scrolls_process): Deleted.
+        (_ewk_view_accelerated_compositing_context_create_if_needed): Deleted.
+        (_ewk_view_accelerated_compositing_object_create_if_needed): Deleted.
+        * ewk/ewk_view.h:
+
 2014-03-23  Hyowon Kim  <hw1008.kim@samsung.com>
 
         Move all EFL typedefs into EflTypedefs.h.

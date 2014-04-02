@@ -255,8 +255,6 @@ struct _Ewk_View_Private_Data {
     WebCore::ViewportArguments viewportArguments;
     Ewk_History* history;
     std::unique_ptr<WebCore::AcceleratedCompositingContext> acceleratedCompositingContext;
-    bool isCompositingActive;
-    RefPtr<Evas_Object> compositingObject;
 #if ENABLE(INPUT_TYPE_COLOR)
     WebCore::ColorChooserClient* colorChooserClient;
 #endif
@@ -272,8 +270,6 @@ struct _Ewk_View_Private_Data {
         size_t count;
         size_t allocated;
     } repaints;
-    WTF::Vector<WebCore::IntRect> m_rectsToScroll;
-    WTF::Vector<WebCore::IntSize> m_scrollOffsets;
     unsigned int imh; /**< input method hints */
     struct {
         bool viewCleared : 1;
@@ -470,12 +466,6 @@ static void _ewk_view_repaints_flush(Ewk_View_Private_Data* priv)
     if (priv->repaints.allocated <= ewkViewRepaintsSizeMaximumFree)
         return;
     _ewk_view_repaints_resize(priv, ewkViewRepaintsSizeMaximumFree);
-}
-
-static void _ewk_view_scrolls_flush(Ewk_View_Private_Data* priv)
-{
-    priv->m_scrollOffsets.clear();
-    priv->m_rectsToScroll.clear();
 }
 
 // Default Event Handling //////////////////////////////////////////////
@@ -747,6 +737,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 #endif
     pageSettings.setInteractiveFormValidationEnabled(true);
     pageSettings.setAcceleratedCompositingEnabled(true);
+    pageSettings.setForceCompositingMode(true);
     char* debugVisualsEnvironment = getenv("WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS");
     bool showDebugVisuals = debugVisualsEnvironment && !strcmp(debugVisualsEnvironment, "1");
     pageSettings.setShowDebugBorders(showDebugVisuals);
@@ -834,8 +825,6 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->contextMenu = 0;
 #endif
 
-    priv->isCompositingActive = false;
-
     return priv;
 }
 
@@ -878,6 +867,11 @@ static void _ewk_view_priv_del(Ewk_View_Private_Data* priv)
     delete priv;
 }
 
+static void _ewk_view_accelerated_compositing_cb(void* data, Evas_Object*)
+{
+    static_cast<WebCore::AcceleratedCompositingContext*>(data)->flushAndRenderLayers();
+}
+
 static void _ewk_view_smart_add(Evas_Object* ewkView)
 {
     const Evas_Smart* smart = evas_object_smart_smart_get(ewkView);
@@ -910,22 +904,23 @@ static void _ewk_view_smart_add(Evas_Object* ewkView)
 
     EWK_VIEW_PRIV_GET(smartData, priv);
 
-    smartData->backing_store = evas_object_image_add(smartData->base.evas);
-    if (EINA_UNLIKELY(!smartData->backing_store)) {
+    smartData->image = evas_object_image_add(smartData->base.evas);
+    if (EINA_UNLIKELY(!smartData->image)) {
         ERR("Could not create backing store object.");
         return;
     }
 
-    const Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(smartData->base.evas);
-    const char* engine = ecore_evas_engine_name_get(ecoreEvas);
-    if (!strncmp(engine, "opengl_x11", strlen("opengl_x11")))
-        evas_object_image_content_hint_set(smartData->backing_store, EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
+    evas_object_image_alpha_set(smartData->image, false);
+    evas_object_image_filled_set(smartData->image, true);
+    evas_object_image_smooth_scale_set(smartData->image, smartData->zoom_weak_smooth_scale);
+    evas_object_pass_events_set(smartData->image, true);
+    evas_object_smart_member_add(smartData->image, ewkView);
+    evas_object_show(smartData->image);
 
-    evas_object_image_alpha_set(smartData->backing_store, false);
-    evas_object_image_smooth_scale_set(smartData->backing_store, smartData->zoom_weak_smooth_scale);
-    evas_object_pass_events_set(smartData->backing_store, true);
-    evas_object_smart_member_add(smartData->backing_store, ewkView);
-    evas_object_show(smartData->backing_store);
+    priv->acceleratedCompositingContext = std::make_unique<WebCore::AcceleratedCompositingContext>(ewkView, smartData->image);
+
+    // Set the pixel get callback.
+    evas_object_image_pixels_get_callback_set(smartData->image, _ewk_view_accelerated_compositing_cb, priv->acceleratedCompositingContext.get());
 
     smartData->events_rect = evas_object_rectangle_add(smartData->base.evas);
     evas_object_color_set(smartData->events_rect, 0, 0, 0, 0);
@@ -981,34 +976,14 @@ static void _ewk_view_smart_resize(Evas_Object* ewkView, Evas_Coord width, Evas_
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
     // these should be queued and processed in calculate as well!
-    evas_object_resize(smartData->backing_store, width, height);
-    evas_object_image_size_set(smartData->backing_store, width, height);
+    evas_object_resize(smartData->image, width, height);
+    evas_object_image_size_set(smartData->image, width, height);
+    evas_object_image_fill_set(smartData->image, 0, 0, width, height);
 
-    if (priv->compositingObject) {
-        evas_object_resize(priv->compositingObject.get(), width, height);
-        evas_object_image_size_set(priv->compositingObject.get(), width, height);
-        evas_object_image_fill_set(priv->compositingObject.get(), 0, 0, width, height);
-
-        if (priv->acceleratedCompositingContext)
-            priv->acceleratedCompositingContext->resize(WebCore::IntSize(width, height));
-    }
+    priv->acceleratedCompositingContext->resize(WebCore::IntSize(width, height));
 
     smartData->changed.size = true;
     _ewk_view_smart_changed(smartData);
-
-    if (smartData->animated_zoom.zoom.current < std::numeric_limits<float>::epsilon()) {
-        Evas_Object* clip = evas_object_clip_get(smartData->backing_store);
-        Evas_Coord x, y, contentWidth, contentHeight;
-        evas_object_image_fill_set(smartData->backing_store, 0, 0, width, height);
-        evas_object_geometry_get(smartData->backing_store, &x, &y, 0, 0);
-        evas_object_move(clip, x, y);
-        ewk_frame_contents_size_get(smartData->main_frame, &contentWidth, &contentHeight);
-        if (width > contentWidth)
-            width = contentWidth;
-        if (height > contentHeight)
-            height = contentHeight;
-        evas_object_resize(clip, width, height);
-    }
 }
 
 static void _ewk_view_smart_move(Evas_Object* ewkView, Evas_Coord /*x*/, Evas_Coord /*y*/)
@@ -1053,173 +1028,6 @@ static inline void _ewk_view_screen_move(uint32_t* image, size_t destinationX, s
     }
 }
 
-static inline void _ewk_view_scroll_process(Ewk_View_Smart_Data* smartData, void* pixels, Evas_Coord width, Evas_Coord height, const WebCore::IntSize& scrollOffset, const WebCore::IntRect& rectToScroll)
-{
-    int scrollX = rectToScroll.x();
-    int scrollY = rectToScroll.y();
-    int scrollWidth = rectToScroll.width();
-    int scrollHeight = rectToScroll.height();
-
-    if (abs(scrollOffset.width()) >= scrollWidth || abs(scrollOffset.height()) >= scrollHeight) {
-        ewk_view_repaint_add(smartData->_priv, scrollX, scrollY, scrollWidth, scrollHeight);
-        return;
-    }
-
-    if (scrollX < 0) {
-        scrollWidth += scrollX;
-        scrollX = 0;
-    }
-    if (scrollY < 0) {
-        scrollHeight += scrollY;
-        scrollY = 0;
-    }
-
-    if (scrollX + scrollWidth > width)
-        scrollWidth = width - scrollX;
-    if (scrollY + scrollHeight > height)
-        scrollHeight = height - scrollY;
-
-    if (scrollWidth <= 0 || scrollHeight <= 0)
-        return;
-
-    int sourceX = scrollOffset.width() < 0 ? abs(scrollOffset.width()) : 0;
-    int sourceY = scrollOffset.height() < 0 ? abs(scrollOffset.height()) : 0;
-    int destinationX = scrollOffset.width() < 0 ? 0 : scrollOffset.width();
-    int destinationY = scrollOffset.height() < 0 ? 0 : scrollOffset.height();
-    int copyWidth = scrollWidth - abs(scrollOffset.width());
-    int copyHeight = scrollHeight - abs(scrollOffset.height());
-    if (scrollOffset.width() || scrollOffset.height()) {
-        _ewk_view_screen_move(static_cast<uint32_t*>(pixels), destinationX, destinationY, sourceX, sourceY, copyWidth, copyHeight, width);
-        evas_object_image_data_update_add(smartData->backing_store, destinationX, destinationY, copyWidth, copyHeight);
-    }
-
-    Eina_Rectangle verticalUpdate;
-    verticalUpdate.x = destinationX ? 0 : copyWidth - 1;
-    verticalUpdate.y = 0;
-    verticalUpdate.w = abs(scrollOffset.width());
-    verticalUpdate.h = scrollHeight;
-    if (verticalUpdate.w && verticalUpdate.h)
-        ewk_view_repaint_add(smartData->_priv, verticalUpdate.x, verticalUpdate.y, verticalUpdate.w, verticalUpdate.h);
-
-    Eina_Rectangle horizontalUpdate;
-    horizontalUpdate.x = destinationX;
-    horizontalUpdate.y = destinationY ? 0 : copyHeight - 1;
-    horizontalUpdate.w = copyWidth;
-    horizontalUpdate.h = abs(scrollOffset.height());
-    if (horizontalUpdate.w && horizontalUpdate.h)
-        ewk_view_repaint_add(smartData->_priv, horizontalUpdate.x, horizontalUpdate.y, horizontalUpdate.w, horizontalUpdate.h);
-}
-
-static void _ewk_view_smart_scrolls_process(Ewk_View_Smart_Data* smartData)
-{
-    Evas_Coord imageWidth, imageHeight;
-    const WTF::Vector<WebCore::IntSize>& scrollOffsets = smartData->_priv->m_scrollOffsets;
-    const WTF::Vector<WebCore::IntRect>& rectsToScroll = smartData->_priv->m_rectsToScroll;
-
-    if (!scrollOffsets.size())
-        return;
-
-    evas_object_image_size_get(smartData->backing_store, &imageWidth, &imageHeight);
-
-    WebCore::IntRect rectToScroll(0, 0, imageWidth, imageHeight);
-    WebCore::IntSize scrollOffset;
-    for (size_t i = 0; i < scrollOffsets.size(); ++i) {
-        rectToScroll.intersect(rectsToScroll[i]);
-        scrollOffset += scrollOffsets[i];
-    }
-
-    if (scrollOffset.isZero())
-        return;
-
-    void* pixels = evas_object_image_data_get(smartData->backing_store, 1);
-    _ewk_view_scroll_process(smartData, pixels, imageWidth, imageHeight, scrollOffset, rectToScroll);
-
-    evas_object_image_data_set(smartData->backing_store, pixels);
-
-    return;
-}
-
-static bool _ewk_view_smart_repaints_process(Ewk_View_Smart_Data* smartData)
-{
-    EWK_VIEW_PRIV_GET(smartData, priv);
-
-    if (smartData->animated_zoom.zoom.current < std::numeric_limits<float>::epsilon()) {
-        Evas_Object* clip = evas_object_clip_get(smartData->backing_store);
-
-        // reset effects of zoom_weak_set()
-        evas_object_image_fill_set(smartData->backing_store, 0, 0, smartData->view.w, smartData->view.h);
-        evas_object_move(clip, smartData->view.x, smartData->view.y);
-
-        Evas_Coord width = smartData->view.w;
-        Evas_Coord height = smartData->view.h;
-
-        Evas_Coord centerWidth, centerHeight;
-        ewk_frame_contents_size_get(smartData->main_frame, &centerWidth, &centerHeight);
-        if (width > centerWidth)
-            width = centerWidth;
-
-        if (height > centerHeight)
-            height = centerHeight;
-
-        evas_object_resize(clip, width, height);
-    }
-
-    Evas_Coord imageWidth, imageHeight;
-    evas_object_image_size_get(smartData->backing_store, &imageWidth, &imageHeight);
-
-    Eina_Tiler* tiler = eina_tiler_new(imageWidth, imageHeight);
-    if (!tiler) {
-        ERR("could not create tiler %dx%d", imageWidth, imageHeight);
-        return false;
-    }
-
-    ewk_view_layout_if_needed_recursive(priv);
-
-    size_t count;
-    const Eina_Rectangle* paintRequest = ewk_view_repaints_pop(priv, &count);
-    const Eina_Rectangle* paintRequestEnd = paintRequest + count;
-    for (; paintRequest < paintRequestEnd; paintRequest++)
-        eina_tiler_rect_add(tiler, paintRequest);
-
-    Eina_Iterator* iterator = eina_tiler_iterator_new(tiler);
-    if (!iterator) {
-        ERR("could not get iterator for tiler");
-        eina_tiler_free(tiler);
-        return false;
-    }
-
-#if USE(TILED_BACKING_STORE)
-    if (priv->page->mainFrame().tiledBackingStore())
-        priv->page->mainFrame().tiledBackingStore()->coverWithTilesIfNeeded();
-#endif
-
-    Ewk_Paint_Context* context = ewk_paint_context_from_image_new(smartData->backing_store);
-    ewk_paint_context_save(context);
-
-    Eina_Rectangle* rect;
-    EINA_ITERATOR_FOREACH(iterator, rect) {
-        ewk_view_paint(smartData->_priv, context, rect);
-        evas_object_image_data_update_add(smartData->backing_store, rect->x, rect->y, rect->w, rect->h);
-    }
-
-#if ENABLE(INSPECTOR)
-    WebCore::Page* page = EWKPrivate::corePage(smartData->self);
-    if (page) {
-        WebCore::InspectorController& controller = page->inspectorController();
-        if (controller.highlightedNode())
-            controller.drawHighlight(*context->graphicContext);
-    }
-#endif
-
-    ewk_paint_context_restore(context);
-    ewk_paint_context_free(context);
-
-    eina_tiler_free(tiler);
-    eina_iterator_free(iterator);
-
-    return true;
-}
-
 static void _ewk_view_smart_calculate(Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET(ewkView, smartData);
@@ -1258,19 +1066,13 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
 
     if (smartData->changed.position && ((x != smartData->view.x) || (y != smartData->view.y))) {
         evas_object_move(smartData->main_frame, x, y);
-        evas_object_move(smartData->backing_store, x, y);
+        evas_object_move(smartData->image, x, y);
         evas_object_move(smartData->events_rect, x, y);
         smartData->changed.frame_rect = true;
         smartData->view.x = x;
         smartData->view.y = y;
     }
     smartData->changed.position = false;
-
-    _ewk_view_smart_scrolls_process(smartData);
-    _ewk_view_scrolls_flush(priv);
-
-    if (!_ewk_view_smart_repaints_process(smartData))
-        ERR("failed to process repaints.");
 
     if (smartData->changed.frame_rect) {
         priv->page->mainFrame().view()->frameRectsChanged();
@@ -1285,10 +1087,7 @@ static void _ewk_view_smart_show(Evas_Object* ewkView)
 
     if (evas_object_clipees_get(smartData->base.clipper))
         evas_object_show(smartData->base.clipper);
-    evas_object_show(smartData->backing_store);
-
-    if (priv->isCompositingActive)
-        evas_object_show(priv->compositingObject.get());
+    evas_object_show(smartData->image);
 }
 
 static void _ewk_view_smart_hide(Evas_Object* ewkView)
@@ -1297,10 +1096,7 @@ static void _ewk_view_smart_hide(Evas_Object* ewkView)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
     evas_object_hide(smartData->base.clipper);
-    evas_object_hide(smartData->backing_store);
-
-    if (priv->isCompositingActive)
-        evas_object_hide(priv->compositingObject.get());
+    evas_object_hide(smartData->image);
 }
 
 static Eina_Bool _ewk_view_smart_contents_resize(Ewk_View_Smart_Data*, int /*width*/, int /*height*/)
@@ -1340,7 +1136,6 @@ static void _ewk_view_smart_flush(Ewk_View_Smart_Data* smartData)
 {
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
     _ewk_view_repaints_flush(priv);
-    _ewk_view_scrolls_flush(priv);
 }
 
 static void _ewk_view_zoom_animated_mark_stop(Ewk_View_Smart_Data* smartData)
@@ -1381,7 +1176,7 @@ static Eina_Bool _ewk_view_smart_zoom_weak_set(Ewk_View_Smart_Data* smartData, f
     Evas_Coord w = smartData->view.w * scale;
     Evas_Coord h = smartData->view.h * scale;
     Evas_Coord deltaX, deltaY, contentWidth, contentHeight;
-    Evas_Object* clip = evas_object_clip_get(smartData->backing_store);
+    Evas_Object* clip = evas_object_clip_get(smartData->image);
 
     ewk_frame_contents_size_get(smartData->main_frame, &contentWidth, &contentHeight);
     if (smartData->view.w > 0 && smartData->view.h > 0) {
@@ -1392,7 +1187,7 @@ static Eina_Bool _ewk_view_smart_zoom_weak_set(Ewk_View_Smart_Data* smartData, f
         deltaY = 0;
     }
 
-    evas_object_image_fill_set(smartData->backing_store, centerX + deltaX, centerY + deltaY, w, h);
+    evas_object_image_fill_set(smartData->image, centerX + deltaX, centerY + deltaY, w, h);
 
     if (smartData->view.w > 0 && smartData->view.h > 0) {
         deltaX = ((smartData->view.w - w) * centerX) / smartData->view.w;
@@ -1414,7 +1209,7 @@ static Eina_Bool _ewk_view_smart_zoom_weak_set(Ewk_View_Smart_Data* smartData, f
 
 static void _ewk_view_smart_zoom_weak_smooth_scale_set(Ewk_View_Smart_Data* smartData, Eina_Bool smooth_scale)
 {
-    evas_object_image_smooth_scale_set(smartData->backing_store, smooth_scale);
+    evas_object_image_smooth_scale_set(smartData->image, smooth_scale);
 }
 
 static Eina_Bool _ewk_view_zoom_animator_cb(void* data)
@@ -1698,7 +1493,7 @@ void ewk_view_bg_color_set(Evas_Object* ewkView, int red, int green, int blue, i
     smartData->bg_color.b = blue;
     smartData->bg_color.a = alpha;
 
-    evas_object_image_alpha_set(smartData->backing_store, alpha < 255);
+    evas_object_image_alpha_set(smartData->image, alpha < 255);
 
     WebCore::FrameView* view = smartData->_priv->page->mainFrame().view();
     if (view) {
@@ -2939,15 +2734,6 @@ void ewk_view_layout_if_needed_recursive(Ewk_View_Private_Data* priv)
     view->updateLayoutAndStyleIfNeededRecursive();
 }
 
-void ewk_view_scrolls_process(Ewk_View_Smart_Data* smartData)
-{
-    EINA_SAFETY_ON_NULL_RETURN(smartData);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
-
-    _ewk_view_smart_scrolls_process(smartData);
-    _ewk_view_scrolls_flush(priv);
-}
-
 /* internal methods ****************************************************/
 /**
  * @internal
@@ -3743,15 +3529,7 @@ void ewk_view_scroll(Evas_Object* ewkView, const WebCore::IntSize& delta, const 
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
-    priv->m_rectsToScroll.append(rectToScroll);
-    priv->m_scrollOffsets.append(delta);
-
-    for (size_t i = 0; i < priv->repaints.count; ++i) {
-        priv->repaints.array[i].x += delta.width();
-        priv->repaints.array[i].y += delta.height();
-    }
-
-    _ewk_view_smart_changed(smartData);
+    ewk_view_mark_for_sync(ewkView);
 }
 
 /**
@@ -4626,79 +4404,12 @@ void ewk_view_inspector_view_set(Evas_Object* ewkView, Evas_Object* inspectorVie
 #endif
 }
 
-void _ewk_view_accelerated_compositing_cb(void* data, Evas_Object*)
-{
-    Ewk_View_Private_Data* priv = static_cast<Ewk_View_Private_Data*>(data);
-
-    if (priv->isCompositingActive)
-        priv->acceleratedCompositingContext->flushAndRenderLayers();
-}
-
-bool _ewk_view_accelerated_compositing_context_create_if_needed(Evas_Object* ewkView)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
-
-    if (!priv->acceleratedCompositingContext) {
-        priv->acceleratedCompositingContext = std::make_unique<WebCore::AcceleratedCompositingContext>(ewkView, priv->compositingObject.get());
-        if (!priv->acceleratedCompositingContext->initialize()) {
-            priv->acceleratedCompositingContext = nullptr;
-            return false;
-        }
-    }
-    return true;
-}
-
-void _ewk_view_accelerated_compositing_object_create_if_needed(Evas_Object* ewkView)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
-
-    if (!priv->compositingObject) {
-        priv->compositingObject = adoptRef(evas_object_image_add(smartData->base.evas));
-
-        evas_object_pass_events_set(priv->compositingObject.get(), true); // Just for rendering, ignore events.
-        evas_object_image_alpha_set(priv->compositingObject.get(), true);
-        evas_object_image_content_hint_set(priv->compositingObject.get(), EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
-
-        // Set the pixel get callback.
-        evas_object_image_pixels_get_callback_set(priv->compositingObject.get(), _ewk_view_accelerated_compositing_cb, priv);
-
-        evas_object_smart_member_add(priv->compositingObject.get(), ewkView);
-    }
-
-    evas_object_image_size_set(priv->compositingObject.get(), smartData->view.w, smartData->view.h);
-    evas_object_image_fill_set(priv->compositingObject.get(), 0, 0, smartData->view.w, smartData->view.h);
-
-    evas_object_move(priv->compositingObject.get(), smartData->view.x, smartData->view.y);
-    evas_object_resize(priv->compositingObject.get(), smartData->view.w, smartData->view.h);
-    evas_object_hide(priv->compositingObject.get());
-}
-
 void ewk_view_root_graphics_layer_set(Evas_Object* ewkView, WebCore::GraphicsLayer* rootLayer)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
-    bool active = !!rootLayer;
-    if (priv->isCompositingActive == active)
-        return;
-
-    priv->isCompositingActive = active;
-
-    if (priv->isCompositingActive) {
-        _ewk_view_accelerated_compositing_object_create_if_needed(ewkView);
-        if (_ewk_view_accelerated_compositing_context_create_if_needed(ewkView))
-            evas_object_show(priv->compositingObject.get());
-        else
-            priv->isCompositingActive = false;
-    }
-
-    if (!priv->isCompositingActive)
-        evas_object_hide(priv->compositingObject.get());
-
-    if (priv->acceleratedCompositingContext)
-        priv->acceleratedCompositingContext->attachRootGraphicsLayer(rootLayer);
+    priv->acceleratedCompositingContext->setRootGraphicsLayer(rootLayer);
 }
 
 void ewk_view_mark_for_sync(Evas_Object* ewkView)
@@ -4708,7 +4419,7 @@ void ewk_view_mark_for_sync(Evas_Object* ewkView)
 
     // Mark the image as "dirty" meaning it needs an update next time evas renders.
     // It will call the pixel get callback then.
-    evas_object_image_pixels_dirty_set(priv->compositingObject.get(), true);
+    evas_object_image_pixels_dirty_set(smartData->image, true);
 }
 
 void ewk_view_cursor_set(Evas_Object* ewkView, const WebCore::Cursor& cursor)
