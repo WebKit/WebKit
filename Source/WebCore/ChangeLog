@@ -1,3 +1,38 @@
+2014-04-01  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Crash in WebCore::RenderLayer::FilterInfo::updateReferenceFilterClients
+
+        <https://bugs.webkit.org/show_bug.cgi?id=121887>
+        <rdar://problem/15073043>
+
+        Reviewed by Dean Jackson.
+
+        Test: svg/filters/first-letter-crash.html
+
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::buildReferenceFilter):
+        Added a null check to prevent crashes for anonymous RenderObjects.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::filterNeedsRepaint):
+        Get the enclosing element, if there is one, and recalculate its style.
+        We use the enclosing element so that we recalculate style for the
+        ancestor of an anonymous RenderElement.
+        (WebCore::RenderLayer::enclosingElement):
+        Remove an assertion; we may now reach this condition if loading a
+        cached SVG document results in RenderLayer::filterNeedsRepaint() being
+        called before the object has been inserted into the render tree.
+
+        * rendering/RenderLayerFilterInfo.cpp:
+        (WebCore::RenderLayer::FilterInfo::notifyFinished):
+        Tell the RenderLayer that the filter needs repainting.
+        (WebCore::RenderLayer::FilterInfo::updateReferenceFilterClients):
+        Get the Element from the renderer rather than asking the renderer's
+        Element, which will be null for anonymous RenderObjects.
+
+        * rendering/RenderLayerFilterInfo.h:
+        Removed declaration for the old workaround function, layerElement().
+
 2014-04-01  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Build break when disabled VIDEO since r166261

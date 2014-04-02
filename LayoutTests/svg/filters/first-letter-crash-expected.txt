@@ -1,0 +1,2 @@
+PASS.
+WebKit bug #121887: Crash when applying SVG filter to first-letter pseudo element. This test passes if it does not crash.

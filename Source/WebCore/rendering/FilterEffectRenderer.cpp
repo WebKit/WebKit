@@ -104,9 +104,10 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderElemen
 
     Element* filter = document->getElementById(filterOperation->fragment());
     if (!filter) {
-        // Although we did not find the referenced filter, it might exist later
-        // in the document
-        document->accessSVGExtensions()->addPendingResource(filterOperation->fragment(), renderer->element());
+        // Although we did not find the referenced filter, it might exist later in the document.
+        // FIXME: This skips anonymous RenderObjects. <https://webkit.org/b/131085>
+        if (Element* element = renderer->element())
+            document->accessSVGExtensions()->addPendingResource(filterOperation->fragment(), element);
         return 0;
     }
 

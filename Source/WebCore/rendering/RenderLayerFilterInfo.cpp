@@ -93,16 +93,9 @@ void RenderLayer::FilterInfo::setRenderer(PassRefPtr<FilterEffectRenderer> rende
 
 void RenderLayer::FilterInfo::notifyFinished(CachedResource*)
 {
-    m_layer.renderer().element()->setNeedsStyleRecalc(SyntheticStyleChange);
-    m_layer.renderer().repaint();
+    m_layer.filterNeedsRepaint();
 }
-
-// FIXME: Remove this helper function when <rdar://problem/16230015> is fixed.
-NEVER_INLINE Element* RenderLayer::FilterInfo::layerElement() const
-{
-    return m_layer.renderer().element();
-}
-
+    
 void RenderLayer::FilterInfo::updateReferenceFilterClients(const FilterOperations& operations)
 {
     removeReferenceFilterClients();
@@ -121,7 +114,7 @@ void RenderLayer::FilterInfo::updateReferenceFilterClients(const FilterOperation
         } else {
             // Reference is internal; add layer as a client so we can trigger
             // filter repaint on SVG attribute change.
-            Element* filter = layerElement()->document().getElementById(referenceFilterOperation->fragment());
+            Element* filter = m_layer.renderer().document().getElementById(referenceFilterOperation->fragment());
 
             if (!filter || !filter->renderer() || !filter->renderer()->isSVGResourceFilter())
                 continue;

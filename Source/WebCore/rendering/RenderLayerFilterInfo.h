@@ -63,8 +63,6 @@ public:
     void removeReferenceFilterClients();
 
 private:
-    Element* layerElement() const;
-
     friend void WTF::deleteOwnedPtr<FilterInfo>(FilterInfo*);
 
     virtual void notifyFinished(CachedResource*) override;

@@ -1,3 +1,15 @@
+2014-04-01  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Crash in WebCore::RenderLayer::FilterInfo::updateReferenceFilterClients
+
+        <https://bugs.webkit.org/show_bug.cgi?id=121887>
+        <rdar://problem/15073043>
+
+        Reviewed by Dean Jackson.
+
+        * svg/filters/first-letter-crash-expected.txt: Added.
+        * svg/filters/first-letter-crash.html: Added.
+
 2014-04-01  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Exclusions] Remove exclusions parsing support

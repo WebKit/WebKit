@@ -4650,7 +4650,6 @@ Element* RenderLayer::enclosingElement() const
         if (Element* e = r->element())
             return e;
     }
-    ASSERT_NOT_REACHED();
     return 0;
 }
 
@@ -6804,7 +6803,9 @@ void RenderLayer::updateOrRemoveFilterEffectRenderer()
 
 void RenderLayer::filterNeedsRepaint()
 {
-    renderer().element()->setNeedsStyleRecalc(SyntheticStyleChange);
+    // We use the enclosing element so that we recalculate style for the ancestor of an anonymous object.
+    if (Element* element = enclosingElement())
+        element->setNeedsStyleRecalc(SyntheticStyleChange);
     renderer().repaint();
 }
 
