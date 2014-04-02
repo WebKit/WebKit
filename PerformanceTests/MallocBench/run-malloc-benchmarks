@@ -1,0 +1,347 @@
+#!/usr/bin/env ruby
+
+require 'getoptlong'
+require 'pathname'
+
+$binDir = "#{File.expand_path(File.dirname(__FILE__))}"
+$productDir = `perl -e 'use lib \"#{$binDir}/../../Tools/Scripts\"; use webkitdirs; print productDir()'`
+
+$benchmarks = [
+    "churn",
+    "churn --parallel",
+    "list_allocate",
+    "list_allocate --parallel",
+    "tree_allocate",
+    "tree_allocate --parallel",
+    "tree_churn",
+    "tree_churn --parallel",
+    "facebook",
+    "facebook --parallel",
+    "fragment",
+    "fragment --parallel",
+    "fragment_iterate",
+    "fragment_iterate --parallel",
+    "message_one",
+    "message_many",
+    "medium",
+    "medium --parallel",
+    "big",
+    "big --parallel",
+]
+
+$heap = 0
+$measureHeap = false
+
+def usage
+	puts "run-malloc-benchmarks [options] <Name:/path/to/dylib> [<Name:/path/to/dylib>]"
+	puts
+	puts "    Runs a suite of memory allocation and access benchmarks."
+    puts
+    puts "    <Name:/path/to/dylib> is a symbolic name followed by a folder containing a libmbmalloc.dylib."
+    puts
+    puts "    Specify \"SystemMalloc\" to test the built-in libc malloc."
+    puts "    Specify \"NanoMalloc\" to test the built-in libc malloc using the NanoMalloc zone."
+    puts
+    puts "    Example usage:"
+    puts
+    puts "        run-malloc-benchmarks SystemMalloc NanoMalloc"
+    puts "        run-malloc-benchmarks FastMalloc:/path/to/FastMalloc/Build/Products/Release/"
+    puts "        run-malloc-benchmarks --benchmark churn SystemMalloc FastMalloc:/path/to/FastMalloc/Build/Products/Release/"
+    puts
+	puts "Options:"
+    puts
+    puts "    --benchmark <benchmark>      Select a single benchmark to run instead of the full suite."
+    puts "    --heap <heap>           Set a baseline heap size."
+    puts
+end
+
+class Dylib
+    attr_reader :name
+    attr_reader :path
+
+    def initialize(name, path)
+        @name = name
+        @path = File.join(path, "libmbmalloc.dylib")
+    end
+end
+
+class Results
+    attr_reader :executionTime
+    attr_reader :peakMemory
+    attr_reader :memoryAtEnd
+
+    def initialize(executionTime, peakMemory, memoryAtEnd)
+        @executionTime = executionTime
+        @peakMemory = peakMemory
+        @memoryAtEnd = memoryAtEnd
+    end
+end
+
+class Stat
+    attr_reader :benchmark
+    attr_reader :result
+
+    def initialize(benchmark, result)
+        @benchmark = benchmark
+        @result = result[/\d+/].to_i
+    end
+end
+
+class TimeStat < Stat
+    def to_s
+    	@result + "ms"
+    end
+end
+
+class MemoryStat < Stat
+    def to_s
+    	@result + "kB"
+    end
+end
+
+class PeakMemoryStat < Stat
+    def to_s
+    	@result + "kB"
+    end
+end
+
+def lpad(str, chars)
+    if str.length > chars
+        str
+    else
+        "%#{chars}s"%(str)
+    end
+end
+
+def rpad(str, chars)
+    while str.length < chars
+        str += " "
+    end
+    str
+end
+
+def computeArithmeticMean(array)
+  sum = 0.0
+  array.each {
+    | value |
+    sum += value
+  }
+  (sum / array.length)
+end
+
+def computeGeometricMean(array)
+  mult = 1.0
+  array.each {
+    | value |
+    mult *= value ? value : 1.0
+  }
+  (mult ** (1.0 / array.length))
+end
+
+def computeHarmonicMean(array)
+  1.0 / computeArithmeticMean(array.collect{ | value | 1.0 / value })
+end
+
+def lowerIsBetter(a, b, better, worse)
+    if b < a
+        return "^ " + (a.to_f / b.to_f).round(2).to_s + "x " + better
+    end
+
+    if b == a
+        return ""
+    end
+
+    "! " + (b.to_f / a.to_f).round(2).to_s + "x " + worse
+end
+
+
+def lowerIsFaster(a, b)
+    lowerIsBetter(a, b, "faster", "slower")
+end
+
+def lowerIsSmaller(a, b)
+    lowerIsBetter(a, b, "smaller", "bigger")
+end
+
+def numberWithDelimiter(number)
+    number.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse
+end
+
+def prettify(number, suffix)
+    numberWithDelimiter(number) + suffix
+end
+
+def parseOptions
+    GetoptLong.new(
+        ['--benchmark', GetoptLong::REQUIRED_ARGUMENT],
+        ['--heap', GetoptLong::REQUIRED_ARGUMENT],
+        ['--measure-heap', GetoptLong::NO_ARGUMENT],
+        ['--help', GetoptLong::NO_ARGUMENT],
+    ).each {
+        | opt, arg |
+        case opt
+        when '--benchmark'
+            $benchmarks = [ arg ]
+        when '--heap'
+            $heap = arg
+        when '--measure-heap'
+            $measureHeap = true
+        when '--help'
+            usage
+            exit 1
+        else
+          raise "bad option: #{opt}"
+        end
+    }
+
+    if ARGV.length < 1
+        puts "Error: No dylib specified."
+        exit 1
+    end
+
+    dylibs = []
+    ARGV.each {
+        | arg |
+        if arg == "SystemMalloc"
+            dylib = Dylib.new("SystemMalloc", $productDir)
+        elsif arg == "NanoMalloc"
+            dylib = Dylib.new("NanoMalloc", $productDir)
+        else
+            name = arg.split(":")[0]
+            path = arg.split(":")[1]
+            if !name || name.length < 1 ||
+                !path || path.length < 1
+                puts "Invalid <Name:/path/to/dylib>: '#{arg}'."
+                exit 1
+            end
+
+            dylib = Dylib.new(name, File.expand_path(path))
+        end
+
+        if !File.exists?(dylib.path)
+            puts "File not found: #{dylib.path}."
+            exit 1
+        end
+
+        dylibs.push(dylib)
+    }
+    dylibs
+end
+
+def runBenchmarks(dylibs)
+    executionTime = []
+    peakMemory = []
+    memoryAtEnd = []
+
+    $benchmarks.each {
+        | benchmark |
+
+        executionTime.push([])
+        peakMemory.push([])
+        memoryAtEnd.push([])
+
+        dylibs.each {
+            | dylib |
+
+            $stderr.print "\rRUNNING #{dylib.name}: #{benchmark}...                "
+            env = "DYLD_LIBRARY_PATH='#{Pathname.new(dylib.path).dirname}' "
+            if dylib.name == "NanoMalloc"
+                env += "MallocNanoZone=1 "
+            end
+            input = "cd '#{$productDir}'; #{env} '#{$productDir}/MallocBench' --benchmark #{benchmark} --heap #{$heap} #{$measureHeap ? '--measure-heap' : ''}"
+            output =`#{input}`
+            splitOutput = output.split("\n")
+
+            executionTime[-1].push(TimeStat.new(benchmark, splitOutput[1]))
+            peakMemory[-1].push(PeakMemoryStat.new(benchmark, splitOutput.length > 3 ? splitOutput[3] : "0"))
+            memoryAtEnd[-1].push(MemoryStat.new(benchmark, splitOutput.length > 2 ? splitOutput[2] : "0"))
+        }
+    }
+    $stderr.print "\r                                                                                \n"
+
+    Results.new(executionTime, peakMemory, memoryAtEnd)
+end
+
+def printResults(dylibs, results)
+    def printHeader(dylibs, fieldSize)
+        print
+        print lpad("", fieldSize)
+        print lpad(dylibs[0].name, fieldSize)
+        if dylibs[1]
+            print lpad(dylibs[1].name, fieldSize)
+            print lpad("Δ", fieldSize * 1.25)
+        end
+        print "\n"
+    end
+
+    def printMetric(name, results, compareFunction, suffix, fieldSize)
+        def printMean(name, results, meanFunction, compareFunction, suffix, fieldSize)
+            means = []
+
+            means.push(meanFunction.call(results.collect { | stats | stats[0].result }))
+            print rpad("    " + name, fieldSize)
+            print lpad("#{prettify(means[0].round, suffix)}", fieldSize)
+
+            if results[0][1]
+                means.push(meanFunction.call(results.collect { | stats | stats[1].result }))
+                print lpad("#{prettify(means[1].round, suffix)}", fieldSize)
+                print lpad(compareFunction.call(means[0], means[1]), fieldSize * 1.25)
+            end
+
+            print "\n"
+        end
+
+        if results[0][0].result == 0
+            return
+        end
+
+        print name + ":\n"
+        results.each {
+            | stats |
+
+            print rpad("    " + stats[0].benchmark, fieldSize)
+            print lpad("#{prettify(stats[0].result, suffix)}", fieldSize)
+
+            if stats[1]
+                print lpad("#{prettify(stats[1].result, suffix)}", fieldSize)
+                print lpad(compareFunction.call(stats[0].result, stats[1].result), fieldSize * 1.25)
+            end
+
+            print "\n"
+        }
+
+        print "\n"
+
+        printMean("<geometric mean>", results, method(:computeGeometricMean), compareFunction, suffix, fieldSize)
+        printMean("<arithmetic mean>", results, method(:computeArithmeticMean), compareFunction, suffix, fieldSize)
+        printMean("<harmonic mean>", results, method(:computeHarmonicMean), compareFunction, suffix, fieldSize)
+
+        print "\n"
+    end
+
+    fieldSize = ($benchmarks + ["<arithmetic mean>"]).collect {
+        | benchmark |
+        benchmark.size
+    }.max + 4
+
+    printHeader(dylibs, fieldSize)
+    printMetric("Execution Time", results.executionTime, method(:lowerIsFaster), "ms", fieldSize)
+    printMetric("Peak Memory", results.peakMemory, method(:lowerIsSmaller), "kB", fieldSize)
+    printMetric("Memory at End", results.memoryAtEnd, method(:lowerIsSmaller), "kB", fieldSize)
+end
+
+def main
+    begin
+        dylibs = parseOptions()
+        results = runBenchmarks(dylibs)
+        printResults(dylibs, results)
+    rescue => exception
+        puts
+        puts
+        puts exception
+        puts exception.backtrace
+        puts
+    end
+end
+
+main()
