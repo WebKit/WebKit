@@ -215,7 +215,7 @@ static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buf
     // lower priority sources.
     // See: https://bugzilla.gnome.org/show_bug.cgi?id=610830.
     gst_object_ref(sink);
-    priv->timeoutSource.schedule("[WebKit] webkitVideoSinkTimeoutCallback", std::bind(webkitVideoSinkTimeoutCallback, sink), G_PRIORITY_DEFAULT,
+    priv->timeoutSource.schedule("[WebKit] webkitVideoSinkTimeoutCallback", std::function<void()>(std::bind(webkitVideoSinkTimeoutCallback, sink)), G_PRIORITY_DEFAULT,
         [sink] { gst_object_unref(sink); });
 
     g_cond_wait(priv->dataCondition, priv->bufferMutex);

@@ -532,7 +532,7 @@ static GstStateChangeReturn webKitWebSrcChangeState(GstElement* element, GstStat
     case GST_STATE_CHANGE_READY_TO_PAUSED:
         GST_DEBUG_OBJECT(src, "READY->PAUSED");
         gst_object_ref(src);
-        priv->startSource.schedule("[WebKit] webKitWebSrcStart", std::bind(webKitWebSrcStart, src), G_PRIORITY_DEFAULT,
+        priv->startSource.schedule("[WebKit] webKitWebSrcStart", std::function<void()>(std::bind(webKitWebSrcStart, src)), G_PRIORITY_DEFAULT,
             [src] { gst_object_unref(src); });
         break;
     case GST_STATE_CHANGE_PAUSED_TO_READY:
@@ -540,7 +540,7 @@ static GstStateChangeReturn webKitWebSrcChangeState(GstElement* element, GstStat
         // cancel pending sources
         removeTimeoutSources(src);
         gst_object_ref(src);
-        priv->stopSource.schedule("[WebKit] webKitWebSrcStop", std::bind(webKitWebSrcStop, src), G_PRIORITY_DEFAULT,
+        priv->stopSource.schedule("[WebKit] webKitWebSrcStop", std::function<void()>(std::bind(webKitWebSrcStop, src)), G_PRIORITY_DEFAULT,
             [src] { gst_object_unref(src); });
         break;
     default:
@@ -682,7 +682,7 @@ static void webKitWebSrcNeedDataCb(GstAppSrc*, guint length, gpointer userData)
         return;
 
     gst_object_ref(src);
-    priv->needDataSource.schedule("[WebKit] webKitWebSrcNeedDataMainCb", std::bind(webKitWebSrcNeedDataMainCb, src), G_PRIORITY_DEFAULT,
+    priv->needDataSource.schedule("[WebKit] webKitWebSrcNeedDataMainCb", std::function<void()>(std::bind(webKitWebSrcNeedDataMainCb, src)), G_PRIORITY_DEFAULT,
         [src] { gst_object_unref(src); });
 }
 
@@ -712,7 +712,7 @@ static void webKitWebSrcEnoughDataCb(GstAppSrc*, gpointer userData)
         return;
 
     gst_object_ref(src);
-    priv->enoughDataSource.schedule("[WebKit] webKitWebSrcEnoughDataMainCb", std::bind(webKitWebSrcEnoughDataMainCb, src), G_PRIORITY_DEFAULT,
+    priv->enoughDataSource.schedule("[WebKit] webKitWebSrcEnoughDataMainCb", std::function<void()>(std::bind(webKitWebSrcEnoughDataMainCb, src)), G_PRIORITY_DEFAULT,
         [src] { gst_object_unref(src); });
 }
 
@@ -741,7 +741,7 @@ static gboolean webKitWebSrcSeekDataCb(GstAppSrc*, guint64 offset, gpointer user
     priv->requestedOffset = offset;
 
     gst_object_ref(src);
-    priv->seekSource.schedule("[WebKit] webKitWebSrcSeekMainCb", std::bind(webKitWebSrcSeekMainCb, src), G_PRIORITY_DEFAULT,
+    priv->seekSource.schedule("[WebKit] webKitWebSrcSeekMainCb", std::function<void()>(std::bind(webKitWebSrcSeekMainCb, src)), G_PRIORITY_DEFAULT,
         [src] { gst_object_unref(src); });
     return TRUE;
 }

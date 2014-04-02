@@ -1,3 +1,35 @@
+2014-04-02  Alex Christensen  <achristensen@webkit.org>
+
+        [WinCairo] Build fix after r166496.
+        https://bugs.webkit.org/show_bug.cgi?id=131006
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        (WebCore::InbandTextTrackPrivateGStreamer::handleSample):
+        (WebCore::InbandTextTrackPrivateGStreamer::streamChanged):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::changePipelineState):
+        (WebCore::MediaPlayerPrivateGStreamer::videoChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::videoCapsChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::audioChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::textChanged):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::volumeChanged):
+        (WebCore::MediaPlayerPrivateGStreamerBase::muteChanged):
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::activeChanged):
+        (WebCore::TrackPrivateBaseGStreamer::tagsChanged):
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkitVideoSinkRender):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcChangeState):
+        (webKitWebSrcNeedDataCb):
+        (webKitWebSrcEnoughDataCb):
+        (webKitWebSrcSeekDataCb):
+        Added std::function<void()> constructors to help Visual Studio decide which version of 
+        GMainLoopSource::schedule or GMainLoopSource::scheduleAfterDelay to use.
+
 2014-04-02  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Transition class CSSImageGeneratorValue/class StyleImage (and its dependencies) from 

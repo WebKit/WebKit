@@ -80,12 +80,12 @@ void InbandTextTrackPrivateGStreamer::handleSample(GRefPtr<GstSample> sample)
         MutexLocker lock(m_sampleMutex);
         m_pendingSamples.append(sample);
     }
-    m_sampleTimerHandler.schedule("[WebKit] InbandTextTrackPrivateGStreamer::notifyTrackOfSample", std::bind(&InbandTextTrackPrivateGStreamer::notifyTrackOfSample, this));
+    m_sampleTimerHandler.schedule("[WebKit] InbandTextTrackPrivateGStreamer::notifyTrackOfSample", std::function<void()>(std::bind(&InbandTextTrackPrivateGStreamer::notifyTrackOfSample, this)));
 }
 
 void InbandTextTrackPrivateGStreamer::streamChanged()
 {
-    m_streamTimerHandler.schedule("[WebKit] InbandTextTrackPrivateGStreamer::notifyTrackOfStreamChanged", std::bind(&InbandTextTrackPrivateGStreamer::notifyTrackOfStreamChanged, this));
+    m_streamTimerHandler.schedule("[WebKit] InbandTextTrackPrivateGStreamer::notifyTrackOfStreamChanged", std::function<void()>(std::bind(&InbandTextTrackPrivateGStreamer::notifyTrackOfStreamChanged, this)));
 }
 
 void InbandTextTrackPrivateGStreamer::notifyTrackOfSample()

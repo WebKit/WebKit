@@ -222,7 +222,7 @@ void MediaPlayerPrivateGStreamerBase::notifyPlayerOfVolumeChange()
 
 void MediaPlayerPrivateGStreamerBase::volumeChanged()
 {
-    m_volumeTimerHandler.schedule("[WebKit] MediaPlayerPrivateGStreamerBase::volumeChanged", std::bind(&MediaPlayerPrivateGStreamerBase::notifyPlayerOfVolumeChange, this));
+    m_volumeTimerHandler.schedule("[WebKit] MediaPlayerPrivateGStreamerBase::volumeChanged", std::function<void()>(std::bind(&MediaPlayerPrivateGStreamerBase::notifyPlayerOfVolumeChange, this)));
 }
 
 MediaPlayer::NetworkState MediaPlayerPrivateGStreamerBase::networkState() const
@@ -270,7 +270,7 @@ void MediaPlayerPrivateGStreamerBase::notifyPlayerOfMute()
 
 void MediaPlayerPrivateGStreamerBase::muteChanged()
 {
-    m_muteTimerHandler.schedule("[WebKit] MediaPlayerPrivateGStreamerBase::muteChanged", std::bind(&MediaPlayerPrivateGStreamerBase::notifyPlayerOfMute, this));
+    m_muteTimerHandler.schedule("[WebKit] MediaPlayerPrivateGStreamerBase::muteChanged", std::function<void()>(std::bind(&MediaPlayerPrivateGStreamerBase::notifyPlayerOfMute, this)));
 }
 
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
