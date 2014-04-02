@@ -213,7 +213,7 @@
                       "builderNames": ["Apple MountainLion Release (Build)", "Apple MountainLion Debug (Build)", "Apple MountainLion Release (32-bit Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-mavericks", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple Mavericks Release (Build)", "Apple Mavericks Debug (Build)", "Apple Mavericks LLINT CLoop (BuildAndTest)"]
+                      "builderNames": ["Apple Mavericks Release (Build)", "Apple Mavericks Debug (Build)", "Apple Mavericks LLINT CLoop (BuildAndTest)", "Apple Mavericks 32-bit JSC (BuildAndTest)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Win Release (Build)", "Apple Win Debug (Build)"]
