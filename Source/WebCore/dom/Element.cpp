@@ -147,7 +147,7 @@ Element::~Element()
         // When the document is not destroyed, an element that was part of a named flow
         // content nodes should have been removed from the content nodes collection
         // and the isNamedFlowContentNode flag reset.
-        ASSERT(!isNamedFlowContentNode());
+        ASSERT_WITH_SECURITY_IMPLICATION(!isNamedFlowContentNode());
     }
 #endif
 

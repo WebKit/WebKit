@@ -1,3 +1,21 @@
+2014-04-01  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Displaying region's children in another region not supported
+        https://bugs.webkit.org/show_bug.cgi?id=130735
+
+        Reviewed by David Hyatt.
+
+        With http://trac.webkit.org/changeset/166353, we disabled the possibility
+        of collecting the region's children into another flow and displaying them
+        in another region. With that change, we also skipped the existing tests.
+
+        Add a dedicated test that passes if a region child cannot be painted in another region,
+        in order to complete the skipped tests. This test should be removed when support for
+        this functionality will be added again.
+
+        * fast/regions/region-child-not-flowed-expected.html: Added.
+        * fast/regions/region-child-not-flowed.html: Added.
+
 2014-04-01  Beth Dakin  <bdakin@apple.com>
 
         willReveal edge events should be hooked up for overflow:scroll

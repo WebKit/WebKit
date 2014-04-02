@@ -1,3 +1,21 @@
+2014-04-01  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Displaying region's children in another region not supported
+        https://bugs.webkit.org/show_bug.cgi?id=130735
+
+        Reviewed by David Hyatt.
+
+        With http://trac.webkit.org/changeset/166353, we disabled the possibility
+        of collecting the region's children into another flow and displaying them
+        in another region.
+        I added a new test for this and also changed the plain ASSERT in Element dtor
+        to ASSERT_WITH_SECURITY_IMPLICATION to better reflect the meaning of the assertion.
+
+        Test: fast/regions/region-child-not-flowed.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+
 2014-04-01  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Simplify the RenderFlowThread state pusher
