@@ -790,6 +790,23 @@ public:
     BlendMode blendMode() const { return m_blendMode; }
 #endif
 
+    bool isolatesCompositedBlending() const
+    {
+#if ENABLE(CSS_COMPOSITING)
+        return m_hasUnisolatedCompositedBlendingDescendants && isStackingContext();
+#else
+        return false;
+#endif
+    }
+
+#if ENABLE(CSS_COMPOSITING)
+    bool hasUnisolatedCompositedBlendingDescendants() const { return m_hasUnisolatedCompositedBlendingDescendants; }
+    void setHasUnisolatedCompositedBlendingDescendants(bool hasUnisolatedCompositedBlendingDescendants)
+    {
+        m_hasUnisolatedCompositedBlendingDescendants = hasUnisolatedCompositedBlendingDescendants;
+    }
+#endif
+
     bool isolatesBlending() const
     {
 #if ENABLE(CSS_COMPOSITING)
@@ -1291,6 +1308,7 @@ private:
 
 #if ENABLE(CSS_COMPOSITING)
     BlendMode m_blendMode : 5;
+    bool m_hasUnisolatedCompositedBlendingDescendants : 1;
     bool m_hasBlendedElementInChildStackingContext : 1;
     bool m_hasBlendedElementInChildStackingContextStatusDirty : 1;
 #endif

@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<!-- This test will check that parent is not accelerated when it has non-accelerated blended children -->
+<style>
+    .accelerated {
+        -webkit-transform: rotateX(0deg);
+    }
+    .blended {
+        -webkit-mix-blend-mode: multiply;
+    }
+    .child {
+        width: 10px;
+        height: 10px;
+        background-color: green;
+    }
+    .parent {
+        -webkit-isolation: isolate;
+    }
+</style>
+
+<div class="parent">
+    <div class="accelerated child"></div>
+    <div class="blended child"></div>
+</div>
+<pre id="layerTree"></pre>
+<script>
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+
+    var text = document.getElementById("layerTree");
+    text.innerHTML = window.internals.layerTreeAsText(document);
+</script>

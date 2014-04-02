@@ -186,6 +186,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
 #endif
 #if ENABLE(CSS_COMPOSITING)
     , m_blendMode(BlendModeNormal)
+    , m_hasUnisolatedCompositedBlendingDescendants(false)
     , m_hasBlendedElementInChildStackingContext(false)
     , m_hasBlendedElementInChildStackingContextStatusDirty(false)
 #endif

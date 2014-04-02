@@ -1,3 +1,38 @@
+2014-04-02  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] Compositing requirements for blending are not computed correctly
+        https://bugs.webkit.org/show_bug.cgi?id=130664
+
+        Reviewed by Dean Jackson.
+
+        Tests: css3/compositing/blend-mode-accelerated-with-multiple-stacking-contexts.html
+               css3/compositing/blend-mode-with-accelerated-sibling.html
+
+        Compositing requirements for blending: if a layer having blend mode
+        other than normal is composited for any reason, its closest stacking
+        context ancestor should be composited as well.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        * rendering/RenderLayer.h: added a new field,
+        m_hasUnisolatedCompositedBlendingDescendants, which is true if the layer
+        has composited blending descendants not isolated by any stacking context child;
+        added a new method: isolatesCompositedBlending(), which is true if we should
+        accelerate that layer in order to perform isolation correctly.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::CompositingState::CompositingState): m_subtreeHasBlending was renamed
+        m_hasUnisolatedCompositedBlendingDescendants in order to be more self-explanatory.
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        computes the isolation requirements for composited blending by
+        (re)setting RenderLayer::m_hasUnisolatedCompositedBlendingDescendants flag.
+
+        (WebCore::RenderLayerCompositor::reasonsForCompositing):
+        fixed the reason of compositing: isolation instead of blending.
+
+        (WebCore::RenderLayerCompositor::requiresCompositingForIndirectReason):
+        * rendering/RenderLayerCompositor.h:
+
 2014-04-02  Frédéric Wang  <fred.wang@free.fr>
 
         Operator stretching: expose a math data API

@@ -1,3 +1,15 @@
+2014-04-02  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] Compositing requirements for blending are not computed correctly
+        https://bugs.webkit.org/show_bug.cgi?id=130664
+
+        Reviewed by Dean Jackson.
+
+        * css3/compositing/blend-mode-accelerated-with-multiple-stacking-contexts-expected.txt: Added.
+        * css3/compositing/blend-mode-accelerated-with-multiple-stacking-contexts.html: Added.
+        * css3/compositing/blend-mode-with-accelerated-sibling-expected.txt: Added.
+        * css3/compositing/blend-mode-with-accelerated-sibling.html: Added.
+
 2014-04-01  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Displaying region's children in another region not supported

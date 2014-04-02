@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<!-- This test will check that only the direct parent of blending element gets accelerated -->
+<style>
+    .accelerated {
+        -webkit-transform: rotateX(0deg);
+    }
+    .blended {
+        -webkit-mix-blend-mode: multiply;
+    }
+    .child {
+        width: 10px;
+        height: 10px;
+        background-color: green;
+    }
+    .parent {
+        -webkit-isolation: isolate;
+    }
+</style>
+
+<div class="parent">
+    <div class="parent">
+        <div class="accelerated blended child"></div>
+    </div>
+</div>
+<pre id="layerTree"></pre>
+<script>
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+
+    var text = document.getElementById("layerTree");
+    text.innerHTML = window.internals.layerTreeAsText(document);
+</script>

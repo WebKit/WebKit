@@ -195,7 +195,9 @@ struct CompositingState {
         : m_compositingAncestor(compAncestor)
         , m_subtreeIsCompositing(false)
         , m_testingOverlap(testOverlap)
-        , m_subtreeHasBlending(false)
+#if ENABLE(CSS_COMPOSITING)
+        , m_hasUnisolatedCompositedBlendingDescendants(false)
+#endif
 #ifndef NDEBUG
         , m_depth(0)
 #endif
@@ -206,7 +208,9 @@ struct CompositingState {
         : m_compositingAncestor(other.m_compositingAncestor)
         , m_subtreeIsCompositing(other.m_subtreeIsCompositing)
         , m_testingOverlap(other.m_testingOverlap)
-        , m_subtreeHasBlending(other.m_subtreeHasBlending)
+#if ENABLE(CSS_COMPOSITING)
+        , m_hasUnisolatedCompositedBlendingDescendants(other.m_hasUnisolatedCompositedBlendingDescendants)
+#endif
 #ifndef NDEBUG
         , m_depth(other.m_depth + 1)
 #endif
@@ -216,7 +220,9 @@ struct CompositingState {
     RenderLayer* m_compositingAncestor;
     bool m_subtreeIsCompositing;
     bool m_testingOverlap;
-    bool m_subtreeHasBlending;
+#if ENABLE(CSS_COMPOSITING)
+    bool m_hasUnisolatedCompositedBlendingDescendants;
+#endif
 #ifndef NDEBUG
     int m_depth;
 #endif
@@ -1099,6 +1105,9 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     // ancestor with m_subtreeIsCompositing set to false.
     CompositingState childState(compositingState);
     childState.m_subtreeIsCompositing = false;
+#if ENABLE(CSS_COMPOSITING)
+    childState.m_hasUnisolatedCompositedBlendingDescendants = false;
+#endif
 
     bool willBeComposited = needsToBeComposited(layer);
     if (willBeComposited) {
@@ -1172,10 +1181,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
             willBeComposited = true;
     }
     
-    // If the layer composited for other reasons than blending, it is no longer needed to keep track of whether a child was blended.
-    if (compositingState.m_subtreeHasBlending && !layer.hasBlendMode())
-        compositingState.m_subtreeHasBlending = false;
-
     ASSERT(willBeComposited == needsToBeComposited(layer));
 
     // All layers (even ones that aren't being composited) need to get added to
@@ -1184,13 +1189,13 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     if (overlapMap && childState.m_compositingAncestor && !childState.m_compositingAncestor->isRootLayer())
         addToOverlapMap(*overlapMap, layer, absBounds, haveComputedBounds);
 
-    if (childState.m_subtreeHasBlending || layer.hasBlendMode())
-        compositingState.m_subtreeHasBlending = true;
-
+#if ENABLE(CSS_COMPOSITING)
+    layer.setHasUnisolatedCompositedBlendingDescendants(childState.m_hasUnisolatedCompositedBlendingDescendants);
+#endif
     // Now check for reasons to become composited that depend on the state of descendant layers.
     RenderLayer::IndirectCompositingReason indirectCompositingReason;
     if (!willBeComposited && canBeComposited(layer)
-        && requiresCompositingForIndirectReason(layer.renderer(), childState.m_subtreeIsCompositing, compositingState.m_subtreeHasBlending, anyDescendantHas3DTransform, indirectCompositingReason)) {
+        && requiresCompositingForIndirectReason(layer.renderer(), childState.m_subtreeIsCompositing, anyDescendantHas3DTransform, indirectCompositingReason)) {
         layer.setIndirectCompositingReason(indirectCompositingReason);
         childState.m_compositingAncestor = &layer;
         if (overlapMap) {
@@ -1233,6 +1238,12 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
             willBeComposited = true;
          }
     }
+
+#if ENABLE(CSS_COMPOSITING)
+    if ((willBeComposited && layer.hasBlendMode())
+        || (layer.hasUnisolatedCompositedBlendingDescendants() && !layer.isolatesCompositedBlending()))
+        compositingState.m_hasUnisolatedCompositedBlendingDescendants = true;
+#endif
 
     if (overlapMap && childState.m_compositingAncestor == &layer && !layer.isRootLayer())
         overlapMap->popCompositingContainer();
@@ -2114,8 +2125,10 @@ CompositingReasons RenderLayerCompositor::reasonsForCompositing(const RenderLaye
         if (renderer->hasFilter())
             reasons |= CompositingReasonFilterWithCompositedDescendants;
 
-        if (renderer->hasBlendMode())
+#if ENABLE(CSS_COMPOSITING)
+        if (layer.isolatesCompositedBlending())
             reasons |= CompositingReasonBlendingWithCompositedDescendants;
+#endif
 
     } else if (renderer->layer()->indirectCompositingReason() == RenderLayer::IndirectCompositingForPerspective)
         reasons |= CompositingReasonPerspective;
@@ -2379,13 +2392,13 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
             || animController.isRunningAnimationOnRenderer(&renderer, CSSPropertyWebkitTransform, activeAnimationState);
 }
 
-bool RenderLayerCompositor::requiresCompositingForIndirectReason(RenderLayerModelObject& renderer, bool hasCompositedDescendants, bool hasBlendedDescendants, bool has3DTransformedDescendants, RenderLayer::IndirectCompositingReason& reason) const
+bool RenderLayerCompositor::requiresCompositingForIndirectReason(RenderLayerModelObject& renderer, bool hasCompositedDescendants, bool has3DTransformedDescendants, RenderLayer::IndirectCompositingReason& reason) const
 {
     RenderLayer& layer = *toRenderBoxModelObject(renderer).layer();
 
     // When a layer has composited descendants, some effects, like 2d transforms, filters, masks etc must be implemented
     // via compositing so that they also apply to those composited descendants.
-    if (hasCompositedDescendants && (hasBlendedDescendants || layer.transform() || renderer.createsGroup() || renderer.hasReflection() || renderer.isRenderNamedFlowFragmentContainer())) {
+    if (hasCompositedDescendants && (layer.isolatesCompositedBlending() || layer.transform() || renderer.createsGroup() || renderer.hasReflection() || renderer.isRenderNamedFlowFragmentContainer())) {
         reason = RenderLayer::IndirectCompositingForGraphicalEffect;
         return true;
     }
