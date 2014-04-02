@@ -100,6 +100,87 @@ protected:
     }
 };
 
+#if ENABLE(OPENTYPE_VERTICAL) || ENABLE(OPENTYPE_MATH)
+struct CoverageTable : TableBase {
+    OpenType::UInt16 coverageFormat;
+};
+
+struct Coverage1Table : CoverageTable {
+    OpenType::UInt16 glyphCount;
+    OpenType::GlyphID glyphArray[1];
+};
+
+struct Coverage2Table : CoverageTable {
+    OpenType::UInt16 rangeCount;
+    struct RangeRecord {
+        OpenType::GlyphID start;
+        OpenType::GlyphID end;
+        OpenType::UInt16 startCoverageIndex;
+    } ranges[1];
+};
+#endif // ENABLE(OPENTYPE_VERTICAL) || ENABLE(OPENTYPE_MATH)
+
+#if ENABLE(OPENTYPE_MATH)
+struct TableWithCoverage : TableBase {
+protected:
+    bool getCoverageIndex(const SharedBuffer& buffer, const CoverageTable* coverage, Glyph glyph, uint32_t& coverageIndex) const
+    {
+        switch (coverage->coverageFormat) {
+        case 1: { // Coverage Format 1
+            const Coverage1Table* coverage1 = validatePtr<Coverage1Table>(buffer, coverage);
+            if (!coverage1)
+                return false;
+            uint16_t glyphCount = coverage1->glyphCount;
+            if (!isValidEnd(buffer, &coverage1->glyphArray[glyphCount]))
+                return false;
+
+            // We do a binary search on the glyph indexes.
+            uint32_t imin = 0, imax = glyphCount;
+            while (imin < imax) {
+                uint32_t imid = (imin + imax) >> 1;
+                uint16_t glyphMid = coverage1->glyphArray[imid];
+                if (glyphMid == glyph) {
+                    coverageIndex = imid;
+                    return true;
+                }
+                if (glyphMid < glyph)
+                    imin = imid + 1;
+                else
+                    imax = imid;
+            }
+            break;
+        }
+        case 2: { // Coverage Format 2
+            const Coverage2Table* coverage2 = validatePtr<Coverage2Table>(buffer, coverage);
+            if (!coverage2)
+                return false;
+            uint16_t rangeCount = coverage2->rangeCount;
+            if (!isValidEnd(buffer, &coverage2->ranges[rangeCount]))
+                return false;
+
+            // We do a binary search on the ranges.
+            uint32_t imin = 0, imax = rangeCount;
+            while (imin < imax) {
+                uint32_t imid = (imin + imax) >> 1;
+                uint16_t rStart = coverage2->ranges[imid].start;
+                uint16_t rEnd = coverage2->ranges[imid].end;
+                if (rEnd < glyph)
+                    imin = imid + 1;
+                else if (glyph < rStart)
+                    imax = imid;
+                else {
+                    coverageIndex = coverage2->ranges[imid].startCoverageIndex + glyph - rStart;
+                    return true;
+                }
+            }
+            break;
+        }
+        }
+        return false;
+    }
+};
+#endif
+
 } // namespace OpenType
 } // namespace WebCore
 #endif // OpenTypeTypes_h

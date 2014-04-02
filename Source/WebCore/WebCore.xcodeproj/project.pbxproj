@@ -4596,6 +4596,7 @@
 		B2C3DA650D006CD600EF6F26 /* SimpleFontData.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA540D006CD600EF6F26 /* SimpleFontData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2D3DA640D006CD600EF6F27 /* OpenTypeMathData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2D3DA530D006CD600EF6F27 /* OpenTypeMathData.cpp */; };
 		B2D3DA650D006CD600EF6F27 /* OpenTypeMathData.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D3DA540D006CD600EF6F27 /* OpenTypeMathData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B2D3EA650D006CD600EF6F28 /* OpenTypeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D3EA540D006CD600EF6F28 /* OpenTypeTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA660D006CD600EF6F26 /* FontDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA550D006CD600EF6F26 /* FontDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA670D006CD600EF6F26 /* FontGlyphs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA560D006CD600EF6F26 /* FontGlyphs.cpp */; };
 		B2C3DA680D006CD600EF6F26 /* FontGlyphs.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA570D006CD600EF6F26 /* FontGlyphs.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11852,6 +11853,7 @@
 		B2C3DA540D006CD600EF6F26 /* SimpleFontData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SimpleFontData.h; sourceTree = "<group>"; };
 		B2D3DA530D006CD600EF6F27 /* OpenTypeMathData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = opentype/OpenTypeMathData.cpp; sourceTree = "<group>"; };
 		B2D3DA540D006CD600EF6F27 /* OpenTypeMathData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = opentype/OpenTypeMathData.h; sourceTree = "<group>"; };
+		B2D3EA540D006CD600EF6F28 /* OpenTypeTypes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = opentype/OpenTypeTypes.h; sourceTree = "<group>"; };
 		B2C3DA550D006CD600EF6F26 /* FontDescription.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontDescription.h; sourceTree = "<group>"; };
 		B2C3DA560D006CD600EF6F26 /* FontGlyphs.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontGlyphs.cpp; sourceTree = "<group>"; };
 		B2C3DA570D006CD600EF6F26 /* FontGlyphs.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontGlyphs.h; sourceTree = "<group>"; };
@@ -20146,6 +20148,7 @@
 				B2C3DA540D006CD600EF6F26 /* SimpleFontData.h */,
 				B2D3DA530D006CD600EF6F27 /* OpenTypeMathData.cpp */,
 				B2D3DA540D006CD600EF6F27 /* OpenTypeMathData.h */,
+				B2D3EA540D006CD600EF6F28 /* OpenTypeTypes.h */,
 				CD641EB21818F5ED00EE4C41 /* SourceBufferPrivate.h */,
 				CDC61DA0180867D8004B913F /* SourceBufferPrivate.h */,
 				CDC8B5AC1804AE5D0016E685 /* SourceBufferPrivateClient.h */,
@@ -25494,6 +25497,7 @@
 				41D168EE10226E89009BC827 /* SharedWorkerThread.h in Headers */,
 				B2C3DA650D006CD600EF6F26 /* SimpleFontData.h in Headers */,
 				B2D3DA650D006CD600EF6F27 /* OpenTypeMathData.h in Headers */,
+				B2D3EA650D006CD600EF6F28 /* OpenTypeTypes.h in Headers */,
 				E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */,
 				E4E9B11D1814569C003ACCDF /* SimpleLineLayoutFunctions.h in Headers */,
 				E4E9B1191810916F003ACCDF /* SimpleLineLayoutResolver.h in Headers */,

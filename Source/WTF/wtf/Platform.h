@@ -1054,4 +1054,9 @@
 #define WTF_USE_ASYNC_NSTEXTINPUTCLIENT 1
 #endif
 
+#if (OS(DARWIN) && USE(CG)) || USE(FREETYPE) || (PLATFORM(WIN) && (USE(CG) || USE(CAIRO)))
+#undef ENABLE_OPENTYPE_MATH
+#define ENABLE_OPENTYPE_MATH 1
+#endif
+
 #endif /* WTF_Platform_h */

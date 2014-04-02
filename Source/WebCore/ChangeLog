@@ -1,3 +1,35 @@
+2014-04-02  Frédéric Wang  <fred.wang@free.fr>
+
+        Operator stretching: read the Open Type MATH table
+        https://bugs.webkit.org/show_bug.cgi?id=130324
+
+        Reviewed by Chris Fleizach.
+
+        We parse and expose some data from the OpenType MATH table that will be
+        be relevant for at least the MathML operator stretching (bug 130322):
+        math constants, italic corrections and size variants / glyph assembly.
+        This will be tested when the MathML code uses the data.
+
+        * WebCore.xcodeproj/project.pbxproj: Add OpenTypeTypes.h to the Mac build.
+        * platform/graphics/opentype/OpenTypeMathData.cpp: We implement the low-level parsing of the MATH table.
+        (WebCore::OpenType::MathItalicsCorrectionInfo::getItalicCorrection):
+        (WebCore::OpenType::MathGlyphInfo::mathItalicsCorrectionInfo):
+        (WebCore::OpenType::GlyphAssembly::getAssemblyParts):
+        (WebCore::OpenType::MathGlyphConstruction::getSizeVariants):
+        (WebCore::OpenType::MathGlyphConstruction::getAssemblyParts):
+        (WebCore::OpenType::MathVariants::mathGlyphConstruction):
+        (WebCore::OpenType::MATHTable::mathConstants):
+        (WebCore::OpenType::MATHTable::mathGlyphInfo):
+        (WebCore::OpenType::MATHTable::mathVariants):
+        (WebCore::OpenTypeMathData::OpenTypeMathData): We load the MATH table.
+        (WebCore::OpenTypeMathData::getMathConstant): We add a function to get values from the MathConstant subtable.
+        (WebCore::OpenTypeMathData::getItalicCorrection): We add a function to get italic correction from the MathGlyphInfo subtable.
+        (WebCore::OpenTypeMathData::getMathVariants): We add a function to get size variants / glyph assembly from the MathVariants subtable.
+        * platform/graphics/opentype/OpenTypeMathData.h: We expose three new functions to get math data.
+        * platform/graphics/opentype/OpenTypeTypes.h: We share the coverage tables that are common to vertical and math data.
+        (WebCore::OpenType::TableWithCoverage::getCoverageIndex): We add a function to get the coverage index from a given glyph.
+        * platform/graphics/opentype/OpenTypeVerticalData.cpp: We move the coverage tables to OpenTypeTypes.h.
+
 2014-04-02  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Compositing requirements for blending are not computed correctly

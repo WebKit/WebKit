@@ -112,24 +112,6 @@ struct VORGTable {
     size_t requiredSize() const { return sizeof(*this) + sizeof(VertOriginYMetrics) * (numVertOriginYMetrics - 1); }
 };
 
-struct CoverageTable : TableBase {
-    OpenType::UInt16 coverageFormat;
-};
-
-struct Coverage1Table : CoverageTable {
-    OpenType::UInt16 glyphCount;
-    OpenType::GlyphID glyphArray[1];
-};
-
-struct Coverage2Table : CoverageTable {
-    OpenType::UInt16 rangeCount;
-    struct RangeRecord {
-        OpenType::GlyphID start;
-        OpenType::GlyphID end;
-        OpenType::UInt16 startCoverageIndex;
-    } ranges[1];
-};
-
 struct SubstitutionSubTable : TableBase {
     OpenType::UInt16 substFormat;
     OpenType::Offset coverageOffset;

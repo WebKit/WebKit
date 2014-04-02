@@ -26,12 +26,15 @@
 #ifndef OpenTypeMathData_h
 #define OpenTypeMathData_h
 
+#include "Glyph.h"
 #include "SharedBuffer.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
+class SimpleFontData;
 class FontPlatformData;
 
 class OpenTypeMathData : public RefCounted<OpenTypeMathData> {
@@ -42,6 +45,76 @@ public:
     }
 
     bool hasMathData() const { return m_mathBuffer; }
+
+    // These constants are defined in the MATH table.
+    // The implementation of OpenTypeMathData::getMathConstant assumes that they correspond to the indices of the MathContant table.
+    enum MathConstant {
+        ScriptPercentScaleDown,
+        ScriptScriptPercentScaleDown,
+        DelimitedSubFormulaMinHeight,
+        DisplayOperatorMinHeight,
+        MathLeading,
+        AxisHeight,
+        AccentBaseHeight,
+        FlattenedAccentBaseHeight,
+        SubscriptShiftDown,
+        SubscriptTopMax,
+        SubscriptBaselineDropMin,
+        SuperscriptShiftUp,
+        SuperscriptShiftUpCramped,
+        SuperscriptBottomMin,
+        SuperscriptBaselineDropMax,
+        SubSuperscriptGapMin,
+        SuperscriptBottomMaxWithSubscript,
+        SpaceAfterScript,
+        UpperLimitGapMin,
+        UpperLimitBaselineRiseMin,
+        LowerLimitGapMin,
+        LowerLimitBaselineDropMin,
+        StackTopShiftUp,
+        StackTopDisplayStyleShiftUp,
+        StackBottomShiftDown,
+        StackBottomDisplayStyleShiftDown,
+        StackGapMin,
+        StackDisplayStyleGapMin,
+        StretchStackTopShiftUp,
+        StretchStackBottomShiftDown,
+        StretchStackGapAboveMin,
+        StretchStackGapBelowMin,
+        FractionNumeratorShiftUp,
+        FractionNumeratorDisplayStyleShiftUp,
+        FractionDenominatorShiftDown,
+        FractionDenominatorDisplayStyleShiftDown,
+        FractionNumeratorGapMin,
+        FractionNumDisplayStyleGapMin,
+        FractionRuleThickness,
+        FractionDenominatorGapMin,
+        FractionDenomDisplayStyleGapMin,
+        SkewedFractionHorizontalGap,
+        SkewedFractionVerticalGap,
+        OverbarVerticalGap,
+        OverbarRuleThickness,
+        OverbarExtraAscender,
+        UnderbarVerticalGap,
+        UnderbarRuleThickness,
+        UnderbarExtraDescender,
+        RadicalVerticalGap,
+        RadicalDisplayStyleVerticalGap,
+        RadicalRuleThickness,
+        RadicalExtraAscender,
+        RadicalKernBeforeDegree,
+        RadicalKernAfterDegree,
+        RadicalDegreeBottomRaisePercent
+    };
+
+    struct AssemblyPart {
+        Glyph glyph;
+        bool isExtender;
+    };
+
+    float getMathConstant(const SimpleFontData*, MathConstant) const;
+    float getItalicCorrection(const SimpleFontData*, Glyph) const;
+    void getMathVariants(Glyph, bool isVertical, Vector<Glyph>& sizeVariants, Vector<AssemblyPart>& assemblyParts) const;
 
 private:
     explicit OpenTypeMathData(const FontPlatformData&);
