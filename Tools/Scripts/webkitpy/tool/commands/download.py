@@ -403,15 +403,6 @@ class AbstractRolloutPrepCommand(AbstractSequencedCommand):
                 raise ScriptError(message="Invalid svn revision number: " + revision)
         revision_list.sort()
 
-        # We use the earliest revision for the bug info
-        for revision in revision_list:
-            commit_info = self._commit_info(revision)
-            if commit_info:
-                description_list.append(commit_info.bug_description())
-                bug_id_list.append(commit_info.bug_id())
-            else:
-                description_list.append(None)
-                bug_id_list.append(None)
         earliest_revision = revision_list[0]
         state = {
             "revision": earliest_revision,
@@ -421,14 +412,22 @@ class AbstractRolloutPrepCommand(AbstractSequencedCommand):
             "bug_id_list": bug_id_list,
             "description_list": description_list,
         }
-        commit_info = self._commit_info(earliest_revision)
-        if commit_info:
-            state["bug_blocked"] = commit_info.bug_id()
-            cc_list = sorted([party.bugzilla_email()
+        for revision in revision_list:
+            commit_info = self._commit_info(revision)
+            if commit_info:
+                # We use the earliest revision for the bug info
+                if revision == earliest_revision:
+                    state["bug_blocked"] = commit_info.bug_id()
+                    cc_list = sorted([party.bugzilla_email()
                             for party in commit_info.responsible_parties()
                             if party.bugzilla_email()])
-            # FIXME: We should used the list as the canonical representation.
-            state["bug_cc"] = ",".join(cc_list)
+                    # FIXME: We should used the list as the canonical representation.
+                    state["bug_cc"] = ",".join(cc_list)
+                description_list.append(commit_info.bug_description())
+                bug_id_list.append(commit_info.bug_id())
+            else:
+                description_list.append(None)
+                bug_id_list.append(None)
         return state
 
 

@@ -289,12 +289,11 @@ Not closing bug 50000 as attachment 10000 has review=+.  Assuming there are more
         self.assert_execute_outputs(LandFromURL(), ["https://bugs.webkit.org/show_bug.cgi?id=50000"], options=self._default_options(), expected_logs=expected_logs)
 
     def test_prepare_rollout(self):
-        expected_logs = "Preparing rollout for bug 50000.\nPreparing rollout for bug 50000.\nUpdating working directory\n"
+        expected_logs = "Preparing rollout for bug 50000.\nUpdating working directory\n"
         self.assert_execute_outputs(PrepareRollout(), [852, "Reason"], options=self._default_options(), expected_logs=expected_logs)
 
     def test_create_rollout(self):
         expected_logs = """Preparing rollout for bug 50000.
-Preparing rollout for bug 50000.
 Updating working directory
 MOCK create_bug
 bug_title: REGRESSION(r852): Reason
@@ -320,7 +319,6 @@ where ATTACHMENT_ID is the ID of this attachment.
         expected_logs = """Preparing rollout for bug 50000.
 Preparing rollout for bug 50000.
 Unable to parse bug number from diff.
-Preparing rollout for bug 50000.
 Updating working directory
 MOCK create_bug
 bug_title: REGRESSION(r852): Reason
@@ -345,7 +343,6 @@ where ATTACHMENT_ID is the ID of this attachment.
 
     def test_create_rollout_resolved(self):
         expected_logs = """Preparing rollout for bug 50004.
-Preparing rollout for bug 50004.
 Updating working directory
 MOCK create_bug
 bug_title: REGRESSION(r3001): Reason
@@ -370,7 +367,6 @@ where ATTACHMENT_ID is the ID of this attachment.
 
     def test_rollout(self):
         expected_logs = """Preparing rollout for bug 50000.
-Preparing rollout for bug 50000.
 Updating working directory
 MOCK: user.open_url: file://...
 Was that diff correct?

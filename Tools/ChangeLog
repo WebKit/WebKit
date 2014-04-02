@@ -1,3 +1,18 @@
+2014-04-02  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        [webkitpy] Avoid multiple "Preparing rollout for bug" log messages
+        https://bugs.webkit.org/show_bug.cgi?id=131106
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/tool/commands/download.py:
+        (AbstractRolloutPrepCommand._prepare_state):
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        (test_prepare_rollout):
+        (test_create_rollout):
+        (test_create_rollout_resolved):
+        (test_rollout):
+
 2014-04-02  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL] Add option to use separate web process for new window in MiniBrowser
