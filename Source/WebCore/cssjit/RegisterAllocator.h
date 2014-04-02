@@ -113,6 +113,15 @@ public:
 
     const Vector<JSC::MacroAssembler::RegisterID, registerCount>& allocatedRegisters() const { return m_allocatedRegisters; }
 
+    static bool isValidRegister(JSC::MacroAssembler::RegisterID registerID)
+    {
+#if CPU(X86_64)
+        return registerID >= JSC::X86Registers::eax && registerID <= JSC::X86Registers::r15;
+#else
+#error RegisterAllocator does not define the valid register range for the current architecture.
+#endif
+    }
+
 private:
     HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_registers;
     Vector<JSC::MacroAssembler::RegisterID, registerCount> m_allocatedRegisters;

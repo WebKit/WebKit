@@ -1,3 +1,26 @@
+2014-04-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        Refactor the function call generator to take the arguments by value
+        https://bugs.webkit.org/show_bug.cgi?id=131129
+
+        Reviewed by Andreas Kling.
+
+        Nothing forces the pointed address to stay alive between setOneArgument/setTwoArguments
+        and prepareAndCall.
+
+        This patch changes FunctionCall to:
+        -Keep the register by value instead of using pointers.
+        -Crash at compile time if a register is invalid.
+
+        * cssjit/FunctionCall.h:
+        (WebCore::FunctionCall::FunctionCall):
+        (WebCore::FunctionCall::setOneArgument):
+        (WebCore::FunctionCall::setTwoArguments):
+        (WebCore::FunctionCall::swapArguments):
+        (WebCore::FunctionCall::prepareAndCall):
+        * cssjit/RegisterAllocator.h:
+        (WebCore::RegisterAllocator::isValidRegister):
+
 2014-04-02  Daniel Bates  <dabates@apple.com>
 
         Remove Settings::maximumDecodedImageSize()

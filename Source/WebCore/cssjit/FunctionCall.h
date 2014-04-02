@@ -42,8 +42,9 @@ public:
         , m_registerAllocator(registerAllocator)
         , m_stackAllocator(stackAllocator)
         , m_callRegistry(callRegistry)
-        , m_firstArgument(nullptr)
-        , m_secondArgument(nullptr)
+        , m_argumentCount(0)
+        , m_firstArgument(InvalidGPRReg)
+        , m_secondArgument(InvalidGPRReg)
     {
     }
 
@@ -54,13 +55,15 @@ public:
 
     void setOneArgument(const JSC::MacroAssembler::RegisterID& registerID)
     {
-        m_firstArgument = &registerID;
+        m_argumentCount = 1;
+        m_firstArgument = registerID;
     }
 
     void setTwoArguments(const JSC::MacroAssembler::RegisterID& firstRegisterID, const JSC::MacroAssembler::RegisterID& secondRegisterID)
     {
-        m_firstArgument = &firstRegisterID;
-        m_secondArgument = &secondRegisterID;
+        m_argumentCount = 2;
+        m_firstArgument = firstRegisterID;
+        m_secondArgument = secondRegisterID;
     }
 
     void call()
@@ -80,8 +83,8 @@ public:
 private:
     void swapArguments()
     {
-        JSC::MacroAssembler::RegisterID a = *m_firstArgument;
-        JSC::MacroAssembler::RegisterID b = *m_secondArgument;
+        JSC::MacroAssembler::RegisterID a = m_firstArgument;
+        JSC::MacroAssembler::RegisterID b = m_secondArgument;
         // x86 can swap without a temporary register. On other architectures, we need allocate a temporary register to switch the values.
 #if CPU(X86) || CPU(X86_64)
         m_assembler.swap(a, b);
@@ -117,31 +120,37 @@ private:
         saveAllocatedRegisters();
         m_stackAllocator.alignStackPreFunctionCall();
 
-        if (m_secondArgument) {
-            if (*m_firstArgument != JSC::GPRInfo::argumentGPR0) {
+        if (m_argumentCount == 2) {
+            RELEASE_ASSERT(RegisterAllocator::isValidRegister(m_firstArgument));
+            RELEASE_ASSERT(RegisterAllocator::isValidRegister(m_secondArgument));
+
+            if (m_firstArgument != JSC::GPRInfo::argumentGPR0) {
                 // If firstArgument is not in argumentGPR0, we need to handle potential conflicts:
                 // -if secondArgument and firstArgument are in inversted registers, just swap the values.
                 // -if secondArgument is in argumentGPR0 but firstArgument is not taking argumentGPR1, we can move in order secondArgument->argumentGPR1, firstArgument->argumentGPR0
                 // -if secondArgument does not take argumentGPR0, firstArgument and secondArgument can be moved safely to destination.
-                if (*m_secondArgument == JSC::GPRInfo::argumentGPR0) {
-                    if (*m_firstArgument == JSC::GPRInfo::argumentGPR1)
+                if (m_secondArgument == JSC::GPRInfo::argumentGPR0) {
+                    if (m_firstArgument == JSC::GPRInfo::argumentGPR1)
                         swapArguments();
                     else {
                         m_assembler.move(JSC::GPRInfo::argumentGPR0, JSC::GPRInfo::argumentGPR1);
-                        m_assembler.move(*m_firstArgument, JSC::GPRInfo::argumentGPR0);
+                        m_assembler.move(m_firstArgument, JSC::GPRInfo::argumentGPR0);
                     }
                 } else {
-                    m_assembler.move(*m_firstArgument, JSC::GPRInfo::argumentGPR0);
-                    if (*m_secondArgument != JSC::GPRInfo::argumentGPR1)
-                        m_assembler.move(*m_secondArgument, JSC::GPRInfo::argumentGPR1);
+                    m_assembler.move(m_firstArgument, JSC::GPRInfo::argumentGPR0);
+                    if (m_secondArgument != JSC::GPRInfo::argumentGPR1)
+                        m_assembler.move(m_secondArgument, JSC::GPRInfo::argumentGPR1);
                 }
             } else {
                 // We know firstArgument is already in place, we can safely move secondArgument.
-                if (*m_secondArgument != JSC::GPRInfo::argumentGPR1)
-                    m_assembler.move(*m_secondArgument, JSC::GPRInfo::argumentGPR1);
+                if (m_secondArgument != JSC::GPRInfo::argumentGPR1)
+                    m_assembler.move(m_secondArgument, JSC::GPRInfo::argumentGPR1);
             }
-        } else if (m_firstArgument && *m_firstArgument != JSC::GPRInfo::argumentGPR0)
-            m_assembler.move(*m_firstArgument, JSC::GPRInfo::argumentGPR0);
+        } else if (m_argumentCount == 1) {
+            RELEASE_ASSERT(RegisterAllocator::isValidRegister(m_firstArgument));
+            if (m_firstArgument != JSC::GPRInfo::argumentGPR0)
+                m_assembler.move(m_firstArgument, JSC::GPRInfo::argumentGPR0);
+        }
 
         JSC::MacroAssembler::Call call = m_assembler.call();
         m_callRegistry.append(std::make_pair(call, m_functionAddress));
@@ -181,8 +190,9 @@ private:
     Vector<StackAllocator::StackReference> m_savedRegisterStackReferences;
 
     JSC::FunctionPtr m_functionAddress;
-    const JSC::MacroAssembler::RegisterID* m_firstArgument;
-    const JSC::MacroAssembler::RegisterID* m_secondArgument;
+    unsigned m_argumentCount;
+    JSC::MacroAssembler::RegisterID m_firstArgument;
+    JSC::MacroAssembler::RegisterID m_secondArgument;
 };
 
 } // namespace WebCore
