@@ -1,3 +1,12 @@
+2014-04-02  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Improve ARIA live region reliability by sending notifications when live regions are created/shown and hidden/destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=124381
+
+        Unreviewed. Forgot to add test expectation.
+
+        * platform/mac/accessibility/live-region-creation-notification-expected.txt: Added.
+
 2014-04-02  Daniel Bates  <dabates@apple.com>
 
         Move focus management API from HTMLDocument to Document
