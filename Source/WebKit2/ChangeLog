@@ -1,3 +1,17 @@
+2014-04-02  Dean Jackson  <dino@apple.com>
+
+        [iOS] Expose geolocation provider on the process pool
+        https://bugs.webkit.org/show_bug.cgi?id=131125
+
+        Patch by Sam Weinig.
+        Reviewed by Dean Jackson.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _geolocationProvider]): Create and initialize WKGeolocationProviderIOS if necessary.
+        * UIProcess/API/Cocoa/WKProcessPoolInternal.h: Expose _geolocationProvider.
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _decidePolicyForGeolocationRequestFromOrigin:frame:request:]): Call into WKProcessPool.
+
 2014-04-02  Martin Hock  <mhock@apple.com>
 
         Unify private browsing with sessions.

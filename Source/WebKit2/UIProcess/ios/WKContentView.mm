@@ -445,9 +445,7 @@ static inline FloatRect fixedPositionRectFromExposedRect(CGRect unobscuredRect, 
 
 - (void)_decidePolicyForGeolocationRequestFromOrigin:(WebSecurityOrigin&)origin frame:(WebFrameProxy&)frame request:(GeolocationPermissionRequestProxy&)permissionRequest
 {
-    // FIXME: The line below is commented out since wrapper(WebContext&) now returns a WKProcessPool.
-    // As part of the new API we should figure out where geolocation fits in, see <rdar://problem/15885544>.
-    // [[wrapper(_page->process().context()) _geolocationProvider] decidePolicyForGeolocationRequestFromOrigin:toAPI(&origin) frame:toAPI(&frame) request:toAPI(&permissionRequest) window:[self window]];
+    [[wrapper(_page->process().context()) _geolocationProvider] decidePolicyForGeolocationRequestFromOrigin:toAPI(&origin) frame:toAPI(&frame) request:toAPI(&permissionRequest) window:[self window]];
 }
 
 - (RetainPtr<CGImageRef>)_takeViewSnapshot
