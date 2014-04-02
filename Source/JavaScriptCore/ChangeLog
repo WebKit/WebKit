@@ -1,3 +1,54 @@
+2014-04-02  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        CodeBlockSet should be generational
+        https://bugs.webkit.org/show_bug.cgi?id=127152
+
+        Reviewed by Geoffrey Garen.
+
+        During EdenCollections we now only visit those CodeBlocks that:
+        a) Are new since the last collection if they were somehow otherwise reachable.
+        b) Are reachable from an Executable that is part of the remembered set.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock): Initialize uninitialized variables.
+        (JSC::CodeBlock::visitAggregate): Move the addition of the weak reference harvester after the
+        shouldImmediatelyAssumeLivenessDuringScan check since it's redundant if we assume liveness.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::forEachRelatedCodeBlock): Executes a functor for each CodeBlock reachable from the current CodeBlock (including this).
+        We use this to clear marks for the CodeBlocks of remembered Executables (see: CodeBlockSet::clearMarksForEdenCollection).
+        (JSC::CodeBlockSet::mark): Also check the set of new CodeBlocks for memebership when doing conservative scanning.
+        (JSC::ScriptExecutable::forEachCodeBlock): Executes a functor for each of this Executable's CodeBlocks.
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::~CodeBlockSet):
+        (JSC::CodeBlockSet::add):
+        (JSC::CodeBlockSet::promoteYoungCodeBlocks): Moves all CodeBlocks currently in the set of new CodeBlocks into 
+        the set of old CodeBlocks.
+        (JSC::CodeBlockSet::clearMarksForFullCollection): Clears the marks for all CodeBlocks.
+        (JSC::CodeBlockSet::clearMarksForEdenCollection): Clears the marks for CodeBlocks owned by Executables in the 
+        remembered set. When an Executable is added to the remembered set it's typically because we need to do something 
+        with its CodeBlock.
+        (JSC::CodeBlockSet::clearMarks):
+        (JSC::CodeBlockSet::deleteUnmarkedAndUnreferenced): Fixpoints over either just the new CodeBlocks or all CodeBlocks
+        to determine which CodeBlocks are dead and eagerly finalizes/deletes them.
+        (JSC::CodeBlockSet::remove):
+        (JSC::CodeBlockSet::traceMarked): Iterate only the currently executing CodeBlocks instead of all CodeBlocks.
+        (JSC::CodeBlockSet::rememberCurrentlyExecutingCodeBlocks): Clear m_mayBeExecuting for all currently executing 
+        CodeBlocks because we no longer always do this at the beginning of EdenCollections.
+        * heap/CodeBlockSet.h:
+        (JSC::CodeBlockSet::iterate):
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::deleteAllCompiledCode):
+        (JSC::Heap::deleteUnmarkedCompiledCode):
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::installCode): Write barrier code on installation. We do this due to the following situation:
+        a) A CodeBlock is created and is compiled on a DFG worker thread.
+        b) No GC happens.
+        c) The CodeBlock has finished being compiled and is installed in the Executable.
+        d) The function never executes before the next GC.
+        e) The next GC needs needs to visit the new CodeBlock but the Executable won't be revisited unless 
+            it's added to the remembered set.
+
 2014-04-02  Mark Lam  <mark.lam@apple.com>
 
         Added some more dataLog info for OSR exits.

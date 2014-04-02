@@ -178,6 +178,8 @@ void ScriptExecutable::installCode(CodeBlock* genericCodeBlock)
     Debugger* debugger = genericCodeBlock->globalObject()->debugger();
     if (debugger)
         debugger->registerCodeBlock(genericCodeBlock);
+
+    Heap::heap(this)->writeBarrier(this);
 }
 
 PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(

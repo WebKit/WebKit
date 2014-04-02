@@ -27,6 +27,7 @@
 #define CodeBlockSet_h
 
 #include "GCSegmentedArray.h"
+#include "HeapOperation.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
@@ -37,6 +38,7 @@ namespace JSC {
 class BlockAllocator;
 class CodeBlock;
 class Heap;
+class JSCell;
 class SlotVisitor;
 
 // CodeBlockSet tracks all CodeBlocks. Every CodeBlock starts out with one
@@ -53,9 +55,12 @@ public:
     // Add a CodeBlock. This is only called by CodeBlock constructors.
     void add(PassRefPtr<CodeBlock>);
     
-    // Clear all mark bits associated with DFG code blocks.
-    void clearMarks();
-    
+    // Clear mark bits for certain CodeBlocks depending on the type of collection.
+    void clearMarksForEdenCollection(const Vector<const JSCell*>&);
+
+    // Clear all mark bits for all CodeBlocks.
+    void clearMarksForFullCollection();
+
     // Mark a pointer that may be a CodeBlock that belongs to the set of DFG
     // blocks. This is defined in CodeBlock.h.
     void mark(CodeBlock* candidateCodeBlock);
@@ -63,7 +68,7 @@ public:
     
     // Delete all code blocks that are only referenced by this set (i.e. owned
     // by this set), and that have not been marked.
-    void deleteUnmarkedAndUnreferenced();
+    void deleteUnmarkedAndUnreferenced(HeapOperation);
     
     void remove(CodeBlock*);
     
@@ -80,18 +85,28 @@ public:
     // visited.
     template<typename Functor> void iterate(Functor& functor)
     {
-        for (auto& codeBlock : m_set) {
+        for (auto& codeBlock : m_oldCodeBlocks) {
             bool done = functor(codeBlock);
             if (done)
-                break;
+                return;
+        }
+
+        for (auto& codeBlock : m_newCodeBlocks) {
+            bool done = functor(codeBlock);
+            if (done)
+                return;
         }
     }
 
 private:
+    void clearMarksForCodeBlocksInRememberedExecutables(const Vector<const JSCell*>&);
+    void promoteYoungCodeBlocks();
+
     // This is not a set of RefPtr<CodeBlock> because we need to be able to find
     // arbitrary bogus pointers. I could have written a thingy that had peek types
     // and all, but that seemed like overkill.
-    HashSet<CodeBlock* > m_set;
+    HashSet<CodeBlock*> m_oldCodeBlocks;
+    HashSet<CodeBlock*> m_newCodeBlocks;
     GCSegmentedArray<CodeBlock*> m_currentlyExecuting;
 };
 

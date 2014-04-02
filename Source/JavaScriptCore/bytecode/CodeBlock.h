@@ -132,6 +132,23 @@ public:
     CodeBlock* alternative() { return m_alternative.get(); }
     PassRefPtr<CodeBlock> releaseAlternative() { return m_alternative.release(); }
     void setAlternative(PassRefPtr<CodeBlock> alternative) { m_alternative = alternative; }
+
+    template <typename Functor> void forEachRelatedCodeBlock(Functor&& functor)
+    {
+        Functor f(std::forward<Functor>(functor));
+        Vector<CodeBlock*, 4> codeBlocks;
+        codeBlocks.append(this);
+
+        while (!codeBlocks.isEmpty()) {
+            CodeBlock* currentCodeBlock = codeBlocks.takeLast();
+            f(currentCodeBlock);
+
+            if (CodeBlock* alternative = currentCodeBlock->alternative())
+                codeBlocks.append(alternative);
+            if (CodeBlock* osrEntryBlock = currentCodeBlock->specialOSREntryBlockOrNull())
+                codeBlocks.append(osrEntryBlock);
+        }
+    }
     
     CodeSpecializationKind specializationKind() const
     {
@@ -1275,12 +1292,12 @@ inline void CodeBlockSet::mark(void* candidateCodeBlock)
     // -1 + 1 = 0
     if (value + 1 <= 1)
         return;
-    
-    HashSet<CodeBlock*>::iterator iter = m_set.find(static_cast<CodeBlock*>(candidateCodeBlock));
-    if (iter == m_set.end())
+
+    CodeBlock* codeBlock = static_cast<CodeBlock*>(candidateCodeBlock); 
+    if (!m_oldCodeBlocks.contains(codeBlock) && !m_newCodeBlocks.contains(codeBlock))
         return;
-    
-    mark(*iter);
+
+    mark(codeBlock);
 }
 
 inline void CodeBlockSet::mark(CodeBlock* codeBlock)
@@ -1292,9 +1309,38 @@ inline void CodeBlockSet::mark(CodeBlock* codeBlock)
         return;
     
     codeBlock->m_mayBeExecuting = true;
+    // We might not have cleared the marks for this CodeBlock, but we need to visit it.
+    codeBlock->m_visitAggregateHasBeenCalled = false;
 #if ENABLE(GGC)
     m_currentlyExecuting.append(codeBlock);
 #endif
+}
+
+template <typename Functor> inline void ScriptExecutable::forEachCodeBlock(Functor&& functor)
+{
+    switch (type()) {
+    case ProgramExecutableType: {
+        jsCast<ProgramExecutable*>(this)->m_programCodeBlock->forEachRelatedCodeBlock(std::forward<Functor>(functor));
+        break;
+    }
+        
+    case EvalExecutableType: {
+        jsCast<EvalExecutable*>(this)->m_evalCodeBlock->forEachRelatedCodeBlock(std::forward<Functor>(functor));
+        break;
+    }
+        
+    case FunctionExecutableType: {
+        Functor f(std::forward<Functor>(functor));
+        FunctionExecutable* executable = jsCast<FunctionExecutable*>(this);
+        if (CodeBlock* codeBlock = executable->m_codeBlockForCall.get())
+            codeBlock->forEachRelatedCodeBlock(f);
+        if (CodeBlock* codeBlock = executable->m_codeBlockForConstruct.get())
+            codeBlock->forEachRelatedCodeBlock(f);
+        break;
+    }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 }
 
 } // namespace JSC

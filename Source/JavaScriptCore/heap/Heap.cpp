@@ -485,7 +485,17 @@ void Heap::markRoots()
     double gcStartTime = WTF::monotonicallyIncreasingTime();
 #endif
 
-    m_codeBlocks.clearMarks();
+#if ENABLE(GGC)
+    Vector<const JSCell*> rememberedSet(m_slotVisitor.markStack().size());
+    m_slotVisitor.markStack().fillVector(rememberedSet);
+#else
+    Vector<const JSCell*> rememberedSet;
+#endif
+
+    if (m_operationInProgress == EdenCollection)
+        m_codeBlocks.clearMarksForEdenCollection(rememberedSet);
+    else
+        m_codeBlocks.clearMarksForFullCollection();
 
     // We gather conservative roots before clearing mark bits because conservative
     // gathering uses the mark bits to determine whether a reference is valid.
@@ -502,13 +512,6 @@ void Heap::markRoots()
     m_sharedData.didStartMarking();
     m_slotVisitor.didStartMarking();
     HeapRootVisitor heapRootVisitor(m_slotVisitor);
-
-#if ENABLE(GGC)
-    Vector<const JSCell*> rememberedSet(m_slotVisitor.markStack().size());
-    m_slotVisitor.markStack().fillVector(rememberedSet);
-#else
-    Vector<const JSCell*> rememberedSet;
-#endif
 
     {
         ParallelModeEnabler enabler(m_slotVisitor);
@@ -852,8 +855,9 @@ void Heap::deleteAllCompiledCode()
         static_cast<FunctionExecutable*>(current)->clearCodeIfNotCompiling();
     }
 
-    m_codeBlocks.clearMarks();
-    m_codeBlocks.deleteUnmarkedAndUnreferenced();
+    ASSERT(m_operationInProgress == FullCollection);
+    m_codeBlocks.clearMarksForFullCollection();
+    m_codeBlocks.deleteUnmarkedAndUnreferenced(FullCollection);
 }
 
 void Heap::deleteAllUnlinkedFunctionCode()
@@ -865,9 +869,9 @@ void Heap::deleteAllUnlinkedFunctionCode()
     }
 }
 
-void Heap::deleteUnmarkedCompiledCode()
+void Heap::clearUnmarkedExecutables()
 {
-    GCPHASE(DeleteCodeBlocks);
+    GCPHASE(ClearUnmarkedExecutables);
     ExecutableBase* next;
     for (ExecutableBase* current = m_compiledCode.head(); current; current = next) {
         next = current->next();
@@ -879,8 +883,13 @@ void Heap::deleteUnmarkedCompiledCode()
         ExecutableBase::clearCodeVirtual(current);
         m_compiledCode.remove(current);
     }
+}
 
-    m_codeBlocks.deleteUnmarkedAndUnreferenced();
+void Heap::deleteUnmarkedCompiledCode()
+{
+    GCPHASE(DeleteCodeBlocks);
+    clearUnmarkedExecutables();
+    m_codeBlocks.deleteUnmarkedAndUnreferenced(m_operationInProgress);
     m_jitStubRoutines.deleteUnmarkedJettisonedStubRoutines();
 }
 
@@ -1011,6 +1020,9 @@ void Heap::willStartCollection(HeapOperation collectionType)
 
 void Heap::deleteOldCode(double gcStartTime)
 {
+    if (m_operationInProgress == EdenCollection)
+        return;
+
     GCPHASE(DeleteOldCode);
     if (gcStartTime - m_lastCodeDiscardTime > minute) {
         deleteAllCompiledCode();

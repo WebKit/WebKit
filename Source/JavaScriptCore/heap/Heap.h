@@ -292,6 +292,7 @@ private:
     void copyBackingStores();
     void harvestWeakReferences();
     void finalizeUnconditionalFinalizers();
+    void clearUnmarkedExecutables();
     void deleteUnmarkedCompiledCode();
     void updateAllocationLimits();
     void didFinishCollection(double gcStartTime);

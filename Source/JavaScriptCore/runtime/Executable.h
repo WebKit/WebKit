@@ -429,6 +429,8 @@ public:
         return prepareForExecutionImpl(exec, function, scope, kind);
     }
 
+    template <typename Functor> void forEachCodeBlock(Functor&&);
+
 private:
     JSObject* prepareForExecutionImpl(ExecState*, JSFunction*, JSScope**, CodeSpecializationKind);
 

@@ -1446,6 +1446,8 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_activationRegister(other.m_activationRegister)
     , m_isStrictMode(other.m_isStrictMode)
     , m_needsActivation(other.m_needsActivation)
+    , m_mayBeExecuting(false)
+    , m_visitAggregateHasBeenCalled(false)
     , m_source(other.m_source)
     , m_sourceOffset(other.m_sourceOffset)
     , m_firstLineColumnOffset(other.m_firstLineColumnOffset)
@@ -1503,6 +1505,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     , m_activationRegister(unlinkedCodeBlock->activationRegister())
     , m_isStrictMode(unlinkedCodeBlock->isStrictMode())
     , m_needsActivation(unlinkedCodeBlock->hasActivationRegister() && unlinkedCodeBlock->codeType() == FunctionCode)
+    , m_mayBeExecuting(false)
+    , m_visitAggregateHasBeenCalled(false)
     , m_source(sourceProvider)
     , m_sourceOffset(sourceOffset)
     , m_firstLineColumnOffset(firstLineColumnOffset)
@@ -1937,10 +1941,6 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
     // and when it runs, it figures out whether it has any work to do.
     visitor.addUnconditionalFinalizer(this);
     
-    // There are two things that we use weak reference harvesters for: DFG fixpoint for
-    // jettisoning, and trying to find structures that would be live based on some
-    // inline cache. So it makes sense to register them regardless.
-    visitor.addWeakReferenceHarvester(this);
     m_allTransitionsHaveBeenMarked = false;
     
     if (shouldImmediatelyAssumeLivenessDuringScan()) {
@@ -1951,6 +1951,11 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
         return;
     }
     
+    // There are two things that we use weak reference harvesters for: DFG fixpoint for
+    // jettisoning, and trying to find structures that would be live based on some
+    // inline cache. So it makes sense to register them regardless.
+    visitor.addWeakReferenceHarvester(this);
+
 #if ENABLE(DFG_JIT)
     // We get here if we're live in the sense that our owner executable is live,
     // but we're not yet live for sure in another sense: we may yet decide that this
