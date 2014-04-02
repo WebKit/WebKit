@@ -292,7 +292,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 
 // Other private methods
 #if TARGET_OS_IPHONE
-- (size_t)_maximumImageSize;
 - (BOOL)_standalone;
 - (void)_setStandalone:(BOOL)flag;
 - (void)_setTelephoneNumberParsingEnabled:(BOOL)flag;

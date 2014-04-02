@@ -25,7 +25,6 @@ validationMessageTimerMagnification type=int, initial=50
 minimumAccelerated2dCanvasSize type=int, initial=257*256
 
 layoutFallbackWidth type=int, initial=980
-maximumDecodedImageSize type=size_t, initial=std::numeric_limits<size_t>::max()
 deviceWidth type=int, initial=0
 deviceHeight type=int, initial=0
 

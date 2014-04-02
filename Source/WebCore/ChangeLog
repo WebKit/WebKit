@@ -1,3 +1,33 @@
+2014-04-02  Daniel Bates  <dabates@apple.com>
+
+        Remove Settings::maximumDecodedImageSize()
+        https://bugs.webkit.org/show_bug.cgi?id=131057
+        <rdar://problem/15626368>
+
+        Reviewed by Darin Adler.
+
+        The setting Settings::maximumDecodedImageSize() and its related logic have various
+        shortcomings, including the inability to cancel an image load when the estimated
+        decoded image size exceeds the maximum decoded image size. In the iOS port, this
+        setting is less useful given image subsampling support. For now, we remove this
+        setting and its related logic. Should it turn out that such a setting is useful
+        then we can implement it again taking care to address the shortcomings in the
+        original design.
+
+        * html/HTMLCanvasElement.cpp: For the iOS port, define MaxCanvasArea to be 4580 * 1145
+        pixels such that the maximum size of the image buffer is 20 MB (assumes 4 bytes per pixel).
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+        * html/HTMLCanvasElement.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createImageData):
+        (WebCore::CanvasRenderingContext2D::getImageData):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::addIncrementalDataBuffer):
+        (WebCore::CachedImage::finishLoading):
+        * loader/cache/CachedImage.h:
+        * page/Settings.in:
+
 2014-04-02  Martin Hock  <mhock@apple.com>
 
         Unify private browsing with sessions.

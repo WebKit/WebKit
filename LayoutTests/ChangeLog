@@ -1,3 +1,20 @@
+2014-04-02  Daniel Bates  <dabates@apple.com>
+
+        Remove Settings::maximumDecodedImageSize()
+        https://bugs.webkit.org/show_bug.cgi?id=131057
+        <rdar://problem/15626368>
+
+        Reviewed by Darin Adler.
+
+        Remove test LayoutTests/fast/images/decoded-size-exceeds-max-decoded-size.html as it
+        isn't applicable following the removal of the setting Settings::maximumDecodedImageSize().
+        Additionally update the test fast/images/bag-png.html to ensure that we dispatch
+        a DOM Error event when we fail to decode a malformed image.
+
+        * fast/images/bad-png.html:
+        * fast/images/decoded-size-exceeds-max-decoded-size-expected.txt: Removed.
+        * fast/images/decoded-size-exceeds-max-decoded-size.html: Removed.
+
 2014-04-02  Timothy Hatcher  <timothy@apple.com>
 
         Remove Input domain from the Web Inspector protocol.

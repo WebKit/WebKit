@@ -1857,15 +1857,6 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(float sw, float 
         return 0;
     }
 
-#if PLATFORM(IOS)
-    // If the canvas element was created before Document had a Frame,
-    // then no maximumDecodedImageSize was set.
-    if (!canvas()->maximumDecodedImageSize()) {
-        if (Settings* settings = canvas()->document().settings())
-            canvas()->setMaximumDecodedImageSize(settings->maximumDecodedImageSize());
-    }
-#endif
-
     FloatSize logicalSize(fabs(sw), fabs(sh));
     if (!logicalSize.isExpressibleAsIntSize())
         return 0;
@@ -1915,15 +1906,6 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(ImageBuffer::Coordi
         sy += sh;
         sh = -sh;
     }
-
-#if PLATFORM(IOS)
-    // If the canvas element was created before Document had a Frame,
-    // then no maximumDecodedImageSize was set.
-    if (!canvas()->maximumDecodedImageSize()) {
-        if (Settings* settings = canvas()->document().settings())
-            canvas()->setMaximumDecodedImageSize(settings->maximumDecodedImageSize());
-    }
-#endif
 
     FloatRect logicalRect(sx, sy, sw, sh);
     if (logicalRect.width() < 1)

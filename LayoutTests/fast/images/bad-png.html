@@ -1,8 +1,17 @@
 <html>
   <head>
     <script>
-      if (window.testRunner)
+      if (window.testRunner) {
+        testRunner.waitUntilDone();
         testRunner.dumpAsText();
+      }
+
+      function testPassed()
+      {
+        document.getElementById("result").innerText = "PASS";
+        if (window.testRunner)
+          testRunner.notifyDone();
+      }
     </script>
 
    </head>
@@ -10,7 +19,7 @@
      <!-- This previously tried to recursively decode the PNG, leading to heap
           corruption when trying to unwind the stack through a member of a
           destroyed object. -->
-     <img src="resources/bad-png.png">
-     <p>PASS</p>
+     <img src="resources/bad-png.png" onerror="testPassed()">
+     <p id="result">FAIL</p>
    </body>
  </html>

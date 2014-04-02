@@ -381,18 +381,6 @@ inline void CachedImage::clearImage()
     m_image.clear();
 }
 
-bool CachedImage::canBeDrawn() const
-{
-    if (!m_image || m_image->isNull())
-        return false;
-
-    if (!m_loader || m_loader->reachedTerminalState())
-        return true;
-
-    size_t estimatedDecodedImageSize = m_image->width() * m_image->height() * 4; // no overflow check
-    return estimatedDecodedImageSize <= m_loader->frameLoader()->frame().settings().maximumDecodedImageSize();
-}
-
 void CachedImage::addIncrementalDataBuffer(ResourceBuffer* data)
 {
     m_data = data;
@@ -408,8 +396,8 @@ void CachedImage::addIncrementalDataBuffer(ResourceBuffer* data)
     if (!sizeAvailable)
         return;
 
-    if (!canBeDrawn()) {
-        // There's no image to draw or its decoded size is bigger than the maximum allowed.
+    if (m_image->isNull()) {
+        // Image decoding failed. Either we need more image data or the image data is malformed.
         error(errorOccurred() ? status() : DecodeError);
         if (inCache())
             memoryCache()->remove(this);
@@ -447,8 +435,8 @@ void CachedImage::finishLoading(ResourceBuffer* data)
     if (m_image)
         m_image->setData(m_data->sharedBuffer(), true);
 
-    if (!canBeDrawn()) {
-        // There's no image to draw or its decoded size is bigger than the maximum allowed.
+    if (!m_image || m_image->isNull()) {
+        // Image decoding failed; the image data is malformed.
         error(errorOccurred() ? status() : DecodeError);
         if (inCache())
             memoryCache()->remove(this);

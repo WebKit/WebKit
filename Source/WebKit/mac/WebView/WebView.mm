@@ -2288,7 +2288,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #else
     // iOS-specific settings
     settings.setStandalone([preferences _standalone]);
-    settings.setMaximumDecodedImageSize([preferences _maximumImageSize]);
     settings.setTelephoneNumberParsingEnabled([preferences _telephoneNumberParsingEnabled]);
     settings.setAlwaysUseBaselineOfPrimaryFont([preferences _alwaysUseBaselineOfPrimaryFont]);
     settings.setAllowMultiElementImplicitSubmission([preferences _allowMultiElementImplicitFormSubmission]);

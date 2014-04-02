@@ -180,7 +180,6 @@
 #define WebKitMinimumZoomFontSizePreferenceKey @"WebKitMinimumZoomFontSizePreferenceKey"
 
 #if TARGET_OS_IPHONE
-#define WebKitMaximumImageSizePreferenceKey @"WebKitMaximumImageSize"
 #define WebKitStandalonePreferenceKey @"WebKitStandalonePreferenceKey"
 #define WebKitTelephoneParsingEnabledPreferenceKey @"WebKitTelephoneParsingEnabledPreferenceKey"
 #define WebKitAlwaysUseBaselineOfPrimaryFontPreferenceKey @"WebKitAlwaysUseBaselineOfPrimaryFontPreferenceKey"
