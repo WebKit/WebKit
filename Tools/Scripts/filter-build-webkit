@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -256,6 +256,9 @@ sub shouldIgnoreLine($$)
     return 1 if $line =~ /^warning\: detected internal install, passing entitlements to simulator anyway\./;
     return 1 if $line =~ /may not function in the Simulator because Ad Hoc/;
     return 1 if $line =~ /\/usr\/bin\/clang .*? \> \S+.sb/;
+    return 1 if $line =~ / xcodebuild\[[0-9]+:[0-9a-f]+\]\s+DVTAssertions: Warning in .*XCClangResultsPostprocessor.m/;
+    return 1 if $line =~ /^(Details|Object|Method|Function|Thread):/;
+    return 1 if $line =~ /^Please file a bug at /;
 
     if ($platform eq "win") {
         return 1 if $line =~ /^\s*(touch|perl|cat|rm -f|bison|del|flex|python|\/usr\/bin\/g\+\+|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file) /;

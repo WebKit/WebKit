@@ -1,3 +1,14 @@
+2014-04-02  David Kilzer  <ddkilzer@apple.com>
+
+        filter-build-webkit: Ignore xcodebuild warnings when compiling with newer builds of clang
+        <http://webkit.org/b/131045>
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/filter-build-webkit:
+        (shouldIgnoreLine): Ignore DVTAssertions related to new builds
+        of clang, plus debug data for all DVTAssertions.
+
 2014-04-01  Dean Jackson  <dino@apple.com>
 
         Load Media Controls js/css from bundle
