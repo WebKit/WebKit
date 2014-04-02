@@ -1,3 +1,17 @@
+2014-04-02  Dean Jackson  <dino@apple.com>
+
+        [iOS] Expose geolocation provider on the process pool
+        https://bugs.webkit.org/show_bug.cgi?id=131125
+
+        Reviewed by Dan Bernstein.
+
+        Followup comments from Dan Bernstein. Use a class
+        extension rather than a new category.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _geolocationProvider]):
+        * UIProcess/API/Cocoa/WKProcessPoolInternal.h:
+
 2014-04-02  Tim Horton  <timothy_horton@apple.com>
 
         RemoteLayerBackingStore doesn't need to clear opaque layers

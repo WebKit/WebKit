@@ -50,12 +50,10 @@ inline WKProcessPool *wrapper(WebContext& context)
 
     API::ObjectStorage<WebKit::WebContext> _context;
 }
-@end
 
 #if TARGET_OS_IPHONE
-@interface WKProcessPool (WKInternal)
 @property(readonly) WKGeolocationProviderIOS *_geolocationProvider;
-@end
 #endif
+@end
 
 #endif // WK_API_ENABLED

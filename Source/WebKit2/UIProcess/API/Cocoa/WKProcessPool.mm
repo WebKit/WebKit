@@ -97,6 +97,15 @@ enum : NSUInteger {
     return *_context;
 }
 
+#if PLATFORM(IOS)
+- (WKGeolocationProviderIOS *)_geolocationProvider
+{
+    if (!_geolocationProvider)
+        _geolocationProvider = adoptNS([[WKGeolocationProviderIOS alloc] initWithContext:_context.get()]);
+    return _geolocationProvider.get();
+}
+#endif // PLATFORM(IOS)
+
 @end
 
 @implementation WKProcessPool (WKPrivate)
@@ -195,18 +204,5 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
 }
 
 @end
-
-#if PLATFORM(IOS)
-@implementation WKProcessPool (WKInternal)
-
-- (WKGeolocationProviderIOS *)_geolocationProvider
-{
-    if (!_geolocationProvider)
-        _geolocationProvider = adoptNS([[WKGeolocationProviderIOS alloc] initWithContext:_context.get()]);
-    return _geolocationProvider.get();
-}
-
-@end
-#endif // PLATFORM(IOS)
 
 #endif // WK_API_ENABLED
