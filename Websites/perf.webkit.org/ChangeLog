@@ -1,5 +1,24 @@
 2014-04-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        WebKitPerfMonitor: Tooltips cannot be pinned after using browser's back button
+        https://bugs.webkit.org/show_bug.cgi?id=131155
+
+        Reviewed by Andreas Kling.
+
+        The bug was caused by Chart.attach binding event listeners on plot container on each call.
+        This resulted in the click event handler toggling the visiblity of the tooltip twice upon
+        click when attach() has been called even number of times, keeping the tooltip invisible.
+
+        Fixed the bug by extracting the code to bind event listeners outside of Chart.attach as
+        a separate function, bindPlotEventHandlers, and calling it exactly once when Chart.attach
+        is called for the first time.
+
+        * public/index.html:
+        (Chart.attach):
+        (Chart..bindPlotEventHandlers):
+
+2014-04-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         WebKitPerfMonitor: Tooltips can be cut off at the top
         https://bugs.webkit.org/show_bug.cgi?id=130960
 

@@ -739,12 +739,16 @@ td, th {
             else
                 this.attachMainPlot(minTime);
 
-            var self = this;
+            if (bindPlotEventHandlers)
+                bindPlotEventHandlers(this);
+            bindPlotEventHandlers = null;
+        };
 
+        function bindPlotEventHandlers(chart) {
             // FIXME: Crosshair should stay where it was between charts.
             $(plotContainer).bind("plothover", function (event, pos, item) {
                 for (var i = 0; i < charts.length; i++) {
-                    if (charts[i] !== self) {
+                    if (charts[i] !== chart) {
                         charts[i].setCrosshair(pos);
                         charts[i].hideTooltip();
                     }
@@ -782,8 +786,8 @@ td, th {
                         toggleClickTooltip(tooltip.currentItem.dataIndex, tooltip.currentItem.pageX, tooltip.currentItem.pageY);
                 });
             }
-        };
-        
+        }
+
         charts.push(this);
     }
 
