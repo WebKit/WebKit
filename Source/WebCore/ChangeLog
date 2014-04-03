@@ -1,3 +1,16 @@
+2014-04-03  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Crash when passing a NULL initData to MediaKeys.createSession()
+        https://bugs.webkit.org/show_bug.cgi?id=131156
+
+        Reviewed by Eric Carlson.
+
+        Update the checks at the start of createSession() to match the current spec, notably
+        bailing early if the initData parameter is NULL or empty.
+
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::createSession):
+
 2014-04-03  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] add missing QuickTime plug-in replacement API
