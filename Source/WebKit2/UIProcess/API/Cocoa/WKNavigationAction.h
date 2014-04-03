@@ -30,6 +30,15 @@
 
 @class WKFrameInfo;
 
+/*! @enum WKNavigationType
+ @abstract the type of action that triggered a possible navigation.
+ @constant WKNavigationTypeLinkActivated    A link with an href activated by the user.
+ @constant WKNavigationTypeFormSubmitted    A form was submitted.
+ @constant WKNavigationTypeBackForward      The user requested an item from the back forward list.
+ @constant WKNavigationTypeReload           The user reloaded a page.
+ @constant WKNavigationTypeFormResubmitted  A form as resubmitted (for example by going back, forward or reloading).
+ @constant WKNavigationTypeOther            Navigation is taking place for some other reason.
+ */
 typedef NS_ENUM(NSInteger, WKNavigationType) {
     WKNavigationTypeLinkActivated,
     WKNavigationTypeFormSubmitted,
@@ -39,13 +48,26 @@ typedef NS_ENUM(NSInteger, WKNavigationType) {
     WKNavigationTypeOther = -1,
 };
 
+
+/*! Contains information about an action that may cause a navigation, used for making policy decisions.
+ */
 WK_API_CLASS
 @interface WKNavigationAction : NSObject
 
+/*! @abstract Represents the frame that is requesting the navigation.
+ */
 @property (nonatomic, readonly) WKFrameInfo *sourceFrame;
+
+/*! @abstract Represents the target frame. If this is a new window navigation, targetFrame will be nil.
+ */
 @property (nonatomic, readonly) WKFrameInfo *targetFrame;
 
+/*! @abstract The type of the navigation.
+ */
 @property (nonatomic, readonly) WKNavigationType navigationType;
+
+/*! @abstract The NSURLRequest of the navigation.
+ */
 @property (nonatomic, readonly) NSURLRequest *request;
 
 @end

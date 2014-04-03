@@ -1,3 +1,14 @@
+2014-04-02  Anders Carlsson  <andersca@apple.com>
+
+        Document WKNavigationAction and WKNavigationResponse
+        https://bugs.webkit.org/show_bug.cgi?id=131138
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKFrameInfo.h:
+        * UIProcess/API/Cocoa/WKNavigationAction.h:
+        * UIProcess/API/Cocoa/WKNavigationResponse.h:
+
 2014-04-03  Anders Carlsson  <andersca@apple.com>
 
         Make actionsForElement a proper API::UIClient member function

@@ -30,11 +30,21 @@
 
 @class WKFrameInfo;
 
+/*! Contains information about a navigation response, used for making policy decisions.
+ */
 WK_API_CLASS
 @interface WKNavigationResponse : NSObject
 
+/*! @abstract Represents the frame that is being navigated.
+ */
 @property (nonatomic, readonly) WKFrameInfo *frame;
+
+/*! @abstract The NSURLResponse of the frame.
+ */
 @property (nonatomic, readonly) NSURLResponse *response;
+
+/*! @abstract Whether WebKit can show the MIME type natively or not.
+ */
 @property (nonatomic, readonly) BOOL canShowMIMEType;
 
 @end

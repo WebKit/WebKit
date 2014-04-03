@@ -28,10 +28,19 @@
 
 #if WK_API_ENABLED
 
+/*! A @link WKFrameInfo @/link object contains information about a frame on a web page.
+ @discussion WKFrameInfo objects are transient data only objects, they can not be used to uniquely 
+ identify a frame across multiple delegate method calls.
+ */
 WK_API_CLASS
 @interface WKFrameInfo : NSObject
 
+/*! @abstract Whether the frame is the main frame or a subframe.
+ */
 @property (nonatomic, readonly, getter=isMainFrame) BOOL mainFrame;
+
+/*! @abstract The current NSURLRequest of this frame.
+ */
 @property (nonatomic, readonly) NSURLRequest *request;
 
 @end
