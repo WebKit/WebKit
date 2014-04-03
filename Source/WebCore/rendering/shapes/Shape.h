@@ -48,8 +48,8 @@ struct LineSegment {
     {
     }
 
-    LayoutUnit logicalLeft;
-    LayoutUnit logicalRight;
+    float logicalLeft;
+    float logicalRight;
 };
 
 typedef Vector<LineSegment> SegmentList;

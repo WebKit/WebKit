@@ -1,3 +1,17 @@
+2014-04-03  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] LineSegment logicalLeft and logicalRight members should be floats
+        https://bugs.webkit.org/show_bug.cgi?id=116160
+
+        Reviewed by Andreas Kling. 
+
+        LineSegment edges should not have been changed to LayoutUnit. These are
+        used only as floats. I modified them back to floats. 
+
+        No new tests are needed, no behavior change.
+
+        * rendering/shapes/Shape.h:
+
 2014-04-03  Dirk Schulze  <krit@webkit.org>
 
         [CG] Canvas lineDashOffset does not handle negative numbers correctly
