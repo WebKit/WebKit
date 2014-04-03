@@ -344,8 +344,6 @@
 		A10C1D3518202FC50036883A /* WebGeolocationCoreLocationProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D2618202FC50036883A /* WebGeolocationCoreLocationProvider.mm */; };
 		A10C1D3618202FC50036883A /* WebGeolocationProviderIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D2718202FC50036883A /* WebGeolocationProviderIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10C1D3718202FC50036883A /* WebGeolocationProviderIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D2818202FC50036883A /* WebGeolocationProviderIOS.mm */; };
-		A10C1D3818202FC50036883A /* WebNSStringDrawing.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D2918202FC50036883A /* WebNSStringDrawing.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A10C1D3918202FC50036883A /* WebNSStringDrawing.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D2A18202FC50036883A /* WebNSStringDrawing.mm */; };
 		A10C1D3A18202FC50036883A /* WebNSStringExtrasIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D2B18202FC50036883A /* WebNSStringExtrasIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10C1D3B18202FC50036883A /* WebNSStringExtrasIOS.m in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D2C18202FC50036883A /* WebNSStringExtrasIOS.m */; };
 		A10C1D3C18202FC50036883A /* WebNSStringExtrasIPhone.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D2D18202FC50036883A /* WebNSStringExtrasIPhone.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -745,8 +743,6 @@
 		A10C1D2618202FC50036883A /* WebGeolocationCoreLocationProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebGeolocationCoreLocationProvider.mm; path = ios/Misc/WebGeolocationCoreLocationProvider.mm; sourceTree = SOURCE_ROOT; };
 		A10C1D2718202FC50036883A /* WebGeolocationProviderIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGeolocationProviderIOS.h; path = ios/Misc/WebGeolocationProviderIOS.h; sourceTree = SOURCE_ROOT; };
 		A10C1D2818202FC50036883A /* WebGeolocationProviderIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebGeolocationProviderIOS.mm; path = ios/Misc/WebGeolocationProviderIOS.mm; sourceTree = SOURCE_ROOT; };
-		A10C1D2918202FC50036883A /* WebNSStringDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebNSStringDrawing.h; path = ios/Misc/WebNSStringDrawing.h; sourceTree = SOURCE_ROOT; };
-		A10C1D2A18202FC50036883A /* WebNSStringDrawing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebNSStringDrawing.mm; path = ios/Misc/WebNSStringDrawing.mm; sourceTree = SOURCE_ROOT; };
 		A10C1D2B18202FC50036883A /* WebNSStringExtrasIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebNSStringExtrasIOS.h; path = ios/Misc/WebNSStringExtrasIOS.h; sourceTree = SOURCE_ROOT; };
 		A10C1D2C18202FC50036883A /* WebNSStringExtrasIOS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WebNSStringExtrasIOS.m; path = ios/Misc/WebNSStringExtrasIOS.m; sourceTree = SOURCE_ROOT; };
 		A10C1D2D18202FC50036883A /* WebNSStringExtrasIPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebNSStringExtrasIPhone.h; path = ios/Misc/WebNSStringExtrasIPhone.h; sourceTree = SOURCE_ROOT; };
@@ -1446,8 +1442,6 @@
 				A10C1D2618202FC50036883A /* WebGeolocationCoreLocationProvider.mm */,
 				A10C1D2718202FC50036883A /* WebGeolocationProviderIOS.h */,
 				A10C1D2818202FC50036883A /* WebGeolocationProviderIOS.mm */,
-				A10C1D2918202FC50036883A /* WebNSStringDrawing.h */,
-				A10C1D2A18202FC50036883A /* WebNSStringDrawing.mm */,
 				A10C1D2B18202FC50036883A /* WebNSStringExtrasIOS.h */,
 				A10C1D2C18202FC50036883A /* WebNSStringExtrasIOS.m */,
 				A10C1D2D18202FC50036883A /* WebNSStringExtrasIPhone.h */,
@@ -1837,7 +1831,6 @@
 				9398106D0824BF01008DF038 /* WebKitErrorsPrivate.h in Headers */,
 				CD8BFCE815531224005AFB25 /* WebKitFullScreenListener.h in Headers */,
 				9398101D0824BF01008DF038 /* WebKitLogging.h in Headers */,
-				A10C1D3818202FC50036883A /* WebNSStringDrawing.h in Headers */,
 				9398101E0824BF01008DF038 /* WebKitNSStringExtras.h in Headers */,
 				1AAF58940EDCCF15008D883D /* WebKitPluginAgent.defs in Headers */,
 				1AAF58950EDCCF15008D883D /* WebKitPluginAgentReply.defs in Headers */,
@@ -2372,7 +2365,6 @@
 				939811150824BF01008DF038 /* WebNSDataExtras.m in Sources */,
 				65488DA2084FBCCB00831AD0 /* WebNSDictionaryExtras.m in Sources */,
 				939811160824BF01008DF038 /* WebNSEventExtras.m in Sources */,
-				A10C1D3918202FC50036883A /* WebNSStringDrawing.mm in Sources */,
 				65EEDE58084FFC9E0002DB25 /* WebNSFileManagerExtras.mm in Sources */,
 				939810C70824BF01008DF038 /* WebNSImageExtras.m in Sources */,
 				A10C1D4318202FEF0036883A /* WebSQLiteDatabaseTrackerClient.mm in Sources */,

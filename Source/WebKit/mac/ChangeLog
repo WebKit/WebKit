@@ -1,3 +1,12 @@
+2014-04-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS] Remove the legacy string drawing code
+        https://bugs.webkit.org/show_bug.cgi?id=131088
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/WebKit.xcconfig:
+
 2014-04-02  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/131135> Introduce LockHistory and LockBackForwardList enums to use in place of bools.

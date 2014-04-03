@@ -53,8 +53,6 @@ void endBackgroundTask(WebBackgroundTaskIdentifier);
 // This method gives WebKit the notifications to listen to so it knows about app Suspend/Resume
 void WebKitSetBackgroundAndForegroundNotificationNames(NSString *, NSString *);
 
-// This method does the minimum amount of work for WebNSStringDrawing to work
-// correctly.
 void WebKitInitialize(void);
 void WebKitSetIsClassic(BOOL);
 float WebKitGetMinimumZoomFontSize(void);
