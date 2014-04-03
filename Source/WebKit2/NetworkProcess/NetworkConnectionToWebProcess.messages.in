@@ -42,9 +42,11 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     GetRawCookies(WebCore::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url) -> (Vector<WebCore::Cookie> cookies)
     DeleteCookie(WebCore::SessionID sessionID, WebCore::URL url, String cookieName)
 
+#if ENABLE(BLOB)
     RegisterBlobURL(WebCore::URL url, WebKit::BlobRegistrationData data)
     RegisterBlobURLFromURL(WebCore::URL url, WebCore::URL srcURL)
     UnregisterBlobURL(WebCore::URL url)
+#endif
 }
 
 #endif // ENABLE(NETWORK_PROCESS)

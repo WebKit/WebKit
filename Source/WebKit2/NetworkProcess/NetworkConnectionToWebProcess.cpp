@@ -101,7 +101,9 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection*)
     for (HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader>>::iterator i = m_networkResourceLoaders.begin(); i != end; ++i)
         i->value->abort();
 
+#if ENABLE(BLOB)
     NetworkBlobRegistry::shared().connectionToWebProcessDidClose(this);
+#endif
 
     m_networkResourceLoaders.clear();
     
@@ -214,6 +216,7 @@ void NetworkConnectionToWebProcess::deleteCookie(SessionID sessionID, const URL&
     WebCore::deleteCookie(storageSession(sessionID), url, cookieName);
 }
 
+#if ENABLE(BLOB)
 void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, const BlobRegistrationData& data)
 {
     Vector<RefPtr<SandboxExtension>> extensions;
@@ -234,6 +237,7 @@ void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url)
 {
     NetworkBlobRegistry::shared().unregisterBlobURL(this, url);
 }
+#endif
 
 } // namespace WebKit
 

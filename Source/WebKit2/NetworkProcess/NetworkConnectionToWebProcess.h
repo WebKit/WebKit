@@ -86,9 +86,11 @@ private:
     void getRawCookies(WebCore::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, Vector<WebCore::Cookie>&);
     void deleteCookie(WebCore::SessionID, const WebCore::URL&, const String& cookieName);
 
+#if ENABLE(BLOB)
     void registerBlobURL(const WebCore::URL&, const BlobRegistrationData&);
     void registerBlobURLFromURL(const WebCore::URL&, const WebCore::URL& srcURL);
     void unregisterBlobURL(const WebCore::URL&);
+#endif
 
     RefPtr<IPC::Connection> m_connection;
 
