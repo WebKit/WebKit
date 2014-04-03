@@ -348,6 +348,16 @@ private:
     RenderFlowThread* m_previousRenderFlowThread;
 };
 
+class CurrentRenderFlowThreadDisabler {
+    WTF_MAKE_NONCOPYABLE(CurrentRenderFlowThreadDisabler);
+public:
+    CurrentRenderFlowThreadDisabler(RenderView*);
+    ~CurrentRenderFlowThreadDisabler();
+private:
+    RenderView* m_view;
+    RenderFlowThread* m_renderFlowThread;
+};
+
 // This structure is used by PODIntervalTree for debugging.
 #ifndef NDEBUG
 template <> struct ValueToString<RenderRegion*> {

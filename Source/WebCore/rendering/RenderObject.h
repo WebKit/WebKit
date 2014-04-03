@@ -277,8 +277,9 @@ public:
     void showRenderObject() const;
     // We don't make printedCharacters an optional parameter so that
     // showRenderObject can be called from gdb easily.
-    void showRenderObject(int printedCharacters) const;
-    void showRenderTreeAndMark(const RenderObject* markedObject1 = 0, const char* markedLabel1 = 0, const RenderObject* markedObject2 = 0, const char* markedLabel2 = 0, int depth = 0) const;
+    void showRenderObject(int) const;
+    void showRenderTreeAndMark(const RenderObject* = 0, const char* = 0, const RenderObject* = 0, const char* = 0, int = 0) const;
+    void showRegionsInformation(int&) const;
 #endif
 
 public:

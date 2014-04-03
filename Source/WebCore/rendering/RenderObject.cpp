@@ -1436,6 +1436,21 @@ void RenderObject::showRenderObject() const
     showRenderObject(0);
 }
 
+void RenderObject::showRegionsInformation(int& printedCharacters) const
+{
+    CurrentRenderFlowThreadDisabler flowThreadDisabler(&view());
+
+    if (RenderFlowThread* flowThread = flowThreadContainingBlock()) {
+        const RenderBox* box = isBox() ? toRenderBox(this) : nullptr;
+        if (box) {
+            RenderRegion* startRegion = nullptr;
+            RenderRegion* endRegion = nullptr;
+            flowThread->getRegionRangeForBox(box, startRegion, endRegion);
+            printedCharacters += fprintf(stderr, " Rs:%p Re:%p", startRegion, endRegion);
+        }
+    }
+}
+
 void RenderObject::showRenderObject(int printedCharacters) const
 {
     // As this function is intended to be used when debugging, the
@@ -1446,6 +1461,7 @@ void RenderObject::showRenderObject(int printedCharacters) const
     }
 
     printedCharacters += fprintf(stderr, "%s %p", renderName(), this);
+    showRegionsInformation(printedCharacters);
 
     if (node()) {
         if (printedCharacters)

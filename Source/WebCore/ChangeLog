@@ -1,3 +1,28 @@
+2014-04-03  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Include region range information when printing the render tree
+        https://bugs.webkit.org/show_bug.cgi?id=131159
+
+        Reviewed by Mihnea Ovidenie.
+
+        With this change showRenderObject() will print the region range for objects inside
+        a flow thread. The format is:
+        Rs: <startRegion> Re: <endRegion>
+
+        Because this can be called anytime during debugging, it's necessary to disable the
+        current flow thread caching to prevent using the wrong flow thread for an object.
+
+        Tests: No new tests, no functional change.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::CurrentRenderFlowThreadDisabler::CurrentRenderFlowThreadDisabler):
+        (WebCore::CurrentRenderFlowThreadDisabler::~CurrentRenderFlowThreadDisabler):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::showRegionsInformation): Added.
+        (WebCore::RenderObject::showRenderObject):
+        * rendering/RenderObject.h:
+
 2014-04-03  Antti Koivisto  <antti@apple.com>
 
         RenderSnapshottedPlugIn::paint should use iterator for traversal.
