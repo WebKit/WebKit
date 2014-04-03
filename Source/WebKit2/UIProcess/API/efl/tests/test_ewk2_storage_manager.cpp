@@ -77,7 +77,7 @@ public:
             ewk_object_unref(static_cast<Ewk_Object*>(originItem));
     }
 
-    static bool timerCallback(void* userData)
+    static Eina_Bool timerCallback(void* userData)
     {
         OriginData* originData = static_cast<OriginData*>(userData);
 
@@ -139,7 +139,7 @@ TEST_F(EWK2StorageManagerTest, ewk_storage_manager_origins_async_get)
     ASSERT_TRUE(waitUntilLoadFinished());
 
     ASSERT_TRUE(ewk_storage_manager_origins_async_get(originData.manager, getStorageOriginsCallback, &originData));
-    Ecore_Timer* storageTimer = ecore_timer_add(1, reinterpret_cast<Ecore_Task_Cb>(timerCallback), &originData);
+    Ecore_Timer* storageTimer = ecore_timer_add(1, timerCallback, &originData);
 
     ecore_main_loop_begin();
     storageTimer = nullptr;
@@ -168,7 +168,7 @@ TEST_F(EWK2StorageManagerTest, ewk_storage_manager_entries_for_origin_delete)
     ASSERT_TRUE(waitUntilLoadFinished());
 
     ASSERT_TRUE(ewk_storage_manager_origins_async_get(originData.manager, getStorageOriginsCallback, &originData));
-    Ecore_Timer* storageTimer = ecore_timer_add(1, reinterpret_cast<Ecore_Task_Cb>(timerCallback), &originData);
+    Ecore_Timer* storageTimer = ecore_timer_add(1, timerCallback, &originData);
 
     ecore_main_loop_begin();
     storageTimer = nullptr;
@@ -186,7 +186,7 @@ TEST_F(EWK2StorageManagerTest, ewk_storage_manager_entries_for_origin_delete)
 
     ASSERT_TRUE(ewk_storage_manager_origins_async_get(originData.manager, getStorageOriginsCallback, &originData));
 
-    storageTimer = ecore_timer_add(1, reinterpret_cast<Ecore_Task_Cb>(timerCallback), &originData);
+    storageTimer = ecore_timer_add(1, timerCallback, &originData);
 
     ecore_main_loop_begin();
     storageTimer = nullptr;

@@ -1,3 +1,23 @@
+2014-04-02  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [WK2][EFL] Remove unnecessary reinterpret_cast<> in unit testcase
+        https://bugs.webkit.org/show_bug.cgi?id=131143
+
+        Reviewed by Gyuyoung Kim.
+
+        Ecore_Timer callback requires *Eina_Bool* return type instead of *bool*.
+        Also, WebKit/EFL port coding style recommends to use *Eina_Bool* in the
+        callback function for EFL event handler. Additionally, replaced 0 to nullptr.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::CallbackDataTimer::CallbackDataTimer):
+        (EWK2UnitTest::CallbackDataTimer::setDone):
+        (EWK2UnitTest::CallbackDataTimer::timeOutCallback):
+        (EWK2UnitTest::CallbackDataTimer::setTimedOut):
+        * UIProcess/API/efl/tests/test_ewk2_storage_manager.cpp:
+        (EWK2StorageManagerTest::timerCallback):
+        (TEST_F):
+
 2014-04-02  Tim Horton  <timothy_horton@apple.com>
 
         Remove a FIXME that happened.

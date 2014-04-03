@@ -97,7 +97,7 @@ class CallbackDataTimer {
 public:
     explicit CallbackDataTimer(double timeoutSeconds)
         : m_done(false)
-        , m_timer(timeoutSeconds >= 0 ? ecore_timer_add(timeoutSeconds, reinterpret_cast<Ecore_Task_Cb>(timeOutCallback), this) : 0)
+        , m_timer(timeoutSeconds >= 0 ? ecore_timer_add(timeoutSeconds, timeOutCallback, this) : nullptr)
         , m_didTimeOut(false)
     {
     }
@@ -114,7 +114,7 @@ public:
     {
         if (m_timer) {
             ecore_timer_del(m_timer);
-            m_timer = 0;
+            m_timer = nullptr;
         }
         m_done = true;
     }
@@ -127,7 +127,7 @@ protected:
     bool m_didTimeOut;
 
 private:
-    static bool timeOutCallback(void* userData)
+    static Eina_Bool timeOutCallback(void* userData)
     {
         CallbackDataTimer* data = static_cast<CallbackDataTimer*>(userData);
         data->setTimedOut();
@@ -137,7 +137,7 @@ private:
     void setTimedOut()
     {
         m_done = true;
-        m_timer = 0;
+        m_timer = nullptr;
         m_didTimeOut = true;
     }
 
