@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<link href="resources/grid.css" rel="stylesheet">
+<script src="../../resources/check-layout.js"></script>
+<style type="text/css">
+    .grid {
+	-webkit-grid-auto-flow: row;
+    }
+
+    #firstGridItem {
+	-webkit-grid-row: auto;
+	-webkit-grid-column: column;
+    }
+
+    #secondGridItem {
+	-webkit-grid-row: row;
+	-webkit-grid-column: auto;
+    }
+
+    #thirdGridItem {
+	-webkit-grid-row: auto;
+	-webkit-grid-column: auto;
+    }
+</style>
+<script>
+function testGridDefinitions(gridTemplateRows, gridTemplateColumns, firstGridItemData, secondGridItemData, thirdGridItemData)
+{
+    var gridElement = document.getElementsByClassName("grid")[0];
+    gridElement.style.webkitGridTemplateRows = gridTemplateRows;
+    gridElement.style.webkitGridTemplateColumns = gridTemplateColumns;
+
+    var firstGridItem = document.getElementById("firstGridItem");
+    firstGridItem.setAttribute("data-expected-width", firstGridItemData.width);
+    firstGridItem.setAttribute("data-expected-height", firstGridItemData.height);
+    firstGridItem.setAttribute("data-offset-x", firstGridItemData.x);
+    firstGridItem.setAttribute("data-offset-y", firstGridItemData.y);
+
+    var secondGridItem = document.getElementById("secondGridItem");
+    secondGridItem.setAttribute("data-expected-width", secondGridItemData.width);
+    secondGridItem.setAttribute("data-expected-height", secondGridItemData.height);
+    secondGridItem.setAttribute("data-offset-x", secondGridItemData.x);
+    secondGridItem.setAttribute("data-offset-y", secondGridItemData.y);
+
+    var thirdGridItem = document.getElementById("thirdGridItem");
+    thirdGridItem.setAttribute("data-expected-width", thirdGridItemData.width);
+    thirdGridItem.setAttribute("data-expected-height", thirdGridItemData.height);
+    thirdGridItem.setAttribute("data-offset-x", thirdGridItemData.x);
+    thirdGridItem.setAttribute("data-offset-y", thirdGridItemData.y);
+
+    checkLayout(".grid");
+}
+
+function testChangingGridDefinitions()
+{
+    testGridDefinitions('10px (row) 20px', '30px (column)', { 'width': '0', 'height': '10', 'x': '30', 'y': '0' }, { 'width': '30', 'height': '20', 'x': '0', 'y': '10' }, { 'width': '30', 'height': '10', 'x': '0', 'y': '0' });
+    testGridDefinitions('10px (row) 20px', '30px', { 'width': '30', 'height': '10', 'x': '0', 'y': '0' }, { 'width': '30', 'height': '20', 'x': '0', 'y': '10' }, { 'width': '30', 'height': '0', 'x': '0', 'y': '30' });
+    testGridDefinitions('10px 20px (row)', '30px', { 'width': '30', 'height': '10', 'x': '0', 'y': '0' }, { 'width': '30', 'height': '0', 'x': '0', 'y': '30' }, { 'width': '30', 'height': '20', 'x': '0', 'y': '10' });
+    testGridDefinitions('10px 20px (row)', '30px (column)', { 'width': '0', 'height': '10', 'x': '30', 'y': '0' }, { 'width': '30', 'height': '0', 'x': '0', 'y': '30' }, { 'width': '30', 'height': '10', 'x': '0', 'y': '0' });
+}
+
+window.addEventListener("load", testChangingGridDefinitions, false);
+</script>
+</head>
+<body>
+<div>This test checks that updating the named grid lines definitions in grid-template-{rows|columns} recomputes the positions of automatically placed grid items.</div>
+
+<div style="position: relative">
+    <div class="grid">
+        <div class="sizedToGridArea" id="firstGridItem"></div>
+        <div class="sizedToGridArea" id="secondGridItem"></div>
+        <div class="sizedToGridArea" id="thirdGridItem"></div>
+    </div>
+</div>
+
+</body>
+</html>

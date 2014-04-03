@@ -36,6 +36,22 @@ if (window.testRunner)
     -webkit-grid-column-end: auto;
     -webkit-grid-row-end: auto;
 }
+.gridItemWithCustomIdent {
+    -webkit-grid-column-end: first;
+    -webkit-grid-row-end: last;
+}
+.gridItemWithNumberCustomIdent {
+    -webkit-grid-column-end: first 2;
+    -webkit-grid-row-end: 3 last;
+}
+.gridItemWithSpanCustomIdent {
+    -webkit-grid-column-end: first span;
+    -webkit-grid-row-end: span last;
+}
+.gridItemWithSpanNumberCustomIdent {
+    -webkit-grid-column-end: 2 first span;
+    -webkit-grid-row-end: last 3 span;
+}
 .gridItemWithArea {
     -webkit-grid-column-end: firstArea;
     -webkit-grid-row-end: thirdArea;
@@ -54,6 +70,10 @@ if (window.testRunner)
     <div class="gridItemWithAfterSpan" id="gridItemWithAfterSpan"></div>
     <div class="gridItemWithOnlySpan" id="gridItemWithOnlySpan"></div>
     <div class="gridItemWithAuto" id="gridItemWithAutoElement"></div>
+    <div class="gridItemWithCustomIdent" id="gridItemWithCustomIdent"></div>
+    <div class="gridItemWithNumberCustomIdent" id="gridItemWithNumberCustomIdent"></div>
+    <div class="gridItemWithSpanCustomIdent" id="gridItemWithSpanCustomIdentElement"></div>
+    <div class="gridItemWithSpanNumberCustomIdent" id="gridItemWithSpanNumberCustomIdentElement"></div>
     <div class="gridItemWithArea" id="gridItemWithArea"></div>
 </div>
 <script>
@@ -67,6 +87,10 @@ if (window.testRunner)
     testColumnRowCSSParsing("gridItemWithAfterSpan", "auto / span 2", "auto / span 9");
     testColumnRowCSSParsing("gridItemWithOnlySpan", "auto / span 1", "auto / span 1");
     testColumnRowCSSParsing("gridItemWithAutoElement", "auto / auto", "auto / auto");
+    testColumnRowCSSParsing("gridItemWithCustomIdent", "auto / first", "auto / last");
+    testColumnRowCSSParsing("gridItemWithNumberCustomIdent", "auto / 2 first", "auto / 3 last");
+    testColumnRowCSSParsing("gridItemWithSpanCustomIdentElement", "auto / span 1 first", "auto / span 1 last");
+    testColumnRowCSSParsing("gridItemWithSpanNumberCustomIdentElement", "auto / span 2 first", "auto / span 3 last");
     testColumnRowCSSParsing("gridItemWithArea", "auto / firstArea", "auto / thirdArea");
 
     debug("");
@@ -82,7 +106,9 @@ if (window.testRunner)
     debug("Test getting and setting grid-column-end and grid-row-end through JS");
     testColumnEndRowEndJSParsing("18", "66");
     testColumnEndRowEndJSParsing("-55", "-40");
+    testColumnEndRowEndJSParsing("first", "last", "first", "last");
     testColumnEndRowEndJSParsing("span 7", "span 2");
+    testColumnEndRowEndJSParsing("span first", "span last", "span 1 first", "span 1 last");
     testColumnEndRowEndJSParsing("auto", "auto");
     testColumnEndRowEndJSParsing("thirdArea", "secondArea");
     testColumnEndRowEndJSParsing("nonExistentArea", "secondArea");

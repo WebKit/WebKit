@@ -1,3 +1,31 @@
+2014-03-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] <string> not allowed in grid-{area | row | column} syntax
+        https://bugs.webkit.org/show_bug.cgi?id=129713
+
+        Reviewed by Darin Adler.
+
+        Grid positioning properties no longer accept <string> values for
+        named grid lines as they did in previous versions of the specs. They
+        were first replaced by <ident> and since the beginning of 2014 they
+        should only accept <custom-ident>.
+
+        Updated the parser and the style resolver to this new syntax. Also
+        updated the tests accordingly.
+
+        Test: fast/css-grid-layout/grid-container-change-named-grid-lines-recompute-child.html
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidCustomIdent): New function that checks that the
+        <custom-ident> is valid.
+        (WebCore::CSSParser::parseIntegerOrCustomIdentFromGridPosition):
+        (WebCore::CSSParser::parseGridPosition):
+        (WebCore::CSSParser::parseIntegerOrStringFromGridPosition):
+        Replaced by WebCore::CSSParser::parseIntegerOrCustomIdentFromGridPosition.
+        * css/CSSParser.h:
+        * css/StyleResolver.cpp:
+        (WebCore::createGridPosition):
+
 2014-04-03  Antti Koivisto  <antti@apple.com>
 
         Crash after mutating after pseudo style

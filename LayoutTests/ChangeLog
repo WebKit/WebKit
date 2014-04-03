@@ -1,3 +1,31 @@
+2014-03-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] <string> not allowed in grid-{area | row | column} syntax
+        https://bugs.webkit.org/show_bug.cgi?id=129713
+
+        Reviewed by Darin Adler.
+
+        Replaced <string> by <custom-ident> in the tests. Also added a new
+        one to check that children are properly layed out after changes in
+        the grid line names.
+
+        * fast/css-grid-layout/grid-container-change-named-grid-lines-recompute-child-expected.txt: Added.
+        * fast/css-grid-layout/grid-container-change-named-grid-lines-recompute-child.html: Added.
+        * fast/css-grid-layout/grid-item-area-get-set.html:
+        * fast/css-grid-layout/grid-item-bad-named-area-auto-placement.html:
+        * fast/css-grid-layout/grid-item-bad-resolution-double-span.html:
+        * fast/css-grid-layout/grid-item-column-row-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-column-row-get-set.html:
+        * fast/css-grid-layout/grid-item-end-after-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-end-after-get-set.html:
+        * fast/css-grid-layout/grid-item-named-grid-area-resolution.html:
+        * fast/css-grid-layout/grid-item-named-grid-line-resolution-expected.txt:
+        * fast/css-grid-layout/grid-item-named-grid-line-resolution.html:
+        * fast/css-grid-layout/grid-item-negative-position-resolution.html:
+        * fast/css-grid-layout/grid-item-position-changed-dynamic.html:
+        * fast/css-grid-layout/grid-item-start-before-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-start-before-get-set.html:
+
 2014-04-03  Antti Koivisto  <antti@apple.com>
 
         Crash after mutating after pseudo style

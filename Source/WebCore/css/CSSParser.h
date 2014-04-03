@@ -521,7 +521,7 @@ private:
     bool parseColor(const String&);
 
 #if ENABLE(CSS_GRID_LAYOUT)
-    bool parseIntegerOrStringFromGridPosition(RefPtr<CSSPrimitiveValue>& numericValue, RefPtr<CSSPrimitiveValue>& gridLineName);
+    bool parseIntegerOrCustomIdentFromGridPosition(RefPtr<CSSPrimitiveValue>& numericValue, RefPtr<CSSPrimitiveValue>& gridLineName);
 #endif
 
     enum ParsingMode {
