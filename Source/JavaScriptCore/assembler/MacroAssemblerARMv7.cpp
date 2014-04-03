@@ -82,8 +82,10 @@ extern "C" void ctiMasmProbeTrampoline();
 
 void MacroAssemblerARMv7::probe(MacroAssemblerARMv7::ProbeFunction function, void* arg1, void* arg2)
 {
-    push(RegisterID::sp);
     push(RegisterID::lr);
+    push(RegisterID::lr);
+    add32(TrustedImm32(8), RegisterID::sp, RegisterID::lr);
+    store32(RegisterID::lr, ArmAddress(RegisterID::sp, 4));
     push(RegisterID::ip);
     push(RegisterID::r0);
     // The following uses RegisterID::ip. So, they must come after we push ip above.

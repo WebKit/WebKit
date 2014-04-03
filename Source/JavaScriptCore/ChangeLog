@@ -1,3 +1,20 @@
+2014-04-03  Mark Lam  <mark.lam@apple.com>
+
+        Fix bit rot in ARMv7 JIT probe mechanism.
+        <https://webkit.org/b/131167>
+
+        Reviewed by Geoffrey Garen.
+
+        1. The macro assembler does not support pushing the SP register.  Worked
+           around this by pushing the LR register as a placeholder, and then
+           writing the original SP value to that slot.
+        2. The CPUState field in the ProbeContext needs to be aligned on a 4
+           byte boundary, not an 8 byte boundary.
+
+        * assembler/MacroAssemblerARMv7.cpp:
+        (JSC::MacroAssemblerARMv7::probe):
+        * jit/JITStubsARMv7.h:
+
 2014-04-02  Mark Lam  <mark.lam@apple.com>
 
         ARMv7 compare32() should not use TST to do CMP's job.
