@@ -1287,18 +1287,14 @@ private:
     void compare32(RegisterID left, TrustedImm32 right)
     {
         int32_t imm = right.m_value;
-        if (!imm)
-            m_assembler.tst(left, left);
+        ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm);
+        if (armImm.isValid())
+            m_assembler.cmp(left, armImm);
+        else if ((armImm = ARMThumbImmediate::makeEncodedImm(-imm)).isValid())
+            m_assembler.cmn(left, armImm);
         else {
-            ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm);
-            if (armImm.isValid())
-                m_assembler.cmp(left, armImm);
-            else if ((armImm = ARMThumbImmediate::makeEncodedImm(-imm)).isValid())
-                m_assembler.cmn(left, armImm);
-            else {
-                move(TrustedImm32(imm), dataTempRegister);
-                m_assembler.cmp(left, dataTempRegister);
-            }
+            move(TrustedImm32(imm), dataTempRegister);
+            m_assembler.cmp(left, dataTempRegister);
         }
     }
 

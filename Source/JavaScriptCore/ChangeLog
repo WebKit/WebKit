@@ -1,3 +1,22 @@
+2014-04-02  Mark Lam  <mark.lam@apple.com>
+
+        ARMv7 compare32() should not use TST to do CMP's job.
+        <https://webkit.org/b/131146>
+
+        Reviewed by Geoffrey Garen.
+
+        The ARMv7 implementation of "compare32(RegisterID left, TrustedImm32 right)"
+        was using "tst reg, reg" to implement "cmp reg, #0".  Unfortunately, the tst
+        instruction doesn't set the Overflow (V) flag and this results in random
+        results depending on whether there was a preceeding instruction that did set
+        the Overflow (V) flag.  This issue was causing emscripten-cube2hash to run
+        with a lot of OSR exits where not expected as well as producing wrong results.
+
+        The fix is to use "cmp reg, #0" to do the job properly.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::compare32):
+
 2014-04-02  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         CodeBlockSet should be generational
