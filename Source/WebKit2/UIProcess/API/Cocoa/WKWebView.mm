@@ -97,6 +97,7 @@
 
     UIEdgeInsets _obscuredInsets;
     bool _isChangingObscuredInsetsInteractively;
+    BOOL _isAnimatingResize;
     CGFloat _lastAdjustmentForScroller;
     CGFloat _keyboardVerticalOverlap;
 
@@ -180,7 +181,7 @@
     [_contentView setFrame:bounds];
     [_scrollView addSubview:_contentView.get()];
 
-    [self _frameOrBoundsChanged];
+    [self _frameOrBoundsChangedFrom:self.bounds];
 
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
@@ -346,10 +347,11 @@
 - (void)setFrame:(CGRect)frame
 {
     CGRect oldFrame = self.frame;
+    CGRect oldBounds = self.bounds;
     [super setFrame:frame];
 
     if (!CGSizeEqualToSize(oldFrame.size, frame.size))
-        [self _frameOrBoundsChanged];
+        [self _frameOrBoundsChangedFrom:oldBounds];
 }
 
 - (void)setBounds:(CGRect)bounds
@@ -358,7 +360,7 @@
     [super setBounds:bounds];
 
     if (!CGSizeEqualToSize(oldBounds.size, bounds.size))
-        [self _frameOrBoundsChanged];
+        [self _frameOrBoundsChangedFrom:oldBounds];
 }
 
 - (UIScrollView *)scrollView
@@ -446,6 +448,9 @@ static CGFloat contentZoomScale(WKWebView* webView)
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
 {
     ASSERT(!_customContentView);
+
+    if (_isAnimatingResize)
+        return;
 
     [_scrollView setContentSize:[_contentView frame].size];
     [_scrollView setMinimumZoomScale:layerTreeTransaction.minimumScaleFactor()];
@@ -667,7 +672,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [_contentView didZoomToScale:scale];
 }
 
-- (void)_frameOrBoundsChanged
+- (void)_frameOrBoundsChangedFrom:(CGRect)oldBounds
 {
     CGRect bounds = self.bounds;
 
@@ -677,6 +682,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [_contentView setMinimumSize:bounds.size];
     [_customContentView web_setMinimumSize:bounds.size];
     [self _updateVisibleContentRects];
+
+    if (_isAnimatingResize && !_customContentView) {
+        CGFloat oldWebViewWidthInContentCoordinate = oldBounds.size.width / contentZoomScale(self);
+        CGFloat visibleContentViewWidthInContentCoordinate = std::min([_contentView bounds].size.width, oldWebViewWidthInContentCoordinate);
+        CGFloat targetScale = bounds.size.width / visibleContentViewWidthInContentCoordinate;
+        [_scrollView setZoomScale:targetScale];
+        // FIXME: compute the real target offset based on the future exposed rect, the content and limit it to the valid range.
+   }
 }
 
 // Unobscured content rect where the user can interact. When the keyboard is up, this should be the area above or bellow the keyboard, wherever there is enough space.
@@ -1181,6 +1194,30 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 {
     ASSERT(_isChangingObscuredInsetsInteractively);
     _isChangingObscuredInsetsInteractively = NO;
+    [self _updateVisibleContentRects];
+}
+
+- (void)_beginAnimatedResizeToSize:(CGSize)futureSize obscuredInsets:(UIEdgeInsets)futureObscuredInsets minimumLayoutSizeOverride:(CGSize)futureMinimumLayoutSize
+{
+    _isAnimatingResize = YES;
+
+    if (_customContentView)
+        return;
+
+    [_scrollView setMinimumZoomScale:std::min(futureSize.width / [_contentView bounds].size.width, [_scrollView minimumZoomScale])];
+
+    _obscuredInsets = futureObscuredInsets;
+    if (_hasStaticMinimumLayoutSize)
+        _minimumLayoutSizeOverride = futureMinimumLayoutSize;
+
+    // FIXME: Send a single message to the WebProcess to layout and repaint instead.
+    // FIXME: Send resize event.
+    [_contentView setMinimumLayoutSize:futureMinimumLayoutSize];
+}
+
+- (void)_endAnimatedResize
+{
+    _isAnimatingResize = NO;
     [self _updateVisibleContentRects];
 }
 

@@ -1,3 +1,24 @@
+2014-04-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Add SPI to handle animated resize
+        https://bugs.webkit.org/show_bug.cgi?id=131141
+
+        Reviewed by Simon Fraser.
+
+        Set up a basic API to handle animated resize. The code does not do much at the moment,
+        it is mostly to have an interface we can implement later.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        (-[WKWebView setFrame:]):
+        (-[WKWebView setBounds:]):
+        (-[WKWebView _didCommitLayerTree:WebKit::]):
+        (-[WKWebView _frameOrBoundsChangedFrom:]):
+        (-[WKWebView _beginAnimatedResizeToSize:obscuredInsets:minimumLayoutSizeOverride:]):
+        (-[WKWebView _endAnimatedResize]):
+        (-[WKWebView _frameOrBoundsChanged]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2014-04-03  Simon Fraser  <simon.fraser@apple.com>
 
         Pixelated WebView when display is changed from hiDPI to regularDPI

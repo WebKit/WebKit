@@ -103,6 +103,9 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 - (void)_beginInteractiveObscuredInsetsChange;
 - (void)_endInteractiveObscuredInsetsChange;
 
+- (void)_beginAnimatedResizeToSize:(CGSize)futureSize obscuredInsets:(UIEdgeInsets)futureObscuredInsets minimumLayoutSizeOverride:(CGSize)futureMinimumLayoutSize;
+- (void)_endAnimatedResize;
+
 - (void)_showInspectorIndication;
 - (void)_hideInspectorIndication;
 
