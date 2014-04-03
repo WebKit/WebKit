@@ -1,3 +1,16 @@
+2014-04-03  Andreas Kling  <akling@apple.com>
+
+        Fix over-retain in SharedBufferCF's createCFData().
+        <https://webkit.org/b/131139>
+
+        Constructing the return type (RetainPtr<CFDataRef>) will also retain
+        the pointee, so this would end up leaking.
+
+        Reviewed by Anders Carlsson.
+
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::createCFData):
+
 2014-04-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Turn on ENABLE_CSS_GRID_LAYOUT

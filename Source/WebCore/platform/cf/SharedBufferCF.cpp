@@ -54,10 +54,8 @@ SharedBuffer::SharedBuffer(CFDataRef cfData)
 #if !USE(FOUNDATION)
 RetainPtr<CFDataRef> SharedBuffer::createCFData()
 {
-    if (m_cfData) {
-        CFRetain(m_cfData.get());
-        return m_cfData.get();
-    }
+    if (m_cfData)
+        return m_cfData;
 
     // Internal data in SharedBuffer can be segmented. We need to get the contiguous buffer.
     const Vector<char>& contiguousBuffer = buffer();
