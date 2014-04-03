@@ -1,3 +1,20 @@
+2014-04-03  Simon Fraser  <simon.fraser@apple.com>
+
+        ASSERT(m_children.isEmpty()) in PlatformCALayerRemote::removeAllSublayers() on time.com
+        https://bugs.webkit.org/show_bug.cgi?id=131187
+
+        Reviewed by Maciej Stachowiak.
+        
+        After a call to PlatformCALayerRemote::adoptSublayers() when a layer
+        toggles between tiled and non-tiled, we'd assert in PlatformCALayerRemote::removeAllSublayers()
+        that not all sublayers had been removed (there was one with a null superlayer).
+        
+        Fix by ensuring that we don't copy over custom subviews when adoptSublayers()
+        is called; they'll get added as we update children anyway.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::adoptSublayers):
+
 2014-04-03  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Add SPI to handle animated resize

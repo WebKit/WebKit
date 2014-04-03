@@ -264,7 +264,17 @@ void PlatformCALayerRemote::replaceSublayer(PlatformCALayer* reference, Platform
 
 void PlatformCALayerRemote::adoptSublayers(PlatformCALayer* source)
 {
-    setSublayers(toPlatformCALayerRemote(source)->m_children);
+    PlatformCALayerList layersToMove = toPlatformCALayerRemote(source)->m_children;
+
+    if (const PlatformCALayerList* customLayers = source->customSublayers()) {
+        for (const auto& layer : *customLayers) {
+            size_t layerIndex = layersToMove.find(layer);
+            if (layerIndex != notFound)
+                layersToMove.remove(layerIndex);
+        }
+    }
+
+    setSublayers(layersToMove);
 }
 
 void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnimation* animation)
