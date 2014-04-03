@@ -1,3 +1,11 @@
+2014-04-03  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
+
+        [EFL] Enable CSS JIT again, it works fine after r166666.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * wtf/Platform.h:
+
 2014-04-03  Javier Fernandez  <jfernandez@igalia.com>
 
         [GTK][Cmake] Enable CSS JIT
