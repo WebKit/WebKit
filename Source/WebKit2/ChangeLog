@@ -1,5 +1,12 @@
 2014-04-02  Tim Horton  <timothy_horton@apple.com>
 
+        Remove a FIXME that happened.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::display):
+
+2014-04-02  Tim Horton  <timothy_horton@apple.com>
+
         Fix the !USE(IOSURFACE) build... again.
 
         * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:

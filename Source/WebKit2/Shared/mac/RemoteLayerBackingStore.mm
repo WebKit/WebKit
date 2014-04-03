@@ -198,7 +198,6 @@ bool RemoteLayerBackingStore::display()
         std::swap(m_frontSurface, m_backSurface);
 
         if (!m_frontSurface || m_frontSurface->isInUse()) {
-            // FIXME: Instead of discarding it, put the unusable in-use surface into a pool for future use.
             if (m_frontSurface)
                 IOSurfacePool::sharedPool().addSurface(m_frontSurface.get());
             m_frontSurface = IOSurface::create(expandedScaledSize, ColorSpaceDeviceRGB);
