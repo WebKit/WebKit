@@ -26,18 +26,17 @@
 #import "config.h"
 #import "MemoryPressureHandler.h"
 
-#import <WebCore/LayerPool.h>
-#import <wtf/CurrentTime.h>
-#import <malloc/malloc.h>
-
 #if !PLATFORM(IOS)
+
+#import "IOSurfacePool.h"
+#import "LayerPool.h"
 #import "WebCoreSystemInterface.h"
+#import <malloc/malloc.h>
 #import <notify.h>
-#endif
+#import <wtf/CurrentTime.h>
 
 namespace WebCore {
 
-#if !PLATFORM(IOS)
 static dispatch_source_t _cache_event_source = 0;
 static dispatch_source_t _timer_event_source = 0;
 static int _notifyToken;
@@ -57,7 +56,7 @@ void MemoryPressureHandler::install()
         return;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-#if !PLATFORM(IOS) && MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
         _cache_event_source = wkCreateMemoryStatusPressureCriticalDispatchOnMainQueue();
 #else
         _cache_event_source = wkCreateVMPressureDispatchOnMainQueue();
@@ -138,8 +137,9 @@ void MemoryPressureHandler::respondToMemoryPressure()
 void MemoryPressureHandler::platformReleaseMemory(bool)
 {
     LayerPool::sharedPool()->drain();
+    IOSurfacePool::sharedPool().discardAllSurfaces();
 }
 
-#endif // !PLATFORM(IOS)
-
 } // namespace WebCore
+
+#endif // !PLATFORM(IOS)

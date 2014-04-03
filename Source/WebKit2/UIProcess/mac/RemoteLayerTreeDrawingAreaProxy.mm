@@ -32,6 +32,7 @@
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import <WebCore/IOSurfacePool.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 
 static const CFIndex CoreAnimationCommitRunLoopOrder = 2000000;
@@ -46,6 +47,10 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy* w
     , m_remoteLayerTreeHost(*this)
     , m_isWaitingForDidUpdateGeometry(false)
 {
+    // We don't want to pool surfaces in the UI process.
+    // FIXME: We should do this somewhere else.
+    IOSurfacePool::sharedPool().setPoolSize(0);
+
     m_webPageProxy->process().addMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_webPageProxy->pageID(), *this);
 }
 

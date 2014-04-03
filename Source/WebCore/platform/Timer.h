@@ -52,6 +52,7 @@ public:
     void start(double nextFireInterval, double repeatInterval);
 
     void startRepeating(double repeatInterval) { start(repeatInterval, repeatInterval); }
+    void startRepeating(std::chrono::milliseconds repeatInterval) { startRepeating(repeatInterval.count() * 0.001); }
     void startOneShot(double interval) { start(interval, 0); }
     void startOneShot(std::chrono::milliseconds interval) { startOneShot(interval.count() * 0.001); }
 

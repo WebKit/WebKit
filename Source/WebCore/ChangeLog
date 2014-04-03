@@ -1,3 +1,66 @@
+2014-04-02  Tim Horton  <timothy_horton@apple.com>
+
+        Pool IOSurfaces to help with allocation cost
+        https://bugs.webkit.org/show_bug.cgi?id=131096
+        <rdar://problem/15373942>
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        
+        * platform/Timer.h:
+        (WebCore::TimerBase::startRepeating): Add a std::chrono startRepeating.
+
+        * platform/graphics/cg/IOSurfacePool.h: Added.
+        (WebCore::IOSurfacePool::CachedSurfaceDetails::CachedSurfaceDetails):
+        (WebCore::IOSurfacePool::CachedSurfaceDetails::resetLastUseTime):
+        * platform/graphics/cg/ImageBufferBackingStoreCache.cpp: Removed.
+        * platform/graphics/cg/ImageBufferBackingStoreCache.h: Removed.
+        * platform/graphics/cg/IOSurfacePool.cpp: Added.
+        (WebCore::IOSurfacePool::IOSurfacePool):
+        (WebCore::IOSurfacePool::sharedPool):
+        (WebCore::surfaceMatchesParameters):
+        (WebCore::IOSurfacePool::willAddSurface):
+        (WebCore::IOSurfacePool::didRemoveSurface):
+        (WebCore::IOSurfacePool::didUseSurfaceOfSize):
+        (WebCore::IOSurfacePool::takeSurface):
+        (WebCore::IOSurfacePool::addSurface):
+        (WebCore::IOSurfacePool::insertSurfaceIntoPool):
+        (WebCore::IOSurfacePool::setPoolSize):
+        (WebCore::IOSurfacePool::tryEvictInUseSurface):
+        (WebCore::IOSurfacePool::tryEvictOldestCachedSurface):
+        (WebCore::IOSurfacePool::evict):
+        (WebCore::IOSurfacePool::collectInUseSurfaces):
+        (WebCore::IOSurfacePool::markOlderSurfacesPurgeable):
+        (WebCore::IOSurfacePool::collectionTimerFired):
+        (WebCore::IOSurfacePool::scheduleCollectionTimer):
+        (WebCore::IOSurfacePool::discardAllSurfaces):
+        (WebCore::IOSurfacePool::showPoolStatistics):
+        Add a pool of IOSurfaces. It behaves as such:
+
+            - Keeps up to 64MB of surfaces.
+            - Keeps unused and in-use surfaces (but never gets more than 1/2 full with the latter)
+            - Marks surfaces purgeable after they've been unused for 2 seconds.
+            - Tries to move surfaces from the in-use pool to the unused pool every 500ms.
+            - Evicts in an LRU-ish fashion, interleaving eviction of the oldest
+              surfaces and the in-use surfaces (since in-use surfaces are not immediately
+              useful for the pool, but they are desirous because they were recently used).
+            - Throws everything away under memory pressure.
+
+        * platform/graphics/cocoa/IOSurface.mm:
+        (IOSurface::create):
+        Try to grab a surface from the IOSurfacePool.
+
+        * platform/ios/MemoryPressureHandlerIOS.mm:
+        (WebCore::MemoryPressureHandler::platformReleaseMemory):
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::install):
+        (WebCore::MemoryPressureHandler::platformReleaseMemory):
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::platformReleaseMemory):
+        Fix some includes, and throw away all surfaces when we're under memory pressure.
+
 2014-04-02  Stephanie Lewis  <slewis@apple.com>
 
         Roll out http://trac.webkit.org/changeset/166144

@@ -913,8 +913,8 @@
 		1C11CCC80AA6093700DADB20 /* DOMHTMLElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85DF2EEB0AA387CB00AD64C5 /* DOMHTMLElement.h */; };
 		1C18DA58181AF6A500C4EF22 /* TextPainter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C18DA56181AF6A500C4EF22 /* TextPainter.cpp */; };
 		1C18DA59181AF6A500C4EF22 /* TextPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C18DA57181AF6A500C4EF22 /* TextPainter.h */; };
-		1C21E57C183ED1FF001C289D /* ImageBufferBackingStoreCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C21E57A183ED1FF001C289D /* ImageBufferBackingStoreCache.cpp */; };
-		1C21E57D183ED1FF001C289D /* ImageBufferBackingStoreCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C21E57B183ED1FF001C289D /* ImageBufferBackingStoreCache.h */; };
+		1C21E57C183ED1FF001C289D /* IOSurfacePool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C21E57A183ED1FF001C289D /* IOSurfacePool.cpp */; };
+		1C21E57D183ED1FF001C289D /* IOSurfacePool.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C21E57B183ED1FF001C289D /* IOSurfacePool.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C26497A0D7E248A00BD10F2 /* DocumentLoaderMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C2649790D7E248A00BD10F2 /* DocumentLoaderMac.cpp */; };
 		1C26497C0D7E24EC00BD10F2 /* PageMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C26497B0D7E24EC00BD10F2 /* PageMac.cpp */; };
 		1C4C8F020AD85D87009475CE /* DeleteButtonController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4C8F000AD85D87009475CE /* DeleteButtonController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7773,8 +7773,8 @@
 		1AFE11980CBFFCC4003017FA /* JSSQLResultSetRowList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLResultSetRowList.h; sourceTree = "<group>"; };
 		1C18DA56181AF6A500C4EF22 /* TextPainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextPainter.cpp; sourceTree = "<group>"; };
 		1C18DA57181AF6A500C4EF22 /* TextPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextPainter.h; sourceTree = "<group>"; };
-		1C21E57A183ED1FF001C289D /* ImageBufferBackingStoreCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferBackingStoreCache.cpp; sourceTree = "<group>"; };
-		1C21E57B183ED1FF001C289D /* ImageBufferBackingStoreCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBufferBackingStoreCache.h; sourceTree = "<group>"; };
+		1C21E57A183ED1FF001C289D /* IOSurfacePool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IOSurfacePool.cpp; path = ../cg/IOSurfacePool.cpp; sourceTree = "<group>"; };
+		1C21E57B183ED1FF001C289D /* IOSurfacePool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOSurfacePool.h; path = ../cg/IOSurfacePool.h; sourceTree = "<group>"; };
 		1C2649790D7E248A00BD10F2 /* DocumentLoaderMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentLoaderMac.cpp; sourceTree = "<group>"; };
 		1C26497B0D7E24EC00BD10F2 /* PageMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageMac.cpp; sourceTree = "<group>"; };
 		1C4C8EFF0AD85D87009475CE /* DeleteButtonController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteButtonController.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -19933,8 +19933,6 @@
 				B2ED97700B1F55CE00257D0F /* GraphicsContextCG.cpp */,
 				934907E3125BBBC8007F23A0 /* GraphicsContextCG.h */,
 				A80D67070E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h */,
-				1C21E57A183ED1FF001C289D /* ImageBufferBackingStoreCache.cpp */,
-				1C21E57B183ED1FF001C289D /* ImageBufferBackingStoreCache.h */,
 				B2A10B930B3818D700099AA4 /* ImageBufferCG.cpp */,
 				2292B27B1356669400CF11EF /* ImageBufferDataCG.cpp */,
 				22BD9F80135364FE009BD102 /* ImageBufferDataCG.h */,
@@ -20320,6 +20318,8 @@
 			children = (
 				2D0B4AA918DA1CCD00434DE1 /* IOSurface.h */,
 				2D0B4AAA18DA1CCD00434DE1 /* IOSurface.mm */,
+				1C21E57A183ED1FF001C289D /* IOSurfacePool.cpp */,
+				1C21E57B183ED1FF001C289D /* IOSurfacePool.h */,
 				B5320D6A122A24E9002D1440 /* FontPlatformDataCocoa.mm */,
 			);
 			path = cocoa;
@@ -24144,7 +24144,7 @@
 				8AB4BC77126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h in Headers */,
 				B27535700B053814002CE64F /* Image.h in Headers */,
 				B2A10B920B3818BD00099AA4 /* ImageBuffer.h in Headers */,
-				1C21E57D183ED1FF001C289D /* ImageBufferBackingStoreCache.h in Headers */,
+				1C21E57D183ED1FF001C289D /* IOSurfacePool.h in Headers */,
 				22BD9F7F1353625C009BD102 /* ImageBufferData.h in Headers */,
 				22BD9F81135364FE009BD102 /* ImageBufferDataCG.h in Headers */,
 				510192D618B6B9B7007FC7A1 /* ImageControlsRootElement.h in Headers */,
@@ -27544,7 +27544,7 @@
 				C3CF17A615B0063F00276D39 /* IdTargetObserverRegistry.cpp in Sources */,
 				B275356F0B053814002CE64F /* Image.cpp in Sources */,
 				43D2597713C816F400608559 /* ImageBuffer.cpp in Sources */,
-				1C21E57C183ED1FF001C289D /* ImageBufferBackingStoreCache.cpp in Sources */,
+				1C21E57C183ED1FF001C289D /* IOSurfacePool.cpp in Sources */,
 				B2A10B940B3818D700099AA4 /* ImageBufferCG.cpp in Sources */,
 				2292B27C1356669400CF11EF /* ImageBufferDataCG.cpp in Sources */,
 				B275355E0B053814002CE64F /* ImageCG.cpp in Sources */,

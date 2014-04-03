@@ -96,13 +96,14 @@ void MemoryPressureHandler::releaseMemory(bool critical)
 }
 
 #if !PLATFORM(MAC)
-
 void MemoryPressureHandler::install() { }
 void MemoryPressureHandler::uninstall() { }
 void MemoryPressureHandler::holdOff(unsigned) { }
 void MemoryPressureHandler::respondToMemoryPressure() { }
-void MemoryPressureHandler::platformReleaseMemory(bool) { }
+#endif
 
+#if !PLATFORM(COCOA)
+void MemoryPressureHandler::platformReleaseMemory(bool) { }
 #endif
 
 } // namespace WebCore

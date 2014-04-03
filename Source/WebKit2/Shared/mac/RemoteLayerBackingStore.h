@@ -47,6 +47,7 @@ class RemoteLayerBackingStore {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteLayerBackingStore();
+    ~RemoteLayerBackingStore();
 
     void ensureBackingStore(PlatformCALayerRemote*, WebCore::IntSize, float scale, bool acceleratesDrawing, bool isOpaque);
 

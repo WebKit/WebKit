@@ -29,6 +29,7 @@
 #if USE(IOSURFACE)
 
 #import "GraphicsContextCG.h"
+#import "IOSurfacePool.h"
 #import <IOSurface/IOSurface.h>
 #import <wtf/Assertions.h>
 
@@ -53,6 +54,8 @@ using namespace WebCore;
 
 PassRefPtr<IOSurface> IOSurface::create(IntSize size, ColorSpace colorSpace)
 {
+    if (RefPtr<IOSurface> cachedSurface = IOSurfacePool::sharedPool().takeSurface(size, colorSpace))
+        return cachedSurface.release();
     return adoptRef(new IOSurface(size, colorSpace));
 }
 

@@ -1,3 +1,22 @@
+2014-04-02  Tim Horton  <timothy_horton@apple.com>
+
+        Pool IOSurfaces to help with allocation cost
+        https://bugs.webkit.org/show_bug.cgi?id=131096
+        <rdar://problem/15373942>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::~RemoteLayerBackingStore):
+        (WebKit::RemoteLayerBackingStore::clearBackingStore):
+        (WebKit::RemoteLayerBackingStore::display):
+        When RemoteLayerBackingStore discards a layer, throw it into the pool.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy):
+        Disable the pool in the UI process.
+
 2014-04-02  Alice Barraclough  <alice.barraclough@apple.com>
 
         Fix a typo causing TestWebKitAPI to timeout when testing Find.

@@ -34,6 +34,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
+#import <WebCore/IOSurfacePool.h>
 #import <WebCore/WebLayer.h>
 
 #if USE(IOSURFACE)
@@ -58,6 +59,11 @@ RemoteLayerBackingStore::RemoteLayerBackingStore()
 {
 }
 
+RemoteLayerBackingStore::~RemoteLayerBackingStore()
+{
+    clearBackingStore();
+}
+
 void RemoteLayerBackingStore::ensureBackingStore(PlatformCALayerRemote* layer, IntSize size, float scale, bool acceleratesDrawing, bool isOpaque)
 {
     if (m_layer == layer && m_size == size && m_scale == scale && m_acceleratesDrawing == acceleratesDrawing && m_isOpaque == isOpaque)
@@ -75,6 +81,11 @@ void RemoteLayerBackingStore::ensureBackingStore(PlatformCALayerRemote* layer, I
 void RemoteLayerBackingStore::clearBackingStore()
 {
 #if USE(IOSURFACE)
+    if (m_frontSurface)
+        IOSurfacePool::sharedPool().addSurface(m_frontSurface.get());
+    if (m_backSurface)
+        IOSurfacePool::sharedPool().addSurface(m_backSurface.get());
+
     m_frontSurface = nullptr;
     m_backSurface = nullptr;
 #endif
@@ -188,6 +199,8 @@ bool RemoteLayerBackingStore::display()
 
         if (!m_frontSurface || m_frontSurface->isInUse()) {
             // FIXME: Instead of discarding it, put the unusable in-use surface into a pool for future use.
+            if (m_frontSurface)
+                IOSurfacePool::sharedPool().addSurface(m_frontSurface.get());
             m_frontSurface = IOSurface::create(expandedScaledSize, ColorSpaceDeviceRGB);
         }
 
