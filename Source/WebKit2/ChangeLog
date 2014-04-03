@@ -1,3 +1,13 @@
+2014-04-02  Alice Barraclough  <alice.barraclough@apple.com>
+
+        Fix a typo causing TestWebKitAPI to timeout when testing Find.
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageFindClient): Test for !functionPointer like
+        all the other implementations do.
+
 2014-04-02  Dean Jackson  <dino@apple.com>
 
         [iOS] Expose geolocation provider on the process pool

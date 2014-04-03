@@ -703,9 +703,9 @@ void WKPageSetPageFindClient(WKPageRef pageRef, const WKPageFindClientBase* wkCl
 
         virtual void didCountStringMatches(WebPageProxy* page, const String& string, uint32_t matchCount) override
         {
-            if (m_client.didCountStringMatches)
+            if (!m_client.didCountStringMatches)
                 return;
-            
+
             m_client.didCountStringMatches(toAPI(page), toAPI(string.impl()), matchCount, m_client.base.clientInfo);
         }
     };
