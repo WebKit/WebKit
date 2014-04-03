@@ -1,3 +1,14 @@
+2014-04-03  Anders Carlsson  <andersca@apple.com>
+
+        Add WKWebView documentation
+        https://bugs.webkit.org/show_bug.cgi?id=131190
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKBackForwardListItem.h:
+        * UIProcess/API/Cocoa/WKNavigationAction.h:
+        * UIProcess/API/Cocoa/WKWebView.h:
+
 2014-04-03  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION: PCE.js is 20x slower in WebKit2 because timers are throttled
