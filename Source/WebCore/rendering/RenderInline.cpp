@@ -143,11 +143,19 @@ static RenderElement* inFlowPositionedInlineAncestor(RenderElement* p)
     return 0;
 }
 
-static void updateStyleOfAnonymousBlockContinuations(RenderBlock* block, const RenderStyle* newStyle, const RenderStyle* oldStyle)
+static void updateStyleOfAnonymousBlockContinuations(RenderBox* box, const RenderStyle* newStyle, const RenderStyle* oldStyle)
 {
-    for (;block && block->isAnonymousBlock(); block = toRenderBlock(block->nextSibling())) {
-        if (!block->isAnonymousBlockContinuation() || block->style().position() == newStyle->position())
+    for (;box && box->isAnonymousBlock(); box = box->nextSiblingBox()) {
+        if (box->style().position() == newStyle->position())
             continue;
+        
+        if (!box->isRenderBlock())
+            break; // We're done if we ever encounter something other than a RenderBlock.
+
+        RenderBlock* block = toRenderBlock(box);
+        if (!block->isAnonymousBlockContinuation())
+            break; // We're done if we ever encounter something other than a continuation RenderBlock.
+        
         // If we are no longer in-flow positioned but our descendant block(s) still have an in-flow positioned ancestor then
         // their containing anonymous block should keep its in-flow positioning. 
         RenderInline* cont = block->inlineElementContinuation();

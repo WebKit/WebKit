@@ -1,3 +1,21 @@
+2014-04-03  David Hyatt  <hyatt@apple.com>
+
+        Continuations casting issue.
+        https://bugs.webkit.org/show_bug.cgi?id=130057
+        <rdar://problem/16283406>
+
+        Reviewed by Simon Fraser.
+
+        The code to update relative positioned anonymous block continuations should not
+        have assumed that all siblings were RenderBlocks. Make the code smarter and
+        make it bail when it hits something that isn't part of the block continuation
+        chain.
+
+        Added fast/block/continuation-crash.html
+
+        * rendering/RenderInline.cpp:
+        (WebCore::updateStyleOfAnonymousBlockContinuations):
+
 2014-04-03  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] CRASH with calc() value args in inset round
