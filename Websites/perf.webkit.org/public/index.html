@@ -314,25 +314,58 @@ td, th {
         }
     };
 
-    function computeYAxisBoundsToFitLines(minTime, results, baseline, target) {
-        var stdevOfAllRuns = results.sampleStandardDeviation(minTime);
-        var movingAverage = results.exponentialMovingArithmeticMean(minTime, /* alpha, the degree of weighting decrease */ 0.3);
-        var min = results.min(minTime);
-        var max = results.max(minTime);
+    function adjustedIntervalForRun(results, minTime, minRatioToFitInAdjustedInterval) {
+        if (!results)
+            return {min: Number.MAX_VALUE, max: Number.MIN_VALUE};
+        var degreeOfWeightingDecrease = 0.2;
+        var movingAverage = results.exponentialMovingArithmeticMean(minTime, degreeOfWeightingDecrease);
+        var resultsCount = results.countResults(minTime);
+        var adjustmentDelta = results.sampleStandardDeviation(minTime) / 4;
+        var adjustedMin = movingAverage;
+        var adjustedMax = movingAverage;
+        var adjustmentCount;
+        for (adjustmentCount = 0; adjustmentCount < 4 * 4; adjustmentCount++) { // Don't expand beyond 4 standard deviations.
+            adjustedMin -= adjustmentDelta;
+            adjustedMax += adjustmentDelta;
+            if (results.countResultsInInterval(minTime, adjustedMin, adjustedMax) / resultsCount >= minRatioToFitInAdjustedInterval)
+                break;
+        }
+        for (var i = 0; i < adjustmentCount; i++) {
+            if (results.countResultsInInterval(minTime, adjustedMin + adjustmentDelta, adjustedMax) / resultsCount < minRatioToFitInAdjustedInterval)
+                break;
+            adjustedMin += adjustmentDelta;
+        }
+        for (var i = 0; i < adjustmentCount; i++) {
+            if (results.countResultsInInterval(minTime, adjustedMin, adjustedMax - adjustmentDelta) / resultsCount < minRatioToFitInAdjustedInterval)
+                break;
+            adjustedMax -= adjustmentDelta;
+        }
+        return {min: adjustedMin, max: adjustedMax};
+    }
 
+    function computeYAxisBoundsToFitLines(minTime, results, baseline, target) {
+        var minOfAllRuns = results.min(minTime);
+        var maxOfAllRuns = results.max(minTime);
         if (baseline) {
-            min = Math.min(min, baseline.min(minTime));
-            max = Math.max(max, baseline.max(minTime));
+            minOfAllRuns = Math.min(minOfAllRuns, baseline.min(minTime));
+            maxOfAllRuns = Math.max(maxOfAllRuns, baseline.max(minTime));
         }
         if (target) {
-            min = Math.min(min, target.min(minTime));
-            max = Math.max(max, target.max(minTime));
+            minOfAllRuns = Math.min(minOfAllRuns, target.min(minTime));
+            maxOfAllRuns = Math.max(maxOfAllRuns, target.max(minTime));
         }
+        var marginSize = (maxOfAllRuns - minOfAllRuns) * 0.1;
 
-        var marginSize = (max - min) * 0.1;
-        return {min: min - marginSize, max: max + marginSize,
-            adjustedMin: Math.min(results.lastResult().mean() - marginSize, Math.max(movingAverage - stdevOfAllRuns * 2, min) - marginSize),
-            adjustedMax: Math.max(results.lastResult().mean() + marginSize, Math.min(movingAverage + stdevOfAllRuns * 2, max) + marginSize) };
+        var minRatioToFitInAdjustedInterval = 0.9;
+        var intervalForResults = adjustedIntervalForRun(results, minTime, minRatioToFitInAdjustedInterval);
+        var intervalForBaseline = adjustedIntervalForRun(baseline, minTime, minRatioToFitInAdjustedInterval);
+        var intervalForTarget = adjustedIntervalForRun(target, minTime, minRatioToFitInAdjustedInterval);
+        var adjustedMin = Math.min(intervalForResults.min, intervalForBaseline.min, intervalForTarget.min);
+        var adjustedMax = Math.max(intervalForResults.max, intervalForBaseline.max, intervalForTarget.max);
+        var adjsutedMarginSize = (adjustedMax - adjustedMin) * 0.1;
+        return {min: minOfAllRuns - marginSize, max: maxOfAllRuns + marginSize,
+            adjustedMin: Math.max(minOfAllRuns - marginSize, adjustedMin - adjsutedMarginSize),
+            adjustedMax: Math.min(maxOfAllRuns + marginSize, adjustedMax + adjsutedMarginSize)};
     }
 
     function computeStatus(smallerIsBetter, lastResult, baseline, target) {

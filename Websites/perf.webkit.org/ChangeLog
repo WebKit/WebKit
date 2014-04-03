@@ -1,3 +1,43 @@
+2014-04-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebKitPerfMonitor: Y-axis adjustment is too aggressive
+        https://bugs.webkit.org/show_bug.cgi?id=130937
+
+        Reviewed by Andreas Kling.
+
+        Previously, adjusted min. and max. were defined as the two standards deviations away from EWMA of measured
+        results. This had two major problems:
+        1. Two standard deviations can be too small to show the confidence interval for results.
+        2. Sometimes baseline and target can be more than two standards deviations away.
+
+        Fixed the bug by completely rewriting the algorithm to compute the interval. Instead of blindly using two
+        standard deviations as margins, we keep adding quarter the standard deviation on each side until more than 90%
+        of points lie in the interval or we've expanded 4 standard deviations. Once this condition is met, we reduce
+        the margin on each side separately to reduce the empty space on either side.
+
+        A more rigorous approach would involve computing least squared value of results with respect to intervals
+        but that seems like an overkill for a simple UI problem; it's also computationally expensive.
+
+        * public/index.html:
+        (Chart..adjustedIntervalForRun): Extracted from computeYAxisBoundsToFitLines.
+        (Chart..computeYAxisBoundsToFitLines): Compute the min. and max. adjusted intervals out of adjusted intervals
+        for each runs (current, baseline, and target) so that at least one point from each set of results is shown.
+        We wouldn't see the difference between measured values versus baseline and target values otherwise.
+        * public/js/helper-classes.js:
+        (PerfTestResult.unscaledConfidenceIntervalDelta): Returns the default value if the confidence
+        interval delta cannot be computed.
+        (PerfTestResult.isInUnscaledInterval): Added. Returns true iff the confidence intervals lies
+        within the given interval.
+        (PerfTestRuns..filteredResults): Extracted from unscaledMeansForAllResults now that PerfTestRuns.min and
+        PerfTestRuns.max need to use both mean and confidence interval delta for each result.
+        (PerfTestRuns..unscaledMeansForAllResults):
+        (PerfTestRuns.min): Take the confidence interval delta into account.
+        (PerfTestRuns.max): Ditto.
+        (PerfTestRuns.countResults): Returns the number of results in the given time frame (> minTime).
+        (PerfTestRuns.countResultsInInterval): Returns the number of results whose confidence interval lie within the
+        given interval.
+        (PerfTestRuns.exponentialMovingArithmeticMean): Fixed the typo so that it actually computes the EWMA.
+
 2014-03-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Some CSS tweaks after r166477 and r166479,

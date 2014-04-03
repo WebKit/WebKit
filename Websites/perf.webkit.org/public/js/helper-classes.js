@@ -8,8 +8,16 @@ function PerfTestResult(runs, result, associatedBuild) {
     this.confidenceIntervalDelta = function () {
         return runs.scalingFactor() * this.unscaledConfidenceIntervalDelta();
     }
-    this.unscaledConfidenceIntervalDelta = function () {
-        return Statistics.confidenceIntervalDelta(0.95, result.iterationCount, result.sum, result.squareSum);
+    this.unscaledConfidenceIntervalDelta = function (defaultValue) {
+        var delta = Statistics.confidenceIntervalDelta(0.95, result.iterationCount, result.sum, result.squareSum);
+        if (isNaN(delta) && defaultValue !== undefined)
+            return defaultValue;
+        return delta;
+    }
+    this.isInUnscaledInterval = function (min, max) {
+        var mean = this.unscaledMean();
+        var delta = this.unscaledConfidenceIntervalDelta(0);
+        return min <= mean - delta && mean + delta <= max;
     }
     this.isBetterThan = function(other) { return runs.smallerIsBetter() == (this.mean() < other.mean()); }
     this.relativeDifference = function(other) { return (other.mean() - this.mean()) / this.mean(); }
@@ -169,24 +177,38 @@ function PerfTestRuns(metric, platform) {
     this.lastResult = function () { return results[results.length - 1]; }
     this.resultAt = function (i) { return results[i]; }
 
-    var unscaledMeansCache;
-    var unscaledMeansCacheMinTime;
+    var resultsFilterCache;
+    var resultsFilterCacheMinTime;
+    function filteredResults(minTime) {
+        if (!minTime)
+            return results;
+        if (resultsFilterCacheMinTime != minTime) {
+            resultsFilterCache = results.filter(function (result) { return !minTime || result.build().time() >= minTime; });
+            resultsFilterCacheMinTime = minTime;
+        }
+        return resultsFilterCache;
+    }
+
     function unscaledMeansForAllResults(minTime) {
-        if (unscaledMeansCacheMinTime == minTime && unscaledMeansCache)
-            return unscaledMeansCache;
-        unscaledMeansCache = results.filter(function (result) { return !minTime || result.build().time() >= minTime; })
-            .map(function (result) { return result.unscaledMean(); });
-        unscaledMeansCacheMinTime = minTime;
-        return unscaledMeansCache;
+        return filteredResults(minTime).map(function (result) { return result.unscaledMean(); });
     }
 
     this.min = function (minTime) {
-        return this.scalingFactor() * unscaledMeansForAllResults(minTime)
-            .reduce(function (minSoFar, currentMean) { return Math.min(minSoFar, currentMean); }, Number.MAX_VALUE);
+        return this.scalingFactor() * filteredResults(minTime)
+            .reduce(function (minSoFar, result) { return Math.min(minSoFar, result.unscaledMean() - result.unscaledConfidenceIntervalDelta(0)); }, Number.MAX_VALUE);
     }
     this.max = function (minTime, baselineName) {
-        return this.scalingFactor() * unscaledMeansForAllResults(minTime)
-            .reduce(function (maxSoFar, currentMean) { return Math.max(maxSoFar, currentMean); }, Number.MIN_VALUE);
+        return this.scalingFactor() * filteredResults(minTime)
+            .reduce(function (maxSoFar, result) { return Math.max(maxSoFar, result.unscaledMean() + result.unscaledConfidenceIntervalDelta(0)); }, Number.MIN_VALUE);
+    }
+    this.countResults = function (minTime) {
+        return unscaledMeansForAllResults(minTime).length;
+    }
+    this.countResultsInInterval = function (minTime, min, max) {
+        var unscaledMin = min / this.scalingFactor();
+        var unscaledMax = max / this.scalingFactor();
+        return filteredResults(minTime).reduce(function (count, currentResult) {
+            return count + (currentResult.isInUnscaledInterval(unscaledMin, unscaledMax) ? 1 : 0); }, 0);
     }
     this.sampleStandardDeviation = function (minTime) {
         var unscaledMeans = unscaledMeansForAllResults(minTime);
@@ -196,7 +218,7 @@ function PerfTestRuns(metric, platform) {
         var unscaledMeans = unscaledMeansForAllResults(minTime);
         if (!unscaledMeans.length)
             return NaN;
-        return this.scalingFactor() * unscaledMeans.reduce(function (movingAverage, currentMean) { return alpha * movingAverage + (1 - alpha) * movingAverage; });
+        return this.scalingFactor() * unscaledMeans.reduce(function (movingAverage, currentMean) { return alpha * currentMean + (1 - alpha) * movingAverage; });
     }
     this.hasConfidenceInterval = function () { return !isNaN(this.lastResult().unscaledConfidenceIntervalDelta()); }
     var meanPlotCache;
