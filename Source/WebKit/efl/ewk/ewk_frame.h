@@ -233,24 +233,14 @@ typedef enum {
     EWK_TOUCH_CANCEL
 } Ewk_Touch_Event_Type;
 
-/// Represents states of touch events.
-typedef enum {
-    EWK_TOUCH_POINT_RELEASED,
-    EWK_TOUCH_POINT_PRESSED,
-    EWK_TOUCH_POINT_MOVED,
-    EWK_TOUCH_POINT_STATIONARY,
-    EWK_TOUCH_POINT_CANCELLED,
-    EWK_TOUCH_POINT_END
-} Ewk_Touch_Point_Type;
-
 /// Creates a type name for _Ewk_Touch_Point.
 typedef struct _Ewk_Touch_Point Ewk_Touch_Point;
 /// Represents a touch point.
 struct _Ewk_Touch_Point {
-    unsigned int id; /**< identifier of the touch event */
+    int id; /**< identifier of the touch event */
     int x; /**< the horizontal position of the touch event */
     int y; /**< the horizontal position of the touch event */
-    Ewk_Touch_Point_Type state; /**< state of the touch event */
+    Evas_Touch_Point_State state; /**< state of the touch event */
 };
 
 typedef enum {

@@ -43,21 +43,19 @@ public:
     }
 };
 
-inline static WebCore::PlatformTouchPoint::State toPlatformTouchPointState(Ewk_Touch_Point_Type type)
+inline static WebCore::PlatformTouchPoint::State toPlatformTouchPointState(Evas_Touch_Point_State type)
 {
     switch (type) {
-    case EWK_TOUCH_POINT_RELEASED:
+    case EVAS_TOUCH_POINT_UP:
         return WebCore::PlatformTouchPoint::TouchReleased;
-    case EWK_TOUCH_POINT_PRESSED:
+    case EVAS_TOUCH_POINT_DOWN:
         return WebCore::PlatformTouchPoint::TouchPressed;
-    case EWK_TOUCH_POINT_MOVED:
+    case EVAS_TOUCH_POINT_MOVE:
         return WebCore::PlatformTouchPoint::TouchMoved;
-    case EWK_TOUCH_POINT_STATIONARY:
+    case EVAS_TOUCH_POINT_STILL:
         return WebCore::PlatformTouchPoint::TouchStationary;
-    case EWK_TOUCH_POINT_CANCELLED:
+    case EVAS_TOUCH_POINT_CANCEL:
         return WebCore::PlatformTouchPoint::TouchCancelled;
-    case EWK_TOUCH_POINT_END:
-        return WebCore::PlatformTouchPoint::TouchStateEnd;
     }
 
     ASSERT_NOT_REACHED();

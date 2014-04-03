@@ -1,3 +1,17 @@
+2014-04-02  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK1] Use Evas_Touch_Point_State instead of Ewk_Touch_Point_Type
+        https://bugs.webkit.org/show_bug.cgi?id=131151
+
+        Reviewed by Gyuyoung Kim.
+
+        Like ewebkit2, we'd beter to use EFL type instead of WebKit specific type
+        In addition, changed type of id as int to match with ewebkit2.
+
+        * ewk/ewk_frame.h: Replace Ewk_Touch_Point_Type to Evas_Touch_Point_State.
+        * ewk/ewk_touch_event.cpp:
+        (toPlatformTouchPointState):
+
 2014-04-02  Martin Hock  <mhock@apple.com>
 
         Unify private browsing with sessions.

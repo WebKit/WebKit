@@ -1,3 +1,18 @@
+2014-04-02  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK1] Use Evas_Touch_Point_State instead of Ewk_Touch_Point_Type
+        https://bugs.webkit.org/show_bug.cgi?id=131151
+
+        Reviewed by Gyuyoung Kim.
+
+        * DumpRenderTree/efl/EventSender.cpp: Replace Ewk_Touch_Point_Type to Evas_Touch_Point_State.
+        (TouchEventInfo::TouchEventInfo):
+        (sendTouchEvent):
+        (addTouchPointCallback):
+        (updateTouchPointCallback):
+        (cancelTouchPointCallback):
+        (releaseTouchPointCallback):
+
 2014-04-02  David Kilzer  <ddkilzer@apple.com>
 
         filter-build-webkit: Ignore xcodebuild warnings when compiling with newer builds of clang

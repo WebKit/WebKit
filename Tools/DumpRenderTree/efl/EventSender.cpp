@@ -153,15 +153,15 @@ struct DelayedEvent {
 };
 
 struct TouchEventInfo {
-    TouchEventInfo(unsigned id, Ewk_Touch_Point_Type state, const WebCore::IntPoint& point)
+    TouchEventInfo(int id, Evas_Touch_Point_State state, const WebCore::IntPoint& point)
         : state(state)
         , point(point)
         , id(id)
     {
     }
 
-    unsigned id;
-    Ewk_Touch_Point_Type state;
+    int id;
+    Evas_Touch_Point_State state;
     WebCore::IntPoint point;
 };
 
@@ -764,10 +764,10 @@ static void sendTouchEvent(Ewk_Touch_Event_Type type)
     }
 
     for (unsigned i = 0; i < touchPointList().size(); ) {
-        if (touchPointList().at(i).state == EWK_TOUCH_POINT_RELEASED)
+        if (touchPointList().at(i).state == EVAS_TOUCH_POINT_UP)
             touchPointList().remove(i);
         else {
-            touchPointList().at(i).state = EWK_TOUCH_POINT_STATIONARY;
+            touchPointList().at(i).state = EVAS_TOUCH_POINT_STILL;
             ++i;
         }
     }
@@ -785,7 +785,7 @@ static JSValueRef addTouchPointCallback(JSContextRef context, JSObjectRef functi
 
     const WebCore::IntPoint point(x, y);
     const unsigned id = touchPointList().isEmpty() ? 0 : touchPointList().last().id + 1;
-    TouchEventInfo eventInfo(id, EWK_TOUCH_POINT_PRESSED, point);
+    TouchEventInfo eventInfo(id, EVAS_TOUCH_POINT_DOWN, point);
     touchPointList().append(eventInfo);
 
     return JSValueMakeUndefined(context);
@@ -815,7 +815,7 @@ static JSValueRef updateTouchPointCallback(JSContextRef context, JSObjectRef fun
     WebCore::IntPoint& point = touchPointList().at(index).point;
     point.setX(x);
     point.setY(y);
-    touchPointList().at(index).state = EWK_TOUCH_POINT_MOVED;
+    touchPointList().at(index).state = EVAS_TOUCH_POINT_MOVE;
 
     return JSValueMakeUndefined(context);
 }
@@ -836,7 +836,7 @@ static JSValueRef cancelTouchPointCallback(JSContextRef context, JSObjectRef fun
     if (index < 0 || index >= touchPointList().size())
         return JSValueMakeUndefined(context);
 
-    touchPointList().at(index).state = EWK_TOUCH_POINT_CANCELLED;
+    touchPointList().at(index).state = EVAS_TOUCH_POINT_CANCEL;
     return JSValueMakeUndefined(context);
 }
 
@@ -856,7 +856,7 @@ static JSValueRef releaseTouchPointCallback(JSContextRef context, JSObjectRef fu
     if (index < 0 || index >= touchPointList().size())
         return JSValueMakeUndefined(context);
 
-    touchPointList().at(index).state = EWK_TOUCH_POINT_RELEASED;
+    touchPointList().at(index).state = EVAS_TOUCH_POINT_UP;
     return JSValueMakeUndefined(context);
 }
 
