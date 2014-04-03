@@ -1,3 +1,17 @@
+2014-04-03  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [webkitpy] perf profiler does not understand --call-graph argument
+        https://bugs.webkit.org/show_bug.cgi?id=131132
+
+        Reviewed by Ryosuke Niwa.
+
+        New versions of perf profiler have changed the argument from --call-graph to -g.
+
+        * Scripts/webkitpy/common/system/profiler.py:
+        (Perf.wrapper_arguments): Use -g instead of --call-graph.
+        * Scripts/webkitpy/port/driver_unittest.py:
+        (DriverTest.test_profiler_as_wrapper): Update test accordingly.
+
 2014-04-03  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
 
         Add EFL WK2 performance bot to build.webkit.org

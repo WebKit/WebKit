@@ -148,7 +148,7 @@ class Perf(SingleFileOutputProfiler):
         self._wait_process = self._host.executive.popen(["wait", "%d" % pid], shell=True)
 
     def wrapper_arguments(self):
-        return [self._perf_path(), "record", "--call-graph", "--output", self._output_path]
+        return [self._perf_path(), "record", "-g", "--output", self._output_path]
 
     def _first_ten_lines_of_profile(self, perf_output):
         output_lines = re.finditer(r"^(?:( [^\n]*?)\s*\n)", perf_output, re.MULTILINE)
