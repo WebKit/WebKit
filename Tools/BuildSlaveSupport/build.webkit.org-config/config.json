@@ -204,7 +204,7 @@
                       "slavenames": ["efl-linux-szeged-slave-2"]
                     },
                     {
-                      "name": "EFL Linux 64-bit Release WK2 (perf)", "type": "BuildAndPerfTestWebKit2", "builddir": "efl-linux-64-release-wk2-perf",
+                      "name": "EFL Linux 64-bit Release WK2 (Perf)", "type": "BuildAndPerfTestWebKit2", "builddir": "efl-linux-64-release-wk2-perf",
                       "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
                       "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
                       "slavenames": ["efl-linux-szeged-slave-3"]

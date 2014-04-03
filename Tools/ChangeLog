@@ -3,6 +3,17 @@
         Add EFL WK2 performance bot to build.webkit.org
         https://bugs.webkit.org/show_bug.cgi?id=131034
 
+        Fix after r166707, use "Perf" instead of "perf" for consistency.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
+2014-04-03  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
+
+        Add EFL WK2 performance bot to build.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=131034
+
         Reviewed by Csaba Osztrogonác.
 
         * BuildSlaveSupport/build.webkit.org-config/config.json:
