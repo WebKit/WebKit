@@ -1,3 +1,12 @@
+2014-04-03  Sam Weinig  <sam@webkit.org>
+
+        [WebKit2] Promote user script SPI to API
+        https://bugs.webkit.org/show_bug.cgi?id=131181
+
+        Reviewed by Anders Carlsson.
+
+        * MigrateHeaders.make:
+
 2014-04-02  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS] Remove the legacy string drawing code

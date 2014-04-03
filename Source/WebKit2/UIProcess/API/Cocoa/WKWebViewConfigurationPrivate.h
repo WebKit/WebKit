@@ -29,14 +29,11 @@
 
 @class WKWebView;
 @class _WKVisitedLinkProvider;
-@class _WKUserContentController;
 
 @interface WKWebViewConfiguration (WKPrivate)
 
 @property (nonatomic, weak, setter=_setRelatedWebView:) WKWebView *_relatedWebView;
 @property (nonatomic, copy, setter=_setGroupIdentifier:) NSString *_groupIdentifier;
-
-@property (nonatomic, strong, setter=_setUserContentController:) _WKUserContentController *_userContentController;
 
 @property (nonatomic, strong, setter=_setVisitedLinkProvider:) _WKVisitedLinkProvider *_visitedLinkProvider;
 

@@ -23,24 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit2/WKFoundation.h>
+#include "config.h"
+#include "WKUserContentController.h"
 
 #if WK_API_ENABLED
 
-@class WKWebView;
-@class _WKScriptWorld;
+@implementation WKUserContentController
 
-WK_API_CLASS
-@interface _WKScriptMessage : NSObject
+- (void)addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name world:(WKScriptWorld *)world
+{
+    // FIXME: Implement.
+}
 
-@property (nonatomic, readonly) id body;
-
-@property (nonatomic, readonly, weak) WKWebView *webView;
-@property (nonatomic, readonly) NSString *name;
-@property (nonatomic, readonly) _WKScriptWorld *scriptWorld;
-
-// FIXME: Consider adding the navigation as well.
+- (void)removeScriptMessageHandlerForName:(NSString *)name world:(WKScriptWorld *)world
+{
+    // FIXME: Implement.
+}
 
 @end
 

@@ -23,21 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "_WKUserContentController.h"
+#import "config.h"
+#import "WKScriptMessage.h"
 
 #if WK_API_ENABLED
 
-@implementation _WKUserContentController
+@implementation WKScriptMessage
 
-- (void)addScriptMessageHandler:(id <_WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name world:(_WKScriptWorld *)world
+- (id)body
 {
     // FIXME: Implement.
+    return nil;
 }
 
-- (void)removeScriptMessageHandlerForName:(NSString *)name world:(_WKScriptWorld *)world
+- (WKWebView *)webView
 {
     // FIXME: Implement.
+    return nil;
+}
+
+- (NSString *)name
+{
+    // FIXME: Implement.
+    return nil;
+}
+
+- (WKScriptWorld *)scriptWorld
+{
+    return nil;
 }
 
 @end

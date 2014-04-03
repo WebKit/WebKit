@@ -1,3 +1,45 @@
+2014-04-03  Sam Weinig  <sam@webkit.org>
+
+        [WebKit2] Promote user script SPI to API
+        https://bugs.webkit.org/show_bug.cgi?id=131181
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKScriptMessage.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKScriptMessage.h.
+        * UIProcess/API/Cocoa/WKScriptMessage.mm: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKScriptMessage.mm.
+        (-[WKScriptMessage scriptWorld]):
+        (-[_WKScriptMessage scriptWorld]): Deleted.
+        * UIProcess/API/Cocoa/WKScriptMessageHandler.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKScriptMessageHandler.h.
+        * UIProcess/API/Cocoa/WKScriptWorld.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKScriptWorld.h.
+        * UIProcess/API/Cocoa/WKScriptWorld.mm: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKScriptWorld.mm.
+        (+[WKScriptWorld defaultWorld]):
+        (+[_WKScriptWorld defaultWorld]): Deleted.
+        * UIProcess/API/Cocoa/WKUserContentController.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKUserContentController.h.
+        * UIProcess/API/Cocoa/WKUserContentController.mm: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKUserContentController.mm.
+        (-[WKUserContentController addScriptMessageHandler:name:world:]):
+        (-[WKUserContentController removeScriptMessageHandlerForName:world:]):
+        (-[_WKUserContentController addScriptMessageHandler:name:world:]): Deleted.
+        (-[_WKUserContentController removeScriptMessageHandlerForName:world:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration userContentController]):
+        (-[WKWebViewConfiguration setUserContentController:]):
+        (-[WKWebViewConfiguration _userContentController]): Deleted.
+        (-[WKWebViewConfiguration _setUserContentController:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKScriptMessage.h: Removed.
+        * UIProcess/API/Cocoa/_WKScriptMessage.mm: Removed.
+        * UIProcess/API/Cocoa/_WKScriptMessageHandler.h: Removed.
+        * UIProcess/API/Cocoa/_WKScriptWorld.h: Removed.
+        * UIProcess/API/Cocoa/_WKScriptWorld.mm: Removed.
+        * UIProcess/API/Cocoa/_WKUserContentController.h: Removed.
+        * UIProcess/API/Cocoa/_WKUserContentController.mm: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-04-03  Anders Carlsson  <andersca@apple.com>
 
         Make download policy decisions SPI for now

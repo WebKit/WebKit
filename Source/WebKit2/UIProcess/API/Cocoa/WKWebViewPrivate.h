@@ -56,7 +56,6 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 
 @protocol WKHistoryDelegatePrivate;
 @protocol _WKFindDelegate;
-@protocol _WKScriptMessageHandler;
 
 @interface WKWebView (WKPrivate)
 

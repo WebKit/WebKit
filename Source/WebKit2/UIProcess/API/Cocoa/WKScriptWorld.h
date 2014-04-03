@@ -23,37 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "_WKScriptMessage.h"
+#import <Foundation/Foundation.h>
+#import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-@implementation _WKScriptMessage
+WK_API_CLASS
+@interface WKScriptWorld : NSObject
 
-- (id)body
-{
-    // FIXME: Implement.
-    return nil;
-}
-
-- (WKWebView *)webView
-{
-    // FIXME: Implement.
-    return nil;
-}
-
-- (NSString *)name
-{
-    // FIXME: Implement.
-    return nil;
-}
-
-- (_WKScriptWorld *)scriptWorld
-{
-    return nil;
-}
++ (instancetype)defaultWorld;
 
 @end
 
 #endif
-

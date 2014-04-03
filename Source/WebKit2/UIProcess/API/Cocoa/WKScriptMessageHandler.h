@@ -29,14 +29,14 @@
 
 #import <Foundation/Foundation.h>
 
-@class _WKScriptMessage;
-@class _WKUserContentController;
+@class WKScriptMessage;
+@class WKUserContentController;
 
-@protocol _WKScriptMessageHandler <NSObject>
+@protocol WKScriptMessageHandler <NSObject>
 
 @required
 
-- (void)_userContentController:(_WKUserContentController *)userContentController didReceiveScriptMessage:(_WKScriptMessage *)message;
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message;
 
 @end
 

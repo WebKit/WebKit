@@ -23,48 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "_WKScriptWorld.h"
+#import <Foundation/Foundation.h>
+#import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-@implementation _WKScriptWorld {
-    uint64_t _worldID;
-}
+@class WKWebView;
+@class WKScriptWorld;
 
-static uint64_t generateWorldID()
-{
-    std::atomic<uint64_t> worldID;
+WK_API_CLASS
+@interface WKScriptMessage : NSObject
 
-    return ++worldID;
-}
+@property (nonatomic, readonly) id body;
 
-+ (instancetype)defaultWorld
-{
-    static dispatch_once_t onceToken;
-    static _WKScriptWorld *defaultWorld;
+@property (nonatomic, readonly, weak) WKWebView *webView;
+@property (nonatomic, readonly) NSString *name;
+@property (nonatomic, readonly) WKScriptWorld *scriptWorld;
 
-    dispatch_once(&onceToken, ^{
-        defaultWorld = [[_WKScriptWorld alloc] _initWithWorldID:0];
-    });
-
-    return defaultWorld;
-}
-
-- (instancetype)init
-{
-    return [self _initWithWorldID:generateWorldID()];
-}
-
-- (instancetype)_initWithWorldID:(uint64_t)worldID
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _worldID = worldID;
-    return self;
-}
+// FIXME: Consider adding the navigation as well.
 
 @end
 
 #endif
+

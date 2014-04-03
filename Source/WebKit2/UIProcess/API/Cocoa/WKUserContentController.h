@@ -28,11 +28,17 @@
 
 #if WK_API_ENABLED
 
-WK_API_CLASS
-@interface _WKScriptWorld : NSObject
+@class WKScriptWorld;
+@protocol WKScriptMessageHandler;
 
-+ (instancetype)defaultWorld;
+WK_API_CLASS
+@interface WKUserContentController : NSObject
+
+- (void)addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name world:(WKScriptWorld *)world;
+- (void)removeScriptMessageHandlerForName:(NSString *)name world:(WKScriptWorld *)world;
 
 @end
 
 #endif
+
+

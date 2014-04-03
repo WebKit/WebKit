@@ -23,22 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit2/WKFoundation.h>
+#import "config.h"
+#import "WKScriptWorld.h"
 
 #if WK_API_ENABLED
 
-@class _WKScriptWorld;
-@protocol _WKScriptMessageHandler;
+@implementation WKScriptWorld {
+    uint64_t _worldID;
+}
 
-WK_API_CLASS
-@interface _WKUserContentController : NSObject
+static uint64_t generateWorldID()
+{
+    std::atomic<uint64_t> worldID;
 
-- (void)addScriptMessageHandler:(id <_WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name world:(_WKScriptWorld *)world;
-- (void)removeScriptMessageHandlerForName:(NSString *)name world:(_WKScriptWorld *)world;
+    return ++worldID;
+}
+
++ (instancetype)defaultWorld
+{
+    static dispatch_once_t onceToken;
+    static WKScriptWorld *defaultWorld;
+
+    dispatch_once(&onceToken, ^{
+        defaultWorld = [[WKScriptWorld alloc] _initWithWorldID:0];
+    });
+
+    return defaultWorld;
+}
+
+- (instancetype)init
+{
+    return [self _initWithWorldID:generateWorldID()];
+}
+
+- (instancetype)_initWithWorldID:(uint64_t)worldID
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _worldID = worldID;
+    return self;
+}
 
 @end
 
 #endif
-
-
