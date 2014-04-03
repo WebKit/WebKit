@@ -1,3 +1,9 @@
+2014-04-03  Santosh Mahto  <santoshbit2007@gmail.com>
+
+        Unreviewed. Add myself as a committer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-04-03  Andrzej Badowski  <a.badowski@samsung.com>
 
         [EFL][WK2] Replacing zoom functionality of MiniBrowser from scale_set to page_zoom_set.
