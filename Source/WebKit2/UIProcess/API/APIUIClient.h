@@ -34,6 +34,11 @@
 #include <functional>
 #include <wtf/PassRefPtr.h>
 
+#if PLATFORM(IOS)
+OBJC_CLASS NSArray;
+OBJC_CLASS _WKActivatedElementInfo;
+#endif
+
 namespace WebCore {
 class ResourceRequest;
 struct WindowFeatures;
@@ -136,6 +141,10 @@ public:
     }
 
     virtual bool shouldInterruptJavaScript(WebKit::WebPageProxy*) { return false; }
+
+#if PLATFORM(IOS)
+    virtual RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) { return std::move(defaultActions); }
+#endif
 };
 
 } // namespace API

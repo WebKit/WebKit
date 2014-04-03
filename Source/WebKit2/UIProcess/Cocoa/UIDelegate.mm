@@ -64,21 +64,6 @@ void UIClient::setDelegate(id <WKUIDelegate> delegate)
 #endif
 }
 
-NSArray *UIClient::actionsForElement(_WKActivatedElementInfo *elementInfo, NSArray *defaultActions)
-{
-#if PLATFORM(IOS)
-    if (!m_delegateMethods.webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler)
-        return defaultActions;
-
-    auto delegate = m_delegate.get();
-    if (!delegate)
-        return defaultActions;
-
-    return [(id <WKUIDelegatePrivate>)delegate _webView:m_webView actionsForElement:elementInfo defaultActions:defaultActions];
-#endif
-    return defaultActions;
-}
-
 PassRefPtr<WebKit::WebPageProxy> UIClient::createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy* initiatingFrame, const WebCore::ResourceRequest& request, const WebCore::WindowFeatures& windowFeatures, WebKit::WebEvent::Modifiers, WebKit::WebMouseEvent::Button)
 {
     if (!m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeatures)
@@ -162,6 +147,20 @@ void UIClient::runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF::String& mes
         completionHandler(result);
     }];
 }
+
+#if PLATFORM(IOS)
+RetainPtr<NSArray> UIClient::actionsForElement(_WKActivatedElementInfo *elementInfo, RetainPtr<NSArray> defaultActions)
+{
+    if (!m_delegateMethods.webViewActionsForElementDefaultActions)
+        return std::move(defaultActions);
+
+    auto delegate = m_delegate.get();
+    if (!delegate)
+        return defaultActions;
+
+    return [(id <WKUIDelegatePrivate>)delegate _webView:m_webView actionsForElement:elementInfo defaultActions:defaultActions.get()];
+}
+#endif
 
 } // namespace WebKit
 

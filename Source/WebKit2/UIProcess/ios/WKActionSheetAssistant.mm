@@ -227,7 +227,7 @@ using namespace WebKit;
     const auto& positionInformation = _view.positionInformation;
 
     NSURL *targetURL = [NSURL URLWithString:positionInformation.url];
-    NSMutableArray *defaultActions = [NSMutableArray array];
+    auto defaultActions = adoptNS([[NSMutableArray alloc] init]);
     if (!positionInformation.url.isEmpty())
         [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeOpen]];
     if ([getSSReadingListClass() supportsURL:targetURL])
@@ -237,10 +237,10 @@ using namespace WebKit;
     if (!targetURL.scheme.length || [targetURL.scheme caseInsensitiveCompare:@"javascript"] != NSOrderedSame)
         [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeCopy]];
 
-    RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage
+    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage
         URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds]);
 
-    RetainPtr<NSArray> actions = static_cast<UIClient&>(_view.page->uiClient()).actionsForElement(elementInfo.get(), [[defaultActions copy] autorelease]);
+    RetainPtr<NSArray> actions = _view.page->uiClient().actionsForElement(elementInfo.get(), std::move(defaultActions));
 
     if (![actions count])
         return;
@@ -266,7 +266,7 @@ using namespace WebKit;
     if (!targetURL)
         return;
 
-    NSMutableArray *defaultActions = [NSMutableArray array];
+    auto defaultActions = adoptNS([[NSMutableArray alloc] init]);
     [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeOpen]];
     if ([getSSReadingListClass() supportsURL:targetURL])
         [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeAddToReadingList]];
@@ -276,7 +276,7 @@ using namespace WebKit;
     RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink
         URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds]);
 
-    RetainPtr<NSArray> actions = static_cast<UIClient&>(_view.page->uiClient()).actionsForElement(elementInfo.get(), [[defaultActions copy] autorelease]);
+    RetainPtr<NSArray> actions = _view.page->uiClient().actionsForElement(elementInfo.get(), std::move(defaultActions));
 
     if (![actions count])
         return;

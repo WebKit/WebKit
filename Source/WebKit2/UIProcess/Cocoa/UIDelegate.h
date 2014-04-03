@@ -48,14 +48,15 @@ public:
     RetainPtr<id <WKUIDelegate> > delegate();
     void setDelegate(id <WKUIDelegate>);
 
-    NSArray *actionsForElement(_WKActivatedElementInfo *, NSArray *defaultActions);
-
 private:
     // API::UIClient
     virtual PassRefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, WebKit::WebEvent::Modifiers, WebKit::WebMouseEvent::Button) override;
     virtual void runJavaScriptAlert(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, std::function<void ()> completionHandler) override;
     virtual void runJavaScriptConfirm(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, std::function<void (bool)> completionHandler) override;
     virtual void runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy*, std::function<void (const WTF::String&)> completionHandler) override;
+#if PLATFORM(IOS)
+    virtual RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) override;
+#endif
 
     WKWebView *m_webView;
     WeakObjCPtr<id <WKUIDelegate> > m_delegate;
