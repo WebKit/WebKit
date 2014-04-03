@@ -1558,7 +1558,7 @@ void PDFPlugin::clickedLink(NSURL *url)
     if (m_lastMouseEvent.type() != WebEvent::NoType)
         coreEvent = MouseEvent::create(eventNames().clickEvent, frame->document()->defaultView(), platform(m_lastMouseEvent), 0, 0);
 
-    frame->loader().urlSelected(url, emptyString(), coreEvent.get(), false, false, MaybeSendReferrer);
+    frame->loader().urlSelected(url, emptyString(), coreEvent.get(), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer);
 }
 
 void PDFPlugin::setActiveAnnotation(PDFAnnotation *annotation)

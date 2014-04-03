@@ -24,6 +24,7 @@
 #ifndef HTMLFrameElementBase_h
 #define HTMLFrameElementBase_h
 
+#include "FrameLoaderTypes.h"
 #include "HTMLFrameOwnerElement.h"
 #include "ScrollTypes.h"
 
@@ -64,7 +65,7 @@ private:
     virtual bool isFrameElementBase() const override { return true; }
 
     void setNameAndOpenURL();
-    void openURL(bool lockHistory = true, bool lockBackForwardList = true);
+    void openURL(LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes);
 
     AtomicString m_URL;
     AtomicString m_frameName;

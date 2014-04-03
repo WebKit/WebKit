@@ -31,6 +31,7 @@
 #ifndef NavigationScheduler_h
 #define NavigationScheduler_h
 
+#include "FrameLoaderTypes.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -73,7 +74,8 @@ public:
     bool locationChangePending();
 
     void scheduleRedirect(double delay, const String& url);
-    void scheduleLocationChange(SecurityOrigin*, const String& url, const String& referrer, bool lockHistory = true, bool lockBackForwardList = true);
+    void scheduleLocationChange(SecurityOrigin*, const String& url, const String& referrer, LockHistory = LockHistory::Yes,
+        LockBackForwardList = LockBackForwardList::Yes);
     void scheduleFormSubmission(PassRefPtr<FormSubmission>);
     void scheduleRefresh();
     void scheduleHistoryNavigation(int steps);
@@ -90,7 +92,7 @@ private:
     void timerFired(Timer<NavigationScheduler>&);
     void schedule(std::unique_ptr<ScheduledNavigation>);
 
-    static bool mustLockBackForwardList(Frame& targetFrame);
+    static LockBackForwardList mustLockBackForwardList(Frame& targetFrame);
 
     Frame& m_frame;
     Timer<NavigationScheduler> m_timer;

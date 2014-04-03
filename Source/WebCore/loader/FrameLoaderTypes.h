@@ -112,6 +112,15 @@ namespace WebCore {
         WebGLPendingCreation
     };
 
+    enum class LockHistory {
+        Yes,
+        No
+    };
+
+    enum class LockBackForwardList {
+        Yes,
+        No
+    };
 }
 
 #endif

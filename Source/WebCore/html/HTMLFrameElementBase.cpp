@@ -73,7 +73,7 @@ bool HTMLFrameElementBase::isURLAllowed() const
     return true;
 }
 
-void HTMLFrameElementBase::openURL(bool lockHistory, bool lockBackForwardList)
+void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList lockBackForwardList)
 {
     if (!isURLAllowed())
         return;
@@ -181,7 +181,7 @@ void HTMLFrameElementBase::setLocation(const String& str)
     m_URL = AtomicString(str);
 
     if (inDocument())
-        openURL(false, false);
+        openURL(LockHistory::No, LockBackForwardList::No);
 }
 
 bool HTMLFrameElementBase::supportsFocus() const

@@ -59,7 +59,7 @@ public:
 
     void clear();
 
-    bool requestFrame(HTMLFrameOwnerElement&, const String& url, const AtomicString& frameName, bool lockHistory = true, bool lockBackForwardList = true);
+    bool requestFrame(HTMLFrameOwnerElement&, const String& url, const AtomicString& frameName, LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes);
     bool requestObject(HTMLPlugInImageElement&, const String& url, const AtomicString& frameName,
         const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
@@ -77,7 +77,7 @@ public:
 
 private:
     bool requestPlugin(HTMLPlugInImageElement&, const URL&, const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
-    Frame* loadOrRedirectSubframe(HTMLFrameOwnerElement&, const URL&, const AtomicString& frameName, bool lockHistory, bool lockBackForwardList);
+    Frame* loadOrRedirectSubframe(HTMLFrameOwnerElement&, const URL&, const AtomicString& frameName, LockHistory, LockBackForwardList);
     Frame* loadSubframe(HTMLFrameOwnerElement&, const URL&, const String& name, const String& referrer);
     bool loadPlugin(HTMLPlugInImageElement&, const URL&, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
 

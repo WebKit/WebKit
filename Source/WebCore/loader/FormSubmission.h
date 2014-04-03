@@ -32,6 +32,7 @@
 #define FormSubmission_h
 
 #include "FormState.h"
+#include "FrameLoaderTypes.h"
 #include "URL.h"
 
 namespace WebCore {
@@ -88,7 +89,7 @@ public:
         String m_acceptCharset;
     };
 
-    static PassRefPtr<FormSubmission> create(HTMLFormElement*, const Attributes&, PassRefPtr<Event> event, bool lockHistory, FormSubmissionTrigger);
+    static PassRefPtr<FormSubmission> create(HTMLFormElement*, const Attributes&, PassRefPtr<Event> event, LockHistory, FormSubmissionTrigger);
 
     void populateFrameLoadRequest(FrameLoadRequest&);
     
@@ -102,7 +103,7 @@ public:
     FormState* state() const { return m_formState.get(); }
     FormData* data() const { return m_formData.get(); }
     const String boundary() const { return m_boundary; }
-    bool lockHistory() const { return m_lockHistory; }
+    LockHistory lockHistory() const { return m_lockHistory; }
     Event* event() const { return m_event.get(); }
 
     const String& referrer() const { return m_referrer; }
@@ -111,7 +112,7 @@ public:
     void setOrigin(const String& origin) { m_origin = origin; }
 
 private:
-    FormSubmission(Method, const URL& action, const String& target, const String& contentType, PassRefPtr<FormState>, PassRefPtr<FormData>, const String& boundary, bool lockHistory, PassRefPtr<Event>);
+    FormSubmission(Method, const URL& action, const String& target, const String& contentType, PassRefPtr<FormState>, PassRefPtr<FormData>, const String& boundary, LockHistory, PassRefPtr<Event>);
 
     // FIXME: Hold an instance of Attributes instead of individual members.
     Method m_method;
@@ -121,7 +122,7 @@ private:
     RefPtr<FormState> m_formState;
     RefPtr<FormData> m_formData;
     String m_boundary;
-    bool m_lockHistory;
+    LockHistory m_lockHistory;
     RefPtr<Event> m_event;
     String m_referrer;
     String m_origin;
