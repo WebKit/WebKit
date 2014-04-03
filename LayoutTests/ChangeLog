@@ -1,3 +1,16 @@
+2014-04-03  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Make sure grid element's shrink-to-fit behavior is correct
+        https://bugs.webkit.org/show_bug.cgi?id=103473
+
+        Reviewed by Sergio Villar Senin.
+
+        Added a new Layout Test to verify the shrink-to-fit behavior works as expected
+        for out-of-flow positioned grid elements.
+
+        * fast/css-grid-layout/grid-element-shrink-to-fit-expected.html: Added.
+        * fast/css-grid-layout/grid-element-shrink-to-fit.html: Added.
+
 2014-03-27  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] <string> not allowed in grid-{area | row | column} syntax
