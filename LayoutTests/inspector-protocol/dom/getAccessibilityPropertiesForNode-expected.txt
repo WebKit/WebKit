@@ -4,7 +4,7 @@ Checking Web Inspector protocol for the Accessibility Node Inspector.
     exists: true
     label: 
     role: 
-    childNodeIds.length: 25
+    childNodeIds.length: 42
 
 
 Total elements to be tested: 63.
@@ -479,7 +479,6 @@ Total elements to be tested: 63.
     parentNodeId: exists
 
 <div role="group">
-    <!-- FIXME: childNodeIds.length should be 3 (foo, bar, baz). WebCore only reports 1 (foo). http://webkit.org/b/130563 -->
     <div>foo</div>
     <span>
         bar
@@ -491,7 +490,7 @@ Total elements to be tested: 63.
     exists: true
     label: 
     role: group
-    childNodeIds.length: 1
+    childNodeIds.length: 3
     parentNodeId: exists
 
 <div><div></div></div>

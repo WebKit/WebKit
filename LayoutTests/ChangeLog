@@ -1,3 +1,12 @@
+2014-04-02  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: AccessibilityObject::children() returns invalid results sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=130563
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt:
+
 2014-04-02  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r166144): fast/preloader/document-write.html is very flaky

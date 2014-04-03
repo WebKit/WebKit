@@ -54,7 +54,8 @@ class InjectedScriptManager;
 }
 
 namespace WebCore {
-
+    
+class AccessibilityObject;
 class ContainerNode;
 class CharacterData;
 class DOMEditor;
@@ -233,7 +234,8 @@ private:
     PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
     PassRefPtr<Inspector::TypeBuilder::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, const AtomicString& eventType, Node*, const String* objectGroupId);
     PassRefPtr<Inspector::TypeBuilder::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node*);
-
+    void processAccessibilityChildren(PassRefPtr<AccessibilityObject>, RefPtr<Inspector::TypeBuilder::Array<int>>&);
+    
     Node* nodeForPath(const String& path);
     Node* nodeForObjectId(const String& objectId);
 

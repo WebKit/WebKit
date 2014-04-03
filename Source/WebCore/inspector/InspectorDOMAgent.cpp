@@ -1415,7 +1415,24 @@ PassRefPtr<Inspector::TypeBuilder::DOM::EventListener> InspectorDOMAgent::buildO
     }
     return value.release();
 }
-
+    
+void InspectorDOMAgent::processAccessibilityChildren(PassRefPtr<AccessibilityObject> axObject, RefPtr<Inspector::TypeBuilder::Array<int>>& childNodeIds)
+{
+    const auto& children = axObject->children();
+    if (!children.size())
+        return;
+    
+    if (!childNodeIds)
+        childNodeIds = Inspector::TypeBuilder::Array<int>::create();
+    
+    for (const auto& childObject : children) {
+        if (Node* childNode = childObject->node())
+            childNodeIds->addItem(pushNodePathToFrontend(childNode));
+        else
+            processAccessibilityChildren(childObject, childNodeIds);
+    }
+}
+    
 PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAccessibilityProperties(Node* node)
 {
     ASSERT(node);
@@ -1477,15 +1494,8 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
                     checked = TypeBuilder::DOM::AccessibilityProperties::Checked::True;
             }
             
-            const auto& children = axObject->children();
-            if (children.size()) {
-                childNodeIds = Inspector::TypeBuilder::Array<int>::create();
-                for (const auto& childObject : children) {
-                    if (Node* childNode = childObject->node())
-                        childNodeIds->addItem(pushNodePathToFrontend(childNode));
-                }
-            }
-
+            processAccessibilityChildren(axObject, childNodeIds);
+            
             if (axObject->supportsARIAControls()) {
                 Vector<Element*> controlledElements;
                 axObject->elementsFromAttribute(controlledElements, aria_controlsAttr);
