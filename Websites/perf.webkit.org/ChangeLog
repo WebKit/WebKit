@@ -1,5 +1,24 @@
 2014-04-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        WebKitPerfMonitor: Tooltips can be cut off at the top
+        https://bugs.webkit.org/show_bug.cgi?id=130960
+
+        Reviewed by Andreas Kling.
+
+        * public/common.css:
+        (#title): Removed the gradients, box shadows, and border from the header.
+        (#title h1): Reduce the font size.
+        (#title ul): Use line-height to vertically align the navigation bar instead of specifying a padding atop.
+        * public/index.html:
+        (.tooltop:before): Added. Identical to .tooltop:after except it's upside down (arrow facing up).
+        (.tooltip.inverted:before): Show the arrow facing up when .inverted is set.
+        (.tooltip.inverted:before): Hide the arrow facing down when .inverted is set.
+        * public/js/helper-classes.js:
+        (Tooltip.show): Show the tooltip below the point if placing it above the point results in the top of the
+        tooltip extending above y=0.
+
+2014-04-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         WebKitPerfMonitor: Y-axis adjustment is too aggressive
         https://bugs.webkit.org/show_bug.cgi?id=130937
 

@@ -251,6 +251,28 @@ td, th {
     white-space: nowrap;
 }
 
+.tooltip:before {
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: 50%;
+    margin-left: -9px;
+    top: -19px;
+    content: "";
+    display: none;
+    border-style: solid;
+    border-width: 10px;
+    border-color: transparent transparent #333 transparent;
+}
+
+.tooltip.inverted:before {
+    display: block;
+}
+
+.tooltip.inverted:after {
+    display: none;
+}
+
 .tooltip:after {
     position: absolute;
     width: 0;

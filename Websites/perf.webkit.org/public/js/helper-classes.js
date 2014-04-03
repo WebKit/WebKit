@@ -377,7 +377,13 @@ function Tooltip(containerParent, className) {
         container.innerHTML = content;
         $(container).show();
         // FIXME: Style specific computation like this one shouldn't be in Tooltip class.
-        $(container).offset({left: x - $(container).outerWidth() / 2, top: y - $(container).outerHeight() - 15});
+        var top = y - $(container).outerHeight() - 15;
+        if (top < 0) {
+            $(container).addClass('inverted');
+            top = y + 15;
+        } else
+            $(container).removeClass('inverted');
+        $(container).offset({left: x - $(container).outerWidth() / 2, top: top});
     }
 
     this.hide = function () {
