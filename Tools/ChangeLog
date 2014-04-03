@@ -1,5 +1,11 @@
 2014-04-03  Santosh Mahto  <santoshbit2007@gmail.com>
 
+        Unreviewed. Moving my name to commiter section
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2014-04-03  Santosh Mahto  <santoshbit2007@gmail.com>
+
         Unreviewed. Add myself as a committer.
 
         * Scripts/webkitpy/common/config/contributors.json:

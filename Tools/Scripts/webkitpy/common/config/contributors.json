@@ -2278,6 +2278,15 @@
             "samuel_white"
          ]
       },
+      "Santosh Mahto" : {
+         "emails" : [
+            "santoshbit2007@gmail.com"
+         ],
+         "expertise" : "Editing, Event Handling, Theme",
+         "nicks" : [
+            "santoshbit2007"
+         ]
+      },
       "Satish Sampath" : {
          "emails" : [
             "satish@chromium.org"
@@ -4330,15 +4339,6 @@
          "expertise" : "HTML DOM, Core DOM, DOM Bindings (JavaScript, Objective-C and COM), Security, DumpRenderTree",
          "nicks" : [
             "weinig"
-         ]
-      },
-      "Santosh Mahto" : {
-         "emails" : [
-            "santoshbit2007@gmail.com"
-         ],
-         "expertise" : "Editing, Event Handling, Theme",
-         "nicks" : [
-            "santoshbit2007"
          ]
       },
       "Sergio Villar Senin" : {
