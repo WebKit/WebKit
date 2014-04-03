@@ -1,3 +1,45 @@
+2014-04-03  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Merge ShapeInfo & ShapeOutsideInfo now that ShapeInsideInfo is no more
+        https://bugs.webkit.org/show_bug.cgi?id=131180
+
+        Reviewed by Andreas Kling.
+
+        Now that ShapeInsideInfo is gone, having a class hiearachy and
+        templates doesn't make any sense. As a first step to cleaning up the
+        code, this remove ShapeInfo and puts all of its functionality into
+        ShapeOutsideInfo.
+
+        No new tests, no behavior change.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/shapes/ShapeInfo.cpp: Removed.
+        * rendering/shapes/ShapeInfo.h: Removed.
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::computedShapePhysicalBoundingBox):
+        (WebCore::ShapeOutsideInfo::shapeToRendererPoint):
+        (WebCore::ShapeOutsideInfo::shapeToRendererSize):
+        (WebCore::referenceBox):
+        (WebCore::ShapeOutsideInfo::setReferenceBoxLogicalSize):
+        (WebCore::checkShapeImageOrigin):
+        (WebCore::getShapeImageAndRect):
+        (WebCore::getShapeImageMarginRect):
+        (WebCore::ShapeOutsideInfo::computedShape):
+        (WebCore::borderBeforeInWritingMode):
+        (WebCore::borderAndPaddingBeforeInWritingMode):
+        (WebCore::ShapeOutsideInfo::logicalTopOffset):
+        (WebCore::borderStartWithStyleForWritingMode):
+        (WebCore::borderAndPaddingStartWithStyleForWritingMode):
+        (WebCore::ShapeOutsideInfo::logicalLeftOffset):
+        (WebCore::ShapeOutsideInfo::computeSegmentsForLine):
+        (WebCore::ShapeOutsideInfo::updateDeltasForContainingBlockLine):
+        (WebCore::ShapeOutsideInfo::shapeValue): Deleted.
+        (WebCore::ShapeOutsideInfo::styleForWritingMode): Deleted.
+        * rendering/shapes/ShapeOutsideInfo.h:
+
 2014-04-03  Andreas Kling  <akling@apple.com>
 
         Fix over-retain in SharedBufferCF's createCFData().

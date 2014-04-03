@@ -32,8 +32,13 @@
 
 #if ENABLE(CSS_SHAPES)
 
+#include "FloatRect.h"
 #include "LayoutSize.h"
-#include "ShapeInfo.h"
+#include "LayoutUnit.h"
+#include "RenderStyle.h"
+#include "Shape.h"
+#include "ShapeValue.h"
+#include <memory>
 
 namespace WebCore {
 
@@ -41,10 +46,11 @@ class RenderBlockFlow;
 class RenderBox;
 class FloatingObject;
 
-class ShapeOutsideInfo final : public ShapeInfo<RenderBox>, public MappedInfo<RenderBox, ShapeOutsideInfo> {
+class ShapeOutsideInfo final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ShapeOutsideInfo(const RenderBox& renderer)
-        : ShapeInfo<RenderBox>(renderer)
+        : m_renderer(renderer)
         , m_lineOverlapsShape(false)
     {
     }
@@ -57,31 +63,58 @@ public:
 
     void updateDeltasForContainingBlockLine(const RenderBlockFlow&, const FloatingObject&, LayoutUnit lineTop, LayoutUnit lineHeight);
 
-    virtual bool lineOverlapsShapeBounds() const override
-    {
-        return computedShape().lineOverlapsShapeMarginBounds(m_referenceBoxLineTop, m_lineHeight);
-    }
+    void setReferenceBoxLogicalSize(LayoutSize);
 
-protected:
-    virtual CSSBoxType referenceBox() const override
+    LayoutUnit shapeLogicalTop() const { return computedShape().shapeMarginLogicalBoundingBox().y() + logicalTopOffset(); }
+    LayoutUnit shapeLogicalBottom() const { return computedShape().shapeMarginLogicalBoundingBox().maxY() + logicalTopOffset(); }
+    LayoutUnit shapeLogicalLeft() const { return computedShape().shapeMarginLogicalBoundingBox().x() + logicalLeftOffset(); }
+    LayoutUnit shapeLogicalRight() const { return computedShape().shapeMarginLogicalBoundingBox().maxX() + logicalLeftOffset(); }
+    LayoutUnit shapeLogicalWidth() const { return computedShape().shapeMarginLogicalBoundingBox().width(); }
+    LayoutUnit shapeLogicalHeight() const { return computedShape().shapeMarginLogicalBoundingBox().height(); }
+
+    LayoutUnit logicalLineTop() const { return m_referenceBoxLineTop + logicalTopOffset(); }
+    LayoutUnit logicalLineBottom() const { return m_referenceBoxLineTop + m_lineHeight + logicalTopOffset(); }
+    LayoutUnit logicalLineBottom(LayoutUnit lineHeight) const { return m_referenceBoxLineTop + lineHeight + logicalTopOffset(); }
+
+    void markShapeAsDirty() { m_shape = nullptr; }
+    bool isShapeDirty() { return !m_shape; }
+
+    LayoutRect computedShapePhysicalBoundingBox() const;
+    FloatPoint shapeToRendererPoint(FloatPoint) const;
+    FloatSize shapeToRendererSize(FloatSize) const;
+
+    const Shape& computedShape() const;
+
+    static ShapeOutsideInfo& ensureInfo(const RenderBox& key)
     {
-        if (shapeValue()->cssBox() == BoxMissing) {
-            if (shapeValue()->type() == ShapeValue::Image)
-                return ContentBox;
-            return MarginBox;
-        }
-        return shapeValue()->cssBox();
+        InfoMap& infoMap = ShapeOutsideInfo::infoMap();
+        if (ShapeOutsideInfo* info = infoMap.get(&key))
+            return *info;
+        auto result = infoMap.add(&key, std::make_unique<ShapeOutsideInfo>(key));
+        return *result.iterator->value;
     }
+    static void removeInfo(const RenderBox& key) { infoMap().remove(&key); }
+    static ShapeOutsideInfo* info(const RenderBox& key) { return infoMap().get(&key); }
 
 private:
-    virtual LayoutRect computedShapeLogicalBoundingBox() const override { return computedShape().shapeMarginLogicalBoundingBox(); }
-    virtual ShapeValue* shapeValue() const override;
-    virtual void getIntervals(LayoutUnit lineTop, LayoutUnit lineHeight, SegmentList& segments) const override
+    SegmentList computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight) const;
+
+    LayoutUnit logicalTopOffset() const;
+    LayoutUnit logicalLeftOffset() const;
+
+    typedef HashMap<const RenderBox*, std::unique_ptr<ShapeOutsideInfo>> InfoMap;
+    static InfoMap& infoMap()
     {
-        return computedShape().getExcludedIntervals(lineTop, lineHeight, segments);
+        DEPRECATED_DEFINE_STATIC_LOCAL(InfoMap, staticInfoMap, ());
+        return staticInfoMap;
     }
 
-    virtual const RenderStyle& styleForWritingMode() const override;
+    const RenderBox& m_renderer;
+
+    mutable std::unique_ptr<Shape> m_shape;
+    LayoutSize m_referenceBoxLogicalSize;
+    LayoutUnit m_referenceBoxLineTop;
+    LayoutUnit m_lineHeight;
 
     LayoutUnit m_leftMarginBoxDelta;
     LayoutUnit m_rightMarginBoxDelta;

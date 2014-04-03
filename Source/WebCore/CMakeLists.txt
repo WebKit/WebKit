@@ -2221,7 +2221,6 @@ set(WebCore_SOURCES
     rendering/shapes/RasterShape.cpp
     rendering/shapes/RectangleShape.cpp
     rendering/shapes/Shape.cpp
-    rendering/shapes/ShapeInfo.cpp
     rendering/shapes/ShapeOutsideInfo.cpp
 
     rendering/style/BasicShapes.cpp

@@ -11311,7 +11311,6 @@
     <ClCompile Include="..\rendering\shapes\RasterShape.cpp" />
     <ClCompile Include="..\rendering\shapes\RectangleShape.cpp" />
     <ClCompile Include="..\rendering\shapes\Shape.cpp" />
-    <ClCompile Include="..\rendering\shapes\ShapeInfo.cpp" />
     <ClCompile Include="..\rendering\shapes\ShapeOutsideInfo.cpp" />
     <ClCompile Include="..\rendering\svg\SVGPathData.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -20058,7 +20057,6 @@
     <ClInclude Include="..\rendering\shapes\RasterShape.h" />
     <ClInclude Include="..\rendering\shapes\RectangleShape.h" />
     <ClInclude Include="..\rendering\shapes\Shape.h" />
-    <ClInclude Include="..\rendering\shapes\ShapeInfo.h" />
     <ClInclude Include="..\rendering\shapes\ShapeInterval.h" />
     <ClInclude Include="..\rendering\shapes\ShapeOutsideInfo.h" />
     <ClInclude Include="..\rendering\svg\RenderSVGBlock.h" />

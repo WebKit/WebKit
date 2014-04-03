@@ -6802,9 +6802,6 @@
     <ClCompile Include="..\rendering\shapes\Shape.cpp">
       <Filter>rendering\shapes</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\shapes\ShapeInfo.cpp">
-      <Filter>rendering\shapes</Filter>
-    </ClCompile>
     <ClCompile Include="..\rendering\shapes\ShapeInsideInfo.cpp">
       <Filter>rendering\shapes</Filter>
     </ClCompile>
@@ -14641,9 +14638,6 @@
       <Filter>rendering\shapes</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\shapes\Shape.h">
-      <Filter>rendering\shapes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\shapes\ShapeInfo.h">
       <Filter>rendering\shapes</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\shapes\ShapeInsideInfo.h">
