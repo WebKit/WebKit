@@ -560,8 +560,6 @@ public:
 
     void scheduleOptimizedStyleSheetUpdate();
 
-    void didAccessStyleResolver();
-
     void evaluateMediaQueryList();
 
     FormController& formController();
@@ -1355,11 +1353,7 @@ private:
 
     void didAssociateFormControlsTimerFired(Timer<Document>&);
 
-    void styleResolverThrowawayTimerFired(DeferrableOneShotTimer<Document>&);
-
     unsigned m_referencingNodeCount;
-
-    DeferrableOneShotTimer<Document> m_styleResolverThrowawayTimer;
 
     std::unique_ptr<StyleResolver> m_styleResolver;
     bool m_didCalculateStyleResolver;

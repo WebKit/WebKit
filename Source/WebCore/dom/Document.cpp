@@ -379,8 +379,6 @@ static void printNavigationErrorMessage(Frame* frame, const URL& activeURL, cons
 
 uint64_t Document::s_globalTreeVersion = 0;
 
-static const double timeBeforeThrowingAwayStyleResolverAfterLastUseInSeconds = 30;
-
 #if ENABLE(IOS_TEXT_AUTOSIZING)
 void TextAutoSizingTraits::constructDeletedValue(TextAutoSizingKey& slot)
 {
@@ -408,7 +406,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_touchEventsChangedTimer(this, &Document::touchEventsChangedTimerFired)
 #endif
     , m_referencingNodeCount(0)
-    , m_styleResolverThrowawayTimer(this, &Document::styleResolverThrowawayTimerFired, timeBeforeThrowingAwayStyleResolverAfterLastUseInSeconds)
     , m_didCalculateStyleResolver(false)
     , m_hasNodesWithPlaceholderStyle(false)
     , m_needsNotifyRemoveAllPendingStylesheet(false)
@@ -4483,17 +4480,6 @@ void Document::finishedParsing()
 void Document::sharedObjectPoolClearTimerFired(Timer<Document>&)
 {
     m_sharedObjectPool = nullptr;
-}
-
-void Document::didAccessStyleResolver()
-{
-    m_styleResolverThrowawayTimer.restart();
-}
-
-void Document::styleResolverThrowawayTimerFired(DeferrableOneShotTimer<Document>&)
-{
-    ASSERT(!m_inStyleRecalc);
-    clearStyleResolver();
 }
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)

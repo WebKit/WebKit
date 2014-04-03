@@ -1,3 +1,26 @@
+2014-04-03  Andreas Kling  <akling@apple.com>
+
+        Stop throwing away the Document's StyleResolver on a timer.
+        <https://webkit.org/b/131168>
+        <rdar://problem/15227045>
+
+        This was causing some unfortunate pauses when returning to idle pages
+        after a long-ish time. There's already a mechanism in place that will
+        throw these away if the system comes under memory pressure.
+
+        Reviewed by Sam Weinig.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForElement):
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::pseudoStyleForElement):
+        (WebCore::StyleResolver::styleForPage):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::didAccessStyleResolver): Deleted.
+        (WebCore::Document::styleResolverThrowawayTimerFired): Deleted.
+        * dom/Document.h:
+
 2014-04-02  Simon Fraser  <simon.fraser@apple.com>
 
         Assertion under RenderLayerCompositor::updateScrollCoordinatedLayer on time.com on iOS

@@ -808,8 +808,6 @@ PassRef<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyl
 
     state.clear(); // Clear out for the next resolve.
 
-    document().didAccessStyleResolver();
-
     // Now return the style.
     return state.takeStyle();
 }
@@ -866,8 +864,6 @@ PassRef<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementS
         if (property != CSSPropertyWebkitAnimationTimingFunction)
             keyframeValue.addProperty(property);
     }
-
-    document().didAccessStyleResolver();
 
     return state.takeStyle();
 }
@@ -982,8 +978,6 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* element, c
     // Start loading resources referenced by this style.
     loadPendingResources();
 
-    document().didAccessStyleResolver();
-
     // Now return the style.
     return state.takeStyle();
 }
@@ -1023,8 +1017,6 @@ PassRef<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 
     // Start loading resources referenced by this style.
     loadPendingResources();
-
-    document().didAccessStyleResolver();
 
     // Now return the style.
     return m_state.takeStyle();
