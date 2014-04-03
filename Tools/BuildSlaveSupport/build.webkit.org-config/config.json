@@ -44,7 +44,8 @@
                     { "name": "efl-linux-slave-2", "platform": "efl" },
                     { "name": "efl-linux-slave-3", "platform": "efl" },
                     { "name": "efl-linux-szeged-slave-1", "platform": "efl" },
-                    { "name": "efl-linux-szeged-slave-2", "platform": "efl" }
+                    { "name": "efl-linux-szeged-slave-2", "platform": "efl" },
+                    { "name": "efl-linux-szeged-slave-3", "platform": "efl" }
 
                   ],
 
@@ -201,13 +202,20 @@
                       "platform": "efl", "configuration": "release", "architectures": ["armv7"],
                       "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
                       "slavenames": ["efl-linux-szeged-slave-2"]
+                    },
+                    {
+                      "name": "EFL Linux 64-bit Release WK2 (perf)", "type": "BuildAndPerfTestWebKit2", "builddir": "efl-linux-64-release-wk2-perf",
+                      "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
+                      "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
+                      "slavenames": ["efl-linux-szeged-slave-3"]
                     }
                   ],
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
                       "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release", "GTK Linux 64-bit Debug", "GTK Linux ARM Release",
                                        "EFL Linux 64-bit Release WK1", "EFL Linux 64-bit Release WK2", "EFL Linux 32-bit Release (Build)",
-                                       "EFL Linux ARMv7 Thumb2 Release (Build)", "EFL Linux ARMv7 Traditional Release (Build)", "WinCairo Release"]
+                                       "EFL Linux ARMv7 Thumb2 Release (Build)", "EFL Linux ARMv7 Traditional Release (Build)",
+                                       "EFL Linux 64-bit Release WK2 (perf)", "WinCairo Release"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-mountainlion", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple MountainLion Release (Build)", "Apple MountainLion Debug (Build)", "Apple MountainLion Release (32-bit Build)"]

@@ -1,3 +1,12 @@
+2014-04-03  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
+
+        Add EFL WK2 performance bot to build.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=131034
+
+        Reviewed by Csaba Osztrogonác.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2014-04-02  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK1] Use Evas_Touch_Point_State instead of Ewk_Touch_Point_Type
