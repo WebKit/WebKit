@@ -1,3 +1,17 @@
+2014-04-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Assertion under RenderLayerCompositor::updateScrollCoordinatedLayer on time.com on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=131150
+
+        Reviewed by Beth Dakin.
+
+        When calling updateScrollCoordinatedLayer() under styleChanged, we haven't done
+        layout yet so our composting layers haven't been hooked together. Don't try
+        to add a zero nodeID to the map in this case.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+
 2014-04-03  David Hyatt  <hyatt@apple.com>
 
         Continuations casting issue.

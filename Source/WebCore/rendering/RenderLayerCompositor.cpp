@@ -3505,6 +3505,9 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Scr
             ASSERT_NOT_REACHED();
 
         nodeID = scrollingCoordinator->attachToStateTree(nodeType, nodeID, parentNodeID);
+        if (!nodeID)
+            return;
+
         backing->setViewportConstrainedNodeID(nodeID);
 
         switch (nodeType) {
@@ -3528,6 +3531,9 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Scr
             nodeID = scrollingCoordinator->uniqueScrollLayerID();
 
         nodeID = scrollingCoordinator->attachToStateTree(isRootLayer ? FrameScrollingNode : OverflowScrollingNode, nodeID, parentNodeID);
+        if (!nodeID)
+            return;
+
         backing->setScrollingNodeID(nodeID);
         m_scrollingNodeToLayerMap.add(nodeID, &layer);
 
