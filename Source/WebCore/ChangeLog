@@ -1,3 +1,22 @@
+2014-04-02  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Use RenderStyle::hasFlowInto when needed
+        https://bugs.webkit.org/show_bug.cgi?id=131092
+
+        Reviewed by Andrei Bucur.
+
+        Add hasFlowInto() helper method on RenderStyle to be used
+        instead of directly checking the presence or absence of flowThread value.
+        No new functionality, no new tests.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * dom/Element.cpp:
+        (WebCore::Element::shouldMoveToFlowThread):
+        * rendering/style/RenderStyle.h:
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::isRendererReparented):
+
 2014-04-02  Benjamin Poulain  <benjamin@webkit.org>
 
         CSS JIT: the adjacent position is never reset

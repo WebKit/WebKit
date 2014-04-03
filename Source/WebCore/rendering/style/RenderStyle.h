@@ -1022,6 +1022,7 @@ public:
 
     // End CSS3 Getters
 
+    bool hasFlowInto() const { return !rareNonInheritedData->m_flowThread.isNull(); }
     const AtomicString& flowThread() const { return rareNonInheritedData->m_flowThread; }
     bool hasFlowFrom() const { return !rareNonInheritedData->m_regionThread.isNull(); }
     const AtomicString& regionThread() const { return rareNonInheritedData->m_regionThread; }

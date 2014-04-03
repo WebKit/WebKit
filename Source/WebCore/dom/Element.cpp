@@ -2486,7 +2486,7 @@ bool Element::shouldMoveToFlowThread(const RenderStyle& styleToUse) const
     if (isInShadowTree())
         return false;
 
-    if (styleToUse.flowThread().isEmpty())
+    if (!styleToUse.hasFlowInto())
         return false;
 
     return true;

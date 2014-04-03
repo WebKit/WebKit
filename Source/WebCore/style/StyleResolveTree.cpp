@@ -145,7 +145,7 @@ static bool isRendererReparented(const RenderObject* renderer)
 {
     if (!renderer->node()->isElementNode())
         return false;
-    if (!renderer->style().flowThread().isEmpty())
+    if (renderer->style().hasFlowInto())
         return true;
     return false;
 }

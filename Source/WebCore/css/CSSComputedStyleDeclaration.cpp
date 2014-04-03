@@ -2792,7 +2792,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         }
 #if ENABLE(CSS_REGIONS)
         case CSSPropertyWebkitFlowInto:
-            if (style->flowThread().isNull())
+            if (!style->hasFlowInto())
                 return cssValuePool().createIdentifierValue(CSSValueNone);
             return cssValuePool().createValue(style->flowThread(), CSSPrimitiveValue::CSS_STRING);
         case CSSPropertyWebkitFlowFrom:
