@@ -150,11 +150,11 @@ static void updateStyleOfAnonymousBlockContinuations(RenderBox* box, const Rende
             continue;
         
         if (!box->isRenderBlock())
-            break; // We're done if we ever encounter something other than a RenderBlock.
+            continue;
 
         RenderBlock* block = toRenderBlock(box);
         if (!block->isAnonymousBlockContinuation())
-            break; // We're done if we ever encounter something other than a continuation RenderBlock.
+            continue;
         
         // If we are no longer in-flow positioned but our descendant block(s) still have an in-flow positioned ancestor then
         // their containing anonymous block should keep its in-flow positioning. 

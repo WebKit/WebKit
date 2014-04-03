@@ -1,3 +1,16 @@
+2014-04-03  David Hyatt  <hyatt@apple.com>
+
+        REGRESSION: fast/css/relative-positioned-block-nested-with-inline-parent-multiple-descendant-blocks-dynamic.html broken
+        https://bugs.webkit.org/show_bug.cgi?id=131183
+
+        Reviewed by Simon Fraser.
+
+        Revert the loop to continue rather than breaking when an invalid block is encountered.
+        This is what it used to do if it encountered a non-continuation block.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::updateStyleOfAnonymousBlockContinuations):
+
 2014-04-02  Simon Fraser  <simon.fraser@apple.com>
 
         Harden FilterOperation type casting
