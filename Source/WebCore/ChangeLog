@@ -1,5 +1,20 @@
 2014-04-02  Mark Rowe  <mrowe@apple.com>
 
+        <https://webkit.org/b/131136> Remove FrameLoadRequest's m_lockHistory member since it's always false.
+
+        Reviewed by Andreas Kling.
+
+        * loader/FrameLoadRequest.cpp:
+        (WebCore::FrameLoadRequest::FrameLoadRequest):
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::FrameLoadRequest):
+        (WebCore::FrameLoadRequest::lockHistory): Deleted.
+        (WebCore::FrameLoadRequest::setLockHistory): Deleted.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load): Remove an if whose body was never executed.
+
+2014-04-02  Mark Rowe  <mrowe@apple.com>
+
         <https://webkit.org/b/131135> Introduce LockHistory and LockBackForwardList enums to use in place of bools.
 
         These arguments are often passed using literals at the call site, where the use of bools severely hinders
