@@ -1,3 +1,16 @@
+2014-04-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Pixelated WebView when display is changed from hiDPI to regularDPI
+        https://bugs.webkit.org/show_bug.cgi?id=131185
+        <rdar://problem/16512184&16503714>
+
+        Reviewed by Tim Horton.
+        
+        TileController function was renamed.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.cpp:
+        (WebKit::PlatformCALayerRemoteTiledBacking::setContentsScale):
+
 2014-04-03  Sam Weinig  <sam@webkit.org>
 
         [WebKit2] Promote user script SPI to API

@@ -1,3 +1,35 @@
+2014-04-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Pixelated WebView when display is changed from hiDPI to regularDPI
+        https://bugs.webkit.org/show_bug.cgi?id=131185
+
+        Reviewed by Tim Horton.
+
+        r166309 added a short circuit in GraphicsLayerCA::updateContentsScale()
+        when the scale didn't change. This broke layers which expected to
+        unconditionally receive a setContentsScale(), namely the WebTiledBackingLayer
+        which owns the TileController. WebTiledBackingLayer overrode -setContentsScale:
+        to pass the scale down to the TileController; however, it didn't override
+        -contentsScale, and it mucked with the scale passed in.
+        
+        Fix by having setting and fetching contentsScale on a WebTiledBackingLayer
+        work as expected. Also rename the TileController functions to mirror the
+        CALayer functions better.
+
+        * WebCore.exp.in:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateContentsScale):
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::TileController):
+        (WebCore::TileController::contentsScale):
+        (WebCore::TileController::setContentsScale):
+        (WebCore::TileController::scale): Deleted.
+        (WebCore::TileController::setScale): Deleted.
+        * platform/graphics/ca/mac/WebTiledBackingLayer.mm:
+        (-[WebTiledBackingLayer setContentsScale:]):
+        (-[WebTiledBackingLayer contentsScale]):
+
 2014-04-03  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] LineSegment logicalLeft and logicalRight members should be floats

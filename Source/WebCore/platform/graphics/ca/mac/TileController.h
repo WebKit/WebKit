@@ -59,8 +59,8 @@ public:
     void setNeedsDisplay();
     void setNeedsDisplayInRect(const IntRect&);
 
-    void setScale(float);
-    float scale() const;
+    void setContentsScale(float);
+    float contentsScale() const { return m_contentsScale; }
 
     bool acceleratesDrawing() const { return m_acceleratesDrawing; }
     void setAcceleratesDrawing(bool);
@@ -191,6 +191,7 @@ private:
 
     RepaintCountMap m_tileRepaintCounts;
 
+    float m_contentsScale;
     float m_deviceScaleFactor;
 
     TileCoverage m_tileCoverage;

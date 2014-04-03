@@ -115,7 +115,12 @@ using namespace WebCore;
 
 - (void)setContentsScale:(CGFloat)contentsScale
 {
-    _tileController->setScale(contentsScale);
+    _tileController->setContentsScale(contentsScale);
+}
+
+- (CGFloat)contentsScale
+{
+    return _tileController->contentsScale();
 }
 
 - (WebCore::TiledBacking*)tiledBacking

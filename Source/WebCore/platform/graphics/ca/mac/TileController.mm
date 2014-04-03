@@ -60,6 +60,7 @@ TileController::TileController(PlatformCALayer* rootPlatformLayer)
     , m_tileSize(defaultTileWidth, defaultTileHeight)
     , m_exposedRect(FloatRect::infiniteRect())
     , m_tileRevalidationTimer(this, &TileController::tileRevalidationTimerFired)
+    , m_contentsScale(1)
     , m_deviceScaleFactor(1)
     , m_tileCoverage(CoverageForVisibleArea)
     , m_marginTop(0)
@@ -156,13 +157,10 @@ bool TileController::platformCALayerShowRepaintCounter(PlatformCALayer*) const
     return owningGraphicsLayer()->platformCALayerShowRepaintCounter(0);
 }
 
-float TileController::scale() const
+void TileController::setContentsScale(float scale)
 {
-    return tileGrid().scale();
-}
-
-void TileController::setScale(float scale)
-{
+    m_contentsScale = scale;
+    
     ASSERT(owningGraphicsLayer()->isCommittingChanges());
 
     float deviceScaleFactor = platformCALayerDeviceScaleFactor();
