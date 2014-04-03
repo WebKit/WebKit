@@ -1116,6 +1116,7 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
                     _data->_page->handleMouseEvent(webEvent); \
                 } \
             }]; \
+            return; \
         } \
         NativeWebMouseEvent webEvent(theEvent, self); \
         _data->_page->handleMouseEvent(webEvent); \

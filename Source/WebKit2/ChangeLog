@@ -1,3 +1,14 @@
+2014-04-03  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (Async text input): Controls become unresponsive to mouse events
+        https://bugs.webkit.org/show_bug.cgi?id=131176
+        <rdar://problem/16507932>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/mac/WKView.mm: (NATIVE_MOUSE_EVENT_HANDLER):
+        Don't confuse event handling machinery by sending events to WebProcess twice.
+
 2014-04-03  Anders Carlsson  <andersca@apple.com>
 
         WKWebView should always have a UIDelegate, even when closed
