@@ -37,21 +37,26 @@
 
 namespace WebKit {
 
-UIClient::UIClient(WKWebView *webView)
+UIDelegate::UIDelegate(WKWebView *webView)
     : m_webView(webView)
 {
 }
 
-UIClient::~UIClient()
+UIDelegate::~UIDelegate()
 {
 }
 
-RetainPtr<id <WKUIDelegate> > UIClient::delegate()
+std::unique_ptr<API::UIClient> UIDelegate::createUIClient()
+{
+    return std::make_unique<UIClient>(*this);
+}
+
+RetainPtr<id <WKUIDelegate> > UIDelegate::delegate()
 {
     return m_delegate.get();
 }
 
-void UIClient::setDelegate(id <WKUIDelegate> delegate)
+void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
 {
     m_delegate = delegate;
 
@@ -64,17 +69,26 @@ void UIClient::setDelegate(id <WKUIDelegate> delegate)
 #endif
 }
 
-PassRefPtr<WebKit::WebPageProxy> UIClient::createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy* initiatingFrame, const WebCore::ResourceRequest& request, const WebCore::WindowFeatures& windowFeatures, WebKit::WebEvent::Modifiers, WebKit::WebMouseEvent::Button)
+UIDelegate::UIClient::UIClient(UIDelegate& uiDelegate)
+    : m_uiDelegate(uiDelegate)
 {
-    if (!m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeatures)
+}
+
+UIDelegate::UIClient::~UIClient()
+{
+}
+
+PassRefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy* initiatingFrame, const WebCore::ResourceRequest& request, const WebCore::WindowFeatures& windowFeatures, WebKit::WebEvent::Modifiers, WebKit::WebMouseEvent::Button)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeatures)
         return nullptr;
 
-    auto delegate = m_delegate.get();
+    auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate)
         return nullptr;
 
-    auto configuration = adoptNS([m_webView->_configuration copy]);
-    [configuration _setRelatedWebView:m_webView];
+    auto configuration = adoptNS([m_uiDelegate.m_webView->_configuration copy]);
+    [configuration _setRelatedWebView:m_uiDelegate.m_webView];
 
     auto navigationAction = adoptNS([[WKNavigationAction alloc] init]);
 
@@ -83,82 +97,82 @@ PassRefPtr<WebKit::WebPageProxy> UIClient::createNewPage(WebKit::WebPageProxy*, 
     [navigationAction setNavigationType:WKNavigationTypeOther];
     [navigationAction setRequest:request.nsURLRequest(WebCore::DoNotUpdateHTTPBody)];
 
-    RetainPtr<WKWebView> webView = [delegate.get() webView:m_webView createWebViewWithConfiguration:configuration.get() forNavigationAction:navigationAction.get() windowFeatures:adoptNS([[WKWindowFeatures alloc] _initWithWindowFeatures:windowFeatures]).get()];
+    RetainPtr<WKWebView> webView = [delegate.get() webView:m_uiDelegate.m_webView createWebViewWithConfiguration:configuration.get() forNavigationAction:navigationAction.get() windowFeatures:adoptNS([[WKWindowFeatures alloc] _initWithWindowFeatures:windowFeatures]).get()];
 
     if (!webView)
         return nullptr;
 
-    if ([webView->_configuration _relatedWebView] != m_webView)
+    if ([webView->_configuration _relatedWebView] != m_uiDelegate.m_webView)
         [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
 
     return webView->_page.get();
 }
 
-void UIClient::runJavaScriptAlert(WebKit::WebPageProxy*, const WTF::String& message, WebKit::WebFrameProxy* webFrameProxy, std::function<void ()> completionHandler)
+void UIDelegate::UIClient::runJavaScriptAlert(WebKit::WebPageProxy*, const WTF::String& message, WebKit::WebFrameProxy* webFrameProxy, std::function<void ()> completionHandler)
 {
-    if (!m_delegateMethods.webViewRunJavaScriptAlertPanelWithMessageInitiatedByFrameCompletionHandler) {
+    if (!m_uiDelegate.m_delegateMethods.webViewRunJavaScriptAlertPanelWithMessageInitiatedByFrameCompletionHandler) {
         completionHandler();
         return;
     }
 
-    auto delegate = m_delegate.get();
+    auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate) {
         completionHandler();
         return;
     }
 
-    [delegate webView:m_webView runJavaScriptAlertPanelWithMessage:message initiatedByFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*webFrameProxy]).get() completionHandler:[completionHandler] {
+    [delegate webView:m_uiDelegate.m_webView runJavaScriptAlertPanelWithMessage:message initiatedByFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*webFrameProxy]).get() completionHandler:[completionHandler] {
         completionHandler();
     }];
 }
 
-void UIClient::runJavaScriptConfirm(WebKit::WebPageProxy*, const WTF::String& message, WebKit::WebFrameProxy* webFrameProxy, std::function<void (bool)> completionHandler)
+void UIDelegate::UIClient::runJavaScriptConfirm(WebKit::WebPageProxy*, const WTF::String& message, WebKit::WebFrameProxy* webFrameProxy, std::function<void (bool)> completionHandler)
 {
-    if (!m_delegateMethods.webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler) {
+    if (!m_uiDelegate.m_delegateMethods.webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler) {
         completionHandler(false);
         return;
     }
 
-    auto delegate = m_delegate.get();
+    auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate) {
         completionHandler(false);
         return;
     }
 
-    [delegate webView:m_webView runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*webFrameProxy]).get() completionHandler:[completionHandler](BOOL result) {
+    [delegate webView:m_uiDelegate.m_webView runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*webFrameProxy]).get() completionHandler:[completionHandler](BOOL result) {
         completionHandler(result);
     }];
 }
 
-void UIClient::runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& defaultValue, WebKit::WebFrameProxy* webFrameProxy, std::function<void (const WTF::String&)> completionHandler)
+void UIDelegate::UIClient::runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& defaultValue, WebKit::WebFrameProxy* webFrameProxy, std::function<void (const WTF::String&)> completionHandler)
 {
-    if (!m_delegateMethods.webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler) {
+    if (!m_uiDelegate.m_delegateMethods.webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler) {
         completionHandler(String());
         return;
     }
 
-    auto delegate = m_delegate.get();
+    auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate) {
         completionHandler(String());
         return;
     }
 
-    [delegate webView:m_webView runJavaScriptTextInputPanelWithPrompt:message defaultText:defaultValue initiatedByFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*webFrameProxy]).get() completionHandler:[completionHandler](NSString *result) {
+    [delegate webView:m_uiDelegate.m_webView runJavaScriptTextInputPanelWithPrompt:message defaultText:defaultValue initiatedByFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*webFrameProxy]).get() completionHandler:[completionHandler](NSString *result) {
         completionHandler(result);
     }];
 }
 
 #if PLATFORM(IOS)
-RetainPtr<NSArray> UIClient::actionsForElement(_WKActivatedElementInfo *elementInfo, RetainPtr<NSArray> defaultActions)
+RetainPtr<NSArray> UIDelegate::UIClient::actionsForElement(_WKActivatedElementInfo *elementInfo, RetainPtr<NSArray> defaultActions)
 {
-    if (!m_delegateMethods.webViewActionsForElementDefaultActions)
+    if (!m_uiDelegate.m_delegateMethods.webViewActionsForElementDefaultActions)
         return std::move(defaultActions);
 
-    auto delegate = m_delegate.get();
+    auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate)
         return defaultActions;
 
-    return [(id <WKUIDelegatePrivate>)delegate _webView:m_webView actionsForElement:elementInfo defaultActions:defaultActions.get()];
+    return [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView actionsForElement:elementInfo defaultActions:defaultActions.get()];
 }
 #endif
 

@@ -1,3 +1,40 @@
+2014-04-03  Anders Carlsson  <andersca@apple.com>
+
+        WKWebView should always have a UIDelegate, even when closed
+        https://bugs.webkit.org/show_bug.cgi?id=131174
+        <rdar://problem/16389248>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        (-[WKWebView UIDelegate]):
+        (-[WKWebView setUIDelegate:]):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIDelegate):
+        (WebKit::UIDelegate::~UIDelegate):
+        (WebKit::UIDelegate::createUIClient):
+        (WebKit::UIDelegate::delegate):
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::UIClient):
+        (WebKit::UIDelegate::UIClient::~UIClient):
+        (WebKit::UIDelegate::UIClient::createNewPage):
+        (WebKit::UIDelegate::UIClient::runJavaScriptAlert):
+        (WebKit::UIDelegate::UIClient::runJavaScriptConfirm):
+        (WebKit::UIDelegate::UIClient::runJavaScriptPrompt):
+        (WebKit::UIDelegate::UIClient::actionsForElement):
+        (WebKit::UIClient::UIClient): Deleted.
+        (WebKit::UIClient::~UIClient): Deleted.
+        (WebKit::UIClient::delegate): Deleted.
+        (WebKit::UIClient::setDelegate): Deleted.
+        (WebKit::UIClient::createNewPage): Deleted.
+        (WebKit::UIClient::runJavaScriptAlert): Deleted.
+        (WebKit::UIClient::runJavaScriptConfirm): Deleted.
+        (WebKit::UIClient::runJavaScriptPrompt): Deleted.
+        (WebKit::UIClient::actionsForElement): Deleted.
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+
 2014-04-02  Anders Carlsson  <andersca@apple.com>
 
         Document WKNavigationAction and WKNavigationResponse

@@ -82,6 +82,7 @@
 
 @implementation WKWebView {
     std::unique_ptr<WebKit::NavigationState> _navigationState;
+    std::unique_ptr<WebKit::UIDelegate> _uiDelegate;
 
     RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
     _WKRenderingProgressEvents _observedRenderingProgressEvents;
@@ -199,8 +200,12 @@
     _navigationState = std::make_unique<WebKit::NavigationState>(self);
     _page->setPolicyClient(_navigationState->createPolicyClient());
     _page->setLoaderClient(_navigationState->createLoaderClient());
-    _page->setUIClient(std::make_unique<WebKit::UIClient>(self));
+
+    _uiDelegate = std::make_unique<WebKit::UIDelegate>(self);
+    _page->setUIClient(_uiDelegate->createUIClient());
+
     _page->setFindClient(std::make_unique<WebKit::FindClient>(self));
+
     return self;
 }
 
@@ -237,20 +242,12 @@
 
 - (id <WKUIDelegate>)UIDelegate
 {
-    // FIXME: A closed page should still have a UI delegate - it should just never be called.
-    if (_page->isClosed())
-        return nil;
-
-    return [static_cast<WebKit::UIClient&>(_page->uiClient()).delegate().leakRef() autorelease];
+    return [_uiDelegate->delegate().leakRef() autorelease];
 }
 
 - (void)setUIDelegate:(id<WKUIDelegate>)UIDelegate
 {
-    // FIXME: A closed page should still have a UI delegate - it should just never be called.
-    if (_page->isClosed())
-        return;
-
-    static_cast<WebKit::UIClient&>(_page->uiClient()).setDelegate(UIDelegate);
+    _uiDelegate->setDelegate(UIDelegate);
 }
 
 - (WKNavigation *)loadRequest:(NSURLRequest *)request
