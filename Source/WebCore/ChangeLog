@@ -1,3 +1,10 @@
+2014-04-02  Brent Fulgham  <bfulgham@apple.com>
+
+        Speculative build fix for Windows.
+
+        * DerivedSources.make: Make sure we generate our media control
+        scripts for Apple Windows (but not WinCairo)
+
 2014-04-02  Tim Horton  <timothy_horton@apple.com>
 
         Fix the !USE(IOSURFACE) iOS build.
