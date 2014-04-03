@@ -1,3 +1,12 @@
+2014-04-03  Javier Fernandez  <jfernandez@igalia.com>
+
+        [GTK][Cmake] Enable CSS JIT
+        https://bugs.webkit.org/show_bug.cgi?id=131022
+
+        Reviewed by Martin Robinson.
+
+        * wtf/Platform.h: Enable CSS JIT for GTK port.
+
 2014-04-02  Frédéric Wang  <fred.wang@free.fr>
 
         Operator stretching: read the Open Type MATH table
