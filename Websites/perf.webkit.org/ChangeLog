@@ -1,5 +1,20 @@
 2014-04-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        WebKitPerfMonitor: There should be a way to add all metrics of a suite without also adding subtests
+        https://bugs.webkit.org/show_bug.cgi?id=131157
+
+        Reviewed by Andreas Kling.
+
+        Split "all metrics" into all metrics of a test suite and all subtests of the suite.
+        This allows, for example, adding all metrics such as Arithmetic and Geometric for
+        a given test suite without also adding its subtests.
+
+        * public/index.html:
+        (init.showCharts):
+        (init):
+
+2014-04-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         WebKitPerfMonitor: Tooltips cannot be pinned after using browser's back button
         https://bugs.webkit.org/show_bug.cgi?id=131155
 

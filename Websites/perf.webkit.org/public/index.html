@@ -954,15 +954,33 @@ function init() {
             while (metricList.firstChild)
                 metricList.removeChild(metricList.firstChild);
 
-            addOption(metricList, 'All metrics', OPTION_VALUE_FOR_ALL);
+            var metricsGroup = document.createElement('optgroup');
+            metricsGroup.label = 'Metrics';
+            metricList.appendChild(metricsGroup);
+            addOption(metricsGroup, 'All metrics', OPTION_VALUE_FOR_ALL);
             for (var i = 0; i < tests.length; ++i) {
-                if (tests[i].id != testList.value && (!tests[i].parentTest || tests[i].parentTest.id != testList.value))
+                if (tests[i].id == testList.value) {
+                    var selectedTest = tests[i];
+                    for (var j = 0; j < selectedTest.metrics.length; ++j) {
+                        var fullName = selectedTest.metrics[j].fullName;
+                        var relativeName = fullName.replace(selectedTest.fullName, '').replace(/^[:/]/, '');
+                        addOption(metricsGroup, relativeName, fullName);
+                    }
+                }
+            }
+            var subtestsGroup = document.createElement('optgroup');
+            subtestsGroup.label = 'Tests';
+            metricList.appendChild(subtestsGroup);
+            addOption(subtestsGroup, 'All subtests', OPTION_VALUE_FOR_ALL);
+            for (var i = 0; i < tests.length; ++i) {
+                if (!tests[i].parentTest || tests[i].parentTest.id != testList.value)
                     continue;
-                var selectedTest = tests[i].id == testList.value ? tests[i] : tests[i].parentTest;
-                for (var j = 0; j < tests[i].metrics.length; ++j) {
-                    var fullName = tests[i].metrics[j].fullName;
+                var subtest = tests[i];
+                var selectedTest = subtest.parentTest;
+                for (var j = 0; j < subtest.metrics.length; ++j) {
+                    var fullName = subtest.metrics[j].fullName;
                     var relativeName = fullName.replace(selectedTest.fullName, '').replace(/^[:/]/, '');
-                    addOption(metricList, relativeName, fullName);
+                    addOption(subtestsGroup, relativeName, fullName);
                 }
             }
         }
@@ -1018,13 +1036,14 @@ function init() {
                     newChartList.push([allPlatforms[i].name, metricList.value]);
                 }
             } else if (metricList.value === OPTION_VALUE_FOR_ALL) {
-                for (var i = 0; i < tests.length; ++i) {
-                    if (tests[i].id != testList.value && (!tests[i].parentTest || tests[i].parentTest.id != testList.value))
+                var group = metricList.selectedOptions[0].parentNode;
+                var metricsToAdd = [];
+                for (var i = 0; i < group.children.length; i++) {
+                    var metric = group.children[i].value;
+                    if (metric == OPTION_VALUE_FOR_ALL)
                         continue;
-                    for (var j = 0; j < tests[i].metrics.length; ++j) {
-                        createChartFromListPair(platformList.value, tests[i].metrics[j].fullName);
-                        newChartList.push([platformList.value, tests[i].metrics[j].fullName]);
-                    }
+                    createChartFromListPair(platformList.value, metric);
+                    newChartList.push([platformList.value, metric]);
                 }
             } else {
                 createChartFromListPair(platformList.value, metricList.value);
