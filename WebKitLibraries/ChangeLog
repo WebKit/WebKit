@@ -1,3 +1,16 @@
+2014-04-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Enable the CSS_GRID_LAYOUT feature.
+        https://bugs.webkit.org/show_bug.cgi?id=131147
+
+        Reviewed by Simon Fraser.
+
+        Just like the CANVAS_PATH feature, this seems to have been
+        overlooked when it was turned on for other ports.
+
+        * win/tools/vsprops/FeatureDefines.props:
+        * win/tools/vsprops/FeatureDefinesCairo.props:
+
 2014-04-02  Dean Jackson  <dino@apple.com>
 
         Update WKSI.

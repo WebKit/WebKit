@@ -43,6 +43,9 @@
 #include "CSSFontSelector.cpp"
 #include "CSSFunctionValue.cpp"
 #include "CSSGradientValue.cpp"
+#if ENABLE(CSS_GRID_LAYOUT)
+#include "CSSGridLineNamesValue.cpp"
+#endif
 #include "CSSGroupingRule.cpp"
 #include "CSSImageGeneratorValue.cpp"
 #include "CSSImageSetValue.cpp"

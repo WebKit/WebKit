@@ -1,3 +1,15 @@
+2014-04-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Turn on ENABLE_CSS_GRID_LAYOUT
+        https://bugs.webkit.org/show_bug.cgi?id=131147
+
+        Reviewed by Simon Fraser.
+
+        Covered by existing fast/css/getComputedStyle tests.
+
+        * css/CSSAllInOne.cpp: Add CSSGridLineNamesValue.cpp when building
+        with ENABLE(CSS_GRID_LAYOUT)
+
 2014-04-03  Simon Fraser  <simon.fraser@apple.com>
 
         Pixelated WebView when display is changed from hiDPI to regularDPI
