@@ -1,3 +1,10 @@
+2014-04-02  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the !USE(IOSURFACE) build... again.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy):
+
 2014-04-02  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/131135> Introduce LockHistory and LockBackForwardList enums to use in place of bools.
