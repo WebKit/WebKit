@@ -30,7 +30,7 @@
 
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKElementActionInternal.h"
-#import "UIClient.h"
+#import "UIDelegate.h"
 #import "WKActionSheet.h"
 #import "WKContentViewInteraction.h"
 #import "WebPageProxy.h"

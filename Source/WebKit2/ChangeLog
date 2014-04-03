@@ -1,5 +1,11 @@
 2014-04-03  Anders Carlsson  <andersca@apple.com>
 
+        Fix iOS build.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+
+2014-04-03  Anders Carlsson  <andersca@apple.com>
+
         Rename UIClient.{h, mm} to UIDelegate.{h, mm}.
 
         Rubber-stamped by Dan Bernstein.
