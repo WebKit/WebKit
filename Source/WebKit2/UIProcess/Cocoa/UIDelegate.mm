@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "UIClient.h"
+#import "UIDelegate.h"
 
 #if WK_API_ENABLED
 

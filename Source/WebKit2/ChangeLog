@@ -1,3 +1,14 @@
+2014-04-03  Anders Carlsson  <andersca@apple.com>
+
+        Rename UIClient.{h, mm} to UIDelegate.{h, mm}.
+
+        Rubber-stamped by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/Cocoa/UIDelegate.h: Renamed from Source/WebKit2/UIProcess/Cocoa/UIClient.h.
+        * UIProcess/Cocoa/UIDelegate.mm: Renamed from Source/WebKit2/UIProcess/Cocoa/UIClient.mm.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-04-03  Andrzej Badowski  <a.badowski@samsung.com>
 
         [EFL][WK2] Replacing zoom functionality of MiniBrowser from scale_set to page_zoom_set.

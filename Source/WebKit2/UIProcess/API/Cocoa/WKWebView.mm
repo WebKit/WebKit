@@ -33,7 +33,7 @@
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
-#import "UIClient.h"
+#import "UIDelegate.h"
 #import "ViewGestureController.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
