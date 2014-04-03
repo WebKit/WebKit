@@ -551,7 +551,7 @@ static void clearBeforeOrAfterPseudoElement(Element& current, PseudoId pseudoId)
     current.clearAfterPseudoElement();
 }
 
-static bool needsPseudeElement(Element& current, PseudoId pseudoId)
+static bool needsPseudoElement(Element& current, PseudoId pseudoId)
 {
     if (!current.document().styleSheetCollection().usesBeforeAfterRules())
         return false;
@@ -566,7 +566,7 @@ static bool needsPseudeElement(Element& current, PseudoId pseudoId)
 
 static void attachBeforeOrAfterPseudoElementIfNeeded(Element& current, PseudoId pseudoId, RenderTreePosition& renderTreePosition)
 {
-    if (!needsPseudeElement(current, pseudoId))
+    if (!needsPseudoElement(current, pseudoId))
         return;
     RefPtr<PseudoElement> pseudoElement = PseudoElement::create(current, pseudoId);
     setBeforeOrAfterPseudoElement(current, pseudoElement, pseudoId);
@@ -797,7 +797,10 @@ static void resolveShadowTree(ShadowRoot& shadowRoot, Element& host, Style::Chan
 static void updateBeforeOrAfterPseudoElement(Element& current, Change change, PseudoId pseudoId, RenderTreePosition& renderTreePosition)
 {
     if (PseudoElement* existingPseudoElement = beforeOrAfterPseudoElement(current, pseudoId)) {
-        if (needsPseudeElement(current, pseudoId))
+        if (existingPseudoElement->renderer())
+            renderTreePosition.invalidateNextSibling(*existingPseudoElement->renderer());
+
+        if (needsPseudoElement(current, pseudoId))
             resolveTree(*existingPseudoElement, current, renderTreePosition, current.needsStyleRecalc() ? Force : change);
         else
             clearBeforeOrAfterPseudoElement(current, pseudoId);

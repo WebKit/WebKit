@@ -1,3 +1,21 @@
+2014-04-03  Antti Koivisto  <antti@apple.com>
+
+        Crash after mutating after pseudo style
+        https://bugs.webkit.org/show_bug.cgi?id=130881
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/css/pseudo-after-crash.html
+
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::updateBeforeOrAfterPseudoElement):
+        
+            Invalidate the cached renderer for pseudo elements too.
+    
+        (WebCore::Style::needsPseudeElement): Deleted.
+        
+            Fix spelling.
+
 2014-04-02  Chris Fleizach  <cfleizach@apple.com>
 
         AX: AccessibilityObject::children() returns invalid results sometimes
