@@ -1,3 +1,11 @@
+2014-04-02  Dean Jackson  <dino@apple.com>
+
+        Update WKSI.
+        <rdar://problem/16321286>
+
+        * libWebKitSystemInterfaceMavericks.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2014-04-02  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Enable the CANVAS_PATH feature.
