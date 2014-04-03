@@ -14,10 +14,10 @@ body {
     -webkit-shape-margin: 10px;
 }
 .inset {
-    -webkit-shape-outside: inset(25px 25px 25px 25px round 10px 10px) content-box;
+    -webkit-shape-outside: inset(25px round 10px) content-box;
 }
 .circle {
-    -webkit-shape-outside: circle(50px) content-box;
+    -webkit-shape-outside: circle(25% at center) content-box;
 }
 .svg {
     -webkit-shape-outside: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none' width='100px' height='100px'><rect x='25' y='25' width='50' height='50' fill='blue' /></svg>");
@@ -31,56 +31,35 @@ function test() {
     var testcases = [
     {
         'selector' : '.inset',
-        'shape' : roundedRectCommands(50, 50, 50, 50, 10),
-        'marginShape' : roundedRectCommands(40, 40, 70, 70, 20)
+        'path' : ['M', 60, 50, 'L', 90, 50, 'C', 96, 50, 100, 54, 100, 60, 'L', 100, 90, 'C', 100, 96, 96, 100, 90, 100,
+            'L', 60, 100, 'C', 54, 100, 50, 96, 50, 90, 'L', 50, 60, 'C', 50, 54, 54, 50, 60, 50, 'Z'],
+        'marginPath' : ['M', 60, 40, 'L', 90, 40, 'C', 101, 40, 110, 49, 110, 60, 'L', 110, 90, 'C', 110, 101, 101, 110, 90, 110,
+            'L', 60, 110, 'C', 49, 110, 40, 101, 40, 90, 'L', 40, 60, 'C', 40, 49, 49, 40, 60, 40, 'Z']
     },
     {
         'selector' : '.circle',
-        'shape' : roundedRectCommands(25, 25, 100, 100, 50),
-        'marginShape' : roundedRectCommands(15, 15, 120, 120, 60)
+        'path' : ['M', 75, 63, 'L', 75, 63, 'C', 89, 63, 100, 74, 100, 88, 'L', 100, 88, 'C', 100, 102, 89, 113, 75, 113, 'L', 75, 113,
+            'C', 61, 113, 50, 102, 50, 88, 'L', 50, 88, 'C', 50, 74, 61, 63, 75, 63, 'Z'],
+        'marginPath' : ['M', 75, 53, 'L', 75, 53, 'C', 94, 53, 110, 69, 110, 88, 'L', 110, 88, 'C', 110, 107, 94, 123, 75, 123, 'L', 75, 123,
+            'C', 56, 123, 40, 107, 40, 88, 'L', 40, 88, 'C', 40, 69, 56, 53, 75, 53, 'Z']
     },
     {
         'selector' : '.svg',
-        'shape' : roundedRectCommands(50, 50, 50, 50, 0),
-        'marginShape' : [].concat(roundedRectCommands(50, 49, 50, 1, 0),
-            roundedRectCommands(49, 50, 52, 50, 0),
-            roundedRectCommands(50, 100, 50, 1, 0))
-    }
-    ];
-
-    function roundedRectCommands(x, y, w, h, r) {
-        if (!r)
-            return ['M', x, y, 'L', x + w, y, 'L', x + w, y + h, 'L', x, y + h, 'L', x, y, 'Z'];
-
-        // Approximate 1 - kappa, see Path.cpp
-        var control = .447715;
-
-        var commands = [];
-
-        commands.push('M', x + r, y);
-        commands.push('L', x + w - r, y);
-        commands.push('C', x + w - control * r, y, x + w, y + control * r, x + w, y + r);
-
-        commands.push('L', x + w, y + h - r);
-        commands.push('C', x + w, y + h - control * r, x + w - control * r, y + h, x + w - r, y + h);
-
-        commands.push('L', x + r, y + h);
-        commands.push('C', x + control * r, y + h, x, y + h - control * r, x, y + h - r);
-
-        commands.push('L', x, y + r);
-        commands.push('C', x, y + control * r, x + control * r, y, x + r, y);
-        commands.push('Z');
-
-        return commands;
-    }
+        'path' : ['M', 50, 63, 'L', 100, 63, 'L', 100, 113, 'L', 50, 113, 'Z'],
+        'marginPath' : ['M', 50, 62, 'L', 100, 62, 'L', 100, 63, 'L', 50, 63, 'Z',
+            'M', 49, 63, 'L', 101, 63, 'L', 101, 113, 'L', 49, 113, 'Z',
+            'M', 50, 113, 'L', 100, 113, 'L', 100, 114, 'L', 50, 114, 'Z']
+    }];
 
     function runNextTest(tests) {
         var testcase = tests[0];
+        var selectorInformation = "Selector: \'" + testcase.selector + "\'";
 
         InspectorTest.Shapes.getShapeOutsideInfoForSelector(testcase.selector, function(payload) {
-            InspectorTest.log("Comparing shape information for selector: " + testcase.selector);
-            InspectorTest.Shapes.assertPathsAreRoughlyEqual(payload.shape, testcase.shape, "Shape information was not roughly equal.");
-            InspectorTest.Shapes.assertPathsAreRoughlyEqual(payload.marginShape, testcase.marginShape, "Margin shape information was not roughly equal.");
+            if (!InspectorTest.Shapes.assertPathsAreRoughlyEqual(payload.shape, testcase.path, selectorInformation + " Shape information was not roughly equal."))
+                InspectorTest.log("PASS: " + testcase.selector);
+            if (!InspectorTest.Shapes.assertPathsAreRoughlyEqual(payload.marginShape, testcase.marginPath, selectorInformation + " Margin shape information was not roughly equal."))
+                InspectorTest.log("PASS: " + testcase.selector + " with shape-margin");
 
             if (tests.length > 1)
                 runNextTest(tests.splice(1));

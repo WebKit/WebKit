@@ -1,3 +1,18 @@
+2014-04-03  Zoltan Horvath  <zoltan@webkit.org>
+
+        [WebInspector] inspector/dom/highlight-shape-outside-margin.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=131126
+
+        Reviewed by Timothy Hatcher.
+
+        I updated the test, so it works with the new testing framework. I included the shape path results in the test,
+        so we won't run into rounding problems, and we don't have that big test set, which would require an expected
+        result generation. We can add it later, if we extend the test set. The logic is similar to the non margin test case.
+
+        * TestExpectations:
+        * inspector/dom/highlight-shape-outside-margin-expected.txt:
+        * inspector/dom/highlight-shape-outside-margin.html:
+
 2014-04-03  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] CRASH with calc() value args in inset round
