@@ -1183,6 +1183,13 @@ void GraphicsContext::setLineCap(LineCap cap)
 
 void GraphicsContext::setLineDash(const DashArray& dashes, float dashOffset)
 {
+    if (dashOffset < 0) {
+        float length = 0;
+        for (size_t i = 0; i < dashes.size(); ++i)
+            length += static_cast<float>(dashes[i]);
+        if (length)
+            dashOffset = fmod(dashOffset, length) + length;
+    }
     CGContextSetLineDash(platformContext(), dashOffset, dashes.data(), dashes.size());
 }
 

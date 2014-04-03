@@ -1,3 +1,19 @@
+2014-04-03  Dirk Schulze  <krit@webkit.org>
+
+        [CG] Canvas lineDashOffset does not handle negative numbers correctly
+        https://bugs.webkit.org/show_bug.cgi?id=80560
+
+        Reviewed by Dean Jackson.
+
+        CG ignores negative dash array offsets. Check if we have a negative offset, if yes
+        then calculate the length of the dash array and modulo the dash array offset with
+        the dash array length.
+
+        Test: fast/canvas/canvas-negative-lineDashOffset.html
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setLineDash):
+
 2014-04-03  David Hyatt  <hyatt@apple.com>
 
         REGRESSION: fast/css/relative-positioned-block-nested-with-inline-parent-multiple-descendant-blocks-dynamic.html broken

@@ -1,3 +1,19 @@
+2014-04-03  Dirk Schulze  <krit@webkit.org>
+
+        [CG] Canvas lineDashOffset does not handle negative numbers correctly
+        https://bugs.webkit.org/show_bug.cgi?id=80560
+
+        Reviewed by Dean Jackson.
+
+        Test correct rendering of negative offset for Canvas dash arrays.
+
+        * fast/canvas/canvas-negative-lineDashOffset-expected.txt: Added.
+        * fast/canvas/canvas-negative-lineDashOffset.html: Added.
+        * fast/canvas/script-tests/canvas-negative-lineDashOffset.js: Added.
+        (dataToArray):
+        (getPixel):
+        (pixelShouldBe):
+
 2014-04-03  David Hyatt  <hyatt@apple.com>
 
         Continuations casting issue.
