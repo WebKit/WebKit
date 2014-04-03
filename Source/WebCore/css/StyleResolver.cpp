@@ -3350,7 +3350,7 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
             String cssUrl = primitiveValue.getStringValue();
             URL url = m_state.document().completeURL(cssUrl);
 
-            RefPtr<ReferenceFilterOperation> operation = ReferenceFilterOperation::create(cssUrl, url.fragmentIdentifier(), operationType);
+            RefPtr<ReferenceFilterOperation> operation = ReferenceFilterOperation::create(cssUrl, url.fragmentIdentifier());
             if (SVGURIReference::isExternalURIReference(cssUrl, m_state.document()))
                 state.filtersWithPendingSVGDocuments().append(operation);
 
@@ -3418,7 +3418,7 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
             if (stdDeviation.isUndefined())
                 return false;
 
-            operations.operations().append(BlurFilterOperation::create(stdDeviation, operationType));
+            operations.operations().append(BlurFilterOperation::create(stdDeviation));
             break;
         }
         case WebKitCSSFilterValue::DropShadowFilterOperation: {
@@ -3444,7 +3444,7 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
             if (item->color)
                 color = colorFromPrimitiveValue(item->color.get());
 
-            operations.operations().append(DropShadowFilterOperation::create(location, blur, color.isValid() ? color : Color::transparent, operationType));
+            operations.operations().append(DropShadowFilterOperation::create(location, blur, color.isValid() ? color : Color::transparent));
             break;
         }
         case WebKitCSSFilterValue::UnknownFilterOperation:

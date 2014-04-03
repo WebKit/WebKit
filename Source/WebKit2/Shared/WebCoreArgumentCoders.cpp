@@ -1608,6 +1608,7 @@ static void encodeFilterOperation(ArgumentEncoder& encoder, const FilterOperatio
         encoder << dropShadowFilter.color();
         break;
     }
+    case FilterOperation::DEFAULT:
     case FilterOperation::PASSTHROUGH:
     case FilterOperation::NONE:
         break;
@@ -1628,7 +1629,7 @@ static bool decodeFilterOperation(ArgumentDecoder& decoder, RefPtr<FilterOperati
             return false;
         if (!decoder.decode(fragment))
             return false;
-        filter = ReferenceFilterOperation::create(url, fragment, type);
+        filter = ReferenceFilterOperation::create(url, fragment);
         break;
     }
     case FilterOperation::GRAYSCALE:
@@ -1655,7 +1656,7 @@ static bool decodeFilterOperation(ArgumentDecoder& decoder, RefPtr<FilterOperati
         Length stdDeviation;
         if (!decoder.decode(stdDeviation))
             return false;
-        filter = BlurFilterOperation::create(stdDeviation, type);
+        filter = BlurFilterOperation::create(stdDeviation);
         break;
     }
     case FilterOperation::DROP_SHADOW: {
@@ -1668,9 +1669,10 @@ static bool decodeFilterOperation(ArgumentDecoder& decoder, RefPtr<FilterOperati
             return false;
         if (!decoder.decode(color))
             return false;
-        filter = DropShadowFilterOperation::create(location, stdDeviation, color, type);
+        filter = DropShadowFilterOperation::create(location, stdDeviation, color);
         break;
     }
+    case FilterOperation::DEFAULT:
     case FilterOperation::PASSTHROUGH:
     case FilterOperation::NONE:
         break;

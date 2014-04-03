@@ -632,6 +632,9 @@ RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const FilterOpe
     for (size_t i = 0; i < filters.size(); ++i) {
         const auto filter = filters.at(i);
         switch (filter->type()) {
+        case FilterOperation::DEFAULT:
+            ts << "default";
+            break;
         case FilterOperation::REFERENCE:
             ts << "reference";
             break;

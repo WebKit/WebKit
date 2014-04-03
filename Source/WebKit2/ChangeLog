@@ -1,3 +1,30 @@
+2014-04-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Harden FilterOperation type casting
+        https://bugs.webkit.org/show_bug.cgi?id=131142
+
+        Reviewed by Sam Weinig.
+
+        DefaultFilterOperation had an error-prone behavior where it set the base class
+        OperationType to the type of some other filter class, but overrode isDefault(). 
+        This made it very easy to write incorrect code that casted incorrectly based on type().
+        
+        Fix by making adding a DEFAULT filter operation type, and storing the represented
+        type on DefaultFilterOperation().
+        
+        Also remove the OperationType argument for constructors of FilterOperations that
+        can only be of one type, to avoid possible mistakes.
+        
+        Make the type cast macros a bit more normal, and use them in a few places.
+        
+        Fixed PlatformCAFiltersMac to handle the default filter case more cleanly.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::encodeFilterOperation):
+        (IPC::decodeFilterOperation):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTextStream::operator<<):
+
 2014-04-03  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (Async text input): Controls become unresponsive to mouse events

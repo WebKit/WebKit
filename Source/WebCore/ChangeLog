@@ -1,3 +1,63 @@
+2014-04-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Harden FilterOperation type casting
+        https://bugs.webkit.org/show_bug.cgi?id=131142
+
+        Reviewed by Sam Weinig.
+
+        DefaultFilterOperation had an error-prone behavior where it set the base class
+        OperationType to the type of some other filter class, but overrode isDefault(). 
+        This made it very easy to write incorrect code that casted incorrectly based on type().
+        
+        Fix by making adding a DEFAULT filter operation type, and storing the represented
+        type on DefaultFilterOperation().
+        
+        Also remove the OperationType argument for constructors of FilterOperations that
+        can only be of one type, to avoid possible mistakes.
+        
+        Make the type cast macros a bit more normal, and use them in a few places.
+        
+        Fixed PlatformCAFiltersMac to handle the default filter case more cleanly.
+
+        * WebCore.exp.in:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForFilter):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::createFilterOperations):
+        * platform/graphics/ca/PlatformCAFilters.h:
+        * platform/graphics/ca/mac/PlatformCAFiltersMac.mm:
+        (PlatformCAFilters::filterValueForOperation):
+        (PlatformCAFilters::colorMatrixValueForFilter):
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::DefaultFilterOperation::operator==):
+        (WebCore::ReferenceFilterOperation::ReferenceFilterOperation):
+        (WebCore::ReferenceFilterOperation::operator==):
+        (WebCore::BlurFilterOperation::operator==):
+        (WebCore::BlurFilterOperation::blend):
+        (WebCore::DropShadowFilterOperation::operator==):
+        (WebCore::DropShadowFilterOperation::blend):
+        * platform/graphics/filters/FilterOperation.h:
+        (WebCore::FilterOperation::blend):
+        (WebCore::FilterOperation::type):
+        (WebCore::FilterOperation::isBasicColorMatrixFilterOperation):
+        (WebCore::FilterOperation::isBasicComponentTransferFilterOperation):
+        (WebCore::FilterOperation::isSameType):
+        (WebCore::DefaultFilterOperation::create):
+        (WebCore::DefaultFilterOperation::representedType):
+        (WebCore::DefaultFilterOperation::DefaultFilterOperation):
+        (WebCore::ReferenceFilterOperation::create):
+        (WebCore::BlurFilterOperation::create):
+        (WebCore::BlurFilterOperation::BlurFilterOperation):
+        (WebCore::DropShadowFilterOperation::create):
+        (WebCore::DropShadowFilterOperation::DropShadowFilterOperation):
+        (WebCore::FilterOperation::isDefault): Deleted.
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::outsets):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::build):
+        * rendering/RenderLayerFilterInfo.cpp:
+        (WebCore::RenderLayer::FilterInfo::updateReferenceFilterClients):
+
 2014-04-03  Andreas Kling  <akling@apple.com>
 
         Stop throwing away the Document's StyleResolver on a timer.

@@ -103,7 +103,7 @@ void RenderLayer::FilterInfo::updateReferenceFilterClients(const FilterOperation
         FilterOperation* filterOperation = operations.operations()[i].get();
         if (filterOperation->type() != FilterOperation::REFERENCE)
             continue;
-        ReferenceFilterOperation* referenceFilterOperation = static_cast<ReferenceFilterOperation*>(filterOperation);
+        ReferenceFilterOperation* referenceFilterOperation = toReferenceFilterOperation(filterOperation);
         CachedSVGDocumentReference* documentReference = referenceFilterOperation->cachedSVGDocumentReference();
         CachedSVGDocument* cachedSVGDocument = documentReference ? documentReference->document() : 0;
 

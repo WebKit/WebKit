@@ -32,9 +32,17 @@
 #include "CachedSVGDocumentReference.h"
 
 namespace WebCore {
+    
+bool DefaultFilterOperation::operator==(const FilterOperation& o) const
+{
+    if (!isSameType(o))
+        return false;
+    
+    return representedType() == toDefaultFilterOperation(o).representedType();
+}
 
-ReferenceFilterOperation::ReferenceFilterOperation(const String& url, const String& fragment, OperationType type)
-    : FilterOperation(type)
+ReferenceFilterOperation::ReferenceFilterOperation(const String& url, const String& fragment)
+    : FilterOperation(REFERENCE)
     , m_url(url)
     , m_fragment(fragment)
 {
@@ -43,7 +51,15 @@ ReferenceFilterOperation::ReferenceFilterOperation(const String& url, const Stri
 ReferenceFilterOperation::~ReferenceFilterOperation()
 {
 }
-
+    
+bool ReferenceFilterOperation::operator==(const FilterOperation& o) const
+{
+    if (!isSameType(o))
+        return false;
+    
+    return m_url == toReferenceFilterOperation(o).m_url;
+}
+    
 CachedSVGDocumentReference* ReferenceFilterOperation::getOrCreateCachedSVGDocumentReference()
 {
     if (!m_cachedSVGDocumentReference)
@@ -124,7 +140,15 @@ double BasicComponentTransferFilterOperation::passthroughAmount() const
         return 0;
     }
 }
-
+    
+bool BlurFilterOperation::operator==(const FilterOperation& o) const
+{
+    if (!isSameType(o))
+        return false;
+    
+    return m_stdDeviation == toBlurFilterOperation(o).stdDeviation();
+}
+    
 PassRefPtr<FilterOperation> BlurFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
 {
     if (from && !from->isSameType(*this))
@@ -133,13 +157,21 @@ PassRefPtr<FilterOperation> BlurFilterOperation::blend(const FilterOperation* fr
     LengthType lengthType = m_stdDeviation.type();
 
     if (blendToPassthrough)
-        return BlurFilterOperation::create(Length(lengthType).blend(m_stdDeviation, progress), m_type);
+        return BlurFilterOperation::create(Length(lengthType).blend(m_stdDeviation, progress));
 
-    const BlurFilterOperation* fromOp = static_cast<const BlurFilterOperation*>(from);
+    const BlurFilterOperation* fromOp = toBlurFilterOperation(from);
     Length fromLength = fromOp ? fromOp->m_stdDeviation : Length(lengthType);
-    return BlurFilterOperation::create(m_stdDeviation.blend(fromLength, progress), m_type);
+    return BlurFilterOperation::create(m_stdDeviation.blend(fromLength, progress));
 }
-
+    
+bool DropShadowFilterOperation::operator==(const FilterOperation& o) const
+{
+    if (!isSameType(o))
+        return false;
+    const DropShadowFilterOperation& other = toDropShadowFilterOperation(o);
+    return m_location == other.m_location && m_stdDeviation == other.m_stdDeviation && m_color == other.m_color;
+}
+    
 PassRefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
 {
     if (from && !from->isSameType(*this))
@@ -149,10 +181,9 @@ PassRefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperati
         return DropShadowFilterOperation::create(
             WebCore::blend(m_location, IntPoint(), progress),
             WebCore::blend(m_stdDeviation, 0, progress),
-            WebCore::blend(m_color, Color(Color::transparent), progress),
-            m_type);
+            WebCore::blend(m_color, Color(Color::transparent), progress));
 
-    const DropShadowFilterOperation* fromOp = static_cast<const DropShadowFilterOperation*>(from);
+    const DropShadowFilterOperation* fromOp = toDropShadowFilterOperation(from);
     IntPoint fromLocation = fromOp ? fromOp->location() : IntPoint();
     int fromStdDeviation = fromOp ? fromOp->stdDeviation() : 0;
     Color fromColor = fromOp ? fromOp->color() : Color(Color::transparent);
@@ -160,7 +191,7 @@ PassRefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperati
     return DropShadowFilterOperation::create(
         WebCore::blend(fromLocation, m_location, progress),
         WebCore::blend(fromStdDeviation, m_stdDeviation, progress),
-        WebCore::blend(fromColor, m_color, progress), m_type);
+        WebCore::blend(fromColor, m_color, progress));
 }
 
 } // namespace WebCore

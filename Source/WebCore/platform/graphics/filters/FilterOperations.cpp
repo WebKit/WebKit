@@ -108,10 +108,10 @@ FilterOutsets FilterOperations::outsets() const
 {
     FilterOutsets totalOutsets;
     for (size_t i = 0; i < m_operations.size(); ++i) {
-        FilterOperation* filterOperation = m_operations.at(i).get();
+        const FilterOperation* filterOperation = m_operations.at(i).get();
         switch (filterOperation->type()) {
         case FilterOperation::BLUR: {
-            BlurFilterOperation* blurOperation = static_cast<BlurFilterOperation*>(filterOperation);
+            const BlurFilterOperation* blurOperation = toBlurFilterOperation(filterOperation);
             float stdDeviation = floatValueForLength(blurOperation->stdDeviation(), 0);
             IntSize outsetSize = outsetSizeForBlur(stdDeviation);
             FilterOutsets outsets(outsetSize.height(), outsetSize.width(), outsetSize.height(), outsetSize.width());
@@ -119,7 +119,7 @@ FilterOutsets FilterOperations::outsets() const
             break;
         }
         case FilterOperation::DROP_SHADOW: {
-            DropShadowFilterOperation* dropShadowOperation = static_cast<DropShadowFilterOperation*>(filterOperation);
+            const DropShadowFilterOperation* dropShadowOperation = toDropShadowFilterOperation(filterOperation);
             IntSize outsetSize = outsetSizeForBlur(dropShadowOperation->stdDeviation());
             FilterOutsets outsets(
                 std::max(0, outsetSize.height() - dropShadowOperation->y()),
