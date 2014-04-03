@@ -73,14 +73,7 @@ zoom_level_set(Evas_Object *webview, int level)
     if (level < 0  || level >= sizeof(zoomLevels) / sizeof(float))
         return EINA_FALSE;
 
-    Evas_Coord ox, oy, mx, my, cx, cy;
-    evas_pointer_canvas_xy_get(evas_object_evas_get(webview), &mx, &my); // Get current mouse position on window.
-    evas_object_geometry_get(webview, &ox, &oy, NULL, NULL); // Get webview's position on window.
-    cx = mx - ox; // current x position = mouse x position - webview x position
-    cy = my - oy; // current y position = mouse y position - webview y position
-
-    Eina_Bool result = ewk_view_scale_set(webview, zoomLevels[level], cx, cy);
-    return result;
+    return ewk_view_page_zoom_set(webview, zoomLevels[level]);
 }
 
 static Ewk_View_Smart_Class *miniBrowserViewSmartClass()

@@ -1,3 +1,21 @@
+2014-04-03  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [EFL][WK2] Replacing zoom functionality of MiniBrowser from scale_set to page_zoom_set.
+        https://bugs.webkit.org/show_bug.cgi?id=130391
+
+        Reviewed by Gyuyoung Kim.
+
+        Change the implementation of the zoom functionality from ewk_view_scale_set
+        to ewk_view_page_zoom_set. Adding to the API functions: ewk_view_page_zoom_set and
+        ewk_view_page_zoom_get to call appropriate WK functions.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_page_zoom_set):
+        (ewk_view_page_zoom_get):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2014-04-02  Alexey Proskuryakov  <ap@apple.com>
 
         Sandbox violation in NetworkProcess when uploading a bundle

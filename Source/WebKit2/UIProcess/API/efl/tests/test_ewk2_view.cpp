@@ -1099,3 +1099,17 @@ TEST_F(EWK2ViewTest, ewk_view_bg_color)
     ASSERT_EQ(0, blue);
     ASSERT_EQ(255, red);
 }
+
+TEST_F(EWK2ViewTest, ewk_view_page_zoom_set)
+{
+    ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
+
+    // Default zoom factor is 1.0
+    ASSERT_FLOAT_EQ(1, ewk_view_page_zoom_get(webView()));
+
+    ASSERT_TRUE(ewk_view_page_zoom_set(webView(), 0.67));
+    ASSERT_FLOAT_EQ(0.67, ewk_view_page_zoom_get(webView()));
+
+    ASSERT_TRUE(ewk_view_page_zoom_set(webView(), 1));
+    ASSERT_FLOAT_EQ(1, ewk_view_page_zoom_get(webView()));
+}

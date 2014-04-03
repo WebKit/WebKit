@@ -238,6 +238,22 @@ double ewk_view_scale_get(const Evas_Object* ewkView)
     return WKPageGetScaleFactor(impl->wkPage());
 }
 
+Eina_Bool ewk_view_page_zoom_set(Evas_Object* ewkView, double zoomFactor)
+{
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
+
+    WKPageSetPageZoomFactor(impl->wkPage(), zoomFactor);
+
+    return true;
+}
+
+double ewk_view_page_zoom_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, -1);
+
+    return WKPageGetPageZoomFactor(impl->wkPage());
+}
+
 Eina_Bool ewk_view_device_pixel_ratio_set(Evas_Object* ewkView, float ratio)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);

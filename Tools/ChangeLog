@@ -1,3 +1,15 @@
+2014-04-03  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [EFL][WK2] Replacing zoom functionality of MiniBrowser from scale_set to page_zoom_set.
+        https://bugs.webkit.org/show_bug.cgi?id=130391
+
+        Reviewed by Gyuyoung Kim.
+
+        Change the implementation of the zoom functionality from ewk_view_scale_set
+        to ewk_view_page_zoom_set.
+
+        * MiniBrowser/efl/main.c:
+
 2014-04-03  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [webkitpy] perf profiler does not understand --call-graph argument

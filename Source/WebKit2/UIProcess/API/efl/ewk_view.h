@@ -573,6 +573,28 @@ EAPI Eina_Bool ewk_view_scale_set(Evas_Object *o, double scaleFactor, int x, int
 EAPI double ewk_view_scale_get(const Evas_Object *o);
 
 /**
+ * Sets zoom of the current page.
+ *
+ * @param o view object to set the zoom level
+ * @param zoom_factor a new level to set
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool ewk_view_page_zoom_set(Evas_Object *o, double zoom_factor);
+
+/**
+ * Queries the current zoom factor of the page.
+ *
+ * It returns previous zoom factor after ewk_view_page_zoom_factor_set is called immediately
+ * until zoom factor of page is really changed.
+ *
+ * @param o view object to get the zoom factor
+ *
+ * @return current zoom factor in use on success or @c -1.0 on failure
+ */
+EAPI double ewk_view_page_zoom_get(const Evas_Object *o);
+
+/**
  * Queries the ratio between the CSS units and device pixels when the content is unscaled.
  *
  * When designing touch-friendly contents, knowing the approximated target size on a device
