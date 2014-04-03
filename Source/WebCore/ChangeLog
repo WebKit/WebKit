@@ -1,3 +1,10 @@
+2014-04-02  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the !USE(IOSURFACE) iOS build.
+
+        * platform/ios/MemoryPressureHandlerIOS.mm:
+        (WebCore::MemoryPressureHandler::platformReleaseMemory):
+
 2014-04-02  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/131136> Remove FrameLoadRequest's m_lockHistory member since it's always false.

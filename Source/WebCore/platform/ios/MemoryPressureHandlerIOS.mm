@@ -107,7 +107,9 @@ void MemoryPressureHandler::respondToMemoryPressureIfNeeded()
 
 void MemoryPressureHandler::platformReleaseMemory(bool)
 {
+#if USE(IOSURFACE)
     IOSurfacePool::sharedPool().discardAllSurfaces();
+#endif
 }
 
 } // namespace WebCore
