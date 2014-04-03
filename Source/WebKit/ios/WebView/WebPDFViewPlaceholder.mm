@@ -504,7 +504,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 
     // Call to the frame loader because this is where our security checks are made.
     Frame* frame = core([_dataSource webFrame]);
-    frame->loader().loadFrameRequest(FrameLoadRequest(frame->document()->securityOrigin(), ResourceRequest(URL)), false, false, event.get(), 0, MaybeSendReferrer);
+    frame->loader().loadFrameRequest(FrameLoadRequest(frame->document()->securityOrigin(), ResourceRequest(URL)), LockHistory::No, LockBackForwardList::No, event.get(), 0, MaybeSendReferrer);
 }
 
 @end
