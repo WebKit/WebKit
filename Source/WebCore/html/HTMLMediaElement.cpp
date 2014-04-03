@@ -4600,12 +4600,13 @@ void HTMLMediaElement::stop()
         exitFullscreen();
     
     m_inActiveDocument = false;
-    userCancelledLoad();
-    
+
     // Stop the playback without generating events
     m_playing = false;
     setPausedInternal(true);
-    
+
+    userCancelledLoad();
+
     if (renderer())
         renderer()->updateFromElement();
     

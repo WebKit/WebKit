@@ -1,5 +1,22 @@
 2014-04-03  Jer Noble  <jer.noble@apple.com>
 
+        Leaving a streaming movie by going "Back" keeps playing the audio
+        https://bugs.webkit.org/show_bug.cgi?id=131149
+
+        Reviewed by Eric Carlson.
+
+        When stopping a HTMLMediaElement, call userCancelledLoad() (which clears the
+        MediaPlayer) only after calling setPausedInternal() (which pauses the MediaPlayer).
+        Previously, and in the reverse order, the MediaPlayer would never get a chance to pause
+        before being cleared. There is an underlying error with the QTKit media engine which
+        is causing it to continue playing even after its last reference is released, but this
+        does fix the symptom of playback continuing even after stopping.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::stop):
+
+2014-04-03  Jer Noble  <jer.noble@apple.com>
+
         [EME] Crash when passing a NULL initData to MediaKeys.createSession()
         https://bugs.webkit.org/show_bug.cgi?id=131156
 
