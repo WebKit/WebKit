@@ -269,7 +269,11 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
             listener->ignore();
             break;
 
-        case WKNavigationActionPolicyDownload:
+// FIXME: Once we have a new enough compiler everywhere we don't need to ignore -Wswitch.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wswitch"
+        case _WKNavigationActionPolicyDownload:
+#pragma clang diagnostic pop
             listener->download();
             break;
         }
@@ -310,7 +314,11 @@ void NavigationState::PolicyClient::decidePolicyForResponse(WebPageProxy*, WebFr
             listener->ignore();
             break;
 
-        case WKNavigationResponsePolicyBecomeDownload:
+// FIXME: Once we have a new enough compiler everywhere we don't need to ignore -Wswitch.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wswitch"
+        case _WKNavigationResponsePolicyBecomeDownload:
+#pragma clang diagnostic pop
             listener->download();
             break;
         }

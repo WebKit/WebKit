@@ -1,3 +1,18 @@
+2014-04-03  Anders Carlsson  <andersca@apple.com>
+
+        Make download policy decisions SPI for now
+        https://bugs.webkit.org/show_bug.cgi?id=131179
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        (NS_ENUM):
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        (NS_ENUM):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::PolicyClient::decidePolicyForNavigationAction):
+        (WebKit::NavigationState::PolicyClient::decidePolicyForResponse):
+
 2014-04-02  Simon Fraser  <simon.fraser@apple.com>
 
         Harden FilterOperation type casting

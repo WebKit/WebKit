@@ -36,12 +36,10 @@
 typedef NS_ENUM(NSInteger, WKNavigationActionPolicy) {
     WKNavigationActionPolicyCancel,
     WKNavigationActionPolicyAllow,
-    WKNavigationActionPolicyDownload,
 
     // FIXME: Remove this.
     WKNavigationPolicyDecisionCancel = WKNavigationActionPolicyCancel,
     WKNavigationPolicyDecisionAllow = WKNavigationActionPolicyAllow,
-    WKNavigationPolicyDecisionDownload = WKNavigationActionPolicyDownload,
 };
 
 // FIXME: Remove this.
@@ -50,12 +48,10 @@ typedef WKNavigationActionPolicy WKNavigationPolicyDecision;
 typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
     WKNavigationResponsePolicyCancel,
     WKNavigationResponsePolicyAllow,
-    WKNavigationResponsePolicyBecomeDownload,
 
     // FIXME: Remove this.
     WKNavigationResponsePolicyDecisionCancel = WKNavigationResponsePolicyCancel,
     WKNavigationResponsePolicyDecisionAllow = WKNavigationResponsePolicyAllow,
-    WKNavigationResponsePolicyDecisionBecomeDownload = WKNavigationResponsePolicyBecomeDownload,
 };
 
 // FIXME: Remove this.
