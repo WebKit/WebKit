@@ -222,11 +222,19 @@ if (ENABLE_CREDENTIAL_STORAGE)
     set(ENABLE_CREDENTIAL_STORAGE 1)
 endif ()
 
-# We don't use find_package for GLX because it is part of -lGL, unlike EGL.
 find_package(OpenGL)
-check_include_files("GL/glx.h" GLX_FOUND)
-find_package(EGL)
 
+# This part can be simplified once CMake 2.8.6 is required and
+# CMakePushCheckState can be used. We need to have OPENGL_INCLUDE_DIR as part
+# of the directories check_include_files() looks for in case OpenGL is
+# installed into a non-standard location.
+set(REQUIRED_INCLUDES_OLD ${CMAKE_REQUIRED_INCLUDES})
+set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${OPENGL_INCLUDE_DIR})
+# We don't use find_package for GLX because it is part of -lGL, unlike EGL.
+check_include_files("GL/glx.h" GLX_FOUND)
+set(CMAKE_REQUIRED_INCLUDES ${REQUIRED_INCLUDES_OLD})
+
+find_package(EGL)
 if (EGL_FOUND)
     set(WTF_USE_EGL 1)
 endif ()

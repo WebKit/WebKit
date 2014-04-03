@@ -1,3 +1,17 @@
+2014-04-02  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [GTK][CMake] Look for glx.h in OPENGL_INCLUDE_DIR.
+        https://bugs.webkit.org/show_bug.cgi?id=131095
+
+        Reviewed by Martin Robinson.
+
+        One needs to take into account OpenGL's include directory found via
+        find_package() when looking for glx.h, since if the former is a
+        non-standard location the latter will also be. If this is not it is
+        possible that OpenGL is found but GLX support is not properly detected.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2014-04-02  Martin Robinson  <mrobinson@igalia.com>
 
         REGRESSION(r165704): [GTK] Inspector resources not correctly generated
