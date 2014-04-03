@@ -640,6 +640,21 @@ void MediaPlayer::setVideoFullscreenGravity(MediaPlayer::VideoGravity gravity)
 {
     m_private->setVideoFullscreenGravity(gravity);
 }
+
+NSArray* MediaPlayer::timedMetadata() const
+{
+    return m_private->timedMetadata();
+}
+
+String MediaPlayer::accessLog() const
+{
+    return m_private->accessLog();
+}
+
+String MediaPlayer::errorLog() const
+{
+    return m_private->errorLog();
+}
 #endif
 
 MediaPlayer::NetworkState MediaPlayer::networkState()

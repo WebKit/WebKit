@@ -29,5 +29,8 @@
     JSGenerateToJSObject,
 ] interface QuickTimePluginReplacement {
     readonly attribute unsigned long long movieSize;
+    [CustomGetter] readonly attribute any timedMetaData;
+    [CustomGetter] readonly attribute any accessLog;
+    [CustomGetter] readonly attribute any errorLog;
     void postEvent(DOMString eventName);
 };

@@ -108,6 +108,7 @@ public:
     void presentationSizeDidChange(FloatSize);
     void durationDidChange(double);
     void rateDidChange(double);
+    void metadataDidArrive(RetainPtr<NSArray>);
 
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     void outputMediaDataWillChange(AVPlayerItemVideoOutput*);
@@ -152,7 +153,12 @@ private:
     virtual void setVideoFullscreenLayer(PlatformLayer*);
     virtual void setVideoFullscreenFrame(FloatRect);
     virtual void setVideoFullscreenGravity(MediaPlayer::VideoGravity);
+
+    virtual NSArray *timedMetadata() const override;
+    virtual String accessLog() const;
+    virtual String errorLog() const;
 #endif
+
     virtual bool supportsAcceleratedRendering() const { return true; }
     virtual float mediaTimeForTimeValue(float) const;
     virtual double maximumDurationToCacheMediaTime() const { return 5; }
@@ -301,6 +307,7 @@ private:
     mutable RetainPtr<NSArray> m_cachedSeekableRanges;
     mutable RetainPtr<NSArray> m_cachedLoadedRanges;
     RetainPtr<NSArray> m_cachedTracks;
+    RetainPtr<NSArray> m_currentMetaData;
     FloatSize m_cachedPresentationSize;
     double m_cachedDuration;
     double m_cachedRate;

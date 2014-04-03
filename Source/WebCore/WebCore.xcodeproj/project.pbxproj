@@ -149,7 +149,7 @@
 		07277E5417D018CC0015534D /* JSMediaStreamTrackEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07277E4817D018CC0015534D /* JSMediaStreamTrackEvent.cpp */; };
 		07277E5517D018CC0015534D /* JSMediaStreamTrackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07277E4917D018CC0015534D /* JSMediaStreamTrackEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		072AE1E5183C0741000A5988 /* PluginReplacement.h in Headers */ = {isa = PBXBuildFile; fileRef = 072AE1DF183C0741000A5988 /* PluginReplacement.h */; };
-		072AE1E6183C0741000A5988 /* QuickTimePluginReplacement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 072AE1E0183C0741000A5988 /* QuickTimePluginReplacement.cpp */; };
+		072AE1E6183C0741000A5988 /* QuickTimePluginReplacement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 072AE1E0183C0741000A5988 /* QuickTimePluginReplacement.mm */; };
 		072AE1E8183C0741000A5988 /* QuickTimePluginReplacement.h in Headers */ = {isa = PBXBuildFile; fileRef = 072AE1E2183C0741000A5988 /* QuickTimePluginReplacement.h */; };
 		072C8B11131C518600A4FCE9 /* MediaPlayerPrivateAVFoundation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */; };
 		072CA86116CB4DC3008AE131 /* CaptionUserPreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 072CA86016CB4DC3008AE131 /* CaptionUserPreferences.cpp */; };
@@ -7021,7 +7021,7 @@
 		0729B14E17CFCCA0004F1D60 /* MediaStreamCenterMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamCenterMac.cpp; sourceTree = "<group>"; };
 		0729B14F17CFCCA0004F1D60 /* MediaStreamCenterMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamCenterMac.h; sourceTree = "<group>"; };
 		072AE1DF183C0741000A5988 /* PluginReplacement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginReplacement.h; path = plugins/PluginReplacement.h; sourceTree = "<group>"; };
-		072AE1E0183C0741000A5988 /* QuickTimePluginReplacement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = QuickTimePluginReplacement.cpp; path = plugins/QuickTimePluginReplacement.cpp; sourceTree = "<group>"; };
+		072AE1E0183C0741000A5988 /* QuickTimePluginReplacement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QuickTimePluginReplacement.mm; path = plugins/QuickTimePluginReplacement.mm; sourceTree = "<group>"; };
 		072AE1E1183C0741000A5988 /* QuickTimePluginReplacement.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = QuickTimePluginReplacement.css; path = plugins/QuickTimePluginReplacement.css; sourceTree = "<group>"; };
 		072AE1E2183C0741000A5988 /* QuickTimePluginReplacement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuickTimePluginReplacement.h; path = plugins/QuickTimePluginReplacement.h; sourceTree = "<group>"; };
 		072AE1E3183C0741000A5988 /* QuickTimePluginReplacement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = QuickTimePluginReplacement.idl; path = plugins/QuickTimePluginReplacement.idl; sourceTree = "<group>"; };
@@ -14282,7 +14282,7 @@
 			isa = PBXGroup;
 			children = (
 				072AE1DF183C0741000A5988 /* PluginReplacement.h */,
-				072AE1E0183C0741000A5988 /* QuickTimePluginReplacement.cpp */,
+				072AE1E0183C0741000A5988 /* QuickTimePluginReplacement.mm */,
 				072AE1E1183C0741000A5988 /* QuickTimePluginReplacement.css */,
 				072AE1E2183C0741000A5988 /* QuickTimePluginReplacement.h */,
 				072AE1E3183C0741000A5988 /* QuickTimePluginReplacement.idl */,
@@ -28599,7 +28599,7 @@
 				E4D687770ED7AE3D006EA978 /* PurgeableBufferMac.cpp in Sources */,
 				550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */,
 				442AF7AA102CDDEA008FD4D3 /* QuickLook.mm in Sources */,
-				072AE1E6183C0741000A5988 /* QuickTimePluginReplacement.cpp in Sources */,
+				072AE1E6183C0741000A5988 /* QuickTimePluginReplacement.mm in Sources */,
 				379E371613736A6600B9E919 /* QuotedPrintable.cpp in Sources */,
 				5A574F28131DB96D00471B88 /* QuotesData.cpp in Sources */,
 				F55B3DCB1251F12D003EF269 /* RadioInputType.cpp in Sources */,

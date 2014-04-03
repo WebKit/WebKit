@@ -322,19 +322,28 @@ Replacement.prototype = {
     
     timedMetadataUpdates: function()
     {
-        // FIXME: not implemented yet.
+        try {
+            return this.host.timedMetaData;
+        } catch(e) { }
+
         return null;
     },
     
     accessLog: function()
     {
-        // FIXME: not implemented yet.
+        try {
+            return this.host.accessLog;
+        } catch(e) { }
+
         return null;
     },
     
     errorLog: function()
     {
-        // FIXME: not implemented yet.
+        try {
+            return this.host.errorLog;
+        } catch(e) { }
+
         return null;
     },
 };

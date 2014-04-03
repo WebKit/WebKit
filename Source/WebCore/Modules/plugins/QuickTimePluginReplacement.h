@@ -55,6 +55,8 @@ public:
     virtual bool willCreateRenderer() override { return m_mediaElement; }
     virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, PassRef<RenderStyle>) override;
 
+    HTMLVideoElement* parentElement() { return m_mediaElement.get(); }
+
     unsigned long long movieSize() const;
     void postEvent(const String&);
 

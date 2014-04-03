@@ -1,3 +1,57 @@
+2014-04-03  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] add missing QuickTime plug-in replacement API
+        https://bugs.webkit.org/show_bug.cgi?id=131042
+
+        Reviewed by Dean Jackson.
+
+        Rename QuickTimePluginReplacement.cpp to QuickTimePluginReplacement.mm to make it possible
+        to use the ObjC JSC API.
+        * Modules/plugins/QuickTimePluginReplacement.cpp:
+        * Modules/plugins/QuickTimePluginReplacement.h:
+        (WebCore::QuickTimePluginReplacement::parentElement):
+        * Modules/plugins/QuickTimePluginReplacement.idl:
+
+        * Modules/plugins/QuickTimePluginReplacement.js:
+        (Replacement.prototype.timedMetadataUpdates): Implement.
+        (Replacement.prototype.accessLog): Ditto.
+        (Replacement.prototype.errorLog): Ditto.
+
+        Use the JSC ObjC API to create a JavaScript object from an array of AVMetadataItems. The
+        JSC ObjC API supports basic NSTypes, but an AVMetadataItem can also contain NSData which 
+        the existing plug-in returns as base-64 encoded data, so create wrappers for NSDictionary
+        and NSArray.
+        * Modules/plugins/QuickTimePluginReplacement.mm: Copied from Source/WebCore/Modules/plugins/QuickTimePluginReplacement.cpp.
+        (WebCore::QuickTimePluginReplacement::ensureReplacementScriptInjected): Disambiguate with "JSC::"
+        (WebCore::QuickTimePluginReplacement::installReplacement): Ditto.
+        (WebCore::jsValueWithDataInContext): Create JSValue* from NSData.
+        (WebCore::jsValueWithArrayInContext): Create JSValue* from NSArray.
+        (WebCore::jsValueWithDictionaryInContext): Create JSValue* from NSDictionary.
+        (WebCore::jsValueWithValueInContext): Create JSValue* from basic NSTypes plus AVMetadataItem
+            and NSData.
+        (WebCore::jsValueWithAVMetadataItemInContext): Create JSValue* from AVMetadataItem.
+        (WebCore::JSQuickTimePluginReplacement::timedMetaData): Script interface.
+        (WebCore::JSQuickTimePluginReplacement::accessLog): Ditto.
+        (WebCore::JSQuickTimePluginReplacement::errorLog): Ditto.
+
+        * WebCore.xcodeproj/project.pbxproj: QuickTimePluginReplacement.cpp -> QuickTimePluginReplacement.mm.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::timedMetadata): iOS only accessor.
+        (WebCore::MediaPlayer::accessLog): Ditto.
+        (WebCore::MediaPlayer::errorLog): Ditto.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::timedMetadata):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::accessLog):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::errorLog):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::metadataDidArrive):
+        (WebCore::itemKVOProperties):
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+
 2014-04-03  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Include region range information when printing the render tree

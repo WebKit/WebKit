@@ -58,7 +58,12 @@ public:
     virtual void setVideoFullscreenLayer(PlatformLayer*) { }
     virtual void setVideoFullscreenFrame(FloatRect) { }
     virtual void setVideoFullscreenGravity(MediaPlayer::VideoGravity) { }
+
+    virtual NSArray *timedMetadata() const { return 0; }
+    virtual String accessLog() const { return emptyString(); }
+    virtual String errorLog() const { return emptyString(); }
 #endif
+
     virtual void play() = 0;
     virtual void pause() = 0;    
 

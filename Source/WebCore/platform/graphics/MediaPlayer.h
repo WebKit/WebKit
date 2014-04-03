@@ -62,6 +62,7 @@
 
 OBJC_CLASS AVAsset;
 OBJC_CLASS AVPlayer;
+OBJC_CLASS NSArray;
 OBJC_CLASS QTMovie;
 
 class AVCFPlayer;
@@ -308,7 +309,12 @@ public:
     void setVideoFullscreenFrame(FloatRect);
     enum VideoGravity { VideoGravityResize, VideoGravityResizeAspect, VideoGravityResizeAspectFill };
     void setVideoFullscreenGravity(VideoGravity);
+
+    NSArray *timedMetadata() const;
+    String accessLog() const;
+    String errorLog() const;
 #endif
+
     IntSize naturalSize();
     bool hasVideo() const;
     bool hasAudio() const;

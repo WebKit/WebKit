@@ -98,6 +98,8 @@
 @end
 #endif
 
+typedef AVMetadataItem AVMetadataItemType;
+
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
 SOFT_LINK_FRAMEWORK_OPTIONAL(CoreImage)
@@ -132,6 +134,8 @@ SOFT_LINK_CLASS(AVFoundation, AVPlayerItemVideoOutput)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 SOFT_LINK_CLASS(AVFoundation, AVURLAsset)
 SOFT_LINK_CLASS(AVFoundation, AVAssetImageGenerator)
+SOFT_LINK_CLASS(AVFoundation, AVMetadataItem)
+
 SOFT_LINK_CLASS(CoreImage, CIContext)
 SOFT_LINK_CLASS(CoreImage, CIImage)
 
@@ -156,6 +160,7 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime)
 #define AVPlayerLayer getAVPlayerLayerClass()
 #define AVURLAsset getAVURLAssetClass()
 #define AVAssetImageGenerator getAVAssetImageGeneratorClass()
+#define AVMetadataItem getAVMetadataItemClass()
 
 #define AVMediaCharacteristicVisual getAVMediaCharacteristicVisual()
 #define AVMediaCharacteristicAudible getAVMediaCharacteristicAudible()
@@ -846,6 +851,35 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenGravity(MediaPlayer::
         ASSERT_NOT_REACHED();
 
     [m_videoLayer setVideoGravity:videoGravity];
+}
+
+NSArray *MediaPlayerPrivateAVFoundationObjC::timedMetadata() const
+{
+    if (m_currentMetaData)
+        return m_currentMetaData.get();
+    return nil;
+}
+
+String MediaPlayerPrivateAVFoundationObjC::accessLog() const
+{
+    if (!m_avPlayerItem)
+        return emptyString();
+    
+    AVPlayerItemAccessLog *log = [m_avPlayerItem.get() accessLog];
+    RetainPtr<NSString> logString = adoptNS([[NSString alloc] initWithData:[log extendedLogData] encoding:[log extendedLogDataStringEncoding]]);
+
+    return logString.get();
+}
+
+String MediaPlayerPrivateAVFoundationObjC::errorLog() const
+{
+    if (!m_avPlayerItem)
+        return emptyString();
+
+    AVPlayerItemErrorLog *log = [m_avPlayerItem.get() errorLog];
+    RetainPtr<NSString> logString = adoptNS([[NSString alloc] initWithData:[log extendedLogData] encoding:[log extendedLogDataStringEncoding]]);
+
+    return logString.get();
 }
 #endif
 
@@ -2192,6 +2226,14 @@ void MediaPlayerPrivateAVFoundationObjC::loadedTimeRangesDidChange(RetainPtr<NSA
     updateStates();
 }
 
+void MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(RetainPtr<NSArray> metadata)
+{
+    if (!metadata || [metadata isKindOfClass:[NSNull class]])
+        return;
+
+    m_currentMetaData = metadata;
+}
+
 void MediaPlayerPrivateAVFoundationObjC::tracksDidChange(RetainPtr<NSArray> tracks)
 {
     m_cachedTracks = tracks;
@@ -2270,6 +2312,7 @@ NSArray* itemKVOProperties()
                 @"playbackBufferEmpty",
                 @"duration",
                 @"hasEnabledAudio",
+                @"timedMetadata",
                 nil];
     }
     return keys;
@@ -2357,6 +2400,8 @@ NSArray* itemKVOProperties()
             function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::presentationSizeDidChange, m_callback, FloatSize([newValue sizeValue]));
         else if ([keyPath isEqualToString:@"duration"])
             function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::durationDidChange, m_callback, CMTimeGetSeconds([newValue CMTimeValue]));
+        else if ([keyPath isEqualToString:@"timedMetadata"] && newValue)
+            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::metadataDidArrive, m_callback, RetainPtr<NSArray>(newValue));
     }
 
     if (context == MediaPlayerAVFoundationObservationContextPlayer && !willChange) {
