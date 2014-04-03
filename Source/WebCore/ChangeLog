@@ -1,3 +1,18 @@
+2014-04-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT: the adjacent position is never reset
+        https://bugs.webkit.org/show_bug.cgi?id=131145
+
+        Reviewed by Andreas Kling.
+
+        Corresponding radar: <rdar://problem/16440036>. The backtracking action would use a tail
+        when not needed.
+
+        Test: fast/selectors/multiple-adjacent-chain-without-adjacent-tail.html
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::updateChainStates):
+
 2014-04-02  Brent Fulgham  <bfulgham@apple.com>
 
         Speculative build fix for Windows.

@@ -1,3 +1,13 @@
+2014-04-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT: the adjacent position is never reset
+        https://bugs.webkit.org/show_bug.cgi?id=131145
+
+        Reviewed by Andreas Kling.
+
+        * fast/selectors/multiple-adjacent-chain-without-adjacent-tail-expected.txt: Added.
+        * fast/selectors/multiple-adjacent-chain-without-adjacent-tail.html: Added.
+
 2014-04-02  Stephanie Lewis  <slewis@apple.com>
 
         Roll out http://trac.webkit.org/changeset/166144

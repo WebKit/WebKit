@@ -513,6 +513,7 @@ static inline void updateChainStates(const SelectorFragment& fragment, bool& has
         break;
     case FragmentRelation::IndirectAdjacent:
         hasIndirectAdjacentRelationOnTheRightOfDirectAdjacentChain = true;
+        adjacentPositionSinceIndirectAdjacentTreeWalk = 0;
         break;
     }
 }
