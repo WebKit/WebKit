@@ -1,3 +1,15 @@
+2014-04-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Sandbox violation in NetworkProcess when uploading a bundle
+        https://bugs.webkit.org/show_bug.cgi?id=131133
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::cleanup):
+        (WebKit::NetworkResourceLoader::didReceiveResponseAsync):
+        Don't delete the files. It can't work.
+
 2014-04-02  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [WK2][EFL] Remove unnecessary reinterpret_cast<> in unit testcase

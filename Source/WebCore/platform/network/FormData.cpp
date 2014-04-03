@@ -44,7 +44,6 @@ namespace WebCore {
 
 inline FormData::FormData()
     : m_identifier(0)
-    , m_hasGeneratedFiles(false)
     , m_alwaysStream(false)
     , m_containsPasswordData(false)
 {
@@ -54,18 +53,15 @@ inline FormData::FormData(const FormData& data)
     : RefCounted<FormData>()
     , m_elements(data.m_elements)
     , m_identifier(data.m_identifier)
-    , m_hasGeneratedFiles(false)
     , m_alwaysStream(false)
     , m_containsPasswordData(data.m_containsPasswordData)
 {
     // We shouldn't be copying FormData that hasn't already removed its generated files
     // but just in case, make sure the new FormData is ready to generate its own files.
-    if (data.m_hasGeneratedFiles) {
-        size_t n = m_elements.size();
-        for (size_t i = 0; i < n; ++i) {
-            FormDataElement& e = m_elements[i];
-            if (e.m_type == FormDataElement::encodedFile)
-                e.m_generatedFilename = String();
+    for (FormDataElement& element : m_elements) {
+        if (element.m_type == FormDataElement::encodedFile) {
+            element.m_generatedFilename = String();
+            element.m_ownsGeneratedFile = false;
         }
     }
 }
@@ -74,7 +70,7 @@ FormData::~FormData()
 {
     // This cleanup should've happened when the form submission finished.
     // Just in case, let's assert, and do the cleanup anyway in release builds.
-    ASSERT(!m_hasGeneratedFiles);
+    ASSERT(!hasOwnedGeneratedFiles());
     removeGeneratedFilesIfNeeded();
 }
 
@@ -129,24 +125,22 @@ PassRefPtr<FormData> FormData::deepCopy() const
 
     formData->m_alwaysStream = m_alwaysStream;
 
-    size_t n = m_elements.size();
-    formData->m_elements.reserveInitialCapacity(n);
-    for (size_t i = 0; i < n; ++i) {
-        const FormDataElement& e = m_elements[i];
-        switch (e.m_type) {
+    formData->m_elements.reserveInitialCapacity(m_elements.size());
+    for (const FormDataElement& element : m_elements) {
+        switch (element.m_type) {
         case FormDataElement::data:
-            formData->m_elements.uncheckedAppend(FormDataElement(e.m_data));
+            formData->m_elements.uncheckedAppend(FormDataElement(element.m_data));
             break;
         case FormDataElement::encodedFile:
 #if ENABLE(BLOB)
-            formData->m_elements.uncheckedAppend(FormDataElement(e.m_filename, e.m_fileStart, e.m_fileLength, e.m_expectedFileModificationTime, e.m_shouldGenerateFile));
+            formData->m_elements.uncheckedAppend(FormDataElement(element.m_filename, element.m_fileStart, element.m_fileLength, element.m_expectedFileModificationTime, element.m_shouldGenerateFile));
 #else
-            formData->m_elements.uncheckedAppend(FormDataElement(e.m_filename, e.m_shouldGenerateFile));
+            formData->m_elements.uncheckedAppend(FormDataElement(element.m_filename, element.m_shouldGenerateFile));
 #endif
             break;
 #if ENABLE(BLOB)
         case FormDataElement::encodedBlob:
-            formData->m_elements.uncheckedAppend(FormDataElement(e.m_url));
+            formData->m_elements.uncheckedAppend(FormDataElement(element.m_url));
             break;
 #endif
         }
@@ -367,42 +361,56 @@ PassRefPtr<FormData> FormData::resolveBlobReferences()
 
 void FormData::generateFiles(Document* document)
 {
-    ASSERT(!m_hasGeneratedFiles);
-
-    if (m_hasGeneratedFiles)
-        return;
-
     Page* page = document->page();
     if (!page)
         return;
 
-    size_t n = m_elements.size();
-    for (size_t i = 0; i < n; ++i) {
-        FormDataElement& e = m_elements[i];
-        if (e.m_type == FormDataElement::encodedFile && e.m_shouldGenerateFile) {
-            e.m_generatedFilename = page->chrome().client().generateReplacementFile(e.m_filename);
-            m_hasGeneratedFiles = true;
+    for (FormDataElement& element : m_elements) {
+        if (element.m_type == FormDataElement::encodedFile && element.m_shouldGenerateFile) {
+            ASSERT(!element.m_ownsGeneratedFile);
+            ASSERT(element.m_generatedFilename.isEmpty());
+            if (!element.m_generatedFilename.isEmpty())
+                continue;
+            element.m_generatedFilename = page->chrome().client().generateReplacementFile(element.m_filename);
+            if (!element.m_generatedFilename.isEmpty())
+                element.m_ownsGeneratedFile = true;
         }
     }
 }
 
-void FormData::removeGeneratedFilesIfNeeded()
+bool FormData::hasGeneratedFiles() const
 {
-    if (!m_hasGeneratedFiles)
-        return;
+    for (const FormDataElement& element : m_elements) {
+        if (element.m_type == FormDataElement::encodedFile && !element.m_generatedFilename.isEmpty())
+            return true;
+    }
+    return false;
+}
 
-    size_t n = m_elements.size();
-    for (size_t i = 0; i < n; ++i) {
-        FormDataElement& e = m_elements[i];
-        if (e.m_type == FormDataElement::encodedFile && !e.m_generatedFilename.isEmpty()) {
-            ASSERT(e.m_shouldGenerateFile);
-            String directory = directoryName(e.m_generatedFilename);
-            deleteFile(e.m_generatedFilename);
-            deleteEmptyDirectory(directory);
-            e.m_generatedFilename = String();
+bool FormData::hasOwnedGeneratedFiles() const
+{
+    for (const FormDataElement& element : m_elements) {
+        if (element.m_type == FormDataElement::encodedFile && element.m_ownsGeneratedFile) {
+            ASSERT(!element.m_generatedFilename.isEmpty());
+            return true;
         }
     }
-    m_hasGeneratedFiles = false;
+    return false;
+}
+
+void FormData::removeGeneratedFilesIfNeeded()
+{
+    for (FormDataElement& element : m_elements) {
+        if (element.m_type == FormDataElement::encodedFile && element.m_ownsGeneratedFile) {
+            ASSERT(!element.m_generatedFilename.isEmpty());
+            ASSERT(element.m_shouldGenerateFile);
+            String directory = directoryName(element.m_generatedFilename);
+            deleteFile(element.m_generatedFilename);
+            deleteEmptyDirectory(directory);
+            element.m_generatedFilename = String();
+            element.m_ownsGeneratedFile = false;
+        }
+    }
 }
 
 static void encodeElement(Encoder& encoder, const FormDataElement& element)
@@ -547,7 +555,7 @@ void FormData::encode(Encoder& encoder) const
     for (size_t i = 0; i < size; ++i)
         encodeElement(encoder, m_elements[i]);
 
-    encoder.encodeBool(m_hasGeneratedFiles);
+    encoder.encodeBool(hasGeneratedFiles()); // For backward compatibility.
 
     encoder.encodeInt64(m_identifier);
 }
@@ -561,7 +569,6 @@ void FormData::encode(KeyedEncoder& encoder) const
         encodeElement(encoder, element);
     });
 
-    encoder.encodeBool("hasGeneratedFiles", m_hasGeneratedFiles);
     encoder.encodeInt64("identifier", m_identifier);
 }
 
@@ -589,7 +596,8 @@ PassRefPtr<FormData> FormData::decode(Decoder& decoder)
         data->m_elements.append(element);
     }
 
-    if (!decoder.decodeBool(data->m_hasGeneratedFiles))
+    bool dummy;
+    if (!decoder.decodeBool(dummy))
         return 0;
 
     if (!decoder.decodeInt64(data->m_identifier))

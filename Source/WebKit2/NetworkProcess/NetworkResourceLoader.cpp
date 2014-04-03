@@ -141,9 +141,6 @@ void NetworkResourceLoader::cleanup()
 
     invalidateSandboxExtensions();
 
-    if (FormData* formData = request().httpBody())
-        formData->removeGeneratedFilesIfNeeded();
-
     // Tell the scheduler about this finished loader soon so it can start more network requests.
     NetworkProcess::shared().networkResourceLoadScheduler().scheduleRemoveLoader(this);
 
@@ -174,10 +171,6 @@ void NetworkResourceLoader::abort()
 void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, const ResourceResponse& response)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
-
-    // FIXME (NetworkProcess): Cache the response.
-    if (FormData* formData = request().httpBody())
-        formData->removeGeneratedFilesIfNeeded();
 
     m_networkLoaderClient->didReceiveResponse(this, response);
 

@@ -1,3 +1,30 @@
+2014-04-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Sandbox violation in NetworkProcess when uploading a bundle
+        https://bugs.webkit.org/show_bug.cgi?id=131133
+
+        Reviewed by Brady Eidson.
+
+        Track generated file ownership explicitly, so that each copy of FormData would know
+        whether to delete the file.
+
+        This part is needed to prevent asserting in FormData destructor in NetworkProcess,
+        because it doesn't delete the files. Also, some cleanup.
+
+        * WebCore.exp.in: Don't export FormData::removeGeneratedFilesIfNeeded(), WebKit2
+        doesn't need it any more.
+        * platform/network/FormData.cpp: Removed m_hasGeneratedFiles. There is no problem
+        iterating over FormDataElements to compute it, and that's more robust when FormDatas
+        are passed or stored on disk permanently.
+        Updated touched functions to use C++ iteration, and renamed "e" to "element".
+        (WebCore::FormData::encode): Keep encoding a boolean for hasGeneratedFiles, because
+        the encoded FormData can be stored persitently, and we can't change the format.
+
+        * platform/network/FormData.h: (WebCore::FormDataElement::FormDataElement):
+        Added m_ownsGeneratedFile. FormData will only delete files it owns. Since files
+        are generated immediately before form submission, it's always the FormData being
+        submitted that owns the generated files.
+
 2014-04-02  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Use RenderStyle::hasFlowInto when needed

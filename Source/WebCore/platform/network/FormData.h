@@ -39,10 +39,10 @@ public:
     explicit FormDataElement(const Vector<char>& array) : m_type(data), m_data(array) { }
 
 #if ENABLE(BLOB)
-    FormDataElement(const String& filename, long long fileStart, long long fileLength, double expectedFileModificationTime, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_fileStart(fileStart), m_fileLength(fileLength), m_expectedFileModificationTime(expectedFileModificationTime), m_shouldGenerateFile(shouldGenerateFile) { }
+    FormDataElement(const String& filename, long long fileStart, long long fileLength, double expectedFileModificationTime, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_fileStart(fileStart), m_fileLength(fileLength), m_expectedFileModificationTime(expectedFileModificationTime), m_shouldGenerateFile(shouldGenerateFile), m_ownsGeneratedFile(false) { }
     explicit FormDataElement(const URL& blobURL) : m_type(encodedBlob), m_url(blobURL) { }
 #else
-    FormDataElement(const String& filename, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_shouldGenerateFile(shouldGenerateFile) { }
+    FormDataElement(const String& filename, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_shouldGenerateFile(shouldGenerateFile), m_ownsGeneratedFile(false) { }
 #endif
 
     enum Type {
@@ -62,6 +62,7 @@ public:
 #endif
     String m_generatedFilename;
     bool m_shouldGenerateFile;
+    bool m_ownsGeneratedFile;
 };
 
 inline bool operator==(const FormDataElement& a, const FormDataElement& b)
@@ -104,9 +105,12 @@ public:
     static PassRefPtr<FormData> create(const Vector<char>&);
     static PassRefPtr<FormData> create(const FormDataList&, const TextEncoding&, EncodingType = FormURLEncoded);
     static PassRefPtr<FormData> createMultiPart(const FormDataList&, const TextEncoding&, Document*);
+    ~FormData();
+
+    // FIXME: Both these functions perform a deep copy of m_elements, but differ in handling of other data members.
+    // How much of that is intentional? We need better names that explain the difference.
     PassRefPtr<FormData> copy() const;
     PassRefPtr<FormData> deepCopy() const;
-    ~FormData();
 
     void encode(Encoder&) const;
     void encode(KeyedEncoder&) const;
@@ -162,10 +166,12 @@ private:
 
     void appendKeyValuePairItems(const FormDataList&, const TextEncoding&, bool isMultiPartForm, Document*, EncodingType = FormURLEncoded);
 
+    bool hasGeneratedFiles() const;
+    bool hasOwnedGeneratedFiles() const;
+
     Vector<FormDataElement> m_elements;
 
     int64_t m_identifier;
-    bool m_hasGeneratedFiles;
     bool m_alwaysStream;
     Vector<char> m_boundary;
     bool m_containsPasswordData;
