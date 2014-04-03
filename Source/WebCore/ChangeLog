@@ -1,3 +1,24 @@
+2014-04-03  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] CRASH with calc() value args in inset round
+        https://bugs.webkit.org/show_bug.cgi?id=129816
+
+        Reviewed by Andreas Kling.
+
+        The code to parse the inset rounded corners was adding the parser
+        value arguments to a temporary CSSParserValueList. Unfortunately,
+        CSSParserValueList expects to own the values it contains, and it frees
+        the values it contains when the list is destroyed. This was a problem
+        because the values are owned by the CSSParserValueList passed in to
+        parseInsetRoundedCorners, and thus the calc's argument list would get
+        double freed, resulting in a crash. This patch fixes this by using a
+        Vector to hold the pointers instead.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-inset-round-calc-crash.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseInsetRoundedCorners):
+
 2014-04-03  Jer Noble  <jer.noble@apple.com>
 
         Leaving a streaming movie by going "Back" keeps playing the audio

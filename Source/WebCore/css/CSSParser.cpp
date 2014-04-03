@@ -5347,13 +5347,13 @@ PassRefPtr<CSSBasicShape> CSSParser::parseInsetRoundedCorners(PassRefPtr<CSSBasi
     if (!argument)
         return nullptr;
 
-    std::unique_ptr<CSSParserValueList> radiusArguments(new CSSParserValueList);
+    Vector<CSSParserValue*> radiusArguments;
     while (argument) {
-        radiusArguments->addValue(*argument);
+        radiusArguments.append(argument);
         argument = args->next();
     }
 
-    unsigned num = radiusArguments->size();
+    unsigned num = radiusArguments.size();
     if (!num || num > 9)
         return nullptr;
 
@@ -5361,7 +5361,7 @@ PassRefPtr<CSSBasicShape> CSSParser::parseInsetRoundedCorners(PassRefPtr<CSSBasi
 
     unsigned indexAfterSlash = 0;
     for (unsigned i = 0; i < num; ++i) {
-        CSSParserValue* value = radiusArguments->valueAt(i);
+        CSSParserValue* value = radiusArguments.at(i);
         if (value->unit == CSSParserValue::Operator) {
             if (value->iValue != '/')
                 return nullptr;

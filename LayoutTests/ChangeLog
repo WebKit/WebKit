@@ -1,3 +1,16 @@
+2014-04-03  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] CRASH with calc() value args in inset round
+        https://bugs.webkit.org/show_bug.cgi?id=129816
+
+        Reviewed by Andreas Kling.
+
+        Simple test to make sure that using calc in the round argument of an
+        inset doesn't cause a crash.
+
+        * fast/shapes/shape-outside-floats/shape-outside-inset-round-calc-crash-expected.txt: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-inset-round-calc-crash.html: Added.
+
 2014-04-03  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Make sure grid element's shrink-to-fit behavior is correct
