@@ -42,6 +42,7 @@
 #include "PaintInfo.h"
 #include "Path.h"
 #include "PlatformMouseEvent.h"
+#include "RenderIterator.h"
 #include "RenderView.h"
 #include <wtf/StackStats.h>
 
@@ -103,10 +104,10 @@ void RenderSnapshottedPlugIn::paint(PaintInfo& paintInfo, const LayoutPoint& pai
     paintInfoForChild.phase = newPhase;
     paintInfoForChild.updateSubtreePaintRootForChildren(this);
 
-    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        LayoutPoint childPoint = flipForWritingModeForChild(child, paintOffset);
-        if (!child->hasSelfPaintingLayer() && !child->isFloating())
-            child->paint(paintInfoForChild, childPoint);
+    for (auto& child : childrenOfType<RenderBox>(*this)) {
+        LayoutPoint childPoint = flipForWritingModeForChild(&child, paintOffset);
+        if (!child.hasSelfPaintingLayer() && !child.isFloating())
+            child.paint(paintInfoForChild, childPoint);
     }
 
     RenderEmbeddedObject::paint(paintInfo, paintOffset);

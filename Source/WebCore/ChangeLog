@@ -1,3 +1,13 @@
+2014-04-03  Antti Koivisto  <antti@apple.com>
+
+        RenderSnapshottedPlugIn::paint should use iterator for traversal.
+        https://bugs.webkit.org/show_bug.cgi?id=131158
+
+        Reviewed by Dean Jackson.
+
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::paint):
+
 2014-03-27  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] <string> not allowed in grid-{area | row | column} syntax
