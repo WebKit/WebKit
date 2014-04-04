@@ -1,3 +1,15 @@
+2014-04-04  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [GTK][CMake] Remove FindXt.cmake.
+        https://bugs.webkit.org/show_bug.cgi?id=131227
+
+        Reviewed by Anders Carlsson.
+
+        Xt is already detected by CMake's own FindX11.cmake, so there is no need to keep a custom FindXt.cmake around.
+
+        * Source/cmake/FindXt.cmake: Removed.
+        * Source/cmake/OptionsGTK.cmake:
+
 2014-04-04  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         [EFL] Build error due to changed path of generated js files.

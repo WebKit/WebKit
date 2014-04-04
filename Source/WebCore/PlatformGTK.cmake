@@ -314,7 +314,7 @@ list(APPEND WebCore_LIBRARIES
     ${X11_Xcomposite_LIB}
     ${X11_Xdamage_LIB}
     ${X11_Xrender_LIB}
-    ${XT_LIBRARIES}
+    ${X11_Xt_LIB}
     ${ZLIB_LIBRARIES}
 )
 
@@ -335,7 +335,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     ${LIBXSLT_INCLUDE_DIR}
     ${SQLITE_INCLUDE_DIR}
     ${WEBP_INCLUDE_DIRS}
-    ${XT_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIRS}
 )
 
