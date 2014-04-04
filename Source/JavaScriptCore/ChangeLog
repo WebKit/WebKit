@@ -1,5 +1,29 @@
 2014-04-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Use JSCell::indexingType instead of Structure::indexingType wherever possible
+        https://bugs.webkit.org/show_bug.cgi?id=131230
+
+        Reviewed by Mark Lam.
+
+        Avoid the indirection through the Structure.
+
+        * bytecode/ArrayAllocationProfile.cpp:
+        (JSC::ArrayAllocationProfile::updateIndexingType):
+        * bytecode/ArrayAllocationProfile.h:
+        (JSC::ArrayAllocationProfile::selectIndexingType):
+        * heap/HeapStatistics.cpp:
+        (JSC::StorageStatistics::operator()):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::attemptFastSort):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::objectPrototypeIsSane):
+        (JSC::JSGlobalObject::arrayPrototypeChainIsSane):
+        (JSC::JSGlobalObject::stringPrototypeChainIsSane):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::create):
+
+2014-04-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Use JSCell::type instead of TypeInfo::type wherever possible
         https://bugs.webkit.org/show_bug.cgi?id=131229
 

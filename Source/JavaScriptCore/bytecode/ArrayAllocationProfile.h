@@ -42,7 +42,7 @@ public:
     IndexingType selectIndexingType()
     {
         JSArray* lastArray = m_lastArray;
-        if (lastArray && UNLIKELY(lastArray->structure()->indexingType() != m_currentIndexingType))
+        if (lastArray && UNLIKELY(lastArray->indexingType() != m_currentIndexingType))
             updateIndexingType();
         return m_currentIndexingType;
     }

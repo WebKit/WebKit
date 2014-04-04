@@ -195,7 +195,7 @@ inline void StorageStatistics::operator()(JSCell* cell)
         return;
 
     JSObject* object = jsCast<JSObject*>(cell);
-    if (hasIndexedProperties(object->structure()->indexingType()))
+    if (hasIndexedProperties(object->indexingType()))
         return;
 
     if (object->structure()->isUncacheableDictionary())

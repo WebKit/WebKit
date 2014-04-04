@@ -607,7 +607,7 @@ static bool attemptFastSort(ExecState* exec, JSObject* thisObj, JSValue function
 {
     if (thisObj->classInfo() != JSArray::info()
         || asArray(thisObj)->hasSparseMap()
-        || shouldUseSlowPut(thisObj->structure()->indexingType()))
+        || shouldUseSlowPut(thisObj->indexingType()))
         return false;
     
     if (isNumericCompareFunction(exec, function, callType, callData))

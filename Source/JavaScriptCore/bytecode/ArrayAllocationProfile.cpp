@@ -49,7 +49,7 @@ void ArrayAllocationProfile::updateIndexingType()
     JSArray* lastArray = m_lastArray;
     if (!lastArray)
         return;
-    m_currentIndexingType = leastUpperBoundOfIndexingTypes(m_currentIndexingType, lastArray->structure()->indexingType());
+    m_currentIndexingType = leastUpperBoundOfIndexingTypes(m_currentIndexingType, lastArray->indexingType());
     m_lastArray = 0;
 }
 

@@ -507,7 +507,7 @@ ObjectsWithBrokenIndexingFinder::ObjectsWithBrokenIndexingFinder(
 inline bool hasBrokenIndexing(JSObject* object)
 {
     // This will change if we have more indexing types.
-    IndexingType type = object->structure()->indexingType();
+    IndexingType type = object->indexingType();
     // This could be made obviously more efficient, but isn't made so right now, because
     // we expect this to be an unlikely slow path anyway.
     return hasUndecided(type) || hasInt32(type) || hasDouble(type) || hasContiguous(type) || hasArrayStorage(type);
@@ -583,20 +583,20 @@ void JSGlobalObject::haveABadTime(VM& vm)
 
 bool JSGlobalObject::objectPrototypeIsSane()
 {
-    return !hasIndexedProperties(m_objectPrototype->structure()->indexingType())
+    return !hasIndexedProperties(m_objectPrototype->indexingType())
         && m_objectPrototype->prototype().isNull();
 }
 
 bool JSGlobalObject::arrayPrototypeChainIsSane()
 {
-    return !hasIndexedProperties(m_arrayPrototype->structure()->indexingType())
+    return !hasIndexedProperties(m_arrayPrototype->indexingType())
         && m_arrayPrototype->prototype() == m_objectPrototype.get()
         && objectPrototypeIsSane();
 }
 
 bool JSGlobalObject::stringPrototypeChainIsSane()
 {
-    return !hasIndexedProperties(m_stringPrototype->structure()->indexingType())
+    return !hasIndexedProperties(m_stringPrototype->indexingType())
         && m_stringPrototype->prototype() == m_objectPrototype.get()
         && objectPrototypeIsSane();
 }
