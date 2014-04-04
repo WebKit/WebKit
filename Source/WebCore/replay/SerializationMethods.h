@@ -40,6 +40,7 @@ class Frame;
 class Page;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
+class PlatformWheelEvent;
 class SecurityOrigin;
 class URL;
 
@@ -79,6 +80,13 @@ template<> struct EncodingTraits<WebCore::PlatformMouseEvent> {
 
     static EncodedValue encodeValue(const WebCore::PlatformMouseEvent& value);
     static bool decodeValue(EncodedValue&, std::unique_ptr<WebCore::PlatformMouseEvent>& value);
+};
+
+template<> struct EncodingTraits<WebCore::PlatformWheelEvent> {
+    typedef WebCore::PlatformWheelEvent DecodedType;
+
+    static EncodedValue encodeValue(const WebCore::PlatformWheelEvent& value);
+    static bool decodeValue(EncodedValue&, std::unique_ptr<WebCore::PlatformWheelEvent>& value);
 };
 
 template<> struct EncodingTraits<WebCore::URL> {

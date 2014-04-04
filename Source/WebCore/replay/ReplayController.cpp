@@ -50,6 +50,10 @@
 #include <replay/EmptyInputCursor.h>
 #include <wtf/text/CString.h>
 
+#if ENABLE(ASYNC_SCROLLING)
+#include "ScrollingCoordinator.h"
+#endif
+
 namespace WebCore {
 
 ReplayController::ReplayController(Page& page)
@@ -66,17 +70,20 @@ ReplayController::ReplayController(Page& page)
 {
 }
 
-void ReplayController::setForceDeterministicSettings(bool shouldForce)
+void ReplayController::setForceDeterministicSettings(bool shouldForceDeterministicBehavior)
 {
-    ASSERT(shouldForce ^ (m_sessionState == SessionState::Inactive));
+    ASSERT(shouldForceDeterministicBehavior ^ (m_sessionState == SessionState::Inactive));
 
-    if (shouldForce) {
+    if (shouldForceDeterministicBehavior) {
         m_savedSettings.usesPageCache = m_page.settings().usesPageCache();
 
         m_page.settings().setUsesPageCache(false);
     } else {
         m_page.settings().setUsesPageCache(m_savedSettings.usesPageCache);
     }
+
+    if (ScrollingCoordinator* scrollingCoordinator = m_page.scrollingCoordinator())
+        scrollingCoordinator->replaySessionStateDidChange();
 }
 
 void ReplayController::setSessionState(SessionState state)

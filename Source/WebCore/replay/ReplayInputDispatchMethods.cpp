@@ -77,6 +77,21 @@ void HandleMouseRelease::dispatch(ReplayController& controller)
     controller.page().userInputBridge().handleMouseReleaseEvent(platformEvent(), InputSource::Synthetic);
 }
 
+void HandleWheelEvent::dispatch(ReplayController& controller)
+{
+    controller.page().userInputBridge().handleWheelEvent(platformEvent(), InputSource::Synthetic);
+}
+
+void LogicalScrollPage::dispatch(ReplayController& controller)
+{
+    controller.page().userInputBridge().logicalScrollRecursively(direction(), granularity(), InputSource::Synthetic);
+}
+
+void ScrollPage::dispatch(ReplayController& controller)
+{
+    controller.page().userInputBridge().scrollRecursively(direction(), granularity(), InputSource::Synthetic);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_REPLAY)

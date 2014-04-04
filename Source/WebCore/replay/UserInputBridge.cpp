@@ -160,8 +160,19 @@ bool UserInputBridge::handleAccessKeyEvent(const PlatformKeyboardEvent& keyEvent
     return m_page.focusController().focusedOrMainFrame().eventHandler().handleAccessKey(keyEvent);
 }
 
-bool UserInputBridge::handleWheelEvent(const PlatformWheelEvent& wheelEvent, InputSource)
+bool UserInputBridge::handleWheelEvent(const PlatformWheelEvent& wheelEvent, InputSource inputSource)
 {
+#if ENABLE(WEB_REPLAY)
+    EARLY_RETURN_IF_SHOULD_IGNORE_INPUT;
+
+    if (activeCursor().isCapturing()) {
+        std::unique_ptr<PlatformWheelEvent> ownedEvent = std::make_unique<PlatformWheelEvent>(wheelEvent);
+        activeCursor().appendInput<HandleWheelEvent>(std::move(ownedEvent));
+    }
+#else
+    UNUSED_PARAM(inputSource);
+#endif
+
     return m_page.mainFrame().eventHandler().handleWheelEvent(wheelEvent);
 }
 
@@ -175,13 +186,31 @@ void UserInputBridge::focusSetFocused(bool focused, InputSource)
     m_page.focusController().setFocused(focused);
 }
 
-bool UserInputBridge::scrollRecursively(ScrollDirection direction, ScrollGranularity granularity, InputSource)
+bool UserInputBridge::scrollRecursively(ScrollDirection direction, ScrollGranularity granularity, InputSource inputSource)
 {
+#if ENABLE(WEB_REPLAY)
+    EARLY_RETURN_IF_SHOULD_IGNORE_INPUT;
+
+    if (activeCursor().isCapturing())
+        activeCursor().appendInput<ScrollPage>(direction, granularity);
+#else
+    UNUSED_PARAM(inputSource);
+#endif
+
     return m_page.focusController().focusedOrMainFrame().eventHandler().scrollRecursively(direction, granularity, nullptr);
 }
 
-bool UserInputBridge::logicalScrollRecursively(ScrollLogicalDirection direction, ScrollGranularity granularity, InputSource)
+bool UserInputBridge::logicalScrollRecursively(ScrollLogicalDirection direction, ScrollGranularity granularity, InputSource inputSource)
 {
+#if ENABLE(WEB_REPLAY)
+    EARLY_RETURN_IF_SHOULD_IGNORE_INPUT;
+
+    if (activeCursor().isCapturing())
+        activeCursor().appendInput<LogicalScrollPage>(direction, granularity);
+#else
+    UNUSED_PARAM(inputSource);
+#endif
+
     return m_page.focusController().focusedOrMainFrame().eventHandler().logicalScrollRecursively(direction, granularity, nullptr);
 }
 

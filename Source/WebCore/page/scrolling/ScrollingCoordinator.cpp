@@ -46,6 +46,11 @@
 #include "ScrollingCoordinatorCoordinatedGraphics.h"
 #endif
 
+#if ENABLE(WEB_REPLAY)
+#include "ReplayController.h"
+#include <replay/InputCursor.h>
+#endif
+
 namespace WebCore {
 
 #if !PLATFORM(COCOA)
@@ -299,6 +304,11 @@ SynchronousScrollingReasons ScrollingCoordinator::synchronousScrollingReasons() 
 
     if (m_forceSynchronousScrollLayerPositionUpdates)
         synchronousScrollingReasons |= ForcedOnMainThread;
+#if ENABLE(WEB_REPLAY)
+    InputCursor& cursor = m_page->replayController().activeInputCursor();
+    if (cursor.isCapturing() || cursor.isReplaying())
+        synchronousScrollingReasons |= ForcedOnMainThread;
+#endif
     if (frameView->hasSlowRepaintObjects())
         synchronousScrollingReasons |= HasSlowRepaintObjects;
     if (!supportsFixedPositionLayers() && frameView->hasViewportConstrainedObjects())
@@ -324,6 +334,13 @@ void ScrollingCoordinator::setForceSynchronousScrollLayerPositionUpdates(bool fo
     m_forceSynchronousScrollLayerPositionUpdates = forceSynchronousScrollLayerPositionUpdates;
     updateSynchronousScrollingReasons();
 }
+
+#if ENABLE(WEB_REPLAY)
+void ScrollingCoordinator::replaySessionStateDidChange()
+{
+    updateSynchronousScrollingReasons();
+}
+#endif
 
 ScrollingNodeID ScrollingCoordinator::uniqueScrollLayerID()
 {

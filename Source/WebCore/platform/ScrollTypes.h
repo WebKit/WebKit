@@ -30,14 +30,14 @@
 
 namespace WebCore {
 
-    enum ScrollDirection {
+    enum ScrollDirection : uint64_t {
         ScrollUp,
         ScrollDown,
         ScrollLeft,
         ScrollRight
     };
 
-    enum ScrollLogicalDirection {
+    enum ScrollLogicalDirection : uint64_t {
         ScrollBlockDirectionBackward,
         ScrollBlockDirectionForward,
         ScrollInlineDirectionBackward,
@@ -103,7 +103,7 @@ namespace WebCore {
         return ScrollUp;
     }
 
-    enum ScrollGranularity {
+    enum ScrollGranularity : uint64_t {
         ScrollByLine,
         ScrollByPage,
         ScrollByDocument,

@@ -1,3 +1,63 @@
+2014-04-04  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: capture and replay wheel events and scroll commands
+        https://bugs.webkit.org/show_bug.cgi?id=129402
+
+        Reviewed by Timothy Hatcher and Simon Fraser.
+
+        To capture and replay scrolling, the scrolling coordinator will force synchronous 
+        scrolling during capture and replay. If the page is capturing or replaying,
+        ForceOnMainThread will be added to the coordinator's SynchronousScrollingReasons.
+
+        A callback was added to signal that replay session state have changed,
+        and thus the synchronous scrolling reasons should be recomputed.
+
+        Automated replay reftests for scrolling are not included, because they will be
+        too flaky until more nondeterminism is handled. Specifically, resource loading,
+        initial focus/active state, and parsing are known blocking issues.
+
+        Test: ManualTests/inspector/replay-wheel-events.html
+
+        * page/scrolling/ScrollingCoordinator.cpp: Add a new callback for replay state
+        session changes. Add ForceOnMainThread if the page's active input cursor is
+        capturing or replaying.
+
+        (WebCore::ScrollingCoordinator::synchronousScrollingReasons):
+        (WebCore::ScrollingCoordinator::replaySessionStateDidChange): Added.
+        * page/scrolling/ScrollingCoordinator.h:
+
+        * platform/PlatformWheelEvent.h:
+        * platform/ScrollTypes.h: Add explicit enum storage types so these enums can
+        be forward-declared. This is necessary to generate enum encode/decode implementations.
+
+        * replay/ReplayController.cpp:
+        (WebCore::ReplayController::setForceDeterministicSettings): If async scrolling
+        support is available, tell the scrolling tree to behave deterministically.
+
+        * replay/ReplayInputDispatchMethods.cpp:
+        (WebCore::HandleWheelEvent::dispatch): Added.
+        (WebCore::LogicalScrollPage::dispatch): Added.
+        (WebCore::ScrollPage::dispatch): Added.
+        * replay/SerializationMethods.cpp: Introduce more specific macros for values
+        deserialized to arbitraray lvalues, scalars, RefPtr, and unique_ptr. Fix existing
+        uses of decode macros.
+
+        (JSC::EncodingTraits<NondeterministicInputBase>::encodeValue): Fix macro name.
+        (JSC::EncodingTraits<KeypressCommand>::encodeValue): Fix macro name.
+        (JSC::EncodingTraits<PlatformKeyboardEvent>::encodeValue): Fix macro name.
+        (JSC::EncodingTraits<PlatformMouseEvent>::encodeValue): Fix macro name.
+        (JSC::PlatformWheelEventCocoa::PlatformWheelEventCocoa): Added. Encapsulate
+        and initialize data members specific to PLATFORM(COCOA).
+
+        (JSC::EncodingTraits<PlatformWheelEvent>::encodeValue): Added.
+        (JSC::EncodingTraits<PlatformWheelEvent>::decodeValue): Added.
+        * replay/SerializationMethods.h:
+        * replay/UserInputBridge.cpp: Fill in bridge methods to capture inputs.
+        (WebCore::UserInputBridge::handleWheelEvent):
+        (WebCore::UserInputBridge::scrollRecursively):
+        (WebCore::UserInputBridge::logicalScrollRecursively):
+        * replay/WebInputs.json: Add inputs and new enum types.
+
 2014-04-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Upgrade to SelectorFailsAllSiblings when Child selector is failed.

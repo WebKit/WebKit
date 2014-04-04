@@ -140,6 +140,11 @@ public:
     void handleWheelEventPhase(PlatformWheelEventPhase);
 #endif
 
+#if ENABLE(WEB_REPLAY)
+    // Called when the page transitions between executing normally and deterministically.
+    void replaySessionStateDidChange();
+#endif
+
     // Force all scroll layer position updates to happen on the main thread.
     void setForceSynchronousScrollLayerPositionUpdates(bool);
 

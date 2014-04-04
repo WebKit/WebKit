@@ -33,6 +33,7 @@
 #include "AllReplayInputs.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
+#include "PlatformWheelEvent.h"
 #include "ReplayInputTypes.h"
 #include "SecurityOrigin.h"
 #include "URL.h"
@@ -44,9 +45,15 @@ using WebCore::MouseButton;
 using WebCore::PlatformEvent;
 using WebCore::PlatformKeyboardEvent;
 using WebCore::PlatformMouseEvent;
+using WebCore::PlatformWheelEvent;
+using WebCore::PlatformWheelEventGranularity;
 using WebCore::SecurityOrigin;
 using WebCore::URL;
 using WebCore::inputTypes;
+
+#if PLATFORM(COCOA)
+using WebCore::PlatformWheelEventPhase;
+#endif
 
 #define IMPORT_FROM_WEBCORE_NAMESPACE(name) \
 using WebCore::name; \
@@ -54,21 +61,39 @@ using WebCore::name; \
 WEB_REPLAY_INPUT_NAMES_FOR_EACH(IMPORT_FROM_WEBCORE_NAMESPACE)
 #undef IMPORT_FROM_WEBCORE_NAMESPACE
 
-#define ENCODE_SCALAR_TYPE_WITH_KEY(_encodedValue, _type, _key, _value) \
+#define ENCODE_TYPE_WITH_KEY(_encodedValue, _type, _key, _value) \
     _encodedValue.put<_type>(ASCIILiteral(#_key), _value)
+
+#define ENCODE_OPTIONAL_TYPE_WITH_KEY(_encodedValue, _type, _key, _value, condition) \
+    if (condition) \
+        ENCODE_TYPE_WITH_KEY(_encodedValue, _type, _key, _value)
+
+#define DECODE_TYPE_WITH_KEY_TO_LVALUE(_encodedValue, _type, _key, _lvalue) \
+    if (!_encodedValue.get<_type>(ASCIILiteral(#_key), _lvalue)) \
+        return false
+
+#define DECODE_OPTIONAL_TYPE_WITH_KEY_TO_LVALUE(_encodedValue, _type, _key, _lvalue) \
+    bool _key ## WasDecoded = _encodedValue.get<_type>(ASCIILiteral(#_key), _lvalue)
+
+#define DECODE_REFCOUNTED_TYPE_WITH_KEY(_encodedValue, _type, _key) \
+    RefPtr<_type> _key; \
+    DECODE_TYPE_WITH_KEY_TO_LVALUE(_encodedValue, _type, _key, _key)
+
+#define DECODE_UNIQUE_TYPE_WITH_KEY(_encodedValue, _type, _key) \
+    std::unique_ptr<_type> _key; \
+    DECODE_TYPE_WITH_KEY_TO_LVALUE(_encodedValue, _type, _key, _key)
 
 #define DECODE_SCALAR_TYPE_WITH_KEY(_encodedValue, _type, _key) \
     _type _key; \
-    if (!_encodedValue.get<_type>(ASCIILiteral(#_key), _key)) \
-        return false
-
-#define ENCODE_OPTIONAL_SCALAR_TYPE_WITH_KEY(_encodedValue, _type, _key, _value, condition) \
-    if (condition) \
-        _encodedValue.put<_type>(ASCIILiteral(#_key), _value)
+    DECODE_TYPE_WITH_KEY_TO_LVALUE(_encodedValue, _type, _key, _key)
 
 #define DECODE_OPTIONAL_SCALAR_TYPE_WITH_KEY(_encodedValue, _type, _key) \
     _type _key; \
-    bool _key ## WasDecoded = _encodedValue.get<_type>(ASCIILiteral(#_key), _key)
+    DECODE_OPTIONAL_TYPE_WITH_KEY_TO_LVALUE(_encodedValue, _type, _key, _key)
+
+#define DECODE_OPTIONAL_REFCOUNTED_TYPE_WITH_KEY(_encodedValue, _type, _key) \
+    RefPtr<_type> _key; \
+    DECODE_OPTIONAL_TYPE_WITH_KEY_TO_LVALUE(_encodedValue, _type, _key, _key)
 
 namespace JSC {
 
@@ -77,7 +102,7 @@ EncodedValue EncodingTraits<NondeterministicInputBase>::encodeValue(const Nondet
     EncodedValue encodedValue = EncodedValue::createObject();
     const AtomicString& type = input.type();
 
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, String, type, type.string());
+    ENCODE_TYPE_WITH_KEY(encodedValue, String, type, type.string());
 
 #define ENCODE_IF_TYPE_TAG_MATCHES(name) \
     if (type == inputTypes().name) { \
@@ -134,8 +159,8 @@ EncodedValue EncodingTraits<KeypressCommand>::encodeValue(const KeypressCommand&
 {
     EncodedValue encodedValue = EncodedValue::createObject();
 
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, String, commandName, command.commandName);
-    ENCODE_OPTIONAL_SCALAR_TYPE_WITH_KEY(encodedValue, String, text, command.text, !command.text.isEmpty());
+    ENCODE_TYPE_WITH_KEY(encodedValue, String, commandName, command.commandName);
+    ENCODE_OPTIONAL_TYPE_WITH_KEY(encodedValue, String, text, command.text, !command.text.isEmpty());
 
     return encodedValue;
 }
@@ -164,21 +189,21 @@ EncodedValue EncodingTraits<PlatformKeyboardEvent>::encodeValue(const PlatformKe
 {
     EncodedValue encodedValue = EncodedValue::createObject();
 
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, double, timestamp, input.timestamp());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, PlatformEvent::Type, type, input.type());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, PlatformEvent::Modifiers, modifiers, static_cast<PlatformEvent::Modifiers>(input.modifiers()));
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, String, text, input.text());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, String, unmodifiedText, input.unmodifiedText());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, String, keyIdentifier, input.keyIdentifier());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, windowsVirtualKeyCode, input.windowsVirtualKeyCode());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, nativeVirtualKeyCode, input.nativeVirtualKeyCode());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, macCharCode, input.macCharCode());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, autoRepeat, input.isAutoRepeat());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, keypad, input.isKeypad());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, systemKey, input.isSystemKey());
+    ENCODE_TYPE_WITH_KEY(encodedValue, double, timestamp, input.timestamp());
+    ENCODE_TYPE_WITH_KEY(encodedValue, PlatformEvent::Type, type, input.type());
+    ENCODE_TYPE_WITH_KEY(encodedValue, PlatformEvent::Modifiers, modifiers, static_cast<PlatformEvent::Modifiers>(input.modifiers()));
+    ENCODE_TYPE_WITH_KEY(encodedValue, String, text, input.text());
+    ENCODE_TYPE_WITH_KEY(encodedValue, String, unmodifiedText, input.unmodifiedText());
+    ENCODE_TYPE_WITH_KEY(encodedValue, String, keyIdentifier, input.keyIdentifier());
+    ENCODE_TYPE_WITH_KEY(encodedValue, int, windowsVirtualKeyCode, input.windowsVirtualKeyCode());
+    ENCODE_TYPE_WITH_KEY(encodedValue, int, nativeVirtualKeyCode, input.nativeVirtualKeyCode());
+    ENCODE_TYPE_WITH_KEY(encodedValue, int, macCharCode, input.macCharCode());
+    ENCODE_TYPE_WITH_KEY(encodedValue, bool, autoRepeat, input.isAutoRepeat());
+    ENCODE_TYPE_WITH_KEY(encodedValue, bool, keypad, input.isKeypad());
+    ENCODE_TYPE_WITH_KEY(encodedValue, bool, systemKey, input.isSystemKey());
 #if USE(APPKIT)
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, handledByInputMethod, input.handledByInputMethod());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, Vector<KeypressCommand>, commands, input.commands());
+    ENCODE_TYPE_WITH_KEY(encodedValue, bool, handledByInputMethod, input.handledByInputMethod());
+    ENCODE_TYPE_WITH_KEY(encodedValue, Vector<KeypressCommand>, commands, input.commands());
 #endif
     return encodedValue;
 }
@@ -215,18 +240,18 @@ EncodedValue EncodingTraits<PlatformMouseEvent>::encodeValue(const PlatformMouse
 {
     EncodedValue encodedValue = EncodedValue::createObject();
 
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, positionX, input.position().x());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, positionY, input.position().y());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, globalPositionX, input.globalPosition().x());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, globalPositionY, input.globalPosition().y());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, MouseButton, button, input.button());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, PlatformEvent::Type, type, input.type());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, clickCount, input.clickCount());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, shiftKey, input.shiftKey());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, ctrlKey, input.ctrlKey());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, altKey, input.altKey());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, bool, metaKey, input.metaKey());
-    ENCODE_SCALAR_TYPE_WITH_KEY(encodedValue, int, timestamp, input.timestamp());
+    ENCODE_TYPE_WITH_KEY(encodedValue, int, positionX, input.position().x());
+    ENCODE_TYPE_WITH_KEY(encodedValue, int, positionY, input.position().y());
+    ENCODE_TYPE_WITH_KEY(encodedValue, int, globalPositionX, input.globalPosition().x());
+    ENCODE_TYPE_WITH_KEY(encodedValue, int, globalPositionY, input.globalPosition().y());
+    ENCODE_TYPE_WITH_KEY(encodedValue, MouseButton, button, input.button());
+    ENCODE_TYPE_WITH_KEY(encodedValue, PlatformEvent::Type, type, input.type());
+    ENCODE_TYPE_WITH_KEY(encodedValue, int, clickCount, input.clickCount());
+    ENCODE_TYPE_WITH_KEY(encodedValue, bool, shiftKey, input.shiftKey());
+    ENCODE_TYPE_WITH_KEY(encodedValue, bool, ctrlKey, input.ctrlKey());
+    ENCODE_TYPE_WITH_KEY(encodedValue, bool, altKey, input.altKey());
+    ENCODE_TYPE_WITH_KEY(encodedValue, bool, metaKey, input.metaKey());
+    ENCODE_TYPE_WITH_KEY(encodedValue, int, timestamp, input.timestamp());
 
     return encodedValue;
 }
@@ -250,6 +275,102 @@ bool EncodingTraits<PlatformMouseEvent>::decodeValue(EncodedValue& encodedValue,
         IntPoint(globalPositionX, globalPositionY),
         button, type, clickCount,
         shiftKey, ctrlKey, altKey, metaKey, timestamp);
+    return true;
+}
+
+#if PLATFORM(COCOA)
+struct PlatformWheelEventCocoaArguments {
+    bool directionInvertedFromDevice;
+    bool hasPreciseScrollingDeltas;
+    PlatformWheelEventPhase phase;
+    PlatformWheelEventPhase momentumPhase;
+    int scrollCount;
+    float unacceleratedScrollingDeltaX;
+    float unacceleratedScrollingDeltaY;
+};
+
+class PlatformWheelEventCocoa : public PlatformWheelEvent {
+public:
+    PlatformWheelEventCocoa(PlatformWheelEvent& event, PlatformWheelEventCocoaArguments& arguments)
+        : PlatformWheelEvent(event)
+    {
+        m_directionInvertedFromDevice = arguments.directionInvertedFromDevice;
+        m_hasPreciseScrollingDeltas = arguments.hasPreciseScrollingDeltas;
+        m_phase = arguments.phase;
+        m_momentumPhase = arguments.momentumPhase;
+        m_scrollCount = arguments.scrollCount;
+        m_unacceleratedScrollingDeltaX = arguments.unacceleratedScrollingDeltaX;
+        m_unacceleratedScrollingDeltaY = arguments.unacceleratedScrollingDeltaY;
+    }
+};
+#endif // PLATFORM(COCOA)
+
+EncodedValue EncodingTraits<PlatformWheelEvent>::encodeValue(const PlatformWheelEvent& input)
+{
+    EncodedValue encodedData = EncodedValue::createObject();
+
+    ENCODE_TYPE_WITH_KEY(encodedData, int, positionX, input.position().x());
+    ENCODE_TYPE_WITH_KEY(encodedData, int, positionY, input.position().y());
+    ENCODE_TYPE_WITH_KEY(encodedData, int, globalPositionX, input.globalPosition().x());
+    ENCODE_TYPE_WITH_KEY(encodedData, int, globalPositionY, input.globalPosition().y());
+    ENCODE_TYPE_WITH_KEY(encodedData, bool, shiftKey, input.shiftKey());
+    ENCODE_TYPE_WITH_KEY(encodedData, bool, ctrlKey, input.ctrlKey());
+    ENCODE_TYPE_WITH_KEY(encodedData, bool, altKey, input.altKey());
+    ENCODE_TYPE_WITH_KEY(encodedData, bool, metaKey, input.metaKey());
+    ENCODE_TYPE_WITH_KEY(encodedData, float, deltaX, input.deltaX());
+    ENCODE_TYPE_WITH_KEY(encodedData, float, deltaY, input.deltaY());
+    ENCODE_TYPE_WITH_KEY(encodedData, float, wheelTicksX, input.wheelTicksX());
+    ENCODE_TYPE_WITH_KEY(encodedData, float, wheelTicksY, input.wheelTicksY());
+    ENCODE_TYPE_WITH_KEY(encodedData, PlatformWheelEventGranularity, granularity, static_cast<PlatformWheelEventGranularity>(input.granularity()));
+
+#if PLATFORM(COCOA)
+    ENCODE_TYPE_WITH_KEY(encodedData, bool, directionInvertedFromDevice, input.directionInvertedFromDevice());
+    ENCODE_TYPE_WITH_KEY(encodedData, bool, hasPreciseScrollingDeltas, input.hasPreciseScrollingDeltas());
+    ENCODE_TYPE_WITH_KEY(encodedData, PlatformWheelEventPhase, phase, static_cast<PlatformWheelEventPhase>(input.phase()));
+    ENCODE_TYPE_WITH_KEY(encodedData, PlatformWheelEventPhase, momentumPhase, static_cast<PlatformWheelEventPhase>(input.momentumPhase()));
+    ENCODE_TYPE_WITH_KEY(encodedData, int, scrollCount, input.scrollCount());
+    ENCODE_TYPE_WITH_KEY(encodedData, float, unacceleratedScrollingDeltaX, input.unacceleratedScrollingDeltaX());
+    ENCODE_TYPE_WITH_KEY(encodedData, float, unacceleratedScrollingDeltaY, input.unacceleratedScrollingDeltaY());
+#endif
+
+    return encodedData;
+}
+
+bool EncodingTraits<PlatformWheelEvent>::decodeValue(EncodedValue& encodedData, std::unique_ptr<PlatformWheelEvent>& input)
+{
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedData, int, positionX);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedData, int, positionY);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedData, int, globalPositionX);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedData, int, globalPositionY);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedData, bool, shiftKey);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedData, bool, ctrlKey);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedData, bool, altKey);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedData, bool, metaKey);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedData, float, deltaX);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedData, float, deltaY);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedData, float, wheelTicksX);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedData, float, wheelTicksY);
+    DECODE_SCALAR_TYPE_WITH_KEY(encodedData, PlatformWheelEventGranularity, granularity);
+
+#if PLATFORM(COCOA)
+    PlatformWheelEventCocoaArguments arguments;
+    DECODE_TYPE_WITH_KEY_TO_LVALUE(encodedData, bool, directionInvertedFromDevice, arguments.directionInvertedFromDevice);
+    DECODE_TYPE_WITH_KEY_TO_LVALUE(encodedData, bool, hasPreciseScrollingDeltas, arguments.hasPreciseScrollingDeltas);
+    DECODE_TYPE_WITH_KEY_TO_LVALUE(encodedData, PlatformWheelEventPhase, phase, arguments.phase);
+    DECODE_TYPE_WITH_KEY_TO_LVALUE(encodedData, PlatformWheelEventPhase, momentumPhase, arguments.momentumPhase);
+    DECODE_TYPE_WITH_KEY_TO_LVALUE(encodedData, int, scrollCount, arguments.scrollCount);
+    DECODE_TYPE_WITH_KEY_TO_LVALUE(encodedData, float, unacceleratedScrollingDeltaX, arguments.unacceleratedScrollingDeltaX);
+    DECODE_TYPE_WITH_KEY_TO_LVALUE(encodedData, float, unacceleratedScrollingDeltaY, arguments.unacceleratedScrollingDeltaY);
+#endif
+
+    PlatformWheelEvent event(IntPoint(positionX, positionY), IntPoint(globalPositionX, globalPositionY),
+        deltaX, deltaY, wheelTicksX, wheelTicksY, granularity, shiftKey, ctrlKey, altKey, metaKey);
+
+#if PLATFORM(COCOA)
+    input = std::make_unique<PlatformWheelEventCocoa>(event, arguments);
+#else
+    input = std::make_unique<PlatformWheelEvent>(event);
+#endif
     return true;
 }
 

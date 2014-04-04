@@ -48,13 +48,13 @@ namespace WebCore {
     // and synthesized in other cases where platforms generate line-by-line scrolling events.
     // The ScrollByPageWheelEvent indicates that the wheel event should scroll an entire page.  In this case WebCore's built in paging behavior is used to page
     // up and down (you get the same behavior as if the user was clicking in a scrollbar track to page up or page down).
-    enum PlatformWheelEventGranularity {
+    enum PlatformWheelEventGranularity : uint64_t {
         ScrollByPageWheelEvent,
         ScrollByPixelWheelEvent,
     };
 
 #if PLATFORM(COCOA)
-    enum PlatformWheelEventPhase {
+    enum PlatformWheelEventPhase : uint64_t {
         PlatformWheelEventPhaseNone        = 0,
         PlatformWheelEventPhaseBegan       = 1 << 0,
         PlatformWheelEventPhaseStationary  = 1 << 1,

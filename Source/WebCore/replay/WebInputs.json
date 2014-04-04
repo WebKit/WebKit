@@ -63,6 +63,60 @@
                 "header": "platform/PlatformMouseEvent.h"
             },
             {
+                "name": "PlatformWheelEvent", "mode": "OWNED",
+                "header": "platform/PlatformWheelEvent.h"
+            },
+            {
+                "name": "PlatformWheelEventGranularity", "mode": "SCALAR", "storage": "uint64_t",
+                "flags": ["ENUM"],
+                "values": ["ScrollByPageWheelEvent", "ScrollByPixelWheelEvent"],
+                "header": "platform/PlatformWheelEvent.h"
+            },
+            {
+                "name": "PlatformWheelEventPhase", "mode": "SCALAR", "storage": "uint64_t",
+                "flags": ["ENUM"],
+                "guard": "PLATFORM(COCOA)",
+                "values": [
+                    "PlatformWheelEventPhaseNone",
+                    "PlatformWheelEventPhaseBegan",
+                    "PlatformWheelEventPhaseStationary",
+                    "PlatformWheelEventPhaseChanged",
+                    "PlatformWheelEventPhaseEnded",
+                    "PlatformWheelEventPhaseCancelled",
+                    "PlatformWheelEventPhaseMayBegin"
+                ],
+                "header": "platform/PlatformWheelEvent.h"
+            },
+            {
+                "name": "ScrollDirection", "mode": "SCALAR", "storage": "uint64_t",
+                "flags": ["ENUM"],
+                "values": ["ScrollUp", "ScrollDown", "ScrollLeft", "ScrollRight"],
+                "header": "platform/ScrollTypes.h"
+            },
+            {
+                "name": "ScrollGranularity", "mode": "SCALAR", "storage": "uint64_t",
+                "flags": ["ENUM"],
+                "values": [
+                    "ScrollByLine",
+                    "ScrollByPage",
+                    "ScrollByDocument",
+                    "ScrollByPixel",
+                    "ScrollByPrecisePixel"
+                ],
+                "header": "platform/ScrollTypes.h"
+            },
+            {
+                "name": "ScrollLogicalDirection", "mode": "SCALAR", "storage": "uint64_t",
+                "flags": ["ENUM"],
+                "values": [
+                    "ScrollBlockDirectionBackward",
+                    "ScrollBlockDirectionForward",
+                    "ScrollInlineDirectionBackward",
+                    "ScrollInlineDirectionForward"
+                ],
+                "header": "platform/ScrollTypes.h"
+            },
+            {
                 "name": "SecurityOrigin", "mode": "SHARED",
                 "header": "page/SecurityOrigin.h"
             },
@@ -146,6 +200,14 @@
             ]
         },
         {
+            "name": "HandleWheelEvent",
+            "description": "The embedder signalled a mouse wheel event.",
+            "queue": "EVENT_LOOP",
+            "members": [
+                { "name": "platformEvent", "type": "PlatformWheelEvent" }
+            ]
+        },
+        {
             "name": "InitialNavigation",
             "description": "Initiate the initial main frame navigation.",
             "queue": "EVENT_LOOP",
@@ -154,6 +216,24 @@
                 { "name": "securityOrigin", "type": "SecurityOrigin" },
                 { "name": "url", "type": "URL" },
                 { "name": "referrer", "type": "String" }
+            ]
+        },
+        {
+            "name": "LogicalScrollPage",
+            "description": "The embedder signalled a logical scroll event.",
+            "queue": "EVENT_LOOP",
+            "members": [
+                { "name": "direction", "type": "ScrollLogicalDirection" },
+                { "name": "granularity", "type": "ScrollGranularity" }
+            ]
+        },
+        {
+            "name": "ScrollPage",
+            "description": "The embedder signalled a scroll event.",
+            "queue": "EVENT_LOOP",
+            "members": [
+                { "name": "direction", "type": "ScrollDirection" },
+                { "name": "granularity", "type": "ScrollGranularity" }
             ]
         }
     ]
