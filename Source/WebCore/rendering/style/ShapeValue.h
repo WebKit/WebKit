@@ -44,7 +44,6 @@ public:
         // The None value is defined by a null ShapeValue*
         Shape,
         Box,
-        Outside,
         Image
     };
 
@@ -56,11 +55,6 @@ public:
     static PassRefPtr<ShapeValue> createBoxShapeValue(CSSBoxType boxShape)
     {
         return adoptRef(new ShapeValue(boxShape));
-    }
-
-    static PassRefPtr<ShapeValue> createOutsideValue()
-    {
-        return adoptRef(new ShapeValue(Outside));
     }
 
     static PassRefPtr<ShapeValue> createImageValue(PassRefPtr<StyleImage> image)

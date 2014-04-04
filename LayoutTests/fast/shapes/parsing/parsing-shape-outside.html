@@ -23,8 +23,6 @@ invalidShapeValues.forEach(function(value, i, a) {
     testShapePropertyParsingFailure("-webkit-shape-outside", value, "none")
 });
 
-testShapePropertyParsingFailure("-webkit-shape-outside", "outside-shape", "none");
-
 applyToEachArglist(
     testNotInheritedShapeProperty,
     [// [property, parentValue, childValue, expectedValue]

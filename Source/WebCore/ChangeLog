@@ -1,3 +1,25 @@
+2014-04-04  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Remove outside-shape CSS value
+        https://bugs.webkit.org/show_bug.cgi?id=131201
+
+        Reviewed by Bem Jones-Bey.
+
+        Outside-shape is not a valid CSS value anymore. This patch removes it.
+
+        No new tests, existing tests are removed.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::shapePropertyValue):
+        * css/CSSValueKeywords.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyShape::applyValue):
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::computedShape):
+        (WebCore::ShapeOutsideInfo::isEnabledFor):
+        * rendering/style/ShapeValue.h:
+        (WebCore::ShapeValue::createOutsideValue): Deleted.
+
 2014-04-04  Dirk Schulze  <krit@webkit.org>
 
         Gradient offsets are off if compositing operator != source-over

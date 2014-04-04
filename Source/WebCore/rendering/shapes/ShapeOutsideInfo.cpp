@@ -185,9 +185,6 @@ const Shape& ShapeOutsideInfo::computedShape() const
         m_shape = Shape::createBoxShape(shapeRect, writingMode, margin);
         break;
     }
-    case ShapeValue::Outside:
-        // Outside should have already resolved to a different shape value
-        ASSERT_NOT_REACHED();
     }
 
     ASSERT(m_shape);
@@ -292,15 +289,11 @@ bool ShapeOutsideInfo::isEnabledFor(const RenderBox& box)
         return false;
 
     switch (shapeValue->type()) {
-    case ShapeValue::Shape:
-        return shapeValue->shape();
-    case ShapeValue::Image:
-        return shapeValue->isImageValid() && checkShapeImageOrigin(box.document(), *(shapeValue->image()->cachedImage()));
-    case ShapeValue::Box:
-        return true;
-    case ShapeValue::Outside:
-        break;
+    case ShapeValue::Shape: return shapeValue->shape();
+    case ShapeValue::Image: return shapeValue->isImageValid() && checkShapeImageOrigin(box.document(), *(shapeValue->image()->cachedImage()));
+    case ShapeValue::Box: return true;
     }
+
     ASSERT_NOT_REACHED();
     return false;
 }

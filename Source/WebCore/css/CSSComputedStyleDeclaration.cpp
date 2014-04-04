@@ -1623,9 +1623,6 @@ static PassRefPtr<CSSValue> shapePropertyValue(const RenderStyle* style, const S
     if (!shapeValue)
         return cssValuePool().createIdentifierValue(CSSValueNone);
 
-    if (shapeValue->type() == ShapeValue::Outside)
-        return cssValuePool().createIdentifierValue(CSSValueOutsideShape);
-
     if (shapeValue->type() == ShapeValue::Box)
         return cssValuePool().createValue(shapeValue->cssBox());
 
