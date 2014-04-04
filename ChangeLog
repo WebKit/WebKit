@@ -1,3 +1,16 @@
+2014-04-04  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        [EFL] Build error due to changed path of generated js files.
+        https://bugs.webkit.org/show_bug.cgi?id=131215
+
+        Reviewed by Gyuyoung Kim.
+
+        r166648 fixed the generation of some .js files on GTK. Due to some
+        changes in the paths it causes a build error on EFL.
+
+        * Source/PlatformEfl.cmake:
+          Replaced path for two derived source files.
+
 2014-04-02  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [GTK][CMake] Look for glx.h in OPENGL_INCLUDE_DIR.
