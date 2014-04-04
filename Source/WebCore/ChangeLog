@@ -1,3 +1,20 @@
+2014-04-04  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] polygon y-value calc() args serialize incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=129842
+
+        Reviewed by Bem Jones-Bey.
+
+        The code hit ASSERT(isCalculation(value)) in CSSParser::createPrimitiveNumbericValue, because
+        CSSParser::validUnit had been called on both coordinates, which set the value for m_parsedCalculation,
+        but only one of the coordinates was calculation value. I reordered calling valudUnit and
+        createPrimitiveNumbericValue to be called in the correct order on the coordinates.
+
+        I added the new test case to parsing-test-utils.js.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBasicShapePolygon):
+
 2014-04-04  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: capture and replay wheel events and scroll commands

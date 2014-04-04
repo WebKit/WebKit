@@ -5595,14 +5595,14 @@ PassRefPtr<CSSBasicShape> CSSParser::parseBasicShapePolygon(CSSParserValueList* 
 
     CSSParserValue* argumentX = argument;
     while (argumentX) {
+
         if (!validUnit(argumentX, FLength | FPercent))
             return 0;
+        RefPtr<CSSPrimitiveValue> xLength = createPrimitiveNumericValue(argumentX);
 
         CSSParserValue* argumentY = args->next();
         if (!argumentY || !validUnit(argumentY, FLength | FPercent))
             return 0;
-
-        RefPtr<CSSPrimitiveValue> xLength = createPrimitiveNumericValue(argumentX);
         RefPtr<CSSPrimitiveValue> yLength = createPrimitiveNumericValue(argumentY);
 
         shape->appendPoint(xLength.release(), yLength.release());

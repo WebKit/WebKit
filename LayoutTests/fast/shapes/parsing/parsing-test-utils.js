@@ -71,6 +71,8 @@ var validShapeValues = [
     ["polygon(10px 20px, 30px 40px, 40px 50px)", "polygon(10px 20px, 30px 40px, 40px 50px)"],
     ["polygon(evenodd, 10px 20px, 30px 40px, 40px 50px)", "polygon(evenodd, 10px 20px, 30px 40px, 40px 50px)"],
     ["polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)", "polygon(10px 20px, 30px 40px, 40px 50px)"],
+    ["polygon(10px calc(10in))", "polygon(10px calc(10in))", "polygon(10px 960px)"],
+    ["polygon(calc(10in) 10px)", "polygon(calc(10in) 10px)", "polygon(960px 10px)"],
 
     "content-box",
     "padding-box",
