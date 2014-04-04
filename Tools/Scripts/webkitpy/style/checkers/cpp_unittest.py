@@ -1783,6 +1783,17 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('String& operator|=(const String&, const String&);', '')
         self.assert_lint('String& operator^=(const String&, const String&);', '')
 
+    def test_spacing_in_objective_c_properties(self):
+        self.assert_lint('@property (readonly) BOOL pass;', '')
+        self.assert_lint('@property (getter=isPassing) BOOL passing;', '')
+        self.assert_lint('@property (nonatomic, readonly) NSString* title;', '')
+        self.assert_lint('@property(readonly) BOOL fail;',
+                         'Should have space between @property and attributes.  [whitespace/property] [4]')
+        self.assert_lint('@property (getter = isFailing) BOOL failing;',
+                         'Should not have spaces around = in property attributes.  [whitespace/property] [4]')
+        self.assert_lint('@property (nonatomic,readonly) NSString* title;',
+                         'Missing space after ,  [whitespace/comma] [3]')
+
     def test_spacing_before_last_semicolon(self):
         self.assert_lint('call_function() ;',
                          'Extra space before last semicolon. If this should be an '

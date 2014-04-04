@@ -1,3 +1,16 @@
+2014-04-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        check-webkit-style: Improve warnings on Objective-C @property syntax
+        https://bugs.webkit.org/show_bug.cgi?id=131200
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_spacing):
+        (CppChecker):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_spacing_in_objective_c_properties):
+
 2014-04-03  Santosh Mahto  <santoshbit2007@gmail.com>
 
         Unreviewed. Moving my name to commiter section

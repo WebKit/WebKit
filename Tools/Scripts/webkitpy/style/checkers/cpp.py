@@ -1836,13 +1836,25 @@ def check_spacing(file_extension, clean_lines, line_number, error):
 
     line = clean_lines.elided[line_number]  # get rid of comments and strings
 
+    # Objective-C @property lines.
+    is_objective_c_property = search(r'^@property', line)
+    if is_objective_c_property:
+        # "@property (attr)" not "@property(attr)"
+        if search(r'^@property\(', line):
+            error(line_number, 'whitespace/property', 4,
+                  'Should have space between @property and attributes.')
+        # "(getter=foo)" not "(getter = foo)"
+        if search(r'(\s+=|=\s+)', line):
+            error(line_number, 'whitespace/property', 4,
+                  'Should not have spaces around = in property attributes.')
+
     # Don't try to do spacing checks for operator methods
     line = sub(r'operator(==|!=|<|<<|<=|>=|>>|>|\+=|-=|\*=|/=|%=|&=|\|=|^=|<<=|>>=|/)\(', 'operator\(', line)
     # Don't try to do spacing checks for #include, #import, or #if statements at
     # minimum because it messes up checks for spacing around /
     if match(r'\s*#\s*(?:include|import|if)', line):
         return
-    if search(r'[\w.]=[\w.]', line):
+    if not is_objective_c_property and search(r'[\w.]=[\w.]', line):
         error(line_number, 'whitespace/operators', 4,
               'Missing spaces around =')
 
@@ -3768,6 +3780,7 @@ class CppChecker(object):
         'whitespace/line_length',
         'whitespace/newline',
         'whitespace/operators',
+        'whitespace/property',
         'whitespace/parens',
         'whitespace/semicolon',
         'whitespace/tab',
