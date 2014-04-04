@@ -1,3 +1,19 @@
+2014-04-04  Dirk Schulze  <krit@webkit.org>
+
+        Gradient offsets are off if compositing operator != source-over
+        https://bugs.webkit.org/show_bug.cgi?id=129791
+
+        Reviewed by Andreas Kling.
+
+        Instead of transforming the path before drawing it on the context,
+        the whole context should be transformed. This will make the gradient
+        map correctly to the context space.
+
+        Test: fast/canvas/canvas-gradient-on-compositing.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fullCanvasCompositedFill):
+
 2014-04-04  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Move background images to device pixel boundaries.

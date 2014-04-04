@@ -1679,10 +1679,10 @@ template<class T> void CanvasRenderingContext2D::fullCanvasCompositedFill(const 
         return;
 
     Path path = transformAreaToDevice(area);
-    path.translate(FloatSize(-bufferRect.x(), -bufferRect.y()));
-
     buffer->context()->setCompositeOperation(CompositeSourceOver);
+    buffer->context()->translate(FloatSize(-bufferRect.x(), -bufferRect.y()));
     modifiableState().m_fillStyle.applyFillColor(buffer->context());
+
     buffer->context()->fillPath(path);
 
     compositeBuffer(buffer.get(), bufferRect, state().m_globalComposite);

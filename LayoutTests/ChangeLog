@@ -1,3 +1,20 @@
+2014-04-04  Dirk Schulze  <krit@webkit.org>
+
+        Gradient offsets are off if compositing operator != source-over
+        https://bugs.webkit.org/show_bug.cgi?id=129791
+
+        Reviewed by Andreas Kling.
+
+        Test that the gradient space maps correctly to context space after
+        applying compositing mode.
+
+        * fast/canvas/canvas-gradient-on-compositing-expected.txt: Added.
+        * fast/canvas/canvas-gradient-on-compositing.html: Added.
+        * fast/canvas/script-tests/canvas-gradient-on-compositing.js: Added.
+        (dataToArray):
+        (getPixel):
+        (pixelShouldBe):
+
 2014-04-04  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Move background images to device pixel boundaries.
