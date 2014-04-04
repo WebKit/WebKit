@@ -80,7 +80,8 @@ enum {
     CompositingReasonBlendingWithCompositedDescendants      = 1 << 20,
     CompositingReasonPerspective                            = 1 << 21,
     CompositingReasonPreserve3D                             = 1 << 22,
-    CompositingReasonRoot                                   = 1 << 23
+    CompositingReasonRoot                                   = 1 << 23,
+    CompositingReasonIsolatesCompositedBlendingDescendants  = 1 << 24,
 };
 typedef unsigned CompositingReasons;
 

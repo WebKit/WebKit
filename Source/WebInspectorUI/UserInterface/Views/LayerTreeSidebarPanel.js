@@ -432,6 +432,8 @@ WebInspector.LayerTreeSidebarPanel.prototype = {
             addReason(WebInspector.UIString("Element has CSS filters applied and composited descendants"));
         if (compositingReasons.blendingWithCompositedDescendants)
             addReason(WebInspector.UIString("Element has CSS blending applied and composited descendants"));
+        if (compositingReasons.isolatesCompositedBlendingDescendants)
+            addReason(WebInspector.UIString("Element is a stacking context and has composited descendants with CSS blending applied"));
         if (compositingReasons.perspective)
             addReason(WebInspector.UIString("Element has perspective applied"));
         if (compositingReasons.preserve3D)

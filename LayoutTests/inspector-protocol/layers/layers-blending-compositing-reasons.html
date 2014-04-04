@@ -1,0 +1,163 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script type="text/javascript">
+
+function test()
+{
+
+    var nodes = [];
+ 
+    InspectorTest.eventHandler["DOM.setChildNodes"] = setChildNodes;
+
+    enableLayerTreeAgent();
+    
+    function enableLayerTreeAgent(result)
+    {
+        step({
+            name: "Enable the LayerTree agent",
+            command: "LayerTree.enable",
+            parameters: {},
+            callback: getDocument
+        });
+    };
+
+    function getDocument()
+    {
+        // We must first get the document so that later on we may get sensible nodeIds.
+        step({
+            name: "Get the Document",
+            command: "DOM.getDocument",
+            parameters: {},
+            callback: getLayerTree
+        });
+    };
+
+    function getLayerTree(result)
+    {
+        step({
+            name: "Get the layer tree",
+            command: "LayerTree.layersForNode",
+            parameters: {"nodeId": result.root.nodeId},
+            callback: gotLayerTree
+        });
+    };
+
+    function gotLayerTree(result)
+    {
+        logTestName("Check layers' reasons for compositing")
+        
+        var layers = result.layers;
+
+        var nodesById = {};
+        nodes.forEach(function(node) {
+            nodesById[node.nodeId] = node;
+        });
+
+        var count = 0;
+        
+        function hasId(node, id) {
+            return node && node.attributes && node.attributes[0] === "id" && node.attributes[1] === id;
+        }
+        
+        function dumpReasons(layer, compositingReasons) {
+            var node = nodesById[layer.nodeId];
+
+            if (hasId(node, "blending")) {
+                assert(
+                    "<div id=\"blending\"> is composited due having CSS blending applied and composited descendants",
+                    compositingReasons.blendingWithCompositedDescendants,
+                    true);
+            } else if (hasId(node, "isolating")) {
+                assert(
+                    "<div id=\"isolating\"> is composition due to isolating compositing descendants having CSS blending applied",
+                    compositingReasons.isolatesCompositedBlendingDescendants,
+                    true);
+            }
+
+            if (++count === layers.length)
+                InspectorTest.completeTest();
+        };
+
+        layers.forEach(function (layer) {
+            runCommand({
+                command: "LayerTree.reasonsForCompositingLayer",
+                parameters: {"layerId": layer.layerId},
+                callback: function(result) {
+                    dumpReasons(layer, result.compositingReasons);
+                }
+            });
+        });
+    };
+
+    function setChildNodes (messageObject) {
+        messageObject.params.nodes.forEach(function (node) {
+            nodes.push(node);
+        })
+    };
+
+    function step(test)
+    {
+        if (test.callback)
+            logTestName(test.name);
+        runCommand(test);
+    };
+
+    function logTestName(name)
+    {
+        InspectorTest.log("\n=== " + name + " ===\n");
+    };
+
+    function runCommand(command)
+    {
+        InspectorTest.sendCommand(command.command, command.parameters, function(messageObject) {
+            InspectorTest.checkForError(messageObject);
+
+            if (command.name)
+                InspectorTest.log("PASS");
+
+            if (command.callback)
+                command.callback(messageObject.result);
+        });
+    };
+
+    function assert(name, actual, expected)
+    {
+        if (expected === actual)
+            InspectorTest.log("PASS: " + name + ".");
+        else
+            InspectorTest.log("FAIL: " + name + ". Expected " + expected + " but got " + actual);
+    };
+
+};
+
+window.addEventListener("DOMContentLoaded", function()
+{
+    runTest();
+}, false);
+
+</script>
+<style type="text/css">
+      
+    #isolating {
+        -webkit-isolation: isolate;
+    }
+
+    #blending {
+        -webkit-mix-blend-mode: difference;
+    }
+
+    #composited {
+        -webkit-transform: translateZ(0);
+    }
+
+</style>
+</head>
+<body>
+    <div id="isolating">
+        <div id="blending">
+            <div id="composited"></div>
+        </div>
+    </div>
+</body>
+</html>

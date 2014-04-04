@@ -1,3 +1,13 @@
+2014-04-04  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] Add compositing reason for isolation.
+        https://bugs.webkit.org/show_bug.cgi?id=131153
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector-protocol/layers/layers-blending-compositing-reasons-expected.txt: Added.
+        * inspector-protocol/layers/layers-blending-compositing-reasons.html: Added.
+
 2014-04-04  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r166615): Pressing return doesn’t submit search term at bing.com

@@ -1,3 +1,14 @@
+2014-04-04  Ion Rosca  <rosca@adobe.com>
+
+        [CSS Blending] Add compositing reason for isolation.
+        https://bugs.webkit.org/show_bug.cgi?id=131153
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/LayerTreeSidebarPanel.js:
+        (WebInspector.LayerTreeSidebarPanel.prototype._populateListOfCompositingReasons):
+
 2014-04-02  Timothy Hatcher  <timothy@apple.com>
 
         Remove Input domain from the Web Inspector protocol.

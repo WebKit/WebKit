@@ -298,6 +298,9 @@ void InspectorLayerTreeAgent::reasonsForCompositingLayer(ErrorString* errorStrin
     if (reasonsBitmask & CompositingReasonBlendingWithCompositedDescendants)
         compositingReasons->setBlendingWithCompositedDescendants(true);
 
+    if (reasonsBitmask & CompositingReasonIsolatesCompositedBlendingDescendants)
+        compositingReasons->setIsolatesCompositedBlendingDescendants(true);
+
     if (reasonsBitmask & CompositingReasonPerspective)
         compositingReasons->setPerspective(true);
 

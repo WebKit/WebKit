@@ -2127,6 +2127,9 @@ CompositingReasons RenderLayerCompositor::reasonsForCompositing(const RenderLaye
 
 #if ENABLE(CSS_COMPOSITING)
         if (layer.isolatesCompositedBlending())
+            reasons |= CompositingReasonIsolatesCompositedBlendingDescendants;
+
+        if (layer.hasBlendMode())
             reasons |= CompositingReasonBlendingWithCompositedDescendants;
 #endif
 
@@ -2202,9 +2205,14 @@ const char* RenderLayerCompositor::logReasonsForCompositing(const RenderLayer& l
 
     if (reasons & CompositingReasonFilterWithCompositedDescendants)
         return "filter with composited descendants";
-            
+
+#if ENABLE(CSS_COMPOSITING)
     if (reasons & CompositingReasonBlendingWithCompositedDescendants)
         return "blending with composited descendants";
+
+    if (reasons & CompositingReasonIsolatesCompositedBlendingDescendants)
+        return "isolates composited blending descendants";
+#endif
 
     if (reasons & CompositingReasonPerspective)
         return "perspective";

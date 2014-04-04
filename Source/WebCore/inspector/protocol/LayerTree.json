@@ -67,6 +67,7 @@
                 { "name": "reflectionWithCompositedDescendants", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a reflection and composited descendants." },
                 { "name": "filterWithCompositedDescendants", "type": "boolean", "optional": true, "description": "Composition due to association with an element with CSS filters applied and composited descendants." },
                 { "name": "blendingWithCompositedDescendants", "type": "boolean", "optional": true, "description": "Composition due to association with an element with CSS blending applied and composited descendants." },
+                { "name": "isolatesCompositedBlendingDescendants", "type": "boolean", "optional": true, "description": "Composition due to association with an element isolating compositing descendants having CSS blending applied." },
                 { "name": "perspective", "type": "boolean", "optional": true, "description": "Composition due to association with an element with perspective applied." },
                 { "name": "preserve3D", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a \"transform-style: preserve-3d\" style." },
                 { "name": "root", "type": "boolean", "optional": true, "description": "Composition due to association with the root element." },
