@@ -1,3 +1,27 @@
+2014-04-03  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add additional WKWebView SPI for clients that interact with PDFs
+        https://bugs.webkit.org/show_bug.cgi?id=131206
+
+        Reviewed by Dan Bernstein.
+
+        Add _dataForDisplayedPDF and _suggestedFilenameForDisplayedPDF to
+        support clients that wish to save a copy of the currently displayed PDF
+        to disk. Ultimately we should support this use case by exposing something
+        like WKWebViewContentProvider, but for now let's do something simple.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:data:]):
+        (-[WKWebView _dataForDisplayedPDF]):
+        (-[WKWebView _suggestedFilenameForDisplayedPDF]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/WKWebViewContentProvider.h:
+        * UIProcess/ios/WKPDFView.h:
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView documentData]):
+        (-[WKPDFView suggestedFilename]):
+        (-[WKPDFView web_setContentProviderData:suggestedFilename:]):
+
 2014-04-03  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Add API to get contents size of current web page.

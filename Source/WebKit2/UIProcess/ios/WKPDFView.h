@@ -30,6 +30,9 @@
 
 @interface WKPDFView : UIView <WKWebViewContentProvider>
 
+@property (nonatomic, readonly) NSData *documentData;
+@property (nonatomic, readonly) NSString *suggestedFilename;
+
 @end
 
 #endif // PLATFORM(IOS)

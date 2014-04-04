@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS)
 
+#import <CoreGraphics/CGPDFDocumentPrivate.h>
 #import <CorePDF/UIPDFDocument.h>
 #import <CorePDF/UIPDFPageView.h>
 #import <wtf/RetainPtr.h>
@@ -39,6 +40,7 @@ const CGFloat pdfMaximumZoomScale = 5;
 
 @implementation WKPDFView {
     RetainPtr<UIPDFDocument> _pdfDocument;
+    RetainPtr<NSString> _suggestedFilename;
     Vector<UIPDFPageView*> _pageViews;
     CGSize _minimumSize;
     UIScrollView *_scrollView;
@@ -54,8 +56,20 @@ const CGFloat pdfMaximumZoomScale = 5;
     return self;
 }
 
-- (void)web_setContentProviderData:(NSData *)data
+- (NSData *)documentData
+{    
+    return [(NSData *)CGDataProviderCopyData(CGPDFDocumentGetDataProvider([_pdfDocument CGDocument])) autorelease];
+}
+
+- (NSString *)suggestedFilename
 {
+    return _suggestedFilename.get();
+}
+
+- (void)web_setContentProviderData:(NSData *)data suggestedFilename:(NSString *)filename
+{
+    _suggestedFilename = adoptNS([filename copy]);
+
     for (auto& pageView : _pageViews)
         [pageView removeFromSuperview];
 

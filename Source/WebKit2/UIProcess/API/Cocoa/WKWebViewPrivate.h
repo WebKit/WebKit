@@ -98,7 +98,11 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 
 @property (nonatomic, setter=_setBackgroundExtendsBeyondPage:) BOOL _backgroundExtendsBeyondPage;
 
+// FIXME: Remove these three properties once we expose WKWebViewContentProvider as API.
 @property (nonatomic, readonly, getter=_isDisplayingPDF) BOOL _displayingPDF;
+@property (nonatomic, readonly) NSData *_dataForDisplayedPDF;
+// FIXME: This can be removed once WKNavigation's response property is implemented.
+@property (nonatomic, readonly) NSString *_suggestedFilenameForDisplayedPDF;
 
 - (void)_beginInteractiveObscuredInsetsChange;
 - (void)_endInteractiveObscuredInsetsChange;

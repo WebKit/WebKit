@@ -399,7 +399,7 @@
 - (void)_didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:(const String&)suggestedFilename data:(NSData *)data
 {
     ASSERT(_customContentView);
-    [_customContentView web_setContentProviderData:data];
+    [_customContentView web_setContentProviderData:data suggestedFilename:suggestedFilename];
 }
 
 - (void)_didCommitLoadForMainFrame
@@ -1268,6 +1268,20 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (BOOL)_isDisplayingPDF
 {
     return [_customContentView isKindOfClass:[WKPDFView class]];
+}
+
+- (NSData *)_dataForDisplayedPDF
+{
+    if (![self _isDisplayingPDF])
+        return nil;
+    return [(WKPDFView *)_customContentView.get() documentData];
+}
+
+- (NSString *)_suggestedFilenameForDisplayedPDF
+{
+    if (![self _isDisplayingPDF])
+        return nil;
+    return [(WKPDFView *)_customContentView.get() suggestedFilename];
 }
 
 // FIXME: Remove this once nobody uses it.

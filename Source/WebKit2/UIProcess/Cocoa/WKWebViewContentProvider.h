@@ -37,7 +37,7 @@ struct CGSize;
 // FIXME: This should be API.
 @protocol WKWebViewContentProvider <NSObject>
 
-- (void)web_setContentProviderData:(NSData *)data;
+- (void)web_setContentProviderData:(NSData *)data suggestedFilename:(NSString *)filename;
 - (void)web_setMinimumSize:(CGSize)size;
 - (void)web_setScrollView:(UIScrollView *)scrollView;
 
