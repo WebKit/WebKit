@@ -32,27 +32,61 @@
 
 #if WK_API_ENABLED
 
+/*! WKPreferences encapsulates the preferences you can change for one or more WKWebViews. 
+ A @link WKWebView @/link can specify which WKPreferences object it uses through its @link WKWebViewConfiguration @/link.
+ */
 WK_API_CLASS
 @interface WKPreferences : NSObject
 
+/*! @abstract Returns an initialized WKPreferences object.
+ @param userDefaultsKeyPrefix The user defaults key prefix.
+ @discussion If the userDefaultsKeyPrefix argument is non-nil, it is is prepended to the keys used to store preferences 
+ in the user defaults database. If the argument is nil, the preferences object won't save anything to the user defaults database.
+ */
 - (instancetype)initWithUserDefaultsKeyPrefix:(NSString *)userDefaultsKeyPrefix WK_DESIGNATED_INITIALIZER;
 
+/*! @abstract The user defaults key prefix
+ */
 @property (nonatomic, readonly) NSString *userDefaultsKeyPrefix;
 
+/*! @abstract The minimum font size in points.
+ */
 @property (nonatomic) CGFloat minimumFontSize;
 
+/*! @abstract Whether JavaScript is enabled.
+ */
 @property (nonatomic, getter=isJavaScriptEnabled) BOOL javaScriptEnabled;
+
+/*! @abstract Whether JavaScript can open windows without user interaction.
+ */
 @property (nonatomic) BOOL javaScriptCanOpenWindowsAutomatically;
+
+/*! @abstract Whether the WKWebView suppresses content rendering until it is fully loaded into memory.
+ */
 @property (nonatomic) BOOL suppressesIncrementalRendering;
 
 #if TARGET_OS_IPHONE
+/*! @abstract Whether HTML5 videos play inline or use the native full-screen controller.
+ */
 @property (nonatomic) BOOL allowsInlineMediaPlayback;
+
+/*! @abstract Whether HTML5 videos can play automatically or require the user to start playing them.
+ */
 @property (nonatomic) BOOL mediaPlaybackRequiresUserAction;
+
+/*! @abstract Whether AirPlay is allowed.
+ */
 @property (nonatomic) BOOL mediaPlaybackAllowsAirPlay;
+
 #endif
 
 #if !TARGET_OS_IPHONE
+/*! @abstract Whether Java is enabled.
+ */
 @property (nonatomic, getter=isJavaEnabled) BOOL javaEnabled;
+
+/*! abstract Whether plug-ins are enabled.
+ */
 @property (nonatomic, getter=arePlugInsEnabled) BOOL plugInsEnabled;
 #endif
 

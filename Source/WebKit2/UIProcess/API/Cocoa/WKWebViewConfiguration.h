@@ -54,7 +54,6 @@ WK_API_CLASS
 */
 @property (nonatomic, strong) WKPreferences *preferences;
 
-
 /*! @abstract The user content controller that should be used by web views created with this configuration.
  @discussion When this property is set to nil, a unique user content controller object will be created for each
  @link WKWebView @/link initialized with the configuration.

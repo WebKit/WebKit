@@ -28,12 +28,26 @@
 
 #if WK_API_ENABLED
 
+/*! WKNavigation objects are returned from  the @link WKWebView @/link load methods and are passed to the 
+ @link WKNavigationDelegate @/link methods, and can be used to track page loads from start to finish.
+ */
 WK_API_CLASS
 @interface WKNavigation : NSObject
 
+/*! @abstract The initial NSURLRequest used to perform the navigation.
+ */
 @property (nonatomic, readonly) NSURLRequest *initialRequest;
+
+/*! @abstract The current request of the navigation. This request may be different from the request returned by initialRequest if server side redirects have happened.
+ */
 @property (nonatomic, readonly) NSURLRequest *request;
+
+/* @abstract The NSURLResponse for the navigation or nil if no response has been received yet.
+ */
 @property (nonatomic, readonly) NSURLResponse *response;
+
+/* @abstract The page load error if the page failed to load, nil otherwise.
+ */
 @property (nonatomic, readonly) NSError *error;
 
 @end

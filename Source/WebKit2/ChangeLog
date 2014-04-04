@@ -1,3 +1,15 @@
+2014-04-04  Anders Carlsson  <andersca@apple.com>
+
+        More documentation
+        https://bugs.webkit.org/show_bug.cgi?id=131238
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKNavigation.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+
 2014-04-04  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [GTK][CMake] Use a stricter check for the HAVE_GTK_UNIX_PRINTING define
