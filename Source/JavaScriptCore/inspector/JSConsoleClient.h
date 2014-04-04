@@ -37,6 +37,10 @@ public:
     explicit JSConsoleClient(InspectorConsoleAgent*);
     virtual ~JSConsoleClient() { }
 
+    static bool logToSystemConsole();
+    static void setLogToSystemConsole(bool);
+    static void initializeLogToSystemConsole();
+
 protected:
     virtual void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, PassRefPtr<ScriptArguments>) override;
     virtual void count(JSC::ExecState*, PassRefPtr<ScriptArguments>) override;

@@ -30,28 +30,34 @@
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
 #include "ScriptValue.h"
-#include <stdio.h>
+#include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 using namespace Inspector;
 
 namespace JSC {
 
-void ConsoleClient::printURLAndPosition(const String& url, unsigned lineNumber, unsigned columnNumber)
+static void appendURLAndPosition(StringBuilder& builder, const String& url, unsigned lineNumber, unsigned columnNumber)
 {
     if (url.isEmpty())
         return;
 
-    if (lineNumber > 0 && columnNumber > 0)
-        printf("%s:%u:%u", url.utf8().data(), lineNumber, columnNumber);
-    else if (lineNumber > 0)
-        printf("%s:%u", url.utf8().data(), lineNumber);
-    else
-        printf("%s", url.utf8().data());
+    builder.append(url);
+
+    if (lineNumber > 0) {
+        builder.append(':');
+        builder.appendNumber(lineNumber);
+    }
+
+    if (columnNumber > 0) {
+        builder.append(':');
+        builder.appendNumber(columnNumber);
+    }
 }
 
-void ConsoleClient::printMessagePrefix(MessageSource source, MessageType type, MessageLevel level)
+static void appendMessagePrefix(StringBuilder& builder, MessageSource source, MessageType type, MessageLevel level)
 {
     const char* sourceString;
     switch (source) {
@@ -114,15 +120,25 @@ void ConsoleClient::printMessagePrefix(MessageSource source, MessageType type, M
     if (type == MessageType::Trace)
         levelString = "TRACE";
 
-    printf("%s %s:", sourceString, levelString);
+    builder.append(sourceString);
+    builder.append(' ');
+    builder.append(levelString);
 }
 
 void ConsoleClient::printConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& url, unsigned lineNumber, unsigned columnNumber)
 {
-    ConsoleClient::printURLAndPosition(url, lineNumber, columnNumber);
-    printf(": ");
-    ConsoleClient::printMessagePrefix(source, type, level);
-    printf(" %s\n", message.utf8().data());
+    StringBuilder builder;
+
+    if (!url.isEmpty()) {
+        appendURLAndPosition(builder, url, lineNumber, columnNumber);
+        builder.appendLiteral(": ");
+    }
+
+    appendMessagePrefix(builder, source, type, level);
+    builder.append(' ');
+    builder.append(message);
+
+    WTFLogAlways("%s", builder.toString().utf8().data());
 }
 
 void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, MessageType type, MessageLevel level, JSC::ExecState* exec, PassRefPtr<ScriptArguments> prpArguments)
@@ -134,14 +150,21 @@ void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, Messa
     RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec, stackSize));
     const ScriptCallFrame& lastCaller = callStack->at(0);
 
-    ConsoleClient::printURLAndPosition(lastCaller.sourceURL(), lastCaller.lineNumber(), lastCaller.columnNumber());
-    printf(": ");
-    ConsoleClient::printMessagePrefix(source, type, level);
+    StringBuilder builder;
+
+    if (!lastCaller.sourceURL().isEmpty()) {
+        appendURLAndPosition(builder, lastCaller.sourceURL(), lastCaller.lineNumber(), lastCaller.columnNumber());
+        builder.appendLiteral(": ");
+    }
+
+    appendMessagePrefix(builder, source, type, level);
     for (size_t i = 0; i < arguments->argumentCount(); ++i) {
         String argAsString = arguments->argumentAt(i).toString(arguments->globalState());
-        printf(" %s", argAsString.utf8().data());
+        builder.append(' ');
+        builder.append(argAsString.utf8().data());
     }
-    printf("\n");
+
+    WTFLogAlways("%s", builder.toString().utf8().data());
 
     if (isTraceMessage) {
         for (size_t i = 0; i < callStack->size(); ++i) {
@@ -149,9 +172,16 @@ void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, Messa
             String functionName = String(callFrame.functionName());
             if (functionName.isEmpty())
                 functionName = ASCIILiteral("(unknown)");
-            printf("%lu: %s (", static_cast<unsigned long>(i), functionName.utf8().data());
-            ConsoleClient::printURLAndPosition(callFrame.sourceURL(), callFrame.lineNumber(), callFrame.columnNumber());
-            printf(")\n");
+
+            StringBuilder callFrameBuilder;
+            callFrameBuilder.appendNumber(static_cast<unsigned long>(i));
+            callFrameBuilder.appendLiteral(": ");
+            callFrameBuilder.append(functionName);
+            callFrameBuilder.append('(');
+            appendURLAndPosition(callFrameBuilder, callFrame.sourceURL(), callFrame.lineNumber(), callFrame.columnNumber());
+            callFrameBuilder.append(')');
+
+            WTFLogAlways("%s", callFrameBuilder.toString().utf8().data());
         }
     }
 }

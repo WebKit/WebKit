@@ -1,3 +1,54 @@
+2014-04-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Provide a way for JSContext console to log to system console
+        https://bugs.webkit.org/show_bug.cgi?id=131050
+
+        Reviewed by Timothy Hatcher.
+
+        Applications often re-expose some log -> NSLog functionality.
+        We already have the capability ourselves, which includes extra
+        information such as sourceURL:line:column, all arguments instead
+        of just one argument, and backtrace information on console.trace.
+        Therefore it would be convenient if developers could just use
+        the built-in console.log and get rich output in both the inspector
+        and the console, without writing their own logger.
+
+        The logging will be enabled in debug builds by default, and can be enabled
+        otherwise by setting a user default before creating the first context.
+        
+        For example, in the application itself:
+
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"JavaScriptCoreOutputConsoleMessagesToSystemConsole"];
+
+        Or from outside the application:
+        
+            shell> defaults write <app-bundle-identifier> JavaScriptCoreOutputConsoleMessagesToSystemConsole -bool YES
+
+        * inspector/JSConsoleClient.h:
+        * inspector/JSConsoleClient.cpp:
+        (Inspector::JSConsoleClient::logToSystemConsole):
+        (Inspector::JSConsoleClient::setLogToSystemConsole):
+        (Inspector::JSConsoleClient::initializeLogToSystemConsole):
+        (Inspector::JSConsoleClient::JSConsoleClient):
+        Global setting for logging to system console. Enabled on
+        debug builds, and by a user default on supported platforms.
+
+        (Inspector::JSConsoleClient::messageWithTypeAndLevel):
+        Log to system console when the static setting is enabled.
+
+        * runtime/ConsoleClient.h:
+        * runtime/ConsoleClient.cpp:
+        (JSC::appendURLAndPosition):
+        (JSC::appendMessagePrefix):
+        (JSC::ConsoleClient::printConsoleMessage):
+        (JSC::ConsoleClient::printConsoleMessageWithArguments):
+        Clean up printing. Build strings and use WTFLogAlways instead of printf
+        for consistant logging.
+
+        * runtime/ConsoleClient.cpp:
+        (JSC::ConsoleClient::printConsoleMessageWithArguments):
+        Clean up printing. If there is no source URL, don't print a leading colon.
+
 2014-04-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Use JSCell::indexingType instead of Structure::indexingType wherever possible

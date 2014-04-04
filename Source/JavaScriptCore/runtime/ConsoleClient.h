@@ -41,8 +41,6 @@ class ConsoleClient {
 public:
     virtual ~ConsoleClient() { }
 
-    static void printURLAndPosition(const String& url, unsigned lineNumber, unsigned columnNumber);
-    static void printMessagePrefix(MessageSource, MessageType, MessageLevel);
     JS_EXPORT_PRIVATE static void printConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, const String& url, unsigned lineNumber, unsigned columnNumber);
     JS_EXPORT_PRIVATE static void printConsoleMessageWithArguments(MessageSource, MessageType, MessageLevel, JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>);
 
