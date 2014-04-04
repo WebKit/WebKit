@@ -142,6 +142,9 @@ public:
     bool contains(float px, float py) const
         { return px >= x() && px <= maxX() && py >= y() && py <= maxY(); }
 
+    bool overlapsYRange(float y1, float y2) const { return !isEmpty() && y2 >= y1 && y2 >= y() && y1 <= maxY(); }
+    bool overlapsXRange(float x1, float x2) const { return !isEmpty() && x2 >= x1 && x2 >= x() && x1 <= maxX(); }
+
     void inflateX(float dx) {
         m_location.setX(m_location.x() - dx);
         m_size.setWidth(m_size.width() + dx + dx);

@@ -32,51 +32,29 @@
 
 #include "FloatPolygon.h"
 #include "Shape.h"
+#include "ShapeInterval.h"
 
 namespace WebCore {
 
 class OffsetPolygonEdge : public VertexPair {
 public:
-    enum Basis {
-        Edge,
-        Vertex,
-        LineTop
-    };
-
     OffsetPolygonEdge(const FloatPolygonEdge& edge, const FloatSize& offset)
         : m_vertex1(edge.vertex1() + offset)
         , m_vertex2(edge.vertex2() + offset)
-        , m_edgeIndex(edge.edgeIndex())
-        , m_basis(Edge)
-    {
-    }
-
-    OffsetPolygonEdge(const FloatPoint& reflexVertex, const FloatSize& offset1, const FloatSize& offset2)
-        : m_vertex1(reflexVertex + offset1)
-        , m_vertex2(reflexVertex + offset2)
-        , m_edgeIndex(-1)
-        , m_basis(Vertex)
-    {
-    }
-
-    OffsetPolygonEdge(const FloatPolygon& polygon, float minLogicalIntervalTop, const FloatSize& offset)
-        : m_vertex1(FloatPoint(polygon.boundingBox().x(), minLogicalIntervalTop) + offset)
-        , m_vertex2(FloatPoint(polygon.boundingBox().maxX(), minLogicalIntervalTop) + offset)
-        , m_edgeIndex(-1)
-        , m_basis(LineTop)
     {
     }
 
     virtual const FloatPoint& vertex1() const override { return m_vertex1; }
     virtual const FloatPoint& vertex2() const override { return m_vertex2; }
-    int edgeIndex() const { return m_edgeIndex; }
-    Basis basis() const { return m_basis; }
+
+    bool isWithinYRange(float y1, float y2) const { return y1 <= minY() && y2 >= maxY(); }
+    bool overlapsYRange(float y1, float y2) const { return y2 >= minY() && y1 <= maxY(); }
+    float xIntercept(float y) const;
+    FloatShapeInterval clippedEdgeXRange(float y1, float y2) const;
 
 private:
     FloatPoint m_vertex1;
     FloatPoint m_vertex2;
-    int m_edgeIndex;
-    Basis m_basis;
 };
 
 class PolygonShape : public Shape {
@@ -84,21 +62,17 @@ class PolygonShape : public Shape {
 public:
     PolygonShape(std::unique_ptr<Vector<FloatPoint>> vertices, WindRule fillRule)
         : m_polygon(std::move(vertices), fillRule)
-        , m_marginBounds(nullptr)
     {
     }
 
-    virtual LayoutRect shapeMarginLogicalBoundingBox() const override { return static_cast<LayoutRect>(shapeMarginBounds().boundingBox()); }
+    virtual LayoutRect shapeMarginLogicalBoundingBox() const override;
     virtual bool isEmpty() const override { return m_polygon.isEmpty(); }
     virtual void getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const override;
 
     virtual void buildDisplayPaths(DisplayPaths&) const override;
 
 private:
-    const FloatPolygon& shapeMarginBounds() const;
-
     FloatPolygon m_polygon;
-    mutable std::unique_ptr<FloatPolygon> m_marginBounds;
 };
 
 } // namespace WebCore

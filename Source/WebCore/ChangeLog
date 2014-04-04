@@ -1,3 +1,39 @@
+2014-04-04  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Simplify Polygon implementation
+        https://bugs.webkit.org/show_bug.cgi?id=130975
+
+        Reviewed by Andreas Kling.
+
+        Only floats can specify shape-outside. For polygon shape-outside values, the problem
+        of finding the left and right exclusion edges reduces to finding the X axis
+        limits of the polygon edges that overlap a particular layout line. This is a much
+        simpler version of the problem that PolygonShape was originally designed for, and so
+        the implementation can also be simplified. There's more about the new algorithm in
+        http://hansmuller-webkit.blogspot.com/2014/03/a-simpler-algorithm-for-css-shapes.html.
+
+        No new tests, since functionality was only removed.
+
+        * platform/graphics/FloatRect.h:
+        (WebCore::FloatRect::overlapsYRange):
+        (WebCore::FloatRect::overlapsXRange):
+        * rendering/shapes/PolygonShape.cpp:
+        (WebCore::OffsetPolygonEdge::xIntercept):
+        (WebCore::circleXIntercept):
+        (WebCore::OffsetPolygonEdge::clippedEdgeXRange): X axis extent of the edge clipped to a vertical interval.
+        (WebCore::clippedCircleXRange): X axis extent of a circle clipped to a vertical interval.
+        (WebCore::PolygonShape::shapeMarginLogicalBoundingBox):
+        (WebCore::PolygonShape::getExcludedIntervals):
+        (WebCore::PolygonShape::buildDisplayPaths):
+        * rendering/shapes/PolygonShape.h:
+        (WebCore::OffsetPolygonEdge::OffsetPolygonEdge):
+        (WebCore::OffsetPolygonEdge::isWithinYRange):
+        (WebCore::OffsetPolygonEdge::overlapsYRange):
+        (WebCore::PolygonShape::PolygonShape):
+        * rendering/shapes/ShapeInterval.h:
+        (WebCore::ShapeInterval::isEmpty):
+        (WebCore::ShapeInterval::unite):
+
 2014-04-04  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] shape-margin in percentage units always computes to 0px
