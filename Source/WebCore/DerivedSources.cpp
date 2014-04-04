@@ -246,7 +246,6 @@
 #include "JSMediaController.cpp"
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
 #include "JSMediaControlsHost.cpp"
-#include "UserAgentScriptsData.cpp"
 #endif
 #include "JSMediaError.cpp"
 #include "JSMediaList.cpp"

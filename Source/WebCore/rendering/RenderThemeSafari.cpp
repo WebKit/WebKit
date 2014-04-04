@@ -46,12 +46,9 @@
 #include "SoftLinking.h"
 #include "StyleResolver.h"
 #include "UserAgentStyleSheets.h"
+#include "WebCoreBundleWin.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <wtf/RetainPtr.h>
-
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
-#include "UserAgentScripts.h"
-#endif
 
 using std::min;
 
@@ -1178,7 +1175,9 @@ bool RenderThemeSafari::paintSearchFieldResultsButton(RenderObject* o, const Pai
 String RenderThemeSafari::mediaControlsStyleSheet()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    return String(mediaControlsAppleUserAgentStyleSheet, sizeof(mediaControlsAppleUserAgentStyleSheet));
+    if (m_mediaControlsStyleSheet.isEmpty())
+        m_mediaControlsStyleSheet = RenderThemeWin::stringWithContentsOfFile(CFSTR("mediaControlsApple"), CFSTR("css"));
+    return m_mediaControlsStyleSheet;
 #else
     return emptyString();
 #endif
@@ -1187,7 +1186,9 @@ String RenderThemeSafari::mediaControlsStyleSheet()
 String RenderThemeSafari::mediaControlsScript()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    return String(mediaControlsAppleJavaScript, sizeof(mediaControlsAppleJavaScript));
+    if (m_mediaControlsScript.isEmpty())
+        m_mediaControlsScript = RenderThemeWin::stringWithContentsOfFile(CFSTR("mediaControlsApple"), CFSTR("js"));
+    return m_mediaControlsScript;
 #else
     return emptyString();
 #endif

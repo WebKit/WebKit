@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2013 Apple Inc.
+ * Copyright (C) 2007, 2008, 2013, 2014 Apple Inc.
  * Copyright (C) 2009 Kenneth Rohde Christiansen
  *
  * This library is free software; you can redistribute it and/or
@@ -181,6 +181,9 @@ private:
     void setSearchFieldSize(RenderStyle*) const;
 
     ThemeControlState determineState(RenderObject*) const;
+
+    String m_mediaControlsScript;
+    String m_mediaControlsStyleSheet;
 };
 
 } // namespace WebCore

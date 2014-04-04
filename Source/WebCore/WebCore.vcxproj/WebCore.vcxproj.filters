@@ -6829,9 +6829,6 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSBeforeUnloadEvent.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\UserAgentScriptsData.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
     <ClCompile Include="..\Modules\mediacontrols\MediaControlsHost.cpp">
       <Filter>Modules\mediacontrols</Filter>
     </ClCompile>
@@ -14828,9 +14825,6 @@
     </ClInclude>
     <ClInclude Include="..\rendering\TextPaintStyle.h">
       <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\UserAgentScripts.h">
-      <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\OrderIterator.h">
       <Filter>rendering</Filter>

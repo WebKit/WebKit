@@ -1,7 +1,7 @@
 /*
  * This file is part of the WebKit project.
  *
- * Copyright (C) 2006, 2008, 2013 Apple Inc.
+ * Copyright (C) 2006, 2008, 2013, 2014 Apple Inc.
  * Copyright (C) 2009 Kenneth Rohde Christiansen
  *
  * This library is free software; you can redistribute it and/or
@@ -120,6 +120,8 @@ public:
 
     static void setWebKitIsBeingUnloaded();
 
+    static String stringWithContentsOfFile(CFStringRef name, CFStringRef type);
+
     virtual bool supportsFocusRing(const RenderStyle*) const;
 
 #if ENABLE(VIDEO)
@@ -173,6 +175,9 @@ private:
     mutable HANDLE m_sliderTheme;
     mutable HANDLE m_spinButtonTheme;
     mutable HANDLE m_progressBarTheme;
+
+    String m_mediaControlsScript;
+    String m_mediaControlsStyleSheet;
 };
 
 };

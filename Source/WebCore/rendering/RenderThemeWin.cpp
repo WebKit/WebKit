@@ -37,11 +37,8 @@
 #include "SoftLinking.h"
 #include "SystemInfo.h"
 #include "UserAgentStyleSheets.h"
+#include "WebCoreBundleWin.h"
 #include <wtf/win/GDIObject.h>
-
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
-#include "UserAgentScripts.h"
-#endif
 
 #if ENABLE(VIDEO)
 #include "RenderMediaControls.h"
@@ -1079,10 +1076,65 @@ Color RenderThemeWin::systemColor(CSSValueID cssValueId) const
 }
 
 #if ENABLE(VIDEO)
+static const size_t maximumReasonableBufferSize = 32768;
+
+static void fillBufferWithContentsOfFile(PlatformFileHandle file, long long filesize, Vector<char>& buffer)
+{
+    // Load the file content into buffer
+    buffer.resize(filesize + 1);
+
+    int bufferPosition = 0;
+    int bufferReadSize = 4096;
+    int bytesRead = 0;
+    while (filesize > bufferPosition) {
+        if (filesize - bufferPosition < bufferReadSize)
+            bufferReadSize = filesize - bufferPosition;
+
+        bytesRead = readFromFile(file, buffer.data() + bufferPosition, bufferReadSize);
+        if (bytesRead != bufferReadSize) {
+            buffer.clear();
+            return;
+        }
+
+        bufferPosition += bufferReadSize;
+    }
+
+    buffer[filesize] = 0;
+}
+
+String RenderThemeWin::stringWithContentsOfFile(CFStringRef name, CFStringRef type)
+{
+    RetainPtr<CFURLRef> requestedURLRef = adoptCF(CFBundleCopyResourceURL(webKitBundle(), name, type, 0));
+    if (!requestedURLRef)
+        return String();
+
+    UInt8 requestedFilePath[MAX_PATH];
+    if (!CFURLGetFileSystemRepresentation(requestedURLRef.get(), false, requestedFilePath, MAX_PATH))
+        return String();
+
+    PlatformFileHandle requestedFileHandle = openFile(requestedFilePath, OpenForRead);
+    if (!isHandleValid(requestedFileHandle))
+        return String();
+
+    long long filesize = -1;
+    if (!getFileSize(requestedFilePath, filesize)) {
+        closeFile(requestedFileHandle);
+        return String();
+    }
+
+    Vector<char> fileContents;
+    fillBufferWithContentsOfFile(requestedFileHandle, filesize, fileContents);
+    closeFile(requestedFileHandle);
+
+    return String(fileContents.data(), static_cast<size_t>(filesize));
+}
+
 String RenderThemeWin::mediaControlsStyleSheet()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    return String(mediaControlsAppleUserAgentStyleSheet, sizeof(mediaControlsAppleUserAgentStyleSheet));
+    if (m_mediaControlsStyleSheet.isEmpty())
+        m_mediaControlsStyleSheet = stringWithContentsOfFile(CFSTR("mediaControlsApple"), CFSTR("css"));
+    return m_mediaControlsStyleSheet;
 #else
     return emptyString();
 #endif
@@ -1091,7 +1143,9 @@ String RenderThemeWin::mediaControlsStyleSheet()
 String RenderThemeWin::mediaControlsScript()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    return String(mediaControlsAppleJavaScript, sizeof(mediaControlsAppleJavaScript));
+    if (m_mediaControlsScript.isEmpty())
+        m_mediaControlsScript = stringWithContentsOfFile(CFSTR("mediaControlsApple"), CFSTR("js"));
+    return m_mediaControlsScript;
 #else
     return emptyString();
 #endif
