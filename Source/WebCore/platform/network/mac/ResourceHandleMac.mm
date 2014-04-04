@@ -92,7 +92,7 @@ static NSOperationQueue *operationQueueForAsyncClients()
     if (!queue) {
         queue = [[NSOperationQueue alloc] init];
         // Default concurrent operation count depends on current system workload, but delegate methods are mostly idling in IPC, so we can run as many as needed.
-        [queue setMaxConcurrentOperationCount:NSIntegerMax];
+        [queue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
     }
     return queue;
 }

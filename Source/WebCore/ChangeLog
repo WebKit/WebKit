@@ -1,3 +1,15 @@
+2014-04-04  Martin Hock  <mhock@apple.com>
+
+        [Mac] Change operation queue width to NSOperationQueueDefaultMaxConcurrentOperationCount.
+        https://bugs.webkit.org/show_bug.cgi?id=131231
+
+        Reviewed by Brady Eidson.
+
+        No new tests, no behavior change.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::operationQueueForAsyncClients):
+
 2014-04-04  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Simplify Polygon implementation
