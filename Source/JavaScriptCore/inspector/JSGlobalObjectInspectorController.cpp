@@ -156,6 +156,14 @@ void JSGlobalObjectInspectorController::reportAPIException(ExecState* exec, JSVa
     String errorMessage = exception.toString(exec)->value(exec);
     exec->clearException();
 
+    if (JSConsoleClient::logToSystemConsole()) {
+        if (callStack->size()) {
+            const ScriptCallFrame& callFrame = callStack->at(0);
+            ConsoleClient::printConsoleMessage(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage, callFrame.sourceURL(), callFrame.lineNumber(), callFrame.columnNumber());
+        } else
+            ConsoleClient::printConsoleMessage(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage, String(), 0, 0);
+    }
+
     m_consoleAgent->addMessageToConsole(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage, callStack);
 }
 
