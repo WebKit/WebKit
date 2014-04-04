@@ -1122,9 +1122,8 @@ inline bool JSObject::isGlobalObject() const
 
 inline bool JSObject::isVariableObject() const
 {
-    return type() >= VariableObjectType;
+    return type() == GlobalObjectType || type() == ActivationObjectType;
 }
-
 
 inline bool JSObject::isStaticScopeObject() const
 {

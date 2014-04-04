@@ -69,11 +69,11 @@ enum JSType : uint8_t {
     DataViewType,
 
     NameScopeObjectType,
-    // VariableObjectType must be less than MOST of the types of its subclasses and only its subclasses.
-    // We use >=VariableObjectType checks to test for Global & Activation objects, but exclude NameScopes.
-    VariableObjectType,
+
     GlobalObjectType,
     ActivationObjectType,
+
+    LastJSCObjectType = ActivationObjectType,
 };
 
 COMPILE_ASSERT(sizeof(JSType) == sizeof(uint8_t), sizeof_jstype_is_one_byte);

@@ -1,3 +1,29 @@
+2014-04-03  Andreas Kling  <akling@apple.com>
+
+        Fast-path for casting JS wrappers to JSNode.
+        <https://webkit.org/b/131196>
+
+        Add a way to quickly determine that a given JSObject is a JSNode.
+        This lets us avoid walking the ClassInfo chain in the DOM bindings
+        for WebCore::Node.
+
+        Reviewed by Mark Hahnenberg and Geoff Garen.
+
+        * bindings/js/JSDOMWrapper.h:
+
+            Added a JSNodeType constant that extends beyond JSC::JSType.
+
+        * bindings/js/JSNodeCustom.h:
+        (WebCore::jsNodeCast):
+
+            Added. Fast cast from JSValue to JSNode.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+
+            Generate code that uses jsNodeCast in Node interfaces.
+
 2014-04-03  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Merge ShapeInfo & ShapeOutsideInfo now that ShapeInsideInfo is no more

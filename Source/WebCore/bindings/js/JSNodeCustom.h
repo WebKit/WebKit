@@ -78,6 +78,13 @@ inline void* root(Node& node)
     return root(&node);
 }
 
+ALWAYS_INLINE JSNode* jsNodeCast(JSC::JSValue value)
+{
+    if (UNLIKELY(!value.isCell()))
+        return nullptr;
+    return value.asCell()->type() == JSNodeType ? JSC::jsCast<JSNode*>(value) : nullptr;
+}
+
 } // namespace WebCore
 
 #endif // JSDOMNodeCustom_h

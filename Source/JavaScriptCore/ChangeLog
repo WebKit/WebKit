@@ -1,3 +1,24 @@
+2014-04-03  Andreas Kling  <akling@apple.com>
+
+        Fast-path for casting JS wrappers to JSNode.
+        <https://webkit.org/b/131196>
+
+        Allow code outside of JSC (well, WebCore) to extend the JSType spectrum
+        a little bit. We do this by exposing a LastJSCObjectType constant so
+        WebCore can encode its own wrapper types after that.
+
+        Reviewed by Mark Hahnenberg and Geoff Garen.
+
+        * runtime/JSType.h:
+
+            Added LastJSCObjectType for use by WebCore.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::isVariableObject):
+
+            Updated since this can no longer assume that types >= VariableObjectType
+            are all variable objects.
+
 2014-04-03  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         All Heap::writeBarriers should be inline
