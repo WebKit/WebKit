@@ -1,3 +1,20 @@
+2014-04-04  Andres Gomez  <agomez@igalia.com>
+
+        [Win] Update obsolete packages in cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=126264
+
+        Reviewed by Brent Fulgham.
+
+        Removed "apache" and "minires" as the first has been replaced by
+        "lighttpd" and the second is now integrated into
+        "cygwin". Replaced the transitional and now obsolete "gcc" package
+        with "gcc-g++" and ensure that "python" stays at version "2.6.8"
+        since the newer version available is "2.7.3" which breaks the
+        build due to some funniness with environment variable handling.
+
+        * CygwinDownloader/cygwin-downloader.py:
+        * CygwinDownloader/cygwin-downloader.zip:
+
 2014-04-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         check-webkit-style: Improve warnings on Objective-C @property syntax

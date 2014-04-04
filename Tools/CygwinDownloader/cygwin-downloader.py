@@ -44,20 +44,18 @@ package_mirror_url = mirror_servers[random.choice(range(len(mirror_servers)))]
 def download_package(package, message):
         download_url_to_file(package_mirror_url + package["path"], package["path"], message)
 
-required_packages = frozenset(["apache",
-                               "bc",
+required_packages = frozenset(["bc",
                                "bison",
                                "curl",
                                "diffutils",
                                "e2fsprogs",
                                "emacs",
                                "flex",
-                               "gcc",
+                               "gcc-g++",
                                "gperf",
                                "keychain",
                                "lighttpd",
                                "make",
-                               "minires",
                                "nano",
                                "openssh",
                                "patch",
@@ -71,6 +69,8 @@ required_packages = frozenset(["apache",
                                "unzip",
                                "vim",
                                "zip"])
+
+required_packages_versions = {"python": "2.6.8-2"}
 
 #
 # Main
@@ -90,7 +90,9 @@ current_package = ''
 for line in downloaded_packages_file.readlines():
         if line[0] == "@":
                 current_package = line[2:-1]
-                packages[current_package] = {"name": current_package, "needs_download": False, "requires": [], "path": ""}
+                packages[current_package] = {"name": current_package, "needs_download": False, "requires": [], "path": "", "version": "", "found_version": False}
+                if current_package in required_packages_versions:
+                        packages[current_package]["version"] = required_packages_versions[current_package]
         elif line[:10] == "category: ":
                 if current_package in required_packages:
                         line = "category: Base\n"
@@ -99,7 +101,13 @@ for line in downloaded_packages_file.readlines():
         elif line[:10] == "requires: ":
                 packages[current_package]["requires"] = line[10:].split()
                 packages[current_package]["requires"].sort()
-        elif line[:9] == "install: " and not len(packages[current_package]["path"]):
+        elif line[:9] == "version: " and not packages[current_package]["found_version"]:
+                if not len(packages[current_package]["version"]):
+                        packages[current_package]["version"] = line[9:-1]
+                        packages[current_package]["found_version"] = True
+                else:
+                        packages[current_package]["found_version"] = (packages[current_package]["version"] == line[9:-1])
+        elif line[:9] == "install: " and packages[current_package]["found_version"] and not len(packages[current_package]["path"]):
                 end_of_path = line.find(" ", 9)
                 if end_of_path != -1:
                         packages[current_package]["path"] = line[9:end_of_path]
