@@ -1,3 +1,28 @@
+2014-04-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: JSContext inspection provide a way to opt-out of including Native Call Stacks in Exception traces reported to Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=131186
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSContextPrivate.h:
+        * API/JSContext.mm:
+        (-[JSContext _includesNativeCallStackWhenReportingExceptions]):
+        (-[JSContext _setIncludesNativeCallStackWhenReportingExceptions:]):
+        JSContext ObjC SPI to opt-out of including native call stacks in exceptions.
+
+        * API/JSContextRefPrivate.h:
+        * API/JSContextRef.cpp:
+        (JSGlobalContextGetIncludesNativeCallStackWhenReportingExceptions):
+        (JSGlobalContextSetIncludesNativeCallStackWhenReportingExceptions):
+        JSContext C SPI to opt-out of including native call stacks in exceptions.
+
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        (Inspector::JSGlobalObjectInspectorController::reportAPIException):
+        Only include the native call stack if the setting is enabled. It is enabled by default.
+
 2014-04-03  Mark Lam  <mark.lam@apple.com>
 
         Fix bit rot in ARMv7 JIT probe mechanism.

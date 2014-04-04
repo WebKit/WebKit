@@ -213,6 +213,16 @@
     JSGlobalContextSetRemoteInspectionEnabled(m_context, enabled);
 }
 
+- (BOOL)_includesNativeCallStackWhenReportingExceptions
+{
+    return JSGlobalContextGetIncludesNativeCallStackWhenReportingExceptions(m_context);
+}
+
+- (void)_setIncludesNativeCallStackWhenReportingExceptions:(BOOL)includeNativeCallStack
+{
+    JSGlobalContextSetIncludesNativeCallStackWhenReportingExceptions(m_context, includeNativeCallStack);
+}
+
 @end
 
 @implementation JSContext(SubscriptSupport)

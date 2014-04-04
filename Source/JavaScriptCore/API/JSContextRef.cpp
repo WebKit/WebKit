@@ -40,6 +40,10 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
+#if ENABLE(REMOTE_INSPECTOR)
+#include "JSGlobalObjectInspectorController.h"
+#endif
+
 #if OS(DARWIN)
 #include <mach-o/dyld.h>
 
@@ -320,3 +324,42 @@ void JSGlobalContextSetRemoteInspectionEnabled(JSGlobalContextRef ctx, bool enab
 
     exec->vmEntryGlobalObject()->setRemoteDebuggingEnabled(enabled);
 }
+
+bool JSGlobalContextGetIncludesNativeCallStackWhenReportingExceptions(JSGlobalContextRef ctx)
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    ExecState* exec = toJS(ctx);
+    JSLockHolder lock(exec);
+
+    JSGlobalObject* globalObject = exec->vmEntryGlobalObject();
+    return globalObject->inspectorController().includesNativeCallStackWhenReportingExceptions();
+#else
+    UNUSED_PARAM(ctx);
+    return false;
+#endif
+}
+
+void JSGlobalContextSetIncludesNativeCallStackWhenReportingExceptions(JSGlobalContextRef ctx, bool includesNativeCallStack)
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    ExecState* exec = toJS(ctx);
+    JSLockHolder lock(exec);
+
+    JSGlobalObject* globalObject = exec->vmEntryGlobalObject();
+    globalObject->inspectorController().setIncludesNativeCallStackWhenReportingExceptions(includesNativeCallStack);
+#else
+    UNUSED_PARAM(ctx);
+    UNUSED_PARAM(includesNativeCallStack);
+#endif
+}
+

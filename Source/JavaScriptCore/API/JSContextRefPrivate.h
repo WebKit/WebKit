@@ -111,6 +111,23 @@ JS_EXPORT bool JSGlobalContextGetRemoteInspectionEnabled(JSGlobalContextRef ctx)
 */
 JS_EXPORT void JSGlobalContextSetRemoteInspectionEnabled(JSGlobalContextRef ctx, bool enabled) CF_AVAILABLE(10_10, 8_0);    
 
+/*!
+@function
+@abstract Gets the include native call stack when reporting exceptions setting for a context.
+@param ctx The JSGlobalContext whose setting you want to get.
+@result The value of the setting, true if remote inspection is enabled, otherwise false.
+@discussion This setting is true by default.
+*/
+JS_EXPORT bool JSGlobalContextGetIncludesNativeCallStackWhenReportingExceptions(JSGlobalContextRef ctx) CF_AVAILABLE(10_10, 8_0);
+
+/*!
+@function
+@abstract Sets the include native call stack when reporting exceptions setting for a context.
+@param ctx The JSGlobalContext that you want to change.
+@param includeNativeCallStack The new value of the setting for the context.
+*/
+JS_EXPORT void JSGlobalContextSetIncludesNativeCallStackWhenReportingExceptions(JSGlobalContextRef ctx, bool includesNativeCallStack) CF_AVAILABLE(10_10, 8_0);    
+
 #ifdef __cplusplus
 }
 #endif

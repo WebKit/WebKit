@@ -64,6 +64,9 @@ public:
 
     void globalObjectDestroyed();
 
+    bool includesNativeCallStackWhenReportingExceptions() const { return m_includeNativeCallStackWithExceptions; }
+    void setIncludesNativeCallStackWhenReportingExceptions(bool includesNativeCallStack) { m_includeNativeCallStackWithExceptions = includesNativeCallStack; }
+
     void reportAPIException(JSC::ExecState*, JSC::JSValue exception);
 
     JSC::ConsoleClient* consoleClient() const;
@@ -85,6 +88,7 @@ private:
     InspectorAgentRegistry m_agents;
     InspectorFrontendChannel* m_inspectorFrontendChannel;
     RefPtr<InspectorBackendDispatcher> m_inspectorBackendDispatcher;
+    bool m_includeNativeCallStackWithExceptions;
 };
 
 } // namespace Inspector

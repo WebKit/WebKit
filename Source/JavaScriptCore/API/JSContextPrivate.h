@@ -38,6 +38,12 @@
 */
 @property (setter=_setRemoteInspectionEnabled:) BOOL _remoteInspectionEnabled NS_AVAILABLE(10_10, 8_0);
 
+/*!
+@property
+@discussion Set whether or not the native call stack is included when reporting exceptions. Default value is YES.
+*/
+@property (setter=_setIncludesNativeCallStackWhenReportingExceptions:) BOOL _includesNativeCallStackWhenReportingExceptions NS_AVAILABLE(10_10, 8_0);
+
 @end
 
 #endif
