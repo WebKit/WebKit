@@ -1,5 +1,12 @@
 2014-04-03  Andreas Kling  <akling@apple.com>
 
+        Rebaseline a bindings test.
+
+        * bindings/scripts/test/JS/JSTestNode.h:
+        (WebCore::JSTestNode::createStructure):
+
+2014-04-03  Andreas Kling  <akling@apple.com>
+
         Fast-path for casting JS wrappers to JSNode.
         <https://webkit.org/b/131196>
 
