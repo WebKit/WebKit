@@ -1,3 +1,18 @@
+2014-04-03  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [WK2][EFL] Use template method in creating NativeWebMouseEvent
+        https://bugs.webkit.org/show_bug.cgi?id=131152
+
+        Reviewed by Anders Carlsson.
+
+        There are three EFL mouse events, such as Evas_Event_Mouse_Down, Evas_Event_Mouse_Up,
+        and Evas_Event_Mouse_Move. They can be defined as a template method.
+
+        * PlatformEfl.cmake: Remove NativeWebMouseEventEfl.cpp
+        * Shared/NativeWebMouseEvent.h:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent): Add a template method.
+        * Shared/efl/NativeWebMouseEventEfl.cpp: Removed.
+
 2014-04-03  Anders Carlsson  <andersca@apple.com>
 
         Add WKWebView documentation

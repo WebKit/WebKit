@@ -34,6 +34,7 @@ OBJC_CLASS NSView;
 #endif
 
 #if PLATFORM(EFL)
+#include "WebEventFactory.h"
 #include <Evas.h>
 #include <WebCore/AffineTransform.h>
 #endif
@@ -53,9 +54,8 @@ public:
     NativeWebMouseEvent(const NativeWebMouseEvent&);
     NativeWebMouseEvent(GdkEvent*, int);
 #elif PLATFORM(EFL)
-    NativeWebMouseEvent(const Evas_Event_Mouse_Down*, const WebCore::AffineTransform&, const WebCore::AffineTransform&);
-    NativeWebMouseEvent(const Evas_Event_Mouse_Up*, const WebCore::AffineTransform&, const WebCore::AffineTransform&);
-    NativeWebMouseEvent(const Evas_Event_Mouse_Move*, const WebCore::AffineTransform&, const WebCore::AffineTransform&);
+    template <typename EvasEventMouse>
+    NativeWebMouseEvent(const EvasEventMouse*, const WebCore::AffineTransform&, const WebCore::AffineTransform&);
 #endif
 
 #if USE(APPKIT)
@@ -77,6 +77,15 @@ private:
     const void* m_nativeEvent;
 #endif
 };
+
+#if PLATFORM(EFL)
+template <typename EvasEventMouse>
+NativeWebMouseEvent::NativeWebMouseEvent(const EvasEventMouse* event, const WebCore::AffineTransform& toWebContent, const WebCore::AffineTransform& toDeviceScreen)
+    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, toWebContent, toDeviceScreen))
+    , m_nativeEvent(event)
+{
+}
+#endif
 
 } // namespace WebKit
 
