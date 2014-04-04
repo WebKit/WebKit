@@ -773,11 +773,11 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     // FIXME: In the bgLayer->hasFiniteBounds() case, we could improve the culling test
     // by verifying whether the background image covers the entire layout rect.
     if (!bgLayer->next()) {
-        IntRect backgroundRect(pixelSnappedIntRect(scrolledPaintRect));
+        LayoutRect backgroundRect(scrolledPaintRect);
         bool boxShadowShouldBeAppliedToBackground = this->boxShadowShouldBeAppliedToBackground(bleedAvoidance, box);
         if (boxShadowShouldBeAppliedToBackground || !shouldPaintBackgroundImage || !bgLayer->hasOpaqueImage(this) || !bgLayer->hasRepeatXY()) {
             if (!boxShadowShouldBeAppliedToBackground)
-                backgroundRect.intersect(pixelSnappedIntRect(paintInfo.rect));
+                backgroundRect.intersect(paintInfo.rect);
 
             // If we have an alpha and we are painting the root element, go ahead and blend with the base background color.
             Color baseColor;
@@ -792,16 +792,17 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             if (boxShadowShouldBeAppliedToBackground)
                 applyBoxShadowForBackground(context, &style());
 
+            FloatRect backgroundRectForPainting = pixelSnappedForPainting(backgroundRect, deviceScaleFactor);
             if (baseColor.alpha()) {
                 if (bgColor.alpha())
                     baseColor = baseColor.blend(bgColor);
 
-                context->fillRect(backgroundRect, baseColor, style().colorSpace(), CompositeCopy);
+                context->fillRect(backgroundRectForPainting, baseColor, style().colorSpace(), CompositeCopy);
             } else if (bgColor.alpha()) {
                 CompositeOperator operation = shouldClearBackground ? CompositeCopy : context->compositeOperation();
-                context->fillRect(backgroundRect, bgColor, style().colorSpace(), operation);
+                context->fillRect(backgroundRectForPainting, bgColor, style().colorSpace(), operation);
             } else if (shouldClearBackground)
-                context->clearRect(backgroundRect);
+                context->clearRect(backgroundRectForPainting);
         }
     }
 
@@ -809,7 +810,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     if (shouldPaintBackgroundImage) {
         BackgroundImageGeometry geometry;
         calculateBackgroundImageGeometry(paintInfo.paintContainer, bgLayer, scrolledPaintRect, geometry, backgroundObject);
-        geometry.clip(pixelSnappedIntRect(paintInfo.rect));
+        geometry.clip(LayoutRect(pixelSnappedRect));
         if (!geometry.destRect().isEmpty()) {
             CompositeOperator compositeOp = op == CompositeSourceOver ? bgLayer->composite() : op;
             auto clientForBackgroundImage = backgroundObject ? backgroundObject : this;
@@ -818,8 +819,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             bool useLowQualityScaling = shouldPaintAtLowQuality(context, image.get(), bgLayer, geometry.tileSize());
             if (image.get())
                 image->setSpaceSize(geometry.spaceSize());
-            context->drawTiledImage(image.get(), style().colorSpace(), geometry.destRect(), geometry.relativePhase(), geometry.tileSize(), 
-                compositeOp, useLowQualityScaling, bgLayer->blendMode());
+            context->drawTiledImage(image.get(), style().colorSpace(), geometry.destRect(), geometry.relativePhase(), geometry.tileSize(), compositeOp, useLowQualityScaling, bgLayer->blendMode());
         }
     }
 
@@ -829,60 +829,60 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     }
 }
 
-static inline int resolveWidthForRatio(int height, const FloatSize& intrinsicRatio)
+static inline int resolveWidthForRatio(LayoutUnit height, const FloatSize& intrinsicRatio)
 {
-    return ceilf(height * intrinsicRatio.width() / intrinsicRatio.height());
+    return height * intrinsicRatio.width() / intrinsicRatio.height();
 }
 
-static inline int resolveHeightForRatio(int width, const FloatSize& intrinsicRatio)
+static inline int resolveHeightForRatio(LayoutUnit width, const FloatSize& intrinsicRatio)
 {
-    return ceilf(width * intrinsicRatio.height() / intrinsicRatio.width());
+    return width * intrinsicRatio.height() / intrinsicRatio.width();
 }
 
-static inline IntSize resolveAgainstIntrinsicWidthOrHeightAndRatio(const IntSize& size, const FloatSize& intrinsicRatio, int useWidth, int useHeight)
+static inline LayoutSize resolveAgainstIntrinsicWidthOrHeightAndRatio(const LayoutSize& size, const FloatSize& intrinsicRatio, LayoutUnit useWidth, LayoutUnit useHeight)
 {
     if (intrinsicRatio.isEmpty()) {
         if (useWidth)
-            return IntSize(useWidth, size.height());
-        return IntSize(size.width(), useHeight);
+            return LayoutSize(useWidth, size.height());
+        return LayoutSize(size.width(), useHeight);
     }
 
     if (useWidth)
-        return IntSize(useWidth, resolveHeightForRatio(useWidth, intrinsicRatio));
-    return IntSize(resolveWidthForRatio(useHeight, intrinsicRatio), useHeight);
+        return LayoutSize(useWidth, resolveHeightForRatio(useWidth, intrinsicRatio));
+    return LayoutSize(resolveWidthForRatio(useHeight, intrinsicRatio), useHeight);
 }
 
-static inline IntSize resolveAgainstIntrinsicRatio(const IntSize& size, const FloatSize& intrinsicRatio)
+static inline LayoutSize resolveAgainstIntrinsicRatio(const LayoutSize& size, const FloatSize& intrinsicRatio)
 {
     // Two possible solutions: (size.width(), solutionHeight) or (solutionWidth, size.height())
     // "... must be assumed to be the largest dimensions..." = easiest answer: the rect with the largest surface area.
 
-    int solutionWidth = resolveWidthForRatio(size.height(), intrinsicRatio);
-    int solutionHeight = resolveHeightForRatio(size.width(), intrinsicRatio);
+    LayoutUnit solutionWidth = resolveWidthForRatio(size.height(), intrinsicRatio);
+    LayoutUnit solutionHeight = resolveHeightForRatio(size.width(), intrinsicRatio);
     if (solutionWidth <= size.width()) {
         if (solutionHeight <= size.height()) {
             // If both solutions fit, choose the one covering the larger area.
-            int areaOne = solutionWidth * size.height();
-            int areaTwo = size.width() * solutionHeight;
+            LayoutUnit areaOne = solutionWidth * size.height();
+            LayoutUnit areaTwo = size.width() * solutionHeight;
             if (areaOne < areaTwo)
-                return IntSize(size.width(), solutionHeight);
-            return IntSize(solutionWidth, size.height());
+                return LayoutSize(size.width(), solutionHeight);
+            return LayoutSize(solutionWidth, size.height());
         }
 
         // Only the first solution fits.
-        return IntSize(solutionWidth, size.height());
+        return LayoutSize(solutionWidth, size.height());
     }
 
     // Only the second solution fits, assert that.
     ASSERT(solutionHeight <= size.height());
-    return IntSize(size.width(), solutionHeight);
+    return LayoutSize(size.width(), solutionHeight);
 }
 
-IntSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* image, const IntSize& positioningAreaSize, ScaleByEffectiveZoomOrNot shouldScaleOrNot) const
+LayoutSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* image, const LayoutSize& positioningAreaSize, ScaleByEffectiveZoomOrNot shouldScaleOrNot) const
 {
     // A generated image without a fixed size, will always return the container size as intrinsic size.
     if (image->isGeneratedImage() && image->usesImageContainerSize())
-        return IntSize(positioningAreaSize.width(), positioningAreaSize.height());
+        return LayoutSize(positioningAreaSize.width(), positioningAreaSize.height());
 
     Length intrinsicWidth;
     Length intrinsicHeight;
@@ -895,13 +895,13 @@ IntSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* imag
     // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
     if (intrinsicWidth.isPercent() && intrinsicHeight.isPercent() && intrinsicRatio.isEmpty()) {
         // Resolve width/height percentages against positioningAreaSize, only if no intrinsic ratio is provided.
-        int resolvedWidth = static_cast<int>(round(positioningAreaSize.width() * intrinsicWidth.percent() / 100));
-        int resolvedHeight = static_cast<int>(round(positioningAreaSize.height() * intrinsicHeight.percent() / 100));
-        return IntSize(resolvedWidth, resolvedHeight);
+        float resolvedWidth = positioningAreaSize.width() * intrinsicWidth.percent() / 100;
+        float resolvedHeight = positioningAreaSize.height() * intrinsicHeight.percent() / 100;
+        return LayoutSize(resolvedWidth, resolvedHeight);
     }
 
-    IntSize resolvedSize(intrinsicWidth.isFixed() ? intrinsicWidth.value() : 0, intrinsicHeight.isFixed() ? intrinsicHeight.value() : 0);
-    IntSize minimumSize(resolvedSize.width() > 0 ? 1 : 0, resolvedSize.height() > 0 ? 1 : 0);
+    LayoutSize resolvedSize(intrinsicWidth.isFixed() ? intrinsicWidth.value() : 0, intrinsicHeight.isFixed() ? intrinsicHeight.value() : 0);
+    LayoutSize minimumSize(resolvedSize.width() > 0 ? 1 : 0, resolvedSize.height() > 0 ? 1 : 0);
     if (shouldScaleOrNot == ScaleByEffectiveZoom)
         resolvedSize.scale(style().effectiveZoom());
     resolvedSize.clampToMinimumSize(minimumSize);
@@ -927,18 +927,12 @@ IntSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* imag
     return positioningAreaSize;
 }
 
-static inline void applySubPixelHeuristicForTileSize(LayoutSize& tileSize, const IntSize& positioningAreaSize)
-{
-    tileSize.setWidth(positioningAreaSize.width() - tileSize.width() <= 1 ? tileSize.width().ceil() : tileSize.width().floor());
-    tileSize.setHeight(positioningAreaSize.height() - tileSize.height() <= 1 ? tileSize.height().ceil() : tileSize.height().floor());
-}
-
-IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, const IntSize& positioningAreaSize) const
+LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, const LayoutSize& positioningAreaSize) const
 {
     StyleImage* image = fillLayer->image();
     EFillSizeType type = fillLayer->size().type;
 
-    IntSize imageIntrinsicSize = calculateImageIntrinsicDimensions(image, positioningAreaSize, ScaleByEffectiveZoom);
+    LayoutSize imageIntrinsicSize = calculateImageIntrinsicDimensions(image, positioningAreaSize, ScaleByEffectiveZoom);
     imageIntrinsicSize.scale(1 / image->imageScaleFactor(), 1 / image->imageScaleFactor());
     switch (type) {
         case SizeLength: {
@@ -957,8 +951,6 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
             else if (layerHeight.isPercent() || layerHeight.isViewportPercentage())
                 tileSize.setHeight(valueForLength(layerHeight, positioningAreaSize.height()));
 
-            applySubPixelHeuristicForTileSize(tileSize, positioningAreaSize);
-
             // If one of the values is auto we have to use the appropriate
             // scale to maintain our aspect ratio.
             if (layerWidth.isAuto() && !layerHeight.isAuto()) {
@@ -973,7 +965,7 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
             }
             
             tileSize.clampNegativeToZero();
-            return flooredIntSize(tileSize);
+            return tileSize;
         }
         case SizeNone: {
             // If both values are ‘auto’ then the intrinsic width and/or height of the image should be used, if any.
@@ -986,46 +978,46 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
         FALLTHROUGH;
         case Contain:
         case Cover: {
-            float horizontalScaleFactor = imageIntrinsicSize.width()
-                ? static_cast<float>(positioningAreaSize.width()) / imageIntrinsicSize.width() : 1;
-            float verticalScaleFactor = imageIntrinsicSize.height()
-                ? static_cast<float>(positioningAreaSize.height()) / imageIntrinsicSize.height() : 1;
+            float horizontalScaleFactor = imageIntrinsicSize.width() ? (positioningAreaSize.width() / imageIntrinsicSize.width()).toFloat() : 1;
+            float verticalScaleFactor = imageIntrinsicSize.height() ? (positioningAreaSize.height() / imageIntrinsicSize.height()).toFloat() : 1;
             float scaleFactor = type == Contain ? std::min(horizontalScaleFactor, verticalScaleFactor) : std::max(horizontalScaleFactor, verticalScaleFactor);
-            return IntSize(std::max(1, static_cast<int>(imageIntrinsicSize.width() * scaleFactor)), std::max(1, static_cast<int>(imageIntrinsicSize.height() * scaleFactor)));
+            float deviceScaleFactor = document().deviceScaleFactor();
+            return LayoutSize(std::max<LayoutUnit>(1 / deviceScaleFactor, imageIntrinsicSize.width() * scaleFactor),
+                std::max<LayoutUnit>(1 / deviceScaleFactor, imageIntrinsicSize.height() * scaleFactor));
        }
     }
 
     ASSERT_NOT_REACHED();
-    return IntSize();
+    return LayoutSize();
 }
 
-void RenderBoxModelObject::BackgroundImageGeometry::setNoRepeatX(int xOffset)
+void RenderBoxModelObject::BackgroundImageGeometry::setNoRepeatX(LayoutUnit xOffset)
 {
-    m_destRect.move(std::max(xOffset, 0), 0);
-    m_phase.setX(-std::min(xOffset, 0));
-    m_destRect.setWidth(m_tileSize.width() + std::min(xOffset, 0));
+    m_destRect.move(std::max<LayoutUnit>(xOffset, 0), 0);
+    m_phase.setX(-std::min<LayoutUnit>(xOffset, 0));
+    m_destRect.setWidth(m_tileSize.width() + std::min<float>(xOffset, 0));
 }
-void RenderBoxModelObject::BackgroundImageGeometry::setNoRepeatY(int yOffset)
+void RenderBoxModelObject::BackgroundImageGeometry::setNoRepeatY(LayoutUnit yOffset)
 {
-    m_destRect.move(0, std::max(yOffset, 0));
-    m_phase.setY(-std::min(yOffset, 0));
-    m_destRect.setHeight(m_tileSize.height() + std::min(yOffset, 0));
-}
-
-void RenderBoxModelObject::BackgroundImageGeometry::useFixedAttachment(const IntPoint& attachmentPoint)
-{
-    IntPoint alignedPoint = attachmentPoint;
-    m_phase.move(std::max(alignedPoint.x() - m_destRect.x(), 0), std::max(alignedPoint.y() - m_destRect.y(), 0));
+    m_destRect.move(0, std::max<LayoutUnit>(yOffset, 0));
+    m_phase.setY(-std::min<LayoutUnit>(yOffset, 0));
+    m_destRect.setHeight(m_tileSize.height() + std::min<float>(yOffset, 0));
 }
 
-void RenderBoxModelObject::BackgroundImageGeometry::clip(const IntRect& clipRect)
+void RenderBoxModelObject::BackgroundImageGeometry::useFixedAttachment(const LayoutPoint& attachmentPoint)
+{
+    FloatPoint alignedPoint = attachmentPoint;
+    m_phase.move(std::max<LayoutUnit>(alignedPoint.x() - m_destRect.x(), 0), std::max<LayoutUnit>(alignedPoint.y() - m_destRect.y(), 0));
+}
+
+void RenderBoxModelObject::BackgroundImageGeometry::clip(const LayoutRect& clipRect)
 {
     m_destRect.intersect(clipRect);
 }
 
-IntPoint RenderBoxModelObject::BackgroundImageGeometry::relativePhase() const
+LayoutPoint RenderBoxModelObject::BackgroundImageGeometry::relativePhase() const
 {
-    IntPoint phase = m_phase;
+    LayoutPoint phase = m_phase;
     phase += m_destRect.location() - m_destOrigin;
     return phase;
 }
@@ -1045,15 +1037,26 @@ bool RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates() const
     return rootLayer->backing()->backgroundLayerPaintsFixedRootBackground();
 }
 
-static inline int getSpace(int areaSize, int tileSize)
+static inline LayoutUnit getSpace(LayoutUnit areaSize, LayoutUnit tileSize)
 {
     int numberOfTiles = areaSize / tileSize;
-    int space = -1;
+    LayoutUnit space = -1;
 
     if (numberOfTiles > 1)
-        space = roundedLayoutUnit((float)(areaSize - numberOfTiles * tileSize) / (numberOfTiles - 1));
+        space = (areaSize - numberOfTiles * tileSize) / (numberOfTiles - 1);
 
     return space;
+}
+
+void RenderBoxModelObject::pixelSnapBackgroundImageGeometryForPainting(BackgroundImageGeometry& geometry) const
+{
+    float deviceScaleFactor = document().deviceScaleFactor();
+    // FIXME: We need a better rounding strategy to round/space out tiles.
+    geometry.setTileSize(LayoutSize(pixelSnappedForPainting(LayoutRect(geometry.destRect().location(), geometry.tileSize()), deviceScaleFactor).size()));
+    geometry.setSpaceSize(LayoutSize(pixelSnappedForPainting(LayoutRect(LayoutPoint(), geometry.spaceSize()), deviceScaleFactor).size()));
+    geometry.setDestOrigin(LayoutPoint(roundedForPainting(geometry.destOrigin(), deviceScaleFactor)));
+    geometry.setDestRect(LayoutRect(pixelSnappedForPainting(geometry.destRect(), deviceScaleFactor)));
+    geometry.setPhase(LayoutPoint(roundedForPainting(geometry.phase(), deviceScaleFactor)));
 }
 
 void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerModelObject* paintContainer, const FillLayer* fillLayer, const LayoutRect& paintRect,
@@ -1061,9 +1064,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
 {
     LayoutUnit left = 0;
     LayoutUnit top = 0;
-    IntSize positioningAreaSize;
-    IntRect snappedPaintRect = pixelSnappedIntRect(paintRect);
-
+    LayoutSize positioningAreaSize;
     // Determine the background positioning area and set destRect to the background painting area.
     // destRect will be adjusted later if the background is non-repeating.
     // FIXME: transforms spec says that fixed backgrounds behave like scroll inside transforms. https://bugs.webkit.org/show_bug.cgi?id=15679
@@ -1080,7 +1081,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
 #endif
 
     if (!fixedAttachment) {
-        geometry.setDestRect(snappedPaintRect);
+        geometry.setDestRect(paintRect);
 
         LayoutUnit right = 0;
         LayoutUnit bottom = 0;
@@ -1102,14 +1103,14 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
         // its margins. Since those were added in already, we have to factor them out when computing
         // the background positioning area.
         if (isRoot()) {
-            positioningAreaSize = pixelSnappedIntSize(toRenderBox(this)->size() - LayoutSize(left + right, top + bottom), toRenderBox(this)->location());
+            positioningAreaSize = toRenderBox(this)->size() - LayoutSize(left + right, top + bottom);
             if (view().frameView().hasExtendedBackgroundRectForPainting()) {
-                IntRect extendedBackgroundRect = view().frameView().extendedBackgroundRectForPainting();
+                LayoutRect extendedBackgroundRect = view().frameView().extendedBackgroundRectForPainting();
                 left += (marginLeft() - extendedBackgroundRect.x());
                 top += (marginTop() - extendedBackgroundRect.y());
             }
         } else
-            positioningAreaSize = pixelSnappedIntSize(paintRect.size() - LayoutSize(left + right, top + bottom), paintRect.location());
+            positioningAreaSize = paintRect.size() - LayoutSize(left + right, top + bottom);
     } else {
         geometry.setHasNonLocalGeometry();
 
@@ -1119,107 +1120,102 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
         else
             viewportRect.setLocation(toLayoutPoint(view().frameView().scrollOffsetForFixedPosition()));
 
-        if (paintContainer) {
-            LayoutPoint absoluteContainerOffset = roundedLayoutPoint(paintContainer->localToAbsolute(FloatPoint()));
-            viewportRect.moveBy(-absoluteContainerOffset);
-        }
+        if (paintContainer)
+            viewportRect.moveBy(LayoutPoint(-paintContainer->localToAbsolute(FloatPoint())));
 
-        geometry.setDestRect(pixelSnappedIntRect(viewportRect));
+        geometry.setDestRect(viewportRect);
         positioningAreaSize = geometry.destRect().size();
     }
 
     auto clientForBackgroundImage = backgroundObject ? backgroundObject : this;
-    IntSize fillTileSize = calculateFillTileSize(fillLayer, positioningAreaSize);
+    LayoutSize fillTileSize = calculateFillTileSize(fillLayer, positioningAreaSize);
     fillLayer->image()->setContainerSizeForRenderer(clientForBackgroundImage, fillTileSize, style().effectiveZoom());
     geometry.setTileSize(fillTileSize);
 
     EFillRepeat backgroundRepeatX = fillLayer->repeatX();
     EFillRepeat backgroundRepeatY = fillLayer->repeatY();
-    int availableWidth = positioningAreaSize.width() - geometry.tileSize().width();
-    int availableHeight = positioningAreaSize.height() - geometry.tileSize().height();
+    LayoutUnit availableWidth = positioningAreaSize.width() - geometry.tileSize().width();
+    LayoutUnit availableHeight = positioningAreaSize.height() - geometry.tileSize().height();
 
     LayoutUnit computedXPosition = minimumValueForLength(fillLayer->xPosition(), availableWidth, true);
     if (backgroundRepeatX == RoundFill && positioningAreaSize.width() > 0 && fillTileSize.width() > 0) {
-        long nrTiles = lroundf((float)positioningAreaSize.width() / fillTileSize.width());
-        if (!nrTiles)
-            nrTiles = 1;
-
+        int numTiles = std::max(1, roundToInt(positioningAreaSize.width() / fillTileSize.width()));
         if (fillLayer->size().size.height().isAuto() && backgroundRepeatY != RoundFill)
-            fillTileSize.setHeight(fillTileSize.height() * positioningAreaSize.width() / (nrTiles * fillTileSize.width()));
+            fillTileSize.setHeight(fillTileSize.height() * positioningAreaSize.width() / (numTiles * fillTileSize.width()));
 
-        fillTileSize.setWidth(positioningAreaSize.width() / nrTiles);
+        fillTileSize.setWidth(positioningAreaSize.width() / numTiles);
         geometry.setTileSize(fillTileSize);
-        geometry.setPhaseX(geometry.tileSize().width() ? geometry.tileSize().width() - roundToInt(computedXPosition + left) % geometry.tileSize().width() : 0);
-        geometry.setSpaceSize(FloatSize());
+        geometry.setPhaseX(geometry.tileSize().width() ? geometry.tileSize().width() - fmodf((computedXPosition + left), geometry.tileSize().width()) : 0);
+        geometry.setSpaceSize(LayoutSize());
     }
 
     LayoutUnit computedYPosition = minimumValueForLength(fillLayer->yPosition(), availableHeight, true);
     if (backgroundRepeatY == RoundFill && positioningAreaSize.height() > 0 && fillTileSize.height() > 0) {
-        long nrTiles = lroundf((float)positioningAreaSize.height() / fillTileSize.height());
-        if (!nrTiles)
-            nrTiles = 1;
-
+        int numTiles = std::max(1, roundToInt(positioningAreaSize.height() / fillTileSize.height()));
         if (fillLayer->size().size.width().isAuto() && backgroundRepeatX != RoundFill)
-            fillTileSize.setWidth(fillTileSize.width() * positioningAreaSize.height() / (nrTiles * fillTileSize.height()));
+            fillTileSize.setWidth(fillTileSize.width() * positioningAreaSize.height() / (numTiles * fillTileSize.height()));
 
-        fillTileSize.setHeight(positioningAreaSize.height() / nrTiles);
+        fillTileSize.setHeight(positioningAreaSize.height() / numTiles);
         geometry.setTileSize(fillTileSize);
-        geometry.setPhaseY(geometry.tileSize().height() ? geometry.tileSize().height() - roundToInt(computedYPosition + top) % geometry.tileSize().height() : 0);
-        geometry.setSpaceSize(FloatSize());
+        geometry.setPhaseY(geometry.tileSize().height() ? geometry.tileSize().height() - fmodf((computedYPosition + top), geometry.tileSize().height()) : 0);
+        geometry.setSpaceSize(LayoutSize());
     }
 
     if (backgroundRepeatX == RepeatFill) {
-        geometry.setPhaseX(geometry.tileSize().width() ? geometry.tileSize().width() - roundToInt(computedXPosition + left) % geometry.tileSize().width() : 0);
-        geometry.setSpaceSize(FloatSize(0, geometry.spaceSize().height()));
+        geometry.setPhaseX(geometry.tileSize().width() ? geometry.tileSize().width() -  fmodf(computedXPosition + left, geometry.tileSize().width()): 0);
+        geometry.setSpaceSize(LayoutSize(0, geometry.spaceSize().height()));
     } else if (backgroundRepeatX == SpaceFill && fillTileSize.width() > 0) {
-        int space = getSpace(positioningAreaSize.width(), geometry.tileSize().width());
-        int actualWidth = geometry.tileSize().width() + space;
+        LayoutUnit space = getSpace(positioningAreaSize.width(), geometry.tileSize().width());
+        LayoutUnit actualWidth = geometry.tileSize().width() + space;
 
         if (space >= 0) {
             computedXPosition = minimumValueForLength(Length(), availableWidth, true);
-            geometry.setSpaceSize(FloatSize(space, 0));
-            geometry.setPhaseX(actualWidth ? actualWidth - roundToInt(computedXPosition + left) % actualWidth : 0);
+            geometry.setSpaceSize(LayoutSize(space, 0));
+            geometry.setPhaseX(actualWidth ? actualWidth - fmodf((computedXPosition + left), actualWidth) : 0);
         } else
             backgroundRepeatX = NoRepeatFill;
     }
     if (backgroundRepeatX == NoRepeatFill) {
-        int xOffset = fillLayer->backgroundXOrigin() == RightEdge ? availableWidth - computedXPosition : computedXPosition;
+        LayoutUnit xOffset = fillLayer->backgroundXOrigin() == RightEdge ? availableWidth - computedXPosition : computedXPosition;
         geometry.setNoRepeatX(left + xOffset);
-        geometry.setSpaceSize(FloatSize(0, geometry.spaceSize().height()));
+        geometry.setSpaceSize(LayoutSize(0, geometry.spaceSize().height()));
     }
 
     if (backgroundRepeatY == RepeatFill) {
-        geometry.setPhaseY(geometry.tileSize().height() ? geometry.tileSize().height() - roundToInt(computedYPosition + top) % geometry.tileSize().height() : 0);
-        geometry.setSpaceSize(FloatSize(geometry.spaceSize().width(), 0));
+        geometry.setPhaseY(geometry.tileSize().height() ? geometry.tileSize().height() - fmodf(computedYPosition + top, geometry.tileSize().height()) : 0);
+        geometry.setSpaceSize(LayoutSize(geometry.spaceSize().width(), 0));
     } else if (backgroundRepeatY == SpaceFill && fillTileSize.height() > 0) {
-        int space = getSpace(positioningAreaSize.height(), geometry.tileSize().height());
-        int actualHeight = geometry.tileSize().height() + space;
+        LayoutUnit space = getSpace(positioningAreaSize.height(), geometry.tileSize().height());
+        LayoutUnit actualHeight = geometry.tileSize().height() + space;
 
         if (space >= 0) {
             computedYPosition = minimumValueForLength(Length(), availableHeight, true);
-            geometry.setSpaceSize(FloatSize(geometry.spaceSize().width(), space));
-            geometry.setPhaseY(actualHeight ? actualHeight - roundToInt(computedYPosition + top) % actualHeight : 0);
+            geometry.setSpaceSize(LayoutSize(geometry.spaceSize().width(), space));
+            geometry.setPhaseY(actualHeight ? actualHeight - fmodf((computedYPosition + top), actualHeight) : 0);
         } else
             backgroundRepeatY = NoRepeatFill;
     }
     if (backgroundRepeatY == NoRepeatFill) {
-        int yOffset = fillLayer->backgroundYOrigin() == BottomEdge ? availableHeight - computedYPosition : computedYPosition;
+        LayoutUnit yOffset = fillLayer->backgroundYOrigin() == BottomEdge ? availableHeight - computedYPosition : computedYPosition;
         geometry.setNoRepeatY(top + yOffset);
-        geometry.setSpaceSize(FloatSize(geometry.spaceSize().width(), 0));
+        geometry.setSpaceSize(LayoutSize(geometry.spaceSize().width(), 0));
     }
 
     if (fixedAttachment)
-        geometry.useFixedAttachment(snappedPaintRect.location());
+        geometry.useFixedAttachment(paintRect.location());
 
-    geometry.clip(snappedPaintRect);
+    geometry.clip(paintRect);
     geometry.setDestOrigin(geometry.destRect().location());
+
+    pixelSnapBackgroundImageGeometryForPainting(geometry);
 }
 
-void RenderBoxModelObject::getGeometryForBackgroundImage(const RenderLayerModelObject* paintContainer, IntRect& destRect, IntPoint& phase, IntSize& tileSize) const
+void RenderBoxModelObject::getGeometryForBackgroundImage(const RenderLayerModelObject* paintContainer, FloatRect& destRect, FloatPoint& phase, FloatSize& tileSize) const
 {
     const FillLayer* backgroundLayer = style().backgroundLayers();
     BackgroundImageGeometry geometry;
-    calculateBackgroundImageGeometry(paintContainer, backgroundLayer, destRect, geometry);
+    LayoutRect paintRect = LayoutRect(destRect);
+    calculateBackgroundImageGeometry(paintContainer, backgroundLayer, paintRect, geometry);
     phase = geometry.phase();
     tileSize = geometry.tileSize();
     destRect = geometry.destRect();
@@ -1253,7 +1249,7 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     rectWithOutsets.expand(style.imageOutsets(ninePieceImage));
     IntRect borderImageRect = pixelSnappedIntRect(rectWithOutsets);
 
-    IntSize imageSize = calculateImageIntrinsicDimensions(styleImage, borderImageRect.size(), DoNotScaleByEffectiveZoom);
+    LayoutSize imageSize = calculateImageIntrinsicDimensions(styleImage, borderImageRect.size(), DoNotScaleByEffectiveZoom);
 
     // If both values are ‘auto’ then the intrinsic width and/or height of the image should be used, if any.
     styleImage->setContainerSizeForRenderer(this, imageSize, style.effectiveZoom());

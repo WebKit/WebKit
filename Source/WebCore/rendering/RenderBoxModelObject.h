@@ -183,7 +183,7 @@ public:
 
     bool canHaveBoxInfoInRegion() const { return !isFloating() && !isReplaced() && !isInline() && !hasColumns() && !isTableCell() && isRenderBlock() && !isRenderSVGBlock(); }
 
-    void getGeometryForBackgroundImage(const RenderLayerModelObject* paintContainer, IntRect& destRect, IntPoint& phase, IntSize& tileSize) const;
+    void getGeometryForBackgroundImage(const RenderLayerModelObject* paintContainer, FloatRect& destRect, FloatPoint& phase, FloatSize& tileSize) const;
     void contentChanged(ContentChangeType);
     bool hasAcceleratedCompositing() const;
 
@@ -208,57 +208,43 @@ protected:
         BackgroundImageGeometry()
             : m_hasNonLocalGeometry(false)
         { }
-        IntPoint destOrigin() const { return m_destOrigin; }
-        void setDestOrigin(const IntPoint& destOrigin)
-        {
-            m_destOrigin = destOrigin;
-        }
+        LayoutPoint destOrigin() const { return m_destOrigin; }
+        void setDestOrigin(const LayoutPoint& destOrigin) { m_destOrigin = destOrigin; }
         
-        IntRect destRect() const { return m_destRect; }
-        void setDestRect(const IntRect& destRect)
-        {
-            m_destRect = destRect;
-        }
+        LayoutRect destRect() const { return m_destRect; }
+        void setDestRect(const LayoutRect& destRect) { m_destRect = destRect; }
 
         // Returns the phase relative to the destination rectangle.
-        IntPoint relativePhase() const;
+        LayoutPoint relativePhase() const;
         
-        IntPoint phase() const { return m_phase; }   
-        void setPhase(const IntPoint& phase)
-        {
-            m_phase = phase;
-        }
+        LayoutPoint phase() const { return m_phase; }
+        void setPhase(const LayoutPoint& phase) { m_phase = phase; }
 
-        IntSize tileSize() const { return m_tileSize; }    
-        void setTileSize(const IntSize& tileSize)
-        {
-            m_tileSize = tileSize;
-        }
-        FloatSize spaceSize() const { return m_space; }
-        void setSpaceSize(const FloatSize& space)
-        {
-            m_space = space;
-        }
+        LayoutSize tileSize() const { return m_tileSize; }
+        void setTileSize(const LayoutSize& tileSize) { m_tileSize = tileSize; }
 
-        void setPhaseX(int x) { m_phase.setX(x); }
-        void setPhaseY(int y) { m_phase.setY(y); }
+        LayoutSize spaceSize() const { return m_space; }
+        void setSpaceSize(const LayoutSize& space) { m_space = space; }
+
+        void setPhaseX(LayoutUnit  x) { m_phase.setX(x); }
+        void setPhaseY(LayoutUnit y) { m_phase.setY(y); }
         
-        void setNoRepeatX(int xOffset);
-        void setNoRepeatY(int yOffset);
+        void setNoRepeatX(LayoutUnit xOffset);
+        void setNoRepeatY(LayoutUnit yOffset);
         
-        void useFixedAttachment(const IntPoint& attachmentPoint);
+        void useFixedAttachment(const LayoutPoint& attachmentPoint);
         
-        void clip(const IntRect&);
+        void clip(const LayoutRect&);
         
         void setHasNonLocalGeometry(bool hasNonLocalGeometry = true) { m_hasNonLocalGeometry = hasNonLocalGeometry; }
         bool hasNonLocalGeometry() const { return m_hasNonLocalGeometry; }
 
     private:
-        IntRect m_destRect;
-        IntPoint m_destOrigin;
-        IntPoint m_phase;
-        IntSize m_tileSize;
-        FloatSize m_space;
+        LayoutRect m_destRect;
+        LayoutPoint m_destOrigin;
+        LayoutPoint m_phase;
+        LayoutSize m_tileSize;
+        LayoutSize m_space;
         bool m_hasNonLocalGeometry; // Has background-attachment: fixed. Implies that we can't always cheaply compute destRect.
     };
 
@@ -313,14 +299,14 @@ public:
     void moveChildrenTo(RenderBoxModelObject* toBoxModelObject, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, bool fullRemoveInsert = false);
 
     enum ScaleByEffectiveZoomOrNot { ScaleByEffectiveZoom, DoNotScaleByEffectiveZoom };
-    IntSize calculateImageIntrinsicDimensions(StyleImage*, const IntSize& scaledPositioningAreaSize, ScaleByEffectiveZoomOrNot) const;
+    LayoutSize calculateImageIntrinsicDimensions(StyleImage*, const LayoutSize& scaledPositioningAreaSize, ScaleByEffectiveZoomOrNot) const;
 
 private:
     LayoutUnit computedCSSPadding(const Length&) const;
     
     virtual LayoutRect frameRectForStickyPositioning() const = 0;
 
-    IntSize calculateFillTileSize(const FillLayer*, const IntSize& scaledPositioningAreaSize) const;
+    LayoutSize calculateFillTileSize(const FillLayer*, const LayoutSize& scaledPositioningAreaSize) const;
 
     RoundedRect getBackgroundRoundedRect(const LayoutRect&, InlineFlowBox*, LayoutUnit inlineBoxWidth, LayoutUnit inlineBoxHeight,
         bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const;
@@ -342,6 +328,8 @@ private:
         float thickness, float drawThickness, BoxSide, const RenderStyle&,
         Color, EBorderStyle, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
     void paintMaskForTextFillBox(ImageBuffer*, const IntRect&, InlineFlowBox*, const LayoutRect&, RenderNamedFlowFragment*);
+
+    void pixelSnapBackgroundImageGeometryForPainting(BackgroundImageGeometry&) const;
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderBoxModelObject, isBoxModelObject())

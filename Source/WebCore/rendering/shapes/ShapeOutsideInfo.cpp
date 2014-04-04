@@ -137,7 +137,7 @@ static void getShapeImageAndRect(const ShapeValue* shapeValue, const RenderBox* 
     ASSERT(shapeValue->isImageValid());
     StyleImage* styleImage = shapeValue->image();
 
-    const IntSize& imageSize = renderBox->calculateImageIntrinsicDimensions(styleImage, roundedIntSize(referenceBoxSize), RenderImage::ScaleByEffectiveZoom);
+    const LayoutSize& imageSize = renderBox->calculateImageIntrinsicDimensions(styleImage, roundedIntSize(referenceBoxSize), RenderImage::ScaleByEffectiveZoom);
     styleImage->setContainerSizeForRenderer(renderBox, imageSize, renderBox->style().effectiveZoom());
 
     image = styleImage->cachedImage()->imageForRenderer(renderBox);

@@ -3,14 +3,17 @@
     <head>
         <style>
             div {
-                width: 800px;
+                width: 600px;
                 height: 400px;
                 border: 50px solid transparent;
                 padding: 50px;
-            }
+                background-origin: content-box;
+                background-clip: content-box;
+                background-repeat: no-repeat;
+           }
         </style>
         <script>
-            var sizeX = 121, sizeY = 93, spaceX = 14, spaceY = 9, width = 800, height = 400;
+            var sizeX = 100, sizeY = 80, spaceX = 0, spaceY = 0, width = 600, height = 400;
 
             var urls = Array(), size = Array(), position = Array();
 
@@ -27,10 +30,7 @@
 
                 div.style.cssText += "background-image: " + urls.join(", ") + ";" +
                                      "background-size: " + size.join(", ")  + ";" +
-                                     "background-position: " + position.join(", ") + ";" +
-                                     "background-repeat: no-repeat;" +
-                                     "background-origin: content-box;" +
-                                     "background-clip: content-box;";
+                                     "background-position: " + position.join(", ") + ";";
            }
        </script>
     </head>

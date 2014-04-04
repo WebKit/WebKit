@@ -1,3 +1,71 @@
+2014-04-04  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Move background images to device pixel boundaries.
+        https://bugs.webkit.org/show_bug.cgi?id=131144
+
+        Reviewed by Simon Fraser.
+
+        Replace integral snapping with device pixel snapping.
+        Background image geometry calculation uses LayoutUnits and we snap to device pixels right before painting.
+
+        Tests: fast/backgrounds/hidpi-bitmap-background-on-subpixel-position.html
+               fast/backgrounds/hidpi-bitmap-background-origin-on-subpixel-position.html
+               fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html
+               fast/backgrounds/hidpi-generated-gradient-background-on-subpixel-position.html
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setContentsTilePhase):
+        (WebCore::GraphicsLayer::contentsTilePhase):
+        (WebCore::GraphicsLayer::setContentsTileSize):
+        (WebCore::GraphicsLayer::contentsTileSize):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::setContentsTileSize):
+        (WebCore::TextureMapperLayer::setContentsTilePhase):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setContentsTileSize):
+        (WebCore::CoordinatedGraphicsLayer::setContentsTilePhase):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsState.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::repaintLayerRectsForImage):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::resolveWidthForRatio):
+        (WebCore::resolveHeightForRatio):
+        (WebCore::resolveAgainstIntrinsicWidthOrHeightAndRatio):
+        (WebCore::resolveAgainstIntrinsicRatio):
+        (WebCore::RenderBoxModelObject::calculateImageIntrinsicDimensions):
+        (WebCore::RenderBoxModelObject::calculateFillTileSize):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setNoRepeatX):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setNoRepeatY):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::useFixedAttachment):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::clip):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::relativePhase):
+        (WebCore::getSpace):
+        (WebCore::RenderBoxModelObject::pixelSnapBackgroundImageGeometryForPainting):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        (WebCore::RenderBoxModelObject::getGeometryForBackgroundImage):
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+        (WebCore::applySubPixelHeuristicForTileSize): Deleted.
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::destOrigin):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setDestOrigin):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::destRect):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setDestRect):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::phase):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setPhase):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::tileSize):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setTileSize):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::spaceSize):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setSpaceSize):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setPhaseX):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setPhaseY):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateDirectlyCompositedBackgroundImage):
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::getShapeImageAndRect):
+
 2014-04-04  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed test fix (crash in debug build).

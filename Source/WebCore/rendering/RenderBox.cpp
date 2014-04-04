@@ -1623,7 +1623,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
                 return true;
             }
             
-            IntRect rectToRepaint = geometry.destRect();
+            LayoutRect rectToRepaint = geometry.destRect();
             bool shouldClipToLayer = true;
 
             // If this is the root background layer, we may need to extend the repaintRect if the FrameView has an

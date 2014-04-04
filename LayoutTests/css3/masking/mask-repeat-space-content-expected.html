@@ -13,17 +13,20 @@
                 background-color: red;
                 border: 50px solid blue;
                 padding: 50px;
+                -webkit-mask-repeat: no-repeat;
+                -webkit-mask-origin: content-box;
+                -webkit-mask-clip: content-box;
             }
         </style>
         <script>
-            var sizeX = 121, sizeY = 93, spaceX = 58, spaceY = 10, width = 300, height = 300;
+            var sizeX = 100, sizeY = 80, spaceX = 0, spaceY = 30, width = 300, height = 300;
 
             var urls = Array(), size = Array(), position = Array();
 
             function addMasks() {
                 for (var x = 0; x < width; x += sizeX + spaceX) {
                     for (var y = 0; y < height; y += sizeY + spaceY) {
-                        urls.push("url(resources/circle.svg)");
+                        urls.push("url(resources/circle.png)");
                         size.push(sizeX + "px " + sizeY + "px");
                         position.push(x + "px " + y + "px");
                     }
@@ -33,10 +36,7 @@
 
                 div.style.cssText += "-webkit-mask-image: " + urls.join(", ") + ";" +
                                      "-webkit-mask-size: " + size.join(", ")  + ";" +
-                                     "-webkit-mask-position: " + position.join(", ") + ";" +
-                                     "-webkit-mask-repeat: no-repeat;" +
-                                     "-webkit-mask-origin: content-box;" +
-                                     "-webkit-mask-clip: content-box;";
+                                     "-webkit-mask-position: " + position.join(", ") + ";";
            }
        </script>
     </head>

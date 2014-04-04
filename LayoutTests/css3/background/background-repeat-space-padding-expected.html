@@ -7,10 +7,13 @@
                 height: 300px;
                 border: 50px solid transparent;
                 padding: 50px;
+                background-repeat: no-repeat;
+                background-origin: padding-box;
+                background-clip: padding-box;
             }
         </style>
         <script>
-            var sizeX = 153, sizeY = 127, spaceX = 20, spaceY = 9, width = 700, height = 600;
+            var sizeX = 150, sizeY = 120, spaceX = 25, spaceY = 20, width = 400, height = 300;
 
             var urls = Array(), size = Array(), position = Array();
 
@@ -27,10 +30,7 @@
 
                 div.style.cssText += "background-image: " + urls.join(", ") + ";" +
                                      "background-size: " + size.join(", ")  + ";" +
-                                     "background-position: " + position.join(", ") + ";" +
-                                     "background-repeat: no-repeat;" +
-                                     "background-origin: padding-box;" +
-                                     "background-clip: padding-box;";
+                                     "background-position: " + position.join(", ") + ";";
            }
        </script>
     </head>

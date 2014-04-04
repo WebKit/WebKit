@@ -568,7 +568,7 @@ void TextureMapperLayer::setContentsRect(const FloatRect& contentsRect)
     m_patternTransformDirty = true;
 }
 
-void TextureMapperLayer::setContentsTileSize(const IntSize& size)
+void TextureMapperLayer::setContentsTileSize(const FloatSize& size)
 {
     if (size == m_state.contentsTileSize)
         return;
@@ -576,7 +576,7 @@ void TextureMapperLayer::setContentsTileSize(const IntSize& size)
     m_patternTransformDirty = true;
 }
 
-void TextureMapperLayer::setContentsTilePhase(const IntPoint& phase)
+void TextureMapperLayer::setContentsTilePhase(const FloatPoint& phase)
 {
     if (phase == m_state.contentsTilePhase)
         return;

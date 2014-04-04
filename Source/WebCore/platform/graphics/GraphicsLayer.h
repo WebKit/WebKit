@@ -368,11 +368,11 @@ public:
     virtual void setContentsNeedsDisplay() { };
 
     // The tile phase is relative to the GraphicsLayer bounds.
-    virtual void setContentsTilePhase(const IntPoint& p) { m_contentsTilePhase = p; }
-    IntPoint contentsTilePhase() const { return m_contentsTilePhase; }
+    virtual void setContentsTilePhase(const FloatPoint& p) { m_contentsTilePhase = p; }
+    FloatPoint contentsTilePhase() const { return m_contentsTilePhase; }
 
-    virtual void setContentsTileSize(const IntSize& s) { m_contentsTileSize = s; }
-    IntSize contentsTileSize() const { return m_contentsTileSize; }
+    virtual void setContentsTileSize(const FloatSize& s) { m_contentsTileSize = s; }
+    FloatSize contentsTileSize() const { return m_contentsTileSize; }
     bool hasContentsTiling() const { return !m_contentsTileSize.isEmpty(); }
 
     // Set that the position/size of the contents (image or video).
@@ -610,8 +610,8 @@ protected:
 
     FloatRect m_contentsRect;
     FloatRect m_contentsClippingRect;
-    IntPoint m_contentsTilePhase;
-    IntSize m_contentsTileSize;
+    FloatPoint m_contentsTilePhase;
+    FloatSize m_contentsTileSize;
 
     int m_repaintCount;
     CustomAppearance m_customAppearance;

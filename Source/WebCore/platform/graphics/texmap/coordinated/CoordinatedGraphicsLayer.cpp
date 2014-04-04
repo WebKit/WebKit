@@ -346,7 +346,7 @@ void CoordinatedGraphicsLayer::setContentsRect(const FloatRect& r)
     didChangeLayerState();
 }
 
-void CoordinatedGraphicsLayer::setContentsTileSize(const IntSize& s)
+void CoordinatedGraphicsLayer::setContentsTileSize(const FloatSize& s)
 {
     if (contentsTileSize() == s)
         return;
@@ -357,7 +357,7 @@ void CoordinatedGraphicsLayer::setContentsTileSize(const IntSize& s)
     didChangeLayerState();
 }
 
-void CoordinatedGraphicsLayer::setContentsTilePhase(const IntPoint& p)
+void CoordinatedGraphicsLayer::setContentsTilePhase(const FloatPoint& p)
 {
     if (contentsTilePhase() == p)
         return;

@@ -13,10 +13,13 @@
                 background-color: red;
                 border: 50px solid blue;
                 padding: 50px;
+                -webkit-mask-repeat: no-repeat;
+                -webkit-mask-origin: padding-box;
+                -webkit-mask-clip: padding-box;
             }
         </style>
         <script>
-            var sizeX = 153, sizeY = 127, spaceX = 20, spaceY = 9, width = 700, height = 600;
+            var sizeX = 100, sizeY = 80, spaceX = 0, spaceY = 0, width = 700, height = 600;
 
             var urls = Array(), size = Array(), position = Array();
 
@@ -33,10 +36,7 @@
 
                 div.style.cssText += "-webkit-mask-image: " + urls.join(", ") + ";" +
                                      "-webkit-mask-size: " + size.join(", ")  + ";" +
-                                     "-webkit-mask-position: " + position.join(", ") + ";" +
-                                     "-webkit-mask-repeat: no-repeat;" +
-                                     "-webkit-mask-origin: padding-box;" +
-                                     "-webkit-mask-clip: padding-box;";
+                                     "-webkit-mask-position: " + position.join(", ") + ";";
            }
        </script>
     </head>

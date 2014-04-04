@@ -1615,9 +1615,9 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(bool isSimpleCo
         return;
     }
 
-    IntRect destRect = pixelSnappedIntRect(LayoutRect(backgroundBoxForPainting()));
-    IntPoint phase;
-    IntSize tileSize;
+    FloatRect destRect = backgroundBoxForPainting();
+    FloatPoint phase;
+    FloatSize tileSize;
 
     RefPtr<Image> image = style.backgroundLayers()->image()->cachedImage()->image();
     toRenderBox(renderer()).getGeometryForBackgroundImage(&m_owningLayer.renderer(), destRect, phase, tileSize);

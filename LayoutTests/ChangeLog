@@ -1,3 +1,47 @@
+2014-04-04  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Move background images to device pixel boundaries.
+        https://bugs.webkit.org/show_bug.cgi?id=131144
+
+        Reviewed by Simon Fraser.
+
+        Replace integral snapping with device pixel snapping.
+        Background image geometry calculation uses LayoutUnits and we snap to device pixels right before painting.
+
+        * css3/background/background-repeat-round-auto1-expected.html:
+        * css3/background/background-repeat-round-auto1.html:
+        * css3/background/background-repeat-round-auto2-expected.html:
+        * css3/background/background-repeat-round-auto2.html:
+        * css3/background/background-repeat-round-border-expected.html:
+        * css3/background/background-repeat-round-border.html:
+        * css3/background/background-repeat-round-content-expected.html:
+        * css3/background/background-repeat-round-content.html:
+        * css3/background/background-repeat-space-content-expected.html:
+        * css3/background/background-repeat-space-content.html:
+        * css3/background/background-repeat-space-padding-expected.html:
+        * css3/background/background-repeat-space-padding.html:
+        * css3/masking/mask-repeat-round-auto1-expected.html:
+        * css3/masking/mask-repeat-round-auto1.html:
+        * css3/masking/mask-repeat-round-auto2-expected.html:
+        * css3/masking/mask-repeat-round-auto2.html:
+        * css3/masking/mask-repeat-round-border-expected.html:
+        * css3/masking/mask-repeat-round-border.html:
+        * css3/masking/mask-repeat-round-content-expected.html:
+        * css3/masking/mask-repeat-round-content.html:
+        * css3/masking/mask-repeat-space-content-expected.html:
+        * css3/masking/mask-repeat-space-content.html:
+        * css3/masking/mask-repeat-space-padding-expected.html:
+        * css3/masking/mask-repeat-space-padding.html:
+        * fast/backgrounds/hidpi-bitmap-background-on-subpixel-position-expected.html: Added.
+        * fast/backgrounds/hidpi-bitmap-background-on-subpixel-position.html: Added.
+        * fast/backgrounds/hidpi-bitmap-background-origin-on-subpixel-position-expected.html: Added.
+        * fast/backgrounds/hidpi-bitmap-background-origin-on-subpixel-position.html: Added.
+        * fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position-expected.html: Added.
+        * fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html: Added.
+        * fast/backgrounds/hidpi-generated-gradient-background-on-subpixel-position-expected.html: Added.
+        * fast/backgrounds/hidpi-generated-gradient-background-on-subpixel-position.html: Added.
+        * fast/backgrounds/resources/black25x25.png: Added.
+
 2014-04-04  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Region's behaviour not updated when becoming valid from invalid

@@ -99,8 +99,8 @@ public:
     void setBackfaceVisibility(bool);
     void setOpacity(float);
     void setSolidColor(const Color&);
-    void setContentsTileSize(const IntSize&);
-    void setContentsTilePhase(const IntPoint&);
+    void setContentsTileSize(const FloatSize&);
+    void setContentsTilePhase(const FloatPoint&);
 #if ENABLE(CSS_FILTERS)
     void setFilters(const FilterOperations&);
 #endif
@@ -210,8 +210,8 @@ private:
         TransformationMatrix childrenTransform;
         float opacity;
         FloatRect contentsRect;
-        IntSize contentsTileSize;
-        IntPoint contentsTilePhase;
+        FloatSize contentsTileSize;
+        FloatPoint contentsTilePhase;
         TextureMapperLayer* maskLayer;
         TextureMapperLayer* replicaLayer;
         Color solidColor;

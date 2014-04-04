@@ -85,8 +85,8 @@ public:
     virtual void setBackfaceVisibility(bool) override;
     virtual void setOpacity(float) override;
     virtual void setContentsRect(const FloatRect&) override;
-    virtual void setContentsTilePhase(const IntPoint&) override;
-    virtual void setContentsTileSize(const IntSize&) override;
+    virtual void setContentsTilePhase(const FloatPoint&) override;
+    virtual void setContentsTileSize(const FloatSize&) override;
     virtual void setContentsToImage(Image*) override;
     virtual void setContentsToSolidColor(const Color&) override;
     virtual void setShowDebugBorder(bool) override;
