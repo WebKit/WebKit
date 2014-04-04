@@ -1,3 +1,15 @@
+2014-04-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Rebaseline some tests after r166748. These tests now correctly
+        report a contentsScale.
+
+        * platform/mac-wk2/compositing/tiling/rotated-tiled-clamped-expected.txt:
+        * platform/mac-wk2/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt:
+        * platform/mac-wk2/compositing/tiling/tile-cache-zoomed-expected.txt:
+        * platform/mac-wk2/tiled-drawing/tile-size-slow-zoomed-expected.txt:
+        * platform/mac-wk2/tiled-drawing/tiled-drawing-zoom-expected.txt:
+        * platform/mac-wk2/tiled-drawing/tiled-drawing-zoom-scrolled-expected.txt:
+
 2014-04-03  Dirk Schulze  <krit@webkit.org>
 
         [CG] Canvas lineDashOffset does not handle negative numbers correctly

@@ -9,7 +9,7 @@
       (contentsOpaque 1)
       (transform [2.30 0.00 0.00 0.00] [0.00 2.30 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
       (visible rect 0.00, 0.00 341.30 x 254.35)
-      (contentsScale 1.00)
+      (contentsScale 2.30)
       (tile cache coverage 0, 0 445 x 445)
       (tile size 512 x 512)
       (top left tile 0, 0 tiles grid 2 x 2)
