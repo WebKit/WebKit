@@ -3212,7 +3212,7 @@ PassRefPtr<WebGLUniformLocation> WebGLRenderingContext::getUniformLocation(WebGL
         return nullptr;
 
     GC3Dint activeUniforms = 0;
-    m_context->getProgramiv(objectOrZero(program), GraphicsContext3D::ACTIVE_UNIFORMS, &activeUniforms);
+    m_context->getNonBuiltInActiveSymbolCount(objectOrZero(program), GraphicsContext3D::ACTIVE_UNIFORMS, &activeUniforms);
     for (GC3Dint i = 0; i < activeUniforms; i++) {
         ActiveInfo info;
         if (!m_context->getActiveUniform(objectOrZero(program), i, info))

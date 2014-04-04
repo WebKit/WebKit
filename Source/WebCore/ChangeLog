@@ -1,3 +1,27 @@
+2014-04-04  Roger Fong  <roger_fong@apple.com>
+
+        Keep track of filtered active attribute/uniform indices per shader program.
+        https://bugs.webkit.org/show_bug.cgi?id=131235.
+
+        Reviewed by Dean Jackson.
+
+        Tests: Covered by existing Khronos Conformance tests. 
+        Will create a test to use multiple shader programs in a follow-up patch.
+
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::cacheActiveAttribLocations): Use getActiveAttribImpl. We do not need to use the filtered list of attributes here.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getUniformLocation): Use filtered list of uniforms for uniform count.
+        * platform/graphics/GraphicsContext3D.h: Create a map of shader programs to ActiveShaderSymbolCounts.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::attachShader): 
+        When attaching or detaching a shader the shader program's active symbols list will change. Clear it so that it will be updated later.
+        (WebCore::GraphicsContext3D::detachShader): Ditto.
+        (WebCore::GraphicsContext3D::compileShader): No need to clear symbol counts here.
+        (WebCore::GraphicsContext3D::getActiveAttrib): getActiveAttrib should only be able to query for attributes in the filtered list.
+        (WebCore::GraphicsContext3D::getActiveUniform): getActiveUniform should only be able to query for uniforms in the filtered list.
+        (WebCore::GraphicsContext3D::getNonBuiltInActiveSymbolCount): Return the filtered symbol count for a shader program.
+
 2014-04-04  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Add compositing reason for isolation.

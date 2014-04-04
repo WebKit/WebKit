@@ -374,6 +374,7 @@ void GraphicsContext3D::attachShader(Platform3DObject program, Platform3DObject 
     ASSERT(program);
     ASSERT(shader);
     makeContextCurrent();
+    m_shaderProgramSymbolCountMap.remove(program);
     ::glAttachShader(program, shader);
 }
 
@@ -561,8 +562,6 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
         entry.isValid = false;
         LOG(WebGL, "Error: shader translator produced a shader that OpenGL would not compile.");
     }
-
-    m_shaderSymbolCount = nullptr;
 }
 
 void GraphicsContext3D::copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border)
@@ -612,6 +611,7 @@ void GraphicsContext3D::detachShader(Platform3DObject program, Platform3DObject 
     ASSERT(program);
     ASSERT(shader);
     makeContextCurrent();
+    m_shaderProgramSymbolCountMap.remove(program);
     ::glDetachShader(program, shader);
 }
 
@@ -719,8 +719,15 @@ bool GraphicsContext3D::getActiveAttribImpl(Platform3DObject program, GC3Duint i
 
 bool GraphicsContext3D::getActiveAttrib(Platform3DObject program, GC3Duint index, ActiveInfo& info)
 {
-    ASSERT(!m_shaderSymbolCount || index < m_shaderSymbolCount->filteredToActualAttributeIndexMap.size());
-    GC3Duint rawIndex = (m_shaderSymbolCount) ? m_shaderSymbolCount->filteredToActualAttributeIndexMap[index] : index;
+    GC3Dint symbolCount;
+    auto result = m_shaderProgramSymbolCountMap.find(program);
+    if (result == m_shaderProgramSymbolCountMap.end()) {
+        getNonBuiltInActiveSymbolCount(program, GraphicsContext3D::ACTIVE_ATTRIBUTES, &symbolCount);
+        result = m_shaderProgramSymbolCountMap.find(program);
+    }
+    
+    ActiveShaderSymbolCounts& symbolCounts = result->value;
+    GC3Duint rawIndex = (index < symbolCounts.filteredToActualAttributeIndexMap.size()) ? symbolCounts.filteredToActualAttributeIndexMap[index] : -1;
 
     return getActiveAttribImpl(program, rawIndex, info);
 }
@@ -759,8 +766,15 @@ bool GraphicsContext3D::getActiveUniformImpl(Platform3DObject program, GC3Duint 
 
 bool GraphicsContext3D::getActiveUniform(Platform3DObject program, GC3Duint index, ActiveInfo& info)
 {
-    ASSERT(!m_shaderSymbolCount || index < m_shaderSymbolCount->filteredToActualUniformIndexMap.size());
-    GC3Duint rawIndex = (m_shaderSymbolCount) ? m_shaderSymbolCount->filteredToActualUniformIndexMap[index] : index;
+    GC3Dint symbolCount;
+    auto result = m_shaderProgramSymbolCountMap.find(program);
+    if (result == m_shaderProgramSymbolCountMap.end()) {
+        getNonBuiltInActiveSymbolCount(program, GraphicsContext3D::ACTIVE_UNIFORMS, &symbolCount);
+        result = m_shaderProgramSymbolCountMap.find(program);
+    }
+    
+    ActiveShaderSymbolCounts& symbolCounts = result->value;
+    GC3Duint rawIndex = (index < symbolCounts.filteredToActualUniformIndexMap.size()) ? symbolCounts.filteredToActualUniformIndexMap[index] : -1;
     
     return getActiveUniformImpl(program, rawIndex, info);
 }
@@ -1268,13 +1282,14 @@ void GraphicsContext3D::getNonBuiltInActiveSymbolCount(Platform3DObject program,
         return;
 
     makeContextCurrent();
-
-    if (m_shaderSymbolCount) {
-        *value = m_shaderSymbolCount->countForType(pname);
+    const auto& result = m_shaderProgramSymbolCountMap.find(program);
+    if (result != m_shaderProgramSymbolCountMap.end()) {
+        *value = result->value.countForType(pname);
         return;
     }
 
-    m_shaderSymbolCount = std::make_unique<ActiveShaderSymbolCounts>();
+    m_shaderProgramSymbolCountMap.set(program, ActiveShaderSymbolCounts());
+    ActiveShaderSymbolCounts& symbolCounts = m_shaderProgramSymbolCountMap.find(program)->value;
 
     // Retrieve the active attributes, build a filtered count, and a mapping of
     // our internal attributes indexes to the real unfiltered indexes inside OpenGL.
@@ -1286,7 +1301,7 @@ void GraphicsContext3D::getNonBuiltInActiveSymbolCount(Platform3DObject program,
         if (info.name.startsWith("gl_"))
             continue;
 
-        m_shaderSymbolCount->filteredToActualAttributeIndexMap.append(i);
+        symbolCounts.filteredToActualAttributeIndexMap.append(i);
     }
     
     // Do the same for uniforms.
@@ -1298,10 +1313,10 @@ void GraphicsContext3D::getNonBuiltInActiveSymbolCount(Platform3DObject program,
         if (info.name.startsWith("gl_"))
             continue;
         
-        m_shaderSymbolCount->filteredToActualUniformIndexMap.append(i);
+        symbolCounts.filteredToActualUniformIndexMap.append(i);
     }
     
-    *value = m_shaderSymbolCount->countForType(pname);
+    *value = symbolCounts.countForType(pname);
 }
 
 String GraphicsContext3D::getUnmangledInfoLog(Platform3DObject shaders[2], GC3Dsizei count, const String& log)
