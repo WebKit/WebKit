@@ -1,3 +1,13 @@
+2014-04-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Improve error checking in WebPageProxy::didReceiveEvent
+        https://bugs.webkit.org/show_bug.cgi?id=131243
+        <rdar://problem/16529207>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebPageProxy.cpp: (WebKit::WebPageProxy::didReceiveEvent):
+
 2014-04-04  Anders Carlsson  <andersca@apple.com>
 
         More documentation
