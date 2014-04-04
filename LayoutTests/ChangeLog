@@ -1,3 +1,13 @@
+2014-04-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        compositing/tiling/rotated-tiled-* tests failing on bots
+        https://bugs.webkit.org/show_bug.cgi?id=131207
+
+        Unreviewed rebaseline of tests after r166748.
+
+        * platform/mac/compositing/tiling/rotated-tiled-clamped-expected.txt:
+        * platform/mac/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt:
+
 2014-04-03  Simon Fraser  <simon.fraser@apple.com>
 
         Rebaseline some tests after r166748. These tests now correctly

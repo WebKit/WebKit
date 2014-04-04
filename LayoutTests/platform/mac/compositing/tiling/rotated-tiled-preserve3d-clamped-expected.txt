@@ -37,7 +37,7 @@
                       (drawsContent 1)
                       (transform [0.17 0.00 -0.98 0.00] [0.00 1.00 0.00 0.00] [0.98 0.00 0.17 0.00] [0.00 0.00 0.00 1.00])
                       (visible rect 0.00, 0.00 2800.00 x 300.00)
-                      (contentsScale 1.00)
+                      (contentsScale 0.85)
                       (tile cache coverage 0, 0 2799 x 299)
                       (tile size 512 x 512)
                       (top left tile 0, 0 tiles grid 5 x 1)
