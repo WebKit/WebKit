@@ -1,5 +1,32 @@
 2014-04-03  Andreas Kling  <akling@apple.com>
 
+        Fast-path for casting JS wrappers to JSElement.
+        <https://webkit.org/b/131210>
+
+        Add an extended JSType for Element wrappers so we can avoid walking
+        the ClassInfo chain in those bindings as well.
+
+        Generalized the code to select a casting helper in the bindings
+        generator into a function (GetCastingHelperForThisObject.)
+        Updated all the jsDynamicCast call sites to go through this, in case
+        there's an optimized cast available for the desired type.
+
+        Reviewed by Benjamin Poulain.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWrapper.h:
+        * bindings/js/JSElementCustom.h: Added.
+        (WebCore::jsElementCast):
+        * bindings/js/JSNodeCustom.h:
+        (WebCore::jsNodeCast):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GetCastingHelperForThisObject):
+        (GenerateImplementation):
+        * dom/Element.idl:
+
+2014-04-03  Andreas Kling  <akling@apple.com>
+
         Rebaseline a bindings test.
 
         * bindings/scripts/test/JS/JSTestNode.h:

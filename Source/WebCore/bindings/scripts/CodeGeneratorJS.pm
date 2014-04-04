@@ -959,6 +959,8 @@ sub GenerateHeader
     push(@headerContent, "    {\n");
     if (IsDOMGlobalObject($interface)) {
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());\n");
+    } elsif ($codeGenerator->InheritsInterface($interface, "Element")) {
+        push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType(JSElementType), StructureFlags), info());\n");
     } elsif ($codeGenerator->InheritsInterface($interface, "Node")) {
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType(JSNodeType), StructureFlags), info());\n");
     } else {
@@ -1693,6 +1695,19 @@ sub GetRuntimeEnableFunctionName
     return "RuntimeEnabledFeatures::sharedFeatures()." . ToMethodName($signature->name) . "Enabled";
 }
 
+sub GetCastingHelperForThisObject
+{
+    my $interface = shift;
+
+    if ($interface->name eq "Node") {
+        return "jsNodeCast";
+    }
+    if ($interface->name eq "Element") {
+        return "jsElementCast";
+    }
+    return "jsDynamicCast<JS" . $interface->name . "*>";
+}
+
 sub GenerateImplementation
 {
     my ($object, $interface) = @_;
@@ -2132,11 +2147,7 @@ sub GenerateImplementation
                     push(@implContent, "    ${className}* castedThis = to${className}(JSValue::decode(thisValue));\n");
                     push(@implContent, "    UNUSED_PARAM(slotBase);\n");
                 } else {
-                    if ($interfaceName eq "Node") {
-                        push(@implContent, "    JSNode* castedThis = jsNodeCast(JSValue::decode(thisValue));\n");
-                    } else {
-                        push(@implContent, "    ${className}* castedThis = jsDynamicCast<$className*>(JSValue::decode(thisValue));\n");
-                    }
+                    push(@implContent, "    ${className}* castedThis = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
                     push(@implContent, "    UNUSED_PARAM(slotBase);\n");
                 }
                 $implIncludes{"ScriptExecutionContext.h"} = 1;
@@ -2354,7 +2365,7 @@ sub GenerateImplementation
             if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
                 push(@implContent, "    ${className}* domObject = to${className}(JSValue::decode(thisValue));\n");
             } else {
-                push(@implContent, "    ${className}* domObject = jsDynamicCast<${className}*>(JSValue::decode(thisValue));\n") if ConstructorShouldBeOnInstance($interface);
+                push(@implContent, "    ${className}* domObject = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n") if ConstructorShouldBeOnInstance($interface);
                 push(@implContent, "    ${className}Prototype* domObject = jsDynamicCast<${className}Prototype*>(baseValue);\n") if !ConstructorShouldBeOnInstance($interface);
             }
             push(@implContent, "    if (!domObject)\n");
@@ -2379,7 +2390,7 @@ sub GenerateImplementation
             if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
                 push(@implContent, "    ${className}* castedThis = to${className}(JSValue::decode(thisValue));\n");
             } else {
-                push(@implContent, "    ${className}* castedThis = jsDynamicCast<${className}*>(JSValue::decode(thisValue));\n");
+                push(@implContent, "    ${className}* castedThis = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
             }
             push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
             push(@implContent, "        throwVMTypeError(exec);\n");
@@ -2486,7 +2497,7 @@ sub GenerateImplementation
                     if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
                         push(@implContent, "    ${className}* castedThis = to${className}(JSValue::decode(thisValue));\n");
                     } else {
-                        push(@implContent, "    ${className}* castedThis = jsDynamicCast<${className}*>(JSValue::decode(thisValue));\n");
+                        push(@implContent, "    ${className}* castedThis = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
                     }
                     push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
                     push(@implContent, "        throwVMTypeError(exec, makeDOMBindingsTypeErrorString(\"The \", \"$interfaceName\", \".\", \"$name\", \" setter can only be used on instances of \", \"$interfaceName\"));\n");
@@ -2721,7 +2732,7 @@ sub GenerateImplementation
                     push(@implContent, "        return throwVMTypeError(exec);\n");
                 } else {
                     push(@implContent, "    JSValue thisValue = exec->thisValue();\n");
-                    push(@implContent, "    $className* castedThis = jsDynamicCast<$className*>(thisValue);\n");
+                    push(@implContent, "    $className* castedThis = " . GetCastingHelperForThisObject($interface) . "(thisValue);\n");
                     my $domFunctionName = $function->signature->name;
                     push(@implContent, "    if (UNLIKELY(!castedThis))\n");
                     push(@implContent, "        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString(\"Can only call \", \"$interfaceName\", \".\", \"$domFunctionName\", \" on instances of \", \"$interfaceName\"));\n");
