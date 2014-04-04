@@ -1,4 +1,24 @@
-2014-04-03  Andy Estes  <aestes@apple.com>
+2014-04-03  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: iOS does not need to spin the run loop on synchronous message calls
+        https://bugs.webkit.org/show_bug.cgi?id=131195
+
+        Reviewed by Dan Bernstein.
+
+        On the Mac platform, we need to spin the run loop while making synchronous calls to avoid VoiceOver hanging.
+        On iOS, this not needed due to architectural differences.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::runJavaScriptAlert):
+        (WebKit::WebChromeClient::runJavaScriptConfirm):
+        (WebKit::WebChromeClient::runJavaScriptPrompt):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::synchronousMessagesShouldSpinRunLoop):
+        * WebProcess/WebPage/WebPage.h:
+
+2014-04-03 Andy Estes <aestes@apple.com>
 
         [Cocoa] Add additional WKWebView SPI for clients that interact with PDFs
         https://bugs.webkit.org/show_bug.cgi?id=131206

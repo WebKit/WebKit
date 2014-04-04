@@ -765,7 +765,11 @@ public:
 #if ENABLE(IMAGE_CONTROLS)
     void replaceControlledImage(const ShareableBitmap::Handle&);
 #endif
-
+    
+    // Some platforms require accessibility-enabled processes to spin the run loop so that the WebProcess doesn't hang.
+    // While this is not ideal, it does not have to be applied to every platform at the moment.
+    static bool synchronousMessagesShouldSpinRunLoop();
+    
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

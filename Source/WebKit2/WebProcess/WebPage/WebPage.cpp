@@ -4532,6 +4532,14 @@ PassRefPtr<WebCore::Range> WebPage::rangeFromEditingRange(WebCore::Frame& frame,
     // That fits with AppKit's idea of an input context.
     return TextIterator::rangeFromLocationAndLength(frame.selection().rootEditableElementOrDocumentElement(), static_cast<int>(range.location), length);
 }
-
+    
+bool WebPage::synchronousMessagesShouldSpinRunLoop()
+{
+#if PLATFORM(MAC)
+    return WebCore::AXObjectCache::accessibilityEnabled();
+#endif
+    return false;
+}
+    
 
 } // namespace WebKit
