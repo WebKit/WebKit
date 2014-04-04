@@ -1296,21 +1296,6 @@ void Heap::zombifyDeadObjects()
     m_objectSpace.forEachDeadCell<Zombify>(iterationScope);
 }
 
-void Heap::writeBarrier(const JSCell* from)
-{
-#if ENABLE(GGC)
-    ASSERT_GC_OBJECT_LOOKS_VALID(const_cast<JSCell*>(from));
-    if (!from || !from->isMarked()) {
-        ASSERT(!from || !isMarked(from));
-        return;
-    }
-    ASSERT(isMarked(from));
-    addToRememberedSet(from);
-#else
-    UNUSED_PARAM(from);
-#endif
-}
-
 void Heap::flushWriteBarrierBuffer(JSCell* cell)
 {
 #if ENABLE(GGC)

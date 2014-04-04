@@ -1,3 +1,22 @@
+2014-04-03  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        All Heap::writeBarriers should be inline
+        https://bugs.webkit.org/show_bug.cgi?id=131197
+
+        Reviewed by Mark Lam.
+
+        One is in a JSCellInlines.h, another is in Heap.cpp. These are all critical 
+        enough and small enough to belong in HeapInlines.h. Also added the proper 
+        ENABLE(GGC) ifdefs to minimize the cost of C++ barriers for !ENABLE(GGC) builds.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::writeBarrier): Deleted.
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::writeBarrier):
+        * runtime/JSCellInlines.h:
+        (JSC::Heap::writeBarrier): Deleted.
+
 2014-04-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JSContext inspection provide a way to opt-out of including Native Call Stacks in Exception traces reported to Web Inspector

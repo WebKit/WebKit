@@ -100,7 +100,7 @@ public:
 
     JS_EXPORT_PRIVATE void addToRememberedSet(const JSCell*);
     static bool isWriteBarrierEnabled();
-    JS_EXPORT_PRIVATE void writeBarrier(const JSCell*);
+    void writeBarrier(const JSCell*);
     void writeBarrier(const JSCell*, JSValue);
     void writeBarrier(const JSCell*, JSCell*);
 

@@ -242,22 +242,6 @@ inline TriState JSCell::pureToBoolean() const
     return MixedTriState;
 }
 
-inline void Heap::writeBarrier(const JSCell* from, JSCell* to)
-{
-#if ENABLE(WRITE_BARRIER_PROFILING)
-    WriteBarrierCounters::countWriteBarrier();
-#endif
-    if (!from || !from->isMarked()) {
-        ASSERT(!from || !isMarked(from));
-        return;
-    }
-    if (!to || to->isMarked()) {
-        ASSERT(!to || isMarked(to));
-        return;
-    }
-    addToRememberedSet(from);
-}
-
 } // namespace JSC
 
 #endif // JSCellInlines_h

@@ -28,6 +28,7 @@
 
 #include "Heap.h"
 #include "JSCell.h"
+#include "Structure.h"
 
 namespace JSC {
 
@@ -105,9 +106,50 @@ inline void Heap::writeBarrier(const JSCell* from, JSValue to)
 #if ENABLE(WRITE_BARRIER_PROFILING)
     WriteBarrierCounters::countWriteBarrier();
 #endif
+#if ENABLE(GGC)
     if (!to.isCell())
         return;
     writeBarrier(from, to.asCell());
+#else
+    UNUSED_PARAM(from);
+    UNUSED_PARAM(to);
+#endif
+}
+
+inline void Heap::writeBarrier(const JSCell* from, JSCell* to)
+{
+#if ENABLE(WRITE_BARRIER_PROFILING)
+    WriteBarrierCounters::countWriteBarrier();
+#endif
+#if ENABLE(GGC)
+    if (!from || !from->isMarked()) {
+        ASSERT(!from || !isMarked(from));
+        return;
+    }
+    if (!to || to->isMarked()) {
+        ASSERT(!to || isMarked(to));
+        return;
+    }
+    addToRememberedSet(from);
+#else
+    UNUSED_PARAM(from);
+    UNUSED_PARAM(to);
+#endif
+}
+
+inline void Heap::writeBarrier(const JSCell* from)
+{
+#if ENABLE(GGC)
+    ASSERT_GC_OBJECT_LOOKS_VALID(const_cast<JSCell*>(from));
+    if (!from || !from->isMarked()) {
+        ASSERT(!from || !isMarked(from));
+        return;
+    }
+    ASSERT(isMarked(from));
+    addToRememberedSet(from);
+#else
+    UNUSED_PARAM(from);
+#endif
 }
 
 inline void Heap::reportExtraMemoryCost(size_t cost)
