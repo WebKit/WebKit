@@ -1,3 +1,27 @@
+2014-04-04  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Use more const refs in ShapeOutsideInfo and some misc cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=131192
+
+        Reviewed by Dirk Schulze.
+
+        Use const refs for pretty much everything that can't be null. Also
+        cleanup some code that got a bit messy when ShapeInfo was merged into
+        ShapeOutsideInfo.
+
+        No new tests, no behavior change.
+
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::shapeToRendererPoint):
+        (WebCore::ShapeOutsideInfo::shapeToRendererSize):
+        (WebCore::referenceBox):
+        (WebCore::ShapeOutsideInfo::setReferenceBoxLogicalSize):
+        (WebCore::getShapeImageAndRect):
+        (WebCore::ShapeOutsideInfo::computedShape):
+        (WebCore::ShapeOutsideInfo::logicalTopOffset):
+        (WebCore::ShapeOutsideInfo::logicalLeftOffset):
+        * rendering/shapes/ShapeOutsideInfo.h:
+
 2014-04-04  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r166615): Pressing return doesn’t submit search term at bing.com
