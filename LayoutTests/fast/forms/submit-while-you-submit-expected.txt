@@ -1,0 +1,10 @@
+Test that calling submit() during submit event handling works.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Form was submitted
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

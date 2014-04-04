@@ -1,3 +1,24 @@
+2014-04-04  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r166615): Pressing return doesn’t submit search term at bing.com
+        https://bugs.webkit.org/show_bug.cgi?id=131212
+        <rdar://problem/16521788>
+
+        Reviewed by Dan Bernstein.
+
+        Test: fast/forms/submit-while-you-submit.html
+
+        Turns out that m_shouldSubmit can actually be modified in a code path where we can't
+        directly return the result. I'm not sure if the current behavior is entirely correct
+        (we have open bugs about submitting forms multiple times), but let's restore it to
+        pre-r166615 state.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::HTMLFormElement):
+        (WebCore::HTMLFormElement::prepareForSubmission):
+        (WebCore::HTMLFormElement::submit):
+        * html/HTMLFormElement.h:
+
 2014-04-04  Martin Hock  <mhock@apple.com>
 
         [Mac] Change operation queue width to NSOperationQueueDefaultMaxConcurrentOperationCount.

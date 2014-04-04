@@ -57,6 +57,7 @@ HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document& documen
     , m_associatedElementsAfterIndex(0)
     , m_wasUserSubmitted(false)
     , m_isSubmittingOrPreparingForSubmission(false)
+    , m_shouldSubmit(false)
     , m_isInResetFunction(false)
     , m_wasDemoted(false)
 {
@@ -266,7 +267,7 @@ void HTMLFormElement::prepareForSubmission(Event* event)
         return;
 
     m_isSubmittingOrPreparingForSubmission = true;
-    bool shouldSubmit = false;
+    m_shouldSubmit = false;
 
     // Interactive validation must be done before dispatching the submit event.
     if (!validateInteractively(event)) {
@@ -279,12 +280,13 @@ void HTMLFormElement::prepareForSubmission(Event* event)
     RefPtr<FormState> formState = FormState::create(this, controlNamesAndValues, &document(), NotSubmittedByJavaScript);
     frame->loader().client().dispatchWillSendSubmitEvent(formState.release());
 
+    // Event handling can result in m_shouldSubmit becoming true, regardless of dispatchEvent() return value.
     if (dispatchEvent(Event::create(eventNames().submitEvent, true, true)))
-        shouldSubmit = true;
+        m_shouldSubmit = true;
 
     m_isSubmittingOrPreparingForSubmission = false;
 
-    if (shouldSubmit)
+    if (m_shouldSubmit)
         submit(event, true, true, NotSubmittedByJavaScript);
 }
 
@@ -322,8 +324,10 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
     if (!view || !frame)
         return;
 
-    if (m_isSubmittingOrPreparingForSubmission)
+    if (m_isSubmittingOrPreparingForSubmission) {
+        m_shouldSubmit = true;
         return;
+    }
 
     m_isSubmittingOrPreparingForSubmission = true;
     m_wasUserSubmitted = processingUserGesture;
@@ -353,6 +357,7 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
     if (needButtonActivation && firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(false);
 
+    m_shouldSubmit = false;
     m_isSubmittingOrPreparingForSubmission = false;
 }
 

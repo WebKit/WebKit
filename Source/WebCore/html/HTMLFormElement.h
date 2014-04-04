@@ -81,7 +81,7 @@ public:
     void registerImgElement(HTMLImageElement*);
     void removeImgElement(HTMLImageElement*);
 
-    void prepareForSubmission(Event*); // FIXME: This function doesn't only prepare, it sometimes calls sumbit() itself.
+    void prepareForSubmission(Event*); // FIXME: This function doesn't only prepare, it sometimes calls submit() itself.
     void submit();
     void submitFromJavaScript();
     void reset();
@@ -172,6 +172,7 @@ private:
 
     bool m_wasUserSubmitted;
     bool m_isSubmittingOrPreparingForSubmission;
+    bool m_shouldSubmit;
 
     bool m_isInResetFunction;
 
