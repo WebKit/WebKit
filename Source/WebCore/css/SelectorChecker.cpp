@@ -211,12 +211,17 @@ SelectorChecker::Match SelectorChecker::matchRecursively(const SelectorCheckingC
         return SelectorFailsCompletely;
 
     case CSSSelector::Child:
-        nextContext.element = context.element->parentElement();
-        if (!nextContext.element)
-            return SelectorFailsCompletely;
-        nextContext.isSubSelector = false;
-        nextContext.elementStyle = 0;
-        return matchRecursively(nextContext, ignoreDynamicPseudo);
+        {
+            nextContext.element = context.element->parentElement();
+            if (!nextContext.element)
+                return SelectorFailsCompletely;
+            nextContext.isSubSelector = false;
+            nextContext.elementStyle = nullptr;
+            Match match = matchRecursively(nextContext, ignoreDynamicPseudo);
+            if (match == SelectorMatches || match == SelectorFailsCompletely)
+                return match;
+            return SelectorFailsAllSiblings;
+        }
 
     case CSSSelector::DirectAdjacent:
         if (m_mode == ResolvingStyle) {

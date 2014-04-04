@@ -1,3 +1,18 @@
+2014-04-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Upgrade to SelectorFailsAllSiblings when Child selector is failed.
+        https://bugs.webkit.org/show_bug.cgi?id=130961
+
+        Reviewed by Benjamin Poulain.
+
+        When Child selector fails, we should resume matching from the closest
+        Descendant selector.
+        So upgrading SelectorFailsLocally to SelectorFailsAllSibling at least
+        to prevent unnecessary direct/indirect adjacent selectors matching.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively):
+
 2014-04-04  Roger Fong  <roger_fong@apple.com>
 
         Keep track of filtered active attribute/uniform indices per shader program.
