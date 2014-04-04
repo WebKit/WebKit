@@ -113,6 +113,8 @@ WK_EXPORT double WKViewOpacity(WKViewRef view);
 
 WK_EXPORT void WKViewFindZoomableAreaForRect(WKViewRef, WKRect);
 
+WK_EXPORT WKSize WKViewGetContentsSize(WKViewRef);
+
 #ifdef __cplusplus
 }
 #endif

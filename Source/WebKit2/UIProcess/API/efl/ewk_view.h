@@ -931,6 +931,19 @@ EAPI void ewk_view_bg_color_set(Evas_Object *o, int r, int g, int b, int a);
  */
 EAPI void ewk_view_bg_color_get(const Evas_Object *o, int *r, int *g, int *b, int *a);
 
+/**
+ * Get contents size of current web page.
+ *
+ * If it fails to get the content size, the width and height will be set to 0.
+ *
+ * @param o view object to get contents size
+ * @param width pointer to an integer in which to store the width of contents.
+ * @param height pointer to an integer in which to store the height of contents.
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool ewk_view_contents_size_get(const Evas_Object *o, Evas_Coord *width, Evas_Coord *height);
+
 #ifdef __cplusplus
 }
 #endif

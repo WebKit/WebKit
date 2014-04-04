@@ -755,3 +755,25 @@ void ewk_view_bg_color_get(const Evas_Object* ewkView, int* red, int* green, int
 
     WKViewGetBackgroundColor(impl->wkView(), red, green, blue, alpha);
 }
+
+Eina_Bool ewk_view_contents_size_get(const Evas_Object* ewkView, Evas_Coord* width, Evas_Coord* height)
+{
+    EwkView* impl = toEwkViewChecked(ewkView);
+    if (EINA_UNLIKELY(!impl)) {
+        EINA_LOG_CRIT("no private data for object %p", ewkView);
+        if (width)
+            *width = 0;
+        if (height)
+            *height = 0;
+
+        return false;
+    }
+
+    WKSize contentsSize = WKViewGetContentsSize(impl->wkView());
+    if (width)
+        *width = contentsSize.width;
+    if (height)
+        *height = contentsSize.height;
+
+    return true;
+}

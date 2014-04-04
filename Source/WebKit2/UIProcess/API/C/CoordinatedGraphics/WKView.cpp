@@ -195,4 +195,10 @@ void WKViewFindZoomableAreaForRect(WKViewRef viewRef, WKRect wkRect)
     toImpl(viewRef)->findZoomableAreaForPoint(rect.center(), rect.size());
 }
 
+WKSize WKViewGetContentsSize(WKViewRef viewRef)
+{
+    const WebCore::IntSize& size = toImpl(viewRef)->contentsSize();
+    return WKSizeMake(size.width(), size.height());
+}
+
 #endif // USE(COORDINATED_GRAPHICS)
