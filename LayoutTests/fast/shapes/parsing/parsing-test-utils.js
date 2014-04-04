@@ -161,14 +161,14 @@ var validShapeLengths = [
     "3.5mm",
     "4pt",
     "4.5pc",
-    "5px"
+    "5px",
+    "120%"
 ];
 
 // Invalid length values for shape-margin and shape-padding.
 var invalidShapeLengths = [
     "-5px",
     "none",
-    "120%",
     "\'string\'"
 ];
 

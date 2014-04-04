@@ -160,7 +160,7 @@ const Shape& ShapeOutsideInfo::computedShape() const
         return *shape;
 
     WritingMode writingMode = m_renderer.containingBlock()->style().writingMode();
-    Length margin = m_renderer.style().shapeMargin();
+    float margin = floatValueForLength(m_renderer.style().shapeMargin(), m_renderer.containingBlock() ? m_renderer.containingBlock()->contentWidth() : LayoutUnit());
     float shapeImageThreshold = m_renderer.style().shapeImageThreshold();
     const ShapeValue* shapeValue = this->m_renderer.style().shapeOutside();
     ASSERT(shapeValue);
