@@ -4126,6 +4126,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.gapBetweenPages = m_gapBetweenPages;
     parameters.userAgent = userAgent();
     parameters.sessionState = SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex());
+    parameters.sessionID = m_session->getID();
     parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
     parameters.visitedLinkTableID = m_visitedLinkProvider->identifier();
     parameters.canRunBeforeUnloadConfirmPanel = m_uiClient->canRunBeforeUnloadConfirmPanel();

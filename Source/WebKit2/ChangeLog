@@ -1,3 +1,21 @@
+2014-04-04  Martin Hock  <mhock@apple.com>
+
+        Include Session ID in WebPageCreationParameters.
+        https://bugs.webkit.org/show_bug.cgi?id=131239
+
+        <rdar://problem/16175483>
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2014-04-04  Jer Noble  <jer.noble@apple.com>
 
         [Mac][WK2] Videos do not have access to session cookies

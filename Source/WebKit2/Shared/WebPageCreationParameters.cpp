@@ -50,6 +50,7 @@ void WebPageCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << gapBetweenPages;
     encoder << userAgent;
     encoder << sessionState;
+    encoder << sessionID;
     encoder << highestUsedBackForwardItemID;
     encoder << visitedLinkTableID;
     encoder << canRunBeforeUnloadConfirmPanel;
@@ -110,6 +111,8 @@ bool WebPageCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebPageCre
     if (!decoder.decode(parameters.userAgent))
         return false;
     if (!decoder.decode(parameters.sessionState))
+        return false;
+    if (!decoder.decode(parameters.sessionID))
         return false;
     if (!decoder.decode(parameters.highestUsedBackForwardItemID))
         return false;

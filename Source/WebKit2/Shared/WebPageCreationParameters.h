@@ -37,6 +37,7 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/Pagination.h>
 #include <WebCore/ScrollTypes.h>
+#include <WebCore/SessionID.h>
 #include <WebCore/ViewState.h>
 #include <wtf/text/WTFString.h>
 
@@ -83,6 +84,7 @@ struct WebPageCreationParameters {
     String userAgent;
 
     SessionState sessionState;
+    WebCore::SessionID sessionID;
     uint64_t highestUsedBackForwardItemID;
 
     uint64_t visitedLinkTableID;

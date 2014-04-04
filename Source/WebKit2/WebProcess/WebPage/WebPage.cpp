@@ -416,6 +416,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     if (!parameters.sessionState.isEmpty())
         restoreSession(parameters.sessionState);
 
+    if (parameters.sessionID.isValid())
+        setSessionID(parameters.sessionID);
+
     m_drawingArea->setPaintingEnabled(true);
     
     setMediaVolume(parameters.mediaVolume);
