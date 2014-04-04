@@ -1,3 +1,13 @@
+2014-04-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test fix. Rebaseline Mountain Lion scrolling tests
+        after switching to high-resolution continuous scroll output.
+
+        * platform/mac-mountainlion/fast/scrolling: Added.
+        * platform/mac-mountainlion/fast/scrolling/scroll-div-latched-mainframe-expected.txt: Added.
+        * platform/mac-mountainlion/fast/scrolling/scroll-iframe-latched-mainframe-expected.txt: Added.
+        * platform/mac-mountainlion/fast/scrolling/scroll-select-latched-mainframe-expected.txt: Added.
+
 2014-04-04  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] shape-margin in percentage units always computes to 0px
