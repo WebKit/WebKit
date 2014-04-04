@@ -1,3 +1,13 @@
+2014-04-04  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        Updated expectations for tests crashing in Debug bots.
+
+        * platform/gtk-wk1/TestExpectations:
+        * platform/gtk-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2014-04-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         compositing/tiling/rotated-tiled-* tests failing on bots

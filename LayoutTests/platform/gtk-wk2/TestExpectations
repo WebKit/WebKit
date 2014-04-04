@@ -208,6 +208,40 @@ Bug(GTK) plugins/document-open.html [ Crash Timeout ]
 
 webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Crash Pass ]
 
+webkit.org/b/131221 [ Debug ] fast/css/object-fit/object-fit-embed.html [ Crash ]
+
+webkit.org/b/131218 [ Debug ] fast/events/touch/multi-touch-inside-nested-iframes.html [ Crash ]
+webkit.org/b/131218 [ Debug ] fast/events/touch/multi-touch-inside-iframes.html [ Crash ]
+webkit.org/b/131218 [ Debug ] fast/events/touch/frame-hover-update.html [ Crash ]
+webkit.org/b/131218 [ Debug ] fast/events/touch/basic-multi-touch-events.html [ Crash ]
+
+webkit.org/b/131216 [ Debug ] http/tests/multipart/invalid-image-data.html [ Crash ]
+webkit.org/b/131216 [ Debug ] http/tests/multipart/multipart-html.php [ Crash ]
+webkit.org/b/131216 [ Debug ] http/tests/multipart/stop-crash.html [ Crash Pass ]
+
+webkit.org/b/131219 [ Debug ] http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html [ Crash ]
+
+webkit.org/b/131220 [ Debug ] inspector-protocol/dom/remove-multiple-nodes.html [ Crash ]
+
+webkit.org/b/116977 [ Debug ] media/event-attributes.html [ Crash Pass ]
+
+webkit.org/b/131223 [ Debug ] media/restore-from-page-cache.html [ Crash ]
+
+webkit.org/b/131222 [ Debug ] media/video-currentsrc-cleared.html [ Crash Pass ]
+
+webkit.org/b/117756 [ Debug ] media/track/media-element-enqueue-event-crash.html [ Crash ]
+
+webkit.org/b/131224 [ Debug ] media/track/track-insert-after-load-crash.html [ Crash ]
+
+webkit.org/b/131225 [ Debug ] media/track/track-remove-quickly.html [ Crash ]
+
+webkit.org/b/131217 [ Debug ] plugins/no-mime-with-valid-extension.html [ Crash ]
+webkit.org/b/131217 [ Debug ] plugins/embed-prefers-plugins-for-images.html [ Crash ]
+
+webkit.org/b/105870 [ Debug ] webaudio/audiobuffersource-loop-points.html [ Crash ]
+webkit.org/b/105870 [ Debug ] webaudio/audionode-channel-rules.html [ Crash Pass ]
+webkit.org/b/105870 [ Debug ] webaudio/audionode-connect-order.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
