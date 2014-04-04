@@ -593,7 +593,7 @@ void WebChromeClient::print(Frame* frame)
     WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
-#if PLATFORM(GTK) && defined(HAVE_GTK_UNIX_PRINTING)
+#if PLATFORM(GTK) && HAVE(GTK_UNIX_PRINTING)
     // When printing synchronously in GTK+ we need to make sure that we have a list of Printers before starting the print operation.
     // Getting the list of printers is done synchronously by GTK+, but using a nested main loop that might process IPC messages
     // comming from the UI process like EndPrinting. When the EndPriting message is received while the printer list is being populated,

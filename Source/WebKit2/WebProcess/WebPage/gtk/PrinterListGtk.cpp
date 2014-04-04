@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PrinterListGtk.h"
 
-#ifdef HAVE_GTK_UNIX_PRINTING
+#if HAVE(GTK_UNIX_PRINTING)
 
 #include <gtk/gtkunixprint.h>
 
@@ -81,4 +81,4 @@ GtkPrinter* PrinterListGtk::findPrinter(const char* printerName) const
 
 } // namespace WebKit
 
-#endif // HAVE_GTK_UNIX_PRINTING
+#endif // HAVE(GTK_UNIX_PRINTING)

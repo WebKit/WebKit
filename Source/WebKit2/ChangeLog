@@ -1,3 +1,23 @@
+2014-04-04  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [GTK][CMake] Use a stricter check for the HAVE_GTK_UNIX_PRINTING define
+        https://bugs.webkit.org/show_bug.cgi?id=131226
+
+        Reviewed by Carlos Garcia Campos.
+
+        #cmakedefine01 will define HAVE_GTK_UNIX_PRINTING to 0 instead of #undef'ining it. This
+        means that simple checks like #ifdef HAVE_GTK_UNIX_PRINTING will always be true -- we
+        actually need to check if the value is set to 1, which is precisely what the HAVE() macro
+        does, so start using it.
+
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::print):
+        * WebProcess/WebPage/gtk/PrinterListGtk.cpp:
+        * WebProcess/WebPage/gtk/PrinterListGtk.h:
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::WebPrintOperationGtk::create):
+
 2014-04-03  Chris Fleizach  <cfleizach@apple.com>
 
         AX: iOS does not need to spin the run loop on synchronous message calls

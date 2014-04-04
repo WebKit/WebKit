@@ -44,7 +44,7 @@
 #include <wtf/Vector.h>
 #include <wtf/gobject/GUniquePtr.h>
 
-#ifdef HAVE_GTK_UNIX_PRINTING
+#if HAVE(GTK_UNIX_PRINTING)
 #include "PrinterListGtk.h"
 #include <cairo-pdf.h>
 #include <cairo-ps.h>
@@ -53,7 +53,7 @@
 
 namespace WebKit {
 
-#ifdef HAVE_GTK_UNIX_PRINTING
+#if HAVE(GTK_UNIX_PRINTING)
 class WebPrintOperationGtkUnix final: public WebPrintOperationGtk {
 public:
     WebPrintOperationGtkUnix(WebPage* page, const PrintInfo& printInfo)
@@ -380,7 +380,7 @@ struct PrintPagesData {
 
 PassRefPtr<WebPrintOperationGtk> WebPrintOperationGtk::create(WebPage* page, const PrintInfo& printInfo)
 {
-#ifdef HAVE_GTK_UNIX_PRINTING
+#if HAVE(GTK_UNIX_PRINTING)
     return adoptRef(new WebPrintOperationGtkUnix(page, printInfo));
 #elif defined(G_OS_WIN32)
     return adoptRef(new WebPrintOperationGtkWin32(page, printInfo));

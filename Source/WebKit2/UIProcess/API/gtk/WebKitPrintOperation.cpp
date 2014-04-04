@@ -31,7 +31,7 @@
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
-#ifdef HAVE_GTK_UNIX_PRINTING
+#if HAVE(GTK_UNIX_PRINTING)
 #include <gtk/gtkunixprint.h>
 #endif
 
@@ -207,7 +207,7 @@ static void webkit_print_operation_class_init(WebKitPrintOperationClass* printOp
                      G_TYPE_POINTER);
 }
 
-#ifdef HAVE_GTK_UNIX_PRINTING
+#if HAVE(GTK_UNIX_PRINTING)
 static WebKitPrintOperationResponse webkitPrintOperationRunDialog(WebKitPrintOperation* printOperation, GtkWindow* parent)
 {
     GtkPrintUnixDialog* printDialog = GTK_PRINT_UNIX_DIALOG(gtk_print_unix_dialog_new(0, parent));
