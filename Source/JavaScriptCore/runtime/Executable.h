@@ -96,7 +96,7 @@ public:
 
     bool isEvalExecutable()
     {
-        return structure()->typeInfo().type() == EvalExecutableType;
+        return type() == EvalExecutableType;
     }
     bool isFunctionExecutable()
     {
@@ -104,7 +104,7 @@ public:
     }
     bool isProgramExecutable()
     {
-        return structure()->typeInfo().type() == ProgramExecutableType;
+        return type() == ProgramExecutableType;
     }
 
     bool isHostFunction() const

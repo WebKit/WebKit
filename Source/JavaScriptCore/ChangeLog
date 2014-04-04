@@ -1,3 +1,16 @@
+2014-04-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Use JSCell::type instead of TypeInfo::type wherever possible
+        https://bugs.webkit.org/show_bug.cgi?id=131229
+
+        Reviewed by Michael Saboff.
+
+        Avoid going through the Structure and reifying the TypeInfo.
+
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::isEvalExecutable):
+        (JSC::ExecutableBase::isProgramExecutable):
+
 2014-04-03  Andreas Kling  <akling@apple.com>
 
         Fast-path for casting JS wrappers to JSNode.
