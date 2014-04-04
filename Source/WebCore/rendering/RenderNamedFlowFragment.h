@@ -80,7 +80,6 @@ public:
     RenderLayerModelObject& layerOwner() const { return *toRenderLayerModelObject(parent()); }
 
     bool hasCustomRegionStyle() const { return m_hasCustomRegionStyle; }
-    void setHasCustomRegionStyle(bool hasCustomRegionStyle) { m_hasCustomRegionStyle = hasCustomRegionStyle; }
     void clearObjectStyleInRegion(const RenderObject*);
 
     void setRegionObjectsRegionStyle();
@@ -115,9 +114,7 @@ public:
 
     virtual void updateLogicalHeight() override;
 
-// FIXME: Temporarily public until we move all the CSSRegions functionality from RenderRegion to here.
-public:
-    void checkRegionStyle();
+    void updateRegionFlags();
 
 private:
     virtual const char* renderName() const override { return "RenderNamedFlowFragment"; }
@@ -125,6 +122,9 @@ private:
     PassRefPtr<RenderStyle> computeStyleInRegion(RenderElement&, RenderStyle& parentStyle);
     void computeChildrenStyleInRegion(RenderElement&);
     void setObjectStyleInRegion(RenderObject*, PassRefPtr<RenderStyle>, bool objectRegionStyleCached);
+
+    void checkRegionStyle();
+    void setHasCustomRegionStyle(bool hasCustomRegionStyle) { m_hasCustomRegionStyle = hasCustomRegionStyle; }
 
     void updateRegionHasAutoLogicalHeightFlag();
 

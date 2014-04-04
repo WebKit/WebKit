@@ -1,3 +1,32 @@
+2014-04-04  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Region's behaviour not updated when becoming valid from invalid
+        https://bugs.webkit.org/show_bug.cgi?id=131211
+
+        Reviewed by Andrei Bucur.
+
+        When a region becomes valid again from invalid, it was part of a dependency cycle and the dependency cycle was broken,
+        it needs to behave like a valid region again: if it has autoheight then it should compute its height based on the
+        named flow content, if it has region styling then it should apply the additional style to the flowed content.
+
+        Added a new method, updateRegionFlags, that is used to ensure that auto-height and region-styling flags
+        are properly set in several situations. Checking the behaviour, autoheight or styling, is done only
+        if the region is valid.
+
+        Tests: fast/regions/auto-size/autoheight-region-valid-from-invalid.html
+               fast/regions/region-styling/region-withstyling-valid-from-invalid.html
+
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::updateRegionFlags):
+        (WebCore::RenderNamedFlowFragment::styleDidChange):
+        (WebCore::RenderNamedFlowFragment::updateRegionHasAutoLogicalHeightFlag):
+        (WebCore::RenderNamedFlowFragment::checkRegionStyle):
+        (WebCore::RenderNamedFlowFragment::attachRegion):
+        (WebCore::RenderNamedFlowFragment::detachRegion):
+        * rendering/RenderNamedFlowFragment.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::addFragmentToNamedFlowThread):
+
 2014-04-04  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [GTK][CMake] Remove FindXt.cmake.

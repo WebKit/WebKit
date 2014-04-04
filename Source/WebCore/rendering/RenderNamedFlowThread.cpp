@@ -219,6 +219,7 @@ void RenderNamedFlowThread::addFragmentToNamedFlowThread(RenderNamedFlowFragment
         addDependencyOnFlowThread(renderNamedFlowFragment->parentNamedFlowThread());
 
     renderNamedFlowFragment->setIsValid(true);
+    renderNamedFlowFragment->updateRegionFlags();
     addFragmentToList(m_regionList, renderNamedFlowFragment);
 
     if (m_regionList.first() == renderNamedFlowFragment)

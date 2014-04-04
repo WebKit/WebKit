@@ -1,3 +1,17 @@
+2014-04-04  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Region's behaviour not updated when becoming valid from invalid
+        https://bugs.webkit.org/show_bug.cgi?id=131211
+
+        Reviewed by Andrei Bucur.
+
+        Add tests for auto-height and region styling behaviour.
+
+        * fast/regions/auto-size/autoheight-region-valid-from-invalid-expected.html: Added.
+        * fast/regions/auto-size/autoheight-region-valid-from-invalid.html: Added.
+        * fast/regions/region-styling/region-withstyling-valid-from-invalid-expected.html: Added.
+        * fast/regions/region-styling/region-withstyling-valid-from-invalid.html: Added.
+
 2014-04-04  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed GTK gardening.

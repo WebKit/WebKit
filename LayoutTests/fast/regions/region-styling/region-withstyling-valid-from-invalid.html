@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+        .flowA { -webkit-flow-into: flowA; width: 50px; height: 50px; background-color: red; }
+        .flowB { -webkit-flow-into: flowB; }
+        .flowC { -webkit-flow-into: flowC; }
+
+        .regionFlowA { -webkit-flow-from: flowA; width: 50px; height: 50px; }
+        .regionFlowB { -webkit-flow-from: flowB; }
+        .regionFlowC { -webkit-flow-from: flowC; }
+
+        @-webkit-region .regionFlowA {
+            .flowA { background-color: green; }
+        }
+        </style>
+    </head>
+    <body>
+        <p>Test than a region correctly applies region styling rules when changing from invalid to valid.</p>
+        <p>On success you should see a green rectangle below and no red.</p>
+        <div class="flowA">
+            <div class="regionFlowB"></div>
+        </div>
+
+        <div class="flowB">
+            <div class="regionFlowC"></div>
+        </div>
+
+        <div class="flowC">
+            <!-- The following region will initially be invalid.
+            Removing regionFlowC should make it valid again. -->
+            <div class="regionFlowA"></div>
+        </div>
+
+        <div class="regionFlowC"></div>
+
+        <script>
+            document.body.offsetTop;    // force layout
+            var el = document.getElementsByClassName("regionFlowC")[0];
+            el.parentNode.removeChild(el);
+        </script>
+    </body>
+</html>

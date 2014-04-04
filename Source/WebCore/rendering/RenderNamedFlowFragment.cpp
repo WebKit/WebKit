@@ -67,21 +67,20 @@ PassRef<RenderStyle> RenderNamedFlowFragment::createStyle(const RenderStyle& par
     return style;
 }
 
+void RenderNamedFlowFragment::updateRegionFlags()
+{
+    checkRegionStyle();
+    updateRegionHasAutoLogicalHeightFlag();
+}
+
 void RenderNamedFlowFragment::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderRegion::styleDidChange(diff, oldStyle);
 
-    // If the region is not attached to any thread, there is no need to check
-    // whether the region has region styling since no content will be displayed
-    // into the region.
-    if (!m_flowThread) {
-        setHasCustomRegionStyle(false);
+    if (!isValid())
         return;
-    }
 
-    updateRegionHasAutoLogicalHeightFlag();
-
-    checkRegionStyle();
+    updateRegionFlags();
 
     if (parent() && parent()->needsLayout())
         setNeedsLayout(MarkOnlyThis);
@@ -120,20 +119,18 @@ void RenderNamedFlowFragment::decrementAutoLogicalHeightCount()
 
 void RenderNamedFlowFragment::updateRegionHasAutoLogicalHeightFlag()
 {
-    ASSERT(m_flowThread);
-
-    if (!isValid())
-        return;
+    ASSERT(isValid());
 
     bool didHaveAutoLogicalHeight = m_hasAutoLogicalHeight;
     m_hasAutoLogicalHeight = shouldHaveAutoLogicalHeight();
-    if (m_hasAutoLogicalHeight != didHaveAutoLogicalHeight) {
-        if (m_hasAutoLogicalHeight)
-            incrementAutoLogicalHeightCount();
-        else {
-            clearComputedAutoHeight();
-            decrementAutoLogicalHeightCount();
-        }
+    if (didHaveAutoLogicalHeight == m_hasAutoLogicalHeight)
+        return;
+
+    if (m_hasAutoLogicalHeight)
+        incrementAutoLogicalHeightCount();
+    else {
+        clearComputedAutoHeight();
+        decrementAutoLogicalHeightCount();
     }
 }
 
@@ -338,7 +335,8 @@ void RenderNamedFlowFragment::updateOversetState()
 
 void RenderNamedFlowFragment::checkRegionStyle()
 {
-    ASSERT(m_flowThread);
+    ASSERT(isValid());
+
     bool customRegionStyle = false;
 
     // FIXME: Region styling doesn't work for pseudo elements.
@@ -508,25 +506,20 @@ void RenderNamedFlowFragment::attachRegion()
 {
     RenderRegion::attachRegion();
 
-    if (documentBeingDestroyed() || !m_flowThread)
+    if (documentBeingDestroyed() || !isValid())
         return;
 
-    // The region just got attached to the flow thread, lets check whether
-    // it has region styling rules associated.
-    checkRegionStyle();
-
-    if (!isValid())
-        return;
-
-    m_hasAutoLogicalHeight = shouldHaveAutoLogicalHeight();
-    if (hasAutoLogicalHeight())
-        incrementAutoLogicalHeightCount();
+    updateRegionFlags();
 }
 
 void RenderNamedFlowFragment::detachRegion()
 {
-    if (m_flowThread && hasAutoLogicalHeight())
+    if (hasAutoLogicalHeight()) {
+        ASSERT(isValid());
+        m_hasAutoLogicalHeight = false;
+        clearComputedAutoHeight();
         decrementAutoLogicalHeightCount();
+    }
     
     RenderRegion::detachRegion();
 }
