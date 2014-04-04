@@ -1,3 +1,13 @@
+2014-04-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] kill-old-processes should kill dbus-daemon processes
+        https://bugs.webkit.org/show_bug.cgi?id=127352
+
+        Reviewed by Martin Robinson.
+
+        * BuildSlaveSupport/kill-old-processes:
+        (main):
+
 2014-04-04  Andres Gomez  <agomez@igalia.com>
 
         [Win] Update obsolete packages in cygwin

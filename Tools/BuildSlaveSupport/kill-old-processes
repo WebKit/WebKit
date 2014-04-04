@@ -90,6 +90,7 @@ def main():
     taskToKillUnix = [
         "apache2",
         "cc1plus",
+        "dbus-daemon",
         "DumpRenderTree",
         "gold",
         "httpd",
