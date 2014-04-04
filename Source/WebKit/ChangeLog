@@ -1,3 +1,10 @@
+2014-04-03  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix.
+
+        * WebKit.vcxproj/WebKit.sln: Make sure we don't generate the
+        WebInspectorUI before the generated JS is ready.
+
 2014-04-02  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS] Remove the legacy string drawing code
