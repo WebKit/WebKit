@@ -1629,7 +1629,7 @@ void AVFWrapper::processCue(void* context)
 
 void AVFWrapper::legibleOutputCallback(void* context, AVCFPlayerItemLegibleOutputRef legibleOutput, CFArrayRef attributedStrings, CFArrayRef /*nativeSampleBuffers*/, CMTime itemTime)
 {
-    ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
+    ASSERT(dispatch_get_main_queue() != dispatch_get_current_queue());
     MutexLocker locker(mapLock());
     AVFWrapper* self = avfWrapperForCallbackContext(context);
     if (!self) {

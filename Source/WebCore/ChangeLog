@@ -1,3 +1,11 @@
+2014-04-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test fix (crash in debug build).
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::legibleOutputCallback): Correct assertion. This
+        callback is scheduled for the caption queue, not the main queue.
+
 2014-04-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Load Media Controls js/css from bundle
