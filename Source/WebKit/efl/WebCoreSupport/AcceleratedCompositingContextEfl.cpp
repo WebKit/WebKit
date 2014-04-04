@@ -181,6 +181,14 @@ void AcceleratedCompositingContext::compositeLayers()
         m_syncTimer.startOneShot(1 / compositingFrameRate);
 }
 
+void AcceleratedCompositingContext::setRootGraphicsLayer(GraphicsLayer* rootLayer)
+{
+    m_rootLayer = rootLayer;
+
+    if (!m_syncTimer.isActive())
+        m_syncTimer.startOneShot(0);
+}
+
 } // namespace WebCore
 
 #endif // USE(TEXTURE_MAPPER_GL)

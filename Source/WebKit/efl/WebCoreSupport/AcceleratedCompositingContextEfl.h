@@ -42,7 +42,7 @@ public:
     AcceleratedCompositingContext(Evas_Object* ewkView, Evas_Object* compositingObject);
     ~AcceleratedCompositingContext();
 
-    void setRootGraphicsLayer(GraphicsLayer* rootLayer) { m_rootLayer = rootLayer; }
+    void setRootGraphicsLayer(GraphicsLayer* rootLayer);
     void resize(const IntSize&);
     void flushAndRenderLayers();
 
