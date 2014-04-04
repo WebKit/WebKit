@@ -1,3 +1,10 @@
+2014-04-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed gardening. Mark a flakey test that is failing intermittenly in pixel tests.
+
+        * platform/mac/TestExpectations:
+        Mark svg/as-image/svg-as-image-canvas.html as flakey.
+
 2014-04-04  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Add compositing reason for isolation.
