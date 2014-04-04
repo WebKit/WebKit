@@ -167,7 +167,9 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, readonly* im
 
 readonly* toreadonly(JSC::JSValue value)
 {
-    return value.inherits(JSreadonly::info()) ? &jsCast<JSreadonly*>(value)->impl() : 0;
+    if (auto* wrapper = jsDynamicCast<JSreadonly*>(value))
+        return &wrapper->impl();
+    return nullptr;
 }
 
 }

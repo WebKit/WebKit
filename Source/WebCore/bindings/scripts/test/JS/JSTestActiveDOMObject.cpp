@@ -271,7 +271,9 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestActiveDO
 
 TestActiveDOMObject* toTestActiveDOMObject(JSC::JSValue value)
 {
-    return value.inherits(JSTestActiveDOMObject::info()) ? &jsCast<JSTestActiveDOMObject*>(value)->impl() : 0;
+    if (auto* wrapper = jsDynamicCast<JSTestActiveDOMObject*>(value))
+        return &wrapper->impl();
+    return nullptr;
 }
 
 }

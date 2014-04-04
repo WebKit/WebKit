@@ -989,7 +989,9 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterfac
 
 TestInterface* toTestInterface(JSC::JSValue value)
 {
-    return value.inherits(JSTestInterface::info()) ? &jsCast<JSTestInterface*>(value)->impl() : 0;
+    if (auto* wrapper = jsDynamicCast<JSTestInterface*>(value))
+        return &wrapper->impl();
+    return nullptr;
 }
 
 }

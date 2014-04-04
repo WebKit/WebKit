@@ -212,7 +212,9 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, attribute* i
 
 attribute* toattribute(JSC::JSValue value)
 {
-    return value.inherits(JSattribute::info()) ? &jsCast<JSattribute*>(value)->impl() : 0;
+    if (auto* wrapper = jsDynamicCast<JSattribute*>(value))
+        return &wrapper->impl();
+    return nullptr;
 }
 
 }

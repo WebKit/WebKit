@@ -773,7 +773,9 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestTypedefs
 
 TestTypedefs* toTestTypedefs(JSC::JSValue value)
 {
-    return value.inherits(JSTestTypedefs::info()) ? &jsCast<JSTestTypedefs*>(value)->impl() : 0;
+    if (auto* wrapper = jsDynamicCast<JSTestTypedefs*>(value))
+        return &wrapper->impl();
+    return nullptr;
 }
 
 }

@@ -238,7 +238,9 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestCustomNa
 
 TestCustomNamedGetter* toTestCustomNamedGetter(JSC::JSValue value)
 {
-    return value.inherits(JSTestCustomNamedGetter::info()) ? &jsCast<JSTestCustomNamedGetter*>(value)->impl() : 0;
+    if (auto* wrapper = jsDynamicCast<JSTestCustomNamedGetter*>(value))
+        return &wrapper->impl();
+    return nullptr;
 }
 
 }

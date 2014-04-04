@@ -352,7 +352,9 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventTar
 
 TestEventTarget* toTestEventTarget(JSC::JSValue value)
 {
-    return value.inherits(JSTestEventTarget::info()) ? &jsCast<JSTestEventTarget*>(value)->impl() : 0;
+    if (auto* wrapper = jsDynamicCast<JSTestEventTarget*>(value))
+        return &wrapper->impl();
+    return nullptr;
 }
 
 }

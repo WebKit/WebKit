@@ -196,7 +196,9 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestGenerate
 
 TestGenerateIsReachable* toTestGenerateIsReachable(JSC::JSValue value)
 {
-    return value.inherits(JSTestGenerateIsReachable::info()) ? &jsCast<JSTestGenerateIsReachable*>(value)->impl() : 0;
+    if (auto* wrapper = jsDynamicCast<JSTestGenerateIsReachable*>(value))
+        return &wrapper->impl();
+    return nullptr;
 }
 
 }

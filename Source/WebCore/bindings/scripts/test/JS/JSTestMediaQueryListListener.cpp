@@ -211,7 +211,9 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestMediaQue
 
 TestMediaQueryListListener* toTestMediaQueryListListener(JSC::JSValue value)
 {
-    return value.inherits(JSTestMediaQueryListListener::info()) ? &jsCast<JSTestMediaQueryListListener*>(value)->impl() : 0;
+    if (auto* wrapper = jsDynamicCast<JSTestMediaQueryListListener*>(value))
+        return &wrapper->impl();
+    return nullptr;
 }
 
 }

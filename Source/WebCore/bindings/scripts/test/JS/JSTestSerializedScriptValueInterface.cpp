@@ -361,7 +361,9 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestSerializ
 
 TestSerializedScriptValueInterface* toTestSerializedScriptValueInterface(JSC::JSValue value)
 {
-    return value.inherits(JSTestSerializedScriptValueInterface::info()) ? &jsCast<JSTestSerializedScriptValueInterface*>(value)->impl() : 0;
+    if (auto* wrapper = jsDynamicCast<JSTestSerializedScriptValueInterface*>(value))
+        return &wrapper->impl();
+    return nullptr;
 }
 
 }

@@ -3087,8 +3087,10 @@ END
     if ((!$hasParent or $interface->extendedAttributes->{"JSGenerateToNativeObject"}) and !$interface->extendedAttributes->{"JSCustomToNativeObject"}) {
         push(@implContent, "$implType* to${interfaceName}(JSC::JSValue value)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    return value.inherits(${className}::info()) ? &jsCast<$className*>(value)->impl() : 0");
-        push(@implContent, ";\n}\n");
+        push(@implContent, "    if (auto* wrapper = " . GetCastingHelperForThisObject($interface) . "(value))\n");
+        push(@implContent, "        return &wrapper->impl();\n");
+        push(@implContent, "    return nullptr;\n");
+        push(@implContent, "}\n");
     }
 
     push(@implContent, "\n}\n");

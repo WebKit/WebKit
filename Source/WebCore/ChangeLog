@@ -1,3 +1,24 @@
+2014-04-04  Andreas Kling  <akling@apple.com>
+
+        JSGenerateToNativeObject should use fast JSNode/JSElement casts.
+        <https://webkit.org/b/131245>
+
+        Make JSGenerateToNativeObject spit out code using the fast new wrapper
+        casts for JSNode and JSElement.
+
+        This avoids walking the ClassInfo chain in many core functions, e.g:
+
+            - Node.insertBefore()
+            - Node.replaceChild()
+            - Node.removeChild()
+            - Node.appendChild()
+            - window.getComputedStyle()
+
+        Reviewed by Geoff Garen.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+
 2014-04-04  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] polygon y-value calc() args serialize incorrectly
