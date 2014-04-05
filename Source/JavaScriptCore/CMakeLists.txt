@@ -219,6 +219,7 @@ set(JavaScriptCore_SOURCES
     heap/EdenGCActivityCallback.cpp
     heap/FullGCActivityCallback.cpp
     heap/GCActivityCallback.cpp
+    heap/GCLogging.cpp
     heap/GCThread.cpp
     heap/GCThreadSharedData.cpp
     heap/HandleSet.cpp

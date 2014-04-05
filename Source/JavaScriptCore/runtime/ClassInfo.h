@@ -96,6 +96,9 @@ struct MethodTable {
     
     typedef PassRefPtr<ArrayBufferView> (*GetTypedArrayImpl)(JSArrayBufferView*);
     GetTypedArrayImpl getTypedArrayImpl;
+
+    typedef void (*DumpToStreamFunctionPtr)(const JSCell*, PrintStream&);
+    DumpToStreamFunctionPtr dumpToStream;
 };
 
 #define CREATE_MEMBER_CHECKER(member) \
@@ -138,7 +141,8 @@ struct MethodTable {
         &ClassName::customHasInstance, \
         &ClassName::defineOwnProperty, \
         &ClassName::slowDownAndWasteMemory, \
-        &ClassName::getTypedArrayImpl \
+        &ClassName::getTypedArrayImpl, \
+        &ClassName::dumpToStream \
     }, \
     ClassName::TypedArrayStorageType
 

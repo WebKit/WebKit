@@ -795,6 +795,7 @@
 		2A83638918D7D0FE0000EBCC /* FullGCActivityCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A83638718D7D0FE0000EBCC /* FullGCActivityCallback.cpp */; };
 		2A83638A18D7D0FE0000EBCC /* FullGCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AAAA31218BD49D100394CC8 /* StructureIDBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AAAA31018BD49D100394CC8 /* StructureIDBlob.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2AABCDE718EF294200002096 /* GCLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AABCDE618EF294200002096 /* GCLogging.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AACE63C18CA5A0300ED0191 /* GCActivityCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AACE63A18CA5A0300ED0191 /* GCActivityCallback.cpp */; };
 		2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AACE63B18CA5A0300ED0191 /* GCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AAD964A18569417001F93BE /* RecursiveAllocationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AAD964918569417001F93BE /* RecursiveAllocationScope.h */; };
@@ -803,6 +804,7 @@
 		2ACCF3DE185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2ACCF3DC185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.cpp */; };
 		2ACCF3DF185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 2ACCF3DD185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.h */; };
 		2AD8932B17E3868F00668276 /* HeapIterationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD8932917E3868F00668276 /* HeapIterationScope.h */; };
+		2ADFA26318EF3540004F9FCC /* GCLogging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2ADFA26218EF3540004F9FCC /* GCLogging.cpp */; };
 		2AF7382C18BBBF92008A5A37 /* StructureIDTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AF7382A18BBBF92008A5A37 /* StructureIDTable.cpp */; };
 		2AF7382D18BBBF92008A5A37 /* StructureIDTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AF7382B18BBBF92008A5A37 /* StructureIDTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		371D842D17C98B6E00ECF994 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 371D842C17C98B6E00ECF994 /* libz.dylib */; };
@@ -2288,6 +2290,7 @@
 		2A83638718D7D0FE0000EBCC /* FullGCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FullGCActivityCallback.cpp; sourceTree = "<group>"; };
 		2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullGCActivityCallback.h; sourceTree = "<group>"; };
 		2AAAA31018BD49D100394CC8 /* StructureIDBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureIDBlob.h; sourceTree = "<group>"; };
+		2AABCDE618EF294200002096 /* GCLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCLogging.h; sourceTree = "<group>"; };
 		2AACE63A18CA5A0300ED0191 /* GCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCActivityCallback.cpp; sourceTree = "<group>"; };
 		2AACE63B18CA5A0300ED0191 /* GCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCActivityCallback.h; sourceTree = "<group>"; };
 		2AAD964918569417001F93BE /* RecursiveAllocationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecursiveAllocationScope.h; sourceTree = "<group>"; };
@@ -2296,6 +2299,7 @@
 		2ACCF3DC185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStoreBarrierElisionPhase.cpp; path = dfg/DFGStoreBarrierElisionPhase.cpp; sourceTree = "<group>"; };
 		2ACCF3DD185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStoreBarrierElisionPhase.h; path = dfg/DFGStoreBarrierElisionPhase.h; sourceTree = "<group>"; };
 		2AD8932917E3868F00668276 /* HeapIterationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapIterationScope.h; sourceTree = "<group>"; };
+		2ADFA26218EF3540004F9FCC /* GCLogging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCLogging.cpp; sourceTree = "<group>"; };
 		2AF7382A18BBBF92008A5A37 /* StructureIDTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureIDTable.cpp; sourceTree = "<group>"; };
 		2AF7382B18BBBF92008A5A37 /* StructureIDTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureIDTable.h; sourceTree = "<group>"; };
 		371D842C17C98B6E00ECF994 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -3632,6 +3636,8 @@
 				2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */,
 				2A83638718D7D0FE0000EBCC /* FullGCActivityCallback.cpp */,
 				2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */,
+				2AABCDE618EF294200002096 /* GCLogging.h */,
+				2ADFA26218EF3540004F9FCC /* GCLogging.cpp */,
 			);
 			path = heap;
 			sourceTree = "<group>";
@@ -4952,6 +4958,7 @@
 				A1A009C11831A26E00CF8711 /* ARM64Assembler.h in Headers */,
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
 				A584032018BFFBE1005A0811 /* InspectorAgent.h in Headers */,
+				2AABCDE718EF294200002096 /* GCLogging.h in Headers */,
 				C2DA778318E259990066FCB6 /* HeapInlines.h in Headers */,
 				2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */,
 				2A83638618D7D0EE0000EBCC /* EdenGCActivityCallback.h in Headers */,
@@ -6678,6 +6685,7 @@
 				0FC3141518146D7000033232 /* RegisterSet.cpp in Sources */,
 				A57D23ED1891B5540031C7FA /* RegularExpression.cpp in Sources */,
 				A5BA15E9182340B300A82E69 /* RemoteInspector.mm in Sources */,
+				2ADFA26318EF3540004F9FCC /* GCLogging.cpp in Sources */,
 				A594558F18245EFD00CC3843 /* RemoteInspectorDebuggable.cpp in Sources */,
 				A5BA15EC182340B400A82E69 /* RemoteInspectorDebuggableConnection.mm in Sources */,
 				A5BA15EE182340B400A82E69 /* RemoteInspectorXPCConnection.mm in Sources */,

@@ -466,6 +466,7 @@
     <ClCompile Include="..\heap\EdenGCActivityCallback.cpp" />
     <ClCompile Include="..\heap\FullGCActivityCallback.cpp" />
     <ClCompile Include="..\heap\GCActivityCallback.cpp" />
+    <ClCompile Include="..\heap\GCLogging.cpp" />
     <ClCompile Include="..\heap\GCThread.cpp" />
     <ClCompile Include="..\heap\GCThreadSharedData.cpp" />
     <ClCompile Include="..\heap\HandleSet.cpp" />
@@ -1050,6 +1051,7 @@
     <ClInclude Include="..\heap\EdenGCActivityCallback.h" />
     <ClInclude Include="..\heap\FullGCActivityCallback.h" />
     <ClInclude Include="..\heap\GCActivityCallback.h" />
+    <ClCompile Include="..\heap\GCLogging.cpp" />
     <ClInclude Include="..\heap\GCSegmentedArray.h" />
     <ClInclude Include="..\heap\GCSegmentedArrayInlines.h" />
     <ClInclude Include="..\heap\GCAssertions.h" />

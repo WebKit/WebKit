@@ -76,6 +76,26 @@ static bool parse(const char* string, OptionRange& value)
     return value.init(string);
 }
 
+static bool parse(const char* string, GCLogging::Level& value)
+{
+    if (!strcasecmp(string, "none") || !strcasecmp(string, "no") || !strcasecmp(string, "false") || !strcmp(string, "0")) {
+        value = GCLogging::None;
+        return true;
+    }
+
+    if (!strcasecmp(string, "basic") || !strcasecmp(string, "yes") || !strcasecmp(string, "true") || !strcmp(string, "1")) {
+        value = GCLogging::Basic;
+        return true;
+    }
+
+    if (!strcasecmp(string, "verbose") || !strcmp(string, "2")) {
+        value = GCLogging::Verbose;
+        return true;
+    }
+
+    return false;
+}
+
 template<typename T>
 bool overrideOptionWithHeuristic(T& variable, const char* name)
 {
@@ -284,7 +304,7 @@ bool Options::setOption(const char* arg)
 #define FOR_EACH_OPTION(type_, name_, defaultValue_)    \
     if (!strncmp(arg, #name_, equalStr - arg)) {        \
         type_ value;                                    \
-        value = 0;                                      \
+        value = (defaultValue_);                        \
         bool success = parse(valueStr, value);          \
         if (success) {                                  \
             name_() = value;                            \
@@ -329,6 +349,9 @@ void Options::dumpOption(OptionID id, FILE* stream, const char* header, const ch
         break;
     case optionRangeType:
         fprintf(stream, "%s", s_options[id].u.optionRangeVal.rangeString());
+        break;
+    case gcLogLevelType:
+        fprintf(stream, "%s", GCLogging::levelAsString(s_options[id].u.gcLogLevelVal));
         break;
     }
     fprintf(stream, "%s", footer);

@@ -622,10 +622,6 @@
 #define ENABLE_NOTIFICATIONS 0
 #endif
 
-#if !defined(ENABLE_OBJECT_MARK_LOGGING)
-#define ENABLE_OBJECT_MARK_LOGGING 0
-#endif
-
 #if !defined(ENABLE_OPENCL)
 #define ENABLE_OPENCL 0
 #endif

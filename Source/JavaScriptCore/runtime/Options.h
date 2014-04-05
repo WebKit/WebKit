@@ -26,6 +26,7 @@
 #ifndef Options_h
 #define Options_h
 
+#include "GCLogging.h"
 #include "JSExportMacros.h"
 #include <stdint.h>
 #include <stdio.h>
@@ -258,7 +259,7 @@ typedef OptionRange optionRange;
     v(bool, objectsAreImmortal, false) \
     v(bool, showObjectStatistics, false) \
     \
-    v(bool, logGC, false) \
+    v(gcLogLevel, logGC, GCLogging::None) \
     v(bool, disableGC, false) \
     v(unsigned, gcMaxHeapSize, 0) \
     v(bool, recordGCPauseTimes, false) \
@@ -303,6 +304,7 @@ private:
         doubleType,
         int32Type,
         optionRangeType,
+        gcLogLevelType,
     };
 
     // For storing for an option value:
@@ -313,6 +315,7 @@ private:
             double doubleVal;
             int32 int32Val;
             OptionRange optionRangeVal;
+            GCLogging::Level gcLogLevelVal;
         } u;
         bool didOverride;
     };

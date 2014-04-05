@@ -237,6 +237,9 @@
     <ClCompile Include="..\heap\GCActivityCallback.cpp">
       <Filter>heap</Filter>
     </ClCompile>
+    <ClCompile Include="..\heap\GCLogging.cpp">
+      <Filter>heap</Filter>
+    </ClCompile>
     <ClCompile Include="..\heap\GCThread.cpp">
       <Filter>heap</Filter>
     </ClCompile>
@@ -1698,6 +1701,9 @@
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\GCActivityCallback.h">
+      <Filter>heap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\heap\GCLogging.h">
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\GCSegmentedArray.h">

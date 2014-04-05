@@ -41,6 +41,16 @@ void JSCell::destroy(JSCell* cell)
     cell->JSCell::~JSCell();
 }
 
+void JSCell::dump(PrintStream& out) const
+{
+    methodTable()->dumpToStream(this, out);
+}
+
+void JSCell::dumpToStream(const JSCell* cell, PrintStream& out)
+{
+    out.printf("<%p, %s>", cell, cell->className());
+}
+
 void JSCell::copyBackingStore(JSCell*, CopyVisitor&, CopyToken)
 {
 }
@@ -192,7 +202,7 @@ String JSCell::className(const JSObject*)
     return String();
 }
 
-const char* JSCell::className()
+const char* JSCell::className() const
 {
     return classInfo()->className;
 }

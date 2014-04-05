@@ -64,6 +64,7 @@ template <typename T> class GCSegmentedArrayIterator;
 template <typename T>
 class GCSegmentedArray {
     friend class GCSegmentedArrayIterator<T>;
+    friend class GCSegmentedArrayIterator<const T>;
 public:
     GCSegmentedArray(BlockAllocator&);
     ~GCSegmentedArray();
@@ -81,8 +82,8 @@ public:
     void clear();
 
     typedef GCSegmentedArrayIterator<T> iterator;
-    iterator begin() { return GCSegmentedArrayIterator<T>(m_segments.head(), m_top); }
-    iterator end() { return GCSegmentedArrayIterator<T>(); }
+    iterator begin() const { return GCSegmentedArrayIterator<T>(m_segments.head(), m_top); }
+    iterator end() const { return GCSegmentedArrayIterator<T>(); }
 
 protected:
     template <size_t size> struct CapacityFromSize {

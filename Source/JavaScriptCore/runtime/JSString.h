@@ -141,7 +141,7 @@ namespace JSC {
         const String& value(ExecState*) const;
         const String& tryGetValue() const;
         const StringImpl* tryGetValueImpl() const;
-        unsigned length() { return m_length; }
+        unsigned length() const { return m_length; }
 
         JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
         JS_EXPORT_PRIVATE bool toBoolean() const;
@@ -167,6 +167,7 @@ namespace JSC {
 
         DECLARE_EXPORT_INFO;
 
+        static void dumpToStream(const JSCell*, PrintStream&);
         static void visitChildren(JSCell*, SlotVisitor&);
 
         enum {
@@ -241,7 +242,7 @@ namespace JSC {
                 return tmp;
             }
 
-            unsigned length() { return m_jsString->m_length; }
+            unsigned length() const { return m_jsString->m_length; }
 
         private:
             void expand();

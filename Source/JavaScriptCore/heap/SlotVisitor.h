@@ -54,6 +54,7 @@ public:
     ~SlotVisitor();
 
     MarkStackArray& markStack() { return m_stack; }
+    const MarkStackArray& markStack() const { return m_stack; }
 
     VM& vm();
     const VM& vm() const;
@@ -109,11 +110,11 @@ public:
     void addWeakReferenceHarvester(WeakReferenceHarvester*);
     void addUnconditionalFinalizer(UnconditionalFinalizer*);
 
-#if ENABLE(OBJECT_MARK_LOGGING)
     inline void resetChildCount() { m_logChildCount = 0; }
     inline unsigned childCount() { return m_logChildCount; }
     inline void incrementChildCount() { m_logChildCount++; }
-#endif
+
+    void dump(PrintStream&) const;
 
 private:
     friend class ParallelModeEnabler;
@@ -148,9 +149,7 @@ private:
     typedef HashMap<StringImpl*, JSValue> UniqueStringMap;
     UniqueStringMap m_uniqueStrings;
 
-#if ENABLE(OBJECT_MARK_LOGGING)
     unsigned m_logChildCount;
-#endif
 
 public:
 #if !ASSERT_DISABLED

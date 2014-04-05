@@ -26,30 +26,6 @@
 #ifndef MarkStack_h
 #define MarkStack_h
 
-#if ENABLE(OBJECT_MARK_LOGGING)
-#define MARK_LOG_MESSAGE0(message) dataLogF(message)
-#define MARK_LOG_MESSAGE1(message, arg1) dataLogF(message, arg1)
-#define MARK_LOG_MESSAGE2(message, arg1, arg2) dataLogF(message, arg1, arg2)
-#define MARK_LOG_ROOT(visitor, rootName) \
-    dataLogF("\n%s: ", rootName); \
-    (visitor).resetChildCount()
-#define MARK_LOG_PARENT(visitor, parent) \
-    dataLogF("\n%p (%s): ", parent, parent->className() ? parent->className() : "unknown"); \
-    (visitor).resetChildCount()
-#define MARK_LOG_CHILD(visitor, child) \
-    if ((visitor).childCount()) \
-    dataLogFString(", "); \
-    dataLogF("%p", child); \
-    (visitor).incrementChildCount()
-#else
-#define MARK_LOG_MESSAGE0(message) do { } while (false)
-#define MARK_LOG_MESSAGE1(message, arg1) do { } while (false)
-#define MARK_LOG_MESSAGE2(message, arg1, arg2) do { } while (false)
-#define MARK_LOG_ROOT(visitor, rootName) do { } while (false)
-#define MARK_LOG_PARENT(visitor, parent) do { } while (false)
-#define MARK_LOG_CHILD(visitor, child) do { } while (false)
-#endif
-
 #include "GCSegmentedArrayInlines.h"
 
 namespace JSC {

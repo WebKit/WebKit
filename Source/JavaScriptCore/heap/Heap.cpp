@@ -474,16 +474,12 @@ void Heap::getConservativeRegisterRoots(HashSet<JSCell*>& roots)
     }
 }
 
-void Heap::markRoots()
+void Heap::markRoots(double gcStartTime)
 {
     SamplingRegion samplingRegion("Garbage Collection: Marking");
 
     GCPHASE(MarkRoots);
     ASSERT(isValidThreadState(m_vm));
-
-#if ENABLE(OBJECT_MARK_LOGGING)
-    double gcStartTime = WTF::monotonicallyIncreasingTime();
-#endif
 
 #if ENABLE(GGC)
     Vector<const JSCell*> rememberedSet(m_slotVisitor.markStack().size());
@@ -535,7 +531,7 @@ void Heap::markRoots()
 
     clearRememberedSet(rememberedSet);
     m_sharedData.didFinishMarking();
-    updateObjectCounts();
+    updateObjectCounts(gcStartTime);
     resetVisitors();
 }
 
@@ -599,13 +595,21 @@ void Heap::visitSmallStrings()
 {
     GCPHASE(VisitSmallStrings);
     m_vm->smallStrings.visitStrongReferences(m_slotVisitor);
+
+    if (Options::logGC() == GCLogging::Verbose)
+        dataLog("Small strings:\n", m_slotVisitor);
+
+    m_slotVisitor.donateAndDrain();
 }
 
 void Heap::visitConservativeRoots(ConservativeRoots& roots)
 {
     GCPHASE(VisitConservativeRoots);
-    MARK_LOG_ROOT(m_slotVisitor, "Conservative Roots");
     m_slotVisitor.append(roots);
+
+    if (Options::logGC() == GCLogging::Verbose)
+        dataLog("Conservative Roots:\n", m_slotVisitor);
+
     m_slotVisitor.donateAndDrain();
 }
 
@@ -613,29 +617,34 @@ void Heap::visitCompilerWorklists()
 {
 #if ENABLE(DFG_JIT)
     GCPHASE(VisitDFGWorklists);
-    MARK_LOG_ROOT(m_slotVisitor, "DFG Worklists");
     for (unsigned i = DFG::numberOfWorklists(); i--;) {
         if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i))
             worklist->visitChildren(m_slotVisitor, m_codeBlocks);
     }
+
+    if (Options::logGC() == GCLogging::Verbose)
+        dataLog("DFG Worklists:\n", m_slotVisitor);
+
+    m_slotVisitor.donateAndDrain();
 #endif
 }
 
 void Heap::visitProtectedObjects(HeapRootVisitor& heapRootVisitor)
 {
     GCPHASE(VisitProtectedObjects);
-    MARK_LOG_ROOT(m_slotVisitor, "Protected Objects");
 
     for (auto& pair : m_protectedValues)
         heapRootVisitor.visit(&pair.key);
+
+    if (Options::logGC() == GCLogging::Verbose)
+        dataLog("Protected Objects:\n", m_slotVisitor);
+
     m_slotVisitor.donateAndDrain();
 }
 
 void Heap::visitTempSortVectors(HeapRootVisitor& heapRootVisitor)
 {
     GCPHASE(VisitTempSortVectors);
-    MARK_LOG_ROOT(m_slotVisitor, "Temp Sort Vectors");
-
     typedef Vector<Vector<ValueStringPair, 0, UnsafeVectorOverflow>*> VectorOfValueStringVectors;
 
     for (auto* vector : m_tempSortingVectors) {
@@ -644,53 +653,72 @@ void Heap::visitTempSortVectors(HeapRootVisitor& heapRootVisitor)
                 heapRootVisitor.visit(&valueStringPair.first);
         }
     }
+
+    if (Options::logGC() == GCLogging::Verbose)
+        dataLog("Temp Sort Vectors:\n", m_slotVisitor);
+
     m_slotVisitor.donateAndDrain();
 }
 
 void Heap::visitArgumentBuffers(HeapRootVisitor& visitor)
 {
     GCPHASE(MarkingArgumentBuffers);
-    MARK_LOG_ROOT(m_slotVisitor, "Argument Buffers");
     if (!m_markListSet || !m_markListSet->size())
         return;
 
     MarkedArgumentBuffer::markLists(visitor, *m_markListSet);
+
+    if (Options::logGC() == GCLogging::Verbose)
+        dataLog("Argument Buffers:\n", m_slotVisitor);
+
     m_slotVisitor.donateAndDrain();
 }
 
 void Heap::visitException(HeapRootVisitor& visitor)
 {
     GCPHASE(MarkingException);
-    MARK_LOG_ROOT(m_slotVisitor, "Exceptions");
     if (!m_vm->exception())
         return;
 
     visitor.visit(m_vm->addressOfException());
+
+    if (Options::logGC() == GCLogging::Verbose)
+        dataLog("Exceptions:\n", m_slotVisitor);
+
     m_slotVisitor.donateAndDrain();
 }
 
 void Heap::visitStrongHandles(HeapRootVisitor& visitor)
 {
     GCPHASE(VisitStrongHandles);
-    MARK_LOG_ROOT(m_slotVisitor, "Strong Handles");
     m_handleSet.visitStrongHandles(visitor);
+
+    if (Options::logGC() == GCLogging::Verbose)
+        dataLog("Strong Handles:\n", m_slotVisitor);
+
     m_slotVisitor.donateAndDrain();
 }
 
 void Heap::visitHandleStack(HeapRootVisitor& visitor)
 {
     GCPHASE(VisitHandleStack);
-    MARK_LOG_ROOT(m_slotVisitor, "Handle Stack");
     m_handleStack.visit(visitor);
+
+    if (Options::logGC() == GCLogging::Verbose)
+        dataLog("Handle Stack:\n", m_slotVisitor);
+
     m_slotVisitor.donateAndDrain();
 }
 
 void Heap::traceCodeBlocksAndJITStubRoutines()
 {
     GCPHASE(TraceCodeBlocksAndJITStubRoutines);
-    MARK_LOG_ROOT(m_slotVisitor, "Trace Code Blocks and JIT Stub Routines");
     m_codeBlocks.traceMarked(m_slotVisitor);
     m_jitStubRoutines.traceMarkedStubRoutines(m_slotVisitor);
+
+    if (Options::logGC() == GCLogging::Verbose)
+        dataLog("Code Blocks and JIT Stub Routines:\n", m_slotVisitor);
+
     m_slotVisitor.donateAndDrain();
 }
 
@@ -705,12 +733,15 @@ void Heap::converge()
 void Heap::visitWeakHandles(HeapRootVisitor& visitor)
 {
     GCPHASE(VisitingLiveWeakHandles);
-    MARK_LOG_ROOT(m_slotVisitor, "Live Weak Handles");
     while (true) {
         m_objectSpace.visitWeakSets(visitor);
         harvestWeakReferences();
         if (m_slotVisitor.isEmpty())
             break;
+
+        if (Options::logGC() == GCLogging::Verbose)
+            dataLog("Live Weak Handles:\n", m_slotVisitor);
+
         {
             ParallelModeEnabler enabler(m_slotVisitor);
             m_slotVisitor.donateAndDrain();
@@ -734,17 +765,17 @@ void Heap::clearRememberedSet(Vector<const JSCell*>& rememberedSet)
 #endif
 }
 
-void Heap::updateObjectCounts()
+void Heap::updateObjectCounts(double gcStartTime)
 {
     GCCOUNTER(VisitedValueCount, m_slotVisitor.visitCount());
 
-#if ENABLE(OBJECT_MARK_LOGGING)
-    size_t visitCount = m_slotVisitor.visitCount();
+    if (Options::logGC() == GCLogging::Verbose) {
+        size_t visitCount = m_slotVisitor.visitCount();
 #if ENABLE(PARALLEL_GC)
-    visitCount += m_sharedData.childVisitCount();
+        visitCount += m_sharedData.childVisitCount();
 #endif
-    MARK_LOG_MESSAGE2("\nNumber of live Objects after full GC %lu, took %.6f secs\n", visitCount, WTF::monotonicallyIncreasingTime() - gcStartTime);
-#endif
+        dataLogF("\nNumber of live Objects after GC %lu, took %.6f secs\n", visitCount, WTF::monotonicallyIncreasingTime() - gcStartTime);
+    }
 
     if (m_operationInProgress == EdenCollection) {
         m_totalBytesVisited += m_slotVisitor.bytesVisited();
@@ -951,7 +982,7 @@ void Heap::collect(HeapOperation collectionType)
     stopAllocation();
     flushWriteBarrierBuffer();
 
-    markRoots();
+    markRoots(gcStartTime);
 
     JAVASCRIPTCORE_GC_MARKED();
 
@@ -1178,6 +1209,9 @@ void Heap::didFinishCollection(double gcStartTime)
 
     if (Options::showObjectStatistics())
         HeapStatistics::showObjectStatistics(this);
+
+    if (Options::logGC() == GCLogging::Verbose)
+        GCLogging::dumpObjectGraph(this);
 }
 
 void Heap::resumeCompilerThreads()

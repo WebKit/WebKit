@@ -49,24 +49,27 @@ void JSString::destroy(JSCell* cell)
     thisObject->JSString::~JSString();
 }
 
+void JSString::dumpToStream(const JSCell* cell, PrintStream& out)
+{
+    const JSString* thisObject = jsCast<const JSString*>(cell);
+    out.printf("<%p, %s, [%u], ", thisObject, thisObject->className(), thisObject->length()); 
+    if (thisObject->isRope())
+        out.printf("[rope]");
+    else {
+        WTF::StringImpl* ourImpl = thisObject->m_value.impl();
+        if (ourImpl->is8Bit())
+            out.printf("[8 %p]", ourImpl->characters8());
+        else
+            out.printf("[16 %p]", ourImpl->characters16());
+    }
+    out.printf(">");
+}
+
 void JSString::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSString* thisObject = jsCast<JSString*>(cell);
     Base::visitChildren(thisObject, visitor);
     
-    MARK_LOG_MESSAGE1("[%u]: ", thisObject->length());
-
-#if ENABLE(OBJECT_MARK_LOGGING)
-    if (!thisObject->isRope()) {
-        WTF::StringImpl* ourImpl = thisObject->m_value.impl();
-        if (ourImpl->is8Bit())
-            MARK_LOG_MESSAGE1("[8 %p]", ourImpl->characters8());
-        else
-            MARK_LOG_MESSAGE1("[16 %p]", ourImpl->characters16());
-    } else
-        MARK_LOG_MESSAGE0("[rope]: ");
-#endif
-
     if (thisObject->isRope())
         static_cast<JSRopeString*>(thisObject)->visitFibers(visitor);
     else {

@@ -104,7 +104,7 @@ public:
 
     TypeInfo::InlineTypeFlags inlineTypeFlags() const { return m_flags; }
 
-    const char* className();
+    const char* className() const;
 
     // Extracting the value.
     JS_EXPORT_PRIVATE bool getString(ExecState*, String&) const;
@@ -123,6 +123,8 @@ public:
     JS_EXPORT_PRIVATE double toNumber(ExecState*) const;
     JS_EXPORT_PRIVATE JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
+    void dump(PrintStream&) const;
+    JS_EXPORT_PRIVATE static void dumpToStream(const JSCell*, PrintStream&);
     static void visitChildren(JSCell*, SlotVisitor&);
     JS_EXPORT_PRIVATE static void copyBackingStore(JSCell*, CopyVisitor&, CopyToken);
 

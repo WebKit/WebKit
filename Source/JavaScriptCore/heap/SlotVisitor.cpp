@@ -373,4 +373,10 @@ void SlotVisitor::validate(JSCell*)
 }
 #endif
 
+void SlotVisitor::dump(PrintStream&) const
+{
+    for (const JSCell* cell : markStack())
+        dataLog(*cell, "\n");
+}
+
 } // namespace JSC

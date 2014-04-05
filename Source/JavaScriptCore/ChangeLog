@@ -1,3 +1,95 @@
+2014-04-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Enhanced GC logging
+        https://bugs.webkit.org/show_bug.cgi?id=131246
+
+        Reviewed by Geoff Garen.
+
+        Getting data on the state of the JSC Heap at runtime is currently in a sad state. 
+        The OBJECT_MARK_LOGGING macro enables some basic GC logging, but it requires a full 
+        recompile to turn it on. It would be nice if we could runtime enable our GC logging 
+        infrastructure while incurring minimal cost when it is disabled. 
+
+        It would also be nice to get a complete view of the Heap. Currently OBJECT_MARK_LOGGING 
+        provides us with the discovered roots along with parent-child relationships as objects 
+        are scanned. However, once an object is scanned it will never be declared as the child 
+        of another object during that collection. This gives us a tree-like view of the 
+        Heap (i.e. each scanned node only reports having a single parent), where the actual 
+        Heap can be an arbitrary graph.
+
+        This patch replaces OBJECT_MARK_LOGGING and gives us these nice to haves. First it enhances 
+        our logGC() runtime Option by changing it to be a tri-state value of None, Basic, or Verbose 
+        logging levels. None means no logging is done, Basic is what logGC() = true would have done 
+        prior to this patch, and Verbose logs all object relationships.
+
+        JSCell has new dump/dumpToStream methods, the latter of which is "virtual" to allow 
+        subclasses to override the default string representation that will be dumped. These 
+        methods allow JSCells to be dumped using the standard dataLog() calls similar to much of
+        the logging infrastructure in our compilers.
+
+        This patch also adds a GCLogging class that handles dumping the relationships between objects.
+        It does this by using the pre-existing visitChildren virtual methods to obtain the immediate
+        children of each live cell at the end of garbage collection.
+
+        This change meets our goal of being neutral on the benchmarks we track.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/GCLogging.cpp: Added.
+        (JSC::GCLogging::levelAsString):
+        (JSC::LoggingFunctor::LoggingFunctor):
+        (JSC::LoggingFunctor::operator()):
+        (JSC::LoggingFunctor::log):
+        (JSC::LoggingFunctor::reviveCells):
+        (JSC::LoggingFunctor::returnValue):
+        (JSC::GCLogging::dumpObjectGraph):
+        * heap/GCLogging.h: Added.
+        * heap/GCSegmentedArray.h:
+        (JSC::GCSegmentedArray::begin):
+        (JSC::GCSegmentedArray::end):
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::visitSmallStrings):
+        (JSC::Heap::visitConservativeRoots):
+        (JSC::Heap::visitCompilerWorklists):
+        (JSC::Heap::visitProtectedObjects):
+        (JSC::Heap::visitTempSortVectors):
+        (JSC::Heap::visitArgumentBuffers):
+        (JSC::Heap::visitException):
+        (JSC::Heap::visitStrongHandles):
+        (JSC::Heap::visitHandleStack):
+        (JSC::Heap::traceCodeBlocksAndJITStubRoutines):
+        (JSC::Heap::visitWeakHandles):
+        (JSC::Heap::updateObjectCounts):
+        (JSC::Heap::collect):
+        (JSC::Heap::didFinishCollection):
+        * heap/Heap.h:
+        * heap/MarkStack.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::dump):
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::markStack):
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::internalAppend):
+        * runtime/ClassInfo.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::dump):
+        (JSC::JSCell::dumpToStream):
+        (JSC::JSCell::className):
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::visitChildren):
+        * runtime/JSString.cpp:
+        (JSC::JSString::dumpToStream):
+        (JSC::JSString::visitChildren):
+        * runtime/JSString.h:
+        (JSC::JSString::length):
+        (JSC::JSRopeString::RopeBuilder::length):
+        * runtime/Options.cpp:
+        (JSC::parse):
+        (JSC::Options::setOption):
+        (JSC::Options::dumpOption):
+        * runtime/Options.h:
+
 2014-04-05  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove bogus ASSERT in -JSVirtualMachine scanObjectGraph

@@ -106,8 +106,6 @@ inline Structure* JSCell::structure(VM& vm) const
 
 inline void JSCell::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    MARK_LOG_PARENT(visitor, cell);
-
     Structure* structure = cell->structure(visitor.vm());
     visitor.appendUnbarrieredPointer(&structure);
 }

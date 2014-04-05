@@ -222,6 +222,7 @@ private:
     friend class DeferGCForAWhile;
     friend class DelayedReleaseScope;
     friend class GCAwareJITStubRoutine;
+    friend class GCLogging;
     friend class HandleSet;
     friend class JITStubRoutine;
     friend class LLIntOffsetsExtractor;
@@ -261,7 +262,7 @@ private:
     void flushWriteBarrierBuffer();
     void stopAllocation();
 
-    void markRoots();
+    void markRoots(double gcStartTime);
     void gatherStackRoots(ConservativeRoots&, void** dummy);
     void gatherJSStackRoots(ConservativeRoots&);
     void gatherScratchBufferRoots(ConservativeRoots&);
@@ -279,7 +280,7 @@ private:
     void converge();
     void visitWeakHandles(HeapRootVisitor&);
     void clearRememberedSet(Vector<const JSCell*>&);
-    void updateObjectCounts();
+    void updateObjectCounts(double gcStartTime);
     void resetVisitors();
 
     void reapWeakHandles();

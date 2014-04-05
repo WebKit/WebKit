@@ -116,8 +116,6 @@ ALWAYS_INLINE void SlotVisitor::internalAppend(void* from, JSCell* cell)
     cell->setMarked();
     m_bytesVisited += MarkedBlock::blockFor(cell)->cellSize();
         
-    MARK_LOG_CHILD(*this, cell);
-
     unconditionallyAppend(cell);
 }
 

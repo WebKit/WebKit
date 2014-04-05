@@ -1,3 +1,15 @@
+2014-04-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Enhanced GC logging
+        https://bugs.webkit.org/show_bug.cgi?id=131246
+
+        Reviewed by Geoff Garen.
+
+        Remove OBJECT_MARK_LOGGING
+
+        * wtf/FeatureDefines.h:
+        * wtf/Platform.h:
+
 2014-04-03  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
 
         [EFL] Enable CSS JIT again, it works fine after r166666.
