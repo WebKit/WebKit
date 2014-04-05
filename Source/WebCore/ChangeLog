@@ -1,3 +1,13 @@
+2014-04-05  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] Clean up the platform/graphics group
+        https://bugs.webkit.org/show_bug.cgi?id=131271
+
+        Reviewed by Eric Carlson.
+
+        * WebCore.xcodeproj/project.pbxproj: Created an opentype group and moved opentype file
+        references into it. Removed duplicate file references.
+
 2014-04-05  Andreas Kling  <akling@apple.com>
 
         Remove unused type casting helpers for HTMLUnknownElement...
