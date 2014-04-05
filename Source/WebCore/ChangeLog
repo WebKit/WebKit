@@ -1,3 +1,11 @@
+2014-04-05  Andreas Kling  <akling@apple.com>
+
+        Remove unused type casting helpers for HTMLUnknownElement...
+
+        ...to fix the debug build.
+
+        * html/HTMLUnknownElement.h:
+
 2014-04-05  Dirk Schulze  <krit@webkit.org>
 
         Canvas strokeText and fillText with SourceIn, DestinationIn, SourceOut, DestinationAtop and Copy have errors

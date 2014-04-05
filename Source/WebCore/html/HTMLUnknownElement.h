@@ -48,8 +48,6 @@ private:
     }
 };
 
-NODE_TYPE_CASTS(HTMLUnknownElement)
-
 } // namespace
 
 #endif
