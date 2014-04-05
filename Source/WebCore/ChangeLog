@@ -1,3 +1,21 @@
+2014-04-05  Jeongeun Kim  <je_julie.kim@samsung.com>
+
+        bad values from HTMLImageElement x and y attributes (CSSOM-View)
+        https://bugs.webkit.org/show_bug.cgi?id=130308
+        
+        Reviewed by Simon Fraser.
+
+        According to CSSOM-View, interface HTMLImageElement,
+        The x attribute must return the x-coordinate.
+        If style is not updated when x() is called, it can’t return anything.
+        Style and layout should be done before getting value for x() and y(). 
+
+        Test: cssom/cssom-view-img-attributes-001.html
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::x):
+        (WebCore::HTMLImageElement::y):
+
 2014-04-05  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Remove CSSBoxType member from BasicShape and CSSBasicShape

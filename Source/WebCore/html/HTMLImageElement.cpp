@@ -379,6 +379,7 @@ void HTMLImageElement::setWidth(int value)
 
 int HTMLImageElement::x() const
 {
+    document().updateLayoutIgnorePendingStylesheets();
     auto renderer = this->renderer();
     if (!renderer)
         return 0;
@@ -389,6 +390,7 @@ int HTMLImageElement::x() const
 
 int HTMLImageElement::y() const
 {
+    document().updateLayoutIgnorePendingStylesheets();
     auto renderer = this->renderer();
     if (!renderer)
         return 0;
