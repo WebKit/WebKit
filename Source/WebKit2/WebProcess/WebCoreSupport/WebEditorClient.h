@@ -167,6 +167,10 @@ private:
 
     virtual bool supportsGlobalSelection() override;
 
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+    virtual void selectedTelephoneNumberRangesChanged(const Vector<RefPtr<WebCore::Range>>&) override;
+#endif
+
     WebPage* m_page;
 };
 

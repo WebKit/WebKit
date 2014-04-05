@@ -1,3 +1,29 @@
+2014-04-04  Brady Eidson  <beidson@apple.com>
+
+        Show DataDetector UI on scanned phone numbers.
+        <rdar://problem/16379588> and https://bugs.webkit.org/show_bug.cgi?id=131247
+
+        Reviewed by Tim Horton.
+
+        Gather the ranges of the scanned telephone numbers and send them up to WK2:
+        * editing/Editor.cpp:
+        (WebCore::Editor::respondToChangedSelection):
+        (WebCore::Editor::scanSelectionForTelephoneNumbers):
+        (WebCore::Editor::scanRangeForTelephoneNumbers):
+        * editing/Editor.h:
+
+        Add client method to receive scanned telephone number ranges:
+        * page/EditorClient.h:
+        (WebCore::EditorClient::selectedTelephoneNumberRangesChanged):
+
+        Remove unneeded placeholder UI:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+        (WebCore::InlineTextBox::computeRectForReplacementMarker): Deleted.
+        (WebCore::InlineTextBox::paintCompositionUnderline): Deleted.
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::expansionBehavior): Deleted.
+
 2014-04-04  James Craig  <jcraig@apple.com>
 
         AX: supportsARIAExpanded should always return true for a few roles: combobox, disclosure.

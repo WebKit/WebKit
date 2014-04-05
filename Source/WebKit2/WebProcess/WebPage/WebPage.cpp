@@ -53,6 +53,7 @@
 #include "SessionState.h"
 #include "SessionTracker.h"
 #include "ShareableBitmap.h"
+#include "TelephoneNumberOverlayController.h"
 #include "VisitedLinkTableController.h"
 #include "WKSharedAPICast.h"
 #include "WebAlternativeTextClient.h"
@@ -4544,5 +4545,14 @@ bool WebPage::synchronousMessagesShouldSpinRunLoop()
     return false;
 }
     
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+TelephoneNumberOverlayController& WebPage::telephoneNumberOverlayController()
+{
+    if (!m_telephoneNumberOverlayController)
+        m_telephoneNumberOverlayController = TelephoneNumberOverlayController::create(this);
+
+    return *m_telephoneNumberOverlayController;
+}
+#endif
 
 } // namespace WebKit

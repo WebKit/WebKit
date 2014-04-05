@@ -1248,33 +1248,6 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, const FloatPoint& 
     }
 }
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
-void InlineTextBox::paintTelephoneNumberMarker(GraphicsContext* ctx, const FloatPoint& boxOrigin, DocumentMarker* marker, const RenderStyle& style, const Font& font)
-{
-    // FIXME: This is placeholder UI for development of the feature.
-
-    int startPosition = std::max<int>(marker->startOffset() - m_start, 0);
-    int endPosition = std::min<int>(marker->endOffset() - m_start, m_len);
-
-    if (m_truncation != cNoTruncation)
-        endPosition = std::min<int>(endPosition, m_truncation);
-
-    int deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
-    int selHeight = selectionHeight();
-    FloatPoint startPoint(boxOrigin.x(), boxOrigin.y() - deltaY);
-    TextRun run = constructTextRun(style, font);
-
-    IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, startPoint, selHeight, startPosition, endPosition));
-
-    computeRectForReplacementMarker(marker, style, font);
-
-    Path outline;
-    outline.addRoundedRect(markerRect, FloatSize(4, 4));
-    ctx->setFillColor(Color(150, 150, 150, 255), ColorSpaceDeviceRGB);
-    ctx->fillPath(outline);
-}
-#endif // ENABLE(TELEPHONE_NUMBER_DETECTION)
-
 void InlineTextBox::computeRectForReplacementMarker(DocumentMarker* marker, const RenderStyle& style, const Font& font)
 {
     // Replacement markers are not actually drawn, but their rects need to be computed for hit testing.
@@ -1363,7 +1336,6 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const FloatPoint& 
                 break;
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
             case DocumentMarker::TelephoneNumber:
-                paintTelephoneNumberMarker(pt, boxOrigin, marker, style, font);
                 break;
 #endif
             default:

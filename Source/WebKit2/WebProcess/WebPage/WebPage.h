@@ -178,6 +178,10 @@ class RemoteLayerTreeTransaction;
 class WebTouchEvent;
 #endif
 
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+class TelephoneNumberOverlayController;
+#endif
+
 typedef Vector<RefPtr<PageOverlay>> PageOverlayList;
 
 class WebPage : public API::ObjectImpl<API::Object::Type::BundlePage>, public IPC::MessageReceiver, public IPC::MessageSender {
@@ -770,6 +774,10 @@ public:
     // While this is not ideal, it does not have to be applied to every platform at the moment.
     static bool synchronousMessagesShouldSpinRunLoop();
     
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+    TelephoneNumberOverlayController& telephoneNumberOverlayController();
+#endif
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -1171,6 +1179,10 @@ private:
 
 #if ENABLE(WEBGL)
     WebCore::WebGLLoadPolicy m_systemWebGLPolicy;
+#endif
+
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+    RefPtr<TelephoneNumberOverlayController> m_telephoneNumberOverlayController;
 #endif
 };
 

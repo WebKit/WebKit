@@ -1,3 +1,49 @@
+2014-04-04  Brady Eidson  <beidson@apple.com>
+
+        Show DataDetector UI on scanned phone numbers.
+        <rdar://problem/16379588> and https://bugs.webkit.org/show_bug.cgi?id=131247
+
+        Reviewed by Tim Horton.
+
+        Add a new PageOverlay for telephone number UI, handle drawing the UI, and
+        handle mouse clicks on the button in that UI.
+
+        Even though clicks are detected, they aren’t acted upon yet.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::selectedTelephoneNumberRangesChanged): Pass ranges to
+          the TelephoneNumberController.
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+
+        This controller handles installing/removing the PageOverlay, drawing the UI elements,
+        and handling mouse events while any of the UI elements are shown.
+        There’s also a clumsy attempt to keep platform-specific parts separated out.
+        * WebProcess/WebPage/TelephoneNumberOverlayController.cpp: Added.
+        (WebKit::TelephoneNumberOverlayController::TelephoneNumberOverlayController):
+        (WebKit::TelephoneNumberOverlayController::createOverlayIfNeeded):
+        (WebKit::TelephoneNumberOverlayController::destroyOverlay):
+        (WebKit::TelephoneNumberOverlayController::pageOverlayDestroyed):
+        (WebKit::TelephoneNumberOverlayController::willMoveToWebPage):
+        (WebKit::TelephoneNumberOverlayController::didMoveToWebPage):
+        (WebKit::TelephoneNumberOverlayController::rectsForDrawing):
+        (WebKit::TelephoneNumberOverlayController::selectedTelephoneNumberRangesChanged):
+
+        * WebProcess/WebPage/TelephoneNumberOverlayController.h: Added.
+        (WebKit::TelephoneNumberOverlayController::create):
+
+        * WebProcess/WebPage/mac/TelephoneNumberOverlayControllerMac.mm: Added.
+        (WebKit::TelephoneNumberOverlayController::drawRect):
+        (WebKit::TelephoneNumberOverlayController::handleTelephoneClick):
+        (WebKit::TelephoneNumberOverlayController::mouseEvent):
+        (WebKit::TelephoneNumberOverlayController::clearMouseDownInformation):
+        (WebKit::TelephoneNumberOverlayController::clearHighlights):
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::telephoneNumberOverlayController):
+        * WebProcess/WebPage/WebPage.h:
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-04-04  Martin Hock  <mhock@apple.com>
 
         Include Session ID in WebPageCreationParameters.

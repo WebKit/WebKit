@@ -852,6 +852,8 @@
 		518E8F0B16B2093700E91429 /* DownloadManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518E8F0216B2093700E91429 /* DownloadManager.cpp */; };
 		518E8F0C16B2093700E91429 /* DownloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 518E8F0316B2093700E91429 /* DownloadManager.h */; };
 		518E8F0D16B2093700E91429 /* DownloadMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 518E8F0516B2093700E91429 /* DownloadMac.mm */; };
+		519EF58E18EF770D0003B7F4 /* TelephoneNumberOverlayControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 519EF58D18EF770D0003B7F4 /* TelephoneNumberOverlayControllerMac.mm */; };
+		519EF59218EF80CE0003B7F4 /* TelephoneNumberOverlayController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 519EF58F18EF77210003B7F4 /* TelephoneNumberOverlayController.cpp */; };
 		51A4D5A916CAC4FF000E615E /* StatisticsRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A4D5A816CAC4FF000E615E /* StatisticsRequest.cpp */; };
 		51A555F5128C6C47009ABCEC /* WKContextMenuItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A555F3128C6C47009ABCEC /* WKContextMenuItem.cpp */; };
 		51A555F6128C6C47009ABCEC /* WKContextMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A555F4128C6C47009ABCEC /* WKContextMenuItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2673,6 +2675,9 @@
 		518E8F0216B2093700E91429 /* DownloadManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DownloadManager.cpp; path = Downloads/DownloadManager.cpp; sourceTree = "<group>"; };
 		518E8F0316B2093700E91429 /* DownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DownloadManager.h; path = Downloads/DownloadManager.h; sourceTree = "<group>"; };
 		518E8F0516B2093700E91429 /* DownloadMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DownloadMac.mm; sourceTree = "<group>"; };
+		519EF58D18EF770D0003B7F4 /* TelephoneNumberOverlayControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TelephoneNumberOverlayControllerMac.mm; sourceTree = "<group>"; };
+		519EF58F18EF77210003B7F4 /* TelephoneNumberOverlayController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TelephoneNumberOverlayController.cpp; sourceTree = "<group>"; };
+		519EF59018EF77210003B7F4 /* TelephoneNumberOverlayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TelephoneNumberOverlayController.h; sourceTree = "<group>"; };
 		51A4D5A816CAC4FF000E615E /* StatisticsRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StatisticsRequest.cpp; sourceTree = "<group>"; };
 		51A555F3128C6C47009ABCEC /* WKContextMenuItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKContextMenuItem.cpp; sourceTree = "<group>"; };
 		51A555F4128C6C47009ABCEC /* WKContextMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextMenuItem.h; sourceTree = "<group>"; };
@@ -5317,6 +5322,8 @@
 				7CF47FF917275C57008ACB91 /* PageBanner.h */,
 				1A90C23612650717003E44D4 /* PageOverlay.cpp */,
 				1A90C23512650717003E44D4 /* PageOverlay.h */,
+				519EF58F18EF77210003B7F4 /* TelephoneNumberOverlayController.cpp */,
+				519EF59018EF77210003B7F4 /* TelephoneNumberOverlayController.h */,
 				2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */,
 				2D819B9A186275B3001F03D1 /* ViewGestureGeometryCollector.h */,
 				2D819B9B186275B3001F03D1 /* ViewGestureGeometryCollector.messages.in */,
@@ -6066,6 +6073,7 @@
 				1AB16AE7164B3A8800290D62 /* RemoteLayerTreeContext.mm */,
 				1AB16ADC1648598400290D62 /* RemoteLayerTreeDrawingArea.h */,
 				1AB16ADB1648598400290D62 /* RemoteLayerTreeDrawingArea.mm */,
+				519EF58D18EF770D0003B7F4 /* TelephoneNumberOverlayControllerMac.mm */,
 				1AAF263714687C39004A1E8A /* TiledCoreAnimationDrawingArea.h */,
 				1AAF263614687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm */,
 				1C8E2DAD1278C5B200BC7BD0 /* WebInspectorMac.mm */,
@@ -8500,9 +8508,11 @@
 				33D3A3BA1339606200709BE4 /* WebMediaCacheManagerProxy.cpp in Sources */,
 				33D3A3CA1339617900709BE4 /* WebMediaCacheManagerProxyMessageReceiver.cpp in Sources */,
 				0FCB4E4D18BBE044000FCFC9 /* WKContentView.mm in Sources */,
+				519EF59218EF80CE0003B7F4 /* TelephoneNumberOverlayController.cpp in Sources */,
 				909854EC12BC4E17000AD080 /* WebMemorySampler.cpp in Sources */,
 				909854EE12BC4E18000AD080 /* WebMemorySampler.mac.mm in Sources */,
 				C0337DB0127A28D0008FF4F4 /* WebMouseEvent.cpp in Sources */,
+				519EF58E18EF770D0003B7F4 /* TelephoneNumberOverlayControllerMac.mm in Sources */,
 				BCF69FA31176D01400471A52 /* APINavigationData.cpp in Sources */,
 				31A2EC48148997C200810D71 /* WebNotification.cpp in Sources */,
 				31099973146C75A20029DEB9 /* WebNotificationClient.cpp in Sources */,

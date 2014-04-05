@@ -178,6 +178,10 @@ public:
     virtual void willSetInputMethodState() = 0;
     virtual void setInputMethodState(bool enabled) = 0;
 
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+    virtual void selectedTelephoneNumberRangesChanged(const Vector<RefPtr<Range>>&) { }
+#endif
+
     // Support for global selections, used on platforms like the X Window System that treat
     // selection as a type of clipboard.
     virtual bool supportsGlobalSelection() { return false; }

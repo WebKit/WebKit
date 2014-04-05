@@ -3318,7 +3318,10 @@ void Editor::respondToChangedSelection(const VisibleSelection&, FrameSelection::
         client()->respondToChangedSelection(&m_frame);
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
-    scanSelectionForTelephoneNumbers();
+    Vector<RefPtr<Range>> markedRanges;
+    scanSelectionForTelephoneNumbers(markedRanges);
+    if (client())
+        client()->selectedTelephoneNumberRangesChanged(markedRanges);
 #endif
 
     setStartNewKillRingSequence(true);
@@ -3334,7 +3337,7 @@ void Editor::respondToChangedSelection(const VisibleSelection&, FrameSelection::
 }
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
-void Editor::scanSelectionForTelephoneNumbers()
+void Editor::scanSelectionForTelephoneNumbers(Vector<RefPtr<Range>>& markedRanges)
 {
     if (!TelephoneNumberDetector::isSupported())
         return;
@@ -3350,16 +3353,16 @@ void Editor::scanSelectionForTelephoneNumbers()
 
     // FIXME: This won't work if a phone number spans multiple chunks of text from the perspective of the TextIterator
     // (By a style change, image, line break, etc.)
-    // On idea to handle this would be a model like text search that uses a rotating window.
+    // One idea to handle this would be a model like text search that uses a rotating window.
     for (TextIterator textChunk(selectedRange.get()); !textChunk.atEnd(); textChunk.advance()) {
         // TextIterator is supposed to never returns a Range that spans multiple Nodes.
         ASSERT(textChunk.range()->startContainer() == textChunk.range()->endContainer());
 
-        scanRangeForTelephoneNumbers(*textChunk.range(), textChunk.text());
+        scanRangeForTelephoneNumbers(*textChunk.range(), textChunk.text(), markedRanges);
     }
 }
 
-void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& stringView)
+void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& stringView, Vector<RefPtr<Range>>& markedRanges)
 {
     // relativeStartPosition and relativeEndPosition are the endpoints of the phone number range,
     // relative to the scannerPosition
@@ -3383,7 +3386,11 @@ void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& string
         if (!range.startContainer()->isTextNode())
             continue;
 
-        range.ownerDocument().markers().addMarkerToNode(range.startContainer(), range.startOffset() + scannerPosition + relativeStartPosition, relativeEndPosition - relativeStartPosition + 1, DocumentMarker::TelephoneNumber);
+        unsigned startOffset = range.startOffset() + scannerPosition + relativeStartPosition;
+        unsigned length = relativeEndPosition - relativeStartPosition + 1;
+
+        markedRanges.append(Range::create(range.ownerDocument(), range.startContainer(), startOffset, range.startContainer(), startOffset + length));
+        range.ownerDocument().markers().addMarkerToNode(range.startContainer(), startOffset, length, DocumentMarker::TelephoneNumber);
 
         scannerPosition += relativeEndPosition + 1;
     }

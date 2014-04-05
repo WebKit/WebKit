@@ -474,8 +474,8 @@ private:
     bool unifiedTextCheckerEnabled() const;
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
-    void scanSelectionForTelephoneNumbers();
-    void scanRangeForTelephoneNumbers(Range&, const StringView&);
+    void scanSelectionForTelephoneNumbers(Vector<RefPtr<Range>>& markedRanges);
+    void scanRangeForTelephoneNumbers(Range&, const StringView&, Vector<RefPtr<Range>>& markedRanges);
     void clearDataDetectedTelephoneNumbers();
 #endif
 
