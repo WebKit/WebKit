@@ -1960,7 +1960,15 @@ bool AccessibilityObject::supportsARIAExpanded() const
 {
     // Undefined values should not result in this attribute being exposed to ATs according to ARIA.
     const AtomicString& expanded = getAttribute(aria_expandedAttr);
-    return equalIgnoringCase(expanded, "true") || equalIgnoringCase(expanded, "false");
+    if (equalIgnoringCase(expanded, "true") || equalIgnoringCase(expanded, "false"))
+        return true;
+    switch (roleValue()) {
+    case ComboBoxRole:
+    case DisclosureTriangleRole:
+        return true;
+    default:
+        return false;
+    }
 }
     
 bool AccessibilityObject::isExpanded() const

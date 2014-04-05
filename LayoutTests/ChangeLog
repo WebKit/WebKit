@@ -1,3 +1,13 @@
+2014-04-04  James Craig  <jcraig@apple.com>
+
+        AX: supportsARIAExpanded should always return true for a few roles: combobox, disclosure.
+        https://bugs.webkit.org/show_bug.cgi?id=129787
+
+        Reviewed by Chris Fleizach.
+
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode.html:
+
 2014-04-04  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] polygon y-value calc() args serialize incorrectly
