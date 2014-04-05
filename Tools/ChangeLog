@@ -1,3 +1,11 @@
+2014-04-05  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r166529): Fix build after renaming TileCache to LegacyTileCache
+        <http://webkit.org/b/130986>
+
+        * Scripts/check-for-inappropriate-objc-class-names: Add 'Legacy'
+        prefix to TileCache class names in exception list.
+
 2014-04-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] kill-old-processes should kill dbus-daemon processes

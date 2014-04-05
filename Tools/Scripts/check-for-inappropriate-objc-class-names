@@ -85,9 +85,9 @@ if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePat
     my %exceptions = (
         # WebCore
         "WKQuadObject" => 1,
-        "TileCacheTombstone" => 1,
-        "TileHostLayer" => 1,
-        "TileLayer" => 1,
+        "LegacyTileCacheTombstone" => 1,
+        "LegacyTileHostLayer" => 1,
+        "LegacyTileLayer" => 1,
         "WAKResponder" => 1,
         "NSCursor" => 1,
         "WAKClipView" => 1,
