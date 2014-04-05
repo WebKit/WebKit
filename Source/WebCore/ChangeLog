@@ -1,3 +1,21 @@
+2014-04-05  Dirk Schulze  <krit@webkit.org>
+
+        Canvas stroke and strokeRect with SourceIn, DestinationIn, SourceOut, DestinationAtop and Copy have errors
+        https://bugs.webkit.org/show_bug.cgi?id=66762
+
+        Reviewed by Andreas Kling.
+
+        For fill operations we create a new ImageBuffer to ensure that the results are composited
+        correctly according to the Canvas spec. This patch creates a new transparency layer
+        for stroking on certain compositing operators to archive the same. This makes WebKit's
+        behavior interoperable with Firefox and IE as well. 
+
+        Test: fast/fast/canvas/canvas-composite-stroke-alpha.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::strokeInternal):
+        (WebCore::CanvasRenderingContext2D::strokeRect):
+
 2014-04-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use preallocated stack reference to store adjacentBacktrackingStart

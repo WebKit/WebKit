@@ -970,11 +970,21 @@ void CanvasRenderingContext2D::strokeInternal(const Path& path)
         return;
 
     if (!path.isEmpty()) {
-        FloatRect dirtyRect = path.fastBoundingRect();
-        inflateStrokeRect(dirtyRect);
-
-        c->strokePath(path);
-        didDraw(dirtyRect);
+        if (isFullCanvasCompositeMode(state().m_globalComposite)) {
+            c->beginTransparencyLayer(1);
+            c->strokePath(path);
+            c->endTransparencyLayer();
+            didDrawEntireCanvas();
+        } else if (state().m_globalComposite == CompositeCopy) {
+            clearCanvas();
+            c->strokePath(path);
+            didDrawEntireCanvas();
+        } else {
+            FloatRect dirtyRect = path.fastBoundingRect();
+            inflateStrokeRect(dirtyRect);
+            c->strokePath(path);
+            didDraw(dirtyRect);
+        }
     }
 }
 
@@ -1147,12 +1157,21 @@ void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float h
         return;
 
     FloatRect rect(x, y, width, height);
-
-    FloatRect boundingRect = rect;
-    boundingRect.inflate(state().m_lineWidth / 2);
-
-    c->strokeRect(rect, state().m_lineWidth);
-    didDraw(boundingRect);
+    if (isFullCanvasCompositeMode(state().m_globalComposite)) {
+        c->beginTransparencyLayer(1);
+        c->strokeRect(rect, state().m_lineWidth);
+        c->endTransparencyLayer();
+        didDrawEntireCanvas();
+    } else if (state().m_globalComposite == CompositeCopy) {
+        clearCanvas();
+        c->strokeRect(rect, state().m_lineWidth);
+        didDrawEntireCanvas();
+    } else {
+        FloatRect boundingRect = rect;
+        boundingRect.inflate(state().m_lineWidth / 2);
+        c->strokeRect(rect, state().m_lineWidth);
+        didDraw(boundingRect);
+    }
 }
 
 void CanvasRenderingContext2D::setShadow(float width, float height, float blur)
