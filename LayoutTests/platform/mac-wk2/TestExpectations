@@ -422,9 +422,6 @@ webkit.org/b/123431 [ Mavericks ] http/tests/local/link-stylesheet-load-order.ht
 # passes but has different logging
 [ Mavericks ] http/tests/security/xss-DENIED-xsl-document-redirect.xml [ Failure ]
 
-# <rdar://problem/15171108>
-[ Mavericks ] fast/forms/form-associated-element-removal.html [ Crash Pass ]
-
 # test results in DRT don't match in browser behavior, test seems broken
 fast/dom/Window/mozilla-focus-blur.html [ Failure ]
 

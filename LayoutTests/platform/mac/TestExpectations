@@ -1243,8 +1243,6 @@ webkit.org/b/124373 [ MountainLion Release ] http/tests/security/frameNavigation
 
 webkit.org/b/124424 webgl/1.0.2/conformance/ogles/GL/tan/tan_001_to_006.html [ Pass Failure ]
 
-webkit.org/b/124593 fast/forms/form-associated-element-crash.html [ Pass Timeout ]
-
 webkit.org/b/121646 webaudio/delaynode-max-default-delay.html [ Pass Failure ]
 
 # These fast/forms/select tests open a pop-up menu (visible on screen even when using run-webkit-tests), and get stuck in its nested event loop.

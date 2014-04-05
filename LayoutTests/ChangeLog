@@ -1,3 +1,20 @@
+2014-04-05  Alexey Proskuryakov  <ap@apple.com>
+
+        WebProcess freezes after fast/forms/form-associated-element-crash3.html test
+        https://bugs.webkit.org/show_bug.cgi?id=122130
+
+        fast/forms/form-associated-element-crash.html often times out on Mavericks WK1
+        https://bugs.webkit.org/show_bug.cgi?id=124593
+
+        With underlying bug having been fixed in OS X 10.9.2, removing expectations
+        for form-associated-element tests that were affected by it.
+
+        I'm not sure if Mountain Lion was affected, let's see if tests start to fail there.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2014-04-04  James Craig  <jcraig@apple.com>
 
         AX: supportsARIAExpanded should always return true for a few roles: combobox, disclosure.

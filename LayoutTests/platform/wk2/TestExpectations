@@ -536,9 +536,6 @@ plugins/destroy-on-setwindow.html
 # Sporadically fails in WebKit2 for unknown reasons.
 fast/forms/input-align.html
 
-# WebProcess sometimes terminates when running these tests
-fast/forms/form-associated-element-crash.html
-
 # New history tests added in r76205 fail on WebKit2 (perhaps the change
 # as coded doesn't affect both processes for WebKit2)
 fast/history/history-replace-updates-current-item.html
@@ -554,9 +551,6 @@ userscripts/window-onerror-for-isolated-world-2.html
 transitions/color-transition-all.html
 transitions/min-max-width-height-transitions.html
 transitions/text-indent-transition.html
-
-# This tests causes the next test to crash the WebProcess (probably a reset timeout)
-fast/forms/form-associated-element-crash2.html
 
 # These storage tests fail in WebKit2 on the bot, but not running locally
 fast/workers/storage/executesql-accepts-only-one-statement-sync.html
