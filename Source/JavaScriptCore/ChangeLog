@@ -1,3 +1,16 @@
+2014-04-04  Matthew Mirman  <mmirman@apple.com>
+
+        WIP for inlining C++.  Added a build target to produce llvm ir.
+        https://bugs.webkit.org/show_bug.cgi?id=130523
+
+        Reviewed by Filip Pizlo.
+
+        The llvm ir gets placed JavaScriptCoreRuntimeToLLVMir.build with the extension .o
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * build_index.py: Added.
+        * Configurations/CompileRuntimeToLLVMir.xcconfig: Added.
+
 2014-04-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Log JS Exceptions to System Console if JavaScriptCoreOutputConsoleMessagesToSystemConsole enabled
