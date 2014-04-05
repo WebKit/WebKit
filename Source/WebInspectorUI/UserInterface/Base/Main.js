@@ -666,7 +666,7 @@ WebInspector.toggleConsoleView = function()
         if (this.contentBrowser.canGoBack())
             this.contentBrowser.goBack();
         else
-            this.resourceSidebarPanel.showMainFrameSourceCode();
+            this.resourceSidebarPanel.showDefaultContentView();
 
         if (this._wasShowingNavigationSidebarBeforeFullHeightConsole)
             this.navigationSidebar.collapsed = false;

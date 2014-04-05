@@ -102,7 +102,14 @@ WebInspector.ResourceSidebarPanel.prototype = {
 
     showDefaultContentView: function()
     {
-        this.showMainFrameDOMTree();
+        if (WebInspector.frameResourceManager.mainFrame) {
+            this.showMainFrameSourceCode();
+            return;
+        }
+
+        var firstTreeElement = this._resourcesContentTreeOutline.children[0];
+        if (firstTreeElement)
+            firstTreeElement.revealAndSelect();
     },
 
     get contentTreeOutlineToAutoPrune()

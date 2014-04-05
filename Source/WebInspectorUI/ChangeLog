@@ -1,3 +1,22 @@
+2014-04-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: JSContext inspection - TypeError: null is not an object (evaluating 'contentView.showSourceCode')
+        https://bugs.webkit.org/show_bug.cgi?id=129857
+
+        Reviewed by Timothy Hatcher.
+
+        When inspecting a JSContext, there is no main frame resource, so
+        attempting to show it was resulting in a runtime error.
+        Instead, check to see if there is a main frame resource, fallback
+        to selecting the first tree element.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.toggleConsoleView):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype.showDefaultContentView):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype.showDefaultContentView):
+
 2014-04-04  Ion Rosca  <rosca@adobe.com>
 
         [CSS Blending] Add compositing reason for isolation.

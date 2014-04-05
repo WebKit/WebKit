@@ -131,7 +131,7 @@ WebInspector.DebuggerSidebarPanel.prototype = {
 
     showDefaultContentView: function()
     {
-        WebInspector.resourceSidebarPanel.showMainFrameSourceCode();
+        WebInspector.resourceSidebarPanel.showDefaultContentView();
     },
 
     treeElementForRepresentedObject: function(representedObject)
