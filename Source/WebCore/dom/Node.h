@@ -611,6 +611,8 @@ protected:
 
         SelfOrAncestorHasDirAutoFlag = 1 << 29,
 
+        IsHTMLUnknownElementFlag = 1 << 30,
+
         DefaultNodeFlags = IsParsingChildrenFinishedFlag
     };
 
@@ -634,6 +636,7 @@ protected:
         CreateInsertionPoint = CreateHTMLElement | NeedsNodeRenderingTraversalSlowPathFlag,
         CreateEditingText = CreateText | IsEditingTextFlag,
         CreateMathMLElement = CreateStyledElement | IsMathMLFlag,
+        CreateHTMLUnknownElement = CreateHTMLElement | IsHTMLUnknownElementFlag,
     };
     Node(Document&, ConstructionType);
 

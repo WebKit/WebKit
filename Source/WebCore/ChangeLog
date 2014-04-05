@@ -1,3 +1,25 @@
+2014-04-05  Andreas Kling  <akling@apple.com>
+
+        Devirtualize isHTMLUnknownElement().
+        <https://webkit.org/b/131269>
+
+        We were hitting isHTMLUnknownElement() pretty hard when marking
+        out-of-document Nodes. (The check is part of isHTMLAudioElement()
+        which is called by JSNodeOwner::isReachableFromOpaqueRoots().)
+
+        This patch uses a Node flag for the unknown element instead.
+        I'm also adding HTMLUnknownElement.{h,idl} to the Xcode project
+        since they were suspiciously missing.
+
+        Reviewed by Benjamin Poulain.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Node.h:
+        * html/HTMLElement.h:
+        (WebCore::HTMLElement::isHTMLUnknownElement):
+        * html/HTMLUnknownElement.h:
+        (WebCore::toHTMLUnknownElement): Deleted.
+
 2014-04-05  Dirk Schulze  <krit@webkit.org>
 
         Canvas stroke and strokeRect with SourceIn, DestinationIn, SourceOut, DestinationAtop and Copy have errors

@@ -41,20 +41,14 @@ public:
         return adoptRef(new HTMLUnknownElement(tagName, document));
     }
 
-    virtual bool isHTMLUnknownElement() const override { return true; }
-
 private:
     HTMLUnknownElement(const QualifiedName& tagName, Document& document)
-        : HTMLElement(tagName, document)
+        : HTMLElement(tagName, document, CreateHTMLUnknownElement)
     {
     }
 };
 
-inline HTMLUnknownElement* toHTMLUnknownElement(HTMLElement* element)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!element || element->isHTMLUnknownElement());
-    return static_cast<HTMLUnknownElement*>(element);
-}
+NODE_TYPE_CASTS(HTMLUnknownElement)
 
 } // namespace
 
