@@ -1139,6 +1139,19 @@ void testObjectiveCAPI()
 
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
+        TestObject *testObject = [TestObject testObject];
+        context[@"testObject"] = testObject;
+        JSManagedValue *managedValue = nil;
+        @autoreleasepool {
+            JSValue *object = [JSValue valueWithNewObjectInContext:context];
+            managedValue = [JSManagedValue managedValueWithValue:object andOwner:testObject];
+            [context.virtualMachine addManagedReference:managedValue withOwner:testObject];
+        }
+        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
         context[@"MyClass"] = ^{
             JSValue *newThis = [JSValue valueWithNewObjectInContext:[JSContext currentContext]];
             JSGlobalContextRef contextRef = [[JSContext currentContext] JSGlobalContextRef];

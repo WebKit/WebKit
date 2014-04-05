@@ -255,10 +255,8 @@ void scanExternalObjectGraph(JSC::VM& vm, JSC::SlotVisitor& visitor, void* root)
             NSMapTable *ownedObjects = [externalObjectGraph objectForKey:static_cast<id>(nextRoot)];
             id ownedObject;
             NSEnumerator *enumerator = [ownedObjects keyEnumerator];
-            while ((ownedObject = [enumerator nextObject])) {
-                ASSERT(reinterpret_cast<size_t>(NSMapGet(ownedObjects, ownedObject)) == 1);
+            while ((ownedObject = [enumerator nextObject]))
                 stack.append(static_cast<void*>(ownedObject));
-            }
         }
     }
 }

@@ -1,3 +1,14 @@
+2014-04-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove bogus ASSERT in -JSVirtualMachine scanObjectGraph
+        https://bugs.webkit.org/show_bug.cgi?id=131251
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSVirtualMachine.mm:
+        (scanExternalObjectGraph):
+        * API/tests/testapi.mm:
+
 2014-04-03  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: hook up probe samples to TimelineAgent's records
