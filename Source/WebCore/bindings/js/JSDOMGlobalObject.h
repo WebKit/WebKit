@@ -65,6 +65,7 @@ namespace WebCore {
         static void visitChildren(JSC::JSCell*, JSC::SlotVisitor&);
 
         DOMWrapperWorld& world() { return *m_world; }
+        bool worldIsNormal() const { return m_worldIsNormal; }
 
     protected:
         static WEBKIT_EXPORTDATA const JSC::ClassInfo s_info;
@@ -82,7 +83,8 @@ namespace WebCore {
         JSDOMConstructorMap m_constructors;
 
         Event* m_currentEvent;
-        RefPtr<DOMWrapperWorld> m_world;
+        const RefPtr<DOMWrapperWorld> m_world;
+        bool m_worldIsNormal;
     };
 
     template<class ConstructorClass>

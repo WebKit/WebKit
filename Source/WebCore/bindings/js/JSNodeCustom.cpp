@@ -261,6 +261,12 @@ JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Node*
     return createWrapperInline(exec, globalObject, node);
 }
 
+JSC::JSObject* getOutOfLineCachedWrapper(JSDOMGlobalObject* globalObject, Node* node)
+{
+    ASSERT(!globalObject->world().isNormal());
+    return globalObject->world().m_wrappers.get(node);
+}
+
 void willCreatePossiblyOrphanedTreeByRemovalSlowCase(Node* root)
 {
     JSC::ExecState* scriptState = mainWorldExecState(root->document().frame());

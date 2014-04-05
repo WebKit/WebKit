@@ -34,15 +34,20 @@
 namespace WebCore {
 
 JSC::JSValue createWrapper(JSC::ExecState*, JSDOMGlobalObject*, Node*);
+JSC::JSObject* getOutOfLineCachedWrapper(JSDOMGlobalObject*, Node*);
 
 inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)
 {
     if (!node)
         return JSC::jsNull();
 
-    JSNode* wrapper = JSC::jsCast<JSNode*>(getCachedWrapper(globalObject->world(), node));
-    if (wrapper)
-        return wrapper;
+    if (LIKELY(globalObject->worldIsNormal())) {
+        if (auto* wrapper = node->wrapper())
+            return wrapper;
+    } else {
+        if (auto* wrapper = getOutOfLineCachedWrapper(globalObject, node))
+            return wrapper;
+    }
 
     return createWrapper(exec, globalObject, node);
 }

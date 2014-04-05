@@ -1,3 +1,27 @@
+2014-04-04  Andreas Kling  <akling@apple.com>
+
+        Streamline cached wrapper lookup for Nodes in the normal world.
+        <https://webkit.org/b/131249>
+
+        Inline the hot path for toJS(..., Node*) for cached wrapper lookups
+        in the normal world. (Or really, out-of-line the cold path, since
+        that was preventing the compiler from inlining this function.)
+
+        Also have JSDOMGlobalObject cache the "is normal world" flag from
+        the DOMWrapperWorld so we can avoid the extra load.
+
+        Reviewed by Benjamin Poulain.
+
+        * WebCore.exp.in:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::JSDOMGlobalObject):
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::JSDOMGlobalObject::worldIsNormal):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::getOutOfLineCachedWrapper):
+        * bindings/js/JSNodeCustom.h:
+        (WebCore::toJS):
+
 2014-04-04  Brady Eidson  <beidson@apple.com>
 
         Show DataDetector UI on scanned phone numbers.

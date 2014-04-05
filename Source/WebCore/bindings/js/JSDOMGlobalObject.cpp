@@ -43,6 +43,7 @@ JSDOMGlobalObject::JSDOMGlobalObject(VM& vm, Structure* structure, PassRefPtr<DO
     : JSGlobalObject(vm, structure, globalObjectMethodTable)
     , m_currentEvent(0)
     , m_world(world)
+    , m_worldIsNormal(m_world->isNormal())
 {
     ASSERT(m_world);
 }
