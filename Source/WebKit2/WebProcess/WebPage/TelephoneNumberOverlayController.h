@@ -39,7 +39,7 @@ namespace WebKit {
     
 class WebPage;
     
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 typedef void* DDHighlightRef;
 #endif
 
@@ -76,8 +76,7 @@ private:
     PageOverlay* m_telephoneNumberOverlay;
     Vector<RefPtr<WebCore::Range>> m_currentSelectionRanges;
     
-    
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     Vector<RetainPtr<DDHighlightRef>> m_highlights;
     RetainPtr<DDHighlightRef> m_currentMouseDownHighlight;
 #endif

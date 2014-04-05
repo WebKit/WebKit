@@ -1,5 +1,14 @@
 2014-04-04  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Unreviewed. iOS Build fix after r166818.
+
+        These member variables / declarations are accessed by iOS
+        in shared code in TelephoneNumberOverlayControllerMac.
+
+        * WebProcess/WebPage/TelephoneNumberOverlayController.h:
+
+2014-04-04  Joseph Pecoraro  <pecoraro@apple.com>
+
         Unreviewed. Rollout r166812, breaks 32-bit Mavericks build.
 
         * Shared/mac/CookieStorageShim.mm:
