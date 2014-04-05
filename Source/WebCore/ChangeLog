@@ -1,3 +1,9 @@
+2014-04-05  Mark Rowe  <mrowe@apple.com>
+
+        Fix the 32-bit build after r166818.
+
+        * WebCore.exp.in:
+
 2014-04-03  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: hook up probe samples to TimelineAgent's records
