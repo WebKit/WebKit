@@ -1,3 +1,18 @@
+2014-04-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add missing files from r166837
+
+        * heap/GCLogging.cpp: Added.
+        (JSC::GCLogging::levelAsString):
+        (JSC::LoggingFunctor::LoggingFunctor):
+        (JSC::LoggingFunctor::~LoggingFunctor):
+        (JSC::LoggingFunctor::operator()):
+        (JSC::LoggingFunctor::log):
+        (JSC::LoggingFunctor::reviveCells):
+        (JSC::LoggingFunctor::returnValue):
+        (JSC::GCLogging::dumpObjectGraph):
+        * heap/GCLogging.h: Added.
+
 2014-04-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Enhanced GC logging
