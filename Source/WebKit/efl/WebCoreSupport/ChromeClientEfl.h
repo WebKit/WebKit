@@ -38,149 +38,142 @@
 
 namespace WebCore {
 
-class ChromeClientEfl : public ChromeClient {
+class ChromeClientEfl final : public ChromeClient {
 public:
     explicit ChromeClientEfl(Evas_Object* view);
     virtual ~ChromeClientEfl();
 
-    virtual void chromeDestroyed();
+    virtual void chromeDestroyed() override;
 
-    virtual void setWindowRect(const FloatRect&);
-    virtual FloatRect windowRect();
+    virtual void setWindowRect(const FloatRect&) override;
+    virtual FloatRect windowRect() override;
 
-    virtual FloatRect pageRect();
+    virtual FloatRect pageRect() override;
 
-    virtual void focus();
-    virtual void unfocus();
+    virtual void focus() override;
+    virtual void unfocus() override;
 
-    virtual bool canTakeFocus(FocusDirection);
-    virtual void takeFocus(FocusDirection);
+    virtual bool canTakeFocus(FocusDirection) override;
+    virtual void takeFocus(FocusDirection) override;
 
-    virtual void focusedElementChanged(Element*);
-    virtual void focusedFrameChanged(Frame*);
+    virtual void focusedElementChanged(Element*) override;
+    virtual void focusedFrameChanged(Frame*) override;
 
-    virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&);
-    virtual void show();
+    virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) override;
+    virtual void show() override;
 
-    virtual bool canRunModal();
-    virtual void runModal();
+    virtual bool canRunModal() override;
+    virtual void runModal() override;
 
-    virtual void setToolbarsVisible(bool);
-    virtual bool toolbarsVisible();
+    virtual void setToolbarsVisible(bool) override;
+    virtual bool toolbarsVisible() override;
 
-    virtual void setStatusbarVisible(bool);
-    virtual bool statusbarVisible();
+    virtual void setStatusbarVisible(bool) override;
+    virtual bool statusbarVisible() override;
 
-    virtual void setScrollbarsVisible(bool);
-    virtual bool scrollbarsVisible();
+    virtual void setScrollbarsVisible(bool) override;
+    virtual bool scrollbarsVisible() override;
 
-    virtual void setMenubarVisible(bool);
-    virtual bool menubarVisible();
+    virtual void setMenubarVisible(bool) override;
+    virtual bool menubarVisible() override;
 
-    virtual void createSelectPopup(PopupMenuClient*, int selected, const IntRect&);
-    virtual bool destroySelectPopup();
+    void createSelectPopup(PopupMenuClient*, int selected, const IntRect&);
+    bool destroySelectPopup();
 
-    virtual void setResizable(bool);
+    virtual void setResizable(bool) override;
 
-    virtual void addMessageToConsole(MessageSource, MessageLevel, const String& message,
-                                     unsigned lineNumber, unsigned columnNumber, const String& sourceID);
+    virtual void addMessageToConsole(MessageSource, MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID) override;
 
-    virtual bool canRunBeforeUnloadConfirmPanel();
-    virtual bool runBeforeUnloadConfirmPanel(const String& message, Frame*);
+    virtual bool canRunBeforeUnloadConfirmPanel() override;
+    virtual bool runBeforeUnloadConfirmPanel(const String& message, Frame*) override;
 
-    virtual void closeWindowSoon();
+    virtual void closeWindowSoon() override;
 
-    virtual void runJavaScriptAlert(Frame*, const String&);
-    virtual bool runJavaScriptConfirm(Frame*, const String&);
-    virtual bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result);
-    virtual void setStatusbarText(const String&);
-    virtual bool shouldInterruptJavaScript();
-    virtual WebCore::KeyboardUIMode keyboardUIMode();
+    virtual void runJavaScriptAlert(Frame*, const String&) override;
+    virtual bool runJavaScriptConfirm(Frame*, const String&) override;
+    virtual bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result) override;
+    virtual void setStatusbarText(const String&) override;
+    virtual bool shouldInterruptJavaScript() override;
+    virtual WebCore::KeyboardUIMode keyboardUIMode() override;
 
-    virtual IntRect windowResizerRect() const;
+    virtual IntRect windowResizerRect() const override;
 
-    virtual void contentsSizeChanged(Frame*, const IntSize&) const;
-    virtual IntPoint screenToRootView(const IntPoint&) const;
-    virtual IntRect rootViewToScreen(const IntRect&) const;
-    virtual PlatformPageClient platformPageClient() const;
+    virtual void contentsSizeChanged(Frame*, const IntSize&) const override;
+    virtual IntPoint screenToRootView(const IntPoint&) const override;
+    virtual IntRect rootViewToScreen(const IntRect&) const override;
+    virtual PlatformPageClient platformPageClient() const override;
 
-    virtual void scrollbarsModeDidChange() const;
-    virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
+    virtual void scrollbarsModeDidChange() const override;
+    virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) override;
 
-    virtual void setToolTip(const String&, TextDirection);
+    virtual void setToolTip(const String&, TextDirection) override;
 
-    virtual void print(Frame*);
+    virtual void print(Frame*) override;
 
 #if ENABLE(SQL_DATABASE)
-    virtual void exceededDatabaseQuota(Frame*, const String&, DatabaseDetails);
+    virtual void exceededDatabaseQuota(Frame*, const String&, DatabaseDetails) override;
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    virtual WebCore::NotificationClient* notificationPresenter() const;
+    virtual WebCore::NotificationClient* notificationPresenter() const override;
 #endif
 
-    virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
-    virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t totalSpaceNeeded);
+    virtual void reachedMaxAppCacheSize(int64_t spaceNeeded) override;
+    virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t totalSpaceNeeded) override;
 
-    virtual void populateVisitedLinks();
+    virtual void populateVisitedLinks() override;
 
 #if ENABLE(TOUCH_EVENTS)
-    virtual void needTouchEvents(bool);
+    virtual void needTouchEvents(bool) override;
 #endif
 
-    virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*);
-    virtual void setNeedsOneShotDrawingSynchronization();
-    virtual void scheduleCompositingLayerFlush();
-    virtual CompositingTriggerFlags allowedCompositingTriggers() const;
+    virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*) override;
+    virtual void setNeedsOneShotDrawingSynchronization() override;
+    virtual void scheduleCompositingLayerFlush() override;
+    virtual CompositingTriggerFlags allowedCompositingTriggers() const override;
 
 #if ENABLE(FULLSCREEN_API)
-    virtual bool supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard);
-    virtual void enterFullScreenForElement(WebCore::Element*);
-    virtual void exitFullScreenForElement(WebCore::Element*);
+    virtual bool supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard) override;
+    virtual void enterFullScreenForElement(WebCore::Element*) override;
+    virtual void exitFullScreenForElement(WebCore::Element*) override;
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&);
-    virtual void removeColorChooser();
-    virtual void updateColorChooser(const Color&);
+    virtual PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&) override;
+    void removeColorChooser();
+    void updateColorChooser(const Color&);
 #endif
 
-    virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
-    virtual void loadIconForFiles(const Vector<String>&, FileIconLoader*);
+    virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) override;
+    virtual void loadIconForFiles(const Vector<String>&, FileIconLoader*) override;
 
-    virtual void setCursor(const Cursor&);
-    virtual void setCursorHiddenUntilMouseMoves(bool);
+    virtual void setCursor(const Cursor&) override;
+    virtual void setCursorHiddenUntilMouseMoves(bool) override;
 
 #if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
-    virtual void scheduleAnimation();
-    virtual void serviceScriptedAnimations();
+    virtual void scheduleAnimation() override;
 #endif
 
-    virtual void scrollRectIntoView(const IntRect&) const { }
+    virtual void scrollRectIntoView(const IntRect&) const override { }
 
-    virtual void cancelGeolocationPermissionForFrame(Frame*, Geolocation*);
+    virtual void invalidateRootView(const IntRect&) override;
+    virtual void invalidateContentsAndRootView(const IntRect&) override;
+    virtual void invalidateContentsForSlowScroll(const IntRect&) override;
+    virtual void scroll(const IntSize&, const IntRect&, const IntRect&) override;
 
-    virtual void invalidateContents(const IntRect&);
-    virtual void invalidateRootView(const IntRect&);
-    virtual void invalidateContentsAndRootView(const IntRect&);
-    virtual void invalidateContentsForSlowScroll(const IntRect&);
-    virtual void scroll(const IntSize&, const IntRect&, const IntRect&);
-    virtual void cancelGeolocationPermissionRequestForFrame(Frame*);
-    virtual void iconForFiles(const Vector<String, 0u>&, PassRefPtr<FileChooser>);
+    virtual void dispatchViewportPropertiesDidChange(const ViewportArguments&) const override;
 
-    virtual void dispatchViewportPropertiesDidChange(const ViewportArguments&) const;
+    virtual bool selectItemWritingDirectionIsNatural() override;
+    virtual bool selectItemAlignmentFollowsMenuWritingDirection() override;
+    virtual bool hasOpenedPopup() const override;
+    virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const override;
+    virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const override;
 
-    virtual bool selectItemWritingDirectionIsNatural();
-    virtual bool selectItemAlignmentFollowsMenuWritingDirection();
-    virtual bool hasOpenedPopup() const;
-    virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const;
-    virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const;
-
-    virtual void numWheelEventHandlersChanged(unsigned) { }
+    virtual void numWheelEventHandlersChanged(unsigned) override { }
 
 #if USE(TILED_BACKING_STORE)
-    virtual void delegatedScrollRequested(const IntPoint& scrollPoint);
-    virtual IntRect visibleRectForTiledBackingStore() const;
+    virtual void delegatedScrollRequested(const IntPoint& scrollPoint) override;
+    virtual IntRect visibleRectForTiledBackingStore() const override;
 #endif
 
     Evas_Object* m_view;

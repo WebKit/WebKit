@@ -1,3 +1,27 @@
+2014-04-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK1] Apply override and final keyword for ChromeClientEfl
+        https://bugs.webkit.org/show_bug.cgi?id=131261
+
+        Reviewed by Gyuyoung Kim.
+
+        There are unnecessary virtual methods in ChromeClientEfl.
+        Almost methods are already removed from parent class and
+        the others does not need to be virtual method.
+
+        This patch removed them and applied override and final.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::scheduleAnimation):
+        (WebCore::ChromeClientEfl::serviceScriptedAnimations): Deleted.
+        (WebCore::ChromeClientEfl::cancelGeolocationPermissionForFrame): Deleted.
+        (WebCore::ChromeClientEfl::invalidateContents): Deleted.
+        (WebCore::ChromeClientEfl::cancelGeolocationPermissionRequestForFrame): Deleted.
+        (WebCore::ChromeClientEfl::iconForFiles): Deleted.
+        * WebCoreSupport/ChromeClientEfl.h:
+        (WebCore::ChromeClientEfl::scrollRectIntoView): Deleted.
+        (WebCore::ChromeClientEfl::numWheelEventHandlersChanged): Deleted.
+
 2014-04-03  Hyowon Kim  <hw1008.kim@samsung.com>
 
         [EFL] Should flush and render layers after the root layer is changed.

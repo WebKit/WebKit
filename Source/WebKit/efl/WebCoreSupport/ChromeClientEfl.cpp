@@ -512,22 +512,7 @@ void ChromeClientEfl::scheduleAnimation()
 {
     notImplemented();
 }
-
-void ChromeClientEfl::serviceScriptedAnimations()
-{
-    notImplemented();
-}
 #endif
-
-void ChromeClientEfl::cancelGeolocationPermissionForFrame(Frame*, Geolocation*)
-{
-    notImplemented();
-}
-
-void ChromeClientEfl::invalidateContents(const IntRect& /*updateRect*/)
-{
-    notImplemented();
-}
 
 void ChromeClientEfl::invalidateRootView(const IntRect& updateRect)
 {
@@ -561,16 +546,6 @@ void ChromeClientEfl::invalidateContentsForSlowScroll(const IntRect& updateRect)
 void ChromeClientEfl::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
     ewk_view_scroll(m_view, scrollDelta, rectToScroll, clipRect);
-}
-
-void ChromeClientEfl::cancelGeolocationPermissionRequestForFrame(Frame*)
-{
-    notImplemented();
-}
-
-void ChromeClientEfl::iconForFiles(const Vector<String, 0u>&, PassRefPtr<FileChooser>)
-{
-    notImplemented();
 }
 
 void ChromeClientEfl::loadIconForFiles(const Vector<String>&, FileIconLoader*)
