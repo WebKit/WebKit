@@ -62,18 +62,6 @@ public:
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const = 0;
 
     virtual Type type() const = 0;
-
-    CSSBoxType referenceBox() const { return m_referenceBox; }
-    void setReferenceBox(CSSBoxType referenceBox) { m_referenceBox = referenceBox; }
-
-protected:
-    BasicShape()
-        : m_referenceBox(BoxMissing)
-    {
-    }
-
-private:
-    CSSBoxType m_referenceBox;
 };
 
 class BasicShapeCenterCoordinate {

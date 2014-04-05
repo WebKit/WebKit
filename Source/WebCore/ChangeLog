@@ -1,3 +1,24 @@
+2014-04-05  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Remove CSSBoxType member from BasicShape and CSSBasicShape
+        https://bugs.webkit.org/show_bug.cgi?id=129706
+
+        Reviewed by Andreas Kling.
+
+        The CSSBoxType has been moved up to ShapeValue and is no longer needed in the BasicShape classes.
+
+        No new tests, no behavior change.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBasicShape):
+        (WebCore::basicShapeForValue):
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShape::canBlend):
+        * rendering/style/BasicShapes.h:
+        (WebCore::BasicShape::referenceBox): Deleted.
+        (WebCore::BasicShape::setReferenceBox): Deleted.
+        (WebCore::BasicShape::BasicShape): Deleted.
+
 2014-04-05  Mark Rowe  <mrowe@apple.com>
 
         Fix the 32-bit build after r166818.
