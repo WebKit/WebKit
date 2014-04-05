@@ -451,17 +451,26 @@ WebInspector.ResourceSidebarPanel.prototype = {
             DOMAgent.getSearchResults(searchId, 0, resultsCount, domSearchResults.bind(this));
         }
 
-        WebInspector.domTreeManager.requestDocument();
+        if (window.DOMAgent)
+            WebInspector.domTreeManager.requestDocument();
 
         // FIXME: Should we be searching for regexes or just plain text?
-        PageAgent.searchInResources(searchTerm, false, false, resourcesCallback.bind(this));
+        if (window.PageAgent)
+            PageAgent.searchInResources(searchTerm, false, false, resourcesCallback.bind(this));
 
-        if ("_domSearchIdentifier" in this) {
-            DOMAgent.discardSearchResults(this._domSearchIdentifier);
-            delete this._domSearchIdentifier;
+        if (window.DOMAgent) {
+            if ("_domSearchIdentifier" in this) {
+                DOMAgent.discardSearchResults(this._domSearchIdentifier);
+                delete this._domSearchIdentifier;
+            }
+
+            DOMAgent.performSearch(searchTerm, domCallback.bind(this));
         }
 
-        DOMAgent.performSearch(searchTerm, domCallback.bind(this));
+        // FIXME: Resource search should work in JSContext inspection.
+        // <https://webkit.org/b/131252> Web Inspector: JSContext inspection Resource search does not work
+        if (!window.DOMAgent && !window.PageAgent)
+            updateEmptyContentPlaceholderSoon.call(this);
     },
 
     // Private
