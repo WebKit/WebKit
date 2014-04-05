@@ -1,3 +1,20 @@
+2014-04-05  Dirk Schulze  <krit@webkit.org>
+
+        Canvas strokeText and fillText with SourceIn, DestinationIn, SourceOut, DestinationAtop and Copy have errors
+        https://bugs.webkit.org/show_bug.cgi?id=66766
+
+        Reviewed by Andreas Kling.
+
+        Use transparency layers to draw text with certain compositing modes on
+        the canvas. This follows the Canvas specification and makes WebKit fully
+        compatible with IE. It also makes it more compatible with Firefox, even though
+        Firefox still has some bugs.
+
+        Test: fast/canvas/canvas-composite-text-alpha.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+
 2014-04-05  Andreas Kling  <akling@apple.com>
 
         Devirtualize isHTMLUnknownElement().

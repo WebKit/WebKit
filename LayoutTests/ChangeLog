@@ -1,5 +1,17 @@
 2014-04-05  Dirk Schulze  <krit@webkit.org>
 
+        Canvas strokeText and fillText with SourceIn, DestinationIn, SourceOut, DestinationAtop and Copy have errors
+        https://bugs.webkit.org/show_bug.cgi?id=66766
+
+        Reviewed by Andreas Kling.
+
+        330 tests check compositing on Canvas with text.
+
+        * fast/canvas/canvas-composite-text-alpha-expected.txt: Added.
+        * fast/canvas/canvas-composite-text-alpha.html: Added.
+
+2014-04-05  Dirk Schulze  <krit@webkit.org>
+
         Canvas stroke and strokeRect with SourceIn, DestinationIn, SourceOut, DestinationAtop and Copy have errors
         https://bugs.webkit.org/show_bug.cgi?id=66762
 

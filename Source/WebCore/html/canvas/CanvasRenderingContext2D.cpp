@@ -2334,16 +2334,27 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
 
     c->setTextDrawingMode(fill ? TextModeFill : TextModeStroke);
 
+    GraphicsContextStateSaver stateSaver(*c);
     if (useMaxWidth) {
-        GraphicsContextStateSaver stateSaver(*c);
         c->translate(location.x(), location.y());
         // We draw when fontWidth is 0 so compositing operations (eg, a "copy" op) still work.
         c->scale(FloatSize((fontWidth > 0 ? (width / fontWidth) : 0), 1));
-        c->drawBidiText(font, textRun, FloatPoint(0, 0), Font::UseFallbackIfFontNotReady);
-    } else
-        c->drawBidiText(font, textRun, location, Font::UseFallbackIfFontNotReady);
+        location = FloatPoint();
+    }
 
-    didDraw(textRect);
+    if (isFullCanvasCompositeMode(state().m_globalComposite)) {
+        c->beginTransparencyLayer(1);
+        c->drawBidiText(font, textRun, location, Font::UseFallbackIfFontNotReady);
+        c->endTransparencyLayer();
+        didDrawEntireCanvas();
+    } else if (state().m_globalComposite == CompositeCopy) {
+        clearCanvas();
+        c->drawBidiText(font, textRun, location, Font::UseFallbackIfFontNotReady);
+        didDrawEntireCanvas();
+    } else {
+        c->drawBidiText(font, textRun, location, Font::UseFallbackIfFontNotReady);
+        didDraw(textRect);
+    }
 }
 
 void CanvasRenderingContext2D::inflateStrokeRect(FloatRect& rect) const
