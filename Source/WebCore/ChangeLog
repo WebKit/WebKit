@@ -1,3 +1,23 @@
+2014-04-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use preallocated stack reference to store adjacentBacktrackingStart
+        https://bugs.webkit.org/show_bug.cgi?id=131237
+
+        Reviewed by Benjamin Poulain.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::SelectorCodeGenerator):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::computeBacktrackingInformation):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateDirectAdjacentTreeWalker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateAdjacentBacktrackingTail):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateBacktrackingTailsIfNeeded):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateWalkToPreviousAdjacent): Deleted.
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::linkFailures): Deleted.
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateDescendantBacktrackingTail): Deleted.
+        * cssjit/StackAllocator.h:
+        (WebCore::StackAllocator::allocateUninitialized):
+
 2014-04-05  Jeongeun Kim  <je_julie.kim@samsung.com>
 
         bad values from HTMLImageElement x and y attributes (CSSOM-View)

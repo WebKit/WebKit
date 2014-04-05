@@ -60,6 +60,14 @@ public:
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
     }
 
+    StackReference allocateUninitialized()
+    {
+        RELEASE_ASSERT(!m_hasFunctionCallPadding);
+        m_assembler.addPtrNoFlags(JSC::MacroAssembler::TrustedImm32(-8), JSC::MacroAssembler::stackPointerRegister);
+        m_offsetFromTop += 8;
+        return StackReference(m_offsetFromTop);
+    }
+
     StackReference push(JSC::MacroAssembler::RegisterID registerID)
     {
         RELEASE_ASSERT(!m_hasFunctionCallPadding);
