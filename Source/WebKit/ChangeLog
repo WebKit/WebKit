@@ -1,3 +1,10 @@
+2014-04-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Add missing
+        symbol export.
+
 2014-04-03  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix.
