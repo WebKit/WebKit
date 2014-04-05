@@ -1,3 +1,14 @@
+2014-04-03  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: hook up probe samples to TimelineAgent's records
+        https://bugs.webkit.org/show_bug.cgi?id=131127
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/TimelineManager.js: Stub out a case for the ProbeSample record type.
+        (WebInspector.TimelineManager.prototype.eventRecorded.processRecord):
+        (WebInspector.TimelineManager.prototype.eventRecorded):
+
 2014-04-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JSContext inspection Resource search throws exception

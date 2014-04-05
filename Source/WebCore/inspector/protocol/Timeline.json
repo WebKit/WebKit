@@ -5,7 +5,7 @@
         {
             "id": "EventType",
             "type": "string",
-            "enum": ["EventDispatch", "BeginFrame", "ScheduleStyleRecalculation", "RecalculateStyles", "InvalidateLayout", "Layout", "Paint", "ScrollLayer", "ResizeImage", "CompositeLayers", "ParseHTML", "TimerInstall", "TimerRemove", "TimerFire", "EvaluateScript", "MarkLoad", "MarkDOMContent", "TimeStamp", "Time", "TimeEnd", "ScheduleResourceRequest", "ResourceSendRequest", "ResourceReceiveResponse", "ResourceReceivedData", "ResourceFinish", "XHRReadyStateChange", "XHRLoad", "FunctionCall", "GCEvent", "RequestAnimationFrame", "CancelAnimationFrame", "FireAnimationFrame", "WebSocketCreate", "WebSocketSendHandshakeRequest", "WebSocketReceiveHandshakeResponse", "WebSocketDestroy"],
+            "enum": ["EventDispatch", "BeginFrame", "ScheduleStyleRecalculation", "RecalculateStyles", "InvalidateLayout", "Layout", "Paint", "ScrollLayer", "ResizeImage", "CompositeLayers", "ParseHTML", "TimerInstall", "TimerRemove", "TimerFire", "EvaluateScript", "MarkLoad", "MarkDOMContent", "TimeStamp", "Time", "TimeEnd", "ScheduleResourceRequest", "ResourceSendRequest", "ResourceReceiveResponse", "ResourceReceivedData", "ResourceFinish", "XHRReadyStateChange", "XHRLoad", "FunctionCall", "ProbeSample", "GCEvent", "RequestAnimationFrame", "CancelAnimationFrame", "FireAnimationFrame", "WebSocketCreate", "WebSocketSendHandshakeRequest", "WebSocketReceiveHandshakeResponse", "WebSocketDestroy"],
             "description": "Timeline record type."
         },
         {

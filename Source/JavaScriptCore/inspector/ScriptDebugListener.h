@@ -40,6 +40,8 @@ class ScriptValue;
 
 namespace Inspector {
 
+struct ScriptBreakpointAction;
+
 class ScriptDebugListener {
 public:
     class Script {

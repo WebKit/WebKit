@@ -271,6 +271,10 @@ WebInspector.TimelineManager.prototype = {
 
                 break;
 
+            case TimelineAgent.EventType.ProbeSample:
+                // FIXME: Create timeline records for probe samples <https://webkit.org/b/131173>
+                break;
+
             case TimelineAgent.EventType.TimerInstall:
                 console.assert(isNaN(endTime));
 

@@ -1,5 +1,6 @@
 /*
 * Copyright (C) 2013 Google Inc. All rights reserved.
+* Copyright (C) 2014 University of Washington.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are
@@ -44,13 +45,16 @@
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "JSDOMWindow.h"
+#include "PageScriptDebugServer.h"
 #include "RenderElement.h"
 #include "RenderView.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptProfiler.h"
+#include "ScriptState.h"
 #include "TimelineRecordFactory.h"
 #include <inspector/IdentifiersFactory.h>
+#include <inspector/ScriptBreakpoint.h>
 #include <wtf/CurrentTime.h>
 
 using namespace Inspector;
@@ -94,6 +98,7 @@ void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth)
     m_timeConverter.reset();
 
     m_instrumentingAgents->setInspectorTimelineAgent(this);
+    PageScriptDebugServer::shared().addListener(this, page());
     m_enabled = true;
 }
 
@@ -104,6 +109,7 @@ void InspectorTimelineAgent::stop(ErrorString*)
 
     m_weakFactory.revokeAll();
     m_instrumentingAgents->setInspectorTimelineAgent(nullptr);
+    PageScriptDebugServer::shared().removeListener(this, page(), true);
 
     clearRecordStack();
 
@@ -452,6 +458,18 @@ void InspectorTimelineAgent::didDestroyWebSocket(unsigned long identifier, Frame
 }
 #endif // ENABLE(WEB_SOCKETS)
 
+// ScriptDebugListener
+
+void InspectorTimelineAgent::breakpointActionProbe(JSC::ExecState* exec, const Inspector::ScriptBreakpointAction& action, int hitCount, const Deprecated::ScriptValue&)
+{
+    ASSERT(exec);
+
+    ScriptExecutionContext* context = scriptExecutionContextFromExecState(exec);
+    Document* document = (context && context->isDocument()) ? toDocument(context) : nullptr;
+    Frame* frame = document ? document->frame() : nullptr;
+    appendRecord(TimelineRecordFactory::createProbeSampleData(action, hitCount), TimelineRecordType::ProbeSample, false, frame);
+}
+
 void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> record, TimelineRecordType type)
 {
     commitFrameRecord();
@@ -525,6 +543,8 @@ static Inspector::TypeBuilder::Timeline::EventType::Enum toProtocol(TimelineReco
 
     case TimelineRecordType::FunctionCall:
         return Inspector::TypeBuilder::Timeline::EventType::FunctionCall;
+    case TimelineRecordType::ProbeSample:
+        return Inspector::TypeBuilder::Timeline::EventType::ProbeSample;
 
     case TimelineRecordType::RequestAnimationFrame:
         return Inspector::TypeBuilder::Timeline::EventType::RequestAnimationFrame;

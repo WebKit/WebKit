@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2014 University of Washington.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -43,6 +44,7 @@
 #include "ResourceResponse.h"
 #include "ScriptProfile.h"
 #include <inspector/InspectorValues.h>
+#include <inspector/ScriptBreakpoint.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
 #include <wtf/CurrentTime.h>
@@ -84,6 +86,14 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createFunctionCallData(const 
     RefPtr<InspectorObject> data = InspectorObject::create();
     data->setString("scriptName", scriptName);
     data->setNumber("scriptLine", scriptLine);
+    return data.release();
+}
+
+PassRefPtr<InspectorObject> TimelineRecordFactory::createProbeSampleData(const ScriptBreakpointAction& action, int hitCount)
+{
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setNumber(ASCIILiteral("probeId"), action.identifier);
+    data->setNumber(ASCIILiteral("hitCount"), hitCount);
     return data.release();
 }
 

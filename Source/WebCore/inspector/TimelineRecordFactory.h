@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2014 University of Washington.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,6 +37,10 @@
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
+namespace Inspector {
+struct ScriptBreakpointAction;
+}
+
 namespace WebCore {
 
     class Event;
@@ -52,6 +57,8 @@ namespace WebCore {
         static PassRefPtr<Inspector::InspectorObject> createGCEventData(const size_t usedHeapSizeDelta);
 
         static PassRefPtr<Inspector::InspectorObject> createFunctionCallData(const String& scriptName, int scriptLine);
+
+        static PassRefPtr<Inspector::InspectorObject> createProbeSampleData(const Inspector::ScriptBreakpointAction&, int hitCount);
 
         static PassRefPtr<Inspector::InspectorObject> createEventDispatchData(const Event&);
 

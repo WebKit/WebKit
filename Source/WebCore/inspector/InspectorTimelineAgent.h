@@ -1,5 +1,6 @@
 /*
 * Copyright (C) 2012 Google Inc. All rights reserved.
+* Copyright (C) 2014 University of Washington.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are
@@ -38,6 +39,7 @@
 #include "InspectorWebFrontendDispatchers.h"
 #include "LayoutRect.h"
 #include <inspector/InspectorValues.h>
+#include <inspector/ScriptDebugListener.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -95,6 +97,7 @@ enum class TimelineRecordType {
     XHRLoad,
 
     FunctionCall,
+    ProbeSample,
 
     RequestAnimationFrame,
     CancelAnimationFrame,
@@ -121,7 +124,8 @@ private:
 
 class InspectorTimelineAgent
     : public InspectorAgentBase
-    , public Inspector::InspectorTimelineBackendDispatcherHandler {
+    , public Inspector::InspectorTimelineBackendDispatcherHandler
+    , public Inspector::ScriptDebugListener {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
 public:
     enum InspectorType { PageInspector, WorkerInspector };
@@ -210,6 +214,17 @@ public:
     void didReceiveWebSocketHandshakeResponse(unsigned long identifier, Frame*);
     void didDestroyWebSocket(unsigned long identifier, Frame*);
 #endif
+
+protected:
+    // ScriptDebugListener. This is only used to create records for probe samples.
+    virtual void didParseSource(JSC::SourceID, const Script&) override { }
+    virtual void failedToParseSource(const String&, const String&, int, int, const String&) override { }
+    virtual void didPause(JSC::ExecState*, const Deprecated::ScriptValue&, const Deprecated::ScriptValue&) override { }
+    virtual void didContinue() override { }
+
+    virtual void breakpointActionLog(JSC::ExecState*, const String&) override { }
+    virtual void breakpointActionSound(int) override { }
+    virtual void breakpointActionProbe(JSC::ExecState*, const Inspector::ScriptBreakpointAction&, int hitCount, const Deprecated::ScriptValue& result) override;
 
 private:
     friend class TimelineRecordStack;

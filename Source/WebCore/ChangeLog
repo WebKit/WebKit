@@ -1,3 +1,26 @@
+2014-04-03  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: hook up probe samples to TimelineAgent's records
+        https://bugs.webkit.org/show_bug.cgi?id=131127
+
+        Reviewed by Timothy Hatcher.
+
+        Hook up probe callbacks from ScriptDebugListener so that timeline records are
+        created for probe samples. The record includes the probe identifier and hit count.
+        The actual probe evaluation result is sent separately by DebuggerAgent, and
+        can be looked up in frontend models using the identifier and hit count.
+
+        * inspector/InspectorTimelineAgent.cpp: Only listen to the debug server when recording.
+        (WebCore::InspectorTimelineAgent::start):
+        (WebCore::InspectorTimelineAgent::stop):
+        (WebCore::InspectorTimelineAgent::breakpointActionProbe):
+        (WebCore::toProtocol):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createProbeSampleData):
+        * inspector/TimelineRecordFactory.h:
+        * inspector/protocol/Timeline.json: Add new enum value.
+
 2014-04-04  Andreas Kling  <akling@apple.com>
 
         Streamline cached wrapper lookup for Nodes in the normal world.
