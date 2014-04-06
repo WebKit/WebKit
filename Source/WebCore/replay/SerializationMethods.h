@@ -35,6 +35,7 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
 class Document;
 class Frame;
 class Page;
@@ -47,6 +48,12 @@ class URL;
 #if USE(APPKIT)
 struct KeypressCommand;
 #endif
+
+unsigned long frameIndexFromDocument(const Document*);
+unsigned long frameIndexFromFrame(const Frame*);
+Document* documentFromFrameIndex(Page*, unsigned long frameIndex);
+Frame* frameFromFrameIndex(Page*, unsigned long frameIndex);
+
 } // namespace WebCore
 
 // Template specializations must be defined in the same namespace as the template declaration.

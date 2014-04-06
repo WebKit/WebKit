@@ -31,6 +31,11 @@
 #if ENABLE(WEB_REPLAY)
 
 #include "AllReplayInputs.h"
+#include "Document.h"
+#include "Frame.h"
+#include "FrameTree.h"
+#include "MainFrame.h"
+#include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
@@ -60,6 +65,51 @@ using WebCore::name; \
 
 WEB_REPLAY_INPUT_NAMES_FOR_EACH(IMPORT_FROM_WEBCORE_NAMESPACE)
 #undef IMPORT_FROM_WEBCORE_NAMESPACE
+
+namespace WebCore {
+
+unsigned long frameIndexFromDocument(const Document* document)
+{
+    ASSERT(document);
+    ASSERT(document->frame());
+    return frameIndexFromFrame(document->frame());
+}
+
+unsigned long frameIndexFromFrame(const Frame* targetFrame)
+{
+    ASSERT(targetFrame);
+
+    unsigned long currentIndex = 0;
+    const Frame* mainFrame = &targetFrame->tree().top();
+    for (const Frame* frame = mainFrame; frame; ++currentIndex, frame = frame->tree().traverseNext(mainFrame)) {
+        if (frame == targetFrame)
+            return currentIndex;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+Document* documentFromFrameIndex(Page* page, unsigned long frameIndex)
+{
+    Frame* frame = frameFromFrameIndex(page, frameIndex);
+    return frame ? frame->document() : nullptr;
+}
+
+Frame* frameFromFrameIndex(Page* page, unsigned long frameIndex)
+{
+    ASSERT(page);
+    ASSERT(frameIndex >= 0);
+
+    MainFrame* mainFrame = &page->mainFrame();
+    Frame* frame = mainFrame;
+    unsigned long currentIndex = 0;
+    for (; currentIndex < frameIndex && frame; ++currentIndex, frame = frame->tree().traverseNext(mainFrame)) { }
+
+    return frame;
+}
+
+} // namespace WebCore
 
 #define ENCODE_TYPE_WITH_KEY(_encodedValue, _type, _key, _value) \
     _encodedValue.put<_type>(ASCIILiteral(#_key), _value)

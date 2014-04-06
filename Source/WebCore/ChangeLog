@@ -1,3 +1,23 @@
+2014-04-06  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: add methods to encode a frame's index based on its FrameTree position
+        https://bugs.webkit.org/show_bug.cgi?id=131281
+
+        Reviewed by Timothy Hatcher.
+
+        Given a frame, its encoded index is computed by traversing the frame tree
+        and saving how many nodes have been traversed to reach a given frame.
+
+        This is used to disambiguate frames when dispatching frame-specific event
+        loop inputs during replay, such as timers and resource loaders.
+
+        * replay/SerializationMethods.cpp:
+        (WebCore::frameIndexFromDocument): Added.
+        (WebCore::frameIndexFromFrame): Added.
+        (WebCore::documentFromFrameIndex): Added.
+        (WebCore::frameFromFrameIndex): Added.
+        * replay/SerializationMethods.h:
+
 2014-04-06  Alexey Proskuryakov  <ap@apple.com>
 
         iOS build fix.
