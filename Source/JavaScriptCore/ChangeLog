@@ -1,3 +1,10 @@
+2014-04-06  Dan Bernstein  <mitz@apple.com>
+
+        32-bit build fix.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::setInputCursor):
+
 2014-04-04  Brian J. Burg  <burg@cs.washington.edu>
 
         Enable WEB_REPLAY for PLATFORM(MAC)

@@ -818,7 +818,7 @@ void JSGlobalObject::setInputCursor(PassRefPtr<InputCursor> prpCursor)
         cursor.appendInput<SetRandomSeed>(m_weakRandom.seedUnsafe());
     else if (cursor.isReplaying()) {
         if (SetRandomSeed* input = cursor.fetchInput<SetRandomSeed>())
-            m_weakRandom.initializeSeed(input->randomSeed());
+            m_weakRandom.initializeSeed(static_cast<unsigned>(input->randomSeed()));
     }
 }
 #endif
