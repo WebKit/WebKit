@@ -49,6 +49,10 @@ using namespace WebCore;
 
 const CFStringRef kLSPlugInBundleIdentifierKey = CFSTR("LSPlugInBundleIdentifierKey");
 
+// These values were chosen to match default NSURLCache sizes at the time of this writing.
+const NSUInteger pluginMemoryCacheSize = 512000;
+const NSUInteger pluginDiskCacheSize = 20000000;
+
 namespace WebKit {
 
 class FullscreenWindowTracker {
@@ -404,6 +408,11 @@ void PluginProcess::platformInitializePluginProcess(const PluginProcessCreationP
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
     if (parameters.processType == PluginProcessTypeSnapshot)
         muteAudio();
+
+    [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
+        initWithMemoryCapacity:pluginMemoryCacheSize
+        diskCapacity:pluginDiskCacheSize
+        diskPath:m_nsurlCacheDirectory]).get()];
 }
 
 void PluginProcess::platformInitializeProcess(const ChildProcessInitializationParameters& parameters)
@@ -462,11 +471,21 @@ void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters
 
     sandboxParameters.setSandboxProfile(sandboxProfile);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
-    // Use private temporary and cache directories.
     char temporaryDirectory[PATH_MAX];
     if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
         WTFLogAlways("PluginProcess: couldn't retrieve system temporary directory path: %d\n", errno);
+        exit(EX_OSERR);
+    }
+
+    char cacheDirectory[PATH_MAX];
+    if (!confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectory, sizeof(cacheDirectory))) {
+        WTFLogAlways("PluginProcess: couldn't retrieve system cache directory path: %d\n", errno);
+        exit(EX_OSERR);
+    }
+
+    m_nsurlCacheDirectory = [[[NSFileManager defaultManager] stringWithFileSystemRepresentation:cacheDirectory length:strlen(temporaryDirectory)] stringByAppendingPathComponent:[[NSBundle mainBundle] bundleIdentifier]];
+    if (![[NSFileManager defaultManager] createDirectoryAtURL:[NSURL fileURLWithPath:m_nsurlCacheDirectory isDirectory:YES] withIntermediateDirectories:YES attributes:nil error:nil]) {
+        WTFLogAlways("PluginProcess: couldn't create NSURL cache directory '%s'\n", temporaryDirectory);
         exit(EX_OSERR);
     }
 
@@ -477,15 +496,11 @@ void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters
     }
 
     sandboxParameters.setSystemDirectorySuffix([[[[NSFileManager defaultManager] stringWithFileSystemRepresentation:temporaryDirectory length:strlen(temporaryDirectory)] lastPathComponent] fileSystemRepresentation]);
-#endif
 
     sandboxParameters.addPathParameter("PLUGIN_PATH", m_pluginPath);
+    sandboxParameters.addPathParameter("NSURL_CACHE_DIR", m_nsurlCacheDirectory);
 
-    RetainPtr<CFStringRef> cachePath = adoptCF(WKCopyFoundationCacheDirectory());
-    sandboxParameters.addPathParameter("NSURL_CACHE_DIR", (NSString *)cachePath.get());
-
-    RetainPtr<NSDictionary> defaults = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], @"NSUseRemoteSavePanel", nil]);
-    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults.get()];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSUseRemoteSavePanel" : @YES }];
 
     ChildProcess::initializeSandbox(parameters, sandboxParameters);
 }

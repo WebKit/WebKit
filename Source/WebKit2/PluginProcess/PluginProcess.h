@@ -126,6 +126,8 @@ private:
 #if PLATFORM(COCOA)
     // The Mach port used for accelerated compositing.
     mach_port_t m_compositingRenderServerPort;
+
+    String m_nsurlCacheDirectory;
 #endif
 
     static void lowMemoryHandler(bool critical);
