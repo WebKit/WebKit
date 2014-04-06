@@ -1,5 +1,17 @@
 2014-04-05  Alexey Proskuryakov  <ap@apple.com>
 
+        REGRESSION (NetworkProcess): Subresources fail to load from AppCache
+        https://bugs.webkit.org/show_bug.cgi?id=131262
+        <rdar://problem/15370653>
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad): Check application cache,
+        as done in ResourceLoader::start() for in-process loads.
+
+2014-04-05  Alexey Proskuryakov  <ap@apple.com>
+
         Frequent PluginProcess crashes at libsqlite3.dylib: openDatabase
         https://bugs.webkit.org/show_bug.cgi?id=131264
         <rdar://problem/14165329>

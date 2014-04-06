@@ -1,3 +1,20 @@
+2014-04-05  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (NetworkProcess): Subresources fail to load from AppCache
+        https://bugs.webkit.org/show_bug.cgi?id=131262
+        <rdar://problem/15370653>
+
+        Reviewed by Sam Weinig.
+
+        Exported ApplicationCacheHost::maybeLoadResource. Changed it to take a const
+        reference to ResourceRequest, as appropriate for WebResourceLoadScheduler.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::maybeLoadResource):
+        * loader/appcache/ApplicationCacheHost.h:
+
 2014-04-05  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: remove unused metrics and commands from the Timeline agent

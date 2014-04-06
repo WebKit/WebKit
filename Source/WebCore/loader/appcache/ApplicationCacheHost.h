@@ -123,7 +123,7 @@ namespace WebCore {
         void finishedLoadingMainResource();
         void failedLoadingMainResource();
 
-        bool maybeLoadResource(ResourceLoader*, ResourceRequest&, const URL& originalURL);
+        bool maybeLoadResource(ResourceLoader*, const ResourceRequest&, const URL& originalURL);
         bool maybeLoadFallbackForRedirect(ResourceLoader*, ResourceRequest&, const ResourceResponse&);
         bool maybeLoadFallbackForResponse(ResourceLoader*, const ResourceResponse&);
         bool maybeLoadFallbackForError(ResourceLoader*, const ResourceError&);
