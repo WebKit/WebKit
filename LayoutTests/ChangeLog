@@ -1,3 +1,15 @@
+2014-03-23  Darin Adler  <darin@apple.com>
+
+        Refactor post-attach and HTMLObjectElement-related code
+        https://bugs.webkit.org/show_bug.cgi?id=131282
+
+        Reviewed by Antti Koivisto.
+
+        * svg/custom/object-no-size-attributes-expected.txt: Removed expectation of an empty text
+        renderer from the render tree.
+        * svg/custom/object-no-size-attributes.xhtml: Restructured the source so there is no text
+        to render. Without this, we were seeing two text renderers due to the loading timing change.
+
 2014-04-05  Dirk Schulze  <krit@webkit.org>
 
         Canvas strokeText and fillText with SourceIn, DestinationIn, SourceOut, DestinationAtop and Copy have errors

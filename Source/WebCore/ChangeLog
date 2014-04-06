@@ -1,3 +1,82 @@
+2014-03-23  Darin Adler  <darin@apple.com>
+
+        Refactor post-attach and HTMLObjectElement-related code
+        https://bugs.webkit.org/show_bug.cgi?id=131282
+
+        Reviewed by Antti Koivisto.
+
+        * dom/ContainerNode.cpp: Moved the post-attach callback code from here to
+        StyleResolveTree.h/cpp.
+        * dom/ContainerNode.h: Ditto.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle): Use Style::PostResolutionCallbackDisabler instead of
+        PostAttachCallbackDisabler.
+
+        * dom/Element.h: Moved the post-attach callback code from here to StyleResolveTree.h/cpp.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseAttribute): Simplified the code for typeAttr, turning
+        it into a 1-liner. Added a FIXME in codeAttr about the fact that it does not have the
+        code to trigger image loads.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::didAttachRenderers): Updated to use
+        Style::queuePostResolutionCallback and use a lambda instead of a function.
+        (WebCore::HTMLFormControlElement::didRecalcStyle): Ditto. Also added RefPtr instead
+        of just using wishful thinking to keep the object alive.
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::scheduleSetNeedsStyleRecalc): Ditto.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseAttribute):: Simplified the code for typeAttr, turning
+        it into a 1-liner. Made dataAttr call setNeedsWidgetUpdate(true) unconditionally after
+        checking carefully to see that's harmless if there is no renderer. Changed classidAttr
+        to call setNeedsWidgetUpdate(true) unconditionally and not set m_classId.
+        (WebCore::HTMLObjectElement::shouldAllowQuickTimeClassIdQuirk): Use fastGetAttribute
+        instead of classId and descendantsOfType instead of getElementsByTagName.
+        (WebCore::HTMLObjectElement::hasValidClassId): Use fastGetAttribute instead of classId.
+        (WebCore::HTMLObjectElement::renderFallbackContent): Use imageLoader instead of m_imageLoader.
+
+        * html/HTMLObjectElement.h: Removed classId, since there is no reason to cache that
+        attribute in a data member. Rearranged header, making more private, and fixing some typos,
+        and doing a "using" instead of a function to disambiguate the inherited form functions.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::createElementRenderer): Fixed some code that assumed the
+        first child of the shadow root is guaranteed to be an element.
+        (WebCore::HTMLPlugInImageElement::didMoveToNewDocument): Removed null check on oldDocument,
+        since m_needsDocumentActivationCallbacks can't be true if the old document was null.
+        (WebCore::is100Percent): Added helper to make function below more readable.
+        (WebCore::HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn): Restructured the code a
+        bit. The part that attracted my attention was the local variable of type RenderBox, which
+        was named renderEmbeddedObject. Turns out the caller guarantees to only call this if there
+        is a renderer of type RenderEmbeddedObject, so depend on that.
+
+        * html/HTMLPlugInImageElement.h: Trimmed includes a bit. Made more members private.
+        Marked more function members final. Made a protected imageLoader function so that
+        m_imageLoader can be private eventually. Made m_imageLoader be std::unique_ptr.
+
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::needsPseudoElement): Fixed spelling error in the name of this function.
+        (WebCore::Style::attachBeforeOrAfterPseudoElementIfNeeded): Updated for name change.
+        (WebCore::Style::attachRenderTree): Update for new name of PostResolutionCallbackDisabler.
+        (WebCore::Style::updateBeforeOrAfterPseudoElement): Updated for name change.
+        (WebCore::Style::postResolutionCallbackQueue): Added.
+        (WebCore::Style::queuePostResolutionCallback): Added.
+        (WebCore::Style::suspendMemoryCacheClientCalls): Added. This is a side effect of the original
+        PostAttachCallbackDisabler that is now done in a cleaner way, using the callback queue, instead
+        of as a special case. It should not work for multiple documents across multiple pages instead of
+        only the outermost one.
+        (WebCore::Style::PostResolutionCallbackDisabler::PostResolutionCallbackDisabler): Added.
+        Calls suspendMemoryCacheClientCalls, but a FIXME tries to point out why that isn't so great.
+        (WebCore::Style::PostResolutionCallbackDisabler::~PostResolutionCallbackDisabler): Added.
+        (WebCore::Style::postResolutionCallbacksAreSuspended): Added.
+
+        * style/StyleResolveTree.h: Added queuePostResolutionCallback and
+        postResolutionCallbacksAreSuspended. Also added PostResolutionCallbackDisabler, which should
+        eventually become a private implementation detail.
+
 2014-04-04  Brian J. Burg  <burg@cs.washington.edu>
 
         Enable WEB_REPLAY for PLATFORM(MAC)

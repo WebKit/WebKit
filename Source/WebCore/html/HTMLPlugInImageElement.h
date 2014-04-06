@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2011, 2012, 2014 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,16 +23,13 @@
 
 #include "HTMLPlugInElement.h"
 
-#include "RenderStyle.h"
-#include <wtf/OwnPtr.h>
-
 namespace WebCore {
 
 class HTMLImageLoader;
-class HTMLVideoElement;
 class FrameLoader;
 class Image;
 class MouseEvent;
+class RenderStyle;
 class Widget;
 
 enum PluginCreationOption {
@@ -40,12 +37,8 @@ enum PluginCreationOption {
     CreateOnlyNonNetscapePlugins,
 };
 
-enum PreferPlugInsForImagesOption {
-    ShouldPreferPlugInsForImages,
-    ShouldNotPreferPlugInsForImages
-};
-
-// Base class for HTMLObjectElement and HTMLEmbedElement
+// Base class for HTMLAppletElement, HTMLEmbedElement, and HTMLObjectElement.
+// FIXME: Should HTMLAppletElement inherit from HTMLPlugInElement directly instead?
 class HTMLPlugInImageElement : public HTMLPlugInElement {
 public:
     virtual ~HTMLPlugInImageElement();
@@ -104,55 +97,53 @@ public:
     SnapshotDecision snapshotDecision() const { return m_snapshotDecision; }
 
 protected:
+    enum PreferPlugInsForImagesOption { ShouldPreferPlugInsForImages, ShouldNotPreferPlugInsForImages };
     HTMLPlugInImageElement(const QualifiedName& tagName, Document&, bool createdByParser, PreferPlugInsForImagesOption);
 
+    virtual void didMoveToNewDocument(Document* oldDocument) override;
+    virtual bool requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues) override final;
+
     bool isImageType();
-
-    OwnPtr<HTMLImageLoader> m_imageLoader;
-    String m_serviceType;
-    String m_url;
-    URL m_loadedUrl;
-
-    static void updateWidgetCallback(Node&, unsigned);
-    static void startLoadingImageCallback(Node&, unsigned);
-
-    virtual void didAttachRenderers() override;
-    virtual void willDetachRenderers() override;
+    HTMLImageLoader* imageLoader() { return m_imageLoader.get(); }
 
     bool allowedToLoadFrameURL(const String& url);
     bool wouldLoadAsNetscapePlugin(const String& url, const String& serviceType);
 
-    virtual void didMoveToNewDocument(Document* oldDocument) override;
+    String m_serviceType;
+    String m_url;
 
-    virtual void documentWillSuspendForPageCache() override;
-    virtual void documentDidResumeFromPageCache() override;
-
-    virtual bool isRestartedPlugin() const override { return m_isRestartedPlugin; }
-    virtual bool requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues) override;
+    std::unique_ptr<HTMLImageLoader> m_imageLoader;
 
 private:
+    virtual bool isPlugInImageElement() const override final { return true; }
+    virtual bool isRestartedPlugin() const override final { return m_isRestartedPlugin; }
+
+    virtual void finishParsingChildren() override final;
+    virtual void didAddUserAgentShadowRoot(ShadowRoot*) override final;
+
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
-    virtual bool willRecalcStyle(Style::Change) override;
+    virtual bool willRecalcStyle(Style::Change) override final;
+    virtual void didAttachRenderers() override final;
+    virtual void willDetachRenderers() override final;
 
-    virtual void didAddUserAgentShadowRoot(ShadowRoot*) override;
+    virtual void documentWillSuspendForPageCache() override final;
+    virtual void documentDidResumeFromPageCache() override final;
 
-    virtual void finishParsingChildren() override;
+    virtual void defaultEventHandler(Event*) override final;
+    virtual void dispatchPendingMouseClick() override final;
 
-    void updateWidgetIfNecessary();
+    virtual void updateSnapshot(PassRefPtr<Image>) override final;
+
     void startLoadingImage();
+    void updateWidgetIfNecessary();
 
-    virtual void updateSnapshot(PassRefPtr<Image>) override;
-    virtual void dispatchPendingMouseClick() override;
     void simulatedMouseClickTimerFired(DeferrableOneShotTimer<HTMLPlugInImageElement>&);
 
     void restartSimilarPlugIns();
-
-    virtual bool isPlugInImageElement() const override { return true; }
-
     void removeSnapshotTimerFired(Timer<HTMLPlugInImageElement>&);
 
-    virtual void defaultEventHandler(Event*) override;
-
+private:
+    URL m_loadedUrl;
     bool m_needsWidgetUpdate;
     bool m_shouldPreferPlugInsForImages;
     bool m_needsDocumentActivationCallbacks;
