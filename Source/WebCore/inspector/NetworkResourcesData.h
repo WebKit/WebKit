@@ -162,7 +162,6 @@ public:
     Vector<String> removeCachedResource(CachedResource*);
     void clear(const String& preservedLoaderId = String());
 
-    void setResourcesDataSizeLimits(size_t maximumResourcesContentSize, size_t maximumSingleResourceContentSize);
     void setXHRReplayData(const String& requestId, XHRReplayData*);
     void reuseXHRReplayData(const String& requestId, const String& reusedRequestId);
     XHRReplayData* xhrReplayData(const String& requestId);

@@ -227,7 +227,6 @@ EXPORTS
         symbolWithPointer(?setInspectorFrontendClient@InspectorController@WebCore@@QAEXV?$unique_ptr@VInspectorFrontendClient@WebCore@@U?$default_delete@VInspectorFrontendClient@WebCore@@@std@@@std@@@Z, ?setInspectorFrontendClient@InspectorController@WebCore@@QEAAXV?$unique_ptr@VInspectorFrontendClient@WebCore@@U?$default_delete@VInspectorFrontendClient@WebCore@@@std@@@std@@@Z)
         symbolWithPointer(?setProperty@Settings@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@0@Z, ?setProperty@Settings@InspectorFrontendClientLocal@WebCore@@UEAAXAEBVString@WTF@@0@Z)
         symbolWithPointer(?windowObjectCleared@InspectorFrontendClientLocal@WebCore@@UAEXXZ, ?windowObjectCleared@InspectorFrontendClientLocal@WebCore@@UEAAXXZ)
-        symbolWithPointer(?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QAEXHH@Z, ?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QEAAXHH@Z)
         symbolWithPointer(?pathByAppendingComponent@WebCore@@YA?AVString@WTF@@ABV23@0@Z, ?pathByAppendingComponent@WebCore@@YA?AVString@WTF@@AEBV23@0@Z)
         symbolWithPointer(?setProfilerEnabled@InspectorController@WebCore@@QAEX_N@Z, ?setProfilerEnabled@InspectorController@WebCore@@QEAAX_N@Z)
         symbolWithPointer(?disconnectFrontend@InspectorController@WebCore@@QAEXW4InspectorDisconnectReason@Inspector@@@Z, ?disconnectFrontend@InspectorController@WebCore@@QEAAXW4InspectorDisconnectReason@Inspector@@@Z)

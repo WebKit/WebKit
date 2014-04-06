@@ -635,12 +635,6 @@ void InspectorResourceAgent::didReceiveWebSocketFrameError(unsigned long identif
 
 #endif // ENABLE(WEB_SOCKETS)
 
-// called from Internals for layout test purposes.
-void InspectorResourceAgent::setResourcesDataSizeLimitsFromInternals(int maximumResourcesContentSize, int maximumSingleResourceContentSize)
-{
-    m_resourcesData->setResourcesDataSizeLimits(maximumResourcesContentSize, maximumSingleResourceContentSize);
-}
-
 void InspectorResourceAgent::enable(ErrorString*)
 {
     enable();

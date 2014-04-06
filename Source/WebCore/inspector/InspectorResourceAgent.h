@@ -121,9 +121,6 @@ public:
     void didReceiveWebSocketFrameError(unsigned long identifier, const String&);
 #endif
 
-    // Called from Internals for layout test purposes.
-    void setResourcesDataSizeLimitsFromInternals(int maximumResourcesContentSize, int maximumSingleResourceContentSize);
-
     // Called from frontend.
     virtual void enable(ErrorString*) override;
     virtual void disable(ErrorString*) override;

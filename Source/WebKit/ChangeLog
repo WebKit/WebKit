@@ -1,5 +1,14 @@
 2014-04-05  Brian J. Burg  <burg@cs.washington.edu>
 
+        Web Inspector: remove unused test hook setInspectorResourcesDataSizeLimits
+        https://bugs.webkit.org/show_bug.cgi?id=131268
+
+        Reviewed by Timothy Hatcher.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Remove symbols.
+
+2014-04-05  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Inspector: remove unused metrics and commands from the Timeline agent
         https://bugs.webkit.org/show_bug.cgi?id=131184
 

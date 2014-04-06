@@ -396,11 +396,6 @@ void InspectorController::resume()
     }
 }
 
-void InspectorController::setResourcesDataSizeLimitsFromInternals(int maximumResourcesContentSize, int maximumSingleResourceContentSize)
-{
-    m_resourceAgent->setResourcesDataSizeLimitsFromInternals(maximumResourcesContentSize, maximumSingleResourceContentSize);
-}
-
 bool InspectorController::developerExtrasEnabled() const
 {
     return m_page.settings().developerExtrasEnabled();

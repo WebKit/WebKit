@@ -351,13 +351,6 @@ void NetworkResourcesData::clear(const String& preservedLoaderId)
     m_reusedXHRReplayDataRequestIds.clear();
 }
 
-void NetworkResourcesData::setResourcesDataSizeLimits(size_t maximumResourcesContentSize, size_t maximumSingleResourceContentSize)
-{
-    clear();
-    m_maximumResourcesContentSize = maximumResourcesContentSize;
-    m_maximumSingleResourceContentSize = maximumSingleResourceContentSize;
-}
-
 NetworkResourcesData::ResourceData* NetworkResourcesData::resourceDataForRequestId(const String& requestId)
 {
     if (requestId.isNull())
