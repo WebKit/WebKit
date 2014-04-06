@@ -103,7 +103,7 @@ ApplicationCache* ApplicationCacheGroup::cacheForMainRequest(const ResourceReque
     if (url.hasFragmentIdentifier())
         url.removeFragmentIdentifier();
 
-    if (documentLoader->frame() && (documentLoader->frame()->page()->usesEphemeralSession() || !documentLoader->frame()->document()->securityOrigin()->canAccessApplicationCache(documentLoader->frame()->tree().top().document()->securityOrigin())))
+    if (documentLoader->frame() && documentLoader->frame()->page()->usesEphemeralSession())
         return 0;
 
     if (ApplicationCacheGroup* group = cacheStorage().cacheGroupForURL(url)) {

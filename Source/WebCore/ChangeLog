@@ -1,3 +1,19 @@
+2014-04-05  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r163914): Application cache cannot be used in main frame
+        https://bugs.webkit.org/show_bug.cgi?id=131263
+        <rdar://problem/16532063>
+
+        Reviewed by Sam Weinig.
+
+        * loader/appcache/ApplicationCacheHost.cpp: (WebCore::ApplicationCacheHost::isApplicationCacheBlockedForRequest):
+        Don't check main frame origin when loading into main frame, it's not a 3rd party
+        subframe, and the URL is unrelated to the page we are loading now.
+
+        * loader/appcache/ApplicationCacheGroup.cpp: (WebCore::ApplicationCacheGroup::cacheForMainRequest):
+        Removed the same incorrect check that was duplicated here. The only caller already
+        checks isApplicationCacheBlockedForRequest().
+
 2014-04-05  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Clean up the platform/graphics group

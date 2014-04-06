@@ -35,6 +35,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
+#include "MainFrame.h"
 #include "ProgressEvent.h"
 #include "ResourceHandle.h"
 #include "ResourceLoader.h"
@@ -481,8 +482,15 @@ bool ApplicationCacheHost::isApplicationCacheEnabled()
 
 bool ApplicationCacheHost::isApplicationCacheBlockedForRequest(const ResourceRequest& request)
 {
+    Frame* frame = m_documentLoader->frame();
+    if (!frame)
+        return false;
+
+    if (frame->isMainFrame())
+        return false;
+
     RefPtr<SecurityOrigin> origin = SecurityOrigin::create(request.url());
-    return m_documentLoader->frame() && !origin->canAccessApplicationCache(m_documentLoader->frame()->document()->topOrigin());
+    return !origin->canAccessApplicationCache(frame->document()->topOrigin());
 }
 
 }  // namespace WebCore
