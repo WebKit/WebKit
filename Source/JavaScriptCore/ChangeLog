@@ -1,3 +1,10 @@
+2014-04-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed speculative 32-bit buildfix after r166837.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::updateObjectCounts):
+
 2014-04-06  Dan Bernstein  <mitz@apple.com>
 
         32-bit build fix.

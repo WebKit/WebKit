@@ -774,7 +774,7 @@ void Heap::updateObjectCounts(double gcStartTime)
 #if ENABLE(PARALLEL_GC)
         visitCount += m_sharedData.childVisitCount();
 #endif
-        dataLogF("\nNumber of live Objects after GC %lu, took %.6f secs\n", visitCount, WTF::monotonicallyIncreasingTime() - gcStartTime);
+        dataLogF("\nNumber of live Objects after GC %lu, took %.6f secs\n", static_cast<unsigned long>(visitCount), WTF::monotonicallyIncreasingTime() - gcStartTime);
     }
 
     if (m_operationInProgress == EdenCollection) {
