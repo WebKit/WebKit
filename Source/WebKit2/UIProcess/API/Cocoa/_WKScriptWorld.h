@@ -29,7 +29,7 @@
 #if WK_API_ENABLED
 
 WK_API_CLASS
-@interface WKScriptWorld : NSObject
+@interface _WKScriptWorld : NSObject
 
 + (instancetype)defaultWorld;
 

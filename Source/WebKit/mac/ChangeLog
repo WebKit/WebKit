@@ -1,3 +1,11 @@
+2014-04-06  Sam Weinig  <sam@webkit.org>
+
+        Document user content related APIs
+
+        Reviewed by Anders Carlsson.
+
+        * MigrateHeaders.make:
+
 2014-04-06  Darin Adler  <darin@apple.com>
 
         Refactor post-attach and HTMLObjectElement-related code

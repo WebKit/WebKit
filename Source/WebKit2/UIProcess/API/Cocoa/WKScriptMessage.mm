@@ -24,9 +24,11 @@
  */
 
 #import "config.h"
-#import "WKScriptMessage.h"
+#import "WKScriptMessagePrivate.h"
 
 #if WK_API_ENABLED
+
+// FIXME: Consider adding the navigation as well.
 
 @implementation WKScriptMessage
 
@@ -48,8 +50,13 @@
     return nil;
 }
 
-- (WKScriptWorld *)scriptWorld
+@end
+
+@implementation WKScriptMessage (WKPrivate)
+
+- (_WKScriptWorld *)_scriptWorld
 {
+    // FIXME: Implement.
     return nil;
 }
 

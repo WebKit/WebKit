@@ -23,28 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit2/WKFoundation.h>
+#import "config.h"
+#import "_WKScriptWorld.h"
 
 #if WK_API_ENABLED
 
-@class WKWebView;
+@implementation _WKScriptWorld {
+    uint64_t _worldID;
+}
 
-/*! A @link WKScriptMessage @/link object contains information about a message being sent from a web page.
- */
-WK_API_CLASS
-@interface WKScriptMessage : NSObject
+static uint64_t generateWorldID()
+{
+    std::atomic<uint64_t> worldID;
 
-/*! @abstract The body of the message. Allowed types are NSDictionary, NSArray, NSNumber, NSNull, NSString, and NSDate. */
-@property (nonatomic, readonly) id body;
+    return ++worldID;
+}
 
-/*! @abstract The web view the message is coming from. */
-@property (nonatomic, readonly, weak) WKWebView *webView;
++ (instancetype)defaultWorld
+{
+    static dispatch_once_t onceToken;
+    static _WKScriptWorld *defaultWorld;
 
-/*! @abstract The name of the message handler this message is being sent to. */
-@property (nonatomic, readonly) NSString *name;
+    dispatch_once(&onceToken, ^{
+        defaultWorld = [[_WKScriptWorld alloc] _initWithWorldID:0];
+    });
+
+    return defaultWorld;
+}
+
+- (instancetype)init
+{
+    return [self _initWithWorldID:generateWorldID()];
+}
+
+- (instancetype)_initWithWorldID:(uint64_t)worldID
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _worldID = worldID;
+    return self;
+}
 
 @end
 
 #endif
-

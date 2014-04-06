@@ -28,14 +28,25 @@
 
 #if WK_API_ENABLED
 
-@class WKScriptWorld;
 @protocol WKScriptMessageHandler;
 
+/*! WKUserContentController provides a way for JavaScript to post messages to the @link WKWebView @/link.
+ A @link WKWebView @/link can specify which WKUserContentController object it uses through its @link WKWebViewConfiguration @/link.
+ */
 WK_API_CLASS
 @interface WKUserContentController : NSObject
 
-- (void)addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name world:(WKScriptWorld *)world;
-- (void)removeScriptMessageHandlerForName:(NSString *)name world:(WKScriptWorld *)world;
+/*! @abstract Adds a script message handler.
+ @param scriptMessageHandler The message handler where the messages should be delivered.
+ @param name The name of the message handler.
+ @discussion Adding a scriptMessageHandler adds a function window.webkit.messaging.<name>.postMessage(<messageBody>) for all frames.
+ */
+- (void)addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name;
+
+/*! @abstract Removes a script message handler.
+ @param name The name of the message handler to remove.
+ */
+- (void)removeScriptMessageHandlerForName:(NSString *)name;
 
 @end
 

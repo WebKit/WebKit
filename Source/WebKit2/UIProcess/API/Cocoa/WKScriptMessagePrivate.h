@@ -23,28 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit2/WKFoundation.h>
+#import <WebKit2/WKScriptMessage.h>
 
 #if WK_API_ENABLED
 
-@class WKWebView;
+@class _WKScriptWorld;
 
-/*! A @link WKScriptMessage @/link object contains information about a message being sent from a web page.
- */
-WK_API_CLASS
-@interface WKScriptMessage : NSObject
+@interface WKScriptMessage (WKPrivate)
 
-/*! @abstract The body of the message. Allowed types are NSDictionary, NSArray, NSNumber, NSNull, NSString, and NSDate. */
-@property (nonatomic, readonly) id body;
-
-/*! @abstract The web view the message is coming from. */
-@property (nonatomic, readonly, weak) WKWebView *webView;
-
-/*! @abstract The name of the message handler this message is being sent to. */
-@property (nonatomic, readonly) NSString *name;
+@property (nonatomic, readonly) _WKScriptWorld *_scriptWorld;
 
 @end
 
 #endif
-

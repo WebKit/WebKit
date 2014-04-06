@@ -23,19 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKUserContentController.h"
+#import "config.h"
+#import "WKUserContentControllerPrivate.h"
 
 #if WK_API_ENABLED
 
+#import "_WKScriptWorld.h"
+
 @implementation WKUserContentController
 
-- (void)addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name world:(WKScriptWorld *)world
+- (void)addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name
+{
+    [self _addScriptMessageHandler:scriptMessageHandler name:name world:[_WKScriptWorld defaultWorld]];
+}
+
+- (void)removeScriptMessageHandlerForName:(NSString *)name
+{
+    [self _removeScriptMessageHandlerForName:name world:[_WKScriptWorld defaultWorld]];
+}
+
+@end
+
+@implementation WKUserContentController (WKPrivate)
+
+- (void)_addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name world:(_WKScriptWorld *)world
 {
     // FIXME: Implement.
 }
 
-- (void)removeScriptMessageHandlerForName:(NSString *)name world:(WKScriptWorld *)world
+- (void)_removeScriptMessageHandlerForName:(NSString *)name world:(_WKScriptWorld *)world
 {
     // FIXME: Implement.
 }

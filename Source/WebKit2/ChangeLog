@@ -1,3 +1,34 @@
+2014-04-06  Sam Weinig  <sam@webkit.org>
+
+        Document user content related APIs..
+
+        Reviewed by Anders Carlsson.
+
+        - Also demote WKScriptWorld to SPI.
+
+        * UIProcess/API/Cocoa/WKScriptMessage.h:
+        * UIProcess/API/Cocoa/WKScriptMessage.mm:
+        (-[WKScriptMessage _scriptWorld]):
+        (-[WKScriptMessage scriptWorld]): Deleted.
+        * UIProcess/API/Cocoa/WKScriptMessageHandler.h:
+        * UIProcess/API/Cocoa/WKScriptMessagePrivate.h: Added.
+        * UIProcess/API/Cocoa/WKScriptWorld.h: Removed.
+        * UIProcess/API/Cocoa/WKScriptWorld.mm: Removed.
+        * UIProcess/API/Cocoa/WKUserContentController.h:
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (-[WKUserContentController addScriptMessageHandler:name:]):
+        (-[WKUserContentController removeScriptMessageHandlerForName:]):
+        (-[WKUserContentController _addScriptMessageHandler:name:world:]):
+        (-[WKUserContentController _removeScriptMessageHandlerForName:world:]):
+        (-[WKUserContentController addScriptMessageHandler:name:world:]): Deleted.
+        (-[WKUserContentController removeScriptMessageHandlerForName:world:]): Deleted.
+        * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h: Added.
+        * UIProcess/API/Cocoa/_WKScriptWorld.h: Copied from WebKit2/UIProcess/API/Cocoa/WKScriptWorld.h.
+        * UIProcess/API/Cocoa/_WKScriptWorld.mm: Copied from WebKit2/UIProcess/API/Cocoa/WKScriptWorld.mm.
+        (+[_WKScriptWorld defaultWorld]):
+        (+[WKScriptWorld defaultWorld]): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-04-04  Brian J. Burg  <burg@cs.washington.edu>
 
         Enable WEB_REPLAY for PLATFORM(MAC)
