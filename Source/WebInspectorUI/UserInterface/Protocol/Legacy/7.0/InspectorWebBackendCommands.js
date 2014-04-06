@@ -15,10 +15,6 @@ InspectorBackend.registerEvent("Inspector.targetCrashed", []);
 InspectorBackend.registerCommand("Inspector.enable", [], []);
 InspectorBackend.registerCommand("Inspector.disable", [], []);
 
-// Memory.
-InspectorBackend.registerMemoryDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Memory");
-InspectorBackend.registerCommand("Memory.getDOMCounters", [], ["documents", "nodes", "jsEventListeners"]);
-
 // Page.
 InspectorBackend.registerPageDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Page");
 InspectorBackend.registerEnum("Page.ResourceType", {Document: "Document", Stylesheet: "Stylesheet", Image: "Image", Font: "Font", Script: "Script", XHR: "XHR", WebSocket: "WebSocket", Other: "Other"});
@@ -230,12 +226,10 @@ InspectorBackend.registerCommand("CSS.getNamedFlowCollection", [{"name": "docume
 
 // Timeline.
 InspectorBackend.registerTimelineDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Timeline");
-InspectorBackend.registerEnum("Timeline.EventType", {EventDispatch: "EventDispatch", BeginFrame: "BeginFrame", ScheduleStyleRecalculation: "ScheduleStyleRecalculation", RecalculateStyles: "RecalculateStyles", InvalidateLayout: "InvalidateLayout", Layout: "Layout", Paint: "Paint", ScrollLayer: "ScrollLayer", ResizeImage: "ResizeImage", CompositeLayers: "CompositeLayers", ParseHTML: "ParseHTML", TimerInstall: "TimerInstall", TimerRemove: "TimerRemove", TimerFire: "TimerFire", EvaluateScript: "EvaluateScript", MarkLoad: "MarkLoad", MarkDOMContent: "MarkDOMContent", TimeStamp: "TimeStamp", Time: "Time", TimeEnd: "TimeEnd", ScheduleResourceRequest: "ScheduleResourceRequest", ResourceSendRequest: "ResourceSendRequest", ResourceReceiveResponse: "ResourceReceiveResponse", ResourceReceivedData: "ResourceReceivedData", ResourceFinish: "ResourceFinish", XHRReadyStateChange: "XHRReadyStateChange", XHRLoad: "XHRLoad", FunctionCall: "FunctionCall", GCEvent: "GCEvent", RequestAnimationFrame: "RequestAnimationFrame", CancelAnimationFrame: "CancelAnimationFrame", FireAnimationFrame: "FireAnimationFrame", WebSocketCreate: "WebSocketCreate", WebSocketSendHandshakeRequest: "WebSocketSendHandshakeRequest", WebSocketReceiveHandshakeResponse: "WebSocketReceiveHandshakeResponse", WebSocketDestroy: "WebSocketDestroy"});
+InspectorBackend.registerEnum("Timeline.EventType", {EventDispatch: "EventDispatch", ScheduleStyleRecalculation: "ScheduleStyleRecalculation", RecalculateStyles: "RecalculateStyles", InvalidateLayout: "InvalidateLayout", Layout: "Layout", Paint: "Paint", ScrollLayer: "ScrollLayer", ResizeImage: "ResizeImage", ParseHTML: "ParseHTML", TimerInstall: "TimerInstall", TimerRemove: "TimerRemove", TimerFire: "TimerFire", EvaluateScript: "EvaluateScript", MarkLoad: "MarkLoad", MarkDOMContent: "MarkDOMContent", TimeStamp: "TimeStamp", Time: "Time", TimeEnd: "TimeEnd", ScheduleResourceRequest: "ScheduleResourceRequest", ResourceSendRequest: "ResourceSendRequest", ResourceReceiveResponse: "ResourceReceiveResponse", ResourceReceivedData: "ResourceReceivedData", ResourceFinish: "ResourceFinish", XHRReadyStateChange: "XHRReadyStateChange", XHRLoad: "XHRLoad", FunctionCall: "FunctionCall", GCEvent: "GCEvent", RequestAnimationFrame: "RequestAnimationFrame", CancelAnimationFrame: "CancelAnimationFrame", FireAnimationFrame: "FireAnimationFrame", WebSocketCreate: "WebSocketCreate", WebSocketSendHandshakeRequest: "WebSocketSendHandshakeRequest", WebSocketReceiveHandshakeResponse: "WebSocketReceiveHandshakeResponse", WebSocketDestroy: "WebSocketDestroy"});
 InspectorBackend.registerEvent("Timeline.eventRecorded", ["record"]);
-InspectorBackend.registerCommand("Timeline.start", [{"name": "maxCallStackDepth", "type": "number", "optional": true}, {"name": "includeDomCounters", "type": "boolean", "optional": true}, {"name": "includeNativeMemoryStatistics", "type": "boolean", "optional": true}], []);
+InspectorBackend.registerCommand("Timeline.start", [{"name": "maxCallStackDepth", "type": "number", "optional": true}], []);
 InspectorBackend.registerCommand("Timeline.stop", [], []);
-InspectorBackend.registerCommand("Timeline.supportsFrameInstrumentation", [], ["result"]);
-InspectorBackend.registerCommand("Timeline.canMonitorMainThread", [], ["result"]);
 
 // Debugger.
 InspectorBackend.registerDebuggerDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Debugger");

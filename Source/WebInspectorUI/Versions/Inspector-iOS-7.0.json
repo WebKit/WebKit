@@ -42,30 +42,6 @@
         ]
     },
     {
-        "domain": "Memory",
-        "types": [
-            {
-                "id": "MemoryBlock",
-                "type": "object",
-                "properties": [
-                    { "name": "size", "type": "number", "optional": true, "description": "Size of the block in bytes if available" },
-                    { "name": "name", "type": "string", "description": "Unique name used to identify the component that allocated this block" },
-                    { "name": "children", "type": "array", "optional": true, "items": { "$ref": "MemoryBlock" }}
-                ]
-            }
-        ],
-        "commands": [
-            {
-                "name": "getDOMCounters",
-                "returns": [
-                    { "name": "documents", "type": "integer" },
-                    { "name": "nodes", "type": "integer" },
-                    { "name": "jsEventListeners", "type": "integer" }
-                ]
-            }
-        ]
-    },
-    {
         "domain": "Page",
         "description": "Actions and events related to the inspected page belong to the page domain.",
         "types": [
@@ -2223,19 +2199,9 @@
         "description": "Timeline provides its clients with instrumentation records that are generated during the page runtime. Timeline instrumentation can be started and stopped using corresponding commands. While timeline is started, it is generating timeline event records.",
         "types": [
             {
-                "id": "DOMCounters",
-                "type": "object",
-                "properties": [
-                    { "name": "documents", "type": "integer" },
-                    { "name": "nodes", "type": "integer" },
-                    { "name": "jsEventListeners", "type": "integer" }
-                ],
-                "description": "Current values of DOM counters."
-            },
-            {
                 "id": "EventType",
                 "type": "string",
-                "enum": ["EventDispatch", "BeginFrame", "ScheduleStyleRecalculation", "RecalculateStyles", "InvalidateLayout", "Layout", "Paint", "ScrollLayer", "ResizeImage", "CompositeLayers", "ParseHTML", "TimerInstall", "TimerRemove", "TimerFire", "EvaluateScript", "MarkLoad", "MarkDOMContent", "TimeStamp", "Time", "TimeEnd", "ScheduleResourceRequest", "ResourceSendRequest", "ResourceReceiveResponse", "ResourceReceivedData", "ResourceFinish", "XHRReadyStateChange", "XHRLoad", "FunctionCall", "GCEvent", "RequestAnimationFrame", "CancelAnimationFrame", "FireAnimationFrame", "WebSocketCreate", "WebSocketSendHandshakeRequest", "WebSocketReceiveHandshakeResponse", "WebSocketDestroy"],
+                "enum": ["EventDispatch", "ScheduleStyleRecalculation", "RecalculateStyles", "InvalidateLayout", "Layout", "Paint", "ScrollLayer", "ResizeImage", "ParseHTML", "TimerInstall", "TimerRemove", "TimerFire", "EvaluateScript", "MarkLoad", "MarkDOMContent", "TimeStamp", "Time", "TimeEnd", "ScheduleResourceRequest", "ResourceSendRequest", "ResourceReceiveResponse", "ResourceReceivedData", "ResourceFinish", "XHRReadyStateChange", "XHRLoad", "FunctionCall", "GCEvent", "RequestAnimationFrame", "CancelAnimationFrame", "FireAnimationFrame", "WebSocketCreate", "WebSocketSendHandshakeRequest", "WebSocketReceiveHandshakeResponse", "WebSocketDestroy"],
                 "description": "Timeline record type."
             },
             {
@@ -2243,12 +2209,8 @@
                 "type": "object",
                 "properties": [
                     { "name": "type", "type": "string", "description": "Event type." },
-                    { "name": "thread", "type": "string", "optional": true, "description": "If present, identifies the thread that produced the event." },
                     { "name": "data", "type": "object", "description": "Event data." },
-                    { "name": "children", "type": "array", "optional": true, "items": { "$ref": "TimelineEvent" }, "description": "Nested records." },
-                    { "name": "counters", "$ref": "DOMCounters", "optional": true,  "description": "Current values of DOM counters." },
-                    { "name": "usedHeapSize", "type": "integer", "optional": true,  "description": "Current size of JS heap." },
-                    { "name": "nativeHeapStatistics", "type": "object", "optional": true,  "description": "Native heap statistics." }
+                    { "name": "children", "type": "array", "optional": true, "items": { "$ref": "TimelineEvent" }, "description": "Nested records." }
                 ],
                 "description": "Timeline record contains information about the recorded activity."
             }
@@ -2257,29 +2219,13 @@
             {
                 "name": "start",
                 "parameters": [
-                    { "name": "maxCallStackDepth", "optional": true, "type": "integer", "description": "Samples JavaScript stack traces up to <code>maxCallStackDepth</code>, defaults to 5." },
-                    { "name": "includeDomCounters", "optional": true, "type": "boolean",  "description": "Whether DOM counters data should be included into timeline events." },
-                    { "name": "includeNativeMemoryStatistics", "optional": true, "type": "boolean",  "description": "Whether native memory usage statistics should be reported as part of timeline events." }
+                    { "name": "maxCallStackDepth", "optional": true, "type": "integer", "description": "Samples JavaScript stack traces up to <code>maxCallStackDepth</code>, defaults to 5." }
                 ],
                 "description": "Starts capturing instrumentation events."
             },
             {
                 "name": "stop",
                 "description": "Stops capturing instrumentation events."
-            },
-            {
-                "name": "supportsFrameInstrumentation",
-                "returns": [
-                    { "name": "result", "type": "boolean", "description": "True if timeline supports frame instrumentation." }
-                ],
-                "description": "Tells whether timeline agent supports frame instrumentation."
-            },
-            {
-                "name": "canMonitorMainThread",
-                "returns": [
-                    { "name": "result", "type": "boolean", "description": "True if timeline supports main thread CPU utilization instrumentation." }
-                ],
-                "description": "Tells whether timeline agent supports main thread CPU utilization instrumentation."
             }
         ],
         "events": [

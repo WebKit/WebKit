@@ -1,3 +1,19 @@
+2014-04-05  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: remove unused metrics and commands from the Timeline agent
+        https://bugs.webkit.org/show_bug.cgi?id=131184
+
+        Reviewed by Timothy Hatcher.
+
+        Remove the Memory domain from old protocol versions. Remove enum values
+        BeginFrame and CompositeLayers. Remove arguments to Timeline.start.
+        Remove miscellaneous Timeline commands that no longer exist and were never used.
+
+        * UserInterface/Protocol/Legacy/6.0/InspectorWebBackendCommands.js:
+        * UserInterface/Protocol/Legacy/7.0/InspectorWebBackendCommands.js:
+        * Versions/Inspector-iOS-6.0.json:
+        * Versions/Inspector-iOS-7.0.json:
+
 2014-04-03  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: hook up probe samples to TimelineAgent's records

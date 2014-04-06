@@ -1164,20 +1164,6 @@ PassRefPtr<NodeList> Internals::nodesFromRect(Document* document, int centerX, i
     return StaticNodeList::adopt(matches);
 }
 
-void Internals::emitInspectorDidBeginFrame()
-{
-#if ENABLE(INSPECTOR)
-    contextDocument()->frame()->page()->inspectorController().didBeginFrame();
-#endif
-}
-
-void Internals::emitInspectorDidCancelFrame()
-{
-#if ENABLE(INSPECTOR)
-    contextDocument()->frame()->page()->inspectorController().didCancelFrame();
-#endif
-}
-
 class GetCallerCodeBlockFunctor {
 public:
     GetCallerCodeBlockFunctor()

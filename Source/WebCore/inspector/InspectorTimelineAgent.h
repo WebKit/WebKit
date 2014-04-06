@@ -62,7 +62,6 @@ typedef String ErrorString;
 
 enum class TimelineRecordType {
     EventDispatch,
-    BeginFrame,
     ScheduleStyleRecalculation,
     RecalculateStyles,
     InvalidateLayout,
@@ -70,7 +69,6 @@ enum class TimelineRecordType {
     Paint,
     ScrollLayer,
     ResizeImage,
-    CompositeLayers,
 
     ParseHTML,
 
@@ -138,8 +136,6 @@ public:
 
     virtual void start(ErrorString*, const int* maxCallStackDepth) override;
     virtual void stop(ErrorString*) override;
-    virtual void canMonitorMainThread(ErrorString*, bool*) override;
-    virtual void supportsFrameInstrumentation(ErrorString*, bool*) override;
 
     int id() const { return m_id; }
 
@@ -151,9 +147,6 @@ public:
 
     void willDispatchEvent(const Event&, Frame*);
     void didDispatchEvent();
-
-    void didBeginFrame();
-    void didCancelFrame();
 
     void didInvalidateLayout(Frame*);
     void willLayout(Frame*);
@@ -168,9 +161,6 @@ public:
 
     void willScroll(Frame*);
     void didScroll();
-
-    void willComposite();
-    void didComposite();
 
     void willWriteHTML(unsigned startLine, Frame*);
     void didWriteHTML(unsigned endLine);
@@ -230,15 +220,14 @@ private:
     friend class TimelineRecordStack;
 
     struct TimelineRecordEntry {
-        TimelineRecordEntry(PassRefPtr<Inspector::InspectorObject> record, PassRefPtr<Inspector::InspectorObject> data, PassRefPtr<Inspector::InspectorArray> children, TimelineRecordType type, size_t usedHeapSizeAtStart)
-            : record(record), data(data), children(children), type(type), usedHeapSizeAtStart(usedHeapSizeAtStart)
+        TimelineRecordEntry(PassRefPtr<Inspector::InspectorObject> record, PassRefPtr<Inspector::InspectorObject> data, PassRefPtr<Inspector::InspectorArray> children, TimelineRecordType type)
+            : record(record), data(data), children(children), type(type)
         {
         }
         RefPtr<Inspector::InspectorObject> record;
         RefPtr<Inspector::InspectorObject> data;
         RefPtr<Inspector::InspectorArray> children;
         TimelineRecordType type;
-        size_t usedHeapSizeAtStart;
     };
 
     void sendEvent(PassRefPtr<Inspector::InspectorObject>);
@@ -249,11 +238,7 @@ private:
 
     void didCompleteCurrentRecord(TimelineRecordType);
 
-    void setHeapSizeStatistics(Inspector::InspectorObject* record);
-    void commitFrameRecord();
-
     void addRecordToTimeline(PassRefPtr<Inspector::InspectorObject>, TimelineRecordType);
-    void innerAddRecordToTimeline(PassRefPtr<Inspector::InspectorObject>, TimelineRecordType);
     void clearRecordStack();
 
     void localToPageQuad(const RenderObject&, const LayoutRect&, FloatQuad*);
@@ -272,7 +257,6 @@ private:
 
     int m_id;
     int m_maxCallStackDepth;
-    RefPtr<Inspector::InspectorObject> m_pendingFrameRecord;
     InspectorType m_inspectorType;
     InspectorClient* m_client;
     WeakPtrFactory<InspectorTimelineAgent> m_weakFactory;

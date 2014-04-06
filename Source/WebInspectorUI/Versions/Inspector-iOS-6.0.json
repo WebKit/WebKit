@@ -46,60 +46,6 @@
         ]
     },
     {
-        "domain": "Memory",
-        "hidden": true,
-        "types": [
-            {
-                "id": "NodeCount",
-                "type": "object",
-                "properties": [
-                    { "name": "nodeName", "type": "string" },
-                    { "name": "count", "type": "integer" }
-                ],
-                "description": "Number of nodes with given name."
-            },
-            {
-                "id": "ListenerCount",
-                "type": "object",
-                "properties": [
-                    { "name": "type", "type": "string" },
-                    { "name": "count", "type": "integer" }
-                ],
-                "description": "Number of JS event listeners by event type."
-            },
-            {
-                "id": "StringStatistics",
-                "type": "object",
-                "properties": [
-                    { "name": "dom", "type": "integer" },
-                    { "name": "js", "type": "integer" },
-                    { "name": "shared", "type": "integer" }
-                ],
-                "description": "Character data statistics for the page."
-            },
-            {
-                "id": "DOMGroup",
-                "type": "object",
-                "properties": [
-                    { "name": "size", "type": "integer" },
-                    { "name": "title", "type": "string" },
-                    { "name": "documentURI", "type": "string", "optional": true },
-                    { "name": "nodeCount", "type": "array", "items": { "$ref": "NodeCount" }},
-                    { "name": "listenerCount", "type": "array", "items": { "$ref": "ListenerCount" }}
-                ]
-            }
-        ],
-        "commands": [
-            {
-                "name": "getDOMNodeCount",
-                "returns": [
-                    { "name": "domGroups", "type": "array", "items": { "$ref": "DOMGroup" }},
-                    { "name": "strings", "$ref": "StringStatistics" }
-                ]
-            }
-        ]
-    },
-    {
         "domain": "Page",
         "description": "Actions and events related to the inspected page belong to the page domain.",
         "types": [

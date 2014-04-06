@@ -401,30 +401,6 @@ void InspectorController::setResourcesDataSizeLimitsFromInternals(int maximumRes
     m_resourceAgent->setResourcesDataSizeLimitsFromInternals(maximumResourcesContentSize, maximumSingleResourceContentSize);
 }
 
-void InspectorController::didBeginFrame()
-{
-    if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
-        timelineAgent->didBeginFrame();
-}
-
-void InspectorController::didCancelFrame()
-{
-    if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
-        timelineAgent->didCancelFrame();
-}
-
-void InspectorController::willComposite()
-{
-    if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
-        timelineAgent->willComposite();
-}
-
-void InspectorController::didComposite()
-{
-    if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
-        timelineAgent->didComposite();
-}
-
 bool InspectorController::developerExtrasEnabled() const
 {
     return m_page.settings().developerExtrasEnabled();

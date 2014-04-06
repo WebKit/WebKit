@@ -126,11 +126,6 @@ public:
     InspectorClient* inspectorClient() const { return m_inspectorClient; }
     InspectorPageAgent* pageAgent() const { return m_pageAgent; }
 
-    void didBeginFrame();
-    void didCancelFrame();
-    void willComposite();
-    void didComposite();
-
     virtual bool developerExtrasEnabled() const override;
     virtual bool canAccessInspectedScriptState(JSC::ExecState*) const override;
     virtual Inspector::InspectorFunctionCallHandler functionCallHandler() const override;

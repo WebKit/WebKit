@@ -1,3 +1,59 @@
+2014-04-05  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: remove unused metrics and commands from the Timeline agent
+        https://bugs.webkit.org/show_bug.cgi?id=131184
+
+        Reviewed by Timothy Hatcher.
+
+        This patch removes several instrumentation hooks that are not being
+        used by the frontend in any way. Most of them are not hooked up to
+        produce any data, so they just clutter up InspectorClient and the agent.
+
+        * WebCore.exp.in: Remove didBeginFrame/didCancelFrame.
+        * inspector/InspectorClient.h: Remove client methods that are never overridden.
+        (WebCore::InspectorClient::canMonitorMainThread): Deleted.
+        (WebCore::InspectorClient::supportsFrameInstrumentation): Deleted.
+        (WebCore::InspectorClient::getAllocatedObjects): Deleted.
+        (WebCore::InspectorClient::dumpUncountedAllocatedObjects): Deleted.
+
+        * inspector/InspectorController.cpp: Remove unused instrumentation.
+        (WebCore::InspectorController::didBeginFrame): Deleted.
+        (WebCore::InspectorController::didCancelFrame): Deleted.
+        (WebCore::InspectorController::didComposite): Deleted.
+        (WebCore::InspectorController::wilComposite): Deleted.
+        * inspector/InspectorController.h:
+
+        * inspector/InspectorTimelineAgent.cpp: Remove the backend's BeginFrame enum
+        value, but keep it in the protocol for when it is reimplemented. Remove
+        management of the current frame record, and simplify some code.
+        (WebCore::toProtocol):
+        (WebCore::InspectorTimelineAgent::addRecordToTimeline):
+        (WebCore::InspectorTimelineAgent::didCompleteCurrentRecord):
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+        (WebCore::InspectorTimelineAgent::clearRecordStack):
+        (WebCore::InspectorTimelineAgent::canMonitorMainThread): Deleted.
+        (WebCore::InspectorTimelineAgent::supportsFrameInstrumentation): Deleted.
+        (WebCore::InspectorTimelineAgent::didBeginFrame): Deleted.
+        (WebCore::InspectorTimelineAgent::didCancelFrame): Deleted.
+        (WebCore::InspectorTimelineAgent::didComposite): Deleted.
+        (WebCore::InspectorTimelineAgent::wilComposite): Deleted.
+        (WebCore::InspectorTimelineAgent::innerAddRecordToTimeline): Deleted. Undo telescoping.
+        (WebCore::usedHeapSize): Deleted.
+        (WebCore::InspectorTimelineAgent::commitFrameRecord): Deleted.
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::InspectorTimelineAgent::TimelineRecordEntry::TimelineRecordEntry):
+        * inspector/protocol/Timeline.json:
+
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.cpp: Remove
+        instrumentation hook for beginFrame. This is the only backend that implements it.
+        (WebCore::CompositingCoordinator::syncDisplayState):
+
+        * testing/Internals.cpp: Remove crufty test methods that aren't used.
+        (WebCore::Internals::emitInspectorDidBeginFrame): Deleted.
+        (WebCore::Internals::emitInspectorDidCancelFrame): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-04-05  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r163914): Application cache cannot be used in main frame

@@ -63,7 +63,6 @@ public:
     virtual void clearBrowserCache() { }
     virtual bool canClearBrowserCookies() { return false; }
     virtual void clearBrowserCookies() { }
-    virtual bool canMonitorMainThread() { return false; }
 
     virtual bool overridesShowPaintRects() { return false; }
     virtual void setShowPaintRects(bool) { }
@@ -77,12 +76,7 @@ public:
     virtual bool canContinuouslyPaint() { return false; }
     virtual void setContinuousPaintingEnabled(bool) { }
 
-    virtual bool supportsFrameInstrumentation() { return false; }
-
     virtual void didSetSearchingForNode(bool) { }
-
-    virtual void getAllocatedObjects(HashSet<const void*>&) { }
-    virtual void dumpUncountedAllocatedObjects(const HashMap<const void*, size_t>&) { }
 
     virtual bool handleJavaScriptDialog(bool, const String*) { return false; }
 

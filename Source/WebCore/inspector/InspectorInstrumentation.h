@@ -165,8 +165,6 @@ public:
     static void didScrollLayer(Frame*);
     static void willPaint(RenderObject*);
     static void didPaint(RenderObject*, GraphicsContext*, const LayoutRect&);
-    static void willComposite(Page*);
-    static void didComposite(Page*);
     static InspectorInstrumentationCookie willRecalculateStyle(Document*);
     static void didRecalculateStyle(const InspectorInstrumentationCookie&);
     static void didScheduleStyleRecalculation(Document*);

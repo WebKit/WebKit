@@ -5,7 +5,7 @@
         {
             "id": "EventType",
             "type": "string",
-            "enum": ["EventDispatch", "BeginFrame", "ScheduleStyleRecalculation", "RecalculateStyles", "InvalidateLayout", "Layout", "Paint", "ScrollLayer", "ResizeImage", "CompositeLayers", "ParseHTML", "TimerInstall", "TimerRemove", "TimerFire", "EvaluateScript", "MarkLoad", "MarkDOMContent", "TimeStamp", "Time", "TimeEnd", "ScheduleResourceRequest", "ResourceSendRequest", "ResourceReceiveResponse", "ResourceReceivedData", "ResourceFinish", "XHRReadyStateChange", "XHRLoad", "FunctionCall", "ProbeSample", "GCEvent", "RequestAnimationFrame", "CancelAnimationFrame", "FireAnimationFrame", "WebSocketCreate", "WebSocketSendHandshakeRequest", "WebSocketReceiveHandshakeResponse", "WebSocketDestroy"],
+            "enum": ["EventDispatch", "ScheduleStyleRecalculation", "RecalculateStyles", "InvalidateLayout", "Layout", "Paint", "ScrollLayer", "ResizeImage", "ParseHTML", "TimerInstall", "TimerRemove", "TimerFire", "EvaluateScript", "MarkLoad", "MarkDOMContent", "TimeStamp", "Time", "TimeEnd", "ScheduleResourceRequest", "ResourceSendRequest", "ResourceReceiveResponse", "ResourceReceivedData", "ResourceFinish", "XHRReadyStateChange", "XHRLoad", "FunctionCall", "ProbeSample", "GCEvent", "RequestAnimationFrame", "CancelAnimationFrame", "FireAnimationFrame", "WebSocketCreate", "WebSocketSendHandshakeRequest", "WebSocketReceiveHandshakeResponse", "WebSocketDestroy"],
             "description": "Timeline record type."
         },
         {
@@ -13,10 +13,8 @@
             "type": "object",
             "properties": [
                 { "name": "type", "$ref": "EventType", "description": "Event type." },
-                { "name": "thread", "type": "string", "optional": true, "description": "If present, identifies the thread that produced the event." },
                 { "name": "data", "type": "object", "description": "Event data." },
-                { "name": "children", "type": "array", "optional": true, "items": { "$ref": "TimelineEvent" }, "description": "Nested records." },
-                { "name": "usedHeapSize", "type": "integer", "optional": true, "description": "Current size of JS heap." }
+                { "name": "children", "type": "array", "optional": true, "items": { "$ref": "TimelineEvent" }, "description": "Nested records." }
             ],
             "description": "Timeline record contains information about the recorded activity."
         }
@@ -32,20 +30,6 @@
         {
             "name": "stop",
             "description": "Stops capturing instrumentation events."
-        },
-        {
-            "name": "supportsFrameInstrumentation",
-            "returns": [
-                { "name": "result", "type": "boolean", "description": "True if timeline supports frame instrumentation." }
-            ],
-            "description": "Tells whether timeline agent supports frame instrumentation."
-        },
-        {
-            "name": "canMonitorMainThread",
-            "returns": [
-                { "name": "result", "type": "boolean", "description": "True if timeline supports main thread CPU utilization instrumentation." }
-            ],
-            "description": "Tells whether timeline agent supports main thread CPU utilization instrumentation."
         }
     ],
     "events": [

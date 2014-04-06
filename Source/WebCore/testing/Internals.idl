@@ -124,9 +124,6 @@
         unsigned long topPadding, unsigned long rightPadding, unsigned long bottomPadding, unsigned long leftPadding,
         boolean ignoreClipping, boolean allowShadowContent, boolean allowChildFrameContent);
 
-    void emitInspectorDidBeginFrame();
-    void emitInspectorDidCancelFrame();
-
     // Calling parserMetaData() with no arguments gets the metadata for the script of the current scope.
     DOMString parserMetaData(optional any func);
 

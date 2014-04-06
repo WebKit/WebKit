@@ -124,10 +124,6 @@ EXPORTS
         symbolWithPointer(?addTextMatchMarker@DocumentMarkerController@WebCore@@QAEXPBVRange@2@_N@Z, ?addTextMatchMarker@DocumentMarkerController@WebCore@@QEAAXPEBVRange@2@_N@Z)
         symbolWithPointer(?broadcast@ThreadCondition@WTF@@QAEXXZ, ?broadcast@ThreadCondition@WTF@@QEAAXXZ)
         symbolWithPointer(?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z, ?callOnMainThread@WTF@@YAXP6AXPEAX@Z0@Z)
-#if ENABLE(INSPECTOR)
-        symbolWithPointer(?didBeginFrame@InspectorController@WebCore@@QAEXXZ, ?didBeginFrame@InspectorController@WebCore@@QEAAXXZ)
-        symbolWithPointer(?didCancelFrame@InspectorController@WebCore@@QAEXXZ, ?didCancelFrame@InspectorController@WebCore@@QEAAXXZ)
-#endif
         symbolWithPointer(?counterValueForElement@WebCore@@YA?AVString@WTF@@PAVElement@1@@Z, ?counterValueForElement@WebCore@@YA?AVString@WTF@@PEAVElement@1@@Z)
         symbolWithPointer(?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z, ?createThread@WTF@@YAIP6APEAXPEAX@Z0PEBD@Z)
         symbolWithPointer(?createThread@WTF@@YAIP6AXPAX@Z0PBD@Z, ?createThread@WTF@@YAIP6AXPEAX@Z0PEBD@Z)
