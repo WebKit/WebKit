@@ -1,3 +1,13 @@
+2014-04-06  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [GTK] Stop trying to install WebKit1 documentation
+        https://bugs.webkit.org/show_bug.cgi?id=131278
+
+        Reviewed by Martin Robinson.
+
+        * Source/PlatformGTK.cmake: Remove install() call since the WebKit1 documentation is not
+        built anymore since r166584. This fixes `make install'.
+
 2014-04-04  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: capture and replay wheel events and scroll commands

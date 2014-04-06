@@ -7,17 +7,6 @@ set(DocumentationDependencies
     "${CMAKE_SOURCE_DIR}/Source/WebKit/gtk/docs/webkitenvironment.xml"
 )
 
-if (ENABLE_WEBKIT)
-    list(APPEND DocumentationDependencies
-        WebKit
-        "${CMAKE_SOURCE_DIR}/Source/WebKit/gtk/docs/webkitgtk-docs.sgml"
-        "${CMAKE_SOURCE_DIR}/Source/WebKit/gtk/docs/webkitgtk-sections.txt"
-    )
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/Documentation/webkitgtk/html/
-            DESTINATION ${CMAKE_INSTALL_DATADIR}/gtk-doc/html/webkitgtk
-    )
-endif ()
-
 if (ENABLE_WEBKIT2)
     list(APPEND DocumentationDependencies
         WebKit2
