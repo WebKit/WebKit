@@ -1,3 +1,12 @@
+2014-04-04  Brian J. Burg  <burg@cs.washington.edu>
+
+        Enable WEB_REPLAY for PLATFORM(MAC)
+        https://bugs.webkit.org/show_bug.cgi?id=130700
+
+        Reviewed by Timothy Hatcher.
+
+        * Scripts/webkitperl/FeatureList.pm: Set the default for WEB_REPLAY for OS X engineering builds.
+
 2014-04-05  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [CMake] Include X11's include dirs in TestNetscapePlugin

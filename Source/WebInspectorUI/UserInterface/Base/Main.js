@@ -159,6 +159,7 @@ WebInspector.loaded = function()
     this._dockButtonToggledSetting = new WebInspector.Setting("dock-button-toggled", false);
 
     this.showShadowDOMSetting = new WebInspector.Setting("show-shadow-dom", false);
+    this.showReplayInterfaceSetting = new WebInspector.Setting("show-web-replay", false);
 
     this.mouseCoords = {
         x: 0,

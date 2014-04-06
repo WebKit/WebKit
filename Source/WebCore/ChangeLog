@@ -1,3 +1,17 @@
+2014-04-04  Brian J. Burg  <burg@cs.washington.edu>
+
+        Enable WEB_REPLAY for PLATFORM(MAC)
+        https://bugs.webkit.org/show_bug.cgi?id=130700
+
+        Reviewed by Timothy Hatcher.
+
+        Switch on WEB_REPLAY feature flag for non-production builds.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * replay/ReplayInputDispatchMethods.cpp: Fix the ENABLE(WEB_REPLAY) build.
+        It was broken by the bool to enum refactoring in r166684.
+        (WebCore::InitialNavigation::dispatch):
+
 2014-04-05  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: remove unused test hook setInspectorResourcesDataSizeLimits

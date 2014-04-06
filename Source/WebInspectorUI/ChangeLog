@@ -1,5 +1,29 @@
 2014-04-05  Brian J. Burg  <burg@cs.washington.edu>
 
+        Enable WEB_REPLAY for PLATFORM(MAC)
+        https://bugs.webkit.org/show_bug.cgi?id=130700
+
+        Reviewed by Timothy Hatcher.
+
+        If the ReplayAgent is available, then add an option to toggle between the
+        replay interface and normal Timeline interface from the timeline
+        sidebar panel. The option is available through a context menu item on the
+        sidebar panel's top navigation bar.
+
+        If web replay not available, just show the non-replay interface.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js: Add WebInspector.showReplayInterfaceSetting.
+        (WebInspector.loaded):
+
+        * UserInterface/Views/TimelineSidebarPanel.js: Unconditionally create the replay
+        interface elements, but only show them if showReplayInterfaceSetting is enabled.
+        (WebInspector.TimelineSidebarPanel.prototype._updateReplayInterfaceVisibility): Added
+        (WebInspector.TimelineSidebarPanel.prototype._contextMenuNavigationBarOrStatusBar.toggleReplayInterface): Added.
+        (WebInspector.TimelineSidebarPanel.prototype._contextMenuNavigationBarOrStatusBar): Added.
+
+2014-04-05  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Inspector: remove unused metrics and commands from the Timeline agent
         https://bugs.webkit.org/show_bug.cgi?id=131184
 

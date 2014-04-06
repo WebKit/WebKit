@@ -49,7 +49,7 @@ WebInspector.TimelineSidebarPanel = function()
     timelinesTitleBarElement.classList.add(WebInspector.TimelineSidebarPanel.TimelinesTitleBarStyleClass);
     this.element.insertBefore(timelinesTitleBarElement, this.element.firstChild);
 
-    var statusBarElement = document.createElement("div");
+    var statusBarElement = this._statusBarElement = document.createElement("div");
     statusBarElement.classList.add(WebInspector.TimelineSidebarPanel.StatusBarStyleClass);
     this.element.insertBefore(statusBarElement, this.element.firstChild);
 
@@ -64,30 +64,32 @@ WebInspector.TimelineSidebarPanel = function()
     this._recordStatusElement.className = WebInspector.TimelineSidebarPanel.RecordStatusStyleClass;
     statusBarElement.appendChild(this._recordStatusElement);
 
-    if (window.ReplayAgent) {
-        // If replay support is enabled, hide the default status bar element and show a navigation bar instead.
-        statusBarElement.classList.add(WebInspector.TimelineSidebarPanel.HiddenStyleClassName);
+    WebInspector.showReplayInterfaceSetting.addEventListener(WebInspector.Setting.Event.Changed, this._updateReplayInterfaceVisibility, this);
 
-        this._navigationBar = new WebInspector.NavigationBar;
-        this.element.appendChild(this._navigationBar.element);
+    // We always create a navigation bar; its visibility is controlled by WebInspector.showReplayInterfaceSetting.
+    this._navigationBar = new WebInspector.NavigationBar;
+    this.element.appendChild(this._navigationBar.element);
 
-        var toolTip = WebInspector.UIString("Begin Capturing");
-        var altToolTip = WebInspector.UIString("End Capturing");
-        this._replayCaptureButtonItem = new WebInspector.ActivateButtonNavigationItem("replay-capture", toolTip, altToolTip, "Images/Circle.svg", 16, 16);
-        this._replayCaptureButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._replayCaptureButtonClicked, this);
-        this._replayCaptureButtonItem.enabled = true;
-        this._navigationBar.addNavigationItem(this._replayCaptureButtonItem);
+    var toolTip = WebInspector.UIString("Begin Capturing");
+    var altToolTip = WebInspector.UIString("End Capturing");
+    this._replayCaptureButtonItem = new WebInspector.ActivateButtonNavigationItem("replay-capture", toolTip, altToolTip, "Images/Circle.svg", 16, 16);
+    this._replayCaptureButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._replayCaptureButtonClicked, this);
+    this._replayCaptureButtonItem.enabled = true;
+    this._navigationBar.addNavigationItem(this._replayCaptureButtonItem);
 
-        toolTip = WebInspector.UIString("Start Playback");
-        altToolTip = WebInspector.UIString("Pause Playback");
-        this._replayPauseResumeButtonItem = new WebInspector.ToggleButtonNavigationItem("replay-pause-resume", toolTip, altToolTip, "Images/Resume.svg", "Images/Pause.svg", 16, 16, true);
-        this._replayPauseResumeButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._replayPauseResumeButtonClicked, this);
-        this._replayPauseResumeButtonItem.enabled = false;
-        this._navigationBar.addNavigationItem(this._replayPauseResumeButtonItem);
+    toolTip = WebInspector.UIString("Start Playback");
+    altToolTip = WebInspector.UIString("Pause Playback");
+    this._replayPauseResumeButtonItem = new WebInspector.ToggleButtonNavigationItem("replay-pause-resume", toolTip, altToolTip, "Images/Resume.svg", "Images/Pause.svg", 16, 16, true);
+    this._replayPauseResumeButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._replayPauseResumeButtonClicked, this);
+    this._replayPauseResumeButtonItem.enabled = false;
+    this._navigationBar.addNavigationItem(this._replayPauseResumeButtonItem);
 
-        WebInspector.replayManager.addEventListener(WebInspector.ReplayManager.Event.CaptureStarted, this._captureStarted, this);
-        WebInspector.replayManager.addEventListener(WebInspector.ReplayManager.Event.CaptureStopped, this._captureStopped, this);
-    }
+    WebInspector.replayManager.addEventListener(WebInspector.ReplayManager.Event.CaptureStarted, this._captureStarted, this);
+    WebInspector.replayManager.addEventListener(WebInspector.ReplayManager.Event.CaptureStopped, this._captureStopped, this);
+
+    this._statusBarElement.oncontextmenu = this._contextMenuNavigationBarOrStatusBar.bind(this);
+    this._navigationBar.element.oncontextmenu = this._contextMenuNavigationBarOrStatusBar.bind(this);
+    this._updateReplayInterfaceVisibility();
 
     function createTimelineTreeElement(label, iconClass, identifier)
     {
@@ -376,6 +378,31 @@ WebInspector.TimelineSidebarPanel.prototype = {
     },
 
     // These methods are only used when ReplayAgent is available.
+
+    _updateReplayInterfaceVisibility: function()
+    {
+        var shouldShowReplayInterface = window.ReplayAgent && WebInspector.showReplayInterfaceSetting.value;
+
+        this._statusBarElement.classList.toggle(WebInspector.TimelineSidebarPanel.HiddenStyleClassName, shouldShowReplayInterface);
+        this._navigationBar.element.classList.toggle(WebInspector.TimelineSidebarPanel.HiddenStyleClassName, !shouldShowReplayInterface);
+    },
+
+    _contextMenuNavigationBarOrStatusBar: function()
+    {
+        if (!window.ReplayAgent)
+            return;
+
+        function toggleReplayInterface() {
+            WebInspector.showReplayInterfaceSetting.value = !WebInspector.showReplayInterfaceSetting.value;
+        }
+
+        var contextMenu = new WebInspector.ContextMenu(event);
+        if (WebInspector.showReplayInterfaceSetting.value)
+            contextMenu.appendItem(WebInspector.UIString("Hide Replay Controls"), toggleReplayInterface);
+        else
+            contextMenu.appendItem(WebInspector.UIString("Show Replay Controls"), toggleReplayInterface);
+        contextMenu.show();
+    },
 
     _replayCaptureButtonClicked: function()
     {
