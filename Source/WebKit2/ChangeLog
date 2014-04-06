@@ -1,3 +1,18 @@
+2014-04-05  Miyoung Shin  <myid.m.shin@gmail.com>
+
+        [WK2] Fix unused parameter compile warning.
+        https://bugs.webkit.org/show_bug.cgi?id=131260
+
+        Reviewed by Gyuyoung Kim.
+
+        fix unused parameter warning in the WebKit2 build.
+
+        * UIProcess/API/APIDownloadClient.h:
+        (API::DownloadClient::didReceiveData):
+        (API::DownloadClient::shouldDecodeSourceDataOfMIMEType):
+        (API::DownloadClient::decideDestinationWithSuggestedFilename):
+        (API::DownloadClient::didCreateDestination):
+
 2014-04-05  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (NetworkProcess): Subresources fail to load from AppCache
