@@ -1310,6 +1310,9 @@ void MediaControlTextTrackContainerElement::updateDisplay()
     // corresponding CSS boxes added to output, in text track cue order, run the
     // following substeps:
     for (size_t i = 0; i < activeCues.size(); ++i) {
+        if (!mediaController()->closedCaptionsVisible())
+            continue;
+
         TextTrackCue* textTrackCue = activeCues[i].data();
         if (!textTrackCue->isRenderable())
             continue;

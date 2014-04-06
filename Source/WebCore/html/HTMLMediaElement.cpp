@@ -3708,9 +3708,6 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
         displayMode = CaptionUserPreferences::AlwaysOn;
         if (trackToSelect->language().length())
             captionPreferences->setPreferredLanguage(trackToSelect->language());
-        
-        // Set m_captionDisplayMode here so we don't reconfigure again when the preference changed notification comes through.
-        m_captionDisplayMode = displayMode;
     }
 
     captionPreferences->setCaptionDisplayMode(displayMode);
@@ -5420,7 +5417,7 @@ void HTMLMediaElement::captionPreferencesChanged()
         return;
 
     m_captionDisplayMode = displayMode;
-    setClosedCaptionsVisible(m_captionDisplayMode == CaptionUserPreferences::AlwaysOn);
+    setWebkitClosedCaptionsVisible(m_captionDisplayMode == CaptionUserPreferences::AlwaysOn);
 }
 
 void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMode mode)

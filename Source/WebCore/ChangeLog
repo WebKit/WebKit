@@ -1,3 +1,20 @@
+2014-04-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Honor System-Level User Preferences for Caption Display
+        https://bugs.webkit.org/show_bug.cgi?id=131258
+
+        Reviewed by Eric Carlson.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setSelectedTextTrack): Allow preferenced change to fully dispatch
+        so we can properly deal with captions being turned off.
+        (WebCore::HTMLMediaElement::captionPreferencesChanged): Use 'webkit' variant of the
+        setWebKitClosedCaptionsVisible method so we properly adjust settings needed for the JS API call.
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay): When captions are turned off, e.g.
+        because the user turned off the preference, don't inadvertently turn them back on just bacause there
+        was an existing track that was not in a 'hidden' state.
+
 2014-04-06  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: add methods to encode a frame's index based on its FrameTree position
