@@ -142,7 +142,6 @@ private:
     void restartSimilarPlugIns();
     void removeSnapshotTimerFired(Timer<HTMLPlugInImageElement>&);
 
-private:
     URL m_loadedUrl;
     bool m_needsWidgetUpdate;
     bool m_shouldPreferPlugInsForImages;
