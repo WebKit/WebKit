@@ -30,9 +30,9 @@
 
 #if PLATFORM(IOS)
 
-#import "_WKActivatedElementInfoInternal.h"
+#import "GestureTypes.h"
 #import "WKContentViewInteraction.h"
-#import "WKGestureTypes.h"
+#import "_WKActivatedElementInfoInternal.h"
 #import <SafariServices/SSReadingList.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/SoftLinking.h>
@@ -75,12 +75,12 @@ typedef void (^WKElementActionHandlerInternal)(WKContentView *, _WKActivatedElem
 
 static void copyElement(WKContentView *view)
 {
-    [view _performAction:WebKit::WKSheetActionCopy];
+    [view _performAction:WebKit::SheetAction::Copy];
 }
 
 static void saveImage(WKContentView *view)
 {
-    [view _performAction:WebKit::WKSheetActionSaveImage];
+    [view _performAction:WebKit::SheetAction::SaveImage];
 }
 
 static void addToReadingList(NSURL *targetURL, NSString *title)

@@ -546,7 +546,7 @@
 		2DA944A11884E4F000ED86DB /* WebIOSEventFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA9449A1884E4F000ED86DB /* WebIOSEventFactory.mm */; };
 		2DA944A21884E4F000ED86DB /* WebPlatformTouchPointIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA9449B1884E4F000ED86DB /* WebPlatformTouchPointIOS.cpp */; };
 		2DA944A31884E4F000ED86DB /* WebTouchEventIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA9449C1884E4F000ED86DB /* WebTouchEventIOS.cpp */; };
-		2DA944A41884E4F000ED86DB /* WKGestureTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA9449D1884E4F000ED86DB /* WKGestureTypes.h */; };
+		2DA944A41884E4F000ED86DB /* GestureTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA9449D1884E4F000ED86DB /* GestureTypes.h */; };
 		2DA944A71884E94800ED86DB /* DownloadIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944A61884E94800ED86DB /* DownloadIOS.mm */; };
 		2DA944AD1884E9BA00ED86DB /* TextCheckerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944A91884E9BA00ED86DB /* TextCheckerIOS.mm */; };
 		2DA944AE1884E9BA00ED86DB /* WebInspectorProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944AA1884E9BA00ED86DB /* WebInspectorProxyIOS.mm */; };
@@ -2354,7 +2354,7 @@
 		2DA9449A1884E4F000ED86DB /* WebIOSEventFactory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebIOSEventFactory.mm; path = ios/WebIOSEventFactory.mm; sourceTree = "<group>"; };
 		2DA9449B1884E4F000ED86DB /* WebPlatformTouchPointIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPlatformTouchPointIOS.cpp; path = ios/WebPlatformTouchPointIOS.cpp; sourceTree = "<group>"; };
 		2DA9449C1884E4F000ED86DB /* WebTouchEventIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebTouchEventIOS.cpp; path = ios/WebTouchEventIOS.cpp; sourceTree = "<group>"; };
-		2DA9449D1884E4F000ED86DB /* WKGestureTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKGestureTypes.h; path = ios/WKGestureTypes.h; sourceTree = "<group>"; };
+		2DA9449D1884E4F000ED86DB /* GestureTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GestureTypes.h; path = ios/GestureTypes.h; sourceTree = "<group>"; };
 		2DA944A61884E94800ED86DB /* DownloadIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DownloadIOS.mm; path = Downloads/ios/DownloadIOS.mm; sourceTree = "<group>"; };
 		2DA944A91884E9BA00ED86DB /* TextCheckerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextCheckerIOS.mm; path = ios/TextCheckerIOS.mm; sourceTree = "<group>"; };
 		2DA944AA1884E9BA00ED86DB /* WebInspectorProxyIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebInspectorProxyIOS.mm; path = ios/WebInspectorProxyIOS.mm; sourceTree = "<group>"; };
@@ -4457,13 +4457,13 @@
 		2DA944961884E4DA00ED86DB /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				2DA9449D1884E4F000ED86DB /* GestureTypes.h */,
 				2DA944971884E4F000ED86DB /* NativeWebKeyboardEventIOS.mm */,
 				2DA944981884E4F000ED86DB /* NativeWebTouchEventIOS.mm */,
 				2DA944991884E4F000ED86DB /* WebIOSEventFactory.h */,
 				2DA9449A1884E4F000ED86DB /* WebIOSEventFactory.mm */,
 				2DA9449B1884E4F000ED86DB /* WebPlatformTouchPointIOS.cpp */,
 				2DA9449C1884E4F000ED86DB /* WebTouchEventIOS.cpp */,
-				2DA9449D1884E4F000ED86DB /* WKGestureTypes.h */,
 			);
 			name = ios;
 			sourceTree = "<group>";
@@ -7138,7 +7138,7 @@
 				51217465164C21370037A5C1 /* WebResourceBuffer.h in Headers */,
 				33367630130C9998006C9DE2 /* WebResourceCacheManager.h in Headers */,
 				33367656130C9ECA006C9DE2 /* WebResourceCacheManagerMessages.h in Headers */,
-				2DA944A41884E4F000ED86DB /* WKGestureTypes.h in Headers */,
+				2DA944A41884E4F000ED86DB /* GestureTypes.h in Headers */,
 				33367636130C99B2006C9DE2 /* WebResourceCacheManagerProxy.h in Headers */,
 				33367658130C9ECB006C9DE2 /* WebResourceCacheManagerProxyMessages.h in Headers */,
 				0F931C1C18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h in Headers */,

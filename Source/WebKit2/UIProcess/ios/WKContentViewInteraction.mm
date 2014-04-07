@@ -882,7 +882,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     [_textSelectionAssistant hideTextStyleOptions];
 }
 
-- (void)_performAction:(WKSheetActions)action
+- (void)_performAction:(SheetAction)action
 {
     _page->performActionOnElement((uint32_t)action);
 }
@@ -977,173 +977,172 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 // UIWKInteractionViewProtocol
 
-static inline WKGestureType toWKGestureType(UIWKGestureType gestureType)
+static inline GestureType toGestureType(UIWKGestureType gestureType)
 {
     switch (gestureType) {
     case UIWKGestureLoupe:
-        return WKGestureLoupe;
+        return GestureType::Loupe;
     case UIWKGestureOneFingerTap:
-        return WKGestureOneFingerTap;
+        return GestureType::OneFingerTap;
     case UIWKGestureTapAndAHalf:
-        return WKGestureTapAndAHalf;
+        return GestureType::TapAndAHalf;
     case UIWKGestureDoubleTap:
-        return WKGestureDoubleTap;
+        return GestureType::DoubleTap;
     case UIWKGestureTapAndHalf:
-        return WKGestureTapAndHalf;
+        return GestureType::TapAndHalf;
     case UIWKGestureDoubleTapInUneditable:
-        return WKGestureDoubleTapInUneditable;
+        return GestureType::DoubleTapInUneditable;
     case UIWKGestureOneFingerTapInUneditable:
-        return WKGestureOneFingerTapInUneditable;
+        return GestureType::OneFingerTapInUneditable;
     case UIWKGestureOneFingerTapSelectsAll:
-        return WKGestureOneFingerTapSelectsAll;
+        return GestureType::OneFingerTapSelectsAll;
     case UIWKGestureOneFingerDoubleTap:
-        return WKGestureOneFingerDoubleTap;
+        return GestureType::OneFingerDoubleTap;
     case UIWKGestureOneFingerTripleTap:
-        return WKGestureOneFingerTripleTap;
+        return GestureType::OneFingerTripleTap;
     case UIWKGestureTwoFingerSingleTap:
-        return WKGestureTwoFingerSingleTap;
+        return GestureType::TwoFingerSingleTap;
     case UIWKGestureTwoFingerRangedSelectGesture:
-        return WKGestureTwoFingerRangedSelectGesture;
+        return GestureType::TwoFingerRangedSelectGesture;
     case UIWKGestureTapOnLinkWithGesture:
-        return WKGestureTapOnLinkWithGesture;
+        return GestureType::TapOnLinkWithGesture;
     case UIWKGestureMakeWebSelection:
-        return WKGestureMakeWebSelection;
+        return GestureType::MakeWebSelection;
     }
     ASSERT_NOT_REACHED();
-    return WKGestureLoupe;
+    return GestureType::Loupe;
 }
 
-static inline UIWKGestureType toUIWKGestureType(WKGestureType gestureType)
+static inline UIWKGestureType toUIWKGestureType(GestureType gestureType)
 {
     switch (gestureType) {
-    case WKGestureLoupe:
+    case GestureType::Loupe:
         return UIWKGestureLoupe;
-    case WKGestureOneFingerTap:
+    case GestureType::OneFingerTap:
         return UIWKGestureOneFingerTap;
-    case WKGestureTapAndAHalf:
+    case GestureType::TapAndAHalf:
         return UIWKGestureTapAndAHalf;
-    case WKGestureDoubleTap:
+    case GestureType::DoubleTap:
         return UIWKGestureDoubleTap;
-    case WKGestureTapAndHalf:
+    case GestureType::TapAndHalf:
         return UIWKGestureTapAndHalf;
-    case WKGestureDoubleTapInUneditable:
+    case GestureType::DoubleTapInUneditable:
         return UIWKGestureDoubleTapInUneditable;
-    case WKGestureOneFingerTapInUneditable:
+    case GestureType::OneFingerTapInUneditable:
         return UIWKGestureOneFingerTapInUneditable;
-    case WKGestureOneFingerTapSelectsAll:
+    case GestureType::OneFingerTapSelectsAll:
         return UIWKGestureOneFingerTapSelectsAll;
-    case WKGestureOneFingerDoubleTap:
+    case GestureType::OneFingerDoubleTap:
         return UIWKGestureOneFingerDoubleTap;
-    case WKGestureOneFingerTripleTap:
+    case GestureType::OneFingerTripleTap:
         return UIWKGestureOneFingerTripleTap;
-    case WKGestureTwoFingerSingleTap:
+    case GestureType::TwoFingerSingleTap:
         return UIWKGestureTwoFingerSingleTap;
-    case WKGestureTwoFingerRangedSelectGesture:
+    case GestureType::TwoFingerRangedSelectGesture:
         return UIWKGestureTwoFingerRangedSelectGesture;
-    case WKGestureTapOnLinkWithGesture:
+    case GestureType::TapOnLinkWithGesture:
         return UIWKGestureTapOnLinkWithGesture;
-    case WKGestureMakeWebSelection:
+    case GestureType::MakeWebSelection:
         return UIWKGestureMakeWebSelection;
     }
 }
 
-static inline WKSelectionTouch toWKSelectionTouch(UIWKSelectionTouch touch)
+static inline SelectionTouch toSelectionTouch(UIWKSelectionTouch touch)
 {
     switch (touch) {
     case UIWKSelectionTouchStarted:
-        return WKSelectionTouchStarted;
+        return SelectionTouch::Started;
     case UIWKSelectionTouchMoved:
-        return WKSelectionTouchMoved;
+        return SelectionTouch::Moved;
     case UIWKSelectionTouchEnded:
-        return WKSelectionTouchEnded;
+        return SelectionTouch::Ended;
     case UIWKSelectionTouchEndedMovingForward:
-        return WKSelectionTouchEndedMovingForward;
+        return SelectionTouch::EndedMovingForward;
     case UIWKSelectionTouchEndedMovingBackward:
-        return WKSelectionTouchEndedMovingBackward;
+        return SelectionTouch::EndedMovingBackward;
     case UIWKSelectionTouchEndedNotMoving:
-        return WKSelectionTouchEndedNotMoving;
+        return SelectionTouch::EndedNotMoving;
     }
     ASSERT_NOT_REACHED();
-    return WKSelectionTouchEnded;
+    return SelectionTouch::Ended;
 }
 
-static inline UIWKSelectionTouch toUIWKSelectionTouch(WKSelectionTouch touch)
+static inline UIWKSelectionTouch toUIWKSelectionTouch(SelectionTouch touch)
 {
     switch (touch) {
-    case WKSelectionTouchStarted:
+    case SelectionTouch::Started:
         return UIWKSelectionTouchStarted;
-    case WKSelectionTouchMoved:
+    case SelectionTouch::Moved:
         return UIWKSelectionTouchMoved;
-    case WKSelectionTouchEnded:
+    case SelectionTouch::Ended:
         return UIWKSelectionTouchEnded;
-    case WKSelectionTouchEndedMovingForward:
+    case SelectionTouch::EndedMovingForward:
         return UIWKSelectionTouchEndedMovingForward;
-    case WKSelectionTouchEndedMovingBackward:
+    case SelectionTouch::EndedMovingBackward:
         return UIWKSelectionTouchEndedMovingBackward;
-    case WKSelectionTouchEndedNotMoving:
+    case SelectionTouch::EndedNotMoving:
         return UIWKSelectionTouchEndedNotMoving;
     }
 }
 
-static inline WKGestureRecognizerState toWKGestureRecognizerState(UIGestureRecognizerState state)
+static inline GestureRecognizerState toGestureRecognizerState(UIGestureRecognizerState state)
 {
     switch (state) {
     case UIGestureRecognizerStatePossible:
-        return WKGestureRecognizerStatePossible;
+        return GestureRecognizerState::Possible;
     case UIGestureRecognizerStateBegan:
-        return WKGestureRecognizerStateBegan;
+        return GestureRecognizerState::Began;
     case UIGestureRecognizerStateChanged:
-        return WKGestureRecognizerStateChanged;
+        return GestureRecognizerState::Changed;
     case UIGestureRecognizerStateCancelled:
-        return WKGestureRecognizerStateCancelled;
+        return GestureRecognizerState::Cancelled;
     case UIGestureRecognizerStateEnded:
-        return WKGestureRecognizerStateEnded;
+        return GestureRecognizerState::Ended;
     case UIGestureRecognizerStateFailed:
-        return WKGestureRecognizerStateFailed;
+        return GestureRecognizerState::Failed;
     }
 }
 
-static inline UIGestureRecognizerState toUIGestureRecognizerState(WKGestureRecognizerState state)
+static inline UIGestureRecognizerState toUIGestureRecognizerState(GestureRecognizerState state)
 {
     switch (state) {
-    case WKGestureRecognizerStatePossible:
+    case GestureRecognizerState::Possible:
         return UIGestureRecognizerStatePossible;
-    case WKGestureRecognizerStateBegan:
+    case GestureRecognizerState::Began:
         return UIGestureRecognizerStateBegan;
-    case WKGestureRecognizerStateChanged:
+    case GestureRecognizerState::Changed:
         return UIGestureRecognizerStateChanged;
-    case WKGestureRecognizerStateCancelled:
+    case GestureRecognizerState::Cancelled:
         return UIGestureRecognizerStateCancelled;
-    case WKGestureRecognizerStateEnded:
+    case GestureRecognizerState::Ended:
         return UIGestureRecognizerStateEnded;
-    case WKGestureRecognizerStateFailed:
+    case GestureRecognizerState::Failed:
         return UIGestureRecognizerStateFailed;
     }
 }
 
-static inline UIWKSelectionFlags toUIWKSelectionFlags(WKSelectionFlags flag)
+static inline UIWKSelectionFlags toUIWKSelectionFlags(SelectionFlags flags)
 {
-    switch (flag) {
-    case WKNone:
-        return UIWKNone;
-    case WKWordIsNearTap:
-        return UIWKWordIsNearTap;
-    case WKIsBlockSelection:
-        return UIWKIsBlockSelection;
-    }
+    NSInteger uiFlags = UIWKNone;
+    if (flags & WordIsNearTap)
+        uiFlags |= UIWKWordIsNearTap;
+    if (flags & IsBlockSelection)
+        uiFlags |= UIWKIsBlockSelection;
+
+    return static_cast<UIWKSelectionFlags>(uiFlags);
 }
 
-static inline WKHandlePosition toWKHandlePosition(UIWKHandlePosition position)
+static inline SelectionHandlePosition toSelectionHandlePosition(UIWKHandlePosition position)
 {
     switch (position) {
     case UIWKHandleTop:
-        return WKHandleTop;
+        return SelectionHandlePosition::Top;
     case UIWKHandleRight:
-        return WKHandleRight;
+        return SelectionHandlePosition::Right;
     case UIWKHandleBottom:
-        return WKHandleBottom;
+        return SelectionHandlePosition::Bottom;
     case UIWKHandleLeft:
-        return WKHandleLeft;
+        return SelectionHandlePosition::Left;
     }
 }
 
@@ -1154,9 +1153,9 @@ static void selectionChangedWithGesture(bool error, WKContentView *view, const W
         return;
     }
     if ([view webSelectionAssistant])
-        [(UIWKSelectionAssistant *)[view webSelectionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((WKGestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<WKGestureRecognizerState>(gestureState)) withFlags:(toUIWKSelectionFlags((WKSelectionFlags)flags))];
+        [(UIWKSelectionAssistant *)[view webSelectionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((GestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<GestureRecognizerState>(gestureState)) withFlags:(toUIWKSelectionFlags((SelectionFlags)flags))];
     else
-        [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((WKGestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<WKGestureRecognizerState>(gestureState)) withFlags:(toUIWKSelectionFlags((WKSelectionFlags)flags))];
+        [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((GestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<GestureRecognizerState>(gestureState)) withFlags:(toUIWKSelectionFlags((SelectionFlags)flags))];
 }
 
 static void selectionChangedWithTouch(bool error, WKContentView *view, const WebCore::IntPoint& point, uint32_t touch)
@@ -1166,40 +1165,40 @@ static void selectionChangedWithTouch(bool error, WKContentView *view, const Web
         return;
     }
     if ([view webSelectionAssistant])
-        [(UIWKSelectionAssistant *)[view webSelectionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((WKSelectionTouch)touch)];
+        [(UIWKSelectionAssistant *)[view webSelectionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((SelectionTouch)touch)];
     else
-        [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((WKSelectionTouch)touch)];
+        [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((SelectionTouch)touch)];
 }
 
-- (void)_didUpdateBlockSelectionWithTouch:(WebKit::WKSelectionTouch)touch withFlags:(WebKit::WKSelectionFlags)flags growThreshold:(CGFloat)growThreshold shrinkThreshold:(CGFloat)shrinkThreshold
+- (void)_didUpdateBlockSelectionWithTouch:(SelectionTouch)touch withFlags:(SelectionFlags)flags growThreshold:(CGFloat)growThreshold shrinkThreshold:(CGFloat)shrinkThreshold
 {
-    [_webSelectionAssistant blockSelectionChangedWithTouch:toUIWKSelectionTouch((WKSelectionTouch)touch) withFlags:toUIWKSelectionFlags((WKSelectionFlags)flags) growThreshold:growThreshold shrinkThreshold:shrinkThreshold];
+    [_webSelectionAssistant blockSelectionChangedWithTouch:toUIWKSelectionTouch(touch) withFlags:toUIWKSelectionFlags(flags) growThreshold:growThreshold shrinkThreshold:shrinkThreshold];
 }
 
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state
 {
-    _page->selectWithGesture(WebCore::IntPoint(point), CharacterGranularity, toWKGestureType(gestureType), toWKGestureRecognizerState(state), GestureCallback::create([self](bool error, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags) {
+    _page->selectWithGesture(WebCore::IntPoint(point), CharacterGranularity, static_cast<uint32_t>(toGestureType(gestureType)), static_cast<uint32_t>(toGestureRecognizerState(state)), GestureCallback::create([self](bool error, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags) {
         selectionChangedWithGesture(error, self, point, gestureType, gestureState, flags);
     }));
 }
 
 - (void)changeSelectionWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch baseIsStart:(BOOL)baseIsStart
 {
-    _page->updateSelectionWithTouches(WebCore::IntPoint(point), toWKSelectionTouch(touch), baseIsStart, TouchesCallback::create([self](bool error, const WebCore::IntPoint& point, uint32_t touch) {
+    _page->updateSelectionWithTouches(WebCore::IntPoint(point), static_cast<uint32_t>(toSelectionTouch(touch)), baseIsStart, TouchesCallback::create([self](bool error, const WebCore::IntPoint& point, uint32_t touch) {
         selectionChangedWithTouch(error, self, point, touch);
     }));
 }
 
 - (void)changeSelectionWithTouchesFrom:(CGPoint)from to:(CGPoint)to withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState
 {
-    _page->selectWithTwoTouches(WebCore::IntPoint(from), WebCore::IntPoint(to), toWKGestureType(gestureType), toWKGestureRecognizerState(gestureState), GestureCallback::create([self](bool error, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags) {
+    _page->selectWithTwoTouches(WebCore::IntPoint(from), WebCore::IntPoint(to), static_cast<uint32_t>(toGestureType(gestureType)), static_cast<uint32_t>(toGestureRecognizerState(gestureState)), GestureCallback::create([self](bool error, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags) {
         selectionChangedWithGesture(error, self, point, gestureType, gestureState, flags);
     }));
 }
 
 - (void)changeBlockSelectionWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch forHandle:(UIWKHandlePosition)handle
 {
-    _page->updateBlockSelectionWithTouch(WebCore::IntPoint(point), toWKSelectionTouch(touch), toWKHandlePosition(handle));
+    _page->updateBlockSelectionWithTouch(WebCore::IntPoint(point), static_cast<uint32_t>(toSelectionTouch(touch)), static_cast<uint32_t>(toSelectionHandlePosition(handle)));
 }
 
 - (const WKAutoCorrectionData&)autocorrectionData

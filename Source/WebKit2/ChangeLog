@@ -1,3 +1,54 @@
+2014-04-06  Dan Bernstein  <mitz@apple.com>
+
+        Clean up WKGestureTypes.h
+        https://bugs.webkit.org/show_bug.cgi?id=131286
+
+        Reviewed by Sam Weinig.
+
+        Renamed WKGestureTypes.h to GestureTypes.h, dropped the useless “WK” prefixes and changed
+        into scoped enums, with the exception of SelectionFlags.
+
+        * Shared/ios/GestureTypes.h: Copied from Source/WebKit2/Shared/ios/WKGestureTypes.h.
+        * Shared/ios/WKGestureTypes.h: Removed.
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        (copyElement):
+        (saveImage):
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didUpdateBlockSelectionWithTouch):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _performAction:]):
+        (toGestureType):
+        (toUIWKGestureType):
+        (toSelectionTouch):
+        (toUIWKSelectionTouch):
+        (toGestureRecognizerState):
+        (toUIGestureRecognizerState):
+        (toUIWKSelectionFlags):
+        (toSelectionHandlePosition):
+        (selectionChangedWithGesture):
+        (selectionChangedWithTouch):
+        (-[WKContentView _didUpdateBlockSelectionWithTouch:withFlags:growThreshold:shrinkThreshold:]):
+        (-[WKContentView changeSelectionWithGestureAt:withGesture:withState:]):
+        (-[WKContentView changeSelectionWithTouchAt:withSelectionTouch:baseIsStart:]):
+        (-[WKContentView changeSelectionWithTouchesFrom:to:withGesture:withState:]):
+        (-[WKContentView changeBlockSelectionWithTouchAt:withSelectionTouch:forHandle:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::rangeForWebSelectionAtPosition):
+        (WebKit::WebPage::selectWithGesture):
+        (WebKit::distanceBetweenRectsForPosition):
+        (WebKit::computeEdgeCenter):
+        (WebKit::WebPage::expandedRangeFromHandle):
+        (WebKit::WebPage::contractedRangeFromHandle):
+        (WebKit::WebPage::computeExpandAndShrinkThresholdsForHandle):
+        (WebKit::shouldExpand):
+        (WebKit::WebPage::changeBlockSelection):
+        (WebKit::WebPage::updateBlockSelectionWithTouch):
+        (WebKit::WebPage::updateSelectionWithTouches):
+        (WebKit::WebPage::performActionOnElement):
+
 2014-04-06  Sam Weinig  <sam@webkit.org>
 
         Document user content related APIs..
