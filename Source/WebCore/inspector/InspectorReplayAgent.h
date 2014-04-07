@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class DocumentLoader;
+class Event;
 class Frame;
 class InspectorPageAgent;
 class InstrumentingAgents;
@@ -69,6 +70,7 @@ public:
     // Callbacks from InspectorInstrumentation.
     void frameNavigated(DocumentLoader*);
     void frameDetached(Frame*);
+    void willDispatchEvent(const Event&, Frame*);
 
     // Notifications from ReplayController.
     void sessionCreated(PassRefPtr<ReplaySession>);

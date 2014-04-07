@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class EventLoopInputExtent;
 class SegmentedInputStorage;
 
 class CapturingInputCursor final : public InputCursor {
@@ -46,14 +47,19 @@ public:
     virtual bool isCapturing() const override { return true; }
     virtual bool isReplaying() const override { return false; }
 
+    void setWithinEventLoopInputExtent(bool);
+    bool withinEventLoopInputExtent() const { return m_withinEventLoopInputExtent; }
+
     virtual NondeterministicInputBase* uncheckedLoadInput(InputQueue) override;
     virtual void storeInput(std::unique_ptr<NondeterministicInputBase>) override;
 protected:
     virtual NondeterministicInputBase* loadInput(InputQueue, const AtomicString& type) override;
+
 private:
     explicit CapturingInputCursor(SegmentedInputStorage&);
 
     SegmentedInputStorage& m_storage;
+    bool m_withinEventLoopInputExtent;
 };
 
 } // namespace WebCore

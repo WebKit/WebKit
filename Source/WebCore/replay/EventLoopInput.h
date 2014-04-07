@@ -33,9 +33,25 @@
 #include <replay/NondeterministicInput.h>
 #include <wtf/CurrentTime.h>
 
+namespace JSC {
+class InputCursor;
+};
+
 namespace WebCore {
 
 class ReplayController;
+
+// This is an RAII helper used during capturing which sets a flag on the input cursor
+// to track the dynamic extent of a captured event loop input. This extent approximates
+// the interval in which EventLoopInputDispatcher::dispatching() is true.
+class EventLoopInputExtent {
+    WTF_MAKE_NONCOPYABLE(EventLoopInputExtent);
+public:
+    EventLoopInputExtent(JSC::InputCursor&);
+    ~EventLoopInputExtent();
+private:
+    JSC::InputCursor& m_cursor;
+};
 
 class EventLoopInputBase : public NondeterministicInputBase {
 public:

@@ -34,6 +34,10 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
+// Determinism assertions are guarded by this macro. When a user-facing error reporting and
+// recovery mechanism is implemented, this guard can be removed. <https://webkit.org/b/131279>
+#define ENABLE_AGGRESSIVE_DETERMINISM_CHECKS 0
+
 namespace JSC {
 class InputCursor;
 }
@@ -129,6 +133,7 @@ public:
     // InspectorReplayAgent notifications.
     void frameNavigated(DocumentLoader*);
     void frameDetached(Frame*);
+    void willDispatchEvent(const Event&, Frame*);
 
     Page& page() const { return m_page; }
     SessionState sessionState() const { return m_sessionState; }

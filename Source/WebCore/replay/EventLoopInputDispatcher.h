@@ -68,6 +68,7 @@ public:
     DispatchSpeed dispatchSpeed() const { return m_speed; }
 
     bool isRunning() const { return m_running; }
+    bool isDispatching() const { return m_dispatching; }
 private:
     void dispatchInputSoon();
     void dispatchInput();

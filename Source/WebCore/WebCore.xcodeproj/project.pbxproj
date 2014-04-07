@@ -5440,6 +5440,7 @@
 		C3CF17A515B0063F00276D39 /* IdTargetObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C3CF17A115B0063F00276D39 /* IdTargetObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C3CF17A615B0063F00276D39 /* IdTargetObserverRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3CF17A215B0063F00276D39 /* IdTargetObserverRegistry.cpp */; };
 		C3CF17A715B0063F00276D39 /* IdTargetObserverRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = C3CF17A315B0063F00276D39 /* IdTargetObserverRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C400D10918F1C8F60090D863 /* EventLoopInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C400D10818F1C8F60090D863 /* EventLoopInput.cpp */; };
 		C4CD629A18383766007EBAF1 /* FrameSnapshotting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C4CD629818383766007EBAF1 /* FrameSnapshotting.cpp */; };
 		C4CD629B18383766007EBAF1 /* FrameSnapshotting.h in Headers */ = {isa = PBXBuildFile; fileRef = C4CD629918383766007EBAF1 /* FrameSnapshotting.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C50B561612119D23008B46E0 /* GroupSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C50B561412119D23008B46E0 /* GroupSettings.cpp */; };
@@ -12742,6 +12743,7 @@
 		C3CF17A215B0063F00276D39 /* IdTargetObserverRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IdTargetObserverRegistry.cpp; sourceTree = "<group>"; };
 		C3CF17A315B0063F00276D39 /* IdTargetObserverRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IdTargetObserverRegistry.h; sourceTree = "<group>"; };
 		C3E61C653A64807A83E76FB8 /* MathMLMencloseElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLMencloseElement.cpp; sourceTree = "<group>"; };
+		C400D10818F1C8F60090D863 /* EventLoopInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventLoopInput.cpp; sourceTree = "<group>"; };
 		C4CD629818383766007EBAF1 /* FrameSnapshotting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameSnapshotting.cpp; sourceTree = "<group>"; };
 		C4CD629918383766007EBAF1 /* FrameSnapshotting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameSnapshotting.h; sourceTree = "<group>"; };
 		C50B561412119D23008B46E0 /* GroupSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GroupSettings.cpp; sourceTree = "<group>"; };
@@ -18041,6 +18043,7 @@
 				99CC0B3818BE9849006CEBCC /* AllReplayInputs.h */,
 				99CC0B3918BE9849006CEBCC /* CapturingInputCursor.cpp */,
 				99CC0B3A18BE9849006CEBCC /* CapturingInputCursor.h */,
+				C400D10818F1C8F60090D863 /* EventLoopInput.cpp */,
 				99E45A1618A063BE0026D88F /* EventLoopInput.h */,
 				99CC0B3B18BE9849006CEBCC /* EventLoopInputDispatcher.cpp */,
 				99CC0B3C18BE9849006CEBCC /* EventLoopInputDispatcher.h */,
@@ -26648,6 +26651,7 @@
 				FD315FF812B0267600C1A359 /* AudioBuffer.cpp in Sources */,
 				FD315FFB12B0267600C1A359 /* AudioBufferSourceNode.cpp in Sources */,
 				FD31607B12B026F700C1A359 /* AudioBus.cpp in Sources */,
+				C400D10918F1C8F60090D863 /* EventLoopInput.cpp in Sources */,
 				FD3160BB12B0272A00C1A359 /* AudioBusMac.mm in Sources */,
 				FD31607D12B026F700C1A359 /* AudioChannel.cpp in Sources */,
 				FD31600412B0267600C1A359 /* AudioContext.cpp in Sources */,

@@ -198,6 +198,12 @@ void InspectorReplayAgent::frameDetached(Frame* frame)
         m_page.replayController().frameDetached(frame);
 }
 
+void InspectorReplayAgent::willDispatchEvent(const Event& event, Frame* frame)
+{
+    if (sessionState() != SessionState::Inactive)
+        m_page.replayController().willDispatchEvent(event, frame);
+}
+
 void InspectorReplayAgent::sessionCreated(PassRefPtr<ReplaySession> prpSession)
 {
     RefPtr<ReplaySession> session = prpSession;

@@ -1,3 +1,65 @@
+2014-04-07  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: detect possible replay divergence from unexpected DOM event dispatches
+        https://bugs.webkit.org/show_bug.cgi?id=131193
+
+        Reviewed by Andreas Kling.
+
+        Add assertions to catch potential nondeterministic behavior.
+
+        The assertion added by this patch catches dispatched DOM events
+        that are triggered by nondeterministic event loop cycles. If we
+        did not capture an event loop input in the current event loop
+        cycle nor are we manually simulating an event loop input during
+        playback, then DOM events fired during the unordered cycle could
+        run JavaScript and diverge the execution.
+
+        During playback, we can assert that EventLoopInputDispatcher is dispatching
+        when a DOM event is be dispatched to a document that is being replayed.
+
+        During capturing, event loop inputs are captured rather than
+        dispatched, so we add some accounting to track what caused a DOM
+        event. To approximate the extent of computation triggered by an
+        event loop input, we add RAII helpers to call sites where event
+        loop inputs are captured.
+
+        The assertions are disabled by default until the most common
+        sources of nondeterminism are handled and playback errors are
+        gracefully surfaced to the user. <https://webkit.org/b/131279>
+
+        No new tests. This patch adds extra assertions for debugging purposes.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorInstrumentation.cpp: Notify ReplayAgent of dispatched DOM event.
+        (WebCore::InspectorInstrumentation::willDispatchEventImpl):
+        (WebCore::InspectorInstrumentation::willDispatchEventOnWindowImpl):
+        * inspector/InspectorReplayAgent.cpp: Forward dispatched DOM events to ReplayController.
+        (WebCore::InspectorReplayAgent::willDispatchEvent): Added.
+        * inspector/InspectorReplayAgent.h:
+        * replay/CapturingInputCursor.cpp:
+        (WebCore::CapturingInputCursor::CapturingInputCursor):
+        (WebCore::CapturingInputCursor::setWithinEventLoopInputExtent): Added.
+        * replay/CapturingInputCursor.h:
+        * replay/EventLoopInput.cpp: Added.
+        (WebCore::EventLoopInputExtent::EventLoopInputExtent): Added.
+        (WebCore::EventLoopInputExtent::~EventLoopInputExtent): Added.
+        * replay/EventLoopInput.h:
+        * replay/EventLoopInputDispatcher.h:
+        (WebCore::EventLoopInputDispatcher::isDispatching): Add a getter.
+        * replay/ReplayController.cpp:
+        (WebCore::logDispatchedDOMEvent): Added. This is useful for understanding script-visible events.
+        (WebCore::ReplayController::willDispatchEvent): Added.
+        * replay/ReplayController.h:
+        * replay/UserInputBridge.cpp: Add extent helpers to call sites that capture inputs.
+        (WebCore::UserInputBridge::handleMousePressEvent):
+        (WebCore::UserInputBridge::handleMouseReleaseEvent):
+        (WebCore::UserInputBridge::handleMouseMoveEvent):
+        (WebCore::UserInputBridge::handleMouseMoveOnScrollbarEvent):
+        (WebCore::UserInputBridge::handleKeyEvent):
+        (WebCore::UserInputBridge::handleWheelEvent):
+        (WebCore::UserInputBridge::scrollRecursively):
+        (WebCore::UserInputBridge::logicalScrollRecursively):
+
 2014-04-07  Timothy Hatcher  <timothy@apple.com>
 
         Remove copy of combine-javascript-resources.pl that isn't used anymore

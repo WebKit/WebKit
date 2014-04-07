@@ -350,6 +350,10 @@ InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventImpl(I
         timelineAgent->willDispatchEvent(event, document->frame());
         timelineAgentId = timelineAgent->id();
     }
+#if ENABLE(WEB_REPLAY)
+    if (InspectorReplayAgent* replayAgent = instrumentingAgents->inspectorReplayAgent())
+        replayAgent->willDispatchEvent(event, document->frame());
+#endif
     return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
 }
 
@@ -378,6 +382,10 @@ InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventOnWind
         timelineAgent->willDispatchEvent(event, window ? window->frame() : nullptr);
         timelineAgentId = timelineAgent->id();
     }
+#if ENABLE(WEB_REPLAY)
+    if (InspectorReplayAgent* replayAgent = instrumentingAgents->inspectorReplayAgent())
+        replayAgent->willDispatchEvent(event, window ? window->frame() : nullptr);
+#endif
     return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
 }
 
