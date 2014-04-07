@@ -994,6 +994,13 @@ WebCore::WebGLLoadPolicy WebPage::resolveWebGLPolicyForURL(WebFrame* frame, cons
 }
 #endif // ENABLE(WEBGL)
 
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+void WebPage::handleTelephoneNumberClick(const String& number, const IntPoint& point)
+{
+    send(Messages::WebPageProxy::ShowTelephoneNumberMenu(number, point));
+}
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

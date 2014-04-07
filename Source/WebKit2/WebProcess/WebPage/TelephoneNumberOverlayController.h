@@ -41,6 +41,27 @@ class WebPage;
     
 #if PLATFORM(COCOA)
 typedef void* DDHighlightRef;
+
+class TelephoneNumberData : public RefCounted<TelephoneNumberData> {
+public:
+    static PassRefPtr<TelephoneNumberData> create(WebCore::Range* range, DDHighlightRef highlight)
+    {
+        return adoptRef(new TelephoneNumberData(range, highlight));
+    }
+
+    WebCore::Range* range() const { return m_range.get(); }
+    DDHighlightRef highlight() const { return m_highlight.get(); }
+
+private:
+    TelephoneNumberData(WebCore::Range* range, DDHighlightRef highlight)
+        : m_range(range)
+        , m_highlight(highlight)
+    {
+    }
+
+    RefPtr<WebCore::Range> m_range;
+    RetainPtr<DDHighlightRef> m_highlight;
+};
 #endif
 
 class TelephoneNumberOverlayController : public RefCounted<TelephoneNumberOverlayController>, private PageOverlay::Client {
@@ -62,10 +83,8 @@ private:
     void clearHighlights();
     void clearMouseDownInformation();
     
-    void handleTelephoneClick();
+    void handleTelephoneClick(TelephoneNumberData*, const WebCore::IntPoint&);
     
-    Vector<WebCore::IntRect> rectsForDrawing() const;
-
     virtual void pageOverlayDestroyed(PageOverlay*) override;
     virtual void willMoveToWebPage(PageOverlay*, WebPage*) override;
     virtual void didMoveToWebPage(PageOverlay*, WebPage*) override;
@@ -77,8 +96,8 @@ private:
     Vector<RefPtr<WebCore::Range>> m_currentSelectionRanges;
     
 #if PLATFORM(COCOA)
-    Vector<RetainPtr<DDHighlightRef>> m_highlights;
-    RetainPtr<DDHighlightRef> m_currentMouseDownHighlight;
+    Vector<RefPtr<TelephoneNumberData>> m_telephoneNumberDatas;
+    RefPtr<TelephoneNumberData> m_currentMouseDownNumber;
 #endif
     
     WebCore::IntPoint m_mouseDownPosition;

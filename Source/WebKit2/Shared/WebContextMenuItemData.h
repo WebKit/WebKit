@@ -29,6 +29,7 @@
 #if ENABLE(CONTEXT_MENUS)
 
 #include <WebCore/ContextMenuItem.h>
+#include <functional>
 #include <wtf/text/WTFString.h>
 
 namespace API {
@@ -40,16 +41,12 @@ namespace IPC {
     class ArgumentEncoder;
 }
 
-namespace WebCore {
-    class ContextMenu;
-}
-
 namespace WebKit {
 
 class WebContextMenuItemData {
 public:
     WebContextMenuItemData();
-    WebContextMenuItemData(const WebCore::ContextMenuItem&, WebCore::ContextMenu* menu);
+    WebContextMenuItemData(const WebCore::ContextMenuItem&, std::function<void()> selectionHandler = nullptr);
     WebContextMenuItemData(WebCore::ContextMenuItemType, WebCore::ContextMenuAction, const String& title, bool enabled, bool checked);
     WebContextMenuItemData(WebCore::ContextMenuAction, const String& title, bool enabled, const Vector<WebContextMenuItemData>& submenu);
 
@@ -68,6 +65,8 @@ public:
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebContextMenuItemData&);
 
+    std::function<void()> selectionHandler() const { return m_selectionHandler; }
+
 private:
     WebCore::ContextMenuItemType m_type;
     WebCore::ContextMenuAction m_action;
@@ -76,9 +75,11 @@ private:
     bool m_checked;
     Vector<WebContextMenuItemData> m_submenu;
     RefPtr<API::Object> m_userData;
+
+    std::function<void()> m_selectionHandler;
 };
 
-Vector<WebContextMenuItemData> kitItems(const Vector<WebCore::ContextMenuItem>&, WebCore::ContextMenu*);
+Vector<WebContextMenuItemData> kitItems(const Vector<WebCore::ContextMenuItem>&);
 Vector<WebCore::ContextMenuItem> coreItems(const Vector<WebContextMenuItemData>&);
 
 } // namespace WebKit

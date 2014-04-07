@@ -358,4 +358,11 @@ messages -> WebPageProxy {
     WrapCryptoKey(Vector<uint8_t> key) -> (bool succeeded, Vector<uint8_t> wrappedKey)
     UnwrapCryptoKey(Vector<uint8_t> wrappedKey) -> (bool succeeded, Vector<uint8_t> key)
 #endif
+
+
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+#if PLATFORM(COCOA)
+    ShowTelephoneNumberMenu(String telephoneNumber, WebCore::IntPoint point)
+#endif
+#endif
 }

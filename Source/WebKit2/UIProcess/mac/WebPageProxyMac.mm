@@ -49,6 +49,7 @@
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/SoftLinking.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/UserAgent.h>
 #import <WebKitSystemInterface.h>
@@ -58,6 +59,17 @@
 
 @interface NSApplication (Details)
 - (void)speakString:(NSString *)string;
+@end
+
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectors)
+SOFT_LINK_CLASS(DataDetectors, DDActionsManager)
+SOFT_LINK_CONSTANT(DataDetectors, DDBinderPhoneNumberKey, CFStringRef)
+
+typedef void* DDActionContext;
+
+@interface DDActionsManager : NSObject
++ (DDActionsManager *) sharedManager;
+- (NSArray *) menuItemsForValue:(NSString *)value type:(CFStringRef)type service:(NSString *)service context:(DDActionContext *)context;
 @end
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
@@ -633,6 +645,29 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String&
 
     [[NSWorkspace sharedWorkspace] openFile:pdfFilename];
 }
+
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+#if PLATFORM(COCOA)
+void WebPageProxy::showTelephoneNumberMenu(const String& telephoneNumber, const WebCore::IntPoint& point)
+{
+    NSArray *menuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForValue:(NSString *)telephoneNumber type:getDDBinderPhoneNumberKey() service:nil context:nil];
+
+    Vector<WebContextMenuItemData> items;
+    for (NSMenuItem *item in menuItems) {
+        RetainPtr<NSMenuItem> retainedItem = item;
+        std::function<void()> handler = [retainedItem]() {
+            NSMenuItem *item = retainedItem.get();
+            [[item target] performSelector:[item action] withObject:item];
+        };
+        
+        items.append(WebContextMenuItemData(ContextMenuItem(item), handler));
+    }
+    
+    ContextMenuContextData contextData;
+    internalShowContextMenu(point, contextData, items, ContextMenuClientEligibility::NotEligibleForClient, nullptr);
+}
+#endif
+#endif
 
 } // namespace WebKit
 

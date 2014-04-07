@@ -1,3 +1,60 @@
+2014-04-07  Brady Eidson  <beidson@apple.com>
+
+        Handle clicks on DataDetectors UI for scanned phone numbers
+        <rdar://problem/16379588> and https://bugs.webkit.org/show_bug.cgi?id=131309
+
+        Reviewed by Tim Horton.
+
+        WebContextMenuItemDatas never need to know about a ContextMenu, so remove that concept.
+        Also add the concept of a selection handler for UIProcess-native menu items.
+        * Shared/WebContextMenuItemData.cpp:
+        (WebKit::WebContextMenuItemData::WebContextMenuItemData): 
+        (WebKit::WebContextMenuItemData::encode):
+        (WebKit::kitItems):
+        (WebKit::WebContextMenuItemData::decode):
+        * Shared/WebContextMenuItemData.h:
+        (WebKit::WebContextMenuItemData::selectionHandler):
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showContextMenu):
+        (WebKit::WebPageProxy::internalShowContextMenu): Make the decoder argument optional. Make consulting the client optional.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::showTelephoneNumberMenu):
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (-[WKSelectionHandlerWrapper initWithSelectionHandler:std::]):
+        (-[WKSelectionHandlerWrapper executeSelectionHandler]):
+        (-[WKMenuTarget forwardContextMenuAction:]):
+        (WebKit::nsMenuItemVector):
+        (WebKit::WebContextMenuProxyMac::contextMenuItemSelected): If the represented object is a WKSelectionHandlerWrapper,
+          execute the selection handler. Do nothing else.
+
+        Instead of getting rects from ranges, creating highlights, and storing those highlights,
+        work in terms of a TelephoneNumberData object that wraps both a range and a highlight.
+        This makes it easier to track where the mouse is down and to know what phone number we should act on when clicked.
+        * WebProcess/WebPage/TelephoneNumberOverlayController.cpp:
+        (WebKit::TelephoneNumberOverlayController::rectsForDrawing): Deleted.
+        * WebProcess/WebPage/TelephoneNumberOverlayController.h:
+        (WebKit::TelephoneNumberData::create):
+        (WebKit::TelephoneNumberData::range):
+        (WebKit::TelephoneNumberData::highlight):
+        (WebKit::TelephoneNumberData::TelephoneNumberData):
+        * WebProcess/WebPage/mac/TelephoneNumberOverlayControllerMac.mm:
+        (WebKit::TelephoneNumberOverlayController::drawRect):
+        (WebKit::TelephoneNumberOverlayController::handleTelephoneClick): Pass the phone number text and the point to WebPage.
+        (WebKit::TelephoneNumberOverlayController::mouseEvent):
+        (WebKit::TelephoneNumberOverlayController::clearMouseDownInformation):
+        (WebKit::TelephoneNumberOverlayController::clearHighlights):
+
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::menuItemsWithUserData):
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::handleTelephoneNumberClick): Message the phone number and coordinate to the UIProcess.
+
 2014-04-07  Dan Bernstein  <mitz@apple.com>
 
         Introduce API::InjectedBundle::PageUIClient

@@ -67,10 +67,11 @@ WebContextMenuItemData::WebContextMenuItemData(WebCore::ContextMenuAction action
 {
 }
 
-WebContextMenuItemData::WebContextMenuItemData(const WebCore::ContextMenuItem& item, WebCore::ContextMenu* menu)
+WebContextMenuItemData::WebContextMenuItemData(const WebCore::ContextMenuItem& item, std::function<void()> selectionHandler)
     : m_type(item.type())
     , m_action(item.action())
     , m_title(item.title())
+    , m_selectionHandler(selectionHandler)
 {
     if (m_type == WebCore::SubmenuType) {
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
@@ -78,7 +79,7 @@ WebContextMenuItemData::WebContextMenuItemData(const WebCore::ContextMenuItem& i
 #else
         Vector<WebCore::ContextMenuItem> coreSubmenu = WebCore::contextMenuItemVector(item.platformSubMenu());
 #endif
-        m_submenu = kitItems(coreSubmenu, menu);
+        m_submenu = kitItems(coreSubmenu);
     }
     
     m_enabled = item.enabled();
@@ -106,6 +107,9 @@ void WebContextMenuItemData::setUserData(API::Object* userData)
     
 void WebContextMenuItemData::encode(IPC::ArgumentEncoder& encoder) const
 {
+    // WebContextMenuItemDatas with a selection handler are meant to exist solely in the UIProcess and should never be sent over IPC.
+    ASSERT(!m_selectionHandler);
+    
     encoder.encodeEnum(m_type);
     encoder.encodeEnum(m_action);
     encoder << m_title;
@@ -157,12 +161,12 @@ bool WebContextMenuItemData::decode(IPC::ArgumentDecoder& decoder, WebContextMen
     return true;
 }
 
-Vector<WebContextMenuItemData> kitItems(const Vector<WebCore::ContextMenuItem>& coreItemVector, WebCore::ContextMenu* menu)
+Vector<WebContextMenuItemData> kitItems(const Vector<WebCore::ContextMenuItem>& coreItemVector)
 {
     Vector<WebContextMenuItemData> result;
     result.reserveCapacity(coreItemVector.size());
     for (unsigned i = 0; i < coreItemVector.size(); ++i)
-        result.append(WebContextMenuItemData(coreItemVector[i], menu));
+        result.append(WebContextMenuItemData(coreItemVector[i]));
     
     return result;
 }

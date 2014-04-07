@@ -86,6 +86,31 @@ using namespace WebCore;
 
 @end
 
+@interface WKSelectionHandlerWrapper : NSObject {
+    std::function<void()> _selectionHandler;
+}
+- (id)initWithSelectionHandler:(std::function<void()>)selectionHandler;
+- (void)executeSelectionHandler;
+@end
+
+@implementation WKSelectionHandlerWrapper
+- (id)initWithSelectionHandler:(std::function<void()>)selectionHandler
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    
+    _selectionHandler = selectionHandler;
+    return self;
+}
+
+- (void)executeSelectionHandler
+{
+    if (_selectionHandler)
+        _selectionHandler();
+}
+@end
+
 @interface WKMenuTarget : NSObject {
     WebKit::WebContextMenuProxyMac* _menuProxy;
 }
@@ -115,9 +140,17 @@ using namespace WebCore;
 
 - (void)forwardContextMenuAction:(id)sender
 {
+    id representedObject = [sender representedObject];
+
+    // NSMenuItems with a represented selection handler belong solely to the UI process
+    // and don't need any further processing after the selection handler is called.
+    if ([representedObject isKindOfClass:[WKSelectionHandlerWrapper class]]) {
+        [representedObject executeSelectionHandler];
+        return;
+    }
+
     WebKit::WebContextMenuItemData item(ActionType, static_cast<ContextMenuAction>([sender tag]), [sender title], [sender isEnabled], [sender state] == NSOnState);
-    
-    if (id representedObject = [sender representedObject]) {
+    if (representedObject) {
         ASSERT([representedObject isKindOfClass:[WKUserDataWrapper class]]);
         item.setUserData([static_cast<WKUserDataWrapper *>(representedObject) userData]);
     }
@@ -256,8 +289,12 @@ static Vector<RetainPtr<NSMenuItem>> nsMenuItemVector(const Vector<WebContextMen
             [menuItem setTag:items[i].action()];
             [menuItem setEnabled:items[i].enabled()];
             [menuItem setState:items[i].checked() ? NSOnState : NSOffState];
-                        
-            if (items[i].userData()) {
+
+            if (std::function<void()> selectionHandler = items[i].selectionHandler()) {
+                WKSelectionHandlerWrapper *wrapper = [[WKSelectionHandlerWrapper alloc] initWithSelectionHandler:selectionHandler];
+                [menuItem setRepresentedObject:wrapper];
+                [wrapper release];
+            } else if (items[i].userData()) {
                 WKUserDataWrapper *wrapper = [[WKUserDataWrapper alloc] initWithUserData:items[i].userData()];
                 [menuItem setRepresentedObject:wrapper];
                 [wrapper release];

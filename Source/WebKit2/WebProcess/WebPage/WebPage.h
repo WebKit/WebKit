@@ -46,6 +46,7 @@
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
 #include "WebUndoStep.h"
+#include <WebCore/ContextMenuItem.h>
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DragData.h>
 #include <WebCore/Editor.h>
@@ -777,6 +778,7 @@ public:
     
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     TelephoneNumberOverlayController& telephoneNumberOverlayController();
+    void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&);
 #endif
 
 private:

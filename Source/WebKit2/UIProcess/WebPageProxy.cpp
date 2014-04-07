@@ -3334,17 +3334,17 @@ void WebPageProxy::hidePopupMenu()
 #if ENABLE(CONTEXT_MENUS)
 void WebPageProxy::showContextMenu(const IntPoint& menuLocation, const ContextMenuContextData& contextMenuContextData, const Vector<WebContextMenuItemData>& proposedItems, IPC::MessageDecoder& decoder)
 {
-    internalShowContextMenu(menuLocation, contextMenuContextData, proposedItems, decoder);
+    internalShowContextMenu(menuLocation, contextMenuContextData, proposedItems, ContextMenuClientEligibility::EligibleForClient, &decoder);
     
     // No matter the result of internalShowContextMenu, always notify the WebProcess that the menu is hidden so it starts handling mouse events again.
     m_process->send(Messages::WebPage::ContextMenuHidden(), m_pageID);
 }
 
-void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const ContextMenuContextData& contextMenuContextData, const Vector<WebContextMenuItemData>& proposedItems, IPC::MessageDecoder& decoder)
+void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const ContextMenuContextData& contextMenuContextData, const Vector<WebContextMenuItemData>& proposedItems, ContextMenuClientEligibility clientEligibility, IPC::MessageDecoder* decoder)
 {
     RefPtr<API::Object> userData;
     WebContextUserMessageDecoder messageDecoder(userData, process());
-    if (!decoder.decode(messageDecoder))
+    if (decoder && !decoder->decode(messageDecoder))
         return;
 
     m_activeContextMenuContextData = contextMenuContextData;
@@ -3364,7 +3364,7 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
     // Unless this is an image control, give the PageContextMenuClient one last swipe at changing the menu.
     Vector<WebContextMenuItemData> items;
     bool useProposedItems = true;
-    bool askClientToChangeMenu = true;
+    bool askClientToChangeMenu = clientEligibility == ContextMenuClientEligibility::EligibleForClient;
 #if ENABLE(IMAGE_CONTROLS)
     if (!contextMenuContextData.controlledImageHandle().isNull())
         askClientToChangeMenu = false;
@@ -3372,7 +3372,7 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
 
     if (askClientToChangeMenu && m_contextMenuClient.getContextMenuFromProposedMenu(this, proposedItems, items, contextMenuContextData.webHitTestResultData(), userData.get()))
         useProposedItems = false;
-    
+
     const Vector<WebContextMenuItemData>& itemsToShow = useProposedItems ? proposedItems : items;
     if (!m_contextMenuClient.showContextMenu(this, menuLocation, itemsToShow))
         m_activeContextMenu->showContextMenu(menuLocation, itemsToShow, contextMenuContextData);

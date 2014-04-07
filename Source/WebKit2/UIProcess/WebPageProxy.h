@@ -1219,9 +1219,18 @@ private:
     void hidePopupMenu();
 
 #if ENABLE(CONTEXT_MENUS)
-    // Context Menu.
+    enum class ContextMenuClientEligibility {
+        EligibleForClient,
+        NotEligibleForClient
+    };
     void showContextMenu(const WebCore::IntPoint& menuLocation, const ContextMenuContextData&, const Vector<WebContextMenuItemData>&, IPC::MessageDecoder&);
-    void internalShowContextMenu(const WebCore::IntPoint& menuLocation, const ContextMenuContextData&, const Vector<WebContextMenuItemData>&, IPC::MessageDecoder&);
+    void internalShowContextMenu(const WebCore::IntPoint& menuLocation, const ContextMenuContextData&, const Vector<WebContextMenuItemData>&, ContextMenuClientEligibility, IPC::MessageDecoder*);
+#endif
+
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+#if PLATFORM(COCOA)
+    void showTelephoneNumberMenu(const String& telephoneNumber, const WebCore::IntPoint&);
+#endif
 #endif
 
     // Search popup results
