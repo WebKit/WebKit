@@ -1,3 +1,12 @@
+2014-03-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Move slow JSRegress tests out of the way so that they don't show up in run-jsc-benchmarks runs and also skip tests that are extremely long-running
+        https://bugs.webkit.org/show_bug.cgi?id=130951
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/run-javascriptcore-tests:
+
 2014-04-06  Darin Adler  <darin@apple.com>
 
         Rework CSS calc logic, fixing some reference count mistakes in Length

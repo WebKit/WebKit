@@ -1,3 +1,4 @@
+//@ skip
 
 function testFunction(a, b)
 {

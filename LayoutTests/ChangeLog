@@ -1,3 +1,330 @@
+2014-03-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Move slow JSRegress tests out of the way so that they don't show up in run-jsc-benchmarks runs and also skip tests that are extremely long-running
+        https://bugs.webkit.org/show_bug.cgi?id=130951
+
+        Reviewed by Geoffrey Garen.
+
+        * js/regress/ArrayBuffer-DataView-alloc-large-long-lived.html:
+        * js/regress/ArrayBuffer-DataView-alloc-long-lived.html:
+        * js/regress/ArrayBuffer-Int32Array-byteOffset.html:
+        * js/regress/ArrayBuffer-Int8Array-alloc-huge-long-lived-expected.txt: Removed.
+        * js/regress/ArrayBuffer-Int8Array-alloc-huge-long-lived.html: Removed.
+        * js/regress/ArrayBuffer-Int8Array-alloc-large-long-lived-fragmented-expected.txt: Removed.
+        * js/regress/ArrayBuffer-Int8Array-alloc-large-long-lived-fragmented.html: Removed.
+        * js/regress/ArrayBuffer-Int8Array-alloc-large-long-lived.html:
+        * js/regress/ArrayBuffer-Int8Array-alloc-long-lived-buffer.html:
+        * js/regress/ArrayBuffer-Int8Array-alloc-long-lived.html:
+        * js/regress/ArrayBuffer-Int8Array-alloc.html:
+        * js/regress/DataView-custom-properties.html:
+        * js/regress/Float32Array-matrix-mult.html:
+        * js/regress/Float32Array-to-Float64Array-set.html:
+        * js/regress/Float64Array-alloc-long-lived.html:
+        * js/regress/Float64Array-to-Int16Array-set.html:
+        * js/regress/HashMap-put-get-iterate-keys.html:
+        * js/regress/HashMap-put-get-iterate.html:
+        * js/regress/HashMap-string-put-get-iterate.html:
+        * js/regress/Int16Array-alloc-long-lived.html:
+        * js/regress/Int16Array-bubble-sort-with-byteLength.html:
+        * js/regress/Int16Array-bubble-sort.html:
+        * js/regress/Int16Array-load-int-mul.html:
+        * js/regress/Int16Array-to-Int32Array-set.html:
+        * js/regress/Int32Array-Int8Array-view-alloc.html:
+        * js/regress/Int32Array-alloc-huge-expected.txt: Removed.
+        * js/regress/Int32Array-alloc-huge-long-lived-expected.txt: Removed.
+        * js/regress/Int32Array-alloc-huge-long-lived.html: Removed.
+        * js/regress/Int32Array-alloc-huge.html: Removed.
+        * js/regress/Int32Array-alloc-large-long-lived-expected.txt: Removed.
+        * js/regress/Int32Array-alloc-large-long-lived.html: Removed.
+        * js/regress/Int32Array-alloc-large.html:
+        * js/regress/Int32Array-alloc-long-lived.html:
+        * js/regress/Int32Array-alloc.html:
+        * js/regress/Int8Array-alloc-long-lived.html:
+        * js/regress/Int8Array-load-with-byteLength.html:
+        * js/regress/Int8Array-load.html:
+        * js/regress/adapt-to-double-divide.html:
+        * js/regress/aliased-arguments-getbyval.html:
+        * js/regress/allocate-big-object.html:
+        * js/regress/arity-mismatch-inlining.html:
+        * js/regress/array-access-polymorphic-structure.html:
+        * js/regress/array-nonarray-polymorhpic-access.html:
+        * js/regress/array-nonarray-polymorphic-access.html:
+        * js/regress/array-prototype-every.html:
+        * js/regress/array-prototype-filter-expected.txt: Removed.
+        * js/regress/array-prototype-filter.html: Removed.
+        * js/regress/array-prototype-forEach.html:
+        * js/regress/array-prototype-map.html:
+        * js/regress/array-prototype-some.html:
+        * js/regress/array-with-double-add.html:
+        * js/regress/array-with-double-increment.html:
+        * js/regress/array-with-double-mul-add.html:
+        * js/regress/array-with-double-sum.html:
+        * js/regress/array-with-int32-add-sub.html:
+        * js/regress/array-with-int32-or-double-sum.html:
+        * js/regress/asmjs_bool_bug.html:
+        * js/regress/assign-custom-setter-polymorphic.html:
+        * js/regress/assign-custom-setter.html:
+        * js/regress/basic-set.html:
+        * js/regress/big-int-mul.html:
+        * js/regress/boolean-test.html:
+        * js/regress/branch-fold.html:
+        * js/regress/by-val-generic.html:
+        * js/regress/call-spread-apply.html:
+        * js/regress/call-spread-call.html:
+        * js/regress/call-spread-expected.txt: Removed.
+        * js/regress/call-spread.html: Removed.
+        * js/regress/captured-assignments.html:
+        * js/regress/cast-int-to-double.html:
+        * js/regress/cell-argument.html:
+        * js/regress/cfg-simplify.html:
+        * js/regress/chain-custom-getter-expected.txt: Removed.
+        * js/regress/chain-custom-getter.html: Removed.
+        * js/regress/chain-getter-access.html:
+        * js/regress/cmpeq-obj-to-obj-other.html:
+        * js/regress/constant-test.html:
+        * js/regress/delay-tear-off-arguments-strictmode.html:
+        * js/regress/destructuring-arguments-length-expected.txt: Removed.
+        * js/regress/destructuring-arguments-length.html: Removed.
+        * js/regress/destructuring-arguments.html:
+        * js/regress/destructuring-swap.html:
+        * js/regress/direct-arguments-getbyval.html:
+        * js/regress/double-get-by-val-out-of-bounds.html:
+        * js/regress/double-pollution-getbyval.html:
+        * js/regress/double-pollution-putbyoffset.html:
+        * js/regress/double-to-int32-typed-array-no-inline.html:
+        * js/regress/double-to-int32-typed-array.html:
+        * js/regress/double-to-uint32-typed-array-no-inline.html:
+        * js/regress/double-to-uint32-typed-array.html:
+        * js/regress/empty-string-plus-int.html:
+        * js/regress/emscripten-cube2hash.html:
+        * js/regress/emscripten-memops-expected.txt: Removed.
+        * js/regress/emscripten-memops.html: Removed.
+        * js/regress/external-arguments-getbyval.html:
+        * js/regress/external-arguments-putbyval.html:
+        * js/regress/fixed-typed-array-storage-var-index.html:
+        * js/regress/fixed-typed-array-storage.html:
+        * js/regress/fold-double-to-int.html:
+        * js/regress/fold-strict-eq-expected.txt: Removed.
+        * js/regress/fold-strict-eq.html: Removed.
+        * js/regress/for-of-iterate-array-entries.html:
+        * js/regress/for-of-iterate-array-keys.html:
+        * js/regress/for-of-iterate-array-values.html:
+        * js/regress/function-dot-apply.html:
+        * js/regress/function-test.html:
+        * js/regress/function-with-eval.html:
+        * js/regress/get-by-id-chain-from-try-block.html:
+        * js/regress/get-by-id-proto-or-self.html:
+        * js/regress/get-by-id-self-or-proto.html:
+        * js/regress/get-by-val-out-of-bounds.html:
+        * js/regress/get_callee_monomorphic.html:
+        * js/regress/get_callee_polymorphic.html:
+        * js/regress/getter.html:
+        * js/regress/global-var-const-infer-fire-from-opt.html:
+        * js/regress/global-var-const-infer.html:
+        * js/regress/imul-double-only.html:
+        * js/regress/imul-int-only.html:
+        * js/regress/imul-mixed.html:
+        * js/regress/in-four-cases.html:
+        * js/regress/in-one-case-false.html:
+        * js/regress/in-one-case-true.html:
+        * js/regress/in-two-cases.html:
+        * js/regress/indexed-properties-in-objects.html:
+        * js/regress/infer-closure-const-then-mov-no-inline.html:
+        * js/regress/infer-closure-const-then-mov.html:
+        * js/regress/infer-closure-const-then-put-to-scope-no-inline.html:
+        * js/regress/infer-closure-const-then-put-to-scope.html:
+        * js/regress/infer-closure-const-then-reenter-no-inline.html:
+        * js/regress/infer-closure-const-then-reenter.html:
+        * js/regress/infer-one-time-closure-ten-vars.html:
+        * js/regress/infer-one-time-closure-two-vars.html:
+        * js/regress/infer-one-time-closure.html:
+        * js/regress/infer-one-time-deep-closure.html:
+        * js/regress/inline-arguments-access.html:
+        * js/regress/inline-arguments-aliased-access.html:
+        * js/regress/inline-arguments-local-escape.html:
+        * js/regress/inline-get-scoped-var.html:
+        * js/regress/inlined-put-by-id-transition.html:
+        * js/regress/int-or-other-abs-then-get-by-val.html:
+        * js/regress/int-or-other-abs-zero-then-get-by-val.html:
+        * js/regress/int-or-other-add-then-get-by-val.html:
+        * js/regress/int-or-other-add.html:
+        * js/regress/int-or-other-div-then-get-by-val.html:
+        * js/regress/int-or-other-max-then-get-by-val.html:
+        * js/regress/int-or-other-min-then-get-by-val.html:
+        * js/regress/int-or-other-mod-then-get-by-val.html:
+        * js/regress/int-or-other-mul-then-get-by-val.html:
+        * js/regress/int-or-other-neg-then-get-by-val.html:
+        * js/regress/int-or-other-neg-zero-then-get-by-val.html:
+        * js/regress/int-or-other-sub-then-get-by-val.html:
+        * js/regress/int-or-other-sub.html:
+        * js/regress/int-overflow-local.html:
+        * js/regress/int52-spill.html:
+        * js/regress/integer-divide.html:
+        * js/regress/integer-modulo.html:
+        * js/regress/large-int-captured.html:
+        * js/regress/large-int-neg.html:
+        * js/regress/large-int.html:
+        * js/regress/logical-not.html:
+        * js/regress/lots-of-fields.html:
+        * js/regress/make-indexed-storage.html:
+        * js/regress/make-rope-cse.html:
+        * js/regress/marsaglia-expected.txt: Removed.
+        * js/regress/marsaglia-larger-ints.html:
+        * js/regress/marsaglia-osr-entry.html:
+        * js/regress/marsaglia.html: Removed.
+        * js/regress/method-on-number.html:
+        * js/regress/misc-strict-eq.html:
+        * js/regress/negative-zero-divide.html:
+        * js/regress/negative-zero-modulo.html:
+        * js/regress/negative-zero-negate.html:
+        * js/regress/nested-function-parsing-random-expected.txt: Removed.
+        * js/regress/nested-function-parsing-random.html: Removed.
+        * js/regress/nested-function-parsing.html:
+        * js/regress/new-array-buffer-dead.html:
+        * js/regress/new-array-buffer-push.html:
+        * js/regress/new-array-dead.html:
+        * js/regress/new-array-push.html:
+        * js/regress/new-spread-expected.txt: Removed.
+        * js/regress/new-spread.html: Removed.
+        * js/regress/number-test.html:
+        * js/regress/object-closure-call.html:
+        * js/regress/object-test.html:
+        * js/regress/poly-stricteq.html:
+        * js/regress/polymorphic-get-by-id.html:
+        * js/regress/polymorphic-put-by-id.html:
+        * js/regress/polymorphic-structure.html:
+        * js/regress/polyvariant-monomorphic-get-by-id.html:
+        * js/regress/proto-custom-getter-expected.txt: Removed.
+        * js/regress/proto-custom-getter.html: Removed.
+        * js/regress/proto-getter-access.html:
+        * js/regress/put-by-id.html:
+        * js/regress/put-by-val-large-index-blank-indexing-type.html:
+        * js/regress/put-by-val-machine-int.html:
+        * js/regress/rare-osr-exit-on-local.html:
+        * js/regress/register-pressure-from-osr.html:
+        * js/regress/resources/regress-post.js: Removed.
+        * js/regress/resources/regress-pre.js: Removed.
+        * js/regress/script-tests/ArrayBuffer-Int8Array-alloc-huge-long-lived.js: Removed.
+        * js/regress/script-tests/ArrayBuffer-Int8Array-alloc-large-long-lived-fragmented.js: Removed.
+        * js/regress/script-tests/Int32Array-alloc-huge-long-lived.js: Removed.
+        * js/regress/script-tests/Int32Array-alloc-huge.js: Removed.
+        * js/regress/script-tests/Int32Array-alloc-large-long-lived.js: Removed.
+        * js/regress/script-tests/array-prototype-filter.js: Removed.
+        * js/regress/script-tests/call-spread.js: Removed.
+        * js/regress/script-tests/chain-custom-getter.js: Removed.
+        * js/regress/script-tests/destructuring-arguments-length.js: Removed.
+        * js/regress/script-tests/emscripten-memops.js: Removed.
+        * js/regress/script-tests/fold-strict-eq.js: Removed.
+        * js/regress/script-tests/marsaglia.js: Removed.
+        * js/regress/script-tests/nested-function-parsing-random.js: Removed.
+        * js/regress/script-tests/new-spread.js: Removed.
+        * js/regress/script-tests/proto-custom-getter.js: Removed.
+        * js/regress/script-tests/simple-custom-getter.js: Removed.
+        * js/regress/script-tests/variadic-closure-call.js: Removed.
+        * js/regress/simple-activation-demo.html:
+        * js/regress/simple-custom-getter-expected.txt: Removed.
+        * js/regress/simple-custom-getter.html: Removed.
+        * js/regress/simple-getter-access.html:
+        * js/regress/slow-array-profile-convergence.html:
+        * js/regress/slow-convergence.html:
+        * js/regress/sparse-conditional.html:
+        * js/regress/splice-to-remove.html:
+        * js/regress/string-char-code-at.html:
+        * js/regress/string-concat-object.html:
+        * js/regress/string-concat-pair-object.html:
+        * js/regress/string-concat-pair-simple.html:
+        * js/regress/string-concat-simple.html:
+        * js/regress/string-cons-repeat.html:
+        * js/regress/string-cons-tower.html:
+        * js/regress/string-equality.html:
+        * js/regress/string-get-by-val-big-char.html:
+        * js/regress/string-get-by-val-out-of-bounds-insane.html:
+        * js/regress/string-get-by-val-out-of-bounds.html:
+        * js/regress/string-get-by-val.html:
+        * js/regress/string-hash.html:
+        * js/regress/string-long-ident-equality.html:
+        * js/regress/string-repeat-arith.html:
+        * js/regress/string-sub.html:
+        * js/regress/string-test.html:
+        * js/regress/string-var-equality.html:
+        * js/regress/structure-hoist-over-transitions.html:
+        * js/regress/switch-char-constant.html:
+        * js/regress/switch-char.html:
+        * js/regress/switch-constant.html:
+        * js/regress/switch-string-basic-big-var.html:
+        * js/regress/switch-string-basic-big.html:
+        * js/regress/switch-string-basic-var.html:
+        * js/regress/switch-string-basic.html:
+        * js/regress/switch-string-big-length-tower-var.html:
+        * js/regress/switch-string-length-tower-var.html:
+        * js/regress/switch-string-length-tower.html:
+        * js/regress/switch-string-short.html:
+        * js/regress/switch.html:
+        * js/regress/tear-off-arguments-simple.html:
+        * js/regress/tear-off-arguments.html:
+        * js/regress/temporal-structure.html:
+        * js/regress/to-int32-boolean.html:
+        * js/regress/undefined-test.html:
+        * js/regress/unprofiled-licm.html:
+        * js/regress/variadic-closure-call-expected.txt: Removed.
+        * js/regress/variadic-closure-call.html: Removed.
+        * js/regress/weird-inlining-const-prop.html:
+        * js/slow-stress: Added.
+        * js/slow-stress/ArrayBuffer-Int8Array-alloc-huge-long-lived-expected.txt: Copied from LayoutTests/js/regress/ArrayBuffer-Int8Array-alloc-huge-long-lived-expected.txt.
+        * js/slow-stress/ArrayBuffer-Int8Array-alloc-huge-long-lived.html: Copied from LayoutTests/js/regress/ArrayBuffer-Int8Array-alloc-huge-long-lived.html.
+        * js/slow-stress/ArrayBuffer-Int8Array-alloc-large-long-lived-fragmented-expected.txt: Copied from LayoutTests/js/regress/ArrayBuffer-Int8Array-alloc-large-long-lived-fragmented-expected.txt.
+        * js/slow-stress/ArrayBuffer-Int8Array-alloc-large-long-lived-fragmented.html: Copied from LayoutTests/js/regress/ArrayBuffer-Int8Array-alloc-large-long-lived-fragmented.html.
+        * js/slow-stress/Int32Array-alloc-huge-expected.txt: Copied from LayoutTests/js/regress/Int32Array-alloc-huge-expected.txt.
+        * js/slow-stress/Int32Array-alloc-huge-long-lived-expected.txt: Copied from LayoutTests/js/regress/Int32Array-alloc-huge-long-lived-expected.txt.
+        * js/slow-stress/Int32Array-alloc-huge-long-lived.html: Copied from LayoutTests/js/regress/Int32Array-alloc-huge-long-lived.html.
+        * js/slow-stress/Int32Array-alloc-huge.html: Copied from LayoutTests/js/regress/Int32Array-alloc-huge.html.
+        * js/slow-stress/Int32Array-alloc-large-long-lived-expected.txt: Copied from LayoutTests/js/regress/Int32Array-alloc-large-long-lived-expected.txt.
+        * js/slow-stress/Int32Array-alloc-large-long-lived.html: Copied from LayoutTests/js/regress/Int32Array-alloc-large-long-lived.html.
+        * js/slow-stress/array-prototype-filter-expected.txt: Copied from LayoutTests/js/regress/array-prototype-filter-expected.txt.
+        * js/slow-stress/array-prototype-filter.html: Copied from LayoutTests/js/regress/array-prototype-filter.html.
+        * js/slow-stress/call-spread-expected.txt: Copied from LayoutTests/js/regress/call-spread-expected.txt.
+        * js/slow-stress/call-spread.html: Copied from LayoutTests/js/regress/call-spread.html.
+        * js/slow-stress/chain-custom-getter-expected.txt: Copied from LayoutTests/js/regress/chain-custom-getter-expected.txt.
+        * js/slow-stress/chain-custom-getter.html: Copied from LayoutTests/js/regress/chain-custom-getter.html.
+        * js/slow-stress/destructuring-arguments-length-expected.txt: Copied from LayoutTests/js/regress/destructuring-arguments-length-expected.txt.
+        * js/slow-stress/destructuring-arguments-length.html: Copied from LayoutTests/js/regress/destructuring-arguments-length.html.
+        * js/slow-stress/emscripten-memops-expected.txt: Copied from LayoutTests/js/regress/emscripten-memops-expected.txt.
+        * js/slow-stress/emscripten-memops.html: Copied from LayoutTests/js/regress/emscripten-memops.html.
+        * js/slow-stress/fold-strict-eq-expected.txt: Copied from LayoutTests/js/regress/fold-strict-eq-expected.txt.
+        * js/slow-stress/fold-strict-eq.html: Copied from LayoutTests/js/regress/fold-strict-eq.html.
+        * js/slow-stress/marsaglia-expected.txt: Copied from LayoutTests/js/regress/marsaglia-expected.txt.
+        * js/slow-stress/marsaglia.html: Copied from LayoutTests/js/regress/marsaglia.html.
+        * js/slow-stress/nested-function-parsing-random-expected.txt: Copied from LayoutTests/js/regress/nested-function-parsing-random-expected.txt.
+        * js/slow-stress/nested-function-parsing-random.html: Copied from LayoutTests/js/regress/nested-function-parsing-random.html.
+        * js/slow-stress/new-spread-expected.txt: Copied from LayoutTests/js/regress/new-spread-expected.txt.
+        * js/slow-stress/new-spread.html: Copied from LayoutTests/js/regress/new-spread.html.
+        * js/slow-stress/proto-custom-getter-expected.txt: Copied from LayoutTests/js/regress/proto-custom-getter-expected.txt.
+        * js/slow-stress/proto-custom-getter.html: Copied from LayoutTests/js/regress/proto-custom-getter.html.
+        * js/slow-stress/script-tests: Added.
+        * js/slow-stress/script-tests/ArrayBuffer-Int8Array-alloc-huge-long-lived.js: Copied from LayoutTests/js/regress/script-tests/ArrayBuffer-Int8Array-alloc-huge-long-lived.js.
+        * js/slow-stress/script-tests/ArrayBuffer-Int8Array-alloc-large-long-lived-fragmented.js: Copied from LayoutTests/js/regress/script-tests/ArrayBuffer-Int8Array-alloc-large-long-lived-fragmented.js.
+        * js/slow-stress/script-tests/Int32Array-alloc-huge-long-lived.js: Copied from LayoutTests/js/regress/script-tests/Int32Array-alloc-huge-long-lived.js.
+        * js/slow-stress/script-tests/Int32Array-alloc-huge.js: Copied from LayoutTests/js/regress/script-tests/Int32Array-alloc-huge.js.
+        * js/slow-stress/script-tests/Int32Array-alloc-large-long-lived.js: Copied from LayoutTests/js/regress/script-tests/Int32Array-alloc-large-long-lived.js.
+        * js/slow-stress/script-tests/array-prototype-filter.js: Copied from LayoutTests/js/regress/script-tests/array-prototype-filter.js.
+        * js/slow-stress/script-tests/call-spread.js: Copied from LayoutTests/js/regress/script-tests/call-spread.js.
+        * js/slow-stress/script-tests/chain-custom-getter.js: Copied from LayoutTests/js/regress/script-tests/chain-custom-getter.js.
+        * js/slow-stress/script-tests/destructuring-arguments-length.js: Copied from LayoutTests/js/regress/script-tests/destructuring-arguments-length.js.
+        * js/slow-stress/script-tests/emscripten-memops.js: Copied from LayoutTests/js/regress/script-tests/emscripten-memops.js.
+        * js/slow-stress/script-tests/fold-strict-eq.js: Copied from LayoutTests/js/regress/script-tests/fold-strict-eq.js.
+        * js/slow-stress/script-tests/marsaglia.js: Copied from LayoutTests/js/regress/script-tests/marsaglia.js.
+        * js/slow-stress/script-tests/nested-function-parsing-random.js: Copied from LayoutTests/js/regress/script-tests/nested-function-parsing-random.js.
+        * js/slow-stress/script-tests/new-spread.js: Copied from LayoutTests/js/regress/script-tests/new-spread.js.
+        * js/slow-stress/script-tests/proto-custom-getter.js: Copied from LayoutTests/js/regress/script-tests/proto-custom-getter.js.
+        * js/slow-stress/script-tests/simple-custom-getter.js: Copied from LayoutTests/js/regress/script-tests/simple-custom-getter.js.
+        * js/slow-stress/script-tests/variadic-closure-call.js: Copied from LayoutTests/js/regress/script-tests/variadic-closure-call.js.
+        * js/slow-stress/simple-custom-getter-expected.txt: Copied from LayoutTests/js/regress/simple-custom-getter-expected.txt.
+        * js/slow-stress/simple-custom-getter.html: Copied from LayoutTests/js/regress/simple-custom-getter.html.
+        * js/slow-stress/variadic-closure-call-expected.txt: Copied from LayoutTests/js/regress/variadic-closure-call-expected.txt.
+        * js/slow-stress/variadic-closure-call.html: Copied from LayoutTests/js/regress/variadic-closure-call.html.
+        * resources/regress-post.js: Copied from LayoutTests/js/regress/resources/regress-post.js.
+        * resources/regress-pre.js: Copied from LayoutTests/js/regress/resources/regress-pre.js.
+
 2014-04-04  Mark Lam  <mark.lam@apple.com>
 
         Date object needs to check for ES5 15.9.1.14 TimeClip limit.
