@@ -28,6 +28,7 @@
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
 
 #include "PageOverlay.h"
+#include "WebPage.h"
 #include <WebCore/IntRect.h>
 #include <wtf/RefCounted.h>
 
@@ -39,7 +40,7 @@ namespace WebKit {
     
 class WebPage;
     
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
 typedef void* DDHighlightRef;
 
 class TelephoneNumberData : public RefCounted<TelephoneNumberData> {
@@ -82,8 +83,10 @@ private:
     
     void clearHighlights();
     void clearMouseDownInformation();
-    
+
+#if PLATFORM(MAC)
     void handleTelephoneClick(TelephoneNumberData*, const WebCore::IntPoint&);
+#endif
     
     virtual void pageOverlayDestroyed(PageOverlay*) override;
     virtual void willMoveToWebPage(PageOverlay*, WebPage*) override;
@@ -95,7 +98,7 @@ private:
     PageOverlay* m_telephoneNumberOverlay;
     Vector<RefPtr<WebCore::Range>> m_currentSelectionRanges;
     
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
     Vector<RefPtr<TelephoneNumberData>> m_telephoneNumberDatas;
     RefPtr<TelephoneNumberData> m_currentMouseDownNumber;
 #endif

@@ -1,3 +1,19 @@
+2014-04-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Make Mac only parts of TelephoneNumberOverlayController PLATFORM(MAC).
+
+        Unreviewed build fix for r166881.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::showTelephoneNumberMenu): Deleted.
+        * WebProcess/WebPage/TelephoneNumberOverlayController.cpp:
+        (WebKit::TelephoneNumberOverlayController::drawRect):
+        (WebKit::TelephoneNumberOverlayController::mouseEvent):
+        * WebProcess/WebPage/TelephoneNumberOverlayController.h:
+        * WebProcess/WebPage/mac/TelephoneNumberOverlayControllerMac.mm:
+
 2014-04-07  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Fixing the GTK build.

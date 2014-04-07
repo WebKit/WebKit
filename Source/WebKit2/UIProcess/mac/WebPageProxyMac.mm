@@ -647,7 +647,6 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String&
 }
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
-#if PLATFORM(COCOA)
 void WebPageProxy::showTelephoneNumberMenu(const String& telephoneNumber, const WebCore::IntPoint& point)
 {
     NSArray *menuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForValue:(NSString *)telephoneNumber type:getDDBinderPhoneNumberKey() service:nil context:nil];
@@ -666,7 +665,6 @@ void WebPageProxy::showTelephoneNumberMenu(const String& telephoneNumber, const 
     ContextMenuContextData contextData;
     internalShowContextMenu(point, contextData, items, ContextMenuClientEligibility::NotEligibleForClient, nullptr);
 }
-#endif
 #endif
 
 } // namespace WebKit

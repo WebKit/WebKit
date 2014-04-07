@@ -1228,7 +1228,7 @@ private:
 #endif
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
     void showTelephoneNumberMenu(const String& telephoneNumber, const WebCore::IntPoint&);
 #endif
 #endif

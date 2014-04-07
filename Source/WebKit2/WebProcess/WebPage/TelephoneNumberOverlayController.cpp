@@ -29,6 +29,7 @@
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
 
 #include "WebPage.h"
+#include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
 
@@ -97,6 +98,19 @@ void TelephoneNumberOverlayController::selectedTelephoneNumberRangesChanged(cons
     UNUSED_PARAM(ranges);
 #endif
 }
+
+#if !PLATFORM(MAC)
+void TelephoneNumberOverlayController::drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect&)
+{
+    notImplemented();
+}
+
+bool TelephoneNumberOverlayController::mouseEvent(PageOverlay*, const WebMouseEvent&)
+{
+    notImplemented();
+    return false;
+}
+#endif
 
 } // namespace WebKit
 

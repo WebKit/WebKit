@@ -26,9 +26,8 @@
 #import "config.h"
 #import "TelephoneNumberOverlayController.h"
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
 
-#import "WebPage.h"
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/MainFrame.h>
@@ -189,4 +188,4 @@ void TelephoneNumberOverlayController::clearHighlights()
     
 }
 
-#endif // ENABLE(TELEPHONE_NUMBER_DETECTION)
+#endif // ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)

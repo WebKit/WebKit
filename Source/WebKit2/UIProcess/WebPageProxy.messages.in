@@ -361,7 +361,7 @@ messages -> WebPageProxy {
 
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
     ShowTelephoneNumberMenu(String telephoneNumber, WebCore::IntPoint point)
 #endif
 #endif
