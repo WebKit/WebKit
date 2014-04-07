@@ -1484,6 +1484,10 @@ webkit.org/b/107194 http/tests/security/no-indexeddb-from-sandbox.html [ Skip ]
 webkit.org/b/107194 crypto/subtle/rsa-indexeddb.html [ Skip ]
 webkit.org/b/107194 inspector-protocol/indexeddb/basics.html [ Skip ]
 
+# Composite canvas tests with alpha failing.
+webkit.org/b/131303 fast/canvas/canvas-composite-stroke-alpha.html [ Failure ]
+webkit.org/b/131303 fast/canvas/canvas-composite-text-alpha.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,11 @@
+2014-04-07  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed update of GTK expectations.
+
+        Canvas composite tests with alpha are not working.
+
+        * platform/gtk/TestExpectations:
+
 2014-04-07  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Turn on ENABLE_MEDIA_CONTROLS_SCRIPT
