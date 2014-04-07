@@ -180,16 +180,11 @@ bool JSTestEventConstructor::getOwnPropertySlot(JSObject* object, ExecState* exe
 EncodedJSValue jsTestEventConstructorAttr1(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestEventConstructor* castedThis = jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(thisValue));
-    UNUSED_PARAM(slotBase);
     if (UNLIKELY(!castedThis)) {
-        if (jsDynamicCast<JSTestEventConstructorPrototype*>(slotBase)) {
-            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
-            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'attr1' on a non-TestEventConstructor object."));
-            return JSValue::encode(jsUndefined());
-        }
-        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestEventConstructor", ".", "attr1", " getter can only be used on instances of ", "TestEventConstructor"));
+        if (jsDynamicCast<JSTestEventConstructorPrototype*>(slotBase))
+            return reportDeprecatedGetterError(*exec, "TestEventConstructor", "attr1");
+        return throwGetterTypeError(*exec, "TestEventConstructor", "attr1");
     }
-    UNUSED_PARAM(exec);
     TestEventConstructor& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.attr1());
     return JSValue::encode(result);
@@ -199,26 +194,19 @@ EncodedJSValue jsTestEventConstructorAttr1(ExecState* exec, JSObject* slotBase, 
 EncodedJSValue jsTestEventConstructorAttr2(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestEventConstructor* castedThis = jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(thisValue));
-    UNUSED_PARAM(slotBase);
     if (UNLIKELY(!castedThis)) {
-        if (jsDynamicCast<JSTestEventConstructorPrototype*>(slotBase)) {
-            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
-            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'attr2' on a non-TestEventConstructor object."));
-            return JSValue::encode(jsUndefined());
-        }
-        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestEventConstructor", ".", "attr2", " getter can only be used on instances of ", "TestEventConstructor"));
+        if (jsDynamicCast<JSTestEventConstructorPrototype*>(slotBase))
+            return reportDeprecatedGetterError(*exec, "TestEventConstructor", "attr2");
+        return throwGetterTypeError(*exec, "TestEventConstructor", "attr2");
     }
-    UNUSED_PARAM(exec);
     TestEventConstructor& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.attr2());
     return JSValue::encode(result);
 }
 
 
-EncodedJSValue jsTestEventConstructorConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestEventConstructorConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue, PropertyName)
 {
-    UNUSED_PARAM(baseValue);
-    UNUSED_PARAM(thisValue);
     JSTestEventConstructorPrototype* domObject = jsDynamicCast<JSTestEventConstructorPrototype*>(baseValue);
     if (!domObject)
         return throwVMTypeError(exec);

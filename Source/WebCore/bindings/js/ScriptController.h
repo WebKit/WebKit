@@ -32,8 +32,8 @@
 
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
-OBJC_CLASS WebScriptObject;
 OBJC_CLASS JSContext;
+OBJC_CLASS WebScriptObject;
 #endif
 
 struct NPObject;
@@ -54,8 +54,9 @@ namespace JSC {
 
 namespace WebCore {
 
-class HTMLPlugInElement;
 class Frame;
+class HTMLDocument;
+class HTMLPlugInElement;
 class ScriptSourceCode;
 class SecurityOrigin;
 class Widget;

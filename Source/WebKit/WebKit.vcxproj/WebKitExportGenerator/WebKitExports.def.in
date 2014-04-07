@@ -476,6 +476,10 @@ EXPORTS
         symbolWithPointer(?setEnhancedUserInterfaceAccessibility@AXObjectCache@WebCore@@SAX_N@Z, ?setEnhancedUserInterfaceAccessibility@AXObjectCache@WebCore@@SAX_N@Z)
         symbolWithPointer(?sessionID@Page@WebCore@@QBE?AVSessionID@2@XZ, ?sessionID@Page@WebCore@@QEBA?AVSessionID@2@XZ)
         symbolWithPointer(?resourceForURL@MemoryCache@WebCore@@QAEPAVCachedResource@2@ABVURL@2@VSessionID@2@@Z, ?resourceForURL@MemoryCache@WebCore@@QEAAPEAVCachedResource@2@AEBVURL@2@VSessionID@2@@Z)
-        symbolWithPointer(?makeDOMBindingsTypeErrorStringInternal@WebCore@@YA?AVString@WTF@@PBDZZ, ?makeDOMBindingsTypeErrorStringInternal@WebCore@@YA?AVString@WTF@@PEBDZZ)
         symbolWithPointer(?isAPIValueWrapper@JSCell@JSC@@QBE_NXZ, ?isAPIValueWrapper@JSCell@JSC@@QBE_NXZ)
+        symbolWithPointer(?reportDeprecatedGetterError@WebCore@@YA_JAAVExecState@JSC@@PBD1@Z)
+        symbolWithPointer(?throwGetterTypeError@WebCore@@YA_JAAVExecState@JSC@@PBD1@Z)
+        symbolWithPointer(?throwSequenceTypeError@WebCore@@YAXAAVExecState@JSC@@@Z)
+        symbolWithPointer(?throwSetterTypeError@WebCore@@YAXAAVExecState@JSC@@PBD1@Z)
+        symbolWithPointer(?throwThisTypeError@WebCore@@YA_JAAVExecState@JSC@@PBD1@Z)
 

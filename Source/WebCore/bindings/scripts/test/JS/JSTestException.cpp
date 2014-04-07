@@ -139,26 +139,19 @@ bool JSTestException::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
 EncodedJSValue jsTestExceptionName(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestException* castedThis = jsDynamicCast<JSTestException*>(JSValue::decode(thisValue));
-    UNUSED_PARAM(slotBase);
     if (UNLIKELY(!castedThis)) {
-        if (jsDynamicCast<JSTestExceptionPrototype*>(slotBase)) {
-            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
-            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'name' on a non-TestException object."));
-            return JSValue::encode(jsUndefined());
-        }
-        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestException", ".", "name", " getter can only be used on instances of ", "TestException"));
+        if (jsDynamicCast<JSTestExceptionPrototype*>(slotBase))
+            return reportDeprecatedGetterError(*exec, "TestException", "name");
+        return throwGetterTypeError(*exec, "TestException", "name");
     }
-    UNUSED_PARAM(exec);
     TestException& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.name());
     return JSValue::encode(result);
 }
 
 
-EncodedJSValue jsTestExceptionConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestExceptionConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue, PropertyName)
 {
-    UNUSED_PARAM(baseValue);
-    UNUSED_PARAM(thisValue);
     JSTestExceptionPrototype* domObject = jsDynamicCast<JSTestExceptionPrototype*>(baseValue);
     if (!domObject)
         return throwVMTypeError(exec);

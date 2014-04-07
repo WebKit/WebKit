@@ -184,10 +184,8 @@ bool JSTestEventTarget::getOwnPropertySlotByIndex(JSObject* object, ExecState* e
     return Base::getOwnPropertySlotByIndex(thisObject, exec, index, slot);
 }
 
-EncodedJSValue jsTestEventTargetConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestEventTargetConstructor(ExecState* exec, JSObject*, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(baseValue);
-    UNUSED_PARAM(thisValue);
     JSTestEventTarget* domObject = jsDynamicCast<JSTestEventTarget*>(JSValue::decode(thisValue));
     if (!domObject)
         return throwVMTypeError(exec);
@@ -213,7 +211,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* e
     JSValue thisValue = exec->thisValue();
     JSTestEventTarget* castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestEventTarget", ".", "item", " on instances of ", "TestEventTarget"));
+        return throwThisTypeError(*exec, "TestEventTarget", "item");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
     TestEventTarget& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -234,7 +232,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionAddEventListener(
     JSValue thisValue = exec->thisValue();
     JSTestEventTarget* castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestEventTarget", ".", "addEventListener", " on instances of ", "TestEventTarget"));
+        return throwThisTypeError(*exec, "TestEventTarget", "addEventListener");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
     TestEventTarget& impl = castedThis->impl();
     JSValue listener = exec->argument(1);
@@ -249,7 +247,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionRemoveEventListen
     JSValue thisValue = exec->thisValue();
     JSTestEventTarget* castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestEventTarget", ".", "removeEventListener", " on instances of ", "TestEventTarget"));
+        return throwThisTypeError(*exec, "TestEventTarget", "removeEventListener");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
     TestEventTarget& impl = castedThis->impl();
     JSValue listener = exec->argument(1);
@@ -264,7 +262,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionDispatchEvent(Exe
     JSValue thisValue = exec->thisValue();
     JSTestEventTarget* castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestEventTarget", ".", "dispatchEvent", " on instances of ", "TestEventTarget"));
+        return throwThisTypeError(*exec, "TestEventTarget", "dispatchEvent");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
     TestEventTarget& impl = castedThis->impl();
     if (exec->argumentCount() < 1)

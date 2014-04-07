@@ -1,3 +1,64 @@
+2014-04-06  Darin Adler  <darin@apple.com>
+
+        Make some bindings improvements, with smaller code size for error message generation
+        https://bugs.webkit.org/show_bug.cgi?id=131285
+
+        Reviewed by Andreas Kling.
+
+        * WebCore.exp.in: Updated to remove old and add new functions, for use by the Internals
+        JavaScript bindings.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::makeDOMBindingsTypeErrorStringInternal): Deleted.
+        (WebCore::throwTypeError): Added. Helper to avoid repeating throwVMError/createTypeError.
+        (WebCore::appendArgumentMustBe): Added. Helper for building up argument error strings.
+        (WebCore::reportDeprecatedGetterError): Added. For bindings to use.
+        (WebCore::throwArgumentMustBeEnumError): Ditto.
+        (WebCore::throwArgumentMustBeFunctionError): Ditto.
+        (WebCore::throwArgumentTypeError): Ditto.
+        (WebCore::throwArrayElementTypeError): Ditto.
+        (WebCore::throwAttributeTypeError): Ditto.
+        (WebCore::throwConstructorDocumentUnavailableError): Ditto.
+        (WebCore::throwGetterTypeError): Ditto.
+        (WebCore::throwSequenceTypeError): Ditto.
+        (WebCore::throwSetterTypeError): Ditto.
+        (WebCore::throwThisTypeError): Ditto.
+
+        * bindings/js/JSDOMBinding.h: Added declarations for new functions. Removed forward
+        declarations for things not used in this file. Use nullptr instead of 0. Format
+        templates consistently. Use a better for loop in the jsArray function. Removed
+        unused HasMemoryCostMemberFunction, makeDOMBindingsTypeErrorString, and
+        makeDOMBindingsTypeErrorStringInternal.
+
+        * bindings/js/JSNavigatorCustom.cpp: Fixed a hand-written binding that was using
+        makeDOMBindingsTypeErrorString to make a string.
+
+        * bindings/js/ScriptController.h: Updated forward declarations.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Cut down on use of UNUSED_PARAM. Use the new functions
+        for errors, keeping the code in the generated file to a minimum.
+        (GenerateParametersCheck): Ditto.
+        (GenerateConstructorDefinition): Ditto.
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        Updated expected results for changes above.
+
 2014-04-06  Benjamin Poulain  <benjamin@webkit.org>
 
         Move the PseudoPageClass types out of the pseudo element/class mix

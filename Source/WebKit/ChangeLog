@@ -1,3 +1,13 @@
+2014-04-06  Darin Adler  <darin@apple.com>
+
+        Make some bindings improvements, with smaller code size for error message generation
+        https://bugs.webkit.org/show_bug.cgi?id=131285
+
+        Reviewed by Andreas Kling.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Updated for
+        changes in JavaScript binding functions.
+
 2014-04-05  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: remove unused test hook setInspectorResourcesDataSizeLimits

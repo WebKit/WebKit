@@ -147,28 +147,21 @@ bool JSTestActiveDOMObject::getOwnPropertySlot(JSObject* object, ExecState* exec
 EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
     JSTestActiveDOMObject* castedThis = jsDynamicCast<JSTestActiveDOMObject*>(JSValue::decode(thisValue));
-    UNUSED_PARAM(slotBase);
     if (UNLIKELY(!castedThis)) {
-        if (jsDynamicCast<JSTestActiveDOMObjectPrototype*>(slotBase)) {
-            ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
-            scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Error, String("Deprecated attempt to access property 'excitingAttr' on a non-TestActiveDOMObject object."));
-            return JSValue::encode(jsUndefined());
-        }
-        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("The ", "TestActiveDOMObject", ".", "excitingAttr", " getter can only be used on instances of ", "TestActiveDOMObject"));
+        if (jsDynamicCast<JSTestActiveDOMObjectPrototype*>(slotBase))
+            return reportDeprecatedGetterError(*exec, "TestActiveDOMObject", "excitingAttr");
+        return throwGetterTypeError(*exec, "TestActiveDOMObject", "excitingAttr");
     }
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->impl()))
         return JSValue::encode(jsUndefined());
-    UNUSED_PARAM(exec);
     TestActiveDOMObject& impl = castedThis->impl();
     JSValue result = jsNumber(impl.excitingAttr());
     return JSValue::encode(result);
 }
 
 
-EncodedJSValue jsTestActiveDOMObjectConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestActiveDOMObjectConstructor(ExecState* exec, JSObject*, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(baseValue);
-    UNUSED_PARAM(thisValue);
     JSTestActiveDOMObject* domObject = jsDynamicCast<JSTestActiveDOMObject*>(JSValue::decode(thisValue));
     if (!domObject)
         return throwVMTypeError(exec);
@@ -187,7 +180,7 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunct
     JSValue thisValue = exec->thisValue();
     JSTestActiveDOMObject* castedThis = jsDynamicCast<JSTestActiveDOMObject*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestActiveDOMObject", ".", "excitingFunction", " on instances of ", "TestActiveDOMObject"));
+        return throwThisTypeError(*exec, "TestActiveDOMObject", "excitingFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestActiveDOMObject::info());
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->impl()))
         return JSValue::encode(jsUndefined());
@@ -206,7 +199,7 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(E
     JSValue thisValue = exec->thisValue();
     JSTestActiveDOMObject* castedThis = jsDynamicCast<JSTestActiveDOMObject*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwVMTypeError(exec, makeDOMBindingsTypeErrorString("Can only call ", "TestActiveDOMObject", ".", "postMessage", " on instances of ", "TestActiveDOMObject"));
+        return throwThisTypeError(*exec, "TestActiveDOMObject", "postMessage");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestActiveDOMObject::info());
     TestActiveDOMObject& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
