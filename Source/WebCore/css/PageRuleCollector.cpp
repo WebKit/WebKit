@@ -96,14 +96,14 @@ static bool checkPageSelectorComponents(const CSSSelector* selector, bool isLeft
             const AtomicString& localName = component->tagQName().localName();
             if (localName != starAtom && localName != pageName)
                 return false;
-        }
-
-        CSSSelector::PagePseudoClassType pseudoType = component->pagePseudoClassType();
-        if ((pseudoType == CSSSelector::PagePseudoClassLeft && !isLeftPage)
-            || (pseudoType == CSSSelector::PagePseudoClassRight && isLeftPage)
-            || (pseudoType == CSSSelector::PagePseudoClassFirst && !isFirstPage))
-        {
-            return false;
+        } else if (component->m_match == CSSSelector::PagePseudoClass) {
+            CSSSelector::PagePseudoClassType pseudoType = component->pagePseudoClassType();
+            if ((pseudoType == CSSSelector::PagePseudoClassLeft && !isLeftPage)
+                || (pseudoType == CSSSelector::PagePseudoClassRight && isLeftPage)
+                || (pseudoType == CSSSelector::PagePseudoClassFirst && !isFirstPage))
+            {
+                return false;
+            }
         }
     }
     return true;

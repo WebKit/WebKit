@@ -1,3 +1,10 @@
+2014-04-06  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix the debug bots after r166863
+
+        * css/PageRuleCollector.cpp:
+        (WebCore::checkPageSelectorComponents): I forgot to update one call site for PagePseudoClass.
+
 2014-04-06  Darin Adler  <darin@apple.com>
 
         Make some bindings improvements, with smaller code size for error message generation
