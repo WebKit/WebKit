@@ -196,6 +196,12 @@ webkit.org/b/128172 fast/events/touch/touch-target.html [ Timeout ]
 webkit.org/b/128172 fast/events/touch/touch-target-limited.html [ Crash Timeout ]
 webkit.org/b/128172 fast/events/touch/send-oncancel-event.html [ Timeout ]
 
+# AX tests failing
+webkit.org/b/131294 accessibility/adjacent-continuations-cause-assertion-failure.html [ Failure ]
+webkit.org/b/131294 accessibility/deleting-iframe-destroys-axcache.html [ Failure ]
+webkit.org/b/131294 accessibility/div-within-anchors-causes-crash.html [ Failure ]
+webkit.org/b/131294 accessibility/lists.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
