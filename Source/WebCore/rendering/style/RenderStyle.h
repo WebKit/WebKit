@@ -278,12 +278,8 @@ public:
         static ETableLayout initialTableLayout() { return TAUTO; }
 
         static ptrdiff_t flagsMemoryOffset() { return OBJECT_OFFSETOF(NonInheritedFlags, m_flags); }
-        static uint64_t flagEmptyState() { return oneBitMask << emptyStateOffset; }
         static uint64_t setFirstChildStateFlags() { return flagFirstChildState() | flagIsUnique(); }
-        static uint64_t flagLastChildState() { return oneBitMask << lastChildStateOffset; }
-        static uint64_t flagAffectedByHover() { return oneBitMask << affectedByHoverOffset; }
-        static uint64_t flagAffectedByActive() { return oneBitMask << affectedByActiveOffset; }
-        static uint64_t flagAffectedByDrag() { return oneBitMask << affectedByDragOffset; }
+        static uint64_t setLastChildStateFlags() { return flagLastChildState() | flagIsUnique(); }
     private:
         void updateBoolean(bool isSet, uint64_t offset)
         {
@@ -312,6 +308,7 @@ public:
 
         static uint64_t flagIsUnique() { return oneBitMask << isUniqueOffset; }
         static uint64_t flagFirstChildState() { return oneBitMask << firstChildStateOffset; }
+        static uint64_t flagLastChildState() { return oneBitMask << lastChildStateOffset; }
 
         // To type the bit mask properly on 64bits.
         static const uint64_t oneBitMask = 0x1;

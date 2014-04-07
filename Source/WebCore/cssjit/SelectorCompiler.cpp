@@ -156,6 +156,7 @@ private:
     void generateParentElementTreeWalker(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateAncestorTreeWalker(Assembler::JumpList& failureCases, const SelectorFragment&);
 
+    void generateWalkToNextAdjacentElement(Assembler::JumpList& failureCases, Assembler::RegisterID);
     void generateWalkToPreviousAdjacentElement(Assembler::JumpList& failureCases, Assembler::RegisterID);
     void generateWalkToPreviousAdjacent(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateDirectAdjacentTreeWalker(Assembler::JumpList& failureCases, const SelectorFragment&);
@@ -171,7 +172,11 @@ private:
     void generateElementMatching(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementDataMatching(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementFunctionCallTest(Assembler::JumpList& failureCases, JSC::FunctionPtr);
+    Assembler::JumpList jumpIfNoPreviousAdjacentElement();
     void generateElementIsFirstChild(Assembler::JumpList& failureCases, const SelectorFragment&);
+    Assembler::JumpList jumpIfNoNextAdjacentElement();
+    void generateElementIsLastChild(Assembler::JumpList& failureCases, const SelectorFragment&);
+    void generateElementIsOnlyChild(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateSynchronizeStyleAttribute(Assembler::RegisterID elementDataArraySizeAndFlags);
     void generateSynchronizeAllAnimatedSVGAttribute(Assembler::RegisterID elementDataArraySizeAndFlags);
     void generateElementAttributesMatching(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const SelectorFragment&);
@@ -312,6 +317,8 @@ static inline FunctionType addPseudoType(CSSSelector::PseudoType type, SelectorF
         return FunctionType::SimpleSelectorChecker;
 
     case CSSSelector::PseudoFirstChild:
+    case CSSSelector::PseudoLastChild:
+    case CSSSelector::PseudoOnlyChild:
         pseudoClasses.pseudoClasses.add(type);
         if (selectorContext == SelectorContext::QuerySelector)
             return FunctionType::SimpleSelectorChecker;
@@ -794,6 +801,14 @@ void SelectorCodeGenerator::generateAncestorTreeWalker(Assembler::JumpList& fail
     tagMatchingLocalFailureCases.linkTo(loopStart, &m_assembler);
 }
 
+inline void SelectorCodeGenerator::generateWalkToNextAdjacentElement(Assembler::JumpList& failureCases, Assembler::RegisterID workRegister)
+{
+    Assembler::Label loopStart = m_assembler.label();
+    m_assembler.loadPtr(Assembler::Address(workRegister, Node::nextSiblingMemoryOffset()), workRegister);
+    failureCases.append(m_assembler.branchTestPtr(Assembler::Zero, workRegister));
+    testIsElementFlagOnNode(Assembler::Zero, m_assembler, workRegister).linkTo(loopStart, &m_assembler);
+}
+
 inline void SelectorCodeGenerator::generateWalkToPreviousAdjacentElement(Assembler::JumpList& failureCases, Assembler::RegisterID workRegister)
 {
     Assembler::Label loopStart = m_assembler.label();
@@ -993,8 +1008,12 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& failure
 
     generateElementDataMatching(failureCases, fragment);
 
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoOnlyChild))
+        generateElementIsOnlyChild(failureCases, fragment);
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoFirstChild))
         generateElementIsFirstChild(failureCases, fragment);
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoLastChild))
+        generateElementIsLastChild(failureCases, fragment);
 }
 
 void SelectorCodeGenerator::generateElementDataMatching(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
@@ -1419,13 +1438,19 @@ static void setFirstChildState(Element* element)
         style->setFirstChildState();
 }
 
+inline Assembler::JumpList SelectorCodeGenerator::jumpIfNoPreviousAdjacentElement()
+{
+    Assembler::JumpList successCase;
+    LocalRegister previousSibling(m_registerAllocator);
+    m_assembler.move(elementAddressRegister, previousSibling);
+    generateWalkToPreviousAdjacentElement(successCase, previousSibling);
+    return successCase;
+}
+
 void SelectorCodeGenerator::generateElementIsFirstChild(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
     if (m_selectorContext == SelectorContext::QuerySelector) {
-        Assembler::JumpList successCase;
-        LocalRegister previousSibling(m_registerAllocator);
-        m_assembler.move(elementAddressRegister, previousSibling);
-        generateWalkToPreviousAdjacentElement(successCase, previousSibling);
+        Assembler::JumpList successCase = jumpIfNoPreviousAdjacentElement();
         failureCases.append(m_assembler.jump());
         successCase.link(&m_assembler);
         LocalRegister parent(m_registerAllocator);
@@ -1441,10 +1466,7 @@ void SelectorCodeGenerator::generateElementIsFirstChild(Assembler::JumpList& fai
     m_assembler.move(Assembler::TrustedImm32(0), isFirstChildRegister);
 
     {
-        Assembler::JumpList successCase;
-        LocalRegister previousSibling(m_registerAllocator);
-        m_assembler.move(elementAddressRegister, previousSibling);
-        generateWalkToPreviousAdjacentElement(successCase, previousSibling);
+        Assembler::JumpList successCase = jumpIfNoPreviousAdjacentElement();
 
         // If there was a sibling element, the element was not the first child -> failure case.
         m_assembler.move(Assembler::TrustedImm32(1), isFirstChildRegister);
@@ -1487,6 +1509,190 @@ void SelectorCodeGenerator::generateElementIsFirstChild(Assembler::JumpList& fai
 
     notResolvingStyle.link(&m_assembler);
     failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isFirstChildRegister));
+}
+
+Assembler::JumpList SelectorCodeGenerator::jumpIfNoNextAdjacentElement()
+{
+    Assembler::JumpList successCase;
+    LocalRegister nextSibling(m_registerAllocator);
+    m_assembler.move(elementAddressRegister, nextSibling);
+    generateWalkToNextAdjacentElement(successCase, nextSibling);
+    return successCase;
+}
+
+static void markElementWithSetChildrenAffectedByLastChildRules(Element *element)
+{
+    element->setChildrenAffectedByLastChildRules();
+}
+
+static void setLastChildState(Element* element)
+{
+    if (RenderStyle* style = element->renderStyle())
+        style->setLastChildState();
+}
+
+void SelectorCodeGenerator::generateElementIsLastChild(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
+{
+    if (m_selectorContext == SelectorContext::QuerySelector) {
+        Assembler::JumpList successCase = jumpIfNoNextAdjacentElement();
+        failureCases.append(m_assembler.jump());
+
+        successCase.link(&m_assembler);
+        LocalRegister parent(m_registerAllocator);
+        generateWalkToParentElement(failureCases, parent);
+
+        failureCases.append(m_assembler.branchTest32(Assembler::Zero, Assembler::Address(parent, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsParsingChildrenFinished())));
+
+        return;
+    }
+
+    Assembler::RegisterID parentElement = m_registerAllocator.allocateRegister();
+    generateWalkToParentElement(failureCases, parentElement);
+
+    // Zero in isLastChildRegister is the success case. The register is set to non-zero if a sibling if found.
+    LocalRegister isLastChildRegister(m_registerAllocator);
+    m_assembler.move(Assembler::TrustedImm32(0), isLastChildRegister);
+
+    {
+        Assembler::Jump notFinishedParsingChildren = m_assembler.branchTest32(Assembler::Zero, Assembler::Address(parentElement, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsParsingChildrenFinished()));
+
+        Assembler::JumpList successCase = jumpIfNoNextAdjacentElement();
+
+        notFinishedParsingChildren.link(&m_assembler);
+        m_assembler.move(Assembler::TrustedImm32(1), isLastChildRegister);
+
+        successCase.link(&m_assembler);
+    }
+
+    LocalRegister checkingContext(m_registerAllocator);
+    Assembler::Jump notResolvingStyle = jumpIfNotResolvingStyle(checkingContext);
+
+    m_registerAllocator.deallocateRegister(parentElement);
+    FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+    functionCall.setFunctionAddress(markElementWithSetChildrenAffectedByLastChildRules);
+    functionCall.setOneArgument(parentElement);
+    functionCall.call();
+
+    // The parent marking is unconditional. If the matching is not a success, we can now fail.
+    // Otherwise we need to apply setLastChildState() on the RenderStyle.
+    failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isLastChildRegister));
+
+    if (fragment.relationToRightFragment == FragmentRelation::Rightmost) {
+        LocalRegister childStyle(m_registerAllocator);
+        m_assembler.loadPtr(Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, elementStyle)), childStyle);
+
+        // FIXME: We should look into doing something smart in MacroAssembler instead.
+        LocalRegister flags(m_registerAllocator);
+        Assembler::Address flagAddress(childStyle, RenderStyle::noninheritedFlagsMemoryOffset() + RenderStyle::NonInheritedFlags::flagsMemoryOffset());
+        m_assembler.load64(flagAddress, flags);
+        LocalRegister isLastChildStateFlagImmediate(m_registerAllocator);
+        m_assembler.move(Assembler::TrustedImm64(RenderStyle::NonInheritedFlags::setLastChildStateFlags()), isLastChildStateFlagImmediate);
+        m_assembler.or64(isLastChildStateFlagImmediate, flags);
+        m_assembler.store64(flags, flagAddress);
+    } else {
+        FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+        functionCall.setFunctionAddress(setLastChildState);
+        Assembler::RegisterID elementAddress = elementAddressRegister;
+        functionCall.setOneArgument(elementAddress);
+        functionCall.call();
+    }
+
+    notResolvingStyle.link(&m_assembler);
+    failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isLastChildRegister));
+}
+
+static void markElementWithSetChildrenAffectedByFirstChildAndLastChildRules(Element *element)
+{
+    element->setChildrenAffectedByFirstChildRules();
+    element->setChildrenAffectedByLastChildRules();
+}
+
+static void setOnlyChildState(Element* element)
+{
+    if (RenderStyle* style = element->renderStyle()) {
+        style->setFirstChildState();
+        style->setLastChildState();
+    }
+}
+
+void SelectorCodeGenerator::generateElementIsOnlyChild(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
+{
+    // Is Only child is pretty much a combination of isFirstChild + isLastChild. The main difference is that tree marking is combined.
+    if (m_selectorContext == SelectorContext::QuerySelector) {
+        Assembler::JumpList previousSuccessCase = jumpIfNoPreviousAdjacentElement();
+        failureCases.append(m_assembler.jump());
+        previousSuccessCase.link(&m_assembler);
+
+        Assembler::JumpList nextSuccessCase = jumpIfNoNextAdjacentElement();
+        failureCases.append(m_assembler.jump());
+        nextSuccessCase.link(&m_assembler);
+
+        LocalRegister parent(m_registerAllocator);
+        generateWalkToParentElement(failureCases, parent);
+
+        failureCases.append(m_assembler.branchTest32(Assembler::Zero, Assembler::Address(parent, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsParsingChildrenFinished())));
+
+        return;
+    }
+
+    Assembler::RegisterID parentElement = m_registerAllocator.allocateRegister();
+    generateWalkToParentElement(failureCases, parentElement);
+
+    // Zero in isOnlyChildRegister is the success case. The register is set to non-zero if a sibling if found.
+    LocalRegister isOnlyChildRegister(m_registerAllocator);
+    m_assembler.move(Assembler::TrustedImm32(0), isOnlyChildRegister);
+
+    {
+        Assembler::JumpList localFailureCases;
+        {
+            Assembler::JumpList successCase = jumpIfNoPreviousAdjacentElement();
+            localFailureCases.append(m_assembler.jump());
+            successCase.link(&m_assembler);
+        }
+        localFailureCases.append(m_assembler.branchTest32(Assembler::Zero, Assembler::Address(parentElement, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsParsingChildrenFinished())));
+        Assembler::JumpList successCase = jumpIfNoNextAdjacentElement();
+
+        localFailureCases.link(&m_assembler);
+        m_assembler.move(Assembler::TrustedImm32(1), isOnlyChildRegister);
+
+        successCase.link(&m_assembler);
+    }
+
+    LocalRegister checkingContext(m_registerAllocator);
+    Assembler::Jump notResolvingStyle = jumpIfNotResolvingStyle(checkingContext);
+
+    m_registerAllocator.deallocateRegister(parentElement);
+    FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+    functionCall.setFunctionAddress(markElementWithSetChildrenAffectedByFirstChildAndLastChildRules);
+    functionCall.setOneArgument(parentElement);
+    functionCall.call();
+
+    // The parent marking is unconditional. If the matching is not a success, we can now fail.
+    // Otherwise we need to apply setLastChildState() on the RenderStyle.
+    failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isOnlyChildRegister));
+
+    if (fragment.relationToRightFragment == FragmentRelation::Rightmost) {
+        LocalRegister childStyle(m_registerAllocator);
+        m_assembler.loadPtr(Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, elementStyle)), childStyle);
+
+        // FIXME: We should look into doing something smart in MacroAssembler instead.
+        LocalRegister flags(m_registerAllocator);
+        Assembler::Address flagAddress(childStyle, RenderStyle::noninheritedFlagsMemoryOffset() + RenderStyle::NonInheritedFlags::flagsMemoryOffset());
+        m_assembler.load64(flagAddress, flags);
+        LocalRegister isLastChildStateFlagImmediate(m_registerAllocator);
+        m_assembler.move(Assembler::TrustedImm64(RenderStyle::NonInheritedFlags::setFirstChildStateFlags() | RenderStyle::NonInheritedFlags::setLastChildStateFlags()), isLastChildStateFlagImmediate);
+        m_assembler.or64(isLastChildStateFlagImmediate, flags);
+        m_assembler.store64(flags, flagAddress);
+    } else {
+        FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+        functionCall.setFunctionAddress(setOnlyChildState);
+        Assembler::RegisterID elementAddress = elementAddressRegister;
+        functionCall.setOneArgument(elementAddress);
+        functionCall.call();
+    }
+
+    notResolvingStyle.link(&m_assembler);
+    failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isOnlyChildRegister));
 }
 
 inline void SelectorCodeGenerator::generateElementHasTagName(Assembler::JumpList& failureCases, const QualifiedName& nameToMatch)
