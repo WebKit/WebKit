@@ -372,10 +372,8 @@ public:
     void setChildrenAffectedByHover() { setFlag(ChildrenAffectedByHoverRulesFlag); }
     void setChildrenAffectedByActive();
     void setChildrenAffectedByDrag();
-    static void setChildrenAffectedByFirstChildRules(Element*);
     void setChildrenAffectedByFirstChildRules() { setFlag(ChildrenAffectedByFirstChildRulesFlag); }
     void setChildrenAffectedByLastChildRules() { setFlag(ChildrenAffectedByLastChildRulesFlag); }
-    static void setChildrenAffectedByDirectAdjacentRules(Element*);
     void setChildrenAffectedByDirectAdjacentRules() { setFlag(ChildrenAffectedByDirectAdjacentRulesFlag); }
     static void setChildrenAffectedByForwardPositionalRules(Element*);
     void setChildrenAffectedByForwardPositionalRules() { setChildrenAffectedByForwardPositionalRules(this); }

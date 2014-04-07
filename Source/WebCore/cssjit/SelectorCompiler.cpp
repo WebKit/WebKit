@@ -161,6 +161,7 @@ private:
     void generateWalkToPreviousAdjacent(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateDirectAdjacentTreeWalker(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateIndirectAdjacentTreeWalker(Assembler::JumpList& failureCases, const SelectorFragment&);
+    void markParentElementIfResolvingStyle(int32_t);
     void markParentElementIfResolvingStyle(JSC::FunctionPtr);
 
     void linkFailures(Assembler::JumpList& globalFailureCases, BacktrackingAction, Assembler::JumpList& localFailureCases);
@@ -854,7 +855,7 @@ void SelectorCodeGenerator::generateWalkToPreviousAdjacent(Assembler::JumpList& 
 
 void SelectorCodeGenerator::generateDirectAdjacentTreeWalker(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
-    markParentElementIfResolvingStyle(Element::setChildrenAffectedByDirectAdjacentRules);
+    markParentElementIfResolvingStyle(Node::flagChildrenAffectedByDirectAdjacentRulesFlag());
 
     generateWalkToPreviousAdjacent(failureCases, fragment);
 
@@ -896,6 +897,30 @@ Assembler::Jump SelectorCodeGenerator::jumpIfNotResolvingStyle(Assembler::Regist
     return m_assembler.branch8(Assembler::NotEqual, Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, resolvingMode)), Assembler::TrustedImm32(SelectorChecker::ResolvingStyle));
 }
 
+static void setNodeFlag(Assembler& assembler, Assembler::RegisterID elementAddress, int32_t flag)
+{
+    assembler.or32(Assembler::TrustedImm32(flag), Assembler::Address(elementAddress, Node::nodeFlagsMemoryOffset()));
+}
+
+void SelectorCodeGenerator::markParentElementIfResolvingStyle(int32_t nodeFlag)
+{
+    if (m_selectorContext == SelectorContext::QuerySelector)
+        return;
+
+    Assembler::JumpList skipMarking;
+    {
+        LocalRegister checkingContext(m_registerAllocator);
+        skipMarking.append(jumpIfNotResolvingStyle(checkingContext));
+    }
+
+    LocalRegister parentElement(m_registerAllocator);
+    generateWalkToParentElement(skipMarking, parentElement);
+
+    setNodeFlag(m_assembler, parentElement, nodeFlag);
+
+    skipMarking.link(&m_assembler);
+}
+
 void SelectorCodeGenerator::markParentElementIfResolvingStyle(JSC::FunctionPtr markingFunction)
 {
     if (m_selectorContext == SelectorContext::QuerySelector)
@@ -906,16 +931,15 @@ void SelectorCodeGenerator::markParentElementIfResolvingStyle(JSC::FunctionPtr m
     //         markingFunction(parent);
     //     }
 
-    Assembler::Jump notResolvingStyle;
+    Assembler::JumpList skipMarking;
     {
         LocalRegister checkingContext(m_registerAllocator);
-        notResolvingStyle = jumpIfNotResolvingStyle(checkingContext);
+        skipMarking.append(jumpIfNotResolvingStyle(checkingContext));
     }
 
     // Get the parent element in a temporary register.
-    Assembler::JumpList failedToGetParent;
     Assembler::RegisterID parentElement = m_registerAllocator.allocateRegister();
-    generateWalkToParentElement(failedToGetParent, parentElement);
+    generateWalkToParentElement(skipMarking, parentElement);
 
     // Return the register parentElement just before the function call since we don't need it to be preserved
     // on the stack.
@@ -927,8 +951,7 @@ void SelectorCodeGenerator::markParentElementIfResolvingStyle(JSC::FunctionPtr m
     functionCall.setOneArgument(parentElement);
     functionCall.call();
 
-    notResolvingStyle.link(&m_assembler);
-    failedToGetParent.link(&m_assembler);
+    skipMarking.link(&m_assembler);
 }
 
 
@@ -1482,11 +1505,8 @@ void SelectorCodeGenerator::generateElementIsFirstChild(Assembler::JumpList& fai
     LocalRegister checkingContext(m_registerAllocator);
     Assembler::Jump notResolvingStyle = jumpIfNotResolvingStyle(checkingContext);
 
+    setNodeFlag(m_assembler, parentElement, Node::flagChildrenAffectedByFirstChildRulesFlag());
     m_registerAllocator.deallocateRegister(parentElement);
-    FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
-    functionCall.setFunctionAddress(Element::setChildrenAffectedByFirstChildRules);
-    functionCall.setOneArgument(parentElement);
-    functionCall.call();
 
     // The parent marking is unconditional. If the matching is not a success, we can now fail.
     // Otherwise we need to apply setFirstChildState() on the RenderStyle.
@@ -1523,11 +1543,6 @@ Assembler::JumpList SelectorCodeGenerator::jumpIfNoNextAdjacentElement()
     m_assembler.move(elementAddressRegister, nextSibling);
     generateWalkToNextAdjacentElement(successCase, nextSibling);
     return successCase;
-}
-
-static void markElementWithSetChildrenAffectedByLastChildRules(Element *element)
-{
-    element->setChildrenAffectedByLastChildRules();
 }
 
 static void setLastChildState(Element* element)
@@ -1572,11 +1587,8 @@ void SelectorCodeGenerator::generateElementIsLastChild(Assembler::JumpList& fail
     LocalRegister checkingContext(m_registerAllocator);
     Assembler::Jump notResolvingStyle = jumpIfNotResolvingStyle(checkingContext);
 
+    setNodeFlag(m_assembler, parentElement, Node::flagChildrenAffectedByLastChildRulesFlag());
     m_registerAllocator.deallocateRegister(parentElement);
-    FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
-    functionCall.setFunctionAddress(markElementWithSetChildrenAffectedByLastChildRules);
-    functionCall.setOneArgument(parentElement);
-    functionCall.call();
 
     // The parent marking is unconditional. If the matching is not a success, we can now fail.
     // Otherwise we need to apply setLastChildState() on the RenderStyle.
@@ -1604,12 +1616,6 @@ void SelectorCodeGenerator::generateElementIsLastChild(Assembler::JumpList& fail
 
     notResolvingStyle.link(&m_assembler);
     failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isLastChildRegister));
-}
-
-static void markElementWithSetChildrenAffectedByFirstChildAndLastChildRules(Element *element)
-{
-    element->setChildrenAffectedByFirstChildRules();
-    element->setChildrenAffectedByLastChildRules();
 }
 
 static void setOnlyChildState(Element* element)
@@ -1666,11 +1672,8 @@ void SelectorCodeGenerator::generateElementIsOnlyChild(Assembler::JumpList& fail
     LocalRegister checkingContext(m_registerAllocator);
     Assembler::Jump notResolvingStyle = jumpIfNotResolvingStyle(checkingContext);
 
+    setNodeFlag(m_assembler, parentElement, Node::flagChildrenAffectedByFirstChildRulesFlag() | Node::flagChildrenAffectedByLastChildRulesFlag());
     m_registerAllocator.deallocateRegister(parentElement);
-    FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
-    functionCall.setFunctionAddress(markElementWithSetChildrenAffectedByFirstChildAndLastChildRules);
-    functionCall.setOneArgument(parentElement);
-    functionCall.call();
 
     // The parent marking is unconditional. If the matching is not a success, we can now fail.
     // Otherwise we need to apply setLastChildState() on the RenderStyle.

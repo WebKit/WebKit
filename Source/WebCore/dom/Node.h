@@ -575,6 +575,9 @@ public:
     static int32_t flagIsHTML() { return IsHTMLFlag; }
     static int32_t flagIsLink() { return IsLinkFlag; }
     static int32_t flagIsParsingChildrenFinished() { return IsParsingChildrenFinishedFlag; }
+    static int32_t flagChildrenAffectedByFirstChildRulesFlag() { return ChildrenAffectedByFirstChildRulesFlag; }
+    static int32_t flagChildrenAffectedByLastChildRulesFlag() { return ChildrenAffectedByLastChildRulesFlag; }
+    static int32_t flagChildrenAffectedByDirectAdjacentRulesFlag() { return ChildrenAffectedByDirectAdjacentRulesFlag; }
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
 protected:

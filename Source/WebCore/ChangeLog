@@ -1,3 +1,31 @@
+2014-04-07  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT: change the node flags directly instead of using function calls when possible
+        https://bugs.webkit.org/show_bug.cgi?id=131292
+
+        Reviewed by Andreas Kling.
+
+        For historical reasons, changing the node flags was always done with function calls.
+        This patch changes those calls to modify the nodes directly.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateDirectAdjacentTreeWalker):
+        (WebCore::SelectorCompiler::setNodeFlag):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::markParentElementIfResolvingStyle):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsFirstChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsLastChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsOnlyChild):
+        (WebCore::SelectorCompiler::markElementWithSetChildrenAffectedByLastChildRules): Deleted.
+        (WebCore::SelectorCompiler::markElementWithSetChildrenAffectedByFirstChildAndLastChildRules): Deleted.
+        * dom/Element.cpp:
+        (WebCore::Element::setChildrenAffectedByFirstChildRules): Deleted.
+        (WebCore::Element::setChildrenAffectedByDirectAdjacentRules): Deleted.
+        * dom/Element.h:
+        * dom/Node.h:
+        (WebCore::Node::flagChildrenAffectedByFirstChildRulesFlag):
+        (WebCore::Node::flagChildrenAffectedByLastChildRulesFlag):
+        (WebCore::Node::flagChildrenAffectedByDirectAdjacentRulesFlag):
+
 2014-04-07  Krzysztof Czech  <k.czech@samsung.com>
 
         Remove unused header from PlatformSpeechSynthesizer.h
