@@ -1,3 +1,19 @@
+2014-04-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][WK1] Apply std::unique_ptr<> to NavigatorContentUtilsClientEfl
+        https://bugs.webkit.org/show_bug.cgi?id=130958
+
+        Reviewed by Darin Adler.
+
+        As a step of replacing OwnPtr with std::unique_ptr, this patch replaces
+        OwnPtr with the std::unique_ptr for NavigatorContentUtilsClientEfl.
+
+        * WebCoreSupport/NavigatorContentUtilsClientEfl.cpp:
+        (WebCore::NavigatorContentUtilsClientEfl::create): Deleted.
+        * WebCoreSupport/NavigatorContentUtilsClientEfl.h:
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
 2014-04-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK1] Apply override and final keyword for ChromeClientEfl

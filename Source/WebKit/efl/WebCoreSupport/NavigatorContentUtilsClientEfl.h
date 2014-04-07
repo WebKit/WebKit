@@ -36,7 +36,7 @@
 namespace WebCore {
 class NavigatorContentUtilsClientEfl : public WebCore::NavigatorContentUtilsClient {
 public:
-    static PassOwnPtr<NavigatorContentUtilsClientEfl> create(Evas_Object* view);
+    explicit NavigatorContentUtilsClientEfl(Evas_Object* view);
 
     ~NavigatorContentUtilsClientEfl() { }
     virtual void registerProtocolHandler(const String& scheme, const URL& baseURL, const URL&, const String& title);
@@ -48,8 +48,6 @@ public:
 
 private:
     Evas_Object* m_view;
-
-    NavigatorContentUtilsClientEfl(Evas_Object* view);
 };
 }
 

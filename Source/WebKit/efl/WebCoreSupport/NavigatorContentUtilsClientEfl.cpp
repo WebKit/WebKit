@@ -53,11 +53,6 @@ static void customHandlerDataDelete(Ewk_Custom_Handler_Data* data)
     delete data;
 }
 
-PassOwnPtr<NavigatorContentUtilsClientEfl> NavigatorContentUtilsClientEfl::create(Evas_Object* view)
-{
-    return adoptPtr(new NavigatorContentUtilsClientEfl(view));
-}
-
 NavigatorContentUtilsClientEfl::NavigatorContentUtilsClientEfl(Evas_Object* view)
     : m_view(view)
 {
