@@ -27,44 +27,32 @@
 #define InjectedBundlePageFormClient_h
 
 #include "APIClient.h"
-#include "WKBundlePage.h"
-#include <algorithm>
-#include <wtf/Forward.h>
-#include <wtf/Vector.h>
+#include "APIInjectedBundleFormClient.h"
+#include "WKBundlePageFormClient.h"
 
 namespace API {
-class Object;
 
 template<> struct ClientTraits<WKBundlePageFormClientBase> {
     typedef std::tuple<WKBundlePageFormClientV0, WKBundlePageFormClientV1, WKBundlePageFormClientV2> Versions;
 };
 }
 
-namespace WebCore {
-class Element;
-class HTMLFormElement;
-class HTMLInputElement;
-class HTMLTextAreaElement;
-}
-
 namespace WebKit {
 
-class ImmutableDictionary;
-class WebFrame;
-class WebPage;
-
-class InjectedBundlePageFormClient : public API::Client<WKBundlePageFormClientBase> {
+class InjectedBundlePageFormClient : public API::Client<WKBundlePageFormClientBase>, public API::InjectedBundle::FormClient {
 public:
-    void didFocusTextField(WebPage*, WebCore::HTMLInputElement*, WebFrame*);
-    void textFieldDidBeginEditing(WebPage*, WebCore::HTMLInputElement*, WebFrame*);
-    void textFieldDidEndEditing(WebPage*, WebCore::HTMLInputElement*, WebFrame*);
-    void textDidChangeInTextField(WebPage*, WebCore::HTMLInputElement*, WebFrame*);
-    void textDidChangeInTextArea(WebPage*, WebCore::HTMLTextAreaElement*, WebFrame*);
-    bool shouldPerformActionInTextField(WebPage*, WebCore::HTMLInputElement*, WKInputFieldActionType, WebFrame*);    
-    void willSubmitForm(WebPage*, WebCore::HTMLFormElement*, WebFrame*, WebFrame* sourceFrame, const Vector<std::pair<String, String>>&, RefPtr<API::Object>& userData);
-    void willSendSubmitEvent(WebPage*, WebCore::HTMLFormElement*, WebFrame*, WebFrame* sourceFrame, const Vector<std::pair<String, String>>&);
-    void didAssociateFormControls(WebPage*, const Vector<RefPtr<WebCore::Element>>&);
-    bool shouldNotifyOnFormChanges(WebPage*);
+    explicit InjectedBundlePageFormClient(const WKBundlePageFormClientBase*);
+
+    virtual void didFocusTextField(WebPage*, WebCore::HTMLInputElement*, WebFrame*) override;
+    virtual void textFieldDidBeginEditing(WebPage*, WebCore::HTMLInputElement*, WebFrame*) override;
+    virtual void textFieldDidEndEditing(WebPage*, WebCore::HTMLInputElement*, WebFrame*) override;
+    virtual void textDidChangeInTextField(WebPage*, WebCore::HTMLInputElement*, WebFrame*) override;
+    virtual void textDidChangeInTextArea(WebPage*, WebCore::HTMLTextAreaElement*, WebFrame*) override;
+    virtual bool shouldPerformActionInTextField(WebPage*, WebCore::HTMLInputElement*, InputFieldAction, WebFrame*) override;    
+    virtual void willSubmitForm(WebPage*, WebCore::HTMLFormElement*, WebFrame*, WebFrame* sourceFrame, const Vector<std::pair<String, String>>&, RefPtr<API::Object>& userData) override;
+    virtual void willSendSubmitEvent(WebPage*, WebCore::HTMLFormElement*, WebFrame*, WebFrame* sourceFrame, const Vector<std::pair<String, String>>&) override;
+    virtual void didAssociateFormControls(WebPage*, const Vector<RefPtr<WebCore::Element>>&) override;
+    virtual bool shouldNotifyOnFormChanges(WebPage*) override;
 };
 
 } // namespace WebKit

@@ -665,6 +665,7 @@
 		3766F9F0189A1248003CF19B /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C79A100E7FC50078DEBC /* WebCore.framework */; };
 		3766F9F1189A1254003CF19B /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BC87DFA91018101400564216 /* libicucore.dylib */; };
 		3769079A18F31CB2001DFF04 /* APIInjectedBundlePageUIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3769079818F31CB2001DFF04 /* APIInjectedBundlePageUIClient.h */; };
+		3769079E18F340A2001DFF04 /* APIInjectedBundleFormClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3769079C18F340A2001DFF04 /* APIInjectedBundleFormClient.h */; };
 		37694525184FC6B600CDE21F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCF5068412431861005955AE /* Security.framework */; };
 		377EAD4517E2C51A002D193D /* WKDeclarationSpecifiers.h in Headers */ = {isa = PBXBuildFile; fileRef = 377EAD4417E2C51A002D193D /* WKDeclarationSpecifiers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		377EAD4817E2C77B002D193D /* WKUserContentInjectedFrames.h in Headers */ = {isa = PBXBuildFile; fileRef = 377EAD4617E2C77B002D193D /* WKUserContentInjectedFrames.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2484,6 +2485,7 @@
 		37608820150414F700FC82C7 /* WKRenderObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKRenderObject.cpp; sourceTree = "<group>"; };
 		37608821150414F700FC82C7 /* WKRenderObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRenderObject.h; sourceTree = "<group>"; };
 		3769079818F31CB2001DFF04 /* APIInjectedBundlePageUIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = APIInjectedBundlePageUIClient.h; path = API/APIInjectedBundlePageUIClient.h; sourceTree = "<group>"; };
+		3769079C18F340A2001DFF04 /* APIInjectedBundleFormClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInjectedBundleFormClient.h; sourceTree = "<group>"; };
 		377EAD4417E2C51A002D193D /* WKDeclarationSpecifiers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDeclarationSpecifiers.h; sourceTree = "<group>"; };
 		377EAD4617E2C77B002D193D /* WKUserContentInjectedFrames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserContentInjectedFrames.h; sourceTree = "<group>"; };
 		377EAD4717E2C77B002D193D /* WKUserScriptInjectionTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserScriptInjectionTime.h; sourceTree = "<group>"; };
@@ -5762,6 +5764,7 @@
 				BC204EE711C83EAD008F3375 /* API */,
 				BC4BEE96120A091700FBA0C7 /* DOM */,
 				BC204EE411C83E9C008F3375 /* mac */,
+				3769079C18F340A2001DFF04 /* APIInjectedBundleFormClient.h */,
 				3769079818F31CB2001DFF04 /* APIInjectedBundlePageUIClient.h */,
 				BC204EE011C83E98008F3375 /* InjectedBundle.cpp */,
 				BC204EE111C83E98008F3375 /* InjectedBundle.h */,
@@ -7260,6 +7263,7 @@
 				BCB9F6A51123DD0D00A137E0 /* WKFramePolicyListener.h in Headers */,
 				E1AEA22F14687BDB00804569 /* WKFullKeyboardAccessWatcher.h in Headers */,
 				CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */,
+				3769079E18F340A2001DFF04 /* APIInjectedBundleFormClient.h in Headers */,
 				1AB8A1F618400B9D00E9AE69 /* WKPageFindMatchesClient.h in Headers */,
 				BC54CC1212D674EE005C67B0 /* WKGeolocationManager.h in Headers */,
 				BC06F44E12DBDF3F002D78DE /* WKGeolocationPermissionRequest.h in Headers */,

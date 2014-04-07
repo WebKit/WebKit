@@ -361,6 +361,29 @@ static bool getActionTypeForKeyEvent(KeyboardEvent* event, WKInputFieldActionTyp
     return true;
 }
 
+static API::InjectedBundle::FormClient::InputFieldAction toInputFieldAction(WKInputFieldActionType action)
+{
+    switch (action) {
+    case WKInputFieldActionTypeMoveUp:
+        return API::InjectedBundle::FormClient::InputFieldAction::MoveUp;
+    case WKInputFieldActionTypeMoveDown:
+        return API::InjectedBundle::FormClient::InputFieldAction::MoveDown;
+    case WKInputFieldActionTypeCancel:
+        return API::InjectedBundle::FormClient::InputFieldAction::Cancel;
+    case WKInputFieldActionTypeInsertTab:
+        return API::InjectedBundle::FormClient::InputFieldAction::InsertTab;
+    case WKInputFieldActionTypeInsertNewline:
+        return API::InjectedBundle::FormClient::InputFieldAction::InsertNewline;
+    case WKInputFieldActionTypeInsertDelete:
+        return API::InjectedBundle::FormClient::InputFieldAction::InsertDelete;
+    case WKInputFieldActionTypeInsertBacktab:
+        return API::InjectedBundle::FormClient::InputFieldAction::InsertBacktab;
+    }
+
+    ASSERT_NOT_REACHED();
+    return API::InjectedBundle::FormClient::InputFieldAction::Cancel;
+}
+
 bool WebEditorClient::doTextFieldCommandFromEvent(Element* element, KeyboardEvent* event)
 {
     if (!isHTMLInputElement(element))
@@ -373,7 +396,7 @@ bool WebEditorClient::doTextFieldCommandFromEvent(Element* element, KeyboardEven
     WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
     ASSERT(webFrame);
 
-    return m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, toHTMLInputElement(element), actionType, webFrame);
+    return m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, toHTMLInputElement(element), toInputFieldAction(actionType), webFrame);
 }
 
 void WebEditorClient::textWillBeDeletedInTextField(Element* element)
@@ -384,7 +407,7 @@ void WebEditorClient::textWillBeDeletedInTextField(Element* element)
     WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
     ASSERT(webFrame);
 
-    m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, toHTMLInputElement(element), WKInputFieldActionTypeInsertDelete, webFrame);
+    m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, toHTMLInputElement(element), toInputFieldAction(WKInputFieldActionTypeInsertDelete), webFrame);
 }
 
 bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType type) const

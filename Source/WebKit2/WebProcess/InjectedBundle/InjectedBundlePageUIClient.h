@@ -41,17 +41,7 @@ template<> struct ClientTraits<WKBundlePageUIClientBase> {
 };
 }
 
-namespace WebCore {
-class GraphicsContext;
-class HitTestResult;
-class IntRect;
-}
-
 namespace WebKit {
-
-class WebFrame;
-class WebPage;
-class WebSecurityOrigin;
 
 class InjectedBundlePageUIClient : public API::Client<WKBundlePageUIClientBase>, public API::InjectedBundle::PageUIClient {
 public:

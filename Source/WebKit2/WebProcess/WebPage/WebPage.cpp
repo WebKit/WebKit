@@ -263,6 +263,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
     , m_setCanStartMediaTimer(RunLoop::main(), this, &WebPage::setCanStartMediaTimerFired)
     , m_sendDidUpdateViewStateTimer(RunLoop::main(), this, &WebPage::didUpdateViewStateTimerFired)
+    , m_formClient(std::make_unique<API::InjectedBundle::FormClient>())
     , m_uiClient(std::make_unique<API::InjectedBundle::PageUIClient>())
     , m_findController(this)
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -529,9 +530,14 @@ void WebPage::initializeInjectedBundleEditorClient(WKBundlePageEditorClientBase*
     m_editorClient.initialize(client);
 }
 
-void WebPage::initializeInjectedBundleFormClient(WKBundlePageFormClientBase* client)
+void WebPage::setInjectedBundleFormClient(std::unique_ptr<API::InjectedBundle::FormClient> formClient)
 {
-    m_formClient.initialize(client);
+    if (!formClient) {
+        m_formClient = std::make_unique<API::InjectedBundle::FormClient>();
+        return;
+    }
+
+    m_formClient = std::move(formClient);
 }
 
 void WebPage::initializeInjectedBundleLoaderClient(WKBundlePageLoaderClientBase* client)
@@ -879,7 +885,7 @@ void WebPage::close()
     m_contextMenuClient.initialize(0);
 #endif
     m_editorClient.initialize(0);
-    m_formClient.initialize(0);
+    m_formClient = std::unique_ptr<API::InjectedBundle::FormClient>();
     m_loaderClient.initialize(0);
     m_policyClient.initialize(0);
     m_resourceLoadClient.initialize(0);

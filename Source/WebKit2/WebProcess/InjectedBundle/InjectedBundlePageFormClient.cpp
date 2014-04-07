@@ -39,6 +39,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
+InjectedBundlePageFormClient::InjectedBundlePageFormClient(const WKBundlePageFormClientBase* client)
+{
+    initialize(client);
+}
+
 void InjectedBundlePageFormClient::didFocusTextField(WebPage* page, HTMLInputElement* inputElement, WebFrame* frame)
 {
     if (!m_client.didFocusTextField)
@@ -84,13 +89,36 @@ void InjectedBundlePageFormClient::textDidChangeInTextArea(WebPage* page, HTMLTe
     m_client.textDidChangeInTextArea(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), m_client.base.clientInfo);
 }
 
-bool InjectedBundlePageFormClient::shouldPerformActionInTextField(WebPage* page, HTMLInputElement* inputElement, WKInputFieldActionType actionType, WebFrame* frame)
+static WKInputFieldActionType toWKInputFieldActionType(API::InjectedBundle::FormClient::InputFieldAction action)
+{
+    switch (action) {
+    case API::InjectedBundle::FormClient::InputFieldAction::MoveUp:
+        return WKInputFieldActionTypeMoveUp;
+    case API::InjectedBundle::FormClient::InputFieldAction::MoveDown:
+        return WKInputFieldActionTypeMoveDown;
+    case API::InjectedBundle::FormClient::InputFieldAction::Cancel:
+        return WKInputFieldActionTypeCancel;
+    case API::InjectedBundle::FormClient::InputFieldAction::InsertTab:
+        return WKInputFieldActionTypeInsertTab;
+    case API::InjectedBundle::FormClient::InputFieldAction::InsertBacktab:
+        return WKInputFieldActionTypeInsertBacktab;
+    case API::InjectedBundle::FormClient::InputFieldAction::InsertNewline:
+        return WKInputFieldActionTypeInsertNewline;
+    case API::InjectedBundle::FormClient::InputFieldAction::InsertDelete:
+        return WKInputFieldActionTypeInsertDelete;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WKInputFieldActionTypeCancel;
+}
+
+bool InjectedBundlePageFormClient::shouldPerformActionInTextField(WebPage* page, HTMLInputElement* inputElement, API::InjectedBundle::FormClient::InputFieldAction actionType, WebFrame* frame)
 {
     if (!m_client.shouldPerformActionInTextField)
         return false;
 
     RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(inputElement);
-    return m_client.shouldPerformActionInTextField(toAPI(page), toAPI(nodeHandle.get()), actionType, toAPI(frame), m_client.base.clientInfo);
+    return m_client.shouldPerformActionInTextField(toAPI(page), toAPI(nodeHandle.get()), toWKInputFieldActionType(actionType), toAPI(frame), m_client.base.clientInfo);
 }
 
 void InjectedBundlePageFormClient::willSendSubmitEvent(WebPage* page, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values)

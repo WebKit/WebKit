@@ -53,6 +53,8 @@
 #import "_WKRemoteObjectRegistryInternal.h"
 #import <WebCore/Document.h>
 #import <WebCore/Frame.h>
+#import <WebCore/HTMLFormElement.h>
+#import <WebCore/HTMLInputElement.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -267,37 +269,6 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
     page.initializeInjectedBundleResourceLoadClient(&client.base);
 }
 
-static void didFocusTextField(WKBundlePageRef page, WKBundleNodeHandleRef htmlInputElementHandleRef, WKBundleFrameRef frameRef, const void* clientInfo)
-{
-    WKWebProcessPlugInBrowserContextController *controller = (WKWebProcessPlugInBrowserContextController *)clientInfo;
-    auto formDelegate = controller->_formDelegate.get();
-
-    if ([formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:didFocusTextField:inFrame:)])
-        [formDelegate _webProcessPlugInBrowserContextController:controller didFocusTextField:wrapper(*toImpl(htmlInputElementHandleRef)) inFrame:wrapper(*toImpl(frameRef))];
-}
-
-static void willSubmitForm(WKBundlePageRef page, WKBundleNodeHandleRef htmlFormElementHandle, WKBundleFrameRef frame, WKBundleFrameRef sourceFrame, WKDictionaryRef values, WKTypeRef* userData, const void* clientInfo)
-{
-    WKWebProcessPlugInBrowserContextController *controller = (WKWebProcessPlugInBrowserContextController *)clientInfo;
-    auto formDelegate = controller->_formDelegate.get();
-
-    if ([formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:willSubmitForm:toFrame:fromFrame:withValues:)])
-        [formDelegate _webProcessPlugInBrowserContextController:controller willSubmitForm:wrapper(*toImpl(htmlFormElementHandle)) toFrame:wrapper(*toImpl(frame)) fromFrame:wrapper(*toImpl(sourceFrame)) withValues:wrapper(*toImpl(values))];
-}
-
-static void setUpFormClient(WKWebProcessPlugInBrowserContextController *contextController, WebPage& page)
-{
-    WKBundlePageFormClientV2 client;
-    memset(&client, 0, sizeof(client));
-
-    client.base.version = 2;
-    client.base.clientInfo = contextController;
-    client.didFocusTextField = didFocusTextField;
-    client.willSubmitForm = willSubmitForm;
-
-    page.initializeInjectedBundleFormClient(&client.base);
-}
-
 - (id <WKWebProcessPlugInLoadDelegate>)loadDelegate
 {
     return _loadDelegate.getAutoreleased();
@@ -404,10 +375,44 @@ static void setUpFormClient(WKWebProcessPlugInBrowserContextController *contextC
 {
     _formDelegate = formDelegate;
 
+    class FormClient : public API::InjectedBundle::FormClient {
+    public:
+        explicit FormClient(WKWebProcessPlugInBrowserContextController *controller)
+            : m_controller(controller)
+        {
+        }
+
+        virtual ~FormClient() { }
+
+        virtual void didFocusTextField(WebPage*, HTMLInputElement* inputElement, WebFrame* frame) override
+        {
+            auto formDelegate = m_controller->_formDelegate.get();
+
+            if ([formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:didFocusTextField:inFrame:)])
+                [formDelegate _webProcessPlugInBrowserContextController:m_controller didFocusTextField:wrapper(*InjectedBundleNodeHandle::getOrCreate(inputElement).get()) inFrame:wrapper(*frame)];
+        }
+
+        virtual void willSubmitForm(WebPage*, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<WTF::String, WTF::String>>& values, RefPtr<API::Object>& userData) override
+        {
+            auto formDelegate = m_controller->_formDelegate.get();
+
+            if ([formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:willSubmitForm:toFrame:fromFrame:withValues:)]) {
+                auto valueMap = adoptNS([[NSMutableDictionary alloc] initWithCapacity:values.size()]);
+                for (const auto& pair : values)
+                    [valueMap setObject:pair.second forKey:pair.first];
+
+                [formDelegate _webProcessPlugInBrowserContextController:m_controller willSubmitForm:wrapper(*InjectedBundleNodeHandle::getOrCreate(formElement).get()) toFrame:wrapper(*frame) fromFrame:wrapper(*sourceFrame) withValues:valueMap.get()];
+            }
+        }
+
+    private:
+        WKWebProcessPlugInBrowserContextController *m_controller;
+    };
+
     if (formDelegate)
-        setUpFormClient(self, *_page);
+        _page->setInjectedBundleFormClient(std::make_unique<FormClient>(self));
     else
-        _page->initializeInjectedBundleFormClient(nullptr);
+        _page->setInjectedBundleFormClient(nullptr);
 }
 
 @end
