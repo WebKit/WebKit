@@ -1,3 +1,17 @@
+2014-04-04  Mark Lam  <mark.lam@apple.com>
+
+        Date object needs to check for ES5 15.9.1.14 TimeClip limit.
+        <https://webkit.org/b/131248>
+
+        Reviewed by Mark Hahnenberg.
+
+        * wtf/DateMath.cpp:
+        - Moved the definition of maxECMAScriptTime to the .h file so that we
+          can use it in other files as well.
+        (WTF::msToYear):
+        - Removed a stale comment for parseDateFromNullTerminatedCharacters().
+        * wtf/DateMath.h:
+
 2014-04-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Enhanced GC logging

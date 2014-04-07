@@ -501,7 +501,7 @@ void VM::resetDateCache()
 {
     localTimeOffsetCache.reset();
     cachedDateString = String();
-    cachedDateStringValue = QNaN;
+    cachedDateStringValue = std::numeric_limits<double>::quiet_NaN();
     dateInstanceCache.reset();
 }
 

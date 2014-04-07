@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2007, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2010 Research In Motion Limited. All rights reserved.
  *
@@ -52,6 +52,11 @@
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
+
+// ECMAScript asks not to support for a date of which total
+// millisecond value is larger than the following value.
+// See 15.9.1.14 of ECMA-262 5th edition.
+static const double maxECMAScriptTime = 8.64E15;
 
 struct LocalTimeOffset {
     LocalTimeOffset()

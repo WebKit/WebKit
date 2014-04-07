@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2007, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2010 Research In Motion Limited. All rights reserved.
  *
@@ -53,7 +53,6 @@ class VM;
 void msToGregorianDateTime(VM&, double, bool outputIsUTC, GregorianDateTime&);
 double gregorianDateTimeToMS(VM&, const GregorianDateTime&, double, bool inputIsUTC);
 double getUTCOffset(VM&);
-double parseDateFromNullTerminatedCharacters(VM&, const char* dateString);
 double parseDate(VM&, const WTF::String&);
 
 } // namespace JSC

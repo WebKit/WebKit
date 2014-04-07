@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- * Copyright (C) 2006, 2007, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2007, 2012, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010 &yet, LLC. (nate@andyet.net)
@@ -138,6 +138,7 @@ static LocalTimeOffset localTimeOffset(VM& vm, double ms)
     double start = cache.start;
     double end = cache.end;
 
+    ASSERT(fabs(ms) <= WTF::maxECMAScriptTime);
     if (start <= ms) {
         // If the time fits in the cached interval, return the cached offset.
         if (ms <= end) return cache.offset;
@@ -145,7 +146,7 @@ static LocalTimeOffset localTimeOffset(VM& vm, double ms)
         // Compute a possible new interval end.
         double newEnd = end + cache.increment;
 
-        if (ms <= newEnd) {
+        if (ms <= newEnd && newEnd <= WTF::maxECMAScriptTime) {
             LocalTimeOffset endOffset = calculateLocalTimeOffset(newEnd);
             if (cache.offset == endOffset) {
                 // If the offset at the end of the new interval still matches
@@ -194,15 +195,19 @@ double gregorianDateTimeToMS(VM& vm, const GregorianDateTime& t, double milliSec
     double ms = timeToMS(t.hour(), t.minute(), t.second(), milliSeconds);
     double result = (day * WTF::msPerDay) + ms;
 
+    if (fabs(result) > WTF::maxECMAScriptTime)
+        return std::numeric_limits<double>::quiet_NaN();
+
     if (!inputIsUTC)
         result -= localTimeOffset(vm, result).offset;
 
-    return result;
+    return timeClip(result);
 }
 
 // input is UTC
 void msToGregorianDateTime(VM& vm, double ms, bool outputIsUTC, GregorianDateTime& tm)
 {
+    ASSERT(fabs(ms) <= WTF::maxECMAScriptTime);
     LocalTimeOffset localTime;
     if (!outputIsUTC) {
         localTime = localTimeOffset(vm, ms);
@@ -222,13 +227,13 @@ void msToGregorianDateTime(VM& vm, double ms, bool outputIsUTC, GregorianDateTim
     tm.setUtcOffset(localTime.offset / WTF::msPerSecond);
 }
 
-double parseDateFromNullTerminatedCharacters(VM& vm, const char* dateString)
+static double parseDateFromNullTerminatedCharacters(VM& vm, const char* dateString)
 {
     bool haveTZ;
     int offset;
     double ms = WTF::parseDateFromNullTerminatedCharacters(dateString, haveTZ, offset);
-    if (std::isnan(ms))
-        return QNaN;
+    if (std::isnan(ms) || fabs(ms) > WTF::maxECMAScriptTime)
+        return std::numeric_limits<double>::quiet_NaN();
 
     // fall back to local timezone
     if (!haveTZ)
@@ -244,6 +249,7 @@ double parseDate(VM& vm, const String& date)
     double value = parseES5DateFromNullTerminatedCharacters(date.utf8().data());
     if (std::isnan(value))
         value = parseDateFromNullTerminatedCharacters(vm, date.utf8().data());
+    value = timeClip(value);
     vm.cachedDateString = date;
     vm.cachedDateStringValue = value;
     return value;

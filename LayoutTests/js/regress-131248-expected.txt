@@ -1,0 +1,41 @@
+This test checks date values at the limits set by the ES5 15.9.1.14 TimeClip specification and ensures that we don't crash on any assertions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+(new Date(1396547803766)).setDate(1396549003769) ==> NaN ms, Invalid Date
+(new Date(1396547803766)).setDate(100000000) ==> NaN ms, Invalid Date
+(new Date(1396547803766)).setDate(99983840) ==> NaN ms, Invalid Date
+(new Date(1396547803766)).setDate(99983839) ==> 8639999978203766 ms, Fri Sep 12 275760
+(new Date(1396547803766)).setDate(10000000) ==> 865396288603766 ms, Thu Apr 25 29393
+
+(new Date(0)).setTime(8640000000000001) ==> NaN ms, Invalid Date NaN ms
+(new Date(0)).setTime(8640000000000000) ==> 8640000000000000 ms, Sat, 13 Sep 275760 00:00:00 GMT 0 ms
+(new Date(0)).setTime(-8640000000000000) ==> -8640000000000000 ms, Tue, 20 Apr -271821 00:00:00 GMT 0 ms
+(new Date(0)).setTime(-8640000000000001) ==> NaN ms, Invalid Date NaN ms
+
+(new Date(13 Sep 275760 00:00:00 -0001) ==> NaN ms, Invalid Date NaN ms
+(new Date(13 Sep 275760 00:00:00 +0000) ==> 8640000000000000 ms, Sat, 13 Sep 275760 00:00:00 GMT 0 ms
+(new Date(13 Sep 275760 00:00:00 +0001) ==> 8639999996400000 ms, Fri, 12 Sep 275760 23:00:00 GMT 0 ms
+(new Date(20 Apr -271821 00:00:00 -0001) ==> -8639999996400000 ms, Tue, 20 Apr -271821 01:00:00 GMT 0 ms
+(new Date(20 Apr -271821 00:00:00 +0000) ==> -8640000000000000 ms, Tue, 20 Apr -271821 00:00:00 GMT 0 ms
+(new Date(20 Apr -271821 00:00:00 +0001) ==> NaN ms, Invalid Date NaN ms
+
+(new Date(19 Apr -271821 23:59:59) ==> NaN ms, Invalid Date NaN ms
+
+(new Date(275760-09-13T00:00:00.001) ==> NaN ms, Invalid Date NaN ms
+(new Date(275760-09-13T00:00:00.000) ==> 8640000000000000 ms, Sat, 13 Sep 275760 00:00:00 GMT 0 ms
+(new Date(-271821-04-20T00:00:00.0000) ==> -8640000000000000 ms, Tue, 20 Apr -271821 00:00:00 GMT 0 ms
+(new Date(-271821-04-19T23:59:59.999) ==> NaN ms, Invalid Date NaN ms
+
+(new Date(Sat, 13 Sep 275760 00:00:00 UTC-2) ==> NaN ms, Invalid Date NaN ms
+(new Date(Sat, 13 Sep 275760 00:00:00 UTC) ==> 8640000000000000 ms, Sat, 13 Sep 275760 00:00:00 GMT 0 ms
+(new Date(Sat, 13 Sep 275760 00:00:00 UTC+2) ==> 8639999992800000 ms, Fri, 12 Sep 275760 22:00:00 GMT 0 ms
+(new Date(Tue, 20 Apr -271821 00:00:00 UTC-2) ==> -8639999992800000 ms, Tue, 20 Apr -271821 02:00:00 GMT 0 ms
+(new Date(Tue, 20 Apr -271821 00:00:00 UTC) ==> -8640000000000000 ms, Tue, 20 Apr -271821 00:00:00 GMT 0 ms
+(new Date(Tue, 20 Apr -271821 00:00:00 UTC+2) ==> NaN ms, Invalid Date NaN ms
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

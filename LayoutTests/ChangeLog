@@ -1,3 +1,17 @@
+2014-04-04  Mark Lam  <mark.lam@apple.com>
+
+        Date object needs to check for ES5 15.9.1.14 TimeClip limit.
+        <https://webkit.org/b/131248>
+
+        Reviewed by Mark Hahnenberg.
+
+        * js/regress-131248-expected.txt: Added.
+        * js/regress-131248.html: Added.
+        * js/script-tests/regress-131248.js: Added.
+        (testDateFromSetDateAdjustement):
+        (testDateFromSetTimeWithMilliseconds):
+        (testDateFromString):
+
 2014-04-07  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed gardening for GTK.

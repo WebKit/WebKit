@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2007, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010 &yet, LLC. (nate@andyet.net)
@@ -109,10 +109,6 @@ namespace WTF {
 /* Constants */
 
 static const double maxUnixTime = 2145859200.0; // 12/31/2037
-// ECMAScript asks not to support for a date of which total
-// millisecond value is larger than the following value.
-// See 15.9.1.14 of ECMA-262 5th edition.
-static const double maxECMAScriptTime = 8.64E15;
 
 // Day of year for the first day of each month, where index 0 is January, and day 0 is January 1.
 // First for non-leap years, then for leap years.
@@ -184,6 +180,7 @@ static void appendTwoDigitNumber(StringBuilder& builder, int number)
 
 int msToYear(double ms)
 {
+    ASSERT(fabs(ms) <= maxECMAScriptTime);
     int approxYear = static_cast<int>(floor(ms / (msPerDay * 365.2425)) + 1970);
     double msFromApproxYearTo1970 = msPerDay * daysFrom1970ToYear(approxYear);
     if (msFromApproxYearTo1970 > ms)
@@ -330,7 +327,7 @@ static inline int minimumYearForDST()
 }
 
 /*
- * Find an equivalent year for the one given, where equivalence is deterined by
+ * Find an equivalent year for the one given, where equivalence is determined by
  * the two years having the same leapness and the first day of the year, falling
  * on the same day of the week.
  *
@@ -796,7 +793,6 @@ double parseES5DateFromNullTerminatedCharacters(const char* dateString)
     return dateSeconds * msPerSecond;
 }
 
-// Odd case where 'exec' is allowed to be 0, to accomodate a caller in WebCore.
 double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveTZ, int& offset)
 {
     haveTZ = false;

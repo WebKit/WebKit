@@ -1,3 +1,39 @@
+2014-04-04  Mark Lam  <mark.lam@apple.com>
+
+        Date object needs to check for ES5 15.9.1.14 TimeClip limit.
+        <https://webkit.org/b/131248>
+
+        Reviewed by Mark Hahnenberg.
+
+        The current Date object code does not adequately check for the ES5
+        15.9.1.14 TimeClip limit.  As a result, some calculations can underflow
+        / overflow and produce unexpected results.
+
+        For example, we were getting an assertion failure in
+        WTF::equivalentYearForDST() due int underflows in this function, which
+        in turn were due to an int overflow in WTF::msToYear().
+
+        This patch adds the needed checks, and adds some assertions to ensure
+        that the used values are sane.
+
+        The changes have no noticeable impact on benchmark results.
+
+        * runtime/DateConstructor.cpp:
+        (JSC::callDate):
+        * runtime/JSDateMath.cpp:
+        (JSC::localTimeOffset):
+        (JSC::gregorianDateTimeToMS):
+        (JSC::msToGregorianDateTime):
+        (JSC::parseDateFromNullTerminatedCharacters):
+        (JSC::parseDate):
+        * runtime/JSDateMath.h:
+        - parseDateFromNullTerminatedCharacters() does not need to be public.
+          Made it a static function.
+        * runtime/VM.cpp:
+        (JSC::VM::resetDateCache):
+        - Changed cachedDateStringValue to use std::numeric_limits<double>::quiet_NaN()
+          to be consistent with other Date code.
+
 2014-04-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed speculative 32-bit buildfix after r166837.
