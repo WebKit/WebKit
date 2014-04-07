@@ -1,3 +1,9 @@
+2014-04-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another build fix after r166879.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+
 2014-04-07  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the Mac build.
