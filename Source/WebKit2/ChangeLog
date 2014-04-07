@@ -1,3 +1,13 @@
+2014-04-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Fixing the GTK build.
+
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp: Include the Document header from WebCore
+        to avoid operating on an incomplete type.
+        * WebProcess/WebPage/TapHighlightController.cpp: Include the RenderElement instead of RenderObject
+        to make the RenderObject::style() inline accessible.
+        * WebProcess/WebPage/atk/WebPageAccessibilityObjectAtk.cpp: Include the Document header from WebCore
+
 2014-04-07  Tim Horton  <timothy_horton@apple.com>
 
         [iOS WebKit2] Make back-buffers purgeable when possible

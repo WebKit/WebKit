@@ -35,8 +35,7 @@
 #include <WebCore/GestureTapHighlighter.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Page.h>
-
-#include <WebCore/RenderObject.h>
+#include <WebCore/RenderElement.h>
 
 using namespace std;
 using namespace WebCore;

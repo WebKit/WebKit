@@ -27,6 +27,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/DataObjectGtk.h>
+#include <WebCore/Document.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/PasteboardHelper.h>
 #include <WebCore/WindowsKeyboardCodes.h>
