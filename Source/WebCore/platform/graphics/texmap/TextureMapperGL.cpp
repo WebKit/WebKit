@@ -1129,9 +1129,9 @@ PassRefPtr<BitmapTexture> TextureMapperGL::createTexture()
 }
 
 #if USE(TEXTURE_MAPPER_GL)
-PassOwnPtr<TextureMapper> TextureMapper::platformCreateAccelerated()
+std::unique_ptr<TextureMapper> TextureMapper::platformCreateAccelerated()
 {
-    return TextureMapperGL::create();
+    return std::make_unique<TextureMapperGL>();
 }
 #endif
 

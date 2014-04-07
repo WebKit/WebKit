@@ -160,7 +160,7 @@ private:
     };
     void notifyChange(ChangeMask);
 
-    OwnPtr<TextureMapperLayer> m_layer;
+    std::unique_ptr<TextureMapperLayer> m_layer;
     RefPtr<TextureMapperTiledBackingStore> m_compositedImage;
     NativeImagePtr m_compositedNativeImagePtr;
     RefPtr<TextureMapperBackingStore> m_backingStore;

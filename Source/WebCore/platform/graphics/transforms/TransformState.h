@@ -32,7 +32,6 @@
 #include "IntSize.h"
 #include "LayoutSize.h"
 #include "TransformationMatrix.h"
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -110,7 +109,7 @@ private:
     FloatQuad m_lastPlanarQuad;
 
     // We only allocate the transform if we need to
-    OwnPtr<TransformationMatrix> m_accumulatedTransform;
+    std::unique_ptr<TransformationMatrix> m_accumulatedTransform;
     LayoutSize m_accumulatedOffset;
     bool m_accumulatingTransform;
     bool m_mapPoint, m_mapQuad;

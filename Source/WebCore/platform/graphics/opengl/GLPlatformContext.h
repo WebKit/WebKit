@@ -30,7 +30,6 @@
 #include "GLPlatformSurface.h"
 #include "GraphicsContext3D.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 
 // Encapsulates an OpenGL context, hiding platform specific management.
 namespace WebCore {
@@ -47,7 +46,7 @@ public:
         PLATFORMCONTEXT_UNKNOWN_CONTEXT_RESET = 0x8255,
     };
 
-    static PassOwnPtr<GLPlatformContext> createContext(GraphicsContext3D::RenderStyle);
+    static std::unique_ptr<GLPlatformContext> createContext(GraphicsContext3D::RenderStyle);
 
     static bool supportsGLExtension(const String&);
 

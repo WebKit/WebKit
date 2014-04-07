@@ -197,12 +197,12 @@ bool GraphicsContext3D::isGLES2Compliant() const
 #endif
 }
 
-void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback> callBack)
+void GraphicsContext3D::setContextLostCallback(std::unique_ptr<ContextLostCallback> callBack)
 {
-    m_private->setContextLostCallback(callBack);
+    m_private->setContextLostCallback(std::move(callBack));
 }
 
-void GraphicsContext3D::setErrorMessageCallback(PassOwnPtr<ErrorMessageCallback>) 
+void GraphicsContext3D::setErrorMessageCallback(std::unique_ptr<ErrorMessageCallback>)
 {
     notImplemented();
 }

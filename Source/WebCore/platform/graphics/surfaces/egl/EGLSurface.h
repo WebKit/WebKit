@@ -53,7 +53,7 @@ protected:
 
 class EGLOffScreenSurface : public GLPlatformSurface {
 public:
-    static PassOwnPtr<GLPlatformSurface> createOffScreenSurface(SurfaceAttributes);
+    static std::unique_ptr<GLPlatformSurface> createOffScreenSurface(SurfaceAttributes);
     virtual ~EGLOffScreenSurface();
     virtual PlatformSurfaceConfig configuration() override;
     virtual void destroy() override;

@@ -40,11 +40,11 @@ namespace WebCore {
 
 static GLPlatformSurface* m_currentDrawable = 0;
 
-PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createOffScreenSurface(SurfaceAttributes attributes)
+std::unique_ptr<GLPlatformSurface> GLPlatformSurface::createOffScreenSurface(SurfaceAttributes attributes)
 {
-    OwnPtr<GLPlatformSurface> surface;
+    std::unique_ptr<GLPlatformSurface> surface;
 #if USE(GLX)
-    surface = adoptPtr(new GLXOffScreenSurface(attributes));
+    surface = std::make_unique<GLXOffScreenSurface>(attributes);
 #elif USE(EGL) && USE(GRAPHICS_SURFACE)
     surface = EGLOffScreenSurface::createOffScreenSurface(attributes);
 #else
@@ -53,7 +53,7 @@ PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createOffScreenSurface(SurfaceA
 #endif
 
     if (surface && surface->drawable())
-        return surface.release();
+        return surface;
 
     return nullptr;
 }

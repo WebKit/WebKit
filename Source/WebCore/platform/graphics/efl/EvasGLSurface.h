@@ -29,7 +29,6 @@
 #include "IntSize.h"
 
 #include <Evas_GL.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

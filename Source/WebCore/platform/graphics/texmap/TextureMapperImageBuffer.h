@@ -50,7 +50,9 @@ private:
 class TextureMapperImageBuffer : public TextureMapper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<TextureMapper> create() { return adoptPtr(new TextureMapperImageBuffer); }
+    TextureMapperImageBuffer()
+        : TextureMapper(SoftwareMode)
+    { }
 
     // TextureMapper implementation
     virtual void drawBorder(const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) override;
@@ -70,9 +72,6 @@ public:
     }
 
 private:
-    TextureMapperImageBuffer()
-        : TextureMapper(SoftwareMode)
-    { }
     RefPtr<BitmapTexture> m_currentSurface;
 };
 

@@ -152,7 +152,7 @@ private:
     Vector<std::function<void()>> m_renderQueue;
     Mutex m_renderQueueMutex;
 
-    OwnPtr<TextureMapper> m_textureMapper;
+    std::unique_ptr<TextureMapper> m_textureMapper;
 
     typedef HashMap<CoordinatedImageBackingID, RefPtr<CoordinatedBackingStore> > ImageBackingMap;
     ImageBackingMap m_imageBackings;

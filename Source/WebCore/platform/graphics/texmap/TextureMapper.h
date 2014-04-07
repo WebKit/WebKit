@@ -116,7 +116,9 @@ public:
 
     typedef unsigned PaintFlags;
 
-    static PassOwnPtr<TextureMapper> create(AccelerationMode newMode = SoftwareMode);
+    static std::unique_ptr<TextureMapper> create(AccelerationMode newMode = SoftwareMode);
+
+    explicit TextureMapper(AccelerationMode);
     virtual ~TextureMapper();
 
     enum ExposedEdges {
@@ -163,8 +165,6 @@ public:
     void setWrapMode(WrapMode m) { m_wrapMode = m; }
 
 protected:
-    explicit TextureMapper(AccelerationMode);
-
     GraphicsContext* m_context;
 
     bool isInMaskMode() const { return m_isMaskMode; }
@@ -173,16 +173,16 @@ protected:
 
 private:
 #if USE(TEXTURE_MAPPER_GL)
-    static PassOwnPtr<TextureMapper> platformCreateAccelerated();
+    static std::unique_ptr<TextureMapper> platformCreateAccelerated();
 #else
-    static PassOwnPtr<TextureMapper> platformCreateAccelerated()
+    static std::unique_ptr<TextureMapper> platformCreateAccelerated()
     {
-        return PassOwnPtr<TextureMapper>();
+        return std::make_unique<TextureMapper>();
     }
 #endif
     InterpolationQuality m_interpolationQuality;
     TextDrawingModeFlags m_textDrawingMode;
-    OwnPtr<BitmapTexturePool> m_texturePool;
+    std::unique_ptr<BitmapTexturePool> m_texturePool;
     AccelerationMode m_accelerationMode;
     bool m_isMaskMode;
     TransformationMatrix m_patternTransform;

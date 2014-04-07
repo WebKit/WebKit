@@ -151,7 +151,7 @@ private:
     IntSize m_size;
     PlatformBufferHandle m_sharedHandle;
     OwnPtr<GLTransportSurfaceClient> m_client;
-    OwnPtr<GLPlatformContext> m_sharedContext;
+    std::unique_ptr<GLPlatformContext> m_sharedContext;
     OwnPtr<GLTransportSurface> m_sharedSurface;
 };
 

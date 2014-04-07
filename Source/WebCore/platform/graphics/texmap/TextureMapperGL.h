@@ -38,7 +38,7 @@ class FilterOperation;
 // An OpenGL-ES2 implementation of TextureMapper.
 class TextureMapperGL : public TextureMapper {
 public:
-    static PassOwnPtr<TextureMapperGL> create() { return adoptPtr(new TextureMapperGL); }
+    TextureMapperGL();
     virtual ~TextureMapperGL();
 
     enum Flag {
@@ -119,8 +119,6 @@ private:
         IntSize size;
         YAxisMode yAxisMode;
     };
-
-    TextureMapperGL();
 
     void drawTexturedQuadWithProgram(TextureMapperShaderProgram*, uint32_t texture, Flags, const IntSize&, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
     void draw(const FloatRect&, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram*, GC3Denum drawingMode, Flags);

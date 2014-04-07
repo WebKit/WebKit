@@ -103,7 +103,7 @@ private:
     std::unique_ptr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
     typedef HashMap<PageOverlay*, std::unique_ptr<WebCore::GraphicsLayer>> PageOverlayLayerMap;
     PageOverlayLayerMap m_pageOverlayLayers;
-    OwnPtr<WebCore::TextureMapper> m_textureMapper;
+    std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
     OwnPtr<WebCore::GLContext> m_context;
     double m_lastFlushTime;
     bool m_layerFlushSchedulingEnabled;

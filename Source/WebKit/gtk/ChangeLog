@@ -1,3 +1,14 @@
+2014-04-07  Hyowon Kim  <hw1008.kim@samsung.com>
+
+        Move to using std::unique_ptr for opengl, texmap, transforms and efl in WebCore/platform/graphics.
+        https://bugs.webkit.org/show_bug.cgi?id=131276
+
+        Reviewed by Darin Adler.
+
+        Replace uses of OwnPtr for TextureMapper in AcceleratedCompositingContext with std::unique_ptr.
+
+        * WebCoreSupport/AcceleratedCompositingContext.h:
+
 2014-04-02  Martin Hock  <mhock@apple.com>
 
         Unify private browsing with sessions.

@@ -75,7 +75,7 @@ private:
     OwnPtr<WebCore::RedirectedXCompositeWindow> m_redirectedWindow;
     std::unique_ptr<WebCore::GraphicsLayer> m_rootLayer;
     std::unique_ptr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
-    OwnPtr<WebCore::TextureMapper> m_textureMapper;
+    std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
     double m_lastFlushTime;
     double m_redrawPendingTime;
     bool m_needsExtraFlush;

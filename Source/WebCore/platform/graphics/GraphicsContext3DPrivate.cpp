@@ -45,11 +45,6 @@ using namespace std;
 
 namespace WebCore {
 
-PassOwnPtr<GraphicsContext3DPrivate> GraphicsContext3DPrivate::create(GraphicsContext3D* context, GraphicsContext3D::RenderStyle renderStyle)
-{
-    return adoptPtr(new GraphicsContext3DPrivate(context, renderStyle));
-}
-
 GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, GraphicsContext3D::RenderStyle renderStyle)
     : m_context(context)
     , m_renderStyle(renderStyle)

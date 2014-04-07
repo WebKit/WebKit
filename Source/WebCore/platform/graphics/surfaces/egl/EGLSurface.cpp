@@ -112,19 +112,14 @@ PlatformSurfaceConfig EGLTransportSurface::configuration()
     return m_configSelector->surfaceContextConfig();
 }
 
-PassOwnPtr<GLPlatformSurface> EGLOffScreenSurface::createOffScreenSurface(SurfaceAttributes attributes)
+std::unique_ptr<GLPlatformSurface> EGLOffScreenSurface::createOffScreenSurface(SurfaceAttributes attributes)
 {
-    OwnPtr<GLPlatformSurface> surface;
 #if PLATFORM(X11)
-    surface = adoptPtr(new EGLPixmapSurface(attributes));
+    return std::make_unique<EGLPixmapSurface>(attributes);
 #else
     UNUSED_PARAM(attributes);
-#endif
-
-    if (surface)
-        return surface.release();
-
     return nullptr;
+#endif
 }
 
 EGLOffScreenSurface::EGLOffScreenSurface(SurfaceAttributes surfaceAttributes)

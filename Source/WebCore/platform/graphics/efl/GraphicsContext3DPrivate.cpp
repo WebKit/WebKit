@@ -26,12 +26,12 @@
 
 namespace WebCore {
 
-PassOwnPtr<GraphicsContext3DPrivate> GraphicsContext3DPrivate::create(GraphicsContext3D* context, HostWindow* hostWindow)
+std::unique_ptr<GraphicsContext3DPrivate> GraphicsContext3DPrivate::create(GraphicsContext3D* context, HostWindow* hostWindow)
 {
-    OwnPtr<GraphicsContext3DPrivate> platformLayer = adoptPtr(new GraphicsContext3DPrivate(context, hostWindow));
+    std::unique_ptr<GraphicsContext3DPrivate> platformLayer = std::make_unique<GraphicsContext3DPrivate>(context, hostWindow);
 
     if (platformLayer && platformLayer->initialize())
-        return platformLayer.release();
+        return platformLayer;
 
     return nullptr;
 }
@@ -105,9 +105,9 @@ void GraphicsContext3DPrivate::releaseResources()
     }
 }
 
-void GraphicsContext3DPrivate::setContextLostCallback(PassOwnPtr<GraphicsContext3D::ContextLostCallback> callBack)
+void GraphicsContext3DPrivate::setContextLostCallback(std::unique_ptr<GraphicsContext3D::ContextLostCallback> callBack)
 {
-    m_contextLostCallback = callBack;
+    m_contextLostCallback = std::move(callBack);
 }
 
 PlatformGraphicsContext3D GraphicsContext3DPrivate::platformGraphicsContext3D() const

@@ -85,7 +85,7 @@ public:
 
     // EXT Robustness - reset
     virtual int getGraphicsResetStatusARB();
-    void setEXTContextLostCallback(PassOwnPtr<GraphicsContext3D::ContextLostCallback>);
+    void setEXTContextLostCallback(std::unique_ptr<GraphicsContext3D::ContextLostCallback>);
 
     // EXT Robustness - etc
     virtual void readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data);
@@ -120,8 +120,7 @@ protected:
     PFNGLDRAWARRAYSINSTANCEDANGLEPROC m_glDrawArraysInstancedANGLE;
     PFNGLDRAWELEMENTSINSTANCEDANGLEPROC m_glDrawElementsInstancedANGLE;
 
-
-    OwnPtr<GraphicsContext3D::ContextLostCallback> m_contextLostCallback;
+    std::unique_ptr<GraphicsContext3D::ContextLostCallback> m_contextLostCallback;
 };
 
 } // namespace WebCore

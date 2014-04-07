@@ -128,10 +128,10 @@ PassRefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& s
     return selectedTexture;
 }
 
-PassOwnPtr<TextureMapper> TextureMapper::create(AccelerationMode mode)
+std::unique_ptr<TextureMapper> TextureMapper::create(AccelerationMode mode)
 {
     if (mode == SoftwareMode)
-        return TextureMapperImageBuffer::create();
+        return std::make_unique<TextureMapperImageBuffer>();
     return platformCreateAccelerated();
 }
 
@@ -139,7 +139,7 @@ TextureMapper::TextureMapper(AccelerationMode accelerationMode)
     : m_context(0)
     , m_interpolationQuality(InterpolationDefault)
     , m_textDrawingMode(TextModeFill)
-    , m_texturePool(adoptPtr(new BitmapTexturePool()))
+    , m_texturePool(std::make_unique<BitmapTexturePool>())
     , m_accelerationMode(accelerationMode)
     , m_isMaskMode(false)
     , m_wrapMode(StretchWrap)

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "TransformState.h"
 
-#include <wtf/PassOwnPtr.h>
-
 namespace WebCore {
 
 TransformState& TransformState::operator=(const TransformState& other)
@@ -42,10 +40,10 @@ TransformState& TransformState::operator=(const TransformState& other)
     m_accumulatingTransform = other.m_accumulatingTransform;
     m_direction = other.m_direction;
     
-    m_accumulatedTransform.clear();
+    m_accumulatedTransform = nullptr;
 
     if (other.m_accumulatedTransform)
-        m_accumulatedTransform = adoptPtr(new TransformationMatrix(*other.m_accumulatedTransform));
+        m_accumulatedTransform = std::make_unique<TransformationMatrix>(*other.m_accumulatedTransform);
         
     return *this;
 }
@@ -121,12 +119,12 @@ void TransformState::applyTransform(const TransformationMatrix& transformFromCon
     // If we have an accumulated transform from last time, multiply in this transform
     if (m_accumulatedTransform) {
         if (m_direction == ApplyTransformDirection)
-            m_accumulatedTransform = adoptPtr(new TransformationMatrix(transformFromContainer * *m_accumulatedTransform));
+            m_accumulatedTransform = std::make_unique<TransformationMatrix>(transformFromContainer * *m_accumulatedTransform);
         else
             m_accumulatedTransform->multiply(transformFromContainer);
     } else if (accumulate == AccumulateTransform) {
         // Make one if we started to accumulate
-        m_accumulatedTransform = adoptPtr(new TransformationMatrix(transformFromContainer));
+        m_accumulatedTransform = std::make_unique<TransformationMatrix>(transformFromContainer);
     }
     
     if (accumulate == FlattenTransform) {
