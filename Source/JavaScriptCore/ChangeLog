@@ -1,3 +1,16 @@
+2014-04-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Make it possible to disable some of the FTL's more interesting features
+        https://bugs.webkit.org/show_bug.cgi?id=131312
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::parse):
+        * runtime/Options.h:
+
 2014-04-04  Mark Lam  <mark.lam@apple.com>
 
         Date object needs to check for ES5 15.9.1.14 TimeClip limit.

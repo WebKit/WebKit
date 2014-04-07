@@ -162,6 +162,8 @@ typedef OptionRange optionRange;
     v(bool, clobberAllRegsInFTLICSlowPath, !ASSERT_DISABLED) \
     v(bool, assumeAllRegsInFTLICAreLive, true) \
     v(bool, enableAccessInlining, true) \
+    v(bool, enablePolyvariantDevirtualization, true) \
+    v(bool, enablePolymorphicAccessInlining, true) \
     \
     v(bool, enableConcurrentJIT, true) \
     v(unsigned, numberOfDFGCompilerThreads, computeNumberOfWorkerThreads(2, 2) - 1) \
