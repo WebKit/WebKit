@@ -241,9 +241,9 @@ void WebChromeClient::setToolbarsVisible(bool toolbarsAreVisible)
 
 bool WebChromeClient::toolbarsVisible()
 {
-    WKBundlePageUIElementVisibility toolbarsVisibility = m_page->injectedBundleUIClient().toolbarsAreVisible(m_page);
-    if (toolbarsVisibility != WKBundlePageUIElementVisibilityUnknown)
-        return toolbarsVisibility == WKBundlePageUIElementVisible;
+    API::InjectedBundle::PageUIClient::UIElementVisibility toolbarsVisibility = m_page->injectedBundleUIClient().toolbarsAreVisible(m_page);
+    if (toolbarsVisibility != API::InjectedBundle::PageUIClient::UIElementVisibility::Unknown)
+        return toolbarsVisibility == API::InjectedBundle::PageUIClient::UIElementVisibility::Visible;
     
     bool toolbarsAreVisible = true;
     if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::GetToolbarsAreVisible(), Messages::WebPageProxy::GetToolbarsAreVisible::Reply(toolbarsAreVisible), m_page->pageID()))
@@ -259,9 +259,9 @@ void WebChromeClient::setStatusbarVisible(bool statusBarIsVisible)
 
 bool WebChromeClient::statusbarVisible()
 {
-    WKBundlePageUIElementVisibility statusbarVisibility = m_page->injectedBundleUIClient().statusBarIsVisible(m_page);
-    if (statusbarVisibility != WKBundlePageUIElementVisibilityUnknown)
-        return statusbarVisibility == WKBundlePageUIElementVisible;
+    API::InjectedBundle::PageUIClient::UIElementVisibility statusbarVisibility = m_page->injectedBundleUIClient().statusBarIsVisible(m_page);
+    if (statusbarVisibility != API::InjectedBundle::PageUIClient::UIElementVisibility::Unknown)
+        return statusbarVisibility == API::InjectedBundle::PageUIClient::UIElementVisibility::Visible;
 
     bool statusBarIsVisible = true;
     if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::GetStatusBarIsVisible(), Messages::WebPageProxy::GetStatusBarIsVisible::Reply(statusBarIsVisible), m_page->pageID()))
@@ -288,9 +288,9 @@ void WebChromeClient::setMenubarVisible(bool menuBarVisible)
 
 bool WebChromeClient::menubarVisible()
 {
-    WKBundlePageUIElementVisibility menubarVisibility = m_page->injectedBundleUIClient().menuBarIsVisible(m_page);
-    if (menubarVisibility != WKBundlePageUIElementVisibilityUnknown)
-        return menubarVisibility == WKBundlePageUIElementVisible;
+    API::InjectedBundle::PageUIClient::UIElementVisibility menubarVisibility = m_page->injectedBundleUIClient().menuBarIsVisible(m_page);
+    if (menubarVisibility != API::InjectedBundle::PageUIClient::UIElementVisibility::Unknown)
+        return menubarVisibility == API::InjectedBundle::PageUIClient::UIElementVisibility::Visible;
     
     bool menuBarIsVisible = true;
     if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::GetMenuBarIsVisible(), Messages::WebPageProxy::GetMenuBarIsVisible::Reply(menuBarIsVisible), m_page->pageID()))

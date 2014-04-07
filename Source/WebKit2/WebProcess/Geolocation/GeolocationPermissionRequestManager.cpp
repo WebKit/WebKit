@@ -32,6 +32,7 @@
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/Geolocation.h>

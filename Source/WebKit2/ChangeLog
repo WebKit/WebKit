@@ -1,3 +1,68 @@
+2014-04-07  Dan Bernstein  <mitz@apple.com>
+
+        Introduce API::InjectedBundle::PageUIClient
+        https://bugs.webkit.org/show_bug.cgi?id=131310
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added references to new files.
+
+        * WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp: Added #include that
+        became necessary.
+
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageUIClient.h: Added.
+        (API::InjectedBundle::PageUIClient::~PageUIClient):
+        (API::InjectedBundle::PageUIClient::willAddMessageToConsole):
+        (API::InjectedBundle::PageUIClient::willSetStatusbarText):
+        (API::InjectedBundle::PageUIClient::willRunJavaScriptAlert):
+        (API::InjectedBundle::PageUIClient::willRunJavaScriptConfirm):
+        (API::InjectedBundle::PageUIClient::willRunJavaScriptPrompt):
+        (API::InjectedBundle::PageUIClient::mouseDidMoveOverElement):
+        (API::InjectedBundle::PageUIClient::pageDidScroll):
+        (API::InjectedBundle::PageUIClient::shouldGenerateFileForUpload):
+        (API::InjectedBundle::PageUIClient::generateFileForUpload):
+        (API::InjectedBundle::PageUIClient::statusBarIsVisible):
+        (API::InjectedBundle::PageUIClient::menuBarIsVisible):
+        (API::InjectedBundle::PageUIClient::toolbarsAreVisible):
+        (API::InjectedBundle::PageUIClient::didReachApplicationCacheOriginQuota):
+        (API::InjectedBundle::PageUIClient::didExceedDatabaseQuota):
+        (API::InjectedBundle::PageUIClient::plugInStartLabelTitle):
+        (API::InjectedBundle::PageUIClient::plugInStartLabelSubtitle):
+        (API::InjectedBundle::PageUIClient::plugInExtraStyleSheet):
+        (API::InjectedBundle::PageUIClient::plugInExtraScript):
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetUIClient): Changed to create an InjectedBundlePageUIClient and set it on
+        the WebPage.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::InjectedBundlePageUIClient): Added constructor from
+        WKBundlePageUIClient.
+        (WebKit::toUIElementVisibility): Added helper to convert from C SPI enum to internal enum.
+        (WebKit::InjectedBundlePageUIClient::statusBarIsVisible): Changed to use the above.
+        (WebKit::InjectedBundlePageUIClient::menuBarIsVisible): Ditto.
+        (WebKit::InjectedBundlePageUIClient::toolbarsAreVisible): Ditto.
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h: Added inheritance from
+        API::InjectedBundle::PageUIClient, marked overrides as such.
+
+        * WebProcess/Storage/StorageAreaMap.cpp: Added #include that became necessary.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::toolbarsVisible): Updated to use new internal enum.
+        (WebKit::WebChromeClient::statusbarVisible): Ditto.
+        (WebKit::WebChromeClient::menubarVisible): Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Initialized m_uiClient member.
+        (WebKit::WebPage::setInjectedBundleUIClient): Added. Updates m_uiClient.
+        (WebKit::WebPage::close): Updated for change in m_uiClient.
+        (WebKit::WebPage::pageDidScroll): Ditto.
+        (WebKit::WebPage::initializeInjectedBundleUIClient): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::injectedBundleUIClient): Updated return type.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm: Added #include that became
+        necessary.
+
 2014-04-06  Dan Bernstein  <mitz@apple.com>
 
         Clean up WKGestureTypes.h

@@ -35,6 +35,7 @@
 #import "WKString.h"
 #import "WKStringCF.h"
 #import <WebCore/AXObjectCache.h>
+#import <WebCore/Document.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>

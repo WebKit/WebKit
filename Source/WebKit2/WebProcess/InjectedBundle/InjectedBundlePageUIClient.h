@@ -27,6 +27,7 @@
 #define InjectedBundlePageUIClient_h
 
 #include "APIClient.h"
+#include "APIInjectedBundlePageUIClient.h"
 #include "WKBundlePage.h"
 #include "WebEvent.h"
 #include <WebCore/RenderSnapshottedPlugIn.h>
@@ -52,31 +53,32 @@ class WebFrame;
 class WebPage;
 class WebSecurityOrigin;
 
-class InjectedBundlePageUIClient : public API::Client<WKBundlePageUIClientBase> {
+class InjectedBundlePageUIClient : public API::Client<WKBundlePageUIClientBase>, public API::InjectedBundle::PageUIClient {
 public:
-    void willAddMessageToConsole(WebPage*, const String& message, int32_t lineNumber);
-    void willSetStatusbarText(WebPage*, const String&);
-    void willRunJavaScriptAlert(WebPage*, const String&, WebFrame*);
-    void willRunJavaScriptConfirm(WebPage*, const String&, WebFrame*);
-    void willRunJavaScriptPrompt(WebPage*, const String&, const String&, WebFrame*);
-    void mouseDidMoveOverElement(WebPage*, const WebCore::HitTestResult&, WebEvent::Modifiers, RefPtr<API::Object>& userData);
-    void pageDidScroll(WebPage*);
+    explicit InjectedBundlePageUIClient(const WKBundlePageUIClientBase*);
 
-    String shouldGenerateFileForUpload(WebPage*, const String& originalFilePath);
-    String generateFileForUpload(WebPage*, const String& originalFilePath);
+    void willAddMessageToConsole(WebPage*, const String& message, int32_t lineNumber) override;
+    void willSetStatusbarText(WebPage*, const String&) override;
+    void willRunJavaScriptAlert(WebPage*, const String&, WebFrame*) override;
+    void willRunJavaScriptConfirm(WebPage*, const String&, WebFrame*) override;
+    void willRunJavaScriptPrompt(WebPage*, const String&, const String&, WebFrame*) override;
+    void mouseDidMoveOverElement(WebPage*, const WebCore::HitTestResult&, WebEvent::Modifiers, RefPtr<API::Object>& userData) override;
+    void pageDidScroll(WebPage*) override;
+
+    String shouldGenerateFileForUpload(WebPage*, const String& originalFilePath) override;
+    String generateFileForUpload(WebPage*, const String& originalFilePath) override;
     
-    WKBundlePageUIElementVisibility statusBarIsVisible(WebPage*);
-    WKBundlePageUIElementVisibility menuBarIsVisible(WebPage*);
-    WKBundlePageUIElementVisibility toolbarsAreVisible(WebPage*);
+    UIElementVisibility statusBarIsVisible(WebPage*) override;
+    UIElementVisibility menuBarIsVisible(WebPage*) override;
+    UIElementVisibility toolbarsAreVisible(WebPage*) override;
 
-    void didReachApplicationCacheOriginQuota(WebPage*, WebSecurityOrigin*, int64_t totalBytesNeeded);
-    uint64_t didExceedDatabaseQuota(WebPage*, WebSecurityOrigin*, const String& databaseName, const String& databaseDisplayName, uint64_t currentQuotaBytes, uint64_t currentOriginUsageBytes, uint64_t currentDatabaseUsageBytes, uint64_t expectedUsageBytes);
+    void didReachApplicationCacheOriginQuota(WebPage*, WebSecurityOrigin*, int64_t totalBytesNeeded) override;
+    uint64_t didExceedDatabaseQuota(WebPage*, WebSecurityOrigin*, const String& databaseName, const String& databaseDisplayName, uint64_t currentQuotaBytes, uint64_t currentOriginUsageBytes, uint64_t currentDatabaseUsageBytes, uint64_t expectedUsageBytes) override;
 
-    String plugInStartLabelTitle(const String& mimeType) const;
-    String plugInStartLabelSubtitle(const String& mimeType) const;
-    String plugInExtraStyleSheet() const;
-    String plugInExtraScript() const;
-
+    String plugInStartLabelTitle(const String& mimeType) const override;
+    String plugInStartLabelSubtitle(const String& mimeType) const override;
+    String plugInExtraStyleSheet() const override;
+    String plugInExtraScript() const override;
 };
 
 } // namespace WebKit

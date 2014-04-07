@@ -33,6 +33,7 @@
 #include "APIURLRequest.h"
 #include "InjectedBundleBackForwardList.h"
 #include "InjectedBundleNodeHandle.h"
+#include "InjectedBundlePageUIClient.h"
 #include "PageBanner.h"
 #include "WKAPICast.h"
 #include "WKArray.h"
@@ -98,7 +99,7 @@ void WKBundlePageSetPolicyClient(WKBundlePageRef pageRef, WKBundlePagePolicyClie
 
 void WKBundlePageSetUIClient(WKBundlePageRef pageRef, WKBundlePageUIClientBase* wkClient)
 {
-    toImpl(pageRef)->initializeInjectedBundleUIClient(wkClient);
+    toImpl(pageRef)->setInjectedBundleUIClient(std::make_unique<InjectedBundlePageUIClient>(wkClient));
 }
 
 void WKBundlePageSetFullScreenClient(WKBundlePageRef pageRef, WKBundlePageFullScreenClientBase* wkClient)

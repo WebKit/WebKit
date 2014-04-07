@@ -26,6 +26,7 @@
 #ifndef WebPage_h
 #define WebPage_h
 
+#include "APIInjectedBundlePageUIClient.h"
 #include "APIObject.h"
 #include "DrawingArea.h"
 #include "FindController.h"
@@ -38,7 +39,6 @@
 #include "InjectedBundlePageLoaderClient.h"
 #include "InjectedBundlePagePolicyClient.h"
 #include "InjectedBundlePageResourceLoadClient.h"
-#include "InjectedBundlePageUIClient.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "TapHighlightController.h"
@@ -115,6 +115,7 @@ namespace IPC {
 }
 
 namespace WebCore {
+    class DocumentLoader;
     class GraphicsContext;
     class Frame;
     class FrameView;
@@ -283,7 +284,7 @@ public:
     void initializeInjectedBundleLoaderClient(WKBundlePageLoaderClientBase*);
     void initializeInjectedBundlePolicyClient(WKBundlePagePolicyClientBase*);
     void initializeInjectedBundleResourceLoadClient(WKBundlePageResourceLoadClientBase*);
-    void initializeInjectedBundleUIClient(WKBundlePageUIClientBase*);
+    void setInjectedBundleUIClient(std::unique_ptr<API::InjectedBundle::PageUIClient>);
 #if ENABLE(FULLSCREEN_API)
     void initializeInjectedBundleFullScreenClient(WKBundlePageFullScreenClientBase*);
 #endif
@@ -297,7 +298,7 @@ public:
     InjectedBundlePageLoaderClient& injectedBundleLoaderClient() { return m_loaderClient; }
     InjectedBundlePagePolicyClient& injectedBundlePolicyClient() { return m_policyClient; }
     InjectedBundlePageResourceLoadClient& injectedBundleResourceLoadClient() { return m_resourceLoadClient; }
-    InjectedBundlePageUIClient& injectedBundleUIClient() { return m_uiClient; }
+    API::InjectedBundle::PageUIClient& injectedBundleUIClient() { return *m_uiClient.get(); }
     InjectedBundlePageDiagnosticLoggingClient& injectedBundleDiagnosticLoggingClient() { return m_logDiagnosticMessageClient; }
 #if ENABLE(FULLSCREEN_API)
     InjectedBundlePageFullScreenClient& injectedBundleFullScreenClient() { return m_fullScreenClient; }
@@ -1076,7 +1077,7 @@ private:
     InjectedBundlePageLoaderClient m_loaderClient;
     InjectedBundlePagePolicyClient m_policyClient;
     InjectedBundlePageResourceLoadClient m_resourceLoadClient;
-    InjectedBundlePageUIClient m_uiClient;
+    std::unique_ptr<API::InjectedBundle::PageUIClient> m_uiClient;
 #if ENABLE(FULLSCREEN_API)
     InjectedBundlePageFullScreenClient m_fullScreenClient;
 #endif
