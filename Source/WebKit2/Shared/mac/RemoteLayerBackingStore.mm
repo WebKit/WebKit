@@ -29,6 +29,8 @@
 #import "ArgumentCoders.h"
 #import "MachPort.h"
 #import "PlatformCALayerRemote.h"
+#import "RemoteLayerBackingStoreCollection.h"
+#import "RemoteLayerTreeContext.h"
 #import "ShareableBitmap.h"
 #import "WebCoreArgumentCoders.h"
 #import <QuartzCore/QuartzCore.h>
@@ -53,15 +55,23 @@ using namespace WebCore;
 
 namespace WebKit {
 
-RemoteLayerBackingStore::RemoteLayerBackingStore()
+RemoteLayerBackingStore::RemoteLayerBackingStore(RemoteLayerTreeContext* context)
     : m_layer(nullptr)
     , m_isOpaque(false)
+    , m_volatility(RemoteLayerBackingStore::Volatility::NonVolatile)
+    , m_context(context)
+    , m_lastDisplayTime(std::chrono::steady_clock::time_point::min())
 {
+    if (m_context)
+        m_context->backingStoreWasCreated(this);
 }
 
 RemoteLayerBackingStore::~RemoteLayerBackingStore()
 {
     clearBackingStore();
+
+    if (m_context)
+        m_context->backingStoreWillBeDestroyed(this);
 }
 
 void RemoteLayerBackingStore::ensureBackingStore(PlatformCALayerRemote* layer, IntSize size, float scale, bool acceleratesDrawing, bool isOpaque)
@@ -106,9 +116,9 @@ void RemoteLayerBackingStore::encode(IPC::ArgumentEncoder& encoder) const
         encoder << IPC::MachPort(port, MACH_MSG_TYPE_MOVE_SEND);
         return;
     }
-#else
-    ASSERT(!m_acceleratesDrawing);
 #endif
+
+    ASSERT(!m_acceleratesDrawing);
 
     ShareableBitmap::Handle handle;
     m_frontBuffer->createHandle(handle);
@@ -138,9 +148,9 @@ bool RemoteLayerBackingStore::decode(IPC::ArgumentDecoder& decoder, RemoteLayerB
         mach_port_deallocate(mach_task_self(), machPort.port());
         return true;
     }
-#else
-    ASSERT(!result.m_acceleratesDrawing);
 #endif
+
+    ASSERT(!result.m_acceleratesDrawing);
 
     ShareableBitmap::Handle handle;
     if (!decoder.decode(handle))
@@ -164,16 +174,9 @@ bool RemoteLayerBackingStore::display()
 {
     ASSERT(!m_frontContextPendingFlush);
 
-    if (!m_layer)
-        return false;
+    m_lastDisplayTime = std::chrono::steady_clock::now();
 
-    // If we previously were drawsContent=YES, and now are not, we need
-    // to note that our backing store has been cleared.
-    if (!m_layer->owner() || !m_layer->owner()->platformCALayerDrawsContent()) {
-        bool previouslyDrewContents = hasFrontBuffer();
-        clearBackingStore();
-        return previouslyDrewContents;
-    }
+    setVolatility(Volatility::NonVolatile);
 
     if (m_dirtyRegion.isEmpty() || m_size.isEmpty())
         return false;
@@ -357,5 +360,42 @@ void RemoteLayerBackingStore::flush()
         m_frontContextPendingFlush = nullptr;
     }
 }
+
+#if USE(IOSURFACE)
+bool RemoteLayerBackingStore::setVolatility(Volatility volatility)
+{
+    if (m_volatility == volatility)
+        return true;
+
+    bool wantsVolatileFrontBuffer = volatility == Volatility::AllBuffersVolatile;
+    bool wantsVolatileBackBuffer = volatility == Volatility::AllBuffersVolatile || volatility == Volatility::BackBufferVolatile;
+
+    // If either surface is in-use and would become volatile, don't make any changes.
+    if (wantsVolatileFrontBuffer && m_frontSurface && m_frontSurface->isInUse())
+        return false;
+    if (wantsVolatileBackBuffer && m_backSurface && m_backSurface->isInUse())
+        return false;
+
+    if (m_frontSurface) {
+        IOSurface::SurfaceState previousState = m_frontSurface->setIsVolatile(wantsVolatileFrontBuffer);
+
+        // Becoming non-volatile and the front buffer was purged, so we need to repaint.
+        if (!wantsVolatileFrontBuffer && (previousState == IOSurface::SurfaceState::Empty))
+            setNeedsDisplay();
+    }
+
+    if (m_backSurface)
+        m_backSurface->setIsVolatile(wantsVolatileBackBuffer);
+
+    m_volatility = volatility;
+
+    return true;
+}
+#else
+bool RemoteLayerBackingStore::setVolatility(Volatility)
+{
+    return true;
+}
+#endif
 
 } // namespace WebKit

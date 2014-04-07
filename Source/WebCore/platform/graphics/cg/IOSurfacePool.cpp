@@ -130,7 +130,7 @@ PassRefPtr<IOSurface> IOSurfacePool::takeSurface(IntSize size, ColorSpace colorS
 
         didRemoveSurface(surface.get(), false);
 
-        surface->setIsPurgeable(false);
+        surface->setIsVolatile(false);
 
         DUMP_POOL_STATISTICS();
         return surface.release();
@@ -147,7 +147,7 @@ PassRefPtr<IOSurface> IOSurfacePool::takeSurface(IntSize size, ColorSpace colorS
         m_inUseSurfaces.remove(surfaceIter);
         didRemoveSurface(surface.get(), true);
 
-        surface->setIsPurgeable(false);
+        surface->setIsVolatile(false);
 
         DUMP_POOL_STATISTICS();
         return surface.release();
@@ -273,7 +273,7 @@ bool IOSurfacePool::markOlderSurfacesPurgeable()
             continue;
         }
 
-        surfaceAndDetails.key->setIsPurgeable(true);
+        surfaceAndDetails.key->setIsVolatile(true);
         surfaceAndDetails.value.hasMarkedPurgeable = true;
     }
 
@@ -326,7 +326,7 @@ void IOSurfacePool::showPoolStatistics()
             totalSurfaces++;
             queueSize += surfaceBytes;
 
-            if (surface->isPurgeable())
+            if (surface->isVolatile())
                 queuePurgeableSize += surfaceBytes;
         }
 

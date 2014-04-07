@@ -362,7 +362,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 
     RefPtr<IOSurface> snapshot = ViewSnapshotStore::shared().snapshotAndRenderTreeSize(targetItem).first;
 
-    if (snapshot && snapshot->setIsPurgeable(false) == IOSurface::SurfaceState::Valid) {
+    if (snapshot && snapshot->setIsVolatile(false) == IOSurface::SurfaceState::Valid) {
         m_currentSwipeSnapshotSurface = snapshot;
         [m_swipeSnapshotLayer setContents:(id)snapshot->surface()];
     }
@@ -511,7 +511,7 @@ void ViewGestureController::removeSwipeSnapshot()
         return;
 
     if (m_currentSwipeSnapshotSurface)
-        m_currentSwipeSnapshotSurface->setIsPurgeable(true);
+        m_currentSwipeSnapshotSurface->setIsVolatile(true);
     m_currentSwipeSnapshotSurface = nullptr;
 
     for (const auto& layer : m_currentSwipeLiveLayers)

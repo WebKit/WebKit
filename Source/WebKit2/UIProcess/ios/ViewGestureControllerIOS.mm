@@ -157,7 +157,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     m_snapshotView = adoptNS([[UIView alloc] initWithFrame:[m_liveSwipeView frame]]);
     if (snapshot) {
 #if USE(IOSURFACE)
-        if (snapshot->setIsPurgeable(false) == IOSurface::SurfaceState::Valid) {
+        if (snapshot->setIsVolatile(false) == IOSurface::SurfaceState::Valid) {
             [m_snapshotView layer].contents = (id)snapshot->surface();
             m_currentSwipeSnapshotSurface = snapshot;
         }
@@ -264,7 +264,7 @@ void ViewGestureController::removeSwipeSnapshot()
     
 #if USE(IOSURFACE)
     if (m_currentSwipeSnapshotSurface)
-        m_currentSwipeSnapshotSurface->setIsPurgeable(true);
+        m_currentSwipeSnapshotSurface->setIsVolatile(true);
     m_currentSwipeSnapshotSurface = nullptr;
 #endif
     

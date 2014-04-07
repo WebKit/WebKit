@@ -27,6 +27,7 @@
 #define RemoteLayerTreeContext_h
 
 #include "LayerTreeContext.h"
+#include "RemoteLayerBackingStoreCollection.h"
 #include "RemoteLayerTreeTransaction.h"
 #include "WebPage.h"
 #include <WebCore/GraphicsLayerFactory.h>
@@ -50,6 +51,9 @@ public:
     void outOfTreeLayerWasAdded(WebCore::GraphicsLayer*);
     void outOfTreeLayerWillBeRemoved(WebCore::GraphicsLayer*);
 
+    void backingStoreWasCreated(RemoteLayerBackingStore*);
+    void backingStoreWillBeDestroyed(RemoteLayerBackingStore*);
+
     LayerHostingMode layerHostingMode() const { return m_webPage->layerHostingMode(); }
 
     void flushOutOfTreeLayers();
@@ -60,19 +64,22 @@ public:
 
     void willStartAnimationOnLayer(PlatformCALayerRemote*);
 
+    RemoteLayerBackingStoreCollection& backingStoreCollection() { return m_backingStoreCollection; }
+
 private:
     // WebCore::GraphicsLayerFactory
     virtual std::unique_ptr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient*) override;
 
     WebPage* m_webPage;
 
-    RefPtr<PlatformCALayerRemote> m_rootLayer;
     Vector<WebCore::GraphicsLayer*> m_outOfTreeLayers;
 
     Vector<RemoteLayerTreeTransaction::LayerCreationProperties> m_createdLayers;
     Vector<WebCore::GraphicsLayer::PlatformLayerID> m_destroyedLayers;
-    
+
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, PlatformCALayerRemote*> m_layersAwaitingAnimationStart;
+
+    RemoteLayerBackingStoreCollection m_backingStoreCollection;
 };
 
 } // namespace WebKit

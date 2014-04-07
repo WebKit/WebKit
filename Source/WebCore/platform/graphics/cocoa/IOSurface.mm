@@ -158,7 +158,7 @@ IOSurface::SurfaceState IOSurface::state() const
 #endif
 }
 
-bool IOSurface::isPurgeable() const
+bool IOSurface::isVolatile() const
 {
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     uint32_t previousState = 0;
@@ -170,17 +170,17 @@ bool IOSurface::isPurgeable() const
 #endif
 }
 
-IOSurface::SurfaceState IOSurface::setIsPurgeable(bool isPurgeable)
+IOSurface::SurfaceState IOSurface::setIsVolatile(bool isVolatile)
 {
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     uint32_t previousState = 0;
-    IOReturn ret = IOSurfaceSetPurgeable(m_surface.get(), isPurgeable ? kIOSurfacePurgeableVolatile : kIOSurfacePurgeableNonVolatile, &previousState);
+    IOReturn ret = IOSurfaceSetPurgeable(m_surface.get(), isVolatile ? kIOSurfacePurgeableVolatile : kIOSurfacePurgeableNonVolatile, &previousState);
     ASSERT_UNUSED(ret, ret == kIOReturnSuccess);
 
     if (previousState == kIOSurfacePurgeableEmpty)
         return IOSurface::SurfaceState::Empty;
 #else
-    UNUSED_PARAM(isPurgeable);
+    UNUSED_PARAM(isVolatile);
 #endif
 
     return IOSurface::SurfaceState::Valid;

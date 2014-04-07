@@ -222,8 +222,9 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& e
         encoder << timeOffset;
 
     if (changedProperties & BackingStoreChanged) {
-        encoder << backingStore->hasFrontBuffer();
-        if (backingStore->hasFrontBuffer())
+        bool hasFrontBuffer = backingStore && backingStore->hasFrontBuffer();
+        encoder << hasFrontBuffer;
+        if (hasFrontBuffer)
             encoder << *backingStore;
     }
 
@@ -384,12 +385,13 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
         if (!decoder.decode(hasFrontBuffer))
             return false;
         if (hasFrontBuffer) {
-            std::unique_ptr<RemoteLayerBackingStore> backingStore = std::make_unique<RemoteLayerBackingStore>();
+            std::unique_ptr<RemoteLayerBackingStore> backingStore = std::make_unique<RemoteLayerBackingStore>(nullptr);
             if (!decoder.decode(*backingStore))
                 return false;
             
             result.backingStore = std::move(backingStore);
-        }
+        } else
+            result.backingStore = nullptr;
     }
 
     if (result.changedProperties & FiltersChanged) {

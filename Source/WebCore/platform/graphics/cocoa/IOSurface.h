@@ -58,14 +58,14 @@ public:
         Empty
     };
 
-    // Querying purgeability state can be expensive, so in cases where the surface is
-    // going to be used immediately, use the return value of setIsPurgeable to
-    // determine whether the data was purged, instead of first calling state() or isPurgeable().
+    // Querying volatility can be expensive, so in cases where the surface is
+    // going to be used immediately, use the return value of setIsVolatile to
+    // determine whether the data was purged, instead of first calling state() or isVolatile().
     SurfaceState state() const;
-    bool isPurgeable() const;
+    bool isVolatile() const;
 
-    // setIsPurgeable only has an effect on iOS and OS 10.9 and above.
-    SurfaceState setIsPurgeable(bool);
+    // setIsVolatile only has an effect on iOS and OS 10.9 and above.
+    SurfaceState setIsVolatile(bool);
 
     IntSize size() const { return m_size; }
     size_t totalBytes() const { return m_totalBytes; }

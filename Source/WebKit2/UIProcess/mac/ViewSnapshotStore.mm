@@ -142,7 +142,7 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy)
 
 #if USE(IOSURFACE)
     snapshot.surface = createIOSurfaceFromImage(snapshotImage.get());
-    snapshot.surface->setIsPurgeable(true);
+    snapshot.surface->setIsVolatile(true);
 #else
     snapshot.image = snapshotImage;
 #endif

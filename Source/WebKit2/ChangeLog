@@ -1,3 +1,94 @@
+2014-04-07  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS WebKit2] Make back-buffers purgeable when possible
+        https://bugs.webkit.org/show_bug.cgi?id=131213
+        <rdar://problem/15373906>
+
+        Reviewed by Simon Fraser.
+
+        We should make back-buffers volatile when their owning
+        layer falls out of use (either stops being repainted or
+        is unparented), as they are inherently recreatable.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        (WebKit::RemoteLayerBackingStore::volatility):
+        (WebKit::RemoteLayerBackingStore::lastDisplayTime):
+        Add storage and a getter for the backing store's last paint time.
+        Add setter/getter for volatility of backing store.
+        Add RemoteLayerTreeContext param to constructor.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::RemoteLayerBackingStore):
+        (WebKit::RemoteLayerBackingStore::~RemoteLayerBackingStore):
+        Inform the RemoteLayerTreeContext when backing store
+        is created and destroyed. Since we only have a Context in
+        the Web process, this will only happen there.
+
+        (WebKit::RemoteLayerBackingStore::encode):
+        (WebKit::RemoteLayerBackingStore::decode):
+        Move some assertions out of #else blocks which are preceded by returns.
+
+        (WebKit::RemoteLayerBackingStore::display):
+        Update the last display time.
+        If the backing store was volatile, make it non-volatile.
+
+        (WebKit::RemoteLayerBackingStore::setVolatility):
+        Mark the relevant surfaces as volatile or not.
+        setVolatility:
+            - fails and returns false if any surfaces weren't marked
+              volatile because they were in use
+            - marks the whole backing store for repaint if the front
+              surface was purged
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        Make it possible to remove the RemoteLayerBackingStore on layers
+        that went from drawing contents to not drawing contents.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshotStore::recordSnapshot):
+        Adopt the new names from WebCore.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::recursiveBuildTransaction):
+        Clear the backing store if the layer doesn't want to draw contents anymore.
+
+        (WebKit::PlatformCALayerRemote::ensureBackingStore):
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        (WebKit::RemoteLayerTreeContext::backingStoreCollection):
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::RemoteLayerTreeContext):
+        (WebKit::RemoteLayerTreeContext::backingStoreWasCreated):
+        (WebKit::RemoteLayerTreeContext::backingStoreWillBeDestroyed):
+        Keep a RemoteLayerBackingStoreCollection, which just keeps track
+        of all backing store (even unparented) created for layers in a
+        particular context. Forward backing store creation/deletion to it.
+        Remove a unused m_rootLayer member.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        If any layers had backing store changes, start the timer
+        on the RemoteLayerBackingStoreCollection that will mark them
+        purgeable once they are no longer needed.
+
+        * Shared/mac/RemoteLayerBackingStoreCollection.mm:
+        * Shared/mac/RemoteLayerBackingStoreCollection.h:
+        Keep track of all backing store for our context.
+        When the timer fires, run through the backing store, finding
+        backing store that was last painted more than 1 second ago,
+        and mark them purgeable. If there was more recently-painted
+        backing store, let the timer fire again in another second;
+        otherwise, stop it.
+
 2014-04-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another build fix after r166879.

@@ -30,6 +30,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/IOSurface.h>
 #include <WebCore/Region.h>
+#include <chrono>
 
 OBJC_CLASS CALayer;
 
@@ -41,12 +42,13 @@ typedef Vector<WebCore::FloatRect, 5> RepaintRectList;
 namespace WebKit {
 
 class PlatformCALayerRemote;
+class RemoteLayerTreeContext;
 
 class RemoteLayerBackingStore {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteLayerBackingStore();
+    RemoteLayerBackingStore(RemoteLayerTreeContext*);
     ~RemoteLayerBackingStore();
 
     void ensureBackingStore(PlatformCALayerRemote*, WebCore::IntSize, float scale, bool acceleratesDrawing, bool isOpaque);
@@ -81,6 +83,17 @@ public:
 
     void flush();
 
+    enum class Volatility {
+        NonVolatile,
+        BackBufferVolatile,
+        AllBuffersVolatile
+    };
+
+    Volatility volatility() const { return m_volatility; }
+    bool setVolatility(Volatility);
+
+    std::chrono::steady_clock::time_point lastDisplayTime() const { return m_lastDisplayTime; }
+
 private:
     void drawInContext(WebCore::GraphicsContext&, CGImageRef backImage);
     void clearBackingStore();
@@ -104,7 +117,13 @@ private:
 
     bool m_acceleratesDrawing;
 
+    Volatility m_volatility;
+
     WebCore::RepaintRectList m_paintingRects;
+
+    RemoteLayerTreeContext* m_context;
+
+    std::chrono::steady_clock::time_point m_lastDisplayTime;
 };
 
 } // namespace WebKit

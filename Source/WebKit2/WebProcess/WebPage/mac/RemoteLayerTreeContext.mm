@@ -29,6 +29,7 @@
 #import "GenericCallback.h"
 #import "GraphicsLayerCARemote.h"
 #import "PlatformCALayerRemote.h"
+#import "RemoteLayerBackingStoreCollection.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "WebPage.h"
 #import <WebCore/FrameView.h>
@@ -42,6 +43,7 @@ namespace WebKit {
 
 RemoteLayerTreeContext::RemoteLayerTreeContext(WebPage* webPage)
     : m_webPage(webPage)
+    , m_backingStoreCollection(this)
 {
 }
 
@@ -80,6 +82,16 @@ void RemoteLayerTreeContext::outOfTreeLayerWillBeRemoved(GraphicsLayer* layer)
     size_t layerIndex = m_outOfTreeLayers.find(layer);
     ASSERT(layerIndex != notFound);
     m_outOfTreeLayers.remove(layerIndex);
+}
+
+void RemoteLayerTreeContext::backingStoreWasCreated(RemoteLayerBackingStore* backingStore)
+{
+    m_backingStoreCollection.backingStoreWasCreated(backingStore);
+}
+
+void RemoteLayerTreeContext::backingStoreWillBeDestroyed(RemoteLayerBackingStore* backingStore)
+{
+    m_backingStoreCollection.backingStoreWillBeDestroyed(backingStore);
 }
 
 std::unique_ptr<GraphicsLayer> RemoteLayerTreeContext::createGraphicsLayer(GraphicsLayerClient* client)

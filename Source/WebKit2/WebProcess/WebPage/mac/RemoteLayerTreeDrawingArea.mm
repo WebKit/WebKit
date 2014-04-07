@@ -29,6 +29,7 @@
 #import "DrawingAreaProxyMessages.h"
 #import "GraphicsLayerCARemote.h"
 #import "PlatformCALayerRemote.h"
+#import "RemoteLayerBackingStoreCollection.h"
 #import "RemoteLayerTreeContext.h"
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #import "RemoteScrollingCoordinator.h"
@@ -358,8 +359,15 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     m_waitingForBackingStoreSwap = true;
     m_webPage->send(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree(layerTransaction, scrollingTransaction));
 
-    for (auto& layer : layerTransaction.changedLayers())
+    bool hadAnyChangedBackingStore = false;
+    for (auto& layer : layerTransaction.changedLayers()) {
+        if (layer->properties().changedProperties & RemoteLayerTreeTransaction::LayerChanges::BackingStoreChanged)
+            hadAnyChangedBackingStore = true;
         layer->properties().resetChangedProperties();
+    }
+
+    if (hadAnyChangedBackingStore)
+        m_remoteLayerTreeContext->backingStoreCollection().schedulePurgeabilityTimer();
 }
 
 void RemoteLayerTreeDrawingArea::didUpdate()
