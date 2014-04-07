@@ -142,9 +142,6 @@ namespace WebCore {
             PseudoSingleButton,
             PseudoNoButton,
             PseudoSelection,
-            PseudoLeft,
-            PseudoRight,
-            PseudoFirst,
 #if ENABLE(FULLSCREEN_API)
             PseudoFullScreen,
             PseudoFullScreenDocument,
@@ -160,6 +157,12 @@ namespace WebCore {
             PseudoFuture,
             PseudoPast,
 #endif
+        };
+
+        enum PagePseudoClassType {
+            PagePseudoClassFirst = 1,
+            PagePseudoClassLeft,
+            PagePseudoClassRight,
         };
 
         enum MarginBoxType {
@@ -200,6 +203,7 @@ namespace WebCore {
         const AtomicString& argument() const { return m_hasRareData ? m_data.m_rareData->m_argument : nullAtom; }
         const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.m_rareData->m_selectorList.get() : 0; }
 
+        void setPagePseudoType(PagePseudoClassType pagePseudoType) { m_pseudoType = pagePseudoType; }
         void setValue(const AtomicString&);
         void setAttribute(const QualifiedName&, bool isCaseInsensitive);
         void setArgument(const AtomicString&);
@@ -207,6 +211,8 @@ namespace WebCore {
 
         bool parseNth() const;
         bool matchNth(int count) const;
+
+        PagePseudoClassType pagePseudoClassType() const { ASSERT(m_match == PagePseudoClass); return static_cast<PagePseudoClassType>(m_pseudoType); }
 
         bool matchesPseudoElement() const;
         bool isUnknownPseudoElement() const;

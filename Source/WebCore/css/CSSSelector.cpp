@@ -123,16 +123,14 @@ unsigned CSSSelector::specificityForPage() const
             s += tagQName().localName() == starAtom ? 0 : 4;
             break;
         case PagePseudoClass:
-            switch (component->pseudoType()) {
-            case PseudoFirst:
+            switch (component->pagePseudoClassType()) {
+            case PagePseudoClassFirst:
                 s += 2;
                 break;
-            case PseudoLeft:
-            case PseudoRight:
+            case PagePseudoClassLeft:
+            case PagePseudoClassRight:
                 s += 1;
                 break;
-            default:
-                ASSERT_NOT_REACHED();
             }
             break;
         default:
@@ -230,9 +228,6 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
     case PseudoDoubleButton:
     case PseudoSingleButton:
     case PseudoNoButton:
-    case PseudoFirst:
-    case PseudoLeft:
-    case PseudoRight:
     case PseudoInRange:
     case PseudoOutOfRange:
     case PseudoUserAgentCustomElement:
@@ -572,18 +567,16 @@ String CSSSelector::selectorText(const String& rightSide) const
                 str.append(']');
             }
         } else if (cs->m_match == CSSSelector::PagePseudoClass) {
-            switch (cs->pseudoType()) {
-            case PseudoFirst:
+            switch (cs->pagePseudoClassType()) {
+            case PagePseudoClassFirst:
                 str.appendLiteral(":first");
                 break;
-            case PseudoLeft:
+            case PagePseudoClassLeft:
                 str.appendLiteral(":left");
                 break;
-            case PseudoRight:
+            case PagePseudoClassRight:
                 str.appendLiteral(":right");
                 break;
-            default:
-                ASSERT_NOT_REACHED();
             }
         }
 

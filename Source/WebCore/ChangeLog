@@ -1,5 +1,29 @@
 2014-04-06  Benjamin Poulain  <benjamin@webkit.org>
 
+        Move the PseudoPageClass types out of the pseudo element/class mix
+        https://bugs.webkit.org/show_bug.cgi?id=131284
+
+        Reviewed by Darin Adler.
+
+        Some more cleanup of Selector's pseudo types. This patch moves the page pseudo
+        class types into their own enumeration (PagePseudoClassType).
+
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::parsePagePseudoSelector):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::specificityForPage):
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::CSSSelector::selectorText):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::setPagePseudoType):
+        (WebCore::CSSSelector::pagePseudoClassType):
+        * css/PageRuleCollector.cpp:
+        (WebCore::checkPageSelectorComponents):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::SelectorCodeGenerator):
+
+2014-04-06  Benjamin Poulain  <benjamin@webkit.org>
+
         CSS JIT: add support for :last-child and :only-child
         https://bugs.webkit.org/show_bug.cgi?id=131283
 

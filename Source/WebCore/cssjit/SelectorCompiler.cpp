@@ -391,9 +391,14 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
         case CSSSelector::Set:
             fragment.attributes.append(AttributeMatchingInfo(selector, true));
             break;
-        case CSSSelector::Unknown:
-        case CSSSelector::PseudoElement:
         case CSSSelector::PagePseudoClass:
+            // Pseudo page class are only relevant for style resolution, they are ignored for matching.
+            break;
+        case CSSSelector::Unknown:
+            ASSERT_NOT_REACHED();
+            m_functionType = FunctionType::CannotMatchAnything;
+            return;
+        case CSSSelector::PseudoElement:
             goto CannotHandleSelector;
         }
 
