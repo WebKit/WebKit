@@ -1,3 +1,16 @@
+2014-04-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Hang in debuggable application after receiving WIRPermissionDenied
+        https://bugs.webkit.org/show_bug.cgi?id=131321
+
+        Reviewed by Mark Rowe.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::xpcConnectionReceivedMessage):
+        Avoid attempting to take the same lock twice. Move the received message
+        lock grab after the WIRPermissionDenied branch, which takes the lock
+        inside RemoteInspector::stop.
+
 2014-04-07  Filip Pizlo  <fpizlo@apple.com>
 
         Make it possible to disable some of the FTL's more interesting features

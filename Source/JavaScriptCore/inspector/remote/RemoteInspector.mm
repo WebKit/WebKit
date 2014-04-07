@@ -239,12 +239,12 @@ void RemoteInspector::setupXPCConnectionIfNeeded()
 
 void RemoteInspector::xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*, NSString *messageName, NSDictionary *userInfo)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
-
     if ([messageName isEqualToString:WIRPermissionDenied]) {
         stop();
         return;
     }
+
+    std::lock_guard<std::mutex> lock(m_mutex);
 
     if ([messageName isEqualToString:WIRSocketDataMessage])
         receivedDataMessage(userInfo);
