@@ -1,3 +1,9 @@
+2014-04-07  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the Mac build.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+
 2014-04-07  Brady Eidson  <beidson@apple.com>
 
         Handle clicks on DataDetectors UI for scanned phone numbers

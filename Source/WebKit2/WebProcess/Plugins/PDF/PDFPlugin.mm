@@ -71,6 +71,7 @@
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PluginData.h>
 #import <WebCore/PluginDocument.h>
+#import <WebCore/RenderBoxModelObject.h>
 #import <WebCore/ScrollbarTheme.h>
 #import <WebCore/UUID.h>
 #import <WebKitSystemInterface.h>
