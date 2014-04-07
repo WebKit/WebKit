@@ -759,9 +759,6 @@ webkit.org/b/116957 media/track/track-automatic-subtitles.html [ Timeout ]
 webkit.org/b/116958 http/tests/navigation/scrollstate-after-http-equiv-refresh.html [ Timeout ]
 webkit.org/b/116958 http/tests/navigation/scrollstate-after-location-reload.html [ Timeout ]
 
-# These tests time out after the FTL merge
-webkit.org/b/119254 fast/workers/worker-call.html [ Timeout ]
-
 webkit.org/b/120682 inspector-protocol/page/archive.html [ Timeout ]
 
 webkit.org/b/122571 http/tests/inspector-protocol/access-inspected-object.html [ Timeout Pass ]
@@ -916,6 +913,8 @@ webkit.org/b/53986 svg/text/caret-in-svg-text.xhtml [ Failure ]
 
 # This port doesn't have a global history delegate yet
 Bug(GTK) http/tests/globalhistory [ Failure ]
+Bug(GTK) http/tests/globalhistory/history-delegate-basic-302-redirect.html [ Pass ]
+Bug(GTK) http/tests/globalhistory/history-delegate-basic-title.html [ Pass ]
 
 # Need to add functionality to DumpRenderTree to handle error pages
 Bug(GTK) fast/history/back-forward-reset-after-error-handling.html [ Failure ]
@@ -1076,8 +1075,6 @@ webkit.org/b/81320 editing/pasteboard/copy-two-pasteboard-types-both-work.html [
 # EditorClient::checkTextOfParagraph() is not implemented.
 Bug(GTK) editing/spelling/spelling-marker-description.html [ Failure ]
 
-webkit.org/b/83906 ietestcenter/css3/grid/grid-column-001.htm [ ImageOnlyFailure ]
-webkit.org/b/83909 ietestcenter/css3/grid/grid-column-003.htm [ ImageOnlyFailure ]
 webkit.org/b/83912 ietestcenter/css3/grid/grid-items-002.htm [ ImageOnlyFailure ]
 webkit.org/b/83913 ietestcenter/css3/grid/grid-items-003.htm [ ImageOnlyFailure ]
 
@@ -1205,8 +1202,6 @@ webkit.org/b/108370 editing/spelling/spelling-with-whitespace-selection.html [ S
 webkit.org/b/107118 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 
 webkit.org/b/108973 fast/css/negative-text-indent-in-inline-block.html [ ImageOnlyFailure ]
-
-webkit.org/b/109224 fast/forms/number/number-l10n-input.html [ Failure ]
 
 webkit.org/b/109353 fast/flexbox/line-clamp-link-after-ellipsis.html [ Failure ]
 
@@ -1350,15 +1345,11 @@ webkit.org/b/125348 accessibility/document-attributes.html [ Failure ]
 
 webkit.org/b/125406 fast/regions/relative-in-absolute-borders-overflow.html [ ImageOnlyFailure ]
 
-webkit.org/b/126425 fast/block/float/overhanging-tall-block.html [ Failure ]
-webkit.org/b/126425 scrollbars/scrollbar-large-overflow-rectangle.html [ Failure ]
-
 webkit.org/b/126521 accessibility/menu-list-sends-change-notification.html [ Failure ]
 
 webkit.org/b/126619 http/tests/media/video-auth.html [ Failure ]
 
 # Subpixel rendering: borders are reporting float values.
-webkit.org/b/128061 css1/units/length_units.html [ Failure ]
 webkit.org/b/128061 fast/css/bidi-override-in-anonymous-block.html [ Failure ]
 webkit.org/b/128061 fast/multicol/span/anonymous-style-inheritance.html [ Failure ]
 webkit.org/b/128061 fast/repaint/repaint-during-scroll-with-zoom.html [ Failure ]
@@ -1381,7 +1372,7 @@ webkit.org/b/128061 tables/mozilla_expected_failures/bugs/bug1055-2.html [ Failu
 
 # After webkit.org/b/123097 we flag these tests that also fail in mac
 webkit.org/b/123097 media/track/track-cue-mutable-text.html [ Failure ]
-webkit.org/b/123097 media/video-controls-captions-trackmenu-sorted.html [ Failure ]
+webkit.org/b/123097 media/video-controls-captions-trackmenu-sorted.html [ Failure Crash Pass ]
 webkit.org/b/123097 media/video-controls-toggling.html [ Timeout ]
 
 # Regressions in svg/clip-path
@@ -1487,6 +1478,12 @@ webkit.org/b/107194 inspector-protocol/indexeddb/basics.html [ Skip ]
 # Composite canvas tests with alpha failing.
 webkit.org/b/131303 fast/canvas/canvas-composite-stroke-alpha.html [ Failure ]
 webkit.org/b/131303 fast/canvas/canvas-composite-text-alpha.html [ Failure ]
+
+# Test marked in TestExpectations as failing on non-retina displays, passing on GTK port
+webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ Pass ]
+
+# Test globally skipped, passing on GTK port
+webkit.org/b/124349 fast/hidpi/image-srcset-relative-svg-canvas.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

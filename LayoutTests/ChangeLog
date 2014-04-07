@@ -1,5 +1,15 @@
 2014-04-07  Sergio Villar Senin  <svillar@igalia.com>
 
+        Unreviewed gardening for GTK.
+
+        Removed tests that have been actually passing in both release and
+        debug bots for some time.
+
+        * platform/gtk-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2014-04-07  Sergio Villar Senin  <svillar@igalia.com>
+
         Unreviewed update of GTK expectations.
 
         Canvas composite tests with alpha are not working.

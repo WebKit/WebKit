@@ -135,7 +135,6 @@ webkit.org/b/93982 storage/domstorage/storage-close-database-on-idle.html [ Time
 
 # WebKitTestRunner needs a more-complete implementation of eventSender
 # https://bugs.webkit.org/show_bug.cgi?id=42194
-webkit.org/b/42194 fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
 webkit.org/b/42194 fast/events/5056619.html [ Failure ]
 webkit.org/b/42194 http/tests/security/drag-drop-same-unique-origin.html [ Failure ]
 
@@ -404,7 +403,6 @@ webkit.org/b/122535 fast/dom/Window/open-window-min-size.html [ Failure ]
 # Unexplained failures
 Bug(GTK) editing/selection/5136696.html [ Failure ]
 Bug(GTK) editing/selection/inactive-selection.html [ Failure ]
-Bug(GTK) editing/selection/programmatic-selection-on-mac-is-directionless.html [ Failure ]
 Bug(GTK) fast/css/bidi-override-in-anonymous-block.html [ Failure ]
 Bug(GTK) fast/css/disabled-author-styles.html [ Failure ]
 Bug(GTK) fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Failure ]
@@ -414,14 +412,12 @@ Bug(GTK) fast/events/backspace-navigates-back.html [ Failure ]
 Bug(GTK) fast/events/keydown-leftright-keys.html [ Failure ]
 Bug(GTK) fast/events/keydown-numpad-keys.html [ Failure ]
 Bug(GTK) fast/events/remove-target-with-shadow-in-drag.html [ Failure ]
-Bug(GTK) fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
 Bug(GTK) fast/events/selectionchange-iframe.html [ Failure ]
 Bug(GTK) fast/forms/listbox-typeahead-cyrillic.html [ Failure ]
 Bug(GTK) fast/forms/listbox-typeahead-greek.html [ Failure ]
 Bug(GTK) fast/forms/mailto/formenctype-attribute-button-html.html [ Failure ]
 Bug(GTK) fast/forms/mailto/formenctype-attribute-input-html.html [ Failure ]
 Bug(GTK) fast/forms/select-type-ahead-non-latin.html [ Failure ]
-Bug(GTK) fast/repaint/fixed-move-after-keyboard-scroll.html [ Failure ]
 Bug(GTK) fast/ruby/nested-ruby.html [ Failure ]
 Bug(GTK) fast/ruby/ruby-beforeafter.html [ Failure ]
 Bug(GTK) fast/ruby/rubyDOM-insert-rt.html [ Failure ]
@@ -482,8 +478,6 @@ Bug(GTK) fast/css/image-rendering.html [ Failure ]
 Bug(GTK) fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 
 Bug(GTK) fast/text/descent-clip-in-scaled-page.html [ ImageOnlyFailure ]
-
-Bug(GTK) fast/frames/flattening/scrolling-in-object.html [ ImageOnlyFailure ]
 
 Bug(GTK) fast/forms/file/input-file-value.html [ Failure ]
 
