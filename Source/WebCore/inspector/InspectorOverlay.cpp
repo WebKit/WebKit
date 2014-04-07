@@ -29,7 +29,6 @@
 #include "config.h"
 
 #if ENABLE(INSPECTOR)
-
 #include "InspectorOverlay.h"
 
 #include "DocumentLoader.h"
@@ -678,8 +677,9 @@ static PassRefPtr<InspectorObject> buildObjectForElementInfo(Node* node)
     
     if (renderer->isRenderNamedFlowFragmentContainer()) {
         RenderNamedFlowFragment* region = toRenderBlockFlow(renderer)->renderNamedFlowFragment();
-        RenderFlowThread* flowThread = region->flowThread();
-        if (flowThread && flowThread->isRenderNamedFlowThread()) {
+        if (region->isValid()) {
+            RenderFlowThread* flowThread = region->flowThread();
+            ASSERT(flowThread && flowThread->isRenderNamedFlowThread());
             RefPtr<InspectorObject> regionFlowInfo = InspectorObject::create();
             regionFlowInfo->setString("name", toRenderNamedFlowThread(flowThread)->flowThreadName());
             regionFlowInfo->setArray("regions", buildObjectForCSSRegionsHighlight(region, flowThread));

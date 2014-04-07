@@ -166,7 +166,7 @@ void RenderNamedFlowFragment::updateLogicalHeight()
 
 LayoutUnit RenderNamedFlowFragment::pageLogicalHeight() const
 {
-    ASSERT(m_flowThread);
+    ASSERT(isValid());
     if (hasComputedAutoHeight() && m_flowThread->inMeasureContentLayoutPhase()) {
         ASSERT(hasAutoLogicalHeight());
         return computedAutoHeight();
@@ -178,7 +178,7 @@ LayoutUnit RenderNamedFlowFragment::pageLogicalHeight() const
 // height value for auto-height regions in the first layout phase of the parent named flow.
 LayoutUnit RenderNamedFlowFragment::maxPageLogicalHeight() const
 {
-    ASSERT(m_flowThread);
+    ASSERT(isValid());
     ASSERT(hasAutoLogicalHeight() && m_flowThread->inMeasureContentLayoutPhase());
     ASSERT(isAnonymous());
     ASSERT(parent());

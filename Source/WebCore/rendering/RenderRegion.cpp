@@ -51,7 +51,7 @@ namespace WebCore {
 RenderRegion::RenderRegion(Element& element, PassRef<RenderStyle> style, RenderFlowThread* flowThread)
     : RenderBlockFlow(element, std::move(style))
     , m_flowThread(flowThread)
-    , m_parentNamedFlowThread(0)
+    , m_parentNamedFlowThread(nullptr)
     , m_isValid(false)
 {
 }
@@ -59,7 +59,7 @@ RenderRegion::RenderRegion(Element& element, PassRef<RenderStyle> style, RenderF
 RenderRegion::RenderRegion(Document& document, PassRef<RenderStyle> style, RenderFlowThread* flowThread)
     : RenderBlockFlow(document, std::move(style))
     , m_flowThread(flowThread)
-    , m_parentNamedFlowThread(0)
+    , m_parentNamedFlowThread(nullptr)
     , m_isValid(false)
 {
 }
@@ -106,7 +106,6 @@ LayoutPoint RenderRegion::mapRegionPointIntoFlowThreadCoordinates(const LayoutPo
 
 VisiblePosition RenderRegion::positionForPoint(const LayoutPoint& point)
 {
-    ASSERT(m_flowThread);
     if (!isValid() || !m_flowThread->firstChild()) // checking for empty region blocks.
         return RenderBlock::positionForPoint(point);
 
@@ -115,13 +114,13 @@ VisiblePosition RenderRegion::positionForPoint(const LayoutPoint& point)
 
 LayoutUnit RenderRegion::pageLogicalWidth() const
 {
-    ASSERT(m_flowThread);
+    ASSERT(isValid());
     return m_flowThread->isHorizontalWritingMode() ? contentWidth() : contentHeight();
 }
 
 LayoutUnit RenderRegion::pageLogicalHeight() const
 {
-    ASSERT(m_flowThread);
+    ASSERT(isValid());
     return m_flowThread->isHorizontalWritingMode() ? contentHeight() : contentWidth();
 }
 
@@ -209,7 +208,7 @@ void RenderRegion::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
 
-    if (!m_flowThread)
+    if (!isValid())
         return;
 
     if (oldStyle && oldStyle->writingMode() != style().writingMode())
@@ -289,11 +288,6 @@ void RenderRegion::installFlowThread()
     }
 
     m_parentNamedFlowThread = &*closestFlowThreadAncestor;
-
-    // Do not take into account a region that links a flow with itself. The dependency
-    // cannot change, so it is not worth adding it to the list.
-    if (m_flowThread == m_parentNamedFlowThread)
-        m_flowThread = nullptr;
 }
 
 void RenderRegion::attachRegion()
@@ -309,7 +303,7 @@ void RenderRegion::attachRegion()
     // and we are attaching the region to the flow thread.
     installFlowThread();
     
-    if (!m_flowThread)
+    if (m_flowThread == m_parentNamedFlowThread)
         return;
 
     // Only after adding the region to the thread, the region is marked to be valid.
@@ -320,7 +314,7 @@ void RenderRegion::detachRegion()
 {
     if (m_flowThread)
         m_flowThread->removeRegionFromThread(this);
-    m_flowThread = 0;
+    m_flowThread = nullptr;
 }
 
 RenderBoxRegionInfo* RenderRegion::renderBoxRegionInfo(const RenderBox* box) const
@@ -436,9 +430,8 @@ void RenderRegion::adjustRegionBoundsFromFlowThreadPortionRect(const LayoutPoint
 
 void RenderRegion::ensureOverflowForBox(const RenderBox* box, RefPtr<RenderOverflow>& overflow, bool forceCreation)
 {
-    RenderFlowThread* flowThread = this->flowThread();
-    ASSERT(flowThread);
-    
+    ASSERT(isValid());
+
     RenderBoxRegionInfo* boxInfo = renderBoxRegionInfo(box);
     if (!boxInfo && !forceCreation)
         return;
@@ -450,7 +443,7 @@ void RenderRegion::ensureOverflowForBox(const RenderBox* box, RefPtr<RenderOverf
     
     LayoutRect borderBox = box->borderBoxRectInRegion(this);
     LayoutRect clientBox;
-    ASSERT(flowThread->objectShouldPaintInFlowRegion(box, this));
+    ASSERT(m_flowThread->objectShouldPaintInFlowRegion(box, this));
 
     if (!borderBox.isEmpty()) {
         borderBox = rectFlowPortionForBox(box, borderBox);
@@ -458,8 +451,8 @@ void RenderRegion::ensureOverflowForBox(const RenderBox* box, RefPtr<RenderOverf
         clientBox = box->clientBoxRectInRegion(this);
         clientBox = rectFlowPortionForBox(box, clientBox);
         
-        flowThread->flipForWritingModeLocalCoordinates(borderBox);
-        flowThread->flipForWritingModeLocalCoordinates(clientBox);
+        m_flowThread->flipForWritingModeLocalCoordinates(borderBox);
+        m_flowThread->flipForWritingModeLocalCoordinates(clientBox);
     }
 
     if (boxInfo) {

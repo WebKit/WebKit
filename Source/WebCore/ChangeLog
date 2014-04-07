@@ -1,3 +1,47 @@
+2014-04-06  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Use RenderRegion::isValid() before using a region
+        https://bugs.webkit.org/show_bug.cgi?id=131232
+
+        Reviewed by Andreas Kling.
+
+        RenderRegion method isValid() should be used to test whether a region
+        is good to use instead of a mix between isValid() and flowThread().
+        When the region is designed to fragment content from a parent flow thread,
+        the m_flowThread is not nullified anymore, thus ensuring the same treatment for all invalid
+        regions.
+        Covered by existing regions tests.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForElementInfo):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintMaskForTextFillBox):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::pageLogicalHeight):
+        (WebCore::RenderNamedFlowFragment::maxPageLogicalHeight):
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::getRanges):
+        (WebCore::RenderNamedFlowThread::clearRenderObjectCustomStyle):
+        (WebCore::RenderNamedFlowThread::checkRegionsWithStyling):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+        (WebCore::RenderRegion::positionForPoint):
+        (WebCore::RenderRegion::pageLogicalWidth):
+        (WebCore::RenderRegion::pageLogicalHeight):
+        (WebCore::RenderRegion::styleDidChange):
+        (WebCore::RenderRegion::installFlowThread):
+        (WebCore::RenderRegion::attachRegion):
+        (WebCore::RenderRegion::detachRegion):
+        (WebCore::RenderRegion::ensureOverflowForBox):
+        (WebCore::RenderRegion::renderBoxRegionInfo):
+
 2014-04-06  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix the debug bots after r166863

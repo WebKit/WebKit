@@ -13,9 +13,5 @@ On success it should not crash and you should see 3 rectangles painted in the fo
   (rect 100 100 50 50)
   (rect 100 100 50 100)
   (rect 100 100 50 50)
-  (rect 100 100 50 150)
-  (rect 100 100 50 100)
-  (rect 100 100 50 100)
-  (rect 100 100 50 50)
 )
 

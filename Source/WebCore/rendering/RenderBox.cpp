@@ -4553,13 +4553,12 @@ LayoutRect RenderBox::overflowRectForPaintRejection(RenderNamedFlowFragment* nam
     // cause the paint rejection algorithm to prevent them from painting when using different width regions.
     // e.g. an absolutely positioned box with bottom:0px and right:0px would have it's frameRect.x relative
     // to the flow thread, not the last region (in which it will end up because of bottom:0px)
-    if (namedFlowFragment) {
-        if (RenderFlowThread* flowThread = namedFlowFragment->flowThread()) {
-            RenderRegion* startRegion = nullptr;
-            RenderRegion* endRegion = nullptr;
-            if (flowThread->getRegionRangeForBox(this, startRegion, endRegion))
-                overflowRect.unite(namedFlowFragment->visualOverflowRectForBox(this));
-        }
+    if (namedFlowFragment && namedFlowFragment->isValid()) {
+        RenderFlowThread* flowThread = namedFlowFragment->flowThread();
+        RenderRegion* startRegion = nullptr;
+        RenderRegion* endRegion = nullptr;
+        if (flowThread->getRegionRangeForBox(this, startRegion, endRegion))
+            overflowRect.unite(namedFlowFragment->visualOverflowRectForBox(this));
     }
     
     if (!m_overflow || !usesCompositedScrolling())

@@ -589,9 +589,8 @@ void RenderBoxModelObject::paintMaskForTextFillBox(ImageBuffer* maskImage, const
         box->paint(info, LayoutPoint(scrolledPaintRect.x() - box->x(), scrolledPaintRect.y() - box->y()), rootBox.lineTop(), rootBox.lineBottom());
     } else if (isRenderNamedFlowFragmentContainer()) {
         RenderNamedFlowFragment* region = toRenderBlockFlow(this)->renderNamedFlowFragment();
-        if (!region->flowThread())
-            return;
-        region->flowThread()->layer()->paintNamedFlowThreadInsideRegion(maskImageContext, region, maskRect, maskRect.location(), PaintBehaviorForceBlackText, RenderLayer::PaintLayerTemporaryClipRects);
+        if (region->isValid())
+            region->flowThread()->layer()->paintNamedFlowThreadInsideRegion(maskImageContext, region, maskRect, maskRect.location(), PaintBehaviorForceBlackText, RenderLayer::PaintLayerTemporaryClipRects);
     } else {
         LayoutSize localOffset = isBox() ? toRenderBox(this)->locationOffset() : LayoutSize();
         paint(info, scrolledPaintRect.location() - localOffset);

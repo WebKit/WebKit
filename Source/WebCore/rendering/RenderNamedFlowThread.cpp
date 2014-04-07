@@ -725,7 +725,8 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range>>& rangeObjects, const
 
             // start position
             if (logicalTopForRenderer < logicalTopForRegion && startsAboveRegion) {
-                if (renderer->isText()) { // Text crosses region top
+                if (renderer->isText()) {
+                    // Text crosses region top
                     // for Text elements, just find the last textbox that is contained inside the region and use its start() offset as start position
                     RenderText* textRenderer = toRenderText(renderer);
                     for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
@@ -735,12 +736,14 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range>>& rangeObjects, const
                         startsAboveRegion = false;
                         break;
                     }
-                } else { // node crosses region top
+                } else {
+                    // node crosses region top
                     // for all elements, except Text, just set the start position to be before their children
                     startsAboveRegion = true;
                     range->setStart(Position(node, Position::PositionIsBeforeChildren));
                 }
-            } else { // node starts inside region
+            } else {
+                // node starts inside region
                 // for elements that start inside the region, set the start position to be before them. If we found one, we will just skip the others until
                 // the range is closed.
                 if (startsAboveRegion) {
@@ -754,7 +757,8 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range>>& rangeObjects, const
             // end position
             if (logicalBottomForRegion < logicalBottomForRenderer && (endsBelowRegion || (!endsBelowRegion && !node->isDescendantOf(lastEndNode)))) {
                 // for Text elements, just find just find the last textbox that is contained inside the region and use its start()+len() offset as end position
-                if (renderer->isText()) { // Text crosses region bottom
+                if (renderer->isText()) {
+                    // Text crosses region bottom
                     RenderText* textRenderer = toRenderText(renderer);
                     InlineTextBox* lastBox = 0;
                     for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
@@ -769,13 +773,15 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range>>& rangeObjects, const
                     }
                     endsBelowRegion = false;
                     lastEndNode = node;
-                } else { // node crosses region bottom
+                } else {
+                    // node crosses region bottom
                     // for all elements, except Text, just set the start position to be after their children
                     range->setEnd(Position(node, Position::PositionIsAfterChildren));
                     endsBelowRegion = true;
                     lastEndNode = node;
                 }
-            } else { // node ends inside region
+            } else {
+                // node ends inside region
                 // for elements that ends inside the region, set the end position to be after them
                 // allow this end position to be changed only by other elements that are not descendants of the current end node
                 if (endsBelowRegion || (!endsBelowRegion && !node->isDescendantOf(lastEndNode))) {
@@ -816,9 +822,8 @@ void RenderNamedFlowThread::clearRenderObjectCustomStyle(const RenderObject* obj
 {
     // Clear the styles for the object in the regions.
     // FIXME: Region styling is not computed only for the region range of the object so this is why we need to walk the whole chain.
-    for (auto& region : m_regionList) {
+    for (auto& region : m_regionList)
         toRenderNamedFlowFragment(region)->clearObjectStyleInRegion(object);
-    }
 }
 
 void RenderNamedFlowThread::removeFlowChildInfo(RenderObject* child)

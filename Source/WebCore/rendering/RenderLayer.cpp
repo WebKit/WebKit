@@ -439,7 +439,7 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
                     // If we just repainted a region, we must also repaint the flow thread since it is the one
                     // doing the actual painting of the flowed content.
                     RenderNamedFlowFragment* region = toRenderBlockFlow(&renderer())->renderNamedFlowFragment();
-                    if (region->flowThread())
+                    if (region->isValid())
                         region->flowThread()->layer()->repaintIncludingDescendants();
                 }
             }
@@ -3743,10 +3743,8 @@ void RenderLayer::paintLayer(GraphicsContext* context, const LayerPaintingInfo& 
         if (enclosingPaginationLayer())
             info.renderNamedFlowFragment = nullptr;
         else {
-            RenderFlowThread* flowThread = namedFlowFragment->flowThread();
-            ASSERT(flowThread);
-
-            if (!flowThread->objectShouldPaintInFlowRegion(&renderer(), namedFlowFragment))
+            ASSERT(namedFlowFragment->isValid());
+            if (!namedFlowFragment->flowThread()->objectShouldPaintInFlowRegion(&renderer(), namedFlowFragment))
                 return;
         }
     }
@@ -4820,9 +4818,8 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     // This is true as long as we clamp the range of a box to its containing block range.
     // FIXME: Fix hit testing with in-flow threads included in out-of-flow threads.
     if (hitTestLocation.region()) {
+        ASSERT(hitTestLocation.region()->isValid());
         RenderFlowThread* flowThread = hitTestLocation.region()->flowThread();
-        ASSERT(flowThread);
-
         if (!flowThread->objectShouldPaintInFlowRegion(&renderer(), hitTestLocation.region()))
             return 0;
     }
@@ -5492,6 +5489,7 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
 
     RenderFlowThread* flowThread = clipRectsContext.region ? clipRectsContext.region->flowThread() : 0;
     if (isSelfPaintingLayer() && flowThread && !renderer().isInFlowRenderFlowThread()) {
+        ASSERT(clipRectsContext.region->isValid());
         const RenderBoxModelObject& boxModelObject = toRenderBoxModelObject(renderer());
         LayoutRect layerBoundsWithVisualOverflow = clipRectsContext.region->visualOverflowRectForBox(&boxModelObject);
 
