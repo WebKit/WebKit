@@ -88,21 +88,24 @@ inline unsigned CSSSelector::specificityForOneSelector() const
     switch (m_match) {
     case Id:
         return 0x10000;
+
+    case PseudoClass:
+        // FIXME: PsuedoAny should base the specificity on the sub-selectors.
+        // See http://lists.w3.org/Archives/Public/www-style/2010Sep/0530.html
+        if (pseudoType() == PseudoNot && selectorList())
+            return selectorList()->first()->specificityForOneSelector();
+        FALLTHROUGH;
     case Exact:
     case Class:
     case Set:
     case List:
     case Hyphen:
-    case PseudoClass:
     case PseudoElement:
     case Contain:
     case Begin:
     case End:
-        // FIXME: PsuedoAny should base the specificity on the sub-selectors.
-        // See http://lists.w3.org/Archives/Public/www-style/2010Sep/0530.html
-        if (pseudoType() == PseudoNot && selectorList())
-            return selectorList()->first()->specificityForOneSelector();
         return 0x100;
+
     case Tag:
         return (tagQName().localName() != starAtom) ? 1 : 0;
     case Unknown:
@@ -140,103 +143,39 @@ unsigned CSSSelector::specificityForPage() const
     return s;
 }
 
-PseudoId CSSSelector::pseudoId(PseudoType type)
+PseudoId CSSSelector::pseudoId(PseudoElementType type)
 {
     switch (type) {
-    case PseudoFirstLine:
+    case PseudoElementFirstLine:
         return FIRST_LINE;
-    case PseudoFirstLetter:
+    case PseudoElementFirstLetter:
         return FIRST_LETTER;
-    case PseudoSelection:
+    case PseudoElementSelection:
         return SELECTION;
-    case PseudoBefore:
+    case PseudoElementBefore:
         return BEFORE;
-    case PseudoAfter:
+    case PseudoElementAfter:
         return AFTER;
-    case PseudoScrollbar:
+    case PseudoElementScrollbar:
         return SCROLLBAR;
-    case PseudoScrollbarButton:
+    case PseudoElementScrollbarButton:
         return SCROLLBAR_BUTTON;
-    case PseudoScrollbarCorner:
+    case PseudoElementScrollbarCorner:
         return SCROLLBAR_CORNER;
-    case PseudoScrollbarThumb:
+    case PseudoElementScrollbarThumb:
         return SCROLLBAR_THUMB;
-    case PseudoScrollbarTrack:
+    case PseudoElementScrollbarTrack:
         return SCROLLBAR_TRACK;
-    case PseudoScrollbarTrackPiece:
+    case PseudoElementScrollbarTrackPiece:
         return SCROLLBAR_TRACK_PIECE;
-    case PseudoResizer:
+    case PseudoElementResizer:
         return RESIZER;
-#if ENABLE(FULLSCREEN_API)
-    case PseudoFullScreen:
-        return FULL_SCREEN;
-    case PseudoFullScreenDocument:
-        return FULL_SCREEN_DOCUMENT;
-    case PseudoFullScreenAncestor:
-        return FULL_SCREEN_ANCESTOR;
-    case PseudoAnimatingFullScreenTransition:
-        return ANIMATING_FULL_SCREEN_TRANSITION;
-#endif
-    case PseudoUnknown:
-    case PseudoEmpty:
-    case PseudoFirstChild:
-    case PseudoFirstOfType:
-    case PseudoLastChild:
-    case PseudoLastOfType:
-    case PseudoOnlyChild:
-    case PseudoOnlyOfType:
-    case PseudoNthChild:
-    case PseudoNthOfType:
-    case PseudoNthLastChild:
-    case PseudoNthLastOfType:
-    case PseudoLink:
-    case PseudoVisited:
-    case PseudoAny:
-    case PseudoAnyLink:
-    case PseudoAutofill:
-    case PseudoHover:
-    case PseudoDrag:
-    case PseudoFocus:
-    case PseudoActive:
-    case PseudoChecked:
-    case PseudoEnabled:
-    case PseudoFullPageMedia:
-    case PseudoDefault:
-    case PseudoDisabled:
-    case PseudoOptional:
-    case PseudoRequired:
-    case PseudoReadOnly:
-    case PseudoReadWrite:
-    case PseudoValid:
-    case PseudoInvalid:
-    case PseudoIndeterminate:
-    case PseudoTarget:
-    case PseudoLang:
-    case PseudoNot:
-    case PseudoRoot:
-    case PseudoScope:
-    case PseudoScrollbarBack:
-    case PseudoScrollbarForward:
-    case PseudoWindowInactive:
-    case PseudoCornerPresent:
-    case PseudoDecrement:
-    case PseudoIncrement:
-    case PseudoHorizontal:
-    case PseudoVertical:
-    case PseudoStart:
-    case PseudoEnd:
-    case PseudoDoubleButton:
-    case PseudoSingleButton:
-    case PseudoNoButton:
-    case PseudoInRange:
-    case PseudoOutOfRange:
-    case PseudoUserAgentCustomElement:
-    case PseudoWebKitCustomElement:
 #if ENABLE(VIDEO_TRACK)
-    case PseudoCue:
-    case PseudoFuture:
-    case PseudoPast:
+    case PseudoElementCue:
 #endif
+    case PseudoElementUnknown:
+    case PseudoElementUserAgentCustom:
+    case PseudoElementWebKitCustom:
         return NOPSEUDO;
     }
 
@@ -244,18 +183,18 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
     return NOPSEUDO;
 }
 
-CSSSelector::PseudoType CSSSelector::parsePseudoElementType(const String& name)
+CSSSelector::PseudoElementType CSSSelector::parsePseudoElementType(const String& name)
 {
     if (name.isNull())
-        return PseudoUnknown;
+        return PseudoElementUnknown;
 
-    PseudoType type = parsePseudoElementString(*name.impl());
-    if (type == PseudoUnknown) {
+    PseudoElementType type = parsePseudoElementString(*name.impl());
+    if (type == PseudoElementUnknown) {
         if (name.startsWith("-webkit-"))
-            type = PseudoWebKitCustomElement;
+            type = PseudoElementWebKitCustom;
 
         if (name.startsWith("x-"))
-            type = PseudoUserAgentCustomElement;
+            type = PseudoElementUserAgentCustom;
     }
     return type;
 }
@@ -271,7 +210,7 @@ bool CSSSelector::operator==(const CSSSelector& other) const
             || sel1->relation() != sel2->relation()
             || sel1->m_match != sel2->m_match
             || sel1->value() != sel2->value()
-            || sel1->pseudoType() != sel2->pseudoType()
+            || sel1->m_pseudoType != sel2->m_pseudoType
             || sel1->argument() != sel2->argument()) {
             return false;
         }

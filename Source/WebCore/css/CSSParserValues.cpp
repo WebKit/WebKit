@@ -174,19 +174,19 @@ CSSParserSelector* CSSParserSelector::parsePseudoElementSelector(CSSParserString
     pseudoTypeString.lower();
     AtomicString name = pseudoTypeString;
 
-    CSSSelector::PseudoType pseudoType = CSSSelector::parsePseudoElementType(name);
-    if (pseudoType == CSSSelector::PseudoUnknown)
+    CSSSelector::PseudoElementType pseudoType = CSSSelector::parsePseudoElementType(name);
+    if (pseudoType == CSSSelector::PseudoElementUnknown)
         return nullptr;
 
     auto selector = std::make_unique<CSSParserSelector>();
     selector->m_selector->m_match = CSSSelector::PseudoElement;
-    selector->m_selector->m_pseudoType = pseudoType;
+    selector->m_selector->setPseudoElementType(pseudoType);
     selector->m_selector->setValue(name);
     return selector.release();
 }
 
 #if ENABLE(VIDEO_TRACK)
-CSSParserSelector* CSSParserSelector::parsePseudoCueFunctionSelector(const CSSParserString& functionIdentifier, Vector<std::unique_ptr<CSSParserSelector>>* parsedSelectorVector)
+CSSParserSelector* CSSParserSelector::parsePseudoElementCueFunctionSelector(const CSSParserString& functionIdentifier, Vector<std::unique_ptr<CSSParserSelector>>* parsedSelectorVector)
 {
     ASSERT_UNUSED(functionIdentifier, String(functionIdentifier) == "cue(");
 
@@ -197,7 +197,7 @@ CSSParserSelector* CSSParserSelector::parsePseudoCueFunctionSelector(const CSSPa
 
     auto selector = std::make_unique<CSSParserSelector>();
     selector->m_selector->m_match = CSSSelector::PseudoElement;
-    selector->m_selector->m_pseudoType = CSSSelector::PseudoCue;
+    selector->m_selector->setPseudoElementType(CSSSelector::PseudoElementCue);
     selector->adoptSelectorVector(*selectorVector);
     return selector.release();
 }
@@ -212,10 +212,10 @@ CSSParserSelector* CSSParserSelector::parsePseudoClassAndCompatibilityElementSel
         selector->m_selector->m_pseudoType = pseudoType.pseudoClass;
         return selector.release();
     }
-    if (pseudoType.compatibilityPseudoElement != CSSSelector::PseudoUnknown) {
+    if (pseudoType.compatibilityPseudoElement != CSSSelector::PseudoElementUnknown) {
         auto selector = std::make_unique<CSSParserSelector>();
         selector->m_selector->m_match = CSSSelector::PseudoElement;
-        selector->m_selector->m_pseudoType = pseudoType.compatibilityPseudoElement;
+        selector->m_selector->setPseudoElementType(pseudoType.compatibilityPseudoElement);
         AtomicString name = pseudoTypeString;
         selector->m_selector->setValue(name);
         return selector.release();

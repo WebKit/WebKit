@@ -5,8 +5,8 @@
 -webkit-drag
 -webkit-full-page-media
 active
-after, PseudoUnknown, PseudoAfter
-before, PseudoUnknown, PseudoBefore
+after, PseudoUnknown, PseudoElementAfter
+before, PseudoUnknown, PseudoElementBefore
 checked
 corner-present
 decrement
@@ -17,8 +17,8 @@ empty
 enabled
 end
 first-child
-first-letter, PseudoUnknown, PseudoFirstLetter
-first-line, PseudoUnknown, PseudoFirstLine
+first-letter, PseudoUnknown, PseudoElementFirstLetter
+first-line, PseudoUnknown, PseudoElementFirstLine
 first-of-type
 focus
 horizontal

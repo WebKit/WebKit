@@ -1369,8 +1369,8 @@ PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* element, const St
         return 0;
 
     unsigned colonStart = pseudoElement[0] == ':' ? (pseudoElement[1] == ':' ? 2 : 1) : 0;
-    CSSSelector::PseudoType pseudoType = CSSSelector::parsePseudoElementType(pseudoElement.substringSharingImpl(colonStart));
-    if (pseudoType == CSSSelector::PseudoUnknown && !pseudoElement.isEmpty())
+    CSSSelector::PseudoElementType pseudoType = CSSSelector::parsePseudoElementType(pseudoElement.substringSharingImpl(colonStart));
+    if (pseudoType == CSSSelector::PseudoElementUnknown && !pseudoElement.isEmpty())
         return 0;
 
     unsigned rulesToInclude = StyleResolver::AuthorCSSRules;

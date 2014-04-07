@@ -11343,9 +11343,7 @@ void CSSParser::rewriteSpecifiersWithElementName(const AtomicString& namespacePr
     if (!specifiers.isCustomPseudoElement()) {
         if (tag == anyQName())
             return;
-#if ENABLE(VIDEO_TRACK)
-        if (specifiers.pseudoType() != CSSSelector::PseudoCue)
-#endif
+        if (!specifiers.isPseudoElementCueFunction())
             specifiers.prependTagSelector(tag, tagIsForNamespaceRule);
         return;
     }
@@ -11372,11 +11370,7 @@ void CSSParser::rewriteSpecifiersWithElementName(const AtomicString& namespacePr
 
 std::unique_ptr<CSSParserSelector> CSSParser::rewriteSpecifiers(std::unique_ptr<CSSParserSelector> specifiers, std::unique_ptr<CSSParserSelector> newSpecifier)
 {
-#if ENABLE(VIDEO_TRACK)
-    if (newSpecifier->isCustomPseudoElement() || newSpecifier->pseudoType() == CSSSelector::PseudoCue) {
-#else
-    if (newSpecifier->isCustomPseudoElement()) {
-#endif
+    if (newSpecifier->isCustomPseudoElement() || newSpecifier->isPseudoElementCueFunction()) {
         // Unknown pseudo element always goes at the top of selector chain.
         newSpecifier->appendTagHistory(CSSSelector::ShadowDescendant, std::move(specifiers));
         return newSpecifier;

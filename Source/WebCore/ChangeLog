@@ -1,3 +1,67 @@
+2014-04-07  Benjamin Poulain  <benjamin@webkit.org>
+
+        Split CSS Selectors pseudo class and pseudo elements
+        https://bugs.webkit.org/show_bug.cgi?id=131295
+
+        Reviewed by Andreas Kling.
+
+        Split pseudo class and pseudo element to make it clearer what pseudo types
+        are possible for a given match type.
+
+        Pseudo Element types are separated and Pseudo Class are left in place. The Pseudo Class
+        will have to be renamed too but that will be done separately to make this change smaller.
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::rewriteSpecifiersWithElementName):
+        (WebCore::CSSParser::rewriteSpecifiers):
+        Use a method isPseudoElementCueFunction() to abstract the #ifdef out of the parser.
+
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::parsePseudoElementSelector):
+
+        (WebCore::CSSParserSelector::parsePseudoElementCueFunctionSelector):
+        Rename to specify this is for the pseudo element cue function, not the pseudo element cue.
+
+        (WebCore::CSSParserSelector::parsePseudoClassAndCompatibilityElementSelector):
+        (WebCore::CSSParserSelector::parsePseudoCueFunctionSelector): Deleted.
+        * css/CSSParserValues.h:
+        (WebCore::CSSParserSelector::isPseudoElementCueFunction):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::specificityForOneSelector):
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::CSSSelector::parsePseudoElementType):
+        (WebCore::CSSSelector::operator==):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::pseudoType):
+        (WebCore::CSSSelector::setPseudoElementType):
+        (WebCore::CSSSelector::pseudoElementType):
+        (WebCore::CSSSelector::isUnknownPseudoElement):
+        (WebCore::CSSSelector::isCustomPseudoElement):
+        (WebCore::pseudoClassIsRelativeToSiblings):
+        (WebCore::CSSSelector::isSiblingSelector):
+        * css/RuleFeature.cpp:
+        (WebCore::RuleFeatureSet::collectFeaturesFromSelector):
+        * css/RuleSet.cpp:
+        (WebCore::determinePropertyWhitelistType):
+        (WebCore::RuleSet::findBestRuleSetAndAdd):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively):
+        (WebCore::SelectorChecker::checkOne):
+        (WebCore::SelectorChecker::checkScrollbarPseudoClass):
+        (WebCore::SelectorChecker::determineLinkMatchType):
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in:
+        * css/SelectorPseudoElementTypeMap.in:
+        * css/SelectorPseudoTypeMap.h:
+        * css/makeSelectorPseudoClassAndCompatibilityElementMap.py:
+        * css/makeSelectorPseudoElementsMap.py:
+        (enumerablePseudoType):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getMatchedCSSRules):
+
+        * rendering/style/RenderStyleConstants.h:
+        All the fullscreen pseudo types are pseudo class selectors. They should not have a pseudo ID.
+
 2014-04-07  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: detect possible replay divergence from unexpected DOM event dispatches

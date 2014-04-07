@@ -119,7 +119,7 @@ static inline PropertyWhitelistType determinePropertyWhitelistType(const AddRule
         return PropertyWhitelistRegion;
 #if ENABLE(VIDEO_TRACK)
     for (const CSSSelector* component = selector; component; component = component->tagHistory()) {
-        if (component->pseudoType() == CSSSelector::PseudoCue || (component->m_match == CSSSelector::PseudoElement && component->value() == TextTrackCue::cueShadowPseudoId()))
+        if (component->m_match == CSSSelector::PseudoElement && (component->pseudoElementType() == CSSSelector::PseudoElementCue || component->value() == TextTrackCue::cueShadowPseudoId()))
             return PropertyWhitelistCue;
     }
 #else
@@ -192,7 +192,7 @@ bool RuleSet::findBestRuleSetAndAdd(const CSSSelector* component, RuleData& rule
         return true;
     }
 #if ENABLE(VIDEO_TRACK)
-    if (component->pseudoType() == CSSSelector::PseudoCue) {
+    if (component->m_match == CSSSelector::PseudoElement && component->pseudoElementType() == CSSSelector::PseudoElementCue) {
         m_cuePseudoRules.append(ruleData);
         return true;
     }

@@ -107,7 +107,7 @@ struct SelectorPseudoClassOrCompatibilityPseudoElementEntry {
 
 %}
 %struct-type
-%define initializer-suffix ,{CSSSelector::PseudoUnknown,CSSSelector::PseudoUnknown}
+%define initializer-suffix ,{CSSSelector::PseudoUnknown,CSSSelector::PseudoElementUnknown}
 %define class-name SelectorPseudoClassAndCompatibilityElementMapHash
 %omit-struct-type
 %language=C++
@@ -149,7 +149,7 @@ for line in input_file:
     keyword_definition = line.split(',')
     if len(keyword_definition) == 1:
         keyword = keyword_definition[0].strip()
-        output_file.write('"%s", {%s, CSSSelector::PseudoUnknown}\n' % (keyword, enumerablePseudoType(keyword)))
+        output_file.write('"%s", {%s, CSSSelector::PseudoElementUnknown}\n' % (keyword, enumerablePseudoType(keyword)))
     else:
         output_file.write('"%s", {CSSSelector::%s, CSSSelector::%s}\n' % (keyword_definition[0].strip(), keyword_definition[1].strip(), keyword_definition[2].strip()))
 
@@ -193,7 +193,7 @@ PseudoClassOrCompatibilityPseudoElement parsePseudoClassAndCompatibilityElementS
 
     if (entry)
         return entry->pseudoTypes;
-    return { CSSSelector::PseudoUnknown, CSSSelector::PseudoUnknown };
+    return { CSSSelector::PseudoUnknown, CSSSelector::PseudoElementUnknown };
 }
 
 } // namespace WebCore

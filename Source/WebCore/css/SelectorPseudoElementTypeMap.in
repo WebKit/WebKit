@@ -1,7 +1,7 @@
 after
 before
 #if ENABLE(VIDEO_TRACK)
-cue, PseudoWebKitCustomElement
+cue, PseudoElementWebKitCustom
 #endif
 first-letter
 first-line

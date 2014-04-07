@@ -177,7 +177,7 @@ class CSSParserSelector {
 public:
     static CSSParserSelector* parsePagePseudoSelector(const CSSParserString& pseudoTypeString);
     static CSSParserSelector* parsePseudoElementSelector(CSSParserString& pseudoTypeString);
-    static CSSParserSelector* parsePseudoCueFunctionSelector(const CSSParserString& functionIdentifier, Vector<std::unique_ptr<CSSParserSelector>>* selectorVector);
+    static CSSParserSelector* parsePseudoElementCueFunctionSelector(const CSSParserString& functionIdentifier, Vector<std::unique_ptr<CSSParserSelector>>* selectorVector);
     static CSSParserSelector* parsePseudoClassAndCompatibilityElementSelector(CSSParserString& pseudoTypeString);
 
     CSSParserSelector();
@@ -199,6 +199,15 @@ public:
     void setPseudoClassValue(const CSSParserString& pseudoClassString);
     CSSSelector::PseudoType pseudoType() const { return m_selector->pseudoType(); }
     bool isCustomPseudoElement() const { return m_selector->isCustomPseudoElement(); }
+
+    bool isPseudoElementCueFunction() const
+    {
+#if ENABLE(VIDEO_TRACK)
+        return m_selector->m_match == CSSSelector::PseudoElement && m_selector->pseudoElementType() == CSSSelector::PseudoElementCue;
+#else
+        return false;
+#endif
+    }
 
     bool isSimple() const;
     bool hasShadowDescendant() const;

@@ -1204,7 +1204,7 @@ pseudo:
 #if ENABLE_VIDEO_TRACK
     // used by ::cue(:past/:future)
     | ':' ':' CUEFUNCTION maybe_space simple_selector_list maybe_space ')' {
-        $$ = CSSParserSelector::parsePseudoCueFunctionSelector($3, $5);
+        $$ = CSSParserSelector::parsePseudoElementCueFunctionSelector($3, $5);
     }
 #endif
     // use by :-webkit-any.

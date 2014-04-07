@@ -87,8 +87,6 @@ namespace WebCore {
             PseudoLastOfType,
             PseudoOnlyChild,
             PseudoOnlyOfType,
-            PseudoFirstLine,
-            PseudoFirstLetter,
             PseudoNthChild,
             PseudoNthOfType,
             PseudoNthLastChild,
@@ -115,21 +113,10 @@ namespace WebCore {
             PseudoInvalid,
             PseudoIndeterminate,
             PseudoTarget,
-            PseudoBefore,
-            PseudoAfter,
             PseudoLang,
             PseudoNot,
-            PseudoResizer,
             PseudoRoot,
             PseudoScope,
-            PseudoScrollbar,
-            PseudoScrollbarBack,
-            PseudoScrollbarButton,
-            PseudoScrollbarCorner,
-            PseudoScrollbarForward,
-            PseudoScrollbarThumb,
-            PseudoScrollbarTrack,
-            PseudoScrollbarTrackPiece,
             PseudoWindowInactive,
             PseudoCornerPresent,
             PseudoDecrement,
@@ -141,7 +128,6 @@ namespace WebCore {
             PseudoDoubleButton,
             PseudoSingleButton,
             PseudoNoButton,
-            PseudoSelection,
 #if ENABLE(FULLSCREEN_API)
             PseudoFullScreen,
             PseudoFullScreenDocument,
@@ -150,13 +136,31 @@ namespace WebCore {
 #endif
             PseudoInRange,
             PseudoOutOfRange,
-            PseudoUserAgentCustomElement,
-            PseudoWebKitCustomElement,
 #if ENABLE(VIDEO_TRACK)
-            PseudoCue,
             PseudoFuture,
             PseudoPast,
 #endif
+        };
+
+        enum PseudoElementType {
+            PseudoElementUnknown = 0,
+            PseudoElementAfter,
+            PseudoElementBefore,
+#if ENABLE(VIDEO_TRACK)
+            PseudoElementCue,
+#endif
+            PseudoElementFirstLetter,
+            PseudoElementFirstLine,
+            PseudoElementResizer,
+            PseudoElementScrollbar,
+            PseudoElementScrollbarButton,
+            PseudoElementScrollbarCorner,
+            PseudoElementScrollbarThumb,
+            PseudoElementScrollbarTrack,
+            PseudoElementScrollbarTrackPiece,
+            PseudoElementSelection,
+            PseudoElementUserAgentCustom,
+            PseudoElementWebKitCustom,
         };
 
         enum PagePseudoClassType {
@@ -186,11 +190,12 @@ namespace WebCore {
 
         PseudoType pseudoType() const
         {
+            ASSERT(m_match == PseudoClass);
             return static_cast<PseudoType>(m_pseudoType);
         }
 
-        static PseudoType parsePseudoElementType(const String&);
-        static PseudoId pseudoId(PseudoType);
+        static PseudoElementType parsePseudoElementType(const String&);
+        static PseudoId pseudoId(PseudoElementType);
 
         // Selectors are kept in an array by CSSSelectorList. The next component of the selector is
         // the next item in the array.
@@ -203,6 +208,7 @@ namespace WebCore {
         const AtomicString& argument() const { return m_hasRareData ? m_data.m_rareData->m_argument : nullAtom; }
         const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.m_rareData->m_selectorList.get() : 0; }
 
+        void setPseudoElementType(PseudoElementType pseudoElementType) { m_pseudoType = pseudoElementType; }
         void setPagePseudoType(PagePseudoClassType pagePseudoType) { m_pseudoType = pagePseudoType; }
         void setValue(const AtomicString&);
         void setAttribute(const QualifiedName&, bool isCaseInsensitive);
@@ -212,6 +218,7 @@ namespace WebCore {
         bool parseNth() const;
         bool matchNth(int count) const;
 
+        PseudoElementType pseudoElementType() const { ASSERT(m_match == PseudoElement); return static_cast<PseudoElementType>(m_pseudoType); }
         PagePseudoClassType pagePseudoClassType() const { ASSERT(m_match == PagePseudoClass); return static_cast<PagePseudoClassType>(m_pseudoType); }
 
         bool matchesPseudoElement() const;
@@ -299,30 +306,34 @@ inline bool CSSSelector::matchesPseudoElement() const
 
 inline bool CSSSelector::isUnknownPseudoElement() const
 {
-    return m_match == PseudoElement && m_pseudoType == PseudoUnknown;
+    return m_match == PseudoElement && m_pseudoType == PseudoElementUnknown;
 }
 
 inline bool CSSSelector::isCustomPseudoElement() const
 {
-    return m_match == PseudoElement && (m_pseudoType == PseudoUserAgentCustomElement || m_pseudoType == PseudoWebKitCustomElement);
+    return m_match == PseudoElement && (m_pseudoType == PseudoElementUserAgentCustom || m_pseudoType == PseudoElementWebKitCustom);
+}
+
+static inline bool pseudoClassIsRelativeToSiblings(CSSSelector::PseudoType type)
+{
+    return type == CSSSelector::PseudoEmpty
+        || type == CSSSelector::PseudoFirstChild
+        || type == CSSSelector::PseudoFirstOfType
+        || type == CSSSelector::PseudoLastChild
+        || type == CSSSelector::PseudoLastOfType
+        || type == CSSSelector::PseudoOnlyChild
+        || type == CSSSelector::PseudoOnlyOfType
+        || type == CSSSelector::PseudoNthChild
+        || type == CSSSelector::PseudoNthOfType
+        || type == CSSSelector::PseudoNthLastChild
+        || type == CSSSelector::PseudoNthLastOfType;
 }
 
 inline bool CSSSelector::isSiblingSelector() const
 {
-    PseudoType type = pseudoType();
     return m_relation == DirectAdjacent
         || m_relation == IndirectAdjacent
-        || type == PseudoEmpty
-        || type == PseudoFirstChild
-        || type == PseudoFirstOfType
-        || type == PseudoLastChild
-        || type == PseudoLastOfType
-        || type == PseudoOnlyChild
-        || type == PseudoOnlyOfType
-        || type == PseudoNthChild
-        || type == PseudoNthOfType
-        || type == PseudoNthLastChild
-        || type == PseudoNthLastOfType;
+        || (m_match == CSSSelector::PseudoClass && pseudoClassIsRelativeToSiblings(pseudoType()));
 }
 
 inline bool CSSSelector::isAttributeSelector() const

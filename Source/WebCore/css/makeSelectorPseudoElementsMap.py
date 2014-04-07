@@ -28,7 +28,7 @@ import sys
 
 
 def enumerablePseudoType(stringPseudoType):
-    output = ['CSSSelector::Pseudo']
+    output = ['CSSSelector::PseudoElement']
 
     if stringPseudoType.endswith('('):
         stringPseudoType = stringPseudoType[:-1]
@@ -102,12 +102,12 @@ namespace WebCore {
 
 struct SelectorPseudoTypeEntry {
     const char* name;
-    CSSSelector::PseudoType type;
+    CSSSelector::PseudoElementType type;
 };
 
 %}
 %struct-type
-%define initializer-suffix ,CSSSelector::PseudoUnknown
+%define initializer-suffix ,CSSSelector::PseudoElementUnknown
 %define class-name SelectorPseudoElementTypeMapHash
 %omit-struct-type
 %language=C++
@@ -158,26 +158,26 @@ for line in input_file:
 
 output_file.write("""%%
 
-static inline CSSSelector::PseudoType parsePseudoElementString(const LChar* characters, unsigned length)
+static inline CSSSelector::PseudoElementType parsePseudoElementString(const LChar* characters, unsigned length)
 {
     if (const SelectorPseudoTypeEntry* entry = SelectorPseudoElementTypeMapHash::in_word_set(reinterpret_cast<const char*>(characters), length))
         return entry->type;
-    return CSSSelector::PseudoUnknown;
+    return CSSSelector::PseudoElementUnknown;
 }""")
 
 output_file.write("""
 
-static inline CSSSelector::PseudoType parsePseudoElementString(const UChar* characters, unsigned length)
+static inline CSSSelector::PseudoElementType parsePseudoElementString(const UChar* characters, unsigned length)
 {
     const unsigned maxKeywordLength = %s;
     LChar buffer[maxKeywordLength];
     if (length > maxKeywordLength)
-        return CSSSelector::PseudoUnknown;
+        return CSSSelector::PseudoElementUnknown;
 
     for (unsigned i = 0; i < length; ++i) {
         UChar character = characters[i];
         if (character & ~0xff)
-            return CSSSelector::PseudoUnknown;
+            return CSSSelector::PseudoElementUnknown;
 
         buffer[i] = static_cast<LChar>(character);
     }
@@ -186,7 +186,7 @@ static inline CSSSelector::PseudoType parsePseudoElementString(const UChar* char
 """ % longest_keyword)
 
 output_file.write("""
-CSSSelector::PseudoType parsePseudoElementString(const StringImpl& pseudoTypeString)
+CSSSelector::PseudoElementType parsePseudoElementString(const StringImpl& pseudoTypeString)
 {
     if (pseudoTypeString.is8Bit())
         return parsePseudoElementString(pseudoTypeString.characters8(), pseudoTypeString.length());
