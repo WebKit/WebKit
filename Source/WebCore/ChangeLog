@@ -1,3 +1,13 @@
+2014-04-07  Timothy Hatcher  <timothy@apple.com>
+
+        Remove copy of combine-javascript-resources.pl that isn't used anymore
+        https://bugs.webkit.org/show_bug.cgi?id=131307
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/combine-javascript-resources.pl: Removed.
+
 2014-04-07  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Clean up invalid FIXME

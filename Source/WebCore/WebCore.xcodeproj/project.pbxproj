@@ -10770,7 +10770,6 @@
 		A584FE391864E2D800843B10 /* JSCommandLineAPIHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCommandLineAPIHost.cpp; sourceTree = "<group>"; };
 		A584FE3A1864E2D800843B10 /* JSCommandLineAPIHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCommandLineAPIHost.h; sourceTree = "<group>"; };
 		A593CF7218402CE900BFCE27 /* protocol */ = {isa = PBXFileReference; lastKnownFileType = folder; path = protocol; sourceTree = "<group>"; };
-		A593CF7518402D4B00BFCE27 /* combine-javascript-resources.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "combine-javascript-resources.pl"; sourceTree = "<group>"; };
 		A593CF8A1840535200BFCE27 /* InspectorWebAgentBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorWebAgentBase.h; sourceTree = "<group>"; };
 		A5A2AF091829734300DE1729 /* PageDebuggable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageDebuggable.cpp; sourceTree = "<group>"; };
 		A5A2AF0A1829734300DE1729 /* PageDebuggable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageDebuggable.h; sourceTree = "<group>"; };
@@ -14950,7 +14949,6 @@
 			isa = PBXGroup;
 			children = (
 				A593CF7218402CE900BFCE27 /* protocol */,
-				A593CF7518402D4B00BFCE27 /* combine-javascript-resources.pl */,
 				A584FE311864D5AF00843B10 /* CommandLineAPIHost.cpp */,
 				A584FE321864D5AF00843B10 /* CommandLineAPIHost.h */,
 				A584FE331864D5AF00843B10 /* CommandLineAPIHost.idl */,
