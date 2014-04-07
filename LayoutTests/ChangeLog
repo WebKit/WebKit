@@ -2,6 +2,14 @@
 
         Unreviewed gardening.
 
+        Updated expectations for GTK. Added some more failing AX tests.
+
+        * platform/gtk-wk2/TestExpectations:
+
+2014-04-07  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed gardening.
+
         Updated expectations for GTK. Added some failing AX tests.
 
         * platform/gtk-wk2/TestExpectations:
