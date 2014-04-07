@@ -42,22 +42,6 @@ macro(GENERATE_THEME _target_name _name _option)
             widget/entry/img_focused.png
             widget/entry/img_hovered.png
             widget/entry/img_normal.png
-            widget/mediacontrol/fullscreenbutton/enterfullscreenbutton.png
-            widget/mediacontrol/fullscreenbutton/exitfullscreenbutton.png
-            widget/mediacontrol/fullscreenbutton/fullscreen_button.edc
-            widget/mediacontrol/mutebutton/mute_button.edc
-            widget/mediacontrol/mutebutton/mutebutton.png
-            widget/mediacontrol/mutebutton/unmutebutton.png
-            widget/mediacontrol/playpausebutton/pausebutton.png
-            widget/mediacontrol/playpausebutton/playbutton.png
-            widget/mediacontrol/playpausebutton/playpause_button.edc
-            widget/mediacontrol/seekbackwardbutton/seekbackward_button.edc
-            widget/mediacontrol/seekbackwardbutton/seekbackwardbutton.png
-            widget/mediacontrol/seekforwardbutton/seekforward_button.edc
-            widget/mediacontrol/seekforwardbutton/seekforwardbutton.png
-            widget/mediacontrol/togglecaptionsbutton/closedcaption_disabled.png
-            widget/mediacontrol/togglecaptionsbutton/closedcaption.png
-            widget/mediacontrol/togglecaptionsbutton/toggle_captions_button.edc
             widget/progressbar/bt_base.png
             widget/progressbar/progressbar.edc
             widget/progressbar/shelf_inset.png

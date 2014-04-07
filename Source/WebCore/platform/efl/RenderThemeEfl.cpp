@@ -45,6 +45,7 @@
 #include "RenderSlider.h"
 #include "ScrollbarThemeEfl.h"
 #include "Settings.h"
+#include "UserAgentScripts.h"
 #include "UserAgentStyleSheets.h"
 #include <Ecore_Evas.h>
 #include <Edje.h>
@@ -52,16 +53,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(VIDEO)
-#include "HTMLMediaElement.h"
-#include "HTMLNames.h"
-#include "TimeRanges.h"
-#endif
-
 namespace WebCore {
-#if ENABLE(VIDEO)
-using namespace HTMLNames;
-#endif
 
 // TODO: change from object count to ecore_evas size (bytes)
 // TODO: as objects are webpage/user defined and they can be very large.
@@ -84,11 +76,6 @@ static const double progressAnimationInterval = 0.125;
 
 static const int sliderThumbWidth = 29;
 static const int sliderThumbHeight = 11;
-#if ENABLE(VIDEO)
-static const int mediaSliderHeight = 14;
-static const int mediaSliderThumbWidth = 12;
-static const int mediaSliderThumbHeight = 12;
-#endif
 
 #define _ASSERT_ON_RELEASE_RETURN(o, fmt, ...) \
     do { if (!o) { EINA_LOG_CRIT(fmt, ## __VA_ARGS__); ASSERT(o); return; } } while (0)
@@ -115,16 +102,6 @@ static const char* toEdjeGroup(FormType type)
         "webkit/widget/slider/horizontal",
         "webkit/widget/slider/thumb_vertical",
         "webkit/widget/slider/thumb_horizontal",
-#if ENABLE(VIDEO)
-        "webkit/widget/mediacontrol/playpause_button",
-        "webkit/widget/mediacontrol/mute_button",
-        "webkit/widget/mediacontrol/seekforward_button",
-        "webkit/widget/mediacontrol/seekbackward_button",
-        "webkit/widget/mediacontrol/fullscreen_button",
-#endif
-#if ENABLE(VIDEO_TRACK)
-        "webkit/widget/mediacontrol/toggle_captions_button",
-#endif
         "webkit/widget/spinner",
         0
     };
@@ -620,10 +597,6 @@ RenderThemeEfl::RenderThemeEfl(Page* page)
     , m_inactiveSelectionForegroundColor(200, 200, 200)
     , m_focusRingColor(32, 32, 224, 224)
     , m_sliderThumbColor(Color::darkGray)
-#if ENABLE(VIDEO)
-    , m_mediaPanelColor(220, 220, 195) // light tannish color.
-    , m_mediaSliderColor(Color::white)
-#endif
     , m_supportsSelectionForegroundColor(false)
     , m_partCache(0)
 {
@@ -745,11 +718,6 @@ void RenderThemeEfl::adjustSliderThumbSize(RenderStyle* style, Element*) const
     } else if (part == SliderThumbHorizontalPart) {
         style->setWidth(Length(sliderThumbWidth, Fixed));
         style->setHeight(Length(sliderThumbHeight, Fixed));
-#if ENABLE(VIDEO)
-    } else if (part == MediaSliderThumbPart) {
-        style->setWidth(Length(mediaSliderThumbWidth, Fixed));
-        style->setHeight(Length(mediaSliderThumbHeight, Fixed));
-#endif
     }
 }
 
@@ -1064,234 +1032,14 @@ bool RenderThemeEfl::paintProgressBar(RenderObject* object, const PaintInfo& inf
 #endif
 
 #if ENABLE(VIDEO)
-bool RenderThemeEfl::emitMediaButtonSignal(FormType formType, MediaControlElementType mediaElementType, const IntRect& rect)
+String RenderThemeEfl::mediaControlsStyleSheet()
 {
-    loadThemeIfNeeded();
-    _ASSERT_ON_RELEASE_RETURN_VAL(edje(), false, "Could not paint native HTML part due to missing theme.");
-
-    ThemePartCacheEntry* entry = getThemePartFromCache(formType, rect.size());
-    _ASSERT_ON_RELEASE_RETURN_VAL(entry, false, "Could not paint native HTML part due to missing theme part.");
-
-    if (mediaElementType == MediaPlayButton)
-        edje_object_signal_emit(entry->edje(), "play", "");
-    else if (mediaElementType == MediaPauseButton)
-        edje_object_signal_emit(entry->edje(), "pause", "");
-    else if (mediaElementType == MediaMuteButton)
-        edje_object_signal_emit(entry->edje(), "mute", "");
-    else if (mediaElementType == MediaUnMuteButton)
-        edje_object_signal_emit(entry->edje(), "sound", "");
-    else if (mediaElementType == MediaSeekForwardButton)
-        edje_object_signal_emit(entry->edje(), "seekforward", "");
-    else if (mediaElementType == MediaSeekBackButton)
-        edje_object_signal_emit(entry->edje(), "seekbackward", "");
-    else if (mediaElementType == MediaEnterFullscreenButton)
-        edje_object_signal_emit(entry->edje(), "fullscreen_enter", "");
-    else if (mediaElementType == MediaExitFullscreenButton)
-        edje_object_signal_emit(entry->edje(), "fullscreen_exit", "");
-#if ENABLE(VIDEO_TRACK)
-    else if (mediaElementType == MediaShowClosedCaptionsButton)
-        edje_object_signal_emit(entry->edje(), "show_captions", "");
-    else if (mediaElementType == MediaHideClosedCaptionsButton)
-        edje_object_signal_emit(entry->edje(), "hide_captions", "");
-#endif
-    else
-        return false;
-
-    return true;
+    return ASCIILiteral(mediaControlsAppleUserAgentStyleSheet);
 }
 
-String RenderThemeEfl::extraMediaControlsStyleSheet()
+String RenderThemeEfl::mediaControlsScript()
 {
-    return String(mediaControlsEflUserAgentStyleSheet, sizeof(mediaControlsEflUserAgentStyleSheet));
-}
-
-#if ENABLE(FULLSCREEN_API)
-String RenderThemeEfl::extraFullScreenStyleSheet()
-{
-    return String(mediaControlsEflFullscreenUserAgentStyleSheet, sizeof(mediaControlsEflFullscreenUserAgentStyleSheet));
-}
-#endif
-
-String RenderThemeEfl::formatMediaControlsCurrentTime(float currentTime, float duration) const
-{
-    return formatMediaControlsTime(currentTime) + " / " + formatMediaControlsTime(duration);
-}
-
-bool RenderThemeEfl::hasOwnDisabledStateHandlingFor(ControlPart part) const
-{
-    return (part != MediaMuteButtonPart);
-}
-
-bool RenderThemeEfl::paintMediaFullscreenButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
-{
-    Node* mediaNode = object->node() ? object->node()->shadowHost() : 0;
-    if (!mediaNode)
-        mediaNode = object->node();
-    if (!mediaNode || !mediaNode->isElementNode() || !toElement(mediaNode)->isMediaElement())
-        return false;
-
-    HTMLMediaElement* mediaElement = toHTMLMediaElement(mediaNode);
-    if (!emitMediaButtonSignal(FullScreenButton, mediaElement->isFullscreen() ? MediaExitFullscreenButton : MediaEnterFullscreenButton, rect))
-        return false;
-
-    return paintThemePart(object, FullScreenButton, info, rect);
-}
-
-bool RenderThemeEfl::paintMediaMuteButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
-{
-    Node* mediaNode = object->node() ? object->node()->shadowHost() : 0;
-    if (!mediaNode)
-        mediaNode = object->node();
-    if (!mediaNode || !mediaNode->isElementNode() || !toElement(mediaNode)->isMediaElement())
-        return false;
-
-    HTMLMediaElement* mediaElement = toHTMLMediaElement(mediaNode);
-
-    if (!emitMediaButtonSignal(MuteUnMuteButton, mediaElement->muted() ? MediaMuteButton : MediaUnMuteButton, rect))
-        return false;
-
-    return paintThemePart(object, MuteUnMuteButton, info, rect);
-}
-
-bool RenderThemeEfl::paintMediaPlayButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
-{
-    Node* node = object->node();
-    if (!node || !node->isMediaControlElement())
-        return false;
-
-    if (!emitMediaButtonSignal(PlayPauseButton, mediaControlElementType(node), rect))
-        return false;
-
-    return paintThemePart(object, PlayPauseButton, info, rect);
-}
-
-bool RenderThemeEfl::paintMediaSeekBackButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
-{
-    Node* node = object->node();
-    if (!node || !node->isMediaControlElement())
-        return 0;
-
-    if (!emitMediaButtonSignal(SeekBackwardButton, mediaControlElementType(node), rect))
-        return false;
-
-    return paintThemePart(object, SeekBackwardButton, info, rect);
-}
-
-bool RenderThemeEfl::paintMediaSeekForwardButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
-{
-    Node* node = object->node();
-    if (!node || !node->isMediaControlElement())
-        return 0;
-
-    if (!emitMediaButtonSignal(SeekForwardButton, mediaControlElementType(node), rect))
-        return false;
-
-    return paintThemePart(object, SeekForwardButton, info, rect);
-}
-
-bool RenderThemeEfl::paintMediaSliderTrack(RenderObject* object, const PaintInfo& info, const IntRect& rect)
-{
-    GraphicsContext* context = info.context;
-
-    context->fillRect(FloatRect(rect), m_mediaPanelColor, ColorSpaceDeviceRGB);
-    context->fillRect(FloatRect(IntRect(rect.x(), rect.y() + (rect.height() - mediaSliderHeight) / 2,
-                                        rect.width(), mediaSliderHeight)), m_mediaSliderColor, ColorSpaceDeviceRGB);
-
-    RenderStyle* style = &object->style();
-    HTMLMediaElement* mediaElement = parentMediaElement(*object);
-
-    if (!mediaElement)
-        return false;
-
-    // Draw the buffered ranges. This code is highly inspired from
-    // Chrome for the gradient code.
-    float mediaDuration = mediaElement->duration();
-    RefPtr<TimeRanges> timeRanges = mediaElement->buffered();
-    IntRect trackRect = rect;
-    int totalWidth = trackRect.width();
-
-    trackRect.inflate(-style->borderLeftWidth());
-    context->save();
-    context->setStrokeStyle(NoStroke);
-
-    for (unsigned index = 0; index < timeRanges->length(); ++index) {
-        float start = timeRanges->start(index, IGNORE_EXCEPTION);
-        float end = timeRanges->end(index, IGNORE_EXCEPTION);
-        int width = ((end - start) * totalWidth) / mediaDuration;
-        IntRect rangeRect;
-        if (!index) {
-            rangeRect = trackRect;
-            rangeRect.setWidth(width);
-        } else {
-            rangeRect.setLocation(IntPoint(trackRect.x() + start / mediaDuration* totalWidth, trackRect.y()));
-            rangeRect.setSize(IntSize(width, trackRect.height()));
-        }
-
-        // Don't bother drawing empty range.
-        if (rangeRect.isEmpty())
-            continue;
-
-        IntPoint sliderTopLeft = rangeRect.location();
-        IntPoint sliderTopRight = sliderTopLeft;
-        sliderTopRight.move(0, rangeRect.height());
-
-        context->fillRect(FloatRect(rangeRect), m_mediaPanelColor, ColorSpaceDeviceRGB);
-    }
-    context->restore();
-    return true;
-}
-
-bool RenderThemeEfl::paintMediaSliderThumb(RenderObject*, const PaintInfo& info, const IntRect& rect)
-{
-    IntSize thumbRect(3, 3);
-    info.context->fillRoundedRect(FloatRoundedRect(rect, thumbRect, thumbRect, thumbRect, thumbRect), m_sliderThumbColor, ColorSpaceDeviceRGB);
-    return true;
-}
-
-bool RenderThemeEfl::paintMediaVolumeSliderContainer(RenderObject*, const PaintInfo&, const IntRect&)
-{
-    notImplemented();
-    return false;
-}
-
-bool RenderThemeEfl::paintMediaVolumeSliderTrack(RenderObject*, const PaintInfo&, const IntRect&)
-{
-    notImplemented();
-    return false;
-}
-
-bool RenderThemeEfl::paintMediaVolumeSliderThumb(RenderObject*, const PaintInfo&, const IntRect&)
-{
-    notImplemented();
-    return false;
-}
-
-bool RenderThemeEfl::paintMediaCurrentTime(RenderObject*, const PaintInfo& info, const IntRect& rect)
-{
-    info.context->fillRect(FloatRect(rect), m_mediaPanelColor, ColorSpaceDeviceRGB);
-    return true;
-}
-#endif
-
-#if ENABLE(VIDEO_TRACK)
-bool RenderThemeEfl::supportsClosedCaptioning() const
-{
-    return true;
-}
-
-bool RenderThemeEfl::paintMediaToggleClosedCaptionsButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
-{
-    Node* mediaNode = object->node() ? object->node()->shadowHost() : 0;
-    if (!mediaNode)
-        mediaNode = object->node();
-    if (!mediaNode || (!mediaNode->hasTagName(videoTag)))
-        return false;
-
-    HTMLMediaElement* mediaElement = toHTMLMediaElement(mediaNode);
-    if (!emitMediaButtonSignal(ToggleCaptionsButton, mediaElement->webkitClosedCaptionsVisible() ? MediaShowClosedCaptionsButton : MediaHideClosedCaptionsButton, rect))
-        return false;
-
-    return paintThemePart(object, ToggleCaptionsButton, info, rect);
+    return ASCIILiteral(mediaControlsAppleJavaScript);
 }
 #endif
 

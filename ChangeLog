@@ -1,3 +1,12 @@
+2014-04-07  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Turn on ENABLE_MEDIA_CONTROLS_SCRIPT
+        https://bugs.webkit.org/show_bug.cgi?id=131257
+
+        Reviewed by Gyuyoung Kim.
+
+        * Source/cmake/OptionsEfl.cmake: Enable MEDIA_CONTROLS_SCRIPT
+
 2014-04-06  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [GTK] Stop trying to install WebKit1 documentation

@@ -30,9 +30,6 @@
 #ifndef RenderThemeEfl_h
 #define RenderThemeEfl_h
 
-#if ENABLE(VIDEO)
-#include "MediaControlElements.h"
-#endif
 #include "RenderTheme.h"
 
 #include <Eina.h>
@@ -59,16 +56,6 @@ enum FormType { // KEEP IN SYNC WITH edjeGroupFromFormType()
     SliderHorizontal,
     SliderThumbVertical,
     SliderThumbHorizontal,
-#if ENABLE(VIDEO)
-    PlayPauseButton,
-    MuteUnMuteButton,
-    SeekForwardButton,
-    SeekBackwardButton,
-    FullScreenButton,
-#endif
-#if ENABLE(VIDEO_TRACK)
-    ToggleCaptionsButton,
-#endif
     Spinner,
     FormTypeLast
 };
@@ -186,28 +173,11 @@ public:
 #endif
 
 #if ENABLE(VIDEO)
-    virtual String extraMediaControlsStyleSheet();
-#if ENABLE(FULLSCREEN_API)
-    virtual String extraFullScreenStyleSheet();
-#endif
-    virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
-    virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const;
-
-    virtual bool paintMediaFullscreenButton(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual bool paintMediaPlayButton(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual bool paintMediaMuteButton(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual bool paintMediaSeekBackButton(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual bool paintMediaSeekForwardButton(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual bool paintMediaSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual bool paintMediaSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual bool paintMediaVolumeSliderContainer(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual bool paintMediaVolumeSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual bool paintMediaVolumeSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual bool paintMediaCurrentTime(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual String mediaControlsStyleSheet();
+    virtual String mediaControlsScript();
 #endif
 #if ENABLE(VIDEO_TRACK)
-    virtual bool supportsClosedCaptioning() const override;
-    virtual bool paintMediaToggleClosedCaptionsButton(RenderObject*, const PaintInfo&, const IntRect&) override;
+    virtual bool supportsClosedCaptioning() const override { return true; }
 #endif
     virtual bool shouldShowPlaceholderWhenFocused() const override { return true; }
 
@@ -233,10 +203,6 @@ private:
     void applyEdjeRTLState(Evas_Object*, RenderObject*, FormType, const IntRect&);
     bool paintThemePart(RenderObject*, FormType, const PaintInfo&, const IntRect&);
 
-#if ENABLE(VIDEO)
-    bool emitMediaButtonSignal(FormType, MediaControlElementType, const IntRect&);
-#endif
-
     Page* m_page;
     Color m_activeSelectionBackgroundColor;
     Color m_activeSelectionForegroundColor;
@@ -244,11 +210,6 @@ private:
     Color m_inactiveSelectionForegroundColor;
     Color m_focusRingColor;
     Color m_sliderThumbColor;
-
-#if ENABLE(VIDEO)
-    Color m_mediaPanelColor;
-    Color m_mediaSliderColor;
-#endif
 
     String m_themePath;
     // Order so that the canvas gets destroyed at last.

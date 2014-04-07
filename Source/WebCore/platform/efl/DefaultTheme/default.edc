@@ -47,12 +47,6 @@ collections {
 #include "widget/combo/combo.edc"
 #include "widget/cursor/cursor.edc"
 #include "widget/entry/entry.edc"
-#include "widget/mediacontrol/fullscreenbutton/fullscreen_button.edc"
-#include "widget/mediacontrol/mutebutton/mute_button.edc"
-#include "widget/mediacontrol/playpausebutton/playpause_button.edc"
-#include "widget/mediacontrol/seekbackwardbutton/seekbackward_button.edc"
-#include "widget/mediacontrol/seekforwardbutton/seekforward_button.edc"
-#include "widget/mediacontrol/togglecaptionsbutton/toggle_captions_button.edc"
 #ifdef ENABLE_PROGRESS_ELEMENT
 #include "widget/progressbar/progressbar.edc"
 #endif

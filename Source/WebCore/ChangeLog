@@ -1,3 +1,59 @@
+2014-04-07  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Turn on ENABLE_MEDIA_CONTROLS_SCRIPT
+        https://bugs.webkit.org/show_bug.cgi?id=131257
+
+        Reviewed by Gyuyoung Kim.
+
+        no new tests. just rebased exisiting tests.
+
+        * PlatformEfl.cmake: Added the media controls script associated files.
+        * css/mediaControlsEfl.css: Removed.
+        * css/mediaControlsEflFullscreen.css: Removed.
+        * platform/efl/DefaultTheme/CMakeLists.txt:
+        * platform/efl/DefaultTheme/default.edc:
+        * platform/efl/DefaultTheme/widget/mediacontrol/fullscreenbutton/enterfullscreenbutton.png: Removed.
+        * platform/efl/DefaultTheme/widget/mediacontrol/fullscreenbutton/exitfullscreenbutton.png: Removed.
+        * platform/efl/DefaultTheme/widget/mediacontrol/fullscreenbutton/fullscreen_button.edc: Removed.
+        * platform/efl/DefaultTheme/widget/mediacontrol/mutebutton/mute_button.edc: Removed.
+        * platform/efl/DefaultTheme/widget/mediacontrol/mutebutton/mutebutton.png: Removed.
+        * platform/efl/DefaultTheme/widget/mediacontrol/mutebutton/unmutebutton.png: Removed.
+        * platform/efl/DefaultTheme/widget/mediacontrol/playpausebutton/pausebutton.png: Removed.
+        * platform/efl/DefaultTheme/widget/mediacontrol/playpausebutton/playbutton.png: Removed.
+        * platform/efl/DefaultTheme/widget/mediacontrol/playpausebutton/playpause_button.edc: Removed.
+        * platform/efl/DefaultTheme/widget/mediacontrol/seekbackwardbutton/seekbackward_button.edc: Removed.
+        * platform/efl/DefaultTheme/widget/mediacontrol/seekbackwardbutton/seekbackwardbutton.png: Removed.
+        * platform/efl/DefaultTheme/widget/mediacontrol/seekforwardbutton/seekforward_button.edc: Removed.
+        * platform/efl/DefaultTheme/widget/mediacontrol/seekforwardbutton/seekforwardbutton.png: Removed.
+        * platform/efl/DefaultTheme/widget/mediacontrol/togglecaptionsbutton/closedcaption.png: Removed.
+        * platform/efl/DefaultTheme/widget/mediacontrol/togglecaptionsbutton/closedcaption_disabled.png: Removed.
+        * platform/efl/DefaultTheme/widget/mediacontrol/togglecaptionsbutton/toggle_captions_button.edc: Removed.
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::toEdjeGroup):
+        (WebCore::RenderThemeEfl::RenderThemeEfl):
+        (WebCore::RenderThemeEfl::adjustSliderThumbSize):
+        (WebCore::RenderThemeEfl::mediaControlsStyleSheet): Modified to load bundle style sheet.
+        (WebCore::RenderThemeEfl::mediaControlsScript): Added to load bundle scripts.
+        (WebCore::RenderThemeEfl::emitMediaButtonSignal): Deleted.
+        (WebCore::RenderThemeEfl::extraMediaControlsStyleSheet): Deleted.
+        (WebCore::RenderThemeEfl::extraFullScreenStyleSheet): Deleted.
+        (WebCore::RenderThemeEfl::formatMediaControlsCurrentTime): Deleted.
+        (WebCore::RenderThemeEfl::hasOwnDisabledStateHandlingFor): Deleted.
+        (WebCore::RenderThemeEfl::paintMediaFullscreenButton): Deleted.
+        (WebCore::RenderThemeEfl::paintMediaMuteButton): Deleted.
+        (WebCore::RenderThemeEfl::paintMediaPlayButton): Deleted.
+        (WebCore::RenderThemeEfl::paintMediaSeekBackButton): Deleted.
+        (WebCore::RenderThemeEfl::paintMediaSeekForwardButton): Deleted.
+        (WebCore::RenderThemeEfl::paintMediaSliderTrack): Deleted.
+        (WebCore::RenderThemeEfl::paintMediaSliderThumb): Deleted.
+        (WebCore::RenderThemeEfl::paintMediaVolumeSliderContainer): Deleted.
+        (WebCore::RenderThemeEfl::paintMediaVolumeSliderTrack): Deleted.
+        (WebCore::RenderThemeEfl::paintMediaVolumeSliderThumb): Deleted.
+        (WebCore::RenderThemeEfl::paintMediaCurrentTime): Deleted.
+        (WebCore::RenderThemeEfl::supportsClosedCaptioning): Deleted.
+        (WebCore::RenderThemeEfl::paintMediaToggleClosedCaptionsButton): Deleted.
+        * platform/efl/RenderThemeEfl.h:
+
 2014-04-07  Benjamin Poulain  <benjamin@webkit.org>
 
         CSS JIT: change the node flags directly instead of using function calls when possible

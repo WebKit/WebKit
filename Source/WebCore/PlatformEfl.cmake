@@ -201,8 +201,7 @@ if (ENABLE_NETSCAPE_PLUGIN_API)
 endif ()
 
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
-    ${WEBCORE_DIR}/css/mediaControlsEfl.css
-    ${WEBCORE_DIR}/css/mediaControlsEflFullscreen.css
+    ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsApple.css
 )
 
 if (WTF_USE_TEXTURE_MAPPER)
@@ -210,6 +209,12 @@ if (WTF_USE_TEXTURE_MAPPER)
         platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
     )
 endif ()
+
+set(WebCore_USER_AGENT_SCRIPTS
+    ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsApple.js
+)
+
+set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/platform/efl/RenderThemeEfl.cpp)
 
 list(APPEND WebCore_LIBRARIES
     ${CAIRO_LIBRARIES}
