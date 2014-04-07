@@ -1,3 +1,16 @@
+2014-04-07  Krzysztof Czech  <k.czech@samsung.com>
+
+        Remove unused header from PlatformSpeechSynthesizer.h
+        https://bugs.webkit.org/show_bug.cgi?id=131103
+
+        Reviewed by Anders Carlsson.
+
+        Since WebSpeech has switched to use std::unique_ptr, we do not need to include PassOwnPtr.
+
+        No new tests. No behaviour change, just quick fix.
+
+        * platform/PlatformSpeechSynthesizer.h:
+
 2014-04-06  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Use RenderRegion::isValid() before using a region

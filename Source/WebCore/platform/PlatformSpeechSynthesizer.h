@@ -29,7 +29,6 @@
 #if ENABLE(SPEECH_SYNTHESIS)
 
 #include "PlatformSpeechSynthesisVoice.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
