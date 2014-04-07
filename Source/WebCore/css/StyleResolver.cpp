@@ -1041,18 +1041,18 @@ static void addIntrinsicMargins(RenderStyle& style)
     const int intrinsicMargin = 2 * style.effectiveZoom();
 
     // FIXME: Using width/height alone and not also dealing with min-width/max-width is flawed.
-    // FIXME: Using "quirk" to decide the margin wasn't set is kind of lame.
+    // FIXME: Using "hasQuirk" to decide the margin wasn't set is kind of lame.
     if (style.width().isIntrinsicOrAuto()) {
-        if (style.marginLeft().quirk())
+        if (style.marginLeft().hasQuirk())
             style.setMarginLeft(Length(intrinsicMargin, Fixed));
-        if (style.marginRight().quirk())
+        if (style.marginRight().hasQuirk())
             style.setMarginRight(Length(intrinsicMargin, Fixed));
     }
 
     if (style.height().isAuto()) {
-        if (style.marginTop().quirk())
+        if (style.marginTop().hasQuirk())
             style.setMarginTop(Length(intrinsicMargin, Fixed));
-        if (style.marginBottom().quirk())
+        if (style.marginBottom().hasQuirk())
             style.setMarginBottom(Length(intrinsicMargin, Fixed));
     }
 }
@@ -1860,7 +1860,7 @@ static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, const Styl
         return false;
 
     if (primitiveValue->isLength())
-        workingLength.length().setQuirk(primitiveValue->isQuirkValue());
+        workingLength.length().setHasQuirk(primitiveValue->isQuirkValue());
 
     return true;
 }

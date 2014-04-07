@@ -9569,7 +9569,7 @@ bool CSSParser::parseCalculation(CSSParserValue* value, CalculationPermittedValu
         return false;
 
     ASSERT(!m_parsedCalculation);
-    m_parsedCalculation = CSSCalcValue::create(value->function->name, args, range);
+    m_parsedCalculation = CSSCalcValue::create(value->function->name, *args, range);
     
     if (!m_parsedCalculation)
         return false;

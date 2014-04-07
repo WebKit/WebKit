@@ -1,3 +1,13 @@
+2014-04-06  Darin Adler  <darin@apple.com>
+
+        Rework CSS calc logic, fixing some reference count mistakes in Length
+        https://bugs.webkit.org/show_bug.cgi?id=131280
+
+        Reviewed by Andreas Kling.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added CalculationValue.cpp.
+        * TestWebKitAPI/Tests/WebCore/CalculationValue.cpp: Added.
+
 2014-04-04  Brian J. Burg  <burg@cs.washington.edu>
 
         Enable WEB_REPLAY for PLATFORM(MAC)

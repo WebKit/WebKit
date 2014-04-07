@@ -522,8 +522,8 @@ public:
     bool hasBorder() const { return surround->border.hasBorder(); }
     bool hasPadding() const { return surround->padding.nonZero(); }
     bool hasOffset() const { return surround->offset.nonZero(); }
-    bool hasMarginBeforeQuirk() const { return marginBefore().quirk(); }
-    bool hasMarginAfterQuirk() const { return marginAfter().quirk(); }
+    bool hasMarginBeforeQuirk() const { return marginBefore().hasQuirk(); }
+    bool hasMarginAfterQuirk() const { return marginAfter().hasQuirk(); }
 
     bool hasBackgroundImage() const { return m_background->background().hasImage(); }
     bool hasFixedBackgroundImage() const { return m_background->background().hasFixedImage(); }
@@ -1775,9 +1775,9 @@ public:
 #endif
     static short initialWidows() { return 2; }
     static short initialOrphans() { return 2; }
-    static Length initialLineHeight() { return Length(-100.0, Percent); }
+    static Length initialLineHeight() { return Length(-100.0f, Percent); }
 #if ENABLE(IOS_TEXT_AUTOSIZING)
-    static Length initialSpecifiedLineHeight() { return Length(-100, Percent); }
+    static Length initialSpecifiedLineHeight() { return Length(-100.0f, Percent); }
 #endif
     static ETextAlign initialTextAlign() { return TASTART; }
     static TextDecoration initialTextDecoration() { return TextDecorationNone; }
@@ -1846,15 +1846,15 @@ public:
     static ColumnFill initialColumnFill() { return ColumnFillBalance; }
     static ColumnSpan initialColumnSpan() { return ColumnSpanNone; }
     static const TransformOperations& initialTransform() { DEPRECATED_DEFINE_STATIC_LOCAL(TransformOperations, ops, ()); return ops; }
-    static Length initialTransformOriginX() { return Length(50.0, Percent); }
-    static Length initialTransformOriginY() { return Length(50.0, Percent); }
+    static Length initialTransformOriginX() { return Length(50.0f, Percent); }
+    static Length initialTransformOriginY() { return Length(50.0f, Percent); }
     static EPointerEvents initialPointerEvents() { return PE_AUTO; }
     static float initialTransformOriginZ() { return 0; }
     static ETransformStyle3D initialTransformStyle3D() { return TransformStyle3DFlat; }
     static EBackfaceVisibility initialBackfaceVisibility() { return BackfaceVisibilityVisible; }
     static float initialPerspective() { return 0; }
-    static Length initialPerspectiveOriginX() { return Length(50.0, Percent); }
-    static Length initialPerspectiveOriginY() { return Length(50.0, Percent); }
+    static Length initialPerspectiveOriginX() { return Length(50.0f, Percent); }
+    static Length initialPerspectiveOriginY() { return Length(50.0f, Percent); }
     static Color initialBackgroundColor() { return Color::transparent; }
     static Color initialTextEmphasisColor() { return TextEmphasisFillFilled; }
     static TextEmphasisFill initialTextEmphasisFill() { return TextEmphasisFillFilled; }

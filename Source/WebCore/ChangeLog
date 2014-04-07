@@ -1,3 +1,121 @@
+2014-04-06  Darin Adler  <darin@apple.com>
+
+        Rework CSS calc logic, fixing some reference count mistakes in Length
+        https://bugs.webkit.org/show_bug.cgi?id=131280
+        rdar://problem/16400823
+
+        Reviewed by Andreas Kling.
+
+        New unit test in TestWebKitAPI.
+
+        Changed the classes related to CSS "calc" to make the code a bit easier to read by
+        moving code out of class definitions. Also used final some more, made more things private,
+        used references instead of pointers, and other such changes. Biggest change, though, is to
+        Length, which had a broken system for managing reference counted calculated objects.
+        There were multiple bugs including a basic design mistake of not having a reference count
+        and trying to use the reference count in the object itself. Fixed and covered by the unit
+        test now; test found multiple problems in both the old and new implementations.
+
+        * WebCore.exp.in: Updated exports, including symbols to make the unit test practical.
+
+        * WebCore.xcodeproj/project.pbxproj: Made CalculationValue.h a Private file so it can
+        be used in a unit test. Also let Xcode update the file type for a gperf file.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcValue::equals): Updated since m_expression is a Ref now.
+        (WebCore::CSSCalcValue::clampToPermittedRange): Marked inline and updated for data member
+        name change.
+        (WebCore::isIntegerResult): Changed argument order to put the operator first and use
+        references instead of pointers. Also marked inline.
+        (WebCore::createBlendHalf): Added. Helper to make the other functions more readable.
+        (WebCore::createExpressionNode): Made non-member function private to this file. Also made
+        many small improvements.
+        (WebCore::CSSCalcValue::create): Updated so both of these call the same constructor.
+
+        * css/CSSCalculationValue.h: Cut down CSSCalcValue class by making more things private
+        and deleting unneeded things. Also use Ref instead of RefPtr.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::getPositionOffsetValue): Use isFixed function instead of type function.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::addStops): Updated code since toCalcValue now returns PassRef
+        instead of PassRefPtr. Unfortunately the new code is a bit more verbose.
+        (WebCore::positionFromValue): Ditto.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseCalculation):
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Updated to pass reference rather than pointer.
+        (WebCore::CSSPrimitiveValue::init): Ditto.
+
+        * css/CSSToStyleMap.h: Removed unneeded include of LengthBox.h.
+
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyLength::applyValue): Updated for function name change.
+        (WebCore::ApplyPropertyBorderRadius::applyValue): Removed extra parentheses.
+        (WebCore::ApplyPropertyFontSize::applyValue): Ditto. Also updated since toCalcValue returns Ref.
+
+        * css/LengthFunctions.cpp:
+        (WebCore::floatValueForLength): Updated to call value instead of getFloatValue; both are the same.
+
+        * css/StyleResolver.cpp:
+        (WebCore::addIntrinsicMargins): Updated for function name change.
+        (WebCore::createGridTrackBreadth): Ditto.
+
+        * platform/CalculationValue.cpp:
+        (WebCore::CalculationValue::create): Changed to return PassRef.
+        (WebCore::CalcExpressionNumber::evaluate): Moved this function out of the header, since it's
+        virtual and not really going to be inlined.
+        (WebCore::CalcExpressionNumber::operator==): Ditto.
+        (WebCore::CalculationValue::evaluate): Ditto.
+        (WebCore::CalcExpressionBinaryOperation::operator==): Ditto.
+        (WebCore::CalcExpressionLength::evaluate): Ditto.
+        (WebCore::CalcExpressionLength::operator==): Ditto.
+        (WebCore::CalcExpressionBlendLength::evaluate): Ditto.
+        (WebCore::CalcExpressionBlendLength::operator==): Ditto.
+
+        * platform/CalculationValue.h: Moved most functions out of the class bodies so the classes are
+        easier to see. Made all the == operator functions non-member ones except for the polymorphic
+        one from the base class. Changed the casting functions to work on references instead of pointers.
+        Tweaked name of some members.
+
+        * platform/Length.cpp: Reworked the CalculationValueMap (formerly CalculationValueHandleMap) to
+        use unsigned instead of int, and store reference counts in the map rather than trying to share the
+        reference count of the underlying CalculationValue object, which can lead to storage leaks where
+        handles end up in the map permanently.
+        (WebCore::calculationValues): Use NeverDestroyed instead of DEPRECATED_DEFINE_STATIC_LOCAL.
+        (WebCore::Length::Length): Updated some data member names.
+        (WebCore::Length::calculationValue): Updated to return a reference instead of a PassRefPtr.
+        (WebCore::Length::ref): Renamed and updated for new interface to the map.
+        (WebCore::Length::deref): Ditto.
+        (WebCore::Length::nonNanCalculatedValue): Updated to use a reference instead of a pointer.
+        (WebCore::Length::isCalculatedEqual): Updated since this is now only called if both objects are
+        known to be calculated values.
+
+        * platform/Length.h: Moved most functions out of the class definition to make the class definition
+        easier to read. Reworked the constructors and assignment operators to handle the reference counting
+        correctly. Added various FIXMEs and assertions. Removed some unused functions, made others private.
+
+        * platform/LengthBox.h: Renamed some one-letter arguments to use words instead.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn): Updated for change to Length::setValue.
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcWidthArray): Ditto.
+
+        * rendering/style/FillLayer.h:
+        (WebCore::FillLayer::initialFillXPosition): Updated to not convert a double to a float at runtime.
+        (WebCore::FillLayer::initialFillYPosition): Ditto.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setWordSpacing): Removed a bogus FALLTHROUGH that was clearly wrong, but
+        harmless. Updated for changes to Length.
+
+        * rendering/style/RenderStyle.h: Updated for name changes and to avoid converting doubles to floats
+        at runtime.
+
 2014-04-06  Brent Fulgham  <bfulgham@apple.com>
 
         Honor System-Level User Preferences for Caption Display

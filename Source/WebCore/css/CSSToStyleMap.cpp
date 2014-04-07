@@ -251,7 +251,7 @@ void CSSToStyleMap::mapFillXPosition(CSSPropertyID propertyID, FillLayer* layer,
     else if (primitiveValue->isPercentage())
         length = Length(primitiveValue->getDoubleValue(), Percent);
     else if (primitiveValue->isCalculatedPercentageWithLength())
-        length = Length(primitiveValue->cssCalcValue()->toCalcValue(style(), rootElementStyle(), zoomFactor));
+        length = Length(primitiveValue->cssCalcValue()->createCalculationValue(style(), rootElementStyle(), zoomFactor));
     else if (primitiveValue->isViewportPercentageLength())
         length = primitiveValue->viewportPercentageLength();
     else
@@ -287,7 +287,7 @@ void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer* layer,
     else if (primitiveValue->isPercentage())
         length = Length(primitiveValue->getDoubleValue(), Percent);
     else if (primitiveValue->isCalculatedPercentageWithLength())
-        length = Length(primitiveValue->cssCalcValue()->toCalcValue(style(), rootElementStyle(), zoomFactor));
+        length = Length(primitiveValue->cssCalcValue()->createCalculationValue(style(), rootElementStyle(), zoomFactor));
     else if (primitiveValue->isViewportPercentageLength())
         length = primitiveValue->viewportPercentageLength();
     else

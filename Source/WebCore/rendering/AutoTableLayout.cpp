@@ -85,9 +85,9 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                     const int cCellMaxWidth = 32760;
                     Length cellLogicalWidth = cell->styleOrColLogicalWidth();
                     if (cellLogicalWidth.value() > cCellMaxWidth)
-                        cellLogicalWidth.setValue(cCellMaxWidth);
+                        cellLogicalWidth.setValue(Fixed, cCellMaxWidth);
                     if (cellLogicalWidth.isNegative())
-                        cellLogicalWidth.setValue(0);
+                        cellLogicalWidth.setValue(Fixed, 0);
                     switch (cellLogicalWidth.type()) {
                     case Fixed:
                         // ignore width=0

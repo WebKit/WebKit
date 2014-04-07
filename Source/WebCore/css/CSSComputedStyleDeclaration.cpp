@@ -677,9 +677,9 @@ static PassRefPtr<CSSValue> getPositionOffsetValue(RenderStyle* style, CSSProper
     }
 
     if (style->hasOutOfFlowPosition()) {
-        if (l.type() == WebCore::Fixed)
+        if (l.isFixed())
             return zoomAdjustedPixelValue(l.value(), style);
-        else if (l.isViewportPercentage())
+        if (l.isViewportPercentage())
             return zoomAdjustedPixelValue(valueForLength(l, 0, renderView), style);
         return cssValuePool().createValue(l);
     }

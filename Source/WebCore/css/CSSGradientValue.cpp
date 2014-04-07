@@ -182,8 +182,10 @@ void CSSGradientValue::addStops(Gradient* gradient, RenderElement* renderer, con
                 float length;
                 if (stop.m_position->isLength())
                     length = stop.m_position->computeLength<float>(&style, &rootStyle, style.effectiveZoom());
-                else 
-                    length = stop.m_position->cssCalcValue()->toCalcValue(&style, &rootStyle, style.effectiveZoom())->evaluate(gradientLength);
+                else {
+                    Ref<CalculationValue> calculationValue { stop.m_position->cssCalcValue()->createCalculationValue(&style, &rootStyle, style.effectiveZoom()) };
+                    length = calculationValue->evaluate(gradientLength);
+                }
                 stops[i].offset = (gradientLength > 0) ? length / gradientLength : 0;
             } else {
                 ASSERT_NOT_REACHED();
@@ -401,8 +403,10 @@ static float positionFromValue(CSSPrimitiveValue* value, const RenderStyle& styl
     if (value->isPercentage())
         return value->getFloatValue() / 100.f * edgeDistance;
 
-    if (value->isCalculatedPercentageWithLength())
-        return value->cssCalcValue()->toCalcValue(&style, &rootStyle, style.effectiveZoom())->evaluate(edgeDistance);
+    if (value->isCalculatedPercentageWithLength()) {
+        Ref<CalculationValue> calculationValue { value->cssCalcValue()->createCalculationValue(&style, &rootStyle, style.effectiveZoom()) };
+        return calculationValue->evaluate(edgeDistance);
+    }
 
     switch (value->getValueID()) {
     case CSSValueTop:

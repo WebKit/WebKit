@@ -1348,18 +1348,18 @@ int RenderStyle::computedLineHeight(RenderView* renderView) const
     return lh.value();
 }
 
-void RenderStyle::setWordSpacing(Length v)
+void RenderStyle::setWordSpacing(Length value)
 {
     float fontWordSpacing;
-    switch (v.type()) {
+    switch (value.type()) {
     case Auto:
         fontWordSpacing = 0;
-        FALLTHROUGH;
+        break;
     case Percent:
-        fontWordSpacing = v.getFloatValue() * font().spaceWidth() / 100;
+        fontWordSpacing = value.percent() * font().spaceWidth() / 100;
         break;
     case Fixed:
-        fontWordSpacing = v.getFloatValue();
+        fontWordSpacing = value.value();
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -1367,7 +1367,7 @@ void RenderStyle::setWordSpacing(Length v)
         break;
     }
     inherited.access()->font.setWordSpacing(fontWordSpacing);
-    rareInheritedData.access()->wordSpacing = std::move(v);
+    rareInheritedData.access()->wordSpacing = std::move(value);
 }
 
 void RenderStyle::setLetterSpacing(float v) { inherited.access()->font.setLetterSpacing(v); }

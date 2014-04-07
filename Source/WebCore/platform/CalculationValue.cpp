@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -35,6 +36,31 @@
 
 namespace WebCore {
 
+PassRef<CalculationValue> CalculationValue::create(std::unique_ptr<CalcExpressionNode> value, CalculationPermittedValueRange range)
+{
+    return adoptRef(*new CalculationValue(std::move(value), range));
+}
+
+float CalcExpressionNumber::evaluate(float) const
+{
+    return m_value;
+}
+
+bool CalcExpressionNumber::operator==(const CalcExpressionNode& other) const
+{
+    return other.type() == CalcExpressionNodeNumber && *this == toCalcExpressionNumber(other);
+}
+
+float CalculationValue::evaluate(float maxValue) const
+{
+    float result = m_expression->evaluate(maxValue);
+    // FIXME: This test was originally needed when we did not detect division by zero at parse time.
+    // It's possible that this is now unneeded code and can be removed.
+    if (std::isnan(result))
+        return 0;
+    return m_shouldClampToNonNegative && result < 0 ? 0 : result;
+}
+
 float CalcExpressionBinaryOperation::evaluate(float maxValue) const
 {
     float left = m_leftSide->evaluate(maxValue);
@@ -55,19 +81,29 @@ float CalcExpressionBinaryOperation::evaluate(float maxValue) const
     return std::numeric_limits<float>::quiet_NaN();
 }
 
-PassRefPtr<CalculationValue> CalculationValue::create(std::unique_ptr<CalcExpressionNode> value, CalculationPermittedValueRange range)
+bool CalcExpressionBinaryOperation::operator==(const CalcExpressionNode& other) const
 {
-    return adoptRef(new CalculationValue(std::move(value), range));
+    return other.type() == CalcExpressionNodeBinaryOperation && *this == toCalcExpressionBinaryOperation(other);
 }
 
-float CalculationValue::evaluate(float maxValue) const
+float CalcExpressionLength::evaluate(float maxValue) const
 {
-    float result = m_value->evaluate(maxValue);
-    // FIXME calc https://webkit.org/b/80411 : result is NaN when there is a division 
-    // by zero which isn't found at parse time. 
-    if (std::isnan(result))
-        return 0;
-    return m_isNonNegative && result < 0 ? 0 : result;
+    return floatValueForLength(m_length, maxValue);
+}
+
+bool CalcExpressionLength::operator==(const CalcExpressionNode& other) const
+{
+    return other.type() == CalcExpressionNodeLength && *this == toCalcExpressionLength(other);
+}
+
+float CalcExpressionBlendLength::evaluate(float maxValue) const
+{
+    return (1.0f - m_progress) * floatValueForLength(m_from, maxValue) + m_progress * floatValueForLength(m_to, maxValue);
+}
+
+bool CalcExpressionBlendLength::operator==(const CalcExpressionNode& other) const
+{
+    return other.type() == CalcExpressionNodeBlendLength && *this == toCalcExpressionBlendLength(other);
 }
 
 } // namespace WebCore

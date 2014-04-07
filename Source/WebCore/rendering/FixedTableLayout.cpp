@@ -143,7 +143,7 @@ int FixedTableLayout::calcWidthArray()
         // RenderBox::computeLogicalWidthInRegionUsing to compute the width.
         if (logicalWidth.isFixed() && logicalWidth.isPositive()) {
             fixedBorderBoxLogicalWidth = cell->adjustBorderBoxLogicalWidthForBoxSizing(logicalWidth.value());
-            logicalWidth.setValue(fixedBorderBoxLogicalWidth);
+            logicalWidth.setValue(Fixed, fixedBorderBoxLogicalWidth);
         }
 
         unsigned usedSpan = 0;

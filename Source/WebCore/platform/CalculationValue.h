@@ -62,195 +62,179 @@ enum CalcExpressionNodeType {
 class CalcExpressionNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CalcExpressionNode()
-        : m_type(CalcExpressionNodeUndefined)
-    {
-    }
+    explicit CalcExpressionNode(CalcExpressionNodeType = CalcExpressionNodeUndefined);
+    virtual ~CalcExpressionNode() { }
 
-    virtual ~CalcExpressionNode()
-    {
-    }
+    CalcExpressionNodeType type() const { return m_type; }
 
     virtual float evaluate(float maxValue) const = 0;
     virtual bool operator==(const CalcExpressionNode&) const = 0;
 
-    CalcExpressionNodeType type() const { return m_type; }
-
-protected:
+private:
     CalcExpressionNodeType m_type;
 };
 
-class CalculationValue : public RefCounted<CalculationValue> {
+class CalcExpressionNumber final : public CalcExpressionNode {
 public:
-    static PassRefPtr<CalculationValue> create(std::unique_ptr<CalcExpressionNode> value, CalculationPermittedValueRange);
-    float evaluate(float maxValue) const;
-
-    bool operator==(const CalculationValue& o) const
-    {
-        return *(m_value.get()) == *(o.m_value.get());
-    }
-
-    bool isNonNegative() const { return m_isNonNegative; }
-    const CalcExpressionNode* expression() const { return m_value.get(); }
-
-private:
-    CalculationValue(std::unique_ptr<CalcExpressionNode> value, CalculationPermittedValueRange range)
-        : m_value(std::move(value))
-        , m_isNonNegative(range == CalculationRangeNonNegative)
-    {
-    }
-
-    std::unique_ptr<CalcExpressionNode> m_value;
-    bool m_isNonNegative;
-};
-
-class CalcExpressionNumber : public CalcExpressionNode {
-public:
-    explicit CalcExpressionNumber(float value)
-        : m_value(value)
-    {
-        m_type = CalcExpressionNodeNumber;
-    }
-
-    bool operator==(const CalcExpressionNumber& o) const
-    {
-        return m_value == o.m_value;
-    }
-
-    virtual bool operator==(const CalcExpressionNode& o) const override
-    {
-        return type() == o.type() && *this == static_cast<const CalcExpressionNumber&>(o);
-    }
-
-    virtual float evaluate(float) const override
-    {
-        return m_value;
-    }
+    explicit CalcExpressionNumber(float);
 
     float value() const { return m_value; }
 
 private:
+    virtual float evaluate(float) const override;
+    virtual bool operator==(const CalcExpressionNode&) const override;
+
     float m_value;
 };
 
-inline const CalcExpressionNumber* toCalcExpressionNumber(const CalcExpressionNode* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->type() == CalcExpressionNodeNumber);
-    return static_cast<const CalcExpressionNumber*>(value);
-}
-
-class CalcExpressionLength : public CalcExpressionNode {
+class CalcExpressionLength final : public CalcExpressionNode {
 public:
-    explicit CalcExpressionLength(Length length)
-        : m_length(length)
-    {
-        m_type = CalcExpressionNodeLength;
-    }
-
-    bool operator==(const CalcExpressionLength& o) const
-    {
-        return m_length == o.m_length;
-    }
-
-    virtual bool operator==(const CalcExpressionNode& o) const override
-    {
-        return type() == o.type() && *this == static_cast<const CalcExpressionLength&>(o);
-    }
-
-    virtual float evaluate(float maxValue) const override
-    {
-        return floatValueForLength(m_length, maxValue);
-    }
+    explicit CalcExpressionLength(Length);
 
     const Length& length() const { return m_length; }
 
 private:
+    virtual float evaluate(float maxValue) const override;
+    virtual bool operator==(const CalcExpressionNode&) const override;
+
     Length m_length;
 };
 
-inline const CalcExpressionLength* toCalcExpressionLength(const CalcExpressionNode* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->type() == CalcExpressionNodeLength);
-    return static_cast<const CalcExpressionLength*>(value);
-}
-
-class CalcExpressionBinaryOperation : public CalcExpressionNode {
+class CalcExpressionBinaryOperation final : public CalcExpressionNode {
 public:
-    CalcExpressionBinaryOperation(std::unique_ptr<CalcExpressionNode> leftSide, std::unique_ptr<CalcExpressionNode> rightSide, CalcOperator op)
-        : m_leftSide(std::move(leftSide))
-        , m_rightSide(std::move(rightSide))
-        , m_operator(op)
-    {
-        m_type = CalcExpressionNodeBinaryOperation;
-    }
+    CalcExpressionBinaryOperation(std::unique_ptr<CalcExpressionNode> leftSide, std::unique_ptr<CalcExpressionNode> rightSide, CalcOperator);
 
-    bool operator==(const CalcExpressionBinaryOperation& o) const
-    {
-        return m_operator == o.m_operator && *m_leftSide == *o.m_leftSide && *m_rightSide == *o.m_rightSide;
-    }
-
-    virtual bool operator==(const CalcExpressionNode& o) const override
-    {
-        return type() == o.type() && *this == static_cast<const CalcExpressionBinaryOperation&>(o);
-    }
-
-    virtual float evaluate(float) const override;
-
-    const CalcExpressionNode* leftSide() const { return m_leftSide.get(); }
-    const CalcExpressionNode* rightSide() const { return m_rightSide.get(); }
+    const CalcExpressionNode& leftSide() const { return *m_leftSide; }
+    const CalcExpressionNode& rightSide() const { return *m_rightSide; }
     CalcOperator getOperator() const { return m_operator; }
 
 private:
+    virtual float evaluate(float maxValue) const override;
+    virtual bool operator==(const CalcExpressionNode&) const override;
+
     std::unique_ptr<CalcExpressionNode> m_leftSide;
     std::unique_ptr<CalcExpressionNode> m_rightSide;
     CalcOperator m_operator;
 };
 
-inline const CalcExpressionBinaryOperation* toCalcExpressionBinaryOperation(const CalcExpressionNode* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->type() == CalcExpressionNodeBinaryOperation);
-    return static_cast<const CalcExpressionBinaryOperation*>(value);
-}
-
-class CalcExpressionBlendLength : public CalcExpressionNode {
+class CalcExpressionBlendLength final : public CalcExpressionNode {
 public:
-    CalcExpressionBlendLength(Length from, Length to, float progress)
-        : m_from(from)
-        , m_to(to)
-        , m_progress(progress)
-    {
-        m_type = CalcExpressionNodeBlendLength;
-    }
-
-    bool operator==(const CalcExpressionBlendLength& o) const
-    {
-        return m_progress == o.m_progress && m_from == o.m_from && m_to == o.m_to;
-    }
-
-    virtual bool operator==(const CalcExpressionNode& o) const override
-    {
-        return type() == o.type() && *this == static_cast<const CalcExpressionBlendLength&>(o);
-    }
-
-    virtual float evaluate(float maxValue) const override
-    {
-        return (1.0f - m_progress) * floatValueForLength(m_from, maxValue) + m_progress * floatValueForLength(m_to, maxValue);
-    }
+    CalcExpressionBlendLength(Length from, Length to, float progress);
 
     const Length& from() const { return m_from; }
     const Length& to() const { return m_to; }
     float progress() const { return m_progress; }
 
 private:
+    virtual float evaluate(float maxValue) const override;
+    virtual bool operator==(const CalcExpressionNode&) const override;
+
     Length m_from;
     Length m_to;
     float m_progress;
 };
 
-inline const CalcExpressionBlendLength* toCalcExpressionBlendLength(const CalcExpressionNode* value)
+class CalculationValue : public RefCounted<CalculationValue> {
+public:
+    static PassRef<CalculationValue> create(std::unique_ptr<CalcExpressionNode>, CalculationPermittedValueRange);
+    float evaluate(float maxValue) const;
+
+    bool shouldClampToNonNegative() const { return m_shouldClampToNonNegative; }
+    const CalcExpressionNode& expression() const { return *m_expression; }
+
+private:
+    CalculationValue(std::unique_ptr<CalcExpressionNode>, CalculationPermittedValueRange);
+
+    std::unique_ptr<CalcExpressionNode> m_expression;
+    bool m_shouldClampToNonNegative;
+};
+
+inline CalcExpressionNode::CalcExpressionNode(CalcExpressionNodeType type)
+    : m_type(type)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->type() == CalcExpressionNodeBlendLength);
-    return static_cast<const CalcExpressionBlendLength*>(value);
+}
+
+inline CalculationValue::CalculationValue(std::unique_ptr<CalcExpressionNode> expression, CalculationPermittedValueRange range)
+    : m_expression(std::move(expression))
+    , m_shouldClampToNonNegative(range == CalculationRangeNonNegative)
+{
+}
+
+inline bool operator==(const CalculationValue& a, const CalculationValue& b)
+{
+    return a.expression() == b.expression();
+}
+
+inline CalcExpressionNumber::CalcExpressionNumber(float value)
+    : CalcExpressionNode(CalcExpressionNodeNumber)
+    , m_value(value)
+{
+}
+
+inline bool operator==(const CalcExpressionNumber& a, const CalcExpressionNumber& b)
+{
+    return a.value() == b.value();
+}
+
+inline const CalcExpressionNumber& toCalcExpressionNumber(const CalcExpressionNode& value)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeNumber);
+    return static_cast<const CalcExpressionNumber&>(value);
+}
+
+inline CalcExpressionLength::CalcExpressionLength(Length length)
+    : CalcExpressionNode(CalcExpressionNodeLength)
+    , m_length(length)
+{
+}
+
+inline bool operator==(const CalcExpressionLength& a, const CalcExpressionLength& b)
+{
+    return a.length() == b.length();
+}
+
+inline const CalcExpressionLength& toCalcExpressionLength(const CalcExpressionNode& value)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeLength);
+    return static_cast<const CalcExpressionLength&>(value);
+}
+
+inline CalcExpressionBinaryOperation::CalcExpressionBinaryOperation(std::unique_ptr<CalcExpressionNode> leftSide, std::unique_ptr<CalcExpressionNode> rightSide, CalcOperator op)
+    : CalcExpressionNode(CalcExpressionNodeBinaryOperation)
+    , m_leftSide(std::move(leftSide))
+    , m_rightSide(std::move(rightSide))
+    , m_operator(op)
+{
+}
+
+inline bool operator==(const CalcExpressionBinaryOperation& a, const CalcExpressionBinaryOperation& b)
+{
+    return a.getOperator() == b.getOperator() && a.leftSide() == b.leftSide() && a.rightSide() == b.rightSide();
+}
+
+inline const CalcExpressionBinaryOperation& toCalcExpressionBinaryOperation(const CalcExpressionNode& value)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeBinaryOperation);
+    return static_cast<const CalcExpressionBinaryOperation&>(value);
+}
+
+inline CalcExpressionBlendLength::CalcExpressionBlendLength(Length from, Length to, float progress)
+    : CalcExpressionNode(CalcExpressionNodeBlendLength)
+    , m_from(from)
+    , m_to(to)
+    , m_progress(progress)
+{
+}
+
+inline bool operator==(const CalcExpressionBlendLength& a, const CalcExpressionBlendLength& b)
+{
+    return a.progress() == b.progress() && a.from() == b.from() && a.to() == b.to();
+}
+
+inline const CalcExpressionBlendLength& toCalcExpressionBlendLength(const CalcExpressionNode& value)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeBlendLength);
+    return static_cast<const CalcExpressionBlendLength&>(value);
 }
 
 } // namespace WebCore

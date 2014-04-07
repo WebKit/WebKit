@@ -4646,7 +4646,7 @@ template<int supported> Length CSSPrimitiveValue::convertToLength(const RenderSt
     if ((supported & AutoConversion) && getValueID() == CSSValueAuto)
         return Length(Auto);
     if ((supported & CalculatedConversion) && isCalculated())
-        return Length(cssCalcValue()->toCalcValue(style, rootStyle, multiplier));
+        return Length(cssCalcValue()->createCalculationValue(style, rootStyle, multiplier));
     if ((supported & ViewportPercentageConversion) && isViewportPercentageLength())
         return viewportPercentageLength();
     return Length(Undefined);

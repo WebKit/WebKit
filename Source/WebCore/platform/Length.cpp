@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller ( mueller@kde.org )
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
@@ -27,7 +27,8 @@
 
 #include "CalculationValue.h"
 #include <wtf/ASCIICType.h>
-#include <wtf/Assertions.h>
+#include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringView.h>
@@ -151,70 +152,102 @@ std::unique_ptr<Length[]> newLengthArray(const String& string, int& len)
 
     return r;
 }
-        
-class CalculationValueHandleMap {
-    WTF_MAKE_FAST_ALLOCATED;
+
+class CalculationValueMap {
 public:
-    CalculationValueHandleMap() 
-        : m_index(1) 
-    {
-    }
-    
-    int insert(PassRefPtr<CalculationValue> calcValue)
-    {
-        ASSERT(m_index);
-        // FIXME calc(): https://bugs.webkit.org/show_bug.cgi?id=80489
-        // This monotonically increasing handle generation scheme is potentially wasteful
-        // of the handle space. Consider reusing empty handles.
-        while (m_map.contains(m_index))
-            m_index++;
-        
-        m_map.set(m_index, calcValue);       
-        
-        return m_index;
-    }
+    CalculationValueMap();
 
-    void remove(int index)
-    {
-        ASSERT(m_map.contains(index));
-        m_map.remove(index);
-    }
+    unsigned insert(PassRef<CalculationValue>);
+    void ref(unsigned handle);
+    void deref(unsigned handle);
 
-    void remove(HashMap<int, RefPtr<CalculationValue>>::iterator it)
-    {
-        ASSERT(it != m_map.end());
-        m_map.remove(it);
-    }
+    CalculationValue& get(unsigned handle) const;
 
-    PassRefPtr<CalculationValue> get(int index)
-    {
-        ASSERT(m_map.contains(index));
-        return m_map.get(index);
-    }
+private:
+    struct Entry {
+        uint64_t referenceCountMinusOne;
+        CalculationValue* value;
+        Entry();
+        Entry(CalculationValue&);
+    };
 
-    HashMap<int, RefPtr<CalculationValue>>::iterator find(int index)
-    {
-        ASSERT(m_map.contains(index));
-        return m_map.find(index);
-    }
-
-private:        
-    int m_index;
-    HashMap<int, RefPtr<CalculationValue>> m_map;
+    unsigned m_nextAvailableHandle;
+    HashMap<unsigned, Entry> m_map;
 };
-    
-static CalculationValueHandleMap& calcHandles()
+
+inline CalculationValueMap::Entry::Entry()
+    : referenceCountMinusOne(0)
+    , value(nullptr)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(CalculationValueHandleMap, handleMap, ());
-    return handleMap;
 }
 
-Length::Length(PassRefPtr<CalculationValue> calc)
-    : m_quirk(false)
+inline CalculationValueMap::Entry::Entry(CalculationValue& value)
+    : referenceCountMinusOne(0)
+    , value(&value)
+{
+}
+
+inline CalculationValueMap::CalculationValueMap()
+    : m_nextAvailableHandle(1)
+{
+}
+    
+inline unsigned CalculationValueMap::insert(PassRef<CalculationValue> value)
+{
+    ASSERT(m_nextAvailableHandle);
+
+    // The leakRef below is balanced by the deref in the deref member function.
+    Entry leakedValue = value.leakRef();
+
+    // FIXME: This monotonically increasing handle generation scheme is potentially wasteful
+    // of the handle space. Consider reusing empty handles. https://bugs.webkit.org/show_bug.cgi?id=80489
+    while (!m_map.isValidKey(m_nextAvailableHandle) || !m_map.add(m_nextAvailableHandle, leakedValue).isNewEntry)
+        ++m_nextAvailableHandle;
+
+    return m_nextAvailableHandle++;
+}
+
+inline CalculationValue& CalculationValueMap::get(unsigned handle) const
+{
+    ASSERT(m_map.contains(handle));
+
+    return *m_map.find(handle)->value.value;
+}
+
+inline void CalculationValueMap::ref(unsigned handle)
+{
+    ASSERT(m_map.contains(handle));
+
+    ++m_map.find(handle)->value.referenceCountMinusOne;
+}
+
+inline void CalculationValueMap::deref(unsigned handle)
+{
+    ASSERT(m_map.contains(handle));
+
+    auto it = m_map.find(handle);
+    if (it->value.referenceCountMinusOne) {
+        --it->value.referenceCountMinusOne;
+        return;
+    }
+
+    // The deref below is balanced by the leakRef in the insert member function.
+    it->value.value->deref();
+    m_map.remove(it);
+}
+
+static CalculationValueMap& calculationValues()
+{
+    static NeverDestroyed<CalculationValueMap> map;
+    return map;
+}
+
+Length::Length(PassRef<CalculationValue> value)
+    : m_hasQuirk(false)
     , m_type(Calculated)
     , m_isFloat(false)
 {
-    m_intValue = calcHandles().insert(calc);
+    m_calculationValueHandle = calculationValues().insert(std::move(value));
 }
         
 Length Length::blendMixedTypes(const Length& from, double progress) const
@@ -228,39 +261,37 @@ Length Length::blendMixedTypes(const Length& from, double progress) const
     auto blend = std::make_unique<CalcExpressionBlendLength>(from, *this, progress);
     return Length(CalculationValue::create(std::move(blend), CalculationRangeAll));
 }
-          
-PassRefPtr<CalculationValue> Length::calculationValue() const
+
+CalculationValue& Length::calculationValue() const
 {
     ASSERT(isCalculated());
-    return calcHandles().get(calculationHandle());
+    return calculationValues().get(m_calculationValueHandle);
 }
     
-void Length::incrementCalculatedRef() const
+void Length::ref() const
 {
     ASSERT(isCalculated());
-    calculationValue()->ref();
+    calculationValues().ref(m_calculationValueHandle);
 }
 
-void Length::decrementCalculatedRef() const
+void Length::deref() const
 {
     ASSERT(isCalculated());
-    auto it = calcHandles().find(calculationHandle());
-    if (it->value->hasOneRef())
-        calcHandles().remove(it);
+    calculationValues().deref(m_calculationValueHandle);
 }
 
 float Length::nonNanCalculatedValue(int maxValue) const
 {
     ASSERT(isCalculated());
-    float result = calculationValue()->evaluate(maxValue);
+    float result = calculationValue().evaluate(maxValue);
     if (std::isnan(result))
         return 0;
     return result;
 }
 
-bool Length::isCalculatedEqual(const Length& o) const
+bool Length::isCalculatedEqual(const Length& other) const
 {
-    return isCalculated() && (calculationValue() == o.calculationValue() || *calculationValue() == *o.calculationValue());
+    return calculationValue() == other.calculationValue();
 }
 
 struct SameSizeAsLength {

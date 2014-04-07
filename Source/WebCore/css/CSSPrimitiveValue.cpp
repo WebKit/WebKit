@@ -305,15 +305,16 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length, const RenderStyle* st
         m_value.num = adjustFloatForAbsoluteZoom(length.value(), style);
         return;
     case Calculated: {
-        RefPtr<CSSCalcValue> calcValue = CSSCalcValue::create(length.calculationValue().get(), style);
+        RefPtr<CSSCalcValue> calcValue = CSSCalcValue::create(length.calculationValue(), *style);
         init(calcValue.release());
         return;
     }
     case Relative:
     case Undefined:
         ASSERT_NOT_REACHED();
-        break;
+        return;
     }
+    ASSERT_NOT_REACHED();
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(const LengthSize& lengthSize)
@@ -328,62 +329,63 @@ void CSSPrimitiveValue::init(const Length& length)
     case Auto:
         m_primitiveUnitType = CSS_VALUE_ID;
         m_value.valueID = CSSValueAuto;
-        break;
+        return;
     case WebCore::Fixed:
         m_primitiveUnitType = CSS_PX;
         m_value.num = length.value();
-        break;
+        return;
     case Intrinsic:
         m_primitiveUnitType = CSS_VALUE_ID;
         m_value.valueID = CSSValueIntrinsic;
-        break;
+        return;
     case MinIntrinsic:
         m_primitiveUnitType = CSS_VALUE_ID;
         m_value.valueID = CSSValueMinIntrinsic;
-        break;
+        return;
     case MinContent:
         m_primitiveUnitType = CSS_VALUE_ID;
         m_value.valueID = CSSValueWebkitMinContent;
-        break;
+        return;
     case MaxContent:
         m_primitiveUnitType = CSS_VALUE_ID;
         m_value.valueID = CSSValueWebkitMaxContent;
-        break;
+        return;
     case FillAvailable:
         m_primitiveUnitType = CSS_VALUE_ID;
         m_value.valueID = CSSValueWebkitFillAvailable;
-        break;
+        return;
     case FitContent:
         m_primitiveUnitType = CSS_VALUE_ID;
         m_value.valueID = CSSValueWebkitFitContent;
-        break;
+        return;
     case Percent:
         m_primitiveUnitType = CSS_PERCENTAGE;
         ASSERT(std::isfinite(length.percent()));
         m_value.num = length.percent();
-        break;
+        return;
     case ViewportPercentageWidth:
         m_primitiveUnitType = CSS_VW;
         m_value.num = length.viewportPercentageLength();
-        break;
+        return;
     case ViewportPercentageHeight:
         m_primitiveUnitType = CSS_VH;
         m_value.num = length.viewportPercentageLength();
-        break;
+        return;
     case ViewportPercentageMin:
         m_primitiveUnitType = CSS_VMIN;
         m_value.num = length.viewportPercentageLength();
-        break;
+        return;
     case ViewportPercentageMax:
         m_primitiveUnitType = CSS_VMAX;
         m_value.num = length.viewportPercentageLength();
-        break;
+        return;
     case Calculated:
     case Relative:
     case Undefined:
         ASSERT_NOT_REACHED();
-        break;
+        return;
     }
+    ASSERT_NOT_REACHED();
 }
 
 void CSSPrimitiveValue::init(const LengthSize& lengthSize)

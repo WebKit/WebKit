@@ -187,8 +187,8 @@ public:
     static EFillSizeType initialFillSizeType(EFillLayerType) { return SizeNone; }
     static LengthSize initialFillSizeLength(EFillLayerType) { return LengthSize(); }
     static FillSize initialFillSize(EFillLayerType type) { return FillSize(initialFillSizeType(type), initialFillSizeLength(type)); }
-    static Length initialFillXPosition(EFillLayerType) { return Length(0.0, Percent); }
-    static Length initialFillYPosition(EFillLayerType) { return Length(0.0, Percent); }
+    static Length initialFillXPosition(EFillLayerType) { return Length(0.0f, Percent); }
+    static Length initialFillYPosition(EFillLayerType) { return Length(0.0f, Percent); }
     static StyleImage* initialFillImage(EFillLayerType) { return 0; }
     static EMaskSourceType initialMaskSourceType(EFillLayerType) { return MaskAlpha; }
 

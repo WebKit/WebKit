@@ -122,7 +122,7 @@ float floatValueForLength(const Length& length, LayoutUnit maximumValue, RenderV
 {
     switch (length.type()) {
     case Fixed:
-        return length.getFloatValue();
+        return length.value();
     case Percent:
         return static_cast<float>(maximumValue * length.percent() / 100.0f);
     case FillAvailable:
@@ -168,7 +168,7 @@ float floatValueForLength(const Length& length, float maximumValue, RenderView* 
 {
     switch (length.type()) {
     case Fixed:
-        return length.getFloatValue();
+        return length.value();
     case Percent:
         return static_cast<float>(maximumValue * length.percent() / 100.0f);
     case FillAvailable:
