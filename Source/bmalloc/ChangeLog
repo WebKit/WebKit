@@ -1,0 +1,275 @@
+2014-04-07  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc
+        https://bugs.webkit.org/show_bug.cgi?id=131170
+
+        Reviewed by Andreas Kling.
+
+        Initial commit.
+
+        * bmalloc: Added.
+        * bmalloc.xcodeproj: Added.
+        * bmalloc.xcodeproj/project.pbxproj: Added.
+        * bmalloc/Algorithm.h: Added.
+        (bmalloc::max):
+        (bmalloc::min):
+        (bmalloc::mask):
+        (bmalloc::test):
+        (bmalloc::roundUpToMultipleOf):
+        (bmalloc::roundDownToMultipleOf):
+        (bmalloc::sizeOf):
+        (bmalloc::bitCount):
+        (bmalloc::isPowerOfTwo):
+        * bmalloc/Allocator.cpp: Added.
+        (bmalloc::Allocator::Allocator):
+        (bmalloc::Allocator::~Allocator):
+        (bmalloc::Allocator::log):
+        (bmalloc::Allocator::processSmallAllocatorLog):
+        (bmalloc::Allocator::processMediumAllocatorLog):
+        (bmalloc::Allocator::allocateLarge):
+        (bmalloc::Allocator::allocateXLarge):
+        (bmalloc::Allocator::allocateMedium):
+        (bmalloc::Allocator::allocateSlowCase):
+        * bmalloc/Allocator.h: Added.
+        (bmalloc::Allocator::smallAllocatorFor):
+        (bmalloc::Allocator::allocateFastCase):
+        (bmalloc::Allocator::allocate):
+        * bmalloc/AsyncTask.cpp: Added.
+        (bmalloc::AsyncTask<Function>::runSlowCase):
+        (bmalloc::AsyncTask<Function>::pthreadEntryPoint):
+        (bmalloc::AsyncTask<Function>::entryPoint):
+        * bmalloc/AsyncTask.h: Added.
+        (bmalloc::Function>::AsyncTask):
+        (bmalloc::Function>::join):
+        (bmalloc::Function>::run):
+        (bmalloc::Function>::runSlowCase):
+        (bmalloc::Function>::pthreadEntryPoint):
+        (bmalloc::Function>::entryPoint):
+        * bmalloc/BAssert.h: Added.
+        * bmalloc/BeginTag.h: Added.
+        (bmalloc::BeginTag::isInFreeList):
+        * bmalloc/BoundaryTag.h: Added.
+        (bmalloc::BoundaryTag::isXLarge):
+        (bmalloc::BoundaryTag::setXLarge):
+        (bmalloc::BoundaryTag::isFree):
+        (bmalloc::BoundaryTag::setFree):
+        (bmalloc::BoundaryTag::isEnd):
+        (bmalloc::BoundaryTag::setEnd):
+        (bmalloc::BoundaryTag::hasPhysicalPages):
+        (bmalloc::BoundaryTag::setHasPhysicalPages):
+        (bmalloc::BoundaryTag::isNull):
+        (bmalloc::BoundaryTag::clear):
+        (bmalloc::BoundaryTag::size):
+        (bmalloc::BoundaryTag::setSize):
+        (bmalloc::BoundaryTag::prev):
+        (bmalloc::BoundaryTag::next):
+        * bmalloc/BoundaryTagInlines.h: Added.
+        (bmalloc::validate):
+        (bmalloc::validatePrev):
+        (bmalloc::validateNext):
+        (bmalloc::BoundaryTag::init):
+        (bmalloc::BoundaryTag::mergeLargeLeft):
+        (bmalloc::BoundaryTag::mergeLargeRight):
+        (bmalloc::BoundaryTag::mergeLarge):
+        (bmalloc::BoundaryTag::deallocate):
+        (bmalloc::BoundaryTag::splitLarge):
+        (bmalloc::BoundaryTag::allocate):
+        * bmalloc/Cache.cpp: Added.
+        (bmalloc::Cache::operator new):
+        (bmalloc::Cache::operator delete):
+        (bmalloc::Cache::Cache):
+        (bmalloc::Cache::allocateSlowCase):
+        (bmalloc::Cache::allocateSlowCaseNullCache):
+        (bmalloc::Cache::deallocateSlowCase):
+        (bmalloc::Cache::deallocateSlowCaseNullCache):
+        * bmalloc/Cache.h: Added.
+        (bmalloc::Cache::allocator):
+        (bmalloc::Cache::deallocator):
+        (bmalloc::Cache::allocateFastCase):
+        (bmalloc::Cache::deallocateFastCase):
+        (bmalloc::Cache::allocate):
+        (bmalloc::Cache::deallocate):
+        * bmalloc/Chunk.h: Added.
+        (bmalloc::Chunk::begin):
+        (bmalloc::Chunk::end):
+        (bmalloc::Chunk::lines):
+        (bmalloc::Chunk::pages):
+        * bmalloc/Deallocator.cpp: Added.
+        (bmalloc::Deallocator::Deallocator):
+        (bmalloc::Deallocator::~Deallocator):
+        (bmalloc::Deallocator::deallocateLarge):
+        (bmalloc::Deallocator::deallocateXLarge):
+        (bmalloc::Deallocator::processObjectLog):
+        (bmalloc::Deallocator::deallocateSlowCase):
+        (bmalloc::Deallocator::deallocateSmallLine):
+        (bmalloc::Deallocator::allocateSmallLine):
+        (bmalloc::Deallocator::deallocateMediumLine):
+        (bmalloc::Deallocator::allocateMediumLine):
+        * bmalloc/Deallocator.h: Added.
+        (bmalloc::Deallocator::deallocateFastCase):
+        (bmalloc::Deallocator::deallocate):
+        * bmalloc/EndTag.h: Added.
+        (bmalloc::EndTag::operator=):
+        * bmalloc/FixedVector.h: Added.
+        (bmalloc::FixedVector::begin):
+        (bmalloc::FixedVector::end):
+        (bmalloc::FixedVector::size):
+        (bmalloc::FixedVector::capacity):
+        (bmalloc::FixedVector::clear):
+        (bmalloc::FixedVector::isEmpty):
+        (bmalloc::Capacity>::FixedVector):
+        (bmalloc::Capacity>::operator):
+        (bmalloc::Capacity>::push):
+        (bmalloc::Capacity>::pop):
+        (bmalloc::Capacity>::shrink):
+        * bmalloc/Heap.cpp: Added.
+        (bmalloc::sleep):
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::concurrentScavenge):
+        (bmalloc::Heap::scavengeSmallPages):
+        (bmalloc::Heap::scavengeMediumPages):
+        (bmalloc::Heap::scavengeLargeRanges):
+        (bmalloc::Heap::allocateSmallLineSlowCase):
+        (bmalloc::Heap::allocateMediumLineSlowCase):
+        (bmalloc::Heap::allocateXLarge):
+        (bmalloc::Heap::deallocateXLarge):
+        (bmalloc::Heap::allocateLarge):
+        (bmalloc::Heap::deallocateLarge):
+        * bmalloc/Heap.h: Added.
+        (bmalloc::Heap::deallocateSmallLine):
+        (bmalloc::Heap::allocateSmallLine):
+        (bmalloc::Heap::deallocateMediumLine):
+        (bmalloc::Heap::allocateMediumLine):
+        * bmalloc/Inline.h: Added.
+        * bmalloc/LargeChunk.h: Added.
+        (bmalloc::LargeChunk::begin):
+        (bmalloc::LargeChunk::end):
+        (bmalloc::LargeChunk::create):
+        (bmalloc::LargeChunk::get):
+        (bmalloc::LargeChunk::beginTag):
+        (bmalloc::LargeChunk::endTag):
+        * bmalloc/Line.h: Added.
+        (bmalloc::Line<Traits>::begin):
+        (bmalloc::Line<Traits>::end):
+        (bmalloc::Line<Traits>::concurrentRef):
+        (bmalloc::Line<Traits>::deref):
+        * bmalloc/MediumAllocator.h: Added.
+        (bmalloc::MediumAllocator::isNull):
+        (bmalloc::MediumAllocator::MediumAllocator):
+        (bmalloc::MediumAllocator::line):
+        (bmalloc::MediumAllocator::allocate):
+        (bmalloc::MediumAllocator::derefCount):
+        (bmalloc::MediumAllocator::refill):
+        * bmalloc/MediumChunk.h: Added.
+        * bmalloc/MediumLine.h: Added.
+        * bmalloc/MediumPage.h: Added.
+        * bmalloc/MediumTraits.h: Added.
+        * bmalloc/Mutex.cpp: Added.
+        (bmalloc::Mutex::lockSlowCase):
+        * bmalloc/Mutex.h: Added.
+        (bmalloc::Mutex::Mutex):
+        (bmalloc::Mutex::try_lock):
+        (bmalloc::Mutex::lock):
+        (bmalloc::Mutex::unlock):
+        * bmalloc/ObjectType.cpp: Added.
+        (bmalloc::objectType):
+        * bmalloc/ObjectType.h: Added.
+        (bmalloc::isSmallOrMedium):
+        (bmalloc::isSmall):
+        * bmalloc/Page.h: Added.
+        (bmalloc::Page<Traits>::ref):
+        (bmalloc::Page<Traits>::deref):
+        (bmalloc::Page<Traits>::refCount):
+        * bmalloc/PerProcess.h: Added.
+        (bmalloc::PerProcess::mutex):
+        (bmalloc::PerProcess<T>::getFastCase):
+        (bmalloc::PerProcess<T>::get):
+        (bmalloc::PerProcess<T>::getSlowCase):
+        * bmalloc/PerThread.h: Added.
+        (bmalloc::PerThreadStorage<Cache>::get):
+        (bmalloc::PerThreadStorage<Cache>::init):
+        (bmalloc::PerThreadStorage::get):
+        (bmalloc::PerThreadStorage::init):
+        (bmalloc::PerThread<T>::getFastCase):
+        (bmalloc::PerThread<T>::get):
+        (bmalloc::PerThread<T>::destructor):
+        (bmalloc::PerThread<T>::getSlowCase):
+        * bmalloc/Range.h: Added.
+        (bmalloc::Range::Range):
+        (bmalloc::Range::begin):
+        (bmalloc::Range::end):
+        (bmalloc::Range::size):
+        (bmalloc::Range::operator!):
+        (bmalloc::Range::operator<):
+        * bmalloc/SegregatedFreeList.cpp: Added.
+        (bmalloc::SegregatedFreeList::SegregatedFreeList):
+        (bmalloc::SegregatedFreeList::insert):
+        (bmalloc::SegregatedFreeList::takeGreedy):
+        (bmalloc::SegregatedFreeList::take):
+        * bmalloc/SegregatedFreeList.h: Added.
+        * bmalloc/Sizes.h: Added.
+        * bmalloc/SmallAllocator.h: Added.
+        (bmalloc::SmallAllocator::isNull):
+        (bmalloc::SmallAllocator::canAllocate):
+        (bmalloc::SmallAllocator::SmallAllocator):
+        (bmalloc::SmallAllocator::line):
+        (bmalloc::SmallAllocator::allocate):
+        (bmalloc::SmallAllocator::objectCount):
+        (bmalloc::SmallAllocator::derefCount):
+        (bmalloc::SmallAllocator::refill):
+        * bmalloc/SmallChunk.h: Added.
+        * bmalloc/SmallLine.h: Added.
+        * bmalloc/SmallPage.h: Added.
+        * bmalloc/SmallTraits.h: Added.
+        * bmalloc/Syscall.h: Added.
+        * bmalloc/VMAllocate.h: Added.
+        (bmalloc::vmSize):
+        (bmalloc::vmValidate):
+        (bmalloc::vmAllocate):
+        (bmalloc::vmDeallocate):
+        (bmalloc::vmDeallocatePhysicalPages):
+        (bmalloc::vmAllocatePhysicalPages):
+        (bmalloc::vmDeallocatePhysicalPagesSloppy):
+        (bmalloc::vmAllocatePhysicalPagesSloppy):
+        * bmalloc/VMHeap.cpp: Added.
+        (bmalloc::VMHeap::VMHeap):
+        (bmalloc::VMHeap::allocateSmallChunk):
+        (bmalloc::VMHeap::allocateMediumChunk):
+        (bmalloc::VMHeap::allocateLargeChunk):
+        * bmalloc/VMHeap.h: Added.
+        (bmalloc::VMHeap::allocateSmallPage):
+        (bmalloc::VMHeap::allocateMediumPage):
+        (bmalloc::VMHeap::allocateLargeRange):
+        (bmalloc::VMHeap::deallocateSmallPage):
+        (bmalloc::VMHeap::deallocateMediumPage):
+        (bmalloc::VMHeap::deallocateLargeRange):
+        * bmalloc/Vector.h: Added.
+        (bmalloc::Vector::begin):
+        (bmalloc::Vector::end):
+        (bmalloc::Vector::size):
+        (bmalloc::Vector::capacity):
+        (bmalloc::Vector::last):
+        (bmalloc::Vector::pop):
+        (bmalloc::Vector<T>::Vector):
+        (bmalloc::Vector<T>::~Vector):
+        (bmalloc::Vector<T>::operator):
+        (bmalloc::Vector<T>::push):
+        (bmalloc::Vector<T>::pop):
+        (bmalloc::Vector<T>::shrink):
+        (bmalloc::Vector<T>::reallocateBuffer):
+        (bmalloc::Vector<T>::shrinkCapacity):
+        (bmalloc::Vector<T>::growCapacity):
+        * bmalloc/XLargeChunk.h: Added.
+        (bmalloc::XLargeChunk::get):
+        (bmalloc::XLargeChunk::begin):
+        (bmalloc::XLargeChunk::XLargeChunk):
+        (bmalloc::XLargeChunk::create):
+        (bmalloc::XLargeChunk::destroy):
+        (bmalloc::XLargeChunk::range):
+        (bmalloc::XLargeChunk::size):
+        * bmalloc/bmalloc.h: Added.
+        (bmalloc::api::malloc):
+        (bmalloc::api::free):
+        (bmalloc::api::realloc):
+        * bmalloc/mbmalloc.cpp: Added.
+
