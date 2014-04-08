@@ -1,3 +1,21 @@
+2014-04-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Handle min/max height in the grid element
+        https://bugs.webkit.org/show_bug.cgi?id=131302
+
+        Reviewed by Darin Adler.
+
+        Added test coverage for min/max height handling in the grid
+        item. Also added other test to cover a blind spot in our testing,
+        resizing of content sized columns with flexible breadths.
+
+        Merged from Blink r161876 by <jchaffraix@chromium.org> and r166914 by <rego@igalia.com>.
+
+        * fast/css-grid-layout/flex-content-sized-columns-resize-expected.html: Added.
+        * fast/css-grid-layout/flex-content-sized-columns-resize.html: Added.
+        * fast/css-grid-layout/grid-element-min-max-height-expected.txt: Added.
+        * fast/css-grid-layout/grid-element-min-max-height.html: Added.
+
 2014-04-08  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Fixed positioned elements in named flows have fragmented content

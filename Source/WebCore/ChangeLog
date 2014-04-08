@@ -1,3 +1,22 @@
+2014-04-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Handle min/max height in the grid element
+        https://bugs.webkit.org/show_bug.cgi?id=131302
+
+        Reviewed by Darin Adler.
+
+        Removed a FIXME in the code as we're already handling min/max
+        height in the code. Added a couple of test cases to improve the
+        test coverage.
+
+        Merged from Blink r161876 by <jchaffraix@chromium.org>
+
+        Tests: fast/css-grid-layout/flex-content-sized-columns-resize.html
+               fast/css-grid-layout/grid-element-min-max-height.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutGridItems):
+
 2014-04-08  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Remove unused RenderBox::clearRenderBoxRegionInfo
