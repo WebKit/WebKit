@@ -181,7 +181,7 @@
     [_contentView setFrame:bounds];
     [_scrollView addSubview:_contentView.get()];
 
-    [self _frameOrBoundsChangedFrom:self.bounds];
+    [self _frameOrBoundsChanged];
 
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
@@ -347,11 +347,10 @@
 - (void)setFrame:(CGRect)frame
 {
     CGRect oldFrame = self.frame;
-    CGRect oldBounds = self.bounds;
     [super setFrame:frame];
 
     if (!CGSizeEqualToSize(oldFrame.size, frame.size))
-        [self _frameOrBoundsChangedFrom:oldBounds];
+        [self _frameOrBoundsChanged];
 }
 
 - (void)setBounds:(CGRect)bounds
@@ -360,7 +359,7 @@
     [super setBounds:bounds];
 
     if (!CGSizeEqualToSize(oldBounds.size, bounds.size))
-        [self _frameOrBoundsChangedFrom:oldBounds];
+        [self _frameOrBoundsChanged];
 }
 
 - (UIScrollView *)scrollView
@@ -675,24 +674,15 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [_contentView didZoomToScale:scale];
 }
 
-- (void)_frameOrBoundsChangedFrom:(CGRect)oldBounds
+- (void)_frameOrBoundsChanged
 {
     CGRect bounds = self.bounds;
-
-    if (!_hasStaticMinimumLayoutSize)
+    if (!_hasStaticMinimumLayoutSize && !_isAnimatingResize)
         [_contentView setMinimumLayoutSize:bounds.size];
     [_scrollView setFrame:bounds];
     [_contentView setMinimumSize:bounds.size];
     [_customContentView web_setMinimumSize:bounds.size];
     [self _updateVisibleContentRects];
-
-    if (_isAnimatingResize && !_customContentView) {
-        CGFloat oldWebViewWidthInContentCoordinate = oldBounds.size.width / contentZoomScale(self);
-        CGFloat visibleContentViewWidthInContentCoordinate = std::min([_contentView bounds].size.width, oldWebViewWidthInContentCoordinate);
-        CGFloat targetScale = bounds.size.width / visibleContentViewWidthInContentCoordinate;
-        [_scrollView setZoomScale:targetScale];
-        // FIXME: compute the real target offset based on the future exposed rect, the content and limit it to the valid range.
-   }
 }
 
 // Unobscured content rect where the user can interact. When the keyboard is up, this should be the area above or bellow the keyboard, wherever there is enough space.
@@ -708,6 +698,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 - (void)_updateVisibleContentRects
 {
     if (![self usesStandardContentView])
+        return;
+
+    if (_isAnimatingResize)
         return;
 
     CGRect fullViewRect = self.bounds;
@@ -1207,11 +1200,55 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     if (_customContentView)
         return;
 
-    [_scrollView setMinimumZoomScale:std::min(futureSize.width / [_contentView bounds].size.width, [_scrollView minimumZoomScale])];
+    CGSize contentSizeInContentViewCoordinates = [_contentView bounds].size;
+    [_scrollView setMinimumZoomScale:std::min(futureSize.width / contentSizeInContentViewCoordinates.width, [_scrollView minimumZoomScale])];
 
     _obscuredInsets = futureObscuredInsets;
     if (_hasStaticMinimumLayoutSize)
         _minimumLayoutSizeOverride = futureMinimumLayoutSize;
+
+    CGRect oldBounds = self.bounds;
+    WebCore::FloatRect originalUnobscuredContentRect = _page->unobscuredContentRect();
+
+    CGRect futureBounds = oldBounds;
+    futureBounds.size = futureSize;
+    [self setBounds:futureBounds];
+
+    // Compute the new scale to keep the current content width in the scrollview.
+    CGFloat oldWebViewWidthInContentViewCoordinates = oldBounds.size.width / contentZoomScale(self);
+    CGFloat visibleContentViewWidthInContentCoordinates = std::min(contentSizeInContentViewCoordinates.width, oldWebViewWidthInContentViewCoordinates);
+    CGFloat targetScale = futureBounds.size.width / visibleContentViewWidthInContentCoordinates;
+    [_scrollView setZoomScale:targetScale];
+
+    // Compute a new position to keep the content centered.
+    CGPoint originalContentCenter = originalUnobscuredContentRect.center();
+    CGPoint originalContentCenterInSelfCoordinates = [self convertPoint:originalContentCenter fromView:_contentView.get()];
+    CGRect futureUnobscuredRectInSelfCoordinates = UIEdgeInsetsInsetRect(futureBounds, futureObscuredInsets);
+    CGPoint futureUnobscuredRectCenterInSelfCoordinates = CGPointMake(futureUnobscuredRectInSelfCoordinates.origin.x + futureUnobscuredRectInSelfCoordinates.size.width / 2, futureUnobscuredRectInSelfCoordinates.origin.y + futureUnobscuredRectInSelfCoordinates.size.height / 2);
+
+    CGPoint originalContentOffset = [_scrollView contentOffset];
+    CGPoint contentOffset = originalContentOffset;
+    contentOffset.x += (originalContentCenterInSelfCoordinates.x - futureUnobscuredRectCenterInSelfCoordinates.x);
+    contentOffset.y += (originalContentCenterInSelfCoordinates.y - futureUnobscuredRectCenterInSelfCoordinates.y);
+
+    // Limit the new offset within the scrollview, we do not want to rubber band programmatically.
+    CGSize futureContentSizeInSelfCoordinates = CGSizeMake(contentSizeInContentViewCoordinates.width * targetScale, contentSizeInContentViewCoordinates.height * targetScale);
+    CGFloat maxHorizontalOffset = futureContentSizeInSelfCoordinates.width - futureBounds.size.width + _obscuredInsets.right;
+    contentOffset.x = std::min(contentOffset.x, maxHorizontalOffset);
+    CGFloat maxVerticalOffset = futureContentSizeInSelfCoordinates.height - futureBounds.size.height + _obscuredInsets.bottom;
+    contentOffset.y = std::min(contentOffset.y, maxVerticalOffset);
+
+    contentOffset.x = std::max(contentOffset.x, -_obscuredInsets.left);
+    contentOffset.y = std::max(contentOffset.y, -_obscuredInsets.top);
+
+    // Make the top/bottom edges "sticky" within 1 pixel.
+    if (originalUnobscuredContentRect.maxY() > contentSizeInContentViewCoordinates.height - 1)
+        contentOffset.y = maxVerticalOffset;
+    if (originalUnobscuredContentRect.y() < 1)
+        contentOffset.y = -_obscuredInsets.top;
+
+    // FIXME: if we have content centered after double tap to zoom, we should also try to keep that rect in view.
+    [_scrollView setContentOffset:contentOffset];
 
     // FIXME: Send a single message to the WebProcess to layout and repaint instead.
     // FIXME: Send resize event.

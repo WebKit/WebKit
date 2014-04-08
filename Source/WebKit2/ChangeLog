@@ -1,3 +1,24 @@
+2014-04-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Implement the update of content offset on animated resize
+        https://bugs.webkit.org/show_bug.cgi?id=131329
+
+        Reviewed by Tim Horton.
+
+        Compute a reasonable target offset on rotation. This goes in 3 steps:
+        1) Move the page so that the center does not move during scaling.
+        2) Limit the range to keep the page in scrollview without rubberbanding.
+        3) The horizontal content stays the same but the vertical area changes. When on the top or bottom
+           edge, stick to the edge.
+
+        The code is moved inside _beginAnimatedResizeToSize:obscuredInsets:minimumLayoutSizeOverride: so that we can tell
+        the WebProcess where the scroll position will be at the end of the animation.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _frameOrBoundsChangedFrom:]):
+        (-[WKWebView _updateVisibleContentRects]):
+        (-[WKWebView _beginAnimatedResizeToSize:obscuredInsets:minimumLayoutSizeOverride:]):
+
 2014-04-07  Dan Bernstein  <mitz@apple.com>
 
         Mountain Lion build fix.
