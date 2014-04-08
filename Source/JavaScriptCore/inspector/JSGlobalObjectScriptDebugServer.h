@@ -53,7 +53,9 @@ private:
     virtual void runEventLoopWhilePaused() override;
     virtual bool isContentScript(JSC::ExecState*) const override { return false; }
 
-    // FIXME: JavaScript inspection has no Console yet.
+    // NOTE: Currently all exceptions are reported at the API boundary through reportAPIException.
+    // Until a time comes where an exception can be caused outside of the API (e.g. setTimeout
+    // or some other async operation in a pure JSContext) we can ignore exceptions reported here.
     virtual void reportException(JSC::ExecState*, JSC::JSValue) const override { }
 
     ListenerSet m_listeners;
