@@ -85,4 +85,25 @@
 
 @end
 
+WKNavigationType toWKNavigationType(WebCore::NavigationType navigationType)
+{
+    switch (navigationType) {
+    case WebCore::NavigationTypeLinkClicked:
+        return WKNavigationTypeLinkActivated;
+    case WebCore::NavigationTypeFormSubmitted:
+        return WKNavigationTypeFormSubmitted;
+    case WebCore::NavigationTypeBackForward:
+        return WKNavigationTypeBackForward;
+    case WebCore::NavigationTypeReload:
+        return WKNavigationTypeReload;
+    case WebCore::NavigationTypeFormResubmitted:
+        return WKNavigationTypeFormResubmitted;
+    case WebCore::NavigationTypeOther:
+        return WKNavigationTypeOther;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WKNavigationTypeOther;
+}
+
 #endif

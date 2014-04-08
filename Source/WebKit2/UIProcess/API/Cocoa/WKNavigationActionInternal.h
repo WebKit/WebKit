@@ -27,6 +27,8 @@
 
 #if WK_API_ENABLED
 
+#import <WebCore/FrameLoaderTypes.h>
+
 @interface WKNavigationAction ()
 
 @property (nonatomic, readwrite, strong) WKFrameInfo *sourceFrame;
@@ -38,5 +40,7 @@
 @property (nonatomic, readwrite, copy, setter=_setOriginalURL:) NSURL *_originalURL;
 
 @end
+
+WKNavigationType toWKNavigationType(WebCore::NavigationType);
 
 #endif
