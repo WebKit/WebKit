@@ -380,7 +380,6 @@ public:
     LayoutRect borderBoxRectInRegion(RenderRegion*, RenderBoxRegionInfoFlags = CacheRenderBoxRegionInfo) const;
     LayoutRect clientBoxRectInRegion(RenderRegion*) const;
     RenderRegion* clampToStartAndEndRegions(RenderRegion*) const;
-    void clearRenderBoxRegionInfo();
     virtual LayoutUnit offsetFromLogicalTopOfFirstPage() const;
     
     void positionLineBox(InlineElementBox&);

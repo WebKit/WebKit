@@ -1,3 +1,16 @@
+2014-04-08  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Remove unused RenderBox::clearRenderBoxRegionInfo
+        https://bugs.webkit.org/show_bug.cgi?id=131352
+
+        Reviewed by Andrei Bucur.
+
+        No new tests, code clean-up.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::clearRenderBoxRegionInfo): Deleted.
+        * rendering/RenderBox.h:
+
 2014-04-08  Zsolt Borbely  <zsborbely.u-szeged@partner.samsung.com>
 
         Buildfix after r166917
