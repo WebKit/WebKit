@@ -1,3 +1,27 @@
+2014-04-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Added a bmalloc back-end for FastMalloc
+        https://bugs.webkit.org/show_bug.cgi?id=131387
+
+        Reviewed by Andreas Kling.
+
+        We'll need to rethink some things if we adopt this back-end. For example,
+        fastMallocSize() and fastMallocGoodSize() are no longer real things. But,
+        this is enough to test for now.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMalloc):
+        (WTF::fastCalloc):
+        (WTF::fastRealloc):
+        (WTF::fastFree):
+        (WTF::fastMallocSize):
+        (WTF::fastMallocGoodSize):
+        (WTF::tryFastMalloc):
+        (WTF::tryFastRealloc):
+        (WTF::tryFastCalloc):
+        (WTF::releaseFastMallocFreeMemory):
+        (WTF::fastMallocStatistics):
+
 2014-04-08  Andres Gomez  <agomez@igalia.com>
 
         [GTK] [EFL] Build fails with GCC < 4.8.x

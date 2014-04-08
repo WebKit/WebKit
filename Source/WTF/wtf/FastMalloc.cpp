@@ -423,6 +423,68 @@ size_t fastMallocSize(const void* p)
 extern "C" WTF_EXPORT_PRIVATE const int jscore_fastmalloc_introspection = 0;
 #endif
 
+#elif defined(USE_BMALLOC) && USE_BMALLOC // FORCE_SYSTEM_MALLOC
+
+#include "bmalloc.h"
+
+namespace WTF {
+
+void* fastMalloc(size_t size)
+{
+    ASSERT(!isForbidden());
+    return bmalloc::api::malloc(size);
+}
+
+void* fastCalloc(size_t numElements, size_t elementSize)
+{
+    return fastZeroedMalloc(numElements * elementSize);
+}
+    
+void* fastRealloc(void* object, size_t size)
+{
+    return bmalloc::api::realloc(object, size);
+}
+    
+void fastFree(void* object)
+{
+    bmalloc::api::free(object);
+}
+    
+size_t fastMallocSize(const void*)
+{
+    return 1;
+}
+    
+size_t fastMallocGoodSize(size_t size)
+{
+    return size;
+}
+    
+TryMallocReturnValue tryFastMalloc(size_t size)
+{
+    return fastMalloc(size);
+}
+    
+TryMallocReturnValue tryFastRealloc(void* p, size_t n)
+{
+    return fastRealloc(p, n);
+}
+    
+TryMallocReturnValue tryFastCalloc(size_t numElements, size_t elementSize)
+{
+    return fastCalloc(numElements, elementSize);
+}
+    
+void releaseFastMallocFreeMemory() { }
+
+FastMallocStatistics fastMallocStatistics()
+{
+    FastMallocStatistics statistics = { 0, 0, 0 };
+    return statistics;
+}
+
+} // namespace WTF
+
 #else // FORCE_SYSTEM_MALLOC
 
 #include "TCPackedCache.h"
