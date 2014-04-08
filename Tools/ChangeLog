@@ -1,3 +1,41 @@
+2014-04-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove DumpRenderTree and GtkLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=131373
+
+        Reviewed by Andreas Kling.
+
+        Remove the GTK+ port of DumpRenderTree and GtkLauncher. These tools are
+        no longer necessary now that WebKit1 GTK+ will be removed.
+
+        * CMakeLists.txt:
+        * DumpRenderTree/PlatformGTK.cmake: Removed.
+        * DumpRenderTree/gtk/AccessibilityControllerGtk.cpp: Removed.
+        * DumpRenderTree/gtk/DumpRenderTree.cpp: Removed.
+        * DumpRenderTree/gtk/DumpRenderTreeGtk.h: Removed.
+        * DumpRenderTree/gtk/EditingCallbacks.cpp: Removed.
+        * DumpRenderTree/gtk/EditingCallbacks.h: Removed.
+        * DumpRenderTree/gtk/EventSender.cpp: Removed.
+        * DumpRenderTree/gtk/EventSender.h: Removed.
+        * DumpRenderTree/gtk/GCControllerGtk.cpp: Removed.
+        * DumpRenderTree/gtk/PixelDumpSupportGtk.cpp: Removed.
+        * DumpRenderTree/gtk/SelfScrollingWebKitWebView.cpp: Removed.
+        * DumpRenderTree/gtk/SelfScrollingWebKitWebView.h: Removed.
+        * DumpRenderTree/gtk/TestRunnerGtk.cpp: Removed.
+        * DumpRenderTree/gtk/TextInputController.cpp: Removed.
+        * DumpRenderTree/gtk/TextInputController.h: Removed.
+        * DumpRenderTree/gtk/WorkQueueItemGtk.cpp: Removed.
+        * GtkLauncher/CMakeLists.txt: Removed.
+        * GtkLauncher/LauncherInspectorWindow.c: Removed.
+        * GtkLauncher/LauncherInspectorWindow.h: Removed.
+        * GtkLauncher/main.c: Removed.
+        * GtkLauncher/simple.svg: Removed.
+        * GtkLauncher/text.html: Removed.
+        * WebKitTestRunner/PlatformGTK.cmake:
+        * WebKitTestRunner/gtk/fonts/AHEM____.TTF: Renamed from Tools/DumpRenderTree/gtk/fonts/AHEM____.TTF.
+        * WebKitTestRunner/gtk/fonts/FontWithNoValidEncoding.fon: Renamed from Tools/DumpRenderTree/gtk/fonts/FontWithNoValidEncoding.fon.
+        * WebKitTestRunner/gtk/fonts/fonts.conf: Renamed from Tools/DumpRenderTree/gtk/fonts/fonts.conf.
+
 2014-04-08  Mark Rowe  <mrowe@apple.com>
 
         XPC services launched by Safari have wrong DYLD_FRAMEWORK_PATH set when launched via run-safari / debug-safari
