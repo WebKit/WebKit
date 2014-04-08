@@ -28,6 +28,7 @@
 #ifndef WebFrameNetworkingContext_h
 #define WebFrameNetworkingContext_h
 
+#include "HTTPCookieAcceptPolicy.h"
 #include <WebCore/FrameNetworkingContext.h>
 #include <WebCore/SessionID.h>
 
@@ -44,6 +45,7 @@ public:
     }
 
     static void ensurePrivateBrowsingSession(WebCore::SessionID);
+    static void setCookieAcceptPolicyForAllContexts(HTTPCookieAcceptPolicy);
 
     WebFrameLoaderClient* webFrameLoaderClient() const;
 

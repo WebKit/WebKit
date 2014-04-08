@@ -1,3 +1,19 @@
+2014-04-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [SOUP] Control cookie management according ResourceRequest.allowCookies()
+        https://bugs.webkit.org/show_bug.cgi?id=131026
+
+        Reviewed by Sergio Villar Senin.
+
+        Added setting of accept cookies policy for the current soup network session cookie jar and all tracked sessions.
+        Moved the implementation of cookie policy setting from WebCookieManager to WebFrameNetworkingContext.
+
+        * WebProcess/Cookies/soup/WebCookieManagerSoup.cpp:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy): Moved implementation to WebCookieManager::platformSetHTTPCookieAcceptPolicy.
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp:
+        (WebKit::WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts): Moved implementation from WebCookieManager::platformSetHTTPCookieAcceptPolicy and set the cookie jar accept policy to the cookie jars of all sessions in addition to the default cookie jar.
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.h: Added method prototype.
+
 2014-04-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [WK2] Fix unused parameter compile warning

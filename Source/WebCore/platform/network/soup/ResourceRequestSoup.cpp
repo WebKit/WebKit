@@ -43,6 +43,8 @@ void ResourceRequest::updateSoupMessageMembers(SoupMessage* soupMessage) const
 
     if (!acceptEncoding())
         soup_message_disable_feature(soupMessage, SOUP_TYPE_CONTENT_DECODER);
+    if (!allowCookies())
+        soup_message_disable_feature(soupMessage, SOUP_TYPE_COOKIE_JAR);
 }
 
 void ResourceRequest::updateSoupMessageHeaders(SoupMessageHeaders* soupHeaders) const

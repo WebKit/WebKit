@@ -1,3 +1,17 @@
+2014-04-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [SOUP] Control cookie management according ResourceRequest.allowCookies()
+        https://bugs.webkit.org/show_bug.cgi?id=131026
+
+        Reviewed by Sergio Villar Senin.
+
+        Added per soup-message disabling of cookie jar manager when related ResourceRequest does not allow cookies (e.g. some cross-origin requests).
+
+        Patch is covered by unskipped test http/tests/xmlhttprequest/cross-origin-cookie-storage.html.
+
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::updateSoupMessageMembers): Added disabling of cookie jar manager if cookies are not allowed.
+
 2014-04-08  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Handle min/max height in the grid element

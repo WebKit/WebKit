@@ -1,3 +1,13 @@
+2014-04-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [SOUP] Control cookie management according ResourceRequest.allowCookies()
+        https://bugs.webkit.org/show_bug.cgi?id=131026
+
+        Reviewed by Sergio Villar Senin.
+
+        * platform/efl/TestExpectations: Unskipped test http/tests/xmlhttprequest/cross-origin-cookie-storage.html.
+        * platform/gtk/TestExpectations: Ditto.
+
 2014-04-08  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Handle min/max height in the grid element
