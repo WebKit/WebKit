@@ -57,6 +57,12 @@
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLInputElement.h>
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1080
+@interface NSKeyedUnarchiver (WKDetails)
+- (void)setRequiresSecureCoding:(BOOL)b;
+@end
+#endif
+
 using namespace WebCore;
 using namespace WebKit;
 

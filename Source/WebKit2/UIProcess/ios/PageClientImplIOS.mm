@@ -47,6 +47,12 @@
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/SharedBuffer.h>
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1080
+@interface NSKeyedUnarchiver (WKDetails)
+- (void)setRequiresSecureCoding:(BOOL)b;
+@end
+#endif
+
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_webView->_page->process().connection())
 
 @interface UIView (IPI)
