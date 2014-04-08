@@ -1,3 +1,53 @@
+2014-04-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove WebKit1 unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=131359
+
+        Reviewed by Anders Carlsson.
+
+        Remove all WebKit1 GTK+ unit tests, in preparation for removing the WebKit1 port
+        entirely. We also remove the list of skipped WebKi1 tests from run-gtk-tests, as
+        they were inadvertently left in http://trac.webkit.org/changeset/166504.
+
+        * CMakeLists.txt: No longer load the WebKit1 unit test CMakeLists.txt file.
+        * Scripts/run-gtk-tests: Remove skipped WebKit1 unit tests.
+        * TestWebKitAPI/Tests/WebKitGtk/CMakeLists.txt: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/resources/blank.ico: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/resources/test.html: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/resources/test.ogg: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/resources/test.pdf: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/resources/test.txt: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/test_utils.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/test_utils.h: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testapplicationcache.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testatk.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testatkroles.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testcontextmenu.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testcopyandpaste.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testdomdocument.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testdomdomwindow.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testdomnode.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testdownload.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testfavicondatabase.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testglobals.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testhittestresult.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testhttpbackend.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testkeyevents.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testloading.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testmimehandling.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testnetworkrequest.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testnetworkresponse.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testwebbackforwardlist.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testwebdatasource.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testwebframe.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testwebhistoryitem.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testwebinspector.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testwebplugindatabase.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testwebresource.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testwebsettings.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testwebview.c: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/testwindow.c: Removed.
+
 2014-04-08  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed gardening (Take 2): Prevent users from attempting
