@@ -1,3 +1,19 @@
+2014-04-07  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] inset complex calc() args vanish in serialized computed style
+        https://bugs.webkit.org/show_bug.cgi?id=129838
+
+        Reviewed by Bem Jones-Bey.
+
+        We didn't pass the style parameter when setting the width members of CSSBasicShapeInset,
+        which lead to a 'should never reach asserttion' in CSSPrimitiveValue::init. This patch
+        adds the missing parameters to the call sites.
+
+        Extended existing parsing test script.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBasicShape):
+
 2014-04-07  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] MediaDocument should allow autoplay

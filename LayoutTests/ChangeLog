@@ -1,3 +1,13 @@
+2014-04-07  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] inset complex calc() args vanish in serialized computed style
+        https://bugs.webkit.org/show_bug.cgi?id=129838
+
+        Reviewed by Bem Jones-Bey.
+
+        * fast/shapes/parsing/parsing-shape-outside-expected.txt:
+        * fast/shapes/parsing/parsing-test-utils.js:
+
 2014-03-30  Filip Pizlo  <fpizlo@apple.com>
 
         Move slow JSRegress tests out of the way so that they don't show up in run-jsc-benchmarks runs and also skip tests that are extremely long-running

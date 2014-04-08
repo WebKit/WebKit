@@ -107,10 +107,10 @@ PassRefPtr<CSSValue> valueForBasicShape(const RenderStyle* style, const BasicSha
         const BasicShapeInset* inset = static_cast<const BasicShapeInset*>(basicShape);
         RefPtr<CSSBasicShapeInset> insetValue = CSSBasicShapeInset::create();
 
-        insetValue->setTop(pool.createValue(inset->top()));
-        insetValue->setRight(pool.createValue(inset->right()));
-        insetValue->setBottom(pool.createValue(inset->bottom()));
-        insetValue->setLeft(pool.createValue(inset->left()));
+        insetValue->setTop(pool.createValue(inset->top(), style));
+        insetValue->setRight(pool.createValue(inset->right(), style));
+        insetValue->setBottom(pool.createValue(inset->bottom(), style));
+        insetValue->setLeft(pool.createValue(inset->left(), style));
 
         insetValue->setTopLeftRadius(pool.createValue(inset->topLeftRadius()));
         insetValue->setTopRightRadius(pool.createValue(inset->topRightRadius()));

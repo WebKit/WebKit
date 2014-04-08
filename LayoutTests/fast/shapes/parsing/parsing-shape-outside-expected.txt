@@ -55,6 +55,8 @@ PASS getCSSText("-webkit-shape-outside", "inset(10px 20px 30px 40px round 5px 6p
 PASS getComputedStyleValue("-webkit-shape-outside", "inset(10px 20px 30px 40px round 5px 6px)") is "inset(10px 20px 30px 40px round 5px 6px 5px 6px / 5px 6px 5px 6px)"
 PASS getCSSText("-webkit-shape-outside", "inset(10px 20px 30px 40px round 5px 6px 7px 8px / 50px 60px 70px 80px)") is "inset(10px 20px 30px 40px round 5px 6px 7px 8px / 50px 60px 70px 80px)"
 PASS getComputedStyleValue("-webkit-shape-outside", "inset(10px 20px 30px 40px round 5px 6px 7px 8px / 50px 60px 70px 80px)") is "inset(10px 20px 30px 40px round 5px 6px 7px 8px / 50px 60px 70px 80px)"
+PASS getCSSText("-webkit-shape-outside", "inset(calc(25%*3 - 10in) 0 0 0)") is "inset(calc(75% - 10in) 0px 0px 0px)"
+PASS getComputedStyleValue("-webkit-shape-outside", "inset(calc(25%*3 - 10in) 0 0 0)") is "inset(calc(75% - 960px) 0px 0px 0px round 0px 0px 0px 0px / 0px 0px 0px 0px)"
 PASS getCSSText("-webkit-shape-outside", "circle()") is "circle(at 50% 50%)"
 PASS getComputedStyleValue("-webkit-shape-outside", "circle()") is "circle(closest-side at 50% 50%)"
 PASS getCSSText("-webkit-shape-outside", "circle(farthest-side)") is "circle(farthest-side at 50% 50%)"
