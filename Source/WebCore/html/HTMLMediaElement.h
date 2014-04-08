@@ -456,6 +456,10 @@ public:
     MediaPlayer::Preload preloadValue() const { return m_preload; }
     HTMLMediaSession& mediaSession() const { return *m_mediaSession; }
 
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    void pageScaleFactorChanged();
+#endif
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool);
     virtual ~HTMLMediaElement();
@@ -481,6 +485,11 @@ protected:
 #endif
 
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
+
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    bool mediaControlsDependOnPageScaleFactor() const { return m_mediaControlsDependOnPageScaleFactor; }
+    void setMediaControlsDependOnPageScaleFactor(bool);
+#endif
 
 private:
     void createMediaPlayer();
@@ -828,6 +837,10 @@ private:
     bool m_requestingPlay : 1;
 #endif
 
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    bool m_mediaControlsDependOnPageScaleFactor : 1;
+#endif
+
 #if ENABLE(VIDEO_TRACK)
     bool m_tracksAreReady : 1;
     bool m_haveVisibleTextTrack : 1;
@@ -877,6 +890,7 @@ private:
     size_t m_reportedExtraMemoryCost;
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    friend class MediaControlsHost;
     RefPtr<MediaControlsHost> m_mediaControlsHost;
     RefPtr<DOMWrapperWorld> m_isolatedWorld;
 #endif

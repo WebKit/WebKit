@@ -4195,6 +4195,24 @@ void Document::captionPreferencesChanged()
 }
 #endif
 
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+void Document::registerForPageScaleFactorChangedCallbacks(HTMLMediaElement* element)
+{
+    m_pageScaleFactorChangedElements.add(element);
+}
+
+void Document::unregisterForPageScaleFactorChangedCallbacks(HTMLMediaElement* element)
+{
+    m_pageScaleFactorChangedElements.remove(element);
+}
+
+void Document::pageScaleFactorChanged()
+{
+    for (HTMLMediaElement* mediaElement : m_pageScaleFactorChangedElements)
+        mediaElement->pageScaleFactorChanged();
+}
+#endif
+
 void Document::setShouldCreateRenderers(bool f)
 {
     m_createRenderers = f;

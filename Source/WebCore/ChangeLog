@@ -1,3 +1,38 @@
+2014-04-07  Dean Jackson  <dino@apple.com>
+
+        Allow elements to register for changes in page scale
+        https://bugs.webkit.org/show_bug.cgi?id=131319
+
+        Reviewed by Eric Carlson.
+
+        Some parts of WebCore need to react to changes in the page
+        scale factor, such as resizing when the user zooms. A followup
+        patch will enable this for media controls - this simply lays
+        the groundwork.
+
+        At the moment we only allow HTMLMediaElements to register, but if
+        necessary this could be expanded in the future.
+
+        * dom/Document.cpp: New methods to keep a list of HTMLMediaElements that
+        are interested in updates.
+        (WebCore::Document::registerForPageScaleFactorChangedCallbacks):
+        (WebCore::Document::unregisterForPageScaleFactorChangedCallbacks):
+        (WebCore::Document::pageScaleFactorChanged):
+        * dom/Document.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::registerWithDocument): Add ourselves to the
+        the document's pageScale callback.
+        (WebCore::HTMLMediaElement::unregisterWithDocument): Remove ourselves from the
+        the document's pageScale callback.
+        (WebCore::HTMLMediaElement::setMediaControlsDependOnPageScaleFactor): Add/remove ourselves to/from
+        the callback if necessary.
+        (WebCore::HTMLMediaElement::pageScaleFactorChanged): The callback function. Empty for now.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::mediaControlsDependOnPageScaleFactor): Accessor.
+        * page/Page.cpp:
+        (WebCore::Page::setPageScaleFactor): Tell all documents that the user has zoomed.
+
 2014-04-08  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile error in TextureMapper.h

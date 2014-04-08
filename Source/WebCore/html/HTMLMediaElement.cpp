@@ -330,6 +330,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #if PLATFORM(IOS)
     , m_requestingPlay(false)
 #endif
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    , m_mediaControlsDependOnPageScaleFactor(false)
+#endif
 #if ENABLE(VIDEO_TRACK)
     , m_tracksAreReady(true)
     , m_haveVisibleTextTrack(false)
@@ -451,6 +454,11 @@ void HTMLMediaElement::registerWithDocument(Document& document)
     document.registerForCaptionPreferencesChangedCallbacks(this);
 #endif
 
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    if (m_mediaControlsDependOnPageScaleFactor)
+        document.registerForPageScaleFactorChangedCallbacks(this);
+#endif
+
     addElementToDocumentMap(*this, document);
 }
 
@@ -469,6 +477,11 @@ void HTMLMediaElement::unregisterWithDocument(Document& document)
 
 #if ENABLE(VIDEO_TRACK)
     document.unregisterForCaptionPreferencesChangedCallbacks(this);
+#endif
+
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    if (m_mediaControlsDependOnPageScaleFactor)
+        document.unregisterForPageScaleFactorChangedCallbacks(this);
 #endif
 
     removeElementFromDocumentMap(*this, document);
@@ -5978,6 +5991,24 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     JSC::call(exec, overlay, callType, callData, globalObject, argList);
     if (exec->hadException())
         exec->clearException();
+}
+
+void HTMLMediaElement::setMediaControlsDependOnPageScaleFactor(bool dependsOnPageScale)
+{
+    LOG(Media, "MediaElement::setMediaControlsDependPageScaleFactor = %s", boolString(dependsOnPageScale));
+    if (m_mediaControlsDependOnPageScaleFactor == dependsOnPageScale)
+        return;
+
+    m_mediaControlsDependOnPageScaleFactor = dependsOnPageScale;
+
+    if (m_mediaControlsDependOnPageScaleFactor)
+        document().registerForPageScaleFactorChangedCallbacks(this);
+    else
+        document().unregisterForPageScaleFactorChangedCallbacks(this);
+}
+
+void HTMLMediaElement::pageScaleFactorChanged()
+{
 }
 #endif // ENABLE(MEDIA_CONTROLS_SCRIPT)
 

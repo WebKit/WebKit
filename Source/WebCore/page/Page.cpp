@@ -730,6 +730,11 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin)
         if (!view->delegatesScrolling())
             view->setScrollPosition(origin);
     }
+
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
+        frame->document()->pageScaleFactorChanged();
+#endif
 }
 
 void Page::setDeviceScaleFactor(float scaleFactor)
