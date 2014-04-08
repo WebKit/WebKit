@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ViewGestureController.h"
 
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
 
 #import "NativeWebWheelEvent.h"
 #import "WebPageGroup.h"
@@ -73,6 +73,9 @@ static const float smartMagnificationPanScrollThreshold = 100;
 static const double swipeOverlayShadowOpacity = 0.66;
 static const double swipeOverlayShadowRadius = 3;
 
+static const CGFloat minimumHorizontalSwipeDistance = 15;
+static const float minimumScrollEventRatioForSwipe = 0.5;
+
 static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 static const std::chrono::seconds swipeSnapshotRemovalWatchdogDuration = 3_s;
 
@@ -86,8 +89,7 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     , m_visibleContentRectIsValid(false)
     , m_frameHandlesMagnificationGesture(false)
     , m_swipeTransitionStyle(SwipeTransitionStyle::Overlap)
-    
-    , m_hasPendingSwipe(false)
+    , m_pendingSwipeReason(PendingSwipeReason::None)
 {
     m_webPageProxy.process().addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.pageID(), *this);
 }
@@ -258,9 +260,40 @@ static bool scrollEventCanBecomeSwipe(NSEvent *event, WebPageProxy& webPageProxy
     return true;
 }
 
+bool ViewGestureController::deltaIsSufficientToBeginSwipe(NSEvent *event)
+{
+    if (m_pendingSwipeReason != PendingSwipeReason::InsufficientMagnitude)
+        return false;
+
+    m_cumulativeDeltaForPendingSwipe += FloatSize(event.scrollingDeltaX, event.scrollingDeltaY);
+
+    // If the cumulative delta is ever "too vertical", we will stop tracking this
+    // as a potential swipe until we get another "begin" event.
+    if (fabs(m_cumulativeDeltaForPendingSwipe.height()) >= fabs(m_cumulativeDeltaForPendingSwipe.width()) * minimumScrollEventRatioForSwipe) {
+        m_pendingSwipeReason = PendingSwipeReason::None;
+        return false;
+    }
+
+    if (fabs(m_cumulativeDeltaForPendingSwipe.width()) < minimumHorizontalSwipeDistance)
+        return false;
+
+    return true;
+}
+
 bool ViewGestureController::handleScrollWheelEvent(NSEvent *event)
 {
-    m_hasPendingSwipe = false;
+    if (event.phase == NSEventPhaseEnded) {
+        m_cumulativeDeltaForPendingSwipe = FloatSize();
+        m_pendingSwipeReason = PendingSwipeReason::None;
+    }
+
+    if (m_pendingSwipeReason == PendingSwipeReason::InsufficientMagnitude) {
+        if (deltaIsSufficientToBeginSwipe(event)) {
+            m_pendingSwipeReason = PendingSwipeReason::None;
+            trackSwipeGesture(event, m_pendingSwipeDirection);
+            return true;
+        }
+    }
 
     if (m_activeGestureType != ViewGestureType::None)
         return false;
@@ -270,9 +303,15 @@ bool ViewGestureController::handleScrollWheelEvent(NSEvent *event)
         return false;
 
     if (m_webPageProxy.willHandleHorizontalScrollEvents()) {
-        m_hasPendingSwipe = true;
+        m_pendingSwipeReason = PendingSwipeReason::WebCoreMayScroll;
         m_pendingSwipeDirection = direction;
         return false;
+    }
+
+    m_pendingSwipeReason = PendingSwipeReason::InsufficientMagnitude;
+    if (!deltaIsSufficientToBeginSwipe(event)) {
+        m_pendingSwipeDirection = direction;
+        return true;
     }
 
     trackSwipeGesture(event, direction);
@@ -282,14 +321,19 @@ bool ViewGestureController::handleScrollWheelEvent(NSEvent *event)
 
 void ViewGestureController::wheelEventWasNotHandledByWebCore(NSEvent *event)
 {
-    if (!m_hasPendingSwipe)
+    if (m_pendingSwipeReason != PendingSwipeReason::WebCoreMayScroll)
         return;
 
-    m_hasPendingSwipe = false;
+    m_pendingSwipeReason = PendingSwipeReason::None;
 
     SwipeDirection direction;
     if (!scrollEventCanBecomeSwipe(event, m_webPageProxy, direction))
         return;
+
+    if (!deltaIsSufficientToBeginSwipe(event)) {
+        m_pendingSwipeReason = PendingSwipeReason::InsufficientMagnitude;
+        return;
+    }
 
     trackSwipeGesture(event, m_pendingSwipeDirection);
 }

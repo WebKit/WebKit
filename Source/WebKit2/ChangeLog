@@ -1,3 +1,25 @@
+2014-04-08  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures (Swipe): Swipe-start hysteresis
+        https://bugs.webkit.org/show_bug.cgi?id=127393
+        <rdar://problem/15876822>
+
+        Reviewed by Anders Carlsson.
+
+        We shouldn't start a swipe immediately upon very small scrolls in the correct direction,
+        because we don't want to get the user trapped in a swipe when they want to scroll.
+
+        We'll accumulate the scroll deltas and wait until the user has scrolled at least 15px horizontally.
+        In addition, we'll drop the swipe completely if any event has a vertical delta equal to half (or more)
+        of the horizontal delta.
+
+        * UIProcess/mac/ViewGestureController.h:
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::ViewGestureController):
+        (WebKit::ViewGestureController::deltaIsSufficientToBeginSwipe):
+        (WebKit::ViewGestureController::handleScrollWheelEvent):
+        (WebKit::ViewGestureController::wheelEventWasNotHandledByWebCore):
+
 2014-04-07  Jer Noble  <jer.noble@apple.com>
 
         [Mac][WK2] Videos do not have access to session cookies
