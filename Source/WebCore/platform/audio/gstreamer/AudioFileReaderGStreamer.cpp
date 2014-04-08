@@ -335,7 +335,7 @@ PassRefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
 
     // Start the pipeline processing just after the loop is started.
     GMainLoopSource source;
-    source.schedule("[WebKit] AudioFileReader::decodeAudioForBusCreation", std::bind(&AudioFileReader::decodeAudioForBusCreation, this), G_PRIORITY_DEFAULT, nullptr, context.get());
+    source.schedule("[WebKit] AudioFileReader::decodeAudioForBusCreation", std::function<void()>(std::bind(&AudioFileReader::decodeAudioForBusCreation, this)), G_PRIORITY_DEFAULT, nullptr, context.get());
 
     g_main_loop_run(m_loop.get());
     g_main_context_pop_thread_default(context.get());

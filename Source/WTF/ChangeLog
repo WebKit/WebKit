@@ -1,3 +1,21 @@
+2014-04-08  Andres Gomez  <agomez@igalia.com>
+
+        [GTK] [EFL] Build fails with GCC < 4.8.x
+        https://bugs.webkit.org/show_bug.cgi?id=130585
+
+        Reviewed by Martin Robinson.
+
+        The behavior in lower versions of GCC seem to be related to
+        http://www.open-std.org/jtc1/sc22/wg21/docs/lwg-active.html#2132.
+
+        Provided explicit casts for the failing ambiguous overloads.
+
+        * wtf/gtk/MainThreadGtk.cpp:
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        * wtf/gtk/RunLoopGtk.cpp:
+        (WTF::RunLoop::wakeUp): Provided lambda with a RefPtr instead of
+        ref and de-referring.
+
 2014-04-04  Mark Lam  <mark.lam@apple.com>
 
         Date object needs to check for ES5 15.9.1.14 TimeClip limit.

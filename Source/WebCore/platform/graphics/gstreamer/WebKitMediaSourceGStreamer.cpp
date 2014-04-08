@@ -366,11 +366,11 @@ static GstStateChangeReturn webKitMediaSrcChangeState(GstElement* element, GstSt
         GST_OBJECT_LOCK(src);
 
         gst_object_ref(src);
-        priv->sourceVideo.start.schedule("[WebKit] webKitMediaVideoSrcStart", std::bind(webKitMediaVideoSrcStart, src), G_PRIORITY_DEFAULT,
+        priv->sourceVideo.start.schedule("[WebKit] webKitMediaVideoSrcStart", std::function<void()>(std::bind(webKitMediaVideoSrcStart, src)), G_PRIORITY_DEFAULT,
             [src] { gst_object_unref(src); });
 
         gst_object_ref(src);
-        priv->sourceAudio.start.schedule("[WebKit] webKitMediaAudioSrcStart", std::bind(webKitMediaAudioSrcStart, src), G_PRIORITY_DEFAULT,
+        priv->sourceAudio.start.schedule("[WebKit] webKitMediaAudioSrcStart", std::function<void()>(std::bind(webKitMediaAudioSrcStart, src)), G_PRIORITY_DEFAULT,
             [src] { gst_object_unref(src); });
 
         GST_OBJECT_UNLOCK(src);
@@ -380,11 +380,11 @@ static GstStateChangeReturn webKitMediaSrcChangeState(GstElement* element, GstSt
         GST_OBJECT_LOCK(src);
 
         gst_object_ref(src);
-        priv->sourceVideo.stop.schedule("[WebKit] webKitMediaVideoSrcStop", std::bind(webKitMediaVideoSrcStop, src), G_PRIORITY_DEFAULT,
+        priv->sourceVideo.stop.schedule("[WebKit] webKitMediaVideoSrcStop", std::function<void()>(std::bind(webKitMediaVideoSrcStop, src)), G_PRIORITY_DEFAULT,
             [src] { gst_object_unref(src); });
 
         gst_object_ref(src);
-        priv->sourceAudio.stop.schedule("[WebKit] webKitMediaAudioSrcStop", std::bind(webKitMediaAudioSrcStop, src), G_PRIORITY_DEFAULT,
+        priv->sourceAudio.stop.schedule("[WebKit] webKitMediaAudioSrcStop", std::function<void()>(std::bind(webKitMediaAudioSrcStop, src)), G_PRIORITY_DEFAULT,
             [src] { gst_object_unref(src); });
 
         GST_OBJECT_UNLOCK(src);
@@ -524,7 +524,7 @@ static void webKitMediaVideoSrcNeedDataCb(GstAppSrc*, guint length, gpointer use
     }
 
     gst_object_ref(src);
-    priv->sourceVideo.needData.schedule("[WebKit] webKitMediaVideoSrcNeedDataMainCb", std::bind(webKitMediaVideoSrcNeedDataMainCb, src), G_PRIORITY_DEFAULT,
+    priv->sourceVideo.needData.schedule("[WebKit] webKitMediaVideoSrcNeedDataMainCb", std::function<void()>(std::bind(webKitMediaVideoSrcNeedDataMainCb, src)), G_PRIORITY_DEFAULT,
         [src] { gst_object_unref(src); });
     GST_OBJECT_UNLOCK(src);
 }
@@ -543,7 +543,7 @@ static void webKitMediaAudioSrcNeedDataCb(GstAppSrc*, guint length, gpointer use
     }
 
     gst_object_ref(src);
-    priv->sourceAudio.needData.schedule("[WebKit] webKitMediaAudioSrcNeedDataMainCb", std::bind(webKitMediaAudioSrcNeedDataMainCb, src), G_PRIORITY_DEFAULT,
+    priv->sourceAudio.needData.schedule("[WebKit] webKitMediaAudioSrcNeedDataMainCb", std::function<void()>(std::bind(webKitMediaAudioSrcNeedDataMainCb, src)), G_PRIORITY_DEFAULT,
         [src] { gst_object_unref(src); });
     GST_OBJECT_UNLOCK(src);
 }
@@ -580,7 +580,7 @@ static void webKitMediaVideoSrcEnoughDataCb(GstAppSrc*, gpointer userData)
     }
 
     gst_object_ref(src);
-    priv->sourceVideo.enoughData.schedule("[WebKit] webKitMediaVideoSrcEnoughDataMainCb", std::bind(webKitMediaVideoSrcEnoughDataMainCb, src), G_PRIORITY_DEFAULT,
+    priv->sourceVideo.enoughData.schedule("[WebKit] webKitMediaVideoSrcEnoughDataMainCb", std::function<void()>(std::bind(webKitMediaVideoSrcEnoughDataMainCb, src)), G_PRIORITY_DEFAULT,
         [src] { gst_object_unref(src); });
 
     GST_OBJECT_UNLOCK(src);
@@ -600,7 +600,7 @@ static void webKitMediaAudioSrcEnoughDataCb(GstAppSrc*, gpointer userData)
     }
 
     gst_object_ref(src);
-    priv->sourceAudio.enoughData.schedule("[WebKit] webKitMediaAudioSrcEnoughDataMainCb", std::bind(webKitMediaAudioSrcEnoughDataMainCb, src), G_PRIORITY_DEFAULT,
+    priv->sourceAudio.enoughData.schedule("[WebKit] webKitMediaAudioSrcEnoughDataMainCb", std::function<void()>(std::bind(webKitMediaAudioSrcEnoughDataMainCb, src)), G_PRIORITY_DEFAULT,
         [src] { gst_object_unref(src); });
 
     GST_OBJECT_UNLOCK(src);
@@ -642,7 +642,7 @@ static gboolean webKitMediaVideoSrcSeekDataCb(GstAppSrc*, guint64 offset, gpoint
     priv->sourceVideo.requestedOffset = offset;
 
     gst_object_ref(src);
-    priv->sourceVideo.seek.schedule("[WebKit] webKitMediaVideoSrcSeekMainCb", std::bind(webKitMediaVideoSrcSeekMainCb, src), G_PRIORITY_DEFAULT,
+    priv->sourceVideo.seek.schedule("[WebKit] webKitMediaVideoSrcSeekMainCb", std::function<void()>(std::bind(webKitMediaVideoSrcSeekMainCb, src)), G_PRIORITY_DEFAULT,
         [src] { gst_object_unref(src); });
 
     GST_OBJECT_UNLOCK(src);
@@ -675,7 +675,7 @@ static gboolean webKitMediaAudioSrcSeekDataCb(GstAppSrc*, guint64 offset, gpoint
     priv->sourceAudio.requestedOffset = offset;
 
     gst_object_ref(src);
-    priv->sourceAudio.seek.schedule("[WebKit] webKitMediaAudioSrcSeekMainCb", std::bind(webKitMediaAudioSrcSeekMainCb, src), G_PRIORITY_DEFAULT,
+    priv->sourceAudio.seek.schedule("[WebKit] webKitMediaAudioSrcSeekMainCb", std::function<void()>(std::bind(webKitMediaAudioSrcSeekMainCb, src)), G_PRIORITY_DEFAULT,
         [src] { gst_object_unref(src); });
 
     GST_OBJECT_UNLOCK(src);

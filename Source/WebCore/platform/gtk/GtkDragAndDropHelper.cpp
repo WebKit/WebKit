@@ -99,7 +99,7 @@ void GtkDragAndDropHelper::handleDragLeave(GdkDragContext* gdkContext, DragExite
     // the drag-drop signal. We want the actions for drag-leave to happen after
     // those for drag-drop, so schedule them to happen asynchronously here.
     context->exitedCallback = exitedCallback;
-    GMainLoopSource::createAndDeleteOnDestroy().schedule("[WebKit] handleDragLeaveLater", std::bind(&GtkDragAndDropHelper::handleDragLeaveLater, this, context));
+    GMainLoopSource::createAndDeleteOnDestroy().schedule("[WebKit] handleDragLeaveLater", std::function<void()>(std::bind(&GtkDragAndDropHelper::handleDragLeaveLater, this, context)));
 }
 
 static void queryNewDropContextData(DroppingContext* dropContext, GtkWidget* widget, guint time)

@@ -40,7 +40,7 @@ void initializeMainThreadPlatform()
 
 void scheduleDispatchFunctionsOnMainThread()
 {
-    GMainLoopSource::createAndDeleteOnDestroy().schedule("[WebKit] dispatchFunctionsFromMainThread", dispatchFunctionsFromMainThread);
+    GMainLoopSource::createAndDeleteOnDestroy().schedule("[WebKit] dispatchFunctionsFromMainThread", std::function<void()>(dispatchFunctionsFromMainThread));
 }
 
 } // namespace WTF

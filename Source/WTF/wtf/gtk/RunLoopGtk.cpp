@@ -99,9 +99,10 @@ void RunLoop::stop()
 
 void RunLoop::wakeUp()
 {
-    ref();
-    GMainLoopSource::createAndDeleteOnDestroy().schedule("[WebKit] RunLoop work", std::bind(&RunLoop::performWork, this),
-        G_PRIORITY_DEFAULT, [this] { deref(); });
+    RefPtr<RunLoop> runLoop(this);
+    GMainLoopSource::createAndDeleteOnDestroy().schedule("[WebKit] RunLoop work", std::function<void()>([runLoop] {
+        runLoop->performWork();
+    }));
     g_main_context_wakeup(m_runLoopContext.get());
 }
 
