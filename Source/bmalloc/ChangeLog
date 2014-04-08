@@ -1,5 +1,44 @@
 2014-04-07  Geoffrey Garen  <ggaren@apple.com>
 
+        Build bmalloc on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=131333
+
+        Reviewed by Mark Rowe.
+
+        * Makefile: Added. For make clients.
+
+        These files are required for building any project in WebKit. I copied
+        them from WTF:
+        * Configurations: Added.
+        * Configurations/Base.xcconfig: Added.
+        * Configurations/DebugRelease.xcconfig: Added.
+        * Configurations/bmalloc.xcconfig: Added.
+        * Configurations/iOS.xcconfig: Added.
+        * Configurations/mbmalloc.xcconfig: Added.
+
+        * bmalloc.xcodeproj/project.pbxproj: I removed per-project-file stuff
+        from here because everything is in .xcconfig files now.
+
+        I had to fix a bunch of minor warnings, since they're enabled in our
+        .xcconfig files:
+
+        * bmalloc/AsyncTask.h:
+        (bmalloc::Function>::AsyncTask):
+        * bmalloc/BAssert.h:
+        * bmalloc/BoundaryTagInlines.h:
+        (bmalloc::validate):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::allocateLarge):
+        (bmalloc::Heap::deallocateLarge):
+        * bmalloc/Mutex.h:
+        (bmalloc::Mutex::Mutex): Deleted.
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmValidate):
+        * bmalloc/mbmalloc.cpp:
+
+2014-04-07  Geoffrey Garen  <ggaren@apple.com>
+
         bmalloc: Fixed a leak in the per-thread cache
         https://bugs.webkit.org/show_bug.cgi?id=131330
 

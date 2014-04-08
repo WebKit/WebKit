@@ -76,6 +76,11 @@
 		147AAA9718CE5FB6002201E4 /* SmallTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmallTraits.h; path = bmalloc/SmallTraits.h; sourceTree = "<group>"; };
 		1485655E18A43AF900ED6942 /* BoundaryTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundaryTag.h; path = bmalloc/BoundaryTag.h; sourceTree = "<group>"; };
 		1485656018A43DBA00ED6942 /* ObjectType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectType.h; path = bmalloc/ObjectType.h; sourceTree = "<group>"; };
+		14B650C518F39F4800751968 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		14B650C618F39F4800751968 /* bmalloc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = bmalloc.xcconfig; sourceTree = "<group>"; };
+		14B650C718F39F4800751968 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		14B650C818F39F4800751968 /* iOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = iOS.xcconfig; sourceTree = "<group>"; };
+		14B650C918F3A04200751968 /* mbmalloc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = mbmalloc.xcconfig; sourceTree = "<group>"; };
 		14CC394418EA8743004AFE34 /* libmbmalloc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmbmalloc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		14D9DB4517F2447100EAAB79 /* FixedVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = FixedVector.h; path = bmalloc/FixedVector.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		14DA32071885F9E6007269E0 /* Line.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = Line.h; path = bmalloc/Line.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -121,6 +126,7 @@
 				147AAA9A18CE5FD3002201E4 /* heap: small | medium */,
 				14D9DB4E17F2866E00EAAB79 /* heap */,
 				14D9DB4F17F2868900EAAB79 /* stdlib */,
+				14B650C418F39F4800751968 /* Configurations */,
 				145F6840179DC45F00D65598 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -165,6 +171,18 @@
 				147AAA8918CD17CE002201E4 /* XLargeChunk.h */,
 			);
 			name = "heap: large | xlarge";
+			sourceTree = "<group>";
+		};
+		14B650C418F39F4800751968 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				14B650C518F39F4800751968 /* Base.xcconfig */,
+				14B650C618F39F4800751968 /* bmalloc.xcconfig */,
+				14B650C718F39F4800751968 /* DebugRelease.xcconfig */,
+				14B650C818F39F4800751968 /* iOS.xcconfig */,
+				14B650C918F3A04200751968 /* mbmalloc.xcconfig */,
+			);
+			path = Configurations;
 			sourceTree = "<group>";
 		};
 		14D9DB4D17F2865C00EAAB79 /* cache */ = {
@@ -334,130 +352,70 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		14202F0F18F37C15006C37DB /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 14B650C518F39F4800751968 /* Base.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		14202F1018F37C15006C37DB /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 14B650C618F39F4800751968 /* bmalloc.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		14202F1118F37C15006C37DB /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 14B650C918F3A04200751968 /* mbmalloc.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
 		145F684A179DC45F00D65598 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 14B650C718F39F4800751968 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
+				DEAD_CODE_STRIPPING = "$(DEAD_CODE_STRIPPING_debug)";
+				DEBUG_DEFINES = "$(DEBUG_DEFINES_debug)";
+				GCC_OPTIMIZATION_LEVEL = "$(GCC_OPTIMIZATION_LEVEL_debug)";
+				STRIP_INSTALLED_PRODUCT = "$(STRIP_INSTALLED_PRODUCT_debug)";
 			};
 			name = Debug;
 		};
 		145F684B179DC45F00D65598 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 14B650C718F39F4800751968 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
 		14CC394618EA8743004AFE34 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 14B650C918F3A04200751968 /* mbmalloc.xcconfig */;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx.internal;
 			};
 			name = Debug;
 		};
 		14CC394718EA8743004AFE34 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 14B650C918F3A04200751968 /* mbmalloc.xcconfig */;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx.internal;
 			};
 			name = Release;
 		};
 		14F271C018EA3963008C152F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 14B650C618F39F4800751968 /* bmalloc.xcconfig */;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				EXECUTABLE_PREFIX = lib;
-				GCC_ENABLE_OBJC_EXCEPTIONS = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_THREADSAFE_STATICS = NO;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx.internal;
 			};
 			name = Debug;
 		};
 		14F271C118EA3963008C152F /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 14B650C618F39F4800751968 /* bmalloc.xcconfig */;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				GCC_ENABLE_OBJC_EXCEPTIONS = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_THREADSAFE_STATICS = NO;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx.internal;
 			};
 			name = Release;
 		};
@@ -469,27 +427,30 @@
 			buildConfigurations = (
 				145F684A179DC45F00D65598 /* Debug */,
 				145F684B179DC45F00D65598 /* Release */,
+				14202F0F18F37C15006C37DB /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		14CC394518EA8743004AFE34 /* Build configuration list for PBXNativeTarget "mbmalloc" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				14CC394618EA8743004AFE34 /* Debug */,
 				14CC394718EA8743004AFE34 /* Release */,
+				14202F1118F37C15006C37DB /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		14F271BF18EA3963008C152F /* Build configuration list for PBXNativeTarget "bmalloc" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				14F271C018EA3963008C152F /* Debug */,
 				14F271C118EA3963008C152F /* Release */,
+				14202F1018F37C15006C37DB /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 /* End XCConfigurationList section */
 	};

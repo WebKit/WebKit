@@ -68,8 +68,8 @@ template<typename Object, typename Function> const std::chrono::seconds AsyncTas
 template<typename Object, typename Function>
 AsyncTask<Object, Function>::AsyncTask(Object& object, const Function& function)
     : m_state(Exited)
-    , m_thread()
     , m_condition()
+    , m_thread()
     , m_object(object)
     , m_function(function)
 {

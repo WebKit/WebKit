@@ -1,3 +1,14 @@
+2014-04-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Build bmalloc on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=131333
+
+        Reviewed by Mark Rowe.
+
+        * Source/Makefile:
+        * WebKitBuild: Added.
+        * WebKitBuild/Debug: Added.
+
 2014-04-07  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Turn on ENABLE_MEDIA_CONTROLS_SCRIPT

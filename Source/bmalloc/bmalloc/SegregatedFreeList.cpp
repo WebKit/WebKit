@@ -32,7 +32,7 @@ namespace bmalloc {
 
 SegregatedFreeList::SegregatedFreeList()
 {
-    ASSERT(&select(largeMax) - m_lists.begin() == m_lists.size() - 1);
+    ASSERT(static_cast<size_t>(&select(largeMax) - m_lists.begin()) == m_lists.size() - 1);
 }
 
 void SegregatedFreeList::insert(const Range& range)

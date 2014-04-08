@@ -26,6 +26,7 @@
 #ifndef Mutex_h
 #define Mutex_h
 
+#include "BAssert.h"
 #include <atomic>
 
 // A replacement for std::mutex that does not require an exit-time destructor.
@@ -34,8 +35,6 @@ namespace bmalloc {
 
 class Mutex {
 public:
-    Mutex();
-
     void lock();
     bool try_lock();
     void unlock();
@@ -45,11 +44,6 @@ private:
 
     std::atomic_flag m_flag;
 };
-
-inline Mutex::Mutex()
-    : m_flag(ATOMIC_FLAG_INIT)
-{
-}
 
 inline bool Mutex::try_lock()
 {

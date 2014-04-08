@@ -36,6 +36,7 @@ namespace bmalloc {
 
 static inline void validate(const Range& range)
 {
+    UNUSED(range);
 IF_DEBUG(
     BeginTag* beginTag = LargeChunk::beginTag(range.begin());
     EndTag* endTag = LargeChunk::endTag(range.begin(), range.size());

@@ -1,3 +1,14 @@
+2014-04-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Build bmalloc on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=131333
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/build-webkit: Add the bmalloc target if we're on Mac.
+        (Note: Just testing Mac is not good enough because in this
+        script 'Mac' means 'Mac or iOS'.)
+
 2014-03-30  Filip Pizlo  <fpizlo@apple.com>
 
         Move slow JSRegress tests out of the way so that they don't show up in run-jsc-benchmarks runs and also skip tests that are extremely long-running

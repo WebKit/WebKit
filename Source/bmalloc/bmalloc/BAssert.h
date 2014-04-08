@@ -33,6 +33,8 @@
 
 #define RELEASE_ASSERT(x) ASSERT_IMPL(x)
 
+#define UNUSED(x) (void)x
+
 // ===== Release build =====
 
 #if defined(NDEBUG)

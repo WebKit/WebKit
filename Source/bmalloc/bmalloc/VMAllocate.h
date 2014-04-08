@@ -49,6 +49,7 @@ inline size_t vmSize(size_t size)
     
 inline void vmValidate(size_t vmSize)
 {
+    UNUSED(vmSize);
     ASSERT(vmSize);
     ASSERT(vmSize == bmalloc::vmSize(vmSize));
 }
@@ -59,6 +60,7 @@ inline void vmValidate(void* p, size_t vmSize)
     
     // We use getpagesize() here instead of vmPageSize because vmPageSize is
     // allowed to be larger than the OS's true page size.
+    UNUSED(p);
     ASSERT(p);
     ASSERT(p == mask(p, ~(getpagesize() - 1)));
 }

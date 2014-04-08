@@ -44,8 +44,8 @@ static inline void sleep(std::unique_lock<Mutex>& lock, std::chrono::millisecond
 }
 
 Heap::Heap(std::lock_guard<Mutex>&)
-    : m_scavenger(*this, &Heap::concurrentScavenge)
-    , m_isAllocatingPages(false)
+    : m_isAllocatingPages(false)
+    , m_scavenger(*this, &Heap::concurrentScavenge)
 {
 }
 
@@ -168,7 +168,7 @@ void Heap::deallocateXLarge(std::lock_guard<Mutex>&, void* object)
     XLargeChunk::destroy(chunk);
 }
 
-void* Heap::allocateLarge(std::lock_guard<Mutex>& lock, size_t size)
+void* Heap::allocateLarge(std::lock_guard<Mutex>&, size_t size)
 {
     ASSERT(size <= largeMax);
     ASSERT(size >= largeMin);
@@ -192,7 +192,7 @@ void* Heap::allocateLarge(std::lock_guard<Mutex>& lock, size_t size)
     return range.begin();
 }
 
-void Heap::deallocateLarge(std::lock_guard<Mutex>& lock, void* object)
+void Heap::deallocateLarge(std::lock_guard<Mutex>&, void* object)
 {
     Range range = BoundaryTag::deallocate(object);
     m_largeRanges.insert(range);
