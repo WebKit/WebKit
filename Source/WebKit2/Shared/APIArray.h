@@ -61,7 +61,7 @@ public:
     template<typename T>
     T* at(size_t i) const
     {
-        if (m_elements[i]->type() != T::APIType)
+        if (!m_elements[i] || m_elements[i]->type() != T::APIType)
             return nullptr;
 
         return static_cast<T*>(m_elements[i].get());

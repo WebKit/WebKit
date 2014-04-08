@@ -1,3 +1,14 @@
+2014-04-07  Anders Carlsson  <andersca@apple.com>
+
+        Handle decoding of nil invocation arguments
+        https://bugs.webkit.org/show_bug.cgi?id=131335
+        <rdar://problem/16528449>
+
+        Reviewed by Tim Horton.
+
+        * Shared/APIArray.h:
+        Don't crash if the array element is null.
+
 2014-04-07  Dan Bernstein  <mitz@apple.com>
 
         Add bundle client function corresponding to startAssistingNode
