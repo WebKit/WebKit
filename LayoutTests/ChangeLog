@@ -1,3 +1,13 @@
+2014-04-07  Chris Fleizach  <cfleizach@apple.com>
+
+        Regression: AX: image labels no longer exposed to AX API in SVG test case
+        https://bugs.webkit.org/show_bug.cgi?id=131208
+
+        Reviewed by Daniel Bates.
+
+        * accessibility/svg-labelledby-expected.txt: Added.
+        * accessibility/svg-labelledby.html: Added.
+
 2014-04-07  Martin Robinson  <mrobinson@igalia.com>
 
         Skipped some HighDPI tests for GTK+

@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<g>
+<path xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="label_Sudan" id="Sudan" class="land sd" d="M463.9996,262.5474 C464.6068,261.08 464.8456,259.8488 466.2004,258.8924 C467.4688,257.9972 468.4984,257.3418 467.6728,255.7866 C465.5044,251.7018 467.4568,250.881 470.4796,248.463 C469.6648,247.6832 468.3076,244.3892 469.6348,243.686 C471.7432,242.5664 472.0024,240.5502 473.458,238.6974 C475.2736,236.3838 472.2136,234.2072 475.1188,232.7696">
+   <set attributeName="opacity" from="1" to="0.5" begin="mouseover" end="mouseout"/>
+</path>
+</g>
+
+<text xmlns="http://www.w3.org/2000/svg" id="label_Sudan" x="80" y="790" font-size="24" visibility="hidden">
+   Sudan
+   <set attributeName="visibility" from="hidden" to="visible" begin="Sudan.mouseover" end="Sudan.mouseout"/>
+  </text>
+</svg>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria-labelledby works on SVG elements.");
+
+    if (window.accessibilityController) {
+        var image = accessibilityController.accessibleElementById("Sudan");
+        debug("SVG Element: " + image.description);
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1848,11 +1848,11 @@ void AccessibilityNodeObject::colorValue(int& r, int& g, int& b) const
 // ARIA Implementer's Guide.                                                                                            
 static String accessibleNameForNode(Node* node)
 {
-    if (!node->isHTMLElement())
+    assert(node);
+    if (!node || !node->isElementNode())
         return String();
     
-    HTMLElement* element = toHTMLElement(node);
-    
+    Element* element = toElement(node);
     const AtomicString& ariaLabel = element->fastGetAttribute(aria_labelAttr);
     if (!ariaLabel.isEmpty())
         return ariaLabel;
@@ -1870,8 +1870,8 @@ static String accessibleNameForNode(Node* node)
     String text;
     if (axObject)
         text = axObject->textUnderElement();
-    else if (node->isElementNode())
-        text = toElement(node)->innerText();
+    else
+        text = element->innerText();
     
     if (!text.isEmpty())
         return text;
