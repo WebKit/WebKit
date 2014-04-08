@@ -1,3 +1,43 @@
+2014-04-08  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Add WKFormDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=131343
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _formDelegate]): Added this accessor.
+        (-[WKWebView _setFormDelegate:]): Ditto.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Declared _formDelegate property.
+
+        * UIProcess/API/Cocoa/_WKFormDelegate.h: Added.
+
+        * UIProcess/API/Cocoa/_WKFormInputSession.h: Added.
+
+        * UIProcess/ios/WKContentView.h: Moved _webView ivar into the @interface…
+        * UIProcess/ios/WKContentView.mm: …from the @implementation.
+
+        * UIProcess/ios/WKContentViewInteraction.h: Added _formInputSession ivar and
+        formAccessoryView property.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFormInputSession initWithContentView:userObject:]): Added.
+        (-[WKFormInputSession dealloc]): Added.
+        (-[WKFormInputSession userObject]): Added.
+        (-[WKFormInputSession isValid]): Added.
+        (-[WKFormInputSession accessoryViewCustomButtonTitle]): Added.
+        (-[WKFormInputSession setAccessoryViewCustomButtonTitle:]): Added.
+        (-[WKFormInputSession invalidate]): Added.
+        (-[WKContentView cleanupInteraction]): Invalidate and release the input session.
+        (-[WKContentView formAccessoryView]): Added this accessor.
+        (-[WKContentView _startAssistingNode:userObject:]): Create an input session and message the
+        form delegate.
+        (-[WKContentView _stopAssistingNode]): Invalidate and release the input session.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added references to new files.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFormDelegatePrivate.h: Added
+        comment.
+
 2014-04-08  Daniel Bates  <dabates@apple.com>
 
         Fallback to default storage session when there isn't a valid session ID

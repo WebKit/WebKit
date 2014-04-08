@@ -87,6 +87,8 @@
     RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
     _WKRenderingProgressEvents _observedRenderingProgressEvents;
 
+    WebKit::WeakObjCPtr<id <_WKFormDelegate>> _formDelegate;
+
 #if PLATFORM(IOS)
     RetainPtr<WKScrollView> _scrollView;
     RetainPtr<WKContentView> _contentView;
@@ -1136,6 +1138,16 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (void)_hideFindUI
 {
     _page->hideFindUI();
+}
+
+- (id <_WKFormDelegate>)_formDelegate
+{
+    return _formDelegate.getAutoreleased();
+}
+
+- (void)_setFormDelegate:(id <_WKFormDelegate>)formDelegate
+{
+    _formDelegate = formDelegate;
 }
 
 #pragma mark iOS-specific methods

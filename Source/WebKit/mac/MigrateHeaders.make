@@ -287,6 +287,8 @@ WEBKIT2_HEADERS = \
     WKWebViewPrivate.h \
     _WKActivatedElementInfo.h \
     _WKElementAction.h \
+    _WKFormDelegate.h \
+    _WKFormInputSession.h \
     _WKProcessPoolConfiguration.h \
     _WKScriptWorld.h \
     _WKThumbnailView.h \

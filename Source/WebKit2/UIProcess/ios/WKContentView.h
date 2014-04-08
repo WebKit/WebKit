@@ -48,6 +48,7 @@ struct WebPageConfiguration;
 @interface WKContentView : UIView {
 @package
     RefPtr<WebKit::WebPageProxy> _page;
+    WKWebView *_webView;
 }
 
 @property (nonatomic, readonly) WKBrowsingContextController *browsingContextController;

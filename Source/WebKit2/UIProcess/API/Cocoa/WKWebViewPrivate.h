@@ -56,6 +56,7 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 
 @protocol WKHistoryDelegatePrivate;
 @protocol _WKFindDelegate;
+@protocol _WKFormDelegate;
 
 @interface WKWebView (WKPrivate)
 
@@ -145,6 +146,8 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 - (void)_findString:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount;
 - (void)_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount;
 - (void)_hideFindUI;
+
+@property (nonatomic, weak, setter=_setFormDelegate:) id <_WKFormDelegate> _formDelegate;
 
 @end
 

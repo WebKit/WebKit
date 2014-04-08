@@ -27,19 +27,16 @@
 
 #if WK_API_ENABLED
 
-#import <WebKit2/WKWebProcessPlugInBrowserContextController.h>
-#import <WebKit2/WKWebProcessPlugInFrame.h>
-#import <WebKit2/WKWebProcessPlugInNodeHandle.h>
+#import <Foundation/Foundation.h>
 
-@protocol WKWebProcessPlugInFormDelegatePrivate <NSObject>
+@class WKWebView;
+@protocol _WKFormInputSession;
+
+@protocol _WKFormDelegate <NSObject>
 
 @optional
 
-- (void)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller didFocusTextField:(WKWebProcessPlugInNodeHandle *)textField inFrame:(WKWebProcessPlugInFrame *)frame;
-- (void)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller willSubmitForm:(WKWebProcessPlugInNodeHandle *)form toFrame:(WKWebProcessPlugInFrame *)frame fromFrame:(WKWebProcessPlugInFrame *)sourceFrame withValues:(NSDictionary *)values;
-
-// The return value is exposed in the UI process via the userObject property of the _WKFormInputSession object.
-- (NSObject <NSSecureCoding> *)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller willBeginInputSessionForElement:(WKWebProcessPlugInNodeHandle *)node inFrame:(WKWebProcessPlugInFrame *)frame;
+- (void)_webView:(WKWebView *)webView didStartInputSession:(id <_WKFormInputSession>)inputSession;
 
 @end
 

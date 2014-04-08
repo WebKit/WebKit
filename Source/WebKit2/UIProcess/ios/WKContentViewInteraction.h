@@ -58,6 +58,7 @@ class WebPageProxy;
 @class _UIHighlightView;
 @class WebIOSEvent;
 @class WKActionSheetAssistant;
+@class WKFormInputSession;
 
 typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
 typedef void (^UIWKAutocorrectionContextHandler)(UIWKAutocorrectionContext *autocorrectionContext);
@@ -96,6 +97,7 @@ struct WKAutoCorrectionData {
     RetainPtr<NSString> _markedText;
     RetainPtr<WKActionSheetAssistant> _actionSheetAssistant;
     RetainPtr<WKAirPlayRoutePicker> _airPlayRoutePicker;
+    RetainPtr<WKFormInputSession> _formInputSession;
 
     std::unique_ptr<WebKit::SmartMagnificationController> _smartMagnificationController;
 
@@ -123,6 +125,8 @@ struct WKAutoCorrectionData {
 @property (nonatomic, readonly) const WebKit::InteractionInformationAtPosition& positionInformation;
 @property (nonatomic, readonly) const WebKit::WKAutoCorrectionData& autocorrectionData;
 @property (nonatomic, readonly) const WebKit::AssistedNodeInformation& assistedNodeInformation;
+@property (nonatomic, readonly) UIWebFormAccessory *formAccessoryView;
+
 - (void)setupInteraction;
 - (void)cleanupInteraction;
 

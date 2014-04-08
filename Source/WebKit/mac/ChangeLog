@@ -1,3 +1,12 @@
+2014-04-08  Dan Bernstein  <mitz@apple.com>
+
+        WebKit part of [Cocoa] Add WKFormDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=131343
+
+        Reviewed by Anders Carlsson.
+
+        * MigrateHeaders.make: Added new WebKit2 headers to WEBKIT2_HEADERS.
+
 2014-04-08  Daniel Bates  <dabates@apple.com>
 
         Fallback to default storage session when there isn't a valid session ID

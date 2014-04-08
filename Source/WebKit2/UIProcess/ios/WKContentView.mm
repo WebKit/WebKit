@@ -176,8 +176,6 @@ private:
     RetainPtr<UIView> _rootContentView;
     RetainPtr<WKInspectorIndicationView> _inspectorIndicationView;
 
-    WKWebView *_webView;
-
     HistoricalVelocityData _historicalKinematicData;
 }
 

@@ -39,6 +39,9 @@
 #import "WKActionSheetAssistant.h"
 #import "WKFormInputControl.h"
 #import "WKFormSelectControl.h"
+#import "WKWebViewPrivate.h"
+#import "_WKFormDelegate.h"
+#import "_WKFormInputSession.h"
 #import <DataDetectorsUI/DDDetectionController.h>
 #import <UIKit/_UIHighlightView.h>
 #import <UIKit/_UIWebHighlightLongPressGestureRecognizer.h>
@@ -130,6 +133,59 @@ static const float tapAndHoldDelay  = 0.75;
 - (void)selectWord;
 @end
 
+@interface WKFormInputSession : NSObject <_WKFormInputSession>
+
+- (instancetype)initWithContentView:(WKContentView *)view userObject:(NSObject <NSSecureCoding> *)userObject;
+- (void)invalidate;
+
+@end
+
+@implementation WKFormInputSession {
+    WKContentView *_contentView;
+    RetainPtr<NSObject <NSSecureCoding>> _userObject;
+}
+
+- (instancetype)initWithContentView:(WKContentView *)view userObject:(NSObject <NSSecureCoding> *)userObject
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _contentView = view;
+    _userObject = userObject;
+
+    return self;
+}
+
+- (NSObject <NSSecureCoding> *)userObject
+{
+    return _userObject.get();
+}
+
+- (BOOL)isValid
+{
+    return _contentView != nil;
+}
+
+- (NSString *)accessoryViewCustomButtonTitle
+{
+    return [[[_contentView formAccessoryView] _autofill] title];
+}
+
+- (void)setAccessoryViewCustomButtonTitle:(NSString *)title
+{
+    if (title.length)
+        [[_contentView formAccessoryView] showAutoFillButtonWithTitle:title];
+    else
+        [[_contentView formAccessoryView] hideAutoFillButton];
+}
+
+- (void)invalidate
+{
+    _contentView = nil;
+}
+
+@end
+
 @implementation WKContentView (WKInteraction)
 
 - (void)setupInteraction
@@ -179,6 +235,8 @@ static const float tapAndHoldDelay  = 0.75;
     _webSelectionAssistant = nil;
     _textSelectionAssistant = nil;
     _actionSheetAssistant = nil;
+    [_formInputSession invalidate];
+    _formInputSession = nil;
     [_touchEventGestureRecognizer setDelegate:nil];
     [_singleTapGestureRecognizer setDelegate:nil];
     [_doubleTapGestureRecognizer setDelegate:nil];
@@ -1874,6 +1932,11 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     return _assistedNodeInformation.selectOptions;
 }
 
+- (UIWebFormAccessory *)formAccessoryView
+{
+    return _formAccessoryView.get();
+}
+
 - (void)_startAssistingNode:(const AssistedNodeInformation&)information userObject:(NSObject <NSSecureCoding> *)userObject
 {
     _isEditable = YES;
@@ -1899,10 +1962,18 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
     // _inputPeripheral has been initialized in inputView called by reloadInputViews.
     [_inputPeripheral beginEditing];
+
+    id <_WKFormDelegate> formDelegate = [_webView _formDelegate];
+    if ([formDelegate respondsToSelector:@selector(_webView:didStartInputSession:)]) {
+        _formInputSession = adoptNS([[WKFormInputSession alloc] initWithContentView:self userObject:userObject]);
+        [formDelegate _webView:_webView didStartInputSession:_formInputSession.get()];
+    }
 }
 
 - (void)_stopAssistingNode
 {
+    [_formInputSession invalidate];
+    _formInputSession = nil;
     _isEditable = NO;
     _assistedNodeInformation.elementType = WKTypeNone;
     _inputPeripheral = nil;
