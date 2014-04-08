@@ -118,13 +118,14 @@ public:
     
     bool isTransition() const { return m_type == Transition; }
     bool isReplace() const { return m_type == Replace; }
+    bool isSetter() const { return m_type == Setter; }
     bool isCustom() const { return m_type == CustomSetter; }
     
     Structure* oldStructure() const
     {
         // Using this instead of isSet() to make this assertion robust against the possibility
         // of additional access types being added.
-        ASSERT(isTransition() || isReplace() || isCustom());
+        ASSERT(isTransition() || isReplace() || isSetter() || isCustom());
         
         return m_oldStructure.get();
     }
@@ -143,17 +144,21 @@ public:
     
     StructureChain* chain() const
     {
-        ASSERT(isTransition() || isCustom());
+        ASSERT(isTransition() || isSetter() || isCustom());
         return m_chain.get();
     }
     
     JITStubRoutine* stubRoutine() const
     {
-        ASSERT(isTransition() || isReplace() || isCustom());
+        ASSERT(isTransition() || isReplace() || isSetter() || isCustom());
         return m_stubRoutine.get();
     }
 
-    PutPropertySlot::PutValueFunc customSetter() const { ASSERT(isCustom()); return m_customSetter; }
+    PutPropertySlot::PutValueFunc customSetter() const
+    {
+        ASSERT(isCustom());
+        return m_customSetter;
+    }
 
     bool visitWeak(RepatchBuffer&) const;
     

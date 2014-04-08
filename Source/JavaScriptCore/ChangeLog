@@ -1,5 +1,16 @@
 2014-04-08  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix a goofy assertion to fix debug.
+
+        * bytecode/PolymorphicPutByIdList.h:
+        (JSC::PutByIdAccess::isSetter):
+        (JSC::PutByIdAccess::oldStructure):
+        (JSC::PutByIdAccess::chain):
+        (JSC::PutByIdAccess::stubRoutine):
+        (JSC::PutByIdAccess::customSetter):
+
+2014-04-08  Filip Pizlo  <fpizlo@apple.com>
+
         Fail silently if the LLVM dylib isn't found
         https://bugs.webkit.org/show_bug.cgi?id=131385
 
