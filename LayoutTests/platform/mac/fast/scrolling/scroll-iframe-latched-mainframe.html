@@ -18,8 +18,8 @@ function checkForScroll() {
     var pageScrollPositionAfter = document.body.scrollTop;
     var iFrameScrollPositionAfter = window.frames['target'].document.body.scrollTop;
 
-    debug("Page before: " + pageScrollPositionBefore + ", IFrame before: " + iFrameScrollPositionBefore);
-    debug("Page after:  " + pageScrollPositionAfter + ", IFrame after: " + iFrameScrollPositionAfter);
+    //debug("Page before: " + pageScrollPositionBefore + ", IFrame before: " + iFrameScrollPositionBefore);
+    //debug("Page after:  " + pageScrollPositionAfter + ", IFrame after: " + iFrameScrollPositionAfter);
 
     if (iFrameScrollPositionBefore != iFrameScrollPositionAfter)
         testFailed("IFrame consumed wheel events.");
@@ -57,7 +57,6 @@ function scrollTest() {
 function setupTopLevel() {
 
     if (window.eventSender) {
-        testRunner.dumpAsText(true);
         testRunner.waitUntilDone();
 
         setTimeout(scrollTest, 1000);

@@ -46,8 +46,8 @@ function checkForScroll() {
     var pageScrollPositionAfter = document.body.scrollTop;
     var selectScrollPositionAfter = selectTarget.scrollTop;
 
-    debug("Page before: " + pageScrollPositionBefore + ", select before: " + selectScrollPositionBefore);
-    debug("Page after:  " + pageScrollPositionAfter + ", select after: " + selectScrollPositionAfter);
+    //debug("Page before: " + pageScrollPositionBefore + ", select before: " + selectScrollPositionBefore);
+    //debug("Page after:  " + pageScrollPositionAfter + ", select after: " + selectScrollPositionAfter);
 
     if (selectScrollPositionBefore != selectScrollPositionAfter)
         testFailed("Select consumed wheel events.");
@@ -86,7 +86,6 @@ function scrollTest() {
 function setupTopLevel() {
 
     if (window.eventSender) {
-        testRunner.dumpAsText(true);
         testRunner.waitUntilDone();
 
         setTimeout(scrollTest, 1000);

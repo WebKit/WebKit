@@ -1,3 +1,23 @@
+2014-04-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Unreviewed test gardening.
+
+        Rebaseline scrolling tests to remove flakiness introduced by slight differences in
+        pixel scroll counts between WK1 and WK2 test runners.
+
+        * platform/mac/fast/scrolling/scroll-div-latched-div-expected.txt:
+        * platform/mac/fast/scrolling/scroll-div-latched-div.html:
+        * platform/mac/fast/scrolling/scroll-div-latched-mainframe-expected.txt:
+        * platform/mac/fast/scrolling/scroll-div-latched-mainframe.html:
+        * platform/mac/fast/scrolling/scroll-iframe-latched-iframe-expected.txt:
+        * platform/mac/fast/scrolling/scroll-iframe-latched-iframe.html:
+        * platform/mac/fast/scrolling/scroll-iframe-latched-mainframe-expected.txt:
+        * platform/mac/fast/scrolling/scroll-iframe-latched-mainframe.html:
+        * platform/mac/fast/scrolling/scroll-select-latched-mainframe-expected.txt:
+        * platform/mac/fast/scrolling/scroll-select-latched-mainframe.html:
+        * platform/mac/fast/scrolling/scroll-select-latched-select-expected.txt:
+        * platform/mac/fast/scrolling/scroll-select-latched-select.html:
+
 2014-04-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.

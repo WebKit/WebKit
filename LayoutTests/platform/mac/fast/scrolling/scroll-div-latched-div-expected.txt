@@ -54,7 +54,5 @@ PASS successfullyParsed is true
 TEST COMPLETE
 div display height = 485
 Mouse moved to (28, 610)
-Page before: 0, div before: 451
-Page after:  0, div after: 451
 PASS Page did not receive wheel events.
 

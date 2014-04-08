@@ -11,7 +11,5 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 Mouse moved to (30, 127)
-Page before: 0, select before: 0
-Page after:  58, select after: 0
 PASS Select did not receive wheel events.
 

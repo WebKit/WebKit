@@ -46,8 +46,8 @@ function checkForScroll() {
     var pageScrollPositionAfter = document.body.scrollTop;
     var divScrollPositionAfter = divTarget.scrollTop;
 
-    debug("Page before: " + pageScrollPositionBefore + ", div before: " + divScrollPositionBefore);
-    debug("Page after:  " + pageScrollPositionAfter + ", div after: " + divScrollPositionAfter);
+    //debug("Page before: " + pageScrollPositionBefore + ", div before: " + divScrollPositionBefore);
+    //debug("Page after:  " + pageScrollPositionAfter + ", div after: " + divScrollPositionAfter);
 
     if (pageScrollPositionBefore != pageScrollPositionAfter)
         testFailed("Page received wheel events.");
@@ -88,7 +88,6 @@ function scrollTest() {
 function setupTopLevel() {
 
     if (window.eventSender) {
-        testRunner.dumpAsText(true);
         testRunner.waitUntilDone();
 
         setTimeout(scrollTest, 1000);

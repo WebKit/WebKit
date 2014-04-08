@@ -9,7 +9,5 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 Mouse moved to (28, 66)
-Page before: 0, IFrame before: 0
-Page after:  58, IFrame after: 0
 PASS IFrame did not receive wheel events.
 

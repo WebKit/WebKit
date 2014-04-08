@@ -46,8 +46,8 @@ function checkForScroll() {
     var pageScrollPositionAfter = document.body.scrollTop;
     var selectScrollPositionAfter = selectTarget.scrollTop;
 
-    debug("Page before: " + pageScrollPositionBefore + ", select before: " + selectScrollPositionBefore);
-    debug("Page after:  " + pageScrollPositionAfter + ", select after: " + selectScrollPositionAfter);
+    //debug("Page before: " + pageScrollPositionBefore + ", select before: " + selectScrollPositionBefore);
+    //debug("Page after:  " + pageScrollPositionAfter + ", select after: " + selectScrollPositionAfter);
 
     if (pageScrollPositionBefore != pageScrollPositionAfter)
         testFailed("Page received wheel events.");
