@@ -917,7 +917,7 @@ void MediaPlayerPrivateAVFoundationObjC::platformPause()
 
     setDelayCallbacks(true);
     m_cachedRate = 0;
-    [m_avPlayer.get() setRate:nil];
+    [m_avPlayer.get() setRate:0];
     setDelayCallbacks(false);
 }
 

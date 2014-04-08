@@ -1,3 +1,10 @@
+2014-04-08  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed iOS build fix. Pass 0 instead of nil to setRate: when pausing.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformPause):
+
 2014-04-08  Mark Lam  <mark.lam@apple.com>
 
         Refactor to make JSMainThreadExecState's constructor and destructor private.
