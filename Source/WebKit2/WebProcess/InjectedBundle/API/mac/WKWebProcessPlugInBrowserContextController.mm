@@ -58,7 +58,7 @@
 #import <WebCore/HTMLInputElement.h>
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1080
-@interface NSKeyedUnarchiver (WKDetails)
+@interface NSKeyedArchiver (WKDetails)
 - (void)setRequiresSecureCoding:(BOOL)b;
 @end
 #endif

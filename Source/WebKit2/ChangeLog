@@ -1,3 +1,9 @@
+2014-04-07  Dan Bernstein  <mitz@apple.com>
+
+        More Mountain Lion build fix.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+
 2014-04-07  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Implement the update of content offset on animated resize
