@@ -1,5 +1,11 @@
 2014-04-08  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * WebKit2Prefix.h:
+
+2014-04-08  Anders Carlsson  <andersca@apple.com>
+
         Use an explicit class when decoding individual bundle parameters
         https://bugs.webkit.org/show_bug.cgi?id=131392
         <rdar://problem/16213914>

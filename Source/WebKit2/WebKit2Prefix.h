@@ -69,6 +69,10 @@
 #endif
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1080 && defined(__OBJC__)
+@interface NSKeyedArchiver (WKDetails)
+- (void)setRequiresSecureCoding:(BOOL)requiresSecureCoding;
+@end
+
 @interface NSKeyedUnarchiver (WKDetails)
 - (void)setRequiresSecureCoding:(BOOL)requiresSecureCoding;
 @end
