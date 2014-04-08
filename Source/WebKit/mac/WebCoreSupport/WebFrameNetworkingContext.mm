@@ -112,9 +112,11 @@ ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& req
 NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 {
     ASSERT(isMainThread());
-
-    if (frame() && frame()->page()->sessionID().isEphemeral())
-        return *privateSession();
-
+    if (frame() && frame()->page()->sessionID().isEphemeral()) {
+        if (NetworkStorageSession* session = privateSession().get())
+            return *session;
+        // Some requests may still be coming shortly before WebCore updates the session ID and after WebKit destroys the private browsing session.
+        LOG_ERROR("Invalid session ID. Please file a bug unless you just disabled private browsing, in which case it's an expected race.");
+    }
     return NetworkStorageSession::defaultStorageSession();
 }

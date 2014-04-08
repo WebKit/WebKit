@@ -109,7 +109,13 @@ ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& req
 NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 {
     ASSERT(RunLoop::isMain());
-    return *SessionTracker::session(frame() ? frame()->page()->sessionID() : SessionID::defaultSessionID());
+    if (frame()) {
+        if (NetworkStorageSession* session = SessionTracker::session(frame()->page()->sessionID()))
+            return *session;
+        // Some requests may still be coming shortly after WebProcess was told to destroy its session.
+        LOG_ERROR("Invalid session ID. Please file a bug unless you just disabled private browsing, in which case it's an expected race.");
+    }
+    return NetworkStorageSession::defaultStorageSession();
 }
 
 WebFrameLoaderClient* WebFrameNetworkingContext::webFrameLoaderClient() const

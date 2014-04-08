@@ -1,3 +1,25 @@
+2014-04-08  Daniel Bates  <dabates@apple.com>
+
+        Fallback to default storage session when there isn't a valid session ID
+        https://bugs.webkit.org/show_bug.cgi?id=131326
+        <rdar://problem/16231679>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixes and issue where we may use the wrong storage session after disabling
+        a private browsing session.
+
+        Currently WebKit1 and WebKit2 without NetworkProcess assume that there
+        is always a non-null private browsing storage session so long as the page
+        has a non-default session ID. Instead we should only use the private browsing
+        storage session when it's non-null and the page has a non-default session ID;
+        otherwise, we should use the default storage session. This change will make
+        the behavior in WebKit1 and WebKit2 without NetworkProcess consistent with
+        the behavior in WebKit2 with NetworkProcess.
+
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::storageSession):
+
 2014-04-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [SOUP] Control cookie management according ResourceRequest.allowCookies()
