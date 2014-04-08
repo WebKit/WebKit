@@ -1,3 +1,15 @@
+2014-04-08  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] large corner radius combined with 0 radius does not wrap properly
+        https://bugs.webkit.org/show_bug.cgi?id=129739
+
+        Reviewed by Bem Jones-Bey.
+
+        * fast/shapes/shape-outside-floats/shape-outside-big-box-border-radius-001-expected.txt: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-big-box-border-radius-001.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-big-box-border-radius-002-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-big-box-border-radius-002.html: Added.
+
 2014-04-08  Alexey Proskuryakov  <ap@apple.com>
 
         Rename Clipboard to DataTransfer
