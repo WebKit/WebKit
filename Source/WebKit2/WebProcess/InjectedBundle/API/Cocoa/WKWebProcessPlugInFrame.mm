@@ -37,6 +37,7 @@
 #import "WebProcess.h"
 #import "_WKFrameHandleInternal.h"
 #import <JavaScriptCore/JSValue.h>
+#import <WebCore/CertificateInfo.h>
 #import <WebCore/IntPoint.h>
 
 using namespace WebKit;
@@ -108,6 +109,11 @@ using namespace WebKit;
         return false;
 
     return _frame->page()->mainFrameHasCustomContentProvider();
+}
+
+- (NSArray *)_certificateChain
+{
+    return (NSArray *)_frame->certificateInfo().certificateChain();
 }
 
 #pragma mark WKObject protocol implementation

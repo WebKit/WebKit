@@ -36,6 +36,7 @@
 @property (nonatomic, readonly) WKWebProcessPlugInBrowserContextController *_browserContextController;
 
 @property (nonatomic, readonly) BOOL _hasCustomContentProvider;
+@property (nonatomic, readonly) NSArray *_certificateChain;
 
 @end
 

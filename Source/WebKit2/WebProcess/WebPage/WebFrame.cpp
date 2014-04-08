@@ -44,6 +44,7 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSValueRef.h>
 #include <WebCore/ArchiveResource.h>
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/EventHandler.h>
@@ -399,6 +400,18 @@ String WebFrame::url() const
         return String();
 
     return documentLoader->url().string();
+}
+
+const WebCore::CertificateInfo& WebFrame::certificateInfo() const
+{
+    if (!m_coreFrame)
+        return std::move(CertificateInfo());
+
+    DocumentLoader* documentLoader = m_coreFrame->loader().documentLoader();
+    if (!documentLoader)
+        return std::move(CertificateInfo());
+
+    return std::move(CertificateInfo(documentLoader->response()));
 }
 
 String WebFrame::innerText() const
