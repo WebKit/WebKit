@@ -1,3 +1,13 @@
+2014-04-07  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Allow com.apple.ViewBridge preferences reading in plug-in sandbox profile
+        https://bugs.webkit.org/show_bug.cgi?id=131306
+        <rdar://problem/16359865>
+
+        Reviewed by Sam Weinig.
+
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb: Do it.
+
 2014-04-07  Stephanie Lewis  <slewis@apple.com>
 
         Crash in com.apple.WebKit.Plugin.Development at com.apple.WebKit2: WebKit::PluginControllerProxy::pluginInstanceID

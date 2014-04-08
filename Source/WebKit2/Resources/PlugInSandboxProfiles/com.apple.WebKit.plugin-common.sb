@@ -282,6 +282,7 @@
 
 ;; Open and Save panels
 (define (webkit-powerbox)
+    (allow file-read* (literal "/Library/Preferences/com.apple.ViewBridge.plist"))
     (allow file-read* file-write* (extension "com.apple.app-sandbox.read-write"))
     (allow file-issue-extension
         (require-all
