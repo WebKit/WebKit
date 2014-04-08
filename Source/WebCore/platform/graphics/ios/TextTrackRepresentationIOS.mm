@@ -69,7 +69,7 @@ using namespace WebCore;
     _parent = parent;
 
     if (_parent)
-        [_parent->platformLayer() addObserver:self forKeyPath:@"bounds" options:nil context:0];
+        [_parent->platformLayer() addObserver:self forKeyPath:@"bounds" options:0 context:0];
 }
 
 - (TextTrackRepresentationIOS*)parent

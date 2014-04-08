@@ -1,3 +1,10 @@
+2014-04-08  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed iOS build fix. Pass 0 instead of nil to the options parameter of addObserver:forKeyPath:options:context.
+
+        * platform/graphics/ios/TextTrackRepresentationIOS.mm:
+        (-[WebCoreTextTrackRepresentationIOSHelper setParent:]):
+
 2014-04-08  Antti Koivisto  <antti@apple.com>
 
         Remove exposedRect from TileController
