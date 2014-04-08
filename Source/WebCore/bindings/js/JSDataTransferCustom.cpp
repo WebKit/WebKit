@@ -27,15 +27,15 @@
  */
 
 #include "config.h"
-#include "JSClipboard.h"
+#include "JSDataTransfer.h"
 
-#include "Clipboard.h"
+#include "DataTransfer.h"
 
 using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSClipboard::types(ExecState* exec) const
+JSValue JSDataTransfer::types(ExecState* exec) const
 {
     Vector<String> types = impl().types();
     return types.isEmpty() ? jsNull() : jsArray(exec, globalObject(), types);

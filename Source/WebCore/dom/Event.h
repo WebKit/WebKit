@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class Clipboard;
+class DataTransfer;
 class EventTarget;
 class HTMLIFrameElement;
 
@@ -125,7 +125,7 @@ public:
     bool legacyReturnValue() const { return !defaultPrevented(); }
     void setLegacyReturnValue(bool returnValue) { setDefaultPrevented(!returnValue); }
 
-    Clipboard* clipboardData() const { return isClipboardEvent() ? clipboard() : 0; }
+    DataTransfer* clipboardData() const { return isClipboardEvent() ? internalDataTransfer() : 0; }
 
     virtual EventInterface eventInterface() const;
 
@@ -169,7 +169,7 @@ public:
     Event* underlyingEvent() const { return m_underlyingEvent.get(); }
     void setUnderlyingEvent(PassRefPtr<Event>);
 
-    virtual Clipboard* clipboard() const { return 0; }
+    virtual DataTransfer* internalDataTransfer() const { return 0; }
 
     bool isBeingDispatched() const { return eventPhase(); }
 

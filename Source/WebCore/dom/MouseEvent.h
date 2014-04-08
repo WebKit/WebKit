@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class Clipboard;
+class DataTransfer;
 class PlatformMouseEvent;
 
 struct MouseEventInit : public UIEventInit {
@@ -67,7 +67,7 @@ public:
         int movementX, int movementY,
 #endif
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
-        PassRefPtr<EventTarget> relatedTarget, PassRefPtr<Clipboard>, bool isSimulated = false);
+        PassRefPtr<EventTarget> relatedTarget, PassRefPtr<DataTransfer>, bool isSimulated = false);
 
     static PassRefPtr<MouseEvent> create(const AtomicString& eventType, PassRefPtr<AbstractView>, const PlatformMouseEvent&, int detail, PassRefPtr<Node> relatedTarget);
 
@@ -87,12 +87,13 @@ public:
     virtual EventTarget* relatedTarget() const override final { return m_relatedTarget.get(); }
     void setRelatedTarget(PassRefPtr<EventTarget> relatedTarget) { m_relatedTarget = relatedTarget; }
 
-    Clipboard* clipboard() const override { return m_clipboard.get(); }
 
     Node* toElement() const;
     Node* fromElement() const;
 
-    Clipboard* dataTransfer() const { return isDragEvent() ? m_clipboard.get() : 0; }
+    // FIXME: These functions can be merged if m_dataTransfer is only initialized for drag events.
+    DataTransfer* dataTransfer() const { return isDragEvent() ? m_dataTransfer.get() : 0; }
+    virtual DataTransfer* internalDataTransfer() const override { return m_dataTransfer.get(); }
 
     virtual EventInterface eventInterface() const override;
 
@@ -109,7 +110,7 @@ protected:
         int movementX, int movementY,
 #endif
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
-        PassRefPtr<EventTarget> relatedTarget, PassRefPtr<Clipboard>, bool isSimulated);
+        PassRefPtr<EventTarget> relatedTarget, PassRefPtr<DataTransfer>, bool isSimulated);
 
     MouseEvent(const AtomicString& type, const MouseEventInit&);
 
@@ -119,7 +120,7 @@ private:
     unsigned short m_button;
     bool m_buttonDown;
     RefPtr<EventTarget> m_relatedTarget;
-    RefPtr<Clipboard> m_clipboard;
+    RefPtr<DataTransfer> m_dataTransfer;
 };
 
 class SimulatedMouseEvent : public MouseEvent {

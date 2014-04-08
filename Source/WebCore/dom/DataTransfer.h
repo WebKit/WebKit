@@ -21,11 +21,11 @@
  *
  */
 
-#ifndef Clipboard_h
-#define Clipboard_h
+#ifndef DataTransfer_h
+#define DataTransfer_h
 
 #include "CachedResourceHandle.h"
-#include "ClipboardAccessPolicy.h"
+#include "DataTransferAccessPolicy.h"
 #include "DragActions.h"
 #include "DragImage.h"
 #include "IntPoint.h"
@@ -42,11 +42,11 @@ namespace WebCore {
     class FileList;
     class Pasteboard;
 
-    class Clipboard : public RefCounted<Clipboard> {
+    class DataTransfer : public RefCounted<DataTransfer> {
     public:
-        static PassRefPtr<Clipboard> createForCopyAndPaste(ClipboardAccessPolicy);
+        static PassRefPtr<DataTransfer> createForCopyAndPaste(DataTransferAccessPolicy);
 
-        ~Clipboard();
+        ~DataTransfer();
 
         String dropEffect() const;
         void setDropEffect(const String&);
@@ -71,7 +71,7 @@ namespace WebCore {
         PassRefPtr<DataTransferItemList> items() = 0;
 #endif
 
-        void setAccessPolicy(ClipboardAccessPolicy);
+        void setAccessPolicy(DataTransferAccessPolicy);
         bool canReadTypes() const;
         bool canReadData() const;
         bool canWriteData() const;
@@ -79,8 +79,8 @@ namespace WebCore {
         Pasteboard& pasteboard() { return *m_pasteboard; }
 
 #if ENABLE(DRAG_SUPPORT)
-        static PassRefPtr<Clipboard> createForDragAndDrop();
-        static PassRefPtr<Clipboard> createForDragAndDrop(ClipboardAccessPolicy, const DragData&);
+        static PassRefPtr<DataTransfer> createForDragAndDrop();
+        static PassRefPtr<DataTransfer> createForDragAndDrop(DataTransferAccessPolicy, const DragData&);
 
         bool dropEffectIsUninitialized() const { return m_dropEffect == "uninitialized"; }
 
@@ -95,14 +95,14 @@ namespace WebCore {
 #endif
 
     private:
-        enum ClipboardType { CopyAndPaste, DragAndDrop };
-        Clipboard(ClipboardAccessPolicy, PassOwnPtr<Pasteboard>, ClipboardType = CopyAndPaste, bool forFileDrag = false);
+        enum Type { CopyAndPaste, DragAndDrop };
+        DataTransfer(DataTransferAccessPolicy, PassOwnPtr<Pasteboard>, Type = CopyAndPaste, bool forFileDrag = false);
 
 #if ENABLE(DRAG_SUPPORT)
         bool canSetDragImage() const;
 #endif
 
-        ClipboardAccessPolicy m_policy;
+        DataTransferAccessPolicy m_policy;
         OwnPtr<Pasteboard> m_pasteboard;
 
 #if ENABLE(DRAG_SUPPORT)
@@ -120,4 +120,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // Clipboard_h
+#endif // DataTransfer_h

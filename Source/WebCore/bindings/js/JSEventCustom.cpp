@@ -29,12 +29,12 @@
 #include "config.h"
 #include "JSEvent.h"
 
-#include "Clipboard.h"
+#include "DataTransfer.h"
 #include "Event.h"
 #include "EventHeaders.h"
 #include "EventInterfaces.h"
 #include "EventNames.h"
-#include "JSClipboard.h"
+#include "JSDataTransfer.h"
 #include <runtime/JSLock.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/AtomicString.h>

@@ -344,7 +344,6 @@ set(WebCore_IDL_FILES
     dom/ChildNode.idl
     dom/ClientRect.idl
     dom/ClientRectList.idl
-    dom/Clipboard.idl
     dom/Comment.idl
     dom/CompositionEvent.idl
     dom/CustomEvent.idl
@@ -354,6 +353,7 @@ set(WebCore_IDL_FILES
     dom/DOMNamedFlowCollection.idl
     dom/DOMStringList.idl
     dom/DOMStringMap.idl
+    dom/DataTransfer.idl
     dom/DataTransferItem.idl
     dom/DataTransferItemList.idl
     dom/DeviceMotionEvent.idl
@@ -1127,7 +1127,6 @@ set(WebCore_SOURCES
     dom/ClassNodeList.cpp
     dom/ClientRect.cpp
     dom/ClientRectList.cpp
-    dom/Clipboard.cpp
     dom/ClipboardEvent.cpp
     dom/CollectionIndexCache.cpp
     dom/Comment.cpp
@@ -1141,6 +1140,7 @@ set(WebCore_SOURCES
     dom/DOMImplementation.cpp
     dom/DOMNamedFlowCollection.cpp
     dom/DOMStringList.cpp
+    dom/DataTransfer.cpp
     dom/DataTransferItem.cpp
     dom/DatasetDOMStringMap.cpp
     dom/DecodedDataDocumentParser.cpp

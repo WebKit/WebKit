@@ -24,7 +24,7 @@
 #include "config.h"
 #include "WheelEvent.h"
 
-#include "Clipboard.h"
+#include "DataTransfer.h"
 #include "EventNames.h"
 #include <wtf/MathExtras.h>
 

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DragController.h"
 
-#include "Clipboard.h"
+#include "DataTransfer.h"
 #include "DragData.h"
 #include "Element.h"
 #include "FrameSelection.h"
@@ -69,9 +69,9 @@ void DragController::cleanupAfterSystemDrag()
 {
 }
 
-void DragController::declareAndWriteDragImage(Clipboard& clipboard, Element& element, const URL& url, const String& label)
+void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Element& element, const URL& url, const String& label)
 {
-    Pasteboard& pasteboard = clipboard.pasteboard();
+    Pasteboard& pasteboard = dataTransfer.pasteboard();
 
     // FIXME: Do we really need this check?
     if (!pasteboard.writableDataObject())

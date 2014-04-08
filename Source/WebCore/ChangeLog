@@ -1,3 +1,181 @@
+2014-04-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Rename Clipboard to DataTransfer
+        https://bugs.webkit.org/show_bug.cgi?id=131371
+
+        Reviewed by Anders Carlsson.
+
+        This is the name used in HTML5, and it's much better than the confusing Clipboard one.
+
+        Renamed related enums too, and made DataTransferAccessPolicy an enum class.
+
+        * CMakeLists.txt:
+        * Configurations/WebCore.xcconfig:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSClipboardCustom.cpp: Removed.
+        * bindings/js/JSDataTransferCustom.cpp: Copied from Source/WebCore/bindings/js/JSClipboardCustom.cpp.
+        (WebCore::JSDataTransfer::types):
+        (WebCore::JSClipboard::types): Deleted.
+        * bindings/js/JSEventCustom.cpp:
+        * dom/Clipboard.cpp: Removed.
+        * dom/Clipboard.h: Removed.
+        * dom/Clipboard.idl: Removed.
+        * dom/ClipboardAccessPolicy.h: Removed.
+        * dom/ClipboardEvent.cpp:
+        (WebCore::ClipboardEvent::ClipboardEvent):
+        * dom/ClipboardEvent.h:
+        (WebCore::ClipboardEvent::create):
+        (WebCore::ClipboardEvent::clipboard): Deleted.
+        * dom/ClipboardMac.mm: Removed.
+        * dom/DOMAllInOne.cpp:
+        * dom/DataTransfer.cpp: Copied from Source/WebCore/dom/Clipboard.cpp.
+        (WebCore::DataTransfer::DataTransfer):
+        (WebCore::DataTransfer::createForCopyAndPaste):
+        (WebCore::DataTransfer::~DataTransfer):
+        (WebCore::DataTransfer::setAccessPolicy):
+        (WebCore::DataTransfer::canReadTypes):
+        (WebCore::DataTransfer::canReadData):
+        (WebCore::DataTransfer::canWriteData):
+        (WebCore::DataTransfer::clearData):
+        (WebCore::DataTransfer::getData):
+        (WebCore::DataTransfer::setData):
+        (WebCore::DataTransfer::types):
+        (WebCore::DataTransfer::files):
+        (WebCore::DataTransfer::dropEffect):
+        (WebCore::DataTransfer::setDropEffect):
+        (WebCore::DataTransfer::effectAllowed):
+        (WebCore::DataTransfer::setEffectAllowed):
+        (WebCore::DataTransfer::setDragImage):
+        (WebCore::DataTransfer::createForDragAndDrop):
+        (WebCore::DataTransfer::canSetDragImage):
+        (WebCore::DataTransfer::updateDragImage):
+        (WebCore::DataTransfer::createDragImage):
+        (WebCore::DragImageLoader::DragImageLoader):
+        (WebCore::DragImageLoader::imageChanged):
+        (WebCore::DataTransfer::sourceOperation):
+        (WebCore::DataTransfer::destinationOperation):
+        (WebCore::DataTransfer::setSourceOperation):
+        (WebCore::DataTransfer::setDestinationOperation):
+        (WebCore::Clipboard::Clipboard): Deleted.
+        (WebCore::Clipboard::createForCopyAndPaste): Deleted.
+        (WebCore::Clipboard::~Clipboard): Deleted.
+        (WebCore::Clipboard::setAccessPolicy): Deleted.
+        (WebCore::Clipboard::canReadTypes): Deleted.
+        (WebCore::Clipboard::canReadData): Deleted.
+        (WebCore::Clipboard::canWriteData): Deleted.
+        (WebCore::Clipboard::clearData): Deleted.
+        (WebCore::Clipboard::getData): Deleted.
+        (WebCore::Clipboard::setData): Deleted.
+        (WebCore::Clipboard::types): Deleted.
+        (WebCore::Clipboard::files): Deleted.
+        (WebCore::Clipboard::dropEffect): Deleted.
+        (WebCore::Clipboard::setDropEffect): Deleted.
+        (WebCore::Clipboard::effectAllowed): Deleted.
+        (WebCore::Clipboard::setEffectAllowed): Deleted.
+        (WebCore::Clipboard::setDragImage): Deleted.
+        (WebCore::Clipboard::createForDragAndDrop): Deleted.
+        (WebCore::Clipboard::canSetDragImage): Deleted.
+        (WebCore::Clipboard::updateDragImage): Deleted.
+        (WebCore::Clipboard::createDragImage): Deleted.
+        (WebCore::Clipboard::sourceOperation): Deleted.
+        (WebCore::Clipboard::destinationOperation): Deleted.
+        (WebCore::Clipboard::setSourceOperation): Deleted.
+        (WebCore::Clipboard::setDestinationOperation): Deleted.
+        * dom/DataTransfer.h: Copied from Source/WebCore/dom/Clipboard.h.
+        * dom/DataTransfer.idl: Copied from Source/WebCore/dom/Clipboard.idl.
+        * dom/DataTransferAccessPolicy.h: Copied from Source/WebCore/dom/ClipboardAccessPolicy.h.
+        * dom/DataTransferItemList.h:
+        * dom/DataTransferMac.mm: Copied from Source/WebCore/dom/ClipboardMac.mm.
+        (WebCore::DataTransfer::createDragImage):
+        (WebCore::Clipboard::createDragImage): Deleted.
+        * dom/Event.h:
+        (WebCore::Event::clipboardData):
+        (WebCore::Event::internalDataTransfer):
+        (WebCore::Event::clipboard): Deleted.
+        * dom/Event.idl:
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create):
+        (WebCore::MouseEvent::MouseEvent):
+        (WebCore::MouseEvent::initMouseEvent):
+        * dom/MouseEvent.h:
+        (WebCore::MouseEvent::dataTransfer):
+        * dom/MouseEvent.idl:
+        * dom/WheelEvent.cpp:
+        * editing/Editor.cpp:
+        (WebCore::Editor::canDHTMLCut):
+        (WebCore::Editor::canDHTMLCopy):
+        (WebCore::Editor::canDHTMLPaste):
+        (WebCore::Editor::tryDHTMLCopy):
+        (WebCore::Editor::tryDHTMLCut):
+        (WebCore::Editor::tryDHTMLPaste):
+        (WebCore::Editor::dispatchCPPEvent):
+        (WebCore::Editor::performCutOrCopy):
+        (WebCore::Editor::selectedTextForDataTransfer):
+        (WebCore::Editor::selectedTextForClipboard): Deleted.
+        * editing/Editor.h:
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::stringSelectionForPasteboardWithImageAltText):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::takeFindStringFromSelection):
+        (WebCore::Editor::stringSelectionForPasteboardWithImageAltText):
+        * loader/EmptyClients.h:
+        * page/DragClient.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::dragExited):
+        (WebCore::DragController::performDrag):
+        (WebCore::DragController::tryDHTMLDrag):
+        (WebCore::DragController::startDrag):
+        (WebCore::DragController::doImageDrag):
+        (WebCore::DragController::doSystemDrag):
+        * page/DragController.h:
+        * page/DragState.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchDragEvent):
+        (WebCore::hasFileOfType):
+        (WebCore::hasStringOfType):
+        (WebCore::hasDropZoneType):
+        (WebCore::findDropZone):
+        (WebCore::EventHandler::updateDragAndDrop):
+        (WebCore::EventHandler::cancelDragAndDrop):
+        (WebCore::EventHandler::performDragAndDrop):
+        (WebCore::EventHandler::freeDataTransfer):
+        (WebCore::EventHandler::dragSourceEndedAt):
+        (WebCore::EventHandler::dispatchDragSrcEvent):
+        (WebCore::EventHandler::handleDrag):
+        (WebCore::EventHandler::freeClipboard): Deleted.
+        * page/EventHandler.h:
+        * page/efl/EventHandlerEfl.cpp:
+        (WebCore::EventHandler::createDraggingDataTransfer):
+        (WebCore::EventHandler::createDraggingClipboard): Deleted.
+        * page/gtk/DragControllerGtk.cpp:
+        (WebCore::DragController::declareAndWriteDragImage):
+        * page/gtk/EventHandlerGtk.cpp:
+        (WebCore::EventHandler::createDraggingDataTransfer):
+        (WebCore::EventHandler::createDraggingClipboard): Deleted.
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::declareAndWriteDragImage):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::createDraggingDataTransfer):
+        (WebCore::EventHandler::createDraggingClipboard): Deleted.
+        * page/win/DragControllerWin.cpp:
+        (WebCore::DragController::declareAndWriteDragImage):
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::createDraggingataTransfer):
+        (WebCore::EventHandler::createDraggingClipboard): Deleted.
+        * platform/Pasteboard.h:
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeSelection):
+        * platform/mac/PasteboardMac.mm:
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeRangeToDataObject):
+        (WebCore::Pasteboard::writeSelection):
+
 2014-04-08  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed iOS build fix. Pass 0 instead of nil to the options parameter of addObserver:forKeyPath:options:context.

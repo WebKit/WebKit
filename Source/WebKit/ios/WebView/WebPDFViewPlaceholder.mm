@@ -33,7 +33,7 @@
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <UIKit/UIKit.h>
-#import <WebCore/Clipboard.h>
+#import <WebCore/DataTransfer.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/FormState.h>

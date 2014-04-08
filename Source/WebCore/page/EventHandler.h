@@ -68,8 +68,8 @@ class NSView;
 namespace WebCore {
 
 class AutoscrollController;
-class Clipboard;
 class ContainerNode;
+class DataTransfer;
 class Document;
 class Element;
 class Event;
@@ -159,9 +159,9 @@ public:
     void setCapturingMouseEventsElement(PassRefPtr<Element>); // A caller is responsible for resetting capturing element to 0.
 
 #if ENABLE(DRAG_SUPPORT)
-    bool updateDragAndDrop(const PlatformMouseEvent&, Clipboard*);
-    void cancelDragAndDrop(const PlatformMouseEvent&, Clipboard*);
-    bool performDragAndDrop(const PlatformMouseEvent&, Clipboard*);
+    bool updateDragAndDrop(const PlatformMouseEvent&, DataTransfer*);
+    void cancelDragAndDrop(const PlatformMouseEvent&, DataTransfer*);
+    bool performDragAndDrop(const PlatformMouseEvent&, DataTransfer*);
     void updateDragStateAfterEditDragIfNeeded(Element* rootEditableElement);
 #endif
 
@@ -305,7 +305,7 @@ private:
     static DragState& dragState();
     static const double TextDragDelay;
     
-    PassRefPtr<Clipboard> createDraggingClipboard() const;
+    PassRefPtr<DataTransfer> createDraggingDataTransfer() const;
 #endif // ENABLE(DRAG_SUPPORT)
 
     bool eventActivatedView(const PlatformMouseEvent&) const;
@@ -365,9 +365,9 @@ private:
 
     bool dispatchMouseEvent(const AtomicString& eventType, Node* target, bool cancelable, int clickCount, const PlatformMouseEvent&, bool setUnder);
 #if ENABLE(DRAG_SUPPORT)
-    bool dispatchDragEvent(const AtomicString& eventType, Element& target, const PlatformMouseEvent&, Clipboard*);
+    bool dispatchDragEvent(const AtomicString& eventType, Element& target, const PlatformMouseEvent&, DataTransfer*);
 
-    void freeClipboard();
+    void freeDataTransfer();
 
     bool handleDrag(const MouseEventWithHitTestResults&, CheckDragHysteresis);
 #endif

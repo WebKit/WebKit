@@ -22,14 +22,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
-#ifndef ClipboardAccessPolicy_h
-#define ClipboardAccessPolicy_h
+
+#ifndef DataTransferAccessPolicy_h
+#define DataTransferAccessPolicy_h
 
 namespace WebCore {
 
-enum ClipboardAccessPolicy {
-    ClipboardNumb, ClipboardImageWritable, ClipboardWritable, ClipboardTypesReadable, ClipboardReadable
+enum class DataTransferAccessPolicy {
+    Numb, ImageWritable, Writable, TypesReadable, Readable
 };
 
 } // namespace

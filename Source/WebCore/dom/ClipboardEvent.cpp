@@ -23,7 +23,7 @@
 #include "config.h"
 #include "ClipboardEvent.h"
 
-#include "Clipboard.h"
+#include "DataTransfer.h"
 #include "EventNames.h"
 
 namespace WebCore {
@@ -32,8 +32,8 @@ ClipboardEvent::ClipboardEvent()
 {
 }
 
-ClipboardEvent::ClipboardEvent(const AtomicString& eventType, bool canBubble, bool cancelable, PassRefPtr<Clipboard> clipboard)
-    : Event(eventType, canBubble, cancelable), m_clipboard(clipboard)
+ClipboardEvent::ClipboardEvent(const AtomicString& eventType, bool canBubble, bool cancelable, PassRefPtr<DataTransfer> dataTransfer)
+    : Event(eventType, canBubble, cancelable), m_dataTransfer(dataTransfer)
 {
 }
 

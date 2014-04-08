@@ -26,8 +26,8 @@
 #ifndef Editor_h
 #define Editor_h
 
-#include "ClipboardAccessPolicy.h"
 #include "Color.h"
+#include "DataTransferAccessPolicy.h"
 #include "DictationAlternative.h"
 #include "DocumentMarker.h"
 #include "EditAction.h"
@@ -51,7 +51,7 @@ namespace WebCore {
 
 class AlternativeTextController;
 class ArchiveResource;
-class Clipboard;
+class DataTransfer;
 class CompositeEditCommand;
 class DeleteButtonController;
 class EditCommand;
@@ -175,7 +175,7 @@ public:
     void removeUnchangeableStyles();
 #endif
     
-    bool dispatchCPPEvent(const AtomicString&, ClipboardAccessPolicy);
+    bool dispatchCPPEvent(const AtomicString&, DataTransferAccessPolicy);
     
     void applyStyle(StyleProperties*, EditAction = EditActionUnspecified);
     void applyParagraphStyle(StyleProperties*, EditAction = EditActionUnspecified);
@@ -347,7 +347,7 @@ public:
     Node* findEventTargetFrom(const VisibleSelection& selection) const;
 
     String selectedText() const;
-    String selectedTextForClipboard() const;
+    String selectedTextForDataTransfer() const;
     bool findString(const String&, FindOptions);
 
     PassRefPtr<Range> rangeOfString(const String&, Range*, FindOptions);

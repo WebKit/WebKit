@@ -27,9 +27,9 @@
 #import "Editor.h"
 
 #import "CachedResourceLoader.h"
-#import "Clipboard.h"
 #import "ColorMac.h"
 #import "DOMRangeInternal.h"
+#import "DataTransfer.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
 #import "Editor.h"
@@ -253,7 +253,7 @@ void Editor::takeFindStringFromSelection()
     Vector<String> types;
     types.append(String(NSStringPboardType));
     platformStrategies()->pasteboardStrategy()->setTypes(types, NSFindPboard);
-    platformStrategies()->pasteboardStrategy()->setStringForType(m_frame.displayStringModifiedByEncoding(selectedTextForClipboard()), NSStringPboardType, NSFindPboard);
+    platformStrategies()->pasteboardStrategy()->setStringForType(m_frame.displayStringModifiedByEncoding(selectedTextForDataTransfer()), NSStringPboardType, NSFindPboard);
 }
 
 void Editor::readSelectionFromPasteboard(const String& pasteboardName)
@@ -265,8 +265,8 @@ void Editor::readSelectionFromPasteboard(const String& pasteboardName)
         pasteAsPlainTextWithPasteboard(pasteboard);
 }
 
-// FIXME: Makes no sense that selectedTextForClipboard always includes alt text, but stringSelectionForPasteboard does not.
-// This was left in a bad state when selectedTextForClipboard was added. Need to look over clients and fix this.
+// FIXME: Makes no sense that selectedTextForDataTransfer always includes alt text, but stringSelectionForPasteboard does not.
+// This was left in a bad state when selectedTextForDataTransfer was added. Need to look over clients and fix this.
 String Editor::stringSelectionForPasteboard()
 {
     if (!canCopy())
@@ -280,7 +280,7 @@ String Editor::stringSelectionForPasteboardWithImageAltText()
 {
     if (!canCopy())
         return "";
-    String text = selectedTextForClipboard();
+    String text = selectedTextForDataTransfer();
     text.replace(noBreakSpace, ' ');
     return text;
 }

@@ -33,11 +33,11 @@ class WebDragClient : public WebCore::DragClient {
 public:
     WebDragClient(WebView*);
     virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData&) override;
-    virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::Clipboard&) override;
+    virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::DataTransfer&) override;
     virtual WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData&) override;
     virtual void dragControllerDestroyed() override;
     virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint) override;
-    virtual void startDrag(WebCore::DragImageRef, const WebCore::IntPoint& dragPos, const WebCore::IntPoint& eventPos, WebCore::Clipboard&, WebCore::Frame&, bool linkDrag) override;
+    virtual void startDrag(WebCore::DragImageRef, const WebCore::IntPoint& dragPos, const WebCore::IntPoint& eventPos, WebCore::DataTransfer&, WebCore::Frame&, bool linkDrag) override;
     virtual void declareAndWriteDragImage(const String& pasteboardName, WebCore::Element&, const WebCore::URL&, const String&, WebCore::Frame*) override;
 private:
     WebView* m_webView;

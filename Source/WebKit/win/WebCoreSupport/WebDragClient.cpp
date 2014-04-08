@@ -29,7 +29,7 @@
 #include "WebDropSource.h"
 #include "WebKitGraphics.h"
 #include "WebView.h"
-#include <WebCore/Clipboard.h>
+#include <WebCore/DataTransfer.h>
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
 #include <WebCore/EventHandler.h>
@@ -96,22 +96,22 @@ DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint& win
     return (DragSourceAction)action;
 }
 
-void WebDragClient::willPerformDragSourceAction(DragSourceAction action, const IntPoint& intPoint, Clipboard& clipboard)
+void WebDragClient::willPerformDragSourceAction(DragSourceAction action, const IntPoint& intPoint, DataTransfer& dataTransfer)
 {
     COMPtr<IWebUIDelegate> uiDelegate;
     if (!SUCCEEDED(m_webView->uiDelegate(&uiDelegate)))
         return;
 
     POINT point = intPoint;
-    COMPtr<IDataObject> dataObject = clipboard.pasteboard().dataObject();
+    COMPtr<IDataObject> dataObject = dataTransfer.pasteboard().dataObject();
 
     COMPtr<IDataObject> newDataObject;
     HRESULT result = uiDelegate->willPerformDragSourceAction(m_webView, static_cast<WebDragSourceAction>(action), &point, dataObject.get(), &newDataObject);
     if (result == S_OK && newDataObject != dataObject)
-        const_cast<Pasteboard&>(clipboard.pasteboard()).setExternalDataObject(newDataObject.get());
+        const_cast<Pasteboard&>(dataTransfer.pasteboard()).setExternalDataObject(newDataObject.get());
 }
 
-void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, const IntPoint& dragPoint, Clipboard& clipboard, Frame& frame, bool isLink)
+void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, const IntPoint& dragPoint, DataTransfer& dataTransfer, Frame& frame, bool isLink)
 {
     //FIXME: Allow UIDelegate to override behaviour <rdar://problem/5015953>
 
@@ -124,7 +124,7 @@ void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, c
     if (FAILED(WebDropSource::createInstance(m_webView, &source)))
         return;
 
-    dataObject = clipboard.pasteboard().dataObject();
+    dataObject = dataTransfer.pasteboard().dataObject();
     if (source && (image || dataObject)) {
         if (image) {
             if(SUCCEEDED(CoCreateInstance(CLSID_DragDropHelper, 0, CLSCTX_INPROC_SERVER,

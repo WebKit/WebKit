@@ -39,7 +39,6 @@
 
 namespace WebCore {
 
-class Clipboard;
 class File;
 
 typedef int ExceptionCode;

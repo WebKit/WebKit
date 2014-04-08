@@ -133,11 +133,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'ClientRectList').hasOwnProperty('g
 PASS Object.getOwnPropertyDescriptor(global, 'ClientRectList').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'ClientRectList').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'ClientRectList').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'Clipboard').value is Clipboard
-PASS Object.getOwnPropertyDescriptor(global, 'Clipboard').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'Clipboard').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'Clipboard').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'Clipboard').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'CloseEvent').value is CloseEvent
 PASS Object.getOwnPropertyDescriptor(global, 'CloseEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'CloseEvent').hasOwnProperty('set') is false
@@ -203,6 +198,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'DataCue').hasOwnProperty('get') is
 PASS Object.getOwnPropertyDescriptor(global, 'DataCue').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'DataCue').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'DataCue').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'DataTransfer').value is DataTransfer
+PASS Object.getOwnPropertyDescriptor(global, 'DataTransfer').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'DataTransfer').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'DataTransfer').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'DataTransfer').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Document').value is Document
 PASS Object.getOwnPropertyDescriptor(global, 'Document').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Document').hasOwnProperty('set') is false

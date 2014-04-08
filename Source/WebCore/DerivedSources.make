@@ -251,7 +251,6 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/dom/ChildNode.idl \
     $(WebCore)/dom/ClientRect.idl \
     $(WebCore)/dom/ClientRectList.idl \
-    $(WebCore)/dom/Clipboard.idl \
     $(WebCore)/dom/Comment.idl \
     $(WebCore)/dom/CompositionEvent.idl \
     $(WebCore)/dom/CustomEvent.idl \
@@ -260,6 +259,7 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/dom/DOMImplementation.idl \
     $(WebCore)/dom/DOMStringList.idl \
     $(WebCore)/dom/DOMStringMap.idl \
+    $(WebCore)/dom/DataTransfer.idl \
     $(WebCore)/dom/DataTransferItem.idl \
     $(WebCore)/dom/DataTransferItemList.idl \
     $(WebCore)/dom/DeviceMotionEvent.idl \

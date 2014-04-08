@@ -23,7 +23,7 @@
 #include "config.h"
 #include "MouseEvent.h"
 
-#include "Clipboard.h"
+#include "DataTransfer.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -92,14 +92,14 @@ PassRefPtr<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubb
     int movementX, int movementY,
 #endif
     bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
-    PassRefPtr<EventTarget> relatedTarget, PassRefPtr<Clipboard> clipboard, bool isSimulated)
+    PassRefPtr<EventTarget> relatedTarget, PassRefPtr<DataTransfer> dataTransfer, bool isSimulated)
 {
     return adoptRef(new MouseEvent(type, canBubble, cancelable, timestamp, view,
         detail, screenX, screenY, pageX, pageY,
 #if ENABLE(POINTER_LOCK)
         movementX, movementY,
 #endif
-        ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, clipboard, isSimulated));
+        ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, dataTransfer, isSimulated));
 }
 
 MouseEvent::MouseEvent()
@@ -115,7 +115,7 @@ MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cance
 #endif
                        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
                        unsigned short button, PassRefPtr<EventTarget> relatedTarget,
-                       PassRefPtr<Clipboard> clipboard, bool isSimulated)
+                       PassRefPtr<DataTransfer> dataTransfer, bool isSimulated)
     : MouseRelatedEvent(eventType, canBubble, cancelable, timestamp, view, detail, IntPoint(screenX, screenY),
                         IntPoint(pageX, pageY),
 #if ENABLE(POINTER_LOCK)
@@ -125,7 +125,7 @@ MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cance
     , m_button(button == (unsigned short)-1 ? 0 : button)
     , m_buttonDown(button != (unsigned short)-1)
     , m_relatedTarget(relatedTarget)
-    , m_clipboard(clipboard)
+    , m_dataTransfer(dataTransfer)
 {
 }
 
@@ -139,7 +139,7 @@ MouseEvent::MouseEvent(const AtomicString& eventType, const MouseEventInit& init
     , m_button(initializer.button == (unsigned short)-1 ? 0 : initializer.button)
     , m_buttonDown(initializer.button != (unsigned short)-1)
     , m_relatedTarget(initializer.relatedTarget)
-    , m_clipboard(0 /* clipboard */)
+    , m_dataTransfer(0 /* dataTransfer */)
 {
     initCoordinates(IntPoint(initializer.clientX, initializer.clientY));
 }
@@ -170,7 +170,7 @@ void MouseEvent::initMouseEvent(const AtomicString& type, bool canBubble, bool c
     initCoordinates(IntPoint(clientX, clientY));
 
     // FIXME: m_isSimulated is not set to false here.
-    // FIXME: m_clipboard is not set to 0 here.
+    // FIXME: m_dataTransfer is not set to 0 here.
 }
 
 EventInterface MouseEvent::eventInterface() const

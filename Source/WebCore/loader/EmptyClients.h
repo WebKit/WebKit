@@ -572,10 +572,10 @@ public:
     EmptyDragClient() { }
     virtual ~EmptyDragClient() {}
     virtual void willPerformDragDestinationAction(DragDestinationAction, DragData&) override { }
-    virtual void willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard&) override { }
+    virtual void willPerformDragSourceAction(DragSourceAction, const IntPoint&, DataTransfer&) override { }
     virtual DragDestinationAction actionMaskForDrag(DragData&) override { return DragDestinationActionNone; }
     virtual DragSourceAction dragSourceActionMaskForPoint(const IntPoint&) override { return DragSourceActionNone; }
-    virtual void startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard&, Frame&, bool) override { }
+    virtual void startDrag(DragImageRef, const IntPoint&, const IntPoint&, DataTransfer&, Frame&, bool) override { }
     virtual void dragControllerDestroyed() override { }
 };
 #endif // ENABLE(DRAG_SUPPORT)

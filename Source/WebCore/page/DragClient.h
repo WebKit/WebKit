@@ -33,7 +33,7 @@
 
 namespace WebCore {
     
-class Clipboard;
+class DataTransfer;
 class DragData;
 class Element;
 class Frame;
@@ -44,11 +44,11 @@ public:
     virtual void dragControllerDestroyed() = 0;
 
     virtual void willPerformDragDestinationAction(DragDestinationAction, DragData&) = 0;
-    virtual void willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard&) = 0;
+    virtual void willPerformDragSourceAction(DragSourceAction, const IntPoint&, DataTransfer&) = 0;
     virtual DragDestinationAction actionMaskForDrag(DragData&) = 0;
     virtual DragSourceAction dragSourceActionMaskForPoint(const IntPoint& rootViewPoint) = 0;
     
-    virtual void startDrag(DragImageRef, const IntPoint& dragImageOrigin, const IntPoint& eventPos, Clipboard&, Frame&, bool linkDrag = false) = 0;
+    virtual void startDrag(DragImageRef, const IntPoint& dragImageOrigin, const IntPoint& eventPos, DataTransfer&, Frame&, bool linkDrag = false) = 0;
     virtual void dragEnded() { }
 
 #if PLATFORM(COCOA)

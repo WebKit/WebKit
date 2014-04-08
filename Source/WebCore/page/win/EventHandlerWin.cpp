@@ -28,8 +28,8 @@
 #include "EventHandler.h"
 
 #include "COMPtr.h"
-#include "Clipboard.h"
 #include "Cursor.h"
+#include "DataTransfer.h"
 #include "FloatPoint.h"
 #include "FocusController.h"
 #include "FrameView.h"
@@ -92,12 +92,12 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 }
 
 #if ENABLE(DRAG_SUPPORT)
-PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
+PassRefPtr<DataTransfer> EventHandler::createDraggingDataTransfer() const
 {
 #if OS(WINCE)
     return 0;
 #else
-    return Clipboard::createForDragAndDrop();
+    return DataTransfer::createForDragAndDrop();
 #endif
 }
 #endif

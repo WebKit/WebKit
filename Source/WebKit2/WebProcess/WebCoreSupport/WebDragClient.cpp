@@ -42,7 +42,7 @@ void WebDragClient::willPerformDragDestinationAction(DragDestinationAction actio
         m_page->mayPerformUploadDragDestinationAction(); // Upload can happen from a drop event handler, so we should prepare early.
 }
 
-void WebDragClient::willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard&)
+void WebDragClient::willPerformDragSourceAction(DragSourceAction, const IntPoint&, DataTransfer&)
 {
 }
 
@@ -57,7 +57,7 @@ DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
 }
 
 #if !PLATFORM(COCOA) && !PLATFORM(GTK)
-void WebDragClient::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard&, Frame&, bool)
+void WebDragClient::startDrag(DragImageRef, const IntPoint&, const IntPoint&, DataTransfer&, Frame&, bool)
 {
 }
 #endif

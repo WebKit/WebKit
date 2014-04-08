@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-    class Clipboard;
+    class DataTransfer;
 
     class ClipboardEvent : public Event {
     public:
@@ -38,21 +38,21 @@ namespace WebCore {
         {
             return adoptRef(new ClipboardEvent);
         }
-        static PassRefPtr<ClipboardEvent> create(const AtomicString& type, bool canBubbleArg, bool cancelableArg, PassRefPtr<Clipboard> clipboardArg)
+        static PassRefPtr<ClipboardEvent> create(const AtomicString& type, bool canBubbleArg, bool cancelableArg, PassRefPtr<DataTransfer> clipboardArg)
         {
             return adoptRef(new ClipboardEvent(type, canBubbleArg, cancelableArg, clipboardArg));
         }
 
-        Clipboard* clipboard() const { return m_clipboard.get(); }
+        virtual DataTransfer* internalDataTransfer() const override { return m_dataTransfer.get(); }
 
     private:
         ClipboardEvent();
-        ClipboardEvent(const AtomicString& type, bool canBubbleArg, bool cancelableArg, PassRefPtr<Clipboard>);
+        ClipboardEvent(const AtomicString& type, bool canBubbleArg, bool cancelableArg, PassRefPtr<DataTransfer>);
 
         virtual EventInterface eventInterface() const override;
         virtual bool isClipboardEvent() const override;
 
-        RefPtr<Clipboard> m_clipboard;
+        RefPtr<DataTransfer> m_dataTransfer;
     };
 
 } // namespace WebCore

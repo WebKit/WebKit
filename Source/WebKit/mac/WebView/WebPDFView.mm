@@ -50,7 +50,7 @@
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import <PDFKit/PDFKit.h>
-#import <WebCore/Clipboard.h>
+#import <WebCore/DataTransfer.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/FormState.h>
 #import <WebCore/Frame.h>

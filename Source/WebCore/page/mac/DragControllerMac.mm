@@ -28,7 +28,7 @@
 
 #if ENABLE(DRAG_SUPPORT)
 
-#import "Clipboard.h"
+#import "DataTransfer.h"
 #import "DragClient.h"
 #import "DragData.h"
 #import "Element.h"
@@ -82,9 +82,9 @@ void DragController::cleanupAfterSystemDrag()
         dragEnded();
 }
 
-void DragController::declareAndWriteDragImage(Clipboard& clipboard, Element& element, const URL& url, const String& label)
+void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Element& element, const URL& url, const String& label)
 {
-    m_client.declareAndWriteDragImage(clipboard.pasteboard().name(), element, url, label, element.document().frame());
+    m_client.declareAndWriteDragImage(dataTransfer.pasteboard().name(), element, url, label, element.document().frame());
 }
 
 } // namespace WebCore

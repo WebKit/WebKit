@@ -438,7 +438,7 @@ void Pasteboard::writeRangeToDataObject(Range& selectedRange, Frame& frame)
     if (medium.hGlobal && FAILED(m_writableDataObject->SetData(htmlFormat(), &medium, TRUE)))
         ::GlobalFree(medium.hGlobal);
 
-    String str = frame.editor().selectedTextForClipboard();
+    String str = frame.editor().selectedTextForDataTransfer();
     replaceNewlinesWithWindowsStyleNewlines(str);
     replaceNBSPWithSpace(str);
     medium.hGlobal = createGlobalData(str);
@@ -450,7 +450,7 @@ void Pasteboard::writeRangeToDataObject(Range& selectedRange, Frame& frame)
         m_writableDataObject->SetData(smartPasteFormat(), &medium, TRUE);
 }
 
-void Pasteboard::writeSelection(Range& selectedRange, bool canSmartCopyOrDelete, Frame& frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
+void Pasteboard::writeSelection(Range& selectedRange, bool canSmartCopyOrDelete, Frame& frame, ShouldSerializeSelectedTextForDataTransfer shouldSerializeSelectedTextForDataTransfer)
 {
     clear();
 
@@ -466,7 +466,7 @@ void Pasteboard::writeSelection(Range& selectedRange, bool canSmartCopyOrDelete,
     }
     
     // Put plain string on the pasteboard. CF_UNICODETEXT covers CF_TEXT as well
-    String str = shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard ? frame.editor().selectedTextForClipboard() : frame.editor().selectedText();
+    String str = shouldSerializeSelectedTextForDataTransfer == IncludeImageAltTextForDataTransfer ? frame.editor().selectedTextForDataTransfer() : frame.editor().selectedText();
     replaceNewlinesWithWindowsStyleNewlines(str);
     replaceNBSPWithSpace(str);
     if (::OpenClipboard(m_owner)) {

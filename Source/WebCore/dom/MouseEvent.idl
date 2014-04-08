@@ -59,7 +59,7 @@
     readonly attribute Node             toElement;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    readonly attribute Clipboard        dataTransfer;
+    readonly attribute DataTransfer     dataTransfer;
 #endif
 };
 

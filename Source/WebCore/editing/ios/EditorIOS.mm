@@ -27,10 +27,10 @@
 #include "Editor.h"
 
 #include "CachedImage.h"
-#include "Clipboard.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "DOMRangeInternal.h"
+#include "DataTransfer.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "EditorClient.h"
@@ -311,7 +311,7 @@ static PassRefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *string)
 
 String Editor::stringSelectionForPasteboardWithImageAltText()
 {
-    String text = selectedTextForClipboard();
+    String text = selectedTextForDataTransfer();
     text.replace(noBreakSpace, ' ');
     return text;
 }
