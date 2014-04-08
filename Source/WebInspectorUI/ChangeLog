@@ -1,5 +1,14 @@
 2014-04-08  Timothy Hatcher  <timothy@apple.com>
 
+        Fix corrupt APPLE_IMAGES_LICENSE.rtf after r165676.
+        https://bugs.webkit.org/show_bug.cgi?id=131384
+
+        Reviewed by Joseph Pecoraro.
+
+        * APPLE_IMAGES_LICENSE.rtf:
+
+2014-04-08  Timothy Hatcher  <timothy@apple.com>
+
         Clean up old protocol JSON files to better match the latest
         https://bugs.webkit.org/show_bug.cgi?id=131308
 
