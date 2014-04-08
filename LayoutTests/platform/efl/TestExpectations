@@ -1841,3 +1841,4 @@ webkit.org/b/130189 fast/regions/assert-hit-test-image.html [ Failure ]
 
 # ENABLE(WEBVTT_REGIONS) is disabled
 webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
+webkit.org/b/109570 media/track/w3c [ Skip ]

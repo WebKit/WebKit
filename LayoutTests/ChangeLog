@@ -1,3 +1,221 @@
+2014-04-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebVTT] Begin Enabling W3C VTT Tests
+        https://bugs.webkit.org/show_bug.cgi?id=131345
+
+        Reviewed by Darin Adler.
+
+        Move a number of tests out of 'opera' into a new 'w3c' folder.
+
+        * media/track/opera/interfaces/HTMLElement/HTMLMediaElement/addTextTrack-expected.txt: Removed.
+        * media/track/opera/interfaces/HTMLElement/HTMLMediaElement/addTextTrack.html: Removed.
+        * media/track/opera/interfaces/HTMLElement/HTMLMediaElement/textTracks-expected.txt: Removed.
+        * media/track/opera/interfaces/HTMLElement/HTMLMediaElement/textTracks.html: Removed.
+        * media/track/opera/interfaces/HTMLElement/HTMLTrackElement/default-expected.txt: Removed.
+        * media/track/opera/interfaces/HTMLElement/HTMLTrackElement/default.html: Removed.
+        * media/track/opera/interfaces/HTMLElement/HTMLTrackElement/label-expected.txt: Removed.
+        * media/track/opera/interfaces/HTMLElement/HTMLTrackElement/label.html: Removed.
+        * media/track/opera/interfaces/HTMLElement/HTMLTrackElement/readyState-expected.txt: Removed.
+        * media/track/opera/interfaces/HTMLElement/HTMLTrackElement/readyState.html: Removed.
+        * media/track/opera/interfaces/HTMLElement/HTMLTrackElement/srclang-expected.txt: Removed.
+        * media/track/opera/interfaces/HTMLElement/HTMLTrackElement/srclang.html: Removed.
+        * media/track/opera/interfaces/HTMLElement/HTMLTrackElement/track-expected.txt: Removed.
+        * media/track/opera/interfaces/HTMLElement/HTMLTrackElement/track.html: Removed.
+        * media/track/opera/interfaces/TextTrack/addCue-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrack/addCue.html: Removed.
+        * media/track/opera/interfaces/TextTrack/constants-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrack/constants.html: Removed.
+        * media/track/opera/interfaces/TextTrack/cues-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrack/cues.html: Removed.
+        * media/track/opera/interfaces/TextTrack/kind-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrack/kind.html: Removed.
+        * media/track/opera/interfaces/TextTrack/label-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrack/label.html: Removed.
+        * media/track/opera/interfaces/TextTrack/language-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrack/language.html: Removed.
+        * media/track/opera/interfaces/TextTrack/mode-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrack/mode.html: Removed.
+        * media/track/opera/interfaces/TextTrack/oncuechange-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrack/oncuechange.html: Removed.
+        * media/track/opera/interfaces/TextTrack/removeCue-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrack/removeCue.html: Removed.
+        * media/track/opera/interfaces/TextTrackCue/align-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrackCue/align.html: Removed.
+        * media/track/opera/interfaces/TextTrackCue/endTime-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrackCue/endTime.html: Removed.
+        * media/track/opera/interfaces/TextTrackCue/id-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrackCue/id.html: Removed.
+        * media/track/opera/interfaces/TextTrackCue/pauseOnExit-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrackCue/pauseOnExit.html: Removed.
+        * media/track/opera/interfaces/TextTrackCue/startTime-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrackCue/startTime.html: Removed.
+        * media/track/opera/interfaces/TextTrackCue/track-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrackCue/track.html: Removed.
+        * media/track/opera/interfaces/TextTrackCueList/getCueById-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrackCueList/getCueById.html: Removed.
+        * media/track/opera/interfaces/TextTrackCueList/length-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrackCueList/length.html: Removed.
+        * media/track/opera/interfaces/TextTrackList/length-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrackList/length.html: Removed.
+        * media/track/opera/interfaces/TextTrackList/onaddtrack-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrackList/onaddtrack.html: Removed.
+        * media/track/opera/interfaces/TextTrackList/onremovetrack-expected.txt: Removed.
+        * media/track/opera/interfaces/TextTrackList/onremovetrack.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/2_tracks-ref.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/2_tracks.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/align_end-ref.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/align_end.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/align_middle-ref.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/align_middle.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/align_middle_position_50-ref.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/align_middle_position_50.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/align_middle_position_gt_50-ref.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/align_middle_position_gt_50.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/align_middle_position_lt_50-ref.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/align_middle_position_lt_50.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/align_middle_position_lt_50_size_gt_maximum_size-ref.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/align_middle_position_lt_50_size_gt_maximum_size.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/align_start-ref.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/align_start.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/audio_has_no_subtitles-ref.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/audio_has_no_subtitles.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/basic-ref.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/basic.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/decode_escaped_entities-ref.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/decode_escaped_entities.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/dom_override_cue_align_position_line_size-ref.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/dom_override_cue_align_position_line_size.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/dom_override_cue_align_position_line_size_while_paused-ref.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/dom_override_cue_align_position_line_size_while_paused.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/dom_override_cue_text-ref.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/dom_override_cue_text.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/dom_override_cue_text_while_paused-ref.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/dom_override_cue_text_while_paused.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/dom_override_remove_cue_while_paused-ref.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/dom_override_remove_cue_while_paused.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/media/background.gif: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/media/white.mp4: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/media/white.webm: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/one_line_cue_plus_wrapped_cue-ref.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/one_line_cue_plus_wrapped_cue.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/size_50-ref.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/size_50.html: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/support/2_cues_overlapping_completely_move_up.vtt: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/support/align_end_long.vtt: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/support/foo.vtt: Removed.
+        * media/track/opera/track/webvtt/rendering/reftest/support/refTestWait.js: Removed.
+        * media/track/w3c: Added.
+        * media/track/w3c/interfaces: Added.
+        * media/track/w3c/interfaces/HTMLMediaElement: Added.
+        * media/track/w3c/interfaces/HTMLMediaElement/addTextTrack-expected.txt: Copied from media/track/opera/interfaces/HTMLElement/HTMLMediaElement/addTextTrack-expected.txt.
+        * media/track/w3c/interfaces/HTMLMediaElement/addTextTrack.html: Copied from media/track/opera/interfaces/HTMLElement/HTMLMediaElement/addTextTrack.html.
+        * media/track/w3c/interfaces/HTMLMediaElement/textTracks-expected.txt: Copied from media/track/opera/interfaces/HTMLElement/HTMLMediaElement/textTracks-expected.txt.
+        * media/track/w3c/interfaces/HTMLMediaElement/textTracks.html: Copied from media/track/opera/interfaces/HTMLElement/HTMLMediaElement/textTracks.html.
+        * media/track/w3c/interfaces/HTMLTrackElement: Added.
+        * media/track/w3c/interfaces/HTMLTrackElement/default-expected.txt: Copied from media/track/opera/interfaces/HTMLElement/HTMLTrackElement/default-expected.txt.
+        * media/track/w3c/interfaces/HTMLTrackElement/default.html: Copied from media/track/opera/interfaces/HTMLElement/HTMLTrackElement/default.html.
+        * media/track/w3c/interfaces/HTMLTrackElement/label-expected.txt: Copied from media/track/opera/interfaces/HTMLElement/HTMLTrackElement/label-expected.txt.
+        * media/track/w3c/interfaces/HTMLTrackElement/label.html: Copied from media/track/opera/interfaces/HTMLElement/HTMLTrackElement/label.html.
+        * media/track/w3c/interfaces/HTMLTrackElement/readyState-expected.txt: Copied from media/track/opera/interfaces/HTMLElement/HTMLTrackElement/readyState-expected.txt.
+        * media/track/w3c/interfaces/HTMLTrackElement/readyState.html: Copied from media/track/opera/interfaces/HTMLElement/HTMLTrackElement/readyState.html.
+        * media/track/w3c/interfaces/HTMLTrackElement/srclang-expected.txt: Copied from media/track/opera/interfaces/HTMLElement/HTMLTrackElement/srclang-expected.txt.
+        * media/track/w3c/interfaces/HTMLTrackElement/srclang.html: Copied from media/track/opera/interfaces/HTMLElement/HTMLTrackElement/srclang.html.
+        * media/track/w3c/interfaces/HTMLTrackElement/track-expected.txt: Copied from media/track/opera/interfaces/HTMLElement/HTMLTrackElement/track-expected.txt.
+        * media/track/w3c/interfaces/HTMLTrackElement/track.html: Copied from media/track/opera/interfaces/HTMLElement/HTMLTrackElement/track.html.
+        * media/track/w3c/interfaces/TextTrack: Added.
+        * media/track/w3c/interfaces/TextTrack/addCue-expected.txt: Copied from media/track/opera/interfaces/TextTrack/addCue-expected.txt.
+        * media/track/w3c/interfaces/TextTrack/addCue.html: Copied from media/track/opera/interfaces/TextTrack/addCue.html.
+        * media/track/w3c/interfaces/TextTrack/constants-expected.txt: Copied from media/track/opera/interfaces/TextTrack/constants-expected.txt.
+        * media/track/w3c/interfaces/TextTrack/constants.html: Copied from media/track/opera/interfaces/TextTrack/constants.html.
+        * media/track/w3c/interfaces/TextTrack/cues-expected.txt: Copied from media/track/opera/interfaces/TextTrack/cues-expected.txt.
+        * media/track/w3c/interfaces/TextTrack/cues.html: Copied from media/track/opera/interfaces/TextTrack/cues.html.
+        * media/track/w3c/interfaces/TextTrack/kind-expected.txt: Copied from media/track/opera/interfaces/TextTrack/kind-expected.txt.
+        * media/track/w3c/interfaces/TextTrack/kind.html: Copied from media/track/opera/interfaces/TextTrack/kind.html.
+        * media/track/w3c/interfaces/TextTrack/label-expected.txt: Copied from media/track/opera/interfaces/TextTrack/label-expected.txt.
+        * media/track/w3c/interfaces/TextTrack/label.html: Copied from media/track/opera/interfaces/TextTrack/label.html.
+        * media/track/w3c/interfaces/TextTrack/language-expected.txt: Copied from media/track/opera/interfaces/TextTrack/language-expected.txt.
+        * media/track/w3c/interfaces/TextTrack/language.html: Copied from media/track/opera/interfaces/TextTrack/language.html.
+        * media/track/w3c/interfaces/TextTrack/mode-expected.txt: Copied from media/track/opera/interfaces/TextTrack/mode-expected.txt.
+        * media/track/w3c/interfaces/TextTrack/mode.html: Copied from media/track/opera/interfaces/TextTrack/mode.html.
+        * media/track/w3c/interfaces/TextTrack/oncuechange-expected.txt: Copied from media/track/opera/interfaces/TextTrack/oncuechange-expected.txt.
+        * media/track/w3c/interfaces/TextTrack/oncuechange.html: Copied from media/track/opera/interfaces/TextTrack/oncuechange.html.
+        * media/track/w3c/interfaces/TextTrack/removeCue-expected.txt: Copied from media/track/opera/interfaces/TextTrack/removeCue-expected.txt.
+        * media/track/w3c/interfaces/TextTrack/removeCue.html: Copied from media/track/opera/interfaces/TextTrack/removeCue.html.
+        * media/track/w3c/interfaces/TextTrackCue: Added.
+        * media/track/w3c/interfaces/TextTrackCue/align-expected.txt: Copied from media/track/opera/interfaces/TextTrackCue/align-expected.txt.
+        * media/track/w3c/interfaces/TextTrackCue/align.html: Copied from media/track/opera/interfaces/TextTrackCue/align.html.
+        * media/track/w3c/interfaces/TextTrackCue/endTime-expected.txt: Copied from media/track/opera/interfaces/TextTrackCue/endTime-expected.txt.
+        * media/track/w3c/interfaces/TextTrackCue/endTime.html: Copied from media/track/opera/interfaces/TextTrackCue/endTime.html.
+        * media/track/w3c/interfaces/TextTrackCue/id-expected.txt: Copied from media/track/opera/interfaces/TextTrackCue/id-expected.txt.
+        * media/track/w3c/interfaces/TextTrackCue/id.html: Copied from media/track/opera/interfaces/TextTrackCue/id.html.
+        * media/track/w3c/interfaces/TextTrackCue/pauseOnExit-expected.txt: Copied from media/track/opera/interfaces/TextTrackCue/pauseOnExit-expected.txt.
+        * media/track/w3c/interfaces/TextTrackCue/pauseOnExit.html: Copied from media/track/opera/interfaces/TextTrackCue/pauseOnExit.html.
+        * media/track/w3c/interfaces/TextTrackCue/startTime-expected.txt: Copied from media/track/opera/interfaces/TextTrackCue/startTime-expected.txt.
+        * media/track/w3c/interfaces/TextTrackCue/startTime.html: Copied from media/track/opera/interfaces/TextTrackCue/startTime.html.
+        * media/track/w3c/interfaces/TextTrackCue/track-expected.txt: Copied from media/track/opera/interfaces/TextTrackCue/track-expected.txt.
+        * media/track/w3c/interfaces/TextTrackCue/track.html: Copied from media/track/opera/interfaces/TextTrackCue/track.html.
+        * media/track/w3c/interfaces/TextTrackCueList: Added.
+        * media/track/w3c/interfaces/TextTrackCueList/getCueById-expected.txt: Copied from media/track/opera/interfaces/TextTrackCueList/getCueById-expected.txt.
+        * media/track/w3c/interfaces/TextTrackCueList/getCueById.html: Copied from media/track/opera/interfaces/TextTrackCueList/getCueById.html.
+        * media/track/w3c/interfaces/TextTrackCueList/length-expected.txt: Copied from media/track/opera/interfaces/TextTrackCueList/length-expected.txt.
+        * media/track/w3c/interfaces/TextTrackCueList/length.html: Copied from media/track/opera/interfaces/TextTrackCueList/length.html.
+        * media/track/w3c/interfaces/TextTrackList: Added.
+        * media/track/w3c/interfaces/TextTrackList/length-expected.txt: Copied from media/track/opera/interfaces/TextTrackList/length-expected.txt.
+        * media/track/w3c/interfaces/TextTrackList/length.html: Copied from media/track/opera/interfaces/TextTrackList/length.html.
+        * media/track/w3c/interfaces/TextTrackList/onaddtrack-expected.txt: Copied from media/track/opera/interfaces/TextTrackList/onaddtrack-expected.txt.
+        * media/track/w3c/interfaces/TextTrackList/onaddtrack.html: Copied from media/track/opera/interfaces/TextTrackList/onaddtrack.html.
+        * media/track/w3c/interfaces/TextTrackList/onremovetrack-expected.txt: Copied from media/track/opera/interfaces/TextTrackList/onremovetrack-expected.txt.
+        * media/track/w3c/interfaces/TextTrackList/onremovetrack.html: Copied from media/track/opera/interfaces/TextTrackList/onremovetrack.html.
+        * media/track/w3c/track: Added.
+        * media/track/w3c/track/webvtt: Added.
+        * media/track/w3c/track/webvtt/2_tracks-expected.html: Copied from media/track/opera/track/webvtt/rendering/reftest/2_tracks-ref.html.
+        * media/track/w3c/track/webvtt/2_tracks.html: Copied from media/track/opera/track/webvtt/rendering/reftest/2_tracks.html.
+        * media/track/w3c/track/webvtt/align_end-expected.html: Copied from media/track/opera/track/webvtt/rendering/reftest/align_end-ref.html.
+        * media/track/w3c/track/webvtt/align_end.html: Copied from media/track/opera/track/webvtt/rendering/reftest/align_end.html.
+        * media/track/w3c/track/webvtt/align_middle-expected.html: Copied from media/track/opera/track/webvtt/rendering/reftest/align_middle-ref.html.
+        * media/track/w3c/track/webvtt/align_middle.html: Copied from media/track/opera/track/webvtt/rendering/reftest/align_middle.html.
+        * media/track/w3c/track/webvtt/align_middle_position_50-expected.html: Copied from media/track/opera/track/webvtt/rendering/reftest/align_middle_position_50-ref.html.
+        * media/track/w3c/track/webvtt/align_middle_position_50.html: Copied from media/track/opera/track/webvtt/rendering/reftest/align_middle_position_50.html.
+        * media/track/w3c/track/webvtt/align_middle_position_gt_50-expected.html: Copied from media/track/opera/track/webvtt/rendering/reftest/align_middle_position_gt_50-ref.html.
+        * media/track/w3c/track/webvtt/align_middle_position_gt_50.html: Copied from media/track/opera/track/webvtt/rendering/reftest/align_middle_position_gt_50.html.
+        * media/track/w3c/track/webvtt/align_middle_position_lt_50-expected.html: Copied from media/track/opera/track/webvtt/rendering/reftest/align_middle_position_lt_50-ref.html.
+        * media/track/w3c/track/webvtt/align_middle_position_lt_50.html: Copied from media/track/opera/track/webvtt/rendering/reftest/align_middle_position_lt_50.html.
+        * media/track/w3c/track/webvtt/align_middle_position_lt_50_size_gt_maximum_size-expected.html: Copied from media/track/opera/track/webvtt/rendering/reftest/align_middle_position_lt_50_size_gt_maximum_size-ref.html.
+        * media/track/w3c/track/webvtt/align_middle_position_lt_50_size_gt_maximum_size.html: Copied from media/track/opera/track/webvtt/rendering/reftest/align_middle_position_lt_50_size_gt_maximum_size.html.
+        * media/track/w3c/track/webvtt/align_start-expected.html: Copied from media/track/opera/track/webvtt/rendering/reftest/align_start-ref.html.
+        * media/track/w3c/track/webvtt/align_start.html: Copied from media/track/opera/track/webvtt/rendering/reftest/align_start.html.
+        * media/track/w3c/track/webvtt/audio_has_no_subtitles-expected.html: Copied from media/track/opera/track/webvtt/rendering/reftest/audio_has_no_subtitles-ref.html.
+        * media/track/w3c/track/webvtt/audio_has_no_subtitles.html: Copied from media/track/opera/track/webvtt/rendering/reftest/audio_has_no_subtitles.html.
+        * media/track/w3c/track/webvtt/background.gif: Copied from media/track/opera/track/webvtt/rendering/reftest/media/background.gif.
+        * media/track/w3c/track/webvtt/basic-expected.html: Copied from media/track/opera/track/webvtt/rendering/reftest/basic-ref.html.
+        * media/track/w3c/track/webvtt/basic.html: Copied from media/track/opera/track/webvtt/rendering/reftest/basic.html.
+        * media/track/w3c/track/webvtt/decode_escaped_entities-expected.html: Copied from media/track/opera/track/webvtt/rendering/reftest/decode_escaped_entities-ref.html.
+        * media/track/w3c/track/webvtt/decode_escaped_entities.html: Copied from media/track/opera/track/webvtt/rendering/reftest/decode_escaped_entities.html.
+        * media/track/w3c/track/webvtt/dom_override_cue_align_position_line_size-expected.html: Copied from media/track/opera/track/webvtt/rendering/reftest/dom_override_cue_align_position_line_size-ref.html.
+        * media/track/w3c/track/webvtt/dom_override_cue_align_position_line_size.html: Copied from media/track/opera/track/webvtt/rendering/reftest/dom_override_cue_align_position_line_size.html.
+        * media/track/w3c/track/webvtt/dom_override_cue_align_position_line_size_while_paused-expected.html: Copied from media/track/opera/track/webvtt/rendering/reftest/dom_override_cue_align_position_line_size_while_paused-ref.html.
+        * media/track/w3c/track/webvtt/dom_override_cue_align_position_line_size_while_paused.html: Copied from media/track/opera/track/webvtt/rendering/reftest/dom_override_cue_align_position_line_size_while_paused.html.
+        * media/track/w3c/track/webvtt/dom_override_cue_text-expected.html: Copied from media/track/opera/track/webvtt/rendering/reftest/dom_override_cue_text-ref.html.
+        * media/track/w3c/track/webvtt/dom_override_cue_text.html: Copied from media/track/opera/track/webvtt/rendering/reftest/dom_override_cue_text.html.
+        * media/track/w3c/track/webvtt/dom_override_cue_text_while_paused-expected.html: Copied from media/track/opera/track/webvtt/rendering/reftest/dom_override_cue_text_while_paused-ref.html.
+        * media/track/w3c/track/webvtt/dom_override_cue_text_while_paused.html: Copied from media/track/opera/track/webvtt/rendering/reftest/dom_override_cue_text_while_paused.html.
+        * media/track/w3c/track/webvtt/dom_override_remove_cue_while_paused-expected.html: Copied from media/track/opera/track/webvtt/rendering/reftest/dom_override_remove_cue_while_paused-ref.html.
+        * media/track/w3c/track/webvtt/dom_override_remove_cue_while_paused.html: Copied from media/track/opera/track/webvtt/rendering/reftest/dom_override_remove_cue_while_paused.html.
+        * media/track/w3c/track/webvtt/media: Added.
+        * media/track/w3c/track/webvtt/media/white.mp4: Copied from media/track/opera/track/webvtt/rendering/reftest/media/white.mp4.
+        * media/track/w3c/track/webvtt/media/white.webm: Copied from media/track/opera/track/webvtt/rendering/reftest/media/white.webm.
+        * media/track/w3c/track/webvtt/one_line_cue_plus_wrapped_cue-expected.html: Copied from media/track/opera/track/webvtt/rendering/reftest/one_line_cue_plus_wrapped_cue-ref.html.
+        * media/track/w3c/track/webvtt/one_line_cue_plus_wrapped_cue.html: Copied from media/track/opera/track/webvtt/rendering/reftest/one_line_cue_plus_wrapped_cue.html.
+        * media/track/w3c/track/webvtt/size_50-expected.html: Copied from media/track/opera/track/webvtt/rendering/reftest/size_50-ref.html.
+        * media/track/w3c/track/webvtt/size_50.html: Copied from media/track/opera/track/webvtt/rendering/reftest/size_50.html.
+        * media/track/w3c/track/webvtt/support: Added.
+        * media/track/w3c/track/webvtt/support/2_cues_overlapping_completely_move_up.vtt: Copied from media/track/opera/track/webvtt/rendering/reftest/support/2_cues_overlapping_completely_move_up.vtt.
+        * media/track/w3c/track/webvtt/support/align_end_long.vtt: Copied from media/track/opera/track/webvtt/rendering/reftest/support/align_end_long.vtt.
+        * media/track/w3c/track/webvtt/support/foo.vtt: Copied from media/track/opera/track/webvtt/rendering/reftest/support/foo.vtt.
+        * media/track/w3c/track/webvtt/support/refTestWait.js: Copied from media/track/opera/track/webvtt/rendering/reftest/support/refTestWait.js.
+		* platform/eft/TestExpectations: Skip w3c tests.
+		* platform/gtk/TestExpectations: Skip w3c tests.
+
 2014-04-08  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Slow paint path for inlines should snap to device pixels.
