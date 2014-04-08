@@ -47,8 +47,15 @@ Deallocator::Deallocator()
 
 Deallocator::~Deallocator()
 {
-    std::lock_guard<Mutex> lock(PerProcess<Heap>::mutex());
     processObjectLog();
+    
+    std::lock_guard<Mutex> lock(PerProcess<Heap>::mutex());
+    Heap* heap = PerProcess<Heap>::getFastCase();
+    
+    while (m_smallLineCache.size())
+        heap->deallocateSmallLine(lock, m_smallLineCache.pop());
+    while (m_mediumLineCache.size())
+        heap->deallocateMediumLine(lock, m_mediumLineCache.pop());
 }
 
 void Deallocator::deallocateLarge(void* object)

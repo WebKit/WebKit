@@ -1,5 +1,17 @@
 2014-04-07  Geoffrey Garen  <ggaren@apple.com>
 
+        bmalloc: Fixed a leak in the per-thread cache
+        https://bugs.webkit.org/show_bug.cgi?id=131330
+
+        Reviewed by Andreas Kling.
+
+        Remember to deallocate our line caches upon thread exit.
+
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::~Deallocator):
+
+2014-04-07  Geoffrey Garen  <ggaren@apple.com>
+
         bmalloc: rolled out the tryLock experiment
         https://bugs.webkit.org/show_bug.cgi?id=131328
 
