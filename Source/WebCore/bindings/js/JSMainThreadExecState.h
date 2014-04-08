@@ -28,6 +28,7 @@
 
 #include "JSDOMBinding.h"
 #include <runtime/Completion.h>
+#include <runtime/Microtask.h>
 #include <wtf/MainThread.h>
 
 #if PLATFORM(IOS)
@@ -62,8 +63,15 @@ public:
         return JSC::evaluate(exec, source, thisValue, exception);
     };
 
+    static void runTask(JSC::ExecState* exec, JSC::Microtask& task)
+    {
+        JSMainThreadExecState currentState(exec);
+        task.run(exec);
+    }
+
     static InspectorInstrumentationCookie instrumentFunctionCall(ScriptExecutionContext*, JSC::CallType, const JSC::CallData&);
 
+private:
     explicit JSMainThreadExecState(JSC::ExecState* exec)
         : m_previousState(s_mainThreadState)
     {
@@ -83,7 +91,6 @@ public:
             didLeaveScriptContext();
     }
 
-private:
     static JSC::ExecState* s_mainThreadState;
     JSC::ExecState* m_previousState;
 

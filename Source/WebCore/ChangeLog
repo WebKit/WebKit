@@ -1,3 +1,19 @@
+2014-04-08  Mark Lam  <mark.lam@apple.com>
+
+        Refactor to make JSMainThreadExecState's constructor and destructor private.
+        <https://webkit.org/b/131372>
+
+        Reviewed by Mark Hahnenberg.
+
+        This is in preparation for subsequent patches to ensure that we don't
+        exit the VM with an exception still pending.
+
+        No new tests required.  This is only a refactor of existing behavior.
+
+        * bindings/js/JSDOMGlobalObjectTask.cpp:
+        * bindings/js/JSMainThreadExecState.h:
+        (WebCore::JSMainThreadExecState::runTask):
+
 2014-04-07  Jer Noble  <jer.noble@apple.com>
 
         [WK2][iOS] Consecutive videos in full screen display only black
