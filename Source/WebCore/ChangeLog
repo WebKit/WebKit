@@ -1,3 +1,16 @@
+2014-04-08  Andreas Kling  <akling@apple.com>
+
+        [Mac] Always do a full GC when simulating memory pressure.
+        <https://webkit.org/b/129790>
+
+        To get more consistent accounting on automated memory testers,
+        add a synchronous GC as part of the simulated memory pressure event.
+
+        Reviewed by Geoffrey Garen.
+
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::install):
+
 2014-04-08  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed iOS build fix. Pass 0 instead of nil to setRate: when pausing.

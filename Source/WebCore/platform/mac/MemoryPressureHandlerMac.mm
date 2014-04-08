@@ -29,6 +29,7 @@
 #if !PLATFORM(IOS)
 
 #import "IOSurfacePool.h"
+#import "GCController.h"
 #import "LayerPool.h"
 #import "WebCoreSystemInterface.h"
 #import <malloc/malloc.h>
@@ -70,6 +71,11 @@ void MemoryPressureHandler::install()
 
     // Allow simulation of memory pressure with "notifyutil -p org.WebKit.lowMemory"
     notify_register_dispatch("org.WebKit.lowMemory", &_notifyToken, dispatch_get_main_queue(), ^(int) {
+
+        // We only do a synchronous GC when *simulating* memory pressure.
+        // This gives us a more consistent picture of live objects at the end of testing.
+        gcController().garbageCollectNow();
+
         memoryPressureHandler().respondToMemoryPressure();
         malloc_zone_pressure_relief(nullptr, 0);
     });
