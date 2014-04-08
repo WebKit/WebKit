@@ -1701,7 +1701,7 @@
     <None Include="..\Scripts\combine-resources.pl">
       <Filter>Scripts</Filter>
     </None>
-    <None Include="..\Scripts\copy-user-interface-resources.sh">
+    <None Include="..\Scripts\copy-user-interface-resources.pl">
       <Filter>Scripts</Filter>
     </None>
     <None Include="..\Scripts\cssmin.py">
@@ -1719,6 +1719,7 @@
     <None Include="..\Scripts\update-pretty-printer.rb">
       <Filter>Scripts</Filter>
     </None>
-    <None Include="WebInspectorUIPostBuild.cmd" />
+    <None Include="WebInspectorUI.make" />
+    <None Include="build-webinspectorui.sh" />
   </ItemGroup>
 </Project>

@@ -16,7 +16,7 @@ unless (defined $inputScriptFilename and defined $outputScriptFilename) {
     exit;
 }
 
-open IN, $inputScriptFilename or die;
+open IN, $inputScriptFilename or die "Couldn't open $inputScriptFilename: $!";
 our ($out, $tempFilename) = tempfile(UNLINK => 0) or die;
 
 our $previousLine = "";

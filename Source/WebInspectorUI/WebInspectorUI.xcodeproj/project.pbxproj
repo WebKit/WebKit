@@ -22,7 +22,7 @@
 		1C60FF1414E6E35D006CD77D /* en */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = en; path = Localizations/en.lproj/localizedStrings.js; sourceTree = "<group>"; };
 		1C60FF1914E73C64006CD77D /* combine-resources.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "combine-resources.pl"; sourceTree = "<group>"; };
 		1C60FF1A14E73DCA006CD77D /* remove-console-asserts.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "remove-console-asserts.pl"; sourceTree = "<group>"; };
-		1C60FFE114E79B0F006CD77D /* copy-user-interface-resources.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "copy-user-interface-resources.sh"; sourceTree = "<group>"; };
+		1C60FFE114E79B0F006CD77D /* copy-user-interface-resources.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "copy-user-interface-resources.pl"; sourceTree = "<group>"; };
 		1C78EE131760E115002F6AA5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1C78EE1617611340002F6AA5 /* WebInspectorUI.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = WebInspectorUI.c; sourceTree = "<group>"; };
 		996231EB18D1811700C03FDA /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -55,7 +55,7 @@
 			isa = PBXGroup;
 			children = (
 				1C60FF1914E73C64006CD77D /* combine-resources.pl */,
-				1C60FFE114E79B0F006CD77D /* copy-user-interface-resources.sh */,
+				1C60FFE114E79B0F006CD77D /* copy-user-interface-resources.pl */,
 				1C435CAC14E7B287004E10EA /* cssmin.py */,
 				1C435CAD14E7B287004E10EA /* jsmin.py */,
 				1C60FF1A14E73DCA006CD77D /* remove-console-asserts.pl */,
@@ -157,7 +157,7 @@
 			name = "Copy User Interface Resources";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "sh \"${SRCROOT}/Scripts/copy-user-interface-resources.sh\"";
+			shellScript = "/usr/bin/perl \"${SRCROOT}/Scripts/copy-user-interface-resources.pl\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 

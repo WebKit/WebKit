@@ -1,3 +1,21 @@
+2014-04-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Generate Optimized WebInspectorUI in Release Build
+        https://bugs.webkit.org/show_bug.cgi?id=120120
+
+        Reviewed by Timothy Hatcher.
+
+        * Scripts/copy-user-interface-resources.pl: Copied from Scripts/copy-user-interface-resources.sh.
+        * Scripts/copy-user-interface-resources.sh: Removed.
+        * Scripts/remove-console-asserts.pl:
+        * WebInspectorUI.vcxproj/WebInspectorUI.make: Added.
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj: Switch to Makefile style.
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters: Ditto.
+        * WebInspectorUI.vcxproj/WebInspectorUIPostBuild.cmd: More work should
+        be done in the new build-webinspectorui.sh file.
+        * WebInspectorUI.vcxproj/build-webinspectorui.sh: Added.
+        * WebInspectorUI.xcodeproj/project.pbxproj:
+
 2014-04-08  Timothy Hatcher  <timothy@apple.com>
 
         Fix corrupt APPLE_IMAGES_LICENSE.rtf after r165676.
