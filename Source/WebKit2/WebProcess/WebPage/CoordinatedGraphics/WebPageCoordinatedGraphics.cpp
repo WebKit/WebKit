@@ -33,6 +33,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPageProxyMessages.h"
+#include <WebCore/Document.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>

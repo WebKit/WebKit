@@ -1,3 +1,10 @@
+2014-04-07  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed. Fixing the EFL build.
+
+        * WebProcess/WebPage/CoordinatedGraphics/WebPageCoordinatedGraphics.cpp: Include the Document header from WebCore
+        to avoid operating on an incomplete type.
+
 2014-04-07  Tim Horton  <timothy_horton@apple.com>
 
         [iOS WebKit2] WKPDFView fades in tiles, PDFs load very flashily
