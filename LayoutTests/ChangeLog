@@ -1,3 +1,17 @@
+2014-04-08  Morten Stenshorne  <mstensho@opera.com>
+
+        [New Multicolumn] Child top margin sometimes ignored for column balancing
+        https://bugs.webkit.org/show_bug.cgi?id=122754
+
+        Reviewed by David Hyatt.
+
+        * fast/multicol/break-in-scrollable-expected.html: Added.
+        * fast/multicol/break-in-scrollable.html: Added.
+        * fast/multicol/newmulticol/leading-and-trailing-margin-expected.html: Added.
+        * fast/multicol/newmulticol/leading-and-trailing-margin.html: Added.
+        * fast/multicol/newmulticol/leading-margin-expected.html: Added.
+        * fast/multicol/newmulticol/leading-margin.html: Added.
+
 2014-04-07  Brent Fulgham  <bfulgham@apple.com>
 
         [WebVTT] Begin Enabling W3C VTT Tests

@@ -88,6 +88,7 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
         m_pageOffset = LayoutSize(m_layoutOffset.width() + (!isFlipped ? renderer->borderLeft() + renderer->paddingLeft() : renderer->borderRight() + renderer->paddingRight()),
                                m_layoutOffset.height() + (!isFlipped ? renderer->borderTop() + renderer->paddingTop() : renderer->borderBottom() + renderer->paddingBottom()));
         m_pageLogicalHeightChanged = pageLogicalHeightChanged;
+        m_isPaginated = true;
     } else {
         // If we don't establish a new page height, then propagate the old page height and offset down.
         m_pageLogicalHeight = m_next->m_pageLogicalHeight;
@@ -96,8 +97,11 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
         
         // Disable pagination for objects we don't support. For now this includes overflow:scroll/auto, inline blocks and
         // writing mode roots.
-        if (renderer->isUnsplittableForPagination())
+        if (renderer->isUnsplittableForPagination()) {
             m_pageLogicalHeight = 0;
+            m_isPaginated = false;
+        } else
+            m_isPaginated = m_pageLogicalHeight || m_next->m_columnInfo || renderer->flowThreadContainingBlock();
     }
     
     // Propagate line grid information.
@@ -111,8 +115,6 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
     m_layoutDeltaXSaturated = m_next->m_layoutDeltaXSaturated;
     m_layoutDeltaYSaturated = m_next->m_layoutDeltaYSaturated;
 #endif
-    
-    m_isPaginated = m_pageLogicalHeight || m_columnInfo || renderer->isRenderFlowThread();
 
     if (lineGrid() && (lineGrid()->style().writingMode() == renderer->style().writingMode()) && renderer->isRenderBlock())
         toRenderBlock(renderer)->computeLineGridPaginationOrigin(*this);

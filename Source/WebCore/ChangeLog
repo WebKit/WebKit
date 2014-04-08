@@ -1,3 +1,33 @@
+2014-04-08  Morten Stenshorne  <mstensho@opera.com>
+
+        [New Multicolumn] Child top margin sometimes ignored for column balancing
+        https://bugs.webkit.org/show_bug.cgi?id=122754
+
+        Reviewed by David Hyatt.
+
+        We need to set zero page logical height in LayoutState when column
+        height is unknown (when the columns haven't yet been
+        balanced). There's code that assumes that non-zero page height means
+        that page height is known. Lying about this makes the pagination code
+        believe that every top margin is adjacent to a column break, which
+        makes it eat and ignore all top margins.
+
+        This should be cleaned up, but it's easier to wait until the old
+        multicol code has been removed.
+
+        Tests: fast/multicol/break-in-scrollable.html
+               fast/multicol/newmulticol/leading-and-trailing-margin.html
+               fast/multicol/newmulticol/leading-margin.html
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::checkForPaginationLogicalHeightChange):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::isPageLogicalHeightKnown):
+        * rendering/RenderMultiColumnFlowThread.h:
+
 2014-04-07  Dean Jackson  <dino@apple.com>
 
         Allow elements to register for changes in page scale
