@@ -959,4 +959,45 @@ void GraphicsContext::platformStrokeEllipse(const FloatRect& ellipse)
 }
 #endif
 
+FloatRect GraphicsContext::computeLineBoundsAndAntialiasingModeForText(const FloatPoint& point, float width, bool printing, bool& shouldAntialias, Color& color)
+{
+    FloatPoint origin;
+    float thickness = std::max(strokeThickness(), 0.5f);
+
+    shouldAntialias = true;
+    if (printing)
+        origin = point;
+    else {
+        AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+        if (transform.preservesAxisAlignment())
+            shouldAntialias = false;
+
+        // This code always draws a line that is at least one-pixel line high,
+        // which tends to visually overwhelm text at small scales. To counter this
+        // effect, an alpha is applied to the underline color when text is at small scales.
+
+        // Just compute scale in x dimension, assuming x and y scales are equal.
+        float scale = transform.b() ? sqrtf(transform.a() * transform.a() + transform.b() * transform.b()) : transform.a();
+        if (scale < 1.0) {
+            static const float minimumUnderlineAlpha = 0.4f;
+            float shade = scale > minimumUnderlineAlpha ? scale : minimumUnderlineAlpha;
+            int alpha = color.alpha() * shade;
+            color = Color(color.red(), color.green(), color.blue(), alpha);
+        }
+
+        // Don't offset line from bottom of text if scale is less than offsetUnderLineScale.
+        static const float offsetUnderlineScale = 0.4f;
+        float dy = scale < offsetUnderlineScale ? 0 : 1;
+
+        // If we've increased the thickness of the line, make sure to move the location too.
+        if (thickness > 1)
+            dy += roundf(thickness) - 1;
+
+        FloatPoint devicePoint = transform.mapPoint(point);
+        FloatPoint deviceOrigin = FloatPoint(roundf(devicePoint.x()), ceilf(devicePoint.y()) + dy);
+        origin = transform.inverse().mapPoint(deviceOrigin);
+    }
+    return FloatRect(origin.x(), origin.y(), width, thickness);
+}
+
 }

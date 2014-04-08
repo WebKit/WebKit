@@ -1352,53 +1352,11 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMo
     return FloatRect(roundedOrigin, roundedLowerRight - roundedOrigin);
 }
 
-static FloatRect computeLineBoundsAndAntialiasingModeForText(GraphicsContext& initialContext, const FloatPoint& point, float width, bool printing, bool& shouldAntialias, Color& color)
-{
-    CGContextRef context = initialContext.platformContext();
-    CGPoint origin;
-    CGFloat thickness = std::max(initialContext.strokeThickness(), 0.5f);
-
-    shouldAntialias = true;
-    if (printing)
-        origin = CGPointMake(point.x(), point.y());
-    else {
-        CGAffineTransform t = CGContextGetUserSpaceToDeviceSpaceTransform(context);
-        if (AffineTransform(t).preservesAxisAlignment())
-            shouldAntialias = false;
-
-        // This code always draws a line that is at least one-pixel line high,
-        // which tends to visually overwhelm text at small scales. To counter this
-        // effect, an alpha is applied to the underline color when text is at small scales.
-
-        // Just compute scale in x dimension, assuming x and y scales are equal.
-        CGFloat scale = t.b ? sqrtf(t.a * t.a + t.b * t.b) : t.a;
-        if (scale < 1.0) {
-            static const float MinUnderlineAlpha = 0.4f;
-            float shade = scale > MinUnderlineAlpha ? scale : MinUnderlineAlpha;
-            int alpha = color.alpha() * shade;
-            color = Color(color.red(), color.green(), color.blue(), alpha);
-        }
-
-        // Don't offset line from bottom of text if scale is less than OffsetUnderlineScale.
-        static const CGFloat OffsetUnderlineScale = 0.4f;
-        CGFloat dy = scale < OffsetUnderlineScale ? 0 : 1;
-
-        // If we've increased the thickness of the line, make sure to move the location too.
-        if (thickness > 1)
-            dy += roundf(thickness) - 1;
-
-        CGPoint devicePoint = CGPointApplyAffineTransform(point, t);
-        CGPoint deviceOrigin = CGPointMake(roundf(devicePoint.x), ceilf(devicePoint.y) + dy);
-        origin = CGPointApplyAffineTransform(deviceOrigin, CGAffineTransformInvert(t));
-    }
-    return FloatRect(origin.x, origin.y, width, thickness);
-}
-
 FloatRect GraphicsContext::computeLineBoundsForText(const FloatPoint& point, float width, bool printing)
 {
     bool dummyBool;
     Color dummyColor;
-    return computeLineBoundsAndAntialiasingModeForText(*this, point, width, printing, dummyBool, dummyColor);
+    return computeLineBoundsAndAntialiasingModeForText(point, width, printing, dummyBool, dummyColor);
 }
 
 void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool printing, bool doubleLines)
@@ -1420,7 +1378,7 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray&
     Color localStrokeColor(strokeColor());
 
     bool shouldAntialiasLine;
-    FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(*this, point, widths.last(), printing, shouldAntialiasLine, localStrokeColor);
+    FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(point, widths.last(), printing, shouldAntialiasLine, localStrokeColor);
     bool fillColorIsNotEqualToStrokeColor = fillColor() != localStrokeColor;
     
     Vector<CGRect, 4> dashBounds;

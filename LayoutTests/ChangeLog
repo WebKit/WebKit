@@ -1,3 +1,16 @@
+2014-04-07  Martin Robinson  <mrobinson@igalia.com>
+
+        fast/css3-text/css3-text-decoration/text-decoration-thickness.html fails on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=129957
+
+        Reviewed by Dean Jackson.
+
+        Unskipped tests and modified one test to use the platform-independent Ahem font.
+
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-tall-underlines.html: We
+        need to use Ahem because Helvetica is not a platform-independent font.
+        * platform/gtk/TestExpectations: Unskipped tests.
+
 2014-04-07  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: test helper files should be under LayoutTests/http/tests/inspector/

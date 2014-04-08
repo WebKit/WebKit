@@ -567,6 +567,8 @@ namespace WebCore {
 
         void platformFillRoundedRect(const FloatRoundedRect&, const Color&, ColorSpace);
 
+        FloatRect computeLineBoundsAndAntialiasingModeForText(const FloatPoint&, float width, bool printing, bool& shouldAntialias, Color&);
+
         GraphicsContextPlatformPrivate* m_data;
 
         GraphicsContextState m_state;
