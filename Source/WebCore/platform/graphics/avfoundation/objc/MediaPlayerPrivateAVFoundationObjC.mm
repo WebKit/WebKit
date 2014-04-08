@@ -533,6 +533,11 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
 
     [m_videoLayer.get() setPlayer:nil];
 
+#if PLATFORM(IOS)
+    if (m_videoFullscreenLayer)
+        [m_videoLayer removeFromSuperlayer];
+#endif
+
     m_videoLayer = 0;
 }
 

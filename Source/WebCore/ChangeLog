@@ -1,3 +1,19 @@
+2014-04-07  Jer Noble  <jer.noble@apple.com>
+
+        [WK2][iOS] Consecutive videos in full screen display only black
+        https://bugs.webkit.org/show_bug.cgi?id=131316
+
+        Reviewed by Eric Carlson.
+
+        Update the MediaPlayer's full screen attributes whenever the underlying engine changes,
+        not just when the engine is initially created. Also, clear the videoLayer out of the
+        fullscreen layer when destroying the videoLayer.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer):
+
 2014-04-08  Morten Stenshorne  <mstensho@opera.com>
 
         [New Multicolumn] Child top margin sometimes ignored for column balancing

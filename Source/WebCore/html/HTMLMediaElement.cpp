@@ -4230,6 +4230,14 @@ void HTMLMediaElement::mediaPlayerEngineUpdated(MediaPlayer*)
 #if ENABLE(MEDIA_SOURCE)
     m_droppedVideoFrames = 0;
 #endif
+
+#if PLATFORM(IOS)
+    if (!m_player)
+        return;
+    m_player->setVideoFullscreenFrame(m_videoFullscreenFrame);
+    m_player->setVideoFullscreenGravity(m_videoFullscreenGravity);
+    m_player->setVideoFullscreenLayer(m_videoFullscreenLayer.get());
+#endif
 }
 
 void HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable(MediaPlayer*)
@@ -5504,12 +5512,6 @@ void HTMLMediaElement::createMediaPlayer()
         m_mediaSession->setHasPlaybackTargetAvailabilityListeners(*this, true);
         enqueuePlaybackTargetAvailabilityChangedEvent(); // Ensure the event listener gets at least one event.
     }
-#endif
-    
-#if PLATFORM(IOS)
-    m_player->setVideoFullscreenFrame(m_videoFullscreenFrame);
-    m_player->setVideoFullscreenGravity(m_videoFullscreenGravity);
-    m_player->setVideoFullscreenLayer(m_videoFullscreenLayer.get());
 #endif
 }
 
