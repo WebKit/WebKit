@@ -85,14 +85,15 @@ void WebProcessConnection::destroyPluginControllerProxy(PluginControllerProxy* p
 
 void WebProcessConnection::removePluginControllerProxy(PluginControllerProxy* pluginController, Plugin* plugin)
 {
+    unsigned pluginInstanceID = pluginController->pluginInstanceID();
     {
-        ASSERT(m_pluginControllers.contains(pluginController->pluginInstanceID()));
+        ASSERT(m_pluginControllers.contains(pluginInstanceID));
 
-        std::unique_ptr<PluginControllerProxy> pluginControllerUniquePtr = m_pluginControllers.take(pluginController->pluginInstanceID());
+        std::unique_ptr<PluginControllerProxy> pluginControllerUniquePtr = m_pluginControllers.take(pluginInstanceID);
         ASSERT(pluginControllerUniquePtr.get() == pluginController);
     }
 
-    pluginDidBecomeHidden(pluginController->pluginInstanceID());
+    pluginDidBecomeHidden(pluginInstanceID);
 
     // Invalidate all objects related to this plug-in.
     if (plugin)
