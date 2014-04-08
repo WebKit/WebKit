@@ -2009,6 +2009,7 @@ sub runMacWebKitApp($;$)
     my $productDir = productDir();
     print "Starting @{[basename($appPath)]} with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
     $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+    $ENV{__XPC_DYLD_FRAMEWORK_PATH} = File::Spec->rel2abs($productDir);
     $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
 
     setUpGuardMallocIfNeeded();
@@ -2044,6 +2045,7 @@ sub execMacWebKitAppForDebugging($)
 
     my $productDir = productDir();
     $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+    $ENV{__XPC_DYLD_FRAMEWORK_PATH} = File::Spec->rel2abs($productDir);
     $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
 
     setUpGuardMallocIfNeeded();

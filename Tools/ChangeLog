@@ -1,3 +1,14 @@
+2014-04-08  Mark Rowe  <mrowe@apple.com>
+
+        XPC services launched by Safari have wrong DYLD_FRAMEWORK_PATH set when launched via run-safari / debug-safari
+        <https://webkit.org/b/131388> / <rdar://problem/16291687>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitdirs.pm:
+        (runMacWebKitApp): Set __XPC_DYLD_FRAMEWORK_PATH to the absolute path to the built products directory.
+        (execMacWebKitAppForDebugging): Ditto.
+
 2014-04-08  Geoffrey Garen  <ggaren@apple.com>
 
         Build bmalloc on iOS too
