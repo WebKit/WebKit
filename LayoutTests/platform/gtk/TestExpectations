@@ -401,6 +401,14 @@ webkit.org/b/128172 fast/events/touch/touch-target.html [ Timeout ]
 webkit.org/b/128172 fast/events/touch/touch-target-limited.html [ Crash Timeout ]
 webkit.org/b/128172 fast/events/touch/send-oncancel-event.html [ Timeout ]
 
+# HighDPI support is not enabled
+webkit.org/b/131347 fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/borders/hidpi-simple-hairline-border-painting.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html [ Failure ]
+webkit.org/b/131347 svg/custom/hidpi-masking-clipping.svg [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
