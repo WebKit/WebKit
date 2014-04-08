@@ -1,3 +1,12 @@
+2014-04-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed gardening (Take 2): Prevent users from attempting
+        to build with known invalid cURL. 
+
+        * Scripts/webkitdirs.pm:
+        (checkInstalledTools): Check for 7.34.0 (the broken version), not
+        7.33.0 (the known good version).
+
 2014-04-08  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove DumpRenderTree and GtkLauncher

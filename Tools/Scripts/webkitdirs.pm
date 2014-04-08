@@ -1422,7 +1422,7 @@ sub checkInstalledTools()
     # cURL 7.34.0 has a bug that prevents authentication with opensource.apple.com (and other things using SSL3).
     my $curlVer = `curl --version | grep "curl"`;
     chomp($curlVer);
-    if (!$? and $curlVer =~ /libcurl\/7\.33\.0/) {
+    if (!$? and $curlVer =~ /libcurl\/7\.34\.0/) {
         print "cURL version 7.34.0 has a bug that prevents authentication with SSL v2 or v3.\n";
         print "cURL 7.33.0 is known to work. The cURL projects is preparing an update to\n";
         print "correct this problem.\n\n";
