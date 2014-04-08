@@ -1,3 +1,12 @@
+2014-04-08  Enrica Casucci  <enrica@apple.com>
+
+        Unreviewed iOS build fix.
+
+        Return false instead of nil in a function that returns BOOL.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityCanFuzzyHitTest]):
+
 2014-04-08  Brady Eidson  <beidson@apple.com>
 
         Non-empty ranges misdetected as empty ranges, avoiding telephone number detection.

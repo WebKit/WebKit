@@ -265,7 +265,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (BOOL)accessibilityCanFuzzyHitTest
 {
     if (![self _prepareAccessibilityCall])
-        return nil;
+        return false;
     
     AccessibilityRole role = m_object->roleValue();
     // Elements that can be returned when performing fuzzy hit testing.
