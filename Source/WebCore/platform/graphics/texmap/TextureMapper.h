@@ -177,7 +177,7 @@ private:
 #else
     static std::unique_ptr<TextureMapper> platformCreateAccelerated()
     {
-        return std::make_unique<TextureMapper>();
+        return nullptr;
     }
 #endif
     InterpolationQuality m_interpolationQuality;

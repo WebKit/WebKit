@@ -1,3 +1,15 @@
+2014-04-08  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compile error in TextureMapper.h
+        https://bugs.webkit.org/show_bug.cgi?id=131360
+
+        Reviewed by Brent Fulgham.
+
+        The TextureMapper class has pure virtual methods, and cannot be instantiated.
+
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore::TextureMapper::platformCreateAccelerated):
+
 2014-04-08  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Slow paint path for inlines should snap to device pixels.
