@@ -1,3 +1,29 @@
+2014-04-07  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: test helper files should be under LayoutTests/http/tests/inspector/
+        https://bugs.webkit.org/show_bug.cgi?id=131324
+
+        Reviewed by Joseph Pecoraro.
+
+        Rearrange helper files used by full inspector tests. In their previous placement,
+        they were outside the http server root and couldn't be loaded from http tests.
+
+        * http/tests/inspector/debugger/debugger-test.js: Renamed from LayoutTests/inspector/debugger/debugger-test.js.
+        * http/tests/inspector/dom/shapes-test.js: Renamed from LayoutTests/inspector/dom/shapes-test.js.
+        * http/tests/inspector/inspector-test.js: Renamed from LayoutTests/inspector/inspector-test.js.
+        * http/tests/inspector/replay/replay-test.js: Renamed from LayoutTests/inspector/replay/replay-test.js.
+        * inspector/debugger/probe-manager-add-remove-actions.html:
+        * inspector/dom/content-flow-content-nodes.html:
+        * inspector/dom/content-flow-content-removal.html:
+        * inspector/dom/content-flow-list.html:
+        * inspector/dom/content-node-region-info.html:
+        * inspector/dom/highlight-shape-outside-margin.html:
+        * inspector/dom/highlight-shape-outside.html:
+        * inspector/page/main-frame-resource.html:
+        * inspector/replay/javascript-date-now.html:
+        * inspector/replay/javascript-random-seed.html:
+        * inspector/test-harness-trivially-works.html:
+
 2014-04-07  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] inset complex calc() args vanish in serialized computed style
