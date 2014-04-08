@@ -52,7 +52,7 @@ public:
 #endif
 };
 
-void provideNavigatorContentUtilsTo(Page*, NavigatorContentUtilsClient*);
+void provideNavigatorContentUtilsTo(Page*, std::unique_ptr<NavigatorContentUtilsClient>);
 
 }
 

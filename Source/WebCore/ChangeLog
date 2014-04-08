@@ -1,3 +1,23 @@
+2014-04-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Change NavigatorContentUtils client ownership from port side to NavigatorContentUtils
+        https://bugs.webkit.org/show_bug.cgi?id=131299
+
+        Reviewed by Darin Adler.
+
+        EFL and GTK ports have managed own client of NavigatorContentUtils though it is only passed to
+        NavigatorContentUtils. The NavigatorContentUtils has used the client to call port functions. So,
+        there is no reason port implementation needs to manage the ownership. To manage the client is
+        unnecessary work in current implementation.
+
+        No new tests, no behavior changes.
+
+        * Modules/navigatorcontentutils/NavigatorContentUtils.cpp:
+        (WebCore::NavigatorContentUtils::create):
+        (WebCore::provideNavigatorContentUtilsTo):
+        * Modules/navigatorcontentutils/NavigatorContentUtils.h:
+        * Modules/navigatorcontentutils/NavigatorContentUtilsClient.h:
+
 2014-04-07  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Simplify the parsing of width arguments for Inset shapes

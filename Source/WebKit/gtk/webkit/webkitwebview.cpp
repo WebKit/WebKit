@@ -3870,8 +3870,7 @@ static void webkit_web_view_init(WebKitWebView* webView)
 #endif
 
 #if ENABLE(NAVIGATOR_CONTENT_UTILS)
-    priv->navigatorContentUtilsClient = std::make_unique<WebKit::NavigatorContentUtilsClient>();
-    WebCore::provideNavigatorContentUtilsTo(priv->corePage, priv->navigatorContentUtilsClient.get());
+    WebCore::provideNavigatorContentUtilsTo(priv->corePage, std::make_unique<WebKit::NavigatorContentUtilsClient>());
 #endif
 
 #if ENABLE(BATTERY_STATUS)

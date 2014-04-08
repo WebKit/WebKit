@@ -55,16 +55,16 @@ public:
     static void unregisterProtocolHandler(Navigator*, const String& scheme, const String& url, ExceptionCode&);
 #endif
 
-    static PassRef<NavigatorContentUtils> create(NavigatorContentUtilsClient*);
+    static PassRef<NavigatorContentUtils> create(std::unique_ptr<NavigatorContentUtilsClient>);
 
 private:
-    explicit NavigatorContentUtils(NavigatorContentUtilsClient* client)
-        : m_client(client)
+    explicit NavigatorContentUtils(std::unique_ptr<NavigatorContentUtilsClient> client)
+        : m_client(std::move(client))
     { }
 
-    NavigatorContentUtilsClient* client() { return m_client; }
+    NavigatorContentUtilsClient* client() { return m_client.get(); }
 
-    NavigatorContentUtilsClient* m_client;
+    std::unique_ptr<NavigatorContentUtilsClient> m_client;
 };
 
 } // namespace WebCore

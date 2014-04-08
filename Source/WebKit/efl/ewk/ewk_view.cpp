@@ -259,9 +259,6 @@ struct _Ewk_View_Private_Data {
 #if ENABLE(INPUT_TYPE_COLOR)
     WebCore::ColorChooserClient* colorChooserClient;
 #endif
-#if ENABLE(NAVIGATOR_CONTENT_UTILS) || ENABLE(CUSTOM_SCHEME_HANDLER)
-    std::unique_ptr<WebCore::NavigatorContentUtilsClientEfl> navigatorContentUtilsClient;
-#endif
     struct {
         Ewk_Menu menu;
         WebCore::PopupMenuClient* menuClient;
@@ -687,8 +684,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 #endif
 
 #if ENABLE(NAVIGATOR_CONTENT_UTILS)
-    priv->navigatorContentUtilsClient = std::make_unique<WebCore::NavigatorContentUtilsClientEfl>(smartData->self);
-    WebCore::provideNavigatorContentUtilsTo(priv->page.get(), priv->navigatorContentUtilsClient.get());
+    WebCore::provideNavigatorContentUtilsTo(priv->page.get(), std::make_unique<WebCore::NavigatorContentUtilsClientEfl>(smartData->self));
 #endif
 
 #if ENABLE(GEOLOCATION)

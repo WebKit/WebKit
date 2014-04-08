@@ -116,10 +116,6 @@ struct _WebKitWebViewPrivate {
 #if ENABLE(GEOLOCATION)
     std::unique_ptr<WebCore::GeolocationClientMock> geolocationClientMock;
 #endif
-
-#if ENABLE(NAVIGATOR_CONTENT_UTILS)
-    std::unique_ptr<WebKit::NavigatorContentUtilsClient> navigatorContentUtilsClient;
-#endif
 };
 
 void webkit_web_view_notify_ready(WebKitWebView*);

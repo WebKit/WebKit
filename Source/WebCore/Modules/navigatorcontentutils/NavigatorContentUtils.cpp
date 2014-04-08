@@ -126,9 +126,9 @@ NavigatorContentUtils::~NavigatorContentUtils()
 {
 }
 
-PassRef<NavigatorContentUtils> NavigatorContentUtils::create(NavigatorContentUtilsClient* client)
+PassRef<NavigatorContentUtils> NavigatorContentUtils::create(std::unique_ptr<NavigatorContentUtilsClient> client)
 {
-    return adoptRef(*new NavigatorContentUtils(client));
+    return adoptRef(*new NavigatorContentUtils(std::move(client)));
 }
 
 void NavigatorContentUtils::registerProtocolHandler(Navigator* navigator, const String& scheme, const String& url, const String& title, ExceptionCode& ec)
@@ -219,9 +219,9 @@ const char* NavigatorContentUtils::supplementName()
     return "NavigatorContentUtils";
 }
 
-void provideNavigatorContentUtilsTo(Page* page, NavigatorContentUtilsClient* client)
+void provideNavigatorContentUtilsTo(Page* page, std::unique_ptr<NavigatorContentUtilsClient> client)
 {
-    RefCountedSupplement<Page, NavigatorContentUtils>::provideTo(page, NavigatorContentUtils::supplementName(), NavigatorContentUtils::create(client));
+    RefCountedSupplement<Page, NavigatorContentUtils>::provideTo(page, NavigatorContentUtils::supplementName(), NavigatorContentUtils::create(std::move(client)));
 }
 
 } // namespace WebCore
