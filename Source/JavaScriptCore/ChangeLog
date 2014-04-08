@@ -1,3 +1,18 @@
+2014-04-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Fail silently if the LLVM dylib isn't found
+        https://bugs.webkit.org/show_bug.cgi?id=131385
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * llvm/InitializeLLVM.cpp:
+        (JSC::initializeLLVM):
+        * llvm/InitializeLLVM.h:
+        * llvm/InitializeLLVMPOSIX.cpp:
+        (JSC::initializeLLVMPOSIX):
+
 2014-04-07  Filip Pizlo  <fpizlo@apple.com>
 
         Repatch should support setters and plant calls to them directly

@@ -321,9 +321,15 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         
         dumpAndVerifyGraph(dfg, "Graph just before FTL lowering:");
         
+        bool haveLLVM;
         {
             GraphSafepoint safepoint(dfg);
-            initializeLLVM();
+            haveLLVM = initializeLLVM();
+        }
+        
+        if (!haveLLVM) {
+            finalizer = adoptPtr(new FailedFinalizer(*this));
+            return FailPath;
         }
             
         FTL::State state(dfg);

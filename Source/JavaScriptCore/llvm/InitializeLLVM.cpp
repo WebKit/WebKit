@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +35,10 @@ namespace JSC {
 
 static pthread_once_t initializeLLVMOnceKey = PTHREAD_ONCE_INIT;
 
-void initializeLLVM()
+bool initializeLLVM()
 {
     pthread_once(&initializeLLVMOnceKey, initializeLLVMImpl);
+    return !!llvm;
 }
 
 } // namespace JSC

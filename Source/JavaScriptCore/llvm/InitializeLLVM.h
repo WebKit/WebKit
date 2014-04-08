@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,9 @@ namespace JSC {
 
 void initializeLLVMImpl();
 
-void initializeLLVM(); // It's safe to call this multiple times.
+// You msut call this before using JSC::llvm. It's safe to call this multiple times.
+// Returns true if we successfully loaded LLVM. Returns false if we didn't.
+bool initializeLLVM();
 
 } // namespace JSC
 

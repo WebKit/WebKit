@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,9 @@
 #if HAVE(LLVM)
 
 #include "LLVMAPI.h"
+#include "Options.h"
 #include <dlfcn.h>
+#include <wtf/DataLog.h>
 
 namespace JSC {
 
@@ -37,14 +39,34 @@ typedef LLVMAPI* (*InitializerFunction)(void (*)(const char*, ...));
 
 void initializeLLVMPOSIX(const char* libraryName)
 {
-    void* library = dlopen(libraryName, RTLD_NOW);
-    ASSERT_WITH_MESSAGE(library, "%s", dlerror());
+    const bool verbose =
+        Options::verboseFTLCompilation()
+        || Options::showFTLDisassembly()
+        || Options::verboseFTLFailure()
+        || Options::verboseCompilation()
+        || Options::showDFGDisassembly()
+        || Options::showDisassembly();
     
+    void* library = dlopen(libraryName, RTLD_NOW);
+    if (!library) {
+        if (verbose)
+            dataLog("Failed to load LLVM library at ", libraryName, ": ", dlerror(), "\n");
+        return;
+    }
+    
+    const char* symbolName = "initializeAndGetJSCLLVMAPI";
     InitializerFunction initializer = bitwise_cast<InitializerFunction>(
-        dlsym(library, "initializeAndGetJSCLLVMAPI"));
-    ASSERT_WITH_MESSAGE(initializer, "%s", dlerror());
+        dlsym(library, symbolName));
+    if (!initializer) {
+        if (verbose)
+            dataLog("Failed to find ", symbolName, " in ", libraryName, ": ", dlerror());
+    }
     
     llvm = initializer(WTFLogAlwaysAndCrash);
+    if (!llvm) {
+        if (verbose)
+            dataLog("LLVM initilization failed.\n");
+    }
 }
 
 } // namespace JSC
