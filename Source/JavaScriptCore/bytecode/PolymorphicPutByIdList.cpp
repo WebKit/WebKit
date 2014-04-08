@@ -77,6 +77,7 @@ bool PutByIdAccess::visitWeak(RepatchBuffer& repatchBuffer) const
         if (!Heap::isMarked(m_chain.get()))
             return false;
         break;
+    case Setter:
     case CustomSetter:
         if (!Heap::isMarked(m_oldStructure.get()))
             return false;

@@ -230,6 +230,25 @@ enum ByIdStubKind {
     CallCustomSetter
 };
 
+static const char* toString(ByIdStubKind kind)
+{
+    switch (kind) {
+    case GetValue:
+        return "GetValue";
+    case CallGetter:
+        return "CallGetter";
+    case CallCustomGetter:
+        return "CallCustomGetter";
+    case CallSetter:
+        return "CallSetter";
+    case CallCustomSetter:
+        return "CallCustomSetter";
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+}
+
 static ByIdStubKind kindFor(const PropertySlot& slot)
 {
     if (slot.isCacheableValue())
@@ -250,13 +269,15 @@ static FunctionPtr customFor(const PropertySlot& slot)
 static ByIdStubKind kindFor(const PutPropertySlot& slot)
 {
     RELEASE_ASSERT(!slot.isCacheablePut());
-    RELEASE_ASSERT(slot.isCacheableCustomProperty());
+    if (slot.isCacheableSetter())
+        return CallSetter;
+    RELEASE_ASSERT(slot.isCacheableCustom());
     return CallCustomSetter;
 }
 
 static FunctionPtr customFor(const PutPropertySlot& slot)
 {
-    if (!slot.isCacheableCustomProperty())
+    if (!slot.isCacheableCustom())
         return FunctionPtr();
     return FunctionPtr(slot.customSetter());
 }
@@ -531,8 +552,9 @@ static void generateByIdStub(
     
     MacroAssemblerCodeRef code = FINALIZE_CODE_FOR(
         exec->codeBlock(), patchBuffer,
-        ("Get access stub for %s, return point %p",
-            toCString(*exec->codeBlock()).data(), successLabel.executableAddress()));
+        ("%s access stub for %s, return point %p",
+            toString(kind), toCString(*exec->codeBlock()).data(),
+            successLabel.executableAddress()));
     
     if (kind == CallGetter || kind == CallSetter)
         stubRoutine = adoptRef(new AccessorCallJITStubRoutine(code, *vm, std::move(callLinkInfo)));
@@ -1111,7 +1133,7 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
     Structure* structure = baseCell->structure();
     Structure* oldStructure = structure->previousID();
     
-    if (!slot.isCacheablePut() && !slot.isCacheableCustomProperty())
+    if (!slot.isCacheablePut() && !slot.isCacheableCustom() && !slot.isCacheableSetter())
         return false;
     if (!structure->propertyAccessesAreCacheable())
         return false;
@@ -1166,7 +1188,8 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
         stubInfo.initPutByIdReplace(*vm, codeBlock->ownerExecutable(), structure);
         return true;
     }
-    if (slot.isCacheableCustomProperty() && stubInfo.patch.spillMode == DontSpill) {
+    if ((slot.isCacheableCustom() || slot.isCacheableSetter())
+        && stubInfo.patch.spillMode == DontSpill) {
         RefPtr<JITStubRoutine> stubRoutine;
 
         StructureChain* prototypeChain = 0;
@@ -1189,7 +1212,10 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
             stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToSlowCase),
             stubRoutine);
 
-        list->addAccess(PutByIdAccess::customSetter(*vm, codeBlock->ownerExecutable(), structure, prototypeChain, slot.customSetter(), stubRoutine));
+        list->addAccess(PutByIdAccess::setter(
+            *vm, codeBlock->ownerExecutable(),
+            slot.isCacheableSetter() ? PutByIdAccess::Setter : PutByIdAccess::CustomSetter,
+            structure, prototypeChain, slot.customSetter(), stubRoutine));
 
         RepatchBuffer repatchBuffer(codeBlock);
         repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.deltaCallToJump), CodeLocationLabel(stubRoutine->code().code()));
@@ -1222,7 +1248,7 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
     Structure* oldStructure = structure->previousID();
     
     
-    if (!slot.isCacheablePut() && !slot.isCacheableCustomProperty())
+    if (!slot.isCacheablePut() && !slot.isCacheableCustom() && !slot.isCacheableSetter())
         return false;
 
     if (!structure->propertyAccessesAreCacheable())
@@ -1295,7 +1321,8 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
         return true;
     }
 
-    if (slot.isCacheableCustomProperty() && stubInfo.patch.spillMode == DontSpill) {
+    if ((slot.isCacheableCustom() || slot.isCacheableSetter())
+        && stubInfo.patch.spillMode == DontSpill) {
         RefPtr<JITStubRoutine> stubRoutine;
         StructureChain* prototypeChain = 0;
         PropertyOffset offset = slot.cachedOffset();
@@ -1317,7 +1344,10 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
             CodeLocationLabel(list->currentSlowPathTarget()),
             stubRoutine);
 
-        list->addAccess(PutByIdAccess::customSetter(*vm, codeBlock->ownerExecutable(), structure, prototypeChain, slot.customSetter(), stubRoutine));
+        list->addAccess(PutByIdAccess::setter(
+            *vm, codeBlock->ownerExecutable(),
+            slot.isCacheableSetter() ? PutByIdAccess::Setter : PutByIdAccess::CustomSetter,
+            structure, prototypeChain, slot.customSetter(), stubRoutine));
 
         RepatchBuffer repatchBuffer(codeBlock);
         repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.deltaCallToJump), CodeLocationLabel(stubRoutine->code().code()));

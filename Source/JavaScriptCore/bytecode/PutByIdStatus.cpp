@@ -205,6 +205,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJITLocker&, Code
                     return PutByIdStatus(TakesSlowPath);
                 break;
             }
+            case PutByIdAccess::Setter:
             case PutByIdAccess::CustomSetter:
                 return PutByIdStatus(MakesCalls);
 

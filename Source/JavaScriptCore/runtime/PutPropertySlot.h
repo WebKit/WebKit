@@ -38,7 +38,7 @@ namespace JSC {
     
     class PutPropertySlot {
     public:
-        enum Type { Uncachable, ExistingProperty, NewProperty, CustomProperty, CacheableCustomProperty };
+        enum Type { Uncachable, ExistingProperty, NewProperty, SetterProperty, CustomProperty };
         enum Context { UnknownContext, PutById, PutByIdEval };
         typedef void (*PutValueFunc)(ExecState*, JSObject* base, EncodedJSValue thisObject, EncodedJSValue value);
 
@@ -72,13 +72,14 @@ namespace JSC {
             m_base = base;
             m_putFunction = function;
         }
-
-        void setCacheableCustomProperty(JSObject* base, PutValueFunc function)
+        
+        void setCacheableSetter(JSObject* base, PropertyOffset offset)
         {
-            m_type = CacheableCustomProperty;
+            m_type = SetterProperty;
             m_base = base;
-            m_putFunction = function;
+            m_offset = offset;
         }
+
         PutValueFunc customSetter() const { return m_putFunction; }
 
         Context context() const { return static_cast<Context>(m_context); }
@@ -89,7 +90,8 @@ namespace JSC {
 
         bool isStrictMode() const { return m_isStrictMode; }
         bool isCacheablePut() const { return m_type == NewProperty || m_type == ExistingProperty; }
-        bool isCacheableCustomProperty() const { return m_type == CacheableCustomProperty; }
+        bool isCacheableSetter() const { return m_type == SetterProperty; }
+        bool isCacheableCustom() const { return m_type == CustomProperty; }
 
         PropertyOffset cachedOffset() const
         {

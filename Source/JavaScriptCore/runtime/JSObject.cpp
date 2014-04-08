@@ -384,6 +384,8 @@ void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
             JSValue gs = obj->getDirect(offset);
             if (gs.isGetterSetter()) {
                 callSetter(exec, cell, gs, value, slot.isStrictMode() ? StrictMode : NotStrictMode);
+                if (!thisObject->structure()->isDictionary())
+                    slot.setCacheableSetter(obj, offset);
                 return;
             } else
                 ASSERT(!(attributes & Accessor));

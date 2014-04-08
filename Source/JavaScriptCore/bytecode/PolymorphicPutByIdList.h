@@ -47,6 +47,7 @@ public:
         Invalid,
         Transition,
         Replace,
+        Setter,
         CustomSetter
     };
     
@@ -88,17 +89,19 @@ public:
     }
 
 
-    static PutByIdAccess customSetter(
+    static PutByIdAccess setter(
         VM& vm,
         JSCell* owner,
+        AccessType accessType,
         Structure* structure,
         StructureChain* chain,
         PutPropertySlot::PutValueFunc customSetter,
         PassRefPtr<JITStubRoutine> stubRoutine)
     {
+        RELEASE_ASSERT(accessType == Setter || accessType == CustomSetter);
         PutByIdAccess result;
         result.m_oldStructure.set(vm, owner, structure);
-        result.m_type = CustomSetter;
+        result.m_type = accessType;
         if (chain)
             result.m_chain.set(vm, owner, chain);
         result.m_customSetter = customSetter;

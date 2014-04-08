@@ -1,5 +1,43 @@
 2014-04-07  Filip Pizlo  <fpizlo@apple.com>
 
+        Repatch should support setters and plant calls to them directly
+        https://bugs.webkit.org/show_bug.cgi?id=130750
+
+        Reviewed by Geoffrey Garen.
+        
+        All of the infrastructure was in place so this just enables setter optimization.
+        
+        This is a 12x speed-up on setter microbenchmarks. This is a 1% speed-up on Octane.
+
+        * bytecode/PolymorphicPutByIdList.cpp:
+        (JSC::PutByIdAccess::visitWeak):
+        * bytecode/PolymorphicPutByIdList.h:
+        (JSC::PutByIdAccess::setter):
+        (JSC::PutByIdAccess::customSetter): Deleted.
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeForStubInfo):
+        * jit/Repatch.cpp:
+        (JSC::toString):
+        (JSC::kindFor):
+        (JSC::customFor):
+        (JSC::generateByIdStub):
+        (JSC::tryCachePutByID):
+        (JSC::tryBuildPutByIdList):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        * runtime/Lookup.h:
+        (JSC::putEntry):
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::setCacheableSetter):
+        (JSC::PutPropertySlot::isCacheableSetter):
+        (JSC::PutPropertySlot::isCacheableCustom):
+        (JSC::PutPropertySlot::setCacheableCustomProperty): Deleted.
+        (JSC::PutPropertySlot::isCacheableCustomProperty): Deleted.
+        * tests/stress/setter.js: Added.
+        (foo):
+
+2014-04-07  Filip Pizlo  <fpizlo@apple.com>
+
         Setters are just getters that take an extra argument and don't return a value
         https://bugs.webkit.org/show_bug.cgi?id=131336
 
