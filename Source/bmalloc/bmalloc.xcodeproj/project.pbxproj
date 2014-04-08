@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		14CC390518EA627D004AFE34 /* bmalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CC390418EA627D004AFE34 /* bmalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1448C30018F3754600502839 /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1448C2FF18F3754300502839 /* mbmalloc.cpp */; };
+		1448C30118F3754C00502839 /* bmalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1448C2FE18F3754300502839 /* bmalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14CC394C18EA8858004AFE34 /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14F271BE18EA3963008C152F /* libbmalloc.a */; };
-		14D2868918EB759A0012420E /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D2868818EB759A0012420E /* mbmalloc.cpp */; };
 		14F271C318EA3978008C152F /* Allocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 145F6855179DC8CA00D65598 /* Allocator.cpp */; };
 		14F271C418EA397B008C152F /* Cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 144469E417A46BFE00F9EA1D /* Cache.cpp */; };
 		14F271C518EA397E008C152F /* Deallocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 145F6859179DC90200D65598 /* Deallocator.cpp */; };
@@ -48,6 +48,8 @@
 		144469E517A46BFE00F9EA1D /* Cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = Cache.h; path = bmalloc/Cache.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		144469FD17A61F1F00F9EA1D /* PerThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = PerThread.h; path = bmalloc/PerThread.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		14446A0717A61FA400F9EA1D /* PerProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PerProcess.h; path = bmalloc/PerProcess.h; sourceTree = "<group>"; };
+		1448C2FE18F3754300502839 /* bmalloc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bmalloc.h; path = bmalloc/bmalloc.h; sourceTree = "<group>"; };
+		1448C2FF18F3754300502839 /* mbmalloc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = mbmalloc.cpp; path = bmalloc/mbmalloc.cpp; sourceTree = "<group>"; };
 		144DCED617A649D90093B2F2 /* Mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Mutex.h; path = bmalloc/Mutex.h; sourceTree = "<group>"; };
 		144DCED817A728570093B2F2 /* Mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Mutex.cpp; path = bmalloc/Mutex.cpp; sourceTree = "<group>"; };
 		144F7BFB18BFC517003537F3 /* VMHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VMHeap.cpp; path = bmalloc/VMHeap.cpp; sourceTree = "<group>"; };
@@ -74,9 +76,7 @@
 		147AAA9718CE5FB6002201E4 /* SmallTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmallTraits.h; path = bmalloc/SmallTraits.h; sourceTree = "<group>"; };
 		1485655E18A43AF900ED6942 /* BoundaryTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundaryTag.h; path = bmalloc/BoundaryTag.h; sourceTree = "<group>"; };
 		1485656018A43DBA00ED6942 /* ObjectType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectType.h; path = bmalloc/ObjectType.h; sourceTree = "<group>"; };
-		14CC390418EA627D004AFE34 /* bmalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bmalloc.h; path = bmalloc/bmalloc.h; sourceTree = SOURCE_ROOT; };
 		14CC394418EA8743004AFE34 /* libmbmalloc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmbmalloc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		14D2868818EB759A0012420E /* mbmalloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mbmalloc.cpp; path = bmalloc/mbmalloc.cpp; sourceTree = SOURCE_ROOT; };
 		14D9DB4517F2447100EAAB79 /* FixedVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = FixedVector.h; path = bmalloc/FixedVector.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		14DA32071885F9E6007269E0 /* Line.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = Line.h; path = bmalloc/Line.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		14DA320C18875B09007269E0 /* Heap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Heap.h; path = bmalloc/Heap.h; sourceTree = "<group>"; };
@@ -103,10 +103,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1448C2FD18F3752B00502839 /* api */ = {
+			isa = PBXGroup;
+			children = (
+				1448C2FE18F3754300502839 /* bmalloc.h */,
+				1448C2FF18F3754300502839 /* mbmalloc.cpp */,
+			);
+			name = api;
+			sourceTree = "<group>";
+		};
 		145F6836179DC45F00D65598 = {
 			isa = PBXGroup;
 			children = (
-				14F271B718EA285B008C152F /* api */,
+				1448C2FD18F3752B00502839 /* api */,
 				14D9DB4D17F2865C00EAAB79 /* cache */,
 				147AAA9C18CE6010002201E4 /* heap: large | xlarge */,
 				147AAA9A18CE5FD3002201E4 /* heap: small | medium */,
@@ -207,16 +216,6 @@
 			name = stdlib;
 			sourceTree = "<group>";
 		};
-		14F271B718EA285B008C152F /* api */ = {
-			isa = PBXGroup;
-			children = (
-				14CC390418EA627D004AFE34 /* bmalloc.h */,
-				14D2868818EB759A0012420E /* mbmalloc.cpp */,
-			);
-			name = api;
-			path = imalloc;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -231,7 +230,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				14CC390518EA627D004AFE34 /* bmalloc.h in Headers */,
+				1448C30118F3754C00502839 /* bmalloc.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,7 +304,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				14D2868918EB759A0012420E /* mbmalloc.cpp in Sources */,
+				1448C30018F3754600502839 /* mbmalloc.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

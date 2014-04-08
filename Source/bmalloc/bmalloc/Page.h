@@ -46,7 +46,7 @@ public:
     static Page* get(Line*);
 
     void ref(std::lock_guard<Mutex>&);
-    bool deref();
+    bool deref(std::lock_guard<Mutex>&);
     unsigned refCount(std::lock_guard<Mutex>&);
     
     Line* begin();
@@ -64,7 +64,7 @@ inline void Page<Traits>::ref(std::lock_guard<Mutex>&)
 }
 
 template<typename Traits>
-inline bool Page<Traits>::deref()
+inline bool Page<Traits>::deref(std::lock_guard<Mutex>&)
 {
     ASSERT(m_refCount);
     --m_refCount;

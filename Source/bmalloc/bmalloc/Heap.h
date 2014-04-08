@@ -50,10 +50,10 @@ public:
     Heap(std::lock_guard<Mutex>&);
     
     SmallLine* allocateSmallLine(std::lock_guard<Mutex>&);
-    void deallocateSmallLine(SmallLine*);
+    void deallocateSmallLine(std::lock_guard<Mutex>&, SmallLine*);
 
     MediumLine* allocateMediumLine(std::lock_guard<Mutex>&);
-    void deallocateMediumLine(MediumLine*);
+    void deallocateMediumLine(std::lock_guard<Mutex>&, MediumLine*);
     
     void* allocateLarge(std::lock_guard<Mutex>&, size_t);
     void deallocateLarge(std::lock_guard<Mutex>&, void*);
@@ -94,10 +94,10 @@ private:
     AsyncTask<Heap, decltype(&Heap::concurrentScavenge)> m_scavenger;
 };
 
-inline void Heap::deallocateSmallLine(SmallLine* line)
+inline void Heap::deallocateSmallLine(std::lock_guard<Mutex>& lock, SmallLine* line)
 {
     SmallPage* page = SmallPage::get(line);
-    if (page->deref()) {
+    if (page->deref(lock)) {
         m_smallPages.push(page);
         m_scavenger.run();
         return;
@@ -119,10 +119,10 @@ inline SmallLine* Heap::allocateSmallLine(std::lock_guard<Mutex>& lock)
     return allocateSmallLineSlowCase(lock);
 }
 
-inline void Heap::deallocateMediumLine(MediumLine* line)
+inline void Heap::deallocateMediumLine(std::lock_guard<Mutex>& lock, MediumLine* line)
 {
     MediumPage* page = MediumPage::get(line);
-    if (page->deref()) {
+    if (page->deref(lock)) {
         m_mediumPages.push(page);
         m_scavenger.run();
         return;

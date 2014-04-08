@@ -75,9 +75,9 @@ void Allocator::processSmallAllocatorLog()
     std::lock_guard<Mutex> lock(PerProcess<Heap>::mutex());
 
     for (auto& logEntry : m_smallAllocatorLog) {
-        if (!logEntry.first->deref(logEntry.second))
+        if (!logEntry.first->deref(lock, logEntry.second))
             continue;
-        m_deallocator.deallocateSmallLine(logEntry.first);
+        m_deallocator.deallocateSmallLine(lock, logEntry.first);
     }
     m_smallAllocatorLog.clear();
 }
@@ -98,9 +98,9 @@ void Allocator::processMediumAllocatorLog()
     std::lock_guard<Mutex> lock(PerProcess<Heap>::mutex());
 
     for (auto& logEntry : m_mediumAllocatorLog) {
-        if (!logEntry.first->deref(logEntry.second))
+        if (!logEntry.first->deref(lock, logEntry.second))
             continue;
-        m_deallocator.deallocateMediumLine(logEntry.first);
+        m_deallocator.deallocateMediumLine(lock, logEntry.first);
     }
     m_mediumAllocatorLog.clear();
 }

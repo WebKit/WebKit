@@ -44,10 +44,10 @@ public:
     bool deallocateFastCase(void*);
     void deallocateSlowCase(void*);
 
-    void deallocateSmallLine(SmallLine*);
+    void deallocateSmallLine(std::lock_guard<Mutex>&, SmallLine*);
     SmallLine* allocateSmallLine();
 
-    void deallocateMediumLine(MediumLine*);
+    void deallocateMediumLine(std::lock_guard<Mutex>&, MediumLine*);
     MediumLine* allocateMediumLine();
 
 private:
@@ -67,7 +67,7 @@ inline bool Deallocator::deallocateFastCase(void* object)
 
     ASSERT(object);
 
-    if (!(m_objectLog.size() % (m_objectLog.capacity() / 4)))
+    if (m_objectLog.size() == m_objectLog.capacity())
         return false;
 
     m_objectLog.push(object);

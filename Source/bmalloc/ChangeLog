@@ -1,5 +1,33 @@
 2014-04-07  Geoffrey Garen  <ggaren@apple.com>
 
+        bmalloc: rolled out the tryLock experiment
+        https://bugs.webkit.org/show_bug.cgi?id=131328
+
+        Reviewed by Andreas Kling.
+
+        It wasn't a speedup.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::processSmallAllocatorLog):
+        (bmalloc::Allocator::processMediumAllocatorLog):
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::processObjectLog):
+        (bmalloc::Deallocator::deallocateSlowCase):
+        (bmalloc::Deallocator::deallocateSmallLine):
+        (bmalloc::Deallocator::deallocateMediumLine):
+        * bmalloc/Deallocator.h:
+        (bmalloc::Deallocator::deallocateFastCase):
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::deallocateSmallLine):
+        (bmalloc::Heap::deallocateMediumLine):
+        * bmalloc/Line.h:
+        (bmalloc::Line<Traits>::deref):
+        * bmalloc/Page.h:
+        (bmalloc::Page<Traits>::deref):
+
+2014-04-07  Geoffrey Garen  <ggaren@apple.com>
+
         bmalloc
         https://bugs.webkit.org/show_bug.cgi?id=131170
 

@@ -65,18 +65,20 @@ void Deallocator::deallocateXLarge(void* object)
 
 void Deallocator::processObjectLog()
 {
+    std::lock_guard<Mutex> lock(PerProcess<Heap>::mutex());
+    
     for (auto object : m_objectLog) {
         if (isSmall(object)) {
             SmallLine* line = SmallLine::get(object);
-            if (!line->deref())
+            if (!line->deref(lock))
                 continue;
-            deallocateSmallLine(line);
+            deallocateSmallLine(lock, line);
         } else {
             ASSERT(isSmallOrMedium(object));
             MediumLine* line = MediumLine::get(object);
-            if (!line->deref())
+            if (!line->deref(lock))
                 continue;
-            deallocateMediumLine(line);
+            deallocateMediumLine(lock, line);
         }
     }
     
@@ -91,17 +93,7 @@ void Deallocator::deallocateSlowCase(void* object)
         return;
 
     if (isSmallOrMedium(object)) {
-        std::unique_lock<Mutex> lock(PerProcess<Heap>::mutex(), std::defer_lock);
-        bool didLock;
-        if (m_objectLog.size() == m_objectLog.capacity()) {
-            didLock = true;
-            lock.lock();
-        } else
-            didLock = lock.try_lock();
-        
-        if (didLock)
-            processObjectLog();
-        
+        processObjectLog();
         m_objectLog.push(object);
         return;
     }
@@ -113,10 +105,10 @@ void Deallocator::deallocateSlowCase(void* object)
     return deallocateXLarge(object);
 }
 
-void Deallocator::deallocateSmallLine(SmallLine* line)
+void Deallocator::deallocateSmallLine(std::lock_guard<Mutex>& lock, SmallLine* line)
 {
     if (m_smallLineCache.size() == m_smallLineCache.capacity())
-        return PerProcess<Heap>::getFastCase()->deallocateSmallLine(line);
+        return PerProcess<Heap>::getFastCase()->deallocateSmallLine(lock, line);
 
     m_smallLineCache.push(line);
 }
@@ -134,10 +126,10 @@ SmallLine* Deallocator::allocateSmallLine()
     return m_smallLineCache.pop();
 }
 
-void Deallocator::deallocateMediumLine(MediumLine* line)
+void Deallocator::deallocateMediumLine(std::lock_guard<Mutex>& lock, MediumLine* line)
 {
     if (m_mediumLineCache.size() == m_mediumLineCache.capacity())
-        return PerProcess<Heap>::getFastCase()->deallocateMediumLine(line);
+        return PerProcess<Heap>::getFastCase()->deallocateMediumLine(lock, line);
 
     m_mediumLineCache.push(line);
 }
