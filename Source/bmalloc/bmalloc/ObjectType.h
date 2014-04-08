@@ -42,7 +42,7 @@ inline bool isSmallOrMedium(void* object)
 
 inline bool isSmall(void* smallOrMedium)
 {
-    ASSERT(isSmallOrMedium(smallOrMedium));
+    BASSERT(isSmallOrMedium(smallOrMedium));
     return test(smallOrMedium, smallOrMediumSmallTypeMask);
 }
 

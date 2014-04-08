@@ -65,7 +65,7 @@ inline bool Deallocator::deallocateFastCase(void* object)
     if (!isSmallOrMedium(object))
         return false;
 
-    ASSERT(object);
+    BASSERT(object);
 
     if (m_objectLog.size() == m_objectLog.capacity())
         return false;

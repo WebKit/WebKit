@@ -50,8 +50,8 @@ inline size_t vmSize(size_t size)
 inline void vmValidate(size_t vmSize)
 {
     UNUSED(vmSize);
-    ASSERT(vmSize);
-    ASSERT(vmSize == bmalloc::vmSize(vmSize));
+    BASSERT(vmSize);
+    BASSERT(vmSize == bmalloc::vmSize(vmSize));
 }
 
 inline void vmValidate(void* p, size_t vmSize)
@@ -61,8 +61,8 @@ inline void vmValidate(void* p, size_t vmSize)
     // We use getpagesize() here instead of vmPageSize because vmPageSize is
     // allowed to be larger than the OS's true page size.
     UNUSED(p);
-    ASSERT(p);
-    ASSERT(p == mask(p, ~(getpagesize() - 1)));
+    BASSERT(p);
+    BASSERT(p == mask(p, ~(getpagesize() - 1)));
 }
 
 inline void* vmAllocate(size_t vmSize)
@@ -83,7 +83,7 @@ inline void vmDeallocate(void* p, size_t vmSize)
 inline std::pair<void*, Range> vmAllocate(size_t vmSize, size_t alignment, size_t offset)
 {
     vmValidate(vmSize);
-    ASSERT(isPowerOfTwo(alignment));
+    BASSERT(isPowerOfTwo(alignment));
 
     size_t mappedSize = std::max(vmSize, alignment) + alignment;
     char* mapped = static_cast<char*>(vmAllocate(mappedSize));
@@ -118,7 +118,7 @@ inline void vmAllocatePhysicalPages(void* p, size_t vmSize)
 // Trims requests that are un-page-aligned. NOTE: size must be at least a page.
 inline void vmDeallocatePhysicalPagesSloppy(void* p, size_t size)
 {
-    ASSERT(size >= vmPageSize);
+    BASSERT(size >= vmPageSize);
 
     char* begin = roundUpToMultipleOf<vmPageSize>(static_cast<char*>(p));
     char* end = roundDownToMultipleOf<vmPageSize>(static_cast<char*>(p) + size);

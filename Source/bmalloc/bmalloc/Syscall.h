@@ -30,7 +30,7 @@
 
 #define SYSCALL(x) do { \
     while ((x) == -1) \
-        RELEASE_ASSERT(errno == EAGAIN); \
+        RELEASE_BASSERT(errno == EAGAIN); \
 } while (0);
 
 #endif // Syscall_h

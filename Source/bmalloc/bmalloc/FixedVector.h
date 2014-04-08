@@ -76,14 +76,14 @@ inline FixedVector<T, Capacity>::FixedVector()
 template<typename T, size_t Capacity>
 inline T& FixedVector<T, Capacity>::operator[](size_t i)
 {
-    ASSERT(i < m_size);
+    BASSERT(i < m_size);
     return m_buffer[i];
 }
 
 template<typename T, size_t Capacity>
 inline void FixedVector<T, Capacity>::push(const T& value)
 {
-    ASSERT(m_size < Capacity);
+    BASSERT(m_size < Capacity);
     m_buffer[m_size++] = value;
 }
 
@@ -97,14 +97,14 @@ inline void FixedVector<T, Capacity>::push(const T* begin, const T* end)
 template<typename T, size_t Capacity>
 inline T FixedVector<T, Capacity>::pop()
 {
-    ASSERT(m_size);
+    BASSERT(m_size);
     return m_buffer[--m_size];
 }
 
 template<typename T, size_t Capacity>
 inline void FixedVector<T, Capacity>::shrink(size_t size)
 {
-    ASSERT(size <= m_size);
+    BASSERT(size <= m_size);
     m_size = size;
 }
 

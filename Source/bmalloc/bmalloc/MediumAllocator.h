@@ -67,13 +67,13 @@ inline MediumLine* MediumAllocator::line()
 
 inline void* MediumAllocator::allocate(size_t size)
 {
-    ASSERT(size <= m_remaining);
-    ASSERT(size == roundUpToMultipleOf<alignment>(size));
-    ASSERT(size >= MediumLine::minimumObjectSize);
+    BASSERT(size <= m_remaining);
+    BASSERT(size == roundUpToMultipleOf<alignment>(size));
+    BASSERT(size >= MediumLine::minimumObjectSize);
 
     m_remaining -= size;
     void* object = m_end - m_remaining - size;
-    ASSERT(isSmallOrMedium(object) && !isSmall(object));
+    BASSERT(isSmallOrMedium(object) && !isSmall(object));
 
     ++m_objectCount;
     return object;

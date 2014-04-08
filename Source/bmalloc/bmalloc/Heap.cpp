@@ -170,8 +170,8 @@ void Heap::deallocateXLarge(std::lock_guard<Mutex>&, void* object)
 
 void* Heap::allocateLarge(std::lock_guard<Mutex>&, size_t size)
 {
-    ASSERT(size <= largeMax);
-    ASSERT(size >= largeMin);
+    BASSERT(size <= largeMax);
+    BASSERT(size >= largeMin);
     
     m_isAllocatingPages = true;
 

@@ -1,5 +1,79 @@
 2014-04-08  Geoffrey Garen  <ggaren@apple.com>
 
+        Made bmalloc more #include friendly
+        https://bugs.webkit.org/show_bug.cgi?id=131386
+
+        Reviewed by Andreas Kling.
+
+        Marked a bunch of headers private so they can be used from client code
+        that #includes bmalloc.h.
+
+        Renamed ASSERT macros to BASSERT. This matches their header, which already
+        had to be renamed, and fixes conflicts with WTF's ASSERT macros.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::allocateSlowCase):
+        * bmalloc/AsyncTask.h:
+        (bmalloc::Function>::runSlowCase):
+        * bmalloc/BAssert.h:
+        * bmalloc/BoundaryTag.h:
+        (bmalloc::BoundaryTag::setSize):
+        * bmalloc/BoundaryTagInlines.h:
+        (bmalloc::validate):
+        (bmalloc::BoundaryTag::init):
+        (bmalloc::BoundaryTag::deallocate):
+        (bmalloc::BoundaryTag::splitLarge):
+        (bmalloc::BoundaryTag::allocate):
+        * bmalloc/Chunk.h:
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::processObjectLog):
+        (bmalloc::Deallocator::deallocateSlowCase):
+        * bmalloc/Deallocator.h:
+        (bmalloc::Deallocator::deallocateFastCase):
+        * bmalloc/FixedVector.h:
+        (bmalloc::Capacity>::operator):
+        (bmalloc::Capacity>::push):
+        (bmalloc::Capacity>::pop):
+        (bmalloc::Capacity>::shrink):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateLarge):
+        * bmalloc/LargeChunk.h:
+        (bmalloc::LargeChunk::get):
+        (bmalloc::LargeChunk::endTag):
+        * bmalloc/Line.h:
+        (bmalloc::Line<Traits>::concurrentRef):
+        (bmalloc::Line<Traits>::deref):
+        * bmalloc/MediumAllocator.h:
+        (bmalloc::MediumAllocator::allocate):
+        * bmalloc/ObjectType.h:
+        (bmalloc::isSmall):
+        * bmalloc/Page.h:
+        (bmalloc::Page<Traits>::ref):
+        (bmalloc::Page<Traits>::deref):
+        * bmalloc/PerThread.h:
+        (bmalloc::PerThread<T>::getSlowCase):
+        * bmalloc/SegregatedFreeList.cpp:
+        (bmalloc::SegregatedFreeList::SegregatedFreeList):
+        (bmalloc::SegregatedFreeList::insert):
+        * bmalloc/SmallAllocator.h:
+        (bmalloc::SmallAllocator::allocate):
+        (bmalloc::SmallAllocator::refill):
+        * bmalloc/Syscall.h:
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmValidate):
+        (bmalloc::vmAllocate):
+        (bmalloc::vmDeallocatePhysicalPagesSloppy):
+        * bmalloc/Vector.h:
+        (bmalloc::Vector<T>::operator):
+        (bmalloc::Vector<T>::pop):
+        (bmalloc::Vector<T>::shrink):
+        * bmalloc/XLargeChunk.h:
+        (bmalloc::XLargeChunk::range):
+        (bmalloc::XLargeChunk::size):
+
+2014-04-08  Geoffrey Garen  <ggaren@apple.com>
+
         Removed an unused file.
 
         Unreviewed.

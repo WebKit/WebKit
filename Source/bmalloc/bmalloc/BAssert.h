@@ -26,12 +26,12 @@
 #ifndef BAssert_h
 #define BAssert_h
 
-#define ASSERT_IMPL(x) do { \
+#define BASSERT_IMPL(x) do { \
     if (!(x)) \
         *(int*)0xbbadbeef = 0; \
 } while(0);
 
-#define RELEASE_ASSERT(x) ASSERT_IMPL(x)
+#define RELEASE_BASSERT(x) BASSERT_IMPL(x)
 
 #define UNUSED(x) (void)x
 
@@ -39,7 +39,7 @@
 
 #if defined(NDEBUG)
 
-#define ASSERT(x)
+#define BASSERT(x)
 
 #define IF_DEBUG(x...)
 
@@ -50,7 +50,7 @@
 
 #if !defined(NDEBUG)
 
-#define ASSERT(x) ASSERT_IMPL(x)
+#define BASSERT(x) BASSERT_IMPL(x)
 
 #define IF_DEBUG(x...) x
 

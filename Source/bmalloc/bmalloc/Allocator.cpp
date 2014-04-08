@@ -137,7 +137,7 @@ void* Allocator::allocateSlowCase(size_t size)
 {
 IF_DEBUG(
     void* dummy;
-    ASSERT(!allocateFastCase(size, dummy));
+    BASSERT(!allocateFastCase(size, dummy));
 )
     if (size <= smallMax) {
         SmallAllocator& allocator = smallAllocatorFor(size);

@@ -59,14 +59,14 @@ private:
 template<typename Traits>
 inline void Page<Traits>::ref(std::lock_guard<Mutex>&)
 {
-    ASSERT(m_refCount < maxRefCount);
+    BASSERT(m_refCount < maxRefCount);
     ++m_refCount;
 }
 
 template<typename Traits>
 inline bool Page<Traits>::deref(std::lock_guard<Mutex>&)
 {
-    ASSERT(m_refCount);
+    BASSERT(m_refCount);
     --m_refCount;
     return !m_refCount;
 }

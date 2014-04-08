@@ -79,13 +79,13 @@ inline SmallLine* SmallAllocator::line()
 
 inline void* SmallAllocator::allocate()
 {
-    ASSERT(m_remaining);
-    ASSERT(m_size >= SmallLine::minimumObjectSize);
+    BASSERT(m_remaining);
+    BASSERT(m_size >= SmallLine::minimumObjectSize);
 
     --m_remaining;
     char* result = m_ptr;
     m_ptr += m_size;
-    ASSERT(isSmall(result));
+    BASSERT(isSmall(result));
     return result;
 }
 
@@ -101,7 +101,7 @@ inline unsigned char SmallAllocator::derefCount()
 
 inline void SmallAllocator::refill(SmallLine* line)
 {
-    ASSERT(!canAllocate());
+    BASSERT(!canAllocate());
     line->concurrentRef(SmallLine::maxRefCount);
     m_ptr = line->begin();
     m_remaining = m_maxObjectCount;

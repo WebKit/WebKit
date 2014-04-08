@@ -32,14 +32,14 @@ namespace bmalloc {
 
 SegregatedFreeList::SegregatedFreeList()
 {
-    ASSERT(static_cast<size_t>(&select(largeMax) - m_lists.begin()) == m_lists.size() - 1);
+    BASSERT(static_cast<size_t>(&select(largeMax) - m_lists.begin()) == m_lists.size() - 1);
 }
 
 void SegregatedFreeList::insert(const Range& range)
 {
 IF_DEBUG(
     BeginTag* beginTag = LargeChunk::beginTag(range.begin());
-    ASSERT(beginTag->isInFreeList(range.size()));
+    BASSERT(beginTag->isInFreeList(range.size()));
 )
 
     auto& list = select(range.size());

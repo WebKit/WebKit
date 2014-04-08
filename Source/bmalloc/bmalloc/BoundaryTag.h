@@ -85,8 +85,8 @@ private:
 inline void BoundaryTag::setSize(size_t size)
 {
     m_size = static_cast<unsigned>(size);
-    ASSERT(this->size() == size);
-    ASSERT(!isXLarge());
+    BASSERT(this->size() == size);
+    BASSERT(!isXLarge());
 }
 
 inline EndTag* BoundaryTag::prev()

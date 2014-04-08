@@ -58,7 +58,7 @@ private:
 template<class Traits>
 inline auto Line<Traits>::get(void* object) -> Line*
 {
-    ASSERT(isSmallOrMedium(object));
+    BASSERT(isSmallOrMedium(object));
     Chunk* chunk = Chunk::get(object);
     size_t lineNumber = (reinterpret_cast<char*>(object) - reinterpret_cast<char*>(chunk)) / lineSize;
     return &chunk->lines()[lineNumber];
@@ -82,15 +82,15 @@ inline char* Line<Traits>::end()
 template<class Traits>
 inline void Line<Traits>::concurrentRef(unsigned char count)
 {
-    ASSERT(!m_refCount); // Up-ref from zero can be lock-free because there are no other clients.
-    ASSERT(count <= maxRefCount);
+    BASSERT(!m_refCount); // Up-ref from zero can be lock-free because there are no other clients.
+    BASSERT(count <= maxRefCount);
     m_refCount = count;
 }
 
 template<class Traits>
 inline bool Line<Traits>::deref(std::lock_guard<Mutex>&, unsigned char count)
 {
-    ASSERT(count <= m_refCount);
+    BASSERT(count <= m_refCount);
     m_refCount -= count;
     return !m_refCount;
 }

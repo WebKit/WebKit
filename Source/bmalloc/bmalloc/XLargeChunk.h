@@ -71,7 +71,7 @@ inline Range& XLargeChunk::range()
     // Since we hold only one object, we only use our first BoundaryTag. So, we
     // can stuff our range into the remaining metadata.
     Range& result = *reinterpret_cast<Range*>(roundUpToMultipleOf<alignment>(LargeChunk::beginTag(begin()) + 1));
-    ASSERT(static_cast<void*>(&result) < static_cast<void*>(begin()));
+    BASSERT(static_cast<void*>(&result) < static_cast<void*>(begin()));
     return result;
 }
 
@@ -80,7 +80,7 @@ inline size_t& XLargeChunk::size()
     // Since we hold only one object, we only use our first BoundaryTag. So, we
     // can stuff our size into the remaining metadata.
     size_t& result = *reinterpret_cast<size_t*>(roundUpToMultipleOf<alignment>(&range() + 1));
-    ASSERT(static_cast<void*>(&result) < static_cast<void*>(begin()));
+    BASSERT(static_cast<void*>(&result) < static_cast<void*>(begin()));
     return result;
 }
 

@@ -81,7 +81,7 @@ void Deallocator::processObjectLog()
                 continue;
             deallocateSmallLine(lock, line);
         } else {
-            ASSERT(isSmallOrMedium(object));
+            BASSERT(isSmallOrMedium(object));
             MediumLine* line = MediumLine::get(object);
             if (!line->deref(lock))
                 continue;
@@ -94,7 +94,7 @@ void Deallocator::processObjectLog()
 
 void Deallocator::deallocateSlowCase(void* object)
 {
-    ASSERT(!deallocateFastCase(object));
+    BASSERT(!deallocateFastCase(object));
 
     if (!object)
         return;

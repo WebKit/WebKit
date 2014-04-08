@@ -117,7 +117,7 @@ void PerThread<T>::destructor(void* p)
 template<typename T>
 T* PerThread<T>::getSlowCase()
 {
-    ASSERT(!getFastCase());
+    BASSERT(!getFastCase());
     T* t = new T;
     PerThreadStorage<T>::init(t, destructor);
     return t;

@@ -94,7 +94,7 @@ Vector<T>::~Vector()
 template<typename T>
 inline T& Vector<T>::operator[](size_t i)
 {
-    ASSERT(i < m_size);
+    BASSERT(i < m_size);
     return m_buffer[i];
 }
 
@@ -119,7 +119,7 @@ void Vector<T>::push(const T* begin, const T* end)
 template<typename T>
 inline T Vector<T>::pop()
 {
-    ASSERT(m_size);
+    BASSERT(m_size);
     T value = m_buffer[m_size - 1];
     shrink(m_size - 1);
     return value;
@@ -128,7 +128,7 @@ inline T Vector<T>::pop()
 template<typename T>
 inline T Vector<T>::pop(size_t i)
 {
-    ASSERT(i < m_size);
+    BASSERT(i < m_size);
     std::swap(m_buffer[i], last());
     return pop();
 }
@@ -136,7 +136,7 @@ inline T Vector<T>::pop(size_t i)
 template<typename T>
 inline void Vector<T>::shrink(size_t size)
 {
-    ASSERT(size <= m_size);
+    BASSERT(size <= m_size);
     m_size = size;
     if (m_capacity > initialCapacity && m_size < m_capacity / shrinkFactor)
         shrinkCapacity();

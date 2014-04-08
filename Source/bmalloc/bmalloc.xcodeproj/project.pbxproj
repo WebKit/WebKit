@@ -10,6 +10,41 @@
 		1448C30018F3754600502839 /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1448C2FF18F3754300502839 /* mbmalloc.cpp */; };
 		1448C30118F3754C00502839 /* bmalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1448C2FE18F3754300502839 /* bmalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14CC394C18EA8858004AFE34 /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14F271BE18EA3963008C152F /* libbmalloc.a */; };
+		14DD788C18F48CAE00950702 /* LargeChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 147AAA8818CD17CE002201E4 /* LargeChunk.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD788D18F48CC600950702 /* BeginTag.h in Headers */ = {isa = PBXBuildFile; fileRef = 1417F64518B54A700076FA3F /* BeginTag.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD788E18F48CCD00950702 /* BoundaryTag.h in Headers */ = {isa = PBXBuildFile; fileRef = 1485655E18A43AF900ED6942 /* BoundaryTag.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD789018F48CEB00950702 /* Sizes.h in Headers */ = {isa = PBXBuildFile; fileRef = 145F6874179DF84100D65598 /* Sizes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD789218F48CFC00950702 /* EndTag.h in Headers */ = {isa = PBXBuildFile; fileRef = 1417F64618B54A700076FA3F /* EndTag.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD789318F48D0F00950702 /* ObjectType.h in Headers */ = {isa = PBXBuildFile; fileRef = 1485656018A43DBA00ED6942 /* ObjectType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD789818F48D4A00950702 /* Allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 145F6856179DC8CA00D65598 /* Allocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD789918F48D4A00950702 /* Cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 144469E517A46BFE00F9EA1D /* Cache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD789A18F48D4A00950702 /* Deallocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 145F685A179DC90200D65598 /* Deallocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD789B18F48D4A00950702 /* MediumAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1413E47018A0661700546D68 /* MediumAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD789C18F48D4A00950702 /* SmallAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1413E462189DE1CD00546D68 /* SmallAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78B418F48D6B00950702 /* Chunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 147AAA9418CE5CA6002201E4 /* Chunk.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78B518F48D6B00950702 /* Line.h in Headers */ = {isa = PBXBuildFile; fileRef = 14DA32071885F9E6007269E0 /* Line.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78B618F48D6B00950702 /* MediumChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 147AAA8E18CD89E3002201E4 /* MediumChunk.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78B718F48D6B00950702 /* MediumLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1452478518BC757C00F80098 /* MediumLine.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78B818F48D6B00950702 /* MediumPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 143E29E918CAE8BE00FE8A0F /* MediumPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78B918F48D6B00950702 /* MediumTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 147AAA9618CE5FB6002201E4 /* MediumTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78BA18F48D6B00950702 /* Page.h in Headers */ = {isa = PBXBuildFile; fileRef = 146BEE2318C980D60002D5A2 /* Page.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78BB18F48D6B00950702 /* SmallChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 147AAA8C18CD36A7002201E4 /* SmallChunk.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78BC18F48D6B00950702 /* SmallLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1452478618BC757C00F80098 /* SmallLine.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78BD18F48D6B00950702 /* SmallPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 143E29ED18CAE90500FE8A0F /* SmallPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78BE18F48D6B00950702 /* SmallTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 147AAA9718CE5FB6002201E4 /* SmallTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78C518F48D7500950702 /* Algorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 1421A87718EE462A00B4DD68 /* Algorithm.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78C618F48D7500950702 /* AsyncTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 1417F65218BA88A00076FA3F /* AsyncTask.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78C718F48D7500950702 /* BAssert.h in Headers */ = {isa = PBXBuildFile; fileRef = 1413E468189EEDE400546D68 /* BAssert.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78C818F48D7500950702 /* FixedVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D9DB4517F2447100EAAB79 /* FixedVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78C918F48D7500950702 /* Inline.h in Headers */ = {isa = PBXBuildFile; fileRef = 1413E460189DCE1E00546D68 /* Inline.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78CA18F48D7500950702 /* Mutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 144DCED617A649D90093B2F2 /* Mutex.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78CB18F48D7500950702 /* PerProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 14446A0717A61FA400F9EA1D /* PerProcess.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78CC18F48D7500950702 /* PerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 144469FD17A61F1F00F9EA1D /* PerThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78CD18F48D7500950702 /* Range.h in Headers */ = {isa = PBXBuildFile; fileRef = 145F6878179E3A4400D65598 /* Range.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78CE18F48D7500950702 /* Syscall.h in Headers */ = {isa = PBXBuildFile; fileRef = 1417F64F18B7280C0076FA3F /* Syscall.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78CF18F48D7500950702 /* Vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 1479E21217A1A255006D4E9D /* Vector.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78D018F48D7500950702 /* VMAllocate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1479E21417A1A63E006D4E9D /* VMAllocate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78D118F48EC600950702 /* XLargeChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 147AAA8918CD17CE002201E4 /* XLargeChunk.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14F271C318EA3978008C152F /* Allocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 145F6855179DC8CA00D65598 /* Allocator.cpp */; };
 		14F271C418EA397B008C152F /* Cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 144469E417A46BFE00F9EA1D /* Cache.cpp */; };
 		14F271C518EA397E008C152F /* Deallocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 145F6859179DC90200D65598 /* Deallocator.cpp */; };
@@ -248,7 +283,42 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14DD78B518F48D6B00950702 /* Line.h in Headers */,
+				14DD78CF18F48D7500950702 /* Vector.h in Headers */,
+				14DD788C18F48CAE00950702 /* LargeChunk.h in Headers */,
+				14DD789218F48CFC00950702 /* EndTag.h in Headers */,
+				14DD78CC18F48D7500950702 /* PerThread.h in Headers */,
+				14DD78B418F48D6B00950702 /* Chunk.h in Headers */,
+				14DD78CA18F48D7500950702 /* Mutex.h in Headers */,
+				14DD78D118F48EC600950702 /* XLargeChunk.h in Headers */,
+				14DD78B918F48D6B00950702 /* MediumTraits.h in Headers */,
 				1448C30118F3754C00502839 /* bmalloc.h in Headers */,
+				14DD789A18F48D4A00950702 /* Deallocator.h in Headers */,
+				14DD788D18F48CC600950702 /* BeginTag.h in Headers */,
+				14DD78CD18F48D7500950702 /* Range.h in Headers */,
+				14DD789C18F48D4A00950702 /* SmallAllocator.h in Headers */,
+				14DD789918F48D4A00950702 /* Cache.h in Headers */,
+				14DD789B18F48D4A00950702 /* MediumAllocator.h in Headers */,
+				14DD78BE18F48D6B00950702 /* SmallTraits.h in Headers */,
+				14DD789018F48CEB00950702 /* Sizes.h in Headers */,
+				14DD78C718F48D7500950702 /* BAssert.h in Headers */,
+				14DD78D018F48D7500950702 /* VMAllocate.h in Headers */,
+				14DD78CE18F48D7500950702 /* Syscall.h in Headers */,
+				14DD78C618F48D7500950702 /* AsyncTask.h in Headers */,
+				14DD78BA18F48D6B00950702 /* Page.h in Headers */,
+				14DD78BB18F48D6B00950702 /* SmallChunk.h in Headers */,
+				14DD78C918F48D7500950702 /* Inline.h in Headers */,
+				14DD78B818F48D6B00950702 /* MediumPage.h in Headers */,
+				14DD78C518F48D7500950702 /* Algorithm.h in Headers */,
+				14DD78BD18F48D6B00950702 /* SmallPage.h in Headers */,
+				14DD788E18F48CCD00950702 /* BoundaryTag.h in Headers */,
+				14DD78C818F48D7500950702 /* FixedVector.h in Headers */,
+				14DD78B718F48D6B00950702 /* MediumLine.h in Headers */,
+				14DD78B618F48D6B00950702 /* MediumChunk.h in Headers */,
+				14DD78BC18F48D6B00950702 /* SmallLine.h in Headers */,
+				14DD789818F48D4A00950702 /* Allocator.h in Headers */,
+				14DD78CB18F48D7500950702 /* PerProcess.h in Headers */,
+				14DD789318F48D0F00950702 /* ObjectType.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

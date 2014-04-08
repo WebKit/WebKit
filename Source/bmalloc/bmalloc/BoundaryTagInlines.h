@@ -41,18 +41,18 @@ IF_DEBUG(
     BeginTag* beginTag = LargeChunk::beginTag(range.begin());
     EndTag* endTag = LargeChunk::endTag(range.begin(), range.size());
 
-    ASSERT(!beginTag->isEnd());
+    BASSERT(!beginTag->isEnd());
     if (beginTag->isXLarge())
         return;
 )
-    ASSERT(range.size() >= largeMin);
-    ASSERT(beginTag->size() == range.size());
+    BASSERT(range.size() >= largeMin);
+    BASSERT(beginTag->size() == range.size());
 
-    ASSERT(beginTag->size() == endTag->size());
-    ASSERT(beginTag->isFree() == endTag->isFree());
-    ASSERT(beginTag->hasPhysicalPages() == endTag->hasPhysicalPages());
-    ASSERT(beginTag->isXLarge() == endTag->isXLarge());
-    ASSERT(static_cast<BoundaryTag*>(endTag) == static_cast<BoundaryTag*>(beginTag) || endTag->isEnd());
+    BASSERT(beginTag->size() == endTag->size());
+    BASSERT(beginTag->isFree() == endTag->isFree());
+    BASSERT(beginTag->hasPhysicalPages() == endTag->hasPhysicalPages());
+    BASSERT(beginTag->isXLarge() == endTag->isXLarge());
+    BASSERT(static_cast<BoundaryTag*>(endTag) == static_cast<BoundaryTag*>(beginTag) || endTag->isEnd());
 }
 
 static inline void validatePrev(EndTag* prev, void* object)
@@ -96,12 +96,12 @@ inline Range BoundaryTag::init(LargeChunk* chunk)
     // special-case checks.
     
     EndTag* leftSentinel = beginTag->prev();
-    ASSERT(leftSentinel >= static_cast<void*>(chunk));
+    BASSERT(leftSentinel >= static_cast<void*>(chunk));
     leftSentinel->setSize(largeMin);
     leftSentinel->setFree(false);
 
     BeginTag* rightSentinel = endTag->next();
-    ASSERT(rightSentinel < static_cast<void*>(range.begin()));
+    BASSERT(rightSentinel < static_cast<void*>(range.begin()));
     rightSentinel->setSize(largeMin);
     rightSentinel->setFree(false);
     
@@ -163,8 +163,8 @@ INLINE void BoundaryTag::mergeLarge(BeginTag*& beginTag, EndTag*& endTag, Range&
 inline Range BoundaryTag::deallocate(void* object)
 {
     BeginTag* beginTag = LargeChunk::beginTag(object);
-    ASSERT(!beginTag->isFree());
-    ASSERT(!beginTag->isXLarge())
+    BASSERT(!beginTag->isFree());
+    BASSERT(!beginTag->isXLarge())
 
     Range range(object, beginTag->size());
     EndTag* endTag = LargeChunk::endTag(range.begin(), range.size());
@@ -182,7 +182,7 @@ INLINE void BoundaryTag::splitLarge(BeginTag* beginTag, size_t size, EndTag*& en
         *splitEndTag = *beginTag;
 
     leftover = Range(range.begin() + size, range.size() - size);
-    ASSERT(leftover.size() >= largeMin);
+    BASSERT(leftover.size() >= largeMin);
     BeginTag* leftoverBeginTag = LargeChunk::beginTag(leftover.begin());
     *leftoverBeginTag = *beginTag;
     leftoverBeginTag->setSize(leftover.size());
@@ -202,7 +202,7 @@ INLINE void BoundaryTag::allocate(size_t size, Range& range, Range& leftover, bo
     BeginTag* beginTag = LargeChunk::beginTag(range.begin());
     EndTag* endTag = LargeChunk::endTag(range.begin(), range.size());
 
-    ASSERT(beginTag->isFree());
+    BASSERT(beginTag->isFree());
     validate(beginTag->prev(), range, endTag->next());
 
     if (range.size() - size > largeMin)

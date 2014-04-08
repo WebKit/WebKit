@@ -109,7 +109,7 @@ NO_INLINE void AsyncTask<Object, Function>::runSlowCase()
         return;
     }
 
-    ASSERT(oldState == Exited);
+    BASSERT(oldState == Exited);
     pthread_create(&m_thread, nullptr, &pthreadEntryPoint, this);
     pthread_detach(m_thread);
 }
