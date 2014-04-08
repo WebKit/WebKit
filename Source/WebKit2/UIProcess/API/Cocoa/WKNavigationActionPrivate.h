@@ -30,6 +30,7 @@
 @interface WKNavigationAction (WKPrivate)
 
 @property (nonatomic, readonly) NSURL *_originalURL;
+@property (nonatomic, readonly, getter=_isUserInitiated) BOOL _userInitiated;
 
 @end
 

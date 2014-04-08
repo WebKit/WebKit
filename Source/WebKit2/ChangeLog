@@ -1,3 +1,28 @@
+2014-04-08  Anders Carlsson  <andersca@apple.com>
+
+        Add a WKNavigationAction property indicating whether it resulted from processing a user gesture
+        https://bugs.webkit.org/show_bug.cgi?id=131405
+        <rdar://problem/16535453>
+
+        Reviewed by Tim Horton.
+
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::NavigationActionData):
+        (WebKit::NavigationActionData::encode):
+        (WebKit::NavigationActionData::decode):
+        * Shared/NavigationActionData.h:
+        * UIProcess/API/Cocoa/WKNavigationActionInternal.h:
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::PolicyClient::decidePolicyForNavigationAction):
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::createNewPage):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2014-04-08  Tim Horton  <timothy_horton@apple.com>
 
         Unify and factor out page overlay implementations

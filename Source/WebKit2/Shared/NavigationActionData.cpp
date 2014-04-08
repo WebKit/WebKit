@@ -35,6 +35,9 @@ namespace WebKit {
 
 NavigationActionData::NavigationActionData()
     : navigationType(NavigationTypeOther)
+    , modifiers()
+    , mouseButton(WebMouseEvent::NoButton)
+    , isProcessingUserGesture(false)
 {
 }
 
@@ -43,6 +46,7 @@ void NavigationActionData::encode(IPC::ArgumentEncoder& encoder) const
     encoder.encodeEnum(navigationType);
     encoder.encodeEnum(modifiers);
     encoder.encodeEnum(mouseButton);
+    encoder << isProcessingUserGesture;
 }
 
 bool NavigationActionData::decode(IPC::ArgumentDecoder& decoder, NavigationActionData& result)
@@ -52,6 +56,8 @@ bool NavigationActionData::decode(IPC::ArgumentDecoder& decoder, NavigationActio
     if (!decoder.decodeEnum(result.modifiers))
         return false;
     if (!decoder.decodeEnum(result.mouseButton))
+        return false;
+    if (!decoder.decode(result.isProcessingUserGesture))
         return false;
 
     return true;

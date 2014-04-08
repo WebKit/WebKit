@@ -45,6 +45,7 @@ struct NavigationActionData {
     WebCore::NavigationType navigationType;
     WebEvent::Modifiers modifiers;
     WebMouseEvent::Button mouseButton;
+    bool isProcessingUserGesture;
 };
 
 }

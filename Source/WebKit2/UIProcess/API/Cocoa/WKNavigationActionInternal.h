@@ -38,6 +38,7 @@
 @property (nonatomic, readwrite, copy) NSURLRequest *request;
 
 @property (nonatomic, readwrite, copy, setter=_setOriginalURL:) NSURL *_originalURL;
+@property (nonatomic, readwrite, setter=_setUserInitiated:) BOOL _userInitiated;
 
 @end
 

@@ -237,6 +237,7 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
     [navigationAction setNavigationType:toWKNavigationType(navigationActionData.navigationType)];
     [navigationAction setRequest:request.nsURLRequest(WebCore::DoNotUpdateHTTPBody)];
     [navigationAction _setOriginalURL:originalRequest.url()];
+    [navigationAction _setUserInitiated:navigationActionData.isProcessingUserGesture];
 
     [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:navigationAction.get() decisionHandler:[listener](WKNavigationPolicyDecision policyDecision) {
         switch (policyDecision) {

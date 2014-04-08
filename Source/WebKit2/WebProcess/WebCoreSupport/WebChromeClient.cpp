@@ -67,6 +67,7 @@
 #include <WebCore/MainFrame.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
+#include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
 
@@ -209,6 +210,7 @@ Page* WebChromeClient::createWindow(Frame* frame, const FrameLoadRequest& reques
     navigationActionData.navigationType = navigationAction.type();
     navigationActionData.modifiers = InjectedBundleNavigationAction::modifiersForNavigationAction(navigationAction);
     navigationActionData.mouseButton = InjectedBundleNavigationAction::mouseButtonForNavigationAction(navigationAction);
+    navigationActionData.isProcessingUserGesture = ScriptController::processingUserGesture();
 
     uint64_t newPageID = 0;
     WebPageCreationParameters parameters;
