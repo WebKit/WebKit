@@ -1,3 +1,15 @@
+2014-04-08  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Make border images device pixel aware.
+        https://bugs.webkit.org/show_bug.cgi?id=131209
+
+        Reviewed by Simon Fraser.
+
+        Snap border-image size and position to device pixels. It works both on generated and bitmap images.
+
+        * fast/borders/hidpi-border-image-gradient-on-subpixels-expected.html: Added.
+        * fast/borders/hidpi-border-image-gradient-on-subpixels.html: Added.
+
 2014-04-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [SOUP] Control cookie management according ResourceRequest.allowCookies()
