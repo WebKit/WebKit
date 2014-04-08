@@ -3348,7 +3348,7 @@ void Editor::scanSelectionForTelephoneNumbers(Vector<RefPtr<Range>>& markedRange
     clearDataDetectedTelephoneNumbers();
 
     RefPtr<Range> selectedRange = m_frame.selection().toNormalizedRange();
-    if (!selectedRange || selectedRange->startOffset() == selectedRange->endOffset())
+    if (!selectedRange || (selectedRange->startContainer() == selectedRange->endContainer() && selectedRange->startOffset() == selectedRange->endOffset()))
         return;
 
     // FIXME: This won't work if a phone number spans multiple chunks of text from the perspective of the TextIterator

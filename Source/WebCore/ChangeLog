@@ -1,3 +1,16 @@
+2014-04-08  Brady Eidson  <beidson@apple.com>
+
+        Non-empty ranges misdetected as empty ranges, avoiding telephone number detection.
+        <rdar://problem/16553441> and https://bugs.webkit.org/show_bug.cgi?id=131397 
+
+        Reviewed by Tim Horton.
+
+        No new tests (Only affects a currently untested Mac-only WK2 feature)
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::scanSelectionForTelephoneNumbers): Fix detection of empty ranges so we don’t
+          early return erroneously.
+
 2014-04-08  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         [SVG] Fix CSS transform handling when zoomed
