@@ -1,3 +1,12 @@
+2014-04-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Build bmalloc on iOS too
+        https://bugs.webkit.org/show_bug.cgi?id=131381
+
+        Reviewed by Andreas Kling.
+
+        * Scripts/build-webkit:
+
 2014-04-08  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed gardening: Prevent users from attempting
