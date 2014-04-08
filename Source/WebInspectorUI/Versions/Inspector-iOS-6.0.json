@@ -1,8 +1,6 @@
 {
-    "version": { "major": "1", "minor": "0" },
     "domains": [{
         "domain": "Inspector",
-        "hidden": true,
         "types": [],
         "commands": [
             {
@@ -67,8 +65,7 @@
                     { "name": "url", "type": "string", "description": "Frame document's URL." },
                     { "name": "securityOrigin", "type": "string", "optional": true, "description": "Frame document's security origin." },
                     { "name": "mimeType", "type": "string", "description": "Frame document's mimeType as determined by the browser." }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "id": "FrameResourceTree",
@@ -90,8 +87,7 @@
                         },
                         "description": "Information about frame resources."
                     }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "id": "SearchMatch",
@@ -100,8 +96,7 @@
                 "properties": [
                     { "name": "lineNumber", "type": "number", "description": "Line number in resource content." },
                     { "name": "lineContent", "type": "string", "description": "Line with match content." }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "id": "SearchResult",
@@ -111,8 +106,7 @@
                     { "name": "url", "type": "string", "description": "Resource URL." },
                     { "name": "frameId", "$ref": "Network.FrameId", "description": "Resource frame id." },
                     { "name": "matchesCount", "type": "number", "description": "Number of matches in the resource content." }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "id": "Cookie",
@@ -128,14 +122,12 @@
                     { "name": "httpOnly", "type": "boolean", "description": "True if cookie is http-only." },
                     { "name": "secure", "type": "boolean", "description": "True if cookie is secure." },
                     { "name": "session", "type": "boolean", "description": "True in case of session cookie." }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "id": "ScriptIdentifier",
                 "type": "string",
-                "description": "Unique script identifier.",
-                "hidden": true
+                "description": "Unique script identifier."
             }
         ],
         "commands": [
@@ -154,15 +146,13 @@
                 ],
                 "returns": [
                     { "name": "identifier", "$ref": "ScriptIdentifier", "description": "Identifier of the added script." }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "name": "removeScriptToEvaluateOnLoad",
                 "parameters": [
                     { "name": "identifier", "$ref": "ScriptIdentifier" }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "name": "reload",
@@ -185,8 +175,7 @@
                     { "name": "cookies", "type": "array", "items": { "$ref": "Cookie"}, "description": "Array of cookie objects." },
                     { "name": "cookiesString", "type": "string", "description": "document.cookie string representation of the cookies." }
                 ],
-                "description": "Returns all browser cookies. Depending on the backend support, will either return detailed cookie information in the <code>cookie</code> field or string cookie representation using <code>cookieString</code>.",
-                "hidden": true
+                "description": "Returns all browser cookies. Depending on the backend support, will either return detailed cookie information in the <code>cookie</code> field or string cookie representation using <code>cookieString</code>."
             },
             {
                 "name": "deleteCookie",
@@ -194,16 +183,14 @@
                     { "name": "cookieName", "type": "string", "description": "Name of the cookie to remove." },
                     { "name": "domain", "type": "string", "description": "Domain of the cookie to remove." }
                 ],
-                "description": "Deletes browser cookie with given name for the given domain.",
-                "hidden": true
+                "description": "Deletes browser cookie with given name for the given domain."
             },
             {
                 "name": "getResourceTree",
                 "description": "Returns present frame / resource tree structure.",
                 "returns": [
                     { "name": "frameTree", "$ref": "FrameResourceTree", "description": "Present frame / resource tree structure." }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "name": "getResourceContent",
@@ -215,8 +202,7 @@
                 "returns": [
                     { "name": "content", "type": "string", "description": "Resource content." },
                     { "name": "base64Encoded", "type": "boolean", "description": "True, if content was served as base64." }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "name": "searchInResource",
@@ -230,8 +216,7 @@
                 ],
                 "returns": [
                     { "name": "result", "type": "array", "items": { "$ref": "SearchMatch" }, "description": "List of search matches." }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "name": "searchInResources",
@@ -243,8 +228,7 @@
                 ],
                 "returns": [
                     { "name": "result", "type": "array", "items": { "$ref": "SearchResult" }, "description": "List of search results." }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "name": "setDocumentContent",
@@ -252,16 +236,14 @@
                 "parameters": [
                     { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame id to set HTML for." },
                     { "name": "html", "type": "string", "description": "HTML content to set."  }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "name": "setShowPaintRects",
                 "description": "Requests that backend shows paint rectangles",
                 "parameters": [
                     { "name": "result", "type": "boolean", "description": "True for showing paint rectangles" }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "name": "getScriptExecutionStatus",
@@ -296,16 +278,14 @@
                 "description": "Fired once navigation of the frame has completed. Frame is now associated with the new loader.",
                 "parameters": [
                     { "name": "frame", "$ref": "Frame", "description": "Frame object." }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "name": "frameDetached",
                 "description": "Fired when frame has been detached from its parent.",
                 "parameters": [
                     { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has been detached." }
-                ],
-                "hidden": true
+                ]
             }
         ]
     },
@@ -415,7 +395,6 @@
             },
             {
                 "name": "run",
-                "hidden": true,
                 "description": "Tells inspected instance(worker or page) that it can run in case it was started paused."
             }
         ]
@@ -485,8 +464,7 @@
                 "parameters": [
                     { "name": "nodeId", "$ref": "DOM.NodeId", "description": "DOM node id to be accessible by means of $x command line API." }
                 ],
-                "description": "Enables console to refer to the node with given id via $x (see Command Line API for more details $x functions).",
-                "hidden": true
+                "description": "Enables console to refer to the node with given id via $x (see Command Line API for more details $x functions)."
             }
         ],
         "events": [
@@ -522,8 +500,7 @@
             {
                 "id": "FrameId",
                 "type": "string",
-                "description": "Unique frame identifier.",
-                "hidden": true
+                "description": "Unique frame identifier."
             },
             {
                 "id": "RequestId",
@@ -593,7 +570,6 @@
                 "id": "WebSocketRequest",
                 "type": "object",
                 "description": "WebSocket request data.",
-                "hidden": true,
                 "properties": [
                     { "name": "requestKey3", "type": "string", "description": "HTTP response status text." },
                     { "name": "headers", "$ref": "Headers", "description": "HTTP response headers." }
@@ -603,7 +579,6 @@
                 "id": "WebSocketResponse",
                 "type": "object",
                 "description": "WebSocket response data.",
-                "hidden": true,
                 "properties": [
                     { "name": "status", "type": "number", "description": "HTTP response status code." },
                     { "name": "statusText", "type": "string", "description": "HTTP response status text." },
@@ -615,7 +590,6 @@
                 "id": "WebSocketFrame",
                 "type": "object",
                 "description": "WebSocket frame data.",
-                "hidden": true,
                 "properties": [
                     { "name": "opcode", "type": "number", "description": "WebSocket frame opcode." },
                     { "name": "mask", "type": "boolean", "description": "WebSocket frame mask." },
@@ -784,8 +758,7 @@
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                     { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
                     { "name": "request", "$ref": "WebSocketRequest", "description": "WebSocket request data." }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "name": "webSocketHandshakeResponseReceived",
@@ -794,8 +767,7 @@
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                     { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
                     { "name": "response", "$ref": "WebSocketResponse", "description": "WebSocket response data." }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "name": "webSocketCreated",
@@ -803,8 +775,7 @@
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                     { "name": "url", "type": "string", "description": "WebSocket request URL." }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "name": "webSocketClosed",
@@ -812,8 +783,7 @@
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                     { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "name": "webSocketFrameReceived",
@@ -822,8 +792,7 @@
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                     { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
                     { "name": "response", "$ref": "WebSocketFrame", "description": "WebSocket response data." }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "name": "webSocketFrameError",
@@ -832,8 +801,7 @@
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                     { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
                     { "name": "errorMessage", "type": "string", "description": "WebSocket frame error message." }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "name": "webSocketFrameSent",
@@ -842,26 +810,22 @@
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                     { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
                     { "name": "response", "$ref": "WebSocketFrame", "description": "WebSocket response data." }
-                ],
-                "hidden": true
+                ]
             }
         ]
     },
     {
         "domain": "Database",
-        "hidden": true,
         "types": [
             {
                 "id": "DatabaseId",
                 "type": "string",
-                "description": "Unique identifier of Database object.",
-                "hidden": true
+                "description": "Unique identifier of Database object."
             },
             {
                 "id": "Database",
                 "type": "object",
                 "description": "Database object.",
-                "hidden": true,
                 "properties": [
                     { "name": "id", "$ref": "DatabaseId", "description": "Database ID." },
                     { "name": "domain", "type": "string", "description": "Database domain." },
@@ -931,19 +895,16 @@
     },
     {
         "domain": "DOMStorage",
-        "hidden": true,
         "types": [
             {
                 "id": "StorageId",
                 "type": "string",
-                "description": "Unique identifier of DOM storage entry.",
-                "hidden": true
+                "description": "Unique identifier of DOM storage entry."
             },
             {
                 "id": "Entry",
                 "type": "object",
                 "description": "DOM Storage entry.",
-                "hidden": true,
                 "properties": [
                     { "name": "host", "type": "string", "description": "Domain name." },
                     { "name": "isLocalStorage", "type": "boolean", "description": "True for local storage." },
@@ -954,7 +915,6 @@
                 "id": "Item",
                 "type": "array",
                 "description": "DOM Storage item.",
-                "hidden": true,
                 "items": { "type": "string" }
             }
         ],
@@ -1015,7 +975,6 @@
     },
     {
         "domain": "ApplicationCache",
-        "hidden": true,
         "types": [
             {
                 "id": "ApplicationCacheResource",
@@ -1136,7 +1095,6 @@
             {
                 "id": "EventListener",
                 "type": "object",
-                "hidden": true,
                 "properties": [
                     { "name": "type", "type": "string", "description": "<code>EventListener</code>'s type." },
                     { "name": "useCapture", "type": "boolean", "description": "<code>EventListener</code>'s useCapture." },
@@ -1268,8 +1226,7 @@
                 "returns": [
                     { "name": "listeners", "type": "array", "items": { "$ref": "EventListener"}, "description": "Array of relevant listeners." }
                 ],
-                "description": "Returns event listeners relevant to the node.",
-                "hidden": true
+                "description": "Returns event listeners relevant to the node."
             },
             {
                 "name": "getOuterHTML",
@@ -1298,8 +1255,7 @@
                     { "name": "searchId", "type": "string", "description": "Unique search session identifier." },
                     { "name": "resultCount", "type": "integer", "description": "Number of search results." }
                 ],
-                "description": "Searches for a given string in the DOM tree. Use <code>getSearchResults</code> to access search results or <code>cancelSearch</code> to end this search session.",
-                "hidden": true
+                "description": "Searches for a given string in the DOM tree. Use <code>getSearchResults</code> to access search results or <code>cancelSearch</code> to end this search session."
             },
             {
                 "name": "getSearchResults",
@@ -1311,16 +1267,14 @@
                 "returns": [
                     { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" }, "description": "Ids of the search result nodes." }
                 ],
-                "description": "Returns search results from given <code>fromIndex</code> to given <code>toIndex</code> from the sarch with the given identifier.",
-                "hidden": true
+                "description": "Returns search results from given <code>fromIndex</code> to given <code>toIndex</code> from the sarch with the given identifier."
             },
             {
                 "name": "discardSearchResults",
                 "parameters": [
                     { "name": "searchId", "type": "string", "description": "Unique search session identifier." }
                 ],
-                "description": "Discards search results from the session with the given id. <code>getSearchResults</code> should no longer be called for that search.",
-                "hidden": true
+                "description": "Discards search results from the session with the given id. <code>getSearchResults</code> should no longer be called for that search."
             },
             {
                 "name": "requestNode",
@@ -1334,7 +1288,6 @@
             },
             {
                 "name": "setInspectModeEnabled",
-                "hidden": true,
                 "parameters": [
                     { "name": "enabled", "type": "boolean", "description": "True to enable inspection mode, false to disable it." },
                     { "name": "highlightConfig", "$ref": "HighlightConfig", "optional": true, "description": "A descriptor for the highlight appearance of hovered-over nodes. May be omitted if <code>enabled == false</code>." }
@@ -1372,8 +1325,7 @@
                     { "name": "contentColor", "$ref": "RGBA", "optional": true, "description": "The content box highlight fill color (default: transparent)." },
                     { "name": "contentOutlineColor", "$ref": "RGBA", "optional": true, "description": "The content box highlight outline color (default: transparent)." }
                 ],
-                "description": "Highlights owner element of the frame with given id.",
-                "hidden": true
+                "description": "Highlights owner element of the frame with given id."
             },
             {
                 "name": "pushNodeByPathToFrontend",
@@ -1383,8 +1335,7 @@
                 "returns": [
                     { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node for given path." }
                 ],
-                "description": "Requests that the node is sent to the caller given its path. // FIXME, use XPath",
-                "hidden": true
+                "description": "Requests that the node is sent to the caller given its path. // FIXME, use XPath"
             },
             {
                 "name": "resolveNode",
@@ -1424,23 +1375,19 @@
                 "parameters": [
                     { "name": "enabled", "type": "boolean", "description": "Whether the touch event emulation should be enabled." }
                 ],
-                "description": "Toggles mouse event-based touch event emulation.",
-                "hidden": true
+                "description": "Toggles mouse event-based touch event emulation."
             },
             {
                 "name": "undo",
-                "description": "Undoes the last performed action.",
-                "hidden": true
+                "description": "Undoes the last performed action."
             },
             {
                 "name": "redo",
-                "description": "Re-does the last undone action.",
-                "hidden": true
+                "description": "Re-does the last undone action."
             },
             {
                 "name": "markUndoableState",
-                "description": "Marks last undoable state.",
-                "hidden": true
+                "description": "Marks last undoable state."
             }
         ],
         "events": [
@@ -1478,8 +1425,7 @@
                 "parameters": [
                     { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" }, "description": "Ids of the nodes for which the inline styles have been invalidated." }
                 ],
-                "description": "Fired when <code>Element</code>'s inline style is modified via a CSS property modification.",
-                "hidden": true
+                "description": "Fired when <code>Element</code>'s inline style is modified via a CSS property modification."
             },
             {
                 "name": "characterDataModified",
@@ -1520,8 +1466,7 @@
                     { "name": "hostId", "$ref": "NodeId", "description": "Host element id." },
                     { "name": "root", "$ref": "Node", "description": "Shadow root." }
                 ],
-                "description": "Called when shadow root is pushed into the element.",
-                "hidden": true
+                "description": "Called when shadow root is pushed into the element."
             },
             {
                 "name": "shadowRootPopped",
@@ -1529,14 +1474,12 @@
                     { "name": "hostId", "$ref": "NodeId", "description": "Host element id." },
                     { "name": "rootId", "$ref": "NodeId", "description": "Shadow root id." }
                 ],
-                "description": "Called when shadow root is popped from the element.",
-                "hidden": true
+                "description": "Called when shadow root is popped from the element."
             }
         ]
     },
     {
         "domain": "CSS",
-        "hidden": true,
         "description": "This domain exposes CSS read/write operations. All CSS objects, like stylesheets, rules, and styles, have an associated <code>id</code> used in subsequent operations on the related object. Each object type has a specific <code>id</code> structure, and those are not interchangeable between objects of different kinds. CSS objects can be loaded using the <code>get*ForNode()</code> calls (which accept a DOM node id). Alternatively, a client can discover all the existing stylesheets with the <code>getAllStyleSheets()</code> method and subsequently load the required stylesheet contents using the <code>getStyleSheet[Text]()</code> methods.",
         "types": [
             {
@@ -1905,7 +1848,6 @@
                 "parameters": [
                     { "name": "enabled", "type": "boolean", "description": "True to start collecting DOM counters." }
                 ],
-                "hidden": true,
                 "description": "Starts calculating various DOM statistics and sending them as part of timeline events."
             }
         ],
@@ -1950,7 +1892,6 @@
             },
             {
                 "id": "FunctionDetails",
-                "hidden": true,
                 "type": "object",
                 "properties": [
                     { "name": "location", "$ref": "Location", "description": "Location of the function." },
@@ -1988,7 +1929,6 @@
                 "returns": [
                     { "name": "result", "type": "boolean", "description": "True if debugger supports native breakpoints." }
                 ],
-                "hidden": true,
                 "description": "Tells whether debugger supports native breakpoints."
             },
             {
@@ -2092,7 +2032,6 @@
             },
             {
                 "name": "getFunctionDetails",
-                "hidden": true,
                 "parameters": [
                     { "name": "functionId", "$ref": "Runtime.RemoteObjectId", "description": "Id of the function to get location for." }
                 ],
@@ -2225,16 +2164,14 @@
                 "parameters": [
                     { "name": "eventName", "type": "string", "description": "Instrumentation name to stop on." }
                 ],
-                "description": "Sets breakpoint on particular native event.",
-                "hidden": true
+                "description": "Sets breakpoint on particular native event."
             },
             {
                 "name": "removeInstrumentationBreakpoint",
                 "parameters": [
                     { "name": "eventName", "type": "string", "description": "Instrumentation name to stop on." }
                 ],
-                "description": "Sets breakpoint on particular native event.",
-                "hidden": true
+                "description": "Sets breakpoint on particular native event."
             },
             {
                 "name": "setXHRBreakpoint",
@@ -2254,7 +2191,6 @@
     },
     {
         "domain": "Profiler",
-        "hidden": true,
         "types": [
             {
                 "id": "ProfileHeader",
@@ -2336,7 +2272,6 @@
     },
     {
         "domain": "Worker",
-        "hidden": true,
         "types": [],
         "commands": [
             {

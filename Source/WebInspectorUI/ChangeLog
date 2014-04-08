@@ -1,3 +1,13 @@
+2014-04-08  Timothy Hatcher  <timothy@apple.com>
+
+        Clean up old protocol JSON files to better match the latest
+        https://bugs.webkit.org/show_bug.cgi?id=131308
+
+        Reviewed by Joseph Pecoraro.
+
+        * Versions/Inspector-iOS-6.0.json:
+        * Versions/Inspector-iOS-7.0.json:
+
 2014-04-05  Brian J. Burg  <burg@cs.washington.edu>
 
         Enable WEB_REPLAY for PLATFORM(MAC)
