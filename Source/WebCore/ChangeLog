@@ -1,3 +1,15 @@
+2014-04-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Keep 'webkitClosedCaptionsVisible' API in sync with captions display preferences
+        https://bugs.webkit.org/show_bug.cgi?id=131344
+
+        Reviewed by Eric Carlson.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::configureTextTrackGroup) If we decide that captions should
+        be active (due to user preferences) make sure the 'webkitClosedCaptionsVisible' state
+        is turned on.
+
 2014-04-08  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Paint the filter effect result image on device pixel position.

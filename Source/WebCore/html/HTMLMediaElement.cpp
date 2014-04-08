@@ -3672,8 +3672,14 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
         }
     }
 
-    if (trackToEnable)
+    if (trackToEnable) {
         trackToEnable->setMode(TextTrack::showingKeyword());
+
+        // If user preferences indicate we should always display captions, make sure we reflect the
+        // proper status via the webkitClosedCaptionsVisible API call:
+        if (!webkitClosedCaptionsVisible() && closedCaptionsVisible() && displayMode == CaptionUserPreferences::AlwaysOn)
+            m_webkitLegacyClosedCaptionOverride = true;
+    }
 
     m_processingPreferenceChange = false;
 }
