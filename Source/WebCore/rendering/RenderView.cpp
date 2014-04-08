@@ -960,11 +960,11 @@ bool RenderView::rootBackgroundIsEntirelyFixed() const
 
     return rootObject->rendererForRootBackground().hasEntirelyFixedBackground();
 }
-
-LayoutRect RenderView::backgroundRect(RenderBox* backgroundRenderer) const
+    
+LayoutRect RenderView::unextendedBackgroundRect(RenderBox* backgroundRenderer) const
 {
     if (!hasColumns())
-        return frameView().hasExtendedBackgroundRectForPainting() ? frameView().extendedBackgroundRectForPainting() : unscaledDocumentRect();
+        return unscaledDocumentRect();
 
     ColumnInfo* columnInfo = this->columnInfo();
     LayoutRect backgroundRect(0, 0, columnInfo->desiredColumnWidth(), columnInfo->columnHeight() * columnInfo->columnCount());
@@ -973,6 +973,14 @@ LayoutRect RenderView::backgroundRect(RenderBox* backgroundRenderer) const
     backgroundRenderer->flipForWritingMode(backgroundRect);
 
     return backgroundRect;
+}
+    
+LayoutRect RenderView::backgroundRect(RenderBox* backgroundRenderer) const
+{
+    if (!hasColumns() && frameView().hasExtendedBackgroundRectForPainting())
+        return frameView().extendedBackgroundRectForPainting();
+
+    return unextendedBackgroundRect(backgroundRenderer);
 }
 
 IntRect RenderView::documentRect() const

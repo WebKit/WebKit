@@ -2575,8 +2575,18 @@ IntRect FrameView::extendedBackgroundRectForPainting() const
     TiledBacking* tiledBacking = this->tiledBacking();
     if (!tiledBacking)
         return IntRect();
-
-    return tiledBacking->bounds();
+    
+    RenderView* renderView = this->renderView();
+    if (!renderView)
+        return IntRect();
+    
+    LayoutRect extendedRect = renderView->unextendedBackgroundRect(renderView);
+    if (!tiledBacking->hasMargins())
+        return pixelSnappedIntRect(extendedRect);
+    
+    extendedRect.moveBy(LayoutPoint(-tiledBacking->leftMarginWidth(), -tiledBacking->topMarginHeight()));
+    extendedRect.expand(LayoutSize(tiledBacking->leftMarginWidth() + tiledBacking->rightMarginWidth(), tiledBacking->topMarginHeight() + tiledBacking->bottomMarginHeight()));
+    return pixelSnappedIntRect(extendedRect);
 }
 
 bool FrameView::shouldUpdateWhileOffscreen() const

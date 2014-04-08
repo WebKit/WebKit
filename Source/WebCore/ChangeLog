@@ -1,3 +1,31 @@
+2014-04-07  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION (r163194-r163227): Garbage tiles in overflow of RTL page with 
+        background image
+        https://bugs.webkit.org/show_bug.cgi?id=131323
+        -and corresponding-
+        <rdar://problem/16402013>
+
+        Reviewed by Tim Horton.
+
+        Returning the TiledBacking::bounds() for the 
+        FrameView::extendedBackgroundRectForPainting() in convenient for ltr pages, but it 
+        is simply incorrect in rtl. There is no easy way to map the rect into the right 
+        coordinate space, so this patch re-works the code to use computations in 
+        RenderView to get the right rect.
+
+        Call RenderView::unextendedBackgroundRect() and expand and move it based on the 
+        TiledBacking’s margins.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::extendedBackgroundRectForPainting):
+
+        The logic that used to be in backgroundRect() has been moved to 
+        unextendedBackgroundRect(). 
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::unextendedBackgroundRect):
+        (WebCore::RenderView::backgroundRect):
+        * rendering/RenderView.h:
+
 2014-04-07  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] inset complex calc() args vanish in serialized computed style
