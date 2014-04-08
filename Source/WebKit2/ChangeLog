@@ -1,3 +1,43 @@
+2014-04-07  Dan Bernstein  <mitz@apple.com>
+
+        Add bundle client function corresponding to startAssistingNode
+        https://bugs.webkit.org/show_bug.cgi?id=131332
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/PageClient.h: Added userData parameter to startAssistingNode.
+
+        * UIProcess/WebPageProxy.h: Added message decoder parameter to startAssistingNode.
+        * UIProcess/WebPageProxy.messages.in: Added message decoder parameter to StartAssistingNode.
+
+        * UIProcess/ios/PageClientImplIOS.h: Updated startAssistingNode override.
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::startAssistingNode): Decode the user data into an NSObject and pass
+        it on to the content view.
+
+        * UIProcess/ios/WKContentViewInteraction.h: Added userObject parameter to
+        -_startAssitingNode:.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _startAssistingNode:userObject:]): Added userObject parameter. We will pass
+        it to a future delegate method.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::startAssistingNode): Decode the user data and pass it to the client.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFormDelegatePrivate.h: Declared new
+        delegate method.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setFormDelegate:]): Added an implementation
+        of API::InjectedBundle::FormClient::willBeginInputSession which calls the new delegate
+        method, and encodes the user object into userData.
+
+        * WebProcess/InjectedBundle/APIInjectedBundleFormClient.h:
+        (API::InjectedBundle::FormClient::willBeginInputSession): Added willBeginInputSession.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::elementDidFocus): Call willBeginInputSession and send the user data along
+        with the StartAssistingNode message to the UI process.
+
 2014-04-07  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed. Fixing the EFL build.

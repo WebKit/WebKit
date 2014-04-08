@@ -107,7 +107,7 @@ private:
 
     virtual void didCommitLayerTree(const RemoteLayerTreeTransaction&) override;
 
-    virtual void startAssistingNode(const AssistedNodeInformation&) override;
+    virtual void startAssistingNode(const AssistedNodeInformation&, API::Object* userData) override;
     virtual void stopAssistingNode() override;
     virtual void selectionDidChange() override;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) override;

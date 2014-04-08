@@ -35,6 +35,7 @@
 #import "RemoteLayerTreeTransaction.h"
 #import "ViewUpdateDispatcherMessages.h"
 #import "WKBrowsingContextControllerInternal.h"
+#import "WebContextUserMessageCoders.h"
 #import "WebKitSystemInterfaceIOS.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
@@ -462,9 +463,14 @@ void WebPageProxy::didGetTapHighlightGeometries(uint64_t requestID, const WebCor
     m_pageClient.didGetTapHighlightGeometries(requestID, color, highlightedQuads, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
 }
 
-void WebPageProxy::startAssistingNode(const AssistedNodeInformation& information)
+void WebPageProxy::startAssistingNode(const AssistedNodeInformation& information, IPC::MessageDecoder& decoder)
 {
-    m_pageClient.startAssistingNode(information);
+    RefPtr<API::Object> userData;
+    WebContextUserMessageDecoder messageDecoder(userData, process());
+    if (!decoder.decode(messageDecoder))
+        return;
+
+    m_pageClient.startAssistingNode(information, userData.get());
 }
 
 void WebPageProxy::stopAssistingNode()

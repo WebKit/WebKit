@@ -33,6 +33,7 @@
 #import "EditingRange.h"
 #import "EditorState.h"
 #import "GestureTypes.h"
+#import "InjectedBundleUserMessageCoders.h"
 #import "InteractionInformationAtPosition.h"
 #import "LayerTreeHost.h"
 #import "PluginView.h"
@@ -1685,7 +1686,9 @@ void WebPage::elementDidFocus(WebCore::Node* node)
         m_assistedNode = node;
         AssistedNodeInformation information;
         getAssistedNodeInformation(information);
-        send(Messages::WebPageProxy::StartAssistingNode(information));
+        RefPtr<API::Object> userData;
+        m_formClient->willBeginInputSession(this, toElement(node), WebFrame::fromCoreFrame(*node->document().frame()), userData);
+        send(Messages::WebPageProxy::StartAssistingNode(information, InjectedBundleUserMessageEncoder(userData.get())));
     }
 }
 

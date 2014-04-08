@@ -1874,7 +1874,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     return _assistedNodeInformation.selectOptions;
 }
 
-- (void)_startAssistingNode:(const AssistedNodeInformation&)information
+- (void)_startAssistingNode:(const AssistedNodeInformation&)information userObject:(NSObject <NSSecureCoding> *)userObject
 {
     _isEditable = YES;
     _assistedNodeInformation = information;
