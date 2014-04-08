@@ -31,6 +31,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "14F271BD18EA3963008C152F"
+               BuildableName = "libbmalloc.a"
+               BlueprintName = "bmalloc"
+               ReferencedContainer = "container:Source/bmalloc/bmalloc.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "5D247B6114689B8600E78B76"
                BuildableName = "libWTF.a"
                BlueprintName = "WTF"

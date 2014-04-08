@@ -1,3 +1,14 @@
+2014-04-08  Dan Bernstein  <mitz@apple.com>
+
+        Added bmalloc to the WebKit workspace.
+        https://bugs.webkit.org/show_bug.cgi?id=131362
+
+        Reviewed by Geoff Garen.
+
+        * WebKit.xcworkspace/contents.xcworkspacedata:
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme:
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme:
+
 2014-04-08  Geoffrey Garen  <ggaren@apple.com>
 
         Build bmalloc on iOS too
