@@ -656,6 +656,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
+    if (![self usesStandardContentView])
+        [_customContentView scrollViewDidScroll:(UIScrollView *)scrollView];
+
     [self _updateVisibleContentRects];
 }
 

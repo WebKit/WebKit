@@ -1,3 +1,34 @@
+2014-04-07  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS WebKit2] WKPDFView fades in tiles, PDFs load very flashily
+        https://bugs.webkit.org/show_bug.cgi?id=131325
+        <rdar://problem/16382960>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView scrollViewDidScroll:]):
+        Forward scroll events to the current custom content provider.
+
+        * UIProcess/Cocoa/WKWebViewContentProvider.h:
+        Make content providers UIScrollViewDelegates (though we only forward didScroll for now).
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_setContentProviderData:suggestedFilename:]):
+        (-[WKPDFView web_setMinimumSize:]):
+        (-[WKPDFView web_setScrollView:]):
+        (-[WKPDFView scrollViewDidScroll:]):
+        (-[WKPDFView _revalidateViews]):
+        (-[WKPDFView _computePageAndDocumentFrames]):
+        (-[WKPDFView layoutViews]): Deleted.
+        Keep track of each UIPDFPage, UIPDFPageView, and its frame (in unscaled/document coordinates).
+        Compute all the rects up front (and re-compute upon rotation, loading, etc.).
+        When scrolling, find all the pages that intersect the view (inflated by 1.5x in each
+        vertical direction), and ensure that pages that are inside that rect have
+        UIPDFPageViews installed, and ones that are outside that rect do not.
+        Use setUseBackingLayer to ensure that we have a low-resolution layer behind the
+        tiled layer to avoid flashiness.
+
 2014-04-07  Dan Bernstein  <mitz@apple.com>
 
         Add API::InjectedBundle::FormClient
