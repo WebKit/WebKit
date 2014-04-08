@@ -45,12 +45,6 @@ using namespace WebCore;
 - (CFBundleRef)_cfBundle;
 @end
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1080
-@interface NSKeyedUnarchiver (WKDetails)
-- (void)setRequiresSecureCoding:(BOOL)b;
-@end
-#endif
-
 namespace WebKit {
 
 bool InjectedBundle::load(API::Object* initializationUserData)

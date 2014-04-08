@@ -56,12 +56,6 @@ enum : NSUInteger {
 };
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1080
-@interface NSKeyedArchiver (WKDetails)
-- (void)setRequiresSecureCoding:(BOOL)b;
-@end
-#endif
-
 @implementation WKProcessPool {
     WebKit::WeakObjCPtr<id <_WKDownloadDelegate>> _downloadDelegate;
 

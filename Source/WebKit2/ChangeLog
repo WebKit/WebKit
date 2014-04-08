@@ -1,3 +1,17 @@
+2014-04-08  Anders Carlsson  <andersca@apple.com>
+
+        Move a Mountain Lion declaration to the WebKit2 prefix header
+        https://bugs.webkit.org/show_bug.cgi?id=131391
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        * UIProcess/mac/WebContextMac.mm:
+        * WebKit2Prefix.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+
 2014-04-08  Antti Koivisto  <antti@apple.com>
 
         Remove exposedRect from TileController

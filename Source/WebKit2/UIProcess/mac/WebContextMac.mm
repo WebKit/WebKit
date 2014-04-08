@@ -61,12 +61,6 @@ extern "C" void _CFNetworkResetHSTSHostsWithSession(CFURLStorageSessionRef sessi
 
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1080
-@interface NSKeyedArchiver (WKDetails)
-- (void)setRequiresSecureCoding:(BOOL)b;
-@end
-#endif
-
 using namespace WebCore;
 
 NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
