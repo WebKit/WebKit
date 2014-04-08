@@ -412,6 +412,14 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
             }
         }
 
+        virtual void textDidChangeInTextField(WebPage*, HTMLInputElement* inputElement, WebFrame* frame) override
+        {
+            auto formDelegate = m_controller->_formDelegate.get();
+
+            if ([formDelegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:textDidChangeInTextField:inFrame:)])
+                [formDelegate _webProcessPlugInBrowserContextController:m_controller textDidChangeInTextField:wrapper(*WebKit::InjectedBundleNodeHandle::getOrCreate(inputElement)) inFrame:wrapper(*frame)];
+        }
+
         static void releaseNSData(unsigned char*, const void* untypedData)
         {
             [(NSData *)untypedData release];

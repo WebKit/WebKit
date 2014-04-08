@@ -1,5 +1,19 @@
 2014-04-08  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] Add a bundle form delegate method corresponding to textDidChangeInTextField
+        https://bugs.webkit.org/show_bug.cgi?id=131369
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFormDelegatePrivate.h: Declared
+        new delegate method.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setFormDelegate:]): Added an override
+        of API::InjectedBundle::FormClient::textDidChangeInTextField which calls the new delegate
+        method.
+
+2014-04-08  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Add WKFormDelegate
         https://bugs.webkit.org/show_bug.cgi?id=131343
 

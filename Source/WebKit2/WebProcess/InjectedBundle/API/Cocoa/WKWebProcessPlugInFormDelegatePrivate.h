@@ -37,6 +37,7 @@
 
 - (void)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller didFocusTextField:(WKWebProcessPlugInNodeHandle *)textField inFrame:(WKWebProcessPlugInFrame *)frame;
 - (void)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller willSubmitForm:(WKWebProcessPlugInNodeHandle *)form toFrame:(WKWebProcessPlugInFrame *)frame fromFrame:(WKWebProcessPlugInFrame *)sourceFrame withValues:(NSDictionary *)values;
+- (void)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller textDidChangeInTextField:(WKWebProcessPlugInNodeHandle *)textField inFrame:(WKWebProcessPlugInFrame *)frame;
 
 // The return value is exposed in the UI process via the userObject property of the _WKFormInputSession object.
 - (NSObject <NSSecureCoding> *)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller willBeginInputSessionForElement:(WKWebProcessPlugInNodeHandle *)node inFrame:(WKWebProcessPlugInFrame *)frame;
