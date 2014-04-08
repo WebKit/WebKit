@@ -1,5 +1,20 @@
 2014-04-08  Zalan Bujtas  <zalan@apple.com>
 
+        Subpixel rendering: Paint the filter effect result image on device pixel position.
+        https://bugs.webkit.org/show_bug.cgi?id=131255
+
+        Reviewed by Simon Fraser.
+
+        This patch moves filter effect images from integral to device pixel position. However,
+        result images are still integral based.
+
+        Test: css3/filters/hidpi-filter-is-on-subpixel-position.html
+
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRendererHelper::applyFilterEffect):
+
+2014-04-08  Zalan Bujtas  <zalan@apple.com>
+
         Subpixel rendering: Make border images device pixel aware.
         https://bugs.webkit.org/show_bug.cgi?id=131209
 
