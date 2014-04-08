@@ -705,11 +705,11 @@ PassRefPtr<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(R
 static PassRef<CSSValueList> getBorderRadiusCornerValues(const LengthSize& radius, const RenderStyle* style, RenderView* renderView)
 {
     auto list = CSSValueList::createSpaceSeparated();
-    if (radius.width().type() == Percent)
+    if (radius.width().isPercentNotCalculated())
         list.get().append(cssValuePool().createValue(radius.width().percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
     else
         list.get().append(zoomAdjustedPixelValue(valueForLength(radius.width(), 0, renderView), style));
-    if (radius.height().type() == Percent)
+    if (radius.height().isPercentNotCalculated())
         list.get().append(cssValuePool().createValue(radius.height().percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
     else
         list.get().append(zoomAdjustedPixelValue(valueForLength(radius.height(), 0, renderView), style));
@@ -719,7 +719,7 @@ static PassRef<CSSValueList> getBorderRadiusCornerValues(const LengthSize& radiu
 static PassRef<CSSValue> getBorderRadiusCornerValue(const LengthSize& radius, const RenderStyle* style, RenderView* renderView)
 {
     if (radius.width() == radius.height()) {
-        if (radius.width().type() == Percent)
+        if (radius.width().isPercentNotCalculated())
             return cssValuePool().createValue(radius.width().percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
         return zoomAdjustedPixelValue(valueForLength(radius.width(), 0, renderView), style);
     }
@@ -1452,12 +1452,13 @@ static PassRef<CSSPrimitiveValue> lineHeightFromStyle(RenderStyle* style, Render
     Length length = style->lineHeight();
     if (length.isNegative())
         return cssValuePool().createIdentifierValue(CSSValueNormal);
-    if (length.isPercent())
+    if (length.isPercentNotCalculated()) {
         // This is imperfect, because it doesn't include the zoom factor and the real computation
         // for how high to be in pixels does include things like minimum font size and the zoom factor.
         // On the other hand, since font-size doesn't include the zoom factor, we really can't do
         // that here either.
         return zoomAdjustedPixelValue(static_cast<int>(length.percent() * style->fontDescription().specifiedSize()) / 100, style);
+    }
     return zoomAdjustedPixelValue(floatValueForLength(length, 0, renderView), style);
 }
 
@@ -2164,12 +2165,12 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             if (marginRight.isFixed() || !renderer || !renderer->isBox())
                 return zoomAdjustedPixelValueForLength(marginRight, style.get());
             float value;
-            if (marginRight.isPercent() || marginRight.isViewportPercentage())
+            if (marginRight.isPercent() || marginRight.isViewportPercentage()) {
                 // RenderBox gives a marginRight() that is the distance between the right-edge of the child box
                 // and the right-edge of the containing box, when display == BLOCK. Let's calculate the absolute
                 // value of the specified margin-right % instead of relying on RenderBox's marginRight() value.
                 value = minimumValueForLength(marginRight, toRenderBox(renderer)->containingBlockLogicalWidthForContent(), m_node->document().renderView());
-            else
+            } else
                 value = toRenderBox(renderer)->marginRight();
             return zoomAdjustedPixelValue(value, style.get());
         }

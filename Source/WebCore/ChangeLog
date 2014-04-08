@@ -1,3 +1,93 @@
+2014-04-08  Darin Adler  <darin@apple.com>
+
+        Fix assertions triggered by CSS calc changes in r166860
+        https://bugs.webkit.org/show_bug.cgi?id=131346
+
+        Reviewed by Andrei Bucur.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::getBorderRadiusCornerValues): Use isPercentNotCalculated() instead of
+        type() == Percent; no behavior change.
+        (WebCore::getBorderRadiusCornerValue): Ditto.
+        (WebCore::lineHeightFromStyle): Use isPercentNotCalculated() before code
+        that calls percent(), which won't work for a calculated length.
+
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyBorderRadius::applyValue): Use isNegative and isZero rather
+        than calling value() unconditionally. Should make calculated values work better.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::is100Percent): Use isPercentNotCalculated() before code
+        that calls percent(), which won't work for a calculated length.
+
+        * platform/Length.cpp:
+        (WebCore::CalculationValueMap::deref): Use adoptRef here instead of calling deref
+        immediately, so the deref will happen after calling remove. This makes the code
+        work properly even if it's reentered inside the calculation value's destructor.
+
+        * platform/Length.h:
+        (WebCore::Length::percent): Change assert to isPercentNotCalculated, since the
+        value function this calls only works for non-calculated values anyway.
+        (WebCore::Length::isPercentNotCalculated): Added.
+        (WebCore::Length::isPercent): Changed to call isPercentNotCalculated.
+        (WebCore::Length::isSpecified): Changed to call isPercent.
+
+        * platform/graphics/transforms/TranslateTransformOperation.h:
+        (WebCore::TranslateTransformOperation::apply): Use isPercentNotCalculated()
+        instead of type() == Percent; no behavior change.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn): Use isPercentNotCalculated()
+        before code that calls value() or percent(), which won't work for a calculated length.
+        (WebCore::AutoTableLayout::computeIntrinsicLogicalWidths): Ditto.
+        (WebCore::AutoTableLayout::calcEffectiveLogicalWidth): Ditto.
+        (WebCore::AutoTableLayout::layout): Ditto.
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::layout): Ditto.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateImageIntrinsicDimensions): Ditto.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::updateLogicalHeightForCell): Ditto.
+        (WebCore::RenderTableSection::distributeExtraLogicalHeightToPercentRows): Ditto.
+        (WebCore::RenderTableSection::distributeExtraLogicalHeightToRows): Ditto.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::requireTransformOrigin): Use modern for loop. Also marked function static,
+        since it's private to this file.
+        (WebCore::RenderStyle::applyTransform): Use isPercentNotCalculated() instead of
+        type() == Percent; no behavior change. Also use a modern for loop and auto& to avoid
+        a really long type name.
+
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeIntrinsicRatioInformation): Use isPercentNotCalculated()
+        before code that calls percent(), which won't work for a calculated length.
+
+        * platform/Length.h:
+        (WebCore::Length::percent):
+        (WebCore::Length::isPercentNotCalculated):
+        (WebCore::Length::isPercent):
+        (WebCore::Length::isSpecified):
+        * platform/graphics/transforms/TranslateTransformOperation.h:
+        (WebCore::TranslateTransformOperation::apply):
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::AutoTableLayout::computeIntrinsicLogicalWidths):
+        (WebCore::AutoTableLayout::calcEffectiveLogicalWidth):
+        (WebCore::AutoTableLayout::layout):
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::layout):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateImageIntrinsicDimensions):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::updateLogicalHeightForCell):
+        (WebCore::RenderTableSection::distributeExtraLogicalHeightToPercentRows):
+        (WebCore::RenderTableSection::distributeExtraLogicalHeightToRows):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::requireTransformOrigin):
+        (WebCore::RenderStyle::applyTransform):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeIntrinsicRatioInformation):
+
 2014-04-08  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] Remove media controls dead code

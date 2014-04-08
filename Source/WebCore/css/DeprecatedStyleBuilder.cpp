@@ -443,7 +443,6 @@ public:
             return;
 
         Length radiusWidth;
-        Length radiusHeight;
         if (pair->first()->isPercentage())
             radiusWidth = Length(pair->first()->getDoubleValue(), Percent);
         else if (pair->first()->isViewportPercentageLength())
@@ -452,6 +451,8 @@ public:
             radiusWidth = Length(pair->first()->cssCalcValue()->createCalculationValue(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom()));
         else
             radiusWidth = pair->first()->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
+
+        Length radiusHeight;
         if (pair->second()->isPercentage())
             radiusHeight = Length(pair->second()->getDoubleValue(), Percent);
         else if (pair->second()->isViewportPercentageLength())
@@ -460,17 +461,16 @@ public:
             radiusHeight = Length(pair->second()->cssCalcValue()->createCalculationValue(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom()));
         else
             radiusHeight = pair->second()->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
-        int width = radiusWidth.value();
-        int height = radiusHeight.value();
-        if (width < 0 || height < 0)
-            return;
-        if (!width)
-            radiusHeight = radiusWidth; // Null out the other value.
-        else if (!height)
-            radiusWidth = radiusHeight; // Null out the other value.
 
-        LengthSize size(radiusWidth, radiusHeight);
-        setValue(styleResolver->style(), size);
+        if (radiusWidth.isNegative() || radiusHeight.isNegative())
+            return;
+
+        if (radiusWidth.isZero() || radiusHeight.isZero()) {
+            radiusWidth.setValue(Fixed, 0);
+            radiusHeight.setValue(Fixed, 0);
+        }
+
+        setValue(styleResolver->style(), LengthSize(radiusWidth, radiusHeight));
     }
     static PropertyHandler createHandler()
     {

@@ -68,7 +68,7 @@ private:
     virtual bool apply(TransformationMatrix& transform, const FloatSize& borderBoxSize) const
     {
         transform.translate3d(x(borderBoxSize), y(borderBoxSize), z(borderBoxSize));
-        return m_x.type() == Percent || m_y.type() == Percent;
+        return m_x.isPercentNotCalculated() || m_y.isPercentNotCalculated();
     }
 
     virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false);

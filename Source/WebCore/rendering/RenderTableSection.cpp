@@ -65,12 +65,11 @@ static inline void updateLogicalHeightForCell(RenderTableSection::RowStruct& row
         Length cRowLogicalHeight = row.logicalHeight;
         switch (logicalHeight.type()) {
         case Percent:
-            if (!(cRowLogicalHeight.isPercent())
-                || (cRowLogicalHeight.isPercent() && cRowLogicalHeight.percent() < logicalHeight.percent()))
+            if (!cRowLogicalHeight.isPercentNotCalculated() || cRowLogicalHeight.percent() < logicalHeight.percent())
                 row.logicalHeight = logicalHeight;
             break;
         case Fixed:
-            if (cRowLogicalHeight.type() < Percent
+            if (cRowLogicalHeight.isAuto() || cRowLogicalHeight.isRelative()
                 || (cRowLogicalHeight.isFixed() && cRowLogicalHeight.value() < logicalHeight.value()))
                 row.logicalHeight = logicalHeight;
             break;
@@ -435,7 +434,7 @@ void RenderTableSection::distributeExtraLogicalHeightToPercentRows(int& extraLog
     totalPercent = std::min(totalPercent, 100);
     int rowHeight = m_rowPos[1] - m_rowPos[0];
     for (unsigned r = 0; r < totalRows; ++r) {
-        if (totalPercent > 0 && m_grid[r].logicalHeight.isPercent()) {
+        if (totalPercent > 0 && m_grid[r].logicalHeight.isPercentNotCalculated()) {
             int toAdd = std::min<int>(extraLogicalHeight, (totalHeight * m_grid[r].logicalHeight.percent() / 100) - rowHeight);
             // If toAdd is negative, then we don't want to shrink the row (this bug
             // affected Outlook Web Access).
@@ -507,7 +506,7 @@ int RenderTableSection::distributeExtraLogicalHeightToRows(int extraLogicalHeigh
     for (unsigned r = 0; r < totalRows; r++) {
         if (m_grid[r].logicalHeight.isAuto())
             ++autoRowsCount;
-        else if (m_grid[r].logicalHeight.isPercent())
+        else if (m_grid[r].logicalHeight.isPercentNotCalculated())
             totalPercent += m_grid[r].logicalHeight.percent();
     }
 

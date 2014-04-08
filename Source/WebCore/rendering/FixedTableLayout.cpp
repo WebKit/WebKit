@@ -225,7 +225,7 @@ void FixedTableLayout::layout()
         if (m_width[i].isFixed()) {
             calcWidth[i] = m_width[i].value();
             totalFixedWidth += calcWidth[i];
-        } else if (m_width[i].isPercent()) {
+        } else if (m_width[i].isPercentNotCalculated()) {
             calcWidth[i] = valueForLength(m_width[i], tableLogicalWidth);
             totalPercentWidth += calcWidth[i];
             totalPercent += m_width[i].percent();
@@ -254,7 +254,7 @@ void FixedTableLayout::layout()
             if (totalPercent) {
                 totalPercentWidth = 0;
                 for (unsigned i = 0; i < nEffCols; i++) {
-                    if (m_width[i].isPercent()) {
+                    if (m_width[i].isPercentNotCalculated()) {
                         calcWidth[i] = m_width[i].percent() * (tableLogicalWidth - totalFixedWidth) / totalPercent;
                         totalPercentWidth += calcWidth[i];
                     }

@@ -84,6 +84,7 @@ public:
     bool isFixed() const;
     bool isMaxContent() const;
     bool isMinContent() const;
+    bool isPercentNotCalculated() const; // FIXME: Rename to isPercent.
     bool isRelative() const;
     bool isUndefined() const;
 
@@ -97,11 +98,7 @@ public:
     bool isPositive() const;
     bool isNegative() const;
 
-    // Returns true for both Percent and Calculated.
-    // FIXME: Doesn't really seem OK to return true for Calculated given this function's name,
-    // even though all calculated values are treated as percentages. Callers can tell Percent
-    // from a Calculated already by looking at type, so this function only half-hides the distinction.
-    bool isPercent() const;
+    bool isPercent() const; // Returns true for both Percent and Calculated. FIXME: Find a better name for this.
 
     bool isIntrinsic() const;
     bool isIntrinsicOrAuto() const;
@@ -262,7 +259,7 @@ inline int Length::intValue() const
 
 inline float Length::percent() const
 {
-    ASSERT(isPercent());
+    ASSERT(isPercentNotCalculated());
     return value();
 }
 
@@ -341,6 +338,11 @@ inline bool Length::isNegative() const
     return m_isFloat ? (m_floatValue < 0) : (m_intValue < 0);
 }
 
+inline bool Length::isPercentNotCalculated() const
+{
+    return type() == Percent;
+}
+
 inline bool Length::isRelative() const
 {
     return type() == Relative;
@@ -353,7 +355,7 @@ inline bool Length::isUndefined() const
 
 inline bool Length::isPercent() const
 {
-    return type() == Percent || isCalculated();
+    return isPercentNotCalculated() || isCalculated();
 }
 
 inline bool Length::isPositive() const
@@ -395,7 +397,7 @@ inline bool Length::isIntrinsicOrAuto() const
 
 inline bool Length::isSpecified() const
 {
-    return isFixed() || type() == Percent || isCalculated() || isViewportPercentage();
+    return isFixed() || isPercent() || isViewportPercentage();
 }
 
 inline bool Length::isSpecifiedOrIntrinsic() const

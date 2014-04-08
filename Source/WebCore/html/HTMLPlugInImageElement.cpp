@@ -610,7 +610,7 @@ void HTMLPlugInImageElement::checkSizeChangeForSnapshotting()
 
 static inline bool is100Percent(Length length)
 {
-    return length.isPercent() && length.percent() == 100;
+    return length.isPercentNotCalculated() && length.percent() == 100;
 }
 
 void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const URL& url)

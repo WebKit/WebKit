@@ -196,7 +196,7 @@ inline unsigned CalculationValueMap::insert(PassRef<CalculationValue> value)
 {
     ASSERT(m_nextAvailableHandle);
 
-    // The leakRef below is balanced by the deref in the deref member function.
+    // The leakRef below is balanced by the adoptRef in the deref member function.
     Entry leakedValue = value.leakRef();
 
     // FIXME: This monotonically increasing handle generation scheme is potentially wasteful
@@ -231,8 +231,9 @@ inline void CalculationValueMap::deref(unsigned handle)
         return;
     }
 
-    // The deref below is balanced by the leakRef in the insert member function.
-    it->value.value->deref();
+    // The adoptRef here is balanced by the leakRef in the insert member function.
+    Ref<CalculationValue> value { adoptRef(*it->value.value) };
+
     m_map.remove(it);
 }
 

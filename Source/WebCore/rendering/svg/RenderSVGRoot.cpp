@@ -113,7 +113,7 @@ void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, d
 
     // If our intrinsic size is in percentage units, return those to the caller through the intrinsicSize. Notify the caller
     // about the special situation, by setting isPercentageIntrinsicSize=true, so it knows how to interpret the return values.
-    if (intrinsicWidthAttribute.isPercent() && intrinsicHeightAttribute.isPercent()) {
+    if (intrinsicWidthAttribute.isPercentNotCalculated() && intrinsicHeightAttribute.isPercentNotCalculated()) {
         isPercentageIntrinsicSize = true;
         intrinsicSize = FloatSize(intrinsicWidthAttribute.percent(), intrinsicHeightAttribute.percent());
     }

@@ -892,7 +892,7 @@ LayoutSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* i
     // that establishes the coordinate system for the 'background-position' property. 
     
     // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
-    if (intrinsicWidth.isPercent() && intrinsicHeight.isPercent() && intrinsicRatio.isEmpty()) {
+    if (intrinsicWidth.isPercentNotCalculated() && intrinsicHeight.isPercentNotCalculated() && intrinsicRatio.isEmpty()) {
         // Resolve width/height percentages against positioningAreaSize, only if no intrinsic ratio is provided.
         float resolvedWidth = positioningAreaSize.width() * intrinsicWidth.percent() / 100;
         float resolvedHeight = positioningAreaSize.height() * intrinsicHeight.percent() / 100;
