@@ -1419,6 +1419,16 @@ sub checkInstalledTools()
     die "You must have Python installed to build WebKit.\n" if ($?);
     die "Python 2.7.3 is not compatible with the WebKit build. Please downgrade to Python 2.6.8.\n" if ($pythonVer =~ /2\.7\.3/);
 
+    # cURL 7.34.0 has a bug that prevents authentication with opensource.apple.com (and other things using SSL3).
+    my $curlVer = `curl --version | grep "curl"`;
+    chomp($curlVer);
+    if (!$? and $curlVer =~ /libcurl\/7\.33\.0/) {
+        print "cURL version 7.34.0 has a bug that prevents authentication with SSL v2 or v3.\n";
+        print "cURL 7.33.0 is known to work. The cURL projects is preparing an update to\n";
+        print "correct this problem.\n\n";
+        die "Please install a working cURL and try again.\n";
+    }
+
     # MathML requires fonts that do not ship with Windows (at least through Windows 8). Warn the user if they are missing
     my @fonts = qw(STIXGeneral-Regular MathJax_Main-Regular);
     my @missing = ();

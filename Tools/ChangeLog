@@ -1,3 +1,12 @@
+2014-04-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed gardening: Prevent users from attempting
+        to build with known invalid cURL.
+
+        * Scripts/webkitdirs.pm:
+        (checkInstalledTools): Block build attempts with bad
+        Cygwin tool set.
+
 2014-04-07  Geoffrey Garen  <ggaren@apple.com>
 
         Build bmalloc on Mac
