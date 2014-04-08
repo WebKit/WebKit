@@ -27,8 +27,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 list(APPEND WebCore_SOURCES
     editing/SmartReplace.cpp
 
-    html/shadow/MediaControlsGtk.cpp
-
     loader/soup/CachedRawResourceSoup.cpp
     loader/soup/SubresourceLoaderSoup.cpp
 

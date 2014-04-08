@@ -1,3 +1,19 @@
+2014-04-08  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] Remove media controls dead code
+        https://bugs.webkit.org/show_bug.cgi?id=131300
+
+        Reviewed by Eric Carlson.
+
+        MediaControlsGtk.cpp is no longer used so we can remove it from
+        the repo.
+
+        No new tests needed.
+
+        * PlatformGTK.cmake: Remove html/shadow/MediaControlsGtk.cpp from
+        compilation.
+        * html/shadow/MediaControlsGtk.cpp: Removed.
+
 2014-04-08  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Fixed positioned elements in named flows have fragmented content
