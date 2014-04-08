@@ -1,5 +1,17 @@
 2014-04-08  Zalan Bujtas  <zalan@apple.com>
 
+        Subpixel rendering: Slow paint path for inlines should snap to device pixels.
+        https://bugs.webkit.org/show_bug.cgi?id=131259
+
+        Reviewed by Simon Fraser.
+
+        InlineTextBox::paint needs to round to the same device pixel position as SimpleLineLayout does.
+
+        * fast/inline/hidpi-slow-path-text-on-subpixel-position-expected.html: Added.
+        * fast/inline/hidpi-slow-path-text-on-subpixel-position.html: Added.
+
+2014-04-08  Zalan Bujtas  <zalan@apple.com>
+
         Subpixel rendering: Paint the filter effect result image on device pixel position.
         https://bugs.webkit.org/show_bug.cgi?id=131255
 

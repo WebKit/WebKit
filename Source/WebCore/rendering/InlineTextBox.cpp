@@ -517,7 +517,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     LayoutUnit paintEnd = isHorizontal() ? paintInfo.rect.maxX() : paintInfo.rect.maxY();
     LayoutUnit paintStart = isHorizontal() ? paintInfo.rect.x() : paintInfo.rect.y();
     
-    LayoutPoint adjustedPaintOffset = roundedIntPoint(paintOffset);
+    FloatPoint adjustedPaintOffset = roundedForPainting(paintOffset, renderer().document().deviceScaleFactor());
     
     if (logicalStart >= paintEnd || logicalStart + logicalExtent <= paintStart)
         return;

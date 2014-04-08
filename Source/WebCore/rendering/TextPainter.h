@@ -80,8 +80,8 @@ private:
     const AtomicString& m_emphasisMark;
     RenderCombineText* m_combinedText;
     TextRun& m_textRun;
-    FloatRect& m_boxRect;
-    FloatPoint& m_textOrigin;
+    FloatRect m_boxRect;
+    FloatPoint m_textOrigin;
     int m_emphasisMarkOffset;
     bool m_textBoxIsHorizontal;
     SavedDrawingStateForMask m_savedDrawingStateForMask;
