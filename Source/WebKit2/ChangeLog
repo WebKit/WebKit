@@ -1,3 +1,13 @@
+2014-04-08  Alexey Proskuryakov  <ap@apple.com>
+
+        FlagsChanged events are not delivered to input methods when using async text input
+        https://bugs.webkit.org/show_bug.cgi?id=131383
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm: (-[WKView _interpretKeyEvent:completionHandler:]):
+        The early return is no longer needed.
+
 2014-04-08  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures (Swipe): Swipe-start hysteresis
