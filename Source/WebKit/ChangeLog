@@ -1,3 +1,13 @@
+2014-04-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove the WebKitGTK+ WebKit 1 code
+        https://bugs.webkit.org/show_bug.cgi?id=131399
+
+        Reviewed by Anders Carlsson.
+
+        * PlatformGTK.cmake: Removed.
+        * gtk: Remove this entire directory.
+
 2014-04-06  Darin Adler  <darin@apple.com>
 
         Make some bindings improvements, with smaller code size for error message generation

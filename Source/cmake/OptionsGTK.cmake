@@ -8,6 +8,7 @@ set(PROJECT_VERSION_MAJOR 2)
 set(PROJECT_VERSION_MINOR 3)
 set(PROJECT_VERSION_PATCH 3)
 set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
+set(WEBKITGTK_API_VERSION 3.0)
 
 # Libtool library version, not to be confused with API version.
 # See http://www.gnu.org/software/libtool/manual/html_node/Libtool-versioning.html
@@ -15,7 +16,6 @@ CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 22 0 22)
 CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT2 32 0 7)
 CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(JAVASCRIPTCORE 16 2 16)
 
-set(USE_GTK2 OFF CACHE BOOL "Whether or not to use GTK+ 2. WebKit2 only supports GTK+ 3.")
 set(ENABLE_CREDENTIAL_STORAGE ON CACHE BOOL "Whether or not to enable support for credential storage using libsecret.")
 
 # FIXME: We want to expose fewer options to downstream, but for now everything is public.
@@ -93,19 +93,12 @@ WEBKIT_OPTION_END()
 
 set(ENABLE_WEBCORE ON)
 set(ENABLE_INSPECTOR ON)
-set(ENABLE_WEBKIT ON)
-if (NOT USE_GTK2)
-    set(WEBKITGTK_API_VERSION 3.0)
-    set(GTK_API_VERSION 3.0)
-    set(ENABLE_PLUGIN_PROCESS ON)
-    set(ENABLE_WEBKIT2 ON)
-    set(GDK_VERSION_MIN_REQUIRED GDK_VERSION_3_6)
-else ()
-    set(WEBKITGTK_API_VERSION 2.0)
-    set(GTK_API_VERSION 2.0)
-    set(ENABLE_PLUGIN_PROCESS OFF)
-    set(ENABLE_WEBKIT2 OFF)
-endif ()
+set(ENABLE_WEBKIT OFF)
+set(ENABLE_WEBKIT2 ON)
+set(ENABLE_PLUGIN_PROCESS ON)
+
+set(GDK_VERSION_MIN_REQUIRED GDK_VERSION_3_6)
+set(GTK_API_VERSION 3.0)
 
 # These are used to generate the pkg-config files.
 set(prefix ${CMAKE_INSTALL_PREFIX})

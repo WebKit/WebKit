@@ -1,3 +1,13 @@
+2014-04-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove the WebKitGTK+ WebKit 1 code
+        https://bugs.webkit.org/show_bug.cgi?id=131399
+
+        Reviewed by Anders Carlsson.
+
+        * POTFILES.in: Remove references to WebKit1 source files from the list of
+        files with translatable strings.
+
 2014-03-25  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove the autotools build

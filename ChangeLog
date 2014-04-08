@@ -1,3 +1,13 @@
+2014-04-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove the WebKitGTK+ WebKit 1 code
+        https://bugs.webkit.org/show_bug.cgi?id=131399
+
+        Reviewed by Anders Carlsson.
+
+        * Source/PlatformGTK.cmake: Remove WebKit1 dependency from dist target.
+        * Source/cmake/OptionsGTK.cmake: Remove option to compile with GTK+2 or with WebKit2 disabled.
+
 2014-04-08  Dan Bernstein  <mitz@apple.com>
 
         Added bmalloc to the WebKit workspace.
