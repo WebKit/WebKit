@@ -1,5 +1,16 @@
 2014-04-08  Geoffrey Garen  <ggaren@apple.com>
 
+        WTF should link against bmalloc
+        https://bugs.webkit.org/show_bug.cgi?id=131403
+
+        Reviewed by Michael Saboff.
+
+        This is required to build successfullly with bmalloc enabled.
+
+        * WTF.xcodeproj/project.pbxproj:
+
+2014-04-08  Geoffrey Garen  <ggaren@apple.com>
+
         Added a bmalloc back-end for FastMalloc
         https://bugs.webkit.org/show_bug.cgi?id=131387
 
