@@ -1,3 +1,9 @@
+2014-04-08  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed CMake build fix after r166965.
+
+        * UseJSC.cmake: Rename JSClipboardCustom.cpp to JSDataTransferCustom.cpp.
+
 2014-04-08  Enrica Casucci  <enrica@apple.com>
 
         Unreviewed iOS build fix.
