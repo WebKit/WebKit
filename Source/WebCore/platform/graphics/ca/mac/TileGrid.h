@@ -61,8 +61,6 @@ public:
     void revalidateTiles(TileValidationPolicyFlags);
     bool tilesWouldChangeForVisibleRect(const FloatRect& newVisibleRect, const FloatRect& oldVisibleRect) const;
 
-    FloatRect scaledExposedRect() const;
-
     IntRect tileCoverageRect() const;
     IntRect extent() const;
 

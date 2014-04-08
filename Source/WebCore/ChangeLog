@@ -1,3 +1,45 @@
+2014-04-08  Antti Koivisto  <antti@apple.com>
+
+        Remove exposedRect from TileController
+        https://bugs.webkit.org/show_bug.cgi?id=131378
+
+        Reviewed by Simon Fraser.
+
+        Having two separate visible rectangles is confusing. We should compute one on higher level.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setExposedRect):
+        
+            Push exposed rect to tile controller by doing a layer flush (like the changed visible rect is normally passed).
+
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        
+            Remove exposedRect and just use visibleRect.
+
+        (WebCore::TileController::TileController):
+        (WebCore::TileController::setTiledScrollingIndicatorPosition):
+        
+            Update the scrolling indicator position.
+
+        (WebCore::TileController::updateTileCoverageMap):
+        (WebCore::TileController::setExposedRect): Deleted.
+        * platform/graphics/ca/mac/TileGrid.h:
+        * platform/graphics/ca/mac/TileGrid.mm:
+        (WebCore::TileGrid::tilesWouldChangeForVisibleRect):
+        (WebCore::TileGrid::revalidateTiles):
+        (WebCore::TileGrid::scaledExposedRect): Deleted.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        
+            No need to push exposedRect anymore.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+        
+            Integrate exposed rect to visible rect when flushing layers.
+
 2014-04-08  Andreas Kling  <akling@apple.com>
 
         [Mac] Always do a full GC when simulating memory pressure.

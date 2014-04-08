@@ -450,10 +450,8 @@ void TiledCoreAnimationDrawingArea::updateScrolledExposedRect()
 
     frameView->setExposedRect(m_scrolledExposedRect);
 
-    for (const auto& layer : m_pageOverlayLayers.values()) {
-        if (TiledBacking* tiledBacking = layer->tiledBacking())
-            tiledBacking->setExposedRect(m_scrolledExposedRect);
-    }
+    for (const auto& layer : m_pageOverlayLayers.values())
+        layer->flushCompositingState(m_scrolledExposedRect);
 
     frameView->adjustTiledBackingCoverage();
 }

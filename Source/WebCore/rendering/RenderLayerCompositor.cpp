@@ -433,6 +433,8 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
 #else
         // Having a m_clipLayer indicates that we're doing scrolling via GraphicsLayers.
         IntRect visibleRect = m_clipLayer ? IntRect(IntPoint(), frameView.contentsSize()) : frameView.visibleContentRect();
+        if (!frameView.exposedRect().isInfinite())
+            visibleRect.intersect(IntRect(frameView.exposedRect()));
         rootLayer->flushCompositingState(visibleRect);
 #endif
     }

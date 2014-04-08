@@ -4290,14 +4290,16 @@ void FrameView::setExposedRect(FloatRect exposedRect)
 {
     if (m_exposedRect == exposedRect)
         return;
-
     m_exposedRect = exposedRect;
 
     // FIXME: We should support clipping to the exposed rect for subframes as well.
-    if (m_frame->isMainFrame()) {
-        if (TiledBacking* tiledBacking = this->tiledBacking())
-            tiledBacking->setExposedRect(exposedRect);
-    }
+    if (!m_frame->isMainFrame())
+        return;
+    if (TiledBacking* tiledBacking = this->tiledBacking())
+        tiledBacking->setTiledScrollingIndicatorPosition(exposedRect.location());
+
+    if (auto* view = renderView())
+        view->compositor().scheduleLayerFlush(false /* canThrottle */);
 }
 
 } // namespace WebCore

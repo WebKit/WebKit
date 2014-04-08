@@ -58,7 +58,6 @@ TileController::TileController(PlatformCALayer* rootPlatformLayer)
     : m_tileCacheLayer(rootPlatformLayer)
     , m_tileGrid(std::make_unique<TileGrid>(*this))
     , m_tileSize(defaultTileWidth, defaultTileHeight)
-    , m_exposedRect(FloatRect::infiniteRect())
     , m_tileRevalidationTimer(this, &TileController::tileRevalidationTimerFired)
     , m_contentsScale(1)
     , m_deviceScaleFactor(1)
@@ -213,13 +212,12 @@ bool TileController::tilesWouldChangeForVisibleRect(const FloatRect& newVisibleR
     return tileGrid().tilesWouldChangeForVisibleRect(newVisibleRect, m_visibleRect);
 }
 
-void TileController::setExposedRect(const FloatRect& exposedRect)
+void TileController::setTiledScrollingIndicatorPosition(const FloatPoint& position)
 {
-    if (m_exposedRect == exposedRect)
+    if (m_tiledScrollingIndicatorPosition == position)
         return;
-
-    m_exposedRect = exposedRect;
-    setNeedsRevalidateTiles();
+    m_tiledScrollingIndicatorPosition = position;
+    updateTileCoverageMap();
 }
 
 void TileController::prepopulateRect(const FloatRect& rect)
@@ -418,8 +416,6 @@ void TileController::updateTileCoverageMap()
         return;
     FloatRect containerBounds = bounds();
     FloatRect visibleRect = this->visibleRect();
-
-    visibleRect.intersect(tileGrid().scaledExposedRect());
     visibleRect.contract(4, 4); // Layer is positioned 2px from top and left edges.
 
     float widthScale = 1;
@@ -433,11 +429,7 @@ void TileController::updateTileCoverageMap()
     FloatRect mapBounds = containerBounds;
     mapBounds.scale(indicatorScale, indicatorScale);
 
-    if (!m_exposedRect.isInfinite())
-        m_tiledScrollingIndicatorLayer->setPosition(m_exposedRect.location() + FloatPoint(2, 2));
-    else
-        m_tiledScrollingIndicatorLayer->setPosition(FloatPoint(2, 2));
-
+    m_tiledScrollingIndicatorLayer->setPosition(m_tiledScrollingIndicatorPosition + FloatPoint(2, 2));
     m_tiledScrollingIndicatorLayer->setBounds(mapBounds);
     m_tiledScrollingIndicatorLayer->setNeedsDisplay();
 

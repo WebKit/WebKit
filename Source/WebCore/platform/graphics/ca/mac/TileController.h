@@ -88,7 +88,6 @@ public:
     bool isInWindow() const { return m_isInWindow; }
 
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
-    FloatRect exposedRect() const { return m_exposedRect; }
 
     Color tileDebugBorderColor() const { return m_tileDebugBorderColor; }
     float tileDebugBorderWidth() const { return m_tileDebugBorderWidth; }
@@ -133,7 +132,7 @@ private:
     // TiledBacking member functions.
     virtual void setVisibleRect(const FloatRect&) override;
     virtual bool tilesWouldChangeForVisibleRect(const FloatRect&) const override;
-    virtual void setExposedRect(const FloatRect&) override;
+    virtual void setTiledScrollingIndicatorPosition(const FloatPoint&) override;
     virtual void prepopulateRect(const FloatRect&) override;
     virtual void setIsInWindow(bool) override;
     virtual void setTileCoverage(TileCoverage) override;
@@ -184,7 +183,7 @@ private:
     IntSize m_tileSize;
     FloatRect m_visibleRect;
     FloatRect m_visibleRectAtLastRevalidate;
-    FloatRect m_exposedRect; // The exposed area of containing platform views.
+    FloatPoint m_tiledScrollingIndicatorPosition;
     IntRect m_boundsAtLastRevalidate;
 
     Timer<TileController> m_tileRevalidationTimer;

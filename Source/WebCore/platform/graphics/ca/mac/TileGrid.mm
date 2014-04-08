@@ -166,7 +166,6 @@ void TileGrid::updateTilerLayerProperties()
 bool TileGrid::tilesWouldChangeForVisibleRect(const FloatRect& newVisibleRect, const FloatRect& oldVisibleRect) const
 {
     FloatRect visibleRect = newVisibleRect;
-    visibleRect.intersect(scaledExposedRect());
 
     if (visibleRect.isEmpty())
         return false;
@@ -183,13 +182,6 @@ bool TileGrid::tilesWouldChangeForVisibleRect(const FloatRect& newVisibleRect, c
     IntRect coverageRect = rectForTileIndex(topLeft);
     coverageRect.unite(rectForTileIndex(bottomRight));
     return coverageRect != m_primaryTileCoverageRect;
-}
-
-FloatRect TileGrid::scaledExposedRect() const
-{
-    FloatRect scaledExposedRect = m_controller.exposedRect();
-    scaledExposedRect.scale(1 / m_scale);
-    return scaledExposedRect;
 }
 
 bool TileGrid::prepopulateRect(const FloatRect& rect)
@@ -340,8 +332,6 @@ void TileGrid::revalidateTiles(TileValidationPolicyFlags validationPolicy)
 {
     FloatRect visibleRect = m_controller.visibleRect();
     IntRect bounds = m_controller.bounds();
-
-    visibleRect.intersect(scaledExposedRect());
 
     if (visibleRect.isEmpty() || bounds.isEmpty())
         return;
