@@ -75,6 +75,14 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 
         // Flatten any 3D transform.
         matrix = transform.toAffineTransform();
+        // CSS bakes the zoom factor into lengths, including translation components.
+        // In order to align CSS & SVG transforms, we need to invert this operation.
+        float zoom = style->effectiveZoom();
+        if (zoom != 1) {
+            matrix.setE(matrix.e() / zoom);
+            matrix.setF(matrix.f() / zoom);
+        }
+
     } else
         transform().concatenate(matrix);
 
