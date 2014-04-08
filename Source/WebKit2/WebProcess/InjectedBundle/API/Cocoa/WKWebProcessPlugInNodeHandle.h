@@ -44,6 +44,8 @@ WK_API_CLASS
 @property (nonatomic, readonly) BOOL HTMLTextAreaElementIsUserEdited;
 @property (nonatomic, readonly) WKWebProcessPlugInNodeHandle *HTMLTableCellElementCellAbove;
 
+- (BOOL)isTextField;
+
 @end
 
 #endif // WK_API_ENABLED

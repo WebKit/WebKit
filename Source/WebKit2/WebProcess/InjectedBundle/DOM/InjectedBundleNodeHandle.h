@@ -66,6 +66,7 @@ public:
     void setHTMLInputElementAutofilled(bool);
     bool htmlInputElementLastChangeWasUserEdit();
     bool htmlTextAreaElementLastChangeWasUserEdit();
+    bool isTextField() const;
     
     PassRefPtr<InjectedBundleNodeHandle> htmlTableCellElementCellAbove();
 

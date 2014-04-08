@@ -215,6 +215,11 @@ bool InjectedBundleNodeHandle::htmlTextAreaElementLastChangeWasUserEdit()
     return toHTMLTextAreaElement(m_node.get())->lastChangeWasUserEdit();
 }
 
+bool InjectedBundleNodeHandle::isTextField() const
+{
+    return isHTMLInputElement(m_node.get()) && toHTMLInputElement(m_node.get())->isText();
+}
+
 PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::htmlTableCellElementCellAbove()
 {
     if (!m_node->hasTagName(tdTag))

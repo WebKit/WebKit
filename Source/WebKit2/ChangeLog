@@ -1,5 +1,22 @@
 2014-04-08  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] Add a way to tell whether a WKWebProcessPlugInNodeHandle is a text-type HTML input element
+        https://bugs.webkit.org/show_bug.cgi?id=131374
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        (-[WKWebProcessPlugInNodeHandle isTextField]): Added this getter. Calls
+        InjectedBundleNodeHandle::isTextField.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::isTextField): Added. Uses
+        WebCore::HTMLInputElement::isText, which is consistent with what
+        WebChromeClient::focusedElementChanged uses to decide whether to call didFocusTextField.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+
+2014-04-08  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Add a _certificateChain property to WKWebProcessPlugInFrame
         https://bugs.webkit.org/show_bug.cgi?id=131370
 

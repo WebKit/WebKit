@@ -88,6 +88,11 @@ using namespace WebKit;
     return _nodeHandle->htmlTextAreaElementLastChangeWasUserEdit();
 }
 
+- (BOOL)isTextField
+{
+    return _nodeHandle->isTextField();
+}
+
 - (WKWebProcessPlugInNodeHandle *)HTMLTableCellElementCellAbove
 {
     auto nodeHandle = _nodeHandle->htmlTableCellElementCellAbove();
