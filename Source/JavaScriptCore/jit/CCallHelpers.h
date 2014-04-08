@@ -1667,6 +1667,15 @@ public:
             swap(destA, destB);
     }
     
+    void setupResults(JSValueRegs regs)
+    {
+#if USE(JSVALUE64)
+        move(GPRInfo::returnValueGPR, regs.gpr());
+#else
+        setupResults(regs.payloadGPR(), regs.tagGPR());
+#endif
+    }
+    
     void jumpToExceptionHandler()
     {
         // genericUnwind() leaves the handler CallFrame* in vm->callFrameForThrow,

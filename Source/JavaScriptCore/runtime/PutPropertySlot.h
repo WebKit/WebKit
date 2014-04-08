@@ -93,7 +93,6 @@ namespace JSC {
 
         PropertyOffset cachedOffset() const
         {
-            ASSERT(isCacheablePut());
             return m_offset;
         }
 

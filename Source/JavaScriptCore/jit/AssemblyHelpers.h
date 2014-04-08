@@ -77,6 +77,26 @@ public:
         store32(TrustedImm32(JSValue::CellTag), address.withOffset(TagOffset));
 #endif
     }
+    
+    void storeValue(JSValueRegs regs, Address address)
+    {
+#if USE(JSVALUE64)
+        store64(regs.gpr(), address);
+#else
+        store32(regs.payloadGPR(), address.withOffset(PayloadOffset));
+        store32(regs.tagGPR(), address.withOffset(TagOffset));
+#endif
+    }
+    
+    void moveTrustedValue(JSValue value, JSValueRegs regs)
+    {
+#if USE(JSVALUE64)
+        move(TrustedImm64(JSValue::encode(value)), regs.gpr());
+#else
+        move(TrustedImm32(value.tag()), regs.tagGPR());
+        move(TrustedImm32(value.payload()), regs.payloadGPR());
+#endif
+    }
 
 #if CPU(X86_64) || CPU(X86)
     static size_t prologueStackPointerDelta()

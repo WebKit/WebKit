@@ -1,3 +1,39 @@
+2014-04-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Setters are just getters that take an extra argument and don't return a value
+        https://bugs.webkit.org/show_bug.cgi?id=131336
+
+        Reviewed by Geoffrey Garen.
+        
+        Other than that, they're totally the same thing.
+        
+        This isn't as dumb as it sounds.        
+
+        Most of the work in calling an accessor has to do with emitting the necessary checks for
+        figuring out whether we're calling the accessor we expected, followed by the boilerplate
+        needed for setting up a call inside of a stub. It makes sense for the code to be totally
+        common.
+
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::storeValue):
+        (JSC::AssemblyHelpers::moveTrustedValue):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupResults):
+        * jit/Repatch.cpp:
+        (JSC::kindFor):
+        (JSC::customFor):
+        (JSC::generateByIdStub):
+        (JSC::tryCacheGetByID):
+        (JSC::tryBuildGetByIDList):
+        (JSC::tryCachePutByID):
+        (JSC::tryBuildPutByIdList):
+        (JSC::generateGetByIdStub): Deleted.
+        (JSC::emitCustomSetterStub): Deleted.
+        * runtime/JSCJSValue.h:
+        (JSC::JSValue::asValue):
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::cachedOffset):
+
 2014-04-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Hang in debuggable application after receiving WIRPermissionDenied
