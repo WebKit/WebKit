@@ -1848,7 +1848,7 @@ void AccessibilityNodeObject::colorValue(int& r, int& g, int& b) const
 // ARIA Implementer's Guide.                                                                                            
 static String accessibleNameForNode(Node* node)
 {
-    assert(node);
+    ASSERT(node);
     if (!node || !node->isElementNode())
         return String();
     
