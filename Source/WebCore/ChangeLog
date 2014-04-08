@@ -1,3 +1,23 @@
+2014-04-08  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Fixed positioned elements in named flows have fragmented content
+        https://bugs.webkit.org/show_bug.cgi?id=130595
+
+        Reviewed by Darin Adler.
+
+        Fixed positioned elements that have the named flow as parent are positioned
+        and sized relative to the viewport. Because of that, when the named flow
+        has an associated region chain, the fixed positioned elements should not
+        be fragmented.
+
+        By making a fixed positioned element with a named flow parent unsplittable
+        for fragmentation, we prevent this wrong behavior.
+
+        Test: fast/regions/fixed-pos-content-fragmented.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::isUnsplittableForPagination):
+
 2014-04-07  Chris Fleizach  <cfleizach@apple.com>
 
         Regression: AX: image labels no longer exposed to AX API in SVG test case

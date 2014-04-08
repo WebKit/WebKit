@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            if (window.internals)
+                window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(false);
+        </script>
+        <style>
+            #content {
+                font: 20px/1 Ahem;
+            }
+
+            #fixed {
+                position: fixed;
+                top: 120px;
+                left: 20px;
+                color: green;
+                background-color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test than a fixed positioned element is not fragmented in regions.</p>
+        <p>On success you should see 2 green lines and no red between.</p>
+        <div id="content">
+            <div id="fixed">
+                <div id="div1">div1</div>
+                <div id="div2">div2</div>
+            </div>
+        </div>
+    </body>
+</html>
+
