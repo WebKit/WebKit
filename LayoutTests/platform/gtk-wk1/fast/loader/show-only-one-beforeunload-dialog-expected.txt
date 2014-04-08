@@ -1,4 +1,0 @@
-CONFIRM: This is beforeunload from the top level frame.
-CONSOLE MESSAGE: Blocked attempt to show multiple beforeunload confirmation dialogs for the same navigation.
-CONSOLE MESSAGE: Blocked attempt to show multiple beforeunload confirmation dialogs for the same navigation.
-

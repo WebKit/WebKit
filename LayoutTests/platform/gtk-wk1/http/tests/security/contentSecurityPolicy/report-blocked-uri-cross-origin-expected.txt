@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: [Report Only] Refused to load the image 'http://localhost:8080/security/resources/abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
-
-CSP report received:
-CONTENT_TYPE: application/json
-HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-blocked-uri-cross-origin.html
-REQUEST_METHOD: POST
-=== POST DATA ===
-{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-blocked-uri-cross-origin.html","referrer":"","violated-directive":"img-src 'none'","effective-directive":"img-src","original-policy":"img-src 'none'; report-uri resources/save-report.php","blocked-uri":"http://localhost:8080"}}

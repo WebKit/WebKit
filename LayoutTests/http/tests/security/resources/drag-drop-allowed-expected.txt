@@ -1,0 +1,17 @@
+ALERT: FAIL
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x106
+        RenderText {#text} at (0,89) size 28x17
+          text run at (0,89) width 28: "drag"
+        RenderImage {IMG} at (28,0) size 76x103
+        RenderText {#text} at (104,89) size 19x17
+          text run at (104,89) width 19: "me"
+        RenderInline {SPAN} at (0,0) size 48x17
+          RenderText {#text} at (123,89) size 48x17
+            text run at (123,89) width 48: "            "
+selection start: position 0 of child 1 {IMG} of child 1 {DIV} of body
+selection end:   position 1 of child 1 {IMG} of child 1 {DIV} of body

@@ -1,5 +1,34 @@
 2014-04-07  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK] Remove WebKit1 test results and merge TestExpectations files
+        https://bugs.webkit.org/show_bug.cgi?id=131342
+
+        Merge all WebKit1 test expectations into the gtk directory and also merge the WebKit2
+        test expectations files into the GTK+ one, removing duplicate lines.
+
+        * http/tests/security/resources/drag-drop-allowed-expected.txt: Added.
+        * platform/gtk-wk1: Removed.
+        * platform/gtk-wk2: Removed.
+        * platform/gtk/TestExpectations: Merged in WebKit2 expectations.
+        * platform/gtk/accessibility/file-upload-button-stringvalue-expected.txt: Renamed from LayoutTests/platform/gtk-wk2/accessibility/file-upload-button-stringvalue-expected.txt.
+        * platform/gtk/fast/events/wheelevent-in-horizontal-scrollbar-in-rtl-expected.txt:
+        * platform/gtk/fast/events/wheelevent-in-vertical-scrollbar-in-rtl-expected.txt:
+        * platform/gtk/http/tests/loading/basic-auth-resend-wrong-credentials-expected.txt: Renamed from LayoutTests/platform/gtk-wk2/http/tests/loading/basic-auth-resend-wrong-credentials-expected.txt.
+        * platform/gtk/http/tests/loading/basic-credentials-sent-automatically-expected.txt: Renamed from LayoutTests/platform/gtk-wk2/http/tests/loading/basic-credentials-sent-automatically-expected.txt.
+        * platform/gtk/http/tests/misc/401-alternative-content-expected.txt: Renamed from LayoutTests/platform/gtk-wk2/http/tests/misc/401-alternative-content-expected.txt.
+        * platform/gtk/http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin-expected.txt: Renamed from LayoutTests/platform/gtk-wk2/http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin-expected.txt.
+        * platform/gtk/http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin-expected.txt: Renamed from LayoutTests/platform/gtk-wk2/http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin-expected.txt.
+        * platform/gtk/http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url-expected.txt: Renamed from LayoutTests/platform/gtk-wk2/http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url-expected.txt.
+        * platform/gtk/http/tests/security/401-logout/401-logout-expected.txt: Renamed from LayoutTests/platform/gtk-wk2/http/tests/security/401-logout/401-logout-expected.txt.
+        * platform/gtk/http/tests/xmlhttprequest/failed-auth-expected.txt: Renamed from LayoutTests/platform/gtk-wk2/http/tests/xmlhttprequest/failed-auth-expected.txt.
+        * platform/gtk/http/tests/xmlhttprequest/remember-bad-password-expected.txt: Renamed from LayoutTests/platform/gtk-wk2/http/tests/xmlhttprequest/remember-bad-password-expected.txt.
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt: Renamed from LayoutTests/platform/gtk-wk2/js/dom/global-constructors-attributes-expected.txt.
+        * platform/gtk/plugins/npruntime/object-from-destroyed-plugin-expected.txt:
+        * platform/gtk/plugins/npruntime/object-from-destroyed-plugin-in-subframe-expected.txt:
+        * platform/gtk/plugins/plugin-clip-subframe-expected.txt:
+
+2014-04-07  Martin Robinson  <mrobinson@igalia.com>
+
         fast/css3-text/css3-text-decoration/text-decoration-thickness.html fails on GTK
         https://bugs.webkit.org/show_bug.cgi?id=129957
 

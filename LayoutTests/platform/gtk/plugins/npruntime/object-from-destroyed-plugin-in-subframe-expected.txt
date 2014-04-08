@@ -5,6 +5,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
  PASS testObject.gettingProperty threw exception ReferenceError: Trying to access object from destroyed plug-in..
 PASS testObject.settingProperty = 10 threw exception ReferenceError: Trying to access object from destroyed plug-in..
-PASS testObject() threw exception TypeError: CRuntimeObject is not a function (evaluating 'testObject()').
-PASS new testObject(); threw exception TypeError: CRuntimeObject is not a constructor (evaluating 'new testObject()').
+PASS testObject() threw exception TypeError: NPObject is not a function (evaluating 'testObject()').
+PASS new testObject(); threw exception TypeError: NPObject is not a constructor (evaluating 'new testObject()').
 
