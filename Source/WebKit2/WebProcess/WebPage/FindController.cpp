@@ -156,12 +156,12 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
 
     if (!shouldShowOverlay) {
         if (m_findPageOverlay)
-            m_webPage->uninstallPageOverlay(m_findPageOverlay, true);
+            m_webPage->uninstallPageOverlay(m_findPageOverlay, PageOverlay::FadeMode::Fade);
     } else {
         if (!m_findPageOverlay) {
             RefPtr<PageOverlay> findPageOverlay = PageOverlay::create(this);
             m_findPageOverlay = findPageOverlay.get();
-            m_webPage->installPageOverlay(findPageOverlay.release(), true);
+            m_webPage->installPageOverlay(findPageOverlay.release(), PageOverlay::FadeMode::Fade);
             m_findPageOverlay->setNeedsDisplay();
         } else
             m_findPageOverlay->setNeedsDisplay();
@@ -272,7 +272,7 @@ void FindController::hideFindUI()
 {
     m_findMatches.clear();
     if (m_findPageOverlay)
-        m_webPage->uninstallPageOverlay(m_findPageOverlay, true);
+        m_webPage->uninstallPageOverlay(m_findPageOverlay, PageOverlay::FadeMode::Fade);
 
     PluginView* pluginView = pluginViewForFrame(m_webPage->mainFrame());
     

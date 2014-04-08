@@ -1,3 +1,72 @@
+2014-04-08  Tim Horton  <timothy_horton@apple.com>
+
+        Unify and factor out page overlay implementations
+        https://bugs.webkit.org/show_bug.cgi?id=131353
+
+        Reviewed by Anders Carlsson.
+
+        Bring all of the PageOverlay code together in a single cross-platform
+        PageOverlayController, including hit-testing code from WebPage and painting
+        and layer-tree manipulation code from the DrawingArea.
+
+        This also makes all PageOverlays a single GraphicsLayer tree which can be
+        flushed and plugged into any DrawingArea in a straightforward manner.
+        We no longer have to watch for individual layers flipping into/out of tiling,
+        because they're hidden underneath the root PageOverlay GraphicsLayer.
+        Additionally, because GraphicsLayer is cross-platform, we can share
+        all of the fairly trivial but oft-repeated overlay management code.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/PageOverlayController.cpp: Added.
+        * WebProcess/WebPage/PageOverlayController.h: Added.
+        (WebKit::PageOverlayController::rootLayer):
+        Add PageOverlayController.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        Remove PageOverlay-related code from the DrawingAreas.
+
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::setNeedsDisplay):
+        (WebKit::PageOverlay::fadeAnimationTimerFired):
+        (WebKit::PageOverlay::clear):
+        * WebProcess/WebPage/PageOverlay.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::didChangeScrollOffset):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject accessibilityParameterizedAttributeNames]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:forParameter:]):
+        Use PageOverlayController instead of the DrawingArea/WebPage to manipulate page overlays.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::pageOverlayController):
+        Remove PageOverlay-related code from WebPage.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::outOfTreeLayerWasAdded): Deleted.
+        (WebKit::RemoteLayerTreeContext::outOfTreeLayerWillBeRemoved): Deleted.
+        (WebKit::RemoteLayerTreeContext::flushOutOfTreeLayers): Deleted.
+        Remove the no-longer-necessary out-of-tree layer code.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageInstallPageOverlayWithAnimation):
+        (WKBundlePageUninstallPageOverlayWithAnimation):
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::highlight):
+        (WebKit::WebInspectorClient::hideHighlight):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll):
+        (WebKit::FindController::hideFindUI):
+        * WebProcess/WebPage/TelephoneNumberOverlayController.cpp:
+        (WebKit::TelephoneNumberOverlayController::createOverlayIfNeeded):
+        (WebKit::TelephoneNumberOverlayController::destroyOverlay):
+        Make use of the FadeMode enum.
+
 2014-04-08  Anders Carlsson  <andersca@apple.com>
 
         Change WebPageProxy::CreateNewPage to take a NavigationActionData object

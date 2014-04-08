@@ -41,10 +41,11 @@
 #include "InjectedBundlePageResourceLoadClient.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include "TapHighlightController.h"
+#include "PageOverlayController.h"
 #include "Plugin.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
+#include "TapHighlightController.h"
 #include "WebUndoStep.h"
 #include <WebCore/ContextMenuItem.h>
 #include <WebCore/DictationAlternative.h>
@@ -184,8 +185,6 @@ class WebTouchEvent;
 class TelephoneNumberOverlayController;
 #endif
 
-typedef Vector<RefPtr<PageOverlay>> PageOverlayList;
-
 class WebPage : public API::ObjectImpl<API::Object::Type::BundlePage>, public IPC::MessageReceiver, public IPC::MessageSender {
 public:
     static PassRefPtr<WebPage> create(uint64_t pageID, const WebPageCreationParameters&);
@@ -210,6 +209,8 @@ public:
     
     InjectedBundleBackForwardList* backForwardList();
     DrawingArea* drawingArea() const { return m_drawingArea.get(); }
+    const PageOverlayController& pageOverlayController() const { return m_pageOverlayController; }
+    PageOverlayController& pageOverlayController() { return m_pageOverlayController; }
 #if ENABLE(ASYNC_SCROLLING)
     WebCore::ScrollingCoordinator* scrollingCoordinator() const;
 #endif
@@ -241,7 +242,6 @@ public:
     // -- Called by the DrawingArea.
     // FIXME: We could genericize these into a DrawingArea client interface. Would that be beneficial?
     void drawRect(WebCore::GraphicsContext&, const WebCore::IntRect&);
-    void drawPageOverlay(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect&);
     void layoutIfNeeded();
 
     // -- Called from WebCore clients.
@@ -410,10 +410,8 @@ public:
 
     bool windowIsFocused() const;
     bool windowAndWebPageAreFocused() const;
-    void installPageOverlay(PassRefPtr<PageOverlay>, bool shouldFadeIn = false);
-    void uninstallPageOverlay(PageOverlay*, bool shouldFadeOut = false);
-    bool hasPageOverlay() const { return m_pageOverlays.size(); }
-    PageOverlayList& pageOverlays() { return m_pageOverlays; }
+    void installPageOverlay(PassRefPtr<PageOverlay>, PageOverlay::FadeMode = PageOverlay::FadeMode::DoNotFade);
+    void uninstallPageOverlay(PageOverlay*, PageOverlay::FadeMode = PageOverlay::FadeMode::DoNotFade);
 
 #if !PLATFORM(IOS)
     void setHeaderPageBanner(PassRefPtr<PageBanner>);
@@ -781,6 +779,8 @@ public:
     void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&);
 #endif
 
+    void didChangeScrollOffsetForAnyFrame();
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -1086,7 +1086,6 @@ private:
     InjectedBundlePageDiagnosticLoggingClient m_logDiagnosticMessageClient;
 
     FindController m_findController;
-    PageOverlayList m_pageOverlays;
 
 #if ENABLE(INSPECTOR)
     RefPtr<WebInspector> m_inspector;
@@ -1187,6 +1186,8 @@ private:
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     RefPtr<TelephoneNumberOverlayController> m_telephoneNumberOverlayController;
 #endif
+
+    PageOverlayController m_pageOverlayController;
 };
 
 } // namespace WebKit

@@ -51,7 +51,7 @@ void TelephoneNumberOverlayController::createOverlayIfNeeded()
     
     RefPtr<PageOverlay> overlay = PageOverlay::create(this);
     m_telephoneNumberOverlay = overlay.get();
-    m_webPage->installPageOverlay(overlay.release(), true);
+    m_webPage->installPageOverlay(overlay.release(), PageOverlay::FadeMode::Fade);
     m_telephoneNumberOverlay->setNeedsDisplay();
 }
 
@@ -60,7 +60,7 @@ void TelephoneNumberOverlayController::destroyOverlay()
     if (!m_telephoneNumberOverlay)
         return;
 
-    m_webPage->uninstallPageOverlay(m_telephoneNumberOverlay, false);
+    m_webPage->uninstallPageOverlay(m_telephoneNumberOverlay, PageOverlay::FadeMode::DoNotFade);
 }
 
 void TelephoneNumberOverlayController::pageOverlayDestroyed(PageOverlay*)

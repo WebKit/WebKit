@@ -45,7 +45,6 @@
 #include "NetscapePlugin.h"
 #include "NotificationPermissionRequestManager.h"
 #include "PageBanner.h"
-#include "PageOverlay.h"
 #include "PluginProcessAttributes.h"
 #include "PluginProxy.h"
 #include "PluginView.h"
@@ -307,6 +306,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if ENABLE(WEBGL)
     , m_systemWebGLPolicy(WebGLAllowCreation)
 #endif
+    , m_pageOverlayController(this)
 {
     ASSERT(m_pageID);
     // FIXME: This is a non-ideal location for this Setting and
@@ -340,6 +340,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     m_drawingArea = DrawingArea::create(this, parameters);
     m_drawingArea->setPaintingEnabled(false);
+    m_pageOverlayController.initialize();
 
 #if ENABLE(ASYNC_SCROLLING)
     m_useAsyncScrolling = parameters.store.getBoolValueForKey(WebPreferencesKey::threadedScrollingEnabledKey());
@@ -1121,6 +1122,8 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
     if (view->useFixedLayout())
         sendViewportAttributesChanged();
 #endif
+
+    m_pageOverlayController.didChangeViewSize();
 }
 
 #if USE(TILED_BACKING_STORE)
@@ -1204,15 +1207,6 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
     graphicsContext.clip(rect);
 
     m_mainFrame->coreFrame()->view()->paint(&graphicsContext, rect);
-}
-
-void WebPage::drawPageOverlay(PageOverlay* pageOverlay, GraphicsContext& graphicsContext, const IntRect& rect)
-{
-    ASSERT(pageOverlay);
-
-    GraphicsContextStateSaver stateSaver(graphicsContext);
-    graphicsContext.clip(rect);
-    pageOverlay->drawRect(graphicsContext, rect);
 }
 
 double WebPage::textZoomFactor() const
@@ -1337,6 +1331,8 @@ void WebPage::setDeviceScaleFactor(float scaleFactor)
 
     if (m_drawingArea->layerTreeHost())
         m_drawingArea->layerTreeHost()->deviceOrPageScaleFactorChanged();
+
+    m_pageOverlayController.didChangeDeviceScaleFactor();
 }
 
 float WebPage::deviceScaleFactor() const
@@ -1452,37 +1448,14 @@ void WebPage::postInjectedBundleMessage(const String& messageName, IPC::MessageD
     injectedBundle->didReceiveMessageToPage(this, messageName, messageBody.get());
 }
 
-void WebPage::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay, bool shouldFadeIn)
+void WebPage::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay, PageOverlay::FadeMode fadeMode)
 {
-    RefPtr<PageOverlay> overlay = pageOverlay;
-    
-    if (m_pageOverlays.contains(overlay.get()))
-        return;
-
-    m_pageOverlays.append(overlay);
-    overlay->setPage(this);
-
-    if (shouldFadeIn)
-        overlay->startFadeInAnimation();
-
-    m_drawingArea->didInstallPageOverlay(overlay.get());
+    m_pageOverlayController.installPageOverlay(pageOverlay, fadeMode);
 }
 
-void WebPage::uninstallPageOverlay(PageOverlay* pageOverlay, bool shouldFadeOut)
+void WebPage::uninstallPageOverlay(PageOverlay* pageOverlay, PageOverlay::FadeMode fadeMode)
 {
-    size_t existingOverlayIndex = m_pageOverlays.find(pageOverlay);
-    if (existingOverlayIndex == notFound)
-        return;
-
-    if (shouldFadeOut) {
-        pageOverlay->startFadeOutAnimation();
-        return;
-    }
-
-    pageOverlay->setPage(0);
-    m_pageOverlays.remove(existingOverlayIndex);
-
-    m_drawingArea->didUninstallPageOverlay(pageOverlay);
+    m_pageOverlayController.uninstallPageOverlay(pageOverlay, fadeMode);
 }
 
 #if !PLATFORM(IOS)
@@ -1761,14 +1734,7 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
         return;
     }
 #endif
-    bool handled = false;
-    if (m_pageOverlays.size()) {
-        // Let the page overlay handle the event.
-        PageOverlayList::reverse_iterator end = m_pageOverlays.rend();
-        for (PageOverlayList::reverse_iterator it = m_pageOverlays.rbegin(); it != end; ++it)
-            if ((handled = (*it)->mouseEvent(mouseEvent)))
-                break;
-    }
+    bool handled = m_pageOverlayController.handleMouseEvent(mouseEvent);
 
 #if !PLATFORM(IOS)
     if (!handled && m_headerBanner)
@@ -1794,14 +1760,7 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
 
 void WebPage::mouseEventSyncForTesting(const WebMouseEvent& mouseEvent, bool& handled)
 {
-    handled = false;
-
-    if (m_pageOverlays.size()) {
-        PageOverlayList::reverse_iterator end = m_pageOverlays.rend();
-        for (PageOverlayList::reverse_iterator it = m_pageOverlays.rbegin(); it != end; ++it)
-            if ((handled = (*it)->mouseEvent(mouseEvent)))
-                break;
-    }
+    handled = m_pageOverlayController.handleMouseEvent(mouseEvent);
 #if !PLATFORM(IOS)
     if (!handled && m_headerBanner)
         handled = m_headerBanner->mouseEvent(mouseEvent);
@@ -1890,32 +1849,6 @@ void WebPage::keyEventSyncForTesting(const WebKeyboardEvent& keyboardEvent, bool
     handled = handleKeyEvent(keyboardEvent, m_page.get());
     if (!handled)
         handled = performDefaultBehaviorForKeyEvent(keyboardEvent);
-}
-
-WKTypeRef WebPage::pageOverlayCopyAccessibilityAttributeValue(WKStringRef attribute, WKTypeRef parameter)
-{
-    if (!m_pageOverlays.size())
-        return 0;
-    PageOverlayList::reverse_iterator end = m_pageOverlays.rend();
-    for (PageOverlayList::reverse_iterator it = m_pageOverlays.rbegin(); it != end; ++it) {
-        WKTypeRef value = (*it)->copyAccessibilityAttributeValue(attribute, parameter);
-        if (value)
-            return value;
-    }
-    return 0;
-}
-
-WKArrayRef WebPage::pageOverlayCopyAccessibilityAttributesNames(bool parameterizedNames)
-{
-    if (!m_pageOverlays.size())
-        return 0;
-    PageOverlayList::reverse_iterator end = m_pageOverlays.rend();
-    for (PageOverlayList::reverse_iterator it = m_pageOverlays.rbegin(); it != end; ++it) {
-        WKArrayRef value = (*it)->copyAccessibilityAttributeNames(parameterizedNames);
-        if (value)
-            return value;
-    }
-    return 0;
 }
 
 void WebPage::validateCommand(const String& commandName, uint64_t callbackID)
@@ -2705,6 +2638,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     if (m_drawingArea)
         m_drawingArea->updatePreferences(store);
+
+    m_pageOverlayController.didChangePreferences();
 }
 
 #if PLATFORM(COCOA)
@@ -4566,5 +4501,10 @@ TelephoneNumberOverlayController& WebPage::telephoneNumberOverlayController()
     return *m_telephoneNumberOverlayController;
 }
 #endif
+
+void WebPage::didChangeScrollOffsetForAnyFrame()
+{
+    m_pageOverlayController.didScrollAnyFrame();
+}
 
 } // namespace WebKit

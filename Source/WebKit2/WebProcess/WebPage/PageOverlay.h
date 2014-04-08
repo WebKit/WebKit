@@ -79,6 +79,8 @@ public:
     void clear();
 
     Client* client() const { return m_client; }
+
+    enum class FadeMode { DoNotFade, Fade };
     
 protected:
     explicit PageOverlay(Client*);

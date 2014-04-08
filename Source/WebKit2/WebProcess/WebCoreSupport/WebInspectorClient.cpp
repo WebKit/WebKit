@@ -83,7 +83,7 @@ void WebInspectorClient::highlight()
     if (!m_highlightOverlay) {
         RefPtr<PageOverlay> highlightOverlay = PageOverlay::create(this);
         m_highlightOverlay = highlightOverlay.get();
-        m_page->installPageOverlay(highlightOverlay.release(), true);
+        m_page->installPageOverlay(highlightOverlay.release(), PageOverlay::FadeMode::Fade);
         m_highlightOverlay->setNeedsDisplay();
     } else {
         m_highlightOverlay->stopFadeOutAnimation();
@@ -94,7 +94,7 @@ void WebInspectorClient::highlight()
 void WebInspectorClient::hideHighlight()
 {
     if (m_highlightOverlay)
-        m_page->uninstallPageOverlay(m_highlightOverlay, true);
+        m_page->uninstallPageOverlay(m_highlightOverlay, PageOverlay::FadeMode::Fade);
 }
 
 #if PLATFORM(IOS)

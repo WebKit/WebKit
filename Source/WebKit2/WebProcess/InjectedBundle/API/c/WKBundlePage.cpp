@@ -364,12 +364,12 @@ void WKBundlePageUninstallPageOverlay(WKBundlePageRef pageRef, WKBundlePageOverl
 
 void WKBundlePageInstallPageOverlayWithAnimation(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
 {
-    toImpl(pageRef)->installPageOverlay(toImpl(pageOverlayRef), true);
+    toImpl(pageRef)->installPageOverlay(toImpl(pageOverlayRef), PageOverlay::FadeMode::Fade);
 }
 
 void WKBundlePageUninstallPageOverlayWithAnimation(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
 {
-    toImpl(pageRef)->uninstallPageOverlay(toImpl(pageOverlayRef), true);
+    toImpl(pageRef)->uninstallPageOverlay(toImpl(pageOverlayRef), PageOverlay::FadeMode::Fade);
 }
 
 void WKBundlePageSetTopOverhangImage(WKBundlePageRef pageRef, WKImageRef imageRef)

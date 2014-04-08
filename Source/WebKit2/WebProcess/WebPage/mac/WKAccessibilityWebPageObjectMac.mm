@@ -75,7 +75,7 @@ using namespace WebKit;
 
 - (NSArray *)accessibilityParameterizedAttributeNames
 {
-    WKRetainPtr<WKArrayRef> result = adoptWK(m_page->pageOverlayCopyAccessibilityAttributesNames(true));
+    WKRetainPtr<WKArrayRef> result = adoptWK(m_page->pageOverlayController().copyAccessibilityAttributesNames(true));
     if (!result)
         return nil;
     
@@ -172,7 +172,7 @@ using namespace WebKit;
     }
     
     WKRetainPtr<WKStringRef> attributeRef = adoptWK(WKStringCreateWithCFString((CFStringRef)attribute));
-    WKRetainPtr<WKTypeRef> result = adoptWK(m_page->pageOverlayCopyAccessibilityAttributeValue(attributeRef.get(), pageOverlayParameter.get()));
+    WKRetainPtr<WKTypeRef> result = adoptWK(m_page->pageOverlayController().copyAccessibilityAttributeValue(attributeRef.get(), pageOverlayParameter.get()));
     if (!result)
         return nil;
     

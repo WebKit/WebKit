@@ -48,6 +48,7 @@ namespace WebKit {
 RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage* webPage, const WebPageCreationParameters&)
     : DrawingArea(DrawingAreaTypeRemoteLayerTree, webPage)
     , m_remoteLayerTreeContext(std::make_unique<RemoteLayerTreeContext>(webPage))
+    , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), nullptr))
     , m_exposedRect(FloatRect::infiniteRect())
     , m_scrolledExposedRect(FloatRect::infiniteRect())
     , m_layerFlushTimer(this, &RemoteLayerTreeDrawingArea::layerFlushTimerFired)
@@ -85,19 +86,18 @@ GraphicsLayerFactory* RemoteLayerTreeDrawingArea::graphicsLayerFactory()
 
 void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer* rootLayer)
 {
-    m_rootLayer = rootLayer ? toGraphicsLayerCARemote(rootLayer)->platformCALayer() : nullptr;
+    Vector<GraphicsLayer *> children;
+    if (rootLayer) {
+        children.append(rootLayer);
+        children.append(m_webPage->pageOverlayController().rootLayer());
+    }
+    m_rootLayer->setChildren(children);
 }
 
 void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, const IntSize& layerPosition)
 {
     m_viewSize = viewSize;
     m_webPage->setSize(viewSize);
-
-    for (const auto& overlayAndLayer : m_pageOverlayLayers) {
-        GraphicsLayer* layer = overlayAndLayer.value.get();
-        if (layer->drawsContent())
-            layer->setSize(viewSize);
-    }
 
     scheduleCompositingLayerFlush();
 
@@ -117,95 +117,6 @@ void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore&)
     // in order to be scrolled by the ScrollingCoordinator.
     settings.setAcceleratedCompositingForFixedPositionEnabled(true);
     settings.setFixedPositionCreatesStackingContext(true);
-
-    for (const auto& overlayAndLayer : m_pageOverlayLayers) {
-        overlayAndLayer.value->setAcceleratesDrawing(settings.acceleratedDrawingEnabled());
-        overlayAndLayer.value->setShowDebugBorder(settings.showDebugBorders());
-        overlayAndLayer.value->setShowRepaintCounter(settings.showRepaintCounter());
-    }
-}
-
-void RemoteLayerTreeDrawingArea::didInstallPageOverlay(PageOverlay* pageOverlay)
-{
-    std::unique_ptr<GraphicsLayerCARemote> layer(static_cast<GraphicsLayerCARemote*>(GraphicsLayer::create(graphicsLayerFactory(), this).release()));
-#ifndef NDEBUG
-    layer->setName("page overlay content");
-#endif
-
-    layer->setAcceleratesDrawing(m_webPage->corePage()->settings().acceleratedDrawingEnabled());
-    layer->setShowDebugBorder(m_webPage->corePage()->settings().showDebugBorders());
-    layer->setShowRepaintCounter(m_webPage->corePage()->settings().showRepaintCounter());
-
-    m_rootLayer->appendSublayer(layer->platformCALayer());
-    m_remoteLayerTreeContext->outOfTreeLayerWasAdded(layer.get());
-
-    m_pageOverlayLayers.add(pageOverlay, std::move(layer));
-    scheduleCompositingLayerFlush();
-}
-
-void RemoteLayerTreeDrawingArea::didUninstallPageOverlay(PageOverlay* pageOverlay)
-{
-    std::unique_ptr<GraphicsLayerCARemote> layer = m_pageOverlayLayers.take(pageOverlay);
-    ASSERT(layer);
-
-    m_remoteLayerTreeContext->outOfTreeLayerWillBeRemoved(layer.get());
-    layer->platformCALayer()->removeFromSuperlayer();
-
-    scheduleCompositingLayerFlush();
-}
-
-void RemoteLayerTreeDrawingArea::setPageOverlayNeedsDisplay(PageOverlay* pageOverlay, const IntRect& rect)
-{
-    GraphicsLayerCARemote* layer = m_pageOverlayLayers.get(pageOverlay);
-
-    if (!layer)
-        return;
-
-    if (!layer->drawsContent()) {
-        layer->setDrawsContent(true);
-        layer->setSize(m_viewSize);
-    }
-
-    layer->setNeedsDisplayInRect(rect);
-    scheduleCompositingLayerFlush();
-}
-
-void RemoteLayerTreeDrawingArea::setPageOverlayOpacity(PageOverlay* pageOverlay, float opacity)
-{
-    GraphicsLayerCARemote* layer = m_pageOverlayLayers.get(pageOverlay);
-    
-    if (!layer)
-        return;
-    
-    layer->setOpacity(opacity);
-    scheduleCompositingLayerFlush();
-}
-
-void RemoteLayerTreeDrawingArea::clearPageOverlay(PageOverlay* pageOverlay)
-{
-    GraphicsLayer* layer = m_pageOverlayLayers.get(pageOverlay);
-
-    if (!layer)
-        return;
-
-    layer->setDrawsContent(false);
-    layer->setSize(IntSize());
-    scheduleCompositingLayerFlush();
-}
-
-void RemoteLayerTreeDrawingArea::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const FloatRect& clipRect)
-{
-    for (const auto& overlayAndLayer : m_pageOverlayLayers) {
-        if (overlayAndLayer.value.get() == graphicsLayer) {
-            m_webPage->drawPageOverlay(overlayAndLayer.key, graphicsContext, enclosingIntRect(clipRect));
-            break;
-        }
-    }
-}
-
-float RemoteLayerTreeDrawingArea::deviceScaleFactor() const
-{
-    return m_webPage->corePage()->deviceScaleFactor();
 }
 
 #if PLATFORM(IOS)
@@ -283,11 +194,9 @@ void RemoteLayerTreeDrawingArea::updateScrolledExposedRect()
 #endif
 
     frameView->setExposedRect(m_scrolledExposedRect);
-
-    for (const auto& layer : m_pageOverlayLayers.values())
-        layer->flushCompositingState(m_scrolledExposedRect);
-
     frameView->adjustTiledBackingCoverage();
+
+    m_webPage->pageOverlayController().didChangeExposedRect();
 }
 
 TiledBacking* RemoteLayerTreeDrawingArea::mainFrameTiledBacking() const
@@ -336,13 +245,16 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     }
 
     m_webPage->layoutIfNeeded();
-    m_webPage->corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes();
 
-    m_remoteLayerTreeContext->flushOutOfTreeLayers();
+    FloatRect visibleRect(FloatPoint(), m_viewSize);
+    visibleRect.intersect(m_scrolledExposedRect);
+    m_webPage->pageOverlayController().flushPageOverlayLayers(visibleRect);
+    m_webPage->corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes();
+    m_rootLayer->flushCompositingStateForThisLayerOnly();
 
     // FIXME: minize these transactions if nothing changed.
     RemoteLayerTreeTransaction layerTransaction;
-    m_remoteLayerTreeContext->buildTransaction(layerTransaction, *m_rootLayer);
+    m_remoteLayerTreeContext->buildTransaction(layerTransaction, *toGraphicsLayerCARemote(m_rootLayer.get())->platformCALayer());
     m_webPage->willCommitLayerTree(layerTransaction);
 
     RemoteScrollingCoordinatorTransaction scrollingTransaction;

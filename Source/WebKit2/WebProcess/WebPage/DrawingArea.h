@@ -50,7 +50,6 @@ namespace WebKit {
 
 struct ColorSpaceData;
 class LayerTreeHost;
-class PageOverlay;
 class WebPage;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
@@ -78,12 +77,6 @@ public:
     virtual bool layerTreeStateIsFrozen() const { return false; }
     virtual LayerTreeHost* layerTreeHost() const { return 0; }
 
-    virtual void didInstallPageOverlay(PageOverlay*) { }
-    virtual void didUninstallPageOverlay(PageOverlay*) { }
-    virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&) { }
-    virtual void setPageOverlayOpacity(PageOverlay*, float) { }
-    virtual void clearPageOverlay(PageOverlay*) { }
-
     virtual void setPaintingEnabled(bool) { }
     virtual void updatePreferences(const WebPreferencesStore&) { }
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) { }
@@ -99,8 +92,6 @@ public:
     virtual void mainFrameScrollabilityChanged(bool) { }
 
     virtual bool supportsAsyncScrolling() { return false; }
-
-    virtual void didChangeScrollOffsetForAnyFrame() { }
 
     virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) { return false; }
 

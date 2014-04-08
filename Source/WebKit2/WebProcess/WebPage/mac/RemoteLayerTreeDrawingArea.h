@@ -28,7 +28,6 @@
 
 #include "DrawingArea.h"
 #include "GraphicsLayerCARemote.h"
-#include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/Timer.h>
 #include <wtf/HashMap.h>
 
@@ -40,7 +39,7 @@ namespace WebKit {
 
 class RemoteLayerTreeContext;
 
-class RemoteLayerTreeDrawingArea : public DrawingArea, public WebCore::GraphicsLayerClient {
+class RemoteLayerTreeDrawingArea : public DrawingArea {
 public:
     RemoteLayerTreeDrawingArea(WebPage*, const WebPageCreationParameters&);
     virtual ~RemoteLayerTreeDrawingArea();
@@ -60,11 +59,6 @@ private:
 
     virtual void updatePreferences(const WebPreferencesStore&) override;
 
-    virtual void didInstallPageOverlay(PageOverlay*) override;
-    virtual void didUninstallPageOverlay(PageOverlay*) override;
-    virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&) override;
-    virtual void setPageOverlayOpacity(PageOverlay*, float) override;
-    virtual void clearPageOverlay(PageOverlay*) override;
     virtual bool supportsAsyncScrolling() override { return true; }
 
     virtual void setLayerTreeStateIsFrozen(bool) override;
@@ -83,12 +77,6 @@ private:
 
     virtual void didUpdate() override;
 
-    // WebCore::GraphicsLayerClient
-    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) override { }
-    virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) override { }
-    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& clipRect) override;
-    virtual float deviceScaleFactor() const override;
-    virtual void didCommitChangesForLayer(const WebCore::GraphicsLayer*) const override { }
 #if PLATFORM(IOS)
     virtual void setDeviceScaleFactor(float) override;
 #endif
@@ -101,9 +89,7 @@ private:
     WebCore::TiledBacking* mainFrameTiledBacking() const;
 
     std::unique_ptr<RemoteLayerTreeContext> m_remoteLayerTreeContext;
-    RefPtr<WebCore::PlatformCALayer> m_rootLayer;
-
-    HashMap<PageOverlay*, std::unique_ptr<GraphicsLayerCARemote>> m_pageOverlayLayers;
+    std::unique_ptr<WebCore::GraphicsLayer> m_rootLayer;
 
     WebCore::IntSize m_viewSize;
 
