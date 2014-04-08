@@ -102,6 +102,9 @@ void PageOverlayController::uninstallPageOverlay(PageOverlay* overlay, PageOverl
     ASSERT(overlayIndex != notFound);
     m_pageOverlays.remove(overlayIndex);
 
+    if (!m_pageOverlays.isEmpty())
+        return;
+
 #if ENABLE(ASYNC_SCROLLING)
     if (Page* page = m_webPage->corePage()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())

@@ -1,3 +1,14 @@
+2014-04-08  Tim Horton  <timothy_horton@apple.com>
+
+        Unify and factor out page overlay implementations
+        https://bugs.webkit.org/show_bug.cgi?id=131353
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/PageOverlayController.cpp:
+        (WebKit::PageOverlayController::uninstallPageOverlay):
+        Don't turn fast scrolling back off unless the last overlay is removed.
+
 2014-04-08  Anders Carlsson  <andersca@apple.com>
 
         Add a WKNavigationAction property indicating whether it resulted from processing a user gesture
