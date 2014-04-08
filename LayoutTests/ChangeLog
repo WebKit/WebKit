@@ -1,3 +1,18 @@
+2014-04-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        Update text expectations for failing tests:
+          accessibility/children-changed-sends-notification.html
+          accessibility/notification-listeners.html
+          fast/repaint/blend-mode-isolate-stacking-context.html
+          fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html
+
+        Rebaseline fast/multicol/client-rects-expected.txt after r165991
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/multicol/client-rects-expected.txt:
+
 2014-04-07  Filip Pizlo  <fpizlo@apple.com>
 
         Repatch should support setters and plant calls to them directly

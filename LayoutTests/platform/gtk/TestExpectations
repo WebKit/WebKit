@@ -406,7 +406,7 @@ webkit.org/b/128172 fast/events/touch/send-oncancel-event.html [ Timeout ]
 webkit.org/b/131347 fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-simple-hairline-border-painting.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
-webkit.org/b/131347 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
 webkit.org/b/131347 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html [ Failure ]
 webkit.org/b/131347 svg/custom/hidpi-masking-clipping.svg [ Failure ]
 
@@ -1065,6 +1065,9 @@ webkit.org/b/131294 platform/gtk/accessibility/media-emits-object-replacement.ht
 webkit.org/b/131294 platform/gtk/accessibility/replaced-objects-in-anonymous-blocks.html [ Failure ]
 
 webkit.org/b/106340 accessibility/img-fallsback-to-title.html [ Failure ]
+
+webkit.org/b/131380 accessibility/children-changed-sends-notification.html [ Failure ]
+webkit.org/b/131380 accessibility/notification-listeners.html [ Failure ]
 
 # svg/ failures
 webkit.org/b/42457 svg/custom/embedded-svg-allowed-in-dashboard.xml [ Failure ]
@@ -1828,6 +1831,8 @@ webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ Pass ]
 
 # Test globally skipped, passing on GTK port
 webkit.org/b/124349 fast/hidpi/image-srcset-relative-svg-canvas.html [ Pass ]
+
+webkit.org/b/131377 fast/repaint/blend-mode-isolate-stacking-context.html [ Failure Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
