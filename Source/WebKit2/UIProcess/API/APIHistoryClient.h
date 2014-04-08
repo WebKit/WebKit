@@ -42,21 +42,9 @@ public:
     virtual ~HistoryClient() { }
 
     virtual void didNavigateWithNavigationData(WebKit::WebContext*, WebKit::WebPageProxy*, const WebKit::WebNavigationDataStore&, WebKit::WebFrameProxy*) { }
-    virtual void didPerformClientRedirect(WebKit::WebContext*, WebKit::WebPageProxy*, const WTF::String& sourceURL, const WTF::String& destinationURL, WebKit::WebFrameProxy*)
-    {
-        UNUSED_PARAM(sourceURL);
-        UNUSED_PARAM(destinationURL);
-    }
-    virtual void didPerformServerRedirect(WebKit::WebContext*, WebKit::WebPageProxy*, const WTF::String& sourceURL, const WTF::String& destinationURL, WebKit::WebFrameProxy*)
-    {
-        UNUSED_PARAM(sourceURL);
-        UNUSED_PARAM(destinationURL);
-    }
-    virtual void didUpdateHistoryTitle(WebKit::WebContext*, WebKit::WebPageProxy*, const WTF::String& title, const WTF::String& url, WebKit::WebFrameProxy*)
-    {
-        UNUSED_PARAM(title);
-        UNUSED_PARAM(url);
-    }
+    virtual void didPerformClientRedirect(WebKit::WebContext*, WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy*) { }
+    virtual void didPerformServerRedirect(WebKit::WebContext*, WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy*) { }
+    virtual void didUpdateHistoryTitle(WebKit::WebContext*, WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy*) { }
     virtual void populateVisitedLinks(WebKit::WebContext*) { }
     virtual bool shouldTrackVisitedLinks() const { return false; }
 };

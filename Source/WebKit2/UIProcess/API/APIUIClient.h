@@ -109,13 +109,8 @@ public:
     virtual void didDraw(WebKit::WebPageProxy*) { }
     virtual void pageDidScroll(WebKit::WebPageProxy*) { }
 
-    virtual unsigned long long exceededDatabaseQuota(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebSecurityOrigin*, const WTF::String& databaseName, const WTF::String& databaseDisplayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage)
+    virtual unsigned long long exceededDatabaseQuota(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebSecurityOrigin*, const WTF::String&, const WTF::String&, unsigned long long currentQuota, unsigned long long, unsigned long long, unsigned long long)
     {
-        UNUSED_PARAM(databaseName);
-        UNUSED_PARAM(databaseDisplayName);
-        UNUSED_PARAM(currentOriginUsage);
-        UNUSED_PARAM(currentDatabaseUsage);
-        UNUSED_PARAM(expectedUsage);
         return currentQuota;
     }
 
@@ -133,12 +128,7 @@ public:
     virtual bool canRunModal() const { return false; }
     virtual void runModal(WebKit::WebPageProxy*) { }
 
-    virtual void saveDataToFileInDownloadsFolder(WebKit::WebPageProxy*, const WTF::String& suggestedFilename, const WTF::String& mimeType, const WTF::String& originatingURLString, API::Data*)
-    {
-        UNUSED_PARAM(suggestedFilename);
-        UNUSED_PARAM(mimeType);
-        UNUSED_PARAM(originatingURLString);
-    }
+    virtual void saveDataToFileInDownloadsFolder(WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, const WTF::String&, API::Data*) { }
 
     virtual bool shouldInterruptJavaScript(WebKit::WebPageProxy*) { return false; }
 

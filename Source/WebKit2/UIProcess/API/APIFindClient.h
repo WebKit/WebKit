@@ -38,8 +38,8 @@ class FindClient {
 public:
     virtual ~FindClient() { }
 
-    virtual void didCountStringMatches(WebKit::WebPageProxy*, const WTF::String&, uint32_t matchCount) { }
-    virtual void didFindString(WebKit::WebPageProxy*, const WTF::String&, uint32_t matchCount) { }
+    virtual void didCountStringMatches(WebKit::WebPageProxy*, const WTF::String&, uint32_t) { }
+    virtual void didFindString(WebKit::WebPageProxy*, const WTF::String&, uint32_t) { }
     virtual void didFailToFindString(WebKit::WebPageProxy*, const WTF::String&) { }
 };
 

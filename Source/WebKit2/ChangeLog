@@ -1,3 +1,38 @@
+2014-04-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [WK2] Fix unused parameter compile warning
+        https://bugs.webkit.org/show_bug.cgi?id=131260
+
+        Reviewed by Darin Adler.
+
+        Remove the arguments name without UNUSED_PARAM().
+
+        * UIProcess/API/APIDownloadClient.h:
+        (API::DownloadClient::didReceiveData):
+        (API::DownloadClient::shouldDecodeSourceDataOfMIMEType):
+        (API::DownloadClient::decideDestinationWithSuggestedFilename):
+        (API::DownloadClient::didCreateDestination):
+        * UIProcess/API/APIFindClient.h:
+        (API::FindClient::didCountStringMatches):
+        (API::FindClient::didFindString):
+        * UIProcess/API/APIHistoryClient.h:
+        (API::HistoryClient::didPerformClientRedirect):
+        (API::HistoryClient::didPerformServerRedirect):
+        (API::HistoryClient::didUpdateHistoryTitle):
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didStartProvisionalLoadForFrame):
+        (API::LoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (API::LoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        (API::LoaderClient::didCommitLoadForFrame):
+        (API::LoaderClient::didFinishLoadForFrame):
+        (API::LoaderClient::didFailLoadWithErrorForFrame):
+        (API::LoaderClient::didChangeBackForwardList):
+        * UIProcess/API/APIPolicyClient.h:
+        (API::PolicyClient::decidePolicyForNavigationAction):
+        (API::PolicyClient::decidePolicyForNewWindowAction):
+        (API::PolicyClient::decidePolicyForResponse):
+        (API::PolicyClient::unableToImplementPolicy):
+
 2014-04-07  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Allow com.apple.ViewBridge preferences reading in plug-in sandbox profile
