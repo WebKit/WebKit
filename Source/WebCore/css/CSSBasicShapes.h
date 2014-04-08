@@ -81,6 +81,29 @@ public:
     void setBottom(PassRefPtr<CSSPrimitiveValue> bottom) { m_bottom = bottom; }
     void setLeft(PassRefPtr<CSSPrimitiveValue> left) { m_left = left; }
 
+    void updateShapeSize4Values(CSSPrimitiveValue* top, CSSPrimitiveValue* right, CSSPrimitiveValue* bottom, CSSPrimitiveValue* left)
+    {
+        setTop(top);
+        setRight(right);
+        setBottom(bottom);
+        setLeft(left);
+    }
+
+    void updateShapeSize1Value(CSSPrimitiveValue* value1)
+    {
+        updateShapeSize4Values(value1, value1, value1, value1);
+    }
+
+    void updateShapeSize2Values(CSSPrimitiveValue* value1,  CSSPrimitiveValue* value2)
+    {
+        updateShapeSize4Values(value1, value2, value1, value2);
+    }
+
+    void updateShapeSize3Values(CSSPrimitiveValue* value1, CSSPrimitiveValue* value2,  CSSPrimitiveValue* value3)
+    {
+        updateShapeSize4Values(value1, value2, value3, value2);
+    }
+
     void setTopLeftRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_topLeftRadius = radius; }
     void setTopRightRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_topRightRadius = radius; }
     void setBottomRightRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_bottomRightRadius = radius; }

@@ -5428,31 +5428,19 @@ PassRefPtr<CSSBasicShape> CSSParser::parseBasicShapeInset(CSSParserValueList* ar
 
     switch (widthArguments.size()) {
     case 1: {
-        shape->setTop(widthArguments[0]);
-        shape->setRight(widthArguments[0]);
-        shape->setBottom(widthArguments[0]);
-        shape->setLeft(widthArguments[0]);
+        shape->updateShapeSize1Value(widthArguments[0].get());
         break;
     }
     case 2: {
-        shape->setTop(widthArguments[0]);
-        shape->setRight(widthArguments[1]);
-        shape->setBottom(widthArguments[0]);
-        shape->setLeft(widthArguments[1]);
+        shape->updateShapeSize2Values(widthArguments[0].get(), widthArguments[1].get());
         break;
         }
     case 3: {
-        shape->setTop(widthArguments[0]);
-        shape->setRight(widthArguments[1]);
-        shape->setBottom(widthArguments[2]);
-        shape->setLeft(widthArguments[1]);
+        shape->updateShapeSize3Values(widthArguments[0].get(), widthArguments[1].get(), widthArguments[2].get());
         break;
     }
     case 4: {
-        shape->setTop(widthArguments[0]);
-        shape->setRight(widthArguments[1]);
-        shape->setBottom(widthArguments[2]);
-        shape->setLeft(widthArguments[3]);
+        shape->updateShapeSize4Values(widthArguments[0].get(), widthArguments[1].get(), widthArguments[2].get(), widthArguments[3].get());
         break;
     }
     default:

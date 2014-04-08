@@ -1,3 +1,23 @@
+2014-04-07  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Simplify the parsing of width arguments for Inset shapes
+        https://bugs.webkit.org/show_bug.cgi?id=131305
+
+        Reviewed by Andreas Kling.
+
+        This code introduces some helper functions for setting the size arguments of inset shapes. This change
+        also modifies the code to be the same as in Blink, so it helps us to keep the shapes code similar.
+
+        No new tests, no behavior change.
+
+        * css/CSSBasicShapes.h:
+        (WebCore::CSSBasicShapeInset::updateShapeSize4Values):
+        (WebCore::CSSBasicShapeInset::updateShapeSize1Value):
+        (WebCore::CSSBasicShapeInset::updateShapeSize2Values):
+        (WebCore::CSSBasicShapeInset::updateShapeSize3Values):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBasicShapeInset):
+
 2014-04-07  Martin Robinson  <mrobinson@igalia.com>
 
         fast/css3-text/css3-text-decoration/text-decoration-thickness.html fails on GTK
