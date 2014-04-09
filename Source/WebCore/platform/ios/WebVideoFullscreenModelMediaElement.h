@@ -65,7 +65,8 @@ public:
     virtual void requestExitFullscreen() override;
     virtual void setVideoLayerFrame(FloatRect) override;
     virtual void setVideoLayerGravity(WebVideoFullscreenModel::VideoGravity) override;
-
+    virtual void selectAudioMediaOption(uint64_t index) override;
+    virtual void selectLegibleMediaOption(uint64_t index) override;
 };
 
 }

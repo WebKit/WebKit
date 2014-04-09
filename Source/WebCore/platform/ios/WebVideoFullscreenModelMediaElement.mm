@@ -87,6 +87,13 @@ void WebVideoFullscreenModelMediaElement::setMediaElement(HTMLMediaElement* medi
     m_videoFullscreenInterface->setSeekableRanges(*m_mediaElement->seekable());
     m_videoFullscreenInterface->setRate(!m_mediaElement->paused(), m_mediaElement->playbackRate());
 
+    Vector<String> legibleOptions;
+    
+    for (auto& textTrack : m_mediaElement->platformTextTracks())
+        legibleOptions.append(textTrack->label());
+    
+    m_videoFullscreenInterface->setLegibleMediaSelectionOptions(legibleOptions, 0);
+    
     m_videoFullscreenInterface->setCurrentTime(m_mediaElement->currentTime(), [[NSProcessInfo processInfo] systemUptime]);
 
     if (isHTMLVideoElement(m_mediaElement.get())) {
@@ -194,6 +201,21 @@ void WebVideoFullscreenModelMediaElement::setVideoLayerGravity(WebVideoFullscree
         ASSERT_NOT_REACHED();
     
     m_mediaElement->setVideoFullscreenGravity(videoGravity);
+}
+
+void WebVideoFullscreenModelMediaElement::selectAudioMediaOption(uint64_t)
+{
+    // FIXME: 131236 Implement audio track selection.
+}
+
+void WebVideoFullscreenModelMediaElement::selectLegibleMediaOption(uint64_t index)
+{
+    RefPtr<PlatformTextTrack> platformTrack;
+    
+    if (index < m_mediaElement->platformTextTracks().size())
+        platformTrack = m_mediaElement->platformTextTracks()[static_cast<size_t>(index)];
+    
+    m_mediaElement->setSelectedTextTrack(platformTrack);
 }
 
 #endif

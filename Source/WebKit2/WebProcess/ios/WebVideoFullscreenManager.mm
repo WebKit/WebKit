@@ -135,6 +135,16 @@ void WebVideoFullscreenManager::setSeekableRanges(const WebCore::TimeRanges& tim
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetSeekableRangesVector(std::move(rangesVector)), m_page->pageID());
 }
 
+void WebVideoFullscreenManager::setAudioMediaSelectionOptions(const Vector<String>& options, uint64_t selectedIndex)
+{
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetAudioMediaSelectionOptions(options, selectedIndex), m_page->pageID());
+}
+
+void WebVideoFullscreenManager::setLegibleMediaSelectionOptions(const Vector<String>& options, uint64_t selectedIndex)
+{
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetLegibleMediaSelectionOptions(options, selectedIndex), m_page->pageID());
+}
+    
 void WebVideoFullscreenManager::didEnterFullscreen()
 {
     m_isAnimating = false;

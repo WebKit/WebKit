@@ -67,6 +67,8 @@ private:
     virtual void seekToTime(double) override;
     virtual void setVideoLayerFrame(WebCore::FloatRect) override;
     virtual void setVideoLayerGravity(WebCore::WebVideoFullscreenModel::VideoGravity) override;
+    virtual void selectAudioMediaOption(uint64_t) override;
+    virtual void selectLegibleMediaOption(uint64_t) override;
 
     WebPageProxy* m_page;
     RetainPtr<PlatformLayer> m_layerHost;

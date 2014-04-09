@@ -44,6 +44,8 @@ public:
     virtual void setVideoLayerFrame(FloatRect) = 0;
     enum VideoGravity { VideoGravityResize, VideoGravityResizeAspect, VideoGravityResizeAspectFill };
     virtual void setVideoLayerGravity(VideoGravity) = 0;
+    virtual void selectAudioMediaOption(uint64_t index) = 0;
+    virtual void selectLegibleMediaOption(uint64_t index) = 0;
 };
 
 }

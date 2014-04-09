@@ -125,6 +125,16 @@ void WebVideoFullscreenManagerProxy::setVideoLayerGravity(WebCore::WebVideoFulls
 {
     m_page->send(Messages::WebVideoFullscreenManager::SetVideoLayerGravityEnum((unsigned)gravity), m_page->pageID());
 }
+    
+void WebVideoFullscreenManagerProxy::selectAudioMediaOption(uint64_t index)
+{
+    m_page->send(Messages::WebVideoFullscreenManager::SelectAudioMediaOption(index), m_page->pageID());
+}
+    
+void WebVideoFullscreenManagerProxy::selectLegibleMediaOption(uint64_t index)
+{
+    m_page->send(Messages::WebVideoFullscreenManager::SelectLegibleMediaOption(index), m_page->pageID());
+}
 
 } // namespace WebKit
 

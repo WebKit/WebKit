@@ -1,3 +1,59 @@
+2014-04-09  Jeremy Jones  <jeremyj@apple.com>
+
+        Enable fullscreen captions selection
+        https://bugs.webkit.org/show_bug.cgi?id=131069
+
+        Reviewed by Eric Carlson.
+
+        Enable media selection options from fullscreen. i.e. captions.
+
+        * WebCore.exp.in:
+        Add exports for 
+        setAudioMediaSelectionOptions
+        setLegibleMediaSelectionOptions
+        selectAudioMediaOption
+        selectLegibleMediaOption
+
+        * platform/ios/WebVideoFullscreenInterface.h:
+        Add setAudioMediaSelectionOptions/setLegibleMediaSelectionOptions
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        Add setAudioMediaSelectionOptions/setLegibleMediaSelectionOptions
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        Add setAudioMediaSelectionOptions/setLegibleMediaSelectionOptions
+
+        (-[WebAVPlayerController dealloc]):
+        (-[WebAVPlayerController hasMediaSelectionOptions]):
+        (+[WebAVPlayerController keyPathsForValuesAffectingHasMediaSelectionOptions]):
+        (-[WebAVPlayerController hasAudioMediaSelectionOptions]):
+        (+[WebAVPlayerController keyPathsForValuesAffectingHasAudioMediaSelectionOptions]):
+        (-[WebAVPlayerController hasLegibleMediaSelectionOptions]):
+        (+[WebAVPlayerController keyPathsForValuesAffectingHasLegibleMediaSelectionOptions]):
+        (-[WebAVPlayerController currentAudioMediaSelectionOption]):
+        (-[WebAVPlayerController setCurrentAudioMediaSelectionOption:]):
+        (-[WebAVPlayerController currentLegibleMediaSelectionOption]):
+        (-[WebAVPlayerController setCurrentLegibleMediaSelectionOption:]):
+        (WebVideoFullscreenInterfaceAVKit::setAudioMediaSelectionOptions):
+        (WebVideoFullscreenInterfaceAVKit::setLegibleMediaSelectionOptions):
+        * platform/ios/WebVideoFullscreenModel.h:
+        Add selectAudioMediaOption/selectLegibleMediaOption
+
+        * platform/ios/WebVideoFullscreenModelMediaElement.h:
+        Add selectAudioMediaOption/selectLegibleMediaOption
+
+        * platform/ios/WebVideoFullscreenModelMediaElement.mm:
+        Add selectAudioMediaOption/selectLegibleMediaOption
+
+        (WebVideoFullscreenModelMediaElement::setMediaElement):
+        Send initial media selection options.
+
+        (WebVideoFullscreenModelMediaElement::selectAudioMediaOption):
+        Will be implemented when audio track slection is implemented.
+
+        (WebVideoFullscreenModelMediaElement::selectLegibleMediaOption):
+        Select corresponding text track on HTMLMediaElement.
+
 2014-04-09  Antti Koivisto  <antti@apple.com>
 
         TileGrid should be PlatformCALayerClient instead of TileController

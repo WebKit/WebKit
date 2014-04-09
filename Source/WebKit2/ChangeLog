@@ -1,3 +1,40 @@
+2014-04-09  Jeremy Jones  <jeremyj@apple.com>
+
+        Enable fullscreen captions selection
+        https://bugs.webkit.org/show_bug.cgi?id=131069
+
+        Reviewed by Eric Carlson.
+
+        Enable media selection in fullscreen.
+        setLegibleMediaSelectionOptions/setAudioMediaSelectionOptions provide a list of options.
+        selectAudioMediaOption/selectLegibleMediaOption change the selected option.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+        Add selectAudioMediaOption/selectLegibleMediaOption
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.messages.in:
+        Add selectAudioMediaOption/selectLegibleMediaOption
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::selectAudioMediaOption):
+        Add selectAudioMediaOption
+
+        (WebKit::WebVideoFullscreenManagerProxy::selectLegibleMediaOption):
+        Add selectLegibleMediaOption
+
+        * WebProcess/ios/WebVideoFullscreenManager.h:
+        Add setAudioMediaSelectionOptions/setLegibleMediaSelectionOptions
+
+        * WebProcess/ios/WebVideoFullscreenManager.messages.in:
+        Add setAudioMediaSelectionOptions/setLegibleMediaSelectionOptions
+
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::setAudioMediaSelectionOptions):
+        Add setAudioMediaSelectionOptions
+
+        (WebKit::WebVideoFullscreenManager::setLegibleMediaSelectionOptions):
+        Add setLegibleMediaSelectionOptions
+
 2014-04-09  Alexey Proskuryakov  <ap@apple.com>
 
         Rename some dragging functions
