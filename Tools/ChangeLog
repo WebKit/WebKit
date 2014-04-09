@@ -1,3 +1,22 @@
+2014-04-09  Gergo Balogh  <gbalogh.u-szeged@partner.samsung.com>
+
+        Stylechecker: False positive on inline asm code.
+        https://bugs.webkit.org/show_bug.cgi?id=130570
+
+        Reviewed by Csaba Osztrogonác.
+
+        Disable stylechecking in asm blocks.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (process_line):
+        (_InlineASMState):
+        (_InlineASMState.__init__):
+        (_InlineASMState.process_line):
+        (_InlineASMState.isInside):
+        (_process_lines):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_member_initialization_list):
+
 2014-04-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move WebKit1 unit tests resources used by WebKit2 unit tests to WebKit2 resources dir
