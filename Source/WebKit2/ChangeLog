@@ -1,3 +1,18 @@
+2014-04-09  Gavin Barraclough  <baraclough@apple.com>
+
+        Update SPI for managing tabs
+        https://bugs.webkit.org/show_bug.cgi?id=131453
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/WebKit2.xcconfig:
+            - added AssertionServices
+        * UIProcess/WebProcessProxy.h:
+            - added m_assertion, m_assertionState.
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::updateProcessState):
+            - create BKSProcessAssertion to take an assertion.
+
 2014-04-09  Enrica Casucci  <enrica@apple.com>
 
         WK2: Dictated words disappear after being inserted.

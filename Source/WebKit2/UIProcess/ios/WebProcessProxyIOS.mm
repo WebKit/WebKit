@@ -28,8 +28,11 @@
 
 #if PLATFORM(IOS)
 
-#import <assertion/extension_private.h>
+#import <AssertionServices/BKSProcessAssertion.h>
 #import <WebCore/NotImplemented.h>
+
+const BKSProcessAssertionFlags BackgroundTabFlags = (BKSProcessAssertionAllowIdleSleep);
+const BKSProcessAssertionFlags ForegroundTabFlags = (BKSProcessAssertionAllowIdleSleep | BKSProcessAssertionPreventTaskSuspend | BKSProcessAssertionWantsForegroundResourcePriority | BKSProcessAssertionPreventTaskThrottleDown);
 
 namespace WebKit {
 
@@ -81,16 +84,28 @@ void WebProcessProxy::updateProcessState()
     if (!xpcConnection)
         return;
 
-    assertion_extension_state_t extensionState = ASSERTION_EXTENSION_STATE_BACKGROUND;
+    ProcessAssertionState assertionState = AssertionBackground;
     for (const auto& page : m_pageMap.values()) {
         if (page->isInWindow()) {
-            extensionState = ASSERTION_EXTENSION_STATE_FOREGROUND;
+            assertionState = AssertionForeground;
             break;
         }
     }
-
-    errno_t tabStateError = assertion_extension_set_state(xpcConnection, extensionState, NULL);
-    ASSERT_UNUSED(tabStateError, !tabStateError);
+    BKSProcessAssertionFlags flags = (assertionState == AssertionForeground) ? ForegroundTabFlags : BackgroundTabFlags;
+    
+    if (!m_assertion) {
+        pid_t pid = xpc_connection_get_pid(xpcConnection);
+        BKSProcessAssertionAcquisitionHandler handler = ^(BOOL acquired) {
+            if (!acquired) {
+                LOG_ERROR("Unable to acquire assertion for WebContent process %d", pid);
+                ASSERT_NOT_REACHED();
+            }
+        };
+        m_assertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flags reason:BKSProcessAssertionReasonExtension name:@"Web content visible" withHandler:handler]);
+    } else if (m_assertionState != assertionState)
+        [m_assertion setFlags:flags];
+    
+    m_assertionState = assertionState;
 #endif
 }
 

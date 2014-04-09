@@ -46,6 +46,14 @@
 #include "CustomProtocolManagerProxy.h"
 #endif
 
+#if PLATFORM(IOS) && USE(XPC_SERVICES)
+OBJC_CLASS BKSProcessAssertion;
+enum ProcessAssertionState {
+    AssertionBackground,
+    AssertionForeground
+};
+#endif
+
 namespace WebCore {
 class URL;
 struct PluginInfo;
@@ -216,6 +224,11 @@ private:
 #endif
 
     int m_numberOfTimesSuddenTerminationWasDisabled;
+    
+#if PLATFORM(IOS) && USE(XPC_SERVICES)
+    RetainPtr<BKSProcessAssertion> m_assertion;
+    ProcessAssertionState m_assertionState;
+#endif
 };
 
 #if !PLATFORM(IOS)
