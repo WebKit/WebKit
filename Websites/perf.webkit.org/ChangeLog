@@ -1,3 +1,13 @@
+2014-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Some CSS teaks.
+
+        * public/common.css:
+        (#title):
+        * public/index.html:
+        (#charts .pane):
+        (#charts .arrow):
+
 2014-04-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebKitPerfMonitor: There should be a way to add all metrics of a suite without also adding subtests

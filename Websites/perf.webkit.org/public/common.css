@@ -12,6 +12,7 @@ body {
 
 #title {
     position: relative;
+    padding-bottom: 0.5em;
 }
 
 #title h1 {
