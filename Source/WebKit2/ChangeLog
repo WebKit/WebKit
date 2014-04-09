@@ -1,5 +1,18 @@
 2014-04-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ build after r166975.
+
+        Do not use WebPage removed API to fix the build. Page overlays are
+        no broken, see https://bugs.webkit.org/show_bug.cgi?id=131433.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::display):
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::initialize):
+        (WebKit::LayerTreeHostGtk::paintContents):
+
+2014-04-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ build after r166965.
 
         * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:

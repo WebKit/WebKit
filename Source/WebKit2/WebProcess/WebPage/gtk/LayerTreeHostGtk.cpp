@@ -126,12 +126,7 @@ void LayerTreeHostGtk::initialize()
     static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
     toTextureMapperLayer(m_rootLayer.get())->setTextureMapper(m_textureMapper.get());
 
-    if (m_webPage->hasPageOverlay()) {
-        PageOverlayList& pageOverlays = m_webPage->pageOverlays();
-        PageOverlayList::iterator end = pageOverlays.end();
-        for (PageOverlayList::iterator it = pageOverlays.begin(); it != end; ++it)
-            createPageOverlayLayer(it->get());
-    }
+    // FIXME: Cretae page olverlay layers. https://bugs.webkit.org/show_bug.cgi?id=131433.
 
     scheduleLayerFlush();
 }
@@ -284,12 +279,7 @@ void LayerTreeHostGtk::paintContents(const GraphicsLayer* graphicsLayer, Graphic
         return;
     }
 
-    for (auto& pageOverlayLayer : m_pageOverlayLayers) {
-        if (pageOverlayLayer.value.get() == graphicsLayer) {
-            m_webPage->drawPageOverlay(pageOverlayLayer.key, graphicsContext, enclosingIntRect(clipRect));
-            break;
-        }
-    }
+    // FIXME: Draw page overlays. https://bugs.webkit.org/show_bug.cgi?id=131433.
 }
 
 gboolean LayerTreeHostGtk::layerFlushTimerFiredCallback(LayerTreeHostGtk* layerTreeHost)
