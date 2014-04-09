@@ -335,7 +335,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (NSInteger)accessibilityElementCount
 {
     if (![self _prepareAccessibilityCall])
-        return nil;
+        return 0;
 
     AXAttributeCacheEnabler enableCache(m_object->axObjectCache());
     if ([self isAttachment])
