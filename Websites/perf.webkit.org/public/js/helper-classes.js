@@ -247,7 +247,7 @@ function PerfTestRuns(metric, platform) {
         computeScalingFactorIfNeeded();
         return cachedUnit;
     }
-    this.smallerIsBetter = function() { return unit == 'ms' || unit == 'bytes' || unit == ''; }
+    this.smallerIsBetter = function() { return unit == 'ms' || unit == 'B' || unit == ''; }
 }
 
 var URLState = new (function () {

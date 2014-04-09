@@ -1,5 +1,12 @@
 2014-04-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix after r166479. 'bytes' is now abbreviated as 'B'.
+
+        * public/js/helper-classes.js:
+        (PerfTestRuns.smallerIsBetter):
+
+2014-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Some CSS teaks.
 
         * public/common.css:
