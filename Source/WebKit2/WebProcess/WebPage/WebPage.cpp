@@ -886,7 +886,7 @@ void WebPage::close()
     m_contextMenuClient.initialize(0);
 #endif
     m_editorClient.initialize(0);
-    m_formClient = std::make_ptr<API::InjectedBundle::FormClient>();
+    m_formClient = std::make_unique<API::InjectedBundle::FormClient>();
     m_loaderClient.initialize(0);
     m_policyClient.initialize(0);
     m_resourceLoadClient.initialize(0);
