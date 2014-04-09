@@ -30,6 +30,22 @@
         We should add the PayLoadOffset to ProtoCallFrame::argCountAndCodeOriginValue
         when loading the argCount.
 
+        The paddedArgCount issue was causing failures when running the JSC tests on a
+        64-bit big endian machine.  In this case, the paddedArgCount in the
+        ProtoCallFrame has the value 2.  However, because the paddedArgCount was stored
+        as a 64-bit size_t and the LLINT was loading only the low address 32-bits of
+        that field, the LLINT got a value of 0 instead of the expected 2.  With this
+        patch, we now have a matching store and load of a 32-bit value, and endianness
+        no longer comes into play.
+
+        As for ProtoCallFrame::argCountAndCodeOriginValue, the argCount is stored in
+        the payload field of the Register.  In the definition of EncodedValueDescriptor,
+        We already ensure that that the payload is in the least significant 32-bits for
+        little endian machines, and in the most significant 32-bits for big endian
+        machines.  This means that there is no endianness bug when loading this value
+        using loadi.  However, adding the PayLoadOffset clarifies the intent of the
+        code to load the payload part of the Register value.
+
         * interpreter/ProtoCallFrame.h:
         (JSC::ProtoCallFrame::setPaddedArgCount):
         * llint/LowLevelInterpreter32_64.asm:
