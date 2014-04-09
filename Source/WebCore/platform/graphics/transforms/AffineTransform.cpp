@@ -38,13 +38,13 @@
 namespace WebCore {
 
 AffineTransform::AffineTransform()
+    : m_transform { { 1, 0, 0, 1, 0, 0 } }
 {
-    setMatrix(1, 0, 0, 1, 0, 0);
 }
 
 AffineTransform::AffineTransform(double a, double b, double c, double d, double e, double f)
+    : m_transform { { a, b, c, d, e, f } }
 {
-    setMatrix(a, b, c, d, e, f);
 }
 
 void AffineTransform::makeIdentity()
@@ -130,7 +130,7 @@ AffineTransform& AffineTransform::multiply(const AffineTransform& other)
     trans.m_transform[4] = other.m_transform[4] * m_transform[0] + other.m_transform[5] * m_transform[2] + m_transform[4];
     trans.m_transform[5] = other.m_transform[4] * m_transform[1] + other.m_transform[5] * m_transform[3] + m_transform[5];
 
-    setMatrix(trans.m_transform);
+    *this = trans;
     return *this;
 }
 

@@ -1,3 +1,16 @@
+2014-04-09  Anders Carlsson  <andersca@apple.com>
+
+        Use std::array in AffineTransform, and get rid of setMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=131416
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/transforms/AffineTransform.cpp:
+        (WebCore::AffineTransform::AffineTransform):
+        (WebCore::AffineTransform::multiply):
+        * platform/graphics/transforms/AffineTransform.h:
+        (WebCore::AffineTransform::setMatrix): Deleted.
+
 2014-04-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Plugin process crashes when loading totem plugin
