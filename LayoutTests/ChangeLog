@@ -1,5 +1,16 @@
 2014-04-09  Mario Sanchez Prada  <mario.prada@samsung.com>
 
+        [AX][GTK] No new lines in some AX tests output
+        https://bugs.webkit.org/show_bug.cgi?id=131294
+
+        Reviewed by Martin Robinson.
+
+        Removed failure expectations for tests now passing.
+
+        * platform/gtk/TestExpectations: Updated.
+
+2014-04-09  Mario Sanchez Prada  <mario.prada@samsung.com>
+
         Unreviewed gardening for GTK.
 
         Updated test expectations after r166175, which removed an <hr>

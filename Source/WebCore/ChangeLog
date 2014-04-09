@@ -1,3 +1,19 @@
+2014-04-09  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [AX][GTK] No new lines in some AX tests output
+        https://bugs.webkit.org/show_bug.cgi?id=131294
+
+        Reviewed by Martin Robinson.
+
+        Do not implement Hypetext or AtkText for the WebArea. Those
+        interfaces will be implemented by the containers (automatically
+        generated or not) for the different parts of the DOM and the
+        render subtree under this element anyway.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (getInterfaceMaskFromObject): Make sure we don't apply
+        WAIHypertext nor WAIText to objects with role WebAreaRole.
+
 2014-04-08  Conrad Shultz  <conrad_shultz@apple.com>
 
         nil should only be used for objects

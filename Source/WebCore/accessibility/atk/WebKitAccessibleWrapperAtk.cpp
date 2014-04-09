@@ -1155,29 +1155,27 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
     if (coreObject->isLink() || (renderer && renderer->isReplaced()))
         interfaceMask |= 1 << WAIHyperlink;
 
-    // Text & Editable Text
+    // Text, Editable Text & Hypertext
     if (role == StaticTextRole || coreObject->isMenuListOption())
         interfaceMask |= 1 << WAIText;
-    else {
-        if (coreObject->isTextControl()) {
-            interfaceMask |= 1 << WAIText;
-            if (!coreObject->isReadOnly())
-                interfaceMask |= 1 << WAIEditableText;
-        } else {
-            if (role != TableRole) {
-                interfaceMask |= 1 << WAIHypertext;
-                if ((renderer && renderer->childrenInline()) || roleIsTextType(role))
-                    interfaceMask |= 1 << WAIText;
-            }
+    else if (coreObject->isTextControl()) {
+        interfaceMask |= 1 << WAIText;
+        if (!coreObject->isReadOnly())
+            interfaceMask |= 1 << WAIEditableText;
+    } else if (!coreObject->isWebArea()) {
+        if (role != TableRole) {
+            interfaceMask |= 1 << WAIHypertext;
+            if ((renderer && renderer->childrenInline()) || roleIsTextType(role))
+                interfaceMask |= 1 << WAIText;
+        }
 
-            // Add the TEXT interface for list items whose
-            // first accessible child has a text renderer
-            if (role == ListItemRole) {
-                const AccessibilityObject::AccessibilityChildrenVector& children = coreObject->children();
-                if (children.size()) {
-                    AccessibilityObject* axRenderChild = children.at(0).get();
-                    interfaceMask |= getInterfaceMaskFromObject(axRenderChild);
-                }
+        // Add the TEXT interface for list items whose
+        // first accessible child has a text renderer
+        if (role == ListItemRole) {
+            const AccessibilityObject::AccessibilityChildrenVector& children = coreObject->children();
+            if (children.size()) {
+                AccessibilityObject* axRenderChild = children.at(0).get();
+                interfaceMask |= getInterfaceMaskFromObject(axRenderChild);
             }
         }
     }

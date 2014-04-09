@@ -1055,14 +1055,6 @@ Bug(GTK) editing/spelling/spelling-linebreak.html [ Skip ]
 webkit.org/b/120401 fast/events [ Skip ]
 webkit.org/b/120401 editing/selection [ Skip ]
 
-# AX tests failing
-webkit.org/b/131294 accessibility/adjacent-continuations-cause-assertion-failure.html [ Failure ]
-webkit.org/b/131294 accessibility/deleting-iframe-destroys-axcache.html [ Failure ]
-webkit.org/b/131294 accessibility/div-within-anchors-causes-crash.html [ Failure ]
-webkit.org/b/131294 platform/gtk/accessibility/entry-and-password.html [ Failure ]
-webkit.org/b/131294 platform/gtk/accessibility/media-emits-object-replacement.html [ Failure ]
-webkit.org/b/131294 platform/gtk/accessibility/replaced-objects-in-anonymous-blocks.html [ Failure ]
-
 webkit.org/b/106340 accessibility/img-fallsback-to-title.html [ Failure ]
 
 webkit.org/b/131380 accessibility/children-changed-sends-notification.html [ Failure ]
