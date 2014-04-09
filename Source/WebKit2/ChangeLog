@@ -1,3 +1,11 @@
+2014-04-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Try to fix the GTK+ build after resetDragOperation rename
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDragDataReceived): Rename resetDragOperation to resetDragSession.
+        (dragExitedCallback): Ditto.
+
 2014-04-09  Jeremy Jones  <jeremyj@apple.com>
 
         Enable fullscreen captions selection
