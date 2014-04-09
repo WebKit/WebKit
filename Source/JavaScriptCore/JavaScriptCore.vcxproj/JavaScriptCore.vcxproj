@@ -1160,7 +1160,6 @@
     <ClInclude Include="..\jit\JITInlineCacheGenerator.h" />
     <ClInclude Include="..\jit\JITInlines.h" />
     <ClInclude Include="..\jit\JITOperations.h" />
-    <ClInclude Include="..\jit\JITOperationWrappers.h" />
     <ClInclude Include="..\jit\JITStubRoutine.h" />
     <ClInclude Include="..\jit\JITStubs.h" />
     <ClInclude Include="..\jit\JITStubsX86.h" />

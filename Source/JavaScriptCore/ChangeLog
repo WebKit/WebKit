@@ -1,3 +1,20 @@
+2014-04-09  Julien Brianceau  <jbriance@cisco.com>
+
+        Get rid of JITOperationWrappers.h header file.
+        https://bugs.webkit.org/show_bug.cgi?id=131450
+
+        Reviewed by Michael Saboff.
+
+        JITOperationWrappers header file contains architecture specific code that is
+        not needed anymore, so get rid of it.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGOperations.cpp:
+        * jit/JITOperationWrappers.h: Removed.
+        * jit/JITOperations.cpp:
+
 2014-04-09  Mark Lam  <mark.lam@apple.com>
 
         Ensure that LLINT accessing of the ProtoCallFrame is big endian friendly.

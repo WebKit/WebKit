@@ -136,7 +136,6 @@
 		0F24E54417EA9F5900ABB217 /* GPRInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E53F17EA9F5900ABB217 /* GPRInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E54C17EE274900ABB217 /* JITOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F24E54517EE274900ABB217 /* JITOperations.cpp */; };
 		0F24E54D17EE274900ABB217 /* JITOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54617EE274900ABB217 /* JITOperations.h */; };
-		0F24E54E17EE274900ABB217 /* JITOperationWrappers.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54717EE274900ABB217 /* JITOperationWrappers.h */; };
 		0F24E54F17EE274900ABB217 /* TempRegisterSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54817EE274900ABB217 /* TempRegisterSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E55017EE274900ABB217 /* Repatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F24E54917EE274900ABB217 /* Repatch.cpp */; };
 		0F24E55117EE274900ABB217 /* Repatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54A17EE274900ABB217 /* Repatch.h */; };
@@ -1665,7 +1664,6 @@
 		0F24E53F17EA9F5900ABB217 /* GPRInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPRInfo.h; sourceTree = "<group>"; };
 		0F24E54517EE274900ABB217 /* JITOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITOperations.cpp; sourceTree = "<group>"; };
 		0F24E54617EE274900ABB217 /* JITOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITOperations.h; sourceTree = "<group>"; };
-		0F24E54717EE274900ABB217 /* JITOperationWrappers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITOperationWrappers.h; sourceTree = "<group>"; };
 		0F24E54817EE274900ABB217 /* TempRegisterSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TempRegisterSet.h; sourceTree = "<group>"; };
 		0F24E54917EE274900ABB217 /* Repatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Repatch.cpp; sourceTree = "<group>"; };
 		0F24E54A17EE274900ABB217 /* Repatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Repatch.h; sourceTree = "<group>"; };
@@ -3485,7 +3483,6 @@
 				A71236E41195F33C00BD2174 /* JITOpcodes32_64.cpp */,
 				0F24E54517EE274900ABB217 /* JITOperations.cpp */,
 				0F24E54617EE274900ABB217 /* JITOperations.h */,
-				0F24E54717EE274900ABB217 /* JITOperationWrappers.h */,
 				86CC85C30EE7A89400288682 /* JITPropertyAccess.cpp */,
 				A7C1E8C8112E701C00A37F98 /* JITPropertyAccess32_64.cpp */,
 				0F766D2615A8CC1B008F363E /* JITStubRoutine.cpp */,
@@ -5357,7 +5354,6 @@
 				0FB14E1F18124ACE009B6B4D /* JITInlineCacheGenerator.h in Headers */,
 				86CC85A10EE79A4700288682 /* JITInlines.h in Headers */,
 				0F24E54D17EE274900ABB217 /* JITOperations.h in Headers */,
-				0F24E54E17EE274900ABB217 /* JITOperationWrappers.h in Headers */,
 				0F766D3115AA8112008F363E /* JITStubRoutine.h in Headers */,
 				0F766D2C15A8CC3A008F363E /* JITStubRoutineSet.h in Headers */,
 				14C5242B0F5355E900BA3D04 /* JITStubs.h in Headers */,

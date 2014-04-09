@@ -3303,9 +3303,6 @@
     <ClInclude Include="..\bytecode\InlineCallFrameSet.h">
       <Filter>bytecode</Filter>
     </ClInclude>
-    <ClInclude Include="..\jit\JITOperationWrappers.h">
-      <Filter>jit</Filter>
-    </ClInclude>
     <ClInclude Include="..\jit\JITOperations.h">
       <Filter>jit</Filter>
     </ClInclude>
