@@ -1,3 +1,16 @@
+2014-04-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        systemHiddenFontFamilySet in DRT is unnecessary
+        https://bugs.webkit.org/show_bug.cgi?id=131414
+
+        Reviewed by Tim Horton.
+
+        It doesn't seem to affect test results on my machine.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (drt_NSFontManager_availableFonts):
+        (systemHiddenFontFamilySet): Deleted.
+
 2014-04-09  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed test fix: Don't double-release BSTR.
