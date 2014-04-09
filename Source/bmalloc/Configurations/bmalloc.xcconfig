@@ -23,6 +23,7 @@
 
 EXECUTABLE_PREFIX = lib;
 INSTALL_PATH_ACTUAL = /usr/local/lib;
+PRIVATE_HEADERS_FOLDER_PATH = /usr/local/include/bmalloc;
 PRODUCT_NAME = bmalloc;
 
 GCC_SYMBOLS_PRIVATE_EXTERN = YES;

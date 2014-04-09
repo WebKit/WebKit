@@ -425,7 +425,7 @@ extern "C" WTF_EXPORT_PRIVATE const int jscore_fastmalloc_introspection = 0;
 
 #elif defined(USE_BMALLOC) && USE_BMALLOC // FORCE_SYSTEM_MALLOC
 
-#include "bmalloc.h"
+#include <bmalloc/bmalloc.h>
 
 namespace WTF {
 

@@ -1,3 +1,14 @@
+2014-04-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Put bmalloc headers in the right place
+        https://bugs.webkit.org/show_bug.cgi?id=131464
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/bmalloc.xcconfig: Set PRIVATE_HEADERS_FOLDER_PATH to
+        specify that we don't just want to dump all of our generically-named
+        headers into /usr/local/include.
+
 2014-04-08  Geoffrey Garen  <ggaren@apple.com>
 
         Made bmalloc more #include friendly

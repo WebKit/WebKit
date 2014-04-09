@@ -1,5 +1,15 @@
 2014-04-09  Geoffrey Garen  <ggaren@apple.com>
 
+        Put bmalloc headers in the right place
+        https://bugs.webkit.org/show_bug.cgi?id=131464
+
+        Reviewed by Mark Rowe.
+
+        * wtf/FastMalloc.cpp: Use "<bmalloc/...>" syntax so we can find our
+        headers in <header-root>/usr/local/include/bmalloc/.
+
+2014-04-09  Geoffrey Garen  <ggaren@apple.com>
+
         Rolled back out r166972.
 
         The production buildbots are still broken because the build-root script
