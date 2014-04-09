@@ -1,3 +1,17 @@
+2014-04-08  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Clip outer rounded border rect on device pixel boundaries.
+        https://bugs.webkit.org/show_bug.cgi?id=131404
+
+        Reviewed by Simon Fraser.
+
+        Use device pixel snapped rectangle to clip out rounded rects, when not all sides are solid/double.
+        Snapping it to device pixel boundaries ensures that when we call drawRect(devicePixelSnappedRect) later,
+        it leaves no cruft behind.
+
+        * fast/borders/hidpi-rounded-border-on-subpixel-position-expected.html: Added.
+        * fast/borders/hidpi-rounded-border-on-subpixel-position.html: Added.
+
 2014-04-08  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r155998): Elements render at very low resolution with some 3d transforms
