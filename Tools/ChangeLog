@@ -1,3 +1,13 @@
+2014-04-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Fix the build-jsc build
+        https://bugs.webkit.org/show_bug.cgi?id=131410
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/build-jsc: Make sure to build bmalloc before WTF, since
+        WTF depends on it.
+
 2014-04-08  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove WebKit1 unit tests
