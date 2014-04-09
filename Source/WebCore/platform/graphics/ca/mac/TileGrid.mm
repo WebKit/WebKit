@@ -598,7 +598,7 @@ IntRect TileGrid::tileCoverageRect() const
     return coverageRectInLayerCoords;
 }
 
-void TileGrid::drawTileMapContents(CGContextRef context, CGRect layerBounds)
+void TileGrid::drawTileMapContents(CGContextRef context, CGRect layerBounds) const
 {
     CGContextSetRGBFillColor(context, 0.3, 0.3, 0.3, 1);
     CGContextFillRect(context, layerBounds);

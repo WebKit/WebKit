@@ -30,6 +30,7 @@
 #import "IntRect.h"
 #import "PlatformCALayer.h"
 #import "Region.h"
+#import "TileCoverageMap.h"
 #import "TileGrid.h"
 #if !PLATFORM(IOS)
 #import "LayerPool.h"
@@ -84,9 +85,6 @@ TileController::~TileController()
 #if PLATFORM(IOS)
     tileControllerMemoryHandler().removeTileController(this);
 #endif
-
-    if (m_tiledScrollingIndicatorLayer)
-        m_tiledScrollingIndicatorLayer->setOwner(nullptr);
 }
 
 void TileController::tileCacheLayerBoundsChanged()
@@ -111,11 +109,6 @@ void TileController::platformCALayerPaintContents(PlatformCALayer* platformCALay
     if (pthread_main_np())
         WebThreadLock();
 #endif
-
-    if (platformCALayer == m_tiledScrollingIndicatorLayer.get()) {
-        tileGrid().drawTileMapContents(context.platformContext(), m_tiledScrollingIndicatorLayer->bounds());
-        return;
-    }
 
     {
         GraphicsContextStateSaver stateSaver(context);
@@ -214,10 +207,10 @@ bool TileController::tilesWouldChangeForVisibleRect(const FloatRect& newVisibleR
 
 void TileController::setTiledScrollingIndicatorPosition(const FloatPoint& position)
 {
-    if (m_tiledScrollingIndicatorPosition == position)
+    if (!m_coverageMap)
         return;
-    m_tiledScrollingIndicatorPosition = position;
-    updateTileCoverageMap();
+    m_coverageMap->setPosition(position);
+    m_coverageMap->update();
 }
 
 void TileController::prepopulateRect(const FloatRect& rect)
@@ -412,46 +405,8 @@ void TileController::setNeedsRevalidateTiles()
 
 void TileController::updateTileCoverageMap()
 {
-    if (!m_tiledScrollingIndicatorLayer)
-        return;
-    FloatRect containerBounds = bounds();
-    FloatRect visibleRect = this->visibleRect();
-    visibleRect.contract(4, 4); // Layer is positioned 2px from top and left edges.
-
-    float widthScale = 1;
-    float scale = 1;
-    if (!containerBounds.isEmpty()) {
-        widthScale = std::min<float>(visibleRect.width() / containerBounds.width(), 0.1);
-        scale = std::min(widthScale, visibleRect.height() / containerBounds.height());
-    }
-    
-    float indicatorScale = scale * tileGrid().scale();
-    FloatRect mapBounds = containerBounds;
-    mapBounds.scale(indicatorScale, indicatorScale);
-
-    m_tiledScrollingIndicatorLayer->setPosition(m_tiledScrollingIndicatorPosition + FloatPoint(2, 2));
-    m_tiledScrollingIndicatorLayer->setBounds(mapBounds);
-    m_tiledScrollingIndicatorLayer->setNeedsDisplay();
-
-    visibleRect.scale(indicatorScale, indicatorScale);
-    visibleRect.expand(2, 2);
-    m_visibleRectIndicatorLayer->setPosition(visibleRect.location());
-    m_visibleRectIndicatorLayer->setBounds(FloatRect(FloatPoint(), visibleRect.size()));
-
-    Color visibleRectIndicatorColor;
-    switch (m_indicatorMode) {
-    case SynchronousScrollingBecauseOfStyleIndication:
-        visibleRectIndicatorColor = Color(255, 0, 0);
-        break;
-    case SynchronousScrollingBecauseOfEventHandlersIndication:
-        visibleRectIndicatorColor = Color(255, 255, 0);
-        break;
-    case AsyncScrollingIndication:
-        visibleRectIndicatorColor = Color(0, 200, 0);
-        break;
-    }
-
-    m_visibleRectIndicatorLayer->setBorderColor(visibleRectIndicatorColor);
+    if (m_coverageMap)
+        m_coverageMap->update();
 }
 
 IntRect TileController::tileGridExtent() const
@@ -472,25 +427,10 @@ IntRect TileController::tileCoverageRect() const
 
 PlatformCALayer* TileController::tiledScrollingIndicatorLayer()
 {
-    if (!m_tiledScrollingIndicatorLayer) {
-        m_tiledScrollingIndicatorLayer = m_tileCacheLayer->createCompatibleLayer(PlatformCALayer::LayerTypeSimpleLayer, this);
-        m_tiledScrollingIndicatorLayer->setOpacity(0.75);
-        m_tiledScrollingIndicatorLayer->setAnchorPoint(FloatPoint3D());
-        m_tiledScrollingIndicatorLayer->setBorderColor(Color::black);
-        m_tiledScrollingIndicatorLayer->setBorderWidth(1);
-        m_tiledScrollingIndicatorLayer->setPosition(FloatPoint(2, 2));
+    if (!m_coverageMap)
+        m_coverageMap = std::make_unique<TileCoverageMap>(*this);
 
-        m_visibleRectIndicatorLayer = m_tileCacheLayer->createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr);
-        m_visibleRectIndicatorLayer->setBorderWidth(2);
-        m_visibleRectIndicatorLayer->setAnchorPoint(FloatPoint3D());
-        m_visibleRectIndicatorLayer->setBorderColor(Color(255, 0, 0));
-
-        m_tiledScrollingIndicatorLayer->appendSublayer(m_visibleRectIndicatorLayer.get());
-
-        updateTileCoverageMap();
-    }
-
-    return m_tiledScrollingIndicatorLayer.get();
+    return &m_coverageMap->layer();
 }
 
 void TileController::setScrollingModeIndication(ScrollingModeIndication scrollingMode)

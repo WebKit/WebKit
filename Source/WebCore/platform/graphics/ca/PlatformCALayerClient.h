@@ -36,19 +36,19 @@ class PlatformCALayer;
 
 class PlatformCALayerClient {
 public:
-    virtual void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*) = 0;
-    virtual bool platformCALayerRespondsToLayoutChanges() const = 0;
+    virtual void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*) { }
+    virtual bool platformCALayerRespondsToLayoutChanges() const { return false; }
 
-    virtual void platformCALayerAnimationStarted(CFTimeInterval beginTime) = 0;
-    virtual GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const = 0;
+    virtual void platformCALayerAnimationStarted(CFTimeInterval) { }
+    virtual GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const { return GraphicsLayer::CompositingCoordinatesTopDown; }
     virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect& inClip) = 0;
-    virtual bool platformCALayerShowDebugBorders() const = 0;
-    virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const = 0;
-    virtual int platformCALayerIncrementRepaintCount(PlatformCALayer*) = 0;
+    virtual bool platformCALayerShowDebugBorders() const { return false; }
+    virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const { return false; }
+    virtual int platformCALayerIncrementRepaintCount(PlatformCALayer*) { return 0; }
     
     virtual bool platformCALayerContentsOpaque() const = 0;
     virtual bool platformCALayerDrawsContent() const = 0;
-    virtual void platformCALayerLayerDidDisplay(PlatformLayer*) = 0;
+    virtual void platformCALayerLayerDidDisplay(PlatformLayer*)  { }
 
     virtual void platformCALayerSetNeedsToRevalidateTiles() { }
     virtual float platformCALayerDeviceScaleFactor() const = 0;

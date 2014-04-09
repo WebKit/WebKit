@@ -67,7 +67,7 @@ public:
     double retainedTileBackingStoreMemory() const;
     unsigned blankPixelCount() const;
 
-    void drawTileMapContents(CGContextRef, CGRect layerBounds);
+    void drawTileMapContents(CGContextRef, CGRect layerBounds) const;
 
 #if PLATFORM(IOS)
     unsigned numberOfUnparentedTiles() const { return m_cohortList.size(); }

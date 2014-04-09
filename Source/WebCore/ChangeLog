@@ -1,3 +1,46 @@
+2014-04-08  Antti Koivisto  <antti@apple.com>
+
+        Factor tile coverage map into a class
+        https://bugs.webkit.org/show_bug.cgi?id=131417
+
+        Reviewed by Tim Horton.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ca/PlatformCALayerClient.h:
+        (WebCore::PlatformCALayerClient::platformCALayerLayoutSublayersOfLayer):
+        (WebCore::PlatformCALayerClient::platformCALayerRespondsToLayoutChanges):
+        (WebCore::PlatformCALayerClient::platformCALayerAnimationStarted):
+        (WebCore::PlatformCALayerClient::platformCALayerContentsOrientation):
+        (WebCore::PlatformCALayerClient::platformCALayerShowDebugBorders):
+        (WebCore::PlatformCALayerClient::platformCALayerShowRepaintCounter):
+        (WebCore::PlatformCALayerClient::platformCALayerIncrementRepaintCount):
+        (WebCore::PlatformCALayerClient::platformCALayerLayerDidDisplay):
+        
+            Added default implementation to some of these to make clients less messy.
+
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::~TileController):
+        (WebCore::TileController::platformCALayerPaintContents):
+        (WebCore::TileController::setTiledScrollingIndicatorPosition):
+        (WebCore::TileController::updateTileCoverageMap):
+        (WebCore::TileController::tiledScrollingIndicatorLayer):
+        * platform/graphics/ca/mac/TileCoverageMap.h: Added.
+        (WebCore::TileCoverageMap::setPosition):
+        (WebCore::TileCoverageMap::layer):
+        * platform/graphics/ca/mac/TileCoverageMap.mm: Added.
+        
+            The new class.
+
+        (WebCore::TileCoverageMap::TileCoverageMap):
+        (WebCore::TileCoverageMap::~TileCoverageMap):
+        (WebCore::TileCoverageMap::update):
+        (WebCore::TileCoverageMap::platformCALayerPaintContents):
+        (WebCore::TileCoverageMap::platformCALayerDeviceScaleFactor):
+        * platform/graphics/ca/mac/TileGrid.h:
+        * platform/graphics/ca/mac/TileGrid.mm:
+        (WebCore::TileGrid::drawTileMapContents):
+
 2014-04-08  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Clip outer rounded border rect on device pixel boundaries.
