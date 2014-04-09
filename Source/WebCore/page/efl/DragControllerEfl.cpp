@@ -67,7 +67,7 @@ void DragController::cleanupAfterSystemDrag()
 {
 }
 
-void DragController::declareAndWriteDragImage(Clipboard&, Element&, const URL&, const String&)
+void DragController::declareAndWriteDragImage(DataTransfer&, Element&, const URL&, const String&)
 {
 }
 

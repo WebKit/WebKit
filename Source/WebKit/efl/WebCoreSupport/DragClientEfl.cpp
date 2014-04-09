@@ -40,7 +40,7 @@ void DragClientEfl::willPerformDragDestinationAction(DragDestinationAction, Drag
     notImplemented();
 }
 
-void DragClientEfl::willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard&)
+void DragClientEfl::willPerformDragSourceAction(DragSourceAction, const IntPoint&, DataTransfer&)
 {
     notImplemented();
 }
@@ -55,7 +55,7 @@ DragSourceAction DragClientEfl::dragSourceActionMaskForPoint(const IntPoint&)
     return DragSourceActionAny;
 }
 
-void DragClientEfl::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard&, Frame&, bool)
+void DragClientEfl::startDrag(DragImageRef, const IntPoint&, const IntPoint&, DataTransfer&, Frame&, bool)
 {
     notImplemented();
 }

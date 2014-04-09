@@ -1,3 +1,10 @@
+2014-04-08  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed EFL build fix attempt since r166956
+
+        * page/efl/DragControllerEfl.cpp: Rename Clipboard to DataTransfer.
+        (WebCore::DragController::declareAndWriteDragImage):
+
 2014-04-08  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r155998): Elements render at very low resolution with some 3d transforms

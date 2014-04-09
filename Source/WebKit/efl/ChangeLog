@@ -1,3 +1,12 @@
+2014-04-08  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed EFL build fix attempt since r166956
+
+        * WebCoreSupport/DragClientEfl.cpp: Rename Clipboard to DataTransfer.
+        (WebCore::DragClientEfl::willPerformDragSourceAction):
+        (WebCore::DragClientEfl::startDrag): Ditto.
+        * WebCoreSupport/DragClientEfl.h:
+
 2014-04-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Change NavigatorContentUtils client ownership from port side to NavigatorContentUtils
