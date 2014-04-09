@@ -306,7 +306,7 @@ WK_EXPORT void WKPreferencesResetTestRunnerOverrides(WKPreferencesRef preference
 WK_EXPORT void WKPreferencesSetUseLegacyTextAlignPositionedElementBehavior(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesUseLegacyTextAlignPositionedElementBehavior(WKPreferencesRef preferencesRef);
 
-// Defaults to false.
+// Defaults to true.
 WK_EXPORT void WKPreferencesSetMediaSourceEnabled(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetMediaSourceEnabled(WKPreferencesRef preferencesRef);
 

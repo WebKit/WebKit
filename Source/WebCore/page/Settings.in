@@ -197,7 +197,7 @@ minimumZoomFontSize type=float, initial=15, conditional=IOS_TEXT_AUTOSIZING
 simpleLineLayoutEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
 simpleLineLayoutDebugBordersEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
 
-mediaSourceEnabled initial=false
+mediaSourceEnabled initial=true, conditional=MEDIA_SOURCE
 
 # FIXME: Rename to allowMultiElementImplicitFormSubmission once we upstream the iOS changes to WebView.mm.
 allowMultiElementImplicitSubmission initial=false

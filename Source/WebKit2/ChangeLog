@@ -1,3 +1,15 @@
+2014-04-08  Jon Lee  <jonlee@apple.com>
+
+        Turn MSE on by default
+        https://bugs.webkit.org/show_bug.cgi?id=131313
+        <rdar://problem/16525223>
+
+        Reviewed by Jer Noble.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Shared/WebPreferencesStore.h: Set default to true.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
 2014-04-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix the typo in the previous commit.

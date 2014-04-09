@@ -214,7 +214,7 @@ namespace WebKit {
     macro(MediaStreamEnabled, mediaStreamEnabled, Bool, bool, false) \
     macro(UseLegacyTextAlignPositionedElementBehavior, useLegacyTextAlignPositionedElementBehavior, Bool, bool, false) \
     macro(SpatialNavigationEnabled, spatialNavigationEnabled, Bool, bool, false) \
-    macro(MediaSourceEnabled, mediaSourceEnabled, Bool, bool, false) \
+    macro(MediaSourceEnabled, mediaSourceEnabled, Bool, bool, true) \
     macro(ViewGestureDebuggingEnabled, viewGestureDebuggingEnabled, Bool, bool, false) \
     macro(ShouldConvertPositionStyleOnCopy, shouldConvertPositionStyleOnCopy, Bool, bool, false) \
     macro(Standalone, standalone, Bool, bool, false) \

@@ -588,7 +588,7 @@ public:
         
         [NSNumber numberWithBool:NO],   WebKitVideoPluginProxyEnabledKey,
 #if ENABLE(MEDIA_SOURCE)
-        [NSNumber numberWithBool:NO], WebKitMediaSourceEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES], WebKitMediaSourceEnabledPreferenceKey,
 #endif
 #if ENABLE(IMAGE_CONTROLS)
         [NSNumber numberWithBool:NO], WebKitImageControlsEnabledPreferenceKey,
