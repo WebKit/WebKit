@@ -1,3 +1,16 @@
+2014-04-08  Anders Carlsson  <andersca@apple.com>
+
+        Remove an unused parameter from loadResource.
+
+        Reviewed by Darin Adler.
+
+        Since the CachedResourceRequest has the charset in it, we don't need to pass it separately to loadRequest.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::loadResource):
+        * loader/cache/CachedResourceLoader.h:
+
 2014-04-08  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed EFL build fix attempt since r166956

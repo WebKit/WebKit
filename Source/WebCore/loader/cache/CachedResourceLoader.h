@@ -138,7 +138,7 @@ private:
 
     CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, CachedResourceRequest&);
     CachedResourceHandle<CachedResource> revalidateResource(const CachedResourceRequest&, CachedResource*);
-    CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, CachedResourceRequest&, const String& charset);
+    CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, CachedResourceRequest&);
 #if ENABLE(RESOURCE_TIMING)
     void storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>&, const CachedResourceRequest&);
 #endif

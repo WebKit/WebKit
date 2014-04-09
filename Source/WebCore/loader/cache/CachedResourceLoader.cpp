@@ -451,7 +451,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         memoryCache()->remove(resource.get());
         FALLTHROUGH;
     case Load:
-        resource = loadResource(type, request, request.charset());
+        resource = loadResource(type, request);
         break;
     case Revalidate:
         resource = revalidateResource(request, resource.get());
@@ -514,13 +514,13 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(co
     return newResource;
 }
 
-CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedResource::Type type, CachedResourceRequest& request, const String& charset)
+CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedResource::Type type, CachedResourceRequest& request)
 {
     ASSERT(!memoryCache()->resourceForRequest(request.resourceRequest(), sessionID()));
 
     LOG(ResourceLoading, "Loading CachedResource for '%s'.", request.resourceRequest().url().stringCenterEllipsizedToLength().latin1().data());
 
-    CachedResourceHandle<CachedResource> resource = createResource(type, request.mutableResourceRequest(), charset, sessionID());
+    CachedResourceHandle<CachedResource> resource = createResource(type, request.mutableResourceRequest(), request.charset(), sessionID());
 
     if (!memoryCache()->add(resource.get()))
         resource->setOwningCachedResourceLoader(this);
