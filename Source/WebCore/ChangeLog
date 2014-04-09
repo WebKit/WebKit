@@ -1,3 +1,16 @@
+2014-04-09  Brady Eidson  <beidson@apple.com>
+
+        ContentFilterMac is broken when NE_FILTER_SOURCE is enabled.
+        <rdar://problem/15978793> and https://bugs.webkit.org/show_bug.cgi?id=131445
+
+        Reviewed by Andy Estes.
+
+        No new tests (Not a tested feature).
+
+        * platform/mac/ContentFilterMac.mm:
+        (WebCore::ContentFilter::needsMoreData): Only consider m_neFilterSourceStatus if m_neFilterSource exists.
+        (WebCore::ContentFilter::didBlockData): Ditto.
+
 2014-04-08  Oliver Hunt  <oliver@apple.com>
 
         Rewrite Function.bind as a builtin

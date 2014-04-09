@@ -201,7 +201,7 @@ bool ContentFilter::needsMoreData() const
 {
     return [m_platformContentFilter filterState] == kWFEStateBuffering
 #if HAVE(NE_FILTER_SOURCE)
-        || m_neFilterSourceStatus == NEFilterSourceStatusNeedsMoreData
+        || (m_neFilterSource && m_neFilterSourceStatus == NEFilterSourceStatusNeedsMoreData)
 #endif
     ;
 }
@@ -210,7 +210,7 @@ bool ContentFilter::didBlockData() const
 {
     return [m_platformContentFilter wasBlocked]
 #if HAVE(NE_FILTER_SOURCE)
-        || m_neFilterSourceStatus == NEFilterSourceStatusBlock
+        || (m_neFilterSource && m_neFilterSourceStatus == NEFilterSourceStatusBlock)
 #endif
     ;
 }
