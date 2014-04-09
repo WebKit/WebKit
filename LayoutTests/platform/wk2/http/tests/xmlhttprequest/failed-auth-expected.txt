@@ -1,0 +1,8 @@
+didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet
+didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet
+Test for bug 13075: XMLHttpRequest with failed authentication should set status to 401.
+
+Sync, no credentials: OK
+Sync, incorrect credentials: OK
+Async, no credentials: OK
+Async, incorrect credentials: OK

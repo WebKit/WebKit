@@ -43,6 +43,7 @@
 #include <WebKit2/WKPageGroup.h>
 #include <WebKit2/WKPagePrivate.h>
 #include <WebKit2/WKPreferencesRefPrivate.h>
+#include <WebKit2/WKProtectionSpace.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <algorithm>
 #include <cstdio>
@@ -474,8 +475,8 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // didRemoveFrameFromHierarchy
         0, // didFailToInitializePlugin
         0, // didDisplayInsecureContentForFrame
-        0, // canAuthenticateAgainstProtectionSpaceInFrame
-        didReceiveAuthenticationChallengeInFrame, // didReceiveAuthenticationChallengeInFrame
+        canAuthenticateAgainstProtectionSpaceInFrame,
+        didReceiveAuthenticationChallengeInFrame,
         0, // didStartProgress
         0, // didChangeProgress
         0, // didFinishProgress
@@ -1124,6 +1125,11 @@ void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKT
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didFinishLoadForFrame(page, frame);
 }
 
+bool TestController::canAuthenticateAgainstProtectionSpaceInFrame(WKPageRef, WKFrameRef, WKProtectionSpaceRef protectionSpace, const void*)
+{
+    return WKProtectionSpaceGetAuthenticationScheme(protectionSpace) <= kWKProtectionSpaceAuthenticationSchemeHTTPDigest;
+}
+
 void TestController::didReceiveAuthenticationChallengeInFrame(WKPageRef page, WKFrameRef frame, WKAuthenticationChallengeRef authenticationChallenge, const void *clientInfo)
 {
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveAuthenticationChallengeInFrame(page, frame, authenticationChallenge);
@@ -1174,9 +1180,9 @@ void TestController::didReceiveAuthenticationChallengeInFrame(WKPageRef page, WK
 {
     String message;
     if (!m_handlesAuthenticationChallenges)
-        message = "<unknown> - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet\n";
+        message = "didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet\n";
     else
-        message = String::format("<unknown> - didReceiveAuthenticationChallenge - Responding with %s:%s\n", m_authenticationUsername.utf8().data(), m_authenticationPassword.utf8().data());
+        message = String::format("didReceiveAuthenticationChallenge - Responding with %s:%s\n", m_authenticationUsername.utf8().data(), m_authenticationPassword.utf8().data());
     m_currentInvocation->outputText(message);
 
     WKAuthenticationDecisionListenerRef decisionListener = WKAuthenticationChallengeGetDecisionListener(authenticationChallenge);

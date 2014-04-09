@@ -1,0 +1,2 @@
+didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet
+PASS

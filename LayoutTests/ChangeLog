@@ -1,3 +1,39 @@
+2014-04-09  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] HTTP authentication regression tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=81627
+        <rdar://problem/11079296>
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac-wk2/TestExpectations: Unskipped tests that now pass. Marked three
+        tests as failing, because enabling auth uncovered that they are failing
+        (in browser as well).
+
+        * platform/wk2/http: Added.
+        * platform/wk2/http/tests: Added.
+        * platform/wk2/http/tests/loading: Added.
+        * platform/wk2/http/tests/loading/authentication-after-redirect-stores-wrong-credentials: Added.
+        * platform/wk2/http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials-expected.txt: Copied from LayoutTests/http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials-expected.txt.
+        * platform/wk2/http/tests/loading/basic-auth-resend-wrong-credentials-expected.txt: Copied from LayoutTests/http/tests/loading/basic-auth-resend-wrong-credentials-expected.txt.
+        * platform/wk2/http/tests/loading/basic-credentials-sent-automatically-expected.txt: Copied from LayoutTests/http/tests/loading/basic-credentials-sent-automatically-expected.txt.
+        * platform/wk2/http/tests/misc: Added.
+        * platform/wk2/http/tests/misc/401-alternative-content-expected.txt: Copied from LayoutTests/http/tests/misc/401-alternative-content-expected.txt.
+        * platform/wk2/http/tests/misc/authentication-redirect-1: Added.
+        * platform/wk2/http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin-expected.txt: Copied from LayoutTests/http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin-expected.txt.
+        * platform/wk2/http/tests/misc/authentication-redirect-2: Added.
+        * platform/wk2/http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin-expected.txt: Copied from LayoutTests/http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin-expected.txt.
+        * platform/wk2/http/tests/misc/authentication-redirect-4: Added.
+        * platform/wk2/http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url-expected.txt: Copied from LayoutTests/http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url-expected.txt.
+        * platform/wk2/http/tests/security: Added.
+        * platform/wk2/http/tests/security/401-logout: Added.
+        * platform/wk2/http/tests/security/401-logout/401-logout-expected.txt: Copied from LayoutTests/http/tests/security/401-logout/401-logout-expected.txt.
+        * platform/wk2/http/tests/xmlhttprequest: Added.
+        * platform/wk2/http/tests/xmlhttprequest/failed-auth-expected.txt: Copied from LayoutTests/http/tests/xmlhttprequest/failed-auth-expected.txt.
+        * platform/wk2/http/tests/xmlhttprequest/remember-bad-password-expected.txt: Copied from LayoutTests/http/tests/xmlhttprequest/remember-bad-password-expected.txt.
+        WebKit2 results are the same as WebKit1, except that they lack resource URL. That
+        is expected with WebKit2 API.
+
 2014-04-08  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Crash when video in region exits fullscreen

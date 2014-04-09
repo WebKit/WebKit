@@ -169,13 +169,6 @@ fast/events/pageshow-pagehide-on-back-cached-with-frames.html
 fast/events/pageshow-pagehide-on-back-cached.html
 fast/events/pageshow-pagehide.html
 
-# [WK2] Four http/tests/xmlhttprequest tests fail on mac-wk2
-# https://bugs.webkit.org/show_bug.cgi?id=81627
-http/tests/xmlhttprequest/basic-auth-default.html
-http/tests/xmlhttprequest/basic-auth.html
-http/tests/xmlhttprequest/re-login-async.html
-http/tests/xmlhttprequest/workers/abort-exception-assert.html
-
 # fast/events/drag-link.html is failing in Mac WebKit2
 # https://bugs.webkit.org/show_bug.cgi?id=81833
 fast/events/drag-link.html
@@ -233,19 +226,6 @@ webkit.org/b/105960 plugins/navigator-plugins.html [ Failure ]
 webkit.org/b/105998 [ Lion Release ] fast/css/sticky/inline-sticky.html [ ImageOnlyFailure ]
 webkit.org/b/105998 [ MountainLion Debug ] fast/css/sticky/inline-sticky.html [ ImageOnlyFailure Pass ]
 webkit.org/b/105998 [ MountainLion Debug ] fast/css/sticky/sticky-both-sides.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/106405 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Failure ]
-webkit.org/b/106405 http/tests/loading/basic-auth-resend-wrong-credentials.html [ Failure ]
-webkit.org/b/106405 http/tests/loading/basic-credentials-sent-automatically.html [ Failure ]
-webkit.org/b/106405 http/tests/misc/401-alternative-content.php [ Failure ]
-webkit.org/b/106405 http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html [ Failure ]
-webkit.org/b/106405 http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html [ Failure ]
-webkit.org/b/106405 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
-webkit.org/b/106405 http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html [ Failure ]
-webkit.org/b/106405 http/tests/security/401-logout/401-logout.php [ Failure ]
-webkit.org/b/106405 http/tests/xmlhttprequest/basic-auth-nouser.html [ Failure ]
-webkit.org/b/106405 http/tests/xmlhttprequest/failed-auth.html [ Failure ]
-webkit.org/b/106405 http/tests/xmlhttprequest/remember-bad-password.html [ Failure ]
 
 webkit.org/b/108507 printing/quirks-percentage-height-body.html [ Skip ]
 webkit.org/b/108507 printing/quirks-percentage-height.html [ Skip ]
@@ -363,6 +343,10 @@ webkit.org/b/125996 platform/mac/accessibility/search-when-element-starts-in-tab
 
 webkit.org/b/127960 [ MountainLion ] http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Pass Failure ]
 
+webkit.org/b/131349 http/tests/xmlhttprequest/access-control-preflight-credential-async.html [ Failure ]
+webkit.org/b/131349 http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Failure ]
+webkit.org/b/131349 http/tests/xmlhttprequest/cross-origin-no-credential-prompt.html [ Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
@@ -393,7 +377,6 @@ editing/spelling/spelling-marker-description.html
 
 # All tests that failed on the Lion WebKit2 Release bot in r111739
 fast/forms/range/slider-delete-while-dragging-thumb.html
-http/tests/security/credentials-in-referer.html
 svg/W3C-SVG-1.1/fonts-elem-04-b.svg
 
 # A test that failed more than once on the Lion WebKit2 Debug bot between r111808 and r111849

@@ -1,3 +1,26 @@
+2014-04-09  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] HTTP authentication regression tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=81627
+        <rdar://problem/11079296>
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions): Added canAuthenticateAgainstProtectionSpaceInFrame
+        to pageLoaderClient structure.
+        (WTR::TestController::canAuthenticateAgainstProtectionSpaceInFrame): Return true
+        for password based authentication (we do get server trust challenges on some tests,
+        which WKTR can't handle).
+        When this client call is not implemented or returns false, didReceiveAuthenticationChallengeInFrame
+        calls won't be made, at least on CFNetwork based platforms.
+        (WTR::TestController::didReceiveAuthenticationChallengeInFrame): Changed the output
+        to omit <unknown>. The resource is always unknown with WK2, and it doesn't really
+        make sense to associate auth requests with individual resources - there can be
+        multiple resources loading at once from the same protection space, so WebKit1 API
+        that had a resource identifier was inherently racy.
+
 2014-04-09  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Change font path for DumpRenderTree and WebKitTestRunner

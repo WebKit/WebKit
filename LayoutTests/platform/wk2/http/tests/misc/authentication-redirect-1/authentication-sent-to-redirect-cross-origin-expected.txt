@@ -1,0 +1,27 @@
+didReceiveAuthenticationChallenge - Responding with testUser:testPassword
+https://bugs.webkit.org/show_bug.cgi?id=40138
+You should load this page at 127.0.0.1:8000 so localhost:8000 is considered a different security origin.
+This test loads a php script which demands http authentication, then uses it to redirect to another script in a different origin that shows what authentication headers were sent with the final request.
+It does this once each for HTTP 301, 302, 303, and 307 redirects.
+If not running under DRT, enter any credentials when asked.
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Resource loaded with HTTP authentication username '' and password ''
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+Resource loaded with HTTP authentication username '' and password ''
+
+--------
+Frame: '<!--framePath //<!--frame2-->-->'
+--------
+Resource loaded with HTTP authentication username '' and password ''
+
+--------
+Frame: '<!--framePath //<!--frame3-->-->'
+--------
+Resource loaded with HTTP authentication username '' and password ''
