@@ -1,3 +1,16 @@
+2014-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r 166890): Crash inside WebKit::WebEditorClient::textFieldDidEndEditing
+        https://bugs.webkit.org/show_bug.cgi?id=131409
+
+        Reviewed by Anders Carlsson.
+
+        Create an empty API::InjectedBundle::FormClient to avoid crashing inside
+        m_mainFrame->coreFrame()->loader().detachFromParent().
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+
 2014-04-08  Tim Horton  <timothy_horton@apple.com>
 
         Unify and factor out page overlay implementations
