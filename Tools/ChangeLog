@@ -1,3 +1,170 @@
+2014-04-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Various DumpRenderTree Fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=131446.
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::title): Switch to _bstr_t. Use JSStringCreateWithBSTR.
+        (AccessibilityUIElement::description): Ditto.
+        (AccessibilityUIElement::helpText): Ditto.
+        (AccessibilityUIElement::intValue): Ditto.
+        (AccessibilityUIElement::isPressActionSupported): Ditto.
+        (AccessibilityUIElement::accessibilityValue): Ditto.
+        * DumpRenderTree/win/DRTDesktopNotificationPresenter.cpp:
+        (DRTDesktopNotificationPresenter::QueryInterface): Get rid of uneeded STDMETHODCALLTYPE declaration.
+        (DRTDesktopNotificationPresenter::AddRef): Ditto.
+        (DRTDesktopNotificationPresenter::Release): Ditto.
+        (DRTDesktopNotificationPresenter::showDesktopNotification): Switch to _bstr_t. Use JSStringCreateWithBSTR.
+        (DRTDesktopNotificationPresenter::cancelDesktopNotification): Ditto.
+        (DRTDesktopNotificationPresenter::notificationDestroyed): Ditto.
+        (DRTDesktopNotificationPresenter::checkNotificationPermission): Ditto.
+        (DRTDesktopNotificationPresenter::requestNotificationPermission): Ditto.
+        * DumpRenderTree/win/DRTDesktopNotificationPresenter.h:
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dumpFrameScrollPosition): Ditto.
+        (dumpFramesAsText): Ditto.
+        (compareHistoryItems): Ditto.
+        (dumpHistoryItem): Ditto.
+        (dump): Ditto.
+        (resetDefaultsToConsistentValues): Ditto.
+        (resetWebViewToConsistentStateBeforeTesting): Ditto.
+        (runTest): Ditto.
+        (createWebViewAndOffscreenWindow): Ditto.
+        * DumpRenderTree/win/EditingDelegate.cpp:
+        (EditingDelegate::QueryInterface): Get rid of uneeded STDMETHODCALLTYPE declaration.
+        (EditingDelegate::AddRef): Ditto.
+        (EditingDelegate::Release): Ditto.
+        (dumpPath): Switch to _bstr_t. Use JSStringCreateWithBSTR
+        (EditingDelegate::shouldBeginEditingInDOMRange): Get rid of uneeded STDMETHODCALLTYPE declaration.
+        (EditingDelegate::shouldEndEditingInDOMRange): Ditto.
+        (EditingDelegate::shouldInsertNode): Ditto.
+        (EditingDelegate::shouldInsertText): Ditto.
+        (EditingDelegate::shouldDeleteDOMRange): Ditto.
+        (EditingDelegate::shouldChangeSelectedDOMRange): Ditto.
+        (EditingDelegate::shouldApplyStyle): Ditto.
+        (EditingDelegate::shouldChangeTypingStyle): Ditto.
+        (EditingDelegate::doPlatformCommand): Ditto.
+        (EditingDelegate::webViewDidBeginEditing): Switch to _bstr_t. Use JSStringCreateWithBSTR.
+        (EditingDelegate::webViewDidChange): Ditto.
+        (EditingDelegate::webViewDidEndEditing): Ditto.
+        (EditingDelegate::webViewDidChangeTypingStyle): Ditto.
+        (EditingDelegate::webViewDidChangeSelection): Ditto.
+        (EditingDelegate::checkSpellingOfString): Ditto.
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (descriptionSuitableForTestResult): Switch to _bstr_t. Use JSStringCreateWithBSTR.
+        (FrameLoadDelegate::FrameLoadDelegate): Ditto.
+        (FrameLoadDelegate::QueryInterface): Get rid of uneeded STDMETHODCALLTYPE declaration.
+        (FrameLoadDelegate::AddRef): Ditto.
+        (FrameLoadDelegate::Release): Ditto.
+        (FrameLoadDelegate::didStartProvisionalLoadForFrame): Switch to _bstr_t. Use JSStringCreateWithBSTR.
+        (FrameLoadDelegate::didReceiveServerRedirectForProvisionalLoadForFrame): Ditto.
+        (FrameLoadDelegate::didFailProvisionalLoadWithError): Ditto.
+        (FrameLoadDelegate::didCommitLoadForFrame): Ditto.
+        (FrameLoadDelegate::didReceiveTitle): Ditto.
+        (FrameLoadDelegate::didChangeIcons): Ditto.
+        (delegatesWithDelayedWork): Ditto.
+        (FrameLoadDelegate::didFinishLoadForFrame): Ditto.
+        (FrameLoadDelegate::didFailLoadWithError): Ditto.
+        (FrameLoadDelegate::willPerformClientRedirectToURL): Ditto.
+        (FrameLoadDelegate::didCancelClientRedirectForFrame): Ditto.
+        (FrameLoadDelegate::willCloseFrame): Ditto.
+        (FrameLoadDelegate::didFinishDocumentLoadForFrame): Ditto.
+        (FrameLoadDelegate::didHandleOnloadEventsForFrame): Ditto.
+        (FrameLoadDelegate::didFirstVisuallyNonEmptyLayoutInFrame): Ditto.
+        (FrameLoadDelegate::didDisplayInsecureContent): Ditto.
+        (FrameLoadDelegate::didRunInsecureContent): Ditto.
+        * DumpRenderTree/win/FrameLoadDelegate.h:
+        * DumpRenderTree/win/HistoryDelegate.cpp:
+        (HistoryDelegate::didNavigateWithNavigationData): Switch to _bstr_t. Use JSStringCreateWithBSTR.
+        (HistoryDelegate::updateHistoryTitle): Ditto.
+        (HistoryDelegate::populateVisitedLinksForWebView): Ditto.
+        * DumpRenderTree/win/PolicyDelegate.cpp:
+        (dumpPath):
+        (PolicyDelegate::QueryInterface): Get rid of uneeded STDMETHODCALLTYPE declaration.
+        (PolicyDelegate::AddRef): Ditto.
+        (PolicyDelegate::Release): Ditto.
+        (PolicyDelegate::decidePolicyForNavigationAction): Switch to _bstr_t. Use JSStringCreateWithBSTR.
+        (PolicyDelegate::unableToImplementPolicyWithError): Ditto.
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::descriptionSuitableForTestResult): Switch to _bstr_t. Use JSStringCreateWithBSTR.
+        (ResourceLoadDelegate::QueryInterface): Get rid of uneeded STDMETHODCALLTYPE declaration.
+        (ResourceLoadDelegate::AddRef): Ditto.
+        (ResourceLoadDelegate::Release): Ditto.
+        (ResourceLoadDelegate::identifierForInitialRequest): Switch to _bstr_t. Use JSStringCreateWithBSTR.
+        (ResourceLoadDelegate::removeIdentifierForRequest): Ditto.
+        (ResourceLoadDelegate::willSendRequest): Ditto.
+        (ResourceLoadDelegate::didReceiveAuthenticationChallenge): Ditto.
+        (ResourceLoadDelegate::didReceiveResponse): Ditto.
+        (ResourceLoadDelegate::didFinishLoadingFromDataSource): Ditto.
+        (ResourceLoadDelegate::didFailLoadingWithError): Ditto.
+        * DumpRenderTree/win/TestRunnerWin.cpp: Ditto.
+        (TestRunner::queueLoad): Switch to _bstr_t. Use JSStringCreateWithBSTR.
+        (TestRunner::setUserStyleSheetLocation): Ditto.
+        (TestRunner::execCommand): Ditto.
+        (TestRunner::overridePreference): Ditto.
+        (TestRunner::evaluateScriptInIsolatedWorld): Ditto.
+        * DumpRenderTree/win/TextInputControllerWin.cpp: Ditto.
+        (TextInputController::setMarkedText): Switch to _bstr_t. Use JSStringCreateWithBSTR.
+        (TextInputController::insertText): Ditto.
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::QueryInterface): Get rid of uneeded STDMETHODCALLTYPE declaration.
+        (UIDelegate::AddRef): Ditto.
+        (UIDelegate::Release): Ditto.
+        (UIDelegate::hasCustomMenuImplementation): Switch to _bstr_t. Use JSStringCreateWithBSTR.
+        (UIDelegate::trackCustomPopupMenu): Ditto.
+        (UIDelegate::registerUndoWithTarget): Ditto.
+        (UIDelegate::removeAllActionsWithTarget): Ditto.
+        (UIDelegate::setActionTitle): Ditto.
+        (UIDelegate::undo): Ditto.
+        (UIDelegate::redo): Ditto.
+        (UIDelegate::canUndo): Ditto.
+        (UIDelegate::canRedo): Ditto.
+        (UIDelegate::printFrame): Ditto.
+        (UIDelegate::ftpDirectoryTemplatePath): Ditto.
+        (UIDelegate::webViewHeaderHeight): Ditto.
+        (UIDelegate::webViewFooterHeight): Ditto.
+        (UIDelegate::drawHeaderInRect): Ditto.
+        (UIDelegate::drawFooterInRect): Ditto.
+        (UIDelegate::webViewPrintingMarginRect): Ditto.
+        (UIDelegate::canRunModal): Ditto.
+        (UIDelegate::createModalDialog): Ditto.
+        (UIDelegate::runModal): Ditto.
+        (UIDelegate::isMenuBarVisible): Ditto.
+        (UIDelegate::setMenuBarVisible): Ditto.
+        (UIDelegate::runDatabaseSizeLimitPrompt): Ditto.
+        (UIDelegate::paintCustomScrollbar): Ditto.
+        (UIDelegate::paintCustomScrollCorner): Ditto.
+        (UIDelegate::setFrame): Ditto.
+        (UIDelegate::webViewFrame): Ditto.
+        (UIDelegate::runJavaScriptAlertPanelWithMessage): Ditto.
+        (UIDelegate::runJavaScriptConfirmPanelWithMessage): Ditto.
+        (UIDelegate::runJavaScriptTextInputPanelWithPrompt): Ditto.
+        (UIDelegate::runBeforeUnloadConfirmPanelWithMessage): Ditto.
+        (UIDelegate::webViewAddMessageToConsole): Ditto.
+        (UIDelegate::doDragDrop): Ditto.
+        (UIDelegate::webViewGetDlgCode): Ditto.
+        (UIDelegate::createWebViewWithRequest): Ditto.
+        (UIDelegate::webViewClose): Ditto.
+        (UIDelegate::webViewFocus): Ditto.
+        (UIDelegate::webViewUnfocus): Ditto.
+        (UIDelegate::webViewPainted): Ditto.
+        (UIDelegate::exceededDatabaseQuota): Ditto.
+        (UIDelegate::embeddedViewWithArguments): Ditto.
+        (UIDelegate::webViewClosing): Ditto.
+        (UIDelegate::webViewSetCursor): Ditto.
+        (UIDelegate::webViewDidInvalidate): Ditto.
+        (UIDelegate::setStatusText): Ditto.
+        (UIDelegate::desktopNotificationsDelegate): Ditto.
+        (UIDelegate::drawBackground): Ditto.
+        (UIDelegate::decidePolicyForGeolocationRequest): Ditto.
+        (UIDelegate::didPressMissingPluginButton): Ditto.
+        * DumpRenderTree/win/WorkQueueItemWin.cpp: Ditto.
+        (LoadItem::invoke):  Switch to _bstr_t. Use JSStringCreateWithBSTR.
+        (LoadHTMLStringItem::invoke): Ditto.
+        (ScriptItem::invoke): Ditto.
+
 2014-04-09  Gergo Balogh  <gbalogh.u-szeged@partner.samsung.com>
 
         Stylechecker: False positive on inline asm code.

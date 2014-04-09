@@ -30,7 +30,6 @@
 #define FrameLoadDelegate_h
 
 #include <WebKit/WebKit.h>
-#include <wtf/OwnPtr.h>
 
 class AccessibilityController;
 class TextInputController;
@@ -169,9 +168,9 @@ private:
     void locationChangeDone(IWebError*, IWebFrame*);
 
     ULONG m_refCount;
-    OwnPtr<GCController> m_gcController;
-    OwnPtr<AccessibilityController> m_accessibilityController;
-    OwnPtr<TextInputController> m_textInputController;
+    std::unique_ptr<GCController> m_gcController;
+    std::unique_ptr<AccessibilityController> m_accessibilityController;
+    std::unique_ptr<TextInputController> m_textInputController;
 };
 
 #endif // FrameLoadDelegate_h

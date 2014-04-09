@@ -30,7 +30,6 @@
 #define DRTDesktopNotificationPresenter_h
 
 #include <WebKit/WebKit.h>
-#include <wtf/OwnPtr.h>
 #include <windef.h>
 
 class DRTDesktopNotificationPresenter : public IWebDesktopNotificationsDelegate {

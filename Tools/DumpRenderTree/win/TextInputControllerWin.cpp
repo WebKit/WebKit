@@ -30,6 +30,7 @@
 #include "TextInputController.h"
 
 #include "DumpRenderTree.h"
+#include <JavaScriptCore/JSStringRefBSTR.h>
 #include <WebCore/COMPtr.h>
 #include <WebKit/WebKit.h>
 #include <comutil.h>
@@ -47,7 +48,7 @@ void TextInputController::setMarkedText(JSStringRef text, unsigned int from, uns
     if (FAILED(webView->QueryInterface(&viewPrivate)))
         return;
 
-    _bstr_t bstr(wstring(JSStringGetCharactersPtr(text), JSStringGetLength(text)).data());
+    _bstr_t bstr(JSStringCopyBSTR(text), false);
 
     viewPrivate->setCompositionForTesting(bstr, from, length);
 }
@@ -115,7 +116,7 @@ void TextInputController::insertText(JSStringRef text)
     if (FAILED(webView->QueryInterface(&viewPrivate)))
         return;
  
-    _bstr_t bstr(wstring(JSStringGetCharactersPtr(text), JSStringGetLength(text)).data());
+    _bstr_t bstr(JSStringCopyBSTR(text), false);
 
     viewPrivate->confirmCompositionForTesting(bstr);
 }

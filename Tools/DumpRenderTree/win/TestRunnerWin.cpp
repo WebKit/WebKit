@@ -233,11 +233,10 @@ void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
     if (FAILED(dataSource->response(&response)) || !response)
         return;
 
-    BSTR responseURLBSTR;
-    if (FAILED(response->URL(&responseURLBSTR)))
+    _bstr_t responseURLBSTR;
+    if (FAILED(response->URL(&responseURLBSTR.GetBSTR())))
         return;
-    wstring responseURL(responseURLBSTR, SysStringLen(responseURLBSTR));
-    SysFreeString(responseURLBSTR);
+    wstring responseURL(responseURLBSTR, responseURLBSTR.length());
 
     // FIXME: We should do real relative URL resolution here.
     int lastSlash = responseURL.rfind('/');
@@ -656,9 +655,8 @@ void TestRunner::setUserStyleSheetLocation(JSStringRef jsURL)
 
     resultPath = cfStringRefToWString(CFURLGetString(url.get()));
 
-    BSTR resultPathBSTR = SysAllocStringLen(resultPath.data(), resultPath.size());
+    _bstr_t resultPathBSTR(resultPath.data());
     preferences->setUserStyleSheetLocation(resultPathBSTR);
-    SysFreeString(resultPathBSTR);
 }
 
 void TestRunner::setValueForUser(JSContextRef context, JSValueRef element, JSStringRef value)
@@ -738,9 +736,6 @@ int TestRunner::windowCount()
 
 void TestRunner::execCommand(JSStringRef name, JSStringRef value)
 {
-    wstring wName = jsStringRefToWString(name);
-    wstring wValue = jsStringRefToWString(value);
-
     COMPtr<IWebView> webView;
     if (FAILED(frame->webView(&webView)))
         return;
@@ -749,12 +744,9 @@ void TestRunner::execCommand(JSStringRef name, JSStringRef value)
     if (FAILED(webView->QueryInterface(&viewPrivate)))
         return;
 
-    BSTR nameBSTR = SysAllocStringLen((OLECHAR*)wName.c_str(), wName.length());
-    BSTR valueBSTR = SysAllocStringLen((OLECHAR*)wValue.c_str(), wValue.length());
+    _bstr_t nameBSTR(JSStringCopyBSTR(name), false);
+    _bstr_t valueBSTR(JSStringCopyBSTR(value), false);
     viewPrivate->executeCoreCommandByName(nameBSTR, valueBSTR);
-
-    SysFreeString(nameBSTR);
-    SysFreeString(valueBSTR);
 }
 
 bool TestRunner::findString(JSContextRef /* context */, JSStringRef /* target */, JSObjectRef /* optionsArray */)
@@ -822,11 +814,9 @@ void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
     if (!prefsPrivate)
         return;
 
-    BSTR keyBSTR = JSStringCopyBSTR(key);
-    BSTR valueBSTR = JSStringCopyBSTR(value);
+    _bstr_t keyBSTR(JSStringCopyBSTR(key), false);
+    _bstr_t valueBSTR(JSStringCopyBSTR(value), false);
     prefsPrivate->setPreferenceForTest(keyBSTR, valueBSTR);
-    SysFreeString(keyBSTR);
-    SysFreeString(valueBSTR);
 }
 
 void TestRunner::setDatabaseQuota(unsigned long long quota)
@@ -1036,10 +1026,9 @@ void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef glo
         world = worldSlot;
     }
 
-    BSTR result;
-    if (FAILED(framePrivate->stringByEvaluatingJavaScriptInScriptWorld(world.get(), globalObject, bstrT(script).GetBSTR(), &result)))
+    _bstr_t result;
+    if (FAILED(framePrivate->stringByEvaluatingJavaScriptInScriptWorld(world.get(), globalObject, bstrT(script).GetBSTR(), &result.GetBSTR())))
         return;
-    SysFreeString(result);
 }
 
 void TestRunner::removeAllVisitedLinks()

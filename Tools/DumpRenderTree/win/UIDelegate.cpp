@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <WebKit/WebKit.h>
 #include <WebKit/WebKitCOMAPI.h>
+#include <comutil.h>
 #include <stdio.h>
 
 using std::wstring;
@@ -170,7 +171,7 @@ void UIDelegate::resetUndoManager()
     m_undoManager = adoptPtr(new DRTUndoManager);
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT UIDelegate::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
     if (IsEqualGUID(riid, IID_IUnknown))
@@ -192,12 +193,12 @@ HRESULT STDMETHODCALLTYPE UIDelegate::QueryInterface(REFIID riid, void** ppvObje
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE UIDelegate::AddRef()
+ULONG UIDelegate::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE UIDelegate::Release()
+ULONG UIDelegate::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -206,61 +207,51 @@ ULONG STDMETHODCALLTYPE UIDelegate::Release()
     return newRef;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::hasCustomMenuImplementation( 
-        /* [retval][out] */ BOOL *hasCustomMenus)
+HRESULT UIDelegate::hasCustomMenuImplementation(BOOL* hasCustomMenus)
 {
     *hasCustomMenus = TRUE;
 
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::trackCustomPopupMenu( 
-        /* [in] */ IWebView *sender,
-        /* [in] */ OLE_HANDLE menu,
-        /* [in] */ LPPOINT point)
+HRESULT UIDelegate::trackCustomPopupMenu(IWebView* /*sender*/, OLE_HANDLE /*menu*/, LPPOINT /*point*/)
 {
     // Do nothing
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::registerUndoWithTarget(
-        /* [in] */ IWebUndoTarget* target,
-        /* [in] */ BSTR actionName,
-        /* [in] */ IUnknown* actionArg)
+HRESULT UIDelegate::registerUndoWithTarget(IWebUndoTarget* target, BSTR actionName, IUnknown* actionArg)
 {
     m_undoManager->registerUndoWithTarget(target, actionName, actionArg);
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::removeAllActionsWithTarget(
-        /* [in] */ IWebUndoTarget*)
+HRESULT UIDelegate::removeAllActionsWithTarget(IWebUndoTarget*)
 {
     m_undoManager->removeAllActions();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::setActionTitle(
-        /* [in] */ BSTR actionTitle)
+HRESULT UIDelegate::setActionTitle(BSTR /*actionTitle*/)
 {
     // It is not neccessary to implement this for DRT because there is
     // menu to write out the title to.
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::undo()
+HRESULT UIDelegate::undo()
 {
     m_undoManager->undo();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::redo()
+HRESULT UIDelegate::redo()
 {
     m_undoManager->redo();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::canUndo(
-        /* [retval][out] */ BOOL* result)
+HRESULT UIDelegate::canUndo(BOOL* result)
 {
     if (!result)
         return E_POINTER;
@@ -269,8 +260,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::canUndo(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::canRedo(
-        /* [retval][out] */ BOOL* result)
+HRESULT UIDelegate::canRedo(BOOL* result)
 {
     if (!result)
         return E_POINTER;
@@ -279,16 +269,12 @@ HRESULT STDMETHODCALLTYPE UIDelegate::canRedo(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::printFrame( 
-    /* [in] */ IWebView *webView,
-    /* [in] */ IWebFrame *frame)
+HRESULT UIDelegate::printFrame(IWebView* /*webView*/, IWebFrame* /*frame*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::ftpDirectoryTemplatePath( 
-    /* [in] */ IWebView *webView,
-    /* [retval][out] */ BSTR *path)
+HRESULT UIDelegate::ftpDirectoryTemplatePath(IWebView* /*webView*/, BSTR* path)
 {
     if (!path)
         return E_POINTER;
@@ -297,9 +283,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::ftpDirectoryTemplatePath(
 }
 
 
-HRESULT STDMETHODCALLTYPE UIDelegate::webViewHeaderHeight( 
-    /* [in] */ IWebView *webView,
-    /* [retval][out] */ float *result)
+HRESULT UIDelegate::webViewHeaderHeight(IWebView* /*webView*/, float* result)
 {
     if (!result)
         return E_POINTER;
@@ -307,9 +291,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::webViewHeaderHeight(
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::webViewFooterHeight( 
-    /* [in] */ IWebView *webView,
-    /* [retval][out] */ float *result)
+HRESULT UIDelegate::webViewFooterHeight(IWebView* /*webView*/, float* result)
 {
     if (!result)
         return E_POINTER;
@@ -317,55 +299,37 @@ HRESULT STDMETHODCALLTYPE UIDelegate::webViewFooterHeight(
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::drawHeaderInRect( 
-    /* [in] */ IWebView *webView,
-    /* [in] */ RECT *rect,
-    /* [in] */ OLE_HANDLE drawingContext)
+HRESULT UIDelegate::drawHeaderInRect(IWebView* /*webView*/, RECT* /*rect*/, OLE_HANDLE /*drawingContext*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::drawFooterInRect( 
-    /* [in] */ IWebView *webView,
-    /* [in] */ RECT *rect,
-    /* [in] */ OLE_HANDLE drawingContext,
-    /* [in] */ UINT pageIndex,
-    /* [in] */ UINT pageCount)
+HRESULT UIDelegate::drawFooterInRect(IWebView* /*webView*/, RECT* /*rect*/, OLE_HANDLE /*drawingContext*/, UINT /*pageIndex*/, UINT /*pageCount*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::webViewPrintingMarginRect( 
-    /* [in] */ IWebView *webView,
-    /* [retval][out] */ RECT *rect)
+HRESULT UIDelegate::webViewPrintingMarginRect(IWebView* /*webView*/, RECT* /*rect*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::canRunModal( 
-    /* [in] */ IWebView *webView,
-    /* [retval][out] */ BOOL *canRunBoolean)
+HRESULT UIDelegate::canRunModal(IWebView* /*webView*/, BOOL* /*canRunBoolean*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::createModalDialog( 
-    /* [in] */ IWebView *sender,
-    /* [in] */ IWebURLRequest *request,
-    /* [retval][out] */ IWebView **newWebView)
+HRESULT UIDelegate::createModalDialog(IWebView* /*sender*/, IWebURLRequest* /*request*/, IWebView** /*newWebView*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::runModal( 
-    /* [in] */ IWebView *webView)
+HRESULT UIDelegate::runModal(IWebView* /*webView*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::isMenuBarVisible( 
-    /* [in] */ IWebView *webView,
-    /* [retval][out] */ BOOL *visible)
+HRESULT UIDelegate::isMenuBarVisible(IWebView* /*webView*/, BOOL* visible)
 {
     if (!visible)
         return E_POINTER;
@@ -373,18 +337,12 @@ HRESULT STDMETHODCALLTYPE UIDelegate::isMenuBarVisible(
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::setMenuBarVisible( 
-    /* [in] */ IWebView *webView,
-    /* [in] */ BOOL visible)
+HRESULT UIDelegate::setMenuBarVisible(IWebView* /*webView*/, BOOL /*visible*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::runDatabaseSizeLimitPrompt( 
-    /* [in] */ IWebView *webView,
-    /* [in] */ BSTR displayName,
-    /* [in] */ IWebFrame *initiatedByFrame,
-    /* [retval][out] */ BOOL *allowed)
+HRESULT UIDelegate::runDatabaseSizeLimitPrompt(IWebView* /*webView*/, BSTR /*displayName*/, IWebFrame* /*initiatedByFrame*/, BOOL* allowed)
 {
     if (!allowed)
         return E_POINTER;
@@ -392,48 +350,30 @@ HRESULT STDMETHODCALLTYPE UIDelegate::runDatabaseSizeLimitPrompt(
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::paintCustomScrollbar( 
-    /* [in] */ IWebView *webView,
-    /* [in] */ HDC hDC,
-    /* [in] */ RECT rect,
-    /* [in] */ WebScrollBarControlSize size,
-    /* [in] */ WebScrollbarControlState state,
-    /* [in] */ WebScrollbarControlPart pressedPart,
-    /* [in] */ BOOL vertical,
-    /* [in] */ float value,
-    /* [in] */ float proportion,
-    /* [in] */ WebScrollbarControlPartMask parts)
+HRESULT UIDelegate::paintCustomScrollbar(IWebView* /*webView*/, HDC /*hDC*/, RECT /*rect*/, WebScrollBarControlSize /*size*/, WebScrollbarControlState /*state*/,
+    WebScrollbarControlPart /*pressedPart*/, BOOL /*vertical*/, float /*value*/, float /*proportion*/, WebScrollbarControlPartMask /*parts*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::paintCustomScrollCorner( 
-    /* [in] */ IWebView *webView,
-    /* [in] */ HDC hDC,
-    /* [in] */ RECT rect)
+HRESULT UIDelegate::paintCustomScrollCorner(IWebView* /*webView*/, HDC /*hDC*/, RECT /*rect*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::setFrame( 
-        /* [in] */ IWebView* /*sender*/,
-        /* [in] */ RECT* frame)
+HRESULT UIDelegate::setFrame(IWebView* /*sender*/, RECT* frame)
 {
     m_frame = *frame;
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::webViewFrame( 
-        /* [in] */ IWebView* /*sender*/,
-        /* [retval][out] */ RECT* frame)
+HRESULT UIDelegate::webViewFrame(IWebView* /*sender*/, RECT* frame)
 {
     *frame = m_frame;
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::runJavaScriptAlertPanelWithMessage( 
-        /* [in] */ IWebView* /*sender*/,
-        /* [in] */ BSTR message)
+HRESULT UIDelegate::runJavaScriptAlertPanelWithMessage(IWebView* /*sender*/, BSTR message)
 {
     printf("ALERT: %S\n", message ? message : L"");
     fflush(stdout);
@@ -441,10 +381,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::runJavaScriptAlertPanelWithMessage(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::runJavaScriptConfirmPanelWithMessage( 
-    /* [in] */ IWebView* sender,
-    /* [in] */ BSTR message,
-    /* [retval][out] */ BOOL* result)
+HRESULT UIDelegate::runJavaScriptConfirmPanelWithMessage(IWebView* /*sender*/, BSTR message, BOOL* result)
 {
     printf("CONFIRM: %S\n", message ? message : L"");
     *result = TRUE;
@@ -452,11 +389,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::runJavaScriptConfirmPanelWithMessage(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::runJavaScriptTextInputPanelWithPrompt( 
-    /* [in] */ IWebView *sender,
-    /* [in] */ BSTR message,
-    /* [in] */ BSTR defaultText,
-    /* [retval][out] */ BSTR *result)
+HRESULT UIDelegate::runJavaScriptTextInputPanelWithPrompt(IWebView* /*sender*/, BSTR message, BSTR defaultText, BSTR* result)
 {
     printf("PROMPT: %S, default text: %S\n", message ? message : L"", defaultText ? defaultText : L"");
     *result = SysAllocString(defaultText);
@@ -464,11 +397,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::runJavaScriptTextInputPanelWithPrompt(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::runBeforeUnloadConfirmPanelWithMessage( 
-    /* [in] */ IWebView* /*sender*/,
-    /* [in] */ BSTR message,
-    /* [in] */ IWebFrame* /*initiatedByFrame*/,
-    /* [retval][out] */ BOOL* result)
+HRESULT UIDelegate::runBeforeUnloadConfirmPanelWithMessage(IWebView* /*sender*/, BSTR message, IWebFrame* /*initiatedByFrame*/, BOOL* result)
 {
     if (!result)
         return E_POINTER;
@@ -477,12 +406,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::runBeforeUnloadConfirmPanelWithMessage(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::webViewAddMessageToConsole( 
-    /* [in] */ IWebView* sender,
-    /* [in] */ BSTR message,
-    /* [in] */ int lineNumber,
-    /* [in] */ BSTR url,
-    /* [in] */ BOOL isError)
+HRESULT UIDelegate::webViewAddMessageToConsole(IWebView* /*sender*/, BSTR message, int lineNumber, BSTR url, BOOL isError)
 {
     wstring newMessage;
     if (message) {
@@ -499,12 +423,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::webViewAddMessageToConsole(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::doDragDrop( 
-    /* [in] */ IWebView* sender,
-    /* [in] */ IDataObject* object,
-    /* [in] */ IDropSource* source,
-    /* [in] */ DWORD okEffect,
-    /* [retval][out] */ DWORD* performedEffect)
+HRESULT UIDelegate::doDragDrop(IWebView* /*sender*/, IDataObject* object, IDropSource* source, DWORD /*okEffect*/, DWORD* performedEffect)
 {
     if (!performedEffect)
         return E_POINTER;
@@ -522,10 +441,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::doDragDrop(
     return oleDragAndDropReturnValue;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::webViewGetDlgCode( 
-    /* [in] */ IWebView* /*sender*/,
-    /* [in] */ UINT /*keyCode*/,
-    /* [retval][out] */ LONG_PTR *code)
+HRESULT UIDelegate::webViewGetDlgCode(IWebView* /*sender*/, UINT /*keyCode*/, LONG_PTR* code)
 {
     if (!code)
         return E_POINTER;
@@ -533,10 +449,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::webViewGetDlgCode(
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::createWebViewWithRequest( 
-        /* [in] */ IWebView *sender,
-        /* [in] */ IWebURLRequest *request,
-        /* [retval][out] */ IWebView **newWebView)
+HRESULT UIDelegate::createWebViewWithRequest(IWebView* /*sender*/, IWebURLRequest* /*request*/, IWebView** newWebView)
 {
     if (!::gTestRunner->canOpenWindows())
         return E_FAIL;
@@ -544,8 +457,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::createWebViewWithRequest(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::webViewClose(
-        /* [in] */ IWebView *sender)
+HRESULT UIDelegate::webViewClose(IWebView* sender)
 {
     HWND hostWindow;
     sender->hostWindow(reinterpret_cast<OLE_HANDLE*>(&hostWindow));
@@ -553,8 +465,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::webViewClose(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::webViewFocus( 
-        /* [in] */ IWebView *sender)
+HRESULT UIDelegate::webViewFocus(IWebView* sender)
 {
     HWND hostWindow;
     sender->hostWindow(reinterpret_cast<OLE_HANDLE*>(&hostWindow));
@@ -562,38 +473,29 @@ HRESULT STDMETHODCALLTYPE UIDelegate::webViewFocus(
     return S_OK; 
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::webViewUnfocus( 
-        /* [in] */ IWebView *sender)
+HRESULT UIDelegate::webViewUnfocus(IWebView* /*sender*/)
 {
     SetForegroundWindow(GetDesktopWindow());
     return S_OK; 
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::webViewPainted( 
-        /* [in] */ IWebView *sender)
+HRESULT UIDelegate::webViewPainted(IWebView* /*sender*/)
 {
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::exceededDatabaseQuota( 
-        /* [in] */ IWebView *sender,
-        /* [in] */ IWebFrame *frame,
-        /* [in] */ IWebSecurityOrigin *origin,
-        /* [in] */ BSTR databaseIdentifier)
+HRESULT UIDelegate::exceededDatabaseQuota(IWebView* sender, IWebFrame* frame, IWebSecurityOrigin* origin, BSTR databaseIdentifier)
 {
-    BSTR protocol;
-    BSTR host;
+    _bstr_t protocol;
+    _bstr_t host;
     unsigned short port;
 
-    origin->protocol(&protocol);
-    origin->host(&host);
+    origin->protocol(&protocol.GetBSTR());
+    origin->host(&host.GetBSTR());
     origin->port(&port);
 
     if (!done && gTestRunner->dumpDatabaseCallbacks())
         printf("UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{%S, %S, %i} database:%S\n", protocol, host, port, databaseIdentifier);
-
-    SysFreeString(protocol);
-    SysFreeString(host);
 
     unsigned long long defaultQuota = 5 * 1024 * 1024;
     double testDefaultQuota = gTestRunner->databaseDefaultQuota();
@@ -633,11 +535,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::exceededDatabaseQuota(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::embeddedViewWithArguments( 
-    /* [in] */ IWebView *sender,
-    /* [in] */ IWebFrame *frame,
-    /* [in] */ IPropertyBag *arguments,
-    /* [retval][out] */ IWebEmbeddedView **view)
+HRESULT UIDelegate::embeddedViewWithArguments(IWebView* /*sender*/, IWebFrame* /*frame*/, IPropertyBag* /*arguments*/, IWebEmbeddedView** view)
 {
     if (!view)
         return E_POINTER;
@@ -645,54 +543,50 @@ HRESULT STDMETHODCALLTYPE UIDelegate::embeddedViewWithArguments(
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::webViewClosing( 
-    /* [in] */ IWebView *sender)
+HRESULT UIDelegate::webViewClosing(IWebView* /*sender*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::webViewSetCursor( 
-    /* [in] */ IWebView *sender,
-    /* [in] */ OLE_HANDLE cursor)
+HRESULT UIDelegate::webViewSetCursor(IWebView* /*sender*/, OLE_HANDLE /*cursor*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::webViewDidInvalidate( 
-    /* [in] */ IWebView *sender)
+HRESULT UIDelegate::webViewDidInvalidate(IWebView* /*sender*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::setStatusText(IWebView*, BSTR text)
+HRESULT UIDelegate::setStatusText(IWebView*, BSTR text)
 { 
     if (gTestRunner->dumpStatusCallbacks())
-        printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", text ? toUTF8(text).c_str() : "");
+        printf("UI DELEGATE STATUS CALLBACK: setStatusText:%S\n", text ? text : L"");
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::desktopNotificationsDelegate(IWebDesktopNotificationsDelegate** result)
+HRESULT UIDelegate::desktopNotificationsDelegate(IWebDesktopNotificationsDelegate** result)
 {
     m_desktopNotifications.copyRefTo(result);
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::createWebViewWithRequest(IWebView* sender, IWebURLRequest* request, IPropertyBag* windowFeatures, IWebView** newWebView)
+HRESULT UIDelegate::createWebViewWithRequest(IWebView* /*sender*/, IWebURLRequest* /*request*/, IPropertyBag* /*windowFeatures*/, IWebView** /*newWebView*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::drawBackground(IWebView* sender, OLE_HANDLE hdc, const RECT* dirtyRect)
+HRESULT UIDelegate::drawBackground(IWebView* /*sender*/, OLE_HANDLE hdc, const RECT* dirtyRect)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::decidePolicyForGeolocationRequest(IWebView* sender, IWebFrame* frame, IWebSecurityOrigin* origin, IWebGeolocationPolicyListener* listener)
+HRESULT UIDelegate::decidePolicyForGeolocationRequest(IWebView* /*sender*/, IWebFrame* frame, IWebSecurityOrigin* /*origin*/, IWebGeolocationPolicyListener* /*listener*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE UIDelegate::didPressMissingPluginButton(IDOMElement* element)
+HRESULT UIDelegate::didPressMissingPluginButton(IDOMElement* /*element*/)
 {
     printf("MISSING PLUGIN BUTTON PRESSED\n");
     return S_OK;

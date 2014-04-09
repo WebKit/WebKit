@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2009, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 
 #include "DumpRenderTree.h"
 #include "TestRunner.h"
+#include <comutil.h>
 #include <string>
 
 using std::wstring;
@@ -41,11 +42,10 @@ static wstring dumpPath(IDOMNode* node)
 
     wstring result;
 
-    BSTR name;
-    if (FAILED(node->nodeName(&name)))
+    _bstr_t name;
+    if (FAILED(node->nodeName(&name.GetBSTR())))
         return result;
-    result.assign(name, SysStringLen(name));
-    SysFreeString(name);
+    result.assign(name, name.length());
 
     COMPtr<IDOMNode> parent;
     if (SUCCEEDED(node->parentNode(&parent)))
@@ -62,7 +62,7 @@ PolicyDelegate::PolicyDelegate()
 }
 
 // IUnknown
-HRESULT STDMETHODCALLTYPE PolicyDelegate::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT PolicyDelegate::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
     if (IsEqualGUID(riid, IID_IUnknown))
@@ -76,12 +76,12 @@ HRESULT STDMETHODCALLTYPE PolicyDelegate::QueryInterface(REFIID riid, void** ppv
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE PolicyDelegate::AddRef(void)
+ULONG PolicyDelegate::AddRef(void)
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE PolicyDelegate::Release(void)
+ULONG PolicyDelegate::Release(void)
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -90,16 +90,16 @@ ULONG STDMETHODCALLTYPE PolicyDelegate::Release(void)
     return newRef;
 }
 
-HRESULT STDMETHODCALLTYPE PolicyDelegate::decidePolicyForNavigationAction(
+HRESULT PolicyDelegate::decidePolicyForNavigationAction(
     /*[in]*/ IWebView* /*webView*/, 
     /*[in]*/ IPropertyBag* actionInformation, 
     /*[in]*/ IWebURLRequest* request, 
     /*[in]*/ IWebFrame* frame, 
     /*[in]*/ IWebPolicyDecisionListener* listener)
 {
-    BSTR url;
-    request->URL(&url);
-    wstring wurl = urlSuitableForTestResult(wstring(url, SysStringLen(url)));
+    _bstr_t url;
+    request->URL(&url.GetBSTR());
+    wstring wurl = urlSuitableForTestResult(wstring(url, url.length()));
 
     int navType = 0;
     VARIANT var;
@@ -146,8 +146,6 @@ HRESULT STDMETHODCALLTYPE PolicyDelegate::decidePolicyForNavigationAction(
 
     printf("%S\n", message.c_str());
 
-    SysFreeString(url);
-
     if (m_permissiveDelegate)
         listener->use();
     else
@@ -162,26 +160,21 @@ HRESULT STDMETHODCALLTYPE PolicyDelegate::decidePolicyForNavigationAction(
 }
 
 
-HRESULT STDMETHODCALLTYPE PolicyDelegate::unableToImplementPolicyWithError(
+HRESULT PolicyDelegate::unableToImplementPolicyWithError(
     /*[in]*/ IWebView* /*webView*/, 
     /*[in]*/ IWebError* error, 
     /*[in]*/ IWebFrame* frame)
 {
-    BSTR domainStr;
-    error->domain(&domainStr);
-    wstring domainMessage = domainStr;
+    _bstr_t domainStr;
+    error->domain(&domainStr.GetBSTR());
 
     int code;
     error->code(&code);
     
-    BSTR frameName;
-    frame->name(&frameName);
-    wstring frameNameMessage = frameName;
+    _bstr_t frameName;
+    frame->name(&frameName.GetBSTR());
     
-    printf("Policy delegate: unable to implement policy with error domain '%S', error code %d, in frame '%S'", domainMessage.c_str(), code, frameNameMessage.c_str());
-    
-    SysFreeString(domainStr);
-    SysFreeString(frameName);
+    printf("Policy delegate: unable to implement policy with error domain '%S', error code %d, in frame '%S'", static_cast<wchar_t*>(domainStr), code, static_cast<TCHAR*>(frameName));
     
     return S_OK;
 }

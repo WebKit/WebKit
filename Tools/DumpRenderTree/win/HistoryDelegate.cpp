@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009, 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "DumpRenderTree.h"
 #include "DumpRenderTreeWin.h"
 #include "TestRunner.h"
+#include <comutil.h>
 #include <string>
 #include <WebKit/WebKit.h>
 
@@ -83,33 +84,24 @@ HRESULT HistoryDelegate::didNavigateWithNavigationData(IWebView* webView, IWebNa
     if (!gTestRunner->dumpHistoryDelegateCallbacks())
         return S_OK;
 
-    BSTR urlBSTR;
-    if (FAILED(navigationData->url(&urlBSTR)))
+    _bstr_t urlBSTR;
+    if (FAILED(navigationData->url(&urlBSTR.GetBSTR())))
         return E_FAIL;
     wstring url;
-    if (urlBSTR)
+    if (urlBSTR.length())
         url = urlSuitableForTestResult(wstringFromBSTR(urlBSTR));
-    SysFreeString(urlBSTR);
 
-    BSTR titleBSTR;
-    if (FAILED(navigationData->title(&titleBSTR)))
+    _bstr_t titleBSTR;
+    if (FAILED(navigationData->title(&titleBSTR.GetBSTR())))
         return E_FAIL;
-    wstring title;
-    if (titleBSTR)
-        title = wstringFromBSTR(titleBSTR);
-    SysFreeString(titleBSTR);
 
     COMPtr<IWebURLRequest> request;
     if (FAILED(navigationData->originalRequest(&request)))
         return E_FAIL;
 
-    BSTR httpMethodBSTR;
-    if (FAILED(request->HTTPMethod(&httpMethodBSTR)))
+    _bstr_t httpMethodBSTR;
+    if (FAILED(request->HTTPMethod(&httpMethodBSTR.GetBSTR())))
         return E_FAIL;
-    wstring httpMethod;
-    if (httpMethodBSTR)
-        httpMethod = wstringFromBSTR(httpMethodBSTR);
-    SysFreeString(httpMethodBSTR);
 
     COMPtr<IWebURLResponse> response;
     if (FAILED(navigationData->response(&response)))
@@ -127,21 +119,20 @@ HRESULT HistoryDelegate::didNavigateWithNavigationData(IWebView* webView, IWebNa
     if (FAILED(navigationData->hasSubstituteData(&hasSubstituteData)))
         return E_FAIL;
 
-    BSTR clientRedirectSourceBSTR;
-    if (FAILED(navigationData->clientRedirectSource(&clientRedirectSourceBSTR)))
+    _bstr_t clientRedirectSourceBSTR;
+    if (FAILED(navigationData->clientRedirectSource(&clientRedirectSourceBSTR.GetBSTR())))
         return E_FAIL;
-    bool hasClientRedirect = clientRedirectSourceBSTR && SysStringLen(clientRedirectSourceBSTR);
+    bool hasClientRedirect = clientRedirectSourceBSTR.length();
     wstring redirectSource;
-    if (clientRedirectSourceBSTR)
+    if (clientRedirectSourceBSTR.length())
         redirectSource = urlSuitableForTestResult(wstringFromBSTR(clientRedirectSourceBSTR));
-    SysFreeString(clientRedirectSourceBSTR);
 
     bool wasFailure = hasSubstituteData || (httpResponse && statusCode >= 400);
         
     printf("WebView navigated to url \"%S\" with title \"%S\" with HTTP equivalent method \"%S\".  The navigation was %s and was %s%S.\n", 
         url.c_str(), 
-        title.c_str(), 
-        httpMethod.c_str(),
+        static_cast<wchar_t*>(titleBSTR),
+        static_cast<wchar_t*>(httpMethodBSTR),
         wasFailure ? "a failure" : "successful", 
         hasClientRedirect ? "a client redirect from " : "not a client redirect", 
         redirectSource.c_str());
@@ -192,11 +183,7 @@ HRESULT HistoryDelegate::updateHistoryTitle(IWebView* webView, BSTR titleBSTR, B
     if (urlBSTR)
         url = urlSuitableForTestResult(wstringFromBSTR(urlBSTR));
 
-    wstring title;
-    if (titleBSTR)
-        title = wstringFromBSTR(titleBSTR);
-
-    printf("WebView updated the title for history URL \"%S\" to \"%S\".\n", url.c_str(), title.c_str());
+    printf("WebView updated the title for history URL \"%S\" to \"%S\".\n", url.c_str(), titleBSTR ? titleBSTR : L"");
     return S_OK;
 }
     
@@ -205,14 +192,13 @@ HRESULT HistoryDelegate::populateVisitedLinksForWebView(IWebView* webView)
     if (!gTestRunner->dumpHistoryDelegateCallbacks())
         return S_OK;
 
-    BSTR urlBSTR;
-    if (FAILED(webView->mainFrameURL(&urlBSTR)))
+    _bstr_t urlBSTR;
+    if (FAILED(webView->mainFrameURL(&urlBSTR.GetBSTR())))
         return E_FAIL;
 
     wstring url;
-    if (urlBSTR)
+    if (urlBSTR.length())
         url = urlSuitableForTestResult(wstringFromBSTR(urlBSTR));
-    SysFreeString(urlBSTR);
 
     if (gTestRunner->dumpVisitedLinksCallback())
         printf("Asked to populate visited links for WebView \"%S\"\n", url.c_str());

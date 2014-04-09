@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,11 +37,12 @@
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSStringRefBSTR.h>
 #include <WebCore/NotificationClient.h>
+#include <comutil.h>
 
 DRTDesktopNotificationPresenter::DRTDesktopNotificationPresenter()
     : m_refCount(1) {} 
 
-HRESULT STDMETHODCALLTYPE DRTDesktopNotificationPresenter::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT DRTDesktopNotificationPresenter::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
     if (IsEqualGUID(riid, IID_IUnknown))
@@ -54,12 +56,12 @@ HRESULT STDMETHODCALLTYPE DRTDesktopNotificationPresenter::QueryInterface(REFIID
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE DRTDesktopNotificationPresenter::AddRef()
+ULONG DRTDesktopNotificationPresenter::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE DRTDesktopNotificationPresenter::Release()
+ULONG DRTDesktopNotificationPresenter::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -68,23 +70,19 @@ ULONG STDMETHODCALLTYPE DRTDesktopNotificationPresenter::Release()
     return newRef;
 }
 
-HRESULT STDMETHODCALLTYPE DRTDesktopNotificationPresenter::showDesktopNotification(
-    /* [in] */ IWebDesktopNotification* notification)
+HRESULT DRTDesktopNotificationPresenter::showDesktopNotification(IWebDesktopNotification* notification)
 {
-    BSTR title, text, url;
+    _bstr_t title, text, url;
     BOOL html;
 
     if (!notification->isHTML(&html) && html) {
-        notification->contentsURL(&url);    
-        printf("DESKTOP NOTIFICATION: contents at %S\n", url ? url : L"");
+        notification->contentsURL(&url.GetBSTR());    
+        printf("DESKTOP NOTIFICATION: contents at %S\n", static_cast<wchar_t*>(url));
     } else {
-        notification->iconURL(&url);
-        notification->title(&title);
-        notification->text(&text);
-        printf("DESKTOP NOTIFICATION: icon %S, title %S, text %S\n", 
-            url ? url : L"", 
-            title ? title : L"", 
-            text ? text : L"");
+        notification->iconURL(&url.GetBSTR());
+        notification->title(&title.GetBSTR());
+        notification->text(&text.GetBSTR());
+        printf("DESKTOP NOTIFICATION: icon %S, title %S, text %S\n", static_cast<wchar_t*>(url), static_cast<wchar_t*>(title), static_cast<wchar_t*>(text));
     }
 
     // In this stub implementation, the notification is displayed immediately;
@@ -94,34 +92,30 @@ HRESULT STDMETHODCALLTYPE DRTDesktopNotificationPresenter::showDesktopNotificati
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DRTDesktopNotificationPresenter::cancelDesktopNotification(
-    /* [in] */ IWebDesktopNotification* notification)
+HRESULT DRTDesktopNotificationPresenter::cancelDesktopNotification(IWebDesktopNotification* notification)
 {
-    BSTR identifier;
+    _bstr_t identifier;
     BOOL html;
     notification->isHTML(&html);
     if (html)
-        notification->contentsURL(&identifier);
+        notification->contentsURL(&identifier.GetBSTR());
     else
-        notification->title(&identifier);
+        notification->title(&identifier.GetBSTR());
 
-    printf("DESKTOP NOTIFICATION CLOSED: %S\n", identifier ? identifier : L"");
+    printf("DESKTOP NOTIFICATION CLOSED: %S\n", static_cast<wchar_t*>(identifier));
     notification->notifyClose(false);
 
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DRTDesktopNotificationPresenter::notificationDestroyed(
-    /* [in] */ IWebDesktopNotification* notification)
+HRESULT DRTDesktopNotificationPresenter::notificationDestroyed(IWebDesktopNotification* /*notification*/)
 {
     // Since in these tests events happen immediately, we don't hold on to
     // Notification pointers.  So there's no cleanup to do.
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DRTDesktopNotificationPresenter::checkNotificationPermission(
-        /* [in] */ BSTR origin, 
-        /* [out, retval] */ int* result)
+HRESULT DRTDesktopNotificationPresenter::checkNotificationPermission(BSTR /*origin*/, int* /*result*/)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     JSStringRef jsOrigin = JSStringCreateWithBSTR(origin);
@@ -137,8 +131,7 @@ HRESULT STDMETHODCALLTYPE DRTDesktopNotificationPresenter::checkNotificationPerm
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DRTDesktopNotificationPresenter::requestNotificationPermission(
-        /* [in] */ BSTR origin)
+HRESULT DRTDesktopNotificationPresenter::requestNotificationPermission(BSTR origin)
 {
     printf("DESKTOP NOTIFICATION PERMISSION REQUESTED: %S\n", origin ? origin : L"");
     return S_OK;

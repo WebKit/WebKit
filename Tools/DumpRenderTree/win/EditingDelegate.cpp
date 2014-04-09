@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "config.h"
 #include "EditingDelegate.h"
 
+#include <comutil.h>
 #include "DumpRenderTree.h"
 #include "TestRunner.h"
 #include <WebCore/COMPtr.h>
@@ -46,7 +47,7 @@ EditingDelegate::EditingDelegate()
 }
 
 // IUnknown
-HRESULT STDMETHODCALLTYPE EditingDelegate::QueryInterface(REFIID riid, void** ppvObject)
+HRESULT EditingDelegate::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
     if (IsEqualGUID(riid, IID_IUnknown))
@@ -60,12 +61,12 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::QueryInterface(REFIID riid, void** pp
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE EditingDelegate::AddRef(void)
+ULONG EditingDelegate::AddRef(void)
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE EditingDelegate::Release(void)
+ULONG EditingDelegate::Release(void)
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -80,11 +81,10 @@ static wstring dumpPath(IDOMNode* node)
 
     wstring result;
 
-    BSTR name;
-    if (FAILED(node->nodeName(&name)))
+    _bstr_t name;
+    if (FAILED(node->nodeName(&name.GetBSTR())))
         return result;
-    result.assign(name, SysStringLen(name));
-    SysFreeString(name);
+    result.assign(static_cast<wchar_t*>(name), name.length());
 
     COMPtr<IDOMNode> parent;
     if (SUCCEEDED(node->parentNode(&parent)))
@@ -118,10 +118,7 @@ static wstring dump(IDOMRange* range)
     return buffer;
 }
 
-HRESULT STDMETHODCALLTYPE EditingDelegate::shouldBeginEditingInDOMRange( 
-    /* [in] */ IWebView* webView,
-    /* [in] */ IDOMRange* range,
-    /* [retval][out] */ BOOL* result)
+HRESULT EditingDelegate::shouldBeginEditingInDOMRange(IWebView* /*webView*/, IDOMRange* range, BOOL* result)
 {
     if (!result) {
         ASSERT_NOT_REACHED();
@@ -135,10 +132,7 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::shouldBeginEditingInDOMRange(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EditingDelegate::shouldEndEditingInDOMRange( 
-    /* [in] */ IWebView* webView,
-    /* [in] */ IDOMRange* range,
-    /* [retval][out] */ BOOL* result)
+HRESULT EditingDelegate::shouldEndEditingInDOMRange(IWebView* /*webView*/, IDOMRange* range, BOOL* result)
 {
     if (!result) {
         ASSERT_NOT_REACHED();
@@ -152,11 +146,7 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::shouldEndEditingInDOMRange(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EditingDelegate::shouldInsertNode( 
-    /* [in] */ IWebView* webView,
-    /* [in] */ IDOMNode* node,
-    /* [in] */ IDOMRange* range,
-    /* [in] */ WebViewInsertAction action)
+HRESULT EditingDelegate::shouldInsertNode(IWebView* /*webView*/, IDOMNode* node, IDOMRange* range, WebViewInsertAction action)
 {
     static LPCTSTR insertactionstring[] = {
         TEXT("WebViewInsertActionTyped"),
@@ -170,12 +160,7 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::shouldInsertNode(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EditingDelegate::shouldInsertText( 
-    /* [in] */ IWebView* webView,
-    /* [in] */ BSTR text,
-    /* [in] */ IDOMRange* range,
-    /* [in] */ WebViewInsertAction action,
-    /* [retval][out] */ BOOL* result)
+HRESULT EditingDelegate::shouldInsertText(IWebView* /*webView*/, BSTR text, IDOMRange* range, WebViewInsertAction action, BOOL* result)
 {
     if (!result) {
         ASSERT_NOT_REACHED();
@@ -195,10 +180,7 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::shouldInsertText(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EditingDelegate::shouldDeleteDOMRange( 
-    /* [in] */ IWebView* webView,
-    /* [in] */ IDOMRange* range,
-    /* [retval][out] */ BOOL* result)
+HRESULT EditingDelegate::shouldDeleteDOMRange(IWebView* /*webView*/, IDOMRange* range, BOOL* result)
 {
     if (!result) {
         ASSERT_NOT_REACHED();
@@ -212,13 +194,8 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::shouldDeleteDOMRange(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EditingDelegate::shouldChangeSelectedDOMRange( 
-    /* [in] */ IWebView* webView,
-    /* [in] */ IDOMRange* currentRange,
-    /* [in] */ IDOMRange* proposedRange,
-    /* [in] */ WebSelectionAffinity selectionAffinity,
-    /* [in] */ BOOL stillSelecting,
-    /* [retval][out] */ BOOL* result)
+HRESULT EditingDelegate::shouldChangeSelectedDOMRange(IWebView* /*webView*/, IDOMRange* currentRange, IDOMRange* proposedRange,
+    WebSelectionAffinity selectionAffinity, BOOL stillSelecting, BOOL* result)
 {
     if (!result) {
         ASSERT_NOT_REACHED();
@@ -241,11 +218,7 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::shouldChangeSelectedDOMRange(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EditingDelegate::shouldApplyStyle( 
-    /* [in] */ IWebView* webView,
-    /* [in] */ IDOMCSSStyleDeclaration* style,
-    /* [in] */ IDOMRange* range,
-    /* [retval][out] */ BOOL* result)
+HRESULT EditingDelegate::shouldApplyStyle(IWebView* /*webView*/, IDOMCSSStyleDeclaration* style, IDOMRange* range, BOOL* result)
 {
     if (!result) {
         ASSERT_NOT_REACHED();
@@ -259,11 +232,7 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::shouldApplyStyle(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EditingDelegate::shouldChangeTypingStyle( 
-    /* [in] */ IWebView* webView,
-    /* [in] */ IDOMCSSStyleDeclaration* currentStyle,
-    /* [in] */ IDOMCSSStyleDeclaration* proposedStyle,
-    /* [retval][out] */ BOOL* result)
+HRESULT EditingDelegate::shouldChangeTypingStyle(IWebView* /*webView*/, IDOMCSSStyleDeclaration* currentStyle, IDOMCSSStyleDeclaration* proposedStyle, BOOL* result)
 {
     if (!result) {
         ASSERT_NOT_REACHED();
@@ -277,10 +246,7 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::shouldChangeTypingStyle(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EditingDelegate::doPlatformCommand( 
-    /* [in] */ IWebView *webView,
-    /* [in] */ BSTR command,
-    /* [retval][out] */ BOOL *result)
+HRESULT EditingDelegate::doPlatformCommand(IWebView* /*webView*/, BSTR command, BOOL* result)
 {
     if (!result) {
         ASSERT_NOT_REACHED();
@@ -294,62 +260,52 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::doPlatformCommand(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EditingDelegate::webViewDidBeginEditing( 
-    /* [in] */ IWebNotification* notification)
+HRESULT EditingDelegate::webViewDidBeginEditing(IWebNotification* notification)
 {
     if (::gTestRunner->dumpEditingCallbacks() && !done) {
-        BSTR name;
-        notification->name(&name);
-        _tprintf(TEXT("EDITING DELEGATE: webViewDidBeginEditing:%s\n"), name ? name : TEXT(""));
-        SysFreeString(name);
+        _bstr_t name;
+        notification->name(&name.GetBSTR());
+        _tprintf(TEXT("EDITING DELEGATE: webViewDidBeginEditing:%s\n"), static_cast<TCHAR*>(name));
     }
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EditingDelegate::webViewDidChange( 
-    /* [in] */ IWebNotification *notification)
+HRESULT EditingDelegate::webViewDidChange(IWebNotification* notification)
 {
     if (::gTestRunner->dumpEditingCallbacks() && !done) {
-        BSTR name;
-        notification->name(&name);
-        _tprintf(TEXT("EDITING DELEGATE: webViewDidBeginEditing:%s\n"), name ? name : TEXT(""));
-        SysFreeString(name);
+        _bstr_t name;
+        notification->name(&name.GetBSTR());
+        _tprintf(TEXT("EDITING DELEGATE: webViewDidBeginEditing:%s\n"), static_cast<TCHAR*>(name));
     }
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EditingDelegate::webViewDidEndEditing( 
-    /* [in] */ IWebNotification *notification)
+HRESULT EditingDelegate::webViewDidEndEditing(IWebNotification* notification)
 {
     if (::gTestRunner->dumpEditingCallbacks() && !done) {
-        BSTR name;
-        notification->name(&name);
-        _tprintf(TEXT("EDITING DELEGATE: webViewDidEndEditing:%s\n"), name ? name : TEXT(""));
-        SysFreeString(name);
+        _bstr_t name;
+        notification->name(&name.GetBSTR());
+        _tprintf(TEXT("EDITING DELEGATE: webViewDidEndEditing:%s\n"), static_cast<TCHAR*>(name));
     }
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EditingDelegate::webViewDidChangeTypingStyle( 
-    /* [in] */ IWebNotification *notification)
+HRESULT EditingDelegate::webViewDidChangeTypingStyle(IWebNotification* notification)
 {
     if (::gTestRunner->dumpEditingCallbacks() && !done) {
-        BSTR name;
-        notification->name(&name);
-        _tprintf(TEXT("EDITING DELEGATE: webViewDidChangeTypingStyle:%s\n"), name ? name : TEXT(""));
-        SysFreeString(name);
+        _bstr_t name;
+        notification->name(&name.GetBSTR());
+        _tprintf(TEXT("EDITING DELEGATE: webViewDidChangeTypingStyle:%s\n"), static_cast<TCHAR*>(name));
     }
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EditingDelegate::webViewDidChangeSelection( 
-    /* [in] */ IWebNotification *notification)
+HRESULT EditingDelegate::webViewDidChangeSelection(IWebNotification* notification)
 {
     if (::gTestRunner->dumpEditingCallbacks() && !done) {
-        BSTR name;
-        notification->name(&name);
-        _tprintf(TEXT("EDITING DELEGATE: webViewDidChangeSelection:%s\n"), name ? name : TEXT(""));
-        SysFreeString(name);
+        _bstr_t name;
+        notification->name(&name.GetBSTR());
+        _tprintf(TEXT("EDITING DELEGATE: webViewDidChangeSelection:%s\n"), static_cast<TCHAR*>(name));
     }
     return S_OK;
 }
@@ -370,7 +326,7 @@ static int wordLength(const TCHAR* text)
     return cursor - text;
 };
 
-HRESULT STDMETHODCALLTYPE EditingDelegate::checkSpellingOfString(
+HRESULT EditingDelegate::checkSpellingOfString(
             /* [in] */ IWebView* view,
             /* [in] */ LPCTSTR text,
             /* [in] */ int length,

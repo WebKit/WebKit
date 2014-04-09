@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2013, 2014 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "DumpRenderTree.h"
 #include "FrameLoadDelegate.h"
 #include <JavaScriptCore/JSStringRef.h>
+#include <JavaScriptCore/JSStringRefBSTR.h>
 #include <wtf/text/WTFString.h>
 #include <comutil.h>
 #include <tchar.h>
@@ -296,12 +297,11 @@ JSStringRef AccessibilityUIElement::title()
     if (!m_element)
         return JSStringCreateWithCharacters(0, 0);
 
-    BSTR titleBSTR;
-    if (FAILED(m_element->get_accName(self(), &titleBSTR)) || !titleBSTR)
+    _bstr_t titleBSTR;
+    if (FAILED(m_element->get_accName(self(), &titleBSTR.GetBSTR())) || !titleBSTR.length())
         return JSStringCreateWithCharacters(0, 0);
-    wstring title(titleBSTR, SysStringLen(titleBSTR));
-    ::SysFreeString(titleBSTR);
-    return JSStringCreateWithCharacters(title.data(), title.length());
+
+    return JSStringCreateWithBSTR(titleBSTR);
 }
 
 JSStringRef AccessibilityUIElement::description()
@@ -309,12 +309,10 @@ JSStringRef AccessibilityUIElement::description()
     if (!m_element)
         return JSStringCreateWithCharacters(0, 0);
 
-    BSTR descriptionBSTR;
-    if (FAILED(m_element->get_accDescription(self(), &descriptionBSTR)) || !descriptionBSTR)
+    _bstr_t descriptionBSTR;
+    if (FAILED(m_element->get_accDescription(self(), &descriptionBSTR.GetBSTR())) || !descriptionBSTR.length())
         return JSStringCreateWithCharacters(0, 0);
-    wstring description(descriptionBSTR, SysStringLen(descriptionBSTR));
-    ::SysFreeString(descriptionBSTR);
-    return JSStringCreateWithCharacters(description.data(), description.length());
+    return JSStringCreateWithBSTR(descriptionBSTR);
 }
 
 JSStringRef AccessibilityUIElement::stringValue()
@@ -332,12 +330,10 @@ JSStringRef AccessibilityUIElement::helpText() const
     if (!m_element)
         return JSStringCreateWithCharacters(0, 0);
 
-    BSTR helpTextBSTR;
-    if (FAILED(m_element->get_accHelp(self(), &helpTextBSTR)) || !helpTextBSTR)
+    _bstr_t helpTextBSTR;
+    if (FAILED(m_element->get_accHelp(self(), &helpTextBSTR.GetBSTR())) || !helpTextBSTR.length())
         return JSStringCreateWithCharacters(0, 0);
-    wstring helpText(helpTextBSTR, SysStringLen(helpTextBSTR));
-    ::SysFreeString(helpTextBSTR);
-    return JSStringCreateWithCharacters(helpText.data(), helpText.length());
+    return JSStringCreateWithBSTR(helpTextBSTR);
 }
 
 double AccessibilityUIElement::x()
@@ -472,13 +468,12 @@ double AccessibilityUIElement::intValue() const
     if (!m_element)
         return 0;
 
-    BSTR valueBSTR;
-    if (FAILED(m_element->get_accValue(self(), &valueBSTR)) || !valueBSTR)
+    _bstr_t valueBSTR;
+    if (FAILED(m_element->get_accValue(self(), &valueBSTR.GetBSTR())) || !valueBSTR.length())
         return 0;
-    wstring value(valueBSTR, SysStringLen(valueBSTR));
-    ::SysFreeString(valueBSTR);
+
     TCHAR* ignored;
-    return _tcstod(value.data(), &ignored);
+    return _tcstod(static_cast<TCHAR*>(valueBSTR), &ignored);
 }
 
 double AccessibilityUIElement::minValue()
@@ -496,11 +491,11 @@ bool AccessibilityUIElement::isPressActionSupported()
     if (!m_element)
         return 0;
 
-    BSTR valueBSTR;
-    if (FAILED(m_element->get_accDefaultAction(self(), &valueBSTR) || !valueBSTR))
+    _bstr_t valueBSTR;
+    if (FAILED(m_element->get_accDefaultAction(self(), &valueBSTR.GetBSTR())))
         return false;
 
-    if (!::SysStringLen(valueBSTR))
+    if (!valueBSTR.length())
         return false;
 
     return true;
@@ -725,14 +720,11 @@ JSStringRef AccessibilityUIElement::accessibilityValue() const
     if (!m_element)
         return JSStringCreateWithCharacters(0, 0);
 
-    BSTR valueBSTR;
-    if (FAILED(m_element->get_accValue(self(), &valueBSTR)) || !valueBSTR)
+    _bstr_t valueBSTR;
+    if (FAILED(m_element->get_accValue(self(), &valueBSTR.GetBSTR())) || !valueBSTR.length())
         return JSStringCreateWithCharacters(0, 0);
 
-    wstring value(valueBSTR, SysStringLen(valueBSTR));
-    ::SysFreeString(valueBSTR);
-
-    return JSStringCreateWithCharacters(value.data(), value.length());
+    return JSStringCreateWithBSTR(valueBSTR);
 }
 
 

@@ -29,11 +29,13 @@
 #include "config.h"
 #include "WorkQueueItem.h"
 
+#include <comutil.h>
 #include "DumpRenderTree.h"
 #include <WebCore/COMPtr.h>
 #include <WebKit/WebKit.h>
 #include <WebKit/WebKitCOMAPI.h>
 #include <JavaScriptCore/JSStringRef.h>
+#include <JavaScriptCore/JSStringRefBSTR.h>
 #include <JavaScriptCore/JSStringRefCF.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -53,28 +55,20 @@ static wstring jsStringRefToWString(JSStringRef jsStr)
 
 bool LoadItem::invoke() const
 {
-    wstring targetString = jsStringRefToWString(m_target.get());
+    _bstr_t targetBSTR(JSStringCopyBSTR(m_target.get()), false);
 
     COMPtr<IWebFrame> targetFrame;
-    if (targetString.empty())
+    if (!targetBSTR.length())
         targetFrame = frame;
-    else {
-        BSTR targetBSTR = SysAllocString(targetString.c_str());
-        bool failed = FAILED(frame->findFrameNamed(targetBSTR, &targetFrame));
-        SysFreeString(targetBSTR);
-        if (failed)
-            return false;
-    }
+    else if (FAILED(frame->findFrameNamed(targetBSTR, &targetFrame)))
+        return false;
 
     COMPtr<IWebURLRequest> request;
     if (FAILED(WebKitCreateInstance(CLSID_WebURLRequest, 0, IID_IWebURLRequest, (void**)&request)))
         return false;
 
-    wstring urlString = jsStringRefToWString(m_url.get());
-    BSTR urlBSTR = SysAllocString(urlString.c_str());
-    bool failed = FAILED(request->initWithURL(urlBSTR, WebURLRequestUseProtocolCachePolicy, 60));
-    SysFreeString(urlBSTR);
-    if (failed)
+    _bstr_t urlBSTR(JSStringCopyBSTR(m_url.get()), false);
+    if (FAILED(request->initWithURL(urlBSTR, WebURLRequestUseProtocolCachePolicy, 60)))
         return false;
 
     targetFrame->loadRequest(request.get());
@@ -83,26 +77,16 @@ bool LoadItem::invoke() const
 
 bool LoadHTMLStringItem::invoke() const
 {
-    wstring content = jsStringRefToWString(m_content.get());
-    wstring baseURL = jsStringRefToWString(m_baseURL.get());
-
-    BSTR contentBSTR = SysAllocString(content.c_str());
-    BSTR baseURLBSTR = SysAllocString(baseURL.c_str());
+    _bstr_t contentBSTR(JSStringCopyBSTR(m_content.get()), false);
+    _bstr_t baseURLBSTR(JSStringCopyBSTR(m_baseURL.get()), false);
 
     if (m_unreachableURL) {
-        wstring unreachableURL = jsStringRefToWString(m_unreachableURL.get());
-        BSTR unreachableURLBSTR = SysAllocString(unreachableURL.c_str());
+        _bstr_t unreachableURLBSTR(JSStringCopyBSTR(m_unreachableURL.get()), false);
         frame->loadAlternateHTMLString(contentBSTR, baseURLBSTR, unreachableURLBSTR);
-        SysFreeString(contentBSTR);
-        SysFreeString(baseURLBSTR);
-        SysFreeString(unreachableURLBSTR);
         return true;
     }
 
     frame->loadHTMLString(contentBSTR, baseURLBSTR);
-
-    SysFreeString(contentBSTR);
-    SysFreeString(baseURLBSTR);
 
     return true;
 }
@@ -127,13 +111,10 @@ bool ScriptItem::invoke() const
     if (FAILED(frame->webView(&webView)))
         return false;
 
-    wstring scriptString = jsStringRefToWString(m_script.get());
+    _bstr_t scriptBSTR(JSStringCopyBSTR(m_script.get()), false);
 
-    BSTR result;
-    BSTR scriptBSTR = SysAllocString(scriptString.c_str());
-    webView->stringByEvaluatingJavaScriptFromString(scriptBSTR, &result);
-    SysFreeString(result);
-    SysFreeString(scriptBSTR);
+    _bstr_t result;
+    webView->stringByEvaluatingJavaScriptFromString(scriptBSTR, &result.GetBSTR());
 
     return true;
 }
