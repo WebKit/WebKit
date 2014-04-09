@@ -2759,8 +2759,8 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::DragData dra
         m_page->dragController().dragExited(dragData);
         break;
 
-    case DragControllerActionPerformDrag: {
-        m_page->dragController().performDrag(dragData);
+    case DragControllerActionPerformDragOperation: {
+        m_page->dragController().performDragOperation(dragData);
         break;
     }
 
@@ -2794,7 +2794,7 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint cli
         m_page->dragController().dragExited(dragData);
         break;
         
-    case DragControllerActionPerformDrag: {
+    case DragControllerActionPerformDragOperation: {
         ASSERT(!m_pendingDropSandboxExtension);
 
         m_pendingDropSandboxExtension = SandboxExtension::create(sandboxExtensionHandle);
@@ -2803,7 +2803,7 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint cli
                 m_pendingDropExtensionsForFileUpload.append(extension);
         }
 
-        m_page->dragController().performDrag(dragData);
+        m_page->dragController().performDragOperation(dragData);
 
         // If we started loading a local file, the sandbox extension tracker would have adopted this
         // pending drop sandbox extension. If not, we'll play it safe and clear it.

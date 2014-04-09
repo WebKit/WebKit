@@ -32,7 +32,7 @@ enum DragControllerAction {
     DragControllerActionEntered,
     DragControllerActionUpdated,
     DragControllerActionExited,
-    DragControllerActionPerformDrag
+    DragControllerActionPerformDragOperation
 };
 
 } // namespace WebKit

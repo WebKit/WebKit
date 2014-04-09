@@ -6017,7 +6017,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     IntPoint client([draggingInfo draggingLocation]);
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
     DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
-    return core(self)->dragController().performDrag(dragData);
+    return core(self)->dragController().performDragOperation(dragData);
 }
 
 - (NSView *)_hitTest:(NSPoint *)point dragTypes:(NSSet *)types

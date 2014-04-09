@@ -849,7 +849,7 @@ public:
     void dragEntered(WebCore::DragData&, const String& dragStorageName = String());
     void dragUpdated(WebCore::DragData&, const String& dragStorageName = String());
     void dragExited(WebCore::DragData&, const String& dragStorageName = String());
-    void performDrag(WebCore::DragData&, const String& dragStorageName, const SandboxExtension::Handle&, const SandboxExtension::HandleArray&);
+    void performDragOperation(WebCore::DragData&, const String& dragStorageName, const SandboxExtension::Handle&, const SandboxExtension::HandleArray&);
 
     void didPerformDragControllerAction(WebCore::DragSession);
     void dragEnded(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, uint64_t operation);
@@ -902,7 +902,7 @@ public:
 
 #if ENABLE(DRAG_SUPPORT)
     WebCore::DragSession dragSession() const { return m_currentDragSession; }
-    void resetDragOperation() { m_currentDragSession = WebCore::DragSession(); }
+    void resetDragSession() { m_currentDragSession = WebCore::DragSession(); }
 #endif
 
     void preferencesDidChange();

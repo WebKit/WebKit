@@ -201,7 +201,7 @@ DragSession DragController::dragUpdated(DragData& dragData)
     return dragEnteredOrUpdated(dragData);
 }
 
-bool DragController::performDrag(DragData& dragData)
+bool DragController::performDragOperation(DragData& dragData)
 {
     m_documentUnderMouse = m_page.mainFrame().documentAtPoint(dragData.clientPosition());
     if ((m_dragDestinationAction & DragDestinationActionDHTML) && m_documentIsHandlingDrag) {

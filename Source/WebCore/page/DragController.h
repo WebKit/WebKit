@@ -61,7 +61,7 @@ namespace WebCore {
         DragSession dragEntered(DragData&);
         void dragExited(DragData&);
         DragSession dragUpdated(DragData&);
-        bool performDrag(DragData&);
+        bool performDragOperation(DragData&);
         
         // FIXME: It should be possible to remove a number of these accessors once all
         // drag logic is in WebCore.

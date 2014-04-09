@@ -1,3 +1,31 @@
+2014-04-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Rename some dragging functions
+        https://bugs.webkit.org/show_bug.cgi?id=131460
+
+        Reviewed by Tim Horton.
+
+        Renamed performDrag to performDragOperation.
+
+        Also renamed resetDragOperation to resetDragSession, because it's m_dragSession
+        that it resets.
+
+        * Shared/DragControllerAction.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDragDrop):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView draggingEntered:]):
+        (-[WKView draggingExited:]):
+        (-[WKView performDragOperation:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::performDragOperation):
+        (WebKit::WebPageProxy::performDrag): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::resetDragSession):
+        (WebKit::WebPageProxy::resetDragOperation): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+
 2014-04-09  Gavin Barraclough  <baraclough@apple.com>
 
         Update SPI for managing tabs

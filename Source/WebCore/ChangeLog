@@ -1,3 +1,22 @@
+2014-04-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Rename some dragging functions
+        https://bugs.webkit.org/show_bug.cgi?id=131460
+
+        Reviewed by Tim Horton.
+
+        Renamed performDrag to performDragOperation. This function is responsible for
+        accepting a drop, not for the whole drag.
+
+        The new name is not perfect either, but I think that it's better, and at least
+        it matches AppKit, like the other dragging destination functions already do.
+
+        * WebCore.exp.in:
+        * page/DragController.cpp:
+        (WebCore::DragController::performDragOperation):
+        (WebCore::DragController::performDrag): Deleted.
+        * page/DragController.h:
+
 2014-04-08  Samuel White  <samuel_white@apple.com>
 
         AX: Initial text selection point should respect element focus.
