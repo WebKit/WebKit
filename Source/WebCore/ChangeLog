@@ -1,3 +1,17 @@
+2014-04-08  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: memoize nondeterministic attributes of the Screen interface
+        https://bugs.webkit.org/show_bug.cgi?id=131339
+
+        Reviewed by Timothy Hatcher.
+
+        The values from the screen interface are nondeterministic. Since we can't
+        change the physical screen dimensions, instead memoize values of attributes.
+
+        Test: ManualTests/inspector/replay-window-screen.html
+
+        * page/Screen.idl: Add Nondeterministic attribute.
+
 2014-04-08  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=131408

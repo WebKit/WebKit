@@ -1,3 +1,12 @@
+2014-04-08  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: memoize nondeterministic attributes of the Screen interface
+        https://bugs.webkit.org/show_bug.cgi?id=131339
+
+        Reviewed by Timothy Hatcher.
+
+        * ManualTests/inspector/replay-window-screen.html: Added.
+
 2014-04-08  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove the WebKitGTK+ WebKit 1 code

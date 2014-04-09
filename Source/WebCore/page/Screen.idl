@@ -30,13 +30,13 @@
 [
     GenerateIsReachable=ImplFrame,
 ] interface Screen {
-    readonly attribute unsigned long height;
-    readonly attribute unsigned long width;
-    readonly attribute unsigned long colorDepth;
-    readonly attribute unsigned long pixelDepth;
-    readonly attribute long availLeft;
-    readonly attribute long availTop;
-    readonly attribute unsigned long availHeight;
-    readonly attribute unsigned long availWidth;
+    [Nondeterministic] readonly attribute unsigned long height;
+    [Nondeterministic] readonly attribute unsigned long width;
+    [Nondeterministic] readonly attribute unsigned long colorDepth;
+    [Nondeterministic] readonly attribute unsigned long pixelDepth;
+    [Nondeterministic] readonly attribute long availLeft;
+    [Nondeterministic] readonly attribute long availTop;
+    [Nondeterministic] readonly attribute unsigned long availHeight;
+    [Nondeterministic] readonly attribute unsigned long availWidth;
 };
 
