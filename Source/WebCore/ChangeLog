@@ -1,3 +1,14 @@
+2014-04-09  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Remove duplicated files and unnecessary conditions from UseJSC.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=131438
+
+        Reviewed by Csaba Osztrogonác.
+
+        No new tests required.
+
+        * UseJSC.cmake:
+
 2014-04-09  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Layout tests accessibility/children-changed-sends-notification.html and accessibility/notification-listeners.html fails
