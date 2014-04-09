@@ -6,28 +6,89 @@
 </head>
 <body>
 
-<p id="text">Text.</p>
+<p id="startText">Start text. Before. <input id="button" type="button" value="Submit"> After.</p>
 
 <p id="description"></p>
 <div id="console"></div>
 
+<p id="endText">End text.</p>
+
 <script>
     description("This tests that initial selection is set when arrow keys are pressed and no selection exists.");
+    
+    var afterButtonTextRange = null;
+    var beforeButtonTextRange = null;
+    
+    var documentEndTextRange = null;
+    var documentStartTextRange = null;
     
     function clearSelection() {
         window.getSelection().removeAllRanges();
     }
     
+    function isSelection() {
+        return window.getSelection().rangeCount > 0;
+    }
+    
+    function isSelectionAfterButton() {
+        if (isSelection() === false)
+            return false;
+        var selectionRange = window.getSelection().getRangeAt(0);
+        if (afterButtonTextRange === null) {
+            var buttonNode = document.getElementById("button");
+            afterButtonTextRange = new Range();
+            afterButtonTextRange.setEndAfter(buttonNode);
+            afterButtonTextRange.setStartBefore(buttonNode.nextSibling);
+        }
+        return selectionRange.endOffset === afterButtonTextRange.endOffset && selectionRange.startOffset === afterButtonTextRange.startOffset;
+    }
+    
+    function isSelectionBeforeButton() {
+        if (isSelection() === false)
+            return false;
+        var selectionRange = window.getSelection().getRangeAt(0);
+        if (beforeButtonTextRange === null) {
+            var buttonNode = document.getElementById("button");
+            beforeButtonTextRange = new Range();
+            beforeButtonTextRange.setEnd(buttonNode.previousSibling, buttonNode.previousSibling.length);
+            beforeButtonTextRange.setStart(buttonNode.previousSibling, buttonNode.previousSibling.length);
+        }
+        return selectionRange.endOffset === beforeButtonTextRange.endOffset && selectionRange.startOffset === beforeButtonTextRange.startOffset;
+    }
+    
+    function isSelectionAtEndOfDocument() {
+        if (isSelection() === false)
+            return false;
+        var selectionRange = window.getSelection().getRangeAt(0);
+        if (documentEndTextRange === null) {
+            var endTextNode = document.getElementById("endText").firstChild;
+            documentEndTextRange = new Range();
+            documentEndTextRange.setEnd(endTextNode, endTextNode.length);
+            documentEndTextRange.setStart(endTextNode, endTextNode.length);
+        }
+        return selectionRange.endOffset === documentEndTextRange.endOffset && selectionRange.startOffset === documentEndTextRange.startOffset;
+    }
+    
     function isSelectionAtStartOfDocument() {
-        var selection = window.getSelection();
-        return selection.rangeCount >= 1 && selection.getRangeAt(0).endOffset === 0 && selection.getRangeAt(0).startOffset === 0;
+        if (isSelection() === false)
+            return false;
+        var selectionRange = window.getSelection().getRangeAt(0);
+        if (documentStartTextRange === null) {
+            var startTextNode = document.getElementById("startText").firstChild;
+            documentStartTextRange = new Range();
+            documentStartTextRange.setEnd(startTextNode, 0);
+            documentStartTextRange.setStart(startTextNode, 0);
+        }
+        return selectionRange.endOffset === documentStartTextRange.endOffset && selectionRange.startOffset === documentStartTextRange.startOffset;
     }
     
     if (window.accessibilityController && window.eventSender) {
+        // Tests WITHOUT focus set.
+        
         // Down arrow key (should NOT set initial selection before enhanced accessibility is enabled).
-        shouldBe("isSelectionAtStartOfDocument()", "false");
+        shouldBe("isSelection()", "false");
         eventSender.keyDown("downArrow");
-        shouldBe("isSelectionAtStartOfDocument()", "false");
+        shouldBe("isSelection()", "false");
         clearSelection();
         
         // Enable enhanced accessibility (necessary for accessibility specific selection handling).
@@ -35,36 +96,66 @@
         shouldBe("accessibilityController.enhancedAccessibilityEnabled", "true");
         
         // Down arrow key.
-        shouldBe("isSelectionAtStartOfDocument()", "false");
+        shouldBe("isSelection()", "false");
         eventSender.keyDown("downArrow");
         shouldBe("isSelectionAtStartOfDocument()", "true");
         clearSelection();
         
         // Left arrow key.
-        shouldBe("isSelectionAtStartOfDocument()", "false");
+        shouldBe("isSelection()", "false");
         eventSender.keyDown("leftArrow");
-        shouldBe("isSelectionAtStartOfDocument()", "true");
+        shouldBe("isSelectionAtEndOfDocument()", "true");
         clearSelection();
         
         // Right arrow key.
-        shouldBe("isSelectionAtStartOfDocument()", "false");
+        shouldBe("isSelection()", "false");
         eventSender.keyDown("rightArrow");
         shouldBe("isSelectionAtStartOfDocument()", "true");
         clearSelection();
         
         // Up arrow key.
-        shouldBe("isSelectionAtStartOfDocument()", "false");
+        shouldBe("isSelection()", "false");
         eventSender.keyDown("upArrow");
-        shouldBe("isSelectionAtStartOfDocument()", "true");
+        shouldBe("isSelectionAtEndOfDocument()", "true");
         clearSelection();
         
         // Z key (only arrow keys should set initial selection if no selection exists).
-        shouldBe("isSelectionAtStartOfDocument()", "false");
+        shouldBe("isSelection()", "false");
         eventSender.keyDown("Z");
-        shouldBe("isSelectionAtStartOfDocument()", "false");
+        shouldBe("isSelection()", "false");
+        
+        // Tests WITH focus set.
+        
+        // Set focus.
+        document.getElementById("button").focus();
+        
+        // Down arrow key.
+        shouldBe("isSelection()", "false");
+        eventSender.keyDown("downArrow");
+        shouldBe("isSelectionAfterButton()", "true");
+        clearSelection();
+        
+        // Left arrow key.
+        shouldBe("isSelection()", "false");
+        eventSender.keyDown("leftArrow");
+        shouldBe("isSelectionBeforeButton()", "true");
+        clearSelection();
+        
+        // Right arrow key.
+        shouldBe("isSelection()", "false");
+        eventSender.keyDown("rightArrow");
+        shouldBe("isSelectionAfterButton()", "true");
+        clearSelection();
+        
+        // Up arrow key.
+        shouldBe("isSelection()", "false");
+        eventSender.keyDown("upArrow");
+        shouldBe("isSelectionBeforeButton()", "true");
+        clearSelection();
         
         // Hide superfluous text.
-        document.getElementById("text").style.display = "none";
+        document.getElementById("endText").style.display = "none";
+        document.getElementById("startText").style.display = "none";
     }
 </script>
 

@@ -1,3 +1,18 @@
+2014-04-08  Samuel White  <samuel_white@apple.com>
+
+        AX: Initial text selection point should respect element focus.
+        https://bugs.webkit.org/show_bug.cgi?id=131402
+
+        Reviewed by Chris Fleizach.
+
+        Support the case where we want to set the initial selection and there's already a focused element.
+
+        No new tests, updated existing selection-initial to test this functionality.
+
+        * page/EventHandler.cpp:
+        (WebCore::setKeyboardSelection):
+        (WebCore::handleKeyboardSelectionMovement):
+
 2014-04-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTMLCollection::updateNamedElementCach iterates over items twice

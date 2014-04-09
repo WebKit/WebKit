@@ -1,3 +1,16 @@
+2014-04-08  Samuel White  <samuel_white@apple.com>
+
+        AX: Initial text selection point should respect element focus.
+        https://bugs.webkit.org/show_bug.cgi?id=131402
+
+        Reviewed by Chris Fleizach.
+
+        Updating test to make sure initial selection respects the focused element when necessary. Now, if a VoiceOver user attempts to use
+        arrow keys to read text and selection isn't set, we will set initial selection before/after the focused element if one is present.
+
+        * platform/mac/accessibility/selection-initial-expected.txt:
+        * platform/mac/accessibility/selection-initial.html:
+
 2014-04-09  Brendan Long  <b.long@cablelabs.com>
 
         [GStreamer] Expose MPEG-TS metadata

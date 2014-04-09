@@ -3046,6 +3046,40 @@ static FocusDirection focusDirectionForKey(const AtomicString& keyIdentifier)
     return retVal;
 }
 
+static void setInitialKeyboardSelection(Frame& frame, SelectionDirection direction)
+{
+    Document* document = frame.document();
+    if (!document)
+        return;
+
+    FrameSelection& selection = frame.selection();
+
+    if (!selection.isNone())
+        return;
+
+    Element* focusedElement = document->focusedElement();
+    VisiblePosition visiblePosition;
+
+    switch (direction) {
+    case DirectionBackward:
+    case DirectionLeft:
+        if (focusedElement)
+            visiblePosition = VisiblePosition(positionBeforeNode(focusedElement));
+        else
+            visiblePosition = endOfDocument(document);
+        break;
+    case DirectionForward:
+    case DirectionRight:
+        if (focusedElement)
+            visiblePosition = VisiblePosition(positionAfterNode(focusedElement));
+        else
+            visiblePosition = startOfDocument(document);
+        break;
+    }
+
+    selection.setSelection(visiblePosition, FrameSelection::defaultSetSelectionOptions(UserTriggered));
+}
+
 static void handleKeyboardSelectionMovement(Frame& frame, KeyboardEvent* event)
 {
     if (!event)
@@ -3089,7 +3123,7 @@ static void handleKeyboardSelectionMovement(Frame& frame, KeyboardEvent* event)
     if (isSelection)
         selection.modify(alternation, direction, granularity, UserTriggered);
     else
-        selection.setSelection(startOfDocument(frame.document()), FrameSelection::defaultSetSelectionOptions(UserTriggered));
+        setInitialKeyboardSelection(frame, direction);
 
     event->setDefaultHandled();
 }
