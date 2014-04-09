@@ -1,3 +1,11 @@
+2014-04-09  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r166853): fast/preloader/document-write.html is very flaky
+        https://bugs.webkit.org/show_bug.cgi?id=130942
+
+        * platform/mac/TestExpectations: The offending code was re-landed, marking as
+        flaky again.
+
 2014-04-09  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Layout tests accessibility/children-changed-sends-notification.html and accessibility/notification-listeners.html fails
