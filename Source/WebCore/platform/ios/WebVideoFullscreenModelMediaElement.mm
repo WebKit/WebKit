@@ -85,7 +85,7 @@ void WebVideoFullscreenModelMediaElement::setMediaElement(HTMLMediaElement* medi
 
     m_videoFullscreenInterface->setDuration(m_mediaElement->duration());
     m_videoFullscreenInterface->setSeekableRanges(*m_mediaElement->seekable());
-    m_videoFullscreenInterface->setRate(m_mediaElement->isPlaying(), m_mediaElement->playbackRate());
+    m_videoFullscreenInterface->setRate(!m_mediaElement->paused(), m_mediaElement->playbackRate());
 
     m_videoFullscreenInterface->setCurrentTime(m_mediaElement->currentTime(), [[NSProcessInfo processInfo] systemUptime]);
 
@@ -108,7 +108,7 @@ void WebVideoFullscreenModelMediaElement::handleEvent(WebCore::ScriptExecutionCo
     else if (event->type() == eventNames().pauseEvent
         || event->type() == eventNames().playEvent
         || event->type() == eventNames().ratechangeEvent)
-        m_videoFullscreenInterface->setRate(m_mediaElement->isPlaying(), m_mediaElement->playbackRate());
+        m_videoFullscreenInterface->setRate(!m_mediaElement->paused(), m_mediaElement->playbackRate());
     else if (event->type() == eventNames().timeupdateEvent) {
         m_videoFullscreenInterface->setCurrentTime(m_mediaElement->currentTime(), [[NSProcessInfo processInfo] systemUptime]);
         // FIXME: 130788 - find a better event to update seekable ranges from.

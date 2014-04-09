@@ -1,3 +1,18 @@
+2014-04-09  Jeremy Jones  <jeremyj@apple.com>
+
+        fullscreen controls first show a play button instead of a pause button
+        https://bugs.webkit.org/show_bug.cgi?id=131430
+
+        Reviewed by Jer Noble.
+
+        isPlaying() is false while buffering, paused() isn't; use paused() for
+        the play button.
+
+        * platform/ios/WebVideoFullscreenModelMediaElement.mm:
+        (WebVideoFullscreenModelMediaElement::setMediaElement):
+        (WebVideoFullscreenModelMediaElement::handleEvent):
+        Use HTMLMediaElement::paused() instead of HTMLMediaElement::isPlaying()
+
 2014-04-09  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Remove duplicated files and unnecessary conditions from UseJSC.cmake
