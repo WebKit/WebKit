@@ -1,0 +1,3 @@
+This tests that accessing plug-in script objects from a destroyed plugin cause throws the right exceptions.
+SUCCESS
+

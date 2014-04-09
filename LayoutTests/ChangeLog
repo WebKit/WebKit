@@ -1,3 +1,24 @@
+2014-04-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline some tests for GTK+
+
+        * platform/gtk/editing/input/scroll-viewport-page-up-down-expected.txt:
+        * platform/gtk/fast/text/international/cjk-segmentation-expected.txt: Added.
+        * platform/gtk/http/tests/xmlhttprequest/cache-override-expected.txt: Added.
+        * platform/gtk/inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt: Added.
+        * platform/gtk/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/gtk/plugins/nested-plugin-objects-expected.txt: Added.
+        * platform/gtk/plugins/netscape-destroy-plugin-script-objects-expected.txt: Added.
+        * platform/gtk/sputnik/Unicode/Unicode_320/S7.6_A2.2_T2-expected.txt: Added.
+        * platform/gtk/sputnik/Unicode/Unicode_320/S7.6_A5.2_T8-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/filters-image-01-b-expected.txt: Added.
+        * platform/gtk/svg/custom/object-no-size-attributes-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt: Added.
+
 2014-04-08  Samuel White  <samuel_white@apple.com>
 
         AX: Initial text selection point should respect element focus.

@@ -1,0 +1,523 @@
+Checking Web Inspector protocol for the Accessibility Node Inspector.
+
+#document
+    exists: true
+    label: 
+    role: 
+    childNodeIds.length: 2
+
+
+Total elements to be tested: 63.
+
+<div onclick="void(0);">click</div>
+    exists: true
+    label: 
+    role: 
+    mouseEventNodeId: exists
+    parentNodeId: exists
+
+<li role="treeitem" aria-expanded="undefined">expanded</li>
+    exists: true
+    label: 
+    role: treeitem
+    parentNodeId: exists
+
+<li role="treeitem" aria-expanded="false" id="activedescendant" aria-selected="true">collapsed</li>
+    exists: true
+    label: 
+    role: treeitem
+    expanded: false
+    parentNodeId: exists
+    selected: true
+
+<li role="treeitem" aria-expanded="true">expanded</li>
+    exists: true
+    label: 
+    role: treeitem
+    expanded: true
+    parentNodeId: exists
+
+<ul role="tree" id="flowedTo1" aria-activedescendant="activedescendant">
+    <li role="treeitem" aria-expanded="true">expanded</li>
+    <li role="treeitem" aria-expanded="false" id="activedescendant" aria-selected="true">collapsed</li>
+    <li role="treeitem" aria-expanded="undefined">expanded</li>
+</ul>
+    exists: true
+    label: 
+    role: tree
+    activeDescendantNodeId: exists
+    childNodeIds.length: 3
+    parentNodeId: exists
+    selectedChildNodeIds.length: 1
+
+<div role="listbox" aria-multiselectable="true">
+    <div role="option" aria-selected="true">selected</div>
+    <div role="option" aria-selected="false">not selected</div>
+    <div role="option" aria-selected="true">selected</div>
+</div>
+    exists: true
+    label: 
+    role: listbox
+    childNodeIds.length: 3
+    parentNodeId: exists
+    required: false
+    selectedChildNodeIds.length: 2
+
+<div role="tab" aria-selected="false">not selected</div>
+    exists: true
+    label: 
+    role: tab
+    parentNodeId: exists
+
+<div role="tab" aria-selected="true">selected</div>
+    exists: true
+    label: 
+    role: tab
+    parentNodeId: exists
+    selected: true
+
+<div role="tablist" aria-flowto="flowedTo1 invalidIdRef flowedTo2">
+    <div role="tab" aria-selected="true">selected</div>
+    <div role="tab" aria-selected="false">not selected</div>
+</div>
+    exists: true
+    label: 
+    role: tablist
+    childNodeIds.length: 2
+    flowedNodeIds.length: 2
+    parentNodeId: exists
+
+<div role="option" aria-selected="false">not selected</div>
+    exists: true
+    label: 
+    role: option
+    parentNodeId: exists
+
+<div role="option" aria-selected="true">selected</div>
+    exists: true
+    label: 
+    role: option
+    parentNodeId: exists
+    selected: true
+
+<div role="listbox" id="ownedlistbox">
+    <div role="option" aria-selected="true">selected</div>
+    <div role="option" aria-selected="false">not selected</div>
+</div>
+    exists: true
+    label: 
+    role: listbox
+    childNodeIds.length: 2
+    parentNodeId: exists
+    required: false
+    selectedChildNodeIds.length: 1
+
+<input role="combobox" aria-owns="ownedlistbox invalidIdRef" aria-controls="ownedlistbox invalidIdRef">
+    exists: true
+    label: 
+    role: combobox
+    controlledNodeIds.length: 1
+    expanded: false
+    focused: false
+    ownedNodeIds.length: 1
+    parentNodeId: exists
+    required: false
+
+<option>not selected</option>
+    exists: false
+    label: 
+    role: 
+
+<option selected="">FIXME: Selected is false. Expected true. http://webkit.org/b/129835</option>
+    exists: false
+    label: 
+    role: 
+
+<img src="data:image/gif..." alt="x" style="display:none;">
+    exists: false
+    label: 
+    role: 
+
+<img src="data:image/gif..." alt="x" aria-hidden="true">
+    exists: true
+    label: 
+    role: img
+    ignored: true
+    ignoredByDefault: true
+    hidden: true
+    parentNodeId: exists
+
+<img src="data:image/gif..." alt="x">
+    exists: true
+    label: 
+    role: img
+    parentNodeId: exists
+
+<img src="data:image/gif..." alt="">
+    exists: true
+    label: 
+    role: img
+    ignored: true
+    parentNodeId: exists
+
+<img src="data:image/gif...">
+    exists: true
+    label: 
+    role: img
+    parentNodeId: exists
+
+<img src="./404.gif">
+    exists: true
+    label: 
+    role: img
+    ignored: true
+    parentNodeId: exists
+
+<input style="display:none;">
+    exists: false
+    label: 
+    role: 
+
+<input aria-hidden="true">
+    exists: true
+    label: 
+    role: 
+    focused: false
+    ignored: true
+    ignoredByDefault: true
+    hidden: true
+    parentNodeId: exists
+    required: false
+
+<div role="radio" aria-checked="false">unchecked</div>
+    exists: true
+    label: 
+    role: radio
+    checked: false
+    parentNodeId: exists
+    required: false
+
+<div role="radio" aria-checked="mixed">unchecked [sic] mixed state will not be exposed on radios per ARIA spec.</div>
+    exists: true
+    label: 
+    role: radio
+    checked: false
+    parentNodeId: exists
+    required: false
+
+<div role="radio" aria-checked="true">checked</div>
+    exists: true
+    label: 
+    role: radio
+    checked: true
+    parentNodeId: exists
+    required: false
+
+<div role="radio">unchecked (checked undefined evals to false on radio)</div>
+    exists: true
+    label: 
+    role: radio
+    checked: false
+    parentNodeId: exists
+    required: false
+
+<input type="radio" checked="">
+    exists: true
+    label: 
+    role: radio
+    checked: true
+    focused: false
+    parentNodeId: exists
+    required: false
+
+<input type="radio">
+    exists: true
+    label: 
+    role: radio
+    checked: false
+    focused: false
+    parentNodeId: exists
+    required: false
+
+<div role="checkbox" aria-checked="false">unchecked</div>
+    exists: true
+    label: 
+    role: checkbox
+    checked: false
+    parentNodeId: exists
+    required: false
+
+<div role="checkbox" aria-checked="mixed">mixed</div>
+    exists: true
+    label: 
+    role: checkbox
+    checked: mixed
+    parentNodeId: exists
+    required: false
+
+<div role="checkbox" aria-checked="true">checked</div>
+    exists: true
+    label: 
+    role: checkbox
+    checked: true
+    parentNodeId: exists
+    required: false
+
+<div role="checkbox">unchecked (checked undefined evals to false on checkbox)</div>
+    exists: true
+    label: 
+    role: checkbox
+    checked: false
+    parentNodeId: exists
+    required: false
+
+<input type="checkbox" checked="">
+    exists: true
+    label: 
+    role: checkbox
+    checked: true
+    focused: false
+    parentNodeId: exists
+    required: false
+
+<input type="checkbox">
+    exists: true
+    label: 
+    role: checkbox
+    checked: false
+    focused: false
+    parentNodeId: exists
+    required: false
+
+<div role="textbox" tabindex="0" aria-disabled="true">disabled</div>
+    exists: true
+    label: 
+    role: 
+    disabled: true
+    focused: false
+    parentNodeId: exists
+    readonly: true
+    required: false
+
+<input disabled="" value="disabled">
+    exists: true
+    label: 
+    role: 
+    disabled: true
+    parentNodeId: exists
+    required: false
+
+<div role="textbox" tabindex="0" aria-readonly="true">readonly</div>
+    exists: true
+    label: 
+    role: 
+    focused: false
+    parentNodeId: exists
+    readonly: true
+    required: false
+
+<input readonly="" value="readonly">
+    exists: true
+    label: 
+    role: 
+    focused: false
+    parentNodeId: exists
+    readonly: true
+    required: false
+
+<input aria-invalid="foo" value="fake value will eval to true">
+    exists: true
+    label: 
+    role: 
+    focused: false
+    invalid: true
+    parentNodeId: exists
+    required: false
+
+<input aria-invalid="spelling" value="invalid spelling">
+    exists: true
+    label: 
+    role: 
+    focused: false
+    invalid: spelling
+    parentNodeId: exists
+    required: false
+
+<input aria-required="true" value="required">
+    exists: true
+    label: 
+    role: 
+    focused: false
+    parentNodeId: exists
+    required: true
+
+<input required="">
+    exists: true
+    label: 
+    role: 
+    focused: false
+    parentNodeId: exists
+    required: true
+
+<input>
+    exists: true
+    label: 
+    role: 
+    focused: false
+    parentNodeId: exists
+    required: false
+
+<input type="button">
+    exists: true
+    label: 
+    role: button
+    focused: false
+    parentNodeId: exists
+
+<button></button>
+    exists: true
+    label: 
+    role: button
+    focused: false
+    parentNodeId: exists
+
+<div role="button" tabindex="0" aria-pressed="false">Not Pressed.</div>
+    exists: true
+    label: 
+    role: 
+    focused: false
+    parentNodeId: exists
+    pressed: false
+    required: false
+
+<div role="button" tabindex="0" aria-pressed="true">FIXME: Pressed is false. Expected true. http://webkit.org/b/129830</div>
+    exists: true
+    label: 
+    role: 
+    focused: false
+    parentNodeId: exists
+    pressed: false
+    required: false
+
+<div role="button" tabindex="0" aria-disabled="true">disabled</div>
+    exists: true
+    label: 
+    role: button
+    disabled: true
+    focused: false
+    parentNodeId: exists
+
+<div role="button" tabindex="0"></div>
+    exists: true
+    label: 
+    role: button
+    focused: false
+    parentNodeId: exists
+
+<div role="group" aria-live="assertive" aria-atomic="true">assertive (and atomic)</div>
+    exists: true
+    label: 
+    role: group
+    liveRegionAtomic: true
+    liveRegionStatus: assertive
+    parentNodeId: exists
+
+<div role="group" aria-live="polite">polite</div>
+    exists: true
+    label: 
+    role: group
+    liveRegionAtomic: false
+    liveRegionStatus: polite
+    parentNodeId: exists
+
+<div role="group" aria-live="off">off</div>
+    exists: true
+    label: 
+    role: group
+    parentNodeId: exists
+
+<div role="listbox" aria-busy="true">
+    <!-- Despite having no required option children, this is valid because it is marked as busy. -->
+    <!-- For example, waiting for a script to load its contents. -->
+</div>
+    exists: true
+    label: 
+    role: listbox
+    busy: true
+    parentNodeId: exists
+    required: false
+
+<span aria-hidden="true"></span>
+    exists: true
+    label: 
+    role: 
+    ignored: true
+    ignoredByDefault: true
+    hidden: true
+    parentNodeId: exists
+
+<span></span>
+    exists: true
+    label: 
+    role: 
+    ignored: true
+    ignoredByDefault: true
+    parentNodeId: exists
+
+<div aria-hidden="true"></div>
+    exists: true
+    label: 
+    role: 
+    ignored: true
+    ignoredByDefault: true
+    hidden: true
+    parentNodeId: exists
+
+<div></div>
+    exists: true
+    label: 
+    role: 
+    ignored: true
+    parentNodeId: exists
+
+<div role="presentation"><div></div></div>
+    exists: true
+    label: 
+    role: presentation
+    ignored: true
+    parentNodeId: exists
+
+<div role="group">
+    <div>foo</div>
+    <span>
+        bar
+        <span role="button">baz</span>
+    </span>
+    <div></div>
+    <div></div>
+</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div><div></div></div>
+    exists: true
+    label: 
+    role: 
+    ignored: true
+    parentNodeId: exists
+
+<script style="display:block;"></script>
+    exists: true
+    label: 
+    role: group
+    ignored: true
+    parentNodeId: exists
+
+<script></script>
+    exists: false
+    label: 
+    role: 
+
