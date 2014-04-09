@@ -1,5 +1,14 @@
 2014-04-09  Geoffrey Garen  <ggaren@apple.com>
 
+        Rolled back out r166972.
+
+        The production buildbots are still broken because the build-root script
+        doesn't build bmalloc.
+
+        * WTF.xcodeproj/project.pbxproj:
+
+2014-04-09  Geoffrey Garen  <ggaren@apple.com>
+
         Rolled back in r166972.
 
         The iOS buildbot's scripts have been updated to build bmalloc, so the
