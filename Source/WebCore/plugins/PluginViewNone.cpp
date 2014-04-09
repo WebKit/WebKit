@@ -132,7 +132,7 @@ void PluginView::handleFocusOutEvent()
 // ports using PluginView, but until then, if new functions like this are 
 // added, please make sure they have the proper platform #ifs so that changes
 // do not break ports who compile both this file and PluginView.cpp.   
-#if PLATFORM(COCOA) || PLATFORM(EFL) || OS(WINCE)
+#if PLATFORM(COCOA) || PLATFORM(EFL) || PLATFORM(GTK) || OS(WINCE)
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void PluginView::keepAlive(NPP)
 {

@@ -2081,7 +2081,6 @@ set(WebCore_SOURCES
     plugins/PluginDebug.cpp
     plugins/PluginMainThreadScheduler.cpp
     plugins/PluginStream.cpp
-    plugins/PluginView.cpp
 
     rendering/AutoTableLayout.cpp
     rendering/BidiRun.cpp
@@ -2608,12 +2607,7 @@ if (ENABLE_SQL_DATABASE)
     )
 endif ()
 
-if (ENABLE_NETSCAPE_PLUGIN_API)
-    list(APPEND WebCore_SOURCES
-        plugins/PluginPackage.cpp
-        plugins/npapi.cpp
-    )
-else ()
+if (NOT ENABLE_NETSCAPE_PLUGIN_API)
     list(APPEND WebCore_SOURCES
         plugins/PluginPackageNone.cpp
         plugins/PluginViewNone.cpp

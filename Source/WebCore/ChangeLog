@@ -1,3 +1,25 @@
+2014-04-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Plugin process crashes when loading totem plugin
+        https://bugs.webkit.org/show_bug.cgi?id=131357
+
+        Reviewed by Martin Robinson.
+
+        Remove netscape plugin implementation from WebCore that was only
+        used by WebKit1. This removes the conflict between the WebCore NPN
+        symbols and the ones used by the plugins.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PlatformWin.cmake:
+        * plugins/PluginViewNone.cpp:
+        * plugins/gtk/PluginPackageGtk.cpp: Removed.
+        * plugins/gtk/PluginViewGtk.cpp: Removed.
+        * plugins/gtk/gtk2xtbin.c: Removed.
+        * plugins/gtk/gtk2xtbin.h: Removed.
+        * plugins/gtk/xembed.h: Removed.
+
 2014-04-09  Jeremy Jones  <jeremyj@apple.com>
 
         fullscreen controls first show a play button instead of a pause button

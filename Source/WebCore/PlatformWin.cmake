@@ -73,6 +73,7 @@ list(APPEND WebCore_SOURCES
 if (ENABLE_NETSCAPE_PLUGIN_API)
     list(APPEND WebCore_SOURCES
         plugins/PluginView.cpp
+        plugins/npapi.cpp
 
         plugins/win/PluginMessageThrottlerWin.cpp
         plugins/win/PluginPackageWin.cpp

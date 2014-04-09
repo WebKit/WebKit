@@ -21,7 +21,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/gtk"
     "${WEBCORE_DIR}/platform/text/icu"
-    "${WEBCORE_DIR}/plugins/gtk"
 )
 
 list(APPEND WebCore_SOURCES
@@ -140,6 +139,9 @@ list(APPEND WebCore_SOURCES
     platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp
 
     platform/network/gtk/CredentialBackingStore.cpp
+
+    plugins/PluginPackageNone.cpp
+    plugins/PluginViewNone.cpp
 )
 
 list(APPEND WebCorePlatformGTK_SOURCES
@@ -249,29 +251,6 @@ if (WTF_USE_GEOCLUE2)
     add_custom_command(
          OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.c ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.h
          COMMAND gdbus-codegen --interface-prefix org.freedesktop.GeoClue2. --c-namespace Geoclue --generate-c-code ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface ${GEOCLUE_DBUS_INTERFACE}
-    )
-endif ()
-
-if (ENABLE_NETSCAPE_PLUGIN_API)
-    list(APPEND WebCore_SOURCES
-        plugins/PluginDatabase.cpp
-        plugins/PluginDebug.cpp
-        plugins/PluginPackage.cpp
-        plugins/PluginStream.cpp
-        plugins/PluginView.cpp
-    )
-
-    list(APPEND WebCorePlatformGTK_SOURCES
-        plugins/gtk/PluginPackageGtk.cpp
-        plugins/gtk/PluginViewGtk.cpp
-        plugins/gtk/gtk2xtbin.c
-
-        plugins/x11/PluginViewX11.cpp
-    )
-else ()
-    list(APPEND WebCore_SOURCES
-        plugins/PluginPackageNone.cpp
-        plugins/PluginViewNone.cpp
     )
 endif ()
 
