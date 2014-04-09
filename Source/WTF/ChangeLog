@@ -1,5 +1,21 @@
 2014-04-09  Geoffrey Garen  <ggaren@apple.com>
 
+        Rolled back in r166972.
+
+        This time, we conditionally exclude linking against bmalloc in Production
+        builds. Production builds will not be able to link against bmalloc
+        until the Production build system has been updated to build bmalloc.
+
+            WTF should link against bmalloc
+            https://bugs.webkit.org/show_bug.cgi?id=131403
+
+            Reviewed by Mark Rowe.
+
+            * Configurations/WTF.xcconfig:
+            * WTF.xcodeproj/project.pbxproj:
+
+2014-04-09  Geoffrey Garen  <ggaren@apple.com>
+
         Put bmalloc headers in the right place
         https://bugs.webkit.org/show_bug.cgi?id=131464
 
