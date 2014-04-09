@@ -1,3 +1,15 @@
+2014-04-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove "System Font" from whitelisted DRT fonts and char width calculations
+        https://bugs.webkit.org/show_bug.cgi?id=131411
+
+        Reviewed by Tim Horton.
+
+        Covered by existing tests.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::hasValidAverageCharWidth):
+
 2014-04-09  Jeremy Jones  <jeremyj@apple.com>
 
         Fullscreen does two view controller changes at once

@@ -1,5 +1,17 @@
 2014-04-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Remove "System Font" from whitelisted DRT fonts and char width calculations
+        https://bugs.webkit.org/show_bug.cgi?id=131411
+
+        Reviewed by Tim Horton.
+
+        Covered by existing tests.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (allowedFontFamilySet):
+
+2014-04-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
         systemHiddenFontFamilySet in DRT is unnecessary
         https://bugs.webkit.org/show_bug.cgi?id=131414
 
