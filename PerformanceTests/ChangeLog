@@ -1,3 +1,33 @@
+2014-04-09  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Add no regions version of RegionsShapes performance test
+        https://bugs.webkit.org/show_bug.cgi?id=131442
+
+        Reviewed by Ryosuke Niwa.
+
+        We would like have a no regions version for RegionsShapes performance test. The new
+        test produces similar layout to RegionsShapes.html without using regions. It is helpful
+        for us to do further comparisons when necessary. This test is skipped by default.
+
+        * Layout/Shapes/RegionsShapesNoRegions.html: Added.
+        * Layout/Shapes/resources/RegionsShapes.css: Added.
+        (html, body):
+        (.shape):
+        (#circleShape):
+        (#imageShape):
+        (#insetShape):
+        (#roundedInsetShape):
+        (#triangleLeft):
+        (#triangleRight):
+        (#selfIntersectingStar):
+        (#region1):
+        (#region2):
+        (#region3):
+        * Layout/Shapes/resources/RegionsShapesContent.html:
+        * Layout/Shapes/resources/RegionsShapesContentNoRegionsWidth400.html: Added.
+        * Layout/Shapes/resources/RegionsShapesContentNoRegionsWidth600.html: Added.
+        * Layout/Shapes/resources/RegionsShapesContentNoRegionsWidth800.html: Added.
+
 2014-04-02  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed.

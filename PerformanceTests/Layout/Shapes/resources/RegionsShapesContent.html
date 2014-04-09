@@ -1,21 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="stylesheet" type="text/css" href="./Shapes/resources/RegionsShapes.css">
 <style>
-html, body {
-    padding: 0;
-    margin: 0;
-}
-
-article {
-    -webkit-flow-into: article;
-    text-align: justify;
-    font-family: Palatino, Georgia, serif;
-    font-size: 10px;
-    -webkit-hyphens: auto;
-    text-align: justify;
-    line-height: 1.2em;
-}
+article { -webkit-flow-into: article; }
 
 .regionColumns {
     -webkit-flow-from: article;
@@ -36,80 +24,8 @@ article {
     margin-left: 3%;
 }
 
-.page { width: 100%; }
-#region1 { width: 40%; }
-#region2 { width: 22%; }
-#region3 { width: 22%; }
 #region4 { height: 200px; }
 #region5 { height: 300px; }
-
-.shape {
-    width: 100px;
-    height: 100px;
-}
-
-#circleShape {
-    float: left;
-    -webkit-shape-outside: circle(closest-side at center);
-    -webkit-shape-margin: 2px;
-    -webkit-clip-path: circle(closest-side at center);
-    background-color: green;
-}
-
-#imageShape {
-    float: left;
-    background: url("./Shapes/resources/shape.gif") no-repeat;
-    -webkit-shape-outside: url("./Shapes/resources/shape.gif");
-    -webkit-shape-margin: 2px;
-    width: 200px;
-    height: 200px;
-}
-
-#insetShape {
-    float: right;
-    -webkit-shape-outside: inset(5px);
-    -webkit-clip-path: inset(5px);
-    -webkit-shape-margin: 4px;
-    background-color: red;
-    border: 1px solid black;
-}
-
-#roundedInsetShape {
-    float: right;
-    -webkit-shape-outside: inset(5px round 64px 32px 16px 36px);
-    -webkit-clip-path: inset(5px round 64px 32px 16px 36px);
-    -webkit-shape-margin: 4px;
-    background-color: lightblue;
-    opacity: 0.4;
-    border: 1px solid black;
-}
-
-#triangleLeft {
-    float: left;
-    -webkit-shape-outside: polygon(0 0, 100% 50%, 0 100%);
-    -webkit-clip-path: polygon(0 0, 100% 50%, 0 100%);
-    -webkit-shape-margin: 4px;
-    background-color: yellow;
-    opacity: 0.4;
-}
-
-#triangleRight {
-    float: right;
-    -webkit-shape-outside: polygon(100% 0, 0 50%, 100% 100%);
-    -webkit-clip-path: polygon(100% 0, 0 50%, 100% 100%);
-    -webkit-shape-margin: 4px;
-    background-color: orange;
-}
-
-#selfIntersectingStar {
-    float: left;
-    -webkit-shape-outside: polygon(50% 0, 100% 100%, 0 34%, 100% 34%, 0 100%);
-    -webkit-clip-path: polygon(50% 0, 100% 100%, 0 34%, 100% 34%, 0 100%);
-    -webkit-shape-margin: 4px;
-    background-color: blue;
-    width: 100px;
-    height: 200px;
-}
 
 @media screen and (max-width: 650px) {
     #region1, #region2 { width: 46%; }
@@ -127,7 +43,7 @@ article {
 </head>
 
 <body>
-<div class="page">
+<div>
   <div id="region1" class="regionColumns"></div>
   <div id="region2" class="regionColumns"></div>
   <div id="region3" class="regionColumns"></div>
