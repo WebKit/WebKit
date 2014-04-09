@@ -2968,7 +2968,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 - (BOOL)accessibilityIsAttributeSettable:(NSString*)attributeName
 {
     if (![self updateObjectBackingStore])
-        return nil;
+        return NO;
     
     if ([attributeName isEqualToString: @"AXSelectedTextMarkerRange"])
         return YES;

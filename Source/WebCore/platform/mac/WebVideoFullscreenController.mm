@@ -144,7 +144,7 @@ SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
             [self setupVideoOverlay:layer];
             [layer setPlayer:player];
 
-            [player addObserver:self forKeyPath:@"rate" options:nil context:NULL];
+            [player addObserver:self forKeyPath:@"rate" options:0 context:nullptr];
         }
     }
 }
