@@ -449,7 +449,7 @@ private:
     
     HashMap<RefPtr<Element>, RetainPtr<NSDictionary>> m_attributesForElements;
     HashMap<RetainPtr<NSTextTable>, RefPtr<Element>> m_textTableFooters;
-    HashMap<RefPtr<Element>, RetainPtr<NSMutableDictionary>> m_aggregatedAttributesForElements;
+    HashMap<RefPtr<Element>, RetainPtr<NSDictionary>> m_aggregatedAttributesForElements;
 
     NSMutableAttributedString *_attrStr;
     NSMutableDictionary *_documentAttrs;
@@ -487,7 +487,8 @@ private:
     NSDictionary *computedAttributesForElement(Element&);
     NSDictionary *attributesForElement(Element&);
     NSDictionary *aggregatedAttributesForAncestors(CharacterData&);
-    
+    NSDictionary* aggregatedAttributesForElementAndItsAncestors(Element&);
+
     Element* _blockLevelElementForNode(Node*);
     
     void _newParagraphForElement(Element&, NSString *tag, BOOL flag, BOOL suppressTrailingSpace);
@@ -1357,25 +1358,32 @@ NSDictionary* HTMLConverter::aggregatedAttributesForAncestors(CharacterData& nod
         ancestor = ancestor->parentNode();
     if (!ancestor)
         return nullptr;
+    return aggregatedAttributesForElementAndItsAncestors(*toElement(ancestor));
+}
 
-    auto& attributes = m_aggregatedAttributesForElements.add(toElement(ancestor), nullptr).iterator->value;
-    if (!attributes) {
-        Vector<Element*, 16> ancestorElements;
-        ancestorElements.append(toElement(ancestor));
-        for (; ancestor; ancestor = ancestor->parentNode()) {
-            if (ancestor->isElementNode())
-                ancestorElements.append(toElement(ancestor));
-        }
+NSDictionary* HTMLConverter::aggregatedAttributesForElementAndItsAncestors(Element& element)
+{
+    auto& cachedAttributes = m_aggregatedAttributesForElements.add(&element, nullptr).iterator->value;
+    if (cachedAttributes)
+        return cachedAttributes.get();
 
-        attributes = [NSMutableDictionary dictionary];
-        // Fill attrs dictionary with attributes from the highest to the lowest, not overwriting ones deeper in the tree
-        for (unsigned index = ancestorElements.size(); index;) {
-            index--;
-            [attributes addEntriesFromDictionary:attributesForElement(*ancestorElements[index])];
-        }
+    NSDictionary* attributesForCurrentElement = attributesForElement(element);
+    ASSERT(attributesForCurrentElement);
+
+    Node* ancestor = element.parentNode();
+    while (ancestor && !ancestor->isElementNode())
+        ancestor = ancestor->parentNode();
+
+    if (!ancestor) {
+        cachedAttributes = attributesForCurrentElement;
+        return attributesForCurrentElement;
     }
 
-    return attributes.get();
+    RetainPtr<NSMutableDictionary> attributesForAncestors = adoptNS([aggregatedAttributesForElementAndItsAncestors(*toElement(ancestor)) mutableCopy]);
+    [attributesForAncestors addEntriesFromDictionary:attributesForCurrentElement];
+    m_aggregatedAttributesForElements.set(&element, attributesForAncestors);
+
+    return attributesForAncestors.get();
 }
 
 void HTMLConverter::_newParagraphForElement(Element& element, NSString *tag, BOOL flag, BOOL suppressTrailingSpace)

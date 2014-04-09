@@ -1,3 +1,18 @@
+2014-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTMLConverter::aggregatedAttributesForAncestors should cache intermediate results
+        https://bugs.webkit.org/show_bug.cgi?id=131400
+
+        Reviewed by Sam Weinig.
+
+        Instead of accumulating attributes from a character node to the highest ancestor,
+        recursively call aggregatedAttributesForElementAndItsAncestors so that aggregated
+        attributes are cached on each ancestor to eliminate the old O(n^2) behavior.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::aggregatedAttributesForAncestors):
+        (HTMLConverter::aggregatedAttributesForElementAndItsAncestors): Extracted from aggregatedAttributesForAncestors.
+
 2014-04-08  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed CMake build fix after r166965.
