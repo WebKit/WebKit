@@ -1,3 +1,19 @@
+2014-04-08  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=131408
+        Scrollbars layers don't dynamically update when device scale factor changes
+        -and corresponding-
+        <rdar://problem/16503875>
+
+        Reviewed by Tim Horton.
+
+        The scrollbar layers are not children of the RenderView's layer, so they were 
+        completely skipped over by this function before. We need to start this higher up 
+        the tree in the rootGraphicsLayer(), which will typically return the 
+        m_overflowControlsHostLayer.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::deviceOrPageScaleFactorChanged):
+
 2014-04-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTMLConverter::aggregatedAttributesForAncestors should cache intermediate results

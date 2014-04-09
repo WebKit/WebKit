@@ -3362,12 +3362,10 @@ bool RenderLayerCompositor::layerHas3DContent(const RenderLayer& layer) const
 
 void RenderLayerCompositor::deviceOrPageScaleFactorChanged()
 {
-    // Start at the RenderView's layer, since that's where the scale is applied.
-    RenderLayer* viewLayer = m_renderView.layer();
-    if (!viewLayer->isComposited())
-        return;
-
-    if (GraphicsLayer* rootLayer = viewLayer->backing()->childForSuperlayers())
+    // Page scale will only be applied at to the RenderView and sublayers, but the device scale factor
+    // needs to be applied at the level of rootGraphicsLayer().
+    GraphicsLayer* rootLayer = rootGraphicsLayer();
+    if (rootLayer)
         rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
 
