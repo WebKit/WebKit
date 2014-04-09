@@ -433,11 +433,13 @@ void HTMLCollection::updateNamedElementCache() const
     if (hasNamedElementCache())
         return;
 
-    ContainerNode& root = rootNode();
+
     CollectionNamedElementCache& cache = createNameItemCache();
 
-    unsigned count;
-    for (Element* element = firstElement(root); element; element = traverseForward(*element, 1, count, root)) {
+    unsigned size = m_indexCache.nodeCount(*this);
+    for (unsigned i = 0; i < size; i++) {
+        Element* element = m_indexCache.nodeAt(*this, i);
+        ASSERT(element);
         const AtomicString& idAttrVal = element->getIdAttribute();
         if (!idAttrVal.isEmpty())
             cache.appendIdCache(idAttrVal, element);
@@ -447,8 +449,6 @@ void HTMLCollection::updateNamedElementCache() const
         if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && (type() != DocAll || nameShouldBeVisibleInDocumentAll(toHTMLElement(*element))))
             cache.appendNameCache(nameAttrVal, element);
     }
-
-    m_indexCache.nodeCount(*this);
 
     cache.didPopulate();
 }
