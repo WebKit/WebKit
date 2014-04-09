@@ -76,9 +76,9 @@ list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/efl/TestRunnerEfl.cpp
 )
 
-# FIXME: DOWNLOADED_FONTS_DIR should not hardcode the directory
-# structure. See <https://bugs.webkit.org/show_bug.cgi?id=81475>.
-add_definitions(-DFONTS_CONF_DIR="${TOOLS_DIR}/DumpRenderTree/gtk/fonts"
+# FIXME: EFL port needs to have own test font and font configure instead of gtk test font in future
+# FIXME: DOWNLOADED_FONTS_DIR should not hardcode the directory structure.
+add_definitions(-DFONTS_CONF_DIR="${TOOLS_DIR}/WebKitTestRunner/gtk/fonts"
                 -DDOWNLOADED_FONTS_DIR="${CMAKE_SOURCE_DIR}/WebKitBuild/Dependencies/Source/webkitgtk-test-fonts")
 
 if (ENABLE_ACCESSIBILITY)

@@ -1,3 +1,15 @@
+2014-04-09  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Change font path for DumpRenderTree and WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=131427
+
+        Reviewed by Gyuyoung Kim.
+
+        Since r166973, font path was changed.
+
+        * DumpRenderTree/PlatformEfl.cmake:
+        * WebKitTestRunner/PlatformEfl.cmake:
+
 2014-04-08  Geoffrey Garen  <ggaren@apple.com>
 
         Fix the build-jsc build
