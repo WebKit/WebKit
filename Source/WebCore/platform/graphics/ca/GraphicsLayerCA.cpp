@@ -1336,6 +1336,8 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
         // Ensure that we cap layer depth in commitLayerChangesAfterSublayers().
         if (commitState.treeDepth > cMaxLayerTreeDepth)
             m_uncommittedChanges |= ChildrenChanged;
+
+        updateRootRelativeScale(transformFromRoot);
         return;
     }
 

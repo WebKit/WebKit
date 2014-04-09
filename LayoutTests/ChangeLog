@@ -1,3 +1,16 @@
+2014-04-08  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r155998): Elements render at very low resolution with some 3d transforms
+        https://bugs.webkit.org/show_bug.cgi?id=131412
+
+        Reviewed by Tim Horton.
+        
+        Test that makes an incremental change to a layer property in a tree with
+        interesting 3d transforms.
+
+        * compositing/contents-scale/incremental-change-expected.html: Added.
+        * compositing/contents-scale/incremental-change.html: Added.
+
 2014-04-08  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         [SVG] Fix CSS transform handling when zoomed

@@ -1,3 +1,26 @@
+2014-04-08  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r155998): Elements render at very low resolution with some 3d transforms
+        https://bugs.webkit.org/show_bug.cgi?id=131412
+        <rdar://problem/16525044>
+
+        Reviewed by Tim Horton.
+        
+        In r155998 we started to compute a root-relative transform in order to choose
+        a good contentsScale to avoid blurring on scaling.
+        
+        However, the code failed to update this transform when passing over
+        GraphicsLayerCAs with no uncommitted changes, which caused us to choose
+        an incorrect contentsScale sometimes, resulting in blurriness.
+        
+        Fix by updating the root-relative transform on layers with no uncommitted
+        changes.
+
+        Test: compositing/contents-scale/incremental-change.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+
 2014-04-08  Anders Carlsson  <andersca@apple.com>
 
         Don't call CGPathAddPath with invalid CGAffineTransform objects
