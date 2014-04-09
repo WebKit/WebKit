@@ -741,7 +741,6 @@ void dump()
     fflush(stderr);
 
 fail:
-    SysFreeString(resultString);
     // This will exit from our message loop.
     PostQuitMessage(0);
     done = true;
