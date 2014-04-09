@@ -1,3 +1,16 @@
+2014-04-09  Chris Fleizach  <cfleizach@apple.com>
+
+        Regression: AX: list heuristics sometimes determined as presentational even when explicit roles applied
+        https://bugs.webkit.org/show_bug.cgi?id=131041
+
+        Reviewed by Mario Sanchez Prada.
+
+        When display:table is used on a list item, it inserts RenderObjects that can be ignored as the children
+        of the list. This allows normal list heuristics to be applied.
+
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::computeAccessibilityIsIgnored):
+
 2014-04-09  Antti Koivisto  <antti@apple.com>
 
         TileGrid should be PlatformCALayerClient instead of TileController

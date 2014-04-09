@@ -63,6 +63,10 @@ bool AccessibilityTableCell::computeAccessibilityIsIgnored() const
     if (decision == IgnoreObject)
         return true;
     
+    // Ignore anonymous table cells.
+    if (!node())
+        return true;
+        
     if (!isTableCell())
         return AccessibilityRenderObject::computeAccessibilityIsIgnored();
     

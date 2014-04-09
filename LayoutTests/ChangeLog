@@ -1,3 +1,13 @@
+2014-04-09  Chris Fleizach  <cfleizach@apple.com>
+
+        Regression: AX: list heuristics sometimes determined as presentational even when explicit roles applied
+        https://bugs.webkit.org/show_bug.cgi?id=131041
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/list-detection-expected.txt:
+        * accessibility/list-detection.html:
+
 2014-04-09  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline some tests for GTK+

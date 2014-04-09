@@ -55,6 +55,10 @@ Unordered list with aria role and at least one aria list items is a list.
 PASS axElement.role == 'AXRole: AXList' is true
 
 
+Inline list elements with an aria role should be a list
+PASS axElement.role == 'AXRole: AXList' is true
+
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
