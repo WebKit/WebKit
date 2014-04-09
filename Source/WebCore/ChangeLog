@@ -1,3 +1,42 @@
+2014-04-09  Antti Koivisto  <antti@apple.com>
+
+        TileGrid should be PlatformCALayerClient instead of TileController
+        https://bugs.webkit.org/show_bug.cgi?id=131456
+
+        Reviewed by Tim Horton.
+
+        The client interface is for the tiles in the grid.
+
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::setContentsScale):
+        (WebCore::TileController::createTileLayer):
+        (WebCore::TileController::platformCALayerPaintContents): Deleted.
+        (WebCore::TileController::platformCALayerDeviceScaleFactor): Deleted.
+        (WebCore::TileController::platformCALayerShowDebugBorders): Deleted.
+        (WebCore::TileController::platformCALayerShowRepaintCounter): Deleted.
+        (WebCore::TileController::platformCALayerIncrementRepaintCount): Deleted.
+        * platform/graphics/ca/mac/TileGrid.h:
+        
+            Move repaint counter to TileGrid too.
+
+        * platform/graphics/ca/mac/TileGrid.mm:
+        (WebCore::TileGrid::removeTiles):
+        (WebCore::TileGrid::removeAllSecondaryTiles):
+        (WebCore::TileGrid::removeTilesInCohort):
+        
+           Cleaned up tile removal.
+
+        (WebCore::TileGrid::revalidateTiles):
+        (WebCore::TileGrid::ensureTilesForRect):
+        (WebCore::TileGrid::platformCALayerPaintContents):
+        (WebCore::TileGrid::platformCALayerDeviceScaleFactor):
+        (WebCore::TileGrid::platformCALayerShowDebugBorders):
+        (WebCore::TileGrid::platformCALayerShowRepaintCounter):
+        (WebCore::TileGrid::platformCALayerContentsOpaque):
+        (WebCore::TileGrid::platformCALayerIncrementRepaintCount):
+        (WebCore::queueTileForRemoval): Deleted.
+
 2014-04-09  Alexey Proskuryakov  <ap@apple.com>
 
         Rename some dragging functions

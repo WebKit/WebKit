@@ -48,9 +48,8 @@ class TileGrid;
 
 typedef Vector<RetainPtr<PlatformLayer>> PlatformLayerList;
 
-class TileController final : public TiledBacking, public PlatformCALayerClient {
-    WTF_MAKE_NONCOPYABLE(TileController);
-
+class TileController final : public TiledBacking {
+    WTF_MAKE_NONCOPYABLE(TileController); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<TileController> create(PlatformCALayer*);
     ~TileController();
@@ -104,6 +103,7 @@ public:
     virtual int rightMarginWidth() const override;
     virtual TileCoverage tileCoverage() const override { return m_tileCoverage; }
     virtual bool unparentsOffscreenTiles() const override { return m_unparentsOffscreenTiles; }
+    virtual bool scrollingPerformanceLoggingEnabled() const override { return m_scrollingPerformanceLoggingEnabled; }
 
     IntRect boundsWithoutMargin() const;
 
@@ -117,12 +117,9 @@ public:
     bool shouldAggressivelyRetainTiles() const;
     bool shouldTemporarilyRetainTileCohorts() const;
 
-    typedef HashMap<PlatformCALayer*, int> RepaintCountMap;
-    RepaintCountMap& repaintCountMap() { return m_tileRepaintCounts; }
-
     void updateTileCoverageMap();
 
-    RefPtr<PlatformCALayer> createTileLayer(const IntRect&);
+    RefPtr<PlatformCALayer> createTileLayer(const IntRect&, TileGrid&);
 
     const TileGrid& tileGrid() const { return *m_tileGrid; }
 
@@ -144,22 +141,12 @@ private:
     virtual void forceRepaint() override;
     virtual IntRect tileGridExtent() const override;
     virtual void setScrollingPerformanceLoggingEnabled(bool flag) override { m_scrollingPerformanceLoggingEnabled = flag; }
-    virtual bool scrollingPerformanceLoggingEnabled() const override { return m_scrollingPerformanceLoggingEnabled; }
     virtual void setUnparentsOffscreenTiles(bool flag) override { m_unparentsOffscreenTiles = flag; }
     virtual double retainedTileBackingStoreMemory() const override;
     virtual IntRect tileCoverageRect() const override;
     virtual PlatformCALayer* tiledScrollingIndicatorLayer() override;
     virtual void setScrollingModeIndication(ScrollingModeIndication) override;
     virtual void setTileMargins(int marginTop, int marginBottom, int marginLeft, int marginRight) override;
-
-    // PlatformCALayerClient
-    virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&) override;
-    virtual bool platformCALayerShowDebugBorders() const override;
-    virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const override;
-    virtual int platformCALayerIncrementRepaintCount(PlatformCALayer*) override;
-    virtual bool platformCALayerContentsOpaque() const override { return m_tilesAreOpaque; }
-    virtual bool platformCALayerDrawsContent() const override { return true; }
-    virtual float platformCALayerDeviceScaleFactor() const override;
 
     void scheduleTileRevalidation(double interval);
     void tileRevalidationTimerFired(Timer<TileController>*);
@@ -180,8 +167,6 @@ private:
     IntRect m_boundsAtLastRevalidate;
 
     Timer<TileController> m_tileRevalidationTimer;
-
-    RepaintCountMap m_tileRepaintCounts;
 
     float m_contentsScale;
     float m_deviceScaleFactor;

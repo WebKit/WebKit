@@ -26,7 +26,6 @@
 #import "config.h"
 #import "TileController.h"
 
-#import "GraphicsContext.h"
 #import "IntRect.h"
 #import "PlatformCALayer.h"
 #import "Region.h"
@@ -35,7 +34,6 @@
 #if !PLATFORM(IOS)
 #import "LayerPool.h"
 #endif
-#import "WebLayer.h"
 #import <wtf/MainThread.h>
 #import <utility>
 
@@ -103,59 +101,13 @@ void TileController::setNeedsDisplayInRect(const IntRect& rect)
     tileGrid().setNeedsDisplayInRect(rect);
 }
 
-void TileController::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&)
-{
-#if PLATFORM(IOS)
-    if (pthread_main_np())
-        WebThreadLock();
-#endif
-
-    {
-        GraphicsContextStateSaver stateSaver(context);
-
-        FloatPoint3D layerOrigin = platformCALayer->position();
-        context.translate(-layerOrigin.x(), -layerOrigin.y());
-        context.scale(FloatSize(tileGrid().scale(), tileGrid().scale()));
-
-        RepaintRectList dirtyRects = collectRectsToPaint(context.platformContext(), platformCALayer);
-        drawLayerContents(context.platformContext(), m_tileCacheLayer, dirtyRects);
-    }
-
-    int repaintCount = platformCALayerIncrementRepaintCount(platformCALayer);
-    if (owningGraphicsLayer()->platformCALayerShowRepaintCounter(0))
-        drawRepaintIndicator(context.platformContext(), platformCALayer, repaintCount, cachedCGColor(m_tileDebugBorderColor, ColorSpaceDeviceRGB));
-
-    if (scrollingPerformanceLoggingEnabled()) {
-        FloatRect visiblePart(platformCALayer->position().x(), platformCALayer->position().y(), platformCALayer->bounds().size().width(), platformCALayer->bounds().size().height());
-        visiblePart.intersect(visibleRect());
-
-        if (repaintCount == 1 && !visiblePart.isEmpty())
-            WTFLogAlways("SCROLLING: Filled visible fresh tile. Time: %f Unfilled Pixels: %u\n", WTF::monotonicallyIncreasingTime(), blankPixelCount());
-    }
-}
-
-float TileController::platformCALayerDeviceScaleFactor() const
-{
-    return owningGraphicsLayer()->platformCALayerDeviceScaleFactor();
-}
-
-bool TileController::platformCALayerShowDebugBorders() const
-{
-    return owningGraphicsLayer()->platformCALayerShowDebugBorders();
-}
-
-bool TileController::platformCALayerShowRepaintCounter(PlatformCALayer*) const
-{
-    return owningGraphicsLayer()->platformCALayerShowRepaintCounter(0);
-}
-
 void TileController::setContentsScale(float scale)
 {
     m_contentsScale = scale;
     
     ASSERT(owningGraphicsLayer()->isCommittingChanges());
 
-    float deviceScaleFactor = platformCALayerDeviceScaleFactor();
+    float deviceScaleFactor = owningGraphicsLayer()->platformCALayerDeviceScaleFactor();
 
     // The scale we get is the product of the page scale factor and device scale factor.
     // Divide by the device scale factor so we'll get the page scale factor.
@@ -478,7 +430,7 @@ int TileController::rightMarginWidth() const
     return m_marginRight;
 }
 
-RefPtr<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect)
+RefPtr<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect, TileGrid& grid)
 {
 #if PLATFORM(IOS)
     RefPtr<PlatformCALayer> layer;
@@ -486,11 +438,10 @@ RefPtr<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect)
     RefPtr<PlatformCALayer> layer = LayerPool::sharedPool()->takeLayerWithSize(tileRect.size());
 #endif
 
-    if (layer) {
-        m_tileRepaintCounts.remove(layer.get());
-        layer->setOwner(this);
-    } else
-        layer = m_tileCacheLayer->createCompatibleLayer(PlatformCALayer::LayerTypeTiledBackingTileLayer, this);
+    if (layer)
+        layer->setOwner(&grid);
+    else
+        layer = m_tileCacheLayer->createCompatibleLayer(PlatformCALayer::LayerTypeTiledBackingTileLayer, &grid);
 
     layer->setAnchorPoint(FloatPoint3D());
     layer->setBounds(FloatRect(FloatPoint(), tileRect.size()));
@@ -512,18 +463,6 @@ RefPtr<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect)
     layer->setNeedsDisplay();
 
     return layer;
-}
-
-int TileController::platformCALayerIncrementRepaintCount(PlatformCALayer* platformCALayer)
-{
-    int repaintCount = 0;
-
-    if (m_tileRepaintCounts.contains(platformCALayer))
-        repaintCount = m_tileRepaintCounts.get(platformCALayer);
-
-    m_tileRepaintCounts.set(platformCALayer, ++repaintCount);
-
-    return repaintCount;
 }
 
 Vector<RefPtr<PlatformCALayer>> TileController::containerLayers()
