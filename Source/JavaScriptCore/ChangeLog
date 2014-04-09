@@ -1,5 +1,27 @@
 2014-04-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Prevent deadlocks receiving WIRPermissionDenied message
+        https://bugs.webkit.org/show_bug.cgi?id=131406
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::stop):
+        (Inspector::RemoteInspector::stopInternal):
+        (Inspector::RemoteInspector::xpcConnectionReceivedMessage):
+        Provide a way to stop externally and a path to stop when in
+        the middle of handling a message already with the locked mutex.
+
+        * inspector/remote/RemoteInspectorXPCConnection.h:
+        * inspector/remote/RemoteInspectorXPCConnection.mm:
+        (Inspector::RemoteInspectorXPCConnection::close):
+        (Inspector::RemoteInspectorXPCConnection::closeFromMessage):
+        Provide a way to close externally and a path to close when in
+        the middle of handling a message already with a mutex.
+
+2014-04-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Address stale FIXMEs concerning console in JSContext inspection
         https://bugs.webkit.org/show_bug.cgi?id=131398
 

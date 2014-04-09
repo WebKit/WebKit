@@ -65,6 +65,9 @@ private:
 
     unsigned nextAvailableIdentifier();
 
+    enum class StopSource { API, XPCMessage };
+    void stopInternal(StopSource);
+
     void setupXPCConnectionIfNeeded();
 
     NSDictionary *listingForDebuggable(const RemoteInspectorDebuggableInfo&) const;

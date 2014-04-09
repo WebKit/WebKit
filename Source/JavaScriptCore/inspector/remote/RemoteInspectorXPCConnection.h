@@ -52,6 +52,7 @@ public:
     virtual ~RemoteInspectorXPCConnection();
 
     void close();
+    void closeFromMessage();
     void sendMessage(NSString *messageName, NSDictionary *userInfo);
 
 private:

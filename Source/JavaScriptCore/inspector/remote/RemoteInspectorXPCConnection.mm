@@ -76,7 +76,11 @@ RemoteInspectorXPCConnection::~RemoteInspectorXPCConnection()
 void RemoteInspectorXPCConnection::close()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
+    closeFromMessage();
+}
 
+void RemoteInspectorXPCConnection::closeFromMessage()
+{
     m_closed = true;
     m_client = nullptr;
 
