@@ -1,3 +1,14 @@
+2014-04-09  Brady Eidson  <beidson@apple.com>
+
+        Don't offer "contact" actions in telephone number menus
+        <rdar://problem/16556907> and https://bugs.webkit.org/show_bug.cgi?id=131451
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::showTelephoneNumberMenu): Skip actions that have to do with contacts,
+          and skip separators too!
+
 2014-04-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r166975.

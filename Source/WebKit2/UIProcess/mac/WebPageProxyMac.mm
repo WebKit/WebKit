@@ -63,6 +63,8 @@
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectors)
 SOFT_LINK_CLASS(DataDetectors, DDActionsManager)
+SOFT_LINK_CLASS(DataDetectors, DDAction)
+SOFT_LINK_CLASS(DataDetectors, DDSeparatorAction)
 SOFT_LINK_CONSTANT(DataDetectors, DDBinderPhoneNumberKey, CFStringRef)
 
 typedef void* DDActionContext;
@@ -70,6 +72,10 @@ typedef void* DDActionContext;
 @interface DDActionsManager : NSObject
 + (DDActionsManager *) sharedManager;
 - (NSArray *) menuItemsForValue:(NSString *)value type:(CFStringRef)type service:(NSString *)service context:(DDActionContext *)context;
+@end
+
+@interface DDAction : NSObject
+@property (readonly) NSString *actionUTI;
 @end
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
@@ -653,6 +659,22 @@ void WebPageProxy::showTelephoneNumberMenu(const String& telephoneNumber, const 
 
     Vector<WebContextMenuItemData> items;
     for (NSMenuItem *item in menuItems) {
+        NSDictionary *representedObject = [item representedObject];
+        if (![representedObject isKindOfClass:[NSDictionary class]])
+            continue;
+
+        DDAction *actionObject = [representedObject objectForKey:@"DDAction"];
+        if (![actionObject isKindOfClass:getDDActionClass()])
+            continue;
+
+        // Skip menu items whose actions have anything to do with contacts.
+        if ([[actionObject actionUTI] hasPrefix:@"com.apple.contact."])
+            continue;
+
+        // Skip seperator items.
+        if ([actionObject isKindOfClass:getDDSeparatorActionClass()])
+            continue;
+
         RetainPtr<NSMenuItem> retainedItem = item;
         std::function<void()> handler = [retainedItem]() {
             NSMenuItem *item = retainedItem.get();
