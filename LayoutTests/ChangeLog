@@ -1,3 +1,12 @@
+2014-04-09  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed gardening for GTK.
+
+        Updated test expectations after r166175, which removed an <hr>
+        from the original test accessibility/lists.html.
+
+        * platform/gtk/accessibility/lists-expected.txt: Updated
+
 2014-04-09  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] HTTP authentication regression tests fail

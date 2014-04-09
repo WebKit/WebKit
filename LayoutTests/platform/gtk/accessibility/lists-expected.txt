@@ -69,48 +69,10 @@ AXRole: AXGroup
 AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 8.000000, 217.000000 }
-AXSize: { 784.000000, 51.000000 }
+AXSize: { 784.000000, 68.000000 }
 AXTitle: 
 AXDescription: 
-AXValue: <\n><\n><\n>
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
-------------
-AXRole: AXSeparator
-AXParent: AXWebArea
-AXChildren: 0
-AXPosition: { 8.000000, 276.000000 }
-AXSize: { 784.000000, 2.000000 }
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
-------------
-AXRole: AXGroup
-AXParent: AXWebArea
-AXChildren: 0
-AXPosition: { 8.000000, 286.000000 }
-AXSize: { 784.000000, 17.000000 }
-AXTitle: 
-AXDescription: 
-AXValue: <\n>
+AXValue: <\n><\n><\n><\n>
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
