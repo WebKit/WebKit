@@ -1,3 +1,9 @@
+2014-04-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Trying to unbreak flakiness dashboard after Gtk TextExpectations reshuffling.
+
+        * platform/gtk-wk2/TestExpectations: Added.
+
 2014-04-08  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Clip outer rounded border rect on device pixel boundaries.
