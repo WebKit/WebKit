@@ -1,4 +1,12 @@
 2014-04-08  Chris Fleizach  <cfleizach@apple.com>
+
+        Unreviewed build fix for iOS (redux).
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityARIAIsBusy]):
+        (-[WebAccessibilityObjectWrapper accessibilityARIALiveRegionIsAtomic]):
+
+2014-04-08  Chris Fleizach  <cfleizach@apple.com>
  
         Unreviewed build fix for iOS.
 
