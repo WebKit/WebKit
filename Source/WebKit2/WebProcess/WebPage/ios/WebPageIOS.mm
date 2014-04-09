@@ -1274,8 +1274,11 @@ void WebPage::replaceDictatedText(const String& oldText, const String& newText)
     if (plainText(range.get()) != oldText)
         return;
 
+    // We don't want to notify the client that the selection has changed until we are done inserting the new text.
+    frame.editor().setIgnoreCompositionSelectionChange(true);
     frame.selection().setSelectedRange(range.get(), UPSTREAM, true);
     frame.editor().insertText(newText, 0);
+    frame.editor().setIgnoreCompositionSelectionChange(false);
 }
 
 void WebPage::requestAutocorrectionData(const String& textForAutocorrection, uint64_t callbackID)
