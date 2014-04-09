@@ -304,6 +304,9 @@ void Path::addPath(const Path& path, const AffineTransform& transform)
     if (!path.platformPath())
         return;
 
+    if (!transform.isInvertible())
+        return;
+
     CGAffineTransform transformCG = transform;
     // CG doesn't allow adding a path to itself. Optimize for the common case
     // and copy the path for the self referencing case.

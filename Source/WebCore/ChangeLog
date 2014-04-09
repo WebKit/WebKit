@@ -1,3 +1,24 @@
+2014-04-08  Anders Carlsson  <andersca@apple.com>
+
+        Don't call CGPathAddPath with invalid CGAffineTransform objects
+        https://bugs.webkit.org/show_bug.cgi?id=131413
+        <rdar://problem/16399645>
+
+        Reviewed by Darin Adler.
+
+        Covered by existing tests.
+
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::addPath):
+        Don't try to add the path if the affine transform isn't invertible.
+
+        * platform/graphics/transforms/AffineTransform.cpp:
+        (WebCore::AffineTransform::isInvertible):
+        Handle infinite and NaN determinants.
+
+        (WebCore::AffineTransform::inverse):
+        Handle infinite and NaN determinants.
+
 2014-04-08  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: memoize nondeterministic attributes of the Screen interface

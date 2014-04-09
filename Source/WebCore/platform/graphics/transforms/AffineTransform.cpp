@@ -86,13 +86,15 @@ double AffineTransform::det() const
 
 bool AffineTransform::isInvertible() const
 {
-    return det() != 0.0;
+    double determinant = det();
+
+    return std::isfinite(determinant) && determinant != 0;
 }
 
 AffineTransform AffineTransform::inverse() const
 {
     double determinant = det();
-    if (determinant == 0.0)
+    if (!std::isfinite(determinant) || determinant == 0)
         return AffineTransform();
 
     AffineTransform result;
