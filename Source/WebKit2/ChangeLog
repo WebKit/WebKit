@@ -1,3 +1,10 @@
+2014-04-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r166965.
+
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+        (WebKit::WebDragClient::startDrag): Rename Clipboard to DataTransfer.
+
 2014-04-08  Hyowon Kim  <hw1008.kim@samsung.com>
 
         Fix EFL Build errors since r166975.
