@@ -50,7 +50,6 @@
 		1469419C16EAB10A0024E146 /* AutodrainedPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 1469419A16EAB10A0024E146 /* AutodrainedPool.h */; };
 		1469419D16EAB10A0024E146 /* AutodrainedPoolMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1469419B16EAB10A0024E146 /* AutodrainedPoolMac.mm */; };
 		149EF16316BBFE0D000A4331 /* TriState.h in Headers */ = {isa = PBXBuildFile; fileRef = 149EF16216BBFE0D000A4331 /* TriState.h */; settings = {ATTRIBUTES = (); }; };
-		14DD78D318F4B05A00950702 /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14DD78D218F4B05A00950702 /* libbmalloc.a */; };
 		14F3B0F715E45E4600210069 /* SaturatedArithmetic.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F3B0F615E45E4600210069 /* SaturatedArithmetic.h */; settings = {ATTRIBUTES = (); }; };
 		1A1D8B9C173186CE00141DA4 /* FunctionDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1D8B9B173186CE00141DA4 /* FunctionDispatcher.h */; };
 		1A1D8B9E1731879800141DA4 /* FunctionDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D8B9D1731879800141DA4 /* FunctionDispatcher.cpp */; };
@@ -320,7 +319,6 @@
 		1469419A16EAB10A0024E146 /* AutodrainedPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutodrainedPool.h; sourceTree = "<group>"; };
 		1469419B16EAB10A0024E146 /* AutodrainedPoolMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AutodrainedPoolMac.mm; sourceTree = "<group>"; };
 		149EF16216BBFE0D000A4331 /* TriState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriState.h; sourceTree = "<group>"; };
-		14DD78D218F4B05A00950702 /* libbmalloc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libbmalloc.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		14F3B0F615E45E4600210069 /* SaturatedArithmetic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaturatedArithmetic.h; sourceTree = "<group>"; };
 		1A1D8B9B173186CE00141DA4 /* FunctionDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionDispatcher.h; sourceTree = "<group>"; };
 		1A1D8B9D1731879800141DA4 /* FunctionDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionDispatcher.cpp; sourceTree = "<group>"; };
@@ -563,21 +561,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				14DD78D318F4B05A00950702 /* libbmalloc.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		14DD78D418F4B0BE00950702 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				14DD78D218F4B05A00950702 /* libbmalloc.a */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		1FA47C87152502DA00568D1B /* ios */ = {
 			isa = PBXGroup;
 			children = (
@@ -599,7 +588,6 @@
 			isa = PBXGroup;
 			children = (
 				5D247B6D14689C4700E78B76 /* Configurations */,
-				14DD78D418F4B0BE00950702 /* Frameworks */,
 				5D247B6314689B8600E78B76 /* Products */,
 				5D247B7614689D7600E78B76 /* Source */,
 			);
