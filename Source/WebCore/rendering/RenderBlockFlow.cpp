@@ -676,7 +676,7 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
     determineLogicalLeftPositionForChild(child, ApplyLayoutDelta);
 
     // Update our height now that the child has been placed in the correct position.
-    setLogicalHeight(logicalHeight() + logicalHeightForChild(child));
+    setLogicalHeight(logicalHeight() + logicalHeightForChildForFragmentation(child));
     if (mustSeparateMarginAfterForChild(child)) {
         setLogicalHeight(logicalHeight() + marginAfterForChild(child));
         marginInfo.clearMargin();
@@ -1783,6 +1783,35 @@ LayoutUnit RenderBlockFlow::pageRemainingLogicalHeightForOffset(LayoutUnit offse
     return flowThread->pageRemainingLogicalHeightForOffset(offset, pageBoundaryRule);
 }
 
+LayoutUnit RenderBlockFlow::logicalHeightForChildForFragmentation(const RenderBox& child) const
+{
+    // This method is required because regions do not fragment monolithic elements but instead
+    // they let them overflow the region they flow in. This behaviour is different from the 
+    // multicol/printing implementations, which have not yet been updated to correctly handle
+    // monolithic elements.
+    // As a result, for the moment, this method will only be used for regions, the multicol and
+    // printing implementations will stick to the existing behaviour until their fragmentation
+    // implementation is updated to match the regions implementation.
+    if (!flowThreadContainingBlock() || !flowThreadContainingBlock()->isRenderNamedFlowThread())
+        return logicalHeightForChild(child);
+
+    // For unsplittable elements, this method will just return the height of the element that
+    // fits into the current region, without the height of the part that overflows the region.
+    // This is done for all regions, except the last one because in that case, the logical
+    // height of the flow thread needs to also
+    if (!childBoxIsUnsplittableForFragmentation(child) || !pageLogicalHeightForOffset(logicalTopForChild(child)))
+        return logicalHeightForChild(child);
+
+    // If we're on the last page this block fragments to, the logical height of the flow thread must include
+    // the entire unsplittable child because any following children will not be moved to the next page
+    // so they will need to be laid out below the current unsplittable child.
+    LayoutUnit childLogicalTop = logicalTopForChild(child);
+    if (!hasNextPage(childLogicalTop))
+        return logicalHeightForChild(child);
+    
+    LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(childLogicalTop, ExcludePageBoundary);
+    return std::min(child.logicalHeight(), remainingLogicalHeight);
+}
 
 void RenderBlockFlow::layoutLineGridBox()
 {
@@ -2297,7 +2326,7 @@ bool RenderBlockFlow::positionNewFloats()
 
         setLogicalTopForFloat(floatingObject, floatLogicalLocation.y());
 
-        setLogicalHeightForFloat(floatingObject, logicalHeightForChild(childBox) + marginBeforeForChild(childBox) + marginAfterForChild(childBox));
+        setLogicalHeightForFloat(floatingObject, logicalHeightForChildForFragmentation(childBox) + marginBeforeForChild(childBox) + marginAfterForChild(childBox));
 
         m_floatingObjects->addPlacedObject(floatingObject);
 

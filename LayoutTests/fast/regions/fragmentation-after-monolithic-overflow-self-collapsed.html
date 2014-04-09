@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <style>
+            .region {
+                width: 400px;
+                height: 200px;
+                border: thin solid black;
+                -webkit-flow-from: flow;
+                float: left;
+                margin: 10px;
+            }
+
+            #mono {
+                width: 150px;
+                height: 300px;
+                overflow: scroll;
+                background-color: green;
+                color: white;
+                float: left;
+            }
+
+            #mono2 {
+                width: 110px;
+                height: 250px;
+                overflow: scroll;
+                background-color: lightgreen;
+                color: black;
+                float: left;
+            }
+
+            #after {
+                width: 150px;
+                height: 0px;
+                background-color: red;
+                margin: 20px;
+                color: black;
+                clear: left;
+            }
+
+            #after2 {
+                width: 150px;
+                background-color: blue;
+                margin: 10px;
+                color: white;
+                clear: left;
+            }
+
+            .flow {
+                -webkit-flow-into: flow;
+            }
+        </style>
+    </head>
+
+    <body>
+        <p><a href="https://bugs.webkit.org/show_bug.cgi?id=130499">Bug 130499 - [CSS Regions] Monolithic elements should not affect the layout of the content outside its region</a></p>
+        <p>The blue div should be positioned at the top of the 2nd region. Above it is a red self-collapsing div, which should not be visible.</p>
+
+        <div class="region"></div>
+        <div class="region"></div>
+
+        <div id="mono" class="flow">MONOLITHIC FLOAT</div>
+        <div id="mono2" class="flow">MONOLITHIC FLOAT 2</div>
+        
+        <div id="after" class="flow"></div>
+        <div id="after2" class="flow">AFTER2 - One one one one one one one one one one one one one one one one one</div>
+    </body>
+</html>

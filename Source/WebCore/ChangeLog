@@ -1,3 +1,39 @@
+2014-04-09  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Monolithic elements should not affect the layout of the content outside its region
+        https://bugs.webkit.org/show_bug.cgi?id=130499
+
+        Reviewed by David Hyatt.
+
+        When performing layout on an element flowed into regions, its logical height must not be incremented 
+        past the region's logical bottom for monolithic elements in regions different than the last region their containing
+        block is fragmented into. This ensures that the following elements are correctly laid out 
+        from the top of the next region.
+        This change must also be applied to floats in order to prevent text from avoiding part
+        of a float that did not actually made it into the current region, but instead overflowed
+        the previous one.
+
+        Tests: fast/regions/fragmentation-after-float-overflow-single-region.html
+               fast/regions/fragmentation-after-monolithic-overflow-self-collapsed.html
+               fast/regions/fragmentation-after-monolithic-overflow-single-region.html
+               fast/regions/fragmentation-after-monolithic-overflow.html
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FloatingObjects::computePlacedFloatsTree):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutBlockChild):
+        (WebCore::RenderBlockFlow::adjustBlockChildForPagination):
+        (WebCore::RenderBlockFlow::lowestFloatLogicalBottom):
+        (WebCore::RenderBlockFlow::getClearDelta):
+        (WebCore::RenderBlockFlow::applyAfterBreak): Deleted.
+        (WebCore::RenderBlockFlow::nextFloatLogicalBottomBelow): Deleted.
+        (WebCore::RenderBlockFlow::nextFloatLogicalBottomBelowForBlock): Deleted.
+        (WebCore::RenderBlockFlow::flipFloatForWritingModeForChild): Deleted.
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::isBoxInDifferentRegionsAsFloat):
+        * rendering/RenderFlowThread.h:
+
 2014-04-09  Anders Carlsson  <andersca@apple.com>
 
         Use std::array in AffineTransform, and get rid of setMatrix
