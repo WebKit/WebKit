@@ -1,5 +1,19 @@
 2014-04-09  Zoltan Horvath  <zoltan@webkit.org>
 
+        [CSS Shapes] Add no shapes version of RegionsShapes performance test
+        https://bugs.webkit.org/show_bug.cgi?id=131455
+        
+        Reviewed by Ryosuke Niwa.
+
+        This is a no shapes version of the RegionsShapes performance test. All the content
+        will wrap around the floating containers. This way we can compare the runtime/memory
+        usage of the RegionsShapes test with/without shapes. The test is skipped by default.
+
+        * Layout/Shapes/RegionsShapesNoShapes.html: Added.
+        * Layout/Shapes/resources/RegionsShapesContentNoShapes.html: Added.
+
+2014-04-09  Zoltan Horvath  <zoltan@webkit.org>
+
         [CSS Shapes] Add no regions version of RegionsShapes performance test
         https://bugs.webkit.org/show_bug.cgi?id=131442
 
