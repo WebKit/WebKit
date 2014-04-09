@@ -182,7 +182,7 @@ public:
 
 static void testDownloadLocalFile(DownloadTest* test, gconstpointer)
 {
-    GUniquePtr<char> sourcePath(g_build_filename(Test::getWebKit1TestResoucesDir().data(), "test.pdf", NULL));
+    GUniquePtr<char> sourcePath(g_build_filename(Test::getResourcesDir().data(), "test.pdf", nullptr));
     GRefPtr<GFile> source = adoptGRef(g_file_new_for_path(sourcePath.get()));
     GRefPtr<GFileInfo> sourceInfo = adoptGRef(g_file_query_info(source.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE, static_cast<GFileQueryInfoFlags>(0), 0, 0));
     GUniquePtr<char> sourceURI(g_file_get_uri(source.get()));
@@ -262,7 +262,7 @@ static void testDownloadLocalFileError(DownloadErrorTest* test, gconstpointer)
     g_assert_cmpfloat(webkit_download_get_estimated_progress(download.get()), <, 1);
 
     test->m_expectedError = WEBKIT_DOWNLOAD_ERROR_DESTINATION;
-    GUniquePtr<char> path(g_build_filename(Test::getWebKit1TestResoucesDir().data(), "test.pdf", NULL));
+    GUniquePtr<char> path(g_build_filename(Test::getResourcesDir().data(), "test.pdf", nullptr));
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(path.get()));
     GUniquePtr<char> uri(g_file_get_uri(file.get()));
     download = adoptGRef(test->downloadURIAndWaitUntilFinishes(uri.get()));
@@ -329,7 +329,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         return;
     }
 
-    GUniquePtr<char> filePath(g_build_filename(Test::getWebKit1TestResoucesDir().data(), path, NULL));
+    GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().data(), path, nullptr));
     char* contents;
     gsize contentsLength;
     if (!g_file_get_contents(filePath.get(), &contents, &contentsLength, 0)) {

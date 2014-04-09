@@ -116,7 +116,7 @@ serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHash
     char* contents;
     gsize length;
     if (g_str_equal(path, "/icon/favicon.ico")) {
-        GUniquePtr<char> pathToFavicon(g_build_filename(Test::getWebKit1TestResoucesDir().data(), "blank.ico", NULL));
+        GUniquePtr<char> pathToFavicon(g_build_filename(Test::getResourcesDir().data(), "blank.ico", nullptr));
         g_file_get_contents(pathToFavicon.get(), &contents, &length, 0);
         soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, contents, length);
     } else if (g_str_equal(path, "/nofavicon")) {

@@ -734,7 +734,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         static const char* javascriptRelativeHTML = "<html><head><script language='javascript' src='/redirected-to-cancel.js'></script></head><body></body></html>";
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, javascriptRelativeHTML, strlen(javascriptRelativeHTML));
     } else if (g_str_equal(path, "/blank.ico")) {
-        GUniquePtr<char> filePath(g_build_filename(Test::getWebKit1TestResoucesDir().data(), path, NULL));
+        GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().data(), path, nullptr));
         char* contents;
         gsize contentsLength;
         g_file_get_contents(filePath.get(), &contents, &contentsLength, 0);

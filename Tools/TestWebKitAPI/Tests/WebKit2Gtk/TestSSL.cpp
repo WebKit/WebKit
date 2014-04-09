@@ -245,7 +245,7 @@ static void httpServerCallback(SoupServer* server, SoupMessage* message, const c
     }
 
     if (g_str_equal(path, "/test-script")) {
-        GUniquePtr<char> pathToFile(g_build_filename(Test::getResourcesDir().data(), "link-title.js", NULL));
+        GUniquePtr<char> pathToFile(g_build_filename(Test::getResourcesDir().data(), "link-title.js", nullptr));
         char* contents;
         gsize length;
         g_file_get_contents(pathToFile.get(), &contents, &length, 0);
@@ -254,7 +254,7 @@ static void httpServerCallback(SoupServer* server, SoupMessage* message, const c
         soup_message_set_status(message, SOUP_STATUS_OK);
         soup_message_body_complete(message->response_body);
     } else if (g_str_equal(path, "/test-image")) {
-        GUniquePtr<char> pathToFile(g_build_filename(Test::getWebKit1TestResoucesDir().data(), "blank.ico", NULL));
+        GUniquePtr<char> pathToFile(g_build_filename(Test::getResourcesDir().data(), "blank.ico", nullptr));
         char* contents;
         gsize length;
         g_file_get_contents(pathToFile.get(), &contents, &length, 0);

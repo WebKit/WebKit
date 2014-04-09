@@ -1,3 +1,28 @@
+2014-04-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move WebKit1 unit tests resources used by WebKit2 unit tests to WebKit2 resources dir
+        https://bugs.webkit.org/show_bug.cgi?id=131029
+
+        Reviewed by Philippe Normand.
+
+        Add blank.ico and test.pdf to resources dir of WebKit2Gtk unit
+        tests and remove the getWebKit1TestResoucesDir() method.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDownloads.cpp:
+        (testDownloadLocalFile): Use Test::getResourcesDir().
+        (testDownloadLocalFileError): Ditto.
+        (serverCallback): Ditto.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestResources.cpp:
+        (serverCallback): Ditto.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestSSL.cpp:
+        (httpServerCallback): Ditto.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitFaviconDatabase.cpp:
+        (serverCallback): Ditto.
+        * TestWebKitAPI/Tests/WebKit2Gtk/resources/blank.ico: Added.
+        * TestWebKitAPI/Tests/WebKit2Gtk/resources/test.pdf: Added.
+        * TestWebKitAPI/gtk/WebKit2Gtk/TestMain.h:
+        (Test::getWebKit1TestResoucesDir): Deleted.
+
 2014-04-09  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] HTTP authentication regression tests fail

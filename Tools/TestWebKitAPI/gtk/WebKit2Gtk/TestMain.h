@@ -81,12 +81,6 @@ public:
         g_object_weak_ref(object, reinterpret_cast<GWeakNotify>(objectFinalized), this);
     }
 
-    static CString getWebKit1TestResoucesDir()
-    {
-        GUniquePtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKitGtk", "resources", nullptr));
-        return resourcesDir.get();
-    }
-
     static CString getResourcesDir()
     {
         GUniquePtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKit2Gtk", "resources", nullptr));
