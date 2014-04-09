@@ -1,3 +1,23 @@
+2014-04-09  Mark Lam  <mark.lam@apple.com>
+
+        Ensure that LLINT accessing of the ProtoCallFrame is big endian friendly.
+        <https://webkit.org/b/131449>
+
+        Reviewed by Mark Hahnenberg.
+
+        Change ProtoCallFrame::paddedArgCount to be of type uint32_t.  The argCount
+        that it pads is of type int anyway.  It doesn't need to be 64 bit.  This
+        also makes it work with the LLINT which is loading it with a loadi
+        instruction.
+
+        We should add the PayLoadOffset to ProtoCallFrame::argCountAndCodeOriginValue
+        when loading the argCount.
+
+        * interpreter/ProtoCallFrame.h:
+        (JSC::ProtoCallFrame::setPaddedArgCount):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2014-04-08  Oliver Hunt  <oliver@apple.com>
 
         Rewrite Function.bind as a builtin

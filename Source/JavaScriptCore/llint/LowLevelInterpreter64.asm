@@ -189,7 +189,7 @@ macro doCallToJavaScript(makeCall)
     storeq temp3, CodeBlock[sp, temp1, 8]
     btinz temp1, .copyHeaderLoop
 
-    loadi ProtoCallFrame::argCountAndCodeOriginValue[protoCallFrame], temp2
+    loadi PayloadOffset + ProtoCallFrame::argCountAndCodeOriginValue[protoCallFrame], temp2
     subi 1, temp2
     loadi ProtoCallFrame::paddedArgCount[protoCallFrame], temp3
     subi 1, temp3
