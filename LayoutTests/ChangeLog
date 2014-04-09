@@ -1,3 +1,13 @@
+2014-04-08  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Crash when video in region exits fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=131366
+
+        Reviewed by Andrei Bucur.
+
+        * fast/regions/full-screen-video-in-region-crash-expected.txt: Added.
+        * fast/regions/full-screen-video-in-region-crash.html: Added.
+
 2014-04-08  Alexey Proskuryakov  <ap@apple.com>
 
         Trying to unbreak flakiness dashboard after Gtk TextExpectations reshuffling.

@@ -1,0 +1,12 @@
+Test that a video element inside a content node, exiting the full screen mode, is correctly displayed in region.
+
+To manually test, click the "Enter Fullscreen" button.
+
+The test passes if it does not crash.
+
+PASS
+Enter Fullscreen
+EVENT(webkitfullscreenchange)
+EVENT(webkitfullscreenchange)
+END OF TEST
+

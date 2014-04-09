@@ -779,7 +779,9 @@ bool RenderFlowThread::getRegionRangeForBox(const RenderBox* box, RenderRegion*&
     do {
         if (cb->isUnsplittableForPagination())
             topMostUnsplittable = cb;
+        ASSERT(cb->parent());
         cb = cb->parent()->enclosingBox();
+        ASSERT(cb);
     } while (!cb->isRenderFlowThread());
 
     if (topMostUnsplittable) {

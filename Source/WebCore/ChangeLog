@@ -1,3 +1,27 @@
+2014-04-08  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Crash when video in region exits fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=131366
+
+        Reviewed by Andrei Bucur.
+
+        After fix for https://bugs.webkit.org/show_bug.cgi?id=130392, we compute the region ranges
+        information for inline elements collected in named flows with associated region chains.
+        The algorithm for this computation, implemented in RenderFlowThread::getRegionRangeForBox,
+        walks up the render tree trying to find the top-most unsplittable box under the named flow
+        in the case where the region ranges information is not available.
+
+        As this traversal works properly only when the starting box is not detached from the render tree,
+        i changed the named flow information clearing in RenderBlock::collapseAnonymousBoxChild
+        to occur before the child to be collapsed is removed from the render tree.
+
+        Test: fast/regions/full-screen-video-in-region-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::collapseAnonymousBoxChild):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::getRegionRangeForBox):
+
 2014-04-08  Chris Fleizach  <cfleizach@apple.com>
 
         Unreviewed build fix for iOS (redux).
