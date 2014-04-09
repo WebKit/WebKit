@@ -428,13 +428,7 @@ void TileGrid::revalidateTiles(TileValidationPolicyFlags validationPolicy)
             if (index.y() < topLeftForBounds.y() || index.y() > bottomRightForBounds.y() || index.x() < topLeftForBounds.x() || index.x() > bottomRightForBounds.x())
                 tilesToRemove.append(index);
         }
-
-        for (size_t i = 0, size = tilesToRemove.size(); i < size; ++i) {
-            TileInfo tileInfo = m_tiles.take(tilesToRemove[i]);
-#if !PLATFORM(IOS)
-            LayerPool::sharedPool()->addLayer(tileInfo.layer);
-#endif
-        }
+        removeTiles(tilesToRemove);
     }
 
     m_controller.didRevalidateTiles();
