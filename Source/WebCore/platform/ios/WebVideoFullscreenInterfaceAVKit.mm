@@ -538,11 +538,14 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreen(PlatformLayer& videoLayer
         
         __block RefPtr<WebVideoFullscreenInterfaceAVKit> protect2(this);
 
-        [m_viewController presentViewController:m_playerViewController.get() animated:YES completion:^{
-            if (m_fullscreenChangeObserver)
-                m_fullscreenChangeObserver->didEnterFullscreen();
-            protect2.clear();
-        }];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [m_viewController presentViewController:m_playerViewController.get() animated:YES completion:^{
+                if (m_fullscreenChangeObserver)
+                    m_fullscreenChangeObserver->didEnterFullscreen();
+                protect2.clear();
+            }];
+        });
+        ￼
         protect.clear();
     });
 }

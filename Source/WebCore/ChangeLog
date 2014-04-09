@@ -1,5 +1,17 @@
 2014-04-09  Jeremy Jones  <jeremyj@apple.com>
 
+        Fullscreen does two view controller changes at once
+        https://bugs.webkit.org/show_bug.cgi?id=131432
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreen):
+        delay -presentViewController on the main run loop to allow
+        previous view controller change to complete.
+
+2014-04-09  Jeremy Jones  <jeremyj@apple.com>
+
         Enable fullscreen captions selection
         https://bugs.webkit.org/show_bug.cgi?id=131069
 
