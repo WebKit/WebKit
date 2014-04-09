@@ -1,3 +1,10 @@
+2014-04-09  Enrica Casucci  <enrica@apple.com>
+
+        Unreviewed iOS build fix. Replacing deprecated enum with AVPlayerViewControllerExitFullScreenReason.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerController playerViewController:shouldDismissWithReason:]):
+
 2014-04-09  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Monolithic elements should not affect the layout of the content outside its region
