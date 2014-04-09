@@ -6,10 +6,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Plain text paragraph 
 
 End of test
-PARAGRAPH notification: AXChildrenRemoved
-GLOBAL notification: AXChildrenRemoved on element with role AXRole: AXParagraph
 PARAGRAPH notification: AXChildrenAdded
 GLOBAL notification: AXChildrenAdded on element with role AXRole: AXParagraph
+PARAGRAPH notification: AXChildrenRemoved
+GLOBAL notification: AXChildrenRemoved on element with role AXRole: AXParagraph
 PASS paragraphNotificationCount is globalNotificationCount
 PASS globalNotificationCount is 2
 PASS successfullyParsed is true

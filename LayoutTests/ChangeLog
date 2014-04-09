@@ -1,5 +1,25 @@
 2014-04-09  Mario Sanchez Prada  <mario.prada@samsung.com>
 
+        [GTK] Layout tests accessibility/children-changed-sends-notification.html and accessibility/notification-listeners.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=131380
+
+        Reviewed by Chris Fleizach.
+
+        Updated TestExpectations file and update layout test that was not
+        correctly written, and expecting the signals in the wrong order.
+
+        * platform/gtk/TestExpectations: Removed failure expectations.
+
+        * accessibility/children-changed-sends-notification.html: Updated
+        test to make sure we touch the accessibility tree after adding a
+        <button> so we get the 'add' signal at the right moment.
+
+        * accessibility/children-changed-sends-notification-expected.txt:
+        Updated expectations to expect the 'add' and 'remove' signals in
+        the right order.
+
+2014-04-09  Mario Sanchez Prada  <mario.prada@samsung.com>
+
         [AX][GTK] No new lines in some AX tests output
         https://bugs.webkit.org/show_bug.cgi?id=131294
 

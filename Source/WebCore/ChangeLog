@@ -1,5 +1,18 @@
 2014-04-09  Mario Sanchez Prada  <mario.prada@samsung.com>
 
+        [GTK] Layout tests accessibility/children-changed-sends-notification.html and accessibility/notification-listeners.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=131380
+
+        Reviewed by Chris Fleizach.
+
+        Don't emit signals for added objects that we know won't be exposed
+        to the accessibility hierarchy (e.g. static text).
+
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::attachWrapper): Add extra check and early return.
+
+2014-04-09  Mario Sanchez Prada  <mario.prada@samsung.com>
+
         [AX][GTK] No new lines in some AX tests output
         https://bugs.webkit.org/show_bug.cgi?id=131294
 

@@ -1057,9 +1057,6 @@ webkit.org/b/120401 editing/selection [ Skip ]
 
 webkit.org/b/106340 accessibility/img-fallsback-to-title.html [ Failure ]
 
-webkit.org/b/131380 accessibility/children-changed-sends-notification.html [ Failure ]
-webkit.org/b/131380 accessibility/notification-listeners.html [ Failure ]
-
 # svg/ failures
 webkit.org/b/42457 svg/custom/embedded-svg-allowed-in-dashboard.xml [ Failure ]
 webkit.org/b/42457 svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html [ Failure ]

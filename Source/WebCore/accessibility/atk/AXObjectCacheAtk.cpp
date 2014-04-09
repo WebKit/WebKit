@@ -76,7 +76,11 @@ void AXObjectCache::attachWrapper(AccessibilityObject* obj)
     if (!document || document->childNeedsStyleRecalc())
         return;
 
-    // Don't emit the signal for objects that we already know won't be exposed directly.
+    // Don't emit the signal when the actual object being added is not going to be exposed.
+    if (obj->accessibilityIsIgnoredByDefault())
+        return;
+
+    // Don't emit the signal for objects whose parents won't be exposed directly.
     AccessibilityObject* coreParent = obj->parentObjectUnignored();
     if (!coreParent || coreParent->accessibilityIsIgnoredByDefault())
         return;

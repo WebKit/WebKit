@@ -57,6 +57,9 @@ function runTest() {
     window.newChild = document.createElement('button');
     par.appendChild(newChild);
 
+    // Ensure the new child is added.
+    touchAccessibilityTree(axWebArea);
+
     window.setTimeout(function() {
         var link = document.getElementById('testLink');
         link.style.display = 'none';
