@@ -1,3 +1,13 @@
+2014-04-08  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Make AXPress much more reliable on the Web
+        https://bugs.webkit.org/show_bug.cgi?id=131426
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/press-works-on-control-types-expected.txt:
+        * accessibility/press-works-on-control-types.html:
+
 2014-04-08  Oliver Hunt  <oliver@apple.com>
 
         Rewrite Function.bind as a builtin

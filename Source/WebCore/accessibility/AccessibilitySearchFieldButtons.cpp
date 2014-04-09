@@ -55,7 +55,7 @@ void AccessibilitySearchFieldCancelButton::accessibilityText(Vector<Accessibilit
     textOrder.append(AccessibilityText(accessibilityDescription(), AlternativeText));
 }
 
-bool AccessibilitySearchFieldCancelButton::press() const
+bool AccessibilitySearchFieldCancelButton::press()
 {
     Node* node = this->node();
     if (!node || !node->isElementNode())

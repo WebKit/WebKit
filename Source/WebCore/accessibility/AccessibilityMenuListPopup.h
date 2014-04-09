@@ -54,7 +54,7 @@ private:
     virtual AccessibilityRole roleValue() const override { return MenuListPopupRole; }
 
     virtual bool isVisible() const override;
-    virtual bool press() const override;
+    virtual bool press() override;
     virtual void addChildren() override;
     virtual void childrenChanged() override;
     virtual bool computeAccessibilityIsIgnored() const override;

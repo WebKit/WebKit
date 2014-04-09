@@ -722,8 +722,8 @@ public:
     virtual void setSelectedRows(AccessibilityChildrenVector&) { }
     
     virtual void makeRangeVisible(const PlainTextRange&) { }
-    virtual bool press() const;
-    bool performDefaultAction() const { return press(); }
+    virtual bool press();
+    bool performDefaultAction() { return press(); }
     
     virtual AccessibilityOrientation orientation() const;
     virtual void increment() { }

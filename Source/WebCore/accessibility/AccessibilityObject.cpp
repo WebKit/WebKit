@@ -41,6 +41,7 @@
 #include "FrameSelection.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "HitTestResult.h"
 #include "LocalizedStrings.h"
 #include "MainFrame.h"
 #include "MathMLNames.h"
@@ -49,6 +50,7 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "RenderImage.h"
+#include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderMenuList.h"
@@ -716,16 +718,44 @@ IntRect AccessibilityObject::boundingBoxForQuads(RenderObject* obj, const Vector
     return result;
 }
     
-bool AccessibilityObject::press() const
+bool AccessibilityObject::press()
 {
+    // The presence of the actionElement will confirm whether we should even attempt a press.
     Element* actionElem = actionElement();
     if (!actionElem)
         return false;
     if (Frame* f = actionElem->document().frame())
         f->loader().resetMultipleFormSubmissionProtection();
     
+    // Hit test at this location to determine if there is a sub-node element that should act
+    // as the target of the action.
+    Element* hitTestElement = nullptr;
+    if (Document* document = this->document()) {
+        RenderView* renderView = document->renderView();
+        RenderLayer* layer = renderView->layer();
+        
+        HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AccessibilityHitTest);
+        HitTestResult hitTestResult = HitTestResult(clickPoint());
+        layer->hitTest(request, hitTestResult);
+        if (hitTestResult.innerNode()) {
+            Node* innerNode = hitTestResult.innerNode()->deprecatedShadowAncestorNode();
+            if (innerNode->isElementNode())
+                hitTestElement = toElement(innerNode);
+        }
+    }
+    
+    
+    // Prefer the actionElement instead of this node, if the actionElement is inside this node.
+    Element* pressElement = this->element();
+    if (!pressElement || actionElem->isDescendantOf(pressElement))
+        pressElement = actionElem;
+    
+    // Prefer the hit test element, if it is inside the target element.
+    if (hitTestElement && hitTestElement->isDescendantOf(pressElement))
+        pressElement = hitTestElement;
+    
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
-    actionElem->accessKeyAction(true);
+    pressElement->accessKeyAction(true);
     return true;
 }
 

@@ -36,7 +36,7 @@ public:
     
     virtual String accessibilityDescription() const override;
     virtual void accessibilityText(Vector<AccessibilityText>&) override;
-    virtual bool press() const override;
+    virtual bool press() override;
     virtual AccessibilityRole roleValue() const override { return ButtonRole; }
 
 protected:

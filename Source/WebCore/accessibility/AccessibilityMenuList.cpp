@@ -42,7 +42,7 @@ PassRefPtr<AccessibilityMenuList> AccessibilityMenuList::create(RenderMenuList* 
     return adoptRef(new AccessibilityMenuList(renderer));
 }
 
-bool AccessibilityMenuList::press() const
+bool AccessibilityMenuList::press()
 {
 #if !PLATFORM(IOS)
     RenderMenuList* menuList = static_cast<RenderMenuList*>(m_renderer);

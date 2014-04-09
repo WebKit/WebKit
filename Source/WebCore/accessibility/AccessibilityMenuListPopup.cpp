@@ -82,7 +82,7 @@ AccessibilityMenuListOption* AccessibilityMenuListPopup::menuListOptionAccessibi
     return option;
 }
 
-bool AccessibilityMenuListPopup::press() const
+bool AccessibilityMenuListPopup::press()
 {
     if (!m_parent)
         return false;

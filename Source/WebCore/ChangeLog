@@ -1,3 +1,35 @@
+2014-04-08  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Make AXPress much more reliable on the Web
+        https://bugs.webkit.org/show_bug.cgi?id=131426
+
+        Reviewed by Mario Sanchez Prada.
+
+        AXPress fails when an event handler is on a node higher in the parent chain than the focused node.
+
+        We need to make AXPress more reliable by 
+            1) Using the element that is focused as the target of the event
+            2) Search for the inner most control object when dispatching the event
+
+        Updated existing accessibility/press-works-on-control-types.html
+
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::press):
+        * accessibility/AccessibilityMenuList.h:
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::press):
+        * accessibility/AccessibilityMenuListPopup.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::press):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::performDefaultAction):
+        * accessibility/AccessibilitySearchFieldButtons.cpp:
+        (WebCore::AccessibilitySearchFieldCancelButton::press):
+        * accessibility/AccessibilitySearchFieldButtons.h:
+        * accessibility/AccessibilitySpinButton.cpp:
+        (WebCore::AccessibilitySpinButtonPart::press):
+        * accessibility/AccessibilitySpinButton.h:
+
 2014-04-09  Brady Eidson  <beidson@apple.com>
 
         ContentFilterMac is broken when NE_FILTER_SOURCE is enabled.

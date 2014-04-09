@@ -14,6 +14,7 @@
 <div role="menuitemcheckbox" id="menuitemcheckbox" tabindex="0">menu item checkbox</div>
 <div role="menuitemradio" id="menuitemradio" tabindex="0">menu item radio</div>
 <div role="listitem" id="listitem" tabindex="0">list item</div>
+<div role="button" id="button2" tabindex="0"><div><button id="subbutton"></div></div>
 
 <p id="description"></p>
 <div id="console"></div>
@@ -27,10 +28,8 @@
     function handlePress(e) {
        eventSrcElement = e.srcElement;
 
-       // First press was on the group element. That is not a control type and it should
-       // have caused the body to be the target element instead of the group element.
        if (pressCount == 0)
-          shouldBeTrue("eventSrcElement == document.getElementById('body')");
+          shouldBeTrue("eventSrcElement == document.getElementById('group')");
        else if (pressCount == 1)
           shouldBeTrue("eventSrcElement == document.getElementById('button')");
        else if (pressCount == 2)
@@ -47,6 +46,8 @@
           shouldBeTrue("eventSrcElement == document.getElementById('menuitemradio')");
        else if (pressCount == 8)
           shouldBeTrue("eventSrcElement == document.getElementById('listitem')");
+       else if (pressCount == 9)
+          shouldBeTrue("eventSrcElement == document.getElementById('subbutton')");
 
        pressCount++;
     }
@@ -55,7 +56,7 @@
 
     if (window.accessibilityController) {
 
-        var items = new Array("group", "button", "tab", "radio", "checkbox", "menuitem", "menuitemcheckbox", "menuitemradio", "listitem");
+        var items = new Array("group", "button", "tab", "radio", "checkbox", "menuitem", "menuitemcheckbox", "menuitemradio", "listitem", "button2");
         for (var k = 0; k < items.length; k++) {
            document.getElementById(items[k]).focus();
            accessibilityController.focusedElement.press();

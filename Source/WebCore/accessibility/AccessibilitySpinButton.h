@@ -68,7 +68,7 @@ private:
     AccessibilitySpinButtonPart();
     bool m_isIncrementor : 1;
     
-    virtual bool press() const override;
+    virtual bool press() override;
     virtual AccessibilityRole roleValue() const override { return ButtonRole; }
     virtual bool isSpinButtonPart() const override { return true; }
     virtual LayoutRect elementRect() const override;
