@@ -23,18 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "PageOverlayController.h"
+#include "config.h"
+#include "PageOverlayController.h"
 
-#import "DrawingArea.h"
-#import "PageOverlay.h"
-#import "WebPage.h"
-#import <WebCore/FrameView.h>
-#import <WebCore/GraphicsContext.h>
-#import <WebCore/GraphicsLayer.h>
-#import <WebCore/ScrollingCoordinator.h>
-#import <WebCore/Settings.h>
-#import <WebCore/TiledBacking.h>
+#include "DrawingArea.h"
+#include "PageOverlay.h"
+#include "WebPage.h"
+#include <WebCore/FrameView.h>
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/GraphicsLayer.h>
+#include <WebCore/ScrollingCoordinator.h>
+#include <WebCore/Settings.h>
+#include <WebCore/TiledBacking.h>
 
 using namespace WebCore;
 

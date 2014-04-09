@@ -73,9 +73,6 @@ CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage* webPage)
 
     CoordinatedSurface::setFactory(createCoordinatedSurface);
 
-    if (webPage->hasPageOverlay())
-        createPageOverlayLayer();
-
     scheduleLayerFlush();
 }
 
@@ -265,12 +262,6 @@ void CoordinatedLayerTreeHost::destroyPageOverlayLayer()
 
 void CoordinatedLayerTreeHost::paintLayerContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, const IntRect& clipRect)
 {
-    if (graphicsLayer == m_pageOverlayLayer.get()) {
-        // Overlays contain transparent contents and won't clear the context as part of their rendering, so we do it here.
-        graphicsContext.clearRect(clipRect);
-        m_webPage->drawPageOverlay(m_pageOverlay.get(), graphicsContext, clipRect);
-        return;
-    }
 }
 
 void CoordinatedLayerTreeHost::commitSceneState(const WebCore::CoordinatedGraphicsState& state)
