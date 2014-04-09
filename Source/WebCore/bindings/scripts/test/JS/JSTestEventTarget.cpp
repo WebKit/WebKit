@@ -76,7 +76,7 @@ void JSTestEventTargetConstructor::finishCreation(VM& vm, JSDOMGlobalObject* glo
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    putDirect(vm, vm.propertyNames->prototype, JSTestEventTargetPrototype::self(vm, globalObject), DontDelete | ReadOnly);
+    putDirectPrototypeProperty(vm, JSTestEventTargetPrototype::self(vm, globalObject), DontDelete | ReadOnly);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 

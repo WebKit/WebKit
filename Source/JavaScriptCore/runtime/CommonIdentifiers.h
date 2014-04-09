@@ -218,7 +218,14 @@
     macro(countdownHolder) \
     macro(Object) \
     macro(TypeError) \
-    macro(undefined)
+    macro(undefined) \
+    macro(IsConstructor) \
+    macro(boundFunctionName) \
+    macro(boundFunctionParameters) \
+    macro(boundFunction) \
+    macro(boundFunctionLength) \
+    macro(prototypeForHasInstance) \
+    macro(SetTypeErrorAccessor)
 
 namespace JSC {
     

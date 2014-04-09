@@ -60,7 +60,7 @@ void JSTestSerializedScriptValueInterfaceConstructor::finishCreation(VM& vm, JSD
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    putDirect(vm, vm.propertyNames->prototype, JSTestSerializedScriptValueInterfacePrototype::self(vm, globalObject), DontDelete | ReadOnly);
+    putDirectPrototypeProperty(vm, JSTestSerializedScriptValueInterfacePrototype::self(vm, globalObject), DontDelete | ReadOnly);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 

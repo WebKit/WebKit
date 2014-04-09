@@ -97,7 +97,7 @@ void JSTestTypedefsConstructor::finishCreation(VM& vm, JSDOMGlobalObject* global
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    putDirect(vm, vm.propertyNames->prototype, JSTestTypedefsPrototype::self(vm, globalObject), DontDelete | ReadOnly);
+    putDirectPrototypeProperty(vm, JSTestTypedefsPrototype::self(vm, globalObject), DontDelete | ReadOnly);
     putDirect(vm, vm.propertyNames->length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
 }
 

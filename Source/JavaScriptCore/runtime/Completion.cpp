@@ -55,7 +55,7 @@ bool checkSyntax(VM& vm, const SourceCode& source, ParserError& error)
 {
     JSLockHolder lock(vm);
     RELEASE_ASSERT(vm.atomicStringTable() == wtfThreadData().atomicStringTable());
-    RefPtr<ProgramNode> programNode = parse<ProgramNode>(&vm, source, 0, Identifier(), JSParseNormal, JSParseProgramCode, error);
+    RefPtr<ProgramNode> programNode = parse<ProgramNode>(&vm, source, 0, Identifier(), JSParseNormal, JSParseProgramCode, JSNotFunctionKind, error);
     return programNode;
 }
 

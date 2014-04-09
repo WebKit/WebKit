@@ -68,7 +68,7 @@ private:
 
 static bool parseScript(VM* vm, const SourceCode& source, ParserError& error)
 {
-    return JSC::parse<JSC::ProgramNode>(vm, source, 0, Identifier(), JSParseNormal, JSParseProgramCode, error);
+    return JSC::parse<JSC::ProgramNode>(vm, source, 0, Identifier(), JSParseNormal, JSParseProgramCode, JSNotFunctionKind, error);
 }
 
 extern "C" {

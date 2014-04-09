@@ -1285,7 +1285,7 @@ RegisterID* InstanceOfNode::emitBytecode(BytecodeGenerator& generator, RegisterI
     generator.emitCheckHasInstance(dstReg.get(), src1.get(), src2.get(), target.get());
 
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitGetById(prototype.get(), src2.get(), generator.vm()->propertyNames->prototype);
+    generator.emitGetById(prototype.get(), src2.get(), generator.vm()->propertyNames->prototypeForHasInstancePrivateName);
 
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     RegisterID* result = generator.emitInstanceOf(dstReg.get(), src1.get(), prototype.get());

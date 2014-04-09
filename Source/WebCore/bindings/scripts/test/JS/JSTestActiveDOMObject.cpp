@@ -74,7 +74,7 @@ void JSTestActiveDOMObjectConstructor::finishCreation(VM& vm, JSDOMGlobalObject*
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    putDirect(vm, vm.propertyNames->prototype, JSTestActiveDOMObjectPrototype::self(vm, globalObject), DontDelete | ReadOnly);
+    putDirectPrototypeProperty(vm, JSTestActiveDOMObjectPrototype::self(vm, globalObject), DontDelete | ReadOnly);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 

@@ -71,7 +71,7 @@ class Lexer {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    Lexer(VM*, JSParserStrictness);
+    Lexer(VM*, JSParserStrictness, JSFunctionKind);
     ~Lexer();
 
     // Character manipulation functions.
@@ -238,6 +238,7 @@ private:
 
     VM* m_vm;
     bool m_parsingBuiltinFunction;
+    JSFunctionKind m_functionKind;
 };
 
 template <>

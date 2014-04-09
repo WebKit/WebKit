@@ -69,7 +69,7 @@ void JSTestExceptionConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globa
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    putDirect(vm, vm.propertyNames->prototype, JSTestExceptionPrototype::self(vm, globalObject), DontDelete | ReadOnly);
+    putDirectPrototypeProperty(vm, JSTestExceptionPrototype::self(vm, globalObject), DontDelete | ReadOnly);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 

@@ -32,3 +32,50 @@ function apply(thisValue, argumentValues) {
     "use strict";
     return this.@apply(thisValue, argumentValues);
 }
+
+function bind(thisValue /*, optional arguments */)
+{
+    "use strict";
+    var boundFunction = this;
+    if (typeof boundFunction !== "function")
+        throw new @TypeError("Cannot bind non-function object.");
+    var bindingFunction;
+    if (arguments.length <= 1) {
+        bindingFunction = function () {
+            if (@IsConstructor) {
+                return new boundFunction(...arguments);
+            } else {
+                return boundFunction.@apply(thisValue, arguments);
+            }
+        }
+    } else {
+        var boundParameters = [];
+        var length = arguments.length;
+        for (var i = 1; i < length; i++)
+            boundParameters[i - 1] = arguments[i];
+        
+        bindingFunction = function () {
+            if (arguments.length) {
+                var completeArguments = [...boundParameters, ...arguments];
+                if (@IsConstructor)
+                    return new boundFunction(...completeArguments);
+                else
+                    return boundFunction.@apply(thisValue, completeArguments);
+            }
+            if (@IsConstructor)
+                return new boundFunction(...boundParameters);
+            else
+                return boundFunction.@apply(thisValue, boundParameters);
+            
+        }
+    }
+    bindingFunction.@boundFunctionName = this.name;
+    bindingFunction.@boundFunction = boundFunction.@boundFunction || boundFunction;
+    var boundLength = boundFunction.length - (arguments.length - 1);
+    if (boundLength < 0)
+        boundLength = 0;
+    bindingFunction.@boundFunctionLength = boundLength;
+    @SetTypeErrorAccessor(bindingFunction, "arguments");
+    @SetTypeErrorAccessor(bindingFunction, "caller");
+    return bindingFunction;
+}

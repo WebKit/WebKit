@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010, 2014 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -43,7 +43,7 @@ void JSImageConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
 {
     Base::finishCreation(globalObject);
     ASSERT(inherits(info()));
-    putDirect(vm, vm.propertyNames->prototype, JSHTMLImageElementPrototype::self(vm, globalObject), None);
+    putDirectPrototypeProperty(vm, JSHTMLImageElementPrototype::self(vm, globalObject), None);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructImage(ExecState* exec)

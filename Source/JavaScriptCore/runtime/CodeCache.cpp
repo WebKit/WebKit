@@ -92,7 +92,7 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
     }
 
     typedef typename CacheTypes<UnlinkedCodeBlockType>::RootNode RootNode;
-    RefPtr<RootNode> rootNode = parse<RootNode>(&vm, source, 0, Identifier(), strictness, JSParseProgramCode, error);
+    RefPtr<RootNode> rootNode = parse<RootNode>(&vm, source, 0, Identifier(), strictness, JSParseProgramCode, JSNotFunctionKind, error);
     if (!rootNode) {
         m_sourceCode.remove(addResult.iterator);
         return 0;
@@ -142,7 +142,7 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(VM& v
         return jsCast<UnlinkedFunctionExecutable*>(addResult.iterator->value.cell.get());
 
     JSTextPosition positionBeforeLastNewline;
-    RefPtr<ProgramNode> program = parse<ProgramNode>(&vm, source, 0, Identifier(), JSParseNormal, JSParseProgramCode, error, &positionBeforeLastNewline);
+    RefPtr<ProgramNode> program = parse<ProgramNode>(&vm, source, 0, Identifier(), JSParseNormal, JSParseProgramCode, JSNotFunctionKind, error, &positionBeforeLastNewline);
     if (!program) {
         RELEASE_ASSERT(error.m_type != ParserError::ErrorNone);
         m_sourceCode.remove(addResult.iterator);
