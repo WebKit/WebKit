@@ -4,6 +4,7 @@
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
  * Copyright (C) 2009, 2010, 2011, 2012, 2013 Igalia S.L
+ * Copyright (C) 2014 Cable Television Laboratories, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,6 +38,7 @@
 #include <gst/gst.h>
 #include <gst/pbutils/missing-plugins.h>
 #include <limits>
+#include <wtf/HexNumber.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
@@ -49,6 +51,11 @@
 #include "VideoTrackPrivateGStreamer.h"
 #endif
 
+#if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
+#define GST_USE_UNSTABLE_API
+#include <gst/mpegts/mpegts.h>
+#undef GST_USE_UNSTABLE_API
+#endif
 #include <gst/audio/streamvolume.h>
 
 #if ENABLE(MEDIA_SOURCE)
@@ -971,6 +978,15 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             m_missingPlugins = result == GST_INSTALL_PLUGINS_STARTED_OK;
             g_free(detail);
         }
+#if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
+        else {
+            GstMpegTsSection* section = gst_message_parse_mpegts_section(message);
+            if (section) {
+                processMpegTsSection(section);
+                gst_mpegts_section_unref(section);
+            }
+        }
+#endif
         break;
 #if ENABLE(VIDEO_TRACK)
     case GST_MESSAGE_TOC:
@@ -1005,13 +1021,66 @@ void MediaPlayerPrivateGStreamer::processBufferingStats(GstMessage* message)
     updateStates();
 }
 
+#if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
+void MediaPlayerPrivateGStreamer::processMpegTsSection(GstMpegTsSection* section)
+{
+    ASSERT(section);
+
+    if (section->section_type == GST_MPEGTS_SECTION_PMT) {
+        const GstMpegTsPMT* pmt = gst_mpegts_section_get_pmt(section);
+        m_metadataTracks.clear();
+        for (guint i = 0; i < pmt->streams->len; ++i) {
+            const GstMpegTsPMTStream* stream = static_cast<const GstMpegTsPMTStream*>(g_ptr_array_index(pmt->streams, i));
+            if (stream->stream_type == 0x05 || stream->stream_type >= 0x80) {
+                AtomicString pid = String::number(stream->pid);
+                RefPtr<InbandMetadataTextTrackPrivateGStreamer> track = InbandMetadataTextTrackPrivateGStreamer::create(
+                    InbandTextTrackPrivate::Metadata, InbandTextTrackPrivate::Data, pid);
+
+                // 4.7.10.12.2 Sourcing in-band text tracks
+                // If the new text track's kind is metadata, then set the text track in-band metadata track dispatch
+                // type as follows, based on the type of the media resource:
+                // Let stream type be the value of the "stream_type" field describing the text track's type in the
+                // file's program map section, interpreted as an 8-bit unsigned integer. Let length be the value of
+                // the "ES_info_length" field for the track in the same part of the program map section, interpreted
+                // as an integer as defined by the MPEG-2 specification. Let descriptor bytes be the length bytes
+                // following the "ES_info_length" field. The text track in-band metadata track dispatch type must be
+                // set to the concatenation of the stream type byte and the zero or more descriptor bytes bytes,
+                // expressed in hexadecimal using uppercase ASCII hex digits.
+                String inbandMetadataTrackDispatchType;
+                appendUnsignedAsHexFixedSize(stream->stream_type, inbandMetadataTrackDispatchType, 2);
+                for (guint j = 0; j < stream->descriptors->len; ++j) {
+                    const GstMpegTsDescriptor* descriptor = static_cast<const GstMpegTsDescriptor*>(g_ptr_array_index(stream->descriptors, j));
+                    for (guint k = 0; k < descriptor->length; ++k)
+                        appendByteAsHex(descriptor->data[k], inbandMetadataTrackDispatchType);
+                }
+                track->setInBandMetadataTrackDispatchType(inbandMetadataTrackDispatchType);
+
+                m_metadataTracks.add(pid, track);
+                m_player->addTextTrack(track);
+            }
+        }
+    } else {
+        AtomicString pid = String::number(section->pid);
+        RefPtr<InbandMetadataTextTrackPrivateGStreamer> track = m_metadataTracks.get(pid);
+        if (!track)
+            return;
+
+        GRefPtr<GBytes> data = gst_mpegts_section_get_data(section);
+        gsize size;
+        const void* bytes = g_bytes_get_data(data.get(), &size);
+
+        track->addDataCue(currentTimeDouble(), currentTimeDouble(), bytes, size);
+    }
+}
+#endif
+
 #if ENABLE(VIDEO_TRACK)
 void MediaPlayerPrivateGStreamer::processTableOfContents(GstMessage* message)
 {
     if (m_chaptersTrack)
         m_player->removeTextTrack(m_chaptersTrack);
 
-    m_chaptersTrack = InbandMetadataTextTrackPrivateGStreamer::create(InbandTextTrackPrivate::Chapters);
+    m_chaptersTrack = InbandMetadataTextTrackPrivateGStreamer::create(InbandTextTrackPrivate::Chapters, InbandTextTrackPrivate::Generic);
     m_player->addTextTrack(m_chaptersTrack);
 
     GRefPtr<GstToc> toc;
@@ -1047,7 +1116,7 @@ void MediaPlayerPrivateGStreamer::processTableOfContentsEntry(GstTocEntry* entry
         }
     }
 
-    m_chaptersTrack->client()->addGenericCue(m_chaptersTrack.get(), cue.release());
+    m_chaptersTrack->addGenericCue(cue.release());
 
     for (GList* i = gst_toc_entry_get_sub_entries(entry); i; i = i->next)
         processTableOfContentsEntry(static_cast<GstTocEntry*>(i->data), entry);

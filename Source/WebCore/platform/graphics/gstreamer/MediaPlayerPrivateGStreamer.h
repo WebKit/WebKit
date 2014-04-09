@@ -3,6 +3,7 @@
  * Copyright (C) 2007 Collabora Ltd. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2009, 2010 Igalia S.L
+ * Copyright (C) 2014 Cable Television Laboratories, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,10 +42,12 @@
 typedef struct _GstBuffer GstBuffer;
 typedef struct _GstMessage GstMessage;
 typedef struct _GstElement GstElement;
+typedef struct _GstMpegTsSection GstMpegTsSection;
 
 namespace WebCore {
 
 class AudioTrackPrivateGStreamer;
+class InbandMetadataTextTrackPrivateGStreamer;
 class InbandTextTrackPrivateGStreamer;
 class VideoTrackPrivateGStreamer;
 
@@ -143,6 +146,9 @@ private:
 
     void setDownloadBuffering();
     void processBufferingStats(GstMessage*);
+#if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
+    void processMpegTsSection(GstMpegTsSection*);
+#endif
 #if ENABLE(VIDEO_TRACK)
     void processTableOfContents(GstMessage*);
     void processTableOfContentsEntry(GstTocEntry*, GstTocEntry* parent);
@@ -205,7 +211,10 @@ private:
     Vector<RefPtr<AudioTrackPrivateGStreamer>> m_audioTracks;
     Vector<RefPtr<InbandTextTrackPrivateGStreamer>> m_textTracks;
     Vector<RefPtr<VideoTrackPrivateGStreamer>> m_videoTracks;
-    RefPtr<InbandTextTrackPrivate> m_chaptersTrack;
+    RefPtr<InbandMetadataTextTrackPrivateGStreamer> m_chaptersTrack;
+#endif
+#if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
+    HashMap<AtomicString, RefPtr<InbandMetadataTextTrackPrivateGStreamer>> m_metadataTracks;
 #endif
 #if ENABLE(MEDIA_SOURCE)
     RefPtr<MediaSourcePrivateClient> m_mediaSource;

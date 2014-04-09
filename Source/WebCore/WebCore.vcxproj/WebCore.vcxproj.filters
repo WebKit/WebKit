@@ -4176,6 +4176,9 @@
     <ClCompile Include="..\html\track\DataCue.cpp">
       <Filter>html\track</Filter>
     </ClCompile>
+    <ClCompile Include="..\html\track\InbandDataTextTrack.cpp">
+      <Filter>html\track</Filter>
+    </ClCompile>
     <ClCompile Include="..\html\track\InbandGenericTextTrack.cpp">
       <Filter>html\track</Filter>
     </ClCompile>
@@ -11258,6 +11261,9 @@
       <Filter>html\track</Filter>
     </ClInclude>
     <ClInclude Include="..\html\track\DataCue.h">
+      <Filter>html\track</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\track\InbandDataTextTrack.h">
       <Filter>html\track</Filter>
     </ClInclude>
     <ClInclude Include="..\html\track\InbandGenericTextTrack.h">

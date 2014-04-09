@@ -94,6 +94,8 @@ public:
 
     virtual void setKind(const AtomicString&) override;
 
+    virtual AtomicString inBandMetadataTrackDispatchType() const { return emptyString(); }
+
     AtomicString mode() const { return m_mode; }
     virtual void setMode(const AtomicString&);
 

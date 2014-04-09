@@ -137,7 +137,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     set(GSTREAMER_COMPONENTS app pbutils)
     add_definitions(-DWTF_USE_GSTREAMER)
     if (ENABLE_VIDEO)
-        list(APPEND GSTREAMER_COMPONENTS video tag)
+        list(APPEND GSTREAMER_COMPONENTS video mpegts tag)
     endif ()
 
     if (ENABLE_WEB_AUDIO)
@@ -146,6 +146,11 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     endif ()
 
     find_package(GStreamer 1.0.3 REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
+
+    if (PC_GSTREAMER_MPEGTS_FOUND)
+        add_definitions(-DWTF_USE_GSTREAMER_MPEGTS)
+        set(USE_GSTREAMER_MPEGTS TRUE)
+    endif ()
 endif ()
 
 # FIXME: These need to be configurable.

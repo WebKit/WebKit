@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Cable Television Labs Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -23,38 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InbandWebVTTTextTrack_h
-#define InbandWebVTTTextTrack_h
+#include "config.h"
 
 #if ENABLE(VIDEO_TRACK)
+#include "InbandDataTextTrack.h"
 
-#include "InbandTextTrack.h"
-#include "WebVTTParser.h"
-#include <memory>
-#include <wtf/RefPtr.h>
+#include "DataCue.h"
+#include "ExceptionCodePlaceholder.h"
+#include "InbandTextTrackPrivate.h"
+#include <runtime/ArrayBuffer.h>
 
 namespace WebCore {
 
-class InbandWebVTTTextTrack : public InbandTextTrack, private WebVTTParserClient {
-public:
-    static PassRefPtr<InbandTextTrack> create(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
-    virtual ~InbandWebVTTTextTrack();
+PassRefPtr<InbandDataTextTrack> InbandDataTextTrack::create(ScriptExecutionContext* context, TextTrackClient* client, PassRefPtr<InbandTextTrackPrivate> playerPrivate)
+{
+    return adoptRef(new InbandDataTextTrack(context, client, playerPrivate));
+}
 
-private:
-    InbandWebVTTTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
+InbandDataTextTrack::InbandDataTextTrack(ScriptExecutionContext* context, TextTrackClient* client, PassRefPtr<InbandTextTrackPrivate> trackPrivate)
+    : InbandTextTrack(context, client, trackPrivate)
+{
+}
 
-    virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const char* data, unsigned length) override;
+InbandDataTextTrack::~InbandDataTextTrack()
+{
+}
 
-    virtual void newCuesParsed() override;
-#if ENABLE(WEBVTT_REGIONS)
-    virtual void newRegionsParsed() override;
-#endif
-    virtual void fileFailedToParse() override;
-
-    std::unique_ptr<WebVTTParser> m_webVTTParser;
-};
+void InbandDataTextTrack::addDataCue(InbandTextTrackPrivate*, double start, double end, const void* data, unsigned length)
+{
+    RefPtr<DataCue> cue = DataCue::create(*scriptExecutionContext(), start, end, data, length);
+    addCue(cue.release(), ASSERT_NO_EXCEPTION);
+}
 
 } // namespace WebCore
 
-#endif
 #endif

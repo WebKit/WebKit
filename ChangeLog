@@ -1,3 +1,14 @@
+2014-04-09  Brendan Long  <b.long@cablelabs.com>
+
+        [GStreamer] Expose MPEG-TS metadata
+        https://bugs.webkit.org/show_bug.cgi?id=122001
+
+        Reviewed by Eric Carlson.
+
+        * Source/cmake/FindGStreamer.cmake: Look for gstreamer-mpegts >= 1.3.0.
+        * Source/cmake/OptionsEfl.cmake: Same.
+        * Source/cmake/OptionsGTK.cmake: Same.
+
 2014-04-08  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: memoize nondeterministic attributes of the Screen interface

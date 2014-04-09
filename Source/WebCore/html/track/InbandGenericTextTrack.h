@@ -72,8 +72,6 @@ private:
     virtual void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) override;
     virtual void removeCue(TextTrackCue*, ExceptionCode&) override;
 
-    virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const char*, unsigned) override { ASSERT_NOT_REACHED(); }
-
     PassRefPtr<TextTrackCueGeneric> createCue(PassRefPtr<GenericCueData>);
     void updateCueFromCueData(TextTrackCueGeneric*, GenericCueData*);
 

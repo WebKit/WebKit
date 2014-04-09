@@ -35,6 +35,7 @@ namespace WebCore {
 class InbandTextTrackPrivate : public TrackPrivateBase {
 public:
     enum CueFormat {
+        Data,
         Generic,
         WebVTT
     };
@@ -71,6 +72,7 @@ public:
     virtual AtomicString label() const { return emptyAtom; }
     virtual AtomicString language() const { return emptyAtom; }
     virtual AtomicString id() const { return emptyAtom; }
+    virtual AtomicString inBandMetadataTrackDispatchType() const { return emptyAtom; }
 
     virtual int textTrackIndex() const { return 0; }
 

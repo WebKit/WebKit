@@ -40,6 +40,12 @@ DataCue::DataCue(ScriptExecutionContext& context, double start, double end, Arra
     setData(data, ec);
 }
 
+DataCue::DataCue(ScriptExecutionContext& context, double start, double end, const void* data, unsigned length)
+    : TextTrackCue(context, start, end)
+{
+    m_data = ArrayBuffer::create(data, length);
+}
+
 DataCue::~DataCue()
 {
 }

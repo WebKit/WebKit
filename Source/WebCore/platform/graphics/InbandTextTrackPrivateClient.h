@@ -134,6 +134,8 @@ class InbandTextTrackPrivateClient : public TrackPrivateBaseClient {
 public:
     virtual ~InbandTextTrackPrivateClient() { }
 
+    virtual void addDataCue(InbandTextTrackPrivate*, double start, double end, const void*, unsigned) = 0;
+
     virtual void addGenericCue(InbandTextTrackPrivate*, PassRefPtr<GenericCueData>) = 0;
     virtual void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) = 0;
     virtual void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) = 0;

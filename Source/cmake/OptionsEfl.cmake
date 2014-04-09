@@ -176,7 +176,7 @@ if (ENABLE_BATTERY_STATUS OR (EFL_REQUIRED_VERSION VERSION_LESS 1.8))
 endif ()
 
 if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
-    set(GSTREAMER_COMPONENTS app pbutils)
+    set(GSTREAMER_COMPONENTS app mpegts pbutils)
     set(WTF_USE_GSTREAMER 1)
     add_definitions(-DWTF_USE_GSTREAMER=1)
 
@@ -190,6 +190,11 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     endif ()
 
     find_package(GStreamer 1.0.5 REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
+
+    if (PC_GSTREAMER_MPEGTS_FOUND)
+        add_definitions(-DWTF_USE_GSTREAMER_MPEGTS)
+        set(USE_GSTREAMER_MPEGTS TRUE)
+    endif ()
 endif ()
 
 if (WTF_USE_TILED_BACKING_STORE)

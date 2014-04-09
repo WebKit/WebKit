@@ -1,3 +1,47 @@
+2014-04-09  Brendan Long  <b.long@cablelabs.com>
+
+        [GStreamer] Expose MPEG-TS metadata
+        https://bugs.webkit.org/show_bug.cgi?id=122001
+
+        Reviewed by Eric Carlson.
+
+        Test: media/track/in-band/track-in-band-mpegts-metadata.html
+
+        * CMakeLists.txt: Add InbandDataTextTrack.
+        * PlatformGTK.cmake: Look for gstreamer-mpegts and use it if available.
+        * WebCore.vcxproj/WebCore.vcxproj: Add InbandDataTextTrack.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Same.
+        * WebCore.xcodeproj/project.pbxproj: Same.
+        * html/track/DataCue.cpp:
+        (WebCore::DataCue::DataCue): Add a constructor using raw data.
+        * html/track/DataCue.h:
+        (WebCore::DataCue::create): Same.
+        * html/track/InbandDataTextTrack.cpp: Added, InbandTextTrack which implements addDataCue().
+        * html/track/InbandDataTextTrack.h:
+        * html/track/InbandGenericTextTrack.h: Move unimplemented methods to InbandTextTrack.
+        * html/track/InbandWebVTTTextTrack.h: Same.
+        * html/track/InbandTextTrack.h: Same, and add inBandMetadataTrackDispatchType.
+        * html/track/InbandTextTrack.cpp:
+        (WebCore::InbandTextTrack::create): Add constructor for InbandDataTextTrack.
+        (WebCore::InbandTextTrack::inBandMetadataTrackDispatchType): Added.
+        * html/track/TextTrack.h:
+        (WebCore::TextTrack::inBandMetadataTrackDispatchType): Added (empty).
+        * html/track/TextTrack.idl: Add inBandMetadataTrackDispatchType.
+        * platform/graphics/InbandTextTrackPrivate.h: Add inBandMetadataTrackDispatchType and Data format.
+        (WebCore::InbandTextTrackPrivate::inBandMetadataTrackDispatchType):
+        * platform/graphics/InbandTextTrackPrivateClient.h: Add addDataCue() method.
+        * platform/graphics/gstreamer/InbandMetadataTextTrackPrivateGStreamer.h:
+        (WebCore::InbandMetadataTextTrackPrivateGStreamer::create): Allow specifying the cue format and id.
+         (WebCore::InbandMetadataTextTrackPrivateGStreamer::InbandMetadataTextTrackPrivateGStreamer): Same.
+        (WebCore::InbandMetadataTextTrackPrivateGStreamer::setInBandMetadataTrackDispatchType): Added.
+        (WebCore::InbandMetadataTextTrackPrivateGStreamer::addDataCue): Added.
+        (WebCore::InbandMetadataTextTrackPrivateGStreamer::addGenericCue): Added.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): Check for MPEG-TS sections.
+        (WebCore::MediaPlayerPrivateGStreamer::processMpegTsSection): Add MPEG-TS section metadata, and get inBandMetadataTrackDispatchType from the PMT.
+        (WebCore::MediaPlayerPrivateGStreamer::processTableOfContents): Explicitly use Generic CueFormat.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2014-04-08  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Make AXPress much more reliable on the Web

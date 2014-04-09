@@ -5417,6 +5417,8 @@
 		BE8EF04C171C9014009B48C3 /* JSVideoTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE8EF048171C9014009B48C3 /* JSVideoTrackList.cpp */; };
 		BE8EF04D171C9014009B48C3 /* JSVideoTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = BE8EF049171C9014009B48C3 /* JSVideoTrackList.h */; };
 		BE913D80181EF92400DCB09E /* TrackPrivateBase.h in Headers */ = {isa = PBXBuildFile; fileRef = BE913D7F181EF8E500DCB09E /* TrackPrivateBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BE961C5418AD338500D07DC5 /* InbandDataTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE961C5218AD337C00D07DC5 /* InbandDataTextTrack.cpp */; };
+		BE961C5518AD338C00D07DC5 /* InbandDataTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = BE961C5318AD337C00D07DC5 /* InbandDataTextTrack.h */; };
 		BEA807C80F714A0300524199 /* SelectionRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BEA807C60F714A0300524199 /* SelectionRect.cpp */; };
 		BEA807C90F714A0300524199 /* SelectionRect.h in Headers */ = {isa = PBXBuildFile; fileRef = BEA807C70F714A0300524199 /* SelectionRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BEF29EEB1715DD0900C4B4C9 /* AudioTrackPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF29EE91715DD0900C4B4C9 /* AudioTrackPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12722,6 +12724,8 @@
 		BE913D7F181EF8E500DCB09E /* TrackPrivateBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackPrivateBase.h; sourceTree = "<group>"; };
 		BE91FC8B06133666005E3790 /* Position.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Position.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE91FC8C06133666005E3790 /* Position.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Position.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BE961C5218AD337C00D07DC5 /* InbandDataTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InbandDataTextTrack.cpp; sourceTree = "<group>"; };
+		BE961C5318AD337C00D07DC5 /* InbandDataTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandDataTextTrack.h; sourceTree = "<group>"; };
 		BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreKeyboardUIMode.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BEA807C60F714A0300524199 /* SelectionRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SelectionRect.cpp; path = ios/SelectionRect.cpp; sourceTree = "<group>"; };
 		BEA807C70F714A0300524199 /* SelectionRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectionRect.h; path = ios/SelectionRect.h; sourceTree = "<group>"; };
@@ -19343,6 +19347,8 @@
 				BE23480918A9870300E4B6E8 /* DataCue.cpp */,
 				BE23480A18A9870300E4B6E8 /* DataCue.h */,
 				BE23480B18A9870300E4B6E8 /* DataCue.idl */,
+				BE961C5218AD337C00D07DC5 /* InbandDataTextTrack.cpp */,
+				BE961C5318AD337C00D07DC5 /* InbandDataTextTrack.h */,
 				BE16C58E17CFE17200852C04 /* InbandGenericTextTrack.cpp */,
 				BE16C58F17CFE17200852C04 /* InbandGenericTextTrack.h */,
 				0794178F166E855F009416C2 /* InbandTextTrack.cpp */,
@@ -24426,6 +24432,7 @@
 				1AE2AE5C0A1D26F200B42B25 /* JSHTMLMenuElement.h in Headers */,
 				A80E7A180A19C3D6007FB8C5 /* JSHTMLMetaElement.h in Headers */,
 				A7BBE26711AFB3F20005EA03 /* JSHTMLMeterElement.h in Headers */,
+				BE961C5518AD338C00D07DC5 /* InbandDataTextTrack.h in Headers */,
 				1AE2AB2A0A1CE63B00B42B25 /* JSHTMLModElement.h in Headers */,
 				BC305C7A0C076BB300CD20F0 /* JSHTMLObjectElement.h in Headers */,
 				1A85B1EB0A1B240500D8C87C /* JSHTMLOListElement.h in Headers */,
@@ -26965,6 +26972,7 @@
 				A8C228A211D5722E00D5A7D3 /* DecodedDataDocumentParser.cpp in Sources */,
 				4162A450101145AE00DFF3ED /* DedicatedWorkerGlobalScope.cpp in Sources */,
 				41A3D58E101C152D00316D07 /* DedicatedWorkerThread.cpp in Sources */,
+				BE961C5418AD338500D07DC5 /* InbandDataTextTrack.cpp in Sources */,
 				FD06DFA5134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp in Sources */,
 				CD2F4A2718D8A3490063746D /* AudioHardwareListenerMac.cpp in Sources */,
 				4167EBF5102962BA003D252A /* DefaultSharedWorkerRepository.cpp in Sources */,

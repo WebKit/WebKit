@@ -37,6 +37,7 @@ enum TextTrackKind { "subtitles",  "captions",  "descriptions",  "chapters", "me
     [CustomSetter] attribute TextTrackKind kind;
     readonly attribute DOMString label;
     [CustomSetter] attribute DOMString language;
+    readonly attribute DOMString inBandMetadataTrackDispatchType;
 
     attribute TextTrackMode mode;
 

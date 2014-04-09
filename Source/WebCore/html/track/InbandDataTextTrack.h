@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -23,48 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataCue_h
-#define DataCue_h
+#ifndef InbandDataTextTrack_h
+#define InbandDataTextTrack_h
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "TextTrackCue.h"
-#include <runtime/ArrayBuffer.h>
-#include <wtf/RefCounted.h>
+#include "InbandTextTrack.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class ScriptExecutionContext;
+class Document;
+class InbandTextTrackPrivate;
+class TextTrackCue;
 
-class DataCue : public TextTrackCue {
+class InbandDataTextTrack : public InbandTextTrack {
 public:
-    static PassRefPtr<DataCue> create(ScriptExecutionContext& context, double start, double end, ArrayBuffer* data, ExceptionCode& ec)
-    {
-        return adoptRef(new DataCue(context, start, end, data, ec));
-    }
-
-    static PassRefPtr<DataCue> create(ScriptExecutionContext& context, double start, double end, const void* data, unsigned length)
-    {
-        return adoptRef(new DataCue(context, start, end, data, length));
-    }
-
-    virtual ~DataCue();
-    virtual CueType cueType() const { return Data; }
-
-    RefPtr<ArrayBuffer> data() const;
-    void setData(ArrayBuffer*, ExceptionCode&);
-    String text(bool& isNull) const;
-
-protected:
-    DataCue(ScriptExecutionContext&, double start, double end, ArrayBuffer*, ExceptionCode&);
-    DataCue(ScriptExecutionContext&, double start, double end, const void* data, unsigned length);
+    static PassRefPtr<InbandDataTextTrack> create(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
+    virtual ~InbandDataTextTrack();
 
 private:
-    RefPtr<ArrayBuffer> m_data;
-};
+    InbandDataTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
 
-DataCue* toDataCue(TextTrackCue*);
-const DataCue* toDataCue(const TextTrackCue*);
+    virtual void addDataCue(InbandTextTrackPrivate*, double start, double end, const void*, unsigned) override;
+};
 
 } // namespace WebCore
 
