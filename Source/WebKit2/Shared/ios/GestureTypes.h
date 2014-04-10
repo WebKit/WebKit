@@ -42,7 +42,8 @@ enum class GestureType {
     TwoFingerSingleTap,
     TwoFingerRangedSelectGesture,
     TapOnLinkWithGesture,
-    MakeWebSelection
+    MakeWebSelection,
+    PhraseBoundary
 };
 
 enum class SelectionTouch {
@@ -73,6 +74,7 @@ enum SelectionFlags {
     None = 0,
     WordIsNearTap = 1 << 0,
     IsBlockSelection = 1 << 1,
+    PhraseBoundaryChanged = 1 << 2,
 };
 
 enum class SelectionHandlePosition {

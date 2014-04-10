@@ -37,6 +37,7 @@ void InteractionInformationAtPosition::encode(IPC::ArgumentEncoder& encoder) con
     encoder << point;
     encoder << nodeAtPositionIsAssistedNode;
     encoder << isSelectable;
+    encoder << isNearMarkedText;
     encoder << clickableElementName;
     encoder << url;
     encoder << title;
@@ -52,6 +53,9 @@ bool InteractionInformationAtPosition::decode(IPC::ArgumentDecoder& decoder, Int
         return false;
 
     if (!decoder.decode(result.isSelectable))
+        return false;
+
+    if (!decoder.decode(result.isNearMarkedText))
         return false;
 
     if (!decoder.decode(result.clickableElementName))

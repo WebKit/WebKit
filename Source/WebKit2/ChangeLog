@@ -22,6 +22,40 @@
 
 2014-04-10  Enrica Casucci  <enrica@apple.com>
 
+        [iOS WebKit2] Support phraseboundary gesture recognizer for CJK.
+        https://bugs.webkit.org/show_bug.cgi?id=131493
+        <rdar://problem/16319583>
+
+        Reviewed by Benjamin Poulain.
+
+        On iOS it is possible with a gesture to change the selection
+        within the marked text.
+        Changing the selection triggers also the update of the inline candidates
+        over the keyboard area.
+        The patch adds the logic to decide whether the gesture can begin
+        as well as the code for the movement of
+        the selection within the marked range.
+        The gesture is allowed to start within a given radius from the marked
+        area.
+
+        * Shared/InteractionInformationAtPosition.cpp:
+        (WebKit::InteractionInformationAtPosition::encode):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * Shared/InteractionInformationAtPosition.h:
+        (WebKit::InteractionInformationAtPosition::InteractionInformationAtPosition):
+        * Shared/ios/GestureTypes.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::editorStateChanged):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView pointIsNearMarkedText:]):
+        (toGestureType):
+        (toUIWKGestureType):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::selectWithGesture):
+        (WebKit::WebPage::getPositionInformation):
+
+2014-04-10  Enrica Casucci  <enrica@apple.com>
+
         Unreviewed iOS build fix after http://trac.webkit.org/changeset/167074
 
         * UIProcess/WebPageProxy.cpp:

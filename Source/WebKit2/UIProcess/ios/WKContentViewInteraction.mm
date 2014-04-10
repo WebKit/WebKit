@@ -625,6 +625,12 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     return _positionInformation.isSelectable;
 }
 
+- (BOOL)pointIsNearMarkedText:(CGPoint)point
+{
+    [self ensurePositionInformationIsUpToDate:point];
+    return _positionInformation.isNearMarkedText;
+}
+
 - (BOOL)pointIsInAssistedNode:(CGPoint)point
 {
     [self ensurePositionInformationIsUpToDate:point];
@@ -1066,6 +1072,8 @@ static inline GestureType toGestureType(UIWKGestureType gestureType)
         return GestureType::TapOnLinkWithGesture;
     case UIWKGestureMakeWebSelection:
         return GestureType::MakeWebSelection;
+    case UIWKGesturePhraseBoundary:
+        return GestureType::PhraseBoundary;
     }
     ASSERT_NOT_REACHED();
     return GestureType::Loupe;
@@ -1102,6 +1110,8 @@ static inline UIWKGestureType toUIWKGestureType(GestureType gestureType)
         return UIWKGestureTapOnLinkWithGesture;
     case GestureType::MakeWebSelection:
         return UIWKGestureMakeWebSelection;
+    case GestureType::PhraseBoundary:
+        return UIWKGesturePhraseBoundary;
     }
 }
 

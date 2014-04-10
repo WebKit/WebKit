@@ -3164,10 +3164,9 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
         m_pageClient.notifyInputContextAboutDiscardedComposition();
     }
 #elif PLATFORM(IOS)
-    if (!editorState.hasComposition) {
-        // We need to notify the client on iOS to make sure the selection is redrawn.
-        notifyRevealedSelection();
-    }
+    // We always need to notify the client on iOS to make sure the selection is redrawn,
+    // even during composition to support phrase boundary gesture.
+    notifyRevealedSelection();
 #elif PLATFORM(EFL) || PLATFORM(GTK)
     m_pageClient.updateTextInputState();
 #endif

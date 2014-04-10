@@ -537,6 +537,23 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
     SelectionFlags flags = None;
     GestureRecognizerState wkGestureState = static_cast<GestureRecognizerState>(gestureState);
     switch (static_cast<GestureType>(gestureType)) {
+    case GestureType::PhraseBoundary:
+    {
+        if (!frame.editor().hasComposition())
+            break;
+        RefPtr<Range> markedRange = frame.editor().compositionRange();
+        if (position < markedRange->startPosition())
+            position = markedRange->startPosition();
+        if (position > markedRange->endPosition())
+            position = markedRange->endPosition();
+        if (wkGestureState != GestureRecognizerState::Began)
+            flags = distanceBetweenPositions(markedRange->startPosition(), frame.selection().selection().start()) != distanceBetweenPositions(markedRange->startPosition(), position) ? PhraseBoundaryChanged : None;
+        else
+            flags = PhraseBoundaryChanged;
+        range = Range::create(*frame.document(), position, position);
+    }
+        break;
+
     case GestureType::OneFingerTap:
     {
         VisiblePosition result;
@@ -1468,6 +1485,29 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
 
     info.point = point;
     info.nodeAtPositionIsAssistedNode = (hitNode == m_assistedNode);
+    if (m_assistedNode) {
+        Frame& frame = m_page->focusController().focusedOrMainFrame();
+        if (frame.editor().hasComposition()) {
+            const uint32_t kHitAreaWidth = 66;
+            const uint32_t kHitAreaHeight = 66;
+            FrameView& view = *frame.view();
+            IntPoint adjustedPoint(view.rootViewToContents(point));
+            IntPoint constrainedPoint = m_assistedNode ? constrainPoint(adjustedPoint, &frame, m_assistedNode.get()) : adjustedPoint;
+            VisiblePosition position = frame.visiblePositionForPoint(constrainedPoint);
+
+            RefPtr<Range> compositionRange = frame.editor().compositionRange();
+            if (position < compositionRange->startPosition())
+                position = compositionRange->startPosition();
+            else if (position > compositionRange->endPosition())
+                position = compositionRange->endPosition();
+            IntRect caretRect = view.contentsToRootView(position.absoluteCaretBounds());
+            float deltaX = abs(caretRect.x() + (caretRect.width() / 2) - point.x());
+            float deltaYFromTheTop = abs(caretRect.y() - point.y());
+            float deltaYFromTheBottom = abs(caretRect.y() + caretRect.height() - point.y());
+
+            info.isNearMarkedText = !(deltaX > kHitAreaWidth || deltaYFromTheTop > kHitAreaHeight || deltaYFromTheBottom > kHitAreaHeight);
+        }
+    }
     bool elementIsLinkOrImage = false;
     if (hitNode) {
         info.clickableElementName = hitNode->nodeName();

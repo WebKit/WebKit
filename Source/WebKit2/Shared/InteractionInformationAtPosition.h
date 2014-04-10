@@ -38,12 +38,14 @@ struct InteractionInformationAtPosition {
     InteractionInformationAtPosition()
         : nodeAtPositionIsAssistedNode(false)
         , isSelectable(false)
+        , isNearMarkedText(false)
     {
     }
 
     WebCore::IntPoint point;
     bool nodeAtPositionIsAssistedNode;
     bool isSelectable;
+    bool isNearMarkedText;
     String clickableElementName;
     String url;
     String title;
