@@ -1,3 +1,16 @@
+2014-04-10  Matthew Mirman  <mmirman@apple.com>
+
+        WIP for inlining C++.  Added a build target to produce LLVM IR.
+        https://bugs.webkit.org/show_bug.cgi?id=130523
+
+        Reviewed by Mark Rowe.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * build-symbol-table-index.py: Added.
+        * build-symbol-table-index.sh: Added.
+        * Configurations/CompileRuntimeToLLVMIR.xcconfig: Added.
+        * copy-llvm-ir-to-derived-sources.sh: Added.
+
 2014-04-10  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: memoize plugin data for navigator.mimeTypes and navigator.plugins
