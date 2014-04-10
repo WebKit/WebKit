@@ -1,3 +1,33 @@
+2014-04-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [GStreamer] No CORS support for media elements
+        https://bugs.webkit.org/show_bug.cgi?id=99037
+
+        Reviewed by Philippe Normand.
+
+        Added CORS access control check to media sources when crossorigin attribute is set.
+
+        Added getter to CORS access control check status (used to compute whether the stream is tainted or not).
+        Related test is http/tests/security/video-cross-origin-readback.html.
+
+        Disabled access to cross-origin streams that fail CORS check when crossorigin attribute is set.
+        Related test is http/tests/security/video-cross-origin-accessfailure.html.
+
+        Tests: http/tests/security/video-cross-origin-accessfailure.html
+               http/tests/security/video-cross-origin-accesssameorigin.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::didPassCORSAccessCheck): Return whether media is cross-origin (tainted) or not by querying the gstreamer source layer.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h: Added MediaPlayerPrivateGStreamer::didPassCORSAccessCheck declaration.
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcStart): Passed CORS mode parameter to the streaming client. In case of CORS check failure, stop the resource loading.
+        (webKitSrcPassedCORSAccessCheck): Return whether CORS access control check was done and successful.
+        (StreamingClient::handleResponseReceived): Take a parameter to assign the CORS access control check result.
+        (CachedResourceStreamingClient::CachedResourceStreamingClient): Updated setting of the ResourceLoaderOptions according CORS mode.
+        (CachedResourceStreamingClient::responseReceived): Check CORS and pass result to handleResponseReceived.
+        (ResourceHandleStreamingClient::didReceiveResponse): No CORS check.
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.h: Added webKitSrcPassedCORSAccessCheck declaration.
+
 2014-04-10  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Move UseJSC.cmake back to CMakeLists.txt

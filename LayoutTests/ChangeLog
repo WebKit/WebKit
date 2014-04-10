@@ -1,3 +1,23 @@
+2014-04-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [GStreamer] No CORS support for media elements
+        https://bugs.webkit.org/show_bug.cgi?id=99037
+
+        Reviewed by Philippe Normand.
+
+        http/tests/security/video-cross-origin-accessfailure.html verifies that cross-origin streams that fail CORS check
+        are not played when crossorigin attribute is set.
+         http/tests/security/video-cross-origin-accesssameorigin.html verifies that access to same-origin streams
+        are played when crossorigin attribute is set.
+
+        * http/tests/security/video-cross-origin-accessfailure-expected.txt: Added.
+        * http/tests/security/video-cross-origin-accessfailure.html: Added.
+        * http/tests/security/video-cross-origin-accesssameorigin-expected.txt: Added.
+        * http/tests/security/video-cross-origin-accesssameorigin.html: Added.
+        * platform/efl/TestExpectations: Enabled http/tests/security/video-cross-origin-readback.html.
+        * platform/gtk/TestExpectations: Ditto.
+        * platform/mac/TestExpectations: Disabled http/tests/security/video-cross-origin-accessfailure.html.
+
 2014-04-09  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r166860): ASSERTION FAILED: !isCalculated() on fast/css/image-set-value-not-removed-crash.html
