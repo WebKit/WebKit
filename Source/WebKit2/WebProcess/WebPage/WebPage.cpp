@@ -2746,14 +2746,16 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::DragData dra
     }
 
     switch (action) {
-    case DragControllerActionEntered:
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(m_page->dragController().dragEntered(dragData)));
+    case DragControllerActionEntered: {
+        DragOperation resolvedDragOperation = m_page->dragController().dragEntered(dragData);
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(resolvedDragOperation, m_page->dragController().mouseIsOverFileInput(), m_page->dragController().numberOfItemsToBeAccepted()));
         break;
-
-    case DragControllerActionUpdated:
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(m_page->dragController().dragUpdated(dragData)));
+    }
+    case DragControllerActionUpdated: {
+        DragOperation resolvedDragOperation = m_page->dragController().dragEntered(dragData);
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(resolvedDragOperation, m_page->dragController().mouseIsOverFileInput(), m_page->dragController().numberOfItemsToBeAccepted()));
         break;
-
+    }
     case DragControllerActionExited:
         m_page->dragController().dragExited(dragData);
         break;
