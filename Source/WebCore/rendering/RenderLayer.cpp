@@ -3901,7 +3901,7 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
         return true;
     }
 
-    if (style.clipPath()->type() == ClipPathOperation::Box) {
+    if (style.clipPath()->type() == ClipPathOperation::Box && renderer().isBox()) {
         BoxClipPathOperation& clippingPath = toBoxClipPathOperation(*(style.clipPath()));
 
         RoundedRect shapeRect = computeRoundedRectForBoxShape(clippingPath.referenceBox(), toRenderBox(renderer()));
