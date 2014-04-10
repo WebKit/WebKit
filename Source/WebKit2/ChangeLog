@@ -1,3 +1,15 @@
+2014-04-09  Jeremy Jones  <jeremyj@apple.com>
+
+        Fix build failure when #if USE(XPC_SERVICES) is false.
+        https://bugs.webkit.org/show_bug.cgi?id=131474
+
+        Reviewed by Dan Bernstein.
+
+        Fix build. 
+
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        Add #if around BackgroundTabFlags ForegroundTabFlags to prevent unused variable error.
+
 2014-04-09  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Add API to set preferred languages

@@ -31,8 +31,10 @@
 #import <AssertionServices/BKSProcessAssertion.h>
 #import <WebCore/NotImplemented.h>
 
+#if USE(XPC_SERVICES)
 const BKSProcessAssertionFlags BackgroundTabFlags = (BKSProcessAssertionAllowIdleSleep);
 const BKSProcessAssertionFlags ForegroundTabFlags = (BKSProcessAssertionAllowIdleSleep | BKSProcessAssertionPreventTaskSuspend | BKSProcessAssertionWantsForegroundResourcePriority | BKSProcessAssertionPreventTaskThrottleDown);
+#endif
 
 namespace WebKit {
 
