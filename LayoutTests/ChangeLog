@@ -1,5 +1,12 @@
 2014-04-09  Alexey Proskuryakov  <ap@apple.com>
 
+        REGRESSION (r166860): ASSERTION FAILED: !isCalculated() on fast/css/image-set-value-not-removed-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=131480
+
+        * platform/mac/TestExpectations: Skipped the test in debug builds.
+
+2014-04-09  Alexey Proskuryakov  <ap@apple.com>
+
         [WK2] fast/repaint/obscured-background-no-repaint.html is very flaky
         https://bugs.webkit.org/show_bug.cgi?id=131477
 
