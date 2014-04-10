@@ -1,3 +1,18 @@
+2014-04-10  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] LayerTreeHostGtk is creating a software scene graph
+        https://bugs.webkit.org/show_bug.cgi?id=131471
+
+        Reviewed by Sergio Villar Senin.
+
+        At some point, a regression was introduced that sent the GTK+ WebKit2 scenegraph down the
+        software route. The rest of the file depends on the fact that the TextureMapper is the OpenGL
+        variety, so we should force that explicitly. This is causing crashes locally and soon we
+        should be able to test this directly.
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::initialize): Force the use of the OpenGL scenegraph.
+
 2014-04-09  Jeremy Jones  <jeremyj@apple.com>
 
         Fix build failure when #if USE(XPC_SERVICES) is false.
