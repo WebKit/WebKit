@@ -38,6 +38,7 @@
 #include "PageGroup.h"
 #include "TextTrack.h"
 #include "TextTrackList.h"
+#include <runtime/JSCJSValueInlines.h>
 
 namespace WebCore {
 
@@ -214,7 +215,17 @@ String MediaControlsHost::externalDeviceType() const
     
     return type;
 }
-    
+
+bool MediaControlsHost::controlsDependOnPageScaleFactor() const
+{
+    return m_mediaElement->mediaControlsDependOnPageScaleFactor();
+}
+
+void MediaControlsHost::setControlsDependOnPageScaleFactor(bool value)
+{
+    m_mediaElement->setMediaControlsDependOnPageScaleFactor(value);
+}
+
 }
 
 #endif

@@ -48,4 +48,6 @@ enum DeviceType {
 
     readonly attribute DOMString externalDeviceDisplayName;
     readonly attribute DeviceType externalDeviceType;
+
+    attribute boolean controlsDependOnPageScaleFactor;
 };

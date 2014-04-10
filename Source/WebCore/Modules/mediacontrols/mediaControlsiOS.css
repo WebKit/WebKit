@@ -121,6 +121,7 @@ audio::-webkit-media-controls-panel {
     -webkit-user-select: none;
 
     transition: opacity 0.25s linear;
+    -webkit-transform-origin: bottom left;
 }
 
 video::-webkit-media-controls-panel {
@@ -154,19 +155,19 @@ audio::-webkit-media-controls-start-playback-button {
     padding: 0;
     border: 0;
     position: absolute;
-    width: 150px;
-    height: 150px;
-    left: calc(50% - 75px);
-    top: calc(50% - 75px);
+    width: 72px;
+    height: 72px;
+    left: calc(50% - 36px);
+    top: calc(50% - 36px);
     background-origin: content-box;
     background-repeat: no-repeat;
     background-position: center;
-    background-image: url('data:image/svg+xml,<svg width="140" height="140" xmlns="http://www.w3.org/2000/svg"><circle r="70" cy="70" cx="70" fill="rgba(247, 247, 247, .82)"/><path d="M 48,34 v 72 l 62,-35.5 z" fill="rgba(129, 129, 129, .9)"/></svg>');
+    background-image: url('data:image/svg+xml,<svg viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg"><circle cx="72" cy="72" r="70" fill="rgba(247, 247, 247, .82)"/><path d="M48,36v74L109,74L48,36z" fill="rgba(129, 129, 129, .9)"/></svg>');
 }
 
 video::-webkit-media-controls-start-playback-button.failed,
 audio::-webkit-media-controls-start-playback-button.failed {
-    background-image: url('data:image/svg+xml,<svg width="140" height="140" xmlns="http://www.w3.org/2000/svg"><circle r="70" cy="70" cx="70" fill="rgba(247, 247, 247, .82)"/><g fill="rgba(129, 129, 129, .9)"><path d="M 48,34 v 17 l 47,28 l 15,-8.5 z"/><path d="M 16,36 l 110,64 l -2,4 l -110,-64 z"/><path d="M 48,63 v 43 l 37,-21.5 z"/></g></svg>');
+    background-image: url('data:image/svg+xml,<svg viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg"><circle cx="72" cy="72" r="70" fill="rgba(247, 247, 247, .82)"/><g fill="rgba(129, 129, 129, .9)"><rect x="14" y="70.4" transform="matrix(0.8493 0.5279 -0.5279 0.8493 48.8614 -27.1595)" width="116" height="3.2"/><polygon points="109,74 48,36 48,52.3 95.6,81.9 "/><polygon points="48,110 87.7,86.6 48,61.9 "/></g></svg>');
 }
 
 video::-webkit-media-controls-play-button,

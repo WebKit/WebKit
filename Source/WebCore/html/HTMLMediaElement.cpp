@@ -5918,6 +5918,7 @@ DOMWrapperWorld& HTMLMediaElement::ensureIsolatedWorld()
 
 bool HTMLMediaElement::ensureMediaControlsInjectedScript()
 {
+    LOG(Media, "HTMLMediaElement::ensureMediaControlsInjectedScript");
     Page* page = document().page();
     if (!page)
         return false;
@@ -5931,8 +5932,8 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
     JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
     JSC::ExecState* exec = globalObject->globalExec();
 
-    JSC::JSValue overlayValue = globalObject->get(exec, JSC::Identifier(exec, "createControls"));
-    if (overlayValue.isFunction())
+    JSC::JSValue functionValue = globalObject->get(exec, JSC::Identifier(exec, "createControls"));
+    if (functionValue.isFunction())
         return true;
 
 #ifndef NDEBUG
@@ -5950,8 +5951,16 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
     return true;
 }
 
+static void setPageScaleFactorProperty(JSC::ExecState* exec, JSC::JSValue controllerValue, float pageScaleFactor)
+{
+    JSC::PutPropertySlot propertySlot(controllerValue);
+    JSC::JSObject* controllerObject = controllerValue.toObject(exec);
+    controllerObject->methodTable()->put(controllerObject, exec, JSC::Identifier(exec, "pageScaleFactor"), JSC::jsNumber(pageScaleFactor), propertySlot);
+}
+
 void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
+    LOG(Media, "HTMLMediaElement::didAddUserAgentShadowRoot");
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     // JavaScript controls are not enabled with the video plugin proxy.
     if (shouldUseVideoPluginProxy())
@@ -5971,9 +5980,17 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     JSC::ExecState* exec = globalObject->globalExec();
     JSC::JSLockHolder lock(exec);
 
-    // It is expected the JS file provides a createControls(shadowRoot, video, mediaControlsHost) function.
-    JSC::JSValue overlayValue = globalObject->get(exec, JSC::Identifier(exec, "createControls"));
-    if (overlayValue.isUndefinedOrNull())
+    // The media controls script must provide a method with the following details.
+    // Name: createControls
+    // Parameters:
+    //     1. The ShadowRoot element that will hold the controls.
+    //     2. This object (and HTMLMediaElement).
+    //     3. The MediaControlsHost object.
+    // Return value:
+    //     A reference to the created media controller instance.
+
+    JSC::JSValue functionValue = globalObject->get(exec, JSC::Identifier(exec, "createControls"));
+    if (functionValue.isUndefinedOrNull())
         return;
 
     if (!m_mediaControlsHost)
@@ -5984,13 +6001,17 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     argList.append(toJS(exec, globalObject, this));
     argList.append(toJS(exec, globalObject, m_mediaControlsHost.get()));
 
-    JSC::JSObject* overlay = overlayValue.toObject(exec);
+    JSC::JSObject* function = functionValue.toObject(exec);
     JSC::CallData callData;
-    JSC::CallType callType = overlay->methodTable()->getCallData(overlay, callData);
+    JSC::CallType callType = function->methodTable()->getCallData(function, callData);
     if (callType == JSC::CallTypeNone)
         return;
 
-    JSC::call(exec, overlay, callType, callData, globalObject, argList);
+    JSC::JSValue controllerValue = JSC::call(exec, function, callType, callData, globalObject, argList);
+    m_mediaControlsHost->setControllerJSValue(controllerValue);
+
+    setPageScaleFactorProperty(exec, controllerValue, page->pageScaleFactor());
+
     if (exec->hadException())
         exec->clearException();
 }
@@ -6011,6 +6032,20 @@ void HTMLMediaElement::setMediaControlsDependOnPageScaleFactor(bool dependsOnPag
 
 void HTMLMediaElement::pageScaleFactorChanged()
 {
+    Page* page = document().page();
+    if (!page)
+        return;
+
+    LOG(Media, "HTMLMediaElement::pageScaleFactorChanged = %f", page->pageScaleFactor());
+    DOMWrapperWorld& world = ensureIsolatedWorld();
+    ScriptController& scriptController = page->mainFrame().script();
+    JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
+    JSC::ExecState* exec = globalObject->globalExec();
+    JSC::JSLockHolder lock(exec);
+
+    JSC::JSValue controllerValue = m_mediaControlsHost->controllerJSValue();
+
+    setPageScaleFactorProperty(exec, controllerValue, page->pageScaleFactor());
 }
 #endif // ENABLE(MEDIA_CONTROLS_SCRIPT)
 

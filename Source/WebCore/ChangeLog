@@ -1,3 +1,44 @@
+2014-04-09  Dean Jackson  <dino@apple.com>
+
+        [iOS] Media controls should resize as the user zooms
+        https://bugs.webkit.org/show_bug.cgi?id=131322
+
+        Reviewed by Eric Carlson.
+
+        On iOS the media controls should remain the same size
+        independent of user zoom. Have the HTMLMediaElement optionally
+        register for updates in the page scale to apply an inverse
+        scale.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp: New exposed property that calls
+        back into HTMLMediaElement::mediaControlsDependOnPageScaleFactor.
+        (WebCore::MediaControlsHost::controlsDependOnPageScaleFactor):
+        (WebCore::MediaControlsHost::setControlsDependOnPageScaleFactor):
+        * Modules/mediacontrols/MediaControlsHost.h: Keep a reference to the actual
+        controls from the JavaScript side so we can talk to it later.
+        (WebCore::MediaControlsHost::controllerJSValue):
+        (WebCore::MediaControlsHost::setControllerJSValue):
+        * Modules/mediacontrols/MediaControlsHost.idl: Expose controlsDependOnPageScaleFactor.
+
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (audio::-webkit-media-controls-panel): Specify the transform origin so that
+        scaling will keep the controls pinned to the bottom left corner.
+        (audio::-webkit-media-controls-start-playback-button): Update to the correct size
+        and provide new artwork.
+        (audio::-webkit-media-controls-start-playback-button.failed): New artwork.
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS): Tell the host that these controls care about the page scale.
+        (ControllerIOS.prototype.get pageScaleFactor): New getter.
+        (ControllerIOS.prototype.set pageScaleFactor): When set, update the play button and the panel.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::ensureMediaControlsInjectedScript): Small naming cleanup.
+        (setPageScaleFactorProperty): Static helper to set a JS property value.
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot): Keep a reference to the controls object,
+        and make sure to set the page scale factor on the controls.
+        (WebCore::HTMLMediaElement::pageScaleFactorChanged): Implement the callback, telling
+        the controls object that it needs to relayout.
+
 2014-04-09  Antti Koivisto  <antti@apple.com>
 
         Try to fix iOS build.

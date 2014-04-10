@@ -6,10 +6,13 @@ function createControls(root, video, host)
 function ControllerIOS(root, video, host)
 {
     this.hasWirelessPlaybackTargets = false;
+    this._pageScaleFactor = 1;
     Controller.call(this, root, video, host);
 
     this.updateWirelessTargetAvailable();
     this.updateWirelessPlaybackStatus();
+
+    host.controlsDependOnPageScaleFactor = true;
 };
 
 /* Enums */
@@ -403,6 +406,25 @@ ControllerIOS.prototype = {
         this.video.webkitShowPlaybackTargetPicker();
         event.stopPropagation();
     },
+
+    get pageScaleFactor() {
+        return this._pageScaleFactor;
+    },
+
+    set pageScaleFactor(newScaleFactor) {
+        this._pageScaleFactor = newScaleFactor;
+
+        if (newScaleFactor) {
+            var scaleTransform = "scale(" + (1 / newScaleFactor) + ")";
+            if (this.controls.startPlaybackButton)
+                this.controls.startPlaybackButton.style.webkitTransform = scaleTransform;
+            if (this.controls.panel) {
+                this.controls.panel.style.width = (newScaleFactor * 100) + "%";
+                this.controls.panel.style.webkitTransform = scaleTransform;
+                this.updateProgress();
+            }
+        }
+    }
 };
 
 Object.create(Controller.prototype).extend(ControllerIOS.prototype);
