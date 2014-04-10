@@ -23,8 +23,10 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility"
     "${WEBCORE_DIR}/bindings"
     "${WEBCORE_DIR}/bindings/generic"
+    "${WEBCORE_DIR}/bindings/js"
     "${WEBCORE_DIR}/bridge"
     "${WEBCORE_DIR}/bridge/c"
+    "${WEBCORE_DIR}/bridge/jsc"
     "${WEBCORE_DIR}/crypto"
     "${WEBCORE_DIR}/crypto/keys"
     "${WEBCORE_DIR}/css"
@@ -142,6 +144,7 @@ set(WebCore_IDL_INCLUDES
     Modules/webdatabase
     Modules/websockets
     bindings/generic
+    bindings/js
     css
     dom
     fileapi
@@ -1011,6 +1014,180 @@ set(WebCore_SOURCES
     bindings/generic/ActiveDOMCallback.cpp
     bindings/generic/RuntimeEnabledFeatures.cpp
 
+    bindings/js/ArrayValue.cpp
+    bindings/js/CallbackFunction.cpp
+    bindings/js/DOMObjectHashTableMap.cpp
+    bindings/js/DOMWrapperWorld.cpp
+    bindings/js/Dictionary.cpp
+    bindings/js/GCController.cpp
+    bindings/js/IDBBindingUtilities.cpp
+    bindings/js/JSAttrCustom.cpp
+    bindings/js/JSAudioBufferSourceNodeCustom.cpp
+    bindings/js/JSAudioContextCustom.cpp
+    bindings/js/JSAudioTrackCustom.cpp
+    bindings/js/JSAudioTrackListCustom.cpp
+    bindings/js/JSBiquadFilterNodeCustom.cpp
+    bindings/js/JSBlobCustom.cpp
+    bindings/js/JSCDATASectionCustom.cpp
+    bindings/js/JSCSSRuleCustom.cpp
+    bindings/js/JSCSSRuleListCustom.cpp
+    bindings/js/JSCSSStyleDeclarationCustom.cpp
+    bindings/js/JSCSSValueCustom.cpp
+    bindings/js/JSCallbackData.cpp
+    bindings/js/JSCanvasRenderingContext2DCustom.cpp
+    bindings/js/JSCanvasRenderingContextCustom.cpp
+    bindings/js/JSDataTransferCustom.cpp
+    bindings/js/JSCommandLineAPIHostCustom.cpp
+    bindings/js/JSCryptoAlgorithmBuilder.cpp
+    bindings/js/JSCryptoAlgorithmDictionary.cpp
+    bindings/js/JSCryptoCustom.cpp
+    bindings/js/JSCryptoKeyCustom.cpp
+    bindings/js/JSCryptoKeyPairCustom.cpp
+    bindings/js/JSCryptoKeySerializationJWK.cpp
+    bindings/js/JSCryptoOperationData.cpp
+    bindings/js/JSCustomSQLStatementErrorCallback.cpp
+    bindings/js/JSCustomXPathNSResolver.cpp
+    bindings/js/JSDOMBinding.cpp
+    bindings/js/JSDOMFormDataCustom.cpp
+    bindings/js/JSDOMGlobalObject.cpp
+    bindings/js/JSDOMGlobalObjectTask.cpp
+    bindings/js/JSDOMMimeTypeArrayCustom.cpp
+    bindings/js/JSDOMPluginArrayCustom.cpp
+    bindings/js/JSDOMPluginCustom.cpp
+    bindings/js/JSDOMPromise.cpp
+    bindings/js/JSDOMStringListCustom.cpp
+    bindings/js/JSDOMStringMapCustom.cpp
+    bindings/js/JSDOMWindowBase.cpp
+    bindings/js/JSDOMWindowCustom.cpp
+    bindings/js/JSDOMWindowShell.cpp
+    bindings/js/JSDOMWrapper.cpp
+    bindings/js/JSDedicatedWorkerGlobalScopeCustom.cpp
+    bindings/js/JSDeviceMotionEventCustom.cpp
+    bindings/js/JSDeviceOrientationEventCustom.cpp
+    bindings/js/JSDictionary.cpp
+    bindings/js/JSDocumentCustom.cpp
+    bindings/js/JSElementCustom.cpp
+    bindings/js/JSErrorHandler.cpp
+    bindings/js/JSEventCustom.cpp
+    bindings/js/JSEventListener.cpp
+    bindings/js/JSEventTargetCustom.cpp
+    bindings/js/JSExceptionBase.cpp
+    bindings/js/JSFileReaderCustom.cpp
+    bindings/js/JSGeolocationCustom.cpp
+    bindings/js/JSHTMLAllCollectionCustom.cpp
+    bindings/js/JSHTMLAppletElementCustom.cpp
+    bindings/js/JSHTMLCanvasElementCustom.cpp
+    bindings/js/JSHTMLCollectionCustom.cpp
+    bindings/js/JSHTMLDocumentCustom.cpp
+    bindings/js/JSHTMLElementCustom.cpp
+    bindings/js/JSHTMLEmbedElementCustom.cpp
+    bindings/js/JSHTMLFormControlsCollectionCustom.cpp
+    bindings/js/JSHTMLFormElementCustom.cpp
+    bindings/js/JSHTMLFrameElementCustom.cpp
+    bindings/js/JSHTMLFrameSetElementCustom.cpp
+    bindings/js/JSHTMLInputElementCustom.cpp
+    bindings/js/JSHTMLLinkElementCustom.cpp
+    bindings/js/JSHTMLMediaElementCustom.cpp
+    bindings/js/JSHTMLObjectElementCustom.cpp
+    bindings/js/JSHTMLOptionsCollectionCustom.cpp
+    bindings/js/JSHTMLSelectElementCustom.cpp
+    bindings/js/JSHTMLTemplateElementCustom.cpp
+    bindings/js/JSHistoryCustom.cpp
+    bindings/js/JSIDBAnyCustom.cpp
+    bindings/js/JSIDBDatabaseCustom.cpp
+    bindings/js/JSIDBObjectStoreCustom.cpp
+    bindings/js/JSImageConstructor.cpp
+    bindings/js/JSImageDataCustom.cpp
+    bindings/js/JSInspectorFrontendHostCustom.cpp
+    bindings/js/JSLazyEventListener.cpp
+    bindings/js/JSLocationCustom.cpp
+    bindings/js/JSMainThreadExecState.cpp
+    bindings/js/JSMediaSourceStatesCustom.cpp
+    bindings/js/JSMediaStreamCapabilitiesCustom.cpp
+    bindings/js/JSMessageChannelCustom.cpp
+    bindings/js/JSMessageEventCustom.cpp
+    bindings/js/JSMessagePortCustom.cpp
+    bindings/js/JSMutationCallback.cpp
+    bindings/js/JSMutationObserverCustom.cpp
+    bindings/js/JSNamedNodeMapCustom.cpp
+    bindings/js/JSNavigatorCustom.cpp
+    bindings/js/JSNodeCustom.cpp
+    bindings/js/JSNodeFilterCondition.cpp
+    bindings/js/JSNodeFilterCustom.cpp
+    bindings/js/JSNodeIteratorCustom.cpp
+    bindings/js/JSNodeListCustom.cpp
+    bindings/js/JSOscillatorNodeCustom.cpp
+    bindings/js/JSPannerNodeCustom.cpp
+    bindings/js/JSPerformanceEntryCustom.cpp
+    bindings/js/JSPluginElementFunctions.cpp
+    bindings/js/JSPopStateEventCustom.cpp
+    bindings/js/JSRTCIceCandidateCustom.cpp
+    bindings/js/JSRTCPeerConnectionCustom.cpp
+    bindings/js/JSRTCSessionDescriptionCustom.cpp
+    bindings/js/JSRTCStatsResponseCustom.cpp
+    bindings/js/JSRequestAnimationFrameCallbackCustom.cpp
+    bindings/js/JSSQLResultSetRowListCustom.cpp
+    bindings/js/JSSQLTransactionCustom.cpp
+    bindings/js/JSSQLTransactionSyncCustom.cpp
+    bindings/js/JSSVGElementInstanceCustom.cpp
+    bindings/js/JSSVGLengthCustom.cpp
+    bindings/js/JSSVGPathSegCustom.cpp
+    bindings/js/JSSharedWorkerCustom.cpp
+    bindings/js/JSStorageCustom.cpp
+    bindings/js/JSStyleSheetCustom.cpp
+    bindings/js/JSStyleSheetListCustom.cpp
+    bindings/js/JSSubtleCryptoCustom.cpp
+    bindings/js/JSSVGElementInstanceCustom.cpp
+    bindings/js/JSSVGLengthCustom.cpp
+    bindings/js/JSSVGPathSegCustom.cpp
+    bindings/js/JSTextCustom.cpp
+    bindings/js/JSTextTrackCueCustom.cpp
+    bindings/js/JSTextTrackCustom.cpp
+    bindings/js/JSTextTrackListCustom.cpp
+    bindings/js/JSTouchCustom.cpp
+    bindings/js/JSTouchListCustom.cpp
+    bindings/js/JSTrackCustom.cpp
+    bindings/js/JSTrackEventCustom.cpp
+    bindings/js/JSTreeWalkerCustom.cpp
+    bindings/js/JSVideoTrackCustom.cpp
+    bindings/js/JSVideoTrackListCustom.cpp
+    bindings/js/JSWebGLRenderingContextCustom.cpp
+    bindings/js/JSWebKitPointCustom.cpp
+    bindings/js/JSWorkerCustom.cpp
+    bindings/js/JSWorkerGlobalScopeBase.cpp
+    bindings/js/JSWorkerGlobalScopeCustom.cpp
+    bindings/js/JSXMLHttpRequestCustom.cpp
+    bindings/js/JSXPathResultCustom.cpp
+    bindings/js/JSXSLTProcessorCustom.cpp
+    bindings/js/PageScriptDebugServer.cpp
+    bindings/js/ScheduledAction.cpp
+    bindings/js/ScriptCachedFrameData.cpp
+    bindings/js/ScriptController.cpp
+    bindings/js/ScriptGlobalObject.cpp
+    bindings/js/ScriptProfile.cpp
+    bindings/js/ScriptProfiler.cpp
+    bindings/js/ScriptState.cpp
+    bindings/js/SerializedScriptValue.cpp
+    bindings/js/WebCoreTypedArrayController.cpp
+    bindings/js/WorkerScriptController.cpp
+    bindings/js/WorkerScriptDebugServer.cpp
+
+    bridge/IdentifierRep.cpp
+    bridge/NP_jsobject.cpp
+    bridge/npruntime.cpp
+    bridge/runtime_array.cpp
+    bridge/runtime_method.cpp
+    bridge/runtime_object.cpp
+    bridge/runtime_root.cpp
+
+    bridge/c/CRuntimeObject.cpp
+    bridge/c/c_class.cpp
+    bridge/c/c_instance.cpp
+    bridge/c/c_runtime.cpp
+    bridge/c/c_utility.cpp
+
+    bridge/jsc/BridgeJSC.cpp
+
     css/BasicShapeFunctions.cpp
     css/CSSAspectRatioValue.cpp
     css/CSSBasicShapes.cpp
@@ -1034,8 +1211,8 @@ set(WebCore_SOURCES
     css/CSSFontValue.cpp
     css/CSSFunctionValue.cpp
     css/CSSGradientValue.cpp
-    css/CSSGridTemplateAreasValue.cpp
     css/CSSGridLineNamesValue.cpp
+    css/CSSGridTemplateAreasValue.cpp
     css/CSSGroupingRule.cpp
     css/CSSImageGeneratorValue.cpp
     css/CSSImageSetValue.cpp
@@ -2981,6 +3158,8 @@ set(WebCoreTestSupport_SOURCES
 
     testing/InternalSettings.cpp
     testing/Internals.cpp
+
+    testing/js/WebCoreTestSupport.cpp
 )
 
 set(WebCoreTestSupport_LIBRARIES
@@ -2994,6 +3173,8 @@ set(SCRIPTS_RESOLVE_SUPPLEMENTAL
     ${WEBCORE_DIR}/bindings/scripts/IDLParser.pm
 )
 set(SCRIPTS_BINDINGS
+    ${WEBCORE_DIR}/bindings/scripts/CodeGenerator.pm
+    ${WEBCORE_DIR}/bindings/scripts/CodeGeneratorJS.pm
     ${WEBCORE_DIR}/bindings/scripts/IDLParser.pm
     ${WEBCORE_DIR}/bindings/scripts/InFilesParser.pm
     ${WEBCORE_DIR}/bindings/scripts/preprocessor.pm
@@ -3191,7 +3372,65 @@ GENERATE_GRAMMAR(xpathyy ${WEBCORE_DIR}/xml/XPathGrammar.y ${DERIVED_SOURCES_WEB
 list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/XPathGrammar.cpp)
 
 
-include(${WEBCORE_DIR}/UseJSC.cmake)
+set(IDL_INCLUDES "")
+foreach (_include ${WebCore_IDL_INCLUDES})
+    list(APPEND IDL_INCLUDES --include=${WEBCORE_DIR}/${_include})
+endforeach ()
+
+foreach (_include ${WebCoreTestSupport_IDL_INCLUDES})
+    list(APPEND IDL_INCLUDES --include=${WEBCORE_DIR}/${_include})
+endforeach ()
+
+set(FEATURE_DEFINES_JAVASCRIPT "LANGUAGE_JAVASCRIPT=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
+
+# Create JavaScript C++ code given an IDL input
+foreach (_idl ${WebCore_IDL_FILES})
+    set(IDL_FILES_LIST "${IDL_FILES_LIST}${WEBCORE_DIR}/${_idl}\n")
+endforeach ()
+
+foreach (_idl ${WebCoreTestSupport_IDL_FILES})
+    set(IDL_FILES_LIST "${IDL_FILES_LIST}${WEBCORE_DIR}/${_idl}\n")
+endforeach ()
+
+set(IDL_FILES_LIST "${IDL_FILES_LIST}${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.idl\n")
+list(APPEND IDL_INCLUDES --include=${DERIVED_SOURCES_WEBCORE_DIR})
+list(APPEND WebCoreTestSupport_IDL_FILES ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.idl)
+
+file(WRITE ${IDL_FILES_TMP} ${IDL_FILES_LIST})
+
+add_custom_command(
+    OUTPUT ${SUPPLEMENTAL_DEPENDENCY_FILE} ${WINDOW_CONSTRUCTORS_FILE} ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE} ${SHAREDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE} ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+    DEPENDS ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl ${SCRIPTS_PREPROCESS_IDLS} ${WebCore_IDL_FILES} ${WebCoreTestSupport_IDL_FILES}
+    COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --idlFilesList ${IDL_FILES_TMP} --supplementalDependencyFile ${SUPPLEMENTAL_DEPENDENCY_FILE} --windowConstructorsFile ${WINDOW_CONSTRUCTORS_FILE} --workerGlobalScopeConstructorsFile ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+--sharedWorkerGlobalScopeConstructorsFile ${SHAREDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE} --dedicatedWorkerGlobalScopeConstructorsFile ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+    VERBATIM)
+
+GENERATE_BINDINGS(WebCore_SOURCES
+    "${WebCore_IDL_FILES}"
+    "${WEBCORE_DIR}"
+    "${IDL_INCLUDES}"
+    "${FEATURE_DEFINES_JAVASCRIPT}"
+    ${DERIVED_SOURCES_WEBCORE_DIR} JS JS
+    ${IDL_ATTRIBUTES_FILE}
+    ${SUPPLEMENTAL_DEPENDENCY_FILE}
+    ${WINDOW_CONSTRUCTORS_FILE}
+    ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+    ${SHAREDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+    ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE})
+
+GENERATE_BINDINGS(WebCoreTestSupport_SOURCES
+    "${WebCoreTestSupport_IDL_FILES}"
+    "${WEBCORE_DIR}"
+    "${IDL_INCLUDES}"
+    "${FEATURE_DEFINES_JAVASCRIPT}"
+    ${DERIVED_SOURCES_WEBCORE_DIR} JS JS
+    ${IDL_ATTRIBUTES_FILE}
+    ${SUPPLEMENTAL_DEPENDENCY_FILE}
+    ${WINDOW_CONSTRUCTORS_FILE}
+    ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+    ${SHAREDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+    ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE})
+
 
 ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLTreeBuilder.cpp MathMLNames.cpp)
 
