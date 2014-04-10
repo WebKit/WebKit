@@ -1,3 +1,16 @@
+2014-04-09  Mark Lam  <mark.lam@apple.com>
+
+        Temporarily disable the JIT for the Windows port.
+        <https://webkit.org/b/131470>
+
+        Reviewed by Brent Fulgham.
+
+        This is a temporary stop gap measure to green the Windows bots until
+        we have a fix for https://webkit.org/b/131182.
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
 2014-04-09  Juergen Ributzka  <juergen@apple.com>
 
         [FTL] Emit multibyte NOPs on X86-64
