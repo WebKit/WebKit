@@ -1,3 +1,11 @@
+2014-04-10  Enrica Casucci  <enrica@apple.com>
+
+        Build fix after http://trac.webkit.org/changeset/167085.
+
+        Reviewed by Timothy Hatcher.
+
+        * plugins/PluginData.h:
+
 2014-04-10  Zalan Bujtas  <zalan@apple.com>
 
         Web Inspector: Breakpoint in gutter has clipped / broken border image.

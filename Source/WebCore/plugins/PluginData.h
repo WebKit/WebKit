@@ -74,7 +74,7 @@ private:
     const PluginInfo* pluginInfoForMimeType(const String& mimeType) const;
 
 protected:
-#if ENABLE(WEB_REPLAY)
+#if defined ENABLE_WEB_REPLAY && ENABLE_WEB_REPLAY
     PluginData(Vector<PluginInfo> plugins, Vector<MimeClassInfo> mimes, Vector<size_t> indices)
         : m_plugins(plugins)
         , m_mimes(mimes)
