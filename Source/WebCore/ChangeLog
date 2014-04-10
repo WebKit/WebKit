@@ -1,3 +1,12 @@
+2014-04-09  Enrica Casucci  <enrica@apple.com>
+
+        Unreviewed build fix after http://trac.webkit.org/changeset/167045
+
+        The file contained an invalid character.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreen):
+
 2014-04-09  Dean Jackson  <dino@apple.com>
 
         [iOS] Media controls should resize as the user zooms

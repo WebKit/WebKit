@@ -545,7 +545,7 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreen(PlatformLayer& videoLayer
                 protect2.clear();
             }];
         });
-        ￼
+
         protect.clear();
     });
 }
