@@ -43,7 +43,6 @@ class VM;
 extern "C" {
     EncodedJSValue callToJavaScript(void*, VM*, ProtoCallFrame*);
     EncodedJSValue callToNativeFunction(void*, VM*, ProtoCallFrame*);
-    void handleUncaughtException();
 }
 #endif
 

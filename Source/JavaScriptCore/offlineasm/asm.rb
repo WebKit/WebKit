@@ -172,24 +172,30 @@ class Assembler
         @lastlabel = ""
     end
 
-    def putsLabel(labelName)
+    def putsLabel(labelName, isGlobal)
         raise unless @state == :asm
         @numGlobalLabels += 1
-        putsProcEndIfNeeded if $emitWinAsm
+        putsProcEndIfNeeded if $emitWinAsm and isGlobal
         putsNewlineSpacerIfAppropriate(:global)
         @internalComment = $enableLabelCountComments ? "Global Label #{@numGlobalLabels}" : nil
-        if /\Allint_op_/.match(labelName)
+        if isGlobal
+            if !$emitWinAsm
+                @outp.puts(formatDump("OFFLINE_ASM_GLOBAL_LABEL(#{labelName})", lastComment))
+            else
+                putsProc(labelName, lastComment)
+            end            
+        elsif /\Allint_op_/.match(labelName)
             if !$emitWinAsm
                 @outp.puts(formatDump("OFFLINE_ASM_OPCODE_LABEL(op_#{$~.post_match})", lastComment))
             else
                 label = "llint_" + "op_#{$~.post_match}"
-                putsProc(label, lastComment)
-            end
+                @outp.puts(formatDump("  _#{label}:", lastComment))
+            end            
         else
             if !$emitWinAsm
                 @outp.puts(formatDump("OFFLINE_ASM_GLUE_LABEL(#{labelName})", lastComment))
             else
-                putsProc(labelName, lastComment)
+                @outp.puts(formatDump("  _#{labelName}:", lastComment))
             end
         end
         @newlineSpacerState = :none # After a global label, we can use another spacer.
@@ -206,12 +212,20 @@ class Assembler
             @outp.puts(formatDump("  #{labelName}:", lastComment))
         end
     end
-    
-    def self.labelReference(labelName)
+
+    def self.externLabelReference(labelName)
         if !$emitWinAsm
             "\" LOCAL_REFERENCE(#{labelName}) \""
         else
             "#{labelName}"
+        end
+    end
+
+    def self.labelReference(labelName)
+        if !$emitWinAsm
+            "\" LOCAL_LABEL_STRING(#{labelName}) \""
+        else
+            "_#{labelName}"
         end
     end
     
@@ -261,6 +275,8 @@ class Assembler
         @annotation = text
     end
 end
+
+IncludeFile.processIncludeOptions()
 
 asmFile = ARGV.shift
 offsetsFile = ARGV.shift

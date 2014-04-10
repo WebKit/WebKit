@@ -34,4 +34,4 @@ else
     OUTPUTFILENAME="LLIntAssembly.h"
 fi
 
-/usr/bin/env ruby "${SRCROOT}/offlineasm/asm.rb" "${SRCROOT}/llint/LowLevelInterpreter.asm" "${BUILT_PRODUCTS_DIR}/LLIntOffsetsExtractor/LLIntOffsetsExtractor${3}.exe" "${OUTPUTFILENAME}" || exit 1
+/usr/bin/env ruby "${SRCROOT}/offlineasm/asm.rb" "-I." "${SRCROOT}/llint/LowLevelInterpreter.asm" "${BUILT_PRODUCTS_DIR}/LLIntOffsetsExtractor/LLIntOffsetsExtractor${3}.exe" "${OUTPUTFILENAME}" || exit 1

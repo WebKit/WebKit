@@ -40,25 +40,26 @@
 namespace JSC { namespace LLInt {
 
 Instruction* Data::s_exceptionInstructions = 0;
-Opcode* Data::s_opcodeMap = 0;
+Opcode Data::s_opcodeMap[numOpcodeIDs] = {0};
+
+#if !ENABLE(LLINT_C_LOOP)
+extern "C" void llint_entry(void*);
+#endif
 
 void initialize()
 {
     Data::s_exceptionInstructions = new Instruction[maxOpcodeLength + 1];
-    Data::s_opcodeMap = new Opcode[numOpcodeIDs];
 
-    #if ENABLE(LLINT_C_LOOP)
+#if ENABLE(LLINT_C_LOOP)
     CLoop::initialize();
 
-    #else // !ENABLE(LLINT_C_LOOP)
+#else // !ENABLE(LLINT_C_LOOP)
+    llint_entry(&Data::s_opcodeMap);
+
     for (int i = 0; i < maxOpcodeLength + 1; ++i)
         Data::s_exceptionInstructions[i].u.pointer =
             LLInt::getCodePtr(llint_throw_from_slow_path_trampoline);
-    #define OPCODE_ENTRY(opcode, length) \
-        Data::s_opcodeMap[opcode] = static_cast<Opcode>(LLInt::getCodePtr(llint_##opcode));
-    FOR_EACH_CORE_OPCODE_ID(OPCODE_ENTRY);
-    #undef OPCODE_ENTRY
-    #endif // !ENABLE(LLINT_C_LOOP)
+#endif // !ENABLE(LLINT_C_LOOP)
 }
 
 #if COMPILER(CLANG)

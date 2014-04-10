@@ -1124,7 +1124,7 @@ class Instruction
             $asm.putc "lr.opcode = getOpcode(llint_cloop_did_return_from_js_#{@@didReturnFromJSLabelCounter});"
             $asm.putc "opcode = #{operands[0].clValue(:opcode)};"
             $asm.putc "DISPATCH_OPCODE();"
-            $asm.putsLabel("llint_cloop_did_return_from_js_#{@@didReturnFromJSLabelCounter}")
+            $asm.putsLabel("llint_cloop_did_return_from_js_#{@@didReturnFromJSLabelCounter}", false)
 
         # We can't do generic function calls with an arbitrary set of args, but
         # fortunately we don't have to here. All native function calls always

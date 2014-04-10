@@ -45,6 +45,21 @@ def dirHash(directory, regexp)
 end
 
 #
+# fileListHash(fileList) -> SHA1 hexdigest
+#
+# Returns a hash of all files in the list.
+#
+
+def fileListHash(fileList)
+    contents = ""
+    fileList.each {
+        | fileName |
+        contents += IO::read(fileName)
+    }
+    return Digest::SHA1.hexdigest(contents)
+end
+
+#
 # selfHash -> SHA1 hexdigest
 #
 # Returns a hash of the offlineasm source code. This allows dependency

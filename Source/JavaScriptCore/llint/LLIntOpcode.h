@@ -48,11 +48,7 @@
 
 
 
-#if ENABLE(LLINT_C_LOOP)
 #define FOR_EACH_LLINT_OPCODE_EXTENSION(macro) FOR_EACH_LLINT_NATIVE_HELPER(macro)
-#else
-#define FOR_EACH_LLINT_OPCODE_EXTENSION(macro) // Nothing to add.
-#endif
 
 #else // !ENABLE(LLINT)
 

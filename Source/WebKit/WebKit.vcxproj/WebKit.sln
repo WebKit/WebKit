@@ -68,6 +68,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testapi", "..\..\JavaScript
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LLIntOffsetsExtractor", "..\..\JavaScriptCore\JavaScriptCore.vcxproj\LLInt\LLIntOffsetsExtractor\LLIntOffsetsExtractor.vcxproj", "{D595E3F6-24F2-4C60-935C-95D50C6B3E96}"
 	ProjectSection(ProjectDependencies) = postProject
+		{3670D01F-95F3-45A8-B878-947EB6CF214E} = {3670D01F-95F3-45A8-B878-947EB6CF214E}
 		{877150A0-41B3-4730-9D98-1B8298098B14} = {877150A0-41B3-4730-9D98-1B8298098B14}
 	EndProjectSection
 EndProject
@@ -78,6 +79,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LLIntDesiredOffsets", "..\.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LLIntAssembly", "..\..\JavaScriptCore\JavaScriptCore.vcxproj\LLInt\LLIntAssembly\LLIntAssembly.vcxproj", "{9221744B-5715-4F56-9590-42F7AB23DD8B}"
 	ProjectSection(ProjectDependencies) = postProject
+		{3670D01F-95F3-45A8-B878-947EB6CF214E} = {3670D01F-95F3-45A8-B878-947EB6CF214E}
 		{D595E3F6-24F2-4C60-935C-95D50C6B3E96} = {D595E3F6-24F2-4C60-935C-95D50C6B3E96}
 	EndProjectSection
 EndProject

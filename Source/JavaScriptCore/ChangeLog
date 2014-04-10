@@ -1,3 +1,95 @@
+2014-04-10  Michael Saboff  <msaboff@apple.com>
+
+        LLInt interpreter code should be generated as part of one function
+        https://bugs.webkit.org/show_bug.cgi?id=131205
+
+        Reviewed by Mark Lam.
+
+        Changed the generation of llint opcodes so that they are all part of the same
+        global function, llint_entry.  That function is used to fill in an entry point
+        table that includes each of the opcodes and helpers.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/build-LLIntAssembly.sh:
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/build-LLIntDesiredOffsets.sh:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Added appropriate use of new -I option to offline assembler and offset
+        generator scripts.
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter.cpp:
+        * llint/LowLevelInterpreter.h:
+        * offlineasm/arm.rb:
+        * offlineasm/arm64.rb:
+        * offlineasm/asm.rb:
+        * offlineasm/ast.rb:
+        * offlineasm/backends.rb:
+        * offlineasm/cloop.rb:
+        * offlineasm/generate_offset_extractor.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/parser.rb:
+        * offlineasm/registers.rb:
+        * offlineasm/self_hash.rb:
+        * offlineasm/settings.rb:
+        * offlineasm/transform.rb:
+        * offlineasm/x86.rb:
+        Added a new "global" keyword to the offline assembler that denotes a label that
+        should be exported.  Added opcode and operand support to get the absolute
+        address of a local label using position independent calculations.  Updated the
+        offline assembler to handle included files, both when generating the checksum
+        as well as including files from other than the local directory via a newly
+        added -I option.  The offline assembler now automatically determines external
+        functions by keeping track of referenced functions that are defined within the
+        assembly source.  This is used both for choosing the correct macro for external
+        references as well as generating the needed EXTERN directives for masm.
+        Updated the generation of the masm only .sym file to be written once at the end
+        of the offline assembler.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodePtr::createLLIntCodePtr):
+        (JSC::MacroAssemblerCodeRef::createLLIntCodeRef):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JITStubs.h:
+        * llint/LLIntCLoop.cpp:
+        (JSC::LLInt::initialize):
+        * llint/LLIntData.h:
+        (JSC::LLInt::getCodeFunctionPtr):
+        (JSC::LLInt::getOpcode): Deleted.
+        (JSC::LLInt::getCodePtr): Deleted.
+        * llint/LLIntOpcode.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::functionForCallEntryThunkGenerator):
+        (JSC::LLInt::functionForConstructEntryThunkGenerator):
+        (JSC::LLInt::functionForCallArityCheckThunkGenerator):
+        (JSC::LLInt::functionForConstructArityCheckThunkGenerator):
+        (JSC::LLInt::evalEntryThunkGenerator):
+        (JSC::LLInt::programEntryThunkGenerator):
+        * llint/LLIntThunks.h:
+        Changed references to llint helpers to go through the entry point table populated
+        by llint_entry.  Added helpers to OpcodeID enum for all builds.
+
+        * bytecode/BytecodeList.json:
+        * generate-bytecode-files:
+        * llint/LLIntCLoop.cpp:
+        (JSC::LLInt::CLoop::initialize):
+        Reordered sections to match the order that the functions are added to the entry point
+        table.  Added new "asmPrefix" property for symbols that have one name but are generated
+        with a prefix, e.g. op_enter -> llint_op_enter.  Eliminated the "emitDefineID" property
+        as we are using enums for all bytecode references.  Changed the C Loop only
+        llint_c_loop_init to llint_entry.
+
 2014-04-10  Matthew Mirman  <mmirman@apple.com>
 
         WIP for inlining C++.  Added a build target to produce LLVM IR.

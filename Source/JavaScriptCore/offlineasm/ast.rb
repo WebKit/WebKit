@@ -229,6 +229,10 @@ class Immediate < NoChildren
         true
     end
     
+    def immediateOperand?
+        true
+    end
+        
     def register?
         false
     end
@@ -255,6 +259,10 @@ class AddImmediates < Node
         "(#{left.dump} + #{right.dump})"
     end
     
+    def value
+        "#{left.value} + #{right.value}"
+    end
+    
     def address?
         false
     end
@@ -264,6 +272,10 @@ class AddImmediates < Node
     end
     
     def immediate?
+        true
+    end
+    
+    def immediateOperand?
         true
     end
     
@@ -293,6 +305,10 @@ class SubImmediates < Node
         "(#{left.dump} - #{right.dump})"
     end
     
+    def value
+        "#{left.value} - #{right.value}"
+    end
+    
     def address?
         false
     end
@@ -302,6 +318,10 @@ class SubImmediates < Node
     end
     
     def immediate?
+        true
+    end
+    
+    def immediateOperand?
         true
     end
     
@@ -343,6 +363,10 @@ class MulImmediates < Node
         true
     end
     
+    def immediateOperand?
+        false
+    end
+    
     def register?
         false
     end
@@ -378,6 +402,10 @@ class NegImmediate < Node
     
     def immediate?
         true
+    end
+    
+    def immediateOperand?
+        false
     end
     
     def register?
@@ -418,6 +446,10 @@ class OrImmediates < Node
         true
     end
     
+    def immediateOperand?
+        false
+    end
+    
     def register?
         false
     end
@@ -454,6 +486,10 @@ class AndImmediates < Node
     
     def immediate?
         true
+    end
+    
+    def immediateOperand?
+        false
     end
     
     def register?
@@ -494,6 +530,10 @@ class XorImmediates < Node
         true
     end
     
+    def immediateOperand?
+        false
+    end
+    
     def register?
         false
     end
@@ -529,6 +569,10 @@ class BitnotImmediate < Node
     
     def immediate?
         true
+    end
+    
+    def immediateOperand?
+        false
     end
     
     def register?
@@ -607,6 +651,10 @@ class FPRegisterID < NoChildren
         false
     end
     
+    def immediateOperand?
+        false
+    end
+    
     def register?
         true
     end
@@ -626,6 +674,10 @@ class SpecialRegister < NoChildren
     end
     
     def immediate?
+        false
+    end
+    
+    def immediateOperand?
         false
     end
     
@@ -699,6 +751,10 @@ class Address < Node
         false
     end
     
+    def immediateOperand?
+        true
+    end
+    
     def register?
         false
     end
@@ -759,6 +815,10 @@ class BaseIndex < Node
         false
     end
     
+    def immediateOperand?
+        false
+    end
+    
     def register?
         false
     end
@@ -790,6 +850,10 @@ class AbsoluteAddress < NoChildren
     
     def immediate?
         false
+    end
+    
+    def immediateOperand?
+        true
     end
     
     def register?
@@ -864,6 +928,7 @@ class ConstDecl < Node
 end
 
 $labelMapping = {}
+$referencedExternLabels = Array.new
 
 class Label < NoChildren
     attr_reader :name
@@ -871,17 +936,61 @@ class Label < NoChildren
     def initialize(codeOrigin, name)
         super(codeOrigin)
         @name = name
+        @extern = true
+        @global = false
     end
     
-    def self.forName(codeOrigin, name)
+    def self.forName(codeOrigin, name, definedInFile = false)
         if $labelMapping[name]
             raise "Label name collision: #{name}" unless $labelMapping[name].is_a? Label
         else
             $labelMapping[name] = Label.new(codeOrigin, name)
         end
+        if definedInFile
+            $labelMapping[name].clearExtern()
+        end
         $labelMapping[name]
     end
-    
+
+    def self.setAsGlobal(codeOrigin, name)
+        if $labelMapping[name]
+            label = $labelMapping[name]
+            raise "Label: #{name} declared global multiple times" unless not label.global?
+            label.setGlobal()
+        else
+            newLabel = Label.new(codeOrigin, name)
+            newLabel.setGlobal()
+            $labelMapping[name] = newLabel
+        end
+    end
+
+    def self.resetReferenced
+        $referencedExternLabels = Array.new
+    end
+
+    def self.forReferencedExtern()
+        $referencedExternLabels.each {
+            | label |
+            yield "#{label.name}"
+        }
+    end
+
+    def clearExtern
+        @extern = false
+    end
+
+    def extern?
+        @extern
+    end
+
+    def setGlobal
+        @global = true
+    end
+
+    def global?
+        @global
+    end
+
     def dump
         "#{name}:"
     end
@@ -949,10 +1058,24 @@ class LabelReference < Node
         label.name
     end
     
+    def extern?
+        $labelMapping[name].is_a? Label and $labelMapping[name].extern?
+    end
+
+    def used
+        if !$referencedExternLabels.include?(@label) and extern?
+            $referencedExternLabels.push(@label)
+        end
+    end
+
     def dump
         label.name
     end
     
+    def value
+        asmLabel()
+    end
+
     def address?
         false
     end
@@ -963,6 +1086,10 @@ class LabelReference < Node
     
     def immediate?
         false
+    end
+    
+    def immediateOperand?
+        true
     end
 end
 
@@ -989,6 +1116,10 @@ class LocalLabelReference < NoChildren
     def dump
         label.name
     end
+
+    def value
+        asmLabel()
+    end
     
     def address?
         false
@@ -1000,6 +1131,10 @@ class LocalLabelReference < NoChildren
     
     def immediate?
         false
+    end
+    
+    def immediateOperand?
+        true
     end
 end
 

@@ -212,17 +212,12 @@ if __name__ == "__main__":
             bytecodeHFile.write("\n\n")
             bytecodeHFile.write("#define NUMBER_OF_{0}_IDS {1}\n\n".format(section["macroNameComponent"], bytecodeNum))
 
-            if "emitDefineID" in section:
-                bytecodeNum = 0
-                for bytecode in section["bytecodes"]:
-                    bytecodeHFile.write("#define %s_ID %s\n" % (bytecode["name"].upper(), bytecodeNum))
-                    bytecodeNum = bytecodeNum + 1
-
-                bytecodeHFile.write("\n\n")
-
         if initASMFileName and section['emitInASMFile']:
+            prefix = ""
+            if "asmPrefix" in section:
+                prefix = section["asmPrefix"]
             for bytecode in section["bytecodes"]:
-                initBytecodesFile.write("setEntryAddress({0}, _{1})\n".format(initASMBytecodeNum, bytecode["name"]))
+                initBytecodesFile.write("setEntryAddress({0}, _{1}{2})\n".format(initASMBytecodeNum, prefix, bytecode["name"]))
                 initASMBytecodeNum = initASMBytecodeNum + 1
 
     if bytecodeHFilename:

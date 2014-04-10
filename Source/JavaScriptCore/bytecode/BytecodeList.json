@@ -1,6 +1,7 @@
 [
     {
-        "section" : "Bytecodes", "emitInHFile" : true, "emitInASMFile" : true, "macroNameComponent" : "BYTECODE",
+        "section" : "Bytecodes", "emitInHFile" : true, "emitInASMFile" : true, 
+        "macroNameComponent" : "BYTECODE", "asmPrefix" : "llint_", 
         "bytecodes" : [
             { "name" : "op_enter", "length" : 1 },
             { "name" : "op_create_activation", "length" : 2 },
@@ -125,8 +126,27 @@
         ]
     },
     {
+        "section" : "CLoopHelpers", "emitInHFile" : true, "emitInASMFile" : false, "defaultLength" : 1,
+        "macroNameComponent" : "CLOOP_BYTECODE_HELPER",
+        "bytecodes" : [
+            { "name" : "llint_entry" },
+            { "name" : "getHostCallReturnValue" },
+            { "name" : "llint_return_to_host" },
+            { "name" : "llint_call_to_javascript" },
+            { "name" : "llint_call_to_native_function" },
+            { "name" : "llint_cloop_did_return_from_js_1" },
+            { "name" : "llint_cloop_did_return_from_js_2" },
+            { "name" : "llint_cloop_did_return_from_js_3" },
+            { "name" : "llint_cloop_did_return_from_js_4" },
+            { "name" : "llint_cloop_did_return_from_js_5" },
+            { "name" : "llint_cloop_did_return_from_js_6" },
+            { "name" : "llint_cloop_did_return_from_js_7" },
+            { "name" : "llint_cloop_did_return_from_js_8" }
+        ]
+    },
+    {
         "section" : "NativeHelpers", "emitInHFile" : true, "emitInASMFile" : true, "defaultLength" : 1,
-        "macroNameComponent" : "BYTECODE_HELPER", "emitDefineID" : true,
+        "macroNameComponent" : "BYTECODE_HELPER",
         "bytecodes" : [
             { "name" : "llint_program_prologue" },
             { "name" : "llint_eval_prologue" },
@@ -138,27 +158,8 @@
             { "name" : "llint_throw_from_slow_path_trampoline" },
             { "name" : "llint_throw_during_call_trampoline" },
             { "name" : "llint_native_call_trampoline" },
-            { "name" : "llint_native_construct_trampoline" }
-        ]
-    },
-    {
-        "section" : "CLoopHelpers", "emitInHFile" : true, "emitInASMFile" : false, "defaultLength" : 1,
-        "macroNameComponent" : "CLOOP_BYTECODE_HELPER",
-        "bytecodes" : [
-            { "name" : "llint_c_loop_init" },
-            { "name" : "getHostCallReturnValue" },
-            { "name" : "llint_return_to_host" },
-            { "name" : "llint_call_to_javascript" },
-            { "name" : "llint_call_to_native_function" },
-            { "name" : "handleUncaughtException" },
-            { "name" : "llint_cloop_did_return_from_js_1" },
-            { "name" : "llint_cloop_did_return_from_js_2" },
-            { "name" : "llint_cloop_did_return_from_js_3" },
-            { "name" : "llint_cloop_did_return_from_js_4" },
-            { "name" : "llint_cloop_did_return_from_js_5" },
-            { "name" : "llint_cloop_did_return_from_js_6" },
-            { "name" : "llint_cloop_did_return_from_js_7" },
-            { "name" : "llint_cloop_did_return_from_js_8" }
+            { "name" : "llint_native_construct_trampoline" },
+            { "name" : "handleUncaughtException" }
         ]
     }
 ]

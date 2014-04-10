@@ -463,6 +463,9 @@ class LabelReference
 end
 
 class LocalLabelReference
+    def x86Operand(kind)
+        asmLabel
+    end
     def x86CallOperand(kind)
         asmLabel
     end
@@ -511,7 +514,6 @@ end
 
 class Instruction
     @@floatingPointCompareImplicitOperand = isIntelSyntax ? "st(0), " : ""
-    @@exportedSymbols = Array.new
     
     def x86Operands(*kinds)
         raise unless kinds.size == operands.size
@@ -846,22 +848,6 @@ class Instruction
         lowerX86Common
     end
 
-    def writeSymbolToFile(symbol)
-        raise unless isMSVC
-
-        alreadyExported = @@exportedSymbols.include?(symbol)
-
-        if !alreadyExported
-            @@exportedSymbols.push(symbol)
-
-            # Write symbols needed by MASM
-            File.open("#{File.basename($output.path)}.sym", "a") {
-                | outp |
-                outp.puts "EXTERN #{symbol} : near"
-            }
-        end
-    end
-    
     def lowerX86Common
         $asm.codeOrigin codeOriginString if $enableCodeOriginComments
         $asm.annotation annotation if $enableInstrAnnotations
@@ -1338,8 +1324,8 @@ class Instruction
                 }
             end
             op = operands[0].x86CallOperand(:ptr)
-            if isMSVC && (operands[0].is_a? LabelReference)
-                writeSymbolToFile(op)
+            if operands[0].is_a? LabelReference
+                operands[0].used
             end
             $asm.puts "call #{op}"
         when "ret"

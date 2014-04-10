@@ -172,6 +172,8 @@ end
 #
 
 def emitCodeInConfiguration(concreteSettings, ast, backend)
+    Label.resetReferenced
+
     if !$emitWinAsm
         $output.puts cppSettingsTest(concreteSettings)
     else
@@ -193,6 +195,15 @@ def emitCodeInConfiguration(concreteSettings, ast, backend)
     else
         $output.puts "_TEXT ENDS"
         $output.puts "END"
+
+        # Write symbols needed by MASM
+        File.open("#{File.basename($output.path)}.sym", "w") {
+            | outp |
+            Label.forReferencedExtern {
+                | name |
+                outp.puts "EXTERN #{name[1..-1]} : near"
+            }
+        }
     end
 end
 

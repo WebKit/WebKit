@@ -292,6 +292,8 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_resolve_scope)
         DEFINE_OP(op_get_from_scope)
         DEFINE_OP(op_put_to_scope)
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
 

@@ -22,4 +22,4 @@ export BUILT_PRODUCTS_DIR="$XDSTROOT/obj${3}/JavaScriptCore/DerivedSources"
 # Step 1: Generate LLIntDesiredOffsets.h
 mkdir -p "${BUILT_PRODUCTS_DIR}"
 
-/usr/bin/env ruby "${SRCROOT}/offlineasm/generate_offset_extractor.rb" "${SRCROOT}/llint/LowLevelInterpreter.asm" "${BUILT_PRODUCTS_DIR}/LLIntDesiredOffsets.h"
+/usr/bin/env ruby "${SRCROOT}/offlineasm/generate_offset_extractor.rb" "-I${BUILT_PRODUCTS_DIR}" "${SRCROOT}/llint/LowLevelInterpreter.asm" "${BUILT_PRODUCTS_DIR}/LLIntDesiredOffsets.h"

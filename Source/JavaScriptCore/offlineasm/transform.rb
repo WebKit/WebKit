@@ -457,6 +457,13 @@ class Instruction
     end
 end
 
+class SubImmediates
+    def validate
+      raise "Invalid operand #{left.dump} to immediate subtraction" unless left.immediateOperand?
+      raise "Invalid operand #{right.dump} to immediate subtraction" unless right.immediateOperand?
+    end
+end
+
 class Error
     def validate
     end

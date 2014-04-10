@@ -820,6 +820,8 @@ class Instruction
             $asm.puts "smaddl #{operands[2].arm64Operand(:ptr)}, #{operands[0].arm64Operand(:int)}, #{operands[1].arm64Operand(:int)}, xzr"
         when "memfence"
             $asm.puts "dmb sy"
+        when "pcrtoaddr"
+          $asm.puts "adr #{operands[1].arm64Operand(:ptr)}, #{operands[0].value}"
         else
             lowerDefault
         end

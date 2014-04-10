@@ -60,32 +60,32 @@ static MacroAssemblerCodeRef generateThunkWithJumpTo(VM* vm, void (*target)(), c
 
 MacroAssemblerCodeRef functionForCallEntryThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(vm, llint_function_for_call_prologue, "function for call");
+    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_call_prologue), "function for call");
 }
 
 MacroAssemblerCodeRef functionForConstructEntryThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(vm, llint_function_for_construct_prologue, "function for construct");
+    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_construct_prologue), "function for construct");
 }
 
 MacroAssemblerCodeRef functionForCallArityCheckThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(vm, llint_function_for_call_arity_check, "function for call with arity check");
+    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_call_arity_check), "function for call with arity check");
 }
 
 MacroAssemblerCodeRef functionForConstructArityCheckThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(vm, llint_function_for_construct_arity_check, "function for construct with arity check");
+    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_construct_arity_check), "function for construct with arity check");
 }
 
 MacroAssemblerCodeRef evalEntryThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(vm, llint_eval_prologue, "eval");
+    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_eval_prologue), "eval");
 }
 
 MacroAssemblerCodeRef programEntryThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(vm, llint_program_prologue, "program");
+    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_program_prologue), "program");
 }
 
 } // namespace LLInt

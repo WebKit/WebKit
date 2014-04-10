@@ -38,9 +38,6 @@ struct ProtoCallFrame;
 extern "C" {
     EncodedJSValue callToJavaScript(void*, VM*, ProtoCallFrame*);
     EncodedJSValue callToNativeFunction(void*, VM*, ProtoCallFrame*);
-#if ENABLE(JIT)
-    void handleUncaughtException();
-#endif
 }
 
 namespace LLInt {

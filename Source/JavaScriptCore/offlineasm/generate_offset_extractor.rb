@@ -34,6 +34,8 @@ require "self_hash"
 require "settings"
 require "transform"
 
+IncludeFile.processIncludeOptions()
+
 inputFlnm = ARGV.shift
 outputFlnm = ARGV.shift
 

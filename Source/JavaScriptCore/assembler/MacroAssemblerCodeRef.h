@@ -294,7 +294,7 @@ public:
     }
 
 #if ENABLE(LLINT)
-    static MacroAssemblerCodePtr createLLIntCodePtr(LLIntCode codeId)
+    static MacroAssemblerCodePtr createLLIntCodePtr(OpcodeID codeId)
     {
         return createFromExecutableAddress(LLInt::getCodePtr(codeId));
     }
@@ -412,7 +412,7 @@ public:
     
 #if ENABLE(LLINT)
     // Helper for creating self-managed code refs from LLInt.
-    static MacroAssemblerCodeRef createLLIntCodeRef(LLIntCode codeId)
+    static MacroAssemblerCodeRef createLLIntCodeRef(OpcodeID codeId)
     {
         return createSelfManagedCodeRef(MacroAssemblerCodePtr::createFromExecutableAddress(LLInt::getCodePtr(codeId)));
     }

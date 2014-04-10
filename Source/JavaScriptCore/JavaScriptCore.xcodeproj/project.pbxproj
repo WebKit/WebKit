@@ -13,6 +13,9 @@
 			buildPhases = (
 				0F4680AA14BA7FD900BFE272 /* Generate Derived Sources */,
 			);
+			dependencies = (
+				65442D5018EBB744007AF92F /* PBXTargetDependency */,
+			);
 			name = "LLInt Offsets";
 			productName = "Derived Sources";
 		};
@@ -36,6 +39,7 @@
 				65788AA018B409EB00C189FF /* Offline Assemble */,
 			);
 			dependencies = (
+				65244BD318ECB5000010B708 /* PBXTargetDependency */,
 				65788A9E18B409EB00C189FF /* PBXTargetDependency */,
 			);
 			name = "Offline Assembler";
@@ -49,7 +53,6 @@
 				5D35DEE10C7C140B008648B2 /* Generate DTrace header */,
 			);
 			dependencies = (
-				65788AA918B40A3300C189FF /* PBXTargetDependency */,
 			);
 			name = "Derived Sources";
 			productName = "Derived Sources";
@@ -1831,19 +1834,26 @@
 			remoteGlobalIDString = 5D6B2A47152B9E17005231DE;
 			remoteInfo = "Test Tools";
 		};
+		65244BD218ECB5000010B708 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 65FB3F6609D11E9100F49DEB;
+			remoteInfo = "Derived Sources";
+		};
+		65442D4F18EBB744007AF92F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 65FB3F6609D11E9100F49DEB;
+			remoteInfo = "Derived Sources";
+		};
 		65788A9F18B409EB00C189FF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 0FF922C314F46B130041A24E;
 			remoteInfo = JSCLLIntOffsetsExtractor;
-		};
-		65788AA818B40A3300C189FF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0F4680A914BA7FD900BFE272;
-			remoteInfo = "LLInt Offsets";
 		};
 		65788AAA18B40A3B00C189FF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -6527,7 +6537,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_offset_extractor.rb\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/LLIntDesiredOffsets.h\"\n";
+			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_offset_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/LLIntDesiredOffsets.h\"\n";
 		};
 		0FCEFAD91806191800472CE4 /* Copy LLVM Library Into Framework */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -6715,7 +6725,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${ACTION}\" == \"installhdrs\" ]]; then\n    exit 0\nfi\n\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\n\n/usr/bin/env ruby JavaScriptCore/offlineasm/asm.rb JavaScriptCore/llint/LowLevelInterpreter.asm ${BUILT_PRODUCTS_DIR}/JSCLLIntOffsetsExtractor LLIntAssembly.h || exit 1";
+			shellScript = "if [[ \"${ACTION}\" == \"installhdrs\" ]]; then\n    exit 0\nfi\n\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\n\n/usr/bin/env ruby JavaScriptCore/offlineasm/asm.rb -I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore JavaScriptCore/llint/LowLevelInterpreter.asm ${BUILT_PRODUCTS_DIR}/JSCLLIntOffsetsExtractor LLIntAssembly.h || exit 1";
 		};
 		65FB3F6509D11E9100F49DEB /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -7428,15 +7438,20 @@
 			target = 5D6B2A47152B9E17005231DE /* Test Tools */;
 			targetProxy = 5D6B2A56152B9E2E005231DE /* PBXContainerItemProxy */;
 		};
+		65244BD318ECB5000010B708 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 65FB3F6609D11E9100F49DEB /* Derived Sources */;
+			targetProxy = 65244BD218ECB5000010B708 /* PBXContainerItemProxy */;
+		};
+		65442D5018EBB744007AF92F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 65FB3F6609D11E9100F49DEB /* Derived Sources */;
+			targetProxy = 65442D4F18EBB744007AF92F /* PBXContainerItemProxy */;
+		};
 		65788A9E18B409EB00C189FF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0FF922C314F46B130041A24E /* JSCLLIntOffsetsExtractor */;
 			targetProxy = 65788A9F18B409EB00C189FF /* PBXContainerItemProxy */;
-		};
-		65788AA918B40A3300C189FF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0F4680A914BA7FD900BFE272 /* LLInt Offsets */;
-			targetProxy = 65788AA818B40A3300C189FF /* PBXContainerItemProxy */;
 		};
 		65788AAB18B40A3B00C189FF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

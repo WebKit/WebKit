@@ -41,6 +41,36 @@ class CodeOrigin
     end
 end
 
+class IncludeFile
+    @@includeDirs = []
+
+    attr_reader :fileName
+
+    def initialize(moduleName, defaultDir)
+        directory = nil
+        @@includeDirs.each {
+            | includePath |
+            fileName = includePath + (moduleName + ".asm")
+            directory = includePath unless not File.file?(fileName)
+        }
+        if not directory
+            directory = defaultDir
+        end
+
+        @fileName = directory + (moduleName + ".asm")
+    end
+
+    def self.processIncludeOptions()
+        while ARGV[0][/-I/]
+            path = ARGV.shift[2..-1]
+            if not path
+                path = ARGV.shift
+            end
+            @@includeDirs << (path + "/")
+        end
+    end
+end
+
 class Token
     attr_reader :codeOrigin, :string
     
@@ -157,7 +187,7 @@ def isInstruction(token)
 end
 
 def isKeyword(token)
-    token =~ /\A((true)|(false)|(if)|(then)|(else)|(elsif)|(end)|(and)|(or)|(not)|(macro)|(const)|(sizeof)|(error)|(include))\Z/ or
+    token =~ /\A((true)|(false)|(if)|(then)|(else)|(elsif)|(end)|(and)|(or)|(not)|(global)|(macro)|(const)|(sizeof)|(error)|(include))\Z/ or
         token =~ REGISTER_PATTERN or
         isInstruction(token)
 end
@@ -380,6 +410,14 @@ class Parser
             @idx += 1
             codeOrigin, names = parseColonColon
             Sizeof.forName(codeOrigin, names.join('::'))
+        elsif isLabel @tokens[@idx]
+            result = LabelReference.new(@tokens[@idx].codeOrigin, Label.forName(@tokens[@idx].codeOrigin, @tokens[@idx].string))
+            @idx += 1
+            result
+        elsif isLocalLabel @tokens[@idx]
+            result = LocalLabelReference.new(@tokens[@idx].codeOrigin, LocalLabel.forName(@tokens[@idx].codeOrigin, @tokens[@idx].string))
+            @idx += 1
+            result
         else
             parseError
         end
@@ -573,6 +611,14 @@ class Parser
                 body = parseSequence(/\Aend\Z/, "while inside of macro #{name}")
                 @idx += 1
                 list << Macro.new(codeOrigin, name, variables, body)
+            elsif @tokens[@idx] == "global"
+                codeOrigin = @tokens[@idx].codeOrigin
+                @idx += 1
+                skipNewLine
+                parseError unless isLabel(@tokens[@idx])
+                name = @tokens[@idx].string
+                @idx += 1
+                Label.setAsGlobal(codeOrigin, name)
             elsif isInstruction @tokens[@idx]
                 codeOrigin = @tokens[@idx].codeOrigin
                 name = @tokens[@idx].string
@@ -677,7 +723,7 @@ class Parser
                 parseError unless @tokens[@idx] == ":"
                 # It's a label.
                 if isLabel name
-                    list << Label.forName(codeOrigin, name)
+                    list << Label.forName(codeOrigin, name, true)
                 else
                     list << LocalLabel.forName(codeOrigin, name)
                 end
@@ -686,7 +732,7 @@ class Parser
                 @idx += 1
                 parseError unless isIdentifier(@tokens[@idx])
                 moduleName = @tokens[@idx].string
-                fileName = @tokens[@idx].codeOrigin.fileName.dirname + (moduleName + ".asm")
+                fileName = IncludeFile.new(moduleName, @tokens[@idx].codeOrigin.fileName.dirname).fileName
                 @idx += 1
                 $stderr.puts "offlineasm: Including file #{fileName}"
                 list << parse(fileName)
@@ -695,6 +741,29 @@ class Parser
             end
         }
         Sequence.new(firstCodeOrigin, list)
+    end
+
+    def parseIncludes(final, comment)
+        firstCodeOrigin = @tokens[@idx].codeOrigin
+        fileList = []
+        fileList << @tokens[@idx].codeOrigin.fileName
+        loop {
+            if (@idx == @tokens.length and not final) or (final and @tokens[@idx] =~ final)
+                break
+            elsif @tokens[@idx] == "include"
+                @idx += 1
+                parseError unless isIdentifier(@tokens[@idx])
+                moduleName = @tokens[@idx].string
+                fileName = IncludeFile.new(moduleName, @tokens[@idx].codeOrigin.fileName.dirname).fileName
+                @idx += 1
+                
+                fileList << fileName
+            else
+                @idx += 1
+            end
+        }
+
+        return fileList
     end
 end
 
@@ -708,6 +777,8 @@ def parse(fileName)
 end
 
 def parseHash(fileName)
-    dirHash(Pathname.new(fileName).dirname, /\.asm$/)
+    parser = Parser.new(IO::read(fileName), fileName)
+    fileList = parser.parseIncludes(nil, "")
+    fileListHash(fileList)
 end
 

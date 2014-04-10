@@ -44,7 +44,7 @@ GPRS =
      "r1",
      "sp",
      "lr",
-     
+     "pc",
      # 64-bit only registers:
      "csr1",  # tag type number register
      "csr2"   # tag mask register

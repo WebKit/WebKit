@@ -50,7 +50,7 @@ public:
 
 private:
     static Instruction* s_exceptionInstructions;
-    static Opcode* s_opcodeMap;
+    static Opcode s_opcodeMap[numOpcodeIDs];
 
     friend void initialize();
 
@@ -86,6 +86,13 @@ ALWAYS_INLINE void* getCodePtr(OpcodeID id)
     return reinterpret_cast<void*>(getOpcode(id));
 }
 
+#if ENABLE(JIT)
+ALWAYS_INLINE LLIntCode getCodeFunctionPtr(OpcodeID codeId)
+{
+    return reinterpret_cast<LLIntCode>(getCodePtr(codeId));
+}
+#endif
+
 #else // !ENABLE(LLINT)
 
 #if COMPILER(CLANG)
@@ -103,16 +110,6 @@ public:
 #endif
 
 #endif // !ENABLE(LLINT)
-
-ALWAYS_INLINE void* getOpcode(void llintOpcode())
-{
-    return bitwise_cast<void*>(llintOpcode);
-}
-
-ALWAYS_INLINE void* getCodePtr(void glueHelper())
-{
-    return bitwise_cast<void*>(glueHelper);
-}
 
 ALWAYS_INLINE void* getCodePtr(JSC::EncodedJSValue glueHelper())
 {

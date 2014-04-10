@@ -60,9 +60,9 @@ namespace JSC {
 
 const int maxOpcodeLength = 9;
 #if ENABLE(LLINT_C_LOOP)
-const int numOpcodeIDs = NUMBER_OF_BYTECODE_IDS + NUMBER_OF_BYTECODE_HELPER_IDS + NUMBER_OF_CLOOP_BYTECODE_HELPER_IDS;
+const int numOpcodeIDs = NUMBER_OF_BYTECODE_IDS + NUMBER_OF_CLOOP_BYTECODE_HELPER_IDS + NUMBER_OF_BYTECODE_HELPER_IDS;
 #else
-const int numOpcodeIDs = NUMBER_OF_BYTECODE_IDS;
+const int numOpcodeIDs = NUMBER_OF_BYTECODE_IDS + NUMBER_OF_BYTECODE_HELPER_IDS;
 #endif
 
 #define OPCODE_ID_LENGTHS(id, length) const int id##_length = length;
