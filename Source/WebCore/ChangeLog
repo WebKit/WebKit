@@ -1,3 +1,18 @@
+2014-04-09  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r167046.
+        https://bugs.webkit.org/show_bug.cgi?id=131479
+
+        Caused 300+ failures on Mavericks WK1 tester (Requested by ap
+        on #webkit).
+
+        Reverted changeset:
+
+        "Remove "System Font" from whitelisted DRT fonts and char
+        width calculations"
+        https://bugs.webkit.org/show_bug.cgi?id=131411
+        http://trac.webkit.org/changeset/167046
+
 2014-04-09  Jeremy Jones  <jeremyj@apple.com>
 
         Fix build failure.
