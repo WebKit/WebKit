@@ -350,6 +350,7 @@ public:
     virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&) override;
 
     virtual bool canHaveChildren() const override { return true; }
+    virtual bool canCollapseAnonymousBlockChild() const { return true; }
 
 protected:
     virtual void willBeDestroyed() override;
@@ -573,9 +574,6 @@ protected:
     virtual bool requiresColumns(int computedColumnCount) const;
 
     bool updateLogicalWidthAndColumnWidth();
-
-    virtual bool canCollapseAnonymousBlockChild() const { return true; }
-
 public:
     virtual LayoutUnit offsetFromLogicalTopOfFirstPage() const override;
     RenderRegion* regionAtBlockOffset(LayoutUnit) const;

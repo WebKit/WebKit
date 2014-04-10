@@ -1,3 +1,14 @@
+2014-04-10  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Assertion failure in WebCore::FlexBoxIterator::next()
+        <https://bugs.webkit.org/show_bug.cgi?id=117176>
+        <rdar://problem/14054549>
+
+        Reviewed by Tim Horton.
+
+        * fast/flexbox/collapse-anonymous-wrappers-assertion-expected.txt: Added.
+        * fast/flexbox/collapse-anonymous-wrappers-assertion.html: Added.
+
 2014-04-07  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Assertion failure, !node || node->isElementNode(), in
