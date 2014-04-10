@@ -370,6 +370,10 @@ webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tree-b
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_evil_timestamp.html [ Skip ]
 
+# WebVTT tests don't work because they need more than a 800x600 snapshot.
+# They are also flakily failing on WebKit2, as snapshot sometimes has a black rectangle for video element instead of white one.
+webkit.org/b/131476 media/track/w3c/track/webvtt [ Skip ]
+
 # Tests for MediaSource API. Feature is not yet functional.
 # https://bugs.webkit.org/show_bug.cgi?id=64731
 http/tests/media/media-source/

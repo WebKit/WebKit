@@ -1,3 +1,10 @@
+2014-04-09  Alexey Proskuryakov  <ap@apple.com>
+
+        WebVTT tests don't work because of a 800x600 snapshot (but are very flaky anyway)
+        https://bugs.webkit.org/show_bug.cgi?id=131476
+
+        * platform/mac/TestExpectations: Skip them.
+
 2014-04-09  James Craig  <jcraig@apple.com>
 
         AX: Bug in AccessibilityNodeObject::helpText
