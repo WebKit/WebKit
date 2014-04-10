@@ -44,6 +44,7 @@
 #include <JavaScriptCore/JSContextRef.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
+#include <WebCore/Language.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
@@ -564,4 +565,18 @@ void ewk_context_tls_error_policy_set(Ewk_Context* context, Ewk_TLS_Error_Policy
 {
     EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, context, impl);
     impl->setIgnoreTLSErrors(tls_error_policy);
+}
+
+void ewk_context_preferred_languages_set(Eina_List* languages)
+{
+    Vector<String> preferredLanguages;
+    if (languages) {
+        Eina_List* l;
+        void* data;
+        EINA_LIST_FOREACH(languages, l, data)
+            preferredLanguages.append(String::fromUTF8(static_cast<char*>(data)).lower().replace("_", "-"));
+    }
+
+    WebCore::overrideUserPreferredLanguages(preferredLanguages);
+    WebCore::languageDidChange();
 }

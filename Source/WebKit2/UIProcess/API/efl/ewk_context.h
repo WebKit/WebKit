@@ -431,6 +431,19 @@ EAPI Ewk_TLS_Error_Policy ewk_context_tls_error_policy_get(const Ewk_Context *co
  */
 EAPI void ewk_context_tls_error_policy_set(Ewk_Context *context, Ewk_TLS_Error_Policy tls_error_policy);
 
+/**
+ * Sets the list of preferred languages.
+ *
+ * Sets the list of preferred langages. This list will be used to build the "Accept-Language"
+ * header that will be included in the network requests.
+ * Client can pass @c NULL for languages to clear what is set before.
+ *
+ * @param languages the list of preferred languages (char* as data) or @c NULL
+ *
+ * @note all contexts will be affected.
+ */
+EAPI void ewk_context_preferred_languages_set(Eina_List *languages);
+
 #ifdef __cplusplus
 }
 #endif

@@ -28,8 +28,10 @@
 
 #include "EwkView.h"
 #include "UnitTestUtils/EWK2UnitTestBase.h"
+#include "UnitTestUtils/EWK2UnitTestServer.h"
 #include "ewk_context_private.h"
 #include "ewk_view_private.h"
+#include <wtf/text/CString.h>
 
 using namespace EWK2UnitTest;
 
@@ -236,4 +238,42 @@ TEST_F(EWK2ContextTest, ewk_context_additional_plugin_path_set)
     ASSERT_TRUE(ewk_context_additional_plugin_path_set(context, "/plugins"));
 
     /* FIXME: Get additional plugin path and compare with the path. */
+}
+
+static char* s_acceptLanguages = nullptr;
+
+static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+{
+    if (message->method != SOUP_METHOD_GET) {
+        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+        return;
+    }
+
+    soup_message_set_status(message, SOUP_STATUS_OK);
+    s_acceptLanguages = strdup(soup_message_headers_get_one(message->request_headers, "Accept-Language"));
+
+    soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, s_acceptLanguages, strlen(s_acceptLanguages));
+    soup_message_body_complete(message->response_body);
+}
+
+TEST_F(EWK2UnitTestBase, ewk_context_preferred_languages)
+{
+    Eina_List* acceptLanguages;
+    acceptLanguages = eina_list_append(acceptLanguages, "ko_kr");
+    acceptLanguages = eina_list_append(acceptLanguages, "fr");
+    acceptLanguages = eina_list_append(acceptLanguages, "en");
+
+    ewk_context_preferred_languages_set(acceptLanguages);
+
+    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
+    httpServer->run(serverCallback);
+
+    ASSERT_TRUE(loadUrlSync(httpServer->getURLForPath("/index.html").data()));
+    ASSERT_STREQ("ko-kr, fr;q=0.90, en;q=0.80", s_acceptLanguages);
+    free(s_acceptLanguages);
+
+    ewk_context_preferred_languages_set(nullptr);
+    ASSERT_TRUE(loadUrlSync(httpServer->getURLForPath("/index.html").data()));
+    ASSERT_STREQ("en-US", s_acceptLanguages);
+    free(s_acceptLanguages);
 }
