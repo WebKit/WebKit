@@ -1,3 +1,15 @@
+2014-04-09  Jeremy Jones  <jeremyj@apple.com>
+
+        Fix build failure.
+        https://bugs.webkit.org/show_bug.cgi?id=131473
+
+        Reviewed by Dan Bernstein.
+
+        Fix build failure.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (mediaSelectionOptions):
+
 2014-04-09  Enrica Casucci  <enrica@apple.com>
 
         Unreviewed build fix after http://trac.webkit.org/changeset/167045

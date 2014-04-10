@@ -45,6 +45,7 @@
 #import <WebCore/TimeRanges.h>
 #import <WebCore/WebCoreThreadRun.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/CString.h>
 
 using namespace WebCore;
 
@@ -486,8 +487,7 @@ static NSMutableArray *mediaSelectionOptions(const Vector<String>& options)
     NSMutableArray *webOptions = [NSMutableArray arrayWithCapacity:options.size()];
     for (auto& name : options) {
         RetainPtr<WebAVMediaSelectionOption> webOption = adoptNS([[WebAVMediaSelectionOption alloc] init]);
-        RetainPtr<NSString> nameString = adoptNS([[NSString alloc] initWithUTF8String:name.utf8().data()]);
-        [webOption setLocalizedDisplayName:nameString.get()];
+        [webOption setLocalizedDisplayName:name];
         [webOptions addObject:webOption.get()];
     }
     return webOptions;
