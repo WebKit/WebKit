@@ -31,6 +31,7 @@
 #import "Region.h"
 #import "TileCoverageMap.h"
 #import "TileGrid.h"
+#import "WebLayer.h"
 #if !PLATFORM(IOS)
 #import "LayerPool.h"
 #endif

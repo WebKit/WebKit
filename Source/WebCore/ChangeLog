@@ -1,3 +1,9 @@
+2014-04-09  Antti Koivisto  <antti@apple.com>
+
+        Try to fix iOS build.
+
+        * platform/graphics/ca/mac/TileController.mm:
+
 2014-04-09  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r165908): ~QuickLookHandle() tries to dereference a null ResourceHandle
