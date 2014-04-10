@@ -394,10 +394,11 @@ static void paintToggleButton(ControlPart buttonType, ControlStates* controlStat
     GraphicsContextStateSaver stateSaver(*context);
 
     NSControlSize controlSize = [toggleButtonCell controlSize];
-    IntSize zoomedSize = checkboxSizes()[controlSize];
+    IntSize zoomedSize = buttonType == CheckboxPart ? checkboxSizes()[controlSize] : radioSizes()[controlSize];
     zoomedSize.setWidth(zoomedSize.width() * zoomFactor);
     zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
-    IntRect inflatedRect = inflateRect(zoomedRect, zoomedSize, checkboxMargins(controlSize), zoomFactor);
+    const int* controlMargins = buttonType == CheckboxPart ? checkboxMargins(controlSize) : radioMargins(controlSize);
+    IntRect inflatedRect = inflateRect(zoomedRect, zoomedSize, controlMargins, zoomFactor);
     
     if (zoomFactor != 1.0f) {
         inflatedRect.setWidth(inflatedRect.width() / zoomFactor);

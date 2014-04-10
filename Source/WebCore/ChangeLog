@@ -1,3 +1,15 @@
+2014-04-10  Beth Dakin  <bdakin@apple.com>
+
+        Radio buttons are using the wrong sizes and margins
+        https://bugs.webkit.org/show_bug.cgi?id=131503
+
+        Reviewed by Jer Noble.
+
+        This is a regression that I caused recently when I combined radio button and 
+        checkbox code. 
+        * platform/mac/ThemeMac.mm:
+        (WebCore::paintToggleButton):
+
 2014-04-08  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Assertion failure in WebCore::FlexBoxIterator::next()
