@@ -1,3 +1,26 @@
+2014-04-09  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r165908): ~QuickLookHandle() tries to dereference a null ResourceHandle
+        https://bugs.webkit.org/show_bug.cgi?id=131467
+
+        Reviewed by Tim Horton.
+
+        QuickLookHandle stored a ResourceHandle pointer in order to later
+        retrive the URL of its firstRequest(), but after r165908 we no longer
+        always have a ResourceHandle. Since firstRequest()'s URL is the only
+        thing we need from ResourceHandle, store it directly rather than a
+        ResourceHandle pointer. In the case where we create a QuickLookHandle
+        from a ResourceLoader rather than a ResourceHandle, pass the loader's
+        originalRequest(), which represents the same request as firstRequest()
+        (i.e. the request after willSendRequest() but before redirects).
+
+        * platform/network/ios/QuickLook.h:
+        * platform/network/ios/QuickLook.mm:
+        (WebCore::QuickLookHandle::QuickLookHandle):
+        (WebCore::QuickLookHandle::create):
+        (WebCore::QuickLookHandle::didFail):
+        (WebCore::QuickLookHandle::~QuickLookHandle):
+
 2014-04-09  James Craig  <jcraig@apple.com>
 
         AX: Bug in AccessibilityNodeObject::helpText

@@ -106,12 +106,9 @@ public:
 #endif
 
 private:
-    QuickLookHandle(ResourceHandle*, NSURLConnection *, NSURLResponse *, id delegate);
-#if USE(CFNETWORK)
-    QuickLookHandle(ResourceHandle*, CFURLResponseRef);
-#endif
+    QuickLookHandle(NSURL *, NSURLConnection *, NSURLResponse *, id delegate);
 
-    ResourceHandle* m_handle;
+    RetainPtr<NSURL> m_firstRequestURL;
     RetainPtr<id> m_converter;
     RetainPtr<id> m_delegate;
     bool m_finishedLoadingDataIntoConverter;

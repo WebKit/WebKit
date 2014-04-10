@@ -340,8 +340,8 @@ static NSString *createTemporaryFileForQuickLook(NSString *fileName)
 }
 
 
-QuickLookHandle::QuickLookHandle(ResourceHandle* handle, NSURLConnection *connection, NSURLResponse *nsResponse, id delegate)
-    : m_handle(handle)
+QuickLookHandle::QuickLookHandle(NSURL *firstRequestURL, NSURLConnection *connection, NSURLResponse *nsResponse, id delegate)
+    : m_firstRequestURL(firstRequestURL)
     , m_converter(adoptNS([[QLPreviewConverterClass() alloc] initWithConnection:connection delegate:delegate response:nsResponse options:nil]))
     , m_delegate(adoptNS([delegate retain]))
     , m_finishedLoadingDataIntoConverter(false)
@@ -370,7 +370,7 @@ QuickLookHandle::QuickLookHandle(ResourceHandle* handle, NSURLConnection *connec
 PassOwnPtr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle, NSURLConnection *connection, NSURLResponse *nsResponse, id delegate)
 {
     if (handle->firstRequest().isMainResourceRequest() && [WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:[nsResponse MIMEType]])
-        return adoptPtr(new QuickLookHandle(handle, connection, nsResponse, delegate));
+        return adoptPtr(new QuickLookHandle([handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], connection, nsResponse, delegate));
 
     return nullptr;
 }
@@ -381,7 +381,7 @@ PassOwnPtr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle, Sync
     if (handle->firstRequest().isMainResourceRequest() && [WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:(NSString *)CFURLResponseGetMIMEType(cfResponse)]) {
         NSURLResponse *nsResponse = [NSURLResponse _responseWithCFURLResponse:cfResponse];
         WebQuickLookHandleAsDelegate *delegate = [[[WebQuickLookHandleAsDelegate alloc] initWithConnectionDelegate:connectionDelegate] autorelease];
-        return adoptPtr(new QuickLookHandle(handle, nil, nsResponse, delegate));
+        return adoptPtr(new QuickLookHandle([handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], nil, nsResponse, delegate));
     }
 
     return nullptr;
@@ -396,7 +396,7 @@ CFURLResponseRef QuickLookHandle::cfResponse()
 PassOwnPtr<QuickLookHandle> QuickLookHandle::create(ResourceLoader* loader, NSURLResponse *response, id delegate)
 {
     if (loader->request().isMainResourceRequest() && [WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:[response MIMEType]])
-        return adoptPtr(new QuickLookHandle(NULL, nil, response, delegate));
+        return adoptPtr(new QuickLookHandle([loader->originalRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], nil, response, delegate));
 
     return nullptr;
 }
@@ -454,7 +454,7 @@ void QuickLookHandle::didFail()
     LOG(Network, "QuickLookHandle::didFail()");
     m_quicklookFileHandle = nullptr;
     // removeQLPreviewConverterForURL deletes the temporary file created.
-    removeQLPreviewConverterForURL([m_handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) URL]);
+    removeQLPreviewConverterForURL(m_firstRequestURL.get());
     [m_converter.get() finishConverting];
     m_converter = nullptr;
 }
@@ -464,7 +464,7 @@ QuickLookHandle::~QuickLookHandle()
     LOG(Network, "QuickLookHandle::~QuickLookHandle()");
     if (m_quicklookFileHandle) {
         m_quicklookFileHandle = nullptr;
-        removeQLPreviewConverterForURL([m_handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) URL]);
+        removeQLPreviewConverterForURL(m_firstRequestURL.get());
     }
     m_converter = nullptr;
 
