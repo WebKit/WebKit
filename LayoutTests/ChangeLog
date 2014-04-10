@@ -1,3 +1,20 @@
+2014-04-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        Update text expectations for new failing tests:
+          accessibility/help-text.html
+          fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html
+          fast/css3-text/css3-text-decoration/text-decoration-skip/glyph-inside-underline.html
+
+        Update test expectations related with highdpi still not supported.
+
+        On r166930 test media/track/opera/interfaces/TextTrackList/onremovetrack.html
+        was moved to media/track/w3c/interfaces/TextTrackList/onremovetrack.html.
+        Now it passes. Remove the expectation.
+
+        * platform/gtk/TestExpectations:
+
 2014-04-10  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Invalid cast in WebCore::RenderLayer::setupClipPath
