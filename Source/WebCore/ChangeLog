@@ -1,3 +1,38 @@
+2014-04-07  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Assertion failure, !node || node->isElementNode(), in
+        WebCore::RenderBlock::clone()
+        <https://bugs.webkit.org/show_bug.cgi?id=110489>
+        <rdar://problem/13666425>
+
+        Reviewed by Antti Koivisto.
+
+        We're ending up in RenderBlock::splitBlocks() with |this| ==
+        |fromBlock|.  We then try to climb the ancestor block chain from
+        this->parent() to |fromBlock|, but this->parent() is already above
+        |fromBlock|, so we end up climbing up to the RenderView and trying to
+        clone it, causing the assertion failure.
+
+        Adopt Chromium's mitigation for this from
+        <https://codereview.chromium.org/13852041>. This is not intended as a
+        fix for the underlying issue.
+
+        Also, fix another issue that occurs with this fuzzed test case that's
+        not handled by the Chromium fix.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::splitBlocks):
+        Ensure while we're in the loop that |curr| is a descendant of
+        |fromBlock|. From the Chromium patch:
+
+            We need to check in every iteration of the loop because
+            moveChildrenTo could have moved |curr|. This is a mitigation and
+            not really a fix against a class of tree craziness.
+
+        Finally, before moving children from |fromBlock| to |toBlock|, ensure
+        that the children are children of |fromBlock|. If we never entered the
+        loop, they will be siblings of |fromBlock|, not children.
+
 2014-04-10  Enrica Casucci  <enrica@apple.com>
 
         Build fix after http://trac.webkit.org/changeset/167085.
