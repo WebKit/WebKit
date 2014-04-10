@@ -32,9 +32,6 @@ PassOwnPtr<WidgetBackingStore> WidgetBackingStoreGtkX11::create(GtkWidget* widge
     return adoptPtr(new WidgetBackingStoreGtkX11(widget, size));
 }
 
-// We keep two copies of the surface here, which will double the memory usage, but increase
-// scrolling performance since we do not have to keep reallocating a memory region during
-// quick scrolling requests.
 WidgetBackingStoreGtkX11::WidgetBackingStoreGtkX11(GtkWidget* widget, const IntSize& size)
     : WidgetBackingStore(size)
 {
