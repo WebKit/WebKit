@@ -1,3 +1,16 @@
+2014-04-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed GTK build fix after r167074.
+
+        This involves replacing resetDragSession() by
+        resetCurrentDragInformation() and dragSession().operation by
+        currentDragOperation().
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDragDataReceived):
+        (webkitWebViewBaseDragMotion):
+        (dragExitedCallback):
+
 2014-04-10  Owen Taylor  <otaylor@redhat.com>
 
         [Cairo] Implement ShareableBitmap::paint() with scale factor
