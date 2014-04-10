@@ -35,8 +35,8 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-    class Frame;
-    class Range;
+class Frame;
+class Range;
 }
 
 namespace WebKit {
@@ -54,13 +54,15 @@ public:
     void findStringMatches(const String&, FindOptions, unsigned maxMatchCount);
     void getImageForFindMatch(uint32_t matchIndex);
     void selectFindMatch(uint32_t matchIndex);
-    void hideFindUI();
     void countStringMatches(const String&, FindOptions, unsigned maxMatchCount);
-    
+
+    void hideFindUI();
+    void hideFindOverlay();
     void hideFindIndicator();
     void showFindIndicatorInSelection();
 
     bool isShowingOverlay() const { return m_isShowingFindIndicator && m_findPageOverlay; }
+    void setShouldShowOverlay(bool);
 
     void deviceScaleFactorDidChange();
 
@@ -86,6 +88,8 @@ private:
     bool m_isShowingFindIndicator;
     WebCore::IntRect m_findIndicatorRect;
     Vector<RefPtr<WebCore::Range>> m_findMatches;
+
+    bool m_shouldShowOverlay;
 };
 
 } // namespace WebKit

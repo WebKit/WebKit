@@ -1,3 +1,21 @@
+2014-04-10  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS WebKit2] Disable the find overlay for now
+        https://bugs.webkit.org/show_bug.cgi?id=131509
+
+        Reviewed by Adele Peterson.
+
+        * Shared/WebPreferencesStore.h:
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::FindController):
+        (WebKit::FindController::hideFindOverlay):
+        (WebKit::FindController::hideFindUI):
+        (WebKit::FindController::setShouldShowOverlay):
+        * WebProcess/WebPage/FindController.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Add a setting allowing us to turn off the find-in-page overlay on iOS.
+
 2014-04-10  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed GTK build fix after r167074.
