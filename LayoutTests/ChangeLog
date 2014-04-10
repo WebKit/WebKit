@@ -1,3 +1,15 @@
+2014-04-10  Zalan Bujtas  <zalan@apple.com>
+
+        Web Inspector: Breakpoint in gutter has clipped / broken border image.
+        https://bugs.webkit.org/show_bug.cgi?id=131500
+
+        Reviewed by Joseph Pecoraro.
+
+        Typo in r166925.
+
+        * fast/borders/border-image-slice-missing-right-expected.html: Added.
+        * fast/borders/border-image-slice-missing-right.html: Added.
+
 2014-04-10  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: expose aria-busy state of current and ancestor nodes
