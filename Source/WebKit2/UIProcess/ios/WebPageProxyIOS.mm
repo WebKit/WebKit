@@ -188,6 +188,11 @@ bool WebPageProxy::updateVisibleContentRects(const VisibleContentRectUpdateInfo&
     return true;
 }
 
+void WebPageProxy::dynamicViewportSizeUpdate(const IntSize& minimumLayoutSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, double targetScale)
+{
+    m_process->send(Messages::WebPage::DynamicViewportSizeUpdate(minimumLayoutSize, targetExposedContentRect, targetUnobscuredRect, targetScale), m_pageID);
+}
+
 void WebPageProxy::setViewportConfigurationMinimumLayoutSize(const WebCore::IntSize& size)
 {
     m_process->send(Messages::WebPage::SetViewportConfigurationMinimumLayoutSize(size), m_pageID);
@@ -456,6 +461,11 @@ void WebPageProxy::blurAssistedNode()
 FloatSize WebPageProxy::viewportScreenSize()
 {
     return FloatSize(WKGetViewportScreenSize());
+}
+
+void WebPageProxy::dynamicViewportUpdateChangedTarget(double newScale, const WebCore::FloatPoint& newScrollPosition)
+{
+    m_pageClient.dynamicViewportUpdateChangedTarget(newScale, newScrollPosition);
 }
 
 void WebPageProxy::didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius)

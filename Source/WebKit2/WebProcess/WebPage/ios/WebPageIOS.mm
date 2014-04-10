@@ -1709,6 +1709,89 @@ void WebPage::setViewportConfigurationMinimumLayoutSize(const IntSize& size)
     viewportConfigurationChanged();
 }
 
+void WebPage::dynamicViewportSizeUpdate(const IntSize& minimumLayoutSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, double targetScale)
+{
+    // FIXME: this does not handle the cases where the content would change the content size or scroll position from JavaScript.
+    // To handle those cases, we would need to redo this computation on every change until the next visible content rect update.
+
+    FrameView& frameView = *m_page->mainFrame().view();
+    IntSize oldContentSize = frameView.contentsSize();
+
+    m_viewportConfiguration.setMinimumLayoutSize(minimumLayoutSize);
+    IntSize newLayoutSize = m_viewportConfiguration.layoutSize();
+    setFixedLayoutSize(newLayoutSize);
+    frameView.updateLayoutAndStyleIfNeededRecursive();
+
+    IntSize newContentSize = frameView.contentsSize();
+
+    double scale;
+    if (!m_userHasChangedPageScaleFactor)
+        scale = m_viewportConfiguration.initialScale();
+    else
+        scale = std::max(std::min(targetScale, m_viewportConfiguration.maximumScale()), m_viewportConfiguration.minimumScale());
+
+    FloatRect newUnobscuredContentRect = targetUnobscuredRect;
+    FloatRect newExposedContentRect = targetExposedContentRect;
+
+    if (scale != targetScale) {
+        // The target scale the UI is using cannot be reached by the content. We need to compute new targets based
+        // on the viewport constraint and report everything back to the UIProcess.
+
+        // 1) Compute a new unobscured rect centered around the original one.
+        double scaleDifference = targetScale / scale;
+        double newUnobscuredRectWidth = targetUnobscuredRect.width() * scaleDifference;
+        double newUnobscuredRectHeight = targetUnobscuredRect.height() * scaleDifference;
+        double newUnobscuredRectX = targetUnobscuredRect.x() - (newUnobscuredRectWidth - targetUnobscuredRect.width()) / 2;
+        double newUnobscuredRectY = targetUnobscuredRect.y() - (newUnobscuredRectHeight - targetUnobscuredRect.height()) / 2;
+        newUnobscuredContentRect = FloatRect(newUnobscuredRectX, newUnobscuredRectY, newUnobscuredRectWidth, newUnobscuredRectHeight);
+
+        // 2) Extend our new unobscuredRect by the obscured margins to get a new exposed rect.
+        double obscuredTopMargin = (targetUnobscuredRect.y() - targetExposedContentRect.y()) * scaleDifference;
+        double obscuredLeftMargin = (targetUnobscuredRect.x() - targetExposedContentRect.x()) * scaleDifference;
+        double obscuredBottomMargin = (targetExposedContentRect.maxY() - targetUnobscuredRect.maxY()) * scaleDifference;
+        double obscuredRightMargin = (targetExposedContentRect.maxX() - targetUnobscuredRect.maxX()) * scaleDifference;
+        newExposedContentRect = FloatRect(newUnobscuredRectX - obscuredLeftMargin,
+                                          newUnobscuredRectY - obscuredTopMargin,
+                                          newUnobscuredRectWidth + obscuredLeftMargin + obscuredRightMargin,
+                                          newUnobscuredRectHeight + obscuredTopMargin + obscuredBottomMargin);
+
+        // FIXME: Adjust the rects based on the content.
+    }
+
+    if (oldContentSize != newContentSize || scale != targetScale) {
+        // Snap the new unobscured rect back into the content rect.
+        newUnobscuredContentRect.setWidth(std::min(static_cast<float>(newContentSize.width()), newExposedContentRect.width()));
+        newUnobscuredContentRect.setHeight(std::min(static_cast<float>(newContentSize.height()), newExposedContentRect.height()));
+
+        double horizontalAdjustment = 0;
+        if (newExposedContentRect.maxX() > newContentSize.width())
+            horizontalAdjustment -= newExposedContentRect.maxX() - newContentSize.width();
+        double verticalAdjustment = 0;
+        if (newExposedContentRect.maxY() > newContentSize.height())
+            verticalAdjustment -= newExposedContentRect.maxY() - newContentSize.height();
+        if (newExposedContentRect.x() < 0)
+            horizontalAdjustment += - newExposedContentRect.x();
+        if (newExposedContentRect.y() < 0)
+            verticalAdjustment += - newExposedContentRect.y();
+
+        newUnobscuredContentRect.move(horizontalAdjustment, verticalAdjustment);
+        newExposedContentRect.move(horizontalAdjustment, verticalAdjustment);
+    }
+
+    frameView.setScrollVelocity(0, 0, 0, monotonicallyIncreasingTime());
+
+    IntRect roundedUnobscuredContentRect = roundedIntRect(newUnobscuredContentRect);
+    frameView.setScrollOffset(roundedUnobscuredContentRect.location());
+    frameView.setUnobscuredContentRect(roundedUnobscuredContentRect);
+    m_drawingArea->setExposedContentRect(newExposedContentRect);
+
+    if (scale == targetScale)
+        scalePage(scale, frameView.scrollPosition());
+
+    if (scale != targetScale || roundedIntPoint(targetUnobscuredRect.location()) != roundedUnobscuredContentRect.location())
+        send(Messages::WebPageProxy::DynamicViewportUpdateChangedTarget(scale, frameView.scrollPosition()));
+}
+
 void WebPage::viewportConfigurationChanged()
 {
     setFixedLayoutSize(m_viewportConfiguration.layoutSize());

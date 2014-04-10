@@ -64,6 +64,7 @@
 #import "WKPDFView.h"
 #import "WKScrollView.h"
 #import "WKWebViewContentProviderRegistry.h"
+#import <CoreGraphics/CGFloat.h>
 #import <UIKit/UIPeripheralHost_Private.h>
 
 @interface UIScrollView (UIScrollViewInternal)
@@ -100,6 +101,7 @@
     UIEdgeInsets _obscuredInsets;
     bool _isChangingObscuredInsetsInteractively;
     BOOL _isAnimatingResize;
+    CATransform3D _resizeAnimationTransformAdjustments;
     CGFloat _lastAdjustmentForScroller;
     CGFloat _keyboardVerticalOverlap;
 
@@ -450,8 +452,10 @@ static CGFloat contentZoomScale(WKWebView* webView)
 {
     ASSERT(!_customContentView);
 
-    if (_isAnimatingResize)
+    if (_isAnimatingResize) {
+        [_contentView layer].sublayerTransform = _resizeAnimationTransformAdjustments;
         return;
+    }
 
     [_scrollView setContentSize:[_contentView frame].size];
     [_scrollView setMinimumZoomScale:layerTreeTransaction.minimumScaleFactor()];
@@ -470,7 +474,23 @@ static CGFloat contentZoomScale(WKWebView* webView)
         [_scrollView setContentOffset:CGPointMake(-inset.left, -inset.top)];
         _isWaitingForNewLayerTreeAfterDidCommitLoad = NO;
     }
+}
 
+- (void)_dynamicViewportUpdateChangedTargetToScale:(double)newScale position:(CGPoint)newScrollPosition
+{
+    if (_isAnimatingResize) {
+        double currentTargetScale = [[_contentView layer] affineTransform].a;
+        double scale = newScale / currentTargetScale;
+        _resizeAnimationTransformAdjustments = CATransform3DMakeScale(scale, scale, 0);
+
+        CGPoint newContentOffset = CGPointMake(newScrollPosition.x * newScale, newScrollPosition.y * newScale);
+        newContentOffset.x -= _obscuredInsets.left;
+        newContentOffset.y -= _obscuredInsets.top;
+        CGPoint currentContentOffset = [_scrollView contentOffset];
+
+        _resizeAnimationTransformAdjustments.m41 = (currentContentOffset.x - newContentOffset.x) / currentTargetScale;
+        _resizeAnimationTransformAdjustments.m42 = (currentContentOffset.y - newContentOffset.y) / currentTargetScale;
+    }
 }
 
 - (RetainPtr<CGImageRef>)_takeViewSnapshot
@@ -676,11 +696,16 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [_contentView didZoomToScale:scale];
 }
 
+static inline void setViewportConfigurationMinimumLayoutSize(WebKit::WebPageProxy& page, const CGSize& size)
+{
+    page.setViewportConfigurationMinimumLayoutSize(WebCore::IntSize(CGCeiling(size.width), CGCeiling(size.height)));
+}
+
 - (void)_frameOrBoundsChanged
 {
     CGRect bounds = self.bounds;
     if (!_hasStaticMinimumLayoutSize && !_isAnimatingResize)
-        [_contentView setMinimumLayoutSize:bounds.size];
+        setViewportConfigurationMinimumLayoutSize(*_page, bounds.size);
     [_scrollView setFrame:bounds];
     [_contentView setMinimumSize:bounds.size];
     [_customContentView web_setMinimumSize:bounds.size];
@@ -1164,7 +1189,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 {
     _hasStaticMinimumLayoutSize = YES;
     _minimumLayoutSizeOverride = minimumLayoutSizeOverride;
-    [_contentView setMinimumLayoutSize:minimumLayoutSizeOverride];
+    setViewportConfigurationMinimumLayoutSize(*_page, minimumLayoutSizeOverride);
 }
 
 - (UIEdgeInsets)_obscuredInsets
@@ -1208,6 +1233,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (void)_beginAnimatedResizeToSize:(CGSize)futureSize obscuredInsets:(UIEdgeInsets)futureObscuredInsets minimumLayoutSizeOverride:(CGSize)futureMinimumLayoutSize
 {
     _isAnimatingResize = YES;
+    _resizeAnimationTransformAdjustments = CATransform3DIdentity;
 
     if (_customContentView)
         return;
@@ -1262,13 +1288,33 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     // FIXME: if we have content centered after double tap to zoom, we should also try to keep that rect in view.
     [_scrollView setContentOffset:contentOffset];
 
-    // FIXME: Send a single message to the WebProcess to layout and repaint instead.
-    // FIXME: Send resize event.
-    [_contentView setMinimumLayoutSize:futureMinimumLayoutSize];
+    CGRect visibleRectInContentCoordinates = [self convertRect:futureBounds toView:_contentView.get()];
+
+    CGRect unobscuredRect = UIEdgeInsetsInsetRect(futureBounds, _obscuredInsets);
+    CGRect unobscuredRectInContentCoordinates = [self convertRect:unobscuredRect toView:_contentView.get()];
+
+    _page->dynamicViewportSizeUpdate(WebCore::IntSize(CGCeiling(futureMinimumLayoutSize.width), CGCeiling(futureMinimumLayoutSize.height)), visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, targetScale);
 }
 
 - (void)_endAnimatedResize
 {
+    if (!_customContentView) {
+        CALayer *contentViewLayer = [_contentView layer];
+        CATransform3D resizeAnimationTransformAdjustements = _resizeAnimationTransformAdjustments;
+        CGFloat adjustmentScale = resizeAnimationTransformAdjustements.m11;
+        contentViewLayer.sublayerTransform = CATransform3DIdentity;
+
+        CGFloat currentScale = contentZoomScale(self);
+        CGPoint currentScrollOffset = [_scrollView contentOffset];
+        [_scrollView setZoomScale:adjustmentScale * currentScale];
+
+        double horizontalScrollAdjustement = _resizeAnimationTransformAdjustments.m41 * currentScale;
+        double verticalScrollAdjustment = _resizeAnimationTransformAdjustments.m42 * currentScale;
+
+        [_scrollView setContentOffset:CGPointMake(currentScrollOffset.x - horizontalScrollAdjustement, currentScrollOffset.y - verticalScrollAdjustment)];
+    }
+
+    _resizeAnimationTransformAdjustments = CATransform3DIdentity;
     _isAnimatingResize = NO;
     [self _updateVisibleContentRects];
 }

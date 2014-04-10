@@ -44,6 +44,7 @@ messages -> WebPage LegacyReceiver {
     WheelEventSyncForTesting(WebKit::WebWheelEvent event) -> (bool handled)
 #if PLATFORM(IOS)
     SetViewportConfigurationMinimumLayoutSize(WebCore::IntSize size)
+    DynamicViewportSizeUpdate(WebCore::IntSize minimumLayoutSize, WebCore::FloatRect targetExposedContentRect, WebCore::FloatRect targetUnobscuredRect, double scale)
 
     HandleTap(WebCore::IntPoint point)
     TapHighlightAtPosition(uint64_t requestID, WebCore::FloatPoint point)

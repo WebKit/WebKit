@@ -329,11 +329,6 @@ static inline FloatRect fixedPositionRectFromExposedRect(CGRect unobscuredRect, 
     _page->drawingArea()->setSize(IntSize(size), IntSize(), IntSize());
 }
 
-- (void)setMinimumLayoutSize:(CGSize)size
-{
-    _page->setViewportConfigurationMinimumLayoutSize(IntSize(CGCeiling(size.width), CGCeiling(size.height)));
-}
-
 - (void)didFinishScrolling
 {
     [self _didEndScrollingOrZooming];

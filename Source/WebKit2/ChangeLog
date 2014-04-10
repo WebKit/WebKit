@@ -1,3 +1,55 @@
+2014-04-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Add the initial WebProcess handling of animated resize for rotation
+        https://bugs.webkit.org/show_bug.cgi?id=131469
+
+        Reviewed by Tim Horton.
+
+        Add the basic handling of dynamic resize from the WebProcess.
+
+        On animated resize, the UIProcess decides new target rects and scale. The information
+        is then passed to the WebProcess to update the content.
+
+        For various reason, the target rects and scale computed by the UIProcess can be incorrect
+        (for example, if viewport constraints limit the scale).
+
+        In those cases, the WebProcess has all the information to compute a better target. This patch
+        adds such a basic update mechanism.
+
+        Once the new values are computed, they are sent back to the UIProcess. If the rotation animation
+        is still ongoing, we do not want mess with it. What we do is set a temporary transform on the subviews
+        and restore the real value after the animation. The key is to have the two matrix multiplying to the end
+        value so that there is no visual difference.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:WebKit::]):
+        (-[WKWebView _dynamicViewportUpdateChangedTargetToScale:position:]):
+        (setViewportConfigurationMinimumLayoutSize):
+        (-[WKWebView _frameOrBoundsChanged]):
+        (-[WKWebView _setMinimumLayoutSizeOverride:]):
+        (-[WKWebView _beginAnimatedResizeToSize:obscuredInsets:minimumLayoutSizeOverride:]):
+        (-[WKWebView _endAnimatedResize]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView _frameOrBoundsChanged]):
+        (-[WKView setMinimumLayoutSizeOverride:]):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::dynamicViewportUpdateChangedTarget):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView setMinimumLayoutSize:]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::dynamicViewportSizeUpdate):
+        (WebKit::WebPageProxy::dynamicViewportUpdateChangedTarget):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+
 2014-04-09  Martin Robinson  <mrobinson@igalia.com>
 
         Try to fix the GTK+ build after resetDragOperation rename

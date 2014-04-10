@@ -576,6 +576,8 @@ public:
     bool updateVisibleContentRects(const VisibleContentRectUpdateInfo&);
     uint64_t nextVisibleContentRectUpdateID() const { return m_lastVisibleContentRectUpdate.updateID() + 1; }
     uint64_t lastVisibleContentRectUpdateID() const { return m_lastVisibleContentRectUpdate.updateID(); }
+
+    void dynamicViewportSizeUpdate(const WebCore::IntSize& minimumLayoutSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, double targetScale);
     
     void setViewportConfigurationMinimumLayoutSize(const WebCore::IntSize&);
     void didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction&);
@@ -1333,6 +1335,7 @@ private:
 #if PLATFORM(IOS)
     WebCore::FloatSize viewportScreenSize();
 
+    void dynamicViewportUpdateChangedTarget(double newTargetScale, const WebCore::FloatPoint& newScrollPosition);
     void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& geometries, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius);
 
     void startAssistingNode(const AssistedNodeInformation&, IPC::MessageDecoder&);

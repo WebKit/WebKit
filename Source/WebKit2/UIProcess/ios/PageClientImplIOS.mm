@@ -362,6 +362,11 @@ void PageClientImpl::didCommitLayerTree(const RemoteLayerTreeTransaction& layerT
     [m_contentView _didCommitLayerTree:layerTreeTransaction];
 }
 
+void PageClientImpl::dynamicViewportUpdateChangedTarget(double newScale, const WebCore::FloatPoint& newScrollPosition)
+{
+    [m_webView _dynamicViewportUpdateChangedTargetToScale:newScale position:newScrollPosition];
+}
+
 void PageClientImpl::startAssistingNode(const AssistedNodeInformation& nodeInformation, API::Object* userData)
 {
     MESSAGE_CHECK(!userData || userData->type() == API::Object::Type::Data);

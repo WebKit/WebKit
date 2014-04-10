@@ -248,8 +248,6 @@ using namespace WebKit;
 - (void)_frameOrBoundsChanged
 {
     CGRect bounds = [self bounds];
-    if (!_hasStaticMinimumLayoutSize)
-        [_contentView setMinimumLayoutSize:bounds.size];
     [_scrollView setFrame:bounds];
     [_contentView setMinimumSize:bounds.size];
     [self _updateVisibleContentRects];
@@ -336,7 +334,6 @@ using namespace WebKit;
 {
     _hasStaticMinimumLayoutSize = YES;
     _minimumLayoutSizeOverride = minimumLayoutSizeOverride;
-    [_contentView setMinimumLayoutSize:minimumLayoutSizeOverride];
 }
 
 - (UIEdgeInsets)_obscuredInsets
